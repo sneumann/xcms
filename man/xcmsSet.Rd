@@ -1,0 +1,46 @@
+\name{xcmsSet}
+\alias{xcmsSet}
+\title{Constructor for xcmsSet objects which finds peaks in NetCDF files}
+\description{
+  This function handles the construction of xcmsSet objects. It
+  finds peaks in batch mode and pre-sorts files from subdirectories
+  into different classes suitable for grouping.
+}
+\usage{
+xcmsSet(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = TRUE), 
+        snames = gsub(".[^.]*$", "", basename(files)), 
+        sclass = gsub("^.$", "sample", dirname(files)), profmethod = "bin",
+        profparam = list(), ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{files}{path names of the NetCDF files to read}
+  \item{snames}{sample names}
+  \item{sclass}{sample classes}
+  \item{profmethod}{method to use for profile generation}
+  \item{profparam}{parameters to use for profile generation}
+  \item{\dots}{
+    further arguments to the \code{findPeaks} method of the
+    \code{xcmsRaw} class
+  }
+}
+\details{
+  The default values of the \code{files}, \code{snames}, and
+  \code{sclass} arguments cause the function to recursively search
+  for *.cdf files. The filename without extention is used for the
+  sample name. The subdirectory path is used for the sample class.
+}
+\value{
+  A \code{xcmsSet} object.
+}
+\author{Colin A. Smith, \email{csmith@scripps.edu}}
+\note{
+  
+}
+\seealso{
+  \code{\link{xcmsSet-class}},
+  \code{\link{findPeaks,xcmsRaw-method}},
+  \code{\link{profStep<-,xcmsRaw-method}},
+  \code{\link{profMethod<-,xcmsRaw-method}}
+}
+\keyword{file}
