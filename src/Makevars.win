@@ -1,0 +1,2 @@
+PKG_LIBS=-L./win -lnetcdf
+PKG_CPPFLAGS=-I./win
