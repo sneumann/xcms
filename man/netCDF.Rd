@@ -1,0 +1,55 @@
+\name{netCDF}
+\alias{netCDFStrError}
+\alias{netCDFOpen}
+\alias{netCDFClose}
+\alias{netCDFVarID}
+\alias{netCDFVarLen}
+\alias{netCDFVarDouble}
+\alias{netCDFVarInt}
+\title{High-performance, low-level access to NetCDF data files}
+\description{
+  Functions for low-level access to numerical data in NetCDF files.
+  They have been optimized for maximum speed and memory efficiency.
+}
+\usage{
+netCDFStrError(ncerr)
+netCDFOpen(filename)
+netCDFClose(ncid)
+netCDFVarID(ncid, var)
+netCDFVarLen(ncid, var)
+netCDFVarDouble(ncid, var)
+netCDFVarInt(ncid, var)
+}
+\arguments{
+  \item{filename}{path to NetCDF file}
+  \item{ncid}{NetCDF file ID}
+  \item{var}{NetCDF variable ID or variable name}
+}
+\details{
+  The mechanisms and structure of NetCDF files are not discussed
+  here, please se the NetCDF documentation for more information.
+}
+\value{
+  \code{netCDFStrError} returns the textual description of an error code.
+
+  \code{netCDFOpen} returns the \code{ncid} of the opened file.
+
+  \code{netCDFClose} returns the closing status.
+
+  \code{netCDFVarID} returns the variable ID.
+
+  \code{netCDFVarLen} returns the variable length.
+
+  \code{netCDFVarDouble} and \code{netCDFVarInt} return either
+  double or integer numeric vectors.
+
+  An error in any of the functions will return an integer error
+  code with attribute \code{errortext} containing the error description
+}
+\references{
+  NetCDF file format:
+  \url{http://my.unidata.ucar.edu/content/software/netcdf/}
+}
+\author{Colin A. Smith, \email{csmith@scripps.edu}}
+\keyword{file}
+\keyword{internal}
