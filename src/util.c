@@ -1,6 +1,5 @@
 #include <math.h>
 #include <R.h>
-#include <Rdefines.h>
 #include "util.h"
 
 void DescendZero(double *yvals, int *numin, int *istart, 

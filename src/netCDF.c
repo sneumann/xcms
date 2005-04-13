@@ -28,15 +28,15 @@ void NetCDFVarLen(const int *ncid, const int *varid, int *len, int *status) {
     int    ndims, dimids[NC_MAX_VAR_DIMS], i;
     size_t dimLen;
     
-    if (*status = nc_inq_varndims(*ncid, *varid, &ndims))
+    if ((*status = nc_inq_varndims(*ncid, *varid, &ndims)))
         return;
     
-    if (*status = nc_inq_vardimid(*ncid, *varid, dimids))
+    if ((*status = nc_inq_vardimid(*ncid, *varid, dimids)))
         return;
     
     *len = 1;
     for (i = 0; i < ndims; i++) {
-        if (*status = nc_inq_dimlen(*ncid, dimids[i], &dimLen))
+        if ((*status = nc_inq_dimlen(*ncid, dimids[i], &dimLen)))
             return;
         *len *= dimLen;
     }
@@ -52,7 +52,7 @@ void NetCDFVarDouble(const int *ncid, const int *varid, double *data, int *statu
     if (*status)
         return;
     
-    if (*status = nc_get_var_double(*ncid, *varid, data))
+    if ((*status = nc_get_var_double(*ncid, *varid, data)))
         return;
     
     if (!nc_inq_att(*ncid, *varid, "scale_factor", NULL, &attLen))
@@ -68,7 +68,7 @@ void NetCDFVarDouble(const int *ncid, const int *varid, double *data, int *statu
 
 void NetCDFVarInt(const int *ncid, const int *varid, int *data, int *status) {
     
-    int    varLen, i;
+    int    varLen;
     
     NetCDFVarLen(ncid, varid, &varLen, status);
     if (*status)
