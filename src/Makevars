@@ -1,4 +1,4 @@
-PKG_LIBS=-L/usr/local/lib -lnetcdf
-PKG_CPPFLAGS=-I/usr/local/include
+PKG_LIBS=-L/usr/local/lib -L/home/csmith/R/netcdf-3.6.0-p1/lib -lnetcdf
+PKG_CPPFLAGS=-I/usr/local/include -I/home/csmith/R/netcdf-3.6.0-p1/include
 #PKG_LIBS=-L/sw/lib -lnetcdf
 #PKG_CPPFLAGS=-I/sw/include
