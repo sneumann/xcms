@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include "util.h"
 #include "xcms.h"
 
 void ProfBinLin(double *xvals, double *yvals, int *numin, 

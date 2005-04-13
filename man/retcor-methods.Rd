@@ -42,7 +42,7 @@
     peak density and retention time correction peak density
   }
   \item{col}{vector of colors for plotting each sample}
-  \itme{ty}{vector of line and point types for plotting each sample}
+  \item{ty}{vector of line and point types for plotting each sample}
 }
 \value{
   An \code{xcmsSet} object

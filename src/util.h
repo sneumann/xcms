@@ -1,3 +1,5 @@
+#include <Rdefines.h>
+
 void DescendZero(double *yvals, int *numin, int *istart, 
                  int *ilower, int *iupper);
 
