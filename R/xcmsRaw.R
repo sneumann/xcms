@@ -426,12 +426,10 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
     cnames <- c("i", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf")
     rmat <- matrix(nrow = 2048, ncol = length(cnames))
     num <- 0
-    noverlap <- 0
     
     for (i in seq(length = length(mass)-steps+1)) {
         if (i %% 500 == 0) {
             cat(round(mass[i]), ":", num, " ", sep = "")
-            if (noverlap > 0) cat(round(noverlap*length(mass)/i/length(object@env$mz)*100, 2), "%O ", sep="")
             if (.Platform$OS.type == "windows") flush.console()
         }
         ### Update EIC buffer if necessary
@@ -445,7 +443,6 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
         ysums <- colMax(ymat)
-        noverlap <- noverlap + sum(ymat > 0) - sum(ysums > 0)
         yfilt <- filtfft(ysums, filt)
         gmax <- max(yfilt)
         for (j in seq(length = max)) {
