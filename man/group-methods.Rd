@@ -11,18 +11,30 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{group(object, mzwid = 0.25, bw = 30, max = 5, sleep = 0)}
+  \code{
+    group(object, bw = 30, minfrac = 0.5, minsamp = 1, 
+    mzwid = 0.25, max = 5, sleep = 0)
+  }
 }
 }}
 \arguments{
   \item{object}{the \code{xcmsSet} object}
+  \item{minfrac}{
+    minimum fraction of samples necessary in at least one of the sample
+    groups for it to be a valid group
+  }
+  \item{minfrac}{
+    minimum number of samples necessary in at least one of the sample
+    groups for it to be a valid group
+  }
+  \item{bw}{
+    bandwidth (standard deviation or half width at half maximum)
+    of gaussian smoothing kernel to apply to the peak density
+    chromatogram
+  }
   \item{mzwid}{
     width of overlapping m/z slices to use for creating peak density
     chromatograms and grouping peaks across samples
-  }
-  \item{bw}{
-    bandwidth of gaussian smoothing kernel to apply to the peak
-    density chromatogram
   }
   \item{max}{
     maximum number of groups to identify in a single m/z slice
