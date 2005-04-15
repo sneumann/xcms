@@ -266,7 +266,7 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 if( !isGeneric("group") )
     setGeneric("group", function(object, ...) standardGeneric("group"))
 
-setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minpeaks = 1,
+setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
                                        mzwid = 0.25, max = 5, sleep = 0) {
 
     samples <- sampnames(object)
@@ -316,7 +316,7 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minpeaks 
             gnum <- classlabel[unique(speakmat[gidx,"sample"])]
             for (j in seq(along = gcount))
                 gcount[j] <- sum(gnum == j)
-            if (! any(gcount >= classnum*minfrac & gcount >= minpeaks))
+            if (! any(gcount >= classnum*minfrac & gcount >= minsamp))
                 next
             snum <- snum + 1
             num <- num + 1
