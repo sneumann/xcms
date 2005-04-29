@@ -1,23 +1,38 @@
 \name{descendZero}
 \alias{descendZero}
 \alias{descendMin}
+\alias{descendValue}
 \title{Find start and end points of a peak}
 \description{
-  Decends down the sides of a data peak and finds either the zero
-  intercept or the first valley on each side.
+  Decends down the sides of a data peak and finds either the points
+  greater than or equal to the zero intercept, the intercept with
+  a given value, or the bottom of the first valley on each side.
 }
 \usage{
-descendZero(y, istart = max(y))
-descendMin(y, istart = max(y))
+descendZero(y, istart = which.max(y))
+descendValue(y, value, istart = which.max(y))
+descendMin(y, istart = which.max(y))
 }
 \arguments{
   \item{y}{numeric vector with values}
   \item{istart}{starting point for descent}
+  \item{value}{numeric value to descend to}
 }
 \value{
-  A vector of length 2 with the starting and ending indicies of the
-  peak start and end points.
+  An integer vector of length 2 with the starting and ending indicies
+  of the peak start and end points.
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
-\keyword{manip}
+\seealso{
+  \code{\link{descendValue}}
+}
+\examples{
+normdist <- dnorm(seq(-4, 4, .1)) - .1
+descendZero(normdist)
+normdist[descendZero(normdist)]
+descendValue(normdist, .15)
+normdist[descendValue(normdist, .15)]
+descendMin(normdist)
+}
+\keyword{iteration}
 \keyword{internal}

@@ -5,7 +5,6 @@
 \alias{cdfpaths<-}
 \alias{cdfpaths,xcmsSet-method}
 \alias{cdfpaths}
-\alias{diffreport,xcmsSet-method}
 \alias{fillPeaks,xcmsSet-method}
 \alias{groupidx<-,xcmsSet-method}
 \alias{groupidx<-}
@@ -88,7 +87,7 @@
     \item{cdfpaths}{
       \code{signature(object = "xcmsSet")}: get \code{cdfpaths} slot
     }
-    \item{diffreport}{
+    \item{\link{diffreport}}{
       \code{signature(object = "xcmsSet")}: create report of
       differentially regulated ions including EICs
     }
