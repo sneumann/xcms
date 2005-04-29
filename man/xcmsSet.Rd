@@ -12,7 +12,6 @@ xcmsSet(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = TRUE),
         sclass = gsub("^.$", "sample", dirname(files)), profmethod = "bin",
         profparam = list(), ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{files}{path names of the NetCDF files to read}
   \item{snames}{sample names}

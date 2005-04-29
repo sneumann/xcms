@@ -624,6 +624,7 @@ setMethod("fillPeaks", "xcmsSet", function(object, mzrange) {
     for (i in seq(along = files)) {
         
         cat(samp[i], "")
+        if (.Platform$OS.type == "windows") flush.console()
         naidx <- which(is.na(gvals[,i]))
         lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
         if (length(prof) > 2)
@@ -663,6 +664,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange,
     for (i in seq(along = sampidx)) {
         
         cat(samp[sampidx[i]], "")
+        if (.Platform$OS.type == "windows") flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
         if (length(prof) > 2)
             lcraw@profparam <- prof[seq(3, length(prof))]

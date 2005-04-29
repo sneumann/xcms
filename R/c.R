@@ -169,7 +169,7 @@ medianFilter <- function(x, mrad, nrad) {
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-descendZero <- function(y, istart = max(y)) {
+descendZero <- function(y, istart = which.max(y)) {
 
     if (!is.double(y)) y <- as.double(y)
     unlist(.C("DescendZero",
@@ -194,7 +194,7 @@ descendValue <- function(y, value, istart = which.max(y)) {
               DUP = FALSE, PACKAGE = "xcms")[5:6]) + 1
 }
 
-descendMin <- function(y, istart = max(y)) {
+descendMin <- function(y, istart = which.max(y)) {
 
     if (!is.double(y)) y <- as.double(y)
     unlist(.C("DescendMin",
