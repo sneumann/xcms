@@ -584,7 +584,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 if( !isGeneric("fillPeaks") )
     setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
 
-setMethod("fillPeaks", "xcmsSet", function(object, mzrange) {
+setMethod("fillPeaks", "xcmsSet", function(object) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
