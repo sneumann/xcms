@@ -1,7 +1,6 @@
 \name{xcmsRaw-class}
 \docType{class}
 \alias{xcmsRaw-class}
-\alias{getPeaks,xcmsRaw-method}
 \alias{plotChrom,xcmsRaw-method}
 \alias{plotRaw,xcmsRaw-method}
 \alias{plotScan,xcmsRaw-method}
@@ -83,9 +82,17 @@
       \code{signature(object = "xcmsRaw")}: get extracted ion
       chromatograms in specified m/z ranges
     }
-    \item{getPeaks}{
+    \item{\link{getPeaks}}{
       \code{signature(object = "xcmsRaw")}: get data for peaks in
       specified m/z and time ranges
+    }
+    \item{\link{getScan}}{
+      \code{signature(object = "xcmsRaw")}: get m/z and intensity
+      values for a single mass scan
+    }
+    \item{\link{getSpec}}{
+      \code{signature(object = "xcmsRaw")}: get average m/z and
+      intensity values for multiple mass scans
     }
     \item{\link[xcms:image.xcmsRaw]{image}}{
       \code{signature(x = "xcmsRaw")}: get data for peaks in
