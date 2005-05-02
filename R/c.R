@@ -158,14 +158,15 @@ profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 medianFilter <- function(x, mrad, nrad) {
 
-    if (!is.double(x)) mat <- as.double(x)
+    dimx <- dim(x)
+    if (!is.double(x)) x <- as.double(x)
     .C("MedianFilter",
        x,
-       as.integer(dim(x)[1]),
-       as.integer(dim(x)[2]),
+       as.integer(dimx[1]),
+       as.integer(dimx[2]),
        as.integer(mrad),
        as.integer(nrad),
-       out = doubleMatrix(dim(x)[1], dim(x)[2]),
+       out = doubleMatrix(dimx[1], dimx[2]),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 

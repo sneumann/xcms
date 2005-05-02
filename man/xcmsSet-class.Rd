@@ -5,7 +5,6 @@
 \alias{cdfpaths<-}
 \alias{cdfpaths,xcmsSet-method}
 \alias{cdfpaths}
-\alias{fillPeaks,xcmsSet-method}
 \alias{groupidx<-,xcmsSet-method}
 \alias{groupidx<-}
 \alias{groupidx,xcmsSet-method}
@@ -14,7 +13,6 @@
 \alias{groups<-}
 \alias{groups,xcmsSet-method}
 \alias{groups}
-\alias{groupval,xcmsSet-method}
 \alias{peaks<-,xcmsSet-method}
 \alias{peaks<-}
 \alias{peaks,xcmsSet-method}
@@ -91,7 +89,7 @@
       \code{signature(object = "xcmsSet")}: create report of
       differentially regulated ions including EICs
     }
-    \item{fillPeaks}{
+    \item{\link{fillPeaks}}{
       \code{signature(object = "xcmsSet")}: fill in peak data for
       groups with missing peaks
     }
@@ -111,7 +109,7 @@
     \item{groups}{
       \code{signature(object = "xcmsSet")}: get \code{groups} slot
     }
-    \item{groupval}{
+    \item{\link{groupval}}{
       \code{signature(object = "xcmsSet")}: get matrix of values
       from peak data with a row for each peak group
     }
