@@ -17,6 +17,6 @@ retexp(peakrange, width = 200))
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \seealso{
-  \code{\link{plotEIC,xcmsSet-method}}
+  \code{\link{plotEIC}}
 }
 \keyword{manip}

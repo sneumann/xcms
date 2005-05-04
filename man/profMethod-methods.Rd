@@ -1,11 +1,11 @@
 \name{profMethod-methods}
 \docType{methods}
-\alias{profMethod-methods}
-\alias{profMethod<--methods}
+%\alias{profMethod-methods}
+%\alias{profMethod<--methods}
 \alias{profMethod}
 \alias{profMethod<-}
-\alias{profMethod,xcmsRaw-method}
-\alias{profMethod<-,xcmsRaw-method}
+%\alias{profMethod,xcmsRaw-method}
+%\alias{profMethod<-,xcmsRaw-method}
 \title{Get and set method for generating profile data}
 \description{
   These methods get and set the method for generating profile
@@ -20,6 +20,7 @@
 }}
 \seealso{
   \code{\link{xcmsRaw-class}},
+  \code{\link{profMethod}},
   \code{\link{profBin}},
   \code{\link{plotSpec}},
   \code{\link{plotChrom}},

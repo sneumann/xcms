@@ -153,7 +153,7 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
                 msdev <- dev.cur()
             }
             dev.set(msdev)
-            plotScan(object, id, msident)
+            plotScan(object, id, ident = msident)
             dev.set(ticdev)
         }
         return(idx)
@@ -260,8 +260,10 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
         return()
     idx <- (object@scanindex[scan]+1):min(object@scanindex[scan+1], 
                                         length(object@env$mz), na.rm=TRUE)
-    if (length(massrange) == 2)
+    if (length(massrange) >= 2) {
+        massrange <- range(massrange)
         idx <- idx[object@env$mz[idx] >= massrange[1] & object@env$mz[idx] <= massrange[2]]
+    }
     points <- cbind(object@env$mz[idx], object@env$intensity[idx])
     title = paste("Mass Spectrum: ", round(object@scantime[scan], 1), 
                   " seconds (scan ", scan, ")", sep = "")
@@ -352,35 +354,35 @@ image.xcmsRaw <- function(x, col = rainbow(256), ...) {
 if( !isGeneric("plotSurf") )
     setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
-setMethod("plotSurf", "xcmsRaw", function(object, ...) {
+setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE, 
+                                          aspect = c(1, 1, .5), ...) {
 
     require(rgl) || stop("Couldn't load package rgl")
     
     sel <- profRange(object, ...)
     
-    ylim <- log(range(object@env$intensity))
-    print(ylim)
+    y <- object@env$profile[sel$massidx, sel$scanidx]
+    if (log)
+        y <- log(y+1)
+    ylim <- range(y)
     
-    if (ylim[1] < 0)
-        y <- log(object@env$profile[sel$massidx, sel$scanidx]+1)/ylim[2]*20
-    else
-        y <- log(object@env$profile[sel$massidx, sel$scanidx])/ylim[2]*20
+    x <- seq(0, aspect[1], length=length(sel$massidx))
+    z <- seq(0, aspect[2], length=length(sel$scanidx))
+    y <- y/ylim[2]*aspect[3]
     
-    dim(y) <- NULL
-    y[is.na(y)] <- 0
-    y[is.infinite(y)] <- 0
-    y[is.nan(y)] <- 0
-    
-    x <- seq(sel$massrange[1], sel$massrange[2], length=length(sel$massidx))
-    z <- seq(sel$scanrange[1], sel$scanrange[2], length=length(sel$scanidx))
-    
-    colorlut <- terrain.colors(ylim[2] - ylim[1] + 1)
-    col <- colorlut[ y-ylim[1]+1 ]
+    colorlut <- terrain.colors(256)
+    col <- colorlut[y/aspect[3]*255+1]
     
     rgl.clear("shapes")
     rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col)
-    rgl.bbox(ylen = 0, alpha=0.5)
+    rgl.surface(x, z, y, color = col, shininess = 75)
+    rgl.bbox(
+    #         This seems to cause segmentation faults in rgl
+    #         xat = seq(0, aspect[1], length = 5),
+    #         xlab = as.character(seq(sel$massrange[1], sel$massrange[2], length = 5)), 
+    #         zat = seq(0, aspect[2], length = 5),
+    #         zlab = as.character(seq(sel$timerange[1], sel$timerange[2], length = 5)), 
+             ylen = 0, alpha=0.5)
 })
 
 filtfft <- function(y, filt) {
@@ -625,17 +627,19 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, step = 0.1) {
 if( !isGeneric("plotRaw") )
     setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
 
-setMethod("plotRaw", "xcmsRaw", function(object, ident = FALSE, 
-                                          massrange = numeric(), 
-                                          timerange = numeric(), 
-                                          scanrange = numeric()) {
+setMethod("plotRaw", "xcmsRaw", function(object,
+                                         massrange = numeric(), 
+                                         timerange = numeric(), 
+                                         scanrange = numeric()) {
 
-    if (length(timerange) == 2) {
+    if (length(timerange) >= 2) {
+        timerange <- range(timerange)
         scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
         scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
-    } else if (length(scanrange) != 2) {
+    } else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
-    }
+    else
+        scanrange <- range(scanrange)
     startidx <- object@scanindex[scanrange[1]] + 1
     endidx <- length(object@env$mz)
     if (scanrange[2] < length(object@scanindex))
@@ -650,10 +654,11 @@ setMethod("plotRaw", "xcmsRaw", function(object, ident = FALSE,
     
     masses <- object@env$mz[startidx:endidx]
     massidx <- 1:length(masses)
-    if (length(massrange) == 2)
+    if (length(massrange) >= 2) {
+        massrange <- range(massrange)
         massidx <- (masses >= massrange[1]) & (masses <= massrange[2])
-    else
-        massrange <- c(min(masses), max(masses))
+    } else
+        massrange <- range(masses)
     
     title = paste("Raw XC/MS Points")
     points <- cbind(object@scantime[scans[massidx]], masses[massidx])

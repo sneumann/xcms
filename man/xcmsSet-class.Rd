@@ -1,34 +1,33 @@
 \name{xcmsSet-class}
 \docType{class}
 \alias{xcmsSet-class}
-\alias{cdfpaths<-,xcmsSet-method}
+%\alias{cdfpaths<-,xcmsSet-method}
 \alias{cdfpaths<-}
-\alias{cdfpaths,xcmsSet-method}
+%\alias{cdfpaths,xcmsSet-method}
 \alias{cdfpaths}
-\alias{groupidx<-,xcmsSet-method}
+%\alias{groupidx<-,xcmsSet-method}
 \alias{groupidx<-}
-\alias{groupidx,xcmsSet-method}
+%\alias{groupidx,xcmsSet-method}
 \alias{groupidx}
-\alias{groups<-,xcmsSet-method}
+%\alias{groups<-,xcmsSet-method}
 \alias{groups<-}
-\alias{groups,xcmsSet-method}
+%\alias{groups,xcmsSet-method}
 \alias{groups}
-\alias{peaks<-,xcmsSet-method}
+%\alias{peaks<-,xcmsSet-method}
 \alias{peaks<-}
-\alias{peaks,xcmsSet-method}
+%\alias{peaks,xcmsSet-method}
 \alias{peaks}
-\alias{plotEIC,xcmsSet-method}
-\alias{profinfo<-,xcmsSet-method}
+%\alias{profinfo<-,xcmsSet-method}
 \alias{profinfo<-}
-\alias{profinfo,xcmsSet-method}
+%\alias{profinfo,xcmsSet-method}
 \alias{profinfo}
-\alias{sampclass<-,xcmsSet-method}
+%\alias{sampclass<-,xcmsSet-method}
 \alias{sampclass<-}
-\alias{sampclass,xcmsSet-method}
+%\alias{sampclass,xcmsSet-method}
 \alias{sampclass}
-\alias{sampnames<-,xcmsSet-method}
+%\alias{sampnames<-,xcmsSet-method}
 \alias{sampnames<-}
-\alias{sampnames,xcmsSet-method}
+%\alias{sampnames,xcmsSet-method}
 \alias{sampnames}
 
 \title{Class xcmsSet, a class for preprocessing peak data}
@@ -123,9 +122,13 @@
     \item{peaks}{
       \code{signature(object = "xcmsSet")}: get \code{peaks} slot
     }
-    \item{plotEIC}{
+    \item{\link{plotEIC}}{
       \code{signature(object = "xcmsSet")}: plot list of EICs for
       each sample in the set
+    }
+    \item{\link{plotrt}}{
+      \code{signature(object = "xcmsSet")}: plot retention time
+      deviation profiles
     }
     \item{profinfo<-}{
       \code{signature(object = "xcmsSet")}: set \code{profinfo} slot

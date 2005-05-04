@@ -1,21 +1,11 @@
 \name{xcmsRaw-class}
 \docType{class}
 \alias{xcmsRaw-class}
-\alias{plotChrom,xcmsRaw-method}
-\alias{plotRaw,xcmsRaw-method}
-\alias{plotScan,xcmsRaw-method}
-\alias{plotSpec,xcmsRaw-method}
-\alias{plotSurf,xcmsRaw-method}
-\alias{plotTIC,xcmsRaw-method}
-\alias{profMedFilt,xcmsRaw-method}
-\alias{profMz,xcmsRaw-method}
+%\alias{profMz,xcmsRaw-method}
 \alias{profMz}
-\alias{profRange,xcmsRaw-method}
-\alias{profStep<-,xcmsRaw-method}
-\alias{profStep,xcmsRaw-method}
-\alias{revMz,xcmsRaw-method}
+%\alias{revMz,xcmsRaw-method}
 \alias{revMz}
-\alias{sortMz,xcmsRaw-method}
+%\alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
 
 \title{Class xcmsRaw, a class for handling raw data}
@@ -98,31 +88,31 @@
       \code{signature(x = "xcmsRaw")}: get data for peaks in
       specified m/z and time ranges
     }
-    \item{plotChrom}{
+    \item{\link{plotChrom}}{
       \code{signature(object = "xcmsRaw")}: plot a chromatogram
       from profile data
     }
-    \item{plotRaw}{
+    \item{\link{plotRaw}}{
       \code{signature(object = "xcmsRaw")}: plot locations of raw
       intensity data points
     }
-    \item{plotScan}{
+    \item{\link{plotScan}}{
       \code{signature(object = "xcmsRaw")}: plot a mass spectrum
       of an individual scan from the raw data
     }
-    \item{plotSpec}{
+    \item{\link{plotSpec}}{
       \code{signature(object = "xcmsRaw")}: plot a mass spectrum
       from profile data
     }
-    \item{plotSurf}{
+    \item{\link{plotSurf}}{
       \code{signature(object = "xcmsRaw")}: experimental method for
       plotting 3D surface of profile data with \code{rgl}.
     }
-    \item{plotTIC}{
+    \item{\link{plotTIC}}{
       \code{signature(object = "xcmsRaw")}: plot total ion count
       chromatogram
     }
-    \item{profMedFilt}{
+    \item{\link{profMedFilt}}{
       \code{signature(object = "xcmsRaw")}: median filter profile
       data in time and m/z dimensions
     }
@@ -138,15 +128,15 @@
       \code{signature(object = "xcmsRaw")}: get vector of m/z values
       for each row of the \code{profile} matrix
     }
-    \item{profRange}{
+    \item{\link{profRange}}{
       \code{signature(object = "xcmsRaw")}: interpret flexible ways
       of specifying subsets of the \code{profile} matrix
     }
-    \item{profStep<-}{
+    \item{\link{profStep<-}}{
       \code{signature(object = "xcmsRaw")}: change the m/z step
       used for generating the \code{profile} matrix
     }
-    \item{profStep}{
+    \item{\link{profStep}}{
       \code{signature(object = "xcmsRaw")}: get the m/z step used
       for generating the \code{profile} matrix
     }
