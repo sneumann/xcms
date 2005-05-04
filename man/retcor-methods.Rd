@@ -1,8 +1,8 @@
 \name{retcor-methods}
 \docType{methods}
-\alias{retcor-methods}
+%\alias{retcor-methods}
 \alias{retcor}
-\alias{retcor,xcmsSet-method}
+%\alias{retcor,xcmsSet-method}
 \title{Align retention times across samples}
 \description{
   Use ``well behaved'' peak groups to calculate retention time

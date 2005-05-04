@@ -1,8 +1,8 @@
 \name{group-methods}
 \docType{methods}
-\alias{group-methods}
+%\alias{group-methods}
 \alias{group}
-\alias{group,xcmsSet-method}
+%\alias{group,xcmsSet-method}
 \title{Group peaks from different samples together}
 \description{
  Group peaks together across samples using overlapping m/z bins and

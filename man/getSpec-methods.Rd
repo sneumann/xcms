@@ -1,9 +1,9 @@
 \name{getSpec-methods}
 \docType{methods}
-\alias{getSpec-methods}
+%\alias{getSpec-methods}
 \alias{getSpec}
-\alias{getSpec,xcmsRaw-method}
-\title{get average m/z and intensity values for multiple mass scans}
+%\alias{getSpec,xcmsRaw-method}
+\title{Get average m/z and intensity values for multiple mass scans}
 \description{
   Return full-resolution averaged data from multiple mass scans.
 }
@@ -33,7 +33,7 @@
 \seealso{
   \code{\link{xcmsRaw-class}},
   \code{\link{profRange}},
-  \code{\link{getSpec}}
+  \code{\link{getScan}}
 }
 \keyword{methods}
 \keyword{manip}

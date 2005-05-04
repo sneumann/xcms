@@ -38,8 +38,8 @@ xcmsSet(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = TRUE),
 }
 \seealso{
   \code{\link{xcmsSet-class}},
-  \code{\link{findPeaks,xcmsRaw-method}},
-  \code{\link{profStep<-,xcmsRaw-method}},
-  \code{\link{profMethod<-,xcmsRaw-method}}
+  \code{\link{findPeaks}},
+  \code{\link{profStep}},
+  \code{\link{profMethod}}
 }
 \keyword{file}
