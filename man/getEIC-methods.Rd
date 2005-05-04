@@ -1,9 +1,9 @@
 \name{getEIC-methods}
 \docType{methods}
-\alias{getEIC-methods}
+%\alias{getEIC-methods}
 \alias{getEIC}
-\alias{getEIC,xcmsRaw-method}
-\alias{getEIC,xcmsSet-method}
+%\alias{getEIC,xcmsRaw-method}
+%\alias{getEIC,xcmsSet-method}
 \title{Get extracted ion chromatograms for specified m/z ranges}
 \description{
   Generate multiple extracted ion chromatograms for m/z values of
@@ -37,10 +37,7 @@
   scans.
 
   For \code{xcmsSet} objects, a list of matricies as described
-  above, one for each sample. Each matrix has an additional first
-  column which contains the retention times. If the \code{xcmsSet}
-  object contains retention time correction information, it will
-  return corrected retention times.
+  above, one for each sample.
 }
 \seealso{
   \code{\link{xcmsRaw-class}},

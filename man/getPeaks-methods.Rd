@@ -1,8 +1,8 @@
 \name{getPeaks-methods}
 \docType{methods}
-\alias{getPeaks-methods}
+%\alias{getPeaks-methods}
 \alias{getPeaks}
-\alias{getPeaks,xcmsRaw-method}
+%\alias{getPeaks,xcmsRaw-method}
 \title{Get peak intensities for specified regions}
 \description{
   Integrate extracted ion chromatograms in pre-defined defined

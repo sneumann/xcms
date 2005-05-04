@@ -33,7 +33,7 @@ xcmsRaw(cdfname, profstep = 1, profmethod = "intlin", profparam = list(), msmsfi
 }
 \seealso{
   \code{\link{xcmsRaw-class}},
-  \code{\link{profStep<-,xcmsRaw-method}},
-  \code{\link{profMethod<-,xcmsRaw-method}}
+  \code{\link{profStep}},
+  \code{\link{profMethod}}
 }
 \keyword{file}
