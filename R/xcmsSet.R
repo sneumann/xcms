@@ -405,6 +405,8 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
     samples <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
     n <- length(samples)
@@ -588,6 +590,8 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
     files <- cdfpaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
@@ -743,6 +747,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     require(multtest) || stop("Couldn't load multtest")
     
     groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
     samples <- sampnames(object)
     n <- length(samples)
     classlabel <- sampclass(object)
