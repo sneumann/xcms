@@ -363,7 +363,7 @@ setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
     
     y <- object@env$profile[sel$massidx, sel$scanidx]
     if (log)
-        y <- log(y+1)
+        y <- log(y+max(1-min(y), 0))
     ylim <- range(y)
     
     x <- seq(0, aspect[1], length=length(sel$massidx))
@@ -375,13 +375,22 @@ setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
     
     rgl.clear("shapes")
     rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col, shininess = 75)
+    rgl.surface(x, z, y, color = col, shininess = 128)
+    rgl.points(0, 0, 0, alpha = 0)
+    
+    mztics <- pretty(sel$massrange, n = 5*aspect[1])
+    rttics <- pretty(sel$timerange, n = 5*aspect[2])
+    inttics <- pretty(c(0,ylim), n = 10*aspect[3])
+    inttics <- inttics[inttics > 0]
+    
     rgl.bbox(
-    #         This seems to cause segmentation faults in rgl
-    #         xat = seq(0, aspect[1], length = 5),
-    #         xlab = as.character(seq(sel$massrange[1], sel$massrange[2], length = 5)), 
-    #         zat = seq(0, aspect[2], length = 5),
-    #         zlab = as.character(seq(sel$timerange[1], sel$timerange[2], length = 5)), 
+    #         This causes segmentation faults in rgl 0.64-13
+    #         xat = (mztics - sel$massrange[1])/diff(sel$massrange)*aspect[1],
+    #         xlab = as.character(mztics), 
+    #         yat = inttics/ylim[2]*aspect[3],
+    #         ylab = as.character(inttics), 
+    #         zat = (rttics - sel$timerange[1])/diff(sel$timerange)*aspect[2],
+    #         zlab = as.character(rttics), 
              ylen = 0, alpha=0.5)
 })
 

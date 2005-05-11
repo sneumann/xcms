@@ -36,14 +36,14 @@ necessary, also obtain and install \texttt{R}. The \Rpackage{xcms}
 package includes \texttt{C} code which needs to be compiled, and
 also uses the NetCDF library for reading AIA format NetCDF mass
 spectral data files. Pre-compiled binaries which include the NetCDF
-library are available for Windows and Mac OS X.  Users of Linux and
+library are available for Windows and Mac OS X. Users of Linux and
 other platforms must install the NetCDF library themselves.
 
 The \Rpackage{xcms} package and a demonstration data package,
 \Rpackage{faahKO}, are currently available from several sources.
 The first is the web site of the Bioconductor open source software
-project.  (\url{http://www.bioconductor.org/}) The second is the
-web site of the METLIN Metabolite Database.
+project. (\url{http://www.bioconductor.org/}) The second is the web
+site of the METLIN Metabolite Database.
 (\url{http://metlin.scripps.edu/download/}) Both sites contain
 source and binary distributions, although due to differences in
 distribution, one may host a slightly more up-to-date version than
@@ -77,8 +77,8 @@ Biodconductor repository using the \texttt{Packages > Select
 repositories...} menu item.
 
 \item Use the package installer to automatically download and install
-\Rpackage{genefilter}, \Rpackage{reposTools}, and \Rpackage{multtest}
-with the \texttt{Packages > Install package(s)...} menu item.
+\Rpackage{multtest} with the \texttt{Packages > Install package(s)...}
+menu item.
 
 \item Download the \Rpackage{xcms} and \Rpackage{faahKO} Windows
 binaries from one of the sources listed in the introduction.
@@ -103,30 +103,35 @@ provided below.
 
 \begin{enumerate}
 
-\item Several of the functions in \Rpackage{xcms} require an X11
-display device. If it is not already installed, you will need to
-install
+\item Several of the functions in \Rpackage{xcms} which generate
+PNG images require an X11 display device. If it is not already
+installed, you will need to install
 X11\footnote{\url{http://www.apple.com/downloads/macosx/apple/x11formacosx.html}}.
-Additionally, because Bioconductor is currently between releases,
-you will need to install the Apple Developer
-Tools\footnote{\url{http://connect.apple.com/}} to allow installation
-of several of the Bioconductor packages.
 
 \item Download and install the current version of \texttt{R}.
 Detailed instructions for doing so are available on the CRAN site.
 
-\item From the Developmental Packages section of the Bioconductor
-web site, download the \Rpackage{Biobase} and \Rpackage{multtest}
-packages. Also, download the Mac OS X binaries of the \Rpackage{xcms}
-and \Rpackage{faahKO} packages.
+\item Download the \Rpackage{xcms} and \Rpackage{faahKO} Mac OS X
+binaries from one of the sources listed in the introduction.
 
 \item Launch \texttt{R} and open the R Package Installer using the
-\texttt{Packages \& Data > Package Installer} menu item. Select
-``Local Source Package'' from the popup menu and the ``At User
-Level'' radio button.
+\texttt{Packages \& Data > Package Installer} menu item. Select the
+``At User Level'' radio button.
 
-\item Now install the four packages you downloaded in the previous
-step.
+\item Select ``BioConductor (binaries)'' from the pop up menu and
+use the package installer to automatically download and install
+\Rpackage{Biobase} and \Rpackage{multtest}.
+
+If Bioconductor is preparing for its next release and binaries
+aren't yet available for your version of \texttt{R}, you will need
+to install the Apple Developer
+Tools\footnote{\url{http://connect.apple.com/}} to allow installation
+of source Bioconductor packages. Use the ``BioConductor (sources)''
+option instead.
+
+\item Select ``Local Source Package'' from the popup menu and install
+the \Rpackage{xcms} and \Rpackage{faahKO} packages you previously
+downloaded.
 
 \end{enumerate}
 
@@ -184,7 +189,7 @@ the \Rpackage{rgl} package does get limited use. It provides an
 interface for creating interactive, 3D graphics using OpenGL. The
 \Rpackage{rgl} package is currently under development and does not
 yet provide sufficient functionality or stability to warrant its
-listing as an official dependency. It is currently used by a single
+listing as an official dependency. It is used by a single
 method, \Rmethod{plotSurf}, for plotting out a 3D surface representation
 of part of an LC/MS or GC/MS experiment. Due to limitations in
 \Rpackage{rgl}, axis labels are currently not implemented. However,
