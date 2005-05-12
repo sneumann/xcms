@@ -22,25 +22,24 @@ xcmsRaw <- function(cdfname, profstep = 1, profmethod = "intlin",
     if (!is.null(attr(cdf, "errortext")))
         stop(attr(cdf, "errortext"))
     
-    object@env$mz <- netCDFVarDouble(cdf, "mass_values")
-    if (!is.null(attr(object@env$mz, "errortext")))
-        stop("Couldn't read mass values")
-    
-    object@env$intensity <- netCDFVarDouble(cdf, "intensity_values")
-    if (!is.null(attr(object@env$intensity, "errortext")))
-        stop("Couldn't read intensity values")
-    
     object@scantime <- netCDFVarDouble(cdf, "scan_acquisition_time")
     if (!is.null(attr(object@scantime, "errortext")))
         stop("Couldn't read scan times")
+    
+    object@tic <- netCDFVarDouble(cdf, "total_intensity")
+    if (!is.null(attr(object@tic, "errortext")))
+        stop("Couldn't read total ion chromatogram")
     
     object@scanindex <- netCDFVarInt(cdf, "scan_index")
     if (!is.null(attr(object@scanindex, "errortext")))
         stop("Couldn't read scan indecies")
     
-    object@tic <- netCDFVarDouble(cdf, "total_intensity")
-    if (!is.null(attr(object@tic, "errortext")))
-        stop("Couldn't read total ion chromatogram")
+    pointValues <- netCDFMSPoints(cdf, object@scanindex)
+    if (!is.null(attr(pointValues, "errortext")))
+        stop("Couldn't read mass/intensity values")
+    
+    object@env$mz <- pointValues$massValues
+    object@env$intensity <- pointValues$intensityValues
     
     netCDFClose(cdf)
     
@@ -51,9 +50,6 @@ xcmsRaw <- function(cdfname, profstep = 1, profmethod = "intlin",
         object@parentmass[msmstab[,1]] <- msmstab[,3]
         object@energy[msmstab[,1]] <- msmstab[,4]
     }
-    
-    if (object@env$mz[1] > object@env$mz[2])
-        revMz(object)
     
     object@profmethod <- profmethod
     object@profparam <- profparam

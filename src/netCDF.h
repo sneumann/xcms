@@ -11,3 +11,7 @@ void NetCDFVarLen(const int *ncid, const int *varid, int *len, int *status);
 void NetCDFVarDouble(const int *ncid, const int *varid, double *data, int *status);
 
 void NetCDFVarInt(const int *ncid, const int *varid, int *data, int *status);
+
+void NetCDFMSPoints(const int *ncid, const int *scanNumber, 
+                    const int *scanIndex, const int *pointNumber, 
+                    double *massValues, double *intensityValues, int *status);
