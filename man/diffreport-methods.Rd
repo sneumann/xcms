@@ -106,7 +106,7 @@
 \seealso{
   \code{\link{xcmsSet-class}},
   \code{\link[multtest]{mt.teststat}},
-  \code{\link{palette}}
+  \code{\link[grDevices]{palette}}
 }
 \keyword{methods}
 \keyword{file}
