@@ -6,6 +6,7 @@
 \alias{netCDFVarLen}
 \alias{netCDFVarDouble}
 \alias{netCDFVarInt}
+\alias{netCDFMSPoints}
 \title{High-performance, low-level access to NetCDF data files}
 \description{
   Functions for low-level access to numerical data in NetCDF files.
@@ -19,11 +20,13 @@ netCDFVarID(ncid, var)
 netCDFVarLen(ncid, var)
 netCDFVarDouble(ncid, var)
 netCDFVarInt(ncid, var)
+netCDFMSPoints(ncid, scanIndex)
 }
 \arguments{
   \item{filename}{path to NetCDF file}
   \item{ncid}{NetCDF file ID}
   \item{var}{NetCDF variable ID or variable name}
+  \item{scanIndex}{double vector with \code{scan_index} from CDF file}
 }
 \details{
   The mechanisms and structure of NetCDF files are not discussed
@@ -42,6 +45,10 @@ netCDFVarInt(ncid, var)
 
   \code{netCDFVarDouble} and \code{netCDFVarInt} return either
   double or integer numeric vectors.
+  
+  \code{netCDFMSPoints} returns a list with elements \code{massValues}
+  and \code{intensityValues}, with the masses for each scan in
+  ascending order.
 
   An error in any of the functions will return an integer error
   code with attribute \code{errortext} containing the error description

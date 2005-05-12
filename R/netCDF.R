@@ -112,3 +112,26 @@ netCDFVarInt <- function(ncid, var) {
        status = integer(1),
        DUP = FALSE, PACKAGE = "xcms")$data
 }
+
+netCDFMSPoints <- function(ncid, scanIndex) {
+
+    if (!is.integer(scanIndex)) scanIndex <- as.integer(scanIndex)
+
+    var <- netCDFVarID(ncid, "mass_values")
+    if (!is.null(attr(var, "errortext")))
+        return(var)
+    
+    len <- netCDFVarLen(ncid, var)
+    if (!is.null(attr(len, "errortext")))
+        return(len)
+    
+    .C("NetCDFMSPoints",
+       as.integer(ncid),
+       as.integer(length(scanIndex)),
+       scanIndex,
+       as.integer(len),
+       massValues = double(len),
+       intensityValues = double(len),
+       status = integer(1),
+       DUP = FALSE, PACKAGE = "xcms")[c("massValues", "intensityValues")]
+}

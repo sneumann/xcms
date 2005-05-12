@@ -76,3 +76,43 @@ void NetCDFVarInt(const int *ncid, const int *varid, int *data, int *status) {
     
     *status = nc_get_var_int(*ncid, *varid, data);
 }
+
+void NetCDFMSPoints(const int *ncid, const int *scanNumber, 
+                    const int *scanIndex, const int *pointNumber, 
+                    double *massValues, double *intensityValues, int *status) {
+    
+    int    varid, i, j, scanLen;
+    double tmpMass, tmpIntensity;
+    
+    *status = nc_inq_varid(*ncid, "mass_values", &varid);
+    if (*status)
+        return;
+    
+    NetCDFVarDouble(ncid, &varid, massValues, status);
+    if (*status)
+        return;
+    
+    *status = nc_inq_varid(*ncid, "intensity_values", &varid);
+    if (*status)
+        return;
+    
+    NetCDFVarDouble(ncid, &varid, intensityValues, status);
+    if (*status)
+        return;
+    
+    if (massValues[1] < massValues[2])
+        return;
+    
+    for (i = 0; i < *scanNumber; i++) {
+        scanLen = (i < *scanNumber - 1) ? scanIndex[i+1] - scanIndex[i] :
+                                          *pointNumber - scanIndex[i];
+        for (j = 0; j < scanLen/2; j++) {
+            tmpMass = massValues[scanIndex[i]+j];
+            tmpIntensity = intensityValues[scanIndex[i]+j];
+            massValues[scanIndex[i]+j] = massValues[scanIndex[i]+scanLen-1-j];
+            intensityValues[scanIndex[i]+j] = intensityValues[scanIndex[i]+scanLen-1-j];
+            massValues[scanIndex[i]+scanLen-1-j] = tmpMass;
+            intensityValues[scanIndex[i]+scanLen-1-j] = tmpIntensity;
+        }
+    }
+}
