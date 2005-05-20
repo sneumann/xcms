@@ -1,5 +1,5 @@
 Package: xcms
-Version: 1.0.0
+Version: 1.1.0
 Date: 2005-05-11
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>
@@ -8,8 +8,9 @@ Depends: R (>= 1.9.0)
 Suggests: multtest
 SystemRequirements: NetCDF
 Description: Framework for processing and visualization of
-  chromatographically separated mass spectral data. Imports from
-  AIA format NetCDF files. Preprocesses data for high-throughput,
-  untargeted analyte profiling.
+        chromatographically separated mass spectral data. Imports from
+        AIA format NetCDF files. Preprocesses data for
+        high-throughput, untargeted analyte profiling.
 License: GPL version 2 or newer
 URL: http://metlin.scripps.edu/
+
