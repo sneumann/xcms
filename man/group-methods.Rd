@@ -23,7 +23,7 @@
     minimum fraction of samples necessary in at least one of the sample
     groups for it to be a valid group
   }
-  \item{minfrac}{
+  \item{minsamp}{
     minimum number of samples necessary in at least one of the sample
     groups for it to be a valid group
   }

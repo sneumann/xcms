@@ -684,8 +684,12 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange,
 if( !isGeneric("plotEIC") )
     setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
 
-setMethod("plotEIC", "xcmsSet", function(object, eics, peakrange, nums = seq(length = nrow(peakrange)), 
-                                         classlabel = sampclass(object), peakindex = NULL, filebase = character(), 
+setMethod("plotEIC", "xcmsSet", function(object, eics, peakrange, 
+                                         nums = seq(length = nrow(peakrange)), 
+                                         classlabel = sampclass(object), 
+                                         peakindex = NULL, 
+                                         sampidx = seq(along = sampnames(object)),
+                                         filebase = character(), 
                                          wh = c(640,480), sleep = 0) {
 
     classnames <- levels(classlabel)
@@ -707,9 +711,9 @@ setMethod("plotEIC", "xcmsSet", function(object, eics, peakrange, nums = seq(len
         pts <- vector("list", length(eics))
         maxint <- numeric(length(eics))
         for (j in seq(along = pts)) {
-             stime <- rtcor[[j]]
+             stime <- rtcor[[sampidx[j]]]
              idx <- which(stime >= peakrange[nums[i],"rtmin"] & stime <= peakrange[nums[i],"rtmax"])
-             pts[[j]] <- cbind(rtcor[[j]][idx], eics[[j]][nums[i],idx])
+             pts[[j]] <- cbind(stime[idx], eics[[j]][nums[i],idx])
              maxint[j] <- max(pts[[j]][,2])
         }
         
@@ -793,7 +797,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
             eics <- getEIC(object, peakrange, ceic)
             dir.create(paste(filebase, "_eic", sep=""))
             plotEIC(object, eics, peakrange, seq(length=tsnum), sampclass(object)[ceic],
-                    indecies[eicidx,], file.path(paste(filebase, "_eic", sep=""), ""))
+                    indecies[eicidx,], ceic, file.path(paste(filebase, "_eic", sep=""), ""))
         }
     }
     
