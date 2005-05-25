@@ -14,6 +14,7 @@
   \code{plotEIC(object, eics, peakrange,
                 nums = seq(length = nrow(peakrange)), 
                 classlabel = sampclass(object), peakindex = NULL,
+                sampidx = seq(along = sampnames(object)),
                 filebase = character(), wh = c(640,480), 
                 sleep = 0)}
 }
@@ -21,7 +22,7 @@
 \arguments{
   \item{object}{the \code{xcmsSet} object}
   \item{eics}{
-    list of EIC matricies as produced by \code{link{getEIC}}
+    list of EIC matricies as produced by \code{\link{getEIC}}
   }
   \item{peakrange}{
     matrix with named columns: \code{mzmin}, \code{mzmax}, \code{rtmin},
@@ -34,9 +35,11 @@
     factor with class labels for each EIC matrix in the list
   }
   \item{peakindex}{
-    integer vector with indecies to the rows of the \code{xcmsSet}
-    \code{group} matrix corresponding to the rows of the \code{peakrange}
-    matrix
+    integer matrix with indecies to the rows of the \code{xcmsSet}
+    \code{peak} matrix
+  }
+  \item{sampidx}{
+    integer vector with indicies of samples for which to plot EICs
   }
   \item{filebase}{
     base file name under which to save the numbered EICs, no image

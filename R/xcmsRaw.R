@@ -475,6 +475,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
                      plot(scantime, yfilt, type = "l", main = paste(mass[i], "-", mass[i+1]), ylim=c(-gmax/3, gmax))
                      points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],], type = "l", col = "red")
                      points(scantime, colSums(ymat), type = "l", col = "blue", lty = "dashed")
+                     abline(h = sn*noise, col = "red")
                      Sys.sleep(sleep)
                  }
                  yfilt[peakrange[1]:peakrange[2]] <- 0
@@ -617,7 +618,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, step = 0.1) {
         ### Update EIC buffer if necessary
         if (bufidx[imz[2]] == 0) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
-            idxrange <- c(max(1, imz[1]), min(bufsize+imz[1]-1, length(mass)))
+            idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
             buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]], 
