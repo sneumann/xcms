@@ -15,8 +15,25 @@ xcmsSet <- function(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = T
 
     object <- new("xcmsSet")
     sampnames(object) <- snames
+    # Make the default group names less redundant
+    if (missing(sclass)) {
+        scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
+        scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
+        i <- 1
+        while(all(scomp[i,1] == scomp[i,-1]))
+            i <- i + 1
+        if (i > 1 && i < nrow(scomp))
+            sclass <- substr(sclass, i, max(nchar(sclass)))
+    }
     sampclass(object) <- sclass
     cdfpaths(object) <- file.path(getwd(), files)
+    # Check to see whether the absolute path names work
+    for (file in cdfpaths(object)) {
+        if (is.null(attr(ncid <- netCDFOpen(file), "errortext")))
+            netCDFClose(ncid)
+        else
+            cdfpaths(object) <- files
+    }
     
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
