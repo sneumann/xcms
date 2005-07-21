@@ -6,7 +6,7 @@
   a matrix as defined by the \code{retmin} and \code{retmax} columns.
 }
 \usage{
-retexp(peakrange, width = 200))
+retexp(peakrange, width = 200)
 }
 \arguments{
   \item{peakrange}{maxtrix with columns \code{retmin} and \code{retmax}}
