@@ -466,7 +466,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
         
         if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
             rtdevsmo[[i]][naidx] <- suppressWarnings(approx(na.omit(data.frame(rtcor[[i]], rtdevsmo[[i]])), 
-                                                            xout = rtcor[[i]][naidx])$y)
+                                                            xout = rtcor[[i]][naidx], rule = 2)$y)
         while (length(decidx <- which(diff(rtcor[[i]] - rtdevsmo[[i]]) < 0))) {
             d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
             rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
