@@ -13,10 +13,11 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{getEIC(object, mzrange, step = 0.1)}
+  \code{getEIC(object, mzrange, rtrange = NULL, step = 0.1)}
 }
 \item{object = "xcmsSet"}{
-  \code{getEIC(object, mzrange, sampidx = seq(along = sampnames(object)))}
+  \code{getEIC(object, mzrange, rtrange = 200, groupidx, 
+               sampleidx = sampnames(object), rt = c("corrected", "raw"))}
 }
 }}
 \arguments{
@@ -25,23 +26,46 @@
     either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns \code{mzmin} and
     \code{mzmax}
+
+    for \code{xcmsSet} objects, if left blank the group data will
+    be used instead
+  }
+  \item{rtrange}{
+    a two column matrix the same size as \code{mzrange} with minimum
+    and maximum retention times between which to return EIC data
+    points
+    
+    for \code{xcmsSet} objects, it may also be a single number
+    specifying the time window around the peak to return EIC data
+    points
   }
   \item{step}{step size to use for profile generation}
-  \item{sampidx}{
-    integer vector with indicies of samples for which to get EICs
+  \item{groupidx}{
+    either character vector with names or integer vector with
+    indicies of peak groups for which to get EICs
+  }
+  \item{sampleidx}{
+    either character vector with names or integer vector with
+    indicies of samples for which to get EICs
+  }
+  \item{rt}{
+    \code{"corrected"} for using corrected retention times, or
+    \code{"raw"} for using raw retention times
   }
 }
 \value{
-  For \code{xcmsRaw} objects, a matrix with a column for each
-  \code{mzmin}, \code{mzmax} pair. Rows correspond to individual
-  scans.
+  For \code{xcmsRaw} objects, if \code{rtrange} is NULL, a matrix
+  with a column for each \code{mzmin}, \code{mzmax} pair. Rows
+  correspond to individual scans. Otherwise, a list of two column
+  (retention time/intensity) matricies, one for each \code{mzmin},
+  \code{mzmax} pair.
 
-  For \code{xcmsSet} objects, a list of matricies as described
-  above, one for each sample.
+  For \code{xcmsSet} objects, an \code{xcmsEIC} object.
 }
 \seealso{
   \code{\link{xcmsRaw-class}},
-  \code{\link{xcmsSet-class}}
+  \code{\link{xcmsSet-class}},
+  \code{\link{xcmsEIC-class}}
 }
 \keyword{methods}
 \keyword{file}
