@@ -410,9 +410,9 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
     profFun <- match.fun(.profFunctions[[profMethod(object)]])
     
     ### Create EIC buffer
-    bufsize <- 100
     mrange <- range(object@env$mz)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
     bufidx <- integer(length(mass))
@@ -519,12 +519,11 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     stime <- object@scantime
     
     ### Create EIC buffer
-    bufsize <- 100
     mrange <- range(peakrange)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
-                   bufsize, mass[1], mass[min(bufsize, length(mass))], 
-                   TRUE, object@profparam)
+                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -594,24 +593,26 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 if( !isGeneric("getEIC") )
     setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, step = 0.1) {
+setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
 
     profFun <- match.fun(.profFunctions[[profMethod(object)]])
     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
-        mzrange <- mzrange[,c("mzmin", "mzmax")]
+        mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
     
     ### Create EIC buffer
-    bufsize <- 100
     mrange <- range(mzrange)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
-                   bufsize, mass[1], mass[min(bufsize, length(mass))], TRUE, 
-                   object@profparam)
+                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
     
-    eicmat <- matrix(nrow = nrow(mzrange), ncol = ncol(buf))
+    if (missing(rtrange))
+        eic <- matrix(nrow = nrow(mzrange), ncol = ncol(buf))
+    else
+        eic <- vector("list", nrow(rtrange))
     
     for (i in order(mzrange[,1])) {
         imz <- findRange(mass, c(mzrange[i,1]-.5*step, mzrange[i,2]+.5*step), TRUE)
@@ -624,10 +625,16 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, step = 0.1) {
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]], 
                            TRUE, object@profparam)
         }
-        eicmat[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
+        if (missing(rtrange))
+            eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
+        else {
+            eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
+                               ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],]
+            colnames(eic[[i]]) <- c("rt", "intensity")
+        }
     }
     
-    invisible(eicmat)
+    invisible(eic)
 })
 
 if( !isGeneric("plotRaw") )

@@ -20,8 +20,9 @@ xcmsSet <- function(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = T
         scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
         scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
         i <- 1
-        while(all(scomp[i,1] == scomp[i,-1]))
+        while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
             i <- i + 1
+        i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
         if (i > 1 && i < nrow(scomp))
             sclass <- substr(sclass, i, max(nchar(sclass)))
     }
@@ -280,6 +281,40 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
     object
 })
 
+if ( !isGeneric("groupnames") )
+    setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
+
+setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0, 
+                                            template = NULL) {
+
+    if (!missing(template)) {
+        tempsplit <- strsplit(template[1], "[T_]")
+        tempsplit <- strsplit(unlist(tempsplit), "\\\.")
+        if (length(tempsplit[[1]]) > 1)
+            mzdec <- nchar(tempsplit[[1]][2])
+        else
+            mzdec <- 0
+        if (length(tempsplit[[2]]) > 1)
+            rtdec <- nchar(tempsplit[[2]][2])
+        else
+            rtdec <- 0
+    }
+    
+    mzfmt <- paste("%.", mzdec, "f", sep = "")
+    rtfmt <- paste("%.", rtdec, "f", sep = "")
+    
+    gnames <- paste("M", sprintf(mzfmt, groups(object)[,"mzmed"]), "T", 
+                    sprintf(rtfmt, groups(object)[,"rtmed"]), sep = "")
+    
+    if (any(dup <- duplicated(gnames)))
+        for (dupname in unique(gnames[dup])) {
+            dupidx <- which(gnames == dupname)
+            gnames[dupidx] <- paste(gnames[dupidx], seq(along = dupidx), sep = "_")
+        }
+    
+    gnames
+})
+
 if( !isGeneric("group") )
     setGeneric("group", function(object, ...) standardGeneric("group"))
 
@@ -446,6 +481,8 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
     
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
+    if (length(idx) < 5)
+        stop("Less than 5 peak groups found for RT correction")
     idx <- idx[clustunique(groupmat[idx,], order(-nsamp[idx], groupmat[idx,"npeaks"]), max=10)]
     idx <- idx[order(groupmat[idx,"rtmed"])]
     
@@ -673,88 +710,72 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
 if( !isGeneric("getEIC") )
     setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
-setMethod("getEIC", "xcmsSet", function(object, mzrange, 
-                                        sampidx = seq(along = sampnames(object))) {
-
+setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200, 
+                                        groupidx, sampleidx = sampnames(object),
+                                        rt = c("corrected", "raw")) {
+    
     files <- cdfpaths(object)
+    grp <- groups(object)
     samp <- sampnames(object)
     prof <- profinfo(object)
     
-    eics <- vector("list", length(sampidx))
+    rt <- match.arg(rt)
+
+    if (is.numeric(sampleidx))
+        sampleidx <- sampnames(object)[sampleidx]
+    sampidx <- match(sampleidx, sampnames(object))
+    
+    if (!missing(groupidx)) {
+        if (is.numeric(groupidx))
+            groupidx <- groupnames(object)[unique(as.integer(groupidx))]
+        grpidx <- match(groupidx, groupnames(object, template = groupidx))
+    }
+    
+    if (missing(mzrange)) {
+        if (missing(groupidx))
+            stop("No m/z range or groups specified")
+        mzmin <- -rowMax(-groupval(object, value = "mzmin"))
+        mzmax <- rowMax(groupval(object, value = "mzmax"))
+        mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
+    } else if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
+        mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
+    colnames(mzrange) <- c("mzmin", "mzmax")
+    
+    if (length(rtrange) == 1) {
+        if (missing(groupidx))
+            rtrange <- matrix(rep(range(object@rt[[rt]][sampidx]), nrow(mzrange)), 
+                              ncol = 2, byrow = TRUE)
+        else {
+            rtrange <- retexp(grp[grpidx,c("rtmin","rtmax"),drop=FALSE], rtrange)
+        }
+    }
+    colnames(rtrange) <- c("rtmin", "rtmax")
+    
+    if (missing(groupidx))
+        gnames <- character(0)
+    else
+        gnames <- groupidx
+    
+    eic <- vector("list", length(sampleidx))
+    names(eic) <- sampleidx
     
     for (i in seq(along = sampidx)) {
         
-        cat(samp[sampidx[i]], "")
+        cat(sampleidx[i], "")
         if (.Platform$OS.type == "windows") flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
+        if (rt == "corrected")
+            lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
         if (length(prof) > 2)
             lcraw@profparam <- prof[seq(3, length(prof))]
-        eics[[i]] <- getEIC(lcraw, mzrange, step = prof$step)
+        eic[[i]] <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
         rm(lcraw)
         gc()
     }
     cat("\n")
     
-    invisible(eics)
-})
-
-if( !isGeneric("plotEIC") )
-    setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
-
-setMethod("plotEIC", "xcmsSet", function(object, eics, peakrange, 
-                                         nums = seq(length = nrow(peakrange)), 
-                                         classlabel = sampclass(object), 
-                                         peakindex = NULL, 
-                                         sampidx = seq(along = sampnames(object)),
-                                         filebase = character(), 
-                                         wh = c(640,480), sleep = 0) {
-
-    classnames <- levels(classlabel)
-    classlabel <- as.vector(unclass(classlabel))
-    profstep <- profinfo(object)$step
-    peakmat <- peaks(object)
-    rtcor <- object@rt$corrected
-    cols <- palette()[seq(length = max(classlabel))]
-    lcols <- cols
-    if (!is.null(peakindex)) {
-        pcols <- cols
-        for (i in seq(along = pcols)) {
-            rgbvec <- pmin(col2rgb(cols[i])+153,255)
-            cols[i] <- rgb(rgbvec[1], rgbvec[2], rgbvec[3], max = 255)
-        }
-    }
-    
-    for (i in seq(along = nums)) {
-        pts <- vector("list", length(eics))
-        maxint <- numeric(length(eics))
-        for (j in seq(along = pts)) {
-             stime <- rtcor[[sampidx[j]]]
-             idx <- which(stime >= peakrange[nums[i],"rtmin"] & stime <= peakrange[nums[i],"rtmax"])
-             pts[[j]] <- cbind(stime[idx], eics[[j]][nums[i],idx])
-             maxint[j] <- max(pts[[j]][,2])
-        }
-        
-        mzmin <- floor(peakrange[nums[i],"mzmin"]/profstep)*profstep
-        mzmax <- ceiling(peakrange[nums[i],"mzmax"]/profstep)*profstep
-        main <- paste("Extracted Ion Chromatogram:", mzmin, "-", mzmax, "m/z")
-        if (!missing(filebase))
-            png(paste(filebase, sprintf("%03i", as.integer(i)), ".png", sep = ""), w = wh[1], h = wh[2])
-        plot(0, 0, type = "n", xlim = peakrange[nums[i],c("rtmin","rtmax")], ylim = c(0, max(maxint, na.rm = TRUE)), main = main,
-             xlab = "Retention Time", ylab = "Intensity")
-        for (j in order(-maxint)) {
-            points(pts[[j]], type = "l", col = cols[classlabel[j]])
-            if (!is.null(peakindex) && !is.na(peakindex[nums[i],j])) {
-                retrange <- peakmat[peakindex[nums[i],j],c("rtmin","rtmax")]
-                ptidx <- which(pts[[j]][,1] >= retrange[1] & pts[[j]][,1] <= retrange[2])
-                points(pts[[j]][ptidx,], type = "l", col = pcols[classlabel[j]])
-            }
-        }
-        legend(peakrange[nums[i],c("rtmax")], max(maxint), classnames[unique(classlabel)], col = lcols[unique(classlabel)], lty = 1, xjust = 1)
-        if (!missing(filebase))
-            dev.off()
-        else if (sleep > 0)
-            Sys.sleep(sleep)
-    }
+    invisible(new("xcmsEIC", eic = eic, mzrange = mzrange, rtrange = rtrange, 
+                  rt = rt, groupnames = gnames))
 })
 
 if( !isGeneric("diffreport") )
@@ -763,7 +784,8 @@ if( !isGeneric("diffreport") )
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1], 
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, 
-                                            sortpval = TRUE, classeic = c(class1,class2)) {
+                                            sortpval = TRUE, classeic = c(class1,class2),
+                                            metlin = FALSE) {
     
     require(multtest) || stop("Couldn't load multtest")
     
@@ -797,7 +819,16 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	tstat <- mt.teststat(testval, testclab)
 	pvalue <- pval(testval, testclab, tstat)
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
-	twosamp <- cbind(stat, groupmat, values)
+	if (metlin) {
+	    neutralmass <- groupmat[,"mzmed"] + ifelse(metlin < 0, 1, -1)
+	    metlin <- abs(metlin)
+	    digits <- ceiling(-log10(metlin))+1
+	    metlinurl <- paste("http://metlin.scripps.edu/metabo_list.php?mass_min=",
+	                       round(neutralmass - metlin, digits), "&mass_max=",
+	                       round(neutralmass + metlin, digits), sep="")
+	    values <- cbind(metlin = metlinurl, values)
+	}
+	twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
 	if (sortpval) {
 	   tsidx <- order(twosamp[,"pvalue"])
 	   tsidx <- tsidx[clustunique(twosamp[tsidx,c("mzmin", "mzmax", "rtmin", "rtmax")])]
@@ -805,17 +836,25 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	   rownames(twosamp) <- 1:nrow(twosamp)
 	}
     
-    if (length(filebase)) {
+    if (length(filebase))
         write.table(twosamp, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
-        if (eicmax > 0) {
-            tsnum <- min(eicmax, length(tsidx))
-            eicidx <- tsidx[seq(length=tsnum)]
-            peakrange <- retexp(groupmat[eicidx, c("mzmin", "mzmax", "rtmin", "rtmax")])
-            eics <- getEIC(object, peakrange, ceic)
-            dir.create(paste(filebase, "_eic", sep=""))
-            plotEIC(object, eics, peakrange, seq(length=tsnum), sampclass(object)[ceic],
-                    indecies[eicidx,], ceic, file.path(paste(filebase, "_eic", sep=""), ""))
+    
+    if (eicmax > 0) {
+        eicmax <- min(eicmax, length(tsidx))
+        eics <- getEIC(object, rtrange = 220, sampleidx = ceic,
+                       groupidx = tsidx[seq(length = eicmax)])
+        if (length(filebase)) {
+            eicdir <- paste(filebase, "_eic", sep="")
+            dir.create(eicdir)
+            if (capabilities("png"))
+                png(file.path(eicdir, "%03d.png"), width = 640, height = 480)
+            else
+                pdf(file.path(eicdir, "%03d.pdf"), width = 640/72, 
+                    height = 480/72, onefile = FALSE)
         }
+        plot(eics, object, rtrange = 200)
+        if (length(filebase))
+            dev.off()
     }
     
     invisible(twosamp)
@@ -823,7 +862,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
 retexp <- function(peakrange, width = 200) {
 
-    retmean <- rowMeans(peakrange[,c("rtmin", "rtmax")])
+    retmean <- rowMeans(peakrange[,c("rtmin", "rtmax"),drop=FALSE])
     peakrange[,"rtmin"] <- retmean-width/2
     peakrange[,"rtmax"] <- retmean+width/2
     

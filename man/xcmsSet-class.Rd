@@ -27,8 +27,6 @@
 \alias{sampclass}
 %\alias{sampnames<-,xcmsSet-method}
 \alias{sampnames<-}
-%\alias{sampnames,xcmsSet-method}
-\alias{sampnames}
 
 \title{Class xcmsSet, a class for preprocessing peak data}
 \description{
@@ -102,6 +100,10 @@
     \item{groupidx}{
       \code{signature(object = "xcmsSet")}: get \code{groupidx} slot
     }
+    \item{\link{groupnames}}{
+      \code{signature(object = "xcmsSet")}: get textual names for
+      peak groups
+    }
     \item{groups<-}{
       \code{signature(object = "xcmsSet")}: set \code{groups} slot
     }
@@ -121,10 +123,6 @@
     }
     \item{peaks}{
       \code{signature(object = "xcmsSet")}: get \code{peaks} slot
-    }
-    \item{\link{plotEIC}}{
-      \code{signature(object = "xcmsSet")}: plot list of EICs for
-      each sample in the set
     }
     \item{\link{plotrt}}{
       \code{signature(object = "xcmsSet")}: plot retention time
@@ -149,7 +147,7 @@
     \item{sampnames<-}{
       \code{signature(object = "xcmsSet")}: set \code{sampnames} slot
     }
-    \item{sampnames}{
+    \item{\link{sampnames}}{
       \code{signature(object = "xcmsSet")}: get \code{sampnames} slot
     }
     \item{\link[xcms:split.xcmsSet]{split}}{
