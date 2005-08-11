@@ -403,7 +403,7 @@ if( !isGeneric("findPeaks") )
     setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 
 setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548, 
-                                           max = 5, sn = 10, step = 0.1, steps = 2, 
+                                           max = 5, snthresh = 10, step = 0.1, steps = 2, 
                                            mzdiff = 0.8 - step*steps, index = FALSE, 
                                            sleep = 0) {
 
@@ -456,7 +456,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
              maxy <- which.max(yfilt)
              noise <- mean(ysums[ysums > 0])
              #noise <- mean(yfilt[yfilt >= 0])
-             if (yfilt[maxy] > 0 && yfilt[maxy] > sn*noise) {
+             if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise) {
                  peakrange <- descendZero(yfilt, maxy)
                  masssum <- rowSums(ymat[,peakrange[1]:peakrange[2],drop=FALSE])
                  massidx <- which(masssum > 0)
