@@ -12,7 +12,7 @@
 \item{object = "xcmsRaw"}{
   \code{
     findPeaks(object, fwhm = 30, sigma = fwhm/2.3548, max = 5, 
-    sn = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps, 
+    snthresh = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps, 
     index = FALSE, sleep = 0)
   }
 }
@@ -29,7 +29,7 @@
   \item{max}{
     maximum number of peaks per extracted ion chromatogram
   }
-  \item{sn}{signal to noise ratio cutoff}
+  \item{snthresh}{signal to noise ratio cutoff}
   \item{step}{step size to use for profile generation}
   \item{steps}{number of steps to merge prior to filtration}
   \item{mzdiff}{
