@@ -94,7 +94,7 @@ etc. In \Rpackage{xcms}, they will be automatically assigned class
 names ``GroupA/Day1'', ``GroupA/Day2'', etc.
 
 For the purposes of demonstration, we will use a subset of the data
-from \citep{Saghatelian04} examining the metabolic consequences of
+from \cite{Saghatelian04} examining the metabolic consequences of
 knocking out the fatty acid amide hydrolase (FAAH) gene in mice.
 The raw data files are contained in the \texttt{cdf} directory of
 the \Rpackage{faahKO} data package. There are samples from the
@@ -129,7 +129,7 @@ m/z it is currently processing. The second number is the number of
 peaks that have been identified so far. It is imporant to note that
 the number may be significantly larger than the final number of
 peaks as a vicinity elimination posprocessing step removes duplicate
-peaks corresponding to the same analyte.
+peaks corresponding to the same ion.
 
 <<PeakIdentification>>=
 library(xcms)
@@ -161,11 +161,11 @@ so is provided in the \Rmethod{plotChrom} method with the
 
 Several parameters depend on the resolution your mass spectrometer.
 Prior to matched filtration, the peak detection algorithm creates
-extracted ion base peak chromatograms (EIBPC) on a fixed step size,
-defaulting to 0.1 m/z as defined by the \Rfunarg{step} argument.
-To take into account uncertainties in scan to scan mass accuracy,
-the peak identification algorithm combines a given number of EIBPCs
-prior to filtration and peak detection, as defined by the \Rfunarg{steps}
+extracted ion base peak chromatograms (EIBPC) on a fixed step size
+defined by the \Rfunarg{step} argument (default 0.1 m/z). To take
+into account uncertainties in scan to scan mass accuracy, the peak
+identification algorithm combines a given number of EIBPCs prior
+to filtration and peak detection, as defined by the \Rfunarg{steps}
 argument. The default value, 2, combines EIBPCs 1-2, 2-3, 3-4, etc.
 If the peak width is significantly greater than the step size, you
 may wish to turn off combination using a value of 1. If your scan
@@ -213,16 +213,73 @@ than peak identification and is generally not recommended as such.
 
 \section{Matching Peaks Across Samples}
 
-<<PeakMatching>>=
+After peak identification, peaks representing the same analyte
+across samples must be placed into groups. That is accomplished
+with the \Rmethod{group} method, which returns a new \Rclass{xcmsSet}
+object with the additional group information. The grouping process
+is non-destructive and does not affect the other data stored in the
+\Rclass{xcmsSet} object. Therefore, we can safely replace the
+\Robject{xset} object with the grouped version. The grouping algorithm
+processes the peak lists in order of increasing mass and will
+regularly output the mass it is currently working on.
+
+<<PeakMatching1>>=
 xset <- group(xset)
 @
 
+There are several grouping parameters to consider optimizing for
+your chromatography and mass spectrometer. Please consult the
+\Rmethod{group} documentation for more details. To see what the
+algorithm is doing while running, use the \Rfunarg{sleep} argument
+to specify a time (in seconds) to pause and plot each iteration.
+That can be quite useful for visualizing parameter effects.
+
 \section{Retention Time Correction}
+
+After matching peaks into groups, \Rpackage{xcms} can use those
+groups to identify and correct correlated drifts in retention time
+from run to run. The aligned peaks can then be used for a second
+pass of peak grouping which will be more accurate than the first.
+The whole process can be repeated in an iterative fashion, although
+we will only demonstrate a single pass of retention time alignment
+here.
+
+Not all peak groups will be helpful for identifying retention time
+drifts. Some groups may be missing peaks from a large fraction of
+samples and thus provide an incomplete picture of the drift at that
+time point. Still others may contain multiple peaks from the same
+sample, which is a sign of impropper grouping. \Rpackage{xcms}
+ignores those groups by only considering ``well-behaved'' peak
+groups which are missing at most one sample and have at most one
+extra peak. (Those values can be changed with the \Rfunarg{missing}
+and \Rfunarg{extra} arguments.)
+
+For each of those well-behaved groups, the algorithm calculates a
+median retention time and, for every sample, a deviation from that
+median. Within a sample, the observed deviation generally changes
+over time in a nonlinear fashion. Those changes are approximated
+using a local polynomial regression technique implemented in the
+\Rfunction{loess} function. By default, the curve fitting is done
+using least-squares on all data points. However, it is possible to
+enable outlier detection and removal by setting the \Rfunarg{family}
+argument to \texttt{"symmetric"}, as shown here.
+
+Retention time correction is performed by the \Rmethod{retcor}
+method, which returns an \Rclass{xcmsSet} object with corrected
+retention times.  Because it changes the retention times of all
+peaks, it is important to store the new object under a new variable
+name. That will allow you to backtrack and repeat retention time
+correction if necessary.
 
 <<RTCorrection, include = FALSE, fig = TRUE, eps = FALSE, width = 7, height = 7>>=
 xset2 <- retcor(xset, family = "symmetric", plottype = "mdevden")
-xset2 <- group(xset2, bw = 10)
 @
+
+The above command uses the \Rfunarg{plottype} argument to produce
+a plot, shown in Figure~\ref{rtcorrection}, which is useful for
+supervising the algorithm. It includes the data points used for
+loess regression and the resulting deviation profiles. It additionally
+shows the distribution of peak groups across retention time.
 
 \begin{figure}
 \begin{center}
@@ -240,7 +297,26 @@ peaks used as standards for retention time correction. Examples of
 two peaks before and after alignment are shown in Figure~\ref{eicalign}.}
 \end{figure}
 
+After retention time correction, the initial peak grouping becomes
+invalid and is discarded. Therefore, the resulting object needs to
+be regrouped. Here, we decrease the inclusiveness of the grouping
+using the \Rfunarg{bw} argument (default 30 seconds).
+
+<<PeakMatching2>>=
+xset2 <- group(xset2, bw = 10)
+@
+
 \section{Filling in Missing Peak Data}
+
+After the second pass of peak grouping, there will still be peak
+groups which are missing peaks from some of the samples. That can
+occur because peaks were missed during peak identification or because
+an analyte was not present in a sample. In any case, those missing
+data points can be filled in by rereading the raw data files and
+integrating them in the regions of the missing peaks.  That is
+performed using the \Rmethod{fillPeaks} method, which returns a
+\Rclass{xcmsSet} object with the filled in peak data. While running,
+it outputs the name of the sample it is currently processing.
 
 <<PeakFillIn>>=
 xset3 <- fillPeaks(xset2)
@@ -249,11 +325,11 @@ xset3
 
 \section{Analyzing and Visualizing Results}
 
-<<AnalysisVisualize>>=
-reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
-                        metlin = 0.05)
-reporttab[1:4,]
-@
+A report showing the most statistically significant differences in
+analyte intensities can be generated with the \Rmethod{diffreport}
+method. It will automatically generate extracted ion chromatograms
+for a given number of them, in this case 10. Several of those
+chromatograms are shown in Figure~\ref{eic}.
 
 \begin{figure}
 \begin{center}
@@ -278,10 +354,48 @@ Compare it with peaks in the top two plots, which are also eluting
 at the same time but are correctly aligned.}
 \end{figure}
 
+<<AnalysisVisualize>>=
+reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
+                        metlin = 0.15)
+reporttab[1:4,]
+@
+
+If the \Rfunarg{metlin} argument is set to a numeric value, the
+report will include links to the Metlin Metabolite Database
+(\url{http://metlin.scripps.edu/}) showing potential metabolite
+identities. A positive value indicates the data was acquired in
+positive ion mode and the neutral mass is calculated assuming all
+ions are M+H. A negative value does the opposite. The value itself
+indicates the uncertainty in mass accuracy. For instance, the first
+and third metabolites in the report produce the following URLs:
+
+\begin{itemize}
+
+\item \small{
+<<URL1, echo = FALSE, results = tex>>=
+cat("\\url{", as.character(reporttab[1,"metlin"]), "}", sep = "")
+@
+}
+
+\item \small{
+<<URL2, echo = FALSE, results = tex>>=
+cat("\\url{", as.character(reporttab[3,"metlin"]), "}", sep = "")
+@
+}
+
+\end{itemize}
+
 \section{Selecting and Visualizing Peaks}
+
+It is also possible to generate extracted ion chromatograms for
+arbitrary peak groups selected using various criteria. Here we
+generate EICs for two analytes eluting at different times. They
+are shown using both unaligned and aligned retention times. The
+resulting plots are shown in Figure~\ref{eicalign}.
 
 <<PeakSelect>>=
 gt <- groups(xset3)
+colnames(gt)
 groupidx1 <- which(gt[,"rtmed"] > 2600 & gt[,"rtmed"] < 2700 & gt[,"npeaks"] == 12)[1]
 groupidx2 <- which(gt[,"rtmed"] > 3600 & gt[,"rtmed"] < 3700 & gt[,"npeaks"] == 12)[1]
 eiccor <- getEIC(xset3, groupidx = c(groupidx1, groupidx2))
@@ -315,7 +429,7 @@ plot(eiccor, xset3, groupidx = 2)
 \end{center}
 \caption{\label{eicalign}
 Unaligned (top) and aligned (bottom) extracted ion chromatograms
-from two peaks eluting at 2624 and 3678 seconds. Darkened lines
+from two analytes eluting at 2624 and 3678 seconds. Darkened lines
 indicate where the peaks were integrated for quantitation. A plot
 illustrating the retention time correction is shown in
 Figure~\ref{rtcorrection}.}
