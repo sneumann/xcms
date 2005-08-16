@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-#include <netinet/in.h>
+/* #include <netinet/in.h> not needed in this code */
 
 #include "base64.h"
 
