@@ -8,7 +8,8 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                    sampclass = factor(integer(0)), rt = list(),
                    cdfpaths = character(0), profinfo = vector("list")))
 
-xcmsSet <- function(files = list.files(pattern = ".[Cc][Dd][Ff]$", recursive = TRUE), 
+xcmsSet <- function(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.([Mm][Zz])?[Xx][Mm][Ll]$", 
+                                       recursive = TRUE), 
                     snames = gsub("\.[^.]*$", "", basename(files)), 
                     sclass = gsub("^\.$", "sample", dirname(files)),
                     profmethod = "bin", profparam = list(), ...) {
@@ -450,9 +451,10 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
 if( !isGeneric("retcor") )
     setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
 
-setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .2, 
+setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
+                                        method = c("loess", "linear"), span = .2,
                                         family = c("gaussian", "symmetric"),
-                                        plottype = c("none", "deviation", "mdevden"), 
+                                        plottype = c("none", "deviation", "mdevden"),
                                         col = NULL, ty = NULL) {
 
     peakmat <- peaks(object)
@@ -463,6 +465,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
     classlabel <- as.vector(unclass(sampclass(object)))
     n <- length(samples)
     corpeaks <- peakmat
+    method <- match.arg(method)
     plottype <- match.arg(plottype)
     family <- match.arg(family)
     if (length(object@rt) == 2)
@@ -481,8 +484,8 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
     
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
-    if (length(idx) < 5)
-        stop("Less than 5 peak groups found for RT correction")
+    if (length(idx) == 0)
+        stop("No peak groups found for retention time correction")
     idx <- idx[clustunique(groupmat[idx,], order(-nsamp[idx], groupmat[idx,"npeaks"]), max=10)]
     idx <- idx[order(groupmat[idx,"rtmed"])]
     
@@ -490,23 +493,45 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1, span = .
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
     
+    if (method == "loess") {
+        mingroups <- min(colSums(!is.na(rt)))
+        if (mingroups < 4) {
+            method <- "linear"
+            warning("Too few peak groups, reverting to linear method")
+        } else if (mingroups*span < 4) {
+            span <- 4/mingroups
+            warning("Span too small, resetting to ", round(span, 2))
+        }
+    }
+    
     rtdevsmo <- vector("list", n)
     
     for (i in 1:n) {
     
         pts <- na.omit(data.frame(rt = rt[,i], rtdev = rtdev[,i]))
-        lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
         
-        rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
-        ### Remove singularities from the loess function
-        rtdevsmo[[i]][abs(rtdevsmo[[i]]) > quantile(abs(rtdevsmo[[i]]), 0.9)*2] <- NA
-        
-        if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
-            rtdevsmo[[i]][naidx] <- suppressWarnings(approx(na.omit(data.frame(rtcor[[i]], rtdevsmo[[i]])), 
-                                                            xout = rtcor[[i]][naidx], rule = 2)$y)
-        while (length(decidx <- which(diff(rtcor[[i]] - rtdevsmo[[i]]) < 0))) {
-            d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
-            rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
+        if (method == "loess") {    
+            lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
+            
+            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
+            ### Remove singularities from the loess function
+            rtdevsmo[[i]][abs(rtdevsmo[[i]]) > quantile(abs(rtdevsmo[[i]]), 0.9)*2] <- NA
+            
+            if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
+                rtdevsmo[[i]][naidx] <- suppressWarnings(approx(na.omit(data.frame(rtcor[[i]], rtdevsmo[[i]])), 
+                                                                xout = rtcor[[i]][naidx], rule = 2)$y)
+            while (length(decidx <- which(diff(rtcor[[i]] - rtdevsmo[[i]]) < 0))) {
+                d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
+                rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
+            }
+        } else {
+            fit <- lsfit(pts$rt, pts$rtdev)
+            rtdevsmo[[i]] <- rtcor[[i]] * fit$coef[2] + fit$coef[1]
+            ptsrange <- range(pts$rt)
+            minidx <- rtcor[[i]] < ptsrange[1]
+            maxidx <- rtcor[[i]] > ptsrange[2]
+            rtdevsmo[[i]][minidx] <- rtdevsmo[[i]][head(which(!minidx), n = 1)]
+            rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
         }
     }
     
