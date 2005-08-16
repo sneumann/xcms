@@ -12,9 +12,10 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{retcor(object, missing = 1, extra = 1, span = .2,
+  \code{retcor(object, missing = 1, extra = 1,
+               method = c("loess", "linear"), span = .2,
                family = c("gaussian", "symmetric"),
-               plottype = c("none", "deviation", "mdevden"), 
+               plottype = c("none", "deviation", "mdevden"),
                col = NULL, ty = NULL)}
 }
 }}
@@ -27,6 +28,10 @@
   \item{extra}{
     number of extra peaks to allow in retention time correction
     correction groups
+  }
+  \item{method}{
+    either \code{"loess"} for non-linear alignment or \code{"linear"}
+    for linear alignment
   }
   \item{span}{
     degree of smoothing for local polynomial regression fitting
