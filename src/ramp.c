@@ -23,7 +23,9 @@ Non sequential parser for mzXML files
 #include "ramp.h"
 
 #define SIZE_BUF 4096
-
+#ifdef __MINGW32__
+#define fseeko fseek
+#endif
 
 /****************************************************************
  * Utility functions					*
@@ -47,7 +49,7 @@ off_t getIndexOffset(FILE * pFI)
    char *target = "<indexOffset>";
    char *start, *end;
 
-   fseeko(pFI, -120, SEEK_END);
+   fseeko(pFI, (off_t)-120, SEEK_END);
    while( fgets(indexOffsetTemp, SIZE_BUF, pFI) )
    {
       if ( !( start = strstr( indexOffsetTemp, "<indexOffset>" ) ) )
@@ -173,6 +175,9 @@ void readHeader(FILE * pFI,
    scanHeader->retentionTime = 0;
    scanHeader->lowMZ = 1.E6;
    scanHeader->highMZ = 0.0;
+   scanHeader->basePeakMz = 0.0;
+   scanHeader->basePeakIntensity = 0.0;
+   scanHeader->totIonCurrent = 0.0;
    scanHeader->precursorMZ = 0.0;
    scanHeader->precursorCharge = 0;
    scanHeader->scanType[0] = '\0';
@@ -197,12 +202,18 @@ void readHeader(FILE * pFI,
       if ((pStr = (char *) strstr(stringBuf, "endMz=\"")) && 
 	  scanHeader->highMZ == 0.0)
 	sscanf(pStr + 7, "%lf\"", &(scanHeader->highMZ));
+      if ((pStr = (char *) strstr(stringBuf, "basePeakMz=\"")))
+         sscanf(pStr + 12, "%lf\"", &(scanHeader->basePeakMz));
+      if ((pStr = (char *) strstr(stringBuf, "basePeakIntensity=\"")))
+         sscanf(pStr + 19, "%lf\"", &(scanHeader->basePeakIntensity));
+      if ((pStr = (char *) strstr(stringBuf, "totIonCurrent=\"")))
+         sscanf(pStr + 15, "%lf\"", &(scanHeader->totIonCurrent));
 
       if ((pStr = (char *) strstr(stringBuf, "scanType=\""))) {
 	pStr = pStr+10;
 	if ((pStr2 = (char *) strstr(pStr, "\""))) {
-	  memcpy(&(scanHeader->scanType), pStr, sizeof(char)*((int)pStr2-(int)pStr));
-	  scanHeader->scanType[(int)pStr2-(int)pStr] = '\0';
+	  memcpy(&(scanHeader->scanType), pStr, sizeof(char)*(pStr2-pStr));
+	  scanHeader->scanType[pStr2-pStr] = '\0';
 	}
       }
 
