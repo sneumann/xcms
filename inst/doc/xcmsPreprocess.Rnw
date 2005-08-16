@@ -57,16 +57,18 @@ library(faahKO)
 
 \section{Raw Data File Preparation}
 
-The \Rpackage{xcms} package reads full-scan LC/MS data from AIA
-format NetCDF files. All files to be analyzed by \Rpackage{xcms}
-must first be converted to that standard binary file format. Software
-packages for most instruments should be able to export to NetCDF.
-For information on how to export to NetCDF, please consult the
-documentation that came with your software. The online help of most
-packages frequently use the terms ``CDF'' or ``AIA'' when referring
-to that format.
+The \Rpackage{xcms} package reads full-scan LC/MS data from AIA/ANDI
+format NetCDF files as well as mzXML files. All data to be analyzed
+by \Rpackage{xcms} must first be converted to either of those file
+formats. Software packages for many instruments are be able to
+export to NetCDF. For information about how to export to NetCDF,
+please consult the documentation that came with your instrument's
+software. The online help of most packages frequently use the terms
+``CDF'' or ``AIA'' when referring to NetCDF format. In addition to
+NetCDF, mzXML exporters for a number of instruments are also
+available.\footnote{\url{http://sashimi.sourceforge.net/software_glossolalia.html}}
 
-After exporting all files in NetCDF format, they should be put in
+After exporting all files to NetCDF/mzXML format, they should be put in
 a location that will remain the same throughout the analysis. That
 is because \Rpackage{xcms} records the location of the raw data
 files and refers back to them a number of times during preprocessing
@@ -119,8 +121,8 @@ an \Rclass{xcmsSet} object from a set of NetCDF files, use the
 picking and generation of the \Rclass{xcmsSet} object.  There are
 a number of ways you can specify the files it should read.  By
 default, it will recursively search through the current directory
-for NetCDF files. Alternatively, you can manually specify the files
-you are interested in, as shown below.
+for NetCDF/mzXML files. Alternatively, you can manually specify the
+files you are interested in, as shown below.
 
 During peak identification, \Rpackage{xcms} uses a sepearate line
 for each sample to report on the status of processing. It outputs
