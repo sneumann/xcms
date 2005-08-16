@@ -12,44 +12,32 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    gradient = matrix(nrow=0, ncol=0),
                    msmsinfo = matrix(nrow=0, ncol=0)))
 
-xcmsRaw <- function(cdfname, profstep = 1, profmethod = "intlin", 
-                    profparam = list(), msmsfile = NA) {
+xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin", 
+                    profparam = list()) {
     
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
     
-    cdf <- netCDFOpen(cdfname)
-    if (!is.null(attr(cdf, "errortext")))
-        stop(attr(cdf, "errortext"))
+    if (netCDFIsFile(filename)) {
+        cdf <- netCDFOpen(filename)
+        if (!is.null(attr(cdf, "errortext")))
+            stop(attr(cdf, "errortext"))
+        on.exit(netCDFClose(cdf))
+        rawdata <- netCDFRawData(cdf)
+    } else if (mzXMLIsFile(filename)) {
+        mzxml <- mzXMLOpen(filename)
+        if (mzxml < 0)
+            stop("Couldn't open mzXML file")
+        on.exit(mzXMLClose(mzxml))
+        rawdata <- mzXMLRawData(mzxml)
+    } else
+        stop("Couldn't determine file type")
     
-    object@scantime <- netCDFVarDouble(cdf, "scan_acquisition_time")
-    if (!is.null(attr(object@scantime, "errortext")))
-        stop("Couldn't read scan times")
-    
-    object@tic <- netCDFVarDouble(cdf, "total_intensity")
-    if (!is.null(attr(object@tic, "errortext")))
-        stop("Couldn't read total ion chromatogram")
-    
-    object@scanindex <- netCDFVarInt(cdf, "scan_index")
-    if (!is.null(attr(object@scanindex, "errortext")))
-        stop("Couldn't read scan indecies")
-    
-    pointValues <- netCDFMSPoints(cdf, object@scanindex)
-    if (!is.null(attr(pointValues, "errortext")))
-        stop("Couldn't read mass/intensity values")
-    
-    object@env$mz <- pointValues$massValues
-    object@env$intensity <- pointValues$intensityValues
-    
-    netCDFClose(cdf)
-    
-    if (!is.na(msmsfile)) {
-        msmstab <- read.table(msmsfile)
-        object@parentmass <- numeric(length(object@scanindex))
-        object@energy <- numeric(length(object@scanindex))
-        object@parentmass[msmstab[,1]] <- msmstab[,3]
-        object@energy[msmstab[,1]] <- msmstab[,4]
-    }
+    object@scantime <- rawdata$rt
+    object@tic <- rawdata$tic
+    object@scanindex <- rawdata$scanindex
+    object@env$mz <- rawdata$mz
+    object@env$intensity <- rawdata$intensity
     
     object@profmethod <- profmethod
     object@profparam <- profparam

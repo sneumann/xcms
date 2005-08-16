@@ -1,24 +1,24 @@
 \name{xcmsRaw}
 \alias{xcmsRaw}
-\title{Constructor for xcmsRaw objects which reads NetCDF files}
+\title{Constructor for xcmsRaw objects which reads NetCDF/mzXML files}
 \description{
-  This function handles the task of reading a NetCDF file containing
+  This function handles the task of reading a NetCDF/mzXML file containing
   LC/MS or GC/MS data into a new \code{xcmsRaw} object. It also
   transforms the data into profile (maxrix) mode for efficient
   plotting and data exploration.
 }
 \usage{
-xcmsRaw(cdfname, profstep = 1, profmethod = "intlin", profparam = list(), msmsfile = NA)
+xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam = list())
 }
 \arguments{
-  \item{cdfname}{path name of the NetCDF file to read}
+  \item{filename}{path name of the NetCDF or mzXML file to read}
   \item{profstep}{step size (in m/z) to use for profile generation}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{extra parameters to use for profile generation}
-  \item{msmsfile}{path name of text file with additional MS/MS information}
 }
 \details{
   If \code{profstep} is set to 0, no profile matrix is generated.
+  Only first level MS data is read, not MS/MS, etc.)
 }
 \value{
   A \code{xcmsRaw} object.
@@ -26,6 +26,9 @@ xcmsRaw(cdfname, profstep = 1, profmethod = "intlin", profparam = list(), msmsfi
 \references{
   NetCDF file format:
   \url{http://my.unidata.ucar.edu/content/software/netcdf/}
+
+  mzXML file format:
+  \url{http://sashimi.sourceforge.net/software_glossolalia.html}
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \note{
