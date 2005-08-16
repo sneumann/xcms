@@ -24,8 +24,14 @@ Non sequential parser for mzXML files
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifndef __MINGW32__
 #include <netinet/in.h>
+#else
+#include <winsock2.h>
+#endif
 #include <string.h>
+#include <stdint.h>
+#include <ctype.h>
 #include "base64.h"
 
 #define INSTRUMENT_LENGTH 2000
@@ -38,6 +44,9 @@ struct ScanHeaderStruct
    double retentionTime;        /* in seconds */
    double lowMZ;
    double highMZ;
+   double basePeakMz;
+   double basePeakIntensity;
+   double totIonCurrent;
    double precursorMZ;  /* only if MS level > 1 */
    int precursorCharge;  /* non-zero if MS level > 1, and charge given. */
    char scanType[TYPE_LENGTH]; 
