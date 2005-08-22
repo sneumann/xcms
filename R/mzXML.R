@@ -61,6 +61,8 @@ mzXMLRawData <- function(mxid) {
     
     if (result1$status)
         stop("Couldn't read retention times/total ion current")
+    if (any(diff(result1$rt) <= 0))
+        stop("Invalid retention times, corrupt mzXML file?")
     
     result2 <- .C("MzXMLSIPeaks",
                   as.integer(mxid),
