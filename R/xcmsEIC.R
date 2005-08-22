@@ -130,8 +130,8 @@ setMethod("plot", "xcmsEIC", function(x, y, groupidx = groupnames(x),
             maxint[j] <- max(object@eic[[sampidx[j]]][[i]][,"intensity"])
         plot(0, 0, type = "n", xlim = rtrange[i,], ylim = c(0, max(maxint)),
              xlab = "Retention Time (seconds)", ylab = "Intensity",
-             main = paste("Extracted Ion Chromatogram:", object@mzrange[i,1], "-",
-                          object@mzrange[i,2], "m/z"))
+             main = paste("Extracted Ion Chromatogram:", round(object@mzrange[i,1], 2),
+                          "-", round(object@mzrange[i,2], 2), "m/z"))
         for (j in sampidx[order(maxint, decreasing = TRUE)]) {
             pts <- object@eic[[j]][[i]]
             if (missing(y) || !peakint)
