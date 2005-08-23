@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <limits.h>
 #include "util.h"
 #include "xcms.h"
 
@@ -224,6 +225,46 @@ void ProfBinM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
             vectlen = *numin - mindex[i];
         ProfBin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
                 numout, out+i*(*numout));
+    }
+}
+
+void ProfMaxIdx(double *xvals, double *yvals, int *numin, 
+                double *xstart, double *xend, int *numout, int *out) {
+
+    int    i, outi = 0;
+    double dx, startx, endx;
+    
+    dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
+    
+    for (i = 0; i < *numout; i++)
+        out[i] = INT_MIN;
+    
+    startx = *xstart - dx;
+    endx = *xend + dx;
+    FindEqualGreater(xvals, numin, &startx, &i);
+    for (; i < *numin && xvals[i] < endx; i++) {
+        outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
+        if (outi >= 0 && outi < *numout)
+            if (out[outi] < 0 || yvals[out[outi]] < yvals[i])
+                out[outi] = i;
+    }
+}
+
+void ProfMaxIdxM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
+                 double *xstart, double *xend, int *numout, int *out) {
+    
+    int i, j, vectlen;
+    
+    for (i = 0; i < *nummi; i++) {
+        if (i < *nummi-1)
+            vectlen = mindex[i+1] - mindex[i];
+        else
+            vectlen = *numin - mindex[i];
+        ProfMaxIdx(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
+                   numout, out+i*(*numout));
+        for (j = i*(*numout); j < (i+1)*(*numout); j++)
+            if (out[j] >= 0)
+                out[j] += mindex[i]+1;
     }
 }
 
