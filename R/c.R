@@ -1,3 +1,37 @@
+profMaxIdx <- function(x, y, num, xstart = min(x), xend = max(x), 
+                       param = list()) {
+
+    if (!is.double(x)) x <- as.double(x)
+    if (!is.double(y)) y <- as.double(y)
+    .C("ProfMaxIdx",
+       x,
+       y,
+       as.integer(length(x)),
+       as.double(xstart),
+       as.double(xend),
+       as.integer(num),
+       out = integer(num),
+       DUP = FALSE, PACKAGE = "xcms")$out
+}
+
+profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+                        NAOK = FALSE, param = list()) {
+
+    if (!is.double(x)) x <- as.double(x)
+    if (!is.double(y)) y <- as.double(y)
+    .C("ProfMaxIdxM",
+       x,
+       y,
+       as.integer(length(x)),
+       as.integer(zidx),
+       as.integer(length(zidx)),
+       as.double(xstart),
+       as.double(xend),
+       as.integer(num),
+       out = integerMatrix(num, length(zidx)),
+       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+}
+
 profBin <- function(x, y, num, xstart = min(x), xend = max(x), 
                     param = list()) {
 
@@ -310,9 +344,67 @@ rowMax <- function (x, na.rm = FALSE, dims = 1) {
     z
 }
 
+which.colMax <- function (x, na.rm = FALSE, dims = 1) {
+
+    if (is.data.frame(x)) 
+        x <- as.matrix(x)
+    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+        stop("`x' must be an array of at least two dimensions")
+    if (dims < 1 || dims > length(dn) - 1) 
+        stop("invalid `dims'")
+    n <- prod(dn[1:dims])
+    dn <- dn[-(1:dims)]
+    if (!is.double(x)) x <- as.double(x)
+    z <- .C("WhichColMax",
+            x, 
+            as.integer(n), 
+            as.integer(prod(dn)),
+            integer(prod(dn)),
+            DUP = FALSE, PACKAGE = "xcms")[[4]]
+    if (length(dn) > 1) {
+        dim(z) <- dn
+        dimnames(z) <- dimnames(x)[-(1:dims)]
+    }
+    else names(z) <- dimnames(x)[[dims + 1]]
+    z
+}
+
+which.rowMax <- function (x, na.rm = FALSE, dims = 1) {
+
+    if (is.data.frame(x)) 
+        x <- as.matrix(x)
+    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+        stop("`x' must be an array of at least two dimensions")
+    if (dims < 1 || dims > length(dn) - 1) 
+        stop("invalid `dims'")
+    p <- prod(dn[-(1:dims)])
+    dn <- dn[1:dims]
+    if (!is.double(x)) x <- as.double(x)
+    z <- .C("WhichRowMax",
+            x, 
+            as.integer(prod(dn)), 
+            as.integer(p),
+            integer(prod(dn)),
+            DUP = FALSE, PACKAGE = "xcms")[[4]]
+    if (length(dn) > 1) {
+        dim(z) <- dn
+        dimnames(z) <- dimnames(x)[1:dims]
+    }
+    else names(z) <- dimnames(x)[[1]]
+    z
+}
+
 doubleMatrix <- function(nrow = 0, ncol = 0) {
 
     .Call("DoubleMatrix", 
+          as.integer(nrow), 
+          as.integer(ncol),
+          PACKAGE = "xcms")
+}
+
+integerMatrix <- function(nrow = 0, ncol = 0) {
+
+    .Call("IntegerMatrix", 
           as.integer(nrow), 
           as.integer(ncol),
           PACKAGE = "xcms")

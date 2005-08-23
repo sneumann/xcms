@@ -7,6 +7,8 @@
 \alias{profBinLinBaseM}
 \alias{profIntLin}
 \alias{profIntLinM}
+\alias{profMaxIdx}
+\alias{profMaxIdxM}
 \title{Generation of profile data}
 \description{
   Generates profile data in a given range from an indexed pair of
@@ -21,6 +23,8 @@ profBinLinBase(x, y, num, xstart = min(x), xend = max(x), param = list())
 profBinLinBaseM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
 profIntLin(x, y, num, xstart = min(x), xend = max(x), param = list())
 profIntLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profMaxIdx(x, y, num, xstart = min(x), xend = max(x), param = list())
+profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
 }
 \arguments{
   \item{x}{numeric vector of value positions}
@@ -58,12 +62,19 @@ profIntLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   The \code{IntLin} functions set each matrix or vector value to
   the integral of the linearly interpolated data from plus to minus
   half the step size.
+  
+  The \code{MaxIdx} functions work similarly to the \code{Bin}
+  functions execpt that the return the integer index of which x,y
+  pair would be placed in a particular cell.
 }
 \value{
   For \code{prof*}, a numeric vector of length \code{num}.
 
   For \code{prof*M}, a matrix with dimensions \code{num} by
   \code{length(zidx)}.
+  
+  For \code{MaxIdx}, the data type is integer, for all others it
+  is double.
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \keyword{manip}
