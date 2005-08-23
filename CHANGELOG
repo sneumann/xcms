@@ -1,3 +1,8 @@
+2005-08-23: 1.1.5
+
+Improved peak identification to return full precision masses
+regardless of EIC step size
+
 2005-08-16: 1.1.4
 
 Added mzXML raw data import

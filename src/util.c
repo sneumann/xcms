@@ -118,6 +118,34 @@ void RowMax(const double *in, const int *dn, const int *p, double *out) {
     }
 }
 
+void WhichColMax(const double *in, const int *n, const int *dn, int *out) {
+
+    int i, j;
+    
+    for (i = 0; i < *dn; i++) {
+        out[i] = *n*i;
+        for (j = 1; j < *n; j++)
+            if (in[*n*i + j] > in[out[i]])
+                out[i] = *n*i + j;
+    }
+    for (i = 0; i < *dn; i++)
+        out[i]++;
+}
+
+void WhichRowMax(const double *in, const int *dn, const int *p, int *out) {
+
+    int i, j;
+    
+    for (i = 0; i < *dn; i++) {
+        out[i] = i;
+        for (j = 1; j < *p; j++)
+            if (in[i + *dn*j] > in[out[i]])
+                out[i] = i + *dn*j;
+    }
+    for (i = 0; i < *dn; i++)
+        out[i]++;
+}
+
 SEXP DoubleMatrix(SEXP nrow, SEXP ncol) {
     
     SEXP matrix, dim;
@@ -127,6 +155,25 @@ SEXP DoubleMatrix(SEXP nrow, SEXP ncol) {
     ncolint = INTEGER_POINTER(ncol)[0];
     
     PROTECT(matrix = NEW_NUMERIC(nrowint*ncolint));
+    PROTECT(dim = NEW_INTEGER(2));
+    INTEGER_POINTER(dim)[0] = nrowint;
+    INTEGER_POINTER(dim)[1] = ncolint;
+    SET_DIM(matrix, dim);
+    
+    UNPROTECT(2);
+    
+    return matrix;
+}
+
+SEXP IntegerMatrix(SEXP nrow, SEXP ncol) {
+    
+    SEXP matrix, dim;
+    int  nrowint, ncolint;
+    
+    nrowint = INTEGER_POINTER(nrow)[0];
+    ncolint = INTEGER_POINTER(ncol)[0];
+    
+    PROTECT(matrix = NEW_INTEGER(nrowint*ncolint));
     PROTECT(dim = NEW_INTEGER(2));
     INTEGER_POINTER(dim)[0] = nrowint;
     INTEGER_POINTER(dim)[1] = ncolint;

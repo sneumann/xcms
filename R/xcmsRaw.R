@@ -403,6 +403,9 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
     bufsize <- min(100, length(mass))
     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
+    bufMax <- profMaxIdxM(object@env$mz, object@env$intensity, object@scanindex, 
+                          bufsize, mass[1], mass[bufsize], TRUE, 
+                          object@profparam)
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -435,6 +438,9 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
             buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]], 
                            TRUE, object@profparam)
+            bufMax <- profMaxIdxM(object@env$mz, object@env$intensity, object@scanindex, 
+                                  diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]], 
+                                  TRUE, object@profparam)
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
         ysums <- colMax(ymat)
@@ -446,14 +452,18 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
              #noise <- mean(yfilt[yfilt >= 0])
              if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise) {
                  peakrange <- descendZero(yfilt, maxy)
-                 masssum <- rowSums(ymat[,peakrange[1]:peakrange[2],drop=FALSE])
-                 massidx <- which(masssum > 0)
-                 if (length(massidx) == 0) {
+                 intmat <- ymat[,peakrange[1]:peakrange[2],drop=FALSE]
+                 mzmat <- matrix(object@env$mz[bufMax[bufidx[i:(i+steps-1)],
+                                                      peakrange[1]:peakrange[2]]],
+                                 nrow = steps)
+                 which.intMax <- which.colMax(intmat)
+                 mzmat <- mzmat[which.intMax]
+                 if (all(is.na(mzmat))) {
                      yfilt[peakrange[1]:peakrange[2]] <- 0
                      next
                  }
-                 massrange <- i-1+range(massidx)
-                 massmean <- weighted.mean(mass[i:(i+steps-1)], masssum)
+                 massrange <- range(mzmat, na.rm = TRUE)
+                 massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
                  pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
                  into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
                  intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
@@ -486,8 +496,6 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
     if (index)
         mzdiff <- mzdiff/step
     else {
-        rmat[,"mzmin"] <- mass[rmat[,"mzmin"]]
-        rmat[,"mzmax"] <- mass[rmat[,"mzmax"]]
         rmat[,"rt"] <- scantime[rmat[,"rt"]]
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]

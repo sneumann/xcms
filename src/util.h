@@ -19,6 +19,12 @@ void ColMax(const double *in, const int *n, const int *dn, double *out);
 
 void RowMax(const double *in, const int *dn, const int *p, double *out);
 
+void WhichColMax(const double *in, const int *n, const int *dn, int *out);
+
+void WhichRowMax(const double *in, const int *dn, const int *p, int *out);
+
 SEXP DoubleMatrix(SEXP nrow, SEXP ncol);
+
+SEXP IntegerMatrix(SEXP nrow, SEXP ncol);
 
 SEXP LogicalMatrix(SEXP nrow, SEXP ncol);
