@@ -7,11 +7,11 @@
   into different classes suitable for grouping.
 }
 \usage{
-xcmsSet(files = list.files(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.([Mm][Zz])?[Xx][Mm][Ll]$", 
-                                              recursive = TRUE) 
-        snames = gsub(".[^.]*$", "", basename(files)), 
-        sclass = gsub("^.$", "sample", dirname(files)), profmethod = "bin",
-        profparam = list(), ...)
+xcmsSet(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.([Mm][Zz])?[Xx][Mm][Ll]$", 
+                           recursive = TRUE), 
+        snames = gsub("\.[^.]*$", "", basename(files)), 
+        sclass = gsub("^\.$", "sample", dirname(files)),
+        profmethod = "bin", profparam = list(), ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
