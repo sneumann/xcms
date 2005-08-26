@@ -137,9 +137,10 @@ c.xcmsSet <- function(...) {
     invisible(object)
 }
 
-split.xcmsSet <- function(x, f) {
+split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 
-    f <- factor(f)
+    if (!is.factor(f))
+        f <- factor(f)
     sampidx <- unclass(f)
     peakmat <- peaks(x)
     samples <- sampnames(x)
@@ -152,7 +153,7 @@ split.xcmsSet <- function(x, f) {
     lcsets <- vector("list", length(levels(f)))
     names(lcsets) <- levels(f)
     
-    for (i in seq(along = lcsets)) {
+    for (i in unique(sampidx)) {
         lcsets[[i]] <- new("xcmsSet")
         
         samptrans <- numeric(length(f))
@@ -170,6 +171,9 @@ split.xcmsSet <- function(x, f) {
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
     }
+    
+    if (drop)
+        lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
     
     lcsets
 }
