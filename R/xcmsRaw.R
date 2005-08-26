@@ -566,9 +566,10 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
             figs <- rep(ceiling(sqrt(nrow(peaks))), 2)
     }
     
-    mzi <- (peaks[,c("mzmin","mzmax")]-object@mzrange[1])/profStep(object) + 1
+    mzi <- round((peaks[,c("mzmin","mzmax")]-object@mzrange[1])/profStep(object) + 1)
     
     screens <- split.screen(figs)
+    on.exit(close.screen(all.screens = TRUE))
     
     for (i in seq(length = min(nrow(peaks), prod(figs)))) {
         screen(screens[i])
@@ -582,8 +583,6 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
              xlab = "", ylab = "", xaxt = "n", yaxt = "n")
         abline(v = peaks[i,c("rtmin","rtmax")], col = "grey")
     }
-    
-    close.screen(all.screens = TRUE)
 })
 
 if( !isGeneric("getEIC") )
