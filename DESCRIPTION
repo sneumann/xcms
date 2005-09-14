@@ -13,4 +13,4 @@ Description: Framework for processing and visualization of
         high-throughput, untargeted analyte profiling.
 License: GPL version 2 or newer
 URL: http://metlin.scripps.edu/download/
-
+biocViews: Technology,MassSpectrometry
