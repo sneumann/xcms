@@ -28,9 +28,9 @@ Non sequential parser for mzXML files
 #include <netinet/in.h>
 #else
 #include <winsock2.h>
+#include <stdint.h>
 #endif
 #include <string.h>
-#include <stdint.h>
 #include <ctype.h>
 #include "base64.h"
 
