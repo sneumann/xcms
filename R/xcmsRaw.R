@@ -473,7 +473,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
                      plot(scantime, yfilt, type = "l", main = paste(mass[i], "-", mass[i+1]), ylim=c(-gmax/3, gmax))
                      points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],], type = "l", col = "red")
                      points(scantime, colSums(ymat), type = "l", col = "blue", lty = "dashed")
-                     abline(h = sn*noise, col = "red")
+                     abline(h = snthresh*noise, col = "red")
                      Sys.sleep(sleep)
                  }
                  yfilt[peakrange[1]:peakrange[2]] <- 0
@@ -500,7 +500,10 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
     }
-    rmat <- rmat[clustunique(rmat, order(rmat[,"into"], decreasing=TRUE), mzdiff, max),]
+    uorder <- order(rmat[,"into"], decreasing=TRUE)
+    uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                         uorder, mzdiff)
+    rmat <- rmat[uindex,,drop=FALSE]
     invisible(rmat)
 })
 

@@ -3,6 +3,8 @@
 \title{Create unique matrix of m/z and retention time windows}
 \description{
   Find indicies of nonoverlapping m/z and retention time windows.
+  THIS FUNCTION HAS BEEN DEPRICATED IN FAVOR OF boxUnique AND WILL
+  BE REMOVED IN A FUTURE RELEASE.
 }
 \usage{
 clustunique(clust, priority = seq(length = nrow(clust)), mzdiff = 0, max = 5)

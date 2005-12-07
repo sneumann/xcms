@@ -23,6 +23,12 @@ void WhichColMax(const double *in, const int *n, const int *dn, int *out);
 
 void WhichRowMax(const double *in, const int *dn, const int *p, int *out);
 
+int ComparIntIndex(void *numptr, const void *i1, const void *i2);
+
+void RectUnique(const double *m, const int *order, const int *nrow, 
+                const int *ncol, const double *xdiff, const double *ydiff,
+                int *keep);
+
 SEXP DoubleMatrix(SEXP nrow, SEXP ncol);
 
 SEXP IntegerMatrix(SEXP nrow, SEXP ncol);
