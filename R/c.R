@@ -394,6 +394,23 @@ which.rowMax <- function (x, na.rm = FALSE, dims = 1) {
     z
 }
 
+rectUnique <- function(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0) {
+
+    nr <- nrow(m)
+    nc <- ncol(m)
+    if (!is.double(m))
+        m <- as.double(m)
+    .C("RectUnique",
+       m,
+       as.integer(order-1),
+       nr,
+       nc,
+       as.double(xdiff),
+       as.double(ydiff),
+       logical(nrow(m)),
+       DUP = FALSE, PACKAGE = "xcms")[[7]]
+}
+
 doubleMatrix <- function(nrow = 0, ncol = 0) {
 
     .Call("DoubleMatrix", 

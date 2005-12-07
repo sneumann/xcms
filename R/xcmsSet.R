@@ -406,10 +406,19 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp =
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", classnames)
     
-    groups(object) <- groupmat[seq(length = num),]
-    groupidx(object) <- groupindex[seq(length = num)]
+    groupmat <- groupmat[seq(length = num),]
+    groupindex <- groupindex[seq(length = num)]
     
-    invisible(object)
+    # Remove groups that overlap with more "well-behaved" groups
+    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    uorder <- order(-numsamp, groupmat[,"npeaks"])
+    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                         uorder)
+    
+    groups(object) <- groupmat[uindex,]
+    groupidx(object) <- groupindex[uindex]
+    
+    object
 })
 
 if( !isGeneric("groupval") )
@@ -490,7 +499,6 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
     if (length(idx) == 0)
         stop("No peak groups found for retention time correction")
-    idx <- idx[clustunique(groupmat[idx,], order(-nsamp[idx], groupmat[idx,"npeaks"]), max=10)]
     idx <- idx[order(groupmat[idx,"rtmed"])]
     
     rt <- groupval(object, "maxint", "rt")[idx,]
@@ -680,12 +688,15 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     classlabel <- as.vector(unclass(sampclass(object)))
     prof <- profinfo(object)
     rtcor <- object@rt$corrected
-    nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
     
-    gunique <- clustunique(groupmat, order(-nsamp, groupmat[,"npeaks"]))
-    groupmat <- groupmat[gunique,]
-    groupindex <- groupidx(object)[gunique]
-    gvals <- groupval(object)[gunique,]
+    # Remove groups that overlap with more "well-behaved" groups
+    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    uorder <- order(-numsamp, groupmat[,"npeaks"])
+    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                         uorder)
+    groupmat <- groupmat[uindex,]
+    groupindex <- groupidx(object)[uindex]
+    gvals <- groupval(object)[uindex,]
     
     peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
     colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
@@ -860,7 +871,6 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
 	if (sortpval) {
 	   tsidx <- order(twosamp[,"pvalue"])
-	   tsidx <- tsidx[clustunique(twosamp[tsidx,c("mzmin", "mzmax", "rtmin", "rtmax")])]
 	   twosamp <- twosamp[tsidx,]
 	   rownames(twosamp) <- 1:nrow(twosamp)
 	}
@@ -923,6 +933,8 @@ clustunique <- function(clust, priority = seq(length = nrow(clust)), mzdiff = 0,
                  !(clust[i,"rtmin"] > nearclust[,"rtmax"] | clust[i,"rtmax"] < nearclust[,"rtmin"])))
             use[i] = TRUE
     }
+    
+    warning("clustunique has been depricated and will be removed")
     
     sort(corder[use])
 }
