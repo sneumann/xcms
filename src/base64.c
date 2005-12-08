@@ -3,13 +3,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-/* #include <netinet/in.h> not needed in this code */
-
+#include "ramp.h"
 #include "base64.h"
 
-
-
-inline int getPosition( char buf );
 
 
 static const unsigned char *b64_tbl = (const unsigned char*) "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
@@ -77,24 +73,6 @@ static void decode_group (unsigned char output[],
 }
 
 
-
-inline int getPosition( char buf )
-{
-
-  if( buf > 96 )		// [a-z]
-    return (buf - 71);
-  else if( buf > 64 )		// [A-Z]
-    return (buf - 65);
-  else if( buf > 47 )		// [0-9]
-    return (buf + 4);
-  else if( buf == 43 )
-    return 63;
-  else				// buf == '/'
-    return 64;
-}
-
-
-
 void b64_decode_mio ( char *dest,  char *src )
 {
    char *temp;
@@ -112,16 +90,17 @@ void b64_decode_mio ( char *dest,  char *src )
       t3 = src[2];
       t4 = src[3];
 
-      if (t1 == 61 )		// if == '='
-	return;
      
       if( t1 > 96 )		// [a-z]
 	a = (t1 - 71);
       else if( t1 > 64 )		// [A-Z]
 	a = (t1 - 65);
-      else if( t1 > 47 )		// [0-9]
+      else if( t1 > 47 ) {		// [0-9], or '='
+         if (t1 == 61 )	{	// if == '='
+         	return;
+      }
 	a = (t1 + 4);
-      else if( t1 == 43 )
+      } else if( t1 == 43 )
 	a = 62;
       else				// src[0] == '/'
 	a = 63;     
@@ -135,23 +114,23 @@ void b64_decode_mio ( char *dest,  char *src )
 	b = (t2 + 4);
       else if( t2 == 43 )
 	b = 62;
-      else				// src[0] == '/'
+      else				// src[1] == '/'
 	b = 63;     
     
       *temp++ = ( a << 2) | ( b >> 4);
      
-      if (t3 == 61)
-	return;
-
       if( t3 > 96 )		// [a-z]
 	a = (t3 - 71);
       else if( t3 > 64 )		// [A-Z]
 	a = (t3 - 65);
-      else if( t3 > 47 )		// [0-9]
+      else if( t3 > 47 ) {		// [0-9], or '='
+         if (t3 == 61) {
+            return;
+         }
 	a = (t3 + 4);
-      else if( t3 == 43 )
+      } else if( t3 == 43 )
 	a = 62;
-      else				// src[0] == '/'
+      else				// src[2] == '/'
 	a = 63;     
 
 
@@ -168,7 +147,7 @@ void b64_decode_mio ( char *dest,  char *src )
 	b = (t4 + 4);
       else if( t4 == 43 )
 	b = 62;
-      else				// src[0] == '/'
+      else				// src[3] == '/'
 	b = 63;    
 
       *temp++ = ( a << 6) | ( b );
