@@ -7,10 +7,7 @@
   into different classes suitable for grouping.
 }
 \usage{
-xcmsSet(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.([Mm][Zz])?[Xx][Mm][Ll]$", 
-                           recursive = TRUE), 
-        snames = gsub("\.[^.]*$", "", basename(files)), 
-        sclass = gsub("^\.$", "sample", dirname(files)),
+xcmsSet(files = NULL, snames = NULL, sclass = NULL,
         profmethod = "bin", profparam = list(), ...)
 }
 \arguments{

@@ -9,7 +9,7 @@ Suggests: faahKO, multtest
 SystemRequirements: NetCDF
 Description: Framework for processing and visualization of
         chromatographically separated mass spectral data. Imports from
-        AIA format NetCDF and mzXML files. Preprocesses data for
+        AIA/ANDI NetCDF, mzXML, and mzData files. Preprocesses data for
         high-throughput, untargeted analyte profiling.
 License: GPL version 2 or newer
 URL: http://metlin.scripps.edu/download/

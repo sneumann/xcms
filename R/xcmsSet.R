@@ -8,16 +8,30 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                    sampclass = factor(integer(0)), rt = list(),
                    cdfpaths = character(0), profinfo = vector("list")))
 
-xcmsSet <- function(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.([Mm][Zz])?[Xx][Mm][Ll]$", 
-                                       recursive = TRUE), 
-                    snames = gsub("\.[^.]*$", "", basename(files)), 
-                    sclass = gsub("^\.$", "sample", dirname(files)),
+xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     profmethod = "bin", profparam = list(), ...) {
 
     object <- new("xcmsSet")
+    
+    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]", 
+                     "[Mm][Zz][Da][Aa][Tt][Aa]")
+    filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+    if (is.null(files))
+        files <- list.files(pattern = filepattern, recursive = TRUE,
+                            full.names = TRUE)
+    cdfpaths(object) <- file.path(getwd(), files)
+    # Check to see whether the absolute path names work
+    for (file in cdfpaths(object))
+        if (!file.exists(file))
+            cdfpaths(object) <- files
+    
+    if (is.null(snames))
+        snames <- gsub("\\.[^.]*$", "", basename(files))
     sampnames(object) <- snames
-    # Make the default group names less redundant
-    if (missing(sclass)) {
+    
+    if (is.null(sclass)) {
+        sclass <- gsub("^\\.$", "sample", dirname(files))
+        # Make the default group names less redundant
         scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
         scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
         i <- 1
@@ -28,14 +42,6 @@ xcmsSet <- function(files = list.files(pattern = "\.[Cc][Dd][Ff]$|\.[Nn][Cc]$|\.
             sclass <- substr(sclass, i, max(nchar(sclass)))
     }
     sampclass(object) <- sclass
-    cdfpaths(object) <- file.path(getwd(), files)
-    # Check to see whether the absolute path names work
-    for (file in cdfpaths(object)) {
-        if (is.null(attr(ncid <- netCDFOpen(file), "errortext")))
-            netCDFClose(ncid)
-        else
-            cdfpaths(object) <- files
-    }
     
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
