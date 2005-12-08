@@ -3,7 +3,7 @@
 \title{Create unique matrix of m/z and retention time windows}
 \description{
   Find indicies of nonoverlapping m/z and retention time windows.
-  THIS FUNCTION HAS BEEN DEPRICATED IN FAVOR OF boxUnique AND WILL
+  THIS FUNCTION HAS BEEN DEPRICATED IN FAVOR OF rectUnique AND WILL
   BE REMOVED IN A FUTURE RELEASE.
 }
 \usage{
