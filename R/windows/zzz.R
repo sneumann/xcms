@@ -5,6 +5,7 @@
 }
 
 .Last.lib <- function(libpath) {
+    rampCloseAll()
     if (is.loaded("NetCDFOpen"))
         library.dynam.unload("xcms", libpath)
     dllpath <- file.path(.find.package("xcms"), "netcdfdll", "netcdf.dll")
