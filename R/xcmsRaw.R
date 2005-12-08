@@ -24,12 +24,12 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
             stop(attr(cdf, "errortext"))
         on.exit(netCDFClose(cdf))
         rawdata <- netCDFRawData(cdf)
-    } else if (mzXMLIsFile(filename)) {
-        mzxml <- mzXMLOpen(filename)
-        if (mzxml < 0)
-            stop("Couldn't open mzXML file")
-        on.exit(mzXMLClose(mzxml))
-        rawdata <- mzXMLRawData(mzxml)
+    } else if (rampIsFile(filename)) {
+        rampid <- rampOpen(filename)
+        if (rampid < 0)
+            stop("Couldn't open mzXML/mzData file")
+        on.exit(rampClose(rampid))
+        rawdata <- rampRawData(rampid)
     } else
         stop("Couldn't determine file type")
     
