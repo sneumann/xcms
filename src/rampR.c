@@ -358,6 +358,8 @@ SEXP RampRSIPeaks(SEXP rampid, SEXP seqNum, SEXP peaksCount) {
     for (i = 0; i < numscans; i++) {
         if (peaksCountPtr[i] != readPeaksCount(file, index[seqNumPtr[i]]))
             error("invalid number in peaksCount");
+        if (peaksCountPtr[i] == 0)
+            continue;
         peaks = readPeaks(file, index[seqNumPtr[i]]);
         if (!peaks)
             error("unknown problem while reading peaks");
