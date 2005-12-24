@@ -92,7 +92,8 @@ rampRawData <- function(rampid) {
     
     # Some of these checks work around buggy RAMP indexing code
     scans <- scanHeaders$msLevel == 1 & scanHeaders$seqNum > 0 &
-             !duplicated(scanHeaders$acquisitionNum)
+             !duplicated(scanHeaders$acquisitionNum) &
+             scanHeaders$peaksCount > 0
     if ("Full" %in% levels(scanHeaders$scanType))
         scans <- scans & scanHeaders$scanType == "Full"
     
