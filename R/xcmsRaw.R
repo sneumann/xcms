@@ -627,7 +627,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
             eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
         else {
             eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
-                               ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],]
+                               ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],,drop=FALSE]
             colnames(eic[[i]]) <- c("rt", "intensity")
         }
     }

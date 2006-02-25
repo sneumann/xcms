@@ -14,7 +14,7 @@
 \item{object = "xcmsSet"}{
   \code{diffreport(object, class1 = levels(sampclass(object))[1], 
                    class2 = levels(sampclass(object))[2], 
-                   filebase = character(), eicmax = 0, 
+                   filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2),
                    metlin = FALSE)}
 }
@@ -37,6 +37,9 @@
   \item{eicmax}{
     number of the most significantly different analytes to create
     EICs for
+  }
+  \item{eicwidth}{
+    width (in seconds) of EICs produced
   }
   \item{sortpval}{
     logical indicating whether the reports should be sorted by
