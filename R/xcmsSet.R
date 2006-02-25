@@ -785,6 +785,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
     } else if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
+    else if (is.null(dim(mzrange)))
+        stop("mzrange must be a matrix")
     colnames(mzrange) <- c("mzmin", "mzmax")
     
     if (length(rtrange) == 1) {
@@ -794,7 +796,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         else {
             rtrange <- retexp(grp[grpidx,c("rtmin","rtmax"),drop=FALSE], rtrange)
         }
-    }
+    } else if (is.null(dim(rtrange)))
+        stop("mzrange must be a matrix or single number")
     colnames(rtrange) <- c("rtmin", "rtmax")
     
     if (missing(groupidx))
@@ -829,7 +832,7 @@ if( !isGeneric("diffreport") )
 
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1], 
                                             class2 = levels(sampclass(object))[2],
-                                            filebase = character(), eicmax = 0, 
+                                            filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             metlin = FALSE) {
     
@@ -886,7 +889,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     
     if (eicmax > 0) {
         eicmax <- min(eicmax, length(tsidx))
-        eics <- getEIC(object, rtrange = 220, sampleidx = ceic,
+        eics <- getEIC(object, rtrange = eicwidth*1.1, sampleidx = ceic,
                        groupidx = tsidx[seq(length = eicmax)])
         if (length(filebase)) {
             eicdir <- paste(filebase, "_eic", sep="")
@@ -897,7 +900,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                 pdf(file.path(eicdir, "%03d.pdf"), width = 640/72, 
                     height = 480/72, onefile = FALSE)
         }
-        plot(eics, object, rtrange = 200)
+        plot(eics, object, rtrange = eicwidth)
         if (length(filebase))
             dev.off()
     }

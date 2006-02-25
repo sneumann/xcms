@@ -1,3 +1,10 @@
+2006-02-25: 1.3.2
+
+Blank spectra in mzXML and mzData files are now ignored
+EIC width can now be specified in diffreport()
+Better error reporting in getEIC()
+Fixed rare problem in getEIC()
+
 2005-12-07: 1.3.1
 
 Added support for reading mzData files
