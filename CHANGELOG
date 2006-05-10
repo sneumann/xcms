@@ -1,3 +1,13 @@
+2006-05-09: 1.5.1
+
+Fixed bug where NetCDF files would have their scans incorrectly reversed
+Merged recent changes to RAMP mzXML/mzData parser to support TimeInMinutes
+
+2006-04-27: 1.4.0 & 1.5.0
+
+Bioconductor release 1.8 and development branch 1.9
+No changes to code or functionality from 1.3.2
+
 2006-02-25: 1.3.2
 
 Blank spectra in mzXML and mzData files are now ignored

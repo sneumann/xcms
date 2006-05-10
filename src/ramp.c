@@ -216,6 +216,7 @@ ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
  * Returns pScanIndex which becomes property of the caller	*
  * pScanIndex is -1 terminated					*
  ***************************************************************/
+char buf[SIZE_BUF*16];
 
 ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                 ramp_fileoffset_t indexOffset,
@@ -224,7 +225,6 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
    int  n;
    int  reallocSize = 8000;    /* initial # of scan indexes to expect */
    char *beginScanOffset;
-   char buf[SIZE_BUF*16];
    ramp_fileoffset_t *pScanIndex=NULL;
    int retryLoop;
    
@@ -376,6 +376,8 @@ static double rampReadTime(RAMPFILE *pFI,const char *pStr) {
       const char *tag = findMzDataTagValue(pStr, "TimeInMinutes");
       if (tag) {
          t = 60.0*atof(tag);
+      } else if (NULL!=(tag = findMzDataTagValue(pStr, "TimeInSeconds"))) { // von Steffan Neumann
+         t = atof(tag);
       }
    } else if (!sscanf(pStr, "PT%lfS", &t)) {  // usually this is elapsed run time
       /* but could be stored in for PxYxMxDTxHxMxS */
@@ -586,6 +588,8 @@ void readHeader(RAMPFILE *pFI,
                   memcpy(&(scanHeader->scanType), pStr, sizeof(char)*((pStr2-pStr)));
                   scanHeader->scanType[pStr2-pStr] = '\0';
                }
+            } else if ((pStr = matchAttr(attrib, "collisionEnergy", 15)))  {
+                 sscanf(pStr, "%lf\"", &(scanHeader->collisionEnergy));
             }
          }
          
@@ -616,6 +620,10 @@ void readHeader(RAMPFILE *pFI,
                pStr = stringBuf;
                if ((pStr2 = (char *) strstr(stringBuf, "precursorScanNum=\"")))
                   sscanf(pStr2 + 18, "%d\"", &(scanHeader->precursorScanNum));
+               if ((pStr2 = (char *) strstr(stringBuf, "precursorCharge=\""))) 
+               {
+                  sscanf(pStr2 + 17, "%d\"", &(scanHeader->precursorCharge));
+               }
             }
             pStr++;	// Skip >
             
