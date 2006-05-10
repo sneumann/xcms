@@ -46,9 +46,7 @@ typedef unsigned __int64 uint64_t;
 #define strcasecmp stricmp
 #endif
 #else
-#if !defined(sparc) && !defined(__sparc)
 #include <stdint.h>
-#endif
 #include <netinet/in.h>
 #endif
 

@@ -100,8 +100,10 @@ void NetCDFMSPoints(const int *ncid, const int *scanNumber,
     if (*status)
         return;
     
-    if (massValues[1] < massValues[2])
-        return;
+    for (i = 0; i < *scanNumber-1; i++)
+        if (scanIndex[i+1] - scanIndex[i] > 1) 
+            if (massValues[scanIndex[i]] < massValues[scanIndex[i]+1])
+                return;
     
     for (i = 0; i < *scanNumber; i++) {
         scanLen = (i < *scanNumber - 1) ? scanIndex[i+1] - scanIndex[i] :
