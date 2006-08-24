@@ -62,12 +62,19 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam, 
                          profstep = 0)
         cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- findPeaks(lcraw, ...)[,cnames]
+        peaklist[[i]] <- findPeaks(lcraw, ...)[,cnames,drop=FALSE]
         peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
         rtlist$raw[[i]] <- lcraw@scantime
         rtlist$corrected[[i]] <- lcraw@scantime
         rm(lcraw)
         gc()
+        if (nrow(peaklist[[i]]) == 0)
+            warning(paste("No peaks found in sample", snames[i]))
+        else if (nrow(peaklist[[i]]) == 1)
+            warning(paste("Only 1 peak found in sample", snames[i]))
+        else if (nrow(peaklist[[i]]) < 10)
+            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample", 
+                    snames[i]))
     }
     
     peaks(object) <- do.call("rbind", peaklist)
