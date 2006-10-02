@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotSurf-methods}
 \alias{plotSurf}
-%\alias{plotSurf,xcmsRaw-method}
+\alias{plotSurf,xcmsRaw-method}
 \title{Plot profile matrix 3D surface using OpenGL}
 \description{
   This method uses the rgl package to create interactive three

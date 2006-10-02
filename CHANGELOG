@@ -1,3 +1,8 @@
+2006-04-27: 1.6.0 & 1.7.0
+
+Bioconductor release 1.9 and development branch 2.0
+Fixed documentation and DESCRIPTION file for R 2.4.0 package check
+
 2006-08-24: 1.5.2
 
 Fixed bug where xcmsSet() failed if less than 2 peaks were detected in a file

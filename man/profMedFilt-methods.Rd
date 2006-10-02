@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{profMedFilt-methods}
 \alias{profMedFilt}
-%\alias{profMedFilt,xcmsRaw-method}
+\alias{profMedFilt,xcmsRaw-method}
 \title{Apply a median filter to the profile matrix}
 \description{
   

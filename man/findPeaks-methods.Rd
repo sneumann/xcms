@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{findPeaks-methods}
 \alias{findPeaks}
-%\alias{findPeaks,xcmsRaw-method}
+\alias{findPeaks,xcmsRaw-method}
 \title{Feature detection in the chromatographic time domain}
 \description{
   

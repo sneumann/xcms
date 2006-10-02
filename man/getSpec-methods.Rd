@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{getSpec-methods}
 \alias{getSpec}
-%\alias{getSpec,xcmsRaw-method}
+\alias{getSpec,xcmsRaw-method}
 \title{Get average m/z and intensity values for multiple mass scans}
 \description{
   Return full-resolution averaged data from multiple mass scans.

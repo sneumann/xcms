@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotSpec-methods}
 \alias{plotSpec}
-%\alias{plotSpec,xcmsRaw-method}
+\alias{plotSpec,xcmsRaw-method}
 \title{Plot mass spectra from the profile matrix}
 \description{
   Uses the pre-generated profile mode matrix to plot mass spectra

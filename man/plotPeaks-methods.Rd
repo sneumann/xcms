@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotPeaks-methods}
 \alias{plotPeaks}
-%\alias{plotPeaks,xcmsRaw-method}
+\alias{plotPeaks,xcmsRaw-method}
 \title{Plot a grid of a large number of peaks}
 \description{
   Plot extracted ion chromatograms for many peaks simultaneously, 
