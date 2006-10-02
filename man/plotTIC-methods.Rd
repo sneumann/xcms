@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotTIC-methods}
 \alias{plotTIC}
-%\alias{plotTIC,xcmsRaw-method}
+\alias{plotTIC,xcmsRaw-method}
 \title{Plot total ion count}
 \description{
   Plot chromatogram of total ion count. Optionally allow identification

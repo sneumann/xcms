@@ -2,8 +2,8 @@
 \docType{methods}
 %\alias{groupnames-methods}
 \alias{groupnames}
-%\alias{groupnames,xcmsEIC-method}
-%\alias{groupnames,xcmsSet-method}
+\alias{groupnames,xcmsEIC-method}
+\alias{groupnames,xcmsSet-method}
 \title{Generate unque names for peak groups}
 \description{
   Allow linking of peak group data between classes using unique

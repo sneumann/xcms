@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotScan-methods}
 \alias{plotScan}
-%\alias{plotScan,xcmsRaw-method}
+\alias{plotScan,xcmsRaw-method}
 \title{Plot a single mass scan}
 \description{
   Plot a single mass scan using the impulse representation. Most

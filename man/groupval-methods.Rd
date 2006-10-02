@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{groupval-methods}
 \alias{groupval}
-%\alias{groupval,xcmsSet-method}
+\alias{groupval,xcmsSet-method}
 \title{Extract a matrix of peak values for each group}
 \description{
   Generate a matrix of peak values with rows for every group and

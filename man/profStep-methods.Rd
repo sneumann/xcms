@@ -4,8 +4,8 @@
 %\alias{profStep<--methods}
 \alias{profStep}
 \alias{profStep<-}
-%\alias{profStep,xcmsRaw-method}
-%\alias{profStep<-,xcmsRaw-method}
+\alias{profStep,xcmsRaw-method}
+\alias{profStep<-,xcmsRaw-method}
 \title{Get and set m/z step for generating profile data}
 \description{
   These methods get and set the m/z step for generating profile

@@ -2,8 +2,8 @@
 \docType{methods}
 %\alias{sampnames-methods}
 \alias{sampnames}
-%\alias{sampnames,xcmsEIC-method}
-%\alias{sampnames,xcmsSet-method}
+\alias{sampnames,xcmsEIC-method}
+\alias{sampnames,xcmsSet-method}
 \title{Get sample names}
 \description{
  Return sample names for an object

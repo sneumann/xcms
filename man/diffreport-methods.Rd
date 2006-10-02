@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{diffreport-methods}
 \alias{diffreport}
-%\alias{diffreport,xcmsSet-method}
+\alias{diffreport,xcmsSet-method}
 \title{Create report of analyte differences}
 \description{
   Create a report showing the most significant differences between
