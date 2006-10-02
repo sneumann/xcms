@@ -2,8 +2,8 @@
 \docType{methods}
 %\alias{getEIC-methods}
 \alias{getEIC}
-%\alias{getEIC,xcmsRaw-method}
-%\alias{getEIC,xcmsSet-method}
+\alias{getEIC,xcmsRaw-method}
+\alias{getEIC,xcmsSet-method}
 \title{Get extracted ion chromatograms for specified m/z ranges}
 \description{
   Generate multiple extracted ion chromatograms for m/z values of

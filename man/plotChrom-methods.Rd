@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotChrom-methods}
 \alias{plotChrom}
-%\alias{plotChrom,xcmsRaw-method}
+\alias{plotChrom,xcmsRaw-method}
 \title{Plot extracted ion chromatograms from the profile matrix}
 \description{
   Uses the pre-generated profile mode matrix to plot averaged or

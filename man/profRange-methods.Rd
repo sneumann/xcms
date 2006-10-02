@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{profRange-methods}
 \alias{profRange}
-%\alias{profRange,xcmsRaw-method}
+\alias{profRange,xcmsRaw-method}
 \title{Specify a subset of profile mode data}
 \description{
   Specify a subset of the profile mode matrix given a mass, time,

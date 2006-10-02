@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotRaw-methods}
 \alias{plotRaw}
-%\alias{plotRaw,xcmsRaw-method}
+\alias{plotRaw,xcmsRaw-method}
 \title{Scatterplot of raw data points}
 \description{
   Produce a scatterplot showing raw data point location in retention

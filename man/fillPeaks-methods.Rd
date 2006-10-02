@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{fillPeaks-methods}
 \alias{fillPeaks}
-%\alias{fillPeaks,xcmsSet-method}
+\alias{fillPeaks,xcmsSet-method}
 \title{Integrate areas of missing peaks}
 \description{
   For each sample, identify peak groups where that sample is not

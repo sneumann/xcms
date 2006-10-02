@@ -4,8 +4,8 @@
 %\alias{profMethod<--methods}
 \alias{profMethod}
 \alias{profMethod<-}
-%\alias{profMethod,xcmsRaw-method}
-%\alias{profMethod<-,xcmsRaw-method}
+\alias{profMethod,xcmsRaw-method}
+\alias{profMethod<-,xcmsRaw-method}
 \title{Get and set method for generating profile data}
 \description{
   These methods get and set the method for generating profile

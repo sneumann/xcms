@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{plotrt-methods}
 \alias{plotrt}
-%\alias{plotrt,xcmsSet-method}
+\alias{plotrt,xcmsSet-method}
 \title{Plot retention time deviation profiles}
 \description{
   Use corrected retention times for each sample to calculate retention

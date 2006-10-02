@@ -1,11 +1,12 @@
 \name{xcmsRaw-class}
 \docType{class}
 \alias{xcmsRaw-class}
-%\alias{profMz,xcmsRaw-method}
+\alias{profMz,xcmsRaw-method}
 \alias{profMz}
-%\alias{revMz,xcmsRaw-method}
+\alias{revMz,xcmsRaw-method}
 \alias{revMz}
-%\alias{sortMz,xcmsRaw-method}
+\alias{show,xcmsRaw-method}
+\alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
 
 \title{Class xcmsRaw, a class for handling raw data}

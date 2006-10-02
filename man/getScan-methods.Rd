@@ -2,7 +2,7 @@
 \docType{methods}
 %\alias{getScan-methods}
 \alias{getScan}
-%\alias{getScan,xcmsRaw-method}
+\alias{getScan,xcmsRaw-method}
 \title{Get m/z and intensity values for a single mass scan}
 \description{
   Return the data from a single mass scan using the numeric index
