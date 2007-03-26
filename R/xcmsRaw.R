@@ -18,6 +18,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
     
+    if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   ) 
     if (netCDFIsFile(filename)) {
         cdf <- netCDFOpen(filename)
         if (!is.null(attr(cdf, "errortext")))
@@ -641,7 +642,8 @@ if( !isGeneric("plotRaw") )
 setMethod("plotRaw", "xcmsRaw", function(object,
                                          massrange = numeric(), 
                                          timerange = numeric(), 
-                                         scanrange = numeric()) {
+                                         scanrange = numeric(),
+                                         log=FALSE,title='Raw Data' ) {
 
     if (length(timerange) >= 2) {
         timerange <- range(timerange)
@@ -663,19 +665,27 @@ setMethod("plotRaw", "xcmsRaw", function(object,
         scans[idx-startidx+1] <- i
     }
     
+    timerange <- c(object@scantime[scanrange[1]],object@scantime[scanrange[2]])
     masses <- object@env$mz[startidx:endidx]
+    int <- object@env$intensity[startidx:endidx]
     massidx <- 1:length(masses)
     if (length(massrange) >= 2) {
         massrange <- range(massrange)
         massidx <- (masses >= massrange[1]) & (masses <= massrange[2])
     } else
         massrange <- range(masses)
+        
+     y <- int[massidx]    
+     if (log)  y <- log(y+max(1-min(y), 0))
+     ylim <- range(y)
+     y <- y/ylim[2]
+     colorlut <- terrain.colors(16)
+     col <- colorlut[y*15+1]
+        
+     plot(cbind(object@scantime[scans[massidx]], masses[massidx]), pch=20, cex=.5, main = title, 
+       xlab="Seconds", ylab="m/z",col=col, xlim=timerange,ylim=massrange)
     
-    title = paste("Raw XC/MS Points")
-    points <- cbind(object@scantime[scans[massidx]], masses[massidx])
-    plot(points, pch=20, cex=.5, main = title, xlab="Seconds", ylab="m/z")
-    
-    invisible(points)
+     invisible(cbind(object@scantime[scans[massidx]], masses[massidx],int[massidx]))
 })
 
 if( !isGeneric("profMz") )
