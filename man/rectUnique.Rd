@@ -3,7 +3,7 @@
 \title{Determine a subset of rectangles with unique, non-overlapping areas}
 \description{
   Given a matrix of rectangular areas, this function determines a subset
-  of those rectangles that do not overalp. Rectangles are preserved on
+  of those rectangles that do not overlap. Rectangles are preserved on
   a first come, first served basis, with user control over the order in
   which the rectangles are processed.
 }
@@ -13,8 +13,8 @@ rectUnique(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0)
 \arguments{
   \item{m}{four column matrix defining rectangular areas}
   \item{order}{order in which matrix columns should be scanned}
-  \item{xdiff}{maximum space between overalpping rectangles in x dimension}
-  \item{ydiff}{maximum space between overalpping rectangles in y dimension}
+  \item{xdiff}{maximum space between overlapping rectangles in x dimension}
+  \item{ydiff}{maximum space between overlapping rectangles in y dimension}
 }
 \details{
   The \code{m} matrix must contain four colums defining the position of

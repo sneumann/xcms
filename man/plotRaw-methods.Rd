@@ -13,7 +13,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{plotRaw(object, massrange = numeric(), timerange = numeric(),
-                scanrange = numeric())}
+                scanrange = numeric(), log=FALSE, title='Raw Data')}
 }
 }}
 \arguments{
@@ -29,6 +29,12 @@
   \item{scanrange}{
     numeric vector of length >= 2 whose range will be used to select
     scans to plot
+  }
+  \item{log}{
+    logical, log transform intensity
+  }
+  \item{title}{
+    main title of the plot
   }
 }
 \value{

@@ -124,7 +124,7 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = doubleMatrix(num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       DUP = FALSE, PACKAGE = "xcms")$out
 }
 
 profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
