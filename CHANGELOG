@@ -1,3 +1,13 @@
+
+RAMP: updated ramp.c (v1.37), ramp.h  (from CVS)
+  - ...
+  - handle mzData "TimeInSeconds" values
+  - dealing with mzXML files with missing scans
+
+Check if file exists in xcmsRaw()
+Plot (log) colored data points in plotRaw()  
+
+
 2006-04-27: 1.6.0 & 1.7.0
 
 Bioconductor release 1.9 and development branch 2.0
