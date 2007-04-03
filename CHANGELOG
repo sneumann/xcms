@@ -1,14 +1,17 @@
+2007-04-??: 1.7.1
 
 RAMP: updated ramp.c (v1.37), ramp.h  (from CVS)
   - ...
   - handle mzData "TimeInSeconds" values
   - dealing with mzXML files with missing scans
-
 Check if file exists in xcmsRaw()
 Plot (log) colored data points in plotRaw()  
+Modified findPeaks method:
+  - Moved column "i" (peak number within combined EIC) to the second-to-last column
+  - Added column "sn" with signal to noise ratio
+xcmsSets now include "i" and "sn" columns in the peaks matrix
 
-
-2006-04-27: 1.6.0 & 1.7.0
+2006-04-27: 1.6.1 & 1.7.0
 
 Bioconductor release 1.9 and development branch 2.0
 Fixed documentation and DESCRIPTION file for R 2.4.0 package check
