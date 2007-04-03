@@ -422,7 +422,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
     filt <- filt/sqrt(sum(filt^2))
     filt <- fft(filt, inverse = TRUE)/length(filt)
     
-    cnames <- c("i", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf")
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf", "i", "sn")
     rmat <- matrix(nrow = 2048, ncol = length(cnames))
     num <- 0
     
@@ -451,6 +451,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
              maxy <- which.max(yfilt)
              noise <- mean(ysums[ysums > 0])
              #noise <- mean(yfilt[yfilt >= 0])
+             sn <- yfilt[maxy]/noise
              if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise) {
                  peakrange <- descendZero(yfilt, maxy)
                  intmat <- ymat[,peakrange[1]:peakrange[2],drop=FALSE]
@@ -485,7 +486,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.354
                      nrmat[seq(length = nrow(rmat)),] = rmat
                      rmat <- nrmat
                  }
-                 rmat[num,] <- c(j, massmean, massrange[1], massrange[2], maxy, peakrange, into, intf, maxo, maxf)
+                 rmat[num,] <- c(massmean, massrange[1], massrange[2], maxy, peakrange, into, intf, maxo, maxf, j, sn)
              } else
                  break
         }
@@ -528,7 +529,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
     
-    cnames <- c("i", "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf")
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "maxo")
     rmat <- matrix(nrow = nrow(peakrange), ncol = length(cnames))
     colnames(rmat) <- cnames
     
@@ -548,12 +549,12 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
         ymax <- colMax(ymat)
         iymax <- which.max(ymax)
         pwid <- diff(stime[iret])/diff(iret)
-        rmat[i,2] <- weighted.mean(mass[imz[1]:imz[2]], rowSums(ymat))
-        rmat[i,3:4] <- peakrange[i,1:2]
-        rmat[i,5] <- stime[iret[1]:iret[2]][iymax]
-        rmat[i,6:7] <- peakrange[i,3:4]
-        rmat[i,8] <- pwid*sum(ymax)
-        rmat[i,10] <- ymax[iymax]
+        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rowSums(ymat))
+        rmat[i,2:3] <- peakrange[i,1:2]
+        rmat[i,4] <- stime[iret[1]:iret[2]][iymax]
+        rmat[i,5:6] <- peakrange[i,3:4]
+        rmat[i,7] <- pwid*sum(ymax)
+        rmat[i,8] <- ymax[iymax]
     }
     
     invisible(rmat)
