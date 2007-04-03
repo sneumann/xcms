@@ -305,7 +305,7 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 
     if (!missing(template)) {
         tempsplit <- strsplit(template[1], "[T_]")
-        tempsplit <- strsplit(unlist(tempsplit), "\\\.")
+        tempsplit <- strsplit(unlist(tempsplit), "\\.")
         if (length(tempsplit[[1]]) > 1)
             mzdec <- nchar(tempsplit[[1]][2])
         else
