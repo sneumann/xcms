@@ -53,8 +53,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     
     profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
     
-    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf")
-    
     peaklist <- vector("list", length(files))
     
     for (i in seq(along = peaklist)) {
@@ -62,7 +60,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam, 
                          profstep = 0)
         cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- findPeaks(lcraw, ...)[,cnames,drop=FALSE]
+        peaklist[[i]] <- findPeaks(lcraw, ...)
         peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
         rtlist$raw[[i]] <- lcraw@scantime
         rtlist$corrected[[i]] <- lcraw@scantime
@@ -730,7 +728,7 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     lastpeak <- nrow(peakmat)
     peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
     
-    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf")
+    cnames <- colnames(object@peaks)
     
     for (i in seq(along = files)) {
         
@@ -745,8 +743,9 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
         newpeaks <- getPeaks(lcraw, peakrange[naidx,], step = prof$step)
         rm(lcraw)
         gc()
-        newpeaks <- cbind(newpeaks[,cnames], sample = rep(i, length(naidx)))
-        peakmat[lastpeak+seq(along = naidx),] <- newpeaks
+        newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
+        newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
+        peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
         for (i in seq(along = naidx))
             groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
         lastpeak <- lastpeak + length(naidx)

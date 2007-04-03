@@ -45,9 +45,6 @@
 }
 \value{
   A matrix with columns:
-  \item{i}{
-    rank of peak identified in merged EIC (<= \code{max})
-  }
   \item{mz}{
     weighted (by intensity) mean of peak m/z across scans
   }
@@ -77,6 +74,12 @@
   }
   \item{maxf}{
     maximum intensity of filtered peak
+  }
+  \item{i}{
+    rank of peak identified in merged EIC (<= \code{max})
+  }
+  \item{sn}{
+    signal to noise ratio of the peak
   }
 }
 \seealso{
