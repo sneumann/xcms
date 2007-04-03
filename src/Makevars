@@ -1,2 +1,2 @@
-PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf
+PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
 PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE
