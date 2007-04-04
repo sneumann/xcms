@@ -1,2 +1,2 @@
-PKG_LIBS=-L./win -lws2_32 -lnetcdf -lz
-PKG_CPPFLAGS=-I./win
+PKG_LIBS=-L./win -lws2_32 -lnetcdf -L$(RHOME)/src/extra/zlib -lz
+PKG_CPPFLAGS=-I./win -I$(RHOME)/src/extra/zlib
