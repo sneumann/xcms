@@ -6,7 +6,7 @@
 \title{Get peak intensities for specified regions}
 \description{
   Integrate extracted ion chromatograms in pre-defined defined
-  regions. Return output similar to \code{link{findPeaks}}.
+  regions. Return output similar to \code{\link{findPeaks}}.
 }
 \section{Methods}{
 \describe{

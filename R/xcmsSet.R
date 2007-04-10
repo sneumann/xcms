@@ -533,7 +533,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     
         pts <- na.omit(data.frame(rt = rt[,i], rtdev = rtdev[,i]))
         
-        if (method == "loess") {    
+        if (method == "loess") {   
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
             
             rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
@@ -786,6 +786,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     if (missing(mzrange)) {
         if (missing(groupidx))
             stop("No m/z range or groups specified")
+        # if (any(is.na(groupval(object, value = "mz")))) stop('Please use fillPeaks() to fill up NA values !')    
         mzmin <- -rowMax(-groupval(object, value = "mzmin"))
         mzmax <- rowMax(groupval(object, value = "mzmax"))
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)

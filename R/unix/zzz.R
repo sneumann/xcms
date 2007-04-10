@@ -1,8 +1,10 @@
-.First.lib <- function(libname, pkgname) {
-    library.dynam("xcms", pkgname, libname)
+
+.onLoad <- function(libname, pkgname) {
+    require(methods)
+    .setXCMSOptions(pkgname)
 }
 
-.Last.lib <- function(libpath) {
+.onUnload <- function(libpath) {
     rampCloseAll()
     library.dynam.unload("xcms", libpath)
 }
