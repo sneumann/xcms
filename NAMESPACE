@@ -1,0 +1,21 @@
+useDynLib(xcms)
+
+export(cdfpaths, "cdfpaths<-", clustunique, colMax, c.xcmsSet, descendMin, descendValue, descendZero,
+diffreport, doubleMatrix, etg, fillPeaks, filtfft, findEqualGreater, findEqualGreaterM, findEqualLess,
+findMZBoxes, findPeaks, findPeaks.centWave, findPeaks.matchedFilter, findRange,
+getEIC, getPeaks, getScan, getSpec, group, "groups<-", groupidx, "groupidx<-", groupnames, groups, groupval, image.xcmsRaw,
+integerMatrix, logicalMatrix, medianFilter, mzrange, na.flatfill, panel.cor, peaks, "peaks<-", plot,
+plotChrom, plotPeaks, plotRaw, plotrt, plotScan, plotSpec, plotSurf, plotTIC,
+profBin, profBinLin, profBinLinBase, profBinLinBaseM, profBinLinM,
+profBinM, profinfo, "profinfo<-", profIntLin, profIntLinM, profMaxIdx, profMaxIdxM, profMedFilt, profMethod, "profMethod<-",
+profMz, profRange, profStep, "profStep<-", pval, rawEIC, rectUnique, retcor, retexp, revMz, rowMax, rtrange,
+sampclass, "sampclass<-", sampnames, "sampnames<-", sortMz, specNoise, specPeaks, split.xcmsSet, SSgauss, which.colMax,
+which.rowMax, xcmsRaw, xcmsSet)
+
+import("methods")
+
+importFrom("graphics","plot")
+
+exportMethods("plot", "show")
+
+exportClasses("xcmsRaw", "xcmsEIC", "xcmsSet")

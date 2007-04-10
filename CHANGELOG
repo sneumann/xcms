@@ -1,11 +1,23 @@
 2007-04-??: 1.7.1
 
+introduced namespace
+plot(xcmsEIC) problem seems to be fixed
+
+Added : 
+  - rawEIC method
+  - findMZBoxes method
+  - findPeaks.centWave method
+Modified findPeaks() method to support different findPeaks.* algorithms
+
 RAMP: updated ramp.c (v1.37), ramp.h  (from CVS)
   - ...
   - handle mzData "TimeInSeconds" values
   - dealing with mzXML files with missing scans
+  - support for zlib compression
+  
 Check if file exists in xcmsRaw()
 Plot (log) colored data points in plotRaw()  
+
 Modified findPeaks method:
   - Moved column "i" (peak number within combined EIC) to the second-to-last column
   - Added column "sn" with signal to noise ratio

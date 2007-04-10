@@ -64,7 +64,7 @@ setMethod("rtrange", "xcmsEIC", function(object) {
 })
 
 if ( !isGeneric("plot") )
-    setGeneric("plot", function(x, y, ...) standardGeneric("plot"))
+    setGeneric("plot", function(x,y,...)  standardGeneric("plot"))
 
 setMethod("plot", "xcmsEIC", function(x, y, groupidx = groupnames(x),
                                       sampleidx = sampnames(x), 
@@ -162,3 +162,5 @@ setMethod("plot", "xcmsEIC", function(x, y, groupidx = groupnames(x),
             Sys.sleep(sleep)
     }
 })
+
+
