@@ -1,10 +1,12 @@
-.First.lib <- function(libname, pkgname) {
+
+.onLoad <- function(libname, pkgname) {
+    require(methods)
     dllpath <- file.path(.find.package("xcms"), "netcdfdll", "netcdf.dll")
     suppressWarnings(dyn.load(dllpath))
-    library.dynam("xcms", pkgname, libname)    
+    .setXCMSOptions(pkgname)
 }
 
-.Last.lib <- function(libpath) {
+.onUnload <- function(libpath) {
     rampCloseAll()
     if (is.loaded("NetCDFOpen"))
         library.dynam.unload("xcms", libpath)

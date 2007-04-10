@@ -1,47 +1,42 @@
 \name{findPeaks-methods}
 \docType{methods}
-%\alias{findPeaks-methods}
+\alias{findPeaks-methods}
 \alias{findPeaks}
 \alias{findPeaks,xcmsRaw-method}
-\title{Feature detection in the chromatographic time domain}
+\title{Feature detection for GC/MS and LC/MS Data - methods}
 \description{
-  
+ 
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks(object, fwhm = 30, sigma = fwhm/2.3548, max = 5, 
-    snthresh = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps, 
-    index = FALSE, sleep = 0)
+    findPeaks(object, ...)
   }
 }
 }}
 \arguments{
-  \item{object}{\code{xcmsSet} object}
-  \item{fwhm}{
-    full width at half maximum of matched filtration gaussian model
-    peak
-  }
-  \item{sigma}{
-    standard deviation of matched filtration model peak
-  }
-  \item{max}{
-    maximum number of peaks per extracted ion chromatogram
-  }
-  \item{snthresh}{signal to noise ratio cutoff}
-  \item{step}{step size to use for profile generation}
-  \item{steps}{number of steps to merge prior to filtration}
-  \item{mzdiff}{
-    minimum difference in m/z for peaks with overlapping retention
-    times
-  }
-  \item{index}{
-    return indicies instead of values for m/z and retention times
-  }
-  \item{sleep}{
-    number of seconds to pause between plotting peak finding cycles
-  }
+  \item{object}{\code{\link{xcmsRaw-class}} object}
+  \item{method}{Method to use for peak detection. See details.}
+  \item{...}{Optional arguments to be passed along}
+}
+\details{
+  Different methodologies can be used by specifying them with the
+  \code{method} argument. For example to use the matched filter
+  methodology described by Smith et al (2006) one would type:
+  \code{findPeaks(object, method="matchedFilter")}.
+
+  Further arguments passed by \code{...}, apart from \code{method},  are
+  passed along to the 
+  function responsible for the methodology defined by the \code{method}
+  argument. 
+  
+  A character vector of \emph{nicknames} for the 
+  methodologies available is returned by typing
+  \code{getOption("BioC")$xcms$findPeaks.methods}. If the nickname of a method
+  is called "centWave", the help page for that 
+  specific methodology can
+  be accessed by typing \code{?findPeaks.centWave}. 
 }
 \value{
   A matrix with columns:
@@ -54,35 +49,28 @@
   \item{mzmax}{
     m/z of maximum step
   }
-  \item{ret}{
+  \item{rt}{
     retention time of peak midpoint
   }
-  \item{retmin}{
+  \item{rtmin}{
     leading edge of peak retention time
   }
-  \item{retmax}{
+  \item{rtmax}{
     trailing edge of peak retention time
   }
   \item{into}{
     integrated area of original (raw) peak
   }
-  \item{intf}{
-    integrated area of filtered peak
-  }
   \item{maxo}{
     maximum intensity of original (raw) peak
   }
-  \item{maxf}{
-    maximum intensity of filtered peak
-  }
-  \item{i}{
-    rank of peak identified in merged EIC (<= \code{max})
-  }
-  \item{sn}{
-    signal to noise ratio of the peak
-  }
+  
+  and additional columns depending on the choosen method.
+
 }
 \seealso{
+  \code{\link{findPeaks.matchedFilter}}
+  \code{\link{findPeaks.centWave}}
   \code{\link{xcmsRaw-class}}
 }
 \keyword{methods}
