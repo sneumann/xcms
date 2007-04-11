@@ -15,12 +15,14 @@
 }
 }}
 \details{
-  This algorithm is useful only for centroided LC/MS data. In the first phase of the method 
+  This algorithm is useful only for centroid LC/MS data. In the first phase of the method 
   areas of high peak density (characterised by having at least \code{minEntries} peaks
-  within \code{dev} ppm in consecutive scans) in the LC/MS map are discovered.
+  within \code{dev} ppm in consecutive scans) in the LC/MS map are located.
   In the second phase these \emph{regions of interest} (ROI) are further analysed. 
-  Gaussian curves are fitted to the peaks, areas bigger than \code{2*minPeakWidth} 
-  scans are scanned for containing more than one peak (these may also overlap) using wavelet analysis. 
+  Gaussian curves are fitted to the chromatographic peaks,
+  and areas larger than \code{2*minPeakWidth} scans are checked
+  whether they contain more than one peak (these may also overlap) using
+  wavelet analysis. 
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
@@ -33,7 +35,7 @@
   }
   \item{minPeakWidth}{
     Minimum extent (number of scans) of a peak. Areas bigger than \code{2*minPeakWidth} 
-    scans are scanned for containing more than one peak.
+    are checked whether they contain more than one peak.
   }
   \item{scales}{scales to use for wavelet analysis, the scale range should correspond to the width range of the chromatographic peaks (number of scans) }
   \item{maxGaussErr}{maximum root-mean-square error (RMSE) of Gauss fit, RMSE is close to zero if peak is gaussian-shaped}

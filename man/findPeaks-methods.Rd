@@ -21,22 +21,21 @@
   \item{...}{Optional arguments to be passed along}
 }
 \details{
-  Different methodologies can be used by specifying them with the
+  Different algorithms can be used by specifying them with the
   \code{method} argument. For example to use the matched filter
-  methodology described by Smith et al (2006) one would type:
+  approach described by Smith et al (2006) one would use:
   \code{findPeaks(object, method="matchedFilter")}.
 
-  Further arguments passed by \code{...}, apart from \code{method},  are
-  passed along to the 
-  function responsible for the methodology defined by the \code{method}
-  argument. 
+  Further arguments given by \code{...} are
+  passed through to the function implementing
+  the \code{method}. 
   
   A character vector of \emph{nicknames} for the 
-  methodologies available is returned by typing
-  \code{getOption("BioC")$xcms$findPeaks.methods}. If the nickname of a method
-  is called "centWave", the help page for that 
-  specific methodology can
-  be accessed by typing \code{?findPeaks.centWave}. 
+  algorithms available is returned by 
+  \code{getOption("BioC")$xcms$findPeaks.methods}.
+  If the nickname of a method is called "centWave",
+  the help page for that specific method can
+  be accessed with \code{?findPeaks.centWave}. 
 }
 \value{
   A matrix with columns:
