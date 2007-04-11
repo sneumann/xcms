@@ -577,6 +577,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                             best.scale.pos <- opp[length(opp)]
                          pprange <- min(pp):max(pp)
                          maxint <- max(d[pprange])
+                         lwpos <- max(1,best.scale.pos - best.scale)
+                         rwpos <- min(best.scale.pos + best.scale,length(td))
                          peaks <- rbind(peaks,
                             c(mzmean,mzrange,           ## mz
                             NA,NA,NA,                   ## rt, rtmin, rtmax,
@@ -586,7 +588,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                             NA,                         ## Gaussian RMSE
                             NA,NA,NA,                   ## Gaussian Parameters
                             f,                          ## ROI Position
-                            td[best.scale.pos], td[best.scale.pos - best.scale], td[best.scale.pos + best.scale],
+                            td[best.scale.pos], td[lwpos], td[rwpos],
                                                         ## Peak positions guessed from the wavelet's (scan nr)
                             NA,NA ))                    ## Peak limits (scan nr)
                         }
@@ -597,7 +599,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
               }
             } # N > 2*peakwidth
             
-            if (is.null(dim(peaks))) { ## no peak has been found yet, try gauss fit
+            if (is.null(peaks)) { ## no peak has been found yet, try gauss fit
               pgauss <- fitGauss(td,d); GAUSS <- TRUE
               if (!any(is.na(pgauss)) && all(pgauss > 0)) {
                 md <- max(d);d1 <- d/md; 
@@ -628,7 +630,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
             }
             
             if (!is.null(peaks)) {
-                #  peaks <- data.frame(peaks)
+                if (is.vector(peaks)) peaks <- data.frame(t(peaks))
+                    else peaks <- data.frame(peaks)
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","egauss")
                 colnames(peaks) <- c(basenames,"mu","sigma","h","f","scpos","scmin","scmax","lmin","lmax")
             }
@@ -662,7 +665,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
         
       }  # valid
         
-      if ((sleep >0) && (!is.null(dim(peaks)))) {
+      if ((sleep >0) && (!is.null(peaks))) {
             tdp <- scantime[td]; trange <- range(tdp)
             dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[1] *  1e-6))
             egauss <- paste(round(peaks[,"egauss"],2))
@@ -711,7 +714,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
     pr <- p[uindex,,drop=FALSE]
     cat(dim(p)[1],' Peaks  -- rectUnique(',mzdiff,',',rtdiff,') -->  ', dim(pr)[1],' Peaks.\n',sep='')
 
-    invisible(pr)
+    invisible(as.matrix(pr))
 })
 
 if( !isGeneric("findPeaks") )
@@ -1065,7 +1068,7 @@ setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(ob
 if( !isGeneric("findMZBoxes") )
     setGeneric("findMZBoxes", function(object, ...) standardGeneric("findMZBoxes"))
 
-setMethod("findMZBoxes", "xcmsRaw", function(object,massrange=c(0.0,0.0),scanrange=c(1,length(object@scantime)),dev,minEntries){
+setMethod("findMZBoxes", "xcmsRaw", function(object,massrange=c(0.0,0.0),scanrange=c(1,length(object@scantime)),dev,minEntries,debug=0){
     ## massrange not implemented yet
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
@@ -1073,6 +1076,6 @@ setMethod("findMZBoxes", "xcmsRaw", function(object,massrange=c(0.0,0.0),scanran
   
   .Call("findmzboxes",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),
   as.integer(scanrange),as.integer(length(object@scantime)),
-  as.double(dev),as.integer(minEntries), PACKAGE ='xcms' )
+  as.double(dev),as.integer(minEntries),as.integer(debug), PACKAGE ='xcms' )
 })
 

@@ -24,7 +24,7 @@
 }
 \details{
   Areas of high peak density (characterised by having at least \code{minEntries} peaks
-  within \code{dev} ppm in consecutive scans) in the LC/MS map are discovered.
+  within \code{dev} ppm in consecutive scans) in the LC/MS map are located.
 }
 \value{
   A list with entries :
