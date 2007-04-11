@@ -369,7 +369,6 @@ remove.NA.features <- function(peaks) {
 }
 
 joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverlap=0.5,maxGaussErr=0.3) {  
-  peaks <- as.data.frame(peaks)
   gausspeaks <- which(!is.na(peaks[,"mu"])); Ngp <- length(gausspeaks)
   newpeaks <- peaks
   if (Ngp > 1) {
@@ -433,7 +432,7 @@ joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverl
       }
     } # any overlap
   }
- as.matrix(newpeaks)
+ newpeaks
 }
 
 descendMinTol <- function(d,startpos,maxDescOutlier) {
@@ -505,3 +504,4 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
   
   overlap / vsmall
 }
+

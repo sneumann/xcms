@@ -413,9 +413,9 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   return(reslist);
 }
 
-SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries) {
+SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP debug) {
   double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
-  int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ctScan,nmz,lastScan;
+  int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ctScan,nmz,lastScan, idebug;
   SEXP peaklist,entrylist,vscan,vmz,vint,list_names;
      
   pmz = REAL(mz);  
@@ -423,6 +423,7 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
   pintensity = REAL(intensity); 
   pscanindex = INTEGER(scanindex);
   lastScan = INTEGER(lastscan)[0];
+  idebug = INTEGER(debug)[0];
   
   pickOptions.dev = REAL(dev)[0];                         // 140e-6;
   pickOptions.minEntries = INTEGER(minEntries)[0];        //4;   
@@ -456,7 +457,8 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
     getScan(ctScan, pmz, pintensity, pscanindex,nmz,lastScan, &scanbuf);
     if (scanbuf.length > 0) 
     {
-      printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z boxes, %d boxes found.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
+      if (idebug == TRUE) 
+          printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z boxes, %d boxes found.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
       insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
       cleanup(ctScan,&peakbuf,&mzval,pickOptions);
     }
@@ -509,7 +511,7 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
      total++;
     }
   }
-  printf("%d m/z boxes.\n", total);
+  printf(" %d m/z boxes.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
   return(peaklist);
