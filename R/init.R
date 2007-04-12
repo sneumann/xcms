@@ -31,7 +31,7 @@
   ## all findPeaks methods
   start <- nchar("findPeaks.")
   all.xcms <- ls(asNamespace(pkgname))
-  findPeaks.methods <-  substr(all.xcms[grep("findPeaks.\.*", all.xcms)], start+1, 100)
+  findPeaks.methods <-  substr(all.xcms[grep("findPeaks\\..*", all.xcms)], start+1, 100)
 
   ## default for the methods
   findPeaks.method <- "matchedFilter"
