@@ -17,8 +17,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                      "[Mm][Zz][Da][Aa][Tt][Aa]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
-        files <- list.files(pattern = filepattern, recursive = TRUE,
-                            full.names = TRUE)
+        files <- list.files(pattern = filepattern, recursive = TRUE)
     cdfpaths(object) <- file.path(getwd(), files)
     # Check to see whether the absolute path names work
     for (file in cdfpaths(object))
@@ -38,7 +37,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
             i <- i + 1
         i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
-        if (i > 1 && i < nrow(scomp))
+        if (i > 1 && i <= nrow(scomp))
             sclass <- substr(sclass, i, max(nchar(sclass)))
     }
     sampclass(object) <- sclass
