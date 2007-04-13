@@ -29,6 +29,8 @@ Small fixes to xcmsSet generation relating to finding/categorizing files:
   - If the files argument is not set, then "./" is no longer appended
   - One character directory names, and thus group names, are now supported
 
+Enabled axis labels for OpenGL surface plotting using plotSurf()
+
 2006-04-27: 1.6.1 & 1.7.0
 
 Bioconductor release 1.9 and development branch 2.0

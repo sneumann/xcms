@@ -368,14 +368,12 @@ setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
     inttics <- pretty(c(0,ylim), n = 10*aspect[3])
     inttics <- inttics[inttics > 0]
     
-    rgl.bbox(
-    #         This causes segmentation faults in rgl 0.64-13
-    #         xat = (mztics - sel$massrange[1])/diff(sel$massrange)*aspect[1],
-    #         xlab = as.character(mztics), 
-    #         yat = inttics/ylim[2]*aspect[3],
-    #         ylab = as.character(inttics), 
-    #         zat = (rttics - sel$timerange[1])/diff(sel$timerange)*aspect[2],
-    #         zlab = as.character(rttics), 
+    rgl.bbox(xat = (mztics - sel$massrange[1])/diff(sel$massrange)*aspect[1],
+             xlab = as.character(mztics), 
+             yat = inttics/ylim[2]*aspect[3],
+             ylab = as.character(inttics), 
+             zat = (rttics - sel$timerange[1])/diff(sel$timerange)*aspect[2],
+             zlab = as.character(rttics), 
              ylen = 0, alpha=0.5)
 })
 
