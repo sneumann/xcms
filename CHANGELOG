@@ -23,6 +23,8 @@ Modified findPeaks method:
   - Added column "sn" with signal to noise ratio
 xcmsSets now include "i" and "sn" columns in the peaks matrix
 
+Updated Windows NetCDF library to version 3.6.2 (now statically linked into xcms.dll)
+
 2006-04-27: 1.6.1 & 1.7.0
 
 Bioconductor release 1.9 and development branch 2.0
