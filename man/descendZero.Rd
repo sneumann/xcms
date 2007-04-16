@@ -28,11 +28,11 @@ descendMin(y, istart = which.max(y))
 }
 \examples{
 normdist <- dnorm(seq(-4, 4, .1)) - .1
-descendZero(normdist)
-normdist[descendZero(normdist)]
-descendValue(normdist, .15)
-normdist[descendValue(normdist, .15)]
-descendMin(normdist)
+xcms:::descendZero(normdist)
+normdist[xcms:::descendZero(normdist)]
+xcms:::descendValue(normdist, .15)
+normdist[xcms:::descendValue(normdist, .15)]
+xcms:::descendMin(normdist)
 }
 \keyword{iteration}
 \keyword{internal}
