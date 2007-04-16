@@ -464,15 +464,16 @@ cent <- function(x) {
 gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) { 
   overlap <- NA
   by = 0.05
+  ## Calculate points of intersection
   a <- s2^2 - s1^2
-  c <- -( 2 * s1^2 * s2^2 * (log(h1) - log(h2)) + (s1^2 * mu2^2) - (s2^2 * mu1^2) )
+  cc <- -( 2 * s1^2 * s2^2 * (log(h1) - log(h2)) + (s1^2 * mu2^2) - (s2^2 * mu1^2) )
   b <- ((2 * s1^2 *mu2) - (2 * s2^2 * mu1))
-  D <- b^2 - (a*c)
-  if (a==0) {S1 <- -c/b; S2 <- NA
-   } else if ((D < 0) || ((b^2 - (4*a*c)) < 0)) {S1 <- S2 <- NA
+  D <- b^2 - (a*cc)
+  if (a==0) {S1 <- -cc/b; S2 <- NA
+   } else if ((D < 0) || ((b^2 - (4*a*cc)) < 0)) {S1 <- S2 <- NA
      } else {
-        S1 <- (-b + sqrt(b^2 - (4*a*c))) / (2*a)
-        S2 <- (-b - sqrt(b^2 - (4*a*c))) / (2*a)
+        S1 <- (-b + sqrt(b^2 - (4*a*cc))) / (2*a)
+        S2 <- (-b - sqrt(b^2 - (4*a*cc))) / (2*a)
         if (S2 < S1) {tmp<-S1; S1<-S2; S2<-tmp}
       }  
   if (!is.na(S1)) if (S1 < xlim[1] || S1 > xlim[2]) S1 <- NA
@@ -497,8 +498,14 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
     if (is.na(S1)) S0 <- S2 else S0 <- S1
     x0 <- seq(xlim[1],S0,by=by)
     x1 <- seq(S0,xlim[2],by=by)
-    if (gauss(x0[cent(x0)],h1,mu1,s1) < gauss(x0[cent(x0)],h2,mu2,s2)) ov1 <- sum(gauss(x0,h1,mu1,s1))                    else ov1 <- sum(gauss(x0,h2,mu2,s2))
-    if (gauss(x1[cent(x1)],h1,mu1,s1) < gauss(x1[cent(x1)],h2,mu2,s2)) ov2 <- sum(gauss(x1,h1,mu1,s1))                    else ov2 <- sum(gauss(x1,h2,mu2,s2))
+    g01 <- gauss(x0[cent(x0)],h1,mu1,s1)
+    g02 <- gauss(x0[cent(x0)],h2,mu2,s2)
+    g11 <- gauss(x1[cent(x1)],h1,mu1,s1) 
+    g12 <- gauss(x1[cent(x1)],h2,mu2,s2)
+    if (g01 < g02) ov1 <- sum(gauss(x0,h1,mu1,s1)) else ov1 <- sum(gauss(x0,h2,mu2,s2))
+    if (g11 < g12) ov2 <- sum(gauss(x1,h1,mu1,s1)) else ov2 <- sum(gauss(x1,h2,mu2,s2))
+    if ((g01 == g02) && (g01==0)) ov1 <- 0
+    if ((g11 == g12) && (g11==0)) ov2 <- 0
     overlap <- ov1 + ov2
   }
   
