@@ -222,11 +222,11 @@ than peak identification and is generally not recommended as such.
 \\
 \textbf{findPeaks.centWave} \\
 The method \Rmethod{findPeaks.centWave} follows a different
-approach.  The algorithm is useful only for centroid LC/MS data. If
-your machine software or converter does not support the export of peak
-centroids, tools like the \emph{TOPP-PeakPicker} can be used for
-preprocessing \footnote{\url{http://www.openms.de}}.  Due to the fact
-that peak centroids are used, a binning step is not necessary.
+approach.   This algorithm is most suitable for high resolution 
+centroid LC/TOF-MS data. If your machine software or converter does 
+not support the export of peak centroids, tools like the \emph{TOPP-PeakPicker} 
+can be used for preprocessing \footnote{\url{http://www.openms.de}}. 
+Due to the fact that peak centroids are used, a binning step is not necessary.
 
 In the first phase of the algorithm areas of high peak density
 (characterised by having at least \Rfunarg{minEntries} peaks within

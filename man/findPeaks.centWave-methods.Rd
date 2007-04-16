@@ -15,7 +15,7 @@
 }
 }}
 \details{
-  This algorithm is useful only for centroid LC/MS data. In the first phase of the method 
+  This algorithm is most suitable for high resolution centroid LC/TOF-MS data. In the first phase of the method 
   areas of high peak density (characterised by having at least \code{minEntries} peaks
   within \code{dev} ppm in consecutive scans) in the LC/MS map are located.
   In the second phase these \emph{regions of interest} (ROI) are further analysed. 
