@@ -49,7 +49,7 @@
     \item{mzrange}{
       \code{signature(object = "xcmsEIC")}: get \code{mzrange} slot
     }
-    \item{\link[xcms:plot-methods]{plot}}{
+    \item{\link[xcms:plot.xcmsEIC]{plot}}{
       \code{signature(x = "xcmsEIC")}: plot the extracted ion
       chromatograms
     }

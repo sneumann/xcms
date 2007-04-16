@@ -30,15 +30,15 @@ rectUnique(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0)
 m <- rbind(c(0,4,0,3), c(1,3,2,6), c(3,6,4,6))
 plot(0, 0, type = "n", xlim=range(m[,1:2]), ylim=range(m[,3:4]))
 rect(m[,1], m[,3], m[,2], m[,4])
-rectUnique(m)
+xcms:::rectUnique(m)
 # Changing order of processing
-rectUnique(m, c(2,1,3))
+xcms:::rectUnique(m, c(2,1,3))
 # Requiring border spacing
-rectUnique(m, ydiff = 1)
+xcms:::rectUnique(m, ydiff = 1)
 # Allowing adjacent boxes
-rectUnique(m, c(2,1,3), xdiff = -0.00001)
+xcms:::rectUnique(m, c(2,1,3), xdiff = -0.00001)
 # Allowing interpenetration
-rectUnique(m, xdiff = -1.00001, ydiff = -1.00001)
+xcms:::rectUnique(m, xdiff = -1.00001, ydiff = -1.00001)
 }
 \keyword{array}
 \keyword{internal}

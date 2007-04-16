@@ -48,9 +48,6 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     return(object)
 }
 
-if ( !isGeneric("show") )
-    setGeneric("show", function(object) standardGeneric("show"))
-
 setMethod("show", "xcmsRaw", function(object) {
 
     cat("An \"xcmsRaw\" object with", length(object@scantime), "mass spectra\n\n")
@@ -87,8 +84,7 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-if ( !isGeneric("revMz") )
-    setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
+setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
 
 setMethod("revMz", "xcmsRaw", function(object) {
 
@@ -100,8 +96,7 @@ setMethod("revMz", "xcmsRaw", function(object) {
     }
 })
 
-if ( !isGeneric("sortMz") )
-    setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
+setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
 
 setMethod("sortMz", "xcmsRaw", function(object) {
 
@@ -114,8 +109,7 @@ setMethod("sortMz", "xcmsRaw", function(object) {
     }
 })
 
-if( !isGeneric("plotTIC") )
-    setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
+setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
@@ -147,8 +141,7 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
     invisible(points)
 })
 
-if( !isGeneric("getScan") )
-    setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
+setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
 
 setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
 
@@ -168,8 +161,7 @@ setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
     invisible(points)
 })
 
-if( !isGeneric("getSpec") )
-    setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
+setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
@@ -234,8 +226,7 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
     spectab
 }
 
-if( !isGeneric("plotScan") )
-    setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
+setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
 
 setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(), 
                                           ident = FALSE) {
@@ -260,8 +251,7 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
     invisible(points)
 })
 
-if( !isGeneric("plotSpec") )
-    setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
+setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
 
 setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE, 
                                           vline = numeric(0), ...) {
@@ -282,8 +272,7 @@ setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
     invisible(points)
 })
 
-if( !isGeneric("plotChrom") )
-    setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
+setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 
 setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE, 
                                            fitgauss = FALSE, vline = numeric(0), ...) {
@@ -336,8 +325,7 @@ image.xcmsRaw <- function(x, col = rainbow(256), ...) {
               col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
 }
 
-if( !isGeneric("plotSurf") )
-    setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
+setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
 setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE, 
                                           aspect = c(1, 1, .5), ...) {
@@ -386,13 +374,13 @@ filtfft <- function(y, filt) {
     Re(yfilt[1:length(y)])
 }
 
-if( !isGeneric("findPeaks.matchedFilter") )
-    setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
+setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
 
 setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548, 
-                                           max = 5, snthresh = 10, step = 0.1, steps = 2, 
-                                           mzdiff = 0.8 - step*steps, index = FALSE, 
-                                           sleep = 0, verbose.columns = FALSE) {
+                                                         max = 5, snthresh = 10, step = 0.1,
+                                                         steps = 2, mzdiff = 0.8 - step*steps, 
+                                                         index = FALSE, sleep = 0, 
+                                                         verbose.columns = FALSE) {
 
     profFun <- match.fun(.profFunctions[[profMethod(object)]])
     
@@ -507,8 +495,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     invisible(rmat)
 })
 
-if( !isGeneric("findPeaks.centWave") )
-    setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
+setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
                                         minEntries=4, dev=140e-6, snthresh=10, noiserange=10, minPeakWidth=7,
@@ -715,10 +702,11 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
     invisible(as.matrix(pr))
 })
 
-if( !isGeneric("findPeaks") )
-    setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
+setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 
-setMethod("findPeaks", "xcmsRaw", function(object,method=getOption("BioC")$xcms$findPeaks.method,...) {
+setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms$findPeaks.method,
+                                           ...) {
+    
     method <- match.arg(method, getOption("BioC")$xcms$findPeaks.methods)
     if (is.na(method))
         stop("unknown method : ", method)
@@ -726,8 +714,7 @@ setMethod("findPeaks", "xcmsRaw", function(object,method=getOption("BioC")$xcms$
     invisible(do.call(method, alist(object, ...)))
 })
 
-if( !isGeneric("getPeaks") )
-    setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
+setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 
 setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
@@ -779,8 +766,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     invisible(rmat)
 })
 
-if( !isGeneric("plotPeaks") )
-    setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
+setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
 
 setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
@@ -809,8 +795,7 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
     }
 })
 
-if( !isGeneric("getEIC") )
-    setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
+setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
 setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
 
@@ -856,8 +841,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     invisible(eic)
 })
 
-if( !isGeneric("plotRaw") )
-    setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
+setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
 
 setMethod("plotRaw", "xcmsRaw", function(object,
                                          massrange = numeric(), 
@@ -908,16 +892,14 @@ setMethod("plotRaw", "xcmsRaw", function(object,
      invisible(cbind(object@scantime[scans[massidx]], masses[massidx],int[massidx]))
 })
 
-if( !isGeneric("profMz") )
-    setGeneric("profMz", function(object) standardGeneric("profMz"))
+setGeneric("profMz", function(object) standardGeneric("profMz"))
 
 setMethod("profMz", "xcmsRaw", function(object) {
 
     object@mzrange[1]+profStep(object)*(0:(dim(object@env$profile)[1]-1))
 })
 
-if( !isGeneric("profMethod") )
-    setGeneric("profMethod", function(object) standardGeneric("profMethod"))
+setGeneric("profMethod", function(object) standardGeneric("profMethod"))
 
 setMethod("profMethod", "xcmsRaw", function(object) {
 
@@ -927,8 +909,7 @@ setMethod("profMethod", "xcmsRaw", function(object) {
 .profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM", 
                        binlinbase = "profBinLinBaseM", bin = "profBinM")
 
-if( !isGeneric("profMethod<-") )
-    setGeneric("profMethod<-", function(object, value) standardGeneric("profMethod<-"))
+setGeneric("profMethod<-", function(object, value) standardGeneric("profMethod<-"))
 
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
@@ -942,8 +923,7 @@ setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
     object
 })
 
-if( !isGeneric("profStep") )
-    setGeneric("profStep", function(object) standardGeneric("profStep"))
+setGeneric("profStep", function(object) standardGeneric("profStep"))
 
 setMethod("profStep", "xcmsRaw", function(object) {
 
@@ -953,8 +933,7 @@ setMethod("profStep", "xcmsRaw", function(object) {
         diff(object@mzrange)/(nrow(object@env$profile)-1)
 })
 
-if( !isGeneric("profStep<-") )
-    setGeneric("profStep<-", function(object, value) standardGeneric("profStep<-"))
+setGeneric("profStep<-", function(object, value) standardGeneric("profStep<-"))
 
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
@@ -974,8 +953,7 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
     return(object)
 })
 
-if( !isGeneric("profMedFilt") )
-    setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
+setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
 
 setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 
@@ -983,8 +961,7 @@ setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
     object@env$profile <- medianFilter(object@env$profile, massrad, scanrad)
 })
 
-if( !isGeneric("profRange") )
-    setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
+setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
 
 setMethod("profRange", "xcmsRaw", function(object,
                                            massrange = numeric(), 
@@ -1054,10 +1031,10 @@ setMethod("profRange", "xcmsRaw", function(object,
          timerange = timerange, timelab = timelab)
 })
 
-if( !isGeneric("rawEIC") )
-    setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
+setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
     
 setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(object@scantime))){
+  
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
@@ -1065,11 +1042,11 @@ setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(ob
   .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
-if( !isGeneric("findMZBoxes") )
-    setGeneric("findMZBoxes", function(object, ...) standardGeneric("findMZBoxes"))
+setGeneric("findMZBoxes", function(object, ...) standardGeneric("findMZBoxes"))
 
 setMethod("findMZBoxes", "xcmsRaw", function(object,massrange=c(0.0,0.0),scanrange=c(1,length(object@scantime)),dev,minEntries,debug=0){
-    ## massrange not implemented yet
+  
+  ## massrange not implemented yet
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)  
