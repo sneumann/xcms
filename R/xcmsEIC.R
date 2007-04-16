@@ -5,9 +5,6 @@ setClass("xcmsEIC", representation(eic = "list", mzrange = "matrix",
                    rtrange = matrix(nrow = 0, ncol = 0), 
                    rt = character(0), groupnames = character(0)))
 
-if ( !isGeneric("show") )
-    setGeneric("show", function(object) standardGeneric("show"))
-
 setMethod("show", "xcmsEIC", function(object) {
 
     cat("An \"xcmsEIC\" object with", length(object@eic), "samples\n\n")
@@ -31,47 +28,37 @@ setMethod("show", "xcmsEIC", function(object) {
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-if ( !isGeneric("groupnames") )
-    setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
+setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
 setMethod("groupnames", "xcmsEIC", function(object) {
 
     object@groupnames
 })
 
-if ( !isGeneric("sampnames") )
-    setGeneric("sampnames", function(object) standardGeneric("sampnames"))
+setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
 setMethod("sampnames", "xcmsEIC", function(object) {
 
     names(object@eic)
 })
 
-if ( !isGeneric("mzrange") )
-    setGeneric("mzrange", function(object) standardGeneric("mzrange"))
+setGeneric("mzrange", function(object) standardGeneric("mzrange"))
 
 setMethod("mzrange", "xcmsEIC", function(object) {
 
     object@mzrange
 })
 
-if ( !isGeneric("rtrange") )
-    setGeneric("rtrange", function(object) standardGeneric("rtrange"))
+setGeneric("rtrange", function(object) standardGeneric("rtrange"))
 
 setMethod("rtrange", "xcmsEIC", function(object) {
 
     object@rtrange
 })
 
-if ( !isGeneric("plot") )
-    setGeneric("plot", function(x,y,...)  standardGeneric("plot"))
-
-setMethod("plot", "xcmsEIC", function(x, y, groupidx = groupnames(x),
-                                      sampleidx = sampnames(x), 
-                                      rtrange = x@rtrange, 
-                                      col = rep(1, length(sampleidx)), 
-                                      legtext = NULL, peakint = TRUE, 
-                                      sleep = 0) {
+plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), 
+                         rtrange = x@rtrange, col = rep(1, length(sampleidx)), legtext = NULL, 
+                         peakint = TRUE, sleep = 0, ...) {
 
     object <- x
     
@@ -161,6 +148,6 @@ setMethod("plot", "xcmsEIC", function(x, y, groupidx = groupnames(x),
         if (sleep > 0)
             Sys.sleep(sleep)
     }
-})
+}
 
 

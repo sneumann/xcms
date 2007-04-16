@@ -1,4 +1,4 @@
-2007-04-??: 1.7.1
+2007-04-??: 1.8.0 & 1.9.0
 
 introduced namespace
 plot(xcmsEIC) problem seems to be fixed
@@ -30,6 +30,10 @@ Small fixes to xcmsSet generation relating to finding/categorizing files:
   - One character directory names, and thus group names, are now supported
 
 Enabled axis labels for OpenGL surface plotting using plotSurf()
+
+Removed formerly depricated function clustunique()
+
+Changed xcmsEIC plotting function from an S4 to an S3 method
 
 2006-04-27: 1.6.1 & 1.7.0
 

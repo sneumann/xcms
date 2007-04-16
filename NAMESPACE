@@ -1,21 +1,78 @@
 useDynLib(xcms)
 
-export(cdfpaths, "cdfpaths<-", clustunique, colMax, c.xcmsSet, descendMin, descendValue, descendZero,
-diffreport, doubleMatrix, etg, fillPeaks, filtfft, findEqualGreater, findEqualGreaterM, findEqualLess,
-findMZBoxes, findPeaks, findPeaks.centWave, findPeaks.matchedFilter, findRange,
-getEIC, getPeaks, getScan, getSpec, group, "groups<-", groupidx, "groupidx<-", groupnames, groups, groupval, image.xcmsRaw,
-integerMatrix, logicalMatrix, medianFilter, mzrange, na.flatfill, panel.cor, peaks, "peaks<-", plot,
-plotChrom, plotPeaks, plotRaw, plotrt, plotScan, plotSpec, plotSurf, plotTIC,
-profBin, profBinLin, profBinLinBase, profBinLinBaseM, profBinLinM,
-profBinM, profinfo, "profinfo<-", profIntLin, profIntLinM, profMaxIdx, profMaxIdxM, profMedFilt, profMethod, "profMethod<-",
-profMz, profRange, profStep, "profStep<-", pval, rawEIC, rectUnique, retcor, retexp, revMz, rowMax, rtrange,
-sampclass, "sampclass<-", sampnames, "sampnames<-", sortMz, specNoise, specPeaks, split.xcmsSet, SSgauss, which.colMax,
-which.rowMax, xcmsRaw, xcmsSet)
-
 import("methods")
+importFrom("graphics", "plot")
 
-importFrom("graphics","plot")
+export(
+       "etg",
+       "medianFilter",
+       "retexp",
+       "specNoise",
+       "specPeaks",
+       "SSgauss",
+       "xcmsRaw",
+       "xcmsSet"
+       )
 
-exportMethods("plot", "show")
+S3method(c, xcmsSet)
+S3method(image, xcmsRaw)
+S3method(plot, xcmsEIC)
+S3method(split, xcmsSet)
 
-exportClasses("xcmsRaw", "xcmsEIC", "xcmsSet")
+exportClasses(
+              "xcmsEIC",
+              "xcmsRaw",
+              "xcmsSet"
+              )
+
+exportMethods(
+              "cdfpaths",
+              "cdfpaths<-",
+              "diffreport",
+              "fillPeaks",
+              "findMZBoxes",
+              "findPeaks.centWave",
+              "findPeaks.matchedFilter",
+              "findPeaks",
+              "getEIC",
+              "getPeaks",
+              "getScan",
+              "getSpec",
+              "group",
+              "groupidx",
+              "groupidx<-",
+              "groupnames",
+              "groups",
+              "groups<-",
+              "groupval",
+              "mzrange",
+              "peaks",
+              "peaks<-",
+              "plotChrom",
+              "plotPeaks",
+              "plotRaw",
+              "plotrt",
+              "plotScan",
+              "plotSpec",
+              "plotSurf",
+              "plotTIC",
+              "profinfo",
+              "profinfo<-",
+              "profMedFilt",
+              "profMethod",
+              "profMethod<-",
+              "profMz",
+              "profRange",
+              "profStep",
+              "profStep<-",
+              "rawEIC",
+              "retcor",
+              "revMz",
+              "rtrange",
+              "sampclass",
+              "sampclass<-",
+              "sampnames",
+              "sampnames<-",
+              "show",
+              "sortMz"
+              )

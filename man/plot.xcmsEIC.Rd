@@ -1,21 +1,16 @@
-\name{plot-methods}
-\docType{methods}
-%\alias{plot-methods}
-\alias{plot}
-\alias{plot,xcmsEIC-method}
+\name{plot.xcmsEIC}
+\alias{plot.xcmsEIC}
 \title{Plot extracted ion chromatograms from multiple files}
 \description{
   Batch plot a list of extracted ion chromatograms to the current
   graphics device.
 }
-\section{Methods}{
-\describe{
-\item{x = "xcmsEIC"}{
-  \code{plot(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), 
-             rtrange = x@rtrange, col = rep(1, length(sampleidx)), 
-             legtext = NULL, peakint = TRUE, sleep = 0)}
+\usage{
+plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
+             col = rep(1, length(sampleidx)), legtext = NULL, peakint = TRUE, sleep = 0, ...)}
+\value{
+  A \code{xcmsSet} object.
 }
-}}
 \arguments{
   \item{x}{the \code{xcmsEIC} object}
   \item{y}{optional \code{xcmsSet} object with peak integration data}
@@ -57,7 +52,9 @@
     that \code{y} also be specified)
   }
   \item{sleep}{seconds to pause between plotting EICs}
+  \item{...}{other graphical parameters}
 }
+\author{Colin A. Smith, \email{csmith@scripps.edu}}
 \seealso{
   \code{\link{xcmsEIC-class}},
   \code{\link{png}},

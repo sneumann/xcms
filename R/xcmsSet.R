@@ -80,9 +80,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     object
 }
 
-if ( !isGeneric("show") )
-    setGeneric("show", function(object) standardGeneric("show"))
-
 setMethod("show", "xcmsSet", function(object) {
 
     cat("An \"xcmsSet\" object with", length(object@sampnames), "samples\n\n")
@@ -188,13 +185,11 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     lcsets
 }
 
-if( !isGeneric("peaks") )
-    setGeneric("peaks", function(object) standardGeneric("peaks"))
+setGeneric("peaks", function(object) standardGeneric("peaks"))
 
 setMethod("peaks", "xcmsSet", function(object) object@peaks)
 
-if( !isGeneric("peaks<-") )
-    setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
+setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 
 setReplaceMethod("peaks", "xcmsSet", function(object, value) {
 
@@ -203,13 +198,11 @@ setReplaceMethod("peaks", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("groups") )
-    setGeneric("groups", function(object) standardGeneric("groups"))
+setGeneric("groups", function(object) standardGeneric("groups"))
 
 setMethod("groups", "xcmsSet", function(object) object@groups)
 
-if( !isGeneric("groups<-") )
-    setGeneric("groups<-", function(object, value) standardGeneric("groups<-"))
+setGeneric("groups<-", function(object, value) standardGeneric("groups<-"))
 
 setReplaceMethod("groups", "xcmsSet", function(object, value) {
 
@@ -218,13 +211,11 @@ setReplaceMethod("groups", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("groupidx") )
-    setGeneric("groupidx", function(object) standardGeneric("groupidx"))
+setGeneric("groupidx", function(object) standardGeneric("groupidx"))
 
 setMethod("groupidx", "xcmsSet", function(object) object@groupidx)
 
-if( !isGeneric("groupidx<-") )
-    setGeneric("groupidx<-", function(object, value) standardGeneric("groupidx<-"))
+setGeneric("groupidx<-", function(object, value) standardGeneric("groupidx<-"))
 
 setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
 
@@ -233,13 +224,11 @@ setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("sampnames") )
-    setGeneric("sampnames", function(object) standardGeneric("sampnames"))
+setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
 setMethod("sampnames", "xcmsSet", function(object) object@sampnames)
 
-if( !isGeneric("sampnames<-") )
-    setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
+setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
 
 setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
@@ -248,13 +237,11 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("sampclass") )
-    setGeneric("sampclass", function(object) standardGeneric("sampclass"))
+setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
 setMethod("sampclass", "xcmsSet", function(object) object@sampclass)
 
-if( !isGeneric("sampclass<-") )
-    setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
+setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
 
@@ -266,13 +253,11 @@ setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("cdfpaths") )
-    setGeneric("cdfpaths", function(object) standardGeneric("cdfpaths"))
+setGeneric("cdfpaths", function(object) standardGeneric("cdfpaths"))
 
 setMethod("cdfpaths", "xcmsSet", function(object) object@cdfpaths)
 
-if( !isGeneric("cdfpaths<-") )
-    setGeneric("cdfpaths<-", function(object, value) standardGeneric("cdfpaths<-"))
+setGeneric("cdfpaths<-", function(object, value) standardGeneric("cdfpaths<-"))
 
 setReplaceMethod("cdfpaths", "xcmsSet", function(object, value) {
 
@@ -281,13 +266,11 @@ setReplaceMethod("cdfpaths", "xcmsSet", function(object, value) {
     object
 })
 
-if( !isGeneric("profinfo") )
-    setGeneric("profinfo", function(object) standardGeneric("profinfo"))
+setGeneric("profinfo", function(object) standardGeneric("profinfo"))
 
 setMethod("profinfo", "xcmsSet", function(object) object@profinfo)
 
-if( !isGeneric("profinfo<-") )
-    setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
+setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
 
 setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 
@@ -296,8 +279,7 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
     object
 })
 
-if ( !isGeneric("groupnames") )
-    setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
+setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0, 
                                             template = NULL) {
@@ -330,8 +312,7 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
     gnames
 })
 
-if( !isGeneric("group") )
-    setGeneric("group", function(object, ...) standardGeneric("group"))
+setGeneric("group", function(object, ...) standardGeneric("group"))
 
 setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
                                        mzwid = 0.25, max = 5, sleep = 0) {
@@ -431,8 +412,7 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp =
     object
 })
 
-if( !isGeneric("groupval") )
-    setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
+setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
 setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"), 
                                           value = "index", intensity = "into") {
@@ -471,8 +451,7 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
     values
 })
 
-if( !isGeneric("retcor") )
-    setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
+setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
 
 setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
                                         method = c("loess", "linear"), span = .2,
@@ -626,8 +605,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     invisible(object)
 })
 
-if( !isGeneric("plotrt") )
-    setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
+setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
 setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRUE, densplit = FALSE) {
 
@@ -684,8 +662,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     }
 })
 
-if( !isGeneric("fillPeaks") )
-    setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
+setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
 
 setMethod("fillPeaks", "xcmsSet", function(object) {
 
@@ -757,9 +734,6 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     
     invisible(object)
 })
-
-if( !isGeneric("getEIC") )
-    setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200, 
                                         groupidx, sampleidx = sampnames(object),
@@ -833,8 +807,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                   rt = rt, groupnames = gnames))
 })
 
-if( !isGeneric("diffreport") )
-    setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
+setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1], 
                                             class2 = levels(sampclass(object))[2],
@@ -921,37 +894,6 @@ retexp <- function(peakrange, width = 200) {
     peakrange[,"rtmax"] <- retmean+width/2
     
     peakrange
-}
-
-#### Create a unique cluster list
-
-clustunique <- function(clust, priority = seq(length = nrow(clust)), mzdiff = 0, max = 5) {
-
-    use <- logical(nrow(clust))
-    corder <- order(clust[,"mzmin"])
-    clust <- clust[corder, c("mzmin","mzmax","rtmin","rtmax")]
-    priority <- priority[corder]
-    
-    #mztest <- seq(min(clust[,"mzmin"]), max(clust[,"mzmax"]), by = 0.1)
-    #show(range(mztest))
-    #mintest <- findEqualGreaterM(clust[,"mzmin"], mztest)
-    #maxtest <- findEqualGreaterM(clust[,"mzmax"], mztest)
-    #show(max(maxtest[(mzdiff/.1):length(maxtest)]-mintest[1:(length(mintest)-mzdiff/.1+1)]))
-    #show(max(clust[,2] - clust[,1]))
-    
-    use <- logical(nrow(clust))
-    for (i in priority) {
-        nearidx <- c((i-max):(i-1), (i+1):(i+max))
-        nearidx <- nearidx[nearidx >= 1 & nearidx <= nrow(clust)]
-        nearclust <- clust[nearidx,]
-        if (!any(use[nearidx] & !(clust[i,"mzmin"] - nearclust[,"mzmax"] > mzdiff | nearclust[,"mzmin"] - clust[i,"mzmax"] > mzdiff) &
-                 !(clust[i,"rtmin"] > nearclust[,"rtmax"] | clust[i,"rtmax"] < nearclust[,"rtmin"])))
-            use[i] = TRUE
-    }
-    
-    warning("clustunique has been depricated and will be removed")
-    
-    sort(corder[use])
 }
 
 #### Fill in NA values with the minimum and maximum value
