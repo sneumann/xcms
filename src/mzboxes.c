@@ -16,7 +16,7 @@
 #define FALSE    0
 
 #define SIZE_PEAKBUFS 50000   // max. # of "short" Peaks
-#define SIZE_PEAKBUFL 1000    // max. # of "long" Peaks
+#define SIZE_PEAKBUFL 5000    // max. # of "long" Peaks
 #define DIM_PEAKBUFS 50       // max length of "short" Peaks
 #define DIM_PEAKBUFL 2000     // max length of "long" Peaks
 #define DIM_MZBUF    10000     // max # m/z values to hold
