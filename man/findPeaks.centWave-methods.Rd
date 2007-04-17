@@ -40,7 +40,7 @@
   \item{scales}{scales to use for wavelet analysis, the scale range should correspond to the width range of the chromatographic peaks (number of scans) }
   \item{maxGaussErr}{maximum root-mean-square error (RMSE) of Gauss fit, RMSE is close to zero if peak is gaussian-shaped}
   \item{maxGaussOverlap}{maximal allowed overlapping (peak area)}
-  \item{minPtsAboveBaseLine}{used for baseline estimation}
+  \item{minPtsAboveBaseLine}{minimum number of data points above baseline}
   \item{rbwidth}{width of running median for baseline estimation}
   \item{scRangeTol}{tolerance (in scans) if gaussian peak center is not within the initial ROI}
   \item{maxDescOutlier}{Maximum number of outliers on the descent to find peak borders}
