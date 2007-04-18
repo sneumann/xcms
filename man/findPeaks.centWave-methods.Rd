@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=10, noiserange=10, minPeakWidth=7, scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5, minPtsAboveBaseLine=3, rbwidth=minPeakWidth * 2, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, verbose.columns = FALSE)
+    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=10, noiserange=20, minPeakWidth=7, scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, verbose.columns = FALSE)
   }
 }
 }}

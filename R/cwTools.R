@@ -359,10 +359,6 @@ wnoisedet <- function(x,lev,num) {
   fpos
 } 
 
-noiseQuant <- function(d) {
- quantile(d,1/3)
-}
-
 remove.NA.features <- function(peaks) {
   rmi <- which(is.na(peaks[,"mu"]))
   if (length(rmi) >0) return(peaks[-rmi,]) else return(peaks)
@@ -512,3 +508,7 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
   overlap / vsmall
 }
 
+mzModel <- function(mz,intensity) {
+    ## there might be better models ..
+    weighted.mean(mz, intensity) 
+}
