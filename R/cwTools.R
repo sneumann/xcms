@@ -406,6 +406,7 @@ joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverl
           jp["scpos"] <- -1; jp["scmin"] <- -1; jp["scmax"] <- -1; ## not defined after join
           jp["maxo"] <- max(peaks[c(p1,p2),"maxo"])  
           jp["sn"] <- max(peaks[c(p1,p2),"sn"])
+          jp["egauss"] <- mean(peaks[c(p1,p2),"egauss"])
           jp["lmin"] <- newmin; jp["lmax"] <-  newmax 
           jp["rtmin"] <- scantime[td[newmin]]   ; jp["rtmax"] <- scantime[td[newmax]]     
           jp["rt"] <- weighted.mean(peaks[c(p1,p2),"rt"],w=peaks[c(p1,p2),"maxo"])
@@ -422,8 +423,10 @@ joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverl
           if (!any(is.na(pgauss)) && all(pgauss > 0)) {
                 newpeaks[j,"mu"] <- pgauss$mu; newpeaks[j,"sigma"] <- pgauss$sigma; newpeaks[j,"h"] <- pgauss$h;  
                 newpeaks[j,"egauss"] <- sqrt((1/length(td[newmin:newmax])) * sum(((d1-gauss(td[newmin:newmax],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
-          } else stop('Panic: re-fit after join (2) failed.')
-          if (newpeaks[j,"egauss"] > maxGaussErr) stop('Panic: re-fit after join (2) failed, err > maxGaussErr')
+          } else {
+                    newpeaks[j,"mu"] <- NA; newpeaks[j,"sigma"] <- NA; newpeaks[j,"h"] <- NA;  
+                 }
+          
         }
       }
     } # any overlap

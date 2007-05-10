@@ -1,2 +1,9 @@
 PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
 PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE
+
+all: $(SHLIB)
+
+MYCFLAGS = -O1
+ramp.o: ramp.c
+	$(CC) $(ALL_CPPFLAGS) $(ALL_CFLAGS) $(MYCFLAGS) -c $< -o $@
+

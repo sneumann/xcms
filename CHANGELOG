@@ -1,4 +1,11 @@
-2007-04-??: 1.8.0 & 1.9.0
+2007-05-??: 1.9.1
+
+Workaround for ramp/gcc bug (optimization lowered to -O1 for ramp.c)
+Several improvements for findpeaks.centWave 
+Fixed bug in joinOverlappingPeaks()
+Updated ramp.c to v1.38 (from CVS)
+
+2007-04-26: 1.8.0 & 1.9.0
 
 introduced namespace
 plot(xcmsEIC) problem seems to be fixed

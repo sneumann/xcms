@@ -246,7 +246,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                 ramp_fileoffset_t indexOffset,
                 int *iLastScan)
 {
-   int  n;
+   int  n, nread;
    int  reallocSize = 8000;    /* initial # of scan indexes to expect */
    char *beginScanOffset;
    
@@ -277,11 +277,11 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
          }
          ramp_fseek(pFI,0,SEEK_SET);
          buf[sizeof(buf)-1] = 0;
-         while ((int)ramp_fread(buf,sizeof(buf)-1,pFI)>taglen) {
+         while ((nread = (int)ramp_fread(buf,sizeof(buf)-1,pFI))>taglen) {
             char *find;
             int truncated = 0;
             char *look=buf;
-            int nread;
+            buf[nread] = 0;
             while (NULL != (find = strstr(look,scantag))) {
               int k,newN; 
               // HENRY - needs to read ahead a few chars to make sure the scan num is complete in this buf
@@ -336,12 +336,12 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                */
             }
             nread = strlen(look)+(look-buf);
-            if (*look && strchr(scantag,buf[nread-1])) { // check last char of buffer
+            if (*look && strchr(scantag,buf[nread-1]) && !ramp_feof(pFI)) { // check last char of buffer
                // possible that next scantag overhangs end of buffer
                ramp_fseek(pFI,-taglen,SEEK_CUR); // so next get includes it
             
             // HENRY - if the scan number is truncated, we go back a few chars so that the next get will include it
-            } else if (truncated != 0) {
+            } else if (truncated != 0 && !ramp_feof(pFI)) {
                ramp_fseek(pFI, -truncated, SEEK_CUR);
             } 
             index = ramp_ftell(pFI);
