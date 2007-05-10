@@ -498,7 +498,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
-                                        minEntries=4, dev=140e-6, snthresh=10, noiserange=20, minPeakWidth=7,
+                                        minEntries=4, dev=140e-6, snthresh=10, noiserange=40, minPeakWidth=7,
                                         scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5,
                                         minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2,
                                         maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, 
@@ -515,135 +515,106 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       feat <- featlist[[f]]
       perc <- round((f/lf) * 100)
       if ((perc %% 5 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
-      N <- length(feat$mz); peaks <- NULL; GAUSS <- FALSE
+      N <- length(feat$mz); peaks <- NULL; 
       mzrange <- range(feat$mz) 
       sccenter <- feat$scan[1] + floor(N/2) - 1 
       scrange <- range(feat$scan)
+      ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - noiserange),min(scanrange[2],scrange[2] + noiserange))
       eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
+      d <- eic$intensity;    td <- sr[1]:sr[2] ; scan.range <- c(sr[1],sr[2])
+      ## original data range (hd m/z boxes)
       omz <- feat$mz
       od <- feat$intensity ; otd <- feat$scan
-      d <- eic$intensity;    td <- sr[1]:sr[2] ; scan.range <- c(sr[1],sr[2])
-      noise <- quantile(d,1/3)                  ## estimate "low" baseline
-      pk <- wnoisedet(d,lev=noise,num=minPtsAboveBaseLine)
+      ##  scrange + scRangeTol, used for gauss fitting and continuous data above 1st baseline detection      
+      ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)], scrange[2] + scRangeTol) 
+      fd <- d[match(ftd,td)]
       
-      if (!is.null(pk)) {                       ## any continuous data above "low" baseline ?
-
-          q9 <- quantile(d,.9); rd <- d; 
-          rd[rd>q9] <- mean(d)                  ## cut off outlier data (peaks?) for baseline calc.
-          baseline <- rmean(rd,width=rbwidth)   ## estimate "high" baseline
-          od.baseline.range <- match(otd,td) - round(rbwidth/4)
-          od.baseline.range[od.baseline.range < 1] <- 1
-          od.baseline.range[od.baseline.range > length(baseline)] <- length(baseline)
-          od.baseline.values <- baseline[od.baseline.range] 
-         
-        if (any(max(od) > snthresh * od.baseline.values)) { ## is there any data above snthresh * baseline ?
-        
-            if (N >= 2*minPeakWidth) {      ## look for one or more chrom. peaks   
-              wCoefs <- cwt(d, scales=scales, wavelet='mexh')
-              if (!is.null(dim(wCoefs))) {
-                if (dim(wCoefs)[2] >= 1) {  ## it seems to contain one or more relevant peaks
-                  localMax <- getLocalMaximumCWT(wCoefs) 
-                  rL <- getRidge(localMax)   
-                  for (p in 1:length(rL)) { ## check each peak in ridgeList
-                    opp <- rL[[p]]
-                    pp <- unique(opp)
-                    if (length(pp) >= 1) {
-                      dv <- td[pp] %in% otd[2:(N-1)] 
-                      if (any(dv)) { ## peaks in orig. data range
-                        dmax <- max(d[pp[dv]])
-                        ppos <- pp[which(d[pp] == dmax)]
-                        baseline.value <- max(1,baseline[max(1,min(ppos-round(rbwidth/4),length(baseline)))])
-                        DTHR <- any(d[pp[dv]] >= snthresh * baseline.value)
-                        FTHR <- any(wCoefs[pp,] >= snthresh * baseline.value)
-                        if (DTHR && FTHR) { ## it seems to be a 'real' peak
-                            if (is.matrix(wCoefs[pp,])) 
-                                maxscale <- which.max(apply(wCoefs[pp,], 2, sum)) else 
-                                    maxscale <- which.max(wCoefs[pp,])  ## scale with maximum response 
-                            best.scale <- scales[maxscale] 
-                            if (length(opp) >= maxscale) 
-                                best.scale.pos <- opp[maxscale] else 
-                                    best.scale.pos <- opp[length(opp)]
-                            pprange <- min(pp):max(pp)
-                            maxint <- max(d[pprange])
-                            lwpos <- max(1,best.scale.pos - best.scale)
-                            rwpos <- min(best.scale.pos + best.scale,length(td))
-                            p1 <- match(td[lwpos],otd)[1]
-                            p2 <- match(td[rwpos],otd); p2 <- p2[length(p2)]
-                            if (is.na(p1)) p1<-1
-                            if (is.na(p2)) p2<-N
-                            mz.value <- omz[p1:p2]  
-                            mz.int <- od[p1:p2]     
-                            mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
-                            mzrange <- range(mz.value)
-                            
-                            peaks <- rbind(peaks,
-                                c(mzmean,mzrange,           ## mz
-                                NA,NA,NA,                   ## rt, rtmin, rtmax,
-                                NA,                         ## intensity (sum)
-                                maxint,                     ## max intensity
-                                maxint / baseline.value,    ## S/N Ratio
-                                NA,                         ## Gaussian RMSE
-                                NA,NA,NA,                   ## Gaussian Parameters
-                                f,                          ## ROI Position
-                                td[best.scale.pos], td[lwpos], td[rwpos],
-                                                            ## Peak positions guessed from the wavelet's (scan nr)
-                                NA,NA ))                    ## Peak limits (scan nr)
+      ## 1st type of baseline: statistic approach
+      if (N >= 10*minPeakWidth)  ## in case of very long mass trace use full scan range for baseline detection 
+        noised <- rawEIC(object,massrange=mzrange,scanrange=scanrange)$intensity else 
+            noised <- d;
+      ## cut off outlier data (peaks?) for better baseline calc.
+      noised[noised > quantile(noised,.90)] <- mean(noised[noised>0]) 
+      noise <- mean(noised[noised>0])    
+      pk <- wnoisedet(fd,lev=noise,num=minPtsAboveBaseLine)
+      
+      if (!is.null(pk)) {   ## any continuous data above 1st baseline ?
+            ## 2nd type of baseline: local maxima detection using not-peak-range
+            notod <- d[!td %in% ftd]
+            if (length(notod) > 1) lmax <- max(notod) else lmax <- noise
+            ## Final baseline
+            baseline <- max(1,min(lmax,noise))
+            
+        ## is there any data above snthresh * baseline ?
+        if (length(which(fd > snthresh * baseline)) >= minPtsAboveBaseLine ) { 
+            wCoefs <- cwt(d, scales=scales, wavelet='mexh')
+            if (!is.null(dim(wCoefs))) { ## it seems to contain one or more relevant peaks
+                localMax <- getLocalMaximumCWT(wCoefs) 
+                rL <- getRidge(localMax) 
+                wpeaks <- sapply(rL, function(x) any(wCoefs[x,] >= snthresh * baseline))
+                wpeaksidx <- which(wpeaks) 
+                if (any(wpeaks)) 
+                    for (p in 1:length(wpeaksidx)) { ## check each peak in ridgeList
+                      opp <- rL[[wpeaksidx[p]]]
+                      pp <- unique(opp)
+                      if (length(pp) >= 1) {
+                        dv <- td[pp] %in% ftd 
+                        if (any(dv)) { ## peaks in orig. data range
+                          dmax <- max(d[pp[dv]])
+                          ppos <- pp[which(d[pp] == dmax)]
+                          ##baseline.value <- max(1,baseline[max(1,min(ppos-round(rbwidth/4),length(baseline)))])
+                          
+                          ##DTHR <- any(c(d[pp[dv]] >= snthresh * baseline.value, d[pp[dv]] >= snthresh * noise))
+                          DTHR <- any(d[pp[dv]] >= snthresh * baseline)
+                          FTHR <- any(wCoefs[pp,] >= snthresh * baseline)
+                          if (DTHR || FTHR) { ## it seems to be a 'real' peak
+                              if (is.matrix(wCoefs[pp,])) 
+                                  maxscale <- which.max(apply(wCoefs[pp,], 2, sum)) else 
+                                      maxscale <- which.max(wCoefs[pp,])  ## scale with maximum response 
+                              best.scale <- scales[maxscale] 
+                              if (length(opp) >= maxscale) 
+                                  best.scale.pos <- opp[maxscale] else 
+                                      best.scale.pos <- opp[length(opp)]
+                              pprange <- min(pp):max(pp)
+                              maxint <- max(d[pprange])
+                              lwpos <- max(1,best.scale.pos - best.scale)
+                              rwpos <- min(best.scale.pos + best.scale,length(td))
+                              p1 <- match(td[lwpos],otd)[1]
+                              p2 <- match(td[rwpos],otd); p2 <- p2[length(p2)]
+                              if (is.na(p1)) p1<-1
+                              if (is.na(p2)) p2<-N
+                              mz.value <- omz[p1:p2]  
+                              mz.int <- od[p1:p2]     
+                              mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
+                              mzrange <- range(mz.value)
+                              
+                              peaks <- rbind(peaks,
+                                  c(mzmean,mzrange,           ## mz
+                                  NA,NA,NA,                   ## rt, rtmin, rtmax,
+                                  NA,                         ## intensity (sum)
+                                  maxint,                     ## max intensity
+                                  maxint / baseline,          ## S/N Ratio
+                                  NA,                         ## Gaussian RMSE
+                                  NA,NA,NA,                   ## Gaussian Parameters
+                                  f,                          ## ROI Position
+                                  td[best.scale.pos], td[lwpos], td[rwpos],
+                                                              ## Peak positions guessed from the wavelet's (scan nr)
+                                  NA,NA ))                    ## Peak limits (scan nr)
+                          }
                         }
                       }
-                    }
-                  }  #for 
-                }
-              }
-            } # N > 2*peakwidth
-            
-            if (is.null(peaks)) { ## no peak has been found yet, try gauss fit
-              ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)], scrange[2] + scRangeTol) 
-              fd <- d[match(ftd,td)]
-              pgauss <- fitGauss(ftd,fd)
-              GAUSS <- TRUE
-              
-              if (!any(is.na(pgauss)) && all(pgauss > 0)) {
-                md <- max(fd); d1 <- fd/md; 
-                eg <- sqrt((1/length(ftd)) * sum(((d1-gauss(ftd,pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
-                FIT <- (eg <= maxGaussErr) && pgauss$mu >= ftd[1] && pgauss$mu <= ftd[length(ftd)]
-                if (FIT) {
-                  bound <- c(otd[1],otd[length(otd)])
-                  limits <- descendMinTol(d,startpos = match(bound,td),maxDescOutlier)
-                  ppos <- match(max(1,round(pgauss$mu)),ftd);
-                  maxint <- max(od) # d[ppos];
-                  baseline.value <- max(1,baseline[max(1,min(ppos-round(rbwidth/4),length(baseline)))]);
-                  mz.value <- omz  ## m/z precision should be best in this (unextended) range
-                  mz.int <- od     
-                  mzmean <- mzModel(mz.value,mz.int)
-                  mzrange <- range(mz.value)
-                  if (maxint >= snthresh * baseline.value) {
-                      peaks <- rbind(peaks,
-                        c(mzmean,mzrange,                   ## mz
-                        scantime[ftd[ppos]],scantime[td[limits[1]]],scantime[td[limits[2]]],                                                                       ## rt, rtmin, rtmax
-                        sum(d[limits[1]:limits[2]]),        ## intensity (sum)
-                        maxint,                             ## max intensity
-                        maxint / baseline.value,            ## S/N Ratio
-                        eg,                                 ## Gaussian RMSE
-                        pgauss$mu,pgauss$sigma,pgauss$h,    ## Gaussian Parameters
-                        f,                                  ## ROI Position
-                        NA,NA,NA,                           ## Peak positions guessed from the wavelet's (scan nr)
-                        td[limits[1]],td[limits[2]]))     ## Peak limits (scan nr)
-                  }
-                }  
-              } 
+                    }  #for 
             }
-            
+    
+            ##  postprocessing   
             if (!is.null(peaks)) {
                 if (is.vector(peaks)) peaks <- data.frame(t(peaks))
                     else peaks <- data.frame(peaks)
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","egauss")
                 colnames(peaks) <- c(basenames,"mu","sigma","h","f","scpos","scmin","scmax","lmin","lmax")
-            }
-          
-            ## peaks left for postprocessing ?   
-            if (isTRUE(dim(peaks)[2] >= 1) && !GAUSS) {
-              for (p in 1:dim(peaks)[1]) {
+                   
+                for (p in 1:dim(peaks)[1]) {
                   ## find minima, assign rt and intensity values 
                   lm <- descendMinTol(d,startpos = match(c(peaks[p,"scmin"],peaks[p,"scmax"]),td),maxDescOutlier) 
                   peaks[p,"rtmin"] <- scantime[td[lm[1]]]
@@ -664,15 +635,12 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                     peaks[p,"mu"] <- pgauss$mu; peaks[p,"sigma"] <- pgauss$sigma; peaks[p,"h"] <- pgauss$h;  
                     peaks[p,"egauss"] <- sqrt((1/length(td[lm[1]:lm[2]])) * sum(((d1-gauss(td[lm[1]:lm[2]],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
                   } 
-              } 
-              
-              peaks <- remove.NA.features(peaks)
-              peaks <- joinOverlappingFeatures(td,d,scantime,scan.range,peaks,maxGaussOverlap) 
-              
-            } # postprocessing
-        
+                } 
+                peaks <- remove.NA.features(peaks)
+                peaks <- joinOverlappingFeatures(td,d,scantime,scan.range,peaks,maxGaussOverlap) 
+            }
+            
         } ## s/n
-        
       } ## minPtsAboveBaseLine valid
         
       if ((sleep >0) && (!is.null(peaks))) {
