@@ -41,7 +41,7 @@
   A matrix with the points plotted.
 }
 \seealso{
-  \code{\link{xcmsRaw-class}}}
+  \code{\link{xcmsRaw-class}}
 }
 \keyword{methods}
 \keyword{hplot}

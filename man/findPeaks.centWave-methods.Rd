@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=10, noiserange=20, minPeakWidth=7, scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, verbose.columns = FALSE)
+    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7, scales=c(5,7,9,12), maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, verbose.columns = FALSE)
   }
 }
 }}
@@ -38,7 +38,6 @@
     are checked whether they contain more than one peak.
   }
   \item{scales}{scales to use for wavelet analysis, the scale range should correspond to the width range of the chromatographic peaks (number of scans) }
-  \item{maxGaussErr}{maximum root-mean-square error (RMSE) of Gauss fit, RMSE is close to zero if peak is gaussian-shaped}
   \item{maxGaussOverlap}{maximal allowed overlapping (peak area)}
   \item{minPtsAboveBaseLine}{minimum number of data points above baseline}
   \item{rbwidth}{width of running median for baseline estimation}
