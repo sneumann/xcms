@@ -498,7 +498,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
-                                        minEntries=4, dev=140e-6, snthresh=10, noiserange=40, minPeakWidth=7,
+                                        minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7,
                                         scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5,
                                         minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2,
                                         maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, 
@@ -609,8 +609,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
     
             ##  postprocessing   
             if (!is.null(peaks)) {
-                if (is.vector(peaks)) peaks <- data.frame(t(peaks))
-                    else peaks <- data.frame(peaks)
+                if (is.vector(peaks)) peaks <- data.frame(t(peaks))  else peaks <- data.frame(peaks)
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","egauss")
                 colnames(peaks) <- c(basenames,"mu","sigma","h","f","scpos","scmin","scmax","lmin","lmax")
                    
@@ -625,18 +624,22 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                   md <- max(d[lm[1]:lm[2]]);d1 <- d[lm[1]:lm[2]]/md; ## normalize data for gaussian error calc.
                   pgauss <- fitGauss(td[lm[1]:lm[2]],d[lm[1]:lm[2]],pgauss = 
                     list(mu=peaks[p,"scpos"],sigma=peaks[p,"scmax"]-peaks[p,"scmin"],h=peaks[p,"maxo"]))
+                  rtime <- peaks[p,"scpos"]
                   if (!any(is.na(pgauss)) && all(pgauss > 0)) {
-                    peaks[p,"rt"] <- scantime[td[match(round(pgauss$mu),td)]]
+                    gtime <- td[match(round(pgauss$mu),td)]
+                    if (!is.na(gtime)) {
+                      rtime <- gtime  
+                      peaks[p,"mu"] <- pgauss$mu; peaks[p,"sigma"] <- pgauss$sigma; peaks[p,"h"] <- pgauss$h;  
+                      peaks[p,"egauss"] <- sqrt((1/length(td[lm[1]:lm[2]])) * sum(((d1-gauss(td[lm[1]:lm[2]],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))  
+                    }   
+                  }
+                  peaks[p,"rt"] <- scantime[rtime]
                     
-                    ## avoid fitting side effects
-                    if (peaks[p,"rt"] < peaks[p,"rtmin"]) 
-                        peaks[p,"rt"] <- scantime[peaks[p,"scpos"]]
-                        
-                    peaks[p,"mu"] <- pgauss$mu; peaks[p,"sigma"] <- pgauss$sigma; peaks[p,"h"] <- pgauss$h;  
-                    peaks[p,"egauss"] <- sqrt((1/length(td[lm[1]:lm[2]])) * sum(((d1-gauss(td[lm[1]:lm[2]],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
-                  } 
+                  ## avoid fitting side effects
+                  if (peaks[p,"rt"] < peaks[p,"rtmin"]) 
+                     peaks[p,"rt"] <- scantime[peaks[p,"scpos"]] 
                 } 
-                peaks <- remove.NA.features(peaks)
+                # peaks <- remove.NA.features(peaks)
                 peaks <- joinOverlappingFeatures(td,d,scantime,scan.range,peaks,maxGaussOverlap) 
             }
             
