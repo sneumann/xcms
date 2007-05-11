@@ -2,6 +2,7 @@
 
 Workaround for ramp/gcc bug (optimization lowered to -O1 for ramp.c)
 Several improvements for findpeaks.centWave 
+Removed maxGaussErr option in findpeaks.centWave 
 Fixed bug in joinOverlappingPeaks()
 Fixed bug in findpeaks.centWave where rt was not assigned correctly
 Updated ramp.c to v1.38 (from CVS)
