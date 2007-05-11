@@ -316,20 +316,6 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 	ridgeList
 }
 
-rmean <- function (X,width = min(length(X), 20))
-{ ## modified running() from package gtools
-    width <- min(length(X),width)
-    n <- length(X)
-    from <- 1:n
-    to <- pmin((1:n) + width - 1, n)
-    elements <- apply(cbind(from, to), 1, function(x) seq(x[1], x[2]))
-    len <- sapply(elements, length)
-    skip <- (len < width)
-    elements <- elements[!skip]
-    funct <- function(which, what, fun) mean(what[which])
-    sapply(elements, funct, what = X, fun = mean)
-}
-
 odd <- function (x) x != as.integer(x/2) * 2;
 
 gauss <- function(x, h, mu, sigma){
@@ -358,11 +344,6 @@ wnoisedet <- function(x,lev,num) {
   }
   fpos
 } 
-
-remove.NA.features <- function(peaks) {
-  rmi <- which(is.na(peaks[,"mu"]))
-  if (length(rmi) >0) return(peaks[-rmi,]) else return(peaks)
-}
 
 joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverlap=0.5,maxGaussErr=0.3) {  
   gausspeaks <- which(!is.na(peaks[,"mu"])); Ngp <- length(gausspeaks)
@@ -457,7 +438,9 @@ descendMinTol <- function(d,startpos,maxDescOutlier) {
 }
 
 cent <- function(x) {
-  floor(length(x)/2)
+  N <- length(x)
+  if (N == 1) return(1)
+  floor(N/2)
 }
 
 gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) { 
