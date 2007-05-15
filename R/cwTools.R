@@ -374,7 +374,10 @@ joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverl
         if (!any(is.na(pgauss)) && all(pgauss > 0)) {
               newpeaks["mu"] <- pgauss$mu; newpeaks["sigma"] <- pgauss$sigma; newpeaks["h"] <- pgauss$h;  
               newpeaks["egauss"] <- sqrt((1/length(td[newmin:newmax])) * sum(((d1-gauss(td[newmin:newmax],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
-        } else stop('Panic: re-fit after join (all) failed.')
+        } else { ## re-fit after join failed
+            newpeaks["mu"] <- NA; newpeaks["sigma"] <- NA; newpeaks["h"] <- NA;  
+            newpeaks["egauss"] <- NA;
+        }
       } else {
         ## check each combination, join if overlapping, mark smaller peak as deleted
         overlaps <- which(overlap)
@@ -405,7 +408,8 @@ joinOverlappingFeatures <- function(td,d,scantime,scan.range,peaks,maxGaussOverl
                 newpeaks[j,"mu"] <- pgauss$mu; newpeaks[j,"sigma"] <- pgauss$sigma; newpeaks[j,"h"] <- pgauss$h;  
                 newpeaks[j,"egauss"] <- sqrt((1/length(td[newmin:newmax])) * sum(((d1-gauss(td[newmin:newmax],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
           } else {
-                    newpeaks[j,"mu"] <- NA; newpeaks[j,"sigma"] <- NA; newpeaks[j,"h"] <- NA;  
+                    newpeaks[j,"mu"] <- NA; newpeaks[j,"sigma"] <- NA; newpeaks[j,"h"] <- NA;
+                    newpeaks[j,"egauss"] <- NA;
                  }
           
         }
