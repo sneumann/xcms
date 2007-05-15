@@ -499,7 +499,7 @@ setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeak
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
                                         minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7,
-                                        scales=c(5,7,9,12), maxGaussErr=0.25, maxGaussOverlap = 0.5,
+                                        scales=c(5,7,9,12), maxGaussOverlap = 0.5,
                                         minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2,
                                         maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, 
                                         rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
@@ -658,10 +658,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
             par(mar= c(4, 4, 1, 2) + 0.1)
             plot(tdp,d,ylab='Intensity',xlab='Scan Time');lines(tdp,d,lty=2)
             lines(scantime[otd],od,lty=2,col='blue') ## original mzbox range
-            abline(h=noise,col='green')
+            abline(h=baseline,col='green')
             bwh <- length(sr[1]:sr[2]) - length(baseline)
             if (odd(bwh)) {bwh1 <-  floor(bwh/2); bwh2 <- bwh1+1} else {bwh1<-bwh2<-bwh/2}
-            lines(tdp,c(rep(baseline[1],bwh1),baseline,rep(baseline[length(baseline)],bwh2)),col='red',lty=2)
             if  (any(!is.na(peaks[,"scpos"]))) 
             {   ## plot centers and width found through wavelet analysis
                 abline(v=scantime[na.omit(peaks[(peaks[,"scpos"] >0),"scpos"])],col='red')
