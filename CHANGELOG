@@ -1,3 +1,7 @@
+2007-05-??: 1.9.2
+Fixed mzdata problem under windows (ramp.c v1.39 from CVS)
+Removed workaround for ramp/gcc bug
+
 2007-05-??: 1.9.1
 
 Workaround for ramp/gcc bug (optimization lowered to -O1 for ramp.c)
