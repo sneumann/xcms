@@ -53,6 +53,19 @@ uint64_t swapbytes64(uint64_t x) {
             (uint64_t)swapbytes((uint32_t)(x >> 32))));
 }
 
+// 
+// do casts through unions to avoid running afoul of gcc strict aliasing
+//
+typedef union {
+   uint32_t u32;
+   float flt;
+} U32;
+
+typedef union {
+   uint64_t u64;
+   double dbl;
+} U64;
+
 /****************************************************************
  * Utility functions					*
  ***************************************************************/
@@ -162,7 +175,7 @@ char *ramp_fgets(char *buf,int len,RAMPFILE *handle) {
       }
       newline = strchr(buf+nread,'\n');
       if (newline) {
-         *newline = 0;
+         *(newline+1) = 0; // real fgets includes the newline
          ramp_fseek(handle,pos+(newline-buf)+1,SEEK_SET); // so next read is at next line
          break;
       }
@@ -600,9 +613,8 @@ const char *matchAttr(const char *where,const char *attr,int len) {
 //
 static char *ramp_nextTag(char *buf, int buflen, RAMPFILE *pFI) {
    char *result;
-   buf[buflen-1]=1; // so we can detect full buffer read
    result = ramp_fgets(buf,buflen,pFI);
-   if (result && !buf[buflen-1]) { // no newline found
+   if (result && !strchr(buf,'\n')) { // no newline found
       char *closer = strstr(buf+1,"</");
       if (closer) {
          *closer = 0; // temp. nullterm
@@ -1254,11 +1266,11 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
             pData[peaksLen-1] = 0; // pure base64 now
                         
             if ((pDecoded = (char *) realloc(pDecoded,peaksCount * (precision/8) + 1)) == NULL)
-            {
-               printf("Cannot allocate memory\n");
-               return NULL;
-            }
-            // Base64 decoding
+               {
+                  printf("Cannot allocate memory\n");
+                  return NULL;
+               }
+               // Base64 decoding
             b64_decode_mio(pDecoded, pData);
             
             if ((!pPeaks) && ((pPeaks = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1)) == NULL))
@@ -1277,9 +1289,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
                   }
                } else {
                   uint32_t *u = (uint32_t *) pDecoded;
+                  U32 tmp;
                   for (n = 0; n < peaksCount; n++) {
-                     uint32_t tmp = swapbytes( *u++ );
-                     pPeaks[isInten+(2*n)] = (RAMPREAL) (* (float *)(&tmp));
+                     tmp.u32 = swapbytes( *u++ );
+                     pPeaks[isInten+(2*n)] = (RAMPREAL) tmp.flt;
                   }
                }
             } else { // doubles
@@ -1290,9 +1303,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
                   }
                } else {
                   uint64_t *u = (uint64_t *) pDecoded;
+                  U64 tmp;
                   for (n = 0; n < peaksCount; n++) {
-                     uint64_t tmp = swapbytes64( *u++ );
-                     pPeaks[isInten+(2*n)] = (RAMPREAL) (* (double *)(&tmp));
+                     tmp.u64 = swapbytes64( *u++ );
+                     pPeaks[isInten+(2*n)] = (RAMPREAL) tmp.dbl;
                   }
                }
             }
@@ -1454,10 +1468,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       pData[peaksLen-1] = 0; // pure base64 now
       
       if ((pDecoded = (char *) malloc( decodedSize )) == NULL)
-      {
-         printf("Cannot allocate memory\n");
-         return NULL;
-      }
+         {
+            printf("Cannot allocate memory\n");
+            return NULL;
+         }
       // Base64 decoding
       b64_decode_mio(pDecoded, pData);
       free(pData);
@@ -1494,9 +1508,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
                pPeaks[n] = (RAMPREAL) ((float *) pToBeCorrected)[n];
             } 
          } else {
+            U32 tmp;
             for (n = 0; n < (2 * peaksCount); n++) {
-               uint32_t tmp = swapbytes(((uint32_t *) pToBeCorrected)[n]);
-               pPeaks[n] = (RAMPREAL) * (float *)(&tmp);
+               tmp.u32 = swapbytes(((uint32_t *) pToBeCorrected)[n]);
+               pPeaks[n] = (RAMPREAL) tmp.flt;
             } 
          }
       } else { // doubles
@@ -1505,9 +1520,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
                pPeaks[n] = (RAMPREAL)((double *) pToBeCorrected)[n];
             }
          } else {
+            U64 tmp;
             for (n = 0; n < (2 * peaksCount); n++) {
-               uint64_t tmp = swapbytes64((uint64_t) ((uint64_t *) pToBeCorrected)[n]);
-               pPeaks[n] = (RAMPREAL) * (double *)(&tmp);
+               tmp.u64 = swapbytes64((uint64_t) ((uint64_t *) pToBeCorrected)[n]);
+               pPeaks[n] = (RAMPREAL) tmp.dbl;
             }
          }
       }
