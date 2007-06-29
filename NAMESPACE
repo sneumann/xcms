@@ -33,6 +33,7 @@ exportMethods(
               "findMZBoxes",
               "findPeaks.centWave",
               "findPeaks.matchedFilter",
+              "findPeaks.MSW",
               "findPeaks",
               "getEIC",
               "getPeaks",
