@@ -1,3 +1,7 @@
+2007-06-29: 1.9.3
+Added wrapper for MassSpecWavelet peak picking on single spectra (findPeaks.MSW)
+Added some more logic to joinOverlappingFeatures()
+
 2007-05-??: 1.9.2
 Fixed mzdata problem under windows (ramp.c v1.39 from CVS)
 Removed workaround for ramp/gcc bug
@@ -7,7 +11,7 @@ Removed workaround for ramp/gcc bug
 Workaround for ramp/gcc bug (optimization lowered to -O1 for ramp.c)
 Several improvements for findpeaks.centWave 
 Removed maxGaussErr option in findpeaks.centWave 
-Fixed bug in joinOverlappingPeaks()
+Fixed bug in joinOverlappingFeatures()
 Fixed bug in findpeaks.centWave where rt was not assigned correctly
 Updated ramp.c to v1.38 (from CVS)
 

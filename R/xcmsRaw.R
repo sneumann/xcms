@@ -515,17 +515,22 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       feat <- featlist[[f]]
       perc <- round((f/lf) * 100)
       if ((perc %% 5 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
-      N <- length(feat$mz); peaks <- NULL; 
+      if (.Platform$OS.type == "windows") flush.console()
+      N <- length(feat$mz)
+      peaks <- NULL
       mzrange <- range(feat$mz) 
       sccenter <- feat$scan[1] + floor(N/2) - 1 
       scrange <- range(feat$scan)
       ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - noiserange),min(scanrange[2],scrange[2] + noiserange))
       eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
-      d <- eic$intensity;    td <- sr[1]:sr[2] ; scan.range <- c(sr[1],sr[2])
+      d <- eic$intensity
+      td <- sr[1]:sr[2] 
+      scan.range <- c(sr[1],sr[2])
       ## original data range (hd m/z boxes)
       omz <- feat$mz
-      od <- feat$intensity ; otd <- feat$scan
+      od <- feat$intensity
+      otd <- feat$scan
       ##  scrange + scRangeTol, used for gauss fitting and continuous data above 1st baseline detection      
       ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)], scrange[2] + scRangeTol) 
       fd <- d[match(ftd,td)]
@@ -548,10 +553,10 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
             
         ## is there any data above snthresh * baseline ?
         if (length(which(fd > snthresh * baseline)) >= minPtsAboveBaseLine ) { 
-            wCoefs <- cwt(d, scales=scales, wavelet='mexh')
+            wCoefs <- MSW.cwt(d, scales=scales, wavelet='mexh')
             if (!is.null(dim(wCoefs))) { ## it seems to contain one or more relevant peaks
-                localMax <- getLocalMaximumCWT(wCoefs) 
-                rL <- getRidge(localMax) 
+                localMax <- MSW.getLocalMaximumCWT(wCoefs) 
+                rL <- MSW.getRidge(localMax) 
                 wpeaks <- sapply(rL, function(x) any(wCoefs[x,] >= snthresh * baseline))
                 wpeaksidx <- which(wpeaks) 
                 if (any(wpeaks)) 
@@ -640,7 +645,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                      peaks[p,"rt"] <- scantime[peaks[p,"scpos"]] 
                 } 
                 # peaks <- remove.NA.features(peaks)
-                peaks <- joinOverlappingFeatures(td,d,scantime,scan.range,peaks,maxGaussOverlap) 
+                peaks <- joinOverlappingFeatures(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap) 
             }
             
         } ## s/n
@@ -649,12 +654,14 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       if ((sleep >0) && (!is.null(peaks))) {
             tdp <- scantime[td]; trange <- range(tdp)
             dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[1] *  1e-6))
-            egauss <- paste(round(peaks[,"egauss"],2))
+            egauss <- paste(round(peaks[,"egauss"],3),collapse=", ")
             par(bg = "white") 
-            l <- layout(matrix(c(1,2),nr=2,nc=1,byrow=T),heights=c(1,2));
+            l <- layout(matrix(c(1,2,3),nr=3,nc=1,byrow=T),heights=c(1,.5,2));
             par(mar= c(2, 4, 4, 2) + 0.1) 
             plotRaw(object,mass=mzrange,time=trange,log=T,title='')
             title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , devppm=',dppm,', EGauss=',egauss ,sep=''))
+            par(mar= c(1, 4, 1, 2) + 0.1) 
+            image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
             par(mar= c(4, 4, 1, 2) + 0.1)
             plot(tdp,d,ylab='Intensity',xlab='Scan Time');lines(tdp,d,lty=2)
             lines(scantime[otd],od,lty=2,col='blue') ## original mzbox range
@@ -696,6 +703,70 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
 
     invisible(as.matrix(pr))
 })
+
+setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
+
+setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, mzdiff=-0.02,
+                                               scales=seq(1,22,3), nearbyPeak=TRUE,
+                                               sleep=0, verbose.columns = FALSE)
+{
+  require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
+
+  # MassSpecWavelet Calls
+  peakInfo <- peakDetectionCWT(object@env$intensity,
+                                scales=scales, SNR.Th = snthresh,
+                                nearbyPeak = nearbyPeak)
+  majorPeakInfo <- peakInfo$majorPeakInfo
+  
+  betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
+                                    majorPeakInfo)
+
+  peakIndex <- betterPeakInfo$peakIndex
+
+  # Assemble result
+
+  basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+                 "into","maxo","sn")
+
+  peaklist <- matrix(-1, nrow = length(peakIndex), ncol = length(basenames))
+  
+  colnames(peaklist) <- c(basenames)
+
+  peaklist[,"mz"] <- object@env$mz[peakIndex]
+  peaklist[,"mzmin"] <- object@env$mz[peakIndex]
+  peaklist[,"mzmax"] <- object@env$mz[peakIndex]
+
+  peaklist[,"rt"]    <- rep(-1, length(peakIndex))
+  peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
+  peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
+
+  peaklist[,"into"] <- betterPeakInfo$peakValue
+  peaklist[,"maxo"] <- object@env$intensity[peakIndex]
+  peaklist[,"sn"]   <- betterPeakInfo$peakSNR
+  
+  cat('\n')
+  
+  # Filter additional (verbose) columns
+  if (!verbose.columns) 
+    peaklist <- peaklist[,basenames,drop=FALSE]
+    
+  invisible(peaklist)
+}
+)
+
+
+## library(xcms)
+
+## x <- xcmsRaw("/vol/data/fticr/Floral oil_FTICR_kanchana/DUK-FTMS/DUK-202F_15-09-06/1/Analysis.mzData")
+## xs <- fp(x)
+
+# xs <- xcmsSet(files=c("/vol/data/fticr/Floral oil_FTICR_kanchana/DUK-FTMS/DUK-202F_15-09-06/1/Analysis.mzData", /vol/data/fticr/Floral oil_FTICR_kanchana/DUK-FTMS/DUK-238_13-04-05/1/Analysis.mzData), method="MSW")
+#xs <- xcmsSet(files=unlist(mzfiles), snames=unlist(subdirs), method="MSW",
+
+
+# x <- xcmsRaw("/vol/data/fticr/Floral oil_FTICR_kanchana/DUK-FTMS/DUK-188_19-05-06/1/Analysis.mzData")
+
+
 
 setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 
