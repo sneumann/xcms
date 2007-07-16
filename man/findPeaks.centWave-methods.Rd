@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7, scales=c(5,7,9,12), maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, rbwidth=minPeakWidth * 2, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, verbose.columns = FALSE)
+    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7, scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, integrate=1, fitgauss = FALSE, verbose.columns = FALSE)
   }
 }
 }}
@@ -34,13 +34,11 @@
     neighbourhood size (number of scans) for each ROI used for noise/baseline analysis 
   }
   \item{minPeakWidth}{
-    Minimum extent (number of scans) of a peak. Areas bigger than \code{2*minPeakWidth} 
-    are checked whether they contain more than one peak.
+    Minimum extent (number of scans) of a peak. Only used to estimate other parameters.
   }
   \item{scales}{scales to use for wavelet analysis, the scale range should correspond to the width range of the chromatographic peaks (number of scans) }
   \item{maxGaussOverlap}{maximal allowed overlapping (peak area)}
   \item{minPtsAboveBaseLine}{minimum number of data points above baseline}
-  \item{rbwidth}{width of running median for baseline estimation}
   \item{scRangeTol}{tolerance (in scans) if gaussian peak center is not within the initial ROI}
   \item{maxDescOutlier}{Maximum number of outliers on the descent to find peak borders}
   \item{mzdiff}{
@@ -51,11 +49,19 @@
     minimum difference in retention time for peaks with overlapping m/z,
     can be negative to allow overlap
   }
+  \item{integrate}{
+    Integration method. If \code{=1} peak limits are found through descent on the mexican hat filtered data,
+    if \code{=2} the descent is done on the real data. Method 2 is honest, while method 1 is more robust to noise.
+  }
   \item{sleep}{
     number of seconds to pause between plotting peak finding cycles
   }
+  \item{fitgauss}{
+    logical, if TRUE a gaussian is fitted to each peak
+  }
+  
   \item{verbose.columns}{
-    additional peak meta data columns are returned 
+    logical, if TRUE additional peak meta data columns are returned 
   }
 }
 \value{
@@ -85,7 +91,7 @@
   \item{maxo}{
     maximum intensity of original (raw) peak
   }
-  \item{sn}{Signal/Noise ratio}
+  \item{sn}{Signal/Noise ratio, calculated as (maxo / baseline value) }
   \item{egauss}{RMSE of Gaussian fit}
   \item{}{
       if \code{verbose.columns} is \code{TRUE} additionally :
@@ -94,6 +100,7 @@
   \item{sigma}{Gauss parameter $\sigma$}
   \item{h}{Gauss parameter h}
   \item{f}{ROI number}
+  \item{scale}{Scale on which the peak was localised}
   \item{scpos}{Peak position found by wavelet analysis}
   \item{scmin}{Left peak limit found by wavelet analysis (scan number)}
   \item{scmax}{Right peak limit found by wavelet analysis (scan number)}

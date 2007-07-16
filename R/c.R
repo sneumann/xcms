@@ -434,3 +434,15 @@ logicalMatrix <- function(nrow = 0, ncol = 0) {
           as.integer(ncol),
           PACKAGE = "xcms")
 }
+
+continuousPtsAboveThreshold <- function(y, threshold, num, istart = 1) {
+    if (!is.double(y)) y <- as.double(y)
+    if (.C("continuousPtsAboveThreshold",
+              y,
+              as.integer(istart-1),
+              length(y),
+              threshold = as.double(threshold),
+              num = as.integer(num),
+              n = integer(1),
+              DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
+}

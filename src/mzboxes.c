@@ -15,19 +15,20 @@
 #undef FALSE
 #define FALSE    0
 
-#define SIZE_PEAKBUFS 50000   // max. # of "short" Peaks
-#define SIZE_PEAKBUFL 5000    // max. # of "long" Peaks
-#define DIM_PEAKBUFS 50       // max length of "short" Peaks
-#define DIM_PEAKBUFL 2000     // max length of "long" Peaks
+#define SIZE_PEAKBUFS 100000   // max. # of "short" boxes
+#define SIZE_PEAKBUFL 5000    // max. # of "long" boxes
+#define DIM_PEAKBUFS 50       // max length of "short" boxes
+#define DIM_PEAKBUFL 2000     // max length of "long" boxes
 #define DIM_MZBUF    10000     // max # m/z values to hold
 #define DIM_SCANBUF 10000      // max # m/z values per scan
+
+// this currently allocates ~ 120 MB
 
 #define UNDEF_BUF      0
 #define IN_SHORT_BUF  -1
 #define IN_LONG_BUF    3
 
-
-typedef unsigned short bufnrType;
+typedef unsigned int bufnrType;
 
 struct scanStruct
 {
@@ -64,7 +65,6 @@ struct mzvalStruct {
   int               slbuf [DIM_MZBUF];  // is in small OR long buffer
   int               length;             // actual # of m/z values in mz
 } mzval;
-
 
 void insertMZ(RAMPREAL val, int i, bufnrType bufpos, int which_buf, struct mzvalStruct *psbuf)
 {
@@ -279,7 +279,7 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
   }
 }     
 
-void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, struct pickOptionsStruct pickOptions){
+void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, int *scerr, struct pickOptionsStruct pickOptions, const int idebug){
 int i;
 bufnrType bufnr,entries;
  // check all peaks in mzval
@@ -302,7 +302,10 @@ bufnrType bufnr,entries;
    { // is it finished ?
      if ((entries >= pickOptions.minEntries) && (lastscan < ctScan) )
        deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
-       if (entries > ctScan) printf("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
+       if (entries > ctScan) {
+          if (idebug == TRUE) printf("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
+          (*scerr)++;
+       }   
    }
    else 
    {
@@ -416,6 +419,7 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
 SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP debug) {
   double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
   int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ctScan,nmz,lastScan, idebug;
+  int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
   SEXP peaklist,entrylist,vscan,vmz,vint,list_names;
      
   pmz = REAL(mz);  
@@ -460,10 +464,10 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
       if (idebug == TRUE) 
           printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z boxes, %d boxes found.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
       insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
-      cleanup(ctScan,&peakbuf,&mzval,pickOptions);
+      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,idebug);
     }
   }
-  cleanup(ctScan+1,&peakbuf,&mzval,pickOptions); 
+  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,idebug); 
   
   PROTECT(peaklist = allocVector(VECSXP, peakbuf.PeaksInBuf));
   int total = 0;
@@ -511,6 +515,7 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
      total++;
     }
   }
+  if (scerr > 0) printf("Warning: There were %d peak data insertion problems. \n The reason might be missing/bad centroidisation or wrong parameter settings (\"dev\" too high?).\n", scerr);
   printf(" %d m/z boxes.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
