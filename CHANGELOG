@@ -1,3 +1,13 @@
+2007-07-16: 1.9.4
+Increased buffer size to 100000 in findMZBoxes() to handle also files with a vast number of peaks
+Fixed bug in MSW.getRidge() to catch empty ridgeLists
+findPeaks.centWave
+  - The scale on which the peak was localised is also returned
+  - additional logical argument fitgauss, gaussian fits are no longer mandatory 
+  - Integration method can be choosen: descent on the mexican hat filtered data or on the real data. Method 2 is honest, 
+    while method 1 (default) is more robust to noise.
+  - runs much faster 
+
 2007-06-29: 1.9.3
 Added wrapper for MassSpecWavelet peak picking on single spectra (findPeaks.MSW)
 Added some more logic to joinOverlappingFeatures()

@@ -170,8 +170,8 @@ function (x, winSize = 5)
 }
 
 MSW.getRidge <-
-function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=3, skip=NULL) 
-{    ## modified from package MassSpecWavelet
+function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=3, gapTh=3, skip=NULL)
+ {  ## modified from package MassSpecWavelet
 
 	scales <- as.numeric(colnames(localMax))
 	if (is.null(scales))  scales <- 1:ncol(localMax)
@@ -187,9 +187,9 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 	## Only consider the shortest path
 	if ( ncol(localMax) > 1 ) colInd <- seq(iInit+step, iFinal, step)
 	 else colInd <- 1
-	ridgeList <- sapply(maxInd_curr, as.list)
+	ridgeList <- as.list(maxInd_curr)
 	names(ridgeList) <- maxInd_curr
-	peakStatus <- sapply(rep(0, length(maxInd_curr)), as.list)
+	peakStatus <- as.list(rep(0, length(maxInd_curr)))
 	names(peakStatus) <- maxInd_curr
 	
 	## orphanRidgeList keep the ridges disconnected at certain scale level
@@ -204,8 +204,8 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 
 		if (colInd[j] == skip) {
 			oldname <- names(ridgeList)
-			ridgeList <- sapply(ridgeList, function(x) c(x, x[length(x)]))
-			#peakStatus <- sapply(peakStatus, function(x) c(x, x[length(x)]))
+			ridgeList <- lapply(ridgeList, function(x) c(x, x[length(x)]))
+			#peakStatus <- lapply(peakStatus, function(x) c(x, x[length(x)]))
 			names(ridgeList) <- oldname
 			#names(peakStatus) <- oldname
 			next
@@ -217,7 +217,8 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 		}
 
 		## The slide window size is proportional to the CWT scale
-		winSize.j <- scale.j * 2 + 1
+		# winSize.j <- scale.j / 2 + 1
+		winSize.j <- floor(scale.j/2)
 		if (winSize.j < minWinSize) {
 			winSize.j <- minWinSize
 		}
@@ -276,31 +277,33 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 		## Update the names of the ridgeList as the new selected peaks
 		#if (scale.j >= 2) {
 			names(ridgeList) <- selPeak.j
-			names(peakStatus) <- selPeak.j			
+			names(peakStatus) <- selPeak.j
 		#}
 		
 		## If the level is larger than 3, expand the peak list by including other unselected peaks at that level
 		if (scale.j >= 2) {
 			maxInd_next <- which(localMax[, col.j] > 0)
 			unSelPeak.j <- maxInd_next[!(maxInd_next %in% selPeak.j)]
-			newPeak.j <- sapply(unSelPeak.j, as.list)
+			newPeak.j <- as.list(unSelPeak.j)
 			names(newPeak.j) <- unSelPeak.j
 			## Update ridgeList
 			ridgeList <- c(ridgeList, newPeak.j)
 			maxInd_curr <- c(selPeak.j, unSelPeak.j)
 			## Update peakStatus
-			newPeakStatus <- sapply(rep(0, length(newPeak.j)), as.list)
+			newPeakStatus <- as.list(rep(0, length(newPeak.j)))
 			names(newPeakStatus) <- newPeak.j
 			peakStatus <- c(peakStatus, newPeakStatus)
 		} else {
 			maxInd_curr <- selPeak.j
 		}
 	}
-	## Attach the peak level at the beginning of the ridge names
-	names(ridgeList) <- paste(1, names(ridgeList), sep='_')
-	names(orphanRidgeList) <- orphanRidgeName
+	
+        ## Attach the peak level at the beginning of the ridge names
+	if (length(ridgeList) > 0) names(ridgeList) <- paste(1, names(ridgeList), sep='_')
+	if (length(orphanRidgeList) > 0) names(orphanRidgeList) <- orphanRidgeName
 	## Combine ridgeList and orphanRidgeList
 	ridgeList <- c(ridgeList, orphanRidgeList)
+	if (length(ridgeList) == 0) return(NULL)
 	
 	## Reverse the order as from the low level to high level.
 	ridgeList <- lapply(ridgeList, rev)
@@ -313,8 +316,10 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=5, gapTh=
 
 	attr(ridgeList, 'class') <- 'ridgeList'
 	attr(ridgeList, 'scales') <- scales
-	ridgeList
+	return(ridgeList)
 }
+
+
 
 odd <- function (x) x != as.integer(x/2) * 2;
 
@@ -332,20 +337,7 @@ fitGauss <- function(td,d,pgauss=NA) {
  as.data.frame(t(fit$m$getPars()))
 }
 
-wnoisedet <- function(x,lev,num) {
-  cnt <- 0; cpos <- NULL; fpos <- NULL
-  for (k in 1:length(x)) {
-    if (x[k] > lev) {cnt <- cnt + 1; cpos <- c(cpos,k)}
-    else {
-      if (cnt >= num) fpos <- c(fpos,cpos) 
-      cnt <- 0
-      cpos <- NULL
-      }   
-  }
-  fpos
-} 
-
-joinOverlappingFeatures <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5) {  
+joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5) {  
 
   gausspeaksidx <- which(!is.na(peaks[,"mu"]))
   Ngp <- length(gausspeaksidx)
@@ -387,6 +379,7 @@ joinOverlappingFeatures <- function(td,d,otd,omz,od,scantime,scan.range,peaks,ma
             }
             ccn <- list()
             lcc <- length(cc)
+            ins <- rep(FALSE,lcc)
             if (lcc > 1) {
                 jcomb <- which(upper.tri(matrix(0,lcc,lcc)),arr=TRUE)
                 for (j in 1:dim(jcomb)[1]) { 
@@ -394,8 +387,14 @@ joinOverlappingFeatures <- function(td,d,otd,omz,od,scantime,scan.range,peaks,ma
                     if (any(cc[[j1]] %in% cc[[j2]])) 
                         ccn[[length(ccn) +1]] <- unique(c(cc[[j1]],cc[[j2]]))
                     else {
-                       ccn[[length(ccn) +1]] <- unique(cc[[j1]])
-                       ccn[[length(ccn) +1]] <- unique(cc[[j2]])
+                        if (!ins[j1]) {
+                            ccn[[length(ccn) +1]] <- unique(cc[[j1]])
+                            ins[j1] <- TRUE
+                        }  
+                        if (!ins[j2]) {
+                            ccn[[length(ccn) +1]] <- unique(cc[[j2]])
+                            ins[j2] <- TRUE
+                        }   
                     }
                 }
             } else ccn <- cc;
@@ -420,6 +419,7 @@ joinOverlappingFeatures <- function(td,d,otd,omz,od,scantime,scan.range,peaks,ma
             newpeak["scpos"] <- -1 ## not defined after join
             newpeak["scmin"] <- -1 ##    ..
             newpeak["scmax"] <- -1 ##    ..
+            newpeak["scale"] <- -1 ##    ..
             
             newpeak["maxo"] <- max(gpeaks[jidx,"maxo"])
             newpeak["sn"]   <- max(gpeaks[jidx,"sn"])

@@ -242,3 +242,19 @@ SEXP LogicalMatrix(SEXP nrow, SEXP ncol) {
     
     return matrix;
 }
+
+void continuousPtsAboveThreshold(double *x, int *istart, int *numin, double *threshold, int *num, int *n) {
+    
+    int i;
+    int cnt = 0;
+    
+    for (i = *istart; i < *numin; i++) {
+       if (x[i] > *threshold) cnt++;
+            else cnt = 0;
+       if (cnt >= *num) { 
+            *n = cnt;
+            return ;
+       }
+    }
+    
+}
