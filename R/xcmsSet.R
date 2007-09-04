@@ -711,20 +711,22 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
         cat(samp[i], "")
         flush.console()
         naidx <- which(is.na(gvals[,i]))
-        lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-        if (length(prof) > 2)
-            lcraw@profparam <- prof[seq(3, length(prof))]
-        if (length(rtcor) == length(files))
-            lcraw@scantime <- rtcor[[i]]
-        newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
-        rm(lcraw)
-        gc()
-        newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
-        newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
-        peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
-        for (i in seq(along = naidx))
-            groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
-        lastpeak <- lastpeak + length(naidx)
+        if (length(naidx)) {
+            lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
+            if (length(prof) > 2)
+                lcraw@profparam <- prof[seq(3, length(prof))]
+            if (length(rtcor) == length(files))
+                lcraw@scantime <- rtcor[[i]]
+            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
+            rm(lcraw)
+            gc()
+            newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
+            newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
+            peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
+            for (i in seq(along = naidx))
+                groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
+            lastpeak <- lastpeak + length(naidx)
+        }
     }
     cat("\n")
     
