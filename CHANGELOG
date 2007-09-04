@@ -1,5 +1,5 @@
 2007-09-04: 1.9.5
-Fixed bug were fillPeaks() would fail if there was only one peak to find
+Fixed bug were fillPeaks() would fail if there was <= 1 peak to fill in
 Made getPeaks() slightly more memory efficient by correcting an oversight
 flush.console() is now called on all systems during long operations
 
