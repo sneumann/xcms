@@ -345,7 +345,7 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp =
     for (i in seq(length = length(mass)-2)) {
         if (i %% 500 == 0) {
             cat(round(mass[i]), "")
-            if (.Platform$OS.type == "windows") flush.console()
+            flush.console()
         }
         startidx <- masspos[i]
         endidx <- masspos[i+2]-1
@@ -709,14 +709,14 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     for (i in seq(along = files)) {
         
         cat(samp[i], "")
-        if (.Platform$OS.type == "windows") flush.console()
+        flush.console()
         naidx <- which(is.na(gvals[,i]))
         lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
         if (length(prof) > 2)
             lcraw@profparam <- prof[seq(3, length(prof))]
         if (length(rtcor) == length(files))
             lcraw@scantime <- rtcor[[i]]
-        newpeaks <- getPeaks(lcraw, peakrange[naidx,], step = prof$step)
+        newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
         rm(lcraw)
         gc()
         newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
@@ -791,7 +791,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     for (i in seq(along = sampidx)) {
         
         cat(sampleidx[i], "")
-        if (.Platform$OS.type == "windows") flush.console()
+        flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
