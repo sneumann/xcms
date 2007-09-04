@@ -415,7 +415,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     for (i in seq(length = length(mass)-steps+1)) {
         if (i %% 500 == 0) {
             cat(round(mass[i]), ":", num, " ", sep = "")
-            if (.Platform$OS.type == "windows") flush.console()
+            flush.console()
         }
         ### Update EIC buffer if necessary
         if (bufidx[i+lookahead] == 0) {
@@ -513,7 +513,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       feat <- featlist[[f]]
       perc <- round((f/lf) * 100)
       if ((perc %% 5 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
-      if (.Platform$OS.type == "windows") flush.console()
+      flush.console()
       N <- length(feat$mz)
       peaks <- peakinfo <- NULL
       mzrange <- range(feat$mz) 
@@ -799,11 +799,11 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
     profFun <- match.fun(.profFunctions[[profMethod(object)]])
     if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
-        peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax")]
+        peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
     stime <- object@scantime
     
     ### Create EIC buffer
-    mrange <- range(peakrange)
+    mrange <- range(peakrange[1:2])
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex, 
