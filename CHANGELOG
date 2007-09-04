@@ -1,3 +1,8 @@
+2007-09-04: 1.9.5
+Fixed bug were fillPeaks() would fail if there was only one peak to find
+Made getPeaks() slightly more memory efficient by correcting an oversight
+flush.console() is now called on all systems during long operations
+
 2007-07-16: 1.9.4
 Increased buffer size to 100000 in findMZBoxes() to handle also files with a vast number of peaks
 Fixed bug in MSW.getRidge() to catch empty ridgeLists
