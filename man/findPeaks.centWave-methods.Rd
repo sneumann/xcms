@@ -10,7 +10,11 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7, scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))), sleep=0, integrate=1, fitgauss = FALSE, verbose.columns = FALSE)
+    findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=20, 
+    minPeakWidth=7, noiserange=c(minPeakWidth*3,minPeakWidth*6), scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5,
+    minPtsAboveBaseLine=4, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02,
+    rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
+    integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE) 
   }
 }
 }}
@@ -19,10 +23,8 @@
   areas of high peak density (characterised by having at least \code{minEntries} peaks
   within \code{dev} ppm in consecutive scans) in the LC/MS map are located.
   In the second phase these \emph{regions of interest} (ROI) are further analysed. 
-  Gaussian curves are fitted to the chromatographic peaks,
-  and areas larger than \code{2*minPeakWidth} scans are checked
-  whether they contain more than one peak (these may also overlap) using
-  wavelet analysis. 
+  Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales. 
+  
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
@@ -31,7 +33,8 @@
   \item{dev}{see above}
   \item{snthresh}{signal to noise ratio cutoff}
   \item{noiserange}{
-    neighbourhood size (number of scans) for each ROI used for noise/baseline analysis 
+    neighbourhood size (number of scans) for each ROI used for noise/baseline analysis, two region sizes can be used
+    for better local basline estimation
   }
   \item{minPeakWidth}{
     Minimum extent (number of scans) of a peak. Only used to estimate other parameters.
@@ -40,7 +43,7 @@
   \item{maxGaussOverlap}{maximal allowed overlapping (peak area)}
   \item{minPtsAboveBaseLine}{minimum number of data points above baseline}
   \item{scRangeTol}{tolerance (in scans) if gaussian peak center is not within the initial ROI}
-  \item{maxDescOutlier}{Maximum number of outliers on the descent to find peak borders}
+  \item{maxDescOutlier}{Maximum number of outliers on the descent to find peak borders (used if integrate=2)}
   \item{mzdiff}{
     minimum difference in m/z for peaks with overlapping retention
     times, can be negative to allow overlap

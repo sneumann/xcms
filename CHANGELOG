@@ -1,3 +1,10 @@
+2007-09-17: 1.9.6
+rawEIC uses binary search
+findMZBoxes gives proper error messages
+findPeaks.centWave
+  - new baseline and S/N estimation (default snthresh=20)
+Bugfix for MSW.getRidge
+
 2007-09-04: 1.9.5
 Fixed bug were fillPeaks() would fail if there was <= 1 peak to fill in
 Made getPeaks() slightly more memory efficient by correcting an oversight
