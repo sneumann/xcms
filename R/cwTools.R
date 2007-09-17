@@ -233,6 +233,9 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=3, gapTh=
 			#ind.curr <- which(localMax[, col.j] > 0)
 			if (length(ind.curr) == 0) {
 				status.k <- peakStatus[[as.character(ind.k)]]
+				## bug  work-around
+				 if (is.null(status.k)) status.k <- gapTh +1
+				##
 				if (status.k > gapTh & scale.j >= 2) {
 					temp <- ridgeList[[as.character(ind.k)]]
 					orphanRidgeList <- c(orphanRidgeList, list(temp[1:(length(temp)-status.k)]))
@@ -276,8 +279,8 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=3, gapTh=
 		
 		## Update the names of the ridgeList as the new selected peaks
 		#if (scale.j >= 2) {
-			names(ridgeList) <- selPeak.j
-			names(peakStatus) <- selPeak.j
+		if (length(ridgeList) > 0) names(ridgeList) <- selPeak.j
+		if (length(peakStatus) > 0) names(peakStatus) <- selPeak.j
 		#}
 		
 		## If the level is larger than 3, expand the peak list by including other unselected peaks at that level
@@ -319,7 +322,89 @@ function(localMax, iInit=ncol(localMax), step=-1, iFinal=1, minWinSize=3, gapTh=
 	return(ridgeList)
 }
 
+running <- function (X, Y = NULL, fun = mean, width = min(length(X), 20),
+    allow.fewer = FALSE, pad = FALSE, align = c("right", "center",
+        "left"), simplify = TRUE, by, ...)
+{   ## from package gtools
+    align = match.arg(align)
+    n <- length(X)
+    if (align == "left") {
+        from <- 1:n
+        to <- pmin((1:n) + width - 1, n)
+    }
+    else if (align == "right") {
+        from <- pmax((1:n) - width + 1, 1)
+        to <- 1:n
+    }
+    else {
+        from <- pmax((2 - width):n, 1)
+        to <- pmin(1:(n + width - 1), n)
+        if (!odd(width))
+            stop("width must be odd for center alignment")
+    }
+    elements <- apply(cbind(from, to), 1, function(x) seq(x[1],
+        x[2]))
+    if (is.matrix(elements))
+        elements <- as.data.frame(elements)
+    names(elements) <- paste(from, to, sep = ":")
+    if (!allow.fewer) {
+        len <- sapply(elements, length)
+        skip <- (len < width)
+    }
+    else {
+        skip <- 0
+    }
+    run.elements <- elements[!skip]
+    if (!invalid(by))
+        run.elements <- run.elements[seq(from = 1, to = length(run.elements),
+            by = by)]
+    if (is.null(Y)) {
+        funct <- function(which, what, fun, ...) fun(what[which],
+            ...)
+        if (simplify)
+            Xvar <- sapply(run.elements, funct, what = X, fun = fun,
+                ...)
+        else Xvar <- lapply(run.elements, funct, what = X, fun = fun,
+            ...)
+    }
+    else {
+        funct <- function(which, XX, YY, fun, ...) fun(XX[which],
+            YY[which], ...)
+        if (simplify)
+            Xvar <- sapply(run.elements, funct, XX = X, YY = Y,
+                fun = fun, ...)
+        else Xvar <- lapply(run.elements, funct, XX = X, YY = Y,
+            fun = fun, ...)
+    }
+    if (allow.fewer || !pad)
+        return(Xvar)
+    if (simplify)
+        if (is.matrix(Xvar)) {
+            wholemat <- matrix(new(class(Xvar[1, 1]), NA), ncol = length(to),
+                nrow = nrow(Xvar))
+            colnames(wholemat) <- paste(from, to, sep = ":")
+            wholemat[, -skip] <- Xvar
+            Xvar <- wholemat
+        }
+        else {
+            wholelist <- rep(new(class(Xvar[1]), NA), length(from))
+            names(wholelist) <- names(elements)
+            wholelist[names(Xvar)] <- Xvar
+            Xvar <- wholelist
+        }
+    return(Xvar)
+}
 
+invalid <- function (x) 
+{   ## from package gtools
+    if (missing(x) || is.null(x) || length(x) == 0) 
+        return(TRUE)
+    if (is.list(x)) 
+        return(all(sapply(x, invalid)))
+    else if (is.vector(x)) 
+        return(all(is.na(x)))
+    else return(FALSE)
+}
 
 odd <- function (x) x != as.integer(x/2) * 2;
 
@@ -559,3 +644,58 @@ mzModel <- function(mz,intensity) {
     ## there might be better models ..
     weighted.mean(mz, intensity) 
 }
+
+trimm <- function(x, trim=c(0.05,0.95)) {
+    a <- sort(x[x>0])
+    Na <- length(a)
+    quant <- round((Na*trim[1])+1):round(Na*trim[2])
+    a[quant]
+}
+
+estimateChromNoise <- function(x, trim=c(0.05,0.95),minPts=20) {
+    gz <- which(x>0)
+    if (length(gz) < minPts) 
+        return(mean(x)) else 
+            a <- sort(x[gz])
+    
+    Na <- length(a)
+    quant <- round((Na*trim[1])+1):round(Na*trim[2])
+    a[quant]
+    mean(a[quant])
+}
+
+
+getLocalNoiseEstimate <- function(d,td,ftd,noiserange,Nscantime) {
+    
+    if (length(d) < Nscantime) {
+        
+        ## noiserange[2] is full d-range
+        drange <- which(td %in% ftd)
+        n1 <- d[-drange]
+        if (length(n1) > 1)  { 
+            baseline1 <- mean(n1) 
+            sdnoise1 <- sd(n1) 
+            } else 
+                baseline1 <- sdnoise1 <- 1
+    
+        ## noiserange[1]    
+        d1 <- drange[1] 
+        d2 <- drange[length(drange)]
+        nrange2 <- c(max(1,d1 - noiserange[1]) : d1, d2 : min(length(d),d2 + noiserange[1]))
+        n2 <- d[nrange2]    
+         
+        if (length(n2) > 1)  { 
+        baseline2 <- mean(n2) 
+        sdnoise2 <- sd(n2) 
+        } else 
+            baseline2 <- sdnoise2 <- 1
+     
+    } else {
+        trimmed <- trimm(d,c(0.05,0.95))
+        baseline1 <- baseline2 <- mean(trimmed)
+        sdnoise1 <- sdnoise2 <- sd(trimmed)
+    }
+ 
+    c(min(baseline1,baseline2),min(sdnoise1,sdnoise2))
+}
+
