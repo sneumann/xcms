@@ -15,14 +15,12 @@
 #undef FALSE
 #define FALSE    0
 
-#define SIZE_PEAKBUFS 100000   // max. # of "short" boxes
+#define SIZE_PEAKBUFS 150000   // max. # of "short" boxes
 #define SIZE_PEAKBUFL 5000    // max. # of "long" boxes
 #define DIM_PEAKBUFS 50       // max length of "short" boxes
-#define DIM_PEAKBUFL 2000     // max length of "long" boxes
+#define DIM_PEAKBUFL 2500     // max length of "long" boxes = max number of spectra
 #define DIM_MZBUF    10000     // max # m/z values to hold
 #define DIM_SCANBUF 10000      // max # m/z values per scan
-
-// this currently allocates ~ 120 MB
 
 #define UNDEF_BUF      0
 #define IN_SHORT_BUF  -1
@@ -68,7 +66,7 @@ struct mzvalStruct {
 
 void insertMZ(RAMPREAL val, int i, bufnrType bufpos, int which_buf, struct mzvalStruct *psbuf)
 {
-   if ((psbuf->length) >= DIM_MZBUF) { printf("MZ BUF SIZE too small ! \n"); exit(-5);}
+   if ((psbuf->length) >= DIM_MZBUF) error("MZ BUF SIZE too small ! \n"); 
    int n = psbuf->length - i;
    if (n>0) {
     memmove(psbuf->mz + i +1, psbuf->mz + i, n*sizeof(RAMPREAL));
@@ -87,7 +85,7 @@ void deleteMZ(int i, struct mzvalStruct *psbuf, struct peakbufStruct *peakbuf, i
   if (removeValues == TRUE) {
     bufnrType bufpos   = psbuf->bufnr[i];
     int       whichbuf = psbuf->slbuf[i];
-    if (whichbuf == UNDEF_BUF) { printf("UNDEF_BUF error! \n"); exit(-3);}
+    if (whichbuf == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
     
     if (whichbuf == IN_SHORT_BUF) 
     {
@@ -146,15 +144,49 @@ int half,mid;
   return(first);
 }
 
+int lowerBound(double val,double *mzval,int first, int length){
+int half,mid; 
+  while (length > 0) {
+    half = length >> 1;
+    mid = first;
+    mid += half;
+    if ( mzval[mid] < val){
+      first = mid;
+      first ++;
+      length = length - half -1;
+    }
+    else length = half;
+  }
+  return(first);
+}
+
+int upperBound(double val,double *mzval,int first, int length){
+int half,mid;  
+  while (length > 0) {
+    half = length >> 1;
+    mid = first;
+    mid += half;
+    if (val < mzval[mid]){
+      length = half;
+    }
+    else {
+      first = mid;
+      first ++;
+      length = length - half -1;
+    }
+  }
+  return(first);
+}
+
 bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
   bufnrType pos=0;
   if (which_buf == IN_SHORT_BUF) {
     while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) pos++;
-    if (pos >= SIZE_PEAKBUFS-1) { printf("SIZE_PEAKBUFS too small ! \n"); exit(-7);}
+    if (pos >= SIZE_PEAKBUFS-1) error("SIZE_PEAKBUFS too small ! \n"); 
   } else
   {
     while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) pos++;
-    if (pos >= SIZE_PEAKBUFL-1) { printf("SIZE_PEAKBUFL too small ! \n"); exit(-7);}
+    if (pos >= SIZE_PEAKBUFL-1) error("SIZE_PEAKBUFL too small ! \n"); 
   }
   
   return(pos);
@@ -174,7 +206,7 @@ void insertpeak(RAMPREAL fMass,RAMPREAL fInten,const int scan, struct peakbufStr
     if (ddiff <= ddev) 
     { // match -> extend this box
       wasfound = TRUE;
-      if (mzval->slbuf[i] == UNDEF_BUF) { printf("UNDEF_BUF error! \n"); exit(-3);}
+      if (mzval->slbuf[i] == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
       if (mzval->slbuf[i] == IN_SHORT_BUF) 
       { // APPEND TO SHORT_BUF
         bufnrType bnr = mzval->bufnr[i];
@@ -208,7 +240,7 @@ void insertpeak(RAMPREAL fMass,RAMPREAL fInten,const int scan, struct peakbufStr
       { // APPEND TO LONG_BUF
         bufnrType bnr = mzval->bufnr[i];
         num = peakbuf->lnum[bnr];
-        if (num >= DIM_PEAKBUFL-1) { printf("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); exit(-3);   }
+        if (num >= DIM_PEAKBUFL-1)  error("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); 
         peakbuf->lint[bnr][num] = fInten;
         peakbuf->lmz[bnr][num] =  fMass;
         peakbuf->lscan[bnr][num] = scan;
@@ -272,7 +304,7 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
        fMass  = scanbuf->mz[p];
        fInten = scanbuf->intensity[p];   
        // Test auf Sortiertheit
-       if (fMass < lastMass) { printf("mz sort assumption violated ! \n"); exit(-2);}
+       if (fMass < lastMass)  error("m/z sort assumption violated ! \n");
        lastMass = fMass; //mzval->length
        insertpeak(fMass,fInten,scan,peakbuf,mzval,pickOptions);
     }
@@ -289,11 +321,11 @@ bufnrType bufnr,entries;
     if (mzval->slbuf[i] == IN_SHORT_BUF) 
       {
         entries = peakbuf->snum[bufnr];
-        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else  { printf("(entries <= 0 ?)  err ! \n"); exit(-2);}
+        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n");
       } else
       {
         entries = peakbuf->lnum[bufnr];
-        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else  { printf("(entries <= 0 ?)  err ! \n"); exit(-2);}
+        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n"); 
       }
       
   
@@ -316,7 +348,6 @@ bufnrType bufnr,entries;
  
 }
 
-
 void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *nmz, int *lastScan, double *pscanbufmz,double *pscanbufint,int *length) {
   int idx1,idx2;
   if (*pscan == *lastScan) {
@@ -331,7 +362,7 @@ void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *n
       printf("idx1 %d   idx2   %d  \n", idx1,idx2);  // Rprintf("Mx: %f  My: %f  \n",Mx,My);
   #endif
   int idx,i=0;
-  if ((idx2 -idx1) > DIM_SCANBUF -1) { printf("SCANBUF too small ! \n"); exit(-10);}
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n"); 
   for (idx=idx1;idx <= idx2; idx++) 
   {
     pscanbufmz[i]   = pmz[idx-1];
@@ -346,7 +377,7 @@ void getScan(int scan, double *pmz, double *pintensity, int *pscanindex,int nmz,
   idx1 =  pscanindex[scan -1] +1;
   
   if (scan == lastScan)  idx2 =  nmz-1;   else   idx2 =  pscanindex[scan];
-  if ((idx2 -idx1) > DIM_SCANBUF -1) { printf("SCANBUF too small ! \n"); exit(-10);}
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n");
   
   for (idx=idx1;idx <= idx2; idx++) 
   {
@@ -362,9 +393,16 @@ double getScanEIC(int scan, double from, double to, double *pmz, double *pintens
   double sum=0.0;
   
   idx1 =  pscanindex[scan -1] +1;
-  if (scan == lastScan)  idx2 =  nmz-1;   else   idx2 =  pscanindex[scan];
+  if (scan == lastScan)  idx2 =  nmz-1;  
+    else idx2 =  pscanindex[scan];
     
-  for (idx=idx1;idx <= idx2; idx++) 
+    
+  int idx1b = lowerBound(from, pmz, idx1-1, idx2-idx1); 
+  int idx2b = upperBound(to, pmz, idx1b, idx2-idx1b+1);  
+    
+  //printf("idx1 %d idx2 %d idx1b %d idx2b %d \n",idx1,idx2,idx1b,idx2b);  
+    
+  for (idx=idx1b;idx <= idx2b; idx++) 
   {
     double mzval = pmz[idx-1];
     if ((mzval <= to) && (mzval >= from)) sum += pintensity[idx-1];
@@ -387,7 +425,7 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-     { printf("Error in scanrange \n"); exit(-10);}
+     error("Error in scanrange \n"); 
   char *names[2] = {"scan", "intensity"}; 
   PROTECT(list_names = allocVector(STRSXP, 2));
   for(i = 0; i < 2; i++)  

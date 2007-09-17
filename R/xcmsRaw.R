@@ -498,7 +498,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
-                                        minEntries=4, dev=140e-6, snthresh=3, noiserange=40, minPeakWidth=7,
+                                        minEntries=4, dev=140e-6, snthresh=20, minPeakWidth=7, noiserange=c(minPeakWidth*3,minPeakWidth*6),
                                         scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5,                     minPtsAboveBaseLine=4, scRangeTol=2,                                 maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, 
                                         rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
                                         integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE) 
@@ -506,13 +506,14 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
     peaklist <- list()
     featlist <- findMZBoxes(object,scanrange=scanrange,dev=dev,minEntries=minEntries)
     scantime <- object@scantime 
+    Nscantime <- length(scantime)
     lf <- length(featlist)
     cat('\n Searching for peaks... \n % finished: '); lp <- -1;
     
     for (f in  1:lf) { 
       feat <- featlist[[f]]
       perc <- round((f/lf) * 100)
-      if ((perc %% 5 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
+      if ((perc %% 10 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
       flush.console()
       N <- length(feat$mz)
       peaks <- peakinfo <- NULL
@@ -520,7 +521,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       sccenter <- feat$scan[1] + floor(N/2) - 1 
       scrange <- range(feat$scan)
       ## scrange + noiserange, used for baseline detection and wavelet analysis
-      sr <- c(max(scanrange[1],scrange[1] - noiserange),min(scanrange[2],scrange[2] + noiserange))
+      sr <- c(max(scanrange[1],scrange[1] - max(noiserange)),min(scanrange[2],scrange[2] + max(noiserange)))
       eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
       d <- eic$intensity
       td <- sr[1]:sr[2] 
@@ -538,30 +539,32 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
         noised <- rawEIC(object,massrange=mzrange,scanrange=scanrange)$intensity else 
             noised <- d;
       ## 90% trimmed mean as first baseline guess
-      trim <- c(0.05,0.95)
-      a <- sort(noised[noised>0])
-      Na <- length(a)
-      quant <- round((Na*trim[1])+1):round(Na*trim[2])
-      noise <- mean(a[quant])
+      noise <- estimateChromNoise(noised,c(0.05,0.95),minPts=3*minPeakWidth)
       
       ## any continuous data above 1st baseline ?
       if (continuousPtsAboveThreshold(fd,threshold=noise,num=minPtsAboveBaseLine)) { 
-            ## 2nd type of baseline: local maxima detection using not-peak-range
-            notod <- d[!td %in% ftd]
-            if (length(notod) > 1) lmax <- max(notod) else lmax <- noise
-            ## Final baseline
-            baseline <- max(1,min(lmax,noise))
+        ## 2nd baseline estimate using not-peak-range
+        lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime)
+    
+        ## Final baseline & Noise estimate
+        baseline <- max(1,min(lnoise[1],noise))
+        sdnoise <- max(1,lnoise[2])
+        sdnoise10 <-  sdnoise * 10^(snthresh/20) 
             
-        ## is there any data above snthresh * baseline ?
-        if (length(which(fd > snthresh * baseline)) >= minPtsAboveBaseLine ) { 
+        ## is there any data above S/N * threshold ?
+     
+        if (any(fd - baseline >= sdnoise10 )) { 
+         
             wCoefs <- MSW.cwt(d, scales=scales, wavelet='mexh')
-            if (!is.null(dim(wCoefs))) { 
+            if (!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdnoise10)) { 
+                if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
+                    wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs)-1,] * 0.99
                 localMax <- MSW.getLocalMaximumCWT(wCoefs) 
                 rL <- MSW.getRidge(localMax) 
                 wpeaks <- sapply(rL, 
                     function(x) { 
                         w <- min(1:length(x),ncol(wCoefs))
-                        any(wCoefs[x,w] >= snthresh * baseline)
+                        any(wCoefs[x,w]- baseline >= sdnoise10)
                     })
                 if (any(wpeaks)) {
                     wpeaksidx <- which(wpeaks) 
@@ -572,8 +575,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                       if (length(pp) >= 1) {
                         dv <- td[pp] %in% ftd 
                         if (any(dv)) { ## peaks in orig. data range
-                          ## Does it look like a 'real' peak ?
-                          if (any(c(d[pp[dv]],wCoefs[pp,]) >= snthresh * baseline)) { 
+                          ## Final S/N check
+                          if (any(d[pp[dv]]- baseline >= sdnoise10)) {  
                               ## try to decide which scale describes the peak best 
                               inti <- numeric(length(opp))
                               irange = rep(ceiling(scales[1]/2),length(opp))
@@ -605,23 +608,26 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                               mz.int <- od[p1:p2]     
                               mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
                               mzrange <- range(mz.value)
-                              
+                              if (length(mz.value) >= (minEntries+1))
+                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minEntries))) else
+                                    dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
                                   NA,NA,NA,                   ## rt, rtmin, rtmax,
                                   NA,                         ## intensity (sum)
+                                  NA,                         ## intensity (-bl)
                                   maxint,                     ## max intensity
-                                  maxint / baseline,          ## S/N Ratio
+                                  round(20 * log10( (maxint - baseline) / sdnoise)),  ##  S/N Ratio
                                   NA,                         ## Gaussian RMSE
                                   NA,NA,NA,                   ## Gaussian Parameters
                                   f,                          ## ROI Position
+                                  dppm,                       ## max. difference between the [minEntries] peaks in ppm
                                   best.scale,                 ## Scale
                                   td[best.scale.pos], td[lwpos], td[rwpos],
-                                                              ## Peak positions from wavelets (scan nr)
+                                                              ## Peak positions guessed from the wavelet's (scan nr)
                                   NA,NA ))                    ## Peak limits (scan nr)
                                   
-                              ## Keep peak positions  from wavelets for internal use
-                              peakinfo <- rbind(peakinfo,                             c(best.scale,best.scale.nr,best.scale.pos, lwpos, rwpos))  
+                              peakinfo <- rbind(peakinfo,c(best.scale, best.scale.nr, best.scale.pos, lwpos, rwpos))  ## Peak positions guessed from the wavelet's 
                           }
                         }
                       }
@@ -632,8 +638,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
             ##  postprocessing   
             if (!is.null(peaks)) {
                 if (is.vector(peaks)) peaks <- data.frame(t(peaks))  else peaks <- data.frame(peaks)
-                basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","egauss")
-                colnames(peaks) <- c(basenames,"mu","sigma","h","f","scale","scpos","scmin","scmax","lmin","lmax")
+                basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
+                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
                    
                 if (is.vector(peakinfo)) peakinfo <- data.frame(t(peakinfo))  else peakinfo <- data.frame(peakinfo)
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")   
@@ -647,6 +653,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                   peaks[p,"rtmin"] <- scantime[td[lm[1]]]
                   peaks[p,"rtmax"] <- scantime[td[lm[2]]]
                   peaks[p,"into"] <- sum(d[lm[1]:lm[2]])
+                  db <-  d[lm[1]:lm[2]] - baseline
+                  peaks[p,"intb"] <- sum(db[db>0])
                   peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
                   
                   if (fitgauss) {
@@ -678,13 +686,14 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
         
       if ((sleep >0) && (!is.null(peaks))) {
             tdp <- scantime[td]; trange <- range(tdp)
-            dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[1] *  1e-6))
             egauss <- paste(round(peaks[,"egauss"],3),collapse=", ")
+            cdppm <- paste(peaks[,"dppm"],collapse=", ")
+            csn <- paste(peaks[,"sn"],collapse=", ")
             par(bg = "white") 
             l <- layout(matrix(c(1,2,3),nr=3,nc=1,byrow=T),heights=c(.5,.75,2));
             par(mar= c(2, 4, 4, 2) + 0.1) 
             plotRaw(object,mass=mzrange,time=trange,log=T,title='')
-            title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , devppm=',dppm,', EGauss=',egauss ,sep=''))
+            title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
             par(mar= c(1, 4, 1, 2) + 0.1) 
             image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
             par(mar= c(4, 4, 1, 2) + 0.1)

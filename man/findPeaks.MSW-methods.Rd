@@ -12,7 +12,10 @@
 \item{object = "xcmsRaw"}{
   \code{
     findPeaks.MSW(object, snthresh=3,
-    scales=seq(1,22,3), nearbyPeak=TRUE,                                               
+    scales=seq(1,22,3), nearbyPeak=TRUE,
+    peakScaleRange=5, amp.Th=0.01,
+    minNoiseLevel=amp.Th/SNR.Th,
+    ridgeLength=24, tuneIn=FALSE,
     sleep=0, verbose.columns = FALSE)
     }
 }
