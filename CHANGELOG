@@ -1,3 +1,9 @@
+2007-10-07: 1.11.1
+Add xcmsPipeline framework, make naming of range parameters
+consistent, add rawMat() method for generating a "raw"
+(time,mz,intensity) matrix and allow a matrix (multiple factors) in
+experimental design.
+
 2007-09-17: 1.9.6
 rawEIC uses binary search
 findMZBoxes gives proper error messages
