@@ -1,15 +1,21 @@
+# TODO:
+# 1) phenoData -> AnnotatedDataFrame
+
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
-                                   groupidx = "list", sampnames = "character",
-                                   sampclass = "factor", rt = "list", 
-                                   cdfpaths = "character", profinfo = "list"),
+                                   groupidx = "list",
+                                   phenoData = "data.frame", rt = "list", 
+                                   filepaths = "character", 
+                                   pipeline = "xcmsPipeline"
+                                   ),
          prototype(peaks = matrix(nrow = 0, ncol = 0), 
                    groups = matrix(nrow = 0, ncol = 0), 
-                   groupidx = list(), sampnames = character(0), 
-                   sampclass = factor(integer(0)), rt = list(),
-                   cdfpaths = character(0), profinfo = vector("list")))
+                   groupidx = list(),
+                   phenoData = data.frame(), rt = list(),
+                   filepaths = character(0), pipeline = new("xcmsPipeline")))
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
-                    profmethod = "bin", profparam = list(), ...) {
+                    profmethod = "bin", profparam = list(), 
+                    ..., pipeline = NULL) {
 
     object <- new("xcmsSet")
     
@@ -18,18 +24,23 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
         files <- list.files(pattern = filepattern, recursive = TRUE)
-    cdfpaths(object) <- file.path(getwd(), files)
+    filepaths(object) <- file.path(getwd(), files)
     # Check to see whether the absolute path names work
-    for (file in cdfpaths(object))
+    for (file in filepaths(object))
         if (!file.exists(file))
-            cdfpaths(object) <- files
+            filepaths(object) <- files
     
     if (is.null(snames))
         snames <- gsub("\\.[^.]*$", "", basename(files))
-    sampnames(object) <- snames
     
     if (is.null(sclass)) {
+        # create factors from filesystetm hierarchy
         sclass <- gsub("^\\.$", "sample", dirname(files))
+        lev <- strsplit(sclass, "/")
+        levlen <- sapply(lev, length)
+        if(length(lev) > 1 && !all(levlen[1] == levlen))
+            stop("Directory tree must be level")
+        pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
         # Make the default group names less redundant
         scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
         scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
@@ -39,50 +50,47 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
         if (i > 1 && i <= nrow(scomp))
             sclass <- substr(sclass, i, max(nchar(sclass)))
-    }
-    sampclass(object) <- sclass
+        pdata[,"class"] <- sclass
+    } else pdata <- sclass
+    rownames(pdata) <- sampnames
+    phenoData(object) <- pdata
     
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
     
-    if ("step" %in% names(list(...)))
-        profstep <- list(...)$step
+    mc <- match.call()
+    if ("step" %in% names(mc))
+        mc$profstep <- mc$step
     else
-        profstep <- 0.1
+        mc$profstep <- 0.1
     
-    profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
-    
-    peaklist <- vector("list", length(files))
-    
-    for (i in seq(along = peaklist)) {
-
-        lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam, 
-                         profstep = 0)
-        cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- findPeaks(lcraw, ...)
-        peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
-        rtlist$raw[[i]] <- lcraw@scantime
-        rtlist$corrected[[i]] <- lcraw@scantime
-        rm(lcraw)
-        gc()
-        if (nrow(peaklist[[i]]) == 0)
-            warning(paste("No peaks found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) == 1)
-            warning(paste("Only 1 peak found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) < 10)
-            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample", 
-                    snames[i]))
+    vargs <- list(...)
+    peakargs <- vargs[!(vargs %in% "step")]
+    if (is.null(pipeline)) { # create default pipeline if none provided
+        findpeaksproto <- do.call("xcmsProtocol", c("FindPeaks", peakargs))
+        profargs <- list(profmethod = profmethod, profstep = mc$profstep, profparam)
+        genprofproto <- do.call("xcmsProtocol", c("GenProfile", profargs))
+        rawpipeline <- new("xcmsRawPipeline", genprofproto = genprofproto)
+        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaks, 
+            rawpipeline = rawpipeline)
+    } else { # if prof/peak parameters specified, override pipeline
+        genprof <- genProfProto(rawPipeline(pipeline))
+        specified <- match(c("profmethod", "profstep"), names(mc), 0)
+        genProfProto(rawPipeline(pipeline)) <- do.call("new", c(class(genprof), 
+            genprof, mc[specified], profparam))
+        findpeak <- findPeakProto(pipeline)
+        findPeakProto(pipeline) <- do.call("new", c(class(findpeak), findpeak,
+            peakargs))
     }
     
-    peaks(object) <- do.call("rbind", peaklist)
-    object@rt <- rtlist
+    pipeline(object) <- pipeline
     
     object
 }
 
 setMethod("show", "xcmsSet", function(object) {
 
-    cat("An \"xcmsSet\" object with", length(object@sampnames), "samples\n\n")
+    cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
     
     cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"), 
         " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"), 
@@ -90,18 +98,12 @@ setMethod("show", "xcmsSet", function(object) {
     cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"), 
         "m/z\n")
     cat("Peaks:", nrow(object@peaks), "(about", 
-        round(nrow(object@peaks)/length(object@sampnames)), "per sample)\n")
+        round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
-    cat("Sample classes:", paste(levels(object@sampclass), collapse = ", "), "\n\n")
+    cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
     
-    if (length(object@profinfo)) {
-        cat("Profile settings: ")
-        for (i in seq(along = object@profinfo)) {
-            if (i != 1) cat("                  ")
-            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]], "\n", sep = "")
-        }
-        cat("\n")
-    }
+    show(object@pipeline)
+    cat("\n")
     
     memsize <- object.size(object)
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
@@ -113,18 +115,15 @@ c.xcmsSet <- function(...) {
     object <- new("xcmsSet")
     
     peaklist <- vector("list", length(lcsets))
-    namelist <- vector("list", length(lcsets))
-    classlist <- vector("list", length(lcsets))
+    pdatalist <- vector("list", length(lcsets))
     cdflist <- vector("list", length(lcsets))
     rtraw <- vector("list", 0)
     rtcor <- vector("list", 0)
     nsamp <- 0
     for (i in seq(along = lcsets)) {
         peaklist[[i]] <- peaks(lcsets[[i]])
-        namelist[[i]] <- sampnames(lcsets[[i]])
-        classlist[[i]] <- sampclass(lcsets[[i]])
-        classlist[[i]] <- levels(classlist[[i]])[classlist[[i]]]
-        cdflist[[i]] <- cdfpaths(lcsets[[i]])
+        pdatalist[[i]] <- phenoData(lcsets[[i]])
+        cdflist[[i]] <- filepaths(lcsets[[i]])
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
         
@@ -134,11 +133,11 @@ c.xcmsSet <- function(...) {
     }
     
     peaks(object) <- do.call("rbind", peaklist)
-    sampnames(object) <- unlist(namelist)
-    classlist <- unlist(classlist)
-    sampclass(object) <- factor(classlist, unique(classlist))
-    cdfpaths(object) <- unlist(cdflist)
-    profinfo(object) <- profinfo(lcsets[[1]])
+    phenoData(object) <- do.call("rbind", pdatalist)
+    filepaths(object) <- unlist(cdflist)
+    object@rawprotos <- lcsets[[1]]@rawprotos
+    object@findpeaksproto <- lcsets[[1]]@findpeaksproto
+    object@peakprotos <- lcsets[[1]]@peakprotos
     object@rt <- list(raw = rtraw, corrected = rtcor)
     
     invisible(object)
@@ -150,9 +149,9 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         f <- factor(f)
     sampidx <- unclass(f)
     peakmat <- peaks(x)
-    samples <- sampnames(x)
-    classlabel <- sampclass(x)
-    cdffiles <- cdfpaths(x)
+    
+    pdata <- phenoData(x)
+    cdffiles <- filepaths(x)
     prof <- profinfo(x)
     rtraw <- x@rt$raw
     rtcor <- x@rt$corrected
@@ -171,9 +170,8 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         cpeaks[,"sample"] <- samp[sidx]
         peaks(lcsets[[i]]) <- cpeaks
         
-        sampnames(lcsets[[i]]) <- samples[sampidx == i]
-        sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        cdfpaths(lcsets[[i]]) <- cdffiles[sampidx == i]
+        phenoData(lcsets[[i]]) <- pdata[,sampidx == i]
+        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
         profinfo(lcsets[[i]]) <- prof
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
@@ -226,42 +224,54 @@ setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
 
 setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
-setMethod("sampnames", "xcmsSet", function(object) object@sampnames)
+setMethod("sampnames", "xcmsSet", function(object) rownames(object@phenoData))
 
 setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
 
 setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
-    object@sampnames <- value
+    rownames(object@phenoData) <- value
     
     object
 })
 
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
-setMethod("sampclass", "xcmsSet", function(object) object@sampclass)
+setMethod("sampclass", "xcmsSet", function(object) object@phenoData[,"class"])
 
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
-
-    if (is.factor(value))
-        object@sampclass <- value
-    else
-        object@sampclass <- factor(value, unique(value))
-    
+    object@phenoData[,"class"] <- value
     object
 })
 
-setGeneric("cdfpaths", function(object) standardGeneric("cdfpaths"))
+setGeneric("phenoData", function(object) standardGeneric("phenoData"))
 
-setMethod("cdfpaths", "xcmsSet", function(object) object@cdfpaths)
+setMethod("phenoData", "xcmsSet", function(object) object@phenoData)
 
-setGeneric("cdfpaths<-", function(object, value) standardGeneric("cdfpaths<-"))
+setGeneric("phenoData<-", function(object, value) standardGeneric("phenoData<-"))
 
-setReplaceMethod("cdfpaths", "xcmsSet", function(object, value) {
+setReplaceMethod("phenoData", "xcmsSet", function(object, value) {
+    if (is.matrix(value))
+        value <- as.data.frame(value)
+    if (is.data.frame(value) && !("class" %in% colnames(value)))
+        value[,"class"] <- interaction(value)
+    else if (!is.data.frame(value))
+        value <- data.frame(class = value)
+    object@phenoData <- value
+    object
+})
 
-    object@cdfpaths <- value
+setGeneric("filepaths", function(object) standardGeneric("filepaths"))
+
+setMethod("filepaths", "xcmsSet", function(object) object@filepaths)
+
+setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-"))
+
+setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
+
+    object@filepaths <- value
     
     object
 })
@@ -310,6 +320,43 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
         }
     
     gnames
+})
+
+setMethod("pipeline", "xcmsSet", function(object) object@pipeline)
+
+setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
+    
+    files <- filepaths(object)
+    snames <- sampnames(object)
+    rawpipeline <- rawPipeline(value)
+    
+    peaklist <- vector("list", length(files))
+    
+    for (i in seq(along = peaklist)) {
+        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profStep = 0)
+        cat(snames[i], ": ", sep = "")
+        peaklist[[i]] <- findPeaks(lcraw, protocol = findPeaksProto(pipeline))
+        peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
+        rtlist$raw[[i]] <- lcraw@scantime
+        rtlist$corrected[[i]] <- lcraw@scantime
+        rm(lcraw)
+        gc()
+        if (nrow(peaklist[[i]]) == 0)
+            warning(paste("No peaks found in sample", snames[i]))
+        else if (nrow(peaklist[[i]]) == 1)
+            warning(paste("Only 1 peak found in sample", snames[i]))
+        else if (nrow(peaklist[[i]]) < 10)
+            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample", 
+                    snames[i]))
+    }
+    
+    peaks(object) <- do.call("rbind", peaklist)
+    object@rt <- rtlist
+    
+    for (proto in featureProtos(pipeline))
+        object <- processFeatures(proto, object)
+    
+    object
 })
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
@@ -473,7 +520,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     if (length(object@rt) == 2)
         rtcor <- object@rt$corrected
     else {
-        fnames <- cdfpaths(object)
+        fnames <- filepaths(object)
         rtcor <- vector("list", length(fnames))
         for (i in seq(along = fnames)) {
             cdf <- netCDFOpen(fnames[i])
@@ -670,7 +717,7 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     groupmat <- groups(object)
     if (length(groupmat) == 0)
         stop("No group information found")
-    files <- cdfpaths(object)
+    files <- filepaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
     prof <- profinfo(object)
@@ -741,7 +788,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
                                         rt = c("corrected", "raw")) {
     
-    files <- cdfpaths(object)
+    files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
     prof <- profinfo(object)
