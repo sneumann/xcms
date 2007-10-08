@@ -383,7 +383,6 @@ filtfft <- function(y, filt) {
                                      steps = 2, mzdiff = 0.8 - step*steps, 
                                      index = FALSE, sleep = 0, 
                                      verbose.columns = FALSE) {
-
     pipeline <- object@pipeline
     profStep(genProfProto(pipeline)) <- step
     maxidx <- pipeline
@@ -489,7 +488,7 @@ filtfft <- function(y, filt) {
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
     }
-    browser()
+    
     uorder <- order(rmat[,"into"], decreasing=TRUE)
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder, mzdiff)
@@ -817,7 +816,7 @@ setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 
 setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms$findPeaks.method,
                                            ...) {
-    perform(xcmsProtocol("findPeaks", method), object, ...)
+    perform(xcmsProtocol("findPeaks", method, ...), object)
 })
 
 setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
@@ -1125,13 +1124,18 @@ setGeneric("profMat", function(object, pipeline, ...)
     standardGeneric("profMat"))
 setMethod("profMat", "xcmsRaw", function(object, pipeline, ...)
 {
+    profprotos <- profProtos(pipeline)
+    if (length(profprotos))
+      margins <- rowMax(sapply(profprotos, profMargins))
+    # FIXME: inform profile generation of margins
+    
     prof <- perform(genProfProto(pipeline), object, ...)
-
+    
     if (is.null(prof)) # 'NULL' returned if profile protocol is no-op
         return(NULL)
     
-    for (proto in profProtos(pipeline))
-        prof <- processProfile(proto, prof)
+    for (proto in profprotos)
+        prof <- perform(proto, prof, ...)
     
     prof
 })
@@ -1162,11 +1166,38 @@ setMethod("findMZBoxes", "xcmsRaw", function(object,mzrange=c(0.0,0.0),scanrange
 })
 
 # Baseline Removal
-setGeneric("removeBaseline", function(object, method, ...) standardGeneric("removeBaseline"))
+
+setGeneric("removeBaseline", function(object, ...) standardGeneric("removeBaseline"))
 setMethod("removeBaseline", "xcmsRaw",
   function(object, method=getOption("BioC")$xcms$removeBaseline.method, ...) 
 {
   perform(xcmsProtocol("removeBaseline", method, ...), object)
+})
+
+# FIXME: Should be modified to accept mz/scan ranges
+.removeBaseline.medFilt <- function(object, mzrad = 0, scanrad = 0, ...) {
+    object - medianFilter(object, mzrad, scanrad)
+}
+
+setGeneric("removeBaseline.medFilt", function(object, ...) 
+  standardGeneric("removeBaseline.medFilt"))
+
+setMethod("removeBaseline.medFilt", "matrix", .removeBaseline.medFilt)
+
+setMethod("removeBaseline.medFilt", "xcmsRaw", function(object, ...) {
+  object@env$profile <- removeBaseline.medFilt(object@env$profile, ...)
+  object
+})
+
+setProtocolClass("xcmsProtoRemoveBaselineMedFilt", 
+  representation(mzrad = "numeric", scanrad = "numeric"),
+  c(formals(.removeBaseline.medFilt), name = "Median Filter Baseline Subtraction"),
+  "xcmsProtoRemoveBaseline")
+
+setMethod("profMargins", "xcmsProtoRemoveBaselineMedFilt", 
+  function(object)
+{
+  round(c(mzmargin = object@mzrad/2, scanmargin = object@scanrad/2))
 })
 
 # Pipeline

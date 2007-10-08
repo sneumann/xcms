@@ -192,16 +192,21 @@ profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 medianFilter <- function(x, mrad, nrad) {
 
-    dimx <- dim(x)
-    if (!is.double(x)) x <- as.double(x)
-    .C("MedianFilter",
-       x,
-       as.integer(dimx[1]),
-       as.integer(dimx[2]),
-       as.integer(mrad),
-       as.integer(nrad),
-       out = doubleMatrix(dimx[1], dimx[2]),
-       DUP = FALSE, PACKAGE = "xcms")$out
+    if (mrad == 0) { # 'runmed' seems a lot faster in this case
+        k <- 2*nrad + 1 # ensure 'k' is odd
+        t(apply(x, 1, runmed, k = k))
+    } else {
+        dimx <- dim(x)
+        if (!is.double(x)) x <- as.double(x)
+        .C("MedianFilter",
+           x,
+           as.integer(dimx[1]),
+           as.integer(dimx[2]),
+           as.integer(mrad),
+           as.integer(nrad),
+           out = doubleMatrix(dimx[1], dimx[2]),
+           DUP = FALSE, PACKAGE = "xcms")$out
+    }
 }
 
 descendZero <- function(y, istart = which.max(y)) {
