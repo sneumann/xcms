@@ -28,16 +28,21 @@
     options("BioC"=BioC)
   }
   
-  ## all findPeaks methods
-  start <- nchar("findPeaks.")
   all.xcms <- ls(asNamespace(pkgname))
-  findPeaks.methods <-  substr(all.xcms[grep("findPeaks\\..*", all.xcms)], start+1, 100)
-
-  ## default for the methods
-  findPeaks.method <- "matchedFilter"
+  find_methods <- function(type) {
+    start <- nchar(type)
+    substr(all.xcms[grep(paste("^", type, "\\..*", sep=""), all.xcms)], start+2, 100)
+  }
   
-  xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods) 
-
+  xcms.opt <- list(
+    ## find methods for each type
+    findPeaks.methods = find_methods("findPeaks"),
+    removeBaseline.methods = find_methods("removeBaseline"),
+    ## default for the methods
+    findPeaks.method = "matchedFilter",
+    removeBaseline.method = "medFilt"
+  )
+  
   class(xcms.opt) <- "BioCPkg"
 
   BioC <- getOption("BioC")
