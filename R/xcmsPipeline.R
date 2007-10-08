@@ -49,9 +49,11 @@ setMethod("perform", "xcmsProtocol", function(object, data, ...) {
   type <- uncapitalize(sub("xcmsProto", "", type_cl))
   method <- uncapitalize(sub(type_cl, "", cl))
   slots <- lapply(slotNames(cl), function(slot_name) slot(object, slot_name))
+  names(slots) <- slotNames(cl)
   # leave out base slots
   slots <- slots[!(names(slots) %in% slotNames("xcmsProtocol"))]
-  args <- c(list(object = data), slots)
+  # pass data and any extra args (eg subset specifications) to function
+  args <- c(list(object = data), slots, list(...))
   # ensure all slots evaluated
   slots <- lapply(slots, eval, args)
   do.call(paste(type, method, sep="."), c(list(data), slots))
@@ -189,6 +191,14 @@ setMethod("show", "xcmsProtoGenProfile", function(object) {
     if (length(object@profstep))
       cat("Step:", object@profstep, "m/z\n")
 })
+
+# Base baseline removal class
+
+setClass("xcmsProtoRemoveBaseline", contains = "xcmsProtocol")
+
+# Provide necessary margins (as list) in profile matrix for given ranges
+# This is to avoid edge effects when processing subsets of the matrix
+setGeneric("profMargins", function(object, ...) standardGeneric("profMargins"))
 
 # Base peak finding class
 
