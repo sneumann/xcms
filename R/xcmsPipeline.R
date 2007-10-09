@@ -3,14 +3,21 @@
 # Get a protocol instance for the given type and method
 # eg xcmsProtocol("findPeaks", "matchedFilter") yields an instance of
 # "xcmsProtoFindPeaksMatchedFilter"
-xcmsProtocol <- function(type, method = "", ...)
+xcmsProtocol <- function(type, method = xcmsProtocolDefault(type), ...)
 {
   class <- xcmsProtocolClass(type, method)
   new(class, ...)
 }
-xcmsProtocolClass <- function(type, method = "")
+xcmsProtocolClass <- function(type, method = xcmsProtocolDefault(type))
 {
   paste("xcmsProto", capitalize(type), capitalize(method), sep = "")
+}
+xcmsProtocolDefault <- function(type)
+{
+  def <- getOption("BioC")$xcms[[paste(uncapitalize(type), "method", sep=".")]]
+  if (is.null(def))
+    def <- ""
+  def
 }
 
 setProtocolClass <- function(Class, representation, prototype, ...)

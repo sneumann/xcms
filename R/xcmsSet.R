@@ -52,7 +52,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
             sclass <- substr(sclass, i, max(nchar(sclass)))
         pdata[,"class"] <- sclass
     } else pdata <- sclass
-    rownames(pdata) <- sampnames
+    rownames(pdata) <- snames
     phenoData(object) <- pdata
     
     rtlist <- list(raw = vector("list", length(snames)),
@@ -68,10 +68,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     peakargs <- vargs[!(vargs %in% "step")]
     if (is.null(pipeline)) { # create default pipeline if none provided
         findpeaksproto <- do.call("xcmsProtocol", c("FindPeaks", peakargs))
-        profargs <- list(profmethod = profmethod, profstep = mc$profstep, profparam)
+        profargs <- c(list(profmethod = profmethod, profstep = mc$profstep), profparam)
         genprofproto <- do.call("xcmsProtocol", c("GenProfile", profargs))
         rawpipeline <- new("xcmsRawPipeline", genprofproto = genprofproto)
-        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaks, 
+        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaksproto, 
             rawpipeline = rawpipeline)
     } else { # if prof/peak parameters specified, override pipeline
         genprof <- genProfProto(rawPipeline(pipeline))
@@ -333,9 +333,9 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
     peaklist <- vector("list", length(files))
     
     for (i in seq(along = peaklist)) {
-        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profStep = 0)
+        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profstep = 0)
         cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- findPeaks(lcraw, protocol = findPeaksProto(pipeline))
+        peaklist[[i]] <- perform(findPeaksProto(value), lcraw)
         peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
         rtlist$raw[[i]] <- lcraw@scantime
         rtlist$corrected[[i]] <- lcraw@scantime
