@@ -554,6 +554,10 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     
     rtdevsmo <- vector("list", n)
     
+    # Code for checking to see if retention time correction is overcorrecting
+    rtdevrange <- range(rtdev, na.rm = TRUE)
+    warn.overcorrect <- FALSE
+    
     for (i in 1:n) {
     
         pts <- na.omit(data.frame(rt = rt[,i], rtdev = rtdev[,i]))
@@ -572,6 +576,9 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
                 d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
                 rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
             }
+            
+            rtdevsmorange <- range(rtdevsmo[[i]])
+            if (any(rtdevsmorange/rtdevrange > 2)) warn.overcorrect <- TRUE
         } else {
             fit <- lsfit(pts$rt, pts$rtdev)
             rtdevsmo[[i]] <- rtcor[[i]] * fit$coef[2] + fit$coef[1]
@@ -581,6 +588,13 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
             rtdevsmo[[i]][minidx] <- rtdevsmo[[i]][head(which(!minidx), n = 1)]
             rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
         }
+    }
+    
+    if (warn.overcorrect) {
+        warning(paste("Fitted retention time deviation curves exceed points by more than 2x.",
+                      "This is dangerous and the algorithm is probably overcorrecting your data.",
+                      "Consider increasing the span parameter or switching to the linear method.",
+                      sep = "\n"))
     }
     
     if (plottype == "mdevden") {
