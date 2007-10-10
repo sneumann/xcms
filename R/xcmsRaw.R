@@ -34,6 +34,15 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     } else
         stop("Couldn't determine file type")
     
+    rtdiff <- diff(rawdata$rt)
+    if (any(rtdiff < 0)) {
+    	badtimes <- which(rtdiff < 0)
+    	stop(paste("Time for scan ", badtimes[1], " (", 
+    	           rawdata$rt[[badtimes[1]]], ") greater than scan ", 
+    	           badtimes[1]+1, " (", rawdata$rt[[badtimes[1]+1]], ")", 
+    	           sep = ""))
+    }
+    
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
@@ -215,16 +224,18 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
         intensity <- spec[i,"intensity"]
         fwhmrange <- descendValue(spec[,"intensity"], spec[i,"intensity"]/2, i)
         
-        fwhm1 <- spec[fwhmrange[1],"mz"] - (spec[fwhmrange[1],"intensity"]-intensity/2)*diff(spec[fwhmrange[1]-1:0,"mz"])/diff(spec[fwhmrange[1]-1:0,"intensity"])
-        fwhm2 <- spec[fwhmrange[2],"mz"] - (spec[fwhmrange[2],"intensity"]-intensity/2)*diff(spec[fwhmrange[2]+1:0,"mz"])/diff(spec[fwhmrange[2]+1:0,"intensity"])
+    if (fwhmrange[1] > 1 && fwhmrange[2] < nrow(spec)) {
+            fwhm1 <- spec[fwhmrange[1],"mz"] - (spec[fwhmrange[1],"intensity"]-intensity/2)*diff(spec[fwhmrange[1]-1:0,"mz"])/diff(spec[fwhmrange[1]-1:0,"intensity"])
+            fwhm2 <- spec[fwhmrange[2],"mz"] - (spec[fwhmrange[2],"intensity"]-intensity/2)*diff(spec[fwhmrange[2]+1:0,"mz"])/diff(spec[fwhmrange[2]+1:0,"intensity"])
         
-        fwhm <- fwhm2-fwhm1
+            fwhm <- fwhm2-fwhm1
+        
+            if (!any(abs(spectab[,"mz"] - mz) <= mzgap))
+                spectab <- rbind(spectab, c(mz, intensity, fwhm))
+    }
         
         peakrange <- descendValue(spec[,"intensity"], min(noise*sn, spec[i,"intensity"]/4), i)
         spec[seq(peakrange[1], peakrange[2]),"intensity"] <- 0
-        
-        if (!any(abs(spectab[,"mz"] - mz) <= mzgap))
-            spectab <- rbind(spectab, c(mz, intensity, fwhm))
     }
     
     spectab
