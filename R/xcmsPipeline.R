@@ -69,6 +69,10 @@ setMethod("perform", "xcmsProtocol", function(object, data, ...) {
 # returns a widget for controlling and viewing this object
 setGeneric("widget", function(object, ...) standardGeneric("widget"))
 
+# returns a widget containing an interactive visualization of the
+# specified input and output in the context of this protocol
+setGeneric("explore", function(object, ...) standardGeneric("explore"))
+
 # Base profile generation protocol
 
 setClass("xcmsProtoGenProfile", 
