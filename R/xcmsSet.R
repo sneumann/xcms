@@ -55,9 +55,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     rownames(pdata) <- snames
     phenoData(object) <- pdata
     
-    rtlist <- list(raw = vector("list", length(snames)),
-                   corrected = vector("list", length(snames)))
-    
     mc <- match.call()
     if ("step" %in% names(mc))
         mc$profstep <- mc$step
@@ -135,9 +132,8 @@ c.xcmsSet <- function(...) {
     peaks(object) <- do.call("rbind", peaklist)
     phenoData(object) <- do.call("rbind", pdatalist)
     filepaths(object) <- unlist(cdflist)
-    object@rawprotos <- lcsets[[1]]@rawprotos
-    object@findpeaksproto <- lcsets[[1]]@findpeaksproto
-    object@peakprotos <- lcsets[[1]]@peakprotos
+    # assumes all pipelines were the same (otherwise create a new xcmsSet)
+    object@pipeline <- lcsets[[1]]@pipeline
     object@rt <- list(raw = rtraw, corrected = rtcor)
     
     invisible(object)
@@ -152,7 +148,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     
     pdata <- phenoData(x)
     cdffiles <- filepaths(x)
-    prof <- profinfo(x)
+    pipeline <- pipeline(x)
     rtraw <- x@rt$raw
     rtcor <- x@rt$corrected
     
@@ -172,9 +168,12 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         
         phenoData(lcsets[[i]]) <- pdata[,sampidx == i]
         filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
-        profinfo(lcsets[[i]]) <- prof
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
+        
+        # Since splitting samples into subsets affects the analysis, 
+        # should the split operation be part of the pipeline?
+        lcsets[[i]]@pipeline <- pipeline
     }
     
     if (drop)
@@ -278,13 +277,14 @@ setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
 
 setGeneric("profinfo", function(object) standardGeneric("profinfo"))
 
-setMethod("profinfo", "xcmsSet", function(object) object@profinfo)
+setMethod("profinfo", "xcmsSet", function(object) 
+  genProfProto(rawPipeline(pipeline(object))))
 
 setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
 
 setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 
-    object@profinfo <- value
+    genProfProto(rawPipeline(pipeline(object))) <- value
     
     object
 })
@@ -331,6 +331,8 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
     rawpipeline <- rawPipeline(value)
     
     peaklist <- vector("list", length(files))
+    rtlist <- list(raw = vector("list", length(snames)),
+                   corrected = vector("list", length(snames)))
     
     for (i in seq(along = peaklist)) {
         lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profstep = 0)
@@ -353,7 +355,7 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
     peaks(object) <- do.call("rbind", peaklist)
     object@rt <- rtlist
     
-    for (proto in featureProtos(pipeline))
+    for (proto in featureProtos(value))
         object <- processFeatures(proto, object)
     
     object
@@ -734,7 +736,8 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     files <- filepaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
-    prof <- profinfo(object)
+    rawpipeline <- rawPipeline(pipeline(object))
+    step <- profStep(genProfProto(rawpipeline))
     rtcor <- object@rt$corrected
     
     # Remove groups that overlap with more "well-behaved" groups
@@ -773,12 +776,10 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
         flush.console()
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
-            lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-            if (length(prof) > 2)
-                lcraw@profparam <- prof[seq(3, length(prof))]
+            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profstep = 0)
             if (length(rtcor) == length(files))
                 lcraw@scantime <- rtcor[[i]]
-            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
+            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = step)
             rm(lcraw)
             gc()
             newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
@@ -805,7 +806,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
-    prof <- profinfo(object)
+    rawpipeline <- rawPipeline(pipeline(object))
+    step <- profStep(genProfProto(rawpipeline))
     
     rt <- match.arg(rt)
 
@@ -855,12 +857,11 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         
         cat(sampleidx[i], "")
         flush.console()
-        lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
+        lcraw <- xcmsRaw(files[sampidx[i]], pipeline = rawpipeline, 
+          profstep = 0)
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
-        if (length(prof) > 2)
-            lcraw@profparam <- prof[seq(3, length(prof))]
-        eic[[i]] <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
+        eic[[i]] <- getEIC(lcraw, mzrange, rtrange, step = step)
         rm(lcraw)
         gc()
     }

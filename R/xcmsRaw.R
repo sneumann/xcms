@@ -42,7 +42,8 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     	           badtimes[1]+1, " (", rawdata$rt[[badtimes[1]+1]], ")", 
     	           sep = ""))
     }
-    
+
+    object@filepath <- filename
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
