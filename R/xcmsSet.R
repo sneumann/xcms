@@ -2,13 +2,14 @@
 # 1) phenoData -> AnnotatedDataFrame
 
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
-                                   groupidx = "list",
+                                   groupidx = "list", comps = "matrix",
                                    phenoData = "data.frame", rt = "list", 
                                    filepaths = "character", 
                                    pipeline = "xcmsPipeline"
                                    ),
          prototype(peaks = matrix(nrow = 0, ncol = 0), 
                    groups = matrix(nrow = 0, ncol = 0), 
+                   comps = matrix(nrow = 0, ncol = 0), 
                    groupidx = list(),
                    phenoData = data.frame(), rt = list(),
                    filepaths = character(0), pipeline = new("xcmsPipeline")))
@@ -55,10 +56,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     rownames(pdata) <- snames
     phenoData(object) <- pdata
     
-    mc <- match.call()
+    mc <- as.list(match.call())
     if ("step" %in% names(mc))
         mc$profstep <- mc$step
-    else
+    else if (is.null(pipeline))
         mc$profstep <- 0.1
     
     vargs <- list(...)
@@ -75,8 +76,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         specified <- match(c("profmethod", "profstep"), names(mc), 0)
         genProfProto(rawPipeline(pipeline)) <- do.call("new", c(class(genprof), 
             genprof, mc[specified], profparam))
-        findpeak <- findPeakProto(pipeline)
-        findPeakProto(pipeline) <- do.call("new", c(class(findpeak), findpeak,
+        findpeak <- findPeaksProto(pipeline)
+        findPeaksProto(pipeline) <- do.call("new", c(class(findpeak), findpeak,
             peakargs))
     }
     
@@ -105,6 +106,11 @@ setMethod("show", "xcmsSet", function(object) {
     memsize <- object.size(object)
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 })
+
+# The c() and split() methods should be used only for interpreting results;
+# not as part of the preprocessing.
+
+# There is no attempt to ensure consistency with the pipeline.
 
 c.xcmsSet <- function(...) {
 
@@ -171,8 +177,8 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
         
-        # Since splitting samples into subsets affects the analysis, 
-        # should the split operation be part of the pipeline?
+        # Note that the results are likely different from
+        # those obtained by processing ths subset of samples from the start.
         lcsets[[i]]@pipeline <- pipeline
     }
     
@@ -221,6 +227,19 @@ setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
     object
 })
 
+setGeneric("comps", function(object) standardGeneric("comps"))
+
+setMethod("comps", "xcmsSet", function(object) object@comps)
+
+setGeneric("comps<-", function(object, value) standardGeneric("comps<-"))
+
+setReplaceMethod("comps", "xcmsSet", function(object, value) {
+
+    object@comps <- value
+    
+    object
+})
+
 setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
 setMethod("sampnames", "xcmsSet", function(object) rownames(object@phenoData))
@@ -241,8 +260,11 @@ setMethod("sampclass", "xcmsSet", function(object) object@phenoData[,"class"])
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
-    object@phenoData[,"class"] <- value
-    object
+  if (!is.factor(value))
+    value <- factor(value, unique(value))
+  
+  object@phenoData[,"class"] <- value
+  object
 })
 
 setGeneric("phenoData", function(object) standardGeneric("phenoData"))
@@ -326,6 +348,8 @@ setMethod("pipeline", "xcmsSet", function(object) object@pipeline)
 
 setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
     
+    object@pipeline <- pipeline
+    
     files <- filepaths(object)
     snames <- sampnames(object)
     rawpipeline <- rawPipeline(value)
@@ -335,7 +359,7 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
                    corrected = vector("list", length(snames)))
     
     for (i in seq(along = peaklist)) {
-        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profstep = 0)
+        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, genprof = FALSE)
         cat(snames[i], ": ", sep = "")
         peaklist[[i]] <- perform(findPeaksProto(value), lcraw)
         peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
@@ -356,14 +380,33 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
     object@rt <- rtlist
     
     for (proto in featureProtos(value))
-        object <- processFeatures(proto, object)
+        object <- perform(proto, object)
     
     object
 })
 
+setMethod("addFeatureProtos", c("xcmsSet", "list"), function(object, value)
+{
+  object@pipeline <- addFeatureProtos(object@pipeline, value)
+  for(proto in value) {
+    object <- perform(proto, object)
+  }
+  object
+})
+setMethod("addFeatureProtos", c("xcmsSet", "xcmsProtocol"), function(object, value)
+{
+  addFeatureProtos(object, list(value))
+})
+
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
-setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
+setMethod("group", "xcmsSet", 
+  function(object, method = xcmsMethodDefault("group"), ...)
+{
+  addFeatureProtos(xcmsProtocol("group", method, ...))
+})
+
+.group.density <- function(object, bw = 30, minfrac = 0.5, minsamp = 1,
                                        mzwid = 0.25, max = 5, sleep = 0) {
 
     samples <- sampnames(object)
@@ -459,7 +502,16 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp =
     groupidx(object) <- groupindex[uindex]
     
     object
-})
+}
+
+setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
+setMethod("group.density", "xcmsSet", .group.density)
+
+setProtocolClass("xcmsProtoGroupDensity", 
+  representation(bw = "numeric", minfrac = "numeric", minsamp = "numeric",
+    mzwid = "numeric", max = "numeric"),
+  c(formals(.group.density), dispname = "Density Estimation"),
+  "xcmsProtoGroup")
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
@@ -501,9 +553,14 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
 })
 
 setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
+setMethod("retcor", "xcmsSet", 
+  function(object, method = xcmsMethodDefault("retcor"), ...)
+{
+  addFeatureProtos(xcmsProtocol("retcor", method, ...))
+})
 
-setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
-                                        method = c("loess", "linear"), span = .2,
+.retcor.smooth <- function(object, missing = 1, extra = 1,
+                                        model = c("loess", "linear"), span = .2,
                                         family = c("gaussian", "symmetric"),
                                         plottype = c("none", "deviation", "mdevden"),
                                         col = NULL, ty = NULL) {
@@ -666,8 +723,17 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     groups(object) <- matrix(nrow = 0, ncol = 0)
     groupidx(object) <- list()
     invisible(object)
-})
+}
 
+setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
+setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
+
+setProtocolClass("xcmsProtoRetcorSmooth", 
+  representation(missing = "numeric", extra = "numeric",
+    model = "character", span = "numeric", family = "character"),
+  c(formals(.retcor.smooth), dispname = "Smooth"),
+  "xcmsProtoRetcor")
+  
 setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
 setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRUE, densplit = FALSE) {
@@ -727,7 +793,12 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
 
-setMethod("fillPeaks", "xcmsSet", function(object) {
+setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("fillPeaks"), ...)
+{
+  addFeatureProtos(xcmsProtocol("fillPeaks", method, ...))
+})
+
+.fillPeaks <- function(object) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
@@ -797,6 +868,33 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     groupidx(object) <- groupindex
     
     invisible(object)
+}
+
+setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
+setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
+
+setProtocolClass("xcmsProtoFillPeaksExtract", 
+  prototype = prototype(dispname = "Extract from raw data"),
+  contains = "xcmsProtoFillPeaks")
+
+# The rest of the protocol types
+
+setGeneric("findComps", function(object, ...) standardGeneric("findComps"))
+setMethod("findComps", "xcmsSet", function(object, method = xcmsMethodDefault("findComps"), ...)
+{
+  addFeatureProtos(object, xcmsProtocol("findComps", method, ...))
+})
+
+setGeneric("normalize", function(object, ...) standardGeneric("normalize"))
+setMethod("normalize", "xcmsSet", function(object, method = xcmsMethodDefault("norm"), ...)
+{
+  addFeatureProtos(object, xcmsProtocol("norm", method, ...))
+})
+
+setGeneric("identifyComps", function(object, ...) standardGeneric("identifyComps"))
+setMethod("identifyComps", "xcmsSet", function(object, method = xcmsMethodDefault("ident"), ...)
+{
+  addFeatureProtos(object, xcmsProtocol("ident", method, ...))
 })
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200, 
