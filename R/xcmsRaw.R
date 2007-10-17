@@ -13,7 +13,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msmsinfo = matrix(nrow=0, ncol=0)))
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin", 
-                    profparam = list(), pipeline = NULL) {
+                    profparam = list(), genprof = TRUE, pipeline = NULL) {
     
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
@@ -58,12 +58,16 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         mc <- as.list(match.call())
         specified <- match(c("profstep", "profmethod"), names(mc), 0)
         if (sum(specified)) {
-            genprof <- genProfProto(pipeline)
-            genProfProto(pipeline) <- do.call("new", c(class(genprof), genprof, 
-                mc[specified], profparam))
+            genprofproto <- genProfProto(pipeline)
+            genProfProto(pipeline) <- do.call("new", c(class(genprofproto), 
+                genprofproto, mc[specified], profparam))
         }
     }
+    realprofstep <- profStep(genProfProto(pipeline))
+    if (!genprof) # temporarily set step to zero to disable profile generation
+        profStep(genProfProto(pipeline)) <- 0
     pipeline(object) <- pipeline
+    profStep(genProfProto(object@pipeline)) <- realprofstep
     
     return(object)
 }
@@ -397,8 +401,9 @@ filtfft <- function(y, filt) {
                                      verbose.columns = FALSE) {
     pipeline <- object@pipeline
     profStep(genProfProto(pipeline)) <- step
-    maxidx <- pipeline
-    profMethod(genProfProto(maxidx)) <- "maxidx"
+    maxidxproto <- genProfProto(pipeline)
+    profMethod(maxidxproto) <- "maxidx"
+    maxidx <- new("xcmsRawPipeline", genprofproto = maxidxproto)
     
     ### Create EIC buffer
     # This buffered reading should be factored into an iterator object
@@ -512,8 +517,8 @@ setProtocolClass("xcmsProtoFindPeaksMatchedFilter",
   representation(fwhm = "numeric", sigma = "numeric", max = "numeric", 
     snthresh = "numeric", step = "numeric", steps = "numeric", mzdiff = "numeric", 
     index = "logical"), 
-  c(formals(.findPeaks.matchedFilter), name = "Matched Filter Peak Detection"),
-  contains = "xcmsProtoFindPeaks")
+  c(formals(.findPeaks.matchedFilter), dispname = "Matched Filter"),
+  "xcmsProtoFindPeaks")
 
 setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
 
@@ -770,7 +775,7 @@ setProtocolClass("xcmsProtoFindPeaksCentWave",
     scales="numeric", maxGaussOverlap = "numeric", minPtsAboveBaseLine="numeric",
     scRangeTol="numeric", maxDescOutlier="numeric", mzdiff="numeric", 
     rtdiff="numeric", integrate="numeric", fitgauss = "logical"), 
-  c(formals(.findPeaks.centWave), name = "Centroid Wavelet Peak Detection"),
+  c(formals(.findPeaks.centWave), dispname = "Centroid Wavelet"),
   "xcmsProtoFindPeaks")
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
@@ -826,7 +831,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
 setProtocolClass("xcmsProtoFindPeaksMSW",
   representation(snthresh="numeric", mzdiff="numeric", scales="numeric"), 
-  c(formals(.findPeaks.MSW), name = "MassSpecWavelet Peak Detection"),
+  c(formals(.findPeaks.MSW), name = "MassSpecWavelet"),
   "xcmsProtoFindPeaks")
   
 setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
@@ -835,7 +840,7 @@ setMethod("findPeaks.MSW", "xcmsRaw", .findPeaks.MSW)
 
 setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 
-setMethod("findPeaks", "xcmsRaw", function(object, method=xcmsProtocolDefault("findPeaks"),
+setMethod("findPeaks", "xcmsRaw", function(object, method=xcmsMethodDefault("findPeaks"),
                                            ...) {
     perform(xcmsProtocol("findPeaks", method, ...), object)
 })
@@ -1141,21 +1146,26 @@ setMethod("profRange", "xcmsRaw", function(object,
 })
 
 # generate a profile matrix using a given pipeline and subset
-setGeneric("profMat", function(object, pipeline, ...) 
+setGeneric("profMat", function(object, pipeline = object@pipeline, ...) 
     standardGeneric("profMat"))
-setMethod("profMat", "xcmsRaw", function(object, pipeline, ...)
+setMethod("profMat", "xcmsRaw", function(object, pipeline = object@pipeline, ...)
 {
-    profprotos <- profProtos(pipeline)
-    if (length(profprotos))
-      margins <- rowMax(sapply(profprotos, profMargins))
-    # FIXME: inform profile generation of margins
+    filtprofprotos <- filtProfProtos(pipeline)
+    
+    # FIXME: handle margins
+    
+    #if (length(filtprofprotos))
+    #  margins <- rowMax(sapply(filtprofprotos, profMargins, 
+    #    mzcount = num, scancount = length(object@scantime)))
+    
+    # FIXME: need some sort of caching mechanism
     
     prof <- perform(genProfProto(pipeline), object, ...)
     
     if (is.null(prof)) # 'NULL' returned if profile protocol is no-op
         return(NULL)
     
-    for (proto in profprotos)
+    for (proto in filtprofprotos)
         prof <- perform(proto, prof, ...)
     
     prof
@@ -1186,39 +1196,53 @@ setMethod("findMZBoxes", "xcmsRaw", function(object,mzrange=c(0.0,0.0),scanrange
   as.double(dev),as.integer(minEntries),as.integer(debug), PACKAGE ='xcms' )
 })
 
-# Baseline Removal
+# Profile filtering
 
-setGeneric("removeBaseline", function(object, ...) standardGeneric("removeBaseline"))
-setMethod("removeBaseline", "xcmsRaw",
-  function(object, method=xcmsProtocolDefault("removeBaseline"), ...) 
+# Add a profile filter protocol
+setMethod("addFiltProfProtos", c("xcmsRaw", "list"), function(object, value)
 {
-  perform(xcmsProtocol("removeBaseline", method, ...), object)
+  object@pipeline <- addFiltProfProtos(object@pipeline, value)
+  prof <- object@env$profile
+  for(proto in value) {
+    prof <- perform(proto, prof)
+  }
+  object@env$profile <- prof
+  object
+})
+setMethod("addFiltProfProtos", c("xcmsRaw", "xcmsProtoFilterProfile"), function(object, value)
+{
+  addFiltProfProtos(object, list(value))
+})
+
+setGeneric("filterProfile", function(object, ...) standardGeneric("filterProfile"))
+setMethod("filterProfile", "xcmsRaw",
+  function(object, method=xcmsMethodDefault("filterProfile"), subtract = FALSE, ...) 
+{
+  proto <- xcmsProtocol("filterProfile", method, ...)
+  if (subtract)
+    proto <- xcmsProtocol("filterProfile", "subtract", filter = proto)
+  addFiltProfProtos(object, proto)
 })
 
 # FIXME: Should be modified to accept mz/scan ranges
-.removeBaseline.medFilt <- function(object, mzrad = 0, scanrad = 0, ...) {
-    object - medianFilter(object, mzrad, scanrad)
+.filterProfile.median <- function(object, mzrad = 0, scanrad = 0, ...) {
+  medianFilter(object, mzrad, scanrad)
 }
 
-setGeneric("removeBaseline.medFilt", function(object, ...) 
-  standardGeneric("removeBaseline.medFilt"))
+setGeneric("filterProfile.median", function(object, ...) 
+  standardGeneric("filterProfile.median"))
 
-setMethod("removeBaseline.medFilt", "matrix", .removeBaseline.medFilt)
+setMethod("filterProfile.median", "matrix", .filterProfile.median)
 
-setMethod("removeBaseline.medFilt", "xcmsRaw", function(object, ...) {
-  object@env$profile <- removeBaseline.medFilt(object@env$profile, ...)
-  object
-})
-
-setProtocolClass("xcmsProtoRemoveBaselineMedFilt", 
+setProtocolClass("xcmsProtoFilterProfileMedian", 
   representation(mzrad = "numeric", scanrad = "numeric"),
-  c(formals(.removeBaseline.medFilt), name = "Median Filter Baseline Subtraction"),
-  "xcmsProtoRemoveBaseline")
+  c(formals(.filterProfile.median), dispname = "Median"),
+  "xcmsProtoFilterProfile")
 
-setMethod("profMargins", "xcmsProtoRemoveBaselineMedFilt", 
-  function(object)
+setMethod("profMargins", "xcmsProtoFilterProfileMedian", 
+  function(object, mzcount, scancount)
 {
-  round(c(mzmargin = object@mzrad/2, scanmargin = object@scanrad/2))
+  round(c(mzmargin = object@mzrad, scanmargin = object@scanrad))
 })
 
 # Pipeline
