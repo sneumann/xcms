@@ -34,15 +34,17 @@
     substr(all.xcms[grep(paste("^", type, "\\..*", sep=""), all.xcms)], start+2, 100)
   }
   
-  xcms.opt <- list(
-    ## find methods for each type
-    findPeaks.methods = find_methods("findPeaks"),
-    removeBaseline.methods = find_methods("removeBaseline"),
-    ## default for the methods
-    findPeaks.method = "matchedFilter",
-    removeBaseline.method = "medFilt"
-  )
+  protocols <- list(findPeaks = "matchedFilter", 
+                    filterProfile = "median",
+                    group = "density", 
+                    retcor = "smooth", 
+                    fillPeaks = "extract")
   
+  xcms.opt <- list()
+  for(type in names(protocols)) {
+    xcms.opt[[paste(type, "methods",sep=".")]] <- find_methods(type)
+    xcms.opt[[paste(type, "method", sep=".")]] <- protocols[[type]]
+  }
   class(xcms.opt) <- "BioCPkg"
 
   BioC <- getOption("BioC")

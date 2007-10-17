@@ -3,42 +3,46 @@
 # Get a protocol instance for the given type and method
 # eg xcmsProtocol("findPeaks", "matchedFilter") yields an instance of
 # "xcmsProtoFindPeaksMatchedFilter"
-xcmsProtocol <- function(type, method = xcmsProtocolDefault(type), ...)
+xcmsProtocol <- function(type, method = xcmsMethodDefault(type), ...)
 {
   class <- xcmsProtocolClass(type, method)
   new(class, ...)
 }
-xcmsProtocolClass <- function(type, method = xcmsProtocolDefault(type))
+xcmsProtocolClass <- function(type, method = xcmsMethodDefault(type))
 {
   paste("xcmsProto", capitalize(type), capitalize(method), sep = "")
 }
-xcmsProtocolDefault <- function(type)
+xcmsMethodDefault <- function(type)
 {
   def <- getOption("BioC")$xcms[[paste(uncapitalize(type), "method", sep=".")]]
   if (is.null(def))
     def <- ""
   def
 }
+xcmsProtocolDefault <- function(type) xcmsProtocol(type, xcmsMethodDefault(type))
 
 setProtocolClass <- function(Class, representation, prototype, ...)
 { 
   # Transform representation to allow language objects (delayed evaluation)
-  repr <- lapply(representation, function(cl) {
-    union <- paste(cl, "language", sep="OR")
-    if (!isClassUnion(union))
-      setClassUnion(union, c(cl, "language"))
-    union
-  })
+  mc <- tail(as.list(match.call()),-1)
+  if (!missing(representation)) {
+    mc$representation <- lapply(representation, function(cl) {
+      union <- paste(cl, "language", sep="OR")
+      if (!isClassUnion(union))
+        setClassUnion(union, c(cl, "language"))
+      union
+    })
+  }
   # create prototype without forcing argument evaluation
-  if (!inherits(prototype, "classPrototypeDef"))
-    prototype <- do.call("prototype", prototype, TRUE)
-  setClass(Class, repr, prototype, ...)
+  if (!missing(prototype) && !inherits(prototype, "classPrototypeDef"))
+    mc$prototype <- do.call("prototype", prototype, TRUE)
+  do.call("setClass", mc)
 }
 
 # Base protocol class
 
 setClass("xcmsProtocol", 
-  representation(name = "character", desc = "character"), 
+  representation(disptype = "character", dispname = "character", dispdesc = "character"), 
   contains = "VIRTUAL")
 
 setGeneric("perform", function(object, data, ...) standardGeneric("perform"))
@@ -55,15 +59,15 @@ setMethod("perform", "xcmsProtocol", function(object, data, ...) {
     stop("Cannot find a perform method for class '", cl, "'")
   type <- uncapitalize(sub("xcmsProto", "", type_cl))
   method <- uncapitalize(sub(type_cl, "", cl))
-  slots <- lapply(slotNames(cl), function(slot_name) slot(object, slot_name))
-  names(slots) <- slotNames(cl)
-  # leave out base slots
-  slots <- slots[!(names(slots) %in% slotNames("xcmsProtocol"))]
+  slots <- parameters(object)
   # pass data and any extra args (eg subset specifications) to function
   args <- c(list(object = data), slots, list(...))
-  # ensure all slots evaluated
-  slots <- lapply(slots, eval, args)
-  do.call(paste(type, method, sep="."), c(list(data), slots))
+  fun_name <- paste(type, method, sep=".")
+  wrapper <- paste("function(", paste(names(slots), slots, sep="=", collapse=","), 
+    ") { ", fun_name, "(", paste(c("obj", names(slots)), collapse=","), ") }", sep = "")
+  eval(parse(text=wrapper), list(obj = data))()
+  #slots <- lapply(slots, eval, args)
+  #do.call(fun_name, c(list(data), slots))
 })
 
 # returns a widget for controlling and viewing this object
@@ -73,13 +77,44 @@ setGeneric("widget", function(object, ...) standardGeneric("widget"))
 # specified input and output in the context of this protocol
 setGeneric("explore", function(object, ...) standardGeneric("explore"))
 
+setGeneric("parameters", function(object) standardGeneric("parameters"))
+setMethod("parameters", "xcmsProtocol", function(object) {
+  slots <- lapply(slotNames(object), function(slot_name) slot(object, slot_name))
+  names(slots) <- slotNames(object)
+  # leave out base slots
+  slots[!(names(slots) %in% slotNames("xcmsProtocol"))]
+})
+
+setGeneric("dispType", function(object) standardGeneric("dispType"))
+setMethod("dispType", "xcmsProtocol", function(object) object@disptype)
+
+setGeneric("dispName", function(object) standardGeneric("dispName"))
+setMethod("dispName", "xcmsProtocol", function(object) object@dispname)
+
+setGeneric("dispDesc", function(object) standardGeneric("dispDesc"))
+setMethod("dispDesc", "xcmsProtocol", function(object) object@dispdesc)
+
+setMethod("show", "xcmsProtocol", function(object)
+{
+  cat(dispType(object), ": ", dispName(object), " protocol\n\n", sep="")
+  if (length(dispDesc(object)))
+    cat(dispDesc(object), "\n")
+  params <- parameters(object)
+  if (length(params)) {
+    cat("Parameters:\n")
+    show(params)
+  }
+})
+
 # Base profile generation protocol
 
-setClass("xcmsProtoGenProfile", 
+setProtocolClass("xcmsProtoGenProfile", 
     representation(profstep = "numeric", profmethod = "character", 
         naok = "logical", baselevel = "numeric", basespace = "numeric"),
-    prototype = list(profstep = 1, profmethod = "intlin", naok = TRUE),
-    contains = "xcmsProtocol")
+    list(profstep = 1, profmethod = "bin", naok = TRUE,
+      baselevel = quote(0.5*min(object@env$intensity)), basespace = 0.075,
+      disptype = "Generate Profile Matrix"),
+    "xcmsProtocol")
 
 .profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM", 
                        binlinbase = "profBinLinBaseM", bin = "profBinM",
@@ -144,17 +179,19 @@ setReplaceMethod("baseSpace", "xcmsProtoGenProfile", function(object, value) {
     object
 })
 
+# FIXME: Need to follow 'type.method' delegation pattern of other protocols
 setMethod("perform", c("xcmsProtoGenProfile", "xcmsRaw"), function(object, data, ...)
 {
-  performRaw(object, data@env$mz, data@env$intensity, data@scanindex, ...)
+  performProfile(object, data@env$mz, data@env$intensity, data@scanindex, data@scantime, ...)
 })
 
-setGeneric("performRaw", function(object, mz, intensity, scanindex, ...)
-    standardGeneric("performRaw"))
+setGeneric("performProfile", function(object, mz, intensity, scanindex, scantime, ...)
+    standardGeneric("performProfile"))
 # FIXME: only mzrange is currently supported
-setMethod("performRaw", "xcmsProtoGenProfile", 
-    function(object, mz, intensity, scanindex, mzindexrange = numeric(), 
-        scanrange = numeric(), mzrange = numeric(), rtrange = numeric())
+setMethod("performProfile", "xcmsProtoGenProfile", 
+    function(object, mz, intensity, scanindex, scantime, 
+        mzindexrange = numeric(), scanrange = numeric(), 
+        mzrange = numeric(), rtrange = numeric())
 {
     step <- profStep(object)
     if (!step)
@@ -186,6 +223,8 @@ setMethod("performRaw", "xcmsProtoGenProfile",
     
     # FIXME: copies the profile matrix; need to modify this in-place via C
     attr(prof, "profmz") <- minmass+profStep(object)*(0:(dim(prof)[1]-1))
+    attr(prof, "proftime") <- scantime
+    
     prof
 })
 
@@ -203,23 +242,72 @@ setMethod("show", "xcmsProtoGenProfile", function(object) {
       cat("Step:", object@profstep, "m/z\n")
 })
 
-# Base baseline removal class
+# Base profile filter class
 
-setClass("xcmsProtoRemoveBaseline", contains = "xcmsProtocol")
+setClass("xcmsProtoFilterProfile", , prototype(disptype = "Profile Matrix Filter"),
+  c("xcmsProtocol", "VIRTUAL"))
 
 # Provide necessary margins (as list) in profile matrix for given ranges
 # This is to avoid edge effects when processing subsets of the matrix
 setGeneric("profMargins", function(object, ...) standardGeneric("profMargins"))
 
+setClass("xcmsProtoFilterProfileSubtract", 
+  representation(filter = "xcmsProtoFilterProfile"),
+  contains = "xcmsProtoFilterProfile")
+
+setMethod("perform", "xcmsProtoFilterProfileSubtract", 
+  function(object, data, ...)
+{
+  data - perform(object@filter, data, ...)
+})
+
+setMethod("dispType", "xcmsProtoFilterProfileSubtract", function(object)
+  paste("Subtract", dispType(object@filter)))
+
+setMethod("dispName", "xcmsProtoFilterProfileSubtract", function(object)
+  dispName(object@filter))
+
+setMethod("dispDesc", "xcmsProtoFilterProfileSubtract", function(object)
+  dispDesc(object@filter))
+
+setMethod("show", "xcmsProtoFilterProfileSubtract", function(object)
+{
+  cat("Subtraction of ")
+  show(object@filter)
+})
+
 # Base peak finding class
 
-setClass("xcmsProtoFindPeaks", contains = c("xcmsProtocol", "VIRTUAL"))
-    
+setClass("xcmsProtoFindPeaks", , prototype(disptype = "Find Peaks"),
+  c("xcmsProtocol", "VIRTUAL"))
+
+# Feature-level protocols
+
+setClass("xcmsProtoFindComps", , prototype(disptype = "Find Components"), 
+  c("xcmsProtocol", "VIRTUAL"))
+
+setClass("xcmsProtoGroup", , prototype(disptype = "Group Components"), 
+  c("xcmsProtocol", "VIRTUAL"))
+
+setClass("xcmsProtoRetcor", , prototype(disptype = "Correct Retention Time"), 
+  c("xcmsProtocol", "VIRTUAL"))
+
+setClass("xcmsProtoFillPeaks", , prototype(disptype = "Impute Missing Peaks"),
+  c("xcmsProtocol", "VIRTUAL"))
+  
+# FIXME: do we need a quantify step that resolves a component to a quantity?
+
+setClass("xcmsProtoNorm", , prototype(disptype = "Normalize Quantities"),
+  c("xcmsProtocol", "VIRTUAL"))
+
+setClass("xcmsProtoIdent", , prototype(disptype = "Identify Compounds"),
+  c("xcmsProtocol", "VIRTUAL"))
+
 # The raw (per-sample) pipeline
 
 setClass("xcmsRawPipeline", 
   representation(rawprotos = "list", genprofproto = "xcmsProtoGenProfile", 
-    profprotos = "list"))
+    filtprofprotos = "list"))
 
 setGeneric("genProfProto", function(object) standardGeneric("genProfProto"))
 
@@ -232,32 +320,31 @@ setReplaceMethod("genProfProto", "xcmsRawPipeline", function(object, value) {
   object
 })
 
-setGeneric("profProtos", function(object) standardGeneric("profProtos"))
+setGeneric("filtProfProtos", function(object) standardGeneric("filtProfProtos"))
 
-setMethod("profProtos", "xcmsRawPipeline", function(object) object@profprotos)
+setMethod("filtProfProtos", "xcmsRawPipeline", function(object) object@filtprofprotos)
 
-setGeneric("profProtos<-", function(object, value) standardGeneric("profProtos<-"))
+setGeneric("filtProfProtos<-", function(object, value) standardGeneric("filtProfProtos<-"))
 
-setReplaceMethod("profProtos", "xcmsRawPipeline", function(object, value) {
-  object@profprotos <- value
+setReplaceMethod("filtProfProtos", "xcmsRawPipeline", function(object, value) {
+  object@filtprofprotos <- value
   object
 })
 
-setGeneric("addProfProtos", function(object, value) standardGeneric("addProfProtos"))
+setGeneric("addFiltProfProtos", function(object, value) standardGeneric("addFiltProfProtos"))
 
-setMethod("addProfProtos", "xcmsRawPipeline", function(object, value) {
-  profProtos(object) <- c(profProtos(object), value)
+setMethod("addFiltProfProtos", "xcmsRawPipeline", function(object, value) {
+  filtProfProtos(object) <- c(filtProfProtos(object), value)
   object
 })
 
 setMethod("show", "xcmsRawPipeline", function(object) {
-  cat("Pipeline with", 
-    length(object@genprofproto) + length(object@profprotos), "protocol(s)\n\n")
+  cat("A raw data pipeline containing:\n\n")
   if (length(object@genprofproto))
     show(object@genprofproto)
-  if (length(object@profprotos)) {
+  if (length(object@filtprofprotos)) {
     cat("\nProfile Processing Protocol(s):\n\n")
-    for (proto in object@profprotos)
+    for (proto in object@filtprofprotos)
       show(proto)
   }
 })
@@ -266,7 +353,8 @@ setMethod("show", "xcmsRawPipeline", function(object) {
 
 setClass("xcmsPipeline", 
   representation(rawpipeline = "xcmsRawPipeline", 
-    findpeaksproto = "xcmsProtoFindPeaks", featureprotos = "list"))
+    findpeaksproto = "xcmsProtoFindPeaks", featureprotos = "list"),
+  prototype(findpeaksproto = xcmsProtocolDefault("findPeaks")))
 
 setGeneric("rawPipeline", function(object) standardGeneric("rawPipeline"))
 
@@ -307,12 +395,17 @@ setMethod("addFeatureProtos", "xcmsPipeline", function(object, value) {
   object
 })
 
-# some utilities
-capitalize <- function(str) {
-  substring(str, 1, 1) <- toupper(substring(str, 1, 1))
-  str
-}
-uncapitalize <- function(str) {
-  substring(str, 1, 1) <- tolower(substring(str, 1, 1))
-  str
-}
+setMethod("show", "xcmsPipeline", function(object) {
+  cat("A pipeline containing:\n\n----\n")
+  if (length(object@genprofproto))
+    show(object@rawpipeline)
+  cat("----\n")
+  if (length(object@findpeaksproto))
+    show(object@findpeaksproto)
+  cat("----\n")
+  if (length(object@featureprotos)) {
+    cat("\nFeature Processing Protocol(s):\n\n")
+    for (proto in object@featureprotos)
+      show(proto)
+  }
+})
