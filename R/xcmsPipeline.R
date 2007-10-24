@@ -70,6 +70,12 @@ setMethod("perform", "xcmsProtocol", function(object, data, ...) {
   #do.call(fun_name, c(list(data), slots))
 })
 
+# what information is provided by this protocol that may be required by others?
+setGeneric("provides", function(object, ...) standardGeneric("provides"))
+
+# what information does this protocol require that may be provided by others?
+setGeneric("requires", function(object, ...) standardGeneric("requires"))
+
 # returns a widget for controlling and viewing this object
 setGeneric("widget", function(object, ...) standardGeneric("widget"))
 
@@ -177,12 +183,6 @@ setReplaceMethod("baseSpace", "xcmsProtoGenProfile", function(object, value) {
     stopifnot(object@profmethod == "binlinbase")
     object@basespace <- value
     object
-})
-
-# FIXME: Need to follow 'type.method' delegation pattern of other protocols
-setMethod("perform", c("xcmsProtoGenProfile", "xcmsRaw"), function(object, data, ...)
-{
-  performProfile(object, data@env$mz, data@env$intensity, data@scanindex, data@scantime, ...)
 })
 
 setGeneric("performProfile", function(object, mz, intensity, scanindex, scantime, ...)
@@ -295,7 +295,8 @@ setClass("xcmsProtoRetcor", , prototype(disptype = "Correct Retention Time"),
 setClass("xcmsProtoFillPeaks", , prototype(disptype = "Impute Missing Peaks"),
   c("xcmsProtocol", "VIRTUAL"))
   
-# FIXME: do we need a quantify step that resolves a component to a quantity?
+setClass("xcmsProtoSummarize", , prototype(disptype = "Summarize Quantities"),
+  c("xcmsProtocol", "VIRTUAL"))
 
 setClass("xcmsProtoNorm", , prototype(disptype = "Normalize Quantities"),
   c("xcmsProtocol", "VIRTUAL"))
@@ -354,7 +355,7 @@ setMethod("show", "xcmsRawPipeline", function(object) {
 setClass("xcmsPipeline", 
   representation(rawpipeline = "xcmsRawPipeline", 
     findpeaksproto = "xcmsProtoFindPeaks", featureprotos = "list"),
-  prototype(findpeaksproto = xcmsProtocolDefault("findPeaks")))
+  prototype(findpeaksproto = NULL))
 
 setGeneric("rawPipeline", function(object) standardGeneric("rawPipeline"))
 
@@ -397,7 +398,7 @@ setMethod("addFeatureProtos", "xcmsPipeline", function(object, value) {
 
 setMethod("show", "xcmsPipeline", function(object) {
   cat("A pipeline containing:\n\n----\n")
-  if (length(object@genprofproto))
+  if (length(object@rawpipeline))
     show(object@rawpipeline)
   cat("----\n")
   if (length(object@findpeaksproto))

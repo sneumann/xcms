@@ -255,7 +255,7 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
-setMethod("sampclass", "xcmsSet", function(object) object@phenoData[,"class"])
+setMethod("sampclass", "xcmsSet", function(object) interaction(object@phenoData))
 
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
@@ -263,7 +263,7 @@ setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
   if (!is.factor(value))
     value <- factor(value, unique(value))
   
-  object@phenoData[,"class"] <- value
+  object@phenoData <- data.frame(class = value)
   object
 })
 
@@ -403,7 +403,7 @@ setGeneric("group", function(object, ...) standardGeneric("group"))
 setMethod("group", "xcmsSet", 
   function(object, method = xcmsMethodDefault("group"), ...)
 {
-  addFeatureProtos(xcmsProtocol("group", method, ...))
+  addFeatureProtos(object, xcmsProtocol("group", method, ...))
 })
 
 .group.density <- function(object, bw = 30, minfrac = 0.5, minsamp = 1,
@@ -556,7 +556,7 @@ setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
 setMethod("retcor", "xcmsSet", 
   function(object, method = xcmsMethodDefault("retcor"), ...)
 {
-  addFeatureProtos(xcmsProtocol("retcor", method, ...))
+  addFeatureProtos(object, xcmsProtocol("retcor", method, ...))
 })
 
 .retcor.smooth <- function(object, missing = 1, extra = 1,
@@ -795,7 +795,7 @@ setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
 
 setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("fillPeaks"), ...)
 {
-  addFeatureProtos(xcmsProtocol("fillPeaks", method, ...))
+  addFeatureProtos(object, xcmsProtocol("fillPeaks", method, ...))
 })
 
 .fillPeaks <- function(object) {
@@ -885,16 +885,22 @@ setMethod("findComps", "xcmsSet", function(object, method = xcmsMethodDefault("f
   addFeatureProtos(object, xcmsProtocol("findComps", method, ...))
 })
 
+setGeneric("summarize", function(object, ...) standardGeneric("summarize"))
+setMethod("summarize", "xcmsSet", function(object, method = xcmsMethodDefault("summarize"), ...)
+{
+  addFeatureProtos(object, xcmsProtocol("summarize", method, ...))
+})
+
 setGeneric("normalize", function(object, ...) standardGeneric("normalize"))
 setMethod("normalize", "xcmsSet", function(object, method = xcmsMethodDefault("norm"), ...)
 {
   addFeatureProtos(object, xcmsProtocol("norm", method, ...))
 })
 
-setGeneric("identifyComps", function(object, ...) standardGeneric("identifyComps"))
-setMethod("identifyComps", "xcmsSet", function(object, method = xcmsMethodDefault("ident"), ...)
+setGeneric("identify", function(x, ...) standardGeneric("identify"))
+setMethod("identify", "xcmsSet", function(x, method = xcmsMethodDefault("identify"), ...)
 {
-  addFeatureProtos(object, xcmsProtocol("ident", method, ...))
+  addFeatureProtos(x, xcmsProtocol("identify", method, ...))
 })
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200, 
