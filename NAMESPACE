@@ -35,11 +35,11 @@ exportClasses(
               "xcmsProtoFindPeaksCentWave",
               "xcmsProtoFindPeaksMSW",
               "xcmsProtoGenProfile",
-              "xcmsProtoRemoveBaselineMedFilt"
+              "xcmsProtoFilterProfileMedian"
               )
 
 exportMethods(
-              "addProfProtos",
+              "addFiltProfProtos",
               "addFeatureProtos",
               "baseLevel",
               "baseLevel<-",
@@ -76,7 +76,7 @@ exportMethods(
               "peaks",
               "peaks<-",
               "perform",
-              "performRaw",
+              "performProfile",
               "phenoData",
               "phenoData<-",
               "pipeline",
@@ -96,8 +96,8 @@ exportMethods(
               "profMethod",
               "profMethod<-",
               "profMz",
-              "profProtos",
-              "profProtos<-",
+              "filtProfProtos",
+              "filtProfProtos<-",
               "profRange",
               "profStep",
               "profStep<-",
@@ -105,8 +105,8 @@ exportMethods(
               "rawMat",
               "rawPipeline",
               "rawPipeline<-",
-              "removeBaseline",
-              "removeBaseline.medFilt",
+              "filterProfile",
+              "filterProfile.median",
               "retcor",
               "revMz",
               "rtrange",

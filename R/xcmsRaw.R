@@ -1272,6 +1272,12 @@ setMethod("genProfile", "xcmsRaw", function(object, method = "", ...) {
     object
 })
 
+# FIXME: Need to follow 'type.method' delegation pattern of other protocols
+setMethod("perform", c("xcmsProtoGenProfile", "xcmsRaw"), function(object, data, ...)
+{
+  performProfile(object, data@env$mz, data@env$intensity, data@scanindex, data@scantime, ...)
+})
+
 # Private methods (do not export)
 
 # update the profile by performing the appropriate protocols in the pipeline
