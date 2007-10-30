@@ -481,7 +481,7 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
   peakbuf.PeaksInBuf = 0;
   
   memset(mzval.mz, 0, sizeof(mzval.mz));
-  memset(mzval.slbuf, UNDEF_BUF, sizeof(mzval.mz));
+  memset(mzval.slbuf, UNDEF_BUF, sizeof(mzval.slbuf));
   mzval.length = 0;   
   
   memset(scanbuf.mz, 0, sizeof(scanbuf.mz));
