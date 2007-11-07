@@ -12,7 +12,7 @@
   \code{
     findPeaks.centWave(object, scanrange=c(1,length(object@scantime)), minEntries=4, dev=140e-6, snthresh=20, 
     minPeakWidth=7, noiserange=c(minPeakWidth*3,minPeakWidth*6), scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5,
-    minPtsAboveBaseLine=4, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02,
+    minPtsAboveBaseLine=4, scRangeTol=2, maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.001,
     rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
     integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE) 
   }
