@@ -1,3 +1,23 @@
+2007-11-07: 1.10.3 & 1.11.5
+Fixed a serious fillPeaks() bug introduced in version 1.9.5, which caused it to
+silently fill in zero intensities for almost every missing peak
+
+2007-11-01: 1.10.2 & 1.11.4
+Fixed bug in findPeaks.centWave() buffer initialisation (mzboxes.c)
+Added check in findPeaks.matchedFilter() for not picking filter artefacts
+
+2007-10-24: 1.11.3
+Add generics for provides/requires for protocol dependency checking. 
+This was inspired by the init script system for Gentoo Linux. Add 
+Summarize step to pipeline, which is responsible for reducing a 
+component (a set of peaks) to a single quantity. 
+
+Add protocol types for profile filtering, component finding, grouping, 
+retention time correction, peak filling, normalization and 
+identification. The median is used as the default profile filter. 
+Baseline subtraction is supported through a wrapper "subtract" protocol 
+that subtracts a filter result from the original matrix.
+
 2007-10-09: 1.10.1 & 1.11.2
 Added error when xcmsRaw objects are read that have non-monotonic stantimes
 Added warning when retcor() is probably overcorrecting

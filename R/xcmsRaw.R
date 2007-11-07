@@ -455,7 +455,7 @@ filtfft <- function(y, filt) {
              noise <- mean(ysums[ysums > 0])
              #noise <- mean(yfilt[yfilt >= 0])
              sn <- yfilt[maxy]/noise
-             if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise) {
+             if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
                  peakrange <- descendZero(yfilt, maxy)
                  intmat <- ymat[,peakrange[1]:peakrange[2],drop=FALSE]
                  mzmat <- matrix(object@env$mz[bufMax[bufidx[i:(i+steps-1)],
@@ -529,7 +529,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
                                 noiserange=c(minPeakWidth*3,minPeakWidth*6),
                                 scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5,
                                 minPtsAboveBaseLine=4, scRangeTol=2,
-                                maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.02, 
+                                maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.001, 
                                 rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
                                 integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE) 
 {
@@ -857,7 +857,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     stime <- object@scantime
     
     ### Create EIC buffer
-    mrange <- range(peakrange[1:2])
+    mrange <- range(peakrange[,1:2])
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
     buf <- profMat(object, pipeline, mzrange = c(mass[1], mass[bufsize]))
