@@ -1,3 +1,6 @@
+2007-11-08: 1.10.4 & 1.11.6
+Standardised peak area calculation by introducing scan-distance multiplier to findPeaks.centWave()
+
 2007-11-07: 1.10.3 & 1.11.5
 Fixed a serious fillPeaks() bug introduced in version 1.9.5, which caused it to
 silently fill in zero intensities for almost every missing peak
