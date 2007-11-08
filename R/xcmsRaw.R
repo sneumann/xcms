@@ -679,12 +679,15 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
                   if (integrate == 1) 
                     lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"]) else 
                         lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier) 
+                                    
+                  peakrange <- td[lm]
+                  peaks[p,"rtmin"] <- scantime[peakrange[1]]
+                  peaks[p,"rtmax"] <- scantime[peakrange[2]]
+                  pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
+                  peaks[p,"into"] <- pwid*sum(d[lm[1]:lm[2]])
                   
-                  peaks[p,"rtmin"] <- scantime[td[lm[1]]]
-                  peaks[p,"rtmax"] <- scantime[td[lm[2]]]
-                  peaks[p,"into"] <- sum(d[lm[1]:lm[2]])
                   db <-  d[lm[1]:lm[2]] - baseline
-                  peaks[p,"intb"] <- sum(db[db>0])
+                  peaks[p,"intb"] <- pwid*sum(db[db>0])
                   peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
                   
                   if (fitgauss) {
