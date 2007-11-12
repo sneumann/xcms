@@ -15,7 +15,7 @@
 #undef FALSE
 #define FALSE    0
 
-#define SIZE_PEAKBUFS 150000   // max. # of "short" boxes
+#define SIZE_PEAKBUFS 200000   // max. # of "short" boxes
 #define SIZE_PEAKBUFL 5000    // max. # of "long" boxes
 #define DIM_PEAKBUFS 50       // max length of "short" boxes
 #define DIM_PEAKBUFL 2500     // max length of "long" boxes = max number of spectra
