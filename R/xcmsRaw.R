@@ -1,5 +1,7 @@
 require(methods) || stop("Couldn't load package methods")
 
+# FIXME: What about a 'clone' method? Obviously not a good idea for a huge
+# profile matrix, but for smaller matrices it would be very convenient
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer", 
                                    pipeline = "xcmsRawPipeline",
@@ -333,7 +335,7 @@ image.xcmsRaw <- function(x, col = rainbow(256), ...) {
     zlim <- log(range(x@env$intensity))
     
     title <- paste("XC/MS Log Intensity Image (Profile Method: ", 
-                   x@profmethod, ")", sep = "")
+                   profMethod(x), ")", sep = "")
     if (zlim[1] < 0) {
         zlim <- log(exp(zlim)+1)
         image(profMz(x)[sel$mzindex], x@scantime[sel$scanidx], 
@@ -1162,7 +1164,6 @@ setMethod("profMat", "xcmsRaw", function(object, pipeline = object@pipeline, ...
     #    mzcount = num, scancount = length(object@scantime)))
     
     # FIXME: need some sort of caching mechanism
-    
     prof <- perform(genProfProto(pipeline), object, ...)
     
     if (is.null(prof)) # 'NULL' returned if profile protocol is no-op
@@ -1279,6 +1280,18 @@ setMethod("genProfile", "xcmsRaw", function(object, method = "", ...) {
 setMethod("perform", c("xcmsProtoGenProfile", "xcmsRaw"), function(object, data, ...)
 {
   performProfile(object, data@env$mz, data@env$intensity, data@scanindex, data@scantime, ...)
+})
+
+setMethod("explore", "xcmsRaw", function(object, ...)
+{
+  pipeline <- object@pipeline
+  if (length(filtProfProtos(pipeline)))
+    explore(tail(filtProfProtos(pipeline), 1)[[1]], object, ...)
+  else if (length(genProfProto(pipeline)) && !is.null(object@env$profile))
+    explore(genProfProto(pipeline), object, ...)
+  else { # explore raw data - should raw data input be a protocol?
+    
+  }
 })
 
 # Private methods (do not export)
