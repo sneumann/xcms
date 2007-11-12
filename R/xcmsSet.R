@@ -42,19 +42,23 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         if(length(lev) > 1 && !all(levlen[1] == levlen))
             stop("Directory tree must be level")
         pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
-        # Make the default group names less redundant
-        scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
-        scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
-        i <- 1
-        while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
-            i <- i + 1
-        i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
-        if (i > 1 && i <= nrow(scomp))
-            sclass <- substr(sclass, i, max(nchar(sclass)))
-        pdata[,"class"] <- sclass
+        redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
+        pdata <- pdata[,!redundant,drop=FALSE]
+        if (ncol(pdata) < 1) { # if not multiple factors, behave as before
+          # Make the default group names less redundant
+          scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
+          scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
+          i <- 1
+          while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
+              i <- i + 1
+          i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
+          if (i > 1 && i <= nrow(scomp))
+              sclass <- substr(sclass, i, max(nchar(sclass)))
+          pdata <- sclass
+        }
     } else pdata <- sclass
-    rownames(pdata) <- snames
     phenoData(object) <- pdata
+    rownames(phenoData(object)) <- snames
     
     mc <- as.list(match.call())
     if ("step" %in% names(mc))
@@ -1063,6 +1067,14 @@ retexp <- function(peakrange, width = 200) {
     
     peakrange
 }
+
+setMethod("explore", "xcmsSet", function(object, ...)
+{
+  pipeline <- object@pipeline
+  if (length(featureProtos(pipeline)))
+    explore(tail(featureProtos(pipeline), 1)[[1]], object, ...)
+  else explore(findPeaksProto(pipeline), object, ...)
+})
 
 #### Fill in NA values with the minimum and maximum value
 

@@ -102,7 +102,7 @@ setMethod("dispDesc", "xcmsProtocol", function(object) object@dispdesc)
 
 setMethod("show", "xcmsProtocol", function(object)
 {
-  cat(dispType(object), ": ", dispName(object), " protocol\n\n", sep="")
+  cat("Protocol [", dispType(object), ": ", dispName(object), "]\n\n", sep="")
   if (length(dispDesc(object)))
     cat(dispDesc(object), "\n")
   params <- parameters(object)
@@ -230,7 +230,7 @@ setMethod("performProfile", "xcmsProtoGenProfile",
 
 setMethod("show", "xcmsProtoGenProfile", function(object) {
     
-    cat("Profile generation protocol of class '", class(object), "'\n", sep="")
+    cat("Profile matrix generation protocol\n")
     if (length(object@profmethod)) {
         cat("Method:", object@profmethod, "\n")
         if (object@profmethod == "binlinbase") {
