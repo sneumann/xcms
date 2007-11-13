@@ -669,11 +669,11 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
     
             ##  postprocessing   
             if (!is.null(peaks)) {
-                if (is.vector(peaks)) peaks <- data.frame(t(peaks))  else peaks <- data.frame(peaks)
+               # if (is.vector(peaks)) peaks <- data.frame(t(peaks))  else peaks <- data.frame(peaks)
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
                 colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
                    
-                if (is.vector(peakinfo)) peakinfo <- data.frame(t(peakinfo))  else peakinfo <- data.frame(peakinfo)
+               # if (is.vector(peakinfo)) peakinfo <- data.frame(t(peakinfo))  else peakinfo <- data.frame(peakinfo)
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")   
                    
                 for (p in 1:dim(peaks)[1]) {
@@ -771,7 +771,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
     pr <- p[uindex,,drop=FALSE]
     cat(dim(p)[1],' Peaks  -- rectUnique(',mzdiff,',',rtdiff,') -->  ', dim(pr)[1],' Peaks.\n',sep='')
 
-    invisible(as.matrix(pr))
+    invisible(pr) #as.matrix(pr)
 }
 
 setProtocolClass("xcmsProtoFindPeaksCentWave",
