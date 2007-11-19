@@ -3,24 +3,24 @@
 
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                                    groupidx = "list", comps = "matrix",
-                                   phenoData = "data.frame", rt = "list", 
-                                   filepaths = "character", 
+                                   phenoData = "data.frame", rt = "list",
+                                   filepaths = "character",
                                    pipeline = "xcmsPipeline"
                                    ),
-         prototype(peaks = matrix(nrow = 0, ncol = 0), 
-                   groups = matrix(nrow = 0, ncol = 0), 
-                   comps = matrix(nrow = 0, ncol = 0), 
+         prototype(peaks = matrix(nrow = 0, ncol = 0),
+                   groups = matrix(nrow = 0, ncol = 0),
+                   comps = matrix(nrow = 0, ncol = 0),
                    groupidx = list(),
                    phenoData = data.frame(), rt = list(),
                    filepaths = character(0), pipeline = new("xcmsPipeline")))
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
-                    profmethod = "bin", profparam = list(), 
+                    profmethod = "bin", profparam = list(),
                     ..., pipeline = NULL) {
 
     object <- new("xcmsSet")
-    
-    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]", 
+
+    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
                      "[Mm][Zz][Da][Aa][Tt][Aa]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
@@ -30,10 +30,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     for (file in filepaths(object))
         if (!file.exists(file))
             filepaths(object) <- files
-    
+
     if (is.null(snames))
         snames <- gsub("\\.[^.]*$", "", basename(files))
-    
+
     if (is.null(sclass)) {
         # create factors from filesystetm hierarchy
         sclass <- gsub("^\\.$", "sample", dirname(files))
@@ -59,13 +59,13 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     } else pdata <- sclass
     phenoData(object) <- pdata
     rownames(phenoData(object)) <- snames
-    
+
     mc <- as.list(match.call())
     if ("step" %in% names(mc))
         mc$profstep <- mc$step
     else if (is.null(pipeline))
         mc$profstep <- 0.1
-    
+
     vargs <- list(...)
     peakargs <- vargs[!(vargs %in% "step")]
     if (is.null(pipeline)) { # create default pipeline if none provided
@@ -73,40 +73,40 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         profargs <- c(list(profmethod = profmethod, profstep = mc$profstep), profparam)
         genprofproto <- do.call("xcmsProtocol", c("GenProfile", profargs))
         rawpipeline <- new("xcmsRawPipeline", genprofproto = genprofproto)
-        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaksproto, 
+        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaksproto,
             rawpipeline = rawpipeline)
     } else { # if prof/peak parameters specified, override pipeline
         genprof <- genProfProto(rawPipeline(pipeline))
         specified <- match(c("profmethod", "profstep"), names(mc), 0)
-        genProfProto(rawPipeline(pipeline)) <- do.call("new", c(class(genprof), 
+        genProfProto(rawPipeline(pipeline)) <- do.call("new", c(class(genprof),
             genprof, mc[specified], profparam))
         findpeak <- findPeaksProto(pipeline)
         findPeaksProto(pipeline) <- do.call("new", c(class(findpeak), findpeak,
             peakargs))
     }
-    
+
     pipeline(object) <- pipeline
-    
+
     object
 }
 
 setMethod("show", "xcmsSet", function(object) {
 
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
-    
-    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"), 
-        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"), 
+
+    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"),
+        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"),
         " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"), 
+    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"),
         "m/z\n")
-    cat("Peaks:", nrow(object@peaks), "(about", 
+    cat("Peaks:", nrow(object@peaks), "(about",
         round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
-    
+
     show(object@pipeline)
     cat("\n")
-    
+
     memsize <- object.size(object)
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 })
@@ -120,7 +120,7 @@ c.xcmsSet <- function(...) {
 
     lcsets <- list(...)
     object <- new("xcmsSet")
-    
+
     peaklist <- vector("list", length(lcsets))
     pdatalist <- vector("list", length(lcsets))
     cdflist <- vector("list", length(lcsets))
@@ -133,19 +133,19 @@ c.xcmsSet <- function(...) {
         cdflist[[i]] <- filepaths(lcsets[[i]])
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
-        
+
         sampidx <- seq(along = namelist[[i]]) + nsamp
         peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
         nsamp <- nsamp + length(namelist[[i]])
     }
-    
+
     peaks(object) <- do.call("rbind", peaklist)
     phenoData(object) <- do.call("rbind", pdatalist)
     filepaths(object) <- unlist(cdflist)
     # assumes all pipelines were the same (otherwise create a new xcmsSet)
     object@pipeline <- lcsets[[1]]@pipeline
     object@rt <- list(raw = rtraw, corrected = rtcor)
-    
+
     invisible(object)
 }
 
@@ -155,19 +155,19 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         f <- factor(f)
     sampidx <- unclass(f)
     peakmat <- peaks(x)
-    
+
     pdata <- phenoData(x)
     cdffiles <- filepaths(x)
     pipeline <- pipeline(x)
     rtraw <- x@rt$raw
     rtcor <- x@rt$corrected
-    
+
     lcsets <- vector("list", length(levels(f)))
     names(lcsets) <- levels(f)
-    
+
     for (i in unique(sampidx)) {
         lcsets[[i]] <- new("xcmsSet")
-        
+
         samptrans <- numeric(length(f))
         samptrans[sampidx == i] <- rank(which(sampidx == i))
         samp <- samptrans[peakmat[,"sample"]]
@@ -175,20 +175,20 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         cpeaks <- peakmat[sidx,]
         cpeaks[,"sample"] <- samp[sidx]
         peaks(lcsets[[i]]) <- cpeaks
-        
+
         phenoData(lcsets[[i]]) <- pdata[,sampidx == i]
         filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
-        
+
         # Note that the results are likely different from
         # those obtained by processing ths subset of samples from the start.
         lcsets[[i]]@pipeline <- pipeline
     }
-    
+
     if (drop)
         lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
-    
+
     lcsets
 }
 
@@ -201,7 +201,7 @@ setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 setReplaceMethod("peaks", "xcmsSet", function(object, value) {
 
     object@peaks <- value
-    
+
     object
 })
 
@@ -214,7 +214,7 @@ setGeneric("groups<-", function(object, value) standardGeneric("groups<-"))
 setReplaceMethod("groups", "xcmsSet", function(object, value) {
 
     object@groups <- value
-    
+
     object
 })
 
@@ -227,7 +227,7 @@ setGeneric("groupidx<-", function(object, value) standardGeneric("groupidx<-"))
 setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
 
     object@groupidx <- value
-    
+
     object
 })
 
@@ -240,7 +240,7 @@ setGeneric("comps<-", function(object, value) standardGeneric("comps<-"))
 setReplaceMethod("comps", "xcmsSet", function(object, value) {
 
     object@comps <- value
-    
+
     object
 })
 
@@ -253,7 +253,7 @@ setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-")
 setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
     rownames(object@phenoData) <- value
-    
+
     object
 })
 
@@ -266,7 +266,7 @@ setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-")
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
   if (!is.factor(value))
     value <- factor(value, unique(value))
-  
+
   object@phenoData <- data.frame(class = value)
   object
 })
@@ -297,13 +297,13 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
 
     object@filepaths <- value
-    
+
     object
 })
 
 setGeneric("profinfo", function(object) standardGeneric("profinfo"))
 
-setMethod("profinfo", "xcmsSet", function(object) 
+setMethod("profinfo", "xcmsSet", function(object)
   genProfProto(rawPipeline(pipeline(object))))
 
 setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
@@ -311,13 +311,13 @@ setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
 setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 
     genProfProto(rawPipeline(pipeline(object))) <- value
-    
+
     object
 })
 
 setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
-setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0, 
+setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
                                             template = NULL) {
 
     if (!missing(template)) {
@@ -332,36 +332,36 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
         else
             rtdec <- 0
     }
-    
+
     mzfmt <- paste("%.", mzdec, "f", sep = "")
     rtfmt <- paste("%.", rtdec, "f", sep = "")
-    
-    gnames <- paste("M", sprintf(mzfmt, groups(object)[,"mzmed"]), "T", 
+
+    gnames <- paste("M", sprintf(mzfmt, groups(object)[,"mzmed"]), "T",
                     sprintf(rtfmt, groups(object)[,"rtmed"]), sep = "")
-    
+
     if (any(dup <- duplicated(gnames)))
         for (dupname in unique(gnames[dup])) {
             dupidx <- which(gnames == dupname)
             gnames[dupidx] <- paste(gnames[dupidx], seq(along = dupidx), sep = "_")
         }
-    
+
     gnames
 })
 
 setMethod("pipeline", "xcmsSet", function(object) object@pipeline)
 
 setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
-    
-    object@pipeline <- pipeline
-    
+
+    object@pipeline <- value
+
     files <- filepaths(object)
     snames <- sampnames(object)
     rawpipeline <- rawPipeline(value)
-    
+
     peaklist <- vector("list", length(files))
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
-    
+
     for (i in seq(along = peaklist)) {
         lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, genprof = FALSE)
         cat(snames[i], ": ", sep = "")
@@ -376,16 +376,16 @@ setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
         else if (nrow(peaklist[[i]]) == 1)
             warning(paste("Only 1 peak found in sample", snames[i]))
         else if (nrow(peaklist[[i]]) < 10)
-            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample", 
+            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
                     snames[i]))
     }
-    
+
     peaks(object) <- do.call("rbind", peaklist)
     object@rt <- rtlist
-    
+
     for (proto in featureProtos(value))
         object <- perform(proto, object)
-    
+
     object
 })
 
@@ -404,7 +404,7 @@ setMethod("addFeatureProtos", c("xcmsSet", "xcmsProtocol"), function(object, val
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
-setMethod("group", "xcmsSet", 
+setMethod("group", "xcmsSet",
   function(object, method = xcmsMethodDefault("group"), ...)
 {
   addFeatureProtos(object, xcmsProtocol("group", method, ...))
@@ -420,21 +420,21 @@ setMethod("group", "xcmsSet",
     classnum <- integer(max(classlabel))
     for (i in seq(along = classnum))
         classnum[i] <- sum(classlabel == i)
-    
+
     peakmat <- peaks(object)
     porder <- order(peakmat[,"mz"])
     peakmat <- peakmat[porder,]
     rownames(peakmat) <- NULL
     retrange <- range(peakmat[,"rt"])
-    
+
     minpeakmat <- min(classnum)/2
-    
+
     mass <- seq(peakmat[1,"mz"], peakmat[nrow(peakmat),"mz"] + mzwid, by = mzwid/2)
     masspos <- findEqualGreaterM(peakmat[,"mz"], mass)
-    
+
     groupmat <- matrix(nrow = 512, ncol = 7 + length(classnum))
     groupindex <- vector("list", 512)
-    
+
     endidx <- 0
     num <- 0
     gcount <- integer(length(classnum))
@@ -489,29 +489,29 @@ setMethod("group", "xcmsSet",
         }
     }
     cat("\n")
-    
+
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", classnames)
-    
+
     groupmat <- groupmat[seq(length = num),]
     groupindex <- groupindex[seq(length = num)]
-    
+
     # Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)
-    
+
     groups(object) <- groupmat[uindex,]
     groupidx(object) <- groupindex[uindex]
-    
+
     object
 }
 
 setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
 setMethod("group.density", "xcmsSet", .group.density)
 
-setProtocolClass("xcmsProtoGroupDensity", 
+setProtocolClass("xcmsProtoGroupDensity",
   representation(bw = "numeric", minfrac = "numeric", minsamp = "numeric",
     mzwid = "numeric", max = "numeric"),
   c(formals(.group.density), dispname = "Density Estimation"),
@@ -519,21 +519,21 @@ setProtocolClass("xcmsProtoGroupDensity",
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
-setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"), 
+setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"),
                                           value = "index", intensity = "into") {
 
     method <- match.arg(method)
     peakmat <- peaks(object)
     groupmat <- groups(object)
     groupindex <- groupidx(object)
-    
+
     sampnum <- seq(length = length(sampnames(object)))
     retcol <- match("rt", colnames(peakmat))
     intcol <- match(intensity, colnames(peakmat))
     sampcol <- match("sample", colnames(peakmat))
-    
+
     values <- matrix(nrow = length(groupindex), ncol = length(sampnum))
-    
+
     if (method == "medret") {
         for (i in seq(along = groupindex)) {
             gidx <- groupindex[[i]][order(abs(peakmat[groupindex[[i]],retcol] - median(peakmat[groupindex[[i]],retcol])))]
@@ -545,19 +545,19 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
             values[i,] <- gidx[match(sampnum, peakmat[gidx,sampcol])]
         }
     }
-    
+
     if (value != "index") {
         values <- peakmat[values,value]
         dim(values) <- c(length(groupindex), length(sampnum))
     }
     colnames(values) <- sampnames(object)
     rownames(values) <- paste(round(groupmat[,"mzmed"],1), round(groupmat[,"rtmed"]), sep = "/")
-    
+
     values
 })
 
 setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
-setMethod("retcor", "xcmsSet", 
+setMethod("retcor", "xcmsSet",
   function(object, method = xcmsMethodDefault("retcor"), ...)
 {
   addFeatureProtos(object, xcmsProtocol("retcor", method, ...))
@@ -592,18 +592,18 @@ setMethod("retcor", "xcmsSet",
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
-    
+
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
-    
+
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
     if (length(idx) == 0)
         stop("No peak groups found for retention time correction")
     idx <- idx[order(groupmat[idx,"rtmed"])]
-    
+
     rt <- groupval(object, "maxint", "rt")[idx,]
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
-    
+
     if (method == "loess") {
         mingroups <- min(colSums(!is.na(rt)))
         if (mingroups < 4) {
@@ -614,32 +614,32 @@ setMethod("retcor", "xcmsSet",
             warning("Span too small, resetting to ", round(span, 2))
         }
     }
-    
+
     rtdevsmo <- vector("list", n)
-    
+
     # Code for checking to see if retention time correction is overcorrecting
     rtdevrange <- range(rtdev, na.rm = TRUE)
     warn.overcorrect <- FALSE
-    
+
     for (i in 1:n) {
-    
+
         pts <- na.omit(data.frame(rt = rt[,i], rtdev = rtdev[,i]))
-        
-        if (method == "loess") {   
+
+        if (method == "loess") {
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
-            
+
             rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
             ### Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) > quantile(abs(rtdevsmo[[i]]), 0.9)*2] <- NA
-            
+
             if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
-                rtdevsmo[[i]][naidx] <- suppressWarnings(approx(na.omit(data.frame(rtcor[[i]], rtdevsmo[[i]])), 
+                rtdevsmo[[i]][naidx] <- suppressWarnings(approx(na.omit(data.frame(rtcor[[i]], rtdevsmo[[i]])),
                                                                 xout = rtcor[[i]][naidx], rule = 2)$y)
             while (length(decidx <- which(diff(rtcor[[i]] - rtdevsmo[[i]]) < 0))) {
                 d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
                 rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
             }
-            
+
             rtdevsmorange <- range(rtdevsmo[[i]])
             if (any(rtdevsmorange/rtdevrange > 2)) warn.overcorrect <- TRUE
         } else {
@@ -652,22 +652,22 @@ setMethod("retcor", "xcmsSet",
             rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
         }
     }
-    
+
     if (warn.overcorrect) {
         warning(paste("Fitted retention time deviation curves exceed points by more than 2x.",
                       "This is dangerous and the algorithm is probably overcorrecting your data.",
                       "Consider increasing the span parameter or switching to the linear method.",
                       sep = "\n"))
     }
-    
+
     if (plottype == "mdevden") {
         split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
         screen(1)
         par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
     }
-    
+
     if (plottype %in% c("deviation", "mdevden")) {
-    
+
         ### Set up the colors and line type
         if (missing(col)) {
             col <- integer(n)
@@ -683,21 +683,21 @@ setMethod("retcor", "xcmsSet",
             mypal <- rainbow(max(col), end = 0.85)
         else
             mypal <- palette()[1:max(col)]
-    
+
         rtrange <- range(do.call("c", rtcor))
         devrange <- range(do.call("c", rtdevsmo))
-        
+
         plot(0, 0, type="n", xlim = rtrange, ylim = devrange, main = "Retention Time Deviation vs. Retention Time", xlab = "Retention Time", ylab = "Retention Time Deviation")
         legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
-     
+
         for (i in 1:n) {
             points(data.frame(rt = rt[,i], rtdev = rtdev[,i]), col = mypal[col[i]], pch = ty[i], type="p")
             points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
         }
     }
-    
+
     if (plottype == "mdevden") {
-        
+
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
         allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
@@ -712,16 +712,16 @@ setMethod("retcor", "xcmsSet",
         legend(rtrange[2], maxden, c("All", "Correction"), col = 1:2, lty = c(1,1), xjust = 1)
         close.screen(all = TRUE)
     }
-    
+
     for (i in 1:n) {
-    
+
         cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]])/2, rtcor[[i]] - rtdevsmo[[i]])
         rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
-        
+
         sidx <- which(corpeaks[,"sample"] == i)
         corpeaks[sidx, c("rt", "rtmin", "rtmax")] <- cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
     }
-    
+
     object@rt$corrected <- rtcor
     peaks(object) <- corpeaks
     groups(object) <- matrix(nrow = 0, ncol = 0)
@@ -732,12 +732,12 @@ setMethod("retcor", "xcmsSet",
 setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
 setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
 
-setProtocolClass("xcmsProtoRetcorSmooth", 
+setProtocolClass("xcmsProtoRetcorSmooth",
   representation(missing = "numeric", extra = "numeric",
     model = "character", span = "numeric", family = "character"),
   c(formals(.retcor.smooth), dispname = "Smooth"),
   "xcmsProtoRetcor")
-  
+
 setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
 setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRUE, densplit = FALSE) {
@@ -747,7 +747,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     n <- length(samples)
     rtuncor <- object@rt$raw
     rtcor <- object@rt$corrected
-    
+
     if (missing(col)) {
         col <- integer(n)
         for (i in 1:max(classlabel))
@@ -762,21 +762,21 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
         mypal <- rainbow(max(col), end = 0.85)
     else
         mypal <- palette()[1:max(col)]
-    
+
     rtdevsmo <- vector("list", n)
-    
+
     for (i in 1:n)
         rtdevsmo[[i]] <- rtuncor[[i]] - rtcor[[i]]
-    
+
     rtrange <- range(do.call("c", rtuncor))
     devrange <- range(do.call("c", rtdevsmo))
-    
+
     if (densplit) {
         split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
         screen(1)
         par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
     }
-    
+
     plot(0, 0, type="n", xlim = rtrange, ylim = devrange, main = "Retention Time Deviation vs. Retention Time", xlab = "Retention Time", ylab = "Retention Time Deviation")
     if (leg)
         legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
@@ -785,7 +785,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
         points(rtuncor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
 
     if (densplit) {
-        
+
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
         allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
@@ -814,7 +814,7 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
     rawpipeline <- rawPipeline(pipeline(object))
     step <- profStep(genProfProto(rawpipeline))
     rtcor <- object@rt$corrected
-    
+
     # Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
@@ -823,10 +823,10 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
     groupmat <- groupmat[uindex,]
     groupindex <- groupidx(object)[uindex]
     gvals <- groupval(object)[uindex,]
-    
+
     peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
     colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
-    
+
     mzmin <- peakmat[gvals,"mzmin"]
     dim(mzmin) <- c(nrow(gvals), ncol(gvals))
     peakrange[,"mzmin"] <- apply(mzmin, 1, min, na.rm = TRUE)
@@ -839,14 +839,14 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
     retmax <- peakmat[gvals,"rtmax"]
     dim(retmax) <- c(nrow(gvals), ncol(gvals))
     peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
-    
+
     lastpeak <- nrow(peakmat)
     peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
-    
+
     cnames <- colnames(object@peaks)
-    
+
     for (i in seq(along = files)) {
-        
+
         cat(samp[i], "")
         flush.console()
         naidx <- which(is.na(gvals[,i]))
@@ -866,18 +866,18 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
         }
     }
     cat("\n")
-    
+
     peaks(object) <- peakmat
     groups(object) <- groupmat
     groupidx(object) <- groupindex
-    
+
     invisible(object)
 }
 
 setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
 setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
 
-setProtocolClass("xcmsProtoFillPeaksExtract", 
+setProtocolClass("xcmsProtoFillPeaksExtract",
   prototype = prototype(dispname = "Extract from raw data"),
   contains = "xcmsProtoFillPeaks")
 
@@ -907,32 +907,32 @@ setMethod("identify", "xcmsSet", function(x, method = xcmsMethodDefault("identif
   addFeatureProtos(x, xcmsProtocol("identify", method, ...))
 })
 
-setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200, 
+setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
                                         rt = c("corrected", "raw")) {
-    
+
     files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
     rawpipeline <- rawPipeline(pipeline(object))
     step <- profStep(genProfProto(rawpipeline))
-    
+
     rt <- match.arg(rt)
 
     if (is.numeric(sampleidx))
         sampleidx <- sampnames(object)[sampleidx]
     sampidx <- match(sampleidx, sampnames(object))
-    
+
     if (!missing(groupidx)) {
         if (is.numeric(groupidx))
             groupidx <- groupnames(object)[unique(as.integer(groupidx))]
         grpidx <- match(groupidx, groupnames(object, template = groupidx))
     }
-    
+
     if (missing(mzrange)) {
         if (missing(groupidx))
             stop("No m/z range or groups specified")
-        # if (any(is.na(groupval(object, value = "mz")))) stop('Please use fillPeaks() to fill up NA values !')    
+        # if (any(is.na(groupval(object, value = "mz")))) stop('Please use fillPeaks() to fill up NA values !')
         mzmin <- -rowMax(-groupval(object, value = "mzmin"))
         mzmax <- rowMax(groupval(object, value = "mzmax"))
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
@@ -941,10 +941,10 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     else if (is.null(dim(mzrange)))
         stop("mzrange must be a matrix")
     colnames(mzrange) <- c("mzmin", "mzmax")
-    
+
     if (length(rtrange) == 1) {
         if (missing(groupidx))
-            rtrange <- matrix(rep(range(object@rt[[rt]][sampidx]), nrow(mzrange)), 
+            rtrange <- matrix(rep(range(object@rt[[rt]][sampidx]), nrow(mzrange)),
                               ncol = 2, byrow = TRUE)
         else {
             rtrange <- retexp(grp[grpidx,c("rtmin","rtmax"),drop=FALSE], rtrange)
@@ -952,20 +952,20 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     } else if (is.null(dim(rtrange)))
         stop("mzrange must be a matrix or single number")
     colnames(rtrange) <- c("rtmin", "rtmax")
-    
+
     if (missing(groupidx))
         gnames <- character(0)
     else
         gnames <- groupidx
-    
+
     eic <- vector("list", length(sampleidx))
     names(eic) <- sampleidx
-    
+
     for (i in seq(along = sampidx)) {
-        
+
         cat(sampleidx[i], "")
         flush.console()
-        lcraw <- xcmsRaw(files[sampidx[i]], pipeline = rawpipeline, 
+        lcraw <- xcmsRaw(files[sampidx[i]], pipeline = rawpipeline,
           profstep = 0)
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
@@ -974,21 +974,21 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         gc()
     }
     cat("\n")
-    
-    invisible(new("xcmsEIC", eic = eic, mzrange = mzrange, rtrange = rtrange, 
+
+    invisible(new("xcmsEIC", eic = eic, mzrange = mzrange, rtrange = rtrange,
                   rt = rt, groupnames = gnames))
 })
 
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
-setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1], 
+setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             metlin = FALSE) {
-    
+
     require(multtest) || stop("Couldn't load multtest")
-    
+
     groupmat <- groups(object)
     if (length(groupmat) == 0)
         stop("No group information found")
@@ -996,24 +996,24 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     n <- length(samples)
     classlabel <- sampclass(object)
     classlabel <- levels(classlabel)[as.vector(unclass(classlabel))]
-    
+
     values <- groupval(object, "medret", "into")
     indecies <- groupval(object, "medret")
-    
+
     if (!all(c(class1,class2) %in% classlabel))
         stop("Incorrect Class Labels")
-    
+
     c1 <- which(classlabel %in% class1)
     c2 <- which(classlabel %in% class2)
     ceic <- which(classlabel %in% classeic)
     if (length(intersect(c1, c2)) > 0)
         stop("Intersecting Classes")
-    
+
     mean1 <- rowMeans(values[,c1], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2], na.rm = TRUE)
     fold <- mean2 / mean1
     fold[!is.na(fold) & fold < 1] <- 1/fold[!is.na(fold) & fold < 1]
-    
+
     testval <- values[,c(c1,c2)]
 	testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
 	tstat <- mt.teststat(testval, testclab)
@@ -1034,10 +1034,10 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	   twosamp <- twosamp[tsidx,]
 	   rownames(twosamp) <- 1:nrow(twosamp)
 	}
-    
+
     if (length(filebase))
         write.table(twosamp, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
-    
+
     if (eicmax > 0) {
         eicmax <- min(eicmax, length(tsidx))
         eics <- getEIC(object, rtrange = eicwidth*1.1, sampleidx = ceic,
@@ -1048,14 +1048,14 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
             if (capabilities("png"))
                 png(file.path(eicdir, "%03d.png"), width = 640, height = 480)
             else
-                pdf(file.path(eicdir, "%03d.pdf"), width = 640/72, 
+                pdf(file.path(eicdir, "%03d.pdf"), width = 640/72,
                     height = 480/72, onefile = FALSE)
         }
         plot(eics, object, rtrange = eicwidth)
         if (length(filebase))
             dev.off()
     }
-    
+
     invisible(twosamp)
 })
 
@@ -1064,7 +1064,7 @@ retexp <- function(peakrange, width = 200) {
     retmean <- rowMeans(peakrange[,c("rtmin", "rtmax"),drop=FALSE])
     peakrange[,"rtmin"] <- retmean-width/2
     peakrange[,"rtmax"] <- retmean+width/2
-    
+
     peakrange
 }
 
@@ -1085,7 +1085,7 @@ na.flatfill <- function(x) {
         x[1:(realloc[1]-1)] <- x[realloc[1]]
     if (realloc[length(realloc)] < length(x))
         x[(realloc[length(realloc)]+1):length(x)] <- x[realloc[length(realloc)]]
-    
+
     x
 }
 
@@ -1096,7 +1096,7 @@ pval <- function(X, classlabel, teststat) {
     A <- sd(t(X[,classlabel == 0]), na.rm = TRUE)^2/n1
     B <- sd(t(X[,classlabel == 1]), na.rm = TRUE)^2/n2
     df <- (A+B)^2/(A^2/(n1-1)+B^2/(n2-1))
-    
+
     pvalue <- 2 * (1 - pt(abs(teststat), df))
     invisible(pvalue)
 }
