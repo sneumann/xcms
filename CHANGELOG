@@ -1,3 +1,7 @@
+2007-11-21: 1.11.9
+enhanced xcmsRaw() to read MSn spectra
+Fixed a typo in protocol code
+
 2007-11-13: 1.10.6 & 1.11.8
 Removed unnecessary use of data.frame in findPeaks.centWave(), this fixes
 a long delay when large peaklists are generated

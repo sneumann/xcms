@@ -8,13 +8,16 @@
   plotting and data exploration.
 }
 \usage{
-xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam = list())
+xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam =
+list(), includeMSn = FALSE)
 }
 \arguments{
   \item{filename}{path name of the NetCDF or mzXML file to read}
   \item{profstep}{step size (in m/z) to use for profile generation}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{extra parameters to use for profile generation}
+  \item{includeMSn}{whether to read additional MS$^n$ spectra (mzData
+    and mzXML only)}
 }
 \details{
   If \code{profstep} is set to 0, no profile matrix is generated.
