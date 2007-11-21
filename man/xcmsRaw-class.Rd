@@ -29,7 +29,12 @@
       signal intensity for each m/z value, and \code{profile} -
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
-      values
+      values.
+
+      For objects with MS$^n$ spectra also two matrices \code{msninfo}
+      and \code{MSNpeaks} containing the level (e.g.\ 2 for Tandem MS)
+      and other precursor information. The \code{MSNpeaks} matrix
+      contains the raw spectra with their m/z and intensity.
     }
     \item{\code{tic}:}{
       numeric vector with total ion count (intensity) for each scan
