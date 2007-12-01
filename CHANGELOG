@@ -1,3 +1,7 @@
+2007-12-01: 1.11.9
+Pass further parameters down to findPeaks-MSW
+Moved Meta-Data for MSn to xcmsRaw object and changed MSn to all-vectors 
+	
 2007-11-21: 1.11.9
 enhanced xcmsRaw() to read MSn spectra
 Fixed a typo in protocol code

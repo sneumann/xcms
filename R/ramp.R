@@ -107,11 +107,12 @@ rampRawData <- function(rampid) {
                 intensity = sipeaks$intensity))
 }
 
-rampRawDataMSN <- function(rampid) {
+rampRawDataMSn <- function(rampid) {
 
     # Check if we have MSn at all
     scanHeaders <- rampScanHeaders(rampid)
     if (max(scanHeaders[,"msLevel"]) < 2) {
+        warning("MSn spectra requested but not found")
         return (NULL);
     }
 
@@ -128,11 +129,11 @@ rampRawDataMSN <- function(rampid) {
                     precursorNum=scanHeaders$precursorScanNum[scans],
                     precursorMZ = scanHeaders$precursorMZ[scans],
                     peaksCount=scanHeaders$peaksCount[scans],
-                    msLevel = scanHeaders$msLevel,
+                    msLevel = scanHeaders$msLevel[scans],
                     precursorCharge = scanHeaders$precursorCharge[scans],
                     scanindex = sipeaks$scanindex,
                     mz = sipeaks$mz,
                     intensity =sipeaks$intensity);
 
-	return(retdata)
+    return(retdata)
 }
