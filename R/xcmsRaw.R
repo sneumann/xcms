@@ -827,18 +827,19 @@ setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeak
 setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
 .findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
-                           sleep=0, verbose.columns = FALSE,...)
+                           SNR.method='quantile', winSize.noise=500,
+                           sleep=0, verbose.columns = FALSE)
 {
   require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
   # MassSpecWavelet Calls
   peakInfo <- peakDetectionCWT(object@env$intensity,
                                 scales=scales, SNR.Th = snthresh,
-                                nearbyPeak = nearbyPeak,...)
+                                nearbyPeak = nearbyPeak, SNR.method=SNR.method, winSize.noise=winSize.noise)
   majorPeakInfo <- peakInfo$majorPeakInfo
 
   betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
-                                    majorPeakInfo,...)
+                                    majorPeakInfo)
 
   peakIndex <- betterPeakInfo$peakIndex
 
