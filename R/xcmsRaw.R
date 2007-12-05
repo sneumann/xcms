@@ -24,7 +24,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
                    msnScanindex = NULL,
-                   msnAcquisitionNum = NULL,
+                   msnAcquisitionNum = integer(0),
                    msnLevel = NULL,
                    msnRt = NULL,
                    msnPrecursorScan = NULL,
@@ -78,9 +78,13 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
-    object@acquisitionNum <- rawdata$acquisitionNum
     object@env$mz <- rawdata$mz
     object@env$intensity <- rawdata$intensity
+
+    if (!is.null(rawdata$acquisitionNum)) {
+      ## defined only for mzData and mzXML
+      object@acquisitionNum <- rawdata$acquisitionNum
+    }
 
     if(exists("rawdataMSn")) {
         object@env$msnMz <- rawdataMSn$mz
