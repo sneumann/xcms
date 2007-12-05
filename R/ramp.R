@@ -102,6 +102,7 @@ rampRawData <- function(rampid) {
     sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
 
     return(list(rt = scanHeaders$retentionTime[scans],
+                acquisitionNum = scanHeaders$acquisitionNum[scans],
                 tic = scanHeaders$totIonCurrent[scans],
                 scanindex = sipeaks$scanindex, mz = sipeaks$mz,
                 intensity = sipeaks$intensity))
@@ -126,8 +127,10 @@ rampRawDataMSn <- function(rampid) {
     sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
 
     retdata <- list(rt = scanHeaders$retentionTime[scans],
+                    acquisitionNum = scanHeaders$acquisitionNum[scans],
                     precursorNum=scanHeaders$precursorScanNum[scans],
                     precursorMZ = scanHeaders$precursorMZ[scans],
+                    precursorIntensity = scanHeaders$precursorIntensity[scans],
                     peaksCount=scanHeaders$peaksCount[scans],
                     msLevel = scanHeaders$msLevel[scans],
                     precursorCharge = scanHeaders$precursorCharge[scans],

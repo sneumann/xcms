@@ -1,3 +1,8 @@
+2007-12-05: 1.11.9
+Added mzData precursorIntensity parsing
+Passing more MSn related slots to xcmsRaw
+Added findPeaks.MS1(), which simply returns Peaks reported as precursorIon 
+
 2007-12-01: 1.11.9
 Pass further parameters down to findPeaks-MSW
 Moved Meta-Data for MSn to xcmsRaw object and changed MSn to all-vectors 
