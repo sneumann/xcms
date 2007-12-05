@@ -4,24 +4,32 @@ require(methods) || stop("Couldn't load package methods")
 # profile matrix, but for smaller matrices it would be very convenient
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer",
+                                   acquisitionNum = "integer",
                                    pipeline = "xcmsRawPipeline",
                                    mzrange = "numeric", gradient = "matrix",
-                                   msnScanindex = "numeric",
-                                   msnLevel = "numeric",
+                                   msnScanindex = "integer",
+                                   msnAcquisitionNum = "integer",
+                                   msnPrecursorScan = "integer",
+                                   msnLevel = "integer",
                                    msnRt = "numeric",
                                    msnPrecursorMz = "numeric",
+                                   msnPrecursorIntensity = "numeric",
                                    msnPrecursorCharge = "numeric",
-                                   msnPeakCount = "numeric",
+                                   msnPeakCount = "integer",
                                    filepath = "character"),
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
+                   acquisitionNum = integer(0),
                    pipeline = new("xcmsRawPipeline"),
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
                    msnScanindex = NULL,
+                   msnAcquisitionNum = NULL,
                    msnLevel = NULL,
                    msnRt = NULL,
+                   msnPrecursorScan = NULL,
                    msnPrecursorMz = NULL,
+                   msnPrecursorIntensity = NULL,
                    msnPrecursorCharge = NULL,
                    msnPeakCount = NULL
                    ))
@@ -70,6 +78,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
+    object@acquisitionNum <- rawdata$acquisitionNum
     object@env$mz <- rawdata$mz
     object@env$intensity <- rawdata$intensity
 
@@ -78,11 +87,13 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         object@env$msnIntensity <- rawdataMSn$intensity
 
         object@msnScanindex <- rawdataMSn$scanindex
+        object@msnAcquisitionNum <- rawdataMSn$acquisitionNum
         object@msnLevel <- rawdataMSn$msLevel
         object@msnRt <- rawdataMSn$rt
+        object@msnPrecursorScan <- match(rawdataMSn$precursorNum, object@acquisitionNum)
         object@msnPrecursorMz <- rawdataMSn$precursorMZ
+        object@msnPrecursorIntensity <- rawdataMSn$precursorIntensity
         object@msnPrecursorCharge <- rawdataMSn$precursorCharge
-        object@msnPeakCount <- as.vector(rawdataMSn$peaksCount)
     }
 
     if (is.null(pipeline)) { # create pipeline, if needed
@@ -120,7 +131,7 @@ setMethod("show", "xcmsRaw", function(object) {
         "\n\n")
 
     ## summary MSn data
-    if(exists("object@env$msninfo")) {
+    if (!is.null(object@msnLevel)) {
 	cat("MSN data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
 	cat("\twith ", length(object@msnPrecursorMz)," MSn spectra\n")
     }
@@ -825,6 +836,58 @@ setProtocolClass("xcmsProtoFindPeaksCentWave",
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
+
+.findPeaks.mS1 <- function(object, sleep=0, verbose.columns = FALSE)
+{
+    if (is.null(object@msnLevel)) {
+        warning("xcmsRaw contains no MS2 spectra\n");
+        return (NULL);
+    }
+
+    ## Select all MS2 scans, they have an MS1 parent defined
+    peakIndex <- object@msnLevel == 2
+
+    ## (empty) return object
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+                   "into","maxo","sn")
+    peaklist <- matrix(-1, nrow = length(peakIndex), ncol = length(basenames))
+    colnames(peaklist) <- c(basenames)
+
+    ## Assemble result
+
+    peaklist[,"mz"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmin"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmax"] <- object@msnPrecursorMz[peakIndex]
+
+    if (any(object@msnPrecursorScan!=0)) {
+        peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- object@scantime[object@msnPrecursorScan[peakIndex]]
+    } else {
+        ## This happened with ReAdW mzData
+        warning("MS2 spectra without precursorScan references")
+        peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- 0
+    }
+
+    if (any(object@msnPrecursorIntensity!=0)) {
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- object@msnPrecursorIntensity[peakIndex]
+    } else {
+        ## This happened with Agilent MzDataExport 1.0.98.2
+        warning("MS2 spectra without precursorIntensity, setting to zero")
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- 0
+    }
+
+    cat('\n')
+
+    invisible(peaklist)
+}
+
+setProtocolClass("xcmsProtoFindPeaksMS1",
+  representation(includeMSn="logical"),
+  c(formals(.findPeaks.mS1), dispname = "MS2 precursor Peaks"),
+  "xcmsProtoFindPeaks")
+
+setGeneric("findPeaks.mS1", function(object, ...) standardGeneric("findPeaks.mS1"))
+
+setMethod("findPeaks.mS1", "xcmsRaw", .findPeaks.mS1)
 
 .findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
                            SNR.method='quantile', winSize.noise=500,
