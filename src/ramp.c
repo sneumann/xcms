@@ -732,6 +732,11 @@ void readHeader(RAMPFILE *pFI,
             {
                scanHeader->precursorMZ = atoi(pStr2);
             }
+	    // STN
+            if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"Intensity"))) 
+            {
+               scanHeader->precursorIntensity = atoi(pStr2);
+            }
          }
          if (strstr(stringBuf, "</spectrumDesc>")) {
             break; // into data territory now
