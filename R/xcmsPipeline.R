@@ -63,6 +63,10 @@ setMethod("perform", "xcmsProtocol", function(object, data, ...) {
   # pass data and any extra args (eg subset specifications) to function
   args <- c(list(object = data), slots, list(...))
   fun_name <- paste(type, method, sep=".")
+
+  # quote literal strings 
+  quotedSlots <- ifelse(sapply(slots, is.character), shQuote(slots),slots)
+
   wrapper <- paste("function(", paste(names(slots), slots, sep="=", collapse=","), 
     ") { ", fun_name, "(", paste(c("obj", names(slots)), collapse=","), ") }", sep = "")
   eval(parse(text=wrapper), list(obj = data))()
