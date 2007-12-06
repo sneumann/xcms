@@ -731,10 +731,13 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")
 
                 for (p in 1:dim(peaks)[1]) {
-                  ## find minima, assign rt and intensity values
-                  if (integrate == 1)
-                    lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"]) else
-                        lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier)
+                ## find minima, assign rt and intensity values
+                  if (integrate == 1) {
+                    lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"]) 
+                    if (lm[1]==lm[2]) ## fall-back 
+                            lm <- descendMinTol(d, startpos=c(peakinfo[p,"scmin"], peakinfo[p,"scmax"]), maxDescOutlier)
+                  } else 
+                      lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier) 
 
                   peakrange <- td[lm]
                   peaks[p,"rtmin"] <- scantime[peakrange[1]]
@@ -841,7 +844,7 @@ setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeak
 
 setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
-.findPeaks.mS1 <- function(object, sleep=0, verbose.columns = FALSE)
+.findPeaks.mS1 <- function(object)
 {
     if (is.null(object@msnLevel)) {
         warning("xcmsRaw contains no MS2 spectra\n");
