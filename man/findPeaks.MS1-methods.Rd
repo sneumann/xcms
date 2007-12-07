@@ -46,7 +46,8 @@
      <precursorMz precursorIntensity="125245">220.1828003</precursorMz>     
      </scan>
    }  
-  Several mzXML and mzData converters are known to create incomplete
+
+   Several mzXML and mzData converters are known to create incomplete
   files, either without intensities (they will be set to 0) or without
   the precursor retention time (then a reasonably close rt will be
   chosen. NYI).
