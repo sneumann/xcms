@@ -733,11 +733,11 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
                 for (p in 1:dim(peaks)[1]) {
                 ## find minima, assign rt and intensity values
                   if (integrate == 1) {
-                    lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"]) 
-                    if (lm[1]==lm[2]) ## fall-back 
+                    lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"])
+                    if (lm[1]==lm[2]) ## fall-back
                             lm <- descendMinTol(d, startpos=c(peakinfo[p,"scmin"], peakinfo[p,"scmax"]), maxDescOutlier)
-                  } else 
-                      lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier) 
+                  } else
+                      lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier)
 
                   peakrange <- td[lm]
                   peaks[p,"rtmin"] <- scantime[peakrange[1]]
@@ -844,7 +844,7 @@ setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeak
 
 setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
-.findPeaks.mS1 <- function(object)
+.findPeaks.MS1 <- function(object)
 {
     if (is.null(object@msnLevel)) {
         warning("xcmsRaw contains no MS2 spectra\n");
@@ -889,12 +889,12 @@ setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
 setProtocolClass("xcmsProtoFindPeaksMS1",
   representation(includeMSn="logical"),
-  c(formals(.findPeaks.mS1), dispname = "MS2 precursor Peaks"),
+  c(formals(.findPeaks.MS1), dispname = "MS2 precursor Peaks"),
   "xcmsProtoFindPeaks")
 
-setGeneric("findPeaks.mS1", function(object, ...) standardGeneric("findPeaks.mS1"))
+setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1"))
 
-setMethod("findPeaks.mS1", "xcmsRaw", .findPeaks.mS1)
+setMethod("findPeaks.MS1", "xcmsRaw", .findPeaks.MS1)
 
 .findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
                            SNR.method='quantile', winSize.noise=500,
@@ -904,8 +904,9 @@ setMethod("findPeaks.mS1", "xcmsRaw", .findPeaks.mS1)
 
   # MassSpecWavelet Calls
   peakInfo <- peakDetectionCWT(object@env$intensity,
-                                scales=scales, SNR.Th = snthresh,
-                                nearbyPeak = nearbyPeak, SNR.method=SNR.method, winSize.noise=winSize.noise)
+                               scales=scales, SNR.Th = snthresh,
+                               nearbyPeak = nearbyPeak,
+                               SNR.method=SNR.method, winSize.noise=winSize.noise)
   majorPeakInfo <- peakInfo$majorPeakInfo
 
   betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
@@ -944,12 +945,13 @@ setMethod("findPeaks.mS1", "xcmsRaw", .findPeaks.mS1)
 }
 
 setProtocolClass("xcmsProtoFindPeaksMSW",
-  representation(snthresh="numeric", mzdiff="numeric", scales="numeric"),
+  representation(snthresh="numeric", scales="numeric", nearbyPeak="logical",
+                           SNR.method="character", winSize.noise="numeric",
+                           sleep="numeric", verbose.columns = "logical"),
   c(formals(.findPeaks.MSW), name = "MassSpecWavelet"),
   "xcmsProtoFindPeaks")
 
 setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
-
 setMethod("findPeaks.MSW", "xcmsRaw", .findPeaks.MSW)
 
 setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
