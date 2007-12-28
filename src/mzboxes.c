@@ -23,6 +23,7 @@
 #define DIM_SCANBUF 10000      // max # m/z values per scan
 
 #define UNDEF_BUF      0
+#define INVALID_PT    -1
 #define IN_SHORT_BUF  -1
 #define IN_LONG_BUF    3
 
@@ -55,6 +56,8 @@ struct peakbufStruct {
   int             PeaksInBuf;
   unsigned char   freelists [SIZE_PEAKBUFS];
   unsigned char   freelistl [SIZE_PEAKBUFL];
+  bufnrType  LastFreeS;
+  bufnrType  LastFreeL;
 } peakbuf;
 
 struct mzvalStruct {
@@ -180,84 +183,104 @@ int half,mid;
 
 bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
   bufnrType pos=0;
+    
   if (which_buf == IN_SHORT_BUF) {
-    while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) pos++;
-    if (pos >= SIZE_PEAKBUFS-1) error("SIZE_PEAKBUFS too small ! \n"); 
-  } else
+    if (peakbuf->LastFreeS != INVALID_PT) 
+      pos= peakbuf->LastFreeS; 
+    while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) 
+      pos++;
+    if (pos >= SIZE_PEAKBUFS-1) 
+      { printf("SIZE_PEAKBUFS too small ! \n"); exit(-7);}
+    peakbuf->LastFreeS = pos;
+  } 
+  else
   {
-    while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) pos++;
-    if (pos >= SIZE_PEAKBUFL-1) error("SIZE_PEAKBUFL too small ! \n"); 
+    if (peakbuf->LastFreeL != INVALID_PT) 
+      pos= peakbuf->LastFreeL; 
+    while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) 
+      pos++;
+    if (pos >= SIZE_PEAKBUFL-1) 
+      { printf("SIZE_PEAKBUFL too small ! \n"); exit(-7);}
+    peakbuf->LastFreeL = pos;
   }
   
   return(pos);
 }
 
-void insertpeak(RAMPREAL fMass,RAMPREAL fInten,const int scan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval,struct pickOptionsStruct pickOptions)
+void insertpeak(const RAMPREAL fMass, const RAMPREAL fInten,const int scan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval,const struct pickOptionsStruct pickOptions)
 {
   int i,j,wasfound=FALSE;
   bufnrType num;
   RAMPREAL mzmean=0;
-  
-  for (i=0; i < mzval->length; i++) // TODO: Ausnutzen der Sortierungseigenschaft -> binary search, direkte Suche nach (fMass +- (pickOptions.dev * (float) fMass))
-   { 
-    double ddiff = fabs( mzval->mz[i] -  fMass);
-    double ddev = (pickOptions.dev *  fMass);
-    
-    if (ddiff <= ddev) 
-    { // match -> extend this box
-      wasfound = TRUE;
-      if (mzval->slbuf[i] == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
-      if (mzval->slbuf[i] == IN_SHORT_BUF) 
-      { // APPEND TO SHORT_BUF
-        bufnrType bnr = mzval->bufnr[i];
-        num = peakbuf->snum[bnr];
-        if (num >= DIM_PEAKBUFS-1) // its getting too long for small buf, we got to move it, move it !
-          { 
-             bufnrType newbufpos = getFreeBufPos(IN_LONG_BUF,peakbuf);
-             mzval->bufnr[i]  = newbufpos;
-             mzval->slbuf[i]  = IN_LONG_BUF;
-             peakbuf->freelistl[newbufpos] = FALSE; 
-             // now copy to long buf
-             peakbuf->lnum[newbufpos] = num;
-             memmove(peakbuf->lint[newbufpos] , peakbuf->sint[bnr], num*sizeof(RAMPREAL));
-             memmove(peakbuf->lmz[newbufpos] , peakbuf->smz[bnr], num*sizeof(RAMPREAL));
-             memmove(peakbuf->lscan[newbufpos] , peakbuf->sscan[bnr], num*sizeof(int));
-             // free short buf pos
-             peakbuf->snum[bnr] = 0;
-             peakbuf->freelists[bnr] = TRUE; 
-          } else 
-          {  // still in short buf, so extend it
-            peakbuf->sint[bnr][num] = fInten;
-            peakbuf->smz[bnr][num] =  fMass;
-            peakbuf->sscan[bnr][num] = scan;
-            peakbuf->snum[bnr]++;
-            for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->smz[bnr][j];
-            mzmean /= num+1;
-          } 
-      }
+  double ddev = (pickOptions.dev *  fMass);
+  int lpos = lower_bound( fMass - ddev,mzval,0,mzval->length);
+  int hpos = upper_bound( fMass + ddev,mzval,lpos,mzval->length - lpos+1);   
+
+  if (hpos >=  mzval->length) hpos = mzval->length;
+
+  if (lpos < mzval->length) {
+    for (i=lpos; i < hpos; i++) // 
+    { 
+      double ddiff = fabs( mzval->mz[i] -  fMass);
       
-      if (mzval->slbuf[i] == IN_LONG_BUF) 
-      { // APPEND TO LONG_BUF
-        bufnrType bnr = mzval->bufnr[i];
-        num = peakbuf->lnum[bnr];
-        if (num >= DIM_PEAKBUFL-1)  error("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); 
-        peakbuf->lint[bnr][num] = fInten;
-        peakbuf->lmz[bnr][num] =  fMass;
-        peakbuf->lscan[bnr][num] = scan;
-        peakbuf->lnum[bnr]++;
-        for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->lmz[bnr][j];
-        mzmean /= num+1; 
+      if (ddiff <= ddev) 
+      { // match -> extend this box
+      if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
+      
+        wasfound = TRUE;
+        if (mzval->slbuf[i] == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
+        if (mzval->slbuf[i] == IN_SHORT_BUF) 
+        { // APPEND TO SHORT_BUF
+          bufnrType bnr = mzval->bufnr[i];
+          num = peakbuf->snum[bnr];
+          if (num >= DIM_PEAKBUFS-1) // its getting too long for small buf, we got to move it, move it !
+            { 
+              bufnrType newbufpos = getFreeBufPos(IN_LONG_BUF,peakbuf);
+              mzval->bufnr[i]  = newbufpos;
+              mzval->slbuf[i]  = IN_LONG_BUF;
+              peakbuf->freelistl[newbufpos] = FALSE; 
+              // now copy to long buf
+              peakbuf->lnum[newbufpos] = num;
+              memmove(peakbuf->lint[newbufpos] , peakbuf->sint[bnr], num*sizeof(RAMPREAL));
+              memmove(peakbuf->lmz[newbufpos] , peakbuf->smz[bnr], num*sizeof(RAMPREAL));
+              memmove(peakbuf->lscan[newbufpos] , peakbuf->sscan[bnr], num*sizeof(int));
+              // free short buf pos
+              peakbuf->snum[bnr] = 0;
+              peakbuf->freelists[bnr] = TRUE; 
+            } else 
+            {  // still in short buf, so extend it
+              peakbuf->sint[bnr][num] = fInten;
+              peakbuf->smz[bnr][num] =  fMass;
+              peakbuf->sscan[bnr][num] = scan;
+              peakbuf->snum[bnr]++;
+              for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->smz[bnr][j];
+              mzmean /= num+1;
+            } 
+        }
+        
+        if (mzval->slbuf[i] == IN_LONG_BUF) 
+        { // APPEND TO LONG_BUF
+          bufnrType bnr = mzval->bufnr[i];
+          num = peakbuf->lnum[bnr];
+          if (num >= DIM_PEAKBUFL-1)  error("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); 
+          peakbuf->lint[bnr][num] = fInten;
+          peakbuf->lmz[bnr][num] =  fMass;
+          peakbuf->lscan[bnr][num] = scan;
+          peakbuf->lnum[bnr]++;
+          for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->lmz[bnr][j];
+          mzmean /= num+1; 
+        } 
+          mzval->mz[i] = mzmean; // update mzval
       } 
-        mzval->mz[i] = mzmean; // update mzval
-    } 
-   } // for
+    } // for
+    
+   } // if
    
    // if not found
    if (wasfound == FALSE) {  // no, create new entry for mz
       int ipos = lower_bound(fMass,mzval,0,mzval->length);
       // insert into mzval->mz at pos ipos
       // and add values at free buf pos
-      // printf("ipos: %d\n",ipos);
       bufnrType bufpos = getFreeBufPos(IN_SHORT_BUF,peakbuf);
       insertMZ(fMass,ipos,bufpos,IN_SHORT_BUF,mzval);
       
@@ -276,7 +299,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
   int p;
   RAMPREAL fMass,lastMass=-1;
   RAMPREAL fInten;   
-  //unsigned short size;
   
   if ((mzval->length == 0) && (peakbuf->PeaksInBuf == 0) ){ // copy first scan directly
     for (p=0;p < scanbuf->length;p++)
@@ -286,7 +308,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
      
        mzval->mz[p] = fMass; 
        mzval->slbuf[p] = IN_SHORT_BUF;
-       //size = (unsigned short) peakbuf->snum[p];
        peakbuf->sscan[p][0] = scan;
        peakbuf->smz[p][0]   = fMass;
        peakbuf->sint[p][0]  = fInten;
@@ -303,7 +324,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
     { 
        fMass  = scanbuf->mz[p];
        fInten = scanbuf->intensity[p];   
-       // Test auf Sortiertheit
        if (fMass < lastMass)  error("m/z sort assumption violated ! \n");
        lastMass = fMass; //mzval->length
        insertpeak(fMass,fInten,scan,peakbuf,mzval,pickOptions);
@@ -315,17 +335,17 @@ void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct 
 int i;
 bufnrType bufnr,entries;
  // check all peaks in mzval
- for (i=0; i < (mzval->length); i++) {
+ for (i=0; i < mzval->length; i++) {
     bufnr = mzval->bufnr[i];
     int lastscan=0;
     if (mzval->slbuf[i] == IN_SHORT_BUF) 
       {
         entries = peakbuf->snum[bufnr];
-        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n");
+        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else error("ctScan %d entries %d bufnr %d BUF %d (SHORT_BUF entries <= 0 ?)  err ! \n",ctScan,entries,bufnr,mzval->slbuf[i]);
       } else
       {
         entries = peakbuf->lnum[bufnr];
-        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n"); 
+        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else error("ctScan %d (entries <= 0 ?)  err ! \n",ctScan); 
       }
       
   
@@ -335,7 +355,8 @@ bufnrType bufnr,entries;
      if ((entries >= pickOptions.minEntries) && (lastscan < ctScan) )
        deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
        if (entries > ctScan) {
-          if (idebug == TRUE) printf("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
+         // if (idebug == TRUE) 
+         error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
           (*scerr)++;
        }   
    }
@@ -345,7 +366,8 @@ bufnrType bufnr,entries;
    }
  
  } // for i
- 
+ peakbuf->LastFreeL = INVALID_PT;
+ peakbuf->LastFreeS = INVALID_PT;
 }
 
 void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *nmz, int *lastScan, double *pscanbufmz,double *pscanbufint,int *length) {
@@ -399,8 +421,6 @@ double getScanEIC(int scan, double from, double to, double *pmz, double *pintens
     
   int idx1b = lowerBound(from, pmz, idx1-1, idx2-idx1); 
   int idx2b = upperBound(to, pmz, idx1b, idx2-idx1b+1);  
-    
-  //printf("idx1 %d idx2 %d idx1b %d idx2b %d \n",idx1,idx2,idx1b,idx2b);  
     
   for (idx=idx1b;idx <= idx2b; idx++) 
   {
@@ -467,8 +487,8 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
   lastScan = INTEGER(lastscan)[0];
   idebug = INTEGER(debug)[0];
   
-  pickOptions.dev = REAL(dev)[0];                         // 140e-6;
-  pickOptions.minEntries = INTEGER(minEntries)[0];        //4;   
+  pickOptions.dev = REAL(dev)[0];
+  pickOptions.minEntries = INTEGER(minEntries)[0];
   massrangeFrom = REAL(massrange)[0];  
   massrangeTo =  REAL(massrange)[1];  
   scanrangeFrom = INTEGER(scanrange)[0];
