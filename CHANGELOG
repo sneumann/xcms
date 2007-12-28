@@ -1,9 +1,11 @@
+2007-12-28: 1.11.12
+findPeaks.centWave: speedup for m/z ROI search
+
 2007-12-07: 1.11.11
 xcmsSet.R: Initial import of single-Spectra Alignment group.mzAlign
-xcmsPipeline.R:perform(): Fixed handling of character parameters in xcmsPipelie
+xcmsPipeline.R:perform(): Fixed handling of character parameters in xcmsPipeline
 xcmsSet(): Fixed a typo in mzData Filepattern
 utils.R:uncapitalize(): No CamelCaps for all-caps e.g. ABBRV
-
 
 2007-12-06: 1.11.10
 Fixed a bug in findPeaks.centWave: NaN was assigned as peak intensity in some rare cases
