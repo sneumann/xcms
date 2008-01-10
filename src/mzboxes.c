@@ -355,9 +355,10 @@ bufnrType bufnr,entries;
      if ((entries >= pickOptions.minEntries) && (lastscan < ctScan) )
        deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
        if (entries > ctScan) {
-         // if (idebug == TRUE) 
-         error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
-          (*scerr)++;
+         if (idebug == TRUE) {
+           error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
+         }  
+         (*scerr)++;
        }   
    }
    else 
