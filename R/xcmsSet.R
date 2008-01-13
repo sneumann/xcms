@@ -4,19 +4,19 @@
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                                    groupidx = "list", comps = "matrix",
                                    phenoData = "data.frame", rt = "list",
-                                   filepaths = "character",
-                                   pipeline = "xcmsPipeline"
+                                   filepaths = "character"
                                    ),
          prototype(peaks = matrix(nrow = 0, ncol = 0),
                    groups = matrix(nrow = 0, ncol = 0),
                    comps = matrix(nrow = 0, ncol = 0),
                    groupidx = list(),
                    phenoData = data.frame(), rt = list(),
-                   filepaths = character(0), pipeline = new("xcmsPipeline")))
+                   filepaths = character(0)),
+         "xcmsData")
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     profmethod = "bin", profparam = list(),
-                    ..., pipeline = NULL) {
+                    ..., rawpipeline = NULL, pipeline = NULL) {
 
     object <- new("xcmsSet")
 
@@ -60,34 +60,39 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     phenoData(object) <- pdata
     rownames(phenoData(object)) <- snames
 
+    # figure out 'step' argument
     mc <- as.list(match.call())
-    if ("step" %in% names(mc))
-        mc$profstep <- mc$step
-    else if (is.null(pipeline))
-        mc$profstep <- 0.1
+    #step <- mc$step
+    #if (is.null(step))
+    #  step <- 0.1
 
-    vargs <- list(...)
-    peakargs <- vargs[!(vargs %in% "step")]
-    if (is.null(pipeline)) { # create default pipeline if none provided
-        findpeaksproto <- do.call("xcmsProtocol", c("FindPeaks", peakargs))
-        profargs <- c(list(profmethod = profmethod, profstep = mc$profstep), profparam)
-        genprofproto <- do.call("xcmsProtocol", c("GenProfile", profargs))
-        rawpipeline <- new("xcmsRawPipeline", genprofproto = genprofproto)
-        pipeline <- new("xcmsPipeline", findpeaksproto = findpeaksproto,
-            rawpipeline = rawpipeline)
-    } else { # if prof/peak parameters specified, override pipeline
-        genprof <- genProfProto(rawPipeline(pipeline))
-        specified <- match(c("profmethod", "profstep"), names(mc), 0)
-        genProfProto(rawPipeline(pipeline)) <- do.call("new", c(class(genprof),
-            genprof, mc[specified], profparam))
-        findpeak <- findPeaksProto(pipeline)
-        findPeaksProto(pipeline) <- do.call("new", c(class(findpeak), findpeak,
-            peakargs))
+    # determine peak arguments
+    peakargs <- list(...)
+    #peakargs <- vargs[!(vargs %in% "step")]  
+    
+    specified <- match(c("step", "profmethod", "profparams"), names(mc), 0)
+    params <- c(names(mc)[specified], peakargs)
+    if (length(params) && (!is.null(pipeline) || !is.null(rawpipeline)))
+      warning("Parameter(s) ",
+              paste("'", params, "'", collapse = ", "),
+              " overriden by the 'pipeline' and 'rawpipeline' parameters")
+    if (!is.null(rawpipeline) && !is.null(pipeline))
+      warning("Parameter 'rawpipeline' overriden by the 'pipeline' parameter")
+    if (is.null(pipeline)) {
+      if (is.null(rawpipeline)) {
+        # store pipeline parameters in the raw pipeline (but don't generate)
+        profargs <- c(list(method = profmethod, step = 0), profparam)
+        profmatproto <- do.call("xcmsProtocol", c("profileMatrix", profargs))
+        profpipe <- new("xcmsPipelineProfile", list(profmatproto))
+        genprofproto <- xcmsProtocol("genProfile", "generic", pipeline=profpipe)
+        peaksproto <- do.call("xcmsProtocol", c("findPeaks", peakargs))
+        rawpipeline <- new("xcmsPipeline", list(genprofproto, peaksproto))
+      }
+      rawproto <- xcmsProtocol("processRaws", "generic", pipeline = rawpipeline)
+      pipeline <- new("xcmsPipeline", list(rawproto))
     }
 
-    pipeline(object) <- pipeline
-
-    object
+    perform(pipeline, object)
 }
 
 setMethod("show", "xcmsSet", function(object) {
@@ -348,67 +353,59 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
     gnames
 })
 
-setMethod("pipeline", "xcmsSet", function(object) object@pipeline)
+# Stage that performs a pipeline on each raw sample and aggregates the peaks
 
-setReplaceMethod("pipeline", "xcmsSet", function(object, value) {
+setStage("processRaws", "Load each sample and find its peaks")
 
-    object@pipeline <- value
+.processRaws.generic <- function(data, pipeline)
+{
+  files <- filepaths(data)
+  snames <- sampnames(data)
 
-    files <- filepaths(object)
-    snames <- sampnames(object)
-    rawpipeline <- rawPipeline(value)
-
-    peaklist <- vector("list", length(files))
-    rtlist <- list(raw = vector("list", length(snames)),
-                   corrected = vector("list", length(snames)))
-
-    for (i in seq(along = peaklist)) {
-        lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, genprof = FALSE)
-        cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- perform(findPeaksProto(value), lcraw)
-        peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
-        rtlist$raw[[i]] <- lcraw@scantime
-        rtlist$corrected[[i]] <- lcraw@scantime
-        rm(lcraw)
-        gc()
-        if (nrow(peaklist[[i]]) == 0)
-            warning(paste("No peaks found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) == 1)
-            warning(paste("Only 1 peak found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) < 10)
-            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
+  peaklist <- vector("list", length(files))
+  rtlist <- list(raw = vector("list", length(snames)),
+                 corrected = vector("list", length(snames)))
+  
+  for (i in seq(along = peaklist)) {
+    # FIXME: at some point the call to xcmsRaw could become a protocol
+    lcraw <- xcmsRaw(files[i], genprof = FALSE)
+    cat(snames[i], ": ", sep = "")
+    peaklist[[i]] <- perform(pipeline, lcraw)
+    peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
+    rtlist$raw[[i]] <- lcraw@scantime
+    rtlist$corrected[[i]] <- lcraw@scantime
+    rm(lcraw)
+    gc()
+    if (nrow(peaklist[[i]]) == 0)
+      warning(paste("No peaks found in sample", snames[i]))
+    else if (nrow(peaklist[[i]]) == 1)
+      warning(paste("Only 1 peak found in sample", snames[i]))
+    else if (nrow(peaklist[[i]]) < 10)
+      warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
                     snames[i]))
-    }
-
-    peaks(object) <- do.call("rbind", peaklist)
-    object@rt <- rtlist
-
-    for (proto in featureProtos(value))
-        object <- perform(proto, object)
-
-    object
-})
-
-setMethod("addFeatureProtos", c("xcmsSet", "list"), function(object, value)
-{
-  object@pipeline <- addFeatureProtos(object@pipeline, value)
-  for(proto in value) {
-    object <- perform(proto, object)
   }
-  object
-})
-setMethod("addFeatureProtos", c("xcmsSet", "xcmsProtocol"), function(object, value)
-{
-  addFeatureProtos(object, list(value))
-})
+  
+  peaks(data) <- do.call("rbind", peaklist)
+  data@rt <- rtlist
 
-setGeneric("group", function(object, ...) standardGeneric("group"))
+  data
+}
 
-setMethod("group", "xcmsSet",
-  function(object, method = xcmsMethodDefault("group"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("group", method, ...))
-})
+setProtocol("generic", "Generic", representation(pipeline = "xcmsPipeline"),
+            .processRaws.generic, "processRaws")
+
+# Feature-level protocols
+
+setStage("findComps", "Find Components")
+setStage("retcor", "Correct Retention Time")
+setStage("fillPeaks", "Impute Missing Peaks")
+setStage("summarize", "Summarize Quantities")
+setStage("normalize", "Normalize Quantities")
+setStage("identifyCompounds", "Identify Compounds")
+
+### Grouping
+
+setStage("group", "Group Components")
 
 .group.density <- function(object, bw = 30, minfrac = 0.5, minsamp = 1,
                                        mzwid = 0.25, max = 5, sleep = 0) {
@@ -508,18 +505,16 @@ setMethod("group", "xcmsSet",
     object
 }
 
-setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
-setMethod("group.density", "xcmsSet", .group.density)
-
-setProtocolClass("xcmsProtoGroupDensity",
-  representation(bw = "numeric", minfrac = "numeric", minsamp = "numeric",
-    mzwid = "numeric", max = "numeric"),
-  c(formals(.group.density), dispname = "Density Estimation"),
-  "xcmsProtoGroup")
+setProtocol("density", "Density Estimation",
+            representation(bw = "numeric", minfrac = "numeric",
+                           minsamp = "numeric", mzwid = "numeric",
+                           max = "numeric"),
+            .group.density, "group")
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
-setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"),
+setMethod("groupval", "xcmsSet", function(object,
+                                          method = c("medret", "maxint"),
                                           value = "index", intensity = "into") {
 
     method <- match.arg(method)
@@ -556,12 +551,7 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
     values
 })
 
-setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
-setMethod("retcor", "xcmsSet",
-  function(object, method = xcmsMethodDefault("retcor"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("retcor", method, ...))
-})
+
 
 .retcor.smooth <- function(object, missing = 1, extra = 1,
                                         model = c("loess", "linear"), span = .2,
@@ -729,14 +719,10 @@ setMethod("retcor", "xcmsSet",
     invisible(object)
 }
 
-setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
-setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
-
-setProtocolClass("xcmsProtoRetcorSmooth",
+setProtocol("smooth", "Smooth",
   representation(missing = "numeric", extra = "numeric",
     model = "character", span = "numeric", family = "character"),
-  c(formals(.retcor.smooth), dispname = "Smooth"),
-  "xcmsProtoRetcor")
+  .retcor.smooth, "retcor")
 
 setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
@@ -795,14 +781,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     }
 })
 
-setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
-
-setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("fillPeaks"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("fillPeaks", method, ...))
-})
-
-.fillPeaks <- function(object) {
+.fillPeaks.extract <- function(object) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
@@ -811,8 +790,7 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
     files <- filepaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
-    rawpipeline <- rawPipeline(pipeline(object))
-    step <- profStep(genProfProto(rawpipeline))
+    rawpipeline <- processRawsProto(object)@pipeline
     rtcor <- object@rt$corrected
 
     # Remove groups that overlap with more "well-behaved" groups
@@ -851,10 +829,10 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
         flush.console()
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
-            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline, profstep = 0)
+            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline)
             if (length(rtcor) == length(files))
                 lcraw@scantime <- rtcor[[i]]
-            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = step)
+            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE])
             rm(lcraw)
             gc()
             newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
@@ -874,38 +852,8 @@ setMethod("fillPeaks", "xcmsSet", function(object, method = xcmsMethodDefault("f
     invisible(object)
 }
 
-setGeneric("retcor.smooth", function(object, ...) standardGeneric("retcor.smooth"))
-setMethod("retcor.smooth", "xcmsSet", .retcor.smooth)
-
-setProtocolClass("xcmsProtoFillPeaksExtract",
-  prototype = prototype(dispname = "Extract from raw data"),
-  contains = "xcmsProtoFillPeaks")
-
-# The rest of the protocol types
-
-setGeneric("findComps", function(object, ...) standardGeneric("findComps"))
-setMethod("findComps", "xcmsSet", function(object, method = xcmsMethodDefault("findComps"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("findComps", method, ...))
-})
-
-setGeneric("summarize", function(object, ...) standardGeneric("summarize"))
-setMethod("summarize", "xcmsSet", function(object, method = xcmsMethodDefault("summarize"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("summarize", method, ...))
-})
-
-setGeneric("normalize", function(object, ...) standardGeneric("normalize"))
-setMethod("normalize", "xcmsSet", function(object, method = xcmsMethodDefault("norm"), ...)
-{
-  addFeatureProtos(object, xcmsProtocol("norm", method, ...))
-})
-
-setGeneric("identify", function(x, ...) standardGeneric("identify"))
-setMethod("identify", "xcmsSet", function(x, method = xcmsMethodDefault("identify"), ...)
-{
-  addFeatureProtos(x, xcmsProtocol("identify", method, ...))
-})
+setProtocol("extract", "Extract from raw data",
+            fun = .fillPeaks.extract, parent = "fillPeaks")
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
@@ -914,8 +862,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
-    rawpipeline <- rawPipeline(pipeline(object))
-    step <- profStep(genProfProto(rawpipeline))
+    rawpipeline <- pipeline(processRawsProto(object))
 
     rt <- match.arg(rt)
 
@@ -965,11 +912,10 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 
         cat(sampleidx[i], "")
         flush.console()
-        lcraw <- xcmsRaw(files[sampidx[i]], pipeline = rawpipeline,
-          profstep = 0)
+        lcraw <- xcmsRaw(files[sampidx[i]], pipeline = rawpipeline)
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
-        eic[[i]] <- getEIC(lcraw, mzrange, rtrange, step = step)
+        eic[[i]] <- getEIC(lcraw, mzrange, rtrange)
         rm(lcraw)
         gc()
     }
@@ -1068,12 +1014,9 @@ retexp <- function(peakrange, width = 200) {
     peakrange
 }
 
-setMethod("explore", "xcmsSet", function(object, ...)
+setMethod("explore", c("xcmsSet", "NULL"), function(object, protocol, ...)
 {
-  pipeline <- object@pipeline
-  if (length(featureProtos(pipeline)))
-    explore(tail(featureProtos(pipeline), 1)[[1]], object, ...)
-  else explore(findPeaksProto(pipeline), object, ...)
+  # something that allows the user to view the raw data in each sample
 })
 
 #### Fill in NA values with the minimum and maximum value
