@@ -1,11 +1,9 @@
 require(methods) || stop("Couldn't load package methods")
 
-# FIXME: What about a 'clone' method? Obviously not a good idea for a huge
-# profile matrix, but for smaller matrices it would be very convenient
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer",
                                    acquisitionNum = "integer",
-                                   pipeline = "xcmsRawPipeline",
+                                   pipeline = "xcmsPipeline",
                                    mzrange = "numeric", gradient = "matrix",
                                    msnScanindex = "integer",
                                    msnAcquisitionNum = "integer",
@@ -20,7 +18,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
                    acquisitionNum = integer(0),
-                   pipeline = new("xcmsRawPipeline"),
+                   pipeline = new("xcmsPipeline"),
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
                    msnScanindex = NULL,
@@ -32,7 +30,8 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msnPrecursorIntensity = NULL,
                    msnPrecursorCharge = NULL,
                    msnPeakCount = NULL
-                   ))
+                   ),
+         "xcmsData")
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
                     profparam = list(), genprof = TRUE,
@@ -100,24 +99,22 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         object@msnPrecursorCharge <- rawdataMSn$precursorCharge
     }
 
-    if (is.null(pipeline)) { # create pipeline, if needed
-        profargs <- c(list(profmethod = profmethod, profstep = profstep), profparam)
-        genprofproto <- do.call("xcmsProtocol", c("GenProfile", profargs))
-        pipeline <- new("xcmsRawPipeline", genprofproto = genprofproto)
-    } else { # if given, clone, overriding with any specified parameters
-        mc <- as.list(match.call())
-        specified <- match(c("profstep", "profmethod"), names(mc), 0)
-        if (sum(specified)) {
-            genprofproto <- genProfProto(pipeline)
-            genProfProto(pipeline) <- do.call("new", c(class(genprofproto),
-                genprofproto, mc[specified], profparam))
-        }
+    if (genprof && is.null(pipeline)) { # generate profile matrix
+        profargs <- c(list(method = profmethod, step = profstep), profparam)
+        profmatproto <- do.call("xcmsProtocol", c("profileMatrix", profargs))
+        profpipe <- new("xcmsPipelineProfile", list(profmatproto))
+        object <- genProfile(object, "generic", pipeline = profpipe)
     }
-    realprofstep <- profStep(genProfProto(pipeline))
-    if (!genprof) # temporarily set step to zero to disable profile generation
-        profStep(genProfProto(pipeline)) <- 0
-    pipeline(object) <- pipeline
-    profStep(genProfProto(object@pipeline)) <- realprofstep
+    if (!is.null(pipeline)) { # pipeline specified, profile parameters ignored
+      mc <- match.call()
+      profargs <- c("genprof", "profmethod", "profstep", "profparam")
+        specified <- any(profargs %in% names(mc))
+      if (specified)
+        warning("Profile parameter(s) ",
+                paste("'", names(mc)[specified], "'", collapse = ", "),
+                " overriden by the 'pipeline' parameter")
+      object <- perform(pipeline, object)
+    }
 
     return(object)
 }
@@ -142,12 +139,8 @@ setMethod("show", "xcmsRaw", function(object) {
 
     cat("Profile matrix: ")
     if (is.null(object@env$profile))
-        cat("none\n")
-    else {
-        profmz <- profMz(object)
-        cat(profStep(object), " m/z step (", length(profmz), " grid points from ",
-            paste(object@mzrange, collapse = " to "), " m/z)\n", sep = "")
-    }
+      cat("none\n")
+    else show(object@env$profile)
     cat("\n")
 
     show(object@pipeline)
@@ -239,6 +232,7 @@ setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
+    # FIXME: unnecessary dependency on profile matrix?
     sel <- profRange(object, ...)
 
     scans <- list(length(sel$scanidx))
@@ -259,6 +253,7 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
     invisible(points)
 })
+
 
 specNoise <- function(spec, gap = quantile(diff(spec[,"mz"]), .9)) {
 
@@ -327,78 +322,24 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
     invisible(points)
 })
 
-setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
-
 setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
                                           vline = numeric(0), ...) {
 
-    sel <- profRange(object, ...)
-
-    title = paste("Averaged Mass Spectrum: ", sel$rtlabel, " (",
-                  sel$scanlab, ")",  sep = "")
-    points <- cbind(profMz(object)[sel$mzindex],
-                    rowMeans(object@env$profile[sel$mzindex,sel$scanidx,drop=FALSE]))
-    plot(points, type="l", main = title, xlab="m/z", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (ident)
-        return(identify(points, labels = round(points[,1], 1)))
-
-    invisible(points)
+    plotSpec(object@env$profile, ident, vline, ...)
 })
 
 setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 
 setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
-                                           fitgauss = FALSE, vline = numeric(0), ...) {
+                                           fitgauss = FALSE, vline = numeric(0),
+                                           ...) {
 
-    sel <- profRange(object, ...)
-
-
-    if (base) {
-        title = paste("Base Peak Chromatogram: ", sel$mzlabel, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMax(object@env$profile[sel$mzindex,sel$scanidx,drop=FALSE]))
-    }
-    else {
-        title = paste("Averaged Ion Chromatogram: ", sel$mzlabel, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMeans(object@env$profile[sel$mzindex,sel$scanidx,drop=FALSE]))
-    }
-    plot(pts, type="l", main = title, xlab="Seconds", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (fitgauss) {
-        fit <- nls(y ~ SSgauss(x, mu, sigma, h), data.frame(x = pts[,1], y = pts[,2]))
-        points(pts[,1], fitted(fit), type = "l", col = "red", lwd = 2)
-        return(fit)
-    }
-
-    if (ident)
-        return(identify(pts, labels = round(pts[,1], 1)))
-
-    invisible(pts)
+    plotChrom(object@env$profile, base, ident, fitgauss, vline, ...)
 })
 
 image.xcmsRaw <- function(x, col = rainbow(256), ...) {
 
-    sel <- profRange(x, ...)
-
-    zlim <- log(range(x@env$intensity))
-
-    title <- paste("XC/MS Log Intensity Image (Profile Method: ",
-                   profMethod(x), ")", sep = "")
-    if (zlim[1] < 0) {
-        zlim <- log(exp(zlim)+1)
-        image(profMz(x)[sel$mzindex], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$mzindex, sel$scanidx]+1),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
-    } else
-        image(profMz(x)[sel$mzindex], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$mzindex, sel$scanidx]),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
+    image(x@env$profile, col, ...)
 }
 
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
@@ -406,39 +347,7 @@ setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
                                           aspect = c(1, 1, .5), ...) {
 
-    require(rgl) || stop("Couldn't load package rgl")
-
-    sel <- profRange(object, ...)
-
-    y <- object@env$profile[sel$mzindex, sel$scanidx]
-    if (log)
-        y <- log(y+max(1-min(y), 0))
-    ylim <- range(y)
-
-    x <- seq(0, aspect[1], length=length(sel$mzindex))
-    z <- seq(0, aspect[2], length=length(sel$scanidx))
-    y <- y/ylim[2]*aspect[3]
-
-    colorlut <- terrain.colors(256)
-    col <- colorlut[y/aspect[3]*255+1]
-
-    rgl.clear("shapes")
-    rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col, shininess = 128)
-    rgl.points(0, 0, 0, alpha = 0)
-
-    mztics <- pretty(sel$mzrange, n = 5*aspect[1])
-    rttics <- pretty(sel$rtrange, n = 5*aspect[2])
-    inttics <- pretty(c(0,ylim), n = 10*aspect[3])
-    inttics <- inttics[inttics > 0]
-
-    rgl.bbox(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
-             xlab = as.character(mztics),
-             yat = inttics/ylim[2]*aspect[3],
-             ylab = as.character(inttics),
-             zat = (rttics - sel$rtrange[1])/diff(sel$rtrange)*aspect[2],
-             zlab = as.character(rttics),
-             ylen = 0, alpha=0.5)
+    plotSurf(object@env$profile, log, aspect, ...)
 })
 
 filtfft <- function(y, filt) {
@@ -450,24 +359,31 @@ filtfft <- function(y, filt) {
     Re(yfilt[1:length(y)])
 }
 
+setStage("findPeaks", "Find Peaks", "xcmsRaw", "xcmsPeaks")
+            
 .findPeaks.matchedFilter <- function(object, fwhm = 30, sigma = fwhm/2.3548,
                                      max = 5, snthresh = 10, step = 0.1,
                                      steps = 2, mzdiff = 0.8 - step*steps,
                                      index = FALSE, sleep = 0,
-                                     verbose.columns = FALSE) {
-    pipeline <- object@pipeline
-    profStep(genProfProto(pipeline)) <- step
-    maxidxproto <- genProfProto(pipeline)
-    profMethod(maxidxproto) <- "maxidx"
-    maxidx <- new("xcmsRawPipeline", genprofproto = maxidxproto)
+                                     verbose.columns = FALSE,
+                                     pipeline = new("xcmsPipelineProfile")) {
 
+    # if 'pipeline' is empty, attempt to get from xcmsRaw
+    pipeline <- profPipe(object, pipeline, step)
+    
+    # create maxidx protocol using same parameters
+    matproto <- profileMatrixProto(pipeline)
+    maxidx <- xcmsProtocol("profileMatrix", "maxidx", step = matproto@step,
+                           naok = matproto@naok)
+    step <- matproto@step # get real step
+    
     ### Create EIC buffer
     # This buffered reading should be factored into an iterator object
     mrange <- range(object@env$mz)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profMat(object, pipeline, mzrange = c(mass[1],mass[bufsize]))
-    bufMax <- profMat(object, maxidx, mzrange = c(mass[1],mass[bufsize]))
+    buf <- perform(pipeline, object, mzrange = c(mass[1],mass[bufsize]))
+    bufMax <- perform(maxidx, object, mzrange = c(mass[1],mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -497,10 +413,10 @@ filtfft <- function(y, filt) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profMat(object, pipeline,
+            buf <- perform(pipeline, object,
                 mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
-            bufMax <- profMat(object, maxidx,
-                mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
+            bufMax <- perform(maxidx, object,
+                              mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
         ysums <- colMax(ymat)
@@ -566,19 +482,15 @@ filtfft <- function(y, filt) {
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder, mzdiff)
     rmat <- rmat[uindex,,drop=FALSE]
-    invisible(rmat)
+    invisible(new("xcmsPeaks", rmat))
 }
 
-setProtocolClass("xcmsProtoFindPeaksMatchedFilter",
-  representation(fwhm = "numeric", sigma = "numeric", max = "numeric",
-    snthresh = "numeric", step = "numeric", steps = "numeric", mzdiff = "numeric",
-    index = "logical"),
-  c(formals(.findPeaks.matchedFilter), dispname = "Matched Filter"),
-  "xcmsProtoFindPeaks")
-
-setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
-
-setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
+setProtocol("matchedFilter", "Matched Filter",
+            representation(fwhm = "numeric", sigma = "numeric", max = "numeric",
+                           snthresh = "numeric", step = "numeric",
+                           steps = "numeric", mzdiff = "numeric",
+                           index = "logical", pipeline = "xcmsPipelineProfile"),
+            .findPeaks.matchedFilter, "findPeaks")
 
 .findPeaks.centWave <- function(object, scanrange=c(1,length(object@scantime)),
                                 minEntries=4, dev=140e-6, snthresh=20, minPeakWidth=7,
@@ -828,21 +740,19 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", .findPeaks.matchedFilter)
     pr <- p[uindex,,drop=FALSE]
     cat(dim(p)[1],' Peaks  -- rectUnique(',mzdiff,',',rtdiff,') -->  ', dim(pr)[1],' Peaks.\n',sep='')
 
-    invisible(pr) #as.matrix(pr)
+    invisible(new("xcmsPeaks", pr)) #as.matrix(pr)
 }
 
-setProtocolClass("xcmsProtoFindPeaksCentWave",
-  representation(scanrange="numeric", minEntries="numeric", dev="numeric",
-    snthresh="numeric", noiserange="numeric", minPeakWidth="numeric",
-    scales="numeric", maxGaussOverlap = "numeric", minPtsAboveBaseLine="numeric",
-    scRangeTol="numeric", maxDescOutlier="numeric", mzdiff="numeric",
-    rtdiff="numeric", integrate="numeric", fitgauss = "logical"),
-  c(formals(.findPeaks.centWave), dispname = "Centroid Wavelet"),
-  "xcmsProtoFindPeaks")
-
-setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
-
-setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
+setProtocol("centWave", "Centroid Wavelet", 
+            representation(scanrange="numeric", minEntries="numeric",
+                           dev="numeric", snthresh="numeric",
+                           noiserange="numeric", minPeakWidth="numeric",
+                           scales="numeric", maxGaussOverlap = "numeric",
+                           minPtsAboveBaseLine="numeric",
+                           scRangeTol="numeric", maxDescOutlier="numeric",
+                           mzdiff="numeric", rtdiff="numeric",
+                           integrate="numeric", fitgauss = "logical"),
+            .findPeaks.centWave, "findPeaks")
 
 .findPeaks.MS1 <- function(object)
 {
@@ -884,17 +794,11 @@ setMethod("findPeaks.centWave", "xcmsRaw", .findPeaks.centWave)
 
     cat('\n')
 
-    invisible(peaklist)
+    invisible(new("xcmsPeaks", peaklist))
 }
 
-setProtocolClass("xcmsProtoFindPeaksMS1",
-  representation(includeMSn="logical"),
-  c(formals(.findPeaks.MS1), dispname = "MS2 precursor Peaks"),
-  "xcmsProtoFindPeaks")
-
-setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1"))
-
-setMethod("findPeaks.MS1", "xcmsRaw", .findPeaks.MS1)
+setProtocol("MS1", "MS2 Precursor Peaks", representation(),
+            .findPeaks.MS1, "findPeaks")
 
 .findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
                            SNR.method='quantile', winSize.noise=500,
@@ -941,32 +845,23 @@ setMethod("findPeaks.MS1", "xcmsRaw", .findPeaks.MS1)
   if (!verbose.columns)
     peaklist <- peaklist[,basenames,drop=FALSE]
 
-  invisible(peaklist)
+  invisible(new("xcmsPeaks", peaklist))
 }
 
-setProtocolClass("xcmsProtoFindPeaksMSW",
-  representation(snthresh="numeric", scales="numeric", nearbyPeak="logical",
-                           SNR.method="character", winSize.noise="numeric",
-                           sleep="numeric", verbose.columns = "logical"),
-  c(formals(.findPeaks.MSW), name = "MassSpecWavelet"),
-  "xcmsProtoFindPeaks")
-
-setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
-setMethod("findPeaks.MSW", "xcmsRaw", .findPeaks.MSW)
-
-setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
-
-setMethod("findPeaks", "xcmsRaw", function(object, method=xcmsMethodDefault("findPeaks"),
-                                           ...) {
-    perform(xcmsProtocol("findPeaks", method, ...), object)
-})
+setProtocol("MSW", "MassSpecWavelet",
+            representation(snthresh="numeric", scales="numeric",
+                           nearbyPeak="logical", SNR.method="character",
+                           winSize.noise="numeric", sleep="numeric",
+                           verbose.columns = "logical"),
+            .findPeaks.MSW, "findPeaks")
 
 setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 
-setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
+setMethod("getPeaks", "xcmsRaw",
+          function(object, peakrange, step = 0.1,
+                   pipeline = new("xcmsPipelineProfile")) {
 
-    pipeline <- object@pipeline
-    profStep(genProfProto(pipeline)) <- step
+    pipeline <- profPipe(object, pipeline, step)
 
     if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
         peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
@@ -976,7 +871,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     mrange <- range(peakrange[,1:2])
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profMat(object, pipeline, mzrange = c(mass[1], mass[bufsize]))
+    buf <- perform(pipeline, object, mzrange = c(mass[1], mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -993,7 +888,8 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, imz[1]), min(bufsize+imz[1]-1, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profMat(object, pipeline, mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
+            buf <- perform(pipeline, object,
+                           mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
         ymax <- colMax(ymat)
@@ -1043,11 +939,12 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
 setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+setMethod("getEIC", "xcmsRaw",
+          function(object, mzrange, rtrange = NULL,
+                   step = 0.1, pipeline = new("xcmsPipelineProfile")) {
 
-    pipeline <- object@pipeline
-    profStep(genProfProto(pipeline)) <- step
-
+    pipeline <- profPipe(object, pipeline, step)
+    
     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
 
@@ -1055,7 +952,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     mrange <- range(mzrange)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profMat(object, pipeline, mzrange = c(mass[1], mass[bufsize]))
+    buf <- perform(pipeline, object, mzrange = c(mass[1], mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -1072,7 +969,8 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profMat(object, pipeline, mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
+            buf <- perform(pipeline, object,
+                           mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         if (missing(rtrange))
             eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
@@ -1157,29 +1055,45 @@ setGeneric("profMz", function(object) standardGeneric("profMz"))
 
 setMethod("profMz", "xcmsRaw", function(object) {
 
-    object@mzrange[1]+profStep(object)*(0:(dim(object@env$profile)[1]-1))
+    mzBreaks(object@env$profile)
 })
 
 
+setGeneric("profMethod", function(object, ...) standardGeneric("profMethod"))
 setMethod("profMethod", "xcmsRaw", function(object) {
 
-    profMethod(genProfProto(object@pipeline))
+    methodName(profileMatrixProto(object))
 })
 
+setGeneric("profMethod<-", function(object, ..., value)
+           standardGeneric("profMethod<-"))
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
-    profMethod(genProfProto(object)) <- value
-    object
+  origProto <- profileMatrixProto(object)
+  newProto <- xcmsProtocol("profileMatrix", value)
+  if (canCoerce(newProto, class(origProto)))
+    as(newProto, class(origProto)) <- origProto
+  else { # try to inherit as many parameters as possible
+    params <- parameters(origProto)
+    for (name in names(params)[names(params) %in% slotNames(newProto)])
+      try(slot(newProto, name) <- params[name], TRUE)
+  }
+  
+  profileMatrixProto(object) <- newProto
+  object
 })
 
+setGeneric("profStep", function(object, ...) standardGeneric("profStep"))
 setMethod("profStep", "xcmsRaw", function(object) {
 
-    profStep(genProfProto(object@pipeline))
+    profileMatrixProto(object)@step
 })
 
+setGeneric("profStep<-", function(object, ..., value)
+           standardGeneric("profStep<-"))
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
-    profStep(genProfProto(object)) <- value
+    profileMatrixProto(object)@step <- value
     object
 })
 
@@ -1187,8 +1101,9 @@ setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
 
 setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 
-    contdim <- dim(object@env$profile)
-    object@env$profile <- medianFilter(object@env$profile, massrad, scanrad)
+    object@env$profile <- filterProfile(object@env$profile, "median",
+                                        massrad, scanrad)
+    object
 })
 
 setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
@@ -1197,93 +1112,8 @@ setMethod("profRange", "xcmsRaw", function(object,
                                            mzrange = numeric(),
                                            rtrange = numeric(),
                                            scanrange = numeric(), ...) {
-
-    if (length(object@env$profile)) {
-        contmass <- profMz(object)
-        if (length(mzrange) == 0) {
-            mzrange <- c(min(contmass), max(contmass))
-        } else if (length(mzrange) == 1) {
-            closemass <- contmass[which.min(abs(contmass-mzrange))]
-            mzrange <- c(closemass, closemass)
-        } else if (length(mzrange) > 2) {
-            mzrange <- c(min(mzrange), max(mzrange))
-        }
-        mzindex <- which((contmass >= mzrange[1]) & (contmass <= mzrange[2]))
-    } else {
-        if (length(mzrange) == 0) {
-            mzrange <- range(object@env$mz)
-        } else {
-            mzrange <- c(min(mzrange), max(mzrange))
-        }
-        mzindex <- integer()
-    }
-    if (mzrange[1] == mzrange[2])
-        mzlabel <- paste(mzrange[1], "m/z")
-    else
-        mzlabel <- paste(mzrange[1], "-", mzrange[2], " m/z", sep="")
-
-
-    if (length(rtrange) == 0) {
-        if (length(scanrange) == 0)
-            scanrange <- c(1, length(object@scanindex))
-        else if (length(scanrange) == 1)
-            scanrange <- c(scanrange, scanrange)
-        else if (length(scanrange) > 2)
-            scanrange <- c(max(1, min(scanrange)), min(max(scanrange), length(object@scantime)))
-        rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
-    } else if (length(rtrange) == 1) {
-        closetime <- object@scantime[which.min(abs(object@scantime-rtrange))]
-        rtrange <- c(closetime, closetime)
-    } else if (length(rtrange) > 2) {
-        rtrange <- c(min(rtrange), max(rtrange))
-    }
-
-    if (rtrange[1] == rtrange[2])
-        rtlabel <- paste(round(rtrange[1],1), "seconds")
-    else
-        rtlabel <- paste(round(rtrange[1],1), "-", round(rtrange[2],1), " seconds", sep="")
-
-
-    if (length(scanrange) == 0) {
-        scanidx <- which((object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2]))
-        scanrange <- c(min(scanidx), max(scanidx))
-    } else {
-        scanidx <- scanrange[1]:scanrange[2]
-    }
-
-    if (scanrange[1] == scanrange[2])
-        scanlab <- paste("scan", scanrange[1])
-    else
-        scanlab <- paste("scans ", scanrange[1], "-", scanrange[2], sep="")
-
-    list(mzrange = mzrange, mzlabel = mzlabel, mzindex = mzindex,
-         scanrange = scanrange, scanlab = scanlab, scanidx = scanidx,
-         rtrange = rtrange, rtlabel = rtlabel)
-})
-
-# generate a profile matrix using a given pipeline and subset
-setGeneric("profMat", function(object, pipeline = object@pipeline, ...)
-    standardGeneric("profMat"))
-setMethod("profMat", "xcmsRaw", function(object, pipeline = object@pipeline, ...)
-{
-    filtprofprotos <- filtProfProtos(pipeline)
-
-    # FIXME: handle margins
-
-    #if (length(filtprofprotos))
-    #  margins <- rowMax(sapply(filtprofprotos, profMargins,
-    #    mzcount = num, scancount = length(object@scantime)))
-
-    # FIXME: need some sort of caching mechanism
-    prof <- perform(genProfProto(pipeline), object, ...)
-
-    if (is.null(prof)) # 'NULL' returned if profile protocol is no-op
-        return(NULL)
-
-    for (proto in filtprofprotos)
-        prof <- perform(proto, prof, ...)
-
-    prof
+  
+    selectRange(object@env$profile, mzrange, rtrange, scanrange, ...)
 })
 
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
@@ -1311,113 +1141,144 @@ setMethod("findMZBoxes", "xcmsRaw", function(object,mzrange=c(0.0,0.0),scanrange
   as.double(dev),as.integer(minEntries),as.integer(debug), PACKAGE ='xcms' )
 })
 
-# Profile filtering
+# Exploration
 
-# Add a profile filter protocol
-setMethod("addFiltProfProtos", c("xcmsRaw", "list"), function(object, value)
+# called when no pipeline has been applied
+setMethod("explore", c("xcmsRaw", "NULL"),
+          function(object, protocol, ...)
+          {
+            # show image of raw data
+          })
+
+### Profile generation
+
+# High level profile matrix protocol
+setStage("genProfile", "Create and filter profile matrix", "xcmsRaw")
+setProtocol("generic", "Generic",
+            representation(pipeline = "xcmsPipelineProfile"),
+            function(data, pipeline = new("xcmsPipelineProfile"), ...) {
+              if ("profile" %in% ls(data@env))
+                rm("profile", envir = data@env)
+              prof <- perform(pipeline, data, ...)
+              if (!is.null(prof)) {
+                assign("profile", prof, data@env)
+                data@mzrange <- prof@mzrange
+              }
+              data
+            }, "genProfile")
+
+# Profile generation stage
+
+setStage("profileMatrix", "Create profile matrix", "xcmsRaw", "xcmsProfile")
+
+# Fixed-width bin profile generation protocols
+
+# Virtual base class
+setProtocol("base",
+            representation = representation(step = "numeric", naok = "logical"),
+            parent = "profileMatrix")
+
+.profFunctions <- c(bin = "profBinM", binlin = "profBinLinM",
+                    binlinbase = "profBinLinBaseM", intlin = "profIntLinM",
+                    maxidx = "profMaxIdxM")
+
+# convenience function that builds wrappers around the prof* functions
+.setProfileProtocol <- function(method, dispname, representation = list())
 {
-  object@pipeline <- addFiltProfProtos(object@pipeline, value)
-  prof <- object@env$profile
-  for(proto in value) {
-    prof <- perform(proto, prof)
+  profFun <- match.fun(.profFunctions[method])
+  wrapper <- function(data, step = 1, naok = FALSE,
+                      baselevel = min(data@env$intensity)/2, basespace = .075,
+                      mzindexrange = numeric(), scanrange = numeric(), 
+                      mzrange = numeric(), rtrange = numeric())
+  {
+    if (!step)
+      return(NULL)
+
+    # get necessary information out of the xcmsRaw
+    mz <- get("mz", data@env)
+    intensity <- get("intensity", data@env)
+    scanindex <- data@scanindex
+    scantime <- data@scantime
+    
+    if (length(mzrange) == 2) {
+        minmass <- mzrange[1]
+        maxmass <- mzrange[2]
+    } else {
+        minmass <- min(mz)
+        maxmass <- max(mz)
+    }
+    
+    minmass <- round(minmass/step)*step
+    maxmass <- round(maxmass/step)*step
+    num <- round((maxmass - minmass)/step) + 1
+
+    params <- list()
+    if (!missing(baselevel))
+      params <- c(params, baselevel = baselevel)
+    if (!missing(basespace))
+      params <- c(params, basespace = basespace)
+    
+    prof <- profFun(mz, intensity, scanindex, num, minmass, maxmass, 
+        naok, params)
+
+    new("xcmsProfile", prof, step = step, mzrange = c(minmass, maxmass),
+        scantime = scantime)
   }
-  object@env$profile <- prof
-  object
-})
-setMethod("addFiltProfProtos", c("xcmsRaw", "xcmsProtoFilterProfile"), function(object, value)
-{
-  addFiltProfProtos(object, list(value))
-})
-
-setGeneric("filterProfile", function(object, ...) standardGeneric("filterProfile"))
-setMethod("filterProfile", "xcmsRaw",
-  function(object, method=xcmsMethodDefault("filterProfile"), subtract = FALSE, ...)
-{
-  proto <- xcmsProtocol("filterProfile", method, ...)
-  if (subtract)
-    proto <- xcmsProtocol("filterProfile", "subtract", filter = proto)
-  addFiltProfProtos(object, proto)
-})
-
-# FIXME: Should be modified to accept mz/scan ranges
-.filterProfile.median <- function(object, mzrad = 0, scanrad = 0, ...) {
-  medianFilter(object, mzrad, scanrad)
+  setProtocol(method, dispname, representation, wrapper,
+              "profileMatrixBase")
 }
 
-setGeneric("filterProfile.median", function(object, ...)
-  standardGeneric("filterProfile.median"))
+.setProfileProtocol("intlin", "Integrated linearly interpolated bins")
 
-setMethod("filterProfile.median", "matrix", .filterProfile.median)
+.setProfileProtocol("binlin", "Linearly interpolated bins")
 
-setProtocolClass("xcmsProtoFilterProfileMedian",
-  representation(mzrad = "numeric", scanrad = "numeric"),
-  c(formals(.filterProfile.median), dispname = "Median"),
-  "xcmsProtoFilterProfile")
+.setProfileProtocol("bin", "Simple bins")
 
-setMethod("profMargins", "xcmsProtoFilterProfileMedian",
-  function(object, mzcount, scancount)
-{
-  round(c(mzmargin = object@mzrad, scanmargin = object@scanrad))
-})
+.setProfileProtocol("binlinbase", "Linearly interpolated bins with base",
+            representation(baselevel = "numeric", basespace = "numeric"))
 
-# Pipeline
-
-setGeneric("pipeline", function(object) standardGeneric("pipeline"))
-setMethod("pipeline", "xcmsRaw", function(object) object@pipeline)
-
-# set (and run) a new pipeline
-setGeneric("pipeline<-", function(object, value) standardGeneric("pipeline<-"))
-setReplaceMethod("pipeline", "xcmsRaw", function(object, value) {
-    object@pipeline <- value
-    # only profile matrix is managed by pipeline currently
-    updateProfile(object)
-})
-
-setMethod("genProfProto", "xcmsRaw", function(object) genProfProto(object@pipeline))
-
-setReplaceMethod("genProfProto", "xcmsRaw", function(object, value) {
-    genProfProto(object@pipeline) <- value
-    updateProfile(object)
-})
-
-# generate a (full) profile matrix and store in this object
-setGeneric("genProfile", function(object, method = "", ...) standardGeneric("genProfile"))
-setMethod("genProfile", "xcmsRaw", function(object, method = "", ...) {
-    genProfProto(object) <- xcmsProtocol("GenProfile", method, ...)
-    object
-})
-
-# FIXME: Need to follow 'type.method' delegation pattern of other protocols
-setMethod("perform", c("xcmsProtoGenProfile", "xcmsRaw"), function(object, data, ...)
-{
-  performProfile(object, data@env$mz, data@env$intensity, data@scanindex, data@scantime, ...)
-})
-
-setMethod("explore", "xcmsRaw", function(object, ...)
-{
-  pipeline <- object@pipeline
-  if (length(filtProfProtos(pipeline)))
-    explore(tail(filtProfProtos(pipeline), 1)[[1]], object, ...)
-  else if (length(genProfProto(pipeline)) && !is.null(object@env$profile))
-    explore(genProfProto(pipeline), object, ...)
-  else { # explore raw data - should raw data input be a protocol?
-
-  }
-})
+# should hide in xcms namespace
+.setProfileProtocol("maxidx", "Indices of bin maxima")
 
 # Private methods (do not export)
 
-# update the profile by performing the appropriate protocols in the pipeline
-setGeneric("updateProfile", function(object) standardGeneric("updateProfile"))
-setMethod("updateProfile", "xcmsRaw", function(object) {
-    # remove old profile matrix
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    # store new profile matrix if non-NULL
-    profile <- profMat(object, object@pipeline)
-    if (!is.null(profile)) {
-      object@env$profile <- profile
-      object@mzrange <- range(attr(profile, "profmz"))
+# set the profile protocol
+
+setReplaceMethod("genProfileProto", "xcmsRaw", function(object, value) {
+  genProfileProto(object@pipeline) <- value
+  perform(value, object)
+})
+
+# get/set the profile matrix protocol
+
+setMethod("profileMatrixProto", "xcmsRaw", function(object)
+  profileMatrixProto(genProfileProto(object)@pipeline))
+
+setReplaceMethod("profileMatrixProto", "xcmsRaw", function(object, value) {
+  profileMatrixProto(genProfileProto(object)@pipeline) <- value
+  object
+})
+
+# utility for getting a profile pipeline
+
+setGeneric("profPipe", function(object, ...) standardGeneric("profPipe"))
+
+setMethod("profPipe", "xcmsRaw", function(object, pipeline, step) {
+  # empty pipeline, attempt to get from xcmsRaw
+  if (!length(pipeline@.Data)) {
+    profproto <- genProfileProto(object)
+    if (!is.null(profproto)) {
+      profpipe <- pipeline(profproto)
+      if (!is.null(profpipe))
+        pipeline <- profpipe
     }
-    object # not needed, but only we know that
+  } else step <- NULL # if 'pipeline' non-empty, ignore 'step'
+  # attempt to extract profile matrix protocol from pipeline
+  profmatproto <- profileMatrixProto(pipeline, "base")
+  if (is.null(profmatproto)) # fallback to 'bin' method
+    profmatproto <- xcmsProtocol("profileMatrix", "bin")
+  if (!is.null(step))
+    profmatproto@step <- step
+  profileMatrixProto(pipeline) <- profmatproto
+  pipeline
 })

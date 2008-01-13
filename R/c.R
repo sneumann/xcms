@@ -28,7 +28,10 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xstart),
        as.double(xend),
        as.integer(num),
-       out = integerMatrix(num, length(zidx)),
+       # not clear why integerMatrix() is necessary
+       # sometimes, the return value is not perfectly zeroes (NA's in FFC)
+       #out = integerMatrix(num, length(zidx)),
+       out = matrix(as.integer(0), num, length(zidx)),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
