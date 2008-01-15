@@ -337,6 +337,121 @@ setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
     plotChrom(object@env$profile, base, ident, fitgauss, vline, ...)
 })
 
+
+.getMsnScan <- function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
+                        precision=1, userMsnIndex=NULL)
+{
+    if (scanLevel<1)
+    {
+        warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
+        return(NULL)
+    }
+
+    if (is.NULL(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+        nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+        return(nxcms);
+    }
+
+    if (parentMzs[1]==0)
+        parentMzs <- rep(0,scanLevel-1)
+
+    ## using a zero-vector if none is given
+    wasonlyone=TRUE;
+    if (ms1Rt < object@scantime[1]) {
+        warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
+        return(NULL)
+    }
+    ms1ind <- max(which(object@scantime <= ms1Rt))
+    if (scanLevel==1) { # in this case just the ms1schan of this rt will be returned
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+        nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+
+        return(nxcms);
+    }
+
+    if (is.null(object@env$msnMz)) {
+        warning("Exit: There are no MSnScans in this object.")
+        return(NULL)
+    }
+
+    ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
+    ms2s <- which((object@msnRt >= ms1Rt)  &
+                  (object@msnLevel == 2) &
+                  (object@msnRt <= object@scantime[ms1ind+1]))
+    if (length(ms2s) == 0)
+    {
+        warning("Exit: There is no ms2scan in this Rt-Range!")
+        return(NULL)
+    }
+    ##cat("1> ",ms2s,"\n")
+    if (length(ms2s) > 1)
+    {
+        if (parentMzs[1] == 0)  # more than one ms2scan aviable but no mzvalues given
+            warning("More than one ms2scan available but no mz-parameters given! using first scan")
+        wasonlyone=FALSE;
+        diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
+        msn <- ms2s[min(which(diffe == min(diffe)))] # The PArent-Rt of this ms2index ist closest to the wanted value
+    } else {
+        msn <- ms2s; # there is only one ms2scan in this ms1range so use this
+    }
+    if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
+        warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
+    }
+    msnRt <- object@msnRt[msn]
+    ##cat("3> ",msnRt,"\n")
+    if (scanLevel > 2) {
+        for (a in 3:scanLevel) {
+            msns <- which((object@msnRt >= msnRt) &
+                          (object@msnLevel == a) &
+                          (object@msnRt <= object@scantime[ms1ind+1]))
+            ##cat("4> ",ms2s,"\n")
+            if (length(msns)==0) {
+                warning("Exit: There is no ms",a,"scan in this Rt-Range!")
+                return(NULL)
+            }
+            if (length(msns)>1) {
+                wasonlyone=FALSE;
+                if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { # more than one ms2scan aviable but no mzvalues given
+                    warning("More than one ms",a,"scan available but no mzdata given! using first scan")
+                    msn <- msns[1];
+                } else {
+                    diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
+                    msn <- msns[min(which(diffe == min(diffe)))]
+                }
+            } else {
+                msn <- msns; # there is only one ms[n-1]scan in this ms[n]ramge so use this
+            }
+            if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
+                if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
+                    warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
+                }
+            }
+            msnRt <- object@msnRt[msn]
+        }
+    }
+    if (wasonlyone) {
+        message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
+    }
+    nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+    nxcms@scantime <- msnRt
+    nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+    nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+    return(nxcms);
+}
+
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+setMethod("getMsnScan", "xcmsRaw", .getMsnScan)
+
 image.xcmsRaw <- function(x, col = rainbow(256), ...) {
 
     image(x@env$profile, col, ...)
@@ -360,7 +475,7 @@ filtfft <- function(y, filt) {
 }
 
 setStage("findPeaks", "Find Peaks", "xcmsRaw", "xcmsPeaks")
-            
+
 .findPeaks.matchedFilter <- function(object, fwhm = 30, sigma = fwhm/2.3548,
                                      max = 5, snthresh = 10, step = 0.1,
                                      steps = 2, mzdiff = 0.8 - step*steps,
@@ -370,13 +485,13 @@ setStage("findPeaks", "Find Peaks", "xcmsRaw", "xcmsPeaks")
 
     # if 'pipeline' is empty, attempt to get from xcmsRaw
     pipeline <- profPipe(object, pipeline, step)
-    
+
     # create maxidx protocol using same parameters
     matproto <- profileMatrixProto(pipeline)
     maxidx <- xcmsProtocol("profileMatrix", "maxidx", step = matproto@step,
                            naok = matproto@naok)
     step <- matproto@step # get real step
-    
+
     ### Create EIC buffer
     # This buffered reading should be factored into an iterator object
     mrange <- range(object@env$mz)
@@ -743,7 +858,7 @@ setProtocol("matchedFilter", "Matched Filter",
     invisible(new("xcmsPeaks", pr)) #as.matrix(pr)
 }
 
-setProtocol("centWave", "Centroid Wavelet", 
+setProtocol("centWave", "Centroid Wavelet",
             representation(scanrange="numeric", minEntries="numeric",
                            dev="numeric", snthresh="numeric",
                            noiserange="numeric", minPeakWidth="numeric",
@@ -765,9 +880,11 @@ setProtocol("centWave", "Centroid Wavelet",
     peakIndex <- object@msnLevel == 2
 
     ## (empty) return object
-    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+    basenames <- c("mz","mzmin","mzmax",
+                   "rt","rtmin","rtmax",
                    "into","maxo","sn")
-    peaklist <- matrix(-1, nrow = length(peakIndex), ncol = length(basenames))
+    peaklist <- matrix(-1, nrow = length(which(peakIndex)),
+                       ncol = length(basenames))
     colnames(peaklist) <- c(basenames)
 
     ## Assemble result
@@ -797,8 +914,15 @@ setProtocol("centWave", "Centroid Wavelet",
     invisible(new("xcmsPeaks", peaklist))
 }
 
+## <<<<<<< .mine
+## setProtocolClass("xcmsProtoFindPeaksMS1",
+##   representation(),
+##   c(formals(.findPeaks.MS1), dispname = "MS2 precursor Peaks"),
+##   "xcmsProtoFindPeaks")
+## =======
 setProtocol("MS1", "MS2 Precursor Peaks", representation(),
             .findPeaks.MS1, "findPeaks")
+##>>>>>>> .r29522
 
 .findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
                            SNR.method='quantile', winSize.noise=500,
@@ -944,7 +1068,7 @@ setMethod("getEIC", "xcmsRaw",
                    step = 0.1, pipeline = new("xcmsPipelineProfile")) {
 
     pipeline <- profPipe(object, pipeline, step)
-    
+
     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
 
@@ -1078,7 +1202,7 @@ setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
     for (name in names(params)[names(params) %in% slotNames(newProto)])
       try(slot(newProto, name) <- params[name], TRUE)
   }
-  
+
   profileMatrixProto(object) <- newProto
   object
 })
@@ -1112,7 +1236,7 @@ setMethod("profRange", "xcmsRaw", function(object,
                                            mzrange = numeric(),
                                            rtrange = numeric(),
                                            scanrange = numeric(), ...) {
-  
+
     selectRange(object@env$profile, mzrange, rtrange, scanrange, ...)
 })
 
@@ -1188,7 +1312,7 @@ setProtocol("base",
   profFun <- match.fun(.profFunctions[method])
   wrapper <- function(data, step = 1, naok = FALSE,
                       baselevel = min(data@env$intensity)/2, basespace = .075,
-                      mzindexrange = numeric(), scanrange = numeric(), 
+                      mzindexrange = numeric(), scanrange = numeric(),
                       mzrange = numeric(), rtrange = numeric())
   {
     if (!step)
@@ -1199,7 +1323,7 @@ setProtocol("base",
     intensity <- get("intensity", data@env)
     scanindex <- data@scanindex
     scantime <- data@scantime
-    
+
     if (length(mzrange) == 2) {
         minmass <- mzrange[1]
         maxmass <- mzrange[2]
@@ -1207,7 +1331,7 @@ setProtocol("base",
         minmass <- min(mz)
         maxmass <- max(mz)
     }
-    
+
     minmass <- round(minmass/step)*step
     maxmass <- round(maxmass/step)*step
     num <- round((maxmass - minmass)/step) + 1
@@ -1217,8 +1341,8 @@ setProtocol("base",
       params <- c(params, baselevel = baselevel)
     if (!missing(basespace))
       params <- c(params, basespace = basespace)
-    
-    prof <- profFun(mz, intensity, scanindex, num, minmass, maxmass, 
+
+    prof <- profFun(mz, intensity, scanindex, num, minmass, maxmass,
         naok, params)
 
     new("xcmsProfile", prof, step = step, mzrange = c(minmass, maxmass),

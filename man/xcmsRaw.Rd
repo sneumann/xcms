@@ -1,8 +1,8 @@
 \name{xcmsRaw}
 \alias{xcmsRaw}
-\title{Constructor for xcmsRaw objects which reads NetCDF/mzXML files}
+\title{Constructor for xcmsRaw objects which reads NetCDF/mzXML/mzData files}
 \description{
-  This function handles the task of reading a NetCDF/mzXML file containing
+  This function handles the task of reading a NetCDF/mzXML/mzData file containing
   LC/MS or GC/MS data into a new \code{xcmsRaw} object. It also
   transforms the data into profile (maxrix) mode for efficient
   plotting and data exploration.
