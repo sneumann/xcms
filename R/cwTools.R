@@ -413,6 +413,7 @@ gauss <- function(x, h, mu, sigma){
 }
 
 fitGauss <- function(td,d,pgauss=NA) {
+ if (length(d) < 3) return(rep(NA,3))
  if (!any(is.na(pgauss))) { mu <- pgauss$mu; sigma <- pgauss$sigma;h <- pgauss$h }
  fit <- try(nls(d ~ SSgauss(td,mu,sigma,h)), silent = TRUE)
  if (class(fit) == "try-error") 
@@ -547,15 +548,26 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
       if (dim(peaks)[1] - length(jp) > 0) newpeaks <- rbind(newpeaks,gpeaks[-jp,])
     } else  newpeaks <- gpeaks
     
-    if (dim(peaks)[1] - Ngp > 0) { ## notgausspeaks
+    if (is.vector(newpeaks)) { 
+      grt.min <- newpeaks["rtmin"]
+      grt.max <- newpeaks["rtmax"] 
+      } else {
+        grt.min <- newpeaks[,"rtmin"]
+        grt.max <- newpeaks[,"rtmax"]
+      }
+      
+    if (dim(peaks)[1] - Ngp > 1) { ## notgausspeaks
       ## here we can only check if they are completely overlapped by other peaks 
-      grt <- newpeaks[,c("rtmin","rtmax")]
       for (k in 1:dim(notgausspeaks)[1]) {
-          if (!any((notgausspeaks[k,"rtmin"] >= grt[,1]) & (notgausspeaks[k,"rtmax"] <= grt[,2])))
+          if (!any((notgausspeaks[k,"rtmin"] >= grt.min) & (notgausspeaks[k,"rtmax"] <= grt.max)))
              newpeaks <- rbind(newpeaks,notgausspeaks[k,])
       }
-    }
-    
+    } else 
+      if (dim(peaks)[1] - Ngp == 1) {
+        if (!any((notgausspeaks["rtmin"] >= grt.min) & (notgausspeaks["rtmax"] <= grt.max)))
+          newpeaks <- rbind(newpeaks,notgausspeaks)
+      }    
+             
   } else return(peaks)
   
   newpeaks
