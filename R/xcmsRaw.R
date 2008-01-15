@@ -65,6 +65,8 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         stop("Couldn't determine file type")
 
     rtdiff <- diff(rawdata$rt)
+    if (any(rtdiff == 0))
+       warning("There are identical scantimes.")
     if (any(rtdiff < 0)) {
     	badtimes <- which(rtdiff < 0)
     	stop(paste("Time for scan ", badtimes[1], " (",
