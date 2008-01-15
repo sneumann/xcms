@@ -1,3 +1,8 @@
+2008-01-15: 1.11.13
+Revised pipeline framework. Documentation forthcoming.
+Added hra_clust for m/z alignment to xcmsSet
+Added getMsnScan to xcmsRaw for Tandem MS / Ion Trap data
+
 2007-12-28: 1.11.12
 findPeaks.centWave: speedup for m/z ROI search
 
