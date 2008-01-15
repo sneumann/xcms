@@ -39,7 +39,7 @@ exportClasses(
               "xcmsProtoFindPeaksMSW",
               "xcmsProtoFindPeaksMS1",
               "xcmsProtoGenProfile",
-              "xcmsProtoGenProfileBase",
+#              "xcmsProtoGenProfileBase",
               "xcmsProtoProfileMatrix",
               "xcmsProtoProfileMatrixBase",
               "xcmsProtoProfileMatrixIntlin",
