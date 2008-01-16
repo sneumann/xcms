@@ -703,15 +703,11 @@ hra_hclust <- function(x, eppm, eabs)
     object
 }
 
-setGeneric("group.mzAlign", function(object, ...) standardGeneric("group.mzAlign"))
-setMethod("group.mzAlign", "xcmsSet", .group.mzAlign)
-
-setProtocolClass("xcmsProtoGroupMzAlign",
-  representation(mzppm = "numeric", mzabs = "numeric",
-                 minsamp = "numeric", minsampclass = "numeric",
-                 minfrac = "numeric"),
-                 c(formals(.group.mzAlign), dispname = "Spectrum Alignment"),
-                 "xcmsProtoGroup")
+setProtocol("mzAlign", "Spectrum Alignment",
+            representation(mzppm = "numeric", mzabs = "numeric",
+                           minsamp = "numeric", minsampclass = "numeric",
+                           minfrac = "numeric"),
+            .group.mzAlign, "group")
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
