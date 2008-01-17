@@ -1,6 +1,6 @@
-\name{group.mzAlign}
+\name{group.mzClust}
 \docType{methods}
-\alias{group.mzAlign}
+\alias{group.mzClust}
 
 \title{Group Peaks via High Resolution Alignment}
 \description{
@@ -8,7 +8,7 @@
 	given xcmsSet.
 }
 \usage{
-groupedobject <- group(object, method="mzAlign", mzppm = 20, mzabs = 0, minsamp = 1, minsampclass=0, minfrac=0)
+groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minsampclass=0, minfrac=0)
 }
 \arguments{
 	\item{object}{a xcmsSet with peaks }
@@ -31,7 +31,7 @@ library(xcms)
 library(faahKO)
 data(faahko)
 ## group faahko data
-##faahko_grouped <- group(faahko, method="mzAlign")
+##faahko_grouped <- group(faahko, method="mzClust")
 ## get groups
 ##groups <- groups(faahko_grouped)
 ## get grouped peak indices

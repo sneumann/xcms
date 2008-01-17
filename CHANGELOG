@@ -1,5 +1,6 @@
 2008-01-15: 1.11.13
 added xcmsFragments Class for handling of Tandem MS / MS^n
+renamed hra_clust stuff to mzClust
 
 2008-01-15: 1.11.13
 Revised pipeline framework. Documentation forthcoming.
