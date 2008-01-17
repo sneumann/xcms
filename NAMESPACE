@@ -13,6 +13,7 @@ export(
        "xcmsMethodDefault",
        "xcmsRaw",
        "xcmsSet",
+       "xcmsFragments",
        "xcmsProtocol",
        "protocolName",
        "setProtocol",
@@ -27,6 +28,7 @@ S3method(split, xcmsSet)
 
 exportClasses(
               "xcmsEIC",
+              "xcmsFragments",
               "xcmsRaw",
               "xcmsSet",
               "xcmsPeaks",
@@ -61,6 +63,7 @@ exportClasses(
 exportMethods(
               "filepaths",
               "filepaths<-",
+              "collect",
               "diffreport",
               "dispName",
               "explore",
