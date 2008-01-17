@@ -54,6 +54,7 @@ exportClasses(
               "xcmsProtoGroupMzClust",
               "xcmsProtoFindComps",
               "xcmsProtoRetcor",
+              "xcmsProtoRetcorSmooth",
               "xcmsProtoFillPeaks",
               "xcmsProtoSummarize",
               "xcmsProtoNormalize",

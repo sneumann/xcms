@@ -756,7 +756,7 @@ setMethod("groupval", "xcmsSet", function(object,
     classlabel <- as.vector(unclass(sampclass(object)))
     n <- length(samples)
     corpeaks <- peakmat
-    method <- match.arg(method)
+    method <- match.arg(model)
     plottype <- match.arg(plottype)
     family <- match.arg(family)
     if (length(object@rt) == 2)
