@@ -1,19 +1,19 @@
-/* 
-   * distanzen speichern, wenn 2 cluster verschmolzen werden, distanz zu allen
-   anderen clustern berechnen
-*/
-
 #include <R.h>
 #include <Rdefines.h>
 
+/* Perform hierarchical clustering on x till variable cutoff (specified via eppm
+ * and eabs) reached */
 void
-R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
+R_mzClust_hclust(double *x, int *num, double *d, int *g, double *eppm,
 	     double *eabs)
 {
-	/* anzahl punkte */
+	/* number of data points, one row for each cluster in matrix */
 	int n = *num;
+	/* like n plus one int for cluster length/status, corresponds to matrix
+	 * columns */
 	int m = n + 2;
 
+	/* pointer array for d */
 	double *d_idx[n - 1];
 	double means[n];
 	double mrange[2];
@@ -54,7 +54,7 @@ R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
 			for (j = i + 1; j < n; j++) {
 				if (clust[j * m] <= 0)
 					continue;
-				/*aufsummieren z.b. 5 und 9, index = sum(1:5)+(9-5) */
+				/*calculate index, e.g. x=5 and y=9 -> index=sum(1:5)+(9-5) */
 				if (*(d_idx[i] + (j - i - 1)) < mindst) {
 					mindst = *(d_idx[i] + (j - i - 1));
 					minclust[0] = i;
@@ -62,10 +62,10 @@ R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
 				}
 			}
 		}
-		/* mindst ist DBL_MAX, keine cluster mehr */
+		/* mindst is DBL_MAX, no clusters left */
 		if (mindst == DBL_MAX)
 			break;
-		/* berechne intervall fuer abbruchkriterium */
+		/* calculate intervall for variable cutoff */
 		means[minclust[0]] = (means[minclust[0]] *
 				      clust[minclust[0] * m] +
 				      means[minclust[1]] *
@@ -77,7 +77,7 @@ R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
 		    means[minclust[0]] + means[minclust[0]] * *eppm +
 		    *eabs;
 
-		/* finde ausreisser */
+		/* find outliers */
 		for (i = 1; i <= clust[minclust[0] * m]; i++) {
 			if (x[clust[minclust[0] * m + i]] < mrange[0] ||
 			    x[clust[minclust[0] * m + i]] > mrange[1]) {
@@ -95,26 +95,25 @@ R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
 				}
 			}
 
-		/* wenn abbruchkriterium erfüllt, cluster deaktivieren */
+		/* deactivate clusters, if outliers found*/
 		if (overlimit) {
 			clust[minclust[0] * m] *= -1;
 			clust[minclust[1] * m] *= -1;
 			overlimit = 0;
 		} else {
-			/* sonst cluster verschmelzen */
+			/* merge clusters */
 			for (i = 1; i <= clust[minclust[1] * m]; i++) {
 				clust[minclust[0] * m +
 				      clust[minclust[0] * m] + i] =
 				    clust[minclust[1] * m + i];
 			}
-			/* clusterlaenge aktualisieren */
+			/* update clusterlength */
 			clust[minclust[0] * m] += clust[minclust[1] * m];
-			/* 2. cluster raus */
+			/* kill 2nd cluster */
 			clust[minclust[1] * m] = 0;
 
-			/* distanz aktualisieren */
-			/* abstand zwischen cluster a und {c[i],c[j]} ist
-			 * max(c[i] zu a, c[j] zu a) */
+			/* update distance, distance between cluster a and
+			 * cluster {c[i],c[j]} is max(dist(c[i],a),dist(c[j],a)) */
 			for(i = 0; i<n; i++) {
 				if(clust[i * m] <= 0 || i == minclust[0])
 					continue;
@@ -149,6 +148,7 @@ R_hra_hclust(double *x, int *num, double *d, int *g, double *eppm,
 		}
 		mindst = DBL_MAX;
 	}
+	/* create output */
 	int gnum = 1;
 	int tmp;
 	for (i = 0; i < n; i++) {
