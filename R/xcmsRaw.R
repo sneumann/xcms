@@ -349,7 +349,7 @@ setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
         return(NULL)
     }
 
-    if (is.NULL(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
+    if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
         nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
 
         nxcms@scantime <- ms1Rt
@@ -916,27 +916,24 @@ setProtocol("centWave", "Centroid Wavelet",
     invisible(new("xcmsPeaks", peaklist))
 }
 
-## <<<<<<< .mine
-## setProtocolClass("xcmsProtoFindPeaksMS1",
-##   representation(),
-##   c(formals(.findPeaks.MS1), dispname = "MS2 precursor Peaks"),
-##   "xcmsProtoFindPeaks")
-## =======
 setProtocol("MS1", "MS2 Precursor Peaks", representation(),
             .findPeaks.MS1, "findPeaks")
-##>>>>>>> .r29522
 
-.findPeaks.MSW <- function(object, snthresh=3, scales=seq(1,22,3), nearbyPeak=TRUE,
-                           SNR.method='quantile', winSize.noise=500,
-                           sleep=0, verbose.columns = FALSE)
+
+setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
+
+.findPeaks.MSW <- function (object, snthresh=3,
+                            scales=seq(1,22,3), nearbyPeak=TRUE,
+                            SNR.method='quantile', winSize.noise=500,amp.Th=0.0075,
+                            sleep=0, verbose.columns = FALSE)
 {
   require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
   # MassSpecWavelet Calls
   peakInfo <- peakDetectionCWT(object@env$intensity,
                                scales=scales, SNR.Th = snthresh,
-                               nearbyPeak = nearbyPeak,
-                               SNR.method=SNR.method, winSize.noise=winSize.noise)
+                               nearbyPeak = nearbyPeak, SNR.method=SNR.method,
+                               winSize.noise=winSize.noise, amp.Th=amp.Th)
   majorPeakInfo <- peakInfo$majorPeakInfo
 
   betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
@@ -977,7 +974,8 @@ setProtocol("MS1", "MS2 Precursor Peaks", representation(),
 setProtocol("MSW", "MassSpecWavelet",
             representation(snthresh="numeric", scales="numeric",
                            nearbyPeak="logical", SNR.method="character",
-                           winSize.noise="numeric", sleep="numeric",
+                           winSize.noise="numeric", amp.Th="numeric",
+                           sleep="numeric",
                            verbose.columns = "logical"),
             .findPeaks.MSW, "findPeaks")
 

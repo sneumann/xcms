@@ -68,8 +68,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
 
     # determine peak arguments
     peakargs <- list(...)
-    #peakargs <- vargs[!(vargs %in% "step")]  
-    
+    #peakargs <- vargs[!(vargs %in% "step")]
+
     specified <- match(c("step", "profmethod", "profparams"), names(mc), 0)
     params <- c(names(mc)[specified], peakargs)
     if (length(params) && (!is.null(pipeline) || !is.null(rawpipeline)))
@@ -365,7 +365,7 @@ setStage("processRaws", "Load each sample and find its peaks")
   peaklist <- vector("list", length(files))
   rtlist <- list(raw = vector("list", length(snames)),
                  corrected = vector("list", length(snames)))
-  
+
   for (i in seq(along = peaklist)) {
     # FIXME: at some point the call to xcmsRaw could become a protocol
     lcraw <- xcmsRaw(files[i], genprof = FALSE)
@@ -384,7 +384,7 @@ setStage("processRaws", "Load each sample and find its peaks")
       warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
                     snames[i]))
   }
-  
+
   peaks(data) <- do.call("rbind", peaklist)
   data@rt <- rtlist
 
@@ -512,11 +512,11 @@ setProtocol("density", "Density Estimation",
             .group.density, "group")
 
 
-hra_hclust <- function(x, eppm, eabs)
+mzClust_hclust <- function(x, eppm, eabs)
 {
     N <- length(x)
     d <- dist(x)
-    g <- .C("R_hra_hclust",
+    g <- .C("R_mzClust_hclust",
             x = as.double(x),
             num = N,
             d = as.double(d),
@@ -526,16 +526,15 @@ hra_hclust <- function(x, eppm, eabs)
     return(g)
 }
 
-.group.mzAlign <- function(object, #{{{
+.group.mzClust <- function(object,
                       mzppm = 20,
                       mzabs = 0,
                       minsamp = 1,
                       minsampclass=0,
-                      minfrac=0
-                      )
+                      minfrac=0.5)
 {
 
-    makeBin <- function() # {{{
+    makeBin <- function()
     {
                                         #find the minimum
 	min_sample <- which.min(p[diag(mz[,pos]),"mz"])
@@ -545,7 +544,6 @@ hra_hclust <- function(x, eppm, eabs)
 	pos[min_sample] <<- pos[min_sample] + 1
 	error_range <- c(p[bin[1],"mz"], p[bin[1],"mz"]*error_window+
                          p[bin[1],"mz"]+2*mzabs)
-                                        #print.default(binNumber)
 	for(i in seq(along = samples)[-min_sample]) {
             if(pos[i] <= samppeaknum[i] &&
                p[mz[i,pos[i]],"mz"] <= error_range[2]) {
@@ -561,8 +559,7 @@ hra_hclust <- function(x, eppm, eabs)
 	}
 	bin
     }
-                                        # }}}
-    meanDeviationOverLimit <- function(bin) # {{{
+    meanDeviationOverLimit <- function(bin)
     {
 	bin_mz <- p[bin,"mz"]
 	m <- mean(bin_mz)
@@ -572,10 +569,9 @@ hra_hclust <- function(x, eppm, eabs)
             return(TRUE)
 	} else { FALSE }
     }
-                                        # }}}
-    binclust <- function() #{{{
+    binclust <- function()
     {
-	groups <- hra_hclust(p[binC,"mz"],ppm_error,mzabs)
+	groups <- mzClust_hclust(p[binC,"mz"],ppm_error,mzabs)
 
 	last_group <- groups[which.max(p[binC,"mz"])]
 	binA <<- binC[which(groups == last_group)]
@@ -588,9 +584,7 @@ hra_hclust <- function(x, eppm, eabs)
             }
 	}
     }
-
-                                        # }}}
-    bin2output <- function(bin) #{{{
+    bin2output <- function(bin)
     {
 	if (binNumber > nrow(groupmat)) {
             groupmat <<- rbind(groupmat, matrix(nrow = nrow(groupmat), ncol = ncol(groupmat)))
@@ -602,7 +596,7 @@ hra_hclust <- function(x, eppm, eabs)
             class_idx <- classlabel[p[bin[i],"sample"]]
             gcount[class_idx] <- gcount[class_idx] + 1
 	}
-	if(length(bin) < minsamp || any( gcount < minsampclass | gcount <
+	if(length(bin) < minsamp || !any( gcount >= minsampclass & gcount >=
                                         classnum*minfrac))
             return()
 	groupmat[binNumber,1] <<- mean(p[bin,"mz"])
@@ -610,14 +604,11 @@ hra_hclust <- function(x, eppm, eabs)
 	groupmat[binNumber,4] <<- mean(p[bin,"rt"])
 	groupmat[binNumber,5:6] <<- range(p[bin,"rt"])
 	groupmat[binNumber,7] <<- length(bin)
-                                        #FIXME use porder to sort the mz-values, not indices
 	sorted <- order(p[bin,"mz"])
 	groupindex[[binNumber]] <<- bin[sorted]
-                                        #groupindex[[binNumber]] <<- sort(bin)
 	groupmat[binNumber,7+seq(along = gcount)] <<- gcount
 	binNumber <<- binNumber + 1
     }
-                                        #}}}
 
     ppm_error <- mzppm/1000000
     error_window <- 2*ppm_error
@@ -703,11 +694,11 @@ hra_hclust <- function(x, eppm, eabs)
     object
 }
 
-setProtocol("mzAlign", "Spectrum Alignment",
+setProtocol("mzClust", "Spectrum Alignment",
             representation(mzppm = "numeric", mzabs = "numeric",
                            minsamp = "numeric", minsampclass = "numeric",
                            minfrac = "numeric"),
-            .group.mzAlign, "group")
+            .group.mzClust, "group")
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
