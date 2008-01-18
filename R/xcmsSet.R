@@ -264,8 +264,7 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
-#setMethod("sampclass", "xcmsSet", function(object) interaction(object@phenoData))
-setMethod("sampclass", "xcmsSet", function(object) object@phenoData$class)
+setMethod("sampclass", "xcmsSet", function(object) interaction(object@phenoData))
 
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
@@ -286,10 +285,11 @@ setGeneric("phenoData<-", function(object, value) standardGeneric("phenoData<-")
 setReplaceMethod("phenoData", "xcmsSet", function(object, value) {
     if (is.matrix(value))
         value <- as.data.frame(value)
-    if (is.data.frame(value) && !("class" %in% colnames(value)))
-        value[,"class"] <- interaction(value)
-    else if (!is.data.frame(value))
-        value <- data.frame(class = value)
+    #if (is.data.frame(value) && !("class" %in% colnames(value)))
+    #    value[,"class"] <- interaction(value)
+    #else
+    if (!is.data.frame(value))
+      value <- data.frame(class = value)
     object@phenoData <- value
     object
 })
