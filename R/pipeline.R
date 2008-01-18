@@ -2,18 +2,16 @@
 
 # Common methods
 
-# get the computational identifier of an object
-setGeneric("name", function(object, ...) standardGeneric("name"))
-# by default, the class name of the instance
-setMethod("name", "ANY", function(object) class(object))
-
 # how an object is identified in a user interface
 setGeneric("dispName", function(object, ...) standardGeneric("dispName"))
 # by default, the name of the object
-setMethod("dispName", "ANY", function(object) name(object))
+setMethod("dispName", "ANY", function(object) class(object))
+
+# get the role identifier of a stage
+setGeneric("role", function(object, ...) standardGeneric("role"))
 
 # name of specific method performed by a protocol
-setGeneric("methodName", function(object, ...) standardGeneric("methodName"))
+setGeneric("method", function(object, ...) standardGeneric("method"))
 
 # name of type to accept as input
 # this is a single class, but it could be a class union
@@ -90,16 +88,19 @@ setMethod("parameters", "xcmsPipeline", function(object) {
   lapply(object, parameters)
 })
 
-# return each contiguous range of protocols with same in and out types
+# return the longest range of protocols that goes from inType to outType
 setGeneric("pipeline", function(object, ...) standardGeneric("pipeline"))
 setMethod("pipeline", "xcmsPipeline",
   function(object, intype = "ANY", outtype = "ANY")
 {
   inmatch <- sapply(sapply(object, inType), extends, intype)
   outmatch <- sapply(sapply(object, outType), extends, outtype)
-  ranges <- diff(c(FALSE, inmatch & outmatch, FALSE))
-  rangemat <- cbind(which(ranges > 0), which(ranges < 0) - 1)
-  apply(rangemat, 1, function(range) object[range[1]:range[2]])
+  pipeline <- NULL
+  if (any(inmatch) && any(outmatch)) {
+    pipeline <- object
+    pipeline@.Data <- pipeline[which(inmatch)[1]:tail(which(outmatch),1)]
+  }
+  pipeline
 })
 
 setGeneric("findProtocols", function(object, ...)
@@ -137,15 +138,15 @@ setMethod("show", "xcmsPipeline", function(object) {
 
 # Stage methods
 
-setMethod("name", "xcmsStage",
+setMethod("role", "xcmsStage",
           function(object) dequalifyStageName(class(object)))
 
 # the factory method - creates a protocol given a method name
 setMethod("protocol", "xcmsStage",
-          function(object, method = xcmsMethodDefault(name(object)), ...)
+          function(object, method = defaultMethod(object), ...)
 {
   protocol <- NULL
-  me <- name(object)
+  me <- role(object)
   class <- protocolName(me, method)
   if (extends(class, qualifyProtocolName(me)))
     protocol <- new(class, ...)
@@ -251,9 +252,6 @@ setMethod("parameters", "xcmsProtocol", function(object) {
   slots
 })
 
-setMethod("name", "xcmsProtocol", function(object) 
-  dequalifyProtocolName(class(object)))
-
 setMethod("show", "xcmsProtocol", function(object)
 {
   stage <- stage(object)
@@ -301,13 +299,21 @@ dequalifyProtocolName <- function(name)
 }
 
 # FIXME: need to support setting default methods for stages
-xcmsMethodDefault <- function(stage)
-{
-  def <- getOption("BioC")$xcms[[paste(decapitalize(stage), "method", sep=".")]]
-  if (is.null(def))
-    def <- ""
-  def
-}
+
+setGeneric("defaultMethod",
+           function(object, ...) standardGeneric("defaultMethod"))
+
+setMethod("defaultMethod", "xcmsStage",
+          function(object) defaultMethod(role(object)))
+
+setMethod("defaultMethod", "character", function(object)
+          {
+            key <- paste(decapitalize(object), "method", sep=".")
+            def <- getOption("BioC")$xcms[[key]]
+            if (is.null(def))
+              def <- ""
+            def
+          })
 
 xcmsStageForProtocol <- function(name) {
   if (!extends(name, "xcmsProtocol"))
@@ -335,7 +341,7 @@ setProtocol <- function(method, dispname = method, representation = list(),
   stage <- xcmsStageForProtocol(parent)
   if (is.null(stage))
     stop("Failed to derive a stage from parent class: '", parent, '"')
-  stagename <- name(stage)
+  stagename <- role(stage)
   # class name directly computed from 'stage' and 'method'
   class <- protocolName(stagename, method)
   if (dequalifyProtocolName(class) == stagename)
@@ -368,11 +374,10 @@ setProtocol <- function(method, dispname = method, representation = list(),
   # creates a new instance since stages can be redefined
   setMethod("stage", class, function(object) xcmsStage(stagename), where=where)
   # remember the method name
-  setMethod("methodName", class, function(object) method, where = where)
+  setMethod("method", class, function(object) method, where = where)
   if (!missing(fun)) {
     .fun <- fun
     formal <- slotNames(class) %in% names(formals(fun))
-    # set a 'performDelegate' method that calls 'fun'
     setMethod("performDelegate", class, function(object, data, ...)
     {
       .data <- data

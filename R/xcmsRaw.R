@@ -1186,7 +1186,7 @@ setMethod("profMz", "xcmsRaw", function(object) {
 setGeneric("profMethod", function(object, ...) standardGeneric("profMethod"))
 setMethod("profMethod", "xcmsRaw", function(object) {
 
-    methodName(profileMatrixProto(object))
+    method(profileMatrixProto(object))
 })
 
 setGeneric("profMethod<-", function(object, ..., value)
