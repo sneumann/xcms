@@ -44,7 +44,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
         pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
         redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
         pdata <- pdata[,!redundant,drop=FALSE]
-        if (ncol(pdata) < 1) { # if not multiple factors, behave as before
+        if (ncol(pdata) == 1) { # if not multiple factors, behave as before
           # Make the default group names less redundant
           scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
           scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
