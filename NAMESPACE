@@ -51,6 +51,7 @@ exportClasses(
               "xcmsProtoProfileMatrixMaxidx",
               "xcmsProtoFilterProfileMedian",
               "xcmsProtoGroup",
+              "xcmsProtoGroupDensity",
               "xcmsProtoGroupMzClust",
               "xcmsProtoFindComps",
               "xcmsProtoRetcor",
