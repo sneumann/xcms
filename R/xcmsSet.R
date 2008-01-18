@@ -264,7 +264,8 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
-setMethod("sampclass", "xcmsSet", function(object) interaction(object@phenoData))
+#setMethod("sampclass", "xcmsSet", function(object) interaction(object@phenoData))
+setMethod("sampclass", "xcmsSet", function(object) object@phenoData$class)
 
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
@@ -1018,7 +1019,9 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
         flush.console()
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
-            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline)
+# we need rawdata; not pipeline-picked peaks
+#            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline)
+            lcraw <- xcmsRaw(files[i])
             if (length(rtcor) == length(files))
                 lcraw@scantime <- rtcor[[i]]
             newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE])
