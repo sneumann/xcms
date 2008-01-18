@@ -2,9 +2,15 @@ setClass("xcmsData", representation(pipeline = "xcmsPipeline"))
 
 setMethod("pipeline", "xcmsData", function(object, local = FALSE)
           {
-            if (local)
-              tail(pipeline(object@pipeline, outtype = class(object)), 1)[[1]]
-            else object@pipeline
+            pipeline <- object@pipeline
+            if (local) {
+              me <- sapply(sapply(pipeline, outType), is, class(object))
+              if (any(!me)) {
+                pipeline <- object@pipeline
+                pipeline@.Data <- tail(pipeline, -tail(which(!me),1))
+              }
+            }
+            pipeline
           })
 
 # explore the data in the context of the last applied protocol

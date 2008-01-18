@@ -980,7 +980,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     files <- filepaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
-    rawpipeline <- processRawsProto(object)@pipeline
+    rawpipeline <- pipeline(pipeline(processRawsProto(object)),
+                            outtype = "xcmsRaw")
     rtcor <- object@rt$corrected
 
     # Remove groups that overlap with more "well-behaved" groups
@@ -1054,7 +1055,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
-    rawpipeline <- pipeline(processRawsProto(object))
+    rawpipeline <- pipeline(pipeline(processRawsProto(object)),
+                            outtype = "xcmsRaw")
 
     rt <- match.arg(rt)
 
