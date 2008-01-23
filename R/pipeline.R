@@ -63,14 +63,6 @@ setMethod("dispName", "xcmsPipeline", function(object) {
   else object@dispName
 })
 
-# Perform all component protocols
-setMethod("perform", "xcmsPipeline", function(object, data, ...)
-{
-  for (proto in object)
-    data <- perform(proto, data)
-  data
-})
-
 setMethod("inType", "xcmsPipeline", function(object) {
   first <- head(object, 1)
   if (length(first))
@@ -106,24 +98,24 @@ setMethod("pipeline", "xcmsPipeline",
 setGeneric("findProtocols", function(object, ...)
   standardGeneric("findProtocols"))
 setMethod("findProtocols", "xcmsPipeline",
-  function(object, stage, method = character())
+  function(object, role, method = character())
 {
-  which(sapply(object, is, protocolName(stage, method)))
+  which(sapply(object, is, protocolClass(role, method)))
 })
 
 setMethod("protocol", "xcmsPipeline",
-          function(object, stage, method = character(), ...)
+          function(object, role, method = character(), ...)
 {
-  protos <- findProtocols(object, stage, method)
+  protos <- findProtocols(object, role, method)
   if (!length(protos))
     NULL
   else object[[protos[1]]]
 })
 
 setReplaceMethod("protocol", "xcmsPipeline",
-                 function(object, stage, value)
+                 function(object, role, value)
 {
-  protos <- findProtocols(object, stage)
+  protos <- findProtocols(object, role)
   if (length(protos))
     object@.Data[[protos[1]]] <- value
   else object@.Data <- c(object, value)
@@ -147,15 +139,15 @@ setMethod("protocol", "xcmsStage",
 {
   protocol <- NULL
   me <- role(object)
-  class <- protocolName(me, method)
+  class <- protocolClass(me, method)
   if (extends(class, qualifyProtocolName(me)))
     protocol <- new(class, ...)
   protocol
 })
 
 # get an xcmsStage instance
-xcmsStage <- function(name) {
-  new(qualifyStageName(name))
+xcmsStage <- function(role) {
+  new(qualifyStageName(role))
 }
 # private: do not export these name manipulation functions
 dequalifyStageName <- function(name) {
@@ -186,14 +178,14 @@ setStage <- function(name, dispname = name,
   setMethod("inType", class, function(object) intype, where = where)
   setMethod("outType", class, function(object) outtype, where = where)
   # create the API for performing a method of this stage
-  performFunc <- function(object, method = xcmsMethodDefault(name), ...)
+  performFunc <- function(object, method = defaultMethod(name), ...)
     {
       # need to resolve the arguments against the stage.method() function
       generic <- paste(name, decapitalize(method), sep=".")
       call <- as.call(list(as.name(generic), object, ...))
       args <- as.list(match.call(getMethod(generic, intype), call))
       args <- tail(args, -2)
-      slots <- names(args) %in% slotNames(protocolName(name, method))
+      slots <- names(args) %in% slotNames(protocolClass(name, method))
       proto <- do.call("xcmsProtocol", c(list(name, method), args[slots]))
       do.call("perform", c(list(proto, object), args[!slots]))
     }
@@ -228,12 +220,6 @@ setStage <- function(name, dispname = name,
 
 # Protocol methods
 
-# this is a high-level wrapper that may be overriden for customizing
-# protocol performance.
-setMethod("perform", "xcmsProtocol", function(object,data,...) {
-  performDelegate(object, data, ...)
-})
-
 # actually invokes the protocol function delegate
 # private -- should NOT be exported from namespace
 setGeneric("performDelegate",
@@ -244,6 +230,10 @@ setGeneric("stage", function(object, ...) standardGeneric("stage"))
 # for the base classes
 setMethod("stage", "xcmsProtocol",
           function(object) xcmsStageForProtocol(class(object)))
+
+setMethod("method", "xcmsProtocol",
+          function(object) sub(qualifyProtocolName(role(stage(object))), "",
+                               class(object)))
 
 setMethod("parameters", "xcmsProtocol", function(object) {
   # simply return slots as a list
@@ -276,17 +266,15 @@ setMethod("pipeline", "xcmsProtocol", function(object)
 # eg xcmsProtocol("findPeaks", "matchedFilter") yields an instance of
 # "xcmsProtoFindPeaksMatchedFilter"
 
-xcmsProtocol <- function(stage, method = xcmsMethodDefault(stage), ...)
+xcmsProtocol <- function(role, method = defaultMethod(role), ...)
 {
-  new(protocolName(stage, method), ...)
+  new(protocolClass(role, method), ...)
 }
 
-protocolName <- function(stage, method, qualify = TRUE)
+protocolClass <- function(role, method)
 {
-  name <- paste(decapitalize(stage), capitalize(method), sep="")
-  if (qualify)
-    name <- qualifyProtocolName(name)
-  name
+  name <- paste(decapitalize(role), capitalize(method), sep="")
+  qualifyProtocolName(name)
 }
 
 qualifyProtocolName <- function(name)
@@ -306,15 +294,33 @@ setGeneric("defaultMethod",
 setMethod("defaultMethod", "xcmsStage",
           function(object) defaultMethod(role(object)))
 
+.defaultMethodKey <- function(value) paste(decapitalize(value),"method",sep=".")
+
 setMethod("defaultMethod", "character", function(object)
           {
-            key <- paste(decapitalize(object), "method", sep=".")
-            def <- getOption("BioC")$xcms[[key]]
-            if (is.null(def))
-              def <- ""
-            def
+            key <- .defaultMethodKey(object)
+            getOption("BioC")$xcms[[key]]
           })
 
+setGeneric("defaultMethod<-", function(object, value)
+           standardGeneric("defaultMethod<-"))
+
+setReplaceMethod("defaultMethod", "xcmsStage",
+                 function(object, value)
+                 {
+                   defaultMethod(role(object)) <- value
+                   object
+                 })
+setReplaceMethod("defaultMethod", "character",
+                 function(object, value)
+                 {
+                   key <- .defaultMethodKey(object)
+                   bioc <- getOption("BioC")
+                   bioc$xcms[[key]] <- value
+                   options(BioC = bioc)
+                 })
+  
+                 
 xcmsStageForProtocol <- function(name) {
   if (!extends(name, "xcmsProtocol"))
     stop("Class '", name, "' is not a protocol class")
@@ -337,13 +343,14 @@ setProtocol <- function(method, dispname = method, representation = list(),
 { 
   method <- decapitalize(method)
   # resolve ancestors and find stage
-  parent <- qualifyProtocolName(parent)
+  if (!extends(parent, "xcmsProtocol"))
+    parent <- qualifyProtocolName(parent)
   stage <- xcmsStageForProtocol(parent)
   if (is.null(stage))
     stop("Failed to derive a stage from parent class: '", parent, '"')
   stagename <- role(stage)
   # class name directly computed from 'stage' and 'method'
-  class <- protocolName(stagename, method)
+  class <- protocolClass(stagename, method)
   if (dequalifyProtocolName(class) == stagename)
     stop("Protocol name conflicts with existing stage name '", stagename, "'")
   contains <- parent
@@ -368,17 +375,18 @@ setProtocol <- function(method, dispname = method, representation = list(),
   # create prototype without forcing argument evaluation
   prototype <- do.call("prototype", prototype, TRUE)
   setClass(class, representation, prototype, contains, validity, where = where)
-  if (!missing(dispname))
+  if (!missing(fun))
     setMethod("dispName", class, function(object) dispname, where = where)
   # remember the 'stage' of the protocol
   # creates a new instance since stages can be redefined
-  setMethod("stage", class, function(object) xcmsStage(stagename), where=where)
+  #setMethod("stage", class, function(object) xcmsStage(stagename), where=where)
   # remember the method name
-  setMethod("method", class, function(object) method, where = where)
+  #setMethod("method", class, function(object) method, where = where)
   if (!missing(fun)) {
+    intype <- inType(stage)
     .fun <- fun
     formal <- slotNames(class) %in% names(formals(fun))
-    setMethod("performDelegate", class, function(object, data, ...)
+    setMethod("performDelegate", c(class, intype), function(object, data, ...)
     {
       .data <- data
       slots <- parameters(object)
@@ -402,8 +410,7 @@ setProtocol <- function(method, dispname = method, representation = list(),
     setGeneric(generic, .dyngeneric(generic, genargs), where = where)
     .proto <- list(stagename, method)
     .slots <- slots
-    setMethod(generic, inType(stage), 
-      as.function(c(args, quote(
+    setMethod(generic, intype, as.function(c(args, quote(
     {
       mc <- as.list(match.call())[[-1]]
       slots <- names(mc) %in% .slots
@@ -411,5 +418,5 @@ setProtocol <- function(method, dispname = method, representation = list(),
       do.call("perform", c(protocol, mc[!slots]))
     }))), where = where)
   }
-  dequalifyProtocolName(class)
+  class
 }
