@@ -50,6 +50,7 @@ exportClasses(
               "xcmsProtoProfileMatrixBinlin",
               "xcmsProtoProfileMatrixBinlinbase",
               "xcmsProtoProfileMatrixMaxidx",
+              "xcmsProtoFilterProfile",
               "xcmsProtoFilterProfileMedian",
               "xcmsProtoGroup",
               "xcmsProtoGroupDensity",
