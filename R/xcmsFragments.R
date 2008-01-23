@@ -19,7 +19,7 @@ xcmsFragments <- function(xs = NULL,
     ## e.g. during xcmsSet() constructor
     ## This creates the association between the xcmsSet peaks
     ## and the MSn scans in the raw files.
-  
+
     if (class(xs)=="xcmsSet") {
         ms1peaks <- peaks(xs)
     } else if (class(xs)=="matrix") {
@@ -34,7 +34,7 @@ xcmsFragments <- function(xs = NULL,
     npMsLevel<-rep(1,numMs1Peaks)
     npMz<-ms1peaks[,"mz"]
     npRt<-ms1peaks[,"rt"]
-    npIntensity<-ms1peaks[,"into"] 
+    npIntensity<-ms1peaks[,"into"]
 
     PeakNr <- numMs1Peaks ## PeakNr+1 is the beginning peakindex for msn-spectra
      ## now to do: insert the msndata from the xcmsraw-object into the table
@@ -50,7 +50,7 @@ xcmsFragments <- function(xs = NULL,
         if (compMethod=="round") {pMZ<- which(round(npMz) == xr@msnPrecursorMz[z])}
         if (compMethod=="none")  {pMZ<- which(      npMz  == xr@msnPrecursorMz[z])}
         ActualParentPeakID<- 0
-        biggestRt<- 0 
+        biggestRt<- 0
         for (i in pMZ) ## which rt of a n-1 scan is the biggest? taking those peakID
             if (npMsLevel[i] == (xr@msnLevel[z]-1))
                 if (npRt[i]<xr@msnRt[z])
@@ -71,7 +71,7 @@ xcmsFragments <- function(xs = NULL,
                         for (numPeaks in 1:nrow(npeaks)){ ## for every picked peaks in the PeakPicked-List
                             PeakNr<- PeakNr+1
                             npPeakID[PeakNr]<- PeakNr # increasing peakid
-                            npMSnParentPeakID[PeakNr]<- ActualParentPeakID 
+                            npMSnParentPeakID[PeakNr]<- ActualParentPeakID
                             npMsLevel[PeakNr]<- xr@msnLevel[z]
                             npRt[PeakNr]<- xr@msnRt[z]
                             npMz[PeakNr]<- npeaks[numPeaks,"mz"]
@@ -85,34 +85,34 @@ xcmsFragments <- function(xs = NULL,
 #         mz <- c(peak$mzmin, peak$mz, peak$mzmax)
 #         rt <- c(peak$rtmin, peak$rt, peak$rtmax)
 #         msLevel <- 2
-# 
-# 
+#
+#
 #         ## the getMSn* should go to xcmsRaw
 #         ##
-# 
+#
 #         while (msLevel <= maxMsLevel) {
 #             ## Select the "best fitting/most beatiful" child
 #             fragmentScanId <- getMSnSpecId (xr, msLevel, peaks$mz, peak$rt)
-# 
+#
 #             if (!is.null(fragmentScanID)) {
 #                 warning("No MSn found for peak", peak)
 #                 break
 #             }
-# 
+#
 #             ## Let's say Scan Nr. 17 in the xcmsRaw
 #             fragmentScanId <- c(17)
-# 
+#
 #             ## Call "mini-Peakpicker on MSn spectra
 #             ## remove small, noisy raw data
 #             fragmentPeaks <- specPeaks(, sn=snthresh, mzgap=mzgap)
 #             ## assemble xcmsFragments row
 #             ## newpeaks[i, ] <- c(newpeakid, peak$peakID,  xr$msnPrecursorScan[17],
 #             ##                    msLevel, fragmentPeaks$mz, xr$msnRt[17], fragmentPeaks$intensity)
-# 
+#
 #             ## Collect children in next level
 #             msLevel <- msLevel +1
 #         }
-# 
+#
 #         rbind(object@peaks, newpeaks)
 #     }
 #  stop("jetze müsste ferddich sein")
@@ -153,23 +153,26 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
                 miniPlotTree(object@peaks[a,"mz"],1,a)
                 }
             }
-        } 
+        }
     }
+
+setGeneric("plotTree", function(object, ...) standardGeneric("plotTree"))
+setMethod("plotTree", "xcmsFragments", .xcmsFragments.plotTree)
 
 xcmsFragments.hasMSn <- function(object,  xcmsSetPeakID) {
  ## Quick check whether MSn exists for some peak in xcmsSet
  ## return msnSpecID what? there are more than 1 msnspecids for one peak!
  return(any(object@peaks[,"msnParentPeakID"] == xcmsSetPeakID))
 }
- 
+
 # .xcmsFragments.distance <- function(object, msnSpecID1, msnSpecID2) {
 #     ## A spectrum distance measure
 #     warning("NYI")
 #     return (17)
 # }
-# 
+#
  .xcmsFragments.show <- function(object) {
- 
+
      cat("An \"xcmsFragments\" object with ",nrow(object@peaks)," peaks in",length(unique(object@peaks[,"rt"])),"Spectra\n")
      cat("From Level 1 to",max(object@peaks[,"msLevel"]),"\n")
 #    show(object@pipeline)
@@ -177,5 +180,5 @@ xcmsFragments.hasMSn <- function(object,  xcmsSetPeakID) {
      memsize <- object.size(object)
      cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 }
-# 
+#
 setMethod("show", "xcmsFragments", .xcmsFragments.show)

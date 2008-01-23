@@ -148,6 +148,7 @@ exportMethods(
               "plotSpec",
               "plotSurf",
               "plotTIC",
+              "plotTree",
               "processRaws",
               "processRawsProto",
               "processRawsProto<-",
