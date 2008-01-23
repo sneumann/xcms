@@ -1276,6 +1276,21 @@ setMethod("explore", c("xcmsRaw", "NULL"),
 
 ### Profile generation
 
+# FIXME: need to handle boundaries
+# FIXME: subsetting should probably happen in an xcmsRaw subset stage - NOT HERE
+setMethod("perform", c("xcmsPipelineProfile", "xcmsRaw"),
+          function(object, data, mzindexrange = numeric(),
+                   scanrange = numeric(), mzrange = numeric(),
+                   rtrange = numeric(), ...)
+          {
+            prof <- perform(object[[1]], data, mzindexrange = mzindexrange,
+                            scanrange = scanrange, mzrange = mzrange,
+                            rtrange = rtrange, ...)
+            if (is.null(prof))
+                return(NULL)
+            perform(new("xcmsPipeline", tail(object, -1)), prof, ...)
+          })
+
 # High level profile matrix protocol
 setStage("genProfile", "Create and filter profile matrix", "xcmsRaw")
 setProtocol("generic", "Generic",
