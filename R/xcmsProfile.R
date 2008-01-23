@@ -2,19 +2,6 @@
 
 # Profile pipeline
 setClass("xcmsPipelineProfile", contains = "xcmsPipeline")
-# FIXME: need to handle boundaries
-# FIXME: subsetting should probably happen in an xcmsRaw subset stage - NOT HERE
-setMethod("perform", "xcmsPipelineProfile",
-          function(object, data, mzindexrange = numeric(),
-                   scanrange = numeric(), mzrange = numeric(),
-                   rtrange = numeric(), ...) {
-            prof <- perform(object[[1]], data, mzindexrange = mzindexrange,
-                            scanrange = scanrange, mzrange = mzrange,
-                            rtrange = rtrange, ...)
-            if (is.null(prof))
-                return(NULL)
-            perform(new("xcmsPipeline", tail(object, -1)), prof, ...)
-          })
 
 # Profile matrix data class
 setClass("xcmsProfile",
@@ -121,7 +108,7 @@ image.xcmsProfile <- function(x, col = rainbow(256), ...) {
 
     zlim <- log(range(x))
 
-    method <- name(profileMatrixProto(x@pipeline))
+    method <- methodName(profileMatrixProto(x@pipeline))
     title <- paste("XC/MS Log Intensity Image (Profile Method: ",
                    method, ")", sep = "")
     if (zlim[1] < 0) {
@@ -243,7 +230,7 @@ setGeneric("profMargins", function(object, ...) standardGeneric("profMargins"))
 setProtocol("base", representation = representation(subtract = "logical"),
             parent = "filterProfile", prototype = list(subtract = FALSE))
 
-setMethod("perform", "xcmsProtoFilterProfileBase",
+setMethod("perform", c("xcmsProtoFilterProfileBase", "xcmsProfile"),
           function(object, data, ...)
           {
             result <- performDelegate(object, data, ...)
@@ -264,7 +251,7 @@ setProtocol("median", "Median",
             representation(mzrad = "numeric", scanrad = "numeric"),
             .filterProfile.median, "filterProfileBase")
 
-setMethod("profMargins", protocolName("filterProfile", "median"),
+setMethod("profMargins", protocolClass("filterProfile", "median"),
   function(object, mzcount, scancount)
 {
   round(c(mzmargin = object@mzrad, scanmargin = object@scanrad))

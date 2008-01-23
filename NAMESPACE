@@ -14,7 +14,8 @@ export(
        "xcmsSet",
        "xcmsFragments",
        "xcmsProtocol",
-       "protocolName",
+       "xcmsStage",
+       "protocolClass",
        "setProtocol",
        "setStage"
        )
@@ -26,6 +27,7 @@ S3method(plot, xcmsEIC)
 S3method(split, xcmsSet)
 
 exportClasses(
+              "xcmsData",
               "xcmsEIC",
               "xcmsFragments",
               "xcmsRaw",
@@ -59,7 +61,19 @@ exportClasses(
               "xcmsProtoSummarize",
               "xcmsProtoNormalize",
               "xcmsProtoIdentifyCompounds",
-              "xcmsProtoProcessRaws"
+              "xcmsProtoProcessRaws",
+              "xcmsStage",
+              "xcmsStageGenProfile",
+              "xcmsStageProfileMatrix",
+              "xcmsStageFindPeaks",
+              "xcmsStageFindComps",
+              "xcmsStageGroup",
+              "xcmsStageRetcor",
+              "xcmsStageFillPeaks",
+              "xcmsStageSummarize",
+              "xcmsStageNormalize",
+              "xcmsStageIdentifyCompounds",
+              "xcmsStageProcessRaws"
               )
 
 exportMethods(
@@ -67,6 +81,7 @@ exportMethods(
               "filepaths<-",
               "collect",
               "defaultMethod",
+              "defaultMethod<-",
               "diffreport",
               "dispName",
               "explore",
@@ -173,6 +188,7 @@ exportMethods(
               "selectRange",
               "show",
               "sortMz",
+              "stage",
               "summarize",
               "summarizeProto",
               "summarizeProto<-",
