@@ -66,6 +66,9 @@
       m/z and sucessive columns representing additional information
       about fragmentation (energy, etc.)
     }
+    \item{\code{filepath}:}{
+      path to the file from which this object was created
+    }
   }
 }
 \section{Methods}{
@@ -145,6 +148,10 @@
     \item{\link{profStep}}{
       \code{signature(object = "xcmsRaw")}: get the m/z step used
       for generating the \code{profile} matrix
+    }
+    \item{\link{rawMat}}{
+      \code{signature(object = "xcmsRaw")}: get a matrix of the raw data
+      (columns time, mz and intensity)
     }
     \item{revMz}{
       \code{signature(object = "xcmsRaw")}: reverse the order of the

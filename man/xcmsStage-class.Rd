@@ -3,6 +3,8 @@
 \alias{xcmsStage-class}
 \alias{defaultMethod}
 \alias{defaultMethod,xcmsStage-method}
+\alias{defaultMethod<-}
+\alias{defaultMethod<-,xcmsStage-method}
 \alias{role,xcmsStage-method}
 \alias{role}
 
@@ -26,9 +28,9 @@
       Replaces the name of the analytical method registered as the default
       for the stage in the global options.
     }
-    \item{protocol}{
+    \item{\link{protocol}}{
       \code{signature(object = "xcmsStage")}: Creates a protocol that
-      implements this stage given a method name. See \code{\link{protocol}}.
+      implements this stage given a method name.
     }
     \item{role}{
       \code{signature(object = "xcmsStage")}: Gets the string

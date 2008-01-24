@@ -1,10 +1,10 @@
 \name{xcmsSet-class}
 \docType{class}
 \alias{xcmsSet-class}
-\alias{cdfpaths<-,xcmsSet-method}
-\alias{cdfpaths<-}
-\alias{cdfpaths,xcmsSet-method}
-\alias{cdfpaths}
+\alias{filepaths<-,xcmsSet-method}
+\alias{filepaths<-}
+\alias{filepaths,xcmsSet-method}
+\alias{filepaths}
 \alias{groupidx<-,xcmsSet-method}
 \alias{groupidx<-}
 \alias{groupidx,xcmsSet-method}
@@ -13,10 +13,18 @@
 \alias{groups<-}
 \alias{groups,xcmsSet-method}
 \alias{groups}
+\alias{comps<-,xcmsSet-method}
+\alias{comps<-}
+\alias{comps,xcmsSet-method}
+\alias{comps}
 \alias{peaks<-,xcmsSet-method}
 \alias{peaks<-}
 \alias{peaks,xcmsSet-method}
 \alias{peaks}
+\alias{phenoData}
+\alias{phenoData,xcmsSet-method}
+\alias{phenoData<-}
+\alias{phenoData<-,xcmsSet-method}
 \alias{profinfo<-,xcmsSet-method}
 \alias{profinfo<-}
 \alias{profinfo,xcmsSet-method}
@@ -50,25 +58,22 @@
     \item{\code{groups}:}{
       matrix containing statistics about peak groups
     }
+    \item{\code{comps}:}{
+      matrix containing statistics about peak components, corresponding
+      to sets of peaks matched across m/z within the same sample
+    }
     \item{\code{groupidx}:}{
       list containing indices of peaks in each group
     }
-    \item{\code{sampnames}:}{
-      character vector with names of each sample
-    }
-    \item{\code{sampclass}:}{
-      factor containing sample classes
+    \item{\code{phenoData}:}{
+      a data frame containing the experimental design factors
     }
     \item{\code{rt}:}{
       list containing two lists, \code{raw} and \code{corrected},
       each containing retention times for every scan of every sample
     }
-    \item{\code{cdfpaths}:}{
-      character vector with absolute path name of each NetCDF file
-    }
-    \item{\code{profinfo}:}{
-      list containing two values, \code{method} - profile generation
-      method, and \code{step} - profile m/z step size
+    \item{\code{filepaths}:}{
+      character vector with absolute path name of each data file
     }
   }
 }
@@ -77,11 +82,11 @@
     \item{\link[xcms:c.xcmsSet]{c}}{
       \code{signature("xcmsSet")}: combine objects together
     }
-    \item{cdfpaths<-}{
-      \code{signature(object = "xcmsSet")}: set \code{cdfpaths} slot
+    \item{filepaths<-}{
+      \code{signature(object = "xcmsSet")}: set \code{filepaths} slot
     }
-    \item{cdfpaths}{
-      \code{signature(object = "xcmsSet")}: get \code{cdfpaths} slot
+    \item{filepaths}{
+      \code{signature(object = "xcmsSet")}: get \code{filepaths} slot
     }
     \item{\link{diffreport}}{
       \code{signature(object = "xcmsSet")}: create report of
@@ -111,6 +116,12 @@
     \item{groups}{
       \code{signature(object = "xcmsSet")}: get \code{groups} slot
     }
+    \item{comps<-}{
+      \code{signature(object = "xcmsSet")}: set \code{comps} slot
+    }
+    \item{comps}{
+      \code{signature(object = "xcmsSet")}: get \code{comps} slot
+    }
     \item{\link{groupval}}{
       \code{signature(object = "xcmsSet")}: get matrix of values
       from peak data with a row for each peak group
@@ -129,27 +140,32 @@
       \code{signature(object = "xcmsSet")}: plot retention time
       deviation profiles
     }
-    \item{profinfo<-}{
-      \code{signature(object = "xcmsSet")}: set \code{profinfo} slot
-    }
-    \item{profinfo}{
-      \code{signature(object = "xcmsSet")}: get \code{profinfo} slot
-    }
     \item{\link{retcor}}{
       \code{signature(object = "xcmsSet")}: use initial grouping
       of peaks to do nonlinear loess retention time correction
     }
     \item{sampclass<-}{
-      \code{signature(object = "xcmsSet")}: set \code{sampclass} slot
+      \code{signature(object = "xcmsSet")}: \strong{DEPRECATED}. If used, the
+      experimental design will be replaced with a data frame with a
+      single column matching the supplied factor.
     }
     \item{sampclass}{
-      \code{signature(object = "xcmsSet")}: get \code{sampclass} slot
+      \code{signature(object = "xcmsSet")}: get the interaction of the
+      experimental design factors
+    }
+    \item{phenoData<-}{
+      \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
+    }
+    \item{phenoData}{
+      \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
     }
     \item{sampnames<-}{
-      \code{signature(object = "xcmsSet")}: set \code{sampnames} slot
+      \code{signature(object = "xcmsSet")}: set rownames in the
+      \code{phenoData} slot
     }
     \item{\link{sampnames}}{
-      \code{signature(object = "xcmsSet")}: get \code{sampnames} slot
+      \code{signature(object = "xcmsSet")}: get rownames in the
+      \code{phenoData} slot
     }
     \item{\link[xcms:split.xcmsSet]{split}}{
       \code{signature("xcmsSet")}: divide into a list of objects

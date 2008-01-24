@@ -307,20 +307,6 @@ setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
     object
 })
 
-setGeneric("profinfo", function(object) standardGeneric("profinfo"))
-
-setMethod("profinfo", "xcmsSet", function(object)
-  genProfProto(rawPipeline(pipeline(object))))
-
-setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
-
-setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
-
-    genProfProto(rawPipeline(pipeline(object))) <- value
-
-    object
-})
-
 setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,

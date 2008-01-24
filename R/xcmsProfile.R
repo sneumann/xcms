@@ -224,6 +224,7 @@ setStage("filterProfile", "Filter profile matrix", "xcmsProfile")
 
 # Provide necessary margins (as list) in profile matrix for given ranges
 # This is to avoid edge effects when processing subsets of the matrix
+# FIXME: this is not yet used or exported
 setGeneric("profMargins", function(object, ...) standardGeneric("profMargins"))
 
 # A base class for profile filters that optionally subtracts filter from data

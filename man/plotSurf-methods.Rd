@@ -3,6 +3,7 @@
 %\alias{plotSurf-methods}
 \alias{plotSurf}
 \alias{plotSurf,xcmsRaw-method}
+\alias{plotSurf,xcmsProfile-method}
 \title{Plot profile matrix 3D surface using OpenGL}
 \description{
   This method uses the rgl package to create interactive three
@@ -14,9 +15,12 @@
 \item{object = "xcmsRaw"}{
   \code{plotSurf(object, log = FALSE, aspect = c(1, 1, .5), ...)}
 }
+\item{object = "xcmsProfile"}{
+  \code{plotSurf(object, log = FALSE, aspect = c(1, 1, .5), ...)}
+}
 }}
 \arguments{
-  \item{object}{the \code{xcmsRaw} object}
+  \item{object}{the \code{xcmsRaw} or \code{xcmsProfile} object}
   \item{log}{logical, log transform intensity}
   \item{aspect}{
     numeric vector with aspect ratio of the m/z, retention time and
@@ -34,7 +38,7 @@
   Large portions can quickly overwhelm your CPU and memory.
 }
 \seealso{
-  \code{\link{xcmsRaw-class}}
+  \code{\link{xcmsRaw-class}}, \code{\link{xcmsProfile-class}}
 }
 \keyword{methods}
 \keyword{hplot}
