@@ -26,25 +26,24 @@ Class \code{"\linkS4class{vector}"}, by class "list", distance 2.
 }
 \section{Methods}{
   \describe{
-    \item{dispName}{\code{signature(object = "xcmsPipeline")}: Returns
-      human-readable name, see \code{\link{dispName}}.}
-    \item{findProtocols}{\code{signature(object = "xcmsPipeline")}: Find
-      the indices of protocols that match the specified criteria, see
-      \code{\link{findProtocols}}.}
-    \item{inType}{\code{signature(object = "xcmsPipeline")}: Returns
-      input type of the first protocol, see \code{\link{inType}}.}
-    \item{outType}{\code{signature(object = "xcmsPipeline")}: Returns
-      output type of the last protocol, see \code{\link{outType}}.}
-    \item{perform}{
+    \item{\link{dispName}}{\code{signature(object = "xcmsPipeline")}: Returns
+      human-readable name.}
+    \item{\link{findProtocols}}{\code{signature(object = "xcmsPipeline")}: Find
+      the indices of protocols that match the specified criteria.}
+    \item{\link{inType}}{\code{signature(object = "xcmsPipeline")}: Returns
+      input type of the first protocol.}
+    \item{\link{outType}}{\code{signature(object = "xcmsPipeline")}: Returns
+      output type of the last protocol.}
+    \item{\link{perform}}{
       \code{signature(object = "xcmsPipeline", data = "xcmsData")}:
-      performs each protocol in order, see \code{\link{perform}}.}
-    \item{pipeline}{\code{signature(object = "xcmsPipeline")}: Extract a
-      subpipeline. See \code{\link{pipeline}}.}
-    \item{protocol}{\code{signature(object = "xcmsPipeline")}: Extract a
-      single protocol, see \code{\link{protocol}}.}
-    \item{protocol<-}{\code{signature(object = "xcmsPipeline")}: Replace
-      a single protocol, see \code{\link{protocol<-}}.}
-    \item{show}{\code{signature(object = "xcmsPipeline")}: Display a
+      performs each protocol in order.}
+    \item{\link{pipeline}}{\code{signature(object = "xcmsPipeline")}: Extract a
+      subpipeline.}
+    \item{\link{protocol}}{\code{signature(object = "xcmsPipeline")}: Extract a
+      single protocol.}
+    \item{\link{protocol<-}}{\code{signature(object = "xcmsPipeline")}: Replace
+      a single protocol.}
+    \item{\link{show}}{\code{signature(object = "xcmsPipeline")}: Display a
       textual description of the pipeline and its protocols.}
   }
 

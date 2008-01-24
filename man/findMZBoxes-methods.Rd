@@ -10,14 +10,14 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findMZBoxes(object, massrange=c(0.0,0.0),
+    findMZBoxes(object, mzrange=c(0.0,0.0),
       scanrange=c(1,length(object@scantime)), dev, minEntries)
   }
 }
 }}
 \arguments{
   \item{object}{\code{\link{xcmsRaw-class}} object}
-  \item{massrange}{Not implemented.}
+  \item{mzrange}{Not implemented.}
   \item{scanrange}{scan range to check for peaks}
   \item{dev}{maximum width of m/z box in ppm}
   \item{minEntries}{minimum number of peaks(centroids) within the range of \code{dev} ppm}

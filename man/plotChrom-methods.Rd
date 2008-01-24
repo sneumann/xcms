@@ -3,6 +3,7 @@
 %\alias{plotChrom-methods}
 \alias{plotChrom}
 \alias{plotChrom,xcmsRaw-method}
+\alias{plotChrom,xcmsProfile-method}
 \title{Plot extracted ion chromatograms from the profile matrix}
 \description{
   Uses the pre-generated profile mode matrix to plot averaged or
@@ -12,11 +13,15 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{plotChrom(object, base = FALSE, ident = FALSE,
-                  fitgauss = FALSE, vline = numeric(0), ...)}
+    fitgauss = FALSE, vline = numeric(0), ...)}
+}
+\item{object = "xcmsProfile"}{
+  \code{plotChrom(object, base = FALSE, ident = FALSE,
+    fitgauss = FALSE, vline = numeric(0), ...)}
 }
 }}
 \arguments{
-  \item{object}{the \code{xcmsRaw} object}
+  \item{object}{the \code{xcmsRaw} or \code{xcmsProfile} object}
   \item{base}{logical, plot a base-peak chromatogram}
   \item{ident}{logical, use mouse to identify and label peaks}
   \item{fitgauss}{logical, fit a gaussian to the largest peak}
@@ -30,7 +35,7 @@
   matrix with the plotted points.
 }
 \seealso{
-  \code{\link{xcmsRaw-class}}
+  \code{\link{xcmsRaw-class}}, \code{\link{xcmsProfile-class}}
 }
 \keyword{methods}
 \keyword{hplot}
