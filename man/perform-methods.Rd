@@ -24,8 +24,11 @@
   }
 
   \item{object = "xcmsPipelineProfile", data = "xcmsRaw"}{
-    Special logic for generating and filtering a profile matrix through
-    a pipeline.
+    \code{function(object, data, mzindexrange = numeric(),
+      scanrange = numeric(), mzrange = numeric(),
+      rtrange = numeric(), ...):}
+    Special logic for generating and filtering (subsets of) a profile
+    matrix through a pipeline.
   }
 
   \item{object = "xcmsProtoFilterProfileBase", data = "xcmsProfile"}{

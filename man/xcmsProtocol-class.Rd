@@ -13,11 +13,11 @@
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Methods}{
   \describe{
-    \item{perform}{
+    \item{\link{perform}}{
       \code{signature(object = "xcmsProtocol", data = "xcmsData")}:
       Performs the analysis strategy on the given \code{data}. The
       protocol is added to the pipeline (analysis history) of the
-      returned dataset. See \code{\link{perform}}.
+      returned dataset.
     }
     \item{stage}{
       \code{signature(object = "xcmsProtocol")}:
@@ -29,10 +29,10 @@
       protocol. This distinguishes the protocol from the other protocols
       for the same stage.
     }
-    \item{pipeline}{
+    \item{\link{pipeline}}{
       \code{signature(object = "xcmsProtocol")}:
       If the protocol subclass has a \code{pipeline} field, return
-      it. Otherwise, return \code{NULL}. See \code{\link{pipeline}}.
+      it. Otherwise, return \code{NULL}.
     }
     \item{show}{
       \code{signature(object = "xcmsProtocol")}:
