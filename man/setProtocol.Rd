@@ -73,11 +73,13 @@ setProtocol(method, dispname = method, representation = list(), fun, parent, pro
   obtaining instances of protocols. \code{\link{setClass}} for
   registering stages.}
 \examples{
+\dontrun{
   setProtocol("median", "Median",
               representation(mzrad = "numeric", scanrad = "numeric"),
               function(object, mzrad = 0, scanrad = 0) {
                 object@.Data <- medianFilter(object, mzrad, scanrad)
                 object
               }, "filterProfile")
+}
 }
 \keyword{internal}

@@ -17,6 +17,8 @@ xcmsStage(role)
 \author{ Michael Lawrence }
 \seealso{ \code{\link{stage}} for getting a stage from a container. }
 \examples{
+\dontrun{
   xcmsStage("findPeaks")
+}
 }
 \keyword{internal}
