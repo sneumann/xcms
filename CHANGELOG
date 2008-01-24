@@ -1,3 +1,7 @@
+2008-01-24: 1.11.14
+several small fixes towards Pipelining
+Fix in plot(eic) for xcmsEIC with absent groups
+
 2008-01-15: 1.11.13
 added xcmsFragments Class for handling of Tandem MS / MS^n
 renamed hra_clust stuff to mzClust
