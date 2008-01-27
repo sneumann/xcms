@@ -723,6 +723,11 @@ void readHeader(RAMPFILE *pFI,
             {
                scanHeader->precursorCharge = atoi(pStr2);
             }
+            //Paul : added support for Collision Energy 25-01-08
+            if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"CollisionEnergy"))) 
+            {
+               scanHeader->collisionEnergy = atoi(pStr2);
+            }
             
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"MassToChargeRatio"))) 
             {
