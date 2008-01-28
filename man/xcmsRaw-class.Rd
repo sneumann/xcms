@@ -61,10 +61,20 @@
       for interpolation and successive columns representing solvent
       fractions at each point
     }
-    \item{\code{msmsinfo}:}{
-      matrix with first row, \code{parent}, containing parent ion
-      m/z and sucessive columns representing additional information
-      about fragmentation (energy, etc.)
+    \item{\code{Rt}:}{
+      a numeric vector of retention times of the MS^n scan
+    }
+    \item{\code{msnLevel}:}{
+      a numeric vector giving the fragmentation level eg MS^2 msLevel = 2
+    }
+    \item{\code{msnIntensity}:}{
+      a numeric vector giving the intensity of the precursor ion.
+    }
+    \item{\code{msnPrecursorMZ}:}{
+      a numeric vector of mass/charge of the precursor ion.
+    }
+    \item{\code{msnCollisionEnergy}:}{
+      a numeric vector giving all collision energys for the MSn scans
     }
     \item{\code{filepath}:}{
       path to the file from which this object was created
