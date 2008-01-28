@@ -13,6 +13,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    msnPrecursorIntensity = "numeric",
                                    msnPrecursorCharge = "numeric",
                                    msnPeakCount = "integer",
+                                   msnCollisionEnergy = "numeric",
                                    filepath = "character"),
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
@@ -23,11 +24,13 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msnAcquisitionNum = integer(0),
                    msnLevel = NULL,
                    msnRt = NULL,
+                   msnCollisionEnergy = NULL,
                    msnPrecursorScan = NULL,
                    msnPrecursorMz = NULL,
                    msnPrecursorIntensity = NULL,
                    msnPrecursorCharge = NULL,
-                   msnPeakCount = NULL
+                   msnPeakCount = NULL,
+                   msnCollisionEnergy = NULL
                    ),
          "xcmsData")
 
@@ -97,6 +100,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         object@msnPrecursorMz <- rawdataMSn$precursorMZ
         object@msnPrecursorIntensity <- rawdataMSn$precursorIntensity
         object@msnPrecursorCharge <- rawdataMSn$precursorCharge
+        object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
     }
 
     if (genprof && is.null(pipeline)) { # generate profile matrix
