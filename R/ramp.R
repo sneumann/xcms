@@ -134,7 +134,7 @@ rampRawDataMSn <- function(rampid) {
                     peaksCount=scanHeaders$peaksCount[scans],
                     msLevel = scanHeaders$msLevel[scans],
                     precursorCharge = scanHeaders$precursorCharge[scans],
-                    scanindex = sipeaks$scanindex, collisionenergy = scanHeaders$collisionEnergy[scans],
+                    scanindex = sipeaks$scanindex, collisionEnergy = scanHeaders$collisionEnergy[scans],
                     mz = sipeaks$mz,
                     intensity =sipeaks$intensity);
 
