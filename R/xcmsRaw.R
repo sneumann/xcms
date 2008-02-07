@@ -620,6 +620,10 @@ setProtocol("matchedFilter", "Matched Filter",
                                 rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
                                 integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE)
 {
+    isRaw <-  mean(diff(getScan(object,length(object@scantime) / 2)[,"mz"]))  < 0.5
+    if (isRaw) 
+        warning("It looks like this data is not in centroid mode. centWave can process only centroid data !\n")
+        
     peaklist <- list()
     featlist <- findMZBoxes(object,scanrange=scanrange,dev=dev,minEntries=minEntries)
     scantime <- object@scantime
