@@ -190,7 +190,7 @@ bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
     while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) 
       pos++;
     if (pos >= SIZE_PEAKBUFS-1) 
-      { printf("SIZE_PEAKBUFS too small ! \n"); exit(-7);}
+       error("SIZE_PEAKBUFS too small ! \n"); 
     peakbuf->LastFreeS = pos;
   } 
   else
@@ -200,7 +200,7 @@ bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
     while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) 
       pos++;
     if (pos >= SIZE_PEAKBUFL-1) 
-      { printf("SIZE_PEAKBUFL too small ! \n"); exit(-7);}
+       error("SIZE_PEAKBUFL too small ! \n");
     peakbuf->LastFreeL = pos;
   }
   
