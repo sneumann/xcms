@@ -620,8 +620,7 @@ setProtocol("matchedFilter", "Matched Filter",
                                 rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
                                 integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE)
 {
-    isRaw <-  mean(diff(getScan(object,length(object@scantime) / 2)[,"mz"]))  < 0.25
-    if (isRaw) 
+    if (!isCentroided(object)) 
         warning("It looks like this data is not in centroid mode. centWave can process only centroid data !\n")
         
     peaklist <- list()
@@ -1428,6 +1427,16 @@ setMethod("profPipe", "xcmsRaw", function(object, pipeline, step) {
   pipeline
 })
 
+
+# utility function to detect if spectrum is in centroid mode
+
+setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
+
+setMethod("isCentroided", "xcmsRaw", function(object){
+    quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
+})
+
+
 read.metlinMS<- function(xml){
     reading<-readLines(xml)
     xml.mat<-matrix(nrow=length(reading),ncol=3)
@@ -1511,7 +1520,6 @@ similar<-function(met, xcm, ppmval, matrix=FALSE){
 	return(max(l.met,l.xcm) - d[l.met+1, l.xcm+1]) ##This give number of similar masses :)
     }
 }
-
 
 ppm<-function(Mr, Mm){ ## Mr Mz real Mm Mz Measured
     ppm<-abs((10^6)*(Mr-Mm)/Mm) ##abs for positive number
