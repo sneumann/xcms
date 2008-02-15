@@ -70,7 +70,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     peakargs <- list(...)
     #peakargs <- vargs[!(vargs %in% "step")]
 
-    specified <- match(c("step", "profmethod", "profparams"), names(mc), 0)
+    specified <- match(c("profmethod", "profparams"), names(mc), 0)
     params <- c(names(mc)[specified], peakargs)
     if (length(params) && (!is.null(pipeline) || !is.null(rawpipeline)))
       warning("Parameter(s) ",
@@ -139,9 +139,10 @@ c.xcmsSet <- function(...) {
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
 
-        sampidx <- seq(along = namelist[[i]]) + nsamp
+        mynsamp <- nrow(pdatalist[[i]])
+        sampidx <- seq_len(mynsamp) + nsamp
         peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
-        nsamp <- nsamp + length(namelist[[i]])
+        nsamp <- nsamp + mynsamp
     }
 
     peaks(object) <- do.call("rbind", peaklist)

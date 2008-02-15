@@ -6,7 +6,7 @@
   a list of multiple objects. Group data is discarded.
 }
 \usage{
-split.xcmsSet(x, f, drop = TRUE, ...)
+\method{split}{xcmsSet}(x, f, drop = TRUE, ...)
 }
 \arguments{
   \item{x}{\code{xcmsSet} object}

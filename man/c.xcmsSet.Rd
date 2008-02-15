@@ -8,7 +8,7 @@
   first object.
 }
 \usage{
-c.xcmsSet(...)
+\method{c}{xcmsSet}(...)
 }
 \arguments{
   \item{\dots}{\code{xcmsSet} objects}

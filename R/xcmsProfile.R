@@ -108,7 +108,7 @@ image.xcmsProfile <- function(x, col = rainbow(256), ...) {
 
     zlim <- log(range(x))
 
-    method <- methodName(profileMatrixProto(x@pipeline))
+    method <- method(profileMatrixProto(x@pipeline))
     title <- paste("XC/MS Log Intensity Image (Profile Method: ",
                    method, ")", sep = "")
     if (zlim[1] < 0) {

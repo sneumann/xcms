@@ -34,13 +34,11 @@
 
   }
 }}
-\arguments
-{
+\arguments{
   \item{role}{The role represented by a stage, like "findPeaks".}
   \item{method}{The method implemented by a protocol, like "matchedFilter".}
 }
-\value
-{
+\value{
   An instance of \code{\linkS4class{xcmsProtocol}} or \code{NULL} if
   none matches the specified criteria.
 }
