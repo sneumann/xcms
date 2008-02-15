@@ -6,7 +6,7 @@
   graphics device.
 }
 \usage{
-plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
+\method{plot}{xcmsEIC}(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
              col = rep(1, length(sampleidx)), legtext = NULL, peakint = TRUE, sleep = 0, ...)}
 \value{
   A \code{xcmsSet} object.

@@ -7,7 +7,7 @@
   of \code{\linkS4class{xcmsProtocol}} given a \code{role} and \code{method}.
 }
 \usage{
-xcmsProtocol(role, method = xcmsMethodDefault(role), ...)
+xcmsProtocol(role, method = defaultMethod(role), ...)
 protocolClass(role, method)
 }
 

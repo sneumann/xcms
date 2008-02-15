@@ -7,8 +7,8 @@
   with m/z and retention time axes
 }
 \usage{
-image.xcmsRaw(x, col = rainbow(256), ...)
-image.xcmsProfile(x, col = rainbow(256), ...)
+\method{image}{xcmsRaw}(x, col = rainbow(256), ...)
+\method{image}{xcmsProfile}(x, col = rainbow(256), ...)
 }
 \arguments{
   \item{x}{xcmsRaw or xcmsProfile object}

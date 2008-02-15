@@ -1,6 +1,10 @@
 \name{xcmsFragments-class}
 \docType{class}
 \alias{xcmsFragments}
+\alias{xcmsFragments-class}
+\alias{plotTree}
+\alias{plotTree,xcmsFragment-method}
+\alias{show,xcmsFragment-method}
 
 \title{Class xcmsFragments, a class for handling Tandem MS and MS$^n$ data}
 \description{  
@@ -29,8 +33,12 @@
     \item{\link{collect}}{
       \code{signature(object = "xcmsFragments")}: gets a xcmsSet-object, collects ms1-peaks from it and the msn-peaks from the corresponding xcmsRaw-files.
      }
-    \item{\link{plotTree}}{
+    \item{plotTree}{
       \code{signature(object = "xcmsFragments")}: prints a (text based) pseudo-tree of the peaktable to display the dependencies of the peaks among each other.
+    }
+    \item{\link{show}}{
+      \code{signature(object = "xcmsFragments")}: print a human-readable
+      description of this object to the console.
     }
   }
 }

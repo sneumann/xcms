@@ -3,9 +3,9 @@
 %\alias{profMedFilt-methods}
 \alias{profMedFilt}
 \alias{profMedFilt,xcmsRaw-method}
-\title{Apply a median filter to the profile matrix}
+\title{Median filter for profile matrix}
 \description{
-  
+  Apply a median filter to the profile matrix.
 }
 \section{Methods}{
 \describe{
