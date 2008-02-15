@@ -1,10 +1,6 @@
 \name{xcmsStage-class}
 \docType{class}
 \alias{xcmsStage-class}
-\alias{defaultMethod}
-\alias{defaultMethod,xcmsStage-method}
-\alias{defaultMethod<-}
-\alias{defaultMethod<-,xcmsStage-method}
 \alias{role,xcmsStage-method}
 \alias{role}
 
@@ -17,13 +13,13 @@
 \section{Objects from the Class}{A virtual Class: No objects may be created from it.}
 \section{Methods}{
   \describe{
-    \item{defaultMethod}{
+    \item{\link{defaultMethod}}{
       \code{signature(object = "xcmsStage")}: Returns
       the name of the analytical method (corresponding to a protocol
       type) that is registered as the default for the stage in the global
       \code{\link{options}}.
     }
-    \item{defaultMethod<-}{
+    \item{\link{defaultMethod<-}}{
       \code{signature(object = "xcmsStage")}:
       Replaces the name of the analytical method registered as the default
       for the stage in the global options.

@@ -3,9 +3,9 @@
 \alias{collect-methods}
 \alias{collect}
 \alias{collect,xcmsFragments-method}
-\title{Collecting Peaks into xcmsFragments from several ms-runs using xcmsSet and xcmsRaw}
+\title{Collect peaks into xcmsFragments}
 \description{
- 
+  Collecting Peaks into \code{\linkS4class{xcmsFragment}}s from several ms-runs using \code{\linkS4class{xcmsSet}} and \code{\linkS4class{xcmsRaw}}.
 }
 \section{Methods}{
 \describe{
@@ -24,7 +24,7 @@
 \details{
   After running collect(xFragments,xSet) The peaktable of the xcmsFragments includes the ms1Peaks from all experinemts stored in a xcmsSet-object. Further it contains the relevant msN-peaks from the xcmsRaw-objects, which were created temporarily with the paths in xcmsSet.
 }
-c("peakID", "MSnParentPeakID","msLevel","rt", "mz", "intensity","sample")
+
 \value{
   A matrix with columns:
   \item{peakID}{

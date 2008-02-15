@@ -2,9 +2,9 @@
 \docType{methods}
 \alias{findMZBoxes}
 \alias{findMZBoxes,xcmsRaw-method}
-\title{Find areas of high peak density in  LC/MS Data}
+\title{Find areas of high peak density}
 \description{
- 
+ Find areas of high peak density in LC/MS Data.
 }
 \section{Methods}{
 \describe{

@@ -103,6 +103,8 @@ setMethod("findProtocols", "xcmsPipeline",
   which(sapply(object, is, protocolClass(role, method)))
 })
 
+# FIXME: need [[ method for getting a protocol by name
+# FIXME: need [ method for getting a pipeline with a selected protocol
 setMethod("protocol", "xcmsPipeline",
           function(object, role, method = character(), ...)
 {
