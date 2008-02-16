@@ -356,7 +356,15 @@ setStage("processRaws", "Load each sample and find its peaks")
 
   for (i in seq(along = peaklist)) {
     # FIXME: at some point the call to xcmsRaw could become a protocol
-    lcraw <- xcmsRaw(files[i], genprof = FALSE)
+    # Till then deduce xcmsRaw parameter from findPeaks protocol
+    
+    proto <- protocol(pipeline, "findPeaks", "MS1")
+    if (!is.null(proto))
+      includeMSn <- TRUE
+    else 
+      includeMSn <- FALSE
+    
+    lcraw <- xcmsRaw(files[i], genprof = FALSE, includeMSn = includeMSn)
     cat(snames[i], ": ", sep = "")
     peaklist[[i]] <- perform(pipeline, lcraw)
     peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
