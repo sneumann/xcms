@@ -62,10 +62,10 @@
       fractions at each point
     }
     \item{\code{Rt}:}{
-      a numeric vector of retention times of the MS^n scan
+      a numeric vector of retention times of the MS$^n$ scan
     }
     \item{\code{msnLevel}:}{
-      a numeric vector giving the fragmentation level eg MS^2 msLevel = 2
+      a numeric vector giving the fragmentation level eg MS$^2$ msLevel = 2
     }
     \item{\code{msnIntensity}:}{
       a numeric vector giving the intensity of the precursor ion.
