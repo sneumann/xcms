@@ -24,30 +24,28 @@
 \headheight=-.3in
 
 \begin{document}
-\title{Analysis of FTICR-MS direct infusion data with xcms}
+\title{Grouping FTICR-MS data with xcms}
 \author{J. Bargsten}
 \maketitle
 
 \section*{Introduction}
 
-This document describes how to use \Rpackage{xcms} for peak picking
-and alignment of multiple MS spectra against each other. Since most of
-the preprocessing is explained in other vignettes, this document will
-explain only the features introduced expecially for direct-infusion MS.
+This document describes how to use \Rpackage{xcms} for aligning multiple MS
+spectra against each other.
 
 \section{Prerequisites}
-Preprocessing has to be done before the data is ready for aligning.
-First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet}
-are needed for further processing:
+Lots of Preprocessing has to be done before the data is ready for aligning.
+First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet} 
+are needed for further processing.
 
 <<LoadLib>>=
 library(xcms)
 library(MassSpecWavelet)
 @
 
-This documentation uses raw mzdata files from \Rpackage{msdata} as
-example data set. These are extracts from m/z 400...600 of complex
-samples, taken on a Bruker Apex III.
+This documentation uses raw mzdata files from \Rpackage{msdata} as example data
+set. Assuming that \Rpackage{msdata} is installed, we locate the path of the
+package and extract the datafiles.
 
 <<LoadData>>=
 library(msdata)
@@ -55,10 +53,9 @@ mzdatapath <- system.file("fticr", package = "msdata")
 mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
 @
 
-\Rmethod{xcmsSet} reads the mzdata files and applies peakpicking via
-assSpecWavelet. The method ``MSW'' is a wrapper around the BioC
-package ``MassSpecWavelet'', which uses multi-scale wavelet filtering
-to detect peaks.
+The \Rmethod{xcmsSet}-Constructor parses the given files and applies
+peakpicking using the MassSpecWavelet algorithm, leading to a \Robject{xcmsSet}
+object with 2 sampleclasses, ham4 and ham5, and 5 samples, respectively.
 
 <<ProcessData>>=
 data.mean <- "data.mean"
@@ -75,33 +72,36 @@ xs <- xcmsSet(
 )
 @
 
-The result is an \Robject{xcmsSet} object with 6 samples and 2 sampleclasses,
-ham4 and ham5.
+These steps are necessary to create a usable input for \Rmethod{mzClust}.
+However, if you have already stored the data in a \Robject{xcmsSet}, you can
+skip the steps above.
 
 \section{Aligning}
-\Robject{xs} is now ready for aligning.
-%FTICR lacks retention data
-%consequently \Rmethod{mzClust} has no support for it.
-\Rmethod{mzClust} groups the peaks contained in xs and stores the result in
-\Robject{xsg}.
+Now we can align \Robject{xs} with \Rmethod{mzClust}. The result is a clone of
+\Robject{xs} enhanced by the result of \Rmethod{mzClust}. For a description of
+the arguments \Rmethod{mzClust} takes, see helppage of the function.
 
 <<MzClust>>=
 xsg <- group(xs, method="mzClust")
 xsg
 @
 
-One can acces the grouping information with \Rmethod{groups} and
+\Rmethod{mzClust} stores the grouping information like the standard
+\Rmethod{group} method of \Rpackage{xcms} suited for retrieval via
+\Rmethod{groups} and \Rmethod{groupidx}. An example is shown below.
 
-\Rmethod{groupidx}.
 <<ShowGroups>>=
 groups(xsg)[1:10,]
-groupidx(xsg)[[1]]
+peaks(xsg)[groupidx(xsg)[[1]]]
 @
 
+
+
 \section{Postprocessing}
-Most groups are not complete, one or more samples are absent.
-This causes problems in some functions based on e.g. \Rmethod{groupval}, which use NA for missing peaks.
-\Rmethod{fillPeaks} changes all NA values to random noise based on the raw
+In most cases not all samples are in one group. This can be the origin of
+serious problems in code, which is based on e.g.
+\Rmethod{groupval}. \Rmethod{groupval} sets missing peaks to NA. The solution
+is \Rmethod{fillPeaks}. It changes all NA values to random noise based on the raw
 data file.
 <<FillPeaks>>=
 groupval(xsg)[1,]
