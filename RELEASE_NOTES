@@ -1,0 +1,25 @@
+NEW FEATURES
+
+- Pipeline Stuff
+
+- Two new Peak Pickers have been integrated:
+
+  MS1 is a pseudo peak picker, which uses the MS2 parent mass
+  as annotated in the mzData or mzXML files.
+
+  MSW is a Wrapper around the MassSpecWavelet package 
+  designed for peak picking of SELDI or FTICR single spectra
+
+- For the alignment of individual spectra e.g. from FTICR,
+  a fast peak alignment has been implemented
+
+INCOMPATIBILITIES
+
+- cdfpaths(xcmsSet) has been renamed to filepaths(xcmsSet)
+- the default behaviour of groupval ... [Colin here]
+
+BUG FIXES
+
+During the development of XCMS 2.0.0 all important Fixes
+were backported into the 1.10.x series. 
+
