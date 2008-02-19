@@ -1,0 +1,113 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+%\VignetteIndexEntry{Grouping FTICR-MS data with xcms}
+%\VignetteKeywords{preprocess, analysis}
+%\VignettePackage{xcms}
+\documentclass[12pt]{article}
+
+\usepackage{hyperref}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\begin{document}
+\title{Analysis of FTICR-MS direct infusion data with xcms}
+\author{J. Bargsten}
+\maketitle
+
+\section*{Introduction}
+
+This document describes how to use \Rpackage{xcms} for peak picking
+and alignment of multiple MS spectra against each other. Since most of
+the preprocessing is explained in other vignettes, this document will
+explain only the features introduced expecially for direct-infusion MS.
+
+\section{Prerequisites}
+Preprocessing has to be done before the data is ready for aligning.
+First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet}
+are needed for further processing:
+
+<<LoadLib>>=
+library(xcms)
+library(MassSpecWavelet)
+@
+
+This documentation uses raw mzdata files from \Rpackage{msdata} as
+example data set. These are extracts from m/z 400...600 of complex
+samples, taken on a Bruker Apex III.
+
+<<LoadData>>=
+library(msdata)
+mzdatapath <- system.file("fticr", package = "msdata")
+mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+@
+
+\Rmethod{xcmsSet} reads the mzdata files and applies peakpicking via
+assSpecWavelet. The method ``MSW'' is a wrapper around the BioC
+package ``MassSpecWavelet'', which uses multi-scale wavelet filtering
+to detect peaks.
+
+<<ProcessData>>=
+data.mean <- "data.mean"
+xs <- xcmsSet(
+        method="MSW",
+        files=mzdatafiles,
+        scales=c(1,4,9),
+        nearbyPeak=T,
+        sleep=0,
+        verbose.columns = FALSE,
+        winSize.noise=500,
+        SNR.method="data.mean",
+        snthresh=10
+)
+@
+
+The result is an \Robject{xcmsSet} object with 6 samples and 2 sampleclasses,
+ham4 and ham5.
+
+\section{Aligning}
+\Robject{xs} is now ready for aligning.
+%FTICR lacks retention data
+%consequently \Rmethod{mzClust} has no support for it.
+\Rmethod{mzClust} groups the peaks contained in xs and stores the result in
+\Robject{xsg}.
+
+<<MzClust>>=
+xsg <- group(xs, method="mzClust")
+xsg
+@
+
+One can acces the grouping information with \Rmethod{groups} and
+
+\Rmethod{groupidx}.
+<<ShowGroups>>=
+groups(xsg)[1:10,]
+groupidx(xsg)[[1]]
+@
+
+\section{Postprocessing}
+Most groups are not complete, one or more samples are absent.
+This causes problems in some functions based on e.g. \Rmethod{groupval}, which use NA for missing peaks.
+\Rmethod{fillPeaks} changes all NA values to random noise based on the raw
+data file.
+<<FillPeaks>>=
+groupval(xsg)[1,]
+#xsgf <- fillPeaks(xsg)
+#groupval(xsgf)[1:10,]
+@
+
+The results are suited for instance for heatmaps, etc.
+\end{document}
