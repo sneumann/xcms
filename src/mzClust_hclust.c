@@ -19,7 +19,7 @@ R_mzClust_hclust(double *x, int *num, double *d, int *g, double *eppm,
 	double mrange[2];
 	int overlimit = 0;
 
-	int minclust[2];
+	int minclust[2] = {0,0};
 	double mindst = DBL_MAX;
 
 	/*loop vars */
