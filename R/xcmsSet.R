@@ -609,7 +609,7 @@ mzClust_hclust <- function(x, eppm, eabs)
                                         #numeric version of classlabel
     classlabel <- as.vector(unclass(classlabel))
     ##vector of length max(classlabel)
-    classnum <- min(max(classlabel), 1)
+    classnum <- integer(max(classlabel))
 
                                         #how many samples per class
     for (i in seq(along = classnum))
@@ -653,6 +653,7 @@ mzClust_hclust <- function(x, eppm, eabs)
 	    if(length(out) != 0) {
 		    groupmat[binNumber,] <- out$stat
 		    groupindex[[binNumber]] <- out$members
+		    binNumber <- binNumber + 1
 	    }
             break
         }
@@ -708,6 +709,7 @@ mzClust_hclust <- function(x, eppm, eabs)
 
     cat("\n")
 
+    binNumber <- binNumber - 1
     groupmat <- groupmat[seq(length = binNumber),]
     groupindex <- groupindex[seq(length = binNumber)]
     groups(object) <- groupmat
