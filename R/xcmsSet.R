@@ -536,7 +536,6 @@ mzClust_hclust <- function(x, eppm, eabs)
                       mzppm = 20,
                       mzabs = 0,
                       minsamp = 1,
-                      minsampclass=0,
                       minfrac=0.5)
 {
 
@@ -584,8 +583,7 @@ mzClust_hclust <- function(x, eppm, eabs)
             class_idx <- classlabel[p[bin[i],"sample"]]
             gcount[class_idx] <- gcount[class_idx] + 1
 	}
-	if(length(bin) < minsamp || !any( gcount >= minsampclass & gcount >=
-                                        classnum*minfrac))
+	if(length(bin) < minsamp || !any(gcount >= classnum*minfrac))
             return(list())
 	groupvec <- c(rep(NA,7+length(gcount)))
 	groupvec[1] <- mean(p[bin,"mz"])
@@ -721,7 +719,7 @@ mzClust_hclust <- function(x, eppm, eabs)
 
 setProtocol("mzClust", "Spectrum Alignment",
             representation(mzppm = "numeric", mzabs = "numeric",
-                           minsamp = "numeric", minsampclass = "numeric",
+                           minsamp = "numeric",
                            minfrac = "numeric"),
             .group.mzClust, "group")
 
@@ -1071,6 +1069,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setProtocol("extract", "Extract from raw data",
             fun = .fillPeaks.extract, parent = "fillPeaks")
+
+
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
