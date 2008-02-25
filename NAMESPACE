@@ -91,6 +91,7 @@ exportMethods(
               "fillPeaksProto",
               "fillPeaksProto<-",
               "fillPeaks.extract",
+              "fillPeaks.mean",
               "filterProfile",
               "filterProfileProto",
               "filterProfileProto<-",
