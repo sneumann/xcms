@@ -1072,6 +1072,68 @@ setProtocol("extract", "Extract from raw data",
 
 
 
+.fillPeaks.mean <- function(object, value = "into") {
+    peakmat <- peaks(object)
+    groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
+
+    classlabel <- as.vector(unclass(sampclass(object)))
+    rawpipeline <- pipeline(pipeline(processRawsProto(object)),
+                            outtype = "xcmsRaw")
+
+    groupindex <- groupidx(object)
+    gidxs <- groupval(object)
+    gvals <- groupval(object, value = value)
+
+    cnames <- colnames(object@peaks)
+
+    classWise <- function(x, classes, fun) {
+        unlist(tapply(x, classes, fun))
+    }
+
+    imputeMean <- function(x)  {
+      isna <- is.na(x)
+      x[which(isna)] <- mean(x, na.rm=TRUE)
+      x[which(!isna)] <- NA
+      x
+    }
+
+    gvals.new <- apply(gvals, 1, function(x) {classWise(x, classlabel, imputeMean)})
+
+    samples.new  <- matrix(rep(1:nrow(gvals.new), times=ncol(gvals.new)),
+                          ncol=ncol(gvals.new), nrow=nrow(gvals.new))
+
+    newidx <- which(!is.na(gvals.new))
+
+    newpeaks <- matrix(nrow = length(newidx), ncol = ncol(peakmat))
+    newpeaks[, 1:6] <- groupmat[floor((newidx-1)/ncol(gvals))+1, 1:6]
+    newpeaks[, which(cnames %in% c(value, "sample"))] <- cbind(gvals.new[newidx],
+                                                               samples.new[newidx])
+    colnames(peakmat) <- cnames
+    peakmat.new <- rbind(peakmat, newpeaks)
+
+    groupidx.new <- matrix(rep(1:ncol(gvals.new), each=nrow(gvals.new)),
+                           ncol=ncol(gvals.new), nrow=nrow(gvals.new))
+    groupindex.new <- tapply(seq(nrow(peakmat)+1, nrow(peakmat.new)),
+                             groupidx.new[newidx], function(x){x})
+    
+    groupindex.both <- lapply(1:length(groupindex), function(x){
+      c(groupindex[[x]],
+        groupindex.new[[as.character(x)]]) })
+
+    peaks(object) <- peakmat.new
+    groups(object) <- groupmat
+    groupidx(object) <- groupindex.both
+
+    invisible(object)
+}
+
+setProtocol("mean", "Insert mean value of non-NA peaks",
+            fun = .fillPeaks.mean, parent = "fillPeaks")
+
+
+
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
                                         rt = c("corrected", "raw")) {

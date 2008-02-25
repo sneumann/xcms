@@ -1,8 +1,9 @@
+2008-02-25: 1.11.15
+added fillPeaks.mean
 findPeaks.centWave: generates a warning if data seems to be not in centroid mode 
 remove global variables in .group.mzClust
 fix sampclass if all directories are "redundant"
 
-2008-01-24: 1.11.14
 several small fixes towards Pipelining
 Fix in plot(eic) for xcmsEIC with absent groups
 
