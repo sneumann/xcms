@@ -35,7 +35,7 @@ spectra against each other.
 
 \section{Prerequisites}
 Lots of Preprocessing has to be done before the data is ready for aligning.
-First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet} 
+First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet}
 are needed for further processing.
 
 <<LoadLib>>=
@@ -106,7 +106,7 @@ data file.
 <<FillPeaks>>=
 groupval(xsg)[1,]
 #xsgf <- fillPeaks(xsg)
-#groupval(xsgf)[1:10,]
+groupval(xsg, "medret", "into")[1:10,]
 @
 
 The results are suited for instance for heatmaps, etc.
