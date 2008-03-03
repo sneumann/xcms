@@ -15,7 +15,6 @@ groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp 
 	\item{mzppm}{the relative error used for clustering/grouping in ppm (parts per million)}
 	\item{mzabs}{the absolute error used for clustering/grouping}
 	\item{minsamp}{set the minimum number of samples in one bin}
-	\item{minsampclass}{set the minimum number of samples in one bin from each class}
 	\item{minfrac}{set the minimum fraction of each class in one bin}
 }
 \value{
