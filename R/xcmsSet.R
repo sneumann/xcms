@@ -1079,8 +1079,6 @@ setProtocol("extract", "Extract from raw data",
         stop("No group information found")
 
     classlabel <- as.vector(unclass(sampclass(object)))
-    rawpipeline <- pipeline(pipeline(processRawsProto(object)),
-                            outtype = "xcmsRaw")
 
     groupindex <- groupidx(object)
     gidxs <- groupval(object)
@@ -1117,10 +1115,11 @@ setProtocol("extract", "Extract from raw data",
                            ncol=ncol(gvals.new), nrow=nrow(gvals.new))
     groupindex.new <- tapply(seq(nrow(peakmat)+1, nrow(peakmat.new)),
                              groupidx.new[newidx], function(x){x})
-    
+
     groupindex.both <- lapply(1:length(groupindex), function(x){
-      c(groupindex[[x]],
-        groupindex.new[[as.character(x)]]) })
+         w <- which(as.numeric(unlist(dimnames(groupindex.new))) %in% x)
+         unlist(c(groupindex[[x]], na.omit(ifelse(length(w)==0, integer(0), groupindex.new[w]))))
+     })
 
     peaks(object) <- peakmat.new
     groups(object) <- groupmat
