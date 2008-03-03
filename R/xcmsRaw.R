@@ -900,10 +900,10 @@ setProtocol("centWave", "Centroid Wavelet",
     peaklist[,"mzmin"] <- object@msnPrecursorMz[peakIndex]
     peaklist[,"mzmax"] <- object@msnPrecursorMz[peakIndex]
 
-    if (any(object@msnPrecursorScan!=0)) {
+    if (any(!is.na(object@msnPrecursorScan))) {        
         peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- object@scantime[object@msnPrecursorScan[peakIndex]]
     } else {
-        ## This happened with ReAdW mzData
+        ## This happened with ReAdW mzXML
         warning("MS2 spectra without precursorScan references")
         peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- 0
     }
