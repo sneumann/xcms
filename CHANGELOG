@@ -1,3 +1,6 @@
+2008-03-12: 
+removed warning() in findPeaks.MS1() which caused a memory explosion ;-)
+
 2008-02-25: 1.11.15
 added fillPeaks.mean
 findPeaks.centWave: generates a warning if data seems to be not in centroid mode 
