@@ -620,9 +620,9 @@ setProtocol("matchedFilter", "Matched Filter",
                                 rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
                                 integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE)
 {
-    if (!isCentroided(object)) 
+    if (!isCentroided(object))
         warning("It looks like this data is not in centroid mode. centWave can process only centroid data !\n")
-        
+
     peaklist <- list()
     featlist <- findMZBoxes(object,scanrange=scanrange,dev=dev,minEntries=minEntries)
     scantime <- object@scantime
@@ -900,13 +900,23 @@ setProtocol("centWave", "Centroid Wavelet",
     peaklist[,"mzmin"] <- object@msnPrecursorMz[peakIndex]
     peaklist[,"mzmax"] <- object@msnPrecursorMz[peakIndex]
 
-    if (any(!is.na(object@msnPrecursorScan))) {        
+
+    if (any(!is.na(object@msnPrecursorScan))&&any(object@msnPrecursorScan!=0)) {
         peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- object@scantime[object@msnPrecursorScan[peakIndex]]
     } else {
-        ## This happened with ReAdW mzXML
-        warning("MS2 spectra without precursorScan references")
-        peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- 0
-    }
+        ## This happened with ReAdW mzxml
+	cat("MS2 spectra without precursorScan references, using estimation")
+        ## which object@Scantime are the biggest wich are smaller than the current object@msnRt[peaklist]?
+	ms1Rts<-rep(0,length(which(peakIndex)))
+	i<-1
+	for (a in which(peakIndex)){
+		ms1Rts[i] <- object@scantime[max(which(object@scantime<object@msnRt[a]))]
+		i<-i+1
+		}
+	peaklist[,"rt"] <-  ms1Rts
+	peaklist[,"rtmin"] <-  ms1Rts
+	peaklist[,"rtmax"] <- ms1Rts
+    	}
 
     if (any(object@msnPrecursorIntensity!=0)) {
         peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- object@msnPrecursorIntensity[peakIndex]
@@ -1465,7 +1475,7 @@ distance<-function(met, xcm, ppmval, matrix=FALSE){
     l.met<-length(met)
     l.xcm<-length(xcm)
     d<-array(0, dim=c(l.met+1, l.xcm+1))
-    
+
     d[,1] <- 1:(l.met+1)
     d[1,] <- 1:(l.xcm+1)
     d[1,1] <- 0
@@ -1495,7 +1505,7 @@ similar<-function(met, xcm, ppmval, matrix=FALSE){
     l.met<-length(met)
     l.xcm<-length(xcm)
     d<-array(0, dim=c(l.met+1, l.xcm+1)) #we can cheat and use an AoA:)
-    
+
     d[,1] <- 1:(l.met+1)
     d[1,] <- 1:(l.xcm+1)
     d[1,1]<-max(l.met,l.xcm) ##Put the max simlarity at the start
@@ -1534,7 +1544,7 @@ ppmDev<-function(Mr, ppmE=5){
 
 read.mascot<-function(file, type="csv"){
     ## Experimental
-    if(!file.exists(file)) 
+    if(!file.exists(file))
 	stop("File doesnt exist")
     if(type=="csv"){
 	lines<-readLines(file) ##check to see if file is ~ normal
