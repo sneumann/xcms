@@ -1,10 +1,9 @@
 \name{xcmsFragments-class}
 \docType{class}
-\alias{xcmsFragments}
 \alias{xcmsFragments-class}
 \alias{plotTree}
-\alias{plotTree,xcmsFragment-method}
-\alias{show,xcmsFragment-method}
+\alias{plotTree,xcmsFragments-method}
+\alias{show,xcmsFragments-method}
 
 \title{Class xcmsFragments, a class for handling Tandem MS and MS$^n$ data}
 \description{  
