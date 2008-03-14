@@ -1,3 +1,8 @@
+2008-03-14: 
+xcmsFragments cleanup and documentation, 
+now causing fewer R CMD check warnings
+added Rgraphviz to suggests, for MSn tree Plotting
+
 2008-03-12: 
 removed warning() in findPeaks.MS1() which caused a memory explosion ;-)
 

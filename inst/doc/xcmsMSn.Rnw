@@ -2,9 +2,9 @@
 % NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
 % likely to be overwritten.
 %
-%\VignetteIndexEntry{Processing Tandem-MS and MS$^n$ data with with xcms}
-%\VignetteKeywords{preprocess, analysis, tandemms}
-%\VignettePackage{xcms}
+% \VignetteIndexEntry{Processing Tandem-MS and MS$^n$ data with with xcms}
+% \VignetteKeywords{preprocess, analysis, tandemms}
+% \VignettePackage{xcms}
 \documentclass[12pt]{article}
 
 \usepackage{hyperref}
@@ -91,22 +91,42 @@ containing e.g. MS$^2$ to MS$^5$.
 % @
 
 \section{xcmsFragments}
-A xcmsFragments-Object contains a Table with informations about all Peaks from MS1 to MSn of one Experiment, including mz-value, retensiontime, MSlevel, and parentpeak. The data can be used for visualization or (later) computing alignments between different Experiments. The object is created as empty and can be filled with collect(). This method requires a peaktable or a xcmsSet for the MS1peaks and the original xcmsRaw for the msn-Data.
+
+A xcmsFragments-Object contains a Table with informations about all
+Peaks from MS1 to MSn of one Experiment, including mz-value,
+retensiontime, MSlevel, and parentpeak. The data can be used for
+visualization or (later) computing alignments between different
+Experiments. The object is created as empty and can be filled with
+collect(). This method requires a peaktable or a xcmsSet for the
+MS1peaks and the original xcmsRaw for the msn-Data.
 
 <<SpectraSelection>>=
-peaks <- findPeaks(xraw, method="MS1")
-frag <- xcms:::xcmsFragments()
-xfrag <- collect(frag, peaks@.Data, xraw)
+xs <- xcmsSet(mzdatafiles, method="MS1")
+xfrag <- xcmsFragments(xs)
 xfrag
 @
 
-plotTree prints out a simplyfied tree of the Peaks in the Object. The user can define borders for the retensionTime and for the MassRange, he can also print the tree for a single MS1-Peak.
-<<SpectraSelection>>=
-plotTree(xfrag,xcmsFragmentPeakID=3)
-@
-
+plotTree prints out a simplyfied tree of the Peaks in the Object. The
+user can define borders for the retensionTime and for the MassRange,
+he can also print the tree for a single MS1-Peak.
 
 Finally, to visualise the fragmentation tree, all specified scans
 can be passed to \Rpackage{Rgraphviz}.
+
+<<TreePlot, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plotTree(xfrag,xcmsFragmentPeakID=6)
+@
+
+
+\begin{figure}
+\includegraphics[width=0.49\textwidth]{xcmsMSn-TreePlot}
+\begin{minipage}[b]{0.49\linewidth}
+<<TextTree, echo=FALSE>>=
+plotTree(xfrag,xcmsFragmentPeakID=6, textOnly=TRUE)
+@
+\end{minipage}
+\caption{\label{treeplot} The MS$^n$ fragmentation tree for the MS1
+  peak XXX.}
+\end{figure}
 
 \end{document}
