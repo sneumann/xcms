@@ -5,7 +5,9 @@
 \alias{collect,xcmsFragments-method}
 \title{Collect peaks into xcmsFragments}
 \description{
-  Collecting Peaks into \code{\linkS4class{xcmsFragment}}s from several ms-runs using \code{\linkS4class{xcmsSet}} and \code{\linkS4class{xcmsRaw}}.
+  Collecting Peaks into \code{\linkS4class{xcmsFragments}}s from several
+  MS-runs using \code{\linkS4class{xcmsSet}} and
+  \code{\linkS4class{xcmsRaw}}.  
 }
 \section{Methods}{
 \describe{
@@ -17,12 +19,20 @@
 }}
 \arguments{
   \item{object}{(empty) \code{\link{xcmsFragments-class}} object}
-  \item{xcmsS}{A \code{\link{xcmsSet-class}} object which contains picked ms1-peaks from several experiments}
-  \item{compMethod}{("floor", "round", "none"): compare-method which is used to find the parentpeak of a MSnpeak through comparing the MZ-values of the  MS1peaks with the MSnParentPeaks.}
-  \item{snthresh, mzgap, uniq}{these are the paramters for the getspec-peakpicker included in xcmsRaw.}
+  \item{xcmsS}{A \code{\link{xcmsSet-class}} object which contains
+    picked ms1-peaks from several experiments}  
+  \item{compMethod}{("floor", "round", "none"): compare-method which is
+    used to find the parentpeak of a MSnpeak through comparing the
+    MZ-values of the  MS1peaks with the MSnParentPeaks.}  
+  \item{snthresh, mzgap, uniq}{these are the paramters for the
+    getspec-peakpicker included in xcmsRaw.}  
 }
 \details{
-  After running collect(xFragments,xSet) The peaktable of the xcmsFragments includes the ms1Peaks from all experinemts stored in a xcmsSet-object. Further it contains the relevant msN-peaks from the xcmsRaw-objects, which were created temporarily with the paths in xcmsSet.
+  After running collect(xFragments,xSet) The peaktable of the
+  xcmsFragments includes the ms1Peaks from all experinemts stored in a
+  xcmsSet-object. Further it contains the relevant msN-peaks from the
+  xcmsRaw-objects, which were created temporarily with the paths in
+  xcmsSet.  
 }
 
 \value{
