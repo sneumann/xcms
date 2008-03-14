@@ -270,7 +270,7 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
 setMethod("sampclass", "xcmsSet", function(object) {
-    if (ncol(xs@phenoData) >0) {
+    if (ncol(object@phenoData) >0) {
         interaction(object@phenoData)
     } else {
         factor()
