@@ -3,7 +3,7 @@
 \alias{collect-methods}
 \alias{collect}
 \alias{collect,xcmsFragments-method}
-\title{Collect peaks into xcmsFragments}
+\title{Collect MS$^n$ peaks into xcmsFragments}
 \description{
   Collecting Peaks into \code{\linkS4class{xcmsFragments}}s from several
   MS-runs using \code{\linkS4class{xcmsSet}} and
@@ -19,7 +19,7 @@
 }}
 \arguments{
   \item{object}{(empty) \code{\link{xcmsFragments-class}} object}
-  \item{xcmsS}{A \code{\link{xcmsSet-class}} object which contains
+  \item{xs}{A \code{\link{xcmsSet-class}} object which contains
     picked ms1-peaks from several experiments}  
   \item{compMethod}{("floor", "round", "none"): compare-method which is
     used to find the parentpeak of a MSnpeak through comparing the
