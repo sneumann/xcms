@@ -1042,9 +1042,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
         flush.console()
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
-# we need rawdata; not pipeline-picked peaks
-#            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline)
-            lcraw <- xcmsRaw(files[i])
+            lcraw <- xcmsRaw(files[i], pipeline = rawpipeline)
+#            lcraw <- xcmsRaw(files[i])
             if (length(rtcor) == length(files))
                 lcraw@scantime <- rtcor[[i]]
             newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE])
