@@ -234,8 +234,9 @@ setMethod("stage", "xcmsProtocol",
           function(object) xcmsStageForProtocol(class(object)))
 
 setMethod("method", "xcmsProtocol",
-          function(object) sub(qualifyProtocolName(role(stage(object))), "",
-                               class(object)))
+          function(object)
+          decapitalize(sub(qualifyProtocolName(role(stage(object))), "",
+                           class(object))))
 
 setMethod("parameters", "xcmsProtocol", function(object) {
   # simply return slots as a list
@@ -288,8 +289,6 @@ dequalifyProtocolName <- function(name)
   decapitalize(sub("^xcmsProto", "", name))
 }
 
-# FIXME: need to support setting default methods for stages
-
 setGeneric("defaultMethod",
            function(object, ...) standardGeneric("defaultMethod"))
 
@@ -321,8 +320,18 @@ setReplaceMethod("defaultMethod", "character",
                    bioc$xcms[[key]] <- value
                    options(BioC = bioc)
                  })
-  
-                 
+
+setGeneric("protocolClasses",
+           function(object, ...) standardGeneric("protocolClasses"))
+setMethod("protocolClasses", "xcmsStage",
+          function(object)
+          {
+            baseProto <- qualifyProtocolName(dequalifyStageName(class(object)))
+            subs <- names(getClass(baseProto)@subclasses)
+            protos <- subs[sapply(subs, extends, "xcmsProtocol")]
+            protos[!sapply(protos, isVirtualClass)]
+          })
+
 xcmsStageForProtocol <- function(name) {
   if (!extends(name, "xcmsProtocol"))
     stop("Class '", name, "' is not a protocol class")

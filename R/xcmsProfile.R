@@ -220,39 +220,35 @@ setMethod("plotSurf", "xcmsProfile", function(object, log = FALSE,
 
 # Profile filtering
 
-setStage("filterProfile", "Filter profile matrix", "xcmsProfile")
+# The filterProfile stage is split up into baseline subtraction and smoothing
+# This avoids the need for a 'subtract' parameter in a base class and
+# more importantly improves clarity.
+# Fitting procedures can be shared behind the scenes.
+
+setStage("removeProfileBaseline", "Remove baseline from profile matrix",
+         "xcmsProfile")
+
+setStage("smoothProfile", "Fit a smoother to the profile matrix",
+         "xcmsProfile")
 
 # Provide necessary margins (as list) in profile matrix for given ranges
 # This is to avoid edge effects when processing subsets of the matrix
 # FIXME: this is not yet used or exported
 setGeneric("profMargins", function(object, ...) standardGeneric("profMargins"))
 
-# A base class for profile filters that optionally subtracts filter from data
-setProtocol("base", representation = representation(subtract = "logical"),
-            parent = "filterProfile", prototype = list(subtract = FALSE))
-
-setMethod("perform", c("xcmsProtoFilterProfileBase", "xcmsProfile"),
-          function(object, data, ...)
-          {
-            result <- performDelegate(object, data, ...)
-            if (object@subtract)
-              result@.Data <- data - result
-            result
-          })
-
 # Profile filtering
 
 # FIXME: Should be modified to accept mz/scan ranges
 .filterProfile.median <- function(object, mzrad = 0, scanrad = 0) {
-  object@.Data <- medianFilter(object, mzrad, scanrad)
+  object@.Data <- object - medianFilter(object, mzrad, scanrad)
   object
 }
 
 setProtocol("median", "Median",
             representation(mzrad = "numeric", scanrad = "numeric"),
-            .filterProfile.median, "filterProfileBase")
+            .filterProfile.median, "removeProfileBaseline")
 
-setMethod("profMargins", protocolClass("filterProfile", "median"),
+setMethod("profMargins", protocolClass("removeProfileBaseline", "median"),
   function(object, mzcount, scancount)
 {
   round(c(mzmargin = object@mzrad, scanmargin = object@scanrad))
