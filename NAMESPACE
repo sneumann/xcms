@@ -18,7 +18,9 @@ export(
        "xcmsStage",
        "protocolClass",
        "setProtocol",
-       "setStage"
+       "setStage",
+       "promptStage",
+       "promptProtocol"
        )
 
 S3method(c, xcmsSet)
@@ -65,6 +67,7 @@ exportClasses(
               "xcmsProtoNormalize",
               "xcmsProtoIdentifyCompounds",
               "xcmsProtoProcessRaws",
+              "xcmsProtoProcessRawsGeneric",
               "xcmsStage",
               "xcmsStageGenProfile",
               "xcmsStageProfileMatrix",
@@ -173,6 +176,7 @@ exportMethods(
               "profStep<-",
               "protocol",
               "protocol<-",
+              "protocolClasses",
               "rawEIC",
               "rawMat",
               "role",
