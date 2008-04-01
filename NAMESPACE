@@ -82,7 +82,10 @@ exportClasses(
               "xcmsStageSummarize",
               "xcmsStageNormalize",
               "xcmsStageIdentifyCompounds",
-              "xcmsStageProcessRaws"
+              "xcmsStageProcessRaws",
+              # these are unions for protocol slots
+              "numericORlanguage",
+              "logicalORlanguage"
               )
 
 exportMethods(
@@ -142,6 +145,7 @@ exportMethods(
               "peaks",
               "peaks<-",
               "perform",
+              "performDelegate",
               "phenoData",
               "phenoData<-",
               "pipeline",
