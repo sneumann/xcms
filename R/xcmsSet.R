@@ -254,7 +254,6 @@ setReplaceMethod("comps", "xcmsSet", function(object, value) {
     object
 })
 
-setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
 setMethod("sampnames", "xcmsSet", function(object) rownames(object@phenoData))
 
@@ -317,8 +316,6 @@ setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
 
     object
 })
-
-setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
                                             template = NULL) {
