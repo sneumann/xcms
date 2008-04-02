@@ -1,4 +1,4 @@
-profMaxIdx <- function(x, y, num, xstart = min(x), xend = max(x), 
+profMaxIdx <- function(x, y, num, xstart = min(x), xend = max(x),
                        param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -14,7 +14,7 @@ profMaxIdx <- function(x, y, num, xstart = min(x), xend = max(x),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                         NAOK = FALSE, param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -35,7 +35,7 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBin <- function(x, y, num, xstart = min(x), xend = max(x), 
+profBin <- function(x, y, num, xstart = min(x), xend = max(x),
                     param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -51,7 +51,7 @@ profBin <- function(x, y, num, xstart = min(x), xend = max(x),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                      NAOK = FALSE, param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -69,7 +69,7 @@ profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBinLin <- function(x, y, num, xstart = min(x), xend = max(x), 
+profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
                        param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -85,7 +85,7 @@ profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                         NAOK = FALSE, param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -103,7 +103,7 @@ profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x), 
+profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
                             param = list()) {
 
     if (is.null(param$baselevel))
@@ -114,7 +114,7 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
        basespace <- 0.075
     else
        basespace <- param$basespace
-    
+
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLinBaseM",
@@ -126,11 +126,11 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xstart),
        as.double(xend),
        as.integer(num),
-       out = doubleMatrix(num),
+       out = double(num),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                             NAOK = FALSE, param = list()) {
 
     if (is.null(param$baselevel))
@@ -141,7 +141,7 @@ profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        basespace <- 0.075
     else
        basespace <- param$basespace
-    
+
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLinBaseM",
@@ -159,7 +159,7 @@ profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profIntLin <- function(x, y, num, xstart = min(x), xend = max(x), 
+profIntLin <- function(x, y, num, xstart = min(x), xend = max(x),
                        param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -175,7 +175,7 @@ profIntLin <- function(x, y, num, xstart = min(x), xend = max(x),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
-profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x), 
+profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                         NAOK = FALSE, param = list()) {
 
     if (!is.double(x)) x <- as.double(x)
@@ -304,18 +304,18 @@ findRange <- function(x, values, NAOK = FALSE) {
 
 colMax <- function (x, na.rm = FALSE, dims = 1) {
 
-    if (is.data.frame(x)) 
+    if (is.data.frame(x))
         x <- as.matrix(x)
-    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+    if (!is.array(x) || length(dn <- dim(x)) < 2)
         stop("`x' must be an array of at least two dimensions")
-    if (dims < 1 || dims > length(dn) - 1) 
+    if (dims < 1 || dims > length(dn) - 1)
         stop("invalid `dims'")
     n <- prod(dn[1:dims])
     dn <- dn[-(1:dims)]
     if (!is.double(x)) x <- as.double(x)
     z <- .C("ColMax",
-            x, 
-            as.integer(n), 
+            x,
+            as.integer(n),
             as.integer(prod(dn)),
             double(prod(dn)),
             DUP = FALSE, PACKAGE = "xcms")[[4]]
@@ -329,18 +329,18 @@ colMax <- function (x, na.rm = FALSE, dims = 1) {
 
 rowMax <- function (x, na.rm = FALSE, dims = 1) {
 
-    if (is.data.frame(x)) 
+    if (is.data.frame(x))
         x <- as.matrix(x)
-    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+    if (!is.array(x) || length(dn <- dim(x)) < 2)
         stop("`x' must be an array of at least two dimensions")
-    if (dims < 1 || dims > length(dn) - 1) 
+    if (dims < 1 || dims > length(dn) - 1)
         stop("invalid `dims'")
     p <- prod(dn[-(1:dims)])
     dn <- dn[1:dims]
     if (!is.double(x)) x <- as.double(x)
     z <- .C("RowMax",
-            x, 
-            as.integer(prod(dn)), 
+            x,
+            as.integer(prod(dn)),
             as.integer(p),
             double(prod(dn)),
             DUP = FALSE, PACKAGE = "xcms")[[4]]
@@ -354,18 +354,18 @@ rowMax <- function (x, na.rm = FALSE, dims = 1) {
 
 which.colMax <- function (x, na.rm = FALSE, dims = 1) {
 
-    if (is.data.frame(x)) 
+    if (is.data.frame(x))
         x <- as.matrix(x)
-    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+    if (!is.array(x) || length(dn <- dim(x)) < 2)
         stop("`x' must be an array of at least two dimensions")
-    if (dims < 1 || dims > length(dn) - 1) 
+    if (dims < 1 || dims > length(dn) - 1)
         stop("invalid `dims'")
     n <- prod(dn[1:dims])
     dn <- dn[-(1:dims)]
     if (!is.double(x)) x <- as.double(x)
     z <- .C("WhichColMax",
-            x, 
-            as.integer(n), 
+            x,
+            as.integer(n),
             as.integer(prod(dn)),
             integer(prod(dn)),
             DUP = FALSE, PACKAGE = "xcms")[[4]]
@@ -379,18 +379,18 @@ which.colMax <- function (x, na.rm = FALSE, dims = 1) {
 
 which.rowMax <- function (x, na.rm = FALSE, dims = 1) {
 
-    if (is.data.frame(x)) 
+    if (is.data.frame(x))
         x <- as.matrix(x)
-    if (!is.array(x) || length(dn <- dim(x)) < 2) 
+    if (!is.array(x) || length(dn <- dim(x)) < 2)
         stop("`x' must be an array of at least two dimensions")
-    if (dims < 1 || dims > length(dn) - 1) 
+    if (dims < 1 || dims > length(dn) - 1)
         stop("invalid `dims'")
     p <- prod(dn[-(1:dims)])
     dn <- dn[1:dims]
     if (!is.double(x)) x <- as.double(x)
     z <- .C("WhichRowMax",
-            x, 
-            as.integer(prod(dn)), 
+            x,
+            as.integer(prod(dn)),
             as.integer(p),
             integer(prod(dn)),
             DUP = FALSE, PACKAGE = "xcms")[[4]]
@@ -421,24 +421,24 @@ rectUnique <- function(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0) {
 
 doubleMatrix <- function(nrow = 0, ncol = 0) {
 
-    .Call("DoubleMatrix", 
-          as.integer(nrow), 
+    .Call("DoubleMatrix",
+          as.integer(nrow),
           as.integer(ncol),
           PACKAGE = "xcms")
 }
 
 integerMatrix <- function(nrow = 0, ncol = 0) {
 
-    .Call("IntegerMatrix", 
-          as.integer(nrow), 
+    .Call("IntegerMatrix",
+          as.integer(nrow),
           as.integer(ncol),
           PACKAGE = "xcms")
 }
 
 logicalMatrix <- function(nrow = 0, ncol = 0) {
 
-    .Call("LogicalMatrix", 
-          as.integer(nrow), 
+    .Call("LogicalMatrix",
+          as.integer(nrow),
           as.integer(ncol),
           PACKAGE = "xcms")
 }
