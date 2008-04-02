@@ -727,10 +727,12 @@ setProtocol("matchedFilter", "Matched Filter",
                               mz.int <- od[p1:p2]
                               mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
                               mzrange <- range(mz.value)
-                              if (length(mz.value) >= (minEntries+1))
-                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minEntries))) else
-                                    dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
-
+                              if (length(mz.value) >= (minEntries+1)) {
+                                  dppm <- round(min(running(abs(diff(mz.value))/(mzrange[2]* 1e-6),
+                                                            fun=max,width=minEntries)))
+                              } else {
+                                  dppm <- round((mzrange[2]-mzrange[1]) / (mzrange[2] * 1e-6))
+                              }
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
                                   NA,NA,NA,                   ## rt, rtmin, rtmax,
@@ -1560,7 +1562,7 @@ read.mascot<-function(file, type="csv"){
     return(myDF)
 }
 
-KeggSearch<-function(metabo, write=FALSE) {
+KeggSearch <- function(metabo, write=FALSE) {
     ##Experimental
     KEGG<-"http://www.genome.jp/dbget-bin/www_bfind_sub?mode=bfind&max_hit=100&dbkey=kegg&keywords="
     Mascot<-read.mascot(masfile, type)
