@@ -731,16 +731,17 @@ void readHeader(RAMPFILE *pFI,
             
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"MassToChargeRatio"))) 
             {
-               scanHeader->precursorMZ = atoi(pStr2);
+               scanHeader->precursorMZ = atof(pStr2);
+//Paul altered atoi to atof so we get the decimals :D 04.04.08
             }
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"mz"))) 
             {
-               scanHeader->precursorMZ = atoi(pStr2);
+               scanHeader->precursorMZ = atof(pStr2);
             }
 	    // STN
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"Intensity"))) 
             {
-               scanHeader->precursorIntensity = atoi(pStr2);
+               scanHeader->precursorIntensity = atof(pStr2); //PB: atoi -> atof 
             }
          }
          if (strstr(stringBuf, "</spectrumDesc>")) {
