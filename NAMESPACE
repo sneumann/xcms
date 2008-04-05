@@ -163,6 +163,7 @@ exportMethods(
               "processRawsProto<-",
               "processRaws.generic",
               "profileMatrix",
+              "profileMatrix<-",
               "profileMatrix.bin",
               "profileMatrix.binlin",
               "profileMatrix.binlinbase",

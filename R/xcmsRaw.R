@@ -1294,7 +1294,6 @@ setMethod("explore", c("xcmsRaw", "NULL"),
 ### Profile generation
 
 # FIXME: need to handle boundaries
-# FIXME: subsetting should probably happen in an xcmsRaw subset stage - NOT HERE
 setMethod("perform", c("xcmsPipelineProfile", "xcmsRaw"),
           function(object, data, mzindexrange = numeric(),
                    scanrange = numeric(), mzrange = numeric(),
@@ -1313,15 +1312,20 @@ setStage("genProfile", "Create and filter profile matrix", "xcmsRaw")
 setProtocol("generic", "Generic",
             representation(pipeline = "xcmsPipelineProfile"),
             function(data, pipeline = new("xcmsPipelineProfile"), ...) {
-              if ("profile" %in% ls(data@env))
-                rm("profile", envir = data@env)
-              prof <- perform(pipeline, data, ...)
-              if (!is.null(prof)) {
-                assign("profile", prof, data@env)
-                data@mzrange <- prof@mzrange
-              }
-              data
+              .setProfile(data, function() perform(pipeline, data, ...))
             }, "genProfile")
+
+.setProfile <- function(data, prof) {
+  if ("profile" %in% ls(data@env))
+    rm("profile", envir = data@env)
+  if (is.function(prof))
+    prof <- prof()
+  if (!is.null(prof)) {
+    assign("profile", prof, data@env)
+    data@mzrange <- prof@mzrange
+  }
+  data
+}
 
 # Profile generation stage
 
@@ -1395,6 +1399,20 @@ setProtocol("base",
 
 # should hide in xcms namespace
 .setProfileProtocol("maxidx", "Indices of bin maxima")
+
+# Shortcut for 'performing' a genProfile stage from existing xcmsProfile
+setGeneric("profileMatrix<-",
+           function(object, value) standardGeneric("profileMatrix<-"))
+setReplaceMethod("profileMatrix", c("xcmsRaw", "xcmsProfile"),
+                 function(object, value)
+                 {
+                   object <- .setProfile(object, value)
+                   pipeline <- pipeline(prof, TRUE)
+                   protocol <- xcmsProtocol("genProfile", "generic",
+                                            pipeline = pipeline)
+                   object@pipeline@.Data <- c(object@pipeline, protocol)
+                   object
+                 })
 
 # Private methods (do not export)
 
