@@ -514,202 +514,33 @@ setProtocol("density", "Density Estimation",
                            max = "numeric"),
             .group.density, "group")
 
-
-mzClust_hclust <- function(x, eppm, eabs)
-{
-    N <- length(x)
-    d <- dist(x)
-    g <- .C("R_mzClust_hclust",
-            x = as.double(x),
-            num = N,
-            d = as.double(d),
-            g = integer(length = N),
-            eppm = as.double(eppm),
-            eabs = as.double(eabs),DUP = FALSE, NAOK = TRUE)$g
-    return(g)
-}
-
 .group.mzClust <- function(object,
-                      mzppm = 20,
-                      mzabs = 0,
-                      minsamp = 1,
-                      minfrac=0.5)
+                           mzppm = 20,
+                           mzabs = 0,
+                           minsamp = 1,
+                           minfrac=0.5)
 {
-
-    makeBin <- function(pos)
-    {
-                                        #find the minimum
-	min_sample <- which.min(p[diag(mz[,pos]),"mz"])
-	if(length(min_sample) == 0 || pos[min_sample] > samppeaknum[min_sample])
-            return(list(pos=pos,bin=c(-1)))
-	bin <- c(mz[min_sample, pos[min_sample]])
-	pos[min_sample] <- pos[min_sample] + 1
-	error_range <- c(p[bin[1],"mz"], p[bin[1],"mz"]*error_window+
-                         p[bin[1],"mz"]+2*mzabs)
-	for(i in seq(along = samples)[-min_sample]) {
-            if(pos[i] <= samppeaknum[i] &&
-               p[mz[i,pos[i]],"mz"] <= error_range[2]) {
-                                        # print current mz every 1000 values
-                if((sum(pos)-length(pos))%%1000==1) {
-                    cat(round(p[mz[i,pos[i]],"mz"]), "")
-                    if (.Platform$OS.type == "windows")
-                        flush.console()
-                }
-                bin <- c(bin,mz[i,pos[i]])
-                pos[i] <- pos[i] + 1
-            }
-	}
-	lst <- list(pos=pos,bin=bin)
-	lst
-    }
-    meanDeviationOverLimit <- function(bin)
-    {
-	bin_mz <- p[bin,"mz"]
-	m <- mean(bin_mz)
-	error_range <- c(m-ppm_error*m-mzabs, ppm_error*m+m+mzabs)
-	if(length(bin_mz[(bin_mz > error_range[2]) |
-                         (bin_mz < error_range[1])]) > 0 ) {
-            return(TRUE)
-	} else { FALSE }
-    }
-    bin2output <- function(bin)
-    {
-
-	gcount <- integer(length(classnum))
-	for(i in seq(along = bin)) {
-            class_idx <- classlabel[p[bin[i],"sample"]]
-            gcount[class_idx] <- gcount[class_idx] + 1
-	}
-	if(length(bin) < minsamp || !any(gcount >= classnum*minfrac))
-            return(list())
-	groupvec <- c(rep(NA,7+length(gcount)))
-	groupvec[1] <- mean(p[bin,"mz"])
-	groupvec[2:3] <- range(p[bin,"mz"])
-	groupvec[4] <- mean(p[bin,"rt"])
-	groupvec[5:6] <- range(p[bin,"rt"])
-	groupvec[7] <- length(bin)
-	sorted <- order(p[bin,"mz"])
-	grp_members <- bin[sorted]
-	groupvec[7+seq(along = gcount)] <- gcount
-	lst <- list(stat=groupvec,members=grp_members)
-	lst
-    }
-
-    ppm_error <- mzppm/1000000
-    error_window <- 2*ppm_error
-
     samples <- sampnames(object)
     classlabel <- sampclass(object)
-    classnames <- levels(classlabel)
-                                        #numeric version of classlabel
-    classlabel <- as.vector(unclass(classlabel))
-    ##vector of length max(classlabel)
-    classnum <- integer(max(classlabel))
+    peaks <- peaks(object)
+    groups <- xcms:::mzClustGeneric(peaks[,c(1,10)],
+                                    sampclass=classlabel,
+                                    mzppm=mzppm,mzabs=mzabs,
+                                    minsamp=minsamp,
+                                    minfrac=minfrac)
 
-                                        #how many samples per class
-    for (i in seq(along = classnum))
-        classnum[i] <- sum(classlabel == i)
-
-    p <- peaks(object)
-    rownames(p) <- NULL
-
-    groupmat <- matrix(nrow = 512, ncol = 7 + length(classnum))
-    groupindex <- vector("list", 512)
-
-    sampnum <- length(samples)
-    samppeaknum <- integer(sampnum)
-    for(i in seq(along = samples))
-        samppeaknum[i] <- length(which(p[,"sample"] == i))
-    sampmax <- max(samppeaknum)
-    mz <- matrix(nrow=sampnum,ncol=sampmax+1)
-    for(i in seq(along = samples)) {
-        samplepeaks <- which(p[,"sample"] == i)
-        sorted <- order(p[samplepeaks,"mz"])
-        mz[i,1:samppeaknum[i]] <- samplepeaks[sorted]
+    if(is.null(nrow(groups$mat))) {
+        matColNames <- names(groups$mat)
+        groups$mat <- matrix(groups$mat,
+                             ncol=length(groups$mat),byrow=F);
+        colnames(groups$mat) <- matColNames
     }
-    pos <- c(rep.int(1,sampnum))
-    binNumber <- 1
-    newbin <- makeBin(pos)
-    binA <- newbin$bin
-    pos <- newbin$pos
-    while(1) {
-	if (binNumber +4 > nrow(groupmat)) {
-            groupmat <- rbind(groupmat, matrix(nrow = nrow(groupmat), ncol = ncol(groupmat)))
-            groupindex <- c(groupindex, vector("list", length(groupindex)))
-	}
-	newbin <- makeBin(pos)
-        binB <- newbin$bin
-	pos <- newbin$pos
 
+    rt <- c(rep(-1,nrow(groups$mat)))
 
-
-        if(binB[1] < 0) {
-            out <- bin2output(binA)
-	    if(length(out) != 0) {
-		    groupmat[binNumber,] <- out$stat
-		    groupindex[[binNumber]] <- out$members
-		    binNumber <- binNumber + 1
-	    }
-            break
-        }
-        max_binA <- max(p[binA,"mz"])
-        min_binB <- min(p[binB,"mz"])
-
-	binclust <- 0
-        if(max_binA + max_binA*error_window+2*mzabs >= min_binB &&
-           min_binB - min_binB*error_window -2*mzabs <= max_binA) {
-            binC <- c(binA,binB)
-	    binclust <- 1
-        } else {
-            if(meanDeviationOverLimit(binA)) {
-                binC <- binA
-		binclust <- 2
-            }
-        }
-
-	#case: not in range or mean deviation over limit - perform hierarchical clustering
-	if(binclust != 0) {
-		groups <- mzClust_hclust(p[binC,"mz"],ppm_error,mzabs)
-
-		last_group <- groups[which.max(p[binC,"mz"])]
-		binA <- binC[which(groups == last_group)]
-		if(max(groups) >1) {
-		    for(c in 1:max(groups)) {
-			if(c == last_group) { next }
-			tmp_grp <- which(groups == c)
-			tmp_c <- binC[tmp_grp]
-            out <- bin2output(tmp_c)
-	    if(length(out) != 0) {
-	    groupmat[binNumber,] <- out$stat
-	    groupindex[[binNumber]] <- out$members
-	    binNumber <- binNumber + 1
-	    }
-		    }
-		}
-	}
-
-	if(binclust != 1) {
-            out <- bin2output(binA)
-	    if(length(out) != 0) {
-	    groupmat[binNumber,] <- out$stat
-	    groupindex[[binNumber]] <- out$members
-	    binNumber <- binNumber + 1
-	    }
-            binA <- binB
-	}
-
-
-    }
-    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax", "npeaks", classnames)
-
-    cat("\n")
-
-    binNumber <- binNumber - 1
-    groupmat <- groupmat[seq(length = binNumber),]
-    groupindex <- groupindex[seq(length = binNumber)]
-    groups(object) <- groupmat
-    groupidx(object) <- groupindex
-    cat("finished clustering successfully\n")
+    groups(object) <- cbind(groups$mat[,c(1:3)],rt,rt,rt,groups$mat[,4:ncol(groups$mat)])
+    colnames(groups(object)) <- c(colnames(groups$mat[,1:3]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,4:ncol(groups$mat)]))
+    groupidx(object) <- groups$idx
 
     object
 }

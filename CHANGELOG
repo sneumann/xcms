@@ -1,3 +1,12 @@
+2008-04-08:
+Move mzClust helper functions into own file
+mzClustGeneric can now align arbitrary matrices/spectra, 
+not just within xcmsSet.
+
+2008-04-02:
+Fix duplicate setGeneric() which fails on R-2.7a
+Fix BinLinBase which had an uninitialised argument in .Call()
+
 2008-03-14: 
 xcmsFragments cleanup and documentation, 
 now causing fewer R CMD check warnings
