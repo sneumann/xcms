@@ -24,13 +24,19 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                      "[Mm][Zz][Dd][Aa][Tt][Aa]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
-        files <- list.files(pattern = filepattern, recursive = TRUE)
-    filepaths(object) <- file.path(getwd(), files)
-    # Check to see whether the absolute path names work
-    for (file in filepaths(object))
-        if (!file.exists(file))
-            filepaths(object) <- files
+        files <- getwd()
+    info <- file.info(files)
+    listed <- list.files(files[info$isdir], pattern = filepattern,
+                         recursive = TRUE, full.names = TRUE)
+    files <- c(files[!info$isdir], listed)
 
+    # try making paths absolute
+    files_abs <- file.path(getwd(), files)
+    exists <- file.exists(files_abs)
+    files[exists] <- files_abs[exists]
+    
+    filepaths(object) <- files
+    
     if (is.null(snames))
         snames <- gsub("\\.[^.]*$", "", basename(files))
 
