@@ -1407,7 +1407,7 @@ setReplaceMethod("profileMatrix", c("xcmsRaw", "xcmsProfile"),
                  function(object, value)
                  {
                    object <- .setProfile(object, value)
-                   pipeline <- pipeline(prof, TRUE)
+                   pipeline <- pipeline(value, TRUE)
                    protocol <- xcmsProtocol("genProfile", "generic",
                                             pipeline = pipeline)
                    object@pipeline@.Data <- c(object@pipeline, protocol)
