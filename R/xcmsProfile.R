@@ -22,13 +22,14 @@ setMethod("show", "xcmsProfile", function(object) {
       paste(object@mzrange, collapse = " to "), " m/z)\n", sep = "")
 })
 
-setMethod("pipeline", "xcmsProfile", function(object, local = FALSE) {
-
-  pipeline <- callNextMethod(object, local)
-  if (local)
-    pipeline <- new("xcmsPipelineProfile", pipeline)
-  pipeline
-})
+setMethod("pipeline", "xcmsProfile",
+          function(object, ancestry = TRUE, local = TRUE)
+          {
+            pipeline <- callNextMethod(object, ancestry, local)
+            if (!ancestry)
+              pipeline <- new("xcmsPipelineProfile", pipeline)
+            pipeline
+          })
 
 # analogous to profRange() on xcmsRaw
 

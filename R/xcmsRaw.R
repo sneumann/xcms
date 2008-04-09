@@ -1406,10 +1406,15 @@ setGeneric("profileMatrix<-",
 setReplaceMethod("profileMatrix", c("xcmsRaw", "xcmsProfile"),
                  function(object, value)
                  {
+                   profpipe <- pipeline(value, ancestry = FALSE)
+                   #ancestry <- head(pipeline(value), -length(profpipe@.Data))
+                   #prepipe <- new("xcmsPipeline", ancestry)
+                   prepipe <- pipeline(value, local = FALSE)
+                   if (!identical(pipeline(object), prepipe))
+                     stop("Profile history incompatible with that of xcmsRaw")
                    object <- .setProfile(object, value)
-                   pipeline <- pipeline(value, TRUE)
                    protocol <- xcmsProtocol("genProfile", "generic",
-                                            pipeline = pipeline)
+                                            pipeline = profpipe)
                    object@pipeline@.Data <- c(object@pipeline, protocol)
                    object
                  })
