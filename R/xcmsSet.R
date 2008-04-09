@@ -16,7 +16,8 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     profmethod = "bin", profparam = list(),
-                    ..., rawpipeline = NULL, pipeline = NULL) {
+                    ..., rawpipeline = NULL, pipeline = NULL,
+                    phenoData = NULL) {
 
     object <- new("xcmsSet")
 
@@ -36,39 +37,20 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     files[exists] <- files_abs[exists]
     
     filepaths(object) <- files
-    
+
+    # determine experimental design
+    fromPaths <- phenoDataFromPaths(files)
     if (is.null(snames))
-        snames <- gsub("\\.[^.]*$", "", basename(files))
-
-    if (is.null(sclass)) {
-        # create factors from filesystetm hierarchy
-        sclass <- gsub("^\\.$", "sample", dirname(files))
-        lev <- strsplit(sclass, "/")
-        levlen <- sapply(lev, length)
-        if(length(lev) > 1 && !all(levlen[1] == levlen))
-            stop("Directory tree must be level")
-        pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
-        redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
-        if (!any(!redundant)) {
-            redundant[length(redundant)] <- FALSE
-        }
-
-        pdata <- pdata[,!redundant,drop=FALSE]
-        if (ncol(pdata) == 1) { # if not multiple factors, behave as before
-          # Make the default group names less redundant
-          scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
-          scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
-          i <- 1
-          while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
-              i <- i + 1
-          i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
-          if (i > 1 && i <= nrow(scomp))
-              sclass <- substr(sclass, i, max(nchar(sclass)))
-          pdata <- sclass
-        }
-    } else pdata <- sclass
+      snames <- rownames(fromPaths)
+    pdata <- phenoData
+    if (is.null(pdata)) {
+      pdata <- sclass
+      if (is.null(pdata)) 
+        pdata <- fromPaths
+    }
     phenoData(object) <- pdata
-    rownames(phenoData(object)) <- snames
+    if (is.null(phenoData))
+      rownames(phenoData(object)) <- snames
 
     # figure out 'step' argument
     mc <- as.list(match.call())
@@ -1165,4 +1147,34 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     txt <- paste(prefix, txt, sep="")
     if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex)
+}
+
+# derive experimental design from set of file paths
+phenoDataFromPaths <- function(paths) {
+  ## create factors from filesystem hierarchy
+  sclass <- gsub("^\\.$", "sample", dirname(paths))
+  lev <- strsplit(sclass, "/")
+  levlen <- sapply(lev, length)
+  if(length(lev) > 1 && !all(levlen[1] == levlen))
+    stop("Directory tree must be level")
+  pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
+  redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
+  if (!any(!redundant)) {
+    redundant[length(redundant)] <- FALSE
+  }
+  pdata <- pdata[,!redundant,drop=FALSE]
+  if (ncol(pdata) == 1) { ## if not multiple factors, behave as before
+    ## Make the default group names less redundant
+    scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
+    scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
+    i <- 1
+    while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
+      i <- i + 1
+    i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
+    if (i > 1 && i <= nrow(scomp))
+      sclass <- substr(sclass, i, max(nchar(sclass)))
+    pdata <- data.frame(class = sclass)
+  }
+  rownames(pdata) <- gsub("\\.[^.]*$", "", basename(paths))
+  pdata
 }
