@@ -1,15 +1,17 @@
 setClass("xcmsData", representation(pipeline = "xcmsPipeline"))
 
-setMethod("pipeline", "xcmsData", function(object, local = FALSE)
+setMethod("pipeline", "xcmsData",
+          function(object, ancestry = TRUE, local = TRUE)
           {
             pipeline <- object@pipeline
-            if (local) {
-              me <- sapply(sapply(pipeline, outType), extends, class(object))
-              if (any(!me)) {
-                pipeline <- object@pipeline
-                pipeline@.Data <- tail(pipeline, -tail(which(!me),1))
-              }
-            }
+            locals <- pipeline@.Data
+            me <- sapply(sapply(pipeline, outType), extends, class(object))
+            if (any(!me))
+              locals <- tail(pipeline, -tail(which(!me), 1))
+            ancestors <- list()
+            if (ancestry)
+              ancestors <- head(pipeline, -length(locals))
+            pipeline@.Data <- c(ancestors, if (local) locals)
             pipeline
           })
 
