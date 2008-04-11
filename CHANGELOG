@@ -1,3 +1,8 @@
+2008-04-11: 
+Final commit as 1.11.18 as announced on 
+http://groups.google.com/group/xcms-devel/browse_thread/thread/bd8e6e19303b0cb2
+Well be resurrected on 2008-04-29 as 1.13.1
+
 2008-04-08:
 Move mzClust helper functions into own file
 mzClustGeneric can now align arbitrary matrices/spectra, 

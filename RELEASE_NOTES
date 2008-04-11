@@ -1,6 +1,5 @@
 == NEW FEATURES ==
 
-* Pipeline Stuff
 * Two new Peak Pickers have been integrated:
 ** MS1 is a pseudo peak picker, which uses the MS2 parent mass as annotated
 in the mzData or mzXML files.
@@ -8,6 +7,15 @@ in the mzData or mzXML files.
 picking of SELDI or FTICR single spectra
 * For the alignment of individual spectra e.g. from FTICR,a fast peak
 alignment has been implemented
+
+== Experimental Features ==
+
+* Pipeline Stuff
+* There is very experimental support for Tandem MS and MSn spectra, currently 
+only I/O is supported, and MSn peaks are collected in xcmsFragments objects.
+* There is very experimental support for parallel peak picking using Rmpi 
+and MPICH / OpenMPI / DeinoMPI. Please do not ask for support until the 
+Rmpi examples work for you
 
 == INCOMPATIBILITIES ==
 
