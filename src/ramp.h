@@ -104,6 +104,7 @@ extern "C" {
 #define INSTRUMENT_LENGTH 2000
 #define SCANTYPE_LENGTH 32
 
+
 struct ScanHeaderStruct
 {
    int seqNum; // number in sequence observed file (1-based)

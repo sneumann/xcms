@@ -11,7 +11,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{plotScan(object, scan, mzrange = numeric(), ident = FALSE)}
+  \code{plotScan(object, scan, massrange = numeric(), ident = FALSE)}
 }
 }}
 \arguments{
@@ -19,7 +19,7 @@
   \item{scan}{
     integer with number of scan to plot
   }
-  \item{mzrange}{
+  \item{massrange}{
     numeric vector of length >= 2 whose range will be used to select
     masses to plot
   }

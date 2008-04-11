@@ -1,13 +1,22 @@
 \name{plot.xcmsEIC}
+\docType{methods}
 \alias{plot.xcmsEIC}
+\alias{plot, plot-methods}
 \title{Plot extracted ion chromatograms from multiple files}
 \description{
   Batch plot a list of extracted ion chromatograms to the current
   graphics device.
 }
-\usage{
-\method{plot}{xcmsEIC}(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
+\section{Methods}{
+\describe{
+\item{x = "xcmsEIC"}{
+  \code{
+plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
              col = rep(1, length(sampleidx)), legtext = NULL, peakint = TRUE, sleep = 0, ...)}
+  }
+
+}}
+
 \value{
   A \code{xcmsSet} object.
 }
