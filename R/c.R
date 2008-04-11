@@ -28,10 +28,7 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xstart),
        as.double(xend),
        as.integer(num),
-       # not clear why integerMatrix() is necessary
-       # sometimes, the return value is not perfectly zeroes (NA's in FFC)
-       #out = integerMatrix(num, length(zidx)),
-       out = matrix(as.integer(0), num, length(zidx)),
+       out = integerMatrix(num, length(zidx)),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
 
@@ -195,21 +192,16 @@ profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 medianFilter <- function(x, mrad, nrad) {
 
-    if (mrad == 0) { # 'runmed' seems a lot faster in this case
-        k <- 2*nrad + 1 # turn radius into diameter and ensure 'k' is odd
-        t(apply(x, 1, runmed, k = k, endrule = "constant"))
-    } else {
-        dimx <- dim(x)
-        if (!is.double(x)) x <- as.double(x)
-        .C("MedianFilter",
-           x,
-           as.integer(dimx[1]),
-           as.integer(dimx[2]),
-           as.integer(mrad),
-           as.integer(nrad),
-           out = doubleMatrix(dimx[1], dimx[2]),
-           DUP = FALSE, PACKAGE = "xcms")$out
-    }
+    dimx <- dim(x)
+    if (!is.double(x)) x <- as.double(x)
+    .C("MedianFilter",
+       x,
+       as.integer(dimx[1]),
+       as.integer(dimx[2]),
+       as.integer(mrad),
+       as.integer(nrad),
+       out = doubleMatrix(dimx[1], dimx[2]),
+       DUP = FALSE, PACKAGE = "xcms")$out
 }
 
 descendZero <- function(y, istart = which.max(y)) {

@@ -73,7 +73,7 @@ site\footnote{\url{http://www.unidata.ucar.edu/packages/netcdf/}}.
 Detailed instructions for doing so are available on the CRAN site.
 
 \item Once you have \texttt{R} installed, launch it and select
-BioC Software repository using the \texttt{Packages > Select
+Biodconductor repository using the \texttt{Packages > Select
 repositories...} menu item.
 
 \item Use the package installer to automatically download and install
