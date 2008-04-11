@@ -149,9 +149,9 @@ for the \Rfunction{xcmsSet} function and \Rmethod{findPeaks} method.
 
 The method \Rmethod{findPeaks} can make use of different algorithms
 for peak detection. Currently \Rmethod{findPeaks.matchedFilter}
-and \Rmethod{findPeaks.centWave} are available,
+and \Rmethod{findPeaks.centWave} are available, 
 \Rmethod{findPeaks.matchedFilter} is used by default.
-First, several of the most important parameters of
+First, several of the most important parameters of 
 \Rmethod{findPeaks.matchedFilter} will be discussed.
 \\
 \textbf{findPeaks.matchedFilter} \\
@@ -222,10 +222,10 @@ than peak identification and is generally not recommended as such.
 \\
 \textbf{findPeaks.centWave} \\
 The method \Rmethod{findPeaks.centWave} follows a different
-approach.   This algorithm is most suitable for high resolution
-centroid LC/TOF-MS data. If your machine software or converter does
-not support the export of peak centroids, tools like the \emph{TOPP-PeakPicker}
-can be used for preprocessing \footnote{\url{http://www.openms.de}}.
+approach.   This algorithm is most suitable for high resolution 
+centroid LC/TOF-MS data. If your machine software or converter does 
+not support the export of peak centroids, tools like the \emph{TOPP-PeakPicker} 
+can be used for preprocessing \footnote{\url{http://www.openms.de}}. 
 Due to the fact that peak centroids are used, a binning step is not necessary.
 
 In the first phase of the algorithm areas of high peak density
@@ -235,7 +235,7 @@ In the second phase these \emph{regions of interest} (ROI) are further
 analysed.  Gaussian curves are fitted to the chromatographic peaks,
 and areas larger than 2*\Rfunarg{minPeakWidth} scans are checked
 whether they contain more than one peak (these may also overlap) using
-wavelet analysis.
+wavelet analysis. 
 
 This algorithm is much slower than \Rmethod{findPeaks.matchedFilter}
 due to the extensive gaussian fits.  It can be sped up by
@@ -394,7 +394,7 @@ at the same time but are correctly aligned.}
 \end{figure}
 
 <<AnalysisVisualize>>=
-reporttab <- diffreport(xset3, "WT", "KO", "example", 10,
+reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
                         metlin = 0.15)
 reporttab[1:4,]
 @
