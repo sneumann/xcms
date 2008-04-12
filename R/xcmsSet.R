@@ -832,7 +832,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             value = c("into","maxo","intb"), metlin = FALSE, ...) {
 
     require(multtest) || stop("Couldn't load multtest")
-
+    
+    value <- match.arg(value)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
         stop("No group information found")
