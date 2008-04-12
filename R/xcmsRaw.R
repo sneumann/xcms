@@ -35,6 +35,9 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         stop("Couldn't determine file type")
     
     rtdiff <- diff(rawdata$rt)
+    if (any(rtdiff == 0))
+       warning("There are identical scantimes.")
+       
     if (any(rtdiff < 0)) {
     	badtimes <- which(rtdiff < 0)
     	stop(paste("Time for scan ", badtimes[1], " (", 
@@ -1148,6 +1151,9 @@ setMethod("profRange", "xcmsRaw", function(object,
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
     
 setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(object@scantime))){
+  
+  scanrange[1] <- max(1,scanrange[1])
+  scanrange[2] <- min(length(object@scantime),scanrange[2])
   
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
