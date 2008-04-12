@@ -1,4 +1,8 @@
 2008-??-??
+findPeaks.centWave generates a warning if data seems to be not in centroid mode
+Added method isCentroided()
+Added prefilter option to findPeaks.centWave
+Fixed bug in centWave/fitGauss
 Added prefilter option to findmzROI
 Speedup for findmzROI
 Renamed findMZBoxes to findmzROI
