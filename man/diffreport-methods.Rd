@@ -49,10 +49,10 @@
     character vector with the sample classes to include in the EICs
   }
   \item{value}{
-    intensity values to be used for the diffreport. 
-    \code{into} integrated peak intensities
-    \code{maxo} maximum peak intensities
-    \code{intb} baseline corrected integrated peak intensities (\code{\link{findPeaks.centWave}} only)
+    intensity values to be used for the diffreport. \cr
+    If \code{value="into"}, integrated peak intensities are used. \cr
+    If \code{value="maxo"}, maximum peak intensities are used. \cr
+    If \code{value="intb"}, baseline corrected integrated peak intensities are used (only available if peak detection was done by \code{\link{findPeaks.centWave}}).
   }
   \item{metlin}{
     mass uncertainty to use for generating link to Metlin metabolite
