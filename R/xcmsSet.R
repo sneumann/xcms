@@ -829,7 +829,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
-                                            metlin = FALSE) {
+                                            value = c("into","maxo","intb"), metlin = FALSE, ...) {
 
     require(multtest) || stop("Couldn't load multtest")
 
@@ -841,8 +841,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     classlabel <- sampclass(object)
     classlabel <- levels(classlabel)[as.vector(unclass(classlabel))]
 
-    values <- groupval(object, "medret", "into")
-    indecies <- groupval(object, "medret")
+    values <- groupval(object, "medret", value=value)
+    indecies <- groupval(object, "medret", value = "index")
 
     if (!all(c(class1,class2) %in% classlabel))
         stop("Incorrect Class Labels")
@@ -860,7 +860,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     testval <- values[,c(c1,c2)]
 	testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
-	tstat <- mt.teststat(testval, testclab)
+	tstat <- mt.teststat(testval, testclab, ...)
 	pvalue <- pval(testval, testclab, tstat)
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
 	if (metlin) {
@@ -902,6 +902,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     invisible(twosamp)
 })
+
 
 retexp <- function(peakrange, width = 200) {
 
