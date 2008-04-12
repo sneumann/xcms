@@ -15,8 +15,8 @@
   \code{diffreport(object, class1 = levels(sampclass(object))[1], 
                    class2 = levels(sampclass(object))[2], 
                    filebase = character(), eicmax = 0, eicwidth = 200,
-                   sortpval = TRUE, classeic = c(class1,class2),
-                   metlin = FALSE)}
+                   sortpval = TRUE, classeic = c(class1,class2), 
+                   value=c("into","maxo","intb"), metlin = FALSE, ...)}
 }
 }}
 \arguments{
@@ -48,11 +48,20 @@
   \item{classeic}{
     character vector with the sample classes to include in the EICs
   }
+  \item{value}{
+    intensity values to be used for the diffreport. 
+    \code{into} integrated peak intensities
+    \code{maxo} maximum peak intensities
+    \code{intb} baseline corrected integrated peak intensities (\code{\link{findPeaks.centWave}} only)
+  }
   \item{metlin}{
     mass uncertainty to use for generating link to Metlin metabolite
     database. the sign of the uncertainty indicates negative or
     positive mode data for M+H or M-H calculation. a value of FALSE
     or 0 removes the column
+  }
+  \item{...}{
+    optional arguments to be passed to \code{\link[multtest]{mt.teststat}} 
   }
 }
 \details{
