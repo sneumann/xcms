@@ -15,14 +15,15 @@
 #undef FALSE
 #define FALSE    0
 
-#define SIZE_PEAKBUFS 200000   // max. # of "short" boxes
+#define SIZE_PEAKBUFS 350000   // max. # of "short" boxes
 #define SIZE_PEAKBUFL 5000    // max. # of "long" boxes
 #define DIM_PEAKBUFS 50       // max length of "short" boxes
-#define DIM_PEAKBUFL 2500     // max length of "long" boxes = max number of spectra
-#define DIM_MZBUF    10000     // max # m/z values to hold
-#define DIM_SCANBUF 10000      // max # m/z values per scan
+#define DIM_PEAKBUFL 3500     // max length of "long" boxes = max number of spectra
+#define DIM_MZBUF    25000     // max # m/z values to hold
+#define DIM_SCANBUF 15000      // max # m/z values per scan
 
 #define UNDEF_BUF      0
+#define INVALID_PT    -1
 #define IN_SHORT_BUF  -1
 #define IN_LONG_BUF    3
 
@@ -50,11 +51,13 @@ struct peakbufStruct {
   bufnrType lnum  [SIZE_PEAKBUFL]; // actually used length of each buffer
   int       lscan [SIZE_PEAKBUFL][DIM_PEAKBUFL];
   RAMPREAL  lmz   [SIZE_PEAKBUFL][DIM_PEAKBUFL];
-  RAMPREAL        lint  [SIZE_PEAKBUFL][DIM_PEAKBUFL];
+  RAMPREAL  lint  [SIZE_PEAKBUFL][DIM_PEAKBUFL];
   
   int             PeaksInBuf;
   unsigned char   freelists [SIZE_PEAKBUFS];
   unsigned char   freelistl [SIZE_PEAKBUFL];
+  bufnrType  LastFreeS;
+  bufnrType  LastFreeL;
 } peakbuf;
 
 struct mzvalStruct {
@@ -180,84 +183,106 @@ int half,mid;
 
 bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
   bufnrType pos=0;
+    
   if (which_buf == IN_SHORT_BUF) {
-    while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) pos++;
-    if (pos >= SIZE_PEAKBUFS-1) error("SIZE_PEAKBUFS too small ! \n"); 
-  } else
+    if (peakbuf->LastFreeS != INVALID_PT) 
+      pos= peakbuf->LastFreeS; 
+    while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) 
+      pos++;
+    if (pos >= SIZE_PEAKBUFS-1) 
+       error("SIZE_PEAKBUFS too small ! \n");
+    peakbuf->LastFreeS = pos;
+  } 
+  else
   {
-    while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) pos++;
-    if (pos >= SIZE_PEAKBUFL-1) error("SIZE_PEAKBUFL too small ! \n"); 
+    if (peakbuf->LastFreeL != INVALID_PT) 
+      pos= peakbuf->LastFreeL; 
+    while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) 
+      pos++;
+    if (pos >= SIZE_PEAKBUFL-1) 
+        error("SIZE_PEAKBUFL too small ! \n"); 
+    peakbuf->LastFreeL = pos;
   }
   
   return(pos);
 }
 
-void insertpeak(RAMPREAL fMass,RAMPREAL fInten,const int scan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval,struct pickOptionsStruct pickOptions)
+void insertpeak(const RAMPREAL fMass, const RAMPREAL fInten,const int scan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval,const struct pickOptionsStruct pickOptions)
 {
   int i,j,wasfound=FALSE;
   bufnrType num;
   RAMPREAL mzmean=0;
-  
-  for (i=0; i < mzval->length; i++) // TODO: Ausnutzen der Sortierungseigenschaft -> binary search, direkte Suche nach (fMass +- (pickOptions.dev * (float) fMass))
-   { 
-    double ddiff = fabs( mzval->mz[i] -  fMass);
-    double ddev = (pickOptions.dev *  fMass);
-    
-    if (ddiff <= ddev) 
-    { // match -> extend this box
-      wasfound = TRUE;
-      if (mzval->slbuf[i] == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
-      if (mzval->slbuf[i] == IN_SHORT_BUF) 
-      { // APPEND TO SHORT_BUF
-        bufnrType bnr = mzval->bufnr[i];
-        num = peakbuf->snum[bnr];
-        if (num >= DIM_PEAKBUFS-1) // its getting too long for small buf, we got to move it, move it !
-          { 
-             bufnrType newbufpos = getFreeBufPos(IN_LONG_BUF,peakbuf);
-             mzval->bufnr[i]  = newbufpos;
-             mzval->slbuf[i]  = IN_LONG_BUF;
-             peakbuf->freelistl[newbufpos] = FALSE; 
-             // now copy to long buf
-             peakbuf->lnum[newbufpos] = num;
-             memmove(peakbuf->lint[newbufpos] , peakbuf->sint[bnr], num*sizeof(RAMPREAL));
-             memmove(peakbuf->lmz[newbufpos] , peakbuf->smz[bnr], num*sizeof(RAMPREAL));
-             memmove(peakbuf->lscan[newbufpos] , peakbuf->sscan[bnr], num*sizeof(int));
-             // free short buf pos
-             peakbuf->snum[bnr] = 0;
-             peakbuf->freelists[bnr] = TRUE; 
-          } else 
-          {  // still in short buf, so extend it
-            peakbuf->sint[bnr][num] = fInten;
-            peakbuf->smz[bnr][num] =  fMass;
-            peakbuf->sscan[bnr][num] = scan;
-            peakbuf->snum[bnr]++;
-            for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->smz[bnr][j];
-            mzmean /= num+1;
-          } 
-      }
+  double ddev = (pickOptions.dev *  fMass);
+  int lpos = lower_bound( fMass - ddev,mzval,0,mzval->length);
+  int hpos = upper_bound( fMass + ddev,mzval,lpos,mzval->length - lpos+1);   
+
+  if (hpos >=  mzval->length) hpos = mzval->length;
+
+  if (lpos < mzval->length) {
+    for (i=lpos; i < hpos; i++) // 
+    { 
+      double ddiff = fabs( mzval->mz[i] -  fMass);
       
-      if (mzval->slbuf[i] == IN_LONG_BUF) 
-      { // APPEND TO LONG_BUF
-        bufnrType bnr = mzval->bufnr[i];
-        num = peakbuf->lnum[bnr];
-        if (num >= DIM_PEAKBUFL-1)  error("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); 
-        peakbuf->lint[bnr][num] = fInten;
-        peakbuf->lmz[bnr][num] =  fMass;
-        peakbuf->lscan[bnr][num] = scan;
-        peakbuf->lnum[bnr]++;
-        for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->lmz[bnr][j];
-        mzmean /= num+1; 
+      if (ddiff <= ddev) 
+      { // match -> extend this box
+      if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
+      
+        wasfound = TRUE;
+        if (mzval->slbuf[i] == UNDEF_BUF) error("UNDEF_BUF error! \n"); 
+        if (mzval->slbuf[i] == IN_SHORT_BUF) 
+        { // APPEND TO SHORT_BUF
+          bufnrType bnr = mzval->bufnr[i];
+          num = peakbuf->snum[bnr];
+          if (num >= DIM_PEAKBUFS-1) // its getting too long for small buf, we got to move it, move it !
+            { 
+              bufnrType newbufpos = getFreeBufPos(IN_LONG_BUF,peakbuf);
+              mzval->bufnr[i]  = newbufpos;
+              mzval->slbuf[i]  = IN_LONG_BUF;
+              peakbuf->freelistl[newbufpos] = FALSE; 
+              // now copy to long buf
+              peakbuf->lnum[newbufpos] = num;
+              memmove(peakbuf->lint[newbufpos] , peakbuf->sint[bnr], num*sizeof(RAMPREAL));
+              memmove(peakbuf->lmz[newbufpos] , peakbuf->smz[bnr], num*sizeof(RAMPREAL));
+              memmove(peakbuf->lscan[newbufpos] , peakbuf->sscan[bnr], num*sizeof(int));
+              // free short buf pos
+              peakbuf->snum[bnr] = 0;
+              peakbuf->freelists[bnr] = TRUE; 
+            } else 
+            {  // still in short buf, so extend it
+              peakbuf->sint[bnr][num] = fInten;
+              peakbuf->smz[bnr][num] =  fMass;
+              peakbuf->sscan[bnr][num] = scan;
+              peakbuf->snum[bnr]++;
+              for (j=0,mzmean=0.0;j<=num;j++) 
+                  mzmean += peakbuf->smz[bnr][j];
+              mzmean /= num+1;
+            } 
+        }
+        
+        if (mzval->slbuf[i] == IN_LONG_BUF) 
+        { // APPEND TO LONG_BUF
+          bufnrType bnr = mzval->bufnr[i];
+          num = peakbuf->lnum[bnr];
+          if (num >= DIM_PEAKBUFL-1)  error("PEAKBUFL BUFFER OVERFLOW ERROR! \n"); 
+          peakbuf->lint[bnr][num] = fInten;
+          peakbuf->lmz[bnr][num] =  fMass;
+          peakbuf->lscan[bnr][num] = scan;
+          peakbuf->lnum[bnr]++;
+          for (j=0,mzmean=0.0;j<=num;j++) 
+              mzmean += peakbuf->lmz[bnr][j];
+          mzmean /= num+1; 
+        } 
+          mzval->mz[i] = mzmean; // update mzval
       } 
-        mzval->mz[i] = mzmean; // update mzval
-    } 
-   } // for
+    } // for
+    
+   } // if
    
    // if not found
    if (wasfound == FALSE) {  // no, create new entry for mz
       int ipos = lower_bound(fMass,mzval,0,mzval->length);
       // insert into mzval->mz at pos ipos
       // and add values at free buf pos
-      // printf("ipos: %d\n",ipos);
       bufnrType bufpos = getFreeBufPos(IN_SHORT_BUF,peakbuf);
       insertMZ(fMass,ipos,bufpos,IN_SHORT_BUF,mzval);
       
@@ -276,7 +301,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
   int p;
   RAMPREAL fMass,lastMass=-1;
   RAMPREAL fInten;   
-  //unsigned short size;
   
   if ((mzval->length == 0) && (peakbuf->PeaksInBuf == 0) ){ // copy first scan directly
     for (p=0;p < scanbuf->length;p++)
@@ -286,7 +310,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
      
        mzval->mz[p] = fMass; 
        mzval->slbuf[p] = IN_SHORT_BUF;
-       //size = (unsigned short) peakbuf->snum[p];
        peakbuf->sscan[p][0] = scan;
        peakbuf->smz[p][0]   = fMass;
        peakbuf->sint[p][0]  = fInten;
@@ -303,7 +326,6 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
     { 
        fMass  = scanbuf->mz[p];
        fInten = scanbuf->intensity[p];   
-       // Test auf Sortiertheit
        if (fMass < lastMass)  error("m/z sort assumption violated ! \n");
        lastMass = fMass; //mzval->length
        insertpeak(fMass,fInten,scan,peakbuf,mzval,pickOptions);
@@ -311,32 +333,68 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
   }
 }     
 
-void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, int *scerr, struct pickOptionsStruct pickOptions, const int idebug){
+int checkIntensity(const int i, const int minimumIntValues, const int minimumInt, struct mzvalStruct *mzval, struct peakbufStruct *peakbuf) {
+int j,intcount = 0;
+bufnrType entries,bufnr = mzval->bufnr[i];
+     
+    if (mzval->slbuf[i] == IN_SHORT_BUF) 
+    {
+      entries = peakbuf->snum[bufnr];
+      for (j=0;j < entries;j++) {
+        if (peakbuf->sint[bufnr][j] >= minimumInt)
+          intcount++;
+        if (intcount >= minimumIntValues)  
+          break;
+      }
+    } else
+    {
+      entries = peakbuf->lnum[bufnr];
+      for (j=0;j < entries;j++) {
+        if (peakbuf->lint[bufnr][j] >= minimumInt)
+          intcount++;
+        if (intcount >= minimumIntValues)  
+          break;
+      }    
+    }
+      
+if (intcount >= minimumIntValues)
+  return(TRUE);
+else 
+  return(FALSE);
+}
+
+void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, int *scerr, struct pickOptionsStruct pickOptions, const int minimumIntValues, const int minimumInt, const int idebug){
 int i;
 bufnrType bufnr,entries;
  // check all peaks in mzval
- for (i=0; i < (mzval->length); i++) {
+ for (i=0; i < mzval->length; i++) {
     bufnr = mzval->bufnr[i];
     int lastscan=0;
     if (mzval->slbuf[i] == IN_SHORT_BUF) 
       {
         entries = peakbuf->snum[bufnr];
-        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n");
+        if (entries > 0) lastscan= peakbuf->sscan[bufnr][entries-1]; else error("ctScan %d entries %d bufnr %d BUF %d (SHORT_BUF entries <= 0 ?)  err ! \n",ctScan,entries,bufnr,mzval->slbuf[i]);
       } else
       {
         entries = peakbuf->lnum[bufnr];
-        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else error("(entries <= 0 ?)  err ! \n"); 
+        if (entries > 0) lastscan= peakbuf->lscan[bufnr][entries-1]; else error("ctScan %d (entries <= 0 ?)  err ! \n",ctScan); 
       }
       
   
   // finished (entries >= minEntries)  or just extended
   if ((entries >= pickOptions.minEntries) || (lastscan == ctScan)) // good feature
    { // is it finished ?
-     if ((entries >= pickOptions.minEntries) && (lastscan < ctScan) )
-       deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
+     if ((entries >= pickOptions.minEntries) && (lastscan < ctScan)) { 
+       if (checkIntensity(i,minimumIntValues,minimumInt,mzval,peakbuf) == TRUE)
+          deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
+       else
+          deleteMZ(i,mzval,peakbuf,TRUE); // delete index & values     
+     }  
        if (entries > ctScan) {
-          if (idebug == TRUE) printf("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
-          (*scerr)++;
+         if (idebug == TRUE) {
+           error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
+         }  
+         (*scerr)++;
        }   
    }
    else 
@@ -345,7 +403,10 @@ bufnrType bufnr,entries;
    }
  
  } // for i
- 
+ if (idebug == TRUE) 
+          printf("LastFreeS was %d,LastFreeL was %d.\n", peakbuf->LastFreeS, peakbuf->LastFreeL);
+ peakbuf->LastFreeL = INVALID_PT;
+ peakbuf->LastFreeS = INVALID_PT;
 }
 
 void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *nmz, int *lastScan, double *pscanbufmz,double *pscanbufint,int *length) {
@@ -362,7 +423,7 @@ void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *n
       printf("idx1 %d   idx2   %d  \n", idx1,idx2);  // Rprintf("Mx: %f  My: %f  \n",Mx,My);
   #endif
   int idx,i=0;
-  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n"); 
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("getscan: SCANBUF too small ! (req %d)\n",(idx2 -idx1)); 
   for (idx=idx1;idx <= idx2; idx++) 
   {
     pscanbufmz[i]   = pmz[idx-1];
@@ -377,7 +438,7 @@ void getScan(int scan, double *pmz, double *pintensity, int *pscanindex,int nmz,
   idx1 =  pscanindex[scan -1] +1;
   
   if (scan == lastScan)  idx2 =  nmz-1;   else   idx2 =  pscanindex[scan];
-  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n");
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("getScan: SCANBUF too small ! (req %d) \n",(idx2 -idx1));
   
   for (idx=idx1;idx <= idx2; idx++) 
   {
@@ -399,8 +460,6 @@ double getScanEIC(int scan, double from, double to, double *pmz, double *pintens
     
   int idx1b = lowerBound(from, pmz, idx1-1, idx2-idx1); 
   int idx2b = upperBound(to, pmz, idx1b, idx2-idx1b+1);  
-    
-  //printf("idx1 %d idx2 %d idx1b %d idx2b %d \n",idx1,idx2,idx1b,idx2b);  
     
   for (idx=idx1b;idx <= idx2b; idx++) 
   {
@@ -454,9 +513,9 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   return(reslist);
 }
 
-SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP debug) {
+SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP debug) {
   double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
-  int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ctScan,nmz,lastScan, idebug;
+  int i,*pscanindex, *p_scan, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, minimumIntValues, minimumInt, idebug;
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
   SEXP peaklist,entrylist,vscan,vmz,vint,list_names;
      
@@ -466,9 +525,11 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
   pscanindex = INTEGER(scanindex);
   lastScan = INTEGER(lastscan)[0];
   idebug = INTEGER(debug)[0];
+  minimumIntValues=INTEGER(prefilter)[0];
+  minimumInt=INTEGER(prefilter)[1];
   
-  pickOptions.dev = REAL(dev)[0];                         // 140e-6;
-  pickOptions.minEntries = INTEGER(minEntries)[0];        //4;   
+  pickOptions.dev = REAL(dev)[0];
+  pickOptions.minEntries = INTEGER(minEntries)[0];
   massrangeFrom = REAL(massrange)[0];  
   massrangeTo =  REAL(massrange)[1];  
   scanrangeFrom = INTEGER(scanrange)[0];
@@ -502,10 +563,10 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
       if (idebug == TRUE) 
           printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z boxes, %d boxes found.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
       insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
-      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,idebug);
+      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug);
     }
   }
-  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,idebug); 
+  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug); 
   
   PROTECT(peaklist = allocVector(VECSXP, peakbuf.PeaksInBuf));
   int total = 0;
@@ -553,8 +614,9 @@ SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP s
      total++;
     }
   }
-  if (scerr > 0) printf("Warning: There were %d peak data insertion problems. \n The reason might be missing/bad centroidisation or wrong parameter settings (\"dev\" too high?).\n", scerr);
-  printf(" %d m/z boxes.\n", total);
+  if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"dev\" parameter.\n", scerr);
+  
+  Rprintf(" %d m/z ROI's.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
   return(peaklist);
