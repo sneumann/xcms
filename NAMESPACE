@@ -30,7 +30,6 @@ exportMethods(
               "cdfpaths<-",
               "diffreport",
               "fillPeaks",
-              "findMZBoxes",
               "findPeaks.centWave",
               "findPeaks.matchedFilter",
               "findPeaks.MSW",
