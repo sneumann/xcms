@@ -1,4 +1,7 @@
-2008-??-??
+2008-04-14: 1.11.20
+More straightforward API for findPeaks.centWave, much less parameters are needed
+    CAVE: peak width range (in seconds) is used instead of scale range
+    CAVE: ppm instead of dev parameter
 Added ... to diffreport to pass optional parameters to mt.teststat
 Added value = c("into","maxo","intb") parameter to diffreport
 Added warning if non-unique scantimes are detected to xcmsRaw()

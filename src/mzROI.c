@@ -517,6 +517,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
   int i,*pscanindex, *p_scan, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, minimumIntValues, minimumInt, idebug;
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
+  int perc, lp = -1;
   SEXP peaklist,entrylist,vscan,vmz,vint,list_names;
      
   pmz = REAL(mz);  
@@ -555,8 +556,16 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   for(i = 0; i < 3; i++)
     SET_STRING_ELT(list_names, i,  mkChar(names[i])); 
    
+  Rprintf(" %% finished: ");
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
+     perc = (int) (ctScan* 100)/scanrangeTo;
+     if ((perc % 10) == 0 && (perc != lp)) 
+     { 
+       Rprintf("%d ",perc);
+       lp = perc; 
+     }
+        
     getScan(ctScan, pmz, pintensity, pscanindex,nmz,lastScan, &scanbuf);
     if (scanbuf.length > 0) 
     {
@@ -565,6 +574,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
       insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
       cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug);
     }
+    R_FlushConsole();
   }
   cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug); 
   
@@ -616,7 +626,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   }
   if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"dev\" parameter.\n", scerr);
   
-  Rprintf(" %d m/z ROI's.\n", total);
+  Rprintf("\n %d m/z ROI's.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
   return(peaklist);
