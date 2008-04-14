@@ -125,10 +125,12 @@ setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
-    points <- cbind(object@scantime, object@tic)
+    if (all(object@tic == 0))
+        points <- cbind(object@scantime, rawEIC(object,massrange=range(object@env$mz))$intensity)  else
+        points <- cbind(object@scantime, object@tic)
+        
     plot(points, type="l", main="TIC Chromatogram", xlab="Seconds", 
          ylab="Intensity")
-    
     
     if (ident) {
         idx <- integer(0)

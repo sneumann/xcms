@@ -18,6 +18,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
         files <- list.files(pattern = filepattern, recursive = TRUE)
+        
+    if (length(files) == 0) 
+        stop("No NetCDF/mzXML/mzData files were found.\n")  
+        
     cdfpaths(object) <- file.path(getwd(), files)
     # Check to see whether the absolute path names work
     for (file in cdfpaths(object))
