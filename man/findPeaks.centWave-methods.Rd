@@ -20,14 +20,13 @@
   This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase of the method mass traces (characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
   In the second phase these mass traces are further analysed. 
   Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales. 
-  
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
   \item{ppm}{maxmial tolerated m/z deviation in consecutive scans, in ppm (parts per million)}
   \item{peakwidth}{Chromatographic peak width, given as range (min,max) in seconds}
   \item{snthresh}{signal to noise ratio cutoff}
-  \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity \ge \code{I}.}
+  \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
   
   \item{integrate}{
     Integration method. If \code{=1} peak limits are found through descent on the mexican hat filtered data, if \code{=2} the descent is done on the real data. Method 2 is very accurate but prone to noise, while method 1 is more robust to noise but less exact.
@@ -82,8 +81,8 @@
   \item{}{
       if \code{verbose.columns} is \code{TRUE} additionally :
   }
-  \item{mu}{Gauss parameter \mu}
-  \item{sigma}{Gauss parameter \sigma}
+  \item{mu}{Gauss parameter mu}
+  \item{sigma}{Gauss parameter sigma}
   \item{h}{Gauss parameter h}
   \item{f}{number of m/z ROI where the peak was localised}
   \item{dppm}{m/z deviation of mass trace in ppm}
