@@ -511,30 +511,41 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length(object@scantime)),
-                                        minEntries=5, dev=25e-6, snthresh=20, prefilter=c(3,50), minPeakWidth=7, noiserange=c(minPeakWidth*3,minPeakWidth*6),
-                                        scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5, minPtsAboveBaseLine=4, scRangeTol=2,        maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.001, 
-                                        rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
-                                        integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE) 
-{
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=20,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                       fitgauss=FALSE, scanrange= c(1, length(object@scantime)),                                                             sleep=0, verbose.columns=FALSE) {
     if (!isCentroided(object))
-        warning("It looks like this data is not in centroid mode. centWave can process only centroid data !\n")
+        warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
         
+    ## Peak width: seconds to scales   
+    scalerange <- round((peakwidth / mean(diff(object@scantime))) / 2)
+    if (length(scalerange) > 1)
+        scales <- seq(from=scalerange[1], to=scalerange[2], by=2)  else  
+            scales <- scalerange;   
+    
+    dev <- ppm * 1e-6;
+    minPeakWidth <-  scales[1];
+    noiserange <- c(minPeakWidth*3, max(scales)*3);
+    maxGaussOverlap <- 0.5;
+    minPtsAboveBaseLine <- max(5,minPeakWidth-2);
+    minCentroids <- minPtsAboveBaseLine ;
+    scRangeTol <-  maxDescOutlier <- floor(minPeakWidth/2);
+    
     peaklist <- list()
-    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minEntries=minEntries, prefilter=prefilter)
+    cat("\n Detecting mass traces at",ppm,"ppm ... \n"); flush.console();
+    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minCentroids=minCentroids, prefilter=prefilter)
     scantime <- object@scantime 
     Nscantime <- length(scantime)
     lf <- length(featlist)
-    cat('\n Searching for peaks... \n % finished: '); lp <- -1;
+    cat('\n Detecting chromatographic peaks ... \n % finished: '); lp <- -1;
     
     for (f in  1:lf) { 
       
       ## Show progress
       perc <- round((f/lf) * 100)
       if ((perc %% 10 == 0) && (perc != lp)) 
-        { cat(perc,' ');
-          lp <- perc 
-        }
+      { 
+        cat(perc," ",sep=""); 
+        lp <- perc; 
+      }
       flush.console()
       
       feat <- featlist[[f]]
@@ -631,8 +642,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                               mz.int <- od[p1:p2]     
                               mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
                               mzrange <- range(mz.value)
-                              if (length(mz.value) >= (minEntries+1))
-                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minEntries))) else
+                              if (length(mz.value) >= (minCentroids+1))
+                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minCentroids))) else
                                     dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
@@ -645,7 +656,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                                   NA,                         ## Gaussian RMSE
                                   NA,NA,NA,                   ## Gaussian Parameters
                                   f,                          ## ROI Position
-                                  dppm,                       ## max. difference between the [minEntries] peaks in ppm
+                                  dppm,                       ## max. difference between the [minCentroids] peaks in ppm
                                   best.scale,                 ## Scale
                                   td[best.scale.pos], td[lwpos], td[rwpos],
                                                               ## Peak positions guessed from the wavelet's (scan nr)
@@ -662,7 +673,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
             ##  postprocessing   
             if (!is.null(peaks)) {
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn","snb")
-                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
+                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax")
                    
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")   
                    
@@ -683,7 +694,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
                   
                   db <-  d[lm[1]:lm[2]] - baseline
                   peaks[p,"intb"] <- pwid*sum(db[db>0])
-                  peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
+                 # peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
                   
                   if (fitgauss) {
                       ## perform gaussian fits, use wavelets for inital parameters
@@ -751,7 +762,6 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
       if (!is.null(peaks)) peaklist[[length(peaklist)+1]] <- peaks
       
     } # f 
-    cat('\n')
     
     p <- do.call("rbind",peaklist)
     
@@ -760,9 +770,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, scanrange=c(1,length
     
     uorder <- order(p[,"into"], decreasing=TRUE)
     pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE])
-    uindex <- rectUnique(pm,uorder,mzdiff,rtdiff)
+    uindex <- rectUnique(pm,uorder,mzdiff)
     pr <- p[uindex,,drop=FALSE]
-    cat(dim(p)[1],' Peaks  -- rectUnique(',mzdiff,',',rtdiff,') -->  ', dim(pr)[1],' Peaks.\n',sep='')
+    cat("\n",dim(pr)[1]," Peaks.\n")
 
     invisible(pr) 
 })
@@ -1165,7 +1175,7 @@ setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(ob
 
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
 
-setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minEntries, prefilter, debug=0){
+setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter, debug=0){
   
   scanrange[1] <- max(1,scanrange[1])
   scanrange[2] <- min(length(object@scantime),scanrange[2])
@@ -1177,7 +1187,7 @@ setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanran
   
   .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(massrange),
   as.integer(scanrange), as.integer(length(object@scantime)),
-  as.double(dev), as.integer(minEntries), as.integer(prefilter), as.integer(debug), PACKAGE ='xcms' )
+  as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(debug), PACKAGE ='xcms' )
 })
 
 
