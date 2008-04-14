@@ -1,4 +1,6 @@
 2008-04-14: 1.11.20
+Fixed : plotTIC won't work if object@tic slot is empty
+xcmsSet() now gives an error message if no data files were found
 More straightforward API for findPeaks.centWave, much less parameters are needed
     CAVE: peak width range (in seconds) is used instead of scale range
     CAVE: ppm instead of dev parameter
