@@ -660,9 +660,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                   f,                          ## ROI Position
                                   dppm,                       ## max. difference between the [minCentroids] peaks in ppm
                                   best.scale,                 ## Scale
-                                  td[best.scale.pos], td[lwpos], td[rwpos],
+                                  td[best.scale.pos], td[lwpos], td[rwpos] ))
                                                               ## Peak positions guessed from the wavelet's (scan nr)
-                                  NA,NA ))                    ## Peak limits (scan nr)
                                   
                               peakinfo <- rbind(peakinfo,c(best.scale, best.scale.nr, best.scale.pos, lwpos, rwpos))  ## Peak positions guessed from the wavelet's 
                           }
