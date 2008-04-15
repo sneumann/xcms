@@ -123,7 +123,7 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xstart),
        as.double(xend),
        as.integer(num),
-       out = doubleMatrix(num, length(zidx)),
+       out = double(num),
        DUP = FALSE, PACKAGE = "xcms")$out
 }
 
