@@ -585,14 +585,14 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
         ## Final baseline & Noise estimate
         baseline <- max(1,min(lnoise[1],noise))
         sdnoise <- max(1,lnoise[2])
-        sdnoise10 <-  sdnoise * 10^(snthresh/20) 
+        sdthr <-  sdnoise * snthresh
             
         ## is there any data above S/N * threshold ?
      
-        if (any(fd - baseline >= sdnoise10 )) { 
+        if (any(fd - baseline >= sdthr)) { 
          
             wCoefs <- MSW.cwt(d, scales=scales, wavelet='mexh')
-            if (!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdnoise10)) { 
+            if (!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)) { 
                 if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
                     wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs)-1,] * 0.99
                 localMax <- MSW.getLocalMaximumCWT(wCoefs) 
@@ -600,7 +600,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                 wpeaks <- sapply(rL, 
                     function(x) { 
                         w <- min(1:length(x),ncol(wCoefs))
-                        any(wCoefs[x,w]- baseline >= sdnoise10)
+                        any(wCoefs[x,w]- baseline >= sdthr)
                     })
                 if (any(wpeaks)) {
                     wpeaksidx <- which(wpeaks) 
@@ -612,7 +612,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                         dv <- td[pp] %in% ftd 
                         if (any(dv)) { ## peaks in orig. data range
                           ## Final S/N check
-                          if (any(d[pp[dv]]- baseline >= sdnoise10)) {  
+                          if (any(d[pp[dv]]- baseline >= sdthr)) {  
                               ## try to decide which scale describes the peak best 
                               inti <- numeric(length(opp))
                               irange = rep(ceiling(scales[1]/2),length(opp))
@@ -653,15 +653,13 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                   NA,                         ## intensity (sum)
                                   NA,                         ## intensity (-bl)
                                   maxint,                     ## max intensity
-                                   round(20 * log10( (maxint - baseline) / sdnoise)),  ##  S/N Ratio
-                                   (maxint - baseline) / (5*sdnoise),    ##  S/N Ratio, acc. to Bruker's def.
+                                  round((maxint - baseline) / sdnoise),  ##  S/N Ratio
                                   NA,                         ## Gaussian RMSE
                                   NA,NA,NA,                   ## Gaussian Parameters
                                   f,                          ## ROI Position
                                   dppm,                       ## max. difference between the [minCentroids] peaks in ppm
                                   best.scale,                 ## Scale
-                                  td[best.scale.pos], td[lwpos], td[rwpos] ))
-                                                              ## Peak positions guessed from the wavelet's (scan nr)
+                                  td[best.scale.pos], td[lwpos], td[rwpos] ))  ## Peak positions guessed from the wavelet's (scan nr)
                                   
                               peakinfo <- rbind(peakinfo,c(best.scale, best.scale.nr, best.scale.pos, lwpos, rwpos))  ## Peak positions guessed from the wavelet's 
                           }
@@ -673,7 +671,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     
             ##  postprocessing   
             if (!is.null(peaks)) {
-                basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn","snb")
+                basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
                 colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax")
                    
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")   
@@ -771,7 +769,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     
     uorder <- order(p[,"into"], decreasing=TRUE)
     pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE])
-    uindex <- rectUnique(pm,uorder,mzdiff)
+    uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks
     pr <- p[uindex,,drop=FALSE]
     cat("\n",dim(pr)[1]," Peaks.\n")
 
