@@ -25,7 +25,7 @@
   \item{object}{\code{xcmsSet} object}
   \item{ppm}{maxmial tolerated m/z deviation in consecutive scans, in ppm (parts per million)}
   \item{peakwidth}{Chromatographic peak width, given as range (min,max) in seconds}
-  \item{snthresh}{signal to noise ratio cutoff, S/N is defined as \code{(maxint-baseline)/sd}, where \code{sd} is the standard deviation of local chromatographic noise.}
+  \item{snthresh}{signal to noise ratio cutoff, definition see below.}
   \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
   
   \item{integrate}{
