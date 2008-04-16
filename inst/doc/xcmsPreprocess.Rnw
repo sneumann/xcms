@@ -223,15 +223,13 @@ than peak identification and is generally not recommended as such.
 \textbf{findPeaks.centWave} \\
 The method \Rmethod{findPeaks.centWave} follows a different
 approach.   This algorithm is most suitable for high resolution 
-LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. If your machine software or converter does 
-not support the export of peak centroids, tools like the \emph{TOPP-PeakPicker} 
-can be used for preprocessing \footnote{\url{http://www.openms.de}}. 
+LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. 
 Due to the fact that peak centroids are used, a binning step is not necessary.
 
 In the first phase of the method mass traces (characterised as regions with less than \Rfunarg{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
 In the second phase these mass traces are further analysed. 
 Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales. 
-Accordingly, two parameters have to be adjusted. The \Rfunarg{ppm} parameter has to be set according to the machine accuracy, e.g. \Rfunarg{ppm=25}. The peak width range (\Rfunarg{peakwidth=c(min,max)}) has to be set according to the chromatographic peak width range, e.g. \Rfunarg{peakwidth=c(20,50)} seconds for HPLC and \Rfunarg{peakwidth=c(5,12)} seconds for UPLC chromatography. } . 
+Accordingly, two parameters have to be adjusted. The \Rfunarg{ppm} parameter has to be set according to the machine accuracy, e.g. \Rfunarg{ppm=25}. The peak width range (\Rfunarg{peakwidth=c(min,max)}) has to be set according to the chromatographic peak width range, e.g. \Rfunarg{peakwidth=c(20,50)} seconds for HPLC and \Rfunarg{peakwidth=c(5,12)} seconds for UPLC chromatography.  
 
 The method is capable of detecting close-by-peaks and also overlapping
 peaks. Some efforts are made to detect the exact peak boundaries to get
