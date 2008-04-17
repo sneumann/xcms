@@ -513,7 +513,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=20,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                       fitgauss=FALSE, scanrange= c(1, length(object@scantime)),                                                             sleep=0, verbose.columns=FALSE) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                       fitgauss=FALSE, scanrange= c(1, length(object@scantime)),                                                             sleep=0, verbose.columns=FALSE) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
         

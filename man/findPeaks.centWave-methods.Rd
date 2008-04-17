@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=20,
+    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
     prefilter=c(3,100), integrate=1, mzdiff=-0.001, fitgauss=FALSE,
     scanrange= c(1, length(object@scantime)), sleep=0, verbose.columns=FALSE)
   }
@@ -36,7 +36,7 @@
     times, can be negative to allow overlap
   }
   \item{fitgauss}{
-    logical, if TRUE a gaussian is fitted to each peak
+    logical, if TRUE a Gaussian is fitted to each peak
   }
   \item{scanrange}{scan range to process}
   \item{sleep}{
@@ -53,10 +53,10 @@
     weighted (by intensity) mean of peak m/z across scans
   }
   \item{mzmin}{
-    m/z of minimum step
+    m/z peak minimum
   }
   \item{mzmax}{
-    m/z of maximum step
+    m/z peak maximum 
   }
   \item{rt}{
     retention time of peak midpoint
@@ -86,11 +86,11 @@
   \item{}{
       if \code{verbose.columns} is \code{TRUE} additionally :
   }
-  \item{mu}{Gauss parameter mu}
-  \item{sigma}{Gauss parameter sigma}
-  \item{h}{Gauss parameter h}
-  \item{f}{number of m/z ROI where the peak was localised}
-  \item{dppm}{m/z deviation of mass trace in ppm}
+  \item{mu}{Gaussian parameter mu}
+  \item{sigma}{Gaussian parameter sigma}
+  \item{h}{Gaussian parameter h}
+  \item{f}{Region number of m/z ROI where the peak was localised}
+  \item{dppm}{m/z deviation of mass trace across scans in ppm}
   \item{scale}{Scale on which the peak was localised}
   \item{scpos}{Peak position found by wavelet analysis}
   \item{scmin}{Left peak limit found by wavelet analysis (scan number)}
