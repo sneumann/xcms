@@ -659,7 +659,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                   f,                          ## ROI Position
                                   dppm,                       ## max. difference between the [minCentroids] peaks in ppm
                                   best.scale,                 ## Scale
-                                  td[best.scale.pos], td[lwpos], td[rwpos] ))  ## Peak positions guessed from the wavelet's (scan nr)
+                                  td[best.scale.pos], td[lwpos], td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
+                                  NA,NA ))                    ## Peak limits (scan nr)
                                   
                               peakinfo <- rbind(peakinfo,c(best.scale, best.scale.nr, best.scale.pos, lwpos, rwpos))  ## Peak positions guessed from the wavelet's 
                           }
@@ -672,7 +673,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             ##  postprocessing   
             if (!is.null(peaks)) {
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
-                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax")
+                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
                    
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")   
                    
@@ -693,7 +694,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                   
                   db <-  d[lm[1]:lm[2]] - baseline
                   peaks[p,"intb"] <- pwid*sum(db[db>0])
-                 # peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
+                  peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2]; 
                   
                   if (fitgauss) {
                       ## perform gaussian fits, use wavelets for inital parameters
