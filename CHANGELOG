@@ -17,6 +17,7 @@ Added prefilter option to findmzROI
 Speedup for findmzROI
 Renamed findMZBoxes to findmzROI
 Removed findMZBoxes from NAMESPACE
+Fixed plotScan() for "last" spectrum, catch out-of-bounds arguments
 
 2008-04-02: 1.11.19
 Import xcms from BioC 2.1
