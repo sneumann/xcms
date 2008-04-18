@@ -319,7 +319,7 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 setGeneric("group", function(object, ...) standardGeneric("group"))
 
 setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
-                                       mzwid = 0.25, max = 5, sleep = 0) {
+                                       mzwid = 0.25, max = 50, sleep = 0) {
 
     samples <- sampnames(object)
     classlabel <- sampclass(object)

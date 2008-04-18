@@ -1,4 +1,5 @@
-2008-04-14: 1.11.20
+2008-04-18: 1.11.20
+Increased "max" parameter of group() from 5 to 50
 Fixed : plotTIC won't work if object@tic slot is empty
 xcmsSet() now gives an error message if no data files were found
 More straightforward API for findPeaks.centWave, much less parameters are needed
