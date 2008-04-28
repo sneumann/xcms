@@ -26,7 +26,7 @@
      'get.ridge', 'identify.majorPeaks' and tuneIn.peakInfo.
 }
 \arguments{
-  \item{object}{\code{xcmsSet} object}
+  \item{object}{\code{xcmsRaw} object}
   \item{snthresh}{signal to noise ratio cutoff}
 
   \item{scales}{scales of CWT}
