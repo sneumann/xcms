@@ -17,11 +17,11 @@ rampIsFile <- function(filename) {
     #   as.character(filename),
     #   isfile = logical(1),
     #   PACKAGE = "xcms")$isfile
-    
+
     if (!file.exists(filename))
         return(FALSE)
     text <- readChar(filename, 1024)
-    
+
     length(text) > 0
 }
 
@@ -32,10 +32,10 @@ rampOpen <- function(filename) {
                  rampid = integer(1),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
         return(result$status)
-    
+
     return(result$rampid)
 }
 
@@ -59,10 +59,10 @@ rampNumScans <- function(rampid) {
                  numscans = integer(1),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
         return(NA)
-    
+
     return(result$numscans)
 }
 
@@ -89,20 +89,54 @@ rampSIPeaks <- function(rampid, seqNum, peaksCount) {
 rampRawData <- function(rampid) {
 
     scanHeaders <- rampScanHeaders(rampid)
-    
+
     # Some of these checks work around buggy RAMP indexing code
     scans <- scanHeaders$msLevel == 1 & scanHeaders$seqNum > 0 &
              !duplicated(scanHeaders$acquisitionNum) &
              scanHeaders$peaksCount > 0
     if ("Full" %in% levels(scanHeaders$scanType))
         scans <- scans & scanHeaders$scanType == "Full"
-    
+
     scans <- which(scans)
-    
+
     sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
-    
-    return(list(rt = scanHeaders$retentionTime[scans], 
-                tic = scanHeaders$totIonCurrent[scans], 
+
+    return(list(rt = scanHeaders$retentionTime[scans],
+                acquisitionNum = scanHeaders$acquisitionNum[scans],
+                tic = scanHeaders$totIonCurrent[scans],
                 scanindex = sipeaks$scanindex, mz = sipeaks$mz,
                 intensity = sipeaks$intensity))
+}
+
+rampRawDataMSn <- function(rampid) {
+
+    # Check if we have MSn at all
+    scanHeaders <- rampScanHeaders(rampid)
+    if (max(scanHeaders[,"msLevel"]) < 2) {
+        warning("MSn spectra requested but not found")
+        return (NULL);
+    }
+
+    # Some of these checks work around buggy RAMP indexing code
+    scans <- ( scanHeaders$msLevel >= 2 & scanHeaders$seqNum > 0
+              & !duplicated(scanHeaders$acquisitionNum)
+              & scanHeaders$peaksCount > 0)
+
+    scans <- which(scans)
+
+    sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
+
+    retdata <- list(rt = scanHeaders$retentionTime[scans],
+                    acquisitionNum = scanHeaders$acquisitionNum[scans],
+                    precursorNum=scanHeaders$precursorScanNum[scans],
+                    precursorMZ = scanHeaders$precursorMZ[scans],
+                    precursorIntensity = scanHeaders$precursorIntensity[scans],
+                    peaksCount=scanHeaders$peaksCount[scans],
+                    msLevel = scanHeaders$msLevel[scans],
+                    precursorCharge = scanHeaders$precursorCharge[scans],
+                    scanindex = sipeaks$scanindex, collisionEnergy = scanHeaders$collisionEnergy[scans],
+                    mz = sipeaks$mz,
+                    intensity =sipeaks$intensity);
+
+    return(retdata)
 }

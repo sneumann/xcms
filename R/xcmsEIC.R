@@ -74,9 +74,9 @@ plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x
        sampleidx <- names(object@eic)[sampleidx]
     sampidx <- match(sampleidx, names(object@eic))
 
-    if (length(rtrange) == 1)
+    if (length(rtrange) == 1) {
         rtrange <- retexp(object@rtrange, rtrange)
-    else if (length(rtrange) < length(object@rtrange)) {
+    } else if (length(rtrange) < length(object@rtrange)) {
         tmprtrange <- matrix(rtrange, ncol = 2)
         rtrange <- matrix(nrow = nrow(object@rtrange), ncol = 2)
         rtrange[sampidx,] <- matrix(rep(t(tmprtrange),

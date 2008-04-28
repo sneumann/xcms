@@ -5,8 +5,7 @@
 \alias{findPeaks,xcmsRaw-method}
 \title{Feature detection for GC/MS and LC/MS Data - methods}
 \description{
-  A number of peak pickers exist in XCMS. \code{findPeaks}
-  is the generic method.
+ 
 }
 \section{Methods}{
 \describe{
