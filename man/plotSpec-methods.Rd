@@ -3,7 +3,6 @@
 %\alias{plotSpec-methods}
 \alias{plotSpec}
 \alias{plotSpec,xcmsRaw-method}
-\alias{plotSpec,xcmsProfile-method}
 \title{Plot mass spectra from the profile matrix}
 \description{
   Uses the pre-generated profile mode matrix to plot mass spectra
@@ -14,12 +13,9 @@
 \item{object = "xcmsRaw"}{
   \code{plotSpec(object, ident = FALSE, vline = numeric(0), ...)}
 }
-\item{object = "xcmsProfile"}{
-  \code{plotSpec(object, ident = FALSE, vline = numeric(0), ...)}
-}
 }}
 \arguments{
-  \item{object}{the \code{xcmsRaw} or \code{xcmsProfile} object}
+  \item{object}{the \code{xcmsRaw} object}
   \item{ident}{logical, use mouse to identify and label peaks}
   \item{vline}{numeric vector with locations of vertical lines}
   \item{...}{arguments passed to \code{\link{profRange}}}
@@ -30,7 +26,7 @@
   with the plotted points.
 }
 \seealso{
-  \code{\link{xcmsRaw-class}}, \code{\link{xcmsProfile-class}}
+  \code{\link{xcmsRaw-class}}
 }
 \keyword{methods}
 \keyword{hplot}

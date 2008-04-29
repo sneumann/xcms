@@ -3,9 +3,12 @@
 \alias{findPeaks.matchedFilter}
 \alias{findPeaks.matchedFilter,xcmsRaw-method}
 \title{Feature detection in the chromatographic time domain}
+
 \description{
-  
+  Find peaks in extracted the chromatographic time domain of the profile
+  matrix.
 }
+
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
