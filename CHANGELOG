@@ -1,114 +1,67 @@
+2008-04-29: 1.11.22
+Revert yesterdays change, and bring back 1.11.20 with a version bump 
+to avoid inconsistencies
+
 2008-04-28:
 Resurrection of 1.11.18 as 1.11.21
 
-2008-04-11: 
-Final commit as 1.11.18 as announced on 
-http://groups.google.com/group/xcms-devel/browse_thread/thread/bd8e6e19303b0cb2
-Well be resurrected on 2008-04-29 as 1.13.1
+2008-04-18: 1.11.20
+Increased "max" parameter of group() from 5 to 50
+Fixed : plotTIC won't work if object@tic slot is empty
+xcmsSet() now gives an error message if no data files were found
+More straightforward API for findPeaks.centWave, much less parameters are needed
+    CAVE: peak width range (in seconds) is used instead of scale range
+    CAVE: ppm instead of dev parameter
+Added ... to diffreport to pass optional parameters to mt.teststat
+Added value = c("into","maxo","intb") parameter to diffreport
+Added warning if non-unique scantimes are detected to xcmsRaw()
+rawEIC() verifies the scanrange  
+findPeaks.centWave generates a warning if data seems to be not in centroid mode
+Added method isCentroided()
+Added prefilter option to findPeaks.centWave
+Fixed bug in centWave/fitGauss
+Added prefilter option to findmzROI
+Speedup for findmzROI
+Renamed findMZBoxes to findmzROI
+Removed findMZBoxes from NAMESPACE
+Fixed plotScan() for "last" spectrum, catch out-of-bounds arguments
 
-2008-04-08:
-Move mzClust helper functions into own file
-mzClustGeneric can now align arbitrary matrices/spectra, 
-not just within xcmsSet.
+2008-04-02: 1.11.19
+Import xcms from BioC 2.1
 
-2008-04-02:
+2008-04-02: 1.10.8
 Fix duplicate setGeneric() which fails on R-2.7a
 Fix BinLinBase which had an uninitialised argument in .Call()
+Provide clean base for pulling 1.10.8 into 1.11.19
 
-2008-03-14: 
-xcmsFragments cleanup and documentation, 
-now causing fewer R CMD check warnings
-added Rgraphviz to suggests, for MSn tree Plotting
-
-2008-03-12: 
-removed warning() in findPeaks.MS1() which caused a memory explosion ;-)
-
-2008-02-25: 1.11.15
-added fillPeaks.mean
-findPeaks.centWave: generates a warning if data seems to be not in centroid mode 
-remove global variables in .group.mzClust
-fix sampclass if all directories are "redundant"
-
-several small fixes towards Pipelining
+2008-01-24: 1.10.7
 Fix in plot(eic) for xcmsEIC with absent groups
 
-2008-01-15: 1.11.13
-added xcmsFragments Class for handling of Tandem MS / MS^n
-renamed hra_clust stuff to mzClust
-
-2008-01-15: 1.11.13
-Revised pipeline framework. Documentation forthcoming.
-Added hra_clust for m/z alignment to xcmsSet
-Added getMsnScan to xcmsRaw for Tandem MS / Ion Trap data
-
-2007-12-28: 1.11.12
-findPeaks.centWave: speedup for m/z ROI search
-
-2007-12-07: 1.11.11
-xcmsSet.R: Initial import of single-Spectra Alignment group.mzAlign
-xcmsPipeline.R:perform(): Fixed handling of character parameters in xcmsPipeline
-xcmsSet(): Fixed a typo in mzData Filepattern
-utils.R:uncapitalize(): No CamelCaps for all-caps e.g. ABBRV
-
-2007-12-06: 1.11.10
-Fixed a bug in findPeaks.centWave: NaN was assigned as peak intensity in some rare cases
-
-2007-12-05: 1.11.9
-Added mzData precursorIntensity parsing
-Passing more MSn related slots to xcmsRaw
-Added findPeaks.MS1(), which simply returns Peaks reported as precursorIon 
-
-2007-12-01: 1.11.9
-Pass further parameters down to findPeaks-MSW
-Moved Meta-Data for MSn to xcmsRaw object and changed MSn to all-vectors 
-	
-2007-11-21: 1.11.9
-enhanced xcmsRaw() to read MSn spectra
-Fixed a typo in protocol code
-
-2007-11-13: 1.10.6 & 1.11.8
+2007-11-13: 1.10.6
 Removed unnecessary use of data.frame in findPeaks.centWave(), this fixes
 a long delay when large peaklists are generated
 
-2007-11-12: 1.10.5 & 1.11.7
+2007-11-12: 1.10.5
 Increased buffer size in findMZBoxes() to catch a rare bug
 
-2007-11-08: 1.10.4 & 1.11.6
+2007-11-07: 1.10.4
 Standardised peak area calculation by introducing scan-distance multiplier to findPeaks.centWave()
 
-2007-11-07: 1.10.3 & 1.11.5
+2007-11-07: 1.10.3
 Fixed a serious fillPeaks() bug introduced in version 1.9.5, which caused it to
 silently fill in zero intensities for almost every missing peak
 
-2007-11-01: 1.10.2 & 1.11.4
+2007-11-01: 1.10.2
 Fixed bug in findPeaks.centWave() buffer initialisation (mzboxes.c)
-Added check in findPeaks.matchedFilter() for not picking filter artefacts
+Added check in findPeaks.matchedFilter() for not picking filter artefacts 
 
-2007-10-24: 1.11.3
-Add generics for provides/requires for protocol dependency checking. 
-This was inspired by the init script system for Gentoo Linux. Add 
-Summarize step to pipeline, which is responsible for reducing a 
-component (a set of peaks) to a single quantity. 
-
-Add protocol types for profile filtering, component finding, grouping, 
-retention time correction, peak filling, normalization and 
-identification. The median is used as the default profile filter. 
-Baseline subtraction is supported through a wrapper "subtract" protocol 
-that subtracts a filter result from the original matrix.
-
-2007-10-09: 1.10.1 & 1.11.2
+2007-10-09: 1.10.1
 Added error when xcmsRaw objects are read that have non-monotonic stantimes
 Added warning when retcor() is probably overcorrecting
 Fixed a bounds checking bug in specPeaks()
 
-2007-10-07: 1.11.1
-Add xcmsPipeline framework, make naming of range parameters
-consistent, add rawMat() method for generating a "raw"
-(time,mz,intensity) matrix and allow a matrix (multiple factors) in
-experimental design.
-
-2007-10-07: 1.10.0 & 1.11.0
-Bioconductor release 2.1 and development branch 2.2
+2007-10-08: 1.10.0
+Bioconductor release 2.1
 
 2007-09-17: 1.9.6
 rawEIC uses binary search

@@ -11,7 +11,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{getPeaks(object, peakrange, step = 0.1, pipeline = new("xcmsPipelineProfile"))}
+  \code{getPeaks(object, peakrange, step = 0.1)}
 }
 }}
 \arguments{
@@ -21,13 +21,6 @@
     \code{rtmin}, \code{rtmax} (they must be in that order or named)
   }
   \item{step}{step size to use for profile generation}
-  \item{pipeline}{an \code{\linkS4class{xcmsPipeline}} for producing a
-    profile matrix. In the canonical workflow, this would usually come from an
-    \code{\linkS4class{xcmsProfile}} object. The \code{step} parameter
-    above will override the corresponding parameter in the pipeline. If
-    \code{pipeline} is omitted, the \code{object} is searched for a
-    profile generation pipeline. If not found, a
-    default pipeline is constructed.}
 }
 \value{
   A matrix with columns:
