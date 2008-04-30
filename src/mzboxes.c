@@ -15,12 +15,12 @@
 #undef FALSE
 #define FALSE    0
 
-#define SIZE_PEAKBUFS 350000   // max. # of "short" boxes
+#define SIZE_PEAKBUFS 200000   // max. # of "short" boxes
 #define SIZE_PEAKBUFL 5000    // max. # of "long" boxes
 #define DIM_PEAKBUFS 50       // max length of "short" boxes
-#define DIM_PEAKBUFL 3500     // max length of "long" boxes = max number of spectra
-#define DIM_MZBUF    25000     // max # m/z values to hold
-#define DIM_SCANBUF 15000      // max # m/z values per scan
+#define DIM_PEAKBUFL 2500     // max length of "long" boxes = max number of spectra
+#define DIM_MZBUF    10000     // max # m/z values to hold
+#define DIM_SCANBUF 10000      // max # m/z values per scan
 
 #define UNDEF_BUF      0
 #define INVALID_PT    -1
@@ -51,7 +51,7 @@ struct peakbufStruct {
   bufnrType lnum  [SIZE_PEAKBUFL]; // actually used length of each buffer
   int       lscan [SIZE_PEAKBUFL][DIM_PEAKBUFL];
   RAMPREAL  lmz   [SIZE_PEAKBUFL][DIM_PEAKBUFL];
-  RAMPREAL  lint  [SIZE_PEAKBUFL][DIM_PEAKBUFL];
+  RAMPREAL        lint  [SIZE_PEAKBUFL][DIM_PEAKBUFL];
   
   int             PeaksInBuf;
   unsigned char   freelists [SIZE_PEAKBUFS];
@@ -190,7 +190,7 @@ bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
     while((peakbuf->freelists[pos] == FALSE) && pos < SIZE_PEAKBUFS) 
       pos++;
     if (pos >= SIZE_PEAKBUFS-1) 
-       error("SIZE_PEAKBUFS too small ! \n");
+       error("SIZE_PEAKBUFS too small ! \n"); 
     peakbuf->LastFreeS = pos;
   } 
   else
@@ -200,7 +200,7 @@ bufnrType getFreeBufPos(const int which_buf, struct peakbufStruct *peakbuf){
     while((peakbuf->freelistl[pos] == FALSE) && pos < SIZE_PEAKBUFL) 
       pos++;
     if (pos >= SIZE_PEAKBUFL-1) 
-        error("SIZE_PEAKBUFL too small ! \n"); 
+       error("SIZE_PEAKBUFL too small ! \n");
     peakbuf->LastFreeL = pos;
   }
   
@@ -253,8 +253,7 @@ void insertpeak(const RAMPREAL fMass, const RAMPREAL fInten,const int scan, stru
               peakbuf->smz[bnr][num] =  fMass;
               peakbuf->sscan[bnr][num] = scan;
               peakbuf->snum[bnr]++;
-              for (j=0,mzmean=0.0;j<=num;j++) 
-                  mzmean += peakbuf->smz[bnr][j];
+              for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->smz[bnr][j];
               mzmean /= num+1;
             } 
         }
@@ -268,8 +267,7 @@ void insertpeak(const RAMPREAL fMass, const RAMPREAL fInten,const int scan, stru
           peakbuf->lmz[bnr][num] =  fMass;
           peakbuf->lscan[bnr][num] = scan;
           peakbuf->lnum[bnr]++;
-          for (j=0,mzmean=0.0;j<=num;j++) 
-              mzmean += peakbuf->lmz[bnr][j];
+          for (j=0,mzmean=0.0;j<=num;j++) mzmean += peakbuf->lmz[bnr][j];
           mzmean /= num+1; 
         } 
           mzval->mz[i] = mzmean; // update mzval
@@ -333,37 +331,7 @@ void insertscan(struct scanStruct *scanbuf ,const int scan, struct peakbufStruct
   }
 }     
 
-int checkIntensity(const int i, const int minimumIntValues, const int minimumInt, struct mzvalStruct *mzval, struct peakbufStruct *peakbuf) {
-int j,intcount = 0;
-bufnrType entries,bufnr = mzval->bufnr[i];
-     
-    if (mzval->slbuf[i] == IN_SHORT_BUF) 
-    {
-      entries = peakbuf->snum[bufnr];
-      for (j=0;j < entries;j++) {
-        if (peakbuf->sint[bufnr][j] >= minimumInt)
-          intcount++;
-        if (intcount >= minimumIntValues)  
-          break;
-      }
-    } else
-    {
-      entries = peakbuf->lnum[bufnr];
-      for (j=0;j < entries;j++) {
-        if (peakbuf->lint[bufnr][j] >= minimumInt)
-          intcount++;
-        if (intcount >= minimumIntValues)  
-          break;
-      }    
-    }
-      
-if (intcount >= minimumIntValues)
-  return(TRUE);
-else 
-  return(FALSE);
-}
-
-void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, int *scerr, struct pickOptionsStruct pickOptions, const int minimumIntValues, const int minimumInt, const int idebug){
+void cleanup(const int ctScan, struct peakbufStruct *peakbuf,struct mzvalStruct *mzval, int *scerr, struct pickOptionsStruct pickOptions, const int idebug){
 int i;
 bufnrType bufnr,entries;
  // check all peaks in mzval
@@ -384,12 +352,8 @@ bufnrType bufnr,entries;
   // finished (entries >= minEntries)  or just extended
   if ((entries >= pickOptions.minEntries) || (lastscan == ctScan)) // good feature
    { // is it finished ?
-     if ((entries >= pickOptions.minEntries) && (lastscan < ctScan)) { 
-       if (checkIntensity(i,minimumIntValues,minimumInt,mzval,peakbuf) == TRUE)
-          deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
-       else
-          deleteMZ(i,mzval,peakbuf,TRUE); // delete index & values     
-     }  
+     if ((entries >= pickOptions.minEntries) && (lastscan < ctScan) )
+       deleteMZ(i,mzval,peakbuf,FALSE); // delete index, keep values in buffer
        if (entries > ctScan) {
          if (idebug == TRUE) {
            error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval->mz[i],entries,lastscan,ctScan); 
@@ -403,8 +367,6 @@ bufnrType bufnr,entries;
    }
  
  } // for i
- if (idebug == TRUE) 
-          printf("LastFreeS was %d,LastFreeL was %d.\n", peakbuf->LastFreeS, peakbuf->LastFreeL);
  peakbuf->LastFreeL = INVALID_PT;
  peakbuf->LastFreeS = INVALID_PT;
 }
@@ -423,7 +385,7 @@ void getscan(int *pscan, double *pmz, double *pintensity, int *pscanindex,int *n
       printf("idx1 %d   idx2   %d  \n", idx1,idx2);  // Rprintf("Mx: %f  My: %f  \n",Mx,My);
   #endif
   int idx,i=0;
-  if ((idx2 -idx1) > DIM_SCANBUF -1) error("getscan: SCANBUF too small ! (req %d)\n",(idx2 -idx1)); 
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n"); 
   for (idx=idx1;idx <= idx2; idx++) 
   {
     pscanbufmz[i]   = pmz[idx-1];
@@ -438,7 +400,7 @@ void getScan(int scan, double *pmz, double *pintensity, int *pscanindex,int nmz,
   idx1 =  pscanindex[scan -1] +1;
   
   if (scan == lastScan)  idx2 =  nmz-1;   else   idx2 =  pscanindex[scan];
-  if ((idx2 -idx1) > DIM_SCANBUF -1) error("getScan: SCANBUF too small ! (req %d) \n",(idx2 -idx1));
+  if ((idx2 -idx1) > DIM_SCANBUF -1) error("SCANBUF too small ! \n");
   
   for (idx=idx1;idx <= idx2; idx++) 
   {
@@ -513,11 +475,10 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   return(reslist);
 }
 
-SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP debug) {
+SEXP findmzboxes(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP debug) {
   double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
-  int i,*pscanindex, *p_scan, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, minimumIntValues, minimumInt, idebug;
+  int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ctScan,nmz,lastScan, idebug;
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
-  int perc, lp = -1;
   SEXP peaklist,entrylist,vscan,vmz,vint,list_names;
      
   pmz = REAL(mz);  
@@ -526,8 +487,6 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   pscanindex = INTEGER(scanindex);
   lastScan = INTEGER(lastscan)[0];
   idebug = INTEGER(debug)[0];
-  minimumIntValues=INTEGER(prefilter)[0];
-  minimumInt=INTEGER(prefilter)[1];
   
   pickOptions.dev = REAL(dev)[0];
   pickOptions.minEntries = INTEGER(minEntries)[0];
@@ -556,27 +515,18 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   for(i = 0; i < 3; i++)
     SET_STRING_ELT(list_names, i,  mkChar(names[i])); 
    
-  Rprintf(" %% finished: ");
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
-     perc = (int) (ctScan* 100)/scanrangeTo;
-     if ((perc % 10) == 0 && (perc != lp)) 
-     { 
-       Rprintf("%d ",perc);
-       lp = perc; 
-     }
-        
     getScan(ctScan, pmz, pintensity, pscanindex,nmz,lastScan, &scanbuf);
     if (scanbuf.length > 0) 
     {
       if (idebug == TRUE) 
           printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z boxes, %d boxes found.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
       insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
-      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug);
+      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,idebug);
     }
-    R_FlushConsole();
   }
-  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug); 
+  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,idebug); 
   
   PROTECT(peaklist = allocVector(VECSXP, peakbuf.PeaksInBuf));
   int total = 0;
@@ -624,9 +574,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
      total++;
     }
   }
-  if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"dev\" parameter.\n", scerr);
-  
-  Rprintf("\n %d m/z ROI's.\n", total);
+  if (scerr > 0) printf("Warning: There were %d peak data insertion problems. \n The reason might be missing/bad centroidisation or wrong parameter settings (\"dev\" too high?).\n", scerr);
+  printf(" %d m/z boxes.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
   return(peaklist);
