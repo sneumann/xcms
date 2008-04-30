@@ -2,7 +2,7 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("graphics", "plot")
-importFrom("Rgraphviz", "plot") 
+importFrom("Rgraphviz", "plot")
 
 export(
        "etg",
@@ -208,5 +208,6 @@ exportMethods(
               "summarize",
               "summarizeProto",
               "summarizeProto<-",
-              "widget"
+              "widget",
+              "write.cdf"
               )
