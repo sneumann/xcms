@@ -155,6 +155,43 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
+setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
+
+setMethod("write.cdf", "xcmsRaw", function(object, filename) {
+    require(ncvar) || stop("Couldn't load package ncvar for NetCDF writing")
+
+    scan_no <- length(object@scanindex)
+
+    ## Define netCDF definitions
+    ms <- create.nc(filename)
+    dim.def.nc(ms, "_32_byte_string", 32)
+    dim.def.nc(ms, "_64_byte_string", 64)
+    dim.def.nc(ms, "error_num", 1)
+    dim.def.nc(ms, "scan_number", scan_no)
+    dim.def.nc(ms, "point_number", unlim = TRUE)
+
+    ## Define netCDF vars
+    var.def.nc(ms, "scan_acquisition_time", "NC_DOUBLE", "scan_number")
+    var.def.nc(ms, "total_intensity", "NC_DOUBLE", "scan_number")
+    var.def.nc(ms, "scan_index", "NC_DOUBLE", "scan_number")
+    var.def.nc(ms, "mass_values", "NC_FLOAT", "point_number")
+    var.def.nc(ms, "intensity_values", "NC_FLOAT","point_number")
+
+#    var.def.nc(ms, "netcdf_revision", "NC_CHAR", NA)
+
+    ## Add values to netCDF vars
+    var.put.nc(ms, "scan_acquisition_time", object@scantime)
+    var.put.nc(ms, "total_intensity", object@tic)
+    var.put.nc(ms, "scan_index", object@scanindex)
+    var.put.nc(ms, "mass_values", object@env$mz)
+    var.put.nc(ms, "intensity_values", object@env$intensity)
+
+#    var.put.nc(ms, "netcdf_revision", "2.3.2")
+
+    close.nc(ms)
+})
+
+
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
 
 setMethod("revMz", "xcmsRaw", function(object) {

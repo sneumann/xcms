@@ -8,6 +8,8 @@
 \alias{show,xcmsRaw-method}
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
+\alias{write.cdf,xcmsRaw-method}
+\alias{write.cdf}
 
 \title{Class xcmsRaw, a class for handling raw data}
 \description{
@@ -170,6 +172,11 @@
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points
       by increasing m/z for each scan
+    }
+    \item{write.cdf}{
+      \code{signature(object = "xcmsRaw")}: write the xcmsRaw object to
+      a NetCDF file. This is useful e.g. for converting the XML formats
+      mzData/mzXML/mzML to CDF.
     }
   }
 }
