@@ -12,17 +12,17 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{plotRaw(object, massrange = numeric(), timerange = numeric(),
+  \code{plotRaw(object, mzrange = numeric(), rtrange = numeric(),
                 scanrange = numeric(), log=FALSE, title='Raw Data')}
 }
 }}
 \arguments{
   \item{object}{the \code{xcmsRaw} object}
-  \item{massrange}{
+  \item{mzrange}{
     numeric vector of length >= 2 whose range will be used to select
     the masses to plot
   }
-  \item{timerange}{
+  \item{rtrange}{
     numeric vector of length >= 2 whose range will be used to select
     the retention times to plot
   }
@@ -41,6 +41,7 @@
   A matrix with the points plotted.
 }
 \seealso{
+  \code{\link{rawMat}} for just returning the raw data as a matrix,
   \code{\link{xcmsRaw-class}}
 }
 \keyword{methods}

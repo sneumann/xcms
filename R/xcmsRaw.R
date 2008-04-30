@@ -2,18 +2,41 @@ require(methods) || stop("Couldn't load package methods")
 
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer",
-                                   profmethod = "character", profparam = "list",
+                                   acquisitionNum = "integer",
                                    mzrange = "numeric", gradient = "matrix",
-                                   msmsinfo = "matrix"),
+                                   msnScanindex = "integer",
+                                   msnAcquisitionNum = "integer",
+                                   msnPrecursorScan = "integer",
+                                   msnLevel = "integer",
+                                   msnRt = "numeric",
+                                   msnPrecursorMz = "numeric",
+                                   msnPrecursorIntensity = "numeric",
+                                   msnPrecursorCharge = "numeric",
+                                   msnPeakCount = "integer",
+                                   msnCollisionEnergy = "numeric",
+                                   filepath = "character"),
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
-                   profmethod = "bin", profparam = list(),
+                   acquisitionNum = integer(0),
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
-                   msmsinfo = matrix(nrow=0, ncol=0)))
+                   msnScanindex = NULL,
+                   msnAcquisitionNum = integer(0),
+                   msnLevel = NULL,
+                   msnRt = NULL,
+                   msnCollisionEnergy = NULL,
+                   msnPrecursorScan = NULL,
+                   msnPrecursorMz = NULL,
+                   msnPrecursorIntensity = NULL,
+                   msnPrecursorCharge = NULL,
+                   msnPeakCount = NULL,
+                   msnCollisionEnergy = NULL
+                   ),
+         "xcmsData")
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
-                    profparam = list()) {
+                    profparam = list(), genprof = TRUE,
+                    includeMSn = FALSE, pipeline = NULL) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
@@ -25,19 +48,26 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
             stop(attr(cdf, "errortext"))
         on.exit(netCDFClose(cdf))
         rawdata <- netCDFRawData(cdf)
+        if (includeMSn) {
+            warning("Reading of MSn spectra for NetCDF not supported")
+        }
     } else if (rampIsFile(filename)) {
         rampid <- rampOpen(filename)
         if (rampid < 0)
             stop("Couldn't open mzXML/mzData file")
         on.exit(rampClose(rampid))
+
         rawdata <- rampRawData(rampid)
+
+        if ( includeMSn ) {
+            rawdataMSn <- rampRawDataMSn(rampid)
+        }
     } else
         stop("Couldn't determine file type")
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
        warning("There are identical scantimes.")
-
     if (any(rtdiff < 0)) {
     	badtimes <- which(rtdiff < 0)
     	stop(paste("Time for scan ", badtimes[1], " (",
@@ -46,16 +76,49 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     	           sep = ""))
     }
 
+    object@filepath <- filename
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
     object@env$mz <- rawdata$mz
     object@env$intensity <- rawdata$intensity
 
-    object@profmethod <- profmethod
-    object@profparam <- profparam
-    if (profstep)
-        profStep(object) <- profstep
+    if (!is.null(rawdata$acquisitionNum)) {
+      ## defined only for mzData and mzXML
+      object@acquisitionNum <- rawdata$acquisitionNum
+    }
+
+    if(exists("rawdataMSn")) {
+        object@env$msnMz <- rawdataMSn$mz
+        object@env$msnIntensity <- rawdataMSn$intensity
+
+        object@msnScanindex <- rawdataMSn$scanindex
+        object@msnAcquisitionNum <- rawdataMSn$acquisitionNum
+        object@msnLevel <- rawdataMSn$msLevel
+        object@msnRt <- rawdataMSn$rt
+        object@msnPrecursorScan <- match(rawdataMSn$precursorNum, object@acquisitionNum)
+        object@msnPrecursorMz <- rawdataMSn$precursorMZ
+        object@msnPrecursorIntensity <- rawdataMSn$precursorIntensity
+        object@msnPrecursorCharge <- rawdataMSn$precursorCharge
+        object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
+    }
+
+    if (genprof && is.null(pipeline)) { # generate profile matrix
+        profargs <- c(list(method = profmethod, step = profstep), profparam)
+        profmatproto <- do.call("xcmsProtocol", c("profileMatrix", profargs))
+        profpipe <- new("xcmsPipelineProfile", list(profmatproto))
+        object <- genProfile(object, "generic", pipeline = profpipe)
+    }
+    if (!is.null(pipeline)) { # pipeline specified, profile parameters ignored
+      mc <- match.call()
+      profargs <- c("genprof", "profmethod", "profstep", "profparam")
+        specified <- any(profargs %in% names(mc))
+      if (specified)
+        warning("Profile parameter(s) ",
+                paste("'", names(mc)[specified], "'", collapse = ", "),
+                " overriden by the 'pipeline' parameter")
+      object <- perform(pipeline, object)
+    }
 
     return(object)
 }
@@ -72,23 +135,19 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
         "\n\n")
 
-    cat("Profile method:", object@profmethod, "\n")
-    cat("Profile step: ")
+    ## summary MSn data
+    if (!is.null(object@msnLevel)) {
+	cat("MSN data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
+	cat("\twith ", length(object@msnPrecursorMz)," MSn spectra\n")
+    }
 
+    cat("Profile matrix: ")
     if (is.null(object@env$profile))
-        cat("no profile data\n")
-    else {
-        profmz <- profMz(object)
-        cat(profStep(object), " m/z (", length(profmz), " grid points from ",
-            paste(object@mzrange, collapse = " to "), " m/z)\n", sep = "")
-    }
-    if (length(object@profparam)) {
-        cat("Profile parameters: ")
-        for (i in seq(along = object@profparam)) {
-            if (i != 1) cat("                    ")
-            cat(names(object@profparam)[i], " = ", object@profparam[[i]], "\n", sep = "")
-        }
-    }
+      cat("none\n")
+    else show(object@env$profile)
+    cat("\n")
+
+    show(object@pipeline)
 
     memsize <- object.size(object)
     for (key in ls(object@env))
@@ -125,12 +184,10 @@ setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
-    if (all(object@tic == 0))
-        points <- cbind(object@scantime, rawEIC(object,massrange=range(object@env$mz))$intensity)  else
-        points <- cbind(object@scantime, object@tic)
-
+    points <- cbind(object@scantime, object@tic)
     plot(points, type="l", main="TIC Chromatogram", xlab="Seconds",
          ylab="Intensity")
+
 
     if (ident) {
         idx <- integer(0)
@@ -157,7 +214,7 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
 
 setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
 
-setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
+setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
     if (scan < 0)
         scan <- length(object@scantime) + 1 + scan
@@ -165,9 +222,9 @@ setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
     idx <- seq(object@scanindex[scan]+1, min(object@scanindex[scan+1],
                                              length(object@env$mz), na.rm=TRUE))
 
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        idx <- idx[object@env$mz[idx] >= massrange[1] & object@env$mz[idx] <= massrange[2]]
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
     }
 
     points <- cbind(mz = object@env$mz[idx], intensity = object@env$intensity[idx])
@@ -179,19 +236,20 @@ setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
+    # FIXME: unnecessary dependency on profile matrix?
     sel <- profRange(object, ...)
 
     scans <- list(length(sel$scanidx))
     uniquemz <- numeric()
     for (i in seq(along = sel$scanidx)) {
-       scans[[i]] <- getScan(object, sel$scanidx[i], sel$massrange)
+       scans[[i]] <- getScan(object, sel$scanidx[i], sel$mzrange)
        uniquemz <- unique(c(uniquemz, scans[[i]][,"mz"]))
     }
     uniquemz <- sort(uniquemz)
 
     intmat <- matrix(nrow = length(uniquemz), ncol = length(sel$scanidx))
     for (i in seq(along = sel$scanidx)) {
-        scan <- getScan(object, sel$scanidx[i], sel$massrange)
+        scan <- getScan(object, sel$scanidx[i], sel$mzrange)
         intmat[,i] <- approx(scan, xout = uniquemz)$y
     }
 
@@ -199,6 +257,7 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
     invisible(points)
 })
+
 
 specNoise <- function(spec, gap = quantile(diff(spec[,"mz"]), .9)) {
 
@@ -244,33 +303,17 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
 
 setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
 
-setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
-                                          ident = FALSE)
-{
-    if (scan<1 || scan>length(object@scanindex) ) {
-        warning("scan out of range")
-        return()
-    }
+setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
+                                          ident = FALSE) {
 
-    ## handle last spectrum
-    if (scan == length(object@scanindex)) {
-          followingScanIndex <- length(object@env$mz)
-    } else {
-          followingScanIndex <- object@scanindex[scan+1]
-    }
-
-    ## hendle empty spectra
     if (object@scanindex[scan] == length(object@env$mz) ||
-        object@scanindex[scan] == followingScanIndex) {
-        warning("empty scan")
+        object@scanindex[scan] == object@scanindex[scan+1])
         return()
-    }
-
-    idx <- (object@scanindex[scan]+1):min(followingScanIndex,
+    idx <- (object@scanindex[scan]+1):min(object@scanindex[scan+1],
                                         length(object@env$mz), na.rm=TRUE)
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        idx <- idx[object@env$mz[idx] >= massrange[1] & object@env$mz[idx] <= massrange[2]]
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
     }
     points <- cbind(object@env$mz[idx], object@env$intensity[idx])
     title = paste("Mass Spectrum: ", round(object@scantime[scan], 1),
@@ -283,78 +326,139 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
     invisible(points)
 })
 
-setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
-
 setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
                                           vline = numeric(0), ...) {
 
-    sel <- profRange(object, ...)
-
-    title = paste("Averaged Mass Spectrum: ", sel$timelab, " (",
-                  sel$scanlab, ")",  sep = "")
-    points <- cbind(profMz(object)[sel$massidx],
-                    rowMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    plot(points, type="l", main = title, xlab="m/z", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (ident)
-        return(identify(points, labels = round(points[,1], 1)))
-
-    invisible(points)
+    plotSpec(object@env$profile, ident, vline, ...)
 })
 
 setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 
 setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
-                                           fitgauss = FALSE, vline = numeric(0), ...) {
+                                           fitgauss = FALSE, vline = numeric(0),
+                                           ...) {
 
-    sel <- profRange(object, ...)
-
-
-    if (base) {
-        title = paste("Base Peak Chromatogram: ", sel$masslab, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMax(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    }
-    else {
-        title = paste("Averaged Ion Chromatogram: ", sel$masslab, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    }
-    plot(pts, type="l", main = title, xlab="Seconds", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (fitgauss) {
-        fit <- nls(y ~ SSgauss(x, mu, sigma, h), data.frame(x = pts[,1], y = pts[,2]))
-        points(pts[,1], fitted(fit), type = "l", col = "red", lwd = 2)
-        return(fit)
-    }
-
-    if (ident)
-        return(identify(pts, labels = round(pts[,1], 1)))
-
-    invisible(pts)
+    plotChrom(object@env$profile, base, ident, fitgauss, vline, ...)
 })
+
+
+.getMsnScan <- function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
+                        precision=1, userMsnIndex=NULL)
+{
+    if (scanLevel<1)
+    {
+        warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
+        return(NULL)
+    }
+
+    if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+        nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+        return(nxcms);
+    }
+
+    if (parentMzs[1]==0)
+        parentMzs <- rep(0,scanLevel-1)
+
+    ## using a zero-vector if none is given
+    wasonlyone=TRUE;
+    if (ms1Rt < object@scantime[1]) {
+        warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
+        return(NULL)
+    }
+    ms1ind <- max(which(object@scantime <= ms1Rt))
+    if (scanLevel==1) { # in this case just the ms1schan of this rt will be returned
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+        nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+
+        return(nxcms);
+    }
+
+    if (is.null(object@env$msnMz)) {
+        warning("Exit: There are no MSnScans in this object.")
+        return(NULL)
+    }
+
+    ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
+    ms2s <- which((object@msnRt >= ms1Rt)  &
+                  (object@msnLevel == 2) &
+                  (object@msnRt <= object@scantime[ms1ind+1]))
+    if (length(ms2s) == 0)
+    {
+        warning("Exit: There is no ms2scan in this Rt-Range!")
+        return(NULL)
+    }
+    ##cat("1> ",ms2s,"\n")
+    if (length(ms2s) > 1)
+    {
+        if (parentMzs[1] == 0)  # more than one ms2scan aviable but no mzvalues given
+            warning("More than one ms2scan available but no mz-parameters given! using first scan")
+        wasonlyone=FALSE;
+        diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
+        msn <- ms2s[min(which(diffe == min(diffe)))] # The PArent-Rt of this ms2index ist closest to the wanted value
+    } else {
+        msn <- ms2s; # there is only one ms2scan in this ms1range so use this
+    }
+    if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
+        warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
+    }
+    msnRt <- object@msnRt[msn]
+    ##cat("3> ",msnRt,"\n")
+    if (scanLevel > 2) {
+        for (a in 3:scanLevel) {
+            msns <- which((object@msnRt >= msnRt) &
+                          (object@msnLevel == a) &
+                          (object@msnRt <= object@scantime[ms1ind+1]))
+            ##cat("4> ",ms2s,"\n")
+            if (length(msns)==0) {
+                warning("Exit: There is no ms",a,"scan in this Rt-Range!")
+                return(NULL)
+            }
+            if (length(msns)>1) {
+                wasonlyone=FALSE;
+                if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { # more than one ms2scan aviable but no mzvalues given
+                    warning("More than one ms",a,"scan available but no mzdata given! using first scan")
+                    msn <- msns[1];
+                } else {
+                    diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
+                    msn <- msns[min(which(diffe == min(diffe)))]
+                }
+            } else {
+                msn <- msns; # there is only one ms[n-1]scan in this ms[n]ramge so use this
+            }
+            if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
+                if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
+                    warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
+                }
+            }
+            msnRt <- object@msnRt[msn]
+        }
+    }
+    if (wasonlyone) {
+        message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
+    }
+    nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+    nxcms@scantime <- msnRt
+    nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+    nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+    return(nxcms);
+}
+
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+setMethod("getMsnScan", "xcmsRaw", .getMsnScan)
 
 image.xcmsRaw <- function(x, col = rainbow(256), ...) {
 
-    sel <- profRange(x, ...)
-
-    zlim <- log(range(x@env$intensity))
-
-    title <- paste("XC/MS Log Intensity Image (Profile Method: ",
-                   x@profmethod, ")", sep = "")
-    if (zlim[1] < 0) {
-        zlim <- log(exp(zlim)+1)
-        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$massidx, sel$scanidx]+1),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
-    } else
-        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$massidx, sel$scanidx]),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
+    image(x@env$profile, col, ...)
 }
 
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
@@ -362,39 +466,7 @@ setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
                                           aspect = c(1, 1, .5), ...) {
 
-    require(rgl) || stop("Couldn't load package rgl")
-
-    sel <- profRange(object, ...)
-
-    y <- object@env$profile[sel$massidx, sel$scanidx]
-    if (log)
-        y <- log(y+max(1-min(y), 0))
-    ylim <- range(y)
-
-    x <- seq(0, aspect[1], length=length(sel$massidx))
-    z <- seq(0, aspect[2], length=length(sel$scanidx))
-    y <- y/ylim[2]*aspect[3]
-
-    colorlut <- terrain.colors(256)
-    col <- colorlut[y/aspect[3]*255+1]
-
-    rgl.clear("shapes")
-    rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col, shininess = 128)
-    rgl.points(0, 0, 0, alpha = 0)
-
-    mztics <- pretty(sel$massrange, n = 5*aspect[1])
-    rttics <- pretty(sel$timerange, n = 5*aspect[2])
-    inttics <- pretty(c(0,ylim), n = 10*aspect[3])
-    inttics <- inttics[inttics > 0]
-
-    rgl.bbox(xat = (mztics - sel$massrange[1])/diff(sel$massrange)*aspect[1],
-             xlab = as.character(mztics),
-             yat = inttics/ylim[2]*aspect[3],
-             ylab = as.character(inttics),
-             zat = (rttics - sel$timerange[1])/diff(sel$timerange)*aspect[2],
-             zlab = as.character(rttics),
-             ylen = 0, alpha=0.5)
+    plotSurf(object@env$profile, log, aspect, ...)
 })
 
 filtfft <- function(y, filt) {
@@ -406,25 +478,31 @@ filtfft <- function(y, filt) {
     Re(yfilt[1:length(y)])
 }
 
-setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
+setStage("findPeaks", "Find Peaks", "xcmsRaw", "xcmsPeaks")
 
-setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
-                                                         max = 5, snthresh = 10, step = 0.1,
-                                                         steps = 2, mzdiff = 0.8 - step*steps,
-                                                         index = FALSE, sleep = 0,
-                                                         verbose.columns = FALSE) {
+.findPeaks.matchedFilter <- function(object, fwhm = 30, sigma = fwhm/2.3548,
+                                     max = 5, snthresh = 10, step = 0.1,
+                                     steps = 2, mzdiff = 0.8 - step*steps,
+                                     index = FALSE, sleep = 0,
+                                     verbose.columns = FALSE,
+                                     pipeline = new("xcmsPipelineProfile")) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    # if 'pipeline' is empty, attempt to get from xcmsRaw
+    pipeline <- profPipe(object, pipeline, step)
+
+    # create maxidx protocol using same parameters
+    matproto <- profileMatrixProto(pipeline)
+    maxidx <- xcmsProtocol("profileMatrix", "maxidx", step = matproto@step,
+                           naok = matproto@naok)
+    step <- matproto@step # get real step
 
     ### Create EIC buffer
+    # This buffered reading should be factored into an iterator object
     mrange <- range(object@env$mz)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                  bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
-    bufMax <- profMaxIdxM(object@env$mz, object@env$intensity, object@scanindex,
-                          bufsize, mass[1], mass[bufsize], TRUE,
-                          object@profparam)
+    buf <- perform(pipeline, object, mzrange = c(mass[1],mass[bufsize]))
+    bufMax <- perform(maxidx, object, mzrange = c(mass[1],mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -454,12 +532,10 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-                           TRUE, object@profparam)
-            bufMax <- profMaxIdxM(object@env$mz, object@env$intensity, object@scanindex,
-                                  diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-                                  TRUE, object@profparam)
+            buf <- perform(pipeline, object,
+                mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
+            bufMax <- perform(maxidx, object,
+                              mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
         ysums <- colMax(ymat)
@@ -520,53 +596,45 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
     }
+
     uorder <- order(rmat[,"into"], decreasing=TRUE)
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder, mzdiff)
     rmat <- rmat[uindex,,drop=FALSE]
-    invisible(rmat)
-})
+    invisible(new("xcmsPeaks", rmat))
+}
 
-setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
+setProtocol("matchedFilter", "Matched Filter",
+            representation(fwhm = "numeric", sigma = "numeric", max = "numeric",
+                           snthresh = "numeric", step = "numeric",
+                           steps = "numeric", mzdiff = "numeric",
+                           index = "logical", pipeline = "xcmsPipelineProfile"),
+            .findPeaks.matchedFilter, "findPeaks")
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                       fitgauss=FALSE, scanrange= c(1, length(object@scantime)),                                                             sleep=0, verbose.columns=FALSE) {
+.findPeaks.centWave <- function(object, scanrange=c(1,length(object@scantime)),
+                                minEntries=4, dev=140e-6, snthresh=20, minPeakWidth=7,
+                                noiserange=c(minPeakWidth*3,minPeakWidth*6),
+                                scales=c(5,7,9,12,16,20), maxGaussOverlap = 0.5,
+                                minPtsAboveBaseLine=4, scRangeTol=2,
+                                maxDescOutlier=floor(minPeakWidth/2), mzdiff=-0.001,
+                                rtdiff=-round(2/3 *minPeakWidth *mean(diff(object@scantime))),
+                                integrate=1, sleep=0, fitgauss = FALSE, verbose.columns = FALSE)
+{
     if (!isCentroided(object))
-        warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
-
-    ## Peak width: seconds to scales
-    scalerange <- round((peakwidth / mean(diff(object@scantime))) / 2)
-    if (length(scalerange) > 1)
-        scales <- seq(from=scalerange[1], to=scalerange[2], by=2)  else
-            scales <- scalerange;
-
-    dev <- ppm * 1e-6;
-    minPeakWidth <-  scales[1];
-    noiserange <- c(minPeakWidth*3, max(scales)*3);
-    maxGaussOverlap <- 0.5;
-    minPtsAboveBaseLine <- max(5,minPeakWidth-2);
-    minCentroids <- minPtsAboveBaseLine ;
-    scRangeTol <-  maxDescOutlier <- floor(minPeakWidth/2);
+        warning("It looks like this data is not in centroid mode. centWave can process only centroid data !\n")
 
     peaklist <- list()
-    cat("\n Detecting mass traces at",ppm,"ppm ... \n"); flush.console();
-    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minCentroids=minCentroids, prefilter=prefilter)
+    featlist <- findMZBoxes(object,scanrange=scanrange,dev=dev,minEntries=minEntries)
     scantime <- object@scantime
     Nscantime <- length(scantime)
     lf <- length(featlist)
-    cat('\n Detecting chromatographic peaks ... \n % finished: '); lp <- -1;
+    cat('\n Searching for peaks... \n % finished: '); lp <- -1;
 
     for (f in  1:lf) {
-
-      ## Show progress
-      perc <- round((f/lf) * 100)
-      if ((perc %% 10 == 0) && (perc != lp))
-      {
-        cat(perc," ",sep="");
-        lp <- perc;
-      }
-      flush.console()
-
       feat <- featlist[[f]]
+      perc <- round((f/lf) * 100)
+      if ((perc %% 10 == 0) && (perc != lp)) { cat(perc,' '); lp <- perc }
+      flush.console()
       N <- length(feat$mz)
       peaks <- peakinfo <- NULL
       mzrange <- range(feat$mz)
@@ -574,7 +642,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       scrange <- range(feat$scan)
       ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - max(noiserange)),min(scanrange[2],scrange[2] + max(noiserange)))
-      eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
+      eic <- rawEIC(object,mzrange=mzrange,scanrange=sr)
       d <- eic$intensity
       td <- sr[1]:sr[2]
       scan.range <- c(sr[1],sr[2])
@@ -588,27 +656,26 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
       ## 1st type of baseline: statistic approach
       if (N >= 10*minPeakWidth)  ## in case of very long mass trace use full scan range for baseline detection
-        noised <- rawEIC(object,massrange=mzrange,scanrange=scanrange)$intensity else
+        noised <- rawEIC(object,mzrange=mzrange,scanrange=scanrange)$intensity else
             noised <- d;
       ## 90% trimmed mean as first baseline guess
       noise <- estimateChromNoise(noised,c(0.05,0.95),minPts=3*minPeakWidth)
 
       ## any continuous data above 1st baseline ?
       if (continuousPtsAboveThreshold(fd,threshold=noise,num=minPtsAboveBaseLine)) {
-        ## 2nd baseline estimate using not-peak-range
-        lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime)
+          ## 2nd baseline estimate using not-peak-range
+          lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime)
 
-        ## Final baseline & Noise estimate
-        baseline <- max(1,min(lnoise[1],noise))
-        sdnoise <- max(1,lnoise[2])
-        sdthr <-  sdnoise * snthresh
+          ## Final baseline & Noise estimate
+          baseline <- max(1,min(lnoise[1],noise))
+          sdnoise <- max(1,lnoise[2])
+          sdnoise10 <-  sdnoise * 10^(snthresh/20)
 
         ## is there any data above S/N * threshold ?
 
-        if (any(fd - baseline >= sdthr)) {
-
+        if (any(fd - baseline >= sdnoise10 )) {
             wCoefs <- MSW.cwt(d, scales=scales, wavelet='mexh')
-            if (!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)) {
+            if (!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdnoise10)) {
                 if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
                     wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs)-1,] * 0.99
                 localMax <- MSW.getLocalMaximumCWT(wCoefs)
@@ -616,7 +683,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                 wpeaks <- sapply(rL,
                     function(x) {
                         w <- min(1:length(x),ncol(wCoefs))
-                        any(wCoefs[x,w]- baseline >= sdthr)
+                        any(wCoefs[x,w]- baseline >= sdnoise10)
                     })
                 if (any(wpeaks)) {
                     wpeaksidx <- which(wpeaks)
@@ -628,7 +695,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                         dv <- td[pp] %in% ftd
                         if (any(dv)) { ## peaks in orig. data range
                           ## Final S/N check
-                          if (any(d[pp[dv]]- baseline >= sdthr)) {
+                          if (any(d[pp[dv]]- baseline >= sdnoise10)) {
                               ## try to decide which scale describes the peak best
                               inti <- numeric(length(opp))
                               irange = rep(ceiling(scales[1]/2),length(opp))
@@ -660,22 +727,26 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                               mz.int <- od[p1:p2]
                               mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
                               mzrange <- range(mz.value)
-                              if (length(mz.value) >= (minCentroids+1))
-                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minCentroids))) else
-                                    dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
+                              if (length(mz.value) >= (minEntries+1)) {
+                                  dppm <- round(min(running(abs(diff(mz.value))/(mzrange[2]* 1e-6),
+                                                            fun=max,width=minEntries)))
+                              } else {
+                                  dppm <- round((mzrange[2]-mzrange[1]) / (mzrange[2] * 1e-6))
+                              }
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
                                   NA,NA,NA,                   ## rt, rtmin, rtmax,
                                   NA,                         ## intensity (sum)
                                   NA,                         ## intensity (-bl)
                                   maxint,                     ## max intensity
-                                  round((maxint - baseline) / sdnoise),  ##  S/N Ratio
+                                  round(20 * log10( (maxint - baseline) / sdnoise)),  ##  S/N Ratio
                                   NA,                         ## Gaussian RMSE
                                   NA,NA,NA,                   ## Gaussian Parameters
                                   f,                          ## ROI Position
-                                  dppm,                       ## max. difference between the [minCentroids] peaks in ppm
+                                  dppm,                       ## max. difference between the [minEntries] peaks in ppm
                                   best.scale,                 ## Scale
-                                  td[best.scale.pos], td[lwpos], td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
+                                  td[best.scale.pos], td[lwpos], td[rwpos],
+                                                              ## Peak positions guessed from the wavelet's (scan nr)
                                   NA,NA ))                    ## Peak limits (scan nr)
 
                               peakinfo <- rbind(peakinfo,c(best.scale, best.scale.nr, best.scale.pos, lwpos, rwpos))  ## Peak positions guessed from the wavelet's
@@ -688,19 +759,21 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
             ##  postprocessing
             if (!is.null(peaks)) {
+               # if (is.vector(peaks)) peaks <- data.frame(t(peaks))  else peaks <- data.frame(peaks)
                 basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
                 colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
 
+               # if (is.vector(peakinfo)) peakinfo <- data.frame(t(peakinfo))  else peakinfo <- data.frame(peakinfo)
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")
 
                 for (p in 1:dim(peaks)[1]) {
-                  ## find minima, assign rt and intensity values
+                ## find minima, assign rt and intensity values
                   if (integrate == 1) {
-                      lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"])
-                      if (lm[1]==lm[2]) ## fall-back
-                              lm <- descendMinTol(d, startpos=c(peakinfo[p,"scmin"], peakinfo[p,"scmax"]), maxDescOutlier)
-                    } else
-                        lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier)
+                    lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"])
+                    if (lm[1]==lm[2]) ## fall-back
+                            lm <- descendMinTol(d, startpos=c(peakinfo[p,"scmin"], peakinfo[p,"scmax"]), maxDescOutlier)
+                  } else
+                      lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier)
 
                   peakrange <- td[lm]
                   peaks[p,"rtmin"] <- scantime[peakrange[1]]
@@ -760,6 +833,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             if  (any(!is.na(peaks[,"scpos"])))
             {   ## plot centers and width found through wavelet analysis
                 abline(v=scantime[na.omit(peaks[(peaks[,"scpos"] >0),"scpos"])],col='red')
+               #abline(v=scantime[na.omit(c(peaks[(peaks[,"scmin"] >0),"scmin"],peaks[(peaks[,"scmax"] >0),"scmax"]))],col='cyan')
             }
             abline(v=na.omit(c(peaks[,"rtmin"],peaks[,"rtmax"])),col='green',lwd=1)
             if (fitgauss) {
@@ -778,7 +852,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       if (!is.null(peaks)) peaklist[[length(peaklist)+1]] <- peaks
 
     } # f
-
+    cat('\n')
     p <- do.call("rbind",peaklist)
 
     if (!verbose.columns)
@@ -786,26 +860,97 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
     uorder <- order(p[,"into"], decreasing=TRUE)
     pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE])
-    uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks
+    uindex <- rectUnique(pm,uorder,mzdiff,rtdiff)
     pr <- p[uindex,,drop=FALSE]
-    cat("\n",dim(pr)[1]," Peaks.\n")
+    cat(dim(p)[1],' Peaks  -- rectUnique(',mzdiff,',',rtdiff,') -->  ', dim(pr)[1],' Peaks.\n',sep='')
 
-    invisible(pr)
-})
+    invisible(new("xcmsPeaks", pr)) #as.matrix(pr)
+}
+
+setProtocol("centWave", "Centroid Wavelet",
+            representation(scanrange="numeric", minEntries="numeric",
+                           dev="numeric", snthresh="numeric",
+                           noiserange="numeric", minPeakWidth="numeric",
+                           scales="numeric", maxGaussOverlap = "numeric",
+                           minPtsAboveBaseLine="numeric",
+                           scRangeTol="numeric", maxDescOutlier="numeric",
+                           mzdiff="numeric", rtdiff="numeric",
+                           integrate="numeric", fitgauss = "logical"),
+            .findPeaks.centWave, "findPeaks")
+
+.findPeaks.MS1 <- function(object)
+{
+    if (is.null(object@msnLevel)) {
+        warning("xcmsRaw contains no MS2 spectra\n");
+        return (NULL);
+    }
+
+    ## Select all MS2 scans, they have an MS1 parent defined
+    peakIndex <- object@msnLevel == 2
+
+    ## (empty) return object
+    basenames <- c("mz","mzmin","mzmax",
+                   "rt","rtmin","rtmax",
+                   "into","maxo","sn")
+    peaklist <- matrix(-1, nrow = length(which(peakIndex)),
+                       ncol = length(basenames))
+    colnames(peaklist) <- c(basenames)
+
+    ## Assemble result
+
+    peaklist[,"mz"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmin"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmax"] <- object@msnPrecursorMz[peakIndex]
+
+
+    if (any(!is.na(object@msnPrecursorScan))&&any(object@msnPrecursorScan!=0)) {
+        peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- object@scantime[object@msnPrecursorScan[peakIndex]]
+    } else {
+        ## This happened with ReAdW mzxml
+	cat("MS2 spectra without precursorScan references, using estimation")
+        ## which object@Scantime are the biggest wich are smaller than the current object@msnRt[peaklist]?
+	ms1Rts<-rep(0,length(which(peakIndex)))
+	i<-1
+	for (a in which(peakIndex)){
+		ms1Rts[i] <- object@scantime[max(which(object@scantime<object@msnRt[a]))]
+		i<-i+1
+		}
+	peaklist[,"rt"] <-  ms1Rts
+	peaklist[,"rtmin"] <-  ms1Rts
+	peaklist[,"rtmax"] <- ms1Rts
+    	}
+
+    if (any(object@msnPrecursorIntensity!=0)) {
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- object@msnPrecursorIntensity[peakIndex]
+    } else {
+        ## This happened with Agilent MzDataExport 1.0.98.2
+        warning("MS2 spectra without precursorIntensity, setting to zero")
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- 0
+    }
+
+    cat('\n')
+
+    invisible(new("xcmsPeaks", peaklist))
+}
+
+setProtocol("MS1", "MS2 Precursor Peaks", representation(),
+            .findPeaks.MS1, "findPeaks")
 
 
 setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
 
-setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, mzdiff=-0.02,
-                                               scales=seq(1,22,3), nearbyPeak=TRUE,
-                                               sleep=0, verbose.columns = FALSE)
+.findPeaks.MSW <- function (object, snthresh=3,
+                            scales=seq(1,22,3), nearbyPeak=TRUE,
+                            SNR.method='quantile', winSize.noise=500,amp.Th=0.0075,
+                            sleep=0, verbose.columns = FALSE)
 {
   require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
   # MassSpecWavelet Calls
   peakInfo <- peakDetectionCWT(object@env$intensity,
-                                scales=scales, SNR.Th = snthresh,
-                                nearbyPeak = nearbyPeak)
+                               scales=scales, SNR.Th = snthresh,
+                               nearbyPeak = nearbyPeak, SNR.method=SNR.method,
+                               winSize.noise=winSize.noise, amp.Th=amp.Th)
   majorPeakInfo <- peakInfo$majorPeakInfo
 
   betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
@@ -840,28 +985,25 @@ setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, mzdiff=-0.02,
   if (!verbose.columns)
     peaklist <- peaklist[,basenames,drop=FALSE]
 
-  invisible(peaklist)
+  invisible(new("xcmsPeaks", peaklist))
 }
-)
 
-
-setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
-
-setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms$findPeaks.method,
-                                           ...) {
-
-    method <- match.arg(method, getOption("BioC")$xcms$findPeaks.methods)
-    if (is.na(method))
-        stop("unknown method : ", method)
-    method <- paste("findPeaks", method, sep=".")
-    invisible(do.call(method, alist(object, ...)))
-})
+setProtocol("MSW", "MassSpecWavelet",
+            representation(snthresh="numeric", scales="numeric",
+                           nearbyPeak="logical", SNR.method="character",
+                           winSize.noise="numeric", amp.Th="numeric",
+                           sleep="numeric",
+                           verbose.columns = "logical"),
+            .findPeaks.MSW, "findPeaks")
 
 setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 
-setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
+setMethod("getPeaks", "xcmsRaw",
+          function(object, peakrange, step = 0.1,
+                   pipeline = new("xcmsPipelineProfile")) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    pipeline <- profPipe(object, pipeline, step)
+
     if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
         peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
     stime <- object@scantime
@@ -870,8 +1012,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     mrange <- range(peakrange[,1:2])
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
+    buf <- perform(pipeline, object, mzrange = c(mass[1], mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -888,9 +1029,8 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, imz[1]), min(bufsize+imz[1]-1, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-                           TRUE, object@profparam)
+            buf <- perform(pipeline, object,
+                           mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
         ymax <- colMax(ymat)
@@ -940,9 +1080,12 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
 setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+setMethod("getEIC", "xcmsRaw",
+          function(object, mzrange, rtrange = NULL,
+                   step = 0.1, pipeline = new("xcmsPipelineProfile")) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    pipeline <- profPipe(object, pipeline, step)
+
     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
 
@@ -950,8 +1093,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     mrange <- range(mzrange)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
-    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
+    buf <- perform(pipeline, object, mzrange = c(mass[1], mass[bufsize]))
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -968,9 +1110,8 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
             bufidx[idxrange[1]:idxrange[2]] <- 0
             idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-                           TRUE, object@profparam)
+            buf <- perform(pipeline, object,
+                           mzrange = c(mass[idxrange[1]], mass[idxrange[2]]))
         }
         if (missing(rtrange))
             eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
@@ -984,228 +1125,345 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     invisible(eic)
 })
 
-setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
+setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
 
-setMethod("plotRaw", "xcmsRaw", function(object,
-                                         massrange = numeric(),
-                                         timerange = numeric(),
+setMethod("rawMat", "xcmsRaw", function(object,
+                                         mzrange = numeric(),
+                                         rtrange = numeric(),
                                          scanrange = numeric(),
-                                         log=FALSE,title='Raw Data' ) {
+                                         log=FALSE) {
 
-    if (length(timerange) >= 2) {
-        timerange <- range(timerange)
-        scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
+    if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
         scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
-    } else if (length(scanrange) < 2)
+    }
+    else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
-    else
-        scanrange <- range(scanrange)
+    else scanrange <- range(scanrange)
     startidx <- object@scanindex[scanrange[1]] + 1
     endidx <- length(object@env$mz)
     if (scanrange[2] < length(object@scanindex))
         endidx <- object@scanindex[scanrange[2] + 1]
-
-    scans <- integer(endidx - startidx + 1)
-    for (i in scanrange[1]:scanrange[2]) {
-        idx <- (object@scanindex[i]+1):min(object@scanindex[i+1],
-                                         length(object@env$mz), na.rm=TRUE)
-        scans[idx-startidx+1] <- i
-    }
-
-    timerange <- c(object@scantime[scanrange[1]],object@scantime[scanrange[2]])
+    #scans <- integer(endidx - startidx + 1)
+    scans <- rep(scanrange[1]:scanrange[2], diff(c(object@scanindex, length(object@env$mz)+1)))
+    #for (i in scanrange[1]:scanrange[2]) {
+    #    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
+    #        1], length(object@env$mz), na.rm = TRUE)
+    #    scans[idx - startidx + 1] <- i
+    #}
+    rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
     masses <- object@env$mz[startidx:endidx]
     int <- object@env$intensity[startidx:endidx]
     massidx <- 1:length(masses)
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        massidx <- (masses >= massrange[1]) & (masses <= massrange[2])
-    } else
-        massrange <- range(masses)
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+    }
+    else mzrange <- range(masses)
 
-     y <- int[massidx]
-     if (log)  y <- log(y+max(1-min(y), 0))
-     ylim <- range(y)
-     y <- y/ylim[2]
-     colorlut <- terrain.colors(16)
-     col <- colorlut[y*15+1]
+    y <- int[massidx]
+    if (log)
+        y <- log(y + max(1 - min(y), 0))
 
-     plot(cbind(object@scantime[scans[massidx]], masses[massidx]), pch=20, cex=.5, main = title,
-       xlab="Seconds", ylab="m/z",col=col, xlim=timerange,ylim=massrange)
+    cbind(time = object@scantime[scans[massidx]], mz = masses[massidx], intensity = y)
+})
 
-     invisible(cbind(object@scantime[scans[massidx]], masses[massidx],int[massidx]))
+setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
+
+setMethod("plotRaw", "xcmsRaw", function(object,
+                                         mzrange = numeric(),
+                                         rtrange = numeric(),
+                                         scanrange = numeric(),
+                                         log=FALSE,title='Raw Data' ) {
+
+    raw <- rawMat(object, mzrange, rtrange, scanrange, log)
+
+    y <- raw[,"intensity"]
+    ylim <- range(y)
+    y <- y/ylim[2]
+    colorlut <- terrain.colors(16)
+    col <- colorlut[y*15+1]
+
+    plot(cbind(raw[,"time"], raw[,"mz"]), pch=20, cex=.5,
+        main = title, xlab="Seconds", ylab="m/z", col=col,
+        xlim=range(raw[,"time"]), ylim=range(raw[,"mz"]))
+
+    invisible(raw)
 })
 
 setGeneric("profMz", function(object) standardGeneric("profMz"))
 
 setMethod("profMz", "xcmsRaw", function(object) {
 
-    object@mzrange[1]+profStep(object)*(0:(dim(object@env$profile)[1]-1))
+    mzBreaks(object@env$profile)
 })
 
-setGeneric("profMethod", function(object) standardGeneric("profMethod"))
 
+setGeneric("profMethod", function(object, ...) standardGeneric("profMethod"))
 setMethod("profMethod", "xcmsRaw", function(object) {
 
-    object@profmethod
+    method(profileMatrixProto(object))
 })
 
-.profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
-                       binlinbase = "profBinLinBaseM", bin = "profBinM")
-
-setGeneric("profMethod<-", function(object, value) standardGeneric("profMethod<-"))
-
+setGeneric("profMethod<-", function(object, ..., value)
+           standardGeneric("profMethod<-"))
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
-    if (! (value %in% names(.profFunctions)))
-        stop("Invalid profile method")
+  origProto <- profileMatrixProto(object)
+  newProto <- xcmsProtocol("profileMatrix", value)
+  if (canCoerce(newProto, class(origProto)))
+    as(newProto, class(origProto)) <- origProto
+  else { # try to inherit as many parameters as possible
+    params <- parameters(origProto)
+    for (name in names(params)[names(params) %in% slotNames(newProto)])
+      try(slot(newProto, name) <- params[name], TRUE)
+  }
 
-    object@profmethod <- value
-
-    profStep(object) <- profStep(object)
-
-    object
+  profileMatrixProto(object) <- newProto
+  object
 })
 
-setGeneric("profStep", function(object) standardGeneric("profStep"))
-
+setGeneric("profStep", function(object, ...) standardGeneric("profStep"))
 setMethod("profStep", "xcmsRaw", function(object) {
 
-    if (is.null(object@env$profile))
-        0
-    else
-        diff(object@mzrange)/(nrow(object@env$profile)-1)
+    profileMatrixProto(object)@step
 })
 
-setGeneric("profStep<-", function(object, value) standardGeneric("profStep<-"))
-
+setGeneric("profStep<-", function(object, ..., value)
+           standardGeneric("profStep<-"))
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    if (!value)
-        return(object)
-    minmass <- round(min(object@env$mz)/value)*value
-    maxmass <- round(max(object@env$mz)/value)*value
-    num <- (maxmass - minmass)/value + 1
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
-    object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                  object@scanindex, num, minmass, maxmass,
-                                  FALSE, object@profparam)
-
-    object@mzrange <- c(minmass, maxmass)
-    return(object)
+    profileMatrixProto(object)@step <- value
+    object
 })
 
 setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
 
 setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 
-    contdim <- dim(object@env$profile)
-    object@env$profile <- medianFilter(object@env$profile, massrad, scanrad)
+    object@env$profile <- filterProfile(object@env$profile, "median",
+                                        massrad, scanrad)
+    object
 })
 
 setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
 
 setMethod("profRange", "xcmsRaw", function(object,
-                                           massrange = numeric(),
-                                           timerange = numeric(),
+                                           mzrange = numeric(),
+                                           rtrange = numeric(),
                                            scanrange = numeric(), ...) {
 
-    if (length(object@env$profile)) {
-        contmass <- profMz(object)
-        if (length(massrange) == 0) {
-            massrange <- c(min(contmass), max(contmass))
-        } else if (length(massrange) == 1) {
-            closemass <- contmass[which.min(abs(contmass-massrange))]
-            massrange <- c(closemass, closemass)
-        } else if (length(massrange) > 2) {
-            massrange <- c(min(massrange), max(massrange))
-        }
-        massidx <- which((contmass >= massrange[1]) & (contmass <= massrange[2]))
-    } else {
-        if (length(massrange) == 0) {
-            massrange <- range(object@env$mz)
-        } else {
-            massrange <- c(min(massrange), max(massrange))
-        }
-        massidx <- integer()
-    }
-    if (massrange[1] == massrange[2])
-        masslab <- paste(massrange[1], "m/z")
-    else
-        masslab <- paste(massrange[1], "-", massrange[2], " m/z", sep="")
-
-
-    if (length(timerange) == 0) {
-        if (length(scanrange) == 0)
-            scanrange <- c(1, length(object@scanindex))
-        else if (length(scanrange) == 1)
-            scanrange <- c(scanrange, scanrange)
-        else if (length(scanrange) > 2)
-            scanrange <- c(max(1, min(scanrange)), min(max(scanrange), length(object@scantime)))
-        timerange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
-    } else if (length(timerange) == 1) {
-        closetime <- object@scantime[which.min(abs(object@scantime-timerange))]
-        timerange <- c(closetime, closetime)
-    } else if (length(timerange) > 2) {
-        timerange <- c(min(timerange), max(timerange))
-    }
-
-    if (timerange[1] == timerange[2])
-        timelab <- paste(round(timerange[1],1), "seconds")
-    else
-        timelab <- paste(round(timerange[1],1), "-", round(timerange[2],1), " seconds", sep="")
-
-
-    if (length(scanrange) == 0) {
-        scanidx <- which((object@scantime >= timerange[1]) & (object@scantime <= timerange[2]))
-        scanrange <- c(min(scanidx), max(scanidx))
-    } else {
-        scanidx <- scanrange[1]:scanrange[2]
-    }
-
-    if (scanrange[1] == scanrange[2])
-        scanlab <- paste("scan", scanrange[1])
-    else
-        scanlab <- paste("scans ", scanrange[1], "-", scanrange[2], sep="")
-
-    list(massrange = massrange, masslab = masslab, massidx = massidx,
-         scanrange = scanrange, scanlab = scanlab, scanidx = scanidx,
-         timerange = timerange, timelab = timelab)
+    selectRange(object@env$profile, mzrange, rtrange, scanrange, ...)
 })
 
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 
-setMethod("rawEIC", "xcmsRaw", function(object,massrange,scanrange=c(1,length(object@scantime))){
-
-  scanrange[1] <- max(1,scanrange[1])
-  scanrange[2] <- min(length(object@scantime),scanrange[2])
+setMethod("rawEIC", "xcmsRaw", function(object,mzrange,scanrange=c(1,length(object@scantime))){
 
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
+setGeneric("findMZBoxes", function(object, ...) standardGeneric("findMZBoxes"))
 
-setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
+setMethod("findMZBoxes", "xcmsRaw", function(object,mzrange=c(0.0,0.0),scanrange=c(1,length(object@scantime)),dev,minEntries,debug=0){
 
-setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter, debug=0){
-
-  scanrange[1] <- max(1,scanrange[1])
-  scanrange[2] <- min(length(object@scantime),scanrange[2])
-
-  ## massrange not implemented yet
+  ## mzrange not implemented yet
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-  .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(massrange),
-  as.integer(scanrange), as.integer(length(object@scantime)),
-  as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(debug), PACKAGE ='xcms' )
+  .Call("findmzboxes",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),
+  as.integer(scanrange),as.integer(length(object@scantime)),
+  as.double(dev),as.integer(minEntries),as.integer(debug), PACKAGE ='xcms' )
 })
 
+# Exploration
+
+# called when no pipeline has been applied
+setMethod("explore", c("xcmsRaw", "NULL"),
+          function(object, protocol, ...)
+          {
+            # show image of raw data
+          })
+
+### Profile generation
+
+# FIXME: need to handle boundaries
+setMethod("perform", c("xcmsPipelineProfile", "xcmsRaw"),
+          function(object, data, mzindexrange = numeric(),
+                   scanrange = numeric(), mzrange = numeric(),
+                   rtrange = numeric(), ...)
+          {
+            prof <- perform(object[[1]], data, mzindexrange = mzindexrange,
+                            scanrange = scanrange, mzrange = mzrange,
+                            rtrange = rtrange, ...)
+            if (is.null(prof))
+                return(NULL)
+            perform(new("xcmsPipeline", tail(object, -1)), prof, ...)
+          })
+
+# High level profile matrix protocol
+setStage("genProfile", "Create and filter profile matrix", "xcmsRaw")
+setProtocol("generic", "Generic",
+            representation(pipeline = "xcmsPipelineProfile"),
+            function(data, pipeline = new("xcmsPipelineProfile"), ...) {
+              .setProfile(data, function() perform(pipeline, data, ...))
+            }, "genProfile")
+
+.setProfile <- function(data, prof) {
+  if ("profile" %in% ls(data@env))
+    rm("profile", envir = data@env)
+  if (is.function(prof))
+    prof <- prof()
+  if (!is.null(prof)) {
+    assign("profile", prof, data@env)
+    data@mzrange <- prof@mzrange
+  }
+  data
+}
+
+# Profile generation stage
+
+setStage("profileMatrix", "Create profile matrix", "xcmsRaw", "xcmsProfile")
+
+# Fixed-width bin profile generation protocols
+
+# Virtual base class
+setProtocol("base",
+            representation = representation(step = "numeric", naok = "logical"),
+            parent = "profileMatrix")
+
+.profFunctions <- c(bin = "profBinM", binlin = "profBinLinM",
+                    binlinbase = "profBinLinBaseM", intlin = "profIntLinM",
+                    maxidx = "profMaxIdxM")
+
+# convenience function that builds wrappers around the prof* functions
+.setProfileProtocol <- function(method, dispname, representation = list())
+{
+  profFun <- match.fun(.profFunctions[method])
+  wrapper <- function(data, step = 1, naok = FALSE,
+                      baselevel = min(data@env$intensity)/2, basespace = .075,
+                      mzindexrange = numeric(), scanrange = numeric(),
+                      mzrange = numeric(), rtrange = numeric())
+  {
+    if (!step)
+      return(NULL)
+
+    # get necessary information out of the xcmsRaw
+    mz <- get("mz", data@env)
+    intensity <- get("intensity", data@env)
+    scanindex <- data@scanindex
+    scantime <- data@scantime
+
+    if (length(mzrange) == 2) {
+        minmass <- mzrange[1]
+        maxmass <- mzrange[2]
+    } else {
+        minmass <- min(mz)
+        maxmass <- max(mz)
+    }
+
+    minmass <- round(minmass/step)*step
+    maxmass <- round(maxmass/step)*step
+    num <- round((maxmass - minmass)/step) + 1
+
+    params <- list()
+    if (!missing(baselevel))
+      params <- c(params, baselevel = baselevel)
+    if (!missing(basespace))
+      params <- c(params, basespace = basespace)
+
+    prof <- profFun(mz, intensity, scanindex, num, minmass, maxmass,
+        naok, params)
+
+    new("xcmsProfile", prof, step = step, mzrange = c(minmass, maxmass),
+        scantime = scantime)
+  }
+  setProtocol(method, dispname, representation, wrapper,
+              "profileMatrixBase")
+}
+
+.setProfileProtocol("intlin", "Integrated linearly interpolated bins")
+
+.setProfileProtocol("binlin", "Linearly interpolated bins")
+
+.setProfileProtocol("bin", "Simple bins")
+
+.setProfileProtocol("binlinbase", "Linearly interpolated bins with base",
+            representation(baselevel = "numeric", basespace = "numeric"))
+
+# should hide in xcms namespace
+.setProfileProtocol("maxidx", "Indices of bin maxima")
+
+# Shortcut for 'performing' a genProfile stage from existing xcmsProfile
+setGeneric("profileMatrix<-",
+           function(object, value) standardGeneric("profileMatrix<-"))
+setReplaceMethod("profileMatrix", c("xcmsRaw", "xcmsProfile"),
+                 function(object, value)
+                 {
+                   profpipe <- pipeline(value, ancestry = FALSE)
+                   #ancestry <- head(pipeline(value), -length(profpipe@.Data))
+                   #prepipe <- new("xcmsPipeline", ancestry)
+                   prepipe <- pipeline(value, local = FALSE)
+                   if (!identical(pipeline(object), prepipe))
+                     stop("Profile history incompatible with that of xcmsRaw")
+                   object <- .setProfile(object, value)
+                   protocol <- xcmsProtocol("genProfile", "generic",
+                                            pipeline = profpipe)
+                   object@pipeline@.Data <- c(object@pipeline, protocol)
+                   object
+                 })
+
+# Private methods (do not export)
+
+# set the profile protocol
+
+setReplaceMethod("genProfileProto", "xcmsRaw", function(object, value) {
+  genProfileProto(object@pipeline) <- value
+  perform(value, object)
+})
+
+# get/set the profile matrix protocol
+
+setMethod("profileMatrixProto", "xcmsRaw", function(object)
+  profileMatrixProto(genProfileProto(object)@pipeline))
+
+setReplaceMethod("profileMatrixProto", "xcmsRaw", function(object, value) {
+  profileMatrixProto(genProfileProto(object)@pipeline) <- value
+  object
+})
+
+# utility for getting a profile pipeline
+
+setGeneric("profPipe", function(object, ...) standardGeneric("profPipe"))
+
+setMethod("profPipe", "xcmsRaw", function(object, pipeline, step) {
+  # empty pipeline, attempt to get from xcmsRaw
+  if (!length(pipeline@.Data)) {
+    profproto <- genProfileProto(object)
+    if (!is.null(profproto)) {
+      profpipe <- pipeline(profproto)
+      if (!is.null(profpipe))
+        pipeline <- profpipe
+    }
+  } else step <- NULL # if 'pipeline' non-empty, ignore 'step'
+  # attempt to extract profile matrix protocol from pipeline
+  profmatproto <- profileMatrixProto(pipeline, "base")
+  if (is.null(profmatproto)) # fallback to 'bin' method
+    profmatproto <- xcmsProtocol("profileMatrix", "bin")
+  if (!is.null(step))
+    profmatproto@step <- step
+  profileMatrixProto(pipeline) <- profmatproto
+  pipeline
+})
+
+
+# utility function to detect if spectrum is in centroid mode
 
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
@@ -1213,4 +1471,139 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
 })
 
+
+read.metlinMS<- function(xml){
+    reading<-readLines(xml)
+    xml.mat<-matrix(nrow=length(reading),ncol=3)
+    name<-grep("name", reading)
+    Pmz<-grep("mass", reading)
+    nameVAL<-reading[name]
+    PmzVal<-reading[Pmz]
+
+    pattern1<-"\t{3}<mass>(.*)</mass>"
+    pattern2<-"\t{3}<name>(.*)</name>"
+    PmzVal<-gsub(pattern1, "\\1", PmzVal, perl=T)
+    nameVAL<-gsub(pattern2, "\\1", nameVAL, perl=T)
+
+    nameVAL.correct<-nameVAL[2:length(nameVAL)]
+    PmzVal.correct<-as.numeric(PmzVal[2:length(PmzVal)])
+    met.mat<-cbind(nameVAL.correct, PmzVal.correct)
+    colnames(met.mat)<-c("name", "MZ")
+    metMS.df<-as.data.frame(met.mat, stringsAsFactors=FALSE)
+    metMS.df[,"MZ"]<-as.numeric(metMS.df[,"MZ"])
+    metMS.df<-metMS.df[order(metMS.df[,"MZ"]), ]
+
+    return(metMS.df)
+}
+
+distance<-function(met, xcm, ppmval, matrix=FALSE){
+    l.met<-length(met)
+    l.xcm<-length(xcm)
+    d<-array(0, dim=c(l.met+1, l.xcm+1))
+
+    d[,1] <- 1:(l.met+1)
+    d[1,] <- 1:(l.xcm+1)
+    d[1,1] <- 0
+
+    for(i in 2:(l.met+1)){
+	for(j in 2:(l.xcm+1)){
+		if(ppm(met[i-1], xcm[j-1]) <= ppmval ){ ## ppm cal use
+			cost<- 0
+			#subcost<-0
+			} else {
+			cost<- 1
+			#subcost<-holdsub
+		}
+		d[i,j]<- min(d[i-1,j] +cost, ##inserting peak
+			     d[i,j-1] +cost, ##deleteing peak
+			     d[i-1,j-1] + cost) ##
+	}
+    }
+    if(matrix == TRUE){
+        return(d) ##check print whole matrix
+    }else{
+	return(d[l.met+1, l.xcm+1])
+    }
+}
+
+similar<-function(met, xcm, ppmval, matrix=FALSE){
+    l.met<-length(met)
+    l.xcm<-length(xcm)
+    d<-array(0, dim=c(l.met+1, l.xcm+1)) #we can cheat and use an AoA:)
+
+    d[,1] <- 1:(l.met+1)
+    d[1,] <- 1:(l.xcm+1)
+    d[1,1]<-max(l.met,l.xcm) ##Put the max simlarity at the start
+
+    for(i in 2:(l.met+1)){
+	for(j in 2:(l.xcm+1)){
+		if(ppm(met[i-1], xcm[j-1]) <= ppmval ){ ## ppm cal use
+			cost<- 0
+			#subcost<-0
+			} else {
+			cost<- 1
+			#subcost<-holdsub
+		}
+		d[i,j]<- max(d[i-1,j] -cost, ##inserting peak
+			     d[i,j-1] -cost, ##deleteing peak
+			     d[i-1,j-1] - cost) ## match
+	}
+    }
+    if(matrix == TRUE){
+        return(d) ##check print whole matrix
+    }else{
+	return(max(l.met,l.xcm) - d[l.met+1, l.xcm+1]) ##This give number of similar masses :)
+    }
+}
+
+ppm<-function(Mr, Mm){ ## Mr Mz real Mm Mz Measured
+    ppm<-abs((10^6)*(Mr-Mm)/Mm) ##abs for positive number
+    return(ppm)
+}
+
+ppmDev<-function(Mr, ppmE=5){
+    error<-(ppmE/10^6)*Mr ## just take the ppm as a percentage
+    deviation<-c(Mr+error, Mr-error)## 1 is high 2 is low
+    return(deviation)
+}
+
+read.mascot<-function(file, type="csv"){
+    ## Experimental
+    if(!file.exists(file))
+	stop("File doesnt exist")
+    if(type=="csv"){
+	lines<-readLines(file) ##check to see if file is ~ normal
+	if (grep("Protein hit", lines)) {
+		x<-lines[-seq(grep("Protein hit", lines)+1)]
+		myDF <-read.csv(textConnection(x), header=T)
+	} else {
+		stop("Noncompatable csv file\n")
+	}
+    } else if (type=="xml"){
+	stop("XML files are currently not supported, support comming soon")
+    }
+    return(myDF)
+}
+
+KeggSearch <- function(metabo, write=FALSE) {
+    ##Experimental
+    KEGG<-"http://www.genome.jp/dbget-bin/www_bfind_sub?mode=bfind&max_hit=100&dbkey=kegg&keywords="
+    Mascot<-read.mascot(masfile, type)
+    result<-vector()
+    for(i in 1:dim(metabo)[1]){
+	KEGG<-paste(KEGG,metabo[i,"name"], sep="")
+	KEGG<-readLines(url(KEGG),warn=FALSE) ## Don't tell me that EOF was incomplete
+	for(j in 1:dim(Mascot)[1,])
+		xover<-agrep(Mascot[j,"prot_name"], KEGG) ##Do the best we can grep isn't always happy
+		if(xover){
+			result[j]<-paste(Mascot[j,"prot_name"], "and", metabo[i,"name"], "have been found to be in the same pathway.", sep="")
+			rm(xover)
+		}
+    }
+	if(write){
+		cat(result, file="PathwayMatch.txt", sep="\n")
+	}else {
+		cat(result, sep="\n")
+	}
+}
 
