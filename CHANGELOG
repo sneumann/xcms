@@ -1,6 +1,7 @@
 2008-04-30:
 development cycle 1.13.x opened
 Added xcmsRaw CDF export contributed by Peter.Watkins at Food Science Australia (FSA)
+Fixed image(xcmsRaw)
 
 2008-04-28:
 Resurrection of 1.11.18 as 1.11.21

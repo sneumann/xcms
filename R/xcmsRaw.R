@@ -495,7 +495,7 @@ setMethod("getMsnScan", "xcmsRaw", .getMsnScan)
 
 image.xcmsRaw <- function(x, col = rainbow(256), ...) {
 
-    image(x@env$profile, col, ...)
+    image(x@env$profile@.Data, col, ...)
 }
 
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
