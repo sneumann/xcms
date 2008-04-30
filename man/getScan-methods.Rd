@@ -11,7 +11,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{getScan(object, scan, massrange = numeric())}
+  \code{getScan(object, scan, mzrange = numeric())}
 }
 }}
 \arguments{
@@ -20,7 +20,7 @@
     integer index of scan. if negative, the index numbered from the
     end
   }
-  \item{massrange}{
+  \item{mzrange}{
     limit data points returned to those between in the range, 
     \code{range(massrange)}
   }
