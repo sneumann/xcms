@@ -375,7 +375,7 @@ setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
     plotSpec(object@env$profile, ident, vline, ...)
 })
 
-setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
+#setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 
 setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
                                            fitgauss = FALSE, vline = numeric(0),
@@ -499,12 +499,12 @@ setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
 setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
 setMethod("getMsnScan", "xcmsRaw", .getMsnScan)
 
-image.xcmsRaw <- function(x, col = rainbow(256), ...) {
+image.xcmsRaw <- function(object, col = rainbow(256), ...) {
 
-    image(x@env$profile@.Data, col, ...)
+    image(object@env$profile, col, ...)
 }
 
-setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
+#setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
 setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
                                           aspect = c(1, 1, .5), ...) {
