@@ -105,7 +105,7 @@ setMethod("selectRange", "xcmsProfile", function(object,
 
 image.xcmsProfile <- function(x, col = rainbow(256), ...) {
 
-    sel <- profRange(x, ...)
+    sel <- selectRange(x, ...)
 
     zlim <- log(range(x))
 
@@ -182,9 +182,9 @@ setMethod("plotChrom", "xcmsProfile", function(object, base = FALSE,
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
 setMethod("plotSurf", "xcmsProfile", function(object, log = FALSE,
-                                          aspect = c(1, 1, .5), ...) {
+                                           aspect = c(1, 1, .5), ...) {
 
-    require(rgl) || stop("Couldn't load package rgl")
+  require(rgl) || stop("Couldn't load package rgl")
 
     sel <- selectRange(object, ...)
 
