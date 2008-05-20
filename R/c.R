@@ -117,7 +117,7 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
 
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
-    .C("ProfBinLinBaseM",
+    .C("ProfBinLinBase",
        x,
        y,
        as.integer(length(x)),
