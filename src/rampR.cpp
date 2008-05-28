@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <R.h>
 #include <Rdefines.h>
+
 #include "ramp.h"
 
 #define MAX_RAMP_FILES 100
+
+extern"C" {
 
 typedef struct {
     RAMPFILE          *file;
@@ -382,4 +385,6 @@ SEXP RampRSIPeaks(SEXP rampid, SEXP seqNum, SEXP peaksCount) {
     UNPROTECT(1);
     
     return result;
+}
+
 }
