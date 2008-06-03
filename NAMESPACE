@@ -11,7 +11,8 @@ export(
        "specPeaks",
        "SSgauss",
        "xcmsRaw",
-       "xcmsSet"
+       "xcmsSet",
+       "xcmsFragments"
        )
 
 S3method(c, xcmsSet)
@@ -22,7 +23,8 @@ S3method(split, xcmsSet)
 exportClasses(
               "xcmsEIC",
               "xcmsRaw",
-              "xcmsSet"
+              "xcmsSet",
+	      "xcmsFragments"
               )
 
 exportMethods(
@@ -56,6 +58,7 @@ exportMethods(
               "plotSpec",
               "plotSurf",
               "plotTIC",
+              "plotTree",
               "profinfo",
               "profinfo<-",
               "profMedFilt",
