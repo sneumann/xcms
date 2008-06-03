@@ -8,8 +8,6 @@
 \alias{show,xcmsRaw-method}
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
-\alias{write.cdf,xcmsRaw-method}
-\alias{write.cdf}
 
 \title{Class xcmsRaw, a class for handling raw data}
 \description{
@@ -31,12 +29,7 @@
       signal intensity for each m/z value, and \code{profile} -
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
-      values.
-
-      For objects with MS$^n$ spectra also two matrices \code{msninfo}
-      and \code{MSNpeaks} containing the level (e.g.\ 2 for Tandem MS)
-      and other precursor information. The \code{MSNpeaks} matrix
-      contains the raw spectra with their m/z and intensity.
+      values
     }
     \item{\code{tic}:}{
       numeric vector with total ion count (intensity) for each scan
@@ -63,23 +56,10 @@
       for interpolation and successive columns representing solvent
       fractions at each point
     }
-    \item{\code{Rt}:}{
-      a numeric vector of retention times of the MS$^n$ scan
-    }
-    \item{\code{msnLevel}:}{
-      a numeric vector giving the fragmentation level eg MS$^2$ msLevel = 2
-    }
-    \item{\code{msnIntensity}:}{
-      a numeric vector giving the intensity of the precursor ion.
-    }
-    \item{\code{msnPrecursorMZ}:}{
-      a numeric vector of mass/charge of the precursor ion.
-    }
-    \item{\code{msnCollisionEnergy}:}{
-      a numeric vector giving all collision energys for the MSn scans
-    }
-    \item{\code{filepath}:}{
-      path to the file from which this object was created
+    \item{\code{msmsinfo}:}{
+      matrix with first row, \code{parent}, containing parent ion
+      m/z and sucessive columns representing additional information
+      about fragmentation (energy, etc.)
     }
   }
 }
@@ -161,10 +141,6 @@
       \code{signature(object = "xcmsRaw")}: get the m/z step used
       for generating the \code{profile} matrix
     }
-    \item{\link{rawMat}}{
-      \code{signature(object = "xcmsRaw")}: get a matrix of the raw data
-      (columns time, mz and intensity)
-    }
     \item{revMz}{
       \code{signature(object = "xcmsRaw")}: reverse the order of the
       data points for each scan
@@ -172,11 +148,6 @@
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points
       by increasing m/z for each scan
-    }
-    \item{write.cdf}{
-      \code{signature(object = "xcmsRaw")}: write the xcmsRaw object to
-      a NetCDF file. This is useful e.g. for converting the XML formats
-      mzData/mzXML/mzML to CDF.
     }
   }
 }
