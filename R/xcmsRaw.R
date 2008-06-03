@@ -29,7 +29,8 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msnPrecursorIntensity = NULL,
                    msnPrecursorCharge = NULL,
                    msnPeakCount = NULL,
-                   msnCollisionEnergy = NULL
+                   msnCollisionEnergy = NULL,
+                   filepath = ""
                    ),
          "xcmsData")
 
@@ -162,7 +163,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     scan_no <- length(object@scanindex)
     point_no <- length(object@env$mz)
 
-    
+
     dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
     dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
     dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
@@ -193,7 +194,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
 
 
     close.ncdf(ms)
-    
+
 })
 
 

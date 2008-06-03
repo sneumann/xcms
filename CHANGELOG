@@ -1,3 +1,6 @@
+2008-06-03:
+Version Bump just before resurrection of xcms-1.12.1
+
 2008-05-02:
 Migrate to ncdf for xcmsRaw.write()
 
