@@ -4,6 +4,10 @@
 
 Non sequential parser for mzXML files
 and mzData files, too!
+and mzML, if you have the PWIZ library from Spielberg Family Proteomics Center
+
+NOTE: this is a .c file written with gcc in mind - so it's really
+c++ code.  You may need to tell your compiler this explicitly.
 
                              -------------------
     begin                : Wed Oct 10
@@ -21,20 +25,43 @@ and mzData files, too!
 *    version.                                                              *
 ***************************************************************************/
 
+// TODO:
+// merged_scan stuff is only coded for mzXML - can it be applied to mzData and mzML?
+//
+
+#define RAMP_HOME
+
 #include "ramp.h"
 
-#include "base64.h"
-
-#include "time.h"
-
-#include "zlib.h"
-
+#undef SIZE_BUF
 #define SIZE_BUF 512
 
-#ifdef _MSC_VER
-#define file_sep '\\'
+
+#ifdef HAVE_PWIZ_MZML_LIB
+#include <iostream>
+#include <vector>
+#include <exception>
+#include <RAMPAdapter.hpp>
+#ifdef HAVE_PWIZ_RAW_LIB  // use RAMP+pwiz+xcalibur to read .raw
+#include <Reader_RAW.hpp>
+#endif
+#define MZML_TRYBLOCK try {
+#define MZML_CATCHBLOCK } catch (std::exception& e) { std::cout << e.what() << std::endl;  } catch (...) { std::cout << "Caught unknown exception." << std::endl;  }
+#endif
+
+#ifdef TPPLIB
+#include "util.h"
+#include <inttypes.h>
 #else
-#define file_sep '/'
+// local copies of stuff in TPP's sysdepend.h, and empty macro versions of some stuff as well
+#ifdef _MSC_VER
+typedef unsigned long uint32_t; 
+typedef unsigned __int64 uint64_t;
+#define S_ISDIR(mode) ((mode)&_S_IFDIR)
+#define strcasecmp stricmp
+#endif
+#define fixPath(a,b)
+#define unCygwinify(a)
 #endif
 
 #if defined __LITTLE_ENDIAN
@@ -66,17 +93,40 @@ typedef union {
    double dbl;
 } U64;
 
+long G_RAMP_OPTION = DEFAULT_OPTION;
+
 /****************************************************************
  * Utility functions					*
  ***************************************************************/
 
-static char *findquot(const char *cp) { /* " and ' are both valid attribute delimiters */
-   char *result = strchr(cp,'\"');
+
+static const char *findquot(const char *cp) { /* " and ' are both valid attribute delimiters */
+   const char *result = strchr(cp,'\"');
    if (!result) {
       result = strchr(cp,'\'');
    }
    return result;
 }
+
+#ifndef TPPLIB  // stuff TPPlib provides
+static int isPathSeperator(char c) {
+	return (('/'==c)||('\\'==c));
+}
+
+static const char *findRightmostPathSeperator_const(const char *path) { // return pointer to rightmost / or \ .
+   const char *result = path+strlen(path);
+   while (result-->path) {
+      if (isPathSeperator(*result)) {
+         return result;
+      }
+   }
+   return NULL; // no match
+}
+
+static char *findRightmostPathSeperator(char *path) { // return pointer to rightmost / or \ .
+   return (char *)findRightmostPathSeperator_const(path);
+}
+#endif
 
 static int isquot(const char c) { /* " and ' are both valid attribute delimiters */
       return ('\"'==c)||('\''==c);
@@ -111,10 +161,17 @@ static void getIsLittleEndian(const char *buf, int *result) {
 * open and close files *
 **************************************************/
 RAMPFILE *rampOpenFile(const char *filename) {
+	// verify that this is an existing ordinary file (not a dir)
+	struct stat pFileStat;
+	if (!filename ||
+		!((!stat(filename, &pFileStat)) && S_ISREG(pFileStat.st_mode))) {
+	   return NULL;
+	}
+
    RAMPFILE *result = (RAMPFILE *)calloc(1,sizeof(RAMPFILE));
    if (result) {
       int bOK;
-#ifndef _LARGEFILE_SOURCE
+#ifdef RAMP_NONNATIVE_LONGFILE
      result->fileHandle = open(filename,_O_BINARY|_O_RDONLY);
      bOK = (result->fileHandle >= 0);
 #else
@@ -126,19 +183,65 @@ RAMPFILE *rampOpenFile(const char *filename) {
         result = NULL;
      } else {
         char buf[1024];
+		int bRecognizedFormat = 0;
+		int n_nonempty_lines = 0;
         buf[sizeof(buf)-1] = 0;
         while (!ramp_feof(result)) {
            ramp_fgets(buf,sizeof(buf)-1,result);
            if (strstr(buf,"<msRun")) {
               result->bIsMzData = 0;
+			  bRecognizedFormat = 1;
               break;
            } else if (strstr(buf,"<mzData")) {
               result->bIsMzData = 1;
+			  bRecognizedFormat = 1;
               break;
+#ifdef HAVE_PWIZ_MZML_LIB
+           } else if (strstr(buf,"<mzML")
+#ifdef HAVE_PWIZ_RAW_LIB  // use RAMP+pwiz+xcalibur to read .raw
+			   || pwiz::msdata::Reader_RAW::hasRAWHeader(std::string(buf,sizeof(buf)))
+#endif
+			   ) {
+			  bRecognizedFormat = 1;
+#ifdef RAMP_NONNATIVE_LONGFILE
+			  close(result->fileHandle); // don't confuse pwiz by holding onto handle
+			  result->fileHandle = -1;
+#else
+              fclose(result->fileHandle); // don't confuse pwiz by holding onto handle
+			  result->fileHandle = NULL;
+#endif
+			  try {
+			  result->mzML = new pwiz::msdata::RAMPAdapter(std::string(filename));
+		      } 
+			  catch (std::exception& e) { 
+				  std::cout << e.what() << std::endl;  
+			  } catch (...) { 
+				  std::cout << "Caught unknown exception." << std::endl;  
+			  }
+			  if (!result->mzML) {
+#ifdef HAVE_PWIZ_RAW_LIB  // use RAMP+pwiz+xcalibur to read .raw
+				  if (pwiz::msdata::Reader_RAW::hasRAWHeader(std::string(buf,sizeof(buf)))) {
+					  std::cout << "could not read .raw file - missing Xcalibur DLLs?" << std::endl;
+				  }
+#endif
+				  bRecognizedFormat = false; // something's amiss
+			  }
+              break;
+#endif
+		   } else if (buf[0]&&buf[1]&&(n_nonempty_lines++>5000)) {
+			   break; // this far into the file, this can't be what we intended
            }
         }
+		if (!bRecognizedFormat) {
+			rampCloseFile(result); // this also frees the handle
+			result = NULL; // return null to indicate read failure
+		} else 
+#ifdef HAVE_PWIZ_MZML_LIB
+	 	if (!result->mzML) 
+#endif
+		{
         ramp_fseek(result,0,SEEK_SET); // rewind
-        // now set up the element tags we seek
+		}
      }
    }
    return result;
@@ -146,7 +249,14 @@ RAMPFILE *rampOpenFile(const char *filename) {
 
 void rampCloseFile(RAMPFILE *pFI) {
    if (pFI) {
-#ifndef _LARGEFILE_SOURCE
+#ifdef HAVE_PWIZ_MZML_LIB
+	   if (pFI->mzML) {
+		   MZML_TRYBLOCK
+		   delete pFI->mzML;
+		   MZML_CATCHBLOCK
+	   } else
+#endif
+#ifdef RAMP_NONNATIVE_LONGFILE
       close(pFI->fileHandle);
 #else
       fclose(pFI->fileHandle);
@@ -159,7 +269,7 @@ void rampCloseFile(RAMPFILE *pFI) {
 * fgets() for win32 long files *
 * TODO: this could be a LOT more efficient...
 **************************************************/
-#ifndef _LARGEFILE_SOURCE
+#ifdef RAMP_NONNATIVE_LONGFILE
 char *ramp_fgets(char *buf,int len,RAMPFILE *handle) {
    int nread=0;
    int chunk;
@@ -198,7 +308,11 @@ ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
    int  i;
    ramp_fileoffset_t  indexOffset, indexOffsetOffset;
    char indexOffsetTemp[SIZE_BUF+1], buf;
-
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) {
+      return -1; // no direct index access in mzML
+   }
+#endif
    if (pFI->bIsMzData) {
       return -1; // no index in mzData
    }
@@ -210,7 +324,7 @@ ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
       int  nread;
 
       ramp_fseek(pFI, indexOffsetOffset, SEEK_END);
-      nread = ramp_fread(seekbuf, strlen(target), pFI);
+      nread = ramp_fread(seekbuf, (int)strlen(target), pFI);
       seekbuf[nread] = '\0';
       
       if (!strcmp(seekbuf, target))
@@ -259,7 +373,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                 ramp_fileoffset_t indexOffset,
                 int *iLastScan)
 {
-   int  n, nread;
+   int  n=0, nread;
    int  reallocSize = 8000;    /* initial # of scan indexes to expect */
    char *beginScanOffset;
    
@@ -269,7 +383,36 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
    ramp_fileoffset_t *pScanIndex=NULL;
    int retryLoop;
    char* s;
-   
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) {
+      // we're really building a table of scan numbers vs scan ids, not vs file offsets
+      MZML_TRYBLOCK
+	  int curscan=0;
+	  n = 0; // no scans yet
+      pScanIndex = (ramp_fileoffset_t *)malloc( sizeof(ramp_fileoffset_t)*reallocSize); // allocate space for the scan index info
+	  for (int i = 0; i< (int)pFI->mzML->scanCount();i++) {
+		 ScanHeaderStruct hdr;
+         pFI->mzML->getScanHeader(i, hdr);
+		 int newN = hdr.acquisitionNum;
+		 if (reallocSize <= newN) {
+			 reallocSize = newN + 500; 
+			 pScanIndex = (ramp_fileoffset_t *)realloc(pScanIndex, sizeof(ramp_fileoffset_t)*reallocSize);
+		 }
+         if (!pScanIndex) {
+            printf("Cannot allocate memory\n");
+            return NULL;
+         }
+		 while (curscan < newN) {
+			 pScanIndex[curscan++] = -1; // meaning "there is no scan cur_scan"
+		 }
+         n = curscan; // for use below, where we set pScanIndex[n+1]=-1
+		 pScanIndex[curscan++] = i; // ramp is 1-based
+         (*iLastScan) = newN;
+		 assert((i+1)==hdr.seqNum);
+	  }
+      MZML_CATCHBLOCK
+   } else
+#endif   
    for (retryLoop = 2;retryLoop--;) {
      n = 1; // ramp is one based
      *iLastScan = 0;
@@ -302,7 +445,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                while (++scanNumStr < buf + sizeof(buf) - 1 && *scanNumStr != '\"'); // increment until it hits the end quote or the end of buffer 
                if (scanNumStr >= buf + sizeof(buf) - 1) { 
                   // hitting the end of buffer, let's not read this scan; remember the length of the truncated piece
-                  truncated = scanNumStr - find;
+                  truncated = (int)(scanNumStr - find);
                  break;
                }
                
@@ -348,7 +491,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                }
                */
             }
-            nread = strlen(look)+(look-buf);
+            nread = (int)(strlen(look)+(look-buf));
             if (*look && strchr(scantag,buf[nread-1]) && !ramp_feof(pFI)) { // check last char of buffer
                // possible that next scantag overhangs end of buffer
                ramp_fseek(pFI,-taglen,SEEK_CUR); // so next get includes it
@@ -433,6 +576,9 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
             } else {
                pScanIndex[n] = atol(beginScanOffset);
             }
+			if (pScanIndex[n] <= 0) { // the "X2XML" converter writes index entries for missing scans
+			   pScanIndex[n] = -1; // meaning "there is no scan n"
+			}
 
             // HENRY -- I have moved the following realloc piece earlier. The reason is:
             // In the old way, the scan numbers are assumed to be consecutive, so one can expect the next scan number
@@ -524,7 +670,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
 }
 
 // helper func for reading mzData
-const char *findMzDataTagValue(const char *pStr, const char *tag) {
+static const char *findMzDataTagValue(const char *pStr, const char *tag) {
    const char *find = strstr(pStr,tag);
    if (find) {
       find = strstr(find+1,"value=");
@@ -538,6 +684,7 @@ const char *findMzDataTagValue(const char *pStr, const char *tag) {
    return find;
 }
 
+#include <time.h>
 /*
  * Reads a time string, returns time in seconds.
  */
@@ -596,7 +743,7 @@ static double rampReadTime(RAMPFILE *pFI,const char *pStr) {
 /*
  * helper func for faster parsing
  */
-const char *matchAttr(const char *where,const char *attr,int len) {
+static const char *matchAttr(const char *where,const char *attr,int len) {
    const char *look = where; // we assume this is pointed at '=', look back at attr
    while (len--) {
       if (*--look != attr[len]) {
@@ -634,7 +781,7 @@ void readHeader(RAMPFILE *pFI,
                 ramp_fileoffset_t lScanIndex, // look here
                 struct ScanHeaderStruct *scanHeader)
 {
-   char stringBuf[SIZE_BUF];
+   char stringBuf[SIZE_BUF+1];
    char *pStr2;
 
    /*
@@ -645,6 +792,17 @@ void readHeader(RAMPFILE *pFI,
    scanHeader->lowMZ =  LOWMZ_UNINIT;
    scanHeader->acquisitionNum = -1;
    scanHeader->seqNum = -1;
+   scanHeader->retentionTime = -1;
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+     if (lScanIndex >= 0) { 
+  		MZML_TRYBLOCK;
+		pFI->mzML->getScanHeader((size_t)lScanIndex, *scanHeader);
+		MZML_CATCHBLOCK;
+     }
+	 return;
+   }
+#endif
 
    // HENRY - missing scans due to dta2mzXML get offset of zero
    // missing scans without index entries get offset of -1
@@ -653,7 +811,6 @@ void readHeader(RAMPFILE *pFI,
    if (lScanIndex <= 0) { 
      return;
    }
-
    ramp_fseek(pFI, lScanIndex, SEEK_SET);
 
 
@@ -670,7 +827,10 @@ void readHeader(RAMPFILE *pFI,
             if (closeTag && (closeTag < attrib)) {
                break; // into data territory now
             }
-            if ((pStr = matchAttr(attrib, "spectrum id",11))) {
+			if (matchAttr(attrib,"cvLabel",7)|| matchAttr(attrib,"accession",9)||
+				matchAttr(attrib,"value",5)) {
+			   ; // no info here
+			} else if ((pStr = matchAttr(attrib, "spectrum id",11))) {
                sscanf(pStr, "%d", &(scanHeader->acquisitionNum));
             //} else if ((pStr = matchAttr(attrib, "basePeakMz",10)))  {
             //   sscanf(pStr, "%lf", &(scanHeader->basePeakMZ));      
@@ -723,14 +883,24 @@ void readHeader(RAMPFILE *pFI,
             {
                scanHeader->precursorCharge = atoi(pStr2);
             }
-            
+            //Paul Benton : added support for Collision Energy 25-01-08
+            if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"CollisionEnergy")))
+            {
+               scanHeader->collisionEnergy = atof(pStr2);
+            }
+            //end of collision energy addition            
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"MassToChargeRatio"))) 
             {
-               scanHeader->precursorMZ = atoi(pStr2);
+               scanHeader->precursorMZ = atof(pStr2);
             }
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"mz"))) 
             {
-               scanHeader->precursorMZ = atoi(pStr2);
+               scanHeader->precursorMZ = atof(pStr2);
+            }
+            // bpratt for Steffen Neumann
+            if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"Intensity")))
+            {
+               scanHeader->precursorIntensity = atof(pStr2);
             }
          }
          if (strstr(stringBuf, "</spectrumDesc>")) {
@@ -761,7 +931,21 @@ void readHeader(RAMPFILE *pFI,
          // find each attribute in stringBuf
          for (attrib=stringBuf-1;NULL!=(attrib=strchr(attrib+1,'='));) {
             if ((pStr = matchAttr(attrib, "num",3))) {
-               sscanf(pStr, "%d", &(scanHeader->acquisitionNum));
+               if (-1 == scanHeader->acquisitionNum) {
+                  sscanf(pStr, "%d", &(scanHeader->acquisitionNum));
+               } else {
+                  // ASSUMPTION: only <scan num=...> and <scanOrigin num=...>
+                  int scanOriginNum=0;
+                  sscanf(pStr, "%d", &scanOriginNum);
+                  if (scanOriginNum<scanHeader->mergedResultStartScanNum 
+                     || 0==scanHeader->mergedResultStartScanNum ) {
+                     scanHeader->mergedResultStartScanNum = scanOriginNum;
+                  }
+                  if (scanOriginNum>scanHeader->mergedResultEndScanNum 
+                     || 0==scanHeader->mergedResultEndScanNum ) {
+                     scanHeader->mergedResultEndScanNum = scanOriginNum;
+                  }
+               }
             } else if ((pStr = matchAttr(attrib, "basePeakMz",10)))  {
                sscanf(pStr, "%lf", &(scanHeader->basePeakMZ));      
             } else if ((pStr = matchAttr(attrib, "totIonCurrent",13)))  {
@@ -791,6 +975,10 @@ void readHeader(RAMPFILE *pFI,
                }
             } else if ((pStr = matchAttr(attrib, "collisionEnergy", 15)))  {
                  sscanf(pStr, "%lf", &(scanHeader->collisionEnergy));
+            } else if ((pStr = matchAttr(attrib, "merged", 6)))  {
+                 sscanf(pStr, "%d", &(scanHeader->mergedScan));
+            } else if ((pStr = matchAttr(attrib, "mergedScanNum", 13)))  {
+                 sscanf(pStr, "%d", &(scanHeader->mergedResultScanNum));
             }
          }
          
@@ -813,6 +1001,14 @@ void readHeader(RAMPFILE *pFI,
             }
             if ((pStr2 = (char *) strstr(pStr, "precursorIntensity="))) {
                sscanf(pStr2 + 20, "%lf", &(scanHeader->precursorIntensity));
+            }
+            if ((pStr2 = (char *) strstr(pStr, "activationMethod="))) {
+               char *pStr3;
+               pStr3 = pStr2+18;
+               if ((pStr2 = (char *) findquot(pStr3))) {
+                  memcpy(&(scanHeader->activationMethod), pStr3, sizeof(char)*((pStr2-pStr3)));
+                  scanHeader->activationMethod[pStr2-pStr3] = '\0';
+               }
             }
             
             /*
@@ -856,8 +1052,29 @@ void readHeader(RAMPFILE *pFI,
             break; // ??? we're before scan 1 - indicates a broken index
          }
       }
+      switch(G_RAMP_OPTION & MASK_SCANS_TYPE) {
+         case OPTION_ALL_SCANS:
+            // return all scans (i.e. origin + averaged) as they are
+            break;
+         case OPTION_ORIGIN_SCANS:
+            // return origin scan regardless of whether it has has been used in averaging
+            //        DO NOT return averaged (resultant) scan
+            if (scanHeader->mergedScan 
+               && 0!=scanHeader->mergedResultStartScanNum && 0!=scanHeader->mergedResultEndScanNum) {
+               scanHeader->peaksCount = 0;
+            }
+            break;
+         case OPTION_AVERAGE_SCANS:
+         default:
+            // return origin scan if it has NOT been used in averaging
+            //        also, return averaged scan
+            if (scanHeader->mergedScan && 0!=scanHeader->mergedResultScanNum && scanHeader->acquisitionNum!=scanHeader->mergedResultScanNum) {
+               scanHeader->peaksCount = 0;
+            }
+            break;
+      }
    } // end else mzXML
-   if (!scanHeader->retentionTime) { 
+   if (scanHeader->retentionTime<0) { 
       scanHeader->retentionTime = scanHeader->acquisitionNum; // just some unique nonzero value
    }
    scanHeader->seqNum = scanHeader->acquisitionNum; //  default sequence number
@@ -882,7 +1099,15 @@ int readMsLevel(RAMPFILE *pFI,
    if (lScanIndex <= 0) {
      return (0);
    }
-
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+	   struct ScanHeaderStruct scanHeader;
+	   MZML_TRYBLOCK
+	   pFI->mzML->getScanHeader((size_t)lScanIndex, scanHeader);
+	   MZML_CATCHBLOCK
+	   return(scanHeader.msLevel);
+   }
+#endif
    ramp_fseek(pFI, lScanIndex, SEEK_SET);
 
    ramp_fgets(stringBuf, SIZE_BUF, pFI);
@@ -894,7 +1119,7 @@ int readMsLevel(RAMPFILE *pFI,
 
    beginMsLevel += 9;           // We need to move the length of msLevel="
    endMsLevel = (char *) findquot(beginMsLevel);
-   msLevelLen = endMsLevel - beginMsLevel;
+   msLevelLen = (int)(endMsLevel - beginMsLevel);
 
    strncpy(szLevel, beginMsLevel, msLevelLen);
    szLevel[msLevelLen] = '\0';
@@ -922,7 +1147,15 @@ double readStartMz(RAMPFILE *pFI,
   if (lScanIndex <= 0) {
     return (startMz);
   }
-
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+	   struct ScanHeaderStruct scanHeader;
+	   MZML_TRYBLOCK;
+	   pFI->mzML->getScanHeader((size_t)lScanIndex, scanHeader);
+	   MZML_CATCHBLOCK;
+	   return(scanHeader.lowMZ);
+   }
+#endif
   ramp_fseek(pFI, lScanIndex, SEEK_SET);
    
   while (ramp_fgets(stringBuf, SIZE_BUF, pFI))
@@ -958,7 +1191,15 @@ double readEndMz(RAMPFILE *pFI,
   if (lScanIndex <= 0) {
     return (endMz);
   }
-
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+	   struct ScanHeaderStruct scanHeader;
+	   MZML_TRYBLOCK
+	   pFI->mzML->getScanHeader((size_t)lScanIndex, scanHeader);
+	   MZML_CATCHBLOCK
+	   return(scanHeader.highMZ);
+   }
+#endif
   ramp_fseek(pFI, lScanIndex, SEEK_SET);
    
   while (ramp_fgets(stringBuf, SIZE_BUF, pFI))
@@ -974,31 +1215,65 @@ double readEndMz(RAMPFILE *pFI,
   return endMz;
 }
 
-#define N_EXT_TYPES 4
-static char *data_ext[N_EXT_TYPES]={".mzXML",".mzData",".mzxml",".mzdata"};
+// note the different capITaliZaTIons, this could be done better - it's used
+// for trying to find if basename "foo" has an existing foo.mzXML, foo.mzxml etc
+// which is not problem on windoze (no real case sense in filenames) but is on *nix
+static char *data_ext[]={".mzXML",".mzData",".mzxml",".mzdata",".mzDATA",
+#ifdef HAVE_PWIZ_MZML_LIB
+  ".mzML", ".mzml",  ".MZML",
+#endif
+NULL
+};
 
+// returns a null-terminated array of const ptrs
+const char **rampListSupportedFileTypes() {
+	return (const char **)data_ext;
+}
 
 // construct a filename in inbuf from a basename, adding .mzXML or .mzData as exists
 // returns inbuf, or NULL if neither .mzXML or .mzData file exists
 char *rampConstructInputFileName(char *inbuf,int inbuflen,const char *basename_in) {
    return rampConstructInputPath(inbuf, inbuflen, "", basename_in);
 }
+// std::string equivalent
+std::string rampConstructInputFileName(const std::string &basename) {
+	int len;
+	char *buf = new char[len = (int)(basename.length()+100)]; 
+	rampConstructInputPath(buf, len, "", basename.c_str());
+	std::string result(buf);
+	delete[] buf;
+	return result;
+}
 
-char *rampConstructInputPath(char *inbuf,int inbuflen,const char *dir,const char *basename_in) {
-   char *result = NULL;
+
+char *rampConstructInputPath(char *inbuf, // put the result here
+							 int inbuflen, // max result length
+							 const char *dir_in, // use this as a directory hint if basename does not contain valid dir info
+							 const char *basename_in) { // we'll try adding various filename extensions to this
+ char *result = NULL;
+ for (int loop = (dir_in&&*dir_in)?2:1;loop--&&!result;) { // try it first without directory hint in case basename has full path
    int i;
-   char *basename = (char *) basename_in;
+   const char *basename = basename_in;
+   char *dir = strdup((dir_in&&!loop)?dir_in:"");
    char *tmpbuf = (char *)malloc(strlen(dir) + strlen(basename) + 20);
    char *append;
+   if (*dir)
+   {  // make sure this is a directory, and not a directory+filename
+      struct stat buf;
+	  if ((!stat(dir,&buf)) && !S_ISDIR(buf.st_mode)) { // exists, but isn't a dir
+		  char *slash = findRightmostPathSeperator(dir);
+		  if (slash) {
+			  *(slash+1) = 0;
+		  }
+	  }
+   }
    if (dir != NULL && *dir != '\0')
    {
        // If directory for mzXML was supplied, strip off directory part.
-       char *basename_sep = strrchr(basename, '/');
-       if (basename_sep != NULL)
+	   const char *basename_sep = findRightmostPathSeperator_const(basename);
+	   if (basename_sep) {
            basename = basename_sep + 1;
-       basename_sep = strrchr(basename, '\\');
-       if (basename_sep != NULL)
-           basename = basename_sep + 1;
+   }
    }
 
    if (basename_in==inbuf) { // same pointer
@@ -1010,19 +1285,20 @@ char *rampConstructInputPath(char *inbuf,int inbuflen,const char *dir,const char
    *tmpbuf= 0;
    if (dir != NULL && *dir != '\0')
    {
-       int len_dir = strlen(dir);
+       int len_dir = (int)strlen(dir);
    strcpy(tmpbuf, dir);
-       if (tmpbuf[len_dir - 1] != file_sep)
+       if (!isPathSeperator(tmpbuf[len_dir - 1]))
        {
-           tmpbuf[len_dir] = file_sep;
+           tmpbuf[len_dir] = '/';
            tmpbuf[len_dir+1] = 0;
        }
    }
    strcat(tmpbuf, basename);
+   unCygwinify(tmpbuf); // no effect in Cygwin build
 
    append = tmpbuf + strlen(tmpbuf);
 
-   for (i=0;i<N_EXT_TYPES;i++) {
+   for (i=0;data_ext[i];i++) {
       FILE *test;
       strcpy(append,data_ext[i]);
       test = fopen(tmpbuf,"r");
@@ -1043,7 +1319,7 @@ char *rampConstructInputPath(char *inbuf,int inbuflen,const char *dir,const char
       result = strdup(tmpbuf);
    }
    if (basename_in==inbuf) { // same pointer
-      free(basename);
+      free((void *)basename); // we allocated it
    }
    free(tmpbuf);
 
@@ -1057,22 +1333,57 @@ char *rampConstructInputPath(char *inbuf,int inbuflen,const char *dir,const char
       free(result);
       result = NULL;
    }
-   return result;
+   free(dir); // we allocated this to trim a filename off the directory hint
+ } // end for (int loop...
+ return result;
+}
+
+// construct a filename in inbuf from a basename and taking hints from a named
+// spectrum, adding .mzXML or .mzData as exists
+// return true on success
+int rampValidateOrDeriveInputFilename(char *inbuf, int inbuflen, char *spectrumName) {
+   struct stat buf;
+   char *result = NULL;
+   char *dot,*slash,*tryName;
+   size_t len;
+   if (!stat(inbuf,&buf)) {
+      return 1;
+   }
+   tryName = (char *)malloc(len=strlen(inbuf)+strlen(spectrumName)+12);
+   strcpy(tryName,inbuf);
+   fixPath(tryName,1); // do any desired tweaks, searches etc - expect existence
+   slash=findRightmostPathSeperator(tryName);
+   if (!slash) {
+      slash = tryName-1;
+   }
+   strcpy(slash+1,spectrumName);
+   dot = strchr(slash+1,'.');
+   if (dot) {
+      *dot = 0;
+   }
+   rampConstructInputFileName(tryName,(int)len,tryName); // .mzXML or .mzData
+   if (((int)strlen(tryName) < inbuflen) && !stat(tryName,&buf)) {
+      // success!
+      strncpy(inbuf,tryName,inbuflen);
+      result = inbuf;
+   }
+   free(tryName);
+   return result!=NULL;
+
 }
 
 // return NULL if fname is not of extension type we handle,
 // otherwise return pointer to .ext
 char *rampValidFileType(const char *fname) {
-   char *result;
-   int i;
-   for (i = N_EXT_TYPES;i--;) {
+   const char *result;
+   for (int i=0;data_ext[i];i++) {
       result = strrchr(fname,'.');
       if (result && !strcasecmp(result,data_ext[i])) {
          break;
       }
       result = NULL; // try again
    }
-   return result;
+   return (char *)result;
 }
 
 // remove the filename .ext, if found
@@ -1094,16 +1405,29 @@ char *rampTrimBaseName(char *fname) {
 int readPeaksCount(RAMPFILE *pFI,
       ramp_fileoffset_t lScanIndex)
 {
+
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+	   if (lScanIndex < 0) {
+         return (0);
+       }
+       struct ScanHeaderStruct scanHeader;
+	   MZML_TRYBLOCK
+	   pFI->mzML->getScanHeader((size_t)lScanIndex, scanHeader);
+	   MZML_CATCHBLOCK
+	   return scanHeader.peaksCount;
+   }
+#endif   
+   // HENRY -- check invalid offset. is 0 a good uninitialized value for peakCount?
+   if (lScanIndex <= 0) {
+     return (0);
+   }
    char *stringBuf=(char *)malloc(SIZE_BUF+1);
    char *beginPeaksCount, *peaks;
    int result = 0;
    const char *tag = pFI->bIsMzData?"length=":"peaksCount=";
    ramp_fileoffset_t in_lScanIndex = lScanIndex;
 
-   // HENRY -- check invalid offset. is 0 a good uninitialized value for peakCount?
-   if (lScanIndex <= 0) {
-     return (0);
-   }
 
    ramp_fseek(pFI, lScanIndex, SEEK_SET);
 
@@ -1140,22 +1464,45 @@ int readPeaksCount(RAMPFILE *pFI,
  * !! THE STREAM IS NOT RESET AT THE INITIAL POSITION BEFORE	*
  *    RETURNING !!						*
  ***************************************************************/
-
+#include <zlib.h>
 RAMPREAL *readPeaks(RAMPFILE *pFI,
       ramp_fileoffset_t lScanIndex)
 {
+   RAMPREAL *pPeaks = NULL;
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) { // use pwiz lib to read mzML
+	   MZML_TRYBLOCK;
+	   std::vector<double> vec;
+	   pFI->mzML->getScanPeaks((size_t)lScanIndex, vec);
+	   int peaksCount = (int)vec.size()/2; // vec contains mz/int pairs
+	   pPeaks = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1);
+	   if (!pPeaks) {
+		   printf("Cannot allocate memory\n");
+		   return NULL;
+	   }
+	   size_t rsize=sizeof(RAMPREAL);
+	   if (rsize==sizeof(double)) {
+		   memmove(pPeaks,&(vec[0]),2*peaksCount*sizeof(double));
+	   } else for (int p = 2*peaksCount;p--;) {
+		   pPeaks[p] = (RAMPREAL)vec[p];
+	   }
+       pPeaks[peaksCount*2] = -1; // some callers want a terminator
+       pPeaks[peaksCount*2+1] = -1; // some callers want a terminator
+	   MZML_CATCHBLOCK;
+	   return pPeaks;
+   }
+#endif
    int  n=0;
    int  peaksCount=0;
    int  peaksLen;       // The length of the base64 section
    int precision = 0;
-   RAMPREAL *pPeaks = NULL;
    RAMPREAL *pPeaksDeRuled = NULL;
    
    int  endtest = 1;
    int  weAreLittleEndian = *((char *)&endtest);
 
    char *pData = NULL;
-   char *pBeginData;
+   const char *pBeginData;
    char *pDecoded = NULL;
 
    char buf[1000];
@@ -1166,7 +1513,6 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
    if (lScanIndex <= 0) {
      return (NULL);
    }
-
 
    if (pFI->bIsMzData) {
       // intensity and mz are written in two different arrays
@@ -1241,9 +1587,9 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
             // copy in any partial read of peak data, and complete the read
             strncpy(pData,pBeginData,peaksLen);
             pData[peaksLen] = 0;
-            partial = strlen(pData);
+            partial = (int)strlen(pData);
             if (partial < peaksLen) {              
-               ramp_fread(pData+partial,peaksLen-partial, pFI);
+               ramp_fread(pData+partial,(int)(peaksLen-partial), pFI);
             }
 
             // whitespace may be present in base64 char stream
@@ -1271,7 +1617,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
                   return NULL;
                }
                // Base64 decoding
-            b64_decode_mio(pDecoded, pData);
+            b64_decode(pDecoded, pData, peaksCount * (precision/8));
             
             if ((!pPeaks) && ((pPeaks = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1)) == NULL))
             {
@@ -1319,8 +1665,19 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       free(pDecoded);
       pPeaks[peaksCount*2] = -1; // some callers want a terminator
    } else { // mzXML
+     peaksCount = readPeaksCount(pFI, lScanIndex);
+     if (peaksCount <= 0)
+     { // No peaks in this scan!!
+        return NULL;
+     }
+	 // handle possible mz/intensity in seperate arrays
+	 bool gotMZ=false;
+	 bool gotIntensity=false;
+	 while ((!gotMZ) || (!gotIntensity)) {
        Byte *pUncompr;
        int isCompressed = 0;
+       bool readingMZ = false;
+       bool readingIntensity = false;
       int partial,bytes,triplets;
       int isLittleEndian = 0; // default is network byte order (Big endian)
       int byteOrderOK;
@@ -1329,15 +1686,9 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       char      *pToBeCorrected;
       e_contentType contType = mzInt; // default to m/z-int
 
-      peaksCount = readPeaksCount(pFI, lScanIndex);
-      if (peaksCount <= 0)
-      { // No peaks in this scan!!
-         return NULL;
-      }
-      
       // now determine peaks precision
       ramp_fgets(buf, sizeof(buf)-1, pFI);
-      while (!(pBeginData = (char *) strstr(buf, "peaks")))
+      while (!(pBeginData = (char *) strstr(buf, "<peaks")))
       {
          ramp_fgets(buf, sizeof(buf)-1, pFI);
       }
@@ -1360,13 +1711,24 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
               {
                   contType = mzInt;
               }
-              else if( (pBeginData = strstr( buf , "m/z ruler" )))
+			  else if( (pBeginData = strstr( buf , "m/z ruler" )))
               {
                   contType = mzRuler;
+				  readingMZ = readingIntensity = gotMZ = gotIntensity = true; // they're munged together
+              }
+			  else if( (pBeginData = strstr( buf , "m/z" )))
+              {
+                  contType = mzOnly;
+				  readingMZ = gotMZ = true; 
+              }
+              else if( (pBeginData = strstr( buf , "intensity" )))
+              {
+                  contType = intensityOnly;
+				  readingIntensity = gotIntensity = true; 
               }
               else
               {
-                  char* pEndAttrValue;
+                  const char* pEndAttrValue;
                   pEndAttrValue = strchr( pBeginData + strlen( "contentType=\"") + 1 , '\"' );
                   pEndAttrValue  = '\0';
                   fprintf(stderr, "%s Unsupported content type\n" , pBeginData ); 
@@ -1385,7 +1747,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
               }
               else
               {
-                  char* pEndAttrValue;
+                  const char* pEndAttrValue;
                   pEndAttrValue = strchr( pBeginData + strlen( "compressionType=\"") + 1 , '\"' );
                   pEndAttrValue = '\0';
                   fprintf(stderr, "%s Unsupported compression type\n" , pBeginData ); 
@@ -1411,6 +1773,11 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       { // precision attribute was not defined assume 32 by default
           precision = 32;
       }
+	  if (mzInt==contType) {
+		  readingMZ = readingIntensity = gotMZ = gotIntensity = true; // they're munged together
+	  }
+
+	  int dataPerPeak = 1+(readingMZ&&readingIntensity);
 
       if( isCompressed )
       {
@@ -1418,7 +1785,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       }
       else
       {
-          bytes = (peaksCount*(precision/4));
+          bytes = (dataPerPeak*peaksCount*(precision/8));
       }
       
       // base64 has 4:3 bloat, precision/8 bytes per value, 2 values per peak
@@ -1435,7 +1802,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       
       // copy in any partial read of peak data, and complete the read
       strncpy(pData,pBeginData,peaksLen);
-      partial = strlen(pData);
+      partial = (int)strlen(pData);
       if (partial < peaksLen) {
          ramp_fread(pData+partial,peaksLen-partial, pFI);
       }
@@ -1462,8 +1829,8 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       }
       else
       {
-          // 2 values per peak, precision/8 bytes per value
-          decodedSize = peaksCount * (precision/4) + 1;
+          // dataPerPeak values per peak, precision/8 bytes per value
+          decodedSize = dataPerPeak * peaksCount * (precision/8) + 1;
       }
       pData[peaksLen-1] = 0; // pure base64 now
       
@@ -1473,10 +1840,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
             return NULL;
          }
       // Base64 decoding
-      b64_decode_mio(pDecoded, pData);
+      b64_decode(pDecoded, pData, decodedSize-1);
       free(pData);
       
-      if ((pPeaks = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1)) == NULL)
+      if ((!pPeaks) && ((pPeaks = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1)) == NULL))
       {
          printf("Cannot allocate memory\n");
          return NULL;
@@ -1487,7 +1854,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       {
           int err;
 //        printf("Decompressing data\n");
-          uLong uncomprLen = (peaksCount * precision/4 + 1);
+          uLong uncomprLen = (dataPerPeak * peaksCount * (precision/8) + 1);
 			
           pUncompr = (Byte*)calloc((uInt) uncomprLen , 1);
 			
@@ -1502,27 +1869,30 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       
       // And byte order correction
       byteOrderOK = (isLittleEndian==weAreLittleEndian);
+	  int beginAt = readingMZ?0:1;
+	  int step = 1+(readingMZ!=readingIntensity);
+	  int m=0;
       if (32==precision) { // floats
          if (byteOrderOK) {
-            for (n = 0; n < (2 * peaksCount); n++) {
-               pPeaks[n] = (RAMPREAL) ((float *) pToBeCorrected)[n];
+            for (n = beginAt; n < (2 * peaksCount); n+=step) {
+               pPeaks[n] = (RAMPREAL) ((float *) pToBeCorrected)[m++];
             } 
          } else {
             U32 tmp;
-            for (n = 0; n < (2 * peaksCount); n++) {
-               tmp.u32 = swapbytes(((uint32_t *) pToBeCorrected)[n]);
+            for (n = beginAt; n < (2 * peaksCount); n+=step) {
+               tmp.u32 = swapbytes(((uint32_t *) pToBeCorrected)[m++]);
                pPeaks[n] = (RAMPREAL) tmp.flt;
             } 
          }
       } else { // doubles
          if (byteOrderOK) {
-            for (n = 0; n < (2 * peaksCount); n++) {
-               pPeaks[n] = (RAMPREAL)((double *) pToBeCorrected)[n];
+            for (n = beginAt; n < (2 * peaksCount); n+=step) {
+               pPeaks[n] = (RAMPREAL)((double *) pToBeCorrected)[m++];
             }
          } else {
             U64 tmp;
-            for (n = 0; n < (2 * peaksCount); n++) {
-               tmp.u64 = swapbytes64((uint64_t) ((uint64_t *) pToBeCorrected)[n]);
+            for (n = beginAt; n < (2 * peaksCount); n+=step) {
+               tmp.u64 = swapbytes64((uint64_t) ((uint64_t *) pToBeCorrected)[m++]);
                pPeaks[n] = (RAMPREAL) tmp.dbl;
             }
          }
@@ -1530,9 +1900,9 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
 
       if( contType == mzRuler )
       { // Convert back from m/z ruler contentType into m/z - int pairs
-		RAMPREAL lastMass;
-		RAMPREAL  deltaMass;
-		  int multiplier;
+		RAMPREAL lastMass=0;
+		RAMPREAL  deltaMass=0;
+		  int multiplier=0;
           int j = 0;
 
           if ((pPeaksDeRuled = (RAMPREAL *) malloc((peaksCount+1) * 2 * sizeof(RAMPREAL) + 1)) == NULL)
@@ -1567,7 +1937,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       free(pToBeCorrected);
       pPeaks[n] = -1;
    }
-
+	} // end while((!gotMZ)||(!gotIntensity))
    return (pPeaks); // caller must free this pointer
 }
 
@@ -1578,6 +1948,14 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
 void readMSRun(RAMPFILE *pFI,
                    struct RunHeaderStruct *runHeader)
 {
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) {
+	   MZML_TRYBLOCK;
+	   pFI->mzML->getRunHeader(*runHeader);
+	   MZML_CATCHBLOCK;
+	   return;
+   }
+#endif
    char stringBuf[SIZE_BUF+1];
    ramp_fseek(pFI, 0 , SEEK_SET); // rewind
    ramp_fgets(stringBuf, SIZE_BUF, pFI);
@@ -1676,15 +2054,15 @@ void readRunHeader(RAMPFILE *pFI,
 
 
 
-int setTagValue(const char* text,
+static int setTagValue(const char* text,
    char* storage,
    int maxlen,
    const char* lead)
 {
-  char* result = NULL;
-  char* term = NULL;
+  const char* result = NULL;
+  const char* term = NULL;
   int len = maxlen - 1;
-  int leadlen = strlen(lead)+1; // include the opening quote
+  int leadlen = (int)strlen(lead)+1; // include the opening quote
 
   result = strstr(text, lead);
   if(result != NULL)
@@ -1694,7 +2072,7 @@ int setTagValue(const char* text,
     if(term != NULL)
     {
       if((int)(strlen(result) - strlen(term) - leadlen) < len)
-        len = strlen(result) - strlen(term) - leadlen;
+        len = (int)strlen(result) - (int)strlen(term) - leadlen;
 
       strncpy(storage, result + leadlen , len);
       storage[len] = 0;
@@ -1711,10 +2089,6 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
   char* result = NULL;
   int found[] = {0, 0, 0, 0, 0};
   char stringBuf[SIZE_BUF+1];
-
-  // HENRY - need to rewind to get instrument info
-  ramp_fseek(pFI, 0 , SEEK_SET);
-  
    if ((output = (InstrumentStruct *) calloc(1,sizeof(InstrumentStruct))) == NULL)
    {
       printf("Cannot allocate memory\n");
@@ -1727,10 +2101,22 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
       strncpy(output->manufacturer,cpUnknown,sizeof(output->manufacturer));
       strncpy(output->model,cpUnknown,sizeof(output->model));
    }
+#ifdef HAVE_PWIZ_MZML_LIB
+   if (pFI->mzML) {
+	   MZML_TRYBLOCK;
+	   pFI->mzML->getInstrument(*output);
+	   MZML_CATCHBLOCK;
+	   return output;
+   }
+#endif   
+  // HENRY - need to rewind to get instrument info
+  ramp_fseek(pFI, 0 , SEEK_SET);
+ 
+
 
    ramp_fgets(stringBuf, SIZE_BUF, pFI);
 
-   if (pFI->bIsMzData) {
+   if (pFI->bIsMzData) {  // TODO
    } else {
       int isAncient=0;
       while( !strstr( stringBuf , "<msInstrument" ) && 
@@ -1785,26 +2171,50 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
    return NULL; // no data
 }
 
+void setRampOption(long option) {
+   G_RAMP_OPTION = option;
+}
+
+int isScanAveraged(struct ScanHeaderStruct *scanHeader) {
+   return (scanHeader->mergedScan);
+}
+
+int isScanMergedResult(struct ScanHeaderStruct *scanHeader) {
+   return ((scanHeader->mergedScan 
+      && 0 != scanHeader->mergedResultStartScanNum
+      && 0 != scanHeader->mergedResultEndScanNum) ? 1 : 0);
+}
+
+void getScanSpanRange(struct ScanHeaderStruct *scanHeader, int *startScanNum, int *endScanNum) {
+   if (0 == scanHeader->mergedResultStartScanNum || 0 == scanHeader->mergedResultEndScanNum) {
+      *startScanNum = scanHeader->acquisitionNum;
+      *endScanNum = scanHeader->acquisitionNum;
+   } else {
+      *startScanNum = scanHeader->mergedResultStartScanNum;
+      *endScanNum = scanHeader->mergedResultEndScanNum;
+   }
+}
+
 // exercise at least some of the ramp interface - return non-0 on failure
 int rampSelfTest(char *filename) { // if filename is non-null we'll exercise reader with it
-#define N_TEST_NAME 5
    int result = 0; // assume success
    char buf[256];
    char buf2[256];
    int i;
 
-   char *testname[N_TEST_NAME] = 
-   {"foo.bar","foo.mzxml","foo.mzdata","foo.mzXML","foo.mzData"};
+   char *testname[] = 
+   {"foo.bar","foo.mzxml","foo.mzdata","foo.mzXML","foo.mzData",
+   NULL};
 
    // locate the .mzData or .mzXML extension in the buffer
    // return pointer to extension, or NULL if not found
-   for (i=N_TEST_NAME;i--;) {
+   for (i=0;testname[i];i++) {
       result |= (!i) != !rampValidFileType(testname[i]); // 0th one in not a valid file type
    }
 
    // trim a filename of its .mzData or .mzXML extension
    // return trimmed buffer, or null if no proper .ext found
-   for (i=N_TEST_NAME;i--;) {
+   for (i=0;testname[i];i++) {
       strncpy(buf,testname[i],sizeof(buf));
       result |= ((!i) != !rampTrimBaseName(buf));
       if (i) {
@@ -1824,6 +2234,10 @@ int rampSelfTest(char *filename) { // if filename is non-null we'll exercise rea
       rampTrimBaseName(buf);
       name = rampConstructInputFileName(buf2,sizeof(buf2),buf); // different buf, basename
       result |= (name==NULL);
+	  if (name) {
+		  struct stat statbuf;
+		  result |= stat(name,&statbuf);
+	  }
    }
    return result;
 }
@@ -1861,7 +2275,7 @@ void freeScanCache(struct ScanCacheStruct* cache)
     free(cache->peaks);
     free(cache->headers);
     free(cache);
-}
+   }
 }
 
 // Clear all cached values, freeing peaks, but not the cache arrays themselves.
@@ -1952,7 +2366,7 @@ int getCacheIndex(struct ScanCacheStruct* cache, int seqNum)
     return (int) (seqNum - cache->seqNumStart);
 }
 
-struct ScanHeaderStruct* readHeaderCached(struct ScanCacheStruct* cache, int seqNum, RAMPFILE* pFI, ramp_fileoffset_t lScanIndex)
+const struct ScanHeaderStruct* readHeaderCached(struct ScanCacheStruct* cache, int seqNum, RAMPFILE* pFI, ramp_fileoffset_t lScanIndex)
 {
     int i = getCacheIndex(cache, seqNum);
     if (cache->headers[i].msLevel == 0)
@@ -1962,11 +2376,11 @@ struct ScanHeaderStruct* readHeaderCached(struct ScanCacheStruct* cache, int seq
 
 int readMsLevelCached(struct ScanCacheStruct* cache, int seqNum, RAMPFILE* pFI, ramp_fileoffset_t lScanIndex)
 {
-    struct ScanHeaderStruct* header = readHeaderCached(cache, seqNum, pFI, lScanIndex);
+    const struct ScanHeaderStruct* header = readHeaderCached(cache, seqNum, pFI, lScanIndex);
     return header->msLevel;
 }
 
-RAMPREAL *readPeaksCached(struct ScanCacheStruct* cache, int seqNum, RAMPFILE* pFI, ramp_fileoffset_t lScanIndex)
+const RAMPREAL *readPeaksCached(struct ScanCacheStruct* cache, int seqNum, RAMPFILE* pFI, ramp_fileoffset_t lScanIndex)
 {
     int i = getCacheIndex(cache, seqNum);
     if (cache->peaks[i] == NULL)

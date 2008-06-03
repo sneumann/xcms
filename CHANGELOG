@@ -1,3 +1,9 @@
+2008-06-03: 1.13.4
+Ported the following Changes from 1.13.3:
+- Migrate to ncdf for xcmsRaw.write()
+- Added xcmsRaw CDF export contributed by Peter.Watkins at Food Science Australia (FSA)
+
+
 2008-06-03: 1.13.3
 Promote stable 1.12.1 to 1.13.3
 

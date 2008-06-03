@@ -2,24 +2,52 @@ require(methods) || stop("Couldn't load package methods")
 
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer",
+                                   acquisitionNum = "integer",
                                    profmethod = "character", profparam = "list",
                                    mzrange = "numeric", gradient = "matrix",
-                                   msmsinfo = "matrix"),
+                                   msnScanindex = "integer",
+                                   msnAcquisitionNum = "integer",
+                                   msnPrecursorScan = "integer",
+                                   msnLevel = "integer",
+                                   msnRt = "numeric",
+                                   msnPrecursorMz = "numeric",
+                                   msnPrecursorIntensity = "numeric",
+                                   msnPrecursorCharge = "numeric",
+                                   msnPeakCount = "integer",
+                                   msnCollisionEnergy = "numeric",
+                                   filepath = "character"),
+
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
+                   acquisitionNum = integer(0),
                    profmethod = "bin", profparam = list(),
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
-                   msmsinfo = matrix(nrow=0, ncol=0)))
+                   msnScanindex = NULL,
+                   msnAcquisitionNum = integer(0),
+                   msnLevel = NULL,
+                   msnRt = NULL,
+                   msnPrecursorScan = NULL,
+                   msnPrecursorMz = NULL,
+                   msnPrecursorIntensity = NULL,
+                   msnPrecursorCharge = NULL,
+                   msnPeakCount = NULL,
+                   msnCollisionEnergy = NULL,
+                   filepath = ""
+                   ))
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
-                    profparam = list()) {
+                    profparam = list(), includeMSn = FALSE) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
 
     if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
     if (netCDFIsFile(filename)) {
+        if (includeMSn) {
+            warning("Reading of MSn spectra for NetCDF not supported")
+        }
+
         cdf <- netCDFOpen(filename)
         if (!is.null(attr(cdf, "errortext")))
             stop(attr(cdf, "errortext"))
@@ -31,6 +59,11 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
             stop("Couldn't open mzXML/mzData file")
         on.exit(rampClose(rampid))
         rawdata <- rampRawData(rampid)
+
+        if ( includeMSn ) {
+            rawdataMSn <- rampRawDataMSn(rampid)
+        }
+
     } else
         stop("Couldn't determine file type")
 
@@ -46,6 +79,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     	           sep = ""))
     }
 
+    object@filepath <- filename
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex
@@ -56,6 +90,27 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     object@profparam <- profparam
     if (profstep)
         profStep(object) <- profstep
+
+
+    if (!is.null(rawdata$acquisitionNum)) {
+        ## defined only for mzData and mzXML
+        object@acquisitionNum <- rawdata$acquisitionNum
+    }
+
+    if(exists("rawdataMSn")) {
+        object@env$msnMz <- rawdataMSn$mz
+        object@env$msnIntensity <- rawdataMSn$intensity
+
+        object@msnScanindex <- rawdataMSn$scanindex
+        object@msnAcquisitionNum <- rawdataMSn$acquisitionNum
+        object@msnLevel <- rawdataMSn$msLevel
+        object@msnRt <- rawdataMSn$rt
+        object@msnPrecursorScan <- match(rawdataMSn$precursorNum, object@acquisitionNum)
+        object@msnPrecursorMz <- rawdataMSn$precursorMZ
+        object@msnPrecursorIntensity <- rawdataMSn$precursorIntensity
+        object@msnPrecursorCharge <- rawdataMSn$precursorCharge
+        object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
+    }
 
     return(object)
 }
@@ -71,6 +126,12 @@ setMethod("show", "xcmsRaw", function(object) {
         "m/z\n")
     cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
         "\n\n")
+
+    ## summary MSn data
+    if (!is.null(object@msnLevel)) {
+	cat("MSN data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
+	cat("\twith ", length(object@msnPrecursorMz)," MSn spectra\n")
+    }
 
     cat("Profile method:", object@profmethod, "\n")
     cat("Profile step: ")
@@ -95,6 +156,48 @@ setMethod("show", "xcmsRaw", function(object) {
         memsize <- memsize + object.size(object@env[[key]])
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
+
+## setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
+
+## setMethod("write.cdf", "xcmsRaw", function(object, filename) {
+##     require(ncdf) || stop("Couldn't load package ncvar for NetCDF writing")
+
+##     scan_no <- length(object@scanindex)
+##     point_no <- length(object@env$mz)
+
+
+##     dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
+##     dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
+##     dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
+##     dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
+##     dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
+
+##     ## Define netCDF vars
+##     scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", "", dimScans, -1)
+##     total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
+##     scan_index            <- var.def.ncdf("scan_index", "", dimScans, -1)
+##     total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
+##     mass_values           <- var.def.ncdf("mass_values", "", dimPoints, -1)
+##     intensity_values      <- var.def.ncdf("intensity_values", "", dimPoints, -1)
+
+
+##     ## Define netCDF definitions
+
+##     ms <- create.ncdf(filename, list(scan_acquisition_time,
+##                                      scan_index, total_intensity,
+##                                      mass_values, intensity_values))
+
+##     ## Add values to netCDF vars
+##     put.var.ncdf(ms, "scan_acquisition_time", object@scantime)
+##     put.var.ncdf(ms, "total_intensity", object@tic)
+##     put.var.ncdf(ms, "scan_index", object@scanindex)
+##     put.var.ncdf(ms, "mass_values", object@env$mz)
+##     put.var.ncdf(ms, "intensity_values", object@env$intensity)
+
+
+##     close.ncdf(ms)
+
+## })
 
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
 
@@ -175,10 +278,128 @@ setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
     invisible(points)
 })
 
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+
+setMethod("getMsnScan", "xcmsRaw", function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
+                       precision=1, userMsnIndex=NULL)
+{
+    if (scanLevel<1)
+    {
+        warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
+        return(NULL)
+    }
+
+    if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+        nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+        return(nxcms);
+    }
+
+    if (parentMzs[1]==0)
+        parentMzs <- rep(0,scanLevel-1)
+
+    ## using a zero-vector if none is given
+    wasonlyone=TRUE;
+    if (ms1Rt < object@scantime[1]) {
+        warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
+        return(NULL)
+    }
+    ms1ind <- max(which(object@scantime <= ms1Rt))
+    if (scanLevel==1) { # in this case just the ms1schan of this rt will be returned
+        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+        nxcms@scantime <- ms1Rt
+        nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+        nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+
+        return(nxcms);
+    }
+
+    if (is.null(object@env$msnMz)) {
+        warning("Exit: There are no MSnScans in this object.")
+        return(NULL)
+    }
+
+    ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
+    ms2s <- which((object@msnRt >= ms1Rt)  &
+                  (object@msnLevel == 2) &
+                  (object@msnRt <= object@scantime[ms1ind+1]))
+    if (length(ms2s) == 0)
+    {
+        warning("Exit: There is no ms2scan in this Rt-Range!")
+        return(NULL)
+    }
+    ##cat("1> ",ms2s,"\n")
+    if (length(ms2s) > 1)
+    {
+        if (parentMzs[1] == 0)  # more than one ms2scan aviable but no mzvalues given
+            warning("More than one ms2scan available but no mz-parameters given! using first scan")
+        wasonlyone=FALSE;
+        diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
+        msn <- ms2s[min(which(diffe == min(diffe)))] # The PArent-Rt of this ms2index ist closest to the wanted value
+    } else {
+        msn <- ms2s; # there is only one ms2scan in this ms1range so use this
+    }
+    if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
+        warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
+    }
+    msnRt <- object@msnRt[msn]
+    ##cat("3> ",msnRt,"\n")
+    if (scanLevel > 2) {
+        for (a in 3:scanLevel) {
+            msns <- which((object@msnRt >= msnRt) &
+                          (object@msnLevel == a) &
+                          (object@msnRt <= object@scantime[ms1ind+1]))
+            ##cat("4> ",ms2s,"\n")
+            if (length(msns)==0) {
+                warning("Exit: There is no ms",a,"scan in this Rt-Range!")
+                return(NULL)
+            }
+            if (length(msns)>1) {
+                wasonlyone=FALSE;
+                if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { # more than one ms2scan aviable but no mzvalues given
+                    warning("More than one ms",a,"scan available but no mzdata given! using first scan")
+                    msn <- msns[1];
+                } else {
+                    diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
+                    msn <- msns[min(which(diffe == min(diffe)))]
+                }
+            } else {
+                msn <- msns; # there is only one ms[n-1]scan in this ms[n]ramge so use this
+            }
+            if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
+                if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
+                    warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
+                }
+            }
+            msnRt <- object@msnRt[msn]
+        }
+    }
+    if (wasonlyone) {
+        message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
+    }
+    nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+
+    nxcms@scantime <- msnRt
+    nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+    nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+
+    return(nxcms);
+})
+
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+setMethod("getMsnScan", "xcmsRaw", getMsnScan)
+
+
 setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
+    ## FIXME: unnecessary dependency on profile matrix?
     sel <- profRange(object, ...)
 
     scans <- list(length(sel$scanidx))
@@ -843,6 +1064,64 @@ setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, mzdiff=-0.02,
   invisible(peaklist)
 }
 )
+
+setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1"))
+
+setMethod("findPeaks.MS1", "xcmsRaw", function(object)
+{
+    if (is.null(object@msnLevel)) {
+        warning("xcmsRaw contains no MS2 spectra\n");
+        return (NULL);
+    }
+
+    ## Select all MS2 scans, they have an MS1 parent defined
+    peakIndex <- object@msnLevel == 2
+
+    ## (empty) return object
+    basenames <- c("mz","mzmin","mzmax",
+                   "rt","rtmin","rtmax",
+                   "into","maxo","sn")
+    peaklist <- matrix(-1, nrow = length(which(peakIndex)),
+                       ncol = length(basenames))
+    colnames(peaklist) <- c(basenames)
+
+    ## Assemble result
+
+    peaklist[,"mz"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmin"] <- object@msnPrecursorMz[peakIndex]
+    peaklist[,"mzmax"] <- object@msnPrecursorMz[peakIndex]
+
+
+    if (any(!is.na(object@msnPrecursorScan))&&any(object@msnPrecursorScan!=0)) {
+        peaklist[,"rt"] <- peaklist[,"rtmin"] <- peaklist[,"rtmax"] <- object@scantime[object@msnPrecursorScan[peakIndex]]
+    } else {
+        ## This happened with ReAdW mzxml
+	cat("MS2 spectra without precursorScan references, using estimation")
+        ## which object@Scantime are the biggest wich are smaller than the current object@msnRt[peaklist]?
+	ms1Rts<-rep(0,length(which(peakIndex)))
+	i<-1
+	for (a in which(peakIndex)){
+		ms1Rts[i] <- object@scantime[max(which(object@scantime<object@msnRt[a]))]
+		i<-i+1
+		}
+	peaklist[,"rt"] <-  ms1Rts
+	peaklist[,"rtmin"] <-  ms1Rts
+	peaklist[,"rtmax"] <- ms1Rts
+    	}
+
+    if (any(object@msnPrecursorIntensity!=0)) {
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- object@msnPrecursorIntensity[peakIndex]
+    } else {
+        ## This happened with Agilent MzDataExport 1.0.98.2
+        warning("MS2 spectra without precursorIntensity, setting to zero")
+        peaklist[,"into"] <- peaklist[,"maxo"] <- peaklist[,"sn"] <- 0
+    }
+
+    cat('\n')
+
+    invisible(peaklist)
+})
+
 
 
 setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
