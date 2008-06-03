@@ -149,9 +149,9 @@ for the \Rfunction{xcmsSet} function and \Rmethod{findPeaks} method.
 
 The method \Rmethod{findPeaks} can make use of different algorithms
 for peak detection. Currently \Rmethod{findPeaks.matchedFilter}
-and \Rmethod{findPeaks.centWave} are available,
+and \Rmethod{findPeaks.centWave} are available, 
 \Rmethod{findPeaks.matchedFilter} is used by default.
-First, several of the most important parameters of
+First, several of the most important parameters of 
 \Rmethod{findPeaks.matchedFilter} will be discussed.
 \\
 \textbf{findPeaks.matchedFilter} \\
@@ -222,26 +222,14 @@ than peak identification and is generally not recommended as such.
 \\
 \textbf{findPeaks.centWave} \\
 The method \Rmethod{findPeaks.centWave} follows a different
-approach.   This algorithm is most suitable for high resolution
-centroid LC/TOF-MS data. If your machine software or converter does
-not support the export of peak centroids, tools like the \emph{TOPP-PeakPicker}
-can be used for preprocessing \footnote{\url{http://www.openms.de}}.
+approach.   This algorithm is most suitable for high resolution 
+LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. 
 Due to the fact that peak centroids are used, a binning step is not necessary.
 
-In the first phase of the algorithm areas of high peak density
-(characterised by having at least \Rfunarg{minEntries} peaks within
-\Rfunarg{dev} ppm in consecutive scans) in the LC/MS map are located.
-In the second phase these \emph{regions of interest} (ROI) are further
-analysed.  Gaussian curves are fitted to the chromatographic peaks,
-and areas larger than 2*\Rfunarg{minPeakWidth} scans are checked
-whether they contain more than one peak (these may also overlap) using
-wavelet analysis.
-
-This algorithm is much slower than \Rmethod{findPeaks.matchedFilter}
-due to the extensive gaussian fits.  It can be sped up by
-narrowing the ROI's found in the first phase. This can be done by
-restricting the parameter \Rfunarg{dev} (default value is 140~ppm for
-a 10~ppm QTOF), depending on your machine's mass accuracy.
+In the first phase of the method mass traces (characterised as regions with less than \Rfunarg{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
+In the second phase these mass traces are further analysed. 
+Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales. 
+Accordingly, two parameters have to be adjusted. The \Rfunarg{ppm} parameter has to be set according to the machine accuracy, e.g. \Rfunarg{ppm=25}. The peak width range (\Rfunarg{peakwidth=c(min,max)}) has to be set according to the chromatographic peak width range, e.g. \Rfunarg{peakwidth=c(20,50)} seconds for HPLC and \Rfunarg{peakwidth=c(5,12)} seconds for UPLC chromatography.  
 
 The method is capable of detecting close-by-peaks and also overlapping
 peaks. Some efforts are made to detect the exact peak boundaries to get
@@ -394,7 +382,7 @@ at the same time but are correctly aligned.}
 \end{figure}
 
 <<AnalysisVisualize>>=
-reporttab <- diffreport(xset3, "WT", "KO", "example", 10,
+reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
                         metlin = 0.15)
 reporttab[1:4,]
 @

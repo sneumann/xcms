@@ -1,15 +1,15 @@
 Package: xcms
-Version: 1.13.2
+Version: 1.13.3
 Date: 2008-06-03
-Title: LC/MS, GC/MS and single-spectra MS Data Analysis
+Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>, 
         Ralf Tautenhahn <rtautenh@ipb-halle.de>
 Maintainer: Colin A. Smith <csmith@scripps.edu>
-Depends: R (>= 1.9.0), methods, Rgraphviz
-Suggests: faahKO, msdata, multtest, rgl, MassSpecWavelet (>= 1.5.2), ncdf
+Depends: R (>= 1.9.0), methods
+Suggests: faahKO, multtest, rgl, MassSpecWavelet (>= 1.3.1)
 SystemRequirements: NetCDF, zlib
 Description: Framework for processing and visualization of
-        chromatographically separated and single-spectra mass spectral data. Imports from
+        chromatographically separated mass spectral data. Imports from
         AIA/ANDI NetCDF, mzXML, and mzData files. Preprocesses data for
         high-throughput, untargeted analyte profiling.
 License: GPL version 2 or newer
