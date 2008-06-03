@@ -1,12 +1,9 @@
 #include <stdio.h>
 #include <R.h>
 #include <Rdefines.h>
-
 #include "ramp.h"
 
 #define MAX_RAMP_FILES 100
-
-extern"C" {
 
 typedef struct {
     RAMPFILE          *file;
@@ -157,7 +154,7 @@ void RampRNumScans(const int *rampid, int *numscans, int *status) {
 
 SEXP RampRScanHeaders(SEXP rampid) {
 
-    int               i, j, id, numscans, ncol = 17, ntypes = 0, stlen = 10;
+    int               i, j, id, numscans, ncol = 16, ntypes = 0, stlen = 10;
     SEXP              result = PROTECT(NEW_LIST(ncol)), temp, names;
     struct            ScanHeaderStruct scanHeader;
     RAMPFILE          *file;
@@ -167,7 +164,7 @@ SEXP RampRScanHeaders(SEXP rampid) {
                       *precursorScanNum, *precursorCharge, *scanType;
     double            *totIonCurrent, *retentionTime, *basePeakMZ, 
                       *basePeakIntensity, *collisionEnergy, *ionisationEnergy,
-	              *lowMZ, *highMZ, *precursorMZ, *precursorIntensity;
+                      *lowMZ, *highMZ, *precursorMZ;
     
     if (!rampInitalized)
         RampRInit();
@@ -257,11 +254,6 @@ SEXP RampRScanHeaders(SEXP rampid) {
     SET_VECTOR_ELT(result, 15, temp = NEW_INTEGER(numscans));
     scanType = INTEGER_POINTER(temp);
     SET_ELEMENT(names, 15, mkChar("scanType"));
-
-    SET_VECTOR_ELT(result, 16, temp = NEW_NUMERIC(numscans));
-    precursorIntensity = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 16, mkChar("precursorIntensity"));
-    
     
     scanTypes = S_alloc(stlen*SCANTYPE_LENGTH, sizeof(char));
     
@@ -281,7 +273,6 @@ SEXP RampRScanHeaders(SEXP rampid) {
         highMZ[i] = scanHeader.highMZ;
         precursorScanNum[i] = scanHeader.precursorScanNum;
         precursorMZ[i] = scanHeader.precursorMZ;
-        precursorIntensity[i] = scanHeader.precursorIntensity;
         precursorCharge[i] = scanHeader.precursorCharge;
         for (j = 0; j < ntypes; j++)
             if (!strcmp(scanHeader.scanType, scanTypes+j*SCANTYPE_LENGTH)) {
@@ -300,7 +291,7 @@ SEXP RampRScanHeaders(SEXP rampid) {
         }
     }
     
-    SET_LEVELS(VECTOR_ELT(result, 16), temp = NEW_CHARACTER(ntypes));
+    SET_LEVELS(VECTOR_ELT(result, 15), temp = NEW_CHARACTER(ntypes));
     for (i = 0; i < ntypes; i++)
         SET_ELEMENT(temp, i, mkChar(scanTypes+i*SCANTYPE_LENGTH));
     
@@ -385,6 +376,4 @@ SEXP RampRSIPeaks(SEXP rampid, SEXP seqNum, SEXP peaksCount) {
     UNPROTECT(1);
     
     return result;
-}
-
 }

@@ -555,7 +555,6 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
         grt.min <- newpeaks[,"rtmin"]
         grt.max <- newpeaks[,"rtmax"]
       }
-      
     if (dim(peaks)[1] - Ngp > 1) { ## notgausspeaks
       ## here we can only check if they are completely overlapped by other peaks 
       for (k in 1:dim(notgausspeaks)[1]) {
@@ -567,9 +566,10 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
         if (!any((notgausspeaks["rtmin"] >= grt.min) & (notgausspeaks["rtmax"] <= grt.max)))
           newpeaks <- rbind(newpeaks,notgausspeaks)
       }    
-             
+    
   } else return(peaks)
   
+  rownames(newpeaks) <- NULL
   newpeaks
 }  
 
