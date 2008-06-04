@@ -1,12 +1,12 @@
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                                    groupidx = "list", sampnames = "character",
                                    sampclass = "factor", rt = "list",
-                                   cdfpaths = "character", profinfo = "list"),
+                                   filepaths = "character", profinfo = "list"),
          prototype(peaks = matrix(nrow = 0, ncol = 0),
                    groups = matrix(nrow = 0, ncol = 0),
                    groupidx = list(), sampnames = character(0),
                    sampclass = factor(integer(0)), rt = list(),
-                   cdfpaths = character(0), profinfo = vector("list")))
+                   filepaths = character(0), profinfo = vector("list")))
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     profmethod = "bin", profparam = list(), ...) {
@@ -22,11 +22,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     if (length(files) == 0) 
         stop("No NetCDF/mzXML/mzData files were found.\n")  
         
-    cdfpaths(object) <- file.path(getwd(), files)
+    filepaths(object) <- file.path(getwd(), files)
     # Check to see whether the absolute path names work
-    for (file in cdfpaths(object))
+    for (file in filepaths(object))
         if (!file.exists(file))
-            cdfpaths(object) <- files
+            filepaths(object) <- files
 
     if (is.null(snames))
         snames <- gsub("\\.[^.]*$", "", basename(files))
@@ -60,8 +60,17 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
 
     for (i in seq(along = peaklist)) {
 
+      xcmsSetArgs <- as.list(match.call())
+      if (!is.null(xcmsSetArgs$method)) {
+        if (xcmsSetArgs$method=="MS1") {
+          includeMSn=TRUE
+        }
+      } else {
+        includeMSn=FALSE
+      }
+      
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                         profstep = 0)
+                         profstep = 0, includeMSn=includeMSn)
         cat(snames[i], ": ", sep = "")
         peaklist[[i]] <- findPeaks(lcraw, ...)
         peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
@@ -128,7 +137,7 @@ c.xcmsSet <- function(...) {
         namelist[[i]] <- sampnames(lcsets[[i]])
         classlist[[i]] <- sampclass(lcsets[[i]])
         classlist[[i]] <- levels(classlist[[i]])[classlist[[i]]]
-        cdflist[[i]] <- cdfpaths(lcsets[[i]])
+        cdflist[[i]] <- filepaths(lcsets[[i]])
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
 
@@ -141,7 +150,7 @@ c.xcmsSet <- function(...) {
     sampnames(object) <- unlist(namelist)
     classlist <- unlist(classlist)
     sampclass(object) <- factor(classlist, unique(classlist))
-    cdfpaths(object) <- unlist(cdflist)
+    filepaths(object) <- unlist(cdflist)
     profinfo(object) <- profinfo(lcsets[[1]])
     object@rt <- list(raw = rtraw, corrected = rtcor)
 
@@ -156,7 +165,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     peakmat <- peaks(x)
     samples <- sampnames(x)
     classlabel <- sampclass(x)
-    cdffiles <- cdfpaths(x)
+    cdffiles <- filepaths(x)
     prof <- profinfo(x)
     rtraw <- x@rt$raw
     rtcor <- x@rt$corrected
@@ -177,7 +186,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 
         sampnames(lcsets[[i]]) <- samples[sampidx == i]
         sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        cdfpaths(lcsets[[i]]) <- cdffiles[sampidx == i]
+        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
         profinfo(lcsets[[i]]) <- prof
         lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
         lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
@@ -257,15 +266,15 @@ setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
     object
 })
 
-setGeneric("cdfpaths", function(object) standardGeneric("cdfpaths"))
+setGeneric("filepaths", function(object) standardGeneric("filepaths"))
 
-setMethod("cdfpaths", "xcmsSet", function(object) object@cdfpaths)
+setMethod("filepaths", "xcmsSet", function(object) object@filepaths)
 
-setGeneric("cdfpaths<-", function(object, value) standardGeneric("cdfpaths<-"))
+setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-"))
 
-setReplaceMethod("cdfpaths", "xcmsSet", function(object, value) {
+setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
 
-    object@cdfpaths <- value
+    object@filepaths <- value
 
     object
 })
@@ -477,7 +486,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     if (length(object@rt) == 2)
         rtcor <- object@rt$corrected
     else {
-        fnames <- cdfpaths(object)
+        fnames <- filepaths(object)
         rtcor <- vector("list", length(fnames))
         for (i in seq(along = fnames)) {
             cdf <- netCDFOpen(fnames[i])
@@ -688,7 +697,7 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
     groupmat <- groups(object)
     if (length(groupmat) == 0)
         stop("No group information found")
-    files <- cdfpaths(object)
+    files <- filepaths(object)
     samp <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
     prof <- profinfo(object)
@@ -759,7 +768,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
                                         rt = c("corrected", "raw")) {
 
-    files <- cdfpaths(object)
+    files <- filepaths(object)
     grp <- groups(object)
     samp <- sampnames(object)
     prof <- profinfo(object)

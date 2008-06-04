@@ -2,6 +2,7 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("graphics", "plot")
+importFrom("Rgraphviz", "plot")
 
 export(
        "etg",
@@ -28,8 +29,8 @@ exportClasses(
               )
 
 exportMethods(
-              "cdfpaths",
-              "cdfpaths<-",
+              "filepaths",
+              "filepaths<-",
               "diffreport",
               "fillPeaks",
               "findPeaks.centWave",
