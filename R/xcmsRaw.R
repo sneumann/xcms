@@ -157,47 +157,47 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-## setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
+setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
 
-## setMethod("write.cdf", "xcmsRaw", function(object, filename) {
-##     require(ncdf) || stop("Couldn't load package ncvar for NetCDF writing")
+setMethod("write.cdf", "xcmsRaw", function(object, filename) {
+    require(ncdf) || stop("Couldn't load package ncvar for NetCDF writing")
 
-##     scan_no <- length(object@scanindex)
-##     point_no <- length(object@env$mz)
-
-
-##     dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
-##     dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
-##     dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
-##     dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
-##     dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
-
-##     ## Define netCDF vars
-##     scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", "", dimScans, -1)
-##     total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
-##     scan_index            <- var.def.ncdf("scan_index", "", dimScans, -1)
-##     total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
-##     mass_values           <- var.def.ncdf("mass_values", "", dimPoints, -1)
-##     intensity_values      <- var.def.ncdf("intensity_values", "", dimPoints, -1)
+    scan_no <- length(object@scanindex)
+    point_no <- length(object@env$mz)
 
 
-##     ## Define netCDF definitions
+    dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
+    dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
+    dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
+    dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
+    dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
 
-##     ms <- create.ncdf(filename, list(scan_acquisition_time,
-##                                      scan_index, total_intensity,
-##                                      mass_values, intensity_values))
-
-##     ## Add values to netCDF vars
-##     put.var.ncdf(ms, "scan_acquisition_time", object@scantime)
-##     put.var.ncdf(ms, "total_intensity", object@tic)
-##     put.var.ncdf(ms, "scan_index", object@scanindex)
-##     put.var.ncdf(ms, "mass_values", object@env$mz)
-##     put.var.ncdf(ms, "intensity_values", object@env$intensity)
+    ## Define netCDF vars
+    scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", "", dimScans, -1)
+    total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
+    scan_index            <- var.def.ncdf("scan_index", "", dimScans, -1)
+    total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
+    mass_values           <- var.def.ncdf("mass_values", "", dimPoints, -1)
+    intensity_values      <- var.def.ncdf("intensity_values", "", dimPoints, -1)
 
 
-##     close.ncdf(ms)
+    ## Define netCDF definitions
 
-## })
+    ms <- create.ncdf(filename, list(scan_acquisition_time,
+                                     scan_index, total_intensity,
+                                     mass_values, intensity_values))
+
+    ## Add values to netCDF vars
+    put.var.ncdf(ms, "scan_acquisition_time", object@scantime)
+    put.var.ncdf(ms, "total_intensity", object@tic)
+    put.var.ncdf(ms, "scan_index", object@scanindex)
+    put.var.ncdf(ms, "mass_values", object@env$mz)
+    put.var.ncdf(ms, "intensity_values", object@env$intensity)
+
+
+    close.ncdf(ms)
+
+})
 
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
 
