@@ -54,14 +54,14 @@
   }
 }
 \value{
-  For \code{xcmsRaw} objects, if \code{rtrange} is NULL, a matrix
-  with a column for each \code{mzmin}, \code{mzmax} pair. Rows
-  correspond to individual scans. Otherwise, a list of two column
+  For \code{xcmsRaw} objects, if \code{rtrange} is NULL, an intensity matrix
+  with a row for each \code{mzmin}, \code{mzmax} pair. Columns
+  correspond to individual scans. If \code{rtrange} is not NULL, a list of two column
   (retention time/intensity) matricies, one for each \code{mzmin},
   \code{mzmax} pair.
 
   For \code{xcmsSet} objects, an \code{xcmsEIC} object.
-}
+} 
 \seealso{
   \code{\link{xcmsRaw-class}},
   \code{\link{xcmsSet-class}},
