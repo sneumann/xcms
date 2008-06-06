@@ -18,10 +18,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
     if (is.null(files))
         files <- list.files(pattern = filepattern, recursive = TRUE)
-        
-    if (length(files) == 0) 
-        stop("No NetCDF/mzXML/mzData files were found.\n")  
-        
+
+    if (length(files) == 0)
+        stop("No NetCDF/mzXML/mzData files were found.\n")
+
     filepaths(object) <- file.path(getwd(), files)
     # Check to see whether the absolute path names work
     for (file in filepaths(object))
@@ -60,16 +60,15 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
 
     for (i in seq(along = peaklist)) {
 
+      includeMSn=FALSE
       xcmsSetArgs <- as.list(match.call())
       if (!is.null(xcmsSetArgs$method)) {
         if (xcmsSetArgs$method=="MS1") {
           includeMSn=TRUE
         }
-      } else {
-        includeMSn=FALSE
       }
-      
-        lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
+
+      lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                          profstep = 0, includeMSn=includeMSn)
         cat(snames[i], ": ", sep = "")
         peaklist[[i]] <- findPeaks(lcraw, ...)
@@ -325,9 +324,9 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
     gnames
 })
 
-setGeneric("group", function(object, ...) standardGeneric("group"))
+setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
 
-setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
+setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
                                        mzwid = 0.25, max = 50, sleep = 0) {
 
     samples <- sampnames(object)
@@ -423,6 +422,52 @@ setMethod("group", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp =
     groupidx(object) <- groupindex[uindex]
 
     object
+})
+
+setGeneric("group.mzClust", function(object, ...) standardGeneric("group.mzClust"))
+
+setMethod("group.mzClust", "xcmsSet", function(object,
+                           mzppm = 20,
+                           mzabs = 0,
+                           minsamp = 1,
+                           minfrac=0.5)
+{
+    samples <- sampnames(object)
+    classlabel <- sampclass(object)
+    peaks <- peaks(object)
+    groups <- xcms:::mzClustGeneric(peaks[,c(1,10)],
+                                    sampclass=classlabel,
+                                    mzppm=mzppm,mzabs=mzabs,
+                                    minsamp=minsamp,
+                                    minfrac=minfrac)
+
+    if(is.null(nrow(groups$mat))) {
+        matColNames <- names(groups$mat)
+        groups$mat <- matrix(groups$mat,
+                             ncol=length(groups$mat),byrow=F);
+        colnames(groups$mat) <- matColNames
+    }
+
+    rt <- c(rep(-1,nrow(groups$mat)))
+
+    groups(object) <- cbind(groups$mat[,c(1:3)],rt,rt,rt,groups$mat[,4:ncol(groups$mat)])
+    colnames(groups(object)) <- c(colnames(groups$mat[,1:3]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,4:ncol(groups$mat)]))
+    groupidx(object) <- groups$idx
+
+    object
+})
+
+
+setGeneric("group", function(object, ...) standardGeneric("group"))
+
+setMethod("group", "xcmsSet", function(object, method=getOption("BioC")$xcms$group.method,
+                                       ...) {
+
+    method <- match.arg(method, getOption("BioC")$xcms$group.methods)
+    if (is.na(method))
+        stop("unknown method : ", method)
+    method <- paste("group", method, sep=".")
+    invisible(do.call(method, alist(object, ...)))
 })
 
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
@@ -845,7 +890,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             value = c("into","maxo","intb"), metlin = FALSE, ...) {
 
     require(multtest) || stop("Couldn't load multtest")
-    
+
     value <- match.arg(value)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
