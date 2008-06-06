@@ -1,10 +1,10 @@
 
 # .initFindPeaks <- function(all.xcms) {
-#   
+#
 # #   assign("findPeaksMethods",
 # #         substr(all.xcms[grep("findPeaks.\.*", all.xcms)], start+1, 100),
 # #         envir=as.environment(where))
-# #         
+# #
 # }
 
 
@@ -27,7 +27,7 @@
     class(BioC) <- "BioCOptions"
     options("BioC"=BioC)
   }
-  
+
   ## all findPeaks methods
   start <- nchar("findPeaks.")
   all.xcms <- ls(asNamespace(pkgname))
@@ -35,8 +35,17 @@
 
   ## default for the methods
   findPeaks.method <- "matchedFilter"
-  
-  xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods) 
+
+  ## all groupPeaks methods
+  start <- nchar("group.")
+  all.xcms <- ls(asNamespace(pkgname))
+  group.methods <-  substr(all.xcms[grep("group\\..*", all.xcms)], start+1, 100)
+
+  ## default for the methods
+  group.method <- "density"
+
+  xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
+                   group.method=group.method, group.methods=group.methods)
 
   class(xcms.opt) <- "BioCPkg"
 

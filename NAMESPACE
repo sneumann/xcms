@@ -42,6 +42,8 @@ exportMethods(
               "getScan",
               "getSpec",
               "group",
+              "group.density",
+              "group.mzClust",
               "groupidx",
               "groupidx<-",
               "groupnames",
