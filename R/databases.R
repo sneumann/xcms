@@ -90,6 +90,44 @@ read.metlinMS<- function(xml){
     return(metMS.df)
 }
 
+metlinToList<-function(metlinfile){
+    met.xml<-read.metlin(metlinfile, MS1=FALSE)
+    met.xml<-met.xml[order(met.xml[,"name"]),]
+    CE<-unique(met.xml[,"collisionEnergy"])
+    names<-unique(met.xml[,"name"])
+    ion<-unique(met.xml[,"mode"])
+
+    ref<-1
+    spectra<-list()
+    for(i in 1:length(names)){
+        for(j in 1:length(CE)){
+            for(k in 1:length(ion)){ ## We should ask if we have both "-" & "+"
+                MetSpec<-sortMetlin(met.xml, names[i], ion[k], CE[j]) ##Give index value of scanindex value
+                spectra[[ref]]<-MetSpec
+                ref<-ref+1
+                
+            }
+        }
+    }
+    invisible(spectra)
+}
+
+overlap<-function(a,b,c){
+    #dup<-duplicated(c(a,b))
+    Fdup<-duplicated(c(c(a,b)[duplicated(c(a,b))], c))
+    overlap<-c(c(a,b)[duplicated(c(a,b))], c)[Fdup]
+    return(overlap)
+}
+
+sortMetlin<-function(met.xml, name, ion, CE){
+    met<-met.xml[order(met.xml[,"name"]), ]
+    CEindex<-which(met[,"collisionEnergy"] == CE)
+    nameIndex<-which(met[,"name"] == name)
+    ionIndex<-which(met[,"mode"] == ion)
+    index<-overlap(nameIndex, CEindex, ionIndex)
+    
+    return(met[index,])
+}
 
 distance<-function(met, xcm, ppmval, matrix=FALSE){
     l.met<-length(met)
