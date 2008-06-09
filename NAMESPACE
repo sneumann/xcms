@@ -53,6 +53,8 @@ exportMethods(
               "mzrange",
               "peaks",
               "peaks<-",
+              "phenoData",
+              "phenoData<-",              
               "plotChrom",
               "plotPeaks",
               "plotRaw",
