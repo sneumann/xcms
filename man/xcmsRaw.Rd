@@ -8,17 +8,20 @@
   plotting and data exploration.
 }
 \usage{
-xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam = list())
+xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam =
+list(), includeMSn=FALSE)
 }
 \arguments{
   \item{filename}{path name of the NetCDF or mzXML file to read}
   \item{profstep}{step size (in m/z) to use for profile generation}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{extra parameters to use for profile generation}
+  \item{includeMSn}{only for XML file formats: also read MS$^n$
+    (Tandem-MS of Ion-/Orbi- Trap spectra)}
 }
 \details{
   If \code{profstep} is set to 0, no profile matrix is generated.
-  Only first level MS data is read, not MS/MS, etc.)
+  Unless includeMSn=TRUE only first level MS data is read, not MS/MS, etc.)
 }
 \value{
   A \code{xcmsRaw} object.
@@ -26,9 +29,18 @@ xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam = list())
 \references{
   NetCDF file format:
   \url{http://my.unidata.ucar.edu/content/software/netcdf/}
+  \url{http://www.astm.org/Standards/E2077.htm}
+  \url{http://www.astm.org/Standards/E2078.htm}
 
   mzXML file format:
   \url{http://sashimi.sourceforge.net/software_glossolalia.html}
+
+  PSI-MS working group who developed mzData and mzML file formats:
+  \url{http://www.psidev.info/index.php?q=node/80}
+
+  Parser used for XML file formats:
+  \url{http://tools.proteomecenter.org/wiki/index.php?title=Software:RAMP}
+
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \note{
@@ -38,5 +50,6 @@ xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam = list())
   \code{\link{xcmsRaw-class}},
   \code{\link{profStep}},
   \code{\link{profMethod}}
+  \code{\link{xcmsFragments}}
 }
 \keyword{file}

@@ -1,6 +1,7 @@
 \name{group.mzClust}
 \docType{methods}
 \alias{group.mzClust}
+\alias{group.mzClust,xcmsSet-method}
 
 \title{Group Peaks via High Resolution Alignment}
 \description{
