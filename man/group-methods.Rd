@@ -1,57 +1,50 @@
 \name{group-methods}
 \docType{methods}
-%\alias{group-methods}
+\alias{group-methods}
 \alias{group}
 \alias{group,xcmsSet-method}
 \title{Group peaks from different samples together}
 \description{
- Group peaks together across samples using overlapping m/z bins and
- calculation of smoothed peak distributions in chromatographic time.
+  A number of grouping (or alignment) methods exist in XCMS. \code{group}
+  is the generic method.
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
   \code{
-    group(object, bw = 30, minfrac = 0.5, minsamp = 1, 
-    mzwid = 0.25, max = 50, sleep = 0)
+    group(object, ...)
   }
 }
 }}
 \arguments{
-  \item{object}{the \code{xcmsSet} object}
-  \item{minfrac}{
-    minimum fraction of samples necessary in at least one of the sample
-    groups for it to be a valid group
-  }
-  \item{minsamp}{
-    minimum number of samples necessary in at least one of the sample
-    groups for it to be a valid group
-  }
-  \item{bw}{
-    bandwidth (standard deviation or half width at half maximum)
-    of gaussian smoothing kernel to apply to the peak density
-    chromatogram
-  }
-  \item{mzwid}{
-    width of overlapping m/z slices to use for creating peak density
-    chromatograms and grouping peaks across samples
-  }
-  \item{max}{
-    maximum number of groups to identify in a single m/z slice
-  }
-  \item{sleep}{
-    seconds to pause between plotting successive steps of the peak
-    grouping algorithm. peaks are plotted as points showing relative
-    intensity. identified groups are flanked by dotted vertical
-    lines.
-  }
+  \item{object}{\code{\link{xcmsSet-class}} object}
+  \item{method}{Method to use for grouping. See details.}
+  \item{...}{Optional arguments to be passed along}
 }
+\details{
+  Different algorithms can be used by specifying them with the
+  \code{method} argument. For example to use the density-based 
+  approach described by Smith et al (2006) one would use:
+  \code{group(object, method="density")}. This is also the default.
+
+  Further arguments given by \code{...} are
+  passed through to the function implementing
+  the \code{method}. 
+  
+  A character vector of \emph{nicknames} for the 
+  algorithms available is returned by 
+  \code{getOption("BioC")$xcms$group.methods}.
+  If the nickname of a method is called "mzClust",
+  the help page for that specific method can
+  be accessed with \code{?group.mzClust}. 
+}
+
 \value{
   An \code{xcmsSet} object with peak group assignments and statistics.
 }
 \seealso{
+  \code{\link{group.density}}
+  \code{\link{group.mzClust}}
   \code{\link{xcmsSet-class}},
-  \code{\link{density}}
 }
 \keyword{methods}
-\keyword{file}

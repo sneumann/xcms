@@ -25,7 +25,8 @@
   Different algorithms can be used by specifying them with the
   \code{method} argument. For example to use the matched filter
   approach described by Smith et al (2006) one would use:
-  \code{findPeaks(object, method="matchedFilter")}.
+  \code{findPeaks(object, method="matchedFilter")}. This is also
+  the default.
 
   Further arguments given by \code{...} are
   passed through to the function implementing
