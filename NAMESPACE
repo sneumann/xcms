@@ -29,7 +29,7 @@ exportClasses(
               )
 
 exportMethods(
-              "collect"
+              "collect",
               "filepaths",
               "filepaths<-",
               "diffreport",
@@ -55,7 +55,7 @@ exportMethods(
               "peaks",
               "peaks<-",
               "phenoData",
-              "phenoData<-",              
+              "phenoData<-",
               "plotChrom",
               "plotPeaks",
               "plotRaw",
@@ -82,9 +82,9 @@ exportMethods(
               "sampclass<-",
               "sampnames",
               "sampnames<-",
-              "searchMetlin"
+              "searchMetlin",
               "show",
-              "simSearch"
+              "simSearch",
               "sortMz",
               "write.cdf"
               )
