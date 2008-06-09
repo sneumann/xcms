@@ -1493,6 +1493,18 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
 })
 
+sequenceMz<-function(dat){
+    for (p in 1:dim(dat)[1] ){ # makes the index for the scan
+#       cat(paste(p, " ", j, " ", " <-p:j \n", sep="" ))
+	seq<-seq(from=dat[p,"from"], to=dat[p,"to"])
+	if(p == 1){
+ 	    seqInd<-seq
+	} else {
+	    seqInd<-c(seqInd, seq)
+	}
+    }
+    return(seqInd)
+}
 
 if (!isGeneric("collect") )
     setGeneric("collect", function(object, ...) standardGeneric("collect"))
