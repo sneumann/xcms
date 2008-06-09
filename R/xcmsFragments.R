@@ -44,7 +44,7 @@ xcmsFragments <- function(xs = NULL, ...) {
 setMethod("show", "xcmsFragments", .xcmsFragments.show)
 
 
-.xcmsFragments.collect <- function(object,xs,xraw=null,compMethod="floor", snthresh=20, mzgap=.2, uniq=TRUE) {
+.xcmsFragments.collect <- function(object,xs,xraw=NULL,compMethod="floor", snthresh=20, mzgap=.2, uniq=TRUE) {
     ## This is called after findPeaks()
     ## e.g. during xcmsFragments() constructor
     ## This creates the association between the xcmsSet peaks
