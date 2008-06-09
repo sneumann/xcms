@@ -1638,7 +1638,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
     
     cat(paste("\n", sep=""))
     accurateMZ<-getMZ(object)
-    runinfoFinal<-cbind(object@specinfo[,1], accurateMZ, object@specinfo[,2:5])
+    runinfoFinal<-cbind(runinfoFinal[,1], accurateMZ, runinfoFinal[,2:5])
     colnames(runinfoFinal)<-c("preMZ", "AccMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
     if(fragments == TRUE){
         frag@specinfo<-ruinfoFinal
