@@ -1,3 +1,71 @@
+read.metlin<-function(xml, MS1=TRUE, MSxml) {
+#Parsing the METLIN XML File
+    #cat(paste("Reading Metlin...", sep="")) #if metlin gets really big then add this so user knows what's happening :)
+    reading<-readLines(xml)
+    xml.mat<-matrix(nrow=length(reading),ncol=3)
+    name<-grep("name", reading)# OK it's messy like hell but I didn't want to add the XML package for XCMS
+    mz<-grep("mz", reading) #Anyway the XML package sucks!
+    int<-grep("intensity", reading)
+    Pmz<-grep("mass", reading)
+    mode<-grep("mode", reading)
+    adduct<-grep("adduct", reading)
+    CE<-grep("collisionE", reading)
+
+    mzVAL<-reading[mz]
+    intVAL<-reading[int]
+    nameVAL<-reading[name]
+    PmzVal<-reading[Pmz]
+    adductVAL<-reading[adduct]
+    modeVAL<-reading[mode]
+    CEVAL<-reading[CE]
+
+    pattern<-"\t{3}<mz>(.*)</mz>"# "\t{3}(?:<mz>|<name>(?????)(?:</mz>|</name>))"
+    pattern1<-"\t{3}<mass>(.*)</mass>"
+    pattern2<-"\t{3}<name>(.*)</name>"
+    pattern3<-"\t{3}<mode>(.*)</mode>"
+    pattern4<-"\t{3}<adduct>(.*)</adduct>"
+    pattern5<-"\t{3}<intensity>(.*)</intensity>"
+    pattern6<-"\t{3}<collisionE>(.*)</collisionE>"
+
+    mzVAL<-gsub(pattern, "\\1", mzVAL, perl=T)
+    intVAL<-gsub(pattern5, "\\1", intVAL, perl=T)
+    PmzVal<-gsub(pattern1, "\\1", PmzVal, perl=T)
+    nameVAL<-gsub(pattern2, "\\1", nameVAL, perl=T)
+    modeVAL<-gsub(pattern3, "\\1", modeVAL, perl=T)
+    adductVAL<-gsub(pattern4, "\\1", adductVAL, perl=T)
+    CEVAL<-gsub(pattern6, "\\1", CEVAL, perl=T)
+
+    mzVAL.correct<-as.numeric(mzVAL[2:length(mzVAL)])
+    intVAL.correct<-intVAL[2:length(intVAL)]
+    nameVAL.correct<-nameVAL[2:length(nameVAL)]
+    PmzVal.correct<-as.numeric(PmzVal[2:length(PmzVal)])
+    mode.correct<-modeVAL[2:length(modeVAL)]
+    adduct.correct<-adductVAL[2:length(adductVAL)]
+    CE.correct<-CEVAL[2:length(CEVAL)]
+
+    met.mat<-cbind(nameVAL.correct, mzVAL.correct, intVAL.correct, PmzVal.correct, mode.correct, adduct.correct, CE.correct)
+
+    met.mat<-as.data.frame(met.mat, stringsAsFactors=FALSE)
+    colnames(met.mat)<-c("name", "frag.MZ", "int", "preMZ", "mode", "adduct", "collisionEnergy")
+    met.mat[,"frag.MZ"]<-as.numeric(met.mat[,"frag.MZ"])
+    met.mat[,"int"]<-as.numeric(met.mat[,"int"])
+    met.mat[,"preMZ"]<-as.numeric(met.mat[,"preMZ"])
+    met.mat[,"collisionEnergy"]<-as.numeric(met.mat[,"collisionEnergy"])
+    met.mat<-met.mat[order(met.mat[,"preMZ"]), ]
+    
+
+    if(MS1==TRUE){
+	MS1.df<-suppressWarnings(read.metlinMS(MSxml) ) ##Need to check why warnings?
+	MS2.name<-unique(met.mat[,"name"])
+	logi<-as.logical(match(MS1.df[,"name"], MS2.name, nomatch=0))
+	MS1.df<-data.frame(name=MS1.df[!logi,"name"], frag.MZ=0 , int=0, preMZ=MS1.df[!logi,"MZ"], mode="*", adduct="M", collisionEnergy=0) 
+## add fake values to the MS1 data
+	met.mat<-rbind(MS1.df, met.mat)
+    }
+
+    return(met.mat)
+}
+
 read.metlinMS<- function(xml){
     reading<-readLines(xml)
     xml.mat<-matrix(nrow=length(reading),ncol=3)
@@ -21,6 +89,7 @@ read.metlinMS<- function(xml){
 
     return(metMS.df)
 }
+
 
 distance<-function(met, xcm, ppmval, matrix=FALSE){
     l.met<-length(met)
