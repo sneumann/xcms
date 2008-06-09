@@ -7,13 +7,14 @@
   into different classes suitable for grouping.
 }
 \usage{
-xcmsSet(files = NULL, snames = NULL, sclass = NULL,
+xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(), ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
   \item{snames}{sample names}
   \item{sclass}{sample classes}
+    \item{phenoData}{sample names and classes}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
   \item{\dots}{
@@ -22,8 +23,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL,
   }
 }
 \details{
-  The default values of the \code{files}, \code{snames}, and
-  \code{sclass} arguments cause the function to recursively search
+  The default values of the \code{files}, \code{snames}, \code{sclass}, and
+  \code{phenoData} arguments cause the function to recursively search
   for readable files. The filename without extention is used for the
   sample name. The subdirectory path is used for the sample class.
 }
