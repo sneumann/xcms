@@ -1,10 +1,10 @@
 \name{xcmsSet-class}
 \docType{class}
 \alias{xcmsSet-class}
-\alias{cdfpaths<-,xcmsSet-method}
-\alias{cdfpaths<-}
-\alias{cdfpaths,xcmsSet-method}
-\alias{cdfpaths}
+\alias{filepaths<-,xcmsSet-method}
+\alias{filepaths<-}
+\alias{filepaths,xcmsSet-method}
+\alias{filepaths}
 \alias{groupidx<-,xcmsSet-method}
 \alias{groupidx<-}
 \alias{groupidx,xcmsSet-method}
@@ -63,7 +63,7 @@
       list containing two lists, \code{raw} and \code{corrected},
       each containing retention times for every scan of every sample
     }
-    \item{\code{cdfpaths}:}{
+    \item{\code{filepaths}:}{
       character vector with absolute path name of each NetCDF file
     }
     \item{\code{profinfo}:}{
@@ -77,11 +77,11 @@
     \item{\link[xcms:c.xcmsSet]{c}}{
       \code{signature("xcmsSet")}: combine objects together
     }
-    \item{cdfpaths<-}{
-      \code{signature(object = "xcmsSet")}: set \code{cdfpaths} slot
+    \item{filepaths<-}{
+      \code{signature(object = "xcmsSet")}: set \code{filepaths} slot
     }
-    \item{cdfpaths}{
-      \code{signature(object = "xcmsSet")}: get \code{cdfpaths} slot
+    \item{filepaths}{
+      \code{signature(object = "xcmsSet")}: get \code{filepaths} slot
     }
     \item{\link{diffreport}}{
       \code{signature(object = "xcmsSet")}: create report of
