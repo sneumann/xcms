@@ -29,6 +29,7 @@ exportClasses(
               )
 
 exportMethods(
+              "collect"
               "filepaths",
               "filepaths<-",
               "diffreport",
@@ -81,7 +82,9 @@ exportMethods(
               "sampclass<-",
               "sampnames",
               "sampnames<-",
+              "searchMetlin"
               "show",
+              "simSearch"
               "sortMz",
               "write.cdf"
               )
