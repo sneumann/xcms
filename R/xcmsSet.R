@@ -1,50 +1,57 @@
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
-                                   groupidx = "list", sampnames = "character",
-                                   sampclass = "factor", rt = "list",
+                                   groupidx = "list",
+                                   ##sampnames = "character", sampclass = "factor",
+                                   phenoData = "data.frame",
+                                   rt = "list",
                                    filepaths = "character", profinfo = "list"),
          prototype(peaks = matrix(nrow = 0, ncol = 0),
                    groups = matrix(nrow = 0, ncol = 0),
-                   groupidx = list(), sampnames = character(0),
-                   sampclass = factor(integer(0)), rt = list(),
+                   groupidx = list(),
+                   phenoData = data.frame(), rt = list(),
+                   ##sampnames = character(0),
+                   ##sampclass = factor(integer(0)),
+                   rt = list(),
                    filepaths = character(0), profinfo = vector("list")))
 
-xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
+xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(), ...) {
 
     object <- new("xcmsSet")
 
     filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
-                     "[Mm][Zz][Dd][Aa][Tt][Aa]")
+                     "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+
     if (is.null(files))
-        files <- list.files(pattern = filepattern, recursive = TRUE)
+        files <- getwd()
+    info <- file.info(files)
+    listed <- list.files(files[info$isdir], pattern = filepattern,
+                         recursive = TRUE, full.names = TRUE)
+    files <- c(files[!info$isdir], listed)
+
+    # try making paths absolute
+    files_abs <- file.path(getwd(), files)
+    exists <- file.exists(files_abs)
+    files[exists] <- files_abs[exists]
+    
+    filepaths(object) <- files
 
     if (length(files) == 0)
-        stop("No NetCDF/mzXML/mzData files were found.\n")
+      stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
-    filepaths(object) <- file.path(getwd(), files)
-    # Check to see whether the absolute path names work
-    for (file in filepaths(object))
-        if (!file.exists(file))
-            filepaths(object) <- files
-
+    # determine experimental design
+    fromPaths <- phenoDataFromPaths(files)
     if (is.null(snames))
-        snames <- gsub("\\.[^.]*$", "", basename(files))
-    sampnames(object) <- snames
-
-    if (is.null(sclass)) {
-        sclass <- gsub("^\\.$", "sample", dirname(files))
-        # Make the default group names less redundant
-        scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
-        scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
-        i <- 1
-        while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
-            i <- i + 1
-        i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
-        if (i > 1 && i <= nrow(scomp))
-            sclass <- substr(sclass, i, max(nchar(sclass)))
+      snames <- rownames(fromPaths)
+    pdata <- phenoData
+    if (is.null(pdata)) {
+      pdata <- sclass
+      if (is.null(pdata)) 
+        pdata <- fromPaths
     }
-    sampclass(object) <- sclass
+    phenoData(object) <- pdata
+    if (is.null(phenoData))
+      rownames(phenoData(object)) <- snames
 
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
@@ -94,7 +101,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
 
 setMethod("show", "xcmsSet", function(object) {
 
-    cat("An \"xcmsSet\" object with", length(object@sampnames), "samples\n\n")
+    cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
 
     cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"),
         " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"),
@@ -102,9 +109,9 @@ setMethod("show", "xcmsSet", function(object) {
     cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"),
         "m/z\n")
     cat("Peaks:", nrow(object@peaks), "(about",
-        round(nrow(object@peaks)/length(object@sampnames)), "per sample)\n")
+        round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
-    cat("Sample classes:", paste(levels(object@sampclass), collapse = ", "), "\n\n")
+    cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
 
     if (length(object@profinfo)) {
         cat("Profile settings: ")
@@ -236,32 +243,52 @@ setReplaceMethod("groupidx", "xcmsSet", function(object, value) {
     object
 })
 
-#setGeneric("sampnames", function(object) standardGeneric("sampnames"))
-
-setMethod("sampnames", "xcmsSet", function(object) object@sampnames)
+setMethod("sampnames", "xcmsSet", function(object) rownames(object@phenoData))
 
 setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
 
 setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
-    object@sampnames <- value
+    rownames(object@phenoData) <- value
 
     object
 })
 
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
-setMethod("sampclass", "xcmsSet", function(object) object@sampclass)
+setMethod("sampclass", "xcmsSet", function(object) {
+    if (ncol(object@phenoData) >0) {
+        interaction(object@phenoData)
+    } else {
+        factor()
+    }
+})
 
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
+  if (!is.factor(value))
+    value <- factor(value, unique(value))
 
-    if (is.factor(value))
-        object@sampclass <- value
-    else
-        object@sampclass <- factor(value, unique(value))
+  object@phenoData <- data.frame(class = value)
+  object
+})
 
+setGeneric("phenoData", function(object) standardGeneric("phenoData"))
+
+setMethod("phenoData", "xcmsSet", function(object) object@phenoData)
+
+setGeneric("phenoData<-", function(object, value) standardGeneric("phenoData<-"))
+
+setReplaceMethod("phenoData", "xcmsSet", function(object, value) {
+    if (is.matrix(value))
+        value <- as.data.frame(value)
+    #if (is.data.frame(value) && !("class" %in% colnames(value)))
+    #    value[,"class"] <- interaction(value)
+    #else
+    if (!is.data.frame(value))
+      value <- data.frame(class = value)
+    object@phenoData <- value
     object
 })
 
@@ -323,6 +350,36 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 
     gnames
 })
+
+# derive experimental design from set of file paths
+phenoDataFromPaths <- function(paths) {
+  ## create factors from filesystem hierarchy
+  sclass <- gsub("^\\.$", "sample", dirname(paths))
+  lev <- strsplit(sclass, "/")
+  levlen <- sapply(lev, length)
+  if(length(lev) > 1 && !all(levlen[1] == levlen))
+    stop("Directory tree must be level")
+  pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
+  redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
+  if (!any(!redundant)) {
+    redundant[length(redundant)] <- FALSE
+  }
+  pdata <- pdata[,!redundant,drop=FALSE]
+  if (ncol(pdata) == 1) { ## if not multiple factors, behave as before
+    ## Make the default group names less redundant
+    scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
+    scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
+    i <- 1
+    while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
+      i <- i + 1
+    i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
+    if (i > 1 && i <= nrow(scomp))
+      sclass <- substr(sclass, i, max(nchar(sclass)))
+    pdata <- data.frame(class = sclass)
+  }
+  rownames(pdata) <- gsub("\\.[^.]*$", "", basename(paths))
+  pdata
+}
 
 setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
 

@@ -17,6 +17,10 @@
 \alias{peaks<-}
 \alias{peaks,xcmsSet-method}
 \alias{peaks}
+\alias{phenoData}
+\alias{phenoData,xcmsSet-method}
+\alias{phenoData<-}
+\alias{phenoData<-,xcmsSet-method}
 \alias{profinfo<-,xcmsSet-method}
 \alias{profinfo<-}
 \alias{profinfo,xcmsSet-method}
@@ -53,11 +57,8 @@
     \item{\code{groupidx}:}{
       list containing indices of peaks in each group
     }
-    \item{\code{sampnames}:}{
-      character vector with names of each sample
-    }
-    \item{\code{sampclass}:}{
-      factor containing sample classes
+    \item{\code{phenoData}:}{
+      a data frame containing the experimental design factors
     }
     \item{\code{rt}:}{
       list containing two lists, \code{raw} and \code{corrected},
@@ -140,16 +141,27 @@
       of peaks to do nonlinear loess retention time correction
     }
     \item{sampclass<-}{
-      \code{signature(object = "xcmsSet")}: set \code{sampclass} slot
+      \code{signature(object = "xcmsSet")}: \strong{DEPRECATED}. If used, the
+      experimental design will be replaced with a data frame with a
+      single column matching the supplied factor.
     }
     \item{sampclass}{
-      \code{signature(object = "xcmsSet")}: get \code{sampclass} slot
+      \code{signature(object = "xcmsSet")}: get the interaction of the
+      experimental design factors
+    }
+    \item{phenoData<-}{
+      \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
+    }
+    \item{phenoData}{
+      \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
     }
     \item{sampnames<-}{
-      \code{signature(object = "xcmsSet")}: set \code{sampnames} slot
+      \code{signature(object = "xcmsSet")}: set rownames in the
+      \code{phenoData} slot
     }
     \item{\link{sampnames}}{
-      \code{signature(object = "xcmsSet")}: get \code{sampnames} slot
+      \code{signature(object = "xcmsSet")}: get rownames in the
+      \code{phenoData} slot
     }
     \item{\link[xcms:split.xcmsSet]{split}}{
       \code{signature("xcmsSet")}: divide into a list of objects
