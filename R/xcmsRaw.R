@@ -165,16 +165,12 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     scan_no <- length(object@scanindex)
     point_no <- length(object@env$mz)
 
-    dim32bytes <- dim.def.ncdf("_32_byte_string", "",
-                               1:32, create_dimvar=FALSE)
-    dim64bytes <- dim.def.ncdf("_64_byte_string", "",
-                               1:64, create_dimvar=FALSE)
-    dimError   <- dim.def.ncdf("error_num",       "",
-                               1:1, create_dimvar=FALSE)
-    dimScans   <- dim.def.ncdf("scan_number",     "",
-                               1:scan_no, create_dimvar=FALSE)
-    dimPoints  <- dim.def.ncdf("point_number",    "",
-                               1:point_no, create_dimvar=FALSE)
+
+    dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
+    dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
+    dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
+    dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
+    dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
 
     ## Define netCDF vars
     scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", "", dimScans, -1)
@@ -183,6 +179,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
     mass_values           <- var.def.ncdf("mass_values", "", dimPoints, -1)
     intensity_values      <- var.def.ncdf("intensity_values", "", dimPoints, -1)
+
 
     ## Define netCDF definitions
 
@@ -197,7 +194,9 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     put.var.ncdf(ms, "mass_values", object@env$mz)
     put.var.ncdf(ms, "intensity_values", object@env$intensity)
 
+
     close.ncdf(ms)
+
 })
 
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
@@ -1495,3 +1494,144 @@ setMethod("isCentroided", "xcmsRaw", function(object){
 })
 
 
+if (!isGeneric("collect") )
+    setGeneric("collect", function(object, ...) standardGeneric("collect"))
+
+setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check=FALSE, fragments=TRUE, ...) {
+    for(k in 1:length(object@msnScanindex)){
+        if (k ==1){
+            from<-object@msnScanindex[k]
+            to<-object@msnScanindex[k+1]-1
+            mat<-c(from, to)
+        }else if (k==length(object@msnScanindex)){
+            from<-object@msnScanindex[k]
+            to<-length(object@env$msnMz)
+            mat<-rbind(mat, c(from, to))
+        } else{
+            from<-object@msnScanindex[k]
+            to<-object@msnScanindex[k+1]-1
+            mat<-rbind(mat, c(from, to))
+        }
+    }
+
+    uniMZ<-unique(object@msnPrecursorMz)
+    ref<-1
+    
+    run<-vector("list", 0)
+    for(i in 1:length(uniMZ)){
+	cat(paste(uniMZ[i], " ", sep=""))
+	if(mzU==0){
+	    mzU<-uniMZ[i]
+	    check<-TRUE
+	}
+        
+	uniCE<-unique(object@msnCollisionEnergy[object@msnPrecursorMz == mzU])
+	for (o in 1:length(uniCE)){
+	    if(uCE == -1){
+	        uCE<-uniCE[o]
+	        check<-TRUE
+	    }
+            tempIndex<-which(object@msnPrecursorMz == mzU & object@msnCollisionEnergy == uCE)
+	    scanIX<-cbind(object@msnPrecursorMz[tempIndex], mat[tempIndex,2], mat[tempIndex,1], object@msnRt[tempIndex], object@msnCollisionEnergy[tempIndex])
+            colnames(scanIX)<-c("preMZ", "to", "from", "rt", "collisionEnergy")
+	    if(!is.matrix(scanIX)){
+	        tempNames<-names(scanIX)
+	        scanIX<-matrix(scanIX, ncol=5)
+	        colnames(scanIX)<-tempNames
+	    }
+	    rthold<-min(scanIX[,"rt"])
+
+            if(dim(scanIX)[1] == 1){ ##do we need rt time window?
+                dat<-scanIX
+                seqInd<-sequenceMz(dat)
+                scan<-cbind(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd])
+                colnames(scan)<-c("mz", "intensity")
+                scan<-scan[order(scan[,"mz"], scan[,"intensity"]),]
+                scan[,"intensity"]<-scan[,"intensity"]/max(scan[,"intensity"])*100
+                #spectab<-specPeaks(scan, sn=sn) ## used to remove noise
+                run[[ref]]<-specPeaks(scan, sn=sn)
+                #run[[ref]]<-deisotopeNclean(spectab) ##Just what it says. could be better
+
+                if(!exists("runinfo") ){ # to get over the null object issue
+                    runinfo<-c(mzU, min(dat[,"rt"]), max(dat[,"rt"]), ref, uCE)
+                } else {
+                    runinfo<-rbind(runinfo, c(mzU, min(dat[,"rt"]), max(dat[,"rt"]), ref, uCE))
+                }
+                ref<-ref+1
+            }else if (dim(scanIX)[1] >1){
+	        while(rthold <= max(scanIX[,"rt"])){ 
+	            ahead<-scanIX[which.max(scanIX[,"rt"]>rthold),"rt"]+rtU
+	            scanIndex<-scanIX[,"rt"] <= ahead & scanIX[, "rt"] > rthold
+                    if (!is.matrix(scanIX[scanIndex,])){ # if dim==[1,8] it becomes a vector so check for it
+                        dat<-matrix(scanIX[scanIndex,], ncol=5)
+                        colnames(dat)<-names(scanIX[scanIndex,])
+                    }else {
+                        dat<-scanIX[scanIndex,]
+                    }
+                    if(dim(dat)[1] < 1 ){
+                        rthold<-ahead+rthold
+                        next
+                    }
+                    seqInd<-sequenceMz(dat)
+                    scan<-cbind(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd])
+                    colnames(scan)<-c("mz", "intensity")
+                    scan<-scan[order(scan[,"mz"], scan[,"intensity"]),]
+                    scan[,"intensity"]<-scan[,"intensity"]/max(scan[,"intensity"])*100
+##normilise the intensity for signal to noise ration.
+                    #spectab<-specPeaks(scan, sn=sn) # used to remove noise
+                    run[[ref]]<-specPeaks(scan, sn=sn)
+                    #run[[ref]]<-deisotopeNclean(spectab)
+                    rthold<-max(dat[,"rt"])
+                    
+                    if(!exists("runinfo") ){ # to get over the null object issue
+                        runinfo<-c(mzU, min(dat[,"rt"]), max(dat[,"rt"]), ref, uCE)
+                    } else {
+                        runinfo<-rbind(runinfo, c(mzU, min(dat[,"rt"]), max(dat[,"rt"]), ref, uCE))
+                    }
+                    ref<-ref+1
+                }
+            }
+            
+        }
+
+	if(!exists("runinfoFinal")){
+	    runinfoFinal<-runinfo
+	} else {
+	    runinfoFinal<-rbind(runinfoFinal, runinfo)
+	}
+	if(check==TRUE) {
+	    mzU<-0
+	    uCE<- -1
+	}
+    }
+    
+    colnames(runinfoFinal)<-c("preMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
+    rownames(runinfoFinal)<-rep("", dim(runinfoFinal)[1]) #just to get rid of the added row names which aren't needed.
+    cat("\nCalculating accurate mass...")
+    if(fragments == TRUE){
+        frag<-new("xcmsFragments")
+        if(length(run)== dim(runinfoFinal)[1] ){## some odd stuff happens with the matrix duplicates are made
+	    frag@MS2spec<-run		## So we check for it
+            frag@specinfo<-runinfoFinal
+        } else {
+	    dup<-duplicated(runinfoFinal)
+	    if(dim(runinfoFinal[!dup,])[1] == length(run)){
+                frag@specinfo<-runinfoFinal[!dup,]
+                frag@MS2spec<-run
+	    } else{
+	        cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep=""))
+	    }
+        }
+    }
+    
+    cat(paste("\n", sep=""))
+    
+    if(fragments == TRUE){
+        return(frag)
+    }else {
+        MSMS<-list()
+        MSMS[[1]]<-runinfoFinal
+        MSMS[[2]]<-MS2spec
+        return(MSMS)
+    }    
+})
