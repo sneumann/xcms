@@ -512,7 +512,7 @@ if (!isGeneric("searchMetlin") )
 
 setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", ...) {
     if(metXML=="metlin"){
-        metlinfile<-"http://metlin.scripps.edu/download/MSMS_test.XML"
+        metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
         metlinMS<-"http://metlin.scripps.edu/download/MS.XML"
     }else{
         metlinfile<-metXML
