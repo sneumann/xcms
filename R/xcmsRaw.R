@@ -391,10 +391,6 @@ setMethod("getMsnScan", "xcmsRaw", function(object, scanLevel = 2, ms1Rt = -1, p
     return(nxcms);
 })
 
-setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
-setMethod("getMsnScan", "xcmsRaw", getMsnScan)
-
-
 setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
