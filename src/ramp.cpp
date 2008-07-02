@@ -55,7 +55,8 @@ c++ code.  You may need to tell your compiler this explicitly.
 #else
 // local copies of stuff in TPP's sysdepend.h, and empty macro versions of some stuff as well
 #ifdef _MSC_VER
-typedef unsigned long uint32_t; 
+// conflicting declaration 'typedef long unsigned int uint32_t' mingw32/4.2.1-sjlj
+//typedef unsigned long uint32_t; 
 typedef unsigned __int64 uint64_t;
 #define S_ISDIR(mode) ((mode)&_S_IFDIR)
 #define strcasecmp stricmp
