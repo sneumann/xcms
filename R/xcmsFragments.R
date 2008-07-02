@@ -235,7 +235,7 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
                           to=as.character(gm[,"toID"]),
                           graph=OG,weights=1)
             globA =list(node=list(shape="circle",width=10)  )
-            plot(OG,nodeAttrs=nodes, attrs=globA)
+            Rgraphviz:::plot(OG,nodeAttrs=nodes, attrs=globA)
         }
     }
 }

@@ -2,7 +2,6 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("graphics", "plot")
-importFrom("Rgraphviz", "plot")
 
 export(
        "etg",
