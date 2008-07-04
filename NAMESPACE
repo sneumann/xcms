@@ -51,7 +51,6 @@ exportMethods(
               "groups<-",
               "groupval",
               "mzrange",
-              "papply",
               "peaks",
               "peaks<-",
               "phenoData",
