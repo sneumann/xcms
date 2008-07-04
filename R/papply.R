@@ -1,3 +1,4 @@
+
 ##
 ## Modified papply function from package papply 0.2 (Duane Currie): 
 ##
@@ -33,7 +34,8 @@ function(arg_sets,papply_action,papply_commondata=list(),
 
     # Load the MPI Environment if not already there.
     if (!is.loaded('mpi_initialize')) {
-        require('Rmpi',quietly=TRUE)
+        libname <- 'Rmpi'
+        require(libname, character.only = TRUE, quietly=TRUE)
         }
 
     # Now, if Rmpi is loaded, make sure we have a bunch of slaves
