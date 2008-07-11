@@ -8,7 +8,9 @@
 void ProfBinLin(double *xvals, double *yvals, int *numin, 
                 double *xstart, double *xend, int *numout, double *out) {
 
-    double dx, xi, xpre, ypre, xpost, ypost, startx;
+    double dx, xi, 
+      xpre=-1, ypre=-1, 
+      xpost, ypost, startx;
     int    i, ipost;
     
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
@@ -59,7 +61,7 @@ void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel,
                     double *xstart, double *xend, int *numout, double *out) {
  
     double dx, ypre = -1, ypost = -1, startx;
-    int    i, ipre, ipost, ix, ibase;
+    int    i, ipre = -1, ipost, ix, ibase;
     
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
     ibase = floor(*basespace/dx);
