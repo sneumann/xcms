@@ -118,7 +118,7 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                 ## calling the mini-peakpick
                 npeaks <- specPeaks(MzTable, sn=snthresh, mzgap=mzgap)
 
-                if (nrow(npeaks) > 0) {
+                if (nrow(npeaks) >0) {
                     for (numPeaks in 1:nrow(npeaks)) {
                         ## for every picked peaks in the PeakPicked-List
                         PeakNr<- PeakNr+1
@@ -129,6 +129,7 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                         npMz[PeakNr]<- npeaks[numPeaks,"mz"]
                         npIntensity[PeakNr]<- npeaks[numPeaks,"intensity"]
                         npSample[PeakNr]<- NumXcmsPath
+                        
                     }
                 }
             }
