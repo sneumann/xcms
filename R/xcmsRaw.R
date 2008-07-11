@@ -1618,31 +1618,30 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
     cat("\nCalculating accurate mass...")
     if(fragments == TRUE){
         frag<-new("xcmsFragments")
-        if(length(run)== dim(runinfoFinal)[1] ){## some odd stuff happens with the matrix duplicates are made
-	    frag@MS2spec<-run		## So we check for it
-            frag@specinfo<-runinfoFinal
-        } else {
-	    dup<-duplicated(runinfoFinal)
-	    if(dim(runinfoFinal[!dup,])[1] == length(run)){
-                frag@specinfo<-runinfoFinal[!dup,]
-                frag@MS2spec<-run
-	    } else{
-	        cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep=""))
-	    }
-        }
+    }
+    if(length(run)== dim(runinfoFinal)[1] ){## some odd stuff happens with the matrix duplicates are made
+	frag@MS2spec<-run		## So we check for it
+    } else {
+	dup<-duplicated(runinfoFinal)
+	if(dim(runinfoFinal[!dup,])[1] == length(run)){
+            frag@specinfo<-runinfoFinal[!dup,]
+            frag@MS2spec<-run
+	} else{
+	    cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep=""))
+	}
     }
     
+    
     cat(paste("\n", sep=""))
-    accurateMZ<-getMZ(object)
-    runinfoFinal<-cbind(runinfoFinal[,1], accurateMZ, runinfoFinal[,2:5])
-    colnames(runinfoFinal)<-c("preMZ", "AccMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
+    accurateMZ<-getMZ(object, frag@specinfo)
+    frag@specinfo<-cbind(frag@specinfo[,1], accurateMZ, frag@specinfo[,2:5])
+    colnames(frag@specinfo)<-c("preMZ", "AccMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
     if(fragments == TRUE){
-        frag@specinfo<-ruinfoFinal
         return(frag)
     }else {
         MSMS<-list()
-        MSMS[[1]]<-runinfoFinal
-        MSMS[[2]]<-MS2spec
+        MSMS[[1]]<-frag@specinfo
+        MSMS[[2]]<-frag@MS2spec
         return(MSMS)
     }    
 })
@@ -1650,13 +1649,13 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 if (!isGeneric("getMZ") )
     setGeneric("getMZ", function(object, ...) standardGeneric("getMZ"))
 
-setMethod("getMZ", "xcmsRaw", function(object, ...) {
-    for(i in 1:dim(object@specinfo)[1]){
-	A<-which(object@specinfo[i,"rtmin"] > object@scantime)
-	if(object@specinfo[i,"rtmax"] > object@scantime[length(object@scantime)]){
+setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
+    for(i in 1:dim(specinfo)[1]){
+	A<-which(specinfo[i,"rtmin"] > object@scantime)
+	if(specinfo[i,"rtmax"] > object@scantime[length(object@scantime)]){
 	    B<-length(object@scantime)
 	} else {
-	    B<-which(object@specinfo[i,"rtmax"] < object@scantime)
+	    B<-which(specinfo[i,"rtmax"] < object@scantime)
 	}
 
 	massInd<-object@scanindex[max(A,na.rm=TRUE):min(B,na.rm=TRUE)]
@@ -1664,11 +1663,11 @@ setMethod("getMZ", "xcmsRaw", function(object, ...) {
 	AccuIntensity<-object@env$intensity[massInd[1]:massInd[length(massInd)]]
 
 
-	index<-which(AccuMass > object@specinfo[i, "preMZ"]-0.5 & AccuMass < object@specinfo[i, "preMZ"]+0.5)
+	index<-which(AccuMass > specinfo[i, "preMZ"]-0.25 & AccuMass < specinfo[i, "preMZ"]+0.25)
 	#if (length(index) == 0){ # we should probably check for nothing found :wq
 	    
 	#}
-	if(i == 1){
+	if(!exists("accurate")){
 	    accurate<-weighted.mean(AccuMass[index], AccuIntensity[index], na.rm = TRUE)
 	}else{
 	    accurate<-c(accurate, weighted.mean(AccuMass[index], AccuIntensity[index], na.rm=TRUE))
