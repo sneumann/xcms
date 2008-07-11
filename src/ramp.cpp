@@ -324,7 +324,7 @@ ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
    for (indexOffsetOffset = -120;  indexOffsetOffset++ < 0 ;)
    {
       char seekbuf[SIZE_BUF+1];
-      char *target = "<indexOffset>";
+      const char *target = "<indexOffset>";
       int  nread;
 
       ramp_fseek(pFI, indexOffsetOffset, SEEK_END);
@@ -1222,7 +1222,7 @@ double readEndMz(RAMPFILE *pFI,
 // note the different capITaliZaTIons, this could be done better - it's used
 // for trying to find if basename "foo" has an existing foo.mzXML, foo.mzxml etc
 // which is not problem on windoze (no real case sense in filenames) but is on *nix
-static char *data_ext[]={".mzXML",".mzData",".mzxml",".mzdata",".mzDATA",
+static const char *data_ext[]={".mzXML",".mzData",".mzxml",".mzdata",".mzDATA",
 #ifdef HAVE_PWIZ_MZML_LIB
   ".mzML", ".mzml",  ".MZML",
 #endif
@@ -2206,7 +2206,7 @@ int rampSelfTest(char *filename) { // if filename is non-null we'll exercise rea
    char buf2[256];
    int i;
 
-   char *testname[] = 
+   const char *testname[] = 
    {"foo.bar","foo.mzxml","foo.mzdata","foo.mzXML","foo.mzData",
    NULL};
 
