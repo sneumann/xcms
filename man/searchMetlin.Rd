@@ -2,7 +2,7 @@
 \alias{searchMetlin}
 \title{Search Metlin Online Database}
 \description{
-  A method for searching MS^2 data against the accurate MS^2 METLIN database
+  A method for searching MS$^2$ data against the accurate MS$^2$ METLIN database
 }
 \usage{
 searchMetlin(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin",)
@@ -43,7 +43,7 @@ searchMetlin(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin",
 
 }
 \references{
-  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XCMS^2:"
+  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XCMS$^2$:"
   Analytical Chemistry 2008
   \url{http://d}
 }
