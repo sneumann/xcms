@@ -1,3 +1,32 @@
+2008-07-15: 1.13.5
+Parallel peak petection using Rmpi
+Added mpi.finalize() via .Last
+Changed plot.metlin so that x axes is the same on both plots
+initialise variables gcc complained about
+fix error in searchMetlin method.
+xcmsRaw collect changes for simple-er code
+added -DWIN32_LEAN_AND_MEAN to Makevars.win to fix ramp build on windows
+Fix another windows build issue
+Added findPeaksMPI() MPI slave function
+moved Rgraphviz from required to suggested packages
+Preparations for parallel peak picking using MPI, added xcmsPapply() function
+removed duplicate definition of xcmsRaw.getsnScan
+helper method added for xcmsRaw.collect
+added helper method for collect
+export new MS/MS searching methods
+Added collect to xcmsRaw to convert to xcmsFragments, for searching
+NB findPeaks method doesn't alway pick up all peaks that have ms^n data on them.
+Ported phenoData code from 1.13.2
+Added MS/MS searching methods. searchMetlin and similarity search methods for MS/MS data.
+Added dirty nasty methods to find different metabolotes in metlin XML. the collision energy, name, mode (+/-)
+Added MS/MS parser for metlin XML MS/MS data
+Fix call to MassSpecWavelet
+Reapplied Colins Fix + Michaels changes
+enable write.cdf()
+Backported mzClust stuff
+Fix includeMSn handling in xcmsSet + Graphviz fix + use filepath for CDF path
+Restored some (most?) xcmsFragments functionality
+
 2008-06-03: 1.13.4
 Ported the following Changes from 1.13.3:
 - Migrate to ncdf for xcmsRaw.write()
