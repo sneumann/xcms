@@ -1,4 +1,4 @@
-require(methods) || stop("Couldn't load package methods")
+require(methods) || stop("Couldnt load package methods")
 
 setClass("xcmsFragments", representation(peaks = "matrix",
                                    MS2spec = "list",
@@ -687,14 +687,15 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 
 plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "blue")){
     ExpSpec[,"intensity"]<-ExpSpec[,"intensity"]/max(ExpSpec[,"intensity"])*100
+    maxMZ<-max(ExpSpec[,1], MetSpec[,1]) ##I know could be better with "mz" but not the same sort later
     #ind<-which(MetSpec[,"int"] <= 90)
     #MetSpec[ind, "int"]<-MetSpec[ind, "int"]/max(MetSpec[ind,"int"])*75
     
     op <- par(mfrow = c(2, 1),pty = "m", adj=0.5) # 1 x 2 pictures on one plot
     
-    plot(ExpSpec, type="h", col=col[1], ylab="Intensity", xlab="", main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), )
+    plot(ExpSpec, type="h", col=col[1], ylab="Intensity", xlab="", main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), xlim=c(0, (maxMZ+(maxMZ/2))))
     abline(0,0)
-    plot(MetSpec, type="h", col=col[2], xlab="M/Z", ylab="", main="Metlin Reference Spectrum")
+    plot(MetSpec, type="h", col=col[2], xlab="M/Z", ylab="", main="Metlin Reference Spectrum", xlim=c(0, (maxMZ+(maxMZ/2) )) )
     abline(0,0)
     par(op)
 }
@@ -702,7 +703,7 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
 if (!isGeneric("simSearch") )
     setGeneric("simSearch", function(object,...) standardGeneric("simSearch"))
 
-setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=40, file, fullReport=FALSE, ...) {
+setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...) {
     metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
     spectra<-metlinToList(metlinfile)
     cat("Data converted\nProcessing data...\n")
