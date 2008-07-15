@@ -12,7 +12,8 @@ export(
        "SSgauss",
        "xcmsRaw",
        "xcmsSet",
-       "xcmsFragments"
+       "xcmsFragments",
+       "xcmsPapply"
        )
 
 S3method(c, xcmsSet)

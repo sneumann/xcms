@@ -8,7 +8,7 @@
 }
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
-        profmethod = "bin", profparam = list(), ...)
+        profmethod = "bin", profparam = list(), nSlaves=0, ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -17,6 +17,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
     \item{phenoData}{sample names and classes}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
+  \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
+                 works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
     \code{xcmsRaw} class

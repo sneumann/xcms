@@ -3,10 +3,10 @@
 ## Modified papply function from package papply 0.2 (Duane Currie): 
 ##
 ## Parts of the slave function were wrapped in try() to make it failsafe
-## (if e.g. peak picking in a single file fails - papply will wait forever for this slave...)
+## (if e.g. peak picking in a single file fails - papply would wait forever for the MPI slave to finish ...)
 ##
 
-"papply" <-
+"xcmsPapply" <-
 function(arg_sets,papply_action,papply_commondata=list(),
                    show_errors=TRUE,do_trace=FALSE,also_trace=c()) {
     # Check to ensure arguments are of the correct type
@@ -243,3 +243,30 @@ function(arg_sets,papply_action,papply_commondata=list(),
     return(results)
     }
 
+
+##
+## finPeaks MPI slave function
+##
+
+findPeaksMPI <- function(arg) {
+    require(xcms)
+    
+    params <- arg$params
+    myID <- arg$id
+    if (is.null(params$method)) 
+        params$method <- getOption("BioC")$xcms$findPeaks.method
+    method <- match.arg(params$method, getOption("BioC")$xcms$findPeaks.methods)
+    if (is.na(method))
+        stop("unknown method : ", method)
+    method <- paste("findPeaks", method, sep=".")    
+    
+    xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0, includeMSn=params$includeMSn)
+    params["object"] <- xRaw
+    
+    ## remove parameters which are not used by method() from the parameter list
+    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- NULL
+    
+    peaks <- do.call(method, params)
+
+    list(scantime=xRaw@scantime, peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
+}

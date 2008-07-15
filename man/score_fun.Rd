@@ -19,9 +19,7 @@ score_fun(ref, exp, ppmval)
   \item{score}{Percentage score between the two arrays}
 }
 \references{
-  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XCMS^2:"
+  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XC\eqn{MS^2}:"
   Analytical Chemistry 2008
-  \url{http://d}
 }
 \author{H. Paul Benton, \email{hpbenton@scripps.edu}}
-\keyword{metlin}
