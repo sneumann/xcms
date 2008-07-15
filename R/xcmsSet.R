@@ -14,7 +14,7 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                    filepaths = character(0), profinfo = vector("list")))
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
-                    profmethod = "bin", profparam = list(), ...) {
+                    profmethod = "bin", profparam = list(), nSlaves=0, ...) {
 
     object <- new("xcmsSet")
 
@@ -63,11 +63,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
 
-    peaklist <- vector("list", length(files))
-
-    for (i in seq(along = peaklist)) {
-
-      includeMSn=FALSE
+    includeMSn=FALSE
       xcmsSetArgs <- as.list(match.call())
       if (!is.null(xcmsSetArgs$method)) {
         if (xcmsSetArgs$method=="MS1") {
@@ -75,24 +71,67 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         }
       }
 
-      lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                         profstep = 0, includeMSn=includeMSn)
-        cat(snames[i], ": ", sep = "")
-        peaklist[[i]] <- findPeaks(lcraw, ...)
-        peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
-        rtlist$raw[[i]] <- lcraw@scantime
-        rtlist$corrected[[i]] <- lcraw@scantime
-        rm(lcraw)
-        gc()
-        if (nrow(peaklist[[i]]) == 0)
-            warning(paste("No peaks found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) == 1)
-            warning(paste("Only 1 peak found in sample", snames[i]))
-        else if (nrow(peaklist[[i]]) < 10)
-            warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
-                    snames[i]))
-    }
+    runParallel <- 0
 
+    if (nSlaves > 1) {
+        ## If MPI is available ...
+        rmpi = "Rmpi"
+        if (require(rmpi,character.only=TRUE) && !is.null(nSlaves)) {
+            if (is.loaded('mpi_initialize')) {
+    
+                mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
+    
+                ## If there are multiple slaves AND this process is the master,
+                ## run in parallel.
+                if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0))
+                    runParallel <- 1
+            }
+        }
+    }  
+
+    if (runParallel==1) { ## ... we use MPI
+
+        params <- list(...);
+        params$profmethod <- profmethod;
+        params$profparam <- profparam;
+        params$includeMSn <- includeMSn;
+
+        ft <- cbind(file=files,id=1:length(files))
+        argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
+
+        res <- xcmsPapply(argList, findPeaksMPI)
+
+        mpi.close.Rslaves()
+
+        peaklist <- lapply(res, function(x) x$peaks)
+        rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
+
+    } else {
+    
+      peaklist <- vector("list", length(files))
+  
+      for (i in seq(along = peaklist)) {
+  
+        lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
+                          profstep = 0, includeMSn=includeMSn)
+          cat(snames[i], ": ", sep = "")
+          peaklist[[i]] <- findPeaks(lcraw, ...)
+          peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
+          rtlist$raw[[i]] <- lcraw@scantime
+          rtlist$corrected[[i]] <- lcraw@scantime
+          rm(lcraw)
+          gc()
+          if (nrow(peaklist[[i]]) == 0)
+              warning(paste("No peaks found in sample", snames[i]))
+          else if (nrow(peaklist[[i]]) == 1)
+              warning(paste("Only 1 peak found in sample", snames[i]))
+          else if (nrow(peaklist[[i]]) < 10)
+              warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
+                      snames[i]))
+      }
+      
+    } 
+    
     peaks(object) <- do.call("rbind", peaklist)
     object@rt <- rtlist
 
