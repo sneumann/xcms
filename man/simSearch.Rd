@@ -2,7 +2,7 @@
 \alias{simSearch}
 \title{Unrestricted precursor Metlin Search}
 \description{
-  A method for searching MS^2 data against the METLIN Database without a precursor restraint.
+  A method for searching \eqn{MS^2} data against the METLIN Database without a precursor restraint.
 }
 \usage{
 simSearch(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...)
@@ -36,10 +36,8 @@ simSearch(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...)
 
 }
 \references{
-  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XCMS^2:"
+  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XC\eqn{MS^2}:"
   Analytical Chemistry 2008
-  \url{http://d}
 }
 \author{H. Paul Benton, \email{hpbenton@scripps.edu}}
 \keyword{methods}
-\keyword{metlin}

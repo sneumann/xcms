@@ -43,10 +43,8 @@ searchMetlin(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin",
 
 }
 \references{
-  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "\eqn{XCMS^2}"
+  H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XC\eqn{MS^2}"
   Analytical Chemistry 2008
-  \url{http://d}
 }
 \author{H. Paul Benton, \email{hpbenton@scripps.edu}}
 \keyword{methods}
-\keyword{metlin}
