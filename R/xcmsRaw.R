@@ -1489,9 +1489,8 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
 })
 
-sequenceMz<-function(dat){
+sequenceMz<-function(dat){ #little helper function
     for (p in 1:dim(dat)[1] ){ # makes the index for the scan
-#       cat(paste(p, " ", j, " ", " <-p:j \n", sep="" ))
 	seq<-seq(from=dat[p,"from"], to=dat[p,"to"])
 	if(p == 1){
  	    seqInd<-seq
@@ -1620,14 +1619,15 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
         frag<-new("xcmsFragments")
     }
     if(length(run)== dim(runinfoFinal)[1] ){## some odd stuff happens with the matrix duplicates are made
-	frag@MS2spec<-run		## So we check for it
+	frag@MS2spec<-run## So we check for it
+        frag@specinfo<-runinfoFinal
     } else {
 	dup<-duplicated(runinfoFinal)
 	if(dim(runinfoFinal[!dup,])[1] == length(run)){
             frag@specinfo<-runinfoFinal[!dup,]
             frag@MS2spec<-run
 	} else{
-	    cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep=""))
+	    cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep="")) ##should never be seen :D just having fun
 	}
     }
     
