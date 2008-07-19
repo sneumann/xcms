@@ -685,19 +685,33 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 })
 
 
-plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "blue")){
+plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "blue"), neg=TRUE){
     ExpSpec[,"intensity"]<-ExpSpec[,"intensity"]/max(ExpSpec[,"intensity"])*100
     maxMZ<-max(ExpSpec[,1], MetSpec[,1]) ##I know could be better with "mz" but not the same sort later
     #ind<-which(MetSpec[,"int"] <= 90)
     #MetSpec[ind, "int"]<-MetSpec[ind, "int"]/max(MetSpec[ind,"int"])*75
+    if(neg == FALSE){
+        op <- par(mfrow = c(2, 1),pty = "m", adj=0.5) # 1 x 2 pictures on one plot
     
-    op <- par(mfrow = c(2, 1),pty = "m", adj=0.5) # 1 x 2 pictures on one plot
-    
-    plot(ExpSpec, type="h", col=col[1], ylab="Intensity", xlab="", main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), xlim=c(0, (maxMZ+(maxMZ/2))))
-    abline(0,0)
-    plot(MetSpec, type="h", col=col[2], xlab="M/Z", ylab="", main="Metlin Reference Spectrum", xlim=c(0, (maxMZ+(maxMZ/2) )) )
-    abline(0,0)
-    par(op)
+        plot(ExpSpec, type="h", col=col[1], ylab="Intensity", xlab="", main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), xlim=c(0, (maxMZ+(maxMZ/2))))
+        abline(0,0)
+        plot(MetSpec, type="h", col=col[2], xlab="M/Z", ylab="", main="Metlin Reference Spectrum", xlim=c(0, (maxMZ+(maxMZ/2) )) )
+        abline(0,0)
+        par(op)
+    }else{
+        plot(ExpSpec[,1:2],type="h", col=col[1], ylim=c(-max(c(ExpSpec[,2], MetSpec[,2])), max(c(ExpSpec[,2], MetSpec[,2]))), main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), ylab="Intensity",xlab="m/z")
+        points(specA[,1], -(MetSpec[,2]), type="h", col=col[2])
+        abline(0,0)
+        legend("bottomright", paste("Reference", sep=""), col="blue", pch=16)
+        legend("topright", paste("Experimental", sep=""), col="red",pch=16)
+
+        
+       for(i in 1:nrow(ExpSpec)){
+           text(ExpSpec[i,1], ExpSpec[i,2], round(ExpSpec[i,1], 1))
+       }
+       for(j in 1:nrow(MetSpec)){
+           text(MetSpec[j,1], -(MetSpec[j,2]), round(MetSpec[j,1], 1))
+       }
 }
 
 if (!isGeneric("simSearch") )
