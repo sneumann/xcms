@@ -688,8 +688,8 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "blue"), neg=TRUE){
     ExpSpec[,"intensity"]<-ExpSpec[,"intensity"]/max(ExpSpec[,"intensity"])*100
     maxMZ<-max(ExpSpec[,1], MetSpec[,1]) ##I know could be better with "mz" but not the same sort later
-    #ind<-which(MetSpec[,"int"] <= 90)
-    #MetSpec[ind, "int"]<-MetSpec[ind, "int"]/max(MetSpec[ind,"int"])*75
+    ##ind<-which(MetSpec[,"int"] <= 90)
+    ##MetSpec[ind, "int"]<-MetSpec[ind, "int"]/max(MetSpec[ind,"int"])*75
     if(neg == FALSE){
         op <- par(mfrow = c(2, 1),pty = "m", adj=0.5) # 1 x 2 pictures on one plot
     
@@ -706,16 +706,17 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
         legend("topright", paste("Experimental", sep=""), col="red",pch=16)
 
         
-       for(i in 1:nrow(ExpSpec)){
-           text(ExpSpec[i,1], ExpSpec[i,2], round(ExpSpec[i,1], 1))
-       }
-       for(j in 1:nrow(MetSpec)){
-           text(MetSpec[j,1], -(MetSpec[j,2]), round(MetSpec[j,1], 1))
-       }
+        for(i in 1:nrow(ExpSpec)){
+            text(ExpSpec[i,1], ExpSpec[i,2], round(ExpSpec[i,1], 1))
+        }
+        for(j in 1:nrow(MetSpec)){
+            text(MetSpec[j,1], -(MetSpec[j,2]), round(MetSpec[j,1], 1))
+        }
+    }
 }
 
 if (!isGeneric("simSearch") )
-    setGeneric("simSearch", function(object,...) standardGeneric("simSearch"))
+  setGeneric("simSearch", function(object,...) standardGeneric("simSearch"))
 
 setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...) {
     metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
