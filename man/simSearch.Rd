@@ -1,5 +1,6 @@
 \name{simSearch}
 \alias{simSearch}
+\alias{simSearch,xcmsFragments-method}
 \title{Unrestricted precursor Metlin Search}
 \description{
   A method for searching \eqn{MS^2} data against the METLIN Database without a precursor restraint.
@@ -13,6 +14,7 @@ simSearch(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...)
   \item{percent}{Percentage thresthold to use for identification}
   \item{file}{Name of the output files}
   \item{fullReport}{Should a full report be generated}
+  \item{...}{Arguments to plot.metlin()}
 }
 \details{
   This method searches the METLIN database for similar MS/MS spectra and ranks them on a fragment score and a neutral loss score. Both of these scores work on a \code{score_fun} method. 
