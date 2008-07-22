@@ -509,7 +509,8 @@ setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=10, print=TRUE,
 })
 
 if (!isGeneric("searchMetlin") )
-    setGeneric("searchMetlin", function(object, ...) standardGeneric("searchMetlin"))
+    setGeneric("searchMetlin", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", ...)
+               standardGeneric("searchMetlin"))
 
 setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", ...) {
     if(metXML=="metlin"){
@@ -716,7 +717,7 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
 }
 
 if (!isGeneric("simSearch") )
-  setGeneric("simSearch", function(object,...) standardGeneric("simSearch"))
+  setGeneric("simSearch", function(object,ppmfrag=20, percent=50, file, fullReport=FALSE, ...) standardGeneric("simSearch"))
 
 setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...) {
     metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
