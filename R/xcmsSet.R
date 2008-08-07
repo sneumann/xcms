@@ -33,7 +33,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     files_abs <- file.path(getwd(), files)
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
-    
+
     filepaths(object) <- files
 
     if (length(files) == 0)
@@ -46,7 +46,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     pdata <- phenoData
     if (is.null(pdata)) {
       pdata <- sclass
-      if (is.null(pdata)) 
+      if (is.null(pdata))
         pdata <- fromPaths
     }
     phenoData(object) <- pdata
@@ -357,7 +357,71 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
     object
 })
 
-#setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
+setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
+setMethod("calibrate", "xcmsSet", function(object,wishlist,method="linear",
+                                           mzabs=0.0001, mzppm=5,
+                                           neighbours=3, plotres=FALSE) {
+
+    nsamp = length(unique(object@peaks[,"sample"]))
+    if (!sum(method == c("shift","linear","edgeshift")))
+        stop("unknown calibration method!")
+
+    if (is.list(wishlist))
+        if (length(wishlist) != nsamp)
+            stop("Error: Number of masslists differs with number of samples")
+
+    for (s in 1:nsamp)
+    {
+        peaklist = object@peaks[which(object@peaks[,"sample"]==s),]
+        if (is.list(wishlist)) {
+            masslist <- wishlist[s]
+        }else{
+            masslist <- wishlist
+        }
+
+        masses <- matchpeaks(peaklist,masslist,mzabs,mzppm,neighbours)
+        if (length(masses)==0) stop("No masses close enough!")
+
+        if (nrow(masses)==1 & method!="shift") {
+            cat("Warning: only one peak found, fallback to shift.")
+            method="shift"
+        }
+
+        params <-  estimate (masses, method)
+        mzu <- peaklist[,"mz"]
+        mposs <- masses[,"pos"]
+        mdiffs <- masses[,"dif"]
+        a <- params[1]
+        b <- params[2]
+
+        ## cat("a=",a,"b=",b)
+        
+        if (method != "edgeshift"){
+            mzu <- mzu - (a * mzu + b)
+        } else {
+            mzu[c(1:(min(mposs)-1))] <- mzu[c(1:(min(mposs)-1))] - (a * mzu[min(mposs)] + b)
+            mzu[c((min(mposs)):(max(mposs)))] <-
+                mzu[c((min(mposs)):(max(mposs)))] - (a * mzu[c((min(mposs)):(max(mposs)))] + b)
+            mzu[c((max(mposs)+1):length(mzu))] <-
+                mzu[c((max(mposs)+1):length(mzu))] - (a * mzu[max(mposs)] + b)
+        }
+
+        peaklist[,"mz"] <- mzu
+        object@peaks[which(object@peaks[,"sample"]==s),] <- peaklist
+    }
+
+    if (plotres) {
+        plot(mzu[mposs],mdiffs, xlim=c(min(mzu),max(mzu)))
+        if (method!="edgeshift") {abline(b,a)}else{
+            lines(c(min(mzu),mzu[min(mposs)]),c(a * mzu[min(mposs)] + b,a * mzu[min(mposs)] + b))
+            lines(c(mzu[min(mposs)],mzu[max(mposs)]),c(a * mzu[min(mposs)] + b,a * mzu[max(mposs)] + b))
+            lines(c(mzu[max(mposs)],max(mzu)),c(a * mzu[max(mposs)] + b,a * mzu[max(mposs)] + b))
+        }
+    }
+
+    invisible(object)
+})
+
 
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
                                             template = NULL) {
@@ -552,6 +616,8 @@ setMethod("group.mzClust", "xcmsSet", function(object,
 
     object
 })
+
+
 
 
 setGeneric("group", function(object, ...) standardGeneric("group"))

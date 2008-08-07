@@ -29,6 +29,7 @@ exportClasses(
               )
 
 exportMethods(
+              "calibrate",
               "collect",
               "filepaths",
               "filepaths<-",
