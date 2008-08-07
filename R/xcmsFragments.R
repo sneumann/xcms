@@ -18,7 +18,7 @@ xcmsFragments <- function(xs = NULL, ...) {
 }
 
 .xcmsFragments.show <- function(object) {
-        if(object@peaks){
+        if(length(object@peaks)){
             cat("An \"xcmsFragments\" object with ",nrow(object@peaks),
                 " peaks in",length(unique(object@peaks[,"rt"])),"Spectra\n")
             cat("From Level 1 to",max(object@peaks[,"msLevel"]),
@@ -129,7 +129,7 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                         npMz[PeakNr]<- npeaks[numPeaks,"mz"]
                         npIntensity[PeakNr]<- npeaks[numPeaks,"intensity"]
                         npSample[PeakNr]<- NumXcmsPath
-                        
+
                     }
                 }
             }
@@ -255,9 +255,9 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 	## gets an xcmsSet and the corresponding xcmsFragments
 	## the xs is a grouped, RTcorrected, Regrouped xs, the xf is made from this
 	## returns the xs with #Samples noew rows containing the hamming-distance to the mean
-	
+
 	GetMSnVector <- function(object, xcmsSetPeakID) {
-	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID		
+	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
 		treewalk <- function(peakIDs,parentID){
 			lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
 			pIDs <- c(peakIDs, lnPeaks)
@@ -267,13 +267,13 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 			pIDs
 			}
 		pIDs=NULL
-		pIDs <- treewalk(pIDs,xcmsSetPeakID)	
+		pIDs <- treewalk(pIDs,xcmsSetPeakID)
 		pIDs
 		}
 
 	## first step: Getting information: which grouped peak in which sample has a ms2Spec hanging on it
 	cat("starting ")
-	MSNinfo=matrix(nrow=length(groupidx(xs)), ncol=length(sampnames(xs)), 
+	MSNinfo=matrix(nrow=length(groupidx(xs)), ncol=length(sampnames(xs)),
 		       data=rep(FALSE,(length(groupidx(xs))*length(sampnames(xs)))) ) ## Table(NumSamples * NumGroups)
 	for (a in 1:length(groupidx(xs))){
 		groV <- groupval(xs,"medret","index")[a,]
@@ -284,7 +284,7 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 			MSNinfo[a,xf@peaks[groV[b],"Sample"]] || hmsn
 			}
 		}
-	
+
 	samples <- unique(xf@peaks[,"Sample"])
 	nsamp<-length(samples)
 	x<-c(1:length(groupidx(xs)))
@@ -301,7 +301,7 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 		Nit=NULL
 		Nsa=NULL
 		for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
-			MsnPeaks <- GetMSnVector(xf,peakIDs[a]) 
+			MsnPeaks <- GetMSnVector(xf,peakIDs[a])
 			Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
 			Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
 			Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
@@ -323,7 +323,7 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 			}
 		distances[g,1:(nsamp*length(FUNS))] <- dists
 		}#cat("loopend\n")
-		
+
 	## adding the information to groupval(grouped_object)
 	cat("Groups:", length(AllMSn),"complete:",length(which(AllMSn)))
 	#stop("hope it gets until here")
@@ -336,7 +336,7 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 getXS<-function(xs,xf,g)
 	{
 	GetMSnVector <- function(object, xcmsSetPeakID) {
-	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID		
+	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
 		treewalk <- function(peakIDs,parentID){
 			lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
 			pIDs <- c(peakIDs, lnPeaks)
@@ -346,7 +346,7 @@ getXS<-function(xs,xf,g)
 			pIDs
 			}
 		pIDs=NULL
-		pIDs <- treewalk(pIDs,xcmsSetPeakID)	
+		pIDs <- treewalk(pIDs,xcmsSetPeakID)
 		pIDs
 		}
 
@@ -360,7 +360,7 @@ getXS<-function(xs,xf,g)
 		Nit=NULL
 		Nsa=NULL
 		for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
-			MsnPeaks <- GetMSnVector(xf,peakIDs[a]) 
+			MsnPeaks <- GetMSnVector(xf,peakIDs[a])
 			Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
 			Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
 			Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
@@ -439,14 +439,14 @@ setMethod( "spectralClust", "xcmsFragments", function(object, ...){
 	neutralLOSS_II<-neutralLoss[ind][2]
 	small_I<-min(spectra[[i]][,"mz"])
 	small_II<-sort(spectra[[i]][,"mz"])[2]
-	
+
 	if (dim(clust)[1] == 0){
 	    clust <- matrix(c(small_I, small_II, neutralLOSS_I, neutralLOSS_II), ncol=4)
 	} else {
 	    clust <-rbind(clust, c(small_I, small_II, neutralLOSS_I, neutralLOSS_II))
 	}
     }
-    
+
     return(clust)
 
 })
@@ -525,7 +525,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
         met.xml<-read.metlin(metlinfile, MS1=FALSE)
     }
     #prob<-confidence(metlinfile, ppmMZ, ppmfrag, mode=method)
-    
+
     Na<-c(23, 22.98976)
     H<-c(1, 1.00794)
     H.n<-c(-1, -1.00794)
@@ -558,7 +558,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 	met<-met.xml[Index,]
         CE<-object@specinfo[i,"CollisionEnergy"]
 	if(dim(met)[1] ==0){ ## If it doesn't exist go on.
-	    next 
+	    next
 	}
 
 	uni.met<-unique(met[,"name"]) ## This comes out as a factor, clean it?
@@ -574,7 +574,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
             }else{
                 greaterThan<-which(CEref > CE)[1]
                 LessThan<-which(CEref < CE)
-                LessThan<-LessThan[length(LessThan)] 
+                LessThan<-LessThan[length(LessThan)]
                 if((CE-CEref[LessThan]) > (CEref[greaterThan] -CE)){
                     CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
                 }else if ((CE-CEref[LessThan]) < (CEref[greaterThan] -CE)) {
@@ -600,7 +600,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 		    name<-c(name, met[SpecIndex, "name"][1])
 		    mode<-c(mode, met[SpecIndex, "mode"][1])
 		    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
-		}	
+		}
 	    } else { ## Just MS/MS matching no MS^n yet!!
                 #metSpec<-as.numeric(met[SpecIndex,"frag.MZ"])
                 #metSpec<-as.numeric(cbind(metSpec, met[SpecIndex, "int"]))
@@ -633,7 +633,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 		    adduct<-met[SpecIndex, "adduct"][1]
 		}else{ ## when it does exist add to it (has to be a better way?!?!)
 		    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ppmval=ppmfrag)
-		    
+
 		    if(length(file)){
 			eicdir<-paste(file, "_spectra", sep="")
 			if(!file.exists(eicdir)){
@@ -678,7 +678,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 	colnames(dist.df)<-c("A", "B", "Precursor Ion", "rtmin", "rtmax", "CollisionEnergy experiment", "CollisionEnergy Reference", "Percentage Match", "Metlin Mass", "# matching", "# non-matching", "Total # Ref ion", "Metlin ID Name",  "Ionization", "Adduct")
 	#rownames(dist.df)<-rep("", dim(dist.df)[1])
 	cat("\nDone", "\n")
-	
+
 	file.tsv<-paste(file, ".tsv", sep="")
 	write.table(dist.df, file=file.tsv, sep="\t", row.names=FALSE)
 	invisible(dist.df)
@@ -693,7 +693,7 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
     ##MetSpec[ind, "int"]<-MetSpec[ind, "int"]/max(MetSpec[ind,"int"])*75
     if(neg == FALSE){
         op <- par(mfrow = c(2, 1),pty = "m", adj=0.5) # 1 x 2 pictures on one plot
-    
+
         plot(ExpSpec, type="h", col=col[1], ylab="Intensity", xlab="", main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), xlim=c(0, (maxMZ+(maxMZ/2))))
         abline(0,0)
         plot(MetSpec, type="h", col=col[2], xlab="M/Z", ylab="", main="Metlin Reference Spectrum", xlim=c(0, (maxMZ+(maxMZ/2) )) )
@@ -706,7 +706,7 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
         legend("bottomright", paste("Reference", sep=""), col="blue", pch=16)
         legend("topright", paste("Experimental", sep=""), col="red",pch=16)
 
-        
+
         for(i in 1:nrow(ExpSpec)){
             text(ExpSpec[i,1], ExpSpec[i,2], round(ExpSpec[i,1], 1))
         }
@@ -726,7 +726,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     check=FALSE
     for(i in 19:length(object@MS2spec)){
 	if(!is.matrix(object@MS2spec[[i]])) {
-	    next ## go on if not neutral loss capible 
+	    next ## go on if not neutral loss capible
 	}
         if(dim(object@MS2spec[[i]])[1] <= 1 ){
             next ## go on cus no neutral losses!!
@@ -743,10 +743,10 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
                 next
             }
 	    neutralMet<-sort(abs(diff(sort(spectra[[j]][,"frag.MZ"])) ))##make neutral losses
-            
+
             NeutScore<-score_fun(neutralMet, neutralExp, ppmfrag)
             FragScore<-score_fun(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"], ppmfrag)
-            
+
 	    if(NeutScore >= percent | FragScore >= percent){
                 #cat(paste(" .", sep=""))
                 neutralFreq<-ms2Freq(c(neutralMet, neutralExp), ppmError=ppmfrag)
@@ -755,7 +755,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
                 indFrag<-which.max(fragmentFreq[[2]])
                 commonNeutral<-neutralFreq[[1]][indNeutral]
                 commonFrag<-fragmentFreq[[1]][indFrag]
-                
+
 
 	        if(check==FALSE){
                     result<-c(round(object@specinfo[i, "AccMZ"], 4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"])
@@ -765,9 +765,9 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
 	        }
 	    }
 	}
-        
+
     }
-    
+
     colnames(result)<-c("m/z", "rtmin", "rtmax", "Experiment Collision Energy", "Fragment Score", "Neutral Score", "Common Neutral loss", "Common Fragment", "Compound Name", "Metlin Mass", "Collision Energy")
     rownames(result)<-rep("", dim(result)[1])
     cat(paste("Searching done\n", "Grouping...", sep=""))
@@ -775,7 +775,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     for(k in 1:length(RmzUnique)){
         cat(" ", k)
         index<-which(round(as.numeric(result[,"m/z"]),1) == RmzUnique[k])
-        
+
         comNeutFreq<-ms2Freq(as.numeric(result[index, "Common Neutral loss"]), ppmfrag)
         FreqIndexNeut<-order(comNeutFreq[[2]])
         TotalCommonLoss<-comNeutFreq[[1]][FreqIndexNeut][1:5]
