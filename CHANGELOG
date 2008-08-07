@@ -1,3 +1,5 @@
+2008-08-07: 1.13.6
+Added calibrate() to xcmsSet, incl. vignette in xcmsDirect.pdf 
 2008-07-15: 1.13.5
 Parallel peak petection using Rmpi
 Added mpi.finalize() via .Last

@@ -71,7 +71,43 @@ xs <- xcmsSet(
         snthresh=10
 )
 @
+\section{Calibration}
+\Rmethod{calibrate} can be used to correct the m/z values in a \Robject{xcmsSet}. It needs a xcmsSet and a list of m/z value which should be found in the object. To show this on a example a sample of ham4 is created and discalibrated a bit after getting some m/z:
 
+<<CreateExample>>=
+
+xs4 <- xcmsSet(
+		method = "MSW",
+		files = mzdatafiles[1],
+		scales = c(1,4, 9),
+		nearbyPeak = T,
+		sleep = 0,
+		verbose.columns = FALSE,
+		winSize.noise = 500,
+		SNR.method = "data.mean",
+		snthresh = 10)
+
+masslist <- xs4@peaks[c(1,4,7),"mz"]
+xs4@peaks[,"mz"] <- xs4@peaks[,"mz"] + 0.00001*runif(1,0,0.4)*xs4@peaks[,"mz"] + 0.0001
+@
+
+The \Robject{xcmsSet} now can be calibrated again with the m/z from the masslist. The plot shows the reference masses with the distances to the found ones and the regression-line.
+
+<<Calibrate include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+xs4c <- calibrate(xs4,
+		wishlist=masslist,
+		method="edgeshift",
+		mzabs=0.0001,
+		mzppm=5,
+		neighbours=3,
+		plotres=TRUE
+		)
+@
+
+
+
+The method "shift" adds a value to each m/z, "linear" does a regression and edgeshift does a regression but uses a shift before the smallest and after the biggest m/z from the wishlist.
+\\
 These steps are necessary to create a usable input for \Rmethod{mzClust}.
 However, if you have already stored the data in a \Robject{xcmsSet}, you can
 skip the steps above.
