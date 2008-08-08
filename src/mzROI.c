@@ -624,7 +624,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
      total++;
     }
   }
-  if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"dev\" parameter.\n", scerr);
+  if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"ppm\" parameter.\n", scerr);
   
   Rprintf("\n %d m/z ROI's.\n", total);
   
