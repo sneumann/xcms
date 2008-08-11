@@ -1049,9 +1049,9 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
-                                            value = c("into","maxo","intb"), metlin = FALSE, ...) {
+                                            value = c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...) {
 
-    require(multtest) || stop("Couldn't load multtest")
+    require(multtest) || stop("Couldnt load multtest")
 
     value <- match.arg(value)
     groupmat <- groups(object)
@@ -1084,6 +1084,14 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	tstat <- mt.teststat(testval, testclab, ...)
 	pvalue <- pval(testval, testclab, tstat)
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
+	if(length(levels(sampclass(object))) >2){
+	    for(i in 1:nrow(values)){
+		var<-as.numeric(values[i,])
+		ano<-summary(aov(var ~ sampclass(object)) )
+		pvalAnova<-unlist(ano)["Pr(>F)1"]
+	    }
+	    stat<-cbind(stat, anova= pvalAnova)
+	}
 	if (metlin) {
 	    neutralmass <- groupmat[,"mzmed"] + ifelse(metlin < 0, 1, -1)
 	    metlin <- abs(metlin)
@@ -1110,11 +1118,14 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
         if (length(filebase)) {
             eicdir <- paste(filebase, "_eic", sep="")
             dir.create(eicdir)
-            if (capabilities("png"))
-                png(file.path(eicdir, "%03d.png"), width = 640, height = 480)
-            else
-                pdf(file.path(eicdir, "%03d.pdf"), width = 640/72,
-                    height = 480/72, onefile = FALSE)
+            if (capabilities("png")){
+                xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="png",  width=w, height=h)
+                png(file.path(eicdir, "%003d.png"), width = w, height = h)
+            }else{
+                xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="pdf", width=w, height=h)
+                pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
+                    height = h/72, onefile = FALSE)
+	    }
         }
         plot(eics, object, rtrange = eicwidth)
         if (length(filebase))
@@ -1124,6 +1135,16 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     invisible(twosamp)
 })
 
+xcmsBoxPlot<-function(values, class, dir="boxplot", pic, width=640, height=480){
+    if (pic == "png"){
+	dir.create(dir)
+	png(file.path(dir, "%003d.png"), width, height)
+    }
+    for (i in 1:nrow(values)){
+	var<-as.numeric(values[i,])
+	boxplot(var ~ class, col="blue", outline=FALSE, main=paste("Feature ", row.names(var) ))
+    }
+}
 
 retexp <- function(peakrange, width = 200) {
 
