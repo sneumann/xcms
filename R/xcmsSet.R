@@ -1106,6 +1106,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	   tsidx <- order(twosamp[,"pvalue"])
 	   twosamp <- twosamp[tsidx,]
 	   rownames(twosamp) <- 1:nrow(twosamp)
+	   values<-values[tsidx,]
 	}
 
     if (length(filebase))
