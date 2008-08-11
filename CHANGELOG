@@ -1,7 +1,9 @@
-2008-08-07: 1.13.6
+2008-08-11: 1.13.6
 Added calibrate() to xcmsSet, incl. vignette in xcmsDirect.pdf 
+findPeaks.centWave: save some time: compute dppm only if needed
+
 2008-07-15: 1.13.5
-Parallel peak petection using Rmpi
+Parallel peak detection using Rmpi
 Added mpi.finalize() via .Last
 Changed plot.metlin so that x axes is the same on both plots
 initialise variables gcc complained about
