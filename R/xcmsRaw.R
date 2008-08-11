@@ -875,11 +875,18 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                               if (is.na(p2)) p2<-N
                               mz.value <- omz[p1:p2]
                               mz.int <- od[p1:p2]
-                              mzmean <- mzModel(mz.value,mz.int) ## re-calculate m/z value for peak range
+                              
+                              ## re-calculate m/z value for peak range
+                              mzmean <- mzModel(mz.value,mz.int) 
                               mzrange <- range(mz.value)
-                              if (length(mz.value) >= (minCentroids+1))
-                                dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minCentroids))) else
-                                    dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
+                              
+                              ## Compute dppm only if needed
+                              dppm <- NA
+                              if (verbose.columns)
+                                if (length(mz.value) >= (minCentroids+1))
+                                  dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minCentroids))) else
+                                      dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
+                                      
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
                                   NA,NA,NA,                   ## rt, rtmin, rtmax,
