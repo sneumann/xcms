@@ -16,7 +16,7 @@
                    class2 = levels(sampclass(object))[2], 
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2), 
-                   value=c("into","maxo","intb"), metlin = FALSE, ...)}
+                   value=c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...)}
 }
 }}
 \arguments{
@@ -60,6 +60,12 @@
     positive mode data for M+H or M-H calculation. a value of FALSE
     or 0 removes the column
   }
+  \item{h}{
+    Numeric variable for the height of the eic and boxplots that are printed out.
+  }
+  \item{w}{
+    Numeric variable for the width of the eic and boxplots print out made.
+  }
   \item{...}{
     optional arguments to be passed to \code{\link[multtest]{mt.teststat}} 
   }
@@ -82,8 +88,9 @@
   If a base file name is provided, the report (see Value section)
   will be saved to a tab separated file. If EICs are generated,
   they will be saved as 640x480 PNG files in a newly created
-  subdirectory. The numbered file names correspond to the rows in
-  the report.
+  subdirectory. However this parameter can be changed with the 
+  commands arguments. The numbered file names correspond to the
+  rows in the report.
   
   Chromatographic traces in the EICs are colored and labeled by
   their sample class. Sample classes take their color from the
@@ -92,7 +99,12 @@
   the class arguments. Thus \code{levels(sampclass(object))[1]}
   would use color \code{palette()[1]} and so on. In that way, sample
   classes maintian the same color across any number of different
-  generated reports.
+  generated reports. 
+  
+  When there are multiple groups, xcms will produce boxplots of the
+  different groups and will generate a single anova p-value statistic.
+  Like the eic's the plot number corrosponds to the row number in the 
+  report.
 }
 
 \value{
@@ -108,6 +120,7 @@
     greater intensity in \code{class1}
   }
   \item{pvalue}{p-value of t-statistic}
+  \item{anova}{p-value of the anova statistic if there are multiple groups}
   \item{mzmed}{median m/z of peaks in the group}
   \item{mzmin}{minimum m/z of peaks in the group}
   \item{mzmax}{maximum m/z of peaks in the group}
