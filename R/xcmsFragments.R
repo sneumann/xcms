@@ -538,19 +538,19 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
     for(i in 1:dim(object@specinfo)[1] ){
 	mz.diff<-object@specinfo[i, "preMZ"] - round(as.numeric(met.xml[,"preMZ"]), 0)
 	Index<-0
-	if(any(mz.diff) == elements["H",1] ){ # check to see if what type of ionisation it is and if it's an adduct
+	if(length(which(round(mz.diff,0) == elements["H", 1])) > 0){ # check to see if what type of ionisation it is and if it's an adduct
 	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]-elements["H",2], ppmMZ)
 	    exp.mode<-c("+", "")
 	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (any(mz.diff) == elements["Na",1]){
+	} else if (length(which(round(mz.diff,0) == elements["Na",1] ))> 0 ){
 	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]-(elements["Na",2]+elements["e",2]), ppmMZ)
 	    exp.mode<-c("+","Na")
 	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (any(mz.diff) == elements["H.n",1]){
+	} else if (length(which(round(mz.diff,0) == elements["H.n",1] ))> 0){
 	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["H.n",2], ppmMZ)
 	    exp.mode<-c("-", "")
 	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (any(mz.diff) == elements["Cl",1]){
+	} else if (length(which(round(mz.diff,0) == elements["Cl",1] ))> 0){
 	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["Cl",2], ppmMZ)
 	    exp.mode<-c("-", "Cl")
 	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
@@ -602,11 +602,9 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 		    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
 		}
 	    } else { ## Just MS/MS matching no MS^n yet!!
-                #metSpec<-as.numeric(met[SpecIndex,"frag.MZ"])
-                #metSpec<-as.numeric(cbind(metSpec, met[SpecIndex, "int"]))
-                #metSpec<-data.frame(as.numeric(met[SpecIndex,"frag.MZ"]),  as.numeric(met[SpecIndex, "int"]))
-                #colnames(metSpec)<-c("mz", "intensity")
-                #metSpec<-deisotopeNclean(metSpec)
+	        if(dim(as.matrix(object@MS2spec[[i]]))[1] == 0 ){
+		    next
+		}
 		if(j ==1){ ## if it doesn't exist make it
 		    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ppmval=ppmfrag)
 		    if(length(file)){
@@ -701,7 +699,7 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
         par(op)
     }else{
         plot(ExpSpec[,1:2],type="h", col=col[1], ylim=c(-max(c(ExpSpec[,2], MetSpec[,2])), max(c(ExpSpec[,2], MetSpec[,2]))), main=paste("MS/MS spectra for " , MZlabel , sep=""), sub=paste(placeA, " - ", placeB, sep=""), ylab="Intensity",xlab="m/z")
-        points(specA[,1], -(MetSpec[,2]), type="h", col=col[2])
+        points(MetSpec[,1], -(MetSpec[,2]), type="h", col=col[2])
         abline(0,0)
         legend("bottomright", paste("Reference", sep=""), col="blue", pch=16)
         legend("topright", paste("Experimental", sep=""), col="red",pch=16)
@@ -724,7 +722,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     spectra<-metlinToList(metlinfile)
     cat("Data converted\nProcessing data...\n")
     check=FALSE
-    for(i in 19:length(object@MS2spec)){
+    for(i in 1:length(object@MS2spec)){
 	if(!is.matrix(object@MS2spec[[i]])) {
 	    next ## go on if not neutral loss capible
 	}
