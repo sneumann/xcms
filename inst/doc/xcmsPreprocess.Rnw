@@ -383,7 +383,7 @@ at the same time but are correctly aligned.}
 
 <<AnalysisVisualize>>=
 reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
-                        metlin = 0.15)
+                        metlin = 0.15, h=480, w=640)
 reporttab[1:4,]
 @
 
