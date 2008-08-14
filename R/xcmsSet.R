@@ -1121,6 +1121,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
             dir.create(eicdir)
             if (capabilities("png")){
                 xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="png",  width=w, height=h)
+cat("No Here :>)\n")
                 png(file.path(eicdir, "%003d.png"), width = w, height = h)
             }else{
                 xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="pdf", width=w, height=h)
@@ -1128,6 +1129,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                     height = h/72, onefile = FALSE)
 	    }
         }
+cat("Im here:)\n")
         plot(eics, object, rtrange = eicwidth)
         if (length(filebase))
             dev.off()
@@ -1136,14 +1138,19 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     invisible(twosamp)
 })
 
-xcmsBoxPlot<-function(values, class, dir="boxplot", pic, width=640, height=480){
+xcmsBoxPlot<-function(values, className, dir="boxplot", pic, width=640, height=480){
+    if(any(colnames(values) == "metlin")){
+        ind<-which(colnames(values) != "metlin")
+    }
     if (pic == "png"){
 	dir.create(dir)
 	png(file.path(dir, "%003d.png"), width, height)
+    } else{
+	dir.create(dir)
+	pdf(file.path(dir, "%003d.pdf"), width = w/72, height = h/72, onefile = FALSE)
     }
     for (i in 1:nrow(values)){
-	var<-as.numeric(values[i,])
-	boxplot(var ~ class, col="blue", outline=FALSE, main=paste("Feature ", row.names(var) ))
+	boxplot(as.numeric(values[i,ind]) ~ className, col="blue", outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
     }
 }
 
