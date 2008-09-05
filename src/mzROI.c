@@ -58,7 +58,7 @@ struct peakbufStruct {
   unsigned char   freelistl [SIZE_PEAKBUFL];
   bufnrType  LastFreeS;
   bufnrType  LastFreeL;
-} peakbuf;
+};
 
 struct mzvalStruct {
   RAMPREAL          mz    [DIM_MZBUF];
@@ -536,11 +536,17 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   
-  memset(peakbuf.snum, 0, sizeof(peakbuf.snum));
-  memset(peakbuf.lnum, 0, sizeof(peakbuf.lnum));
-  memset(peakbuf.freelists, TRUE, sizeof(peakbuf.freelists)); // TRUE means FREE
-  memset(peakbuf.freelistl, TRUE, sizeof(peakbuf.freelistl));
-  peakbuf.PeaksInBuf = 0;
+  struct peakbufStruct *ptpeakbuf;
+  ptpeakbuf = (struct peakbufStruct  *) calloc(1, sizeof(struct peakbufStruct));
+
+  //memset(ptpeakbuf.snum, 0, sizeof(peakbuf.snum)); //calloc does it
+  //memset(peakbuf.lnum, 0, sizeof(peakbuf.lnum));
+  for (i=0;i<SIZE_PEAKBUFS;i++) 
+    ptpeakbuf->freelists[i]=TRUE; // TRUE means FREE
+  for (i=0;i<SIZE_PEAKBUFL;i++) 
+    ptpeakbuf->freelistl[i]=TRUE;
+
+  ptpeakbuf->PeaksInBuf = 0;
   
   memset(mzval.mz, 0, sizeof(mzval.mz));
   memset(mzval.slbuf, UNDEF_BUF, sizeof(mzval.slbuf));
@@ -570,19 +576,19 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
     if (scanbuf.length > 0) 
     {
       if (idebug == TRUE) 
-          printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z ROI's, %d ROI's completed.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,peakbuf.PeaksInBuf);
-      insertscan(&scanbuf,ctScan,&peakbuf,&mzval,pickOptions);
-      cleanup(ctScan,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug);
+          printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z ROI's, %d ROI's completed.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf.length,mzval.length,ptpeakbuf->PeaksInBuf);
+      insertscan(&scanbuf,ctScan,ptpeakbuf,&mzval,pickOptions);
+      cleanup(ctScan,ptpeakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug);
     }
     R_FlushConsole();
   }
-  cleanup(ctScan+1,&peakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug); 
+  cleanup(ctScan+1,ptpeakbuf,&mzval,&scerr,pickOptions,minimumIntValues,minimumInt,idebug); 
   
-  PROTECT(peaklist = allocVector(VECSXP, peakbuf.PeaksInBuf));
+  PROTECT(peaklist = allocVector(VECSXP, ptpeakbuf->PeaksInBuf));
   int total = 0;
   for (i=0;i<SIZE_PEAKBUFS;i++) {
-    if (peakbuf.freelists[i] == FALSE) {
-      bufnrType buflength = peakbuf.snum[i];
+    if (ptpeakbuf->freelists[i] == FALSE) {
+      bufnrType buflength = ptpeakbuf->snum[i];
       PROTECT(entrylist = allocVector(VECSXP, 3));
       PROTECT(vscan = NEW_INTEGER(buflength));   
       p_scan = INTEGER_POINTER(vscan);
@@ -590,9 +596,9 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
       p_vmz = NUMERIC_POINTER(vmz);
       PROTECT(vint = NEW_NUMERIC(buflength));   
       p_vint = NUMERIC_POINTER(vint);
-      memmove(p_scan,peakbuf.sscan[i],buflength*sizeof(int));
-      memmove(p_vmz,peakbuf.smz[i],buflength*sizeof(RAMPREAL));
-      memmove(p_vint,peakbuf.sint[i],buflength*sizeof(RAMPREAL));
+      memmove(p_scan,ptpeakbuf->sscan[i],buflength*sizeof(int));
+      memmove(p_vmz,ptpeakbuf->smz[i],buflength*sizeof(RAMPREAL));
+      memmove(p_vint,ptpeakbuf->sint[i],buflength*sizeof(RAMPREAL));
       SET_VECTOR_ELT(entrylist, 0, vscan);// attaching integer vector scan to list
       SET_VECTOR_ELT(entrylist, 1, vmz); // attaching double vector m/z to list
       SET_VECTOR_ELT(entrylist, 2, vint);// attaching double vector intensity to list
@@ -603,8 +609,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
     }
   }
   for (i=0;i<SIZE_PEAKBUFL;i++) {
-    if (peakbuf.freelistl[i] == FALSE) {
-      bufnrType buflength = peakbuf.lnum[i];
+    if (ptpeakbuf->freelistl[i] == FALSE) {
+      bufnrType buflength = ptpeakbuf->lnum[i];
       PROTECT(entrylist = allocVector(VECSXP, 3));
       PROTECT(vscan = NEW_INTEGER(buflength));   
       p_scan = INTEGER_POINTER(vscan);
@@ -612,9 +618,9 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
       p_vmz = NUMERIC_POINTER(vmz);
       PROTECT(vint = NEW_NUMERIC(buflength));   
       p_vint = NUMERIC_POINTER(vint);
-      memmove(p_scan,peakbuf.lscan[i],buflength*sizeof(int));
-      memmove(p_vmz,peakbuf.lmz[i],buflength*sizeof(RAMPREAL));
-      memmove(p_vint,peakbuf.lint[i],buflength*sizeof(RAMPREAL));
+      memmove(p_scan,ptpeakbuf->lscan[i],buflength*sizeof(int));
+      memmove(p_vmz,ptpeakbuf->lmz[i],buflength*sizeof(RAMPREAL));
+      memmove(p_vint,ptpeakbuf->lint[i],buflength*sizeof(RAMPREAL));
       SET_VECTOR_ELT(entrylist, 0, vscan);// attaching integer vector scan to list
       SET_VECTOR_ELT(entrylist, 1, vmz); // attaching double vector m/z to list
       SET_VECTOR_ELT(entrylist, 2, vint);// attaching double vector intensity to list
@@ -629,6 +635,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   Rprintf("\n %d m/z ROI's.\n", total);
   
   UNPROTECT(2); // peaklist,list_names
+  free(ptpeakbuf);
   return(peaklist);
 }
 
