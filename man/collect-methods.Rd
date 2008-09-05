@@ -2,6 +2,7 @@
 \docType{methods}
 \alias{collect-methods}
 \alias{collect}
+\alias{collect,xcmsRaw-method}
 \alias{collect,xcmsFragments-method}
 \title{Collect MS$^n$ peaks into xcmsFragments}
 \description{

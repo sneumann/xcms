@@ -1,3 +1,7 @@
+2008-08-11: 1.13.7
+xcms allocates a lot less memory when loaded
+workaround for openSUSE 11.0 gcc compiler bug
+
 2008-08-11: 1.13.6
 Added calibrate() to xcmsSet, incl. vignette in xcmsDirect.pdf 
 findPeaks.centWave: save some time: compute dppm only if needed
