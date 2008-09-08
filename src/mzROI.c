@@ -538,6 +538,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   
   struct peakbufStruct *ptpeakbuf;
   ptpeakbuf = (struct peakbufStruct  *) calloc(1, sizeof(struct peakbufStruct));
+  if (ptpeakbuf == NULL)
+    error("findmzROI: Buffer memory could not be allocated !\n");
 
   //memset(ptpeakbuf.snum, 0, sizeof(peakbuf.snum)); //calloc does it
   //memset(peakbuf.lnum, 0, sizeof(peakbuf.lnum));
