@@ -300,6 +300,8 @@ correction if necessary.
 
 <<RTCorrection, include = FALSE, fig = TRUE, eps = FALSE, width = 7, height = 7>>=
 xset2 <- retcor(xset, family = "symmetric", plottype = "mdevden")
+cat("After retcor()")
+warnings()
 @
 
 The above command uses the \Rfunarg{plottype} argument to produce
@@ -385,6 +387,7 @@ at the same time but are correctly aligned.}
 reporttab <- diffreport(xset3, "WT", "KO", "example", 10, 
                         metlin = 0.15, h=480, w=640)
 reporttab[1:4,]
+cat("After diffreport()")
 @
 
 If the \Rfunarg{metlin} argument is set to a numeric value, the
@@ -430,6 +433,7 @@ eicraw <- getEIC(xset3, groupidx = c(groupidx1, groupidx2), rt = "raw")
 @
 
 <<EICRaw1, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+cat("Before plotting EICs")
 plot(eicraw, xset3, groupidx = 1)
 @
 
