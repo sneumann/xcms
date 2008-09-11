@@ -51,6 +51,7 @@ package and extract the datafiles.
 library(msdata)
 mzdatapath <- system.file("fticr", package = "msdata")
 mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+cat("Starting xcmsDirect.Rnw")
 @
 
 The \Rmethod{xcmsSet}-Constructor parses the given files and applies

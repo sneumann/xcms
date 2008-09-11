@@ -68,6 +68,7 @@ xcmsRaw summary shows the additional content:
 <<FileIO>>=
 library(xcms)
 mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+cat("Starting xcmsMSn.Rnw")
 xraw <- xcmsRaw(mzdatafiles[1], includeMSn=TRUE)
 xraw
 @
