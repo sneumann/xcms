@@ -65,11 +65,10 @@ xs <- xcmsSet(
         files=mzdatafiles,
         scales=c(1,4,9),
         nearbyPeak=T,
-        sleep=0,
         verbose.columns = FALSE,
         winSize.noise=500,
         SNR.method="data.mean",
-        snthresh=10
+        SNR.Th=10
 )
 @
 \section{Calibration}
@@ -82,11 +81,10 @@ xs4 <- xcmsSet(
 		files = mzdatafiles[1],
 		scales = c(1,4, 9),
 		nearbyPeak = T,
-		sleep = 0,
 		verbose.columns = FALSE,
 		winSize.noise = 500,
 		SNR.method = "data.mean",
-		snthresh = 10)
+		SNR.Th = 10)
 
 masslist <- xs4@peaks[c(1,4,7),"mz"]
 xs4@peaks[,"mz"] <- xs4@peaks[,"mz"] + 0.00001*runif(1,0,0.4)*xs4@peaks[,"mz"] + 0.0001
