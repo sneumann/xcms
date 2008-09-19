@@ -1,4 +1,7 @@
-2008-08-11: 1.13.7
+2008-09-19: 1.13.8
+findPeaks.MSW is compatible with patched versions of MassSpecWavelet  
+
+2008-09-09: 1.13.7
 xcms allocates a lot less memory when loaded
 workaround for openSUSE 11.0 gcc compiler bug
 
