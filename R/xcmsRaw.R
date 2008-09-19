@@ -1020,17 +1020,12 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
 setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
 
-setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, mzdiff=-0.02,
-                                               scales=seq(1,22,3), nearbyPeak=TRUE,
-                                               SNR.method='quantile', winSize.noise=500,amp.Th=0.0075,
-                                               sleep=0, verbose.columns = FALSE)
+setMethod("findPeaks.MSW", "xcmsRaw", function(object, verbose.columns = FALSE, ...)
 {
   require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
   # MassSpecWavelet Calls
-  peakInfo <- peakDetectionCWT(object@env$intensity,
-                                scales=scales, SNR.Th = snthresh, 
-                                nearbyPeak = nearbyPeak, SNR.method=SNR.method, winSize.noise=winSize.noise, amp.Th=amp.Th)
+  peakInfo <- peakDetectionCWT(object@env$intensity, ...)
   majorPeakInfo <- peakInfo$majorPeakInfo
 
   betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
