@@ -1,3 +1,6 @@
+2008-09-22: 1.13.9
+fixed documentation for findPeaks.MSW
+
 2008-09-19: 1.13.8
 findPeaks.MSW is compatible with patched versions of MassSpecWavelet  
 
