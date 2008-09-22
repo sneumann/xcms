@@ -68,7 +68,7 @@ xs <- xcmsSet(
         verbose.columns = FALSE,
         winSize.noise=500,
         SNR.method="data.mean",
-        SNR.Th=10
+        snthr=10
 )
 @
 \section{Calibration}
@@ -84,7 +84,7 @@ xs4 <- xcmsSet(
 		verbose.columns = FALSE,
 		winSize.noise = 500,
 		SNR.method = "data.mean",
-		SNR.Th = 10)
+		snthr = 10)
 
 masslist <- xs4@peaks[c(1,4,7),"mz"]
 xs4@peaks[,"mz"] <- xs4@peaks[,"mz"] + 0.00001*runif(1,0,0.4)*xs4@peaks[,"mz"] + 0.0001
