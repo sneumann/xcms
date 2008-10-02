@@ -1,3 +1,6 @@
+2008-10-02: 1.13.10
+findPeaks.centWave: added check & warning for invalid scanrange parameter
+
 2008-09-22: 1.13.9
 fixed documentation for findPeaks.MSW
 

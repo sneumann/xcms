@@ -746,9 +746,21 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                       fitgauss=FALSE, scanrange= c(1, length(object@scantime)),                                                             sleep=0, verbose.columns=FALSE) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                               fitgauss=FALSE, scanrange= numeric(),                                                                                         sleep=0, verbose.columns=FALSE) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
+
+    scanrange.old <- scanrange
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(object@scantime))
+    else
+        scanrange <- range(scanrange)
+
+    scanrange[1] <- max(1,scanrange[1])
+    scanrange[2] <- min(length(object@scantime),scanrange[2])
+
+    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
+        cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
     ## Peak width: seconds to scales
     scalerange <- round((peakwidth / mean(diff(object@scantime))) / 2)
@@ -785,6 +797,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
       feat <- featlist[[f]]
       N <- length(feat$mz)
+      # if (N < 5) next; ## should not happen
+      
       peaks <- peakinfo <- NULL
       mzrange <- range(feat$mz)
       sccenter <- feat$scan[1] + floor(N/2) - 1
