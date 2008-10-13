@@ -78,16 +78,16 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         rmpi = "Rmpi"
         if (require(rmpi,character.only=TRUE) && !is.null(nSlaves)) {
             if (is.loaded('mpi_initialize')) {
-    
+
                 mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
-    
+
                 ## If there are multiple slaves AND this process is the master,
                 ## run in parallel.
                 if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0))
                     runParallel <- 1
             }
         }
-    }  
+    }
 
     if (runParallel==1) { ## ... we use MPI
 
@@ -107,11 +107,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
 
     } else {
-    
+
       peaklist <- vector("list", length(files))
-  
+
       for (i in seq(along = peaklist)) {
-  
+
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                           profstep = 0, includeMSn=includeMSn)
           cat(snames[i], ": ", sep = "")
@@ -129,9 +129,9 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
               warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
                       snames[i]))
       }
-      
-    } 
-    
+
+    }
+
     peaks(object) <- do.call("rbind", peaklist)
     object@rt <- rtlist
 
@@ -288,6 +288,10 @@ setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-")
 
 setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 
+    if (length(object@phenoData)==0) {
+        object@phenoData <- data.frame(class=rep("dummy", length(value)))
+    }
+
     rownames(object@phenoData) <- value
 
     object
@@ -309,7 +313,7 @@ setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
   if (!is.factor(value))
     value <- factor(value, unique(value))
 
-  object@phenoData <- data.frame(class = value)
+  object@phenoData$class <- value
   object
 })
 
@@ -395,7 +399,7 @@ setMethod("calibrate", "xcmsSet", function(object,wishlist,method="linear",
         b <- params[2]
 
         ## cat("a=",a,"b=",b)
-        
+
         if (method != "edgeshift"){
             mzu <- mzu - (a * mzu + b)
         } else {
