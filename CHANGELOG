@@ -1,5 +1,7 @@
 2008-10-02: 1.13.10
 findPeaks.centWave: added check & warning for invalid scanrange parameter
+sampnames<-(): fix for empty xcmsSet@phenoData
+sampclass<-(): don't overwrite samplnames fixed
 
 2008-09-22: 1.13.9
 fixed documentation for findPeaks.MSW
