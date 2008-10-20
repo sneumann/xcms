@@ -68,7 +68,6 @@ xcmsRaw summary shows the additional content:
 <<FileIO>>=
 library(xcms)
 mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
-cat("Starting xcmsMSn.Rnw")
 xraw <- xcmsRaw(mzdatafiles[1], includeMSn=TRUE)
 xraw
 @
@@ -111,23 +110,18 @@ plotTree prints out a simplyfied tree of the Peaks in the Object. The
 user can define borders for the retensionTime and for the MassRange,
 he can also print the tree for a single MS1-Peak.
 
-Finally, to visualise the fragmentation tree, all specified scans
+Finally, to visualise the fragmentation tree, a textual representation
+is available. Additionally, all specified scans
 can be passed to \Rpackage{Rgraphviz}.
 
-<<TreePlot, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
-plotTree(xfrag,xcmsFragmentPeakID=6)
-@
-
-
 \begin{figure}
-\includegraphics[width=0.49\textwidth]{xcmsMSn-TreePlot}
 \begin{minipage}[b]{0.49\linewidth}
 <<TextTree, echo=FALSE>>=
 plotTree(xfrag,xcmsFragmentPeakID=6, textOnly=TRUE)
 @
 \end{minipage}
 \caption{\label{treeplot} The MS$^n$ fragmentation tree for the MS1
-  peak XXX.}
+  peak Nr. 6.}
 \end{figure}
 
 \end{document}
