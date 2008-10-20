@@ -1122,12 +1122,14 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                        groupidx = tsidx[seq(length = eicmax)])
         if (length(filebase)) {
             eicdir <- paste(filebase, "_eic", sep="")
+            boxdir <- paste(filebase, "_box", sep="")
             dir.create(eicdir)
+            dir.create(boxdir)
             if (capabilities("png")){
-                xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="png",  width=w, height=h)
+                xcmsBoxPlot(values, sampclass(object), dirpath=boxdir, pic="png",  width=w, height=h)
                 png(file.path(eicdir, "%003d.png"), width = w, height = h)
             }else{
-                xcmsBoxPlot(values, sampclass(object), dir="boxplot", pic="pdf", width=w, height=h)
+                xcmsBoxPlot(values, sampclass(object), dirpath=boxdir, pic="pdf", width=w, height=h)
                 pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
                     height = h/72, onefile = FALSE)
 	    }
@@ -1140,24 +1142,25 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     invisible(twosamp)
 })
 
-xcmsBoxPlot<-function(values, className, dir="boxplot", pic, width=640, height=480){
+xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480)
+{
     if(any(colnames(values) == "metlin")){
         ind<-which(colnames(values) != "metlin")
     }
+
     if (pic == "png"){
-	dir.create(dir)
-	png(file.path(dir, "%003d.png"), width, height)
+	png(file.path(dirpath, "%003d.png"), width, height)
     } else{
-	dir.create(dir)
         ## Please don't ignore the NOTE that you get from 'R CMD check': it
         ## was telling you that there are "no visible binding for global
         ## variable 'w' and 'h'". It is still telling you a lot of other things
         ## that are potentially other bugs. Thanks! -- Herve Pages, Oct 17, 2008
 	#pdf(file.path(dir, "%003d.pdf"), width = w/72, height = h/72, onefile = FALSE)
-	pdf(file.path(dir, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
+	pdf(file.path(dirpath, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
     }
     for (i in 1:nrow(values)){
-	boxplot(as.numeric(values[i,ind]) ~ className, col="blue", outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
+	boxplot(as.numeric(values[i,ind]) ~ className, col="blue",
+                outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
     }
 }
 
