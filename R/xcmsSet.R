@@ -1162,6 +1162,7 @@ xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480)
 	boxplot(as.numeric(values[i,ind]) ~ className, col="blue",
                 outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
     }
+    dev.off()
 }
 
 retexp <- function(peakrange, width = 200) {
