@@ -1,3 +1,9 @@
+2008-10-22: 1.15.0
+Added unitTests
+
+2008-10-20: 1.13.11
+Herve Pages: fix global variable (typo) and Version bump
+
 2008-10-02: 1.13.10
 findPeaks.centWave: added check & warning for invalid scanrange parameter
 sampnames<-(): fix for empty xcmsSet@phenoData
