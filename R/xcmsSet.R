@@ -1146,15 +1146,15 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
 xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480)
 {
-    if(any(colnames(values) == "metlin")){
-        ind<-which(colnames(values) != "metlin")
-    }
+
 
     if (pic == "png"){
 	png(file.path(dirpath, "%003d.png"), width, height)
     } else{
 	pdf(file.path(dirpath, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
     }
+
+    ind<-which(colnames(values) != "metlin")
     for (i in 1:nrow(values)){
 	boxplot(as.numeric(values[i,ind]) ~ className, col="blue",
                 outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
