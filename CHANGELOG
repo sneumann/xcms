@@ -1,3 +1,6 @@
+2008-11-07: 1.15.x
+Fixed isCentroided if the center spectrum has only one peak
+
 2008-11-05: 1.15.1
 Fixed xcmsBoxPlot() behaviour, now obeying max_eics
 
