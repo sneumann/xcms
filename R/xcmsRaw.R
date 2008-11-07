@@ -798,7 +798,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       feat <- featlist[[f]]
       N <- length(feat$mz)
       # if (N < 5) next; ## should not happen
-      
+
       peaks <- peakinfo <- NULL
       mzrange <- range(feat$mz)
       sccenter <- feat$scan[1] + floor(N/2) - 1
@@ -889,18 +889,18 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                               if (is.na(p2)) p2<-N
                               mz.value <- omz[p1:p2]
                               mz.int <- od[p1:p2]
-                              
+
                               ## re-calculate m/z value for peak range
-                              mzmean <- mzModel(mz.value,mz.int) 
+                              mzmean <- mzModel(mz.value,mz.int)
                               mzrange <- range(mz.value)
-                              
+
                               ## Compute dppm only if needed
                               dppm <- NA
                               if (verbose.columns)
                                 if (length(mz.value) >= (minCentroids+1))
                                   dppm <- round(min(running(abs(diff(mz.value)) /(mzrange[2] *  1e-6),fun=max,width=minCentroids))) else
                                       dppm <- round((mzrange[2]-mzrange[1]) /  (mzrange[2] *  1e-6))
-                                      
+
                               peaks <- rbind(peaks,
                                   c(mzmean,mzrange,           ## mz
                                   NA,NA,NA,                   ## rt, rtmin, rtmax,
@@ -1468,7 +1468,7 @@ setMethod("profRange", "xcmsRaw", function(object,
 
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 
-setMethod("rawEIC", "xcmsRaw", function(object, 
+setMethod("rawEIC", "xcmsRaw", function(object,
                                            massrange = numeric(),
                                            timerange = numeric(),
                                            scanrange = numeric())  {
@@ -1514,7 +1514,11 @@ setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanran
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
 setMethod("isCentroided", "xcmsRaw", function(object){
-    quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
+    if (length(getScan(object,length(object@scantime) / 2)) >2 ) {
+        quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
+    } else {
+        TRUE
+    }
 })
 
 sequenceMz<-function(dat){ #little helper function
@@ -1551,7 +1555,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 
     uniMZ<-unique(object@msnPrecursorMz)
     ref<-1
-    
+
     run<-vector("list", 0)
     for(i in 1:length(uniMZ)){
 	cat(paste(uniMZ[i], " ", sep=""))
@@ -1559,7 +1563,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 	    mzU<-uniMZ[i]
 	    check<-TRUE
 	}
-        
+
 	uniCE<-unique(object@msnCollisionEnergy[object@msnPrecursorMz == mzU])
 	for (o in 1:length(uniCE)){
 	    if(uCE == -1){
@@ -1594,7 +1598,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
                 }
                 ref<-ref+1
             }else if (dim(scanIX)[1] >1){
-	        while(rthold <= max(scanIX[,"rt"])){ 
+	        while(rthold <= max(scanIX[,"rt"])){
 	            ahead<-scanIX[which.max(scanIX[,"rt"]>rthold),"rt"]+rtU
 	            scanIndex<-scanIX[,"rt"] <= ahead & scanIX[, "rt"] > rthold
                     if (!is.matrix(scanIX[scanIndex,])){ # if dim==[1,8] it becomes a vector so check for it
@@ -1617,7 +1621,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
                     run[[ref]]<-specPeaks(scan, sn=sn)
                     #run[[ref]]<-deisotopeNclean(spectab)
                     rthold<-max(dat[,"rt"])
-                    
+
                     if(!exists("runinfo") ){ # to get over the null object issue
                         runinfo<-c(mzU, min(dat[,"rt"]), max(dat[,"rt"]), ref, uCE)
                     } else {
@@ -1626,7 +1630,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
                     ref<-ref+1
                 }
             }
-            
+
         }
 
 	if(!exists("runinfoFinal")){
@@ -1639,7 +1643,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 	    uCE<- -1
 	}
     }
-    
+
     colnames(runinfoFinal)<-c("preMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
     rownames(runinfoFinal)<-rep("", dim(runinfoFinal)[1]) #just to get rid of the added row names which aren't needed.
     cat("\nCalculating accurate mass...")
@@ -1658,8 +1662,8 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 	    cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep="")) ##should never be seen :D just having fun
 	}
     }
-    
-    
+
+
     cat(paste("\n", sep=""))
     accurateMZ<-getMZ(object, frag@specinfo)
     frag@specinfo<-cbind(frag@specinfo[,1], accurateMZ, frag@specinfo[,2:5])
@@ -1671,7 +1675,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
         MSMS[[1]]<-frag@specinfo
         MSMS[[2]]<-frag@MS2spec
         return(MSMS)
-    }    
+    }
 })
 
 if (!isGeneric("getMZ") )
@@ -1693,7 +1697,7 @@ setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
 
 	index<-which(AccuMass > specinfo[i, "preMZ"]-0.25 & AccuMass < specinfo[i, "preMZ"]+0.25)
 	#if (length(index) == 0){ # we should probably check for nothing found :wq
-	    
+
 	#}
 	if(!exists("accurate")){
 	    accurate<-weighted.mean(AccuMass[index], AccuIntensity[index], na.rm = TRUE)
