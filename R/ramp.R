@@ -104,8 +104,10 @@ rampRawData <- function(rampid) {
     return(list(rt = scanHeaders$retentionTime[scans],
                 acquisitionNum = scanHeaders$acquisitionNum[scans],
                 tic = scanHeaders$totIonCurrent[scans],
-                scanindex = sipeaks$scanindex, mz = sipeaks$mz,
-                intensity = sipeaks$intensity))
+                scanindex = sipeaks$scanindex,
+                mz = sipeaks$mz,
+                intensity = sipeaks$intensity,
+                polarity = scanHeaders$polarity[scans]))
 }
 
 rampRawDataMSn <- function(rampid) {

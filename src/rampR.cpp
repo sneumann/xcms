@@ -157,14 +157,14 @@ void RampRNumScans(const int *rampid, int *numscans, int *status) {
 
 SEXP RampRScanHeaders(SEXP rampid) {
 
-    int               i, j, id, numscans, ncol = 17, ntypes = 0, stlen = 10;
+    int               i, j, id, numscans, ncol = 18, ntypes = 0, stlen = 10;
     SEXP              result = PROTECT(NEW_LIST(ncol)), temp, names;
     struct            ScanHeaderStruct scanHeader;
     RAMPFILE          *file;
     ramp_fileoffset_t *index;
     char              rowname[20], *scanTypes;
     int               *seqNum, *acquisitionNum, *msLevel, *peaksCount,
-                      *precursorScanNum, *precursorCharge, *scanType;
+      *precursorScanNum, *precursorCharge, *scanType, *polarity;
     double            *totIonCurrent, *retentionTime, *basePeakMZ, 
                       *basePeakIntensity, *collisionEnergy, *ionisationEnergy,
 	              *lowMZ, *highMZ, *precursorMZ, *precursorIntensity;
@@ -261,8 +261,11 @@ SEXP RampRScanHeaders(SEXP rampid) {
     SET_VECTOR_ELT(result, 16, temp = NEW_NUMERIC(numscans));
     precursorIntensity = NUMERIC_POINTER(temp);
     SET_ELEMENT(names, 16, mkChar("precursorIntensity"));
-    
-    
+
+    SET_VECTOR_ELT(result, 17, temp = NEW_INTEGER(numscans));
+    polarity = INTEGER_POINTER(temp);
+    SET_ELEMENT(names, 17, mkChar("polarity"));
+        
     scanTypes = S_alloc(stlen*SCANTYPE_LENGTH, sizeof(char));
     
     for (i = 0; i < numscans; i++) {
@@ -282,6 +285,7 @@ SEXP RampRScanHeaders(SEXP rampid) {
         precursorScanNum[i] = scanHeader.precursorScanNum;
         precursorMZ[i] = scanHeader.precursorMZ;
         precursorIntensity[i] = scanHeader.precursorIntensity;
+        polarity[i] = scanHeader.polarity;
         precursorCharge[i] = scanHeader.precursorCharge;
         for (j = 0; j < ntypes; j++)
             if (!strcmp(scanHeader.scanType, scanTypes+j*SCANTYPE_LENGTH)) {
