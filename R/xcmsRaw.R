@@ -2,6 +2,7 @@ require(methods) || stop("Couldn't load package methods")
 
 setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    scantime = "numeric", scanindex = "integer",
+                                   polarity = "factor",
                                    acquisitionNum = "integer",
                                    profmethod = "character", profparam = "list",
                                    mzrange = "numeric", gradient = "matrix",
@@ -19,6 +20,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
 
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
+                   polarity = factor(integer(0)),
                    acquisitionNum = integer(0),
                    profmethod = "bin", profparam = list(),
                    mzrange = numeric(0),
@@ -91,10 +93,14 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
     if (profstep)
         profStep(object) <- profstep
 
-
     if (!is.null(rawdata$acquisitionNum)) {
         ## defined only for mzData and mzXML
         object@acquisitionNum <- rawdata$acquisitionNum
+    }
+    if (!is.null(rawdata$polarity)) {
+        object@polarity <- factor(rawdata$polarity,
+                                  levels=c(0,1,-1),
+                                  labels=c("negative", "positive", "unknown"));
     }
 
     if(exists("rawdataMSn")) {

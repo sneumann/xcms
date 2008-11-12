@@ -129,6 +129,7 @@ struct ScanHeaderStruct
    int seqNum; // number in sequence observed file (1-based)
    int acquisitionNum; // scan number as declared in File (may be gaps)
    int  msLevel;
+   int  polarity; // 1 - positive, 0 - negative
    int  peaksCount;
    double totIonCurrent;
    double retentionTime;        /* in seconds */
