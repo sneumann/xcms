@@ -8,7 +8,8 @@
 }
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
-        profmethod = "bin", profparam = list(), nSlaves=0, ...)
+        profmethod = "bin", profparam = list(),
+        polarity = NULL, nSlaves=0, ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -17,6 +18,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
     \item{phenoData}{sample names and classes}
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
+  \item{polarity}{filter raw data for positive/negative scans}
   \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
                  works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
   \item{\dots}{
@@ -29,6 +31,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \code{phenoData} arguments cause the function to recursively search
   for readable files. The filename without extention is used for the
   sample name. The subdirectory path is used for the sample class.
+  If the files contain both positive and negative spectra, the polarity
+  can be selected explicitely. The default (NULL) is to read all scans.
 }
 \value{
   A \code{xcmsSet} object.
