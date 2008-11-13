@@ -2,6 +2,7 @@
 Fixed isCentroided if the center spectrum has only one peak
 Added a slot "polarity" to xcmsRaw for mixed Polarity files
 Added split.xcmsRaw() to split the scans in one xcmsRaw across several xcmsRaws
+Added polarity to xcmsSet, allows filtering of raw files
 
 2008-11-05: 1.15.1
 Fixed xcmsBoxPlot() behaviour, now obeying max_eics
