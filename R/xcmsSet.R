@@ -1,20 +1,20 @@
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                                    groupidx = "list",
-                                   ##sampnames = "character", sampclass = "factor",
                                    phenoData = "data.frame",
                                    rt = "list",
-                                   filepaths = "character", profinfo = "list"),
+                                   filepaths = "character", profinfo = "list",
+                                   polarity = "character"),
          prototype(peaks = matrix(nrow = 0, ncol = 0),
                    groups = matrix(nrow = 0, ncol = 0),
                    groupidx = list(),
                    phenoData = data.frame(), rt = list(),
-                   ##sampnames = character(0),
-                   ##sampclass = factor(integer(0)),
                    rt = list(),
-                   filepaths = character(0), profinfo = vector("list")))
+                   filepaths = character(0), profinfo = vector("list"),
+                   polarity = character(0)))
 
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
-                    profmethod = "bin", profparam = list(), nSlaves=0, ...) {
+                    profmethod = "bin", profparam = list(),
+                    polarity = NULL, nSlaves=0, ...) {
 
     object <- new("xcmsSet")
 
@@ -63,13 +63,14 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
 
+    object@polarity <- as.character(polarity)
     includeMSn=FALSE
-      xcmsSetArgs <- as.list(match.call())
-      if (!is.null(xcmsSetArgs$method)) {
+    xcmsSetArgs <- as.list(match.call())
+    if (!is.null(xcmsSetArgs$method)) {
         if (xcmsSetArgs$method=="MS1") {
-          includeMSn=TRUE
+            includeMSn=TRUE
         }
-      }
+    }
 
     runParallel <- 0
 
@@ -114,7 +115,13 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                           profstep = 0, includeMSn=includeMSn)
-          cat(snames[i], ": ", sep = "")
+        if (length(object@polarity) >0) {
+            ## Retain wanted polarity only
+            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraw <- lcraws[[1]]
+        }
+
+        cat(snames[i], ": ", sep = "")
           peaklist[[i]] <- findPeaks(lcraw, ...)
           peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
           rtlist$raw[[i]] <- lcraw@scantime
@@ -951,6 +958,12 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
+            if (length(object@polarity) >0) {
+            ## Retain wanted polarity only
+            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraw <- lcraws[[1]]
+        }
+
             if (length(prof) > 2)
                 lcraw@profparam <- prof[seq(3, length(prof))]
             if (length(rtcor) == length(files))
