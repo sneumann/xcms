@@ -16,10 +16,13 @@ export(
        "xcmsPapply"
        )
 
-S3method(c, xcmsSet)
 S3method(image, xcmsRaw)
 S3method(plot, xcmsEIC)
+
 S3method(split, xcmsSet)
+S3method(c, xcmsSet)
+
+S3method(split, xcmsRaw)
 
 exportClasses(
               "xcmsEIC",

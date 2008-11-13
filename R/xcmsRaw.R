@@ -689,8 +689,8 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
         yfilt <- filtfft(ysums, filt)
         gmax <- max(yfilt)
         for (j in seq(length = max)) {
-             maxy <- which.max(yfilt)
-             noise <- mean(ysums[ysums > 0])
+            maxy <- which.max(yfilt)
+            noise <- mean(ysums[ysums > 0])
              #noise <- mean(yfilt[yfilt >= 0])
              sn <- yfilt[maxy]/noise
              if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
@@ -1527,7 +1527,7 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     }
 })
 
-sequenceMz<-function(dat){ #little helper function
+sequenceMz <- function(dat) {
     for (p in 1:dim(dat)[1] ){ # makes the index for the scan
 	seq<-seq(from=dat[p,"from"], to=dat[p,"to"])
 	if(p == 1){
@@ -1676,7 +1676,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
     colnames(frag@specinfo)<-c("preMZ", "AccMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
     if(fragments == TRUE){
         return(frag)
-    }else {
+    } else {
         MSMS<-list()
         MSMS[[1]]<-frag@specinfo
         MSMS[[2]]<-frag@MS2spec
@@ -1713,3 +1713,57 @@ setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
     }
     return(accurate)
 })
+
+
+split.xcmsRaw <- function(x, f, drop = TRUE, ...)
+{
+    if (!is.null(x@msnLevel))
+        warning ("MSn information will be dropped")
+
+    if (!is.factor(f))
+        f <- factor(f)
+
+    scanidx <- unclass(f)
+
+    lcsets <- vector("list", length(levels(f)))
+    names(lcsets) <- levels(f)
+
+    for (i in unique(scanidx)) {
+        lcsets[[i]] <- x
+
+        lcsets[[i]]@env <- new.env(parent=.GlobalEnv)
+
+        lcsets[[i]]@tic = x@tic[scanidx == i]
+        lcsets[[i]]@scantime = x@scantime[scanidx == i]
+        lcsets[[i]]@polarity = x@polarity[scanidx == i]
+        lcsets[[i]]@acquisitionNum = x@acquisitionNum[scanidx == i]
+        lcsets[[i]]@mzrange = x@mzrange[scanidx == i]
+
+        endindex = x@scanindex[which(scanidx == i) +1]
+        endindex[which(is.na(endindex))] <- length(x@env$mz)
+
+        if (length(endindex) > 1) {
+            scanlength <- endindex-x@scanindex[scanidx == i]
+            lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[-1])))
+
+            ptidx <- unlist(sequences(cbind(x@scanindex[scanidx == i]+1, endindex)))
+        } else {
+            ptidx <- 0:endindex
+            lcsets[[i]]@scanindex <- as.integer(0)
+        }
+
+        lcsets[[i]]@env$mz <- x@env$mz[ptidx]
+        lcsets[[i]]@env$intensity <- x@env$intensity[ptidx]
+
+        profStep(lcsets[[i]]) <- profStep(x)
+    }
+
+    if (drop)
+        lcsets <- lcsets[seq(along = lcsets) %in% scanidx]
+
+    lcsets
+}
+
+sequences <- function(seqs) {
+   apply(seqs, 1, FUN=function(x) {x[1]:x[2]})
+}
