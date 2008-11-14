@@ -629,6 +629,8 @@ filtfft <- function(y, filt) {
     Re(yfilt[1:length(y)])
 }
 
+setClass("xcmsPeaks", contains = "matrix")
+
 setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
 
 setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
@@ -747,7 +749,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder, mzdiff)
     rmat <- rmat[uindex,,drop=FALSE]
-    invisible(rmat)
+    invisible(new("xcmsPeaks", rmat))
 })
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
@@ -1033,8 +1035,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks
     pr <- p[uindex,,drop=FALSE]
     cat("\n",dim(pr)[1]," Peaks.\n")
-
-    invisible(pr)
+    
+    invisible(new("xcmsPeaks", pr))
 })
 
 
@@ -1080,7 +1082,7 @@ setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.colum
   if (!verbose.columns)
     peaklist <- peaklist[,basenames,drop=FALSE]
 
-  invisible(peaklist)
+  invisible(new("xcmsPeaks", peaklist))
 }
 )
 
@@ -1089,8 +1091,7 @@ setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1
 setMethod("findPeaks.MS1", "xcmsRaw", function(object)
 {
     if (is.null(object@msnLevel)) {
-        warning("xcmsRaw contains no MS2 spectra\n");
-        return (NULL);
+        stop("xcmsRaw contains no MS2 spectra\n")
     }
 
     ## Select all MS2 scans, they have an MS1 parent defined
@@ -1138,7 +1139,7 @@ setMethod("findPeaks.MS1", "xcmsRaw", function(object)
 
     cat('\n')
 
-    invisible(peaklist)
+    invisible(new("xcmsPeaks", peaklist))
 })
 
 
