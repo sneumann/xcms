@@ -117,7 +117,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
                           profstep = 0, includeMSn=includeMSn)
         if (length(object@polarity) >0) {
             ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraws <- split(lcraw, lcraw@polarity==object@polarity, DROP=TRUE)
             lcraw <- lcraws[[1]]
         }
 
@@ -960,7 +960,7 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
             if (length(object@polarity) >0) {
             ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraws <- split(lcraw, lcraw@polarity==object@polarity, DROP=TRUE)
             lcraw <- lcraws[[1]]
         }
 
