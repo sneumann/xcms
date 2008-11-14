@@ -1,7 +1,6 @@
 \name{split.xcmsRaw}
 \docType{methods}
 \alias{split.xcmsRaw}
-\alias{split, split-methods}
 \title{Divide an xcmsRaw object}
 \description{
   Divides the scans from a \code{xcmsRaw} object into
