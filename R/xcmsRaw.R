@@ -25,16 +25,16 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    profmethod = "bin", profparam = list(),
                    mzrange = numeric(0),
                    gradient = matrix(nrow=0, ncol=0),
-                   msnScanindex = NULL,
+                   msnScanindex = integer(0),
                    msnAcquisitionNum = integer(0),
-                   msnLevel = NULL,
-                   msnRt = NULL,
-                   msnPrecursorScan = NULL,
-                   msnPrecursorMz = NULL,
-                   msnPrecursorIntensity = NULL,
-                   msnPrecursorCharge = NULL,
-                   msnPeakCount = NULL,
-                   msnCollisionEnergy = NULL,
+                   msnLevel = integer(0),
+                   msnRt = numeric(0),
+                   msnPrecursorScan = integer(0),
+                   msnPrecursorMz = numeric(0),
+                   msnPrecursorIntensity = numeric(0),
+                   msnPrecursorCharge = numeric(0),
+                   msnPeakCount = integer(0),
+                   msnCollisionEnergy = numeric(0),
                    filepath = ""
                    ))
 
@@ -561,8 +561,9 @@ setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
     invisible(pts)
 })
 
-image.xcmsRaw <- function(x, col = rainbow(256), ...) {
+setGeneric("image", function(x, ...) standardGeneric("image"))
 
+setMethod("image", "xcmsRaw", function(x, col = rainbow(256), ...) {
     sel <- profRange(x, ...)
 
     zlim <- log(range(x@env$intensity))
@@ -578,7 +579,7 @@ image.xcmsRaw <- function(x, col = rainbow(256), ...) {
         image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
               log(x@env$profile[sel$massidx, sel$scanidx]),
               col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
-}
+})
 
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
@@ -631,6 +632,12 @@ filtfft <- function(y, filt) {
 
 setClass("xcmsPeaks", contains = "matrix")
 
+setMethod("show", "xcmsPeaks", function(object) {
+  cat("A matrix of", nrow(object), "peaks\n")
+  cat("Column names:\n")
+  print(colnames(object))
+})
+
 setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
 
 setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
@@ -639,7 +646,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
                                                          index = FALSE, sleep = 0,
                                                          verbose.columns = FALSE) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    profFun <- match.profFun(object)
 
     ### Create EIC buffer
     mrange <- range(object@env$mz)
@@ -1160,7 +1167,7 @@ setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 
 setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    profFun <- match.profFun(object)
     if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
         peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
     stime <- object@scantime
@@ -1241,7 +1248,7 @@ setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 
 setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
 
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    profFun <- match.profFun(object)
     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
 
@@ -1283,55 +1290,74 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     invisible(eic)
 })
 
+setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
+
+setMethod("rawMat", "xcmsRaw", function(object,
+                                        mzrange = numeric(),
+                                        rtrange = numeric(),
+                                        scanrange = numeric(),
+                                        log=FALSE) {
+
+  if (length(rtrange) >= 2) {
+    rtrange <- range(rtrange)
+    scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+    scanrange <- c(match(TRUE, scanidx),
+                   length(scanidx) - match(TRUE, rev(scanidx)))
+  }
+  else if (length(scanrange) < 2)
+    scanrange <- c(1, length(object@scantime))
+  else scanrange <- range(scanrange)
+  startidx <- object@scanindex[scanrange[1]] + 1
+  endidx <- length(object@env$mz)
+  if (scanrange[2] < length(object@scanindex))
+    endidx <- object@scanindex[scanrange[2] + 1]
+  ##scans <- integer(endidx - startidx + 1)
+  scans <- rep(scanrange[1]:scanrange[2],
+               diff(c(object@scanindex, length(object@env$mz)+1)))
+  ##for (i in scanrange[1]:scanrange[2]) {
+  ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
+  ##        1], length(object@env$mz), na.rm = TRUE)
+  ##    scans[idx - startidx + 1] <- i
+  ##}
+  rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
+  masses <- object@env$mz[startidx:endidx]
+  int <- object@env$intensity[startidx:endidx]
+  massidx <- 1:length(masses)
+  if (length(mzrange) >= 2) {
+    mzrange <- range(mzrange)
+    massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+  }
+  else mzrange <- range(masses)
+
+  y <- int[massidx]
+  if (log)
+    y <- log(y + max(1 - min(y), 0))
+
+  cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
+        intensity = y)
+})
+
 setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
 
 setMethod("plotRaw", "xcmsRaw", function(object,
-                                         massrange = numeric(),
-                                         timerange = numeric(),
+                                         mzrange = numeric(),
+                                         rtrange = numeric(),
                                          scanrange = numeric(),
                                          log=FALSE,title='Raw Data' ) {
 
-    if (length(timerange) >= 2) {
-        timerange <- range(timerange)
-        scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
-        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
-    } else if (length(scanrange) < 2)
-        scanrange <- c(1, length(object@scantime))
-    else
-        scanrange <- range(scanrange)
-    startidx <- object@scanindex[scanrange[1]] + 1
-    endidx <- length(object@env$mz)
-    if (scanrange[2] < length(object@scanindex))
-        endidx <- object@scanindex[scanrange[2] + 1]
+  raw <- rawMat(object, mzrange, rtrange, scanrange, log)
 
-    scans <- integer(endidx - startidx + 1)
-    for (i in scanrange[1]:scanrange[2]) {
-        idx <- (object@scanindex[i]+1):min(object@scanindex[i+1],
-                                         length(object@env$mz), na.rm=TRUE)
-        scans[idx-startidx+1] <- i
-    }
+  y <- raw[,"intensity"]
+  ylim <- range(y)
+  y <- y/ylim[2]
+  colorlut <- terrain.colors(16)
+  col <- colorlut[y*15+1]
 
-    timerange <- c(object@scantime[scanrange[1]],object@scantime[scanrange[2]])
-    masses <- object@env$mz[startidx:endidx]
-    int <- object@env$intensity[startidx:endidx]
-    massidx <- 1:length(masses)
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        massidx <- (masses >= massrange[1]) & (masses <= massrange[2])
-    } else
-        massrange <- range(masses)
+  plot(cbind(raw[,"time"], raw[,"mz"]), pch=20, cex=.5,
+       main = title, xlab="Seconds", ylab="m/z", col=col,
+       xlim=range(raw[,"time"]), ylim=range(raw[,"mz"]))
 
-     y <- int[massidx]
-     if (log)  y <- log(y+max(1-min(y), 0))
-     ylim <- range(y)
-     y <- y/ylim[2]
-     colorlut <- terrain.colors(16)
-     col <- colorlut[y*15+1]
-
-     plot(cbind(object@scantime[scans[massidx]], masses[massidx]), pch=20, cex=.5, main = title,
-       xlab="Seconds", ylab="m/z",col=col, xlim=timerange,ylim=massrange)
-
-     invisible(cbind(object@scantime[scans[massidx]], masses[massidx],int[massidx]))
+  invisible(raw)
 })
 
 setGeneric("profMz", function(object) standardGeneric("profMz"))
@@ -1386,7 +1412,7 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
     minmass <- round(min(object@env$mz)/value)*value
     maxmass <- round(max(object@env$mz)/value)*value
     num <- (maxmass - minmass)/value + 1
-    profFun <- match.fun(.profFunctions[[profMethod(object)]])
+    profFun <- match.profFun(object)
     object@env$profile <- profFun(object@env$mz, object@env$intensity,
                                   object@scanindex, num, minmass, maxmass,
                                   FALSE, object@profparam)
@@ -1767,4 +1793,8 @@ split.xcmsRaw <- function(x, f, drop = TRUE, ...)
 
 sequences <- function(seqs) {
    apply(seqs, 1, FUN=function(x) {x[1]:x[2]})
+}
+
+match.profFun <- function(object) {
+  match.fun(.profFunctions[[profMethod(object)]])
 }
