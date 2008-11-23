@@ -1,7 +1,7 @@
 useDynLib(xcms)
 
 import("methods")
-importFrom("graphics", "plot")
+importFrom("graphics", "plot", "image")
 
 export(
        "etg",
@@ -16,7 +16,6 @@ export(
        "xcmsPapply"
        )
 
-S3method(image, xcmsRaw)
 S3method(plot, xcmsEIC)
 
 S3method(split, xcmsSet)
@@ -26,6 +25,7 @@ S3method(split, xcmsRaw)
 
 exportClasses(
               "xcmsEIC",
+              "xcmsPeaks",
               "xcmsRaw",
               "xcmsSet",
 	      "xcmsFragments"
@@ -55,6 +55,7 @@ exportMethods(
               "groups",
               "groups<-",
               "groupval",
+              "image",
               "mzrange",
               "peaks",
               "peaks<-",
@@ -79,6 +80,7 @@ exportMethods(
               "profStep",
               "profStep<-",
               "rawEIC",
+              "rawMat",
               "retcor",
               "revMz",
               "rtrange",
