@@ -139,7 +139,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     }
 
-    peaks(object) <- do.call("rbind", peaklist)
+    peaks(object) <- do.call(rbind, peaklist)
     object@rt <- rtlist
 
     object
@@ -198,7 +198,7 @@ c.xcmsSet <- function(...) {
         nsamp <- nsamp + length(namelist[[i]])
     }
 
-    peaks(object) <- do.call("rbind", peaklist)
+    peaks(object) <- do.call(rbind, peaklist)
     sampnames(object) <- unlist(namelist)
     classlist <- unlist(classlist)
     sampclass(object) <- factor(classlist, unique(classlist))
@@ -805,8 +805,8 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
         else
             mypal <- palette()[1:max(col)]
 
-        rtrange <- range(do.call("c", rtcor))
-        devrange <- range(do.call("c", rtdevsmo))
+        rtrange <- range(do.call(c, rtcor))
+        devrange <- range(do.call(c, rtdevsmo))
 
         plot(0, 0, type="n", xlim = rtrange, ylim = devrange, main = "Retention Time Deviation vs. Retention Time", xlab = "Retention Time", ylab = "Retention Time Deviation")
         legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
@@ -880,8 +880,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     for (i in 1:n)
         rtdevsmo[[i]] <- rtuncor[[i]] - rtcor[[i]]
 
-    rtrange <- range(do.call("c", rtuncor))
-    devrange <- range(do.call("c", rtdevsmo))
+    rtrange <- range(do.call(c, rtuncor))
+    devrange <- range(do.call(c, rtdevsmo))
 
     if (densplit) {
         split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))

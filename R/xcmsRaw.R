@@ -1036,7 +1036,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
         return(invisible(new("xcmsPeaks")))
     }
 
-    p <- do.call("rbind",peaklist)
+    p <- do.call(rbind,peaklist)
 
     if (!verbose.columns)
         p <- p[,basenames,drop=FALSE]
