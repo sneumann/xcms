@@ -1,3 +1,7 @@
+2008-12-17: 1.15.3
+Fix the Calculation of Anova values for >2 sample classes
+Fix polarity selection
+
 2008-11-07: 1.15.2
 Fixed isCentroided if the center spectrum has only one peak
 Added a slot "polarity" to xcmsRaw for mixed Polarity files

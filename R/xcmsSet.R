@@ -117,8 +117,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
                           profstep = 0, includeMSn=includeMSn)
         if (length(object@polarity) >0) {
             ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity==object@polarity, DROP=TRUE)
-            lcraw <- lcraws[[1]]
+            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraw <- lcraws[[object@polarity]]
         }
 
         cat(snames[i], ": ", sep = "")
@@ -960,8 +960,8 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
             if (length(object@polarity) >0) {
             ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity==object@polarity, DROP=TRUE)
-            lcraw <- lcraws[[1]]
+            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraw <- lcraws[[object@polarity]]
         }
 
             if (length(prof) > 2)
@@ -1102,10 +1102,11 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	pvalue <- pval(testval, testclab, tstat)
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
 	if(length(levels(sampclass(object))) >2){
+            pvalAnova<-c()
 	    for(i in 1:nrow(values)){
 		var<-as.numeric(values[i,])
 		ano<-summary(aov(var ~ sampclass(object)) )
-		pvalAnova<-unlist(ano)["Pr(>F)1"]
+                pvalAnova<-append(pvalAnova, unlist(ano)["Pr(>F)1"])
 	    }
 	    stat<-cbind(stat, anova= pvalAnova)
 	}
