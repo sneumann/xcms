@@ -1,0 +1,28 @@
+citHeader("To cite the XCMS package in publications use:")
+
+citEntry(entry="article",  
+   author="Smith, C.A. and Want, E.J. and O'Maille, G. and Abagyan,R. and Siuzdak, G.",
+   title="XCMS: Processing mass spectrometry data for metabolite profiling using nonlinear peak alignment, matching and identification",
+   journal="Analytical Chemistry",
+   year="2006",
+   volume="78",
+   pages="779--787",
+   textVersion = paste("Smith, C.A. and Want, E.J. and O'Maille, G. and Abagyan,R. and Siuzdak, G.:",
+		       "XCMS: Processing mass spectrometry data for metabolite profiling",
+                       "using nonlinear peak alignment, matching and identification,",
+		       "Analytical Chemistry, 78:779-787 (2006)"))
+
+citEntry(entry="article",  
+   author="Ralf Tautenhahn, Christoph Boettcher, Steffen Neumann",
+   title="Highly sensitive feature detection for high resolution LC/MS",
+   journal="BMC Bioinformatics",
+   year="2008",
+   volume="9",
+   pages="504",
+   textVersion = paste("Ralf Tautenhahn, Christoph Boettcher, Steffen Neumann:",
+   "Highly sensitive feature detection for high resolution LC/MS", 
+   "BMC Bioinformatics, 9:504 (2008)"))
+
+citFooter(paste("Some functions (e.g. group.mzClust, findPeaks.MSW() use 3rd",
+                 "party algorithms, see manpages and related packages",
+	         "for respective citations."))
