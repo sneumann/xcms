@@ -1,7 +1,6 @@
 \name{image-methods}
 \docType{methods}
-\alias{image.xcmsRaw}
-\alias{image, image-methods}
+\alias{image,xcmsRaw-method}
 \title{Plot log intensity image of a xcmsRaw object}
 \description{
   Create log intensity false-color image of a xcmsRaw object plotted
