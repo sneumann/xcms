@@ -85,7 +85,7 @@
       \code{signature(object = "xcmsRaw")}: get average m/z and
       intensity values for multiple mass scans
     }
-    \item{\link[xcms:image.xcmsRaw]{image}}{
+    \item{\link[xcms:image,xcmsRaw-method]{image}}{
       \code{signature(x = "xcmsRaw")}: get data for peaks in
       specified m/z and time ranges
     }
