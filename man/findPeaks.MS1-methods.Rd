@@ -21,7 +21,7 @@
   Since xcmsFragments attaches all MS$^n$ peaks to MS1 peaks in xcmsSet,
   it is important that findPeaks and xcmsSet do not miss any MS1 precursor peak.
   
-  To be sure that {\em all} MS1 precursor peaks are in an xcmsSet,
+  To be sure that \em all MS1 precursor peaks are in an xcmsSet,
   findPeaks.MS1 does not do an actual peak picking, but simply uses the
   annotation stored in mzXML, mzData or mzML raw files.
   

@@ -15,7 +15,7 @@ Objects can be created by calls of the form \code{new("xcmsPeaks", ...)}.
   }
 }
 \section{Extends}{
-Class \code{"\linkS4class{xcmsData}"}, directly.
+%Class \code{"\linkS4class{xcmsData}"}, directly.
 Class \code{"\linkS4class{matrix}"}, from data part.
 Class \code{"\linkS4class{array}"}, by class "matrix", distance 2.
 Class \code{"\linkS4class{structure}"}, by class "matrix", distance 3.
