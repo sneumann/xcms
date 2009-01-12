@@ -606,7 +606,7 @@ setMethod("group.mzClust", "xcmsSet", function(object,
     samples <- sampnames(object)
     classlabel <- sampclass(object)
     peaks <- peaks(object)
-    groups <- xcms:::mzClustGeneric(peaks[,c(1,10)],
+    groups <- xcms:::mzClustGeneric(peaks[,c("mz","sample")],
                                     sampclass=classlabel,
                                     mzppm=mzppm,mzabs=mzabs,
                                     minsamp=minsamp,
@@ -907,9 +907,9 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     }
 })
 
-setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
+setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks", "xcmsSet", function(object) {
+setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
@@ -987,6 +987,93 @@ setMethod("fillPeaks", "xcmsSet", function(object) {
 
     invisible(object)
 })
+
+setGeneric("fillPeaks.MSW", function(object, ...) standardGeneric("fillPeaks.MSW"))
+setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
+
+    peakmat <- peaks(object)
+    groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
+    files <- filepaths(object)
+    samp <- sampnames(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
+    prof <- profinfo(object)
+    rtcor <- object@rt$corrected
+    # Remove groups that overlap with more "well-behaved" groups
+    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    uorder <- order(-numsamp, groupmat[,"npeaks"])
+    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                         uorder)
+    groupmat <- groupmat[uindex,]
+    groupindex <- groupidx(object)[uindex]
+    gvals <- groupval(object)[uindex,]
+
+    peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
+    colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
+    mzmin <- peakmat[gvals,"mzmin"]
+    dim(mzmin) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"mzmin"] <- apply(mzmin, 1, min, na.rm = TRUE)
+    mzmax <- peakmat[gvals,"mzmax"]
+    dim(mzmax) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"mzmax"] <- apply(mzmax, 1, min, na.rm = TRUE)
+    retmin <- peakmat[gvals,"rtmin"]
+    dim(retmin) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"rtmin"] <- apply(retmin, 1, median, na.rm = TRUE)
+    retmax <- peakmat[gvals,"rtmax"]
+    dim(retmax) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
+    lastpeak <- nrow(peakmat)
+    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
+    cnames <- colnames(object@peaks)
+    for (i in seq(along = files)) {
+	 cat(samp[i], "")
+	flush.console()
+        naidx <- which(is.na(gvals[,i]))
+	newpeaks <- matrix(nrow=length(naidx), ncol=9)
+	nppos<-0 ## line position in the newpeaks matrix
+        if (length(naidx)) {
+            lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
+	   ngs <- as.vector(naidx)
+	   for (g in ngs)
+		{
+		nppos <- nppos+1
+		mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
+		mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] == max(lcraw@env$intensity[mzpos]))]
+		mmzr <- seq((mmzpos-mrange[1]),(mmzpos+mrange[2]))
+		maxo <- max(lcraw@env$intensity[mmzr])
+		## this is the new one, summing the scale-range
+		## calculating scale, adding intensitiesin this scale
+		minMzpos <- min(which(abs(lcraw@env$mz - groupmat[g,"mzmin"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmin"]))))
+		maxMzpos <- max(which(abs(lcraw@env$mz - groupmat[g,"mzmax"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmax"]))))
+		into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
+		newpeaks[nppos,] <- c(groupmat[g,c("mzmed","mzmin","mzmax")],-1,-1,-1,into,maxo,i)
+		}
+	    colnames(newpeaks) <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sample")
+            rm(lcraw)
+            gc()
+            newcols <-colnames(newpeaks)[colnames(newpeaks) %in% cnames]
+	    peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
+            for (i in seq(along = naidx))
+                groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
+            lastpeak <- lastpeak + length(naidx)
+        }
+    }
+    cat("\n")
+    peaks(object) <- peakmat
+    groups(object) <- groupmat
+    groupidx(object) <- groupindex
+    invisible(object)
+})
+
+setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
+ setMethod("fillPeaks", "xcmsSet", function(object, method=getOption("BioC")$xcms$fillPeaks.method,...) {
+ 	method <- match.arg(method, getOption("BioC")$xcms$fillPeaks.methods)
+     	if (is.na(method))
+         	stop("unknown method : ", method)
+     	method <- paste("fillPeaks", method, sep=".")
+     	invisible(do.call(method, alist(object, ...)))
+ 	})
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
@@ -1068,7 +1155,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             value = c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...) {
 
-    require(multtest) || stop("Couldnt load multtest")
+    require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
     groupmat <- groups(object)

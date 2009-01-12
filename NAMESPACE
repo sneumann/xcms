@@ -38,6 +38,8 @@ exportMethods(
               "filepaths<-",
               "diffreport",
               "fillPeaks",
+              "fillPeaks.MSW",
+              "fillPeaks.chrom",
               "findPeaks.centWave",
               "findPeaks.matchedFilter",
               "findPeaks.MSW",
