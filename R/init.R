@@ -50,7 +50,7 @@
   fillPeaks.methods <-  substr(all.xcms[grep("fillPeaks\\..*", all.xcms)],
                                start+1, 100)
   ## default method
-  fillPeaks.method <- "chrome"
+  fillPeaks.method <- "chrom"
 
   xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
                    group.method=group.method, group.methods=group.methods,
