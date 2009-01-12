@@ -44,8 +44,17 @@
   ## default for the methods
   group.method <- "density"
 
+  ## all fillPeaks methods
+  start <- nchar("fillPeaks.")
+  all.xcms <- ls(asNamespace(pkgname))
+  fillPeaks.methods <-  substr(all.xcms[grep("fillPeaks\\..*", all.xcms)],
+                               start+1, 100)
+  ## default method
+  fillPeaks.method <- "chrome"
+
   xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
-                   group.method=group.method, group.methods=group.methods)
+                   group.method=group.method, group.methods=group.methods,
+                   fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods)
 
   class(xcms.opt) <- "BioCPkg"
 

@@ -1,3 +1,12 @@
+2009-01-12: 1.15.4
+findPeaks.MSW now returns proper mzmin/mzmax boundaries
+for Peaks, which are calculated via the best scale (== width) for a peak
+findPeaks.MSW now returns more intensity variants, 
+including integrated (non-baseline corrected) raw values 
+between mzmin/mzmax. 
+Converted fillPeaks() to honour method="" arguments
+Added fillPeaks(xs, method="MSW") to process Direct Infusion Data 
+
 2008-12-17: 1.15.3
 Fix the Calculation of Anova values for >2 sample classes
 Fix polarity selection
