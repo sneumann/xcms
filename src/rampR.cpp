@@ -188,83 +188,83 @@ SEXP RampRScanHeaders(SEXP rampid) {
     setAttrib(result, install("row.names"), temp = NEW_CHARACTER(numscans));
     for (i = 0; i < numscans; i++) {
         sprintf(rowname, "%i", i+1);
-        SET_ELEMENT(temp, i, mkChar(rowname));
+        SET_STRING_ELT(temp, i, mkChar(rowname));
     }
     
     SET_CLASS(result, temp = NEW_CHARACTER(1));
-    SET_ELEMENT(temp, 0, mkChar("data.frame"));
+    SET_STRING_ELT(temp, 0, mkChar("data.frame"));
     
     SET_VECTOR_ELT(result, 0, temp = NEW_INTEGER(numscans));
     seqNum = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 0, mkChar("seqNum"));
+    SET_STRING_ELT(names, 0, mkChar("seqNum"));
     
     SET_VECTOR_ELT(result, 1, temp = NEW_INTEGER(numscans));
     acquisitionNum = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 1, mkChar("acquisitionNum"));
+    SET_STRING_ELT(names, 1, mkChar("acquisitionNum"));
     
     SET_VECTOR_ELT(result, 2, temp = NEW_INTEGER(numscans));
     msLevel = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 2, mkChar("msLevel"));
+    SET_STRING_ELT(names, 2, mkChar("msLevel"));
     
     SET_VECTOR_ELT(result, 3, temp = NEW_INTEGER(numscans));
     peaksCount = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 3, mkChar("peaksCount"));
+    SET_STRING_ELT(names, 3, mkChar("peaksCount"));
     
     SET_VECTOR_ELT(result, 4, temp = NEW_NUMERIC(numscans));
     totIonCurrent = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 4, mkChar("totIonCurrent"));
+    SET_STRING_ELT(names, 4, mkChar("totIonCurrent"));
     
     SET_VECTOR_ELT(result, 5, temp = NEW_NUMERIC(numscans));
     retentionTime = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 5, mkChar("retentionTime"));
+    SET_STRING_ELT(names, 5, mkChar("retentionTime"));
     
     SET_VECTOR_ELT(result, 6, temp = NEW_NUMERIC(numscans));
     basePeakMZ = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 6, mkChar("basePeakMZ"));
+    SET_STRING_ELT(names, 6, mkChar("basePeakMZ"));
     
     SET_VECTOR_ELT(result, 7, temp = NEW_NUMERIC(numscans));
     basePeakIntensity = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 7, mkChar("basePeakIntensity"));
+    SET_STRING_ELT(names, 7, mkChar("basePeakIntensity"));
     
     SET_VECTOR_ELT(result, 8, temp = NEW_NUMERIC(numscans));
     collisionEnergy = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 8, mkChar("collisionEnergy"));
+    SET_STRING_ELT(names, 8, mkChar("collisionEnergy"));
     
     SET_VECTOR_ELT(result, 9, temp = NEW_NUMERIC(numscans));
     ionisationEnergy = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 9, mkChar("ionisationEnergy"));
+    SET_STRING_ELT(names, 9, mkChar("ionisationEnergy"));
     
     SET_VECTOR_ELT(result, 10, temp = NEW_NUMERIC(numscans));
     lowMZ = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 10, mkChar("lowMZ"));
+    SET_STRING_ELT(names, 10, mkChar("lowMZ"));
     
     SET_VECTOR_ELT(result, 11, temp = NEW_NUMERIC(numscans));
     highMZ = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 11, mkChar("highMZ"));
+    SET_STRING_ELT(names, 11, mkChar("highMZ"));
     
     SET_VECTOR_ELT(result, 12, temp = NEW_INTEGER(numscans));
     precursorScanNum = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 12, mkChar("precursorScanNum"));
+    SET_STRING_ELT(names, 12, mkChar("precursorScanNum"));
     
     SET_VECTOR_ELT(result, 13, temp = NEW_NUMERIC(numscans));
     precursorMZ = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 13, mkChar("precursorMZ"));
+    SET_STRING_ELT(names, 13, mkChar("precursorMZ"));
     
     SET_VECTOR_ELT(result, 14, temp = NEW_INTEGER(numscans));
     precursorCharge = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 14, mkChar("precursorCharge"));
+    SET_STRING_ELT(names, 14, mkChar("precursorCharge"));
     
     SET_VECTOR_ELT(result, 15, temp = NEW_INTEGER(numscans));
     scanType = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 15, mkChar("scanType"));
+    SET_STRING_ELT(names, 15, mkChar("scanType"));
 
     SET_VECTOR_ELT(result, 16, temp = NEW_NUMERIC(numscans));
     precursorIntensity = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 16, mkChar("precursorIntensity"));
+    SET_STRING_ELT(names, 16, mkChar("precursorIntensity"));
 
     SET_VECTOR_ELT(result, 17, temp = NEW_INTEGER(numscans));
     polarity = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 17, mkChar("polarity"));
+    SET_STRING_ELT(names, 17, mkChar("polarity"));
         
     scanTypes = S_alloc(stlen*SCANTYPE_LENGTH, sizeof(char));
     
@@ -306,10 +306,10 @@ SEXP RampRScanHeaders(SEXP rampid) {
     
     SET_LEVELS(VECTOR_ELT(result, 16), temp = NEW_CHARACTER(ntypes));
     for (i = 0; i < ntypes; i++)
-        SET_ELEMENT(temp, i, mkChar(scanTypes+i*SCANTYPE_LENGTH));
+        SET_STRING_ELT(temp, i, mkChar(scanTypes+i*SCANTYPE_LENGTH));
     
     SET_CLASS(VECTOR_ELT(result, 15), temp = NEW_CHARACTER(1));
-    SET_ELEMENT(temp, 0, mkChar("factor"));
+    SET_STRING_ELT(temp, 0, mkChar("factor"));
     
     UNPROTECT(1);
     
@@ -350,7 +350,7 @@ SEXP RampRSIPeaks(SEXP rampid, SEXP seqNum, SEXP peaksCount) {
     
     SET_VECTOR_ELT(result, 0, temp = NEW_INTEGER(numscans));
     scanindex = INTEGER_POINTER(temp);
-    SET_ELEMENT(names, 0, mkChar("scanindex"));
+    SET_STRING_ELT(names, 0, mkChar("scanindex"));
     
     numpeaks = 0;
     for (i = 0; i < numscans; i++) {
@@ -362,11 +362,11 @@ SEXP RampRSIPeaks(SEXP rampid, SEXP seqNum, SEXP peaksCount) {
     
     SET_VECTOR_ELT(result, 1, temp = NEW_NUMERIC(numpeaks));
     mz = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 1, mkChar("mz"));
+    SET_STRING_ELT(names, 1, mkChar("mz"));
     
     SET_VECTOR_ELT(result, 2, temp = NEW_NUMERIC(numpeaks));
     intensity = NUMERIC_POINTER(temp);
-    SET_ELEMENT(names, 2, mkChar("intensity"));
+    SET_STRING_ELT(names, 2, mkChar("intensity"));
     
     for (i = 0; i < numscans; i++) {
         if (peaksCountPtr[i] != readPeaksCount(file, index[seqNumPtr[i]]))
