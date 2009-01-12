@@ -35,7 +35,7 @@
 \value{
   A \code{xcmsSet} objects with filled in peak groups.
 }
-}
+
 \seealso{
   \code{\link{xcmsSet-class}},
   \code{\link{getPeaks}}
