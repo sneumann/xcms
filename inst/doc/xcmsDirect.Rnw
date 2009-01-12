@@ -140,8 +140,8 @@ is \Rmethod{fillPeaks}. It changes all NA values to random noise based on the ra
 data file.
 <<FillPeaks>>=
 groupval(xsg)[1,]
-#xsgf <- fillPeaks(xsg)
-groupval(xsg, "medret", "into")[1:10,]
+xsgf <- fillPeaks(xsg, method="MSW")
+groupval(xsgf, "medret", "into")[1:10,]
 @
 
 The results are suited for instance for heatmaps, etc.
