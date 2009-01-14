@@ -125,17 +125,19 @@ setMethod("show", "xcmsRaw", function(object) {
 
     cat("An \"xcmsRaw\" object with", length(object@scantime), "mass spectra\n\n")
 
-    cat("Time range: ", paste(round(range(object@scantime), 1), collapse = "-"),
-        " seconds (", paste(round(range(object@scantime)/60, 1), collapse = "-"),
-        " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@env$mz), 4), collapse = "-"),
-        "m/z\n")
-    cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
-        "\n\n")
-
+    if (length(object@scantime)>0) {
+        cat("Time range: ", paste(round(range(object@scantime), 1), collapse = "-"),
+            " seconds (", paste(round(range(object@scantime)/60, 1), collapse = "-"),
+            " minutes)\n", sep = "")
+        cat("Mass range:", paste(round(range(object@env$mz), 4), collapse = "-"),
+            "m/z\n")
+        cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
+            "\n\n")
+    }
+    
     ## summary MSn data
     if (!is.null(object@msnLevel)) {
-	cat("MSN data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
+	cat("MSn data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
 	cat("\twith ", length(object@msnPrecursorMz)," MSn spectra\n")
     }
 
@@ -1441,6 +1443,12 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
         rm("profile", envir = object@env)
     if (!value)
         return(object)
+
+    if (length(object@env$mz)==0) {
+        warning("MS1 scans empty. Skipping profile matrix calculation.")
+        return(object)
+    }
+    
     minmass <- round(min(object@env$mz)/value)*value
     maxmass <- round(max(object@env$mz)/value)*value
     num <- (maxmass - minmass)/value + 1
