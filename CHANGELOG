@@ -1,3 +1,7 @@
+2009-01-14: 1.15.x
+Catch Tandem-MS and MSn files without MS1 scans,
+disable profile matrix generation and part of the summary.
+
 2009-01-12: 1.15.4
 findPeaks.MSW now returns proper mzmin/mzmax boundaries
 for Peaks, which are calculated via the best scale (== width) for a peak
