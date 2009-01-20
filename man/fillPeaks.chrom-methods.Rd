@@ -26,11 +26,18 @@
   group region. In a given group, the start and ending retention
   time points for integration are defined by the median start and
   end points of the other detected peaks. The start and end m/z
-  values are similarly determined.
-
+  values are similarly determined. Intensities
+  can be still be zero, which is a rather unusual intensity for a peak.
+  This is the case if e.g. the raw data was threshholded, and the
+  integration area contains no actual raw intensities, or if one sample
+  is miscalibrated, such thet the raw data points are (just) outside
+  the integration area.
+  
   Importantly, if retention time correction data is available, the
   alignment information is used to more precisely integrate the
-  propper region of the raw data.
+  propper region of the raw data. If the corrected retention time
+  is beyond the end of the raw data, the value will be not-a-number (NaN).
+  
 }
 \value{
   A \code{xcmsSet} objects with filled in peak groups.
