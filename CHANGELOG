@@ -1,6 +1,8 @@
-2009-01-14: 1.15.x
+2009-01-20: 1.15.5
 Catch Tandem-MS and MSn files without MS1 scans,
 disable profile matrix generation and part of the summary.
+Changed the way fillPeaks.chrom() is calculating mzmin/mzmax 
+to use the *median* of existing peaks' mzmin/mzmaxo
 
 2009-01-12: 1.15.4
 findPeaks.MSW now returns proper mzmin/mzmax boundaries

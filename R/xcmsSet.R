@@ -935,10 +935,10 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
 
     mzmin <- peakmat[gvals,"mzmin"]
     dim(mzmin) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmin"] <- apply(mzmin, 1, min, na.rm = TRUE)
+    peakrange[,"mzmin"] <- apply(mzmin, 1, median, na.rm = TRUE)
     mzmax <- peakmat[gvals,"mzmax"]
     dim(mzmax) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmax"] <- apply(mzmax, 1, min, na.rm = TRUE)
+    peakrange[,"mzmax"] <- apply(mzmax, 1, median, na.rm = TRUE)
     retmin <- peakmat[gvals,"rtmin"]
     dim(retmin) <- c(nrow(gvals), ncol(gvals))
     peakrange[,"rtmin"] <- apply(retmin, 1, median, na.rm = TRUE)
