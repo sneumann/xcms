@@ -502,7 +502,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
 
     samples <- sampnames(object)
     classlabel <- sampclass(object)
-    classnames <- levels(classlabel)
+    classnames <- as.character(unique(sampclass(object)))
     classlabel <- as.vector(unclass(classlabel))
     classnum <- integer(max(classlabel))
     for (i in seq(along = classnum))

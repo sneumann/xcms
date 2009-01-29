@@ -1,3 +1,6 @@
+2009-02-xx: 1.15.x
+Ffixed Bug with unused class levels, reported by Hendrik Weisser
+
 2009-01-20: 1.15.5
 Catch Tandem-MS and MSn files without MS1 scans,
 disable profile matrix generation and part of the summary.
