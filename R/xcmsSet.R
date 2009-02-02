@@ -1099,7 +1099,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     if (missing(mzrange)) {
         if (missing(groupidx))
             stop("No m/z range or groups specified")
-        # if (any(is.na(groupval(object, value = "mz")))) stop('Please use fillPeaks() to fill up NA values !')
+        if (any(is.na(groupval(object, value = "mz")))) 
+            stop('Please use fillPeaks() to fill up NA values !')
         mzmin <- -rowMax(-groupval(object, value = "mzmin"))
         mzmax <- rowMax(groupval(object, value = "mzmax"))
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
