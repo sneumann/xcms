@@ -1,5 +1,6 @@
 2009-02-xx: 1.15.x
-Ffixed Bug with unused class levels, reported by Hendrik Weisser
+Fixed Bug with unused class levels, reported by Hendrik Weisser
+Added error message in getEIC() to use fillPeaks() for filling up NA values 
 
 2009-01-20: 1.15.5
 Catch Tandem-MS and MSn files without MS1 scans,
