@@ -1,4 +1,7 @@
-2009-02-xx: 1.15.x
+2009-02-11: 1.15.7
+Fixed: call phenoDataFromPaths() only if necessary
+
+2009-02-02: 1.15.6
 Fixed Bug with unused class levels, reported by Hendrik Weisser
 Added error message in getEIC() to use fillPeaks() for filling up NA values 
 
