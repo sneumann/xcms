@@ -1194,7 +1194,7 @@ setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms
     if (is.na(method))
         stop("unknown method : ", method)
     method <- paste("findPeaks", method, sep=".")
-    invisible(do.call(method, alist(object, ...)))
+    invisible(do.call(method, list(object, ...)))
 })
 
 setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
@@ -1347,7 +1347,7 @@ setMethod("rawMat", "xcmsRaw", function(object,
     endidx <- object@scanindex[scanrange[2] + 1]
   ##scans <- integer(endidx - startidx + 1)
   scans <- rep(scanrange[1]:scanrange[2],
-               diff(c(object@scanindex, length(object@env$mz)+1)))
+               diff(c(object@scanindex[scanrange[1]:scanrange[2]], endidx)))
   ##for (i in scanrange[1]:scanrange[2]) {
   ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
   ##        1], length(object@env$mz), na.rm = TRUE)
