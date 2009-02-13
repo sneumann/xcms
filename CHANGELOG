@@ -1,3 +1,6 @@
+2009-02-13: 1.15.8
+Fixed: "diffreport()" fails if "sortpval" is false and "eicmax" > 0, reported by Hendrik Weisser
+
 2009-02-11: 1.15.7
 Fixed: call phenoDataFromPaths() only if necessary
 
