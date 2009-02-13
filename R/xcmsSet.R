@@ -1214,7 +1214,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	   twosamp <- twosamp[tsidx,]
 	   rownames(twosamp) <- 1:nrow(twosamp)
 	   values<-values[tsidx,]
-	}
+	} else
+	   tsidx <- 1:nrow(values)
 
     if (length(filebase))
         write.table(twosamp, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
