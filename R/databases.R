@@ -55,14 +55,13 @@ read.metlin<-function(xml, MS1=TRUE, MSxml) {
     
 
     if(MS1==TRUE){
-	MS1.df<-suppressWarnings(read.metlinMS(MSxml) ) ##Need to check why warnings?
-	MS2.name<-unique(met.mat[,"name"])
-	logi<-as.logical(match(MS1.df[,"name"], MS2.name, nomatch=0))
-	MS1.df<-data.frame(name=MS1.df[!logi,"name"], frag.MZ=0 , int=0, preMZ=MS1.df[!logi,"MZ"], mode="*", adduct="M", collisionEnergy=0) 
+        MS1.df<-suppressWarnings(read.metlinMS(MSxml) ) ##Need to check why warnings?
+        MS2.name<-unique(met.mat[,"name"])
+        logi<-as.logical(match(MS1.df[,"name"], MS2.name, nomatch=0))
+        MS1.df<-data.frame(name=MS1.df[!logi,"name"], frag.MZ=0 , int=0, preMZ=MS1.df[!logi,"MZ"], mode="*", adduct="M", collisionEnergy=0) 
 ## add fake values to the MS1 data
-	met.mat<-rbind(MS1.df, met.mat)
+        met.mat<-rbind(MS1.df, met.mat)
     }
-
     return(met.mat)
 }
 
@@ -92,41 +91,31 @@ read.metlinMS<- function(xml){
 
 metlinToList<-function(metlinfile){
     met.xml<-read.metlin(metlinfile, MS1=FALSE)
-    met.xml<-met.xml[order(met.xml[,"name"]),]
-    CE<-unique(met.xml[,"collisionEnergy"])
-    names<-unique(met.xml[,"name"])
-    ion<-unique(met.xml[,"mode"])
-
+    cat("Converting Data type\n")
     ref<-1
     spectra<-list()
+    met.xml<-met.xml[order(met.xml[,"name"]),]
+    names<-unique(met.xml[,"name"])
     for(i in 1:length(names)){
+        idx<-which(met.xml[,"name"] == names[i])
+        CE<-unique(met.xml[idx,"collisionEnergy"])
+        tempMetMat<-met.xml[idx,]
         for(j in 1:length(CE)){
-            for(k in 1:length(ion)){ ## We should ask if we have both "-" & "+"
-                MetSpec<-sortMetlin(met.xml, names[i], ion[k], CE[j]) ##Give index value of scanindex value
+            ind<-which(tempMetMat[,"collisionEnergy"] == CE[j])
+            ion<-unique(tempMetMat[ind,"mode"])
+            foo<-tempMetMat[ind,]
+            for(k in 1:length(ion)){
+                ix<-which(foo[,"mode"]== ion[k])
+                MetSpec<-foo[ix,]
                 spectra[[ref]]<-MetSpec
                 ref<-ref+1
-                
             }
         }
+        percent<-(i/length(names))*100
+        cat(paste("\r", round(percent), "% Done", sep=""))
     }
+    cat("\n")
     invisible(spectra)
-}
-
-overlap<-function(a,b,c){
-    #dup<-duplicated(c(a,b))
-    Fdup<-duplicated(c(c(a,b)[duplicated(c(a,b))], c))
-    overlap<-c(c(a,b)[duplicated(c(a,b))], c)[Fdup]
-    return(overlap)
-}
-
-sortMetlin<-function(met.xml, name, ion, CE){
-    met<-met.xml[order(met.xml[,"name"]), ]
-    CEindex<-which(met[,"collisionEnergy"] == CE)
-    nameIndex<-which(met[,"name"] == name)
-    ionIndex<-which(met[,"mode"] == ion)
-    index<-overlap(nameIndex, CEindex, ionIndex)
-    
-    return(met[index,])
 }
 
 distance<-function(met, xcm, ppmval, matrix=FALSE){
@@ -139,23 +128,23 @@ distance<-function(met, xcm, ppmval, matrix=FALSE){
     d[1,1] <- 0
 
     for(i in 2:(l.met+1)){
-	for(j in 2:(l.xcm+1)){
-		if(ppm(met[i-1], xcm[j-1]) <= ppmval ){ ## ppm cal use
-			cost<- 0
-			#subcost<-0
-			} else {
-			cost<- 1
-			#subcost<-holdsub
-		}
-		d[i,j]<- min(d[i-1,j] +cost, ##inserting peak
-			     d[i,j-1] +cost, ##deleteing peak
-			     d[i-1,j-1] + cost) ##
-	}
+        for(j in 2:(l.xcm+1)){
+            if(ppm(met[i-1], xcm[j-1]) <= ppmval ){ ## ppm cal use
+                cost<- 0
+                #subcost<-0
+            } else {
+                cost<- 1
+                #subcost<-holdsub
+            }
+            d[i,j]<- min(d[i-1,j] +cost, ##inserting peak
+            d[i,j-1] +cost, ##deleteing peak
+            d[i-1,j-1] + cost) ##
+        }
     }
     if(matrix == TRUE){
         return(d) ##check print whole matrix
     }else{
-	return(d[l.met+1, l.xcm+1])
+        return(d[l.met+1, l.xcm+1])
     }
 }
 
