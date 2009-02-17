@@ -1596,12 +1596,12 @@ setMethod("isCentroided", "xcmsRaw", function(object){
 
 sequenceMz <- function(dat) {
     for (p in 1:dim(dat)[1] ){ # makes the index for the scan
-	seq<-seq(from=dat[p,"from"], to=dat[p,"to"])
-	if(p == 1){
- 	    seqInd<-seq
-	} else {
-	    seqInd<-c(seqInd, seq)
-	}
+        seq<-seq(from=dat[p,"from"], to=dat[p,"to"])
+        if(p == 1){
+            seqInd<-seq
+        } else {
+            seqInd<-c(seqInd, seq)
+        }
     }
     return(seqInd)
 }
