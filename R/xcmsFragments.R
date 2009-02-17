@@ -383,41 +383,42 @@ if (!isGeneric("simMatrix") )
 setMethod( "simMatrix", "xcmsFragments", function(object, ppmval=500, ...) {
 ##experimental
     if(length(object@MS2spec) >=1){
-	stop("Undefined object slot\nPlease collect spectra first!")
+	    stop("Undefined object slot\nPlease collect spectra first!")
     }
     ##takes very long time and needs some sorting but good info returned!!
     ##make into C++ code ??
     spectra<-object@MS2spec
     Allscores<-matrix(0, nrow=length(spectra))
     for (i in 1:dim(object@specinfo)[1] ){
-	cat(object@specinfo[i,"preMZ"], " ")
-	if(dim(spectra[[i]])[1] <= 1) {
-	    scores<-rep(1, length(spectra))
-	} else {
-	    for (j in 1:dim(object@env$specinfo)[1]){
+        cat(object@specinfo[i,"preMZ"], " ")
+        if(dim(spectra[[i]])[1] <= 1) {
+            scores<-rep(1, length(spectra))
+        } else {
+            for (j in 1:dim(object@specinfo)[1]){
 #		cat(i, ":i ", j, ":j || ")
-		if(dim(spectra[[j]])[1] <=1 ){
-		    score<-1
-		} else {
-		    neutralLoss1<-sort(diff(sort(spectra[[i]][,"mz"], decreasing=T) ))
-		    neutralLoss2<-sort(diff(sort(spectra[[j]][,"mz"], decreasing=T) ))
-		    score<-score_fun(neutralLoss1, neutralLoss2, ppmval)
-		}
-		if (j == 1){
-		    scores<-score
-		} else {
-		    scores<-c(scores, score)
-		}
-	    }
-	}
-	if(i == 1){
-	    Allscores<-scores
-	}else{
-	    Allscores<-rbind(Allscores,scores)
-	}
+                if(dim(spectra[[j]])[1] <=1 ){
+                    score<-1
+                } else {
+                    neutralLoss1<-sort(diff(sort(spectra[[i]][,"mz"], decreasing=T) ))
+                    neutralLoss2<-sort(diff(sort(spectra[[j]][,"mz"], decreasing=T) ))
+                    score<-xcms:::score_fun(neutralLoss1, neutralLoss2, ppmval)
+                }
+                if (j == 1){
+                    scores<-score
+                } else {
+                    scores<-c(scores, score)
+                }
+            }
+        }
+        if(i == 1){
+            Allscores<-scores
+        }else{
+            Allscores<-rbind(Allscores,scores)
+        }
     }
     colnames(Allscores)<-paste(object@specinfo[,"rtmin"], "/", object@specinfo[,"preMZ"], sep="")
     rownames(Allscores)<-paste(object@specinfo[,"rtmin"], "/", object@specinfo[,"preMZ"], sep="")
+    heatmap(Allscores)
     return(Allscores)
  })
 
@@ -430,25 +431,24 @@ setMethod( "spectralClust", "xcmsFragments", function(object, ...){
     info<-object@specinfo
     spectra<-object@MS2spec
     for(i in 1:length(info[,"ref"]) ){
-	if(dim(spectra[[i]])[1] ==1 ) {
-	    i<-i+1
-	}
-	neutralLoss<-sort(diff(spectra[[i]][,"mz"] ))
-	ind<-neutralLoss > 1.5
-	neutralLOSS_I<-neutralLoss[ind][1]
-	neutralLOSS_II<-neutralLoss[ind][2]
-	small_I<-min(spectra[[i]][,"mz"])
-	small_II<-sort(spectra[[i]][,"mz"])[2]
+        if(dim(spectra[[i]])[1] ==1 ) {
+            i<-i+1
+        }
+        neutralLoss<-sort(diff(spectra[[i]][,"mz"] ))
+        ind<-neutralLoss > 1.5
+        neutralLOSS_I<-neutralLoss[ind][1]
+        neutralLOSS_II<-neutralLoss[ind][2]
+        small_I<-min(spectra[[i]][,"mz"])
+        small_II<-sort(spectra[[i]][,"mz"])[2]
 
-	if (dim(clust)[1] == 0){
-	    clust <- matrix(c(small_I, small_II, neutralLOSS_I, neutralLOSS_II), ncol=4)
-	} else {
-	    clust <-rbind(clust, c(small_I, small_II, neutralLOSS_I, neutralLOSS_II))
-	}
+        if (dim(clust)[1] == 0){
+            clust <- matrix(c(small_I, small_II, neutralLOSS_I, neutralLOSS_II), ncol=4)
+        } else {
+            clust <-rbind(clust, c(small_I, small_II, neutralLOSS_I, neutralLOSS_II))
+        }
     }
-
+    colnames(clust)<-c("small_frag", "2ndsmall_frag", "Neutral_Loss", "2nd_Neutral_Loss")
     return(clust)
-
 })
 
 if (!isGeneric("findneutral") )
@@ -458,23 +458,23 @@ setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=10, print=
     find<-ppmDev(Mr=find, ppmE) #gets the deviation window for a mass [1] is top [2] is min
     neutral<-0
     found<-0
-    spectra<-object@env$MS2spec
-    for (i in 1:dim(object@env$specinfo)[1] ){
-	#cat(object@env$specinfo[i,"preMZ"], " ")
-	if(dim(spectra[[i]])[1] >= 2) {
-	    neutral<-sort(abs(diff(sort(spectra[[i]][,"mz"])) ))
-	    if(any (neutral < find[1] & neutral > find[2])== TRUE){
-		if(is.interger(found)){
-		    found<-object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
-		}else{
-		    found<-rbind(found, object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
-		}
-	    }
-	}
+    spectra<-object@MS2spec
+    for (i in 1:dim(object@specinfo)[1] ){
+        #cat(object@specinfo[i,"preMZ"], " ")
+        if(dim(spectra[[i]])[1] >= 2) {
+            neutral<-sort(abs(diff(sort(spectra[[i]][,"mz"])) ))
+            if(any (neutral < find[1] & neutral > find[2])== TRUE){
+                if(is.interger(found)){
+                    found<-object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
+                }else{
+                    found<-rbind(found, object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
+                }
+            }
+        }
     }
     if (print == TRUE){
-	cat("We looked for", find[2], " to", find[1], "and found:\n")
-	print(found)
+        cat("We looked for", find[2], " to", find[1], "and found:\n")
+        print(found)
     }
     return(found)
 })
@@ -487,23 +487,23 @@ setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=10, print=TRUE,
     find<-ppmDev(Mr=find, ppmE) #gets the deviation window for a mass [1] is top [2] is min
     fragMZ<-0
     found<-0
-    spectra<-object@env$MS2spec
-    for (i in 1:dim(object@env$specinfo)[1] ){
-	#cat(object@env$specinfo[i,"preMZ"], " ")
-	if(dim(spectra[[i]])[1] >= 2) {
-	    fragMZ<-sort(spectra[[i]][,"mz"])
-	    if(any (fragMZ < find[1] & fragMZl > find[2])== TRUE){
-		if(is.interger(found)){
-		    found<-object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
-		}else{
-		    found<-rbind(found, object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
-		}
-	    }
-	}
+    spectra<-object@MS2spec
+    for (i in 1:dim(object@specinfo)[1] ){
+    #cat(object@env$specinfo[i,"preMZ"], " ")
+        if(dim(spectra[[i]])[1] >= 2) {
+            fragMZ<-sort(spectra[[i]][,"mz"])
+            if(any (fragMZ < find[1] & fragMZ > find[2])== TRUE){
+                if(is.interger(found)){
+                    found<-object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
+                }else{
+                    found<-rbind(found, object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
+                }
+            }
+        }
     }
     if (print == TRUE){
-	cat("We looked for", find[2], " to", find[1], "and found:\n")
-	print(found)
+        cat("We looked for", find[2], " to", find[1], "and found:\n")
+        print(found)
     }
     return(found)
 })
@@ -556,7 +556,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
 	} ## index the DB by accurate mass
 	met<-met.xml[Index,]
-        CE<-object@specinfo[i,"CollisionEnergy"]
+  CE<-object@specinfo[i,"CollisionEnergy"]
 	if(dim(met)[1] ==0){ ## If it doesn't exist go on.
 	    next
 	}
@@ -567,8 +567,8 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 	    nameIndex<- which(met[,"name"] == uni.met[j])
 	    IonIndex<-which(met[, "mode"] == exp.mode[1] & met[, "adduct"] == exp.mode[2])
             if(length(IonIndex) == 0) {
-		IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
-	    }
+              IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
+            }
             if (any(CEref == CE)){ ## Do we have the same collision energy ?
                 CeIndex<-which(met[,"collisionEnergy"] == CE)
             }else{
@@ -723,47 +723,51 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     cat("Data converted\nProcessing data...\n")
     check=FALSE
     for(i in 1:length(object@MS2spec)){
-	if(!is.matrix(object@MS2spec[[i]])) {
-	    next ## go on if not neutral loss capible
-	}
+        if(!is.matrix(object@MS2spec[[i]])) {
+            next ## go on if not neutral loss capible
+        }
         if(dim(object@MS2spec[[i]])[1] <= 1 ){
             next ## go on cus no neutral losses!!
         }
-#cat(" i ->", i, "\t")
-	neutralExp<-sort(abs(diff(sort(as.matrix(object@MS2spec[[i]])[,"mz"] )) ))
+#cat(" i ->", i, " ")
+        neutralExp<-sort(abs(diff(sort(as.matrix(object@MS2spec[[i]])[,"mz"] )) ))
         cat(paste(object@specinfo[i,"preMZ"], " ", sep=""))
-	for(j in 1:length(spectra)){
-	    if(dim(spectra[[j]])[1] < 1 ){
-	        next ## if we have something which doesn't have a neutral loss go on
-	    }
-#cat(" j->", j)
+        for(j in 1:length(spectra)){
+            if(dim(spectra[[j]])[1] < 1 ){
+                next ## if we have something which doesn't have a neutral loss go on
+            }
+# cat(" j->", j)
             if(length(spectra[[j]][,"frag.MZ"]) <= 1){ ##some things are getting by don't know why!!
                 next
             }
-	    neutralMet<-sort(abs(diff(sort(spectra[[j]][,"frag.MZ"])) ))##make neutral losses
-
+            neutralMet<-sort(abs(diff(sort(spectra[[j]][,"frag.MZ"])) ))##make neutral losses
             NeutScore<-score_fun(neutralMet, neutralExp, ppmfrag)
             FragScore<-score_fun(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"], ppmfrag)
-
-	    if(NeutScore >= percent | FragScore >= percent){
-                #cat(paste(" .", sep=""))
-                neutralFreq<-ms2Freq(c(neutralMet, neutralExp), ppmError=ppmfrag)
-                fragmentFreq<-ms2Freq(c(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"]), ppmError=ppmfrag)
+            if(NeutScore >= percent | FragScore >= percent){
+            cat(paste(" .", sep=""))
+                if(length(neutralExp) > 1 ){
+                    neutralFreq<-ms2Freq(c(neutralMet, neutralExp), ppmError=ppmfrag)
+                }else{
+                    neutralFreq<-list(0,0)
+                }
+                if(length(object@MS2spec[[i]][,"mz"] >1)){
+                    fragmentFreq<-ms2Freq(c(spectra[[j]][,"frag.MZ"],object@MS2spec[[i]][,"mz"]), ppmError=ppmfrag)
+                }else{
+                    fragmentFreq<-list(0,0)
+                }
                 indNeutral<-which.max(neutralFreq[[2]])
                 indFrag<-which.max(fragmentFreq[[2]])
                 commonNeutral<-neutralFreq[[1]][indNeutral]
                 commonFrag<-fragmentFreq[[1]][indFrag]
-
-
-	        if(check==FALSE){
-                    result<-c(round(object@specinfo[i, "AccMZ"], 4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"])
+    
+                if(check==FALSE){
+                    result<-c(round(as.numeric(object@specinfo[i, "AccMZ"]), 4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"])
                     check<-TRUE
-                 }else {
-                    result<-rbind(result, c(round(object@specinfo[i, "AccMZ"],4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"],FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"] ))
-	        }
-	    }
-	}
-
+                }else {
+                    result<-rbind(result, c(round(as.numeric(object@specinfo[i, "AccMZ"]),4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"],FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"] ))
+                }
+            }
+        }
     }
 
     colnames(result)<-c("m/z", "rtmin", "rtmax", "Experiment Collision Energy", "Fragment Score", "Neutral Score", "Common Neutral loss", "Common Fragment", "Compound Name", "Metlin Mass", "Collision Energy")
@@ -773,11 +777,13 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     for(k in 1:length(RmzUnique)){
         cat(" ", k)
         index<-which(round(as.numeric(result[,"m/z"]),1) == RmzUnique[k])
-
-        comNeutFreq<-ms2Freq(as.numeric(result[index, "Common Neutral loss"]), ppmfrag)
+        if(any(result[index, "Common Neutral loss"] >0)){
+            comNeutFreq<-ms2Freq(as.numeric(result[index, "Common Neutral loss"]), ppmfrag)
+        }else{
+            comNeutFreq<-list(rep(0,100),rep(0,100))
+        }
         FreqIndexNeut<-order(comNeutFreq[[2]])
         TotalCommonLoss<-comNeutFreq[[1]][FreqIndexNeut][1:5]
-
         comFragFreq<-ms2Freq(as.numeric(result[index, "Common Fragment"]), ppmfrag)
         FreqIndexFrag<-order(comFragFreq[[2]])
         TotalCommonFrag<-comFragFreq[[1]][FreqIndexFrag][1:5]
@@ -844,5 +850,3 @@ ms2Freq<-function(fragments, ppmError=10){
     x[[2]]<-ObservedFreq
     invisible(x)
 }
-
-
