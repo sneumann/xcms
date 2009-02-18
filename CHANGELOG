@@ -1,3 +1,15 @@
+2009-02-18: 1.15.9
+findPeaks.centWave: ROI detection was rewritten, 
+    new version is faster and needs less memory,
+    some small bugs were fixed
+findPeaks.centWave gains an optional argument "noise",
+    which is useful for data that was centroided without any intensity threshold,
+    centroids with intensity < "noise" are omitted from ROI detection
+Updated and removed bugs from simSearch method
+Optimized metlin to list method. Runs faster and reduced memory size
+Fix rawMat method when specific scan range specified. Fix naming of
+parameters in plotRaw docs.
+
 2009-02-13: 1.15.8
 Fixed: "diffreport()" fails if "sortpval" is false and "eicmax" > 0, reported by Hendrik Weisser
 

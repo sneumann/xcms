@@ -12,7 +12,7 @@
   \code{
     findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
     prefilter=c(3,100), integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), sleep=0, verbose.columns=FALSE)
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE)
   }
 }
 }}
@@ -39,6 +39,8 @@
     logical, if TRUE a Gaussian is fitted to each peak
   }
   \item{scanrange}{scan range to process}
+  \item{noise}{optional argument which is useful for data that was centroided without any intensity threshold,
+    centroids with intensity < \code{noise} are omitted from ROI detection}
   \item{sleep}{
     number of seconds to pause between plotting peak finding cycles
   }
