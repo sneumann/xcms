@@ -6,13 +6,14 @@ test.filenotfound <- function() {
 test.mzData <- function() {
     filename <- system.file('iontrap/extracted.mzData', package = "msdata")
 
-    rampid <- xcms:::rampOpen(filename)
-    checkTrue(rampid >= 0)
+    result <- .C("RampROpen", filename,
+       rampid = integer(1), status = integer(1),
+       PACKAGE = "xcms")
 
-    rawdata <- xcms:::rampRawData(rampid)
-    checkTrue(length(rawdata$rt) > 0)
+    checkTrue(result[[1]] == filename)
+    checkTrue(result$rampid >= 0)
+    checkEqualsNumeric(result$status, 0)
 
-    xcms:::rampClose(rampid)
+    xcms:::rampClose(result$rampid)
 }
-
 
