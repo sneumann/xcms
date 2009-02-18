@@ -763,7 +763,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                               fitgauss=FALSE, scanrange= numeric(),                                                                                         sleep=0, verbose.columns=FALSE) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                               fitgauss=FALSE, scanrange= numeric(), noise=0,                                                                                         sleep=0, verbose.columns=FALSE) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
 
@@ -795,7 +795,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
     peaklist <- list()
     cat("\n Detecting mass traces at",ppm,"ppm ... \n"); flush.console();
-    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minCentroids=minCentroids, prefilter=prefilter)
+    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minCentroids=minCentroids, prefilter=prefilter, noise=noise)
     scantime <- object@scantime
     Nscantime <- length(scantime)
     lf <- length(featlist)
@@ -813,23 +813,29 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       flush.console()
 
       feat <- featlist[[f]]
-      N <- length(feat$mz)
-      # if (N < 5) next; ## should not happen
+      N <- feat$scmax - feat$scmin + 1 
 
       peaks <- peakinfo <- NULL
-      mzrange <- range(feat$mz)
-      sccenter <- feat$scan[1] + floor(N/2) - 1
-      scrange <- range(feat$scan)
+
+      mzrange <- c(feat$mzmin,feat$mzmax)
+      sccenter <- feat$scmin[1] + floor(N/2) - 1
+      scrange <- c(feat$scmin,feat$scmax) 
       ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - max(noiserange)),min(scanrange[2],scrange[2] + max(noiserange)))
       eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
       d <- eic$intensity
       td <- sr[1]:sr[2]
       scan.range <- c(sr[1],sr[2])
-      ## original data range (hd m/z boxes)
-      omz <- feat$mz
-      od <- feat$intensity
-      otd <- feat$scan
+      ## original mzROI range
+      mzROI.EIC <- rawEIC(object,massrange=mzrange,scanrange=scrange)
+      omz <- rawMZ(object,massrange=mzrange,scanrange=scrange)
+      if (any(omz == 0))
+        stop("centWave: debug me: (omz == 0)?\n")
+      od  <- mzROI.EIC$intensity
+      otd <- mzROI.EIC$scan
+      if (all(od == 0))
+        stop("centWave: debug me: (all(od == 0))?\n")
+
       ##  scrange + scRangeTol, used for gauss fitting and continuous data above 1st baseline detection
       ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)], scrange[2] + scRangeTol)
       fd <- d[match(ftd,td)]
@@ -1566,9 +1572,36 @@ setMethod("rawEIC", "xcmsRaw", function(object,
 })
 
 
+setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
+
+setMethod("rawMZ", "xcmsRaw", function(object,
+                                           massrange = numeric(),
+                                           timerange = numeric(),
+                                           scanrange = numeric())  {
+
+   if (length(timerange) >= 2) {
+        timerange <- range(timerange)
+        scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
+        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
+    }  else if (length(scanrange) < 2)
+        scanrange <- c(1, length(object@scantime))
+    else
+        scanrange <- range(scanrange)
+
+  scanrange[1] <- max(1,scanrange[1])
+  scanrange[2] <- min(length(object@scantime),scanrange[2])
+
+  if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
+  if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
+  if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+  
+  .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+})
+
+
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
 
-setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter, debug=0){
+setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter=c(0,0), noise=0){
 
   scanrange[1] <- max(1,scanrange[1])
   scanrange[2] <- min(length(object@scantime),scanrange[2])
@@ -1580,7 +1613,7 @@ setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanran
 
   .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(massrange),
   as.integer(scanrange), as.integer(length(object@scantime)),
-  as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(debug), PACKAGE ='xcms' )
+  as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(noise), PACKAGE ='xcms' )
 })
 
 
