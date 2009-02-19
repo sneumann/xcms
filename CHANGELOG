@@ -1,3 +1,10 @@
+2009-02-19: 1.15.10
+
+xcmsSet, fillPeaks.*: add a (boolean) vector indicating whether 
+    a peak was added via fillPeaks()
+fillPeaks.MSW: Fix calculation of mz boundary (and thus improve intensities)
+
+
 2009-02-18: 1.15.9
 findPeaks.centWave: ROI detection was rewritten, 
     new version is faster and needs less memory,
