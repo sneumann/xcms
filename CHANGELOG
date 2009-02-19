@@ -1,9 +1,8 @@
 2009-02-19: 1.15.10
-
 xcmsSet, fillPeaks.*: add a (boolean) vector indicating whether 
     a peak was added via fillPeaks()
 fillPeaks.MSW: Fix calculation of mz boundary (and thus improve intensities)
-
+diffreport(): Added plotting for single spectra in diffreport()
 
 2009-02-18: 1.15.9
 findPeaks.centWave: ROI detection was rewritten, 
