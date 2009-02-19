@@ -1157,6 +1157,136 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                   rt = rt, groupnames = gnames))
 })
 
+
+getSpecWindow <- function(xs, gidxs, borderwidth=1)
+{
+    groupidx <- groupidx(xs)
+    if (length(groupidx)==0)
+        stop("no groups found in xcmsSet object.")
+
+    minmaxs <- matrix(ncol=2, nrow=length(gidxs))
+
+    cat("Processing data from sample: ")
+    for (a in 1:length(gidxs)){	## 1st step: getting boundaries
+        mzmin <- min(peaks(xs)[groupidx[[gidxs[a]]],"mzmin"]) ## lower bound
+        mzmax <- max(peaks(xs)[groupidx[[gidxs[a]]],"mzmax"]) ## upper bound
+        mzw <- mzmax-mzmin
+        minmaxs[a,1] <- mzmin - borderwidth*mzw
+        minmaxs[a,2] <- mzmax + borderwidth*mzw ## a peakwidth left and right
+    }
+
+    mzlistlist=list()
+
+    for (s in 1:length(gidxs)) {
+        mzlistlist[[s]] <- list()
+    }
+
+    mzlistlist$minmax <- minmaxs
+
+    for (s in 1:length(sampnames(xs))){ ## 2nd Step: process each sample
+        cat(" ", s)
+        xr <- xcmsRaw(xs@filepaths[s])
+        for (a in 1:length(gidxs)){
+            pmin <- min(which(abs(xr@env$mz - minmaxs[a,1]) == min(abs(xr@env$mz - minmaxs[a,1]))))
+            pmax <- min(which(abs(xr@env$mz - minmaxs[a,2]) == min(abs(xr@env$mz - minmaxs[a,2]))))
+            mzlistlist[[a]][[s]] <- matrix(ncol=2, nrow=(pmax-pmin+1),
+                                           data=c(xr@env$mz[pmin:pmax],
+                                           xr@env$intensity[pmin:pmax]))
+        }
+    }
+    cat("\n")
+    invisible(mzlistlist)
+}
+
+plotSpecWindow <- function(xs, gidxs, borderwidth=1
+                           #, filepath=""
+                           )
+{
+    if (length(groupidx(xs))==0)
+        stop("no groups found in xcmsSet object.")
+
+    mzll <- getSpecWindow(xs, gidxs, borderwidth)
+    minmax <- mzll$minmax
+    groupidx <- groupidx(xs)
+
+    pcolors <- c("black","darkred", "green","blue")
+    ecolors <- c("grey","red","lightgreen","lightblue")
+
+    cat("\ngroup: ")
+    for (a in 1:length(gidxs)){
+        cat(" ",gidxs[a])
+
+        nsa <- length(levels(sampclass(xs)))
+        pcol <- pcolors[which(levels(sampclass(xsg)) == sampclass(xsg)[1])]
+        ecol <- ecolors[which(levels(sampclass(xsg)) == sampclass(xsg)[1])]
+        mzmin <- minmax[a,1]
+        mzmax <- minmax[a,2]
+        maxints <- NA
+
+        for (s in 1:length(mzll[[a]])) {
+            maxints[s] <- max(mzll[[a]][[s]][,2])
+        }
+
+        maxo <- max(maxints)
+        par(lty=1)
+
+##         if (!filepath==""){
+##             png(filename = paste(filepath,"/_",a,"_.png",sep=""),
+##                 width = 800, height = 600)
+## 	}
+
+        ## enlarged raw-window
+        plot(mzll[[a]][[1]][,1],
+             mzll[[a]][[1]][,2],
+             xlim=c(mzmin,mzmax), ylim=c(0,(maxo+10000)),
+             type='l', col=ecol, xlab="", ylab="")
+
+        title(main=paste("m/z vs. intensity for group",gidxs[a]), xlab="m/z", ylab="intensity")
+
+        if (length(which(peaks(xs)[groupidx[[gidxs[a]]],"sample"] == 1))>0){
+            ## peak entry of the first sample
+
+            apeak <- groupidx[[gidxs[a]]][min(which(peaks(xs)[groupidx[[gidxs[a]]],"sample"] == 1))]
+            if (apeak %in% xs@filled)
+                par(lty=2)
+            else
+                par(lty=1)
+
+            ppmin <- min(which(abs(mzll[[a]][[1]][,1] - peaks(xs)[apeak,"mzmin"]) ==
+                               min(abs(mzll[[a]][[1]][,1] - peaks(xs)[apeak,"mzmin"]))))
+            ppmax <- min(which(abs(mzll[[a]][[1]][,1] - peaks(xs)[apeak,"mzmax"]) ==
+                               min(abs(mzll[[a]][[1]][,1] - peaks(xs)[apeak,"mzmax"]))))
+            lines(mzll[[a]][[1]][ppmin:ppmax,1],mzll[[a]][[1]][ppmin:ppmax,2],
+                  xlim=c(mzmin,mzmax), col=pcol, type='l')
+	}
+
+        for (n in 1:length(mzll[[a]])){
+            par(lty=1)
+            pcol <- pcolors[which(levels(sampclass(xsg)) == sampclass(xsg)[n])]
+            ecol <- ecolors[which(levels(sampclass(xsg)) == sampclass(xsg)[n])]
+
+            lines(mzll[[a]][[n]][,1],mzll[[a]][[n]][,2],
+                  xlim=c(mzmin,mzmax), type='l', col=ecol)
+
+            if (length(which(peaks(xs)[groupidx[[gidxs[a]]],"sample"] == n))>0){
+                ## peak entry of the sample n
+                apeak <-  groupidx[[gidxs[a]]][min(which(peaks(xs)[groupidx[[gidxs[a]]],"sample"] == 1))]
+                apeak <-  groupidx[[gidxs[a]]][min(which(peaks(xs)[groupidx[[gidxs[a]]],"sample"] == n))]
+                if (apeak %in% xs@filled) par(lty=2) else par(lty=1)
+                ppmin <- which(abs(mzll[[a]][[n]][,1] - peaks(xs)[apeak,"mzmin"]) ==
+                               min(abs(mzll[[a]][[n]][,1] - peaks(xs)[apeak,"mzmin"])))
+                ppmax <- which(abs(mzll[[a]][[n]][,1] - peaks(xs)[apeak,"mzmax"]) ==
+                               min(abs(mzll[[a]][[n]][,1] - peaks(xs)[apeak,"mzmax"])))
+                lines(mzll[[a]][[n]][ppmin:ppmax,1],mzll[[a]][[n]][ppmin:ppmax,2], xlim=c(mzmin,mzmax), col=pcol, type='l')
+	    }
+        }
+        legend("topright", as.vector(levels(sampclass(xs))),
+               col=pcolors[1:nsa],lty=rep(1,nsa))
+    }
+    cat("\n")
+}
+
+
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
@@ -1234,28 +1364,51 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
         write.table(twosamp, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
 
     if (eicmax > 0) {
-        eicmax <- min(eicmax, length(tsidx))
-        eics <- getEIC(object, rtrange = eicwidth*1.1, sampleidx = ceic,
-                       groupidx = tsidx[seq(length = eicmax)])
-        if (length(filebase)) {
-            eicdir <- paste(filebase, "_eic", sep="")
-            boxdir <- paste(filebase, "_box", sep="")
-            dir.create(eicdir)
-            dir.create(boxdir)
-            if (capabilities("png")){
-                xcmsBoxPlot(values[seq(length = eicmax),],
-                            sampclass(object), dirpath=boxdir, pic="png",  width=w, height=h)
-                png(file.path(eicdir, "%003d.png"), width = w, height = h)
-            }else{
-                xcmsBoxPlot(values[seq(length = eicmax),],
-                            sampclass(object), dirpath=boxdir, pic="pdf", width=w, height=h)
-                pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
-                    height = h/72, onefile = FALSE)
-	    }
+        if (length(unique(peaks(object)[,"rt"])) > 1) {
+            ## This looks like "normal" LC data
+
+            eicmax <- min(eicmax, length(tsidx))
+            eics <- getEIC(object, rtrange = eicwidth*1.1, sampleidx = ceic,
+                           groupidx = tsidx[seq(length = eicmax)])
+
+            if (length(filebase)) {
+                eicdir <- paste(filebase, "_eic", sep="")
+                boxdir <- paste(filebase, "_box", sep="")
+                dir.create(eicdir)
+                dir.create(boxdir)
+                if (capabilities("png")){
+                    xcmsBoxPlot(values[seq(length = eicmax),],
+                                sampclass(object), dirpath=boxdir, pic="png",  width=w, height=h)
+                    png(file.path(eicdir, "%003d.png"), width = w, height = h)
+                }else{
+                    xcmsBoxPlot(values[seq(length = eicmax),],
+                                sampclass(object), dirpath=boxdir, pic="pdf", width=w, height=h)
+                    pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
+                        height = h/72, onefile = FALSE)
+                }
+            }
+            plot(eics, object, rtrange = eicwidth)
+
+            if (length(filebase))
+                dev.off()
+        } else {
+            ## This looks like a direct-infusion single spectrum
+            if (length(filebase)) {
+                specdir <- paste(filebase, "_spec", sep="")
+                dir.create(specdir)
+                if (capabilities("png")){
+                    png(file.path(specdir, "%003d.png"), width = w, height = h)
+                }else{
+                    pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
+                        height = h/72, onefile = FALSE)
+                }
+            }
+
+            plotSpecWindow(object, gidxs = tsidx[seq(length = eicmax)], borderwidth=1)
+
+            if (length(filebase))
+                dev.off()
         }
-        plot(eics, object, rtrange = eicwidth)
-        if (length(filebase))
-            dev.off()
     }
 
     invisible(twosamp)
