@@ -1,5 +1,6 @@
 setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                                    groupidx = "list",
+                                   filled="numeric",
                                    phenoData = "data.frame",
                                    rt = "list",
                                    filepaths = "character", profinfo = "list",
@@ -7,6 +8,7 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
          prototype(peaks = matrix(nrow = 0, ncol = 0),
                    groups = matrix(nrow = 0, ncol = 0),
                    groupidx = list(),
+                   filled = integer(0),
                    phenoData = data.frame(), rt = list(),
                    rt = list(),
                    filepaths = character(0), profinfo = vector("list"),
@@ -40,10 +42,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
       stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
     # determine experimental design
-    if (is.null(snames)) { 
+    if (is.null(snames)) {
       fromPaths <- phenoDataFromPaths(files)
       snames <- rownames(fromPaths)
-    } 
+    }
     pdata <- phenoData
     if (is.null(pdata)) {
       pdata <- sclass
@@ -116,7 +118,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                           profstep = 0, includeMSn=includeMSn)
-        if (length(object@polarity) >0) {
+	## check existence of slot, absent in old xcmsSets
+        if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[object@polarity]]
@@ -959,7 +962,8 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-            if (length(object@polarity) >0) {
+	    ## check existence of slot, absent in old xcmsSets
+	    if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[object@polarity]]
@@ -983,6 +987,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
     cat("\n")
 
     peaks(object) <- peakmat
+    object@filled <- seq((lastpeak+1),nrow(peakmat))
     groups(object) <- groupmat
     groupidx(object) <- groupindex
 
@@ -1045,10 +1050,12 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
 		maxo <- max(lcraw@env$intensity[mmzr])
 		## this is the new one, summing the scale-range
 		## calculating scale, adding intensitiesin this scale
-		minMzpos <- min(which(abs(lcraw@env$mz - groupmat[g,"mzmin"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmin"]))))
-		maxMzpos <- max(which(abs(lcraw@env$mz - groupmat[g,"mzmax"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmax"]))))
+		medMZmin <- median(peakmat[groupindex[[g]],"mzmin"])
+		medMZmax <- median(peakmat[groupindex[[g]],"mzmax"])
+		minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) == min(abs(lcraw@env$mz - medMZmin))))
+		maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) == min(abs(lcraw@env$mz - medMZmax))))
 		into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
-		newpeaks[nppos,] <- c(groupmat[g,c("mzmed","mzmin","mzmax")],-1,-1,-1,into,maxo,i)
+		newpeaks[nppos,] <- c(groupmat[g,"mzmed"],medMZmin,medMZmax,-1,-1,-1,into,maxo,i)
 		}
 	    colnames(newpeaks) <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sample")
             rm(lcraw)
@@ -1062,6 +1069,7 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
     }
     cat("\n")
     peaks(object) <- peakmat
+    object@filled <- seq((lastpeak+1),nrow(peakmat))
     groups(object) <- groupmat
     groupidx(object) <- groupindex
     invisible(object)
@@ -1100,7 +1108,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     if (missing(mzrange)) {
         if (missing(groupidx))
             stop("No m/z range or groups specified")
-        if (any(is.na(groupval(object, value = "mz")))) 
+        if (any(is.na(groupval(object, value = "mz"))))
             stop('Please use fillPeaks() to fill up NA values !')
         mzmin <- -rowMax(-groupval(object, value = "mzmin"))
         mzmax <- rowMax(groupval(object, value = "mzmax"))
@@ -1174,6 +1182,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     if (!all(c(class1,class2) %in% classlabel))
         stop("Incorrect Class Labels")
 
+    ## c1 and c2 are column indices of class1 and class2 resp.
     c1 <- which(classlabel %in% class1)
     c2 <- which(classlabel %in% class2)
     ceic <- which(classlabel %in% classeic)
@@ -1182,6 +1191,10 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     mean1 <- rowMeans(values[,c1], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2], na.rm = TRUE)
+
+    ## Calculate fold change.
+    ## For foldchange <1 set fold to 1/fold
+    ## See tstat to check which was higher
     fold <- mean2 / mean1
     fold[!is.na(fold) & fold < 1] <- 1/fold[!is.na(fold) & fold < 1]
 
