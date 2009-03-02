@@ -1,3 +1,8 @@
+2009-03-01: 1.15.11
+xcmsSet: added getScanWindow() and plotScanWindow() which provide 
+         the same kind of graphics for direct-infusion spectra 
+         as xcmsEIC does for LC-MS 
+
 2009-02-19: 1.15.10
 xcmsSet, fillPeaks.*: add a (boolean) vector indicating whether 
     a peak was added via fillPeaks()
