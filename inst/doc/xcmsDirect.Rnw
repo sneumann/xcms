@@ -165,13 +165,13 @@ chromatograms are shown in Figure~\ref{eic}.
 \end{tabular}
 \end{center}
 \caption{\label{eic}
-Auto-generated extracted spectra for the top four
+Auto-generated extracted spectra for the top three
 differentially regulated ions. Darkened lines indicate where the
 peaks were integrated for quantitation.}
 \end{figure}
 
 <<AnalysisVisualize>>=
-reporttab <- diffreport(xsgf, "ham4", "ham5", "example", 10,
+reporttab <- diffreport(xsgf, "ham4", "ham5", "example", eicmax=4,
                         h=480, w=640)
 reporttab[1:4,]
 @
