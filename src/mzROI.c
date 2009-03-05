@@ -183,31 +183,32 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct 
   int lpos = lower_bound( fMass - ddev,mzval,0,mzLength->mzval);
   int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);   
  
-  if (hpos >=  mzLength->mzval) hpos = mzLength->mzval -1 ;
+  if (lpos >  mzLength->mzval-1) 
+      lpos = mzLength->mzval -1;
+  if (hpos >  mzLength->mzval-1) 
+      hpos = mzLength->mzval -1 ;
 
-  if (lpos < mzLength->mzval) {
-    for (i=lpos; i <= hpos; i++) 
-    { 
-      double ddiff = fabs(mzval[i].mz -  fMass);
-      
-      if (ddiff <= ddev) 
-      { // match -> extend this ROI
-            if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
-            wasfound = TRUE;
-            //recursive m/z mean update
-            mzval[i].mz = ((mzval[i].length * mzval[i].mz) + fMass) / (mzval[i].length + 1);  
-            if (fMass < mzval[i].mzmin) 
-                mzval[i].mzmin = fMass; 
-            if (fMass > mzval[i].mzmax) 
-                mzval[i].mzmax = fMass; 
-            mzval[i].scmax = scan;
-            mzval[i].length++;       
-            mzval[i].intensity+=fInten;
-            if (fInten >= pickOptions->minimumInt) 
-                mzval[i].kI++; 
-      }
-    } // for
-  } // if
+  for (i=lpos; i <= hpos; i++) 
+  { 
+    double ddiff = fabs(mzval[i].mz -  fMass);
+    
+    if (ddiff <= ddev) 
+    { // match -> extend this ROI
+          if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
+          wasfound = TRUE;
+          //recursive m/z mean update
+          mzval[i].mz = ((mzval[i].length * mzval[i].mz) + fMass) / (mzval[i].length + 1);  
+          if (fMass < mzval[i].mzmin) 
+              mzval[i].mzmin = fMass; 
+          if (fMass > mzval[i].mzmax) 
+              mzval[i].mzmax = fMass; 
+          mzval[i].scmax = scan;
+          mzval[i].length++;       
+          mzval[i].intensity+=fInten;
+          if (fInten >= pickOptions->minimumInt) 
+              mzval[i].kI++; 
+    }
+  } // for
    
    // if not found
    if (wasfound == FALSE) {  // no, create new ROI for mz   
