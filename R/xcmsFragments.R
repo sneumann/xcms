@@ -289,7 +289,7 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 	nsamp<-length(samples)
 	x<-c(1:length(groupidx(xs)))
 	AllMSn <- sapply(x,FUN=function(x){sum(MSNinfo[x,])}) == ncol(MSNinfo)
-	## AllMSn: wich group is lucky to have MSNs in ALL samples?
+	## AllMSn: which group is lucky to have MSNs in ALL samples?
 	## Processing those groups:
 	## first: creating a xs with the msnPeaks from all samples:
 	distances=matrix(ncol=nsamp*length(FUNS),data=rep(0,(length(AllMSn)*nsamp*length(FUNS))))
@@ -320,9 +320,9 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 		dists=NULL
 		for (fu in 1:length(FUNS)){
 			dists <- c(dists,FUNS[[fu]](xsn))
-			}
+		}
 		distances[g,1:(nsamp*length(FUNS))] <- dists
-		}#cat("loopend\n")
+	}#cat("loopend\n")
 
 	## adding the information to groupval(grouped_object)
 	cat("Groups:", length(AllMSn),"complete:",length(which(AllMSn)))
@@ -849,4 +849,11 @@ ms2Freq<-function(fragments, ppmError=10){
     x[[1]]<-observedFragments
     x[[2]]<-ObservedFreq
     invisible(x)
+}
+
+overlap<-function(a,b,c){
+    #dup<-duplicated(c(a,b))
+    Fdup<-duplicated(c(c(a,b)[duplicated(c(a,b))], c))
+    overlap<-c(c(a,b)[duplicated(c(a,b))], c)[Fdup]
+    return(overlap)
 }
