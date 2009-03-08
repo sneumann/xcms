@@ -536,150 +536,150 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
 
     check=FALSE
     for(i in 1:dim(object@specinfo)[1] ){
-	mz.diff<-object@specinfo[i, "preMZ"] - round(as.numeric(met.xml[,"preMZ"]), 0)
-	Index<-0
-	if(length(which(round(mz.diff,0) == elements["H", 1])) > 0){ # check to see if what type of ionisation it is and if it's an adduct
-	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]-elements["H",2], ppmMZ)
-	    exp.mode<-c("+", "")
-	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (length(which(round(mz.diff,0) == elements["Na",1] ))> 0 ){
-	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]-(elements["Na",2]+elements["e",2]), ppmMZ)
-	    exp.mode<-c("+","Na")
-	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (length(which(round(mz.diff,0) == elements["H.n",1] ))> 0){
-	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["H.n",2], ppmMZ)
-	    exp.mode<-c("-", "")
-	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} else if (length(which(round(mz.diff,0) == elements["Cl",1] ))> 0){
-	    deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["Cl",2], ppmMZ)
-	    exp.mode<-c("-", "Cl")
-	    Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
-	} ## index the DB by accurate mass
-	met<-met.xml[Index,]
-  CE<-object@specinfo[i,"CollisionEnergy"]
-	if(dim(met)[1] ==0){ ## If it doesn't exist go on.
-	    next
-	}
+        mz.diff<-object@specinfo[i, "preMZ"] - round(as.numeric(met.xml[,"preMZ"]), 0)
+        Index<-0
+        if(length(which(round(mz.diff,0) == elements["H", 1])) > 0){ # check to see if what type of ionisation it is and if it's an adduct
+            deviate<-ppmDev(object@specinfo[i, "AccMZ"]-elements["H",2], ppmMZ)
+            exp.mode<-c("+", "")
+            Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
+        } else if (length(which(round(mz.diff,0) == elements["Na",1] ))> 0 ){
+            deviate<-ppmDev(object@specinfo[i, "AccMZ"]-(elements["Na",2]+elements["e",2]), ppmMZ)
+            exp.mode<-c("+","Na")
+            Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
+        } else if (length(which(round(mz.diff,0) == elements["H.n",1] ))> 0){
+            deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["H.n",2], ppmMZ)
+            exp.mode<-c("-", "")
+            Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
+        } else if (length(which(round(mz.diff,0) == elements["Cl",1] ))> 0){
+            deviate<-ppmDev(object@specinfo[i, "AccMZ"]+elements["Cl",2], ppmMZ)
+            exp.mode<-c("-", "Cl")
+            Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
+        } ## index the DB by accurate mass
+        met<-met.xml[Index,]
+        CE<-object@specinfo[i,"CollisionEnergy"]
+        if(dim(met)[1] ==0){ ## If it doesn't exist go on.
+            next
+        }
 
-	uni.met<-unique(met[,"name"]) ## This comes out as a factor, clean it?
-	for (j in 1:length(uni.met)){
-	    cat(" ", object@specinfo[i,"preMZ"])
-	    nameIndex<- which(met[,"name"] == uni.met[j])
-	    IonIndex<-which(met[, "mode"] == exp.mode[1] & met[, "adduct"] == exp.mode[2])
-            if(length(IonIndex) == 0) {
-              IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
-            }
-            if (any(CEref == CE)){ ## Do we have the same collision energy ?
-                CeIndex<-which(met[,"collisionEnergy"] == CE)
-            }else{
-                greaterThan<-which(CEref > CE)[1]
-                LessThan<-which(CEref < CE)
-                LessThan<-LessThan[length(LessThan)]
-                if((CE-CEref[LessThan]) > (CEref[greaterThan] -CE)){
-                    CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
-                }else if ((CE-CEref[LessThan]) < (CEref[greaterThan] -CE)) {
-                    CeIndex<-which(met[,"collisionEnergy"] == CEref[LessThan])
+        uni.met<-unique(met[,"name"]) ## This comes out as a factor, clean it?
+        for (j in 1:length(uni.met)){
+            cat(" ", object@specinfo[i,"preMZ"])
+            nameIndex<- which(met[,"name"] == uni.met[j])
+            IonIndex<-which(met[, "mode"] == exp.mode[1] & met[, "adduct"] == exp.mode[2])
+                if(length(IonIndex) == 0) {
+                  IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
+                }
+                if (any(CEref == CE)){ ## Do we have the same collision energy ?
+                    CeIndex<-which(met[,"collisionEnergy"] == CE)
                 }else{
-                    CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
+                    greaterThan<-which(CEref > CE)[1]
+                    LessThan<-which(CEref < CE)
+                    LessThan<-LessThan[length(LessThan)]
+                    if((CE-CEref[LessThan]) > (CEref[greaterThan] -CE)){
+                        CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
+                    }else if ((CE-CEref[LessThan]) < (CEref[greaterThan] -CE)) {
+                        CeIndex<-which(met[,"collisionEnergy"] == CEref[LessThan])
+                    }else{
+                        CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
+                    }
+                }
+                SpecIndex<-overlap(nameIndex, IonIndex, CeIndex)
+                object@MS2spec[[i]][, "mz"]<-as.matrix(object@MS2spec[[i]][, "mz"])
+            if(dim(met[SpecIndex,])[1] == 0){
+                ##This should only happen when we pick up a molecule that doesn't
+                ## corrospond to the picked up ionisation or adduct that we think it is
+                next ## so jump ahead
+            }else if(met[SpecIndex,"frag.MZ"][1] == 0 ){ ##only used if MS1 matching as well
+                if (j ==1 ){
+                    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1])
+                    name<-met[SpecIndex, "name"][1]
+                    mode<-met[SpecIndex, "mode"][1]
+                    adduct<-met[SpecIndex, "adduct"][1]
+                }else{
+                    dist<-rbind(dist, c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1]))
+                    name<-c(name, met[SpecIndex, "name"][1])
+                    mode<-c(mode, met[SpecIndex, "mode"][1])
+                    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
+                }
+            } else {## Just MS/MS matching no MS^n yet!!
+                if(dim(as.matrix(object@MS2spec[[i]]))[1] == 0 ){
+                    next
+                }
+                if(j ==1){ ## if it doesn't exist make it
+                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ...)
+                    if(length(file)){
+                        eicdir<-paste(file, "_spectra", sep="")
+                        if(!file.exists(eicdir)){
+                            dir.create(eicdir)
+                        }
+                        if(capabilities("png")){
+                            png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
+                        } else{
+                            pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
+                        }
+                    }
+                    plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"])
+                    if(length(file)){
+                        dev.off()
+                    }
+
+                    #score<-dnorm(score, prob[[2]], prob[[1]])
+                    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]))
+
+                    name<-met[SpecIndex, "name"][1]
+                    mode<-met[SpecIndex, "mode"][1]
+                    adduct<-met[SpecIndex, "adduct"][1]
+                }else{ ## when it does exist add to it (has to be a better way?!?!)
+                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ...)
+
+                    if(length(file)){
+                        eicdir<-paste(file, "_spectra", sep="")
+                        if(!file.exists(eicdir)){
+                            dir.create(eicdir)
+                        }
+                        if(capabilities("png")){
+                            png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
+                        } else{
+                            pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
+                        }
+                    }
+                    plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"])
+                    if(length(file)){
+                        dev.off()
+                    }
+                    #score<-dnorm(score, prob[[2]], prob[[1]])
+                    dist<-rbind(dist,c(i, j, object@specinfo[i, "AccMZ"], object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]) ) )
+                    name<-c(name, met[SpecIndex, "name"][1])
+                    mode<-c(mode, met[SpecIndex, "mode"][1])
+                    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
                 }
             }
-            SpecIndex<-overlap(nameIndex, IonIndex, CeIndex)
-            object@MS2spec[[i]][, "mz"]<-as.matrix(object@MS2spec[[i]][, "mz"])
-	    if(dim(met[SpecIndex,])[1] == 0){
-		##This should only happen when we pick up a molecule that doesn't
-		## corrospond to the picked up ionisation or adduct that we think it is
-		next ## so jump ahead
-	    }else if(met[SpecIndex,"frag.MZ"][1] == 0 ){ ##only used if MS1 matching as well
-		if (j ==1 ){
-		    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1])
-		    name<-met[SpecIndex, "name"][1]
-		    mode<-met[SpecIndex, "mode"][1]
-		    adduct<-met[SpecIndex, "adduct"][1]
-		}else{
-		    dist<-rbind(dist, c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1]))
-		    name<-c(name, met[SpecIndex, "name"][1])
-		    mode<-c(mode, met[SpecIndex, "mode"][1])
-		    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
-		}
-	    } else { ## Just MS/MS matching no MS^n yet!!
-	        if(dim(as.matrix(object@MS2spec[[i]]))[1] == 0 ){
-		    next
-		}
-		if(j ==1){ ## if it doesn't exist make it
-		    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ppmval=ppmfrag)
-		    if(length(file)){
-			eicdir<-paste(file, "_spectra", sep="")
-			if(!file.exists(eicdir)){
-			    dir.create(eicdir)
-			}
-			if(capabilities("png")){
-			    png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
-			} else{
-			    pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
-			}
-		    }
-		    plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"], ... )
-		    if(length(file)){
-			dev.off()
-		    }
-
-		    #score<-dnorm(score, prob[[2]], prob[[1]])
-		    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]))
-
-		    name<-met[SpecIndex, "name"][1]
-		    mode<-met[SpecIndex, "mode"][1]
-		    adduct<-met[SpecIndex, "adduct"][1]
-		}else{ ## when it does exist add to it (has to be a better way?!?!)
-		    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ppmval=ppmfrag)
-
-		    if(length(file)){
-			eicdir<-paste(file, "_spectra", sep="")
-			if(!file.exists(eicdir)){
-			    dir.create(eicdir)
-			}
-			if(capabilities("png")){
-			    png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
-			} else{
-			    pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
-			}
-		    }
-		    plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"], ... )
-		    if(length(file)){
-			dev.off()
-		    }
-		    #score<-dnorm(score, prob[[2]], prob[[1]])
-		    dist<-rbind(dist,c(i, j, object@specinfo[i, "AccMZ"], object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]) ) )
-		    name<-c(name, met[SpecIndex, "name"][1])
-		    mode<-c(mode, met[SpecIndex, "mode"][1])
-		    adduct<-c(adduct, met[SpecIndex, "adduct"][1])
-		}
-	    }
-	}
-	if(check == FALSE) {
-	    all.dist<-dist
-	    all.name<-name
-	    all.mode<-mode
-	    all.adduct<-adduct
-	    check <-TRUE
-	} else{
-	    all.dist<-rbind(all.dist, dist)
-	    all.name<-c(all.name, name)
-	    all.mode<-c(all.mode, mode)
-	    all.adduct<-c(all.adduct, adduct)
-	}
+        }
+        if(check == FALSE) {
+            all.dist<-dist
+            all.name<-name
+            all.mode<-mode
+            all.adduct<-adduct
+            check <-TRUE
+        } else{
+            all.dist<-rbind(all.dist, dist)
+            all.name<-c(all.name, name)
+            all.mode<-c(all.mode, mode)
+            all.adduct<-c(all.adduct, adduct)
+        }
     }
 
     if (check == FALSE) {
-	cat("\nNothing match the masses in metlin, try a larger ppm range. \n")
+        cat("\nNothing match the masses in metlin, try a larger ppm range. \n")
     }else{
-	dist.df<-data.frame(all.dist, all.name, all.mode, all.adduct, stringsAsFactors=FALSE, row.names=1:length(all.name))
-	colnames(dist.df)<-c("A", "B", "Precursor Ion", "rtmin", "rtmax", "CollisionEnergy experiment", "CollisionEnergy Reference", "Percentage Match", "Metlin Mass", "# matching", "# non-matching", "Total # Ref ion", "Metlin ID Name",  "Ionization", "Adduct")
-	#rownames(dist.df)<-rep("", dim(dist.df)[1])
-	cat("\nDone", "\n")
+        dist.df<-data.frame(all.dist, all.name, all.mode, all.adduct, stringsAsFactors=FALSE, row.names=1:length(all.name))
+        colnames(dist.df)<-c("A", "B", "Precursor Ion", "rtmin", "rtmax", "CollisionEnergy experiment", "CollisionEnergy Reference", "Percentage Match", "Metlin Mass", "# matching", "# non-matching", "Total # Ref ion", "Metlin ID Name",  "Ionization", "Adduct")
+        #rownames(dist.df)<-rep("", dim(dist.df)[1])
+        cat("\nDone", "\n")
 
-	file.tsv<-paste(file, ".tsv", sep="")
-	write.table(dist.df, file=file.tsv, sep="\t", row.names=FALSE)
-	invisible(dist.df)
+        file.tsv<-paste(file, ".tsv", sep="")
+        write.table(dist.df, file=file.tsv, sep="\t", row.names=FALSE)
+        invisible(dist.df)
     }
 })
 
@@ -717,11 +717,11 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
 if (!isGeneric("simSearch") )
   setGeneric("simSearch", function(object,ppmfrag=20, percent=50, file, fullReport=FALSE, ...) standardGeneric("simSearch"))
 
-setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE, ...) {
+setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE , ...) {
     metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
     spectra<-metlinToList(metlinfile)
     cat("Data converted\nProcessing data...\n")
-    check=FALSE
+    check<-FALSE
     for(i in 1:length(object@MS2spec)){
         if(!is.matrix(object@MS2spec[[i]])) {
             next ## go on if not neutral loss capible
@@ -741,8 +741,8 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
                 next
             }
             neutralMet<-sort(abs(diff(sort(spectra[[j]][,"frag.MZ"])) ))##make neutral losses
-            NeutScore<-score_fun(neutralMet, neutralExp, ppmfrag)
-            FragScore<-score_fun(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"], ppmfrag)
+            NeutScore<-score_fun(neutralMet, neutralExp, ...)
+            FragScore<-score_fun(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"], ...)
             if(NeutScore >= percent | FragScore >= percent){
             cat(paste(" .", sep=""))
                 if(length(neutralExp) > 1 ){
@@ -784,7 +784,11 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
         }
         FreqIndexNeut<-order(comNeutFreq[[2]])
         TotalCommonLoss<-comNeutFreq[[1]][FreqIndexNeut][1:5]
-        comFragFreq<-ms2Freq(as.numeric(result[index, "Common Fragment"]), ppmfrag)
+        if(any(as.numeric(result[index, "Common Fragment"]) >0)){
+            comFragFreq<-ms2Freq(as.numeric(result[index, "Common Fragment"]), ppmfrag)
+        } else {
+            comFragFreq<-list(rep(0,100, rep(0,100)))
+        }
         FreqIndexFrag<-order(comFragFreq[[2]])
         TotalCommonFrag<-comFragFreq[[1]][FreqIndexFrag][1:5]
 
@@ -804,7 +808,31 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     invisible(result)
 })
 
-score_fun<-function(ref, exp, ppmval){
+# score_fun<-function(ref, exp, method="distMatrix", ...) {
+# 
+#     method <- match.arg(method, c("distMatrix", "cor"), several.ok=FALSE)
+# #adding google source 
+#     if (is.na(method))
+#         stop("unknown method : ", method)
+#     method <- paste("score_fun", method, sep=".")
+#     invisible(do.call(method, list(ref, exp, ...)))
+# }
+# 
+# score_fun.cor<-function(ref, exp){
+#     if(length(ref) == length(exp)){
+#         score<-cor(ref,exp)
+#     }else if(length(ref) > length(exp)){
+#         diff<-length(ref) - length(exp)
+#         score<-cor(ref, c(rep(0,diff), exp))
+#     } else if(length(ref) < length(exp)){
+#         diff<-length(exp) - length(ref)
+#         score<-cor(c(rep(0,diff), ref), exp)
+#     }
+#     invisible(round(score,2))    
+# }
+
+# score_fun.distMatrix<-function(ref, exp, ppmval=20){
+score_fun<-function(ref, exp, ppmfrag=20){
     ref<-sort(ref)
     exp<-sort(exp)
 #    Sscore<-similar(ref, exp, ppm=ppmval)# / max(c(ref, exp))
@@ -812,12 +840,12 @@ score_fun<-function(ref, exp, ppmval){
     Sscore<-0
     for(i in 1:length(ref)){
       for(j in 1:length(exp)){
-        if(ppm(ref[i], exp[j]) < ppmval){
+        if(xcms:::ppm(ref[i], exp[j]) < ppmfrag){
           Sscore<-Sscore+1
         }
       }
     }
-    Dscore<-distance(ref, exp, ppm=ppmval)# / max(c(ref, exp)) ## get the scores for the spectra
+    Dscore<-distance(ref, exp, ppm=ppmfrag)# / max(c(ref, exp)) ## get the scores for the spectra
     lenR<-length(ref)
     lenE<-length(exp) ##find the lengths of the spectra
 
@@ -835,6 +863,10 @@ ms2Freq<-function(fragments, ppmError=10){
     ObservedFreq<-0
     for(i in 1:length(fragments)){
         for(j in 1:length(fragments)){
+#             cat(paste("FragJ", as.numeric(fragments[j]), "FragI", as.numeric(fragments[i]) , "\n", sep=""))
+            if(is.nan(ppm(fragments[j], fragments[i]))){
+                next
+            }
             if(ppm(fragments[j], fragments[i]) <= ppmError){
                 freq<-freq+1
             }
