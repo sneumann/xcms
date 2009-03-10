@@ -176,10 +176,8 @@ int half,mid;
 
 struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct scanBuf * scanbuf, const int scan, const int LastScan, struct mzROIStruct *mzval, struct mzLengthStruct *mzLength, struct pickOptionsStruct *pickOptions)
 {
-  int i,j,wasfound=FALSE;
-  double mzmean=0;
+  int i,wasfound=FALSE;
   double ddev = (pickOptions->dev *  fMass);
-  double ddiff = 0;
   int lpos = lower_bound( fMass - ddev,mzval,0,mzLength->mzval);
   int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);   
  
@@ -356,7 +354,7 @@ int i,p,del=0;
 }
 
 struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanindex,int nmz, int lastScan, struct scanBuf *scanbuf) {
-    int idx,idx1,idx2,i=0,N=0,cp=FALSE;
+    int idx,idx1,idx2,i=0,N=0;
     idx1 =  pscanindex[scan -1] +1;
      
     if (scanbuf->thisScan != NULL) 
@@ -474,7 +472,7 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
 
 SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan) {
   double *pmz, *pintensity,*p_res, massrangeFrom,massrangeTo;
-  int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
+  int i,*pscanindex,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
   SEXP res;
   pmz = REAL(mz);  
   nmz = GET_LENGTH(mz);
@@ -525,8 +523,8 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanran
 }
 
 SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP noise) {
-  double *pmz, *pintensity,*p_vmz,*p_vint, massrangeFrom,massrangeTo;
-  int i,*pscanindex, *p_scan, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, inoise;
+  double *pmz, *pintensity, massrangeFrom,massrangeTo;
+  int i,*pscanindex, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, inoise;
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
   int perc, lp = -1;
   SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vscmin,vscmax,vlength,vintensity;
