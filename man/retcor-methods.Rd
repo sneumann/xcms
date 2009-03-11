@@ -1,60 +1,51 @@
 \name{retcor-methods}
 \docType{methods}
-%\alias{retcor-methods}
+\alias{retcor-methods}
 \alias{retcor}
 \alias{retcor,xcmsSet-method}
-\title{Align retention times across samples}
+\title{Correct retention time from different samples}
 \description{
-  Use ``well behaved'' peak groups to calculate retention time
-  deviations for every time point of each sample. Use smoothed
-  deviations to align retention times.
+  To correct differences between retention times between different
+  samples, a number of of methods exist in XCMS. \code{retcor}
+  is the generic method.
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{retcor(object, missing = 1, extra = 1,
-               method = c("loess", "linear"), span = .2,
-               family = c("gaussian", "symmetric"),
-               plottype = c("none", "deviation", "mdevden"),
-               col = NULL, ty = NULL)}
+  \code{
+    retcor(object, ...)
+  }
 }
 }}
 \arguments{
-  \item{object}{the \code{xcmsSet} object}
-  \item{missing}{
-    number of missing samples to allow in retention time correction
-    groups
-  }
-  \item{extra}{
-    number of extra peaks to allow in retention time correction
-    correction groups
-  }
-  \item{method}{
-    either \code{"loess"} for non-linear alignment or \code{"linear"}
-    for linear alignment
-  }
-  \item{span}{
-    degree of smoothing for local polynomial regression fitting
-  }
-  \item{family}{
-    if \code{gaussian} fitting is by least-squares with no outlier
-    removal, and if \code{symmetric} a re-descending M estimator
-    is used with Tukey's biweight function, allowing outlier removal
-  }
-  \item{plottype}{
-    if \code{deviation} plot retention time deviation points and
-    regression fit, and if \code{mdevden} also plot peak overall
-    peak density and retention time correction peak density
-  }
-  \item{col}{vector of colors for plotting each sample}
-  \item{ty}{vector of line and point types for plotting each sample}
+  \item{object}{\code{\link{xcmsSet-class}} object}
+  \item{method}{Method to use for retention time correction. See details.}
+  \item{...}{Optional arguments to be passed along}
 }
+\details{
+    Different algorithms can be used by specifying them with the
+  \code{method} argument. For example to use the approach described by
+  Smith et al (2006) one would use: \code{retcor(object,
+  method="loess")}. This is also the default.
+
+  Further arguments given by \code{...} are
+  passed through to the function implementing
+  the \code{method}. 
+  
+  A character vector of \emph{nicknames} for the 
+  algorithms available is returned by 
+  \code{getOption("BioC")$xcms$retcor.methods}.
+  If the nickname of a method is called "loess",
+  the help page for that specific method can
+  be accessed with \code{?retcor.loess}. 
+}
+
 \value{
-  An \code{xcmsSet} object
+  An \code{xcmsSet} object with corrected retntion times.
 }
 \seealso{
+  \code{\link{retcor.loess}}
+  \code{\link{retcor.obiwarp}}
   \code{\link{xcmsSet-class}},
-  \code{\link{loess}}
 }
 \keyword{methods}
-\keyword{file}
