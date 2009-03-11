@@ -1,3 +1,8 @@
+2009-03-01: 1.15.12
+xcmsSet: added dispatching function retcor(method="...")
+         moved retcor() to retcor.peakgroup()
+         added new retcor.obiwarp function
+
 2009-03-01: 1.15.11
 xcmsSet: added getScanWindow() and plotScanWindow() which provide 
          the same kind of graphics for direct-infusion spectra 

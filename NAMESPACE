@@ -84,6 +84,8 @@ exportMethods(
               "rawEIC",
               "rawMat",
               "retcor",
+              "retcor.peakgroups",
+              "retcor.obiwarp",
               "revMz",
               "rtrange",
               "sampclass",

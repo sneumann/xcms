@@ -688,8 +688,25 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
 
 setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
 
-setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
-                                        method = c("loess", "linear"), span = .2,
+setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$retcor.method,
+                                        ...) {
+
+    ## Backward compatibility for old "methods"
+    if (method == "linear" || method == "loess") {
+        return(invisible(do.call(retcor.peakgroups, alist(object, smooth=method, ...))))
+    }
+
+    method <- match.arg(method, getOption("BioC")$xcms$retcor.methods)
+    if (is.na(method))
+        stop("unknown method : ", method)
+    method <- paste("retcor", method, sep=".")
+
+    invisible(do.call(method, alist(object, ...)))
+})
+
+setGeneric("retcor.peakgroups", function(object, ...) standardGeneric("retcor.peakgroups"))
+setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 1,
+                                        smooth = c("loess", "linear"), span = .2,
                                         family = c("gaussian", "symmetric"),
                                         plottype = c("none", "deviation", "mdevden"),
                                         col = NULL, ty = NULL) {
@@ -702,7 +719,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     classlabel <- as.vector(unclass(sampclass(object)))
     n <- length(samples)
     corpeaks <- peakmat
-    method <- match.arg(method)
+    smooth <- match.arg(smooth)
     plottype <- match.arg(plottype)
     family <- match.arg(family)
     if (length(object@rt) == 2)
@@ -729,10 +746,10 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
-    if (method == "loess") {
+    if (smooth == "loess") {
         mingroups <- min(colSums(!is.na(rt)))
         if (mingroups < 4) {
-            method <- "linear"
+            smooth <- "linear"
             warning("Too few peak groups, reverting to linear method")
         } else if (mingroups*span < 4) {
             span <- 4/mingroups
@@ -750,7 +767,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
 
         pts <- na.omit(data.frame(rt = rt[,i], rtdev = rtdev[,i]))
 
-        if (method == "loess") {
+        if (smooth == "loess") {
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
 
             rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
@@ -781,7 +798,7 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     if (warn.overcorrect) {
         warning(paste("Fitted retention time deviation curves exceed points by more than 2x.",
                       "This is dangerous and the algorithm is probably overcorrecting your data.",
-                      "Consider increasing the span parameter or switching to the linear method.",
+                      "Consider increasing the span parameter or switching to the linear smoothing method.",
                       sep = "\n"))
     }
 
@@ -853,6 +870,235 @@ setMethod("retcor", "xcmsSet", function(object, missing = 1, extra = 1,
     groupidx(object) <- list()
     invisible(object)
 })
+
+setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
+setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation", "mdevden"),col = NULL, ty = NULL, profStep=1, r=NULL, g=NULL, cor = NULL, l=NULL, i_=0) {
+
+
+    peakmat <- peaks(object)
+    samples <- sampnames(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
+    n <- length(samples)
+    corpeaks <- peakmat
+    plottype <- match.arg(plottype)
+
+    if (length(object@rt) == 2) {
+        rtcor <- object@rt$corrected
+    } else {
+        ## STN: warum nicht einfach
+        rtcor <- object@rt$raw
+        object@rt <- list(raw = rtcor, corrected = rtcor)
+##         fnames <- filepaths(object)
+##         rtcor <- vector("list", length(fnames))
+##         for (i in seq(along = fnames)) {
+##             cdf <- netCDFOpen(fnames[i])
+##             rtcor[[i]] <- netCDFVarDouble(cdf, "scan_acquisition_time")
+##             netCDFClose(cdf)
+##         }
+##         object@rt <- list(raw = rtcor, corrected = rtcor)
+    }
+    rtimecor <- vector("list",n)
+    rtdevsmo <- vector("list", n)
+
+    if(!is.null(r)) {
+        r <- c("-r",r)
+    }
+    if(!is.null(cor)) {
+        cor <- c("-s",cor)
+    }
+    if(!is.null(l)){
+        l <- "-l"
+        i_ <- c("-i",i_)
+    }
+    if(!is.null(g)) {
+        g <- c("-g",g)
+    }
+
+    plength <- list()
+    for(i in 1:length(samples)){
+        plength[i] <-length(which(peakmat[,"sample"]==i))
+    }
+    maxsample <- which.max(plength)
+    idx <- which(seq(plength)!=maxsample)
+    cat("center sample: ",samples[maxsample], "\n")
+
+    for (s in idx) {
+        cat("processing sample: ",samples[s], "\n")
+
+        obj1 <- xcmsRaw(object@filepaths[maxsample], profmethod="bin", profstep=profStep)
+        obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
+
+        mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
+        mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
+
+        mz <- seq(mzmin,mzmax, by=profStep)
+        mz <- as.double(mz)
+        mzval <- length(mz)
+
+        scantime1 <- obj1@scantime
+        scantime2 <- obj2@scantime
+
+        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
+
+        rtup1 <- c(1:length(scantime1))
+        rtup2 <- c(1:length(scantime2))
+
+        mst1 <- which(diff(scantime1)>5*mstdiff)[1]
+        if(!is.na(mst1)) {
+            rtup1 <- which(rtup1<=mst1)
+            cat("Found gaps: cut scantime-vector at ", scantime1[mst1],"seconds", "\n")
+        }
+
+        mst2 <- which(diff(scantime2)>5*mstdiff)[1]
+        if(!is.na(mst2)) {
+            rtup2 <- which(rtup2<=mst2)
+            cat("Found gaps: cut scantime-vector at ", scantime2[mst2],"seconds", "\n")
+        }
+
+        scantime1 <- scantime1[rtup1]
+        scantime2 <- scantime2[rtup2]
+
+        rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
+                                scantime2[length(scantime2)])))
+        if(rtmaxdiff>(5*mstdiff)){
+            rtmax <- min(scantime1[length(scantime1)],
+                         scantime2[length(scantime2)])
+            rtup1 <- which(scantime1<=rtmax)
+            rtup2 <- which(scantime2<=rtmax)
+        }
+
+        scantime1 <- scantime1[rtup1]
+        scantime2 <- scantime2[rtup2]
+        valscantime1 <- length(scantime1)
+        valscantime2 <- length(scantime2)
+
+        if(length(obj1@scantime)>valscantime1) {
+            obj1@env$profile <- obj1@env$profile[,-c((valscantime1+1):length(obj1@scantime))]
+        }
+        if(length(obj2@scantime)>valscantime2) {
+            obj2@env$profile <- obj2@env$profile[,-c((valscantime2+1):length(obj2@scantime))]
+        }
+
+        if(mzmin < obj1@mzrange[1]) {
+            seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep))-1
+            x <- matrix(0, seqlen,dim(obj1@env$profile)[2])
+            obj1@env$profile <- rbind(x, obj1@env$profile)
+        }
+        if(mzmax > obj1@mzrange[2]){
+            seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep))-1
+            x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
+            obj1@env$profile <- rbind(obj1@env$profile, x)
+        }
+        if(mzmin < obj2@mzrange[1]){
+            seqlen <- length(seq(mzmin, obj2@mzrange[1], profStep))-1
+            x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
+            obj2@env$profile <- rbind(x, obj2@env$profile)
+        }
+        if(mzmax > obj2@mzrange[2]){
+            seqlen <- length(seq(obj2@mzrange[2], mzmax, profStep))-1
+            x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
+            obj2@env$profile <- rbind(obj2@env$profile, x)
+        }
+
+        intensity1 <- obj1@env$profile
+        intensity2 <- obj2@env$profile
+
+        rtimecor[[s]] <-.Call("R_set_from_xcms",
+                              valscantime1,scantime1,mzval,mz,intensity1,
+                              valscantime2,scantime2,mzval,mz,intensity2,
+                              c(" ",r,cor,g,l,i_))
+
+        if(length(obj2@scantime) > valscantime2) {
+            object@rt$corrected[[s]] <- c(rtimecor[[s]],
+                                          obj2@scantime[(max(rtup2)+1):length(obj2@scantime)])
+        } else {
+            object@rt$corrected[[s]] <- rtimecor[[s]]
+        }
+
+        rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
+
+        rm(obj1,obj2)
+        gc()
+    }
+
+    rtdevsmo[[maxsample]] <- round(rtcor[[maxsample]] - object@rt$corrected[[maxsample]], 2)
+
+    if (plottype == "mdevden") {
+        split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
+        screen(1)
+        par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
+    }
+
+    if (plottype %in% c("deviation", "mdevden")) {
+
+        ## Set up the colors and line type
+        if (missing(col)) {
+            col <- integer(n)
+            for (i in 1:max(classlabel))
+                col[classlabel == i] <- 1:sum(classlabel == i)
+        }
+        if (missing(ty)) {
+            ty <- integer(n)
+            for (i in 1:max(col))
+                ty[col == i] <- 1:sum(col == i)
+        }
+        if (length(palette()) < max(col))
+            mypal <- rainbow(max(col), end = 0.85)
+        else
+            mypal <- palette()[1:max(col)]
+
+        rtrange <- range(do.call("c", rtcor))
+        devrange <- range(do.call("c", rtdevsmo))
+
+        plot(0, 0, type="n", xlim = rtrange*1.4, ylim = devrange,
+             main = "Retention Time Deviation vs. Retention Time",
+             xlab = "Retention Time", ylab = "Retention Time Deviation")
+        legend(rtrange[2], devrange[2],
+               basename(samples), col = mypal[col],
+               lty = ty, pch = ceiling(1:n/length(mypal)), xjust = -0.01)
+
+        for (i in 1:n) {
+            points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
+        }
+    }
+
+    if (plottype == "mdevden") {
+        screen(2)
+        par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
+        allden$y <- allden$y / sum(allden$y)
+        corden$y <- corden$y / sum(corden$y)
+        maxden <- max(allden$y, corden$y)
+        plot(c(0,0), xlim = rtrange, ylim = c(0, maxden),
+             type = "n", main = "",
+             xlab = "Retention Time", ylab = "Peak Density")
+        points(allden, type = "l", col = 1)
+        points(corden, type = "l", col = 2)
+        abline(h = 0, col = "grey")
+
+        legend(rtrange[2], maxden, c("All", "Correction"),
+               col = 1:2, lty = c(1,1), xjust = 1)
+        close.screen(all = TRUE)
+    }
+
+    for (i in 1:n) {
+        cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]])/2, rtcor[[i]] - rtdevsmo[[i]])
+        rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
+
+        sidx <- which(corpeaks[,"sample"] == i)
+        corpeaks[sidx, c("rt", "rtmin", "rtmax")] <- cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
+    }
+
+    peaks(object) <- corpeaks
+    groups(object) <- matrix(nrow = 0, ncol = 0)
+    groupidx(object) <- list()
+    invisible(object)
+
+})
+
 
 setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
@@ -1351,7 +1597,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                     xcmsBoxPlot(values[seq(length = eicmax),],
                                 sampclass(object), dirpath=boxdir, pic="png",  width=w, height=h)
                     png(file.path(eicdir, "%003d.png"), width = w, height = h)
-                }else{
+                } else {
                     xcmsBoxPlot(values[seq(length = eicmax),],
                                 sampclass(object), dirpath=boxdir, pic="pdf", width=w, height=h)
                     pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
