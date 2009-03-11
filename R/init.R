@@ -44,6 +44,14 @@
   ## default for the methods
   group.method <- "density"
 
+  ## all groupPeaks methods
+  start <- nchar("retcor.")
+  all.xcms <- ls(asNamespace(pkgname))
+  retcor.methods <-  substr(all.xcms[grep("retcor\\..*", all.xcms)], start+1, 100)
+
+  ## default for the methods
+  retcor.method <- "loess"
+
   ## all fillPeaks methods
   start <- nchar("fillPeaks.")
   all.xcms <- ls(asNamespace(pkgname))
@@ -54,6 +62,7 @@
 
   xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
                    group.method=group.method, group.methods=group.methods,
+                   retcor.method=retcor.method, retcor.methods=retcor.methods,
                    fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods)
 
   class(xcms.opt) <- "BioCPkg"
