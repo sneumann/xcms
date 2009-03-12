@@ -23,6 +23,6 @@ citEntry(entry="article",
    "Highly sensitive feature detection for high resolution LC/MS", 
    "BMC Bioinformatics, 9:504 (2008)"))
 
-citFooter(paste("Some functions (e.g. group.mzClust, findPeaks.MSW() use 3rd",
+citFooter(paste("Some functions (e.g. group.mzClust, findPeaks.MSW() or retcor.obiwarp() use 3rd",
                  "party algorithms, see manpages and related packages",
 	         "for respective citations."))

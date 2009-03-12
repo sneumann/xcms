@@ -7,6 +7,15 @@
 
 \description{
   Calculate retention time deviations for each sample.
+  It is based on the code at \url{http://obi-warp.sourceforge.net/}.
+  However, this function is able to align multiple samples, by a
+  center-star strategy. 
+  
+  For the original publication see
+
+      Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
+      Ordered Bijective Interpolated Warping John T. Prince and, Edward
+      M. Marcotte Analytical Chemistry 2006 78 (17), 6140-6152
 }
 
 \section{Methods}{
