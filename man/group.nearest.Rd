@@ -5,7 +5,14 @@
 \title{Group peaks from different samples together}
 \description{
  Group peaks together across samples by creating a master peak list and
- assigning corresponding peaks from all samples. 
+ assigning corresponding peaks from all samples. It is inspired by the
+ alignment algorithm of mzMine. For further details check
+ \url{http://mzmine.sourceforge.net/} and
+
+ Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for processing and
+ visualization of mass spectrometry based molecular profile
+ data. Bioinformatics (Oxford, England) 2006, 22:634?636.
+  
 }
 \section{Methods}{
 \describe{
