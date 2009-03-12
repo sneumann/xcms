@@ -632,8 +632,135 @@ setMethod("group.mzClust", "xcmsSet", function(object,
     object
 })
 
+setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
+
+setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
+                                               mzCheck=0.2, rtCheck=15) {
+
+    samples <- sampnames(object)
+    peakmat <- peaks(object)
+    plength <- list()
+    parameters <- list(mzVsRTBalance=mzVsRTbalance,
+                       mzcheck=mzCheck, rtcheck=rtCheck)
+
+    for(i in 1:length(samples)){
+        plength[i] <-length(which(peakmat[,"sample"]==i))
+    }
+
+    mplenv <- new.env(parent = .GlobalEnv)
+    mplenv$mplist <- matrix(0,0,length(samples))
+
+    mplenv$peakmat <- peakmat
+    assign("peakmat",peakmat,env=mplenv)
+
+    for(sample in 1:length(samples)) {
+        cat("sample:",basename(samples[sample])," ")
+        mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
+                                         isJoinedPeak=FALSE)
+
+        if(length(mplenv$peakIdxList$peakidx)==0) {
+            cat("Warning: No peaks in sample",s,"\n")
+        }
+
+        scoreList <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
+                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
+
+        ##time <- system.time(
+        for(currPeak in mplenv$peakIdxList$peakidx) {
+            for (mplRow in seq(mplenv$mplist[,1])) {
+                pvrScore <- patternVsRowScore(mplRow,currPeak,parameters,mplenv)
+                lsl <-length(scoreList[,1])
+
+                if(pvrScore<Inf) {
+                    scoreList[lsl+1,] <- data.frame(score=pvrScore,peak=currPeak,
+                                                    mpListRow=mplRow,
+                                                    isJoinedPeak=FALSE, isJoinedRow=FALSE)
+                }
+            }
+        }
+        ##) ## time
+        ##cat("patternvsRow: ",time," ")
+
+        ## Browse scores in order of descending goodness-of-fit
+
+        scoreList <- scoreList[order(scoreList$score),]
+        ##time2 <- system.time(
+        for (scoreIter in seq(scoreList$score)) {
+
+            iterPeak <-scoreList$peak[scoreIter]
+            iterRow <- scoreList$mpListRow[scoreIter]
+
+            ## Check if master list row is already assigned
+            ## with an isotope pattern (from this rawDataID)
+            if (scoreList$isJoinedRow[scoreIter]==TRUE) {
+                next
+            }
+
+            ## Check if isotope pattern is already assigned
+            ## to some master isotope list row
+            if (scoreList$isJoinedPeak[scoreIter]==TRUE) {
+                next
+            }
+
+            ## Check if score good enough
+            ## Assign isotope pattern to master peak list row
+            mplenv$mplist[iterRow,sample] <- iterPeak
+
+            ## Mark pattern and isotope pattern row as joined
+            setTrue <- which(scoreList$mpListRow==iterRow)
+            scoreList[setTrue,]$isJoinedRow <- TRUE
+            setTrue <- which(scoreList$peak==iterPeak)
+            scoreList[setTrue,]$isJoinedPeak <- TRUE
+            mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
+
+        }
+        ##)
+        ##    cat("iterscorList: ",time2," ")
+        notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
+        ##time3 <- system.time(
+        for(notJoinedPeak in notJoinedPeaks) {
+            mplenv$mplist <- rbind(mplenv$mplist,matrix(0,1,dim(mplenv$mplist)[2]))
+            mplenv$mplist[length(mplenv$mplist[,1]),sample] <- notJoinedPeak
+        }
+        ##)
+        ##    cat("notJoinedPeaks: ", time3, " ")
+
+        ## Clear "Joined" information from all master isotope list rows
+        rm(peakIdxList,envir=mplenv)
+        gc()
+    }
+    invisible(mplenv$mplist)
+})
 
 
+patternVsRowScore <- function(masterPeakListRow, currPeak, parameters, mplenv)
+{
+
+    ## Check that charge is same, skiped
+
+    mplistMZ <- median(mplenv$peakmat[masterPeakListRow,"mz"])
+    mplistRT <- median(mplenv$peakmat[masterPeakListRow,"rt"])
+
+    ## Calculate differences between M/Z and RT values of isotope pattern and median of the row
+    ##cat(length(mplenv$peakmat[,"mz"]), " " , currPeak)
+
+    diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
+    diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
+    ##What type of RT tolerance is used?
+
+    rtTolerance=0
+    rtTolerance = parameters$rtcheck
+
+    ## Calculate score if differences within tolerances
+    if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
+        score = parameters$mzVsRTBalance * diffMZ + diffRT
+        ##goodEnough = true
+    } else {
+        score = Inf
+        ##goodEnough = FALSE
+    }
+    return(score)
+}
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
 

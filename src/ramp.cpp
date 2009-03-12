@@ -187,11 +187,12 @@ RAMPFILE *rampOpenFile(const char *filename) {
         result = NULL;
      } else {
         char buf[1024];
-		int bRecognizedFormat = 0;
-		int n_nonempty_lines = 0;
+	char *bufptr = NULL; // for ramp_fgets() results
+	int bRecognizedFormat = 0;
+	int n_nonempty_lines = 0;
         buf[sizeof(buf)-1] = 0;
         while (!ramp_feof(result)) {
-           ramp_fgets(buf,sizeof(buf)-1,result);
+           bufptr = ramp_fgets(buf,sizeof(buf)-1,result);
            if (strstr(buf,"<msRun")) {
               result->bIsMzData = 0;
 			  bRecognizedFormat = 1;
@@ -310,6 +311,7 @@ char *ramp_fgets(char *buf,int len,RAMPFILE *handle) {
 ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
 {
    int  i;
+   int nread_now;
    ramp_fileoffset_t  indexOffset, indexOffsetOffset;
    char indexOffsetTemp[SIZE_BUF+1], buf;
 #ifdef HAVE_PWIZ_MZML_LIB
@@ -357,7 +359,7 @@ ramp_fileoffset_t getIndexOffset(RAMPFILE *pFI)
       indexOffset = (atol(indexOffsetTemp));
    // now test this
    ramp_fseek(pFI, indexOffset, SEEK_SET);
-   ramp_fread(indexOffsetTemp, sizeof(indexOffsetTemp), pFI);
+   nread_now = ramp_fread(indexOffsetTemp, sizeof(indexOffsetTemp), pFI);
    indexOffsetTemp[sizeof(indexOffsetTemp)-1] = 0;
    if (!strstr(indexOffsetTemp,"<index")) {
       indexOffset = -1; // broken somehow
@@ -387,6 +389,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
    ramp_fileoffset_t *pScanIndex=NULL;
    int retryLoop;
    char* s;
+   char *bufptr = NULL; // for ramp_fgets() results
 #ifdef HAVE_PWIZ_MZML_LIB
    if (pFI->mzML) {
       // we're really building a table of scan numbers vs scan ids, not vs file offsets
@@ -534,7 +537,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
             int k;
             // HENRY -- also reads the "id" field, which is the scan num
             if ((beginOffsetId = (char *)(strstr(buf, "id=\""))) == NULL) {
-               ramp_fgets(buf, SIZE_BUF, pFI);
+               bufptr = ramp_fgets(buf, SIZE_BUF, pFI);
                continue;
             }
             beginOffsetId += 4;
@@ -570,7 +573,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
             
             // HENRY -- using merely the ">" as the beginning of the offset is somewhat scary, but I'm not changing it now.
             if ((beginScanOffset = (char *) (strstr(buf, ">"))) == NULL) {
-               ramp_fgets(buf, SIZE_BUF, pFI);
+               bufptr = ramp_fgets(buf, SIZE_BUF, pFI);
                continue;
             }
             beginScanOffset++;
@@ -610,7 +613,7 @@ ramp_fileoffset_t *readIndex(RAMPFILE *pFI,
                }
             }
   */          
-            ramp_fgets(buf, SIZE_BUF, pFI);
+            bufptr = ramp_fgets(buf, SIZE_BUF, pFI);
          }
          
          // HENRY -- We have no idea whether scan number 1, n/2 or n-1 is a missing scan or not. So we cannot just blindly test them.
@@ -849,6 +852,7 @@ void readHeader(RAMPFILE *pFI,
                 struct ScanHeaderStruct *scanHeader)
 {
    char stringBuf[SIZE_BUF+1];
+   char *bufptr = NULL; // for ramp_fgets() results
    char *pStr2;
 
    /*
@@ -1088,7 +1092,7 @@ void readHeader(RAMPFILE *pFI,
             */
             while (!(pStr = strchr(pStr, '>')))
             {      
-               ramp_fgets(stringBuf, SIZE_BUF, pFI);
+               bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
                pStr = stringBuf;
 
                if ((pStr2 = (char *) strstr(stringBuf, "precursorScanNum="))) 
@@ -1108,7 +1112,7 @@ void readHeader(RAMPFILE *pFI,
             */
             while (!(pStr = skipspace(pStr)))
             {
-               ramp_fgets(stringBuf, SIZE_BUF, pFI);
+               bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
                pStr = stringBuf;
             }
             
@@ -1164,6 +1168,7 @@ int readMsLevel(RAMPFILE *pFI,
 {
    int  msLevelLen;
    char stringBuf[SIZE_BUF+1];
+   char *bufptr = NULL; // for ramp_fgets() results
    char szLevel[12];
    char *beginMsLevel, *endMsLevel;
 
@@ -1182,11 +1187,11 @@ int readMsLevel(RAMPFILE *pFI,
 #endif
    ramp_fseek(pFI, lScanIndex, SEEK_SET);
 
-   ramp_fgets(stringBuf, SIZE_BUF, pFI);
+   bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
 
    while (!(beginMsLevel = (char *) strstr(stringBuf, "msLevel=")))
    {
-      ramp_fgets(stringBuf, SIZE_BUF, pFI);
+      bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
    }
 
    beginMsLevel += 9;           // We need to move the length of msLevel="
@@ -1540,6 +1545,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       ramp_fileoffset_t lScanIndex)
 {
    RAMPREAL *pPeaks = NULL;
+   int nread_now;
 #ifdef HAVE_PWIZ_MZML_LIB
    if (pFI->mzML) { // use pwiz lib to read mzML
 	   MZML_TRYBLOCK;
@@ -1578,6 +1584,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
 
    char buf[1000];
    buf[sizeof(buf)-1] = 0;
+   char *bufptr = NULL; // for ramp_fgets() results
 
    // HENRY - check invalid offset... is returning NULL here okay? I think it should be because
    // NULL is also returned later in this function when there is no peak found.
@@ -1660,7 +1667,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
             pData[peaksLen] = 0;
             partial = (int)strlen(pData);
             if (partial < peaksLen) {              
-               ramp_fread(pData+partial,(int)(peaksLen-partial), pFI);
+               nread_now = ramp_fread(pData+partial,(int)(peaksLen-partial), pFI);
             }
 
             // whitespace may be present in base64 char stream
@@ -1758,10 +1765,10 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       e_contentType contType = mzInt; // default to m/z-int
 
       // now determine peaks precision
-      ramp_fgets(buf, sizeof(buf)-1, pFI);
+      bufptr = ramp_fgets(buf, sizeof(buf)-1, pFI);
       while (!(pBeginData = (char *) strstr(buf, "<peaks")))
       {
-         ramp_fgets(buf, sizeof(buf)-1, pFI);
+         bufptr = ramp_fgets(buf, sizeof(buf)-1, pFI);
       }
       getIsLittleEndian(buf,&isLittleEndian);
 
@@ -1831,7 +1838,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
           }
           if( !(pBeginData = strstr( buf , ">" )))
           { // There is more to read
-              ramp_fgets(buf, sizeof(buf)-1 , pFI);
+              bufptr = ramp_fgets(buf, sizeof(buf)-1 , pFI);
               getIsLittleEndian(buf,&isLittleEndian);
           }
           else
@@ -1875,7 +1882,7 @@ RAMPREAL *readPeaks(RAMPFILE *pFI,
       strncpy(pData,pBeginData,peaksLen);
       partial = (int)strlen(pData);
       if (partial < peaksLen) {
-         ramp_fread(pData+partial,peaksLen-partial, pFI);
+         nread_now = ramp_fread(pData+partial,peaksLen-partial, pFI);
       }
       // whitespace may be present in base64 char stream
       while (pData[peaksLen-1]!='<') {
@@ -2028,12 +2035,13 @@ void readMSRun(RAMPFILE *pFI,
    }
 #endif
    char stringBuf[SIZE_BUF+1];
+   char *bufptr = NULL; // for ramp_fgets() results
    ramp_fseek(pFI, 0 , SEEK_SET); // rewind
-   ramp_fgets(stringBuf, SIZE_BUF, pFI);
+   bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
 
    while((!strstr( stringBuf , pFI->bIsMzData?"<mzData":"<msRun" )) && !ramp_feof(pFI))  /* this should not be needed if index offset points to correct location */
    {
-      ramp_fgets(stringBuf, SIZE_BUF, pFI);
+      bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
    }
    while(!ramp_feof(pFI))
    {
@@ -2053,7 +2061,7 @@ void readMSRun(RAMPFILE *pFI,
       if (NULL != (cp=strstr( stringBuf , pFI->bIsMzData?"<spectrumDesc":"<scan" ))) {
          break; /* we're into data territory now */
       } 
-      ramp_fgets(stringBuf, SIZE_BUF, pFI);
+      bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
    }
 
 }
@@ -2160,6 +2168,7 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
   char* result = NULL;
   int found[] = {0, 0, 0, 0, 0};
   char stringBuf[SIZE_BUF+1];
+  char *bufptr = NULL; // for ramp_fgets() results
    if ((output = (InstrumentStruct *) calloc(1,sizeof(InstrumentStruct))) == NULL)
    {
       printf("Cannot allocate memory\n");
@@ -2185,7 +2194,7 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
  
 
 
-   ramp_fgets(stringBuf, SIZE_BUF, pFI);
+   bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
 
    if (pFI->bIsMzData) {  // TODO
    } else {
@@ -2195,7 +2204,7 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
             !strstr(stringBuf, "<dataProcessing") && 
             !ramp_feof(pFI))  /* this should not be needed if index offset points to correct location */
       {
-         ramp_fgets(stringBuf, SIZE_BUF, pFI);
+         bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
       }
             
       while(! strstr(stringBuf, isAncient?"</instrument":"</msInstrument") &&  ! strstr(stringBuf, "</dataProcessing") && !ramp_feof(pFI))
@@ -2231,7 +2240,7 @@ InstrumentStruct* getInstrumentStruct(RAMPFILE *pFI)
           if(result != NULL && setTagValue(result, output->detector, INSTRUMENT_LENGTH, "value="))
 	      found[4] = 1;
         }
-        ramp_fgets(stringBuf, SIZE_BUF, pFI);
+        bufptr = ramp_fgets(stringBuf, SIZE_BUF, pFI);
 
       } // while
    }
