@@ -1,0 +1,35 @@
+CHANGED BEHAVIOUR since Version 1.14:
+
+* centWave may report a smaller set of peaks, because ...
+
+Other Changes since Version 1.14:
+
+* New method for grouping: an algorithm inspired by mzMine 
+  group(method="nearest") has been implemented. It is slower 
+  than group(method="density"). It can individually group 
+  close-eluting peaks of very similar mass
+
+* New method for retention time correction:
+  The retcor(method="obiwarp") algorithm operates on the raw data, 
+  and thus allows to correct runs without well-behaving 
+  peak groups, or without peak picking at all.
+
+* fillPeaks(method="MSW") is now also available 
+  for direct infusion spectra. The findPeaks(method="MSW")
+  now returns several intensities, and correctly reports 
+  mzmin and mzmax for peaks.
+
+* centWave now uses dynamic memory allocation, and these BUF
+  related errors should be a thing of the past. 
+
+* the fillPeaks() methods now remember which was 
+  an observed, and which was a "filled" peak. 
+
+* For direct infusion spectra diffreport() now shows 
+  the raw peak shapes, and also indicated "real" and "filled" peaks.
+
+* xcmsRaw can now filter for positive/negative spectra,
+  if the file includes both polarities. xcmsSet() can pass 
+  the polarity to contain positive/negative peaks only. 
+
+For more details please see the CHANGELOG in the source package.

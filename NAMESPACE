@@ -51,6 +51,7 @@ exportMethods(
               "group",
               "group.density",
               "group.mzClust",
+              "group.nearest",
               "groupidx",
               "groupidx<-",
               "groupnames",
