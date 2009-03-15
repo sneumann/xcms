@@ -808,31 +808,31 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
     invisible(result)
 })
 
-# score_fun<-function(ref, exp, method="distMatrix", ...) {
-# 
-#     method <- match.arg(method, c("distMatrix", "cor"), several.ok=FALSE)
-# #adding google source 
-#     if (is.na(method))
-#         stop("unknown method : ", method)
-#     method <- paste("score_fun", method, sep=".")
-#     invisible(do.call(method, list(ref, exp, ...)))
-# }
-# 
-# score_fun.cor<-function(ref, exp){
-#     if(length(ref) == length(exp)){
-#         score<-cor(ref,exp)
-#     }else if(length(ref) > length(exp)){
-#         diff<-length(ref) - length(exp)
-#         score<-cor(ref, c(rep(0,diff), exp))
-#     } else if(length(ref) < length(exp)){
-#         diff<-length(exp) - length(ref)
-#         score<-cor(c(rep(0,diff), ref), exp)
-#     }
-#     invisible(round(score,2))    
-# }
+score_fun<-function(ref, exp, method="distMatrix", ...) {
 
-# score_fun.distMatrix<-function(ref, exp, ppmval=20){
-score_fun<-function(ref, exp, ppmfrag=20){
+    method <- match.arg(method, c("distMatrix", "cor"), several.ok=FALSE)
+#adding google source 
+    if (is.na(method))
+        stop("unknown method : ", method)
+    method <- paste("score_fun", method, sep=".")
+    invisible(do.call(method, list(ref, exp, ...)))
+}
+
+score_fun.cor<-function(ref, exp){
+    if(length(ref) == length(exp)){
+        score<-cor(ref,exp)
+    }else if(length(ref) > length(exp)){
+        diff<-length(ref) - length(exp)
+        score<-cor(ref, c(rep(0,diff), exp))
+    } else if(length(ref) < length(exp)){
+        diff<-length(exp) - length(ref)
+        score<-cor(c(rep(0,diff), ref), exp)
+    }
+    invisible(round(score,2))    
+}
+
+score_fun.distMatrix<-function(ref, exp, ppmfrag=20){
+#score_fun<-function(ref, exp, ppmfrag=20){
     ref<-sort(ref)
     exp<-sort(exp)
 #    Sscore<-similar(ref, exp, ppm=ppmval)# / max(c(ref, exp))
