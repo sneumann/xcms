@@ -1,6 +1,8 @@
 2009-03-12: 1.15.13
 xcmsSet: added a new group() method="nearest", 
 	 similar to the algorithm used by mzMine
+	 added citations
+	 Added group.nearest() and cleanup of src/ramp.cpp for gcc-4.3
 
 2009-03-10: 1.15.12
 xcmsSet: added dispatching function retcor(method="...")
