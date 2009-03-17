@@ -1,3 +1,7 @@
+2009-03-17: 1.15.x
+xcmsSet: using RANN package for group(method="nearest")
+         for major speed improvements
+
 2009-03-12: 1.15.13
 xcmsSet: added a new group() method="nearest", 
 	 similar to the algorithm used by mzMine

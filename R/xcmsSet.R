@@ -635,131 +635,134 @@ setMethod("group.mzClust", "xcmsSet", function(object,
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
 
 setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
-                                               mzCheck=0.2, rtCheck=15) {
+                                               mzCheck=0.2, rtCheck=15, kNN=10) {
+
+    ## If ANN is available ...
+    RANN = "RANN"
+    if (!require(RANN)) {
+        stop("RANN is not installed")
+    }
 
     samples <- sampnames(object)
     peakmat <- peaks(object)
     plength <- list()
-    parameters <- list(mzVsRTBalance=mzVsRTbalance,
-                       mzcheck=mzCheck, rtcheck=rtCheck)
+    parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
 
     for(i in 1:length(samples)){
-        plength[i] <-length(which(peakmat[,"sample"]==i))
+        plength <- table(peaks(faahko)[,"sample"])
     }
 
     mplenv <- new.env(parent = .GlobalEnv)
-    mplenv$mplist <- matrix(0,0,length(samples))
-
+    peakmat1 <- which(peakmat[,"sample"]==1)
+    mplenv$mplist <- matrix(0,length(peakmat1),length(samples))
+    mplenv$mplist[,1] <- which(peakmat[,"sample"]==1)
+    mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]==1),c("mz","rt")])
     mplenv$peakmat <- peakmat
     assign("peakmat",peakmat,env=mplenv)
 
-    for(sample in 1:length(samples)) {
+    cat("sample:",basename(samples[1])," ")
+
+    for(sample in 2:length(samples)) {
+        for(mml in seq(mplenv$mplist[,1])){
+            mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
+            mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
+        }
+
         cat("sample:",basename(samples[sample])," ")
         mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
                                          isJoinedPeak=FALSE)
-
-        if(length(mplenv$peakIdxList$peakidx)==0) {
+        if(length(mplenv$peakIdxList$peakidx)==0){
             cat("Warning: No peaks in sample",s,"\n")
         }
-
-        scoreList <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
+        scoreList <- data.frame(score=numeric(0),peak=integer(0),
+                                mpListRow=integer(0),
                                 isJoinedPeak=logical(0), isJoinedRow=logical(0))
 
-        ##time <- system.time(
-        for(currPeak in mplenv$peakIdxList$peakidx) {
-            for (mplRow in seq(mplenv$mplist[,1])) {
-                pvrScore <- patternVsRowScore(mplRow,currPeak,parameters,mplenv)
-                lsl <-length(scoreList[,1])
-
-                if(pvrScore<Inf) {
-                    scoreList[lsl+1,] <- data.frame(score=pvrScore,peak=currPeak,
-                                                    mpListRow=mplRow,
-                                                    isJoinedPeak=FALSE, isJoinedRow=FALSE)
-                }
-            }
+        for(currPeak in mplenv$peakIdxList$peakidx){
+            pvrScore <- patternVsRowScore(currPeak,parameters,mplenv)
+            scoreList <- rbind(scoreList,pvrScore)
         }
-        ##) ## time
-        ##cat("patternvsRow: ",time," ")
+
 
         ## Browse scores in order of descending goodness-of-fit
+        scoreListcurr <- scoreList[order(scoreList$score),]
+        for (scoreIter in seq(scoreListcurr$score)) {
 
-        scoreList <- scoreList[order(scoreList$score),]
-        ##time2 <- system.time(
-        for (scoreIter in seq(scoreList$score)) {
+            iterPeak <-scoreListcurr$peak[scoreIter]
+            iterRow <- scoreListcurr$mpListRow[scoreIter]
 
-            iterPeak <-scoreList$peak[scoreIter]
-            iterRow <- scoreList$mpListRow[scoreIter]
-
-            ## Check if master list row is already assigned
-            ## with an isotope pattern (from this rawDataID)
-            if (scoreList$isJoinedRow[scoreIter]==TRUE) {
+            ## Check if master list row is already assigned with peak
+            if (scoreListcurr$isJoinedRow[scoreIter]==TRUE) {
                 next
             }
 
-            ## Check if isotope pattern is already assigned
-            ## to some master isotope list row
-            if (scoreList$isJoinedPeak[scoreIter]==TRUE) {
-                next
-            }
+            ## Check if peak is already assigned to some master list row
+            if (scoreListcurr$isJoinedPeak[scoreIter]==TRUE) { next }
 
-            ## Check if score good enough
-            ## Assign isotope pattern to master peak list row
+            ##  Check if score good enough
+            ## Assign peak to master peak list row
             mplenv$mplist[iterRow,sample] <- iterPeak
 
-            ## Mark pattern and isotope pattern row as joined
-            setTrue <- which(scoreList$mpListRow==iterRow)
-            scoreList[setTrue,]$isJoinedRow <- TRUE
-            setTrue <- which(scoreList$peak==iterPeak)
-            scoreList[setTrue,]$isJoinedPeak <- TRUE
+            ## Mark peak as joined
+            setTrue <- which(scoreListcurr$mpListRow==iterRow)
+            scoreListcurr[setTrue,]$isJoinedRow <- TRUE
+            setTrue <- which(scoreListcurr$peak==iterPeak)
+            scoreListcurr[setTrue,]$isJoinedPeak <- TRUE
             mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
-
         }
-        ##)
-        ##    cat("iterscorList: ",time2," ")
+
         notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
-        ##time3 <- system.time(
         for(notJoinedPeak in notJoinedPeaks) {
             mplenv$mplist <- rbind(mplenv$mplist,matrix(0,1,dim(mplenv$mplist)[2]))
             mplenv$mplist[length(mplenv$mplist[,1]),sample] <- notJoinedPeak
         }
-        ##)
-        ##    cat("notJoinedPeaks: ", time3, " ")
 
-        ## Clear "Joined" information from all master isotope list rows
+        ## Clear "Joined" information from all master peaklist rows
         rm(peakIdxList,envir=mplenv)
-        gc()
     }
+    gc()
+
     invisible(mplenv$mplist)
 })
 
 
-patternVsRowScore <- function(masterPeakListRow, currPeak, parameters, mplenv)
+patternVsRowScore <- function(currPeak, parameters, mplenv)
 {
+    mplistmeanCurr <- mplenv$mplistmean[,c("mz","rt")]
+    mplistmeanCurr[,"mz"] <- mplistmeanCurr[,"mz"] * parameters$mzVsRTBalance
+    peakmatCurr <- mplenv$peakmat[currPeak,c("mz","rt"),drop=FALSE]
+    peakmatCurr[,"mz"] <- peakmatCurr[,"mz"] * parameters$mzVsRTBalance
 
-    ## Check that charge is same, skiped
+    nnDist <- nn2(mplistmeanCurr,peakmatCurr[,c("mz","rt"),drop=FALSE],
+                  k=min(length(mplistmeanCurr[,1]),parameters$knn))
 
-    mplistMZ <- median(mplenv$peakmat[masterPeakListRow,"mz"])
-    mplistRT <- median(mplenv$peakmat[masterPeakListRow,"rt"])
+    scoreListcurr <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
+                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
 
-    ## Calculate differences between M/Z and RT values of isotope pattern and median of the row
-    ##cat(length(mplenv$peakmat[,"mz"]), " " , currPeak)
+    for(mplRow in 1:length(nnDist$nn.idx)){
+        mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
+        mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
 
-    diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
-    diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
-    ##What type of RT tolerance is used?
+        ## Calculate differences between M/Z and RT values of current peak and median of the row
 
-    rtTolerance=0
-    rtTolerance = parameters$rtcheck
+        diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
+        diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
+        ## What type of RT tolerance is used?
 
-    ## Calculate score if differences within tolerances
-    if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
-        score = parameters$mzVsRTBalance * diffMZ + diffRT
-        ##goodEnough = true
-    } else {
-        score = Inf
-        ##goodEnough = FALSE
+        rtTolerance=0
+        rtTolerance = parameters$rtcheck
+
+
+        ## Calculate if differences within tolerancdiffRT < rtTolerance)es
+        if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
+            scoreListcurr <- rbind(scoreListcurr,
+                                   data.frame(score=nnDist$nn.dists[mplRow],
+                                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+                                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
+            ## goodEnough = true
+            return(scoreListcurr)
+        }
     }
-    return(score)
 }
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
@@ -999,7 +1002,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 })
 
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
-setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation", "mdevden"),col = NULL, ty = NULL, profStep=1, r=NULL, g=NULL, cor = NULL, l=NULL, i_=0) {
+setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation", "mdevden"),
+                                                col = NULL, ty = NULL, profStep=1, r=NULL, g=NULL, cor = NULL, l=NULL, i_=0) {
 
 
     peakmat <- peaks(object)
@@ -1012,17 +1016,14 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     if (length(object@rt) == 2) {
         rtcor <- object@rt$corrected
     } else {
-        ## STN: warum nicht einfach
-        rtcor <- object@rt$raw
+        fnames <- filepaths(object)
+        rtcor <- vector("list", length(fnames))
+        for (i in seq(along = fnames)) {
+            cdf <- netCDFOpen(fnames[i])
+            rtcor[[i]] <- netCDFVarDouble(cdf, "scan_acquisition_time")
+            netCDFClose(cdf)
+        }
         object@rt <- list(raw = rtcor, corrected = rtcor)
-##         fnames <- filepaths(object)
-##         rtcor <- vector("list", length(fnames))
-##         for (i in seq(along = fnames)) {
-##             cdf <- netCDFOpen(fnames[i])
-##             rtcor[[i]] <- netCDFVarDouble(cdf, "scan_acquisition_time")
-##             netCDFClose(cdf)
-##         }
-##         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
     rtimecor <- vector("list",n)
     rtdevsmo <- vector("list", n)
