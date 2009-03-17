@@ -19,7 +19,7 @@
 
 
 /********************************************/
-char * VERSION = "0.9.2";
+//char * VERSION = "0.9.2";
 /********************************************/
 
 #define DEBUG (0)
@@ -48,7 +48,7 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
       strcpy(pargv[i], CHAR(STRING_ELT(argv, i))); 
       }
 //END XCMS****************************************
-    CmdParser opts(len, pargv, VERSION);
+    CmdParser opts(len, pargv, "0.9.2");
 
    
             outfile_is_stdout = 1;
