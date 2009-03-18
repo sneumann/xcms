@@ -1621,7 +1621,7 @@ setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided")
 
 setMethod("isCentroided", "xcmsRaw", function(object){
     if (length(getScan(object,length(object@scantime) / 2)) >2 ) {
-        quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.1
+        quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.025
     } else {
         TRUE
     }
