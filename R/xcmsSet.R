@@ -649,7 +649,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
 
     for(i in 1:length(samples)){
-        plength <- table(peaks(faahko)[,"sample"])
+        plength <- table(peaks(object)[,"sample"])
     }
 
     mplenv <- new.env(parent = .GlobalEnv)
