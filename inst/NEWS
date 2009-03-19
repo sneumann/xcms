@@ -1,6 +1,7 @@
 CHANGED BEHAVIOUR since Version 1.14:
 
-* centWave may report a smaller set of peaks, because ...
+* centWave may report a smaller set of peaks, due to a small bug
+  in the ROI algorithm some features with mass deviation > ppm were retained.
 
 Other Changes since Version 1.14:
 
@@ -19,8 +20,12 @@ Other Changes since Version 1.14:
   now returns several intensities, and correctly reports 
   mzmin and mzmax for peaks.
 
-* centWave now uses dynamic memory allocation, and these BUF
-  related errors should be a thing of the past. 
+* centWave now uses dynamic memory allocation, needs much less memory,
+  and these BUF related errors should be a thing of the past. 
+
+* centWave gains an optional argument "noise",
+  which is useful for data that was centroided without any intensity threshold,
+  centroids with intensity < "noise" are omitted from ROI detection
 
 * the fillPeaks() methods now remember which was 
   an observed, and which was a "filled" peak. 
