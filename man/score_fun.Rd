@@ -26,6 +26,6 @@ score_fun(ref, exp, method="distMatrix", ...)
 
 \references{
   H. Paul Benton, D.M. Wong, S.A.Strauger, G. Siuzdak "XC\eqn{MS^2}:"
-  Analytical Chemistry 2008 DOI:\url{http://pubs.acs.org/doi/abs/10.1021/ac800795f/}{10.1021/ac800795f}
+  Analytical Chemistry 2008 DOI:\url{http://pubs.acs.org/doi/abs/10.1021/ac800795f/}
 }
 \author{H. Paul Benton, \email{hpbenton@scripps.edu}}
