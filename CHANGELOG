@@ -1,12 +1,11 @@
-2009-03-17: 1.15.x
+2009-03-31: 1.15.13
 xcmsSet: using RANN package for group(method="nearest")
          for major speed improvements
-
-2009-03-12: 1.15.13
 xcmsSet: added a new group() method="nearest", 
 	 similar to the algorithm used by mzMine
 	 added citations
 	 Added group.nearest() and cleanup of src/ramp.cpp for gcc-4.3
+Fixed bug in findmzROI associated with empty scans
 
 2009-03-10: 1.15.12
 xcmsSet: added dispatching function retcor(method="...")
