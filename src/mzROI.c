@@ -213,7 +213,7 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct 
    
       lpos=-1;hpos=-1;
       int doInsert=FALSE;
-      if (scan < LastScan) {// check next scan
+      if ((scan < LastScan) && (scanbuf->nextScanLength > 0)) {// check next scan
         int lpos = lowerBound( fMass - ddev,scanbuf->nextScan,0,scanbuf->nextScanLength);
         int hpos = upperBound( fMass + ddev,scanbuf->nextScan,lpos,scanbuf->nextScanLength - lpos);
         if (lpos < scanbuf->nextScanLength) {
@@ -365,20 +365,26 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
              idx2 =  pscanindex[scan];
     
     N=idx2 - idx1 + 1;
-    scanbuf->thisScan= (struct scanStruct  *) calloc(N, sizeof(struct scanStruct));
-    // scanbuf->thisScan= (struct scanStruct  *) malloc(N * sizeof(struct scanStruct));
-    if (scanbuf->thisScan == NULL)
-        error("findmzROI/getScan: Memory could not be allocated !\n");
-        
-    scanbuf->thisScanLength=N;
-  
-    for (idx=idx1;idx <= idx2; idx++) 
+    if (N > 0) {
+        scanbuf->thisScan= (struct scanStruct  *) calloc(N, sizeof(struct scanStruct));
+        // scanbuf->thisScan= (struct scanStruct  *) malloc(N * sizeof(struct scanStruct));
+        if (scanbuf->thisScan == NULL)
+            error("findmzROI/getThisScan: Memory could not be allocated (%d * %d) !\n",N , sizeof(struct scanStruct));
+            
+        scanbuf->thisScanLength=N;
+      
+        for (idx=idx1;idx <= idx2; idx++) 
+        {
+          scanbuf->thisScan[i].mz       = pmz[idx-1];
+          scanbuf->thisScan[i].intensity = pintensity[idx-1];
+          i++;
+        }
+    } else
     {
-      scanbuf->thisScan[i].mz       = pmz[idx-1];
-      scanbuf->thisScan[i].intensity = pintensity[idx-1];
-      i++;
+        scanbuf->thisScan = NULL;
+        scanbuf->thisScanLength= 0;
     }
-  
+        
   //  also get  the m/z values of the following scan 
     if (scan < lastScan) {
         scan++;
@@ -392,15 +398,21 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
                 idx2 =  pscanindex[scan];
                 
         N=idx2 - idx1 + 1;
-        scanbuf->nextScan=  calloc(N, sizeof(double));  
-        if (scanbuf->nextScan == NULL)
-            error("findmzROI/getScan: Memory could not be allocated !\n");
-        scanbuf->nextScanLength=N;  
-        
-        for (idx=idx1;idx <= idx2; idx++) 
+        if (N > 0) {
+            scanbuf->nextScan=  calloc(N, sizeof(double));  
+            if (scanbuf->nextScan == NULL)
+                error("findmzROI/getNextScan: Memory could not be allocated (%d * %d) !\n",N , sizeof(struct scanStruct));
+            scanbuf->nextScanLength=N;  
+            
+            for (idx=idx1;idx <= idx2; idx++) 
+            {
+                scanbuf->nextScan[i]      = pmz[idx-1];
+                i++;
+            } 
+        } else
         {
-            scanbuf->nextScan[i]      = pmz[idx-1];
-            i++;
+            scanbuf->nextScan = NULL;
+            scanbuf->nextScanLength= 0;
         }
     }
   return(scanbuf);
@@ -605,8 +617,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
             mzval=insertpeak(fMass, fInten, scanbuf, ctScan, scanrangeTo, mzval, &mzLength, &pickOptions);
           
         }
-      mzROI=cleanup(ctScan,mzROI,mzval,&mzLength,&scerr,&pickOptions);
     }
+    mzROI=cleanup(ctScan,mzROI,mzval,&mzLength,&scerr,&pickOptions);
     R_FlushConsole();
   } //for ctScan
   
