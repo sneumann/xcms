@@ -7,5 +7,9 @@ XCMSOBJECTS=mzClust_hclust.o mzROI.o netCDF.o ramp_base64.o ramp.o rampR.o util.
 
 OBJECTS=$(OBIOBJECTS) $(XCMSOBJECTS)
 
+all: $(SHLIB)
+
+.PHONEY: clean
+
 clean:
 	rm -f $(OBJECTS)
