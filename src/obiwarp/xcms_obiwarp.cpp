@@ -39,7 +39,9 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     bool outfile = 0;
     bool outfile_is_stdout = 0;
 //XCMS********************************************
-    int len,i;
+    int len;
+    int i=0;
+
     len=length(argv);
     char*  pargv[len];
     PROTECT(argv = AS_CHARACTER(argv));
