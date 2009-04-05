@@ -301,7 +301,7 @@ wrt.write(silly, _scorepath);
    //printf("lmat2.tm()back[0]:%f\n",lmat2.tm()->back()[i]);}
 //XCMS****************************************
 PROTECT(corrected = allocVector(REALSXP, length(scantime2)));
-for(int i; i < length(scantime2);i++){
+for(int i=0; i < length(scantime2);i++){
    REAL(corrected)[i] = lmat2.tm()->back()[i];}
 UNPROTECT(2);
 //END XCMS************************************
