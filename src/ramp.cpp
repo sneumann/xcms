@@ -971,6 +971,11 @@ void readHeader(RAMPFILE *pFI,
             {
                scanHeader->precursorMZ = atof(pStr2);
             }
+	    // "m/z" is used by the compassXport mzData export
+            if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"m/z"))) 
+            {
+               scanHeader->precursorMZ = atof(pStr2);
+            }
             // bpratt for Steffen Neumann
             if (NULL!=(pStr2 = findMzDataTagValue(stringBuf,"Intensity")))
             {
