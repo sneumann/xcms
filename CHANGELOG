@@ -1,3 +1,10 @@
+2009-04-17: 1.15.15
+findPeaks.centWave: changed minPtsAboveBaseLine to max(4,minPeakWidth-2)
+Modified all target in Makevars to delete old object files to support usage on Mac OS X.
+Correctly parse Bruker MS2 precursor masses
+Add targets all: and .PHONEY: to Makevars, to both build and clean
+updated isCentroided() heuristic to work with Orbitrap/ReAdw
+
 2009-03-31: 1.15.13
 xcmsSet: using RANN package for group(method="nearest")
          for major speed improvements
