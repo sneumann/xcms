@@ -789,7 +789,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     minPeakWidth <-  scales[1];
     noiserange <- c(minPeakWidth*3, max(scales)*3);
     maxGaussOverlap <- 0.5;
-    minPtsAboveBaseLine <- max(5,minPeakWidth-2);
+    minPtsAboveBaseLine <- max(4,minPeakWidth-2);
     minCentroids <- minPtsAboveBaseLine ;
     scRangeTol <-  maxDescOutlier <- floor(minPeakWidth/2);
 
