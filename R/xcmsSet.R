@@ -722,7 +722,26 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     }
     gc()
 
-    invisible(mplenv$mplist)
+    groupmat <- matrix(0,nrow(mplenv$mplist), 7+length(levels(sampclass(object))))
+    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                            "npeaks", levels(sampclass(object)))
+    groupindex <- vector("list", nrow(mplenv$mplist))
+
+    for (i in 1:nrow(mplenv$mplist)) {
+        groupmat[i, "mzmed"] <- median(peakmat[mplenv$mplist[i,],"mz"])
+        groupmat[i, c("mzmin", "mzmax")] <- range(peakmat[mplenv$mplist[i,],"mz"])
+        groupmat[i, "rtmed"] <- median(peakmat[mplenv$mplist[i,],"rt"])
+        groupmat[i, c("rtmin", "rtmax")] <- range(peakmat[mplenv$mplist[i,],"rt"])
+
+        groupmat[i, "npeaks"] <- length(which(peakmat[mplenv$mplist[i,]]>0))
+
+        groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
+    }
+
+      groups(object) <- groupmat
+    groupidx(object) <- groupindex
+
+    invisible(object)
 })
 
 

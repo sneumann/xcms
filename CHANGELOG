@@ -1,3 +1,10 @@
+2009-04-21: 1.17.1
+Fixed return value of group(method="nearest")
+to be a proper (grouped) xcmsSet
+
+2009-04-20: 1.17.0
+Version bump for new devel branch
+
 2009-04-17: 1.15.15
 findPeaks.centWave: changed minPtsAboveBaseLine to max(4,minPeakWidth-2)
 Modified all target in Makevars to delete old object files to support usage on Mac OS X.
