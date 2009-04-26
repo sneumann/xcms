@@ -1,3 +1,7 @@
+2009-04-23: 1.17.2
+Reverted Mac Multiarch builds after BioC buildfarm changes
+Fixes in Obiwarp alignment
+
 2009-04-21: 1.17.1
 Fixed return value of group(method="nearest")
 to be a proper (grouped) xcmsSet
