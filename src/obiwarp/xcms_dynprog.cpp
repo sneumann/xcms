@@ -840,7 +840,7 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
     //fill the matrix with infinity
     for (int m = 0; m < s_mlen; ++m) {
       for (int n = 0; n < s_nlen; ++n) {
-       tmp(m,n) = 0;
+       tmp(m,n) = INFINITY;
         }
     }
 
@@ -849,9 +849,9 @@ int diff = s_mlen-s_nlen;
     if (diff <= 0){
       for (int m = 0; m < s_mlen; ++m) {
      //  for (int n = s_nlen-s_nlen/dfd-m-1+diff; n < s_nlen; ++n) {
-          for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m-diff; ++n) {
+          for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m-2*diff; ++n) {
           //  if(n>s_nlen-m+s_nlen/dfd||n<0||n>s_nlen) 
-	    if(n<0||n>s_nlen) 
+	    if(n<0||n>=s_nlen) 
             continue;
             
             //        sum(X * Y) -  
@@ -868,9 +868,9 @@ int diff = s_mlen-s_nlen;
     else
     for (int m = 0; m < s_mlen; ++m) {
        //for (int n = s_nlen-s_nlen/dfd-m-1; n < s_nlen; ++n) {
-         for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m+diff; ++n) {
+         for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m+2*diff; ++n) {
           //if(n>s_nlen-m+s_nlen/dfd+diff||n<0||n>s_nlen) 
-            if(n<0||n>s_nlen)     
+            if(n<0||n>=s_nlen)     
             continue;
             
             //        sum(X * Y) -  
@@ -1291,6 +1291,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize, float diag_
             }
         }
         else {  // maximize:
+
             for (int m = 1; m < length_m; ++m) {
                 float diag = (smat(m,0) * diag_factor) - init_penalty;  // drop in from left side
                 float top  = (smat(m,0) * gap_factor) + tmp_asmat(m - 1,0) - gap_penalty[(tmp_gapmat(m - 1,0))];
@@ -1402,4 +1403,3 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize, float diag_
     _tbpath.take(tmp_tbpath);
     _gapmat.take(tmp_gapmat);
 }
-
