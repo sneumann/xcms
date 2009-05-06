@@ -1,3 +1,6 @@
+2009-05-07: 1.17.3
+Fixed warnings in Obiwarp with cor_opt
+
 2009-04-23: 1.17.2
 Reverted Mac Multiarch builds after BioC buildfarm changes
 Fixes in Obiwarp alignment
