@@ -840,7 +840,7 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
     //fill the matrix with infinity
     for (int m = 0; m < s_mlen; ++m) {
       for (int n = 0; n < s_nlen; ++n) {
-       tmp(m,n) = INFINITY;
+	tmp(m,n) = 0;
         }
     }
 
