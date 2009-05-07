@@ -6,3 +6,8 @@ OBIOBJECTS=obiwarp/cmdparser.o obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.
 XCMSOBJECTS=mzClust_hclust.o mzROI.o netCDF.o ramp_base64.o ramp.o rampR.o util.o xcms.o
 
 OBJECTS=$(OBIOBJECTS) $(XCMSOBJECTS)
+
+all: $(SHLIB)
+
+clean:
+	rm -f $(OBJECTS)
