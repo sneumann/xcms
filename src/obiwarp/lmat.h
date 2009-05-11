@@ -26,9 +26,7 @@ class LMat {
         LMat();
         // Takes a binary lmat file as input
         LMat(const char *file);
-     //xcms
-       // LMat(int mz_vals, int tm_vals, double mat, double *mz, double tm);
-     //end xcms
+
         ~LMat();
         int mzlen() { return _mz_vals; }
         int tmlen() { return _tm_vals; }
@@ -44,20 +42,13 @@ class LMat {
         float lo_tm() { return (*_tm)[0]; }
         void mz_axis_vals(VecI &mzCoords, VecF &mzVals);
         void tm_axis_vals(VecI &tmCoords, VecF &tmVals);
-        void set_from_ascii(const char *file);
-        void set_from_binary(const char *file);
-        // Sets the matrix and gives m and n axis labels as the indices
-        void set_from_binary_mat(const char *file);
-        void set_from_ascii_mat(const char *file);
-   //xcms
-        void set_from_xcms(int valuescantime, double *pscantime, int mzrange, double *mz, double *intensity); 
+
+        void set_from_xcms(int valuescantime, double *pscantime, int mzrange, 
+			   double *mz, double *intensity); 
         void print_xcms();
-       // float back();
-   //xcms 
 
         // selfTimes and equivTimes are the anchor points for the warping
-        // function..
-        // warps the time values (not the actual data values)
+        // function..  warps the time values (not the actual data values)
         void warp_tm(VecF &selfTimes, VecF &equivTimes);
 
         // expects one line with the # mz vals and next with the vals

@@ -186,11 +186,7 @@ class VecI {
         // Removes the value at index and shortens the array by one
         // not shallow anymore regardless of previous state 
         void remove(int index);
-        
-        //VecI operator+(const VecI &A);
-        //void operator++();
-        //void operator--();
-        
+                
         // prints the vector (space delimited on one line without any length
         // header)
         void print(bool without_length=0);
@@ -452,9 +448,6 @@ class VecD {
         // not shallow anymore regardless of previous state 
         void remove(int index);
         
-        //VecD operator+(const VecD &A);
-        //void operator++();
-        //void operator--();
         
         // prints the vector (space delimited on one line without any length
         // header)
@@ -717,10 +710,6 @@ class VecF {
         // not shallow anymore regardless of previous state 
         void remove(int index);
         
-        //VecF operator+(const VecF &A);
-        //void operator++();
-        //void operator--();
-        
         // prints the vector (space delimited on one line without any length
         // header)
         void print(bool without_length=0);
@@ -730,10 +719,10 @@ class VecF {
         // prints the vector to the filehandle with the length written on the
         // line before, unless without_length == true
         void print(std::ostream &fout, bool without_length=0);
-//XCMS****************************************
+
         void print_tm();
         float* back(){ return _dat; }
-//END XCMS************************************
+
         // CLASS FUNCTIONS:
         static int pchst(float arg1, float arg2) {
             if      (arg1*arg2 > 0) { return  1; }
