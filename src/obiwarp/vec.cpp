@@ -14,8 +14,6 @@
 	#define max(a,b) ( ( (a) > (b) ) ? (a) : (b) )
 #endif
 
-//#define JTP_BOUNDS_CHECK
-//#define JTP_DEBUG
 
 namespace VEC {
 
@@ -172,11 +170,6 @@ void VecI::_copy(int *p1, const int *p2, int len) const {
     for (int i = 0; i < len; ++i) {
         p1[i] = p2[i];
     }
-    // Slightly slower
-//    int *end = p1 + len;
-//    while(p1 < end) {
-//        *p1++ = *p2++;
-//    }
 }
 
 VecI & VecI::operator=(const int &val) {
@@ -349,28 +342,6 @@ void VecI::square_root() {
     }
 }
 
-/*
-VecI VecI::operator+(const VecI &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        VecI blank;
-        return blank;
-    }
-
-    else {
-        VecI *C = new VecI(_n);
-        VecI tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-*/
-
 int VecI::sum() {
     int *me = (int*)(*this);
     int sum = 0;
@@ -448,18 +419,6 @@ double VecI::avg() const {
     }
     return total/_n;
 }
-
-//double VecI::prob_one_side_right(double x) {
-//    double _mean;
-//    double _sigma;
-//    // zScore:
-//    sample_stats( _mean, _sigma );
-//    //printf("mean: %f sigma: %f\n", _mean, _sigma);
-//
-//    // @TODO: THIS IS BROKEN until I can figure out how to calc the normalCDF
-//    // using public domain sources:
-//    //return _normalCDF(_mean, _sigma, x); 
-//}
 
 void VecI::sample_stats(double &mean, double &std_dev) {
     // Raw score method (below) is faster (~1.5X) than deviation score method
@@ -605,12 +564,6 @@ void VecI::print(std::ostream &fout, bool without_length) {
 // If length == 0 then prints message to STDERR and returns;
 void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
     int *tmp_derivs = new int[x.length()];
-    // if they aren't the right type then warn
-    
-    //if (typeid(T) != typeid(float) || typeid(T) != typeid(double)) 
-    //    printf("vec2 calling object must be of type float or double!\n");
-    //    exit(2);
-    // }
 
 #ifdef JTP_BOUNDS_CHECK
     if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
@@ -643,14 +596,6 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
             std::cerr << "trying to chim with 0 data points!\n";
         }
     }
-
-// THIS can be done BEFORE this routine if someone cares to...
-//    // Check monotonicity
-//    for (int i = 2; i < length; i++) {
-//        if (x[i] <= x[i-1]) { 
-//            return 2;
-//        }
-//    }
 
     h1 = x[1] - x[0];
     del1 = (y[1] - y[0]) / h1;
@@ -959,7 +904,7 @@ void VecI::chfe(VecI &xin, VecI &yin, VecI &xe, VecI &out_ye, int sorted) {
                 ifirst = ir - 1;
             }
             istart = i;
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
+
             chfev(xin[ifirst], yin[ifirst], derivs[ifirst], c2[ifirst], c3[ifirst], xe[j], out_ye[j]);
         }
     }
@@ -986,7 +931,7 @@ void VecI::chfe(VecI &xin, VecI &yin, VecI &xe, VecI &out_ye, int sorted) {
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
+
             chfev_all(xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j], out_ye[j]);
         }
     }
@@ -1023,7 +968,7 @@ void VecI::chfev_all(int X1, int X2, int F1, int F2, int D1, int D2, int XE, int
     C3 = (DEL1 + DEL2)/H;
 
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -1031,7 +976,7 @@ void VecI::chfev_all(int X1, int X2, int F1, int F2, int D1, int D2, int XE, int
 void VecI::chfev(int X1, int F1, int D1, int C2, int C3, int XE, int &FE) {
     int X;
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -1044,8 +989,6 @@ void VecI::chfe_xy(VecI &x, VecI &y, VecI &new_x, VecI &out_new_y, int sorted) {
 }
 
 double VecI::sum_sq_res_yeqx(VecI &x, VecI &y) {
-    //// PDL way
-    //return sum(0.5*(($y - $x)**2));
     double __sum = 0.0;
     for (int i = 0; i < x.length(); ++i) {
         int diff = x[i] - y[i];
@@ -1074,12 +1017,7 @@ void VecI::rsq_slope_intercept(VecI &x, VecI &y, double &rsq, double &slope, dou
     double sum_sq_res_xx = 0.0;
     double sum_sq_res_yy = 0.0;
     double sum_sq_res_xy = 0.0;
-//    double *sq_res_xx = new double[x.length()];
-//    double *sq_res_yy = new double[y.length()];
-//    double *sq_res_xy = new double[x.length()];
-    //VecD sq_res_xx(x.length());
-    //VecD sq_res_yy(x.length());
-    //VecD sq_res_xy(x.length());
+
     for (i = 0; i < x.length(); ++i) {
         double x_minus_mean_i, y_minus_mean_i;
         x_minus_mean_i = ( (double)(x[i]) ) - mean_x;
@@ -1091,9 +1029,6 @@ void VecI::rsq_slope_intercept(VecI &x, VecI &y, double &rsq, double &slope, dou
     slope = sum_sq_res_xy/sum_sq_res_xx;
     y_intercept = mean_y - (slope * mean_x); 
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
-//    delete[] sq_res_xx;
-//    delete[] sq_res_yy;
-//    delete[] sq_res_xy;
 }
 
 
@@ -1250,11 +1185,6 @@ void VecD::_copy(double *p1, const double *p2, int len) const {
     for (int i = 0; i < len; ++i) {
         p1[i] = p2[i];
     }
-    // Slightly slower
-//    double *end = p1 + len;
-//    while(p1 < end) {
-//        *p1++ = *p2++;
-//    }
 }
 
 VecD & VecD::operator=(const double &val) {
@@ -1427,27 +1357,6 @@ void VecD::square_root() {
     }
 }
 
-/*
-VecD VecD::operator+(const VecD &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        VecD blank;
-        return blank;
-    }
-
-    else {
-        VecD *C = new VecD(_n);
-        VecD tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-*/
 
 double VecD::sum() {
     double *me = (double*)(*this);
@@ -1526,18 +1435,6 @@ double VecD::avg() const {
     }
     return total/_n;
 }
-
-//double VecD::prob_one_side_right(double x) {
-//    double _mean;
-//    double _sigma;
-//    // zScore:
-//    sample_stats( _mean, _sigma );
-//    //printf("mean: %f sigma: %f\n", _mean, _sigma);
-//
-//    // @TODO: THIS IS BROKEN until I can figure out how to calc the normalCDF
-//    // using public domain sources:
-//    //return _normalCDF(_mean, _sigma, x); 
-//}
 
 void VecD::sample_stats(double &mean, double &std_dev) {
     // Raw score method (below) is faster (~1.5X) than deviation score method
@@ -1683,12 +1580,6 @@ void VecD::print(std::ostream &fout, bool without_length) {
 // If length == 0 then prints message to STDERR and returns;
 void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
     double *tmp_derivs = new double[x.length()];
-    // if they aren't the right type then warn
-    
-    //if (typeid(T) != typeid(float) || typeid(T) != typeid(double)) 
-    //    printf("vec2 calling object must be of type float or double!\n");
-    //    exit(2);
-    // }
 
 #ifdef JTP_BOUNDS_CHECK
     if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
@@ -1721,14 +1612,6 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
             std::cerr << "trying to chim with 0 data points!\n";
         }
     }
-
-// THIS can be done BEFORE this routine if someone cares to...
-//    // Check monotonicity
-//    for (int i = 2; i < length; i++) {
-//        if (x[i] <= x[i-1]) { 
-//            return 2;
-//        }
-//    }
 
     h1 = x[1] - x[0];
     del1 = (y[1] - y[0]) / h1;
@@ -2037,7 +1920,7 @@ void VecD::chfe(VecD &xin, VecD &yin, VecD &xe, VecD &out_ye, int sorted) {
                 ifirst = ir - 1;
             }
             istart = i;
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
+
             chfev(xin[ifirst], yin[ifirst], derivs[ifirst], c2[ifirst], c3[ifirst], xe[j], out_ye[j]);
         }
     }
@@ -2064,7 +1947,7 @@ void VecD::chfe(VecD &xin, VecD &yin, VecD &xe, VecD &out_ye, int sorted) {
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
+
             chfev_all(xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j], out_ye[j]);
         }
     }
@@ -2101,7 +1984,7 @@ void VecD::chfev_all(double X1, double X2, double F1, double F2, double D1, doub
     C3 = (DEL1 + DEL2)/H;
 
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -2109,7 +1992,7 @@ void VecD::chfev_all(double X1, double X2, double F1, double F2, double D1, doub
 void VecD::chfev(double X1, double F1, double D1, double C2, double C3, double XE, double &FE) {
     double X;
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -2152,12 +2035,7 @@ void VecD::rsq_slope_intercept(VecD &x, VecD &y, double &rsq, double &slope, dou
     double sum_sq_res_xx = 0.0;
     double sum_sq_res_yy = 0.0;
     double sum_sq_res_xy = 0.0;
-//    double *sq_res_xx = new double[x.length()];
-//    double *sq_res_yy = new double[y.length()];
-//    double *sq_res_xy = new double[x.length()];
-    //VecD sq_res_xx(x.length());
-    //VecD sq_res_yy(x.length());
-    //VecD sq_res_xy(x.length());
+
     for (i = 0; i < x.length(); ++i) {
         double x_minus_mean_i, y_minus_mean_i;
         x_minus_mean_i = ( (double)(x[i]) ) - mean_x;
@@ -2169,9 +2047,6 @@ void VecD::rsq_slope_intercept(VecD &x, VecD &y, double &rsq, double &slope, dou
     slope = sum_sq_res_xy/sum_sq_res_xx;
     y_intercept = mean_y - (slope * mean_x); 
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
-//    delete[] sq_res_xx;
-//    delete[] sq_res_yy;
-//    delete[] sq_res_xy;
 }
 
 
@@ -2328,11 +2203,6 @@ void VecF::_copy(float *p1, const float *p2, int len) const {
     for (int i = 0; i < len; ++i) {
         p1[i] = p2[i];
     }
-    // Slightly slower
-//    float *end = p1 + len;
-//    while(p1 < end) {
-//        *p1++ = *p2++;
-//    }
 }
 
 VecF & VecF::operator=(const float &val) {
@@ -2505,28 +2375,6 @@ void VecF::square_root() {
     }
 }
 
-/*
-VecF VecF::operator+(const VecF &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        VecF blank;
-        return blank;
-    }
-
-    else {
-        VecF *C = new VecF(_n);
-        VecF tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-*/
-
 float VecF::sum() {
     float *me = (float*)(*this);
     float sum = 0;
@@ -2605,17 +2453,6 @@ double VecF::avg() const {
     return total/_n;
 }
 
-//double VecF::prob_one_side_right(double x) {
-//    double _mean;
-//    double _sigma;
-//    // zScore:
-//    sample_stats( _mean, _sigma );
-//    //printf("mean: %f sigma: %f\n", _mean, _sigma);
-//
-//    // @TODO: THIS IS BROKEN until I can figure out how to calc the normalCDF
-//    // using public domain sources:
-//    //return _normalCDF(_mean, _sigma, x); 
-//}
 
 void VecF::sample_stats(double &mean, double &std_dev) {
     // Raw score method (below) is faster (~1.5X) than deviation score method
@@ -2735,11 +2572,7 @@ void VecF::print(const char *filename, bool without_length) {
     this->print(fh, without_length);
     fh.close();
 }
-//XCMS**************************************
-//float* VecF::back() {
-//    
-//    return _dat;
-//    }
+
 void VecF::print_tm() {
     int i;
     
@@ -2751,8 +2584,6 @@ void VecF::print_tm() {
     std::cout << _dat[i];
     std::cout << std::endl;
 }
-
-//END XCMS************************************
 
 void VecF::print(std::ostream &fout, bool without_length) {
     int i;
@@ -2781,12 +2612,6 @@ void VecF::print(std::ostream &fout, bool without_length) {
 // If length == 0 then prints message to STDERR and returns;
 void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
     float *tmp_derivs = new float[x.length()];
-    // if they aren't the right type then warn
-    
-    //if (typeid(T) != typeid(float) || typeid(T) != typeid(double)) 
-    //    printf("vec2 calling object must be of type float or double!\n");
-    //    exit(2);
-    // }
 
 #ifdef JTP_BOUNDS_CHECK
     if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
@@ -3137,8 +2962,6 @@ void VecF::chfe(VecF &xin, VecF &yin, VecF &xe, VecF &out_ye, int sorted) {
                 ifirst = ir - 1;
             }
             istart = i;
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
-//printf("ifirst: %d i:%d \n",ifirst,i); printf("xin[ifirst]%f, yin[ifirst]%f, derivs[ifirst]%f, c2[ifirst]%f, c3[ifirst]%f, xe[j]%f\n", xin[ifirst], yin[ifirst], derivs[ifirst], c2[ifirst], c3[ifirst], xe[j]);
             chfev(xin[ifirst], yin[ifirst], derivs[ifirst], c2[ifirst], c3[ifirst], xe[j], out_ye[j]);
         }
     }
@@ -3165,7 +2988,7 @@ void VecF::chfe(VecF &xin, VecF &yin, VecF &xe, VecF &out_ye, int sorted) {
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            //printf("ifirst: %d ir %d i %d\n",ifirst, ir, i); printf("xin[ifirst]%f, xin[ir]%f, yin[ifirst]%f, yin[ir]%f, derivs[ifirst]%f, derivs[ir]%f, xe[j]%f\n", xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j]);
+
             chfev_all(xin[ifirst], xin[ir], yin[ifirst], yin[ir], derivs[ifirst], derivs[ir], xe[j], out_ye[j]);
         }
     }
@@ -3202,7 +3025,7 @@ void VecF::chfev_all(float X1, float X2, float F1, float F2, float D1, float D2,
     C3 = (DEL1 + DEL2)/H;
 
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -3210,7 +3033,7 @@ void VecF::chfev_all(float X1, float X2, float F1, float F2, float D1, float D2,
 void VecF::chfev(float X1, float F1, float D1, float C2, float C3, float XE, float &FE) {
     float X;
     X = XE - X1;
-    //printf("X: %f F1 %f D1 %f C2 %f C3 %f\n", X, F1, D1, C2, C3);
+
     FE = F1 + X*(D1 + X*(C2 + X*C3));
 }
 
@@ -3253,12 +3076,7 @@ void VecF::rsq_slope_intercept(VecF &x, VecF &y, double &rsq, double &slope, dou
     double sum_sq_res_xx = 0.0;
     double sum_sq_res_yy = 0.0;
     double sum_sq_res_xy = 0.0;
-//    double *sq_res_xx = new double[x.length()];
-//    double *sq_res_yy = new double[y.length()];
-//    double *sq_res_xy = new double[x.length()];
-    //VecD sq_res_xx(x.length());
-    //VecD sq_res_yy(x.length());
-    //VecD sq_res_xy(x.length());
+
     for (i = 0; i < x.length(); ++i) {
         double x_minus_mean_i, y_minus_mean_i;
         x_minus_mean_i = ( (double)(x[i]) ) - mean_x;
@@ -3270,9 +3088,6 @@ void VecF::rsq_slope_intercept(VecF &x, VecF &y, double &rsq, double &slope, dou
     slope = sum_sq_res_xy/sum_sq_res_xx;
     y_intercept = mean_y - (slope * mean_x); 
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
-//    delete[] sq_res_xx;
-//    delete[] sq_res_yy;
-//    delete[] sq_res_xy;
 }
 
 

@@ -219,11 +219,6 @@ void MatI::set_from_binary(const char *file) {
     //printf("rbycools: %d\n", rows_by_cols);
     int *dat_tmp = new int[rows_by_cols];
     fread(dat_tmp, sizeof(int), rows_by_cols, fh);
-    //puts("**********************************************************");
-    //puts("THIS IS THE BINARY MAT READ in:");
-    //printf("First: %d:%.0f\n", 0, dat_tmp[0]);
-    //printf("Last: %d:%.0f\n", rows_by_cols, dat_tmp[rows_by_cols-1]);
-    //puts("**********************************************************");
 
     _dat.take(rows_by_cols, dat_tmp);
     fclose(fh);
@@ -317,29 +312,6 @@ void MatI::transpose(MatI &out) {
     }
     out.take(tmp);
 }
-
-/*
-MatI MatI::operator+(const MatI &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        MatI blank;
-        return blank;
-    }
-
-    else {
-        MatI *C = new MatI(_n);
-        MatI tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-
-*/
 
 
 void MatI::expand(MatI &result, int match, int expand_x_lt, int expand_x_rt, int expand_y_up, int expand_y_dn, int expand_diag_lt_up, int expand_diag_rt_up, int expand_diag_lt_dn, int expand_diag_rt_dn ) {
@@ -463,11 +435,6 @@ void MatI::write(const char *file) {
         fwrite(&_n, sizeof(int), 1, stdout);
         fwrite((int*)(_dat), sizeof(int), _m*_n, stdout);
     }
-    //puts("**********************************************************");
-    //puts("WRITING THE BINARY MAT:");
-    //printf("1st val: %f\n", mptr[0]);
-    //printf("last val: %f\n", mptr[rows_by_cols-1]);
-    //puts("**********************************************************");
 }
 
 
@@ -677,11 +644,6 @@ void MatD::set_from_binary(const char *file) {
     //printf("rbycools: %d\n", rows_by_cols);
     double *dat_tmp = new double[rows_by_cols];
     fread(dat_tmp, sizeof(double), rows_by_cols, fh);
-    //puts("**********************************************************");
-    //puts("THIS IS THE BINARY MAT READ in:");
-    //printf("First: %d:%.0f\n", 0, dat_tmp[0]);
-    //printf("Last: %d:%.0f\n", rows_by_cols, dat_tmp[rows_by_cols-1]);
-    //puts("**********************************************************");
 
     _dat.take(rows_by_cols, dat_tmp);
     fclose(fh);
@@ -775,29 +737,6 @@ void MatD::transpose(MatD &out) {
     }
     out.take(tmp);
 }
-
-/*
-MatD MatD::operator+(const MatD &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        MatD blank;
-        return blank;
-    }
-
-    else {
-        MatD *C = new MatD(_n);
-        MatD tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-
-*/
 
 
 void MatD::expand(MatD &result, double match, int expand_x_lt, int expand_x_rt, int expand_y_up, int expand_y_dn, int expand_diag_lt_up, int expand_diag_rt_up, int expand_diag_lt_dn, int expand_diag_rt_dn ) {
@@ -921,11 +860,6 @@ void MatD::write(const char *file) {
         fwrite(&_n, sizeof(int), 1, stdout);
         fwrite((double*)(_dat), sizeof(double), _m*_n, stdout);
     }
-    //puts("**********************************************************");
-    //puts("WRITING THE BINARY MAT:");
-    //printf("1st val: %f\n", mptr[0]);
-    //printf("last val: %f\n", mptr[rows_by_cols-1]);
-    //puts("**********************************************************");
 }
 
 
@@ -1135,11 +1069,6 @@ void MatF::set_from_binary(const char *file) {
     //printf("rbycools: %d\n", rows_by_cols);
     float *dat_tmp = new float[rows_by_cols];
     fread(dat_tmp, sizeof(float), rows_by_cols, fh);
-    //puts("**********************************************************");
-    //puts("THIS IS THE BINARY MAT READ in:");
-    //printf("First: %d:%.0f\n", 0, dat_tmp[0]);
-    //printf("Last: %d:%.0f\n", rows_by_cols, dat_tmp[rows_by_cols-1]);
-    //puts("**********************************************************");
 
     _dat.take(rows_by_cols, dat_tmp);
     fclose(fh);
@@ -1234,29 +1163,6 @@ void MatF::transpose(MatF &out) {
     out.take(tmp);
 }
 
-/*
-MatF MatF::operator+(const MatF &A) {
-    printf("Adim: %d selfdim: %d\n", A.dim(), _n);
-    if (A.dim() != _n) {
-        puts("**** NOT THE SAME *****!");
-        MatF blank;
-        return blank;
-    }
-
-    else {
-        MatF *C = new MatF(_n);
-        MatF tmp = *C;
-        tmp._to_pass_up = C; 
-        printf("TMPENEW %d\n", tmp.shallow());
-        for (int i = 0; i < _n; ++i) {
-            tmp[i] = _dat[i] + A[i];
-        }
-        return tmp;
-    }
-}
-
-*/
-
 
 void MatF::expand(MatF &result, float match, int expand_x_lt, int expand_x_rt, int expand_y_up, int expand_y_dn, int expand_diag_lt_up, int expand_diag_rt_up, int expand_diag_lt_dn, int expand_diag_rt_dn ) {
     int i;
@@ -1341,22 +1247,17 @@ void MatF::print(bool without_axes) {
         std::cout << std::endl;
     }
 }
-//***XCMS********************************************************
+
 void MatF::print(int __m, int __n,bool without_axes) {
     MatF tmp((*this),1); 
     if (!without_axes) {
         std::cout << _m << ' ' << _n << std::endl<< std::endl;
     }
     for (int m = 0; m < _m; ++m) {
-    //    int n;
-    //    for (n = 0; n < _n - 1; ++n) {
-            std::cout << tmp(m,__n) << " ";
+      std::cout << tmp(m,__n) << " ";
         }
-        //std::cout << tmp(__m,__n);
-        //std::cout << std::endl;
-   // }
 }
-//***END XCMS********************************************************
+
 void MatF::print(const char *filename, bool without_axes) {
     std::ofstream fh(filename);
     if (!fh) {
@@ -1394,11 +1295,6 @@ void MatF::write(const char *file) {
         fwrite(&_n, sizeof(int), 1, stdout);
         fwrite((float*)(_dat), sizeof(float), _m*_n, stdout);
     }
-    //puts("**********************************************************");
-    //puts("WRITING THE BINARY MAT:");
-    //printf("1st val: %f\n", mptr[0]);
-    //printf("last val: %f\n", mptr[rows_by_cols-1]);
-    //puts("**********************************************************");
 }
 
 // END TEMPLATE

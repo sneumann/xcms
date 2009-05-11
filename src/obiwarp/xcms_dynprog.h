@@ -31,7 +31,8 @@ class DynProg {
         // If gap_penalty array len = 0, then a linear gap penalty based on the
         // average matrix score will be used
         // neither diag or gap factor can be 0.0 for minimization
-        void find_path(MatF &smat, VecF &gap_penalty, int minimize=0, float diag_factor=2.f, float gap_factor=1.f, int local=0, float init_penalty=0.0f);
+        void find_path(MatF &smat, VecF &gap_penalty, int minimize=0, float diag_factor=2.f, 
+		       float gap_factor=1.f, int local=0, float init_penalty=0.0f);
         // If gap_penalty array len = 0, then a linear gap penalty based on the
         // average matrix score will be used
         // a gap is introduced without adding in the score of the matrix
@@ -49,13 +50,6 @@ class DynProg {
         void best_anchors(VecI &mCoordsBijShort, VecI &nCoordsBijShort, VecF &sCoordsBijShort, VecI &mOut, VecI &nOut, int num_internal_anchors);
         void bijective_anchors(VecI &mCoords, VecI &nCoords, VecF &scores, VecI &mBijShort, VecI &nBijShort, VecF &sBijShort);
         
-        // NEED to redo these and affirm correctness...
-        // warps the mMat along the m axis where mMat coordinates are
-        // specified by mCoords and the new, warped coordinates are 
-        // supplied by nCoords
-//        void warp(VecI &mCoords, VecI &nCoords, MatF &mMat, MatF &warpedOut, bool mCoord_row_nums=0);
-//        void warp(VecI &mCoords, VecI &nCoords, VecF &mVec, VecF &warpedOut, bool mCoord_row_nums=0);
-//        void warp(VecF &mCoords, VecF &nCoords, VecF &mVec, VecF &warpedOut, bool mCoord_row_nums=0);
         // Calculates the sum of the sq of the residuals of the warped nVals
         float sum_sq_res_yeqx(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpMap, VecF &mVals, VecF &nVals);
         void path_accuracy_details(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mVals, VecF &nVals, VecF &sq_res_yeqx, VecF &abs_diff, int linear_interp=0);
@@ -87,10 +81,9 @@ class DynProg {
         void score_product(MatF &mCoords, MatF &nCoords, MatF &scores);
         void score_covariance(MatF &mCoords, MatF &nCoords, MatF &scores);
         void score_pearsons_r(MatF &mCoords, MatF &nCoords, MatF &scores);
-//***XCMS******************************************************************
+
         void score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores);
-//***End XCMS**************************************************************
-        void score_pearsons_r2(MatF &mCoords, MatF &nCoords, MatF &scores);
+
         void score_mutual_info(MatF &mCoords, MatF &nCoords, MatF &scores, int num_bins=2);
         void score_euclidean(MatF &mCoords, MatF &nCoords, MatF &scores);
         // convenience method for scoring
@@ -113,11 +106,6 @@ class DynProg {
         void linear_less_before(float m, float b, int len, VecF &lessbefore);
         // linear function mx + b where m is slope and b is y intercept
         void linear(float m, float b, int len,  VecF &arr);
-        
-
-        //void replaceAlignmentPathRandom(MatF& mat, MatI& toReplace);
-        //float toProb(int halfWindow, short int numShuffles, char *type, float init_penalty, int minimum);
 };
-
 
 #endif
