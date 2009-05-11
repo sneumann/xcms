@@ -459,9 +459,9 @@ class MatF {
 
         // prints the bare matrix as ascii
         void print(bool without_axes=0);
-//***XCMS****************************************************
+
         void print(int __m, int __n,bool without_axes);
-//***END XCMS****************************************************
+
         void print(const char *file, bool without_axes=0);
         void print(std::ostream &fout, bool without_axes=0);
 
