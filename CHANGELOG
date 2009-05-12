@@ -1,3 +1,8 @@
+2009-05-07: 1.17.5
+Fix getEIC() for xcmsRaw 
+
+2009-05-07: 1.17.4
+
 2009-05-07: 1.17.3
 Fixed warnings in Obiwarp with cor_opt
 
