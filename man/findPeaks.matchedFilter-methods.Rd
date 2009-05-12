@@ -23,10 +23,10 @@
   \item{object}{\code{xcmsRaw} object}
   \item{fwhm}{
     full width at half maximum of matched filtration gaussian model
-    peak
+    peak. Only used to calculate the actual sigma, see below.
   }
   \item{sigma}{
-    standard deviation of matched filtration model peak
+    standard deviation (width) of matched filtration model peak
   }
   \item{max}{
     maximum number of peaks per extracted ion chromatogram
