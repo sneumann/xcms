@@ -134,7 +134,7 @@ setMethod("show", "xcmsRaw", function(object) {
         cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
             "\n\n")
     }
-    
+
     ## summary MSn data
     if (!is.null(object@msnLevel)) {
 	cat("MSn data on ", length(unique(object@msnPrecursorMz)), " mass(es)\n")
@@ -813,13 +813,13 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       flush.console()
 
       feat <- featlist[[f]]
-      N <- feat$scmax - feat$scmin + 1 
+      N <- feat$scmax - feat$scmin + 1
 
       peaks <- peakinfo <- NULL
 
       mzrange <- c(feat$mzmin,feat$mzmax)
       sccenter <- feat$scmin[1] + floor(N/2) - 1
-      scrange <- c(feat$scmin,feat$scmax) 
+      scrange <- c(feat$scmin,feat$scmax)
       ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - max(noiserange)),min(scanrange[2],scrange[2] + max(noiserange)))
       eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
@@ -1327,7 +1327,9 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
         }
     }
 
-    invisible(eic)
+    invisible(new("xcmsEIC", eic = list(eic), mzrange = mzrange, rtrange = rtrange,
+                  rt = "raw", groupnames = character(0)))
+
 })
 
 setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
@@ -1454,7 +1456,7 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
         warning("MS1 scans empty. Skipping profile matrix calculation.")
         return(object)
     }
-    
+
     minmass <- round(min(object@env$mz)/value)*value
     maxmass <- round(max(object@env$mz)/value)*value
     num <- (maxmass - minmass)/value + 1
@@ -1594,7 +1596,7 @@ setMethod("rawMZ", "xcmsRaw", function(object,
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
-  
+
   .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
