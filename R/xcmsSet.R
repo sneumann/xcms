@@ -1540,7 +1540,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
         if (length(prof) > 2)
             lcraw@profparam <- prof[seq(3, length(prof))]
-        eic[[i]] <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
+        currenteic <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
+        eic[[i]] <- currenteic@eic[[1]]
         rm(lcraw)
         gc()
     }
