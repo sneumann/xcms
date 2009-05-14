@@ -1,5 +1,5 @@
 PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
-PKG_CPPFLAGS=-Wall -I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE
+PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
