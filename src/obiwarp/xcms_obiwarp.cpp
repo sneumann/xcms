@@ -33,17 +33,6 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
 
   // Create two matrices in LMata format 
 
-
-    // NOTE: use outfile as indicator if option passed in as opts.outfile!
-    // because we can set opts.outfile to NULL and other routines will
-    // automatically write to stdout!
-    bool outfile = 0;
-    bool outfile_is_stdout = 0;
-
-    int i;
-   
-    outfile_is_stdout = 1;
-
     int pvalscantime, pmzrange;
     int pvalscantime2, pmzrange2;
     double *pscantime, *pmz, *pintensity;
@@ -132,7 +121,7 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     lmat2.warp_tm(nOutF, mOutF); 
     
     PROTECT(corrected = allocVector(REALSXP, length(scantime2)));
-    for(int i; i < length(scantime2);i++){
+    for(int i=0; i < length(scantime2);i++){
       REAL(corrected)[i] = lmat2.tm()->back()[i];
     }
 
