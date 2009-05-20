@@ -236,7 +236,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         samptrans[sampidx == i] <- rank(which(sampidx == i))
         samp <- samptrans[peakmat[,"sample"]]
         sidx <- which(samp != 0)
-        cpeaks <- peakmat[sidx,]
+        cpeaks <- peakmat[sidx,, drop=FALSE]
         cpeaks[,"sample"] <- samp[sidx]
         peaks(lcsets[[i]]) <- cpeaks
 
