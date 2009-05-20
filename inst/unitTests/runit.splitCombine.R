@@ -3,6 +3,24 @@ testSplit <- function() {
     checkEqualsNumeric(length(xsl), 2)
 }
 
+testSplitFirst <- function() {
+    xsl <- split(faahko,c(1,2,2,2,2,2,2,2,2,2,2,2))
+    checkEqualsNumeric(length(xsl), 2)
+}
+testSplitLast <- function() {
+    xsl <- split(faahko,c(2,2,2,2,2,2,2,2,2,2,2,1))
+    checkEqualsNumeric(length(xsl), 2)
+}
+testSplitMiddle <- function() {
+    xsl <- split(faahko,c(2,2,2,2,2,1,2,2,2,2,2,2))
+    checkEqualsNumeric(length(xsl), 2)
+}
+testSplitNone <- function() {
+    xsl <- split(faahko,c(2,2,2,2,2,2,2,2,2,2,2,2))
+    checkEqualsNumeric(length(xsl), 1)
+}
+
+
 testCombine <- function() {
     xsl <- split(faahko,sampclass(faahko))
     checkEqualsNumeric(length(sampnames(c(xsl[[1]], xsl[[2]]))), 12)
