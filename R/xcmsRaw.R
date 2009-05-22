@@ -1318,16 +1318,16 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
                            TRUE, object@profparam)
         }
-        if (missing(rtrange))
+        if (missing(rtrange)) {
             eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
-        else {
+        } else {
             eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
                                ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],,drop=FALSE]
             colnames(eic[[i]]) <- c("rt", "intensity")
         }
     }
 
-    invisible(new("xcmsEIC", eic = list(eic), mzrange = mzrange, rtrange = rtrange,
+    invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
                   rt = "raw", groupnames = character(0)))
 
 })
