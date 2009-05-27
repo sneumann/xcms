@@ -183,6 +183,10 @@ c.xcmsSet <- function(...) {
 
     peaklist <- vector("list", length(lcsets))
     namelist <- vector("list", length(lcsets))
+    if (any(duplicated(unlist(namelist)))) {
+        error ("Duplicated sample names\n")
+    }
+
     classlist <- vector("list", length(lcsets))
     cdflist <- vector("list", length(lcsets))
     rtraw <- vector("list", 0)
