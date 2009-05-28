@@ -21,8 +21,8 @@
 \section{Methods}{
   \describe{
     \item{object = "xcmsSet"}{
-      retcor(object, method="obiwarp", plottype = c("none", "deviation",
-      "mdevden"),col = NULL, ty = NULL, profStep=1,
+      retcor(object, method="obiwarp", plottype = c("none", "deviation"),
+      col = NULL, ty = NULL, profStep=1,
       response=1, score="cor",
       gapInit=0, gapExtend=0,
       factorDiag=2, factorGap=1,

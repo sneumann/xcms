@@ -1215,7 +1215,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
              xlab = "Retention Time", ylab = "Retention Time Deviation")
         legend(rtrange[2], devrange[2],
                basename(samples), col = mypal[col],
-               lty = ty, pch = ceiling(1:n/length(mypal)), xjust = -0.01)
+               lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
 
         for (i in 1:n) {
             points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
