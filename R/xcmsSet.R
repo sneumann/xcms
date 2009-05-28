@@ -1025,7 +1025,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 })
 
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
-setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation", "mdevden"),
+setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation"),
                                                 profStep=1, col = NULL, ty = NULL,
                                                 response=1, distFunc="cor_opt",
                                                 gapInit=NULL, gapExtend=NULL,
@@ -1210,7 +1210,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         rtrange <- range(do.call("c", rtcor))
         devrange <- range(do.call("c", rtdevsmo))
 
-        plot(0, 0, type="n", xlim = rtrange*1.4, ylim = devrange,
+        plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
              main = "Retention Time Deviation vs. Retention Time",
              xlab = "Retention Time", ylab = "Retention Time Deviation")
         legend(rtrange[2], devrange[2],
