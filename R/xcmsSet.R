@@ -1026,8 +1026,27 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
 setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation", "mdevden"),
-                                                col = NULL, ty = NULL, profStep=1, r=NULL, g=NULL, cor = NULL, l=NULL, i_=0) {
+                                                profStep=1, col = NULL, ty = NULL,
+                                                response=1, distFunc="cor_opt",
+                                                gapInit=NULL, gapExtend=NULL,
+                                                factorDiag=2, factorGap=1,
+                                                localAlignment=0, initPenalty=0) {
 
+    if (is.null(gapInit)) {
+        if (distFunc=="cor") {gapInit=0.3}
+        if (distFunc=="cor_opt") {gapInit=0.3}
+        if (distFunc=="cov") {gapInit=0.0}
+        if (distFunc=="euc") {gapInit=0.9}
+        if (distFunc=="prd") {gapInit=0.0}
+    }
+
+    if (is.null(gapExtend)) {
+        if (distFunc=="cor") {gapExtend=2.4}
+        if (distFunc=="cor_opt") {gapExtend=2.4}
+        if (distFunc=="cov") {gapExtend= 11.7}
+        if (distFunc=="euc") {gapExtend= 1.8}
+        if (distFunc=="prd") {gapExtend= 7.8}
+    }
 
     peakmat <- peaks(object)
     samples <- sampnames(object)
@@ -1051,30 +1070,16 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     rtimecor <- vector("list",n)
     rtdevsmo <- vector("list", n)
 
-    if(!is.null(r)) {
-        r <- c("-r",r)
-    }
-    if(!is.null(cor)) {
-        cor <- c("-s",cor)
-    }
-    if(!is.null(l)){
-        l <- "-l"
-        i_ <- c("-i",i_)
-    }
-    if(!is.null(g)) {
-        g <- c("-g",g)
-    }
-
     plength <- list()
     for(i in 1:length(samples)){
         plength[i] <-length(which(peakmat[,"sample"]==i))
     }
     maxsample <- which.max(plength)
     idx <- which(seq(plength)!=maxsample)
-    cat("center sample: ",samples[maxsample], "\n")
+    cat("center sample: ", samples[maxsample], "\nProcessing: ")
 
     for (s in idx) {
-        cat("processing sample: ",samples[s], "\n")
+        cat(samples[s], " ")
 
         obj1 <- xcmsRaw(object@filepaths[maxsample], profmethod="bin", profstep=profStep)
         obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
@@ -1157,7 +1162,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         rtimecor[[s]] <-.Call("R_set_from_xcms",
                               valscantime1,scantime1,mzval,mz,intensity1,
                               valscantime2,scantime2,mzval,mz,intensity2,
-                              c(" ",r,cor,g,l,i_))
+                              response, distFunc,
+                              gapInit, gapExtend,
+                              factorDiag, factorGap,
+                              localAlignment, initPenalty)
 
         if(length(obj2@scantime) > valscantime2) {
             object@rt$corrected[[s]] <- c(rtimecor[[s]],
@@ -1172,6 +1180,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         gc()
     }
 
+    cat("\n")
     rtdevsmo[[maxsample]] <- round(rtcor[[maxsample]] - object@rt$corrected[[maxsample]], 2)
 
     if (plottype == "mdevden") {
