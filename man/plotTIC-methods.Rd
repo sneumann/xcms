@@ -19,7 +19,7 @@
   \item{ident}{
     logical, use mouse to identify and label chromatographic peaks
   }
-  \item{ident}{
+  \item{msident}{
     logical, use mouse to identify and label spectral peaks
   }
 }
