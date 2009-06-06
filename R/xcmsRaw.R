@@ -253,7 +253,7 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
         while(length(id <- identify(points, labels = round(points[,1], 1), n = 1))) {
             idx <- c(idx, id)
             if (!length(msdev)) {
-                eval(call(options("device")$device))
+                options("device")$device()
                 msdev <- dev.cur()
             }
             dev.set(msdev)
