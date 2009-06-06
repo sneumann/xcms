@@ -1,9 +1,10 @@
 Package: xcms
-Version: 1.17.6
-Date: 2009-05-28
+Version: 1.17.7
+Date: 2009-06-06
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>, 
-        Ralf Tautenhahn <rtautenh@ipb-halle.de>
+        Ralf Tautenhahn <rtautenh@ipb-halle.de>,
+        Steffen Neumann <sneumann@ipb-halle.de>
 Maintainer: Colin A. Smith <csmith@scripps.edu>
 Depends: R (>= 1.9.0), methods 
 Suggests: faahKO, msdata, multtest, ncdf, rgl, MassSpecWavelet (>= 1.5.2), Rgraphviz
