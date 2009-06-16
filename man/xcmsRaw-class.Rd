@@ -21,8 +21,10 @@
   Objects can be created with the \code{\link{xcmsRaw}} constructor
   which reads data from a NetCDF file into a new object.
 }
+
 \section{Slots}{
   \describe{
+    \item{\code{acquisitionNum}:}{acquisitionNum}
     \item{\code{env}:}{
       environment with three variables: \code{mz} - concatenated
       m/z values for all scans, \code{intensity} - corresponding
@@ -30,36 +32,45 @@
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
       values
-    }
-    \item{\code{tic}:}{
-      numeric vector with total ion count (intensity) for each scan
-    }
-    \item{\code{scantime}:}{
-      numeric vector with acquisition time (in seconds) for each
-      scan
-    }
-    \item{\code{scanindex}:}{
-      integer vector with starting positions of each scan in the
-      \code{mz} and \code{intensity} variables (note that index
-      values are based off a 0 initial position instead of 1)
-    }
-    \item{\code{profmethod}:}{
-      characer value with name of method used for generating the
-      profile matrix
-    }
-    \item{\code{mzrange}:}{
-      numeric vector of length 2 with minimum and maximum m/z values
-      represented in the profile matrix
-    }
+    }    
+    \item{\code{filepath}:}{filepath}
+    \item{\code{gradient}:}{gradient}
     \item{\code{gradient}:}{
       matrix with first row, \code{time}, containing the time point
       for interpolation and successive columns representing solvent
       fractions at each point
     }
-    \item{\code{msmsinfo}:}{
-      matrix with first row, \code{parent}, containing parent ion
-      m/z and sucessive columns representing additional information
-      about fragmentation (energy, etc.)
+    \item{\code{msnAcquisitionNum}:}{msnAcquisitionNum}
+    \item{\code{msnCollisionEnergy}:}{msnCollisionEnergy}
+    \item{\code{msnLevel}:}{msnLevel}
+    \item{\code{msnPeakCount}:}{msnPeakCount}
+    \item{\code{msnPrecursorCharge}:}{msnPrecursorCharge}
+    \item{\code{msnPrecursorIntensity}:}{msnPrecursorIntensity}
+    \item{\code{msnPrecursorMz}:}{msnPrecursorMz}
+    \item{\code{msnPrecursorScan}:}{msnPrecursorScan}
+    \item{\code{msnRt}:}{msnRt}
+    \item{\code{msnScanindex}:}{msnScanindex}
+    \item{\code{mzrange}:}{
+      numeric vector of length 2 with minimum and maximum m/z values
+      represented in the profile matrix
+    }    
+    \item{\code{polarity}:}{polarity}
+    \item{\code{profmethod}:}{
+      characer value with name of method used for generating the
+      profile matrix
+    }
+    \item{\code{profparam}:}{profparam}
+    \item{\code{scanindex}:}{
+      integer vector with starting positions of each scan in the
+      \code{mz} and \code{intensity} variables (note that index
+      values are based off a 0 initial position instead of 1)
+    }
+    \item{\code{scantime}:}{
+      numeric vector with acquisition time (in seconds) for each
+      scan
+    }
+    \item{\code{tic}:}{
+      numeric vector with total ion count (intensity) for each scan
     }
   }
 }
