@@ -14,7 +14,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    msnPrecursorMz = "numeric",
                                    msnPrecursorIntensity = "numeric",
                                    msnPrecursorCharge = "numeric",
-                                   msnPeakCount = "integer",
+# OBSOLETED                                   msnPeakCount = "integer",
                                    msnCollisionEnergy = "numeric",
                                    filepath = "character"),
 
@@ -33,7 +33,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msnPrecursorMz = numeric(0),
                    msnPrecursorIntensity = numeric(0),
                    msnPrecursorCharge = numeric(0),
-                   msnPeakCount = integer(0),
+# OBSOLETED                   msnPeakCount = integer(0),
                    msnCollisionEnergy = numeric(0),
                    filepath = ""
                    ))

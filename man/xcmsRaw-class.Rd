@@ -33,22 +33,26 @@
       representing scans and rows representing equally spaced m/z
       values
     }    
-    \item{\code{filepath}:}{filepath}
-    \item{\code{gradient}:}{gradient}
+    \item{\code{filepath}:}{Path to the raw data file}
     \item{\code{gradient}:}{
       matrix with first row, \code{time}, containing the time point
       for interpolation and successive columns representing solvent
       fractions at each point
     }
-    \item{\code{msnAcquisitionNum}:}{msnAcquisitionNum}
-    \item{\code{msnCollisionEnergy}:}{msnCollisionEnergy}
-    \item{\code{msnLevel}:}{msnLevel}
-    \item{\code{msnPeakCount}:}{msnPeakCount}
-    \item{\code{msnPrecursorCharge}:}{msnPrecursorCharge}
-    \item{\code{msnPrecursorIntensity}:}{msnPrecursorIntensity}
-    \item{\code{msnPrecursorMz}:}{msnPrecursorMz}
-    \item{\code{msnPrecursorScan}:}{msnPrecursorScan}
-    \item{\code{msnRt}:}{msnRt}
+    \item{\code{msnAcquisitionNum}:}{for each scan a unique acquisition
+  number as reported via "spectrum id" (mzData) or "<scan num=...>" and
+  "<scanOrigin num=...>" (mzXML)}
+    \item{\code{msnCollisionEnergy}:}{"CollisionEnergy" (mzData) or
+  "collisionEnergy" (mzXML)}
+    \item{\code{msnLevel}:}{for each scan the "msLevel" (both mzData and mzXML)}
+%    \item{\code{msnPeakCount}:}{msnPeakCount is equal to scan length} OBSOLETED
+    \item{\code{msnPrecursorCharge}:}{"ChargeState" (mzData) and
+  "precursorCharge" (mzXML)}
+    \item{\code{msnPrecursorIntensity}:}{"Intensity" (mzData) or "precursorIntensity" (mzXML)}
+    \item{\code{msnPrecursorMz}:}{"MassToChargeRatio" (mzData) or
+  "precursorMz" (mzXML)}
+    \item{\code{msnPrecursorScan}:}{"spectrumRef" (both mzData and mzXML)}
+    \item{\code{msnRt}:}{Retention time of the scan}
     \item{\code{msnScanindex}:}{msnScanindex}
     \item{\code{mzrange}:}{
       numeric vector of length 2 with minimum and maximum m/z values
