@@ -22,9 +22,11 @@
       matrix with colmns peakID (MS1 parent in corresponding xcmsSet),
       MSnParentPeakID (parent peak within this xcmsFragments), msLevel
       (e.g. 2 for Tandem MS), rt (retention time in case of LC data), mz
-      (fragment mass-to-charge), intensity (peak intensity as reported
-      by XXX), sample (The ID of the rawData-file).
+      (fragment mass-to-charge), intensity (peak intensity extracted
+      from the original \code{xcmsSet}), sample (the index of the rawData-file).
     }
+%    \item{\code{MS2spec}:}{Added by P.Benton}
+%    \item{\code{specinfo}:}{Added by P.Benton}
   }
 }
 \section{Methods}{
