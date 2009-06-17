@@ -1,3 +1,9 @@
+2009-05-28: 1.17.x
+OBSOLETED xcmsRaw@msnPeakCount, it was not set, not used and can be calculated from msnScanIndex
+
+2009-05-28: 1.17.7
+Fixing a couple coding/documentation bugs in plotTIC
+
 2009-05-28: 1.17.6
 Some arguments renaming for retcor(method="obiwarp")
 

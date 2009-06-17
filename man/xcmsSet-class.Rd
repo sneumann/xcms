@@ -51,6 +51,10 @@
     \item{\code{peaks}:}{
       matrix containing peak data
     }
+    \item{\code{filled}:}{
+      a vector with peak indices of peaks which have been added by a
+      \code{\link{fillPeaks}} method,
+    }
     \item{\code{groups}:}{
       matrix containing statistics about peak groups
     }
@@ -70,6 +74,10 @@
     \item{\code{profinfo}:}{
       list containing two values, \code{method} - profile generation
       method, and \code{step} - profile m/z step size
+    }
+    \item{\code{polarity}:}{
+      a string ("positive" or "negative" or NULL) describing whether only
+      positive or negative scans have been used reading the raw data.
     }
   }
 }
