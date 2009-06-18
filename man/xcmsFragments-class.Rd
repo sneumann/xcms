@@ -25,8 +25,8 @@
       (fragment mass-to-charge), intensity (peak intensity extracted
       from the original \code{xcmsSet}), sample (the index of the rawData-file).
     }
-%    \item{\code{MS2spec}:}{Added by P.Benton}
-%    \item{\code{specinfo}:}{Added by P.Benton}
+    \item{\code{MS2spec}:}{This is a list of matrixes. Each matrix in the list is a single collected spectra from \code{collect}. The column ID's are mz, intensity, and full width half maximum(fwhm). The fwhm column is only relevant if the spectra came from profile data.}
+    \item{\code{specinfo}:}{This is a matrix with reference data for the spectra in MS2spec. The column id's are preMZ, AccMZ, rtmin, rtmax, ref, CollisionEnergy. The preMZ is precursor mass from the MS1 scan. This mass is given by the XML file. With some instruments this mass is only given as nominal mass, therefore a AccMZ is given which is a weighted average mass from the MS1 scan of the collected spectra. The retention time is given by rtmin and rtmax. The ref column is a pointer to the MS2spec matrix spectra. The collisionEnergy column is the collision Energy for the spectra.}
   }
 }
 \section{Methods}{
