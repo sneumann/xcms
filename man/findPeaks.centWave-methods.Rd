@@ -11,7 +11,7 @@
 \item{object = "xcmsRaw"}{
   \code{
     findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
-    prefilter=c(3,100), integrate=1, mzdiff=-0.001, fitgauss=FALSE,
+    prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
     scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE)
   }
 }
@@ -27,7 +27,9 @@
   \item{peakwidth}{Chromatographic peak width, given as range (min,max) in seconds}
   \item{snthresh}{signal to noise ratio cutoff, definition see below.}
   \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
-  
+  \item{mzCenterFun}{Function to calculate the m/z center of the feature: \code{wMean} intensity weighted mean of the feature m/z values, \code{mean} mean of the feature m/z values, \code{apex} use m/z value at peak apex, 
+        \code{wMeanApex3} intensity weighted mean of the m/z value at peak apex and the m/z value left and right of it, \code{meanApex3} mean of the m/z value at peak apex and the m/z value left and right of it.
+    }
   \item{integrate}{
     Integration method. If \code{=1} peak limits are found through descent on the mexican hat filtered data, if \code{=2} the descent is done on the real data. Method 2 is very accurate but prone to noise, while method 1 is more robust to noise but less exact.
    }
