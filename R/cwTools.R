@@ -652,9 +652,30 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
   overlap / vsmall
 }
 
-mzModel <- function(mz,intensity) {
-    ## there might be better models ..
+mzCenter.wMean <- function(mz,intensity) {
     weighted.mean(mz, intensity) 
+}
+
+mzCenter.mean <- function(mz,intensity) {
+    mean(mz) 
+}
+
+mzCenter.apex <- function(mz,intensity) {
+    mz[which.max(intensity)] 
+}
+
+mzCenter.wMeanApex3 <- function(mz,intensity) {
+    iap <- which.max(intensity)
+    st <- max(1,iap-1)
+    en <- min(iap+1,length(mz))
+    weighted.mean(mz[st:en], intensity[st:en]) 
+}
+
+mzCenter.meanApex3 <- function(mz,intensity) {
+    iap <- which.max(intensity)
+    st <- max(1,iap-1)
+    en <- min(iap+1,length(mz))
+    mean(mz[st:en]) 
 }
 
 trimm <- function(x, trim=c(0.05,0.95)) {

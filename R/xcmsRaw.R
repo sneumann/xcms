@@ -763,9 +763,16 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
 
 setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,                                                                      prefilter=c(3,100), integrate=1, mzdiff=-0.001,                                                                               fitgauss=FALSE, scanrange= numeric(), noise=0,                                                                                         sleep=0, verbose.columns=FALSE) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+                                                    prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, 
+                                                    fitgauss=FALSE, scanrange= numeric(), noise=0,
+                                                    sleep=0, verbose.columns=FALSE) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
+
+    mzCenterFun <- paste("mzCenter", mzCenterFun, sep=".")
+    if (!exists(mzCenterFun, mode="function"))
+        stop("Error: >",mzCenterFun,"< not defined ! \n")
 
     scanrange.old <- scanrange
     if (length(scanrange) < 2)
@@ -903,7 +910,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                               best.scale.pos <- opp[best.scale.nr]
 
                               pprange <- min(pp):max(pp)
-                              maxint <- max(d[pprange])
+                             # maxint <- max(d[pprange])
                               lwpos <- max(1,best.scale.pos - best.scale)
                               rwpos <- min(best.scale.pos + best.scale,length(td))
                               p1 <- match(td[lwpos],otd)[1]
@@ -912,10 +919,12 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                               if (is.na(p2)) p2<-N
                               mz.value <- omz[p1:p2]
                               mz.int <- od[p1:p2]
+                              maxint <- max(mz.int)
 
                               ## re-calculate m/z value for peak range
-                              mzmean <- mzModel(mz.value,mz.int)
                               mzrange <- range(mz.value)
+                              mzmean <- do.call(mzCenterFun,list(mz=mz.value,intensity=mz.int))
+                              
 
                               ## Compute dppm only if needed
                               dppm <- NA

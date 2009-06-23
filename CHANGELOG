@@ -1,4 +1,7 @@
-2009-05-28: 1.17.x
+2009-06-22: 1.17.8
+findPeaks.centWave: Optimizations for OrbitTrap/FTICR data, different functions can be used for calculating 
+                    the m/z center of the feature: mzCenter.{mean,wMean,apex,wMeanApex3,meanApex3}
+		    Fixed: maximum intensity (maxo) was incorrect for some features  
 OBSOLETED xcmsRaw@msnPeakCount, it was not set, not used and can be calculated from msnScanIndex
 
 2009-05-28: 1.17.7
