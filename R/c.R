@@ -454,3 +454,14 @@ continuousPtsAboveThreshold <- function(y, threshold, num, istart = 1) {
               n = integer(1),
               DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
 }
+
+findEqualGreaterUnsorted <- function(x, value) {
+
+    if (!is.double(x)) x <- as.double(x)
+    .C("FindEqualGreaterUnsorted",
+       x,
+       length(x),
+       as.double(value),
+       index = integer(1),
+       DUP = FALSE, PACKAGE = "xcms")$index + 1
+}
