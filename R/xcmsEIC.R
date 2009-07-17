@@ -117,8 +117,13 @@ plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x
 
     for (i in grpidx) {
         maxint <- numeric(length(sampidx))
-        for (j in seq(along = sampidx))
-            maxint[j] <- max(object@eic[[sampidx[j]]][[i]][,"intensity"])
+        for (j in seq(along = sampidx)) {
+            eic.int <- object@eic[[sampidx[j]]][[i]][,"intensity"]
+            if (length(eic.int) > 0)  
+                maxint[j] <- max(eic.int)    
+            else   
+                maxint[j] <- 0
+        }
         plot(0, 0, type = "n", xlim = rtrange[i,], ylim = c(0, max(maxint)),
              xlab = "Retention Time (seconds)", ylab = "Intensity",
              main = paste("Extracted Ion Chromatogram:", round(object@mzrange[i,1], 2),

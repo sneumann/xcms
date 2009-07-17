@@ -1711,7 +1711,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	tstat <- mt.teststat(testval, testclab, ...)
 	pvalue <- pval(testval, testclab, tstat)
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
-	if(length(levels(sampclass(object))) >2){
+	if (length(levels(sampclass(object))) >2) {
             pvalAnova<-c()
 	    for(i in 1:nrow(values)){
 		var<-as.numeric(values[i,])
