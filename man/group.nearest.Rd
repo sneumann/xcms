@@ -29,7 +29,7 @@
     (euclidean) distance between two peaks.}  
   \item{mzCheck}{Maximum tolerated distance for mz.}
   \item{rtCheck}{Maximum tolerated distance for RT.}
-  \item{rtCheck}{Number of nearest Neighbours to check}  
+  \item{kNN}{Number of nearest Neighbours to check}  
 }
 \value{
   An \code{xcmsSet} object with peak group assignments and statistics.

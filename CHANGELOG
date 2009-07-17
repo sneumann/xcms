@@ -1,5 +1,7 @@
-2009-07-15: 1.17.9
+2009-07-17: 1.17.9
 findPeaks.centWave: narrow down peak rt boundaries by skipping zeros
+fillPeaks/getPeaks: fixed problem with nonexisting retention times due to retcor(), 
+                    fill in zero instead of NaN (which breaks diffreport), but print a warning
 
 2009-06-22: 1.17.8
 findPeaks.centWave: Optimizations for OrbitTrap/FTICR data, different functions can be used for calculating 

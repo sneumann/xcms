@@ -1246,6 +1246,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     for (i in order(peakrange[,1])) {
         imz <- findRange(mass, c(peakrange[i,1]-.5*step, peakrange[i,2]+.5*step), TRUE)
         iret <- findRange(stime, peakrange[i,3:4], TRUE)
+
         ### Update EIC buffer if necessary
         if (bufidx[imz[2]] == 0) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
@@ -1258,6 +1259,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
         ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
         ymax <- colMax(ymat)
         iymax <- which.max(ymax)
+
         pwid <- diff(stime[iret])/diff(iret)
         rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rowSums(ymat))
         if (is.nan(rmat[i,1]))
@@ -1265,8 +1267,15 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
         rmat[i,2:3] <- peakrange[i,1:2]
         rmat[i,4] <- stime[iret[1]:iret[2]][iymax]
         rmat[i,5:6] <- peakrange[i,3:4]
-        rmat[i,7] <- pwid*sum(ymax)
-        rmat[i,8] <- ymax[iymax]
+
+        if (peakrange[i,3] <  stime[1] || peakrange[i,4] > stime[2] || is.nan(pwid)) {
+            warning("getPeaks: Peak  m/z:",peakrange[i,1],"-",peakrange[i,2], ",  RT:",peakrange[i,3],"-",peakrange[i,4],
+            "is out of retention time range for this sample (",object@filepath,"), using zero intensity value.\n")    
+            rmat[i,7:8] <- 0
+        } else {  
+            rmat[i,7] <- pwid*sum(ymax)
+            rmat[i,8] <- ymax[iymax]
+        }
     }
 
     invisible(rmat)
