@@ -5,11 +5,11 @@
 
 \title{Group Peaks via High Resolution Alignment}
 \description{
-	Runs high resolution alignment on the peaks stored in a
+	Runs high resolution alignment on single spectra samples stored in a
 	given xcmsSet.
 }
 \usage{
-groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minsampclass=0, minfrac=0)
+groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minfrac=0)
 }
 \arguments{
 	\item{object}{a xcmsSet with peaks }
@@ -26,16 +26,11 @@ groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp 
 }
 
 \examples{
-## load xcms and faahKO Dataset
-library(xcms)
-library(faahKO)
-data(faahko)
-## group faahko data
-##faahko_grouped <- group(faahko, method="mzClust")
+# grouped <- group(myxcmsSet, method="mzClust")
 ## get groups
-##groups <- groups(faahko_grouped)
+# groups <- groups(grouped)
 ## get grouped peak indices
-##idx <- groupidx(faahko_grouped)
+# idx <- groupidx(grouped)
 }
 \references{
 	Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin,
