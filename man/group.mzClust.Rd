@@ -26,11 +26,16 @@ groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp 
 }
 
 \examples{
-# grouped <- group(myxcmsSet, method="mzClust")
-## get groups
-# groups <- groups(grouped)
-## get grouped peak indices
-# idx <- groupidx(grouped)
+\dontrun{
+library(msdata)
+mzdatapath <- system.file("fticr", package = "msdata")
+mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+
+xs <- xcmsSet(method="MSW", files=mzdatafiles, scales=c(1,7), SNR.method='data.mean' , winSize.noise=500,
+               peakThr=80000,  amp.Th=0.005)
+
+xsg <- group(xs, method="mzClust")
+}
 }
 \references{
 	Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin,
