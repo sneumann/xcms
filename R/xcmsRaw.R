@@ -1268,7 +1268,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
         rmat[i,4] <- stime[iret[1]:iret[2]][iymax]
         rmat[i,5:6] <- peakrange[i,3:4]
 
-        if (peakrange[i,3] <  stime[1] || peakrange[i,4] > stime[2] || is.nan(pwid)) {
+        if (peakrange[i,3] <  stime[1] || peakrange[i,4] > stime[length(stime)] || is.nan(pwid)) {
             warning("getPeaks: Peak  m/z:",peakrange[i,1],"-",peakrange[i,2], ",  RT:",peakrange[i,3],"-",peakrange[i,4],
             "is out of retention time range for this sample (",object@filepath,"), using zero intensity value.\n")    
             rmat[i,7:8] <- 0
@@ -1277,7 +1277,6 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
             rmat[i,8] <- ymax[iymax]
         }
     }
-
     invisible(rmat)
 })
 
