@@ -423,7 +423,7 @@ fitGauss <- function(td,d,pgauss=NA) {
  as.data.frame(t(fit$m$getPars()))
 }
 
-joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5) {  
+joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5,mzCenterFun) {  
 
   gausspeaksidx <- which(!is.na(peaks[,"mu"]))
   Ngp <- length(gausspeaksidx)
@@ -514,6 +514,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             newpeak["rtmin"] <- scantime[td[newmin]]    
             newpeak["rtmax"] <- scantime[td[newmax]]     
             newpeak["rt"] <- weighted.mean(gpeaks[jidx,"rt"],w=gpeaks[jidx,"maxo"])
+
             ## Re-assign m/z values
             p1 <- match(td[newmin],otd)[1]
             p2 <- match(td[newmax],otd); p2 <- p2[length(p2)]
@@ -521,10 +522,13 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             if (is.na(p2)) p2 <- length(omz)
             mz.value <- omz[p1:p2]  
             mz.int <- od[p1:p2]     
-            mzmean <- mzModel(mz.value,mz.int)
+            
+            ## re-calculate m/z value for peak range
+            mzmean <- do.call(mzCenterFun,list(mz=mz.value,intensity=mz.int))
             mzrange <- range(mz.value)
             newpeak["mz"] <- mzmean
             newpeak[c("mzmin","mzmax")] <- mzrange
+
             ## re-fit gaussian
             md <- max(d[newmin:newmax]);d1 <- d[newmin:newmax]/md;
             pgauss <- fitGauss(td[newmin:newmax],d[newmin:newmax],pgauss = list(mu=td[newmin] + (td[newmax]-td[newmin])/2,sigma=td[newmax]-td[newmin],h=max(gpeaks[jidx,"h"])))

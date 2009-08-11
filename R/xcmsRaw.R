@@ -1011,7 +1011,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                   } else
                     peaks[p,"rt"] <- scantime[peaks[p,"scpos"]]
                 }
-                peaks <- joinOverlappingPeaks(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap)
+                peaks <- joinOverlappingPeaks(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap,mzCenterFun=mzCenterFun)
             }
 
         } ## s/n
