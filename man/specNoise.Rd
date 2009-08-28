@@ -6,6 +6,7 @@
   no signal is present, substituting half of the minimum intensity
   for those regions. Calculate the noise level as the weighted mean
   of the regions with signal and the regions without signal.
+  If there is only one raw peak, return zero.
 }
 \usage{
 specNoise(spec, gap = quantile(diff(spec[, "mz"]), 0.9))
