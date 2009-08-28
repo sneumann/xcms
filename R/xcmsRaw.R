@@ -427,6 +427,11 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
 specNoise <- function(spec, gap = quantile(diff(spec[,"mz"]), .9)) {
 
+    # In a spectrum with just one raw peak we can't calculate noise
+    if (nrow(spec) < 2) {
+      return(0)
+    }
+
     intmean <- mean(spec[,"intensity"])
 
     mzlen <- diff(range(spec[,"mz"]))
