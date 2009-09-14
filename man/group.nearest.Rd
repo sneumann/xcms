@@ -12,14 +12,12 @@
  Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for processing and
  visualization of mass spectrometry based molecular profile
  data. Bioinformatics (Oxford, England) 2006, 22:634?636.
-  
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
   \code{    
     group(object, mzVsRTbalance=10, mzCheck=0.2, rtCheck=15, kNN=10)
-    %% sleep = 0
   }
 }
 }}
