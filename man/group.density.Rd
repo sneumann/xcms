@@ -1,4 +1,4 @@
-\name{group-methods}
+\name{group.density}
 \docType{methods}
 \alias{group.density}
 \alias{group.density,xcmsSet-method}

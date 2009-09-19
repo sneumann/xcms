@@ -1,4 +1,4 @@
-\name{group-methods}
+\name{group.nearest}
 \docType{methods}
 \alias{group.nearest}
 \alias{group.nearest,xcmsSet-method}
