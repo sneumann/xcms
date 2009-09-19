@@ -1,4 +1,4 @@
-\name{retcor-methods}
+\name{retcor.obiwarp}
 \docType{methods}
 \alias{retcor.obiwarp}
 \alias{retcor.obiwarp,xcmsSet-method}
