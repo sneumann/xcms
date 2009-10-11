@@ -1,3 +1,7 @@
+2009-10-11: 1.18.4
+group.nearest: fixed/added calculation of peaks-per-sampclass, 
+               resolving problem in retcor() reported by Daniel Maturana
+
 2009-07-17: 1.18.2
 fixed calculation of specNoise() for 1-point spectra in xcmsRaw.R
 
