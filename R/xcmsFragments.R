@@ -254,7 +254,7 @@ setMethod("hasMSn", "xcmsFragments", .xcmsFragments.hasMSn)
 xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
 	## gets an xcmsSet and the corresponding xcmsFragments
 	## the xs is a grouped, RTcorrected, Regrouped xs, the xf is made from this
-	## returns the xs with #Samples noew rows containing the hamming-distance to the mean
+	## returns the xs with #Samples now rows containing the hamming-distance to the mean
 
 	GetMSnVector <- function(object, xcmsSetPeakID) {
 	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID

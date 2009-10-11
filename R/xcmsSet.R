@@ -647,7 +647,12 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
         stop("RANN is not installed")
     }
 
+    classlabel <- sampclass(object)
+    classlabel <- as.vector(unclass(classlabel))
+    
     samples <- sampnames(object)
+    gcount <- integer(length(unique(sampclass(object))))
+
     peakmat <- peaks(object)
     plength <- list()
     parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
@@ -738,6 +743,11 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
         groupmat[i, c("rtmin", "rtmax")] <- range(peakmat[mplenv$mplist[i,],"rt"])
 
         groupmat[i, "npeaks"] <- length(which(peakmat[mplenv$mplist[i,]]>0))
+
+        gnum <- classlabel[unique(peakmat[mplenv$mplist[i,],"sample"])]
+        for (j in seq(along = gcount))
+          gcount[j] <- sum(gnum == j)
+        groupmat[i, 7+seq(along = gcount)] <- gcount
 
         groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
     }
