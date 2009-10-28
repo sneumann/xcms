@@ -1707,6 +1707,11 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     if (length(intersect(c1, c2)) > 0)
         stop("Intersecting Classes")
 
+    ## Check against missing Values 
+    if (any(is.na(values[,c(c1,c2)]))) {
+	stop("NA values in xcmsSet. Use fillPeaks()")
+    }
+
     mean1 <- rowMeans(values[,c1], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2], na.rm = TRUE)
 

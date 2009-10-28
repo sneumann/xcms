@@ -1,3 +1,6 @@
+2009-10-28: 1.21.1: 
+added a check for grouped xcmsSet with NA values (i.e. without fillPeaks()) to diffreport() 
+
 2009-10-11: 1.18.4
 group.nearest: fixed/added calculation of peaks-per-sampclass, 
                resolving problem in retcor() reported by Daniel Maturana
