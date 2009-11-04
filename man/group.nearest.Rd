@@ -12,6 +12,8 @@
  Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for processing and
  visualization of mass spectrometry based molecular profile
  data. Bioinformatics (Oxford, England) 2006, 22:634?636.
+
+ Currently, there is no equivalent to \code{minfrac} or \code{minsamp}.
 }
 \section{Methods}{
 \describe{
