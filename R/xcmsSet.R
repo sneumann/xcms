@@ -1675,6 +1675,41 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1)
 }
 
 
+
+
+setGeneric("peakTable", function(object, ...) standardGeneric("peakTable"))
+
+setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
+                                           value = c("into","maxo","intb")) {
+  
+  if (length(sampnames(object)) == 1) {
+    return(object@peaks)
+  }
+  
+  if (nrow(object@groups) < 1) {
+    stop ('First argument must be an xcmsSet with group information or contain only one sample.')
+  }
+
+  groupmat <- groups(object)
+  ts <- data.frame(cbind(groupmat,groupval(object, "medret", value)), row.names = NULL)
+  cnames <- colnames(ts)
+  
+  if (cnames[1] == 'mzmed') {
+    cnames[1] <- 'mz'
+  } else {
+    stop ('mzmed column missing')
+  }
+  if (cnames[4] == 'rtmed') {
+    cnames[4] <- 'rt'
+  } else {
+    stop ('mzmed column missing')
+  }
+          
+  colnames(ts) <- cnames
+  ts
+})
+
+
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
