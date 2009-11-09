@@ -21,7 +21,15 @@
     will be appended to this name for the tabular report and EIC
     directory, respectively. if blank nothing will be saved
   }
-  \item{value}{
+  \item{...}{arguments passed down to \code{\link{groupval}},
+    which provides the actual intensities.
+    
+    \code{method}
+    conflict resolution method, \code{"medret"} to use the peak
+    closest to the median retention time or \code{"maxint"} to use
+    the peak with the highest intensity
+    
+    \code{value}
     intensity values to be used for the peakTable. \cr
     If \code{value="into"}, integrated peak intensities are used. \cr
     If \code{value="maxo"}, maximum peak intensities are used. \cr
