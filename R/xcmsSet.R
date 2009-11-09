@@ -1680,7 +1680,7 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1)
 setGeneric("peakTable", function(object, ...) standardGeneric("peakTable"))
 
 setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
-                                           value = c("into","maxo","intb")) {
+                                           ...) {
   
   if (length(sampnames(object)) == 1) {
     return(object@peaks)
@@ -1689,9 +1689,16 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
   if (nrow(object@groups) < 1) {
     stop ('First argument must be an xcmsSet with group information or contain only one sample.')
   }
-
+  
   groupmat <- groups(object)
-  ts <- data.frame(cbind(groupmat,groupval(object, "medret", value)), row.names = NULL)
+
+  
+  if (! "value" %in% names(list(...))) {
+    ts <- data.frame(cbind(groupmat,groupval(object, value="into", ...)), row.names = NULL)
+  } else {
+    ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
+  }
+  
   cnames <- colnames(ts)
   
   if (cnames[1] == 'mzmed') {
