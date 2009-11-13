@@ -1,3 +1,6 @@
+2009-11-13: 1.21.x: 
+added a check for (un)grouped xcmsSet to groupval() 
+
 2009-11-08: 1.21.2: 
 R/xcmsSet.R: added peakTable()
 

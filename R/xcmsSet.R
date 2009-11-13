@@ -815,6 +815,10 @@ setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"),
                                           value = "index", intensity = "into") {
 
+  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+    stop("xcmsSet is not been group()ed.")
+  }
+
     method <- match.arg(method)
     peakmat <- peaks(object)
     groupmat <- groups(object)
@@ -1725,7 +1729,11 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             value = c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...) {
 
-    require(multtest) || stop("Couldn't load multtest")
+  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+    stop("No group information. Use group().")
+  }
+  
+  require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
     groupmat <- groups(object)
