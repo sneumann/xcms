@@ -1,5 +1,6 @@
-2009-11-13: 1.21.x: 
+2009-11-13: 1.21.3: 
 added a check for (un)grouped xcmsSet to groupval() 
+findmzROI shows scan number in case of errors
 
 2009-11-08: 1.21.2: 
 R/xcmsSet.R: added peakTable()
