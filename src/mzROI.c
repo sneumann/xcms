@@ -610,7 +610,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
           fInten = scanbuf->thisScan[p].intensity;  
        
           if (fMass < lastMass)  
-            error("m/z sort assumption violated ! (p %d,current %2.4f, last %2.4f) \n",p,fMass,lastMass);
+            error("m/z sort assumption violated ! (scan %d, p %d, current %2.4f (I=%2.2f), last %2.4f) \n",ctScan,p,fMass,fInten,lastMass);
           lastMass = fMass; 
           
           if (fInten > inoise)
