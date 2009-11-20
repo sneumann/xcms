@@ -1721,9 +1721,9 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
             if(dim(scanIX)[1] == 1){ ##do we need rt time window?
                 dat<-scanIX
                 seqInd<-sequenceMz(dat)
-                scan<-cbind(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd])
+                scan<-matrix(c(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd]), ncol=2)
                 colnames(scan)<-c("mz", "intensity")
-                scan<-scan[order(scan[,"mz"], scan[,"intensity"]),]
+                scan<-scan[order(scan[,"mz"], scan[,"intensity"]),, drop=FALSE]
                 scan[,"intensity"]<-scan[,"intensity"]/max(scan[,"intensity"])*100
                 #spectab<-specPeaks(scan, sn=sn) ## used to remove noise
                 run[[ref]]<-specPeaks(scan, sn=sn)
@@ -1750,9 +1750,9 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
                         next
                     }
                     seqInd<-sequenceMz(dat)
-                    scan<-cbind(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd])
+                    scan<-matrix(c(object@env$msnMz[seqInd], object@env$msnIntensity[seqInd]), ncol=2)
                     colnames(scan)<-c("mz", "intensity")
-                    scan<-scan[order(scan[,"mz"], scan[,"intensity"]),]
+                    scan<-scan[order(scan[,"mz"], scan[,"intensity"]),, drop=FALSE]
                     scan[,"intensity"]<-scan[,"intensity"]/max(scan[,"intensity"])*100
 ##normilise the intensity for signal to noise ration.
                     #spectab<-specPeaks(scan, sn=sn) # used to remove noise
