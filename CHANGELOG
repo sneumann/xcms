@@ -1,3 +1,6 @@
+2009-11-13: 1.21.4: 
+Fixed a dimension problem in collect() for MS2
+
 2009-11-13: 1.21.3: 
 added a check for (un)grouped xcmsSet to groupval() 
 findmzROI shows scan number in case of errors
