@@ -1,4 +1,8 @@
-2009-11-13: 1.21.4: 
+2009-11-27: 1.21.5:
+Added error messages for cases where the user specifies the step and/or method
+parameters differently in the two ways they can be given to xcmsSet()
+
+2009-11-25: 1.21.4: 
 Fixed a dimension problem in collect() for MS2
 
 2009-11-13: 1.21.3: 
