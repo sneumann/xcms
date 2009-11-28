@@ -59,10 +59,25 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
 
-    if ("step" %in% names(list(...)))
+    if ("step" %in% names(profparam)) {
+        if ("step" %in% names(list(...)) && profparam$step != list(...)$step) {
+            stop("different step values defined in profparam and step arguments")
+        }
+        profstep <- profparam$step
+        profparam <- profparam[names(profparam) != "step"]
+    } else if ("step" %in% names(list(...))) {
         profstep <- list(...)$step
-    else
+    } else {
         profstep <- 0.1
+    }
+
+    if ("method" %in% names(profparam)) {
+        if (profparam$method != profmethod) {
+            stop("different method values defined in profparam and profmethod arguments")
+        }
+        profmethod <- profparam$method
+        profparam <- profparam[names(profparam) != "method"]
+    }
 
     profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
 
