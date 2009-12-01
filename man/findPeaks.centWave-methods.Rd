@@ -100,7 +100,13 @@
   \item{scmin}{Left peak limit found by wavelet analysis (scan number)}
   \item{scmax}{Right peak limit found by wavelet analysis (scan number)}
 }
-\author{Ralf Tautenhahn, \email{rtautenh@ipb-halle.de}}
+\author{Ralf Tautenhahn}
+\encoding{UTF-8}
+\references{
+  Ralf Tautenhahn, Christoph \enc{Böttcher}{Boettcher}, and Steffen Neumann  
+  "Highly sensitive feature detection for high resolution LC/MS"
+  BMC Bioinformatics 2008, 9:504
+}
 \seealso{
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
