@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    rawEIC(object, mzrange, scanrange=c(1,length(object@scantime)))
+    rawEIC(object, mzrange = numeric(), rtrange = numeric(), scanrange = numeric())
   }
 }
 }}
@@ -19,6 +19,9 @@
   \item{mzrange}{
     m/z range for EIC
   }
+  \item{rtrange}{
+    retention time range for EIC
+  }  
   \item{scanrange}{
     scan range for EIC
   }
@@ -35,7 +38,7 @@
 
 }
 
-\author{Ralf Tautenhahn, \email{rtautenh@ipb-halle.de}}
+\author{Ralf Tautenhahn}
 
 \seealso{
   \code{\link{xcmsRaw-class}}
