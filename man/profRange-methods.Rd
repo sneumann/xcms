@@ -11,15 +11,15 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
-  \code{profRange(object, massrange = numeric(),
-                  timerange = numeric(), scanrange = numeric(),
+  \code{profRange(object, mzrange = numeric(),
+                  rtrange = numeric(), scanrange = numeric(),
                   ...)}
 }
 }}
 \arguments{
   \item{object}{the \code{xcmsRaw} object}
-  \item{massrange}{single numeric mass or vector of masses}
-  \item{timerange}{
+  \item{mzrange}{single numeric mass or vector of masses}
+  \item{rtrange}{
     single numeric time (in seconds) or vector of times
   }
   \item{scanrange}{single integer scan index or vector of indecies}
@@ -30,11 +30,11 @@
   matrix for other functions. It allows the user to specify such
   subsets in a variety of flexible ways with minimal typing.
 
-  Because \R does partial argument matching, \code{massrange},
-  \code{scanrange}, and \code{timerange} can be specified in short
+  Because \R does partial argument matching, \code{mzrange},
+  \code{scanrange}, and \code{rtrange} can be specified in short
   form using \code{m=}, \code{s=}, and \code{t=}, respectively. If
-  both a \code{scanrange} and \code{timerange} are specified, then
-  the \code{timerange} specification takes precedence.
+  both a \code{scanrange} and \code{rtrange} are specified, then
+  the \code{rtrange} specification takes precedence.
 
   When specifying ranges, you may either enter a single number or
   a numeric vector. If a single number is entered, then the closest
@@ -52,13 +52,13 @@
 \value{
   A list with the folloing items:
   
-  \item{massrange}{numeric vector with start and end mass}
+  \item{mzrange}{numeric vector with start and end mass}
   \item{masslab}{textual label of mass range}
   \item{massidx}{integer vector of mass indecies}
   \item{scanrange}{integer vector with stat ane end scans}
   \item{scanlab}{textual label of scan range}
   \item{scanidx}{integer vector of scan range}
-  \item{timerange}{numeric vector of start and end times}
+  \item{rtrange}{numeric vector of start and end times}
   \item{timelab}{textual label of time range}
 }
 \seealso{

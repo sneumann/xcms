@@ -1,3 +1,6 @@
+2009-11-30: 1.21.6:
+Parameter unification: "massrange" replaced by "mzrange" and "timerange" replaced by "rtrange", for all xcms functions
+
 2009-11-27: 1.21.5:
 Added error messages for cases where the user specifies the step and/or method
 parameters differently in the two ways they can be given to xcmsSet()
