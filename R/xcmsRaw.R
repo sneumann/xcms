@@ -237,7 +237,7 @@ setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
     if (all(object@tic == 0))
-        points <- cbind(object@scantime, rawEIC(object,massrange=range(object@env$mz))$intensity)  else
+        points <- cbind(object@scantime, rawEIC(object,mzrange=range(object@env$mz))$intensity)  else
         points <- cbind(object@scantime, object@tic)
 
     plot(points, type="l", main="TIC Chromatogram", xlab="Seconds",
@@ -268,7 +268,7 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
 
 setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
 
-setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
+setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
     if (scan < 0)
         scan <- length(object@scantime) + 1 + scan
@@ -276,9 +276,9 @@ setMethod("getScan", "xcmsRaw", function(object, scan, massrange = numeric()) {
     idx <- seq(object@scanindex[scan]+1, min(object@scanindex[scan+1],
                                              length(object@env$mz), na.rm=TRUE))
 
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        idx <- idx[object@env$mz[idx] >= massrange[1] & object@env$mz[idx] <= massrange[2]]
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
     }
 
     points <- cbind(mz = object@env$mz[idx], intensity = object@env$intensity[idx])
@@ -409,14 +409,14 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
     scans <- list(length(sel$scanidx))
     uniquemz <- numeric()
     for (i in seq(along = sel$scanidx)) {
-       scans[[i]] <- getScan(object, sel$scanidx[i], sel$massrange)
+       scans[[i]] <- getScan(object, sel$scanidx[i], sel$mzrange)
        uniquemz <- unique(c(uniquemz, scans[[i]][,"mz"]))
     }
     uniquemz <- sort(uniquemz)
 
     intmat <- matrix(nrow = length(uniquemz), ncol = length(sel$scanidx))
     for (i in seq(along = sel$scanidx)) {
-        scan <- getScan(object, sel$scanidx[i], sel$massrange)
+        scan <- getScan(object, sel$scanidx[i], sel$mzrange)
         intmat[,i] <- approx(scan, xout = uniquemz)$y
     }
 
@@ -474,7 +474,7 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
 
 setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
 
-setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
+setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
                                           ident = FALSE)
 {
     if (scan<1 || scan>length(object@scanindex) ) {
@@ -498,9 +498,9 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, massrange = numeric(),
 
     idx <- (object@scanindex[scan]+1):min(followingScanIndex,
                                         length(object@env$mz), na.rm=TRUE)
-    if (length(massrange) >= 2) {
-        massrange <- range(massrange)
-        idx <- idx[object@env$mz[idx] >= massrange[1] & object@env$mz[idx] <= massrange[2]]
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
     }
     points <- cbind(object@env$mz[idx], object@env$intensity[idx])
     title = paste("Mass Spectrum: ", round(object@scantime[scan], 1),
@@ -614,16 +614,16 @@ setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
     rgl.surface(x, z, y, color = col, shininess = 128)
     rgl.points(0, 0, 0, alpha = 0)
 
-    mztics <- pretty(sel$massrange, n = 5*aspect[1])
-    rttics <- pretty(sel$timerange, n = 5*aspect[2])
+    mztics <- pretty(sel$mzrange, n = 5*aspect[1])
+    rttics <- pretty(sel$rtrange, n = 5*aspect[2])
     inttics <- pretty(c(0,ylim), n = 10*aspect[3])
     inttics <- inttics[inttics > 0]
 
-    rgl.bbox(xat = (mztics - sel$massrange[1])/diff(sel$massrange)*aspect[1],
+    rgl.bbox(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
              xlab = as.character(mztics),
              yat = inttics/ylim[2]*aspect[3],
              ylab = as.character(inttics),
-             zat = (rttics - sel$timerange[1])/diff(sel$timerange)*aspect[2],
+             zat = (rttics - sel$rtrange[1])/diff(sel$rtrange)*aspect[2],
              zlab = as.character(rttics),
              ylen = 0, alpha=0.5)
 })
@@ -721,7 +721,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
                      yfilt[peakrange[1]:peakrange[2]] <- 0
                      next
                  }
-                 massrange <- range(mzmat, na.rm = TRUE)
+                 mzrange <- range(mzmat, na.rm = TRUE)
                  massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
                  pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
                  into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
@@ -743,7 +743,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
                      nrmat[seq(length = nrow(rmat)),] = rmat
                      rmat <- nrmat
                  }
-                 rmat[num,] <- c(massmean, massrange[1], massrange[2], maxy, peakrange, into, intf, maxo, maxf, j, sn)
+                 rmat[num,] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange, into, intf, maxo, maxf, j, sn)
              } else
                  break
         }
@@ -834,13 +834,13 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       scrange <- c(feat$scmin,feat$scmax)
       ## scrange + noiserange, used for baseline detection and wavelet analysis
       sr <- c(max(scanrange[1],scrange[1] - max(noiserange)),min(scanrange[2],scrange[2] + max(noiserange)))
-      eic <- rawEIC(object,massrange=mzrange,scanrange=sr)
+      eic <- rawEIC(object,mzrange=mzrange,scanrange=sr)
       d <- eic$intensity
       td <- sr[1]:sr[2]
       scan.range <- c(sr[1],sr[2])
       ## original mzROI range
-      mzROI.EIC <- rawEIC(object,massrange=mzrange,scanrange=scrange)
-      omz <- rawMZ(object,massrange=mzrange,scanrange=scrange)
+      mzROI.EIC <- rawEIC(object,mzrange=mzrange,scanrange=scrange)
+      omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
       if (any(omz == 0))
         stop("centWave: debug me: (omz == 0)?\n")
       od  <- mzROI.EIC$intensity
@@ -854,7 +854,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
       ## 1st type of baseline: statistic approach
       if (N >= 10*minPeakWidth)  ## in case of very long mass trace use full scan range for baseline detection
-        noised <- rawEIC(object,massrange=mzrange,scanrange=scanrange)$intensity else
+        noised <- rawEIC(object,mzrange=mzrange,scanrange=scanrange)$intensity else
             noised <- d;
       ## 90% trimmed mean as first baseline guess
       noise <- estimateChromNoise(noised,c(0.05,0.95),minPts=3*minPeakWidth)
@@ -1510,58 +1510,58 @@ setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
 
 setMethod("profRange", "xcmsRaw", function(object,
-                                           massrange = numeric(),
-                                           timerange = numeric(),
+                                           mzrange = numeric(),
+                                           rtrange = numeric(),
                                            scanrange = numeric(), ...) {
 
     if (length(object@env$profile)) {
         contmass <- profMz(object)
-        if (length(massrange) == 0) {
-            massrange <- c(min(contmass), max(contmass))
-        } else if (length(massrange) == 1) {
-            closemass <- contmass[which.min(abs(contmass-massrange))]
-            massrange <- c(closemass, closemass)
-        } else if (length(massrange) > 2) {
-            massrange <- c(min(massrange), max(massrange))
+        if (length(mzrange) == 0) {
+            mzrange <- c(min(contmass), max(contmass))
+        } else if (length(mzrange) == 1) {
+            closemass <- contmass[which.min(abs(contmass-mzrange))]
+            mzrange <- c(closemass, closemass)
+        } else if (length(mzrange) > 2) {
+            mzrange <- c(min(mzrange), max(mzrange))
         }
-        massidx <- which((contmass >= massrange[1]) & (contmass <= massrange[2]))
+        massidx <- which((contmass >= mzrange[1]) & (contmass <= mzrange[2]))
     } else {
-        if (length(massrange) == 0) {
-            massrange <- range(object@env$mz)
+        if (length(mzrange) == 0) {
+            mzrange <- range(object@env$mz)
         } else {
-            massrange <- c(min(massrange), max(massrange))
+            mzrange <- c(min(mzrange), max(mzrange))
         }
         massidx <- integer()
     }
-    if (massrange[1] == massrange[2])
-        masslab <- paste(massrange[1], "m/z")
+    if (mzrange[1] == mzrange[2])
+        masslab <- paste(mzrange[1], "m/z")
     else
-        masslab <- paste(massrange[1], "-", massrange[2], " m/z", sep="")
+        masslab <- paste(mzrange[1], "-", mzrange[2], " m/z", sep="")
 
 
-    if (length(timerange) == 0) {
+    if (length(rtrange) == 0) {
         if (length(scanrange) == 0)
             scanrange <- c(1, length(object@scanindex))
         else if (length(scanrange) == 1)
             scanrange <- c(scanrange, scanrange)
         else if (length(scanrange) > 2)
             scanrange <- c(max(1, min(scanrange)), min(max(scanrange), length(object@scantime)))
-        timerange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
-    } else if (length(timerange) == 1) {
-        closetime <- object@scantime[which.min(abs(object@scantime-timerange))]
-        timerange <- c(closetime, closetime)
-    } else if (length(timerange) > 2) {
-        timerange <- c(min(timerange), max(timerange))
+        rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
+    } else if (length(rtrange) == 1) {
+        closetime <- object@scantime[which.min(abs(object@scantime-rtrange))]
+        rtrange <- c(closetime, closetime)
+    } else if (length(rtrange) > 2) {
+        rtrange <- c(min(rtrange), max(rtrange))
     }
 
-    if (timerange[1] == timerange[2])
-        timelab <- paste(round(timerange[1],1), "seconds")
+    if (rtrange[1] == rtrange[2])
+        timelab <- paste(round(rtrange[1],1), "seconds")
     else
-        timelab <- paste(round(timerange[1],1), "-", round(timerange[2],1), " seconds", sep="")
+        timelab <- paste(round(rtrange[1],1), "-", round(rtrange[2],1), " seconds", sep="")
 
 
     if (length(scanrange) == 0) {
-        scanidx <- which((object@scantime >= timerange[1]) & (object@scantime <= timerange[2]))
+        scanidx <- which((object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2]))
         scanrange <- c(min(scanidx), max(scanidx))
     } else {
         scanidx <- scanrange[1]:scanrange[2]
@@ -1572,21 +1572,21 @@ setMethod("profRange", "xcmsRaw", function(object,
     else
         scanlab <- paste("scans ", scanrange[1], "-", scanrange[2], sep="")
 
-    list(massrange = massrange, masslab = masslab, massidx = massidx,
+    list(mzrange = mzrange, masslab = masslab, massidx = massidx,
          scanrange = scanrange, scanlab = scanlab, scanidx = scanidx,
-         timerange = timerange, timelab = timelab)
+         rtrange = rtrange, timelab = timelab)
 })
 
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 
 setMethod("rawEIC", "xcmsRaw", function(object,
-                                           massrange = numeric(),
-                                           timerange = numeric(),
+                                           mzrange = numeric(),
+                                           rtrange = numeric(),
                                            scanrange = numeric())  {
 
-   if (length(timerange) >= 2) {
-        timerange <- range(timerange)
-        scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
+   if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
         scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
     }  else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
@@ -1600,20 +1600,20 @@ setMethod("rawEIC", "xcmsRaw", function(object,
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+  .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
 
 setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 
 setMethod("rawMZ", "xcmsRaw", function(object,
-                                           massrange = numeric(),
-                                           timerange = numeric(),
+                                           mzrange = numeric(),
+                                           rtrange = numeric(),
                                            scanrange = numeric())  {
 
-   if (length(timerange) >= 2) {
-        timerange <- range(timerange)
-        scanidx <- (object@scantime >= timerange[1]) & (object@scantime <= timerange[2])
+   if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
         scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
     }  else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
@@ -1627,23 +1627,23 @@ setMethod("rawMZ", "xcmsRaw", function(object,
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-  .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(massrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+  .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
 
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
 
-setMethod("findmzROI", "xcmsRaw", function(object, massrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter=c(0,0), noise=0){
+setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter=c(0,0), noise=0){
 
   scanrange[1] <- max(1,scanrange[1])
   scanrange[2] <- min(length(object@scantime),scanrange[2])
 
-  ## massrange not implemented yet
+  ## mzrange not implemented yet
   if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
   if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
   if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-  .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(massrange),
+  .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(mzrange),
   as.integer(scanrange), as.integer(length(object@scantime)),
   as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(noise), PACKAGE ='xcms' )
 })

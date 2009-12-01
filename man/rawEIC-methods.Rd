@@ -10,13 +10,13 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    rawEIC(object, massrange, scanrange=c(1,length(object@scantime)))
+    rawEIC(object, mzrange, scanrange=c(1,length(object@scantime)))
   }
 }
 }}
 \arguments{
   \item{object}{\code{xcmsRaw} object}
-  \item{massrange}{
+  \item{mzrange}{
     m/z range for EIC
   }
   \item{scanrange}{
