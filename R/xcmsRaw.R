@@ -1603,6 +1603,22 @@ setMethod("rawEIC", "xcmsRaw", function(object,
   .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
+setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
+
+setMethod("plotEIC", "xcmsRaw", function(object,
+                                           mzrange = numeric(),
+                                           rtrange = numeric(),
+                                           scanrange = numeric())  {
+   
+   EIC <-  rawEIC(object,mzrange=mzrange, rtrange=rtrange, scanrange=scanrange)
+   points <- cbind(object@scantime[EIC$scan], EIC$intensity)
+
+   plot(points, type="l", main=paste("Extracted Ion Chromatogram  m/z  ",mzrange[1]," - ",mzrange[2],sep=""), xlab="Seconds",
+        ylab="Intensity")
+
+   invisible(points)
+})
+
 
 setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 
