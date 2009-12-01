@@ -438,8 +438,8 @@ double getScanEIC(int scan, double from, double to, double *pmz, double *pintens
   return(sum);
 }
 
-SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan) {
-  double *pmz, *pintensity,*p_vint, massrangeFrom,massrangeTo;
+SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange, SEXP lastscan) {
+  double *pmz, *pintensity,*p_vint, mzrangeFrom,mzrangeTo;
   int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
   SEXP list_names,reslist,vscan,vint;
   pmz = REAL(mz);  
@@ -448,8 +448,8 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   pscanindex = INTEGER(scanindex);
   int firstScan = 1;   // is always 1 
   ilastScan = INTEGER(lastscan)[0];
-  massrangeFrom = REAL(massrange)[0];  
-  massrangeTo =  REAL(massrange)[1];  
+  mzrangeFrom = REAL(mzrange)[0];  
+  mzrangeTo =  REAL(mzrange)[1];  
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
@@ -470,7 +470,7 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
     p_scan[i] = ctScan;
-    p_vint[i] = getScanEIC(ctScan,massrangeFrom,massrangeTo,pmz, pintensity, pscanindex,nmz,ilastScan);
+    p_vint[i] = getScanEIC(ctScan,mzrangeFrom,mzrangeTo,pmz, pintensity, pscanindex,nmz,ilastScan);
     i++;
   }
   
@@ -482,8 +482,8 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanra
   return(reslist);
 }
 
-SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan) {
-  double *pmz, *pintensity,*p_res, massrangeFrom,massrangeTo;
+SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange, SEXP lastscan) {
+  double *pmz, *pintensity,*p_res, mzrangeFrom,mzrangeTo;
   int i,*pscanindex,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
   SEXP res;
   pmz = REAL(mz);  
@@ -492,8 +492,8 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanran
   pscanindex = INTEGER(scanindex);
   int firstScan = 1;   // is always 1 
   ilastScan = INTEGER(lastscan)[0];
-  massrangeFrom = REAL(massrange)[0];  
-  massrangeTo =  REAL(massrange)[1];  
+  mzrangeFrom = REAL(mzrange)[0];  
+  mzrangeTo =  REAL(mzrange)[1];  
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
@@ -510,15 +510,15 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanran
         idx1 =  pscanindex[ctScan -1] +1;
         if (ctScan == ilastScan)  idx2 =  nmz-1;  
             else idx2 =  pscanindex[ctScan];
-        int idx1b = lowerBound(massrangeFrom, pmz, idx1-1, idx2-idx1-1); 
-        int idx2b = upperBound(massrangeTo, pmz, idx1b, idx2-idx1b-1);  
+        int idx1b = lowerBound(mzrangeFrom, pmz, idx1-1, idx2-idx1-1); 
+        int idx2b = upperBound(mzrangeTo, pmz, idx1b, idx2-idx1b-1);  
 
         int pc=0;
         p_res[i]=0;
         for (idx=idx1b;idx <= idx2b; idx++) 
         {
             double mzval = pmz[idx];
-            if ((mzval <= massrangeTo) && (mzval >= massrangeFrom)) {
+            if ((mzval <= mzrangeTo) && (mzval >= mzrangeFrom)) {
                if (pc==0)
                  p_res[i] = mzval; 
                else
@@ -534,8 +534,8 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanran
   return(res);
 }
 
-SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP noise) {
-  double *pmz, *pintensity, massrangeFrom,massrangeTo;
+SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP noise) {
+  double *pmz, *pintensity, mzrangeFrom,mzrangeTo;
   int i,*pscanindex, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, inoise;
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
   int perc, lp = -1;
@@ -553,8 +553,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP massrange, SEXP sca
   pickOptions.minimumIntValues=INTEGER(prefilter)[0];
   pickOptions.minimumInt=INTEGER(prefilter)[1];
   
-  massrangeFrom = REAL(massrange)[0];  
-  massrangeTo =  REAL(massrange)[1];  
+  mzrangeFrom = REAL(mzrange)[0];  
+  mzrangeTo =  REAL(mzrange)[1];  
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   
