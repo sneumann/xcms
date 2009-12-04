@@ -94,7 +94,7 @@ The \Robject{xcmsSet} now can be calibrated again with the m/z from the masslist
 
 <<Calibrate include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
 xs4c <- calibrate(xs4,
-		wishlist=masslist,
+		calibrants=masslist,
 		method="edgeshift",
 		mzabs=0.0001,
 		mzppm=5,
@@ -105,7 +105,7 @@ xs4c <- calibrate(xs4,
 
 
 
-The method "shift" adds a value to each m/z, "linear" does a regression and edgeshift does a regression but uses a shift before the smallest and after the biggest m/z from the wishlist.
+The method "shift" adds a value to each m/z, "linear" does a regression and edgeshift does a regression but uses a shift before the smallest and after the biggest m/z from the calibrants.
 \\
 These steps are necessary to create a usable input for \Rmethod{mzClust}.
 However, if you have already stored the data in a \Robject{xcmsSet}, you can
