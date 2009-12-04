@@ -392,7 +392,7 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 })
 
 setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
-setMethod("calibrate", "xcmsSet", function(object,wishlist,method="linear",
+setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
                                            mzabs=0.0001, mzppm=5,
                                            neighbours=3, plotres=FALSE) {
 
@@ -400,17 +400,17 @@ setMethod("calibrate", "xcmsSet", function(object,wishlist,method="linear",
     if (!sum(method == c("shift","linear","edgeshift")))
         stop("unknown calibration method!")
 
-    if (is.list(wishlist))
-        if (length(wishlist) != nsamp)
+    if (is.list(calibrants))
+        if (length(calibrants) != nsamp)
             stop("Error: Number of masslists differs with number of samples")
 
     for (s in 1:nsamp)
     {
         peaklist = object@peaks[which(object@peaks[,"sample"]==s),]
-        if (is.list(wishlist)) {
-            masslist <- wishlist[s]
+        if (is.list(calibrants)) {
+            masslist <- calibrants[s]
         }else{
-            masslist <- wishlist
+            masslist <- calibrants
         }
 
         masses <- matchpeaks(peaklist,masslist,mzabs,mzppm,neighbours)
