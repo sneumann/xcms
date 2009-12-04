@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsSet"}{
   \code{
-    calibrate(object, wishlist,method="linear",
+    calibrate(object, calibrants,method="linear",
     mzabs=0.0001, mzppm=5,
     neighbours=3, plotres=FALSE)
   }
@@ -18,7 +18,7 @@
 }}
 \arguments{
   \item{object}{a \code{xcmsSet} object with uncalibrated mz}
-    \item{wishlist}{a vector or a list of vectors with reference m/z-values}
+    \item{calibrants}{a vector or a list of vectors with reference m/z-values}
     \item{method}{the used calibrating-method, see below}
     \item{mzppm}{the relative error used for matching peaks in ppm (parts per million)}
     \item{mzabs}{the absolute error used for matching peaks in Da}
@@ -27,8 +27,8 @@
 }
 \value{
     \item{object}{a \code{xcmsSet} with one ore more samples}
-\item{wishlist}{for each sample can be used a different wishlist if there is given a list of m/z-vectors. the length of the list must be the same as the number of samples, alternatively a single vector of masses can be given which is used for all samples.}
-   \item{method}{ "shift" for shifting each m/z, "linear" does a linear regression and adds a linear term to each m/z. "edgeshift" does a linear regression within the range of the mz-wishlist and a shift outside.}
+\item{calibrants}{for each sample different calibrants can be used, if a list of m/z-vectors is given. The length of the list must be the same as the number of samples, alternatively a single vector of masses can be given which is used for all samples.}
+   \item{method}{ "shift" for shifting each m/z, "linear" does a linear regression and adds a linear term to each m/z. "edgeshift" does a linear regression within the range of the mz-calibrants and a shift outside.}
 }
 \seealso{
   \code{\link{xcmsSet-class}},
