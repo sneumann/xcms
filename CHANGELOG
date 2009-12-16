@@ -1,3 +1,7 @@
+2009-12-16: 1.21.7:
+fillPeaks/getPeaks :  fix for R 2.11.0 :  weighted.mean() results in NA (not NaN) for zero weights
+   (R 2.11.0 changelog: "...Zero weights are handled specially so an infinite value with zero weight does not force an NaN result.")
+
 2009-11-30: 1.21.6:
 Parameter unification: "massrange" replaced by "mzrange" and "timerange" replaced by "rtrange", for all xcms functions
 R/xcmsRaw.R: added plotEIC()
