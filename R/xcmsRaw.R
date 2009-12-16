@@ -1267,8 +1267,9 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
         pwid <- diff(stime[iret])/diff(iret)
         rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rowSums(ymat))
-        if (is.nan(rmat[i,1]))
+        if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()  results in NA (not NaN) for zero weights
             rmat[i,1] <- mean(peakrange[i,1:2])
+
         rmat[i,2:3] <- peakrange[i,1:2]
         rmat[i,4] <- stime[iret[1]:iret[2]][iymax]
         rmat[i,5:6] <- peakrange[i,3:4]
