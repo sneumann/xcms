@@ -1,6 +1,5 @@
 \name{diffreport-methods}
 \docType{methods}
-%\alias{diffreport-methods}
 \alias{diffreport}
 \alias{diffreport,xcmsSet-method}
 \title{Create report of analyte differences}
@@ -101,8 +100,8 @@
   classes maintian the same color across any number of different
   generated reports. 
   
-  When there are multiple groups, xcms will produce boxplots of the
-  different groups and will generate a single anova p-value statistic.
+  When there are multiple sample classes, xcms will produce boxplots of the
+  different classes and will generate a single anova p-value statistic.
   Like the eic's the plot number corrosponds to the row number in the 
   report.
 }
@@ -120,7 +119,7 @@
     greater intensity in \code{class1}
   }
   \item{pvalue}{p-value of t-statistic}
-  \item{anova}{p-value of the anova statistic if there are multiple groups}
+  \item{anova}{p-value of the anova statistic if there are multiple classes}
   \item{mzmed}{median m/z of peaks in the group}
   \item{mzmin}{minimum m/z of peaks in the group}
   \item{mzmax}{maximum m/z of peaks in the group}
