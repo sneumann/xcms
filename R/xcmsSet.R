@@ -460,7 +460,10 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
                                             template = NULL) {
 
-    if (!missing(template)) {
+  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+    stop("No group information. Use group().")
+  
+  if (!missing(template)) {
         tempsplit <- strsplit(template[1], "[T_]")
         tempsplit <- strsplit(unlist(tempsplit), "\\.")
         if (length(tempsplit[[1]]) > 1)
