@@ -462,6 +462,7 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 
   if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
     stop("No group information. Use group().")
+  }
   
   if (!missing(template)) {
         tempsplit <- strsplit(template[1], "[T_]")
