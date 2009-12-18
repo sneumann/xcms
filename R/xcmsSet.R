@@ -1562,7 +1562,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
             rtrange <- retexp(grp[grpidx,c("rtmin","rtmax"),drop=FALSE], rtrange)
         }
     } else if (is.null(dim(rtrange)))
-        stop("mzrange must be a matrix or single number")
+        stop("rtrange must be a matrix or single number")
     colnames(rtrange) <- c("rtmin", "rtmax")
 
     if (missing(groupidx))
