@@ -1,3 +1,6 @@
+2009-12-18: 1.21.8:
+added absent(xset) / present(xset) function.
+	   
 2009-12-16: 1.21.7:
 fillPeaks/getPeaks :  fix for R 2.11.0 :  weighted.mean() results in NA (not NaN) for zero weights
    (R 2.11.0 changelog: "...Zero weights are handled specially so an infinite value with zero weight does not force an NaN result.")
