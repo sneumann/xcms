@@ -1,5 +1,6 @@
 2009-12-18: 1.21.8:
 added absent(xset) / present(xset) function.
+Fixed xcmsSet@filled in fillPeaks.chrom()
 	   
 2009-12-16: 1.21.7:
 fillPeaks/getPeaks :  fix for R 2.11.0 :  weighted.mean() results in NA (not NaN) for zero weights
