@@ -27,7 +27,7 @@ setMethod("present", "xcmsSet", function(object, class, minfrac) {
   
   apply (groupval(object), 1, function(x) {
     length(which(  (!(is.na(x[sampidx]) | is.nan(x[sampidx])))
-                 & !filled[x[sampidx]]) ) >= minpresent
+                 & !filled[x[sampidx]])) >= minpresent
   })
 })
 
@@ -48,8 +48,16 @@ setMethod("absent", "xcmsSet", function(object, class, minfrac) {
 
   classnum <- length(sampidx)
   minabsent <- classnum * minfrac
-  
+
+    filled <- rep(FALSE, nrow(peaks(object)))
+
+  ## exists(object@filled) always returns FALSE ??
+  sloti <- try(slot(object, "filled"), silent = TRUE)
+  if (class(sloti) != "try-error") {
+    filled[object@filled] <- TRUE
+  }
+
   apply (groupval(object), 1, function(x) {
-    length(which(is.na(x[sampidx]) | is.nan(x[sampidx]))) >= minabsent
+    length(which(is.na(x[sampidx]) | is.nan(x[sampidx]) | filled[x[sampidx]])) >= minabsent
   })
 })
