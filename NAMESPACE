@@ -32,6 +32,7 @@ exportClasses(
               )
 
 exportMethods(
+              "absent",
               "calibrate",
               "collect",
               "filepaths",
@@ -75,6 +76,7 @@ exportMethods(
               "plotSurf",
               "plotTIC",
               "plotTree",
+              "present",
               "profinfo",
               "profinfo<-",
               "profMedFilt",
