@@ -1390,6 +1390,8 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
     peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
 
     lastpeak <- nrow(peakmat)
+    lastpeakOrig <- lastpeak
+    
     peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
 
     cnames <- colnames(object@peaks)
@@ -1426,7 +1428,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
     cat("\n")
 
     peaks(object) <- peakmat
-    object@filled <- seq((lastpeak+1),nrow(peakmat))
+    object@filled <- seq((lastpeakOrig+1),nrow(peakmat))
     groups(object) <- groupmat
     groupidx(object) <- groupindex
 
@@ -1940,3 +1942,5 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex)
 }
+
+
