@@ -1,3 +1,6 @@
+2009-12-18: 1.21.9:
+start to modularise the *.R files by extracting class definitions
+
 2009-12-18: 1.21.8:
 added absent(xset) / present(xset) function.
 Fixed xcmsSet@filled in fillPeaks.chrom()
