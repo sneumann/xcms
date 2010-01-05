@@ -1,19 +1,3 @@
-setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
-                                   groupidx = "list",
-                                   filled="numeric",
-                                   phenoData = "data.frame",
-                                   rt = "list",
-                                   filepaths = "character", profinfo = "list",
-                                   polarity = "character"),
-         prototype(peaks = matrix(nrow = 0, ncol = 0),
-                   groups = matrix(nrow = 0, ncol = 0),
-                   groupidx = list(),
-                   filled = integer(0),
-                   phenoData = data.frame(), rt = list(),
-                   rt = list(),
-                   filepaths = character(0), profinfo = vector("list"),
-                   polarity = character(0)))
-
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
                     polarity = NULL, nSlaves=0, ...) {
