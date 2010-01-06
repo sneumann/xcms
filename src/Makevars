@@ -1,11 +1,86 @@
+PWIZ_CPPFLAGS=-I. -I./pwiz/data/msdata/ -I./pwiz/data/msdata/ramp/ -DHAVE_PWIZ_MZML_LIB
+
 PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
-PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE
+PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE $(PWIZ_CPPFLAGS)
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
 XCMSOBJECTS=fastMatch.o mzClust_hclust.o mzROI.o netCDF.o ramp_base64.o ramp.o rampR.o util.o xcms.o
 
-OBJECTS=$(OBIOBJECTS) $(XCMSOBJECTS)
+PWIZOBJECTS=\
+./boost/system/src/error_code.o \
+./boost/regex/src/posix_api.o \
+./boost/regex/src/fileiter.o \
+./boost/regex/src/regex_raw_buffer.o \
+./boost/regex/src/cregex.o \
+./boost/regex/src/regex_debug.o \
+./boost/regex/src/instances.o \
+./boost/regex/src/icu.o \
+./boost/regex/src/usinstances.o \
+./boost/regex/src/regex.o \
+./boost/regex/src/wide_posix_api.o \
+./boost/regex/src/regex_traits_defaults.o \
+./boost/regex/src/winstances.o \
+./boost/regex/src/wc_regex_traits.o \
+./boost/regex/src/c_regex_traits.o \
+./boost/regex/src/cpp_regex_traits.o \
+./boost/regex/src/static_mutex.o \
+./boost/regex/src/w32_regex_traits.o \
+./pwiz/data/msdata/Version.o \
+./pwiz/utility/minimxml/XMLWriter.o \
+./pwiz/utility/minimxml/SAXParser.o \
+./boost/iostreams/src/zlib.o \
+./boost/thread/src/pthread/once.o \
+./boost/filesystem/src/operations.o \
+./pwiz/data/common/MemoryIndex.o \
+./pwiz/data/common/CVTranslator.o \
+./pwiz/data/common/cv.o \
+./pwiz/data/common/ParamTypes.o \
+./pwiz/data/common/BinaryIndexStream.o \
+./pwiz/data/common/diff_std.o \
+./pwiz/data/msdata/SpectrumList_MGF.o \
+./pwiz/data/msdata/DefaultReaderList.o \
+./pwiz/data/msdata/ChromatogramList_mzML.o \
+./pwiz/data/msdata/examples.o \
+./pwiz/data/msdata/Serializer_mzML.o \
+./pwiz/data/msdata/Reader.o \
+./pwiz/data/msdata/Serializer_MGF.o \
+./pwiz/data/msdata/Serializer_mzXML.o \
+./pwiz/data/msdata/SpectrumList_mzML.o \
+./pwiz/data/msdata/BinaryDataEncoder.o \
+./pwiz/data/msdata/Diff.o \
+./pwiz/data/msdata/MSData.o \
+./pwiz/data/msdata/References.o \
+./pwiz/data/msdata/SpectrumList_mzXML.o \
+./pwiz/data/msdata/IO.o \
+./pwiz/data/msdata/SpectrumList_BTDX.o \
+./pwiz/data/msdata/SpectrumInfo.o \
+./pwiz/data/msdata/RAMPAdapter.o \
+./pwiz/data/msdata/LegacyAdapter.o \
+./pwiz/data/msdata/SpectrumIterator.o \
+./pwiz/data/msdata/MSDataFile.o \
+./pwiz/data/msdata/SpectrumListCache.o \
+./pwiz/utility/misc/IntegerSet.o \
+./pwiz/utility/misc/Base64.o \
+./pwiz/utility/misc/IterationListener.o \
+./pwiz/utility/misc/MSIHandler.o \
+./pwiz/utility/misc/Filesystem.o \
+./pwiz/utility/misc/TabReader.o \
+./pwiz/utility/misc/random_access_compressed_ifstream.o \
+./pwiz/utility/misc/SHA1.o \
+./pwiz/utility/misc/SHA1Calculator.o \
+./pwiz/utility/misc/sha1calc.o 
+
+
+#./pwiz/utility/misc/Image.o \
+#./pwiz/data/common/cvgen.o \
+#./pwiz/data/common/obo.o \
+#./boost/regex/src/fileiter.o \
+#./boost/regex/src/cregex.o \
+#./boost/regex/src/regex_traits_defaults.o \
+
+
+OBJECTS=$(PWIZOBJECTS)  $(OBIOBJECTS) $(XCMSOBJECTS) 
 
 all: $(SHLIB)
 
