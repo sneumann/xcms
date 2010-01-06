@@ -5,9 +5,11 @@
 \description{This method calculates the distance of two sets of peaks using the cosine-distance.}
 \section{Methods}{
 \describe{
-\item{peakTable1 = "matrix", peakTable2 = >"matrix"}{
+\item{peakTable1 = "matrix", peakTable2 = "matrix"}{
   \code{
-    specDist.cosinus(peakTable1, peakTable2,  ...)
+    specDist.cosinus(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
+                 mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
+                 symmetric = FALSE)
     }
 }
 }}

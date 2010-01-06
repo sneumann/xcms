@@ -5,7 +5,7 @@
 \description{This method calculates the distance of two sets of peaks by just returning the number of matching peaks (m/z-values).}
 \section{Methods}{
 \describe{
-\item{peakTable1 = "matrix", peakTable2 = >"matrix"}{
+\item{peakTable1 = "matrix", peakTable2 = "matrix"}{
   \code{
     specDist.peakCount(peakTable1, peakTable2,  ...)
     }
