@@ -1,7 +1,9 @@
-PWIZ_CPPFLAGS=-I. -I./pwiz/data/msdata/ -I./pwiz/data/msdata/ramp/ -DHAVE_PWIZ_MZML_LIB
-
-PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
-PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE $(PWIZ_CPPFLAGS)
+#
+# If you want support for mzML, 
+# run checkoutpwiz.sh in this directory 
+# and uncomment the PWIZ stuff in OBJECTS and PKG_CPPFLAGS
+# towards the end of this file
+#
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
@@ -71,16 +73,12 @@ PWIZOBJECTS=\
 ./pwiz/utility/misc/SHA1Calculator.o \
 ./pwiz/utility/misc/sha1calc.o 
 
+OBJECTS= $(OBIOBJECTS) $(XCMSOBJECTS) # $(PWIZOBJECTS) 
 
-#./pwiz/utility/misc/Image.o \
-#./pwiz/data/common/cvgen.o \
-#./pwiz/data/common/obo.o \
-#./boost/regex/src/fileiter.o \
-#./boost/regex/src/cregex.o \
-#./boost/regex/src/regex_traits_defaults.o \
+PWIZ_CPPFLAGS=-I. -I./pwiz/data/msdata/ -I./pwiz/data/msdata/ramp/ -DHAVE_PWIZ_MZML_LIB
 
-
-OBJECTS=$(PWIZOBJECTS)  $(OBIOBJECTS) $(XCMSOBJECTS) 
+PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz
+PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE # $(PWIZ_CPPFLAGS)
 
 all: $(SHLIB)
 
