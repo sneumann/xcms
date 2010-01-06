@@ -1,4 +1,7 @@
-2009-12-18: 1.21.9:
+2010-01-06: 1.21.10:
+Preparing for mzML support
+
+2010-01-05: 1.21.9:
 start to modularise the *.R files by extracting class definitions
 
 2009-12-18: 1.21.8:
