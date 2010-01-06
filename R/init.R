@@ -60,10 +60,19 @@
   ## default method
   fillPeaks.method <- "chrom"
 
+  ## all specDist methods
+  start <- nchar("specDist.")
+  all.xcms <- ls(asNamespace(pkgname))
+  specDist.methods <-  substr(all.xcms[grep("specDist\\..*", all.xcms)],
+                               start+1, 100)
+  ## default method
+  specDist.method <- "meanMZmatch"
+
+
   xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
                    group.method=group.method, group.methods=group.methods,
                    retcor.method=retcor.method, retcor.methods=retcor.methods,
-                   fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods)
+                   fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods, specDist.methods=specDist.methods)
 
   class(xcms.opt) <- "BioCPkg"
 
