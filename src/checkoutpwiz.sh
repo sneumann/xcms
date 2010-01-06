@@ -83,5 +83,4 @@ string Version::str()
 }
 EOF
 
-
 #------------------
