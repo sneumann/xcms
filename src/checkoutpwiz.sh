@@ -38,6 +38,8 @@ done
 
 #------------------
 
+cd ..
+
 PWIZ_MAJOR=$(grep "constant PWIZ_MAJOR" pwiz/Jamroot.jam | sed -e 's/constant PWIZ_MAJOR : \([0-9+]\) ;/\1/')
 PWIZ_MINOR=$(grep "constant PWIZ_MINOR" pwiz/Jamroot.jam | sed -e 's/constant PWIZ_MINOR : \([0-9+]\) ;/\1/')
 
