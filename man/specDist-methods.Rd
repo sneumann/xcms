@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{specDist-methods}
 \alias{specDist}
-\alias{xcmsSet-method}
+\alias{specDist,xcmsSet-method}
 \title{Distance methods for xcmsSet, xcmsRaw and xsAnnotate}
 \description{
   There are several methods for calculating a distance between two sets of peaks in xcms. \code{specDist}
@@ -24,35 +24,11 @@
 		}
 	}
 
-	\describe{
-	\item{object = "xsAnnotate"}{
-	\code{
-	specDist(object, peakIDs1, peakIDs2...)
-		}
-		}
-	}
-
-	\describe{
-	\item{object = "xsAnnotate", object2 = "xsAnnotate"}{
-	\code{
-	specDist(object, object2, PSpec1, PSpec2,...)
-		}
-		}
-	}
-	
-	\describe{
-	\item{object = "xsAnnotate", object2 = "xsAnnotate"}{
-	\code{
-	specDist(object, object2, peakIDs1, peakIDs2 ,...)
-		}
-		}
-	}
-
 }
 
 
 \arguments{
-  \item{object}{a xcmsSet, xcmsRaw or xsAnnotate.}
+  \item{object}{a xcmsSet or xcmsRaw.}
   \item{method}{Method to use for distance calculation. See details.}
   \item{...}{mzabs, mzppm and parameters for the distance function.}
 }

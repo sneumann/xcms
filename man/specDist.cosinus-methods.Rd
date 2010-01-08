@@ -1,13 +1,13 @@
-\name{specDist.methods}
+\name{specDist.cosine}
 \docType{methods}
-\alias{specDist.cosinus}
+\alias{specDist.cosine}
 \title{a Distance function based on matching peaks}
 \description{This method calculates the distance of two sets of peaks using the cosine-distance.}
 \section{Methods}{
 \describe{
 \item{peakTable1 = "matrix", peakTable2 = "matrix"}{
   \code{
-    specDist.cosinus(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
+    specDist.cosine(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
                  mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
                  symmetric = FALSE)
     }
@@ -34,7 +34,7 @@ peaks were found) the return-value is NA.
 	\item{nPmin}{the minimum absolute sum of peaks from both praktables}
 }
 \usage{
-specDist.cosinus(peakTable1, peakTable2, mzabs=0.001, mzppm=10, mzExp=0.6, intExp=3, nPdiff=2, nPmin=8, symmetric=FALSE)
+specDist.cosine(peakTable1, peakTable2, mzabs=0.001, mzppm=10, mzExp=0.6, intExp=3, nPdiff=2, nPmin=8, symmetric=FALSE)
 }
 \author{Joachim Kutzera, \email{jkutzer@ipb-halle.de}}
 \keyword{methods}

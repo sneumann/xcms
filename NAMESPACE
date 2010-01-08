@@ -99,7 +99,7 @@ exportMethods(
               "sampnames<-",
               "searchMetlin",
 	      "specDist",
-	      "specDist.cosinus",
+	      "specDist.cosine",
 	      "specDist.meanMZmatch",
 	      "specDist.peakCount",
               "show",
