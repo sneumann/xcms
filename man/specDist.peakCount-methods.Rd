@@ -7,7 +7,7 @@
 \describe{
 \item{peakTable1 = "matrix", peakTable2 = "matrix"}{
   \code{
-    specDist.peakCount(peakTable1, peakTable2,  ...)
+    specDist.peakCount(peakTable1, peakTable2, mzppm=10,symmetric=FALSE )
     }
 }
 }}
