@@ -1745,18 +1745,17 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
                     ref<-ref+1
                 }
             }
-
         }
 
-	if(!exists("runinfoFinal")){
-	    runinfoFinal<-runinfo
-	} else {
-	    runinfoFinal<-rbind(runinfoFinal, runinfo)
-	}
-	if(check==TRUE) {
-	    mzU<-0
-	    uCE<- -1
-	}
+		if(!exists("runinfoFinal")){
+	    	runinfoFinal<-runinfo
+		} else {
+	    	runinfoFinal<-rbind(runinfoFinal, runinfo)
+		}
+		if(check==TRUE) {
+	    	mzU<-0
+	    	uCE<- -1
+		}
     }
 
     colnames(runinfoFinal)<-c("preMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
@@ -1766,21 +1765,25 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
         frag<-new("xcmsFragments")
     }
     if(length(run)== dim(runinfoFinal)[1] ){## some odd stuff happens with the matrix duplicates are made
-	frag@MS2spec<-run## So we check for it
+		frag@MS2spec<-run## So we check for it
         frag@specinfo<-runinfoFinal
     } else {
-	dup<-duplicated(runinfoFinal)
-	if(dim(runinfoFinal[!dup,])[1] == length(run)){
+		dup<-duplicated(runinfoFinal)
+		if(dim(runinfoFinal[!dup,])[1] == length(run)){
             frag@specinfo<-runinfoFinal[!dup,]
             frag@MS2spec<-run
-	} else{
-	    cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep="")) ##should never be seen :D just having fun
-	}
+		} else{
+	    	cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep="")) ##should never be seen :D just having fun
+		}
     }
 
-
     cat(paste("\n", sep=""))
-    accurateMZ<-getMZ(object, frag@specinfo)
+	if(length(object@env$mz) >1){
+		accurateMZ<-getMZ(object, frag@specinfo)
+	}else{
+		accurateMZ<-as.numeric(frag@specinfo[,1])
+	}
+    
     frag@specinfo<-cbind(frag@specinfo[,1], accurateMZ, frag@specinfo[,2:5])
     colnames(frag@specinfo)<-c("preMZ", "AccMZ", "rtmin", "rtmax", "ref", "CollisionEnergy")
     if(fragments == TRUE){
