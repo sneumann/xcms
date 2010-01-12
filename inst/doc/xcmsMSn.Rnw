@@ -55,7 +55,7 @@ mzData files, we first locate the \textit{data} directory in the
 %FileFilter -in HAM_004_641fE_pDDIT.mzData -rt 1190:1310 -int 100000: -mz 500:850 -out extracted.mzData
 
 <<RawFiles>>=
-mzdatapath <- system.file("iontrap", package = "msdata")
+mzdatapath <- system.file("iontrap", pattern="extracted.mzData", package = "msdata")
 list.files(mzdatapath, recursive = TRUE)
 @
 
