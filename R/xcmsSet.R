@@ -912,7 +912,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         stop("No peak groups found for retention time correction")
     idx <- idx[order(groupmat[idx,"rtmed"])]
 
-    rt <- groupval(object, "maxint", "rt")[idx,]
+    rt <- groupval(object, "maxint", "rt")[idx,, drop=FALSE]
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
@@ -955,6 +955,9 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
             rtdevsmorange <- range(rtdevsmo[[i]])
             if (any(rtdevsmorange/rtdevrange > 2)) warn.overcorrect <- TRUE
         } else {
+            if (nrow(pts) < 2) {
+              stop("Not enough ``well behaved'' peak groups even for linear smoothing of retention times")
+            }
             fit <- lsfit(pts$rt, pts$rtdev)
             rtdevsmo[[i]] <- rtcor[[i]] * fit$coef[2] + fit$coef[1]
             ptsrange <- range(pts$rt)
