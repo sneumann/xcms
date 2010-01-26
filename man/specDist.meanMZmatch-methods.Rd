@@ -1,6 +1,7 @@
 \name{specDist.meanMZmatch}
 \docType{methods}
 \alias{specDist.meanMZmatch}
+\alias{specDist.meanMZmatch,matrix,matrix-method}
 \title{a Distance function based on matching peaks}
 \description{This method calculates the distance of two sets of peaks.}
 \section{Methods}{

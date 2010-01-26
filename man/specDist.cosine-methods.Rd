@@ -1,6 +1,7 @@
 \name{specDist.cosine}
 \docType{methods}
 \alias{specDist.cosine}
+\alias{specDist.cosine,matrix,matrix-method}
 \title{a Distance function based on matching peaks}
 \description{This method calculates the distance of two sets of peaks using the cosine-distance.}
 \section{Methods}{
