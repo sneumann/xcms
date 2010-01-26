@@ -1,6 +1,8 @@
 #!/bin/bash 
 #------------------
 
+cd src
+
 rm -rf pwiz
 mkdir pwiz
 cd pwiz
