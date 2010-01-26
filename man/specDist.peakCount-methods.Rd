@@ -1,15 +1,17 @@
-\name{specDist.methods}
+\name{specDist.peakCount-methods}
 \docType{methods}
+\alias{specDist.peakCount-methods}
 \alias{specDist.peakCount}
+\alias{specDist.peakCount,matrix,matrix-method}
+
 \title{a Distance function based on matching peaks}
 \description{This method calculates the distance of two sets of peaks by just returning the number of matching peaks (m/z-values).}
 \section{Methods}{
 \describe{
-\item{peakTable1 = "matrix", peakTable2 = "matrix"}{
+  \item{peakTable1 = "matrix", peakTable2 = "matrix"}{
   \code{
     specDist.peakCount(peakTable1, peakTable2, mzppm=10,symmetric=FALSE )
-    }
-}
+    }}
 }}
 \arguments{
 	\item{peakTable1}{a Matrix containing at least m/z-values,
@@ -24,3 +26,4 @@ specDist.peakCount(peakTable1, peakTable2, mzabs=0.001, mzppm=10, symmetric=FALS
 }
 \author{Joachim Kutzera, \email{jkutzer@ipb-halle.de}}
 \keyword{methods}
+
