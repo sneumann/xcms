@@ -1046,7 +1046,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
 setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation"),
-                                                profStep=1, col = NULL, ty = NULL,
+                                                profStep=1, center=NULL, 
+                                                col = NULL, ty = NULL,
                                                 response=1, distFunc="cor_opt",
                                                 gapInit=NULL, gapExtend=NULL,
                                                 factorDiag=2, factorGap=1,
@@ -1094,14 +1095,18 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     for(i in 1:length(samples)){
         plength[i] <-length(which(peakmat[,"sample"]==i))
     }
-    maxsample <- which.max(plength)
-    idx <- which(seq(plength)!=maxsample)
-    cat("center sample: ", samples[maxsample], "\nProcessing: ")
 
+    if (missing(center)) {
+      center <- which.max(plength)
+    }
+      
+    cat("center sample: ", samples[center], "\nProcessing: ")
+    idx <- which(seq(plength)!=center)
+      
     for (s in idx) {
         cat(samples[s], " ")
 
-        obj1 <- xcmsRaw(object@filepaths[maxsample], profmethod="bin", profstep=profStep)
+        obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=profStep)
         obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
 
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
@@ -1201,7 +1206,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     }
 
     cat("\n")
-    rtdevsmo[[maxsample]] <- round(rtcor[[maxsample]] - object@rt$corrected[[maxsample]], 2)
+    rtdevsmo[[center]] <- round(rtcor[[center]] - object@rt$corrected[[center]], 2)
 
     if (plottype == "mdevden") {
         split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))

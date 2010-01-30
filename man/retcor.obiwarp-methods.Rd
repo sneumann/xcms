@@ -23,6 +23,7 @@
     \item{object = "xcmsSet"}{
       retcor(object, method="obiwarp", plottype = c("none", "deviation"),
       col = NULL, ty = NULL, profStep=1,
+      center=NULL, 
       response=1, score="cor",
       gapInit=0, gapExtend=0,
       factorDiag=2, factorGap=1,
@@ -40,7 +41,8 @@
   \item{ty}{vector of line and point types for plotting each sample}
   \item{profStep}{step size (in m/z) to use for profile generation from
     the raw data files}
-
+  \item{center}{the index of the sample all others will be aligned
+  to. If center==NULL, the sample with the most peaks is chosen as default.}
   \item{response}{Responsiveness of warping.  0 will give a linear warp based
     on start and end points.  100 will use all bijective anchors}
 
