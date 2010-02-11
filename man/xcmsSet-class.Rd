@@ -25,6 +25,10 @@
 \alias{profinfo<-}
 \alias{profinfo,xcmsSet-method}
 \alias{profinfo}
+\alias{progressCallback}
+\alias{progressCallback,xcmsSet-method}
+\alias{progressCallback<-}
+\alias{progressCallback<-,xcmsSet-method}
 \alias{sampclass<-,xcmsSet-method}
 \alias{sampclass<-}
 \alias{sampclass,xcmsSet-method}
@@ -78,6 +82,12 @@
     \item{\code{polarity}:}{
       a string ("positive" or "negative" or NULL) describing whether only
       positive or negative scans have been used reading the raw data.
+    }
+    \item{\code{progressInfo}:}{
+       progress informations for some xcms functions (for GUI)
+    }
+    \item{\code{progressCallback}:}{
+       function to be called, when progressInfo changes (for GUI)
     }
   }
 }

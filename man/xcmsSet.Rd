@@ -9,7 +9,7 @@
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
-        polarity = NULL, nSlaves=0, ...)
+        polarity = NULL, nSlaves=0, progressCallback=NULL,...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -21,6 +21,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{polarity}{filter raw data for positive/negative scans}
   \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
                  works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
+  \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
     \code{xcmsRaw} class
