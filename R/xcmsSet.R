@@ -140,16 +140,18 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
           rtlist$corrected[[i]] <- lcraw@scantime
           rm(lcraw)
           gc()
-          if (nrow(peaklist[[i]]) == 0)
-              warning(paste("No peaks found in sample", snames[i]))
-          else if (nrow(peaklist[[i]]) == 1)
-              warning(paste("Only 1 peak found in sample", snames[i]))
-          else if (nrow(peaklist[[i]]) < 10)
-              warning(paste("Only", nrow(peaklist[[i]]), "peaks found in sample",
-                      snames[i]))
       }
-
     }
+
+    lapply(1:length(peaklist), function(i) {
+              if (nrow(peaklist[[i]]) == 0)
+              warning("No peaks found in sample ", snames[i], call. = FALSE)
+          else if (nrow(peaklist[[i]]) == 1)
+              warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
+          else if (nrow(peaklist[[i]]) < 10)
+              warning("Only ", nrow(peaklist[[i]], " peaks found in sample",
+                      snames[i]), call. = FALSE)
+                    })
 
     peaks(object) <- do.call(rbind, peaklist)
     object@rt <- rtlist
