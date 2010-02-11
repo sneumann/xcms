@@ -149,8 +149,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
           else if (nrow(peaklist[[i]]) == 1)
               warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
           else if (nrow(peaklist[[i]]) < 10)
-              warning("Only ", nrow(peaklist[[i]], " peaks found in sample",
-                      snames[i]), call. = FALSE)
+              warning("Only ", nrow(peaklist[[i]]), " peaks found in sample", 
+                      snames[i], call. = FALSE)
                     })
 
     peaks(object) <- do.call(rbind, peaklist)
