@@ -751,6 +751,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
         cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
+    verbosenames <- c("egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
+
     ## Peak width: seconds to scales
     scalerange <- round((peakwidth / mean(diff(object@scantime))) / 2)
     if (length(scalerange) > 1)
@@ -923,8 +926,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
             ##  postprocessing
             if (!is.null(peaks)) {
-                basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
-                colnames(peaks) <- c(basenames,"egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
+                colnames(peaks) <- c(basenames, verbosenames)
 
                 colnames(peakinfo) <- c("scale","scaleNr","scpos","scmin","scmax")
 
@@ -1018,12 +1020,24 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             Sys.sleep(sleep)
       }
 
-      if (!is.null(peaks)) peaklist[[length(peaklist)+1]] <- peaks
+      if (!is.null(peaks)) {
+        peaklist[[length(peaklist)+1]] <- peaks
+      }
 
     } # f
 
     if (length(peaklist) == 0) {
-        return(invisible(new("xcmsPeaks")))
+      cat("\nNo peaks found !\n")
+
+      if (verbose.columns) {
+        nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)+length(verbosenames)))
+        colnames(nopeaks) <- c(basenames, verbosenames)
+      } else {
+        nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
+        colnames(nopeaks) <- c(basenames)
+      }
+
+      return(invisible(nopeaks))
     }
 
     p <- do.call(rbind,peaklist)
