@@ -4,6 +4,7 @@
 #include <math.h>
 #include "R.h"
 #include "Rdefines.h"
+#include "binarySearch.h"
 
 struct idxStruct
 {
