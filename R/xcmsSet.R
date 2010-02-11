@@ -1,8 +1,17 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
-                    polarity = NULL, nSlaves=0, ...) {
+                    polarity = NULL, nSlaves=0, progressCallback=NULL,...) {
 
     object <- new("xcmsSet")
+  
+    # initialise progress information 
+    xcms.options <- getOption("BioC")$xcms
+    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."), paste("findPeaks", xcms.options$findPeaks.methods,sep="."), 
+                      paste("retcor", xcms.options$retcor.methods,sep="."), paste("fillPeaks", xcms.options$fillPeaks.methods,sep="."))
+    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",sep="",collapse=","),")") )) 
+
+    if (is.function(progressCallback))
+        object@progressCallback <- progressCallback
 
     filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
                      "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
@@ -731,6 +740,10 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
 
         ## Clear "Joined" information from all master peaklist rows
         rm(peakIdxList,envir=mplenv)
+        
+        ## updateProgressInfo
+        object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
+        progressInfoUpdate(object)
     }
     gc()
 
@@ -1869,6 +1882,26 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     invisible(twosamp)
 })
+
+setGeneric("progressCallback", function(object) standardGeneric("progressCallback"))
+
+setMethod("progressCallback", "xcmsSet", function(object) object@progressCallback)
+
+setGeneric("progressCallback<-", function(object, value) standardGeneric("progressCallback<-"))
+
+setReplaceMethod("progressCallback", "xcmsSet", function(object, value) {
+
+    object@progressCallback <- value
+
+    object
+})
+
+setGeneric("progressInfoUpdate", function(object) standardGeneric("progressInfoUpdate"))
+
+setMethod("progressInfoUpdate", "xcmsSet", function(object) 
+  do.call(object@progressCallback, list(progress=object@progressInfo))
+)
+
 
 xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480)
 {
