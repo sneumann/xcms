@@ -1,3 +1,18 @@
+2010-02-16: 1.21.13:
+Added RANN as "suggested" package 
+
+2010-02-14: 1.21.12:
+minor code beautifications
+Be more graceful if centWave does not find any peaks
+- added progressInfo & callback functionality to xcmsSet
+  e.g. test <- function(progress) cat(progress$group.nearest, "\n")
+   xs <- xcmsSet(progressCallback=test)                            
+   or: xs@progressCallback <- test                                 
+   test with:  xsg <- group(xs, method="nearest")
+
+- added headerfile to fix compiler warnings for fastMatch.c
+
+
 2010-01-30: 1.21.11:
 Allow an explicit center argument in retcor(method="obiwarp").
 
