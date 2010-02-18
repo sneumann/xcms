@@ -203,7 +203,7 @@ function(arg_sets,papply_action,papply_commondata=list(),
             if (current_task <= length(arg_sets)) {
                 task <- list(data=arg_sets[[current_task]],seqno=current_task)
                 # cat("Sending task #",arg_sets[[current_task]],"\n")
-                cat("Sending task #",current_task,"\n")
+                cat("Sending task #",current_task,"\n"); flush.console();
                 mpi.send.Robj(task,slave_id,1)
                 current_task <- current_task + 1
                 }  else {
@@ -245,10 +245,10 @@ function(arg_sets,papply_action,papply_commondata=list(),
 
 
 ##
-## finPeaks MPI slave function
+## findPeaks slave function for parallel execution
 ##
 
-findPeaksMPI <- function(arg) {
+findPeaksPar <- function(arg) {
     require(xcms)
     
     params <- arg$params
@@ -269,4 +269,31 @@ findPeaksMPI <- function(arg) {
     peaks <- do.call(method, params)
 
     list(scantime=xRaw@scantime, peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
+}
+
+##
+## slightly modified version of snow's (static)clusterApply
+##
+
+xcmsClusterApply <- function(cl, x, fun, ...) {
+    argfun <- function(i) c(list(x[[i]]), list(...))
+    n <- length(x) 
+
+    checkCluster(cl)
+    p <- length(cl)
+    if (n > 0 && p > 0) {
+        val <- vector("list", n)
+        start <- 1
+        while (start <= n) {
+            end <- min(n, start + p - 1)
+        jobs <- end - start + 1
+            for (i in 1:jobs) {
+                cat("Sending task #",start + i - 1,"\n"); flush.console();
+                sendCall(cl[[i]], fun, argfun(start + i - 1))
+            }
+            val[start:end] <- lapply(cl[1:jobs], recvResult)
+            start <- start + jobs
+        }
+        checkForRemoteErrors(val)
+    }
 }

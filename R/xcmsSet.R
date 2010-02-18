@@ -84,24 +84,37 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     }
 
     runParallel <- 0
+    parMode <- ""
 
     if (nSlaves > 1) {
         ## If MPI is available ...
         rmpi = "Rmpi"
-        if (require(rmpi,character.only=TRUE) && !is.null(nSlaves)) {
+        opt.warn <- options("warn")$warn
+        options("warn" = -1) 
+        if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
             if (is.loaded('mpi_initialize')) {
-
                 mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
-
                 ## If there are multiple slaves AND this process is the master,
                 ## run in parallel.
-                if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0))
+                if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0)) {
                     runParallel <- 1
+                    parMode <- "MPI"
+                }
             }
+        } else { 
+          ## try local sockets using snow package
+          snow = "snow"
+          if (require(snow,character.only=TRUE,quietly=TRUE)) {
+              cat("Starting snow cluster with",nSlaves,"local sockets.\n")
+              snowclust <- makeCluster(nSlaves, type = "SOCK")
+              runParallel <- 1  
+              parMode <- "SOCK"
+          }
         }
+        options("warn" = opt.warn) 
     }
 
-    if (runParallel==1) { ## ... we use MPI
+    if (runParallel==1) { ## ... we run in parallel mode
 
         params <- list(...);
         params$profmethod <- profmethod;
@@ -111,9 +124,15 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
 
-        res <- xcmsPapply(argList, findPeaksMPI)
-
-        mpi.close.Rslaves()
+        if (parMode == "MPI") {
+          res <- xcmsPapply(argList, findPeaksPar)
+          mpi.close.Rslaves()
+        } else {
+          if (parMode == "SOCK") {
+             res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar)
+             stopCluster(snowclust)
+          }
+        }
 
         peaklist <- lapply(res, function(x) x$peaks)
         rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
