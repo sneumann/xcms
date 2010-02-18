@@ -1,5 +1,13 @@
+2010-02-18: 1.21.14:
+Added simple multicore support for all platforms
+using snow cluster with local sockets.
+snow is automatically used if (nSlaves > 1)
+and Rmpi is not available.
+
+Added snow as "suggested" package.
+
 2010-02-16: 1.21.13:
-Added RANN as "suggested" package 
+Added RANN as "suggested" package. 
 
 2010-02-14: 1.21.12:
 minor code beautifications
