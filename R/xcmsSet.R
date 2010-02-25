@@ -543,7 +543,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
 
     samples <- sampnames(object)
     classlabel <- sampclass(object)
-    classnames <- as.character(unique(sampclass(object)))
+    classnames <- levels(sampclass(object))
     classlabel <- as.vector(unclass(classlabel))
     classnum <- integer(max(classlabel))
     for (i in seq(along = classnum))
@@ -647,7 +647,7 @@ setMethod("group.mzClust", "xcmsSet", function(object,
     samples <- sampnames(object)
     classlabel <- sampclass(object)
     peaks <- peaks(object)
-    groups <- xcms:::mzClustGeneric(peaks[,c("mz","sample")],
+    groups <- mzClustGeneric(peaks[,c("mz","sample")],
                                     sampclass=classlabel,
                                     mzppm=mzppm,mzabs=mzabs,
                                     minsamp=minsamp,
