@@ -2,8 +2,9 @@ testGroup <- function() {
     classes <- sampclass(faahko)
     levels(classes) <- c(levels(classes), "Leftover")
 
-    sampclass(faahko) <- classes
-    xsg <- group(faahko)
+    xs <- faahko
+    sampclass(xs) <- classes
+    xsg <- group(xs)
 
-    checkEquals(sampclass(faahko), sampclass(xsg))    
+    checkEquals(sampclass(xs), sampclass(xsg))    
 }

@@ -1,3 +1,6 @@
+2010-02-18: 1.21.15:
+fixed handling of sampclasses / complex phenoData
+
 2010-02-18: 1.21.14:
 Added simple multicore support for all platforms
 using snow cluster with local sockets.
