@@ -543,12 +543,10 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
 
     samples <- sampnames(object)
     classlabel <- sampclass(object)
-    classnames <- levels(sampclass(object))
+    classnames <- as.character(unique(sampclass(object)))
     classlabel <- as.vector(unclass(classlabel))
-    classnum <- integer(max(classlabel))
-    for (i in seq(along = classnum))
-        classnum[i] <- sum(classlabel == i)
-
+    classnum <- table(classlabel)
+    
     peakmat <- peaks(object)
     porder <- order(peakmat[,"mz"])
     peakmat <- peakmat[porder,]
