@@ -726,7 +726,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
 
         ## Browse scores in order of descending goodness-of-fit
         scoreListcurr <- scoreList[order(scoreList$score),]
-        for (scoreIter in seq(scoreListcurr$score)) {
+        for (scoreIter in 1:nrow(scoreListcurr)) {
 
             iterPeak <-scoreListcurr$peak[scoreIter]
             iterRow <- scoreListcurr$mpListRow[scoreIter]
