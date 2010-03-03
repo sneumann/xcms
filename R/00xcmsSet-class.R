@@ -12,4 +12,4 @@ setClass("xcmsSet", representation(peaks = "matrix", groups = "matrix",
                    phenoData = data.frame(), rt = list(),
                    rt = list(),
                    filepaths = character(0), profinfo = vector("list"),
-                   polarity = character(0), progressInfo = list(), progressCallback= function() NULL))
+                   polarity = character(0), progressInfo = list(), progressCallback= function(progress) NULL))

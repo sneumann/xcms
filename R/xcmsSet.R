@@ -1123,22 +1123,25 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     rtimecor <- vector("list",n)
     rtdevsmo <- vector("list", n)
 
-    plength <- list()
-    for(i in 1:length(samples)){
-        plength[i] <-length(which(peakmat[,"sample"]==i))
-    }
+    N <- length(samples)
+    plength <- rep(0, N)
 
     if (missing(center)) {
+       for(i in 1:N){
+          plength[i] <- length(which(peakmat[,"sample"]==i))
+       }
       center <- which.max(plength)
     }
       
     cat("center sample: ", samples[center], "\nProcessing: ")
-    idx <- which(seq(plength)!=center)
-      
-    for (s in idx) {
-        cat(samples[s], " ")
+    idx <- which(seq(1,N) != center)
 
-        obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=profStep)
+    obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=profStep) 
+ 
+    for (si in 1:length(idx)) {
+        s <- idx[si]
+        cat(samples[s], " ")
+        
         obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
 
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
@@ -1233,8 +1236,13 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
         rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
 
-        rm(obj1,obj2)
+        rm(obj2)
         gc()
+
+        ## updateProgressInfo
+        object@progressInfo$retcor.obiwarp <-  si / length(idx)
+        xcms:::progressInfoUpdate(object)
+
     }
 
     cat("\n")
@@ -1315,7 +1323,6 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     invisible(object)
 
 })
-
 
 setGeneric("plotrt", function(object, ...) standardGeneric("plotrt"))
 
