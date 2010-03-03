@@ -171,7 +171,13 @@
       \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
     }
     \item{phenoData}{
-      \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
+      \code{signature(object = "xcmsSet")}: get the \code{phenoData} slot
+    }
+    \item{progressCallback<-}{
+      \code{signature(object = "xcmsSet")}: set the \code{progressCallback} slot
+    }
+    \item{progressCallback}{
+      \code{signature(object = "xcmsSet")}: get the \code{progressCallback} slot
     }
     \item{sampnames<-}{
       \code{signature(object = "xcmsSet")}: set rownames in the
