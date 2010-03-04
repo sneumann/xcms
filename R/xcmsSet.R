@@ -930,9 +930,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         fnames <- filepaths(object)
         rtcor <- vector("list", length(fnames))
         for (i in seq(along = fnames)) {
-            cdf <- netCDFOpen(fnames[i])
-            rtcor[[i]] <- netCDFVarDouble(cdf, "scan_acquisition_time")
-            netCDFClose(cdf)
+            xraw <- xcmsRaw(fnames[i])
+            rtcor[[i]] <- xraw@scantime
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
@@ -1114,9 +1113,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         fnames <- filepaths(object)
         rtcor <- vector("list", length(fnames))
         for (i in seq(along = fnames)) {
-            cdf <- netCDFOpen(fnames[i])
-            rtcor[[i]] <- netCDFVarDouble(cdf, "scan_acquisition_time")
-            netCDFClose(cdf)
+            xraw <- xcmsRaw(fnames[i])
+            rtcor[[i]] <- xraw@scantime
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
