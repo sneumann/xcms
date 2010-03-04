@@ -81,7 +81,7 @@ PWIZ_LDFLAGS=-lpthread
 PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz # $(PWIZ_LDFLAGS)
 PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE # $(PWIZ_CPPFLAGS)
 
-all: $(SHLIB)
+all: clean $(SHLIB)
 
 clean:
 	rm -f $(OBJECTS)
