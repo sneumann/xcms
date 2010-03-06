@@ -19,6 +19,10 @@ if(require("RUnit", quietly=TRUE)) {
   library(package=pkg, character.only=TRUE)
   library(package="faahKO", character.only=TRUE)
 
+  cdfpath <- system.file("cdf", package = "faahKO")
+  cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE) 
+  attr(faahko, "filepaths") <- cdffiles
+
   ## If desired, load the name space to allow testing of private functions
   ## if (is.element(pkg, loadedNamespaces()))
   ##     attach(loadNamespace(pkg), name=paste("namespace", pkg, sep=":"), pos=3)
