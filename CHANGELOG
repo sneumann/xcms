@@ -1,3 +1,8 @@
+2010-03-08: 1.21.16:
+Fixed building the package from source on Mac
+bugfix: group.nearest: fixed problems /w very small feature lists 
+bugfix: retcor.{peakgroups,obiwarp}: re-reading the raw data to get scan aquisition times was for netcdf only 
+
 2010-02-18: 1.21.15:
 fixed handling of sampclasses / complex phenoData
 
