@@ -726,30 +726,31 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
 
         ## Browse scores in order of descending goodness-of-fit
         scoreListcurr <- scoreList[order(scoreList$score),]
-        for (scoreIter in 1:nrow(scoreListcurr)) {
+        if (nrow(scoreListcurr) > 0)
+          for (scoreIter in 1:nrow(scoreListcurr)) {
 
-            iterPeak <-scoreListcurr$peak[scoreIter]
-            iterRow <- scoreListcurr$mpListRow[scoreIter]
+              iterPeak <-scoreListcurr$peak[scoreIter]
+              iterRow <- scoreListcurr$mpListRow[scoreIter]
 
-            ## Check if master list row is already assigned with peak
-            if (scoreListcurr$isJoinedRow[scoreIter]==TRUE) {
-                next
-            }
+              ## Check if master list row is already assigned with peak
+              if (scoreListcurr$isJoinedRow[scoreIter]==TRUE) {
+                  next
+              }
 
-            ## Check if peak is already assigned to some master list row
-            if (scoreListcurr$isJoinedPeak[scoreIter]==TRUE) { next }
+              ## Check if peak is already assigned to some master list row
+              if (scoreListcurr$isJoinedPeak[scoreIter]==TRUE) { next }
 
-            ##  Check if score good enough
-            ## Assign peak to master peak list row
-            mplenv$mplist[iterRow,sample] <- iterPeak
+              ##  Check if score good enough
+              ## Assign peak to master peak list row
+              mplenv$mplist[iterRow,sample] <- iterPeak
 
-            ## Mark peak as joined
-            setTrue <- which(scoreListcurr$mpListRow==iterRow)
-            scoreListcurr[setTrue,]$isJoinedRow <- TRUE
-            setTrue <- which(scoreListcurr$peak==iterPeak)
-            scoreListcurr[setTrue,]$isJoinedPeak <- TRUE
-            mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
-        }
+              ## Mark peak as joined
+              setTrue <- which(scoreListcurr$mpListRow==iterRow)
+              scoreListcurr[setTrue,]$isJoinedRow <- TRUE
+              setTrue <- which(scoreListcurr$peak==iterPeak)
+              scoreListcurr[setTrue,]$isJoinedPeak <- TRUE
+              mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
+          }
 
         notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
         for(notJoinedPeak in notJoinedPeaks) {
@@ -1246,13 +1247,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     cat("\n")
     rtdevsmo[[center]] <- round(rtcor[[center]] - object@rt$corrected[[center]], 2)
 
-    if (plottype == "mdevden") {
-        split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
-        screen(1)
-        par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
-    }
-
-    if (plottype %in% c("deviation", "mdevden")) {
+    if (plottype == "deviation") {
 
         ## Set up the colors and line type
         if (missing(col)) {
@@ -1273,38 +1268,20 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         rtrange <- range(do.call("c", rtcor))
         devrange <- range(do.call("c", rtdevsmo))
 
+        layout(matrix(c(1, 2),ncol=2,  byrow=F),widths=c(1,0.3))
+        par(mar=c(4,4,2,0))
+
         plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
              main = "Retention Time Deviation vs. Retention Time",
              xlab = "Retention Time", ylab = "Retention Time Deviation")
-        legend(rtrange[2], devrange[2],
-               basename(samples), col = mypal[col],
-               lty = ty, xjust = 1) #pch = ceiling(1:n/length(mypal))
 
         for (i in 1:n) {
             points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
         }
-    }
 
-    if (plottype == "mdevden") {
-        screen(2)
-        par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
-                          from = rtrange[1], to = rtrange[2])[c("x","y")]
-        corden <- density(rt, bw = diff(rtrange)/200,
-                          from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
-        allden$y <- allden$y / sum(allden$y)
-        corden$y <- corden$y / sum(corden$y)
-        maxden <- max(allden$y, corden$y)
-        plot(c(0,0), xlim = rtrange, ylim = c(0, maxden),
-             type = "n", main = "",
-             xlab = "Retention Time", ylab = "Peak Density")
-        points(allden, type = "l", col = 1)
-        points(corden, type = "l", col = 2)
-        abline(h = 0, col = "grey")
-
-        legend(rtrange[2], maxden, c("All", "Correction"),
-               col = 1:2, lty = c(1,1), xjust = 1)
-        close.screen(all = TRUE)
+        plot.new() ;  par(mar= c(2, 0, 2, 0))
+        plot.window(c(0,1), c(0,1))
+        legend(0,1.04, basename(samples), col = mypal[col], lty = ty) 
     }
 
     for (i in 1:n) {

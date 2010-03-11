@@ -32,11 +32,7 @@
 
 \arguments{
   \item{object}{the \code{xcmsSet} object} 
-  \item{plottype}{
-    if \code{deviation} plot retention time deviation points and
-    regression fit, and if \code{mdevden} also plot peak overall
-    peak density and retention time correction peak density
-  }
+  \item{plottype}{if \code{deviation} plot retention time deviation}
   \item{col}{vector of colors for plotting each sample}
   \item{ty}{vector of line and point types for plotting each sample}
   \item{profStep}{step size (in m/z) to use for profile generation from
@@ -46,7 +42,7 @@
   \item{response}{Responsiveness of warping.  0 will give a linear warp based
     on start and end points.  100 will use all bijective anchors}
 
-  \item{distFunc}{DistFunc function: cor (Pearson's R) or cor\_opt (default,
+  \item{distFunc}{DistFunc function: cor (Pearson's R) or cor_opt (default,
     calculate only 10\% diagonal band of distance matrix, better
     runtime), cov (covariance), prd (product), euc (Euclidean distance)}
     
