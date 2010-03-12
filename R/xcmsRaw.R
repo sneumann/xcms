@@ -80,7 +80,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
     }
 
-    if (!missing(mslevel)) {
+    if (!missing(mslevel) & !is.null(mslevel)) {
       object <- msn2ms(object)
       object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
       ## fix xcmsRaw metadata, or always calculate later than here ?
@@ -1943,7 +1943,7 @@ setMethod("msn2ms", "xcmsRaw", function(object) {
 
 })
 
-setGeneric("deepCopy", function(object, ...) standardGeneric("deepCopy"))
+setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
 setMethod("deepCopy", "xcmsRaw", function(object) {
 
     x <- object

@@ -77,6 +77,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     object@polarity <- as.character(polarity)
     includeMSn=FALSE
+
+    ## implicitely TRUE if selecting MSn
+    includeMSn <- !is.null(mslevel) &&  mslevel>1
+
+    ## implicitely TRUE if MS1 parent peak picking
     xcmsSetArgs <- as.list(match.call())
     if (!is.null(xcmsSetArgs$method)) {
         if (xcmsSetArgs$method=="MS1") {
@@ -121,7 +126,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         params$profmethod <- profmethod;
         params$profparam <- profparam;
         params$includeMSn <- includeMSn;
-
+        params$mslevel <- mslevel;
+        
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
 
