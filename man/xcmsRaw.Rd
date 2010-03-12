@@ -1,5 +1,7 @@
 \name{xcmsRaw}
 \alias{xcmsRaw}
+\alias{deepCopy}
+\alias{deepCopy,xcmsRaw-method}
 \title{Constructor for xcmsRaw objects which reads NetCDF/mzXML files}
 \description{
   This function handles the task of reading a NetCDF/mzXML file containing
@@ -9,7 +11,9 @@
 }
 \usage{
 xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam =
-list(), includeMSn=FALSE)
+list(), includeMSn=FALSE, mslevel=NULL)
+
+deepCopy(object)
 }
 \arguments{
   \item{filename}{path name of the NetCDF or mzXML file to read}
@@ -18,10 +22,16 @@ list(), includeMSn=FALSE)
   \item{profparam}{extra parameters to use for profile generation}
   \item{includeMSn}{only for XML file formats: also read MS$^n$
     (Tandem-MS of Ion-/Orbi- Trap spectra)}
+  \item{mslevel}{move data from mslevel into normal MS1 slots, e.g. for
+    peak picking and visualisation}
+  \item{object}{An xcmsRaw object}
 }
 \details{
   If \code{profstep} is set to 0, no profile matrix is generated.
   Unless includeMSn=TRUE only first level MS data is read, not MS/MS, etc.)
+  
+  deepCopy(xraw) will create a copy of the xcmsRaw object with its own
+  copy of mz and intensity data in xraw@env
 }
 \value{
   A \code{xcmsRaw} object.

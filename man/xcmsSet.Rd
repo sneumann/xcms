@@ -9,7 +9,8 @@
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
-        polarity = NULL, nSlaves=0, progressCallback=NULL,...)
+        polarity = NULL, mslevel=NULL,
+        nSlaves=0, progressCallback=NULL,...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -19,7 +20,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
   \item{polarity}{filter raw data for positive/negative scans}
-  \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
+    \item{mslevel}{perform peak picking on data of given mslevel}
+    \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
                  works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{\dots}{

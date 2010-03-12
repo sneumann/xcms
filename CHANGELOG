@@ -1,3 +1,6 @@
+2010-03-12: 1.21.17:
+started adding MSn filtering into xcmsRaw and xcmsSet
+Added a deepCopy() for xcmsRaw, otherwise copies would share xraw@env
 2010-03-08: 1.21.16:
 Fixed building the package from source on Mac
 bugfix: group.nearest: fixed problems /w very small feature lists 
