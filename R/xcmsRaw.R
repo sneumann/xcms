@@ -1,6 +1,7 @@
  
 xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
-                    profparam = list(), includeMSn = FALSE) {
+                    profparam = list(),
+                    includeMSn = FALSE, mslevel=NULL) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
@@ -79,6 +80,12 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
         object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
     }
 
+    if (!missing(mslevel)) {
+      object <- msn2ms(object)
+      object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
+      ## fix xcmsRaw metadata, or always calculate later than here ?
+    }
+    
     return(object)
 }
 
@@ -1906,3 +1913,48 @@ sequences <- function(seqs) {
 match.profFun <- function(object) {
   match.fun(.profFunctions[[profMethod(object)]])
 }
+
+setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms"))
+setMethod("msnparent2ms", "xcmsRaw", function(object) {
+    xr <- new("xcmsRaw")
+
+    xr@env$mz=object@msnPrecursorMz
+    xr@env$intensity=object@msnPrecursorIntensity
+    xr@scantime = object@msnRt
+    xr@scanindex = seq(1,length(object@msnRt))
+    xr@acquisitionNum = seq(1,length(object@msnRt))
+    xr@mzrange = range(object@msnPrecursorMz)
+
+    xr
+})
+
+setGeneric("msn2ms", function(object, ...) standardGeneric("msn2ms"))
+setMethod("msn2ms", "xcmsRaw", function(object) {
+
+    object@tic <- rep(0, length(object@msnAcquisitionNum)) ## 
+
+    object@scantime <- object@msnRt
+    object@acquisitionNum <- object@msnAcquisitionNum
+    object@scanindex <- object@msnScanindex
+
+    object@env$mz <- object@env$msnMz
+    object@env$intensity <- object@env$msnIntensity
+    invisible(object)
+
+})
+
+setGeneric("deepCopy", function(object, ...) standardGeneric("deepCopy"))
+setMethod("deepCopy", "xcmsRaw", function(object) {
+
+    x <- object
+    x@env <- new.env(parent=.GlobalEnv)
+
+    for (variable in ls(object@env)) {
+      eval(parse(text=paste("x@env$",variable," <- object@env$",variable,sep="")))
+    }
+    
+    invisible(x)
+})
+
+
+  
