@@ -1,6 +1,7 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
-                    polarity = NULL, nSlaves=0, progressCallback=NULL,...) {
+                    polarity = NULL, mslevel=NULL,
+                    nSlaves=0, progressCallback=NULL,...) {
 
     object <- new("xcmsSet")
   
@@ -144,7 +145,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
       for (i in seq(along = peaklist)) {
 
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                          profstep = 0, includeMSn=includeMSn)
+                          profstep = 0, includeMSn=includeMSn, mslevel=mslevel)
 	## check existence of slot, absent in old xcmsSets
         if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
