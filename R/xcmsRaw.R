@@ -1859,7 +1859,7 @@ setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
 
 split.xcmsRaw <- function(x, f, drop = TRUE, ...)
 {
-    if (!is.null(x@msnLevel))
+    if (length(x@msnLevel)>0)
         warning ("MSn information will be dropped")
 
     if (!is.factor(f))
@@ -1881,15 +1881,20 @@ split.xcmsRaw <- function(x, f, drop = TRUE, ...)
         lcsets[[i]]@acquisitionNum = x@acquisitionNum[scanidx == i]
         lcsets[[i]]@mzrange = x@mzrange[scanidx == i]
 
+        startindex = x@scanindex[which(scanidx == i)]+1
+
         endindex = x@scanindex[which(scanidx == i) +1]
         endindex[which(is.na(endindex))] <- length(x@env$mz)
-
+        
         if (length(endindex) > 1) {
-            scanlength <- endindex-x@scanindex[scanidx == i]
-            lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[-1])))
 
-            ptidx <- unlist(sequences(cbind(x@scanindex[scanidx == i]+1, endindex)))
+                  scanlength <- endindex-startindex+1
+                  ## irgendwo hier 
+                  lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[1:length(scanlength)-1])))
+
+                  ptidx <- unlist(sequences(cbind(startindex, endindex)))
         } else {
+          ## Single Scan
             ptidx <- 0:endindex
             lcsets[[i]]@scanindex <- as.integer(0)
         }
