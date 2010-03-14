@@ -1,3 +1,6 @@
+2010-03-12: 1.21.18:
+Fixed nasty bug (index off-by-one) in split.xcmsRaw() which resulted in corrupt spectra 
+
 2010-03-12: 1.21.17:
 started adding MSn filtering into xcmsRaw and xcmsSet
 Added a deepCopy() for xcmsRaw, otherwise copies would share xraw@env
