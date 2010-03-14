@@ -3,6 +3,11 @@ testSplit <- function() {
     checkEqualsNumeric(length(xsl), 2)
 }
 
+testSplitAll <- function() {
+    xsl <- split(faahko,sampnames(faahko))
+    checkEqualsNumeric(length(xsl), length(sampnames(faahko)))
+}
+
 testSplitFirst <- function() {
     xsl <- split(faahko,c(1,2,2,2,2,2,2,2,2,2,2,2))
     checkEqualsNumeric(length(xsl), 2)
