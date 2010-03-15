@@ -18,7 +18,6 @@ test.xcmsSetms2mf <- function() {
 
   filename <- system.file('iontrap/DhexD4_2.mzData', package = "msdata")
   xs2 <- xcmsSet(filename, mslevel=2)
-
 }
 
 test.xcmsSetms2cw <- function() {
