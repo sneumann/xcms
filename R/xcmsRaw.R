@@ -1889,9 +1889,8 @@ split.xcmsRaw <- function(x, f, drop = TRUE, ...)
         if (length(endindex) > 1) {
 
                   scanlength <- endindex-startindex+1
-                  ## irgendwo hier 
-                  lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[1:length(scanlength)-1])))
 
+                  lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[1:length(scanlength)-1])))
                   ptidx <- unlist(sequences(cbind(startindex, endindex)))
         } else {
           ## Single Scan
