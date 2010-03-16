@@ -16,13 +16,13 @@ test.xcmsRawms123 <- function() {
 
 test.xcmsSetms2mf <- function() {
 
-  filename <- system.file('iontrap/DhexD4_2.mzData', package = "msdata")
-  xs2 <- xcmsSet(filename, mslevel=2)
+  filename <- system.file('iontrap/extracted.mzData', package = "msdata")
+  xs2 <- xcmsSet(filename, snthresh=4, mslevel=2)
 }
 
 test.xcmsSetms2cw <- function() {
 
-  filename <- system.file('iontrap/DhexD4_2.mzData', package = "msdata")
+  filename <- system.file('iontrap/extracted.mzData', package = "msdata")
   xs2 <- xcmsSet(filename, method="centWave", mslevel=2)
 
 }
