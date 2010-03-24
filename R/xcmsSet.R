@@ -1717,9 +1717,10 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1)
 
 setGeneric("peakTable", function(object, ...) standardGeneric("peakTable"))
 
-setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
+setMethod("peakTable", "xcmsSet", function(object, filebase = character(), value=c("into","maxo","intb"),
                                            ...) {
-  
+  value <- match.arg(value)
+
   if (length(sampnames(object)) == 1) {
     return(object@peaks)
   }
@@ -1732,9 +1733,9 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
 
   
   if (! "value" %in% names(list(...))) {
-    ts <- data.frame(cbind(groupmat,groupval(object, value="into", ...)), row.names = NULL)
+    ts <- data.frame(cbind(groupmat,groupval(object, value=value, ...)), row.names = NULL)
   } else {
-    ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
+    ts <- data.frame(cbind(groupmat,groupval(object, value=value, ...)), row.names = NULL)
   }
   
   cnames <- colnames(ts)
@@ -1751,6 +1752,10 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(),
   }
           
   colnames(ts) <- cnames
+
+  if (length(filebase))
+      write.table(ts, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
+
   ts
 })
 
