@@ -9,9 +9,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{peakTable(object, 
-                   filebase = character(), 
-                   value=c("into","maxo","intb"))}
+  \code{peakTable(object, filebase = character(), ...)}
 }
 }}
 \arguments{
@@ -22,19 +20,7 @@
     directory, respectively. if blank nothing will be saved
   }
   \item{...}{arguments passed down to \code{\link{groupval}},
-    which provides the actual intensities.
-    
-    \code{method}
-    conflict resolution method, \code{"medret"} to use the peak
-    closest to the median retention time or \code{"maxint"} to use
-    the peak with the highest intensity
-    
-    \code{value}
-    intensity values to be used for the peakTable. \cr
-    If \code{value="into"}, integrated peak intensities are used. \cr
-    If \code{value="maxo"}, maximum peak intensities are used. \cr
-    If \code{value="intb"}, baseline corrected integrated peak intensities are used (only available if peak detection was done by \code{\link{findPeaks.centWave}}).
-  }
+    which provides the actual intensities. }
 }
 \details{
   
@@ -49,10 +35,10 @@
 \value{
   A data frame with the following columns:
   
-  \item{mzmed}{median m/z of peaks in the group}
+  \item{mz}{median m/z of peaks in the group}
   \item{mzmin}{minimum m/z of peaks in the group}
   \item{mzmax}{maximum m/z of peaks in the group}
-  \item{rtmed}{median retention time of peaks in the group}
+  \item{rt}{median retention time of peaks in the group}
   \item{rtmin}{minimum retention time of peaks in the group}
   \item{rtmax}{maximum retention time of peaks in the group}
   \item{npeaks}{number of peaks assigned to the group}
