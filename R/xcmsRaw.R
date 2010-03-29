@@ -1715,9 +1715,10 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
 	        uCE<-uniCE[o]
 	        check<-TRUE
 	    }
-            tempIndex<-which(object@msnPrecursorMz == mzU & object@msnCollisionEnergy == uCE)
-	    scanIX<-cbind(object@msnPrecursorMz[tempIndex], mat[tempIndex,2], mat[tempIndex,1], object@msnRt[tempIndex], object@msnCollisionEnergy[tempIndex])
-            colnames(scanIX)<-c("preMZ", "to", "from", "rt", "collisionEnergy")
+        tempIndex<-which(object@msnPrecursorMz == mzU & object@msnCollisionEnergy == uCE)
+	    scanIX<-cbind(object@msnPrecursorMz[tempIndex], mat[tempIndex,2], mat[tempIndex,1], 
+						object@msnRt[tempIndex], object@msnCollisionEnergy[tempIndex])
+        colnames(scanIX)<-c("preMZ", "to", "from", "rt", "collisionEnergy")
 	    if(!is.matrix(scanIX)){
 	        tempNames<-names(scanIX)
 	        scanIX<-matrix(scanIX, ncol=5)
@@ -1803,7 +1804,7 @@ setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check
             frag@specinfo<-runinfoFinal[!dup,]
             frag@MS2spec<-run
 		} else{
-	    	cat(paste("Error: Method \'collect\' has failed. \n", "Your in the matrix and the hard line has been pulled", sep="")) ##should never be seen :D just having fun
+	    	cat(paste("Error: Method \'collect\' has failed. \n", sep="")) ##should never be seen :D just having fun
 		}
     }
 
@@ -1831,27 +1832,27 @@ if (!isGeneric("getMZ") )
 
 setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
     for(i in 1:dim(specinfo)[1]){
-	A<-which(specinfo[i,"rtmin"] > object@scantime)
-	if(specinfo[i,"rtmax"] > object@scantime[length(object@scantime)]){
-	    B<-length(object@scantime)
-	} else {
-	    B<-which(specinfo[i,"rtmax"] < object@scantime)
-	}
+		A<-which(specinfo[i,"rtmin"] > object@scantime)
+		if(specinfo[i,"rtmax"] > object@scantime[length(object@scantime)]){
+			B<-length(object@scantime)
+		} else {
+				B<-which(specinfo[i,"rtmax"] < object@scantime)
+		}
 
-	massInd<-object@scanindex[max(A,na.rm=TRUE):min(B,na.rm=TRUE)]
-	AccuMass<-object@env$mz[massInd[1]:massInd[length(massInd)]]
-	AccuIntensity<-object@env$intensity[massInd[1]:massInd[length(massInd)]]
+		massInd<-object@scanindex[max(A,na.rm=TRUE):min(B,na.rm=TRUE)]
+		AccuMass<-object@env$mz[massInd[1]:massInd[length(massInd)]]
+		AccuIntensity<-object@env$intensity[massInd[1]:massInd[length(massInd)]]
 
 
-	index<-which(AccuMass > specinfo[i, "preMZ"]-0.25 & AccuMass < specinfo[i, "preMZ"]+0.25)
-	#if (length(index) == 0){ # we should probably check for nothing found :wq
+		index<-which(AccuMass > specinfo[i, "preMZ"]-0.25 & AccuMass < specinfo[i, "preMZ"]+0.25)
+		#if (length(index) == 0){ # we should probably check for nothing found :wq
 
-	#}
-	if(!exists("accurate")){
-	    accurate<-weighted.mean(AccuMass[index], AccuIntensity[index], na.rm = TRUE)
-	}else{
-	    accurate<-c(accurate, weighted.mean(AccuMass[index], AccuIntensity[index], na.rm=TRUE))
-	}
+			#}
+		if(!exists("accurate")){
+			accurate<-weighted.mean(AccuMass[index], AccuIntensity[index], na.rm = TRUE)
+		}else{
+			accurate<-c(accurate, weighted.mean(AccuMass[index], AccuIntensity[index], na.rm=TRUE))
+		}
     }
     return(accurate)
 })

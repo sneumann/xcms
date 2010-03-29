@@ -497,10 +497,10 @@ setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=10, print=TRUE,
 })
 
 if (!isGeneric("searchMetlin") )
-    setGeneric("searchMetlin", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", ...)
+    setGeneric("searchMetlin", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", limit=8, ...)
                standardGeneric("searchMetlin"))
 
-setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", ...) {
+setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", limit=8, ...) {
     if(metXML=="metlin"){
         metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
         metlinMS<-"http://metlin.scripps.edu/download/MS.XML"
@@ -554,37 +554,45 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
             cat(" ", object@specinfo[i,"preMZ"])
             nameIndex<- which(met[,"name"] == uni.met[j])
             IonIndex<-which(met[, "mode"] == exp.mode[1] & met[, "adduct"] == exp.mode[2])
-                if(length(IonIndex) == 0) {
-                  IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
-                }
-                if (any(CEref == CE)){ ## Do we have the same collision energy ?
-                    CeIndex<-which(met[,"collisionEnergy"] == CE)
-                }else{
-                    greaterThan<-which(CEref > CE)[1]
-                    LessThan<-which(CEref < CE)
-                    LessThan<-LessThan[length(LessThan)]
-                    if((CE-CEref[LessThan]) > (CEref[greaterThan] -CE)){
-                        CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
-                    }else if ((CE-CEref[LessThan]) < (CEref[greaterThan] -CE)) {
-                        CeIndex<-which(met[,"collisionEnergy"] == CEref[LessThan])
-                    }else{
-                        CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
-                    }
-                }
-                SpecIndex<-overlap(nameIndex, IonIndex, CeIndex)
-                object@MS2spec[[i]][, "mz"]<-as.matrix(object@MS2spec[[i]][, "mz"])
-            if(dim(met[SpecIndex,])[1] == 0){
-                ##This should only happen when we pick up a molecule that doesn't
-                ## corrospond to the picked up ionisation or adduct that we think it is
+            if(length(IonIndex) == 0) {
+				IonIndex<-which(met[, "mode"] == "*" &  met[, "adduct"] == "M")
+            }
+            if (any(CEref == CE)){ ## Do we have the same collision energy ?
+				CeIndex<-which(met[,"collisionEnergy"] == CE)
+			}else{
+				greaterThan<-which(CEref > CE)[1]
+				LessThan<-which(CEref < CE)
+				LessThan<-LessThan[length(LessThan)]
+				if((CE-CEref[LessThan]) > (CEref[greaterThan] -CE)){
+					CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
+				}else if ((CE-CEref[LessThan]) < (CEref[greaterThan] -CE)) {
+					CeIndex<-which(met[,"collisionEnergy"] == CEref[LessThan])
+				}else{
+					CeIndex<-which(met[,"collisionEnergy"] == CEref[greaterThan])
+				}
+			}
+            SpecIndex<-overlap(nameIndex, IonIndex, CeIndex)
+			if(length(SpecIndex) < 1){
+				next#because the indexes don't overlap due to accurate mass matching and adduct/mode most likely
+				##possible GOTO line to try other modes/adducts?
+			}
+			object@MS2spec[[i]][, "mz"]<-as.matrix(object@MS2spec[[i]][, "mz"])
+            if(nrow(met[SpecIndex,]) == 0){
                 next ## so jump ahead
+				##This should only happen when we pick up a molecule that doesn't
+                ## corrospond to the picked up ionisation or adduct that we think it is
             }else if(met[SpecIndex,"frag.MZ"][1] == 0 ){ ##only used if MS1 matching as well
-                if (j ==1 ){
-                    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1])
+                if (!exists("distMat")){
+                    distMat<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], 
+								object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], 
+								met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1])
                     name<-met[SpecIndex, "name"][1]
                     mode<-met[SpecIndex, "mode"][1]
                     adduct<-met[SpecIndex, "adduct"][1]
                 }else{
-                    dist<-rbind(dist, c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1]))
+                    distMat<-rbind(distMat, c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], 
+									object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], 
+									met[SpecIndex, "collisionEnergy"][1], 0.0,  met[SpecIndex,"preMZ"][1]))
                     name<-c(name, met[SpecIndex, "name"][1])
                     mode<-c(mode, met[SpecIndex, "mode"][1])
                     adduct<-c(adduct, met[SpecIndex, "adduct"][1])
@@ -593,8 +601,16 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
                 if(dim(as.matrix(object@MS2spec[[i]]))[1] == 0 ){
                     next
                 }
-                if(j ==1){ ## if it doesn't exist make it
-                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ...)
+
+				if(limit > 0){ #to match to metlins 8 peaks only limit
+					intensityOrder<-order(object@MS2spec[[i]][,"intensity"])
+					MS2mat<-object@MS2spec[[i]][intensityOrder,"intensity", drop=FALSE]
+					MS2mat<-MS2mat[(1:limit),,drop=FALSE]
+				} else{
+					MS2mat<-object@MS2spec[[i]]
+				}
+				if(!exists("distMat")){ ## if it doesn't exist make it
+                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), MS2mat[,"mz"], ...)
                     if(length(file)){
                         eicdir<-paste(file, "_spectra", sep="")
                         if(!file.exists(eicdir)){
@@ -603,7 +619,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
                         if(capabilities("png")){
                             png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
                         } else{
-                            pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
+                            pdf(file.path(eicdir, paste(i,"-",j, ".pdf", sep="")), width=1024/72, height=768/72, onefile=FALSE)
                         }
                     }
                     plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"])
@@ -612,13 +628,18 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
                     }
 
                     #score<-dnorm(score, prob[[2]], prob[[1]])
-                    dist<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]))
+                    distMat<-c(i, j, object@specinfo[i,"AccMZ"], object@specinfo[i,"rtmin"], 
+								object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], 
+								met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], 
+								similar(sort(met[SpecIndex,"frag.MZ"]), sort(MS2mat[,"mz"]), ppmfrag), 
+								distance(sort(met[SpecIndex,"frag.MZ"]), sort(MS2mat[,"mz"]), ppmfrag), 
+								length(met[SpecIndex,"preMZ"]))
 
                     name<-met[SpecIndex, "name"][1]
                     mode<-met[SpecIndex, "mode"][1]
                     adduct<-met[SpecIndex, "adduct"][1]
                 }else{ ## when it does exist add to it (has to be a better way?!?!)
-                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), object@MS2spec[[i]][,"mz"], ...)
+                    score<-score_fun(as.numeric(met[SpecIndex,"frag.MZ"]), MS2mat[,"mz"], ...)
 
                     if(length(file)){
                         eicdir<-paste(file, "_spectra", sep="")
@@ -628,7 +649,7 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
                         if(capabilities("png")){
                             png(file.path(eicdir, paste(i,"-",j, ".png", sep="")), width=1024, height=768)
                         } else{
-                            pdf(file.path(eicdir, "%03d.pdf"), width=1024/72, height=768/72, onefile=FALSE)
+                            pdf(file.path(eicdir, paste(i,"-",j, ".pdf", sep="")), width=1024/72, height=768/72, onefile=FALSE)
                         }
                     }
                     plot.metlin(met[SpecIndex, c("frag.MZ", "int")], object@MS2spec[[i]], i, j, MZlabel=object@specinfo[i,"preMZ"])
@@ -636,21 +657,28 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
                         dev.off()
                     }
                     #score<-dnorm(score, prob[[2]], prob[[1]])
-                    dist<-rbind(dist,c(i, j, object@specinfo[i, "AccMZ"], object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], similar(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), distance(sort(met[SpecIndex,"frag.MZ"]), sort(object@MS2spec[[i]][,"mz"]), ppmfrag), length(met[SpecIndex,"preMZ"]) ) )
+                    distMat<-rbind(distMat, c(i, j, object@specinfo[i, "AccMZ"], object@specinfo[i, "rtmin"], 
+								object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], 
+								met[SpecIndex, "collisionEnergy"][1], score, met[SpecIndex,"preMZ"][1], 
+								similar(sort(met[SpecIndex,"frag.MZ"]), sort(MS2mat[,"mz"]), ppmfrag),
+								distance(sort(met[SpecIndex,"frag.MZ"]), sort(MS2mat), ppmfrag), 
+								length(met[SpecIndex,"preMZ"]) ))
                     name<-c(name, met[SpecIndex, "name"][1])
                     mode<-c(mode, met[SpecIndex, "mode"][1])
                     adduct<-c(adduct, met[SpecIndex, "adduct"][1])
                 }
             }
         }
-        if(check == FALSE) {
-            all.dist<-dist
+        if(!exists("name") && !exists("distMat")){
+			next
+		}else if(check == FALSE) {
+            all.dist<-distMat
             all.name<-name
             all.mode<-mode
             all.adduct<-adduct
             check <-TRUE
         } else{
-            all.dist<-rbind(all.dist, dist)
+            all.dist<-rbind(all.dist, distMat)
             all.name<-c(all.name, name)
             all.mode<-c(all.mode, mode)
             all.adduct<-c(all.adduct, adduct)
@@ -660,8 +688,11 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
     if (check == FALSE) {
         cat("\nNothing match the masses in metlin, try a larger ppm range. \n")
     }else{
-        dist.df<-data.frame(all.dist, all.name, all.mode, all.adduct, stringsAsFactors=FALSE, row.names=1:length(all.name))
-        colnames(dist.df)<-c("A", "B", "Precursor Ion", "rtmin", "rtmax", "CollisionEnergy experiment", "CollisionEnergy Reference", "Percentage Match", "Metlin Mass", "# matching", "# non-matching", "Total # Ref ion", "Metlin ID Name",  "Ionization", "Adduct")
+        dist.df<-data.frame(all.dist, all.name, all.mode, all.adduct, stringsAsFactors=FALSE, 
+							row.names=1:length(all.name))
+        colnames(dist.df)<-c("A", "B", "Precursor Ion", "rtmin", "rtmax", "CollisionEnergy experiment",
+ 							"CollisionEnergy Reference", "Percentage Match", "Metlin Mass", "# matching", 
+							"# non-matching", "Total # Ref ion", "Metlin ID Name",  "Ionization", "Adduct")
         #rownames(dist.df)<-rep("", dim(dist.df)[1])
         cat("\nDone", "\n")
 
@@ -670,7 +701,6 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
         invisible(dist.df)
     }
 })
-
 
 plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "blue"), neg=TRUE){
     ExpSpec[,"intensity"]<-ExpSpec[,"intensity"]/max(ExpSpec[,"intensity"])*100
@@ -703,9 +733,10 @@ plot.metlin<-function(MetSpec, ExpSpec, placeA, placeB, MZlabel,col=c("red", "bl
 }
 
 if (!isGeneric("simSearch") )
-  setGeneric("simSearch", function(object,ppmfrag=20, percent=50, file, fullReport=FALSE, ...) standardGeneric("simSearch"))
+  setGeneric("simSearch", function(object,ppmfrag=20, percent=50, limit=8, file, fullReport=FALSE, ...) 
+  standardGeneric("simSearch"))
 
-setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, file, fullReport=FALSE , ...) {
+setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, limit=8, file, fullReport=FALSE , ...) {
     metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
     spectra<-metlinToList(metlinfile)
     cat("Data converted\nProcessing data...\n")
@@ -718,7 +749,14 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
             next ## go on cus no neutral losses!!
         }
 #cat(" i ->", i, " ")
-        neutralExp<-sort(abs(diff(sort(as.matrix(object@MS2spec[[i]])[,"mz"] )) ))
+		if(limit > 0){ #to match to metlins 8 peaks only limit
+			intensityOrder<-order(object@MS2spec[[i]][,"intensity"])
+			MS2mat<-object@MS2spec[[i]][intensityOrder,"intensity", drop=FALSE]
+			MS2mat<-MS2mat[(1:limit),,drop=FALSE]
+		} else{
+			MS2mat<-object@MS2spec[[i]]
+		}
+        neutralExp<-sort(abs(diff(sort(MS2mat[,"mz"] )) ))
         cat(paste(object@specinfo[i,"preMZ"], " ", sep=""))
         for(j in 1:length(spectra)){
             if(dim(spectra[[j]])[1] < 1 ){
@@ -730,7 +768,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
             }
             neutralMet<-sort(abs(diff(sort(spectra[[j]][,"frag.MZ"])) ))##make neutral losses
             NeutScore<-score_fun(neutralMet, neutralExp, ...)
-            FragScore<-score_fun(spectra[[j]][,"frag.MZ"], object@MS2spec[[i]][,"mz"], ...)
+            FragScore<-score_fun(spectra[[j]][,"frag.MZ"], MS2mat[,"mz"], ...)
             if(NeutScore >= percent | FragScore >= percent){
             cat(paste(" .", sep=""))
                 if(length(neutralExp) > 1 ){
@@ -739,7 +777,7 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
                     neutralFreq<-list(0,0)
                 }
                 if(length(object@MS2spec[[i]][,"mz"] >1)){
-                    fragmentFreq<-ms2Freq(c(spectra[[j]][,"frag.MZ"],object@MS2spec[[i]][,"mz"]), ppmError=ppmfrag)
+                    fragmentFreq<-ms2Freq(c(spectra[[j]][,"frag.MZ"], MS2mat[,"mz"]), ppmError=ppmfrag)
                 }else{
                     fragmentFreq<-list(0,0)
                 }
@@ -749,16 +787,24 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
                 commonFrag<-fragmentFreq[[1]][indFrag]
     
                 if(check==FALSE){
-                    result<-c(round(as.numeric(object@specinfo[i, "AccMZ"]), 4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"])
+                    result<-c(round(as.numeric(object@specinfo[i, "AccMZ"]), 4), object@specinfo[i, "rtmin"],
+ 							object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"], FragScore, NeutScore,
+ 							commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"],
+ 							spectra[[j]][1,"collisionEnergy"])
                     check<-TRUE
                 }else {
-                    result<-rbind(result, c(round(as.numeric(object@specinfo[i, "AccMZ"]),4), object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], object@specinfo[i, "CollisionEnergy"],FragScore, NeutScore, commonNeutral, commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], spectra[[j]][1,"collisionEnergy"] ))
+                    result<-rbind(result, c(round(as.numeric(object@specinfo[i, "AccMZ"]),4), 
+									object@specinfo[i, "rtmin"], object@specinfo[i, "rtmax"], 
+									object@specinfo[i, "CollisionEnergy"],FragScore, NeutScore, commonNeutral, 
+									commonFrag, spectra[[j]][1,"name"], spectra[[j]][1,"preMZ"], 
+									spectra[[j]][1,"collisionEnergy"] ))
                 }
             }
         }
     }
 
-    colnames(result)<-c("m/z", "rtmin", "rtmax", "Experiment Collision Energy", "Fragment Score", "Neutral Score", "Common Neutral loss", "Common Fragment", "Compound Name", "Metlin Mass", "Collision Energy")
+    colnames(result)<-c("m/z", "rtmin", "rtmax", "Experiment Collision Energy", "Fragment Score", "Neutral Score",
+ 						"Common Neutral loss", "Common Fragment", "Compound Name", "Metlin Mass", "Collision Energy")
     rownames(result)<-rep("", dim(result)[1])
     cat(paste("Searching done\n", "Grouping...", sep=""))
     RmzUnique<-unique(round(as.numeric(result[,"m/z"]), 1) ) ##Make the groups
@@ -781,9 +827,11 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
         TotalCommonFrag<-comFragFreq[[1]][FreqIndexFrag][1:5]
 
         if(!exists("CommonIonResult")){
-            CommonIonResult<-cbind(round(as.numeric(result[index, "m/z"][1]),1), paste(TotalCommonFrag, collapse=" :"), paste(TotalCommonLoss, collapse=" :"))
+            CommonIonResult<-cbind(round(as.numeric(result[index, "m/z"][1]),1), 
+								paste(TotalCommonFrag, collapse=" :"), paste(TotalCommonLoss, collapse=" :"))
         } else {
-            CommonIonResult<-rbind(CommonIonResult, cbind(round(as.numeric(result[index, "m/z"][1]),1), paste(TotalCommonFrag, collapse=" :"), paste(TotalCommonLoss, collapse=" :")))
+            CommonIonResult<-rbind(CommonIonResult, cbind(round(as.numeric(result[index, "m/z"][1]),1),
+ 								paste(TotalCommonFrag, collapse=" :"), paste(TotalCommonLoss, collapse=" :")))
         }
     }
     colnames(CommonIonResult)<-c("m/z", "Top 5 Common Fragment", "Top 5 common Neutral Losses")
