@@ -25,8 +25,8 @@ R_mzClust_hclust(double *x, int *num, double *d, int *g, double *eppm,
 	/*loop vars */
 	int i, j, z;
 
-	int *clust;
-	clust = malloc(n * m * sizeof(int));
+	int * clust;
+	clust = (int *) malloc(n * m * sizeof(int));
 
 	/* calculate indices for distance matrix */
 	j = n - 1;

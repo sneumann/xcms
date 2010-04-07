@@ -273,7 +273,7 @@ void ProfMaxIdxM(double *xvals, double *yvals, int *numin, int *mindex, int *num
 void MedianFilter(double *inmat, int *m, int *n, int *mrad, int *nrad, double *outmat) {
     
     int    i, j, k, l, mmin, mmax, nmin, nmax, bufLen;
-    double *sortBuf = malloc((*mrad*2+1)*(*nrad*2+1)*sizeof(double));
+    double * sortBuf = (double *) malloc((*mrad*2+1)*(*nrad*2+1)*sizeof(double));
     
     for (i = 0; i < *m; i++) {
         for (j = 0; j < *n; j++) {

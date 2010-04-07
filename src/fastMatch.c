@@ -27,7 +27,7 @@ SEXP fastMatch(SEXP x, SEXP y, SEXP xidx, SEXP yidx, SEXP xolength, SEXP tol) {
     nx = length(x);
     ny = length(y);
     
-    struct idxStruct * pidxS = calloc(nx,  sizeof(struct idxStruct));
+    struct idxStruct * pidxS =  (struct idxStruct *) calloc(nx,  sizeof(struct idxStruct));
     if (pidxS == NULL)
         error("fastMatch/calloc: memory could not be allocated ! (%d bytes)\n", nx  * sizeof(struct idxStruct) );
     for (xi=0;xi < nx;xi++) 
