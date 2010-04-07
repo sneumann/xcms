@@ -74,7 +74,7 @@ struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned
     printf("realloc mzROI \n");
 #endif
     
-    mzROI = realloc(mzROI, newLength * sizeof(struct mzROIStruct));
+    mzROI = (struct mzROIStruct *) realloc(mzROI, newLength * sizeof(struct mzROIStruct));
     if (mzROI == NULL)
         error("findmzROI/realloc: buffer memory could not be allocated ! (%d bytes)\n", newLength * sizeof(struct mzROIStruct) );
         
@@ -97,7 +97,7 @@ struct mzROIStruct * checkmzvalBufSize(struct mzROIStruct *mzval, const unsigned
        printf("realloc mzval \n");
 #endif
     
-    mzval = realloc(mzval, newLength * sizeof(struct mzROIStruct));
+    mzval = (struct mzROIStruct *) realloc(mzval, newLength * sizeof(struct mzROIStruct));
     if (mzval == NULL)
       error("findmzROI/realloc: buffer memory could not be allocated ! (%d bytes)\n", newLength * sizeof(struct mzROIStruct));   
     
@@ -316,7 +316,7 @@ int i,p,del=0;
  
  if (del > 0) {
     p=0;
-    struct mzROIStruct * tmp = calloc(mzLength->mzval - del,  sizeof(struct mzROIStruct));
+    struct mzROIStruct * tmp = (struct mzROIStruct *) calloc(mzLength->mzval - del,  sizeof(struct mzROIStruct));
     if (tmp == NULL)
       error("findmzROI/cleanup: buffer memory could not be allocated ! (%d bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
     for (i=0; i < mzLength->mzval; i++) {
@@ -399,7 +399,7 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
                 
         N=idx2 - idx1 + 1;
         if (N > 0) {
-            scanbuf->nextScan=  calloc(N, sizeof(double));  
+            scanbuf->nextScan= (double *) calloc(N, sizeof(double));  
             if (scanbuf->nextScan == NULL)
                 error("findmzROI/getNextScan: Memory could not be allocated (%d * %d) !\n",N , sizeof(struct scanStruct));
             scanbuf->nextScanLength=N;  
@@ -558,11 +558,11 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   
-  struct mzROIStruct * mzROI = calloc(ROI_INIT_LENGTH,  sizeof(struct mzROIStruct));
+  struct mzROIStruct * mzROI = (struct mzROIStruct *) calloc(ROI_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzROI == NULL)
       error("findmzROI/calloc: buffer memory could not be allocated ! (%d bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
         
-  struct mzROIStruct *mzval = calloc(MZVAL_INIT_LENGTH,  sizeof(struct mzROIStruct));
+  struct mzROIStruct * mzval = (struct mzROIStruct *) calloc(MZVAL_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzval == NULL)
       error("findmzROI/calloc: buffer memory could not be allocated ! (%d bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
