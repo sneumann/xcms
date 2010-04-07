@@ -61,7 +61,7 @@ typedef unsigned __int64 uint64_t;
 // was missing on gcc-4.2.1-sjlj
 #include <algorithm>
     using std::max;
-#define S_ISDIR(mode) ((mode)&_S_IFDIR)
+#include <stdint.h>
 #define strcasecmp stricmp
 #endif
 #define fixPath(a,b)
