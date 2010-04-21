@@ -143,8 +143,10 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
                                     rtRange=range(object@peaks[,"rt"]),
                                     xcmsSetPeakID=NULL, xcmsFragmentPeakID=NULL,
                                     textOnly=FALSE) {
+    libname <- "Rgraphviz"
+
     if (!textOnly) {
-            require(Rgraphviz) || {
+            (require(libname,character.only=TRUE,quietly=TRUE)) || {
         	warning("Rgraphviz was not found, fallback to text mode.")
 		textOnly=TRUE
 		}
