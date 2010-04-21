@@ -1,5 +1,5 @@
-PKG_LIBS=-L./win -lws2_32 -lnetcdf -lz
-PKG_CPPFLAGS=-I./win -D_MSC_VER -DWIN32_LEAN_AND_MEAN
+PKG_LIBS=-L./win/$(R_ARCH) -lws2_32 -lnetcdf -lz
+PKG_CPPFLAGS=-I./win/$(R_ARCH) -D_MSC_VER -DWIN32_LEAN_AND_MEAN
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
@@ -8,6 +8,6 @@ XCMSOBJECTS=fastMatch.o mzClust_hclust.o mzROI.o netCDF.o ramp_base64.o ramp.o r
 OBJECTS=$(OBIOBJECTS) $(XCMSOBJECTS)
 
 all: $(SHLIB)
-
+	
 clean:
 	rm -f $(OBJECTS)
