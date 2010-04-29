@@ -504,8 +504,8 @@ if (!isGeneric("searchMetlin") )
 
 setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", limit=8, ...) {
     if(metXML=="metlin"){
-        metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
-        metlinMS<-"http://metlin.scripps.edu/download/MS.XML"
+        metlinfile<-"http://metlin.scripps.edu/download/MSMS.Rda"
+        metlinMS<-"http://metlin.scripps.edu/download/MS.Rda"
     }else{
         metlinfile<-metXML
     }
@@ -739,7 +739,7 @@ if (!isGeneric("simSearch") )
   standardGeneric("simSearch"))
 
 setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50, limit=8, file, fullReport=FALSE , ...) {
-    metlinfile<-"http://metlin.scripps.edu/download/MSMS.XML"
+    metlinfile<-"http://metlin.scripps.edu/download/MSMS.Rda"
     spectra<-metlinToList(metlinfile)
     cat("Data converted\nProcessing data...\n")
     check<-FALSE
@@ -849,7 +849,6 @@ setMethod( "simSearch", "xcmsFragments", function(object, ppmfrag=20, percent=50
 score_fun<-function(ref, exp, method="distMatrix", ...) {
 
     method <- match.arg(method, c("distMatrix", "cor"), several.ok=FALSE)
-#adding google source 
     if (is.na(method))
         stop("unknown method : ", method)
     method <- paste("score_fun", method, sep=".")
@@ -866,6 +865,9 @@ score_fun.cor<-function(ref, exp){
         diff<-length(exp) - length(ref)
         score<-cor(c(rep(0,diff), ref), exp)
     }
+	
+	score<-score*100
+	
     invisible(round(score,2))    
 }
 

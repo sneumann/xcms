@@ -1,7 +1,7 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
-                    polarity = NULL, mslevel=NULL,
-                    nSlaves=0, progressCallback=NULL,...) {
+                    polarity = NULL, lockMassFreq=FALSE, start=0,
+					mslevel=NULL, nSlaves=0, progressCallback=NULL,...) {
 
     object <- new("xcmsSet")
   
@@ -153,6 +153,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                           profstep = 0, includeMSn=includeMSn, mslevel=mslevel)
 	## check existence of slot, absent in old xcmsSets
+		if(lockMassFreq){
+			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
+			lcraw<-stitch.Fill(lcraw, lockmass)
+		}
         if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
@@ -1764,7 +1768,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
-                                            value = c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...) {
+                                            value = c("into","maxo","intb"), metlin = FALSE, 
+											DBsearchMS=FALSE, h=480,w=640, ...) {
 
   if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
     stop("No group information. Use group().")
@@ -1830,6 +1835,10 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	                       round(neutralmass - metlin, digits), "&mass_max=",
 	                       round(neutralmass + metlin, digits), sep="")
 	    values <- cbind(metlin = metlinurl, values)
+	}
+	if(DBsearchMS){
+		DBans<-metlinMS1search(object, DBsearchMS)
+		values<-cbind(CMPDname=DBans[,"name"] , CMPDmz=DBans[,"mass"], values)
 	}
 	twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
 	if (sortpval) {
@@ -1979,4 +1988,111 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     text(0.5, 0.5, txt, cex = cex)
 }
 
+
+makeacqNum<-function(ob, freq, start=1){
+	freq<-freq+1 ##nessary for the start at +1 and others since 1st scan is +1
+	
+	acqNum<-numeric()
+	fo<-seq(from=start,to=length(ob@scanindex), by=freq)
+	for(i in fo){
+		acqNum<-c(acqNum, i,i+1)
+	}
+	lockMass<-matrix(acqNum, ncol=1)
+	colnames(lockMass)<-c("AcqNum")
+	return(lockMass)
+}
+
+stitch<-function(object, lockMass, MZerror=25){
+	##Assumption: that lockMass is 2 scans every time & every lock mass scan is found (found by mass atm)
+	##
+		require(stats)
+		if(file.exists("mz.txt")){
+			unlink("mz.txt")
+		}
+		if(file.exists("intensity.txt")){
+			unlink("intensity.txt")
+		}
+
+		hold<-0
+		opps<-0
+		scanN<-lockMass[,"AcqNum"]
+		scanindex<-list()
+
+		for(i in 1:length(object@acquisitionNum)){
+			percent<-(i/length(object@acquisitionNum))*100
+			#cat(paste(round(percent), "%\r"))
+			if( i == 1 || i == 2 ){ ##assuming the lockMass starts at 1 & first 2 scans are lockmass :)	
+				scan<-getScan(object, i)
+				cat(scan[,"mz"], " ", append=TRUE, file="mz.txt")
+				cat(scan[,"intensity"], " ", append=TRUE, file="intensity.txt")
+				next # since lock mass is 1 & 2 there is no gap to fill :)
+			}else if(i == (hold+1)){ 
+				next #skip over lock mass +1 since processing is done
+			}else if(all(lockMass[,"AcqNum"] != i ) || i >= (length(object@acquisitionNum) - 2) ){
+				#Get all the other scans into the text file as well
+				scan<-getScan(object, i)
+				cat(scan[,"mz"], " ", append=TRUE, file="mz.txt")
+				cat(scan[,"intensity"], " ", append=TRUE, file="intensity.txt")
+				next
+			}else if(any(lockMass[,"AcqNum"] == i)){
+				hold<-i
+				cat(paste(round(percent), "%\r"))
+
+				#get scans -1 and +1 from LockMass
+				scan<-getScan(object, i-1)
+				scanB<-getScan(object, i+2)
+				cat(scan[,"intensity"], " ", scanB[,"intensity"], " ", append=TRUE, file="intensity.txt")
+				cat(scan[,"mz"], " ", scanB[,"mz"], " ",append=TRUE, file="mz.txt")
+				##Fill the gap with the scan before and jsut after lock Mass scans 
+			}
+		}
+		cat("\n")
+
+		##Now all loops are finished we can add the mz.txt and Intensity.txt 
+		##to the object and make the scanindex :)
+		gc()
+		if(file.exists("mz.txt") && file.exists("intensity.txt")){
+			#cat(paste("Reading m/z & intensity Vectors...\n", sep=""))
+			mz<-scan("mz.txt", what="numeric")
+			intensity<-scan("intensity.txt", what="numeric")
+		}else{
+			stop("ERROR: Hard Drive error - m/z and Intensity Vectors not found\n")
+		}
+		mz<-as.numeric(mz)
+		intensity<-as.numeric(intensity)
+
+		scanIdx<-0
+		for(k in 1:length(mz)){
+			if( (k+2) == (length(mz))){
+				break
+			} else if(mz[k+1] > mz[k]){
+				#cat(k, " <-k \n")
+				if(mz[k+2] < mz[k+1] && mz[k] < mz[k+2]){
+					stop("Error at ", k, " : value greater than element k\n")
+				}else{
+					next
+				}
+			}else if(mz[k+1] < mz[k]){
+				scanIdx<-c(scanIdx, k)
+	#			cat("N--> ",n," <--N \n")
+			}
+		}
+		
+		ob<-new("xcmsRaw")
+		ob@scanindex<-as.integer(scanIdx)
+		ob@env$mz<-mz
+		ob@env$intensity<-intensity
+		ob@acquisitionNum<-1:length(scanIdx)
+		ob@filepath<-object@filepath
+		ob@mzrange<-range(mz)
+		ob@profmethod<-"bin"
+		ob@tic<-object@tic
+		ob@scantime<-object@scantime
+		ob@profparam<-list()
+		
+		rm(object,scanIdx, mz, intensity)
+		gc()
+		cat("\n")
+		return(ob)
+}
 
