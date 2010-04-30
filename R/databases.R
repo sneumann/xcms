@@ -1,64 +1,33 @@
 read.metlin<-function(xml, MS1=TRUE, MSxml) {
-#Parsing the METLIN XML File
-    #cat(paste("Reading Metlin...", sep="")) #if metlin gets really big then add this so user knows what's happening :)
-    reading<-readLines(xml)
-    xml.mat<-matrix(nrow=length(reading),ncol=3)
-    name<-grep("name", reading)# OK it's messy like hell but I didn't want to add the XML package for XCMS
-    mz<-grep("mz", reading) #Anyway the XML package sucks!
-    int<-grep("intensity", reading)
-    Pmz<-grep("mass", reading)
-    mode<-grep("mode", reading)
-    adduct<-grep("adduct", reading)
-    CE<-grep("collisionE", reading)
+	xmlOpen<-url(xml)
+    load(xmlOpen)##This creates MS2_data
+	close(xmlOpen)
+	met.mat<-MS2_data[[1]]
+	for(i in 1:length(MS2_data[[2]])){
+		idx<-which(met.mat[,"adduct"] == MS2_data[[2]][i])
+		met.mat[idx,"adduct"]<-names(MS2_data[[2]])[i]
+	}
+	MS1.df<-xcms:::read.metlinMS("http://metlin.scripps.edu/download/MS.Rda")
+	UniMolid<-unique(met.mat[,"molid"])
+	met.mat$name<-rep("", nrow(met.mat))
+	cat("loading...\n")
+	for(i in 1:length(UniMolid)){
+		MS2idx<-which(met.mat[,"molid"] == UniMolid[i])
+		MS1idx<-which(MS1.df[,"molid"]  == UniMolid[i])
+		
+		met.mat$name[MS2idx]<-MS1.df[MS1idx,"name"]
+		cat(round((i/length(UniMolid)))*100, "%\r")
+	}
+	cat("\n")
 
-    mzVAL<-reading[mz]
-    intVAL<-reading[int]
-    nameVAL<-reading[name]
-    PmzVal<-reading[Pmz]
-    adductVAL<-reading[adduct]
-    modeVAL<-reading[mode]
-    CEVAL<-reading[CE]
-
-    pattern<-"\t{3}<mz>(.*)</mz>"# "\t{3}(?:<mz>|<name>(?????)(?:</mz>|</name>))"
-    pattern1<-"\t{3}<mass>(.*)</mass>"
-    pattern2<-"\t{3}<name>(.*)</name>"
-    pattern3<-"\t{3}<mode>(.*)</mode>"
-    pattern4<-"\t{3}<adduct>(.*)</adduct>"
-    pattern5<-"\t{3}<intensity>(.*)</intensity>"
-    pattern6<-"\t{3}<collisionE>(.*)</collisionE>"
-
-    mzVAL<-gsub(pattern, "\\1", mzVAL, perl=T)
-    intVAL<-gsub(pattern5, "\\1", intVAL, perl=T)
-    PmzVal<-gsub(pattern1, "\\1", PmzVal, perl=T)
-    nameVAL<-gsub(pattern2, "\\1", nameVAL, perl=T)
-    modeVAL<-gsub(pattern3, "\\1", modeVAL, perl=T)
-    adductVAL<-gsub(pattern4, "\\1", adductVAL, perl=T)
-    CEVAL<-gsub(pattern6, "\\1", CEVAL, perl=T)
-
-    mzVAL.correct<-as.numeric(mzVAL[2:length(mzVAL)])
-    intVAL.correct<-intVAL[2:length(intVAL)]
-    nameVAL.correct<-nameVAL[2:length(nameVAL)]
-    PmzVal.correct<-as.numeric(PmzVal[2:length(PmzVal)])
-    mode.correct<-modeVAL[2:length(modeVAL)]
-    adduct.correct<-adductVAL[2:length(adductVAL)]
-    CE.correct<-CEVAL[2:length(CEVAL)]
-
-    met.mat<-cbind(nameVAL.correct, mzVAL.correct, intVAL.correct, PmzVal.correct, mode.correct, adduct.correct, CE.correct)
-
-    met.mat<-as.data.frame(met.mat, stringsAsFactors=FALSE)
-    colnames(met.mat)<-c("name", "frag.MZ", "int", "preMZ", "mode", "adduct", "collisionEnergy")
-    met.mat[,"frag.MZ"]<-as.numeric(met.mat[,"frag.MZ"])
-    met.mat[,"int"]<-as.numeric(met.mat[,"int"])
-    met.mat[,"preMZ"]<-as.numeric(met.mat[,"preMZ"])
-    met.mat[,"collisionEnergy"]<-as.numeric(met.mat[,"collisionEnergy"])
-    met.mat<-met.mat[order(met.mat[,"preMZ"]), ]
-    
+	colnames(met.mat)<-c("molid", "PreMZ", "mode", "collisionEnergy", "adduct", "frag.MZ", "int", "name")
+	met.mat<-met.mat[order(met.mat[,"PreMZ"]), ]
 
     if(MS1==TRUE){
-        MS1.df<-suppressWarnings(read.metlinMS(MSxml) ) ##Need to check why warnings?
         MS2.name<-unique(met.mat[,"name"])
         logi<-as.logical(match(MS1.df[,"name"], MS2.name, nomatch=0))
-        MS1.df<-data.frame(name=MS1.df[!logi,"name"], frag.MZ=0 , int=0, preMZ=MS1.df[!logi,"MZ"], mode="*", adduct="M", collisionEnergy=0) 
+        MS1.df<-data.frame(molid=MS1.df[!logi,"molid"],  PreMZ=MS1.df[!logi,"MZ"], mode="*", collisionEnergy=0, 
+ 							adduct="M",frag.MZ=0 , int=0, name=MS1.df[!logi,"name"]) 
 ## add fake values to the MS1 data
         met.mat<-rbind(MS1.df, met.mat)
     }
@@ -66,27 +35,10 @@ read.metlin<-function(xml, MS1=TRUE, MSxml) {
 }
 
 read.metlinMS<- function(xml){
-    reading<-readLines(xml)
-    xml.mat<-matrix(nrow=length(reading),ncol=3)
-    name<-grep("name", reading)
-    Pmz<-grep("mass", reading)
-    nameVAL<-reading[name]
-    PmzVal<-reading[Pmz]
-
-    pattern1<-"\t{3}<mass>(.*)</mass>"
-    pattern2<-"\t{3}<name>(.*)</name>"
-    PmzVal<-gsub(pattern1, "\\1", PmzVal, perl=T)
-    nameVAL<-gsub(pattern2, "\\1", nameVAL, perl=T)
-
-    nameVAL.correct<-nameVAL[2:length(nameVAL)]
-    PmzVal.correct<-as.numeric(PmzVal[2:length(PmzVal)])
-    met.mat<-cbind(nameVAL.correct, PmzVal.correct)
-    colnames(met.mat)<-c("name", "MZ")
-    metMS.df<-as.data.frame(met.mat, stringsAsFactors=FALSE)
-    metMS.df[,"MZ"]<-as.numeric(metMS.df[,"MZ"])
-    metMS.df<-metMS.df[order(metMS.df[,"MZ"]), ]
-
-    return(metMS.df)
+    xmlOpen<-url(xml)
+	load(xmlOpen) ##this create ans
+	close(xmlOpen)
+    return(ans)
 }
 
 metlinToList<-function(metlinfile){
@@ -207,26 +159,49 @@ read.mascot<-function(file, type="csv"){
     return(myDF)
 }
 
-KeggSearch <- function(metabo, write=FALSE) {
-    ##Experimental
-    KEGG<-"http://www.genome.jp/dbget-bin/www_bfind_sub?mode=bfind&max_hit=100&dbkey=kegg&keywords="
-    Mascot<-read.mascot(masfile, type)
-    result<-vector()
-    for(i in 1:dim(metabo)[1]){
-	KEGG<-paste(KEGG,metabo[i,"name"], sep="")
-	KEGG<-readLines(url(KEGG),warn=FALSE) ## Don't tell me that EOF was incomplete
-	for(j in 1:dim(Mascot)[1,])
-		xover<-agrep(Mascot[j,"prot_name"], KEGG) ##Do the best we can grep isn't always happy
-		if(xover){
-			result[j]<-paste(Mascot[j,"prot_name"], "and",
-                                         metabo[i,"name"], "have been found to be in the same pathway.", sep="")
-			rm(xover)
+KeggSearch <- function(object, DBsearchMS) {
+	
+    require(KEGGSOAP) || stop("Couldn't load KEGGSOAP\n")
+	
+	if(class(object)=="xcmsSet"){
+		groupmat<-groups(object)
+		neutralmass <- groupmat[,"mzmed"] + ifelse(DBsearchMS < 0, 1, -1)
+
+		KEGGcmpd<-array(0, dim=length(neutralmass))
+		for(i in 1:length(neutralmass)){
+			KEGGcmpd[i]<-search.compounds.by.mass(neutralmass, range(ppmDev(neutralmass[i], DBsearchMS)))[1]
 		}
-    }
-	if(write){
-		cat(result, file="PathwayMatch.txt", sep="\n")
-	}else {
-		cat(result, sep="\n")
+		return(KEGGcmpd)
 	}
 }
 
+metlinMS1search<-function(object, DBsearchMS){
+	met<-read.metlinMS("http://metlin.scripps.edu/download/MS.Rda")
+	if(class(object) =="xcmsSet"){
+		groupmat<-groups(object)
+		neutralmass <- groupmat[,"mzmed"] + ifelse(DBsearchMS < 0, 1, -1)
+	} else if(class(object) =="xcmsPeaks"){
+		neutralmass<-object[,"mz"] + ifelse(DBsearchMS < 0, 1, -1)
+	}else{
+		cat("Method requires an xcmsPeaks or xcmsSet object\n")
+		return(0)
+	}
+	
+	ans<-matrix(0,ncol=2,nrow=length(neutralmass))
+	colnames(ans)<-c("name", "mass")
+	for(i in 1:length(neutralmass)){
+		massError<-range(ppmDev(neutralmass[i], DBsearchMS))
+		idx<-which(met[,"mass"] > massError[1] & met[,"mass"] < massError[2])
+		if(length(idx) >1){
+			idxError<-ppm(met[idx,"mass"], neutralmass[i])
+			ans[i,"mass"]<-met[idx,][which.min(idxError),]$mass
+			ans[i,"name"]<-met[idx,][which.min(idxError),]$name
+		} else if(length(idx) == 1){
+			ans[i,"mass"]<-met[idx,]$mass
+			ans[i,"name"]<-met[idx,]$name
+		} else{
+			ans[i,]<-c("","")
+		}
+	}
+	return(ans)
+}

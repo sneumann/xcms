@@ -9,8 +9,8 @@
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
-        polarity = NULL, mslevel=NULL,
-        nSlaves=0, progressCallback=NULL,...)
+        polarity = NULL, lockMassFreq=FALSE, start=0, 
+		mslevel=NULL, nSlaves=0, progressCallback=NULL,...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -20,6 +20,10 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
   \item{polarity}{filter raw data for positive/negative scans}
+	\item{lockMassFreq}{Performs correction for Waters LockMass function, 
+						set	to the lockmass frequency of the experimental 
+						setting for correction}
+	\item{start}{Specifies where the 1st lockmass scan is}
     \item{mslevel}{perform peak picking on data of given mslevel}
     \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
                  works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
@@ -35,7 +39,11 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   for readable files. The filename without extention is used for the
   sample name. The subdirectory path is used for the sample class.
   If the files contain both positive and negative spectra, the polarity
-  can be selected explicitely. The default (NULL) is to read all scans.
+  can be selected explicitly. The default (NULL) is to read all scans.
+
+  The lock mass correction allows for the lock mass scan to be added back in
+  with the last working scan. This correction gives better reproducibility 
+  between sample sets.
 }
 \value{
   A \code{xcmsSet} object.
