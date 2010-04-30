@@ -15,7 +15,8 @@
                    class2 = levels(sampclass(object))[2], 
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2), 
-                   value=c("into","maxo","intb"), metlin = FALSE, h=480,w=640, ...)}
+                   value=c("into","maxo","intb"), metlin = FALSE, 
+				   DBsearchMS=FALSE, h=480,w=640, ...)}
 }
 }}
 \arguments{
@@ -58,6 +59,12 @@
     database. the sign of the uncertainty indicates negative or
     positive mode data for M+H or M-H calculation. a value of FALSE
     or 0 removes the column
+  }
+  \item{DBsearchMS}{
+	A numerical value in ppm of the mass uncertainty to search against a metlin
+	search. This function will add two columns which give the name of the 
+	molecule and it's mass. If more than one mass if found then the closest mass
+	is given.
   }
   \item{h}{
     Numeric variable for the height of the eic and boxplots that are printed out.
@@ -130,6 +137,9 @@
   \item{Sample Classes}{
     number samples from each sample class represented in the group
   }
+  \item{metlin}{A URL to metlin for that mass}
+  \item{CMPDname}{The name of the ID'ed molecule}
+  \item{CMPDmass}{The mass of the ID'ed molecule}
   \item{...}{one column for every sample class}
   \item{Sample Names}{integrated intensity value for every sample}
   \item{...}{one column for every sample}

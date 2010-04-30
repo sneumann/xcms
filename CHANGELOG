@@ -1,3 +1,6 @@
+2010-04-30: 1.23.1: Added new search method for metlin to diffreport. Time permitting, more to come (HMDB, KEGG via KEGGSOAP). Increase read speed of read.metlin
+Added a MicroMass Waters specific scan/intensity correction due to missing scan from lock mass scan into xcmsSet. NB not in parallel code yet.
+
 2010-03-12: 1.21.18:
 Fixed nasty bug (index off-by-one) in split.xcmsRaw() which resulted in corrupt spectra 
 
