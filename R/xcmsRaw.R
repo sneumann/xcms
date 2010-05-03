@@ -1278,7 +1278,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
 setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
 
-setMethod("plotPeaks", "xcmsPeaks", function(object, peaks, figs, width = 200) {
+setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
     if (missing(figs)) {
         figs <- c(floor(sqrt(nrow(peaks))), ceiling(sqrt(nrow(peaks))))
