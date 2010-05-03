@@ -11,7 +11,7 @@
 }
 \section{Methods}{
 \describe{
-\item{object = "xcmsRaw"}{
+\item{object = "xcmsPeaks"}{
   \code{plotPeaks(object, peaks, figs, width = 200)}
 }
 }}
