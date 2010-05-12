@@ -36,10 +36,13 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
       stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
     # determine experimental design
+    fromPaths <- phenoDataFromPaths(files)
     if (is.null(snames)) {
-      fromPaths <- phenoDataFromPaths(files)
       snames <- rownames(fromPaths)
+    } else {
+      rownames(fromPaths) <- snames
     }
+
     pdata <- phenoData
     if (is.null(pdata)) {
       pdata <- sclass
