@@ -206,23 +206,6 @@ void MatI::set_from_ascii(const char *file, bool without_axes) {
     }
 }
 
-void MatI::set_from_binary(const char *file) {
-    FILE *fh = fopen(file, "rb"); 
-    if (fh == NULL) {
-        printf("Could not open %s for reading\n", file);
-        exit(1);
-    }
-    fread(&_m, sizeof(int), 1, fh);
-    fread(&_n, sizeof(int), 1, fh);
-    // Read the matrix:
-    int rows_by_cols = _m*_n;
-    //printf("rbycools: %d\n", rows_by_cols);
-    int *dat_tmp = new int[rows_by_cols];
-    fread(dat_tmp, sizeof(int), rows_by_cols, fh);
-
-    _dat.take(rows_by_cols, dat_tmp);
-    fclose(fh);
-}
 
 
 MatI & MatI::operator=(const int &val) {
@@ -631,23 +614,6 @@ void MatD::set_from_ascii(const char *file, bool without_axes) {
     }
 }
 
-void MatD::set_from_binary(const char *file) {
-    FILE *fh = fopen(file, "rb"); 
-    if (fh == NULL) {
-        printf("Could not open %s for reading\n", file);
-        exit(1);
-    }
-    fread(&_m, sizeof(int), 1, fh);
-    fread(&_n, sizeof(int), 1, fh);
-    // Read the matrix:
-    int rows_by_cols = _m*_n;
-    //printf("rbycools: %d\n", rows_by_cols);
-    double *dat_tmp = new double[rows_by_cols];
-    fread(dat_tmp, sizeof(double), rows_by_cols, fh);
-
-    _dat.take(rows_by_cols, dat_tmp);
-    fclose(fh);
-}
 
 
 MatD & MatD::operator=(const double &val) {
@@ -1056,23 +1022,6 @@ void MatF::set_from_ascii(const char *file, bool without_axes) {
     }
 }
 
-void MatF::set_from_binary(const char *file) {
-    FILE *fh = fopen(file, "rb"); 
-    if (fh == NULL) {
-        printf("Could not open %s for reading\n", file);
-        exit(1);
-    }
-    fread(&_m, sizeof(int), 1, fh);
-    fread(&_n, sizeof(int), 1, fh);
-    // Read the matrix:
-    int rows_by_cols = _m*_n;
-    //printf("rbycools: %d\n", rows_by_cols);
-    float *dat_tmp = new float[rows_by_cols];
-    fread(dat_tmp, sizeof(float), rows_by_cols, fh);
-
-    _dat.take(rows_by_cols, dat_tmp);
-    fclose(fh);
-}
 
 
 MatF & MatF::operator=(const float &val) {
