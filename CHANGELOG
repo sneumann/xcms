@@ -1,3 +1,6 @@
+2010-05-17: 
+Added a try() to ignore not-installed Rmpi and snow packages to avoid popup window in Windows
+
 2010-05-12: 
 Fixed bug when specifying snames in xcmsSet
 Removed unused fread() in obiwarp, which also fixed warning in newer g++ 4.4.3

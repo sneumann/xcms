@@ -113,7 +113,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         } else { 
           ## try local sockets using snow package
           snow = "snow"
-          if (require(snow,character.only=TRUE,quietly=TRUE)) {
+          if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
               cat("Starting snow cluster with",nSlaves,"local sockets.\n")
               snowclust <- makeCluster(nSlaves, type = "SOCK")
               runParallel <- 1  
