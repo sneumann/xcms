@@ -9,6 +9,7 @@
 \alias{rampScanHeaders}
 \alias{rampSIPeaks}
 \alias{rampRawData}
+\alias{rampRawDataMSn}
 \title{High-performance, low-level access to mzXML/mzData files}
 \description{
   Functions for low-level access to data in mzXML/mzData files.
@@ -67,8 +68,14 @@ rampRawData(rampid)
   for each scan.
 
   \code{rampRawData} returns a named list with components \code{rt},
-  \code{tic}, \code{scanindex}, \code{mz}, and \code{intensity}.
+  \code{tic}, \code{scanindex}, \code{mz} and \code{intensity}.
 
+  \code{rampRawDataMSn} returns a named list with components of MSn data
+	\code{rt}, \code{acquisitionNum}, \code{precursorMZ}, 
+	\code{precursorIntensity}	\code{peaksCount}, \code{msLevel},
+	\code{precursorCharge}, \code{scanindex}, \code{collisionEnergy},
+	\code{mz} and \code{intensity}.
+	
   An error in any of the functions will return a (negative) integer
   error code.
 }
@@ -80,5 +87,24 @@ rampRawData(rampid)
   \url{http://psidev.sourceforge.net/ms/index.html}
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
+\examples{
+	\dontrun{
+	library(msdata)
+	mzdatapath <- system.file("iontrap", package = "msdata")
+	mzdatafiles<-list.files(mzdatapath, pattern = "extracted.mzData", recursive = TRUE, full.names = TRUE)
+	mzdatafiles
+	id<-xcms:::rampOpen(mzdatafiles)
+	id
+	
+	head<-xcms:::rampScanHeaders(id)
+	MS1data<-xcms:::rampRawData(id)
+	MS2data<-xcms:::rampRawDataMSn(id)
+	xcms:::rampClose(id)
+	str(MS2data)
+	str(MS1data)
+	str(head)
+	}
+	
+}
 \keyword{file}
 \keyword{internal}

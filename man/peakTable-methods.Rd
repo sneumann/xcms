@@ -52,5 +52,15 @@
 \seealso{
   \code{\link{xcmsSet-class}},
 }
+\examples{
+	\dontrun{
+	library(faahKO)
+	cdfpath <- system.file("cdf", package = "faahKO")
+	cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+	xs<-xcmsSet(cdf	files)
+	xs<-group(xs)
+	peakTable(xs, filebase="peakList")
+	}
+}
 \keyword{methods}
 \keyword{file}

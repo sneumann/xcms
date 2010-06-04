@@ -76,6 +76,19 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   For \code{MaxIdx}, the data type is integer, for all others it
   is double.
 }
+\examples{
+	\dontrun{
+		library(faahKO)
+		cdfpath <- system.file("cdf", package = "faahKO")
+		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+		xraw <- xcmsRaw(cdffiles[1])
+		
+		image(xraw) ## not how with intLin the intensity's blur
+		profMethod(xraw) <- "bin"
+		image(xraw) ## now with 'bin' there is no blurring good for centroid data
+		##try binlinbase for profile data
+	}
+}
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \keyword{manip}
 \keyword{internal}
