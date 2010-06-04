@@ -16,7 +16,7 @@
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2), 
                    value=c("into","maxo","intb"), metlin = FALSE, 
-				   DBsearchMS=FALSE, h=480,w=640, ...)}
+				   h=480,w=640, ...)}
 }
 }}
 \arguments{
@@ -60,12 +60,6 @@
     positive mode data for M+H or M-H calculation. a value of FALSE
     or 0 removes the column
   }
-  \item{DBsearchMS}{
-	A numerical value in ppm of the mass uncertainty to search against a metlin
-	search. This function will add two columns which give the name of the 
-	molecule and it's mass. If more than one mass if found then the closest mass
-	is given.
-  }
   \item{h}{
     Numeric variable for the height of the eic and boxplots that are printed out.
   }
@@ -85,7 +79,7 @@
 
   Additionally, it does all the heavy lifting involved in creating
   superimposed extracted ion chromatograms for a given number of
-  analytes.  It does so by reading the raw data files assoicated
+  analytes.  It does so by reading the raw data files associated
   with the samples of interest one at a time. As it does so, it
   prints the name of the sample it is currently reading. Depending
   on the number and size of the samples, this process can take a
@@ -104,12 +98,12 @@
   its order in the \code{xcmsSet} object, not the order given in
   the class arguments. Thus \code{levels(sampclass(object))[1]}
   would use color \code{palette()[1]} and so on. In that way, sample
-  classes maintian the same color across any number of different
+  classes maintain the same color across any number of different
   generated reports. 
   
   When there are multiple sample classes, xcms will produce boxplots of the
   different classes and will generate a single anova p-value statistic.
-  Like the eic's the plot number corrosponds to the row number in the 
+  Like the eic's the plot number corresponds to the row number in the 
   report.
 }
 
@@ -138,8 +132,6 @@
     number samples from each sample class represented in the group
   }
   \item{metlin}{A URL to metlin for that mass}
-  \item{CMPDname}{The name of the ID'ed molecule}
-  \item{CMPDmass}{The mass of the ID'ed molecule}
   \item{...}{one column for every sample class}
   \item{Sample Names}{integrated intensity value for every sample}
   \item{...}{one column for every sample}

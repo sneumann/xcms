@@ -158,7 +158,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 	## check existence of slot, absent in old xcmsSets
 		if(lockMassFreq){
 			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
-			lcraw<-stitch.Fill(lcraw, lockmass)
+			lcraw<-stitch(lcraw, lockmass)
 		}
         if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
@@ -1772,7 +1772,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             value = c("into","maxo","intb"), metlin = FALSE, 
-											DBsearchMS=FALSE, h=480,w=640, ...) {
+											h = 480, w = 640, ...) {
 
   if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
     stop("No group information. Use group().")
@@ -1838,10 +1838,6 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	                       round(neutralmass - metlin, digits), "&mass_max=",
 	                       round(neutralmass + metlin, digits), sep="")
 	    values <- cbind(metlin = metlinurl, values)
-	}
-	if(DBsearchMS){
-		DBans<-metlinMS1search(object, DBsearchMS)
-		values<-cbind(CMPDname=DBans[,"name"] , CMPDmz=DBans[,"mass"], values)
 	}
 	twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
 	if (sortpval) {
@@ -2006,7 +2002,7 @@ makeacqNum<-function(ob, freq, start=1){
 }
 
 stitch<-function(object, lockMass, MZerror=25){
-	##Assumption: that lockMass is 2 scans every time & every lock mass scan is found (found by mass atm)
+	##Assumption: that lockMass is 2 scans every time
 	##
 		require(stats)
 		if(file.exists("mz.txt")){
@@ -2088,7 +2084,7 @@ stitch<-function(object, lockMass, MZerror=25){
 		ob@acquisitionNum<-1:length(scanIdx)
 		ob@filepath<-object@filepath
 		ob@mzrange<-range(mz)
-		ob@profmethod<-"bin"
+		ob@profmethod<-object@profmethod
 		ob@tic<-object@tic
 		ob@scantime<-object@scantime
 		ob@profparam<-list()

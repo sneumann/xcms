@@ -1682,7 +1682,8 @@ if (!isGeneric("collect") )
     setGeneric("collect", function(object, ...) standardGeneric("collect"))
 
 setMethod("collect", "xcmsRaw", function(object, rtU, mzU=0, sn=5, uCE=-1, check=FALSE, fragments=TRUE, ...) {
-    for(k in 1:length(object@msnScanindex)){
+    warning("This method will be removed in the next releases\n")
+	for(k in 1:length(object@msnScanindex)){
         if (k ==1){
             from<-object@msnScanindex[k]
             to<-object@msnScanindex[k+1]-1
@@ -1831,6 +1832,7 @@ if (!isGeneric("getMZ") )
     setGeneric("getMZ", function(object, ...) standardGeneric("getMZ"))
 
 setMethod("getMZ", "xcmsRaw", function(object, specinfo,  ...) {
+	warning("This method will be removed in the next releases\n")
     for(i in 1:dim(specinfo)[1]){
 		A<-which(specinfo[i,"rtmin"] > object@scantime)
 		if(specinfo[i,"rtmax"] > object@scantime[length(object@scantime)]){
