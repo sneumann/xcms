@@ -55,6 +55,7 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     npRt<-ms1peaks[,"rt"]
     npIntensity<-ms1peaks[,"into"]
     npSample<- ms1peaks[,"sample"]
+	npCollisionEnergy<-rep(0, numMs1Peaks)
 
     PeakNr <- numMs1Peaks ## PeakNr+1 is the beginning peakindex for msn-spectra
 
@@ -65,9 +66,11 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     ## looking for every Sample-xcmsRaw (only if xs is given)
     for (NumXcmsPath in 1:paths){
         if (class(xs)=="xcmsSet"){
-		xcmsRawPath <- xs@filepaths[NumXcmsPath]
+			xcmsRawPath <- xs@filepaths[NumXcmsPath]
         	xr <- xcmsRaw(xcmsRawPath, includeMSn = TRUE)
 		}else{xr <- xraw}
+
+		npCollisionEnergy<-xr@msnCollisionEnergy
 
         for (z in 1:length(xr@msnScanindex)){ ## looking for every msn
             if (z<length(xr@msnScanindex)) {
@@ -117,7 +120,7 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                         npMz[PeakNr]<- npeaks[numPeaks,"mz"]
                         npIntensity[PeakNr]<- npeaks[numPeaks,"intensity"]
                         npSample[PeakNr]<- NumXcmsPath
-
+						npCollisionEnergy[PeakNr]<-xr@msnCollisionEnergy[z]
                     }
                 }
             }
@@ -125,13 +128,13 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     }
 
     fragmentColnames <- c("peakID", "MSnParentPeakID","msLevel","rt", "mz",
-                          "intensity", "Sample","GroupPeakMSn")
+                          "intensity", "Sample","GroupPeakMSn", "CollisionEnergy")
 
     ## later this is TRUE if the MS1-Peak is Part of a Group and has MSNs behind
     npGroupPeakMSn <- rep(FALSE,length(npSample))
     object@peaks  <- new("matrix", nrow = length(npMz), ncol = length(fragmentColnames),
                          data=c(npPeakID,npMSnParentPeakID,npMsLevel,npRt,npMz,npIntensity,
-                         npSample,npGroupPeakMSn))
+                         npSample,npGroupPeakMSn, npCollisionEnergy))
     colnames(object@peaks) <- fragmentColnames
     cat(length(npPeakID),"Peaks picked,",numAloneSpecs,"MSn-Specs ignored.\n")
     object
@@ -372,13 +375,12 @@ if (!isGeneric("simMatrix") )
 
 setMethod( "simMatrix", "xcmsFragments", function(object, ppmval=500, ...) {
 ##experimental
-    if(length(object@MS2spec) >=1){
-	    stop("Undefined object slot\nPlease collect spectra first!")
-    }
     ##takes very long time and needs some sorting but good info returned!!
     ##make into C++ code ??
-    spectra<-object@MS2spec
-    Allscores<-matrix(0, nrow=length(spectra))
+    spectra<-object@peaks
+    Allscores<-matrix(0, nrow=length(unique(spectra[,"sample"])))##stopped here editing
+
+
     for (i in 1:dim(object@specinfo)[1] ){
         cat(object@specinfo[i,"preMZ"], " ")
         if(dim(spectra[[i]])[1] <= 1) {
@@ -391,7 +393,7 @@ setMethod( "simMatrix", "xcmsFragments", function(object, ppmval=500, ...) {
                 } else {
                     neutralLoss1<-sort(diff(sort(spectra[[i]][,"mz"], decreasing=T) ))
                     neutralLoss2<-sort(diff(sort(spectra[[j]][,"mz"], decreasing=T) ))
-                    score<-xcms:::score_fun(neutralLoss1, neutralLoss2, ppmval)
+                    score<-score_fun(neutralLoss1, neutralLoss2, ppmval, ...)
                 }
                 if (j == 1){
                     scores<-score
@@ -442,27 +444,36 @@ setMethod( "spectralClust", "xcmsFragments", function(object, ...){
 })
 
 if (!isGeneric("findneutral") )
-    setGeneric("findneutral", function(object, ...) standardGeneric("findneutral"))
+    setGeneric("findneutral", function(object, find, ppmE=25, print=TRUE) standardGeneric("findneutral"))
 
-setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=10, print=TRUE, ...) {
-    find<-ppmDev(Mr=find, ppmE) #gets the deviation window for a mass [1] is top [2] is min
-    neutral<-0
-    found<-0
-    spectra<-object@MS2spec
-    for (i in 1:dim(object@specinfo)[1] ){
-        #cat(object@specinfo[i,"preMZ"], " ")
-        if(dim(spectra[[i]])[1] >= 2) {
-            neutral<-sort(abs(diff(sort(spectra[[i]][,"mz"])) ))
-            if(any (neutral < find[1] & neutral > find[2])== TRUE){
-                if(is.interger(found)){
-                    found<-object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
-                }else{
-                    found<-rbind(found, object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
-                }
-            }
-        }
-    }
-    if (print == TRUE){
+setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
+    find<-range(ppmDev(Mr=find, ppmE))
+	spectra<-unique(object@peaks[,"MSnParentPeakID"])
+	found<-matrix(ncol=10)
+	
+    for (i in 1:length(spectra)){
+		if(spectra[i] > 0){
+			losses<-diff(sort(object@peaks[object@peaks[,"MSnParentPeakID"] ==spectra[i],"mz"] ))
+			if(length(losses) > 0){
+				if(length(which(losses > find[1] & losses < find[2])) > 0){
+					idx<-which(object@peaks[,"MSnParentPeakID"] == spectra[i])
+					PrecursorMZ<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"mz"]
+					CE<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"CollisionEnergy"]
+					dat<-object@peaks[idx,c("MSnParentPeakID", "msLevel", "rt", "mz", 
+					"intensity", "Sample", "GroupPeakMSn")]
+					found<-rbind(found, cbind(NeutralLoss=c(losses,0),  PrecursorMz=PrecursorMZ, 
+						dat[order(dat[,"mz"]),], CollisionEnergy=CE))
+				}
+			}
+		}
+	}
+    if(nrow(found) >1){
+		found<-found[2:nrow(found),]
+	} else{
+		cat("Nothing found\n")
+		return(0)
+	}
+	if (print == TRUE){
         cat("We looked for", find[2], " to", find[1], "and found:\n")
         print(found)
     }
@@ -471,38 +482,35 @@ setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=10, print=
 
 
 if (!isGeneric("findMZ") )
-    setGeneric("findMZ", function(object, ...) standardGeneric("findMZ"))
+    setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE) standardGeneric("findMZ"))
 
-setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=10, print=TRUE, ...) {
-    find<-ppmDev(Mr=find, ppmE) #gets the deviation window for a mass [1] is top [2] is min
+setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
+    find<-range(ppmDev(Mr=find, ppmE)) 
     fragMZ<-0
-    found<-0
-    spectra<-object@MS2spec
-    for (i in 1:dim(object@specinfo)[1] ){
-    #cat(object@env$specinfo[i,"preMZ"], " ")
-        if(dim(spectra[[i]])[1] >= 2) {
-            fragMZ<-sort(spectra[[i]][,"mz"])
-            if(any (fragMZ < find[1] & fragMZ > find[2])== TRUE){
-                if(is.interger(found)){
-                    found<-object@env$specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")]
-                }else{
-                    found<-rbind(found, object@specinfo[i, c("ref", "preMZ", "rtmin", "rtmax")] )
-                }
-            }
-        }
-    }
+
+	found<- which(object@peaks[,"mz"] > find[1] & object@peaks[,"mz"] < find[2] & object@peaks[,"msLevel"] >1)
+	if(length(found) <1){
+		cat("nothing was found\n")
+		return(0)
+	}
+	
+	PrecursorMZ<-object@peaks[object@peaks[found,"MSnParentPeakID"],"mz"]
+	CE<-object@peaks[object@peaks[found,"MSnParentPeakID"],"CollisionEnergy"]
+	foundFrag<-cbind(PrecursorMz=PrecursorMZ, object@peaks[found,c("MSnParentPeakID", "msLevel",
+		"rt", "mz", "intensity", "Sample", "GroupPeakMSn")], CollisionEnergy=CE)
+	
     if (print == TRUE){
         cat("We looked for", find[2], " to", find[1], "and found:\n")
-        print(found)
+        print(foundFrag)
     }
-    return(found)
+    return(foundFrag)
 })
 
 if (!isGeneric("searchMetlin") )
-    setGeneric("searchMetlin", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", limit=8, ...)
+    setGeneric("searchMetlin", function(object, ppmfrag=10, ppmMZ= 5, file, metXML="metlin", limit=8, ...)
                standardGeneric("searchMetlin"))
 
-setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, MS1data=FALSE, metXML="metlin", limit=8, ...) {
+setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 5, file, metXML="metlin", limit=8, ...) {
     if(metXML=="metlin"){
         metlinfile<-"http://metlin.scripps.edu/download/MSMS.Rda"
         metlinMS<-"http://metlin.scripps.edu/download/MS.Rda"
@@ -525,15 +533,17 @@ setMethod( "searchMetlin", "xcmsFragments", function(object, ppmfrag=10, ppmMZ= 
     CEref<-c(0, 10, 20, 40)
 
     check=FALSE
-    for(i in 1:dim(object@specinfo)[1] ){
-        mz.diff<-object@specinfo[i, "preMZ"] - round(as.numeric(met.xml[,"preMZ"]), 0)
+
+	PrecursorMZpeak<-object@peaks[object@peaks[,"msLevel"] == 1,]
+    for(i in 1:nrow(PrecursorMZpeak)){
+        mz.diff<-object@peaks[i, ] - round(as.numeric(met.xml[,"preMZ"]), 0)
         Index<-0
         if(length(which(round(mz.diff,0) == elements["H", 1])) > 0){ # check to see if what type of ionisation it is and if it's an adduct
             deviate<-ppmDev(object@specinfo[i, "AccMZ"]-elements["H",2], ppmMZ)
             exp.mode<-c("+", "")
             Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
         } else if (length(which(round(mz.diff,0) == elements["Na",1] ))> 0 ){
-            deviate<-ppmDev(object@specinfo[i, "AccMZ"]-(elements["Na",2]+elements["e",2]), ppmMZ)
+            deviate<-ppmDev(object@specinfo[i, "AccMZ"]-(elements["Na",2]), ppmMZ)
             exp.mode<-c("+","Na")
             Index<-which(as.numeric(met.xml[,"preMZ"]) < deviate[1] & as.numeric(met.xml[,"preMZ"]) > deviate[2])
         } else if (length(which(round(mz.diff,0) == elements["H.n",1] ))> 0){

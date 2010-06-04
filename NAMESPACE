@@ -39,6 +39,8 @@ exportMethods(
               "filepaths",
               "filepaths<-",
               "diffreport",
+			  "findMZ",
+			  "findneutral",
               "fillPeaks",
               "fillPeaks.MSW",
               "fillPeaks.chrom",
