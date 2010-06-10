@@ -691,6 +691,12 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
                  }
                  mzrange <- range(mzmat, na.rm = TRUE)
                  massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
+                 ## This case (the only non-na m/z had intensity 0) was reported
+                 ## by Gregory Alan Barding "binlin processing"
+                 if(any(is.na(massmean))) {
+                   massmean <- mean(mzmat, na.rm = TRUE)                   
+                 }
+
                  pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
                  into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
                  intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
