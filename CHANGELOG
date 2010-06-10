@@ -1,3 +1,7 @@
+2010-06-10: 
+Fixed a problem in matchedFilter reported on the list 
+by Gregory Alan Barding (binlin processing)
+
 2010-05-17: 
 Added a try() to ignore not-installed Rmpi and snow packages to avoid popup window in Windows
 
