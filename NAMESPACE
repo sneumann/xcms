@@ -39,8 +39,8 @@ exportMethods(
               "filepaths",
               "filepaths<-",
               "diffreport",
-			  "findMZ",
-			  "findneutral",
+              "findMZ",
+              "findneutral",
               "fillPeaks",
               "fillPeaks.MSW",
               "fillPeaks.chrom",
@@ -110,5 +110,6 @@ exportMethods(
               "show",
               "simSearch",
               "sortMz",
+              "stitch",
               "write.cdf"
               )
