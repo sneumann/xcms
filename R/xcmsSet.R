@@ -158,6 +158,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 	## check existence of slot, absent in old xcmsSets
 		if(lockMassFreq){
 			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
+			object@dataCorrection<-lockmass
+			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
 			lcraw<-stitch(lcraw, lockmass)
 		}
         if (exists("object@polarity") && length(object@polarity) >0) {
@@ -1423,6 +1425,9 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
+			if(length(object@dataCorrection) > 0){
+				lcraw<-stitch(lcraw, object@dataCorrection)
+			}
 	    ## check existence of slot, absent in old xcmsSets
 	    if (exists("object@polarity") && length(object@polarity) >0) {
             ## Retain wanted polarity only
@@ -1922,9 +1927,7 @@ setMethod("progressInfoUpdate", "xcmsSet", function(object)
 )
 
 
-xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480)
-{
-
+xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480){
 
     if (pic == "png"){
 	png(file.path(dirpath, "%003d.png"), width, height)
@@ -1985,113 +1988,5 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     txt <- paste(prefix, txt, sep="")
     if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex)
-}
-
-
-makeacqNum<-function(ob, freq, start=1){
-	freq<-freq+1 ##nessary for the start at +1 and others since 1st scan is +1
-	
-	acqNum<-numeric()
-	fo<-seq(from=start,to=length(ob@scanindex), by=freq)
-	for(i in fo){
-		acqNum<-c(acqNum, i,i+1)
-	}
-	lockMass<-matrix(acqNum, ncol=1)
-	colnames(lockMass)<-c("AcqNum")
-	return(lockMass)
-}
-
-stitch<-function(object, lockMass, MZerror=25){
-	##Assumption: that lockMass is 2 scans every time
-	##
-		require(stats)
-		if(file.exists("mz.txt")){
-			unlink("mz.txt")
-		}
-		if(file.exists("intensity.txt")){
-			unlink("intensity.txt")
-		}
-
-		hold<-0
-		opps<-0
-		scanN<-lockMass[,"AcqNum"]
-		scanindex<-list()
-
-		for(i in 1:length(object@acquisitionNum)){
-			percent<-(i/length(object@acquisitionNum))*100
-			#cat(paste(round(percent), "%\r"))
-			if( i == 1 || i == 2 ){ ##assuming the lockMass starts at 1 & first 2 scans are lockmass :)	
-				scan<-getScan(object, i)
-				cat(scan[,"mz"], " ", append=TRUE, file="mz.txt")
-				cat(scan[,"intensity"], " ", append=TRUE, file="intensity.txt")
-				next # since lock mass is 1 & 2 there is no gap to fill :)
-			}else if(i == (hold+1)){ 
-				next #skip over lock mass +1 since processing is done
-			}else if(all(lockMass[,"AcqNum"] != i ) || i >= (length(object@acquisitionNum) - 2) ){
-				#Get all the other scans into the text file as well
-				scan<-getScan(object, i)
-				cat(scan[,"mz"], " ", append=TRUE, file="mz.txt")
-				cat(scan[,"intensity"], " ", append=TRUE, file="intensity.txt")
-				next
-			}else if(any(lockMass[,"AcqNum"] == i)){
-				hold<-i
-				cat(paste(round(percent), "%\r"))
-
-				#get scans -1 and +1 from LockMass
-				scan<-getScan(object, i-1)
-				scanB<-getScan(object, i+2)
-				cat(scan[,"intensity"], " ", scanB[,"intensity"], " ", append=TRUE, file="intensity.txt")
-				cat(scan[,"mz"], " ", scanB[,"mz"], " ",append=TRUE, file="mz.txt")
-				##Fill the gap with the scan before and jsut after lock Mass scans 
-			}
-		}
-		cat("\n")
-
-		##Now all loops are finished we can add the mz.txt and Intensity.txt 
-		##to the object and make the scanindex :)
-		gc()
-		if(file.exists("mz.txt") && file.exists("intensity.txt")){
-			#cat(paste("Reading m/z & intensity Vectors...\n", sep=""))
-			mz<-scan("mz.txt", what="numeric")
-			intensity<-scan("intensity.txt", what="numeric")
-		}else{
-			stop("ERROR: Hard Drive error - m/z and Intensity Vectors not found\n")
-		}
-		mz<-as.numeric(mz)
-		intensity<-as.numeric(intensity)
-
-		scanIdx<-0
-		for(k in 1:length(mz)){
-			if( (k+2) == (length(mz))){
-				break
-			} else if(mz[k+1] > mz[k]){
-				#cat(k, " <-k \n")
-				if(mz[k+2] < mz[k+1] && mz[k] < mz[k+2]){
-					stop("Error at ", k, " : value greater than element k\n")
-				}else{
-					next
-				}
-			}else if(mz[k+1] < mz[k]){
-				scanIdx<-c(scanIdx, k)
-	#			cat("N--> ",n," <--N \n")
-			}
-		}
-		
-		ob<-new("xcmsRaw")
-		ob@scanindex<-as.integer(scanIdx)
-		ob@env$mz<-mz
-		ob@env$intensity<-intensity
-		ob@acquisitionNum<-1:length(scanIdx)
-		ob@filepath<-object@filepath
-		ob@mzrange<-range(mz)
-		ob@profmethod<-object@profmethod
-		ob@tic<-object@tic
-		ob@scantime<-object@scantime
-		ob@profparam<-list()
-		
-		rm(object,scanIdx, mz, intensity)
-		gc()
-		cat("\n")
-		return(ob)
 }
 
