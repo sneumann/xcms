@@ -163,7 +163,11 @@
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points
       by increasing m/z for each scan
-    }
+	}
+	\item{stitch}{
+	  \code{signature(object = "xcmsRaw")}: Raw data correction for
+	  lock mass calibration gaps.
+	}
   }
 }
 \references{
