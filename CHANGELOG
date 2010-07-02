@@ -1,3 +1,6 @@
+2010-06-30: 1.23.3
+Changed code for data correction/gap filler/stitch method. Increased documentation for stitch method. Added separate file for code, making xcmsRaw slightly smaller. Added slot into xcmsSet object so no parameters were needed for fillPeaks anymore.
+
 2010-06-10: 
 Fixed a problem in matchedFilter reported on the list 
 by Gregory Alan Barding (binlin processing)
