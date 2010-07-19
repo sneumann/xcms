@@ -1014,7 +1014,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             par(bg = "white")
             l <- layout(matrix(c(1,2,3),nr=3,nc=1,byrow=T),heights=c(.5,.75,2));
             par(mar= c(2, 4, 4, 2) + 0.1)
-            plotRaw(object,mass=mzrange,time=trange,log=T,title='')
+            plotRaw(object,mzrange=mzrange,rtrange=trange,log=TRUE,title='')
             title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
             par(mar= c(1, 4, 1, 2) + 0.1)
             image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
