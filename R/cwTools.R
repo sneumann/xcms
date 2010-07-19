@@ -425,14 +425,16 @@ fitGauss <- function(td,d,pgauss=NA) {
 
 joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5,mzCenterFun) {  
 
-  gausspeaksidx <- which(!is.na(peaks[,"mu"]))
-  Ngp <- length(gausspeaksidx)
-  newpeaks <- NULL
-  
-  if (Ngp > 0) {
-    gpeaks <- peaks[gausspeaksidx,]
+    gausspeaksidx <- which(!is.na(peaks[,"mu"]))
+    Ngp <- length(gausspeaksidx)
+    if (Ngp == 0) 
+        return(peaks)
+
+    newpeaks <- NULL
+
+    gpeaks <- peaks[gausspeaksidx,,drop=FALSE]
     if (dim(peaks)[1] - Ngp > 0) 
-        notgausspeaks <- peaks[-gausspeaksidx,]
+        notgausspeaks <- peaks[-gausspeaksidx,,drop=FALSE]
         
     if (Ngp > 1) { 
         comb <- which(upper.tri(matrix(0,Ngp,Ngp)),arr=TRUE)
@@ -443,7 +445,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
                 h2=gpeaks[p2,"h"],mu2=gpeaks[p2,"mu"],s2=gpeaks[p2,"sigma"]) >= maxGaussOverlap
         } 
     } else overlap <- FALSE
-    
+
     if (any(overlap) && (Ngp > 1)) {
         jlist <- list()
         if (length(which(overlap)) > 1) {
@@ -452,16 +454,16 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             cc <- list()
             cc[[1]] <- gm[1,] ## copy first entry
             for (j in 2:dim(gm)[1]) { ## search for connections
-              ccl <- unlist(cc)
-              nl <- sapply(cc, function(x) length(x)) 
-              ccidx <- rep(1:length(nl),nl)
-              idx <- match(gm[j,],ccl) 
-              if (any(!is.na(idx))) { ## connection found, add to list
+                ccl <- unlist(cc)
+                nl <- sapply(cc, function(x) length(x)) 
+                ccidx <- rep(1:length(nl),nl)
+                idx <- match(gm[j,],ccl) 
+                if (any(!is.na(idx))) { ## connection found, add to list
                 pos <- ccidx[ idx[which(!is.na(idx))[1]] ]
                 cc[[pos]] <- c(cc[[pos]],gm[j,])
-              } else  ## create new list element
-                  cc[[length(cc) + 1]] <- gm[j,] 
-              
+                } else  ## create new list element
+                    cc[[length(cc) + 1]] <- gm[j,] 
+                
             }
             ccn <- list()
             lcc <- length(cc)
@@ -487,33 +489,33 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             
             size <- sapply(ccn, function(x) length(x)) 
             s2idx <- which(size >= 2)
-          
+            
             if (length(s2idx) > 0) {
-              for (j in 1:length(s2idx)) { 
+                for (j in 1:length(s2idx)) { 
                 pgroup <- unique(ccn[[ s2idx[j] ]])    
                 jlist[[j]] <- pgroup 
-              }
+                }
             } else stop('(length(s2idx) = 0) ?!?')
         } else jlist[[1]] <- comb[overlap,]
         
         ## join all peaks belonging to one cc
         for (j in 1:length(jlist)) { 
             jidx <- jlist[[j]]
-            newpeak <- gpeaks[jidx[1],]
+            newpeak <- gpeaks[jidx[1],,drop=FALSE]
             newmin <- min(gpeaks[jidx,"lmin"])
             newmax <- max(gpeaks[jidx,"lmax"])
-            newpeak["scpos"] <- -1 ## not defined after join
-            newpeak["scmin"] <- -1 ##    ..
-            newpeak["scmax"] <- -1 ##    ..
-            newpeak["scale"] <- -1 ##    ..
+            newpeak[1,"scpos"] <- -1 ## not defined after join
+            newpeak[1,"scmin"] <- -1 ##    ..
+            newpeak[1,"scmax"] <- -1 ##    ..
+            newpeak[1,"scale"] <- -1 ##    ..
             
-            newpeak["maxo"] <- max(gpeaks[jidx,"maxo"])
-            newpeak["sn"]   <- max(gpeaks[jidx,"sn"])
-            newpeak["lmin"] <- newmin  
-            newpeak["lmax"] <- newmax 
-            newpeak["rtmin"] <- scantime[td[newmin]]    
-            newpeak["rtmax"] <- scantime[td[newmax]]     
-            newpeak["rt"] <- weighted.mean(gpeaks[jidx,"rt"],w=gpeaks[jidx,"maxo"])
+            newpeak[1,"maxo"] <- max(gpeaks[jidx,"maxo"])
+            newpeak[1,"sn"]   <- max(gpeaks[jidx,"sn"])
+            newpeak[1,"lmin"] <- newmin  
+            newpeak[1,"lmax"] <- newmax 
+            newpeak[1,"rtmin"] <- scantime[td[newmin]]    
+            newpeak[1,"rtmax"] <- scantime[td[newmax]]     
+            newpeak[1,"rt"] <- weighted.mean(gpeaks[jidx,"rt"],w=gpeaks[jidx,"maxo"])
 
             ## Re-assign m/z values
             p1 <- match(td[newmin],otd)[1]
@@ -526,55 +528,47 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             ## re-calculate m/z value for peak range
             mzmean <- do.call(mzCenterFun,list(mz=mz.value,intensity=mz.int))
             mzrange <- range(mz.value)
-            newpeak["mz"] <- mzmean
-            newpeak[c("mzmin","mzmax")] <- mzrange
+            newpeak[1,"mz"] <- mzmean
+            newpeak[1,c("mzmin","mzmax")] <- mzrange
 
             ## re-fit gaussian
             md <- max(d[newmin:newmax]);d1 <- d[newmin:newmax]/md;
             pgauss <- fitGauss(td[newmin:newmax],d[newmin:newmax],pgauss = list(mu=td[newmin] + (td[newmax]-td[newmin])/2,sigma=td[newmax]-td[newmin],h=max(gpeaks[jidx,"h"])))
             if (!any(is.na(pgauss)) && all(pgauss > 0)) {
-                  newpeak["mu"]    <- pgauss$mu
-                  newpeak["sigma"] <- pgauss$sigma
-                  newpeak["h"]     <- pgauss$h 
-                  newpeak["egauss"]<- sqrt((1/length(td[newmin:newmax])) * sum(((d1-gauss(td[newmin:newmax],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
+                newpeak[1,"mu"]    <- pgauss$mu
+                newpeak[1,"sigma"] <- pgauss$sigma
+                newpeak[1,"h"]     <- pgauss$h 
+                newpeak[1,"egauss"]<- sqrt((1/length(td[newmin:newmax])) * sum(((d1-gauss(td[newmin:newmax],pgauss$h/md,pgauss$mu,pgauss$sigma))^2)))
             } else { ## re-fit after join failed
-                newpeak["mu"]       <- NA
-                newpeak["sigma"]    <- NA
-                newpeak["h"]        <- NA  
-                newpeak["egauss"]   <- NA
+                newpeak[1,"mu"]       <- NA
+                newpeak[1,"sigma"]    <- NA
+                newpeak[1,"h"]        <- NA  
+                newpeak[1,"egauss"]   <- NA
             }
             
             if (is.null(newpeaks)) newpeaks <- newpeak  else 
                 newpeaks <- rbind(newpeaks,newpeak)
-      }  
-      ## add the remaining peaks
-      jp <- unique(unlist(jlist))
-      if (dim(peaks)[1] - length(jp) > 0) newpeaks <- rbind(newpeaks,gpeaks[-jp,])
-    } else  newpeaks <- gpeaks
+        }  
+        ## add the remaining peaks
+        jp <- unique(unlist(jlist))
+        if (dim(peaks)[1] - length(jp) > 0) 
+            newpeaks <- rbind(newpeaks,gpeaks[-jp,])
     
-    if (is.vector(newpeaks)) { 
-      grt.min <- newpeaks["rtmin"]
-      grt.max <- newpeaks["rtmax"] 
-      } else {
-        grt.min <- newpeaks[,"rtmin"]
-        grt.max <- newpeaks[,"rtmax"]
-      }
-    if (dim(peaks)[1] - Ngp > 1) { ## notgausspeaks
-      ## here we can only check if they are completely overlapped by other peaks 
-      for (k in 1:dim(notgausspeaks)[1]) {
-          if (!any((notgausspeaks[k,"rtmin"] >= grt.min) & (notgausspeaks[k,"rtmax"] <= grt.max)))
-             newpeaks <- rbind(newpeaks,notgausspeaks[k,])
-      }
-    } else 
-      if (dim(peaks)[1] - Ngp == 1) {
-        if (!any((notgausspeaks["rtmin"] >= grt.min) & (notgausspeaks["rtmax"] <= grt.max)))
-          newpeaks <- rbind(newpeaks,notgausspeaks)
-      }    
+    } else  
+        newpeaks <- gpeaks
+
+    grt.min <- newpeaks[,"rtmin"]
+    grt.max <- newpeaks[,"rtmax"]
     
-  } else return(peaks)
-  
-  rownames(newpeaks) <- NULL
-  newpeaks
+    if (nrow(peaks) - Ngp > 0) { ## notgausspeaks
+        for (k in 1:nrow(notgausspeaks)) {## here we can only check if they are completely overlapped by other peaks 
+            if (!any((notgausspeaks[k,"rtmin"] >= grt.min) & (notgausspeaks[k,"rtmax"] <= grt.max)))
+                newpeaks <- rbind(newpeaks,notgausspeaks[k,])
+            }
+    }    
+
+    rownames(newpeaks) <- NULL
+    newpeaks
 }  
 
 descendMinTol <- function(d,startpos,maxDescOutlier) {
