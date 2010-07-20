@@ -788,6 +788,21 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     scantime <- object@scantime
     Nscantime <- length(scantime)
     lf <- length(featlist)
+
+    if (lf == 0) {
+        cat("No ROIs found ! \n")
+         
+        if (verbose.columns) {
+            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)+length(verbosenames)))
+            colnames(nopeaks) <- c(basenames, verbosenames)
+        } else {
+            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
+            colnames(nopeaks) <- c(basenames)
+        }
+        
+        return(invisible(nopeaks))
+    }
+    
     cat('\n Detecting chromatographic peaks ... \n % finished: '); lp <- -1;
 
     for (f in  1:lf) {
