@@ -1,5 +1,5 @@
  
-xcmsRaw <- function(filename, profstep = 1, profmethod = "intlin",
+xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
                     includeMSn = FALSE, mslevel=NULL) {
 
