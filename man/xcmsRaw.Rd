@@ -10,7 +10,7 @@
   plotting and data exploration.
 }
 \usage{
-xcmsRaw(filename, profstep = 1, profmethod = "intlin", profparam =
+xcmsRaw(filename, profstep = 1, profmethod = "bin", profparam =
 list(), includeMSn=FALSE, mslevel=NULL)
 
 deepCopy(object)
