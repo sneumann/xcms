@@ -1812,8 +1812,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 	stop("NA values in xcmsSet. Use fillPeaks()")
     }
 
-    mean1 <- rowMeans(values[,c1], na.rm = TRUE)
-    mean2 <- rowMeans(values[,c2], na.rm = TRUE)
+    mean1 <- rowMeans(values[,c1,drop=FALSE], na.rm = TRUE)
+    mean2 <- rowMeans(values[,c2,drop=FALSE], na.rm = TRUE)
 
     ## Calculate fold change.
     ## For foldchange <1 set fold to 1/fold
@@ -1823,8 +1823,12 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     testval <- values[,c(c1,c2)]
 	testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
-	tstat <- mt.teststat(testval, testclab, ...)
-	pvalue <- pval(testval, testclab, tstat)
+    if (ncol(testval) > 2) {
+        tstat <- mt.teststat(testval, testclab, ...)
+        pvalue <- pval(testval, testclab, tstat)
+    } else {
+            tstat <- pvalue <- rep(NA,nrow(testval))
+        }
 	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
 	if (length(levels(sampclass(object))) >2) {
             pvalAnova<-c()
