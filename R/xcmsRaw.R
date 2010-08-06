@@ -931,7 +931,6 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                     mzrange <- range(mz.value)
                     mzmean <- do.call(mzCenterFun,list(mz=mz.value,intensity=mz.int))
                     
-
                     ## Compute dppm only if needed
                     dppm <- NA
                     if (verbose.columns)
@@ -972,7 +971,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             ## find minima, assign rt and intensity values
             if (integrate == 1) {
                 lm <- descendMin(wCoefs[,peakinfo[p,"scaleNr"]], istart= peakinfo[p,"scpos"])
-                if (lm[1]==lm[2]) ## fall-back
+                gap <- all(d[lm[1]:lm[2]] == 0) ## looks like we got stuck in a gap right in the middle of the peak
+                if ((lm[1]==lm[2]) || gap )## fall-back
                         lm <- descendMinTol(d, startpos=c(peakinfo[p,"scmin"], peakinfo[p,"scmax"]), maxDescOutlier)
               } else
                   lm <- descendMinTol(d,startpos=c(peakinfo[p,"scmin"],peakinfo[p,"scmax"]),maxDescOutlier)
@@ -989,8 +989,10 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             peaks[p,"rtmin"] <- scantime[peakrange[1]]
             peaks[p,"rtmax"] <- scantime[peakrange[2]]
             pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
+            if (is.na(pwid)) 
+                pwid <- 1
             peaks[p,"into"] <- pwid*sum(d[lm[1]:lm[2]])
-
+           
             db <-  d[lm[1]:lm[2]] - baseline
             peaks[p,"intb"] <- pwid*sum(db[db>0])
             peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2];
