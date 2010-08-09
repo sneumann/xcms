@@ -50,7 +50,7 @@
   retcor.methods <-  substr(all.xcms[grep("retcor\\..*", all.xcms)], start+1, 100)
 
   ## default for the methods
-  retcor.method <- "loess"
+  retcor.method <- "peakgroups"
 
   ## all fillPeaks methods
   start <- nchar("fillPeaks.")
