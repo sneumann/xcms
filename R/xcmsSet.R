@@ -1032,12 +1032,12 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     if (plottype %in% c("deviation", "mdevden")) {
 
         ### Set up the colors and line type
-        if (missing(col)) {
+        if (missing(col) || is.null(col)) {
             col <- integer(n)
             for (i in 1:max(classlabel))
                 col[classlabel == i] <- 1:sum(classlabel == i)
         }
-        if (missing(ty)) {
+        if (missing(ty) || is.null(ty)) {
             ty <- integer(n)
             for (i in 1:max(col))
                 ty[col == i] <- 1:sum(col == i)
