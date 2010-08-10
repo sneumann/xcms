@@ -2,7 +2,7 @@
 % NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
 % likely to be overwritten.
 %
-% \VignetteIndexEntry{Processing Tandem-MS and MS$^n$ data with with xcms}
+% \VignetteIndexEntry{Processing Tandem-MS and MS$^n$ data with xcms}
 % \VignetteKeywords{preprocess, analysis, tandemms}
 % \VignettePackage{xcms}
 \documentclass[12pt]{article}
@@ -24,7 +24,7 @@
 \headheight=-.3in
 
 \begin{document}
-\title{Processing Tandem-MS and MS$^n$ data with with xcms}
+\title{Processing Tandem-MS and MS$^n$ data with xcms}
 \author{S. Neumann, J. Kutzera}
 \maketitle
 
