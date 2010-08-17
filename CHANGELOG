@@ -1,4 +1,6 @@
-2010-08-09: 1.23.6
+2010-08-17: 1.23.6
+Speedup for distributed feature detection: using load balanced version of snow's clusterApply
+Added argument msgfun to xcmsClusterApply, to provide better status messages for distributed computing
 Fixed: initialisation of retcor methods
 Fixed: retcor.peakgroups stopped with an error message when parameters col=NULL or ty=NULL were used
 
