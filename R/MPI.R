@@ -333,6 +333,6 @@ xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
 }
 
 msgfun.featureDetection <- function(x,i) {
-    cat("Detecting features in sample #",i,":",basename(x[[i]]$file),"\n");
+    cat("Detecting features in file #",i,":",basename(x[[i]]$file),"\n");
     flush.console();
 }
