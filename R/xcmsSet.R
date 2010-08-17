@@ -139,7 +139,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
           mpi.close.Rslaves()
         } else {
           if (parMode == "SOCK") {
-             res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar)
+             res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
              stopCluster(snowclust)
           }
         }
