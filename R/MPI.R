@@ -272,28 +272,67 @@ findPeaksPar <- function(arg) {
 }
 
 ##
-## slightly modified version of snow's (static)clusterApply
+## slightly modified version of snow's clusterApply(LB)
 ##
 
-xcmsClusterApply <- function(cl, x, fun, ...) {
+## clusterApply / staticClusterApply
+# xcmsClusterApply <- function(cl, x, fun, ...) {
+#     argfun <- function(i) c(list(x[[i]]), list(...))
+#     n <- length(x) 
+# 
+#     checkCluster(cl)
+#     p <- length(cl)
+#     if (n > 0 && p > 0) {
+#         val <- vector("list", n)
+#         start <- 1
+#         while (start <= n) {
+#             end <- min(n, start + p - 1)
+#         jobs <- end - start + 1
+#             for (i in 1:jobs) {
+#                 cat("Sending task #",start + i - 1,"\n"); flush.console();
+#                 sendCall(cl[[i]], fun, argfun(start + i - 1))
+#             }
+#             val[start:end] <- lapply(cl[1:jobs], recvResult)
+#             start <- start + jobs
+#         }
+#         checkForRemoteErrors(val)
+#     }
+# }
+
+## clusterApplyLB / dynamicClusterApply
+xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
     argfun <- function(i) c(list(x[[i]]), list(...))
     n <- length(x) 
-
+ 
     checkCluster(cl)
     p <- length(cl)
     if (n > 0 && p > 0) {
+        submit <- function(node, job) sendCall(cl[[node]], fun, 
+            argfun(job), tag = job)
+        for (i in 1:min(n, p)) {
+            if (!is.null(msgfun)) 
+                do.call(msgfun,args=list(x=x,i=i)); 
+                
+            submit(i, i)
+        }    
         val <- vector("list", n)
-        start <- 1
-        while (start <= n) {
-            end <- min(n, start + p - 1)
-        jobs <- end - start + 1
-            for (i in 1:jobs) {
-                cat("Sending task #",start + i - 1,"\n"); flush.console();
-                sendCall(cl[[i]], fun, argfun(start + i - 1))
-            }
-            val[start:end] <- lapply(cl[1:jobs], recvResult)
-            start <- start + jobs
+        for (i in 1:n) {
+            d <- recvOneResult(cl)
+            j <- i + min(n, p)
+            if (j <= n) {
+                if (!is.null(msgfun)) 
+                    do.call(msgfun,args=list(x=x,i=j));
+                    
+                submit(d$node, j)
+            }    
+            val[d$tag] <- list(d$value)
         }
         checkForRemoteErrors(val)
     }
+
+}
+
+msgfun.featureDetection <- function(x,i) {
+    cat("Detecting features in sample #",i,":",basename(x[[i]]$file),"\n");
+    flush.console();
 }
