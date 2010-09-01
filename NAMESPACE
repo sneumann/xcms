@@ -111,5 +111,6 @@ exportMethods(
               "simSearch",
               "sortMz",
               "stitch",
-              "write.cdf"
+              "write.cdf",
+              "write.mzdata"
               )
