@@ -1,5 +1,6 @@
 2010-09-01: 1.23.7
 Added support to write.mzdata()
+Replaced pre-compiled Windows x64 libraries for netCDF and compression
 
 2010-08-17: 1.23.6
 Speedup for distributed feature detection: using load balanced version of snow's clusterApply
