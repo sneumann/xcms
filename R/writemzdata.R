@@ -102,6 +102,10 @@ buildMzdata <- function(xr) {
     target <- new("raw")
     peaks <- getScan(xr, id)
     
+    if (is.unsorted(peaks[,"mz"])) { ## fix "bad" scans
+        peaks <- peaks[order(peaks[,"mz"]),]
+    }    
+    
     mzdata$addNode("mzArrayBinary",
                    close = FALSE)
     mzdata$addNode("data",
