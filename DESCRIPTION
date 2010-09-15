@@ -8,7 +8,7 @@ Author: Colin A. Smith <csmith@scripps.edu>,
 		Paul Benton <hpaul.benton08@imperial.ac.uk>
 Maintainer: Colin A. Smith <csmith@scripps.edu>
 Depends: R (>= 1.9.0), methods 
-Suggests: faahKO, msdata, multtest, ncdf, rgl, MassSpecWavelet (>= 1.5.2), RANN, snow, KEGGSOAP, xlsx
+Suggests: faahKO, msdata, multtest, ncdf, rgl, MassSpecWavelet (>= 1.5.2), RANN, snow, KEGGSOAP
 Enhances: Rgraphviz, XML
 SystemRequirements: NetCDF, zlib
 Description: Framework for processing and visualization of
