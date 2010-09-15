@@ -25,8 +25,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 						setting for correction}
 	\item{start}{Specifies where the 1st lockmass scan is}
     \item{mslevel}{perform peak picking on data of given mslevel}
-    \item{nSlaves}{number of MPI-slaves to use for parallel peak detection,
-                 works only if \code{Rmpi} is installed properly, see \code{\link{xcmsPapply}}.}
+    \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
+		   MPI is used if installed, otherwise the snow package is employed for multicore support.}
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
@@ -56,6 +56,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \code{\link{xcmsSet-class}},
   \code{\link{findPeaks}},
   \code{\link{profStep}},
-  \code{\link{profMethod}}
+  \code{\link{profMethod}},
+  \code{\link{xcmsPapply}}
 }
 \keyword{file}
