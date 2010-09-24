@@ -1,5 +1,6 @@
-2010-09-10: 1.23.8
+2010-09-24: 1.23.8
 write.mzdata(): fix "bad" scans while writing mzData
+avoid unexpected results from peakTable() by using value="into" as default (instead of value="index")
 
 2010-09-01: 1.23.7
 Added support to write.mzdata()
