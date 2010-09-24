@@ -1743,7 +1743,7 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
 
   
   if (! "value" %in% names(list(...))) {
-    ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
+    ts <- data.frame(cbind(groupmat,groupval(object, value="into",  ...)), row.names = NULL)
   } else {
     ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
   }
