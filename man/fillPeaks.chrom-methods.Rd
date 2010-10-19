@@ -40,7 +40,7 @@
   
 }
 \value{
-  A \code{xcmsSet} objects with filled in peak groups.
+  A \code{xcmsSet} objects with filled in peak groups (into and maxo).
 }
 
 \seealso{
