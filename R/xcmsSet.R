@@ -1157,6 +1157,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         s <- idx[si]
         cat(samples[s], " ")
         
+	profStep(obj1) <- profStep ## regenerate profile matrix
+
         obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
 
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
