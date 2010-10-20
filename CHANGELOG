@@ -1,3 +1,9 @@
+2010-10-20: 1.25.1
+retcor.obiwarp: fixed bug that caused segmentation fault 
+
+2010-09-19: 1.24.0 & 1.25.0
+BioConductor release version bump
+
 2010-09-24: 1.23.8
 write.mzdata(): fix "bad" scans while writing mzData
 avoid unexpected results from peakTable() by using value="into" as default (instead of value="index")
