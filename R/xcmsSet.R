@@ -1236,6 +1236,9 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         intensity1 <- obj1@env$profile
         intensity2 <- obj2@env$profile
 
+        if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
+          warning("Dimensions of profile matrices do not match !\n")
+
         rtimecor[[s]] <-.Call("R_set_from_xcms",
                               valscantime1,scantime1,mzval,mz,intensity1,
                               valscantime2,scantime2,mzval,mz,intensity2,
