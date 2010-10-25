@@ -161,7 +161,11 @@ read.mascot<-function(file, type="csv"){
 
 KeggSearch <- function(object, DBsearchMS) {
 	
-    require(KEGGSOAP) || stop("Couldn't load KEGGSOAP\n")
+    libname <- 'KEGGSOAP'
+    KEGG.status <- try(require(libname, character.only = TRUE, quietly=TRUE))
+    
+    if (class(KEGG.status) == "try-error")
+        stop("Couldn't load KEGGSOAP\n")
 	
 	if(class(object)=="xcmsSet"){
 		groupmat<-groups(object)
