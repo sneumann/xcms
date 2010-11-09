@@ -1,3 +1,6 @@
+2010-11-09: 1.25.2
+updated checkoutpwiz.sh and src/Makevars (Makevars.win is *not* updated)
+
 2010-10-20: 1.25.1
 retcor.obiwarp: fixed bug that caused segmentation fault 
 
