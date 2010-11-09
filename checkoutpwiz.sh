@@ -1,16 +1,18 @@
 #!/bin/bash 
 #------------------
 
+# http://proteowizard.svn.sourceforge.net/viewvc/proteowizard/trunk/pwiz/libraries/boost_aux/boost/utility/
+
 cd src
 
 rm -rf pwiz
 mkdir pwiz
 cd pwiz
 
-PWIZREPO=https://proteowizard.svn.sourceforge.net/svnroot/proteowizard/trunk/pwiz/
+PWIZREPO=http://proteowizard.svn.sourceforge.net/svnroot/proteowizard/trunk/pwiz/
 svn co --non-recursive $PWIZREPO .
 
-for DIR in data/msdata data/common utility/misc/ utility/minimxml/ ; do 
+for DIR in data/msdata data/common utility/misc/ utility/math/ utility/minimxml/ ; do 
     svn co $PWIZREPO/pwiz/$DIR $DIR
 done
 
@@ -21,26 +23,38 @@ rm -rf boost
 mkdir boost
 cd boost
 
-BOOSTVER=Boost_1_39_0
+BOOSTVER=Boost_1_43_0
 BOOSTREPO=http://svn.boost.org/svn/boost/tags/release/$BOOSTVER/boost
 
 svn co --non-recursive $BOOSTREPO .
 
-for DIR in smart_ptr  config config mpl detail iostreams exception  \
- io type_traits preprocessor format algorithm logic optional range \
- iterator function utility concept bind regex filesystem system thread \
- date_time lambda  tuple multi_index serialization archive functional integer ; do 
+for DIR in smart_ptr  config config mpl detail iostreams exception function_types \
+    io type_traits preprocessor format algorithm logic optional range \
+    iterator function utility concept bind regex filesystem system thread \
+    date_time lambda  tuple multi_index serialization archive functional integer ; do 
     svn co $BOOSTREPO/$DIR $DIR
 done
-
+       
 BOOSTLIBSREPO=http://svn.boost.org/svn/boost/tags/release/$BOOSTVER/libs
 for DIR in iostreams/src thread/src/pthread/ filesystem/src/ regex/src system/src ; do 
     svn co $BOOSTLIBSREPO/$DIR $DIR
 done
 
+cd ..
+           
 #------------------
 
+rm -rf boost_aux
+mkdir boost_aux
+cd boost_aux
+
+PWIZBOOSTREPO=http://proteowizard.svn.sourceforge.net/svnroot/proteowizard/trunk/pwiz/libraries/boost_aux/boost/
+svn co $PWIZBOOSTREPO boost
+
 cd ..
+
+#------------------
+
 
 PWIZ_MAJOR=$(grep "constant PWIZ_MAJOR" pwiz/Jamroot.jam | sed -e 's/constant PWIZ_MAJOR : \([0-9+]\) ;/\1/')
 PWIZ_MINOR=$(grep "constant PWIZ_MINOR" pwiz/Jamroot.jam | sed -e 's/constant PWIZ_MINOR : \([0-9+]\) ;/\1/')
