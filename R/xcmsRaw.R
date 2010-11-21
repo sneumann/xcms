@@ -1439,10 +1439,23 @@ setMethod("plotRaw", "xcmsRaw", function(object,
   colorlut <- terrain.colors(16)
   col <- colorlut[y*15+1]
 
-  plot(cbind(raw[,"time"], raw[,"mz"]), pch=20, cex=.5,
-       main = title, xlab="Seconds", ylab="m/z", col=col,
-       xlim=range(raw[,"time"]), ylim=range(raw[,"mz"]))
-
+  if (nrow(raw) > 0) {
+    plot(cbind(raw[,"time"], raw[,"mz"]), pch=20, cex=.5,
+        main = title, xlab="Seconds", ylab="m/z", col=col,
+        xlim=range(raw[,"time"]), ylim=range(raw[,"mz"]))
+  } else {
+      if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+        scanrange <- c(match(TRUE, scanidx),
+                    length(scanidx) - match(TRUE, rev(scanidx)))
+        } else if (length(scanrange) < 2)
+            scanrange <- c(1, length(object@scantime)) else 
+                scanrange <- range(scanrange)
+      plot(c(NA,NA), main = title, xlab="Seconds", ylab="m/z",
+           xlim=c(object@scantime[scanrange[1]],object@scantime[scanrange[2]]), ylim=mzrange)
+  }
+  
   invisible(raw)
 })
 

@@ -1,3 +1,6 @@
+2010-11-21: 1.25.3
+plotRaw: show empty plot if region is empty (insted of giving an error message)
+
 2010-11-09: 1.25.2
 updated checkoutpwiz.sh and src/Makevars (Makevars.win is *not* updated)
 
