@@ -1416,7 +1416,7 @@ setMethod("rawMat", "xcmsRaw", function(object,
   else mzrange <- range(masses)
 
   y <- int[massidx]
-  if (log)
+  if (log && (length(y)>0))
     y <- log(y + max(1 - min(y), 0))
 
   cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
@@ -1433,13 +1433,12 @@ setMethod("plotRaw", "xcmsRaw", function(object,
 
   raw <- rawMat(object, mzrange, rtrange, scanrange, log)
 
-  y <- raw[,"intensity"]
-  ylim <- range(y)
-  y <- y/ylim[2]
-  colorlut <- terrain.colors(16)
-  col <- colorlut[y*15+1]
-
   if (nrow(raw) > 0) {
+    y <- raw[,"intensity"]
+    ylim <- range(y)
+    y <- y/ylim[2]
+    colorlut <- terrain.colors(16)
+    col <- colorlut[y*15+1]
     plot(cbind(raw[,"time"], raw[,"mz"]), pch=20, cex=.5,
         main = title, xlab="Seconds", ylab="m/z", col=col,
         xlim=range(raw[,"time"]), ylim=range(raw[,"mz"]))
