@@ -64,6 +64,7 @@ exportMethods(
               "groupval",
               "image",
               "mzrange",
+	      "peakPlots",
               "peaks",
               "peaks<-",
               "peakTable",

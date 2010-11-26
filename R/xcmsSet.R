@@ -1999,7 +1999,9 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     text(0.5, 0.5, txt, cex = cex)
 }
 
-peakPlots<- function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
+setGeneric("peakPlots", function(object, ...) standardGeneric("peakPlots"))
+
+setMethod("peakPlots", "xcmsSet", function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
 
 	colFiles<-rainbow(length(object@filepaths))
 	idmz<-which(object@peaks[,"mz"]< max(mzrange) & object@peaks[,"mz"] > min(mzrange))
@@ -2019,4 +2021,4 @@ peakPlots<- function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
 		dev.new()
 		plot(density(object@peaks[idmz,"rt"][idrt]))
 	}
-}
+})
