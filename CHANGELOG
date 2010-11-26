@@ -1,3 +1,6 @@
+2010-11-26: 
+Added new plotting method 'peakPlots' for quickly finding peaks within a group. 
+
 2010-11-21: 1.25.3
 plotRaw: show empty plot if region is empty (insted of giving an error message)
 
