@@ -159,7 +159,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 		if(lockMassFreq){
 			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
 			object@dataCorrection<-lockmass
-			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
 			lcraw<-stitch(lcraw, lockmass)
 		}
         if (exists("object@polarity") && length(object@polarity) >0) {
@@ -1614,6 +1613,9 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         cat(sampleidx[i], "")
         flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
+		if(length(object@dataCorrection) > 1){
+			lcraw<-stitch(lcraw, object@dataCorrection)
+		}
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
         if (length(prof) > 2)
@@ -1630,8 +1632,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 })
 
 
-getSpecWindow <- function(xs, gidxs, borderwidth=1)
-{
+getSpecWindow <- function(xs, gidxs, borderwidth=1){
     groupidx <- groupidx(xs)
     if (length(groupidx)==0) {
         stop("no groups found in xcmsSet object.")
@@ -1664,8 +1665,7 @@ getSpecWindow <- function(xs, gidxs, borderwidth=1)
     invisible(mzlistlist)
 }
 
-plotSpecWindow <- function(xs, gidxs, borderwidth=1)
-{
+plotSpecWindow <- function(xs, gidxs, borderwidth=1){
     if (length(groupidx(xs))==0) {
         stop("no groups found in xcmsSet object.")
     }
@@ -1999,3 +1999,24 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     text(0.5, 0.5, txt, cex = cex)
 }
 
+peakPlots<- function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
+
+	colFiles<-rainbow(length(object@filepaths))
+	idmz<-which(object@peaks[,"mz"]< max(mzrange) & object@peaks[,"mz"] > min(mzrange))
+	idrt<-which(object@peaks[idmz,"rt"]< max(rtrange) & object@peaks[idmz,"rt"] > min(rtrange))
+	title<-paste("Detected features for mz:", mzrange[1], "-", mzrange[2],
+		"and rt:", rtrange[1], "-", rtrange[2], sep="")
+	plot(object@peaks[idmz,c("rt","mz")][idrt,], type="n", main=title, xlab="Retention time (sec)",
+		ylim=mzrange, xlim=rtrange, ...)
+	##Make a pilot plot for dimentions
+		
+	for (i in 1:nrow(object@phenoData)){
+		idx<-which(object@peaks[, "sample"] == i)
+		points(object@peaks[idx, c("rt", "mz")], col=colFiles[i])
+##plot the actual data points in each colour for each sample number
+	}
+	if(density==TRUE){
+		dev.new()
+		plot(density(object@peaks[idmz,"rt"][idrt]))
+	}
+}
