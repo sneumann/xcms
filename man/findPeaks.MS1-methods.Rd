@@ -16,7 +16,7 @@
 }}
 \details{
   Some mass spectrometers can acquire MS1 and MS2 (or MS$^n$ scans)
-  quasi simultanously, e.g. in data dependent tandem MS or DDIT mode.
+  quasi simultaneously, e.g. in data dependent tandem MS or DDIT mode.
 
   Since xcmsFragments attaches \emph{all} MS$^n$ peaks to MS1 peaks in xcmsSet,
   it is important that findPeaks and xcmsSet do not miss any MS1 precursor peak.
