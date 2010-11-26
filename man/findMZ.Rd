@@ -50,5 +50,5 @@ findMZ(object, find, ppmE=25, print=TRUE)
 	}
 	
 }
-\author{H. Paul Benton, \email{hpbenton@scripps.edu}}
+\author{H. Paul Benton, \email{hpaul.beonton08@imperial.ac.uk}}
 \keyword{methods}
