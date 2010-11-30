@@ -1999,7 +1999,7 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     text(0.5, 0.5, txt, cex = cex)
 }
 
-setGeneric("peakPlots", function(object, ...) standardGeneric("peakPlots"))
+setGeneric("peakPlots", function(object,mzrange, rtrange, density=c(TRUE, FALSE), ...) standardGeneric("peakPlots"))
 
 setMethod("peakPlots", "xcmsSet", function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
 
