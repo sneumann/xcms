@@ -161,7 +161,9 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 			object@dataCorrection<-lockmass
 			lcraw<-stitch(lcraw, lockmass)
 		}
-        if (exists("object@polarity") && length(object@polarity) >0) {
+        
+       # if (exists("object@polarity") && length(object@polarity) >0) {
+        if (!is.null(polarity) && length(object@polarity) >0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[object@polarity]]
@@ -1433,7 +1435,8 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
 				lcraw<-stitch(lcraw, object@dataCorrection)
 			}
 	    ## check existence of slot, absent in old xcmsSets
-	    if (exists("object@polarity") && length(object@polarity) >0) {
+	   # if (exists("object@polarity") && length(object@polarity) >0) {
+        if (length(object@polarity) >0) {    
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[object@polarity]]
