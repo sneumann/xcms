@@ -97,7 +97,7 @@ NetCDF library. Its code is pre-compiled and statically linked
 against the NetCDF library version 3.6.0-p1. If you wish to compile
 it yourself, you may obtain the library from software distribution
 projects such as Fink\footnote{\url{http://fink.sourceforge.net/}}
-or DarwinPorts\footnote{\url{http://darwinports.opendarwin.org/}}.
+or DarwinPorts\footnote{\url{http://netcdf.darwinports.com/}}.
 Alternatively, you may compile it yourself using the instructions
 provided below.
 
