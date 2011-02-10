@@ -22,30 +22,26 @@
   \describe{
     \item{object = "xcmsSet"}{
       retcor(object, method="obiwarp", plottype = c("none", "deviation"),
-      col = NULL, ty = NULL, profStep=1,
-      center=NULL, 
-      response=1, score="cor",
-      gapInit=0, gapExtend=0,
-      factorDiag=2, factorGap=1,
-      localAlignment=0, initPenalty=0) }
+             profStep=1, center=NULL, col = NULL, ty = NULL,
+             response=1, distFunc="cor_opt", gapInit=NULL, gapExtend=NULL,
+            factorDiag=2, factorGap=1, localAlignment=0, initPenalty=0)
+    }  
 }}
 
 \arguments{
   \item{object}{the \code{xcmsSet} object} 
   \item{plottype}{if \code{deviation} plot retention time deviation}
-  \item{col}{vector of colors for plotting each sample}
-  \item{ty}{vector of line and point types for plotting each sample}
   \item{profStep}{step size (in m/z) to use for profile generation from
     the raw data files}
   \item{center}{the index of the sample all others will be aligned
   to. If center==NULL, the sample with the most peaks is chosen as default.}
+  \item{col}{vector of colors for plotting each sample}
+  \item{ty}{vector of line and point types for plotting each sample}
   \item{response}{Responsiveness of warping.  0 will give a linear warp based
     on start and end points.  100 will use all bijective anchors}
-
   \item{distFunc}{DistFunc function: cor (Pearson's R) or cor_opt (default,
     calculate only 10\% diagonal band of distance matrix, better
     runtime), cov (covariance), prd (product), euc (Euclidean distance)}
-    
   \item{gapInit}{Penalty for Gap opening, see below}
   \item{gapExtend}{Penalty for Gap enlargement, see below}
   \item{factorDiag}{Local weighting applied to diagonal moves in alignment.}
