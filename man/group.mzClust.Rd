@@ -8,9 +8,14 @@
 	Runs high resolution alignment on single spectra samples stored in a
 	given xcmsSet.
 }
-\usage{
-groupedobject <- group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minfrac=0)
+\section{Methods}{
+\describe{
+\item{object = "xcmsSet"}{
+  \code{    
+     group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minfrac=0)
+  }
 }
+}}
 \arguments{
 	\item{object}{a xcmsSet with peaks }
 	\item{mzppm}{the relative error used for clustering/grouping in ppm (parts per million)}
