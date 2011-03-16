@@ -153,6 +153,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
       for (i in seq(along = peaklist)) {
 
+        cat(snames[i], ": ", sep = "")
+
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
                           profstep = 0, includeMSn=includeMSn, mslevel=mslevel)
 	## check existence of slot, absent in old xcmsSets
@@ -169,7 +171,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             lcraw <- lcraws[[object@polarity]]
         }
 
-        cat(snames[i], ": ", sep = "")
           peaklist[[i]] <- findPeaks(lcraw, ...)
           peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
           rtlist$raw[[i]] <- lcraw@scantime
