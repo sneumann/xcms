@@ -1,3 +1,7 @@
+2011-03-16: 1.25.5
+Moved output in xcmsSet so that a broken file shows before 
+any xcmsRaw/findPeaks() error.
+
 2010-12-16: 1.25.4
 Fixed polarity filter check in xcmsSet()
 Added new plotting method 'peakPlots' for quickly finding peaks within a group. 
