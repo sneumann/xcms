@@ -10,6 +10,13 @@ test.getEICxset <- function() {
     plot(e)
 }
 
+test.getEICretcor <- function() {
+    xset <- fillPeaks(group(faahko))
+    e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2),
+                rt="corrected", rtrange=200)
+    plot(e)
+}
+
 test.plotEIC <- function() {
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
     xraw <- xcmsRaw(file)
