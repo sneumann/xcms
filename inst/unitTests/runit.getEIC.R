@@ -11,9 +11,12 @@ test.getEICxset <- function() {
 }
 
 test.getEICretcor <- function() {
-    xset <- fillPeaks(group(faahko))
+    xset <- fillPeaks(group(retcor(group(faahko))))
+    opt.warn <- options("warn")$warn
+    options("warn" = 2) ## turns warning into errors
     e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2),
                 rt="corrected", rtrange=200)
+    options("warn" = opt.warn) 
     plot(e)
 }
 
