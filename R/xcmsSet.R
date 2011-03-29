@@ -1122,7 +1122,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     peakmat <- peaks(object)
     samples <- sampnames(object)
     classlabel <- as.vector(unclass(sampclass(object)))
-    n <- length(samples)
+    N <- length(samples)
     corpeaks <- peakmat
     plottype <- match.arg(plottype)
 
@@ -1137,10 +1137,9 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
-    rtimecor <- vector("list",n)
-    rtdevsmo <- vector("list", n)
-
-    N <- length(samples)
+    
+    rtimecor <- vector("list", N)
+    rtdevsmo <- vector("list", N)
     plength <- rep(0, N)
 
     if (missing(center)) {
@@ -1153,16 +1152,17 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     cat("center sample: ", samples[center], "\nProcessing: ")
     idx <- which(seq(1,N) != center)
 
-    obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=profStep) 
+    obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0) 
  
     for (si in 1:length(idx)) {
         s <- idx[si]
         cat(samples[s], " ")
         
-	profStep(obj1) <- profStep ## regenerate profile matrix
+        profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
 
-        obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=profStep)
-
+        obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
+        profStepPad(obj2) <- profStep ## generate profile matrix
+        
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
         mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
 
@@ -1239,7 +1239,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         intensity2 <- obj2@env$profile
 
         if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
-          warning("Dimensions of profile matrices do not match !\n")
+          stop("Dimensions of profile matrices do not match !\n")
 
         rtimecor[[s]] <-.Call("R_set_from_xcms",
                               valscantime1,scantime1,mzval,mz,intensity1,
@@ -1274,12 +1274,12 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
         ## Set up the colors and line type
         if (missing(col)) {
-            col <- integer(n)
+            col <- integer(N)
             for (i in 1:max(classlabel))
                 col[classlabel == i] <- 1:sum(classlabel == i)
         }
         if (missing(ty)) {
-            ty <- integer(n)
+            ty <- integer(N)
             for (i in 1:max(col))
                 ty[col == i] <- 1:sum(col == i)
         }
@@ -1298,7 +1298,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
              main = "Retention Time Deviation vs. Retention Time",
              xlab = "Retention Time", ylab = "Retention Time Deviation")
 
-        for (i in 1:n) {
+        for (i in 1:N) {
             points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]], lty = ty[i])
         }
 
@@ -1307,7 +1307,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         legend(0,1.04, basename(samples), col = mypal[col], lty = ty) 
     }
 
-    for (i in 1:n) {
+    for (i in 1:N) {
         cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]])/2, rtcor[[i]] - rtdevsmo[[i]])
         rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
 

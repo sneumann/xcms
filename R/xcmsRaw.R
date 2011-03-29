@@ -988,14 +988,20 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             peakrange <- td[lm]
             peaks[p,"rtmin"] <- scantime[peakrange[1]]
             peaks[p,"rtmax"] <- scantime[peakrange[2]]
+            
+            peaks[p,"maxo"] <- max(d[lm[1]:lm[2]])
+            
             pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]])/(peakrange[2] - peakrange[1])
             if (is.na(pwid)) 
                 pwid <- 1
+            
             peaks[p,"into"] <- pwid*sum(d[lm[1]:lm[2]])
            
             db <-  d[lm[1]:lm[2]] - baseline
             peaks[p,"intb"] <- pwid*sum(db[db>0])
-            peaks[p,"lmin"] <- lm[1]; peaks[p,"lmax"] <- lm[2];
+            
+            peaks[p,"lmin"] <- lm[1]; 
+            peaks[p,"lmax"] <- lm[2];
 
             if (fitgauss) {
                 ## perform gaussian fits, use wavelets for inital parameters
@@ -1515,6 +1521,38 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
     minmass <- round(min(object@env$mz)/value)*value
     maxmass <- round(max(object@env$mz)/value)*value
+
+    num <- (maxmass - minmass)/value + 1
+    profFun <- match.profFun(object)
+    object@env$profile <- profFun(object@env$mz, object@env$intensity,
+                                  object@scanindex, num, minmass, maxmass,
+                                  FALSE, object@profparam)
+
+    object@mzrange <- c(minmass, maxmass)
+    return(object)
+})
+
+
+setGeneric("profStepPad<-", function(object, value) standardGeneric("profStepPad<-"))
+
+setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
+
+    if ("profile" %in% ls(object@env))
+        rm("profile", envir = object@env)
+    if (!value)
+        return(object)
+
+    if (length(object@env$mz)==0) {
+        warning("MS1 scans empty. Skipping profile matrix calculation.")
+        return(object)
+    }
+
+    mzrange <- range(object@env$mz)
+    
+    ## calculate the profile matrix with whole-number limits  
+    minmass <- floor(mzrange[1])
+    maxmass <- ceiling(mzrange[2])
+
     num <- (maxmass - minmass)/value + 1
     profFun <- match.profFun(object)
     object@env$profile <- profFun(object@env$mz, object@env$intensity,
