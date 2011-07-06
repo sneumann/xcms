@@ -2002,27 +2002,3 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex)
 }
-
-setGeneric("peakPlots", function(object,mzrange, rtrange, density=c(TRUE, FALSE), ...) standardGeneric("peakPlots"))
-
-setMethod("peakPlots", "xcmsSet", function(object, mzrange, rtrange, density=c(TRUE, FALSE), ...){
-
-	colFiles<-rainbow(length(object@filepaths))
-	idmz<-which(object@peaks[,"mz"]< max(mzrange) & object@peaks[,"mz"] > min(mzrange))
-	idrt<-which(object@peaks[idmz,"rt"]< max(rtrange) & object@peaks[idmz,"rt"] > min(rtrange))
-	title<-paste("Detected features for mz:", mzrange[1], "-", mzrange[2],
-		"and rt:", rtrange[1], "-", rtrange[2], sep="")
-	plot(object@peaks[idmz,c("rt","mz")][idrt,], type="n", main=title, xlab="Retention time (sec)",
-		ylim=mzrange, xlim=rtrange, ...)
-	##Make a pilot plot for dimentions
-		
-	for (i in 1:nrow(object@phenoData)){
-		idx<-which(object@peaks[, "sample"] == i)
-		points(object@peaks[idx, c("rt", "mz")], col=colFiles[i])
-##plot the actual data points in each colour for each sample number
-	}
-	if(density==TRUE){
-		dev.new()
-		plot(density(object@peaks[idmz,"rt"][idrt]))
-	}
-})
