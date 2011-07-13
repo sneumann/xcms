@@ -1,3 +1,6 @@
+2011-07-13 1.27.4
+Added new method to automatically find Lock mass parameters
+
 2011-07-06 1.27.3
 Increased the speed of stitch function 10-50x faster.
 Removed xcms2 functions and documentation
