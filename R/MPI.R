@@ -261,10 +261,13 @@ findPeaksPar <- function(arg) {
     method <- paste("findPeaks", method, sep=".")    
     
     xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0, includeMSn=params$includeMSn)
+	if(params$lockMassFreq == TRUE){
+		xRaw<-stitch(xRaw, AutoLockMass(xRaw))
+	}
     params["object"] <- xRaw
     
     ## remove parameters which are not used by method() from the parameter list
-    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- NULL
+    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <- NULL
     
     peaks <- do.call(method, params)
 

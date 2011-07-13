@@ -1,19 +1,20 @@
 setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 
 setMethod("AutoLockMass", "xcmsRaw", function(object) {
-	if(all(diff(which(diff(xr@scantime) == 0))-1 == mean(diff(which(diff(xr@scantime) == 0))-1)) ){
-		freqLock<-mean(diff(which(diff(xr@scantime) == 0))-1)
+	tempFreq<-diff(which(diff(object@scantime) == 0))-1
+	if(all(tempFreq == mean(tempFreq)) ){
+		freqLock<-mean(tempFreq)
 	}else{
-		freqLock<-mean(diff(which(diff(xr@scantime) == 0))-1)
+		freqLock<-mean(tempFreq)
 		warn("Lock mass frequency wasn't detected correctly\n")
 	}
 
-	if(diff(xr@scantime[1:5])[1] == 0 ){
+	if(diff(object@scantime[1:5])[1] == 0 ){
 		start<-0
 	}else{
 		start<-freqLock
 	}
-	return(makeacqNum(xr, start, freqLock))
+	return(makeacqNum(object, start, freqLock))
 })
 
 setGeneric("makeacqNum", function(object, freq, start=1) standardGeneric("makeacqNum"))

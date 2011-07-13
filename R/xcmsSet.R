@@ -130,6 +130,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         params$profparam <- profparam;
         params$includeMSn <- includeMSn;
         params$mslevel <- mslevel;
+		params$lockMassFreq <- lockMassFreq;
         
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
@@ -146,7 +147,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
         peaklist <- lapply(res, function(x) x$peaks)
         rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
-
+		if(lockMassFreq){
+			object@dataCorrection[1:length(files)]<-1
+		}
+		
     } else {
 
       peaklist <- vector("list", length(files))
