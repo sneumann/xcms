@@ -1,6 +1,6 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
-                    polarity = NULL, lockMassFreq=FALSE, start=0,
+                    polarity = NULL, lockMassFreq=FALSE, 
 					mslevel=NULL, nSlaves=0, progressCallback=NULL,...) {
 
     object <- new("xcmsSet")
@@ -159,9 +159,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
                           profstep = 0, includeMSn=includeMSn, mslevel=mslevel)
 	## check existence of slot, absent in old xcmsSets
 		if(lockMassFreq){
-			lockmass<-makeacqNum(lcraw, lockMassFreq, start)
-			object@dataCorrection<-lockmass
-			lcraw<-stitch(lcraw, lockmass)
+			object@dataCorrection[i]<-1
+			lcraw<-stitch(lcraw, AutoLockMass(lcraw))
 		}
         
        # if (exists("object@polarity") && length(object@polarity) >0) {
@@ -1432,8 +1431,9 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-			if(length(object@dataCorrection) > 0){
-				lcraw<-stitch(lcraw, object@dataCorrection)
+			if(length(object@dataCorrection) > 1){
+				if(object@dataCorrection[i] == 1)
+					lcraw<-stitch(lcraw, AutoLockMass(lcraw))
 			}
 	    ## check existence of slot, absent in old xcmsSets
 	   # if (exists("object@polarity") && length(object@polarity) >0) {
@@ -1618,7 +1618,8 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
 		if(length(object@dataCorrection) > 1){
-			lcraw<-stitch(lcraw, object@dataCorrection)
+			if(object@dataCorrection[i] == 1)
+				lcraw<-stitch(lcraw, AutoLockMass(lcraw))
 		}
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]

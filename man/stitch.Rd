@@ -1,14 +1,14 @@
 \name{stitch-methods}
 \docType{methods}
-\alias{stitch-methods}
 \alias{stitch}
+\alias{stitch-methods}
 \alias{stitch,xcmsRaw-method}
 \alias{makeacqNum}
 \alias{makeacqNum, xcmsRaw-method}
 
 \title{Correct gaps in data}
 \description{
-  Fixes gaps in data due to calibration scans or lockmass.
+  Fixes gaps in data due to calibration scans or lock mass.
 }
 \section{Methods}{
 	\describe{
@@ -35,11 +35,13 @@
   \item{start}{The starting lock mass scan location, default is 1}
 }
 \details{
-	\code{makeacqNum} takes locates the gap using the starting lock mass scan and it's intervals. This data frame is then used in \code{stitch} to correct for the gap caused by the lock mass. Correction works by using scans from either side of the gap to fill it in.
+	\code{makeacqNum} takes locates the gap using the starting lock mass scan and it's intervals. This data frame is then used in
+	\code{stitch} to correct for the gap caused by the lock mass. Correction works by using scans from either side of the gap to fill it in.	
 }
 \value{
 	\code{stitch} A corrected \code{xcmsRaw-class} object
 	\code{makeacqNum} A numeric vector of scan locations corresponding to lock Mass scans
+	
 }
 \author{Paul Benton, \email{hpaul.benton08@imperial.ac.uk}}
 \examples{
@@ -51,6 +53,8 @@
 		xr
 		##Lets assume that the lockmass starts at 1 and is every 100 scans
 		lockMass<-xcms:::makeacqNum(xr, freq=100, start=1)
+		## these are equcal
+		lockmass<-AutoLockMass(xr)
 		ob<-stitch(xr, lockMass)
 		ob
 		
