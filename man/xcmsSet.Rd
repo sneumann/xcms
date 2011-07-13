@@ -9,7 +9,7 @@
 \usage{
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
-        polarity = NULL, lockMassFreq=FALSE, start=0, 
+        polarity = NULL, lockMassFreq=FALSE,
 		mslevel=NULL, nSlaves=0, progressCallback=NULL,...)
 }
 \arguments{
@@ -20,10 +20,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{profmethod}{method to use for profile generation}
   \item{profparam}{parameters to use for profile generation}
   \item{polarity}{filter raw data for positive/negative scans}
-	\item{lockMassFreq}{Performs correction for Waters LockMass function, 
-						set	to the lockmass frequency of the experimental 
-						setting for correction}
-	\item{start}{Specifies where the 1st lockmass scan is}
+	\item{lockMassFreq}{Performs correction for Waters LockMass function}
     \item{mslevel}{perform peak picking on data of given mslevel}
     \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
 		   MPI is used if installed, otherwise the snow package is employed for multicore support.}
