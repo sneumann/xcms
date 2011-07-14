@@ -10,7 +10,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 	}
 
 	if(diff(object@scantime[1:5])[1] == 0 ){
-		start<-0
+		start<-1
 	}else{
 		start<-freqLock
 	}
