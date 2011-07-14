@@ -14,7 +14,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 	}else{
 		start<-freqLock
 	}
-	return(makeacqNum(object, start, freqLock))
+	return(makeacqNum(object, freqLock, start))
 })
 
 setGeneric("makeacqNum", function(object, freq, start=1) standardGeneric("makeacqNum"))
