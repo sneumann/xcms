@@ -6,7 +6,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 		freqLock<-mean(tempFreq)
 	}else{
 		freqLock<-mean(tempFreq)
-		warn("Lock mass frequency wasn't detected correctly\n")
+		warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
 	}
 
 	if(diff(object@scantime[1:5])[1] == 0 ){
@@ -53,6 +53,9 @@ setMethod("stitch", "xcmsRaw", function(object, lockMass) {
 		lockMass<-lockMass[3:length(lockMass)]
 	}
 	lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+	if((lockMass[nrow(lockMass),2]+2) > length(ob@scanindex)){
+		lockMass<-lockMass[1:(nrow(lockMass)-1),]
+	}
 
 	for(i in 1:(length(ob@scanindex)-1)){
 		if(any(i == lockMass[,1])){
