@@ -1,7 +1,5 @@
 PKG_LIBS=-L./win/$(R_ARCH) -lws2_32 -lnetcdf -lz
 PKG_CPPFLAGS=-I./win/$(R_ARCH) -D_MSC_VER -DWIN32_LEAN_AND_MEAN
-PKG_CFLAGS=-I./win/$(R_ARCH) -D_MSC_VER -DWIN32_LEAN_AND_MEAN -fgnu89-inline
-
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
