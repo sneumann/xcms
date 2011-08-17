@@ -5,6 +5,7 @@ Made lock mass correction work with nSlaves :)
 2011-07-06 1.27.3
 Increased the speed of stitch function 10-50x faster.
 Removed xcms2 functions and documentation
+re-enable Win 64bit builds
 
 2011-03-29: 1.25.6
 retcor.obiwarp: Fixed problems with retcor.obiwarp when profile matrices have different m/z ranges
