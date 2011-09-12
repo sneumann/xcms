@@ -150,19 +150,19 @@ netCDFRawData <- function(ncid) {
     
     rt <- netCDFVarDouble(ncid, "scan_acquisition_time")
     if (!is.null(attr(rt, "errortext")))
-        stop("Couldn't read scan times")
+        stop("Could not read scan times")
     
     tic <- netCDFVarDouble(ncid, "total_intensity")
     if (!is.null(attr(tic, "errortext")))
-        stop("Couldn't read total ion current")
+        stop("Could not read total ion current")
     
     scanindex <- netCDFVarInt(ncid, "scan_index")
     if (!is.null(attr(scanindex, "errortext")))
-        stop("Couldn't read scan indecies")
+        stop("Could not read scan indecies")
     
     pointValues <- netCDFMSPoints(ncid, scanindex)
     if (!is.null(attr(pointValues, "errortext")))
-        stop("Couldn't read mass/intensity values")
+        stop("Could not read mass/intensity values")
 
     return(list(rt = rt, tic = tic, scanindex = scanindex, 
                 mz = pointValues$massValues,

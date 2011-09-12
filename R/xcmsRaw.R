@@ -20,7 +20,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     } else if (rampIsFile(filename)) {
         rampid <- rampOpen(filename)
         if (rampid < 0)
-            stop("Couldn't open mzXML/mzData file")
+            stop("Could not open mzXML/mzData file")
         on.exit(rampClose(rampid))
         rawdata <- rampRawData(rampid)
 
@@ -29,7 +29,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         }
 
     } else
-        stop("Couldn't determine file type")
+        stop("Could not determine file type")
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
@@ -1285,7 +1285,14 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
         iymax <- which.max(ymax)
 
         pwid <- diff(stime[iret])/diff(iret)
-        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rowSums(ymat))
+        
+        rosm <- rowSums(ymat)
+        limz <- length(imz[1]:imz[2])
+        if (length(rosm) != limz) { ## that happens for some reason
+                warning("weighted.mean  : x and w must have the same length \n")
+                rosm <- rep(1, limz)  ## fallback to mean
+        }    
+        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm)
         if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()  results in NA (not NaN) for zero weights
             rmat[i,1] <- mean(peakrange[i,1:2])
 
