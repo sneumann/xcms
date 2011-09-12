@@ -184,12 +184,14 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     }
 
     lapply(1:length(peaklist), function(i) {
-              if (nrow(peaklist[[i]]) == 0)
-              warning("No peaks found in sample ", snames[i], call. = FALSE)
-          else if (nrow(peaklist[[i]]) == 1)
-              warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
-          else if (nrow(peaklist[[i]]) < 10)
-              warning("Only ", nrow(peaklist[[i]]), " peaks found in sample", 
+            if (is.null(peaklist[[i]]))
+              warning("No peaks found in sample ", snames[i], call. = FALSE)  
+                else  if (nrow(peaklist[[i]]) == 0)
+                    warning("No peaks found in sample ", snames[i], call. = FALSE)
+                else if (nrow(peaklist[[i]]) == 1)
+                    warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
+                else if (nrow(peaklist[[i]]) < 10)
+                    warning("Only ", nrow(peaklist[[i]]), " peaks found in sample", 
                       snames[i], call. = FALSE)
                     })
 
@@ -646,6 +648,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     # Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
+    
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)
 
@@ -993,7 +996,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         if (smooth == "loess") {
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
 
-            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
+            rtdevsmo[[i]] <- xcms:::na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
             ### Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) > quantile(abs(rtdevsmo[[i]]), 0.9)*2] <- NA
 
@@ -1003,6 +1006,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
             while (length(decidx <- which(diff(rtcor[[i]] - rtdevsmo[[i]]) < 0))) {
                 d <- diff(rtcor[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
                 rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
+                if (abs(d) <= 1e-06)
+                    break;
             }
 
             rtdevsmorange <- range(rtdevsmo[[i]])
