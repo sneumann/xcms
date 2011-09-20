@@ -1,3 +1,7 @@
+2011-09-19 1.27.7
+Added stitch method for netCDF files which require special code. Made a parent stitch function
+and allowed stitch to be called automatically with parallel code.
+
 2011-09-22 1.27.6
 fillPeaks/getPeaks: fixed rare bug when weighted.mean could not be calculated
 xcmsSet(): catch empty peaklist (NULL) and give warning
