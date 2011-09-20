@@ -3,12 +3,17 @@
 \alias{stitch}
 \alias{stitch-methods}
 \alias{stitch,xcmsRaw-method}
+\alias{stitch.netCDF}
+\alias{stitch.xml}
 \alias{makeacqNum}
 \alias{makeacqNum, xcmsRaw-method}
 
 \title{Correct gaps in data}
 \description{
-  Fixes gaps in data due to calibration scans or lock mass.
+  Fixes gaps in data due to calibration scans or lock mass. Automatically detects file type
+  and calls the relevant method. The mzXML file keeps the data the same length in time but 
+  overwrites the lock mass scans. The netCDF version adds the scans back into the data thereby
+  increasing the length of the data and correcting for the unseen gap.
 }
 \section{Methods}{
 	\describe{
