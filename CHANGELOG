@@ -1,3 +1,10 @@
+2011-09-21 1.27.8
+Fixed getMsnScan(), which was present twice. The (for now) disabled variant 
+in xcmsRaw.R:getMsnScan() has some heuristics to match MS2 to MS1, 
+but AFAICS never really worked in the general case 
+("Error in .local(object, ...) : object 'msn' not found")
+and wasn't exported anyway.
+
 2011-09-19 1.27.7
 Added stitch method for netCDF files which require special code. Made a parent stitch function
 and allowed stitch to be called automatically with parallel code.

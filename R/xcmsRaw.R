@@ -254,118 +254,118 @@ setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
     invisible(points)
 })
 
-setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+## setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
 
-setMethod("getMsnScan", "xcmsRaw", function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
-                       precision=1, userMsnIndex=NULL)
-{
-    if (scanLevel<1)
-    {
-        warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
-        return(NULL)
-    }
+## setMethod("getMsnScan", "xcmsRaw", function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
+##                        precision=1, userMsnIndex=NULL)
+## {
+##     if (scanLevel<1)
+##     {
+##         warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
+##         return(NULL)
+##     }
 
-    if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
-        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+##     if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
+##         nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
 
-        nxcms@scantime <- ms1Rt
-        nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-        nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+##         nxcms@scantime <- ms1Rt
+##         nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+##         nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
 
-        return(nxcms);
-    }
+##         return(nxcms);
+##     }
 
-    if (parentMzs[1]==0)
-        parentMzs <- rep(0,scanLevel-1)
+##     if (parentMzs[1]==0)
+##         parentMzs <- rep(0,scanLevel-1)
 
-    ## using a zero-vector if none is given
-    wasonlyone=TRUE;
-    if (ms1Rt < object@scantime[1]) {
-        warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
-        return(NULL)
-    }
-    ms1ind <- max(which(object@scantime <= ms1Rt))
-    if (scanLevel==1) { # in this case just the ms1schan of this rt will be returned
-        nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+##     ## using a zero-vector if none is given
+##     wasonlyone=TRUE;
+##     if (ms1Rt < object@scantime[1]) {
+##         warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
+##         return(NULL)
+##     }
+##     ms1ind <- max(which(object@scantime <= ms1Rt))
+##     if (scanLevel==1) { # in this case just the ms1schan of this rt will be returned
+##         nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
 
-        nxcms@scantime <- ms1Rt
-        nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
-        nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+##         nxcms@scantime <- ms1Rt
+##         nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
+##         nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
 
-        return(nxcms);
-    }
+##         return(nxcms);
+##     }
 
-    if (is.null(object@env$msnMz)) {
-        warning("Exit: There are no MSnScans in this object.")
-        return(NULL)
-    }
+##     if (is.null(object@env$msnMz)) {
+##         warning("Exit: There are no MSnScans in this object.")
+##         return(NULL)
+##     }
 
-    ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
-    ms2s <- which((object@msnRt >= ms1Rt)  &
-                  (object@msnLevel == 2) &
-                  (object@msnRt <= object@scantime[ms1ind+1]))
-    if (length(ms2s) == 0)
-    {
-        warning("Exit: There is no ms2scan in this Rt-Range!")
-        return(NULL)
-    }
-    ##cat("1> ",ms2s,"\n")
-    if (length(ms2s) > 1)
-    {
-        if (parentMzs[1] == 0)  # more than one ms2scan aviable but no mzvalues given
-            warning("More than one ms2scan available but no mz-parameters given! using first scan")
-        wasonlyone=FALSE;
-        diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
-        msn <- ms2s[min(which(diffe == min(diffe)))] # The PArent-Rt of this ms2index ist closest to the wanted value
-    } else {
-        msn <- ms2s; # there is only one ms2scan in this ms1range so use this
-    }
-    if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
-        warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
-    }
-    msnRt <- object@msnRt[msn]
-    ##cat("3> ",msnRt,"\n")
-    if (scanLevel > 2) {
-        for (a in 3:scanLevel) {
-            msns <- which((object@msnRt >= msnRt) &
-                          (object@msnLevel == a) &
-                          (object@msnRt <= object@scantime[ms1ind+1]))
-            ##cat("4> ",ms2s,"\n")
-            if (length(msns)==0) {
-                warning("Exit: There is no ms",a,"scan in this Rt-Range!")
-                return(NULL)
-            }
-            if (length(msns)>1) {
-                wasonlyone=FALSE;
-                if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { # more than one ms2scan aviable but no mzvalues given
-                    warning("More than one ms",a,"scan available but no mzdata given! using first scan")
-                    msn <- msns[1];
-                } else {
-                    diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
-                    msn <- msns[min(which(diffe == min(diffe)))]
-                }
-            } else {
-                msn <- msns; # there is only one ms[n-1]scan in this ms[n]ramge so use this
-            }
-            if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
-                if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
-                    warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
-                }
-            }
-            msnRt <- object@msnRt[msn]
-        }
-    }
-    if (wasonlyone) {
-        message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
-    }
-    nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
+##     ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
+##     ms2s <- which((object@msnRt >= ms1Rt)  &
+##                   (object@msnLevel == 2) &
+##                   (object@msnRt <= object@scantime[ms1ind+1]))
+##     if (length(ms2s) == 0)
+##     {
+##         warning("Exit: There is no ms2scan in this Rt-Range!")
+##         return(NULL)
+##     }
+##     ##cat("1> ",ms2s,"\n")
+##     if (length(ms2s) > 1)
+##     {
+##         if (parentMzs[1] == 0)  # more than one ms2scan aviable but no mzvalues given
+##             warning("More than one ms2scan available but no mz-parameters given! using first scan")
+##         wasonlyone=FALSE;
+##         diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
+##         msn <- ms2s[min(which(diffe == min(diffe)))] # The PArent-Rt of this ms2index ist closest to the wanted value
+##     } else {
+##         msn <- ms2s; # there is only one ms2scan in this ms1range so use this
+##     }
+##     if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
+##         warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
+##     }
+##     msnRt <- object@msnRt[msn]
+##     ##cat("3> ",msnRt,"\n")
+##     if (scanLevel > 2) {
+##         for (a in 3:scanLevel) {
+##             msns <- which((object@msnRt >= msnRt) &
+##                           (object@msnLevel == a) &
+##                           (object@msnRt <= object@scantime[ms1ind+1]))
+##             ##cat("4> ",ms2s,"\n")
+##             if (length(msns)==0) {
+##                 warning("Exit: There is no ms",a,"scan in this Rt-Range!")
+##                 return(NULL)
+##             }
+##             if (length(msns)>1) {
+##                 wasonlyone=FALSE;
+##                 if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { # more than one ms2scan aviable but no mzvalues given
+##                     warning("More than one ms",a,"scan available but no mzdata given! using first scan")
+##                     msn <- msns[1];
+##                 } else {
+##                     diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
+##                     msn <- msns[min(which(diffe == min(diffe)))]
+##                 }
+##             } else {
+##                 msn <- msns; # there is only one ms[n-1]scan in this ms[n]ramge so use this
+##             }
+##             if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
+##                 if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
+##                     warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
+##                 }
+##             }
+##             msnRt <- object@msnRt[msn]
+##         }
+##     }
+##     if (wasonlyone) {
+##         message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
+##     }
+##     nxcms <- new("xcmsRaw"); # creates a new empty xcmsraw-object
 
-    nxcms@scantime <- msnRt
-    nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-    nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+##     nxcms@scantime <- msnRt
+##     nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
+##     nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
 
-    return(nxcms);
-})
+##     return(nxcms);
+## })
 
 setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
 
