@@ -1736,6 +1736,52 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
 })
 
 
+setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
+
+
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
+            scanrange=c(1,length(object@scantime)), minIntensity = 6400,
+            minCentroids = 12, consecMissedLim = 2, criticalVal = 1.7321, ppm = 10,  segs = 1, scanBack = 1, mzdiff=-0.001){
+
+    ##cat("\nDetecting features with massifquant.  "); flush.console();
+
+    scanrange[1] <- max(1,scanrange[1])
+    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    
+    ## var type checking
+    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
+    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
+    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+    if (!is.double(object@scantime)) object@scantime <- as.double(object@scantime)
+
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo") # ,"sn") ?
+
+    peaklist <- .Call("massifquant", object@env$mz,object@env$intensity,object@scanindex, object@scantime,
+        as.double(mzrange), as.integer(scanrange), as.integer(length(object@scantime)),
+        as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
+        as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+
+    if (length(peaklist) == 0) {
+        cat("\nNo peaks found !\n")
+            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
+            colnames(nopeaks) <- basenames
+            return(invisible(nopeaks))
+    }
+
+    p <- t(sapply(peaklist, unlist))
+
+    colnames(p) <- basenames
+
+    uorder <- order(p[,"into"], decreasing=TRUE)
+    pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE])
+    uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks
+    pr <- p[uindex,,drop=FALSE]
+    cat("\n",dim(pr)[1]," Peaks.\n")
+
+    invisible(new("xcmsPeaks", pr))
+})
+
+
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
 setMethod("isCentroided", "xcmsRaw", function(object){
