@@ -46,6 +46,7 @@ exportMethods(
               "fillPeaks.MSW",
               "fillPeaks.chrom",
               "findPeaks.centWave",
+              "findPeaks.massifquant",
               "findPeaks.matchedFilter",
               "findPeaks.MSW",
               "findPeaks",
