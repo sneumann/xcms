@@ -4,6 +4,7 @@
 # and uncomment the PWIZ stuff in OBJECTS and PKG_CPPFLAGS
 # towards the end of this file
 #
+MQOBJECTS=massifquant/xcms_massifquant.o massifquant/TrMgr.o massifquant/Tracker.o massifquant/SegProc.o massifquant/DataKeeper.o massifquant/OpOverload.o
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
@@ -75,7 +76,7 @@ PWIZOBJECTS=\
 ./pwiz/utility/misc/SHA1Calculator.o \
 ./pwiz/utility/misc/sha1calc.o 
 
-OBJECTS= $(OBIOBJECTS) $(XCMSOBJECTS) # $(PWIZOBJECTS) 
+OBJECTS= $(MQOBJECTS) $(OBIOBJECTS) $(XCMSOBJECTS) # $(PWIZOBJECTS) 
 
 PWIZ_CPPFLAGS=-I./boost_aux/ -I. -I./pwiz/data/msdata/ -I./pwiz/data/msdata/ramp/ -DHAVE_PWIZ_MZML_LIB
 PWIZ_LDFLAGS=-lpthread 
