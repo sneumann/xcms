@@ -164,7 +164,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 	## check existence of slot, absent in old xcmsSets
 		if(lockMassFreq){
 			object@dataCorrection[i]<-1
-			xRaw<-stitch(lcraw, AutoLockMass(lcraw))
+			lcraw<-stitch(lcraw, AutoLockMass(lcraw))
 		}
         
        # if (exists("object@polarity") && length(object@polarity) >0) {
