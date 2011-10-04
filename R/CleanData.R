@@ -7,7 +7,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 			freqLock<-mean(tempFreq)
 		}else{
 			freqLock<-mean(tempFreq)
-			warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
+			warning("\nLock mass frequency wasn't detected correctly", immediate.=TRUE)
 		}
 
 		if(diff(object@scantime[1:5])[1] == 0 ){
@@ -21,6 +21,11 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 		hr <- hist(diff(object@scantime), plot=FALSE)
 		idx<- hr$breaks[which(hr$counts > 0)]
 		inx<- which(diff(object@scantime) > idx[2])
+		if(length(inx) <= 1){
+			warning("\nLock mass frequency wasn't detected", immediate.=TRUE)
+			return(0)
+		}
+		
 		tempFreq<-diff(inx)-1
 		if(all(tempFreq == mean(tempFreq)) ){
 			freqLock<-mean(tempFreq)
@@ -148,6 +153,10 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 
 setMethod("stitch.netCDF", "xcmsRaw", function(object, lockMass) {
+	if(length(lockMass) == 0 | all(lockMass == 0)){
+		return(object)
+	}
+	
 	ob<-new("xcmsRaw")
 
 	ob@filepath<-object@filepath
