@@ -91,6 +91,7 @@ exportMethods(
               "profRange",
               "profStep",
               "profStep<-",
+              "profStepPad<-",
               "progressCallback",
               "progressCallback<-",
               "rawEIC",
