@@ -13,10 +13,11 @@ setMethod("write.mzdata", "xcmsRaw", function(object, filename) {
   sink(NULL)
 })
 
-getMsnScan <- function(object, scan, mzrange = numeric()) {
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
+setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
     if (scan < 0)
-        scan <- length(object@msnRt) + 1 + scan ## shouldn't that be -scan ? 
+        scan <- length(object@msnRt) + 1 + scan
 
     idx <- seq(object@msnScanindex[scan]+1, min(object@msnScanindex[scan+1],
                                              length(object@env$msnMz), na.rm=TRUE))
@@ -29,7 +30,7 @@ getMsnScan <- function(object, scan, mzrange = numeric()) {
     points <- cbind(mz = object@env$msnMz[idx], intensity = object@env$msnIntensity[idx])
 
     invisible(points)
-}
+})
 
 buildMzdata <- function(xr) {
 
