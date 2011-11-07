@@ -1,3 +1,9 @@
+2011-11-07 1.31.1
+Added getMsnScan() to NAMESPACE, added doc and unit test
+
+2011-10-05 1.31.0
+Version bump for 2.9
+
 2011-10-04 1.28.1
 Added warnings and recovery for silent errors from stitch.netcdf that happen when there are few lock mass scans.
 

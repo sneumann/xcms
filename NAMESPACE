@@ -53,6 +53,7 @@ exportMethods(
               "getEIC",
               "getPeaks",
               "getScan",
+              "getMsnScan",
               "getSpec",
               "group",
               "group.density",
