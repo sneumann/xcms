@@ -2,6 +2,7 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("graphics", "plot", "image")
+importFrom("mzR", "peaks")
 
 export(
        "etg",

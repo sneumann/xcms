@@ -7,7 +7,7 @@ Author: Colin A. Smith <csmith@scripps.edu>,
         Steffen Neumann <sneumann@ipb-halle.de>,
 		Paul Benton <hpaul.benton08@imperial.ac.uk>
 Maintainer: Ralf Tautenhahn <rtautenh@scripps.edu>
-Depends: R (>= 1.9.0), methods 
+Depends: R (>= 1.9.0), methods, mzR 
 Suggests: faahKO, msdata, multtest, ncdf, rgl, MassSpecWavelet (>= 1.5.2), RANN, snow
 Enhances: Rgraphviz, XML, KEGGSOAP
 SystemRequirements: NetCDF, zlib
