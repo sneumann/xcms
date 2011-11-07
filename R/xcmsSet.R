@@ -310,9 +310,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     lcsets
 }
 
-setGeneric("peaks", function(object) standardGeneric("peaks"))
-
-setMethod("peaks", "xcmsSet", function(object) object@peaks)
+setMethod("peaks", c("xcmsSet","missing"), function(object) object@peaks)
 
 setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 

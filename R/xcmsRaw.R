@@ -7,30 +7,36 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     object@env <- new.env(parent=.GlobalEnv)
 
     if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
+
     if (netCDFIsFile(filename)) {
-        if (includeMSn) {
-            warning("Reading of MSn spectra for NetCDF not supported")
-        }
-
-        cdf <- netCDFOpen(filename)
-        if (!is.null(attr(cdf, "errortext")))
-            stop(attr(cdf, "errortext"))
+      if (includeMSn) {
+        warning("Reading of MSn spectra for NetCDF not supported")
+      }
+      
+      cdf <- netCDFOpen(filename)
+      if (!is.null(attr(cdf, "errortext")))
+        stop(attr(cdf, "errortext"))
         on.exit(netCDFClose(cdf))
-        rawdata <- netCDFRawData(cdf)
+      rawdata <- netCDFRawData(cdf)
     } else if (rampIsFile(filename)) {
-        rampid <- rampOpen(filename)
-        if (rampid < 0)
-            stop("Could not open mzXML/mzData file")
-        on.exit(rampClose(rampid))
-        rawdata <- rampRawData(rampid)
+      
+      rampid <- rampOpen(filename)
+      if (rampid < 0)
+        stop("Could not open mzXML/mzData/mzML file")
+      on.exit(rampClose(rampid))
 
-        if ( includeMSn ) {
-            rawdataMSn <- rampRawDataMSn(rampid)
-        }
+      mz <- openMSfile(filename)
+      rawdata <- mzRRawData(mz)
 
-    } else
-        stop("Could not determine file type")
-
+      rawdata <- rampRawData(rampid)
+      
+      if ( includeMSn ) {
+        rawdataMSn <- mzRRawDataMSn(mz)
+      }      
+    } else {
+      stop("Could not determine file type")
+    }
+    
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
        warning("There are identical scantimes.")
