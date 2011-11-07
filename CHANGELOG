@@ -1,3 +1,7 @@
+2011-11-07 1.31.2
+Moved to mzR for all I/O. Caveat: since the underlying I/O functions 
+have changed, it is not unlikely that there will be some regressions.
+
 2011-11-07 1.31.1
 Added getMsnScan() to NAMESPACE, added doc and unit test
 
