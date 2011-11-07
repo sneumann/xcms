@@ -1,8 +1,9 @@
 \name{getScan-methods}
 \docType{methods}
-%\alias{getScan-methods}
 \alias{getScan}
 \alias{getScan,xcmsRaw-method}
+\alias{getMsnScan}
+\alias{getMsnScan,xcmsRaw-method}
 \title{Get m/z and intensity values for a single mass scan}
 \description{
   Return the data from a single mass scan using the numeric index
@@ -12,6 +13,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{getScan(object, scan, mzrange = numeric())}
+  \code{getMsnScan(object, scan, mzrange = numeric())}
 }
 }}
 \arguments{

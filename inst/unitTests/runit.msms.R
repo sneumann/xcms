@@ -12,7 +12,7 @@ test.xcmsRawms123 <- function() {
   
   checkTrue(all(x1@msnScanindex[1:6] == x2@scanindex[1:6]))
   
-  checkEqualsNumeric(nrow(xcms:::getMsnScan(x1, scan=1)), 278)
+  checkEqualsNumeric(nrow(getMsnScan(x1, scan=1)), 278)
 
   ## This would fail, since mslevel=2 above seems to use split(),
   ## which does drop MSn information ?
