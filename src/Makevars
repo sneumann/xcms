@@ -81,7 +81,7 @@ OBJECTS= $(MQOBJECTS) $(OBIOBJECTS) $(XCMSOBJECTS) # $(PWIZOBJECTS)
 PWIZ_CPPFLAGS=-I./boost_aux/ -I. -I./pwiz/data/msdata/ -I./pwiz/data/msdata/ramp/ -DHAVE_PWIZ_MZML_LIB
 PWIZ_LDFLAGS=-lpthread 
 
-PKG_LIBS=-L/usr/local/lib -L/sw/lib -lnetcdf -lz # $(PWIZ_LDFLAGS)
+PKG_LIBS=-L/usr/local/lib -L/sw/lib $(shell nc-config --libs) # $(PWIZ_LDFLAGS)
 PKG_CPPFLAGS=-I/usr/local/include -I/sw/include -D_LARGEFILE_SOURCE # $(PWIZ_CPPFLAGS)
 
 all: clean $(SHLIB)
