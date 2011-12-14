@@ -6,10 +6,10 @@
 #include "string.h"
 
 // Obiwarp
-#include "vec.h"
-#include "mat.h"
-#include "lmat.h"
-#include "xcms_dynprog.h"
+#include "obiwarp/vec.h"
+#include "obiwarp/mat.h"
+#include "obiwarp/lmat.h"
+#include "obiwarp/xcms_dynprog.h"
 
 // R
 #include <R.h>
