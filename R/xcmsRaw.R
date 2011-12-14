@@ -8,34 +8,34 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
 
-    if (netCDFIsFile(filename)) {
-      if (includeMSn) {
-        warning("Reading of MSn spectra for NetCDF not supported")
-      }
+##     if (netCDFIsFile(filename)) {
+##       if (includeMSn) {
+##         warning("Reading of MSn spectra for NetCDF not supported")
+##       }
       
-      cdf <- netCDFOpen(filename)
-      if (!is.null(attr(cdf, "errortext")))
-        stop(attr(cdf, "errortext"))
-        on.exit(netCDFClose(cdf))
-      rawdata <- netCDFRawData(cdf)
-    } else if (rampIsFile(filename)) {
+##       cdf <- netCDFOpen(filename)
+##       if (!is.null(attr(cdf, "errortext")))
+##         stop(attr(cdf, "errortext"))
+##         on.exit(netCDFClose(cdf))
+##       rawdata <- netCDFRawData(cdf)
+##     } else if (rampIsFile(filename)) {
       
-      rampid <- rampOpen(filename)
-      if (rampid < 0)
-        stop("Could not open mzXML/mzData/mzML file")
-      on.exit(rampClose(rampid))
+##       rampid <- rampOpen(filename)
+##       if (rampid < 0)
+##         stop("Could not open mzXML/mzData/mzML file")
+##       on.exit(rampClose(rampid))
 
       mz <- openMSfile(filename)
       rawdata <- mzRRawData(mz)
 
-      rawdata <- rampRawData(rampid)
+#      rawdata <- rampRawData(rampid)
       
       if ( includeMSn ) {
         rawdataMSn <- mzRRawDataMSn(mz)
       }      
-    } else {
-      stop("Could not determine file type")
-    }
+##     } else {
+##       stop("Could not determine file type")
+##     }
     
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))

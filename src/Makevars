@@ -8,7 +8,7 @@ MQOBJECTS=massifquant/xcms_massifquant.o massifquant/TrMgr.o massifquant/Tracker
 
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o obiwarp/xcms_obiwarp.o
 
-XCMSOBJECTS=fastMatch.o mzClust_hclust.o mzROI.o netCDF.o ramp_base64.o ramp.o rampR.o util.o xcms.o
+XCMSOBJECTS=fastMatch.o mzClust_hclust.o mzROI.o util.o xcms.o
 
 PWIZOBJECTS=\
 ./boost/system/src/error_code.o \
