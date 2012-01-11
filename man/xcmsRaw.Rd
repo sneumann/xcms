@@ -11,7 +11,7 @@
 }
 \usage{
 xcmsRaw(filename, profstep = 1, profmethod = "bin", profparam =
-list(), includeMSn=FALSE, mslevel=NULL, scanrange= numeric())
+list(), includeMSn=FALSE, mslevel=NULL, scanrange=NULL)
 
 deepCopy(object)
 }
