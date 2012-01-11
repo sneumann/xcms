@@ -10,7 +10,8 @@
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
         polarity = NULL, lockMassFreq=FALSE,
-		mslevel=NULL, nSlaves=0, progressCallback=NULL,...)
+		mslevel=NULL, nSlaves=0, progressCallback=NULL,
+                scanrange = NULL, ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -25,6 +26,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
     \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
 		   MPI is used if installed, otherwise the snow package is employed for multicore support.}
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
+  \item{scanrange}{scan range to read}
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
     \code{xcmsRaw} class
