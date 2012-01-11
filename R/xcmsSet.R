@@ -1,7 +1,8 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
                     polarity = NULL, lockMassFreq=FALSE, 
-					mslevel=NULL, nSlaves=0, progressCallback=NULL,...) {
+                    mslevel=NULL, nSlaves=0, progressCallback=NULL,
+                    scanrange=NULL, ...) {
 
     object <- new("xcmsSet")
   
@@ -160,7 +161,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         cat(snames[i], ": ", sep = "")
 
         lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                          profstep = 0, includeMSn=includeMSn, mslevel=mslevel)
+                          profstep = 0, includeMSn=includeMSn, mslevel=mslevel, scanrange=scanrange)
 	## check existence of slot, absent in old xcmsSets
 		if(lockMassFreq){
 			object@dataCorrection[i]<-1

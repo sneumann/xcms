@@ -1,7 +1,8 @@
  
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
-                    includeMSn = FALSE, mslevel=NULL) {
+                    includeMSn = FALSE, mslevel=NULL,
+                    scanrange=NULL) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
@@ -9,7 +10,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
 
     mz <- openMSfile(filename)
-    rawdata <- mzRRawData(mz)
+    rawdata <- mzRRawData(mz, scanrange)
 
     if ( includeMSn ) {
       rawdataMSn <- mzRRawDataMSn(mz)

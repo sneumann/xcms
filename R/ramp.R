@@ -110,14 +110,18 @@ rampRawData <- function(rampid) {
                 polarity = scanHeaders$polarity[scans]))
 }
 
-mzRRawData <- function(mz) {
+mzRRawData <- function(mz, scanrange=NULL) {
   ## TODO: missing in mzR are:
   ## seqNum
   ## scanType
   ## polarity
   
-    scanHeaders <- header(mz)
+    scanHeaders <- header(mz)    
 
+    if (!is.null(scanrange)) {
+      scanHeaders <- scanHeaders[seq(scanrange[1], scanrange[2]),]
+    }
+    
     scans <- scanHeaders$msLevel == 1 & scanHeaders$seqNum > 0 &
              !duplicated(scanHeaders$acquisitionNum) &
              scanHeaders$peaksCount > 0
