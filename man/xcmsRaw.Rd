@@ -11,7 +11,7 @@
 }
 \usage{
 xcmsRaw(filename, profstep = 1, profmethod = "bin", profparam =
-list(), includeMSn=FALSE, mslevel=NULL)
+list(), includeMSn=FALSE, mslevel=NULL, scanrange= numeric())
 
 deepCopy(object)
 }
@@ -24,14 +24,17 @@ deepCopy(object)
     (Tandem-MS of Ion-/Orbi- Trap spectra)}
   \item{mslevel}{move data from mslevel into normal MS1 slots, e.g. for
     peak picking and visualisation}
+  \item{scanrange}{scan range to read}
   \item{object}{An xcmsRaw object}
 }
 \details{
-  If \code{profstep} is set to 0, no profile matrix is generated.
-  Unless includeMSn=TRUE only first level MS data is read, not MS/MS, etc.)
+  The scanrange to import can be restricted, otherwise all MS1 data
+  is read. If \code{profstep} is set to 0, no profile matrix is generated.
+  Unless includeMSn=TRUE only first level MS data is read, not MS/MS,
+  etc. 
   
   deepCopy(xraw) will create a copy of the xcmsRaw object with its own
-  copy of mz and intensity data in xraw@env
+  copy of mz and intensity data in \code{xraw@env}. 
 }
 \value{
   A \code{xcmsRaw} object.
