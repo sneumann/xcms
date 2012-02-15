@@ -70,7 +70,8 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
       object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
       ## fix xcmsRaw metadata, or always calculate later than here ?
     }
-    
+    #close mzR object
+    close(mz)
     return(object)
 }
 
