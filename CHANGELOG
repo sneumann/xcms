@@ -1,3 +1,9 @@
+2012-02-27 1.31.8
+Fixed MassIfQuant on windows
+
+2012-02-15 1.31.7
+fixed missing close(mz) in xcmsRaw.R
+
 2012-01-11 1.31.6
 Added scanrange parameter to xcmsRaw
 

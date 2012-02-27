@@ -1,8 +1,10 @@
+MQOBJECTS=massifquant/xcms_massifquant.o massifquant/TrMgr.o massifquant/Tracker.o massifquant/SegProc.o massifquant/DataKeeper.o massifquant/OpOverload.o
+
 OBIOBJECTS=obiwarp/mat.o obiwarp/vec.o obiwarp/xcms_dynprog.o obiwarp/xcms_lmat.o xcms_obiwarp.o
 
 XCMSOBJECTS=fastMatch.o mzClust_hclust.o mzROI.o util.o xcms.o
 
-OBJECTS=$(OBIOBJECTS) $(XCMSOBJECTS)
+OBJECTS= $(MQOBJECTS) $(OBIOBJECTS) $(XCMSOBJECTS)
 
 all: $(SHLIB)
 
