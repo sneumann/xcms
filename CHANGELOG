@@ -1,3 +1,6 @@
+2012-02-27 1.31.9
+Adapt xcmsFragments plotTree to new Rgraphviz plot() S4 approach
+
 2012-02-27 1.31.8
 Fixed MassIfQuant on windows
 
