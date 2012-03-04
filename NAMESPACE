@@ -1,10 +1,7 @@
 useDynLib(xcms)
 
 import("methods")
-importFrom("graphics", "image")
-
-importFrom(BiocGenerics, plot)
-
+importFrom("graphics", "plot", "image")
 importFrom("mzR", "peaks", "close")
 
 export(
