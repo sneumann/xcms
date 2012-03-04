@@ -1,3 +1,6 @@
+2012-03-04 1.31.10
+Revert last change because BiocGenerics also reverted 
+
 2012-02-27 1.31.9
 Adapt xcmsFragments plotTree to new Rgraphviz plot() S4 approach
 
