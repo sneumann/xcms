@@ -1,3 +1,6 @@
+2012-03-06 1.31.11
+Fix Rgraphviz::plot() call
+
 2012-03-04 1.31.10
 Revert last change because BiocGenerics also reverted 
 
