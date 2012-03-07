@@ -1,3 +1,6 @@
+2012-03-07 1.31.12
+Add RUnit to the Suggested packages, needed during R CMD check 
+
 2012-03-06 1.31.11
 Fix Rgraphviz::plot() call
 
