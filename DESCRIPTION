@@ -1,13 +1,13 @@
 Package: xcms
-Version: 1.31.12
-Date: 2012-03-07
+Version: 1.31.13
+Date: 2012-03-15
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>, 
         Ralf Tautenhahn <rtautenh@scripps.edu>,
         Steffen Neumann <sneumann@ipb-halle.de>,
 		Paul Benton <hpaul.benton08@imperial.ac.uk>
 Maintainer: Ralf Tautenhahn <rtautenh@scripps.edu>
-Depends: R (>= 1.9.0), methods, mzR
+Depends: R (>= 1.9.0), methods, mzR (>= 1.1.6)
 Suggests: faahKO, msdata, ncdf, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, snow, RUnit
 Enhances: Rgraphviz, XML, KEGGSOAP
 Description: Framework for processing and visualization of
