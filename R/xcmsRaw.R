@@ -9,12 +9,31 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
 
-    mz <- openMSfile(filename)
-    rawdata <- mzRRawData(mz, scanrange)
+    if (mzR:::netCDFIsFile(filename)) {
+      if (includeMSn) {
+        warning("Reading of MSn spectra for NetCDF not supported")
+      }
+      
+      cdf <- mzR:::netCDFOpen(filename)
+      if (!is.null(attr(cdf, "errortext")))
+        stop(attr(cdf, "errortext"))
+      on.exit(mzR:::netCDFClose(cdf))
+      rawdata <- mzR:::netCDFRawData(cdf)
+    } else if (mzR:::rampIsFile(filename)) {
+      rampid <- mzR:::rampOpen(filename)
+      if (rampid < 0) {
+        stop("Could not open mzXML/mzData file")
+      }
+      on.exit(mzR:::rampClose(rampid))
 
-    if ( includeMSn ) {
-      rawdataMSn <- mzRRawDataMSn(mz)
-    }      
+      rawdata <- mzR:::rampRawData(rampid)
+
+      if ( includeMSn ) {
+        rawdataMSn <- mzR:::rampRawDataMSn(rampid)
+      }
+    } else {
+      stop("Could not determine file type")
+    }
     
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
@@ -25,7 +44,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     	stop(paste("Time for scan ", badtimes[1], " (",
     	           rawdata$rt[[badtimes[1]]], ") greater than scan ",
     	           badtimes[1]+1, " (", rawdata$rt[[badtimes[1]+1]], ")",
-    	           sep = ""))
+    	           sep = ""))        
     }
 
     object@filepath <- filename
@@ -70,8 +89,10 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
       object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
       ## fix xcmsRaw metadata, or always calculate later than here ?
     }
-    #close mzR object
-    close(mz)
+
+    ## close mzR object
+    ## close(mz)
+    
     return(object)
 }
 
