@@ -1,3 +1,7 @@
+2012-03-07 1.31.13
+Use the old RAMP and netCDF interfaces now part of mzR,
+which is a major speed improvement
+
 2012-03-07 1.31.12
 Add RUnit to the Suggested packages, needed during R CMD check 
 

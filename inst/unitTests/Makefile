@@ -1,7 +1,7 @@
 TOP=../..
 PKG=${shell cd ${TOP};pwd}
 SUITE=doRUnit.R
-R=Rdevel
+R=R
 
 all: inst test
 
