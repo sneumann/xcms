@@ -12,7 +12,7 @@
   \code{
     findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE)
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list())
   }
 }
 }}
@@ -48,6 +48,16 @@
   }
   \item{verbose.columns}{
     logical, if TRUE additional peak meta data columns are returned 
+  }
+  \item{ROI.list}{
+    A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs, 
+    otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots: 
+    \code{scmin} start scan index,
+    \code{scmax} end scan index,
+    \code{mzmin} minimum m/z,
+    \code{mzmax} maximum m/z,
+    \code{length} number of scans,
+    \code{intensity} summed intensity.
   }
 }
 \value{
