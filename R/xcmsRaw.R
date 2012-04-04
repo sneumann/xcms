@@ -752,7 +752,7 @@ setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeak
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
                                                     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, 
                                                     fitgauss=FALSE, scanrange= numeric(), noise=0, # noise.local=TRUE,
-                                                    sleep=0, verbose.columns=FALSE) {
+                                                    sleep=0, verbose.columns=FALSE, ROI.list=list()) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
 
@@ -777,11 +777,17 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
     ## Peak width: seconds to scales
     scalerange <- round((peakwidth / mean(diff(object@scantime))) / 2)
+    
+    if (length(z <- which(scalerange==0)))   
+        scalerange <- scalerange[-z]
+    
+    if (length(scalerange) < 1)
+        stop("No scales ? Please check peak width!\n")
+        
     if (length(scalerange) > 1)
         scales <- seq(from=scalerange[1], to=scalerange[2], by=2)  else
             scales <- scalerange;
 
-    dev <- ppm * 1e-6;
     minPeakWidth <-  scales[1];
     noiserange <- c(minPeakWidth*3, max(scales)*3);
     maxGaussOverlap <- 0.5;
@@ -789,29 +795,32 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     minCentroids <- minPtsAboveBaseLine ;
     scRangeTol <-  maxDescOutlier <- floor(minPeakWidth/2);
 
-    peaklist <- list()
-    cat("\n Detecting mass traces at",ppm,"ppm ... \n"); flush.console();
-    featlist <- findmzROI(object,scanrange=scanrange,dev=dev,minCentroids=minCentroids, prefilter=prefilter, noise=noise)
-    scantime <- object@scantime
-    Nscantime <- length(scantime)
-    lf <- length(featlist)
+    ## If no ROIs are supplied then search for them.
+    if (length(ROI.list) == 0) {
+        cat("\n Detecting mass traces at",ppm,"ppm ... \n"); flush.console();
+        ROI.list <- findmzROI(object,scanrange=scanrange,dev=ppm * 1e-6,minCentroids=minCentroids, prefilter=prefilter, noise=noise)
+        if (length(ROI.list) == 0) {
+            cat("No ROIs found ! \n")
 
-    if (lf == 0) {
-        cat("No ROIs found ! \n")
-         
-        if (verbose.columns) {
-            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)+length(verbosenames)))
-            colnames(nopeaks) <- c(basenames, verbosenames)
-        } else {
-            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
-            colnames(nopeaks) <- c(basenames)
-        }
+            if (verbose.columns) {
+                nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)+length(verbosenames)))
+                colnames(nopeaks) <- c(basenames, verbosenames)
+            } else {
+                nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
+                colnames(nopeaks) <- c(basenames)
+            }
         
-        return(invisible(nopeaks))
+            return(invisible(nopeaks))
+        }
     }
     
+    peaklist <- list()
+    scantime <- object@scantime
+    Nscantime <- length(scantime)
+    lf <- length(ROI.list)
+    
     cat('\n Detecting chromatographic peaks ... \n % finished: '); lp <- -1;
-
+    
     for (f in  1:lf) {
 
       ## Show progress
@@ -823,7 +832,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       }
       flush.console()
 
-      feat <- featlist[[f]]
+      feat <- ROI.list[[f]]
       N <- feat$scmax - feat$scmin + 1
 
       peaks <- peakinfo <- NULL
@@ -840,7 +849,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       ## original mzROI range
       mzROI.EIC <- rawEIC(object,mzrange=mzrange,scanrange=scrange)
       omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
-      if (any(omz == 0))
+      if (all(omz == 0))
         stop("centWave: debug me: (omz == 0)?\n")
       od  <- mzROI.EIC$intensity
       otd <- mzROI.EIC$scan
