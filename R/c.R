@@ -406,6 +406,12 @@ rectUnique <- function(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0) {
 
     nr <- nrow(m)
     nc <- ncol(m)
+
+    if (is.null(nr) || nr==0) {
+      # empty matrix in first place
+      return (m)
+    }
+    
     if (!is.double(m))
         m <- as.double(m)
     .C("RectUnique",
