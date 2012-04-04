@@ -571,7 +571,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     
     peakmat <- peaks(object)
     porder <- order(peakmat[,"mz"])
-    peakmat <- peakmat[porder,]
+    peakmat <- peakmat[porder,, drop=FALSE]
     rownames(peakmat) <- NULL
     retrange <- range(peakmat[,"rt"])
 
