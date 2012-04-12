@@ -1751,50 +1751,74 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
   as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(noise), PACKAGE ='xcms' )
 })
 
+setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
 
-setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
-
-
-setMethod("findPeaks.massifquant", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
+setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
             scanrange=c(1,length(object@scantime)), minIntensity = 6400,
             minCentroids = 12, consecMissedLim = 2, criticalVal = 1.7321, ppm = 10,  segs = 1, scanBack = 1, mzdiff=-0.001){
 
-    ##cat("\nDetecting features with massifquant.  "); flush.console();
-
     scanrange[1] <- max(1,scanrange[1])
     scanrange[2] <- min(length(object@scantime),scanrange[2])
-    
+
     ## var type checking
     if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
     if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
     if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
     if (!is.double(object@scantime)) object@scantime <- as.double(object@scantime)
+    
 
-    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo") # ,"sn") ?
-
-    peaklist <- .Call("massifquant", object@env$mz,object@env$intensity,object@scanindex, object@scantime,
+    .Call("massifquant", object@env$mz,object@env$intensity,object@scanindex, object@scantime,
         as.double(mzrange), as.integer(scanrange), as.integer(length(object@scantime)),
         as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
         as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+})
 
-    if (length(peaklist) == 0) {
-        cat("\nNo peaks found !\n")
-            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)))
-            colnames(nopeaks) <- basenames
-            return(invisible(nopeaks))
+setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
+
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+                                                    prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, 
+                                                    fitgauss=FALSE, scanrange= numeric(), noise=0, # noise.local=TRUE,
+                                                    sleep=0, verbose.columns=FALSE, criticalValue = 1.7321, consecMissedLimit = 2, 
+					            unions = 0, checkBack = 1, withWave = 1) {
+    
+    #keeep this check since massifquant doesn't check internally
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
+
+    cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
+    #mqstart = proc.time();
+    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = prefilter[1], criticalVal = criticalValue, 
+                             consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack);
+    #mqfinish = proc.time() - mqstart;
+    #cat("The finishing time of massifquant\n", mqfinish);
+    
+    if (withWave == 1) {
+        featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
+            prefilter, mzCenterFun, integrate, mzdiff, fitgauss,
+            scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
     }
+    else {
+        basenames <- c("mz","mzmin","mzmax","scmin","scmax","length", "area")
+        if (length(massifquantROIs) == 0) {
+            cat("\nNo peaks found !\n");
+            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)));
+            colnames(nopeaks) <- basenames;
+            return(invisible(nopeaks));
+        }
 
-    p <- t(sapply(peaklist, unlist))
+        p <- t(sapply(massifquantROIs, unlist));
+        colnames(p) <- basenames;
 
-    colnames(p) <- basenames
+        uorder <- order(p[,"area"], decreasing=TRUE);
+        pm <- as.matrix(p[,c("mzmin","mzmax","scmin","scmax"),drop=FALSE]);
+        uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
+        pr <- p[uindex,,drop=FALSE];
+        cat("\n",dim(pr)[1]," Peaks.\n");
 
-    uorder <- order(p[,"into"], decreasing=TRUE)
-    pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE])
-    uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks
-    pr <- p[uindex,,drop=FALSE]
-    cat("\n",dim(pr)[1]," Peaks.\n")
-
-    invisible(new("xcmsPeaks", pr))
+        invisible(new("xcmsPeaks", pr));
+        featlist = pr;
+    }
+    return(invisible(featlist));
 })
 
 

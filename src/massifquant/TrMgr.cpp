@@ -216,12 +216,9 @@ void TrMgr::manageMissed() {
         if (trks[*it]->getCurrMissed() > currMissedMax ||
             trks[*it]->getCurrMissed() > trks[*it]->getTrLen() ||
             (trks[*it]->getPredCounts()/2) > trks[*it]->getTrLen()) {
-            if (*it == 7) { 
-                //cout << "id is 7 and being judged" << endl;
-            }
             judgeTracker(*it);
-        }
 	}
+    }
 }
 
 void TrMgr::judgeTracker(const int & i) {
@@ -403,9 +400,12 @@ int TrMgr::findMinIdx(const std::vector<double> & d,
 
 void TrMgr::writePICsToFile() {
 
-    ofstream feat_idx("feat_idx.txt");    
-    ofstream scan_idx("scan_idx.txt");    
-    ofstream cent_idx("cent_idx.txt");   
+    ofstream feat_idx("mq_feat_idx.txt");    
+    ofstream scan_idx("mq_scan_idx.txt");    
+    ofstream cent_idx("mq_cent_idx.txt");   
+    ofstream mz_file("mq_mz.txt");  
+    ofstream intensity_file("mq_intensity.txt");  
+
 
     /*iterate over all found features listed in picIdx*/
     feat_idx << 0 << endl;;
@@ -416,15 +416,23 @@ void TrMgr::writePICsToFile() {
 
         std::list<int> iscanList = trks[picIdx.at(i)]->getScanList();
         std::list<int> icentList = trks[picIdx.at(i)]->getCentroidList();
+        std::list<double> imzList = trks[picIdx.at(i)]->getMzList();
+        std::list<double> iintensityList = trks[picIdx.at(i)]->getIntensityList();
 
         std::list<int>::iterator it_s;
         std::list<int>::iterator it_c = icentList.begin();
+        std::list<double>::iterator it_m = imzList.begin();
+        std::list<double>::iterator it_i = iintensityList.begin();
 
         /*iterate over all scans, indices in tracker (i)*/
         for(it_s = iscanList.begin(); it_s != iscanList.end(); ++it_s) {
             scan_idx << *it_s  << endl;
             cent_idx << *it_c  + 1 << endl;
+            mz_file  << *it_m << endl;
+            intensity_file << (*it_i)*(*it_i) << endl;
             ++it_c;
+            ++it_m;
+            ++it_i;
         }
     }
 }

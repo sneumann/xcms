@@ -107,7 +107,9 @@ class Tracker {
         std::list<int> getCentroidList();
 
         void appendToTracker(const std::list<int> & sl,
-                const std::list<int> & cl); 
+                const std::list<int> & cl, 
+		const std::list<double> & ml, 
+		const std::list<double> & il); 
 
         int getStartScanIdx();
 

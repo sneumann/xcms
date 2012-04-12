@@ -21,7 +21,7 @@
 #include <Rinternals.h>
 #include <Rdefines.h>
 
-const int N_NAMES = 8;
+const int N_NAMES = 7;
 using namespace std;
 
 extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex, 
@@ -30,7 +30,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         SEXP ppm, SEXP criticalVal, SEXP segs, SEXP scanBack) { 
  
     //the return data structure and its elemental components
-    SEXP featurelist,entrylist,list_names,vmzmean,vmzmin,vmzmax,vstcenter,vstmin,vstmax,varea,vintenmax;
+    SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vstcenter,vscmin,vscmax,vintensity,vintenmax, vlength;
     int scanrangeTo, scanrangeFrom;
     int firstScan = 1;
 
@@ -55,7 +55,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         error("Error in scanrange \n");
 
     //show the progress please
-    Rprintf("\n Detecting chromatographic peaks ... \n percent finished: ");
+    Rprintf("\n Detecting Kalman ROI's ... \n percent finished: ");
        
     //initialize tracker manager
     TrMgr busybody(scanrangeTo, sqrt(REAL(minIntensity)[0]), 
@@ -98,67 +98,64 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         SegProc sproc(busybody.getPicCounts()); 
         sproc.groupSegments(busybody);
         sproc.collapseSubsets();
-        sproc.segsToFile(busybody);
+        //sproc.segsToFile(busybody);
         sproc.solderSegs(busybody);
     }
     
     Rprintf(" %d\n", 100);
- 
 
-/*
-    char *names[N_NAMES] = {"mz", "mz min", "mz max", "st min", "st max", "integration", "max intensity"};
+    char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
     PROTECT(list_names = allocVector(STRSXP, N_NAMES));
     for(int j = 0; j < N_NAMES; j++)
         SET_STRING_ELT(list_names, j,  mkChar(names[j]));
-*/
 
-    PROTECT(featurelist = allocVector(VECSXP, busybody.getPicCounts()));
+    PROTECT(peaklist = allocVector(VECSXP, busybody.getPicCounts()));
     for (int i=0;i<busybody.getPicCounts();i++) {
 
         std::vector<double> featInfo = busybody.iterOverFeatures(i, pscantime);
-        
+	int scanLength = int(featInfo.at(5) - featInfo.at(4) + 1);
+
         PROTECT(entrylist = allocVector(VECSXP, N_NAMES));
 
         //allow for new vars declared to be passed out
-        PROTECT(vmzmean = NEW_NUMERIC(1));
+        PROTECT(vmz = NEW_NUMERIC(1));
         PROTECT(vmzmin = NEW_NUMERIC(1));
         PROTECT(vmzmax = NEW_NUMERIC(1));
-        PROTECT(vstcenter = NEW_NUMERIC(1));
-        PROTECT(vstmin = NEW_NUMERIC(1));
-        PROTECT(vstmax = NEW_NUMERIC(1));
-        PROTECT(varea = NEW_NUMERIC(1));
-        PROTECT(vintenmax = NEW_NUMERIC(1));
+        
+        PROTECT(vscmin = NEW_INTEGER(1));
+        PROTECT(vscmax = NEW_INTEGER(1));
+        PROTECT(vlength = NEW_INTEGER(1));
+        PROTECT(vintensity = NEW_INTEGER(1));
 
         //assign a copy
-        NUMERIC_POINTER(vmzmean)[0]  = featInfo.at(0);
+        NUMERIC_POINTER(vmz)[0]  = featInfo.at(0);
         NUMERIC_POINTER(vmzmin)[0] = featInfo.at(1);
         NUMERIC_POINTER(vmzmax)[0] = featInfo.at(2);
-        NUMERIC_POINTER(vstcenter)[0] = featInfo.at(3);
-        NUMERIC_POINTER(vstmin)[0] = featInfo.at(4);
-        NUMERIC_POINTER(vstmax)[0] = featInfo.at(5);
-        NUMERIC_POINTER(varea)[0] = featInfo.at(6);
-        NUMERIC_POINTER(vintenmax)[0] = featInfo.at(7);
+        
+        INTEGER_POINTER(vscmin)[0] = int(featInfo.at(4));
+        INTEGER_POINTER(vscmax)[0] = int(featInfo.at(5));
+        INTEGER_POINTER(vlength)[0] = int(featInfo.at(3));
+        INTEGER_POINTER(vintensity)[0] = int(featInfo.at(6));
 
         //enter into nested list
-        SET_VECTOR_ELT(entrylist, 0, vmzmean);
+        SET_VECTOR_ELT(entrylist, 0, vmz);
         SET_VECTOR_ELT(entrylist, 1, vmzmin);
         SET_VECTOR_ELT(entrylist, 2, vmzmax);
-        SET_VECTOR_ELT(entrylist, 3, vstcenter);
-        SET_VECTOR_ELT(entrylist, 4, vstmin);
-        SET_VECTOR_ELT(entrylist, 5, vstmax);
-        SET_VECTOR_ELT(entrylist, 6, varea);
-        SET_VECTOR_ELT(entrylist, 7, vintenmax);
+        SET_VECTOR_ELT(entrylist, 3, vscmin);
+        SET_VECTOR_ELT(entrylist, 4, vscmax);
+        SET_VECTOR_ELT(entrylist, 5, vlength); 
+        SET_VECTOR_ELT(entrylist, 6, vintensity);
 
-  //      setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
-        SET_VECTOR_ELT(featurelist, i, entrylist);
+        setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
+        SET_VECTOR_ELT(peaklist, i, entrylist);
         UNPROTECT(N_NAMES + 1); //entrylist + values
     }
 
-    //busybody.writePICsToFile();
-    Rprintf("There were %d features detected\n", busybody.getPicCounts());
+    busybody.writePICsToFile();
+    Rprintf("Number detected: %d\n", busybody.getPicCounts());
 
-    UNPROTECT(1);//featurelist
+    UNPROTECT(2);//peaklist, list_names
 
-    return (featurelist);  
+    return (peaklist);  
 }
 
