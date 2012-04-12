@@ -162,9 +162,13 @@ std::list<int> Tracker::getCentroidList() {
 }
 
 void  Tracker::appendToTracker(const std::list<int> & sl,
-        const std::list<int> & cl) {
+		const std::list<int> & cl, 
+		const std::list<double> & ml,
+		const std::list<double> & il) {
     scanList.insert(scanList.end(), sl.begin(), sl.end());
     centroidList.insert(centroidList.end(), cl.begin(), cl.end());
+    mzList.insert(mzList.end(), ml.begin(), ml.end());
+    intensityList.insert(intensityList.end(), il.begin(), il.end());
     trLen = scanList.size();
 }
 
@@ -318,16 +322,17 @@ std::vector<double> Tracker::getFeatureInfo(double * scanTime) {
     //1-mz center coordinate is mean     
     featInfo[0]=mzXbar;
     //2-mz min 
-    featInfo[1]=*min_element(mzList.begin(), mzList.end());
+    featInfo[1]= *min_element(mzList.begin(), mzList.end());
     //3-mz max
-    featInfo[2]=*max_element(mzList.begin(), mzList.end());
-    //4-rt middle
-    int scansPast = scanList.front() - scanList.back() + 1;
-    featInfo[3]=scanTime[scanList.back() + int(scansPast/2) - 1];
-    //5-rt min
-    featInfo[4]=scanTime[scanList.back() - 1];
-    //6-rt max
-    featInfo[5]=scanTime[scanList.front() - 1];
+    featInfo[2]= *max_element(mzList.begin(), mzList.end());
+    //4-length
+    featInfo[3] = scanList.size();
+    //5-scan min
+    featInfo[4]  = double(*min_element(scanList.begin(), scanList.end()));
+    //featInfo[4]  = scanTime[*min_element(scanList.begin(), scanList.end()) - 1];
+    //6-scan max
+    featInfo[5] = double(*max_element(scanList.begin(), scanList.end()));
+    //featInfo[5] = scanTime[*max_element(scanList.begin(), scanList.end()) - 1];
     //7-integrated (not normalized intensity)
     std::list<double>::iterator it_i;
     double area = 0;
