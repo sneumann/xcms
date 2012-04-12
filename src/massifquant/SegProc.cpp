@@ -273,7 +273,9 @@ void SegProc::solderSegs(TrMgr & busybody) {
             //int testOSize = busybody.getTracker(appIdx)->getScanList().size();
             list<int> sl = busybody.getTracker(*it)->getScanList();
             list<int> cl = busybody.getTracker(*it)->getCentroidList();
-            busybody.getTracker(appIdx)->appendToTracker(sl, cl);
+            list<double> ml = busybody.getTracker(*it)->getMzList();           
+            list<double> il = busybody.getTracker(*it)->getIntensityList();        
+	    busybody.getTracker(appIdx)->appendToTracker(sl, cl, ml, il);
 
             //assert((testOSize + sl.size()) == busybody.getTracker(appIdx)->getScanList().size());
             erasedPicIdx[j] = *it;
@@ -281,8 +283,9 @@ void SegProc::solderSegs(TrMgr & busybody) {
         }
     }
     //erase the PicElements after the iteration has happened
+    //cout << "The memory corruption begins here" << endl;
     busybody.erasePicElements(erasedPicIdx);
-    //cout  << "The number deleted is: " << j << endl;
+    cout  << "\n The number of ROI'S that collapsed into a larger ROI: " << j << endl;
     //cout << "erasedPicIdx.back: " << erasedPicIdx.back() << endl;
 }
 
