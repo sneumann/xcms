@@ -151,7 +151,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         UNPROTECT(N_NAMES + 1); //entrylist + values
     }
 
-    busybody.writePICsToFile();
+    //busybody.writePICsToFile();
     Rprintf("Number detected: %d\n", busybody.getPicCounts());
 
     UNPROTECT(2);//peaklist, list_names
