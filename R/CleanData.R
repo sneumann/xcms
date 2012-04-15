@@ -3,28 +3,37 @@ setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 setMethod("AutoLockMass", "xcmsRaw", function(object) {
 	if(length(grep("xml|mzData|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
 		tempFreq<-diff(which(diff(object@scantime) == 0))-1
+		idx <- which(tempFreq != floor(mean(tempFreq))) ## only needed for newer lockmass signal
 		if(all(tempFreq == mean(tempFreq)) ){
 			freqLock<-mean(tempFreq)
-		}else{
+		}else if(all(idx == which(tempFreq != floor(mean(tempFreq) )) )){
+			## for the newer mzML and mzXML not sure why the change?
+			## This means that there is only one gap :( ??
+			freqLock<-floor(mean(tempFreq))
+			stop("This file is different from the normally seen files and requires special programming\n
+			This functionality has not been implemented yet\n ")
+			## these files seem to come either from newer MS units or/and msconvert ....
+		} else{
 			freqLock<-mean(tempFreq)
 			warning("\nLock mass frequency wasn't detected correctly", immediate.=TRUE)
 		}
 
 		if(diff(object@scantime[1:5])[1] == 0 ){
 			start<-1
-		}else{
+		} else{
 			start<-freqLock
 		}
 		return(makeacqNum(object, freqLock, start))
 		
 	} else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
-		hr <- hist(diff(object@scantime), plot=FALSE)
-		idx<- hr$breaks[which(hr$counts > 0)]
-		inx<- which(diff(object@scantime) > idx[2])
+		hr <- hist(diff(object@scantime), breaks=length(object@scantime)/(length(object@scantime)/2), plot=FALSE)
+		idx<-which(hr$counts == 0)
+		inx<-which(diff(object@scantime) >= hr$mids[(max(idx))])
 		if(length(inx) <= 1){
 			warning("\nLock mass frequency wasn't detected", immediate.=TRUE)
 			return(0)
-		}
+		} 
+		## above we're looking for scantimes that are much longer than the normal scan times
 		
 		tempFreq<-diff(inx)-1
 		if(all(tempFreq == mean(tempFreq)) ){
@@ -34,7 +43,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 			warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
 		}
 		
-		if(inx[1] == 0 | inx[1] == 1){
+		if(inx[1] == 0 || inx[1] == 1){
 			start<-1
 		}else{
 			start<-freqLock

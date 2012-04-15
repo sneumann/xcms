@@ -1,3 +1,7 @@
+2012-04-15 1.33.4
+Added better coding for automatic detection of lockMass on netCDF files and catch of newer altered files. 
+Coding to come after more testing
+
 2012-04-13 1.33.3
 Improve writemzdata() to also store MSn data if that's contained in the xcmsRaw.
 
