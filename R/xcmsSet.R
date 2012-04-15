@@ -440,8 +440,7 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
         if (length(calibrants) != nsamp)
             stop("Error: Number of masslists differs with number of samples")
 
-    for (s in 1:nsamp)
-    {
+    for (s in 1:nsamp){
         peaklist = object@peaks[which(object@peaks[,"sample"]==s),]
         if (is.list(calibrants)) {
             masslist <- calibrants[s]
@@ -450,7 +449,10 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
         }
 
         masses <- matchpeaks(peaklist,masslist,mzabs,mzppm,neighbours)
-        if (length(masses)==0) stop("No masses close enough!")
+        if (length(masses)==0){
+			warning("No masses close enough!\n")
+			next
+		}
 
         if (nrow(masses)==1 & method!="shift") {
             cat("Warning: only one peak found, fallback to shift.")
@@ -696,7 +698,6 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
                                                mzCheck=0.2, rtCheck=15, kNN=10) {
 
     ## If ANN is available ...
-    RANN = "RANN"
     if (!require(RANN)) {
         stop("RANN is not installed")
     }
@@ -711,9 +712,9 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     plength <- list()
     parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
 
-    for(i in 1:length(samples)){
-        plength <- table(peaks(object)[,"sample"])
-    }
+#   for(i in 1:length(samples)){
+	plength <- table(peaks(object)[,"sample"])
+#   } ## you don't need a for loop if you don't use i
 
     mplenv <- new.env(parent = .GlobalEnv)
     peakmat1 <- which(peakmat[,"sample"]==1)
@@ -726,52 +727,46 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     cat("sample:",basename(samples[1])," ")
 
     for(sample in 2:length(samples)) {
-        for(mml in seq(mplenv$mplist[,1])){
-            mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
-            mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
+       for(mml in seq(mplenv$mplist[,1])){
+           mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
+           mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
         }
 
-        cat("sample:",basename(samples[sample])," ")
+        cat(paste("sample:", basename(samples[sample]), " "), sep="")
         mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
                                          isJoinedPeak=FALSE)
         if(length(mplenv$peakIdxList$peakidx)==0){
             cat("Warning: No peaks in sample",s,"\n")
         }
-        scoreList <- data.frame(score=numeric(0),peak=integer(0),
-                                mpListRow=integer(0),
-                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
 
-        for(currPeak in mplenv$peakIdxList$peakidx){
-            pvrScore <- patternVsRowScore(currPeak,parameters,mplenv)
-            scoreList <- rbind(scoreList,pvrScore)
-        }
-
+		pvrScore<- t(sapply(mplenv$peakIdxList$peakidx, patternVsRowScore, parameters, mplenv))
 
         ## Browse scores in order of descending goodness-of-fit
-        scoreListcurr <- scoreList[order(scoreList$score),]
-        if (nrow(scoreListcurr) > 0)
+		scoreListcurr <- pvrScore[order(as.numeric(pvrScore[,"score"])),]
+		scoreListcurr <- as.matrix(scoreListcurr)
+		if (nrow(scoreListcurr) > 0)
           for (scoreIter in 1:nrow(scoreListcurr)) {
 
-              iterPeak <-scoreListcurr$peak[scoreIter]
-              iterRow <- scoreListcurr$mpListRow[scoreIter]
+              iterPeak <-scoreListcurr[scoreIter, "peak"]
+              iterRow <- scoreListcurr[scoreIter, "mpListRow"]
 
               ## Check if master list row is already assigned with peak
-              if (scoreListcurr$isJoinedRow[scoreIter]==TRUE) {
+              if (scoreListcurr[scoreIter, "isJoinedRow"] == TRUE) {
                   next
               }
 
               ## Check if peak is already assigned to some master list row
-              if (scoreListcurr$isJoinedPeak[scoreIter]==TRUE) { next }
+              if (scoreListcurr[scoreIter, "isJoinedPeak"]==TRUE) { next }
 
               ##  Check if score good enough
               ## Assign peak to master peak list row
               mplenv$mplist[iterRow,sample] <- iterPeak
 
               ## Mark peak as joined
-              setTrue <- which(scoreListcurr$mpListRow==iterRow)
-              scoreListcurr[setTrue,]$isJoinedRow <- TRUE
-              setTrue <- which(scoreListcurr$peak==iterPeak)
-              scoreListcurr[setTrue,]$isJoinedPeak <- TRUE
+              setTrue <- which(scoreListcurr[,"mpListRow"] == iterRow)
+              scoreListcurr[setTrue,][,"isJoinedRow"] <- TRUE
+              setTrue <- which(scoreListcurr[,"peak"] == iterPeak)
+              scoreListcurr[setTrue,][,"isJoinedPeak"] <- TRUE
               mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
           }
 
@@ -788,7 +783,6 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
         object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
         progressInfoUpdate(object)
     }
-    gc()
 
     groupmat <- matrix(0,nrow(mplenv$mplist), 7+length(levels(sampclass(object))))
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
@@ -818,8 +812,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
 })
 
 
-patternVsRowScore <- function(currPeak, parameters, mplenv)
-{
+patternVsRowScore <- function(currPeak, parameters, mplenv){
     mplistmeanCurr <- mplenv$mplistmean[,c("mz","rt")]
     mplistmeanCurr[,"mz"] <- mplistmeanCurr[,"mz"] * parameters$mzVsRTBalance
     peakmatCurr <- mplenv$peakmat[currPeak,c("mz","rt"),drop=FALSE]
@@ -828,33 +821,25 @@ patternVsRowScore <- function(currPeak, parameters, mplenv)
     nnDist <- nn2(mplistmeanCurr,peakmatCurr[,c("mz","rt"),drop=FALSE],
                   k=min(length(mplistmeanCurr[,1]),parameters$knn))
 
-    scoreListcurr <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
-                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
-
     for(mplRow in 1:length(nnDist$nn.idx)){
         mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
         mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
 
         ## Calculate differences between M/Z and RT values of current peak and median of the row
-
         diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
         diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
         ## What type of RT tolerance is used?
-
-        rtTolerance=0
         rtTolerance = parameters$rtcheck
 
-
         ## Calculate if differences within tolerancdiffRT < rtTolerance)es
-        if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
-            scoreListcurr <- rbind(scoreListcurr,
-                                   data.frame(score=nnDist$nn.dists[mplRow],
-                                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-                                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
-            ## goodEnough = true
-            return(scoreListcurr)
+        if ((diffMZ < parameters$mzcheck) & (diffRT < rtTolerance)) {
+            return(data.frame(score=nnDist$nn.dists[mplRow],
+				peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+				isJoinedPeak=FALSE, isJoinedRow=FALSE))
         }
     }
+	return(data.frame(score=NA, peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+		isJoinedPeak=FALSE, isJoinedRow=FALSE))
 }
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
