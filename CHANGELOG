@@ -1,6 +1,10 @@
+2010-04-17 1.33.5
+Found yet more odd new file from waters causing problems. Added another if statement in both CDF & XML blocks
+
 2012-04-15 1.33.4
 Added better coding for automatic detection of lockMass on netCDF files and catch of newer altered files. 
 Coding to come after more testing
+Also changed group.nearest code to improve speed. Changed for loop -> apply ~2x - 3x faster :-)
 
 2012-04-13 1.33.3
 Improve writemzdata() to also store MSn data if that's contained in the xcmsRaw.
