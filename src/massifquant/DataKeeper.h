@@ -16,7 +16,7 @@ typedef __int16_t     int16;
 typedef __uint16_t    uint16;
 typedef char          int8;
 typedef unsigned char uint8;
-typedef double        float64;
+//typedef double        float64;
 #else
 
 //------------Win: 32-bit/64-bit compatibility------------
@@ -28,7 +28,7 @@ typedef __int16            int16;
 typedef unsigned __int16   uint16;
 typedef __int8             int8;
 typedef unsigned __int8    uint8;
-typedef __float64          float64;
+//typedef __float64          float64;
 #endif
 
 //outside libraries
@@ -69,7 +69,9 @@ class DataKeeper {
         void printVec(const std::vector<double> & myvec);
         void printList(const std::list<int> & mylist);
 void printList(const std::list<double> & mylist);
-        void assign_values(float64* data, uint32 data_len, std::vector<double> & vec, int vec_len); 
+        
+/*not working on windows build of bioconductor*/
+//void assign_values(float64* data, uint32 data_len, std::vector<double> & vec, int vec_len); 
         
         std::vector<double> privGetMZScan(int s);
         std::vector<double> privGetIScan(int s);
