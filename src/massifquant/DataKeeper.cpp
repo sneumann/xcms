@@ -31,14 +31,15 @@ DataKeeper::DataKeeper(const char* dotplms1) {
 DataKeeper::~DataKeeper() {
 }
 
-void DataKeeper::assign_values(float64* data, uint32 data_len, vector<double> & vec, int vec_len) {
+/*void DataKeeper::assign_values(float64* data, uint32 data_len, vector<double> & vec, int vec_len) {
     
     uint32 i;
     //vec.resize(data_len + vec_len);
     for (i = 0; i < data_len; ++i) {
         vec.push_back(data[i]); 
     }
-}
+}*/
+
 std::vector<double> DataKeeper::getMZScan(int s) {
 
     int start_pos = scan_idx.at(s);

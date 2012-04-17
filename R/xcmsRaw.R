@@ -1812,11 +1812,9 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth
         uorder <- order(p[,"area"], decreasing=TRUE);
         pm <- as.matrix(p[,c("mzmin","mzmax","scmin","scmax"),drop=FALSE]);
         uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
-        pr <- p[uindex,,drop=FALSE];
-        cat("\n",dim(pr)[1]," Peaks.\n");
-
-        invisible(new("xcmsPeaks", pr));
-        featlist = pr;
+        featlist <- p[uindex,,drop=FALSE];
+        cat("\n",dim(featlist)[1]," Peaks.\n");
+        invisible(new("xcmsPeaks", featlist));
     }
     return(invisible(featlist));
 })
