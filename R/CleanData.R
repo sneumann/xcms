@@ -30,7 +30,7 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 		return(makeacqNum(object, freqLock, start))
 		
 	} else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
-		hr <- hist(diff(object@scantime), breaks=length(object@scantime)/(length(object@scantime)/2), plot=FALSE)
+		hr <- hist(diff(object@scantime), breaks=4, plot=FALSE)
 		if(length(hr$counts) > 2){
 			idx<-which(hr$counts == 0)
 			inx<-which(diff(object@scantime) >= hr$mids[(max(idx))])
@@ -46,10 +46,10 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 		## above we're looking for scantimes that are much longer than the normal scan times
 		
 		tempFreq<-diff(inx)-1
-		if(all(tempFreq == mean(tempFreq)) ){
-			freqLock<-mean(tempFreq)
+		if(all(tempFreq == median(tempFreq)) ){
+			freqLock<-median(tempFreq)
 		}else{
-			freqLock<-mean(tempFreq)
+			freqLock<-median(tempFreq)
 			warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
 		}
 		
