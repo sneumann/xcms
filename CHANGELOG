@@ -1,3 +1,6 @@
+2012-04-23
+Moved if statement checks around to catch errors.
+
 2012-04-20 1.33.6
 Fixed mess up commits between computers.
 
