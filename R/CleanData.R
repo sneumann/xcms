@@ -4,14 +4,14 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 	if(length(grep("xml|mzData|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
 		tempFreq<-diff(which(diff(object@scantime) == 0))-1
 		idx <- which(tempFreq != floor(mean(tempFreq))) ## only needed for newer lockmass signal
-		if(all(tempFreq == mean(tempFreq)) ){
-			freqLock<-mean(tempFreq)
-		} else if(is.nan(mean(tempFreq)) ){
+		if(is.nan(mean(tempFreq)) ){
 			dn<-density(diff(object@scantime))
 			lockMassScans <- quantile(dn$x, .75) ## hopefully always correct (?)
 			inx<-which(diff(object@scantime) >= lockMassScans) ## these seems to be some of the new files
 			return(inx)
-		}else if(all(idx == which(tempFreq != floor(mean(tempFreq) )) )){
+		}else if(all(tempFreq == mean(tempFreq)) ){
+			freqLock<-mean(tempFreq)
+		} else if(all(idx == which(tempFreq != floor(mean(tempFreq) )) )){
 			## for the newer mzML and mzXML not sure why the change?
 			## This means that there is only one gap :( ??
 			stop("This file is different from the normally seen files and requires special programming\n
