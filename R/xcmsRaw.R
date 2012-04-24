@@ -69,7 +69,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                                   labels=c("negative", "positive", "unknown"));
     }
 
-    if(exists("rawdataMSn")) {
+    if(exists("rawdataMSn") && !is.null(rawdataMSn) ) {
         object@env$msnMz <- rawdataMSn$mz
         object@env$msnIntensity <- rawdataMSn$intensity
 
