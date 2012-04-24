@@ -1,3 +1,12 @@
+test.xcmsRawms1 <- function() {
+
+  filename <- system.file('microtofq/MM14.mzdata', package = "msdata")
+
+  ## This file has no MS/MS data at all, but should not fail
+  x1 <- xcmsRaw(filename, includeMSn=TRUE)
+  
+}
+
 test.xcmsRawms123 <- function() {
 
   filename <- system.file('iontrap/extracted.mzData', package = "msdata")

@@ -1,3 +1,6 @@
+2012-04-24
+Fixed error in includeMSn for MS1 only files.
+
 2012-04-23
 Moved if statement checks around to catch errors.
 
