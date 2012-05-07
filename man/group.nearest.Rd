@@ -39,5 +39,44 @@
   \code{\link{group.density}} and 
   \code{\link{group.mzClust}}
 }
+
+\examples{
+	\dontrun{library(xcms)
+		library(faahKO) ## These files do not have this problem to correct for but just for an example
+		cdfpath <- system.file("cdf", package = "faahKO")
+		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+		
+		xset<-xcmsSet(cdffiles)
+		
+		gxset<-group(xset, method="nearest")
+		## this is the same as 
+		# gxset<-group.nearest(xset)
+		nrow(gxset@groups) == 1096 ## the number of features before minFrac
+		
+		post.minFrac<-function(object, minFrac=0.5){
+			ix.minFrac<-sapply(1:length(unique(sampclass(object))), function(x, object, mf){
+				meta<-groups(object)
+				minFrac.idx<-numeric(length=nrow(meta))
+				idx<-which(meta[,levels(sampclass(object))[x]] >= mf*length(which(levels(sampclass(object))[x] == sampclass(object)) ))
+				minFrac.idx[idx]<-1
+				return(minFrac.idx)
+			}, object, minFrac)
+			ix.minFrac<-as.logical(apply(ix.minFrac, 1, sum))
+			ix<-which(ix.minFrac == TRUE)
+			return(ix)
+		}
+		
+		## using the above function we can get a post processing minFrac
+		idx<-post.minFrac(gxset)
+		
+		gxset.post<-gxset ## copy the xcmsSet object
+		gxset.post@groupidx<-gxset@groupidx[idx]
+		gxset.post@groups<-gxset@groups[idx,]
+		
+		nrow(gxset@groups) == 465 ## this is the number of features after minFrac
+	}
+}
+
+
 \keyword{methods}
 \keyword{file}

@@ -695,7 +695,7 @@ setMethod("group.mzClust", "xcmsSet", function(object,
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
 
 setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
-	mzCheck=0.2, rtCheck=15, kNN=10, nSlaves=1) {
+	mzCheck=0.2, rtCheck=15, kNN=10) {
 
 	## If ANN is available ...
 	RANN = "RANN"
@@ -745,8 +745,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
 		for(mml in seq(mplenv$mplist[,1])){
 			mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
 			mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
-		} ## should be a vertorized way of doing this. Not exactly sure what this code wants. 
-		## ?? sample == 2 mean of single mz and rt ??? why : PB
+		} 
 
 		cat("sample:",basename(samples[sample])," ")
 		mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
