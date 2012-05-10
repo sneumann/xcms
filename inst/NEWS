@@ -1,3 +1,9 @@
+CHANGED BEHAVIOUR since Version 1.32:
+
+Other Changes since Version 1.32:
+
+* improved mzData writing, now includes MSn spectra and less verbose.
+
 CHANGED BEHAVIOUR since Version 1.14:
 
 * centWave may report a smaller set of peaks, due to a small bug
