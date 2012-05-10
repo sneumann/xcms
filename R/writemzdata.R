@@ -125,7 +125,7 @@ buildMzdata <- function(xr) {
                      name="TimeInSeconds", value=xr@msnRt[id]))
     mzdata$closeTag() ## </spectrumInstrument>
     mzdata$closeTag() ## </spectrumSettings>
-    cat ("mslevel[", id, "]: ", mslevel[id], "\n")
+
     if (mslevel[id] > 1) { ## only for mslevel >1, here always true
       mzdata$addNode("precursorList",
                      attrs=c(count=1),
