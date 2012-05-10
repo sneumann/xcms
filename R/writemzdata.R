@@ -33,14 +33,15 @@ setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 })
 
 buildMzdata <- function(xr) {
-  mzdata = xmlTree(tag="mzData",
-    attrs=c(
-      version="1.05",
-      "xsi:noNamespaceSchemaLocation"="http://psidev.sourceforge.net/ms/xml/mzdata/mzdata.xsd"),
-    namespaces = list(
-      xsi="http://www.w3.org/2001/XMLSchema-instance")
-    )
 
+  mzdata <- xmlTree(namespaces = c(xsi="http://www.w3.org/2001/XMLSchema-instance"))
+  
+  mzdata$addNode("mzData",
+                 attrs=c(
+                   version="1.05",
+                   "xsi:noNamespaceSchemaLocation"="http://psidev.sourceforge.net/ms/xml/mzdata/mzdata.xsd"),
+                 close=FALSE)
+  
   mzdata$addNode("spectrumList",
                  attrs=c(count=length(xr@scanindex)),
                  close = FALSE)
