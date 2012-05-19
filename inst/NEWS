@@ -3,6 +3,7 @@ CHANGED BEHAVIOUR since Version 1.32:
 Other Changes since Version 1.32:
 
 * improved mzData writing, now includes MSn spectra and less verbose.
+* improved netCDF writing, but not yet good enough for AMDIS
 
 CHANGED BEHAVIOUR since Version 1.14:
 

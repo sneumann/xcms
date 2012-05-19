@@ -154,29 +154,111 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
     dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
     dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
+    dimInstruments<-dim.def.ncdf("instrument_number","",1:1, create_dimvar=FALSE)
 
     ## Define netCDF vars
-    scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", "", dimScans, -1)
-    total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
-    scan_index            <- var.def.ncdf("scan_index", "", dimScans, -1)
-    total_intensity       <- var.def.ncdf("total_intensity", "", dimScans, -1)
-    mass_values           <- var.def.ncdf("mass_values", "", dimPoints, -1)
-    intensity_values      <- var.def.ncdf("intensity_values", "", dimPoints, -1)
+    error_log             <- var.def.ncdf("error_log",NULL, list(dim64bytes, dimError), missval="", prec="char")
+    scan_acquisition_time <- var.def.ncdf("scan_acquisition_time", NULL, dimScans, -1, prec="double")
+    total_intensity       <- var.def.ncdf("total_intensity", "Arbitrary Intensity Units", dimScans, -1, prec="double")
 
+    mass_range_min       <- var.def.ncdf("mass_range_min", NULL, dimScans, NULL, prec="double")
+    mass_range_max       <- var.def.ncdf("mass_range_max", NULL, dimScans, NULL, prec="double")
+    time_range_min       <- var.def.ncdf("time_range_min", NULL, dimScans, NULL, prec="double")
+    time_range_max       <- var.def.ncdf("time_range_max", NULL, dimScans, NULL, prec="double")
+    
+    scan_index            <- var.def.ncdf("scan_index", NULL, dimScans, missval=-1, prec="integer")
+    actual_scan_number    <- var.def.ncdf("actual_scan_number", NULL, dimScans, missval=-1, prec="integer")
+    mass_values           <- var.def.ncdf("mass_values", "M/Z", dimPoints, -1)
+    intensity_values      <- var.def.ncdf("intensity_values", "Arbitrary Intensity Units", dimPoints, -1)
+
+
+    point_count           <- var.def.ncdf("point_count", NULL, dimScans, missval=-1, prec="integer")
+    flag_count            <- var.def.ncdf("flag_count", NULL, dimScans, missval=-1, prec="integer")
+
+    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
+    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
+    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
+    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
+    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
+    
+    instrument_name              <- var.def.ncdf("instrument_name",NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_id                <- var.def.ncdf("instrument_id", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_mfr               <- var.def.ncdf("instrument_mfr", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_model             <- var.def.ncdf("instrument_model", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_serial_no         <- var.def.ncdf("instrument_serial_no", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_sw_version        <- var.def.ncdf("instrument_sw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_fw_version        <- var.def.ncdf("instrument_fw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_os_version        <- var.def.ncdf("instrument_os_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_app_version       <- var.def.ncdf("instrument_app_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_comments          <- var.def.ncdf("instrument_comments", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
 
     ## Define netCDF definitions
 
-    ms <- create.ncdf(filename, list(scan_acquisition_time,
-                                     scan_index, total_intensity,
-                                     mass_values, intensity_values))
+    ms <- create.ncdf(filename, list(error_log,
+                                     scan_acquisition_time,
+                                     actual_scan_number, 
+                                     total_intensity,
+                                     mass_range_min,mass_range_max,time_range_min,time_range_max,
+                                     scan_index, point_count, flag_count,
+                                     mass_values, intensity_values,
+                                     instrument_name, instrument_id,instrument_mfr,instrument_model,
+                                     instrument_serial_no,instrument_sw_version,instrument_fw_version,
+                                     instrument_os_version,instrument_app_version,instrument_comments
+                                     ))
 
     ## Add values to netCDF vars
     put.var.ncdf(ms, "scan_acquisition_time", object@scantime)
     put.var.ncdf(ms, "total_intensity", object@tic)
     put.var.ncdf(ms, "scan_index", object@scanindex)
-    put.var.ncdf(ms, "mass_values", object@env$mz)
-    put.var.ncdf(ms, "intensity_values", object@env$intensity)
+    put.var.ncdf(ms, "actual_scan_number", object@scanindex)
 
+    put.var.ncdf(ms, "mass_values", object@env$mz)
+    att.put.ncdf(ms, "mass_values", "scale_factor", 1, prec="float")
+
+    put.var.ncdf(ms, "intensity_values", object@env$intensity)
+    att.put.ncdf(ms, "intensity_values", "add_offset", 1, prec="float")
+    att.put.ncdf(ms, "intensity_values", "scale_factor", 1, prec="float")
+    
+    ## Add ANDIMS global attributes to netCDF object
+    att.put.ncdf(ms, 0, "dataset_completeness", "C1+C2")
+    att.put.ncdf(ms, 0, "ms_template_revision", "1.0.1")
+    att.put.ncdf(ms, 0, "netcdf_revision", "2.3.2")
+    att.put.ncdf(ms, 0, "languages", "English")
+
+    ##     	:dataset_owner = "Alan Saghatelian" ;
+    ##     	:netcdf_file_date_time_stamp = "2004,06,01,10:32:58+0800" ;
+    ##     	:experiment_title = "Results" ;
+    ##     	:experiment_date_time_stamp = "2003,08,16,18:30:14+0800" ;
+    ##     	:operator_name = "Alan Saghatelian" ;
+    ##     	:experiment_type = "Centroided Mass Spectrum" ;
+    ##     	:sample_state = "Other State" ;
+    ##     	:test_separation_type = "Other Chromatography" ;
+    ##     	:test_ms_inlet = "Electrospray Inlet" ;
+    ##     	:test_ionization_mode = "Electrospray Ionization" ;
+    ##     	:test_ionization_polarity = "Positive Polarity" ;
+    ##     	:test_detector_type = "Conversion Dynode Electron Multiplier" ;
+    ##     	:test_resolution_type = "Constant Resolution" ;
+    ##     	:test_resolution_method = "50% peak height" ;
+    ##     	:test_scan_function = "Mass Scan" ;
+    ##     	:test_scan_direction = "Down" ;
+    ##     	:test_scan_law = "Linear" ;
+    ##     	:mass_calibration_file = "atunes.tun" ;
+    ##     	:test_comments = "" ;
+        
+    att.put.ncdf(ms, 0, "raw_data_mass_format", "Float")
+    att.put.ncdf(ms, 0, "raw_data_time_format", "Short")
+    att.put.ncdf(ms, 0, "raw_data_intensity_format", "Float")
+    att.put.ncdf(ms, 0, "units", "Seconds")
+    att.put.ncdf(ms, 0, "starting_scan_number", "0")
+    att.put.ncdf(ms, 0, "global_mass_min", as.character((min(object@env$mz))))
+    att.put.ncdf(ms, 0, "global_mass_max", as.character((max(object@env$mz))))
+    att.put.ncdf(ms, 0, "global_intensity_min", as.character((min(object@env$intensity))))
+    att.put.ncdf(ms, 0, "global_intensity_max", as.character((max(object@env$intensity))))
+    att.put.ncdf(ms, 0, "calibrated_mass_min", "1.")
+    att.put.ncdf(ms, 0, "calibrated_mass_max", "1.")
+    att.put.ncdf(ms, 0, "actual_run_time_length", "1.")
+    att.put.ncdf(ms, 0, "actual_delay_time", "1.")
+    att.put.ncdf(ms, 0, "raw_data_uniform_sampling_flag", "0s")
 
     close.ncdf(ms)
 
