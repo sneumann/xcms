@@ -1,9 +1,28 @@
+CHANGES IN VERSION 1.33.11
+--------------------------
+
+USER VISIBLE CHANGES
+  
+    o placeholder
+
+NEW FEATURES
+
+    o placeholder
+
+BUG FIXES
+
+    o placeholder
+
+
+For more details and all changes before May 2012 please see the (now discontinued) CHANGELOG in the source package (inst/ folder).
+
 CHANGED BEHAVIOUR since Version 1.32:
 
 Other Changes since Version 1.32:
 
 * improved mzData writing, now includes MSn spectra and less verbose.
 * improved netCDF writing, but not yet good enough for AMDIS
+
 
 CHANGED BEHAVIOUR since Version 1.14:
 
@@ -44,4 +63,4 @@ Other Changes since Version 1.14:
   if the file includes both polarities. xcmsSet() can pass 
   the polarity to contain positive/negative peaks only. 
 
-For more details please see the CHANGELOG in the source package.
+
