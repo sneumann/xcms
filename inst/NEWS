@@ -11,7 +11,8 @@ NEW FEATURES
 
 BUG FIXES
 
-    o placeholder
+    o group.mzClust was failing when result had one peak
+
 
 
 For more details and all changes before May 2012 please see the (now discontinued) CHANGELOG in the source package (inst/ folder).
