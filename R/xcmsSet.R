@@ -685,8 +685,8 @@ setMethod("group.mzClust", "xcmsSet", function(object,
 
     rt <- c(rep(-1,nrow(groups$mat)))
 
-    groups(object) <- cbind(groups$mat[,c(1:3)],rt,rt,rt,groups$mat[,4:ncol(groups$mat)])
-    colnames(groups(object)) <- c(colnames(groups$mat[,1:3]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,4:ncol(groups$mat)]))
+    groups(object) <- cbind(groups$mat[,(1:3),drop=FALSE],rt,rt,rt,groups$mat[,(4:ncol(groups$mat)),drop=FALSE])
+    colnames(groups(object)) <- c(colnames(groups$mat[,(1:3),drop=FALSE]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,(4:ncol(groups$mat)),drop=FALSE]))
     groupidx(object) <- groups$idx
 
     object
