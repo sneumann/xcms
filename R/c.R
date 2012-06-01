@@ -461,6 +461,18 @@ continuousPtsAboveThreshold <- function(y, threshold, num, istart = 1) {
               DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
 }
 
+continuousPtsAboveThresholdIdx <- function(y, threshold, num, istart = 1) {
+    if (!is.double(y)) y <- as.double(y)
+    as.logical(.C("continuousPtsAboveThresholdIdx",
+              y,
+              as.integer(istart-1),
+              length(y),
+              threshold = as.double(threshold),
+              num = as.integer(num),
+              n = integer(length(y)),
+              DUP = FALSE, PACKAGE = "xcms")$n)
+}
+
 findEqualGreaterUnsorted <- function(x, value) {
 
     if (!is.double(x)) x <- as.double(x)

@@ -947,19 +947,14 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
         noised <- rawEIC(object,mzrange=mzrange,scanrange=scanrange)$intensity else
             noised <- d;
       ## 90% trimmed mean as first baseline guess
-      noise <- estimateChromNoise(noised,c(0.05,0.95),minPts=3*minPeakWidth)
-
+      noise <- estimateChromNoise(noised, trim=0.05, minPts=3*minPeakWidth)
+  
       ## any continuous data above 1st baseline ?
       if (!continuousPtsAboveThreshold(fd,threshold=noise,num=minPtsAboveBaseLine)) 
         next;
-  
+
       ## 2nd baseline estimate using not-peak-range
-#       if (noise.local)  ## experimental
-#         lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime)  else  
-#           lnoise <- c(noise, sd(noised))
-
-      lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime)
-
+      lnoise <- getLocalNoiseEstimate(d,td,ftd,noiserange,Nscantime, threshold=noise,num=minPtsAboveBaseLine)
 
       ## Final baseline & Noise estimate
       baseline <- max(1,min(lnoise[1],noise))
