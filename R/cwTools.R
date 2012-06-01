@@ -683,26 +683,23 @@ trimm <- function(x, trim=c(0.05,0.95)) {
     a[quant]
 }
 
-estimateChromNoise <- function(x, trim=c(0.05,0.95),minPts=20) {
-    gz <- which(x>0)
+estimateChromNoise <- function(x, trim=0.05, minPts=20) {
+    gz <- which(x > 0)
     if (length(gz) < minPts) 
-        return(mean(x)) else 
-            a <- sort(x[gz])
-    
-    Na <- length(a)
-    quant <- round((Na*trim[1])+1):round(Na*trim[2])
-    a[quant]
-    mean(a[quant])
+        return(mean(x))
+        
+    mean(x[gz], trim=trim)
 }
 
-
-getLocalNoiseEstimate <- function(d,td,ftd,noiserange,Nscantime) {
+getLocalNoiseEstimate <- function(d, td, ftd, noiserange, Nscantime, threshold, num) {
     
     if (length(d) < Nscantime) {
         
         ## noiserange[2] is full d-range
         drange <- which(td %in% ftd)
-        n1 <- d[-drange]
+        n1 <- d[-drange] ## region outside the detected ROI (wide)
+        n1.cp <- continuousPtsAboveThresholdIdx(n1, threshold=threshold,num=num) ## continousPtsAboveThreshold (probably peak) are subtracted from data for local noise estimation
+        n1 <- n1[!n1.cp]
         if (length(n1) > 1)  { 
             baseline1 <- mean(n1) 
             sdnoise1 <- sd(n1) 
@@ -713,11 +710,12 @@ getLocalNoiseEstimate <- function(d,td,ftd,noiserange,Nscantime) {
         d1 <- drange[1] 
         d2 <- drange[length(drange)]
         nrange2 <- c(max(1,d1 - noiserange[1]) : d1, d2 : min(length(d),d2 + noiserange[1]))
-        n2 <- d[nrange2]    
-         
+        n2 <- d[nrange2] ## region outside the detected ROI (narrow)
+        n2.cp <- continuousPtsAboveThresholdIdx(n2, threshold=threshold,num=num) ## continousPtsAboveThreshold (probably peak) are subtracted from data for local noise estimation
+        n2 <- n2[!n2.cp]
         if (length(n2) > 1)  { 
-        baseline2 <- mean(n2) 
-        sdnoise2 <- sd(n2) 
+            baseline2 <- mean(n2) 
+            sdnoise2 <- sd(n2) 
         } else 
             baseline2 <- sdnoise2 <- 1
      
@@ -729,4 +727,3 @@ getLocalNoiseEstimate <- function(d,td,ftd,noiserange,Nscantime) {
  
     c(min(baseline1,baseline2),min(sdnoise1,sdnoise2))
 }
-
