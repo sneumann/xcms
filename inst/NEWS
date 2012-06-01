@@ -3,7 +3,7 @@ CHANGES IN VERSION 1.33.11
 
 USER VISIBLE CHANGES
   
-    o placeholder
+    o centWave uses a new method to estimate local noise which improves detection of closely spaced peaks
 
 NEW FEATURES
 
