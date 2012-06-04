@@ -259,6 +259,34 @@ void continuousPtsAboveThreshold(double *x, int *istart, int *numin, double *thr
     
 }
 
+void continuousPtsAboveThresholdIdx(double *x, int *istart, int *numin, double *threshold, int *num, int *n) {
+    
+    int i;
+    int j;
+    int cnt = 0;
+    int stidx = 0;
+    int enidx = 0;
+    
+    for (i = *istart; i < *numin; i++) {
+        
+       if (x[i] > *threshold) {
+           cnt++;
+           if (cnt == 1) stidx=i;
+               else enidx=i;
+       }  else cnt = 0;
+
+       if ((cnt==0 || i == *numin - 1) && (enidx - stidx + 1) >= *num) {
+            for (j = stidx; j<= enidx; j++) {
+                n[j] = 1;
+            }
+            stidx = 0;
+            enidx = 0;
+       }    
+    }
+    
+}
+
+
 void FindEqualGreaterUnsorted(const double *in, const int *size, const double *target, 
                       int *index) {
    int i;    
