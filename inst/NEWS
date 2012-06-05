@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.33.12
+--------------------------
+
+BUG FIXES
+  
+    o write.mzData adds Polarity to the file if available
+
 CHANGES IN VERSION 1.33.11
 --------------------------
 

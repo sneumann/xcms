@@ -39,3 +39,19 @@ test.writeMSn.mzdata <- function() {
     checkTrue(all(xraw@env$intensity == xrawCopy@env$intensity))
     checkTrue(all(xraw@env$msnIntensity == xrawCopy@env$msnIntensity))
 }
+
+test.writePolarity.mzdata <- function() {
+    file <- system.file('microtofq/MM14.mzdata', package = "msdata")
+    xraw <- xcmsRaw(file)
+
+    oldpolarity <- xraw@polarity
+    
+    mzdataFile <- paste(tempdir(), "MM14.mzdata", sep="/")
+    
+    write.mzdata(xraw, mzdataFile)
+    
+    xrawCopy <- xcmsRaw(mzdataFile)
+
+    checkTrue(all(xraw@polarity == xrawCopy@polarity))
+}
+
