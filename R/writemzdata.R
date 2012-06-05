@@ -48,6 +48,7 @@ buildMzdata <- function(xr) {
 
   mslevel <- 1; # Write MS1 first
   offset <- 0;
+  polarities <- c("Negative", "Positive", "Unknown")
   
   if (length(xr@scanindex) > 0) {
   for (id in 1:length(xr@scanindex)) {
@@ -69,6 +70,14 @@ buildMzdata <- function(xr) {
                    attrs=c(
                      cvLabel="PSI", accession="PSI:1000039",
                      name="TimeInSeconds", value=xr@scantime[id]))
+
+    if (!is.null(xr@polarity) & !is.na(xr@polarity[id])) {
+      mzdata$addNode("cvParam",
+                     attrs=c(
+                       cvLabel="PSI", accession="PSI:1000037",
+                       name="Polarity", value=polarities[xr@polarity[id]]))
+    }
+    
     mzdata$closeTag() ## </spectrumInstrument>
     mzdata$closeTag() ## </spectrumSettings>
 
