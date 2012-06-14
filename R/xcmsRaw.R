@@ -148,10 +148,9 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     scan_no <- length(object@scanindex)
     point_no <- length(object@env$mz)
 
-
     dim32bytes <- dim.def.ncdf("_32_byte_string", "", 1:32, create_dimvar=FALSE)
     dim64bytes <- dim.def.ncdf("_64_byte_string", "", 1:64, create_dimvar=FALSE)
-    dimError   <- dim.def.ncdf("error_num",       "", 1:1, create_dimvar=FALSE)
+    dimError   <- dim.def.ncdf("error_number",       "", 1:1, create_dimvar=FALSE)
     dimScans   <- dim.def.ncdf("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
     dimPoints  <- dim.def.ncdf("point_number",    "", 1:point_no, create_dimvar=FALSE)
     dimInstruments<-dim.def.ncdf("instrument_number","",1:1, create_dimvar=FALSE)
@@ -171,26 +170,19 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     mass_values           <- var.def.ncdf("mass_values", "M/Z", dimPoints, -1)
     intensity_values      <- var.def.ncdf("intensity_values", "Arbitrary Intensity Units", dimPoints, -1)
 
-
     point_count           <- var.def.ncdf("point_count", NULL, dimScans, missval=-1, prec="integer")
     flag_count            <- var.def.ncdf("flag_count", NULL, dimScans, missval=-1, prec="integer")
-
-    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
-    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
-    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
-    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
-    ## <- var.def.ncdf("", NULL, dimScans, missval=NULL, prec="integer")
     
-    instrument_name              <- var.def.ncdf("instrument_name",NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_id                <- var.def.ncdf("instrument_id", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_mfr               <- var.def.ncdf("instrument_mfr", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_model             <- var.def.ncdf("instrument_model", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_serial_no         <- var.def.ncdf("instrument_serial_no", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_sw_version        <- var.def.ncdf("instrument_sw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_fw_version        <- var.def.ncdf("instrument_fw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_os_version        <- var.def.ncdf("instrument_os_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_app_version       <- var.def.ncdf("instrument_app_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
-    instrument_comments          <- var.def.ncdf("instrument_comments", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_name       <- var.def.ncdf("instrument_name",NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_id         <- var.def.ncdf("instrument_id", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_mfr        <- var.def.ncdf("instrument_mfr", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_model      <- var.def.ncdf("instrument_model", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_serial_no  <- var.def.ncdf("instrument_serial_no", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_sw_version <- var.def.ncdf("instrument_sw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_fw_version <- var.def.ncdf("instrument_fw_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_os_version <- var.def.ncdf("instrument_os_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_app_version<- var.def.ncdf("instrument_app_version", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
+    instrument_comments   <- var.def.ncdf("instrument_comments", NULL, list(dim32bytes, dimInstruments), missval="", prec="char")
 
     ## Define netCDF definitions
 
@@ -212,6 +204,19 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     put.var.ncdf(ms, "scan_index", object@scanindex)
     put.var.ncdf(ms, "actual_scan_number", object@scanindex)
 
+    put.var.ncdf(ms, "time_range_min", rep(-9999, times=scan_no))
+    put.var.ncdf(ms, "time_range_max", rep(-9999, times=scan_no))
+
+    put.var.ncdf(ms, "point_count", c(object@scanindex[2:scan_no], point_no)
+                                      - object@scanindex[1:scan_no])
+    put.var.ncdf(ms, "flag_count", rep(0, times=scan_no))
+
+    mzranges <- t(sapply(1:scan_no,
+                         function(scan) range(getScan(object, scan)[,"mz"])))
+    
+    put.var.ncdf(ms, "mass_range_min", mzranges[,1])
+    put.var.ncdf(ms, "mass_range_max", mzranges[,2])
+    
     put.var.ncdf(ms, "mass_values", object@env$mz)
     att.put.ncdf(ms, "mass_values", "scale_factor", 1, prec="float")
 
@@ -223,28 +228,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     att.put.ncdf(ms, 0, "dataset_completeness", "C1+C2")
     att.put.ncdf(ms, 0, "ms_template_revision", "1.0.1")
     att.put.ncdf(ms, 0, "netcdf_revision", "2.3.2")
-    att.put.ncdf(ms, 0, "languages", "English")
-
-    ##     	:dataset_owner = "Alan Saghatelian" ;
-    ##     	:netcdf_file_date_time_stamp = "2004,06,01,10:32:58+0800" ;
-    ##     	:experiment_title = "Results" ;
-    ##     	:experiment_date_time_stamp = "2003,08,16,18:30:14+0800" ;
-    ##     	:operator_name = "Alan Saghatelian" ;
-    ##     	:experiment_type = "Centroided Mass Spectrum" ;
-    ##     	:sample_state = "Other State" ;
-    ##     	:test_separation_type = "Other Chromatography" ;
-    ##     	:test_ms_inlet = "Electrospray Inlet" ;
-    ##     	:test_ionization_mode = "Electrospray Ionization" ;
-    ##     	:test_ionization_polarity = "Positive Polarity" ;
-    ##     	:test_detector_type = "Conversion Dynode Electron Multiplier" ;
-    ##     	:test_resolution_type = "Constant Resolution" ;
-    ##     	:test_resolution_method = "50% peak height" ;
-    ##     	:test_scan_function = "Mass Scan" ;
-    ##     	:test_scan_direction = "Down" ;
-    ##     	:test_scan_law = "Linear" ;
-    ##     	:mass_calibration_file = "atunes.tun" ;
-    ##     	:test_comments = "" ;
-        
+    att.put.ncdf(ms, 0, "languages", "English")    
     att.put.ncdf(ms, 0, "raw_data_mass_format", "Float")
     att.put.ncdf(ms, 0, "raw_data_time_format", "Short")
     att.put.ncdf(ms, 0, "raw_data_intensity_format", "Float")
@@ -254,14 +238,13 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     att.put.ncdf(ms, 0, "global_mass_max", as.character((max(object@env$mz))))
     att.put.ncdf(ms, 0, "global_intensity_min", as.character((min(object@env$intensity))))
     att.put.ncdf(ms, 0, "global_intensity_max", as.character((max(object@env$intensity))))
-    att.put.ncdf(ms, 0, "calibrated_mass_min", "1.")
-    att.put.ncdf(ms, 0, "calibrated_mass_max", "1.")
-    att.put.ncdf(ms, 0, "actual_run_time_length", "1.")
+    att.put.ncdf(ms, 0, "calibrated_mass_min", as.character((min(object@env$intensity))))
+    att.put.ncdf(ms, 0, "calibrated_mass_max", as.character((max(object@env$intensity))))
+    att.put.ncdf(ms, 0, "actual_run_time_length", object@scantime[scan_no]-object@scantime[1])
     att.put.ncdf(ms, 0, "actual_delay_time", "1.")
     att.put.ncdf(ms, 0, "raw_data_uniform_sampling_flag", "0s")
 
     close.ncdf(ms)
-
 })
 
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
