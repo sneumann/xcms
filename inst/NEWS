@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.33.13
+--------------------------
+
+BUG FIXES
+  
+    o write.cdf() has been fixed to write files AMDIS can read
+
 CHANGES IN VERSION 1.33.12
 --------------------------
 
