@@ -63,12 +63,23 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         ## defined only for mzData and mzXML
         object@acquisitionNum <- rawdata$acquisitionNum
     }
+
     if (!is.null(rawdata$polarity)) {
         object@polarity <- factor(rawdata$polarity,
                                   levels=c(0,1,-1),
                                   labels=c("negative", "positive", "unknown"));
     }
-
+    
+    if (!is.null(scanrange)) {
+      ## Scanrange filtering
+      keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+      object <- split(object, f=keepidx)[["TRUE"]]
+    }
+        
+    ##
+    ## After the MS1 data, take care of MSn
+    ##
+    
     if(exists("rawdataMSn") && !is.null(rawdataMSn) ) {
         object@env$msnMz <- rawdataMSn$mz
         object@env$msnIntensity <- rawdataMSn$intensity
