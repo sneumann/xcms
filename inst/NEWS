@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.33.14
+--------------------------
+
+BUG FIXES
+  
+    o scanrage is now honoured in xcmsRaw, and consequently 
+      also in xcmsSet(matchedFilter), where previously 
+      it was ignored.
+
 CHANGES IN VERSION 1.33.13
 --------------------------
 
