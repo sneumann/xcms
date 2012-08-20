@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.33.15
+--------------------------
+
+BUG FIXES
+  
+    o scanrage is now honoured in xcmsSet, also when in parallel mode
+
 CHANGES IN VERSION 1.33.14
 --------------------------
 
