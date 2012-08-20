@@ -260,7 +260,8 @@ findPeaksPar <- function(arg) {
         stop("unknown method : ", method)
     method <- paste("findPeaks", method, sep=".")    
     
-    xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0, includeMSn=params$includeMSn)
+    xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0,
+                    includeMSn=params$includeMSn, scanrange=params$scanrange)
 	if(params$lockMassFreq == TRUE){
 		xRaw<-stitch(xRaw, AutoLockMass(xRaw))
 	}

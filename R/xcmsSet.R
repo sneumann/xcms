@@ -130,8 +130,9 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         params$profmethod <- profmethod;
         params$profparam <- profparam;
         params$includeMSn <- includeMSn;
+        params$scanrange <- scanrange;
         params$mslevel <- mslevel;
-		params$lockMassFreq <- lockMassFreq;
+        params$lockMassFreq <- lockMassFreq;
         
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
