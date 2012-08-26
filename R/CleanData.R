@@ -1,4 +1,4 @@
-setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
+	setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 
 setMethod("AutoLockMass", "xcmsRaw", function(object) {
 	if(length(grep("xml|mzData|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
@@ -30,36 +30,52 @@ setMethod("AutoLockMass", "xcmsRaw", function(object) {
 		return(makeacqNum(object, freqLock, start))
 		
 	} else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
-		hr <- hist(diff(object@scantime), breaks=4, plot=FALSE)
-		if(length(hr$counts) > 2){
-			idx<-which(hr$counts == 0)
-			inx<-which(diff(object@scantime) >= hr$mids[(max(idx))])
-		}else if(length(hr$counts) == 2){
-			inx<-which(diff(object@scantime) >= hr$mids[2])
+		## check to see if we have the X02.CDF files around 
+		## These files should be the lock mass channel
+		file02<-list.files(gsub("01.CDF", "02.CDF", object@filepath), recursive=T)
+		if(length(file02)> 0){
+			xr<-xcmsRaw(file02)
+			lockMass<-sapply(xr@scantime, function(x, object){
+				which.min(abs(object@scantime - x))
+			}, object)
+			return(lockMass)
 		} else {
-			stop("File appears to have been run without lock mass\n ")
-		}
-		if(length(inx) <= 1){
-			warning("\nLock mass frequency wasn't detected", immediate.=TRUE)
-			return(0)
-		} 
-		## above we're looking for scantimes that are much longer than the normal scan times
+			## we couldn't find the files so lets try to find them automatically		
+			hr <- hist(diff(object@scantime), breaks=4, plot=FALSE)
+			if(length(hr$counts) > 2){
+				idx<-which(hr$counts == 0)
+				## could have something here about which way the plot is ie cor R is - or +
+				# if(cor(hr$mids, hr$counts) < 0){
+				inx<-which(diff(object@scantime) >= hr$mids[(max(idx))])
+				# } else {
+				# 	inx<-which()
+				# }
+			}else if(length(hr$counts) == 2){
+				inx<-which(diff(object@scantime) >= hr$mids[2])
+			} else {
+				stop("File appears to have been run without lock mass\n ")
+			}
+			if(length(inx) <= 1){
+				warning("\nLock mass frequency wasn't detected", immediate.=TRUE)
+				return(0)
+			} 
+			## above we're looking for scantimes that are much longer than the normal scan times
+			tempFreq<-diff(inx)-1
+			if(all(tempFreq == median(tempFreq)) ){
+				freqLock<-median(tempFreq)
+			}else{
+				freqLock<-median(tempFreq)
+				warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
+			}
 		
-		tempFreq<-diff(inx)-1
-		if(all(tempFreq == median(tempFreq)) ){
-			freqLock<-median(tempFreq)
-		}else{
-			freqLock<-median(tempFreq)
-			warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
+			if(inx[1] == 0 || inx[1] == 1){
+				start<-1
+			}else{
+				start<-freqLock
+			}
+			#return(inx)
+			return(makeacqNum(object, freqLock, start))
 		}
-		
-		if(inx[1] == 0 || inx[1] == 1){
-			start<-1
-		}else{
-			start<-freqLock
-		}
-		#return(inx)
-		return(makeacqNum(object, freqLock, start))
 	} else{
 		stop("Couldn't detect file type\n")
 	}
@@ -86,7 +102,12 @@ setMethod("stitch", "xcmsRaw", function(object, lockMass) {
 	if(length(grep("xml|mzData", object@filepath, ignore.case=TRUE)) >= 1){
 		type<-stitch.xml
 	} else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
-		type<-stitch.netCDF
+		## lets check to see if lockMass is one scan or two
+		if(any(diff(lockMass) == 0)){
+			type<-stitch.netCDF.new
+		}else {
+			type<-stitch.netCDF
+		}
 	} else{
 		stop("Unknown stitch method \n")
 	}
@@ -165,6 +186,7 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
 	NAidx<-is.na(arr[1,,])
 	ob@env$mz<-as.numeric(arr[1,,][!NAidx])
 	ob@env$intensity<-as.numeric(arr[2,,][!NAidx])
+	ob<-remakeTIC(ob) ## remake TIC
 
 	return(ob)
 })
@@ -234,7 +256,64 @@ setMethod("stitch.netCDF", "xcmsRaw", function(object, lockMass) {
 	ob@scantime <- sapply(1:length(ob@scanindex), function(x, time){ 
 		time*x
 	}, mean(diff(object@scantime)))
-	ob<-remakeTIC(object) ## remake TIC
+	ob<-remakeTIC(ob) ## remake TIC
+
+	return(ob)
+})
+
+setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
+
+setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
+	if(length(lockMass) == 0 | all(lockMass == 0)){
+		return(object)
+	}
+	
+	ob<-new("xcmsRaw")
+
+	ob@filepath<-object@filepath
+	ob@mzrange<-range(ob@env$mz)
+	ob@profmethod<-object@profmethod
+	ob@profparam<-list()
+
+	arr<-array(dim=c(2,max(diff(object@scanindex)), (length(object@scanindex)+length(lockMass)) ))
+	ob@scanindex <- integer(length=length(arr[1,1,]))
+	ob@acquisitionNum<-1:length(ob@scanindex)
+	
+	if(lockMass[1] == 1){
+		lockMass<-lockMass[2:length(lockMass)]
+	}
+	# lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+	
+	add<-0
+	arrMax<-length(arr[1,,1])
+	scanIx<-integer(length(arr[1,1,]))
+	for(i in 1:length(object@scanindex)){
+		scan<-getScan(object, i)
+		arr[1,,i+add]<- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+		arr[2,,i+add]<- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+		scanIx[(i+add)+1]<- (scanIx[(i+add)])+nrow(scan)
+		
+		if(any(i == lockMass)){
+			arr[1,,i+1+add]  <- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+			arr[2,,i+1+add]  <- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+			scanIx[(i+add)+2]<- (scanIx[1+i+add])+nrow(scan)
+			
+			add<-add+1
+			## for the moment lets be dirty and add the scan before
+			## upgrade later to 1/2 and 1/2 from each scan
+		}
+	}
+
+	NAidx<-is.na(arr[1,,])
+	ob@env$mz<-as.numeric(arr[1,,][!NAidx])
+	ob@env$intensity<-as.numeric(arr[2,,][!NAidx])
+	## above is to remove any NA buffers from the array
+
+	ob@scanindex<-as.integer(scanIx)
+	ob@scantime <- sapply(1:length(ob@scanindex), function(x, time){ 
+		time*x
+	}, mean(diff(object@scantime))) ## remake the scantime vector
+	ob<-remakeTIC(ob) ## remake TIC
 
 	return(ob)
 })

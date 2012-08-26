@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.33.16
+--------------------------
+
+UPDATED FEATURES:
+Lock mass gap filler now works with netCDF lock mass function file to find the exact times of the scans and works with 
+the newer Waters MS instruments.
+
 CHANGES IN VERSION 1.33.15
 --------------------------
 
@@ -42,7 +49,6 @@ NEW FEATURES
 BUG FIXES
 
     o group.mzClust was failing when result had one peak
-
 
 
 For more details and all changes before May 2012 please see the (now discontinued) CHANGELOG in the source package (inst/ folder).
