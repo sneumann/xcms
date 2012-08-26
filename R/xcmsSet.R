@@ -31,6 +31,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
 
+	if(lockMassFreq==TRUE){
+		## remove the 02 files if there here
+		files<-files[-grep("02.CDF", files)]
+	}
+
     filepaths(object) <- files
 
     if (length(files) == 0)
@@ -2013,8 +2018,8 @@ pval <- function(X, classlabel, teststat) {
 
     n1 <- rowSums(!is.na(X[,classlabel == 0]))
     n2 <- rowSums(!is.na(X[,classlabel == 1]))
-    A <- sd(t(X[,classlabel == 0]), na.rm = TRUE)^2/n1
-    B <- sd(t(X[,classlabel == 1]), na.rm = TRUE)^2/n2
+    A <- apply(X[,classlabel == 0], 1, sd, na.rm=TRUE)^2/n1 # sd(t(X[,classlabel == 0]), na.rm = TRUE)^2/n1
+    B <- apply(X[,classlabel == 1], 1, sd, na.rm=TRUE)^2/n2 # sd(t(X[,classlabel == 1]), na.rm = TRUE)^2/n2
     df <- (A+B)^2/(A^2/(n1-1)+B^2/(n2-1))
 
     pvalue <- 2 * (1 - pt(abs(teststat), df))
