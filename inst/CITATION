@@ -25,13 +25,13 @@ citEntry(entry="article",
 
 citEntry(entry="article",  
   author="H. Paul Benton, Elizabeth J. Want and Timothy M. D. Ebbels,
-  title="Correction of mass calibration gaps in liquid chromatography–mass spectrometry metabolomics data",
+  title="Correction of mass calibration gaps in liquid chromatography-mass spectrometry metabolomics data",
   journal="BIOINFORMATICS",
   year="2010",
   volume="26",
   pages="2488",
   textVersion = paste("H. Paul Benton, Elizabeth J. Want and Timothy M. D. Ebbels",
-  "Correction of mass calibration gaps in liquid chromatography–mass spectrometry metabolomics data", 
+  "Correction of mass calibration gaps in liquid chromatography-mass spectrometry metabolomics data", 
   "Bioinformatics, 26:2488 (2010)"))
 
 citFooter(paste("Some functions (e.g. group.mzClust, findPeaks.MSW() or retcor.obiwarp() use 3rd",
