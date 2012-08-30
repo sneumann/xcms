@@ -24,7 +24,7 @@ citEntry(entry="article",
    "BMC Bioinformatics, 9:504 (2008)"))
 
 citEntry(entry="article",  
-  author="H. Paul Benton, Elizabeth J. Want and Timothy M. D. Ebbels,
+  author="H. Paul Benton, Elizabeth J. Want and Timothy M. D. Ebbels",
   title="Correction of mass calibration gaps in liquid chromatography-mass spectrometry metabolomics data",
   journal="BIOINFORMATICS",
   year="2010",
