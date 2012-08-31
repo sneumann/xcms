@@ -51,7 +51,7 @@ setMethod("rtrange", "xcmsEIC", function(object) {
 
 plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x),
                          rtrange = x@rtrange, col = rep(1, length(sampleidx)), legtext = NULL,
-                         peakint = TRUE, sleep = 0, ...) {
+                         peakint = TRUE, sleep = 0, mzdec=2, ...) {
 
     object <- x
 
@@ -119,8 +119,8 @@ plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x
         }
         plot(0, 0, type = "n", xlim = rtrange[i,], ylim = c(0, max(maxint)),
              xlab = "Retention Time (seconds)", ylab = "Intensity",
-             main = paste("Extracted Ion Chromatogram:", round(object@mzrange[i,1], 2),
-                          "-", round(object@mzrange[i,2], 2), "m/z"))
+             main = paste("Extracted Ion Chromatogram:", round(object@mzrange[i,1], mzdec),
+                          "-", round(object@mzrange[i,2], mzdec), "m/z"))
         for (j in sampidx[order(maxint, decreasing = TRUE)]) {
             pts <- object@eic[[j]][[i]]
             if (missing(y) || !peakint)

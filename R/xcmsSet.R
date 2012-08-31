@@ -1820,7 +1820,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
                                             value = c("into","maxo","intb"), metlin = FALSE, 
-											h = 480, w = 640, ...) {
+											h = 480, w = 640, mzdec=2, ...) {
 
   if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
     stop("No group information. Use group().")
@@ -1927,7 +1927,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                         height = h/72, onefile = FALSE)
                 }
             }
-            plot(eics, object, rtrange = eicwidth)
+            plot(eics, object, rtrange = eicwidth, mzdec=mzdec)
 
             if (length(filebase))
                 dev.off()
