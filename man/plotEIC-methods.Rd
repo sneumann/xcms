@@ -10,7 +10,8 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    plotEIC(object, mzrange = numeric(), rtrange = numeric(), scanrange = numeric())
+    plotEIC(object, mzrange = numeric(), rtrange = numeric(), 
+    scanrange = numeric(), mzdec=2)  
   }
 }
 }}
@@ -24,6 +25,9 @@
   }  
   \item{scanrange}{
     scan range for EIC
+  }
+  \item{mzdec}{
+    Number of decimal places of title m/z values in the eic plot.
   }
 }
 \value{
