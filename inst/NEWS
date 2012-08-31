@@ -1,6 +1,14 @@
 CHANGES IN VERSION 1.33.16
 --------------------------
 
+USER VISIBLE CHANGES
+
+    o diffreport and plotEIC have a new parameter mzdec, with is the number of decimal places
+      of the m/z values in the EIC plot title
+
+CHANGES IN VERSION 1.33.16
+--------------------------
+
 UPDATED FEATURES:
 Lock mass gap filler now works with netCDF lock mass function file to find the exact times of the scans and works with 
 the newer Waters MS instruments.

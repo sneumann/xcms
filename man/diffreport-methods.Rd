@@ -16,7 +16,7 @@
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2), 
                    value=c("into","maxo","intb"), metlin = FALSE, 
-				   h=480,w=640, ...)}
+				   h=480,w=640, mzdec=2, ...)}
 }
 }}
 \arguments{
@@ -65,6 +65,9 @@
   }
   \item{w}{
     Numeric variable for the width of the eic and boxplots print out made.
+  }
+  \item{mzdec}{
+    Number of decimal places of title m/z values in the eic plot.
   }
   \item{...}{
     optional arguments to be passed to \code{\link[multtest]{mt.teststat}} 
