@@ -31,9 +31,9 @@
 		xr
 		##Lets assume that the lockmass starts at 1 and is every 100 scans
 		lockMass<-xcms:::makeacqNum(xr, freq=100, start=1)
-		## these are equcal
+		## these are equalvent 
 		lockmass2<-AutoLockMass(xr)
-		all((lockmass == lockmass) == TRUE)
+		all((lockmass == lockmass2) == TRUE)
 		
 		ob<-stitch(xr, lockMass)
 	}

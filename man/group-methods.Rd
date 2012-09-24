@@ -45,6 +45,7 @@
 \seealso{
   \code{\link{group.density}}
   \code{\link{group.mzClust}}
+  \code{\link{group.nearest}}
   \code{\link{xcmsSet-class}},
 }
 \keyword{methods}

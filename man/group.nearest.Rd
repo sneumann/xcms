@@ -73,7 +73,7 @@
 		gxset.post@groupidx<-gxset@groupidx[idx]
 		gxset.post@groups<-gxset@groups[idx,]
 		
-		nrow(gxset@groups) == 465 ## this is the number of features after minFrac
+		nrow(gxset.post@groups) == 465 ## this is the number of features after minFrac
 	}
 }
 
