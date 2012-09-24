@@ -33,7 +33,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
 	if(lockMassFreq==TRUE){
 		## remove the 02 files if there here
-		files<-files[-grep("02.CDF", files)]
+        lockMass.files<-grep("02.CDF", files)
+        if(length(lockMass.files) > 0){
+            files<-files[-lockMass.files]
+        }
 	}
 
     filepaths(object) <- files
