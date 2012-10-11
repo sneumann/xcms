@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.35.1
+--------------------------
+
+UPDATED FEATURES:
+     o The mzData export is now much faster and uses less memory
+
 CHANGES IN VERSION 1.33.16
 --------------------------
 
