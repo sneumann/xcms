@@ -2,14 +2,132 @@ setGeneric("write.mzdata", function(object, ...) standardGeneric("write.mzdata")
 
 setMethod("write.mzdata", "xcmsRaw", function(object, filename) {
 
-  require(XML) || stop("We need library(XML) to write mzData")
   require(caTools) || stop("We need library(caTools) to encode base64 values in mzData")
 
-  mzdata <- buildMzdata(object)
-
-  ## the sink() workaround seems to be needed for proper indenting.
   sink(file=filename)
-  cat(saveXML(mzdata))
+
+  cat('<?xml version="1.0" encoding="ISO-8859-1"?>\n')
+  cat('<mzData xsi:noNamespaceSchemaLocation="http://psidev.sourceforge.net/ms/xml/mzdata/mzdata.xsd" version="1.05" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" accessionNumber="1">\n',
+      '<cvLookup cvLabel="PSI" fullName="The PSI Ontology" version="1.4.0" address="http://psidev.sourceforge.net/ontology/"/>\n')
+  cat ('<spectrumList count="',length(object@scanindex),'">\n', sep="")
+  
+  mslevel <- 1; # Write MS1 first
+  offset <- 0;
+  polarities <- c("Negative", "Positive", "Unknown")
+  
+  if (length(object@scanindex) > 0) {
+    for (id in 1:length(object@scanindex)) {
+
+      cat ('<spectrum id="', id, '">\n', sep="")
+      cat ('<spectrumDesc>\n')
+      cat ('<spectrumSettings>\n')
+      cat ('<spectrumInstrument msLevel="1">\n')
+
+      cat('<cvParam cvLabel="PSI" accession="PSI:1000039" ',
+          'name="TimeInSeconds" value="', object@scantime[id], '"/>\n', sep="")
+
+      if (!is.null(object@polarity) & !is.na(object@polarity[id])) {
+        cat('<cvParam cvLabel="PSI" accession="PSI:1000037" ', 
+            'name="Polarity" value="', polarities[object@polarity[id]], '"/>\n', sep="")
+      }
+
+      cat ("</spectrumInstrument>\n")
+      cat ("</spectrumSettings>\n")
+      cat ('</spectrumDesc>\n')
+      
+      target <- new("raw")
+      peaks <- getScan(object, id)
+      
+      if (is.unsorted(peaks[,"mz"])) { ## fix "bad" scans
+        peaks <- peaks[order(peaks[,"mz"]),]
+      }    
+
+      cat ('<mzArrayBinary>\n')
+      cat ('<data precision="32" endian="big" length="', nrow(peaks), '">', sep="")
+      cat (base64encode(writeBin(peaks[,"mz"], con=target, size=4, endian="big")))
+      cat ('</data>\n')
+      cat ('</mzArrayBinary>\n')
+
+      cat ('<intenArrayBinary>\n')
+      cat ('<data precision="32" endian="big" length="', nrow(peaks), '">', sep="")
+      cat (base64encode(writeBin(peaks[,"intensity"], con=target, size=4, endian="big")))
+      cat ('</data>\n')
+      cat ('</intenArrayBinary>\n')
+
+      cat ('</spectrum>\n')
+
+      offset <- id  
+    }  
+  }
+  
+  mslevel <- object@msnLevel
+  if (length(object@msnScanindex) >0 ) {
+    for (id in seq(1, length(object@msnScanindex))) {
+
+      cat ('<spectrum id="', id=id+offset, '">\n', sep="")
+      cat ('<spectrumDesc>\n')
+      cat ('<spectrumSettings>\n')
+      cat ('<spectrumInstrument msLevel="', msLevel=mslevel[id], '">\n', sep="")
+
+      cat('<cvParam cvLabel="PSI" accession="PSI:1000039" ', 
+          'name="TimeInSeconds" value="', object@msnRt[id], '"/>\n', sep="")
+
+      if (!is.null(object@polarity) & !is.na(object@polarity[id])) {
+        cat('<cvParam cvLabel="PSI" accession="PSI:1000037" ', 
+            'name="Polarity" value="', polarities[object@polarity[id]], '"/>\n', sep="")
+      }
+      
+      cat ('</spectrumInstrument>\n')
+      cat ('</spectrumSettings>\n')
+      
+      if (mslevel[id] > 1) { ## only for mslevel >1, here always true
+        cat ('<precursorList count="1">\n')
+        cat ('<precursor msLevel="', mslevel[id]-1, '" ',
+             'spectrumRef="', max(0, object@msnPrecursorScan[id], na.rm=T), '">\n', sep="")
+        cat('<ionSelection>\n')
+        cat('<cvParam cvLabel="PSI" accession="PSI:1000040"',
+            ' name="m/z" value="', object@msnPrecursorMz[id], '"/>\n', sep="")
+        cat('</ionSelection>\n')
+        
+        cat('<activation>\n')
+        cat('<cvParam cvLabel="PSI" accession="PSI:1000045" ',
+            'name="Collision Energy" value="', object@msnCollisionEnergy[id], '"/>\n', sep="")
+        cat('</activation>\n')
+
+        cat ('</precursor>\n')
+        cat ('</precursorList>\n')
+        
+      }
+      cat ('</spectrumDesc>\n')
+
+      target <- new("raw")
+      peaks <- getMsnScan(object, id)
+      
+      if (is.unsorted(peaks[,"mz"])) { ## fix "bad" scans
+        peaks <- peaks[order(peaks[,"mz"]),]
+      }    
+      
+      cat ('<mzArrayBinary>\n')
+      cat ('<data precision="32" endian="big" length="', nrow(peaks), '">', sep="")
+      cat (base64encode(writeBin(peaks[,"mz"], con=target, size=4, endian="big")))
+      cat ('</data>\n')
+      cat ('</mzArrayBinary>\n')
+
+
+      cat ('<intenArrayBinary>\n')
+      cat ('<data precision="32" endian="big" length="', nrow(peaks), '">', sep="")
+      cat (base64encode(writeBin(peaks[,"intensity"], con=target, size=4, endian="big")))
+      cat ('</data>\n')
+      cat ('</intenArrayBinary>\n')
+
+      cat ('</spectrum>\n')
+
+    }  
+  }
+
+  cat ('</spectrumList>\n')
+  cat ('</mzData>\n')
+
   sink(NULL)
 })
 
@@ -31,171 +149,3 @@ setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
     invisible(points)
 })
-
-buildMzdata <- function(xr) {
-
-  mzdata <- xmlTree(namespaces = c(xsi="http://www.w3.org/2001/XMLSchema-instance"))
-  
-  mzdata$addNode("mzData",
-                 attrs=c(
-                   version="1.05",
-                   "xsi:noNamespaceSchemaLocation"="http://psidev.sourceforge.net/ms/xml/mzdata/mzdata.xsd"),
-                 close=FALSE)
-  
-  mzdata$addNode("spectrumList",
-                 attrs=c(count=length(xr@scanindex)),
-                 close = FALSE)
-
-  mslevel <- 1; # Write MS1 first
-  offset <- 0;
-  polarities <- c("Negative", "Positive", "Unknown")
-  
-  if (length(xr@scanindex) > 0) {
-  for (id in 1:length(xr@scanindex)) {
-
-    mzdata$addNode("spectrum",
-                   attrs=c(id=id),
-                   close = FALSE)
-    mzdata$addNode("spectrumDesc",
-                   attrs=c(),
-                   close = FALSE)
-    mzdata$addNode("spectrumSettings",
-                   attrs=c(),
-                   close = FALSE)
-    mzdata$addNode("spectrumInstrument",
-                   attrs=c(msLevel="1"),
-                   close = FALSE)
-
-    mzdata$addNode("cvParam",
-                   attrs=c(
-                     cvLabel="PSI", accession="PSI:1000039",
-                     name="TimeInSeconds", value=xr@scantime[id]))
-
-    if (!is.null(xr@polarity) & !is.na(xr@polarity[id])) {
-      mzdata$addNode("cvParam",
-                     attrs=c(
-                       cvLabel="PSI", accession="PSI:1000037",
-                       name="Polarity", value=polarities[xr@polarity[id]]))
-    }
-    
-    mzdata$closeTag() ## </spectrumInstrument>
-    mzdata$closeTag() ## </spectrumSettings>
-
-    mzdata$closeTag() ## </spectrumDesc>
-
-    target <- new("raw")
-    peaks <- getScan(xr, id)
-    
-    if (is.unsorted(peaks[,"mz"])) { ## fix "bad" scans
-        peaks <- peaks[order(peaks[,"mz"]),]
-    }    
-    
-    mzdata$addNode("mzArrayBinary",
-                   close = FALSE)
-    mzdata$addNode("data",
-                   attrs=c(
-                     precision="32", endian="big", length=nrow(peaks)),
-                   value=base64encode(writeBin(peaks[,"mz"], con=target, size=4, endian="big")))
-
-    mzdata$closeTag() ## </mzArrayBinary>
-
-    mzdata$addNode("intenArrayBinary",
-                   close = FALSE)
-    mzdata$addNode("data",
-                   attrs=c(
-                     precision="32", endian="big", length=nrow(peaks)),
-                   value=base64encode(writeBin(peaks[,"intensity"], con=target, size=4, endian="big")))
-    mzdata$closeTag() ## </intenArrayBinary>
-
-    mzdata$closeTag() ## </spectrum>
-    offset <- id  
-    }  
-}
-  
-  mslevel <- xr@msnLevel
-  if (length(xr@msnScanindex) >0 ) {
-  for (id in seq(1, length(xr@msnScanindex))) {
-
-    mzdata$addNode("spectrum",
-                   attrs=c(id=id+offset),
-                   close = FALSE)
-    mzdata$addNode("spectrumDesc",
-                   attrs=c(),
-                   close = FALSE)
-    mzdata$addNode("spectrumSettings",
-                   attrs=c(),
-                   close = FALSE)
-    mzdata$addNode("spectrumInstrument",
-                   attrs=c(msLevel=mslevel[id]),
-                   close = FALSE)
-
-    mzdata$addNode("cvParam",
-                   attrs=c(
-                     cvLabel="PSI", accession="PSI:1000039",
-                     name="TimeInSeconds", value=xr@msnRt[id]))
-    mzdata$closeTag() ## </spectrumInstrument>
-    mzdata$closeTag() ## </spectrumSettings>
-
-    if (mslevel[id] > 1) { ## only for mslevel >1, here always true
-      mzdata$addNode("precursorList",
-                     attrs=c(count=1),
-                     close = FALSE)
-      
-      mzdata$addNode("precursor",
-                     attrs=c(msLevel=mslevel[id]-1, spectrumRef=max(0, xr@msnPrecursorScan[id], na.rm=T)),
-                     close = FALSE)
-      
-      mzdata$addNode("ionSelection",
-                     close = FALSE)
-      mzdata$addNode("cvParam",
-                     attrs=c(
-                       cvLabel="PSI", accession="PSI:1000040",
-                       name="m/z", value=xr@msnPrecursorMz[id] ))
-      mzdata$closeTag() ## </ionSelection>
-      
-      mzdata$addNode("activation",
-                     close = FALSE)
-      mzdata$addNode("cvParam",
-                     attrs=c(
-                       cvLabel="PSI", accession="PSI:1000045",
-                       name="Collision Energy", value=xr@msnCollisionEnergy[id] ))
-      mzdata$closeTag() ## </activation>
-      
-      mzdata$closeTag() ## </precursor>
-      mzdata$closeTag() ## </precursorList>         
-    }
-    mzdata$closeTag() ## </spectrumDesc>
-
-    target <- new("raw")
-    peaks <- getMsnScan(xr, id)
-    
-    if (is.unsorted(peaks[,"mz"])) { ## fix "bad" scans
-        peaks <- peaks[order(peaks[,"mz"]),]
-    }    
-    
-    mzdata$addNode("mzArrayBinary",
-                   close = FALSE)
-    mzdata$addNode("data",
-                   attrs=c(
-                     precision="32", endian="big", length=nrow(peaks)),
-                   value=base64encode(writeBin(peaks[,"mz"], con=target, size=4, endian="big")))
-
-    mzdata$closeTag() ## </mzArrayBinary>
-
-    mzdata$addNode("intenArrayBinary",
-                   close = FALSE)
-    mzdata$addNode("data",
-                   attrs=c(
-                     precision="32", endian="big", length=nrow(peaks)),
-                   value=base64encode(writeBin(peaks[,"intensity"], con=target, size=4, endian="big")))
-    mzdata$closeTag() ## </intenArrayBinary>
-
-    mzdata$closeTag() ## </spectrum>
-  }  
-}
-  
-  mzdata$closeTag() ## </spectrumList>
-  mzdata$closeTag() ## </mzData>
-
-  mzdata
-}
