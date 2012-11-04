@@ -200,4 +200,3 @@ void attribute_hidden bratio(double a, double b, double x, double y,
 
 
 #endif /* MATHLIB_PRIVATE_H */
-

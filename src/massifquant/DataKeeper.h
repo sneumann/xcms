@@ -52,10 +52,10 @@ class DataKeeper {
         std::vector<double> rt; //a single big array
         std::vector<double> mz; //an
         std::vector<double> intensity;
-   
+
         struct scanBuf * scbuf;
         double * pmz;
-        double * pinten; 
+        double * pinten;
         int * pscanindex;
         int nmz;
         int lastScan;
@@ -69,26 +69,26 @@ class DataKeeper {
         void printVec(const std::vector<double> & myvec);
         void printList(const std::list<int> & mylist);
 void printList(const std::list<double> & mylist);
-        
+
 /*not working on windows build of bioconductor*/
-//void assign_values(float64* data, uint32 data_len, std::vector<double> & vec, int vec_len); 
-        
+//void assign_values(float64* data, uint32 data_len, std::vector<double> & vec, int vec_len);
+
         std::vector<double> privGetMZScan(int s);
         std::vector<double> privGetIScan(int s);
-        
+
         void privGetScanXcms(int scan, std::vector<double> & mzScan,
                 std::vector<double> & intenScan);
 
     //want to be able to change data
-        std::vector<double> transformIntensity(std::vector<double> & A); 
-        void transformIntensityR(); 
+        std::vector<double> transformIntensity(std::vector<double> & A);
+        void transformIntensityR();
 
     public:
 
         DataKeeper(SEXP mz, SEXP inten, SEXP scanindex, SEXP ls, SEXP scantime);
         DataKeeper(const char* dotplms1);
         ~DataKeeper();
-        
+
         uint32 getTotalScanNumbers();
         int getTotalCentroidCount();
         double getInitMZS2();
@@ -104,8 +104,8 @@ void printList(const std::list<double> & mylist);
         double getScanTime(int s);
 
         void ghostScan();
-        
-        void ghostScanR();  
+
+        void ghostScanR();
 
         };
 #endif

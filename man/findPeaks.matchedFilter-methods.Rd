@@ -13,8 +13,8 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.matchedFilter(object, fwhm = 30, sigma = fwhm/2.3548, max = 5, 
-    snthresh = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps, 
+    findPeaks.matchedFilter(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
+    snthresh = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps,
     index = FALSE, sleep = 0)
   }
 }
@@ -83,7 +83,7 @@
   \item{sn}{
     signal to noise ratio of the peak
   }
-  
+
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \seealso{

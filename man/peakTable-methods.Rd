@@ -23,18 +23,18 @@
     which provides the actual intensities. }
 }
 \details{
-  
+
   This method handles creation of summary reports similar to
   \code{\link{diffreport}}. It returns a summary report that can
   optionally be written out to a tab-separated file.
 
   If a base file name is provided, the report (see Value section)
-  will be saved to a tab separated file. 
+  will be saved to a tab separated file.
 }
 
 \value{
   A data frame with the following columns:
-  
+
   \item{mz}{median m/z of peaks in the group}
   \item{mzmin}{minimum m/z of peaks in the group}
   \item{mzmax}{maximum m/z of peaks in the group}

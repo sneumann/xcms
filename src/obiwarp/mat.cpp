@@ -46,7 +46,7 @@ MatI::MatI(int m, int n, int *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr,sh
 #endif
 }
 
-MatI::MatI(const MatI &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) { 
+MatI::MatI(const MatI &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
     printf("CONSTRUCTOR MatI(MatI &A,shallow) shallow=%d!\n", this->shallow());
 #endif
@@ -68,7 +68,7 @@ void MatI::set(int m, int n, int *arr) {
 }
 
 void MatI::set(MatI &A) {
-    _dat.set(A._dat);  
+    _dat.set(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -85,7 +85,7 @@ void MatI::take(int m, int n, int *arr) {
 
 void MatI::take(MatI &A) {
     // Checking is done in Vec to ensure we're not taking a shallow!
-    _dat.take(A._dat);  
+    _dat.take(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -135,7 +135,7 @@ void MatI::file_rows_cols(std::ifstream &stream, int &rows, int &cols) {
     while(*ptr != '\0') {
         if (*ptr == ' ') {
             *ptr = '\0';  // keep track of spaces
-            ++cols;    
+            ++cols;
         }
         ++ptr;
         ++linelength;
@@ -198,7 +198,7 @@ void MatI::set_from_ascii(const char *file, bool without_axes) {
         else {
             set_from_ascii(fh,(*this));
         }
-        fh.close(); 
+        fh.close();
     }
     else {
         printf("Couldn't open %s\n", file);
@@ -352,7 +352,7 @@ void MatI::expand(MatI &result, int match, int expand_x_lt, int expand_x_rt, int
 
 
 void MatI::mask_as_vec(int return_val, MatI &mask, VecI &out) {
-    _dat.mask_as_vec(return_val, mask._dat, out);    
+    _dat.mask_as_vec(return_val, mask._dat, out);
 }
 
 
@@ -367,7 +367,7 @@ int MatI::sum(int m) {
 
 
 void MatI::print(bool without_axes) {
-    MatI tmp((*this),1); 
+    MatI tmp((*this),1);
     if (!without_axes) {
         std::cout << _m << ' ' << _n << std::endl;
     }
@@ -454,7 +454,7 @@ MatD::MatD(int m, int n, double *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr
 #endif
 }
 
-MatD::MatD(const MatD &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) { 
+MatD::MatD(const MatD &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
     printf("CONSTRUCTOR MatD(MatD &A,shallow) shallow=%d!\n", this->shallow());
 #endif
@@ -476,7 +476,7 @@ void MatD::set(int m, int n, double *arr) {
 }
 
 void MatD::set(MatD &A) {
-    _dat.set(A._dat);  
+    _dat.set(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -493,7 +493,7 @@ void MatD::take(int m, int n, double *arr) {
 
 void MatD::take(MatD &A) {
     // Checking is done in Vec to ensure we're not taking a shallow!
-    _dat.take(A._dat);  
+    _dat.take(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -543,7 +543,7 @@ void MatD::file_rows_cols(std::ifstream &stream, int &rows, int &cols) {
     while(*ptr != '\0') {
         if (*ptr == ' ') {
             *ptr = '\0';  // keep track of spaces
-            ++cols;    
+            ++cols;
         }
         ++ptr;
         ++linelength;
@@ -606,7 +606,7 @@ void MatD::set_from_ascii(const char *file, bool without_axes) {
         else {
             set_from_ascii(fh,(*this));
         }
-        fh.close(); 
+        fh.close();
     }
     else {
         printf("Couldn't open %s\n", file);
@@ -760,7 +760,7 @@ void MatD::expand(MatD &result, double match, int expand_x_lt, int expand_x_rt, 
 
 
 void MatD::mask_as_vec(double return_val, MatI &mask, VecD &out) {
-    _dat.mask_as_vec(return_val, mask._dat, out);    
+    _dat.mask_as_vec(return_val, mask._dat, out);
 }
 
 
@@ -775,7 +775,7 @@ double MatD::sum(int m) {
 
 
 void MatD::print(bool without_axes) {
-    MatD tmp((*this),1); 
+    MatD tmp((*this),1);
     if (!without_axes) {
         std::cout << _m << ' ' << _n << std::endl;
     }
@@ -862,7 +862,7 @@ MatF::MatF(int m, int n, float *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr,
 #endif
 }
 
-MatF::MatF(const MatF &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) { 
+MatF::MatF(const MatF &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
     printf("CONSTRUCTOR MatF(MatF &A,shallow) shallow=%d!\n", this->shallow());
 #endif
@@ -884,7 +884,7 @@ void MatF::set(int m, int n, float *arr) {
 }
 
 void MatF::set(MatF &A) {
-    _dat.set(A._dat);  
+    _dat.set(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -901,7 +901,7 @@ void MatF::take(int m, int n, float *arr) {
 
 void MatF::take(MatF &A) {
     // Checking is done in Vec to ensure we're not taking a shallow!
-    _dat.take(A._dat);  
+    _dat.take(A._dat);
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
@@ -951,7 +951,7 @@ void MatF::file_rows_cols(std::ifstream &stream, int &rows, int &cols) {
     while(*ptr != '\0') {
         if (*ptr == ' ') {
             *ptr = '\0';  // keep track of spaces
-            ++cols;    
+            ++cols;
         }
         ++ptr;
         ++linelength;
@@ -1014,7 +1014,7 @@ void MatF::set_from_ascii(const char *file, bool without_axes) {
         else {
             set_from_ascii(fh,(*this));
         }
-        fh.close(); 
+        fh.close();
     }
     else {
         printf("Couldn't open %s\n", file);
@@ -1168,7 +1168,7 @@ void MatF::expand(MatF &result, float match, int expand_x_lt, int expand_x_rt, i
 
 
 void MatF::mask_as_vec(float return_val, MatI &mask, VecF &out) {
-    _dat.mask_as_vec(return_val, mask._dat, out);    
+    _dat.mask_as_vec(return_val, mask._dat, out);
 }
 
 
@@ -1183,7 +1183,7 @@ float MatF::sum(int m) {
 
 
 void MatF::print(bool without_axes) {
-    MatF tmp((*this),1); 
+    MatF tmp((*this),1);
     if (!without_axes) {
         std::cout << _m << ' ' << _n << std::endl;
     }
@@ -1198,7 +1198,7 @@ void MatF::print(bool without_axes) {
 }
 
 void MatF::print(int __m, int __n,bool without_axes) {
-    MatF tmp((*this),1); 
+    MatF tmp((*this),1);
     if (!without_axes) {
         std::cout << _m << ' ' << _n << std::endl<< std::endl;
     }
@@ -1249,4 +1249,3 @@ void MatF::write(const char *file) {
 // END TEMPLATE
 
 } // End namespace VEC
-

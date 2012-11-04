@@ -6,29 +6,29 @@ xcmsFragments <- function(xs = NULL, ...) {
 }
 
 .xcmsFragments.show <- function(object) {
-        if(length(object@peaks)){
-            cat("An \"xcmsFragments\" object with ",nrow(object@peaks),
-                " peaks in",length(unique(object@peaks[,"rt"])),"Spectra\n")
-            cat("From Level 1 to",max(object@peaks[,"msLevel"]),
-                "Number of Samples: ",length(unique(object@peaks[,"Sample"])),".\n")
+    if(length(object@peaks)){
+        cat("An \"xcmsFragments\" object with ",nrow(object@peaks),
+            " peaks in",length(unique(object@peaks[,"rt"])),"Spectra\n")
+        cat("From Level 1 to",max(object@peaks[,"msLevel"]),
+            "Number of Samples: ",length(unique(object@peaks[,"Sample"])),".\n")
 
-            for (a in unique(object@peaks[,"Sample"])){
-                cat("\nSample",a,":\n")
-                for (b in unique(object@peaks[which(object@peaks[,"Sample"]==a),"msLevel"])) {
-                    cat("   ",
-                        length(which(object@peaks[which(object@peaks[,"Sample"]==a),"msLevel"] == b)),
-                            "Peaks in Level",b,"\n")
-                }
+        for (a in unique(object@peaks[,"Sample"])){
+            cat("\nSample",a,":\n")
+            for (b in unique(object@peaks[which(object@peaks[,"Sample"]==a),"msLevel"])) {
+                cat("   ",
+                    length(which(object@peaks[which(object@peaks[,"Sample"]==a),"msLevel"] == b)),
+                    "Peaks in Level",b,"\n")
             }
-       } else {
-            cat("An \"xcmsFragments\" object with", length(object@specinfo[,"ref"]), " collected mass spectra\n\n")
-            cat("Mass range:", paste(round(range(object@specinfo[,"preMZ"]), 4), collapse = "-"), "m/z\n")
-            paste(cat("Collision Energy range:", paste(range(object@specinfo[,"CollisionEnergy"])), "V"), sep="")
-
         }
-        memsize <- object.size(object)
-        cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
+    } else {
+        cat("An \"xcmsFragments\" object with", length(object@specinfo[,"ref"]), " collected mass spectra\n\n")
+        cat("Mass range:", paste(round(range(object@specinfo[,"preMZ"]), 4), collapse = "-"), "m/z\n")
+        paste(cat("Collision Energy range:", paste(range(object@specinfo[,"CollisionEnergy"])), "V"), sep="")
+
     }
+    memsize <- object.size(object)
+    cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
+}
 setMethod("show", "xcmsFragments", .xcmsFragments.show)
 
 
@@ -55,22 +55,22 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     npRt<-ms1peaks[,"rt"]
     npIntensity<-ms1peaks[,"into"]
     npSample<- ms1peaks[,"sample"]
-	npCollisionEnergy<-rep(0, numMs1Peaks)
+    npCollisionEnergy<-rep(0, numMs1Peaks)
 
     PeakNr <- numMs1Peaks ## PeakNr+1 is the beginning peakindex for msn-spectra
 
     if (class(xs)=="xcmsSet"){ ## a matrix referrs to only one xr, the (so i hope) given one as parameter
-	paths <- length(xs@filepaths)
-	}else{paths=1}
+        paths <- length(xs@filepaths)
+    }else{paths=1}
 
     ## looking for every Sample-xcmsRaw (only if xs is given)
     for (NumXcmsPath in 1:paths){
         if (class(xs)=="xcmsSet"){
-			xcmsRawPath <- xs@filepaths[NumXcmsPath]
-        	xr <- xcmsRaw(xcmsRawPath, includeMSn = TRUE)
-		}else{xr <- xraw}
+            xcmsRawPath <- xs@filepaths[NumXcmsPath]
+            xr <- xcmsRaw(xcmsRawPath, includeMSn = TRUE)
+        }else{xr <- xraw}
 
-		npCollisionEnergy<-xr@msnCollisionEnergy
+        npCollisionEnergy<-xr@msnCollisionEnergy
 
         for (z in 1:length(xr@msnScanindex)){ ## looking for every msn
             if (z<length(xr@msnScanindex)) {
@@ -102,8 +102,8 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                 numAloneSpecs<-numAloneSpecs+1
             } else {
                 MzTable = new("matrix", ncol=2,nrow=length(xr@env$msnMz[(xr@msnScanindex[z]+1):GoTo]),
-                              data=c(xr@env$msnMz[(xr@msnScanindex[z]+1):GoTo],
-                              xr@env$msnIntensity[(xr@msnScanindex[z]+1):GoTo]))
+                data=c(xr@env$msnMz[(xr@msnScanindex[z]+1):GoTo],
+                xr@env$msnIntensity[(xr@msnScanindex[z]+1):GoTo]))
                 colnames(MzTable)<- c("mz","intensity")
 
                 ## calling the mini-peakpick
@@ -113,14 +113,14 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
                     for (numPeaks in 1:nrow(npeaks)) {
                         ## for every picked peaks in the PeakPicked-List
                         PeakNr<- PeakNr+1
-                        npPeakID[PeakNr]<- PeakNr # increasing peakid
+                        npPeakID[PeakNr]<- PeakNr ## increasing peakid
                         npMSnParentPeakID[PeakNr]<- ActualParentPeakID
                         npMsLevel[PeakNr]<- xr@msnLevel[z]
                         npRt[PeakNr]<- xr@msnRt[z]
                         npMz[PeakNr]<- npeaks[numPeaks,"mz"]
                         npIntensity[PeakNr]<- npeaks[numPeaks,"intensity"]
                         npSample[PeakNr]<- NumXcmsPath
-						npCollisionEnergy[PeakNr]<-xr@msnCollisionEnergy[z]
+                        npCollisionEnergy[PeakNr]<-xr@msnCollisionEnergy[z]
                     }
                 }
             }
@@ -149,11 +149,11 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
     libname <- "Rgraphviz"
 
     if (!textOnly) {
-            (require(libname,character.only=TRUE,quietly=TRUE)) || {
-        	warning("Rgraphviz was not found, fallback to text mode.")
-		textOnly=TRUE
-		}
+        (require(libname,character.only=TRUE,quietly=TRUE)) || {
+            warning("Rgraphviz was not found, fallback to text mode.")
+            textOnly=TRUE
         }
+    }
     gm<-NULL
     nodeNames<-NULL
 
@@ -172,13 +172,13 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
                     } ## indention of the line depends on the depth of the node in the tree
                 }
                 cat("|",spc,
-                    "#", object@peaks[peak,"peakID"],
+                    "##", object@peaks[peak,"peakID"],
                     "_M", ms1mass,
                     "T", object@peaks[peak,"rt"],
                     "F", object@peaks[peak,"mz"],
                     ## "L", object@peaks[peak,"msLevel"],
                     "\n",sep="")
-                } else {
+            } else {
                 if (object@peaks[peak,"msLevel"]>1) {
                     gm <-rbind(gm,c(object@peaks[peak,"MSnParentPeakID"],
                                     object@peaks[peak,"peakID"]))
@@ -198,16 +198,16 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
         gm <- miniPlotTree(object@peaks[xcmsFragmentPeakID,"mz"],
                            object@peaks[xcmsFragmentPeakID,"msLevel"],
                            xcmsFragmentPeakID,gm)
+    } else {
+        if (!is.null(xcmsSetPeakID)) {
+            ## i have only one peak (with all subpeaks) to plot
+            gm <- miniPlotTree(object@peaks[xcmsSetPeakID,"mz"],1,xcmsSetPeakID,gm)
         } else {
-            if (!is.null(xcmsSetPeakID)) {
-                ## i have only one peak (with all subpeaks) to plot
-                gm <- miniPlotTree(object@peaks[xcmsSetPeakID,"mz"],1,xcmsSetPeakID,gm)
-            } else {
-                for (a in which(object@peaks[,"msLevel"]==1)) {
-                    gm <- miniPlotTree(object@peaks[a,"mz"],1,a,gm)
-                }
+            for (a in which(object@peaks[,"msLevel"]==1)) {
+                gm <- miniPlotTree(object@peaks[a,"mz"],1,a,gm)
             }
         }
+    }
     nodeNames=NULL
     nodeLabels=NULL
 
@@ -245,161 +245,161 @@ setMethod("hasMSn", "xcmsFragments", .xcmsFragments.hasMSn)
 
 
 xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
-	## gets an xcmsSet and the corresponding xcmsFragments
-	## the xs is a grouped, RTcorrected, Regrouped xs, the xf is made from this
-	## returns the xs with #Samples now rows containing the hamming-distance to the mean
+    ## gets an xcmsSet and the corresponding xcmsFragments
+    ## the xs is a grouped, RTcorrected, Regrouped xs, the xf is made from this
+    ## returns the xs with ##Samples now rows containing the hamming-distance to the mean
 
-	GetMSnVector <- function(object, xcmsSetPeakID) {
-	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
-		treewalk <- function(peakIDs,parentID){
-			lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
-			pIDs <- c(peakIDs, lnPeaks)
-			for (a in lnPeaks){
-				pIDs <- treewalk(pIDs,object@peaks[a,"peakID"])
-				}
-			pIDs
-			}
-		pIDs=NULL
-		pIDs <- treewalk(pIDs,xcmsSetPeakID)
-		pIDs
-		}
+    GetMSnVector <- function(object, xcmsSetPeakID) {
+        ## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
+        treewalk <- function(peakIDs,parentID){
+            lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
+            pIDs <- c(peakIDs, lnPeaks)
+            for (a in lnPeaks){
+                pIDs <- treewalk(pIDs,object@peaks[a,"peakID"])
+            }
+            pIDs
+        }
+        pIDs=NULL
+        pIDs <- treewalk(pIDs,xcmsSetPeakID)
+        pIDs
+    }
 
-	## first step: Getting information: which grouped peak in which sample has a ms2Spec hanging on it
-	cat("starting ")
-	MSNinfo=matrix(nrow=length(groupidx(xs)), ncol=length(sampnames(xs)),
-		       data=rep(FALSE,(length(groupidx(xs))*length(sampnames(xs)))) ) ## Table(NumSamples * NumGroups)
-	for (a in 1:length(groupidx(xs))){
-		groV <- groupval(xs,"medret","index")[a,]
-		for (b in 1:length(groV)){
-			hmsn<-hasMSn(xf,groV[b])
-			xf@peaks[groV[b],"GroupPeakMSn"] <- hmsn
-			MSNinfo[a,xf@peaks[groV[b],"Sample"]]<-
-			MSNinfo[a,xf@peaks[groV[b],"Sample"]] || hmsn
-			}
-		}
+    ## first step: Getting information: which grouped peak in which sample has a ms2Spec hanging on it
+    cat("starting ")
+    MSNinfo=matrix(nrow=length(groupidx(xs)), ncol=length(sampnames(xs)),
+    data=rep(FALSE,(length(groupidx(xs))*length(sampnames(xs)))) ) ## Table(NumSamples * NumGroups)
+    for (a in 1:length(groupidx(xs))){
+        groV <- groupval(xs,"medret","index")[a,]
+        for (b in 1:length(groV)){
+            hmsn<-hasMSn(xf,groV[b])
+            xf@peaks[groV[b],"GroupPeakMSn"] <- hmsn
+            MSNinfo[a,xf@peaks[groV[b],"Sample"]]<-
+                MSNinfo[a,xf@peaks[groV[b],"Sample"]] || hmsn
+        }
+    }
 
-	samples <- unique(xf@peaks[,"Sample"])
-	nsamp<-length(samples)
-	x<-c(1:length(groupidx(xs)))
-	AllMSn <- sapply(x,FUN=function(x){sum(MSNinfo[x,])}) == ncol(MSNinfo)
-	## AllMSn: which group is lucky to have MSNs in ALL samples?
-	## Processing those groups:
-	## first: creating a xs with the msnPeaks from all samples:
-	distances=matrix(ncol=nsamp*length(FUNS),data=rep(0,(length(AllMSn)*nsamp*length(FUNS))))
-	for (g in which(AllMSn)){
-		##peakIDs <- groupidx(xs)[[g]]
-		peakIDs <- groupval(xs,"medret","index")[g,]
-		Nmz=NULL
-		Nrt=NULL
-		Nit=NULL
-		Nsa=NULL
-		for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
-			MsnPeaks <- GetMSnVector(xf,peakIDs[a])
-			Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
-			Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
-			Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
-			Nsa <- c(Nsa,xf@peaks[MsnPeaks,"Sample"])
-			}
-		xsn <- new("xcmsSet")
-		coln<-c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","sample")
-		xsn@peaks=new("matrix", ncol=length(coln), data=c(Nmz,Nmz,Nmz,Nrt,Nrt,Nrt,Nit,Nit,Nit,Nsa))
-		colnames(xsn@peaks) <- coln
-		phenoData(xsn) <- samples
-		sampnames(xsn) <- samples
-		sampclass(xsn) <- samples
-		## The temporary-xs is ready now
-		## apppying the given function to the object:
-		#stop("does the xsSets have RTs?")
-		dists=NULL
-		for (fu in 1:length(FUNS)){
-			dists <- c(dists,FUNS[[fu]](xsn))
-		}
-		distances[g,1:(nsamp*length(FUNS))] <- dists
-	}#cat("loopend\n")
+    samples <- unique(xf@peaks[,"Sample"])
+    nsamp<-length(samples)
+    x<-c(1:length(groupidx(xs)))
+    AllMSn <- sapply(x,FUN=function(x){sum(MSNinfo[x,])}) == ncol(MSNinfo)
+    ## AllMSn: which group is lucky to have MSNs in ALL samples?
+    ## Processing those groups:
+    ## first: creating a xs with the msnPeaks from all samples:
+    distances=matrix(ncol=nsamp*length(FUNS),data=rep(0,(length(AllMSn)*nsamp*length(FUNS))))
+    for (g in which(AllMSn)){
+        ##peakIDs <- groupidx(xs)[[g]]
+        peakIDs <- groupval(xs,"medret","index")[g,]
+        Nmz=NULL
+        Nrt=NULL
+        Nit=NULL
+        Nsa=NULL
+        for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
+            MsnPeaks <- GetMSnVector(xf,peakIDs[a])
+            Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
+            Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
+            Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
+            Nsa <- c(Nsa,xf@peaks[MsnPeaks,"Sample"])
+        }
+        xsn <- new("xcmsSet")
+        coln<-c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","sample")
+        xsn@peaks=new("matrix", ncol=length(coln), data=c(Nmz,Nmz,Nmz,Nrt,Nrt,Nrt,Nit,Nit,Nit,Nsa))
+        colnames(xsn@peaks) <- coln
+        phenoData(xsn) <- samples
+        sampnames(xsn) <- samples
+        sampclass(xsn) <- samples
+        ## The temporary-xs is ready now
+        ## apppying the given function to the object:
+        ##stop("does the xsSets have RTs?")
+        dists=NULL
+        for (fu in 1:length(FUNS)){
+            dists <- c(dists,FUNS[[fu]](xsn))
+        }
+        distances[g,1:(nsamp*length(FUNS))] <- dists
+    }##cat("loopend\n")
 
-	## adding the information to groupval(grouped_object)
-	cat("Groups:", length(AllMSn),"complete:",length(which(AllMSn)))
-	#stop("hope it gets until here")
-	write.csv(distances,file=filename)
-	distances
-	}
-#setGeneric("makeXS", function(object, ...) standardGeneric("makeXS"))
-#setMethod("makeXS", "xcmsFragments", .xcmsFragments.makeXS)
+    ## adding the information to groupval(grouped_object)
+    cat("Groups:", length(AllMSn),"complete:",length(which(AllMSn)))
+    ##stop("hope it gets until here")
+    write.csv(distances,file=filename)
+    distances
+}
+##setGeneric("makeXS", function(object, ...) standardGeneric("makeXS"))
+##setMethod("makeXS", "xcmsFragments", .xcmsFragments.makeXS)
 
 getXS<-function(xs,xf,g)
-	{
-	GetMSnVector <- function(object, xcmsSetPeakID) {
-	## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
-		treewalk <- function(peakIDs,parentID){
-			lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
-			pIDs <- c(peakIDs, lnPeaks)
-			for (a in lnPeaks){
-				pIDs <- treewalk(pIDs,object@peaks[a,"peakID"])
-				}
-			pIDs
-			}
-		pIDs=NULL
-		pIDs <- treewalk(pIDs,xcmsSetPeakID)
-		pIDs
-		}
+{
+    GetMSnVector <- function(object, xcmsSetPeakID) {
+        ## Returns a vector which contains all peakIDs of the msnTree with the Tree-parentmass xcmsSetPeakID
+        treewalk <- function(peakIDs,parentID){
+            lnPeaks <- which((object@peaks[,"MSnParentPeakID"] == parentID))
+            pIDs <- c(peakIDs, lnPeaks)
+            for (a in lnPeaks){
+                pIDs <- treewalk(pIDs,object@peaks[a,"peakID"])
+            }
+            pIDs
+        }
+        pIDs=NULL
+        pIDs <- treewalk(pIDs,xcmsSetPeakID)
+        pIDs
+    }
 
-	## first step: Getting information: which grouped peak in which sample has a ms2Spec hanging on it
-	samples <- unique(xf@peaks[,"Sample"])
-	nsamp<-length(samples)
-	x<-c(1:length(groupidx(xs)))
-	peakIDs <- groupval(xs,"medret","index")[g,]
-		Nmz=NULL
-		Nrt=NULL
-		Nit=NULL
-		Nsa=NULL
-		for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
-			MsnPeaks <- GetMSnVector(xf,peakIDs[a])
-			Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
-			Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
-			Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
-			Nsa <- c(Nsa,xf@peaks[MsnPeaks,"Sample"])
-			}
-		#stop("RTs filled?")
-		xsn <- new("xcmsSet")
-		coln<-c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","sample")
-		xsn@peaks=new("matrix", ncol=length(coln), data=c(Nmz,Nmz,Nmz,Nrt,Nrt,Nrt,Nit,Nit,Nit,Nsa))
-		colnames(xsn@peaks) <- coln
-		phenoData(xsn) <- samples
-		sampnames(xsn) <- samples
-	xsn
-	}
+    ## first step: Getting information: which grouped peak in which sample has a ms2Spec hanging on it
+    samples <- unique(xf@peaks[,"Sample"])
+    nsamp<-length(samples)
+    x<-c(1:length(groupidx(xs)))
+    peakIDs <- groupval(xs,"medret","index")[g,]
+    Nmz=NULL
+    Nrt=NULL
+    Nit=NULL
+    Nsa=NULL
+    for (a in 1:length(peakIDs)){ ## getting the MSns for all Samples the current Group
+        MsnPeaks <- GetMSnVector(xf,peakIDs[a])
+        Nmz <- c(Nmz,xf@peaks[MsnPeaks,"mz"])
+        Nrt <- c(Nrt,xf@peaks[MsnPeaks,"rt"])
+        Nit <- c(Nit,xf@peaks[MsnPeaks,"intensity"])
+        Nsa <- c(Nsa,xf@peaks[MsnPeaks,"Sample"])
+    }
+    ##stop("RTs filled?")
+    xsn <- new("xcmsSet")
+    coln<-c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sn","sample")
+    xsn@peaks=new("matrix", ncol=length(coln), data=c(Nmz,Nmz,Nmz,Nrt,Nrt,Nrt,Nit,Nit,Nit,Nsa))
+    colnames(xsn@peaks) <- coln
+    phenoData(xsn) <- samples
+    sampnames(xsn) <- samples
+    xsn
+}
 
 if (!isGeneric("findneutral") )
     setGeneric("findneutral", function(object, find, ppmE=25, print=TRUE) standardGeneric("findneutral"))
 
 setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
     find<-range(ppmDev(Mr=find, ppmE))
-	spectra<-unique(object@peaks[,"MSnParentPeakID"])
-	found<-matrix(ncol=10)
-	
+    spectra<-unique(object@peaks[,"MSnParentPeakID"])
+    found<-matrix(ncol=10)
+
     for (i in 1:length(spectra)){
-		if(spectra[i] > 0){
-			losses<-diff(sort(object@peaks[object@peaks[,"MSnParentPeakID"] ==spectra[i],"mz"] ))
-			if(length(losses) > 0){
-				if(length(which(losses > find[1] & losses < find[2])) > 0){
-					idx<-which(object@peaks[,"MSnParentPeakID"] == spectra[i])
-					PrecursorMZ<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"mz"]
-					CE<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"CollisionEnergy"]
-					dat<-object@peaks[idx,c("MSnParentPeakID", "msLevel", "rt", "mz", 
-					"intensity", "Sample", "GroupPeakMSn")]
-					found<-rbind(found, cbind(NeutralLoss=c(losses,0),  PrecursorMz=PrecursorMZ, 
-						dat[order(dat[,"mz"]),], CollisionEnergy=CE))
-				}
-			}
-		}
-	}
+        if(spectra[i] > 0){
+            losses<-diff(sort(object@peaks[object@peaks[,"MSnParentPeakID"] ==spectra[i],"mz"] ))
+            if(length(losses) > 0){
+                if(length(which(losses > find[1] & losses < find[2])) > 0){
+                    idx<-which(object@peaks[,"MSnParentPeakID"] == spectra[i])
+                    PrecursorMZ<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"mz"]
+                    CE<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"CollisionEnergy"]
+                    dat<-object@peaks[idx,c("MSnParentPeakID", "msLevel", "rt", "mz",
+                                            "intensity", "Sample", "GroupPeakMSn")]
+                    found<-rbind(found, cbind(NeutralLoss=c(losses,0),  PrecursorMz=PrecursorMZ,
+                                              dat[order(dat[,"mz"]),], CollisionEnergy=CE))
+                }
+            }
+        }
+    }
     if(nrow(found) >1){
-		found<-found[2:nrow(found),]
-	} else{
-		cat("Nothing found\n")
-		return(0)
-	}
-	if (print == TRUE){
+        found<-found[2:nrow(found),]
+    } else{
+        cat("Nothing found\n")
+        return(0)
+    }
+    if (print == TRUE){
         cat("We looked for", find[2], " to", find[1], "and found:\n")
         print(found)
     }
@@ -411,20 +411,20 @@ if (!isGeneric("findMZ") )
     setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE) standardGeneric("findMZ"))
 
 setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
-    find<-range(ppmDev(Mr=find, ppmE)) 
+    find<-range(ppmDev(Mr=find, ppmE))
     fragMZ<-0
 
-	found<- which(object@peaks[,"mz"] > find[1] & object@peaks[,"mz"] < find[2] & object@peaks[,"msLevel"] >1)
-	if(length(found) <1){
-		cat("nothing was found\n")
-		return(0)
-	}
-	
-	PrecursorMZ<-object@peaks[object@peaks[found,"MSnParentPeakID"],"mz"]
-	CE<-object@peaks[object@peaks[found,"MSnParentPeakID"],"CollisionEnergy"]
-	foundFrag<-cbind(PrecursorMz=PrecursorMZ, object@peaks[found,c("MSnParentPeakID", "msLevel",
-		"rt", "mz", "intensity", "Sample", "GroupPeakMSn")], CollisionEnergy=CE)
-	
+    found<- which(object@peaks[,"mz"] > find[1] & object@peaks[,"mz"] < find[2] & object@peaks[,"msLevel"] >1)
+    if(length(found) <1){
+        cat("nothing was found\n")
+        return(0)
+    }
+
+    PrecursorMZ<-object@peaks[object@peaks[found,"MSnParentPeakID"],"mz"]
+    CE<-object@peaks[object@peaks[found,"MSnParentPeakID"],"CollisionEnergy"]
+    foundFrag<-cbind(PrecursorMz=PrecursorMZ, object@peaks[found,c("MSnParentPeakID", "msLevel",
+                     "rt", "mz", "intensity", "Sample", "GroupPeakMSn")], CollisionEnergy=CE)
+
     if (print == TRUE){
         cat("We looked for", find[2], " to", find[1], "and found:\n")
         print(foundFrag)

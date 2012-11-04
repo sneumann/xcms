@@ -11,11 +11,11 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{diffreport(object, class1 = levels(sampclass(object))[1], 
-                   class2 = levels(sampclass(object))[2], 
+  \code{diffreport(object, class1 = levels(sampclass(object))[1],
+                   class2 = levels(sampclass(object))[2],
                    filebase = character(), eicmax = 0, eicwidth = 200,
-                   sortpval = TRUE, classeic = c(class1,class2), 
-                   value=c("into","maxo","intb"), metlin = FALSE, 
+                   sortpval = TRUE, classeic = c(class1,class2),
+                   value=c("into","maxo","intb"), metlin = FALSE,
 				   h=480,w=640, mzdec=2, ...)}
 }
 }}
@@ -70,7 +70,7 @@
     Number of decimal places of title m/z values in the eic plot.
   }
   \item{...}{
-    optional arguments to be passed to \code{\link[multtest]{mt.teststat}} 
+    optional arguments to be passed to \code{\link[multtest]{mt.teststat}}
   }
 }
 \details{
@@ -91,10 +91,10 @@
   If a base file name is provided, the report (see Value section)
   will be saved to a tab separated file. If EICs are generated,
   they will be saved as 640x480 PNG files in a newly created
-  subdirectory. However this parameter can be changed with the 
+  subdirectory. However this parameter can be changed with the
   commands arguments. The numbered file names correspond to the
   rows in the report.
-  
+
   Chromatographic traces in the EICs are colored and labeled by
   their sample class. Sample classes take their color from the
   current palette. The color a sample class is assigned is dependent
@@ -102,17 +102,17 @@
   the class arguments. Thus \code{levels(sampclass(object))[1]}
   would use color \code{palette()[1]} and so on. In that way, sample
   classes maintain the same color across any number of different
-  generated reports. 
-  
+  generated reports.
+
   When there are multiple sample classes, xcms will produce boxplots of the
   different classes and will generate a single anova p-value statistic.
-  Like the eic's the plot number corresponds to the row number in the 
+  Like the eic's the plot number corresponds to the row number in the
   report.
 }
 
 \value{
   A data frame with the following columns:
-  
+
   \item{fold}{
     mean fold change (always greater than 1, see \code{tstat} for
     which set of sample classes was higher)

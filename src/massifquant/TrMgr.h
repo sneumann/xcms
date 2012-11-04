@@ -31,7 +31,7 @@ class TrMgr {
         int initCounts;
         std::vector<int> actIdx;
         std::vector<int> picIdx;
-        std::map<int, int> startMap; //first is startScanIdx, 
+        std::map<int, int> startMap; //first is startScanIdx,
                                     //second is subidx of picIdx.
         int picCounts;
         int actCounts;
@@ -45,16 +45,16 @@ class TrMgr {
 
         std::list<int> excludeMisses(const std::list<int> & A);
 
-        int findMinIdx(const std::vector<double> & d, 
+        int findMinIdx(const std::vector<double> & d,
                 const std::vector<int> & idx);
 
-        void judgeTracker(const int & i); 
+        void judgeTracker(const int & i);
 
         std::list<double> diff(const std::list<double> vec);
 
         bool hasMzDeviation(int i);
 
-        bool isSeizmo(int i); 
+        bool isSeizmo(int i);
 
     public:
 
@@ -67,18 +67,18 @@ class TrMgr {
 
         ~TrMgr();
 
-        void setDataScan(const std::vector<double> & mdat, 
+        void setDataScan(const std::vector<double> & mdat,
                 const std::vector<double> & idat);
         void setCurrScanIdx(const int sidx);
         void setPredDatIdx(const std::list<int> & pdi);
 
-        void setFoundActIdx(const std::list<int> & fai); 
-        void setMissActIdx(const std::list<int> & mai);    
-        void setPredDist(const std::vector<double> & dist); 
+        void setFoundActIdx(const std::list<int> & fai);
+        void setMissActIdx(const std::list<int> & mai);
+        void setPredDist(const std::vector<double> & dist);
         void setActIdx(const std::vector<int> & ai);
 
         int getPicCounts();
-        
+
         int getActiveCounts();
 
         Tracker* getTracker(int i);
@@ -95,10 +95,10 @@ class TrMgr {
 
         void manageMissed();
 
-        void manageTracked();      
+        void manageTracked();
 
         void initTrackers(const double & q_int, const double & q_mz,
-                const double & r_int, const double & r_mz, 
+                const double & r_int, const double & r_mz,
                 const int & sidx);
 
         void removeOvertimers();
@@ -112,7 +112,7 @@ class TrMgr {
         void erasePicElements(const std::vector<int> & eIdx);
 
         void shiftUpIndices(const int i);
-        
+
 };
 
 

@@ -11,7 +11,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{plotrt(object, col = NULL, ty = NULL, leg = TRUE, 
+  \code{plotrt(object, col = NULL, ty = NULL, leg = TRUE,
                densplit = FALSE)}
 }
 }}

@@ -4,7 +4,7 @@
 \alias{peakPlots,xcmsSet-method}
 \title{Plot a grid of a large number of peaks}
 \description{
-Plot extracted ion chromatograms for many peaks simultaneously, 
+Plot extracted ion chromatograms for many peaks simultaneously,
 indicating peak integration start and end points with vertical
 grey lines.
 }

@@ -9,8 +9,8 @@
   Calculate retention time deviations for each sample.
   It is based on the code at \url{http://obi-warp.sourceforge.net/}.
   However, this function is able to align multiple samples, by a
-  center-star strategy. 
-  
+  center-star strategy.
+
   For the original publication see
 
       Chromatographic Alignment of ESI-LC-MS Proteomics Data Sets by
@@ -25,11 +25,11 @@
              profStep=1, center=NULL, col = NULL, ty = NULL,
              response=1, distFunc="cor_opt", gapInit=NULL, gapExtend=NULL,
             factorDiag=2, factorGap=1, localAlignment=0, initPenalty=0)
-    }  
+    }
 }}
 
 \arguments{
-  \item{object}{the \code{xcmsSet} object} 
+  \item{object}{the \code{xcmsSet} object}
   \item{plottype}{if \code{deviation} plot retention time deviation}
   \item{profStep}{step size (in m/z) to use for profile generation from
     the raw data files}

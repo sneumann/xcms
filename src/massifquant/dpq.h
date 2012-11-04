@@ -126,4 +126,3 @@ if(x >= x_max) return R_DT_1
         MATHLIB_WARNING("non-integer x = %f", x);   \
         return R_D__0;                  \
     }
-

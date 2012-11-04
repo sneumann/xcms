@@ -6,7 +6,7 @@
 \title{ Automatic parameter for Lock mass fixing \code{AutoLockMass}  ~~}
 \description{
  \code{AutoLockMass}  - This function decides where the lock mass scans are
-	in the xcmsRaw object. This is done by using the scan time differences. 
+	in the xcmsRaw object. This is done by using the scan time differences.
 }
 \section{Methods}{
 \describe{
@@ -31,10 +31,10 @@
 		xr
 		##Lets assume that the lockmass starts at 1 and is every 100 scans
 		lockMass<-xcms:::makeacqNum(xr, freq=100, start=1)
-		## these are equalvent 
+		## these are equalvent
 		lockmass2<-AutoLockMass(xr)
 		all((lockmass == lockmass2) == TRUE)
-		
+
 		ob<-stitch(xr, lockMass)
 	}
 }

@@ -30,7 +30,7 @@ extern "C" {
     delete _mz;
     delete _tm;
     delete _mat;
-    
+
     // Get the time values:
     _tm_vals = valuescantime;
 
@@ -45,7 +45,7 @@ extern "C" {
     _mz_vals = mzrange;
     float *mz_tmp = new float[_mz_vals];
     for(int i=0; i < _mz_vals; i++) {
-      mz_tmp[i] = mz[i];  
+      mz_tmp[i] = mz[i];
     }
     _mz = new VecF(_mz_vals, mz_tmp);
 
@@ -59,7 +59,7 @@ extern "C" {
 
     _mat = new MatF(_tm_vals, _mz_vals, mat_tmp);
   }
- 
+
   void LMat::print_xcms() {
     float *mztmp = (float*)(*_mz);
     float *tmtmp = (float*)(*_tm);
@@ -111,7 +111,7 @@ extern "C" {
     for (int i = 0; i < tmCoords.length(); ++i) {
       if (tmCoords[i] < _tm_vals) {
 	tmp[i] = (*_tm)[tmCoords[i]];
-	//printf("tmCoords[i] %d val out %f\n", tmCoords[i], tmp[i]); 
+	//printf("tmCoords[i] %d val out %f\n", tmCoords[i], tmp[i]);
       }
       else {
 	printf("asking for time value at index: %d (length: %d)\n", tmCoords[i], _tm_vals);

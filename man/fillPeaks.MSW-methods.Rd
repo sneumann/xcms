@@ -22,10 +22,10 @@
   After peak grouping, there will always be peak groups that do not
   include peaks from every sample. This method produces intensity
   values for those missing samples by integrating raw data in peak
-  group region. In a given group, the start and ending m/z values for 
+  group region. In a given group, the start and ending m/z values for
   integration are defined by the median start and
   end points of the other detected peaks.
- 
+
 }
 \value{
   A \code{xcmsSet} objects with filled in peak groups.

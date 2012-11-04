@@ -23,7 +23,7 @@
   The mzData file will contain a <spectrumList> containing the
   <spectrum> with mass and intensity values in 32 bit precision. Other
   formats are currently not supported. Any header information
-  (e.g. additional <software> information or <cvParams>) will be lost.  
+  (e.g. additional <software> information or <cvParams>) will be lost.
   Currently, also any MSn information will not be stored.
 }
 \value{

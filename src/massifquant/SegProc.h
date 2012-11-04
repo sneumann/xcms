@@ -20,10 +20,10 @@ class SegProc {
         double t; //the test statistic from a student t distribution
         double v; //degrees of freedom for student t distribution
         double p; //the probability of obtaining a test statistic at least
-                  //as extreme as the one that was actually observed, assuming 
+                  //as extreme as the one that was actually observed, assuming
                   //that the null hypothesis is true (wiki)
-                    
-        std::vector<int> segClusters;   
+
+        std::vector<int> segClusters;
         std::vector<int> segIdx;//the list of tracker indices to be soldered together
         std::vector<int> unionIdx; //the delimiation of unions of soldered trks
 
@@ -48,10 +48,10 @@ class SegProc {
         SegProc(int otn);
 
         ~SegProc();
-        
+
         void groupSegments(TrMgr & busybody);
 
-        void collapseSubsets(); 
+        void collapseSubsets();
 
         void solderSegs(TrMgr & busybody);
 

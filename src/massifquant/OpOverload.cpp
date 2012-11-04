@@ -10,7 +10,7 @@ const int OPDIMV = 2;
 
 using namespace std;
 
-std::vector<double> operator * (const std::vector<double> & A, 
+std::vector<double> operator * (const std::vector<double> & A,
 	       const std::vector<double> & B) {
   //C = AB;
   std::vector<double> C(OPDIMM, 0);
@@ -18,7 +18,7 @@ std::vector<double> operator * (const std::vector<double> & A,
   C[1] = A[0]*B[1] + A[1]*B[3];
   C[2] = A[2]*B[0] + A[3]*B[2];
   C[3] = A[2]*B[1] + A[3]*B[3];
-  
+
   return C;
 }
 
@@ -32,7 +32,7 @@ std::vector<double> operator + (const std::vector<double> & A,
   return C;
 }
 
-std::vector<int> operator + (const std::vector<int> & A, 
+std::vector<int> operator + (const std::vector<int> & A,
 			    const std::vector<int> & B) {
   int m = A.size();
   std::vector<int> C(m, 0);
@@ -42,7 +42,7 @@ std::vector<int> operator + (const std::vector<int> & A,
   return C;
 }
 
-std::vector<double> operator - (const std::vector<double> & A, 
+std::vector<double> operator - (const std::vector<double> & A,
 	       const double & b) {
   int m = A.size();
   std::vector<double> C(m,0);
@@ -53,7 +53,7 @@ std::vector<double> operator - (const std::vector<double> & A,
 
 }
 
-std::vector<double> operator / (const std::vector<double> & A, 
+std::vector<double> operator / (const std::vector<double> & A,
 			       const double & b) {
   int m = A.size();
   std::vector<double>  C(m,0);
@@ -65,41 +65,41 @@ std::vector<double> operator / (const std::vector<double> & A,
 }
 
 //integer logicals
-std::vector<int> operator >= (const std::vector<int> & A, 
+std::vector<int> operator >= (const std::vector<int> & A,
 			      const int & b) {
   int m = A.size();
-  std::vector<int> C(m,0);  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C(m,0);
+  for (int i = 0; i < m; i++) {
     if (A.at(i) >= b)
       C.at(i) = 1;
   }
   return C;
 }
 
-std::vector<int> operator <= (const std::vector<int> & A, 
+std::vector<int> operator <= (const std::vector<int> & A,
 			      const int & b) {
   int m = A.size();
-  std::vector<int> C(m,0);  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C(m,0);
+  for (int i = 0; i < m; i++) {
     if (A.at(i) <= b)
       C.at(i) = 1;
   }
   return C;
 }
 
-std::vector<int> operator == (const std::vector<int> & A, 
+std::vector<int> operator == (const std::vector<int> & A,
 			      const int & b) {
   int m = A.size();
-  std::vector<int> C;  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C;
+  for (int i = 0; i < m; i++) {
     if (A.at(i) == b)
       C.push_back(i);//returns the index
   }
   return C;
 }
 
-std::vector<int> operator == (const std::list<int> & A, 
-			      const int & b) { 
+std::vector<int> operator == (const std::list<int> & A,
+			      const int & b) {
   std::vector<int> C;
   std::list<int>::const_iterator it;
   int i = 0;
@@ -112,12 +112,12 @@ std::vector<int> operator == (const std::list<int> & A,
    return C;
 }
 
-std::list<int> operator == (const std::list<int> & A, 
+std::list<int> operator == (const std::list<int> & A,
 	const std::list<int> & B) {
 
     assert(A.size() == B.size());
     std::list<int> C;
-    std::list<int>::const_iterator itA;  
+    std::list<int>::const_iterator itA;
     std::list<int>::const_iterator itB = B.begin();
     int idx = 0;
     for (itA = A.begin(); itA != A.end(); ++itA) {
@@ -128,8 +128,8 @@ std::list<int> operator == (const std::list<int> & A,
     return C;
 }
 
-std::vector<int> operator != (const std::list<int> & A, 
-			      const int & b) { 
+std::vector<int> operator != (const std::list<int> & A,
+			      const int & b) {
   std::vector<int> C;
   std::list<int>::const_iterator it;
   int i = 0;
@@ -137,14 +137,14 @@ std::vector<int> operator != (const std::list<int> & A,
     if (*it != b) {
       C.push_back(i);//returns the index
     }
-    i++; 
+    i++;
   }
    return C;
 }
 
 /*use for miss list */
-std::list<int> operator != (const std::vector<int> & A, 
-            			      const int & b) {  
+std::list<int> operator != (const std::vector<int> & A,
+            			      const int & b) {
   std::list<int> C;
   std::vector<int>::const_iterator it;
   int i = 0;
@@ -158,40 +158,40 @@ std::list<int> operator != (const std::vector<int> & A,
 }
 
 //double logicals
-std::vector<int> operator > (const std::vector<double> & A, 
+std::vector<int> operator > (const std::vector<double> & A,
 			      const double & b) {
   int m = A.size();
-  std::vector<int> C(m,0);  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C(m,0);
+  for (int i = 0; i < m; i++) {
     if (A.at(i) > b)
       C.at(i) = 1;
   }
   return C;
 }
 
-std::vector<int> operator >= (const std::vector<double> & A, 
+std::vector<int> operator >= (const std::vector<double> & A,
 			      const double & b) {
   int m = A.size();
-  std::vector<int> C(m,0);  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C(m,0);
+  for (int i = 0; i < m; i++) {
     if (A.at(i) >= b)
       C.at(i) = 1;
   }
   return C;
 }
 
-std::vector<int> operator <= (const std::vector<double> & A, 
+std::vector<int> operator <= (const std::vector<double> & A,
 			      const double & b) {
   int m = A.size();
-  std::vector<int> C(m,0);  
-  for (int i = 0; i < m; i++) {    
+  std::vector<int> C(m,0);
+  for (int i = 0; i < m; i++) {
     if (A.at(i) <= b)
       C.at(i) = 1;
   }
   return C;
 }
 
-std::vector<double> multiplyMatVec(const std::vector<double>  & A, 
+std::vector<double> multiplyMatVec(const std::vector<double>  & A,
 		   const std::vector<double> & b) {
   //Ab = x;
   std::vector<double> x(OPDIMV,0);
@@ -201,7 +201,7 @@ std::vector<double> multiplyMatVec(const std::vector<double>  & A,
   return x;
 }
 
-std::vector<double> dottimes (const std::vector<double> & A, 
+std::vector<double> dottimes (const std::vector<double> & A,
 				const std::vector<double> & B) {
   int m = A.size();
   std::vector<double> C(m, 0);
@@ -211,7 +211,7 @@ std::vector<double> dottimes (const std::vector<double> & A,
   return C;
 }
 
-std::vector<double> dotadd (const std::vector<double> & A, 
+std::vector<double> dotadd (const std::vector<double> & A,
 				const std::vector<double> & B) {
   int m = A.size();
   std::vector<double> C(m, 0);
@@ -221,7 +221,7 @@ std::vector<double> dotadd (const std::vector<double> & A,
   return C;
 }
 
-std::vector<double> copySubIdx(const std::vector<double> & A, 
+std::vector<double> copySubIdx(const std::vector<double> & A,
 			       const std::vector<int> & subidx) {
   int m = subidx.size();
   std::vector<double> Asubset(m,0);
@@ -234,7 +234,7 @@ std::vector<double> copySubIdx(const std::vector<double> & A,
   return Asubset;
 }
 
-std::vector<int> copySubIdx(const std::vector<int> & A, 
+std::vector<int> copySubIdx(const std::vector<int> & A,
         const std::vector<int> & subidx) {
     int m = subidx.size();
     std::vector<int> Asubset(m,0);
@@ -248,7 +248,7 @@ std::vector<int> copySubIdx(const std::vector<int> & A,
 
 }
 
-std::vector<int> createSequence(const int start, 
+std::vector<int> createSequence(const int start,
         const int stop, const int spacing) {
 
     int upperBound = stop + 1;
@@ -340,7 +340,7 @@ int upperBound(double val, std::vector<double> mzvals, int first, int length){
         mid = first;
         mid += half;
         if (val < mzvals.at(mid) ){
-         length = half;          
+         length = half;
         }
         else {
             first = mid;
@@ -350,4 +350,3 @@ int upperBound(double val, std::vector<double> mzvals, int first, int length){
     }
     return(first);
 }
-

@@ -10,7 +10,7 @@
 \description{
   These two methods use ``well behaved'' peak groups to calculate
   retention time deviations for every time point of each sample. Use
-  smoothed deviations to align retention times.  
+  smoothed deviations to align retention times.
 }
 \section{Methods}{
 \describe{
@@ -58,7 +58,7 @@
 \seealso{
   \code{\link{xcmsSet-class}},
   \code{\link{loess}}
-  \code{\link{retcor.obiwarp}}  
+  \code{\link{retcor.obiwarp}}
 }
 \keyword{methods}
 \keyword{file}

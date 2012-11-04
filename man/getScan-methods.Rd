@@ -23,7 +23,7 @@
     end
   }
   \item{mzrange}{
-    limit data points returned to those between in the range, 
+    limit data points returned to those between in the range,
     \code{range(mzrange)}
   }
 }

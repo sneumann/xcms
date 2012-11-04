@@ -41,7 +41,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   can be selected explicitly. The default (NULL) is to read all scans.
 
   The lock mass correction allows for the lock mass scan to be added back in
-  with the last working scan. This correction gives better reproducibility 
+  with the last working scan. This correction gives better reproducibility
   between sample sets.
 }
 \value{
@@ -49,7 +49,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \note{
-  
+
 }
 \seealso{
   \code{\link{xcmsSet-class}},

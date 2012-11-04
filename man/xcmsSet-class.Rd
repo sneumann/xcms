@@ -80,8 +80,8 @@
       method, and \code{step} - profile m/z step size
     }
 	\item{dataCorrection}{
-	  logical vector filled if the waters Lock mass correction 
-		parameter is used.   
+	  logical vector filled if the waters Lock mass correction
+		parameter is used.
 	}
     \item{\code{polarity}:}{
       a string ("positive" or "negative" or NULL) describing whether only

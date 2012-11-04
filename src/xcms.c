@@ -5,22 +5,22 @@
 #include "util.h"
 #include "xcms.h"
 
-void ProfBinLin(double *xvals, double *yvals, int *numin, 
+void ProfBinLin(double *xvals, double *yvals, int *numin,
                 double *xstart, double *xend, int *numout, double *out) {
 
-    double dx, xi, 
-      xpre=-1, ypre=-1, 
+    double dx, xi,
+      xpre=-1, ypre=-1,
       xpost, ypost, startx;
     int    i, ipost;
-    
+
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-    
+
     startx = *xstart - 20*dx;
     FindEqualLess(xvals, numin, &startx, &ipost);
     //ipost = 0;
     xpost = *xstart + dx*(int)((xvals[ipost] - *xstart)/dx + 0.5);
     ypost = yvals[ipost];
-    
+
     for (i = 0; i < *numout; i++) {
        xi = *xstart + dx*i;
        if (xi < xvals[0] || xi > xvals[(*numin)-1])
@@ -46,26 +46,26 @@ void ProfBinLinM(double *xvals, double *yvals, int *numin, int *mindex, int *num
                  double *xstart, double *xend, int *numout, double *out) {
 
     int i, vectlen;
-    
+
     for (i = 0; i < *nummi; i++) {
         if (i < *nummi-1)
             vectlen = mindex[i+1] - mindex[i];
         else
             vectlen = *numin - mindex[i];
-        ProfBinLin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
+        ProfBinLin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend,
                    numout, out+i*(*numout));
     }
 }
 
 void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel, double *basespace,
                     double *xstart, double *xend, int *numout, double *out) {
- 
+
     double dx, ypre = -1, ypost = -1, startx;
     int    i, ipre = -1, ipost, ix, ibase;
-    
+
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
     ibase = floor(*basespace/dx);
-    
+
     // Initialize the bin after the first interpolation point (post)
     startx = *xstart + 0.5*dx;
     FindEqualLess(xvals, numin, &startx, &ix);
@@ -82,7 +82,7 @@ void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel,
         while (++ix < *numin && round((xvals[ix] - *xstart)/dx) == ipost)
             if (yvals[ix] > ypost)
                 ypost = yvals[ix];
-    
+
     for (i = 0; i < *numout; i++) {
         // Move post to pre if less than or equal to interpolating point
         if (ipost <= i && ypost != -1) {
@@ -112,30 +112,30 @@ void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel,
 }
 
 void ProfBinLinBaseM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
-                     double *baselevel, double *basespace, double *xstart, double *xend, 
+                     double *baselevel, double *basespace, double *xstart, double *xend,
                      int *numout, double *out) {
-    
+
     int i, vectlen;
-    
+
     for (i = 0; i < *nummi; i++) {
         if (i < *nummi-1)
             vectlen = mindex[i+1] - mindex[i];
         else
             vectlen = *numin - mindex[i];
-        ProfBinLinBase(xvals+mindex[i], yvals+mindex[i], &vectlen, baselevel, basespace, 
+        ProfBinLinBase(xvals+mindex[i], yvals+mindex[i], &vectlen, baselevel, basespace,
                        xstart, xend, numout, out+i*(*numout));
     }
 }
 
-void ProfIntLin(double *xvals, double *yvals, int *numin, 
+void ProfIntLin(double *xvals, double *yvals, int *numin,
                 double *xstart, double *xend, int *numout, double *out) {
-    
+
     // Search for initial j
     int    i, j = 0, thru;
     double dx, x1, x2, xb, xe, yb, ye, totarea, startx;
-    
+
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-    
+
     startx = *xstart - dx;
     FindEqualLess(xvals, numin, &startx, &j);
     x2 = *xstart - dx*0.5;
@@ -152,10 +152,10 @@ void ProfIntLin(double *xvals, double *yvals, int *numin,
             if (xvals[j+1] > x2 || j >= *numin-2)
                 thru = 1;
             if (xvals[j+1] <= x1) {
-                j++; 
+                j++;
                 continue;
             }
-                
+
             if (xvals[j] < x1) {
                 xb = x1;
                 yb = yvals[j] + (yvals[j+1]-yvals[j])*(x1-xvals[j])/(xvals[j+1]-xvals[j]);
@@ -180,30 +180,30 @@ void ProfIntLin(double *xvals, double *yvals, int *numin,
 
 void ProfIntLinM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
                  double *xstart, double *xend, int *numout, double *out) {
-    
+
     int i, vectlen;
-    
+
     for (i = 0; i < *nummi; i++) {
         if (i < *nummi-1)
             vectlen = mindex[i+1] - mindex[i];
         else
             vectlen = *numin - mindex[i];
-        ProfIntLin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
+        ProfIntLin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend,
                    numout, out+i*(*numout));
     }
 }
 
-void ProfBin(double *xvals, double *yvals, int *numin, 
+void ProfBin(double *xvals, double *yvals, int *numin,
              double *xstart, double *xend, int *numout, double *out) {
 
     int    i, outi = 0;
     double dx, startx, endx;
-    
+
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-    
+
     for (i = 0; i < *numout; i++)
         out[i] = 0;
-    
+
     startx = *xstart - dx;
     endx = *xend + dx;
     FindEqualGreater(xvals, numin, &startx, &i);
@@ -217,30 +217,30 @@ void ProfBin(double *xvals, double *yvals, int *numin,
 
 void ProfBinM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
               double *xstart, double *xend, int *numout, double *out) {
-    
+
     int i, vectlen;
-    
+
     for (i = 0; i < *nummi; i++) {
         if (i < *nummi-1)
             vectlen = mindex[i+1] - mindex[i];
         else
             vectlen = *numin - mindex[i];
-        ProfBin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
+        ProfBin(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend,
                 numout, out+i*(*numout));
     }
 }
 
-void ProfMaxIdx(double *xvals, double *yvals, int *numin, 
+void ProfMaxIdx(double *xvals, double *yvals, int *numin,
                 double *xstart, double *xend, int *numout, int *out) {
 
     int    i, outi = 0;
     double dx, startx, endx;
-    
+
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-    
+
     for (i = 0; i < *numout; i++)
         out[i] = INT_MIN;
-    
+
     startx = *xstart - dx;
     endx = *xend + dx;
     FindEqualGreater(xvals, numin, &startx, &i);
@@ -254,15 +254,15 @@ void ProfMaxIdx(double *xvals, double *yvals, int *numin,
 
 void ProfMaxIdxM(double *xvals, double *yvals, int *numin, int *mindex, int *nummi,
                  double *xstart, double *xend, int *numout, int *out) {
-    
+
     int i, j, vectlen;
-    
+
     for (i = 0; i < *nummi; i++) {
         if (i < *nummi-1)
             vectlen = mindex[i+1] - mindex[i];
         else
             vectlen = *numin - mindex[i];
-        ProfMaxIdx(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend, 
+        ProfMaxIdx(xvals+mindex[i], yvals+mindex[i], &vectlen, xstart, xend,
                    numout, out+i*(*numout));
         for (j = i*(*numout); j < (i+1)*(*numout); j++)
             if (out[j] >= 0)
@@ -271,10 +271,10 @@ void ProfMaxIdxM(double *xvals, double *yvals, int *numin, int *mindex, int *num
 }
 
 void MedianFilter(double *inmat, int *m, int *n, int *mrad, int *nrad, double *outmat) {
-    
+
     int    i, j, k, l, mmin, mmax, nmin, nmax, bufLen;
     double * sortBuf = (double *) malloc((*mrad*2+1)*(*nrad*2+1)*sizeof(double));
-    
+
     for (i = 0; i < *m; i++) {
         for (j = 0; j < *n; j++) {
             mmin = (i - *mrad > 0) ? (i - *mrad) : 0;
@@ -295,14 +295,14 @@ void MedianFilter(double *inmat, int *m, int *n, int *mrad, int *nrad, double *o
                 *(outmat + i + *m*j) = (sortBuf[(bufLen-2)/2] + sortBuf[(bufLen)/2])/2;
         }
     }
-    
+
     free(sortBuf);
 }
 
 int CompareDouble(const void *a, const void *b) {
-    
+
     const double *da = (const double *) a;
     const double *db = (const double *) b;
-    
+
     return (*da > *db) - (*da < *db);
 }

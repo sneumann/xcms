@@ -44,7 +44,7 @@ VecI::VecI(int n) : _n(n), _shallow(false) {
 VecI::VecI(int n, const int &val) : _n(n), _shallow(false) {
     _dat = new int[_n];
     for (int i = 0; i < _n; ++i) {
-        _dat[i] = val;            
+        _dat[i] = val;
     }
 #ifdef JTP_DEBUG
     puts("Creating DATA(N,int)");
@@ -57,7 +57,7 @@ VecI::VecI(int n, int *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallow) 
 #endif
 }
 
-VecI::VecI(const VecI &A, bool shallow) : _n(A._n), _shallow(shallow) { 
+VecI::VecI(const VecI &A, bool shallow) : _n(A._n), _shallow(shallow) {
     if (!shallow) {
         _dat = new int[_n];
         for (int i = 0; i < _n; ++i) {
@@ -138,12 +138,12 @@ bool VecI::operator==(const VecI &A) {
         if (A._dat == _dat) { return true; }  // Same data
         else {
             for (int i = 0; i < _n; ++i) {
-                if (A._dat[i] != _dat[i]) { return false; } 
+                if (A._dat[i] != _dat[i]) { return false; }
             }
             return true;
         }
     }
-    else { 
+    else {
         return false;
     }
 }
@@ -338,7 +338,7 @@ void VecI::div(const VecI &todiv, VecI &out) {
 void VecI::square_root() {
     int *me = (int*)(*this);
     for (int i = 0; i < _n; ++i) {
-        me[i] = (int)sqrt((double)me[i]);      
+        me[i] = (int)sqrt((double)me[i]);
     }
 }
 
@@ -352,7 +352,7 @@ int VecI::sum() {
 }
 
 char * VecI::class_name() {
-    char *name = new char[7]; 
+    char *name = new char[7];
     strcpy(name, "VecI");
     return name;
 }
@@ -403,7 +403,7 @@ void VecI::sort() {
     qsort(_dat, _n, sizeof(int), intCompare);
 }
 
-int VecI::index(int val) { 
+int VecI::index(int val) {
     for (int i = 0; i < _n; ++i) {
         if (val == _dat[i]) {
             return i;
@@ -429,7 +429,7 @@ void VecI::sample_stats(double &mean, double &std_dev) {
     double _sumSq = 0.0;
     int _len = this->dim();
     for( int i=0; i<_len; ++i ) {
-        _val = (double)me[i]; 
+        _val = (double)me[i];
         _sum += _val;
         _sumSq += _val *_val;
     }
@@ -586,8 +586,8 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
 
     int ierr = 0;
     int lengthLess1 = length - 1;
-    
-    if (length < 2) { 
+
+    if (length < 2) {
         if (length == 1) {
             tmp_derivs[0] = 0;
             return;
@@ -600,7 +600,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
     h1 = x[1] - x[0];
     del1 = (y[1] - y[0]) / h1;
     dsave = del1;
-    
+
     // special case length=2 --use linear interpolation
     if (lengthLess1 < 2) {
         tmp_derivs[0] = del1;
@@ -608,7 +608,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
         out_derivs.take(3, tmp_derivs);
         return;
     }
-    
+
     // Normal case (length >= 3)
 // 10
 
@@ -675,7 +675,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
         }
     }
 
-// 50 
+// 50
     w1 = -h2/hsum;
     w2 = (h2 + hsum)/hsum;
     tmp_derivs[ind] = w1*del1 + w2*del2;
@@ -686,7 +686,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
         // NEED DO THIS CHECK ONLY IF MONOTONICITY SWITCHES.
         dmax = three*del2;
         if (fabs(tmp_derivs[ind]) > fabs(dmax)) {
-            tmp_derivs[ind] = dmax;      
+            tmp_derivs[ind] = dmax;
         }
     }
     out_derivs.take(length, tmp_derivs);
@@ -698,7 +698,7 @@ void VecI::xy_to_x(VecI &x, VecI &y) {
     int *_x = (int*)x;
     int *_y = (int*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] - _x[i]; 
+        _y[i] = _y[i] - _x[i];
     }
 }
 
@@ -706,7 +706,7 @@ void VecI::x_to_xy(VecI &x, VecI &y) {
     int *_x = (int*)x;
     int *_y = (int*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] + _x[i]; 
+        _y[i] = _y[i] + _x[i];
     }
 }
 
@@ -758,7 +758,7 @@ void VecI::linear_interp(VecI &xin, VecI &yin, VecI &xe, VecI &out_ye, int sorte
                 ifirst = ir - 1;
             }
             istart = i;
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt*derivs[ifirst]);
         }
     }
@@ -785,7 +785,7 @@ void VecI::linear_interp(VecI &xin, VecI &yin, VecI &xe, VecI &out_ye, int sorte
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt * ((yin[ir] - yin[ifirst]) / (xin[ir]-xin[ifirst])) );
         }
     }
@@ -802,19 +802,19 @@ int VecI::sum_of_sq() {
 
 
 double VecI::pearsons_r(VecI &x, VecI &y) {
-    
+
     // Preparation:
     double sum_xTy = VecI::dot_product(x,y);
-    double sum_x = x.sum();         
-    double sum_y = y.sum();       
+    double sum_x = x.sum();
+    double sum_y = y.sum();
     // Could this step be sped up?
     double sum_x2 = x.sum_of_sq();
     double sum_y2 = y.sum_of_sq();
     int N = x.dim();
-    
+
     // Here it is:
-    // 'E' is Capital Sigma 
-    // r = EXY - (EXEY/N) 
+    // 'E' is Capital Sigma
+    // r = EXY - (EXEY/N)
     //    -----------------
     //    sqrt( (EX^2 - (EX)^2/N) * (EY^2 - (EY)^2/N) )
 
@@ -848,7 +848,7 @@ double VecI::euclidean(VecI &x, VecI &y) {
     VecF diff(x.size());
     double sum_of_diffs = 0;
     for (int i = 0; i < x.size(); ++i) {
-        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]); 
+        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]);
     }
     return sqrt(sum_of_diffs);
 }
@@ -1027,7 +1027,7 @@ void VecI::rsq_slope_intercept(VecI &x, VecI &y, double &rsq, double &slope, dou
         sum_sq_res_xy += x_minus_mean_i*y_minus_mean_i;
     }
     slope = sum_sq_res_xy/sum_sq_res_xx;
-    y_intercept = mean_y - (slope * mean_x); 
+    y_intercept = mean_y - (slope * mean_x);
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
 }
 
@@ -1059,7 +1059,7 @@ VecD::VecD(int n) : _n(n), _shallow(false) {
 VecD::VecD(int n, const double &val) : _n(n), _shallow(false) {
     _dat = new double[_n];
     for (int i = 0; i < _n; ++i) {
-        _dat[i] = val;            
+        _dat[i] = val;
     }
 #ifdef JTP_DEBUG
     puts("Creating DATA(N,double)");
@@ -1072,7 +1072,7 @@ VecD::VecD(int n, double *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallo
 #endif
 }
 
-VecD::VecD(const VecD &A, bool shallow) : _n(A._n), _shallow(shallow) { 
+VecD::VecD(const VecD &A, bool shallow) : _n(A._n), _shallow(shallow) {
     if (!shallow) {
         _dat = new double[_n];
         for (int i = 0; i < _n; ++i) {
@@ -1153,12 +1153,12 @@ bool VecD::operator==(const VecD &A) {
         if (A._dat == _dat) { return true; }  // Same data
         else {
             for (int i = 0; i < _n; ++i) {
-                if (A._dat[i] != _dat[i]) { return false; } 
+                if (A._dat[i] != _dat[i]) { return false; }
             }
             return true;
         }
     }
-    else { 
+    else {
         return false;
     }
 }
@@ -1353,7 +1353,7 @@ void VecD::div(const VecD &todiv, VecD &out) {
 void VecD::square_root() {
     double *me = (double*)(*this);
     for (int i = 0; i < _n; ++i) {
-        me[i] = (double)sqrt((double)me[i]);      
+        me[i] = (double)sqrt((double)me[i]);
     }
 }
 
@@ -1368,7 +1368,7 @@ double VecD::sum() {
 }
 
 char * VecD::class_name() {
-    char *name = new char[7]; 
+    char *name = new char[7];
     strcpy(name, "VecD");
     return name;
 }
@@ -1419,7 +1419,7 @@ void VecD::sort() {
     qsort(_dat, _n, sizeof(double), doubleCompare);
 }
 
-int VecD::index(double val) { 
+int VecD::index(double val) {
     for (int i = 0; i < _n; ++i) {
         if (val == _dat[i]) {
             return i;
@@ -1445,7 +1445,7 @@ void VecD::sample_stats(double &mean, double &std_dev) {
     double _sumSq = 0.0;
     int _len = this->dim();
     for( int i=0; i<_len; ++i ) {
-        _val = (double)me[i]; 
+        _val = (double)me[i];
         _sum += _val;
         _sumSq += _val *_val;
     }
@@ -1602,8 +1602,8 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
 
     int ierr = 0;
     int lengthLess1 = length - 1;
-    
-    if (length < 2) { 
+
+    if (length < 2) {
         if (length == 1) {
             tmp_derivs[0] = 0;
             return;
@@ -1616,7 +1616,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
     h1 = x[1] - x[0];
     del1 = (y[1] - y[0]) / h1;
     dsave = del1;
-    
+
     // special case length=2 --use linear interpolation
     if (lengthLess1 < 2) {
         tmp_derivs[0] = del1;
@@ -1624,7 +1624,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
         out_derivs.take(3, tmp_derivs);
         return;
     }
-    
+
     // Normal case (length >= 3)
 // 10
 
@@ -1691,7 +1691,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
         }
     }
 
-// 50 
+// 50
     w1 = -h2/hsum;
     w2 = (h2 + hsum)/hsum;
     tmp_derivs[ind] = w1*del1 + w2*del2;
@@ -1702,7 +1702,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
         // NEED DO THIS CHECK ONLY IF MONOTONICITY SWITCHES.
         dmax = three*del2;
         if (fabs(tmp_derivs[ind]) > fabs(dmax)) {
-            tmp_derivs[ind] = dmax;      
+            tmp_derivs[ind] = dmax;
         }
     }
     out_derivs.take(length, tmp_derivs);
@@ -1714,7 +1714,7 @@ void VecD::xy_to_x(VecD &x, VecD &y) {
     double *_x = (double*)x;
     double *_y = (double*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] - _x[i]; 
+        _y[i] = _y[i] - _x[i];
     }
 }
 
@@ -1722,7 +1722,7 @@ void VecD::x_to_xy(VecD &x, VecD &y) {
     double *_x = (double*)x;
     double *_y = (double*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] + _x[i]; 
+        _y[i] = _y[i] + _x[i];
     }
 }
 
@@ -1774,7 +1774,7 @@ void VecD::linear_interp(VecD &xin, VecD &yin, VecD &xe, VecD &out_ye, int sorte
                 ifirst = ir - 1;
             }
             istart = i;
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt*derivs[ifirst]);
         }
     }
@@ -1801,7 +1801,7 @@ void VecD::linear_interp(VecD &xin, VecD &yin, VecD &xe, VecD &out_ye, int sorte
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt * ((yin[ir] - yin[ifirst]) / (xin[ir]-xin[ifirst])) );
         }
     }
@@ -1818,19 +1818,19 @@ double VecD::sum_of_sq() {
 
 
 double VecD::pearsons_r(VecD &x, VecD &y) {
-    
+
     // Preparation:
     double sum_xTy = VecD::dot_product(x,y);
-    double sum_x = x.sum();         
-    double sum_y = y.sum();       
+    double sum_x = x.sum();
+    double sum_y = y.sum();
     // Could this step be sped up?
     double sum_x2 = x.sum_of_sq();
     double sum_y2 = y.sum_of_sq();
     int N = x.dim();
-    
+
     // Here it is:
-    // 'E' is Capital Sigma 
-    // r = EXY - (EXEY/N) 
+    // 'E' is Capital Sigma
+    // r = EXY - (EXEY/N)
     //    -----------------
     //    sqrt( (EX^2 - (EX)^2/N) * (EY^2 - (EY)^2/N) )
 
@@ -1864,7 +1864,7 @@ double VecD::euclidean(VecD &x, VecD &y) {
     VecF diff(x.size());
     double sum_of_diffs = 0;
     for (int i = 0; i < x.size(); ++i) {
-        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]); 
+        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]);
     }
     return sqrt(sum_of_diffs);
 }
@@ -2045,7 +2045,7 @@ void VecD::rsq_slope_intercept(VecD &x, VecD &y, double &rsq, double &slope, dou
         sum_sq_res_xy += x_minus_mean_i*y_minus_mean_i;
     }
     slope = sum_sq_res_xy/sum_sq_res_xx;
-    y_intercept = mean_y - (slope * mean_x); 
+    y_intercept = mean_y - (slope * mean_x);
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
 }
 
@@ -2077,7 +2077,7 @@ VecF::VecF(int n) : _n(n), _shallow(false) {
 VecF::VecF(int n, const float &val) : _n(n), _shallow(false) {
     _dat = new float[_n];
     for (int i = 0; i < _n; ++i) {
-        _dat[i] = val;            
+        _dat[i] = val;
     }
 #ifdef JTP_DEBUG
     puts("Creating DATA(N,float)");
@@ -2090,7 +2090,7 @@ VecF::VecF(int n, float *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallow
 #endif
 }
 
-VecF::VecF(const VecF &A, bool shallow) : _n(A._n), _shallow(shallow) { 
+VecF::VecF(const VecF &A, bool shallow) : _n(A._n), _shallow(shallow) {
     if (!shallow) {
         _dat = new float[_n];
         for (int i = 0; i < _n; ++i) {
@@ -2171,12 +2171,12 @@ bool VecF::operator==(const VecF &A) {
         if (A._dat == _dat) { return true; }  // Same data
         else {
             for (int i = 0; i < _n; ++i) {
-                if (A._dat[i] != _dat[i]) { return false; } 
+                if (A._dat[i] != _dat[i]) { return false; }
             }
             return true;
         }
     }
-    else { 
+    else {
         return false;
     }
 }
@@ -2371,7 +2371,7 @@ void VecF::div(const VecF &todiv, VecF &out) {
 void VecF::square_root() {
     float *me = (float*)(*this);
     for (int i = 0; i < _n; ++i) {
-        me[i] = (float)sqrt((double)me[i]);      
+        me[i] = (float)sqrt((double)me[i]);
     }
 }
 
@@ -2385,7 +2385,7 @@ float VecF::sum() {
 }
 
 char * VecF::class_name() {
-    char *name = new char[7]; 
+    char *name = new char[7];
     strcpy(name, "VecF");
     return name;
 }
@@ -2436,7 +2436,7 @@ void VecF::sort() {
     qsort(_dat, _n, sizeof(float), floatCompare);
 }
 
-int VecF::index(float val) { 
+int VecF::index(float val) {
     for (int i = 0; i < _n; ++i) {
         if (val == _dat[i]) {
             return i;
@@ -2463,7 +2463,7 @@ void VecF::sample_stats(double &mean, double &std_dev) {
     double _sumSq = 0.0;
     int _len = this->dim();
     for( int i=0; i<_len; ++i ) {
-        _val = (double)me[i]; 
+        _val = (double)me[i];
         _sum += _val;
         _sumSq += _val *_val;
     }
@@ -2575,9 +2575,9 @@ void VecF::print(const char *filename, bool without_length) {
 
 void VecF::print_tm() {
     int i;
-    
+
     std::cout << _n << std::endl;
-    
+
     for (i = 0; i < _n - 1; ++i) {
         std::cout << _dat[i] << " ";
     }
@@ -2587,7 +2587,7 @@ void VecF::print_tm() {
 
 void VecF::print(std::ostream &fout, bool without_length) {
     int i;
-    if (!without_length) {    
+    if (!without_length) {
     fout <<"_n"<< _n << std::endl;
     }
     for (i = 0; i < _n - 1; ++i) {
@@ -2634,8 +2634,8 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
 
     int ierr = 0;
     int lengthLess1 = length - 1;
-    
-    if (length < 2) { 
+
+    if (length < 2) {
         if (length == 1) {
             tmp_derivs[0] = 0;
             return;
@@ -2648,7 +2648,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
 // THIS can be done BEFORE this routine if someone cares to...
 //    // Check monotonicity
 //    for (int i = 2; i < length; i++) {
-//        if (x[i] <= x[i-1]) { 
+//        if (x[i] <= x[i-1]) {
 //            return 2;
 //        }
 //    }
@@ -2656,7 +2656,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
     h1 = x[1] - x[0];
     del1 = (y[1] - y[0]) / h1;
     dsave = del1;
-    
+
     // special case length=2 --use linear interpolation
     if (lengthLess1 < 2) {
         tmp_derivs[0] = del1;
@@ -2664,7 +2664,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
         out_derivs.take(3, tmp_derivs);
         return;
     }
-    
+
     // Normal case (length >= 3)
 // 10
 
@@ -2731,7 +2731,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
         }
     }
 
-// 50 
+// 50
     w1 = -h2/hsum;
     w2 = (h2 + hsum)/hsum;
     tmp_derivs[ind] = w1*del1 + w2*del2;
@@ -2742,7 +2742,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
         // NEED DO THIS CHECK ONLY IF MONOTONICITY SWITCHES.
         dmax = three*del2;
         if (fabs(tmp_derivs[ind]) > fabs(dmax)) {
-            tmp_derivs[ind] = dmax;      
+            tmp_derivs[ind] = dmax;
         }
     }
     out_derivs.take(length, tmp_derivs);
@@ -2754,7 +2754,7 @@ void VecF::xy_to_x(VecF &x, VecF &y) {
     float *_x = (float*)x;
     float *_y = (float*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] - _x[i]; 
+        _y[i] = _y[i] - _x[i];
     }
 }
 
@@ -2762,7 +2762,7 @@ void VecF::x_to_xy(VecF &x, VecF &y) {
     float *_x = (float*)x;
     float *_y = (float*)y;
     for (int i = 0; i < x.length(); i++) {
-        _y[i] = _y[i] + _x[i]; 
+        _y[i] = _y[i] + _x[i];
     }
 }
 
@@ -2814,7 +2814,7 @@ void VecF::linear_interp(VecF &xin, VecF &yin, VecF &xe, VecF &out_ye, int sorte
                 ifirst = ir - 1;
             }
             istart = i;
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt*derivs[ifirst]);
         }
     }
@@ -2841,7 +2841,7 @@ void VecF::linear_interp(VecF &xin, VecF &yin, VecF &xe, VecF &out_ye, int sorte
                 ir = i - 1;
                 ifirst = ir - 1;
             }
-            dt = xe[j] - xin[ifirst];  // diff in x, eval to input 
+            dt = xe[j] - xin[ifirst];  // diff in x, eval to input
             out_ye[j] = yin[ifirst] + (dt * ((yin[ir] - yin[ifirst]) / (xin[ir]-xin[ifirst])) );
         }
     }
@@ -2858,19 +2858,19 @@ float VecF::sum_of_sq() {
 
 
 double VecF::pearsons_r(VecF &x, VecF &y) {
-    
+
     // Preparation:
     double sum_xTy = VecF::dot_product(x,y);
-    double sum_x = x.sum();         
-    double sum_y = y.sum();       
+    double sum_x = x.sum();
+    double sum_y = y.sum();
     // Could this step be sped up?
     double sum_x2 = x.sum_of_sq();
     double sum_y2 = y.sum_of_sq();
     int N = x.dim();
-    
+
     // Here it is:
-    // 'E' is Capital Sigma 
-    // r = EXY - (EXEY/N) 
+    // 'E' is Capital Sigma
+    // r = EXY - (EXEY/N)
     //    -----------------
     //    sqrt( (EX^2 - (EX)^2/N) * (EY^2 - (EY)^2/N) )
 
@@ -2904,7 +2904,7 @@ double VecF::euclidean(VecF &x, VecF &y) {
     VecF diff(x.size());
     double sum_of_diffs = 0;
     for (int i = 0; i < x.size(); ++i) {
-        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]); 
+        sum_of_diffs += (x[i] - y[i]) * (x[i] - y[i]);
     }
     return sqrt(sum_of_diffs);
 }
@@ -3086,7 +3086,7 @@ void VecF::rsq_slope_intercept(VecF &x, VecF &y, double &rsq, double &slope, dou
         sum_sq_res_xy += x_minus_mean_i*y_minus_mean_i;
     }
     slope = sum_sq_res_xy/sum_sq_res_xx;
-    y_intercept = mean_y - (slope * mean_x); 
+    y_intercept = mean_y - (slope * mean_x);
     rsq = (sum_sq_res_xy*sum_sq_res_xy)/(sum_sq_res_xx*sum_sq_res_yy);
 }
 
@@ -3094,5 +3094,3 @@ void VecF::rsq_slope_intercept(VecF &x, VecF &y, double &rsq, double &slope, dou
 // END TEMPLATE
 
 } // End namespace VEC
-
-

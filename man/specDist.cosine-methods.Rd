@@ -15,10 +15,10 @@
 }
 }}
 \details{
-The result is the cosine-distance of the product from weighted factors 
-of mz and intensity from matching peaks in the two peaktables. 
+The result is the cosine-distance of the product from weighted factors
+of mz and intensity from matching peaks in the two peaktables.
 The factors are calculated as wFact = mz^mzExp * int^intExp.
-if no distance is calculated (for example because no matching 
+if no distance is calculated (for example because no matching
 peaks were found) the return-value is NA.
 }
 

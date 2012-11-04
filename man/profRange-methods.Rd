@@ -51,7 +51,7 @@
 }
 \value{
   A list with the folloing items:
-  
+
   \item{mzrange}{numeric vector with start and end mass}
   \item{masslab}{textual label of mass range}
   \item{massidx}{integer vector of mass indecies}

@@ -43,12 +43,12 @@ findMZ(object, find, ppmE=25, print=TRUE)
 	library(msdata)
 	mzdatapath <- system.file("iontrap", package = "msdata")
 	mzdatafiles<-list.files(mzdatapath, pattern = "extracted.mzData", recursive = TRUE, full.names = TRUE)
-	xs <- xcmsSet(mzdatafiles, method = "MS1") 
+	xs <- xcmsSet(mzdatafiles, method = "MS1")
 	##takes only one file from the file set
 	xfrag <- xcmsFragments(xs)
 	found<-findMZ(xfrag, 657.3433, 50)
 	}
-	
+
 }
 \author{H. Paul Benton, \email{hpaul.beonton08@imperial.ac.uk}}
 \keyword{methods}

@@ -11,7 +11,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{    
+  \code{
      group(object, method="mzClust", mzppm = 20, mzabs = 0, minsamp = 1, minfrac=0)
   }
 }

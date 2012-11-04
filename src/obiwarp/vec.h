@@ -4,9 +4,9 @@
 #include <fstream>
 
 /*************************************************************
- * Creation from existing object/array is always deep!.  
+ * Creation from existing object/array is always deep!.
  * If you want shallow, use a pointer!
- ************************************************************/ 
+ ************************************************************/
 
 
 namespace VEC {
@@ -40,7 +40,7 @@ class VecI {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         VecI(const VecI &A, bool shallow=0);
 
         operator int*() {
@@ -95,7 +95,7 @@ class VecI {
         void copy(VecI &receiver, bool shallow=0) const;
 
         bool operator==(const VecI &A);
-        
+
         int length() const { return _n; }
         int len() const { return _n; }
         int size() const { return _n; }
@@ -105,9 +105,9 @@ class VecI {
         void mask_as_vec(int return_val, VecI &mask, VecI &vec);
 
         // Returns true if all values are the same, false otherwise
-        bool all_equal() { 
+        bool all_equal() {
             int _min, _max; min_max(_min, _max);
-            if (_min == _max) { return 1; } 
+            if (_min == _max) { return 1; }
             else { return 0; }
         }
 
@@ -116,14 +116,14 @@ class VecI {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const int& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         int& at(int i) {
@@ -131,14 +131,14 @@ class VecI {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const int& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         bool shallow() {
@@ -155,7 +155,7 @@ class VecI {
         void operator-=(int val);
         void operator*=(int val);
         void operator/=(int val);
-    
+
         void add(const VecI &toadd, VecI &out);
         void sub(const VecI &tosub, VecI &out);
         void mul(const VecI &tomul, VecI &out);
@@ -184,9 +184,9 @@ class VecI {
         static int intCompare( const void *a, const void *b );
 
         // Removes the value at index and shortens the array by one
-        // not shallow anymore regardless of previous state 
+        // not shallow anymore regardless of previous state
         void remove(int index);
-                
+
         // prints the vector (space delimited on one line without any length
         // header)
         void print(bool without_length=0);
@@ -200,7 +200,7 @@ class VecI {
         // CLASS FUNCTIONS:
         static int pchst(int arg1, int arg2) {
             if      (arg1*arg2 > 0) { return  1; }
-            else if (arg1*arg2 < 0) { return -1; } 
+            else if (arg1*arg2 < 0) { return -1; }
             else                    { return  0; }
         }
 
@@ -231,7 +231,7 @@ class VecI {
         static void linear_derivs(VecI &x, VecI &y, VecI &out_derivs);
         static void linear_interp(VecI &xin, VecI &yin, VecI &xe, VecI &out_ye, int sorted=0);
         //##### FOR ANY FUNCTION:
-        //                B 
+        //                B
         //               /|
         //              / |
         //             /  |
@@ -240,7 +240,7 @@ class VecI {
         //          /     |
         //       A --------C
         //             b
-        //  
+        //
         //  cPerp = Perpendicular from C to c
         //  (sin A)/a = (sin C)/c
         //  sin C = 1
@@ -256,7 +256,7 @@ class VecI {
         // b = actual x - (x = actual y)
         // a = actual y - (y = actual x)
         // avg residual = SUM(cPerp^2)/N
-        // 
+        //
 
         //###### FOR X=Y
         // residual^2 = 1/2((Y-X)^2)        note: [or X-Y]
@@ -301,7 +301,7 @@ class VecD {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         VecD(const VecD &A, bool shallow=0);
 
         operator double*() {
@@ -356,7 +356,7 @@ class VecD {
         void copy(VecD &receiver, bool shallow=0) const;
 
         bool operator==(const VecD &A);
-        
+
         int length() const { return _n; }
         int len() const { return _n; }
         int size() const { return _n; }
@@ -366,9 +366,9 @@ class VecD {
         void mask_as_vec(double return_val, VecI &mask, VecD &vec);
 
         // Returns true if all values are the same, false otherwise
-        bool all_equal() { 
+        bool all_equal() {
             double _min, _max; min_max(_min, _max);
-            if (_min == _max) { return 1; } 
+            if (_min == _max) { return 1; }
             else { return 0; }
         }
 
@@ -377,14 +377,14 @@ class VecD {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const double& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         double& at(int i) {
@@ -392,14 +392,14 @@ class VecD {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const double& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         bool shallow() {
@@ -416,7 +416,7 @@ class VecD {
         void operator-=(double val);
         void operator*=(double val);
         void operator/=(double val);
-    
+
         void add(const VecD &toadd, VecD &out);
         void sub(const VecD &tosub, VecD &out);
         void mul(const VecD &tomul, VecD &out);
@@ -445,10 +445,10 @@ class VecD {
         static int doubleCompare( const void *a, const void *b );
 
         // Removes the value at index and shortens the array by one
-        // not shallow anymore regardless of previous state 
+        // not shallow anymore regardless of previous state
         void remove(int index);
-        
-        
+
+
         // prints the vector (space delimited on one line without any length
         // header)
         void print(bool without_length=0);
@@ -462,7 +462,7 @@ class VecD {
         // CLASS FUNCTIONS:
         static int pchst(double arg1, double arg2) {
             if      (arg1*arg2 > 0) { return  1; }
-            else if (arg1*arg2 < 0) { return -1; } 
+            else if (arg1*arg2 < 0) { return -1; }
             else                    { return  0; }
         }
 
@@ -493,7 +493,7 @@ class VecD {
         static void linear_derivs(VecD &x, VecD &y, VecD &out_derivs);
         static void linear_interp(VecD &xin, VecD &yin, VecD &xe, VecD &out_ye, int sorted=0);
         //##### FOR ANY FUNCTION:
-        //                B 
+        //                B
         //               /|
         //              / |
         //             /  |
@@ -502,7 +502,7 @@ class VecD {
         //          /     |
         //       A --------C
         //             b
-        //  
+        //
         //  cPerp = Perpendicular from C to c
         //  (sin A)/a = (sin C)/c
         //  sin C = 1
@@ -518,7 +518,7 @@ class VecD {
         // b = actual x - (x = actual y)
         // a = actual y - (y = actual x)
         // avg residual = SUM(cPerp^2)/N
-        // 
+        //
 
         //###### FOR X=Y
         // residual^2 = 1/2((Y-X)^2)        note: [or X-Y]
@@ -563,7 +563,7 @@ class VecF {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         VecF(const VecF &A, bool shallow=0);
 
         operator float*() {
@@ -618,7 +618,7 @@ class VecF {
         void copy(VecF &receiver, bool shallow=0) const;
 
         bool operator==(const VecF &A);
-        
+
         int length() const { return _n; }
         int len() const { return _n; }
         int size() const { return _n; }
@@ -628,9 +628,9 @@ class VecF {
         void mask_as_vec(float return_val, VecI &mask, VecF &vec);
 
         // Returns true if all values are the same, false otherwise
-        bool all_equal() { 
+        bool all_equal() {
             float _min, _max; min_max(_min, _max);
-            if (_min == _max) { return 1; } 
+            if (_min == _max) { return 1; }
             else { return 0; }
         }
 
@@ -639,14 +639,14 @@ class VecF {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const float& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         float& at(int i) {
@@ -654,14 +654,14 @@ class VecF {
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
         const float& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
             if (i < 0) { puts("index < 0 !"); exit(1); }
             if (i >= _n) { puts("i >= _n !"); exit(1); }
 #endif
-            return _dat[i]; 
+            return _dat[i];
         }
 
         bool shallow() {
@@ -678,7 +678,7 @@ class VecF {
         void operator-=(float val);
         void operator*=(float val);
         void operator/=(float val);
-    
+
         void add(const VecF &toadd, VecF &out);
         void sub(const VecF &tosub, VecF &out);
         void mul(const VecF &tomul, VecF &out);
@@ -707,9 +707,9 @@ class VecF {
         static int floatCompare( const void *a, const void *b );
 
         // Removes the value at index and shortens the array by one
-        // not shallow anymore regardless of previous state 
+        // not shallow anymore regardless of previous state
         void remove(int index);
-        
+
         // prints the vector (space delimited on one line without any length
         // header)
         void print(bool without_length=0);
@@ -726,7 +726,7 @@ class VecF {
         // CLASS FUNCTIONS:
         static int pchst(float arg1, float arg2) {
             if      (arg1*arg2 > 0) { return  1; }
-            else if (arg1*arg2 < 0) { return -1; } 
+            else if (arg1*arg2 < 0) { return -1; }
             else                    { return  0; }
         }
 
@@ -757,7 +757,7 @@ class VecF {
         static void linear_derivs(VecF &x, VecF &y, VecF &out_derivs);
         static void linear_interp(VecF &xin, VecF &yin, VecF &xe, VecF &out_ye, int sorted=0);
         //##### FOR ANY FUNCTION:
-        //                B 
+        //                B
         //               /|
         //              / |
         //             /  |
@@ -766,7 +766,7 @@ class VecF {
         //          /     |
         //       A --------C
         //             b
-        //  
+        //
         //  cPerp = Perpendicular from C to c
         //  (sin A)/a = (sin C)/c
         //  sin C = 1
@@ -782,7 +782,7 @@ class VecF {
         // b = actual x - (x = actual y)
         // a = actual y - (y = actual x)
         // avg residual = SUM(cPerp^2)/N
-        // 
+        //
 
         //###### FOR X=Y
         // residual^2 = 1/2((Y-X)^2)        note: [or X-Y]
@@ -807,4 +807,3 @@ class VecF {
 } // End namespace
 
 #endif
-

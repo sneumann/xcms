@@ -23,11 +23,11 @@
   After peak grouping, there will always be peak groups that do not
   include peaks from every sample. This method produces intensity
   values for those missing samples by integrating raw data in peak
-  group region. According to the type of raw-data there are 2 different 
-  methods available. for filling gcms/lcms data the method "chrom" integrates 
-  raw-data in the chromatographic domain, whereas "MSW" is used for  
-  peaklists without retention-time information like those from 
-  direct-infusion spectra. 
+  group region. According to the type of raw-data there are 2 different
+  methods available. for filling gcms/lcms data the method "chrom" integrates
+  raw-data in the chromatographic domain, whereas "MSW" is used for
+  peaklists without retention-time information like those from
+  direct-infusion spectra.
   }
 
 \value{

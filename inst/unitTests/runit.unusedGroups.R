@@ -6,5 +6,5 @@ testGroup <- function() {
     sampclass(xs) <- classes
     xsg <- group(xs)
 
-    checkEquals(sampclass(xs), sampclass(xsg))    
+    checkEquals(sampclass(xs), sampclass(xsg))
 }

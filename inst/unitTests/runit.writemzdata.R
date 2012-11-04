@@ -3,9 +3,9 @@ test.write.mzdata <- function() {
     xraw <- xcmsRaw(file)
 
     mzdataFile <- paste(tempdir(), "ko15.mzData", sep="/")
-    
+
     write.mzdata(xraw, mzdataFile)
-    
+
     xrawCopy <- xcmsRaw(mzdataFile)
 
     checkTrue(all(xraw@env$mz == xrawCopy@env$mz))
@@ -17,9 +17,9 @@ test.writeMS2.mzdata <- function() {
     xraw <- xcmsRaw(file, includeMSn=TRUE)
 
     mzdataFile <- paste(tempdir(), "MSMSpos20_6.mzData", sep="/")
-    
+
     write.mzdata(xraw, mzdataFile)
-    
+
     xrawCopy <- xcmsRaw(mzdataFile)
 
     checkTrue(all(xraw@env$intensity == xrawCopy@env$intensity))
@@ -31,9 +31,9 @@ test.writeMSn.mzdata <- function() {
     xraw <- xcmsRaw(file, includeMSn=TRUE)
 
     mzdataFile <- paste(tempdir(), "threonine_i2_e35_pH_tree.mzData", sep="/")
-    
+
     write.mzdata(xraw, mzdataFile)
-    
+
     xrawCopy <- xcmsRaw(mzdataFile)
 
     checkTrue(all(xraw@env$intensity == xrawCopy@env$intensity))
@@ -45,13 +45,12 @@ test.writePolarity.mzdata <- function() {
     xraw <- xcmsRaw(file)
 
     oldpolarity <- xraw@polarity
-    
+
     mzdataFile <- paste(tempdir(), "MM14.mzdata", sep="/")
-    
+
     write.mzdata(xraw, mzdataFile)
-    
+
     xrawCopy <- xcmsRaw(mzdataFile)
 
     checkTrue(all(xraw@polarity == xrawCopy@polarity))
 }
-

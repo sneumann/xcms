@@ -37,7 +37,7 @@
     number of seconds to pause between plotting peak finding cycles
   }
   \item{verbose.columns}{
-    additional peak meta data columns are returned 
+    additional peak meta data columns are returned
   }
 }
 \value{
@@ -68,7 +68,7 @@
     intensity of original (raw) peak at the centroid position
   }
   \item{intf}{
-    always NA 
+    always NA
   }
   \item{maxf}{
     maximum MSW-filter response of the peak

@@ -16,44 +16,44 @@ CHANGES IN VERSION 1.33.16
 --------------------------
 
 UPDATED FEATURES:
-Lock mass gap filler now works with netCDF lock mass function file to find the exact times of the scans and works with 
+Lock mass gap filler now works with netCDF lock mass function file to find the exact times of the scans and works with
 the newer Waters MS instruments.
 
 CHANGES IN VERSION 1.33.15
 --------------------------
 
 BUG FIXES
-  
+
     o scanrage is now honoured in xcmsSet, also when in parallel mode
 
 CHANGES IN VERSION 1.33.14
 --------------------------
 
 BUG FIXES
-  
-    o scanrage is now honoured in xcmsRaw, and consequently 
-      also in xcmsSet(matchedFilter), where previously 
+
+    o scanrage is now honoured in xcmsRaw, and consequently
+      also in xcmsSet(matchedFilter), where previously
       it was ignored.
 
 CHANGES IN VERSION 1.33.13
 --------------------------
 
 BUG FIXES
-  
+
     o write.cdf() has been fixed to write files AMDIS can read
 
 CHANGES IN VERSION 1.33.12
 --------------------------
 
 BUG FIXES
-  
+
     o write.mzData adds Polarity to the file if available
 
 CHANGES IN VERSION 1.33.11
 --------------------------
 
 USER VISIBLE CHANGES
-  
+
     o centWave uses a new method to estimate local noise which improves detection of closely spaced peaks
 
 NEW FEATURES
@@ -82,36 +82,34 @@ CHANGED BEHAVIOUR since Version 1.14:
 
 Other Changes since Version 1.14:
 
-* New method for grouping: an algorithm inspired by mzMine 
-  group(method="nearest") has been implemented. It is slower 
-  than group(method="density"). It can individually group 
+* New method for grouping: an algorithm inspired by mzMine
+  group(method="nearest") has been implemented. It is slower
+  than group(method="density"). It can individually group
   close-eluting peaks of very similar mass
 
 * New method for retention time correction:
-  The retcor(method="obiwarp") algorithm operates on the raw data, 
-  and thus allows to correct runs without well-behaving 
+  The retcor(method="obiwarp") algorithm operates on the raw data,
+  and thus allows to correct runs without well-behaving
   peak groups, or without peak picking at all.
 
-* fillPeaks(method="MSW") is now also available 
+* fillPeaks(method="MSW") is now also available
   for direct infusion spectra. The findPeaks(method="MSW")
-  now returns several intensities, and correctly reports 
+  now returns several intensities, and correctly reports
   mzmin and mzmax for peaks.
 
 * centWave now uses dynamic memory allocation, needs much less memory,
-  and these BUF related errors should be a thing of the past. 
+  and these BUF related errors should be a thing of the past.
 
 * centWave gains an optional argument "noise",
   which is useful for data that was centroided without any intensity threshold,
   centroids with intensity < "noise" are omitted from ROI detection
 
-* the fillPeaks() methods now remember which was 
-  an observed, and which was a "filled" peak. 
+* the fillPeaks() methods now remember which was
+  an observed, and which was a "filled" peak.
 
-* For direct infusion spectra diffreport() now shows 
+* For direct infusion spectra diffreport() now shows
   the raw peak shapes, and also indicated "real" and "filled" peaks.
 
 * xcmsRaw can now filter for positive/negative spectra,
-  if the file includes both polarities. xcmsSet() can pass 
-  the polarity to contain positive/negative peaks only. 
-
-
+  if the file includes both polarities. xcmsSet() can pass
+  the polarity to contain positive/negative peaks only.
