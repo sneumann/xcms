@@ -539,7 +539,7 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
     gnames
 })
 
-                                        # derive experimental design from set of file paths
+## derive experimental design from set of file paths
 phenoDataFromPaths <- function(paths) {
     ## create factors from filesystem hierarchy
     sclass <- gsub("^\\.$", "sample", dirname(paths))
