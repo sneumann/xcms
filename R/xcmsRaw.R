@@ -1,48 +1,3 @@
-setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
-
-setClass("netCdfFile", contains="character")
-
-setMethod("loadRaw", "netCdfFile", function(object, includeMSn) {
-    if (!missing(includeMSn) && includeMSn) {
-        warning("Reading of MSn spectra for NetCDF not supported")
-    }
-
-    cdf <- mzR:::netCDFOpen(object)
-    if (!is.null(attr(cdf, "errortext")))
-        stop(attr(cdf, "errortext"))
-    on.exit(mzR:::netCDFClose(cdf))
-    mzR:::netCDFRawData(cdf)
-})
-
-setClass("rampFile", contains="character")
-
-setMethod("loadRaw", "rampFile", function(object, includeMSn) {
-    rampid <- mzR:::rampOpen(object)
-    if (rampid < 0) {
-        stop("Could not open mzXML/mzData file")
-    }
-    on.exit(mzR:::rampClose(rampid))
-    rawdata <- mzR:::rampRawData(rampid)
-
-    if (!missing(includeMSn) && includeMSn) {
-        rawdata$MSn <- mzR:::rampRawDataMSn(rampid)
-    }
-    rawdata
-})
-
-setMethod("loadRaw", "character", function(object, ...) {
-    filename <- object
-    if (!file.exists(filename)) stop("File ", filename, " does not exist.\n")
-
-    if (mzR:::netCDFIsFile(filename)) {
-        loadRaw(new("netCdfFile", filename), ...)
-    } else if (mzR:::rampIsFile(filename)) {
-        loadRaw(new("rampFile", filename), ...)
-    } else {
-        stop("Could not determine file type")
-    }
-})
-
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
                     includeMSn = FALSE, mslevel=NULL,
@@ -50,7 +5,8 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
-    rawdata <- loadRaw(filename, includeMSn)
+    object@filepath <- xcmsSource(filename)
+    rawdata <- loadRaw(object@filepath, includeMSn)
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
@@ -64,7 +20,6 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                    sep = ""))
     }
 
-    object@filepath <- filename
     object@scantime <- rawdata$rt
     object@tic <- rawdata$tic
     object@scanindex <- rawdata$scanindex

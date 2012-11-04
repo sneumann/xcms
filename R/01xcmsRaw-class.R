@@ -15,7 +15,7 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                                    msnPrecursorIntensity = "numeric",
                                    msnPrecursorCharge = "numeric",
                                    msnCollisionEnergy = "numeric",
-                                   filepath = "character"),
+                                   filepath = "xcmsSource"),
 
          prototype(env = new.env(parent=.GlobalEnv), tic = numeric(0),
                    scantime = numeric(0), scanindex = integer(0),
@@ -32,6 +32,5 @@ setClass("xcmsRaw", representation(env = "environment", tic = "numeric",
                    msnPrecursorMz = numeric(0),
                    msnPrecursorIntensity = numeric(0),
                    msnPrecursorCharge = numeric(0),
-                   msnCollisionEnergy = numeric(0),
-                   filepath = ""
+                   msnCollisionEnergy = numeric(0)
                    ))
