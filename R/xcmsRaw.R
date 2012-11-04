@@ -1,3 +1,47 @@
+setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
+
+setClass("netCdfFile", contains="character")
+
+setMethod("loadRaw", "netCdfFile", function(object, includeMSn) {
+    if (!missing(includeMSn) && includeMSn) {
+        warning("Reading of MSn spectra for NetCDF not supported")
+    }
+
+    cdf <- mzR:::netCDFOpen(object)
+    if (!is.null(attr(cdf, "errortext")))
+        stop(attr(cdf, "errortext"))
+    on.exit(mzR:::netCDFClose(cdf))
+    mzR:::netCDFRawData(cdf)
+})
+
+setClass("rampFile", contains="character")
+
+setMethod("loadRaw", "rampFile", function(object, includeMSn) {
+    rampid <- mzR:::rampOpen(object)
+    if (rampid < 0) {
+        stop("Could not open mzXML/mzData file")
+    }
+    on.exit(mzR:::rampClose(rampid))
+    rawdata <- mzR:::rampRawData(rampid)
+
+    if (!missing(includeMSn) && includeMSn) {
+        rawdata$MSn <- mzR:::rampRawDataMSn(rampid)
+    }
+    rawdata
+})
+
+setMethod("loadRaw", "character", function(object, ...) {
+    filename <- object
+    if (!file.exists(filename)) stop("File ", filename, " does not exist.\n")
+
+    if (mzR:::netCDFIsFile(filename)) {
+        loadRaw(new("netCdfFile", filename), ...)
+    } else if (mzR:::rampIsFile(filename)) {
+        loadRaw(new("rampFile", filename), ...)
+    } else {
+        stop("Could not determine file type")
+    }
+})
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
@@ -6,34 +50,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
-
-    if (!file.exists(filename)) stop("File ",filename, " not exists. \n"   )
-
-    if (mzR:::netCDFIsFile(filename)) {
-        if (includeMSn) {
-            warning("Reading of MSn spectra for NetCDF not supported")
-        }
-
-        cdf <- mzR:::netCDFOpen(filename)
-        if (!is.null(attr(cdf, "errortext")))
-            stop(attr(cdf, "errortext"))
-        on.exit(mzR:::netCDFClose(cdf))
-        rawdata <- mzR:::netCDFRawData(cdf)
-    } else if (mzR:::rampIsFile(filename)) {
-        rampid <- mzR:::rampOpen(filename)
-        if (rampid < 0) {
-            stop("Could not open mzXML/mzData file")
-        }
-        on.exit(mzR:::rampClose(rampid))
-
-        rawdata <- mzR:::rampRawData(rampid)
-
-        if ( includeMSn ) {
-            rawdataMSn <- mzR:::rampRawDataMSn(rampid)
-        }
-    } else {
-        stop("Could not determine file type")
-    }
+    rawdata <- loadRaw(filename, includeMSn)
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
@@ -79,20 +96,18 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     ##
     ## After the MS1 data, take care of MSn
     ##
-
-    if(exists("rawdataMSn") && !is.null(rawdataMSn) ) {
-        object@env$msnMz <- rawdataMSn$mz
-        object@env$msnIntensity <- rawdataMSn$intensity
-
-        object@msnScanindex <- rawdataMSn$scanindex
-        object@msnAcquisitionNum <- rawdataMSn$acquisitionNum
-        object@msnLevel <- rawdataMSn$msLevel
-        object@msnRt <- rawdataMSn$rt
-        object@msnPrecursorScan <- match(rawdataMSn$precursorNum, object@acquisitionNum)
-        object@msnPrecursorMz <- rawdataMSn$precursorMZ
-        object@msnPrecursorIntensity <- rawdataMSn$precursorIntensity
-        object@msnPrecursorCharge <- rawdataMSn$precursorCharge
-        object@msnCollisionEnergy <- rawdataMSn$collisionEnergy
+    if(!is.null(rawdata$MSn) ) {
+        object@env$msnMz <- rawdata$MSn$mz
+        object@env$msnIntensity <- rawdata$MSn$intensity
+        object@msnScanindex <- rawdata$MSn$scanindex
+        object@msnAcquisitionNum <- rawdata$MSn$acquisitionNum
+        object@msnLevel <- rawdata$MSn$msLevel
+        object@msnRt <- rawdata$MSn$rt
+        object@msnPrecursorScan <- match(rawdata$MSn$precursorNum, object@acquisitionNum)
+        object@msnPrecursorMz <- rawdata$MSn$precursorMZ
+        object@msnPrecursorIntensity <- rawdata$MSn$precursorIntensity
+        object@msnPrecursorCharge <- rawdata$MSn$precursorCharge
+        object@msnCollisionEnergy <- rawdata$MSn$collisionEnergy
     }
 
     if (!missing(mslevel) & !is.null(mslevel)) {
@@ -100,9 +115,6 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
         ## fix xcmsRaw metadata, or always calculate later than here ?
     }
-
-    ## close mzR object
-    ## close(mz)
 
     return(object)
 }
