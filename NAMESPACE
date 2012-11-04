@@ -29,7 +29,9 @@ exportClasses(
               "xcmsPeaks",
               "xcmsRaw",
               "xcmsSet",
-              "xcmsFragments"
+              "xcmsFragments",
+              "xcmsSource",
+              "xcmsFileSource"
               )
 
 exportMethods(
@@ -114,5 +116,7 @@ exportMethods(
               "sortMz",
               "stitch",
               "write.cdf",
-              "write.mzdata"
+              "write.mzdata",
+              "xcmsSource",
+              "loadRaw"
               )
