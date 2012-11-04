@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.35.2
+--------------------------
+
+UPDATED FEATURES:
+     o Behind the scenes xcms now uses the xcmsSource class to read raw data.
+       This allows e.g. to write a class that pulls raw data 
+       from e.g. a database
+
 CHANGES IN VERSION 1.35.1
 --------------------------
 
