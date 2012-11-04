@@ -22,7 +22,7 @@
 \section{Slots}{
   \describe{
     \item{\code{eic}:}{
-      list containing named entries for every sample. for each entry, a 
+      list containing named entries for every sample. for each entry, a
       list of two column EIC matricies with retention time and intensity
     }
     \item{\code{mzrange}:}{

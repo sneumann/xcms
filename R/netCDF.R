@@ -1,7 +1,7 @@
 netCDFStrError <- function(ncerr) {
 
     buflen <- 255
-    
+
     .C("NetCDFStrError",
        as.integer(ncerr),
        as.integer(buflen),
@@ -15,7 +15,7 @@ netCDFIsFile <- function(filename) {
     if (!is.null(attr(ncid, "errortext")))
         return(FALSE)
     netCDFClose(ncid)
-    
+
     return(TRUE)
 }
 
@@ -26,11 +26,11 @@ netCDFOpen <- function(filename) {
                  ncid = integer(1),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
-        return(structure(result$status, 
+        return(structure(result$status,
                          errortext = netCDFStrError(result$status)))
-    
+
     return(result$ncid)
 }
 
@@ -40,9 +40,9 @@ netCDFClose <- function(ncid) {
                  as.integer(ncid),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
-        return(structure(result$status, 
+        return(structure(result$status,
                          errortext = netCDFStrError(result$status)))
 
     result$status
@@ -56,11 +56,11 @@ netCDFVarID <- function(ncid, var) {
                  id = integer(1),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
-        return(structure(result$status, 
+        return(structure(result$status,
                          errortext = netCDFStrError(result$status)))
-    
+
     return(result$id)
 }
 
@@ -68,18 +68,18 @@ netCDFVarLen <- function(ncid, var) {
 
     if (is.character(var))
         var <- netCDFVarID(ncid, var)
-    
+
     result <- .C("NetCDFVarLen",
                  as.integer(ncid),
                  as.integer(var),
                  len = integer(1),
                  status = integer(1),
                  PACKAGE = "xcms")
-    
+
     if (result$status)
-        return(structure(result$status, 
+        return(structure(result$status,
                          errortext = netCDFStrError(result$status)))
-    
+
     return(result$len)
 }
 
@@ -87,14 +87,14 @@ netCDFVarDouble <- function(ncid, var) {
 
     if (is.character(var))
         var <- netCDFVarID(ncid, var)
-    
+
     if (!is.null(attr(var, "errortext")))
         return(var)
-    
+
     len <- netCDFVarLen(ncid, var)
     if (!is.null(attr(len, "errortext")))
         return(len)
-    
+
     .C("NetCDFVarDouble",
        as.integer(ncid),
        as.integer(var),
@@ -107,14 +107,14 @@ netCDFVarInt <- function(ncid, var) {
 
     if (is.character(var))
         var <- netCDFVarID(ncid, var)
-    
+
     if (!is.null(attr(var, "errortext")))
         return(var)
-    
+
     len <- netCDFVarLen(ncid, var)
     if (!is.null(attr(len, "errortext")))
         return(len)
-    
+
     .C("NetCDFVarInt",
        as.integer(ncid),
        as.integer(var),
@@ -130,11 +130,11 @@ netCDFMSPoints <- function(ncid, scanIndex) {
     var <- netCDFVarID(ncid, "mass_values")
     if (!is.null(attr(var, "errortext")))
         return(var)
-    
+
     len <- netCDFVarLen(ncid, var)
     if (!is.null(attr(len, "errortext")))
         return(len)
-    
+
     .C("NetCDFMSPoints",
        as.integer(ncid),
        as.integer(length(scanIndex)),
@@ -147,24 +147,24 @@ netCDFMSPoints <- function(ncid, scanIndex) {
 }
 
 netCDFRawData <- function(ncid) {
-    
+
     rt <- netCDFVarDouble(ncid, "scan_acquisition_time")
     if (!is.null(attr(rt, "errortext")))
         stop("Could not read scan times")
-    
+
     tic <- netCDFVarDouble(ncid, "total_intensity")
     if (!is.null(attr(tic, "errortext")))
         stop("Could not read total ion current")
-    
+
     scanindex <- netCDFVarInt(ncid, "scan_index")
     if (!is.null(attr(scanindex, "errortext")))
         stop("Could not read scan indecies")
-    
+
     pointValues <- netCDFMSPoints(ncid, scanindex)
     if (!is.null(attr(pointValues, "errortext")))
         stop("Could not read mass/intensity values")
 
-    return(list(rt = rt, tic = tic, scanindex = scanindex, 
+    return(list(rt = rt, tic = tic, scanindex = scanindex,
                 mz = pointValues$massValues,
                 intensity = pointValues$intensityValues))
 }

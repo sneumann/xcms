@@ -28,10 +28,10 @@
 		cdfpath <- system.file("cdf", package = "faahKO")
 		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
 		xset <- xcmsRaw(cdffiles[1])
-		
+
 		xset
 		plotSurf(xset, mass=c(200,500))
-		
+
 		profStep(xset)<-0.1 ## decrease the bin size to get better resolution
 		plotSurf(xset, mass=c(200, 500))
 		##works nicer on high resolution data.

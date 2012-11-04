@@ -23,22 +23,22 @@
 
 #define DEBUG (0)
 
-extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, SEXP mz, SEXP intensity, 
+extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, SEXP mz, SEXP intensity,
 				SEXP valscantime2, SEXP scantime2, SEXP mzrange2, SEXP mz2, SEXP intensity2,
-				SEXP response, SEXP score, 
-				SEXP gap_init, SEXP gap_extend, 
+				SEXP response, SEXP score,
+				SEXP gap_init, SEXP gap_extend,
 				SEXP factor_diag, SEXP factor_gap,
-				SEXP local_alignment, SEXP init_penalty) 
+				SEXP local_alignment, SEXP init_penalty)
 {
 
-  // Create two matrices in LMata format 
+  // Create two matrices in LMata format
 
     int pvalscantime, pmzrange;
     int pvalscantime2, pmzrange2;
     double *pscantime, *pmz, *pintensity;
-    double *pscantime2, *pmz2, *pintensity2;    
+    double *pscantime2, *pmz2, *pintensity2;
     SEXP corrected;
-   
+
     valscantime = coerceVector(valscantime, INTSXP);
     mzrange = coerceVector(mzrange, INTSXP);
     pvalscantime = INTEGER(valscantime)[0];
@@ -56,7 +56,7 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     pintensity2 = REAL(intensity2);
 
     // ************************************************************
-    // * READ IN FILES TO GET MAT 
+    // * READ IN FILES TO GET MAT
     // ************************************************************
     LMat lmat1;
     LMat lmat2;
@@ -72,13 +72,13 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     if (DEBUG) {
       std::cerr << "Scoring the mats!\n";
     }
-    
+
     dyn.score(*(lmat1.mat()), *(lmat2.mat()), smat, CHAR(STRING_ELT(score, 0)));
 
     if (DEBUG) {
       std::cerr << "Checking scoring\n";
     }
-    
+
     if (!strcmp(CHAR(STRING_ELT(score, 0)),"euc")) {
       smat *= -1; // inverting euclidean
     }
@@ -87,7 +87,7 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     // ************************************************************
     // * PREPARE GAP PENALTY ARRAY
     // ************************************************************
-   
+
     MatF time_tester;
     MatF time_tester_trans;
     VecF mpt;
@@ -102,12 +102,12 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
 
     // ************************************************************
     // * DYNAMIC PROGRAM
-    // ************************************************************ 
+    // ************************************************************
     int minimize = 0;
     if (DEBUG) {
         std::cerr << "Dynamic Time Warping Score Matrix!\n";
     }
-    dyn.find_path(smat, gp_array, minimize, 
+    dyn.find_path(smat, gp_array, minimize,
 		  *REAL(factor_diag), *REAL(factor_gap), *INTEGER(AS_INTEGER(local_alignment)), *REAL(init_penalty));
 
     VecI mOut;
@@ -117,9 +117,9 @@ extern "C" SEXP R_set_from_xcms(SEXP valscantime, SEXP scantime, SEXP mzrange, S
     VecF nOutF;
     VecF mOutF;
     lmat1.tm_axis_vals(mOut, mOutF);
-    lmat2.tm_axis_vals(nOut, nOutF); 
-    lmat2.warp_tm(nOutF, mOutF); 
-    
+    lmat2.tm_axis_vals(nOut, nOutF);
+    lmat2.warp_tm(nOutF, mOutF);
+
     PROTECT(corrected = allocVector(REALSXP, length(scantime2)));
     for(int i=0; i < length(scantime2);i++){
       REAL(corrected)[i] = lmat2.tm()->back()[i];

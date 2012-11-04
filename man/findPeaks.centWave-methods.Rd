@@ -18,8 +18,8 @@
 }}
 \details{
   This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase of the method mass traces (characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
-  In the second phase these mass traces are further analysed. 
-  Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales. 
+  In the second phase these mass traces are further analysed.
+  Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales.
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
@@ -27,7 +27,7 @@
   \item{peakwidth}{Chromatographic peak width, given as range (min,max) in seconds}
   \item{snthresh}{signal to noise ratio cutoff, definition see below.}
   \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
-  \item{mzCenterFun}{Function to calculate the m/z center of the feature: \code{wMean} intensity weighted mean of the feature m/z values, \code{mean} mean of the feature m/z values, \code{apex} use m/z value at peak apex, 
+  \item{mzCenterFun}{Function to calculate the m/z center of the feature: \code{wMean} intensity weighted mean of the feature m/z values, \code{mean} mean of the feature m/z values, \code{apex} use m/z value at peak apex,
         \code{wMeanApex3} intensity weighted mean of the m/z value at peak apex and the m/z value left and right of it, \code{meanApex3} mean of the m/z value at peak apex and the m/z value left and right of it.
     }
   \item{integrate}{
@@ -47,11 +47,11 @@
     number of seconds to pause between plotting peak finding cycles
   }
   \item{verbose.columns}{
-    logical, if TRUE additional peak meta data columns are returned 
+    logical, if TRUE additional peak meta data columns are returned
   }
   \item{ROI.list}{
-    A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs, 
-    otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots: 
+    A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs,
+    otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots:
     \code{scmin} start scan index,
     \code{scmax} end scan index,
     \code{mzmin} minimum m/z,
@@ -70,7 +70,7 @@
     m/z peak minimum
   }
   \item{mzmax}{
-    m/z peak maximum 
+    m/z peak maximum
   }
   \item{rt}{
     retention time of peak midpoint
@@ -88,7 +88,7 @@
     baseline corrected integrated peak intensity
   }
   \item{maxo}{
-    maximum peak intensity 
+    maximum peak intensity
   }
   \item{sn}{
     Signal/Noise ratio, defined as \code{(maxo - baseline)/sd}, where \cr
@@ -113,7 +113,7 @@
 \author{Ralf Tautenhahn}
 \encoding{UTF-8}
 \references{
-  Ralf Tautenhahn, Christoph \enc{Böttcher}{Boettcher}, and Steffen Neumann  
+  Ralf Tautenhahn, Christoph \enc{Böttcher}{Boettcher}, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
   BMC Bioinformatics 2008, 9:504
 }

@@ -1,16 +1,16 @@
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
-                    polarity = NULL, lockMassFreq=FALSE, 
+                    polarity = NULL, lockMassFreq=FALSE,
                     mslevel=NULL, nSlaves=0, progressCallback=NULL,
                     scanrange=NULL, ...) {
 
     object <- new("xcmsSet")
-  
-    # initialise progress information 
+
+    ## initialise progress information
     xcms.options <- getOption("BioC")$xcms
-    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."), paste("findPeaks", xcms.options$findPeaks.methods,sep="."), 
+    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."), paste("findPeaks", xcms.options$findPeaks.methods,sep="."),
                       paste("retcor", xcms.options$retcor.methods,sep="."), paste("fillPeaks", xcms.options$fillPeaks.methods,sep="."))
-    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",sep="",collapse=","),")") )) 
+    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",sep="",collapse=","),")") ))
 
     if (is.function(progressCallback))
         object@progressCallback <- progressCallback
@@ -26,41 +26,41 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
                          recursive = TRUE, full.names = TRUE)
     files <- c(files[!info$isdir], listed)
 
-    # try making paths absolute
+    ## try making paths absolute
     files_abs <- file.path(getwd(), files)
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
 
-	if(lockMassFreq==TRUE){
-		## remove the 02 files if there here
+    if(lockMassFreq==TRUE){
+        ## remove the 02 files if there here
         lockMass.files<-grep("02.CDF", files)
         if(length(lockMass.files) > 0){
             files<-files[-lockMass.files]
         }
-	}
+    }
 
     filepaths(object) <- files
 
     if (length(files) == 0)
-      stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
+        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
-    # determine experimental design
+    ## determine experimental design
     fromPaths <- phenoDataFromPaths(files)
     if (is.null(snames)) {
-      snames <- rownames(fromPaths)
+        snames <- rownames(fromPaths)
     } else {
-      rownames(fromPaths) <- snames
+        rownames(fromPaths) <- snames
     }
 
     pdata <- phenoData
     if (is.null(pdata)) {
-      pdata <- sclass
-      if (is.null(pdata))
-        pdata <- fromPaths
+        pdata <- sclass
+        if (is.null(pdata))
+            pdata <- fromPaths
     }
     phenoData(object) <- pdata
     if (is.null(phenoData))
-      rownames(phenoData(object)) <- snames
+        rownames(phenoData(object)) <- snames
 
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
@@ -108,7 +108,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         ## If MPI is available ...
         rmpi = "Rmpi"
         opt.warn <- options("warn")$warn
-        options("warn" = -1) 
+        options("warn" = -1)
         if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
             if (is.loaded('mpi_initialize')) {
                 mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
@@ -119,17 +119,17 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
                     parMode <- "MPI"
                 }
             }
-        } else { 
-          ## try local sockets using snow package
-          snow = "snow"
-          if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
-              cat("Starting snow cluster with",nSlaves,"local sockets.\n")
-              snowclust <- makeCluster(nSlaves, type = "SOCK")
-              runParallel <- 1  
-              parMode <- "SOCK"
-          }
+        } else {
+            ## try local sockets using snow package
+            snow = "snow"
+            if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
+                cat("Starting snow cluster with",nSlaves,"local sockets.\n")
+                snowclust <- makeCluster(nSlaves, type = "SOCK")
+                runParallel <- 1
+                parMode <- "SOCK"
+            }
         }
-        options("warn" = opt.warn) 
+        options("warn" = opt.warn)
     }
 
     if (runParallel==1) { ## ... we run in parallel mode
@@ -141,69 +141,69 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         params$scanrange <- scanrange;
         params$mslevel <- mslevel;
         params$lockMassFreq <- lockMassFreq;
-        
+
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
 
         if (parMode == "MPI") {
-          res <- xcmsPapply(argList, findPeaksPar)
-          mpi.close.Rslaves()
+            res <- xcmsPapply(argList, findPeaksPar)
+            mpi.close.Rslaves()
         } else {
-          if (parMode == "SOCK") {
-             res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
-             stopCluster(snowclust)
-          }
+            if (parMode == "SOCK") {
+                res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
+                stopCluster(snowclust)
+            }
         }
 
         peaklist <- lapply(res, function(x) x$peaks)
         rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
-		if(lockMassFreq){
-			object@dataCorrection[1:length(files)]<-1
-		}
-		
-    } else {
-
-      peaklist <- vector("list", length(files))
-
-      for (i in seq(along = peaklist)) {
-
-        cat(snames[i], ": ", sep = "")
-
-        lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                          profstep = 0, includeMSn=includeMSn, mslevel=mslevel, scanrange=scanrange)
-	## check existence of slot, absent in old xcmsSets
-		if(lockMassFreq){
-			object@dataCorrection[i]<-1
-			lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-		}
-        
-       # if (exists("object@polarity") && length(object@polarity) >0) {
-        if (!is.null(polarity) && length(object@polarity) >0) {
-            ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
-            lcraw <- lcraws[[object@polarity]]
+        if(lockMassFreq){
+            object@dataCorrection[1:length(files)]<-1
         }
 
-          peaklist[[i]] <- findPeaks(lcraw, ...)
-          peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
-          rtlist$raw[[i]] <- lcraw@scantime
-          rtlist$corrected[[i]] <- lcraw@scantime
-          rm(lcraw)
-          gc()
-      }
+    } else {
+
+        peaklist <- vector("list", length(files))
+
+        for (i in seq(along = peaklist)) {
+
+            cat(snames[i], ": ", sep = "")
+
+            lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
+                             profstep = 0, includeMSn=includeMSn, mslevel=mslevel, scanrange=scanrange)
+            ## check existence of slot, absent in old xcmsSets
+            if(lockMassFreq){
+                object@dataCorrection[i]<-1
+                lcraw<-stitch(lcraw, AutoLockMass(lcraw))
+            }
+
+            ## if (exists("object@polarity") && length(object@polarity) >0) {
+            if (!is.null(polarity) && length(object@polarity) >0) {
+                ## Retain wanted polarity only
+                lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+                lcraw <- lcraws[[object@polarity]]
+            }
+
+            peaklist[[i]] <- findPeaks(lcraw, ...)
+            peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
+            rtlist$raw[[i]] <- lcraw@scantime
+            rtlist$corrected[[i]] <- lcraw@scantime
+            rm(lcraw)
+            gc()
+        }
     }
 
     lapply(1:length(peaklist), function(i) {
-            if (is.null(peaklist[[i]]))
-              warning("No peaks found in sample ", snames[i], call. = FALSE)  
-                else  if (nrow(peaklist[[i]]) == 0)
-                    warning("No peaks found in sample ", snames[i], call. = FALSE)
-                else if (nrow(peaklist[[i]]) == 1)
-                    warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
-                else if (nrow(peaklist[[i]]) < 10)
-                    warning("Only ", nrow(peaklist[[i]]), " peaks found in sample", 
-                      snames[i], call. = FALSE)
-                    })
+        if (is.null(peaklist[[i]]))
+            warning("No peaks found in sample ", snames[i], call. = FALSE)
+        else  if (nrow(peaklist[[i]]) == 0)
+            warning("No peaks found in sample ", snames[i], call. = FALSE)
+        else if (nrow(peaklist[[i]]) == 1)
+            warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
+        else if (nrow(peaklist[[i]]) < 10)
+            warning("Only ", nrow(peaklist[[i]]), " peaks found in sample",
+                    snames[i], call. = FALSE)
+    })
 
     peaks(object) <- do.call(rbind, peaklist)
     object@rt <- rtlist
@@ -385,11 +385,11 @@ setMethod("sampclass", "xcmsSet", function(object) {
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
-  if (!is.factor(value))
-    value <- factor(value, unique(value))
+    if (!is.factor(value))
+        value <- factor(value, unique(value))
 
-  object@phenoData$class <- value
-  object
+    object@phenoData$class <- value
+    object
 })
 
 setGeneric("phenoData", function(object) standardGeneric("phenoData"))
@@ -401,11 +401,11 @@ setGeneric("phenoData<-", function(object, value) standardGeneric("phenoData<-")
 setReplaceMethod("phenoData", "xcmsSet", function(object, value) {
     if (is.matrix(value))
         value <- as.data.frame(value)
-    #if (is.data.frame(value) && !("class" %in% colnames(value)))
-    #    value[,"class"] <- interaction(value)
-    #else
+    ## if (is.data.frame(value) && !("class" %in% colnames(value)))
+    ##     value[,"class"] <- interaction(value)
+    ## else
     if (!is.data.frame(value))
-      value <- data.frame(class = value)
+        value <- data.frame(class = value)
     object@phenoData <- value
     object
 })
@@ -459,9 +459,9 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
 
         masses <- matchpeaks(peaklist,masslist,mzabs,mzppm,neighbours)
         if (length(masses)==0){
-			warning("No masses close enough!\n")
-			next
-		}
+            warning("No masses close enough!\n")
+            next
+        }
 
         if (nrow(masses)==1 & method!="shift") {
             cat("Warning: only one peak found, fallback to shift.")
@@ -507,11 +507,11 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
 setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
                                             template = NULL) {
 
-  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
-    stop("No group information. Use group().")
-  }
-  
-  if (!missing(template)) {
+    if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+        stop("No group information. Use group().")
+    }
+
+    if (!missing(template)) {
         tempsplit <- strsplit(template[1], "[T_]")
         tempsplit <- strsplit(unlist(tempsplit), "\\.")
         if (length(tempsplit[[1]]) > 1)
@@ -539,47 +539,47 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
     gnames
 })
 
-# derive experimental design from set of file paths
+                                        # derive experimental design from set of file paths
 phenoDataFromPaths <- function(paths) {
-  ## create factors from filesystem hierarchy
-  sclass <- gsub("^\\.$", "sample", dirname(paths))
-  lev <- strsplit(sclass, "/")
-  levlen <- sapply(lev, length)
-  if(length(lev) > 1 && !all(levlen[1] == levlen))
-    stop("Directory tree must be level")
-  pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
-  redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
-  if (!any(!redundant)) {
-    redundant[length(redundant)] <- FALSE
-  }
-  pdata <- pdata[,!redundant,drop=FALSE]
-  if (ncol(pdata) == 1) { ## if not multiple factors, behave as before
-    ## Make the default group names less redundant
-    scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
-    scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
-    i <- 1
-    while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
-      i <- i + 1
-    i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
-    if (i > 1 && i <= nrow(scomp))
-      sclass <- substr(sclass, i, max(nchar(sclass)))
-    pdata <- data.frame(class = sclass)
-  }
-  rownames(pdata) <- gsub("\\.[^.]*$", "", basename(paths))
-  pdata
+    ## create factors from filesystem hierarchy
+    sclass <- gsub("^\\.$", "sample", dirname(paths))
+    lev <- strsplit(sclass, "/")
+    levlen <- sapply(lev, length)
+    if(length(lev) > 1 && !all(levlen[1] == levlen))
+        stop("Directory tree must be level")
+    pdata <- as.data.frame(matrix(unlist(lev), nrow=length(lev), byrow=TRUE))
+    redundant <- apply(pdata, 2, function(col) length(unique(col)) == 1)
+    if (!any(!redundant)) {
+        redundant[length(redundant)] <- FALSE
+    }
+    pdata <- pdata[,!redundant,drop=FALSE]
+    if (ncol(pdata) == 1) { ## if not multiple factors, behave as before
+        ## Make the default group names less redundant
+        scomp <- strsplit(substr(sclass, 1, min(nchar(sclass))), "")
+        scomp <- matrix(c(scomp, recursive = TRUE), ncol = length(scomp))
+        i <- 1
+        while(all(scomp[i,1] == scomp[i,-1]) && i < nrow(scomp))
+            i <- i + 1
+        i <- min(i, tail(c(0, which(scomp[1:i,1] == .Platform$file.sep)), n = 1) + 1)
+        if (i > 1 && i <= nrow(scomp))
+            sclass <- substr(sclass, i, max(nchar(sclass)))
+        pdata <- data.frame(class = sclass)
+    }
+    rownames(pdata) <- gsub("\\.[^.]*$", "", basename(paths))
+    pdata
 }
 
 setGeneric("group.density", function(object, ...) standardGeneric("group.density"))
 
 setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
-                                       mzwid = 0.25, max = 50, sleep = 0) {
+                                               mzwid = 0.25, max = 50, sleep = 0) {
 
     samples <- sampnames(object)
     classlabel <- sampclass(object)
     classnames <- as.character(unique(sampclass(object)))
     classlabel <- as.vector(unclass(classlabel))
     classnum <- table(classlabel)
-    
+
     peakmat <- peaks(object)
     porder <- order(peakmat[,"mz"])
     peakmat <- peakmat[porder,, drop=FALSE]
@@ -623,7 +623,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
                 next
             snum <- snum + 1
             num <- num + 1
-            ### Double the size of the output containers if they're full
+### Double the size of the output containers if they're full
             if (num > nrow(groupmat)) {
                 groupmat <- rbind(groupmat, matrix(nrow = nrow(groupmat), ncol = ncol(groupmat)))
                 groupindex <- c(groupindex, vector("list", length(groupindex)))
@@ -655,10 +655,10 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     groupmat <- groupmat[seq(length = num),]
     groupindex <- groupindex[seq(length = num)]
 
-    # Remove groups that overlap with more "well-behaved" groups
+    ## Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
-    
+
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)
 
@@ -671,187 +671,187 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
 setGeneric("group.mzClust", function(object, ...) standardGeneric("group.mzClust"))
 
 setMethod("group.mzClust", "xcmsSet", function(object,
-                           mzppm = 20,
-                           mzabs = 0,
-                           minsamp = 1,
-                           minfrac=0.5)
-{
-    samples <- sampnames(object)
-    classlabel <- sampclass(object)
-    peaks <- peaks(object)
-    groups <- mzClustGeneric(peaks[,c("mz","sample")],
-                                    sampclass=classlabel,
-                                    mzppm=mzppm,mzabs=mzabs,
-                                    minsamp=minsamp,
-                                    minfrac=minfrac)
+                                               mzppm = 20,
+                                               mzabs = 0,
+                                               minsamp = 1,
+                                               minfrac=0.5)
+      {
+          samples <- sampnames(object)
+          classlabel <- sampclass(object)
+          peaks <- peaks(object)
+          groups <- mzClustGeneric(peaks[,c("mz","sample")],
+                                   sampclass=classlabel,
+                                   mzppm=mzppm,mzabs=mzabs,
+                                   minsamp=minsamp,
+                                   minfrac=minfrac)
 
-    if(is.null(nrow(groups$mat))) {
-        matColNames <- names(groups$mat)
-        groups$mat <- matrix(groups$mat,
-                             ncol=length(groups$mat),byrow=F);
-        colnames(groups$mat) <- matColNames
-    }
+          if(is.null(nrow(groups$mat))) {
+              matColNames <- names(groups$mat)
+              groups$mat <- matrix(groups$mat,
+                                   ncol=length(groups$mat),byrow=F);
+              colnames(groups$mat) <- matColNames
+          }
 
-    rt <- c(rep(-1,nrow(groups$mat)))
+          rt <- c(rep(-1,nrow(groups$mat)))
 
-    groups(object) <- cbind(groups$mat[,(1:3),drop=FALSE],rt,rt,rt,groups$mat[,(4:ncol(groups$mat)),drop=FALSE])
-    colnames(groups(object)) <- c(colnames(groups$mat[,(1:3),drop=FALSE]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,(4:ncol(groups$mat)),drop=FALSE]))
-    groupidx(object) <- groups$idx
+          groups(object) <- cbind(groups$mat[,(1:3),drop=FALSE],rt,rt,rt,groups$mat[,(4:ncol(groups$mat)),drop=FALSE])
+          colnames(groups(object)) <- c(colnames(groups$mat[,(1:3),drop=FALSE]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,(4:ncol(groups$mat)),drop=FALSE]))
+          groupidx(object) <- groups$idx
 
-    object
-})
+          object
+      })
 
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
 
 setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
-	mzCheck=0.2, rtCheck=15, kNN=10) {
+                                               mzCheck=0.2, rtCheck=15, kNN=10) {
 
-	## If ANN is available ...
-	RANN = "RANN"
-	if (!require(RANN)) {
-		stop("RANN is not installed")
-	}
+    ## If ANN is available ...
+    RANN = "RANN"
+    if (!require(RANN)) {
+        stop("RANN is not installed")
+    }
 
-	# classlabel <- sampclass(object)
-	classlabel <- as.vector(unclass(sampclass(object)))
-    
-	samples <- sampnames(object)
-	gcount <- integer(length(unique(sampclass(object))))
+    ## classlabel <- sampclass(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
 
-	peakmat <- peaks(object)
-	plength <- list()
-	parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
+    samples <- sampnames(object)
+    gcount <- integer(length(unique(sampclass(object))))
 
-	# for(i in 1:length(samples)){ ## extra loop for ???.... : PB
-	plength <- table(peaks(object)[,"sample"]) ## this was only used once ??? : PB
-	plength<-as.numeric(plength)
-	# }
+    peakmat <- peaks(object)
+    plength <- list()
+    parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
 
-	mplenv <- new.env(parent = .GlobalEnv)
-	# peakmat1 <- which(peakmat[,"sample"]==1) ## why do we choose the first sample ?
-	## this sample may not be the longest so we'll use plength : PB
-	# mplenv$mplist <- matrix(0,length(peakmat1),length(samples))
-	# mplenv$mplist[,1] <- which(peakmat[,"sample"]==1)
-	# mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]==1),c("mz","rt")])
-	# mplenv$peakmat <- peakmat
-	# assign("peakmat",peakmat,env=mplenv)
-    
-	mplenv$mplist <- matrix(0, sort(plength, decreasing=TRUE)[1], length(samples))
-	mplenv$mplist[,which.max(plength)] <- which(peakmat[,"sample"] == which.max(plength))
-	mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]== which.max(plength)),c("mz","rt")])
-	mplenv$peakmat <- peakmat
-	assign("peakmat",peakmat,env=mplenv)
-        
-	samples <- sampnames(object)[sort.int(plength, decreasing=TRUE, index.return=TRUE)$ix]
-	cat("sample:",basename(samples[1])," ")
+    ## for(i in 1:length(samples)){ ## extra loop for ???.... : PB
+    plength <- table(peaks(object)[,"sample"]) ## this was only used once ??? : PB
+    plength<-as.numeric(plength)
+    ## }
 
-	# for(sample in 2:length(samples)) { ## for loops suck in R don't use them
-	sapply(2:length(samples), function(sample,mplenv, object){
-		# require(parallel)
-		# cl <- makeCluster(getOption("cl.cores", nSlaves))
-		# clusterEvalQ(cl, library(RANN))
-		# parSapply(cl, 2:length(samples), function(sample,mplenv, object){
-		for(mml in seq(mplenv$mplist[,1])){
-			mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
-			mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
-		} 
+    mplenv <- new.env(parent = .GlobalEnv)
+    ## peakmat1 <- which(peakmat[,"sample"]==1) ## why do we choose the first sample ?
+    ## this sample may not be the longest so we'll use plength : PB
+    ## mplenv$mplist <- matrix(0,length(peakmat1),length(samples))
+    ## mplenv$mplist[,1] <- which(peakmat[,"sample"]==1)
+    ## mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]==1),c("mz","rt")])
+    ## mplenv$peakmat <- peakmat
+    ## assign("peakmat",peakmat,env=mplenv)
 
-		cat("sample:",basename(samples[sample])," ")
-		mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
-										isJoinedPeak=FALSE)
-		if(length(mplenv$peakIdxList$peakidx)==0){
-			cat("Warning: No peaks in sample",s,"\n")
-		}
-		# scoreList <- data.frame(score=numeric(0),peak=integer(0),mpListRow=integer(0),
-		#                                                       isJoinedPeak=logical(0), isJoinedRow=logical(0))
-		#         
-		#       for(currPeak in mplenv$peakIdxList$peakidx){
-		#                       pvrScore <- patternVsRowScore(currPeak,parameters,mplenv) ## does the actual NN
-		#                       scoreList <- rbind(scoreList,pvrScore)
-		#       }
-		## this really doesn't take a long time not worth parallel version here. 
-		## but make an apply loop now faster even with rearranging the data :D : PB
-		scoreList <- sapply(mplenv$peakIdxList$peakidx, function(currPeak, para, mplenv){
-			patternVsRowScore(currPeak,para,mplenv)
-		}, parameters, mplenv)
-		if(is.list(scoreList)){
-			idx<-which(scoreList != "NULL")
-			scoreList<-matrix(unlist(scoreList[idx]), ncol=5, nrow=length(idx), byrow=T)
-			colnames(scoreList)<-c("score", "peak", "mpListRow", "isJoinedPeak", "isJoinedRow")
-		} else {
-			scoreList <- data.frame(score=unlist(scoreList["score",]), peak=unlist(scoreList["peak",]), mpListRow=
-						unlist(coreList["mpListRow",]), isJoinedPeak=unlist(scoreList["isJoinedPeak",]), 
-						isJoinedRow=unlist(scoreList["isJoinedRow",]))
-		}
-                                
-		## Browse scores in order of descending goodness-of-fit
-		scoreListcurr <- scoreList[order(scoreList[,"score"]),]
-		if (nrow(scoreListcurr) > 0)
-		for (scoreIter in 1:nrow(scoreListcurr)) {
+    mplenv$mplist <- matrix(0, sort(plength, decreasing=TRUE)[1], length(samples))
+    mplenv$mplist[,which.max(plength)] <- which(peakmat[,"sample"] == which.max(plength))
+    mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]== which.max(plength)),c("mz","rt")])
+    mplenv$peakmat <- peakmat
+    assign("peakmat",peakmat,env=mplenv)
 
-			iterPeak <-scoreListcurr[scoreIter, "peak"]
-			iterRow <- scoreListcurr[scoreIter, "mpListRow"]
+    samples <- sampnames(object)[sort.int(plength, decreasing=TRUE, index.return=TRUE)$ix]
+    cat("sample:",basename(samples[1])," ")
 
-			## Check if master list row is already assigned with peak
-			if (scoreListcurr[scoreIter, "isJoinedRow"]==TRUE) {
-				next
-			}
+    ## for(sample in 2:length(samples)) { ## for loops suck in R don't use them
+    sapply(2:length(samples), function(sample,mplenv, object){
+        ## require(parallel)
+        ## cl <- makeCluster(getOption("cl.cores", nSlaves))
+        ## clusterEvalQ(cl, library(RANN))
+        ## parSapply(cl, 2:length(samples), function(sample,mplenv, object){
+        for(mml in seq(mplenv$mplist[,1])){
+            mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
+            mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
+        }
 
-			## Check if peak is already assigned to some master list row
-			if (scoreListcurr[scoreIter, "isJoinedPeak"]==TRUE) { next }
+        cat("sample:",basename(samples[sample])," ")
+        mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
+                                         isJoinedPeak=FALSE)
+        if(length(mplenv$peakIdxList$peakidx)==0){
+            cat("Warning: No peaks in sample",s,"\n")
+        }
+        ## scoreList <- data.frame(score=numeric(0),peak=integer(0),mpListRow=integer(0),
+        ##                                                       isJoinedPeak=logical(0), isJoinedRow=logical(0))
+        ##
+        ##       for(currPeak in mplenv$peakIdxList$peakidx){
+        ##                       pvrScore <- patternVsRowScore(currPeak,parameters,mplenv) ## does the actual NN
+        ##                       scoreList <- rbind(scoreList,pvrScore)
+        ##       }
+        ## this really doesn't take a long time not worth parallel version here.
+        ## but make an apply loop now faster even with rearranging the data :D : PB
+        scoreList <- sapply(mplenv$peakIdxList$peakidx, function(currPeak, para, mplenv){
+            patternVsRowScore(currPeak,para,mplenv)
+        }, parameters, mplenv)
+        if(is.list(scoreList)){
+            idx<-which(scoreList != "NULL")
+            scoreList<-matrix(unlist(scoreList[idx]), ncol=5, nrow=length(idx), byrow=T)
+            colnames(scoreList)<-c("score", "peak", "mpListRow", "isJoinedPeak", "isJoinedRow")
+        } else {
+            scoreList <- data.frame(score=unlist(scoreList["score",]), peak=unlist(scoreList["peak",]), mpListRow=
+                                    unlist(coreList["mpListRow",]), isJoinedPeak=unlist(scoreList["isJoinedPeak",]),
+                                    isJoinedRow=unlist(scoreList["isJoinedRow",]))
+        }
 
-				##  Check if score good enough
-			## Assign peak to master peak list row
-			mplenv$mplist[iterRow,sample] <- iterPeak
+        ## Browse scores in order of descending goodness-of-fit
+        scoreListcurr <- scoreList[order(scoreList[,"score"]),]
+        if (nrow(scoreListcurr) > 0)
+            for (scoreIter in 1:nrow(scoreListcurr)) {
 
-			## Mark peak as joined
-			setTrue <- which(scoreListcurr[,"mpListRow"] == iterRow)
-			scoreListcurr[setTrue,"isJoinedRow"] <- TRUE
-			setTrue <- which(scoreListcurr[,"peak"] == iterPeak)
-			scoreListcurr[setTrue, "isJoinedPeak"] <- TRUE
-			mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
-		}
+                iterPeak <-scoreListcurr[scoreIter, "peak"]
+                iterRow <- scoreListcurr[scoreIter, "mpListRow"]
 
-		notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
-		for(notJoinedPeak in notJoinedPeaks) {
-			mplenv$mplist <- rbind(mplenv$mplist,matrix(0,1,dim(mplenv$mplist)[2]))
-			mplenv$mplist[length(mplenv$mplist[,1]),sample] <- notJoinedPeak
-		}
+                ## Check if master list row is already assigned with peak
+                if (scoreListcurr[scoreIter, "isJoinedRow"]==TRUE) {
+                    next
+                }
 
-		## Clear "Joined" information from all master peaklist rows
-		rm(peakIdxList,envir=mplenv)
-        
-		## updateProgressInfo
-		object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
-		progressInfoUpdate(object)
-	}, mplenv, object)
-	# stopCluster(cl)
-	gc()
+                ## Check if peak is already assigned to some master list row
+                if (scoreListcurr[scoreIter, "isJoinedPeak"]==TRUE) { next }
 
-	groupmat <- matrix(0,nrow(mplenv$mplist), 7+length(levels(sampclass(object))))
-	colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
-	"npeaks", levels(sampclass(object)))
-	groupindex <- vector("list", nrow(mplenv$mplist))
-	for (i in 1:nrow(mplenv$mplist)) {
-		groupmat[i, "mzmed"] <- median(peakmat[mplenv$mplist[i,],"mz"])
-		groupmat[i, c("mzmin", "mzmax")] <- range(peakmat[mplenv$mplist[i,],"mz"])
-		groupmat[i, "rtmed"] <- median(peakmat[mplenv$mplist[i,],"rt"])
-		groupmat[i, c("rtmin", "rtmax")] <- range(peakmat[mplenv$mplist[i,],"rt"])
+                ##  Check if score good enough
+                ## Assign peak to master peak list row
+                mplenv$mplist[iterRow,sample] <- iterPeak
 
-		groupmat[i, "npeaks"] <- length(which(peakmat[mplenv$mplist[i,]]>0))
+                ## Mark peak as joined
+                setTrue <- which(scoreListcurr[,"mpListRow"] == iterRow)
+                scoreListcurr[setTrue,"isJoinedRow"] <- TRUE
+                setTrue <- which(scoreListcurr[,"peak"] == iterPeak)
+                scoreListcurr[setTrue, "isJoinedPeak"] <- TRUE
+                mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
+            }
 
-		gnum <- classlabel[unique(peakmat[mplenv$mplist[i,],"sample"])]
-		for (j in seq(along = gcount))
-			gcount[j] <- sum(gnum == j)
-		groupmat[i, 7+seq(along = gcount)] <- gcount
+        notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
+        for(notJoinedPeak in notJoinedPeaks) {
+            mplenv$mplist <- rbind(mplenv$mplist,matrix(0,1,dim(mplenv$mplist)[2]))
+            mplenv$mplist[length(mplenv$mplist[,1]),sample] <- notJoinedPeak
+        }
 
-		groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
-	}
+        ## Clear "Joined" information from all master peaklist rows
+        rm(peakIdxList,envir=mplenv)
 
-	groups(object) <- groupmat
-	groupidx(object) <- groupindex
+        ## updateProgressInfo
+        object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
+        progressInfoUpdate(object)
+    }, mplenv, object)
+    ## stopCluster(cl)
+    gc()
 
-	invisible(object)
+    groupmat <- matrix(0,nrow(mplenv$mplist), 7+length(levels(sampclass(object))))
+    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                            "npeaks", levels(sampclass(object)))
+    groupindex <- vector("list", nrow(mplenv$mplist))
+    for (i in 1:nrow(mplenv$mplist)) {
+        groupmat[i, "mzmed"] <- median(peakmat[mplenv$mplist[i,],"mz"])
+        groupmat[i, c("mzmin", "mzmax")] <- range(peakmat[mplenv$mplist[i,],"mz"])
+        groupmat[i, "rtmed"] <- median(peakmat[mplenv$mplist[i,],"rt"])
+        groupmat[i, c("rtmin", "rtmax")] <- range(peakmat[mplenv$mplist[i,],"rt"])
+
+        groupmat[i, "npeaks"] <- length(which(peakmat[mplenv$mplist[i,]]>0))
+
+        gnum <- classlabel[unique(peakmat[mplenv$mplist[i,],"sample"])]
+        for (j in seq(along = gcount))
+            gcount[j] <- sum(gnum == j)
+        groupmat[i, 7+seq(along = gcount)] <- gcount
+
+        groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
+    }
+
+    groups(object) <- groupmat
+    groupidx(object) <- groupindex
+
+    invisible(object)
 })
 
 
@@ -877,12 +877,12 @@ patternVsRowScore <- function(currPeak, parameters, mplenv){
         ## Calculate if differences within tolerancdiffRT < rtTolerance)es
         if ((diffMZ < parameters$mzcheck) & (diffRT < rtTolerance)) {
             return(data.frame(score=nnDist$nn.dists[mplRow],
-				peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-				isJoinedPeak=FALSE, isJoinedRow=FALSE))
+                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
         }
     }
-	return(data.frame(score=NA, peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-		isJoinedPeak=FALSE, isJoinedRow=FALSE))
+    return(data.frame(score=NA, peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+                      isJoinedPeak=FALSE, isJoinedRow=FALSE))
 }
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
@@ -902,9 +902,9 @@ setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint"),
                                           value = "index", intensity = "into") {
 
-  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
-    stop("xcmsSet is not been group()ed.")
-  }
+    if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+        stop("xcmsSet is not been group()ed.")
+    }
 
     method <- match.arg(method)
     peakmat <- peaks(object)
@@ -960,10 +960,10 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
 
 setGeneric("retcor.peakgroups", function(object, ...) standardGeneric("retcor.peakgroups"))
 setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 1,
-                                        smooth = c("loess", "linear"), span = .2,
-                                        family = c("gaussian", "symmetric"),
-                                        plottype = c("none", "deviation", "mdevden"),
-                                        col = NULL, ty = NULL) {
+                                                   smooth = c("loess", "linear"), span = .2,
+                                                   family = c("gaussian", "symmetric"),
+                                                   plottype = c("none", "deviation", "mdevden"),
+                                                   col = NULL, ty = NULL) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
@@ -1012,7 +1012,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     rtdevsmo <- vector("list", n)
 
-    # Code for checking to see if retention time correction is overcorrecting
+    ## Code for checking to see if retention time correction is overcorrecting
     rtdevrange <- range(rtdev, na.rm = TRUE)
     warn.overcorrect <- FALSE
 
@@ -1024,7 +1024,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span, degree = 1, family = family))
 
             rtdevsmo[[i]] <- xcms:::na.flatfill(predict(lo, data.frame(rt = rtcor[[i]])))
-            ### Remove singularities from the loess function
+### Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) > quantile(abs(rtdevsmo[[i]]), 0.9)*2] <- NA
 
             if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
@@ -1041,7 +1041,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
             if (any(rtdevsmorange/rtdevrange > 2)) warn.overcorrect <- TRUE
         } else {
             if (nrow(pts) < 2) {
-              stop("Not enough ``well behaved'' peak groups even for linear smoothing of retention times")
+                stop("Not enough ``well behaved'' peak groups even for linear smoothing of retention times")
             }
             fit <- lsfit(pts$rt, pts$rtdev)
             rtdevsmo[[i]] <- rtcor[[i]] * fit$coef[2] + fit$coef[1]
@@ -1068,7 +1068,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     if (plottype %in% c("deviation", "mdevden")) {
 
-        ### Set up the colors and line type
+### Set up the colors and line type
         if (missing(col) || is.null(col)) {
             col <- integer(n)
             for (i in 1:max(classlabel))
@@ -1131,7 +1131,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
 setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "deviation"),
-                                                profStep=1, center=NULL, 
+                                                profStep=1, center=NULL,
                                                 col = NULL, ty = NULL,
                                                 response=1, distFunc="cor_opt",
                                                 gapInit=NULL, gapExtend=NULL,
@@ -1172,32 +1172,32 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
-    
+
     rtimecor <- vector("list", N)
     rtdevsmo <- vector("list", N)
     plength <- rep(0, N)
 
     if (missing(center)) {
-       for(i in 1:N){
-          plength[i] <- length(which(peakmat[,"sample"]==i))
-       }
-      center <- which.max(plength)
+        for(i in 1:N){
+            plength[i] <- length(which(peakmat[,"sample"]==i))
+        }
+        center <- which.max(plength)
     }
-      
+
     cat("center sample: ", samples[center], "\nProcessing: ")
     idx <- which(seq(1,N) != center)
 
-    obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0) 
- 
+    obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0)
+
     for (si in 1:length(idx)) {
         s <- idx[si]
         cat(samples[s], " ")
-        
+
         profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
 
         obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
         profStepPad(obj2) <- profStep ## generate profile matrix
-        
+
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
         mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
 
@@ -1274,7 +1274,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         intensity2 <- obj2@env$profile
 
         if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
-          stop("Dimensions of profile matrices do not match !\n")
+            stop("Dimensions of profile matrices do not match !\n")
 
         rtimecor[[s]] <-.Call("R_set_from_xcms",
                               valscantime1,scantime1,mzval,mz,intensity1,
@@ -1339,7 +1339,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
         plot.new() ;  par(mar= c(2, 0, 2, 0))
         plot.window(c(0,1), c(0,1))
-        legend(0,1.04, basename(samples), col = mypal[col], lty = ty) 
+        legend(0,1.04, basename(samples), col = mypal[col], lty = ty)
     }
 
     for (i in 1:N) {
@@ -1428,7 +1428,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
     prof <- profinfo(object)
     rtcor <- object@rt$corrected
 
-    # Remove groups that overlap with more "well-behaved" groups
+    ## Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
@@ -1455,7 +1455,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
 
     lastpeak <- nrow(peakmat)
     lastpeakOrig <- lastpeak
-    
+
     peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
 
     cnames <- colnames(object@peaks)
@@ -1467,17 +1467,17 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
         naidx <- which(is.na(gvals[,i]))
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-			if(length(object@dataCorrection) > 1){
-				if(object@dataCorrection[i] == 1)
-					lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-			}
-	    ## check existence of slot, absent in old xcmsSets
-	   # if (exists("object@polarity") && length(object@polarity) >0) {
-        if (length(object@polarity) >0) {    
-            ## Retain wanted polarity only
-            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
-            lcraw <- lcraws[[object@polarity]]
-        }
+            if(length(object@dataCorrection) > 1){
+                if(object@dataCorrection[i] == 1)
+                    lcraw<-stitch(lcraw, AutoLockMass(lcraw))
+            }
+            ## check existence of slot, absent in old xcmsSets
+            ## if (exists("object@polarity") && length(object@polarity) >0) {
+            if (length(object@polarity) >0) {
+                ## Retain wanted polarity only
+                lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+                lcraw <- lcraws[[object@polarity]]
+            }
 
             if (length(prof) > 2)
                 lcraw@profparam <- prof[seq(3, length(prof))]
@@ -1516,7 +1516,7 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
     classlabel <- as.vector(unclass(sampclass(object)))
     prof <- profinfo(object)
     rtcor <- object@rt$corrected
-    # Remove groups that overlap with more "well-behaved" groups
+    ## Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
@@ -1543,35 +1543,35 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
     peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
     cnames <- colnames(object@peaks)
     for (i in seq(along = files)) {
-	 cat(samp[i], "")
-	flush.console()
+        cat(samp[i], "")
+        flush.console()
         naidx <- which(is.na(gvals[,i]))
-	newpeaks <- matrix(nrow=length(naidx), ncol=9)
-	nppos<-0 ## line position in the newpeaks matrix
+        newpeaks <- matrix(nrow=length(naidx), ncol=9)
+        nppos<-0 ## line position in the newpeaks matrix
         if (length(naidx)) {
             lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-	   ngs <- as.vector(naidx)
-	   for (g in ngs)
-		{
-		nppos <- nppos+1
-		mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
-		mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] == max(lcraw@env$intensity[mzpos]))]
-		mmzr <- seq((mmzpos-mrange[1]),(mmzpos+mrange[2]))
-		maxo <- max(lcraw@env$intensity[mmzr])
-		## this is the new one, summing the scale-range
-		## calculating scale, adding intensitiesin this scale
-		medMZmin <- median(peakmat[groupindex[[g]],"mzmin"])
-		medMZmax <- median(peakmat[groupindex[[g]],"mzmax"])
-		minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) == min(abs(lcraw@env$mz - medMZmin))))
-		maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) == min(abs(lcraw@env$mz - medMZmax))))
-		into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
-		newpeaks[nppos,] <- c(groupmat[g,"mzmed"],medMZmin,medMZmax,-1,-1,-1,into,maxo,i)
-		}
-	    colnames(newpeaks) <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sample")
+            ngs <- as.vector(naidx)
+            for (g in ngs)
+            {
+                nppos <- nppos+1
+                mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
+                mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] == max(lcraw@env$intensity[mzpos]))]
+                mmzr <- seq((mmzpos-mrange[1]),(mmzpos+mrange[2]))
+                maxo <- max(lcraw@env$intensity[mmzr])
+                ## this is the new one, summing the scale-range
+                ## calculating scale, adding intensitiesin this scale
+                medMZmin <- median(peakmat[groupindex[[g]],"mzmin"])
+                medMZmax <- median(peakmat[groupindex[[g]],"mzmax"])
+                minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) == min(abs(lcraw@env$mz - medMZmin))))
+                maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) == min(abs(lcraw@env$mz - medMZmax))))
+                into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
+                newpeaks[nppos,] <- c(groupmat[g,"mzmed"],medMZmin,medMZmax,-1,-1,-1,into,maxo,i)
+            }
+            colnames(newpeaks) <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","maxo","sample")
             rm(lcraw)
             gc()
             newcols <-colnames(newpeaks)[colnames(newpeaks) %in% cnames]
-	    peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
+            peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
             for (i in seq(along = naidx))
                 groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
             lastpeak <- lastpeak + length(naidx)
@@ -1586,13 +1586,13 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
 })
 
 setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
- setMethod("fillPeaks", "xcmsSet", function(object, method=getOption("BioC")$xcms$fillPeaks.method,...) {
- 	method <- match.arg(method, getOption("BioC")$xcms$fillPeaks.methods)
-     	if (is.na(method))
-         	stop("unknown method : ", method)
-     	method <- paste("fillPeaks", method, sep=".")
-     	invisible(do.call(method, alist(object, ...)))
- 	})
+setMethod("fillPeaks", "xcmsSet", function(object, method=getOption("BioC")$xcms$fillPeaks.method,...) {
+    method <- match.arg(method, getOption("BioC")$xcms$fillPeaks.methods)
+    if (is.na(method))
+        stop("unknown method : ", method)
+    method <- paste("fillPeaks", method, sep=".")
+    invisible(do.call(method, alist(object, ...)))
+})
 
 setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
                                         groupidx, sampleidx = sampnames(object),
@@ -1653,10 +1653,10 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         cat(sampleidx[i], "")
         flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
-		if(length(object@dataCorrection) > 1){
-			if(object@dataCorrection[i] == 1)
-				lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-		}
+        if(length(object@dataCorrection) > 1){
+            if(object@dataCorrection[i] == 1)
+                lcraw<-stitch(lcraw, AutoLockMass(lcraw))
+        }
         if (rt == "corrected")
             lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
         if (length(prof) > 2)
@@ -1777,42 +1777,42 @@ setGeneric("peakTable", function(object, ...) standardGeneric("peakTable"))
 
 setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) {
 
-  if (length(sampnames(object)) == 1) {
-    return(object@peaks)
-  }
-  
-  if (nrow(object@groups) < 1) {
-    stop ('First argument must be an xcmsSet with group information or contain only one sample.')
-  }
-  
-  groupmat <- groups(object)
+    if (length(sampnames(object)) == 1) {
+        return(object@peaks)
+    }
 
-  
-  if (! "value" %in% names(list(...))) {
-    ts <- data.frame(cbind(groupmat,groupval(object, value="into",  ...)), row.names = NULL)
-  } else {
-    ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
-  }
-  
-  cnames <- colnames(ts)
-  
-  if (cnames[1] == 'mzmed') {
-    cnames[1] <- 'mz'
-  } else {
-    stop ('mzmed column missing')
-  }
-  if (cnames[4] == 'rtmed') {
-    cnames[4] <- 'rt'
-  } else {
-    stop ('mzmed column missing')
-  }
-          
-  colnames(ts) <- cnames
+    if (nrow(object@groups) < 1) {
+        stop ('First argument must be an xcmsSet with group information or contain only one sample.')
+    }
 
-  if (length(filebase))
-      write.table(ts, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
+    groupmat <- groups(object)
 
-  ts
+
+    if (! "value" %in% names(list(...))) {
+        ts <- data.frame(cbind(groupmat,groupval(object, value="into",  ...)), row.names = NULL)
+    } else {
+        ts <- data.frame(cbind(groupmat,groupval(object, ...)), row.names = NULL)
+    }
+
+    cnames <- colnames(ts)
+
+    if (cnames[1] == 'mzmed') {
+        cnames[1] <- 'mz'
+    } else {
+        stop ('mzmed column missing')
+    }
+    if (cnames[4] == 'rtmed') {
+        cnames[4] <- 'rt'
+    } else {
+        stop ('mzmed column missing')
+    }
+
+    colnames(ts) <- cnames
+
+    if (length(filebase))
+        write.table(ts, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
+
+    ts
 })
 
 
@@ -1822,14 +1822,14 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                                             class2 = levels(sampclass(object))[2],
                                             filebase = character(), eicmax = 0, eicwidth = 200,
                                             sortpval = TRUE, classeic = c(class1,class2),
-                                            value = c("into","maxo","intb"), metlin = FALSE, 
-											h = 480, w = 640, mzdec=2, ...) {
+                                            value = c("into","maxo","intb"), metlin = FALSE,
+                                            h = 480, w = 640, mzdec=2, ...) {
 
-  if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
-    stop("No group information. Use group().")
-  }
-  
-  require(multtest) || stop("Couldn't load multtest")
+    if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+        stop("No group information. Use group().")
+    }
+
+    require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
     groupmat <- groups(object)
@@ -1853,9 +1853,9 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     if (length(intersect(c1, c2)) > 0)
         stop("Intersecting Classes")
 
-    ## Check against missing Values 
+    ## Check against missing Values
     if (any(is.na(values[,c(c1,c2)]))) {
-	stop("NA values in xcmsSet. Use fillPeaks()")
+        stop("NA values in xcmsSet. Use fillPeaks()")
     }
 
     mean1 <- rowMeans(values[,c1,drop=FALSE], na.rm = TRUE)
@@ -1868,40 +1868,40 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     fold[!is.na(fold) & fold < 1] <- 1/fold[!is.na(fold) & fold < 1]
 
     testval <- values[,c(c1,c2)]
-	testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
+    testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
     if (ncol(testval) > 2) {
         tstat <- mt.teststat(testval, testclab, ...)
         pvalue <- pval(testval, testclab, tstat)
     } else {
-            tstat <- pvalue <- rep(NA,nrow(testval))
+        tstat <- pvalue <- rep(NA,nrow(testval))
+    }
+    stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
+    if (length(levels(sampclass(object))) >2) {
+        pvalAnova<-c()
+        for(i in 1:nrow(values)){
+            var<-as.numeric(values[i,])
+            ano<-summary(aov(var ~ sampclass(object)) )
+            pvalAnova<-append(pvalAnova, unlist(ano)["Pr(>F)1"])
         }
-	stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
-	if (length(levels(sampclass(object))) >2) {
-            pvalAnova<-c()
-	    for(i in 1:nrow(values)){
-			var<-as.numeric(values[i,])
-			ano<-summary(aov(var ~ sampclass(object)) )
-			pvalAnova<-append(pvalAnova, unlist(ano)["Pr(>F)1"])
-	    }
-	    stat<-cbind(stat, anova= pvalAnova)
-	}
-	if (metlin) {
-	    neutralmass <- groupmat[,"mzmed"] + ifelse(metlin < 0, 1, -1)
-	    metlin <- abs(metlin)
-	    digits <- ceiling(-log10(metlin))+1
-	    metlinurl <- paste("http://metlin.scripps.edu/metabo_list.php?mass_min=",
-	                       round(neutralmass - metlin, digits), "&mass_max=",
-	                       round(neutralmass + metlin, digits), sep="")
-	    values <- cbind(metlin = metlinurl, values)
-	}
-	twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
-	if (sortpval) {
-	   tsidx <- order(twosamp[,"pvalue"])
-	   twosamp <- twosamp[tsidx,]
-	   rownames(twosamp) <- 1:nrow(twosamp)
-	   values<-values[tsidx,]
-	} else
-	   tsidx <- 1:nrow(values)
+        stat<-cbind(stat, anova= pvalAnova)
+    }
+    if (metlin) {
+        neutralmass <- groupmat[,"mzmed"] + ifelse(metlin < 0, 1, -1)
+        metlin <- abs(metlin)
+        digits <- ceiling(-log10(metlin))+1
+        metlinurl <- paste("http://metlin.scripps.edu/metabo_list.php?mass_min=",
+                           round(neutralmass - metlin, digits), "&mass_max=",
+                           round(neutralmass + metlin, digits), sep="")
+        values <- cbind(metlin = metlinurl, values)
+    }
+    twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
+    if (sortpval) {
+        tsidx <- order(twosamp[,"pvalue"])
+        twosamp <- twosamp[tsidx,]
+        rownames(twosamp) <- 1:nrow(twosamp)
+        values<-values[tsidx,]
+    } else
+        tsidx <- 1:nrow(values)
 
     if (length(filebase))
         write.table(twosamp, paste(filebase, ".tsv", sep = ""), quote = FALSE, sep = "\t", col.names = NA)
@@ -1972,22 +1972,22 @@ setReplaceMethod("progressCallback", "xcmsSet", function(object, value) {
 
 setGeneric("progressInfoUpdate", function(object) standardGeneric("progressInfoUpdate"))
 
-setMethod("progressInfoUpdate", "xcmsSet", function(object) 
-  do.call(object@progressCallback, list(progress=object@progressInfo))
-)
+setMethod("progressInfoUpdate", "xcmsSet", function(object)
+          do.call(object@progressCallback, list(progress=object@progressInfo))
+          )
 
 
 xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480){
 
     if (pic == "png"){
-	png(file.path(dirpath, "%003d.png"), width, height)
+        png(file.path(dirpath, "%003d.png"), width, height)
     } else{
-	pdf(file.path(dirpath, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
+        pdf(file.path(dirpath, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
     }
 
     ind<-which(colnames(values) != "metlin")
     for (i in 1:nrow(values)){
-	boxplot(as.numeric(values[i,ind]) ~ className, col="blue",
+        boxplot(as.numeric(values[i,ind]) ~ className, col="blue",
                 outline=FALSE, main=paste("Feature ", row.names(values)[i] ))
     }
     if (length(values) > 0) {
@@ -2021,8 +2021,8 @@ pval <- function(X, classlabel, teststat) {
 
     n1 <- rowSums(!is.na(X[,classlabel == 0]))
     n2 <- rowSums(!is.na(X[,classlabel == 1]))
-    A <- apply(X[,classlabel == 0], 1, sd, na.rm=TRUE)^2/n1 # sd(t(X[,classlabel == 0]), na.rm = TRUE)^2/n1
-    B <- apply(X[,classlabel == 1], 1, sd, na.rm=TRUE)^2/n2 # sd(t(X[,classlabel == 1]), na.rm = TRUE)^2/n2
+    A <- apply(X[,classlabel == 0], 1, sd, na.rm=TRUE)^2/n1 ## sd(t(X[,classlabel == 0]), na.rm = TRUE)^2/n1
+    B <- apply(X[,classlabel == 1], 1, sd, na.rm=TRUE)^2/n2 ## sd(t(X[,classlabel == 1]), na.rm = TRUE)^2/n2
     df <- (A+B)^2/(A^2/(n1-1)+B^2/(n2-1))
 
     pvalue <- 2 * (1 - pt(abs(teststat), df))

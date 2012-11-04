@@ -6,7 +6,7 @@
 \alias{show,xcmsFragments-method}
 
 \title{Class xcmsFragments, a class for handling Tandem MS and MS$^n$ data}
-\description{  
+\description{
   This class is similar to \code{\link{xcmsSet}} because it stores peaks
   from a number of individual files. However,  xcmsFragments keeps
   Tandem MS and e.g. Ion Trap or Orbitrap MS$^n$ peaks, including the
@@ -14,7 +14,7 @@
 }
 \section{Objects from the Class}{
   Objects can be created with the \code{\link{xcmsFragments}}
-  constructor and filled with peaks using the collect method.  
+  constructor and filled with peaks using the collect method.
 }
 \section{Slots}{
   \describe{

@@ -29,12 +29,12 @@ exportClasses(
               "xcmsPeaks",
               "xcmsRaw",
               "xcmsSet",
-	      "xcmsFragments"
+              "xcmsFragments"
               )
 
 exportMethods(
               "absent",
-			  "AutoLockMass",
+              "AutoLockMass",
               "calibrate",
               "collect",
               "deepCopy",

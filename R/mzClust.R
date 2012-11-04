@@ -20,59 +20,59 @@ mzClustGeneric <- function(p,sampclass=NULL,
 {
     makeBin <- function(pos)
     {
-	if(pos > numpeaks)
+        if(pos > numpeaks)
             return(list(pos=pos,bin=c(-1)))
 
-	bin <- pord[pos]
-	pos <- pos+1
-	basepeak <- p[bin[1],1]
-	error_range <- c(basepeak, basepeak*error_window+basepeak+2*mzabs)
-	while(pos < numpeaks && p[pord[pos],1] <= error_range[2]) {
+        bin <- pord[pos]
+        pos <- pos+1
+        basepeak <- p[bin[1],1]
+        error_range <- c(basepeak, basepeak*error_window+basepeak+2*mzabs)
+        while(pos < numpeaks && p[pord[pos],1] <= error_range[2]) {
             bin <- c(bin,pord[pos])
             pos <- pos + 1
-	}
+        }
 
-	if(pos %% (numpeaks%/%100+1) == 0) {
+        if(pos %% (numpeaks%/%100+1) == 0) {
             cat(format(((pos-1)/numpeaks*100),digits=1,nsmall=2)," ")
             flush.console()
-	}
+        }
 
-	lst <- list(pos=pos,bin=bin)
-	lst
+        lst <- list(pos=pos,bin=bin)
+        lst
     }
     meanDeviationOverLimit <- function(bin)
     {
-	bin_mz <- p[bin,1]
-	m <- mean(bin_mz)
-	error_range <- c(m-ppm_error*m-mzabs, ppm_error*m+m+mzabs)
-	if(length(bin_mz[(bin_mz > error_range[2]) |
+        bin_mz <- p[bin,1]
+        m <- mean(bin_mz)
+        error_range <- c(m-ppm_error*m-mzabs, ppm_error*m+m+mzabs)
+        if(length(bin_mz[(bin_mz > error_range[2]) |
                          (bin_mz < error_range[1])]) > 0 ) {
             return(TRUE)
-	} else { FALSE }
+        } else { FALSE }
     }
     bin2output <- function(bin)
     {
 
-	gcount <- integer(length(classnum))
-	if(length(gcount) != 0) {
+        gcount <- integer(length(classnum))
+        if(length(gcount) != 0) {
             for(i in seq(along = bin)) {
                 class_idx <- sampclass[p[bin[i],2]]
                 gcount[class_idx] <- gcount[class_idx] + 1
             }
-	}
+        }
         ## make sure, that if no classes given, 'any' is false
-	if(length(bin) < minsamp || (!any(gcount >= classnum*minfrac)
+        if(length(bin) < minsamp || (!any(gcount >= classnum*minfrac)
                                      && length(gcount)>0))
             return(list())
-	groupvec <- c(rep(NA,4+length(gcount)))
-	groupvec[1] <- mean(p[bin,1])
-	groupvec[2:3] <- range(p[bin,1])
-	groupvec[4] <- length(bin)
-	sorted <- order(p[bin,1])
-	grp_members <- bin[sorted]
-	groupvec[4+seq(along = gcount)] <- gcount
-	lst <- list(stat=groupvec,members=grp_members)
-	lst
+        groupvec <- c(rep(NA,4+length(gcount)))
+        groupvec[1] <- mean(p[bin,1])
+        groupvec[2:3] <- range(p[bin,1])
+        groupvec[4] <- length(bin)
+        sorted <- order(p[bin,1])
+        grp_members <- bin[sorted]
+        groupvec[4+seq(along = gcount)] <- gcount
+        lst <- list(stat=groupvec,members=grp_members)
+        lst
     }
     ppm_error <- mzppm/1000000
     error_window <- 2*ppm_error
@@ -82,7 +82,7 @@ mzClustGeneric <- function(p,sampclass=NULL,
         classnum <- integer(0)
         classnames <- seq(along=classnum)
     } else {
-	classnames <- levels(sampclass)
+        classnames <- levels(sampclass)
         sampclass <- as.vector(unclass(sampclass))
 
         classnum <- integer(max(sampclass))
@@ -103,24 +103,24 @@ mzClustGeneric <- function(p,sampclass=NULL,
     binA <- newbin$bin
     pos <- newbin$pos
     while(1) {
-	if (binNumber +4 > nrow(groupmat)) {
+        if (binNumber +4 > nrow(groupmat)) {
             groupmat <- rbind(groupmat, matrix(nrow = nrow(groupmat),
                                                ncol = ncol(groupmat)))
             groupindex <- c(groupindex, vector("list", length(groupindex)))
-	}
-	newbin <- makeBin(pos)
+        }
+        newbin <- makeBin(pos)
         binB <- newbin$bin
-	pos <- newbin$pos
+        pos <- newbin$pos
 
 
 
         if(binB[1] < 0) {
             out <- bin2output(binA)
-	    if(length(out) != 0) {
+            if(length(out) != 0) {
                 groupmat[binNumber,] <- out$stat
                 groupindex[[binNumber]] <- out$members
                 binNumber <- binNumber + 1
-	    }
+            }
             break
         }
         max_binA <- max(p[binA,1])
@@ -130,17 +130,17 @@ mzClustGeneric <- function(p,sampclass=NULL,
         if(max_binA + max_binA*error_window+2*mzabs >= min_binB &&
            min_binB - min_binB*error_window -2*mzabs <= max_binA) {
             binC <- c(binA,binB)
-	    binclust <- 1
+            binclust <- 1
         } else {
             if(meanDeviationOverLimit(binA)) {
                 binC <- binA
-		binclust <- 2
+                binclust <- 2
             }
         }
 
         ## case: not in range or mean deviation over limit
         ## perform hierarchical clustering
-	if(binclust != 0) {
+        if(binclust != 0) {
             groups <- xcms:::mzClust_hclust(p[binC,1],ppm_error,mzabs)
 
             last_group <- groups[which.max(p[binC,1])]
@@ -158,17 +158,17 @@ mzClustGeneric <- function(p,sampclass=NULL,
                     }
                 }
             }
-	}
+        }
 
-	if(binclust != 1) {
+        if(binclust != 1) {
             out <- bin2output(binA)
-	    if(length(out) != 0) {
+            if(length(out) != 0) {
                 groupmat[binNumber,] <- out$stat
                 groupindex[[binNumber]] <- out$members
                 binNumber <- binNumber + 1
-	    }
+            }
             binA <- binB
-	}
+        }
 
 
     }
@@ -181,4 +181,3 @@ mzClustGeneric <- function(p,sampclass=NULL,
     flush.console()
     return(list(mat=groupmat,idx=groupindex))
 }
-

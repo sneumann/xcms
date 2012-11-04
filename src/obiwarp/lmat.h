@@ -43,8 +43,8 @@ class LMat {
         void mz_axis_vals(VecI &mzCoords, VecF &mzVals);
         void tm_axis_vals(VecI &tmCoords, VecF &tmVals);
 
-        void set_from_xcms(int valuescantime, double *pscantime, int mzrange, 
-			   double *mz, double *intensity); 
+        void set_from_xcms(int valuescantime, double *pscantime, int mzrange,
+			   double *mz, double *intensity);
         void print_xcms();
 
         // selfTimes and equivTimes are the anchor points for the warping

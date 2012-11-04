@@ -51,14 +51,14 @@ void DynProg::warp_map(VecI &mOut, VecI &nOut, float percent_anchors, int minimi
   // percent_anchors:
   // 0 = 2 anchors on the ends (0 internal anchors)
   // 100 = all points (total_size - 2)
-    
+
   // num_internal spots
-  double D_num_internal_anchs = (percent_anchors/100)*(double)mBijS.size();  
+  double D_num_internal_anchs = (percent_anchors/100)*(double)mBijS.size();
 
   // Round to nearest int
   int num_internal_anchs = (int)D_num_internal_anchs;
   if ((int)D_num_internal_anchs != (int)(D_num_internal_anchs + 0.5)) {
-    num_internal_anchs++; 
+    num_internal_anchs++;
   }
 
   if (minimize) {
@@ -69,9 +69,9 @@ void DynProg::warp_map(VecI &mOut, VecI &nOut, float percent_anchors, int minimi
 
 
 void DynProg::bijective_anchors(VecI &mCoords, VecI &nCoords, VecF &scores, VecI &mBijShort, VecI &nBijShort, VecF &sBijShort) {
-    
+
   int i;
-  // number of true peak equivalencies (not counting gaps) 
+  // number of true peak equivalencies (not counting gaps)
   // guarantees that the first and last equivalencies will be the same
   //puts("equivs:"); mCoords.print(); nCoords.print(); scores.print();
   int lengthEquiv = mCoords.dim();
@@ -181,8 +181,8 @@ void DynProg::bijective_anchors(VecI &mCoords, VecI &nCoords, VecF &scores, VecI
 }
 
 
-void DynProg::best_anchors(VecI &mBijShort, VecI &nBijShort, VecF &sBijShort, 
-			   VecI &mCoords, VecI &nCoords, VecI &mOut, VecI &nOut, 
+void DynProg::best_anchors(VecI &mBijShort, VecI &nBijShort, VecF &sBijShort,
+			   VecI &mCoords, VecI &nCoords, VecI &mOut, VecI &nOut,
 			   int num_internal_anchors) {
   // Need mCoords and nCoords simply to set the ends of the anchors!
 
@@ -209,15 +209,15 @@ void DynProg::best_anchors(VecI &mBijShort, VecI &nBijShort, VecF &sBijShort,
   newNcoords[newLen-1] = nCoords[nCoords.size()-1];
 
   int numSegments = num_internal_anchors;
-  float segLength = ((float)(shortLength)/numSegments);  
+  float segLength = ((float)(shortLength)/numSegments);
 
   int fmark;
   int smark;
   float maxScore;
 
   for (int outer = 0; outer < numSegments; outer++) {
-    fmark = (int)(((double)(outer+1))*(double)segLength); 
-    smark = (int)(((double)(outer))*(double)segLength); 
+    fmark = (int)(((double)(outer+1))*(double)segLength);
+    smark = (int)(((double)(outer))*(double)segLength);
     maxScore = sBijShort[smark];
     for (i = smark; i < fmark; ++i) {
 
@@ -256,7 +256,7 @@ void _traceback(MatI &tb, MatF &smat, int m, int n, MatI &tbpath, VecI &mCoord, 
     tbpath(m,n) = 1;
     score_pathr[cnt] = smat(m,n);
 
-    int val = tb(m,n);  
+    int val = tb(m,n);
     if (val == 0) { // Diag
       m -= 1;
       n -= 1;
@@ -292,7 +292,7 @@ void _traceback(MatI &tb, MatF &smat, int m, int n, MatI &tbpath, VecI &mCoord, 
   scores.take(cnt, tmpScores);
 }
 
-// Fetch the highest value on the right and bottom sides and sets 
+// Fetch the highest value on the right and bottom sides and sets
 // m_index and n_index at that index
 float DynProg::_global_max(MatF& asmat, int& m_index, int& n_index) {
   float max_score;
@@ -306,10 +306,10 @@ float DynProg::_global_max(MatF& asmat, int& m_index, int& n_index) {
     max_score = max_bottom;
     m_index = asmat.rows() - 1;
   }
-  return max_score; 
+  return max_score;
 }
 
-// Fetch the highest value on the right and bottom sides and sets 
+// Fetch the highest value on the right and bottom sides and sets
 // m_index and n_index at that index
 float DynProg::_global_min(MatF& asmat, int& m_index, int& n_index) {
   float min_score;
@@ -323,7 +323,7 @@ float DynProg::_global_min(MatF& asmat, int& m_index, int& n_index) {
     min_score = min_bottom;
     m_index = asmat.rows() - 1;
   }
-  return min_score; 
+  return min_score;
 }
 
 // Returns the max value and also sets m_index at the max index (0 indexed)
@@ -438,14 +438,14 @@ void DynProg::_min(float diag, float top, float left, float &val, int &pos) {
   }
 }
 
-void DynProg::path_accuracy_details(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mVals, VecF &nVals, 
+void DynProg::path_accuracy_details(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mVals, VecF &nVals,
 				    VecF &sq_res_yeqx, VecF &abs_diff, int linear_interp) {
   VecF nValsNew;
   if (linear_interp) {
-    VecF::linear_interp(mWarpMapFt, nWarpMapFt, mVals, nValsNew);    
+    VecF::linear_interp(mWarpMapFt, nWarpMapFt, mVals, nValsNew);
   }
   else {
-    VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);    
+    VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);
   }
 
   // sq res
@@ -465,32 +465,32 @@ void DynProg::path_accuracy_details(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mV
   abs_diff.take(nVals_tmp2);
 }
 
-void DynProg::path_accuracy(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mVals, VecF &nVals, 
-			    float &sum_sq_res_yeqx, float &avg_sq_res_yeqx, 
+void DynProg::path_accuracy(VecF &mWarpMapFt, VecF &nWarpMapFt, VecF &mVals, VecF &nVals,
+			    float &sum_sq_res_yeqx, float &avg_sq_res_yeqx,
 			    float &sum_abs_diff, float &avg_abs_diff, int linear_interp) {
 
   VecF nValsNew;
   if (linear_interp) {
-    VecF::linear_interp(mWarpMapFt, nWarpMapFt, mVals, nValsNew);    
+    VecF::linear_interp(mWarpMapFt, nWarpMapFt, mVals, nValsNew);
   }
   else {
-    VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);    
+    VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);
   }
 
   //calculate the sum of the sq of the residuals:
   sum_sq_res_yeqx = VecF::sum_sq_res_yeqx(nVals, nValsNew);
-  avg_sq_res_yeqx = sum_sq_res_yeqx/nVals.length(); 
+  avg_sq_res_yeqx = sum_sq_res_yeqx/nVals.length();
   VecF diff;
   nVals.sub(nValsNew, diff);
-  diff.abs_val();  
+  diff.abs_val();
   sum_abs_diff = diff.sum();
   avg_abs_diff = sum_abs_diff/nVals.length();
 }
 
 
-void DynProg::path_accuracy(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpMap, 
-			    VecF &mVals, VecF &nVals, float &sum_sq_res_yeqx, 
-			    float &avg_sq_res_yeqx, float &sum_abs_diff, float &avg_abs_diff, 
+void DynProg::path_accuracy(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpMap,
+			    VecF &mVals, VecF &nVals, float &sum_sq_res_yeqx,
+			    float &avg_sq_res_yeqx, float &sum_abs_diff, float &avg_abs_diff,
 			    int linear_interp) {
   // mVals are the m time standard points
   // nVals are the n time standard points
@@ -500,13 +500,13 @@ void DynProg::path_accuracy(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpM
   VecF _nWarpMapFt(nWarpMap.length());
   for (int i = 0; i < mWarpMap.length(); ++i) {
     if (mWarpMap[i] < 0 || mWarpMap[i] >= m_tm.length()) {
-      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length() 
+      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length()
 		<< " requested: " << mWarpMap[i] << "\n";
     }
     _mWarpMapFt[i] = m_tm[mWarpMap[i]];
     _nWarpMapFt[i] = n_tm[nWarpMap[i]];
   }
-  path_accuracy(_mWarpMapFt, _nWarpMapFt, mVals, nVals, sum_sq_res_yeqx, avg_sq_res_yeqx, 
+  path_accuracy(_mWarpMapFt, _nWarpMapFt, mVals, nVals, sum_sq_res_yeqx, avg_sq_res_yeqx,
 		sum_abs_diff, avg_abs_diff, linear_interp);
 }
 
@@ -520,14 +520,14 @@ float DynProg::sum_sq_res_yeqx(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWa
   VecF nWarpMapFt(nWarpMap.length());
   for (int i = 0; i < mWarpMap.length(); ++i) {
     if (mWarpMap[i] < 0 || mWarpMap[i] >= m_tm.length()) {
-      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length() 
+      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length()
 		<< " requested: " << mWarpMap[i] << "\n";
     }
     mWarpMapFt[i] = m_tm[mWarpMap[i]];
     nWarpMapFt[i] = n_tm[nWarpMap[i]];
   }
   VecF nValsNew;
-  VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);    
+  VecF::chfe(mWarpMapFt, nWarpMapFt, mVals, nValsNew);
 
   //calculate the sum of the sq of the residuals:
   return VecF::sum_sq_res_yeqx(nVals, nValsNew);
@@ -594,12 +594,12 @@ void DynProg::score_pearsons_r(MatF &mCoords, MatF &nCoords, MatF &scores) {
   assert(cols == nCoords.cols());
   MatF tmp(s_mlen, s_nlen);
 
-  float *bot_x = new float[s_nlen]; 
-  float *bot_y = new float[s_mlen]; 
+  float *bot_x = new float[s_nlen];
+  float *bot_y = new float[s_mlen];
 
   // Sum(x^2)
-  float *sum_x = new float[s_nlen]; 
-  float *sum_y = new float[s_mlen]; 
+  float *sum_x = new float[s_nlen];
+  float *sum_y = new float[s_mlen];
 
   int i;
   for (i = 0; i < s_nlen; ++i) {
@@ -616,12 +616,12 @@ void DynProg::score_pearsons_r(MatF &mCoords, MatF &nCoords, MatF &scores) {
   // CALCULATE ALL PAIR calculations
   for (int n = 0; n < s_nlen; ++n) {
     for (int m = 0; m < s_mlen; ++m) {
-      //        sum(X * Y) -    
+      //        sum(X * Y) -
       double top = sumOfProducts(mCoords, m, nCoords, n) -
 	((sum_x[n] * sum_y[m])/cols);
       //  (sum(x)      * sum(y))/num_elements
       double bot = sqrt(bot_x[n] * bot_y[m]);
-      if (bot == 0) { tmp(m,n) = 0; }  // no undefined 
+      if (bot == 0) { tmp(m,n) = 0; }  // no undefined
       else { tmp(m,n) = (float)(top/bot); }
     }
   }
@@ -639,13 +639,13 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
 
   MatF tmp(s_mlen, s_nlen);
   const int dfd = 10;
-     
-  float *bot_x = new float[s_nlen]; 
-  float *bot_y = new float[s_mlen]; 
+
+  float *bot_x = new float[s_nlen];
+  float *bot_y = new float[s_mlen];
 
   // Sum(x^2)
-  float *sum_x = new float[s_nlen]; 
-  float *sum_y = new float[s_mlen]; 
+  float *sum_x = new float[s_nlen];
+  float *sum_y = new float[s_mlen];
 
   int i;
   for (i = 0; i < s_nlen; ++i) {
@@ -671,15 +671,15 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
   if (diff <= 0){
     for (int m = 0; m < s_mlen; ++m) {
       for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m-2*diff; ++n) {
-	if(n<0||n>=s_nlen) 
+	if(n<0||n>=s_nlen)
 	  continue;
-            
-	//        sum(X * Y) -  
+
+	//        sum(X * Y) -
 	double top = sumOfProducts(mCoords, m, nCoords, n) -
 	  ((sum_x[n] * sum_y[m])/cols);
 	//  (sum(x)      * sum(y))/num_elements
 	double bot = sqrt(bot_x[n] * bot_y[m]);
-	if (bot == 0) { tmp(m,n) = INFINITY; }  // no undefined 
+	if (bot == 0) { tmp(m,n) = INFINITY; }  // no undefined
 	else { tmp(m,n) = (float)(top/bot); }
       }
     }
@@ -687,15 +687,15 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
   else
     for (int m = 0; m < s_mlen; ++m) {
       for (int n = m-s_nlen/dfd; n < s_nlen/dfd+m+2*diff; ++n) {
-	if(n<0||n>=s_nlen)     
+	if(n<0||n>=s_nlen)
 	  continue;
-            
-	//        sum(X * Y) -  
+
+	//        sum(X * Y) -
 	double top = sumOfProducts(mCoords, m, nCoords, n) -
 	  ((sum_x[n] * sum_y[m])/cols);
 	//  (sum(x)      * sum(y))/num_elements
 	double bot = sqrt(bot_x[n] * bot_y[m]);
-	if (bot == 0) { tmp(m,n) = 0; }  // no undefined 
+	if (bot == 0) { tmp(m,n) = 0; }  // no undefined
 	else { tmp(m,n) = (float)(top/bot); }
       }
     }
@@ -740,14 +740,14 @@ void DynProg::score_mutual_info(MatF &mCoords, MatF &nCoords, MatF &scores, int 
   nCoords.min_max(nCoordsMin, nCoordsMax);
   mCoords.min_max(mCoordsMin, mCoordsMax);
 
-  float MI_MAX_VAL = max(nCoordsMax, mCoordsMax); 
+  float MI_MAX_VAL = max(nCoordsMax, mCoordsMax);
   float MI_MIN_VAL = min(nCoordsMin, mCoordsMin);
   float MI_SPAN = MI_MAX_VAL - MI_MIN_VAL;
   float MI_SCALE_FACTOR = MI_SPAN/MI_NUM_BINS;
 
   // CACHE all the values we can:
-  VecF entropyX(s_nlen); 
-  VecF entropyY(s_mlen); 
+  VecF entropyX(s_nlen);
+  VecF entropyY(s_mlen);
   MatI binIndNCoords(nCoords.rows(), nCoords.cols());
   MatI binIndMCoords(mCoords.rows(), mCoords.cols());
 
@@ -803,7 +803,7 @@ void DynProg::expandFlag(MatI &flagged, int flag, int numSteps, MatI &expanded) 
   int nh = 0;
   for (int m = 0; m < m_length; ++m) {
     for (int n = 0; n < n_length; ++n) {
-      val = flagged(m,n); 
+      val = flagged(m,n);
 
       if (!definedExpanded(m,n)) {
 	tmpExpanded(m,n) = val;
@@ -827,7 +827,7 @@ void DynProg::expandFlag(MatI &flagged, int flag, int numSteps, MatI &expanded) 
     }
   }
   expanded = tmpExpanded;
-} 
+}
 
 void entropyXY(MatI &binIndX, MatI &binIndY, VecF &entropyX, VecF &entropyY, MatF &scores, int numBins) {
   assert(binIndX.cols() == binIndY.cols());
@@ -896,7 +896,7 @@ float sumOfProducts(MatF &mat1, int rowNum1, MatF &mat2, int rowNum2) {
   float *mat2ptr = mat2.pointer(rowNum2);
   float sum = 0;
   for (int i = 0; i < mat1.cols(); ++i) {
-    sum += mat1ptr[i] * mat2ptr[i]; 
+    sum += mat1ptr[i] * mat2ptr[i];
   }
   return sum;
 }
@@ -908,13 +908,13 @@ float sumXSquared(MatF &mat, int rowNum) {
   float *matptr = mat.pointer(rowNum);
   float sum = 0;
   for (int i = 0; i < mat.cols(); ++i) {
-    sum += matptr[i] * matptr[i]; 
+    sum += matptr[i] * matptr[i];
   }
   return sum;
 }
 
 void DynProg::default_gap_penalty(MatF &smat, VecF &out) {
-  int _length = smat.cols() + smat.rows(); 
+  int _length = smat.cols() + smat.rows();
   float _avg = smat.avg();
   linear_less_before(DEFAULT_GAP_PENALTY_SLOPE, _avg, _length, out);
 }
@@ -930,7 +930,7 @@ void DynProg::less_before(VecF &arr) {
 void DynProg::linear(float m, float b, int len,  VecF &arr) {
   float *tmparr = new float[len];
   int ind = 0;
-  while (ind < len) { 
+  while (ind < len) {
     tmparr[ind] = m*ind + b;
     ++ind;
   }
@@ -948,12 +948,12 @@ void DynProg::linear_less_before(float m, float b, int veclen, VecF &lessbefore)
 
 // gap penalty is ZERO indexed (i.e. the _first_ gap penalty is
 // accessed at gap_penalty[0]
-void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize, 
+void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
 			float diag_factor, float gap_factor, int local, float init_penalty) {
 
   if (gap_penalty.len() == 0) {
     default_gap_penalty(smat, gap_penalty);
-    if (minimize) { 
+    if (minimize) {
       gap_penalty *= -1.f;
     }
   }
@@ -980,21 +980,21 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
   tmp_tb(0,0)     = 0;
 
   // GLOBAL:
-  if (!local) { 
+  if (!local) {
     // FILL in the left and top sides with gaps!
     for (int m = 1; m < length_m; ++m) {
       tmp_asmat(m,0) =  (smat(m,0) * gap_factor) + tmp_asmat(m-1,0) - gap_penalty[tmp_gapmat(m-1,0)];
       tmp_gapmat(m,0) = m;
-      tmp_tb(m,0) = 1;  // path is from above 
+      tmp_tb(m,0) = 1;  // path is from above
     }
     for (int n = 1; n < length_n; ++n) {
       tmp_asmat(0,n)= (smat(0,n) * gap_factor) + tmp_asmat(0,n - 1) - gap_penalty[tmp_gapmat(0,n - 1)];
       tmp_gapmat(0,n) = n;
-      tmp_tb(0,n) = 2;  // path is from left 
+      tmp_tb(0,n) = 2;  // path is from left
     }
   }
   // LOCAL:
-  else {   
+  else {
     if (minimize) {
       for (int m = 1; m < length_m; ++m) {
 	float diag = (smat(m,0) * diag_factor ) - init_penalty;  // drop in from left side
@@ -1008,7 +1008,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
 
 	// Set the gap matrix:
 	if (best_pos == 1) { tmp_gapmat(m,0) = tmp_gapmat(m - 1,0) + 1; }
-	else { tmp_gapmat(m,0) = 0; }  
+	else { tmp_gapmat(m,0) = 0; }
 	tmp_asmat(m,0) = best_val; tmp_tb(m,0)  = best_pos;
       }
       for (int n = 1; n < length_n; ++n) {
@@ -1039,7 +1039,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
 
 	// Set the gap matrix:
 	if (best_pos == 1) { tmp_gapmat(m,0) = tmp_gapmat(m - 1,0) + 1; }
-	else { tmp_gapmat(m,0) = 0; }  
+	else { tmp_gapmat(m,0) = 0; }
 	tmp_asmat(m,0) = best_val; tmp_tb(m,0)  = best_pos;
       }
       for (int n = 1; n < length_n; ++n) {
@@ -1064,7 +1064,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
       for (int n = 1; n < length_n; ++n) {
 	float best_val; int best_pos;
 	float smat_at_ind = smat(m,n);
-	// MINIMIZE: 
+	// MINIMIZE:
 	float smat_at_ind_times_gap_factor = smat_at_ind * gap_factor;
 
 	DynProg::_min(
@@ -1086,7 +1086,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
       for (int n = 1; n < length_n; ++n) {
 	float best_val; int best_pos;
 	float smat_at_ind = smat(m,n);
-	// MAXIMIZE: 
+	// MAXIMIZE:
 	float smat_at_ind_times_gap_factor = smat_at_ind * gap_factor;
 
 	DynProg::_max(
@@ -1105,7 +1105,7 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
   }
   //  ************************************************************
   //  * END CALC ADD SCORE MATRIX
-  //  ************************************************************ 
+  //  ************************************************************
 
   float bestscore;
   int optimal_m;
@@ -1125,11 +1125,11 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
   }
 
   // Reverse back the gap penalty
-  if (minimize) { 
+  if (minimize) {
     gap_penalty *= -1.f;
   }
 
-  _traceback(tmp_tb, smat, optimal_m, optimal_n, tmp_tbpath, _mCoords, _nCoords, _sCoords); 
+  _traceback(tmp_tb, smat, optimal_m, optimal_n, tmp_tbpath, _mCoords, _nCoords, _sCoords);
   int _equivLastInd = _mCoords.dim()-1;
   _bestScore = tmp_asmat(_mCoords[_equivLastInd],_nCoords[_equivLastInd]);
 
@@ -1138,4 +1138,3 @@ void DynProg::find_path(MatF& smat, VecF &gap_penalty, int minimize,
   _tbpath.take(tmp_tbpath);
   _gapmat.take(tmp_gapmat);
 }
-

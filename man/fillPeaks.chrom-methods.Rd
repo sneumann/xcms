@@ -32,12 +32,12 @@
   integration area contains no actual raw intensities, or if one sample
   is miscalibrated, such thet the raw data points are (just) outside
   the integration area.
-  
+
   Importantly, if retention time correction data is available, the
   alignment information is used to more precisely integrate the
   propper region of the raw data. If the corrected retention time
   is beyond the end of the raw data, the value will be not-a-number (NaN).
-  
+
 }
 \value{
   A \code{xcmsSet} objects with filled in peak groups (into and maxo).

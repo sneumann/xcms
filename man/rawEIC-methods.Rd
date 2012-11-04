@@ -21,14 +21,14 @@
   }
   \item{rtrange}{
     retention time range for EIC
-  }  
+  }
   \item{scanrange}{
     scan range for EIC
   }
 }
 \value{
   A list of :
-  
+
   \item{scan}{
     scan number
   }

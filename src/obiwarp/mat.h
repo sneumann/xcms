@@ -4,11 +4,11 @@
 #include "vec.h"
 
 /*************************************************************
- * Creation from existing object/array is always shallow!.  
+ * Creation from existing object/array is always shallow!.
  * Will delete any memory allocated.
  * Will NOT delete any memory not allocated.
  * If you want deep then use copy function!
- ************************************************************/ 
+ ************************************************************/
 
 namespace VEC {
 
@@ -29,7 +29,7 @@ class MatI {
         MatI();
         MatI(int m, int n);
         MatI(int m, int n, const int &val);
-       
+
 
         // (copied from vec.h)
         // if (shallow == 1 (true)) then no memory is deleted upon destruction
@@ -41,14 +41,14 @@ class MatI {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         MatI(const MatI &A, bool shallow=0);
 
         operator int*() { return (int*)_dat; }
         operator const int*() { return (int*)_dat; }
         int* pointer() { return (int*)_dat; }
         int* pointer(int m) { return &_dat[m*_n]; }
-        // creates vec objects 
+        // creates vec objects
         // caller must have allocated the array for the vec objects
         // the data is a shallow copy!
         // transpose and call row_vecs for col_vecs!
@@ -88,7 +88,7 @@ class MatI {
         void to_vec(VecI &outvec, bool shallow=0);
 
         bool operator==(const MatI &A);
-        
+
         bool shallow() { return _dat.shallow(); }
         int dim1() const { return _m; }
         int dim2() const { return _n; }
@@ -104,7 +104,7 @@ class MatI {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
         const int& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
@@ -113,7 +113,7 @@ class MatI {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
 
         // NOTE: All assignment operators act on the caller!
@@ -126,7 +126,7 @@ class MatI {
         void operator*=(const int val) { _dat *= val; }
         void operator/=(const int val) { _dat /= val; }
 
-    
+
         void add(const MatI &toadd, MatI &out);
         void sub(const MatI &tosub, MatI &out);
         void mul(const MatI &tomul, MatI &out);
@@ -143,7 +143,7 @@ class MatI {
         double avg() { return _dat.avg(); }
         //void operator++();
         //void operator--();
-        
+
         int sum() { return _dat.sum(); } // return the sum of the entire matrix
         int sum(int m);  // return the sum of a given row
         // Returns in a vector all the values matching mask value
@@ -158,7 +158,7 @@ class MatI {
         // ints)
         void write(const char *file=NULL);
 
-        
+
         // @TODO need to write these guys:
         // prints the matrix in binary format:
         // (int) num cols (int) num rows (int) data
@@ -183,7 +183,7 @@ class MatD {
         MatD();
         MatD(int m, int n);
         MatD(int m, int n, const double &val);
-       
+
 
         // (copied from vec.h)
         // if (shallow == 1 (true)) then no memory is deleted upon destruction
@@ -195,14 +195,14 @@ class MatD {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         MatD(const MatD &A, bool shallow=0);
 
         operator double*() { return (double*)_dat; }
         operator const double*() { return (double*)_dat; }
         double* pointer() { return (double*)_dat; }
         double* pointer(int m) { return &_dat[m*_n]; }
-        // creates vec objects 
+        // creates vec objects
         // caller must have allocated the array for the vec objects
         // the data is a shallow copy!
         // transpose and call row_vecs for col_vecs!
@@ -242,7 +242,7 @@ class MatD {
         void to_vec(VecD &outvec, bool shallow=0);
 
         bool operator==(const MatD &A);
-        
+
         bool shallow() { return _dat.shallow(); }
         int dim1() const { return _m; }
         int dim2() const { return _n; }
@@ -258,7 +258,7 @@ class MatD {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
         const double& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
@@ -267,7 +267,7 @@ class MatD {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
 
         // NOTE: All assignment operators act on the caller!
@@ -280,7 +280,7 @@ class MatD {
         void operator*=(const double val) { _dat *= val; }
         void operator/=(const double val) { _dat /= val; }
 
-    
+
         void add(const MatD &toadd, MatD &out);
         void sub(const MatD &tosub, MatD &out);
         void mul(const MatD &tomul, MatD &out);
@@ -297,7 +297,7 @@ class MatD {
         double avg() { return _dat.avg(); }
         //void operator++();
         //void operator--();
-        
+
         double sum() { return _dat.sum(); } // return the sum of the entire matrix
         double sum(int m);  // return the sum of a given row
         // Returns in a vector all the values matching mask value
@@ -312,7 +312,7 @@ class MatD {
         // ints)
         void write(const char *file=NULL);
 
-        
+
         // @TODO need to write these guys:
         // prints the matrix in binary format:
         // (int) num cols (int) num rows (double) data
@@ -337,7 +337,7 @@ class MatF {
         MatF();
         MatF(int m, int n);
         MatF(int m, int n, const float &val);
-       
+
 
         // (copied from vec.h)
         // if (shallow == 1 (true)) then no memory is deleted upon destruction
@@ -349,14 +349,14 @@ class MatF {
         // if (shallow == 0 (false)) a DEEP copy is made of the data
         // if (shallow == 1 (true)) a copy of the pointer is made
         // if (shallow) then no memory is released upon destruction
-        // shallow is used for a quick copy with which to work 
+        // shallow is used for a quick copy with which to work
         MatF(const MatF &A, bool shallow=0);
 
         operator float*() { return (float*)_dat; }
         operator const float*() { return (float*)_dat; }
         float* pointer() { return (float*)_dat; }
         float* pointer(int m) { return &_dat[m*_n]; }
-        // creates vec objects 
+        // creates vec objects
         // caller must have allocated the array for the vec objects
         // the data is a shallow copy!
         // transpose and call row_vecs for col_vecs!
@@ -396,7 +396,7 @@ class MatF {
         void to_vec(VecF &outvec, bool shallow=0);
 
         bool operator==(const MatF &A);
-        
+
         bool shallow() { return _dat.shallow(); }
         int dim1() const { return _m; }
         int dim2() const { return _n; }
@@ -412,7 +412,7 @@ class MatF {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
         const float& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
@@ -421,7 +421,7 @@ class MatF {
             if (m < 0) { puts("m < 0"); exit(1); }
             if (m >= _m) { puts("m >= _m"); exit(1); }
 #endif
-            return _dat[m*_n + n]; 
+            return _dat[m*_n + n];
         }
 
         // NOTE: All assignment operators act on the caller!
@@ -434,7 +434,7 @@ class MatF {
         void operator*=(const float val) { _dat *= val; }
         void operator/=(const float val) { _dat /= val; }
 
-    
+
         void add(const MatF &toadd, MatF &out);
         void sub(const MatF &tosub, MatF &out);
         void mul(const MatF &tomul, MatF &out);
@@ -451,7 +451,7 @@ class MatF {
         double avg() { return _dat.avg(); }
         //void operator++();
         //void operator--();
-        
+
         float sum() { return _dat.sum(); } // return the sum of the entire matrix
         float sum(int m);  // return the sum of a given row
         // Returns in a vector all the values matching mask value
@@ -469,7 +469,7 @@ class MatF {
         // ints)
         void write(const char *file=NULL);
 
-        
+
         // @TODO need to write these guys:
         // prints the matrix in binary format:
         // (int) num cols (int) num rows (float) data
@@ -486,4 +486,3 @@ class MatF {
 } // End namespace
 
 #endif
-

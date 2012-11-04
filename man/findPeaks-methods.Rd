@@ -30,14 +30,14 @@
 
   Further arguments given by \code{...} are
   passed through to the function implementing
-  the \code{method}. 
-  
-  A character vector of \emph{nicknames} for the 
-  algorithms available is returned by 
+  the \code{method}.
+
+  A character vector of \emph{nicknames} for the
+  algorithms available is returned by
   \code{getOption("BioC")$xcms$findPeaks.methods}.
   If the nickname of a method is called "centWave",
   the help page for that specific method can
-  be accessed with \code{?findPeaks.centWave}. 
+  be accessed with \code{?findPeaks.centWave}.
 }
 \value{
   A matrix with columns:
@@ -65,7 +65,7 @@
   \item{maxo}{
     maximum intensity of original (raw) peak
   }
-  
+
   and additional columns depending on the choosen method.
 
 }

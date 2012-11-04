@@ -31,10 +31,10 @@ deepCopy(object)
   The scanrange to import can be restricted, otherwise all MS1 data
   is read. If \code{profstep} is set to 0, no profile matrix is generated.
   Unless includeMSn=TRUE only first level MS data is read, not MS/MS,
-  etc. 
-  
+  etc.
+
   deepCopy(xraw) will create a copy of the xcmsRaw object with its own
-  copy of mz and intensity data in \code{xraw@env}. 
+  copy of mz and intensity data in \code{xraw@env}.
 }
 \value{
   A \code{xcmsRaw} object.
@@ -67,7 +67,7 @@ deepCopy(object)
 	##This gives some information about the file
 	names(attributes(xr))
 	## Lets have a look at the structure of the object
-	
+
 	str(xr)
 	##same but with a preview of each slot in the object
 	##SO... lets have a look at how this works
@@ -75,8 +75,8 @@ deepCopy(object)
 	#[1]    0  429  860 1291 1718 2140
 	xr@env$mz[425:430]
 	#[1] 596.3 597.0 597.3 598.1 599.3 200.1
-	##We can see that the 429 index is the last mz of scan 1 therefore... 
-	
+	##We can see that the 429 index is the last mz of scan 1 therefore...
+
 	mz.scan1<-xr@env$mz[(1+xr@scanindex[1]):xr@scanindex[2]]
 	intensity.scan1<-xr@env$intensity[(1+xr@scanindex[1]):xr@scanindex[2]]
 	plot(mz.scan1, intensity.scan1, type="h", main=paste("Scan 1 of file", basename(cdffiles[1]), sep=""))
@@ -85,7 +85,7 @@ deepCopy(object)
 	head(scan1)
 	plotScan(xr, 1)
 	}
-	
+
 }
 \seealso{
   \code{\link{xcmsRaw-class}},

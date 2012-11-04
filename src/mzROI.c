@@ -16,7 +16,7 @@
 #define MZVAL_INIT_LENGTH 1000
 #define ROI_ALLOC_INC 1.5         // allocation increment
 #define MZVAL_ALLOC_INC 1.5       // allocation increment
-#define N_NAMES 7 
+#define N_NAMES 7
 
 struct scanStruct
 {
@@ -63,21 +63,21 @@ struct mzLengthStruct {
 
 struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned int newmzROILength, struct mzLengthStruct *mzLength){
   unsigned int newLength=0;
-   
+
   if (newmzROILength > mzLength->mzROITotal) {
     newLength= mzLength->mzROITotal * ROI_ALLOC_INC;
-    
+
     if (newmzROILength > newLength)
         newLength= newmzROILength;
-        
+
 #ifdef DEBUG
     printf("realloc mzROI \n");
 #endif
-    
+
     mzROI = (struct mzROIStruct *) realloc(mzROI, newLength * sizeof(struct mzROIStruct));
     if (mzROI == NULL)
         error("findmzROI/realloc: buffer memory could not be allocated ! (%d bytes)\n", newLength * sizeof(struct mzROIStruct) );
-        
+
     mzLength->mzROITotal = newLength;
   }
   return(mzROI);
@@ -86,21 +86,21 @@ struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned
 
 struct mzROIStruct * checkmzvalBufSize(struct mzROIStruct *mzval, const unsigned int newmzvalLength, struct mzLengthStruct *mzLength) {
   unsigned int newLength=0;
-  
+
   if (newmzvalLength > mzLength->mzvalTotal) {
      newLength= mzLength->mzvalTotal * MZVAL_ALLOC_INC;
-     
+
     if (newmzvalLength >  newLength)
        newLength= newmzvalLength;
 
 #ifdef DEBUG
        printf("realloc mzval \n");
 #endif
-    
+
     mzval = (struct mzROIStruct *) realloc(mzval, newLength * sizeof(struct mzROIStruct));
     if (mzval == NULL)
-      error("findmzROI/realloc: buffer memory could not be allocated ! (%d bytes)\n", newLength * sizeof(struct mzROIStruct));   
-    
+      error("findmzROI/realloc: buffer memory could not be allocated ! (%d bytes)\n", newLength * sizeof(struct mzROIStruct));
+
     mzLength->mzvalTotal = newLength;
   }
   return(mzval);
@@ -123,7 +123,7 @@ int half,mid;  // mzval->mz[first]
 }
 
 int upper_bound(double val,struct mzROIStruct *mzval,int first, int length){
-int half,mid;  
+int half,mid;
   while (length > 0) {
     half = length >> 1;
     mid = first;
@@ -141,7 +141,7 @@ int half,mid;
 }
 
 int lowerBound(double val,double *mzval,int first, int length){
-int half,mid; 
+int half,mid;
   while (length > 0) {
     half = length >> 1;
     mid = first;
@@ -157,7 +157,7 @@ int half,mid;
 }
 
 int upperBound(double val,double *mzval,int first, int length){
-int half,mid;  
+int half,mid;
   while (length > 0) {
     half = length >> 1;
     mid = first;
@@ -179,86 +179,86 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct 
   int i,wasfound=FALSE;
   double ddev = (pickOptions->dev *  fMass);
   int lpos = lower_bound( fMass - ddev,mzval,0,mzLength->mzval);
-  int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);   
- 
-  if (lpos >  mzLength->mzval-1) 
+  int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);
+
+  if (lpos >  mzLength->mzval-1)
       lpos = mzLength->mzval -1;
-  if (hpos >  mzLength->mzval-1) 
+  if (hpos >  mzLength->mzval-1)
       hpos = mzLength->mzval -1 ;
 
-  for (i=lpos; i <= hpos; i++) 
-  { 
+  for (i=lpos; i <= hpos; i++)
+  {
     double ddiff = fabs(mzval[i].mz -  fMass);
-    
-    if (ddiff <= ddev) 
+
+    if (ddiff <= ddev)
     { // match -> extend this ROI
           if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
           wasfound = TRUE;
           //recursive m/z mean update
-          mzval[i].mz = ((mzval[i].length * mzval[i].mz) + fMass) / (mzval[i].length + 1);  
-          if (fMass < mzval[i].mzmin) 
-              mzval[i].mzmin = fMass; 
-          if (fMass > mzval[i].mzmax) 
-              mzval[i].mzmax = fMass; 
+          mzval[i].mz = ((mzval[i].length * mzval[i].mz) + fMass) / (mzval[i].length + 1);
+          if (fMass < mzval[i].mzmin)
+              mzval[i].mzmin = fMass;
+          if (fMass > mzval[i].mzmax)
+              mzval[i].mzmax = fMass;
           mzval[i].scmax = scan;
-          mzval[i].length++;       
+          mzval[i].length++;
           mzval[i].intensity+=fInten;
-          if (fInten >= pickOptions->minimumInt) 
-              mzval[i].kI++; 
+          if (fInten >= pickOptions->minimumInt)
+              mzval[i].kI++;
     }
   } // for
-   
+
    // if not found
-   if (wasfound == FALSE) {  // no, create new ROI for mz   
-   
+   if (wasfound == FALSE) {  // no, create new ROI for mz
+
       lpos=-1;hpos=-1;
       int doInsert=FALSE;
       if ((scan < LastScan) && (scanbuf->nextScanLength > 0)) {// check next scan
         int lpos = lowerBound( fMass - ddev,scanbuf->nextScan,0,scanbuf->nextScanLength);
         int hpos = upperBound( fMass + ddev,scanbuf->nextScan,lpos,scanbuf->nextScanLength - lpos);
         if (lpos < scanbuf->nextScanLength) {
-          for (i=lpos; i <= hpos; i++) // 
-          { 
+          for (i=lpos; i <= hpos; i++) //
+          {
             ddev = (pickOptions->dev *  scanbuf->nextScan[i]);
             double ddiff = fabs(fMass - scanbuf->nextScan[i]);
-            
-            if (ddiff <= ddev) 
-            { 
+
+            if (ddiff <= ddev)
+            {
               doInsert=TRUE;
               break;
             }
           }
-        }  
+        }
       } else
       doInsert=TRUE;
-      
+
       if (doInsert == TRUE) {
-        // get pos. for insert 
+        // get pos. for insert
         int i = lower_bound(fMass,mzval,0,mzLength->mzval);
         // check buffer size
         mzval=checkmzvalBufSize(mzval, mzLength->mzval + 1, mzLength);
         // elements to move
         int n = mzLength->mzval - i;
         // insert element
-        if (n>0) 
+        if (n>0)
             memmove(mzval + i +1, mzval + i, n*sizeof(struct mzROIStruct));
-        
-        mzval[i].mz = fMass; 
-        mzval[i].mzmin = fMass; 
-        mzval[i].mzmax = fMass; 
+
+        mzval[i].mz = fMass;
+        mzval[i].mzmin = fMass;
+        mzval[i].mzmax = fMass;
         mzval[i].intensity = fInten;
         mzval[i].scmin = scan;
         mzval[i].scmax = scan;
-        mzval[i].length = 1;       
-        if (fInten >= pickOptions->minimumInt) 
+        mzval[i].length = 1;
+        if (fInten >= pickOptions->minimumInt)
             mzval[i].kI = 1; else
             mzval[i].kI = 0;
         mzval[i].deleteMe = FALSE;
-            
+
         mzLength->mzval++;
-      }  
+      }
    }
-   
+
    return(mzval);
 }
 
@@ -269,7 +269,7 @@ int i,p,del=0;
  for (i=0; i < mzLength->mzval; i++) {
     unsigned int lastscan=mzval[i].scmax;
     unsigned int entries=mzval[i].length;
-    
+
     // finished (entries >= minEntries)  or just extended
     if ((entries >= pickOptions->minEntries) || (lastscan == ctScan)) // good feature
     { // is it finished ?
@@ -278,12 +278,12 @@ int i,p,del=0;
              // copy values to set of completed ROI's
              p=mzLength->mzROI;
              mzROI=checkmzROIBufSize(mzROI, p+1 , mzLength);
-             mzROI[p].mz = mzval[i].mz; 
+             mzROI[p].mz = mzval[i].mz;
              mzROI[p].mzmin = mzval[i].mzmin;
              mzROI[p].mzmax = mzval[i].mzmax;
              mzROI[p].scmin = mzval[i].scmin;
              mzROI[p].scmax = mzval[i].scmax;
-             mzROI[p].length =  mzval[i].length;   
+             mzROI[p].length =  mzval[i].length;
              mzROI[p].kI =  mzval[i].kI;
              mzROI[p].intensity =  mzval[i].intensity;
 
@@ -295,25 +295,25 @@ int i,p,del=0;
              mzval[i].deleteMe=TRUE;
              del++;
              }
-      }  
+      }
       else {
         //continue
       }
         if (entries > ctScan) {
             #ifdef DEBUG
-                error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval[i].mz,mzval[i].length,lastscan,ctScan); 
+                error("Warning : entries > ctScan (is this centroid data ?) i: %d m: %3.4f  %d entries, lastscan %d   (ctScan=%d)\n",i,mzval[i].mz,mzval[i].length,lastscan,ctScan);
             #endif
           (*scerr)++;
-        }   
+        }
     }
-    else 
+    else
     {
         mzval[i].deleteMe=TRUE;
         del++;
     }
-    
+
  } // for i
- 
+
  if (del > 0) {
     p=0;
     struct mzROIStruct * tmp = (struct mzROIStruct *) calloc(mzLength->mzval - del,  sizeof(struct mzROIStruct));
@@ -321,59 +321,59 @@ int i,p,del=0;
       error("findmzROI/cleanup: buffer memory could not be allocated ! (%d bytes)\n", (mzLength->mzval - del) * sizeof(struct mzROIStruct));
     for (i=0; i < mzLength->mzval; i++) {
         if (mzval[i].deleteMe == FALSE) {
-            tmp[p].mz = mzval[i].mz; 
+            tmp[p].mz = mzval[i].mz;
             tmp[p].mzmin = mzval[i].mzmin;
             tmp[p].mzmax = mzval[i].mzmax;
             tmp[p].scmin = mzval[i].scmin;
             tmp[p].scmax = mzval[i].scmax;
-            tmp[p].length =  mzval[i].length;   
+            tmp[p].length =  mzval[i].length;
             tmp[p].kI =  mzval[i].kI;
             tmp[p].intensity =  mzval[i].intensity;
             tmp[p].deleteMe = FALSE;
-            
+
             p++;
         }
     }
     for (i=0; i < p; i++) {
         mzval[i].mz = tmp[i].mz;
-        mzval[i].mzmin =  tmp[i].mzmin;     
-        mzval[i].mzmax =  tmp[i].mzmax;     
-        mzval[i].scmin =  tmp[i].scmin;     
-        mzval[i].scmax =  tmp[i].scmax;    
-        mzval[i].length = tmp[i].length; 
+        mzval[i].mzmin =  tmp[i].mzmin;
+        mzval[i].mzmax =  tmp[i].mzmax;
+        mzval[i].scmin =  tmp[i].scmin;
+        mzval[i].scmax =  tmp[i].scmax;
+        mzval[i].length = tmp[i].length;
         mzval[i].kI =     tmp[i].kI;
         mzval[i].intensity = tmp[i].intensity;
         mzval[i].deleteMe = FALSE;
-    }        
-             
+    }
+
     mzLength->mzval = p;
-    free(tmp); 
+    free(tmp);
  }
- 
+
  return(mzROI);
 }
 
 struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanindex,int nmz, int lastScan, struct scanBuf *scanbuf) {
     int idx,idx1,idx2,i=0,N=0;
     idx1 =  pscanindex[scan -1] +1;
-     
-    if (scanbuf->thisScan != NULL) 
+
+    if (scanbuf->thisScan != NULL)
         free(scanbuf->thisScan);
-    
-    if (scan == lastScan)  
+
+    if (scan == lastScan)
         idx2 =  nmz-1;  else
              idx2 =  pscanindex[scan];
-    
+
     N=idx2 - idx1 + 1;
     if (N > 0) {
         scanbuf->thisScan= (struct scanStruct  *) calloc(N, sizeof(struct scanStruct));
         // scanbuf->thisScan= (struct scanStruct  *) malloc(N * sizeof(struct scanStruct));
         if (scanbuf->thisScan == NULL)
             error("findmzROI/getThisScan: Memory could not be allocated (%d * %d) !\n",N , sizeof(struct scanStruct));
-            
+
         scanbuf->thisScanLength=N;
-      
-        for (idx=idx1;idx <= idx2; idx++) 
+
+        for (idx=idx1;idx <= idx2; idx++)
         {
           scanbuf->thisScan[i].mz       = pmz[idx-1];
           scanbuf->thisScan[i].intensity = pintensity[idx-1];
@@ -384,31 +384,31 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
         scanbuf->thisScan = NULL;
         scanbuf->thisScanLength= 0;
     }
-        
-  //  also get  the m/z values of the following scan 
+
+  //  also get  the m/z values of the following scan
     if (scan < lastScan) {
         scan++;
         i=0;N=0;
         idx1 =  pscanindex[scan -1] +1;
-        if ((scanbuf->nextScan != NULL)) 
+        if ((scanbuf->nextScan != NULL))
             free(scanbuf->nextScan);
-            
-        if (scan == lastScan)  
-            idx2 =  nmz-1;   else   
+
+        if (scan == lastScan)
+            idx2 =  nmz-1;   else
                 idx2 =  pscanindex[scan];
-                
+
         N=idx2 - idx1 + 1;
         if (N > 0) {
-            scanbuf->nextScan= (double *) calloc(N, sizeof(double));  
+            scanbuf->nextScan= (double *) calloc(N, sizeof(double));
             if (scanbuf->nextScan == NULL)
                 error("findmzROI/getNextScan: Memory could not be allocated (%d * %d) !\n",N , sizeof(struct scanStruct));
-            scanbuf->nextScanLength=N;  
-            
-            for (idx=idx1;idx <= idx2; idx++) 
+            scanbuf->nextScanLength=N;
+
+            for (idx=idx1;idx <= idx2; idx++)
             {
                 scanbuf->nextScan[i]      = pmz[idx-1];
                 i++;
-            } 
+            }
         } else
         {
             scanbuf->nextScan = NULL;
@@ -421,16 +421,16 @@ struct scanBuf * getScan(int scan, double *pmz, double *pintensity, int *pscanin
 double getScanEIC(int scan, double from, double to, double *pmz, double *pintensity, int *pscanindex,int nmz, int lastScan) {
   int idx,idx1,idx2;
   double sum=0.0;
-  
+
   idx1 =  pscanindex[scan -1] +1;
-  if (scan == lastScan)  idx2 =  nmz-1;  
+  if (scan == lastScan)  idx2 =  nmz-1;
     else idx2 =  pscanindex[scan];
-    
-    
-  int idx1b = lowerBound(from, pmz, idx1-1, idx2-idx1); 
-  int idx2b = upperBound(to, pmz, idx1b, idx2-idx1b);  
-    
-  for (idx=idx1b;idx <= idx2b; idx++) 
+
+
+  int idx1b = lowerBound(from, pmz, idx1-1, idx2-idx1);
+  int idx2b = upperBound(to, pmz, idx1b, idx2-idx1b);
+
+  for (idx=idx1b;idx <= idx2b; idx++)
   {
     double mzval = pmz[idx-1];
     if ((mzval <= to) && (mzval >= from)) sum += pintensity[idx-1];
@@ -442,30 +442,30 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrang
   double *pmz, *pintensity,*p_vint, mzrangeFrom,mzrangeTo;
   int i,*pscanindex, *p_scan,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
   SEXP list_names,reslist,vscan,vint;
-  pmz = REAL(mz);  
+  pmz = REAL(mz);
   nmz = GET_LENGTH(mz);
-  pintensity = REAL(intensity); 
+  pintensity = REAL(intensity);
   pscanindex = INTEGER(scanindex);
-  int firstScan = 1;   // is always 1 
+  int firstScan = 1;   // is always 1
   ilastScan = INTEGER(lastscan)[0];
-  mzrangeFrom = REAL(mzrange)[0];  
-  mzrangeTo =  REAL(mzrange)[1];  
+  mzrangeFrom = REAL(mzrange)[0];
+  mzrangeTo =  REAL(mzrange)[1];
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-     error("Error in scanrange \n"); 
-  char *names[2] = {"scan", "intensity"}; 
+     error("Error in scanrange \n");
+  char *names[2] = {"scan", "intensity"};
   PROTECT(list_names = allocVector(STRSXP, 2));
-  for(i = 0; i < 2; i++)  
-    SET_STRING_ELT(list_names, i,  mkChar(names[i])); 
-    
-  buflength = scanrangeTo - scanrangeFrom +1;  
+  for(i = 0; i < 2; i++)
+    SET_STRING_ELT(list_names, i,  mkChar(names[i]));
+
+  buflength = scanrangeTo - scanrangeFrom +1;
   PROTECT(reslist = allocVector(VECSXP, 2));
-  PROTECT(vscan = NEW_INTEGER(buflength));   
+  PROTECT(vscan = NEW_INTEGER(buflength));
   p_scan = INTEGER_POINTER(vscan);
-  PROTECT(vint = NEW_NUMERIC(buflength));   
+  PROTECT(vint = NEW_NUMERIC(buflength));
   p_vint = NUMERIC_POINTER(vint);
-  
+
   i=0;
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
@@ -473,11 +473,11 @@ SEXP getEIC(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrang
     p_vint[i] = getScanEIC(ctScan,mzrangeFrom,mzrangeTo,pmz, pintensity, pscanindex,nmz,ilastScan);
     i++;
   }
-  
+
   SET_VECTOR_ELT(reslist, 0, vscan);// attaching integer vector scan to list
   SET_VECTOR_ELT(reslist, 1, vint); // attaching double vector m/z to list
   setAttrib(reslist, R_NamesSymbol, list_names); //and attaching the vector names
-  
+
   UNPROTECT(4);
   return(reslist);
 }
@@ -486,50 +486,50 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange
   double *pmz, *pintensity,*p_res, mzrangeFrom,mzrangeTo;
   int i,*pscanindex,scanrangeFrom, scanrangeTo,ilastScan,nmz,ctScan,buflength;
   SEXP res;
-  pmz = REAL(mz);  
+  pmz = REAL(mz);
   nmz = GET_LENGTH(mz);
-  pintensity = REAL(intensity); 
+  pintensity = REAL(intensity);
   pscanindex = INTEGER(scanindex);
-  int firstScan = 1;   // is always 1 
+  int firstScan = 1;   // is always 1
   ilastScan = INTEGER(lastscan)[0];
-  mzrangeFrom = REAL(mzrange)[0];  
-  mzrangeTo =  REAL(mzrange)[1];  
+  mzrangeFrom = REAL(mzrange)[0];
+  mzrangeTo =  REAL(mzrange)[1];
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
   if ((scanrangeFrom <  firstScan) || (scanrangeFrom > ilastScan) || (scanrangeTo < firstScan) || (scanrangeTo > ilastScan))
-     error("Error in scanrange \n"); 
-     
-  buflength = scanrangeTo - scanrangeFrom +1;  
-  PROTECT(res = NEW_NUMERIC(buflength));   
+     error("Error in scanrange \n");
+
+  buflength = scanrangeTo - scanrangeFrom +1;
+  PROTECT(res = NEW_NUMERIC(buflength));
   p_res = NUMERIC_POINTER(res);
- 
+
   i=0;
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
         int idx,idx1,idx2;
         idx1 =  pscanindex[ctScan -1] +1;
-        if (ctScan == ilastScan)  idx2 =  nmz-1;  
+        if (ctScan == ilastScan)  idx2 =  nmz-1;
             else idx2 =  pscanindex[ctScan];
-        int idx1b = lowerBound(mzrangeFrom, pmz, idx1-1, idx2-idx1-1); 
-        int idx2b = upperBound(mzrangeTo, pmz, idx1b, idx2-idx1b-1);  
+        int idx1b = lowerBound(mzrangeFrom, pmz, idx1-1, idx2-idx1-1);
+        int idx2b = upperBound(mzrangeTo, pmz, idx1b, idx2-idx1b-1);
 
         int pc=0;
         p_res[i]=0;
-        for (idx=idx1b;idx <= idx2b; idx++) 
+        for (idx=idx1b;idx <= idx2b; idx++)
         {
             double mzval = pmz[idx];
             if ((mzval <= mzrangeTo) && (mzval >= mzrangeFrom)) {
                if (pc==0)
-                 p_res[i] = mzval; 
+                 p_res[i] = mzval;
                else
                  p_res[i] = ((pc * p_res[i]) + mzval) / (pc+1);
-                
+
                pc++;
             }
         }
     i++;
   }
-  
+
   UNPROTECT(1);
   return(res);
 }
@@ -540,147 +540,143 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
   int scerr = 0;  // count of peak insertion errors, due to missing/bad centroidisation
   int perc, lp = -1;
   SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vscmin,vscmax,vlength,vintensity;
-     
-  pmz = REAL(mz);  
+
+  pmz = REAL(mz);
   nmz = GET_LENGTH(mz);
-  pintensity = REAL(intensity); 
+  pintensity = REAL(intensity);
   pscanindex = INTEGER(scanindex);
   lastScan = INTEGER(lastscan)[0];
   inoise = INTEGER(noise)[0];
-  
+
   pickOptions.dev = REAL(dev)[0];
   pickOptions.minEntries = INTEGER(minEntries)[0];
   pickOptions.minimumIntValues=INTEGER(prefilter)[0];
   pickOptions.minimumInt=INTEGER(prefilter)[1];
-  
-  mzrangeFrom = REAL(mzrange)[0];  
-  mzrangeTo =  REAL(mzrange)[1];  
+
+  mzrangeFrom = REAL(mzrange)[0];
+  mzrangeTo =  REAL(mzrange)[1];
   scanrangeFrom = INTEGER(scanrange)[0];
   scanrangeTo = INTEGER(scanrange)[1];
-  
+
   struct mzROIStruct * mzROI = (struct mzROIStruct *) calloc(ROI_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzROI == NULL)
       error("findmzROI/calloc: buffer memory could not be allocated ! (%d bytes)\n",ROI_INIT_LENGTH  * sizeof(struct mzROIStruct) );
-        
+
   struct mzROIStruct * mzval = (struct mzROIStruct *) calloc(MZVAL_INIT_LENGTH,  sizeof(struct mzROIStruct));
   if (mzval == NULL)
       error("findmzROI/calloc: buffer memory could not be allocated ! (%d bytes)\n",MZVAL_INIT_LENGTH  * sizeof(struct mzROIStruct) );
 
-  mzLength.mzvalTotal = MZVAL_INIT_LENGTH; 
-  mzLength.mzROITotal = ROI_INIT_LENGTH; 
+  mzLength.mzvalTotal = MZVAL_INIT_LENGTH;
+  mzLength.mzROITotal = ROI_INIT_LENGTH;
   mzLength.mzval = 0;
   mzLength.mzROI = 0;
-  
+
   struct scanBuf * scanbuf = &scbuf;
   scanbuf->thisScan = NULL;
   scanbuf->nextScan = NULL;
   scanbuf->thisScanLength = 0;
   scanbuf->nextScanLength = 0;
-  
-  char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"}; 
+
+  char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
   PROTECT(list_names = allocVector(STRSXP, N_NAMES));
   for(i = 0; i < N_NAMES; i++)
-    SET_STRING_ELT(list_names, i,  mkChar(names[i])); 
-   
+    SET_STRING_ELT(list_names, i,  mkChar(names[i]));
+
   Rprintf(" %% finished: ");
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
      perc = (int) (ctScan* 100)/scanrangeTo;
-     if ((perc % 10) == 0 && (perc != lp)) 
-     { 
+     if ((perc % 10) == 0 && (perc != lp))
+     {
        Rprintf("%d ",perc);
-       lp = perc; 
+       lp = perc;
      }
     scanbuf=getScan(ctScan, pmz, pintensity, pscanindex,nmz,lastScan, scanbuf);
-    
-    if (scanbuf->thisScanLength > 0) 
+
+    if (scanbuf->thisScanLength > 0)
     {
         #ifdef DEBUG
          printf("ScanLength %d ",scanbuf->thisScanLength);
          printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z ROI's, %d ROI's completed.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf->thisScanLength,mzLength.mzval,mzLength.mzROI);
         #endif
-             
+
       int p;
       double fMass,lastMass=-1;
-      double fInten;   
-      
+      double fInten;
+
         for (p=0;p < scanbuf->thisScanLength;p++)
-        { 
+        {
           fMass  = scanbuf->thisScan[p].mz;
-          fInten = scanbuf->thisScan[p].intensity;  
-       
-          if (fMass < lastMass)  
+          fInten = scanbuf->thisScan[p].intensity;
+
+          if (fMass < lastMass)
             error("m/z sort assumption violated ! (scan %d, p %d, current %2.4f (I=%2.2f), last %2.4f) \n",ctScan,p,fMass,fInten,lastMass);
-          lastMass = fMass; 
-          
+          lastMass = fMass;
+
           if (fInten > inoise)
             mzval=insertpeak(fMass, fInten, scanbuf, ctScan, scanrangeTo, mzval, &mzLength, &pickOptions);
-          
+
         }
     }
     mzROI=cleanup(ctScan,mzROI,mzval,&mzLength,&scerr,&pickOptions);
     R_FlushConsole();
   } //for ctScan
-  
-  mzROI=cleanup(ctScan+1,mzROI,mzval,&mzLength,&scerr,&pickOptions); 
-    
+
+  mzROI=cleanup(ctScan+1,mzROI,mzval,&mzLength,&scerr,&pickOptions);
+
   PROTECT(peaklist = allocVector(VECSXP, mzLength.mzROI));
   int total = 0;
   for (i=0;i<mzLength.mzROI;i++) {
       PROTECT(entrylist = allocVector(VECSXP, N_NAMES));
-      
-      PROTECT(vmz = NEW_NUMERIC(1));   
-      PROTECT(vmzmin = NEW_NUMERIC(1));   
+
+      PROTECT(vmz = NEW_NUMERIC(1));
+      PROTECT(vmzmin = NEW_NUMERIC(1));
       PROTECT(vmzmax = NEW_NUMERIC(1));
-      
-      PROTECT(vscmin = NEW_INTEGER(1));  
-      PROTECT(vscmax = NEW_INTEGER(1)); 
-      PROTECT(vlength = NEW_INTEGER(1)); 
-      PROTECT(vintensity = NEW_INTEGER(1)); 
+
+      PROTECT(vscmin = NEW_INTEGER(1));
+      PROTECT(vscmax = NEW_INTEGER(1));
+      PROTECT(vlength = NEW_INTEGER(1));
+      PROTECT(vintensity = NEW_INTEGER(1));
 
       NUMERIC_POINTER(vmz)[0]  = mzROI[i].mz;
       NUMERIC_POINTER(vmzmin)[0] = mzROI[i].mzmin;
       NUMERIC_POINTER(vmzmax)[0] = mzROI[i].mzmax;
-      
+
       INTEGER_POINTER(vscmin)[0] = mzROI[i].scmin;
       INTEGER_POINTER(vscmax)[0] = mzROI[i].scmax;
       INTEGER_POINTER(vlength)[0] = mzROI[i].length;
       INTEGER_POINTER(vintensity)[0] = mzROI[i].intensity;
 
       SET_VECTOR_ELT(entrylist, 0, vmz);
-      SET_VECTOR_ELT(entrylist, 1, vmzmin); 
+      SET_VECTOR_ELT(entrylist, 1, vmzmin);
       SET_VECTOR_ELT(entrylist, 2, vmzmax);
       SET_VECTOR_ELT(entrylist, 3, vscmin);
-      SET_VECTOR_ELT(entrylist, 4, vscmax); 
+      SET_VECTOR_ELT(entrylist, 4, vscmax);
       SET_VECTOR_ELT(entrylist, 5, vlength);
       SET_VECTOR_ELT(entrylist, 6, vintensity);
-      
+
       setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
-      
+
       SET_VECTOR_ELT(peaklist, i, entrylist);
       UNPROTECT(N_NAMES + 1); //entrylist + values
       total++;
   }
 
   if (scerr > 0) Rprintf("Warning: There were %d peak data insertion problems. \n Please try lowering the \"ppm\" parameter.\n", scerr);
-  
+
   Rprintf("\n %d m/z ROI's.\n", total);
-  
+
   UNPROTECT(2); // peaklist,list_names
-  
+
  // free(ptpeakbuf);
 
-  if (scanbuf->thisScan != NULL) 
+  if (scanbuf->thisScan != NULL)
     free(scanbuf->thisScan);
-  if (scanbuf->thisScan != NULL)   
+  if (scanbuf->thisScan != NULL)
     free(scanbuf->nextScan);
-    
+
   free(mzval);
   free(mzROI);
-  
+
   return(peaklist);
 }
-
-
-
-

@@ -28,9 +28,9 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xstart),
        as.double(xend),
        as.integer(num),
-       # not clear why integerMatrix() is necessary
-       # sometimes, the return value is not perfectly zeroes (NA's in FFC)
-       #out = integerMatrix(num, length(zidx)),
+       ## not clear why integerMatrix() is necessary
+       ## sometimes, the return value is not perfectly zeroes (NA's in FFC)
+       ##out = integerMatrix(num, length(zidx)),
        out = matrix(as.integer(0), num, length(zidx)),
        NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
 }
@@ -104,16 +104,16 @@ profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 }
 
 profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
-                            param = list()) {
+                           param = list()) {
 
     if (is.null(param$baselevel))
-       baselevel <- min(y)/2
+        baselevel <- min(y)/2
     else
-       baselevel <- param$baselevel
+        baselevel <- param$baselevel
     if (is.null(param$basespace))
-       basespace <- 0.075
+        basespace <- 0.075
     else
-       basespace <- param$basespace
+        basespace <- param$basespace
 
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
@@ -134,13 +134,13 @@ profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                             NAOK = FALSE, param = list()) {
 
     if (is.null(param$baselevel))
-       baselevel <- min(y)/2
+        baselevel <- min(y)/2
     else
-       baselevel <- param$baselevel
+        baselevel <- param$baselevel
     if (is.null(param$basespace))
-       basespace <- 0.075
+        basespace <- 0.075
     else
-       basespace <- param$basespace
+        basespace <- param$basespace
 
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
@@ -195,8 +195,8 @@ profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 medianFilter <- function(x, mrad, nrad) {
 
-    if (mrad == 0) { # 'runmed' seems a lot faster in this case
-        k <- 2*nrad + 1 # turn radius into diameter and ensure 'k' is odd
+    if (mrad == 0) { ## 'runmed' seems a lot faster in this case
+        k <- 2*nrad + 1 ## turn radius into diameter and ensure 'k' is odd
         t(apply(x, 1, runmed, k = k, endrule = "constant"))
     } else {
         dimx <- dim(x)
@@ -408,10 +408,10 @@ rectUnique <- function(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0) {
     nc <- ncol(m)
 
     if (is.null(nr) || nr==0) {
-      # empty matrix in first place
-      return (m)
+        ## empty matrix in first place
+        return (m)
     }
-    
+
     if (!is.double(m))
         m <- as.double(m)
     .C("RectUnique",
@@ -452,25 +452,25 @@ logicalMatrix <- function(nrow = 0, ncol = 0) {
 continuousPtsAboveThreshold <- function(y, threshold, num, istart = 1) {
     if (!is.double(y)) y <- as.double(y)
     if (.C("continuousPtsAboveThreshold",
-              y,
-              as.integer(istart-1),
-              length(y),
-              threshold = as.double(threshold),
-              num = as.integer(num),
-              n = integer(1),
-              DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
+           y,
+           as.integer(istart-1),
+           length(y),
+           threshold = as.double(threshold),
+           num = as.integer(num),
+           n = integer(1),
+           DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
 }
 
 continuousPtsAboveThresholdIdx <- function(y, threshold, num, istart = 1) {
     if (!is.double(y)) y <- as.double(y)
     as.logical(.C("continuousPtsAboveThresholdIdx",
-              y,
-              as.integer(istart-1),
-              length(y),
-              threshold = as.double(threshold),
-              num = as.integer(num),
-              n = integer(length(y)),
-              DUP = FALSE, PACKAGE = "xcms")$n)
+                  y,
+                  as.integer(istart-1),
+                  length(y),
+                  threshold = as.double(threshold),
+                  num = as.integer(num),
+                  n = integer(length(y)),
+                  DUP = FALSE, PACKAGE = "xcms")$n)
 }
 
 findEqualGreaterUnsorted <- function(x, value) {

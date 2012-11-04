@@ -14,11 +14,11 @@
     }
 }
 }}
-\details{ 
-The result of the calculation is a weighted sum of two values. 
-Value one is the mean absolute difference of the matching peaks, 
+\details{
+The result of the calculation is a weighted sum of two values.
+Value one is the mean absolute difference of the matching peaks,
 value two is the relation of matching peaks and non matching peaks.
-if no distance is calculated (for example because no matching peaks 
+if no distance is calculated (for example because no matching peaks
 were found) the return-value is NA.
 }
 \arguments{

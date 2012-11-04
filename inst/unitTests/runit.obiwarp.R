@@ -25,4 +25,3 @@ test.obiwarp.euc <- function() {
 test.obiwarp.prd <- function() {
     xr <- retcor(faahko, method="obiwarp", distFunc="prd")
 }
-
