@@ -10,7 +10,7 @@ matchpeaks <- function(peaklist, masslist, mzabs=0.0001, mzppm=5, neighbours=3, 
     cposs <- NA
     lastval<-1
     for (b in 1:length(masslist)){
-        ## finding for each entry in masslist the #neighbours closest masses in the spectra
+        ## finding for each entry in masslist the ##neighbours closest masses in the spectra
         a <- lastval
         sf <- FALSE ## is set to true if the neighbour-box is filled the first time for a entry in masslist
         while (a < length(mzu)){
@@ -21,13 +21,13 @@ matchpeaks <- function(peaklist, masslist, mzabs=0.0001, mzppm=5, neighbours=3, 
                 pos[b,mxp] <- a
                 lastval <- min(pos[b,])
                 sf <- TRUE
-                }else{ ## no more masses are smaller, switching to end of mzu
+            }else{ ## no more masses are smaller, switching to end of mzu
                 if (sf) a <- length(mzu)
-                }
-            a <- a + 1
             }
-        # cat(min(abs(dif[b,])),"\n")
-        ## checking the treshold and finding the candidate with the biggest intensity 
+            a <- a + 1
+        }
+        ## cat(min(abs(dif[b,])),"\n")
+        ## checking the treshold and finding the candidate with the biggest intensity
         smalldiffs <- which(abs(dif[b,]) <= (mzabs+(mzu[pos[b,]]/1000000*mzppm)))
         cdifs <- dif[b,smalldiffs]
         cposs <- pos[b,smalldiffs]
@@ -35,11 +35,11 @@ matchpeaks <- function(peaklist, masslist, mzabs=0.0001, mzppm=5, neighbours=3, 
             mcdi <- smalldiffs[which(itu[cposs] == max(itu[cposs]))]
             mdif[b] <- dif[b,mcdi]
             mpos[b] <- pos[b,mcdi]
-            }else{
+        }else{
             mdif[b]<-NA
             mpos[b]<-NA
-            }
         }
+    }
     mdiffs <- mdif[!is.na(mdif)]
     mposs <- mpos[!is.na(mdif)]
     retdata <- matrix(ncol=3, nrow=length(mdiffs), data=c(mposs,mzu[mposs],mdiffs))
@@ -56,11 +56,11 @@ estimate <- function(dtable,method="linear"){
         regg <- lm(mdiffs ~ mposs)
         a <- regg$coefficients[2]
         b <- regg$coefficients[1]
-        }else{
-        ## only global shift 
+    }else{
+        ## only global shift
         a <- 0
         b <- mean(mdiffs)
-        }
+    }
     if (method != "shift") return (c(a,b))
     else return(c(0,b))
 }

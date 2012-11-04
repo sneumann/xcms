@@ -23,7 +23,7 @@ specPeaks(spec, sn = 20, mzgap = 0.2)
 }
 \value{
   A matrix with columns:
-  
+
   \item{mz}{m/z at maximum peak intensity}
   \item{intensity}{maximum intensity of the peak}
   \item{fwhm}{full width at half max of the peak}

@@ -31,7 +31,7 @@
 }
 
 \value{
-  An logical vector with the same length as \code{nrow(groups(object))}.  
+  An logical vector with the same length as \code{nrow(groups(object))}.
 }
 \seealso{
   \code{\link{group}}

@@ -13,12 +13,12 @@
 
 using namespace std;
 
-Tracker::Tracker(const double & init_cent_m, 
+Tracker::Tracker(const double & init_cent_m,
         const double & init_cent_i,
-        const int & scan_num, 
-        const int & cent_num, 
-        const double & q_int, const double & q_mz, 
-        const double & r_int, const double & r_mz, 
+        const int & scan_num,
+        const int & cent_num,
+        const double & q_int, const double & q_mz,
+        const double & r_int, const double & r_mz,
         const double & ct) {
 
     mzList.push_back(init_cent_m);
@@ -57,7 +57,7 @@ Tracker::Tracker(const double & init_cent_m,
 
     mrXhat[0] = init_cent_m;
     irXhat[0] = init_cent_i;
-    
+
     //intensity model
     irF[0] = irF[1] = irF[3] = 1;
     irF[2] = 0;
@@ -106,7 +106,7 @@ void Tracker::displayContents() {
   //cout << "mP is : " << mP(0, 0) << endl;
   //cout << "iXhat is : " << iXhat(0) << endl;
   //cout << "iP is : " << iP(0,0) << endl;
-  
+
   //cout << "Scan List "  << endl;
   //printList(scanList);
   //cout << "Cent List "  << endl;
@@ -126,7 +126,7 @@ int Tracker::getCurrMissed() {
 }
 
 void Tracker::makeZeroCurrMissed() {
-   currMissed = 0; 
+   currMissed = 0;
 }
 
 void Tracker::setXhat(double m, double i) {
@@ -162,7 +162,7 @@ std::list<int> Tracker::getCentroidList() {
 }
 
 void  Tracker::appendToTracker(const std::list<int> & sl,
-		const std::list<int> & cl, 
+		const std::list<int> & cl,
 		const std::list<double> & ml,
 		const std::list<double> & il) {
     scanList.insert(scanList.end(), sl.begin(), sl.end());
@@ -202,8 +202,8 @@ void Tracker::predictCentroid() {
     predCounts += 1;
 }
 
-void Tracker::innovateCentroid(const double & my, 
-        const double & iy, 
+void Tracker::innovateCentroid(const double & my,
+        const double & iy,
         const int scanIdx,
         const int centIdx) {
 
@@ -213,7 +213,7 @@ void Tracker::innovateCentroid(const double & my,
     //step1
     mrK[0] = mrP[0] * (1/(mrP[0] + mrR));
    mrK[1] = mrP[2] * (1/(mrP[0] + mrR));
-   //step2 
+   //step2
     mrXhat[1] =  mrXhat[1] + mrK[1]*(my - mrXhat[0]);
     mrXhat[0] = mrXhat[0] + mrK[0]*(my - mrXhat[0]);
    //step3
@@ -248,8 +248,8 @@ void Tracker::innovateCentroid(const double & my,
 
 }
 
-int Tracker::claimDataIdx(const std::vector<double> & mData, 
-			  const std::vector<double> & iData, 
+int Tracker::claimDataIdx(const std::vector<double> & mData,
+			  const std::vector<double> & iData,
 			  std::vector<double> & predDist, int minTrLen, int scanBack) {
 
   //The returned data point index
@@ -264,14 +264,14 @@ int Tracker::claimDataIdx(const std::vector<double> & mData,
      lowerList.push_back(left);
      upperList.push_back(right);
   }
-  
+
   unsigned int lpos = lowerBound(left, mData, 0, mData.size());
-  unsigned int hpos = upperBound(right, mData, lpos, mData.size() - lpos);    
+  unsigned int hpos = upperBound(right, mData, lpos, mData.size() - lpos);
 
   std::vector<int> neighborIdxR;
 
   if (lpos <  mData.size() && lpos < hpos) {
-      if (hpos >= mData.size()) { 
+      if (hpos >= mData.size()) {
           hpos = mData.size() - 1;
           std::vector<int> uCandIdxR = createSequence(lpos, hpos, 1);
           std::vector<double> umSubDataR = copySubIdx(mData, uCandIdxR);
@@ -289,12 +289,12 @@ int Tracker::claimDataIdx(const std::vector<double> & mData,
              return centIdx;
          }
      }
-     else if (hpos != lpos) {  
+     else if (hpos != lpos) {
          hpos -= 1;
      }
 
      neighborIdxR = createSequence(lpos, hpos, 1);
-       
+
   }
   else {
       predDist.push_back(-1);
@@ -307,21 +307,21 @@ int Tracker::claimDataIdx(const std::vector<double> & mData,
   std::vector<double> iSubDataR = copySubIdx(iData, neighborIdxR);
   std::vector<double> distR = measureDist(mSubDataR, iSubDataR);
   //will be changed inside findMin b/c passed as reference.
-  unsigned int centSubIdxR; 
+  unsigned int centSubIdxR;
   double bestDistR = findMin(distR, centSubIdxR);
   predDist.push_back(bestDistR);
-  int centIdxR = neighborIdxR.at(centSubIdxR); 
+  int centIdxR = neighborIdxR.at(centSubIdxR);
 
   return centIdxR;
 }
 
 
 std::vector<double> Tracker::getFeatureInfo(double * scanTime) {
-    
+
     std::vector<double> featInfo(INFOSIZE);
-    //1-mz center coordinate is mean     
+    //1-mz center coordinate is mean
     featInfo[0]=mzXbar;
-    //2-mz min 
+    //2-mz min
     featInfo[1]= *min_element(mzList.begin(), mzList.end());
     //3-mz max
     featInfo[2]= *max_element(mzList.begin(), mzList.end());
@@ -348,7 +348,7 @@ std::vector<double> Tracker::getFeatureInfo(double * scanTime) {
     }
     featInfo[6]=area;
     featInfo[7]=maxInten * maxInten;
-  
+
    /*verify some of my findings*/
    /* Rprintf("\nThe Scan Times\n");
     for (int i = scanList.back(); i <= scanList.front(); ++i) {
@@ -365,9 +365,9 @@ std::vector<double> Tracker::getFeatureInfo(double * scanTime) {
     return featInfo;
 }
 
-std::vector<double> Tracker::measureDist(const vector<double> & mSubData, 
+std::vector<double> Tracker::measureDist(const vector<double> & mSubData,
 					 const vector<double> & iSubData) {
- 
+
     std::vector<double> d;
 
     vector<double> mNumerator = mSubData - mrXhat[0];
@@ -379,14 +379,14 @@ std::vector<double> Tracker::measureDist(const vector<double> & mSubData,
     return d;
 }
 
-double Tracker::findMin(const std::vector<double> & d, 
+double Tracker::findMin(const std::vector<double> & d,
 			unsigned int & centIdx) {
 
   double myMin = d.at(0);
   centIdx = 0;
   unsigned int i;
   for(i = 0; i < d.size(); i++) {
-    if (d.at(i) < myMin) { 
+    if (d.at(i) < myMin) {
       myMin = d.at(i);
       centIdx = i;
     }
@@ -416,7 +416,7 @@ double Tracker::getLowerXbar() {
         return mzXbar - 0.1;
     }
     else {
-        return  computeAnyXbar(lowerList); 
+        return  computeAnyXbar(lowerList);
     }
 }
 
@@ -426,7 +426,7 @@ double Tracker::getUpperXbar() {
         return mzXbar + 0.1;
     }
     else {
-        return  computeAnyXbar(upperList);    
+        return  computeAnyXbar(upperList);
     }
 }
 
@@ -441,7 +441,7 @@ bool Tracker::performScanBack() {
     std::list<int>::iterator it_c = centroidList.begin();
 
     int delCount = 0;
-    while (it_m != mzList.end()) {   
+    while (it_m != mzList.end()) {
         //is it outside the converged bounds?
         if (*it_m < lower || upper < *it_m) {
             it_m = mzList.erase(it_m);
@@ -458,13 +458,13 @@ bool Tracker::performScanBack() {
         }
     }
     //Rprintf("%d\t", delCount);
-    
-    if (delCount > 0) { 
+
+    if (delCount > 0) {
         trLen = int(mzList.size());
-        return true; 
+        return true;
     }
-    else { 
-        return false; 
+    else {
+        return false;
     }
 }
 
@@ -489,7 +489,7 @@ double Tracker::approxMassAccuracy() {
     for (it_m = mzList.begin(); it_m != mzList.end(); ++it_m) {
         each_ppm.push_back((fabs(*it_m - mzXbar) * MILLION)/mzXbar);
 
-        //cout << "each ppm: " << (fabs(*it_m - mzXbar) * MILLION)/mzXbar << endl; 
+        //cout << "each ppm: " << (fabs(*it_m - mzXbar) * MILLION)/mzXbar << endl;
         //cout << "Mz: " << *it_m << endl;
     }
 
@@ -497,4 +497,3 @@ double Tracker::approxMassAccuracy() {
     //cout << "mass accuracy: " << theMassAcc << endl;
     return massAcc;
 }
-

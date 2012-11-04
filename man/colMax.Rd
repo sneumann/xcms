@@ -36,7 +36,7 @@ which.rowMax(x, na.rm = FALSE, dims = 1)
   A numeric array of suitable size, or a vector if the result is
   one-dimensional. The \code{dimnames} (or \code{names} for a
   vector result) are taken from the original array.
-  
+
   For the \code{which.*} functions, an integer array of suitable
   size, or a vector if the result is one-dimensional. The indecies
   returned are for accessing \code{x} one-dimensionally (i.e.

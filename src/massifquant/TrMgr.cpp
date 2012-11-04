@@ -1,7 +1,7 @@
 //TrMgr.cpp
 #include <algorithm>
 #include <fstream>
-#include <iostream> 
+#include <iostream>
 #include "Tracker.h"
 #include "TrMgr.h"
 
@@ -9,14 +9,14 @@ using namespace std;
 
 TrMgr::TrMgr(int sidx, const double mi,
                  const int ml, const double cmm,
-                 const double mass_acc, const double ct, 
+                 const double mass_acc, const double ct,
                  const int sB)
   : currScanIdx(sidx),
     minIntensity(mi), minTrLen(ml),
     currMissedMax(cmm),
     ppm(mass_acc), criticalT(ct),
     scanBack(sB) {
-    
+
         initCounts = 0;
 }
 
@@ -27,7 +27,7 @@ TrMgr::~TrMgr() {
     }
 }
 
-void TrMgr::setDataScan(const std::vector<double> & mdat, 
+void TrMgr::setDataScan(const std::vector<double> & mdat,
           const std::vector<double> & idat) {
     //cout << "Setting A New Scan" << endl;
     mData = mdat;
@@ -101,11 +101,11 @@ void TrMgr::predictScan(const vector<double> & mzScan, const vector<double> & in
     centIdx = trks[actIdx.at(i)]->claimDataIdx(mData,iData,predDist,minTrLen, scanBack);
     //build list of indices corresponding to found or missed
     if (centIdx > -1) {
-      foundActIdx.push_back(actIdx.at(i)); 
-      predDatIdx.push_back(centIdx); 
+      foundActIdx.push_back(actIdx.at(i));
+      predDatIdx.push_back(centIdx);
     }
     else {
-      missActIdx.push_back(actIdx.at(i)); 
+      missActIdx.push_back(actIdx.at(i));
       predDatIdx.push_back(-1);
     }
   }
@@ -113,14 +113,14 @@ void TrMgr::predictScan(const vector<double> & mzScan, const vector<double> & in
 
 void TrMgr::competeAct() {
   list<int> dupPredDatIdx = predDatIdx; //get copy of original
-        
-//  cout << "**********Does New Scan Have Duplicates?***********" << endl;    
+
+//  cout << "**********Does New Scan Have Duplicates?***********" << endl;
   //cout << "Act Idx is " << endl;
   /*for (size_t test_act = 0; test_act < actIdx.size(); test_act++) {
       cout << actIdx.at(test_act) << "  ";
   }*/
- //cout << endl; 
-  
+ //cout << endl;
+
  //cout << "predDatIdx with misses  is " << endl;
  //printList(dupPredDatIdx);
 
@@ -140,8 +140,8 @@ void TrMgr::competeAct() {
 
   if (origLen == chgdLen) {
 
-      
- //cout << "**********It had no duplicates***********" << endl;        
+
+ //cout << "**********It had no duplicates***********" << endl;
  //cout << "Found List " << endl;
  //printList(foundActIdx);
   //cout << "Buggy Corresponding Found PredDatIdx" << endl;
@@ -151,11 +151,11 @@ void TrMgr::competeAct() {
   predDatIdx = cpNoMisses;
   //cout << "Missed List " << endl;
   //printList(missActIdx);
-      
-      
+
+
       return;
   }
-      //cout << "**********It had duplicates***********" << endl;    
+      //cout << "**********It had duplicates***********" << endl;
   std::list<int> restructFoundIdx;
   std::list<int> moreMissIdx;
 
@@ -164,7 +164,7 @@ void TrMgr::competeAct() {
 
 
     std::vector<int> collideIdx = dupPredDatIdx == *it;
-    
+
     if (collideIdx.size() == 0) {  continue; }
     //cout << "A competing dat pt considered" << endl;
     //cout << "collide idx for datptidx " << *it << endl;
@@ -175,7 +175,7 @@ void TrMgr::competeAct() {
     if (collideIdx.size() == 1) {
       restructFoundIdx.push_back(actIdx.at(collideIdx.at(0)));
       continue;
-    } 
+    }
     /*not working*/ // findMinIdx(predDist, collideIdx);
     std::vector<double> subPredDist = copySubIdx(predDist, collideIdx);
     std::vector<double>::iterator bestIt;
@@ -197,14 +197,14 @@ void TrMgr::competeAct() {
         missActIdx.push_back(actIdx.at(collideIdx.at(*it_miss)));
     }
   }
-  foundActIdx = restructFoundIdx; 
+  foundActIdx = restructFoundIdx;
   //cout << "Found List " << endl;
   //printList(foundActIdx);
   //cout << "Corresponding Found PredDatIdx" << endl;
   //printList(predDatIdx);
   //cout << "Missed List " << endl;
   //printList(missActIdx);
-}			       
+}
 
 void TrMgr::manageMissed() {
     std::list<int>::iterator it;
@@ -222,12 +222,12 @@ void TrMgr::manageMissed() {
 }
 
 void TrMgr::judgeTracker(const int & i) {
-    //Perform serial criteria ordered by computational complexity 
-    
+    //Perform serial criteria ordered by computational complexity
+
     //get the index for final deletion
     std::vector<int> subActIdx = actIdx == i;
     //length check
-    if (trks[i]->getTrLen() < minTrLen) { 
+    if (trks[i]->getTrLen() < minTrLen) {
         //cout << "Deleting on account of length: ActIdx is " << i << endl;
         actIdx.erase(actIdx.begin() + subActIdx.at(0));
         delete trks[i];
@@ -268,7 +268,7 @@ void TrMgr::judgeTracker(const int & i) {
             trks[i]->computeMyXbar();
         }
     }
-    
+
     //a real pic, have a good retirement.
     picIdx.push_back(i);
     //take off the active list
@@ -279,26 +279,26 @@ void TrMgr::judgeTracker(const int & i) {
 
 void TrMgr::manageTracked() {
 
-    
+
 
     //assume the two iterators are same size
     std::list<int>::iterator it_f;
     std::list<int>::iterator it_d = predDatIdx.begin();
     for (it_f = foundActIdx.begin(); it_f != foundActIdx.end(); ++it_f) {
-        
+
         trks[*it_f]->makeZeroCurrMissed();
-        trks[*it_f]->incrementTrLen(); 
-        trks[*it_f]->innovateCentroid(mData.at(*it_d), 
-                                    iData.at(*it_d), 
+        trks[*it_f]->incrementTrLen();
+        trks[*it_f]->innovateCentroid(mData.at(*it_d),
+                                    iData.at(*it_d),
                                     currScanIdx, *it_d);
         //identify for exclusion from new trackers initialized
         mData[*it_d] = CLAIMEDPT;
         iData[*it_d] = CLAIMEDPT;
         ++it_d;
-    }   
-}                                   
+    }
+}
 
-void TrMgr::initTrackers(const double & q_int, const double & q_mz, 
+void TrMgr::initTrackers(const double & q_int, const double & q_mz,
         const double & r_int, const double & r_mz, const int & sidx) {
 //cout << "*********New Scan**************" << endl;
 //cout << "scan: " << sidx + 1 << endl;
@@ -309,9 +309,9 @@ void TrMgr::initTrackers(const double & q_int, const double & q_mz,
     unsigned int i;
     for(i = 0; i < mData.size(); i++) {
         if (mData.at(i) == CLAIMEDPT) { continue; }
-//         trks[initCounts] = 
+//         trks[initCounts] =
        trks.push_back(new Tracker(mData.at(i),iData.at(i),
-                currScanIdx, i, 
+                currScanIdx, i,
                 q_int, q_mz, r_int, r_mz, criticalT));
         actIdx.push_back(initCounts);
         ++initCounts;
@@ -334,19 +334,19 @@ void TrMgr::removeOvertimers() {
         //intensity checks
         std::list<double> iList = trks[*it]->getIntensityList();
         double maxHeight = *max_element(iList.begin(), iList.end());
-        
+
         //used to be default at 60, but that is an arbitrary cut off
-        if (minIntensity > maxHeight) { 
+        if (minIntensity > maxHeight) {
             //cout << "Deleting on account of intensity: ActIdx is " << *it << endl;
 continue; }
-             
 
-        if (hasMzDeviation(*it)) { 
+
+        if (hasMzDeviation(*it)) {
 //cout << "Deleting on account of mz deviation: ActIdx is " << *it << endl;
             continue; }
 
 /*
-        if (isSeizmo(*it)) { 
+        if (isSeizmo(*it)) {
 //cout << "Deleting on account of seizmo: ActIdx is " << *it << endl;
             continue; }
 */
@@ -373,7 +373,7 @@ void TrMgr::displayTracked() {
 
 std::list<int> TrMgr::excludeMisses(const std::list<int> & A) {
 
-  std::list<int> clean; 
+  std::list<int> clean;
   std::list<int>::const_iterator it;
   for (it = A.begin(); it != A.end(); ++it) {
     if (*it != -1)
@@ -382,7 +382,7 @@ std::list<int> TrMgr::excludeMisses(const std::list<int> & A) {
   return clean;
 }
 
-int TrMgr::findMinIdx(const std::vector<double> & d, 
+int TrMgr::findMinIdx(const std::vector<double> & d,
 		   const std::vector<int> & idx) {
   std::vector<int>::const_iterator it;
   double tmpmin = d.at(0);
@@ -400,11 +400,11 @@ int TrMgr::findMinIdx(const std::vector<double> & d,
 
 void TrMgr::writePICsToFile() {
 
-    ofstream feat_idx("mq_feat_idx.txt");    
-    ofstream scan_idx("mq_scan_idx.txt");    
-    ofstream cent_idx("mq_cent_idx.txt");   
-    ofstream mz_file("mq_mz.txt");  
-    ofstream intensity_file("mq_intensity.txt");  
+    ofstream feat_idx("mq_feat_idx.txt");
+    ofstream scan_idx("mq_scan_idx.txt");
+    ofstream cent_idx("mq_cent_idx.txt");
+    ofstream mz_file("mq_mz.txt");
+    ofstream intensity_file("mq_intensity.txt");
 
 
     /*iterate over all found features listed in picIdx*/
@@ -451,14 +451,14 @@ void TrMgr::sortPicIdx() {
     for (size_t t = 0; t < picIdx.size(); ++t) {
         cout << picIdx.at(t) << " ";
     }
-    cout << endl; 
-     
+    cout << endl;
+
     cout << "startMap: " << endl;
     std::map<int, int>::iterator itm;
     for (itm = startMap.begin(); itm != startMap.end();  ++itm) {
         cout << itm->first << " " << itm->second << endl;
     }
-    cout << endl; 
+    cout << endl;
     cout << "sorted picIdx: " << endl;
 
     //restructure the picIdx;
@@ -471,21 +471,21 @@ void TrMgr::sortPicIdx() {
     }
     cout << endl;
 
-    
+
 
 
 
 }
 
 void TrMgr::erasePicElements(const std::vector<int> & eIdx) {
-   
+
     for(size_t i = 0; i < eIdx.size(); ++i) {
         std::vector<int>::iterator it = find(picIdx.begin(), picIdx.end(), eIdx.at(i));
         //if it did find it
-        if (it != picIdx.end()) { 
+        if (it != picIdx.end()) {
             delete trks[eIdx.at(i)];
             trks[eIdx.at(i)] = NULL;
-            picIdx.erase(it);   
+            picIdx.erase(it);
         }
     }
 }
@@ -507,11 +507,11 @@ std::list<double> TrMgr::diff(const std::list<double> vec) {
 bool TrMgr::hasMzDeviation(int i) {
     trks[i]->computeMyXbar();
     trks[i]->computeMyS2();
-    double mzTol = ppm*trks[i]->getXbar()/10e5; 
+    double mzTol = ppm*trks[i]->getXbar()/10e5;
    //cout << "mzTol is: " << mzTol << endl;
     double peakDeviance = fabs(computeAnyXbar(diff(trks[i]->getMzList())));
     //cout << "Peak Deviance is " << peakDeviance << endl;
-    if (peakDeviance > mzTol) 
+    if (peakDeviance > mzTol)
         return true;
     else
         return false;
@@ -539,7 +539,7 @@ bool  TrMgr::isSeizmo(int i) {
 }
 
 void TrMgr::shiftUpIndices(const int i) {
-    
+
     for (size_t j = 0; j < actIdx.size(); ++j) {
         if (i >= actIdx.at(j)) {
             actIdx[j] -= - 1;

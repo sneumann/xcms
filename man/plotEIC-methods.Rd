@@ -10,8 +10,8 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    plotEIC(object, mzrange = numeric(), rtrange = numeric(), 
-    scanrange = numeric(), mzdec=2)  
+    plotEIC(object, mzrange = numeric(), rtrange = numeric(),
+    scanrange = numeric(), mzdec=2)
   }
 }
 }}
@@ -22,7 +22,7 @@
   }
   \item{rtrange}{
     retention time range for EIC
-  }  
+  }
   \item{scanrange}{
     scan range for EIC
   }

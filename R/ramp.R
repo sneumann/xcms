@@ -12,11 +12,11 @@ rampPrintFiles <- function() {
 
 rampIsFile <- function(filename) {
 
-    # The C version doesn't do anything extra
-    #.C("RampRIsFile",
-    #   as.character(filename),
-    #   isfile = logical(1),
-    #   PACKAGE = "xcms")$isfile
+    ## The C version doesn't do anything extra
+    ##.C("RampRIsFile",
+    ##   as.character(filename),
+    ##   isfile = logical(1),
+    ##   PACKAGE = "xcms")$isfile
 
     if (!file.exists(filename))
         return(FALSE)
@@ -90,10 +90,10 @@ rampRawData <- function(rampid) {
 
     scanHeaders <- rampScanHeaders(rampid)
 
-    # Some of these checks work around buggy RAMP indexing code
+    ## Some of these checks work around buggy RAMP indexing code
     scans <- scanHeaders$msLevel == 1 & scanHeaders$seqNum > 0 &
-             !duplicated(scanHeaders$acquisitionNum) &
-             scanHeaders$peaksCount > 0
+        !duplicated(scanHeaders$acquisitionNum) &
+            scanHeaders$peaksCount > 0
     if ("Full" %in% levels(scanHeaders$scanType))
         scans <- scans & scanHeaders$scanType == "Full"
 
@@ -111,33 +111,33 @@ rampRawData <- function(rampid) {
 }
 
 mzRRawData <- function(mz, scanrange=NULL) {
-  ## TODO: missing in mzR are:
-  ## seqNum
-  ## scanType
-  ## polarity
-  
-    scanHeaders <- header(mz)    
+    ## TODO: missing in mzR are:
+    ## seqNum
+    ## scanType
+    ## polarity
+
+    scanHeaders <- header(mz)
 
     if (!is.null(scanrange)) {
-      scanHeaders <- scanHeaders[seq(scanrange[1], scanrange[2]),]
+        scanHeaders <- scanHeaders[seq(scanrange[1], scanrange[2]),]
     }
-    
+
     scans <- scanHeaders$msLevel == 1 & scanHeaders$seqNum > 0 &
-             !duplicated(scanHeaders$acquisitionNum) &
-             scanHeaders$peaksCount > 0
+        !duplicated(scanHeaders$acquisitionNum) &
+            scanHeaders$peaksCount > 0
 
     scans <- which(scans)
 
     scanlist <- mzR::peaks(mz, scans=scans)
     if (class(scanlist) == "list")  {
-      ## concatenate multiple scans 
-      sipeaks <- do.call(rbind, scanlist)
-      scanIndex <- as.integer(c(0, cumsum(sapply(scanlist[-length(scanlist)], nrow))))
+        ## concatenate multiple scans
+        sipeaks <- do.call(rbind, scanlist)
+        scanIndex <- as.integer(c(0, cumsum(sapply(scanlist[-length(scanlist)], nrow))))
     } else {
-      ## no reshaping required
-      sipeaks <- scanlist
-      scanIndex <- as.integer(0) #, nrow(sipeaks))
-    }        
+        ## no reshaping required
+        sipeaks <- scanlist
+        scanIndex <- as.integer(0) ##, nrow(sipeaks))
+    }
 
     return(list(rt = scanHeaders$retentionTime[scans],
                 acquisitionNum = scanHeaders$acquisitionNum[scans],
@@ -149,14 +149,14 @@ mzRRawData <- function(mz, scanrange=NULL) {
 }
 
 mzRRawDataMSn <- function(mz) {
-  ## TODO: missing in mzR are:
-  ## seqNum
-  ## scanType
-  ## polarity
-  
+    ## TODO: missing in mzR are:
+    ## seqNum
+    ## scanType
+    ## polarity
+
     scanHeaders <- header(mz)
 
-    # Check if we have MSn at all
+    ## Check if we have MSn at all
     if (max(scanHeaders[,"msLevel"]) < 2) {
         warning("MSn spectra requested but not found")
         return (NULL);
@@ -164,8 +164,8 @@ mzRRawDataMSn <- function(mz) {
 
     ## Some of these checks work around buggy RAMP indexing code
     scans <- scanHeaders$msLevel >= 2 & scanHeaders$seqNum > 0 &
-             !duplicated(scanHeaders$acquisitionNum) &
-             scanHeaders$peaksCount > 0
+        !duplicated(scanHeaders$acquisitionNum) &
+            scanHeaders$peaksCount > 0
 
     scans <- which(scans)
 
@@ -173,7 +173,7 @@ mzRRawDataMSn <- function(mz) {
     sipeaks <- do.call(rbind, scanlist)
     scanIndex <- as.integer(c(0, cumsum(sapply(scanlist[-length(scanlist)], nrow))))
 
-##        sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
+    ##        sipeaks <- rampSIPeaks(rampid, scans, scanHeaders$peaksCount[scans])
 
     retdata <- list(rt = scanHeaders$retentionTime[scans],
                     acquisitionNum = scanHeaders$acquisitionNum[scans],
@@ -196,14 +196,14 @@ mzRRawDataMSn <- function(mz) {
 
 rampRawDataMSn <- function(rampid) {
 
-    # Check if we have MSn at all
+    ## Check if we have MSn at all
     scanHeaders <- rampScanHeaders(rampid)
     if (max(scanHeaders[,"msLevel"]) < 2) {
         warning("MSn spectra requested but not found")
         return (NULL);
     }
 
-    # Some of these checks work around buggy RAMP indexing code
+    ## Some of these checks work around buggy RAMP indexing code
     scans <- ( scanHeaders$msLevel >= 2 & scanHeaders$seqNum > 0
               & !duplicated(scanHeaders$acquisitionNum)
               & scanHeaders$peaksCount > 0)

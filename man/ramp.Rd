@@ -71,18 +71,18 @@ rampRawData(rampid)
   \code{tic}, \code{scanindex}, \code{mz} and \code{intensity}.
 
   \code{rampRawDataMSn} returns a named list with components of MSn data
-	\code{rt}, \code{acquisitionNum}, \code{precursorMZ}, 
+	\code{rt}, \code{acquisitionNum}, \code{precursorMZ},
 	\code{precursorIntensity}	\code{peaksCount}, \code{msLevel},
 	\code{precursorCharge}, \code{scanindex}, \code{collisionEnergy},
 	\code{mz} and \code{intensity}.
-	
+
   An error in any of the functions will return a (negative) integer
   error code.
 }
 \references{
   mzXML file format:
   \url{http://sashimi.sourceforge.net/software_glossolalia.html}
-  
+
   mzData file format:
   \url{http://psidev.sourceforge.net/ms/index.html}
 }
@@ -95,7 +95,7 @@ rampRawData(rampid)
 	mzdatafiles
 	id<-xcms:::rampOpen(mzdatafiles)
 	id
-	
+
 	head<-xcms:::rampScanHeaders(id)
 	MS1data<-xcms:::rampRawData(id)
 	MS2data<-xcms:::rampRawDataMSn(id)
@@ -104,7 +104,7 @@ rampRawData(rampid)
 	str(MS1data)
 	str(head)
 	}
-	
+
 }
 \keyword{file}
 \keyword{internal}

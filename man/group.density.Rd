@@ -11,7 +11,7 @@
 \describe{
 \item{object = "xcmsSet"}{
   \code{
-    group(object, bw = 30, minfrac = 0.5, minsamp = 1, 
+    group(object, bw = 30, minfrac = 0.5, minsamp = 1,
     mzwid = 0.25, max = 50, sleep = 0)
   }
 }

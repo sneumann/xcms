@@ -32,7 +32,7 @@
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
       values
-    }    
+    }
     \item{\code{filepath}:}{Path to the raw data file}
     \item{\code{gradient}:}{
       matrix with first row, \code{time}, containing the time point
@@ -57,7 +57,7 @@
     \item{\code{mzrange}:}{
       numeric vector of length 2 with minimum and maximum m/z values
       represented in the profile matrix
-    }    
+    }
     \item{\code{polarity}:}{polarity}
     \item{\code{profmethod}:}{
       characer value with name of method used for generating the

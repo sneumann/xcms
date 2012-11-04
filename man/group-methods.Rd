@@ -23,20 +23,20 @@
 }
 \details{
   Different algorithms can be used by specifying them with the
-  \code{method} argument. For example to use the density-based 
+  \code{method} argument. For example to use the density-based
   approach described by Smith et al (2006) one would use:
   \code{group(object, method="density")}. This is also the default.
 
   Further arguments given by \code{...} are
   passed through to the function implementing
-  the \code{method}. 
-  
-  A character vector of \emph{nicknames} for the 
-  algorithms available is returned by 
+  the \code{method}.
+
+  A character vector of \emph{nicknames} for the
+  algorithms available is returned by
   \code{getOption("BioC")$xcms$group.methods}.
   If the nickname of a method is called "mzClust",
   the help page for that specific method can
-  be accessed with \code{?group.mzClust}. 
+  be accessed with \code{?group.mzClust}.
 }
 
 \value{

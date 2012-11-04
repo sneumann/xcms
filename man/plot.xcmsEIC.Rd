@@ -11,7 +11,7 @@
 \describe{
 \item{x = "xcmsEIC"}{
   \code{
-plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange, 
+plot.xcmsEIC(x, y, groupidx = groupnames(x), sampleidx = sampnames(x), rtrange = x@rtrange,
              col = rep(1, length(sampleidx)), legtext = NULL, peakint = TRUE, sleep = 0, ...)}
   }
 

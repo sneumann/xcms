@@ -16,7 +16,7 @@ test.getEICretcor <- function() {
     options("warn" = 2) ## turns warning into errors
     e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2),
                 rt="corrected", rtrange=200)
-    options("warn" = opt.warn) 
+    options("warn" = opt.warn)
     plot(e)
 }
 

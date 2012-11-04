@@ -16,7 +16,7 @@
   \code{getEIC(object, mzrange, rtrange = NULL, step = 0.1)}
 }
 \item{object = "xcmsSet"}{
-  \code{getEIC(object, mzrange, rtrange = 200, groupidx, 
+  \code{getEIC(object, mzrange, rtrange = 200, groupidx,
                sampleidx = sampnames(object), rt = c("corrected", "raw"))}
 }
 }}
@@ -34,7 +34,7 @@
     a two column matrix the same size as \code{mzrange} with minimum
     and maximum retention times between which to return EIC data
     points
-    
+
     for \code{xcmsSet} objects, it may also be a single number
     specifying the time window around the peak to return EIC data
     points
@@ -61,7 +61,7 @@
   \code{mzmax} pair.
 
   For \code{xcmsSet} objects, an \code{xcmsEIC} object.
-} 
+}
 \seealso{
   \code{\link{xcmsRaw-class}},
   \code{\link{xcmsSet-class}},

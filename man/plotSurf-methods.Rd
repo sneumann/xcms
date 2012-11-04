@@ -29,7 +29,7 @@
   on the output format. A bug in the axis label code means that the
   axis labels only go from 0 to the aspect ratio constant of that
   axis. Additionally the axes are not labeled with what they are.
-  
+
   It is important to only plot a small portion of the profile matrix.
   Large portions can quickly overwhelm your CPU and memory.
 }

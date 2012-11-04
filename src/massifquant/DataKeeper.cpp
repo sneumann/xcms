@@ -32,11 +32,11 @@ DataKeeper::~DataKeeper() {
 }
 
 /*void DataKeeper::assign_values(float64* data, uint32 data_len, vector<double> & vec, int vec_len) {
-    
+
     uint32 i;
     //vec.resize(data_len + vec_len);
     for (i = 0; i < data_len; ++i) {
-        vec.push_back(data[i]); 
+        vec.push_back(data[i]);
     }
 }*/
 
@@ -51,23 +51,23 @@ std::vector<double> DataKeeper::getMZScan(int s) {
     for (int i = start_pos; i < stop_pos; ++i) {
         the_scan[copyvec_idx] = mz.at(i);
 //        //cout << "MZ VAL" << the_scan.at(i) << endl;
-        
+
         copyvec_idx++;
     }
     return the_scan;
 }
 
 void DataKeeper::getScanMQ(int s, std::vector<double> & mzScan, std::vector<double> & intenScan) {
-    
+
     mzScan.clear();
     intenScan.clear();
-    
+
     int start_pos = scan_idx.at(s);
     int stop_pos = scan_idx.at(s + 1);
-    
+
     mzScan = std::vector<double>(stop_pos - start_pos, 0);
     intenScan = std::vector<double>(stop_pos - start_pos, 0);
-    
+
     int  copyvec_idx = 0;
     for (int i = start_pos; i < stop_pos; ++i) {
         mzScan[copyvec_idx] = mz.at(i);
@@ -84,7 +84,7 @@ void  DataKeeper::getScanXcms(int scan, int nmz, int lastScan, std::vector<doubl
 
     int idx, idx1, idx2, i=0, N=0;
     idx1 = pscanindex[scan - 1] + 1;
-    
+
     if (scan == lastScan) {
         idx2 = nmz - 1;
     }
@@ -93,7 +93,7 @@ void  DataKeeper::getScanXcms(int scan, int nmz, int lastScan, std::vector<doubl
     }
 
    // cout << "idx1: " << idx1 << endl;
-    N = idx2 - idx1 + 1; 
+    N = idx2 - idx1 + 1;
 //    scanBuf scbuf;
     if (N > 0) {
         mzScan = std::vector<double>(N);
@@ -156,7 +156,7 @@ std::vector<double> DataKeeper::privGetIScan(int s) {
     return the_scan;
 }
 
-void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan, 
+void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan,
         std::vector<double> & intenScan) {
 
     //pass in as reference and changes scan to scan
@@ -165,7 +165,7 @@ void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan,
 
     int idx, idx1, idx2, i=0, N=0;
     idx1 = pscanindex[scan - 1] + 1;
-    
+
     if (scan == lastScan) {
         idx2 = nmz - 1;
     }
@@ -174,7 +174,7 @@ void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan,
     }
 
    // cout << "idx1: " << idx1 << endl;
-    N = idx2 - idx1 + 1; 
+    N = idx2 - idx1 + 1;
 //    scanBuf scbuf;
     if (N > 0) {
         mzScan = std::vector<double>(N);
@@ -192,7 +192,7 @@ void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan,
 }
 
 uint32 DataKeeper::getTotalScanNumbers() {
-    return num_scans; 
+    return num_scans;
 }
 
 int DataKeeper::getTotalCentroidCount() {
@@ -217,11 +217,11 @@ void DataKeeper::ghostScanR() {
     initIS = sqrt(apexVal);
      //cout << "R Apex Val: " << apexVal << endl;
     int apexIdx = int(max_element(pinten, pinten + nmz)
-                   - pinten); 
+                   - pinten);
     double mzApex = pmz[apexIdx];
     //Rprintf("mzApex: %f\n", mzApex);
     //cout << "R apex mz is  " << mz.at(apexIdx) << endl;
-    int low = int(lower_bound(pscanindex, pscanindex + lastScan, apexIdx) 
+    int low = int(lower_bound(pscanindex, pscanindex + lastScan, apexIdx)
                    - pscanindex);
     int up  = int(upper_bound(pscanindex, pscanindex + lastScan, apexIdx)
                    - pscanindex);
@@ -234,7 +234,7 @@ void DataKeeper::ghostScanR() {
 
     int centerScanStartIdx;
     if (low == up) {
-        centerScanStartIdx = low - 1; 
+        centerScanStartIdx = low - 1;
     }
     else {
         centerScanStartIdx = low;
@@ -254,7 +254,7 @@ void DataKeeper::ghostScanR() {
 
                 //cout << "Range is" << centerScanStartIdx + i << endl;
     }
-    
+
     std::list<double> iMaxFeat;
     std::list<double> mMaxFeat;
     std::vector<double> mGhost;
@@ -264,9 +264,9 @@ void DataKeeper::ghostScanR() {
     for (it_r = range.begin(); it_r != range.end(); ++it_r) {
 
         privGetScanXcms(*it_r + 1, mGhost, iGhost);
-        
+
         //mGhost = privGetMZScan(*it_r);
-        //iGhost = privGetIScan(*it_r);       
+        //iGhost = privGetIScan(*it_r);
 
         double left = mzApex - 0.015;
         double right = mzApex + 0.015;
@@ -285,10 +285,10 @@ void DataKeeper::ghostScanR() {
         if (neighborIdx.size() > 0) {
             std::vector<double>::iterator it_imax;
             it_imax = max_element(iGhostSub.begin(), iGhostSub.end());
-            int imaxIdx = int(it_imax -iGhostSub.begin()); 
+            int imaxIdx = int(it_imax -iGhostSub.begin());
 
             //cout << "imaxIdx is "  << imaxIdx << endl;
-            //cout << "neignboridx is  "  <<  neighborIdx.at(0) << endl;        
+            //cout << "neignboridx is  "  <<  neighborIdx.at(0) << endl;
             //cout << "val of mz is " << mz.at(neighborIdx.at(imaxIdx)) << endl;
              //cout << "val of int is " << *it_imax << endl;
             iMaxFeat.push_back(*it_imax);
@@ -298,7 +298,7 @@ void DataKeeper::ghostScanR() {
    //cout << "Range is " << endl;
     //printList(range);
    //cout << "Final Picks for MZ is " << endl;
-    //printList(mMaxFeat); 
+    //printList(mMaxFeat);
    //cout << " Final Picks for Intensity is " << endl;
     //printList(iMaxFeat);
     initMZS2 = computeAnySampVar(mMaxFeat);
@@ -317,10 +317,10 @@ void DataKeeper::ghostScan() {
      //cout << "STL Apex Val: " << apexVal << endl;
 
     int apexIdx = int(max_element(intensity.begin(), intensity.end())
-                   - intensity.begin()); 
+                   - intensity.begin());
     double mzApex = mz.at(apexIdx);
 //cout << "the apex mz is  " << mz.at(apexIdx) << endl;
-    int low = int(lower_bound(scan_idx.begin(), scan_idx.end(), apexIdx) 
+    int low = int(lower_bound(scan_idx.begin(), scan_idx.end(), apexIdx)
                    - scan_idx.begin());
     int up  = int(upper_bound(scan_idx.begin(), scan_idx.end(), apexIdx)
                    - scan_idx.begin());
@@ -331,7 +331,7 @@ void DataKeeper::ghostScan() {
 
     int centerScanStartIdx;
     if (low == up) {
-        centerScanStartIdx = low - 1; 
+        centerScanStartIdx = low - 1;
     }
     else {
         centerScanStartIdx = low;
@@ -351,7 +351,7 @@ void DataKeeper::ghostScan() {
 
                 //cout << "Range is" << centerScanStartIdx + i << endl;
     }
-    
+
     std::list<double> iMaxFeat;
     std::list<double> mMaxFeat;
    /*Now find the surrounding values*/
@@ -360,9 +360,9 @@ void DataKeeper::ghostScan() {
 
         std::vector<double> mGhost = privGetMZScan(*it_r);
         //cout << "mGhost" << endl;
-        //printVec(mGhost);        
-        
-        std::vector<double> iGhost = privGetIScan(*it_r);       
+        //printVec(mGhost);
+
+        std::vector<double> iGhost = privGetIScan(*it_r);
         //cout << "iGhost" << endl;
        // printVec(iGhost);
 
@@ -385,10 +385,10 @@ void DataKeeper::ghostScan() {
         if (neighborIdx.size() > 0) {
             std::vector<double>::iterator it_imax;
             it_imax = max_element(iGhostSub.begin(), iGhostSub.end());
-            int imaxIdx = int(it_imax -iGhostSub.begin()); 
+            int imaxIdx = int(it_imax -iGhostSub.begin());
 
             //cout << "imaxIdx is "  << imaxIdx << endl;
-            //cout << "neignboridx is  "  <<  neighborIdx.at(0) << endl;        
+            //cout << "neignboridx is  "  <<  neighborIdx.at(0) << endl;
             //cout << "val of mz is " << mz.at(neighborIdx.at(imaxIdx)) << endl;
              //cout << "val of int is " << *it_imax << endl;
             iMaxFeat.push_back(*it_imax);
@@ -398,7 +398,7 @@ void DataKeeper::ghostScan() {
    //cout << "Range is " << endl;
    // printList(range);
    //cout << "Final Picks for MZ is " << endl;
-   // printList(mMaxFeat); 
+   // printList(mMaxFeat);
    //cout << " Final Picks for Intensity is " << endl;
    // printList(iMaxFeat);
     initMZS2 = computeAnySampVar(mMaxFeat);
@@ -408,7 +408,7 @@ void DataKeeper::ghostScan() {
 
     intensity = transformIntensity(intensity); //take the sqrt
 
- // printVec(intensity);  
+ // printVec(intensity);
 }
 /*
 double DataKeeper::findMaxIdx() {
@@ -417,14 +417,14 @@ double DataKeeper::findMaxIdx() {
     double max = intensity.at(0);
 
     for (unsigned int i = 0; i < intensity.size(); i++) {
-           if (intensity.at(i) >  
+           if (intensity.at(i) >
     }
 
 
 }
 */
 
-/*std::vector<double> DataKeeper::getMzTrFootprints(int s) { 
+/*std::vector<double> DataKeeper::getMzTrFootprints(int s) {
 
 }*/
 
@@ -455,7 +455,7 @@ void DataKeeper::printList(const std::list<double> & mylist) {
 std::vector<double> DataKeeper::transformIntensity(std::vector<double> & A) {
     unsigned int i;
     for (i = 0; i < A.size(); ++i) {
-      A[i] = sqrt(A.at(i)); 
+      A[i] = sqrt(A.at(i));
     }
     return A;
 }
@@ -466,5 +466,3 @@ void  DataKeeper::transformIntensityR() {
       pinten[i] = sqrt(pinten[i]);
     }
 }
-
-

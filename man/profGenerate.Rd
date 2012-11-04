@@ -62,7 +62,7 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   The \code{IntLin} functions set each matrix or vector value to
   the integral of the linearly interpolated data from plus to minus
   half the step size.
-  
+
   The \code{MaxIdx} functions work similarly to the \code{Bin}
   functions execpt that the return the integer index of which x,y
   pair would be placed in a particular cell.
@@ -72,7 +72,7 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
 
   For \code{prof*M}, a matrix with dimensions \code{num} by
   \code{length(zidx)}.
-  
+
   For \code{MaxIdx}, the data type is integer, for all others it
   is double.
 }
@@ -82,7 +82,7 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
 		cdfpath <- system.file("cdf", package = "faahKO")
 		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
 		xraw <- xcmsRaw(cdffiles[1])
-		
+
 		image(xraw) ## not how with intLin the intensity's blur
 		profMethod(xraw) <- "bin"
 		image(xraw) ## now with 'bin' there is no blurring good for centroid data

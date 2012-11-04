@@ -41,14 +41,14 @@
 
   Further arguments given by \code{...} are
   passed through to the function implementing
-  the \code{method}. 
-  
-  A character vector of \emph{nicknames} for the 
-  algorithms available is returned by 
+  the \code{method}.
+
+  A character vector of \emph{nicknames} for the
+  algorithms available is returned by
   \code{getOption("BioC")$xcms$specDist.methods}.
   If the nickname of a method is called "meanMZmatch",
   the help page for that specific method can
-  be accessed with \code{?specDist.meanMZmatch}. 
+  be accessed with \code{?specDist.meanMZmatch}.
 }
 \value{
 \item{mzabs}{

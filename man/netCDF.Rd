@@ -52,7 +52,7 @@ netCDFRawData(ncid)
 
   \code{netCDFVarDouble} and \code{netCDFVarInt} return either
   double or integer numeric vectors.
-  
+
   \code{netCDFMSPoints} returns a list with elements \code{massValues}
   and \code{intensityValues}, with the masses for each scan in
   ascending order.

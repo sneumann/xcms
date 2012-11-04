@@ -23,4 +23,3 @@ test.xcmsRawScanrange.100 <- function() {
     xraw <- xcmsRaw(file, scanrange=c(100,199))
     checkEquals(length(xraw@scantime), 100)
 }
-

@@ -26,4 +26,3 @@ specDist.peakCount(peakTable1, peakTable2, mzabs=0.001, mzppm=10, symmetric=FALS
 }
 \author{Joachim Kutzera, \email{jkutzer@ipb-halle.de}}
 \keyword{methods}
-

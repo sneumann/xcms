@@ -24,11 +24,11 @@
 const int N_NAMES = 7;
 using namespace std;
 
-extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex, 
-        SEXP scantime, SEXP mzrange, SEXP scanrange, SEXP lastscan, 
-        SEXP minIntensity, SEXP minCentroids, SEXP consecMissedLim, 
-        SEXP ppm, SEXP criticalVal, SEXP segs, SEXP scanBack) { 
- 
+extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
+        SEXP scantime, SEXP mzrange, SEXP scanrange, SEXP lastscan,
+        SEXP minIntensity, SEXP minCentroids, SEXP consecMissedLim,
+        SEXP ppm, SEXP criticalVal, SEXP segs, SEXP scanBack) {
+
     //the return data structure and its elemental components
     SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vstcenter,vscmin,vscmax,vintensity,vintenmax, vlength;
     int scanrangeTo, scanrangeFrom;
@@ -38,7 +38,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     scanrangeTo = INTEGER(scanrange)[1];
 
     //store data
-    DataKeeper dkeep(mz, intensity, scanindex, lastscan, scantime);       
+    DataKeeper dkeep(mz, intensity, scanindex, lastscan, scantime);
     dkeep.ghostScanR();
     std::vector<double> mzScan;
     std::vector<double> intenScan;
@@ -56,10 +56,10 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
 
     //show the progress please
     Rprintf("\n Detecting Kalman ROI's ... \n percent finished: ");
-       
+
     //initialize tracker manager
-    TrMgr busybody(scanrangeTo, sqrt(REAL(minIntensity)[0]), 
-            INTEGER(minCentroids)[0], REAL(consecMissedLim)[0], 
+    TrMgr busybody(scanrangeTo, sqrt(REAL(minIntensity)[0]),
+            INTEGER(minCentroids)[0], REAL(consecMissedLim)[0],
             REAL(ppm)[0], REAL(criticalVal)[0], INTEGER(scanBack)[0]);
     dkeep.getScanXcms(scanrangeTo, nmz, totalScanNums, mzScan, intenScan);
     busybody.setDataScan(mzScan, intenScan);
@@ -70,38 +70,38 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     double maxScanNums = double(scanrangeTo);
     double progThresh = 10;
     for (int k = scanrangeTo - 1; k >= scanrangeFrom; k--) {
-    
+
         //progress
         double perc  = (progCount/scanrangeTo) * 100;
-        //Rprintf("perc: %f\t", perc); 
+        //Rprintf("perc: %f\t", perc);
         if (perc > progThresh) {
             Rprintf(" %d  ", int(perc));
             progThresh += 10;
         }
-        
+
         busybody.setCurrScanIdx(k);
         dkeep.getScanXcms(k, nmz, totalScanNums, mzScan, intenScan);
         busybody.predictScan(mzScan, intenScan);
         busybody.competeAct();
         busybody.manageMissed();
         busybody.manageTracked();
-        busybody.initTrackers(iq, mzq, ir, mzr, k); 
+        busybody.initTrackers(iq, mzq, ir, mzr, k);
         progCount++;
     }
 
     busybody.removeOvertimers();
-   
+
     //option to include segmentation correction
     //string segsStr(segs);
     //if (segsStr.compare("segOn") == 0) {
-    if (INTEGER(segs)[0] == 1) { 
-        SegProc sproc(busybody.getPicCounts()); 
+    if (INTEGER(segs)[0] == 1) {
+        SegProc sproc(busybody.getPicCounts());
         sproc.groupSegments(busybody);
         sproc.collapseSubsets();
         //sproc.segsToFile(busybody);
         sproc.solderSegs(busybody);
     }
-    
+
     Rprintf(" %d\n", 100);
 
     char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
@@ -121,7 +121,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         PROTECT(vmz = NEW_NUMERIC(1));
         PROTECT(vmzmin = NEW_NUMERIC(1));
         PROTECT(vmzmax = NEW_NUMERIC(1));
-        
+
         PROTECT(vscmin = NEW_INTEGER(1));
         PROTECT(vscmax = NEW_INTEGER(1));
         PROTECT(vlength = NEW_INTEGER(1));
@@ -131,7 +131,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         NUMERIC_POINTER(vmz)[0]  = featInfo.at(0);
         NUMERIC_POINTER(vmzmin)[0] = featInfo.at(1);
         NUMERIC_POINTER(vmzmax)[0] = featInfo.at(2);
-        
+
         INTEGER_POINTER(vscmin)[0] = int(featInfo.at(4));
         INTEGER_POINTER(vscmax)[0] = int(featInfo.at(5));
         INTEGER_POINTER(vlength)[0] = int(featInfo.at(3));
@@ -143,7 +143,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         SET_VECTOR_ELT(entrylist, 2, vmzmax);
         SET_VECTOR_ELT(entrylist, 3, vscmin);
         SET_VECTOR_ELT(entrylist, 4, vscmax);
-        SET_VECTOR_ELT(entrylist, 5, vlength); 
+        SET_VECTOR_ELT(entrylist, 5, vlength);
         SET_VECTOR_ELT(entrylist, 6, vintensity);
 
         setAttrib(entrylist, R_NamesSymbol, list_names); //attaching the vector names
@@ -156,6 +156,5 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
 
     UNPROTECT(2);//peaklist, list_names
 
-    return (peaklist);  
+    return (peaklist);
 }
-

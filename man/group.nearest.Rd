@@ -18,7 +18,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{    
+  \code{
     group(object, mzVsRTbalance=10, mzCheck=0.2, rtCheck=15, kNN=10)
   }
 }
@@ -26,17 +26,17 @@
 \arguments{
   \item{object}{the \code{xcmsSet} object}
   \item{mzVsRTbalance}{Multiplicator for mz value before calculating the
-    (euclidean) distance between two peaks.}  
+    (euclidean) distance between two peaks.}
   \item{mzCheck}{Maximum tolerated distance for mz.}
   \item{rtCheck}{Maximum tolerated distance for RT.}
-  \item{kNN}{Number of nearest Neighbours to check}  
+  \item{kNN}{Number of nearest Neighbours to check}
 }
 \value{
   An \code{xcmsSet} object with peak group assignments and statistics.
 }
 \seealso{
   \code{\link{xcmsSet-class}},
-  \code{\link{group.density}} and 
+  \code{\link{group.density}} and
   \code{\link{group.mzClust}}
 }
 
@@ -45,14 +45,14 @@
 		library(faahKO) ## These files do not have this problem to correct for but just for an example
 		cdfpath <- system.file("cdf", package = "faahKO")
 		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-		
+
 		xset<-xcmsSet(cdffiles)
-		
+
 		gxset<-group(xset, method="nearest")
-		## this is the same as 
+		## this is the same as
 		# gxset<-group.nearest(xset)
 		nrow(gxset@groups) == 1096 ## the number of features before minFrac
-		
+
 		post.minFrac<-function(object, minFrac=0.5){
 			ix.minFrac<-sapply(1:length(unique(sampclass(object))), function(x, object, mf){
 				meta<-groups(object)
@@ -65,14 +65,14 @@
 			ix<-which(ix.minFrac == TRUE)
 			return(ix)
 		}
-		
+
 		## using the above function we can get a post processing minFrac
 		idx<-post.minFrac(gxset)
-		
+
 		gxset.post<-gxset ## copy the xcmsSet object
 		gxset.post@groupidx<-gxset@groupidx[idx]
 		gxset.post@groups<-gxset@groups[idx,]
-		
+
 		nrow(gxset.post@groups) == 465 ## this is the number of features after minFrac
 	}
 }
