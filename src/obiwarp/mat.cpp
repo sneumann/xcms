@@ -372,22 +372,22 @@ int MatI::sum(int m) {
 void MatI::print(bool without_axes) {
     MatI tmp((*this),1);
     if (!without_axes) {
-        std::cout << _m << ' ' << _n << std::endl;
+        //std::cout << _m << ' ' << _n << std::endl;
     }
     for (int m = 0; m < _m; ++m) {
         int n;
         for (n = 0; n < _n - 1; ++n) {
-            std::cout << tmp(m,n) << " ";
+            //std::cout << tmp(m,n) << " ";
         }
-        std::cout << tmp(m,n);
-        std::cout << std::endl;
+        //std::cout << tmp(m,n);
+        //std::cout << std::endl;
     }
 }
 
 void MatI::print(const char *filename, bool without_axes) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_axes);
     fh.close();
@@ -780,22 +780,22 @@ double MatD::sum(int m) {
 void MatD::print(bool without_axes) {
     MatD tmp((*this),1);
     if (!without_axes) {
-        std::cout << _m << ' ' << _n << std::endl;
+        //std::cout << _m << ' ' << _n << std::endl;
     }
     for (int m = 0; m < _m; ++m) {
         int n;
         for (n = 0; n < _n - 1; ++n) {
-            std::cout << tmp(m,n) << " ";
+            //std::cout << tmp(m,n) << " ";
         }
-        std::cout << tmp(m,n);
-        std::cout << std::endl;
+        //std::cout << tmp(m,n);
+        //std::cout << std::endl;
     }
 }
 
 void MatD::print(const char *filename, bool without_axes) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_axes);
     fh.close();
@@ -1188,32 +1188,32 @@ float MatF::sum(int m) {
 void MatF::print(bool without_axes) {
     MatF tmp((*this),1);
     if (!without_axes) {
-        std::cout << _m << ' ' << _n << std::endl;
+        //std::cout << _m << ' ' << _n << std::endl;
     }
     for (int m = 0; m < _m; ++m) {
         int n;
         for (n = 0; n < _n - 1; ++n) {
-            std::cout << tmp(m,n) << " ";
+            //std::cout << tmp(m,n) << " ";
         }
-        std::cout << tmp(m,n);
-        std::cout << std::endl;
+        //std::cout << tmp(m,n);
+        //std::cout << std::endl;
     }
 }
 
 void MatF::print(int __m, int __n,bool without_axes) {
     MatF tmp((*this),1);
     if (!without_axes) {
-        std::cout << _m << ' ' << _n << std::endl<< std::endl;
+        //std::cout << _m << ' ' << _n << std::endl<< std::endl;
     }
     for (int m = 0; m < _m; ++m) {
-      std::cout << tmp(m,__n) << " ";
+      //std::cout << tmp(m,__n) << " ";
         }
 }
 
 void MatF::print(const char *filename, bool without_axes) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_axes);
     fh.close();
