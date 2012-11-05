@@ -113,30 +113,38 @@ class VecI {
 
         int& operator[](int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const int& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
 
         int& at(int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const int& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
@@ -374,30 +382,38 @@ class VecD {
 
         double& operator[](int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const double& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
 
         double& at(int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const double& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
@@ -636,30 +652,38 @@ class VecF {
 
         float& operator[](int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const float& operator[](int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
 
         float& at(int i) {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
         const float& at(int i) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (i < 0) { puts("index < 0 !"); exit(1); }
-            if (i >= _n) { puts("i >= _n !"); exit(1); }
+            if (i < 0) { Rprintf("index < 0 !"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (i >= _n) { Rprintf("i >= _n !"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[i];
         }
