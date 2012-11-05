@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
-#include <assert.h>
+
 #include "OpOverload.h"
 #include "TrMgr.h"
 #include "SegProc.h"

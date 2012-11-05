@@ -117,7 +117,7 @@ std::vector<int> operator == (const std::list<int> & A,
 std::list<int> operator == (const std::list<int> & A,
 	const std::list<int> & B) {
 
-    assert(A.size() == B.size());
+    if (A.size() != B.size()) Rf_error("assertion failled in massifquant\n");
     std::list<int> C;
     std::list<int>::const_iterator itA;
     std::list<int>::const_iterator itB = B.begin();
