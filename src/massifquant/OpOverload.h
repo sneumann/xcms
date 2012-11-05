@@ -3,7 +3,7 @@
 
 #include <list>
 #include <vector>
-#include <assert.h>
+
 /*
   Operator Overloading
 */
