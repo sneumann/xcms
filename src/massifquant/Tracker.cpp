@@ -282,7 +282,7 @@ int Tracker::claimDataIdx(const std::vector<double> & mData,
           neighborIdxR = copySubIdx(uCandIdxR, subNeighborIdxR);
           //cout << " Ever get here? Yes" << endl;
           if (neighborIdxR.size() == 0) {
-             cout << "Upper Edge case deleted" << endl;
+	    Rprintf("Upper Edge case deleted\n");
              predDist.push_back(-1);
              centIdx = -1;
              return centIdx;
