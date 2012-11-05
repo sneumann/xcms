@@ -6,7 +6,6 @@
 #include "xcms_dynprog.h"
 #include "vec.h"
 #include "mat.h"
-#include "assert.h"
 
 #include <R.h> // for Rprintf
 
@@ -540,7 +539,7 @@ void DynProg::score_product(MatF &mCoords, MatF &nCoords, MatF &scores) {
   int s_mlen = mCoords.rows();// s_cols = length_n
   int s_nlen = nCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int cols = mCoords.cols();
-  assert(cols == nCoords.cols());
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
   MatF tmp(s_mlen, s_nlen);
   for (int m = 0; m < s_mlen; ++m) {
     for (int n = 0; n < s_nlen; ++n) {
@@ -562,7 +561,7 @@ void DynProg::score_covariance(MatF &mCoords, MatF &nCoords, MatF &scores) {
   int s_mlen = mCoords.rows();// s_cols = length_n
   int s_nlen = nCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int cols = mCoords.cols();
-  assert(cols == nCoords.cols());
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
 
   MatF tmp(s_mlen, s_nlen);
 
@@ -593,7 +592,7 @@ void DynProg::score_pearsons_r(MatF &mCoords, MatF &nCoords, MatF &scores) {
   int s_nlen = nCoords.rows();// s_cols = length_n
   int s_mlen = mCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int cols = mCoords.cols();
-  assert(cols == nCoords.cols());
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
   MatF tmp(s_mlen, s_nlen);
 
   float *bot_x = new float[s_nlen];
@@ -637,7 +636,7 @@ void DynProg::score_pearsons_r_opt(MatF &mCoords, MatF &nCoords, MatF &scores) {
   int s_nlen = nCoords.rows();// s_cols = length_n
   int s_mlen = mCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int cols = mCoords.cols();
-  assert(cols == nCoords.cols());
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
 
   MatF tmp(s_mlen, s_nlen);
   const int dfd = 10;
@@ -711,7 +710,9 @@ void DynProg::score_euclidean(MatF &mCoords, MatF &nCoords, MatF &scores) {
   int s_mlen = mCoords.rows();// s_cols = length_n
   int s_nlen = nCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int cols = mCoords.cols();
-  assert(cols == nCoords.cols());
+
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
+
   MatF tmp(s_mlen, s_nlen);
   for (int m = 0; m < s_mlen; ++m) {
     for (int n = 0; n < s_nlen; ++n) {
@@ -732,7 +733,7 @@ void DynProg::score_mutual_info(MatF &mCoords, MatF &nCoords, MatF &scores, int 
   int s_mlen = mCoords.rows();// s_rows = length_m  // Both rows and cols derived from # rows
   int s_nlen = nCoords.rows();// s_cols = length_n
   int cols = nCoords.cols();
-  assert(cols == mCoords.cols());
+  if(cols != nCoords.cols()) Rf_error("assertion failled in obiwarp\n");
 
   MatF tmpmat(s_mlen, s_mlen);
 
@@ -753,7 +754,7 @@ void DynProg::score_mutual_info(MatF &mCoords, MatF &nCoords, MatF &scores, int 
   MatI binIndNCoords(nCoords.rows(), nCoords.cols());
   MatI binIndMCoords(mCoords.rows(), mCoords.cols());
 
-  assert(nCoords.cols() == mCoords.cols());
+  if(nCoords.cols() != mCoords.cols()) Rf_error("assertion failled in obiwarp\n");
 
   int i;
   for (i = 0; i < nCoords.rows() ; ++i) {
@@ -832,7 +833,7 @@ void DynProg::expandFlag(MatI &flagged, int flag, int numSteps, MatI &expanded) 
 }
 
 void entropyXY(MatI &binIndX, MatI &binIndY, VecF &entropyX, VecF &entropyY, MatF &scores, int numBins) {
-  assert(binIndX.cols() == binIndY.cols());
+  if(binIndX.cols() != binIndY.cols()) Rf_error("assertion failled in obiwarp\n");
   for (int m = 0; m < binIndY.rows(); ++m) {
     for (int n = 0; n < binIndX.rows(); ++n) {
       MatI counts(numBins, numBins,0);
