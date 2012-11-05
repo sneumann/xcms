@@ -104,7 +104,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
 
     Rprintf(" %d\n", 100);
 
-    char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
+    const char *names[N_NAMES] = {"mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity"};
     PROTECT(list_names = allocVector(STRSXP, N_NAMES));
     for(int j = 0; j < N_NAMES; j++)
         SET_STRING_ELT(list_names, j,  mkChar(names[j]));

@@ -449,27 +449,27 @@ void TrMgr::sortPicIdx() {
 
     //cout << "picIdx: " << endl;
     for (size_t t = 0; t < picIdx.size(); ++t) {
-        cout << picIdx.at(t) << " ";
+        //cout << picIdx.at(t) << " ";
     }
-    cout << endl;
+    //cout << endl;
 
-    cout << "startMap: " << endl;
+    //cout << "startMap: " << endl;
     std::map<int, int>::iterator itm;
     for (itm = startMap.begin(); itm != startMap.end();  ++itm) {
-        cout << itm->first << " " << itm->second << endl;
+        //cout << itm->first << " " << itm->second << endl;
     }
-    cout << endl;
-    cout << "sorted picIdx: " << endl;
+    //cout << endl;
+    //cout << "sorted picIdx: " << endl;
 
     //restructure the picIdx;
     std::map<int, int>::iterator it;
     int j = 0;
     for (it = startMap.begin(); it != startMap.end(); ++it) {
         picIdx[j] = it->second;
-        cout << picIdx.at(j) << " ";
+        //cout << picIdx.at(j) << " ";
         j++;
     }
-    cout << endl;
+    //cout << endl;
 
 
 

@@ -5,6 +5,8 @@
 #include <math.h>
 #include "OpOverload.h"
 
+#include <R.h>
+
 const int OPDIMM = 4;
 const int OPDIMV = 2;
 
@@ -311,7 +313,7 @@ void printList(const std::list<double> & mylist) {
 
 void printvector(const std::vector<double> & myvec) {
       for (size_t i = 0; i < myvec.size(); i++) {
-              printf("%f", myvec.at(i));
+              Rprintf("%f", myvec.at(i));
               cout << " " << endl;
                 }
         cout << "\n";
