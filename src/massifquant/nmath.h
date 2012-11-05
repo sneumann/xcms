@@ -82,11 +82,11 @@ void R_CheckUserInterrupt(void);
 
 #include <stdio.h>
 #include <stdlib.h> /* for exit */
-#define MATHLIB_ERROR(fmt,x)    { printf(fmt,x); exit(1); }
-#define MATHLIB_WARNING(fmt,x)      printf(fmt,x)
-#define MATHLIB_WARNING2(fmt,x,x2)  printf(fmt,x,x2)
-#define MATHLIB_WARNING3(fmt,x,x2,x3)   printf(fmt,x,x2,x3)
-#define MATHLIB_WARNING4(fmt,x,x2,x3,x4) printf(fmt,x,x2,x3,x4)
+#define MATHLIB_ERROR(fmt,x)    { Rprintf(fmt,x); Rf_error("Serious error in Massifquant\n"); }
+#define MATHLIB_WARNING(fmt,x)      Rprintf(fmt,x)
+#define MATHLIB_WARNING2(fmt,x,x2)  Rprintf(fmt,x,x2)
+#define MATHLIB_WARNING3(fmt,x,x2,x3)   Rprintf(fmt,x,x2,x3)
+#define MATHLIB_WARNING4(fmt,x,x2,x3,x4) Rprintf(fmt,x,x2,x3,x4)
 
 #define ISNAN(x) (isnan(x)!=0)
 #define R_FINITE(x)    R_finite(x)
@@ -122,7 +122,7 @@ int R_finite(double);
  *        */
 #define ML_ERROR(x, s) { \
     if(x > ME_DOMAIN) { \
-        char *msg = ""; \
+        char *msg = _(""); \
         switch(x) { \
             case ME_DOMAIN: \
                             msg = _("argument out of domain in '%s'\n"); \
