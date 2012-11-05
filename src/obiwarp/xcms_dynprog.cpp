@@ -8,6 +8,8 @@
 #include "mat.h"
 #include "assert.h"
 
+#include <R.h> // for Rprintf
+
 #ifndef min
 #define min(a,b) ( ( (a) < (b) ) ? (a) : (b) )
 #endif
@@ -73,7 +75,7 @@ void DynProg::bijective_anchors(VecI &mCoords, VecI &nCoords, VecF &scores, VecI
   int i;
   // number of true peak equivalencies (not counting gaps)
   // guarantees that the first and last equivalencies will be the same
-  //puts("equivs:"); mCoords.print(); nCoords.print(); scores.print();
+  //Rprintf("equivs:"); mCoords.print(); nCoords.print(); scores.print();
   int lengthEquiv = mCoords.dim();
 
   int *nC_arr = new int[lengthEquiv];  // Max length...
@@ -192,7 +194,7 @@ void DynProg::best_anchors(VecI &mBijShort, VecI &nBijShort, VecF &sBijShort,
 
   // Check that the num_internal_anchors+2
   if (num_internal_anchors+2 > trueLength) {
-    std::cerr << "changing " << num_internal_anchors << " num_internal_anchors to " << trueLength -2 << " to be inbounds";
+    Rprintf("changing %d num_internal_anchors to %d ", num_internal_anchors, trueLength -2);
     num_internal_anchors = trueLength - 2;
   }
 
@@ -500,8 +502,8 @@ void DynProg::path_accuracy(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpM
   VecF _nWarpMapFt(nWarpMap.length());
   for (int i = 0; i < mWarpMap.length(); ++i) {
     if (mWarpMap[i] < 0 || mWarpMap[i] >= m_tm.length()) {
-      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length()
-		<< " requested: " << mWarpMap[i] << "\n";
+      Rprintf("ASKING FOR VAL OUTSIDE RANGE, length: %d requested: %d\n", 
+	      m_tm.length(), mWarpMap[i]);
     }
     _mWarpMapFt[i] = m_tm[mWarpMap[i]];
     _nWarpMapFt[i] = n_tm[nWarpMap[i]];
@@ -520,8 +522,8 @@ float DynProg::sum_sq_res_yeqx(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWa
   VecF nWarpMapFt(nWarpMap.length());
   for (int i = 0; i < mWarpMap.length(); ++i) {
     if (mWarpMap[i] < 0 || mWarpMap[i] >= m_tm.length()) {
-      std::cerr << "ASKING FOR VAL OUTSIDE RANGE, length: " << m_tm.length()
-		<< " requested: " << mWarpMap[i] << "\n";
+      Rprintf("ASKING FOR VAL OUTSIDE RANGE, length: %d requested: %d \n",
+	      m_tm.length(), mWarpMap[i]);
     }
     mWarpMapFt[i] = m_tm[mWarpMap[i]];
     nWarpMapFt[i] = n_tm[nWarpMap[i]];
@@ -786,7 +788,7 @@ void DynProg::score(MatF &mCoords, MatF &nCoords, MatF &scores, const char *type
   }
   else {
     printf("Unrecognized score type!: %s\n", type);
-    exit(1);
+    R_ShowMessage("Serious error in obiwarp.");
   }
 }
 

@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "vec.h"
 
+#include <R.h> // for Rprintf
+
 #ifndef min
 	#define min(a,b) ( ( (a) < (b) ) ? (a) : (b) )
 #endif
@@ -27,17 +29,18 @@ namespace VEC {
 // Constructors:
 VecI::VecI() : _n(0), _shallow(true) {
 #ifdef JTP_DEBUG
-    puts("Creating DATA (NO ARGS)");
+    Rprintf("Creating DATA (NO ARGS)");
 #endif
 }
 
 VecI::VecI(int n) : _n(n), _shallow(false) {
 #ifdef JTP_BOUNDS_CHECK
-    if (n < 0) { puts("n < 0, exiting"); exit(1); }
+    if (n < 0) { Rprintf("n < 0, exiting"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
     _dat = new int[_n];
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N)");
+    Rprintf("Creating DATA(N)");
 #endif
 }
 
@@ -47,13 +50,13 @@ VecI::VecI(int n, const int &val) : _n(n), _shallow(false) {
         _dat[i] = val;
     }
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N,int)");
+    Rprintf("Creating DATA(N,int)");
 #endif
 }
 
 VecI::VecI(int n, int *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallow) {
 #ifdef JTP_DEBUG
-    puts("SHALLOW, (N,*ARR)");
+    Rprintf("SHALLOW, (N,*ARR)");
 #endif
 }
 
@@ -68,7 +71,7 @@ VecI::VecI(const VecI &A, bool shallow) : _n(A._n), _shallow(shallow) {
         _dat = A._dat;
     }
 #ifdef JTP_DEBUG
-    puts("created with VecI(const VecI &A)");
+    Rprintf("created with VecI(const VecI &A)");
 #endif
 }
 
@@ -122,8 +125,8 @@ void VecI::take(VecI &A) {
         delete[] _dat;
     }
     if (A._shallow) {
-        puts("Can't take ownership of memory of a shallow Vec!");
-        exit(1);
+        Rprintf("Can't take ownership of memory of a shallow Vec!");
+        R_ShowMessage("Serious error in obiwarp.");
     }
     _dat = A._dat;
     A._shallow = true;
@@ -181,11 +184,11 @@ VecI & VecI::operator=(const int &val) {
 
 VecI & VecI::operator=(VecI &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         if (!_shallow) {
             delete[] _dat;
@@ -200,11 +203,11 @@ VecI & VecI::operator=(VecI &A) {
 
 VecI::~VecI( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
     if (!_shallow) {
 #ifdef JTP_DEBUG
-        puts("DELETING DATA");
+        Rprintf("DELETING DATA");
 #endif
         delete[] _dat;
     }
@@ -448,7 +451,7 @@ double VecI::_zScore(double mean, double sigma, double x) {
 }
 
 void VecI::mask_as_vec(int return_val, VecI &mask, VecI &out) {
-    if (mask.size() != _n) { puts("mask.size() != this->length()"); exit(1); }
+    if (mask.size() != _n) { Rprintf("mask.size() != this->length()"); R_ShowMessage("Serious error in obiwarp."); }
     int *me = (int*)(*this);
     int *maskptr = (int*)(mask);
     int *tmparr = new int[_n];
@@ -566,7 +569,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
     int *tmp_derivs = new int[x.length()];
 
 #ifdef JTP_BOUNDS_CHECK
-    if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
+    if (x.length() != y.length()) { Rprintf("x.length() != y.length()"); R_ShowMessage("Serious error in obiwarp.");}
 #endif
     int length = x.length();
     int del1;
@@ -593,7 +596,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
             return;
         }
         else {
-            std::cerr << "trying to chim with 0 data points!\n";
+	  Rprintf("trying to chim with 0 data points!\n");
         }
     }
 
@@ -1042,17 +1045,18 @@ void VecI::rsq_slope_intercept(VecI &x, VecI &y, double &rsq, double &slope, dou
 // Constructors:
 VecD::VecD() : _n(0), _shallow(true) {
 #ifdef JTP_DEBUG
-    puts("Creating DATA (NO ARGS)");
+    Rprintf("Creating DATA (NO ARGS)");
 #endif
 }
 
 VecD::VecD(int n) : _n(n), _shallow(false) {
 #ifdef JTP_BOUNDS_CHECK
-    if (n < 0) { puts("n < 0, exiting"); exit(1); }
+    if (n < 0) { Rprintf("n < 0, exiting"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
     _dat = new double[_n];
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N)");
+    Rprintf("Creating DATA(N)");
 #endif
 }
 
@@ -1062,13 +1066,13 @@ VecD::VecD(int n, const double &val) : _n(n), _shallow(false) {
         _dat[i] = val;
     }
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N,double)");
+    Rprintf("Creating DATA(N,double)");
 #endif
 }
 
 VecD::VecD(int n, double *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallow) {
 #ifdef JTP_DEBUG
-    puts("SHALLOW, (N,*ARR)");
+    Rprintf("SHALLOW, (N,*ARR)");
 #endif
 }
 
@@ -1083,7 +1087,7 @@ VecD::VecD(const VecD &A, bool shallow) : _n(A._n), _shallow(shallow) {
         _dat = A._dat;
     }
 #ifdef JTP_DEBUG
-    puts("created with VecD(const VecD &A)");
+    Rprintf("created with VecD(const VecD &A)");
 #endif
 }
 
@@ -1137,8 +1141,8 @@ void VecD::take(VecD &A) {
         delete[] _dat;
     }
     if (A._shallow) {
-        puts("Can't take ownership of memory of a shallow Vec!");
-        exit(1);
+        Rprintf("Can't take ownership of memory of a shallow Vec!");
+        R_ShowMessage("Serious error in obiwarp.");
     }
     _dat = A._dat;
     A._shallow = true;
@@ -1196,11 +1200,11 @@ VecD & VecD::operator=(const double &val) {
 
 VecD & VecD::operator=(VecD &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         if (!_shallow) {
             delete[] _dat;
@@ -1215,11 +1219,11 @@ VecD & VecD::operator=(VecD &A) {
 
 VecD::~VecD( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
     if (!_shallow) {
 #ifdef JTP_DEBUG
-        puts("DELETING DATA");
+        Rprintf("DELETING DATA");
 #endif
         delete[] _dat;
     }
@@ -1464,7 +1468,7 @@ double VecD::_zScore(double mean, double sigma, double x) {
 }
 
 void VecD::mask_as_vec(double return_val, VecI &mask, VecD &out) {
-    if (mask.size() != _n) { puts("mask.size() != this->length()"); exit(1); }
+    if (mask.size() != _n) { Rprintf("mask.size() != this->length()"); R_ShowMessage("Serious error in obiwarp.");}
     double *me = (double*)(*this);
     int *maskptr = (int*)(mask);
     double *tmparr = new double[_n];
@@ -1582,7 +1586,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
     double *tmp_derivs = new double[x.length()];
 
 #ifdef JTP_BOUNDS_CHECK
-    if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
+    if (x.length() != y.length()) { Rprintf("x.length() != y.length()"); R_ShowMessage("Serious error in obiwarp.");}
 #endif
     int length = x.length();
     double del1;
@@ -1609,7 +1613,7 @@ void VecD::chim(VecD &x, VecD &y, VecD &out_derivs) {
             return;
         }
         else {
-            std::cerr << "trying to chim with 0 data points!\n";
+	  Rprintf("trying to chim with 0 data points!\n");
         }
     }
 
@@ -2060,17 +2064,17 @@ void VecD::rsq_slope_intercept(VecD &x, VecD &y, double &rsq, double &slope, dou
 // Constructors:
 VecF::VecF() : _n(0), _shallow(true) {
 #ifdef JTP_DEBUG
-    puts("Creating DATA (NO ARGS)");
+    Rprintf("Creating DATA (NO ARGS)");
 #endif
 }
 
 VecF::VecF(int n) : _n(n), _shallow(false) {
 #ifdef JTP_BOUNDS_CHECK
-    if (n < 0) { puts("n < 0, exiting"); exit(1); }
+    if (n < 0) { Rprintf("n < 0, exiting"); R_ShowMessage("Serious error in obiwarp.");}
 #endif
     _dat = new float[_n];
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N)");
+    Rprintf("Creating DATA(N)");
 #endif
 }
 
@@ -2080,13 +2084,13 @@ VecF::VecF(int n, const float &val) : _n(n), _shallow(false) {
         _dat[i] = val;
     }
 #ifdef JTP_DEBUG
-    puts("Creating DATA(N,float)");
+    Rprintf("Creating DATA(N,float)");
 #endif
 }
 
 VecF::VecF(int n, float *arr, bool shallow) : _n(n), _dat(arr), _shallow(shallow) {
 #ifdef JTP_DEBUG
-    puts("SHALLOW, (N,*ARR)");
+    Rprintf("SHALLOW, (N,*ARR)");
 #endif
 }
 
@@ -2101,7 +2105,7 @@ VecF::VecF(const VecF &A, bool shallow) : _n(A._n), _shallow(shallow) {
         _dat = A._dat;
     }
 #ifdef JTP_DEBUG
-    puts("created with VecF(const VecF &A)");
+    Rprintf("created with VecF(const VecF &A)");
 #endif
 }
 
@@ -2155,8 +2159,8 @@ void VecF::take(VecF &A) {
         delete[] _dat;
     }
     if (A._shallow) {
-        puts("Can't take ownership of memory of a shallow Vec!");
-        exit(1);
+        Rprintf("Can't take ownership of memory of a shallow Vec!");
+        R_ShowMessage("Serious error in obiwarp.");
     }
     _dat = A._dat;
     A._shallow = true;
@@ -2214,11 +2218,11 @@ VecF & VecF::operator=(const float &val) {
 
 VecF & VecF::operator=(VecF &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         if (!_shallow) {
             delete[] _dat;
@@ -2233,11 +2237,11 @@ VecF & VecF::operator=(VecF &A) {
 
 VecF::~VecF( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
     if (!_shallow) {
 #ifdef JTP_DEBUG
-        puts("DELETING DATA");
+        Rprintf("DELETING DATA");
 #endif
         delete[] _dat;
     }
@@ -2482,7 +2486,7 @@ double VecF::_zScore(double mean, double sigma, double x) {
 }
 
 void VecF::mask_as_vec(float return_val, VecI &mask, VecF &out) {
-    if (mask.size() != _n) { puts("mask.size() != this->length()"); exit(1); }
+    if (mask.size() != _n) { Rprintf("mask.size() != this->length()"); R_ShowMessage("Serious error in obiwarp.");}
     float *me = (float*)(*this);
     int *maskptr = (int*)(mask);
     float *tmparr = new float[_n];
@@ -2614,7 +2618,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
     float *tmp_derivs = new float[x.length()];
 
 #ifdef JTP_BOUNDS_CHECK
-    if (x.length() != y.length()) { puts("x.length() != y.length()"); exit(1); }
+    if (x.length() != y.length()) { Rprintf("x.length() != y.length()"); R_ShowMessage("Serious error in obiwarp.");}
 #endif
     int length = x.length();
     float del1;
@@ -2641,7 +2645,7 @@ void VecF::chim(VecF &x, VecF &y, VecF &out_derivs) {
             return;
         }
         else {
-            std::cerr << "trying to chim with 0 data points!\n";
+	  Rprintf("trying to chim with 0 data points!\n");
         }
     }
 

@@ -99,19 +99,27 @@ class MatI {
 
         int& operator()(int m, int n) {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }
         const int& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }
@@ -253,19 +261,27 @@ class MatD {
 
         double& operator()(int m, int n) {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }
         const double& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }
@@ -407,19 +423,27 @@ class MatF {
 
         float& operator()(int m, int n) {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }
         const float& operator()(int m, int n) const {
 #ifdef JTP_BOUNDS_CHECK
-            if (n < 0) { puts("n < 0"); exit(1); }
-            if (n >= _n) { puts("n >= _n"); exit(1); }
-            if (m < 0) { puts("m < 0"); exit(1); }
-            if (m >= _m) { puts("m >= _m"); exit(1); }
+            if (n < 0) { Rprintf("n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (n >= _n) { Rprintf("n >= _n"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m < 0) { Rprintf("m < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
+            if (m >= _m) { Rprintf("m >= _m"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
             return _dat[m*_n + n];
         }

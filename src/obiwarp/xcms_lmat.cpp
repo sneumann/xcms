@@ -9,6 +9,8 @@
 #include "vec.h"
 #include "mat.h"
 
+#include <R.h>
+
 extern "C" {
 
   bool DEBUG = 0;
@@ -98,14 +100,14 @@ extern "C" {
       }
       else {
 	printf("asking for mz value at index: %d (length: %d)\n", mzCoords[i], _mz_vals);
-	exit(1);
+	R_ShowMessage("Serious error in obiwarp.");
       }
     }
     mzVals.take(tmp);
   }
 
   void LMat::tm_axis_vals(VecI &tmCoords, VecF &tmVals) {
-    // puts("tmCoords"); tmCoords.print();
+    // Rprintf("tmCoords"); tmCoords.print();
     VecF tmp(tmCoords.length());
     //printf("tm_vals %d \n", _tm_vals);
     for (int i = 0; i < tmCoords.length(); ++i) {
@@ -115,7 +117,7 @@ extern "C" {
       }
       else {
 	printf("asking for time value at index: %d (length: %d)\n", tmCoords[i], _tm_vals);
-	exit(1);
+	R_ShowMessage("Serious error in obiwarp.");
       }
     }
     tmVals.take(tmp);
