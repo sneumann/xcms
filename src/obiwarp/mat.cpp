@@ -6,6 +6,8 @@
 #include "mat.h"
 #include "vec.h"
 
+#include <R.h>
+
 //#define JTP_BOUNDS_CHECK
 
 //#define JTP_DEBUG
@@ -21,22 +23,23 @@ namespace VEC {
 // Constructors:
 MatI::MatI() : _m(0), _n(0), _dat(0) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatI()!");
+    Rprintf("CONSTRUCTOR MatI()!");
 #endif
 }
 
 MatI::MatI(int m, int n) : _m(m), _n(n), _dat(m*n) {
 #ifdef JTP_BOUNDS_CHECK
-    if (m < 0 || n < 0) { puts("m or n < 0"); exit(1); }
+    if (m < 0 || n < 0) { Rprintf("m or n < 0"); R_ShowMessage("Serious error in obiwarp.");
+}
 #endif
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatI(m,n)!");
+    Rprintf("CONSTRUCTOR MatI(m,n)!");
 #endif
 }
 
 MatI::MatI(int m, int n, const int &val) : _m(m), _n(n), _dat(m*n, val) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatI(m,n,val)!");
+    Rprintf("CONSTRUCTOR MatI(m,n,val)!");
 #endif
 }
 
@@ -72,7 +75,7 @@ void MatI::set(MatI &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("set called!");
+    Rprintf("set called!");
 #endif
 }
 
@@ -89,7 +92,7 @@ void MatI::take(MatI &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("take called!");
+    Rprintf("take called!");
 #endif
 }
 
@@ -119,7 +122,7 @@ void MatI::copy(MatI &receiver, bool shallow) const {
     receiver._n = _n;
     _dat.copy(receiver._dat, shallow);
 #ifdef JTP_DEBUG
-    puts("copy called!");
+    Rprintf("copy called!");
 #endif
 }
 
@@ -202,7 +205,7 @@ void MatI::set_from_ascii(const char *file, bool without_axes) {
     }
     else {
         printf("Couldn't open %s\n", file);
-        exit(1);
+        R_ShowMessage("Serious error in obiwarp.");
     }
 }
 
@@ -215,11 +218,11 @@ MatI & MatI::operator=(const int &val) {
 
 MatI & MatI::operator=(MatI &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         _m = A._m;
         _n = A._n;
@@ -230,7 +233,7 @@ MatI & MatI::operator=(MatI &A) {
 
 MatI::~MatI( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
 }
 
@@ -413,11 +416,11 @@ void MatI::write(const char *file) {
         fwrite((int*)(_dat), sizeof(int), _m*_n, fh);
         fclose(fh);
     }
-    else {
-        fwrite(&_m, sizeof(int), 1, stdout);
-        fwrite(&_n, sizeof(int), 1, stdout);
-        fwrite((int*)(_dat), sizeof(int), _m*_n, stdout);
-    }
+    // else {
+    //     fwrite(&_m, sizeof(int), 1, stdout);
+    //     fwrite(&_n, sizeof(int), 1, stdout);
+    //     fwrite((int*)(_dat), sizeof(int), _m*_n, stdout);
+    // }
 }
 
 
@@ -429,22 +432,22 @@ void MatI::write(const char *file) {
 // Constructors:
 MatD::MatD() : _m(0), _n(0), _dat(0) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatD()!");
+    Rprintf("CONSTRUCTOR MatD()!");
 #endif
 }
 
 MatD::MatD(int m, int n) : _m(m), _n(n), _dat(m*n) {
 #ifdef JTP_BOUNDS_CHECK
-    if (m < 0 || n < 0) { puts("m or n < 0"); exit(1); }
+    if (m < 0 || n < 0) { Rprintf("m or n < 0"); R_ShowMessage("Serious error in obiwarp.");
 #endif
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatD(m,n)!");
+    Rprintf("CONSTRUCTOR MatD(m,n)!");
 #endif
 }
 
 MatD::MatD(int m, int n, const double &val) : _m(m), _n(n), _dat(m*n, val) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatD(m,n,val)!");
+    Rprintf("CONSTRUCTOR MatD(m,n,val)!");
 #endif
 }
 
@@ -480,7 +483,7 @@ void MatD::set(MatD &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("set called!");
+    Rprintf("set called!");
 #endif
 }
 
@@ -497,7 +500,7 @@ void MatD::take(MatD &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("take called!");
+    Rprintf("take called!");
 #endif
 }
 
@@ -527,7 +530,7 @@ void MatD::copy(MatD &receiver, bool shallow) const {
     receiver._n = _n;
     _dat.copy(receiver._dat, shallow);
 #ifdef JTP_DEBUG
-    puts("copy called!");
+    Rprintf("copy called!");
 #endif
 }
 
@@ -610,7 +613,7 @@ void MatD::set_from_ascii(const char *file, bool without_axes) {
     }
     else {
         printf("Couldn't open %s\n", file);
-        exit(1);
+        R_ShowMessage("Serious error in obiwarp.");
     }
 }
 
@@ -623,11 +626,11 @@ MatD & MatD::operator=(const double &val) {
 
 MatD & MatD::operator=(MatD &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         _m = A._m;
         _n = A._n;
@@ -638,7 +641,7 @@ MatD & MatD::operator=(MatD &A) {
 
 MatD::~MatD( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
 }
 
@@ -821,11 +824,11 @@ void MatD::write(const char *file) {
         fwrite((double*)(_dat), sizeof(double), _m*_n, fh);
         fclose(fh);
     }
-    else {
-        fwrite(&_m, sizeof(int), 1, stdout);
-        fwrite(&_n, sizeof(int), 1, stdout);
-        fwrite((double*)(_dat), sizeof(double), _m*_n, stdout);
-    }
+    // else {
+    //     fwrite(&_m, sizeof(int), 1, stdout);
+    //     fwrite(&_n, sizeof(int), 1, stdout);
+    //     fwrite((double*)(_dat), sizeof(double), _m*_n, stdout);
+    // }
 }
 
 
@@ -837,22 +840,22 @@ void MatD::write(const char *file) {
 // Constructors:
 MatF::MatF() : _m(0), _n(0), _dat(0) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatF()!");
+    Rprintf("CONSTRUCTOR MatF()!");
 #endif
 }
 
 MatF::MatF(int m, int n) : _m(m), _n(n), _dat(m*n) {
 #ifdef JTP_BOUNDS_CHECK
-    if (m < 0 || n < 0) { puts("m or n < 0"); exit(1); }
+    if (m < 0 || n < 0) { Rprintf("m or n < 0"); R_ShowMessage("Serious error in obiwarp.");
 #endif
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatF(m,n)!");
+    Rprintf("CONSTRUCTOR MatF(m,n)!");
 #endif
 }
 
 MatF::MatF(int m, int n, const float &val) : _m(m), _n(n), _dat(m*n, val) {
 #ifdef JTP_DEBUG
-    puts("CONSTRUCTOR MatF(m,n,val)!");
+    Rprintf("CONSTRUCTOR MatF(m,n,val)!");
 #endif
 }
 
@@ -888,7 +891,7 @@ void MatF::set(MatF &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("set called!");
+    Rprintf("set called!");
 #endif
 }
 
@@ -905,7 +908,7 @@ void MatF::take(MatF &A) {
     _m = A._m;
     _n = A._n;
 #ifdef JTP_DEBUG
-    puts("take called!");
+    Rprintf("take called!");
 #endif
 }
 
@@ -935,7 +938,7 @@ void MatF::copy(MatF &receiver, bool shallow) const {
     receiver._n = _n;
     _dat.copy(receiver._dat, shallow);
 #ifdef JTP_DEBUG
-    puts("copy called!");
+    Rprintf("copy called!");
 #endif
 }
 
@@ -1018,7 +1021,7 @@ void MatF::set_from_ascii(const char *file, bool without_axes) {
     }
     else {
         printf("Couldn't open %s\n", file);
-        exit(1);
+        R_ShowMessage("Serious error in obiwarp.");
     }
 }
 
@@ -1031,11 +1034,11 @@ MatF & MatF::operator=(const float &val) {
 
 MatF & MatF::operator=(MatF &A) {
 #ifdef JTP_DEBUG
-    puts("IN ASSIGNMENT OP tOP");
+    Rprintf("IN ASSIGNMENT OP tOP");
 #endif
     if (this != &A) {
 #ifdef JTP_DEBUG
-        puts("IN ASSIGNMENT OP MID");
+        Rprintf("IN ASSIGNMENT OP MID");
 #endif
         _m = A._m;
         _n = A._n;
@@ -1046,7 +1049,7 @@ MatF & MatF::operator=(MatF &A) {
 
 MatF::~MatF( ) {
 #ifdef JTP_DEBUG
-    puts("DESTRUCTOR");
+    Rprintf("DESTRUCTOR");
 #endif
 }
 
@@ -1239,11 +1242,11 @@ void MatF::write(const char *file) {
         fwrite((float*)(_dat), sizeof(float), _m*_n, fh);
         fclose(fh);
     }
-    else {
-        fwrite(&_m, sizeof(int), 1, stdout);
-        fwrite(&_n, sizeof(int), 1, stdout);
-        fwrite((float*)(_dat), sizeof(float), _m*_n, stdout);
-    }
+    // else {
+    //     fwrite(&_m, sizeof(int), 1, stdout);
+    //     fwrite(&_n, sizeof(int), 1, stdout);
+    //     fwrite((float*)(_dat), sizeof(float), _m*_n, stdout);
+    // }
 }
 
 // END TEMPLATE
