@@ -289,34 +289,34 @@ double computeAnySampVar(const std::list<double> & x) {
 
 void printvector(std::vector<int> & myvec) {
       for (size_t i = 0; i < myvec.size(); i++) {
-        cout << myvec.at(i) << "  ";
+        Rprintf("%d ", myvec.at(i));
                 }
-        cout << "\n";
+        Rprintf("\n");
 }
 
 void printList(const std::list<int> & mylist) {
         std::list<int>::const_iterator it;
             for (it = mylist.begin(); it != mylist.end(); ++it) {
-                        cout << *it  << "  ";
+                        Rprintf("%d  ", *it);
                             }
-                cout << "\n";
+                Rprintf("\n");
 }
 
 void printList(const std::list<double> & mylist) {
         std::list<double>::const_iterator it;
             for (it = mylist.begin(); it != mylist.end(); ++it) {
-                        cout << *it  << "  ";
+                        Rprintf("%f ", *it);
                             }
-                cout << "\n";
+                Rprintf("\n");
 }
 
 
 void printvector(const std::vector<double> & myvec) {
       for (size_t i = 0; i < myvec.size(); i++) {
               Rprintf("%f", myvec.at(i));
-              cout << " " << endl;
-                }
-        cout << "\n";
+              Rprintf(" \n");
+                  }
+        Rprintf("\n");
 }
 
 int lowerBound(double val, std::vector<double> mzvals, int first, int length){
