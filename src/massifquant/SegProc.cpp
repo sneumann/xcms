@@ -285,7 +285,7 @@ void SegProc::solderSegs(TrMgr & busybody) {
     //erase the PicElements after the iteration has happened
     //cout << "The memory corruption begins here" << endl;
     busybody.erasePicElements(erasedPicIdx);
-    cout  << "\n The number of ROI'S that collapsed into a larger ROI: " << j << endl;
+    Rprintf("\n The number of ROI'S that collapsed into a larger ROI: %d\n",j);
     //cout << "erasedPicIdx.back: " << erasedPicIdx.back() << endl;
 }
 

@@ -523,20 +523,20 @@ void VecI::min_max(int &mn, int &mx) {
 
 void VecI::print(bool without_length ) {
     if (!without_length) {
-        std::cout << _n << std::endl;
+        //std::cout << _n << std::endl;
     }
     int i;
     for (i = 0; i < _n - 1; ++i) {
-        std::cout << _dat[i] << " ";
+        //std::cout << _dat[i] << " ";
     }
-    std::cout << _dat[i]; // the last one
-    std::cout << std::endl;
+    //std::cout << _dat[i]; // the last one
+    //std::cout << std::endl;
 }
 
 void VecI::print(const char *filename, bool without_length) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_length);
     fh.close();
@@ -1540,20 +1540,20 @@ void VecD::min_max(double &mn, double &mx) {
 
 void VecD::print(bool without_length ) {
     if (!without_length) {
-        std::cout << _n << std::endl;
+        //std::cout << _n << std::endl;
     }
     int i;
     for (i = 0; i < _n - 1; ++i) {
-        std::cout << _dat[i] << " ";
+        //std::cout << _dat[i] << " ";
     }
-    std::cout << _dat[i]; // the last one
-    std::cout << std::endl;
+    //std::cout << _dat[i]; // the last one
+    //std::cout << std::endl;
 }
 
 void VecD::print(const char *filename, bool without_length) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_length);
     fh.close();
@@ -2558,20 +2558,20 @@ void VecF::min_max(float &mn, float &mx) {
 
 void VecF::print(bool without_length ) {
     if (!without_length) {
-        std::cout << _n << std::endl;
+        //std::cout << _n << std::endl;
     }
     int i;
     for (i = 0; i < _n - 1; ++i) {
-        std::cout << _dat[i] << " ";
+        //std::cout << _dat[i] << " ";
     }
-    std::cout << _dat[i]; // the last one
-    std::cout << std::endl;
+    //std::cout << _dat[i]; // the last one
+    //std::cout << std::endl;
 }
 
 void VecF::print(const char *filename, bool without_length) {
     std::ofstream fh(filename);
     if (!fh) {
-        std::cout << "Error opening file " << filename << std::endl;
+        //std::cout << "Error opening file " << filename << std::endl;
     }
     this->print(fh, without_length);
     fh.close();
@@ -2580,13 +2580,13 @@ void VecF::print(const char *filename, bool without_length) {
 void VecF::print_tm() {
     int i;
 
-    std::cout << _n << std::endl;
+    //std::cout << _n << std::endl;
 
     for (i = 0; i < _n - 1; ++i) {
-        std::cout << _dat[i] << " ";
+        //std::cout << _dat[i] << " ";
     }
-    std::cout << _dat[i];
-    std::cout << std::endl;
+    //std::cout << _dat[i];
+    //std::cout << std::endl;
 }
 
 void VecF::print(std::ostream &fout, bool without_length) {
