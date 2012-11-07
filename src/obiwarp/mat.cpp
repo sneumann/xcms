@@ -45,13 +45,13 @@ MatI::MatI(int m, int n, const int &val) : _m(m), _n(n), _dat(m*n, val) {
 
 MatI::MatI(int m, int n, int *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr,shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatI(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatI(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
 MatI::MatI(const MatI &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatI(MatI &A,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatI(MatI &A,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
@@ -204,7 +204,7 @@ void MatI::set_from_ascii(const char *file, bool without_axes) {
         fh.close();
     }
     else {
-        printf("Couldn't open %s\n", file);
+        Rprintf("Couldn't open %s\n", file);
         R_ShowMessage("Serious error in obiwarp.");
     }
 }
@@ -453,13 +453,13 @@ MatD::MatD(int m, int n, const double &val) : _m(m), _n(n), _dat(m*n, val) {
 
 MatD::MatD(int m, int n, double *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr,shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatD(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatD(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
 MatD::MatD(const MatD &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatD(MatD &A,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatD(MatD &A,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
@@ -612,7 +612,7 @@ void MatD::set_from_ascii(const char *file, bool without_axes) {
         fh.close();
     }
     else {
-        printf("Couldn't open %s\n", file);
+        Rprintf("Couldn't open %s\n", file);
         R_ShowMessage("Serious error in obiwarp.");
     }
 }
@@ -861,13 +861,13 @@ MatF::MatF(int m, int n, const float &val) : _m(m), _n(n), _dat(m*n, val) {
 
 MatF::MatF(int m, int n, float *arr, bool shallow) : _m(m), _n(n), _dat(m*n,arr,shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatF(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatF(m,n,*arr,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
 MatF::MatF(const MatF &A, bool shallow) : _m(A._m), _n(A._n), _dat(A._dat, shallow) {
 #ifdef JTP_DEBUG
-    printf("CONSTRUCTOR MatF(MatF &A,shallow) shallow=%d!\n", this->shallow());
+    Rprintf("CONSTRUCTOR MatF(MatF &A,shallow) shallow=%d!\n", this->shallow());
 #endif
 }
 
@@ -1020,7 +1020,7 @@ void MatF::set_from_ascii(const char *file, bool without_axes) {
         fh.close();
     }
     else {
-        printf("Couldn't open %s\n", file);
+        Rprintf("Couldn't open %s\n", file);
         R_ShowMessage("Serious error in obiwarp.");
     }
 }
