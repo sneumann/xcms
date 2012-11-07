@@ -69,24 +69,24 @@ extern "C" {
     int i;
 
     // The TIME vals:
-    printf("%d\n", _tm_vals);  // num of vals
+    Rprintf("%d\n", _tm_vals);  // num of vals
     for (i = 0; i < _tm_vals - 1; ++i) {
-      printf("%f ",  tmtmp[i]);
+      Rprintf("%f ",  tmtmp[i]);
     }
-    printf("%f\n",  tmtmp[i]);  // the last one
+    Rprintf("%f\n",  tmtmp[i]);  // the last one
 
     // The M/Z vals:
-    printf("%d\n", _mz_vals);  // num of vals
+    Rprintf("%d\n", _mz_vals);  // num of vals
     for (i = 0; i < _mz_vals - 1; ++i) {
-      printf("%f ",  mztmp[i]);
+      Rprintf("%f ",  mztmp[i]);
     }
-    printf("%f\n",  mztmp[i]);  // the last one
+    Rprintf("%f\n",  mztmp[i]);  // the last one
     for (int m = 0; m < _tm_vals; ++m) {
       int n;
       for (n = 0; n < _mz_vals - 1; ++n) {
-	printf("%f ", mattmp[m*_mz_vals+n]);
+	Rprintf("%f ", mattmp[m*_mz_vals+n]);
       }
-      printf("%f\n", mattmp[m*_mz_vals+n]);
+      Rprintf("%f\n", mattmp[m*_mz_vals+n]);
     }
 
   }
@@ -99,7 +99,7 @@ extern "C" {
 	tmp[i] = (*_mz)[mzCoords[i]];
       }
       else {
-	printf("asking for mz value at index: %d (length: %d)\n", mzCoords[i], _mz_vals);
+	Rprintf("asking for mz value at index: %d (length: %d)\n", mzCoords[i], _mz_vals);
 	R_ShowMessage("Serious error in obiwarp.");
       }
     }
@@ -116,7 +116,7 @@ extern "C" {
 	//printf("tmCoords[i] %d val out %f\n", tmCoords[i], tmp[i]);
       }
       else {
-	printf("asking for time value at index: %d (length: %d)\n", tmCoords[i], _tm_vals);
+	Rprintf("asking for time value at index: %d (length: %d)\n", tmCoords[i], _tm_vals);
 	R_ShowMessage("Serious error in obiwarp.");
       }
     }
