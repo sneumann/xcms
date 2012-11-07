@@ -788,7 +788,7 @@ void DynProg::score(MatF &mCoords, MatF &nCoords, MatF &scores, const char *type
     score_mutual_info(mCoords,nCoords,scores,mi_num_bins);
   }
   else {
-    printf("Unrecognized score type!: %s\n", type);
+    Rprintf("Unrecognized score type!: %s\n", type);
     R_ShowMessage("Serious error in obiwarp.");
   }
 }

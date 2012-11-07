@@ -71,7 +71,7 @@ struct mzROIStruct * checkmzROIBufSize(struct mzROIStruct *mzROI, const unsigned
         newLength= newmzROILength;
 
 #ifdef DEBUG
-    printf("realloc mzROI \n");
+    Rprintf("realloc mzROI \n");
 #endif
 
     mzROI = (struct mzROIStruct *) realloc(mzROI, newLength * sizeof(struct mzROIStruct));
@@ -94,7 +94,7 @@ struct mzROIStruct * checkmzvalBufSize(struct mzROIStruct *mzval, const unsigned
        newLength= newmzvalLength;
 
 #ifdef DEBUG
-       printf("realloc mzval \n");
+       Rprintf("realloc mzval \n");
 #endif
 
     mzval = (struct mzROIStruct *) realloc(mzval, newLength * sizeof(struct mzROIStruct));
@@ -596,8 +596,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
     if (scanbuf->thisScanLength > 0)
     {
         #ifdef DEBUG
-         printf("ScanLength %d ",scanbuf->thisScanLength);
-         printf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z ROI's, %d ROI's completed.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf->thisScanLength,mzLength.mzval,mzLength.mzROI);
+         Rprintf("ScanLength %d ",scanbuf->thisScanLength);
+         Rprintf("Scan Nr. %d of %d (%d %%) %d peaks -- working at %d m/z ROI's, %d ROI's completed.\n", ctScan, scanrangeTo,  (int)100.0*ctScan/scanrangeTo,scanbuf->thisScanLength,mzLength.mzval,mzLength.mzROI);
         #endif
 
       int p;
