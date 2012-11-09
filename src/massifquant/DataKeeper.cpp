@@ -31,9 +31,9 @@ DataKeeper::DataKeeper(const char* dotplms1) {
 DataKeeper::~DataKeeper() {
 }
 
-/*void DataKeeper::assign_values(float64* data, uint32 data_len, vector<double> & vec, int vec_len) {
+/*void DataKeeper::assign_values(float64* data, uint32_t data_len, vector<double> & vec, int vec_len) {
 
-    uint32 i;
+    uint32_t i;
     //vec.resize(data_len + vec_len);
     for (i = 0; i < data_len; ++i) {
         vec.push_back(data[i]);
@@ -191,7 +191,7 @@ void DataKeeper::privGetScanXcms(int scan, std::vector<double> & mzScan,
     }
 }
 
-uint32 DataKeeper::getTotalScanNumbers() {
+uint32_t DataKeeper::getTotalScanNumbers() {
     return num_scans;
 }
 
