@@ -1,34 +1,14 @@
 #ifndef DK_h
 #define DK_h
 
+#include <stdint.h>
+
 #ifndef WIN32
 //------------Unix------------
 #include <sys/types.h>
 #define MKDIR(path,mask) mkdir(path,mask)
 #define GETCWD(buf,len)  getcwd(buf,len)
 #define OPEN(buf,mode,access) open(buf,mode,access)
-//------------Unix: 32-bit/64-bit compatibility------------
-typedef __int64_t     int64;
-typedef __uint64_t    uint64;
-typedef __int32_t     int32;
-typedef __uint32_t    uint32;
-typedef __int16_t     int16;
-typedef __uint16_t    uint16;
-typedef char          int8;
-typedef unsigned char uint8;
-//typedef double        float64;
-#else
-
-//------------Win: 32-bit/64-bit compatibility------------
-typedef __int64            int64;
-typedef unsigned __int64   uint64;
-typedef __int32            int32;
-typedef unsigned int       uint32;
-typedef __int16            int16;
-typedef unsigned __int16   uint16;
-typedef __int8             int8;
-typedef unsigned __int8    uint8;
-//typedef __float64          float64;
 #endif
 
 //outside libraries
@@ -47,7 +27,7 @@ const int RANGEMAXNUM = 6;
 class DataKeeper {
 
     private:
-        uint32 num_scans;
+        uint32_t num_scans;
         std::vector<int> scan_idx;
         std::vector<double> rt; //a single big array
         std::vector<double> mz; //an
@@ -71,7 +51,7 @@ class DataKeeper {
 void printList(const std::list<double> & mylist);
 
 /*not working on windows build of bioconductor*/
-//void assign_values(float64* data, uint32 data_len, std::vector<double> & vec, int vec_len);
+//void assign_values(float64* data, uint32_t data_len, std::vector<double> & vec, int vec_len);
 
         std::vector<double> privGetMZScan(int s);
         std::vector<double> privGetIScan(int s);
@@ -89,7 +69,7 @@ void printList(const std::list<double> & mylist);
         DataKeeper(const char* dotplms1);
         ~DataKeeper();
 
-        uint32 getTotalScanNumbers();
+        uint32_t getTotalScanNumbers();
         int getTotalCentroidCount();
         double getInitMZS2();
         double getInitIS2();
