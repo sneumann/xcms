@@ -51,6 +51,12 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     double ir = dkeep.getInitIS();
     double * pscantime = REAL(scantime);
 
+    //model breaks down otherwise
+    if (mzq == 0) {
+        mzq = 1e-6;
+        mzr = sqrt(mzq);
+    }
+
     if ((scanrangeFrom <  firstScan) || (scanrangeFrom > totalScanNums) || (scanrangeTo < firstScan) || (scanrangeTo > totalScanNums))
         error("Error in scanrange \n");
 
@@ -152,7 +158,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     }
 
     //busybody.writePICsToFile();
-    Rprintf("Number detected: %d\n", busybody.getPicCounts());
+    //Rprintf("Number detected: %d\n", busybody.getPicCounts());
 
     UNPROTECT(2);//peaklist, list_names
 

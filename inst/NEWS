@@ -5,6 +5,11 @@ UPDATED FEATURES:
      o Behind the scenes xcms now uses the xcmsSource class to read raw data.
        This allows e.g. to write a class that pulls raw data 
        from e.g. a database
+BUG FIXES
+     o massifquant: simplified logic structure of Tracker::claimDataIdx
+     resolved failure on new test case. 
+     o massifquant: reporting features data structure compatible with 
+     multiple sample comparison within XCMS.
 
 CHANGES IN VERSION 1.35.1
 --------------------------
