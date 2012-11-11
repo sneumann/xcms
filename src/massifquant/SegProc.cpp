@@ -321,7 +321,7 @@ void SegProc::segsToFile(TrMgr & busybody) {
             std::list<int>::iterator it_c = icentList.begin();
             //write data to file
             for(it_s = iscanList.begin(); it_s != iscanList.end(); ++it_s) {
-                scan_idx << *it_s + 1 << endl;
+                scan_idx << *it_s << endl;
                 cent_idx << *it_c  + 1 << endl;
                 ++it_c;
             }

@@ -1813,11 +1813,11 @@ setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
 
 setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
 
-setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
                                                        prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                        fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
                                                        sleep=0, verbose.columns=FALSE, criticalValue = 1.7321, consecMissedLimit = 2,
-                                                       unions = 0, checkBack = 1, withWave = 1) {
+                                                       unions = 1, checkBack = 0, withWave = 0) {
 
     ##keeep this check since massifquant doesn't check internally
     if (!isCentroided(object))
@@ -1825,8 +1825,8 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth
 
     cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
     ##mqstart = proc.time();
-    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = prefilter[1], criticalVal = criticalValue,
-    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack);
+    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
+    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
     ##mqfinish = proc.time() - mqstart;
     ##cat("The finishing time of massifquant\n", mqfinish);
 
@@ -1836,7 +1836,7 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth
         scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
     }
     else {
-        basenames <- c("mz","mzmin","mzmax","scmin","scmax","length", "area")
+        basenames <- c("mz","mzmin","mzmax","rtmin","rtmax","rt", "into")
         if (length(massifquantROIs) == 0) {
             cat("\nNo peaks found !\n");
             nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)));
@@ -1847,8 +1847,16 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=25, peakwidth
         p <- t(sapply(massifquantROIs, unlist));
         colnames(p) <- basenames;
 
-        uorder <- order(p[,"area"], decreasing=TRUE);
-        pm <- as.matrix(p[,c("mzmin","mzmax","scmin","scmax"),drop=FALSE]);
+        #calculate median index
+        p[,"rt"] = as.integer(p[,"rtmin"] + ( (p[,"rt"] + 1) / 2 ) - 1); 
+        #convert from index into actual time
+        p[,"rtmin"] = object@scantime[p[,"rtmin"]]; 
+        p[,"rtmax"] = object@scantime[p[,"rtmax"]]; 
+        p[,"rt"] = object@scantime[p[,"rt"]]; 
+
+        uorder <- order(p[,"into"], decreasing=TRUE);
+        pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]);
+
         uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
         featlist <- p[uindex,,drop=FALSE];
         cat("\n",dim(featlist)[1]," Peaks.\n");
