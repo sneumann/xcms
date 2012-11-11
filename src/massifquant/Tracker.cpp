@@ -264,36 +264,14 @@ int Tracker::claimDataIdx(const std::vector<double> & mData,
      upperList.push_back(right);
   }
 
-  unsigned int lpos = lowerBound(left, mData, 0, mData.size());
-  unsigned int hpos = upperBound(right, mData, lpos, mData.size() - lpos);
-
+  std::vector<double>::const_iterator low,up;
+  low = lower_bound(mData.begin(), mData.end(), left);
+  up = upper_bound(mData.begin(), mData.end(), right);
   std::vector<int> neighborIdxR;
-
-  if (lpos <  mData.size() && lpos < hpos) {
-      if (hpos >= mData.size()) {
-          hpos = mData.size() - 1;
-          std::vector<int> uCandIdxR = createSequence(lpos, hpos, 1);
-          std::vector<double> umSubDataR = copySubIdx(mData, uCandIdxR);
-          std::vector<int> uLeftLogic = umSubDataR >= left;
-          std::vector<int> uRightLogic = umSubDataR <= right;
-          std::vector<int> uTwos = uLeftLogic + uRightLogic;
-          std::vector<int> subNeighborIdxR = uTwos == DIMV;
-
-          neighborIdxR = copySubIdx(uCandIdxR, subNeighborIdxR);
-          //cout << " Ever get here? Yes" << endl;
-          if (neighborIdxR.size() == 0) {
-	    Rprintf("Upper Edge case deleted\n");
-             predDist.push_back(-1);
-             centIdx = -1;
-             return centIdx;
-         }
-     }
-     else if (hpos != lpos) {
-         hpos -= 1;
-     }
-
-     neighborIdxR = createSequence(lpos, hpos, 1);
-
+  int lowint = int(low - mData.begin());
+  int upint = int(up - mData.begin());
+  if (lowint != upint) {
+      neighborIdxR = createSequence(lowint, upint - 1, 1);
   }
   else {
       predDist.push_back(-1);
@@ -328,10 +306,10 @@ std::vector<double> Tracker::getFeatureInfo(double * scanTime) {
     featInfo[3] = scanList.size();
     //5-scan min
     featInfo[4]  = double(*min_element(scanList.begin(), scanList.end()));
-    //featInfo[4]  = scanTime[*min_element(scanList.begin(), scanList.end()) - 1];
+    //featInfo[4]  = scanTime[*min_element(scanList.begin(), scanList.end())];
     //6-scan max
     featInfo[5] = double(*max_element(scanList.begin(), scanList.end()));
-    //featInfo[5] = scanTime[*max_element(scanList.begin(), scanList.end()) - 1];
+    //featInfo[5] = scanTime[*max_element(scanList.begin(), scanList.end())];
     //7-integrated (not normalized intensity)
     std::list<double>::iterator it_i;
     double area = 0;
