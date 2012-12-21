@@ -1,3 +1,41 @@
+xcmsParallelSetup <- function(nSlaves) {
+  runParallel <- 0
+  parMode <- ""
+  snowclust <- NULL
+  
+  if (nSlaves > 1) {
+    ## If MPI is available ...
+    rmpi = "Rmpi"
+    opt.warn <- options("warn")$warn
+    options("warn" = -1)
+    if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
+      if (is.loaded('mpi_initialize')) {
+        mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
+        ## If there are multiple slaves AND this process is the master,
+        ## run in parallel.
+        if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0)) {
+          runParallel <- 1
+          parMode <- "MPI"
+        }
+      }
+    } else {
+      ## try local sockets using snow package
+      snow = "snow"
+      if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
+        cat("Starting snow cluster with",nSlaves,"local sockets.\n")
+        snowclust <- makeCluster(nSlaves, type = "SOCK")
+        runParallel <- 1
+        parMode <- "SOCK"
+      }
+    }
+    options("warn" = opt.warn)
+  }
+  return (list(runParallel=runParallel,
+               parMode=parMode,
+               snowclust=snowclust))
+}
+
+
 
 ##
 ## Modified papply function from package papply 0.2 (Duane Currie):
@@ -261,14 +299,14 @@ findPeaksPar <- function(arg) {
     method <- paste("findPeaks", method, sep=".")
 
     xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0,
-                    includeMSn=params$includeMSn, scanrange=params$scanrange)
+                    includeMSn=params$includeMSn, mslevel=params$mslevel, scanrange=params$scanrange)
     if(params$lockMassFreq == TRUE){
         xRaw<-stitch(xRaw, AutoLockMass(xRaw))
     }
     params["object"] <- xRaw
 
     ## remove parameters which are not used by method() from the parameter list
-    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <- NULL
+    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <-  params["mslevel"] <- NULL
 
     peaks <- do.call(method, params)
 
