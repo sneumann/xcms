@@ -669,10 +669,30 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
                                                          max = 5, snthresh = 10, step = 0.1,
                                                          steps = 2, mzdiff = 0.8 - step*steps,
                                                          index = FALSE, sleep = 0,
-                                                         verbose.columns = FALSE) {
+                                                         verbose.columns = FALSE,
+                                                         scanrange= numeric()) {
 
     profFun <- match.profFun(object)
 
+    scanrange.old <- scanrange
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(object@scantime))
+    else
+        scanrange <- range(scanrange)
+
+    scanrange[1] <- max(1,scanrange[1])
+    scanrange[2] <- min(length(object@scantime),scanrange[2])
+
+    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
+        cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+
+    if (!missing(scanrange)) {
+        ## Scanrange filtering
+        keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+        object <- split(object, f=keepidx)[["TRUE"]]
+    }
+
+    
 ### Create EIC buffer
     mrange <- range(object@env$mz)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)

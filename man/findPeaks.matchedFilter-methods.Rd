@@ -15,7 +15,7 @@
   \code{
     findPeaks.matchedFilter(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
     snthresh = 10, step = 0.1, steps = 2, mzdiff = 0.8 - step*steps,
-    index = FALSE, sleep = 0)
+    index = FALSE, sleep = 0, scanrange= numeric())
   }
 }
 }}
@@ -44,6 +44,7 @@
   \item{sleep}{
     number of seconds to pause between plotting peak finding cycles
   }
+  \item{scanrange}{scan range to process}
 }
 \value{
   A matrix with columns:
