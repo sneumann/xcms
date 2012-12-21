@@ -586,8 +586,6 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     rownames(peakmat) <- NULL
     retrange <- range(peakmat[,"rt"])
 
-    minpeakmat <- min(classnum)/2
-
     mass <- seq(peakmat[1,"mz"], peakmat[nrow(peakmat),"mz"] + mzwid, by = mzwid/2)
     masspos <- findEqualGreaterM(peakmat[,"mz"], mass)
 
@@ -604,7 +602,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
         }
         startidx <- masspos[i]
         endidx <- masspos[i+2]-1
-        if (endidx - startidx + 1 < minpeakmat)
+        if (endidx - startidx < 0)
             next
         speakmat <- peakmat[startidx:endidx,,drop=FALSE]
         den <- density(speakmat[,"rt"], bw, from = retrange[1]-3*bw, to = retrange[2]+3*bw)
