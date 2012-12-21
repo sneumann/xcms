@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.35.3
+--------------------------
+BUG FIXES
+  o if group.density was used with very low minfrac settings (< 0.5) it did not return all feature groups, 
+    but only those that include features from at least 50% of samples in a group. This limitation was removed.
+
+
 CHANGES IN VERSION 1.35.2
 --------------------------
 
