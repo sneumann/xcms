@@ -626,7 +626,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", classnames)
 
-    groupmat <- groupmat[seq(length = num),]
+    groupmat <- groupmat[seq(length = num),,drop=FALSE]
     groupindex <- groupindex[seq(length = num)]
 
     ## Remove groups that overlap with more "well-behaved" groups
@@ -636,7 +636,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, m
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)
 
-    groups(object) <- groupmat[uindex,]
+    groups(object) <- groupmat[uindex,,drop=FALSE]
     groupidx(object) <- groupindex[uindex]
 
     object
