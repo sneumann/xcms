@@ -101,45 +101,18 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         }
     }
 
-    runParallel <- 0
-    parMode <- ""
-
-    if (nSlaves > 1) {
-        ## If MPI is available ...
-        rmpi = "Rmpi"
-        opt.warn <- options("warn")$warn
-        options("warn" = -1)
-        if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
-            if (is.loaded('mpi_initialize')) {
-                mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
-                ## If there are multiple slaves AND this process is the master,
-                ## run in parallel.
-                if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0)) {
-                    runParallel <- 1
-                    parMode <- "MPI"
-                }
-            }
-        } else {
-            ## try local sockets using snow package
-            snow = "snow"
-            if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
-                cat("Starting snow cluster with",nSlaves,"local sockets.\n")
-                snowclust <- makeCluster(nSlaves, type = "SOCK")
-                runParallel <- 1
-                parMode <- "SOCK"
-            }
-        }
-        options("warn" = opt.warn)
-    }
-
-    if (runParallel==1) { ## ... we run in parallel mode
-
+    parmode <- xcmsParallelSetup(nSlaves=nSlaves)
+    runParallel <- parmode$runParallel
+    parMode <- parmode$parMode    
+    snowclust <- parmode$snowclust
+    
         params <- list(...);
         params$profmethod <- profmethod;
         params$profparam <- profparam;
         params$includeMSn <- includeMSn;
         params$scanrange <- scanrange;
-        params$mslevel <- mslevel;
+
+        params$mslevel <- mslevel; ## Actually, this is 
         params$lockMassFreq <- lockMassFreq;
 
         ft <- cbind(file=files,id=1:length(files))
@@ -148,12 +121,13 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         if (parMode == "MPI") {
             res <- xcmsPapply(argList, findPeaksPar)
             mpi.close.Rslaves()
-        } else {
-            if (parMode == "SOCK") {
+        } else if (parMode == "SOCK") {
                 res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
                 stopCluster(snowclust)
+            } else {
+              ## serial mode
+              res <- lapply(argList, findPeaksPar)
             }
-        }
 
         peaklist <- lapply(res, function(x) x$peaks)
         rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
@@ -161,7 +135,9 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             object@dataCorrection[1:length(files)]<-1
         }
 
-    } else {
+
+
+if (FALSE)  {
 
         peaklist <- vector("list", length(files))
 
@@ -1414,7 +1390,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks.chrom", "xcmsSet", function(object) {
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=0) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
