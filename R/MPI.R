@@ -315,6 +315,60 @@ findPeaksPar <- function(arg) {
     list(scantime=xRaw@scantime, peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
 }
 
+
+##
+## findPeaks slave function for parallel execution
+##
+
+fillPeaksChromPar <- function(arg) {
+
+  ## Debugging:
+  if (FALSE) 
+    arg <- argList[[3]]
+  
+  require(xcms)
+
+  params <- arg$params
+  myID <- arg$id
+  cat(arg$file, "\n")
+  
+  prof <- params$prof
+  rtcor <- params$rtcor
+  peakrange <- params$peakrange
+  gvals <- params$gvals
+  
+  lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
+  
+  if(length(params$dataCorrection) > 1){
+    if(params$dataCorrection[i] == 1)
+      lcraw <- stitch(lcraw, AutoLockMass(lcraw))
+  }
+  
+  if (exists("params$polarity") && length(params$polarity) >0) {
+    if (length(params$polarity) >0) {
+      ## Retain wanted polarity only
+      lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+      lcraw <- lcraws[[object@polarity]]
+    }
+  }
+    
+    if (length(prof) > 2)
+      lcraw@profparam <- prof[seq(3, length(prof))]
+    if (length(rtcor) == length(lcraw@scantime) ) {
+      lcraw@scantime <- rtcor
+    } else {
+      warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
+    }
+  
+    naidx <- which(is.na(gvals[,myID]))
+    
+    newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
+  
+  list(myID=myID, newpeaks=cbind(newpeaks, sample=myID))
+}
+
+
+
 ## clusterApplyLB / dynamicClusterApply
 xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
     argfun <- function(i) c(list(x[[i]]), list(...))
@@ -350,5 +404,10 @@ xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
 
 msgfun.featureDetection <- function(x,i) {
     cat("Detecting features in file #",i,":",basename(x[[i]]$file),"\n");
+    flush.console();
+}
+
+msgfunGeneric <- function(s, x, i) {
+    cat(s, i,":",basename(x[[i]]$file),"\n");
     flush.console();
 }
