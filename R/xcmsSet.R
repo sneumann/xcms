@@ -137,38 +137,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
 
 
-if (FALSE)  {
-
-        peaklist <- vector("list", length(files))
-
-        for (i in seq(along = peaklist)) {
-
-            cat(snames[i], ": ", sep = "")
-
-            lcraw <- xcmsRaw(files[i], profmethod = profmethod, profparam = profparam,
-                             profstep = 0, includeMSn=includeMSn, mslevel=mslevel, scanrange=scanrange)
-            ## check existence of slot, absent in old xcmsSets
-            if(lockMassFreq){
-                object@dataCorrection[i]<-1
-                lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-            }
-
-            ## if (exists("object@polarity") && length(object@polarity) >0) {
-            if (!is.null(polarity) && length(object@polarity) >0) {
-                ## Retain wanted polarity only
-                lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
-                lcraw <- lcraws[[object@polarity]]
-            }
-
-            peaklist[[i]] <- findPeaks(lcraw, ...)
-            peaklist[[i]] <- cbind(peaklist[[i]], sample = rep.int(i, nrow(peaklist[[i]])))
-            rtlist$raw[[i]] <- lcraw@scantime
-            rtlist$corrected[[i]] <- lcraw@scantime
-            rm(lcraw)
-            gc()
-        }
-    }
-
     lapply(1:length(peaklist), function(i) {
         if (is.null(peaklist[[i]]))
             warning("No peaks found in sample ", snames[i], call. = FALSE)
