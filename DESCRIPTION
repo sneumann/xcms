@@ -7,9 +7,9 @@ Author: Colin A. Smith <csmith@scripps.edu>,
         Steffen Neumann <sneumann@ipb-halle.de>,
 		Paul Benton <hpaul.benton08@imperial.ac.uk>
 Maintainer: Ralf Tautenhahn <rtautenh@scripps.edu>
-Depends: R (>= 1.9.0), methods, mzR (>= 1.1.6), BiocGenerics, Biobase
-Suggests: faahKO, msdata, ncdf, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, snow, RUnit
-Enhances: Rgraphviz, KEGGSOAP
+Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, Biobase
+Suggests: faahKO, msdata, ncdf, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, RUnit
+Enhances: Rgraphviz, KEGGSOAP, Rmpi
 Description: Framework for processing and visualization of
         chromatographically separated and single-spectra mass spectral data. Imports from
         AIA/ANDI NetCDF, mzXML, mzData and mzML files. Preprocesses data for
