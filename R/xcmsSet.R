@@ -1356,7 +1356,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, sample=NULL) {
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
   ## development mockup:
   if (FALSE) {
     library(xcms)
@@ -1420,8 +1420,27 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, sample=NULL) {
                                              peakrange=peakrange)
                                            ))
 
+  parmode <- xcmsParallelSetup(nSlaves=nSlaves)
+  runParallel <- parmode$runParallel
+  parMode <- parmode$parMode    
+  snowclust <- parmode$snowclust
+
+  if (parMode == "MPI") {
+    newpeakslist <- xcmsPapply(argList, fillPeaksChromPar)
+    mpi.close.Rslaves()
+  } else if (parMode == "SOCK") {
+    newpeakslist <- xcmsClusterApply(cl=snowclust, x=argList,
+                                     fun=fillPeaksChromPar,
+                                     msgfun=msgfunGeneric)    
+    stopCluster(snowclust)
+  } else {
+    ## serial mode
     newpeakslist <- lapply(argList, fillPeaksChromPar)
-    o <- order(sapply(newpeakslist, function(x) x$myID))
+  }
+
+
+
+  o <- order(sapply(newpeakslist, function(x) x$myID))
   newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
 
   newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
