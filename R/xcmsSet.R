@@ -135,8 +135,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             object@dataCorrection[1:length(files)]<-1
         }
 
-
-
     lapply(1:length(peaklist), function(i) {
         if (is.null(peaklist[[i]]))
             warning("No peaks found in sample ", snames[i], call. = FALSE)
@@ -1358,8 +1356,17 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=0) {
-
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, sample=NULL) {
+  ## development mockup:
+  if (FALSE) {
+    library(xcms)
+    library(faahKO)
+    object <- group(faahko)
+    gf <- fillPeaks(object)
+    pkgEnv = getNamespace("xcms")
+    attach(pkgEnv)
+  }
+  
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -1398,45 +1405,36 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=0) {
     lastpeak <- nrow(peakmat)
     lastpeakOrig <- lastpeak
 
-    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
+##    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
 
     cnames <- colnames(object@peaks)
 
-    for (i in seq(along = files)) {
+    ft <- cbind(file=files,id=1:length(files))
+    argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),
+                                           params=list(method="chrom",
+                                             gvals=gvals, 
+                                             prof=prof,
+                                             dataCorrection=object@dataCorrection,
+                                             polarity=object@polarity,
+                                             rtcor=object@rt$corrected[[as.numeric(x["id"])]],
+                                             peakrange=peakrange)
+                                           ))
 
-        cat(samp[i], "")
-        flush.console()
-        naidx <- which(is.na(gvals[,i]))
-        if (length(naidx)) {
-            lcraw <- xcmsRaw(files[i], profmethod = prof$method, profstep = 0)
-            if(length(object@dataCorrection) > 1){
-                if(object@dataCorrection[i] == 1)
-                    lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-            }
-            ## check existence of slot, absent in old xcmsSets
-            ## if (exists("object@polarity") && length(object@polarity) >0) {
-            if (length(object@polarity) >0) {
-                ## Retain wanted polarity only
-                lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
-                lcraw <- lcraws[[object@polarity]]
-            }
+    newpeakslist <- lapply(argList, fillPeaksChromPar)
+    o <- order(sapply(newpeakslist, function(x) x$myID))
+  newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
 
-            if (length(prof) > 2)
-                lcraw@profparam <- prof[seq(3, length(prof))]
-            if (length(rtcor) == length(files))
-                lcraw@scantime <- rtcor[[i]]
-            newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
-            rm(lcraw)
-            gc()
-            newpeaks <- cbind(newpeaks, sample = rep(i, length(naidx)))
-            newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
-            peakmat[lastpeak+seq(along = naidx),newcols] <- newpeaks[,newcols]
-            for (i in seq(along = naidx))
-                groupindex[[naidx[i]]] <- c(groupindex[[naidx[i]]], lastpeak+i)
-            lastpeak <- lastpeak + length(naidx)
-        }
-    }
-    cat("\n")
+  newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
+  peakmat <- rbind(peakmat[,newcols], newpeaks[,newcols])
+
+  for (i in seq(along = files)) {
+    naidx <- which(is.na(gvals[,i]))
+    
+    for (j in seq(along = naidx))
+      groupindex[[naidx[j]]] <- c(groupindex[[naidx[j]]], lastpeak+j)
+
+    lastpeak <- lastpeak + length(naidx)
+  }
 
     peaks(object) <- peakmat
     object@filled <- seq((lastpeakOrig+1),nrow(peakmat))
@@ -1447,7 +1445,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=0) {
 })
 
 setGeneric("fillPeaks.MSW", function(object, ...) standardGeneric("fillPeaks.MSW"))
-setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0)) {
+setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0), sample=NULL) {
 
     peakmat <- peaks(object)
     groupmat <- groups(object)
