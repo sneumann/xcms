@@ -4,6 +4,10 @@ CHANGES IN VERSION 1.35.4
 NEW FEATURES:
      o Introducing parallel fillPeaks
 
+USER VISIBLE CHANGES
+    o Replace snow requirement with minimum R version 2.14.0
+
+
 CHANGES IN VERSION 1.35.3
 --------------------------
 BUG FIXES
