@@ -2,8 +2,7 @@ CHANGES IN VERSION 1.35.4
 --------------------------
 
 NEW FEATURES:
-     o start of re-organisation for fillPeaks to prepare
-       for parallel fillPeaks()
+     o Introducing parallel fillPeaks
 
 CHANGES IN VERSION 1.35.3
 --------------------------
