@@ -409,7 +409,7 @@ msgfun.featureDetection <- function(x,i) {
     flush.console();
 }
 
-msgfunGeneric <- function(s, x, i) {
-    cat(s, i,":",basename(x[[i]]$file),"\n");
+msgfunGeneric <- function(x, i) {
+    cat(i,":",basename(x[[i]]$file),"\n");
     flush.console();
 }
