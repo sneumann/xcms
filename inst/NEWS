@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.35.6
+--------------------------
+BUG FIXES
+    o Obiwarp retention time alignment error-ed if scanrange was used as a parameter setting during xcmsSet/peak detection
+        The method now tries to automatically find the set scanrange and uses this range for alignment.
+
 CHANGES IN VERSION 1.35.4
 --------------------------
 

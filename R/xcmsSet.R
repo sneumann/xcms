@@ -1126,16 +1126,32 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
     cat("center sample: ", samples[center], "\nProcessing: ")
     idx <- which(seq(1,N) != center)
-
     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0)
+	
+	## added t automatically find the correct scan range from the xcmsSet object
+	if(length(obj1@scantime) != length(object@rt$raw[[1]])){
+		##figure out the scan time range
+		scantime.start	<-object@rt$raw[[1]][1]
+		scantime.end	<-object@rt$raw[[1]][length(object@rt$raw[[1]])]
+		
+		scanrange.start	<-which.min(abs(obj1@scantime - scantime.start)) 
+		scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
+		scanrange<-c(scanrange.start, scanrange.end)
+		obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0, scanrange=scanrange)
+	} else{
+		scanrange<-NULL	
+	}
 
     for (si in 1:length(idx)) {
         s <- idx[si]
         cat(samples[s], " ")
 
         profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
-
-        obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
+		if(is.null(scanrange)){
+			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)	
+		} else{
+			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0, scanrange=scanrange)
+		}
         profStepPad(obj2) <- profStep ## generate profile matrix
 
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
