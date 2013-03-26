@@ -659,34 +659,24 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     gcount <- integer(length(unique(sampclass(object))))
 
     peakmat <- peaks(object)
-    plength <- list()
-    parameters <- list(mzVsRTBalance=mzVsRTbalance, mzcheck=mzCheck, rtcheck=rtCheck,knn=kNN)
+    parameters <- list(mzVsRTBalance = mzVsRTbalance, mzcheck = mzCheck, rtcheck = rtCheck, knn = kNN)
 
-    ## for(i in 1:length(samples)){ ## extra loop for ???.... : PB
-    plength <- table(peaks(object)[,"sample"]) ## this was only used once ??? : PB
-    plength<-as.numeric(plength)
-    ## }
+    ptable <- table(peaks(object)[,"sample"])
+    pord <- ptable[order(ptable, decreasing = TRUE)]
+    sid <- as.numeric(names(pord))
+    pn <- as.numeric(pord)
+
+    samples <- sampnames(object)
+    cat("sample:", basename(samples[sid[1]]), " ")
 
     mplenv <- new.env(parent = .GlobalEnv)
-    ## peakmat1 <- which(peakmat[,"sample"]==1) ## why do we choose the first sample ?
-    ## this sample may not be the longest so we'll use plength : PB
-    ## mplenv$mplist <- matrix(0,length(peakmat1),length(samples))
-    ## mplenv$mplist[,1] <- which(peakmat[,"sample"]==1)
-    ## mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]==1),c("mz","rt")])
-    ## mplenv$peakmat <- peakmat
-    ## assign("peakmat",peakmat,env=mplenv)
-
-    mplenv$mplist <- matrix(0, sort(plength, decreasing=TRUE)[1], length(samples))
-    mplenv$mplist[,which.max(plength)] <- which(peakmat[,"sample"] == which.max(plength))
-    mplenv$mplistmean = data.frame(peakmat[which(peakmat[,"sample"]== which.max(plength)),c("mz","rt")])
+    mplenv$mplist <- matrix(0, pn[1], length(sid))
+    mplenv$mplist[, sid[1]] <- which(peakmat[,"sample"] == sid[1])
+    mplenv$mplistmean <- data.frame(peakmat[which(peakmat[,"sample"] == sid[1]),c("mz","rt")])
     mplenv$peakmat <- peakmat
-    assign("peakmat",peakmat,env=mplenv)
+    assign("peakmat", peakmat, env = mplenv)
 
-    samples <- sampnames(object)[sort.int(plength, decreasing=TRUE, index.return=TRUE)$ix]
-    cat("sample:",basename(samples[1])," ")
-
-    ## for(sample in 2:length(samples)) { ## for loops suck in R don't use them
-    sapply(2:length(samples), function(sample,mplenv, object){
+    sapply(sid[2:length(sid)], function(sample, mplenv, object){
         ## require(parallel)
         ## cl <- makeCluster(getOption("cl.cores", nSlaves))
         ## clusterEvalQ(cl, library(RANN))
