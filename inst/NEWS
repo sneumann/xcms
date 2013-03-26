@@ -1,3 +1,9 @@
+
+CHANGES IN VERSION 1.35.7
+--------------------------
+BUG FIXES
+    o fixed indexing bug in group.nearest, which under certain circumstances caused all peaks in the first sample to be ignored (reported by Tony Larson)
+
 CHANGES IN VERSION 1.35.6
 --------------------------
 BUG FIXES
