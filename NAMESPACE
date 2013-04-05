@@ -11,6 +11,7 @@ export(
        "specNoise",
        "specPeaks",
        "SSgauss",
+       "msn2xcmsRaw",
        "xcmsRaw",
        "xcmsSet",
        "xcmsFragments",
