@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.37.1
+--------------------------
+
+NEW FEATURES:
+     o Introducing msn2xcmsRaw, to allow findPeaks() on MS2 and MSn data
+
 
 CHANGES IN VERSION 1.35.7
 --------------------------
