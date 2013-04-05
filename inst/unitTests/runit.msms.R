@@ -41,3 +41,13 @@ test.xcmsSetms2cw <- function() {
     xs2 <- xcmsSet(filename, method="centWave", mslevel=2)
 
 }
+
+test.msn2xcmsRaw <- function() {
+ msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
+ xrmsn <- xcmsRaw(msnfile, includeMSn=TRUE)
+ xr <- msn2xcmsRaw(xrmsn)
+
+ checkEqualsNumeric(length(xr@env$mz), 3132)
+ checkEqualsNumeric(length(xr@env$intensity), 3132)
+ checkEqualsNumeric(length(xr@scantime), 1121)
+}
