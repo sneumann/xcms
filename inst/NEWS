@@ -2,7 +2,7 @@ CHANGES IN VERSION 1.37.1
 --------------------------
 BUG FIXES
     o fixed fillPeaks, which 1) dropped non-standard columns 
-    and 2) failed if nothing to do.
+    and 2) failed if nothing to do, based on patches by Tony Larson.
 
 CHANGES IN VERSION 1.37.1
 --------------------------
