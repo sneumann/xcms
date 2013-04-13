@@ -1416,16 +1416,32 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
     cnames <- colnames(object@peaks)
 
     ft <- cbind(file=files,id=1:length(files))
-    argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),
-                                           params=list(method="chrom",
-                                             gvals=gvals, 
-                                             prof=prof,
-                                             dataCorrection=object@dataCorrection,
-                                             polarity=object@polarity,
-                                             rtcor=object@rt$corrected[[as.numeric(x["id"])]],
-                                             peakrange=peakrange)
-                                           ))
+    argList <- apply(ft,1,function(x) {
+      ## Add only those samples which actually have NA in them
+      if (!any(is.na(gvals[,as.numeric(x["id"])]))) {
+        ## nothing to do.
+        list()
+      } else {
+        list(file=x["file"],id=as.numeric(x["id"]),
+             params=list(method="chrom",
+               gvals=gvals, 
+               prof=prof,
+               dataCorrection=object@dataCorrection,
+               polarity=object@polarity,
+               rtcor=object@rt$corrected[[as.numeric(x["id"])]],
+               peakrange=peakrange))
+      }
+    })
 
+  nonemptyIdx <- (sapply(argList, length) > 0)
+
+  if (!any(nonemptyIdx)) {
+    ## Nothing to do
+    return(invisible(object))
+  }
+    
+  argList <- argList[nonemptyIdx]
+  
   parmode <- xcmsParallelSetup(nSlaves=nSlaves)
   runParallel <- parmode$runParallel
   parMode <- parmode$parMode    
@@ -1449,8 +1465,11 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
   o <- order(sapply(newpeakslist, function(x) x$myID))
   newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
 
-  newcols <- colnames(newpeaks)[colnames(newpeaks) %in% cnames]
-  peakmat <- rbind(peakmat[,newcols], newpeaks[,newcols])
+  ## Make sure colnames are compatible 
+  newpeaks <- newpeaks[, match(cnames, colnames(newpeaks)), drop = FALSE]
+  colnames(newpeaks) <- cnames
+
+  peakmat <- rbind(peakmat, newpeaks)
 
   for (i in seq(along = files)) {
     naidx <- which(is.na(gvals[,i]))

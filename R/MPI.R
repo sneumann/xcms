@@ -324,10 +324,6 @@ findPeaksPar <- function(arg) {
 
 fillPeaksChromPar <- function(arg) {
 
-  ## Debugging:
-  if (FALSE) 
-    arg <- argList[[3]]
-  
   require(xcms)
 
   params <- arg$params
