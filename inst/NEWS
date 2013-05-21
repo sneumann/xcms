@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.37.3
+--------------------------
+BUG FIXES
+    o fixed bug in patternVsRowScore (group.nearest) that was introduced by the 
+      modifications in rev 65169 and caused features to be aligned that were far outside the given m/z and retention time windows.
+
+
 CHANGES IN VERSION 1.37.1
 --------------------------
 BUG FIXES
