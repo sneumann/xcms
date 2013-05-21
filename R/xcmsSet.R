@@ -784,8 +784,8 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     invisible(object)
 })
 
-
-patternVsRowScore <- function(currPeak, parameters, mplenv){
+patternVsRowScore <- function(currPeak, parameters, mplenv)
+{
     mplistmeanCurr <- mplenv$mplistmean[,c("mz","rt")]
     mplistmeanCurr[,"mz"] <- mplistmeanCurr[,"mz"] * parameters$mzVsRTBalance
     peakmatCurr <- mplenv$peakmat[currPeak,c("mz","rt"),drop=FALSE]
@@ -794,6 +794,11 @@ patternVsRowScore <- function(currPeak, parameters, mplenv){
     nnDist <- nn2(mplistmeanCurr,peakmatCurr[,c("mz","rt"),drop=FALSE],
                   k=min(length(mplistmeanCurr[,1]),parameters$knn))
 
+    scoreListcurr <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
+                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
+
+    rtTolerance = parameters$rtcheck
+    
     for(mplRow in 1:length(nnDist$nn.idx)){
         mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
         mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
@@ -801,18 +806,19 @@ patternVsRowScore <- function(currPeak, parameters, mplenv){
         ## Calculate differences between M/Z and RT values of current peak and median of the row
         diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
         diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
-        ## What type of RT tolerance is used?
-        rtTolerance = parameters$rtcheck
 
         ## Calculate if differences within tolerancdiffRT < rtTolerance)es
-        if ((diffMZ < parameters$mzcheck) & (diffRT < rtTolerance)) {
-            return(data.frame(score=nnDist$nn.dists[mplRow],
-                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
+        if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
+            scoreListcurr <- rbind(scoreListcurr,
+                                   data.frame(score=nnDist$nn.dists[mplRow],
+                                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
+                                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
+            ## goodEnough = true
+            return(scoreListcurr)
         }
     }
-    return(data.frame(score=NA, peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-                      isJoinedPeak=FALSE, isJoinedRow=FALSE))
+    
+    return(scoreListcurr) ## empty
 }
 
 setGeneric("group", function(object, ...) standardGeneric("group"))
