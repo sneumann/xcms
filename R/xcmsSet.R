@@ -1859,10 +1859,12 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
 
     testval <- values[,c(c1,c2)]
     testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
-    if (ncol(testval) > 2) {
+
+    if (min(length(c1), length(c2)) >= 2) {
         tstat <- mt.teststat(testval, testclab, ...)
         pvalue <- pval(testval, testclab, tstat)
     } else {
+        message("Too few samples per class, skipping t-test.")
         tstat <- pvalue <- rep(NA,nrow(testval))
     }
     stat <- data.frame(fold = fold, tstat = tstat, pvalue = pvalue)
