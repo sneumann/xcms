@@ -1125,10 +1125,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0)
 	
 	## added t automatically find the correct scan range from the xcmsSet object
-	if(length(obj1@scantime) != length(object@rt$raw[[1]])){
+	if(length(obj1@scantime) != length(object@rt$raw[[center]])){
 		##figure out the scan time range
-		scantime.start	<-object@rt$raw[[1]][1]
-		scantime.end	<-object@rt$raw[[1]][length(object@rt$raw[[1]])]
+		scantime.start	<-object@rt$raw[[center]][1]
+		scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
 		
 		scanrange.start	<-which.min(abs(obj1@scantime - scantime.start)) 
 		scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
