@@ -1,4 +1,9 @@
-CHANGES IN VERSION 1.37.3
+CHANGES IN VERSION 1.37.5
+--------------------------
+BUG FIXES
+    o fixed bug in retcor.obiwarp where the scanrange of the first sample would be checked instead of the center sample
+
+CHANGES IN VERSION 1.37.4
 --------------------------
 BUG FIXES
     o Skip t-test in diffreport() if one class has less than 2 samples.
