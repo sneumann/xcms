@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.37.6
+--------------------------
+NEW FEATURE:
+     o Introducing write.mzQuantML(xcmsSet) to export the peak list and grouped matrix to the PSI format mzQuantML (see http://www.psidev.info/mzquantml)
+
 CHANGES IN VERSION 1.37.5
 --------------------------
 BUG FIXES

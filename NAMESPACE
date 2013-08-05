@@ -12,6 +12,7 @@ export(
        "specPeaks",
        "SSgauss",
        "msn2xcmsRaw",
+       "verify.mzQuantML",
        "xcmsRaw",
        "xcmsSet",
        "xcmsFragments",
@@ -118,6 +119,7 @@ exportMethods(
               "stitch",
               "write.cdf",
               "write.mzdata",
+              "write.mzQuantML",
               "xcmsSource",
               "loadRaw"
               )
