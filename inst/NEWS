@@ -2,7 +2,13 @@ CHANGES IN VERSION 1.37.6
 --------------------------
 NEW FEATURE:
      o Introducing write.mzQuantML(xcmsSet) to export the peak list and grouped matrix to the PSI format mzQuantML (see http://www.psidev.info/mzquantml)
-
+USER VISIBLE CHANGES:
+     o Add Brigham Young University to LICENSE file for copyright purposes. 
+     o Add copyright information display when running findPeaks.massifquant()
+     within xcmsRaw.R
+     o Clean and update documentation for findPeaks.massifquant-methods.Rd  
+BUG FIXES:
+     o Remove unused parameters in findKalmanROIs() within xcmsRaw.R
 CHANGES IN VERSION 1.37.5
 --------------------------
 BUG FIXES
