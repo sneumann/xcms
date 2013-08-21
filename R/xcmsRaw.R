@@ -1812,8 +1812,8 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
 setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
 
 setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
-                                               scanrange=c(1,length(object@scantime)), minIntensity = 6400,
-                                               minCentroids = 12, consecMissedLim = 2, criticalVal = 1.7321, ppm = 10,  segs = 1, scanBack = 1, mzdiff=-0.001){
+                                               scanrange=c(1,length(object@scantime)), minIntensity,
+                                               minCentroids, consecMissedLim, criticalVal, ppm,  segs, scanBack){
 
     scanrange[1] <- max(1,scanrange[1])
     scanrange[2] <- min(length(object@scantime),scanrange[2])
@@ -1836,19 +1836,20 @@ setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findP
 setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
                                                        prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                        fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                       sleep=0, verbose.columns=FALSE, criticalValue = 1.7321, consecMissedLimit = 2,
+                                                       sleep=0, verbose.columns=FALSE, criticalValue = 1.125, consecMissedLimit = 2,
                                                        unions = 1, checkBack = 0, withWave = 0) {
+
+    cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
+    cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
+    flush.console();
 
     ##keeep this check since massifquant doesn't check internally
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
 
     cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
-    ##mqstart = proc.time();
     massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
     consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
-    ##mqfinish = proc.time() - mqstart;
-    ##cat("The finishing time of massifquant\n", mqfinish);
 
     if (withWave == 1) {
         featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,

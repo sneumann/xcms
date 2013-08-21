@@ -1,5 +1,8 @@
-All code copyright (c) 2005 The Scripps Research Institute
-All accompanying written materials copyright (c) 2005 Colin A. Smith
+All code copyright (c) 2005 The Scripps Research Institute with the exception
+that Massifquant-specific code copyright (c) 2013 Brigham Young University.
+All accompanying written materials copyright (c) 2005 Colin A. Smith with the
+exception that Massifquant-specific documentation copyright (c) 2013 Brigham 
+Young University.
 
 
 NetCDF library governed by the following license:
