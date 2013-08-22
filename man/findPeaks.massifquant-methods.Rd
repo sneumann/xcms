@@ -73,7 +73,7 @@ xset <- xcmsSet(cdffiles, method = "massifquant",
 \author{Christopher Conley}
 \encoding{UTF-8}
 \references{
-    Submitted for review. Christopher Conley, Ralf J .O Torgrip. Ryan Taylor, and John T. Prince.  "Massifquant: open-source Kalman ﬁlter based XC-MS feature detection". August 2013. 
+    Submitted for review. Christopher Conley, Ralf J .O Torgrip. Ryan Taylor, and John T. Prince.  "Massifquant: open-source Kalman filter based XC-MS feature detection". August 2013. 
 }
 \seealso{
   \code{\link{findPeaks-methods}}
