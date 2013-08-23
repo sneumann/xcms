@@ -3,10 +3,11 @@ Version: 1.37.6
 Date: 2013-08-05
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
-        Ralf Tautenhahn <rtautenh@scripps.edu>,
+        Ralf Tautenhahn <rtautenh@gmail.com>,
         Steffen Neumann <sneumann@ipb-halle.de>,
-		Paul Benton <hpaul.benton08@imperial.ac.uk>
-Maintainer: Ralf Tautenhahn <rtautenh@scripps.edu>
+	Paul Benton <hpaul.benton08@imperial.ac.uk>,
+	Christopher Conley <cjconley@ucdavis.edu>
+Maintainer: Ralf Tautenhahn <rtautenh@gmail.com>
 Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, Biobase
 Suggests: faahKO, msdata, ncdf, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, RUnit
 Enhances: Rgraphviz, KEGGSOAP, Rmpi, XML
