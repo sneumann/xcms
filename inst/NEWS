@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.39.1
+--------------------------
+REQUIED CHANGES
+	o Moved inst/doc to vignettes 
+
 CHANGES IN VERSION 1.37.6
 --------------------------
 NEW FEATURE:
