@@ -182,9 +182,11 @@ void RectUnique(const double *m, const int *order, const int *nrow,
 
 SEXP DoubleMatrix(SEXP nrow, SEXP ncol) {
 
-    SEXP   matrix, dim;
-    int    nrowint, ncolint, size, i;
-    double *matrixptr;
+    SEXP matrix, dim;
+	int i;
+	double nrowint, ncolint;
+    // unsigned int nrowint, ncolint, i;
+    double *matrixptr, size;
 
     nrowint = INTEGER_POINTER(nrow)[0];
     ncolint = INTEGER_POINTER(ncol)[0];
@@ -208,7 +210,7 @@ SEXP DoubleMatrix(SEXP nrow, SEXP ncol) {
 SEXP IntegerMatrix(SEXP nrow, SEXP ncol) {
 
     SEXP matrix, dim;
-    int  nrowint, ncolint;
+    unsigned int  nrowint, ncolint;
 
     nrowint = INTEGER_POINTER(nrow)[0];
     ncolint = INTEGER_POINTER(ncol)[0];
@@ -227,7 +229,7 @@ SEXP IntegerMatrix(SEXP nrow, SEXP ncol) {
 SEXP LogicalMatrix(SEXP nrow, SEXP ncol) {
 
     SEXP matrix, dim;
-    int  nrowint, ncolint;
+    unsigned int nrowint, ncolint;
 
     nrowint = INTEGER_POINTER(nrow)[0];
     ncolint = INTEGER_POINTER(ncol)[0];
