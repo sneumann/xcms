@@ -1,6 +1,9 @@
 CHANGES IN VERSION 1.39.1
 --------------------------
-REQUIED CHANGES
+BUG FIXES:
+    o Updated doubleMatrix c code to allow for larger profile matrixes 
+
+REQUIRED CHANGES
 	o Moved inst/doc to vignettes 
 
 CHANGES IN VERSION 1.37.6
