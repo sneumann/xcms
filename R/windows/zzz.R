@@ -1,5 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-    require(methods)
+    # require(methods)
     .setXCMSOptions(pkgname)
 
     eval(expr= ".Last" <<- function() {
@@ -13,7 +13,7 @@
 }
 
 .onUnload <- function(libpath) {
-    rampCloseAll()
+    mzR:::rampCloseAll()
     if (is.loaded("NetCDFOpen"))
         library.dynam.unload("xcms", libpath)
 }
