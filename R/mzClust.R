@@ -141,7 +141,7 @@ mzClustGeneric <- function(p,sampclass=NULL,
         ## case: not in range or mean deviation over limit
         ## perform hierarchical clustering
         if(binclust != 0) {
-            groups <- xcms:::mzClust_hclust(p[binC,1],ppm_error,mzabs)
+            groups <- mzClust_hclust(p[binC,1],ppm_error,mzabs)
 
             last_group <- groups[which.max(p[binC,1])]
             binA <- binC[which(groups == last_group)]
