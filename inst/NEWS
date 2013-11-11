@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.39.3
+--------------------------
+BUG FIXES:
+    o New R-devel check unload better. Lingering ramp code removed, import from mzR. Cleaned up other errors in package check.
+
 CHANGES IN VERSION 1.39.1
 --------------------------
 BUG FIXES:

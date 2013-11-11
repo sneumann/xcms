@@ -1,5 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-    require(methods)
+    # require(methods)
     .setXCMSOptions(pkgname)
 
     eval(expr= ".Last" <<- function() {
@@ -13,6 +13,6 @@
 }
 
 .onUnload <- function(libpath) {
-    rampCloseAll()
+    mzR:::rampCloseAll()
     library.dynam.unload("xcms", libpath)
 }

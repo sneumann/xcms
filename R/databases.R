@@ -28,22 +28,22 @@ read.mascot<-function(file, type="csv"){
     return(myDF)
 }
 
-KeggSearch <- function(object, DBsearchMS) {
-
-    libname <- 'KEGGSOAP'
-    KEGG.status <- try(require(libname, character.only = TRUE, quietly=TRUE))
-
-    if (class(KEGG.status) == "try-error")
-        stop("Couldn't load KEGGSOAP\n")
-
-    if(class(object)=="xcmsSet"){
-        groupmat<-groups(object)
-        neutralmass <- groupmat[,"mzmed"] + ifelse(DBsearchMS < 0, 1, -1)
-
-        KEGGcmpd<-array(0, dim=length(neutralmass))
-        for(i in 1:length(neutralmass)){
-            KEGGcmpd[i]<-search.compounds.by.mass(neutralmass, range(ppmDev(neutralmass[i], DBsearchMS)))[1]
-        }
-        return(KEGGcmpd)
-    }
-}
+# KeggSearch <- function(object, DBsearchMS) {
+# 
+#     libname <- 'KEGGSOAP'
+#     KEGG.status <- try(require(libname, character.only = TRUE, quietly=TRUE))
+# 
+#     if (class(KEGG.status) == "try-error")
+#         stop("Couldn't load KEGGSOAP\n")
+# 
+#     if(class(object)=="xcmsSet"){
+#         groupmat<-groups(object)
+#         neutralmass <- groupmat[,"mzmed"] + ifelse(DBsearchMS < 0, 1, -1)
+# 
+#         KEGGcmpd<-array(0, dim=length(neutralmass))
+#         for(i in 1:length(neutralmass)){
+#             KEGGcmpd[i]<-search.compounds.by.mass(neutralmass, range(ppmDev(neutralmass[i], DBsearchMS)))[1]
+#         }
+#         return(KEGGcmpd)
+#     }
+# }

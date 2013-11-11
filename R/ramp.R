@@ -1,14 +1,14 @@
-rampInit <- function() {
-
-    result <- .C("RampRInit",
-                 PACKAGE = "xcms")
-}
-
-rampPrintFiles <- function() {
-
-    result <- .C("RampRPrintFiles",
-                 PACKAGE = "xcms")
-}
+# rampInit <- function() {
+# 
+#     result <- .C("RampRInit",
+#                  PACKAGE = "xcms")
+# }
+# 
+# rampPrintFiles <- function() {
+# 
+#     result <- .C("RampRPrintFiles",
+#                  PACKAGE = "xcms")
+# }
 
 rampIsFile <- function(filename) {
 
@@ -25,66 +25,66 @@ rampIsFile <- function(filename) {
     length(text) > 0
 }
 
-rampOpen <- function(filename) {
+# rampOpen <- function(filename) {
+# 
+#     result <- .C("RampROpen",
+#                  as.character(filename),
+#                  rampid = integer(1),
+#                  status = integer(1),
+#                  PACKAGE = "xcms")
+# 
+#     if (result$status)
+#         return(result$status)
+# 
+#     return(result$rampid)
+# }
 
-    result <- .C("RampROpen",
-                 as.character(filename),
-                 rampid = integer(1),
-                 status = integer(1),
-                 PACKAGE = "xcms")
+# rampClose <- function(rampid) {
+# 
+#     result <- .C("RampRClose",
+#                  as.integer(rampid),
+#                  PACKAGE = "xcms")
+# }
 
-    if (result$status)
-        return(result$status)
+# rampCloseAll <- function() {
+# 
+#     result <- .C("RampRCloseAll",
+#                  PACKAGE = "xcms")
+# }
 
-    return(result$rampid)
-}
+# rampNumScans <- function(rampid) {
+# 
+#     result <- .C("RampRNumScans",
+#                  as.integer(rampid),
+#                  numscans = integer(1),
+#                  status = integer(1),
+#                  PACKAGE = "xcms")
+# 
+#     if (result$status)
+#         return(NA)
+# 
+#     return(result$numscans)
+# }
 
-rampClose <- function(rampid) {
+# rampScanHeaders <- function(rampid) {
+# 
+#     .Call("RampRScanHeaders",
+#           as.integer(rampid),
+#           PACKAGE = "xcms")
+# }
 
-    result <- .C("RampRClose",
-                 as.integer(rampid),
-                 PACKAGE = "xcms")
-}
-
-rampCloseAll <- function() {
-
-    result <- .C("RampRCloseAll",
-                 PACKAGE = "xcms")
-}
-
-rampNumScans <- function(rampid) {
-
-    result <- .C("RampRNumScans",
-                 as.integer(rampid),
-                 numscans = integer(1),
-                 status = integer(1),
-                 PACKAGE = "xcms")
-
-    if (result$status)
-        return(NA)
-
-    return(result$numscans)
-}
-
-rampScanHeaders <- function(rampid) {
-
-    .Call("RampRScanHeaders",
-          as.integer(rampid),
-          PACKAGE = "xcms")
-}
-
-rampSIPeaks <- function(rampid, seqNum, peaksCount) {
-
-    if (!is.integer(seqNum))
-        seqNum <- as.integer(seqNum)
-    if (!is.integer(peaksCount))
-        peaksCount <- as.integer(peaksCount)
-    .Call("RampRSIPeaks",
-          as.integer(rampid),
-          seqNum,
-          peaksCount,
-          PACKAGE = "xcms")
-}
+# rampSIPeaks <- function(rampid, seqNum, peaksCount) {
+# 
+#     if (!is.integer(seqNum))
+#         seqNum <- as.integer(seqNum)
+#     if (!is.integer(peaksCount))
+#         peaksCount <- as.integer(peaksCount)
+#     .Call("RampRSIPeaks",
+#           as.integer(rampid),
+#           seqNum,
+#           peaksCount,
+#           PACKAGE = "xcms")
+# }
 
 rampRawData <- function(rampid) {
 
