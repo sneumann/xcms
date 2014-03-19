@@ -675,18 +675,20 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     profFun <- match.profFun(object)
 
     scanrange.old <- scanrange
+    ## sanitize if too few or too many scanrange is given
     if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
     else
         scanrange <- range(scanrange)
 
+    ## restrict and sanitize scanrange to maximally cover all scans 
     scanrange[1] <- max(1,scanrange[1])
     scanrange[2] <- min(length(object@scantime),scanrange[2])
 
-    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
+    ## Mild warning if the actual scanrange doesn't match the scanrange argument
+    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0)) {
         cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
-    if (!missing(scanrange)) {
         ## Scanrange filtering
         keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
         object <- split(object, f=keepidx)[["TRUE"]]
