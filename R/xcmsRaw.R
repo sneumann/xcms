@@ -199,7 +199,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     att.put.ncdf(ms, "mass_values", "scale_factor", 1, prec="float")
 
     put.var.ncdf(ms, "intensity_values", object@env$intensity)
-    att.put.ncdf(ms, "intensity_values", "add_offset", 1, prec="float")
+    att.put.ncdf(ms, "intensity_values", "add_offset", 0, prec="float")
     att.put.ncdf(ms, "intensity_values", "scale_factor", 1, prec="float")
 
     ## Add ANDIMS global attributes to netCDF object
