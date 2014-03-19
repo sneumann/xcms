@@ -1,0 +1,125 @@
+useDynLib(xcms)
+
+import("methods")
+importFrom("graphics", "plot", "image")
+importFrom("mzR", "peaks", "close", "openMSfile", "header")
+
+export(
+       "etg",
+       "medianFilter",
+       "retexp",
+       "specNoise",
+       "specPeaks",
+       "SSgauss",
+       "msn2xcmsRaw",
+       "verify.mzQuantML",
+       "xcmsRaw",
+       "xcmsSet",
+       "xcmsFragments",
+       "xcmsPapply"
+       )
+
+S3method(plot, xcmsEIC)
+
+S3method(split, xcmsSet)
+S3method(c, xcmsSet)
+
+S3method(split, xcmsRaw)
+
+exportClasses(
+              "xcmsEIC",
+              "xcmsPeaks",
+              "xcmsRaw",
+              "xcmsSet",
+              "xcmsFragments",
+              "xcmsSource",
+              "xcmsFileSource"
+              )
+
+exportMethods(
+              "absent",
+              "AutoLockMass",
+              "calibrate",
+              "collect",
+              "deepCopy",
+              "filepaths",
+              "filepaths<-",
+              "diffreport",
+              "findMZ",
+              "findneutral",
+              "fillPeaks",
+              "fillPeaks.MSW",
+              "fillPeaks.chrom",
+              "findPeaks.centWave",
+              "findPeaks.massifquant",
+              "findPeaks.matchedFilter",
+              "findPeaks.MSW",
+              "findPeaks",
+              "getEIC",
+              "getPeaks",
+              "getScan",
+              "getMsnScan",
+              "getSpec",
+              "group",
+              "group.density",
+              "group.mzClust",
+              "group.nearest",
+              "groupidx",
+              "groupidx<-",
+              "groupnames",
+              "groups",
+              "groups<-",
+              "groupval",
+              "image",
+              "mzrange",
+              "peaks",
+              "peaks<-",
+              "peakTable",
+              "phenoData",
+              "phenoData<-",
+              "plotChrom",
+              "plotEIC",
+              "plotPeaks",
+              "plotRaw",
+              "plotrt",
+              "plotScan",
+              "plotSpec",
+              "plotSurf",
+              "plotTIC",
+              "plotTree",
+              "present",
+              "profinfo",
+              "profinfo<-",
+              "profMedFilt",
+              "profMethod",
+              "profMethod<-",
+              "profMz",
+              "profRange",
+              "profStep",
+              "profStep<-",
+              "progressCallback",
+              "progressCallback<-",
+              "rawEIC",
+              "rawMat",
+              "retcor",
+              "retcor.peakgroups",
+              "retcor.obiwarp",
+              "revMz",
+              "rtrange",
+              "sampclass",
+              "sampclass<-",
+              "sampnames",
+              "sampnames<-",
+              "specDist",
+              "specDist.cosine",
+              "specDist.meanMZmatch",
+              "specDist.peakCount",
+              "show",
+              "sortMz",
+              "stitch",
+              "write.cdf",
+              "write.mzdata",
+              "write.mzQuantML",
+              "xcmsSource",
+              "loadRaw"
+              )

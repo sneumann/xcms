@@ -1,0 +1,473 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+%\VignetteIndexEntry{LC/MS Preprocessing and Analysis with xcms}
+%\VignetteDepends{faahKO}
+%\VignetteKeywords{preprocess, analysis, alignment}
+%\VignettePackage{xcms}
+\documentclass[12pt]{article}
+
+\usepackage{hyperref}
+\usepackage[authoryear,round]{natbib}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\begin{document}
+\title{LC/MS Preprocessing and Analysis with xcms}
+\author{Colin A. Smith}
+\maketitle
+
+\section*{Introduction}
+
+This document describes how to use \Rpackage{xcms} to preprocess
+LC/MS data for relative quantitation and statistical analysis. It
+gives examples of how visualization can be used throughout the
+process and to display final results. An overview of the
+preprocessing/analysis methodology, along with the function names
+associated with each step, is shown in Figure~\ref{flowchart}.
+
+\begin{figure}
+\begin{center}
+\includegraphics{FlowChart}
+\end{center}
+\caption{\label{flowchart}
+Flow chart showing a high-level overview of the preprocessing/analysis
+methodology employed by \Rpackage{xcms}. Function/method names
+corresponding to each step are also given.}
+\end{figure}
+
+<<LibraryPreload, echo = FALSE, results = hide>>=
+library(multtest)
+library(xcms)
+library(faahKO)
+@
+
+\section{Raw Data File Preparation}
+
+The \Rpackage{xcms} package reads full-scan LC/MS data from AIA/ANDI
+format NetCDF, mzXML, and mzData files. All data to be analyzed
+by \Rpackage{xcms} must first be converted to one of those file
+formats. Software packages for many instruments are be able to
+export to NetCDF. For information about how to export to NetCDF,
+please consult the documentation that came with your instrument's
+software. The online help of most packages frequently use the terms
+``CDF'' or ``AIA'' when referring to NetCDF format. In addition to
+NetCDF, mzXML exporters for a number of instruments are also
+available.\footnote{\url{http://sashimi.sourceforge.net/software_glossolalia.html}}
+
+After exporting all files to NetCDF/mzXML/mzData format, they should be put in
+a location that will remain the same throughout the analysis. That
+is because \Rpackage{xcms} records the location of the raw data
+files and refers back to them a number of times during preprocessing
+and analysis.
+
+In most cases, LC/MS files that were acquired under different
+conditions should not be compared. For instance, positive and
+negative ionization mode files will have no ions in common and
+should thus be preprocessed separately. Similarly, data files
+acquired with different elution gradients should not be processed
+together.
+
+Another important consideration is the directory structure in which
+the files are organized. \Rpackage{xcms} uses sample class information
+during preprocessing to help decide which groups of peaks are
+significant. If organized into subdirectories, samples will
+automatically be assigned to separate classes based on their location.
+Samples may be separated into class based on tissue type, mutation,
+gender, disease, or time. For example, if you are analyzing the
+longitudinal effect of a drug in two patient groups, you may wish
+to put the groups into two directories ``GroupA'' and ``GroupB''.
+Within each of those directories, you could further separate the
+samples by the time they were taken, such as ``Day1'', ``Day2'',
+etc. In \Rpackage{xcms}, they will be automatically assigned class
+names ``GroupA/Day1'', ``GroupA/Day2'', etc.
+
+For the purposes of demonstration, we will use a subset of the data
+from \cite{Saghatelian04} examining the metabolic consequences of
+knocking out the fatty acid amide hydrolase (FAAH) gene in mice.
+The raw data files are contained in the \texttt{cdf} directory of
+the \Rpackage{faahKO} data package. There are samples from the
+spinal cords of 6 knockout mice and 6 wild-type mice placed in two
+subdirectories. Each file contains centroided data acquired in
+positive ion mode from 200-600 m/z and 2500-4500 seconds. To access
+the NetCDF files, we first locate the \textit{cdf} directory in the
+\Rpackage{faahKO} package.
+
+<<RawFiles>>=
+cdfpath <- system.file("cdf", package = "faahKO")
+list.files(cdfpath, recursive = TRUE)
+@
+
+\section{Filtration and Peak Identification}
+
+The class of objects used for preprocessing analyte data from
+multiple LC/MS files is \Rclass{xcmsSet}. It stores peak lists and
+provides methods for grouping and aligning those peaks. To create
+an \Rclass{xcmsSet} object from a set of NetCDF files, use the
+\Rfunction{xcmsSet()} constructor function. It handles batch peak
+picking and generation of the \Rclass{xcmsSet} object.  There are
+a number of ways you can specify the files it should read.  By
+default, it will recursively search through the current directory
+for NetCDF/mzXML/mzData files. Alternatively, you can manually specify the
+files you are interested in, as shown below.
+
+During peak identification, \Rpackage{xcms} uses a sepearate line
+for each sample to report on the status of processing. It outputs
+out pairs of numbers separated by a colon. The first number is the
+m/z it is currently processing. The second number is the number of
+peaks that have been identified so far. It is imporant to note that
+the number may be significantly larger than the final number of
+peaks as a vicinity elimination posprocessing step removes duplicate
+peaks corresponding to the same ion.
+
+<<PeakIdentification>>=
+library(xcms)
+cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+xset <- xcmsSet(cdffiles)
+#xset <- faahko
+xset
+@
+
+The default arguments for \Rfunction{xcmsSet} should work acceptably
+in most cases. However, there are a number of parameters that may
+need to be optimized for a particular instrument or group of samples.
+The full set of parameters can be seen by viewing the documentation
+for the \Rfunction{xcmsSet} function and \Rmethod{findPeaks} method.
+
+The method \Rmethod{findPeaks} can make use of different algorithms
+for peak detection. Currently \Rmethod{findPeaks.matchedFilter}
+and \Rmethod{findPeaks.centWave} are available,
+\Rmethod{findPeaks.matchedFilter} is used by default.
+First, several of the most important parameters of
+\Rmethod{findPeaks.matchedFilter} will be discussed.
+\\
+\textbf{findPeaks.matchedFilter} \\
+One parameter to consider is the Gaussian model peak width used for
+matched filtration, an integral part of the peak detection algorithm.
+For a discussion of how model peak width affects the signal to noise
+ratio, see \cite{Danielsson02}. It can be specified as either the
+standard deviation (\Rfunarg{sigma}) or full width at half maximum
+(\Rfunarg{fwhm}). By default, a FWHM of 30 seconds is used. Depending
+on the type of chromatography, the correct model peak width can be
+quite different. One means of determining the peak width is to fit
+the Gaussian function to one or more peaks in representative samples
+produced with your experimental protocol. Functionality for doing
+so is provided in the \Rmethod{plotChrom} method with the
+\Rfunarg{fitgauss} argument set to TRUE.
+
+Several parameters depend on the resolution your mass spectrometer.
+Prior to matched filtration, the peak detection algorithm creates
+extracted ion base peak chromatograms (EIBPC) on a fixed step size
+defined by the \Rfunarg{step} argument (default 0.1 m/z). To take
+into account uncertainties in scan to scan mass accuracy, the peak
+identification algorithm combines a given number of EIBPCs prior
+to filtration and peak detection, as defined by the \Rfunarg{steps}
+argument. The default value, 2, combines EIBPCs 1-2, 2-3, 3-4, etc.
+If the peak width is significantly greater than the step size, you
+may wish to turn off combination using a value of 1. If your scan
+to scan accuracy is worse, you may wish to increase the number of
+scans combined. For example, a value of 3 would combine EIBPCs 1-3,
+2-4, 3-5, etc.
+
+Another factor to consider is the algorithm by which EIBPCs are
+produced. One way of thinking about that process is as a transformation
+of the data from being separate lists of mass/intensity pairs (one
+list for each scan) to a matrix with rows representing equally
+spaced masses and a column for each scan. Data transformed into
+such a matrix is usually referred to as being in profile mode. To
+do so, each scan of unequally spaced masses must be mapped onto a
+column of the final matrix. The algorithm used to do so is selected
+using the \Rfunarg{profmethod} argument and can be either ``bin'',
+``binlin'', ``binlinbase'', or ``intlin''.
+
+The simplest algorithm, ``bin'', simply bins the intensity into the
+matrix cell closest to it in mass. If more than one intensity value
+is assigned to the same cell, then the greatest intensity is used.
+All other matrix cells are left at zero. It is the default and is
+especially useful for centroided data. ``binlin'' does the same
+thing except that it uses linear interpolation to fill in cells
+that otherwise would have been left at zero. It works well for
+sparsely populated continuum data.
+
+Some mass spectrometry software allows the user to set an intensity
+threshold below which no mass/intensity values are recorded in
+continuum mode. When the mass spectral signal falls below that
+threshold, simple linear interpolation will not provide a good
+approximation of the original signal, instead creating artificially
+high background. To address that, the ``binlinbase'' method uses
+linear interpolation between data points within 0.15 m/z of each
+other, and otherwise inserts a basal intensity value set to half
+of the minimum intensity. Those specific parameters can be changed
+using the \Rfunarg{profparam} argument. See documentation for the
+function \Rfunction{profBinLinBase} for more details.
+
+The last method, ``intlin'', uses integration and linear interpolation
+between mass/intensity pairs to determine the equally spaced intensity
+values. This has the advantage of being numerically stable regardless
+of the mass step size. However, it is more useful for visualization
+than peak identification and is generally not recommended as such.
+\\
+\textbf{findPeaks.centWave} \\
+The method \Rmethod{findPeaks.centWave} follows a different
+approach.   This algorithm is most suitable for high resolution
+LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode.
+Due to the fact that peak centroids are used, a binning step is not necessary.
+
+In the first phase of the method mass traces (characterised as regions with less than \Rfunarg{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
+In the second phase these mass traces are further analysed.
+Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales.
+Accordingly, two parameters have to be adjusted. The \Rfunarg{ppm} parameter has to be set according to the machine accuracy, e.g. \Rfunarg{ppm=25}. The peak width range (\Rfunarg{peakwidth=c(min,max)}) has to be set according to the chromatographic peak width range, e.g. \Rfunarg{peakwidth=c(20,50)} seconds for HPLC and \Rfunarg{peakwidth=c(5,12)} seconds for UPLC chromatography.
+
+The method is capable of detecting close-by-peaks and also overlapping
+peaks. Some efforts are made to detect the exact peak boundaries to get
+precise peak integrals.  The peak attributes \Robject{sn}
+(Signal/Noise Ratio) and \Robject{egauss} (root-mean-square-error of
+the gaussian fit) can be used to assess the peak quality.
+
+
+\section{Matching Peaks Across Samples}
+
+After peak identification, peaks representing the same analyte
+across samples must be placed into groups. That is accomplished
+with the \Rmethod{group} method, which returns a new \Rclass{xcmsSet}
+object with the additional group information. The grouping process
+is non-destructive and does not affect the other data stored in the
+\Rclass{xcmsSet} object. Therefore, we can safely replace the
+\Robject{xset} object with the grouped version. The grouping algorithm
+processes the peak lists in order of increasing mass and will
+regularly output the mass it is currently working on.
+
+<<PeakMatching1>>=
+xset <- group(xset)
+@
+
+There are several grouping parameters to consider optimizing for
+your chromatography and mass spectrometer. Please consult the
+\Rmethod{group} documentation for more details. To see what the
+algorithm is doing while running, use the \Rfunarg{sleep} argument
+to specify a time (in seconds) to pause and plot each iteration.
+That can be quite useful for visualizing parameter effects.
+
+\section{Retention Time Correction}
+
+After matching peaks into groups, \Rpackage{xcms} can use those
+groups to identify and correct correlated drifts in retention time
+from run to run. The aligned peaks can then be used for a second
+pass of peak grouping which will be more accurate than the first.
+The whole process can be repeated in an iterative fashion, although
+we will only demonstrate a single pass of retention time alignment
+here.
+
+Not all peak groups will be helpful for identifying retention time
+drifts. Some groups may be missing peaks from a large fraction of
+samples and thus provide an incomplete picture of the drift at that
+time point. Still others may contain multiple peaks from the same
+sample, which is a sign of impropper grouping. \Rpackage{xcms}
+ignores those groups by only considering ``well-behaved'' peak
+groups which are missing at most one sample and have at most one
+extra peak. (Those values can be changed with the \Rfunarg{missing}
+and \Rfunarg{extra} arguments.)
+
+For each of those well-behaved groups, the algorithm calculates a
+median retention time and, for every sample, a deviation from that
+median. Within a sample, the observed deviation generally changes
+over time in a nonlinear fashion. Those changes are approximated
+using a local polynomial regression technique implemented in the
+\Rfunction{loess} function. By default, the curve fitting is done
+using least-squares on all data points. However, it is possible to
+enable outlier detection and removal by setting the \Rfunarg{family}
+argument to \texttt{"symmetric"}, as shown here.
+
+Retention time correction is performed by the \Rmethod{retcor}
+method, which returns an \Rclass{xcmsSet} object with corrected
+retention times.  Because it changes the retention times of all
+peaks, it is important to store the new object under a new variable
+name. That will allow you to backtrack and repeat retention time
+correction if necessary.
+
+<<RTCorrection, include = FALSE, fig = TRUE, eps = FALSE, width = 7, height = 7>>=
+xset2 <- retcor(xset, family = "symmetric", plottype = "mdevden")
+@
+
+The above command uses the \Rfunarg{plottype} argument to produce
+a plot, shown in Figure~\ref{rtcorrection}, which is useful for
+supervising the algorithm. It includes the data points used for
+loess regression and the resulting deviation profiles. It additionally
+shows the distribution of peak groups across retention time.
+
+\begin{figure}
+\begin{center}
+\includegraphics{xcmsPreprocess-RTCorrection}
+\end{center}
+\caption{\label{rtcorrection}
+Retention time deviation profiles used for aligning the samples.
+The data points used for generating each profile are also shown.
+All times are in seconds. A negative number indicates a sample was
+eluting before most of the others, and vice versa. Samples that
+were acquired on the same day are colored similarly and have
+correlated deviation profiles, as expected.  Below, kernel density
+estimation is used to show the distribution of all peaks and those
+peaks used as standards for retention time correction. Examples of
+two peaks before and after alignment are shown in Figure~\ref{eicalign}.}
+\end{figure}
+
+After retention time correction, the initial peak grouping becomes
+invalid and is discarded. Therefore, the resulting object needs to
+be regrouped. Here, we decrease the inclusiveness of the grouping
+using the \Rfunarg{bw} argument (default 30 seconds).
+
+<<PeakMatching2>>=
+xset2 <- group(xset2, bw = 10)
+@
+
+\section{Filling in Missing Peak Data}
+
+After the second pass of peak grouping, there will still be peak
+groups which are missing peaks from some of the samples. That can
+occur because peaks were missed during peak identification or because
+an analyte was not present in a sample. In any case, those missing
+data points can be filled in by rereading the raw data files and
+integrating them in the regions of the missing peaks.  That is
+performed using the \Rmethod{fillPeaks} method, which returns a
+\Rclass{xcmsSet} object with the filled in peak data. While running,
+it outputs the name of the sample it is currently processing.
+
+<<PeakFillIn>>=
+xset3 <- fillPeaks(xset2)
+xset3
+@
+
+\section{Analyzing and Visualizing Results}
+
+A report showing the most statistically significant differences in
+analyte intensities can be generated with the \Rmethod{diffreport}
+method. It will automatically generate extracted ion chromatograms
+for a given number of them, in this case 10. Several of those
+chromatograms are shown in Figure~\ref{eic}.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{example_eic/001}&
+\includegraphics[width=0.49\textwidth]{example_eic/002}\\
+\includegraphics[width=0.49\textwidth]{example_eic/003}&
+\includegraphics[width=0.49\textwidth]{example_eic/004}\\
+\end{tabular}
+\end{center}
+\caption{\label{eic}
+Auto-generated extracted ion chromatograms for the top four
+differentially regulated ions. Darkened lines indicate where the
+peaks were integrated for quantitation. The top two plots show the
+primary and secondary isotopic peaks of an N-acyl ethanolamine (NAE)
+with a 16 carbon acyl chain. The lower left plot shows the primary
+isotopic peak of an NAE with a 16 carbon, monounsaturated acyl
+chain. The lower right plot shows another potential FAAH substrate
+of unknown identity. Its peaks are not aligned because it is showing
+a different elution profile than the majority of the other metabolites.
+Compare it with peaks in the top two plots, which are also eluting
+at the same time but are correctly aligned.}
+\end{figure}
+
+<<AnalysisVisualize>>=
+reporttab <- diffreport(xset3, "WT", "KO", "example", 10,
+                        metlin = 0.15, h=480, w=640)
+reporttab[1:4,]
+@
+
+If the \Rfunarg{metlin} argument is set to a numeric value, the
+report will include links to the Metlin Metabolite Database
+(\url{http://metlin.scripps.edu/}) showing potential metabolite
+identities. A positive value indicates the data was acquired in
+positive ion mode and the neutral mass is calculated assuming all
+ions are M+H. A negative value does the opposite. The value itself
+indicates the uncertainty in mass accuracy. For instance, the first
+and third metabolites in the report produce the following URLs:
+
+\begin{itemize}
+
+\item \small{
+<<URL1, echo = FALSE, results = tex>>=
+cat("\\url{", as.character(reporttab[1,"metlin"]), "}", sep = "")
+@
+}
+
+\item \small{
+<<URL2, echo = FALSE, results = tex>>=
+cat("\\url{", as.character(reporttab[3,"metlin"]), "}", sep = "")
+@
+}
+
+\end{itemize}
+
+\section{Selecting and Visualizing Peaks}
+
+It is also possible to generate extracted ion chromatograms for
+arbitrary peak groups selected using various criteria. Here we
+generate EICs for two analytes eluting at different times. They
+are shown using both unaligned and aligned retention times. The
+resulting plots are shown in Figure~\ref{eicalign}.
+
+<<PeakSelect>>=
+gt <- groups(xset3)
+colnames(gt)
+groupidx1 <- which(gt[,"rtmed"] > 2600 & gt[,"rtmed"] < 2700 & gt[,"npeaks"] == 12)[1]
+groupidx2 <- which(gt[,"rtmed"] > 3600 & gt[,"rtmed"] < 3700 & gt[,"npeaks"] == 12)[1]
+eiccor <- getEIC(xset3, groupidx = c(groupidx1, groupidx2))
+eicraw <- getEIC(xset3, groupidx = c(groupidx1, groupidx2), rt = "raw")
+@
+
+<<EICRaw1, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plot(eicraw, xset3, groupidx = 1)
+@
+
+<<EICRaw2, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plot(eicraw, xset3, groupidx = 2)
+@
+
+<<EICCor1, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plot(eiccor, xset3, groupidx = 1)
+@
+
+<<EICCor2, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plot(eiccor, xset3, groupidx = 2)
+@
+
+<<warnings>>=
+cat("These are the warning")
+warnings()
+@
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{xcmsPreprocess-EICRaw1}&
+\includegraphics[width=0.49\textwidth]{xcmsPreprocess-EICRaw2}\\
+\includegraphics[width=0.49\textwidth]{xcmsPreprocess-EICCor1}&
+\includegraphics[width=0.49\textwidth]{xcmsPreprocess-EICCor2}\\
+\end{tabular}
+\end{center}
+\caption{\label{eicalign}
+Unaligned (top) and aligned (bottom) extracted ion chromatograms
+from two analytes eluting at 2624 and 3678 seconds. Darkened lines
+indicate where the peaks were integrated for quantitation. A plot
+illustrating the retention time correction is shown in
+Figure~\ref{rtcorrection}.}
+\end{figure}
+
+\bibliographystyle{plainnat}
+\bibliography{xcms}
+
+\end{document}

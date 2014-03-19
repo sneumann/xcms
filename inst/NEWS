@@ -1,0 +1,215 @@
+CHANGES IN VERSION 1.39.4
+--------------------------
+BUG FIXES:
+    o Fixed write.cdf(), which had an intensity offset of +1, added a unit test
+
+CHANGES IN VERSION 1.39.3
+--------------------------
+BUG FIXES:
+    o New R-devel check unload better. Lingering ramp code removed, import from mzR. Cleaned up other errors in package check.
+
+CHANGES IN VERSION 1.39.1
+--------------------------
+BUG FIXES:
+    o Updated doubleMatrix c code to allow for larger profile matrixes 
+
+REQUIRED CHANGES
+	o Moved inst/doc to vignettes 
+
+CHANGES IN VERSION 1.37.6
+--------------------------
+NEW FEATURE:
+     o Introducing write.mzQuantML(xcmsSet) to export the peak list and grouped matrix to the PSI format mzQuantML (see http://www.psidev.info/mzquantml)
+USER VISIBLE CHANGES:
+     o Add Brigham Young University to LICENSE file for copyright purposes. 
+     o Add copyright information display when running findPeaks.massifquant()
+     within xcmsRaw.R
+     o Clean and update documentation for findPeaks.massifquant-methods.Rd  
+BUG FIXES:
+     o Remove unused parameters in findKalmanROIs() within xcmsRaw.R
+CHANGES IN VERSION 1.37.5
+--------------------------
+BUG FIXES
+    o fixed bug in retcor.obiwarp where the scanrange of the first sample would be checked instead of the center sample
+
+CHANGES IN VERSION 1.37.4
+--------------------------
+BUG FIXES
+    o Skip t-test in diffreport() if one class has less than 2 samples.
+
+CHANGES IN VERSION 1.37.3
+--------------------------
+BUG FIXES
+    o fixed bug in patternVsRowScore (group.nearest) that was introduced by the 
+      modifications in rev 65169 and caused features to be aligned that were far outside the given m/z and retention time windows.
+
+
+CHANGES IN VERSION 1.37.1
+--------------------------
+BUG FIXES
+    o fixed fillPeaks, which 1) dropped non-standard columns 
+    and 2) failed if nothing to do, based on patches by Tony Larson.
+
+CHANGES IN VERSION 1.37.1
+--------------------------
+
+NEW FEATURES:
+     o Introducing msn2xcmsRaw, to allow findPeaks() on MS2 and MSn data
+
+
+CHANGES IN VERSION 1.35.7
+--------------------------
+BUG FIXES
+    o fixed indexing bug in group.nearest, which under certain circumstances caused all peaks in the first sample to be ignored (reported by Tony Larson)
+
+CHANGES IN VERSION 1.35.6
+--------------------------
+BUG FIXES
+    o Obiwarp retention time alignment error-ed if scanrange was used as a parameter setting during xcmsSet/peak detection
+        The method now tries to automatically find the set scanrange and uses this range for alignment.
+
+CHANGES IN VERSION 1.35.4
+--------------------------
+
+NEW FEATURES:
+     o Introducing parallel fillPeaks
+
+USER VISIBLE CHANGES
+    o Replace snow requirement with minimum R version 2.14.0
+
+
+CHANGES IN VERSION 1.35.3
+--------------------------
+BUG FIXES
+  o if group.density was used with very low minfrac settings (< 0.5) it did not return all feature groups, 
+    but only those that include features from at least 50% of samples in a group. This limitation was removed.
+
+
+CHANGES IN VERSION 1.35.2
+--------------------------
+
+UPDATED FEATURES:
+     o Behind the scenes xcms now uses the xcmsSource class to read raw data.
+       This allows e.g. to write a class that pulls raw data 
+       from e.g. a database
+BUG FIXES
+     o massifquant: simplified logic structure of Tracker::claimDataIdx
+     resolved failure on new test case. 
+     o massifquant: reporting features data structure compatible with 
+     multiple sample comparison within XCMS.
+
+CHANGES IN VERSION 1.35.1
+--------------------------
+
+UPDATED FEATURES:
+     o The mzData export is now much faster and uses less memory
+
+CHANGES IN VERSION 1.33.16
+--------------------------
+
+USER VISIBLE CHANGES
+
+    o diffreport and plotEIC have a new parameter mzdec, with is the number of decimal places
+      of the m/z values in the EIC plot title
+
+CHANGES IN VERSION 1.33.16
+--------------------------
+
+UPDATED FEATURES:
+Lock mass gap filler now works with netCDF lock mass function file to find the exact times of the scans and works with
+the newer Waters MS instruments.
+
+CHANGES IN VERSION 1.33.15
+--------------------------
+
+BUG FIXES
+
+    o scanrage is now honoured in xcmsSet, also when in parallel mode
+
+CHANGES IN VERSION 1.33.14
+--------------------------
+
+BUG FIXES
+
+    o scanrage is now honoured in xcmsRaw, and consequently
+      also in xcmsSet(matchedFilter), where previously
+      it was ignored.
+
+CHANGES IN VERSION 1.33.13
+--------------------------
+
+BUG FIXES
+
+    o write.cdf() has been fixed to write files AMDIS can read
+
+CHANGES IN VERSION 1.33.12
+--------------------------
+
+BUG FIXES
+
+    o write.mzData adds Polarity to the file if available
+
+CHANGES IN VERSION 1.33.11
+--------------------------
+
+USER VISIBLE CHANGES
+
+    o centWave uses a new method to estimate local noise which improves detection of closely spaced peaks
+
+NEW FEATURES
+
+    o placeholder
+
+BUG FIXES
+
+    o group.mzClust was failing when result had one peak
+
+
+For more details and all changes before May 2012 please see the (now discontinued) CHANGELOG in the source package (inst/ folder).
+
+CHANGED BEHAVIOUR since Version 1.32:
+
+Other Changes since Version 1.32:
+
+* improved mzData writing, now includes MSn spectra and less verbose.
+* improved netCDF writing, but not yet good enough for AMDIS
+
+
+CHANGED BEHAVIOUR since Version 1.14:
+
+* centWave may report a smaller set of peaks, due to a small bug
+  in the ROI algorithm some features with mass deviation > ppm were retained.
+
+Other Changes since Version 1.14:
+
+* New method for grouping: an algorithm inspired by mzMine
+  group(method="nearest") has been implemented. It is slower
+  than group(method="density"). It can individually group
+  close-eluting peaks of very similar mass
+
+* New method for retention time correction:
+  The retcor(method="obiwarp") algorithm operates on the raw data,
+  and thus allows to correct runs without well-behaving
+  peak groups, or without peak picking at all.
+
+* fillPeaks(method="MSW") is now also available
+  for direct infusion spectra. The findPeaks(method="MSW")
+  now returns several intensities, and correctly reports
+  mzmin and mzmax for peaks.
+
+* centWave now uses dynamic memory allocation, needs much less memory,
+  and these BUF related errors should be a thing of the past.
+
+* centWave gains an optional argument "noise",
+  which is useful for data that was centroided without any intensity threshold,
+  centroids with intensity < "noise" are omitted from ROI detection
+
+* the fillPeaks() methods now remember which was
+  an observed, and which was a "filled" peak.
+
+* For direct infusion spectra diffreport() now shows
+  the raw peak shapes, and also indicated "real" and "filled" peaks.
+
+* xcmsRaw can now filter for positive/negative spectra,
+  if the file includes both polarities. xcmsSet() can pass
+  the polarity to contain positive/negative peaks only.

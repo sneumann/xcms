@@ -1,0 +1,179 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+%\VignetteIndexEntry{Grouping FTICR-MS data with xcms}
+%\VignetteKeywords{preprocess, analysis}
+%\VignettePackage{xcms}
+\documentclass[12pt]{article}
+
+\usepackage{hyperref}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\begin{document}
+\title{Grouping FTICR-MS data with xcms}
+\author{J. Bargsten}
+\maketitle
+
+\section*{Introduction}
+
+This document describes how to use \Rpackage{xcms} for aligning multiple MS
+spectra against each other.
+
+\section{Prerequisites}
+Lots of Preprocessing has to be done before the data is ready for aligning.
+First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet}
+are needed for further processing.
+
+<<LoadLib>>=
+library(xcms)
+library(MassSpecWavelet)
+@
+
+This documentation uses raw mzdata files from \Rpackage{msdata} as example data
+set. Assuming that \Rpackage{msdata} is installed, we locate the path of the
+package and extract the datafiles.
+
+<<LoadData>>=
+library(msdata)
+mzdatapath <- system.file("fticr", package = "msdata")
+mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+cat("Starting xcmsDirect.Rnw")
+@
+
+The \Rmethod{xcmsSet}-Constructor parses the given files and applies
+peakpicking using the MassSpecWavelet algorithm, leading to a \Robject{xcmsSet}
+object with 2 sampleclasses, ham4 and ham5, and 5 samples, respectively.
+
+<<ProcessData>>=
+data.mean <- "data.mean"
+xs <- xcmsSet(
+        method="MSW",
+        files=mzdatafiles,
+        scales=c(1,4,9),
+        nearbyPeak=T,
+        verbose.columns = FALSE,
+        winSize.noise=500,
+        SNR.method="data.mean",
+        snthr=10
+)
+@
+\section{Calibration}
+\Rmethod{calibrate} can be used to correct the m/z values in a \Robject{xcmsSet}. It needs a xcmsSet and a list of m/z value which should be found in the object. To show this on a example a sample of ham4 is created and discalibrated a bit after getting some m/z:
+
+<<CreateExample>>=
+
+xs4 <- xcmsSet(
+		method = "MSW",
+		files = mzdatafiles[1],
+		scales = c(1,4, 9),
+		nearbyPeak = T,
+		verbose.columns = FALSE,
+		winSize.noise = 500,
+		SNR.method = "data.mean",
+		snthr = 10)
+
+masslist <- xs4@peaks[c(1,4,7),"mz"]
+xs4@peaks[,"mz"] <- xs4@peaks[,"mz"] + 0.00001*runif(1,0,0.4)*xs4@peaks[,"mz"] + 0.0001
+@
+
+The \Robject{xcmsSet} now can be calibrated again with the m/z from the masslist. The plot shows the reference masses with the distances to the found ones and the regression-line.
+
+<<Calibrate include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+xs4c <- calibrate(xs4,
+		calibrants=masslist,
+		method="edgeshift",
+		mzabs=0.0001,
+		mzppm=5,
+		neighbours=3,
+		plotres=TRUE
+		)
+@
+
+
+
+The method "shift" adds a value to each m/z, "linear" does a regression and edgeshift does a regression but uses a shift before the smallest and after the biggest m/z from the calibrants.
+\\
+These steps are necessary to create a usable input for \Rmethod{mzClust}.
+However, if you have already stored the data in a \Robject{xcmsSet}, you can
+skip the steps above.
+
+\section{Aligning}
+Now we can align \Robject{xs} with \Rmethod{mzClust}. The result is a clone of
+\Robject{xs} enhanced by the result of \Rmethod{mzClust}. For a description of
+the arguments \Rmethod{mzClust} takes, see helppage of the function.
+
+<<MzClust>>=
+xsg <- group(xs, method="mzClust")
+xsg
+@
+
+\Rmethod{mzClust} stores the grouping information like the standard
+\Rmethod{group} method of \Rpackage{xcms} suited for retrieval via
+\Rmethod{groups} and \Rmethod{groupidx}. An example is shown below.
+
+<<ShowGroups>>=
+groups(xsg)[1:10,]
+peaks(xsg)[groupidx(xsg)[[1]]]
+@
+
+
+
+\section{Postprocessing}
+In most cases not all samples are in one group. This can be the origin of
+serious problems in code, which is based on e.g.
+\Rmethod{groupval}. \Rmethod{groupval} sets missing peaks to NA. The solution
+is \Rmethod{fillPeaks}. It changes all NA values to random noise based on the raw
+data file.
+<<FillPeaks>>=
+groupval(xsg)[1,]
+xsgf <- fillPeaks(xsg, method="MSW")
+groupval(xsgf, "medret", "into")[1:10,]
+@
+
+The results are suited for instance for heatmaps, etc.
+
+
+\section{Analyzing and Visualizing Results}
+
+A report showing the most statistically significant differences in
+analyte intensities can be generated with the \Rmethod{diffreport}
+method. It will automatically sho wthe superimposed peaks in the
+spectra for a given number of them, in this case 10. Several of those
+chromatograms are shown in Figure~\ref{eic}.
+
+\begin{figure}
+\begin{center}
+\begin{tabular}{cc}
+\includegraphics[width=0.49\textwidth]{example_spec/001}&
+\includegraphics[width=0.49\textwidth]{example_spec/002}\\
+\includegraphics[width=0.49\textwidth]{example_spec/003}&
+\includegraphics[width=0.49\textwidth]{example_spec/004}\\
+\end{tabular}
+\end{center}
+\caption{\label{eic}
+Auto-generated extracted spectra for the top three
+differentially regulated ions. Darkened lines indicate where the
+peaks were integrated for quantitation.}
+\end{figure}
+
+<<AnalysisVisualize>>=
+reporttab <- diffreport(xsgf, "ham4", "ham5", "example", eicmax=4,
+                        h=480, w=640)
+reporttab[1:4,]
+@
+
+\end{document}

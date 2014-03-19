@@ -1,0 +1,130 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+% \VignetteIndexEntry{Processing Tandem-MS and MS$^n$ data with xcms}
+% \VignetteKeywords{preprocess, analysis, tandemms}
+% \VignettePackage{xcms}
+\documentclass[12pt]{article}
+
+\usepackage{hyperref}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\begin{document}
+\title{Processing Tandem-MS and MS$^n$ data with xcms}
+\author{S. Neumann, J. Kutzera}
+\maketitle
+
+\section*{Introduction}
+
+This document describes how to use \Rpackage{xcms}
+for processing of Tandem-MS and MS$^n$ data from e.g.\ triple-quad,
+QTOF, ion trap or orbitrap mass spectrometers.
+
+% <<LibraryPreload, echo = FALSE, results = hide>>=
+<<LibraryPreload>>=
+library(xcms)
+library(msdata)
+@
+
+\section{Raw Data File Preparation}
+
+The \Rpackage{xcms} package reads full-scan LC/MS data and associated
+Tandem-MS and MS$^n$ spectra from mzData and mzXML files (CDF does not
+support MS$^n$).
+
+For the purposes of demonstration, we will use a some sample files
+included in the \Rpackage{msdata} package. The (truncated) raw data
+files are contained in the \texttt{data} directory.  To access the
+mzData files, we first locate the \textit{data} directory in the
+\Rpackage{msdata} package.
+
+%FileFilter -in HAM_004_641fE_pDDIT.mzData -rt 1190:1310 -int 100000: -mz 500:850 -out extracted.mzData
+
+<<RawFiles>>=
+mzdatapath <- system.file("iontrap", package = "msdata")
+list.files(mzdatapath, recursive = TRUE)
+@
+
+\section{Accessing, combining and Visualising MS$^n$ spectra}
+
+The MS$^n$ spectra are read into xcms just like plain LC-MS files.
+Inclusion of the additional scans has to be explicitely enabled. The
+xcmsRaw summary shows the additional content:
+
+<<FileIO>>=
+library(xcms)
+mzdatafiles <- list.files(mzdatapath, pattern="extracted.mzData", recursive = TRUE, full.names = TRUE)
+xraw <- xcmsRaw(mzdatafiles[1], includeMSn=TRUE)
+xraw
+@
+
+There is also a new peak picker, which actually returns all parent
+ions as annotated in the mzData / mzXML files. A warning will be
+issued if this is not present, either because of a poor converter or
+if xraw is read from a CDF file:
+
+<<SpectraSelection>>=
+peaks <- findPeaks(xraw, method="MS1")
+@
+
+By giving larger windows, subsets of spectra can be returned,
+and these can be combined to obtain so called compound spectra
+containing e.g. MS$^2$ to MS$^5$.
+
+% <<SpectraCombining>>=
+% #xnew <- getScan(xraw)
+% #xnew2 <- combineScans(xnew)
+% @
+
+\section{xcmsFragments}
+
+A xcmsFragments-Object contains a Table with informations about all
+Peaks from MS1 to MS$^n$ of one Experiment, including mz-value,
+retentiontime, MSlevel, and parentpeak. The data can be used for
+visualization or (later) computing alignments between different
+Experiments. The object is created as empty and can be filled with
+collect(). This method requires a peaktable or a xcmsSet for the
+MS1peaks and the original xcmsRaw for the msn-Data.
+
+<<SpectraSelection>>=
+xs <- xcmsSet(mzdatafiles, method="MS1")
+xfrag <- xcmsFragments(xs)
+xfrag
+@
+
+plotTree prints out a simplyfied tree of the peaks in a
+xcmsFragments. The user can define borders for the retentionTime and
+for the MassRange, he can also print the tree for a single
+MS1-Peak. PlotTree uses the package RgraphViz and plots the tree
+text-based if requested or if the package cannot be found.
+
+<<TreePlot, include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+plotTree(xfrag,xcmsFragmentPeakID=6)
+@
+
+\begin{figure}
+\includegraphics[width=0.49\textwidth]{xcmsMSn-TreePlot}
+\begin{minipage}[b]{0.49\linewidth}
+<<TextTree, echo=FALSE>>=
+plotTree(xfrag,xcmsFragmentPeakID=6, textOnly=TRUE)
+@
+\end{minipage}
+\caption{\label{treeplot} The MS$^n$ fragmentation tree for the MS1
+  peak 6.}
+\end{figure}
+
+\end{document}

@@ -1,0 +1,16 @@
+*~
+\#*\#
+
+inst/doc/example_box/
+inst/doc/example_eic/
+inst/doc/example_spec/
+inst/doc/xcmsDirect.pdf
+inst/doc/xcmsInstall.pdf
+inst/doc/xcmsMSn.pdf
+inst/doc/xcmsPreprocess.pdf
+
+*.o
+src/xcms.so
+src/boost/
+src/boost_aux/
+src/pwiz/

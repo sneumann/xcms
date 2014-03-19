@@ -1,0 +1,203 @@
+%
+% NOTE -- ONLY EDIT THE .Rnw FILE!!!  The .tex file is
+% likely to be overwritten.
+%
+%\VignetteIndexEntry{Installation Instructions for xcms}
+%\VignetteDepends{}
+%\VignetteKeywords{install}
+%\VignettePackage{xcms}
+\documentclass[12pt]{article}
+
+\usepackage{hyperref}
+
+\newcommand{\Robject}[1]{{\texttt{#1}}}
+\newcommand{\Rfunction}[1]{{\texttt{#1}}}
+\newcommand{\Rpackage}[1]{{\textit{#1}}}
+\newcommand{\Rclass}[1]{{\textit{#1}}}
+\newcommand{\Rmethod}[1]{{\textit{#1}}}
+\newcommand{\Rfunarg}[1]{{\textit{#1}}}
+
+\textwidth=6.2in
+\textheight=8.5in
+%\parskip=.3cm
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.3in
+
+\begin{document}
+\title{Installation Instructions for xcms}
+\author{Colin A. Smith}
+\maketitle
+
+\section*{Introduction}
+
+This document describes how to install \Rpackage{xcms} and, if
+necessary, also obtain and install \texttt{R}. The \Rpackage{xcms}
+package includes \texttt{C} code which needs to be compiled, and
+also uses the NetCDF library for reading AIA format NetCDF mass
+spectral data files. Pre-compiled binaries which include the NetCDF
+library are available for Windows and Mac OS X. Users of Linux and
+other platforms must install the NetCDF library themselves.
+
+The \Rpackage{xcms} package and a demonstration data package,
+\Rpackage{faahKO}, are currently available from several sources.
+The first is the web site of the Bioconductor open source software
+project. (\url{http://www.bioconductor.org/}) The second is the web
+site of the METLIN Metabolite Database.
+(\url{http://metlin.scripps.edu/download/}) Both sites contain
+source and binary distributions, although due to differences in
+distribution, one may host a slightly more up-to-date version than
+the other.
+
+\texttt{R} is available for download through the Comprehensive R
+Archive Network (CRAN). Visitors are encouraged to use one of the
+many local mirrors of the CRAN site for efficient downloading.
+(\url{http://cran.r-project.org/mirrors.html}) While the vignettes
+included with \Rpackage{xcms} give many examples of \texttt{R} use
+and syntax, new users are strongly encouraged to skim some of the
+introductory material in the Manuals section of the \texttt{R} web
+site. (\url{http://www.r-project.org/}) ``An Introduction to R''
+is an especially useful starting point.
+
+\section{Windows Installation}
+
+To make installation as straightforward as possible for all users,
+\Rpackage{xcms} includes a binary version of the NetCDF library in
+the \texttt{inst/netcdfdll} subdirectory. The version currently
+included is 3.6.1-beta1, as available from the Unidata web
+site\footnote{\url{http://www.unidata.ucar.edu/packages/netcdf/}}.
+
+\begin{enumerate}
+
+\item Download and install the current version of \texttt{R}.
+Detailed instructions for doing so are available on the CRAN site.
+
+\item Once you have \texttt{R} installed, launch it and select
+Biodconductor repository using the \texttt{Packages > Select
+repositories...} menu item.
+
+\item Use the package installer to automatically download and install
+\Rpackage{multtest} with the \texttt{Packages > Install package(s)...}
+menu item.
+
+\item Download the \Rpackage{xcms} and \Rpackage{faahKO} Windows
+binaries from one of the sources listed in the introduction.
+
+\item Install \Rpackage{xcms} and \Rpackage{faahKO} using the
+\texttt{Packages > Install package(s) from local zip files...} menu
+item.
+
+\end{enumerate}
+
+\section{Mac OS X Installation}
+
+The Mac OS X binaries of \Rpackage{xcms} may be installed without
+the Developer Tools and without a separate installation of the
+NetCDF library. Its code is pre-compiled and statically linked
+against the NetCDF library version 3.6.0-p1. If you wish to compile
+it yourself, you may obtain the library from software distribution
+projects such as Fink\footnote{\url{http://fink.sourceforge.net/}}
+or DarwinPorts\footnote{\url{http://netcdf.darwinports.com/}}.
+Alternatively, you may compile it yourself using the instructions
+provided below.
+
+\begin{enumerate}
+
+\item Several of the functions in \Rpackage{xcms} which generate
+PNG images require an X11 display device. If it is not already
+installed, you will need to install
+X11\footnote{\url{http://www.apple.com/downloads/macosx/apple/x11formacosx.html}}.
+
+\item Download and install the current version of \texttt{R}.
+Detailed instructions for doing so are available on the CRAN site.
+
+\item Download the \Rpackage{xcms} and \Rpackage{faahKO} Mac OS X
+binaries from one of the sources listed in the introduction.
+
+\item Launch \texttt{R} and open the R Package Installer using the
+\texttt{Packages \& Data > Package Installer} menu item. Select the
+``At User Level'' radio button.
+
+\item Select ``BioConductor (binaries)'' from the pop up menu and
+use the package installer to automatically download and install
+\Rpackage{Biobase} and \Rpackage{multtest}.
+
+If Bioconductor is preparing for its next release and binaries
+aren't yet available for your version of \texttt{R}, you will need
+to install the Apple Developer
+Tools\footnote{\url{http://connect.apple.com/}} to allow installation
+of source Bioconductor packages. Use the ``BioConductor (sources)''
+option instead.
+
+\item Select ``Local Source Package'' from the popup menu and install
+the \Rpackage{xcms} and \Rpackage{faahKO} packages you previously
+downloaded.
+
+\end{enumerate}
+
+\section{Obtaining the NetCDF Library}
+
+If you are using Linux or another UNIX-like operating system, you
+will have to obtain the NetCDF library before installing and using
+\Rpackage{xcms}. Many Linux distributions include that package so
+in most cases, locating and installing the version that comes with
+your distribution will be the best option. However, you may also
+install the NetCDF package using the following instructions:
+
+\begin{enumerate}
+
+\item Download the gzipped tar file of the NetCDF source
+(\texttt{netcdf.tar.gz}) from the Unidata web-site\footnotemark[1].
+Then extract the archive and change to the source directory.
+
+\begin{verbatim}
+tar -xzf netcdf.tar.gz
+cd netcdf-*/src
+\end{verbatim}
+
+\item Configure, compile, and install the library. By default it
+is installed in the directory you extracted in the previous step.
+If you wish to install it in another location, use the \texttt{---prefix}
+argument with the configuration script.
+
+\begin{verbatim}
+./configure --prefix=/usr/local
+make
+make install
+\end{verbatim}
+
+\end{enumerate}
+
+It is important to note that, when compiled for the x86\_64
+architecture, the NetCDF library must be compiled with the
+\texttt{-fPIC} flag to produce position-independent code. Certain
+Linux distributions, such as SuSE Professional 9.2, do not yet
+enable that option when packaging the NetCDF library. In that case
+you must compile and install the library yourself using the
+instructions above. To enable that flag, set the \texttt{CFLAGS}
+environment variable prior to compilation.
+
+\begin{verbatim}
+export CFLAGS=-fPIC (for sh, bash, etc.)
+setenv CFLAGS -fPIC (for csh, tcsh, etc.)
+\end{verbatim}
+
+\section{Obtaining the \Rpackage{rgl} Package}
+
+Though not listed in any of the dependencies of \Rpackage{xcms},
+the \Rpackage{rgl} package does get limited use. It provides an
+interface for creating interactive, 3D graphics using OpenGL. The
+\Rpackage{rgl} package is currently under development and does not
+yet provide sufficient functionality or stability to warrant its
+listing as an official dependency. It is used by a single
+method, \Rmethod{plotSurf}, for plotting out a 3D surface representation
+of part of an LC/MS or GC/MS experiment. Due to limitations in
+\Rpackage{rgl}, axis labels are currently not implemented. However,
+it can be instructive for visualizing a small number of peaks in
+three dimensions.
+
+The best place to obtain source and Windows binary packages of
+\Rpackage{rgl} is directly from CRAN. Mac OS X binaries are available
+in the same place you download the \texttt{R} installer.
+
+\end{document}
