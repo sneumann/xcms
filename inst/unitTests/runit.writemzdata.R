@@ -9,6 +9,7 @@ test.write.mzdata <- function() {
     xrawCopy <- xcmsRaw(mzdataFile)
 
     checkTrue(all(xraw@env$mz == xrawCopy@env$mz))
+    checkTrue(all(xraw@env$intensity == xrawCopy@env$intensity))
 
 }
 
