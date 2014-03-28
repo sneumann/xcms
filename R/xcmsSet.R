@@ -1421,6 +1421,11 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
 
     cnames <- colnames(object@peaks)
 
+# Making gvals environment so that when it is repeated for each file it only uses the memory one time
+gvals_env <- new.env(parent=baseenv())
+assign("gvals", gvals, envir = gvals_env)
+
+
     ft <- cbind(file=files,id=1:length(files))
     argList <- apply(ft,1,function(x) {
       ## Add only those samples which actually have NA in them
@@ -1430,7 +1435,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
       } else {
         list(file=x["file"],id=as.numeric(x["id"]),
              params=list(method="chrom",
-               gvals=gvals, 
+               gvals=gvals_env, 
                prof=prof,
                dataCorrection=object@dataCorrection,
                polarity=object@polarity,

@@ -333,7 +333,7 @@ fillPeaksChromPar <- function(arg) {
   prof <- params$prof
   rtcor <- params$rtcor
   peakrange <- params$peakrange
-  gvals <- params$gvals
+  gvals <- params$gvals$gvals
   
   lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
   
