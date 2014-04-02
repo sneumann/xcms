@@ -1,5 +1,8 @@
 CHANGES IN VERSION 1.39.6
 --------------------------
+USER VISIBLE CHANGES:
+     o Massifquant reports the maximum intensity for each isotope trace
+(peak). This is useful for interactive parameter optimization. 
 BUG FIXES:
     o Major memory reduction in parallel fillPeaks() thanks to 
       Jan Stanstrup. Now using an environment to mirror gvals 

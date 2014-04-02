@@ -1869,6 +1869,14 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth
 
         p <- t(sapply(massifquantROIs, unlist));
         colnames(p) <- basenames;
+        
+        #get the max intensity for each feature
+        maxo <- sapply(seq_len(nrow(p)), function(i) {
+            raw <- rawMat(object, mzrange = p[i,c("mzmin", "mzmax")],
+                          scanrange = p[i,c("rtmin", "rtmax")])
+            max(raw[,3])
+        })
+        p <- cbind(p, maxo)
 
         #calculate median index
         p[,"rt"] = as.integer(p[,"rtmin"] + ( (p[,"rt"] + 1) / 2 ) - 1); 
