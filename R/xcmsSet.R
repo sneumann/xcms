@@ -1368,7 +1368,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL) {
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL,expand.mz=1,expand.rt=1) {
   ## development mockup:
   if (FALSE) {
     library(xcms)
@@ -1440,7 +1440,9 @@ assign("gvals", gvals, envir = gvals_env)
                dataCorrection=object@dataCorrection,
                polarity=object@polarity,
                rtcor=object@rt$corrected[[as.numeric(x["id"])]],
-               peakrange=peakrange))
+               peakrange=peakrange,
+               expand.mz=expand.mz,
+               expand.rt=expand.rt))
       }
     })
 
