@@ -75,7 +75,7 @@ xset <- xcmsSet(cdffiles, method = "massifquant",
                 peakwidth= c(30, 60),
                 prefilter= c(1,3000),
                 withWave = 0,
-                nSlaves = 12);
+                nSlaves = 2);
 }
 \author{Christopher Conley}
 \encoding{UTF-8}
