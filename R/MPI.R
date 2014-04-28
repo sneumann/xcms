@@ -368,7 +368,12 @@ fillPeaksChromPar <- function(arg) {
   peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
   
   
+  # Making sure the expanded peakrange doesn't exceed the RT range in the file
+  peakrange[        peakrange[,"rtmin"]<min(lcraw@scantime)            ,"rtmin"]     =     min(lcraw@scantime)
+  peakrange[        peakrange[,"rtmax"]>max(lcraw@scantime)            ,"rtmax"]     =     max(lcraw@scantime)
   
+    
+    
   
     naidx <- which(is.na(gvals[,myID]))
     
