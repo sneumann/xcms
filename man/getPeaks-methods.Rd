@@ -15,7 +15,7 @@
 }
 }}
 \arguments{
-  \item{object}{the \code{xcmsSet} object}
+  \item{object}{the \code{xcmsRaw} object}
   \item{peakrange}{
     matrix or data frame with 4 columns: \code{mzmin}, \code{mzmax},
     \code{rtmin}, \code{rtmax} (they must be in that order or named)
