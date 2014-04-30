@@ -335,6 +335,8 @@ fillPeaksChromPar <- function(arg) {
   peakrange <- params$peakrange
   expand.mz <- params$expand.mz
   expand.rt <- params$expand.rt
+  min.width.mz <- params$min.width.mz
+  min.width.rt <- params$min.width.rt
   gvals <- params$gvals$gvals
   
   lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
@@ -368,9 +370,19 @@ fillPeaksChromPar <- function(arg) {
   peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
   
   
+  # Setting a minimum peakwidth for mz and rt range
+  idx.expand.mz = (peakrange[,"mzmax"] - peakrange[,"mzmin"]) < min.width.mz
+  peakrange[idx.expand.mz,"mzmin"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   -min.width.mz/2
+  peakrange[idx.expand.mz,"mzmax"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   +min.width.mz/2
+  
+  idx.expand.rt = (peakrange[,"rtmax"] - peakrange[,"rtmin"]) < min.width.rt
+  peakrange[idx.expand.rt,"rtmin"]   =  rowMeans(    peakrange[ idx.expand.rt , c("mzmin","mzmax") ]    )   -min.width.rt/2
+  peakrange[idx.expand.rt,"rtmax"]   =  rowMeans(    peakrange[ idx.expand.rt , c("mzmin","mzmax") ]    )   +min.width.rt/2
+  
+  
   # Making sure the expanded peakrange doesn't exceed the RT range in the file
-  peakrange[        peakrange[,"rtmin"]<min(lcraw@scantime)            ,"rtmin"]     =     min(lcraw@scantime)
-  peakrange[        peakrange[,"rtmax"]>max(lcraw@scantime)            ,"rtmax"]     =     max(lcraw@scantime)
+  peakrange[        peakrange[,"rtmin"]<min(lcraw@scantime)            ,"rtmin"]     <-     min(lcraw@scantime)
+  peakrange[        peakrange[,"rtmax"]>max(lcraw@scantime)            ,"rtmax"]     <-     max(lcraw@scantime)
   
     
     
