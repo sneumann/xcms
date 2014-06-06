@@ -357,7 +357,41 @@ fillPeaksChromPar <- function(arg) {
     } else {
       warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
     }
+    
+  # Expand the peakrange symmetrically by a factor of the total peak width 
+  peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1) 
+  peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1) 
+  peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1) 
+  peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1) 
   
+  # Set a minimum width for the mz and rt ranges of all peaks
+  idx.expand.mz = (peakrange[,"mzmax"] - peakrange[,"mzmin"]) < min.width.mz
+  #account for rowMeans dimension error when only 1 peak needs adjustment 
+  if(length(which(idx.expand.mz==T))==1){ 
+	peakrange[idx.expand.mz,"rtmin"]   =  mean(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   -min.width.mz/2
+	peakrange[idx.expand.mz,"mzmax"]   =  mean(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   +min.width.mz/2
+  }
+  else{
+  peakrange[idx.expand.mz,"mzmin"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   -min.width.mz/2 
+  peakrange[idx.expand.mz,"mzmax"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   +min.width.mz/2 
+  }
+    
+  idx.expand.rt = (peakrange[,"rtmax"] - peakrange[,"rtmin"]) < min.width.rt
+  #account for rowMeans dimension error when only 1 peak needs adjustment
+  if(length(which(idx.expand.rt==T))==1){ 
+	peakrange[idx.expand.rt,"rtmin"]   =  mean(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   -min.width.rt/2
+	peakrange[idx.expand.rt,"rtmax"]   =  mean(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   +min.width.rt/2
+  }
+  else{
+  peakrange[idx.expand.rt,"rtmin"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   -min.width.rt/2 
+  peakrange[idx.expand.rt,"rtmax"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   +min.width.rt/2 
+  }  
+  
+  # Make sure the expanded peakrange doesn't exceed the RT range in the file
+  peakrange[        peakrange[,"rtmin"]<min(lcraw@scantime)            ,"rtmin"]     =     min(lcraw@scantime) 
+  peakrange[        peakrange[,"rtmax"]>max(lcraw@scantime)            ,"rtmax"]     =     max(lcraw@scantime) 
+    
+      
     naidx <- which(is.na(gvals[,myID]))
     
     newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
