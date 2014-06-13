@@ -372,12 +372,12 @@ fillPeaksChromPar <- function(arg) {
   
   # Setting a minimum peakwidth for mz and rt range
   idx.expand.mz = (peakrange[,"mzmax"] - peakrange[,"mzmin"]) < min.width.mz
-  peakrange[idx.expand.mz,"mzmin"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   -min.width.mz/2
-  peakrange[idx.expand.mz,"mzmax"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ]    )   +min.width.mz/2
+  peakrange[idx.expand.mz,"mzmin"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ,drop=F]    )   -min.width.mz/2
+  peakrange[idx.expand.mz,"mzmax"]   =  rowMeans(    peakrange[ idx.expand.mz , c("mzmin","mzmax") ,drop=F]    )   +min.width.mz/2
   
   idx.expand.rt = (peakrange[,"rtmax"] - peakrange[,"rtmin"]) < min.width.rt
-  peakrange[idx.expand.rt,"rtmin"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   -min.width.rt/2
-  peakrange[idx.expand.rt,"rtmax"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ]    )   +min.width.rt/2
+  peakrange[idx.expand.rt,"rtmin"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ,drop=F]    )   -min.width.rt/2
+  peakrange[idx.expand.rt,"rtmax"]   =  rowMeans(    peakrange[ idx.expand.rt , c("rtmin","rtmax") ,drop=F]    )   +min.width.rt/2
   
   
   # Making sure the expanded peakrange doesn't exceed the RT range in the file
