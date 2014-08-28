@@ -17,4 +17,5 @@ Description: Framework for processing and visualization of
         high-throughput, untargeted analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
+BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
