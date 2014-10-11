@@ -318,7 +318,7 @@ setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
 setMethod("sampclass", "xcmsSet", function(object) {
     if (ncol(object@phenoData) >0) {
-        interaction(object@phenoData)
+        interaction(object@phenoData, drop=TRUE)
     } else {
         factor()
     }

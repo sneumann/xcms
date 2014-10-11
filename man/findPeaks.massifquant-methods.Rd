@@ -66,7 +66,8 @@ library(xcms)
 #load all the wild type and Knock out samples
 cdfpath <- system.file("cdf", package = "faahKO")
 cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-#run the massifquant analysis using 12 cores in parallel. (nslaves = 12).
+# run the massifquant analysis 
+
 xset <- xcmsSet(cdffiles, method = "massifquant", 
                 consecMissedLimit = 1,
                 snthresh = 10,
@@ -74,8 +75,7 @@ xset <- xcmsSet(cdffiles, method = "massifquant",
                 ppm = 10,
                 peakwidth= c(30, 60),
                 prefilter= c(1,3000),
-                withWave = 0,
-                nSlaves = 2);
+                withWave = 0);
 }
 \author{Christopher Conley}
 \encoding{UTF-8}
