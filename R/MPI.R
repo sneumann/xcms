@@ -333,6 +333,8 @@ fillPeaksChromPar <- function(arg) {
   prof <- params$prof
   rtcor <- params$rtcor
   peakrange <- params$peakrange
+  expand.mz <- params$expand.mz
+  expand.rt <- params$expand.rt
   gvals <- params$gvals$gvals
   
   lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
@@ -357,6 +359,16 @@ fillPeaksChromPar <- function(arg) {
     } else {
       warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
     }
+  
+  
+  # Expanding the peakrange
+  peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
+  peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
+  peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
+  peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
+  
+  
+  
   
     naidx <- which(is.na(gvals[,myID]))
     
