@@ -14,3 +14,4 @@ src/xcms.so
 src/boost/
 src/boost_aux/
 src/pwiz/
+.Rproj.user

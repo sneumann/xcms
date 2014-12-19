@@ -337,10 +337,10 @@ fillPeaksChromPar <- function(arg) {
   
   lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
   
-  if(length(params$dataCorrection) > 1){
-    if(params$dataCorrection[i] == 1)
-      lcraw <- stitch(lcraw, AutoLockMass(lcraw))
-  }
+  # if(length(params$dataCorrection) > 1){
+  #   if(params$dataCorrection[i] == 1)
+  #     lcraw <- stitch(lcraw, AutoLockMass(lcraw))
+  # }
   
   if (exists("params$polarity") && length(params$polarity) >0) {
     if (length(params$polarity) >0) {

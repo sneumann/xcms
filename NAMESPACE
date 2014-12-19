@@ -16,7 +16,9 @@ export(
        "xcmsRaw",
        "xcmsSet",
        "xcmsFragments",
-       "xcmsPapply"
+       "xcmsPapply",
+       "ppm",
+       "ppmDev"
        )
 
 S3method(plot, xcmsEIC)
