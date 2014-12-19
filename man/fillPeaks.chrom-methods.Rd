@@ -12,7 +12,7 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{fillPeaks.chrom(object, nSlaves=0)}
+  \code{fillPeaks.chrom(object, nSlaves=0,expand.mz=1,expand.rt=1)}
 }
 }}
 
@@ -20,6 +20,8 @@
   \item{object}{the \code{xcmsSet} object}
   \item{nSlaves}{number of slaves/cores to be used for parallel peak filling.
     MPI is used if installed, otherwise the snow package is employed for multicore support.}
+  \item{expand.mz}{Expansion factor for the m/z range used for integration.}
+  \item{expand.rt}{Expansion factor for the rentention time range used for integration.}
 }
 \details{
   After peak grouping, there will always be peak groups that do not
