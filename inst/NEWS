@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.43.1
+--------------------------
+
+NEW FEATURE:
+    o function plotQC() for plotting various QC plots on RT and m/z
+
 CHANGES IN VERSION 1.41.1
 --------------------------
 
