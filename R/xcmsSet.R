@@ -225,12 +225,19 @@ split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
   if (any(! f %in% xs@phenoData[,"class"])) {
     stop("Non-existant class specified.")
     }
+
+  split.samps = lapply(f, function(x) {
+    which(xs@phenoData[,"class"] %in% x)
+    })
+  if (!drop) {
+    split.samps[[length(split.samps) + 1]] = which(! xs@phenoData[,"class"] %in% f)
+    f = c(f, "others")
+  }
   
-  
-  lcsets = lapply(f, function(x) {
+  lcsets = lapply(split.samps, function(samps) {
     xs.n = new("xcmsSet")
     
-    samps = which(xs@phenoData[,"class"] == x)
+
     
     peaks(xs.n) = xs@peaks[xs@peaks[,"sample"] %in% samps,,drop=F]
     xs.n@peaks[,"sample"] = rank(xs.n@peaks[,"sample"], ties.method="max")
