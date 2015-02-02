@@ -221,45 +221,38 @@ c.xcmsSet <- function(...) {
     invisible(object)
 }
 
-split.xcmsSet <- function(x, f, drop = TRUE, ...) {
-
-    if (!is.factor(f))
-        f <- factor(f)
-    sampidx <- unclass(f)
-    peakmat <- peaks(x)
-    samples <- sampnames(x)
-    classlabel <- sampclass(x)
-    cdffiles <- filepaths(x)
-    prof <- profinfo(x)
-    rtraw <- x@rt$raw
-    rtcor <- x@rt$corrected
-
-    lcsets <- vector("list", length(levels(f)))
-    names(lcsets) <- levels(f)
-
-    for (i in unique(sampidx)) {
-        lcsets[[i]] <- new("xcmsSet")
-
-        samptrans <- numeric(length(f))
-        samptrans[sampidx == i] <- rank(which(sampidx == i))
-        samp <- samptrans[peakmat[,"sample"]]
-        sidx <- which(samp != 0)
-        cpeaks <- peakmat[sidx,, drop=FALSE]
-        cpeaks[,"sample"] <- samp[sidx]
-        peaks(lcsets[[i]]) <- cpeaks
-
-        sampnames(lcsets[[i]]) <- samples[sampidx == i]
-        sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
-        profinfo(lcsets[[i]]) <- prof
-        lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
-        lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
+split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
+  if (any(! f %in% xs@phenoData[,"class"])) {
+    stop("Non-existant class specified.")
     }
 
-    if (drop)
-        lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
+  split.samps = lapply(f, function(x) {
+    which(xs@phenoData[,"class"] %in% x)
+    })
+  if (!drop) {
+    split.samps[[length(split.samps) + 1]] = which(! xs@phenoData[,"class"] %in% f)
+    f = c(f, "others")
+  }
+  
+  lcsets = lapply(split.samps, function(samps) {
+    xs.n = new("xcmsSet")
+    
 
-    lcsets
+    
+    peaks(xs.n) = xs@peaks[xs@peaks[,"sample"] %in% samps,,drop=F]
+    xs.n@peaks[,"sample"] = rank(xs.n@peaks[,"sample"], ties.method="max")
+    
+    sampnames(xs.n) = rownames(xs@phenoData)[samps]
+    sampclass(xs.n) = factor(xs@phenoData[samps,"class"])
+    
+    xs.n@filepaths = xs@filepaths[samps]
+    profinfo(xs.n) = profinfo(xs)
+    xs.n@rt$raw = xs@rt$raw[samps]
+    xs.n@rt$corrected = xs@rt$corrected[samps]
+    xs.n
+    })
+  names(lcsets) = as.character(f)
+  return(lcsets)  
 }
 
 setMethod("peaks", c("xcmsSet","missing"), function(object) object@peaks)
