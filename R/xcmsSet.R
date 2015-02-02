@@ -221,8 +221,24 @@ c.xcmsSet <- function(...) {
     invisible(object)
 }
 
-split.xcmsSet <- function(x, f, drop = TRUE, ...) {
-
+split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
+  if (any(! f %in% xs@phenoData[,"class"])) {
+    stop("Non-existant class specified.")
+    }
+  
+  samp.groups = lapply(f, function(x) {
+    xs@phenoData[,"class"] == x
+    })
+  
+  lcsets = lapply(f, function(x) {
+    xs.n = new("xcmsSet")
+    
+    
+    
+    })
+  names(lcsets) = levels(f)
+  return(lcsets)
+  
     if (!is.factor(f))
         f <- factor(f)
     sampidx <- unclass(f)
