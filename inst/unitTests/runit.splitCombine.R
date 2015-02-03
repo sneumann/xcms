@@ -32,7 +32,7 @@ testCombine <- function() {
 }
 
 testSplitFactorShort = function() {
-  f = c("1", "2", "2")
+  f = c(1,2,2)
   xsl <- split(faahko, f)
   for (x in unique(f)) {
     num.samps = sum(x==f)
@@ -42,12 +42,12 @@ testSplitFactorShort = function() {
   }
 }
 
-testSplitFactorLong = function() {
-  f = c(1,2, NULL, NULL, NULL, NULL, NULL,1,1,1,1,1,1,1,1,1)
-  f = c("1", "2", "2")
+testSplitFactorLongDrop = function() {
+  f = c(1,2,1,1,1,1,1,1,1,1,1,1,1,1,1,3)
+  actual.f = f[1:nrow(faahko@phenoData)]
   xsl <- split(faahko, f)
-  for (x in unique(f)) {
-    num.samps = sum(x==f)
+  for (x in unique(actual.f)) {
+    num.samps = sum(x==actual.f)
     checkEqualsNumeric(length(xsl[[x]]@filepaths), num.samps)
     checkEqualsNumeric(nrow(xsl[[x]]@phenoData), num.samps)
     checkEqualsNumeric(length(xsl[[x]]@rt$raw), num.samps)

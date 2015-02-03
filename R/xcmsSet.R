@@ -225,20 +225,21 @@ split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
   if (length(f) < nrow(xs@phenoData)) {
     warning("f is shorter than the number of samples, extra samples will be discarded.")
     }
-  if (length(f) > nrow(xs@phenoData)) {
-    warning("f is longer than the number of samples, extra factors will be ignored.")
+  if (length(f) > nrow(xs@phenoData) & drop) {
+    warning("f is longer than the number of samples, extra factors will be discarded.")
     f = f[1:nrow(xs@phenoData)]
+  }
+  if (length(f) > nrow(xs@phenoData) & !drop) {
+    warning("f is longer than the number of samples, extra factors will be NULL.")
   }
 
   split.samps = lapply(unique(f), function(x) {
-    which(f == x)
+    samps = which(f == x)
+    samps[samps <= nrow(xs@phenoData)]
     })
-  if (!drop) {
-    split.samps[[length(split.samps) + 1]] = which(! xs@phenoData[,"class"] %in% f)
-    f = c(f, "others")
-  }
-  
+
   lcsets = lapply(split.samps, function(samps) {
+    if(length(samps) < 1) {return(NULL)}
     xs.n = new("xcmsSet")
     
     peaks(xs.n) = xs@peaks[xs@peaks[,"sample"] %in% samps,,drop=F]
