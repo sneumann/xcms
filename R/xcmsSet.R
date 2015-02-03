@@ -222,12 +222,16 @@ c.xcmsSet <- function(...) {
 }
 
 split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
-  if (any(! f %in% xs@phenoData[,"class"])) {
-    stop("Non-existant class specified.")
+  if (length(f) < nrow(xs@phenoData)) {
+    warning("f is shorter than the number of samples, extra samples will be discarded.")
     }
+  if (length(f) > nrow(xs@phenoData)) {
+    warning("f is longer than the number of samples, extra factors will be ignored.")
+    f = f[1:nrow(xs@phenoData)]
+  }
 
-  split.samps = lapply(f, function(x) {
-    which(xs@phenoData[,"class"] %in% x)
+  split.samps = lapply(unique(f), function(x) {
+    which(f == x)
     })
   if (!drop) {
     split.samps[[length(split.samps) + 1]] = which(! xs@phenoData[,"class"] %in% f)
@@ -236,8 +240,6 @@ split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
   
   lcsets = lapply(split.samps, function(samps) {
     xs.n = new("xcmsSet")
-    
-
     
     peaks(xs.n) = xs@peaks[xs@peaks[,"sample"] %in% samps,,drop=F]
     xs.n@peaks[,"sample"] = rank(xs.n@peaks[,"sample"], ties.method="max")
@@ -251,7 +253,7 @@ split.xcmsSet <- function(xs, f, drop = TRUE, ...) {
     xs.n@rt$corrected = xs@rt$corrected[samps]
     xs.n
     })
-  names(lcsets) = as.character(f)
+  names(lcsets) = as.character(unique(f))
   return(lcsets)  
 }
 
