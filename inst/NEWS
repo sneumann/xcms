@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.43.2
+--------------------------
+
+BUG FIXES:
+    o Use ProtGenerics, adapted xcms peaks() 
+
 CHANGES IN VERSION 1.43.1
 --------------------------
 
