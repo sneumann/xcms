@@ -15,7 +15,7 @@
 \alias{groups}
 \alias{peaks<-,xcmsSet-method}
 \alias{peaks<-}
-\alias{peaks,xcmsSet,missing-method}
+\alias{peaks,xcmsSet-method}
 \alias{peaks}
 \alias{phenoData}
 \alias{phenoData,xcmsSet-method}
