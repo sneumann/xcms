@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.43.1
-Date: 2015-01-26
+Version: 1.43.2
+Date: 2015-03-03
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
         Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -8,7 +8,7 @@ Author: Colin A. Smith <csmith@scripps.edu>,
 	Paul Benton <hpbenton@scripps.edu>,
 	Christopher Conley <cjconley@ucdavis.edu>
 Maintainer: Ralf Tautenhahn <rtautenh@gmail.com>
-Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, Biobase
+Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, ProtGenerics, Biobase
 Suggests: faahKO, msdata, ncdf, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, RUnit
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of
