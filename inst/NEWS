@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.43.3
+-------------------------
+
+BUG FIXES:
+    o Give a more verbose error message when file not found
+
 CHANGES IN VERSION 1.43.2
 --------------------------
 
