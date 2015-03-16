@@ -4,6 +4,6 @@ setMethod("xcmsSource", "character", function(object) {
     } else if (mzR:::rampIsFile(object)) {
         new("rampSource", object)
     } else {
-        stop("Could not determine file type")
+        stop("xcmsSource: Could not determine file type", object)
     }
 })
