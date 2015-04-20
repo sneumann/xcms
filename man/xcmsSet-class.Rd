@@ -1,6 +1,8 @@
 \name{xcmsSet-class}
 \docType{class}
 \alias{xcmsSet-class}
+\alias{$<-,xcmsSet-method}
+\alias{$,xcmsSet-method}
 \alias{filepaths<-,xcmsSet-method}
 \alias{filepaths<-}
 \alias{filepaths,xcmsSet-method}
@@ -193,6 +195,9 @@
     }
     \item{\link[xcms:split.xcmsSet]{split}}{
       \code{signature("xcmsSet")}: divide into a list of objects
+    }
+    \item{\code{object$name}, \code{object$name<-value}}{
+      Access and set \code{name} column in \code{phenoData}
     }
   }
 }
