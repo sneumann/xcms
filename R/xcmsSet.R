@@ -127,7 +127,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             } else if (parMode == "parallel"){
                 ## using the mclapply to run the code in parallel on the multiple
                 ## CPUs of the actual host/computer.
-                res <- mclapply(argList, findPeaksPar)
+                res <- parallel::mclapply(argList, findPeaksPar)
          } else {
               ## serial mode
               res <- lapply(argList, findPeaksPar)
@@ -1032,11 +1032,11 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm=TRUE)[c("x","y")]
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
         corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
         allden$y <- allden$y / sum(allden$y)
         corden$y <- corden$y / sum(corden$y)
-        maxden <- max(allden$y, corden$y, na.rm=TRUE)
+        maxden <- max(allden$y, corden$y)
         plot(c(0,0), xlim = rtrange, ylim = c(0, maxden), type = "n", main = "", xlab = "Retention Time", ylab = "Peak Density")
         points(allden, type = "l", col = 1)
         points(corden, type = "l", col = 2)
@@ -1450,7 +1450,7 @@ assign("gvals", gvals, envir = gvals_env)
                                      msgfun=msgfunGeneric)
     stopCluster(snowclust)
   } else if (parMode == "parallel"){
-      newpeakslist <- mclapply(argList, fillPeaksChromPar)
+      newpeakslist <- parallel::mclapply(argList, fillPeaksChromPar)
   } else {
     ## serial mode
     newpeakslist <- lapply(argList, fillPeaksChromPar)

@@ -29,7 +29,7 @@ xcmsParallelSetup <- function(nSlaves) {
           parMode <- "SOCK"
       } else{
           ## check parallel package... can use the mclapply on local CPUs
-          if(try(require("parallel", character.only=TRUE, quietly=TRUE))){
+          if(requireNamespace("parallel", quietly=TRUE)){
               cat("Processing on", nSlaves, "cores.\n")
               runParallel <- 1
               parMode <- "parallel"
