@@ -1008,21 +1008,13 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     if (plottype %in% c("deviation", "mdevden")) {
 
-### Set up the colors and line type
-        if (missing(col) || is.null(col)) {
-            col <- integer(n)
-            for (i in 1:max(classlabel))
-                col[classlabel == i] <- 1:sum(classlabel == i)
-        }
-        if (missing(ty) || is.null(ty)) {
-            ty <- integer(n)
-            for (i in 1:max(col))
-                ty[col == i] <- 1:sum(col == i)
-        }
-        if (length(palette()) < max(col))
-            mypal <- rainbow(max(col), end = 0.85)
-        else
-            mypal <- palette()[1:max(col)]
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
 
         rtrange <- range(do.call(c, rtcor))
         devrange <- range(do.call(c, rtdevsmo))
@@ -1040,11 +1032,11 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm=TRUE)[c("x","y")]
         corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
         allden$y <- allden$y / sum(allden$y)
         corden$y <- corden$y / sum(corden$y)
-        maxden <- max(allden$y, corden$y)
+        maxden <- max(allden$y, corden$y, na.rm=TRUE)
         plot(c(0,0), xlim = rtrange, ylim = c(0, maxden), type = "n", main = "", xlab = "Retention Time", ylab = "Peak Density")
         points(allden, type = "l", col = 1)
         points(corden, type = "l", col = 2)
@@ -1263,21 +1255,13 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
     if (plottype == "deviation") {
 
-        ## Set up the colors and line type
-        if (missing(col)) {
-            col <- integer(N)
-            for (i in 1:max(classlabel))
-                col[classlabel == i] <- 1:sum(classlabel == i)
-        }
-        if (missing(ty)) {
-            ty <- integer(N)
-            for (i in 1:max(col))
-                ty[col == i] <- 1:sum(col == i)
-        }
-        if (length(palette()) < max(col))
-            mypal <- rainbow(max(col), end = 0.85)
-        else
-            mypal <- palette()[1:max(col)]
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
 
         rtrange <- range(do.call("c", rtcor))
         devrange <- range(do.call("c", rtdevsmo))
@@ -1323,20 +1307,13 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     rtuncor <- object@rt$raw
     rtcor <- object@rt$corrected
 
-    if (missing(col)) {
-        col <- integer(n)
-        for (i in 1:max(classlabel))
-            col[classlabel == i] <- 1:sum(classlabel == i)
-    }
-    if (missing(ty)) {
-        ty <- integer(n)
-        for (i in 1:max(col))
-            ty[col == i] <- 1:sum(col == i)
-    }
-    if (length(palette()) < max(col))
-        mypal <- rainbow(max(col), end = 0.85)
-    else
-        mypal <- palette()[1:max(col)]
+    ## define the colors and line types and returns a list of
+    ## mypal, col and ty. Uses the original code if no colors are
+    ## submitted. Supports manually selected colors (e.g. in hex)
+    vals <- defineColAndTy(col, ty, classlabel)
+    col <- vals$col
+    mypal <- vals$mypal
+    ty <- vals$ty
 
     rtdevsmo <- vector("list", n)
 
@@ -2054,3 +2031,56 @@ setReplaceMethod("$", "xcmsSet", function(x, name, value) {
   phenoData(x)[[name]] = value
   x
 })
+
+## defines the colors and ltys to be used in the plot functions...
+## the code combines original code taken from the plot functions and
+## adds the possibility to sumbmit colors.
+## col: colors to be used for the samples
+## ty: lty to be used for the samples
+## classlabels: factor with class labels (group definitions), length
+##              being equal to the number of samples.
+defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
+    if(missing(classlabel))
+        stop("classlabel is required")
+    n <- length(classlabel)
+    if(!is.factor(classlabel))
+        classlabel <- factor(classlabel)
+    ## want to transform the class labels to integer values, i.e. skip the levels
+    classlabel <- as.numeric(classlabel)
+    if(is.null(col)) {
+        col <- integer(n)
+        for (i in 1:max(classlabel))
+            col[classlabel == i] <- 1:sum(classlabel == i)
+    }else{
+        ## check if we do have the same number of colors than samples
+        if(length(col) != n){
+            warning("Less colors than samples! Using the first color for all samples.")
+            col <- rep(col[1], n)
+        }
+    }
+    if(is.null(ty)) {
+        ## allow col being not just integers...
+        col.int <- as.numeric(factor(col))
+        ty <- integer(n)
+        for (i in 1:max(col.int))
+            ty[col.int == i] <- 1:sum(col.int == i)
+    }else{
+        if(length(ty) != n){
+            warning("Less line types than samples! Using the first type for all samples.")
+            ty <- rep(ty[1], n)
+        }
+    }
+    ## if col is a character vector (e.g. colors defined by RColorBrewer)
+    if(!is.numeric(col)){
+        ## define the mypal... that's the color vector as used below.
+        mypal <- col
+        ## col is now a numeric vector
+        col <- 1:length(mypal)
+    }else{
+        if (length(palette()) < max(col))
+            mypal <- rainbow(max(col), end = 0.85)
+        else
+            mypal <- palette()[1:max(col)]
+    }
+    return(list(col=col, ty=ty, mypal=mypal ))
+}
