@@ -39,6 +39,7 @@ exportClasses(
               )
 
 exportMethods(
+              "$",
               "absent",
               "AutoLockMass",
               "calibrate",
