@@ -24,7 +24,12 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 	\item{lockMassFreq}{Performs correction for Waters LockMass function}
     \item{mslevel}{perform peak picking on data of given mslevel}
     \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
-		   MPI is used if installed, otherwise the snow package is employed for multicore support.}
+		   MPI is used if installed, otherwise the snow package
+		   is employed for multicore support. If none of the two
+		   packages is available it uses the parallel package
+		   for parallel processing on multiple CPUs of the
+		   current machine.
+		 }
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{scanrange}{scan range to read}
   \item{\dots}{
