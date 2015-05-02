@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.45.2
+-------------------------
+
+BUG FIXES:
+    o The xcms split() function now accepts factors that are shorter 
+      than the number of samples in the xcmsSet, following more closely 
+      the standard split() behaviour
+
+
 CHANGES IN VERSION 1.45.1
 -------------------------
 
