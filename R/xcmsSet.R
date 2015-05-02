@@ -240,28 +240,29 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 
     lcsets <- vector("list", length(levels(f)))
     names(lcsets) <- levels(f)
-
+    
     for (i in unique(sampidx)) {
+        samptrans = which(sampidx == i)
+        samptrans = samptrans[samptrans <= nrow(x@phenoData)]
+        
+        if (length(samptrans) < 1) next
+        
         lcsets[[i]] <- new("xcmsSet")
-
-        samptrans <- numeric(length(f))
-        samptrans[sampidx == i] <- rank(which(sampidx == i))
-        samp <- samptrans[peakmat[,"sample"]]
-        sidx <- which(samp != 0)
-        cpeaks <- peakmat[sidx,, drop=FALSE]
-        cpeaks[,"sample"] <- samp[sidx]
+        
+        cpeaks = peakmat[peakmat[,"sample"] %in% samptrans, ,drop=F]
+        cpeaks[,"sample"] <- as.numeric(factor(cpeaks[,"sample"]))
         peaks(lcsets[[i]]) <- cpeaks
 
-        sampnames(lcsets[[i]]) <- samples[sampidx == i]
-        sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
+        sampnames(lcsets[[i]]) <- samples[samptrans]
+        sampclass(lcsets[[i]]) <- classlabel[samptrans, drop = TRUE]
+        filepaths(lcsets[[i]]) <- cdffiles[samptrans]
         profinfo(lcsets[[i]]) <- prof
-        lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
-        lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
+        lcsets[[i]]@rt$raw <- rtraw[samptrans]
+        lcsets[[i]]@rt$corrected <- rtcor[samptrans]
     }
 
     if (drop)
-        lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
+        lcsets <- lcsets[!sapply(lcsets, is.null)]
 
     lcsets
 }
