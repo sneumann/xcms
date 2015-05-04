@@ -4,6 +4,8 @@ import("methods")
 importFrom("ProtGenerics", "peaks")
 importFrom("graphics", "plot", "image")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
+importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
+import("RColorBrewer")
 
 export(
        "etg",
@@ -63,6 +65,7 @@ exportMethods(
               "getScan",
               "getMsnScan",
               "getSpec",
+              "getXcmsRaw",
               "group",
               "group.density",
               "group.mzClust",
@@ -74,6 +77,7 @@ exportMethods(
               "groups<-",
               "groupval",
               "image",
+              "levelplot",
               "mzrange",
               "peaks",
               "peaks<-",

@@ -8,6 +8,7 @@
 \alias{show,xcmsRaw-method}
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
+\alias{levelplot}
 
 \title{Class xcmsRaw, a class for handling raw data}
 \description{
@@ -86,7 +87,9 @@
     }
     \item{\link{getEIC}}{
       \code{signature(object = "xcmsRaw")}: get extracted ion
-      chromatograms in specified m/z ranges
+      chromatograms in specified m/z ranges. This will return the total
+  ion chromatogram (TIC) if the m/z range corresponds to the full m/z
+  range (i.e. sum of all signals per retention time across all m/z).
     }
     \item{\link{getPeaks}}{
       \code{signature(object = "xcmsRaw")}: get data for peaks in
@@ -103,6 +106,10 @@
     \item{\link[xcms:image.xcmsRaw]{image}}{
       \code{signature(x = "xcmsRaw")}: get data for peaks in
       specified m/z and time ranges
+    }
+    \item{\link[xcms:levelplot.xcmsRaw]{levelplot}}{
+      Create an image of the raw (profile) data m/z against retention
+  time, with the intensity color coded.
     }
     \item{\link{plotChrom}}{
       \code{signature(object = "xcmsRaw")}: plot a chromatogram

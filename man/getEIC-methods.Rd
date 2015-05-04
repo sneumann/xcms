@@ -25,7 +25,9 @@
   \item{mzrange}{
     either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns \code{mzmin} and
-    \code{mzmax}
+    \code{mzmax}. If not specified the method for \code{xcmsRaw} returns
+    the total ion chromatogram (i.e. sum of intensities over the full
+    m/z range).
 
     for \code{xcmsSet} objects, if left blank the group data will
     be used instead

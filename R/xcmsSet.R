@@ -57,6 +57,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         pdata <- sclass
         if (is.null(pdata))
             pdata <- fromPaths
+    }else{
+        if(class(pdata)=="AnnotatedDataFrame")
+            pdata <- as(pdata, "data.frame")
+        if(class(pdata)!="data.frame")
+            stop("phenoData has to be a data.frame or AnnotatedDataFrame!")
     }
     phenoData(object) <- pdata
     if (is.null(phenoData))
@@ -1634,7 +1639,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         flush.console()
         lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
         if(length(object@dataCorrection) > 1){
-            if(object@dataCorrection[i] == 1)
+            if(object@dataCorrection[sampidx[i]] == 1)
                 lcraw<-stitch(lcraw, AutoLockMass(lcraw))
         }
         if (rt == "corrected")
@@ -2084,3 +2089,77 @@ defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
     }
     return(list(col=col, ty=ty, mypal=mypal ))
 }
+
+
+## read the raw data for a xset.
+## argument which allows to specify which file from the xcmsSet should be read, if length > 1
+## a list of xcmsRaw is returned
+setGeneric("getXcmsRaw", function(object, ...) standardGeneric("getXcmsRaw"))
+setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
+                                            profmethod=profinfo(object)$method,
+                                            profstep=profinfo(object)$step, ... ){
+              if (is.numeric(sampleidx))
+                  sampleidx <- sampnames(object)[sampleidx]
+              sampidx <- match(sampleidx, sampnames(object))
+              if(length(sampidx)==0)
+                  stop("submitted value for sampleidx outside of the available files!")
+              fn <- filepaths(object)[sampidx]
+              ret <- lapply(as.list(fn), xcmsRaw, profmethod=profmethod, profstep=profstep,
+                            ...)
+              if(length(ret)==1)
+                  return(ret[[1]])
+              return(ret)
+          })
+
+setMethod("levelplot", "xcmsSet", function(x, log=TRUE, sampleidx=1,
+                                           col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256),
+                                           highlight.peaks=FALSE, highlight.col="#377EB880", ...){
+              if (is.numeric(sampleidx))
+                  sampleidx <- sampnames(x)[sampleidx]
+              sampidx <- match(sampleidx, sampnames(x))
+              if(length(sampidx) > 1)
+                  stop("A levelplot can only be created for one file at a time!")
+              xraw <- getXcmsRaw(x, sampleidx=sampidx)
+              if(highlight.peaks){
+                  pks <- peaks(x)
+                  pks <- pks[pks[, "sample"]==sampidx, ]
+                  ## call the levelplot AND specify the panel...
+                  ## some code taken from plotSurf...
+                  sel <- profRange(xraw, ...)
+                  zvals <- xraw@env$profile[sel$massidx, sel$scanidx]
+                  if(log){
+                      zvals <- log(zvals+max(c(-min(zvals), 1)))
+                  }
+                  ## y axis is time
+                  yvals <- xraw@scantime[sel$scanidx]
+                  yrange <- range(yvals)
+                  ## x is m/z
+                  xvals <- profMz(xraw)[sel$massidx]
+                  ## now i have to match the x and y to the z.
+                  ## as.numeric of z returns values by column(!), i.e. the first nrow(z) correspond to
+                  ## the x of 1.
+                  xvals <- rep(xvals, ncol(zvals))
+                  yvals <- rep(yvals, each=nrow(zvals))
+                  zvals <- as.numeric(zvals)
+                  ## get the file name
+                  fileName <- sampnames(xset)[sampidx]
+                  plt <- levelplot(zvals~xvals*yvals,
+                                   panel=function(...){
+                                       panel.levelplot(...)
+                                       panel.rect(xleft=pks[, "mzmin"], xright=pks[, "mzmax"],
+                                                ybottom=pks[, "rtmin"], ytop=pks[, "rtmax"],
+                                                border=highlight.col)
+                                   },
+                                   xlab="m/z", ylab="Time",
+                                   colorkey=list(height=1, width=0.7),
+                                   main=list(fileName, side=1, line=0.5), col.regions=col.regions)
+                  ## plt <- plt + layer(panel.rect(xleft=pks[, "mzmin"], xright=pks[, "mzmax"],
+                  ##                               ybottom=pks[, "rtmin"], ytop=pks[, "rtmax"],
+                  ##                               border="#377EB820")
+                  ##                   )
+              }else{
+                  plt <- levelplot(xraw, col.regions = col.regions, log=log)
+              }
+              plt
+          })
+

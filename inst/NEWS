@@ -1,8 +1,28 @@
+CHANGES IN VERSION 1.45.2
+-------------------------
+
+NEW FEATURE:
+    o xcmsSet now allows phenoData to be an AnnotatedDataFrame.
+    o levelplot for xcmsRaw and xcmsSet objects (m/z on x vs RT on y with the intensity color coded). The method for xcmsSet allows to highlight the identified peaks.
+    o Method getXcmsRaw for xcmsSet: returns the raw data for the speficied file.
+
+USER VISIBLE CHANGES:
+    o Elaborated some documentation entries.
+    o rtrange and mzrange for xcmsRaw method plotEIC use by default the full RT and m/z range.
+    o Added arguments "lty" and "add" to plotEIC method for xcmsRaw.
+    o getEIC without specifying mzrange returns the ion chromatogram for the full m/z range (i.e. the base peak chromatogram).
+
+BUG FIXES:
+    o Checking if phenoData is a data.frame or AnnotatedDataFrame and throw an error otherwise.
+    o xcmsSet getEIC method for water Lock mass corrected files for a subset of files did not evaluate whether the specified files were corrected.
+    o getEIC did not return correct chromatograms for a m/z range larger than 100.
+
+
 CHANGES IN VERSION 1.45.1
 -------------------------
 
 NEW FEATURE:
-    o plotrt now allows col to be a vector of color definition, 
+    o plotrt now allows col to be a vector of color definition,
       same as the plots for retcor methods.
     o Added $ method to access phenoData columns in a eSet/ExpressionSet like manner.
     o Allow to use the "parallel" package for parallel processing of the functions xcmsSet and fillPeaks.chrom.
@@ -18,7 +38,7 @@ CHANGES IN VERSION 1.43.2
 --------------------------
 
 BUG FIXES:
-    o Use ProtGenerics, adapted xcms peaks() 
+    o Use ProtGenerics, adapted xcms peaks()
 
 CHANGES IN VERSION 1.43.1
 --------------------------
@@ -37,10 +57,10 @@ CHANGES IN VERSION 1.39.6
 --------------------------
 USER VISIBLE CHANGES:
      o Massifquant reports the maximum intensity for each isotope trace
-(peak). This is useful for interactive parameter optimization. 
+(peak). This is useful for interactive parameter optimization.
 BUG FIXES:
-    o Major memory reduction in parallel fillPeaks() thanks to 
-      Jan Stanstrup. Now using an environment to mirror gvals 
+    o Major memory reduction in parallel fillPeaks() thanks to
+      Jan Stanstrup. Now using an environment to mirror gvals
       to each list item in the very large argList.
 
 CHANGES IN VERSION 1.39.4
@@ -56,20 +76,20 @@ BUG FIXES:
 CHANGES IN VERSION 1.39.1
 --------------------------
 BUG FIXES:
-    o Updated doubleMatrix c code to allow for larger profile matrixes 
+    o Updated doubleMatrix c code to allow for larger profile matrixes
 
 REQUIRED CHANGES
-	o Moved inst/doc to vignettes 
+	o Moved inst/doc to vignettes
 
 CHANGES IN VERSION 1.37.6
 --------------------------
 NEW FEATURE:
      o Introducing write.mzQuantML(xcmsSet) to export the peak list and grouped matrix to the PSI format mzQuantML (see http://www.psidev.info/mzquantml)
 USER VISIBLE CHANGES:
-     o Add Brigham Young University to LICENSE file for copyright purposes. 
+     o Add Brigham Young University to LICENSE file for copyright purposes.
      o Add copyright information display when running findPeaks.massifquant()
      within xcmsRaw.R
-     o Clean and update documentation for findPeaks.massifquant-methods.Rd  
+     o Clean and update documentation for findPeaks.massifquant-methods.Rd
 BUG FIXES:
      o Remove unused parameters in findKalmanROIs() within xcmsRaw.R
 CHANGES IN VERSION 1.37.5
@@ -85,14 +105,14 @@ BUG FIXES
 CHANGES IN VERSION 1.37.3
 --------------------------
 BUG FIXES
-    o fixed bug in patternVsRowScore (group.nearest) that was introduced by the 
+    o fixed bug in patternVsRowScore (group.nearest) that was introduced by the
       modifications in rev 65169 and caused features to be aligned that were far outside the given m/z and retention time windows.
 
 
 CHANGES IN VERSION 1.37.1
 --------------------------
 BUG FIXES
-    o fixed fillPeaks, which 1) dropped non-standard columns 
+    o fixed fillPeaks, which 1) dropped non-standard columns
     and 2) failed if nothing to do, based on patches by Tony Larson.
 
 CHANGES IN VERSION 1.37.1
@@ -126,7 +146,7 @@ USER VISIBLE CHANGES
 CHANGES IN VERSION 1.35.3
 --------------------------
 BUG FIXES
-  o if group.density was used with very low minfrac settings (< 0.5) it did not return all feature groups, 
+  o if group.density was used with very low minfrac settings (< 0.5) it did not return all feature groups,
     but only those that include features from at least 50% of samples in a group. This limitation was removed.
 
 
@@ -135,12 +155,12 @@ CHANGES IN VERSION 1.35.2
 
 UPDATED FEATURES:
      o Behind the scenes xcms now uses the xcmsSource class to read raw data.
-       This allows e.g. to write a class that pulls raw data 
+       This allows e.g. to write a class that pulls raw data
        from e.g. a database
 BUG FIXES
      o massifquant: simplified logic structure of Tracker::claimDataIdx
-     resolved failure on new test case. 
-     o massifquant: reporting features data structure compatible with 
+     resolved failure on new test case.
+     o massifquant: reporting features data structure compatible with
      multiple sample comparison within XCMS.
 
 CHANGES IN VERSION 1.35.1
