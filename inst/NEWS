@@ -1,9 +1,9 @@
-CHANGES IN VERSION 1.45.2
+CHANGES IN VERSION 1.45.3
 -------------------------
 
 NEW FEATURE:
     o xcmsSet now allows phenoData to be an AnnotatedDataFrame.
-    o levelplot for xcmsRaw and xcmsSet objects (m/z on x vs RT on y with the intensity color coded). The method for xcmsSet allows to highlight the identified peaks.
+    o levelplot for xcmsRaw and xcmsSet objects (m/z on x vs RT on y with color coded intensities). The method for xcmsSet allows to highlight the identified peaks.
     o Method getXcmsRaw for xcmsSet: returns the raw data for the speficied file.
 
 USER VISIBLE CHANGES:
@@ -16,6 +16,15 @@ BUG FIXES:
     o Checking if phenoData is a data.frame or AnnotatedDataFrame and throw an error otherwise.
     o xcmsSet getEIC method for water Lock mass corrected files for a subset of files did not evaluate whether the specified files were corrected.
     o getEIC did not return correct chromatograms for a m/z range larger than 100.
+
+
+CHANGES IN VERSION 1.45.2
+-------------------------
+
+BUG FIXES:
+    o The xcms split() function now accepts factors that are shorter
+      than the number of samples in the xcmsSet, following more closely
+      the standard split() behaviour
 
 
 CHANGES IN VERSION 1.45.1

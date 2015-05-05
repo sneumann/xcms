@@ -1507,7 +1507,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
     if(any(names(object@env) == "profile" )){
         if(profStep(object) != step){
             ## delete that profile matrix since the step differs.
-            rm( "profile", env=object@env)
+            rm(list="profile", envir=object@env)
         }
     }
 
@@ -1537,7 +1537,7 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
                       imz <- findRange(mass, c(z$mzrange[1]-.5*step, z$mzrange[2]+0.5*step), TRUE)
                       irt <- which(object@scantime >= z$rtrange[1] & object@scantime <= z$rtrange[2])
                       e <- matrix(c(object@scantime[irt],
-                                    colMax(object@env$profile[imz[1]:imz[2], irt])), ncol=2)
+                                    colMax(object@env$profile[imz[1]:imz[2], irt, drop=FALSE])), ncol=2)
                       colnames(e) <- c("rt", "intensity")
                       return(e)
                   })

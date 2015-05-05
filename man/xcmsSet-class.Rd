@@ -120,6 +120,10 @@
       \code{signature(object = "xcmsSet")}: get list of EICs for
       each sample in the set
     }
+    \item{\link{getXcmsRaw}}{
+      \code{signature(object = "xcmsSet")}: read the raw data for one or
+      more files in the \code{xcmsSet} and return it.
+    }
     \item{groupidx<-}{
       \code{signature(object = "xcmsSet")}: set \code{groupidx} slot
     }

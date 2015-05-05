@@ -247,26 +247,27 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     names(lcsets) <- levels(f)
 
     for (i in unique(sampidx)) {
+        samptrans = which(sampidx == i)
+        samptrans = samptrans[samptrans <= nrow(x@phenoData)]
+
+        if (length(samptrans) < 1) next
+
         lcsets[[i]] <- new("xcmsSet")
 
-        samptrans <- numeric(length(f))
-        samptrans[sampidx == i] <- rank(which(sampidx == i))
-        samp <- samptrans[peakmat[,"sample"]]
-        sidx <- which(samp != 0)
-        cpeaks <- peakmat[sidx,, drop=FALSE]
-        cpeaks[,"sample"] <- samp[sidx]
+        cpeaks = peakmat[peakmat[,"sample"] %in% samptrans, ,drop=F]
+        cpeaks[,"sample"] <- as.numeric(factor(cpeaks[,"sample"]))
         peaks(lcsets[[i]]) <- cpeaks
 
-        sampnames(lcsets[[i]]) <- samples[sampidx == i]
-        sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
+        sampnames(lcsets[[i]]) <- samples[samptrans]
+        sampclass(lcsets[[i]]) <- classlabel[samptrans, drop = TRUE]
+        filepaths(lcsets[[i]]) <- cdffiles[samptrans]
         profinfo(lcsets[[i]]) <- prof
-        lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
-        lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
+        lcsets[[i]]@rt$raw <- rtraw[samptrans]
+        lcsets[[i]]@rt$corrected <- rtcor[samptrans]
     }
 
     if (drop)
-        lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
+        lcsets <- lcsets[!sapply(lcsets, is.null)]
 
     lcsets
 }
@@ -2097,26 +2098,55 @@ defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
 setGeneric("getXcmsRaw", function(object, ...) standardGeneric("getXcmsRaw"))
 setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
                                             profmethod=profinfo(object)$method,
-                                            profstep=profinfo(object)$step, ... ){
+                                            profstep=profinfo(object)$step,
+                                            rt=c("corrected", "raw"), ... ){
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(object)[sampleidx]
               sampidx <- match(sampleidx, sampnames(object))
               if(length(sampidx)==0)
                   stop("submitted value for sampleidx outside of the available files!")
               fn <- filepaths(object)[sampidx]
-              ret <- lapply(as.list(fn), xcmsRaw, profmethod=profmethod, profstep=profstep,
-                            ...)
+              rt <- match.arg(rt)
+              if(rt == "corrected" & !any(names(object@rt)=="corrected")){
+                  warning("No RT correction has been performed, thus returning raw retention times.")
+                  rt <- "raw"
+              }
+
+              if(requireNamespace("parallel", quietly=TRUE)){
+                  APPLYFUN <- mclapply
+              }else{
+                  APPLYFUN <- lapply
+              }
+              ret <- APPLYFUN(as.list(fn), FUN=function(z){
+                                raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep, ...)
+                                return(raw)
+                            })
+              ## do corrections etc.
+              for(i in 1:length(ret)){
+                  if(length(object@dataCorrection) > 1){
+                      if(object@dataCorrection[[sampidx[i]]] == 1){
+                          ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
+                          message(paste0("Applying smith Waters mass correction to ", fn[i]))
+                      }
+                  }
+                  if(rt == "corrected"){
+                      message(paste0("Applying retention time correction to ", fn[i]))
+                      ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
+                  }
+              }
               if(length(ret)==1)
                   return(ret[[1]])
               return(ret)
           })
 
+
 setMethod("levelplot", "xcmsSet", function(x, log=TRUE, sampleidx=1,
                                            col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256),
-                                           highlight.peaks=FALSE, highlight.col="#377EB880", ...){
+                                           highlight.peaks=FALSE, highlight.col="#377EB880",
+                                           rt="raw", ...){
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(x)[sampleidx]
-              sampidx <- match(sampleidx, sampnames(x))
+              sampidx <- match(sampleidx, sampnames(x), rt=rt)
               if(length(sampidx) > 1)
                   stop("A levelplot can only be created for one file at a time!")
               xraw <- getXcmsRaw(x, sampleidx=sampidx)
