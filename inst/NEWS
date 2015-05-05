@@ -1,3 +1,40 @@
+CHANGES IN VERSION 1.45.2
+-------------------------
+
+BUG FIXES:
+    o The xcms split() function now accepts factors that are shorter 
+      than the number of samples in the xcmsSet, following more closely 
+      the standard split() behaviour
+
+
+CHANGES IN VERSION 1.45.1
+-------------------------
+
+NEW FEATURE:
+    o plotrt now allows col to be a vector of color definition, 
+      same as the plots for retcor methods.
+    o Added $ method to access phenoData columns in a eSet/ExpressionSet like manner.
+    o Allow to use the "parallel" package for parallel processing of the functions xcmsSet and fillPeaks.chrom.
+    o Thanks to J. Rainer!
+
+CHANGES IN VERSION 1.43.3
+-------------------------
+
+BUG FIXES:
+    o Give a more verbose error message when file not found
+
+CHANGES IN VERSION 1.43.2
+--------------------------
+
+BUG FIXES:
+    o Use ProtGenerics, adapted xcms peaks() 
+
+CHANGES IN VERSION 1.43.1
+--------------------------
+
+NEW FEATURE:
+    o function plotQC() for plotting various QC plots on RT and m/z
+
 CHANGES IN VERSION 1.41.1
 --------------------------
 

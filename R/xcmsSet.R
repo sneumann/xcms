@@ -103,14 +103,14 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     parmode <- xcmsParallelSetup(nSlaves=nSlaves)
     runParallel <- parmode$runParallel
-    parMode <- parmode$parMode    
+    parMode <- parmode$parMode
     snowclust <- parmode$snowclust
-    
-        params <- list(...)
-        params$profmethod <- profmethod
-        params$profparam <- profparam
-        params$includeMSn <- includeMSn
-        params$scanrange <- scanrange
+
+        params <- list(...);
+        params$profmethod <- profmethod;
+        params$profparam <- profparam;
+        params$includeMSn <- includeMSn;
+        params$scanrange <- scanrange;
 
         params$mslevel <- mslevel ## Actually, this is 
         params$lockMassFreq <- lockMassFreq
@@ -125,7 +125,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         } else if (parMode == "SOCK") {
                 res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
                 stopCluster(snowclust)
-            } else {
+            } else if (parMode == "parallel"){
+                ## using the mclapply to run the code in parallel on the multiple
+                ## CPUs of the actual host/computer.
+                res <- parallel::mclapply(argList, findPeaksPar)
+         } else {
               ## serial mode
               res <- lapply(argList, findPeaksPar)
             }
@@ -238,33 +242,34 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 
     lcsets <- vector("list", length(levels(f)))
     names(lcsets) <- levels(f)
-
+    
     for (i in unique(sampidx)) {
+        samptrans = which(sampidx == i)
+        samptrans = samptrans[samptrans <= nrow(x@phenoData)]
+        
+        if (length(samptrans) < 1) next
+        
         lcsets[[i]] <- new("xcmsSet")
-
-        samptrans <- numeric(length(f))
-        samptrans[sampidx == i] <- rank(which(sampidx == i))
-        samp <- samptrans[peakmat[,"sample"]]
-        sidx <- which(samp != 0)
-        cpeaks <- peakmat[sidx,, drop=FALSE]
-        cpeaks[,"sample"] <- samp[sidx]
+        
+        cpeaks = peakmat[peakmat[,"sample"] %in% samptrans, ,drop=F]
+        cpeaks[,"sample"] <- as.numeric(factor(cpeaks[,"sample"]))
         peaks(lcsets[[i]]) <- cpeaks
 
-        sampnames(lcsets[[i]]) <- samples[sampidx == i]
-        sampclass(lcsets[[i]]) <- classlabel[sampidx == i, drop = TRUE]
-        filepaths(lcsets[[i]]) <- cdffiles[sampidx == i]
+        sampnames(lcsets[[i]]) <- samples[samptrans]
+        sampclass(lcsets[[i]]) <- classlabel[samptrans, drop = TRUE]
+        filepaths(lcsets[[i]]) <- cdffiles[samptrans]
         profinfo(lcsets[[i]]) <- prof
-        lcsets[[i]]@rt$raw <- rtraw[sampidx == i]
-        lcsets[[i]]@rt$corrected <- rtcor[sampidx == i]
+        lcsets[[i]]@rt$raw <- rtraw[samptrans]
+        lcsets[[i]]@rt$corrected <- rtcor[samptrans]
     }
 
     if (drop)
-        lcsets <- lcsets[seq(along = lcsets) %in% sampidx]
+        lcsets <- lcsets[!sapply(lcsets, is.null)]
 
     lcsets
 }
 
-setMethod("peaks", c("xcmsSet","missing"), function(object) object@peaks)
+setMethod("peaks", "xcmsSet", function(object) object@peaks)
 
 setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 
@@ -800,7 +805,7 @@ patternVsRowScore <- function(currPeak, parameters, mplenv)
                                 isJoinedPeak=logical(0), isJoinedRow=logical(0))
 
     rtTolerance = parameters$rtcheck
-    
+
     for(mplRow in 1:length(nnDist$nn.idx)){
         mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
         mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
@@ -819,7 +824,7 @@ patternVsRowScore <- function(currPeak, parameters, mplenv)
             return(scoreListcurr)
         }
     }
-    
+
     return(scoreListcurr) ## empty
 }
 
@@ -1006,21 +1011,13 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     if (plottype %in% c("deviation", "mdevden")) {
 
-### Set up the colors and line type
-        if (missing(col) || is.null(col)) {
-            col <- integer(n)
-            for (i in 1:max(classlabel))
-                col[classlabel == i] <- 1:sum(classlabel == i)
-        }
-        if (missing(ty) || is.null(ty)) {
-            ty <- integer(n)
-            for (i in 1:max(col))
-                ty[col == i] <- 1:sum(col == i)
-        }
-        if (length(palette()) < max(col))
-            mypal <- rainbow(max(col), end = 0.85)
-        else
-            mypal <- palette()[1:max(col)]
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
 
         rtrange <- range(do.call(c, rtcor))
         devrange <- range(do.call(c, rtdevsmo))
@@ -1125,19 +1122,19 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     cat("center sample: ", samples[center], "\nProcessing: ")
     idx <- which(seq(1,N) != center)
     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0)
-	
+
 	## added t automatically find the correct scan range from the xcmsSet object
 	if(length(obj1@scantime) != length(object@rt$raw[[center]])){
 		##figure out the scan time range
 		scantime.start	<-object@rt$raw[[center]][1]
 		scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
-		
-		scanrange.start	<-which.min(abs(obj1@scantime - scantime.start)) 
+
+		scanrange.start	<-which.min(abs(obj1@scantime - scantime.start))
 		scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
 		scanrange<-c(scanrange.start, scanrange.end)
 		obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0, scanrange=scanrange)
 	} else{
-		scanrange<-NULL	
+		scanrange<-NULL
 	}
 
     for (si in 1:length(idx)) {
@@ -1146,7 +1143,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
         profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
 		if(is.null(scanrange)){
-			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)	
+			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
 		} else{
 			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0, scanrange=scanrange)
 		}
@@ -1267,21 +1264,13 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
     if (plottype == "deviation") {
 
-        ## Set up the colors and line type
-        if (missing(col)) {
-            col <- integer(N)
-            for (i in 1:max(classlabel))
-                col[classlabel == i] <- 1:sum(classlabel == i)
-        }
-        if (missing(ty)) {
-            ty <- integer(N)
-            for (i in 1:max(col))
-                ty[col == i] <- 1:sum(col == i)
-        }
-        if (length(palette()) < max(col))
-            mypal <- rainbow(max(col), end = 0.85)
-        else
-            mypal <- palette()[1:max(col)]
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
 
         rtrange <- range(do.call("c", rtcor))
         devrange <- range(do.call("c", rtdevsmo))
@@ -1327,20 +1316,13 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
     rtuncor <- object@rt$raw
     rtcor <- object@rt$corrected
 
-    if (missing(col)) {
-        col <- integer(n)
-        for (i in 1:max(classlabel))
-            col[classlabel == i] <- 1:sum(classlabel == i)
-    }
-    if (missing(ty)) {
-        ty <- integer(n)
-        for (i in 1:max(col))
-            ty[col == i] <- 1:sum(col == i)
-    }
-    if (length(palette()) < max(col))
-        mypal <- rainbow(max(col), end = 0.85)
-    else
-        mypal <- palette()[1:max(col)]
+    ## define the colors and line types and returns a list of
+    ## mypal, col and ty. Uses the original code if no colors are
+    ## submitted. Supports manually selected colors (e.g. in hex)
+    vals <- defineColAndTy(col, ty, classlabel)
+    col <- vals$col
+    mypal <- vals$mypal
+    ty <- vals$ty
 
     rtdevsmo <- vector("list", n)
 
@@ -1386,7 +1368,7 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL,expand.mz=
     pkgEnv = getNamespace("xcms")
     attach(pkgEnv)
   }
-  
+
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -1443,7 +1425,7 @@ assign("gvals", gvals, envir = gvals_env)
       } else {
         list(file=x["file"],id=as.numeric(x["id"]),
              params=list(method="chrom",
-               gvals=gvals_env, 
+               gvals=gvals_env,
                prof=prof,
                dataCorrection=object@dataCorrection,
                polarity=object@polarity,
@@ -1460,12 +1442,12 @@ assign("gvals", gvals, envir = gvals_env)
     ## Nothing to do
     return(invisible(object))
   }
-    
+
   argList <- argList[nonemptyIdx]
-  
+
   parmode <- xcmsParallelSetup(nSlaves=nSlaves)
   runParallel <- parmode$runParallel
-  parMode <- parmode$parMode    
+  parMode <- parmode$parMode
   snowclust <- parmode$snowclust
 
   if (parMode == "MPI") {
@@ -1474,8 +1456,10 @@ assign("gvals", gvals, envir = gvals_env)
   } else if (parMode == "SOCK") {
     newpeakslist <- xcmsClusterApply(cl=snowclust, x=argList,
                                      fun=fillPeaksChromPar,
-                                     msgfun=msgfunGeneric)    
+                                     msgfun=msgfunGeneric)
     stopCluster(snowclust)
+  } else if (parMode == "parallel"){
+      newpeakslist <- parallel::mclapply(argList, fillPeaksChromPar)
   } else {
     ## serial mode
     newpeakslist <- lapply(argList, fillPeaksChromPar)
@@ -1486,7 +1470,7 @@ assign("gvals", gvals, envir = gvals_env)
   o <- order(sapply(newpeakslist, function(x) x$myID))
   newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
 
-  ## Make sure colnames are compatible 
+  ## Make sure colnames are compatible
   newpeaks <- newpeaks[, match(cnames, colnames(newpeaks)), drop = FALSE]
   colnames(newpeaks) <- cnames
 
@@ -1494,7 +1478,7 @@ assign("gvals", gvals, envir = gvals_env)
 
   for (i in seq(along = files)) {
     naidx <- which(is.na(gvals[,i]))
-    
+
     for (j in seq(along = naidx))
       groupindex[[naidx[j]]] <- c(groupindex[[naidx[j]]], lastpeak+j)
 
@@ -2045,4 +2029,67 @@ panel.cor <- function(x, y, digits=2, prefix="", cex.cor)
     txt <- paste(prefix, txt, sep="")
     if(missing(cex.cor)) cex <- 0.8/strwidth(txt)
     text(0.5, 0.5, txt, cex = cex)
+}
+
+## eSet/ExpressionSet like methods to access columns in @phenoData
+setMethod("$", "xcmsSet", function(x, name) {
+    eval(substitute(phenoData(x)$NAME_ARG, list(NAME_ARG=name)))
+})
+
+setReplaceMethod("$", "xcmsSet", function(x, name, value) {
+  phenoData(x)[[name]] = value
+  x
+})
+
+## defines the colors and ltys to be used in the plot functions...
+## the code combines original code taken from the plot functions and
+## adds the possibility to sumbmit colors.
+## col: colors to be used for the samples
+## ty: lty to be used for the samples
+## classlabels: factor with class labels (group definitions), length
+##              being equal to the number of samples.
+defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
+    if(missing(classlabel))
+        stop("classlabel is required")
+    n <- length(classlabel)
+    if(!is.factor(classlabel))
+        classlabel <- factor(classlabel)
+    ## want to transform the class labels to integer values, i.e. skip the levels
+    classlabel <- as.numeric(classlabel)
+    if(is.null(col)) {
+        col <- integer(n)
+        for (i in 1:max(classlabel))
+            col[classlabel == i] <- 1:sum(classlabel == i)
+    }else{
+        ## check if we do have the same number of colors than samples
+        if(length(col) != n){
+            warning("Less colors than samples! Using the first color for all samples.")
+            col <- rep(col[1], n)
+        }
+    }
+    if(is.null(ty)) {
+        ## allow col being not just integers...
+        col.int <- as.numeric(factor(col))
+        ty <- integer(n)
+        for (i in 1:max(col.int))
+            ty[col.int == i] <- 1:sum(col.int == i)
+    }else{
+        if(length(ty) != n){
+            warning("Less line types than samples! Using the first type for all samples.")
+            ty <- rep(ty[1], n)
+        }
+    }
+    ## if col is a character vector (e.g. colors defined by RColorBrewer)
+    if(!is.numeric(col)){
+        ## define the mypal... that's the color vector as used below.
+        mypal <- col
+        ## col is now a numeric vector
+        col <- 1:length(mypal)
+    }else{
+        if (length(palette()) < max(col))
+            mypal <- rainbow(max(col), end = 0.85)
+        else
+            mypal <- palette()[1:max(col)]
+    }
+    return(list(col=col, ty=ty, mypal=mypal ))
 }

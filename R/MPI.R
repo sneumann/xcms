@@ -2,7 +2,7 @@ xcmsParallelSetup <- function(nSlaves) {
   runParallel <- 0
   parMode <- ""
   snowclust <- NULL
-  
+
   if (!is.null(nSlaves)) {
     if (nSlaves > 1) {
       ## If MPI is available ...
@@ -27,7 +27,16 @@ xcmsParallelSetup <- function(nSlaves) {
           snowclust <- makeCluster(nSlaves, type = "SOCK")
         runParallel <- 1
           parMode <- "SOCK"
-        }
+      } else{
+          ## check parallel package... can use the mclapply on local CPUs
+          if(requireNamespace("parallel", quietly=TRUE)){
+              cat("Processing on", nSlaves, "cores.\n")
+              runParallel <- 1
+              parMode <- "parallel"
+              ## setting the number of cores
+              options(mc.cores=nSlaves)
+          }
+      }
       }
       options("warn" = opt.warn)
     }
@@ -340,21 +349,21 @@ fillPeaksChromPar <- function(arg) {
   params <- arg$params
   myID <- arg$id
   cat(arg$file, "\n")
-  
+
   prof <- params$prof
   rtcor <- params$rtcor
   peakrange <- params$peakrange
   expand.mz <- params$expand.mz
   expand.rt <- params$expand.rt
   gvals <- params$gvals$gvals
-  
+
   lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
-  
+
   # if(length(params$dataCorrection) > 1){
   #   if(params$dataCorrection[i] == 1)
   #     lcraw <- stitch(lcraw, AutoLockMass(lcraw))
   # }
-  
+
   if (exists("params$polarity") && length(params$polarity) >0) {
     if (length(params$polarity) >0) {
       ## Retain wanted polarity only
@@ -362,7 +371,7 @@ fillPeaksChromPar <- function(arg) {
       lcraw <- lcraws[[object@polarity]]
     }
   }
-    
+
     if (length(prof) > 2)
       lcraw@profparam <- prof[seq(3, length(prof))]
     if (length(rtcor) == length(lcraw@scantime) ) {
@@ -370,21 +379,21 @@ fillPeaksChromPar <- function(arg) {
     } else {
       warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
     }
-  
-  
+
+
   # Expanding the peakrange
   peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
   peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
   peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
   peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-  
-  
-  
-  
+
+
+
+
     naidx <- which(is.na(gvals[,myID]))
-    
+
     newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
-  
+
   list(myID=myID, newpeaks=cbind(newpeaks, sample=myID))
 }
 
