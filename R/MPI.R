@@ -329,8 +329,17 @@ findPeaksPar <- function(arg) {
     params["object"] <- xRaw
 
     ## remove parameters which are not used by method() from the parameter list
-    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <-  params["mslevel"] <- NULL
-    params["scanrange"] <- params["polarity"] <- NULL ## avoid filtering scanrange twice, first in xRaw then in findPeaks
+    params["method"] 		<- NULL
+	arams["lockMassFreq"	<- NULL
+	params["includeMSn"]	<- NULL
+	params["profparam"]		<- NULL
+	params["profmethod"]	<- NULL
+	params["id"] 			<- NULL
+	params["mslevel"] 		<- NULL ## added extra lines to make sure intention was clear that above get NULL
+	
+    params["scanrange"]		<- NULL ## avoid filtering scanrange twice, first in xRaw then in findPeaks
+
+	params["polarity"] <- 	NULL ## added extra line to make intenion clear that polarity also get NULL
 
     peaks <- do.call(method, params)
 
@@ -362,7 +371,7 @@ fillPeaksChromPar <- function(arg) {
   # if(length(params$dataCorrection) > 1){
   #   if(params$dataCorrection[i] == 1)
   #     lcraw <- stitch(lcraw, AutoLockMass(lcraw))
-  # }
+  # } ## currenly removed as parallel fillPeaks has issues with stitch method
 
   if (exists("params$polarity") && length(params$polarity) >0) {
     if (length(params$polarity) >0) {
