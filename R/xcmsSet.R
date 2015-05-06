@@ -159,6 +159,8 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     peaks(object) <- do.call(rbind, peaklist)
     object@rt <- rtlist
 
+    mslevel(object) <- as.numeric(mslevel)
+    scanrange(object) <- as.numeric(scanrange)
     object
 }
 
@@ -175,6 +177,18 @@ setMethod("show", "xcmsSet", function(object) {
         round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
+
+    if(.hasSlot(object, "mslevel")){
+        MSn <- mslevel(object)
+        if(is.null(MSn))
+            MSn <- 1
+        cat(paste0("Peak picking was performed on MS", MSn, ".\n"))
+    }
+    if(.hasSlot(object, "scanrange")){
+        if(!is.null(scanrange(object))){
+            cat("Scan range limited to ", scanrange(object)[1], "-", scanrange(object)[2], "\n")
+        }
+    }
 
     if (length(object@profinfo)) {
         cat("Profile settings: ")
@@ -375,11 +389,7 @@ setReplaceMethod("filepaths", "xcmsSet", function(object, value) {
     object
 })
 
-setGeneric("profinfo", function(object) standardGeneric("profinfo"))
-
 setMethod("profinfo", "xcmsSet", function(object) object@profinfo)
-
-setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
 
 setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 
@@ -2095,11 +2105,13 @@ defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
 ## read the raw data for a xset.
 ## argument which allows to specify which file from the xcmsSet should be read, if length > 1
 ## a list of xcmsRaw is returned
-setGeneric("getXcmsRaw", function(object, ...) standardGeneric("getXcmsRaw"))
 setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
-                                            profmethod=profinfo(object)$method,
-                                            profstep=profinfo(object)$step,
-                                            rt=c("corrected", "raw"), ... ){
+                                            profmethod=profMethod(object),
+                                            profstep=profStep(object),
+                                            profparam=profinfo(object),
+                                            mslevel=NULL,
+                                            scanrange=NULL,
+                                            rt=c("corrected", "raw") ){
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(object)[sampleidx]
               sampidx <- match(sampleidx, sampnames(object))
@@ -2107,43 +2119,72 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
                   stop("submitted value for sampleidx outside of the available files!")
               fn <- filepaths(object)[sampidx]
               rt <- match.arg(rt)
-              if(rt == "corrected" & !any(names(object@rt)=="corrected")){
+              if(rt == "corrected" & !any(names(object@rt) == "corrected")){
                   warning("No RT correction has been performed, thus returning raw retention times.")
                   rt <- "raw"
               }
-
+              if(missing(mslevel)){
+                  msl <- mslevel(object)
+              }else{
+                  msl <- mslevel
+              }
+              if(missing(scanrange)){
+                  srange <- scanrange(object)
+              }else{
+                  srange <- scanrange
+              }
               if(requireNamespace("parallel", quietly=TRUE)){
                   APPLYFUN <- mclapply
               }else{
                   APPLYFUN <- lapply
               }
+              ## include MSn?
+              includeMsn <- FALSE
+              if(!is.null(msl)){
+                  if(msl > 1)
+                      includeMsn <- TRUE
+              }
               ret <- APPLYFUN(as.list(fn), FUN=function(z){
-                                raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep, ...)
-                                return(raw)
+                                  raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep,
+                                                 mslevel=msl, scanrange=srange,
+                                                 includeMSn=includeMsn)
+                                  return(raw)
                             })
               ## do corrections etc.
               for(i in 1:length(ret)){
                   if(length(object@dataCorrection) > 1){
                       if(object@dataCorrection[[sampidx[i]]] == 1){
                           ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
-                          message(paste0("Applying smith Waters mass correction to ", fn[i]))
+                          message(paste0("Applying lock Waters mass correction to ", fn[i]))
                       }
                   }
                   if(rt == "corrected"){
-                      message(paste0("Applying retention time correction to ", fn[i]))
-                      ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
+                      ## check if there is any need to apply correction...
+                      if(all(object@rt$corrected[[i]] == object@rt$raw[[i]])){
+                          message(paste0("No need to perform retention time correction, raw and corrected rt are identical for ", fn[i]))
+                          ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
+                      }else{
+                          message(paste0("Applying retention time correction to ", fn[i]))
+                          ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
+                      }
                   }
               }
+
+              ## what's missing?
+              ## + consider calibration(s)?
+              ## + what with polarity?
+
               if(length(ret)==1)
                   return(ret[[1]])
               return(ret)
           })
 
 
-setMethod("levelplot", "xcmsSet", function(x, log=TRUE, sampleidx=1,
-                                           col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256),
-                                           highlight.peaks=FALSE, highlight.col="#377EB880",
-                                           rt="raw", ...){
+setMethod("levelplot", "xcmsSet",
+          function(x, log=TRUE, sampleidx=1,
+                   col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256),
+                   highlight.peaks=FALSE, highlight.col="#377EB880",
+                   rt="raw", ...){
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(x)[sampleidx]
               sampidx <- match(sampleidx, sampnames(x), rt=rt)
@@ -2193,3 +2234,58 @@ setMethod("levelplot", "xcmsSet", function(x, log=TRUE, sampleidx=1,
               plt
           })
 
+## getter methods for the slots mslevel and scanrange of the xcmsSet object.
+setMethod("mslevel", "xcmsSet", function(object){
+              ## for xcmsSet objects that don't have (yet) the slot...
+              if(!.hasSlot(object, "mslevel")){
+                  warning("No slot mslevel available, returning mslevel=NULL.")
+                  return(NULL)
+              }else{
+                  mlevel <- object@mslevel
+                  if(length(mlevel) == 0){
+                      ## for compatibility with the xcmsSet and xcmsRaw functions,
+                      ## which default the mslevel argument to NULL.
+                      return(NULL)
+                  }
+                  return(mlevel)
+              }
+          })
+setReplaceMethod("mslevel", "xcmsSet", function(object, value){
+                     if(.hasSlot(object, "mslevel")){
+                         object@mslevel <- value
+                     }else{
+                         warning("Object has no slot mslevel.")
+                     }
+                     object
+                 })
+
+setMethod("scanrange", "xcmsSet", function(object){
+              if(!.hasSlot(object, "scanrange")){
+                  warning("No slot scanrange available, returning scanrange=NULL.")
+                  return(NULL)
+              }else{
+                  srange <- object@scanrange
+                  if(length(srange) == 0){
+                      ## for compatibility with the xcmsSet and xcmsRaw functions,
+                      ## which default the scanrange argument to NULL.
+                      return(NULL)
+                  }
+                  return(srange)
+              }
+          })
+setReplaceMethod("scanrange", "xcmsSet", function(object, value){
+                     if(.hasSlot(object, "scanrange")){
+                         object@scanrange <- value
+                     }else{
+                         warning("Object has no slot scanrange.")
+                     }
+                     object
+                 })
+
+## getter methods for the prof method and step.
+setMethod("profMethod", "xcmsSet", function(object) {
+              return(profinfo(object)$method)
+})
+setMethod("profStep", "xcmsSet", function(object) {
+              return(profinfo(object)$step)
+})

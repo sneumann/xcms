@@ -11,6 +11,10 @@ test.getEICxraw <- function() {
     ecalc <- apply(xraw@env$profile[mzIdx, rtIdx, drop=FALSE], MARGIN=2, max)
     checkEqualsNumeric(ecalc, e@eic[[1]][[1]][, 2])
     ## extract the /full/ EIC, i.e. the base peak chromatogram (BPC).
+    ## here we have to use the "new" method...
+    BioC <- getOption("BioC")
+    BioC$xcms$getEIC.method <- "getEICNew"
+    options(BioC=BioC)
     e <- getEIC(xraw, mzrange=matrix(xraw@mzrange, nrow=1),
                 rtrange=matrix(range(xraw@scantime), nrow=1))
     rtIdx <- which(xraw@scantime >= min(xraw@scantime) &
@@ -29,6 +33,10 @@ test.getEICxraw <- function() {
         ecalc <- apply(xraw@env$profile[mzIdx, rtIdx, drop=FALSE], MARGIN=2, max)
         checkEqualsNumeric(ecalc, e@eic[[1]][[i]][, 2])
     }
+    ## restoring the setting...
+    BioC <- getOption("BioC")
+    BioC$xcms$getEIC.method <- "getEICOld"
+    options(BioC=BioC)
 }
 
 test.getEICxset <- function() {

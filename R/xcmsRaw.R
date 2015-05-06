@@ -25,6 +25,9 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     object@scanindex <- rawdata$scanindex
     object@env$mz <- rawdata$mz
     object@env$intensity <- rawdata$intensity
+    ## setting the scanrange.
+    scanrange(object) <- as.numeric(scanrange)
+    mslevel(object) <- as.numeric(mslevel)
 
     object@profmethod <- profmethod
     object@profparam <- profparam
@@ -70,7 +73,6 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
         ## fix xcmsRaw metadata, or always calculate later than here ?
     }
-
     return(object)
 }
 
@@ -1418,60 +1420,72 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 })
 
 setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
+setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+              FUN <- getOption("BioC")$xcms$getEIC.method
+              if(FUN == "getEICOld"){
+                  return(getEICOld(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
+              }else if(FUN == "getEICNew"){
+                  return(getEICNew(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
+              }else{
+                  stop("Method ", FUN, " not known! getEIC.method should be either getEICOld or getEICnew!")
+              }
+          })
 
-## setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
-##     ## if mzrange and rtrange is not provided use the full range.
-##     if(missing(mzrange)){
-##         mzrange <- matrix(object@mzrange, nrow=1)
-##         colnames(mzrange) <- c("mzmin", "mzmax")
-##     }
-##     if(is.null(rtrange)){
-##         rtrange <- matrix(range(object@scantime), nrow=1)
-##         colnames(rtrange) <- c("rtmin", "rtmax")
-##     }
-##     profFun <- match.profFun(object)
-##     if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
-##         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
+## that's the original getEIC version.
+setGeneric("getEICOld", function(object, ...) standardGeneric("getEICOld"))
+setMethod("getEICOld", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+    ## if mzrange and rtrange is not provided use the full range.
+    if(missing(mzrange)){
+        mzrange <- matrix(object@mzrange, nrow=1)
+        colnames(mzrange) <- c("mzmin", "mzmax")
+    }
+    if(is.null(rtrange)){
+        rtrange <- matrix(range(object@scantime), nrow=1)
+        colnames(rtrange) <- c("rtmin", "rtmax")
+    }
+    profFun <- match.profFun(object)
+    if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
+        mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
 
-## ### Create EIC buffer
-##     mrange <- range(mzrange)
-##     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
-##     bufsize <- min(100, length(mass))
-##     buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-##                    bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
-##     bufidx <- integer(length(mass))
-##     idxrange <- c(1, bufsize)
-##     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
+### Create EIC buffer
+    mrange <- range(mzrange)
+    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
+    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
+                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
+    bufidx <- integer(length(mass))
+    idxrange <- c(1, bufsize)
+    bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
 
-##     if (missing(rtrange))
-##         eic <- matrix(nrow = nrow(mzrange), ncol = ncol(buf))
-##     else
-##         eic <- vector("list", nrow(rtrange))
+    if (missing(rtrange))
+        eic <- matrix(nrow = nrow(mzrange), ncol = ncol(buf))
+    else
+        eic <- vector("list", nrow(rtrange))
 
-##     for (i in order(mzrange[,1])) {
-##         imz <- findRange(mass, c(mzrange[i,1]-.5*step, mzrange[i,2]+.5*step), TRUE)
-## ### Update EIC buffer if necessary
-##         if (bufidx[imz[2]] == 0) {
-##             bufidx[idxrange[1]:idxrange[2]] <- 0
-##             idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
-##             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-##             buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-##                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-##                            TRUE, object@profparam)
-##         }
-##         if (missing(rtrange)) {
-##             eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
-##         } else {
-##             eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
-##                                ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],,drop=FALSE]
-##             colnames(eic[[i]]) <- c("rt", "intensity")
-##         }
-##     }
+    for (i in order(mzrange[,1])) {
+        imz <- findRange(mass, c(mzrange[i,1]-.5*step, mzrange[i,2]+.5*step), TRUE)
+### Update EIC buffer if necessary
+        if (bufidx[imz[2]] == 0) {
+            bufidx[idxrange[1]:idxrange[2]] <- 0
+            idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
+            bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
+            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
+                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
+                           TRUE, object@profparam)
+        }
+        if (missing(rtrange)) {
+            eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
+        } else {
+            eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
+                               ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],,drop=FALSE]
+            colnames(eic[[i]]) <- c("rt", "intensity")
+        }
+    }
 
-##     invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
-##                   rt = "raw", groupnames = character(0)))
+    invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
+                  rt = "raw", groupnames = character(0)))
 
-## })
+})
 
 ## what's different in this method?
 ## 1) we're not (re-) calculating the profile matrix if it already exists and if the step argument
@@ -1480,8 +1494,8 @@ setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 ##    ranges, thus we can use the method to extract the EIC for the full m/z range (i.e. the base
 ##    peak chromatogram BPC).
 ## 3) the method might be slower.
-##setGeneric("getEIC2", function(object, ...) standardGeneric("getEIC2"))
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+setGeneric("getEICNew", function(object, ...) standardGeneric("getEICNew"))
+setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
     ## if mzrange and rtrange is not provided use the full range.
     if(missing(mzrange)){
         if(length(object@mzrange) == 2){
@@ -2143,4 +2157,62 @@ setMethod("levelplot", "xcmsRaw", function(x, log=TRUE,
     ## trellis.unfocus()
     plt
 })
+
+## the profinfo for the xcmsSet object.
+setMethod("profinfo", "xcmsRaw", function(object){
+              pinfo <- object@profparam
+              ## fill with additional method and step.
+              pinfo$method <- profMethod(object)
+              pinfo$step <- profStep(object)
+              return(pinfo)
+          })
+
+## method to get the scanrange.
+setMethod("scanrange", "xcmsRaw", function(object){
+              if(.hasSlot(object, "scanrange")){
+                  srange <- object@scanrange
+                  if(length(srange) == 0){
+                      ## for compatibility with the xcmsSet and xcmsRaw functions,
+                      ## which default the scanrange argument to NULL.
+                      return(NULL)
+                  }
+                  return(srange)
+              }else{
+                  warning("No slot scanrange available, returning NULL.")
+                  return(NULL)
+              }
+          })
+setReplaceMethod("scanrange", "xcmsRaw", function(object, value){
+                     if(.hasSlot(object, "scanrange")){
+                         object@scanrange <- value
+                     }else{
+                         warning("Object has no slot scanrange.")
+                     }
+                     object
+                 })
+
+
+## method to get the mslevel.
+setMethod("mslevel", "xcmsRaw", function(object){
+              if(.hasSlot(object, "mslevel")){
+                  mlevel <- object@mslevel
+                  if(length(mlevel) == 0){
+                      ## for compatibility with the xcmsSet and xcmsRaw functions,
+                      ## which default the mslevel argument to NULL.
+                      return(NULL)
+                  }
+                  return(object@mslevel)
+              }else{
+                  warning("No slot mslevel available, returning NULL.")
+                  return(NULL)
+              }
+          })
+setReplaceMethod("mslevel", "xcmsRaw", function(object, value){
+                     if(.hasSlot(object, "mslevel")){
+                         object@mslevel <- value
+                     }else{
+                         warning("Object has no slot mslevel.")
+                     }
+                     object
+                 })
 

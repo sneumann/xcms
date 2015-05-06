@@ -15,6 +15,8 @@
 \alias{groups<-}
 \alias{groups,xcmsSet-method}
 \alias{groups}
+\alias{mslevel,xcmsSet-method}
+\alias{mslevel}
 \alias{peaks<-,xcmsSet-method}
 \alias{peaks<-}
 \alias{peaks,xcmsSet-method}
@@ -27,6 +29,8 @@
 \alias{profinfo<-}
 \alias{profinfo,xcmsSet-method}
 \alias{profinfo}
+\alias{profMethod,xcmsSet-method}
+\alias{profStep,xcmsSet-method}
 \alias{progressCallback}
 \alias{progressCallback,xcmsSet-method}
 \alias{progressCallback<-}
@@ -37,6 +41,8 @@
 \alias{sampclass}
 \alias{sampnames<-,xcmsSet-method}
 \alias{sampnames<-}
+\alias{scanrange,xcmsSet-method}
+\alias{scanrange}
 \alias{show,xcmsSet-method}
 
 \title{Class xcmsSet, a class for preprocessing peak data}
@@ -78,8 +84,9 @@
       character vector with absolute path name of each NetCDF file
     }
     \item{\code{profinfo}:}{
-      list containing two values, \code{method} - profile generation
-      method, and \code{step} - profile m/z step size
+      list containing the values \code{method} - profile generation
+      method, and \code{step} - profile m/z step size and eventual
+      additional parameters to the profile function.
     }
 	\item{dataCorrection}{
 	  logical vector filled if the waters Lock mass correction
@@ -94,6 +101,16 @@
     }
     \item{\code{progressCallback}:}{
        function to be called, when progressInfo changes (for GUI)
+    }
+    \item{\code{mslevel}:}{
+      Numeric representing the MS level on which the peak picking was
+      performed (by default on MS1). This slot should be accessed
+      through its getter method \code{mslevel}.
+    }
+    \item{\code{scanrange}:}{
+      Numeric of length 2 specifying the scan range (or \code{NULL} for
+      the full range). This slot should be accessed through its getter
+      method \code{scanrange}.
     }
   }
 }
@@ -148,6 +165,9 @@
       \code{signature(object = "xcmsSet")}: find groups of peaks
       across samples that share similar m/z and retention times
     }
+    \item{mslevel}{
+      Getter method for the \code{mslevel} slot.
+    }
     \item{peaks<-}{
       \code{signature(object = "xcmsSet")}: set \code{peaks} slot
     }
@@ -163,6 +183,14 @@
     }
     \item{profinfo}{
       \code{signature(object = "xcmsSet")}: get \code{profinfo} slot
+    }
+    \item{profMethod}{
+      \code{signature(object = "xcmsSet")}: extract the method used to
+      generate the profile matrix.
+    }
+    \item{profStep}{
+      \code{signature(object = "xcmsSet")}: extract the profile step
+      used for the generation of the profile matrix.
     }
     \item{\link{retcor}}{
       \code{signature(object = "xcmsSet")}: use initial grouping
@@ -189,6 +217,9 @@
     \item{progressCallback}{
       \code{signature(object = "xcmsSet")}: get the \code{progressCallback} slot
     }
+    \item{scanrange}{
+      Getter method for the \code{scanrange} slot.
+    }
     \item{sampnames<-}{
       \code{signature(object = "xcmsSet")}: set rownames in the
       \code{phenoData} slot
@@ -209,7 +240,7 @@
   A parallel effort in metabolite profiling data sharing:
   \url{http://metlin.scripps.edu/}
 }
-\author{Colin A. Smith, \email{csmith@scripps.edu}}
+\author{Colin A. Smith, \email{csmith@scripps.edu}, Johannes Rainer \email{johannes.rainer@eurac.edu}}
 \note{
   No notes yet.
 }

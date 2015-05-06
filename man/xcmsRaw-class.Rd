@@ -1,10 +1,13 @@
 \name{xcmsRaw-class}
 \docType{class}
 \alias{xcmsRaw-class}
+\alias{mslevel,xcmsRaw-method}
+\alias{profinfo,xcmsRaw-method}
 \alias{profMz,xcmsRaw-method}
 \alias{profMz}
 \alias{revMz,xcmsRaw-method}
 \alias{revMz}
+\alias{scanrange,xcmsRaw-method}
 \alias{show,xcmsRaw-method}
 \alias{sortMz,xcmsRaw-method}
 \alias{sortMz}
@@ -77,6 +80,17 @@
     \item{\code{tic}:}{
       numeric vector with total ion count (intensity) for each scan
     }
+    \item{\code{mslevel}:}{
+      Numeric representing the MS level that is present in MS1
+      slot. This slot should be accessed through its getter method
+      \code{mslevel}.
+    }
+    \item{\code{scanrange}:}{
+      Numeric of length 2 specifying the scan range (or \code{NULL} for
+      the full range). This slot should be accessed through its getter
+      method \code{scanrange}.
+    }
+
   }
 }
 \section{Methods}{
@@ -111,6 +125,9 @@
       Create an image of the raw (profile) data m/z against retention
   time, with the intensity color coded.
     }
+    \item{mslevel}{
+      Getter method for the \code{mslevel} slot.
+    }
     \item{\link{plotChrom}}{
       \code{signature(object = "xcmsRaw")}: plot a chromatogram
       from profile data
@@ -134,6 +151,11 @@
     \item{\link{plotTIC}}{
       \code{signature(object = "xcmsRaw")}: plot total ion count
       chromatogram
+    }
+    \item{\link{profinfo}}{
+      \code{signature(object = "xcmsRaw")}: returns a list containing
+  the profile generation method and step (profile m/z step size) and
+  eventual additional parameters to the profile function.
     }
     \item{\link{profMedFilt}}{
       \code{signature(object = "xcmsRaw")}: median filter profile
@@ -167,6 +189,9 @@
       \code{signature(object = "xcmsRaw")}: reverse the order of the
       data points for each scan
     }
+    \item{scanrange}{
+      Getter method for the \code{scanrange} slot.
+    }
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points
       by increasing m/z for each scan
@@ -181,7 +206,7 @@
   A parallel effort in metabolite profiling data sharing:
   \url{http://metlin.scripps.edu/}
 }
-\author{Colin A. Smith, \email{csmith@scripps.edu}}
+\author{Colin A. Smith, \email{csmith@scripps.edu}, Johannes Rainer \email{johannes.rainer@eurac.edu}}
 \note{
   No notes yet.
 }
