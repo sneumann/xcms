@@ -25,7 +25,9 @@
   \item{mzrange}{
     either a two column matrix with minimum or maximum m/z or a
     matrix of any dimensions containing columns \code{mzmin} and
-    \code{mzmax}
+    \code{mzmax}. If not specified, the method for \code{xcmsRaw} returns
+    the base peak chromatogram (BPC, i.e. the most intense signal for
+    each RT across all m/z).
 
     for \code{xcmsSet} objects, if left blank the group data will
     be used instead
@@ -33,7 +35,8 @@
   \item{rtrange}{
     a two column matrix the same size as \code{mzrange} with minimum
     and maximum retention times between which to return EIC data
-    points
+    points. If not specified, the method returns the chromatogram for
+    the full RT range.
 
     for \code{xcmsSet} objects, it may also be a single number
     specifying the time window around the peak to return EIC data
@@ -54,13 +57,7 @@
   }
 }
 \value{
-  For \code{xcmsRaw} objects, if \code{rtrange} is NULL, an intensity matrix
-  with a row for each \code{mzmin}, \code{mzmax} pair. Columns
-  correspond to individual scans. If \code{rtrange} is not NULL, a list of two column
-  (retention time/intensity) matricies, one for each \code{mzmin},
-  \code{mzmax} pair.
-
-  For \code{xcmsSet} objects, an \code{xcmsEIC} object.
+  For \code{xcmsSet} and \code{xcmsRaw} objects, an \code{xcmsEIC} object.
 }
 \seealso{
   \code{\link{xcmsRaw-class}},
