@@ -15,11 +15,16 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
-  \item{snames}{sample names}
-  \item{sclass}{sample classes}
-    \item{phenoData}{sample names and classes}
-  \item{profmethod}{method to use for profile generation}
-  \item{profparam}{parameters to use for profile generation}
+  \item{snames}{sample names. By default the file name without extension
+  is used.}
+  \item{sclass}{sample classes.}
+    \item{phenoData}{\code{data.frame} or \code{AnnotatedDataFrame}
+      defining the sample names and classes and other sample related
+      properties. If not provided, the argument \code{sclass} or the
+      subdirectories in which the samples are stored will be
+      used to specify sample grouping.}
+  \item{profmethod}{method to use for profile generation.}
+  \item{profparam}{parameters to use for profile generation.}
   \item{polarity}{filter raw data for positive/negative scans}
 	\item{lockMassFreq}{Performs correction for Waters LockMass function}
     \item{mslevel}{perform peak picking on data of given mslevel}
@@ -45,6 +50,16 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   If the files contain both positive and negative spectra, the polarity
   can be selected explicitly. The default (NULL) is to read all scans.
 
+  The step size (in m/z) to use for profile generation can be submitted
+  either using the \code{profparam} argument
+  (e.g. \code{profparam=list(step=0.1)}) or by submitting
+  \code{step=0.1}.
+
+  The feature/peak detection algorithm can be specified with the
+  \code{method} argument which defaults to the \code{"matchFilter"}
+  method (\code{\link{findPeaks.matchedFilter}}). Possible values are
+  returned by \code{getOption("BioC")$xcms$findPeaks.methods}.
+
   The lock mass correction allows for the lock mass scan to be added back in
   with the last working scan. This correction gives better reproducibility
   between sample sets.
@@ -54,7 +69,10 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \note{
-
+  The arguments \code{profmethod} and \code{profparam} have no influence
+  on the feature/peak detection. The step size parameter \code{step} for
+  the profile generation in the \code{\link{findPeaks.matchedFilter}}
+  peak detection algorithm can be passed using the \code{...}.
 }
 \seealso{
   \code{\link{xcmsSet-class}},

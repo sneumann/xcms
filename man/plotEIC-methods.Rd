@@ -11,23 +11,33 @@
 \item{object = "xcmsRaw"}{
   \code{
     plotEIC(object, mzrange = numeric(), rtrange = numeric(),
-    scanrange = numeric(), mzdec=2)
+    scanrange = numeric(), mzdec=2, type="l", add=FALSE, ...)
   }
 }
 }}
 \arguments{
   \item{object}{\code{xcmsRaw} object}
   \item{mzrange}{
-    m/z range for EIC
+    m/z range for EIC. Uses the full m/z range by default.
   }
   \item{rtrange}{
-    retention time range for EIC
+    retention time range for EIC. Uses the full retention time range by default.
   }
   \item{scanrange}{
     scan range for EIC
   }
   \item{mzdec}{
     Number of decimal places of title m/z values in the eic plot.
+  }
+  \item{type}{
+    Speficies how the data should be plotted (by default as a line).
+  }
+  \item{add}{
+    If the EIC should be added to an existing plot.
+  }
+  \item{...}{
+    Additional parameters passed to the plotting function
+    (e.g. \code{col} etc).
   }
 }
 \value{
