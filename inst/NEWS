@@ -1,3 +1,39 @@
+CHANGES IN VERSION 1.45.3
+-------------------------
+
+NEW FEATURE:
+
++ xcmsSet now allows phenoData to be an AnnotatedDataFrame.
++ new slots for xcmsRaw:
+  - mslevel: store the mslevel parameter submitted to xcmsRaw.
+  - scanrange: store the scanrange parameter submitted to xcmsRaw.
++ new slots for xcmsSet:
+  - mslevel: stores the mslevel argument from the xcmsSet method.
+  - scanrange: to keep track of the scanrange argument of the xcmsSet method.
++ new methods for xcmsRaw:
+  - levelplot: similar to the image method, plots m/z vs RT with color coded intensities.
+  - mslevel: returns the value for the .mslevel slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
+  - profinfo: same functionality as the profinfo method for xcmsSet.
+  - scanrange: returns the value for the scanrange slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
++ new methods for xcmsSet:
+  - getXcmsRaw: returns a xcmsRaw object for one or more files in the xcmsSet, eventually applying retention time correction etc.
+  - levelplot: similar to the image method, plots m/z vs RT with color coded intensities. Allows in addition to highlight identified peaks.
+  - mslevel: returns the value for the mslevel slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
+  - profMethod: same functionality as the profMethod method of xcmsRaw.
+  - profStep: same functionality as the profStep method of xcmsRaw.
+  - scanrange: returns the value for the scanrange slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
+
+USER VISIBLE CHANGES:
++ show method for xcmsSet updated to display also informations about the mslevel and scanrange.
++ Elaborated some documentation entries.
++ rtrange and mzrange for xcmsRaw method plotEIC use by default the full RT and m/z range.
++ Added arguments "lty" and "add" to plotEIC method for xcmsRaw.
++ getEIC without specifying mzrange returns the ion chromatogram for the full m/z range (i.e. the base peak chromatogram).
+
+BUG FIXES:
++ Checking if phenoData is a data.frame or AnnotatedDataFrame and throw an error otherwise.
++ xcmsSet getEIC method for water Lock mass corrected files for a subset of files did not evaluate whether the specified files were corrected.
+
 CHANGES IN VERSION 1.45.2
 -------------------------
 
