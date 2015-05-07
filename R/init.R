@@ -68,11 +68,13 @@
     ## default method
     specDist.method <- "meanMZmatch"
 
+    ## getEIC method
+    getEIC.method="getEICOld"
     xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
                      group.method=group.method, group.methods=group.methods,
                      retcor.method=retcor.method, retcor.methods=retcor.methods,
                      fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods,
-                     specDist.methods=specDist.methods)
+                     specDist.methods=specDist.methods, getEIC.method=getEIC.method)
 
     class(xcms.opt) <- "BioCPkg"
 
