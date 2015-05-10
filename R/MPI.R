@@ -330,7 +330,7 @@ findPeaksPar <- function(arg) {
 
     ## remove parameters which are not used by method() from the parameter list
     params["method"] 		<- NULL
-	arams["lockMassFreq"	<- NULL
+	params["lockMassFreq"]	<- NULL
 	params["includeMSn"]	<- NULL
 	params["profparam"]		<- NULL
 	params["profmethod"]	<- NULL
