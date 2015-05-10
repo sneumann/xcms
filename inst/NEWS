@@ -77,6 +77,8 @@ CHANGES IN VERSION 1.41.1
 BUG FIXES:
     o fix sampclass generation from phenoData if some combinations of factors don't exist
     o disable parallel code in manpages to avoid issues on BioC windows build farm machines
+    o Added polarity switching back into xcmsSet method
+	o Added polarity switching into obiwarp and fillPeaks
 
 CHANGES IN VERSION 1.39.6
 --------------------------

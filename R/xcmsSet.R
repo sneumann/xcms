@@ -117,8 +117,9 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
         params$includeMSn <- includeMSn;
         params$scanrange <- scanrange;
 
-        params$mslevel <- mslevel; ## Actually, this is
-        params$lockMassFreq <- lockMassFreq;
+        params$mslevel <- mslevel ## Actually, this is 
+        params$lockMassFreq <- lockMassFreq
+        params$polarity <- polarity
 
         ft <- cbind(file=files,id=1:length(files))
         argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
@@ -176,7 +177,8 @@ setMethod("show", "xcmsSet", function(object) {
     cat("Peaks:", nrow(object@peaks), "(about",
         round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
-    cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
+    cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n")
+    cat("Mode: ", object@polarity, "\n\n")
 
     if(.hasSlot(object, "mslevel")){
         MSn <- mslevel(object)
@@ -1160,6 +1162,12 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 		} else{
 			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0, scanrange=scanrange)
 		}
+        if (exists("object@polarity") && length(obj2@polarity) > 0) {
+	        ## Retain wanted polarity only
+	        obj2 <- split(obj2, obj2@polarity, DROP=TRUE)
+	        obj2 <- obj2[[object@polarity]]
+	    }
+        
         profStepPad(obj2) <- profStep ## generate profile matrix
 
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])

@@ -839,7 +839,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
         cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
-    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
+    basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "mzo", "mzoscan", "sn")
     verbosenames <- c("egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
 
     ## Peak width: seconds to scales
@@ -1004,6 +1004,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                             mz.value <- omz[p1:p2]
                             mz.int <- od[p1:p2]
                             maxint <- max(mz.int)
+                            int.max <- which.max(mz.int)
+                            mzo <- mz.value[int.max] ## :)
+	                        mzoscan <- otd[p1:p2][int.max] ## :)
 
                             ## re-calculate m/z value for peak range
                             mzrange <- range(mz.value)
@@ -1022,6 +1025,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                              NA,                         ## intensity (sum)
                                              NA,                         ## intensity (-bl)
                                              maxint,                     ## max intensity
+                                             mzo, mzoscan,							 ## HPB: mzo :)
                                              round((maxint - baseline) / sdnoise),  ##  S/N Ratio
                                              NA,                         ## Gaussian RMSE
                                              NA,NA,NA,                   ## Gaussian Parameters
@@ -2009,8 +2013,7 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     }
 })
 
-split.xcmsRaw <- function(x, f, drop = TRUE, ...)
-{
+split.xcmsRaw <- function(x, f, drop = TRUE, ...){
     if (length(x@msnLevel)>0)
         warning ("MSn information will be dropped")
 
