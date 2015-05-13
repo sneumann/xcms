@@ -2187,10 +2187,10 @@ setMethod("levelplot", "xcmsSet",
                    rt="raw", ...){
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(x)[sampleidx]
-              sampidx <- match(sampleidx, sampnames(x), rt=rt)
+              sampidx <- match(sampleidx, sampnames(x))
               if(length(sampidx) > 1)
                   stop("A levelplot can only be created for one file at a time!")
-              xraw <- getXcmsRaw(x, sampleidx=sampidx)
+              xraw <- getXcmsRaw(x, sampleidx=sampidx, rt=rt)
               if(highlight.peaks){
                   pks <- peaks(x)
                   pks <- pks[pks[, "sample"]==sampidx, ]
