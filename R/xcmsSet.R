@@ -18,18 +18,18 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
                      "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
     filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
-
     if (is.null(files))
         files <- getwd()
     info <- file.info(files)
     listed <- list.files(files[info$isdir], pattern = filepattern,
                          recursive = TRUE, full.names = TRUE)
     files <- c(files[!info$isdir], listed)
-
     ## try making paths absolute
     files_abs <- file.path(getwd(), files)
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
+    if (length(files) == 0 | all(is.na(files)))
+        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
@@ -38,11 +38,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             files<-files[-lockMass.files]
         }
     }
-
     filepaths(object) <- files
-
-    if (length(files) == 0)
-        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
 
     ## determine experimental design
     fromPaths <- phenoDataFromPaths(files)
@@ -51,7 +47,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     } else {
         rownames(fromPaths) <- snames
     }
-
     pdata <- phenoData
     if (is.null(pdata)) {
         pdata <- sclass
@@ -66,7 +61,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     phenoData(object) <- pdata
     if (is.null(phenoData))
         rownames(phenoData(object)) <- snames
-
     rtlist <- list(raw = vector("list", length(snames)),
                    corrected = vector("list", length(snames)))
 
@@ -105,7 +99,6 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             includeMSn=TRUE
         }
     }
-
     parmode <- xcmsParallelSetup(nSlaves=nSlaves)
     runParallel <- parmode$runParallel
     parMode <- parmode$parMode
