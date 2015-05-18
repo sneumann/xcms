@@ -334,7 +334,17 @@ setReplaceMethod("sampnames", "xcmsSet", function(object, value) {
 setGeneric("sampclass", function(object) standardGeneric("sampclass"))
 
 setMethod("sampclass", "xcmsSet", function(object) {
-    if (ncol(object@phenoData) >0) {
+              if (ncol(object@phenoData) >0) {
+                  if(any(colnames(object@phenoData)=="class")){
+                      sclass <- object$class
+                      ## in any rate: transform class to a character vector
+                      ## and generate a new factor on that with the levels
+                      ## being in the order of the first occurrence of the
+                      ## elements (i.e. no alphanumeric ordering).
+                      sclass <- as.character(sclass)
+                      sclass <- factor(sclass, levels=unique(sclass))
+                      return(sclass)
+                  }
         interaction(object@phenoData, drop=TRUE)
     } else {
         factor()
@@ -344,9 +354,13 @@ setMethod("sampclass", "xcmsSet", function(object) {
 setGeneric("sampclass<-", function(object, value) standardGeneric("sampclass<-"))
 
 setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
+    ## if we're submitting a data.frame, we're using interaction on that.
+    if(class(value)=="data.frame"){
+        message("Setting the class labels as the interaction of the data.frame columns.")
+        value <- as.character(interaction(value, drop=TRUE))
+    }
     if (!is.factor(value))
         value <- factor(value, unique(value))
-
     object@phenoData$class <- value
     object
 })
