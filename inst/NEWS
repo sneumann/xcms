@@ -1,3 +1,19 @@
+CHANGES IN VERSION 1.45.5
+-------------------------
+
+USER VISIBLE CHANGES:
++ The sampclass method for xcmsSet will now return the content of the
+  column "class" from the data.frame in the phenoData slot, or if not
+  present, the interaction of all factors (columns) of that data.frame.
++ The sampclass<- method replaces the content of the "class" column in
+  the phenoData data.frame. If a data.frame is submitted, the interaction
+  of its columns is calculated and stored into the "class" column.
+
+BUG FIXES:
++ Fixed a bug that resulted in a cryptic error message 
+  when no input files are available to the xcmsSet function.
+
+
 CHANGES IN VERSION 1.45.4
 -------------------------
 
