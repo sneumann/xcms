@@ -197,13 +197,15 @@
       of peaks to do nonlinear loess retention time correction
     }
     \item{sampclass<-}{
-      \code{signature(object = "xcmsSet")}: \strong{DEPRECATED}. If used, the
-      experimental design will be replaced with a data frame with a
-      single column matching the supplied factor.
+      \code{signature(object = "xcmsSet")}: Replaces the column
+      \dQuote{class} in the \code{phenoData} slot. See details for more information.
     }
     \item{sampclass}{
-      \code{signature(object = "xcmsSet")}: get the interaction of the
-      experimental design factors
+      \code{signature(object = "xcmsSet")}: Returns the content of the
+      column \dQuote{class} from the \code{phenoData} slot or, if not
+      present, the interaction of the experimental design factors
+      (i.e. of the \code{phenoData} \code{data.frame}). See details for
+      more information.
     }
     \item{phenoData<-}{
       \code{signature(object = "xcmsSet")}: set the \code{phenoData} slot
@@ -235,6 +237,26 @@
       Access and set \code{name} column in \code{phenoData}
     }
   }
+}
+\details{
+  The \code{phenoData} slot (and \code{phenoData} parameter in the
+  \code{\link{xcmsSet}} function) is intended to contain a \code{data.frame} describing
+  all experimental factors, i.e. the samples along with their
+  properties. If this \code{data.frame} contains a column named
+  \dQuote{class}, this will be returned by the \code{sampclass} method
+  and will thus be used by all methods to determine the sample
+  grouping/class assignment (e.g. to define the colors in various plots
+  or for the \code{\link{group}} method).
+
+  The \code{sampclass<-} method adds or replaces the \dQuote{class}
+  column in the \code{phenoData} slot. If a \code{data.frame} is
+  submitted to this method, the interaction of its columns will be
+  stored into the \dQuote{class} column.
+
+  Also, similar to other classes in Bioconductor, the \code{$} method
+  can be used to directly access all columns in the \code{phenoData}
+  slot (e.g. use \code{xset$name} on a \code{xcmsSet} object called
+  \dQuote{xset} to extract the values from a column named \dQuote{name} in the \code{phenoData} slot).
 }
 \references{
   A parallel effort in metabolite profiling data sharing:
