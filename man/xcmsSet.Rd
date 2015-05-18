@@ -50,6 +50,13 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   If the files contain both positive and negative spectra, the polarity
   can be selected explicitly. The default (NULL) is to read all scans.
 
+  If \code{phenoData} is provided, it is stored to the \code{phenoData}
+  slot of the returned \code{xcmsSet} class. If that \code{data.frame}
+  contains a column named \dQuote{class}, its content will be returned
+  by the \code{\link{sampclass}} method and thus be used for the
+  group/class assignment of the individual files (e.g. for peak grouping
+  etc.). For more details see the help of the \code{\link{xcmsSet-class}}.
+
   The step size (in m/z) to use for profile generation can be submitted
   either using the \code{profparam} argument
   (e.g. \code{profparam=list(step=0.1)}) or by submitting
