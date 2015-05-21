@@ -1,6 +1,7 @@
 \name{xcmsSet-class}
 \docType{class}
 \alias{xcmsSet-class}
+\alias{[,xcmsSet-method}
 \alias{$<-,xcmsSet-method}
 \alias{$,xcmsSet-method}
 \alias{filepaths<-,xcmsSet-method}
@@ -138,8 +139,15 @@
       each sample in the set
     }
     \item{\link{getXcmsRaw}}{
-      \code{signature(object = "xcmsSet")}: read the raw data for one or
-      more files in the \code{xcmsSet} and return it.
+      \code{signature(object = "xcmsSet", sampleidx=1,
+	profmethod=profMethod(object), profstep=profStep(object),
+	profparam=profinfo(object), mslevel=NULL, scanrange=NULL,
+	rt=c("corrected", "raw"))}: read the raw data for one or
+      more files in the \code{xcmsSet} and return it. The default
+      parameters will apply all settings used in the original \code{\link{xcmsSet}}
+      call to generate the \code{xcmsSet} object to be applied also to
+      the raw data. Parameter \code{sampleidx} allows to specify which
+      raw file(s) should be loaded.
     }
     \item{groupidx<-}{
       \code{signature(object = "xcmsSet")}: set \code{groupidx} slot
@@ -231,10 +239,20 @@
       \code{phenoData} slot
     }
     \item{\link[xcms:split.xcmsSet]{split}}{
-      \code{signature("xcmsSet")}: divide into a list of objects
+      \code{signature("xcmsSet")}: divide the xcmsSet into a list of
+      xcmsSet objects depending on the provided factor. Note that only
+      peak data will be preserved, i.e. eventual peak grouping information
+      will be lost.
     }
     \item{\code{object$name}, \code{object$name<-value}}{
       Access and set \code{name} column in \code{phenoData}
+    }
+    \item{\code{object[, i]}}{
+      Conducts subsetting of a \code{xcmsSet} instance. Only subsetting
+      on columns, i.e. samples, is supported. Subsetting is performed on
+      all slots, also on \code{groups} and \code{groupidx}. Parameter
+      \code{i} can be an integer vector, a logical vector or a character
+      vector of sample names (matching \code{sampnames}).
     }
   }
 }
