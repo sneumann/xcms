@@ -253,6 +253,18 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
     lcsets <- vector("list", length(levels(f)))
     names(lcsets) <- levels(f)
 
+    ## get the phenoData and all other parameters we want to pass
+    ## down to the splitted objects
+    pd <- phenoData(x)
+    dataCor <- x@dataCorrection
+    suppressWarnings(
+        msL <- mslevel(x)
+        )
+    suppressWarnings(
+        scanR <- scanrange(x)
+        )
+    pol <- x@polarity
+
     for (i in unique(sampidx)) {
         samptrans = which(sampidx == i)
         samptrans = samptrans[samptrans <= nrow(x@phenoData)]
@@ -265,8 +277,23 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         cpeaks[,"sample"] <- as.numeric(factor(cpeaks[,"sample"]))
         peaks(lcsets[[i]]) <- cpeaks
 
-        sampnames(lcsets[[i]]) <- samples[samptrans]
-        sampclass(lcsets[[i]]) <- classlabel[samptrans, drop = TRUE]
+        ## don't need these, since I'm going to use the phenoData instead.
+        ## sampnames(lcsets[[i]]) <- samples[samptrans]
+        ## sampclass(lcsets[[i]]) <- classlabel[samptrans, drop = TRUE]
+        phenoData(lcsets[[i]]) <- droplevels(pd[samptrans, , drop=FALSE])
+        ## set also all other settings.
+        if(length(dataCor) > 1){
+            lcsets[[i]]@dataCorrection <- dataCor[samptrans]
+        }
+        ## suppressWarnings, as "old" xcmsSet objects don't have these
+        ## slots.
+        suppressWarnings(
+            mslevel(lcsets[[i]]) <- as.numeric(msL)
+            )
+        suppressWarnings(
+            scanrange(lcsets[[i]]) <- as.numeric(scanR)
+            )
+        lcsets[[i]]@polarity <- pol
         filepaths(lcsets[[i]]) <- cdffiles[samptrans]
         profinfo(lcsets[[i]]) <- prof
         lcsets[[i]]@rt$raw <- rtraw[samptrans]
@@ -2296,3 +2323,157 @@ setMethod("profMethod", "xcmsSet", function(object) {
 setMethod("profStep", "xcmsSet", function(object) {
               return(profinfo(object)$step)
 })
+
+## sub setting an xcmsSet object...
+setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
+  if (missing(drop))
+    drop <- FALSE
+  if (missing(i) && missing(j)) {
+      if (length(list(...))!=0)
+        stop("specify samples to subset; use '",
+             substitute(x), "$", names(list(...))[[1]],
+             "' to access phenoData variables")
+      return(x)
+  }
+  ## don't allow i, but allow j to be: numeric or logical. If
+  ## it's a character vector <- has to fit to sampnames(x)
+  if(!missing(i))
+      stop("Subsetting to rows is not supported!")
+  if(missing(j))
+      j <- 1:length(sampnames(x))
+  if(class(j)=="character"){
+      ## check if these match to the sampnames.
+      matches <- match(j, sampnames(x))
+      if(length(matches)!=length(j))
+          stop("All provided sample names have to match the sample names in the xcmsSet!")
+      j <- matches
+  }
+  if(class(j)=="logical"){
+      if(length(j) != length(sampnames(x)))
+          stop("If j is a logical its length has to match the number of samples in the xcmsSet!")
+      j <- which(j)
+  }
+  if(class(j)=="numeric")
+      j <- as.integer(j)
+  if(class(j)!="integer")
+      stop("j has to be a numeric vector specifying the index of the samples for which the data has to be extracted")
+  ## check if j is within the range of 1:length(sampnames)
+  if(any(!j %in% (1:length(sampnames(x)))))
+      stop("j has to be a numeric with values between 1 and ", length(sampnames(x)), "!")
+  ## OK, j is now an integer vector...
+  ## "copy" the xcmsSet, that way we keep parameters mslevel, scanrange,
+  ## profinfo, polarity.
+  xsub <- x
+  ## first of all, subset the phenoData
+  phenoData(xsub) <- droplevels(phenoData(xsub)[j,, drop=FALSE])
+  ## then the file paths
+  filepaths(xsub) <- filepaths(x)[j]
+  ## now starting to subset data:
+  ## 1) @rt$raw, @rt$corrected
+  xsub@rt$raw <- x@rt$raw[j]
+  xsub@rt$corrected <- x@rt$corrected[j]
+  ## 2) @peaks
+  keep.peaks <- x@peaks
+  rownames(keep.peaks) <- as.character(1:nrow(keep.peaks))
+  ## subsetting the peaks. Since we want to also allow reverse ordering we have to
+  ## do it a little more complicated...
+  keep.peaks <- split(data.frame(keep.peaks), f=keep.peaks[, "sample"])
+  keep.peaks <- keep.peaks[as.character(j)]
+  names(keep.peaks) <- NULL
+  keep.peaks <- as.matrix(do.call(rbind, keep.peaks))
+  ##keep.peaks <- keep.peaks[as.character(keep.peaks[, "sample"]) %in% as.character(j), ]
+  ## have to replace the sample index.
+  newsample <- numeric(nrow(keep.peaks))
+  for(idx in 1:length(j)){
+      newsample[keep.peaks[, "sample"]==j[idx]] <- idx
+  }
+  keep.peaks[, "sample"] <- newsample
+  xsub@peaks <- keep.peaks
+  rownames(xsub@peaks) <- NULL
+  ## 3) groupidx if present. subset this to indices of peaks which we will keep.
+  ##    will use the rownames of the keep.peaks matrix for that (represents the
+  ##    original index).
+  if(length(x@groupidx) > 0){
+      keep.groupidx <- lapply(x@groupidx, function(z){
+                                  newidx <- match(as.character(z), rownames(keep.peaks))
+                                  return(newidx[!is.na(newidx)])
+                                  ## that way I just return the indices as they are!
+                                  ##return(z[as.character(z) %in% rownames(keep.peaks)])
+                              })
+      xsub@groupidx <- keep.groupidx
+      ## 4) groups have to be re-calculated.
+      keep.groups <- x@groups
+      keep.groups <- keep.groups[, -(which(colnames(keep.groups)=="npeaks"):ncol(keep.groups))]
+      sampclasses <- sampclass(xsub)
+      peakCounts <- matrix(ncol=length(levels(sampclasses)), nrow=nrow(keep.groups), 0)
+      colnames(peakCounts) <- levels(sampclasses)
+      ## loop throught the peakcounts
+      for(idx in 1:nrow(keep.groups)){
+          groupidx <- keep.groupidx[[idx]]
+          if(length(groupidx) == 0)
+              next
+          tab <- keep.peaks[groupidx, "sample"]
+          tab <- table(sampclasses[tab])
+          peakCounts[idx, names(tab)] <- as.numeric(tab)
+      }
+      keep.groups <- cbind(keep.groups, npeaks=rowSums(peakCounts), peakCounts)
+      xsub@groups <- keep.groups
+  }
+  ## 5) filled
+  if(length(x@filled) > 0){
+      xsub@filled <- (1:nrow(keep.peaks))[rownames(keep.peaks) %in% as.character(x@filled)]
+  }
+  ## 6) dataCorrection
+  if(length(x@dataCorrection)>0)
+      xset@dataCorrection <- x@dataCorrection[j]
+  return(xsub)
+})
+## setMethod("[", "eSet", function(x, i, j, ..., drop = FALSE) {
+##   if (missing(drop))
+##     drop <- FALSE
+##   if (missing(i) && missing(j)) {
+##       if (length(list(...))!=0)
+##         stop("specify genes or samples to subset; use '",
+##              substitute(x), "$", names(list(...))[[1]],
+##              "' to access phenoData variables")
+##       return(x)
+##   }
+##   if (!isVersioned(x) || !isCurrent(x)["eSet"])
+##     x <- updateObject(x)
+##   if (!missing(j)) {
+##     phenoData(x) <- phenoData(x)[j,, ..., drop = drop]
+##     protocolData(x) <- protocolData(x)[j,, ..., drop = drop]
+##   }
+##   if (!missing(i))
+##     featureData(x) <- featureData(x)[i,,..., drop=drop]
+##   ## assayData; implemented here to avoid function call
+##   orig <- assayData(x)
+##   storage.mode <- assayDataStorageMode(orig)
+##   assayData(x) <-
+##     switch(storage.mode,
+##            environment =,
+##            lockedEnvironment = {
+##              aData <- new.env(parent=emptyenv())
+##              if (missing(i))                     # j must be present
+##                for(nm in ls(orig)) aData[[nm]] <- orig[[nm]][, j, ..., drop = drop]
+##              else {                              # j may or may not be present
+##                if (missing(j))
+##                  for(nm in ls(orig)) aData[[nm]] <- orig[[nm]][i,, ..., drop = drop]
+##                else
+##                  for(nm in ls(orig)) aData[[nm]] <- orig[[nm]][i, j, ..., drop = drop]
+##              }
+##              if ("lockedEnvironment" == storage.mode) assayDataEnvLock(aData)
+##              aData
+##            },
+##            list = {
+##              if (missing(i))                     # j must be present
+##                lapply(orig, function(obj) obj[, j, ..., drop = drop])
+##              else {                              # j may or may not be present
+##                if (missing(j))
+##                  lapply(orig, function(obj) obj[i,, ..., drop = drop])
+##                else
+##                  lapply(orig, function(obj) obj[i, j, ..., drop = drop])
+##              }
+##            })
+##   x
+## })
