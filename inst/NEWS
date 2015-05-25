@@ -1,3 +1,14 @@
+CHANGES IN VERSION 1.45.6
+-------------------------
+
+NEW FEATURE:
++ J. Rainer implemented a [ method that allows to subset an xcmsSet.
+
+BUG FIXES:
++ Fixed a problem in split.xcmsSet that did not split the phenoData properly.
+  Added some details to the documentation of xcmsSet-class.
+
+
 CHANGES IN VERSION 1.45.5
 -------------------------
 
