@@ -1,49 +1,49 @@
 xcmsParallelSetup <- function(nSlaves) {
-  runParallel <- 0
-  parMode <- ""
-  snowclust <- NULL
+    runParallel <- 0
+    parMode <- ""
+    snowclust <- NULL
 
-  if (!is.null(nSlaves)) {
-    if (nSlaves > 1) {
-      ## If MPI is available ...
-      rmpi = "Rmpi"
-      opt.warn <- options("warn")$warn
-      options("warn" = -1)
-      if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
-        if (is.loaded('mpi_initialize')) {
-          mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
-          ## If there are multiple slaves AND this process is the master,
-          ## run in parallel.
-          if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0)) {
-            runParallel <- 1
-            parMode <- "MPI"
-          }
+    if (!is.null(nSlaves)) {
+        if (nSlaves > 1) {
+            ## If MPI is available ...
+            rmpi = "Rmpi"
+            opt.warn <- options("warn")$warn
+            options("warn" = -1)
+            if (require(rmpi,character.only=TRUE,quietly=TRUE)) {
+                if (is.loaded('mpi_initialize')) {
+                    mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
+                    ## If there are multiple slaves AND this process is the master,
+                    ## run in parallel.
+                    if ((mpi.comm.size() > 2)  && (mpi.comm.rank() == 0)) {
+                        runParallel <- 1
+                        parMode <- "MPI"
+                    }
+                }
+            } else {
+                ## try local sockets using snow package
+                snow = "snow"
+                if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
+                    cat("Starting snow cluster with",nSlaves,"local sockets.\n")
+                    snowclust <- makeCluster(nSlaves, type = "SOCK")
+                    runParallel <- 1
+                    parMode <- "SOCK"
+                } else{
+                    ## check parallel package... can use the mclapply on local CPUs
+                    if(requireNamespace("parallel", quietly=TRUE)){
+                        cat("Processing on", nSlaves, "cores.\n")
+                        runParallel <- 1
+                        parMode <- "parallel"
+                        ## setting the number of cores
+                        options(mc.cores=nSlaves)
+                    }
+                }
+            }
+            options("warn" = opt.warn)
         }
-      } else {
-        ## try local sockets using snow package
-        snow = "snow"
-        if (try(require(snow,character.only=TRUE,quietly=TRUE))) {
-          cat("Starting snow cluster with",nSlaves,"local sockets.\n")
-          snowclust <- makeCluster(nSlaves, type = "SOCK")
-        runParallel <- 1
-          parMode <- "SOCK"
-      } else{
-          ## check parallel package... can use the mclapply on local CPUs
-          if(requireNamespace("parallel", quietly=TRUE)){
-              cat("Processing on", nSlaves, "cores.\n")
-              runParallel <- 1
-              parMode <- "parallel"
-              ## setting the number of cores
-              options(mc.cores=nSlaves)
-          }
-      }
-      }
-      options("warn" = opt.warn)
     }
-  }
-  return (list(runParallel=runParallel,
-               parMode=parMode,
-               snowclust=snowclust))
+    return (list(runParallel=runParallel,
+                 parMode=parMode,
+                 snowclust=snowclust))
 }
 
 
@@ -139,8 +139,8 @@ xcmsParallelSetup <- function(nSlaves) {
                        envir=globalenv())
                 trace(papply_action,
                       quote({papply_lineno <- papply_lineno+1 ;
-                             cat("papply_action: Line ",papply_lineno, ": ") ;
-                             print(get("papply_fn_bodies$papply_action")[[papply_lineno]]) }),
+                          cat("papply_action: Line ",papply_lineno, ": ") ;
+                          print(get("papply_fn_bodies$papply_action")[[papply_lineno]]) }),
                       quote(cat("\n")),
                       1:length(get("papply_fn_bodies$papply_action")),
                       where=environment(),
@@ -153,8 +153,8 @@ xcmsParallelSetup <- function(nSlaves) {
                            envir=globalenv())
                     trace(fn_name,
                           substitute({papply_lineno <- papply_lineno+1 ;
-                                      cat(fn_name,": Line ",papply_lineno, ": ") ;
-                                      print(get(paste("papply_fn_bodies$",fn_name))[[papply_lineno]]) },list(fn_name=fn_name)),
+                              cat(fn_name,": Line ",papply_lineno, ": ") ;
+                              print(get(paste("papply_fn_bodies$",fn_name))[[papply_lineno]]) },list(fn_name=fn_name)),
                           quote(cat("\n")),
                           1:length(get(paste("papply_fn_bodies$",fn_name))),
                           where=environment(),
@@ -215,9 +215,9 @@ xcmsParallelSetup <- function(nSlaves) {
         mpi.bcast.Robj2slave(papply_also_trace)
         if (show_errors) {
             mpi.bcast.cmd(options(error=quote( {
-                cat("Error: ",geterrmessage(),"\n") ;
-                assign(".mpi.err", TRUE, env = .GlobalEnv)
-            })))
+                                                  cat("Error: ",geterrmessage(),"\n") ;
+                                                  assign(".mpi.err", TRUE, env = .GlobalEnv)
+                                              })))
         }
 
         mpi.bcast.cmd(papply_fn_bodies <- list())
@@ -333,48 +333,48 @@ findPeaksPar <- function(arg) {
 
 fillPeaksChromPar <- function(arg) {
 
-  require(xcms)
+    require(xcms)
 
-  params <- arg$params
-  myID <- arg$id
-  cat(arg$file, "\n")
+    params <- arg$params
+    myID <- arg$id
+    cat(arg$file, "\n")
 
-  prof <- params$prof
-  rtcor <- params$rtcor
-  peakrange <- params$peakrange
-  expand.mz <- params$expand.mz
-  expand.rt <- params$expand.rt
-  gvals <- params$gvals$gvals
+    prof <- params$prof
+    rtcor <- params$rtcor
+    peakrange <- params$peakrange
+    expand.mz <- params$expand.mz
+    expand.rt <- params$expand.rt
+    gvals <- params$gvals$gvals
 
-  lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
+    lcraw <- xcmsRaw(arg$file, profmethod=params$prof$method, profstep = 0)
 
-  if(length(params$dataCorrection) > 1){
-    if(params$dataCorrection[i] == 1)
-      lcraw <- stitch(lcraw, AutoLockMass(lcraw))
-  }
-
-  if (exists("params$polarity") && length(params$polarity) >0) {
-    if (length(params$polarity) >0) {
-      ## Retain wanted polarity only
-      lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
-      lcraw <- lcraws[[object@polarity]]
+    if(length(params$dataCorrection) > 1){
+        if(params$dataCorrection[i] == 1)
+            lcraw <- stitch(lcraw, AutoLockMass(lcraw))
     }
-  }
+
+    if (exists("params$polarity") && length(params$polarity) >0) {
+        if (length(params$polarity) >0) {
+            ## Retain wanted polarity only
+            lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
+            lcraw <- lcraws[[object@polarity]]
+        }
+    }
 
     if (length(prof) > 2)
-      lcraw@profparam <- prof[seq(3, length(prof))]
+        lcraw@profparam <- prof[seq(3, length(prof))]
     if (length(rtcor) == length(lcraw@scantime) ) {
-      lcraw@scantime <- rtcor
+        lcraw@scantime <- rtcor
     } else {
-      warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
+        warning("(corrected) retention time vector length mismatch for ", basename(arg$file))
     }
 
 
-  # Expanding the peakrange
-  peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-  peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-  peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-  peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
+                                        # Expanding the peakrange
+    peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
+    peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
+    peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
+    peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
 
 
 
@@ -383,7 +383,7 @@ fillPeaksChromPar <- function(arg) {
 
     newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)
 
-  list(myID=myID, newpeaks=cbind(newpeaks, sample=myID))
+    list(myID=myID, newpeaks=cbind(newpeaks, sample=myID))
 }
 
 
