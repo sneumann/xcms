@@ -11,7 +11,7 @@ xcmsParallelSetup <- function(nSlaves) {
             options("warn" = -1)
 
             ## Rmpi does not work on the BioC build machines: 
-            if ( (Sys.info()["sysname"] != "windows") && require(rmpi,character.only=TRUE,quietly=TRUE)) {
+            if ( (Sys.info()["sysname"] != "Windows") && require(rmpi,character.only=TRUE,quietly=TRUE)) {
                 if (is.loaded('mpi_initialize')) {
                     mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
                     ## If there are multiple slaves AND this process is the master,
