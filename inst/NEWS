@@ -2,6 +2,13 @@ CHANGES IN VERSION 1.45.7
 -------------------------
 
 USER VISIBLE CHANGES:
++ Disabled parallel processing in unit tests
+* migrate dependencies from ncdf -> ncdf4
+
+CHANGES IN VERSION 1.45.7
+-------------------------
+
+USER VISIBLE CHANGES:
 + Disabled Rmpi support and usage on Windows
 
 
