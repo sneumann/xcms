@@ -3,6 +3,7 @@
 #' This class can hold OBO terms, and in particular is used to set and retrieve
 #' strings in the form [STATO,STATO:0000169,fold change,,] as used in e.g. the mzTab format.
 #' See here for an example: https://github.com/HUPO-PSI/mzTab/blob/master/examples/labelfree_SQI.mzTab
+#' This could possibly be changed to use https://github.com/lgatto/rols/blob/master/R/cvparam.R instead
 #'
 #' \describe{
 #'    \item{ontology}{ID of the ontology that contains the term.}
