@@ -1861,7 +1861,7 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
     if (missing(phenoDataColumn)) {
         labels <- as.character(sampclass(object))
     } else {
-        labels <- phenoData(object)[, phenoDataColumn]
+        labels <- as.character(phenoData(object)[, phenoDataColumn])
     }
 
     if(any(table(labels)<3))
