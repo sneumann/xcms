@@ -1846,6 +1846,38 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
 })
 
 
+##
+## before starting conversion to metaboAnalyst format:
+## grouping, opt. retcoring (+grouping) and peak filling the xcmsObject
+## 
+.write.metaboanalyst <- function(object, filename, phenoDataColumn=NULL, value="into", ...) {
+
+    if (! "value" %in% names(list(...))) {
+        p <-groupval(object, value="into", ... )
+    } else {
+        p <-groupval(object, value=value, ... )
+    }
+    
+    if (missing(phenoDataColumn)) {
+        labels <- as.character(sampclass(object))
+    } else {
+        labels <- phenoData(object)[, phenoDataColumn]
+    }
+
+    if(any(table(labels)<3))
+        stop(paste("The classes", paste(names(which(table(labels)<8)), collapse=", "), "have less than 3 samples"))           
+        
+    p <- rbind(Sample=sampnames(object),
+               Label=labels,
+               p)  
+
+    write.table(p, file = filename,
+                dec=".", sep=",", qmethod="double", 
+                col.names=F, row.names = T)
+  
+}
+
+
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
 setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
