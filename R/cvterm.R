@@ -67,9 +67,12 @@ if (FALSE) {
     dr <- data.frame(name=c("A", "B", "C"),
                      tvalue=c(3,6,9),
                      pvalue=c(0.1,0.2,0.3),
+                     fold=c(1.6,1.8,1.5),
                      ko16=c(11,22,33))
 
-    attr(dr$pvalue, "cvTerms") <- list(cvTerm("STATO", "STATO:0000169", "fold change"))
+    attr(dr$tvalue, "cvTerms") <- list(cvTerm("STATO", "STATO:0000176", "t-statistic"))
+    attr(dr$pvalue, "cvTerms") <- list(cvTerm("STATO", "STATO:0000175", "p-value"))
+    attr(dr$fold, "cvTerms") <- list(cvTerm("STATO", "STATO:0000169", "fold change"))
     attr(dr$ko16, "cvTerms") <- list(cvTerm("MS", "MS:1001841", "LC-MS feature volume"))
     
 
