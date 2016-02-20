@@ -39,6 +39,89 @@ test.getEICxraw <- function() {
     options(BioC=BioC)
 }
 
+
+## This test case checks for the problem reported by Alan Smith in issue #7
+## on github.
+## Apparently (and actually), the length of the retention time corrected and
+## original retention times differ, e.g. when scanrange is used. Using the
+## getXcmsRaw method fixes that, since within that method we ensure that all
+## vectors, times etc are aligned (i.e. match in length and ordering).
+test.issue7 <- function(){
+    library(xcms)
+    library(faahKO)
+
+    cdfpath <- system.file("cdf", package = "faahKO")
+    list.files(cdfpath, recursive = TRUE)
+    cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+
+    xset<-xcmsSet(cdffiles,profmethod = "bin", method="centWave",
+                  ppm=30, peakwidth=c(5,50), snthresh=10, prefilter=c(7,1000),
+                  integrate=1, mzdiff= -0.001, fitgauss=FALSE,
+                  scanrange= c(0,500),mzCenterFun="wMean",noise=300,
+                  sleep=0, verbose.columns=T,nSlaves=3);
+    xset2<-retcor(xset, method = "obiwarp",distFunc="cor_opt",
+                  profStep=1,plot="deviation",gapInit=0.8, gapExtend=3.3)
+    gxset2<-group(xset2,method="density", bw=8, minfrac = .5,
+                  minsamp = 2, mzwid = .01, max = 50, sleep = 0)
+    xset3<-fillPeaks(gxset2)
+
+    peaktab <-data.frame(ID=groupnames(xset3),peakTable(xset3))
+    rownames(peaktab) <- peaktab$ID
+
+    pkid <- c("M205T2790","M392T2927")
+    a <- getEIC(xset3,groupidx=pkid)
+    ## Get the retention times and eic for the first file.
+    rts <- a@eic[[1]][[1]]
+    ## rt has to be increasing!
+    rtidx <- order(rts[, "rt"])
+    checkEquals(rtidx, 1:length(rtidx))
+
+    ## Reproduce what's happening within the getEIC for xcmsSet:
+    ## That's how the xcmsRaw is loaded.
+    braw <- xcmsRaw(cdffiles[1], profmethod=profMethod(xset3), profstep=0)
+    ## Note that the vector lengths are different.
+    checkTrue(length(braw@scantime) != length(xset3@rt$corrected[[1]]))
+    ## That's the problem! That's how the corrected scantime is applied.
+    braw@scantime <- xset3@rt$corrected[[1]]
+
+    ## Now the lengths are different and we get the error.
+    rtrange <- as.matrix(peaktab[pkid, c("rtmin", "rtmax")])
+    rtrange[,1] <- rtrange[,1] - 200
+    rtrange[,2] <- rtrange[,2] + 200
+    beic <- getEIC(braw, mzrange=as.matrix(peaktab[pkid, c("mzmin", "mzmax")]),
+                   rtrange=rtrange)
+    plot(beic)
+    rts <- beic@eic[[1]][[1]]
+    ## rt has to be increasing!
+    rtidx <- order(rts[, "rt"])
+    checkTrue(all(rtidx != 1:length(rtidx)))
+
+    ## Applying also the scanrange (as done in getXcmsRaw) fix it.
+    craw <- getXcmsRaw(xset3)
+    ceic <- getEIC(craw, mzrange=as.matrix(peaktab[pkid, c("mzmin", "mzmax")]),
+                   rtrange=rtrange)
+    plot(ceic)
+    rts <- ceic@eic[[1]][[1]]
+    ## rt has to be increasing!
+    rtidx <- order(rts[, "rt"])
+    checkEquals(rtidx, 1:length(rtidx))
+
+    ## Interestingly, using getEICNew also helps:
+    BioC <- getOption("BioC")
+    BioCBefore <- getOption("BioC")
+    BioC$xcms$getEIC.method <- "getEICNew"
+    options(BioC=BioC)
+    zic <- getEIC(xset3, groupidx=pkid[1])
+    plot(zic)
+    rts <- zic@eic[[1]][[1]]
+    ## rt has to be increasing!
+    rtidx <- order(rts[, "rt"])
+    checkEquals(rtidx, 1:length(rtidx))
+
+    ## Reset options.
+    options(BioC=BioCBefore)
+}
+
 test.getEICxset <- function() {
     xset <- fillPeaks(group(faahko))
     e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2), rtrange=200)
