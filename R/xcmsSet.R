@@ -1682,18 +1682,9 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 
         cat(sampleidx[i], "")
         flush.console()
-        ## lcraw <- getXcmsRaw(object, sampleidx=i, rt=rt)
-        ## lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
-        lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0,
-                         scanrange=scanrange(object))
-        if(length(object@dataCorrection) > 1){
-            if(object@dataCorrection[sampidx[i]] == 1)
-                lcraw<-stitch(lcraw, AutoLockMass(lcraw))
-        }
-        if (rt == "corrected")
-            lcraw@scantime <- object@rt$corrected[[sampidx[i]]]
-        if (length(prof) > 2)
-            lcraw@profparam <- prof[seq(3, length(prof))]
+        ## getXcmsRaw takes care of rt correction, susetting to scanrage and other
+        ## stuff.
+        lcraw <- getXcmsRaw(object, sampleidx=i, rt=rt)
         currenteic <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
         eic[[i]] <- currenteic@eic[[1]]
         rm(lcraw)
