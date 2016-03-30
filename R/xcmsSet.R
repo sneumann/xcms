@@ -744,7 +744,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
         mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
                                          isJoinedPeak=FALSE)
         if(length(mplenv$peakIdxList$peakidx)==0){
-            cat("Warning: No peaks in sample",s,"\n")
+            cat("Warning: No peaks in sample\n")
         }
         ## scoreList <- data.frame(score=numeric(0),peak=integer(0),mpListRow=integer(0),
         ##                                                       isJoinedPeak=logical(0), isJoinedRow=logical(0))
@@ -1682,7 +1682,10 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 
         cat(sampleidx[i], "")
         flush.console()
-        lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
+        ## lcraw <- getXcmsRaw(object, sampleidx=i, rt=rt)
+        ## lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0)
+        lcraw <- xcmsRaw(files[sampidx[i]], profmethod = prof$method, profstep = 0,
+                         scanrange=scanrange(object))
         if(length(object@dataCorrection) > 1){
             if(object@dataCorrection[sampidx[i]] == 1)
                 lcraw<-stitch(lcraw, AutoLockMass(lcraw))
@@ -1849,7 +1852,7 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
 ##
 ## before starting conversion to metaboAnalyst format:
 ## grouping, opt. retcoring (+grouping) and peak filling the xcmsObject
-## 
+##
 .write.metaboanalyst <- function(object, filename, phenoDataColumn=NULL, value="into", ...) {
 
     if (! "value" %in% names(list(...))) {
@@ -1857,7 +1860,7 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
     } else {
         p <-groupval(object, value=value, ... )
     }
-    
+
     if (missing(phenoDataColumn)) {
         labels <- as.character(sampclass(object))
     } else {
@@ -1865,16 +1868,16 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
     }
 
     if(any(table(labels)<3))
-        stop(paste("The classes", paste(names(which(table(labels)<8)), collapse=", "), "have less than 3 samples"))           
-        
+        stop(paste("The classes", paste(names(which(table(labels)<8)), collapse=", "), "have less than 3 samples"))
+
     p <- rbind(Sample=sampnames(object),
                Label=labels,
-               p)  
+               p)
 
     write.table(p, file = filename,
-                dec=".", sep=",", qmethod="double", 
+                dec=".", sep=",", qmethod="double",
                 col.names=F, row.names = T)
-  
+
 }
 
 
@@ -2186,7 +2189,8 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
               fn <- filepaths(object)[sampidx]
               rt <- match.arg(rt)
               if(rt == "corrected" & !any(names(object@rt) == "corrected")){
-                  warning("No RT correction has been performed, thus returning raw retention times.")
+                  message("No RT correction has been performed, thus returning raw",
+                          " retention times.")
                   rt <- "raw"
               }
               if(missing(mslevel)){
@@ -2227,7 +2231,8 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
                   if(rt == "corrected"){
                       ## check if there is any need to apply correction...
                       if(all(object@rt$corrected[[i]] == object@rt$raw[[i]])){
-                          message(paste0("No need to perform retention time correction, raw and corrected rt are identical for ", fn[i]))
+                          message("No need to perform retention time correction,",
+                                  " raw and corrected rt are identical for ", fn[i])
                           ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
                       }else{
                           message(paste0("Applying retention time correction to ", fn[i]))
@@ -2279,7 +2284,7 @@ setMethod("levelplot", "xcmsSet",
                   yvals <- rep(yvals, each=nrow(zvals))
                   zvals <- as.numeric(zvals)
                   ## get the file name
-                  fileName <- sampnames(xset)[sampidx]
+                  fileName <- sampnames(x)[sampidx]
                   plt <- levelplot(zvals~xvals*yvals,
                                    panel=function(...){
                                        panel.levelplot(...)
@@ -2304,7 +2309,7 @@ setMethod("levelplot", "xcmsSet",
 setMethod("mslevel", "xcmsSet", function(object){
               ## for xcmsSet objects that don't have (yet) the slot...
               if(!.hasSlot(object, "mslevel")){
-                  warning("No slot mslevel available, returning mslevel=NULL.")
+                  message("No slot mslevel available, returning mslevel=NULL.")
                   return(NULL)
               }else{
                   mlevel <- object@mslevel
@@ -2320,14 +2325,14 @@ setReplaceMethod("mslevel", "xcmsSet", function(object, value){
                      if(.hasSlot(object, "mslevel")){
                          object@mslevel <- value
                      }else{
-                         warning("Object has no slot mslevel.")
+                         message("Object has no slot mslevel.")
                      }
                      object
                  })
 
 setMethod("scanrange", "xcmsSet", function(object){
               if(!.hasSlot(object, "scanrange")){
-                  warning("No slot scanrange available, returning scanrange=NULL.")
+                  message("No slot scanrange available, returning scanrange=NULL.")
                   return(NULL)
               }else{
                   srange <- object@scanrange
@@ -2343,7 +2348,7 @@ setReplaceMethod("scanrange", "xcmsSet", function(object, value){
                      if(.hasSlot(object, "scanrange")){
                          object@scanrange <- value
                      }else{
-                         warning("Object has no slot scanrange.")
+                         message("Object has no slot scanrange.")
                      }
                      object
                  })

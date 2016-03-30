@@ -1,6 +1,15 @@
 CHANGES IN VERSION 1.47.2
 -------------------------
 
+BUG FIXES
++ Fix problem in getEIC on xcmsSet objects reported by Alan Smith in issue #7 and
+  add a RUnit test case to test for this (test.issue7 in runit.getEIC.R).
++ Changed some unnecessary warnings into messages.
+
+
+CHANGES IN VERSION 1.47.2
+-------------------------
+
 USER VISIBLE CHANGES:
 + Disabled parallel processing in unit tests
 * migrate dependencies from ncdf -> ncdf4
@@ -35,7 +44,7 @@ USER VISIBLE CHANGES:
   of its columns is calculated and stored into the "class" column.
 
 BUG FIXES:
-+ Fixed a bug that resulted in a cryptic error message 
++ Fixed a bug that resulted in a cryptic error message
   when no input files are available to the xcmsSet function.
 
 
