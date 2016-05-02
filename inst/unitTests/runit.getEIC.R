@@ -58,7 +58,7 @@ test.issue7 <- function(){
                   ppm=30, peakwidth=c(5,50), snthresh=10, prefilter=c(7,1000),
                   integrate=1, mzdiff= -0.001, fitgauss=FALSE,
                   scanrange= c(0,500),mzCenterFun="wMean",noise=300,
-                  sleep=0, verbose.columns=T,nSlaves=3);
+                  sleep=0, verbose.columns=T); # parallel disabled: ,nSlaves=3);
     xset2<-retcor(xset, method = "obiwarp",distFunc="cor_opt",
                   profStep=1,plot="deviation",gapInit=0.8, gapExtend=3.3)
     gxset2<-group(xset2,method="density", bw=8, minfrac = .5,

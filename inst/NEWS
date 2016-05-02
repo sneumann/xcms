@@ -1,3 +1,8 @@
+CHANGES IN VERSION 1.47.3
+-------------------------
++ Disable parallel processing in unit tests causing a timeout 
+  on BioC build machines
+
 CHANGES IN VERSION 1.47.2
 -------------------------
 
