@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.49.1
+-------------------------
+
+NEW FEATURE:
+
++ The raw CDF/mzXML/mzData/mzML is assumed to have scans sorted by m/z.
+  Instead of throwing an "m/z sort assumption violated !" error, 
+  the data is re-read and on-demand sorted by m/z. 
+
 CHANGES IN VERSION 1.47.3
 -------------------------
 + Disable parallel processing in unit tests causing a timeout 
