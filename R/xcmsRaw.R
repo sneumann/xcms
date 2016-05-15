@@ -1907,9 +1907,58 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
     if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
     if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
 
-    .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(mzrange),
-          as.integer(scanrange), as.integer(length(object@scantime)),
-          as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(noise), PACKAGE ='xcms' )
+    ## .Call("findmzROI", object@env$mz,object@env$intensity,object@scanindex, as.double(mzrange),
+    ##       as.integer(scanrange), as.integer(length(object@scantime)),
+    ##       as.double(dev), as.integer(minCentroids), as.integer(prefilter), as.integer(noise), PACKAGE ='xcms' )
+
+    ROIs <- NULL
+    withRestarts(
+        tryCatch({
+            ROIs <- .Call("findmzROI",
+                          object@env$mz,
+                          object@env$intensity,
+                          object@scanindex,
+                          as.double(mzrange),
+                          as.integer(scanrange),
+                          as.integer(length(object@scantime)),
+                          as.double(dev),
+                          as.integer(minCentroids),
+                          as.integer(prefilter),
+                          as.integer(noise),
+                          PACKAGE ='xcms' )
+        },
+        error=function(e) {if (grepl("m/z sort assumption violated !", e$message))
+                           {invokeRestart("fixSort")} else {simpleError(e)}}),
+        fixSort = function() {
+            ## Check and fix "m/z sort assumption violated !"
+            for(i in 1:length(object@scanindex)){
+                scan <- getScan(object, scan=i)    
+                if(is.unsorted(scan[,"mz"])){
+                    message("Scan ", i, " is unsorted. Fixing.")
+                    o <- order(scan[,"mz"])
+                    start <- object@scanindex[i]
+                    end <- start+nrow(scan)
+                    object@env$mz[start:end] <- scan[o, "mz"]
+                    object@env$intensity[start:end] <- scan[o, "intensity"]
+                }
+            }
+
+            ## Re-run now with fixed m/z order
+            ROIs <<- .Call("findmzROI",
+                           object@env$mz,
+                           object@env$intensity,
+                           object@scanindex,
+                           as.double(mzrange),
+                           as.integer(scanrange),
+                           as.integer(length(object@scantime)),
+                           as.double(dev),
+                           as.integer(minCentroids),
+                           as.integer(prefilter),
+                           as.integer(noise),
+                           PACKAGE ='xcms' )
+        }
+    )
+    return(ROIs)
 })
 
 setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
