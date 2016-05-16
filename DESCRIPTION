@@ -10,7 +10,7 @@ Author: Colin A. Smith <csmith@scripps.edu>,
 	Johannes Rainer <Johannes.Rainer@eurac.edu>
 Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
 Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, ProtGenerics, Biobase
-Imports: lattice, RColorBrewer
+Imports: lattice, RColorBrewer, plyr
 Suggests: faahKO, msdata, ncdf4, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, RUnit, parallel
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of
