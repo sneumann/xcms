@@ -5,6 +5,7 @@ importFrom("ProtGenerics", "peaks")
 importFrom("graphics", "plot", "image")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
+importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 
 export(
