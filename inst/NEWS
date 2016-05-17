@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.49.2
+-------------------------
+
+NEW FEATURE:
+
++ Initial support for exporint mzTab format. Since Changes are 
+  still to be expected, xcms:::writeMzTab() is not yet exported. 
+
 CHANGES IN VERSION 1.49.1
 -------------------------
 
