@@ -196,6 +196,192 @@ setMethod("show", "xcmsSet", function(object) {
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
+xcmsSet2 <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
+                    profmethod = "bin", profparam = list(),
+                    polarity = NULL, lockMassFreq=FALSE,
+                    mslevel=NULL, nSlaves=0, progressCallback=NULL,
+                    scanrange=NULL, BPPARAM=bpparam(), ...) {
+
+    if (nSlaves != 0)
+        warning("Use of argument 'nSlaves' is deprecated!",
+                " Please use 'BPPARAM' instead.")
+
+    object <- new("xcmsSet")
+
+    ## initialise progress information
+    xcms.options <- getOption("BioC")$xcms
+    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."), paste("findPeaks", xcms.options$findPeaks.methods,sep="."),
+                      paste("retcor", xcms.options$retcor.methods,sep="."), paste("fillPeaks", xcms.options$fillPeaks.methods,sep="."))
+    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",sep="",collapse=","),")") ))
+
+    if (is.function(progressCallback))
+        object@progressCallback <- progressCallback
+
+    filepattern <- c("[Cc][Dd][Ff]", "[Nn][Cc]", "([Mm][Zz])?[Xx][Mm][Ll]",
+                     "[Mm][Zz][Dd][Aa][Tt][Aa]", "[Mm][Zz][Mm][Ll]")
+    filepattern <- paste(paste("\\.", filepattern, "$", sep = ""), collapse = "|")
+    if (is.null(files))
+        files <- getwd()
+    info <- file.info(files)
+    listed <- list.files(files[info$isdir], pattern = filepattern,
+                         recursive = TRUE, full.names = TRUE)
+    files <- c(files[!info$isdir], listed)
+    ## try making paths absolute
+    files_abs <- file.path(getwd(), files)
+    exists <- file.exists(files_abs)
+    files[exists] <- files_abs[exists]
+    if (length(files) == 0 | all(is.na(files)))
+        stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
+
+    if(lockMassFreq==TRUE){
+        ## remove the 02 files if there here
+        lockMass.files<-grep("02.CDF", files)
+        if(length(lockMass.files) > 0){
+            files<-files[-lockMass.files]
+        }
+    }
+    filepaths(object) <- files
+
+    ## determine experimental design
+    fromPaths <- phenoDataFromPaths(files)
+    if (is.null(snames)) {
+        snames <- rownames(fromPaths)
+    } else {
+        rownames(fromPaths) <- snames
+    }
+    pdata <- phenoData
+    if (is.null(pdata)) {
+        pdata <- sclass
+        if (is.null(pdata))
+            pdata <- fromPaths
+    }else{
+        if(class(pdata)=="AnnotatedDataFrame")
+            pdata <- as(pdata, "data.frame")
+        if(class(pdata)!="data.frame")
+            stop("phenoData has to be a data.frame or AnnotatedDataFrame!")
+    }
+    phenoData(object) <- pdata
+    if (is.null(phenoData))
+        rownames(phenoData(object)) <- snames
+    rtlist <- list(raw = vector("list", length(snames)),
+                   corrected = vector("list", length(snames)))
+
+    if ("step" %in% names(profparam)) {
+        if ("step" %in% names(list(...)) && profparam$step != list(...)$step) {
+            stop("different step values defined in profparam and step arguments")
+        }
+        profstep <- profparam$step
+        profparam <- profparam[names(profparam) != "step"]
+    } else if ("step" %in% names(list(...))) {
+        profstep <- list(...)$step
+    } else {
+        profstep <- 0.1
+    }
+
+    if ("method" %in% names(profparam)) {
+        if (profparam$method != profmethod) {
+            stop("different method values defined in profparam and profmethod arguments")
+        }
+        profmethod <- profparam$method
+        profparam <- profparam[names(profparam) != "method"]
+    }
+
+    profinfo(object) <- c(list(method = profmethod, step = profstep), profparam)
+
+    object@polarity <- as.character(polarity)
+    includeMSn=FALSE
+
+    ## implicitely TRUE if selecting MSn
+    includeMSn <- !is.null(mslevel) &&  mslevel>1
+
+    ## implicitely TRUE if MS1 parent peak picking
+    xcmsSetArgs <- as.list(match.call())
+    if (!is.null(xcmsSetArgs$method)) {
+        if (xcmsSetArgs$method=="MS1") {
+            includeMSn=TRUE
+        }
+    }
+
+    params <- list(...)
+    params$profmethod <- profmethod
+    params$profparam <- profparam
+    params$includeMSn <- includeMSn
+    params$scanrange <- scanrange
+
+    params$mslevel <- mslevel ## Actually, this is
+    params$lockMassFreq <- lockMassFreq
+
+    ft <- cbind(file = files,id = 1:length(files))
+    argList <- apply(ft ,1 ,function(x) list(file = x["file"],
+                                           id = as.numeric(x["id"]),
+                                           params = params))
+    ## Use BiocParallel:
+    res <- bplapply(argList, findPeaksPar, BPPARAM = BPPARAM)
+    peaklist <- lapply(res, function(x) x$peaks)
+    rtlist$raw <-  rtlist$corrected <- lapply(res, function(x) x$scantime)
+    if(lockMassFreq){
+        object@dataCorrection[1:length(files)] <- 1
+    }
+
+    lapply(1:length(peaklist), function(i) {
+        if (is.null(peaklist[[i]]))
+            warning("No peaks found in sample ", snames[i], call. = FALSE)
+        else  if (nrow(peaklist[[i]]) == 0)
+            warning("No peaks found in sample ", snames[i], call. = FALSE)
+        else if (nrow(peaklist[[i]]) == 1)
+            warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
+        else if (nrow(peaklist[[i]]) < 10)
+            warning("Only ", nrow(peaklist[[i]]), " peaks found in sample",
+                    snames[i], call. = FALSE)
+    })
+
+    peaks(object) <- do.call(rbind, peaklist)
+    object@rt <- rtlist
+
+    mslevel(object) <- as.numeric(mslevel)
+    scanrange(object) <- as.numeric(scanrange)
+    object
+}
+
+setMethod("show", "xcmsSet", function(object) {
+
+    cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
+
+    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"),
+        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"),
+        " minutes)\n", sep = "")
+    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"),
+        "m/z\n")
+    cat("Peaks:", nrow(object@peaks), "(about",
+        round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
+    cat("Peak Groups:", nrow(object@groups), "\n")
+    cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
+
+    if(.hasSlot(object, "mslevel")){
+        MSn <- mslevel(object)
+        if(is.null(MSn))
+            MSn <- 1
+        cat(paste0("Peak picking was performed on MS", MSn, ".\n"))
+    }
+    if(.hasSlot(object, "scanrange")){
+        if(!is.null(scanrange(object))){
+            cat("Scan range limited to ", scanrange(object)[1], "-", scanrange(object)[2], "\n")
+        }
+    }
+
+    if (length(object@profinfo)) {
+        cat("Profile settings: ")
+        for (i in seq(along = object@profinfo)) {
+            if (i != 1) cat("                  ")
+            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]], "\n", sep = "")
+        }
+        cat("\n")
+    }
+
+    memsize <- object.size(object)
+    cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
+})
+
 c.xcmsSet <- function(...) {
 
     lcsets <- list(...)
@@ -1533,6 +1719,130 @@ assign("gvals", gvals, envir = gvals_env)
 
     invisible(object)
 })
+
+setGeneric("fillPeaks.chrom2", function(object, ...) standardGeneric("fillPeaks.chrom2"))
+## New version using BiocParallel instead of nSlaves and manual setup.
+setMethod("fillPeaks.chrom2", "xcmsSet", function(object, nSlaves = NULL,
+                                                  expand.mz = 1,expand.rt = 1,
+                                                  BPPARAM = bpparam()) {
+  ## development mockup:
+  if (FALSE) {
+    library(xcms)
+    library(faahKO)
+    object <- group(faahko)
+    gf <- fillPeaks(object)
+    pkgEnv = getNamespace("xcms")
+    attach(pkgEnv)
+  }
+
+    if (!is.null(nSlaves))
+        warning("Use of argument 'nSlaves' is deprecated!",
+                " Please use 'BPPARAM' instead.")
+
+    peakmat <- peaks(object)
+    groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
+    files <- filepaths(object)
+    samp <- sampnames(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
+    prof <- profinfo(object)
+    rtcor <- object@rt$corrected
+
+    ## Remove groups that overlap with more "well-behaved" groups
+    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    uorder <- order(-numsamp, groupmat[,"npeaks"])
+    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                         uorder)
+    groupmat <- groupmat[uindex,]
+    groupindex <- groupidx(object)[uindex]
+    gvals <- groupval(object)[uindex,]
+
+    peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
+    colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
+
+    mzmin <- peakmat[gvals,"mzmin"]
+    dim(mzmin) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"mzmin"] <- apply(mzmin, 1, median, na.rm = TRUE)
+    mzmax <- peakmat[gvals,"mzmax"]
+    dim(mzmax) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"mzmax"] <- apply(mzmax, 1, median, na.rm = TRUE)
+    retmin <- peakmat[gvals,"rtmin"]
+    dim(retmin) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"rtmin"] <- apply(retmin, 1, median, na.rm = TRUE)
+    retmax <- peakmat[gvals,"rtmax"]
+    dim(retmax) <- c(nrow(gvals), ncol(gvals))
+    peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
+
+    lastpeak <- nrow(peakmat)
+    lastpeakOrig <- lastpeak
+
+    ##    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
+
+    cnames <- colnames(object@peaks)
+
+    ## Making gvals environment so that when it is repeated for each file it only uses the memory one time
+    gvals_env <- new.env(parent=baseenv())
+    assign("gvals", gvals, envir = gvals_env)
+
+    ft <- cbind(file=files,id=1:length(files))
+    argList <- apply(ft,1,function(x) {
+        ## Add only those samples which actually have NA in them
+        if (!any(is.na(gvals[,as.numeric(x["id"])]))) {
+        ## nothing to do.
+            list()
+        } else {
+            list(file=x["file"],id=as.numeric(x["id"]),
+                 params=list(method="chrom",
+                             gvals=gvals_env,
+                             prof=prof,
+                             dataCorrection=object@dataCorrection,
+                             polarity=object@polarity,
+                             rtcor=object@rt$corrected[[as.numeric(x["id"])]],
+                             peakrange=peakrange,
+                             expand.mz=expand.mz,
+                             expand.rt=expand.rt))
+        }
+    })
+
+    nonemptyIdx <- (sapply(argList, length) > 0)
+
+    if (!any(nonemptyIdx)) {
+        ## Nothing to do
+        return(invisible(object))
+    }
+
+    argList <- argList[nonemptyIdx]
+
+    ## Use BiocParallel for parallel computing.
+    newpeakslist <- bplapply(argList, fillPeaksChromPar, BPPARAM = BPPARAM)
+
+    o <- order(sapply(newpeakslist, function(x) x$myID))
+    newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
+
+    ## Make sure colnames are compatible
+    newpeaks <- newpeaks[, match(cnames, colnames(newpeaks)), drop = FALSE]
+    colnames(newpeaks) <- cnames
+
+    peakmat <- rbind(peakmat, newpeaks)
+
+    for (i in seq(along = files)) {
+        naidx <- which(is.na(gvals[,i]))
+
+        for (j in seq(along = naidx))
+            groupindex[[naidx[j]]] <- c(groupindex[[naidx[j]]], lastpeak+j)
+
+        lastpeak <- lastpeak + length(naidx)
+    }
+
+    peaks(object) <- peakmat
+    object@filled <- seq((lastpeakOrig+1),nrow(peakmat))
+    groups(object) <- groupmat
+    groupidx(object) <- groupindex
+
+    invisible(object)
+})
+
 
 setGeneric("fillPeaks.MSW", function(object, ...) standardGeneric("fillPeaks.MSW"))
 setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0), sample=NULL) {
