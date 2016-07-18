@@ -26,6 +26,7 @@
 \alias{phenoData,xcmsSet-method}
 \alias{phenoData<-}
 \alias{phenoData<-,xcmsSet-method}
+\alias{phenoData<-,xcmsSet,ANY-method}
 \alias{profinfo<-,xcmsSet-method}
 \alias{profinfo<-}
 \alias{profinfo,xcmsSet-method}
@@ -139,15 +140,17 @@
       each sample in the set
     }
     \item{\link{getXcmsRaw}}{
-      \code{signature(object = "xcmsSet", sampleidx=1,
-	profmethod=profMethod(object), profstep=profStep(object),
-	profparam=profinfo(object), mslevel=NULL, scanrange=NULL,
-	rt=c("corrected", "raw"))}: read the raw data for one or
-      more files in the \code{xcmsSet} and return it. The default
-      parameters will apply all settings used in the original \code{\link{xcmsSet}}
-      call to generate the \code{xcmsSet} object to be applied also to
-      the raw data. Parameter \code{sampleidx} allows to specify which
-      raw file(s) should be loaded.
+      \code{signature(object = "xcmsSet", sampleidx = 1,
+	profmethod = profMethod(object), profstep = profStep(object),
+	profparam=profinfo(object), mslevel = NULL, scanrange = NULL,
+	rt=c("corrected", "raw"), BPPARAM = bpparam())}: read the raw
+      data for one or more files in the \code{xcmsSet} and return
+      it. The default parameters will apply all settings used in the
+      original \code{\link{xcmsSet}} call to generate the \code{xcmsSet}
+      object to be applied also to the raw data. Parameter
+      \code{sampleidx} allows to specify which raw file(s) should be
+      loaded. Argument \code{BPPARAM} allows to setup parallel
+      processing.
     }
     \item{groupidx<-}{
       \code{signature(object = "xcmsSet")}: set \code{groupidx} slot
