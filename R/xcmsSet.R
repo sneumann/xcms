@@ -1,8 +1,13 @@
+## The "new" xcmsSet method using BiocParallel.
 xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
                     profmethod = "bin", profparam = list(),
                     polarity = NULL, lockMassFreq=FALSE,
                     mslevel=NULL, nSlaves=0, progressCallback=NULL,
-                    scanrange=NULL, ...) {
+                    scanrange=NULL, BPPARAM=bpparam(), ...) {
+
+    if (nSlaves != 0)
+        warning("Use of argument 'nSlaves' is deprecated!",
+                " Please use 'BPPARAM' instead.")
 
     object <- new("xcmsSet")
 
@@ -99,43 +104,27 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
             includeMSn=TRUE
         }
     }
-    parmode <- xcmsParallelSetup(nSlaves=nSlaves)
-    runParallel <- parmode$runParallel
-    parMode <- parmode$parMode
-    snowclust <- parmode$snowclust
 
-        params <- list(...);
-        params$profmethod <- profmethod;
-        params$profparam <- profparam;
-        params$includeMSn <- includeMSn;
-        params$scanrange <- scanrange;
+    params <- list(...)
+    params$profmethod <- profmethod
+    params$profparam <- profparam
+    params$includeMSn <- includeMSn
+    params$scanrange <- scanrange
 
-        params$mslevel <- mslevel; ## Actually, this is
-        params$lockMassFreq <- lockMassFreq;
+    params$mslevel <- mslevel ## Actually, this is
+    params$lockMassFreq <- lockMassFreq
 
-        ft <- cbind(file=files,id=1:length(files))
-        argList <- apply(ft,1,function(x) list(file=x["file"],id=as.numeric(x["id"]),params=params))
-
-        if (parMode == "MPI") {
-            res <- xcmsPapply(argList, findPeaksPar)
-            mpi.close.Rslaves()
-        } else if (parMode == "SOCK") {
-                res <- xcmsClusterApply(cl=snowclust, x=argList, fun=findPeaksPar, msgfun=msgfun.featureDetection)
-                stopCluster(snowclust)
-            } else if (parMode == "parallel"){
-                ## using the mclapply to run the code in parallel on the multiple
-                ## CPUs of the actual host/computer.
-                res <- parallel::mclapply(argList, findPeaksPar)
-         } else {
-              ## serial mode
-              res <- lapply(argList, findPeaksPar)
-            }
-
-        peaklist <- lapply(res, function(x) x$peaks)
-        rtlist$raw <-  rtlist$corrected <-  lapply(res, function(x) x$scantime)
-        if(lockMassFreq){
-            object@dataCorrection[1:length(files)]<-1
-        }
+    ft <- cbind(file = files,id = 1:length(files))
+    argList <- apply(ft ,1 ,function(x) list(file = x["file"],
+                                           id = as.numeric(x["id"]),
+                                           params = params))
+    ## Use BiocParallel:
+    res <- bplapply(argList, findPeaksPar, BPPARAM = BPPARAM)
+    peaklist <- lapply(res, function(x) x$peaks)
+    rtlist$raw <-  rtlist$corrected <- lapply(res, function(x) x$scantime)
+    if(lockMassFreq){
+        object@dataCorrection[1:length(files)] <- 1
+    }
 
     lapply(1:length(peaklist), function(i) {
         if (is.null(peaklist[[i]]))
@@ -578,11 +567,8 @@ setReplaceMethod("sampclass", "xcmsSet", function(object, value) {
     object
 })
 
-setGeneric("phenoData", function(object) standardGeneric("phenoData"))
 
 setMethod("phenoData", "xcmsSet", function(object) object@phenoData)
-
-setGeneric("phenoData<-", function(object, value) standardGeneric("phenoData<-"))
 
 setReplaceMethod("phenoData", "xcmsSet", function(object, value) {
     if (is.matrix(value))
@@ -1585,144 +1571,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves=NULL,expand.mz=1,expand.rt=1) {
-  ## development mockup:
-  if (FALSE) {
-    library(xcms)
-    library(faahKO)
-    object <- group(faahko)
-    gf <- fillPeaks(object)
-    pkgEnv = getNamespace("xcms")
-    attach(pkgEnv)
-  }
-
-    peakmat <- peaks(object)
-    groupmat <- groups(object)
-    if (length(groupmat) == 0)
-        stop("No group information found")
-    files <- filepaths(object)
-    samp <- sampnames(object)
-    classlabel <- as.vector(unclass(sampclass(object)))
-    prof <- profinfo(object)
-    rtcor <- object@rt$corrected
-
-    ## Remove groups that overlap with more "well-behaved" groups
-    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
-    uorder <- order(-numsamp, groupmat[,"npeaks"])
-    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
-                         uorder)
-    groupmat <- groupmat[uindex,]
-    groupindex <- groupidx(object)[uindex]
-    gvals <- groupval(object)[uindex,]
-
-    peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
-    colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
-
-    mzmin <- peakmat[gvals,"mzmin"]
-    dim(mzmin) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmin"] <- apply(mzmin, 1, median, na.rm = TRUE)
-    mzmax <- peakmat[gvals,"mzmax"]
-    dim(mzmax) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmax"] <- apply(mzmax, 1, median, na.rm = TRUE)
-    retmin <- peakmat[gvals,"rtmin"]
-    dim(retmin) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"rtmin"] <- apply(retmin, 1, median, na.rm = TRUE)
-    retmax <- peakmat[gvals,"rtmax"]
-    dim(retmax) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
-
-    lastpeak <- nrow(peakmat)
-    lastpeakOrig <- lastpeak
-
-##    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
-
-    cnames <- colnames(object@peaks)
-
-# Making gvals environment so that when it is repeated for each file it only uses the memory one time
-gvals_env <- new.env(parent=baseenv())
-assign("gvals", gvals, envir = gvals_env)
-
-
-    ft <- cbind(file=files,id=1:length(files))
-    argList <- apply(ft,1,function(x) {
-      ## Add only those samples which actually have NA in them
-      if (!any(is.na(gvals[,as.numeric(x["id"])]))) {
-        ## nothing to do.
-        list()
-      } else {
-        list(file=x["file"],id=as.numeric(x["id"]),
-             params=list(method="chrom",
-               gvals=gvals_env,
-               prof=prof,
-               dataCorrection=object@dataCorrection,
-               polarity=object@polarity,
-               rtcor=object@rt$corrected[[as.numeric(x["id"])]],
-               peakrange=peakrange,
-               expand.mz=expand.mz,
-               expand.rt=expand.rt))
-      }
-    })
-
-  nonemptyIdx <- (sapply(argList, length) > 0)
-
-  if (!any(nonemptyIdx)) {
-    ## Nothing to do
-    return(invisible(object))
-  }
-
-  argList <- argList[nonemptyIdx]
-
-  parmode <- xcmsParallelSetup(nSlaves=nSlaves)
-  runParallel <- parmode$runParallel
-  parMode <- parmode$parMode
-  snowclust <- parmode$snowclust
-
-  if (parMode == "MPI") {
-    newpeakslist <- xcmsPapply(argList, fillPeaksChromPar)
-    mpi.close.Rslaves()
-  } else if (parMode == "SOCK") {
-    newpeakslist <- xcmsClusterApply(cl=snowclust, x=argList,
-                                     fun=fillPeaksChromPar,
-                                     msgfun=msgfunGeneric)
-    stopCluster(snowclust)
-  } else if (parMode == "parallel"){
-      newpeakslist <- parallel::mclapply(argList, fillPeaksChromPar)
-  } else {
-    ## serial mode
-    newpeakslist <- lapply(argList, fillPeaksChromPar)
-  }
-
-
-
-  o <- order(sapply(newpeakslist, function(x) x$myID))
-  newpeaks <- do.call(rbind, lapply(newpeakslist[o], function(x) x$newpeaks))
-
-  ## Make sure colnames are compatible
-  newpeaks <- newpeaks[, match(cnames, colnames(newpeaks)), drop = FALSE]
-  colnames(newpeaks) <- cnames
-
-  peakmat <- rbind(peakmat, newpeaks)
-
-  for (i in seq(along = files)) {
-    naidx <- which(is.na(gvals[,i]))
-
-    for (j in seq(along = naidx))
-      groupindex[[naidx[j]]] <- c(groupindex[[naidx[j]]], lastpeak+j)
-
-    lastpeak <- lastpeak + length(naidx)
-  }
-
-    peaks(object) <- peakmat
-    object@filled <- seq((lastpeakOrig+1),nrow(peakmat))
-    groups(object) <- groupmat
-    groupidx(object) <- groupindex
-
-    invisible(object)
-})
-
-setGeneric("fillPeaks.chrom2", function(object, ...) standardGeneric("fillPeaks.chrom2"))
 ## New version using BiocParallel instead of nSlaves and manual setup.
-setMethod("fillPeaks.chrom2", "xcmsSet", function(object, nSlaves = NULL,
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = NULL,
                                                   expand.mz = 1,expand.rt = 1,
                                                   BPPARAM = bpparam()) {
   ## development mockup:
@@ -2475,52 +2325,48 @@ defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
 ## read the raw data for a xset.
 ## argument which allows to specify which file from the xcmsSet should be read, if length > 1
 ## a list of xcmsRaw is returned
-setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx=1,
-                                            profmethod=profMethod(object),
-                                            profstep=profStep(object),
-                                            profparam=profinfo(object),
-                                            mslevel=NULL,
-                                            scanrange=NULL,
-                                            rt=c("corrected", "raw") ){
+setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
+                                            profmethod = profMethod(object),
+                                            profstep = profStep(object),
+                                            profparam = profinfo(object),
+                                            mslevel = NULL,
+                                            scanrange = NULL,
+                                            rt = c("corrected", "raw"),
+                                            BPPARAM = bpparam()) {
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(object)[sampleidx]
               sampidx <- match(sampleidx, sampnames(object))
-              if(length(sampidx)==0)
+              if (length(sampidx) == 0)
                   stop("submitted value for sampleidx outside of the available files!")
               fn <- filepaths(object)[sampidx]
               rt <- match.arg(rt)
-              if(rt == "corrected" & !any(names(object@rt) == "corrected")){
+              if (rt == "corrected" & !any(names(object@rt) == "corrected")) {
                   message("No RT correction has been performed, thus returning raw",
                           " retention times.")
                   rt <- "raw"
               }
-              if(missing(mslevel)){
+              if (missing(mslevel)) {
                   msl <- mslevel(object)
-              }else{
+              } else {
                   msl <- mslevel
               }
-              if(missing(scanrange)){
+              if (missing(scanrange)) {
                   srange <- scanrange(object)
-              }else{
+              } else {
                   srange <- scanrange
-              }
-              if(requireNamespace("parallel", quietly=TRUE)){
-                  APPLYFUN <- mclapply
-              }else{
-                  APPLYFUN <- lapply
               }
               ## include MSn?
               includeMsn <- FALSE
-              if(!is.null(msl)){
+              if (!is.null(msl)) {
                   if(msl > 1)
                       includeMsn <- TRUE
               }
-              ret <- APPLYFUN(as.list(fn), FUN=function(z){
+              ret <- bplapply(as.list(fn), FUN = function(z) {
                                   raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep,
                                                  mslevel=msl, scanrange=srange,
                                                  includeMSn=includeMsn)
                                   return(raw)
-                            })
+                            }, BPPARAM=BPPARAM)
               ## do corrections etc.
               for(i in 1:length(ret)){
                   if(length(object@dataCorrection) > 1){

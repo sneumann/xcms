@@ -2,12 +2,30 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("ProtGenerics", "peaks")
-importFrom("graphics", "plot", "image")
+##importFrom("BiocGenerics", "phenoData", "phenoData<-")
+import("Biobase")
+importFrom("graphics", "plot", "image", "boxplot")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
+
+## Additional imports proposed by R CMD check:
+importFrom("graphics", "abline", "barplot", "close.screen", "hist",
+           "identify", "layout", "legend", "lines", "par", "plot.new",
+           "plot.window", "points", "screen", "split.screen",
+           "strwidth", "text", "title")
+importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
+           "dev.list", "dev.off", "dev.set", "palette", "pdf", "png",
+           "rainbow", "rgb", "terrain.colors")
+importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
+           "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
+           "na.omit", "nextn", "nls", "predict", "pt", "quantile",
+           "runmed", "sd", "stepfun", "weighted.mean", "density")
+importFrom("utils", "flush.console", "head", "object.size",
+           "packageVersion", "read.csv", "tail", "write.csv",
+           "write.table")
 
 export(
        "etg",
