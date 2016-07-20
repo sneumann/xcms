@@ -3,23 +3,71 @@ Version: 1.49.2
 Date: 2016-05-17
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
-        Ralf Tautenhahn <rtautenh@gmail.com>,
-        Steffen Neumann <sneumann@ipb-halle.de>,
-	Paul Benton <hpbenton@scripps.edu>,
-	Christopher Conley <cjconley@ucdavis.edu>,
-	Johannes Rainer <Johannes.Rainer@eurac.edu>
+    Ralf Tautenhahn <rtautenh@gmail.com>,
+    Steffen Neumann <sneumann@ipb-halle.de>,
+    Paul Benton <hpbenton@scripps.edu>,
+    Christopher Conley <cjconley@ucdavis.edu>,
+    Johannes Rainer <Johannes.Rainer@eurac.edu>
 Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
-Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, ProtGenerics,
-	 Biobase
-Imports: lattice, RColorBrewer, plyr, BiocParallel
-Suggests: faahKO, msdata, ncdf4, multtest, rgl, MassSpecWavelet (>= 1.5.2),
-	  RANN, RUnit
+Depends:
+    R (>= 2.14.0),
+    methods,
+    mzR (>= 1.1.6),
+    BiocGenerics,
+    ProtGenerics,
+    Biobase
+Imports:
+    lattice,
+    RColorBrewer,
+    plyr,
+    BiocParallel
+Suggests:
+    faahKO,
+    msdata,
+    ncdf4,
+    multtest,
+    rgl,
+    MassSpecWavelet (>= 1.5.2),
+    RANN,
+    RUnit
 Enhances: Rgraphviz, Rmpi, XML
-Description: Framework for processing and visualization of
-        chromatographically separated and single-spectra mass spectral data. Imports from
-        AIA/ANDI NetCDF, mzXML, mzData and mzML files. Preprocesses data for
-        high-throughput, untargeted analyte profiling.
+Description: Framework for processing and visualization of chromatographically
+    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
+    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
+    analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
+RoxygenNote: 5.0.1
+Collate:
+    'AllGenerics.R'
+    'DataClasses.R'
+    'CleanData.R'
+    'MPI.R'
+    'c.R'
+    'cwTools.R'
+    'databases.R'
+    'fastMatch.R'
+    'init.R'
+    'matchpeaks.R'
+    'methods-netCdfSource.R'
+    'methods-rampSource.R'
+    'methods-xcmsSet.R'
+    'models.R'
+    'msn2xcmsRaw.R'
+    'mzClust.R'
+    'netCDF.R'
+    'plotQC.R'
+    'present.R'
+    'ramp.R'
+    'specDist.R'
+    'write.mzquantML.R'
+    'writemzdata.R'
+    'writemztab.R'
+    'xcmsEIC.R'
+    'xcmsFragments.R'
+    'xcmsRaw.R'
+    'xcmsSet.R'
+    'xcmsSource.R'
+    'zzz.R'

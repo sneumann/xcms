@@ -18,3 +18,6 @@ if(!isGeneric("scanrange"))
 if(!isGeneric("scanrange<-"))
     setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-"))
 
+setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
+setGeneric("xcmsSource", function(object, ...) standardGeneric("xcmsSource"))
+

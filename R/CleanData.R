@@ -1,3 +1,5 @@
+#' @include AllGenerics.R DataClasses.R
+
 setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 
 setMethod("AutoLockMass", "xcmsRaw", function(object) {

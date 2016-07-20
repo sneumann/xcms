@@ -2,7 +2,7 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("ProtGenerics", "peaks")
-##importFrom("BiocGenerics", "phenoData", "phenoData<-")
+importFrom("BiocGenerics", "updateObject")
 import("Biobase")
 importFrom("graphics", "plot", "image", "boxplot")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
@@ -147,6 +147,7 @@ exportMethods(
               "show",
               "sortMz",
               "stitch",
+              "updateObject",
               "write.cdf",
               "write.mzdata",
               "write.mzQuantML",
