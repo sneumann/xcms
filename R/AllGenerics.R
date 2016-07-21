@@ -52,6 +52,9 @@ setGeneric("groups", function(object) standardGeneric("groups"))
 setGeneric("groups<-", function(object, value) standardGeneric("groups<-"))
 setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
+## H
+setGeneric("hasMSn", function(object, ...) standardGeneric("hasMSn"))
+
 ## I
 setGeneric("image", function(x, ...) standardGeneric("image"))
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
