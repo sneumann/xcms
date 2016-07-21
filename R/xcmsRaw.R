@@ -120,7 +120,6 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
 
 setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     require(ncdf4) || stop("Couldn't load package ncdf4 for NetCDF writing")
@@ -226,8 +225,6 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     nc_close(ms)
 })
 
-setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
-
 setMethod("revMz", "xcmsRaw", function(object) {
 
     for (i in 1:length(object@scanindex)) {
@@ -238,7 +235,6 @@ setMethod("revMz", "xcmsRaw", function(object) {
     }
 })
 
-setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
 
 setMethod("sortMz", "xcmsRaw", function(object) {
 
@@ -250,8 +246,6 @@ setMethod("sortMz", "xcmsRaw", function(object) {
         object@env$intensity[idx] <- object@env$intensity[idx[ord]]
     }
 })
-
-setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
@@ -284,8 +278,6 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
 
     invisible(points)
 })
-
-setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
 
 setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
@@ -418,8 +410,6 @@ setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 ##     return(nxcms);
 ## })
 
-setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
-
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
     ## FIXME: unnecessary dependency on profile matrix?
@@ -491,7 +481,6 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
     spectab
 }
 
-setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
 
 setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
                                           ident = FALSE)
@@ -532,8 +521,6 @@ setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
           invisible(points)
       })
 
-setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
-
 setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
                                           vline = numeric(0), ...) {
 
@@ -552,8 +539,6 @@ setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
 
     invisible(points)
 })
-
-setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 
 setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
                                            fitgauss = FALSE, vline = numeric(0), ...) {
@@ -587,8 +572,6 @@ setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
     invisible(pts)
 })
 
-setGeneric("image", function(x, ...) standardGeneric("image"))
-
 setMethod("image", "xcmsRaw", function(x, col = rainbow(256), ...) {
     sel <- profRange(x, ...)
 
@@ -606,8 +589,6 @@ setMethod("image", "xcmsRaw", function(x, col = rainbow(256), ...) {
               log(x@env$profile[sel$massidx, sel$scanidx]),
               col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
 })
-
-setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 
 setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
                                           aspect = c(1, 1, .5), ...) {
@@ -664,7 +645,6 @@ setMethod("show", "xcmsPeaks", function(object) {
     print(colnames(object))
 })
 
-setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
 
 setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
                                                          max = 5, snthresh = 10, step = 0.1,
@@ -813,7 +793,6 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     invisible(new("xcmsPeaks", rmat))
 })
 
-setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
 
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
                                                     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
@@ -1177,7 +1156,6 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 })
 
 
-setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
 
 setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.columns = FALSE, ...)
       {
@@ -1251,7 +1229,6 @@ setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.colum
       }
           )
 
-setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1"))
 
 setMethod("findPeaks.MS1", "xcmsRaw", function(object)
       {
@@ -1308,9 +1285,6 @@ setMethod("findPeaks.MS1", "xcmsRaw", function(object)
       })
 
 
-
-setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
-
 setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms$findPeaks.method,
                                            ...) {
 
@@ -1320,8 +1294,6 @@ setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms
     method <- paste("findPeaks", method, sep=".")
     invisible(do.call(method, list(object, ...)))
 })
-
-setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 
 setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
@@ -1389,8 +1361,6 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     invisible(rmat)
 })
 
-setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
-
 setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
     if (missing(figs)) {
@@ -1418,7 +1388,6 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
     }
 })
 
-setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
 setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
               FUN <- getOption("BioC")$xcms$getEIC.method
               if(FUN == "getEICOld"){
@@ -1431,7 +1400,6 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
           })
 
 ## that's the original getEIC version.
-setGeneric("getEICOld", function(object, ...) standardGeneric("getEICOld"))
 setMethod("getEICOld", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
     ## if mzrange and rtrange is not provided use the full range.
     if(missing(mzrange)){
@@ -1493,7 +1461,6 @@ setMethod("getEICOld", "xcmsRaw", function(object, mzrange, rtrange = NULL, step
 ##    ranges, thus we can use the method to extract the EIC for the full m/z range (i.e. the base
 ##    peak chromatogram BPC).
 ## 3) the method might be slower.
-setGeneric("getEICNew", function(object, ...) standardGeneric("getEICNew"))
 setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL,
                                            step = 0.1, BPPARAM = bpparam()) {
     ## if mzrange and rtrange is not provided use the full range.
@@ -1556,8 +1523,6 @@ setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL,
 })
 
 
-setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
-
 setMethod("rawMat", "xcmsRaw", function(object,
                                         mzrange = numeric(),
                                         rtrange = numeric(),
@@ -1603,7 +1568,6 @@ setMethod("rawMat", "xcmsRaw", function(object,
           intensity = y)
 })
 
-setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
 
 setMethod("plotRaw", "xcmsRaw", function(object,
                                          mzrange = numeric(),
@@ -1638,14 +1602,12 @@ setMethod("plotRaw", "xcmsRaw", function(object,
     invisible(raw)
 })
 
-setGeneric("profMz", function(object) standardGeneric("profMz"))
 
 setMethod("profMz", "xcmsRaw", function(object) {
 
     object@mzrange[1]+profStep(object)*(0:(dim(object@env$profile)[1]-1))
 })
 
-setGeneric("profMethod", function(object) standardGeneric("profMethod"))
 
 setMethod("profMethod", "xcmsRaw", function(object) {
 
@@ -1655,7 +1617,6 @@ setMethod("profMethod", "xcmsRaw", function(object) {
 .profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
                        binlinbase = "profBinLinBaseM", bin = "profBinM")
 
-setGeneric("profMethod<-", function(object, value) standardGeneric("profMethod<-"))
 
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
@@ -1669,7 +1630,6 @@ setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
     object
 })
 
-setGeneric("profStep", function(object) standardGeneric("profStep"))
 
 setMethod("profStep", "xcmsRaw", function(object) {
 
@@ -1679,7 +1639,6 @@ setMethod("profStep", "xcmsRaw", function(object) {
         diff(object@mzrange)/(nrow(object@env$profile)-1)
 })
 
-setGeneric("profStep<-", function(object, value) standardGeneric("profStep<-"))
 
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
@@ -1707,7 +1666,6 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 })
 
 
-setGeneric("profStepPad<-", function(object, value) standardGeneric("profStepPad<-"))
 
 setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
 
@@ -1737,7 +1695,6 @@ setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
     return(object)
 })
 
-setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
 
 setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 
@@ -1745,7 +1702,6 @@ setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
     object@env$profile <- medianFilter(object@env$profile, massrad, scanrad)
 })
 
-setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
 
 setMethod("profRange", "xcmsRaw", function(object,
                                            mzrange = numeric(),
@@ -1815,7 +1771,6 @@ setMethod("profRange", "xcmsRaw", function(object,
          rtrange = rtrange, timelab = timelab)
 })
 
-setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 
 setMethod("rawEIC", "xcmsRaw", function(object,
                                         mzrange = numeric(),
@@ -1841,7 +1796,6 @@ setMethod("rawEIC", "xcmsRaw", function(object,
     .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
-setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
 
 setMethod("plotEIC", "xcmsRaw", function(object,
                                          mzrange = numeric(),
@@ -1863,8 +1817,6 @@ setMethod("plotEIC", "xcmsRaw", function(object,
     invisible(points)
 })
 
-
-setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
 
 setMethod("rawMZ", "xcmsRaw", function(object,
                                        mzrange = numeric(),
@@ -1890,8 +1842,6 @@ setMethod("rawMZ", "xcmsRaw", function(object,
     .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
-
-setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
 
 setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter=c(0,0), noise=0){
 
@@ -1957,8 +1907,6 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
     return(ROIs)
 })
 
-setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
-
 setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
                                                scanrange=c(1,length(object@scantime)), minIntensity,
                                                minCentroids, consecMissedLim, criticalVal, ppm,  segs, scanBack){
@@ -1978,8 +1926,6 @@ setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
           as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
           as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
 })
-
-setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
 
 setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
                                                        prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
@@ -2042,8 +1988,6 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth
     return(invisible(featlist));
 })
 
-
-setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
 setMethod("isCentroided", "xcmsRaw", function(object){
     if (length(getScan(object,length(object@scantime) / 2)) >2 ) {
@@ -2114,7 +2058,6 @@ match.profFun <- function(object) {
     match.fun(.profFunctions[[profMethod(object)]])
 }
 
-setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms"))
 setMethod("msnparent2ms", "xcmsRaw", function(object) {
     xr <- new("xcmsRaw")
 
@@ -2128,7 +2071,6 @@ setMethod("msnparent2ms", "xcmsRaw", function(object) {
     xr
 })
 
-setGeneric("msn2ms", function(object, ...) standardGeneric("msn2ms"))
 setMethod("msn2ms", "xcmsRaw", function(object) {
 
     object@tic <- rep(0, length(object@msnAcquisitionNum)) ##
@@ -2143,7 +2085,6 @@ setMethod("msn2ms", "xcmsRaw", function(object) {
 
 })
 
-setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
 setMethod("deepCopy", "xcmsRaw", function(object) {
 
     x <- object
@@ -2159,8 +2100,6 @@ setMethod("deepCopy", "xcmsRaw", function(object) {
 
 ## levelplot for xcmsRaw objects; contains code from the image method, but uses the levelplot
 ## from the lattice package.
-if(!isGeneric("levelplot"))
-    setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 setMethod("levelplot", "xcmsRaw", function(x, log=TRUE,
                                            col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256), ...){
     ## some code taken from plotSurf...

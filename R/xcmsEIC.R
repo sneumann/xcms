@@ -21,28 +21,24 @@ setMethod("show", "xcmsEIC", function(object) {
     cat("Memory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
 
 setMethod("groupnames", "xcmsEIC", function(object) {
 
     object@groupnames
 })
 
-setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 
 setMethod("sampnames", "xcmsEIC", function(object) {
 
     names(object@eic)
 })
 
-setGeneric("mzrange", function(object) standardGeneric("mzrange"))
 
 setMethod("mzrange", "xcmsEIC", function(object) {
 
     object@mzrange
 })
 
-setGeneric("rtrange", function(object) standardGeneric("rtrange"))
 
 setMethod("rtrange", "xcmsEIC", function(object) {
 
