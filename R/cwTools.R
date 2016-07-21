@@ -366,8 +366,7 @@ running <- function (X, Y = NULL, fun = mean, width = min(length(X), 20),
                            ...)
         else Xvar <- lapply(run.elements, funct, what = X, fun = fun,
                             ...)
-    }
-    else {
+    } else {
         funct <- function(which, XX, YY, fun, ...) fun(XX[which],
                                                        YY[which], ...)
         if (simplify)
@@ -412,18 +411,20 @@ gauss <- function(x, h, mu, sigma){
     h*exp(-(x-mu)^2/(2*sigma^2))
 }
 
-fitGauss <- function(td,d,pgauss=NA) {
+fitGauss <- function(td, d, pgauss = NA) {
     if (length(d) < 3) return(rep(NA,3))
     if (!any(is.na(pgauss))) { mu <- pgauss$mu; sigma <- pgauss$sigma;h <- pgauss$h }
     fit <- try(nls(d ~ SSgauss(td,mu,sigma,h)), silent = TRUE)
     if (class(fit) == "try-error")
-        fit <- try(nls(d ~ SSgauss(td,mu,sigma,h),algo='port'), silent = TRUE)
-    if (class(fit) == "try-error")  return(rep(NA,3))
+        fit <- try(nls(d ~ SSgauss(td, mu, sigma, h), algorithm = 'port'),
+                   silent = TRUE)
+    if (class(fit) == "try-error")  return(rep(NA, 3))
 
     as.data.frame(t(fit$m$getPars()))
 }
 
-joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5,mzCenterFun) {
+joinOverlappingPeaks <- function(td, d, otd, omz, od, scantime, scan.range,
+                                 peaks, maxGaussOverlap=0.5, mzCenterFun) {
 
     gausspeaksidx <- which(!is.na(peaks[,"mu"]))
     Ngp <- length(gausspeaksidx)
@@ -437,7 +438,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
         notgausspeaks <- peaks[-gausspeaksidx,,drop=FALSE]
 
     if (Ngp > 1) {
-        comb <- which(upper.tri(matrix(0,Ngp,Ngp)),arr=TRUE)
+        comb <- which(upper.tri(matrix(0,Ngp,Ngp)), arr.ind = TRUE)
         overlap <- rep(FALSE,dim(comb)[1])
         for (k in 1:dim(comb)[1]) {
             p1 <- comb[k,1]; p2 <- comb[k,2]
@@ -469,7 +470,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             lcc <- length(cc)
             ins <- rep(FALSE,lcc)
             if (lcc > 1) {
-                jcomb <- which(upper.tri(matrix(0,lcc,lcc)),arr=TRUE)
+                jcomb <- which(upper.tri(matrix(0,lcc,lcc)),arr.ind = TRUE)
                 for (j in 1:dim(jcomb)[1]) {
                     j1 <- jcomb[j,1]; j2 <- jcomb[j,2]
                     if (any(cc[[j1]] %in% cc[[j2]]))

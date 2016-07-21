@@ -3,6 +3,7 @@
 
 ## A
 setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
+setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 
 ## C
 setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
@@ -64,6 +65,7 @@ setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 
 ## M
+setGeneric("makeacqNum", function(object, freq, start=1) standardGeneric("makeacqNum"))
 setGeneric("mslevel", function(object, ...) standardGeneric("mslevel"))
 setGeneric("mslevel<-", function(object, value) standardGeneric("mslevel<-"))
 setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms"))
@@ -129,6 +131,11 @@ setGeneric("specDist.cosine",
 setGeneric("specDist.peakCount",
            function(peakTable1, peakTable2, mzabs=0.001, mzppm=10,symmetric=FALSE)
                standardGeneric("specDist.peakCount"))
+setGeneric("stitch", function(object, lockMass, ...) standardGeneric("stitch"))
+setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"))
+setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
+setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
+
 
 ## W
 setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))

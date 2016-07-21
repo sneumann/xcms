@@ -16,9 +16,6 @@
 }
 }}
 
-\usage{
-
-}
 \arguments{
   \item{xs}{\code{xcmsSet} object}
   \item{f}{factor such that \code{factor(f)} defines the grouping}

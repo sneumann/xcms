@@ -43,7 +43,7 @@ RoxygenNote: 5.0.1
 Collate:
     'AllGenerics.R'
     'DataClasses.R'
-    'CleanData.R'
+    'Deprecated.R'
     'MPI.R'
     'c.R'
     'cwTools.R'

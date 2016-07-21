@@ -50,7 +50,8 @@ plot.xcmsEIC <- function(x, y, groupidx = groupnames(x), sampleidx = sampnames(x
         lcol <- col
         for (i in seq(along = lcol)) {
             rgbvec <- pmin(col2rgb(lcol[i])+153,255)
-            lcol[i] <- rgb(rgbvec[1], rgbvec[2], rgbvec[3], max = 255)
+            lcol[i] <- rgb(rgbvec[1], rgbvec[2], rgbvec[3],
+                           maxColorValue = 255)
         }
 
         if (missing(legtext))

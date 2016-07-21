@@ -484,7 +484,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
     mplenv$mplist[, sid[1]] <- which(peakmat[,"sample"] == sid[1])
     mplenv$mplistmean <- data.frame(peakmat[which(peakmat[,"sample"] == sid[1]),c("mz","rt")])
     mplenv$peakmat <- peakmat
-    assign("peakmat", peakmat, env = mplenv)
+    assign("peakmat", peakmat, envir = mplenv)
 
     sapply(sid[2:length(sid)], function(sample, mplenv, object){
         ## require(parallel)
@@ -520,7 +520,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
             colnames(scoreList)<-c("score", "peak", "mpListRow", "isJoinedPeak", "isJoinedRow")
         } else {
             scoreList <- data.frame(score=unlist(scoreList["score",]), peak=unlist(scoreList["peak",]), mpListRow=
-                                    unlist(coreList["mpListRow",]), isJoinedPeak=unlist(scoreList["isJoinedPeak",]),
+                                    unlist(scoreList["mpListRow",]), isJoinedPeak=unlist(scoreList["isJoinedPeak",]),
                                     isJoinedRow=unlist(scoreList["isJoinedRow",]))
         }
 
@@ -559,7 +559,7 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
         }
 
         ## Clear "Joined" information from all master peaklist rows
-        rm(peakIdxList,envir=mplenv)
+        rm(list = "peakIdxList", envir=mplenv)
 
         ## updateProgressInfo
         object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
@@ -1112,7 +1112,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
         allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
         plot(allden, xlim = rtrange, type = "l", main = "", xlab = "Retention Time", ylab = "Peak Density")
         abline(h = 0, col = "grey")
-        close.screen(all = TRUE)
+        close.screen(all.screens = TRUE)
     }
 })
 

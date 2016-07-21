@@ -324,3 +324,12 @@ sequences <- function(seqs) {
 match.profFun <- function(object) {
     match.fun(.profFunctions[[profMethod(object)]])
 }
+
+############################################################
+## remakeTIC
+remakeTIC<-function(object){
+    for(i in 1:length(object@scanindex)){
+        object@tic[i]<-sum(getScan(object, i)[,"intensity"])
+    }
+    return(object)
+}

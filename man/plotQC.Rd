@@ -28,7 +28,7 @@ of measurement to detect time drift}
 No return value
 }
 \description{
-Use "democracy" to determine the average m/z and RT deviations 
+Use "democracy" to determine the average m/z and RT deviations
 for a grouped xcmsSet, and dependency on sample or absolute m/z
 }
 \details{
