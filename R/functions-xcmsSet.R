@@ -590,3 +590,14 @@ defineColAndTy <- function(col=NULL, ty=NULL, classlabel){
     }
     return(list(col=col, ty=ty, mypal=mypal ))
 }
+
+############################################################
+## filtfft
+filtfft <- function(y, filt) {
+
+    yfilt <- numeric(length(filt))
+    yfilt[1:length(y)] <- y
+    yfilt <- fft(fft(yfilt, inverse = TRUE) * filt)
+
+    Re(yfilt[1:length(y)])
+}

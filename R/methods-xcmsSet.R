@@ -1923,3 +1923,93 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
         xset@dataCorrection <- x@dataCorrection[j]
     return(xsub)
 })
+
+############################################################
+## present
+setMethod("present", "xcmsSet", function(object, class, minfrac) {
+    if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+        stop("No group information. Use group().")
+    }
+
+    classlabel <- sampclass(object)
+    classlabel <- levels(classlabel)[as.vector(unclass(classlabel))]
+
+    sampidx <- which(classlabel %in% class)
+
+    if (length(sampidx) == 0) {
+        stop("Class ", class, "not found")
+    }
+
+    classnum <- length(sampidx)
+    minpresent <- classnum * minfrac
+
+    filled <- rep(FALSE, nrow(peaks(object)))
+
+    ## exists(object@filled) always returns FALSE ??
+    sloti <- try(slot(object, "filled"), silent = TRUE)
+    if (class(sloti) != "try-error") {
+        filled[object@filled] <- TRUE
+    }
+
+    apply (groupval(object), 1, function(x) {
+        length(which(  (!(is.na(x[sampidx]) | is.nan(x[sampidx])))
+                     & !filled[x[sampidx]])) >= minpresent
+    })
+})
+
+############################################################
+## absent
+setMethod("absent", "xcmsSet", function(object, class, minfrac) {
+    if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
+        stop("No group information. Use group().")
+    }
+
+    classlabel <- sampclass(object)
+    classlabel <- levels(classlabel)[as.vector(unclass(classlabel))]
+
+    sampidx <- which(classlabel %in% class)
+
+    if (length(sampidx) == 0) {
+        stop("Class ", class, "not found")
+    }
+
+    classnum <- length(sampidx)
+    minabsent <- classnum * minfrac
+
+    filled <- rep(FALSE, nrow(peaks(object)))
+
+    ## exists(object@filled) always returns FALSE ??
+    sloti <- try(slot(object, "filled"), silent = TRUE)
+    if (class(sloti) != "try-error") {
+        filled[object@filled] <- TRUE
+    }
+
+    apply (groupval(object), 1, function(x) {
+        length(which(is.na(x[sampidx]) | is.nan(x[sampidx]) | filled[x[sampidx]])) >= minabsent
+    })
+})
+
+############################################################
+## specDist
+setMethod("specDist", signature(object="xcmsSet"),
+          function(object, peakIDs1, peakIDs2,
+                   method=getOption("BioC")$xcms$specDist.method,
+                   ...) {
+              if (missing(peakIDs1)) {
+                  stop("missing argument peakIDs1")
+              }
+              if (missing(peakIDs2)) {
+                  stop("missing argument peakIDs2")
+              }
+
+              peaks <- object@peaks
+              peakTable1 <- peaks[peakIDs1,c("mz","into")]
+              peakTable2 <- peaks[peakIDs2,c("mz","into")]
+
+              method <- match.arg(method, getOption("BioC")$xcms$specDist.methods)
+              if (is.na(method))
+                  stop("unknown method : ", method)
+              method <- paste("specDist", method, sep=".")
+              distance <- do.call(method, alist<-list(peakTable1, peakTable2, ...))
+              distance
+          })

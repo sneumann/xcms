@@ -1,8 +1,12 @@
 ## On the long run it would be nice to have all generics in here.
 ## Alphabetically ordered.
 
+## A
+setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
+
 ## C
 setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
+setGeneric("collect", function(object, ...) standardGeneric("collect"))
 
 ## D
 setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
@@ -14,7 +18,9 @@ setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-")
 setGeneric("fillPeaks.chrom", function(object, ...) standardGeneric("fillPeaks.chrom"))
 setGeneric("fillPeaks.MSW", function(object, ...) standardGeneric("fillPeaks.MSW"))
 setGeneric("fillPeaks", function(object, ...) standardGeneric("fillPeaks"))
+setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE) standardGeneric("findMZ"))
 setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
+setGeneric("findneutral", function(object, find, ppmE=25, print=TRUE) standardGeneric("findneutral"))
 setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
 setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
 setGeneric("findPeaks.centWave", function(object, ...)
@@ -29,8 +35,7 @@ setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1
 
 ## G
 setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
-setGeneric("getEICOld", function(object, ...) standardGeneric("getEICOld"))
-setGeneric("getEICNew", function(object, ...) standardGeneric("getEICNew"))
+setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
 setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
 setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
 setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
@@ -74,6 +79,8 @@ setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
 setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
+setGeneric("plotTree", function(object, ...) standardGeneric("plotTree"))
+setGeneric("present", function(object, class, minfrac) standardGeneric("present"))
 setGeneric("profinfo", function(object) standardGeneric("profinfo"))
 setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
 setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
@@ -106,9 +113,24 @@ setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-")
 setGeneric("scanrange", function(object, ...) standardGeneric("scanrange"))
 setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-"))
 setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
+setGeneric("specDist", function(object, ...) standardGeneric("specDist"))
+setGeneric("specDist.meanMZmatch",
+           function(peakTable1, peakTable2, matchdist=1, matchrate=1,
+                    mzabs=0.001, mzppm=10, symmetric=TRUE)
+               standardGeneric("specDist.meanMZmatch"))
+setGeneric("specDist.cosine",
+           function(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
+                    mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
+                    symmetric = FALSE)
+               standardGeneric("specDist.cosine"))
+setGeneric("specDist.peakCount",
+           function(peakTable1, peakTable2, mzabs=0.001, mzppm=10,symmetric=FALSE)
+               standardGeneric("specDist.peakCount"))
 
 ## W
 setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
+setGeneric("write.mzdata", function(object, ...) standardGeneric("write.mzdata"))
+setGeneric("write.mzQuantML", function(object, ...) standardGeneric("write.mzQuantML"))
 
 ## X
 setGeneric("xcmsSource", function(object, ...) standardGeneric("xcmsSource"))

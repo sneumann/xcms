@@ -167,3 +167,8 @@ setClass("rampSource",
                  paste("Could not open mzML/mzXML/mzData file:", object)
              } else TRUE
          })
+
+############################################################
+## xcmsPeaks
+setClass("xcmsPeaks", contains = "matrix")
+

@@ -139,7 +139,6 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     cat(length(npPeakID),"Peaks picked,",numAloneSpecs,"MSn-Specs ignored.\n")
     object
 }
-setGeneric("collect", function(object, ...) standardGeneric("collect"))
 setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
 
 .xcmsFragments.plotTree <- function(object, mzRange=range(object@peaks[,"mz"]),
@@ -233,7 +232,6 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
         }
     }
 }
-setGeneric("plotTree", function(object, ...) standardGeneric("plotTree"))
 setMethod("plotTree", "xcmsFragments", .xcmsFragments.plotTree)
 
 .xcmsFragments.hasMSn <- function(object,  xcmsSetPeakID) {
@@ -369,9 +367,6 @@ getXS<-function(xs,xf,g)
     xsn
 }
 
-if (!isGeneric("findneutral") )
-    setGeneric("findneutral", function(object, find, ppmE=25, print=TRUE) standardGeneric("findneutral"))
-
 setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
     find<-range(ppmDev(Mr=find, ppmE))
     spectra<-unique(object@peaks[,"MSnParentPeakID"])
@@ -406,9 +401,6 @@ setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=25, print=
     return(found)
 })
 
-
-if (!isGeneric("findMZ") )
-    setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE) standardGeneric("findMZ"))
 
 setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
     find<-range(ppmDev(Mr=find, ppmE))
