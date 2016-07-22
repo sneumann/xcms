@@ -21,14 +21,14 @@ findPeaksPar <- function(arg) {
     if(params$lockMassFreq == TRUE){
         xRaw<-stitch(xRaw, AutoLockMass(xRaw))
     }
-    params["object"] <- xRaw
+    ## params["object"] <- xRaw
 
     ## remove parameters which are not used by method() from the parameter list
     params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <-  params["mslevel"] <- NULL
 
     params["scanrange"] <- NULL ## avoid filtering scanrange twice, first in xRaw then in findPeaks
 
-    peaks <- do.call(method, params)
+    peaks <- do.call(method, args = c(list(object = xRaw), params))
 
     list(scantime=xRaw@scantime, peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
 }

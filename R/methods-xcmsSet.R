@@ -457,10 +457,10 @@ setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
                                                mzCheck=0.2, rtCheck=15, kNN=10) {
 
     ## If ANN is available ...
-    RANN = "RANN"
-    if (!require(RANN)) {
-        stop("RANN is not installed")
-    }
+    ##RANN = "RANN"
+    ##if (!require(RANN)) {
+    ##    stop("RANN is not installed")
+    ##}
 
     ## classlabel <- sampclass(object)
     classlabel <- as.vector(unclass(sampclass(object)))
@@ -1461,7 +1461,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
         stop("No group information. Use group().")
     }
 
-    require(multtest) || stop("Couldn't load multtest")
+    ## require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
     groupmat <- groups(object)

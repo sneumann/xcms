@@ -27,6 +27,11 @@ importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")
 
+## New imports from packages moved from Suggests to Imports:
+importFrom("multtest", "mt.teststat")
+importFrom("RANN", "nn2")
+importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
+
 export(
        "etg",
        "medianFilter",

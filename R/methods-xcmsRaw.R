@@ -669,7 +669,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.columns = FALSE, ...)
 {
     ## Should consider to put MassSpecWavelet into Imports instead of Suggests.
-          require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
+          ## require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
           ## MassSpecWavelet Calls
           peakInfo <- peakDetectionCWT(object@env$intensity, SNR.Th=snthresh, ...)

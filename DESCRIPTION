@@ -20,15 +20,15 @@ Imports:
     lattice,
     RColorBrewer,
     plyr,
+    RANN,
+    multtest,
+    MassSpecWavelet (>= 1.5.2),
     BiocParallel
 Suggests:
     faahKO,
     msdata,
     ncdf4,
-    multtest,
     rgl,
-    MassSpecWavelet (>= 1.5.2),
-    RANN,
     RUnit
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of chromatographically
