@@ -23,7 +23,8 @@ Imports:
     RANN,
     multtest,
     MassSpecWavelet (>= 1.5.2),
-    BiocParallel
+    BiocParallel,
+    S4Vectors
 Suggests:
     faahKO,
     msdata,
@@ -48,7 +49,9 @@ Collate:
     'c.R'
     'cwTools.R'
     'databases.R'
+    'do_detectFeatures-functions.R'
     'fastMatch.R'
+    'functions-utils.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'

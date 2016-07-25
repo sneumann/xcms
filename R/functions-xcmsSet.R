@@ -1,5 +1,5 @@
 ## Functions for xcmsSet objects.
-#' @include DataClasses.R
+#' @include DataClasses.R do_detectFeatures-functions.R
 
 ## The "constructor"
 ## The "new" xcmsSet method using BiocParallel.
