@@ -1,32 +1,6 @@
-setGeneric("specDist", function(object, ...) standardGeneric("specDist"))
-setMethod("specDist", signature(object="xcmsSet"),
-          function(object, peakIDs1, peakIDs2,
-                   method=getOption("BioC")$xcms$specDist.method,
-                   ...) {
-              if (missing(peakIDs1)) {
-                  stop("missing argument peakIDs1")
-              }
-              if (missing(peakIDs2)) {
-                  stop("missing argument peakIDs2")
-              }
 
-              peaks <- object@peaks
-              peakTable1 <- peaks[peakIDs1,c("mz","into")]
-              peakTable2 <- peaks[peakIDs2,c("mz","into")]
-
-              method <- match.arg(method, getOption("BioC")$xcms$specDist.methods)
-              if (is.na(method))
-                  stop("unknown method : ", method)
-              method <- paste("specDist", method, sep=".")
-              distance <- do.call(method, alist<-list(peakTable1, peakTable2, ...))
-              distance
-          })
-
-### specDist - functions
-setGeneric("specDist.meanMZmatch",
-           function(peakTable1, peakTable2, matchdist=1, matchrate=1,
-                    mzabs=0.001, mzppm=10, symmetric=TRUE)
-           standardGeneric("specDist.meanMZmatch"))
+## specDist - functions; eventually it might be better to have them as functions, not
+## methods!
 
 setMethod("specDist.meanMZmatch", signature(peakTable1="matrix", peakTable2="matrix"),
           function(peakTable1, peakTable2, matchdist=1, matchrate=1,
@@ -73,11 +47,6 @@ minifm <- function(v1, v2, mzabs, mzppm, symmetric) {
     list(idx1=idx1, idx2=idx2)
 }
 
-setGeneric("specDist.cosine",
-           function(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
-                    mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
-                    symmetric = FALSE)
-           standardGeneric("specDist.cosine"))
 
 setMethod("specDist.cosine", signature(peakTable1="matrix", peakTable2="matrix"),
           function(peakTable1, peakTable2,  mzabs = 0.001, mzppm = 10,
@@ -130,10 +99,6 @@ setMethod("specDist.cosine", signature(peakTable1="matrix", peakTable2="matrix")
               }
           })
 
-
-setGeneric("specDist.peakCount",
-           function(peakTable1, peakTable2, mzabs=0.001, mzppm=10,symmetric=FALSE)
-           standardGeneric("specDist.peakCount"))
 
 setMethod("specDist.peakCount", signature(peakTable1="matrix", peakTable2="matrix"),
           function(peakTable1, peakTable2, mzabs=0.001, mzppm=10,symmetric=FALSE) {

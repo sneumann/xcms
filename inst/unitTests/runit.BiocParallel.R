@@ -16,4 +16,7 @@ test_BiocParallel <- function() {
     bpprogressbar(bpp) <- TRUE
     xs2 <- xcmsSet(fs, BPPARAM=bpp)
 
+    bpp <- SerialParam()
+    xs3 <- xcmsSet(fs, BPPARAM=bpp)
+    checkIdentical(xs2, xs3)
 }
