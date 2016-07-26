@@ -1,4 +1,3 @@
-setGeneric("write.mzdata", function(object, ...) standardGeneric("write.mzdata"))
 
 setMethod("write.mzdata", "xcmsRaw", function(object, filename) {
 
@@ -131,21 +130,3 @@ setMethod("write.mzdata", "xcmsRaw", function(object, filename) {
     sink(NULL)
 })
 
-setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
-setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
-
-    if (scan < 0)
-        scan <- length(object@msnRt) + 1 + scan
-
-    idx <- seq(object@msnScanindex[scan]+1, min(object@msnScanindex[scan+1],
-                                                length(object@env$msnMz), na.rm=TRUE))
-
-    if (length(mzrange) >= 2) {
-        mzrange <- range(mzrange)
-        idx <- idx[object@env$msnMz[idx] >= mzrange[1] & object@env$msnMz[idx] <= mzrange[2]]
-    }
-
-    points <- cbind(mz = object@env$msnMz[idx], intensity = object@env$msnIntensity[idx])
-
-    invisible(points)
-})
