@@ -1,10 +1,13 @@
 \name{xcmsPapply}
 \alias{xcmsPapply}
-\title{ xcmsPapply }
+\title{\emph{Deprecated}: xcmsPapply }
 \description{
+  This function is deprecated, use \code{\link[BiocParallel]{bplapply}}
+  instead.
+
   An apply-like function which uses Rmpi to distribute
-   the processing evenly across a cluster.  Will use a non-MPI
-   version if distributed processing is not available.
+  the processing evenly across a cluster.  Will use a non-MPI
+  version if distributed processing is not available.
 }
 \usage{
     xcmsPapply(arg_sets, papply_action, papply_commondata = list(),

@@ -1,4 +1,5 @@
 xcmsParallelSetup <- function(nSlaves) {
+    .Deprecated(msg = "Use of 'xcmsParallelSetup' is deprecated! Use 'BPPARAM' arguments instead.")
     runParallel <- 0
     parMode <- ""
     snowclust <- NULL
@@ -10,7 +11,7 @@ xcmsParallelSetup <- function(nSlaves) {
             opt.warn <- options("warn")$warn
             options("warn" = -1)
 
-            ## Rmpi does not work on the BioC build machines: 
+            ## Rmpi does not work on the BioC build machines:
             if ( (Sys.info()["sysname"] != "Windows") && require(rmpi,character.only=TRUE,quietly=TRUE)) {
                 if (is.loaded('mpi_initialize')) {
                     mpi.spawn.Rslaves(nslaves=nSlaves, needlog=FALSE)
@@ -60,6 +61,7 @@ xcmsParallelSetup <- function(nSlaves) {
 "xcmsPapply" <-
     function(arg_sets,papply_action,papply_commondata=list(),
              show_errors=TRUE,do_trace=FALSE,also_trace=c()) {
+        .Deprecated(msg = "Use of 'xcmsPapply' is deprecated! Use BiocParallel 'bplapply' instead.")
         ## Check to ensure arguments are of the correct type
         if (!is.list(arg_sets)) {
             print("1st argument to papply must be a list")
@@ -392,6 +394,7 @@ fillPeaksChromPar <- function(arg) {
 
 ## clusterApplyLB / dynamicClusterApply
 xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
+    .Deprecated(msg = "Use of 'xcmsClusterApply' is deprecated! Use 'BPPARAM' arguments instead.")
     argfun <- function(i) c(list(x[[i]]), list(...))
     n <- length(x)
 
@@ -424,11 +427,11 @@ xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
 }
 
 msgfun.featureDetection <- function(x,i) {
-    cat("Detecting features in file #",i,":",basename(x[[i]]$file),"\n");
+    message("Detecting features in file #",i,":",basename(x[[i]]$file))
     flush.console();
 }
 
 msgfunGeneric <- function(x, i) {
-    cat(i,":",basename(x[[i]]$file),"\n");
+    message(i,":",basename(x[[i]]$file))
     flush.console();
 }
