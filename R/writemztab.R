@@ -171,14 +171,14 @@ if (FALSE) {
     }
 
     mzt <- data.frame(character(0))
-    mzt <- xcms:::mzTabHeader(mzt,
+    mzt <- mzTabHeader(mzt,
                        version="1.1.0", mode="Complete", type="Quantification",
                        description="faahKO",
                        xset=xs)
-    mzt <- xcms:::mzTabAddSME(mzt, xs)
+    mzt <- mzTabAddSME(mzt, xs)
     ##mzt
     
-    xcms:::writeMzTab(mzt, "faahKO.mzTab")
+    writeMzTab(mzt, "faahKO.mzTab")
 }
 
 #############################
