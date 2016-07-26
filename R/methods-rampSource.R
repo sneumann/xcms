@@ -1,12 +1,5 @@
-setClass("rampSource",
-         representation(rampid="integer"),
-         contains="xcmsFileSource",
-         validity=function(object) {
-             if (object@rampid < 0) {
-                 mzR:::rampClose(object@rampid)
-                 paste("Could not open mzML/mzXML/mzData file:", object)
-             } else TRUE
-         })
+## Methods for rampSource
+#' @include AllGenerics.R DataClasses.R
 
 setMethod("initialize", "rampSource", function(.Object, path) {
     .Object@rampid <- mzR:::rampOpen(path)
