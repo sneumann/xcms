@@ -7,6 +7,7 @@ importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
+import("BiocParallel")
 
 export(
        "etg",
