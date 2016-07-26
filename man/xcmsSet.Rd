@@ -11,7 +11,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
         polarity = NULL, lockMassFreq=FALSE,
 		mslevel=NULL, nSlaves=0, progressCallback=NULL,
-                scanrange = NULL, ...)
+                scanrange = NULL, BPPARAM = bpparam(), ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -28,15 +28,16 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{polarity}{filter raw data for positive/negative scans}
 	\item{lockMassFreq}{Performs correction for Waters LockMass function}
     \item{mslevel}{perform peak picking on data of given mslevel}
-    \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
-		   MPI is used if installed, otherwise the snow package
-		   is employed for multicore support. If none of the two
-		   packages is available it uses the parallel package
-		   for parallel processing on multiple CPUs of the
-		   current machine.
-		 }
+    \item{nSlaves}{\emph{DEPRECATED}, use \code{BPPARAM} argument
+      instead.}
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{scanrange}{scan range to read}
+  \item{BPPARAM}{a \code{BiocParallel} parameter object to control how
+    and if parallel processing should be performed. Such objects can be
+    created by the \code{\link[BiocParallel]{SerialParam}},
+    \code{\link[BiocParallel]{MulticoreParam}} or
+    \code{\link[BiocParallel]{SnowParam}} functions.
+  }
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
     \code{xcmsRaw} class

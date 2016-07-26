@@ -124,7 +124,7 @@ setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
 
 setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     require(ncdf4) || stop("Couldn't load package ncdf4 for NetCDF writing")
-    
+
     scan_no <- length(object@scanindex)
     point_no <- length(object@env$mz)
 
@@ -164,7 +164,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
     instrument_app_version<- ncvar_def("instrument_app_version", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
     instrument_comments   <- ncvar_def("instrument_comments", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
 
-    ## Define netCDF definitions                        
+    ## Define netCDF definitions
     ms <- nc_create(filename, list(error_log,
                                      scan_acquisition_time,
                                      actual_scan_number,
@@ -176,7 +176,7 @@ setMethod("write.cdf", "xcmsRaw", function(object, filename) {
                                      instrument_serial_no,instrument_sw_version,instrument_fw_version,
                                      instrument_os_version,instrument_app_version,instrument_comments
                                      ))
-    
+
     ## Add values to netCDF vars
     ncvar_put(ms, "scan_acquisition_time", object@scantime)
     ncvar_put(ms, "total_intensity", object@tic)
@@ -1494,7 +1494,8 @@ setMethod("getEICOld", "xcmsRaw", function(object, mzrange, rtrange = NULL, step
 ##    peak chromatogram BPC).
 ## 3) the method might be slower.
 setGeneric("getEICNew", function(object, ...) standardGeneric("getEICNew"))
-setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
+setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL,
+                                           step = 0.1, BPPARAM = bpparam()) {
     ## if mzrange and rtrange is not provided use the full range.
     if(missing(mzrange)){
         if(length(object@mzrange) == 2){
@@ -1541,19 +1542,14 @@ setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL, step
         parms[[i]] <- list( mzrange=mzrange[i, ], rtrange=rtrange[i, ] )
     }
     ## check if we could run the code on multiple cpus...
-    if(requireNamespace("parallel", quietly=TRUE)){
-        APPLYFUN <- mclapply
-    }else{
-        APPLYFUN <- lapply
-    }
-    eic <- APPLYFUN(parms, FUN=function(z){
+    eic <- bplapply(parms, FUN=function(z){
                       imz <- findRange(mass, c(z$mzrange[1]-.5*step, z$mzrange[2]+0.5*step), TRUE)
                       irt <- which(object@scantime >= z$rtrange[1] & object@scantime <= z$rtrange[2])
                       e <- matrix(c(object@scantime[irt],
                                     colMax(object@env$profile[imz[1]:imz[2], irt, drop=FALSE])), ncol=2)
                       colnames(e) <- c("rt", "intensity")
                       return(e)
-                  })
+                  }, BPPARAM=BPPARAM)
 
     invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
                   rt = "raw", groupnames = character(0)))
@@ -1932,7 +1928,7 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
         fixSort = function() {
             ## Check and fix "m/z sort assumption violated !"
             for(i in 1:length(object@scanindex)){
-                scan <- getScan(object, scan=i)    
+                scan <- getScan(object, scan=i)
                 if(is.unsorted(scan[,"mz"])){
                     message("Scan ", i, " is unsorted. Fixing.")
                     o <- order(scan[,"mz"])
