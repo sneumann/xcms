@@ -1,12 +1,5 @@
-setClass("netCdfSource",
-         representation(cdf="integer"),
-         contains="xcmsFileSource",
-         validity=function(object) {
-             if (!is.null(attr(object@cdf, "errortext"))) {
-                 mzR:::netCDFClose(object@cdf)
-                 attr(object@cdf, "errortext")
-             } else TRUE
-         })
+## Methods for netCdfSource class.
+#' @include AllGenerics.R DataClasses.R
 
 setMethod("initialize", "netCdfSource", function(.Object, path) {
     .Object@cdf <- mzR:::netCDFOpen(path)
@@ -23,3 +16,4 @@ setMethod("loadRaw", "netCdfSource", function(object, includeMSn) {
     on.exit(mzR:::netCDFClose(object@cdf))
     mzR:::netCDFRawData(object@cdf)
 })
+

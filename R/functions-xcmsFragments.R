@@ -1,4 +1,8 @@
+## Functions for xcmsFragments
+#' @include DataClasses.R
 
+############################################################
+## xcmsFragments constructor.
 xcmsFragments <- function(xs = NULL, ...) {
     object <- new("xcmsFragments")
     object <- collect(object,xs,...)
@@ -29,8 +33,6 @@ xcmsFragments <- function(xs = NULL, ...) {
     memsize <- object.size(object)
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 }
-setMethod("show", "xcmsFragments", .xcmsFragments.show)
-
 
 .xcmsFragments.collect <- function(object,xs,xraw=NULL,compMethod="floor", snthresh=20, mzgap=.2, uniq=TRUE) {
     ## This is called after findPeaks()
@@ -139,8 +141,6 @@ setMethod("show", "xcmsFragments", .xcmsFragments.show)
     cat(length(npPeakID),"Peaks picked,",numAloneSpecs,"MSn-Specs ignored.\n")
     object
 }
-setGeneric("collect", function(object, ...) standardGeneric("collect"))
-setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
 
 .xcmsFragments.plotTree <- function(object, mzRange=range(object@peaks[,"mz"]),
                                     rtRange=range(object@peaks[,"rt"]),
@@ -233,16 +233,11 @@ setMethod("collect", "xcmsFragments", .xcmsFragments.collect)
         }
     }
 }
-setGeneric("plotTree", function(object, ...) standardGeneric("plotTree"))
-setMethod("plotTree", "xcmsFragments", .xcmsFragments.plotTree)
 
 .xcmsFragments.hasMSn <- function(object,  xcmsSetPeakID) {
     ## Quick check whether MSn exists for some peak in xcmsSet
     any(object@peaks[,"MSnParentPeakID"] == xcmsSetPeakID)
 }
-setGeneric("hasMSn", function(object, ...) standardGeneric("hasMSn"))
-setMethod("hasMSn", "xcmsFragments", .xcmsFragments.hasMSn)
-
 
 xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
     ## gets an xcmsSet and the corresponding xcmsFragments
@@ -323,8 +318,6 @@ xcmsFragments.makeXS <- function(xs,xf,FUNS,filename){
     write.csv(distances,file=filename)
     distances
 }
-##setGeneric("makeXS", function(object, ...) standardGeneric("makeXS"))
-##setMethod("makeXS", "xcmsFragments", .xcmsFragments.makeXS)
 
 getXS<-function(xs,xf,g)
 {
@@ -368,66 +361,3 @@ getXS<-function(xs,xf,g)
     sampnames(xsn) <- samples
     xsn
 }
-
-if (!isGeneric("findneutral") )
-    setGeneric("findneutral", function(object, find, ppmE=25, print=TRUE) standardGeneric("findneutral"))
-
-setMethod("findneutral", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
-    find<-range(ppmDev(Mr=find, ppmE))
-    spectra<-unique(object@peaks[,"MSnParentPeakID"])
-    found<-matrix(ncol=10)
-
-    for (i in 1:length(spectra)){
-        if(spectra[i] > 0){
-            losses<-diff(sort(object@peaks[object@peaks[,"MSnParentPeakID"] ==spectra[i],"mz"] ))
-            if(length(losses) > 0){
-                if(length(which(losses > find[1] & losses < find[2])) > 0){
-                    idx<-which(object@peaks[,"MSnParentPeakID"] == spectra[i])
-                    PrecursorMZ<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"mz"]
-                    CE<-object@peaks[object@peaks[idx,"MSnParentPeakID"],"CollisionEnergy"]
-                    dat<-object@peaks[idx,c("MSnParentPeakID", "msLevel", "rt", "mz",
-                                            "intensity", "Sample", "GroupPeakMSn")]
-                    found<-rbind(found, cbind(NeutralLoss=c(losses,0),  PrecursorMz=PrecursorMZ,
-                                              dat[order(dat[,"mz"]),], CollisionEnergy=CE))
-                }
-            }
-        }
-    }
-    if(nrow(found) >1){
-        found<-found[2:nrow(found),]
-    } else{
-        cat("Nothing found\n")
-        return(0)
-    }
-    if (print == TRUE){
-        cat("We looked for", find[2], " to", find[1], "and found:\n")
-        print(found)
-    }
-    return(found)
-})
-
-
-if (!isGeneric("findMZ") )
-    setGeneric("findMZ", function(object, find, ppmE=25, print=TRUE) standardGeneric("findMZ"))
-
-setMethod("findMZ", "xcmsFragments", function(object, find, ppmE=25, print=TRUE) {
-    find<-range(ppmDev(Mr=find, ppmE))
-    fragMZ<-0
-
-    found<- which(object@peaks[,"mz"] > find[1] & object@peaks[,"mz"] < find[2] & object@peaks[,"msLevel"] >1)
-    if(length(found) <1){
-        cat("nothing was found\n")
-        return(0)
-    }
-
-    PrecursorMZ<-object@peaks[object@peaks[found,"MSnParentPeakID"],"mz"]
-    CE<-object@peaks[object@peaks[found,"MSnParentPeakID"],"CollisionEnergy"]
-    foundFrag<-cbind(PrecursorMz=PrecursorMZ, object@peaks[found,c("MSnParentPeakID", "msLevel",
-                     "rt", "mz", "intensity", "Sample", "GroupPeakMSn")], CollisionEnergy=CE)
-
-    if (print == TRUE){
-        cat("We looked for", find[2], " to", find[1], "and found:\n")
-        print(foundFrag)
-    }
-    return(foundFrag)
-})
