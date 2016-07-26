@@ -15,9 +15,6 @@
 }
 }}
 
-\usage{
-
-}
 \arguments{
   \item{x}{\code{xcmsRaw} object}
   \item{f}{factor such that \code{factor(f)} defines the scans which go
