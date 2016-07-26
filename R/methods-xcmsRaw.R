@@ -1,81 +1,8 @@
-xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
-                    profparam = list(),
-                    includeMSn = FALSE, mslevel=NULL,
-                    scanrange=NULL) {
+## All Methods for xcmsRaw should be here.
+#' @include functions-xcmsRaw.R
 
-    object <- new("xcmsRaw")
-    object@env <- new.env(parent=.GlobalEnv)
-    object@filepath <- xcmsSource(filename)
-    rawdata <- loadRaw(object@filepath, includeMSn)
-
-    rtdiff <- diff(rawdata$rt)
-    if (any(rtdiff == 0))
-        warning("There are identical scantimes.")
-
-    if (any(rtdiff < 0)) {
-        badtimes <- which(rtdiff < 0)
-        stop(paste("Time for scan ", badtimes[1], " (",
-                   rawdata$rt[[badtimes[1]]], ") greater than scan ",
-                   badtimes[1]+1, " (", rawdata$rt[[badtimes[1]+1]], ")",
-                   sep = ""))
-    }
-
-    object@scantime <- rawdata$rt
-    object@tic <- rawdata$tic
-    object@scanindex <- rawdata$scanindex
-    object@env$mz <- rawdata$mz
-    object@env$intensity <- rawdata$intensity
-    ## setting the scanrange.
-    scanrange(object) <- as.numeric(scanrange)
-    mslevel(object) <- as.numeric(mslevel)
-
-    object@profmethod <- profmethod
-    object@profparam <- profparam
-    if (profstep)
-        profStep(object) <- profstep
-
-    if (!is.null(rawdata$acquisitionNum)) {
-        ## defined only for mzData and mzXML
-        object@acquisitionNum <- rawdata$acquisitionNum
-    }
-
-    if (!is.null(rawdata$polarity)) {
-        object@polarity <- factor(rawdata$polarity,
-                                  levels=c(0,1,-1),
-                                  labels=c("negative", "positive", "unknown"));
-    }
-
-    if (!is.null(scanrange)) {
-        ## Scanrange filtering
-        keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
-        object <- split(object, f=keepidx)[["TRUE"]]
-    }
-
-    ##
-    ## After the MS1 data, take care of MSn
-    ##
-    if(!is.null(rawdata$MSn) ) {
-        object@env$msnMz <- rawdata$MSn$mz
-        object@env$msnIntensity <- rawdata$MSn$intensity
-        object@msnScanindex <- rawdata$MSn$scanindex
-        object@msnAcquisitionNum <- rawdata$MSn$acquisitionNum
-        object@msnLevel <- rawdata$MSn$msLevel
-        object@msnRt <- rawdata$MSn$rt
-        object@msnPrecursorScan <- match(rawdata$MSn$precursorNum, object@acquisitionNum)
-        object@msnPrecursorMz <- rawdata$MSn$precursorMZ
-        object@msnPrecursorIntensity <- rawdata$MSn$precursorIntensity
-        object@msnPrecursorCharge <- rawdata$MSn$precursorCharge
-        object@msnCollisionEnergy <- rawdata$MSn$collisionEnergy
-    }
-
-    if (!missing(mslevel) & !is.null(mslevel)) {
-        object <- msn2ms(object)
-        object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
-        ## fix xcmsRaw metadata, or always calculate later than here ?
-    }
-    return(object)
-}
-
+############################################################
+## show
 setMethod("show", "xcmsRaw", function(object) {
 
     cat("An \"xcmsRaw\" object with", length(object@scantime), "mass spectra\n\n")
@@ -120,114 +47,8 @@ setMethod("show", "xcmsRaw", function(object) {
     cat("\nMemory usage:", signif(memsize/2^20, 3), "MB\n")
 })
 
-setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
-
-setMethod("write.cdf", "xcmsRaw", function(object, filename) {
-    require(ncdf4) || stop("Couldn't load package ncdf4 for NetCDF writing")
-
-    scan_no <- length(object@scanindex)
-    point_no <- length(object@env$mz)
-
-    dim32bytes <- ncdim_def("_32_byte_string", "", 1:32, create_dimvar=FALSE)
-    dim64bytes <- ncdim_def("_64_byte_string", "", 1:64, create_dimvar=FALSE)
-    dimError   <- ncdim_def("error_number",       "", 1:1, create_dimvar=FALSE)
-    dimScans   <- ncdim_def("scan_number",     "", 1:scan_no, create_dimvar=FALSE)
-    dimPoints  <- ncdim_def("point_number",    "", 1:point_no, create_dimvar=FALSE)
-    dimInstruments<-ncdim_def("instrument_number","",1:1, create_dimvar=FALSE)
-
-    ## Define netCDF vars
-    error_log             <- ncvar_def("error_log","", list(dim64bytes, dimError), missval=NULL, prec="char")
-    scan_acquisition_time <- ncvar_def("scan_acquisition_time", "", dimScans, -1, prec="double")
-    total_intensity       <- ncvar_def("total_intensity", "Arbitrary Intensity Units", dimScans, -1, prec="double")
-
-    mass_range_min       <- ncvar_def("mass_range_min", "", dimScans, NULL, prec="double")
-    mass_range_max       <- ncvar_def("mass_range_max", "", dimScans, NULL, prec="double")
-    time_range_min       <- ncvar_def("time_range_min", "", dimScans, NULL, prec="double")
-    time_range_max       <- ncvar_def("time_range_max", "", dimScans, NULL, prec="double")
-
-    scan_index            <- ncvar_def("scan_index", "", dimScans, missval=-1, prec="integer")
-    actual_scan_number    <- ncvar_def("actual_scan_number", "", dimScans, missval=-1, prec="integer")
-    mass_values           <- ncvar_def("mass_values", "M/Z", dimPoints, -1)
-    intensity_values      <- ncvar_def("intensity_values", "Arbitrary Intensity Units", dimPoints, -1)
-
-    point_count           <- ncvar_def("point_count", "", dimScans, missval=-1, prec="integer")
-    flag_count            <- ncvar_def("flag_count", "", dimScans, missval=-1, prec="integer")
-
-    instrument_name       <- ncvar_def("instrument_name","", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_id         <- ncvar_def("instrument_id", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_mfr        <- ncvar_def("instrument_mfr", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_model      <- ncvar_def("instrument_model", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_serial_no  <- ncvar_def("instrument_serial_no", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_sw_version <- ncvar_def("instrument_sw_version", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_fw_version <- ncvar_def("instrument_fw_version", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_os_version <- ncvar_def("instrument_os_version", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_app_version<- ncvar_def("instrument_app_version", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-    instrument_comments   <- ncvar_def("instrument_comments", "", list(dim32bytes, dimInstruments), missval=NULL, prec="char")
-
-    ## Define netCDF definitions
-    ms <- nc_create(filename, list(error_log,
-                                     scan_acquisition_time,
-                                     actual_scan_number,
-                                     total_intensity,
-                                     mass_range_min,mass_range_max,time_range_min,time_range_max,
-                                     scan_index, point_count, flag_count,
-                                     mass_values, intensity_values,
-                                     instrument_name, instrument_id,instrument_mfr,instrument_model,
-                                     instrument_serial_no,instrument_sw_version,instrument_fw_version,
-                                     instrument_os_version,instrument_app_version,instrument_comments
-                                     ))
-
-    ## Add values to netCDF vars
-    ncvar_put(ms, "scan_acquisition_time", object@scantime)
-    ncvar_put(ms, "total_intensity", object@tic)
-    ncvar_put(ms, "scan_index", object@scanindex)
-    ncvar_put(ms, "actual_scan_number", object@scanindex)
-
-    ncvar_put(ms, "time_range_min", rep(-9999, times=scan_no))
-    ncvar_put(ms, "time_range_max", rep(-9999, times=scan_no))
-
-    ncvar_put(ms, "point_count", c(object@scanindex[2:scan_no], point_no)
-                 - object@scanindex[1:scan_no])
-    ncvar_put(ms, "flag_count", rep(0, times=scan_no))
-
-    mzranges <- t(sapply(1:scan_no,
-                         function(scan) range(getScan(object, scan)[,"mz"])))
-
-    ncvar_put(ms, "mass_range_min", mzranges[,1])
-    ncvar_put(ms, "mass_range_max", mzranges[,2])
-
-    ncvar_put(ms, "mass_values", object@env$mz)
-    ncatt_put(ms, "mass_values", "scale_factor", 1, prec="float")
-
-    ncvar_put(ms, "intensity_values", object@env$intensity)
-    ncatt_put(ms, "intensity_values", "add_offset", 0, prec="float")
-    ncatt_put(ms, "intensity_values", "scale_factor", 1, prec="float")
-
-    ## Add ANDIMS global attributes to netCDF object
-    ncatt_put(ms, 0, "dataset_completeness", "C1+C2")
-    ncatt_put(ms, 0, "ms_template_revision", "1.0.1")
-    ncatt_put(ms, 0, "netcdf_revision", "2.3.2")
-    ncatt_put(ms, 0, "languages", "English")
-    ncatt_put(ms, 0, "raw_data_mass_format", "Float")
-    ncatt_put(ms, 0, "raw_data_time_format", "Short")
-    ncatt_put(ms, 0, "raw_data_intensity_format", "Float")
-    ncatt_put(ms, 0, "units", "Seconds")
-    ncatt_put(ms, 0, "starting_scan_number", "0")
-    ncatt_put(ms, 0, "global_mass_min", as.character((min(object@env$mz))))
-    ncatt_put(ms, 0, "global_mass_max", as.character((max(object@env$mz))))
-    ncatt_put(ms, 0, "global_intensity_min", as.character((min(object@env$intensity))))
-    ncatt_put(ms, 0, "global_intensity_max", as.character((max(object@env$intensity))))
-    ncatt_put(ms, 0, "calibrated_mass_min", as.character((min(object@env$intensity))))
-    ncatt_put(ms, 0, "calibrated_mass_max", as.character((max(object@env$intensity))))
-    ncatt_put(ms, 0, "actual_run_time_length", object@scantime[scan_no]-object@scantime[1])
-    ncatt_put(ms, 0, "actual_delay_time", "1.")
-    ncatt_put(ms, 0, "raw_data_uniform_sampling_flag", "0s")
-
-    nc_close(ms)
-})
-
-setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
-
+############################################################
+## sortMz
 setMethod("revMz", "xcmsRaw", function(object) {
 
     for (i in 1:length(object@scanindex)) {
@@ -238,8 +59,8 @@ setMethod("revMz", "xcmsRaw", function(object) {
     }
 })
 
-setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
-
+############################################################
+## sortMz
 setMethod("sortMz", "xcmsRaw", function(object) {
 
     for (i in 1:length(object@scanindex)) {
@@ -251,8 +72,8 @@ setMethod("sortMz", "xcmsRaw", function(object) {
     }
 })
 
-setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
-
+############################################################
+## plotTIC
 setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE) {
 
     if (all(object@tic == 0))
@@ -285,8 +106,8 @@ setMethod("plotTIC", "xcmsRaw", function(object, ident = FALSE, msident = FALSE)
     invisible(points)
 })
 
-setGeneric("getScan", function(object, ...) standardGeneric("getScan"))
-
+############################################################
+## getScan
 setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
 
     if (scan < 0)
@@ -305,121 +126,8 @@ setMethod("getScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
     invisible(points)
 })
 
-## setGeneric("getMsnScan", function(object, ...) standardGeneric("getMsnScan"))
-
-## setMethod("getMsnScan", "xcmsRaw", function(object, scanLevel = 2, ms1Rt = -1, parentMzs = 0,
-##                        precision=1, userMsnIndex=NULL)
-## {
-##     if (scanLevel<1)
-##     {
-##         warning("Exit: Do you really want to have a ms ",scanLevel," Scan?")
-##         return(NULL)
-##     }
-
-##     if (is.null(userMsnIndex)) { ## if the User wants to address the data via xcms@msnScanindex
-##         nxcms <- new("xcmsRaw"); ## creates a new empty xcmsraw-object
-
-##         nxcms@scantime <- ms1Rt
-##         nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-##         nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-
-##         return(nxcms);
-##     }
-
-##     if (parentMzs[1]==0)
-##         parentMzs <- rep(0,scanLevel-1)
-
-##     ## using a zero-vector if none is given
-##     wasonlyone=TRUE;
-##     if (ms1Rt < object@scantime[1]) {
-##         warning("Exit: ms1Rt is smaller than smallest ms1Rt in the object")
-##         return(NULL)
-##     }
-##     ms1ind <- max(which(object@scantime <= ms1Rt))
-##     if (scanLevel==1) { ## in this case just the ms1schan of this rt will be returned
-##         nxcms <- new("xcmsRaw"); ## creates a new empty xcmsraw-object
-
-##         nxcms@scantime <- ms1Rt
-##         nxcms@env$mz        <- object@env$mz[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
-##         nxcms@env$intensity <- object@env$intensity[(object@scanindex[ms1ind]+1):(object@scanindex[ms1ind+1])]
-
-##         return(nxcms);
-##     }
-
-##     if (is.null(object@env$msnMz)) {
-##         warning("Exit: There are no MSnScans in this object.")
-##         return(NULL)
-##     }
-
-##     ##finding the peak in the s1 the user wants to have the msnpath from (searching in the ms2parentRtlist):
-##     ms2s <- which((object@msnRt >= ms1Rt)  &
-##                   (object@msnLevel == 2) &
-##                   (object@msnRt <= object@scantime[ms1ind+1]))
-##     if (length(ms2s) == 0)
-##     {
-##         warning("Exit: There is no ms2scan in this Rt-Range!")
-##         return(NULL)
-##     }
-##     ##cat("1> ",ms2s,"\n")
-##     if (length(ms2s) > 1)
-##     {
-##         if (parentMzs[1] == 0)  ## more than one ms2scan aviable but no mzvalues given
-##             warning("More than one ms2scan available but no mz-parameters given! using first scan")
-##         wasonlyone=FALSE;
-##         diffe <- abs(object@msnPrecursorMz[ms2s] - parentMzs[1])
-##         msn <- ms2s[min(which(diffe == min(diffe)))] ## The PArent-Rt of this ms2index ist closest to the wanted value
-##     } else {
-##         msn <- ms2s; ## there is only one ms2scan in this ms1range so use this
-##     }
-##     if ((parentMzs[1] != 0) & (abs(object@msnPrecursorMz[msn] - parentMzs[1]) > 1)) {
-##         warning("No ms2scan parent m/z is close enought to the requested value! using closest:",object@msnPrecursorMz[msn])
-##     }
-##     msnRt <- object@msnRt[msn]
-##     ##cat("3> ",msnRt,"\n")
-##     if (scanLevel > 2) {
-##         for (a in 3:scanLevel) {
-##             msns <- which((object@msnRt >= msnRt) &
-##                           (object@msnLevel == a) &
-##                           (object@msnRt <= object@scantime[ms1ind+1]))
-##             ##cat("4> ",ms2s,"\n")
-##             if (length(msns)==0) {
-##                 warning("Exit: There is no ms",a,"scan in this Rt-Range!")
-##                 return(NULL)
-##             }
-##             if (length(msns)>1) {
-##                 wasonlyone=FALSE;
-##                 if ((length(parentMzs)< a-1) | (parentMzs[a-1] == 0)) { ## more than one ms2scan aviable but no mzvalues given
-##                     warning("More than one ms",a,"scan available but no mzdata given! using first scan")
-##                     msn <- msns[1];
-##                 } else {
-##                     diffe <- abs(object@msnPrecursorMz[msns] - parentMzs[a-1])
-##                     msn <- msns[min(which(diffe == min(diffe)))]
-##                 }
-##             } else {
-##                 msn <- msns; ## there is only one ms[n-1]scan in this ms[n]ramge so use this
-##             }
-##             if (length(parentMzs)>=(a-1)&(parentMzs[1]!=0)) {
-##                 if (abs(object@msnPrecursorMz[msn] - parentMzs[a-1]) > 1) {
-##                     warning("No ms",scanLevel,"scan parent m/z is close enought to the requested value! using closest: ", object@msnPrecursorMz[msn])
-##                 }
-##             }
-##             msnRt <- object@msnRt[msn]
-##         }
-##     }
-##     if (wasonlyone) {
-##         message("Note: There was only one ms",scanLevel,"Scan for the given MS1rt.\n", sep="")
-##     }
-##     nxcms <- new("xcmsRaw"); ## creates a new empty xcmsraw-object
-
-##     nxcms@scantime <- msnRt
-##     nxcms@env$mz        <- object@env$msnMz[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-##     nxcms@env$intensity <- object@env$msnIntensity[(object@msnScanindex[msn]+1):(object@msnScanindex[msn+1])]
-
-##     return(nxcms);
-## })
-
-setGeneric("getSpec", function(object, ...) standardGeneric("getSpec"))
-
+############################################################
+## getSpec
 setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
     ## FIXME: unnecessary dependency on profile matrix?
@@ -444,228 +152,8 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
     invisible(points)
 })
 
-specNoise <- function(spec, gap = quantile(diff(spec[,"mz"]), .9)) {
-
-    ## In a spectrum with just one raw peak we can't calculate noise
-    if (nrow(spec) < 2) {
-        return(0)
-    }
-
-    intmean <- mean(spec[,"intensity"])
-
-    mzlen <- diff(range(spec[,"mz"]))
-    mzdiff <- diff(spec[,"mz"])
-    gaplen <- sum(mzdiff[mzdiff > gap])
-
-    weighted.mean(c(intmean, min(spec[,"intensity"])/2), c(1 - gaplen/mzlen,
-                                                           gaplen/mzlen))
-}
-
-specPeaks <- function(spec, sn = 20, mzgap = .2) {
-
-    noise <- specNoise(spec)
-
-    spectab <- matrix(nrow = 0, ncol = 3)
-    colnames(spectab) <- c("mz", "intensity", "fwhm")
-
-    while (spec[i <- which.max(spec[,"intensity"]), "intensity"] > noise*sn) {
-
-        mz <- spec[i,"mz"]
-        intensity <- spec[i,"intensity"]
-        fwhmrange <- descendValue(spec[,"intensity"], spec[i,"intensity"]/2, i)
-
-        if (fwhmrange[1] > 1 && fwhmrange[2] < nrow(spec)) {
-            fwhm1 <- spec[fwhmrange[1],"mz"] - (spec[fwhmrange[1],"intensity"]-intensity/2)*diff(spec[fwhmrange[1]-1:0,"mz"])/diff(spec[fwhmrange[1]-1:0,"intensity"])
-            fwhm2 <- spec[fwhmrange[2],"mz"] - (spec[fwhmrange[2],"intensity"]-intensity/2)*diff(spec[fwhmrange[2]+1:0,"mz"])/diff(spec[fwhmrange[2]+1:0,"intensity"])
-
-            fwhm <- fwhm2-fwhm1
-
-            if (!any(abs(spectab[,"mz"] - mz) <= mzgap))
-                spectab <- rbind(spectab, c(mz, intensity, fwhm))
-        }
-
-        peakrange <- descendValue(spec[,"intensity"], min(noise*sn, spec[i,"intensity"]/4), i)
-        spec[seq(peakrange[1], peakrange[2]),"intensity"] <- 0
-    }
-
-    spectab
-}
-
-setGeneric("plotScan", function(object, ...) standardGeneric("plotScan"))
-
-setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
-                                          ident = FALSE)
-      {
-          if (scan<1 || scan>length(object@scanindex) ) {
-              warning("scan out of range")
-              return()
-          }
-
-          ## handle last spectrum
-          if (scan == length(object@scanindex)) {
-              followingScanIndex <- length(object@env$mz)
-          } else {
-              followingScanIndex <- object@scanindex[scan+1]
-          }
-
-          ## hendle empty spectra
-          if (object@scanindex[scan] == length(object@env$mz) ||
-              object@scanindex[scan] == followingScanIndex) {
-              warning("empty scan")
-              return()
-          }
-
-          idx <- (object@scanindex[scan]+1):min(followingScanIndex,
-                                                length(object@env$mz), na.rm=TRUE)
-          if (length(mzrange) >= 2) {
-              mzrange <- range(mzrange)
-              idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
-          }
-          points <- cbind(object@env$mz[idx], object@env$intensity[idx])
-          title = paste("Mass Spectrum: ", round(object@scantime[scan], 1),
-          " seconds (scan ", scan, ")", sep = "")
-          plot(points, type="h", main = title, xlab="m/z", ylab="Intensity")
-
-          if (ident)
-              return(identify(points, labels = round(points[,1], 1)))
-
-          invisible(points)
-      })
-
-setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
-
-setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
-                                          vline = numeric(0), ...) {
-
-    sel <- profRange(object, ...)
-
-    title = paste("Averaged Mass Spectrum: ", sel$timelab, " (",
-    sel$scanlab, ")",  sep = "")
-    points <- cbind(profMz(object)[sel$massidx],
-                    rowMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    plot(points, type="l", main = title, xlab="m/z", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (ident)
-        return(identify(points, labels = round(points[,1], 1)))
-
-    invisible(points)
-})
-
-setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
-
-setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
-                                           fitgauss = FALSE, vline = numeric(0), ...) {
-
-    sel <- profRange(object, ...)
-
-
-    if (base) {
-        title = paste("Base Peak Chromatogram: ", sel$masslab, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMax(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    }
-    else {
-        title = paste("Averaged Ion Chromatogram: ", sel$masslab, sep = "")
-        pts <- cbind(object@scantime[sel$scanidx],
-                     colMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
-    }
-    plot(pts, type="l", main = title, xlab="Seconds", ylab="Intensity")
-    if (length(vline))
-        abline(v = vline, col = "red")
-
-    if (fitgauss) {
-        fit <- nls(y ~ SSgauss(x, mu, sigma, h), data.frame(x = pts[,1], y = pts[,2]))
-        points(pts[,1], fitted(fit), type = "l", col = "red", lwd = 2)
-        return(fit)
-    }
-
-    if (ident)
-        return(identify(pts, labels = round(pts[,1], 1)))
-
-    invisible(pts)
-})
-
-setGeneric("image", function(x, ...) standardGeneric("image"))
-
-setMethod("image", "xcmsRaw", function(x, col = rainbow(256), ...) {
-    sel <- profRange(x, ...)
-
-    zlim <- log(range(x@env$intensity))
-
-    title <- paste("XC/MS Log Intensity Image (Profile Method: ",
-                   x@profmethod, ")", sep = "")
-    if (zlim[1] < 0) {
-        zlim <- log(exp(zlim)+1)
-        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$massidx, sel$scanidx]+1),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
-    } else
-        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
-              log(x@env$profile[sel$massidx, sel$scanidx]),
-              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
-})
-
-setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
-
-setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
-                                          aspect = c(1, 1, .5), ...) {
-
-    require(rgl) || stop("Couldn't load package rgl")
-
-    sel <- profRange(object, ...)
-
-    y <- object@env$profile[sel$massidx, sel$scanidx]
-    if (log)
-        y <- log(y+max(1-min(y), 0))
-    ylim <- range(y)
-
-    x <- seq(0, aspect[1], length=length(sel$massidx))
-    z <- seq(0, aspect[2], length=length(sel$scanidx))
-    y <- y/ylim[2]*aspect[3]
-
-    colorlut <- terrain.colors(256)
-    col <- colorlut[y/aspect[3]*255+1]
-
-    rgl.clear("shapes")
-    rgl.clear("bbox")
-    rgl.surface(x, z, y, color = col, shininess = 128)
-    rgl.points(0, 0, 0, alpha = 0)
-
-    mztics <- pretty(sel$mzrange, n = 5*aspect[1])
-    rttics <- pretty(sel$rtrange, n = 5*aspect[2])
-    inttics <- pretty(c(0,ylim), n = 10*aspect[3])
-    inttics <- inttics[inttics > 0]
-
-    rgl.bbox(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
-             xlab = as.character(mztics),
-             yat = inttics/ylim[2]*aspect[3],
-             ylab = as.character(inttics),
-             zat = (rttics - sel$rtrange[1])/diff(sel$rtrange)*aspect[2],
-             zlab = as.character(rttics),
-             ylen = 0, alpha=0.5)
-})
-
-filtfft <- function(y, filt) {
-
-    yfilt <- numeric(length(filt))
-    yfilt[1:length(y)] <- y
-    yfilt <- fft(fft(yfilt, inverse = TRUE) * filt)
-
-    Re(yfilt[1:length(y)])
-}
-
-setClass("xcmsPeaks", contains = "matrix")
-
-setMethod("show", "xcmsPeaks", function(object) {
-    cat("A matrix of", nrow(object), "peaks\n")
-    cat("Column names:\n")
-    print(colnames(object))
-})
-
-setGeneric("findPeaks.matchedFilter", function(object, ...) standardGeneric("findPeaks.matchedFilter"))
-
+############################################################
+## findPeaks.matchedFilter
 setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
                                                          max = 5, snthresh = 10, step = 0.1,
                                                          steps = 2, mzdiff = 0.8 - step*steps,
@@ -813,8 +301,8 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigm
     invisible(new("xcmsPeaks", rmat))
 })
 
-setGeneric("findPeaks.centWave", function(object, ...) standardGeneric("findPeaks.centWave"))
-
+############################################################
+## findPeaks.centWave
 setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
                                                     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                     fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
@@ -985,7 +473,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                             maxpi <- which.max(inti)
                             if (length(maxpi) > 1) {
                                 m <- wCoefs[opp[maxpi],maxpi]
-                                bestcol <- which(m == max(m),arr=T)[2]
+                                bestcol <- which(m == max(m),arr.ind=T)[2]
                                 best.scale.nr <- maxpi[bestcol]
                             } else  best.scale.nr <- maxpi
 
@@ -1112,7 +600,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
             cdppm <- paste(peaks[,"dppm"],collapse=", ")
             csn <- paste(peaks[,"sn"],collapse=", ")
             par(bg = "white")
-            l <- layout(matrix(c(1,2,3),nr=3,nc=1,byrow=T),heights=c(.5,.75,2));
+            l <- layout(matrix(c(1,2,3),nrow=3,nc=1,byrow=T),heights=c(.5,.75,2));
             par(mar= c(2, 4, 4, 2) + 0.1)
             plotRaw(object,mzrange=mzrange,rtrange=trange,log=TRUE,title='')
             title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
@@ -1176,12 +664,12 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     invisible(new("xcmsPeaks", pr))
 })
 
-
-setGeneric("findPeaks.MSW", function(object, ...) standardGeneric("findPeaks.MSW"))
-
+############################################################
+## findPeaks.MSW
 setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.columns = FALSE, ...)
-      {
-          require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
+{
+    ## Should consider to put MassSpecWavelet into Imports instead of Suggests.
+          ## require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
 
           ## MassSpecWavelet Calls
           peakInfo <- peakDetectionCWT(object@env$intensity, SNR.Th=snthresh, ...)
@@ -1249,10 +737,10 @@ setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.colum
 
           invisible(new("xcmsPeaks", peaklist))
       }
-          )
+      )
 
-setGeneric("findPeaks.MS1", function(object, ...) standardGeneric("findPeaks.MS1"))
-
+############################################################
+## findPeaks.MS1
 setMethod("findPeaks.MS1", "xcmsRaw", function(object)
       {
           if (is.null(object@msnLevel)) {
@@ -1307,10 +795,8 @@ setMethod("findPeaks.MS1", "xcmsRaw", function(object)
           invisible(new("xcmsPeaks", peaklist))
       })
 
-
-
-setGeneric("findPeaks", function(object, ...) standardGeneric("findPeaks"))
-
+############################################################
+## findPeaks
 setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms$findPeaks.method,
                                            ...) {
 
@@ -1321,8 +807,8 @@ setMethod("findPeaks", "xcmsRaw", function(object, method=getOption("BioC")$xcms
     invisible(do.call(method, list(object, ...)))
 })
 
-setGeneric("getPeaks", function(object, ...) standardGeneric("getPeaks"))
-
+############################################################
+## getPeaks
 setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
 
     profFun <- match.profFun(object)
@@ -1389,8 +875,8 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     invisible(rmat)
 })
 
-setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
-
+############################################################
+## plotPeaks
 setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
     if (missing(figs)) {
@@ -1418,7 +904,8 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
     }
 })
 
-setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
+############################################################
+## getEIC
 setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
               FUN <- getOption("BioC")$xcms$getEIC.method
               if(FUN == "getEICOld"){
@@ -1430,134 +917,8 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 
               }
           })
 
-## that's the original getEIC version.
-setGeneric("getEICOld", function(object, ...) standardGeneric("getEICOld"))
-setMethod("getEICOld", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
-    ## if mzrange and rtrange is not provided use the full range.
-    if(missing(mzrange)){
-        mzrange <- matrix(object@mzrange, nrow=1)
-        colnames(mzrange) <- c("mzmin", "mzmax")
-    }
-    if(is.null(rtrange)){
-        rtrange <- matrix(range(object@scantime), nrow=1)
-        colnames(rtrange) <- c("rtmin", "rtmax")
-    }
-    profFun <- match.profFun(object)
-    if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
-        mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
-
-### Create EIC buffer
-    mrange <- range(mzrange)
-    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
-    bufsize <- min(100, length(mass))
-    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
-    bufidx <- integer(length(mass))
-    idxrange <- c(1, bufsize)
-    bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
-
-    if (missing(rtrange))
-        eic <- matrix(nrow = nrow(mzrange), ncol = ncol(buf))
-    else
-        eic <- vector("list", nrow(rtrange))
-
-    for (i in order(mzrange[,1])) {
-        imz <- findRange(mass, c(mzrange[i,1]-.5*step, mzrange[i,2]+.5*step), TRUE)
-### Update EIC buffer if necessary
-        if (bufidx[imz[2]] == 0) {
-            bufidx[idxrange[1]:idxrange[2]] <- 0
-            idxrange <- c(max(1, min(imz[1], length(mass)-bufsize+1)), min(bufsize+imz[1]-1, length(mass)))
-            bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
-                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
-                           TRUE, object@profparam)
-        }
-        if (missing(rtrange)) {
-            eic[i,] <- colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])
-        } else {
-            eic[[i]] <- matrix(c(object@scantime, colMax(buf[bufidx[imz[1]:imz[2]],,drop=FALSE])),
-                               ncol = 2)[object@scantime >= rtrange[i,1] & object@scantime <= rtrange[i,2],,drop=FALSE]
-            colnames(eic[[i]]) <- c("rt", "intensity")
-        }
-    }
-
-    invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
-                  rt = "raw", groupnames = character(0)))
-
-})
-
-## what's different in this method?
-## 1) we're not (re-) calculating the profile matrix if it already exists and if the step argument
-##    is the same.
-## 2) by not using the buffer with the fixed (max) size of 100 we're no longer limited to small m/z
-##    ranges, thus we can use the method to extract the EIC for the full m/z range (i.e. the base
-##    peak chromatogram BPC).
-## 3) the method might be slower.
-setGeneric("getEICNew", function(object, ...) standardGeneric("getEICNew"))
-setMethod("getEICNew", "xcmsRaw", function(object, mzrange, rtrange = NULL,
-                                           step = 0.1, BPPARAM = bpparam()) {
-    ## if mzrange and rtrange is not provided use the full range.
-    if(missing(mzrange)){
-        if(length(object@mzrange) == 2){
-            mzrange <- matrix(object@mzrange, nrow=1)
-        }else{
-            mzrange <- matrix(c(min(object@env$mz), max(object@env$mz)), nrow=1)
-        }
-        colnames(mzrange) <- c("mzmin", "mzmax")
-    }
-    if(is.null(rtrange)){
-        rtrange <- matrix(range(object@scantime), nrow=1)
-        colnames(rtrange) <- c("rtmin", "rtmax")
-    }
-    ## rtrange and mzrange have to have the same number of rows!
-    if(nrow(rtrange)!=nrow(mzrange)){
-        stop("rtrange and mzrange have to have the same number of rows!")
-    }
-    profFun <- match.profFun(object)
-    if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
-        mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
-
-    ## check if we have the profile and if, if the profile step fits the step...
-    if(any(names(object@env) == "profile" )){
-        if(profStep(object) != step){
-            ## delete that profile matrix since the step differs.
-            rm(list="profile", envir=object@env)
-        }
-    }
-
-    mass <- seq(floor(min(object@env$mz)/step)*step,
-                ceiling(max(object@env$mz)/step)*step, by = step)
-    ## check if we've got already the profile matrix available, if yes, we don't have to
-    ## re-calculate anything.
-    if(!any(names(object@env) == "profile")){
-        ## calculate the profile matrix.
-        object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                      object@scanindex, length(mass), mass[1],
-                                      mass[length(mass)], TRUE, object@profparam)
-    }
-
-    ## once we've got the full profile matrix we go on and extract the EICs.
-    parms <- vector("list", length=nrow(rtrange))
-    for(i in 1:length(parms)){
-        parms[[i]] <- list( mzrange=mzrange[i, ], rtrange=rtrange[i, ] )
-    }
-    ## check if we could run the code on multiple cpus...
-    eic <- bplapply(parms, FUN=function(z){
-                      imz <- findRange(mass, c(z$mzrange[1]-.5*step, z$mzrange[2]+0.5*step), TRUE)
-                      irt <- which(object@scantime >= z$rtrange[1] & object@scantime <= z$rtrange[2])
-                      e <- matrix(c(object@scantime[irt],
-                                    colMax(object@env$profile[imz[1]:imz[2], irt, drop=FALSE])), ncol=2)
-                      colnames(e) <- c("rt", "intensity")
-                      return(e)
-                  }, BPPARAM=BPPARAM)
-
-    invisible(new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
-                  rt = "raw", groupnames = character(0)))
-})
-
-
-setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
-
+############################################################
+## rawMat
 setMethod("rawMat", "xcmsRaw", function(object,
                                         mzrange = numeric(),
                                         rtrange = numeric(),
@@ -1603,8 +964,8 @@ setMethod("rawMat", "xcmsRaw", function(object,
           intensity = y)
 })
 
-setGeneric("plotRaw", function(object, ...) standardGeneric("plotRaw"))
-
+############################################################
+## plotRaw
 setMethod("plotRaw", "xcmsRaw", function(object,
                                          mzrange = numeric(),
                                          rtrange = numeric(),
@@ -1638,61 +999,46 @@ setMethod("plotRaw", "xcmsRaw", function(object,
     invisible(raw)
 })
 
-setGeneric("profMz", function(object) standardGeneric("profMz"))
-
+############################################################
+## profMz
 setMethod("profMz", "xcmsRaw", function(object) {
-
     object@mzrange[1]+profStep(object)*(0:(dim(object@env$profile)[1]-1))
 })
 
-setGeneric("profMethod", function(object) standardGeneric("profMethod"))
-
+############################################################
+## profMethods
 setMethod("profMethod", "xcmsRaw", function(object) {
-
     object@profmethod
 })
-
 .profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
                        binlinbase = "profBinLinBaseM", bin = "profBinM")
-
-setGeneric("profMethod<-", function(object, value) standardGeneric("profMethod<-"))
-
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
     if (! (value %in% names(.profFunctions)))
         stop("Invalid profile method")
-
     object@profmethod <- value
-
     profStep(object) <- profStep(object)
-
     object
 })
 
-setGeneric("profStep", function(object) standardGeneric("profStep"))
-
+############################################################
+## profStep
 setMethod("profStep", "xcmsRaw", function(object) {
-
     if (is.null(object@env$profile))
         0
     else
         diff(object@mzrange)/(nrow(object@env$profile)-1)
 })
-
-setGeneric("profStep<-", function(object, value) standardGeneric("profStep<-"))
-
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 
     if ("profile" %in% ls(object@env))
         rm("profile", envir = object@env)
     if (!value)
         return(object)
-
     if (length(object@env$mz)==0) {
         warning("MS1 scans empty. Skipping profile matrix calculation.")
         return(object)
     }
-
     minmass <- round(min(object@env$mz)/value)*value
     maxmass <- round(max(object@env$mz)/value)*value
 
@@ -1701,14 +1047,12 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
     object@env$profile <- profFun(object@env$mz, object@env$intensity,
                                   object@scanindex, num, minmass, maxmass,
                                   FALSE, object@profparam)
-
     object@mzrange <- c(minmass, maxmass)
     return(object)
 })
 
-
-setGeneric("profStepPad<-", function(object, value) standardGeneric("profStepPad<-"))
-
+############################################################
+## profStepPad
 setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
 
     if ("profile" %in% ls(object@env))
@@ -1720,9 +1064,7 @@ setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
         warning("MS1 scans empty. Skipping profile matrix calculation.")
         return(object)
     }
-
     mzrange <- range(object@env$mz)
-
     ## calculate the profile matrix with whole-number limits
     minmass <- floor(mzrange[1])
     maxmass <- ceiling(mzrange[2])
@@ -1732,21 +1074,20 @@ setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
     object@env$profile <- profFun(object@env$mz, object@env$intensity,
                                   object@scanindex, num, minmass, maxmass,
                                   FALSE, object@profparam)
-
     object@mzrange <- c(minmass, maxmass)
     return(object)
 })
 
-setGeneric("profMedFilt", function(object, ...) standardGeneric("profMedFilt"))
-
+############################################################
+## profMedFilt
 setMethod("profMedFilt", "xcmsRaw", function(object, massrad = 0, scanrad = 0) {
 
     contdim <- dim(object@env$profile)
     object@env$profile <- medianFilter(object@env$profile, massrad, scanrad)
 })
 
-setGeneric("profRange", function(object, ...) standardGeneric("profRange"))
-
+############################################################
+## profRange
 setMethod("profRange", "xcmsRaw", function(object,
                                            mzrange = numeric(),
                                            rtrange = numeric(),
@@ -1815,8 +1156,8 @@ setMethod("profRange", "xcmsRaw", function(object,
          rtrange = rtrange, timelab = timelab)
 })
 
-setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
-
+############################################################
+## rawEIC
 setMethod("rawEIC", "xcmsRaw", function(object,
                                         mzrange = numeric(),
                                         rtrange = numeric(),
@@ -1841,8 +1182,8 @@ setMethod("rawEIC", "xcmsRaw", function(object,
     .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
-setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
-
+############################################################
+## plotEIC
 setMethod("plotEIC", "xcmsRaw", function(object,
                                          mzrange = numeric(),
                                          rtrange = numeric(),
@@ -1863,9 +1204,8 @@ setMethod("plotEIC", "xcmsRaw", function(object,
     invisible(points)
 })
 
-
-setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
-
+############################################################
+## rawMZ
 setMethod("rawMZ", "xcmsRaw", function(object,
                                        mzrange = numeric(),
                                        rtrange = numeric(),
@@ -1890,9 +1230,8 @@ setMethod("rawMZ", "xcmsRaw", function(object,
     .Call("getMZ",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
-
-setGeneric("findmzROI", function(object, ...) standardGeneric("findmzROI"))
-
+############################################################
+## findmzROI
 setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange=c(1,length(object@scantime)),dev, minCentroids, prefilter=c(0,0), noise=0){
 
     scanrange[1] <- max(1,scanrange[1])
@@ -1957,8 +1296,8 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
     return(ROIs)
 })
 
-setGeneric("findKalmanROI", function(object, ...) standardGeneric("findKalmanROI"))
-
+############################################################
+## findKalmanROI
 setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
                                                scanrange=c(1,length(object@scantime)), minIntensity,
                                                minCentroids, consecMissedLim, criticalVal, ppm,  segs, scanBack){
@@ -1979,8 +1318,8 @@ setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
           as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
 })
 
-setGeneric("findPeaks.massifquant", function(object, ...) standardGeneric("findPeaks.massifquant"))
-
+############################################################
+## findPeaks.massifquant
 setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
                                                        prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                        fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
@@ -2042,9 +1381,8 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth
     return(invisible(featlist));
 })
 
-
-setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
-
+############################################################
+## isCentroided
 setMethod("isCentroided", "xcmsRaw", function(object){
     if (length(getScan(object,length(object@scantime) / 2)) >2 ) {
         quantile(diff(getScan(object,length(object@scantime) / 2)[,"mz"]),.25)  > 0.025
@@ -2053,68 +1391,8 @@ setMethod("isCentroided", "xcmsRaw", function(object){
     }
 })
 
-split.xcmsRaw <- function(x, f, drop = TRUE, ...)
-{
-    if (length(x@msnLevel)>0)
-        warning ("MSn information will be dropped")
-
-    if (!is.factor(f))
-        f <- factor(f)
-
-    scanidx <- unclass(f)
-
-    lcsets <- vector("list", length(levels(f)))
-    names(lcsets) <- levels(f)
-
-    for (i in unique(scanidx)) {
-        lcsets[[i]] <- x
-
-        lcsets[[i]]@env <- new.env(parent=.GlobalEnv)
-
-        lcsets[[i]]@tic = x@tic[scanidx == i]
-        lcsets[[i]]@scantime = x@scantime[scanidx == i]
-        lcsets[[i]]@polarity = x@polarity[scanidx == i]
-        lcsets[[i]]@acquisitionNum = x@acquisitionNum[scanidx == i]
-        lcsets[[i]]@mzrange = x@mzrange[scanidx == i]
-
-        startindex = x@scanindex[which(scanidx == i)]+1
-
-        endindex = x@scanindex[which(scanidx == i) +1]
-        endindex[which(is.na(endindex))] <- length(x@env$mz)
-
-        if (length(endindex) > 1) {
-
-            scanlength <- endindex-startindex+1
-
-            lcsets[[i]]@scanindex <- as.integer(c(0, cumsum(scanlength[1:length(scanlength)-1])))
-            ptidx <- unlist(sequences(cbind(startindex, endindex)))
-        } else {
-            ## Single Scan
-            ptidx <- 0:endindex
-            lcsets[[i]]@scanindex <- as.integer(0)
-        }
-
-        lcsets[[i]]@env$mz <- x@env$mz[ptidx]
-        lcsets[[i]]@env$intensity <- x@env$intensity[ptidx]
-
-        profStep(lcsets[[i]]) <- profStep(x)
-    }
-
-    if (drop)
-        lcsets <- lcsets[seq(along = lcsets) %in% scanidx]
-
-    lcsets
-}
-
-sequences <- function(seqs) {
-    apply(seqs, 1, FUN=function(x) {x[1]:x[2]})
-}
-
-match.profFun <- function(object) {
-    match.fun(.profFunctions[[profMethod(object)]])
-}
-
-setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms"))
+############################################################
+## msnparent2ms
 setMethod("msnparent2ms", "xcmsRaw", function(object) {
     xr <- new("xcmsRaw")
 
@@ -2128,7 +1406,8 @@ setMethod("msnparent2ms", "xcmsRaw", function(object) {
     xr
 })
 
-setGeneric("msn2ms", function(object, ...) standardGeneric("msn2ms"))
+############################################################
+## msn2ms
 setMethod("msn2ms", "xcmsRaw", function(object) {
 
     object@tic <- rep(0, length(object@msnAcquisitionNum)) ##
@@ -2143,7 +1422,8 @@ setMethod("msn2ms", "xcmsRaw", function(object) {
 
 })
 
-setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
+############################################################
+## deepCopy
 setMethod("deepCopy", "xcmsRaw", function(object) {
 
     x <- object
@@ -2156,11 +1436,10 @@ setMethod("deepCopy", "xcmsRaw", function(object) {
     invisible(x)
 })
 
-
+############################################################
+## levelplot
 ## levelplot for xcmsRaw objects; contains code from the image method, but uses the levelplot
 ## from the lattice package.
-if(!isGeneric("levelplot"))
-    setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 setMethod("levelplot", "xcmsRaw", function(x, log=TRUE,
                                            col.regions=colorRampPalette(brewer.pal(9, "YlOrRd"))(256), ...){
     ## some code taken from plotSurf...
@@ -2202,8 +1481,9 @@ setMethod("levelplot", "xcmsRaw", function(x, log=TRUE,
     plt
 })
 
-## the profinfo for the xcmsSet object.
-setMethod("profinfo", "xcmsRaw", function(object){
+############################################################
+## profinfo
+setMethod("profinfo", "xcmsRaw", function(object) {
               pinfo <- object@profparam
               ## fill with additional method and step.
               pinfo$method <- profMethod(object)
@@ -2211,8 +1491,9 @@ setMethod("profinfo", "xcmsRaw", function(object){
               return(pinfo)
           })
 
-## method to get the scanrange.
-setMethod("scanrange", "xcmsRaw", function(object){
+############################################################
+## scanrange
+setMethod("scanrange", "xcmsRaw", function(object) {
               if(.hasSlot(object, "scanrange")){
                   srange <- object@scanrange
                   if(length(srange) == 0){
@@ -2222,21 +1503,23 @@ setMethod("scanrange", "xcmsRaw", function(object){
                   }
                   return(srange)
               }else{
-                  warning("No slot scanrange available, returning NULL.")
+                  warning("No slot scanrange available, consider updating the",
+                          " object using the 'updateObject' method.")
                   return(NULL)
               }
           })
-setReplaceMethod("scanrange", "xcmsRaw", function(object, value){
+setReplaceMethod("scanrange", "xcmsRaw", function(object, value) {
                      if(.hasSlot(object, "scanrange")){
                          object@scanrange <- value
                      }else{
-                         warning("Object has no slot scanrange.")
+                         warning("Object has no slot scanrange, condider updating",
+                                 " the object using the 'updateObject' method.")
                      }
                      object
                  })
 
-
-## method to get the mslevel.
+############################################################
+## mslevel
 setMethod("mslevel", "xcmsRaw", function(object){
               if(.hasSlot(object, "mslevel")){
                   mlevel <- object@mslevel
@@ -2247,7 +1530,8 @@ setMethod("mslevel", "xcmsRaw", function(object){
                   }
                   return(object@mslevel)
               }else{
-                  warning("No slot mslevel available, returning NULL.")
+                  warning("No slot mslevel available, consider updating the",
+                          " object using the 'updateObject' method.")
                   return(NULL)
               }
           })
@@ -2255,8 +1539,504 @@ setReplaceMethod("mslevel", "xcmsRaw", function(object, value){
                      if(.hasSlot(object, "mslevel")){
                          object@mslevel <- value
                      }else{
-                         warning("Object has no slot mslevel.")
+                         warning("Object has no slot mslevel, consider updating",
+                                 " the object using the 'updateObject' method.")
                      }
                      object
                  })
+
+############################################################
+## plotScan
+setMethod("plotScan", "xcmsRaw", function(object, scan, mzrange = numeric(),
+                                          ident = FALSE)
+      {
+          if (scan<1 || scan>length(object@scanindex) ) {
+              warning("scan out of range")
+              return()
+          }
+
+          ## handle last spectrum
+          if (scan == length(object@scanindex)) {
+              followingScanIndex <- length(object@env$mz)
+          } else {
+              followingScanIndex <- object@scanindex[scan+1]
+          }
+
+          ## hendle empty spectra
+          if (object@scanindex[scan] == length(object@env$mz) ||
+              object@scanindex[scan] == followingScanIndex) {
+              warning("empty scan")
+              return()
+          }
+
+          idx <- (object@scanindex[scan]+1):min(followingScanIndex,
+                                                length(object@env$mz), na.rm=TRUE)
+          if (length(mzrange) >= 2) {
+              mzrange <- range(mzrange)
+              idx <- idx[object@env$mz[idx] >= mzrange[1] & object@env$mz[idx] <= mzrange[2]]
+          }
+          points <- cbind(object@env$mz[idx], object@env$intensity[idx])
+          title = paste("Mass Spectrum: ", round(object@scantime[scan], 1),
+          " seconds (scan ", scan, ")", sep = "")
+          plot(points, type="h", main = title, xlab="m/z", ylab="Intensity")
+
+          if (ident)
+              return(identify(points, labels = round(points[,1], 1)))
+
+          invisible(points)
+      })
+
+############################################################
+## plotSpec
+setMethod("plotSpec", "xcmsRaw", function(object, ident = FALSE,
+                                          vline = numeric(0), ...) {
+
+    sel <- profRange(object, ...)
+
+    title = paste("Averaged Mass Spectrum: ", sel$timelab, " (",
+    sel$scanlab, ")",  sep = "")
+    points <- cbind(profMz(object)[sel$massidx],
+                    rowMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
+    plot(points, type="l", main = title, xlab="m/z", ylab="Intensity")
+    if (length(vline))
+        abline(v = vline, col = "red")
+
+    if (ident)
+        return(identify(points, labels = round(points[,1], 1)))
+
+    invisible(points)
+})
+
+############################################################
+## plotChrom
+setMethod("plotChrom", "xcmsRaw", function(object, base = FALSE, ident = FALSE,
+                                           fitgauss = FALSE, vline = numeric(0), ...) {
+
+    sel <- profRange(object, ...)
+
+
+    if (base) {
+        title = paste("Base Peak Chromatogram: ", sel$masslab, sep = "")
+        pts <- cbind(object@scantime[sel$scanidx],
+                     colMax(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
+    }
+    else {
+        title = paste("Averaged Ion Chromatogram: ", sel$masslab, sep = "")
+        pts <- cbind(object@scantime[sel$scanidx],
+                     colMeans(object@env$profile[sel$massidx,sel$scanidx,drop=FALSE]))
+    }
+    plot(pts, type="l", main = title, xlab="Seconds", ylab="Intensity")
+    if (length(vline))
+        abline(v = vline, col = "red")
+
+    if (fitgauss) {
+        fit <- nls(y ~ SSgauss(x, mu, sigma, h), data.frame(x = pts[,1], y = pts[,2]))
+        points(pts[,1], fitted(fit), type = "l", col = "red", lwd = 2)
+        return(fit)
+    }
+
+    if (ident)
+        return(identify(pts, labels = round(pts[,1], 1)))
+
+    invisible(pts)
+})
+
+############################################################
+## image
+setMethod("image", "xcmsRaw", function(x, col = rainbow(256), ...) {
+    sel <- profRange(x, ...)
+
+    zlim <- log(range(x@env$intensity))
+
+    title <- paste("XC/MS Log Intensity Image (Profile Method: ",
+                   x@profmethod, ")", sep = "")
+    if (zlim[1] < 0) {
+        zlim <- log(exp(zlim)+1)
+        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
+              log(x@env$profile[sel$massidx, sel$scanidx]+1),
+              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
+    } else
+        image(profMz(x)[sel$massidx], x@scantime[sel$scanidx],
+              log(x@env$profile[sel$massidx, sel$scanidx]),
+              col = col, zlim = zlim, main = title, xlab="m/z", ylab="Seconds")
+})
+
+############################################################
+## plotSurf
+setMethod("plotSurf", "xcmsRaw", function(object, log = FALSE,
+                                          aspect = c(1, 1, .5), ...) {
+
+    require(rgl) || stop("Couldn't load package rgl")
+
+    sel <- profRange(object, ...)
+
+    y <- object@env$profile[sel$massidx, sel$scanidx]
+    if (log)
+        y <- log(y+max(1-min(y), 0))
+    ylim <- range(y)
+
+    x <- seq(0, aspect[1], length=length(sel$massidx))
+    z <- seq(0, aspect[2], length=length(sel$scanidx))
+    y <- y/ylim[2]*aspect[3]
+
+    colorlut <- terrain.colors(256)
+    col <- colorlut[y/aspect[3]*255+1]
+
+    rgl.clear("shapes")
+    rgl.clear("bbox")
+    rgl.surface(x, z, y, color = col, shininess = 128)
+    rgl.points(0, 0, 0, alpha = 0)
+
+    mztics <- pretty(sel$mzrange, n = 5*aspect[1])
+    rttics <- pretty(sel$rtrange, n = 5*aspect[2])
+    inttics <- pretty(c(0,ylim), n = 10*aspect[3])
+    inttics <- inttics[inttics > 0]
+
+    rgl.bbox(xat = (mztics - sel$mzrange[1])/diff(sel$mzrange)*aspect[1],
+             xlab = as.character(mztics),
+             yat = inttics/ylim[2]*aspect[3],
+             ylab = as.character(inttics),
+             zat = (rttics - sel$rtrange[1])/diff(sel$rtrange)*aspect[2],
+             zlab = as.character(rttics),
+             ylen = 0, alpha=0.5)
+})
+
+############################################################
+## getMsnScan
+setMethod("getMsnScan", "xcmsRaw", function(object, scan, mzrange = numeric()) {
+
+    if (scan < 0)
+        scan <- length(object@msnRt) + 1 + scan
+
+    idx <- seq(object@msnScanindex[scan]+1, min(object@msnScanindex[scan+1],
+                                                length(object@env$msnMz), na.rm=TRUE))
+
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        idx <- idx[object@env$msnMz[idx] >= mzrange[1] & object@env$msnMz[idx] <= mzrange[2]]
+    }
+
+    points <- cbind(mz = object@env$msnMz[idx], intensity = object@env$msnIntensity[idx])
+
+    invisible(points)
+})
+
+############################################################
+## AutoLockMass
+setMethod("AutoLockMass", "xcmsRaw", function(object) {
+    if(length(grep("xml|mzData|mzXML|mzML", object@filepath, ignore.case=TRUE)) >= 1){
+        tempFreq<-diff(which(diff(object@scantime) == 0))-1
+        idx <- which(tempFreq != floor(mean(tempFreq))) ## only needed for newer lockmass signal
+        if(is.nan(mean(tempFreq)) ){
+            dn<-density(diff(object@scantime))
+            lockMassScans <- quantile(dn$x, .75) ## hopefully always correct (?)
+            inx<-which(diff(object@scantime) >= lockMassScans) ## these seems to be some of the new files
+            return(inx)
+        }else if(all(tempFreq == mean(tempFreq)) ){
+            freqLock<-mean(tempFreq)
+        } else if(all(idx == which(tempFreq != floor(mean(tempFreq) )) )){
+            ## for the newer mzML and mzXML not sure why the change?
+            ## This means that there is only one gap :( ??
+            stop("This file is different from the normally seen files and requires special programming\n
+                        This functionality has not been implemented yet\n ")
+            ## these files seem to come either from newer MS units or/and msconvert ....
+        } else {
+            freqLock<-mean(tempFreq)
+            warning("\nLock mass frequency wasn't detected correctly", immediate.=TRUE)
+        }
+
+        if(diff(object@scantime[1:5])[1] == 0 ){
+            start<-1
+        } else{
+            start<-freqLock
+        }
+        return(makeacqNum(object, freqLock, start))
+
+    } else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
+        ## check to see if we have the X02.CDF files around
+        ## These files should be the lock mass channel
+        file02<-list.files(gsub("01.CDF", "02.CDF", object@filepath), recursive=T)
+        if(length(file02)> 0){
+            xr<-xcmsRaw(file02)
+            lockMass<-sapply(xr@scantime, function(x, object){
+                which.min(abs(object@scantime - x))
+            }, object)
+            return(lockMass)
+        } else {
+            ## we couldn't find the files so lets try to find them automatically
+            hr <- hist(diff(object@scantime), breaks=4, plot=FALSE)
+            if(length(hr$counts) > 2){
+                idx<-which(hr$counts == 0)
+                ## could have something here about which way the plot is ie cor R is - or +
+                                        # if(cor(hr$mids, hr$counts) < 0){
+                inx<-which(diff(object@scantime) >= hr$mids[(max(idx))])
+                                        # } else {
+                                        #       inx<-which()
+                                        # }
+            }else if(length(hr$counts) == 2){
+                inx<-which(diff(object@scantime) >= hr$mids[2])
+            } else {
+                stop("File appears to have been run without lock mass\n ")
+            }
+            if(length(inx) <= 1){
+                warning("\nLock mass frequency wasn't detected", immediate.=TRUE)
+                return(0)
+            }
+            ## above we're looking for scantimes that are much longer than the normal scan times
+            tempFreq<-diff(inx)-1
+            if(all(tempFreq == median(tempFreq)) ){
+                freqLock<-median(tempFreq)
+            }else{
+                freqLock<-median(tempFreq)
+                warning("Lock mass frequency wasn't detected correctly\n", immediate.=TRUE)
+            }
+
+            if(inx[1] == 0 || inx[1] == 1){
+                start<-1
+            }else{
+                start<-freqLock
+            }
+                                        #return(inx)
+            return(makeacqNum(object, freqLock, start))
+        }
+    } else{
+        stop("Couldn't detect file type\n")
+    }
+})
+
+############################################################
+## makeacqNum
+setMethod("makeacqNum", "xcmsRaw", function(object, freq, start=1) {
+
+    freq<-freq+1 ##nessary for the start at +1 and others since 1st scan is +1
+
+    acqNum<-numeric()
+    fo<-seq(from=start, to=length(object@scanindex), by=freq)
+    for(i in fo){
+        acqNum<-c(acqNum, i,i+1)
+    }
+    return(acqNum)
+})
+
+############################################################
+## stitch
+setMethod("stitch", "xcmsRaw", function(object, lockMass) {
+    if(length(grep("xml|mzData", object@filepath, ignore.case=TRUE)) >= 1){
+        type<-stitch.xml
+    } else if(length(grep("cdf", object@filepath, ignore.case=TRUE)) >= 1){
+        ## lets check to see if lockMass is one scan or two
+        if(any(diff(lockMass) == 0)){
+            type<-stitch.netCDF.new
+        }else {
+            type<-stitch.netCDF
+        }
+    } else{
+        stop("Unknown stitch method \n")
+    }
+
+    invisible(do.call(type, list(object, lockMass)))
+})
+
+############################################################
+## stitch.xml
+setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
+
+    ob<-new("xcmsRaw")
+    ob@env$mz<-object@env$mz
+    ob@env$intensity<-object@env$intensity
+    ob@scanindex<-object@scanindex
+    ob@scantime<-object@scantime
+
+    ob@acquisitionNum<-1:length(ob@scanindex)
+    ob@filepath<-object@filepath
+    ob@mzrange<-range(ob@env$mz)
+    ob@profmethod<-object@profmethod
+    ob@tic<-object@tic
+    ob@profparam<-list()
+
+    arr<-array(dim=c(2,max(diff(ob@scanindex)), length(ob@scanindex)))
+    if(lockMass[1] == 1){
+        lockMass<-lockMass[3:length(lockMass)]
+    }
+    lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+    if((lockMass[nrow(lockMass),2]+2) > length(ob@scanindex)){
+        lockMass<-lockMass[1:(nrow(lockMass)-1),]
+    }
+
+    for(i in 1:(length(ob@scanindex)-1)){
+        if(any(i == lockMass[,1])){
+            arr[1,,i] <-c(object@env$mz[(object@scanindex[(i-1)]+1):object@scanindex[i]],
+                          rep(NA, (max(diff(object@scanindex))-
+                                   length((object@scanindex[(i-1)]+1):object@scanindex[i])) ))
+
+            arr[2,,i] <-c(object@env$intensity[(object@scanindex[(i-1)]+1):object@scanindex[i]],
+                          rep(NA, (max(diff(object@scanindex)) -
+                                   length((object@scanindex[(i-1)]+1):object@scanindex[i])) ))
+
+        } else if(any(i == lockMass[,2])){
+            arr[1,,i] <-c(object@env$mz[(object@scanindex[i+1]+1):object@scanindex[(i+2)]],
+                          rep(NA, (max(diff(object@scanindex)) -
+                                   length((object@scanindex[i+1]+1):object@scanindex[(i+2)])) ))
+
+            arr[2,,i] <-c(object@env$intensity[(object@scanindex[i+1]+1):object@scanindex[(i+2)]],
+                          rep(NA, (max(diff(object@scanindex)) -
+                                   length((object@scanindex[i+1]+1):object@scanindex[(i+2)])) ))
+
+        } else{
+            arr[1,,i] <-c(object@env$mz[(object@scanindex[i]+1):object@scanindex[i+1]],
+                          rep(NA, (max(diff(object@scanindex))-
+                                   length((object@scanindex[i]+1):object@scanindex[i+1])) ))
+
+            arr[2,,i] <-c(object@env$intensity[(object@scanindex[i]+1):object@scanindex[i+1]],
+                          rep(NA, (max(diff(object@scanindex)) -
+                                   length((object@scanindex[i]+1):object@scanindex[i+1])) ))
+        }
+        ## mz is in 1; Intensity is in 2
+        ##remake scanindex
+        if(i == 1){
+            ob@scanindex[i]<-as.integer(0)
+
+        }else if(i == length(ob@scanindex)-1){
+            ob@scanindex[i]<-as.integer(length(na.omit(arr[1,,(i-1)]))+ob@scanindex[(i-1)])
+            ob@scanindex[i+1]<-as.integer(length(na.omit(arr[1,,i]))+ob@scanindex[i])
+                                        #			ob@scanindex[i+1]<-as.integer(length(ob@env$mz))
+        }else{
+            ob@scanindex[i]<-as.integer(length(na.omit(arr[1,,(i-1)]))+ob@scanindex[(i-1)])
+        }
+    }
+
+    NAidx<-is.na(arr[1,,])
+    ob@env$mz<-as.numeric(arr[1,,][!NAidx])
+    ob@env$intensity<-as.numeric(arr[2,,][!NAidx])
+    ob<-remakeTIC(ob) ## remake TIC
+
+    return(ob)
+})
+
+############################################################
+## stitch.netCDF
+setMethod("stitch.netCDF", "xcmsRaw", function(object, lockMass) {
+    if(length(lockMass) == 0 | all(lockMass == 0)){
+        return(object)
+    }
+
+    ob<-new("xcmsRaw")
+
+    ob@filepath<-object@filepath
+    ob@mzrange<-range(ob@env$mz)
+    ob@profmethod<-object@profmethod
+    ob@profparam<-list()
+
+    arr<-array(dim=c(2,max(diff(object@scanindex)), (length(object@scanindex)+length(lockMass)) ))
+    ob@scanindex <- integer(length=length(arr[1,1,]))
+    ob@acquisitionNum<-1:length(ob@scanindex)
+
+    if(lockMass[1] == 1){
+        lockMass<-lockMass[3:length(lockMass)]
+    }
+    lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+    if((lockMass[nrow(lockMass),2]+2) > length(ob@scanindex)){
+        lockMass<-lockMass[1:(nrow(lockMass)-1),]
+    } ## remove the last lock mass scan if it's at the end of the run
+
+    add<-0
+    arrMax<-length(arr[1,,1])
+    scanIx<-integer(length(arr[1,1,]))
+    for(i in 1:length(object@scanindex)){
+                                        #		if((i+add) > length(object@scanindex)){
+                                        #			break
+                                        #		}
+        scan<-getScan(object, i)
+        arr[1,,i+add]<- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+        arr[2,,i+add]<- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+        scanIx[(i+add)+1]<- (scanIx[(i+add)])+nrow(scan)
+        ##proably going to need a cut at the end of scanIx +1 problem
+
+        if(any(i == lockMass[,1])){
+            arr[1,,i+1+add]<- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+            arr[2,,i+1+add]<- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+            scanIx[(i+add)+2]<- (scanIx[1+i+add])+nrow(scan)
+
+            scan<-getScan(object, i+1)
+            arr[1,,i+2+add]<- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+            arr[2,,i+2+add]<- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+            scanIx[(i+add)+3]<- (scanIx[(i+2)+add])+nrow(scan)
+
+            add<-add+2
+        }
+    }
+
+    NAidx<-is.na(arr[1,,])
+    ob@env$mz<-as.numeric(arr[1,,][!NAidx])
+    ob@env$intensity<-as.numeric(arr[2,,][!NAidx])
+    ##remake scanindex
+                                        #	scanInx<- as.integer(apply(arr[1,,], 2, function(x){
+                                        #		inx<-is.na(x)
+                                        #		length(x[!inx]) ## need to add these length together
+                                        #	}))
+    ob@scanindex<-as.integer(scanIx)
+    ob@scantime <- sapply(1:length(ob@scanindex), function(x, time){
+        time*x
+    }, mean(diff(object@scantime)))
+    ob<-remakeTIC(ob) ## remake TIC
+
+    return(ob)
+})
+
+############################################################
+## stitch.netCDF.new
+setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
+    if(length(lockMass) == 0 | all(lockMass == 0)){
+        return(object)
+    }
+
+    ob<-new("xcmsRaw")
+
+    ob@filepath<-object@filepath
+    ob@mzrange<-range(ob@env$mz)
+    ob@profmethod<-object@profmethod
+    ob@profparam<-list()
+
+    arr<-array(dim=c(2,max(diff(object@scanindex)), (length(object@scanindex)+length(lockMass)) ))
+    ob@scanindex <- integer(length=length(arr[1,1,]))
+    ob@acquisitionNum<-1:length(ob@scanindex)
+
+    if(lockMass[1] == 1){
+        lockMass<-lockMass[2:length(lockMass)]
+    }
+                                        # lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+
+    add<-0
+    arrMax<-length(arr[1,,1])
+    scanIx<-integer(length(arr[1,1,]))
+    for(i in 1:length(object@scanindex)){
+        scan<-getScan(object, i)
+        arr[1,,i+add]<- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+        arr[2,,i+add]<- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+        scanIx[(i+add)+1]<- (scanIx[(i+add)])+nrow(scan)
+
+        if(any(i == lockMass)){
+            arr[1,,i+1+add]  <- c(scan[,"mz"], rep(NA, (arrMax-length(scan[,"mz"])) ))
+            arr[2,,i+1+add]  <- c(scan[,"intensity"], rep(NA, (arrMax-length(scan[,"intensity"])) ))
+            scanIx[(i+add)+2]<- (scanIx[1+i+add])+nrow(scan)
+
+            add<-add+1
+            ## for the moment lets be dirty and add the scan before
+            ## upgrade later to 1/2 and 1/2 from each scan
+        }
+    }
+
+    NAidx<-is.na(arr[1,,])
+    ob@env$mz<-as.numeric(arr[1,,][!NAidx])
+    ob@env$intensity<-as.numeric(arr[2,,][!NAidx])
+    ## above is to remove any NA buffers from the array
+
+    ob@scanindex<-as.integer(scanIx)
+    ob@scantime <- sapply(1:length(ob@scanindex), function(x, time){
+        time*x
+    }, mean(diff(object@scantime))) ## remake the scantime vector
+    ob<-remakeTIC(ob) ## remake TIC
+
+    return(ob)
+})
 

@@ -1,10 +1,32 @@
+CHANGES IN VERSION 1.49.3
+-------------------------
+
+NEW FEATURE:
++ updateObject method for xcmsSet.
+
+USER VISIBLE CHANGES:
++ xcms uses now BiocParallel for parallel processing. All other parallel
+  processing functions have been deprecated.
+
+BUG FIXES:
++ Added missing package imports.
++ Fix bug in fillPeaksChromPar referencing a non-existing variables i and
+  object.
++ Fix bug in group.nearest: variable scoreList was mis-spelled (coreList).
++ Remove all DUP = FALSE from the .C calls as they are ignored anyways.
+
+OTHER CHANGES
++ Re-organization of class, function and method definitions in R-files.
++ Use roxygen2 to manage the DESCRIPTION's collate field.
+
+
 CHANGES IN VERSION 1.49.2
 -------------------------
 
 NEW FEATURE:
 
-+ Initial support for exporint mzTab format. Since Changes are 
-  still to be expected, xcms:::writeMzTab() is not yet exported. 
++ Initial support for exporint mzTab format. Since Changes are
+  still to be expected, xcms:::writeMzTab() is not yet exported.
 
 CHANGES IN VERSION 1.49.1
 -------------------------
@@ -12,12 +34,12 @@ CHANGES IN VERSION 1.49.1
 NEW FEATURE:
 
 + The raw CDF/mzXML/mzData/mzML is assumed to have scans sorted by m/z.
-  Instead of throwing an "m/z sort assumption violated !" error, 
-  the data is re-read and on-demand sorted by m/z. 
+  Instead of throwing an "m/z sort assumption violated !" error,
+  the data is re-read and on-demand sorted by m/z.
 
 CHANGES IN VERSION 1.47.3
 -------------------------
-+ Disable parallel processing in unit tests causing a timeout 
++ Disable parallel processing in unit tests causing a timeout
   on BioC build machines
 
 CHANGES IN VERSION 1.47.2

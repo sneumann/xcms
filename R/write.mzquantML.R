@@ -1,9 +1,8 @@
-setGeneric("write.mzQuantML", function(object, ...) standardGeneric("write.mzQuantML"))
 
 setMethod("write.mzQuantML", "xcmsSet", function(object, filename) {
 
     require(XML) || stop("We need library(XML) to write mzQuantML")
-    
+
     mzq <- buildMzq(object)
 
     ## the sink() workaround seems to be needed for proper indenting.
@@ -16,7 +15,7 @@ verify.mzQuantML <- function(filename,
                              xsdfilename=system.file('unitTests/mzQuantML_1_0_0.xsd', package = "xcms")) {
     xsd = xmlTreeParse(xsdfilename, isSchema =TRUE, useInternal = TRUE)
     doc = xmlInternalTreeParse(filename)
-    xmlSchemaValidate(xsd, doc)    
+    xmlSchemaValidate(xsd, doc)
 }
 
 buildCVlist <- function() {
@@ -29,15 +28,15 @@ buildCVlist <- function() {
                              fullName="Proteomics Standards Initiative Mass Spectrometry Ontology",
                              version="2.29.0",
                              uri="http://psidev.cvs.sourceforge.net/*checkout*/psidev/psi/psi-ms/mzML/controlledVocabulary/psi-ms.obo")),
-        
-        
+
+
         newXMLNode("Cv", attrs=c(
                              id="UO",
                              fullName="Unit Ontology",
                              version="1.20",
                              uri="http://obo.cvs.sourceforge.net/obo/obo/ontology/phenotype/unit.obo")))
-    
-    addChildren(CvList, kids=CVs)   
+
+    addChildren(CvList, kids=CVs)
 }
 
 buildAuditCollection <- function() {
@@ -60,7 +59,7 @@ buildAuditCollection <- function() {
 buildCvParams <- function(cvparams) {
     lapply(cvparams, function(cv) {
         newXMLNode("cvParam", attrs=cv)
-    })               
+    })
 }
 
 buildAnalysisSummary <- function() {
@@ -68,7 +67,7 @@ buildAnalysisSummary <- function() {
                .children=buildCvParams(
                    list(c(accession="MS:1001834", cvRef="PSI-MS", name="LC-MS label-free quantitation analysis"),
                         c(accession="MS:1002019", cvRef="PSI-MS", name="label-free raw feature quantitation",  value="false"))
-                   )) 
+                   ))
 }
 
 buildInputFiles <- function(xs) {
@@ -81,7 +80,7 @@ buildInputFiles <- function(xs) {
                    .children=newXMLNode("RawFile",
                        attrs=c(location=x, name=name, id=paste("rf_", i, sep=""))))
     })
-    newXMLNode("InputFiles", .children=rfgs)    
+    newXMLNode("InputFiles", .children=rfgs)
 }
 
 buildSoftwareList <- function() {
@@ -122,7 +121,7 @@ buildAssayList <- function(xs) {
     })
     newXMLNode("AssayList",
                attrs=c(id="AssayList_1"),
-               .children=assays)        
+               .children=assays)
 }
 
 buildStudyVariableList <- function(xs) {
@@ -133,7 +132,7 @@ buildStudyVariableList <- function(xs) {
         sv <- svlevels[i]
         ##        assays <- paste (sampnames(xs)[sampclass(xs) == sv], collapse="-")
         assay_ref <- paste("assay", which(sc == sv), sep="_", collapse=" ")
-        
+
         newXMLNode("StudyVariable",
                    attrs=c(
                        name=svlevels[i],
@@ -147,7 +146,7 @@ buildStudyVariableList <- function(xs) {
     ## and written to mzQuantML in a column-wise fashion
     ##
     p <- cbind(phenoData(xs), "dummy")
-    
+
     phenoVariables <- list()
     if (ncol(p)>1) {
         phenoVariables <- unlist(lapply(seq(1, ncol(p)), function(j) {
@@ -156,7 +155,7 @@ buildStudyVariableList <- function(xs) {
             StudyVariables <- lapply (seq(1,length(svlevels)), function(i) {
                 sv <- svlevels[i]
                 assay_ref <- paste("assay", which(sc == sv), sep="_", collapse=" ")
-                
+
                 newXMLNode("StudyVariable",
                            attrs=c(
                                name=svlevels[i],
@@ -165,7 +164,7 @@ buildStudyVariableList <- function(xs) {
             })
         }))
     }
-    
+
     newXMLNode("StudyVariableList",
                .children=c(StudyVariables, phenoVariables))
 
@@ -175,29 +174,29 @@ buildStudyVariableList <- function(xs) {
 buildFeatureList <- function(xs, parent) {
     sn <- sampnames(xs)
     pks <- cbind(id=paste("Feature", 1:nrow(peaks(xs)), sep="_"), peaks(xs)[, c("mz", "rt", "sample")])
-    
-    Features <- apply(pks, MARGIN=1, FUN=function(p) {        
+
+    Features <- apply(pks, MARGIN=1, FUN=function(p) {
         newXMLNode("Feature", attrs=c(p[c("id", "rt", "mz")], charge="null"))
     })
-    
+
     snum <- pks[,"sample"]
     unique_snum <- unique(snum)
     idxList <- lapply(unique_snum, function(x) {
         which(snum==x)
     })
-    
+
     dummy <- lapply(1:length(idxList), function(i) {
-        
+
         parent$addNode(newXMLNode("FeatureList",
                                   attrs=c(id=paste("FeatureList_", i, sep=""),
                                       rawFilesGroup_ref=paste("rfg_", i, sep="")),
                                   .children=Features[idxList[[i]]]))
-    })    
+    })
 }
 
 buildSmallMoleculeList <- function(xs) {
 
-            
+
     feature_refs <- apply(groupval(xs, value="index"), MARGIN=1, FUN=function(x) {paste("Feature", x, sep="_", collapse=" ")})
     data <- cbind(groupnames(xs),
                   feature_refs,
@@ -209,23 +208,23 @@ buildSmallMoleculeList <- function(xs) {
     }
 
 
-    SmallMolecules <- apply(data[,1:2], 1, FUN=function(x) {        
+    SmallMolecules <- apply(data[,1:2], 1, FUN=function(x) {
         newXMLNode("SmallMolecule",
                    attrs=c(id=x[1]),
                    .children=list(newXMLNode("Feature_refs", x[2])))
     })
-    
+
     DataType <- newXMLNode("DataType",
                            .children=buildCvParams(list(c(accession="MS:1001840",
                                cvRef="PSI-MS",
                                name="LC-MS feature intensity"))))
- 
+
     assay_ref <- paste("assay", 1:length(sampnames(xs)), sep="_", collapse=" ")
     ColumnIndex <- newXMLNode("ColumnIndex", assay_ref)
-    
+
     DataMatrix <- newXMLNode("DataMatrix",
                              .children=apply(data, MARGIN=1, FUN=function(row) {
-                                 newXMLNode("Row", 
+                                 newXMLNode("Row",
                                             paste(row[c(-1,-2)], collapse=" "),
                                             attrs=c(object_ref=row[1]))
                              }))
@@ -235,17 +234,17 @@ buildSmallMoleculeList <- function(xs) {
                                   .children=list(DataType,
                                       ColumnIndex,
                                       DataMatrix))
-    
+
     newXMLNode("SmallMoleculeList",
                attrs=c(id="SML_1"),
                .children=c(SmallMolecules,
-                   AssayQuantLayer))        
+                   AssayQuantLayer))
 }
 
 buildMzq <- function(xs) {
     mzqVersion="1.0.0"
     schemaLocation="http://psidev.info/psi/pi/mzQuantML/1.0.0 ../../../schema/mzQuantML_1_0_0.xsd"
-    
+
     mzq = xmlTree(tag="MzQuantML",
         attrs=c(
             version=mzqVersion,
@@ -254,9 +253,9 @@ buildMzq <- function(xs) {
             "xsi:schemaLocation"=schemaLocation),
         namespaces = c(
             "http://psidev.info/psi/pi/mzQuantML/1.0.0",
-            xsi="http://www.w3.org/2001/XMLSchema-instance")    
-        )    
-    
+            xsi="http://www.w3.org/2001/XMLSchema-instance")
+        )
+
     mzq$addNode(buildCVlist())
     mzq$addNode(buildAuditCollection())
     mzq$addNode(buildAnalysisSummary())
@@ -268,6 +267,6 @@ buildMzq <- function(xs) {
     mzq$addNode(buildSmallMoleculeList(xs))
 
     buildFeatureList(xs, parent=mzq)
-    
-    mzq$closeTag()                                        
+
+    mzq$closeTag()
 }

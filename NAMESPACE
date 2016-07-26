@@ -2,7 +2,7 @@ useDynLib(xcms)
 
 import("methods")
 importFrom("ProtGenerics", "peaks")
-##importFrom("BiocGenerics", "phenoData", "phenoData<-")
+importFrom("BiocGenerics", "updateObject")
 import("Biobase")
 importFrom("graphics", "plot", "image", "boxplot")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
@@ -10,6 +10,9 @@ importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
+
+importClassesFrom("S4Vectors", "Rle")
+importFrom("S4Vectors", "split")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -26,6 +29,11 @@ importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")
+
+## New imports from packages moved from Suggests to Imports:
+importFrom("multtest", "mt.teststat")
+importFrom("RANN", "nn2")
+importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 export(
        "etg",
@@ -147,6 +155,7 @@ exportMethods(
               "show",
               "sortMz",
               "stitch",
+              "updateObject",
               "write.cdf",
               "write.mzdata",
               "write.mzQuantML",

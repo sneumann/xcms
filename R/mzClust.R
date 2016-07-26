@@ -8,7 +8,7 @@ mzClust_hclust <- function(x, eppm, eabs)
             d = as.double(d),
             g = integer(length = N),
             eppm = as.double(eppm),
-            eabs = as.double(eabs),DUP = FALSE, NAOK = TRUE)$g
+            eabs = as.double(eabs), NAOK = TRUE)$g
     return(g)
 }
 
