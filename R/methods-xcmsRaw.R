@@ -1271,8 +1271,8 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
                 if(is.unsorted(scan[,"mz"])){
                     message("Scan ", i, " is unsorted. Fixing.")
                     o <- order(scan[,"mz"])
-                    start <- object@scanindex[i]
-                    end <- start+nrow(scan)
+                    start <- object@scanindex[i] + 1
+                    end <- start+nrow(scan) - 1
                     object@env$mz[start:end] <- scan[o, "mz"]
                     object@env$intensity[start:end] <- scan[o, "intensity"]
                 }
