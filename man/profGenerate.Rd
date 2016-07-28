@@ -11,8 +11,8 @@
 \alias{profMaxIdxM}
 \title{Generation of profile data}
 \description{
-  Generates profile data in a given range from an indexed pair of
-  vectors.
+  Generates profile (binned) data in a given range from an indexed pair
+  of vectors.
 }
 \usage{
 profBin(x, y, num, xstart = min(x), xend = max(x), param = list())

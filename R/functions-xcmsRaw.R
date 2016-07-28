@@ -134,6 +134,7 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
 ############################################################
 ## getEICOld
 ## that's the original getEIC version.
+## We've got a problem if step = 0! (relates to issue #39)
 getEICOld <- function(object, mzrange, rtrange = NULL, step = 0.1) {
     ## if mzrange and rtrange is not provided use the full range.
     if(missing(mzrange)){
@@ -197,6 +198,7 @@ getEICOld <- function(object, mzrange, rtrange = NULL, step = 0.1) {
 ##    ranges, thus we can use the method to extract the EIC for the full m/z range (i.e. the base
 ##    peak chromatogram BPC).
 ## 3) the method might be slower.
+## We've got a problem if step = 0! (relates to issue #39)
 getEICNew <- function(object, mzrange, rtrange = NULL,
                       step = 0.1, BPPARAM = bpparam()) {
     ## if mzrange and rtrange is not provided use the full range.
@@ -222,7 +224,10 @@ getEICNew <- function(object, mzrange, rtrange = NULL,
 
     ## check if we have the profile and if, if the profile step fits the step...
     if(any(names(object@env) == "profile" )){
-        if(profStep(object) != step){
+        pStep <- profStep(object)
+        if (length(pStep) == 0)
+            pStep <- step
+        if(pStep != step){
             ## delete that profile matrix since the step differs.
             rm(list="profile", envir=object@env)
         }

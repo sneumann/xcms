@@ -23,7 +23,9 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
       properties. If not provided, the argument \code{sclass} or the
       subdirectories in which the samples are stored will be
       used to specify sample grouping.}
-  \item{profmethod}{method to use for profile generation.}
+  \item{profmethod}{method to use for profile generation. See help on
+    \code{\link{profBin}} for a complete list of available methods and
+    their supported parameters.}
   \item{profparam}{parameters to use for profile generation.}
   \item{polarity}{filter raw data for positive/negative scans}
 	\item{lockMassFreq}{Performs correction for Waters LockMass function}
@@ -61,7 +63,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   The step size (in m/z) to use for profile generation can be submitted
   either using the \code{profparam} argument
   (e.g. \code{profparam=list(step=0.1)}) or by submitting
-  \code{step=0.1}.
+  \code{step=0.1}. By specifying a value of \code{0} the profile matrix
+  generation can be skipped.
 
   The feature/peak detection algorithm can be specified with the
   \code{method} argument which defaults to the \code{"matchFilter"}
@@ -87,6 +90,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \code{\link{findPeaks}},
   \code{\link{profStep}},
   \code{\link{profMethod}},
+  \code{\link{profBin}},
   \code{\link{xcmsPapply}}
 }
 \keyword{file}
