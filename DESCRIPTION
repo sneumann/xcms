@@ -51,6 +51,7 @@ Collate:
     'databases.R'
     'do_detectFeatures-functions.R'
     'fastMatch.R'
+    'functions-binnnig.R'
     'functions-utils.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'

@@ -199,8 +199,10 @@ void ProfBin(double *xvals, double *yvals, int *numin,
     int    i, outi = 0;
     double dx, startx, endx;
 
+    // calculate the step size
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
 
+    // fill out with 0s.
     for (i = 0; i < *numout; i++)
         out[i] = 0;
 
