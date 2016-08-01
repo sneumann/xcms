@@ -810,7 +810,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         points(corden, type = "l", col = 2)
         abline(h = 0, col = "grey")
         legend(rtrange[2], maxden, c("All", "Correction"), col = 1:2, lty = c(1,1), xjust = 1)
-        close.screen(all = TRUE)
+        close.screen(all.screens = TRUE)
     }
 
     for (i in 1:n) {
