@@ -1,6 +1,21 @@
 ## Test functions to evaluate binning of values.
 
+test_breaks <- function() {
+    library(xcms)
+    library(RUnit)
 
+    ## Test generation of breaks for binning.
+    ## o nBins
+    res <- xcms:::breaks_on_nBins(1, 10, 4)
+    checkIdentical(res, seq(1, 10, length.out = 5))
+    res <- xcms:::breaks_on_nBins(2, 8, 20)
+    checkEquals(res, seq(2, 8, length.out = 21))
+
+    ## o binSize
+    res <- xcms:::breaks_on_binSize(1, 10, 0.13)
+    checkEquals(res, c(seq(1, 10, by = 0.13), 10))
+
+}
 
 
 .test_binning <- function() {
@@ -11,28 +26,70 @@
     X <- 1:10
     Y <- 1:10
 
-    ## Specifying nBins.
-    res <- xcms:::binTest(X, Y, nBins = 5L)
-    checkEquals(res, seq(1, 10, length.out = 6))
+    ## o nBins
+    res <- xcms:::binYonX_max(X, Y, nBins = 5L)
+    checkEquals(res, c(2, 4, 6, 8, 10))
+    ##  Defining fromX, toX
+    X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
+           11, 11.124, 11.125, 11.126, 12, 13)
+    res <- xcms:::binYonX_max(X, X, nBins = 5L, binFromX = 1, binToX = 10)
+    checkEquals(res, c(2.05, 4, 6, 8, 10))
+    ##  Define fromIdx, toIdx
+    res <- xcms:::binYonX_max(X, X, nBins = 5L, fromIdx = 1, toIdx = 10)
+    xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
+    ##  This calculates 5 bins on range(X)
+    checkEquals(res, c(3, 5, 8, 10, 0)) ## because toIdx = 10 the last is 0
+    ##  Check the fromIdx and toIdx again:
+    X <- rep(1:10, 3)
+    Y <- 1:30
+    xcms:::breaks_on_nBins(1, 10, nBins = 5L)
+    ##  In this case we have to sex x
+    res <- xcms:::binYonX_max(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
+                              fromIdx = 11, toIdx = 20, sortedX = TRUE)
+    checkEquals(res, c(12, 14, 16, 18, 20))
+    ##  re-order X
+    X <- sample(X, size = length(X))
+    res <- xcms:::binYonX_max(X, X, nBins = 5L, binFromX = 1, binToX = 10)
+    checkEquals(res, c(2, 4, 6, 8, 10))
+    ## Exceptions:
+    checkException(xcms:::binYonX_max(X, X, nBins = -4))
+    checkException(xcms:::binYonX_max(X, X, nBins = 0))
+    checkException(xcms:::binYonX_max(X, X, nBins = 4, fromIdx = 0))
+    checkException(xcms:::binYonX_max(X, X, nBins = 4, toIdx = 0))
+    checkException(xcms:::binYonX_max(X, X, nBins = 4, fromIdx = 7, toIdx = 3))
+    checkException(xcms:::binYonX_max(X, X, nBins = 4, toIdx = 30))
 
-    res <- xcms:::binTest(X, Y, nBins = 5L, fromX = 2, toX = 8)
-    checkEquals(res, seq(2, 8, length.out = 6))
+    ## o binSize
+    X <- 1:10
+    res <- xcms:::binYonX_max(X, X, binSize = 0.5)
+    ##  We expect: every other bin is 0. The last value has to be 10, the first 1.
+    ## 1-1.5, 1.5-2, 2-2.5, 2.5-3, 3-3.5, 3.5-4, 4-4.5, 4.5-5, 5-5.5, 5.5-6,
+    ## 6-6.5, 6.5-7, 7-7.5, 7.5-8, 8-8.5, 8.5-9, 9-9.5. 9.5-10.
+    checkEquals(res, c(1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 10))
+    res <- xcms:::binYonX_max(X, X, binSize = 1.45)
+    ## bins:
+    ## 1-2.45, 2.45-3.9, 3.9-5.35, 5.35-6.8, 6.8-8.25, 8.25-9.7, 9.7-10
+    checkEquals(res, c(2, 3, 5, 6, 8, 9, 10))
+    res <- xcms:::binYonX_max(X, X, binSize = 1.45, binFromX = 3, binToX = 9)
+    xcms:::breaks_on_binSize(3, 9, 1.45)
+    checkEquals(res, c(4, 5, 7, 8, 9))
+    res <- xcms:::binYonX_max(X, X, binSize = 1.45, fromIdx = 3, toIdx = 10)
+    ## bins:
+    ## 1-2.45, 2.45-3.90, 3.90-5.35, 5.35-6.80, 6.80-8.25, 8.25-9.70, 9.70-10.00
+    checkEquals(res, c(0, 3, 5, 6, 8, 9, 10))
 
-    ## Test some weird stuff.
-    checkException(xcms:::binTest(X, Y, nBins = -3))
-
-    ## Specifying binSize.
-    res <- xcms:::binTest(X, Y, binSize = 2)
-
-
-
-    Test <- xcms:::binTest(as.double(X), as.double(Y), c(5L, 3L, 3L),
-                           fromX = as.double(1), toX = as.double(10))
-
-    Test <- xcms:::binTest(as.double(X), as.double(Y), 5,
-                           fromX = as.double(1.232), toX = 5.454)
-
-    Test <- xcms:::binTest(X, Y, 5, c(1, 2, 3), toX = 9)
+    ## o breaks
+    X <- 1:10
+    brks <- seq(1, 10, length.out = 5)
+    res <- xcms:::binYonX_max(X, X, breaks = brks)
+    checkEquals(res, xcms:::binYonX_max(X, X, nBins = 4L))
+    ##  same breaks but sub-setting x
+    res <- xcms:::binYonX_max(X, X, breaks = brks, fromIdx = 4, toIdx = 9)
+    checkEquals(res, c(0, 5, 7, 9))
+    ##  breaks spanning a sub-set of x
+    brks <- seq(3, 9, length.out = 5)
+    res <- xcms:::binYonX_max(X, X, breaks = brks)
+    checkEquals(res, c(4, 5, 7, 9))
 }
 
 
