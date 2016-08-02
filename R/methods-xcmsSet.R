@@ -1631,7 +1631,7 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                                             BPPARAM = bpparam()) {
               if (is.numeric(sampleidx))
                   sampleidx <- sampnames(object)[sampleidx]
-              sampidx <- match(sampleidx, sampnames(object))
+              sampidx <- match(sampleidx, sampnames(object)) ## numeric
               if (length(sampidx) == 0)
                   stop("submitted value for sampleidx outside of the available files!")
               fn <- filepaths(object)[sampidx]
@@ -1673,7 +1673,8 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                   }
                   if(rt == "corrected"){
                       ## check if there is any need to apply correction...
-                      if(all(object@rt$corrected[[i]] == object@rt$raw[[i]])){
+                      ## This includes fix for the bug reported by Aleksandr (issue 44)
+                      if(all(object@rt$corrected[[sampidx[i]]] == object@rt$raw[[sampidx[i]]])){
                           message("No need to perform retention time correction,",
                                   " raw and corrected rt are identical for ", fn[i])
                           ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
