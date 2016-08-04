@@ -27,27 +27,29 @@
  *     The bin_size is calculated as (toX - fromX) / (nBins - 1), such that the
  *     number of bins corresponds to nBins. If 1 binning is performed similarly to
  *     the profBin method.
+ * method: integer to select the aggregation method: 1: max, 2: min, 3: sum, 4: mean.
  * The function returns a list with the first element (x) being the bin
  * midpoints and the second element (y) the max y-value within each bin.
  */
-SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
-		       SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize) {
+SEXP binYonX_nBins(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
+		   SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize,
+		   SEXP initValue, SEXP method) {
   SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin = asInteger(nBins);
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
-  double from_x, to_x, *p_ans, *p_brks;
+  int the_method = asInteger(method);
+  double from_x, to_x, init_value, *p_ans, *p_brks;
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
+  init_value = REAL(initValue)[0];
 
   /* Eventually shift by a half bin_size */
   int shift_by_half_bin_size = asInteger(shiftByHalfBinSize);
 
   /* Error checks */
-  /* Check that n_bin > 0 */
   if (n_bin <= 0)
     error("'nBins' must be larger 1!");
-  // Check that from_x to_x are > 0 and < length(x)
   if (from_idx < 0 | to_idx < 0)
     error("'fromIdx' and 'toIdx' have to be >= 0!");
   if (from_idx > to_idx)
@@ -61,14 +63,37 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
   /* Calculate the breaks */
   p_brks = REAL(brks);
   _breaks_on_nBins(from_x, to_x, n_bin, p_brks, shift_by_half_bin_size);
+
   /* Do the binning. */
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
-    p_ans[i] = 0;
+    p_ans[i] = NA_REAL;
   }
-  /* max*/
-  _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-			      from_idx, to_idx);
+  switch(the_method) {
+  case 2:
+    _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 3:
+    _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 4:
+    _bin_y_on_x_with_breaks_mean(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				 from_idx, to_idx);
+    break;
+  default:
+    _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+  }
+  /* Replace NAs with the "default" value. */
+  if (!ISNA(init_value)) {
+    for(int i = 0; i < n_bin; i++) {
+      if (ISNA(p_ans[i]))
+	p_ans[i] = init_value;
+    }
+  }
+
   /* Calculate bin mid-points */
   PROTECT(bin_mids = allocVector(REALSXP, n_bin));
   _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
@@ -88,18 +113,21 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
 }
 
 /*
- * Same as binXonY_nBins_max, but the binning is defined by the binSize.
+ * Same as binYonX_nBins, but the binning is defined by the binSize.
  */
-SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
-			 SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize) {
+SEXP binYonX_binSize(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
+		     SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize,
+		     SEXP initValue, SEXP method) {
   SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin;
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
-  double bin_size, from_x, to_x, *p_ans, *p_brks;
+  int the_method = asInteger(method);
+  double bin_size, from_x, to_x, init_value, *p_ans, *p_brks;
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
   bin_size = REAL(binSize)[0];
+  init_value = REAL(initValue)[0];
   /* Eventually shift by a half bin_size */
   int shift_by_half_bin_size = asInteger(shiftByHalfBinSize);
   if (shift_by_half_bin_size > 0) {
@@ -123,13 +151,37 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
   // Calculate breaks
   p_brks = REAL(brks);
   _breaks_on_binSize(from_x, to_x, n_bin, bin_size, REAL(brks));
-  // Do the binning.
+
+  /* Do the binning. */
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
-    p_ans[i] = 0;
+    p_ans[i] = NA_REAL;
   }
-  _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-			      from_idx, to_idx);
+  switch(the_method) {
+  case 2:
+    _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 3:
+    _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 4:
+    _bin_y_on_x_with_breaks_mean(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				 from_idx, to_idx);
+    break;
+  default:
+    _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+  }
+  /* Replace NAs with the "default" value. */
+  if (!ISNA(init_value)) {
+    for(int i = 0; i < n_bin; i++) {
+      if (ISNA(p_ans[i]))
+	p_ans[i] = init_value;
+    }
+  }
+
   // Calculate bin mid-points
   PROTECT(bin_mids = allocVector(REALSXP, n_bin));
   _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
@@ -149,17 +201,19 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
 }
 
 /*
- * Same as binXonY_nBins_max, but with pre-defined breaks.
+ * Same as binYonX_nBins_max, but with pre-defined breaks.
  */
-SEXP binXonY_breaks_max(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
-			SEXP toIdx) {
+SEXP binYonX_breaks(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
+		    SEXP toIdx, SEXP initValue, SEXP method) {
   SEXP ans, bin_mids, ans_list, names;
   int n_bin;
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
-  double bin_size, from_x, to_x, *p_ans, *p_brks;
+  int the_method = asInteger(method);
+  double bin_size, from_x, to_x, init_value, *p_ans, *p_brks;
   n_bin = (LENGTH(breaks) - 1);
   p_brks = REAL(breaks);
+  init_value = REAL(initValue)[0];
 
   // Input checking
   if (n_bin < 1)
@@ -173,13 +227,37 @@ SEXP binXonY_breaks_max(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
 
   // Create output
   PROTECT(ans = allocVector(REALSXP, n_bin));
-  // Do the binning.
+
+  /* Do the binning. */
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
-    p_ans[i] = 0;
+    p_ans[i] = NA_REAL;
   }
-  _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-			      from_idx, to_idx);
+  switch(the_method) {
+  case 2:
+    _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 3:
+    _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+    break;
+  case 4:
+    _bin_y_on_x_with_breaks_mean(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				 from_idx, to_idx);
+    break;
+  default:
+    _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				from_idx, to_idx);
+  }
+  /* Replace NAs with the "default" value. */
+  if (!ISNA(init_value)) {
+    for(int i = 0; i < n_bin; i++) {
+      if (ISNA(p_ans[i]))
+	p_ans[i] = init_value;
+    }
+  }
+
   // Calculate bin mid-points
   PROTECT(bin_mids = allocVector(REALSXP, n_bin));
   _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
@@ -296,6 +374,7 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * which we're looking for values to be within the bins. This allows to
  * bin on a subset of the x/y arrays. We suppose these have been checked
  * BEFORE (i.e. both being positive and x_end_idx <= length(x)).
+ * NA handling: skips any NAs in y.
  */
 static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
@@ -316,13 +395,15 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 	 */
 	if ((x_current_value < brks[i + 1]) | (x_current_value == brks[i + 1] &
 					       i == last_bin_idx)) {
-	  /* if (x_current_value == brks[i + 1] & i == last_bin_idx) */
-	  /*   Rprintf(" We're in the last bin and the value is equal to the upper brks.\n"); */
 	  /* Check if the corresponding y value is larger than the one we have and
 	   * replace if so.
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
 	   */
-	  if (y[x_current_idx] > ans[i])
-	    ans[i] = y[x_current_idx];
+	  if (!ISNA(y[x_current_idx])) {
+	    if (ISNA(ans[i]) | (y[x_current_idx] > ans[i]))
+	      ans[i] = y[x_current_idx];
+	  }
 	} else {
 	  /* Break without incrementing the x_current_idx, thus the same value will
 	   * be evaluated for the next bin i.
@@ -335,6 +416,144 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
   }
   return;
 }
+
+static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
+					double *ans, int n_bin, int x_start_idx,
+					int x_end_idx) {
+  int x_current_idx, last_bin_idx;
+  double x_current_value;
+  last_bin_idx = n_bin - 1;
+  x_current_idx = x_start_idx;
+
+  // o Loop through the bins/brks
+  for (int i = 0; i < n_bin; i++) {
+    // loop through the x values; assumes x sorted increasingly
+    while (x_current_idx <= x_end_idx) {
+      x_current_value = x[x_current_idx];
+      if (x_current_value >= brks[i]) {
+	/* OK, now check if the value is smaller the upper border
+	 * OR if we're in the last bin, whether the value matches the upper border.
+	 */
+	if ((x_current_value < brks[i + 1]) | (x_current_value == brks[i + 1] &
+					       i == last_bin_idx)) {
+	  /*
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
+	   */
+	  if (!ISNA(y[x_current_idx])) {
+	    if (ISNA(ans[i]) | (y[x_current_idx] < ans[i]))
+	      ans[i] = y[x_current_idx];
+	  }
+	} else {
+	  /* Break without incrementing the x_current_idx, thus the same value will
+	   * be evaluated for the next bin i.
+	   */
+	  break;
+	}
+      }
+      x_current_idx++;
+    }
+  }
+  return;
+}
+
+static void _bin_y_on_x_with_breaks_sum(double *x, double *y, double *brks,
+					double *ans, int n_bin, int x_start_idx,
+					int x_end_idx) {
+  int x_current_idx, last_bin_idx;
+  double x_current_value;
+  last_bin_idx = n_bin - 1;
+  x_current_idx = x_start_idx;
+
+  // o Loop through the bins/brks
+  for (int i = 0; i < n_bin; i++) {
+    // loop through the x values; assumes x sorted increasingly
+    while (x_current_idx <= x_end_idx) {
+      x_current_value = x[x_current_idx];
+      if (x_current_value >= brks[i]) {
+	/* OK, now check if the value is smaller the upper border
+	 * OR if we're in the last bin, whether the value matches the upper border.
+	 */
+	if ((x_current_value < brks[i + 1]) | (x_current_value == brks[i + 1] &
+					       i == last_bin_idx)) {
+	  /*
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
+	   */
+	  if (!ISNA(y[x_current_idx])) {
+	    if(ISNA(ans[i])) {
+	      ans[i] = y[x_current_idx];
+	    } else {
+	      ans[i] = ans[i] + y[x_current_idx];
+	    }
+	  }
+	} else {
+	  /* Break without incrementing the x_current_idx, thus the same value will
+	   * be evaluated for the next bin i.
+	   */
+	  break;
+	}
+      }
+      x_current_idx++;
+    }
+  }
+  return;
+}
+
+static void _bin_y_on_x_with_breaks_mean(double *x, double *y, double *brks,
+					 double *ans, int n_bin, int x_start_idx,
+					 int x_end_idx) {
+  int x_current_idx, last_bin_idx;
+  double x_current_value;
+  last_bin_idx = n_bin - 1;
+  x_current_idx = x_start_idx;
+  // make an element counter.
+  int el_count[n_bin];
+
+  // o Loop through the bins/brks
+  for (int i = 0; i < n_bin; i++) {
+    el_count[i] = 0;
+    // loop through the x values; assumes x sorted increasingly
+    while (x_current_idx <= x_end_idx) {
+      x_current_value = x[x_current_idx];
+      if (x_current_value >= brks[i]) {
+	/* OK, now check if the value is smaller the upper border
+	 * OR if we're in the last bin, whether the value matches the upper border.
+	 */
+	if ((x_current_value < brks[i + 1]) | (x_current_value == brks[i + 1] &
+					       i == last_bin_idx)) {
+	  /*
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
+	   */
+	  if (!ISNA(y[x_current_idx])) {
+	    if(ISNA(ans[i])) {
+	      ans[i] = y[x_current_idx];
+	    } else {
+	      ans[i] = ans[i] + y[x_current_idx];
+	    }
+	    el_count[i] = el_count[i] + 1;
+	  }
+	} else {
+	  /* Break without incrementing the x_current_idx, thus the same value will
+	   * be evaluated for the next bin i.
+	   */
+	  break;
+	}
+      }
+      x_current_idx++;
+    }
+  }
+  // Now dividing by el_count.
+  for (int i = 0; i < n_bin; i++) {
+    if (el_count[i] > 0)
+      ans[i] = ans[i] / (double)el_count[i];
+  }
+  return;
+}
+
+
+
 
 static void _bin_midPoint(double *brks, double *bin_mids, int n_bin) {
   for (int i = 0; i < n_bin; i++) {

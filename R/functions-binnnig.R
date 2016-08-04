@@ -3,11 +3,12 @@
 
 ## @description This functions takes two same-sized numeric vectors \code{x}
 ## and \code{y}, bins/cuts \code{x} into bins (either a pre-defined number
-## of equal-sized bins or bins of a pre-defined size) and identifies for
-## each bin the maximal value in \code{y} for the \code{x} values falling
-## within each bin. \code{x} is expected to be incrementally sorted and, if
-## not, it will be internally sorted (in which case also \code{y} will be
-## ordered according to the order of \code{x}).
+## of equal-sized bins or bins of a pre-defined size) and aggregates values
+## in \code{y} corresponding to \code{x} values falling within each bin. By
+## default (i.e. \code{method = "max"}) the maximal \code{y} value for the
+## corresponding \code{x} values is identified. \code{x} is expected to be
+## incrementally sorted and, if not, it will be internally sorted (in which
+## case also \code{y} will be ordered according to the order of \code{x}).
 ##
 ## @details The breaks for the bins can be defined with the input arguments
 ##  \code{nBins} or \code{binSize}. Pre-defined breaks can be passed with the
@@ -18,16 +19,20 @@
 ## determined. See examples for more details.
 ## @note The function ensures that all values in the range defined by the breaks
 ## (including \code{binFromX} and \code{binToX}) are considered in the binning. This
-## means that for all bins except the last one the condition is that values in
-## \code{x} have to be \code{>= xlower} and \code{< xupper} (with \code{xlower}
+## means that for all bins except the last one values in \code{x} have to be
+## \code{>= xlower} and \code{< xupper} (with \code{xlower}
 ## and \code{xupper} being the lower and upper boundary, respectively). For the
 ## last bin the condition is \code{x >= xlower & x <= xupper}.
 ## Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of values
 ## that is used for binning is expanded by \code{binSize} (i.e. the lower boundary
 ## will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
-## this argument to \code{TRUE} resembles the binning that is/was used in the
-## \code{profBin} method.
-## @title Get maximum values in y for bins defined on x
+## this argument to \code{TRUE} resembles the binning that is/was used in
+## \code{xcms} \code{\link{profBin}} and similar methods.
+##
+## \code{NA} handling: by default the function ignores \code{NA} values in
+## \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
+## allowed in \code{x}.
+## @title Aggregate values in y for bins defined on x
 ## @param x Numeric vector to be used for binning.
 ## @param y Numeric vector (same length than \code{x}) from which the maximum
 ## values for each bin should be defined. If not provided, \code{x} will
@@ -45,12 +50,19 @@
 ## that will be used for binning.
 ## @param toIdx Same as \code{toIdx}, but defining the maximum index in x to
 ## be used for binning.
+## @method A character string specifying the method that should be used to
+## aggregate values in \code{y}. Allowed are \code{"max"}, \code{"min"},
+## \code{"sum"} and \code{"mean"} to identify the maximal or minimal value or
+## to sum all values within a bin or calculate their mean value.
 ## @param sortedX Whether \code{x} is sorted.
 ## @param shiftByHalfBinSize Logical specifying whether the bins should be
 ## shifted by half the bin size to the left. Thus, the first bin will have its
 ## center at \code{fromX} and its lower and upper boundary are
 ##  \code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
 ## ignored if \code{breaks} are provided.
+## @missingValue A numeric of length one specifying the value that should be
+## used as \emph{default} value for a bin. Defaults to \code{0}, thus if no value
+## in \code{x} falls within a bin, \code{0} is reported for this bin.
 ## @return Returns a list of length 2, the first element (named \code{"x"})
 ## contains the bin mid-points, the second element (named \code{"y"}) the
 ## aggregated values from input vector \code{y} within each bin.
@@ -87,9 +99,11 @@
 ## ## the x and y vectors would be sorted otherwise.
 ## xcms:::binYonX_max(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
 ##                    sortedX = TRUE, fromIdx = 11, toIdx = 20)
-binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
-                        binToX = max(x), fromIdx = 1L, toIdx = length(x),
-                        sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE) {
+binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
+                    binToX = max(x), fromIdx = 1L, toIdx = length(x),
+                    method = "max",
+                    sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
+                    missingValue = 0) {
     if (!missing(x) & missing(y))
         y <- x
     if (missing(x) | missing(y))
@@ -102,6 +116,9 @@ binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
         x <- x[o]
         y <- y[o]
     }
+    ## For now we don't allow NAs in x
+    if (anyNA(x))
+        stop("No 'NA' values are allowed in 'x'!")
     ## Check that input values have the correct data types.
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
@@ -115,16 +132,19 @@ binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
             warning("Argument 'shiftByHalfBinSize' is ignored if 'breaks'",
                     " are provided.")
         if (!is.double(breaks)) breaks <- as.double(nBins)
-        return(.Call("binXonY_breaks_max", x, y, breaks, force(fromIdx - 1L),
-                     force(toIdx - 1L), PACKAGE = "xcms"))
+        return(.Call("binYonX_breaks", x, y, breaks, force(fromIdx - 1L),
+                     force(toIdx - 1L), as.double(missingValue),
+                     as.integer(.method2int(method)),
+                     PACKAGE = "xcms"))
     }
     if (!missing(nBins)) {
         shiftIt <- 0L
         if (shiftByHalfBinSize)
             shiftIt <- 1L
         if (!is.integer(nBins)) nBins <- as.integer(nBins)
-        return(.Call("binXonY_nBins_max", x, y, nBins, binFromX, binToX,
+        return(.Call("binYonX_nBins", x, y, nBins, binFromX, binToX,
                      force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
+                     as.double(missingValue), as.integer(.method2int(method)),
                      PACKAGE = "xcms"))
     }
     if (!missing(binSize)) {
@@ -132,8 +152,9 @@ binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
         if (shiftByHalfBinSize)
             shiftIt <- 1L
         if (!is.double(binSize)) binSize <- as.double(binSize)
-        return(.Call("binXonY_binSize_max", x, y, binSize, binFromX, binToX,
+        return(.Call("binYonX_binSize", x, y, binSize, binFromX, binToX,
                      force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
+                     as.double(missingValue), as.integer(.method2int(method)),
                      PACKAGE = "xcms"))
     }
 }
@@ -199,5 +220,17 @@ testRealInput <- function(x) {
     if (!is.double(x)) x <- as.double(x)
     res <- .Call("test_real", x, PACKAGE = "xcms")
     return(res)
+}
+
+############################################################
+## .method2int
+## Converts the method character string to an integer that can
+## be used by the downstream C-functions to switch method.
+.method2int <- function(method = "max") {
+    meths <- c("max", "min", "sum", "mean")
+    method <- match.arg(method, meths)
+    .methints <- c(1, 2, 3, 4)
+    names(.methints) <- meths
+    return(.methints[method])
 }
 
