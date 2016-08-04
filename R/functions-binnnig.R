@@ -22,6 +22,11 @@
 ## \code{x} have to be \code{>= xlower} and \code{< xupper} (with \code{xlower}
 ## and \code{xupper} being the lower and upper boundary, respectively). For the
 ## last bin the condition is \code{x >= xlower & x <= xupper}.
+## Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of values
+## that is used for binning is expanded by \code{binSize} (i.e. the lower boundary
+## will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
+## this argument to \code{TRUE} resembles the binning that is/was used in the
+## \code{profBin} method.
 ## @title Get maximum values in y for bins defined on x
 ## @param x Numeric vector to be used for binning.
 ## @param y Numeric vector (same length than \code{x}) from which the maximum
@@ -41,6 +46,11 @@
 ## @param toIdx Same as \code{toIdx}, but defining the maximum index in x to
 ## be used for binning.
 ## @param sortedX Whether \code{x} is sorted.
+## @param shiftByHalfBinSize Logical specifying whether the bins should be
+## shifted by half the bin size to the left. Thus, the first bin will have its
+## center at \code{fromX} and its lower and upper boundary are
+##  \code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
+## ignored if \code{breaks} are provided.
 ## @return Returns a list of length 2, the first element (named \code{"x"})
 ## contains the bin mid-points, the second element (named \code{"y"}) the
 ## aggregated values from input vector \code{y} within each bin.
@@ -79,7 +89,7 @@
 ##                    sortedX = TRUE, fromIdx = 11, toIdx = 20)
 binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
                         binToX = max(x), fromIdx = 1L, toIdx = length(x),
-                        sortedX = !is.unsorted(x)) {
+                        sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE) {
     if (!missing(x) & missing(y))
         y <- x
     if (missing(x) | missing(y))
@@ -101,19 +111,29 @@ binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
     if (!is.integer(toIdx)) as.integer(toIdx)
     ## Call the C function(s). breaks has precedence over nBins over binSize.
     if (!missing(breaks)) {
+        if (shiftByHalfBinSize)
+            warning("Argument 'shiftByHalfBinSize' is ignored if 'breaks'",
+                    " are provided.")
         if (!is.double(breaks)) breaks <- as.double(nBins)
         return(.Call("binXonY_breaks_max", x, y, breaks, force(fromIdx - 1L),
                      force(toIdx - 1L), PACKAGE = "xcms"))
     }
     if (!missing(nBins)) {
+        shiftIt <- 0L
+        if (shiftByHalfBinSize)
+            shiftIt <- 1L
         if (!is.integer(nBins)) nBins <- as.integer(nBins)
         return(.Call("binXonY_nBins_max", x, y, nBins, binFromX, binToX,
-                     force(fromIdx - 1L), force(toIdx - 1L), PACKAGE = "xcms"))
+                     force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
+                     PACKAGE = "xcms"))
     }
     if (!missing(binSize)) {
+        shiftIt <- 0L
+        if (shiftByHalfBinSize)
+            shiftIt <- 1L
         if (!is.double(binSize)) binSize <- as.double(binSize)
         return(.Call("binXonY_binSize_max", x, y, binSize, binFromX, binToX,
-                     force(fromIdx - 1L), force(toIdx - 1L),
+                     force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
                      PACKAGE = "xcms"))
     }
 }

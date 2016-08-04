@@ -22,11 +22,16 @@
  * toX: the largest x-value to be included in the binning.
  * fromIdx, toIdx: indices in array x (0-based) that allow to specify a sub-set
  *     of x/y on which the binning should be done.
+ * shiftByHalfBinSize: either 0 or 1. If 0 breaks are defined from fromX to toX,
+ *     if 1 breaks are defined from fromX - (bin_size / 2) to toX + (bin_size / 2).
+ *     The bin_size is calculated as (toX - fromX) / (nBins - 1), such that the
+ *     number of bins corresponds to nBins. If 1 binning is performed similarly to
+ *     the profBin method.
  * The function returns a list with the first element (x) being the bin
  * midpoints and the second element (y) the max y-value within each bin.
  */
 SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
-		       SEXP fromIdx, SEXP toIdx) {
+		       SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize) {
   SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin = asInteger(nBins);
   int from_idx = asInteger(fromIdx);
@@ -34,6 +39,9 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
   double from_x, to_x, *p_ans, *p_brks;
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
+
+  /* Eventually shift by a half bin_size */
+  int shift_by_half_bin_size = asInteger(shiftByHalfBinSize);
 
   /* Error checks */
   /* Check that n_bin > 0 */
@@ -52,7 +60,7 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
   PROTECT(ans = allocVector(REALSXP, n_bin));
   /* Calculate the breaks */
   p_brks = REAL(brks);
-  _breaks_on_nBins(from_x, to_x, n_bin, p_brks);
+  _breaks_on_nBins(from_x, to_x, n_bin, p_brks, shift_by_half_bin_size);
   /* Do the binning. */
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
@@ -83,7 +91,7 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
  * Same as binXonY_nBins_max, but the binning is defined by the binSize.
  */
 SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
-			 SEXP fromIdx, SEXP toIdx) {
+			 SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize) {
   SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin;
   int from_idx = asInteger(fromIdx);
@@ -92,6 +100,12 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
   bin_size = REAL(binSize)[0];
+  /* Eventually shift by a half bin_size */
+  int shift_by_half_bin_size = asInteger(shiftByHalfBinSize);
+  if (shift_by_half_bin_size > 0) {
+    from_x = from_x - bin_size / 2;
+  }
+
   n_bin = (int)ceil((to_x - from_x) / bin_size);
   // Input checking
   if (bin_size < 0)
@@ -200,7 +214,7 @@ SEXP breaks_on_nBins(SEXP fromX, SEXP toX, SEXP nBins) {
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
   PROTECT(ans = allocVector(REALSXP, n_bin + 1));
-  _breaks_on_nBins(from_x, to_x, n_bin, REAL(ans));
+  _breaks_on_nBins(from_x, to_x, n_bin, REAL(ans), 0);
   UNPROTECT(1);
   return ans;
 }
@@ -228,14 +242,23 @@ SEXP breaks_on_binSize(SEXP fromX, SEXP toX, SEXP binSize) {
 
 /*
  * Create breaks for binning: seq(from_val, to_val, length.out = (n_bin + 1))
+ * shift_by_half_bin_size: either 0 or 1, if 1 the bin mid-points will be shifted left
+ * by half of the bin_size.
  */
 void _breaks_on_nBins(double from_val, double to_val, int n_bin,
-		      double *brks) {
+		      double *brks, int shift_by_half_bin_size) {
   int i;
   double current_val, bin_size;
 
-  bin_size = (to_val - from_val) / (double)n_bin;
-  current_val = from_val;
+  /* If we're going to shift the bin mid-points we have to ensure that the bin_size
+   * will be slightly larger to include also the to_val (+ bin_size/2).
+   */
+  bin_size = (to_val - from_val) / ((double)n_bin - (double)shift_by_half_bin_size);
+  if (shift_by_half_bin_size > 0) {
+    current_val = from_val - (bin_size / 2);
+  } else {
+    current_val = from_val;
+  }
   for (i = 0; i <= n_bin; i++) {
     brks[i] = current_val;
     current_val += bin_size;

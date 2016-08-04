@@ -14,9 +14,11 @@ void binYonX_max(double *x, double *y, int *numin, double *xstart,
  * Calculate breaks from_val to to_val based on the number of bins.
  * Results are directly stored into array brks which size has to be
  * correctly defined in the calling function.
+ * shift_by_half_bin_size: either 0 or 1, if 1 the bin mid-points will be shifted left
+ * by half of the bin_size.
  */
 void _breaks_on_nBins(double from_val, double to_val, int n_bin,
-		      double *brks);
+		      double *brks, int shift_by_half_bin_size);
 
 /*
  * Calculate breaks from_val to to_val providing the bin size.

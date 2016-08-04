@@ -26,6 +26,8 @@ Imports:
     BiocParallel,
     S4Vectors
 Suggests:
+    BiocStyle,
+    knitr (>= 1.1.0),
     faahKO,
     msdata,
     ncdf4,
@@ -38,6 +40,7 @@ Description: Framework for processing and visualization of chromatographically
     analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
+VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
 RoxygenNote: 5.0.1
