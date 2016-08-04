@@ -1,3 +1,11 @@
+#include <R.h>
+#include <Rinternals.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+#include <limits.h>
+
 // From binners.c
 void binYonX_max(double *x, double *y, int *numin, double *xstart,
 		 double *xend, int *numout, double *out);
@@ -32,6 +40,11 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * bin on a subset of the x/y arrays. We suppose these have been checked
  * BEFORE (i.e. both being positive and x_end_idx <= length(x)).
  */
-void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
-				 double *ans, int n_bin, int x_start_idx,
-				 int x_end_idx);
+static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
+					double *ans, int n_bin, int x_start_idx,
+					int x_end_idx);
+
+/*
+ * Simple function to calculate the midpoint of bins, breaks provided.
+ */
+static void _bin_midPoint(double *brks, double *bin_mids, int n_bin);

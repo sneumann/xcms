@@ -1,9 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <math.h>
-#include <limits.h>
-#include "xcms.h"
-#include "util.h"
 #include "binners.h"
 /*
  * Contains binning utils.
@@ -28,10 +22,12 @@
  * toX: the largest x-value to be included in the binning.
  * fromIdx, toIdx: indices in array x (0-based) that allow to specify a sub-set
  *     of x/y on which the binning should be done.
+ * The function returns a list with the first element (x) being the bin
+ * midpoints and the second element (y) the max y-value within each bin.
  */
 SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
 		       SEXP fromIdx, SEXP toIdx) {
-  SEXP ans, brks;
+  SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin = asInteger(nBins);
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
@@ -39,8 +35,8 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
 
-  // Error checks
-  // Check that n_bin > 0
+  /* Error checks */
+  /* Check that n_bin > 0 */
   if (n_bin <= 0)
     error("'nBins' must be larger 1!");
   // Check that from_x to_x are > 0 and < length(x)
@@ -51,21 +47,36 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
   if (to_idx >= LENGTH(x))
     error("'toIdx' can not be larger than length(x)!");
 
-  // Create output
-  PROTECT(brks = NEW_NUMERIC(n_bin + 1));
-  PROTECT(ans = NEW_NUMERIC(n_bin));
-  // Calculate the breaks
+  /* Create output */
+  PROTECT(brks = allocVector(REALSXP, n_bin + 1));
+  PROTECT(ans = allocVector(REALSXP, n_bin));
+  /* Calculate the breaks */
   p_brks = REAL(brks);
   _breaks_on_nBins(from_x, to_x, n_bin, p_brks);
-  // Do the binning.
+  /* Do the binning. */
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
     p_ans[i] = 0;
   }
+  /* max*/
   _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 			      from_idx, to_idx);
-  UNPROTECT(2);
-  return ans;
+  /* Calculate bin mid-points */
+  PROTECT(bin_mids = allocVector(REALSXP, n_bin));
+  _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
+  /* Now create the result list. */
+  PROTECT(ans_list = allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(ans_list, 0, bin_mids);
+  SET_VECTOR_ELT(ans_list, 1, ans);
+  /* Setting names */
+  PROTECT(names = allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, mkChar("x"));
+  SET_STRING_ELT(names, 1, mkChar("y"));
+  setAttrib(ans_list, R_NamesSymbol, names);
+  UNPROTECT(5);
+  return ans_list;
+  /* UNPROTECT(2); */
+  /* return ans; */
 }
 
 /*
@@ -73,7 +84,7 @@ SEXP binXonY_nBins_max(SEXP x, SEXP y, SEXP nBins, SEXP fromX, SEXP toX,
  */
 SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
 			 SEXP fromIdx, SEXP toIdx) {
-  SEXP ans, brks;
+  SEXP ans, brks, bin_mids, ans_list, names;
   int n_bin;
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
@@ -93,8 +104,8 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
     error("'toIdx' can not be larger than length(x)!");
 
   // Create output
-  PROTECT(brks = NEW_NUMERIC(n_bin + 1));
-  PROTECT(ans = NEW_NUMERIC(n_bin));
+  PROTECT(brks = allocVector(REALSXP, n_bin + 1));
+  PROTECT(ans = allocVector(REALSXP, n_bin));
   // Calculate breaks
   p_brks = REAL(brks);
   _breaks_on_binSize(from_x, to_x, n_bin, bin_size, REAL(brks));
@@ -105,8 +116,22 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
   }
   _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 			      from_idx, to_idx);
-  UNPROTECT(2);
-  return ans;
+  // Calculate bin mid-points
+  PROTECT(bin_mids = allocVector(REALSXP, n_bin));
+  _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
+  // Now create the result list.
+  PROTECT(ans_list = allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(ans_list, 0, bin_mids);
+  SET_VECTOR_ELT(ans_list, 1, ans);
+  // Setting names
+  PROTECT(names = allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, mkChar("x"));
+  SET_STRING_ELT(names, 1, mkChar("y"));
+  setAttrib(ans_list, R_NamesSymbol, names);
+  UNPROTECT(5);
+  return ans_list;
+  /* UNPROTECT(2); */
+  /* return ans; */
 }
 
 /*
@@ -114,7 +139,7 @@ SEXP binXonY_binSize_max(SEXP x, SEXP y, SEXP binSize, SEXP fromX, SEXP toX,
  */
 SEXP binXonY_breaks_max(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
 			SEXP toIdx) {
-  SEXP ans;
+  SEXP ans, bin_mids, ans_list, names;
   int n_bin;
   int from_idx = asInteger(fromIdx);
   int to_idx = asInteger(toIdx);
@@ -133,7 +158,7 @@ SEXP binXonY_breaks_max(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
     error("'toIdx' can not be larger than length(x)!");
 
   // Create output
-  PROTECT(ans = NEW_NUMERIC(n_bin));
+  PROTECT(ans = allocVector(REALSXP, n_bin));
   // Do the binning.
   p_ans = REAL(ans);
   for(int i = 0; i < n_bin; i++) {
@@ -141,8 +166,22 @@ SEXP binXonY_breaks_max(SEXP x, SEXP y, SEXP breaks, SEXP fromIdx,
   }
   _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 			      from_idx, to_idx);
-  UNPROTECT(1);
-  return ans;
+  // Calculate bin mid-points
+  PROTECT(bin_mids = allocVector(REALSXP, n_bin));
+  _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
+  // Now create the result list.
+  PROTECT(ans_list = allocVector(VECSXP, 2));
+  SET_VECTOR_ELT(ans_list, 0, bin_mids);
+  SET_VECTOR_ELT(ans_list, 1, ans);
+  // Setting names
+  PROTECT(names = allocVector(STRSXP, 2));
+  SET_STRING_ELT(names, 0, mkChar("x"));
+  SET_STRING_ELT(names, 1, mkChar("y"));
+  setAttrib(ans_list, R_NamesSymbol, names);
+  UNPROTECT(4);
+  return ans_list;
+  /* UNPROTECT(1); */
+  /* return ans; */
 }
 
 
@@ -160,7 +199,7 @@ SEXP breaks_on_nBins(SEXP fromX, SEXP toX, SEXP nBins) {
   n_bin = asInteger(nBins);
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
-  PROTECT(ans = NEW_NUMERIC(n_bin + 1));
+  PROTECT(ans = allocVector(REALSXP, n_bin + 1));
   _breaks_on_nBins(from_x, to_x, n_bin, REAL(ans));
   UNPROTECT(1);
   return ans;
@@ -177,7 +216,7 @@ SEXP breaks_on_binSize(SEXP fromX, SEXP toX, SEXP binSize) {
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
   n_bin = (int)ceil((to_x - from_x) / bin_size);
-  PROTECT(ans = NEW_NUMERIC(n_bin + 1));
+  PROTECT(ans = allocVector(REALSXP, n_bin + 1));
   _breaks_on_binSize(from_x, to_x, n_bin, bin_size, REAL(ans));
   UNPROTECT(1);
   return ans;
@@ -205,7 +244,7 @@ void _breaks_on_nBins(double from_val, double to_val, int n_bin,
 }
 
 /*
- * Create breaks for binning: seq(from_val, to_val, by = bin_size)
+ * Create breaks for binning: seq(from_val, to_val, by = bin_size).
  */
 void _breaks_on_binSize(double from_val, double to_val, int n_bin,
 			double bin_size, double *brks) {
@@ -235,44 +274,33 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * bin on a subset of the x/y arrays. We suppose these have been checked
  * BEFORE (i.e. both being positive and x_end_idx <= length(x)).
  */
-void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
-				 double *ans, int n_bin, int x_start_idx,
-				 int x_end_idx) {
+static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
+					double *ans, int n_bin, int x_start_idx,
+					int x_end_idx) {
   int x_current_idx, last_bin_idx;
   double x_current_value;
   last_bin_idx = n_bin - 1;
   x_current_idx = x_start_idx;
 
-  // Print input args:
-  Rprintf("Input args:\n o n_bin: %d\n o x_start_idx: %d\n o x_end_idx %d\n",
-	  n_bin, x_start_idx, x_end_idx);
-
   // o Loop through the bins/brks
   for (int i = 0; i < n_bin; i++) {
-    Rprintf("Running i %d\n", i);
     // loop through the x values; assumes x sorted increasingly
     while (x_current_idx <= x_end_idx) {
       x_current_value = x[x_current_idx];
-      Rprintf(" x_current_idx: %d\n x_current_value %f >= brks[i] %f? ",
-	      x_current_idx, x_current_value, brks[i]);
       if (x_current_value >= brks[i]) {
-	Rprintf("YES\n");
 	/* OK, now check if the value is smaller the upper border
 	 * OR if we're in the last bin, whether the value matches the upper border.
 	 */
-	Rprintf(" x_current_value < brks[i + 1]? ");
 	if ((x_current_value < brks[i + 1]) | (x_current_value == brks[i + 1] &
 					       i == last_bin_idx)) {
-	  Rprintf(" YES %f < %f\n", x_current_value, brks[i + 1]);
-	  if (x_current_value == brks[i + 1] & i == last_bin_idx)
-	    Rprintf(" We're in the last bin and the value is equal to the upper brks.\n");
+	  /* if (x_current_value == brks[i + 1] & i == last_bin_idx) */
+	  /*   Rprintf(" We're in the last bin and the value is equal to the upper brks.\n"); */
 	  /* Check if the corresponding y value is larger than the one we have and
 	   * replace if so.
 	   */
 	  if (y[x_current_idx] > ans[i])
 	    ans[i] = y[x_current_idx];
 	} else {
-	  Rprintf(" NO; break and evaluate next i.\n");
 	  /* Break without incrementing the x_current_idx, thus the same value will
 	   * be evaluated for the next bin i.
 	   */
@@ -285,6 +313,12 @@ void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
   return;
 }
 
+static void _bin_midPoint(double *brks, double *bin_mids, int n_bin) {
+  for (int i = 0; i < n_bin; i++) {
+    bin_mids[i] = (brks[i] + brks[i+1]) / 2;
+  }
+  return;
+}
 
 /*
  * Some simple functions to check passing of arguments.

@@ -41,8 +41,9 @@
 ## @param toIdx Same as \code{toIdx}, but defining the maximum index in x to
 ## be used for binning.
 ## @param sortedX Whether \code{x} is sorted.
-## @return Returns a numeric vector with the maximal y-values for each bin
-## of x-values.
+## @return Returns a list of length 2, the first element (named \code{"x"})
+## contains the bin mid-points, the second element (named \code{"y"}) the
+## aggregated values from input vector \code{y} within each bin.
 ## @author Johannes Rainer
 ## @examples
 ## ########
@@ -76,12 +77,14 @@
 ## ## the x and y vectors would be sorted otherwise.
 ## xcms:::binYonX_max(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
 ##                    sortedX = TRUE, fromIdx = 11, toIdx = 20)
-binYonX_max <- function(x, y = x, breaks, nBins, binSize, binFromX = min(x),
+binYonX_max <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
                         binToX = max(x), fromIdx = 1L, toIdx = length(x),
                         sortedX = !is.unsorted(x)) {
-    if(missing(x) | missing(y))
+    if (!missing(x) & missing(y))
+        y <- x
+    if (missing(x) | missing(y))
         stop("Arguments 'x' and 'y' are mandatory!")
-    if(missing(nBins) & missing(binSize) & missing(breaks))
+    if (missing(nBins) & missing(binSize) & missing(breaks))
         stop("One of 'breaks', 'nBins' or 'binSize' has to be defined!")
     if (!sortedX) {
         message("'x' is not sorted, will sort 'x' and 'y'.")
@@ -110,7 +113,8 @@ binYonX_max <- function(x, y = x, breaks, nBins, binSize, binFromX = min(x),
     if (!missing(binSize)) {
         if (!is.double(binSize)) binSize <- as.double(binSize)
         return(.Call("binXonY_binSize_max", x, y, binSize, binFromX, binToX,
-                     force(fromIdx - 1L), force(toIdx - 1L), PACKAGE = "xcms"))
+                     force(fromIdx - 1L), force(toIdx - 1L),
+                     PACKAGE = "xcms"))
     }
 }
 
