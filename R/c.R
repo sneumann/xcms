@@ -493,3 +493,6 @@ findEqualGreaterUnsorted <- function(x, value) {
        index = integer(1),
        PACKAGE = "xcms")$index + 1
 }
+
+.profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
+                       binlinbase = "profBinLinBaseM", bin = "profBinM")

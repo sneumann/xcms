@@ -195,8 +195,8 @@ breaks_on_nBins <- function(fromX, toX, nBins) {
 ## @param binSize Numeric of length 1 defining the size of a bin.
 ## @return A numeric vector defining the lower and upper bounds of the bins.
 ## @author Johannes Rainer
-##' @examples
-##'
+## @examples
+##
 breaks_on_binSize <- function(fromX, toX, binSize) {
     if(missing(fromX) | missing(toX) | missing(binSize))
         stop("'fromX', 'toX' and 'binSize' are required!")

@@ -1,5 +1,5 @@
 ## All functions for xcmsRaw methods should be put here.
-#' @include DataClasses.R
+#' @include DataClasses.R c.R
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
