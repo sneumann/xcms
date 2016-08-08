@@ -41,16 +41,33 @@ X <- sort(abs(rnorm(500000, mean = 500, sd = 100)))
 
 ```
 
-Bin this vector into 1000 bins using `profBin`.
+Bin this vector into 1000 bins using `profBin` and using the `binYonX` function
+and compare their performance.
 
 ```{r runProfBin}
-system.time(a <- xcms:::profBin(X, X, 1000))
+library(microbenchmark)
+microbenchmark(xcms:::profBin(X, X, 1000),
+               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                              shiftByHalfBinSize = TRUE), times = 100)
 ```
 
-And using the `binYonX` function.
+With the results being identical.
 
-```{r runBinYonX}
-system.time(b <- xcms:::binYonX_max(X, nBins = 1000, sortedX = TRUE,
-                                    shiftByHalfBinSize = TRUE))
+```{r binResults}
+a <- xcms:::profBin(X, X, 1000)
+b <- xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE)
+all.equal(a, b$y)
+```
+
+The new binning function is also considerably faster if missing bin values
+should be imputed.
+
+```{r runProfBinLin}
+microbenchmark(xcms:::profBinLin(X, X, 1000),
+               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                              shiftByHalfBinSize = TRUE, impute = "lin"),
+               times = 100)
+
 ```
 

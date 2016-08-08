@@ -37,20 +37,26 @@
  *     number of bins corresponds to nBins. If 1 binning is performed similarly to
  *     the profBin method.
  * method: integer to select the aggregation method: 1: max, 2: min, 3: sum, 4: mean.
+ * imputeMethod: how missing bin value imputation should be performed: 0: none,
+ *     1: linear interpolation of missing bin values from neighboring non-missing
+ *     bin values (!imputation is done on the already binned values, not
+ *     the y-values).
  * The function returns a list with the first element (x) being the bin
  * midpoints and the second element (y) the max y-value within each bin.
  */
 SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
 	     SEXP toX, SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize,
-	     SEXP initValue, SEXP method) {
+	     SEXP initValue, SEXP method, SEXP imputeMethod) {
   SEXP ans, brks, bin_mids, ans_list, names;
-  int n_bin, from_idx, to_idx, the_method, shift_by_half_bin_size;
+  int n_bin, from_idx, to_idx, the_method, the_impute_method,
+    shift_by_half_bin_size;
   double from_x, to_x, init_value, bin_size, *p_ans, *p_brks;
 
   /* Initializeing variables */
   from_idx = asInteger(fromIdx);
   to_idx = asInteger(toIdx);
   the_method = asInteger(method);
+  the_impute_method = asInteger(imputeMethod);
   init_value = REAL(initValue)[0];
   shift_by_half_bin_size = asInteger(shiftByHalfBinSize);
 
@@ -63,14 +69,12 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
 
   /* Binning: define breaks. */
   if (!ISNA(REAL(breaks)[0])) {
-    Rprintf("breaks specified\n");
     /* Using the provided breaks */
     n_bin = (LENGTH(breaks) - 1);
     p_brks = REAL(breaks);
     if (n_bin < 1)
       error("Not enough breaks defined!");
   } else if (INTEGER(nBins)[0] != NA_INTEGER) {
-    Rprintf("nBins specified\n");
     /* Calculating breaks based on the number of bins. */
     from_x = REAL(fromX)[0];
     to_x = REAL(toX)[0];
@@ -82,7 +86,6 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
     p_brks = REAL(brks);
     _breaks_on_nBins(from_x, to_x, n_bin, p_brks, shift_by_half_bin_size);
   } else {
-    Rprintf("binSize specified\n");
     /* Calculating breaks based on bin size. */
     bin_size = REAL(binSize)[0];
     from_x = REAL(fromX)[0];
@@ -106,7 +109,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
   for(int i = 0; i < n_bin; i++) {
     p_ans[i] = NA_REAL;
   }
-  switch(the_method) {
+  switch (the_method) {
   case 2:
     _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 				from_idx, to_idx);
@@ -125,12 +128,13 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
   }
 
   /* Missing value handling... */
-  /* Replace NAs with the "default" value. */
-  if (!ISNA(init_value)) {
-    for(int i = 0; i < n_bin; i++) {
-      if (ISNA(p_ans[i]))
-	p_ans[i] = init_value;
-    }
+  switch (the_impute_method) {
+  case 1:
+    _impute_linearly_interpolate_x(p_ans, n_bin);
+    break;
+  default:
+    /* Replace NAs with the "default" value. */
+    _fill_missing_with_value(p_ans, init_value, n_bin);
   }
 
   /* Calculate bin mid-points */
@@ -164,7 +168,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
 /*
  * Get breaks given from x, to x and number of bins.
  */
-SEXP breaks_on_nBins(SEXP fromX, SEXP toX, SEXP nBins) {
+SEXP breaks_on_nBins(SEXP fromX, SEXP toX, SEXP nBins, SEXP shift) {
   SEXP ans;
   int n_bin;
   double from_x, to_x;
@@ -172,7 +176,7 @@ SEXP breaks_on_nBins(SEXP fromX, SEXP toX, SEXP nBins) {
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
   PROTECT(ans = allocVector(REALSXP, n_bin + 1));
-  _breaks_on_nBins(from_x, to_x, n_bin, REAL(ans), 0);
+  _breaks_on_nBins(from_x, to_x, n_bin, REAL(ans), asInteger(shift));
   UNPROTECT(1);
   return ans;
 }
@@ -438,6 +442,76 @@ static void _bin_y_on_x_with_breaks_mean(double *x, double *y, double *brks,
 static void _bin_midPoint(double *brks, double *bin_mids, int n_bin) {
   for (int i = 0; i < n_bin; i++) {
     bin_mids[i] = (brks[i] + brks[i+1]) / 2;
+  }
+  return;
+}
+
+
+/* Simply replace all NAs in a double vector with the provided init value */
+static void _fill_missing_with_value(double *ans, double init_value, int n_bin) {
+  if (!ISNA(init_value)) {
+    for(int i = 0; i < n_bin; i++) {
+      if (ISNA(ans[i]))
+	ans[i] = init_value;
+    }
+  }
+  return;
+}
+
+/*
+ * This linearly interpolates missing bin values based on the non-missing bin
+ * values left and right of the bin. This uses the already binned values,
+ * but it would be easy to consider the actual values BEFORE binning easily
+ * by just storing the first and last value for each bin and using these.
+ * That would actually be better, but does not fit with the original
+ * xcms binLin implementation.
+ */
+static void _impute_linearly_interpolate_x(double *x, int n_bin) {
+  int is_empty_bin = 0;  // To check wheter we are in a series of empty bins.
+  int start_x = 0;  // index of the first empty bin of a potential empty bin series.
+  int current_x = 0;
+  double base_value = 0;
+  double last_bin_value = base_value;
+  double incrementer = 0;
+  double new_value;
+  while (current_x < n_bin) {
+    if (ISNA(x[current_x])) {
+      /* Found a bin without a value, now I have to look for the next with
+       * a value. If the first one is empty, I have to set start_x to -1.
+       */
+      /* if (current_x == 0) { */
+      /* 	start_x = -1; */
+      /* 	is_empty_bin = 1; */
+      /* } else */
+      if (is_empty_bin == 0) {
+	start_x = current_x;
+	is_empty_bin = 1;
+      }
+    } else {
+      if (is_empty_bin == 1) {
+	/* Gotcha! Will use last_bin_value and this one to interpolate the
+	 * missing bins in between. First calculate the increment per bin and
+	 * then loop through the empty bin to fill with values.
+	 */
+	incrementer = (x[current_x] - last_bin_value) / (double)(current_x - start_x + 1);
+	for (int i = start_x; i < current_x; i++) {
+	  last_bin_value = last_bin_value + incrementer;
+	  x[i] = last_bin_value;
+	}
+      }
+      /* Keep track of the last non-empty bin value. */
+      last_bin_value = x[current_x];
+      is_empty_bin = 0;
+    }
+    current_x++;
+  }
+  /* Check if the last bin is empty too */
+  if (is_empty_bin == 1) {
+	incrementer = (base_value - last_bin_value) / (double)(current_x - start_x + 1);
+	for (int i = start_x; i <= current_x; i++) {
+	  last_bin_value = last_bin_value + incrementer;
+	  x[i] = last_bin_value;
+	}
   }
   return;
 }

@@ -19,6 +19,7 @@ void ProfBinLin(double *xvals, double *yvals, int *numin,
     //
     FindEqualLess(xvals, numin, &startx, &ipost);
     //ipost = 0;
+    // this will be 0 if ipost = 0
     xpost = *xstart + dx*(int)((xvals[ipost] - *xstart)/dx + 0.5);
     ypost = yvals[ipost];
 

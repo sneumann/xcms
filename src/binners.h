@@ -63,3 +63,18 @@ static void _bin_y_on_x_with_breaks_mean(double *x, double *y, double *brks,
  * Simple function to calculate the midpoint of bins, breaks provided.
  */
 static void _bin_midPoint(double *brks, double *bin_mids, int n_bin);
+
+/*
+ * Replaces NA values in vector with the init_value.
+ */
+static void _fill_missing_with_value(double *ans, double init_value, int n_bin);
+
+/*
+ * This linearly interpolates missing bin values based on the non-missing bin
+ * values left and right of the bin. This uses the already binned values,
+ * but it would be easy to consider the actual values BEFORE binning easily
+ * by just storing the first and last value for each bin and using these.
+ * That would actually be better, but does not fit with the original
+ * xcms binLin implementation.
+ */
+static void _impute_linearly_interpolate_x(double *x, int n_bin);

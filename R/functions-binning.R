@@ -17,6 +17,15 @@
 ## For each bin then the maximal \code{y} value
 ## (e.g. \code{max(y[x >= brs[1] & x < brs[2]])} for the first bin) is
 ## determined. See examples for more details.
+##
+## Imputation of missing bin values: by default (argument \code{impute = "no"})
+## the value of \code{missingValue} is reported for a bin if none of the values
+## in \code{x} fall into the bin. Alternatively, a value for such bins can be
+## calculated by specifying an interpolation method with argument \code{impute}.
+## \code{impute = "lin"} uses simple linear imputation to derive a value for a
+## bin with missing values from its neighboring bins (for which a value was
+## defined). This method is equivalent to the \code{\link{profBinLin}} method.
+## For more details see examples below.
 ## @note The function ensures that all values in the range defined by the breaks
 ## (including \code{binFromX} and \code{binToX}) are considered in the binning. This
 ## means that for all bins except the last one values in \code{x} have to be
@@ -32,6 +41,10 @@
 ## \code{NA} handling: by default the function ignores \code{NA} values in
 ## \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
 ## allowed in \code{x}.
+##
+## All methods to impute missing bin values are based on the already aggregated
+## data, not the individual values in \code{y}.
+##
 ## @title Aggregate values in y for bins defined on x
 ## @param x Numeric vector to be used for binning.
 ## @param y Numeric vector (same length than \code{x}) from which the maximum
@@ -63,6 +76,9 @@
 ## @missingValue A numeric of length one specifying the value that should be
 ## used as \emph{default} value for a bin. Defaults to \code{0}, thus if no value
 ## in \code{x} falls within a bin, \code{0} is reported for this bin.
+## @impute Allows to specify a method to be used for imputation of missing
+## bin-values. Allowed values are \code{"no"} (no imputation), \code{"lin"}
+## (linear interpolation). See details section for more information.
 ## @return Returns a list of length 2, the first element (named \code{"x"})
 ## contains the bin mid-points, the second element (named \code{"y"}) the
 ## aggregated values from input vector \code{y} within each bin.
@@ -99,10 +115,27 @@
 ## ## the x and y vectors would be sorted otherwise.
 ## xcms:::binYonX_max(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
 ##                    sortedX = TRUE, fromIdx = 11, toIdx = 20)
+##
+## #######
+## ## Use linear interpolation to impute missing bin values.
+## ##
+## ## The input vector y contains NAs for x-values falling within some bins. By
+## ## default the value of argument missingValue is reported for these.
+## X <- 1:11
+## Y <- c(1, NA, NA, NA, 5, 6, NA, NA, 9, 10, 11)
+## ## The breaks for the bins are:
+## xcms:::breaks_on_nBins(1, 11, 5L)
+## ## Thus bin 2 and 4 will get a value of 0.
+## binYonX(X, Y, nBins = 5L)$y
+## ## If we use impute = "lin" a value is inferred for these bins based on their
+## ## neighboring bins, i.e. the value for the second bin will be (6 + 1)/2 and
+## ## the value for the 4th bin will be (6 + 11)/2.
+## binYonX(X, Y, nBins = 5L, impute = "lin")$y
 binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
                     binToX = max(x), fromIdx = 1L, toIdx = length(x),
                     method = "max",
                     sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
+                    impute = "no",
                     missingValue = 0) {
     if (!missing(x) & missing(y))
         y <- x
@@ -127,51 +160,36 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
     if (!is.integer(fromIdx)) as.integer(fromIdx)
     if (!is.integer(toIdx)) as.integer(toIdx)
     ## Call the C function(s). breaks has precedence over nBins over binSize.
+    shiftIt <- 0L
     if (!missing(breaks)) {
         if (shiftByHalfBinSize)
             warning("Argument 'shiftByHalfBinSize' is ignored if 'breaks'",
                     " are provided.")
         if (!is.double(breaks)) breaks <- as.double(nBins)
-        ## return(.Call("binYonX_breaks", x, y, breaks, force(fromIdx - 1L),
-        ##              force(toIdx - 1L), as.double(missingValue),
-        ##              as.integer(.method2int(method)),
-        ##              PACKAGE = "xcms"))
-        return(.Call("binYonX", x, y, breaks, NA_integer_, as.double(NA),
-                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                     0L, as.double(missingValue),
-                     as.integer(.method2int(method)),
-                     PACKAGE = "xcms"))
+        nBins <- NA_integer_
+        binSize <- as.double(NA)
+    } else {
+        if (!missing(nBins)) {
+            if (shiftByHalfBinSize)
+                shiftIt <- 1L
+            breaks <- as.double(NA)
+            if (!is.integer(nBins)) nBins <- as.integer(nBins)
+            binSize <- as.double(NA)
+        } else{
+            if (shiftByHalfBinSize)
+                shiftIt <- 1L
+            breaks <- as.double(NA)
+            nBins <- NA_integer_
+            if (!is.double(binSize)) binSize <- as.double(binSize)
+        }
     }
-    if (!missing(nBins)) {
-        shiftIt <- 0L
-        if (shiftByHalfBinSize)
-            shiftIt <- 1L
-        if (!is.integer(nBins)) nBins <- as.integer(nBins)
-        ## return(.Call("binYonX_nBins", x, y, nBins, binFromX, binToX,
-        ##              force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
-        ##              as.double(missingValue), as.integer(.method2int(method)),
-        ##              PACKAGE = "xcms"))
-        return(.Call("binYonX", x, y, as.double(NA), nBins, as.double(NA),
-                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                     shiftIt, as.double(missingValue),
-                     as.integer(.method2int(method)),
-                     PACKAGE = "xcms"))
-    }
-    if (!missing(binSize)) {
-        shiftIt <- 0L
-        if (shiftByHalfBinSize)
-            shiftIt <- 1L
-        if (!is.double(binSize)) binSize <- as.double(binSize)
-        ## return(.Call("binYonX_binSize", x, y, binSize, binFromX, binToX,
-        ##              force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
-        ##              as.double(missingValue), as.integer(.method2int(method)),
-        ##              PACKAGE = "xcms"))
-        return(.Call("binYonX", x, y, as.double(NA), NA_integer_, binSize,
-                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                     shiftIt, as.double(missingValue),
-                     as.integer(.method2int(method)),
-                     PACKAGE = "xcms"))
-    }
+    return(.Call("binYonX", x, y, breaks, nBins, binSize,
+                 binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                 shiftIt, as.double(missingValue),
+                 as.integer(.aggregateMethod2int(method)),
+                 as.integer(.imputeMethod2int(impute)),
+                 PACKAGE = "xcms"))
+
 }
 
 ## @description Calculate breaks for same-sized bins for data values
@@ -188,13 +206,17 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
 ## @return A numeric vector of length \code{nBins + 1} defining the lower and
 ## upper bounds of the bins.
 ## @author Johannes Rainer
-breaks_on_nBins <- function(fromX, toX, nBins) {
+breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
     if(missing(fromX) | missing(toX) | missing(nBins))
         stop("'fromX', 'toX' and 'nBins' are required!")
     if (!is.double(fromX)) fromX <- as.double(fromX)
     if (!is.double(toX)) toX <- as.double(toX)
     if (!is.integer(nBins)) nBins <- as.integer(nBins)
-    return(.Call("breaks_on_nBins", fromX, toX, nBins, PACKAGE = "xcms"))
+    shiftIt <- 0L
+    if (shiftByHalfBinSize)
+        shiftIt <- 1L
+    return(.Call("breaks_on_nBins", fromX, toX, nBins, shiftIt,
+                 PACKAGE = "xcms"))
 }
 
 ## @description Defines breaks for \code{binSize} sized bins for values ranging
@@ -238,14 +260,24 @@ testRealInput <- function(x) {
 }
 
 ############################################################
-## .method2int
+## .aggregateMethod2int
 ## Converts the method character string to an integer that can
 ## be used by the downstream C-functions to switch method.
-.method2int <- function(method = "max") {
-    meths <- c("max", "min", "sum", "mean")
-    method <- match.arg(method, meths)
-    .methints <- c(1, 2, 3, 4)
-    names(.methints) <- meths
-    return(.methints[method])
+.aggregateMethod2int <- function(method = "max") {
+    method <- match.arg(method, names(.aggregateMethods))
+    return(.aggregateMethods[method])
 }
+.aggregateMethods <- c(1, 2, 3, 4)
+names(.aggregateMethods) <- c("max", "min", "sum", "mean")
 
+
+############################################################
+## .imputeMethod2int
+## Converts the imputation method into an integer that can be
+## passed down to the C-function.
+.imputeMethod2int <- function(method = "no") {
+    method <- match.arg(method, names(.imputeMethods))
+    return(.imputeMethods[method])
+}
+.imputeMethods <- c(0, 1)
+names(.imputeMethods) <- c("no", "lin")
