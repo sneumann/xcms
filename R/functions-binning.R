@@ -132,8 +132,13 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
             warning("Argument 'shiftByHalfBinSize' is ignored if 'breaks'",
                     " are provided.")
         if (!is.double(breaks)) breaks <- as.double(nBins)
-        return(.Call("binYonX_breaks", x, y, breaks, force(fromIdx - 1L),
-                     force(toIdx - 1L), as.double(missingValue),
+        ## return(.Call("binYonX_breaks", x, y, breaks, force(fromIdx - 1L),
+        ##              force(toIdx - 1L), as.double(missingValue),
+        ##              as.integer(.method2int(method)),
+        ##              PACKAGE = "xcms"))
+        return(.Call("binYonX", x, y, breaks, NA_integer_, as.double(NA),
+                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                     0L, as.double(missingValue),
                      as.integer(.method2int(method)),
                      PACKAGE = "xcms"))
     }
@@ -142,9 +147,14 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
         if (shiftByHalfBinSize)
             shiftIt <- 1L
         if (!is.integer(nBins)) nBins <- as.integer(nBins)
-        return(.Call("binYonX_nBins", x, y, nBins, binFromX, binToX,
-                     force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
-                     as.double(missingValue), as.integer(.method2int(method)),
+        ## return(.Call("binYonX_nBins", x, y, nBins, binFromX, binToX,
+        ##              force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
+        ##              as.double(missingValue), as.integer(.method2int(method)),
+        ##              PACKAGE = "xcms"))
+        return(.Call("binYonX", x, y, as.double(NA), nBins, as.double(NA),
+                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                     shiftIt, as.double(missingValue),
+                     as.integer(.method2int(method)),
                      PACKAGE = "xcms"))
     }
     if (!missing(binSize)) {
@@ -152,9 +162,14 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
         if (shiftByHalfBinSize)
             shiftIt <- 1L
         if (!is.double(binSize)) binSize <- as.double(binSize)
-        return(.Call("binYonX_binSize", x, y, binSize, binFromX, binToX,
-                     force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
-                     as.double(missingValue), as.integer(.method2int(method)),
+        ## return(.Call("binYonX_binSize", x, y, binSize, binFromX, binToX,
+        ##              force(fromIdx - 1L), force(toIdx - 1L), shiftIt,
+        ##              as.double(missingValue), as.integer(.method2int(method)),
+        ##              PACKAGE = "xcms"))
+        return(.Call("binYonX", x, y, as.double(NA), NA_integer_, binSize,
+                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                     shiftIt, as.double(missingValue),
+                     as.integer(.method2int(method)),
                      PACKAGE = "xcms"))
     }
 }

@@ -16,14 +16,18 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
   \item{snames}{sample names. By default the file name without extension
-  is used.}
+    is used.}
   \item{sclass}{sample classes.}
-    \item{phenoData}{\code{data.frame} or \code{AnnotatedDataFrame}
-      defining the sample names and classes and other sample related
-      properties. If not provided, the argument \code{sclass} or the
-      subdirectories in which the samples are stored will be
-      used to specify sample grouping.}
-  \item{profmethod}{method to use for profile generation. See help on
+  \item{phenoData}{\code{data.frame} or \code{AnnotatedDataFrame}
+    defining the sample names and classes and other sample related
+    properties. If not provided, the argument \code{sclass} or the
+    subdirectories in which the samples are stored will be
+    used to specify sample grouping.}
+  \item{profmethod}{Method to use for profile generation. Supported
+    values are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and
+    \code{"intlin"} (for methods \code{\link{profBin}},
+    \code{\link{profBinLin}}, \code{\link{profBinLinBase}} and
+    \code{\link{profIntLin}}, respectively). See help on
     \code{\link{profBin}} for a complete list of available methods and
     their supported parameters.}
   \item{profparam}{parameters to use for profile generation.}

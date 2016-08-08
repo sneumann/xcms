@@ -14,8 +14,9 @@ void ProfBinLin(double *xvals, double *yvals, int *numin,
     int    i, ipost;
 
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-
+    // why 20 here?
     startx = *xstart - 20*dx;
+    //
     FindEqualLess(xvals, numin, &startx, &ipost);
     //ipost = 0;
     xpost = *xstart + dx*(int)((xvals[ipost] - *xstart)/dx + 0.5);

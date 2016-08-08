@@ -18,6 +18,22 @@ test_breaks <- function() {
 
 }
 
+############################################################
+## Test profBinLin
+test_profBinLin <- function() {
+
+    library(xcms)
+    library(RUnit)
+
+    X <- 1:10
+    ## If there are no bins with missing values we expect the
+    ## results to be identical.
+    res <- xcms:::profBinLin(X, X, 5L)
+    checkEquals(res, xcms:::profBin(X, X, 5L))
+}
+
+############################################################
+## Compare binYonX, max, with plain profBin
 test_compare_with_profBin <- function() {
 
     library(xcms)
@@ -40,6 +56,51 @@ test_compare_with_profBin <- function() {
     checkEquals(b$y, c$y)
 }
 
+############################################################
+## Compare with profBinLin
+notrunyet_test_compare_with_profBinLin <- function() {
+    ## binLin does linear interpolation of values, in which nothing
+    ## was binned... let's see
+
+    library(xcms)
+    library(RUnit)
+
+    ## Reporting this as issue:
+    X <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+    ## Binsize if we want to have 5 bins: (10-1)/ (5-1) = 2.25
+    ## bins will thus be: (starting from 1, centered at 1)
+    ## [-0.125,2.125), [2.125,4.375), [4.375,6.625), [6.625,8.875), [8.875,11.125)
+    ## Binning values from above and selecting the max:
+    ## bin1: 1, 2 -> 2
+    ## bin2: 3, 4 -> 4
+    ## bin3: 5, 6 -> 6
+    ## bin4: 7, 8 -> 8
+    ## bin5: 9, 10 -> 10
+    ## profBin: bins as described above, select max value within bin
+    xcms:::profBin(X, X, 5L)  ## OK
+    ## profBinLin: same as profBin, but linearly interpolate values into which nothing was binned;
+    ## all bins have values, thus we expect it to be the same
+    xcms:::profBinLin(X, X, 5L)
+    ## The value for the first bin is always wrong.
+    ## profBinLinBase: same as profBinLin
+    xcms:::profBinLinBase(X, X, 5L)  ## OK
+
+    X <- sort(abs(rnorm(5000, mean = 500, sd = 300)))
+    a <- xcms:::profBinLinBase(X, X, 200)
+    b <- xcms:::profBinLin(X, X, 200)
+    head(a)
+    head(b)
+    head(xcms:::binYonX(X, X, nBins = 200, shiftByHalfBinSize = TRUE, method = "min")$y)
+
+    ## We've got 1 missing bin.
+    X <- c(1, 2, 7, 8, 9, 10)
+    xcms:::profBinLin(X, X, 5L)
+    xcms:::profBinLinBase(X, X, 5L)
+
+}
+
+############################################################
+## Test NA handling in binYonX
 test_binning_NA_handling <- function() {
 
     library(xcms)
@@ -69,7 +130,7 @@ test_binning_NA_handling <- function() {
                          NA, 8, NA, 9, 10))
 }
 
-test_binning <- function() {
+test_binning_max <- function() {
 
     library(xcms)
     library(RUnit)

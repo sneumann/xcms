@@ -105,7 +105,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                            mzdiff = mzdiff,
                                            index = index,
                                            verbose.columns = verboseColumns)
-    )  ## 15.4
+    )  ##
     ## Compare.
     ## For now the problem seems to be that arguments are not passed correctly!
     cat("DO: ", a, "\n")
