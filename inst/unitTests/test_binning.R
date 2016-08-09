@@ -575,12 +575,100 @@ test_compare_with_profBin <- function() {
     ## The bins will be the same except for the last one.
     checkEquals(b$x[-length(b$x)], c$x[-length(c$x)])
     checkEquals(b$y, c$y)
+
+    ## NA handling
+    X[20:30] <- NA
+    checkException(a <- xcms:::profBin(X, X, 1000))
+    checkException(b <- xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
+                                       shiftByHalfBinSize = TRUE))
+    set.seed(18011977)
+    X <- sort(abs(rnorm(500000, mean = 500, sd = 50)))
+    Y <- X
+    Y[20:30] <- NA
+    ## Doesn't work! a <- xcms:::profBin(X, Y, 1000)
+}
+
+############################################################
+## Compare with profBinLinM
+test_compare_with_profBinLinM <- function() {
+
+    ## A more realistic example.
+    set.seed(18011977)
+    X <- c(sort(abs(rnorm(3545, mean = 400, sd = 100))),
+           sort(abs(rnorm(10000, mean = 500, sd = 200))),
+           sort(abs(rnorm(7500, mean = 300, sd = 134))))
+    fromX <- c(1, 3546, 13546)
+    toX <- c(3545, 13545, 21045)
+    nBins <- 2000L
+    scIndex <- fromX - 1L
+    fX <- min(X)
+    tX <- max(X)
+    ## Calculate
+    resX <- xcms:::profBinLinM(X, X, scIndex, nBins, xstart = fX, xend = tX)
+    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+                           fromIdx = fromX, toIdx = toX,
+                           shiftByHalfBinSize = TRUE, sortedX = TRUE,
+                           impute = "lin")
+    M <- do.call(cbind, lapply(resM, function(x) {x$y}))
+    ## checkEquals(resX[, 2:3], M[, 2:3])
+
+    ## Benchmark.
+    ## library(microbenchmark)
+    ## microbenchmark(xcms:::profBinLinM(X, X, scIndex, nBins, xstart = fX, xend = tX),
+    ##                xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+    ##                               fromIdx = fromX, toIdx = toX,
+    ##                               shiftByHalfBinSize = TRUE, sortedX = TRUE,
+    ##                               impute = "lin"))
+    ## We're faster!
 }
 
 ############################################################
 ## Compare with profBinM
 test_compare_with_profBinM <- function() {
+
+    ## profBinM: takes vectors of data and a second one specifying
+    ## non-overlapping sub-sets.
+    X <- 1:30
+    fromX <- c(1, 11, 19)
+    toX <- c(10, 18, 30)
+    scIndex <- fromX - 1L
+    nBins <- 5L
+
+    resX <- xcms:::profBinM(X, X, scIndex, nBins)
+    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = min(X), binToX = max(X),
+                           fromIdx = fromX, toIdx = toX,
+                           shiftByHalfBinSize = TRUE)
+    M <- do.call(cbind, lapply(resM, function(x) {x$y}))
+    checkEquals(resX, M)
+
+    ## A more realistic example.
+    set.seed(18011977)
+    X <- c(sort(abs(rnorm(3545, mean = 400, sd = 100))),
+           sort(abs(rnorm(10000, mean = 500, sd = 200))),
+           sort(abs(rnorm(7500, mean = 300, sd = 134))))
+    fromX <- c(1, 3546, 13546)
+    toX <- c(3545, 13545, 21045)
+    nBins <- 2000L
+    scIndex <- fromX - 1L
+    fX <- min(X)
+    tX <- max(X)
+    ## Calculate
+    resX <- xcms:::profBinM(X, X, scIndex, nBins, xstart = fX, xend = tX)
+    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+                           fromIdx = fromX, toIdx = toX,
+                           shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    M <- do.call(cbind, lapply(resM, function(x) {x$y}))
+    checkEquals(resX, M)
+
+    ## Benchmark.
+    ## library(microbenchmark)
+    ## microbenchmark(xcms:::profBinM(X, X, scIndex, nBins, xstart = fX, xend = tX),
+    ##                xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+    ##                               fromIdx = fromX, toIdx = toX,
+    ##                               shiftByHalfBinSize = TRUE, sortedX = TRUE))
+    ## Same speed.
 }
+
 
 ############################################################
 ## Compare with profBinLin
