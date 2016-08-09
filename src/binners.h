@@ -41,14 +41,16 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * which we're looking for values to be within the bins. This allows to
  * bin on a subset of the x/y arrays. We suppose these have been checked
  * BEFORE (i.e. both being positive and x_end_idx <= length(x)).
+ * *index is a integer array, same length then brks that will hold the index
+ * of the min or max value within each bin in vector x.
  */
 static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx);
+					int x_end_idx, int *index);
 
 static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx);
+					int x_end_idx, int *index);
 
 static void _bin_y_on_x_with_breaks_sum(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,

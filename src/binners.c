@@ -8,7 +8,6 @@
  * ----------------------- R ENTRY POINTS -----------------------
  */
 
-
 /*
  * Bin vector x into bins and aggregate values in y for x-values falling within a
  * certain bin. Definition of breaks for the bins depends on input arguments breaks,
@@ -41,18 +40,22 @@
  *     1: linear interpolation of missing bin values from neighboring non-missing
  *     bin values (!imputation is done on the already binned values, not
  *     the y-values).
+ * getIndex: 0 or 1, whether an index should be returned or not.
  * The function returns a list with the first element (x) being the bin
  * midpoints and the second element (y) the max y-value within each bin.
  */
 SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
 	     SEXP toX, SEXP fromIdx, SEXP toIdx, SEXP shiftByHalfBinSize,
-	     SEXP initValue, SEXP method, SEXP imputeMethod) {
-  SEXP ans, brks, bin_mids, ans_list, names;
+	     SEXP initValue, SEXP method, SEXP imputeMethod, SEXP getIndex) {
+  SEXP ans, brks, bin_mids, ans_list, names, index;
   int n_bin, from_idx, to_idx, the_method, the_impute_method,
-    shift_by_half_bin_size;
+    shift_by_half_bin_size, count_protect, have_index, *p_index, get_index;
   double from_x, to_x, init_value, bin_size, *p_ans, *p_brks;
 
   /* Initializeing variables */
+  count_protect = 0;  // To count the PROTECT calls.
+  have_index = 0;     // If an index with the min and max value is returned too.
+  get_index = asInteger(getIndex);  // Whether we want the index to be returned at all.
   from_idx = asInteger(fromIdx);
   to_idx = asInteger(toIdx);
   the_method = asInteger(method);
@@ -67,6 +70,17 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
   if (to_idx >= LENGTH(x))
     error("'toIdx' can not be larger than length(x)!");
 
+  /* Define from_x and to_x */
+  if (ISNA(REAL(fromX)[0])) {
+    from_x = REAL(x)[from_idx];
+  } else {
+    from_x = REAL(fromX)[0];
+  }
+  if (ISNA(REAL(toX)[0])) {
+    to_x = REAL(x)[to_idx];
+  } else {
+    to_x = REAL(toX)[0];
+  }
   /* Binning: define breaks. */
   if (!ISNA(REAL(breaks)[0])) {
     /* Using the provided breaks */
@@ -76,33 +90,32 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
       error("Not enough breaks defined!");
   } else if (INTEGER(nBins)[0] != NA_INTEGER) {
     /* Calculating breaks based on the number of bins. */
-    from_x = REAL(fromX)[0];
-    to_x = REAL(toX)[0];
     n_bin = asInteger(nBins);
     if (n_bin <= 0)
       error("'nBins' must be larger 1!");
     PROTECT(brks = allocVector(REALSXP, n_bin + 1));
+    count_protect++;
     /* Calculate the breaks */
     p_brks = REAL(brks);
     _breaks_on_nBins(from_x, to_x, n_bin, p_brks, shift_by_half_bin_size);
   } else {
     /* Calculating breaks based on bin size. */
     bin_size = REAL(binSize)[0];
-    from_x = REAL(fromX)[0];
     if (shift_by_half_bin_size > 0) {
       from_x = from_x - bin_size / 2;
     }
-    to_x = REAL(toX)[0];
     if (bin_size < 0)
       error("'binSize' has to be > 0!");
     n_bin = (int)ceil((to_x - from_x) / bin_size);
     PROTECT(brks = allocVector(REALSXP, n_bin + 1));
+    count_protect++;
     p_brks = REAL(brks);
     _breaks_on_binSize(from_x, to_x, n_bin, bin_size, p_brks);
   }
 
   /* Create output */
   PROTECT(ans = allocVector(REALSXP, n_bin));
+  count_protect++;
 
   /* Do the binning. */
   p_ans = REAL(ans);
@@ -111,8 +124,12 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
   }
   switch (the_method) {
   case 2:
+    PROTECT(index = allocVector(INTSXP, n_bin));
+    count_protect++;
+    p_index = INTEGER(index);
     _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-				from_idx, to_idx);
+				from_idx, to_idx, p_index);
+    have_index = 1;
     break;
   case 3:
     _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
@@ -123,8 +140,12 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
 				 from_idx, to_idx);
     break;
   default:
+    PROTECT(index = allocVector(INTSXP, n_bin));
+    count_protect++;
+    p_index = INTEGER(index);
     _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-				from_idx, to_idx);
+				from_idx, to_idx, p_index);
+    have_index = 1;
   }
 
   /* Missing value handling... */
@@ -137,33 +158,76 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize, SEXP fromX,
     _fill_missing_with_value(p_ans, init_value, n_bin);
   }
 
+  /* Overwriting have_index if get_index == 0. */
+  if (get_index == 0)
+    have_index = 0;
+
   /* Calculate bin mid-points */
   PROTECT(bin_mids = allocVector(REALSXP, n_bin));
+  count_protect++;
   _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
   /* Now create the result list. */
-  PROTECT(ans_list = allocVector(VECSXP, 2));
+  PROTECT(ans_list = allocVector(VECSXP, (2 + have_index)));
+  count_protect++;
   SET_VECTOR_ELT(ans_list, 0, bin_mids);
   SET_VECTOR_ELT(ans_list, 1, ans);
   /* Setting names */
-  PROTECT(names = allocVector(STRSXP, 2));
+  PROTECT(names = allocVector(STRSXP, (2 + have_index)));
+  count_protect++;
   SET_STRING_ELT(names, 0, mkChar("x"));
   SET_STRING_ELT(names, 1, mkChar("y"));
-  setAttrib(ans_list, R_NamesSymbol, names);
-  if (!ISNA(REAL(breaks)[0])) {
-    UNPROTECT(4);
-  } else {
-    UNPROTECT(5);
+  /* For max and min we can also return the index of the min/max for each bin. */
+  if (have_index) {
+    SET_STRING_ELT(names, 2, mkChar("index"));
+    SET_VECTOR_ELT(ans_list, 2, index);
   }
+  setAttrib(ans_list, R_NamesSymbol, names);
+
+  UNPROTECT(count_protect);
   return ans_list;
-  /* UNPROTECT(2); */
-  /* return ans; */
 }
 
 
-
 /*
- * Some other test functions.
+ * Performs binning on sub-sets of x and y vectors. Subsets are defined with
+ * arguments subsetFromIdx, subsetToIdx speficying the (0-based) start and end
+ * index of the subsets.
+ * Returns a list, each element containing the results from the binning within
+ * each sub-set.
+ * Get fromX and toX if not provided from the vector x.
  */
+SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
+		   SEXP fromX, SEXP toX, SEXP subsetFromIdx, SEXP subsetToIdx,
+		   SEXP shiftByHalfBinSize, SEXP initValue, SEXP method,
+		   SEXP imputeMethod, SEXP getIndex) {
+  SEXP res, from_idx, to_idx, current_res;
+  int n_subsets, *p_subset_from_idx, *p_subset_to_idx;
+  if (LENGTH(subsetFromIdx) != LENGTH(subsetToIdx)) {
+    error("Arguments 'subsetFromIdx' and 'subsetToIdx' have to have the same length!");
+  }
+  n_subsets = LENGTH(subsetFromIdx);
+  p_subset_from_idx = INTEGER(subsetFromIdx);
+  p_subset_to_idx = INTEGER(subsetToIdx);
+
+  PROTECT(res = allocVector(VECSXP, n_subsets));
+
+  /* Loop through the subsets and perform the binning.
+   * If breaks is not provided, we have to infer the fromX and toX
+   * from the data in each loop and overwrite eventually pre-defined values.
+   */
+  for (int i = 0; i < n_subsets; i++) {
+    PROTECT(from_idx = ScalarInteger(p_subset_from_idx[i]));
+    PROTECT(to_idx = ScalarInteger(p_subset_to_idx[i]));
+    PROTECT(current_res = binYonX(x, y, breaks, nBins, binSize, fromX, toX,
+				  from_idx, to_idx, shiftByHalfBinSize,
+				  initValue, method, imputeMethod, getIndex));
+    SET_VECTOR_ELT(res, i, current_res);
+    UNPROTECT(3);
+  }
+
+  UNPROTECT(1);
+  return(res);
+}
 
 /*
  * Get breaks given from x, to x and number of bins.
@@ -259,10 +323,11 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * bin on a subset of the x/y arrays. We suppose these have been checked
  * BEFORE (i.e. both being positive and x_end_idx <= length(x)).
  * NA handling: skips any NAs in y.
+ * *index keeps track of the index of the max value within each bin in x.
  */
 static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx) {
+					int x_end_idx, int *index) {
   int x_current_idx, last_bin_idx;
   double x_current_value;
   last_bin_idx = n_bin - 1;
@@ -270,6 +335,7 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 
   // o Loop through the bins/brks
   for (int i = 0; i < n_bin; i++) {
+    index[i] = NA_INTEGER;
     // loop through the x values; assumes x sorted increasingly
     while (x_current_idx <= x_end_idx) {
       x_current_value = x[x_current_idx];
@@ -285,8 +351,10 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 	   * if the current bin value is NA, replace it automatically.
 	   */
 	  if (!ISNA(y[x_current_idx])) {
-	    if (ISNA(ans[i]) || (y[x_current_idx] > ans[i]))
+	    if (ISNA(ans[i]) || (y[x_current_idx] > ans[i])) {
 	      ans[i] = y[x_current_idx];
+	      index[i] = x_current_idx + 1;
+	    }
 	  }
 	} else {
 	  /* Break without incrementing the x_current_idx, thus the same value will
@@ -303,7 +371,7 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 
 static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx) {
+					int x_end_idx, int *index) {
   int x_current_idx, last_bin_idx;
   double x_current_value;
   last_bin_idx = n_bin - 1;
@@ -311,6 +379,7 @@ static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 
   // o Loop through the bins/brks
   for (int i = 0; i < n_bin; i++) {
+    index[i] = NA_INTEGER;
     // loop through the x values; assumes x sorted increasingly
     while (x_current_idx <= x_end_idx) {
       x_current_value = x[x_current_idx];
@@ -325,8 +394,10 @@ static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 	   * if the current bin value is NA, replace it automatically.
 	   */
 	  if (!ISNA(y[x_current_idx])) {
-	    if (ISNA(ans[i]) || (y[x_current_idx] < ans[i]))
+	    if (ISNA(ans[i]) || (y[x_current_idx] < ans[i])) {
 	      ans[i] = y[x_current_idx];
+	      index[i] = x_current_idx + 1;
+	    }
 	  }
 	} else {
 	  /* Break without incrementing the x_current_idx, thus the same value will

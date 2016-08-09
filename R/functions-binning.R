@@ -10,13 +10,18 @@
 ## incrementally sorted and, if not, it will be internally sorted (in which
 ## case also \code{y} will be ordered according to the order of \code{x}).
 ##
-## @details The breaks for the bins can be defined with the input arguments
-##  \code{nBins} or \code{binSize}. Pre-defined breaks can be passed with the
-## argument \code{breaks}. If \code{nBins} are defined, the breaks are
-## calculated similar to \code{brs <- seq(min(x), max(x), length.out = (nBins + 1))}).
-## For each bin then the maximal \code{y} value
-## (e.g. \code{max(y[x >= brs[1] & x < brs[2]])} for the first bin) is
-## determined. See examples for more details.
+## @details The breaks defining the boundary of each bin can be either passed
+## directly to the function with the argument \code{breaks}, or are calculated
+## on the data based on arguments \code{nBins} or \code{binSize} along with
+## \code{fromIdx}, \code{toIdx} and optionally \code{binFromX} and \code{binToX}.
+## Arguments \code{fromIdx} and \code{toIdx} allow to specify subset(s) of the
+## input vector \code{x} on which bins should be calculated. By default, the
+## range of the bins will be from \code{x[fromIdx]} to \code{x[toIdx]}, but it
+## is also possible to manually specify the x-value-range on which the breaks
+## should be defined with arguments \code{binFromX} and \code{binToX}. See
+## examples below for more details.
+## Calculation of breaks: for \code{nBins} the breaks correspond to
+## \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
 ##
 ## Imputation of missing bin values: by default (argument \code{impute = "no"})
 ## the value of \code{missingValue} is reported for a bin if none of the values
@@ -26,8 +31,9 @@
 ## bin with missing values from its neighboring bins (for which a value was
 ## defined). This method is equivalent to the \code{\link{profBinLin}} method.
 ## For more details see examples below.
+##
 ## @note The function ensures that all values in the range defined by the breaks
-## (including \code{binFromX} and \code{binToX}) are considered in the binning. This
+## are considered in the binning. This
 ## means that for all bins except the last one values in \code{x} have to be
 ## \code{>= xlower} and \code{< xupper} (with \code{xlower}
 ## and \code{xupper} being the lower and upper boundary, respectively). For the
@@ -54,9 +60,12 @@
 ## lower and upper values for each bin. See examples below.
 ## @param nBins Integer of length one defining the number of desired bins.
 ## @param binSize Numeric of length one defining the desired bin size.
-## @param binFromX Numeric of length one allowing to manually specify the range
-## to be used for binning. This will affect only the calculation of the breaks
-## for the bins (i.e. if \code{nBins} or \code{binSize} is provided).
+## @param binFromX Optional numeric of length one allowing to manually specify
+## the range of x-values to be used for binning.
+## This will affect only the calculation of the breaks for the bins
+## (i.e. if \code{nBins} or \code{binSize} is provided).
+## If not provided the minimal value in the sub-set \code{fromIdx}-\code{toIdx}
+## in input vector \code{x} will be used.
 ## @param binToX Same as \code{binFromX}, but defining the maximum x-value to be
 ## used for binning.
 ## @param fromIdx Integer of length 1 allowing to define the sub-set of x
@@ -79,9 +88,16 @@
 ## @impute Allows to specify a method to be used for imputation of missing
 ## bin-values. Allowed values are \code{"no"} (no imputation), \code{"lin"}
 ## (linear interpolation). See details section for more information.
+## @returnIndex Logical indicating whether the index of the max (if
+## \code{method = "max"}) or min (if \code{method = "min"}) value within
+## each bin in input vector \code{x} should also be reported. For methods other
+## than \code{"max"} or \code{"min"} this argument is ignored.
 ## @return Returns a list of length 2, the first element (named \code{"x"})
 ## contains the bin mid-points, the second element (named \code{"y"}) the
-## aggregated values from input vector \code{y} within each bin.
+## aggregated values from input vector \code{y} within each bin. For
+## \code{returnIndex = TRUE} the list contains an additional element \code{"index"} with
+## the index of the max or min (depending on whether \code{method = "max"} or
+## \code{method = "min"}) value within each bin in input vector \code{x}.
 ## @author Johannes Rainer
 ## @examples
 ## ########
@@ -92,14 +108,30 @@
 ## ## The first bin is then [2,4), the second [4,6) and so on.
 ## brks
 ## ## Get the max value falling within each bin.
-## xcms:::binYonX_max(x = 1:16, y = 1:16, breaks = brks)
+## xcms:::binYonX(x = 1:16, y = 1:16, breaks = brks)
 ## ## Thus, the largest value in x = 1:16 falling into the bin [2,4) (i.e. being
 ## ## >= 2 and < 4) is 3, the largest one falling into [4,6) is 5 and so on.
-## ## Note however the function ensures that binFromX and binToX (in this example 1 and
-## ## 12) fall within a bin, i.e. 12 is considered for the last bin.
+## ## Note however the function ensures that the minimal and maximal x-value
+## ## (in this example 1 and 12) fall within a bin, i.e. 12 is considered for
+## ## the last bin.
 ##
 ## #######
-## ## Bin only values within a sub-set of x
+## ## Performing the binning ons sub-set of x
+## ##
+## X <- 1:16
+## ## Bin X from element 4 to 10 into 5 bins.
+## X[4:10]
+## xcms:::binYonX(X, X, nBins = 5L, fromIdx = 4, toIdx = 10)
+## ## This defines breaks for 5 bins on the values from 4 to 10 and bins
+## ## the values into these 5 bins. Alternatively, we could manually specify
+## ## the range for the binning, i.e. the minimal and maximal value for the
+## ## breaks:
+## xcms:::binYonX(X, X, nBins = 5L, fromIdx = 4, toIdx = 10, binFromX = 1, binToX = 16)
+## ## In this case the breaks for 5 bins were defined from a value 1 to 16 and
+## ## the values 4 to 10 were binned based on these breaks.
+##
+## #######
+## ## Bin values within a sub-set of x, second example
 ## ##
 ## ## This example illustrates how the fromIdx and toIdx parameters can be used.
 ## ## x defines 3 times the sequence form 1 to 10, while y is the sequence from
@@ -113,8 +145,7 @@
 ## ## Bin the M/Z values in the second scan into 5 bins and get the maximum
 ## ## intensity for each bin. Note that we have to specify sortedX = TRUE as
 ## ## the x and y vectors would be sorted otherwise.
-## xcms:::binYonX_max(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
-##                    sortedX = TRUE, fromIdx = 11, toIdx = 20)
+## xcms:::binYonX(X, Y, nBins = 5L, sortedX = TRUE, fromIdx = 11, toIdx = 20)
 ##
 ## #######
 ## ## Use linear interpolation to impute missing bin values.
@@ -131,12 +162,13 @@
 ## ## neighboring bins, i.e. the value for the second bin will be (6 + 1)/2 and
 ## ## the value for the 4th bin will be (6 + 11)/2.
 ## binYonX(X, Y, nBins = 5L, impute = "lin")$y
-binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
-                    binToX = max(x), fromIdx = 1L, toIdx = length(x),
+binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
+                    binToX, fromIdx = 1L, toIdx = length(x),
                     method = "max",
                     sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
                     impute = "no",
-                    missingValue = 0) {
+                    missingValue = 0,
+                    returnIndex = FALSE) {
     if (!missing(x) & missing(y))
         y <- x
     if (missing(x) | missing(y))
@@ -149,6 +181,15 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
         x <- x[o]
         y <- y[o]
     }
+    ## Check fromIdx and toIdx
+    if (any(fromIdx < 1) | any(toIdx > length(x)))
+        stop("'fromIdx' and 'toIdx' have to be within 1 and lenght(x)!")
+    if (length(toIdx) != length(fromIdx))
+        stop("'fromIdx' and 'toIdx' have to have the same length!")
+    if (missing(binFromX))
+        binFromX <- as.double(NA)
+    if (missing(binToX))
+        binToX <- as.double(NA)
     ## For now we don't allow NAs in x
     if (anyNA(x))
         stop("No 'NA' values are allowed in 'x'!")
@@ -157,8 +198,8 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
     if (!is.double(y)) y <- as.double(y)
     if (!is.double(binFromX)) binFromX <- as.double(binFromX)
     if (!is.double(binToX)) binToX <- as.double(binToX)
-    if (!is.integer(fromIdx)) as.integer(fromIdx)
-    if (!is.integer(toIdx)) as.integer(toIdx)
+    if (!is.integer(fromIdx)) fromIdx <- as.integer(fromIdx)
+    if (!is.integer(toIdx)) toIdx <- as.integer(toIdx)
     ## Call the C function(s). breaks has precedence over nBins over binSize.
     shiftIt <- 0L
     if (!missing(breaks)) {
@@ -183,11 +224,60 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX = min(x),
             if (!is.double(binSize)) binSize <- as.double(binSize)
         }
     }
-    return(.Call("binYonX", x, y, breaks, nBins, binSize,
+    getIndex <- 0L
+    if (returnIndex)
+        getIndex <- 1L
+    if (length(toIdx) > 1) {
+        return(.Call("binYonX_multi", x, y, breaks, nBins, binSize,
+                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                     shiftIt, as.double(missingValue),
+                     as.integer(.aggregateMethod2int(method)),
+                     as.integer(.imputeMethod2int(impute)),
+                     getIndex,
+                     PACKAGE = "xcms"))
+    } else {
+        return(.Call("binYonX", x, y, breaks, nBins, binSize,
+                     binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
+                     shiftIt, as.double(missingValue),
+                     as.integer(.aggregateMethod2int(method)),
+                     as.integer(.imputeMethod2int(impute)),
+                     getIndex,
+                     PACKAGE = "xcms"))
+    }
+}
+
+## The "multi"-version will also be called by binYonX, this is only for testing
+## purposes.
+binYonX_multi <- function(x, y, breaks, nBins, binSize, binFromX,
+                          binToX, fromIdx = 1L, toIdx = length(x),
+                          method = "max",
+                          sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
+                          impute = "no",
+                          missingValue = 0) {
+    if (missing(nBins) & missing(binSize) & missing(breaks))
+        stop("One of 'breaks', 'nBins' or 'binSize' has to be defined!")
+    if (missing(binFromX))
+        binFromX <- as.double(NA)
+    if (missing(binToX))
+        binToX <- as.double(NA)
+    if (!is.double(x)) x <- as.double(x)
+    if (!is.double(y)) y <- as.double(y)
+    if (!is.double(binFromX)) binFromX <- as.double(binFromX)
+    if (!is.double(binToX)) binToX <- as.double(binToX)
+    if (!is.integer(fromIdx)) fromIdx <- as.integer(fromIdx)
+    if (!is.integer(toIdx)) toIdx <- as.integer(toIdx)
+    if (missing(breaks)) breaks <- as.double(NA)
+    if (missing(binSize)) binSize <- as.double(NA)
+    if (missing(nBins)) nBins <- NA_integer_
+    shiftIt <- 0L
+    if (shiftByHalfBinSize)
+        shiftIt <- 1L
+    return(.Call("binYonX_multi", x, y, breaks, nBins, binSize,
                  binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
                  shiftIt, as.double(missingValue),
                  as.integer(.aggregateMethod2int(method)),
                  as.integer(.imputeMethod2int(impute)),
+                 0L,
                  PACKAGE = "xcms"))
 
 }

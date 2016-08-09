@@ -1,22 +1,5 @@
 ## Test functions to evaluate binning of values.
 
-test_breaks <- function() {
-
-    library(xcms)
-    library(RUnit)
-
-    ## Test generation of breaks for binning.
-    ## o nBins
-    res <- xcms:::breaks_on_nBins(1, 10, 4)
-    checkIdentical(res, seq(1, 10, length.out = 5))
-    res <- xcms:::breaks_on_nBins(2, 8, 20)
-    checkEquals(res, seq(2, 8, length.out = 21))
-
-    ## o binSize
-    res <- xcms:::breaks_on_binSize(1, 10, 0.13)
-    checkEquals(res, c(seq(1, 10, by = 0.13), 10))
-
-}
 
 ############################################################
 ## Test profBinLin
@@ -196,6 +179,8 @@ test_binning_imputation_lin <- function() {
     checkEquals(res$y, c(2, 4, 6, 4, 2))
 }
 
+############################################################
+## binYonX with method max.
 test_binning_max <- function() {
 
     library(xcms)
@@ -213,6 +198,8 @@ test_binning_max <- function() {
     checkEquals(res$y, c(2, 4, 6, 8, 10))
     checkEquals(res$x,
                 breakMidPoint(xcms:::breaks_on_nBins(min(X), max(X), 5L)))
+    res <- xcms:::binYonX(X, Y, nBins = 5L, returnIndex = TRUE)
+    checkEquals(res$index, c(2, 4, 6, 8, 10))
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
@@ -220,12 +207,28 @@ test_binning_max <- function() {
     checkEquals(res$y, c(2.05, 4, 6, 8, 10))
     checkEquals(res$x,
                 breakMidPoint(xcms:::breaks_on_nBins(1, 10, 5L)))
-    ##  Define fromIdx, toIdx
+    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10,
+                          returnIndex = TRUE)
+    checkEquals(res$index, c(2, 4, 6, 8, 10))
+    ##  Define fromIdx, toIdx; binning will only take place in that sub-set.
     res <- xcms:::binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = 10)
-    brks <- xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
+    brks <- xcms:::breaks_on_nBins(min(X[1]), max(X[10]), nBins = 5L)
+    checkEquals(res$y, c(2.05, 4, 6, 8, 10))
+    checkEquals(res$x, breakMidPoint(brks))
+    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                          returnIndex = TRUE)
+    checkEquals(res$index, c(2, 4, 6, 8, 10))
+    ##  If we provide fromX and toX the result will be different, as the breaks
+    ##  are calculated differently.
     ##  This calculates 5 bins on range(X)
+    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = min(X), binToX = max(X),
+                          fromIdx = 1, toIdx = 10)
+    brks <- xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkEquals(res$y, c(3, 5, 8, 10, 0)) ## because toIdx = 10 the last is 0
     checkEquals(res$x, breakMidPoint(brks))
+    res <- xcms:::binYonX(X, nBins = 5L, binFromX = min(X), binToX = max(X),
+                          fromIdx = 1, toIdx = 10, returnIndex = TRUE)
+    checkEquals(res$index, c(3, 5, 8, 10, NA))
     ##  Check the fromIdx and toIdx again:
     X <- rep(1:10, 3)
     Y <- 1:30
@@ -235,6 +238,10 @@ test_binning_max <- function() {
                               fromIdx = 11, toIdx = 20, sortedX = TRUE)
     checkEquals(res$y, c(12, 14, 16, 18, 20))
     checkEquals(res$x, breakMidPoint(brks))
+    res <- xcms:::binYonX(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
+                          fromIdx = 11, toIdx = 20, sortedX = TRUE,
+                          returnIndex = TRUE)
+    checkEquals(res$index, c(12, 14, 16, 18, 20))
     ##  re-order X
     X <- sample(X, size = length(X))
     res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10)
@@ -270,7 +277,8 @@ test_binning_max <- function() {
     checkEquals(res$y, c(4, 5, 7, 8, 9))
     brks <- xcms:::breaks_on_binSize(3, 9, 1.45)
     checkEquals(res$x, breakMidPoint(brks))
-    res <- xcms:::binYonX(X, X, binSize = 1.45, fromIdx = 3, toIdx = 10)
+    res <- xcms:::binYonX(X, X, binSize = 1.45, fromIdx = 3, toIdx = 10,
+                          binFromX = min(X), binToX = max(X))
     ## bins:
     ## 1-2.45, 2.45-3.90, 3.90-5.35, 5.35-6.80, 6.80-8.25, 8.25-9.70, 9.70-10.00
     checkEquals(res$y, c(0, 3, 5, 6, 8, 9, 10))
@@ -305,15 +313,22 @@ test_binning_min <- function() {
     ## o nBins
     res <- xcms:::binYonX(X, nBins = 5L, method = "min")
     checkEquals(res$y, c(1, 3, 5, 7, 9))
+    res <- xcms:::binYonX(X, nBins = 5L, method = "min", returnIndex = TRUE)
+    checkEquals(res$index, c(1, 3, 5, 7, 9))
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
     res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10, method = "min")
     checkEquals(res$y, c(1, 3, 5, 7, 9))
     ##  Define fromIdx, toIdx
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10, method = "min")
+    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10, method = "min",
+                          binFromX = min(X), binToX = max(X))
     brks <- xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkEquals(res$y, c(1, 4, 6, 9, 0))
+    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                          method = "min", binFromX = min(X), binToX = max(X),
+                          returnIndex = TRUE)
+    checkEquals(res$index, c(1, 4, 6, 9, NA))
 
     ## o binSize
     X <- 1:10
@@ -355,10 +370,15 @@ test_binning_sum <- function() {
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
-    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10, method = "sum")
+    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
+                          method = "sum")
     checkEquals(res$y, c(3.05, 7, 11, 15, 19))
+    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
+                          method = "sum", returnIndex = TRUE)
+    checkEquals(length(res), 2)
     ##  Define fromIdx, toIdx
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10, method = "sum")
+    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                          method = "sum", binFromX = min(X), binToX = max(X))
     xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkEquals(res$y, c(6.05, 9, 21, 19, 0))
 
@@ -419,6 +439,23 @@ test_binning_mean <- function() {
     checkEquals(res$y, c(2, 4.5, 6.5, 9))
 }
 
+test_breaks <- function() {
+
+    library(xcms)
+    library(RUnit)
+
+    ## Test generation of breaks for binning.
+    ## o nBins
+    res <- xcms:::breaks_on_nBins(1, 10, 4)
+    checkIdentical(res, seq(1, 10, length.out = 5))
+    res <- xcms:::breaks_on_nBins(2, 8, 20)
+    checkEquals(res, seq(2, 8, length.out = 21))
+
+    ## o binSize
+    res <- xcms:::breaks_on_binSize(1, 10, 0.13)
+    checkEquals(res, c(seq(1, 10, by = 0.13), 10))
+
+}
 
 .test_inputs <- function() {
 
@@ -430,6 +467,83 @@ test_binning_mean <- function() {
     xcms:::testRealInput(4)
     xcms:::testRealInput(c(4.2231444, 5))
 
+}
+
+############################################################
+## binYonX_multi
+##
+## Test binning in subsets.
+test_binYonX_multi <- function() {
+
+    library(xcms)
+    library(RUnit)
+
+    ## Simple test without actually needing subsets.
+    X <- 1:11
+    Y <- 1:11
+    nBins = 5L
+    res <- xcms:::binYonX(X, Y, nBins = nBins)
+    resM <- xcms:::binYonX_multi(X, Y, nBins = nBins)
+    checkEquals(res, resM[[1]])
+
+    X <- 1:30
+    fromIdx <- c(1, 3, 14)
+    toIdx <- c(8, 11, 28)
+    resM <- xcms:::binYonX_multi(X, X, nBins = nBins, fromIdx = fromIdx,
+                                 toIdx = toIdx)
+    checkEquals(length(resM), 3)
+    for (i in 1:length(fromIdx)) {
+        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
+                                              fromIdx = fromIdx[i],
+                                              toIdx = toIdx[i]))
+    }
+
+    ## GC-torture; check if objects in C are save.
+    gctorture(on = TRUE)
+    resM <- xcms:::binYonX_multi(X, X, nBins = nBins, fromIdx = fromIdx,
+                                 toIdx = toIdx)
+    gctorture(on = FALSE)
+    for (i in 1:length(fromIdx)) {
+        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
+                                              fromIdx = fromIdx[i],
+                                              toIdx = toIdx[i]))
+    }
+
+    X <- 1:30
+    fromIdx <- c(1, 3, 14)
+    toIdx <- c(8, 11, 28)
+    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                                 toIdx = toIdx)
+    checkEquals(length(resM), 3)
+    for (i in 1:length(fromIdx)) {
+        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
+                                              fromIdx = fromIdx[i],
+                                              toIdx = toIdx[i]))
+    }
+    ## Returning also the index
+    resM <- xcms:::binYonX(X, nBins = nBins, fromIdx = fromIdx, toIdx = toIdx,
+                           returnIndex = TRUE)
+    checkTrue(all(unlist(lapply(resM, function(z) {
+        return(any(names(z) == "index"))
+    })) == TRUE))
+
+    ## With defining fromX and toX before. The breaks will thus
+    ## be defined on these values.
+    fromX <- 1
+    toX <- 30
+    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                           toIdx = toIdx, binFromX = fromX, binToX = toX)
+    checkEquals(length(resM), 3)
+    for (i in 1:length(fromIdx)) {
+        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
+                                              fromIdx = fromIdx[i],
+                                              toIdx = toIdx[i],
+                                              binFromX = fromX,
+                                              binToX = toX))
+    }
+
+    ## Error checks.
+    checkException(xcms:::binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = c(2, 3)))
 }
 
 
@@ -461,6 +575,11 @@ test_compare_with_profBin <- function() {
     ## The bins will be the same except for the last one.
     checkEquals(b$x[-length(b$x)], c$x[-length(c$x)])
     checkEquals(b$y, c$y)
+}
+
+############################################################
+## Compare with profBinM
+test_compare_with_profBinM <- function() {
 }
 
 ############################################################
