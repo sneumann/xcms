@@ -15,22 +15,15 @@
 ## on the data based on arguments \code{nBins} or \code{binSize} along with
 ## \code{fromIdx}, \code{toIdx} and optionally \code{binFromX} and \code{binToX}.
 ## Arguments \code{fromIdx} and \code{toIdx} allow to specify subset(s) of the
-## input vector \code{x} on which bins should be calculated. By default, the
-## range of the bins will be from \code{x[fromIdx]} to \code{x[toIdx]}, but it
-## is also possible to manually specify the x-value-range on which the breaks
-## should be defined with arguments \code{binFromX} and \code{binToX}. See
-## examples below for more details.
-## Calculation of breaks: for \code{nBins} the breaks correspond to
+## input vector \code{x} on which bins should be calculated. The default the full
+##  \code{x} vector is considered. Also, if not specified otherwise with arguments
+##  \code{binFromX} and \code{binToX }, the range of the bins within each of the
+## sub-sets will be from \code{x[fromIdx]} to \code{x[toIdx]}. Arguments
+##  \code{binFromX} and \code{binToX} allow to overwrite this by manually
+## defining the a range on which the breaks should be calculated. See examples
+## below for more details. Calculation of breaks: for \code{nBins} the breaks
+## correspond to
 ## \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
-##
-## Imputation of missing bin values: by default (argument \code{impute = "no"})
-## the value of \code{missingValue} is reported for a bin if none of the values
-## in \code{x} fall into the bin. Alternatively, a value for such bins can be
-## calculated by specifying an interpolation method with argument \code{impute}.
-## \code{impute = "lin"} uses simple linear imputation to derive a value for a
-## bin with missing values from its neighboring bins (for which a value was
-## defined). This method is equivalent to the \code{\link{profBinLin}} method.
-## For more details see examples below.
 ##
 ## @note The function ensures that all values in the range defined by the breaks
 ## are considered in the binning. This
@@ -47,9 +40,6 @@
 ## \code{NA} handling: by default the function ignores \code{NA} values in
 ## \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
 ## allowed in \code{x}.
-##
-## All methods to impute missing bin values are based on the already aggregated
-## data, not the individual values in \code{y}.
 ##
 ## @title Aggregate values in y for bins defined on x
 ## @param x Numeric vector to be used for binning.
@@ -68,10 +58,10 @@
 ## in input vector \code{x} will be used.
 ## @param binToX Same as \code{binFromX}, but defining the maximum x-value to be
 ## used for binning.
-## @param fromIdx Integer of length 1 allowing to define the sub-set of x
-## that will be used for binning.
-## @param toIdx Same as \code{toIdx}, but defining the maximum index in x to
-## be used for binning.
+## @param fromIdx Integer vector defining the start position of one or multiple
+## sub-sets of input vector \code{x} that should be used for binning.
+## @param toIdx Same as \code{toIdx}, but defining the maximum index (or indices)
+## in x to be used for binning.
 ## @method A character string specifying the method that should be used to
 ## aggregate values in \code{y}. Allowed are \code{"max"}, \code{"min"},
 ## \code{"sum"} and \code{"mean"} to identify the maximal or minimal value or
@@ -82,12 +72,10 @@
 ## center at \code{fromX} and its lower and upper boundary are
 ##  \code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
 ## ignored if \code{breaks} are provided.
-## @missingValue A numeric of length one specifying the value that should be
-## used as \emph{default} value for a bin. Defaults to \code{0}, thus if no value
-## in \code{x} falls within a bin, \code{0} is reported for this bin.
-## @impute Allows to specify a method to be used for imputation of missing
-## bin-values. Allowed values are \code{"no"} (no imputation), \code{"lin"}
-## (linear interpolation). See details section for more information.
+## @baseValue The base value for empty bins (i.e. bins into which either no
+## values in \code{x} did fall, or to which only \code{NA} values in \code{y}
+## were assigned). By default (i.e. if not specified), \code{NA} is assigned
+## to such bins.
 ## @returnIndex Logical indicating whether the index of the max (if
 ## \code{method = "max"}) or min (if \code{method = "min"}) value within
 ## each bin in input vector \code{x} should also be reported. For methods other
@@ -99,6 +87,7 @@
 ## the index of the max or min (depending on whether \code{method = "max"} or
 ## \code{method = "min"}) value within each bin in input vector \code{x}.
 ## @author Johannes Rainer
+## @seealso \code{\link{imputeLinInterpol}}, \code{profBin}
 ## @examples
 ## ########
 ## ## Simple example illustrating the breaks and the binning.
@@ -148,26 +137,23 @@
 ## xcms:::binYonX(X, Y, nBins = 5L, sortedX = TRUE, fromIdx = 11, toIdx = 20)
 ##
 ## #######
-## ## Use linear interpolation to impute missing bin values.
+## ## Bin in overlapping sub-sets of X
 ## ##
-## ## The input vector y contains NAs for x-values falling within some bins. By
-## ## default the value of argument missingValue is reported for these.
-## X <- 1:11
-## Y <- c(1, NA, NA, NA, 5, 6, NA, NA, 9, 10, 11)
-## ## The breaks for the bins are:
-## xcms:::breaks_on_nBins(1, 11, 5L)
-## ## Thus bin 2 and 4 will get a value of 0.
-## binYonX(X, Y, nBins = 5L)$y
-## ## If we use impute = "lin" a value is inferred for these bins based on their
-## ## neighboring bins, i.e. the value for the second bin will be (6 + 1)/2 and
-## ## the value for the 4th bin will be (6 + 11)/2.
-## binYonX(X, Y, nBins = 5L, impute = "lin")$y
+## ## In this example we define overlapping sub-sets of X and perform the binning
+## ## within these.
+## X <- 1:30
+## ## Define the start and end indices of the sub-sets.
+## fIdx <- c(2, 8, 21)
+## tIdx <- c(10, 25, 30)
+## xcms:::binYonX(X, nBins = 5L, fromIdx = fIdx, toIdx = tIdx)
+## ## The same, but pre-defining also the desired range of the bins.
+## xcms:::binYonX(X, nBins = 5L, fromIdx = fIdx, toIdx = tIdx, binFromX = 4, binToX = 28)
+## ## The same bins are thus used for each sub-set.
 binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
                     binToX, fromIdx = 1L, toIdx = length(x),
-                    method = "max",
-                    sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
-                    impute = "no",
-                    missingValue = 0,
+                    method = "max", baseValue,
+                    sortedX = !is.unsorted(x),
+                    shiftByHalfBinSize = FALSE,
                     returnIndex = FALSE) {
     if (!missing(x) & missing(y))
         y <- x
@@ -200,7 +186,7 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
     if (!is.double(binToX)) binToX <- as.double(binToX)
     if (!is.integer(fromIdx)) fromIdx <- as.integer(fromIdx)
     if (!is.integer(toIdx)) toIdx <- as.integer(toIdx)
-    ## Call the C function(s). breaks has precedence over nBins over binSize.
+    ## breaks has precedence over nBins over binSize.
     shiftIt <- 0L
     if (!missing(breaks)) {
         if (shiftByHalfBinSize)
@@ -211,75 +197,148 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
         binSize <- as.double(NA)
     } else {
         if (!missing(nBins)) {
-            if (shiftByHalfBinSize)
-                shiftIt <- 1L
             breaks <- as.double(NA)
             if (!is.integer(nBins)) nBins <- as.integer(nBins)
             binSize <- as.double(NA)
         } else{
-            if (shiftByHalfBinSize)
-                shiftIt <- 1L
             breaks <- as.double(NA)
             nBins <- NA_integer_
             if (!is.double(binSize)) binSize <- as.double(binSize)
         }
     }
+    if (shiftByHalfBinSize)
+        shiftIt <- 1L
+    ## Define default value for baseValue
+    if (missing(baseValue)) {
+        baseValue = as.double(NA)
+    } else {
+        if (!is.double(baseValue)) baseValue <- as.double(baseValue)
+    }
+
     getIndex <- 0L
     if (returnIndex)
         getIndex <- 1L
     if (length(toIdx) > 1) {
         return(.Call("binYonX_multi", x, y, breaks, nBins, binSize,
                      binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                     shiftIt, as.double(missingValue),
+                     shiftIt,
                      as.integer(.aggregateMethod2int(method)),
-                     as.integer(.imputeMethod2int(impute)),
+                     baseValue,
                      getIndex,
                      PACKAGE = "xcms"))
     } else {
         return(.Call("binYonX", x, y, breaks, nBins, binSize,
                      binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                     shiftIt, as.double(missingValue),
+                     shiftIt,
                      as.integer(.aggregateMethod2int(method)),
-                     as.integer(.imputeMethod2int(impute)),
+                     baseValue,
                      getIndex,
                      PACKAGE = "xcms"))
     }
 }
 
-## The "multi"-version will also be called by binYonX, this is only for testing
-## purposes.
-binYonX_multi <- function(x, y, breaks, nBins, binSize, binFromX,
-                          binToX, fromIdx = 1L, toIdx = length(x),
-                          method = "max",
-                          sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
-                          impute = "no",
-                          missingValue = 0) {
-    if (missing(nBins) & missing(binSize) & missing(breaks))
-        stop("One of 'breaks', 'nBins' or 'binSize' has to be defined!")
-    if (missing(binFromX))
-        binFromX <- as.double(NA)
-    if (missing(binToX))
-        binToX <- as.double(NA)
-    if (!is.double(x)) x <- as.double(x)
-    if (!is.double(y)) y <- as.double(y)
-    if (!is.double(binFromX)) binFromX <- as.double(binFromX)
-    if (!is.double(binToX)) binToX <- as.double(binToX)
-    if (!is.integer(fromIdx)) fromIdx <- as.integer(fromIdx)
-    if (!is.integer(toIdx)) toIdx <- as.integer(toIdx)
-    if (missing(breaks)) breaks <- as.double(NA)
-    if (missing(binSize)) binSize <- as.double(NA)
-    if (missing(nBins)) nBins <- NA_integer_
-    shiftIt <- 0L
-    if (shiftByHalfBinSize)
-        shiftIt <- 1L
-    return(.Call("binYonX_multi", x, y, breaks, nBins, binSize,
-                 binFromX, binToX, force(fromIdx - 1L), force(toIdx - 1L),
-                 shiftIt, as.double(missingValue),
-                 as.integer(.aggregateMethod2int(method)),
-                 as.integer(.imputeMethod2int(impute)),
-                 0L,
-                 PACKAGE = "xcms"))
 
+############################################################
+## imputeLinInterpol
+##
+## @description This method resembles some of the functionality of the xcms
+## profBinLin and profBinLinBase functions, more specifically, the missing
+## value imputation based on linear interpolation.
+##
+## @details Values for NAs in input vector \code{x} can be imputed using methods
+## \code{"lin"} and \code{"linbase"}:
+## \code{impute = "lin"} uses simple linear imputation to derive a value for an
+## empty element in input vector \code{x} from its neighboring non-empty elements.
+## This method is equivalent to the linear interpolation in the
+## \code{\link{profBinLin}} method.
+## \code{impute = "linbase"} uses linear interpolation to impute values for empty
+## elements within a user-definable proximity to non-empty elements and setting the
+## element's value to the \code{baseValue} otherwise. The default for the
+##  \code{baseValue} is half of the smallest value in \code{x}
+## (\code{NA}s being removed). Whether linear interpolation based imputation is
+## performed for a missing value depends on the \code{distance} argument.
+## Interpolation is only performed if one of the next \code{distance} closest
+## neighbors to the current empty element has a value other than \code{NA}.
+## No interpolation takes place for \code{distance = 0}, while \code{distance = 1}
+## means that the value for an empty element is interpolated from directly
+## adjacent non-empty elements while, if the next neighbors of the current
+## empty element are also \code{NA}, it's vale is set to \code{baseValue}.
+## This corresponds to the linear interpolation performed by the
+## \code{\link{profBinLinBase}} method.
+## For more details see examples below.
+##
+## @title Impute values for empty elements in a vector using linear interpolation
+## @param x A numeric vector with eventual missing (\code{NA}) values.
+## @param baseValue The base value to which empty elements should be set. This
+## is only considered for \code{method = "linbase"} and corresponds to the
+## \code{\link{profBinLinBase}}'s \code{baselevel} argument.
+## @param method One of \code{"none"}, \code{"lin"} or \code{"linbase"}.
+## @param distance For \code{method = "linbase"}: number of non-empty neighboring
+## element of an empty element that should be considered for linear interpolation. See
+## details section for more information.
+## @return A numeric vector with empty values imputed based on the selected
+## \code{method}.
+## @author Johannes Rainer
+## @examples
+## #######
+## ## Impute missing values by linearly interpolating from neighboring
+## ## non-empty elements
+## x <- c(3, NA, 1, 2, NA, NA, 4, NA, NA, NA, 3, NA, NA, NA, NA, 2)
+## xcms:::imputeLinInterpol(x, method = "lin")
+## ## visualize the interpolation:
+## plot(x = 1:length(x), y = x)
+## points(x = 1:length(x), y = xcms:::imputeLinInterpol(x, method = "lin"), type = "l", col = "grey")
+##
+## ## If the first or last elements are NA, interpolation is performed from 0
+## ## to the first non-empty element.
+## x <- c(NA, 2, 1, 4, NA)
+## xcms:::imputeLinInterpol(x, method = "lin")
+## ## visualize the interpolation:
+## plot(x = 1:length(x), y = x)
+## points(x = 1:length(x), y = xcms:::imputeLinInterpol(x, method = "lin"), type = "l", col = "grey")
+##
+## ######
+## ## method = "linbase"
+## ## "linbase" performs imputation by interpolation for empty elements based on
+## ## 'distance' adjacent non-empty elements, setting all remaining empty elements
+## ## to the baseValue
+## x <- c(3, NA, 1, 2, NA, NA, 4, NA, NA, NA, 3, NA, NA, NA, NA, 2)
+## ## Setting distance = 0 skips imputation by linear interpolation
+## xcms:::imputeLinInterpol(x, method = "linbase", distance = 0)
+##
+## ## With distance = 1 for all empty elements next to a non-empty element the value
+## ## is imputed by linear interpolation.
+## xInt <- xcms:::imputeLinInterpol(x, method = "linbase", distance = 1L)
+## xInt
+##
+## plot(x = 1:length(x), y = x, ylim = c(0, max(x, na.rm = TRUE)))
+## points(x = 1:length(x), y = xInt, type = "l", col = "grey")
+##
+## ## Setting distance = 2L would cause that for all empty elements for which the
+## ## distance to the next non-empty element is <= 2 the value is imputed by
+## ## linear interpolation:
+## xInt <- xcms:::imputeLinInterpol(x, method = "linbase", distance = 2L)
+## xInt
+##
+## plot(x = 1:length(x), y = x, ylim = c(0, max(x, na.rm = TRUE)))
+## points(x = 1:length(x), y = xInt, type = "l", col = "grey")
+imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L) {
+    method <- match.arg(method, c("none", "lin", "linbase")) ## interDist? distance = 2
+    if (method == "none") {
+        return(x)
+    }
+    if (!is.double(x)) x <- as.double(x)
+    if (method == "lin") {
+        return(.Call("impute_with_linear_interpolation", x, PACKAGE = "xcms"))
+    }
+    if (method == "linbase") {
+        if (missing(baseValue))
+            baseValue <- min(x, na.rm = TRUE) / 2
+        if (!is.double(baseValue)) baseValue <- as.double(baseValue)
+        if (!is.integer(distance)) distance <- as.integer(distance)
+        return(.Call("impute_with_linear_interpolation_base", x, baseValue,
+                     distance, PACKAGE = "xcms"))
+    }
 }
 
 ## @description Calculate breaks for same-sized bins for data values
@@ -369,5 +428,6 @@ names(.aggregateMethods) <- c("max", "min", "sum", "mean")
     method <- match.arg(method, names(.imputeMethods))
     return(.imputeMethods[method])
 }
-.imputeMethods <- c(0, 1)
-names(.imputeMethods) <- c("no", "lin")
+.imputeMethods <- c(0, 1, 2)
+names(.imputeMethods) <- c("no", "lin", "linbase")
+

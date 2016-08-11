@@ -80,3 +80,22 @@ static void _fill_missing_with_value(double *ans, double init_value, int n_bin);
  * xcms binLin implementation.
  */
 static void _impute_linearly_interpolate_x(double *x, int n_bin);
+
+/*
+ * The name might be misleading; this does essentially what the binLinBase from xcms
+ * does/did, i.e. setting empty bin values to a baselevel and interpolating bin
+ * values for empty bins if they are close enough to non-empty bins.
+ *
+ * - loop through the bins.
+ * - There are 3 cases:
+ *   1) interpolate from a bin value to base level
+ *   2) interpolate form base level to a bin value
+ *   3) interpolate from a bin value to a bin value: if the difference between the indices
+ *      is smaller 2 * ibase + 1
+ * base_value is the base value to which we set all empty bins, if we're not intepolating.
+ * inter_bin is the number of neighboring bins for an empty one which we consider for
+ *   interpolation.
+ */
+static void _impute_linearly_interpolate_base_x(double *x, int n_bin,
+						double base_value,
+						int inter_bin);
