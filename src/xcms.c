@@ -14,10 +14,12 @@ void ProfBinLin(double *xvals, double *yvals, int *numin,
     int    i, ipost;
 
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
-
+    // why 20 here?
     startx = *xstart - 20*dx;
+    //
     FindEqualLess(xvals, numin, &startx, &ipost);
     //ipost = 0;
+    // this will be 0 if ipost = 0
     xpost = *xstart + dx*(int)((xvals[ipost] - *xstart)/dx + 0.5);
     ypost = yvals[ipost];
 
@@ -57,12 +59,27 @@ void ProfBinLinM(double *xvals, double *yvals, int *numin, int *mindex, int *num
     }
 }
 
+/*
+ * xvals vector of x values; binning is performed on these.
+ * yvals vector of y values; these are binned.
+ * numin
+ */
 void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel, double *basespace,
                     double *xstart, double *xend, int *numout, double *out) {
 
     double dx, ypre = -1, ypost = -1, startx;
     int    i, ipre = -1, ipost, ix, ibase;
 
+    /* dx: the bin size.
+     * ypre: y value.
+     * ypost: y value.
+     * startx
+     * i index
+     * ipre: index of last value.
+     * ipost: index of next value.
+     * ix:
+     * ibase: the number of neighboring bins considered for interpolation.
+     */
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
     ibase = floor(*basespace/dx);
 
@@ -83,6 +100,7 @@ void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel,
             if (yvals[ix] > ypost)
                 ypost = yvals[ix];
 
+    // loop through the bins.
     for (i = 0; i < *numout; i++) {
         // Move post to pre if less than or equal to interpolating point
         if (ipost <= i && ypost != -1) {
@@ -98,16 +116,21 @@ void ProfBinLinBase(double *xvals, double *yvals, int *numin, double *baselevel,
                 if (yvals[ix] > ypost)
                     ypost = yvals[ix];
         }
+	/*
+	 * If I understand it correctly, ibase is used to devine whether interpolation
+	 * takes place or not. And interpolation takes place if i, for a bin with a missing
+	 * value, is close to another bin with a value.
+	 */
         if (ipre == i)
-            out[i] = ypre;
+	  out[i] = ypre;  // assuming that's the binning...
         else if (ypre != -1 && ypost != -1 && (ipost-ipre <= 2*ibase+1))
-            out[i] = ypre + (ypost-ypre)/(ipost-ipre)*(i-ipre);
+	  out[i] = ypre + (ypost-ypre)/(ipost-ipre)*(i-ipre);  // that's interpolation between existing bins
         else if (ypre != -1 && i-ipre <= ibase && (ypost == -1 || ipost-i > ibase))
-            out[i] = ypre + (*baselevel-ypre)/(ibase+1)*(i-ipre);
+	  out[i] = ypre + (*baselevel-ypre)/(ibase+1)*(i-ipre);  // interpolating: decreasing to baselevel
         else if ((ypre == -1 || i-ipre > ibase) && ypost != -1 && ipost-i <= ibase)
-            out[i] = *baselevel + (ypost-*baselevel)/(ibase+1)*(i-ipost+ibase+1);
+	  out[i] = *baselevel + (ypost-*baselevel)/(ibase+1)*(i-ipost+ibase+1);  // interpolating: increasing from baselevel
         else
-            out[i] = *baselevel;
+	  out[i] = *baselevel; // base
     }
 }
 
@@ -199,8 +222,10 @@ void ProfBin(double *xvals, double *yvals, int *numin,
     int    i, outi = 0;
     double dx, startx, endx;
 
+    // calculate the step size
     dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
 
+    // fill out with 0s.
     for (i = 0; i < *numout; i++)
         out[i] = 0;
 
