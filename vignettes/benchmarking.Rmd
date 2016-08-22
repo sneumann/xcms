@@ -1,0 +1,73 @@
+---
+title: "xcms3 benchmarking"
+output:
+  BiocStyle::html_document2:
+    toc: false
+vignette: >
+  % \VignetteIndexEntry{xcms3 benchmarking}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \VignetteKeyword{metabolomics, mass spectrometry}
+  % \VignettePackage{xcms}
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+# Introduction
+
+In this vignette we evaluate the performance of some recently added/modified
+functionality of the `xcms` package and compare it, where possible, with the
+*old* functions and methods from the `xcms` package.
+
+```{r libs, message = FALSE}
+library(xcms)
+```
+
+# Data binning
+
+`xcms` uses binning of the MS data to generate the *profile* matrix on which
+e.g. the `findPeaks.matchedFilter` method identified the MS1 features. Different
+binning methods are available, such as `profBin`, that bins M/Z values into
+equal-sized bins and identifies for all M/Z values falling into each bin the
+maximal intensity value. This concept of data binning has been generalized and
+is provided by the `binYonX` function that allows to bin any given numeric
+vector. The function calls C-routines to ensure a high performance. In the
+example below we compare the speed of the `profBin` and `binYonX` functions.
+
+```{r binYonXbenchPrepare}
+## Define a large numeric vector of sorted values.
+X <- sort(abs(rnorm(500000, mean = 500, sd = 100)))
+
+```
+
+Bin this vector into 1000 bins using `profBin` and using the `binYonX` function
+and compare their performance.
+
+```{r runProfBin}
+library(microbenchmark)
+microbenchmark(xcms:::profBin(X, X, 1000),
+               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                              shiftByHalfBinSize = TRUE), times = 100)
+```
+
+With the results being identical.
+
+```{r binResults}
+a <- xcms:::profBin(X, X, 1000)
+b <- xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE)
+all.equal(a, b$y)
+```
+
+The new binning function is also considerably faster if missing bin values
+should be imputed.
+
+```{r runProfBinLin}
+microbenchmark(xcms:::profBinLin(X, X, 1000),
+               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
+                              shiftByHalfBinSize = TRUE, impute = "lin"),
+               times = 100)
+
+```
+
