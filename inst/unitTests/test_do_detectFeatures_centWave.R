@@ -1,4 +1,4 @@
-## Test detectFeatures functions/methods
+## Test detectFeatures centWave
 
 library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -10,8 +10,10 @@ test_do_detectFeatures_centWave <- function() {
     xr <- xcmsRaw(fs[1])
 }
 
+
+############################################################
 ## This is only relevant during development of the do_ function
-## to compare the results.
+## to evaluate that results are identical.
 dontrun_test_do_detectFeatures_centWave_impl <- function() {
 
     ppm = 25

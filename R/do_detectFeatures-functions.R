@@ -1,5 +1,5 @@
 ## All low level (API) analysis functions for feature detection should go in here.
-#' @include c.R cwTools.R
+#' @include c.R functions-binning.R cwTools.R
 
 ############################################################
 ## centWave
@@ -451,8 +451,465 @@ do_detectFeatures_massifquant <- function() {
 ############################################################
 ## matchedFilter
 ##
-do_detectFeatures_matchedFilter <- function() {
+##  That's the function that matches the code from the
+##  findPeaks.matchedFilter method from the xcms package.
+##  This function takes basic R-objects and might thus be used as the base analysis
+##  method for a future xcms API.
+##  mz is a numeric vector with all M/Z values.
+##  int is a numeric vector with the intensities.
+##  valsPerSpect: is an integer vector with the number of values per spectrum. This will
+##     be converted to what xcms calls the scanindex.
+##  TODO: in the long run it would be better to avoid buffer creation, extending, filling
+##     and all this stuff being done in a for loop.
+## profFun: bin, binlin, binlinbase, intlin
+do_detectFeatures_matchedFilter <- function(mz,
+                                            int,
+                                            scantime,
+                                            valsPerSpect,
+                                            profFun = "bin",
+                                            profparam=list(),
+                                            fwhm = 30,
+                                            sigma = fwhm/2.3548,
+                                            max = 5,
+                                            snthresh = 10,
+                                            step = 0.1,
+                                            steps = 2,
+                                            mzdiff = 0.8 - step * steps,
+                                            index = FALSE,
+                                            verboseColumns = FALSE){
+
+    ## Input argument checking.
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to much. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+    ## get the profile/binning function:
+    profFun <- match.arg(profFun, names(.profFunctions))
+    profFun <- .profFunctions[[profFun]]
+    ## Calculate a the "scanindex" from the number of values per spectrum:
+    scanindex <- valueCount2ScanIndex(valsPerSpect)
+
+    ## Create EIC buffer
+    mrange <- range(mz)
+    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
+    ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
+    buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
+                                        mass[bufsize], TRUE, profparam))
+    ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+    ##                TRUE, profparam)
+    bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+                          TRUE, profparam)
+    bufidx <- integer(length(mass))
+    idxrange <- c(1, bufsize)
+    bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
+    lookahead <- steps-1
+    lookbehind <- 1
+
+    N <- nextn(length(scantime))
+    xrange <- range(scantime)
+    x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
+
+    filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
+    filt <- filt/sqrt(sum(filt^2))
+    filt <- fft(filt, inverse = TRUE)/length(filt)
+
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
+                "maxo", "maxf", "i", "sn")
+    rmat <- matrix(nrow = 2048, ncol = length(cnames))
+    num <- 0
+
+    for (i in seq(length = length(mass)-steps+1)) {
+        ## Update EIC buffer if necessary
+        if (bufidx[i+lookahead] == 0) {
+            bufidx[idxrange[1]:idxrange[2]] <- 0
+            idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind, length(mass)))
+            bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
+            buf <- do.call(profFun, args = list(mz, int, scanindex, diff(idxrange)+1,
+                                                mass[idxrange[1]], mass[idxrange[2]],
+                                                TRUE, profparam))
+            ## buf <- profFun(mz, int, scanindex, diff(idxrange)+1, mass[idxrange[1]],
+            ##                mass[idxrange[2]], TRUE, profparam)
+            bufMax <- profMaxIdxM(mz, int, scanindex, diff(idxrange)+1, mass[idxrange[1]],
+                                  mass[idxrange[2]], TRUE, profparam)
+        }
+        ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
+        ysums <- colMax(ymat)
+        yfilt <- filtfft(ysums, filt)
+        gmax <- max(yfilt)
+        for (j in seq(length = max)) {
+            maxy <- which.max(yfilt)
+            noise <- mean(ysums[ysums > 0])
+            ##noise <- mean(yfilt[yfilt >= 0])
+            sn <- yfilt[maxy]/noise
+            if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
+                peakrange <- descendZero(yfilt, maxy)
+                intmat <- ymat[, peakrange[1]:peakrange[2], drop = FALSE]
+                mzmat <- matrix(mz[bufMax[bufidx[i:(i+steps-1)],
+                                          peakrange[1]:peakrange[2]]],
+                                nrow = steps)
+                which.intMax <- which.colMax(intmat)
+                mzmat <- mzmat[which.intMax]
+                if (all(is.na(mzmat))) {
+                    yfilt[peakrange[1]:peakrange[2]] <- 0
+                    next
+                }
+                mzrange <- range(mzmat, na.rm = TRUE)
+                massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
+                ## This case (the only non-na m/z had intensity 0) was reported
+                ## by Gregory Alan Barding "binlin processing"
+                if(any(is.na(massmean))) {
+                    massmean <- mean(mzmat, na.rm = TRUE)
+                }
+
+                pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
+                    (peakrange[2] - peakrange[1])
+                into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
+                intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
+                maxo <- max(ysums[peakrange[1]:peakrange[2]])
+                maxf <- yfilt[maxy]
+                yfilt[peakrange[1]:peakrange[2]] <- 0
+                num <- num + 1
+                ## Double the size of the output matrix if it's full
+                if (num > nrow(rmat)) {
+                    nrmat <- matrix(nrow = 2*nrow(rmat), ncol = ncol(rmat))
+                    nrmat[seq(length = nrow(rmat)),] = rmat
+                    rmat <- nrmat
+                }
+                rmat[num,] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
+                                into, intf, maxo, maxf, j, sn)
+            } else
+                break
+        }
+    }
+    ## cat("\n")
+    colnames(rmat) <- cnames
+    rmat <- rmat[seq(length = num),]
+    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
+    if (index)
+        mzdiff <- mzdiff/step
+    else {
+        rmat[,"rt"] <- scantime[rmat[,"rt"]]
+        rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
+        rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
+    }
+    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
+    uorder <- order(rmat[,"into"], decreasing=TRUE)
+    uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
+                                uorder, mzdiff)
+    rmat <- rmat[uindex,,drop=FALSE]
+    return(rmat)
 }
+
+############################################################
+## The code of this function is basically the same than of the original
+## findPeaks.matchedFilter method in xcms with the following differences:
+##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once instead of
+##    repeatedly creating a "buffer" of 100 M/Z values.
+##  o Append the identified peaks to a list instead of generating a matrix with a fixed
+##    set of rows which is doubled in its size each time more peaks are identified than
+##    there are rows in the matrix.
+do_detectFeatures_matchedFilter_new <- function(mz,
+                                                int,
+                                                scantime,
+                                                valsPerSpect,
+                                                profFun = "bin",
+                                                profparam = list(),
+                                                fwhm = 30,
+                                                sigma = fwhm/2.3548,
+                                                max = 5,
+                                                snthresh = 10,
+                                                step = 0.1,
+                                                steps = 2,
+                                                mzdiff = 0.8 - step * steps,
+                                                index = FALSE,
+                                                verboseColumns = FALSE){
+
+    ## Input argument checking.
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to much. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+    ## get the profile/binning function:
+    profFun <- match.arg(profFun, names(.profFunctions))
+    profFun <- .profFunctions[[profFun]]
+    ## Calculate a the "scanindex" from the number of values per spectrum:
+    scanindex <- valueCount2ScanIndex(valsPerSpect)
+
+    ## Create the full profile matrix.
+    mrange <- range(mz)
+    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    ## bufsize <- min(100, length(mass))
+    bufsize <- length(mass)
+    ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
+    ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+    ##                TRUE, profparam)
+    buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+                   TRUE, profparam))
+
+    ## The full matrix, nrow is the total number of (binned) M/Z values.
+    bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+                          TRUE, profparam)
+    ## bufidx <- integer(length(mass))
+    ## idxrange <- c(1, bufsize)
+    ## bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
+    bufidx <- 1L:length(mass)
+    lookahead <- steps-1
+    lookbehind <- 1
+
+    N <- nextn(length(scantime))
+    xrange <- range(scantime)
+    x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
+
+    filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
+    filt <- filt/sqrt(sum(filt^2))
+    filt <- fft(filt, inverse = TRUE)/length(filt)
+
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
+                "maxo", "maxf", "i", "sn")
+    num <- 0
+
+    ResList <- list()
+
+    ## Can not do much here, lapply/apply won't work because of the 'steps' parameter.
+    ## That's looping through the masses, i.e. rows of the profile matrix.
+    for (i in seq(length = length(mass)-steps+1)) {
+
+        ymat <- buf[bufidx[i:(i+steps-1)], , drop = FALSE]
+        ysums <- colMax(ymat)
+        yfilt <- filtfft(ysums, filt)
+        gmax <- max(yfilt)
+        for (j in seq(length = max)) {
+            maxy <- which.max(yfilt)
+            noise <- mean(ysums[ysums > 0])
+            ##noise <- mean(yfilt[yfilt >= 0])
+            sn <- yfilt[maxy]/noise
+            if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
+                peakrange <- descendZero(yfilt, maxy)
+                intmat <- ymat[, peakrange[1]:peakrange[2], drop = FALSE]
+                mzmat <- matrix(mz[bufMax[bufidx[i:(i+steps-1)],
+                                          peakrange[1]:peakrange[2]]],
+                                nrow = steps)
+                which.intMax <- which.colMax(intmat)
+                mzmat <- mzmat[which.intMax]
+                if (all(is.na(mzmat))) {
+                    yfilt[peakrange[1]:peakrange[2]] <- 0
+                    next
+                }
+                mzrange <- range(mzmat, na.rm = TRUE)
+                massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
+                ## This case (the only non-na m/z had intensity 0) was reported
+                ## by Gregory Alan Barding "binlin processing"
+                if(any(is.na(massmean))) {
+                    massmean <- mean(mzmat, na.rm = TRUE)
+                }
+
+                pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
+                    (peakrange[2] - peakrange[1])
+                into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
+                intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
+                maxo <- max(ysums[peakrange[1]:peakrange[2]])
+                maxf <- yfilt[maxy]
+                yfilt[peakrange[1]:peakrange[2]] <- 0
+                num <- num + 1
+                ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
+                                    into, intf, maxo, maxf, j, sn)
+            } else
+                break
+        }
+    }
+    rmat <- do.call(rbind, ResList)
+    colnames(rmat) <- cnames
+    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
+    if (index)
+        mzdiff <- mzdiff/step
+    else {
+        rmat[, "rt"] <- scantime[rmat[, "rt"]]
+        rmat[, "rtmin"] <- scantime[rmat[, "rtmin"]]
+        rmat[, "rtmax"] <- scantime[rmat[, "rtmax"]]
+    }
+    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
+    uorder <- order(rmat[, "into"], decreasing = TRUE)
+    uindex <- rectUnique(rmat[, c("mzmin", "mzmax", "rtmin", "rtmax"),
+                              drop = FALSE],
+                         uorder, mzdiff)
+    rmat <- rmat[uindex,,drop = FALSE]
+    return(rmat)
+}
+
+############################################################
+## The code of this function is basically the same than of the original
+## findPeaks.matchedFilter method in xcms with the following differences:
+##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once instead of
+##    repeatedly creating a "buffer" of 100 M/Z values.
+##  o Append the identified peaks to a list instead of generating a matrix with a fixed
+##    set of rows which is doubled in its size each time more peaks are identified than
+##    there are rows in the matrix.
+##  o Use binYonX and imputeLinInterpol instead of the profBin... methods.
+do_detectFeatures_matchedFilter_newer <- function(mz,
+                                                  int,
+                                                  scantime,
+                                                  valsPerSpect,
+                                                  profFun = "bin",
+                                                  fwhm = 30,
+                                                  sigma = fwhm/2.3548,
+                                                  max = 5,
+                                                  snthresh = 10,
+                                                  step = 0.1,
+                                                  steps = 2,
+                                                  mzdiff = 0.8 - step * steps,
+                                                  index = FALSE,
+                                                  verboseColumns = FALSE,
+                                                  ...){
+    ## ... arguments are passed down to the binning function.
+
+    ## Input argument checking.
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to much. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+
+    ## Generate the 'profile' matrix, i.e. perform the binning:
+    mrange <- range(mz)
+    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    ## Get the profile/binning function: allowed: bin, binlin, binlinbase and intlin
+    profFun <- match.arg(profFun, names(.profFunctions))
+    ## Select the profFun and the settings for it...
+    if (profFun == "intlin") {
+        profFun = "profIntLinM"
+        ## Calculate a the "scanindex" from the number of values per spectrum:
+        scanindex <- valueCount2ScanIndex(valsPerSpect)
+        bufsize <- length(mass)
+        ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
+        ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+        ##                TRUE, profparam)
+        buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+                                            TRUE, profparam))
+
+        ## The full matrix, nrow is the total number of (binned) M/Z values.
+        bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+                              TRUE, profparam)
+    } else {
+        cat("Using binYonX\n")
+        ## Define argument imputeMethod
+        if (profFun == "bin") {
+            imputeMethod = "no"
+        } else if (profFun == "binlin") {
+            imputeMethod = "lin"
+        } else if (profFun == "binlinbase") {
+            imputeMethod = "linbase"
+        } else {
+            stop("Don't know profile function '", profFun, "'!")
+        }
+        profFun = "binYonX"
+        ## Create and translate settings for binYonX
+        toX <- cumsum(valsPerSpect)
+        fromX <- c(1L, toX[-length(toX)] + 1L)
+        shiftBy = TRUE
+        binRes <- binYonX(mz, int, fromIdx = fromX, toIdx = toX, binFromX = mass[1],
+                          binToX = mass[length(mass)], shiftByHalfBinSize = shiftBy,
+                          impute = imputeMethod, sortedY = TRUE, binSize = step,
+                          returnIndex = TRUE)
+        bufMax <- unlist(lapply(binRes, function(z) return(z$index)))
+        buf <- do.call(cbind, lapply(binRes, function(z) return(z$y)))
+    }
+
+    bufidx <- 1L:length(mass)
+    lookahead <- steps-1
+    lookbehind <- 1
+
+    N <- nextn(length(scantime))
+    xrange <- range(scantime)
+    x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
+
+    filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
+    filt <- filt/sqrt(sum(filt^2))
+    filt <- fft(filt, inverse = TRUE)/length(filt)
+
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
+                "maxo", "maxf", "i", "sn")
+    num <- 0
+
+    ResList <- list()
+
+    ## Can not do much here, lapply/apply won't work because of the 'steps' parameter.
+    ## That's looping through the masses, i.e. rows of the profile matrix.
+    for (i in seq(length = length(mass)-steps+1)) {
+
+        ymat <- buf[bufidx[i:(i+steps-1)], , drop = FALSE]
+        ysums <- colMax(ymat)
+        yfilt <- filtfft(ysums, filt)
+        gmax <- max(yfilt)
+        for (j in seq(length = max)) {
+            maxy <- which.max(yfilt)
+            noise <- mean(ysums[ysums > 0])
+            ##noise <- mean(yfilt[yfilt >= 0])
+            sn <- yfilt[maxy]/noise
+            if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
+                peakrange <- descendZero(yfilt, maxy)
+                intmat <- ymat[, peakrange[1]:peakrange[2], drop = FALSE]
+                mzmat <- matrix(mz[bufMax[bufidx[i:(i+steps-1)],
+                                          peakrange[1]:peakrange[2]]],
+                                nrow = steps)
+                which.intMax <- which.colMax(intmat)
+                mzmat <- mzmat[which.intMax]
+                if (all(is.na(mzmat))) {
+                    yfilt[peakrange[1]:peakrange[2]] <- 0
+                    next
+                }
+                mzrange <- range(mzmat, na.rm = TRUE)
+                massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
+                ## This case (the only non-na m/z had intensity 0) was reported
+                ## by Gregory Alan Barding "binlin processing"
+                if(any(is.na(massmean))) {
+                    massmean <- mean(mzmat, na.rm = TRUE)
+                }
+
+                pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
+                    (peakrange[2] - peakrange[1])
+                into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
+                intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
+                maxo <- max(ysums[peakrange[1]:peakrange[2]])
+                maxf <- yfilt[maxy]
+                yfilt[peakrange[1]:peakrange[2]] <- 0
+                num <- num + 1
+                ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
+                                    into, intf, maxo, maxf, j, sn)
+            } else
+                break
+        }
+    }
+    rmat <- do.call(rbind, ResList)
+    colnames(rmat) <- cnames
+    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
+    if (index)
+        mzdiff <- mzdiff/step
+    else {
+        rmat[, "rt"] <- scantime[rmat[, "rt"]]
+        rmat[, "rtmin"] <- scantime[rmat[, "rtmin"]]
+        rmat[, "rtmax"] <- scantime[rmat[, "rtmax"]]
+    }
+    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
+    uorder <- order(rmat[, "into"], decreasing = TRUE)
+    uindex <- rectUnique(rmat[, c("mzmin", "mzmax", "rtmin", "rtmax"),
+                              drop = FALSE],
+                         uorder, mzdiff)
+    rmat <- rmat[uindex,,drop = FALSE]
+    return(rmat)
+}
+
 
 ############################################################
 ## MSW

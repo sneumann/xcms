@@ -35,6 +35,15 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
+############################################################
+## profBin
+##
+## Just some notes to bettern understand what this friend here is doing:
+## o x: object@env$mz, i.e. the values on which we want to bin.
+## o y: object@env$intensity, i.e. the values that we want to bin.
+## o num: number of bins we want.
+## o xstart: minimal value in x from which we start.
+## o xend: minimal value in x to which we go.
 profBin <- function(x, y, num, xstart = min(x), xend = max(x),
                     param = list()) {
 
@@ -51,6 +60,7 @@ profBin <- function(x, y, num, xstart = min(x), xend = max(x),
        PACKAGE = "xcms")$out
 }
 
+## o zidx: start position of each new segment (e.g. spectrum).
 profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                      NAOK = FALSE, param = list()) {
 
@@ -483,3 +493,6 @@ findEqualGreaterUnsorted <- function(x, value) {
        index = integer(1),
        PACKAGE = "xcms")$index + 1
 }
+
+.profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
+                       binlinbase = "profBinLinBaseM", bin = "profBinM")
