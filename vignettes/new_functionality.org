@@ -1,0 +1,23 @@
+* Overview of new and modified functionality in =xcms=
+
+Thus far this is more to remind me what has been added/changed. In the end it
+would be nice to have a vignette describing all these methods in detail.
+
+** Binning functions
+
+The binning/profile matrix generation functions have been completely
+rewritten. The new =binYonX= function replaces =profBin=, =profBinLin= and
+=profBinLinBase= methods. The function provides also additional functionality:
+
++ Breaks for the bins can be defined based on either the number of desired bins
+  (=nBins=) or the size of a bin (=binSize=). In addition it is possible to provide
+  a vector with pre-defined breaks. This allows to bin data from multiple files
+  or scans on the same bin-definition.
+
++ The function returns a list with element =y= containing the binned values and
+  element =x= the bin mid-points.
+
++ Values in input vector =y= can be aggregated within each bin with different
+  methods: =max=, =min=, =sum= and =mean=.
+
+

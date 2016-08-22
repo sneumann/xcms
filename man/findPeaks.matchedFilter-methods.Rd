@@ -5,8 +5,7 @@
 \title{Feature detection in the chromatographic time domain}
 
 \description{
-  Find peaks in extracted the chromatographic time domain of the profile
-  matrix.
+  Find peaks in the chromatographic time domain of the profile matrix.
 }
 
 \section{Methods}{
@@ -18,7 +17,8 @@
     index = FALSE, sleep = 0, scanrange= numeric())
   }
 }
-}}
+}
+}
 \arguments{
   \item{object}{\code{xcmsRaw} object}
   \item{fwhm}{
@@ -45,6 +45,11 @@
     number of seconds to pause between plotting peak finding cycles
   }
   \item{scanrange}{scan range to process}
+}
+\details{
+  The method calculates the profile matrix (i.e. intensities in bins
+  along the M/Z dimension) on the fly using one of the methods described
+  on the \code{\link{profBin}} help page.
 }
 \value{
   A matrix with columns:
