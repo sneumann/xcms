@@ -2,6 +2,7 @@
 \docType{class}
 \alias{xcmsSet-class}
 \alias{[,xcmsSet-method}
+\alias{[,xcmsSet,ANY,ANY,ANY-method}
 \alias{$<-,xcmsSet-method}
 \alias{$,xcmsSet-method}
 \alias{filepaths<-,xcmsSet-method}
