@@ -46,28 +46,36 @@ and compare their performance.
 
 ```{r runProfBin}
 library(microbenchmark)
-microbenchmark(xcms:::profBin(X, X, 1000),
-               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
-                              shiftByHalfBinSize = TRUE), times = 100)
+microbenchmark(xcms:::profBin(X, X, 300),
+               xcms:::binYonX(X, nBins = 300, sortedX = TRUE,
+                              shiftByHalfBinSize = TRUE, baseValue = 0),
+               times = 100)
 ```
 
 With the results being identical.
 
 ```{r binResults}
-a <- xcms:::profBin(X, X, 1000)
-b <- xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
-                    shiftByHalfBinSize = TRUE)
+a <- xcms:::profBin(X, X, 300)
+b <- xcms:::binYonX(X, nBins = 300, sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE, baseValue = 0)
 all.equal(a, b$y)
 ```
 
-The new binning function is also considerably faster if missing bin values
-should be imputed.
+Data binning and imputation of missing values, performed by e.g. `profBinLin`,
+has been separated into the two functions `binYonX` and `imputeLinInterpol`.
 
 ```{r runProfBinLin}
+## Define a function that performs data binning and imputation
+myProfBinLin <- function(x, ...) {
+    res <- xcms:::binYonX(x, ...)
+    return(xcms:::imputeLinInterpol(res$y, method = "lin"))
+}
+
 microbenchmark(xcms:::profBinLin(X, X, 1000),
-               xcms:::binYonX(X, nBins = 1000, sortedX = TRUE,
-                              shiftByHalfBinSize = TRUE, impute = "lin"),
+               myProfBinLin(X, nBins = 1000, sortedX = TRUE,
+                            shiftByHalfBinSize = TRUE),
                times = 100)
 
 ```
+
 

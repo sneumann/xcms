@@ -3,11 +3,12 @@
 Thus far this is more to remind me what has been added/changed. In the end it
 would be nice to have a vignette describing all these methods in detail.
 
-** Binning functions
+** Binning and missing value imputation functions
 
 The binning/profile matrix generation functions have been completely
-rewritten. The new =binYonX= function replaces =profBin=, =profBinLin= and
-=profBinLinBase= methods. The function provides also additional functionality:
+rewritten. The new =binYonX= function replaces the binning of intensity values
+into bins defined by their M/Z values implemented in the =profBin=, =profBinLin= and
+=profBinLinBase= methods. The =binYonX= function provides also additional functionality:
 
 + Breaks for the bins can be defined based on either the number of desired bins
   (=nBins=) or the size of a bin (=binSize=). In addition it is possible to provide
@@ -20,4 +21,86 @@ rewritten. The new =binYonX= function replaces =profBin=, =profBinLin= and
 + Values in input vector =y= can be aggregated within each bin with different
   methods: =max=, =min=, =sum= and =mean=.
 
++ The index of the largest (or smallest for =method= being "min") within each bin
+  can be returned by setting argument =returnIndex= to =TRUE=.
+
++ Binning can be performed on single or multiple sub-sets of the input vectors
+  using the =fromIdx= and =toIdx= arguments. This replaces the /M/ methods (such as
+  =profBinM=). These sub-sets can be overlapping.
+
+The missing value imputation logic inherently build into the =profBinLin= and
+=profBinLinBase= methods has been implemented in the =imputeLinInterpol= function.
+
+
+* Changes in analysis results due to bug fixes and modified functionality
+
+** Differences for linear interpolation of missing values (=profBinLin=).
+
+The first bin value calculated by =profBinLin= can be wrong (issue #46 on Github).
+
+Also, if no values were present for the last bin =profBinLin= reports a bin value
+of =0=, while =imputeLinInterpol= would interpolate that value considering the last
+non-missing bin value and the base value (=0=):
+
+The example below illustrates both differences, the wrong first bin value and
+the difference in the last value.
+
+#+BEGIN_SRC R
+  ## Define a vector with empty values at the end.
+  Y <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, NA, NA)
+  nas <- is.na(Y)
+  resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5,
+                            xstart = 1, xend = 11)
+  ## profBinLin reports a last bin value of 0
+  resX
+
+  ## The same binning and linear interpolation using binYonX
+  ## and imputeLinInterpol:
+  res <- xcms:::binYonX(X, Y, nBins = 5L,
+                        shiftByHalfBinSize = TRUE)
+  resM <- xcms:::imputeLinInterpol(res$y, method = "lin")
+  resM
+#+END_SRC
+
+** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter=
+
+The iterative binning of only small sub-sets of data causes problems with
+=profBinLinBase=, in which data imputation might be skipped in some iterations
+while it is performed in others.
+
+Iterative buffering has both conceptual and computational issues.
++ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to
+  impute missing values. This is obviously affected by the input data, i.e. if
+  only a small subset of input data is considered, the imputation can change.
+
++ Computational: it's slower; simple as that.
+
+Example with =profBinLinBase= resulting in an error: if =step= and =basespace= are
+both =0.1= it seems that not in all buffer-generation iterations a interpolation
+is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
+(interpolation with neighboring bins) and sometimes to =0=.
+
+
+** Different binning results due to /internal/ and /external/ breaks definition :noexport:
+
+*FIXED*: the bin calculation in C uses now also a multiplication instead of a
+addition thus resulting in identical breaks!
+
+Breaks calculated by the =breaks_on_nBins= function are equal as breaks calculated
+using the =seq= function, but they are not identical.
+
+#+BEGIN_SRC R
+  library(xcms)
+
+  ## Define breaks from 200 to 600
+  brks <- seq(200, 600, length.out = 2002)
+  brks2 <- xcms:::breaks_on_nBins(200, 600, nBins = 2001)
+  all.equal(brks, brks2)
+  identical(brks, brks2)
+
+  ## The difference is very small, but could still, in the binning
+  ## yield slightly different results depending on which breaks are
+  ## used.
+  range(brks - brks2)
+#+END_SRC
 

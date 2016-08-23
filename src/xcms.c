@@ -233,10 +233,10 @@ void ProfBin(double *xvals, double *yvals, int *numin,
     endx = *xend + dx;
     FindEqualGreater(xvals, numin, &startx, &i);
     for (; i < *numin && xvals[i] < endx; i++) {
-        outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
-        if (outi >= 0 && outi < *numout)
-            if (out[outi] < yvals[i])
-                out[outi] = yvals[i];
+      outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
+      if (outi >= 0 && outi < *numout)
+	if (out[outi] < yvals[i])
+	  out[outi] = yvals[i];
     }
 }
 

@@ -21,12 +21,19 @@
 ## sub-sets will be from \code{x[fromIdx]} to \code{x[toIdx]}. Arguments
 ##  \code{binFromX} and \code{binToX} allow to overwrite this by manually
 ## defining the a range on which the breaks should be calculated. See examples
-## below for more details. Calculation of breaks: for \code{nBins} the breaks
-## correspond to
-## \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
+## below for more details.
 ##
-## @note The function ensures that all values in the range defined by the breaks
-## are considered in the binning. This
+## Calculation of breaks: for \code{nBins} the breaks correspond to
+## \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
+## For \code{binSize} the breaks correspond to
+## \code{seq(min(x[fromIdx]), max(x[toIdx]), by = binSize)} with the exception
+## that the last break value is forced to be equal to \code{max(x[toIdx])}. This
+## ensures that all values from the specified range are covered by the breaks
+## defining the bins. The last bin could however in some instances be slightly
+## larger than \code{binSize}.
+##
+## @note The function ensures that all values within the range used to define
+## the breaks are considered in the binning (and assigned to a bin). This
 ## means that for all bins except the last one values in \code{x} have to be
 ## \code{>= xlower} and \code{< xupper} (with \code{xlower}
 ## and \code{xupper} being the lower and upper boundary, respectively). For the
@@ -36,6 +43,10 @@
 ## will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
 ## this argument to \code{TRUE} resembles the binning that is/was used in
 ## \code{xcms} \code{\link{profBin}} and similar methods.
+##
+## Note also that the internal calculation of breaks could lead to slightly
+## different results, as breaks, while being equal to the ones that would e.g.
+## be calculated by the \code{seq} function, might not be identical.
 ##
 ## \code{NA} handling: by default the function ignores \code{NA} values in
 ## \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
@@ -352,9 +363,17 @@ imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L) {
 ## @param fromX Numeric of length 1 specifying the lowest value for the bins.
 ## @param toX Numeric of length 1 specifying the largest value for the bins.
 ## @param nBins Integer of length 1 defining the number of bins.
+## @param shiftByHalfBinSize Logical indicating whether the bins should be shifted
+## left by half bin size. This results centered bins, i.e. the first bin being
+## centered at \code{fromX} and the last around \code{toX}.
 ## @return A numeric vector of length \code{nBins + 1} defining the lower and
 ## upper bounds of the bins.
 ## @author Johannes Rainer
+## @examples
+## ## Create breaks to bin values from 3 to 20 into 20 bins
+## breaks_on_nBins(3, 20, nBins = 20)
+## ## The same call but using shiftByHalfBinSize
+## breaks_on_nBins(3, 20, nBins = 20, shiftByHalfBinSize = TRUE)
 breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
     if(missing(fromX) | missing(toX) | missing(nBins))
         stop("'fromX', 'toX' and 'nBins' are required!")
@@ -371,10 +390,12 @@ breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
 ## @description Defines breaks for \code{binSize} sized bins for values ranging
 ## from \code{fromX} to \code{toX}.
 ##
-## @details This generates breaks for bins such that
-## \code{seq(fromX, toX, by = binSize)} would, with the exception that one last break
-## is added to ensure that also \code{toX} would be included (see examples). This
-## function can be up to twice as fast as the \code{seq} call.
+## @details This function creates breaks for bins of size \code{binSize}. The
+## function ensures that the full data range is included in the bins, i.e. the
+## last value (upper boundary of the last bin) is always equal \code{toX}. This
+## however means that the size of the last bin will not always be equal to the
+## desired bin size.
+## See examples for more details and a comparisom to R's \code{seq} function.
 ## @title Generate breaks for binning using a defined bin size.
 ## @param fromX Numeric of length 1 specifying the lowest value for the bins.
 ## @param toX Numeric of length 1 specifying the largest value for the bins.
@@ -382,7 +403,21 @@ breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
 ## @return A numeric vector defining the lower and upper bounds of the bins.
 ## @author Johannes Rainer
 ## @examples
+## ## Define breaks with a size of 0.13 for a data range from 1 to 10:
+## breaks_on_binSize(1, 10, 0.13)
+## ## The size of the last bin is however larger than 0.13:
+## diff(breaks_on_binSize(1, 10, 0.13))
+## ## If we would use seq, the max value would not be included:
+## seq(1, 10, by = 0.13)
 ##
+## ## In the next example we use binSize that leads to an additional last bin with
+## ## a smaller binSize:
+## breaks_on_binSize(1, 10, 0.51)
+## ## Again, the max value is included, but the size of the last bin is < 0.51.
+## diff(breaks_on_binSize(1, 10, 0.51))
+## ## Using just seq would result in the following bin definition:
+## seq(1, 10, by = 0.51)
+## ## Thus it defines one bin (break) less.
 breaks_on_binSize <- function(fromX, toX, binSize) {
     if(missing(fromX) | missing(toX) | missing(binSize))
         stop("'fromX', 'toX' and 'binSize' are required!")
@@ -392,6 +427,65 @@ breaks_on_binSize <- function(fromX, toX, binSize) {
     return(.Call("breaks_on_binSize", fromX, toX, binSize, PACKAGE = "xcms"))
 }
 
+############################################################
+## profBinR
+##
+## "reference" implementation of profBin in R.
+##
+## @description This function is a reference implementation in R for the profBin
+## C-function.
+##
+## @details Same as the \code{\link{profBin}} method, this function calculates
+## centered breaks (i.e. shifted by half the bin-size, thus the center for the
+## first bin is the value of \code{fromX}) and bins the input vector \code{x}
+## into the bins defined by these breaks. The maximum \code{y} value corresponding
+## to the \code{x} values per bin is then returned.
+## Either \code{nBins} or \code{step} has to be defined.
+## @title Reference implementation of the profBin C-function in R
+## @param x Numeric vector of values used for binning.
+## @param y Numeric vector of values to be binned.
+## @param nBins Number of bins.
+## @param step Bin size.
+## @param fromX X value from which binning should start. Default to \code{min(x)}.
+## @param toX Maximum \code{x} value that should be included in the binning.
+## @param FUN Function to aggregate \code{y} values for \code{x} values falling
+## within a bin.
+## @return A numeric vector of the maximum \code{y} values for each bin.
+## @author Johannes Rainer
+profBinR <- function(x, y, nBins, step, fromX = min(x), toX = max(x),
+                     FUN = max, shiftByHalfBinSize = TRUE) {
+    if (missing(x) | missing(y))
+        stop("'x' and 'y' are required arguments!")
+    if (missing(nBins) & missing(step))
+        stop("Either 'nBins' or 'step' has to be specified.")
+    ## When we've got nBin
+    if (!missing(nBins)) {
+        if (shiftByHalfBinSize )
+            binSize <- (toX - fromX) / (nBins - 1)
+        else
+            binSize <- (toX - fromX) / nBins
+    }
+    ## When we've got step
+    if (!missing(step)) {
+        binSize <- step
+    }
+    ## Calculate the bin size
+    if (shiftByHalfBinSize)
+        brks_xcms <- seq((fromX - binSize/2), (toX + binSize/2),
+                         by = binSize)
+    else
+        brks_xcms <- seq(fromX, toX, by = binSize)
+    ## Define output vector:
+    res <- numeric(length(brks_xcms) - 1)
+    ## Find elements in x falling within the breaks. The breaks span
+    ## a little larger range than the values in x, thus we can be sure
+    ## that all values are within.
+    idx <- findInterval(x, brks_xcms, all.inside = !shiftByHalfBinSize)
+    ## Split the y values by index and get the maximum value / bin
+    yList <- split(y, idx)
+    res[as.numeric(names(yList))] <- unlist(lapply(yList, FUN = FUN))
+    return(res)
+}
 
 
 ############################################################
