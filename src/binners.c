@@ -223,13 +223,14 @@ SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   return(res);
 }
 
-SEXP impute_with_linear_interpolation(SEXP x) {
+SEXP impute_with_linear_interpolation(SEXP x, SEXP noInterAtEnds) {
   SEXP x_copy;
   int x_length = LENGTH(x);
+  int no_inter_at_ends = asInteger(noInterAtEnds);
   double *p_x;
   x_copy = PROTECT(duplicate(x));
   p_x = REAL(x_copy);
-  _impute_linearly_interpolate_x(p_x, x_length);
+  _impute_linearly_interpolate_x(p_x, x_length, no_inter_at_ends);
   UNPROTECT(1);
   return x_copy;
 }
@@ -574,7 +575,7 @@ static void _fill_missing_with_value(double *ans, double init_value, int n_bin) 
  * That would actually be better, but does not fit with the original
  * xcms binLin implementation.
  */
-static void _impute_linearly_interpolate_x(double *x, int n_bin) {
+static void _impute_linearly_interpolate_x(double *x, int n_bin, int no_interpol_at_ends) {
   int is_empty_bin = 0;  // To check whether we are in a series of empty bins.
   int start_x = 0;  // index of the first empty bin of a potential empty bin series.
   int idx_last_non_empty_bin = -1;  // index of the last bin with a value.
@@ -588,10 +589,6 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
       /* Found a bin without a value, now I have to look for the next with
        * a value. If the first one is empty, I have to set start_x to -1.
        */
-      /* if (current_x == 0) { */
-      /* 	start_x = -1; */
-      /* 	is_empty_bin = 1; */
-      /* } else */
       if (is_empty_bin == 0) {
 	start_x = current_x;
 	is_empty_bin = 1;
@@ -602,12 +599,16 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
 	 * missing bins in between. First calculate the increment per bin and
 	 * then loop through the empty bin to fill with values.
 	 */
-	//incrementer = (x[current_x] - last_bin_value) / (double)(current_x - start_x + 1);
-	for (int i = start_x; i < current_x; i++) {
+	if (idx_last_non_empty_bin < 0 && no_interpol_at_ends > 0) {
+	  /* No interpolation at the start, fill with base_value */
+	  for (int i = start_x; i < current_x; i++) {
+	    x[i] = base_value;
+	  }
+	} else {
+	  for (int i = start_x; i < current_x; i++) {
 	    x[i] = last_bin_value + (x[current_x] - last_bin_value) /
 	      (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
-	    //last_bin_value = last_bin_value + incrementer;
-	    //x[i] = last_bin_value;
+	  }
 	}
       }
       /* Keep track of the last non-empty bin value. */
@@ -619,14 +620,16 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
   }
   /* Check if the last bin is empty too */
   if (is_empty_bin == 1) {
-        // incrementer = (base_value - last_bin_value) / (double)(current_x - start_x + 1);
-	for (int i = start_x; i < current_x; i++) {
-	  // x[i] = last_bin_value + (x[current_x] - last_bin_value) /
-	  x[i] = last_bin_value + (base_value - last_bin_value) /
-	    (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
-	  // last_bin_value = last_bin_value + incrementer;
-	  //x[i] = last_bin_value;
-	}
+    if (no_interpol_at_ends > 0) {
+      for (int i = start_x; i < current_x; i++) {
+	x[i] = base_value;
+      }
+    } else {
+      for (int i = start_x; i < current_x; i++) {
+	x[i] = last_bin_value + (base_value - last_bin_value) /
+	  (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
+      }
+    }
   }
   return;
 }

@@ -162,3 +162,11 @@ exportMethods(
               "xcmsSource",
               "loadRaw"
               )
+
+## New functions
+export(
+    "binYonX",
+    "breaks_on_binSize",
+    "breaks_on_nBins",
+    "imputeLinInterpol"
+)

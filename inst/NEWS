@@ -1,9 +1,19 @@
+CHANGES IN VERSION 1.49.X
+-------------------------
+
+NEW FEATURES:
++ binYonX binning function.
++ imputeLinInterpol function providing linear interpolation of missing values.
++ breaks_on_binSize and breaks_on_nBins functions to calculate breaks defining
+  bins.
+
+
 CHANGES IN VERSION 1.49.5
 -------------------------
 
 USER VISIBLE CHANGES:
 + Some documentation updates.
-+ Preparation for a new binning function 
++ Preparation for a new binning function
 
 
 CHANGES IN VERSION 1.49.4

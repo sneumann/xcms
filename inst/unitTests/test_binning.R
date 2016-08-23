@@ -67,7 +67,7 @@ fails_test_profBinLin <- function() {
     res <- xcms:::profBinLin(X, X, 5L)
     ## THAT FAILS!!!
     ## checkEquals(res, xcms:::profBin(X, X, 5L))
-    brks <- xcms:::breaks_on_nBins(1, 11, 5L, TRUE)
+    brks <- breaks_on_nBins(1, 11, 5L, TRUE)
 
     ## Test with different Ys:
     Y <- c(2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11)
@@ -135,7 +135,7 @@ fails_test_profBinLin <- function() {
     b <- xcms:::profBinLin(X, X, 200)
     head(a)
     head(b)
-    head(xcms:::binYonX(X, X, nBins = 200, shiftByHalfBinSize = TRUE, method = "min")$y)
+    head(binYonX(X, X, nBins = 200, shiftByHalfBinSize = TRUE, method = "min")$y)
 
     ## We've got 1 missing bin.
     X <- c(1, 2, 7, 8, 9, 10)
@@ -159,10 +159,10 @@ test_profBinLinBase <- function() {
     X <- 1:16
     Y <- c(3, NA, 1, 2, NA, NA, 4, NA, NA, NA, 3, NA, NA, NA, NA, 2)
     nas <- is.na(Y)
-    brks <- xcms:::breaks_on_nBins(1, 16, nBins = 16, shiftByHalfBinSize = TRUE)
+    brks <- breaks_on_nBins(1, 16, nBins = 16, shiftByHalfBinSize = TRUE)
     resX <- xcms:::profBinLinBase(X[!nas], Y[!nas], 16)
-    checkEquals(resX, xcms:::binYonX(X, Y, nBins = 16, baseValue = 0.5,
-                                     shiftByHalfBinSize = TRUE)$y)
+    checkEquals(resX, binYonX(X, Y, nBins = 16, baseValue = 0.5,
+                              shiftByHalfBinSize = TRUE)$y)
     ## Modify basespace such that 1 neighboring bin is considered.
     resX <- xcms:::profBinLinBase(X[!nas], Y[!nas], 16, param = list(basespace = 1))
     expect <- c(3, 2, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
@@ -227,21 +227,21 @@ test_binning_NA_handling <- function() {
     Y <- X
     Y[4] <- NA
 
-    res <- xcms:::binYonX(X, Y, nBins = 5L)
+    res <- binYonX(X, Y, nBins = 5L)
     checkEquals(res$y, c(2, 3, 6, 8, 10))
     Y[3] <- NA
-    res <- xcms:::binYonX(X, Y, nBins = 5L, baseValue = 0)
+    res <- binYonX(X, Y, nBins = 5L, baseValue = 0)
     checkEquals(res$y, c(2, 0, 6, 8, 10))
 
     ## Initialize with NA
-    res <- xcms:::binYonX(X, Y, nBins = 5L, baseValue = NA)
+    res <- binYonX(X, Y, nBins = 5L, baseValue = NA)
     checkEquals(res$y, c(2, NA, 6, 8, 10))
 
     X <- 1:10
-    res <- xcms:::binYonX(X, X, binSize = 0.5, baseValue = 0)
+    res <- binYonX(X, X, binSize = 0.5, baseValue = 0)
     checkEquals(res$y, c(1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0,
                          8, 0, 9, 10))
-    res <- xcms:::binYonX(X, X, binSize = 0.5)
+    res <- binYonX(X, X, binSize = 0.5)
     checkEquals(res$y, c(1, NA, 2, NA, 3, NA, 4, NA, 5, NA, 6, NA, 7,
                          NA, 8, NA, 9, 10))
 }
@@ -262,74 +262,74 @@ test_binning_max <- function() {
     }
 
     ## o nBins
-    res <- xcms:::binYonX(X, Y, nBins = 5L)
+    res <- binYonX(X, Y, nBins = 5L)
     checkEquals(res$y, c(2, 4, 6, 8, 10))
     checkEquals(res$x,
-                breakMidPoint(xcms:::breaks_on_nBins(min(X), max(X), 5L)))
-    res <- xcms:::binYonX(X, Y, nBins = 5L, returnIndex = TRUE)
+                breakMidPoint(breaks_on_nBins(min(X), max(X), 5L)))
+    res <- binYonX(X, Y, nBins = 5L, returnIndex = TRUE)
     checkEquals(res$index, c(2, 4, 6, 8, 10))
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
-    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10)
+    res <- binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10)
     checkEquals(res$y, c(2.05, 4, 6, 8, 10))
     checkEquals(res$x,
-                breakMidPoint(xcms:::breaks_on_nBins(1, 10, 5L)))
-    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10,
-                          returnIndex = TRUE)
+                breakMidPoint(breaks_on_nBins(1, 10, 5L)))
+    res <- binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10,
+                   returnIndex = TRUE)
     checkEquals(res$index, c(2, 4, 6, 8, 10))
     ##  Define fromIdx, toIdx; binning will only take place in that sub-set.
-    res <- xcms:::binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = 10)
-    brks <- xcms:::breaks_on_nBins(min(X[1]), max(X[10]), nBins = 5L)
+    res <- binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = 10)
+    brks <- breaks_on_nBins(min(X[1]), max(X[10]), nBins = 5L)
     checkEquals(res$y, c(2.05, 4, 6, 8, 10))
     checkEquals(res$x, breakMidPoint(brks))
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
-                          returnIndex = TRUE)
+    res <- binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                   returnIndex = TRUE)
     checkEquals(res$index, c(2, 4, 6, 8, 10))
     ##  If we provide fromX and toX the result will be different, as the breaks
     ##  are calculated differently.
     ##  This calculates 5 bins on range(X)
-    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = min(X), binToX = max(X),
-                          fromIdx = 1, toIdx = 10)
-    brks <- xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
+    res <- binYonX(X, X, nBins = 5L, binFromX = min(X), binToX = max(X),
+                   fromIdx = 1, toIdx = 10)
+    brks <- breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkEquals(res$y, c(3, 5, 8, 10, NA)) ## because toIdx = 10 the last is 0
     checkEquals(res$x, breakMidPoint(brks))
-    res <- xcms:::binYonX(X, nBins = 5L, binFromX = min(X), binToX = max(X),
-                          fromIdx = 1, toIdx = 10, returnIndex = TRUE)
+    res <- binYonX(X, nBins = 5L, binFromX = min(X), binToX = max(X),
+                   fromIdx = 1, toIdx = 10, returnIndex = TRUE)
     checkEquals(res$index, c(3, 5, 8, 10, NA))
     ##  Check the fromIdx and toIdx again:
     X <- rep(1:10, 3)
     Y <- 1:30
-    brks <- xcms:::breaks_on_nBins(1, 10, nBins = 5L)
+    brks <- breaks_on_nBins(1, 10, nBins = 5L)
     ##  In this case we have to set sortedX = TRUE
-    res <- xcms:::binYonX(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
-                              fromIdx = 11, toIdx = 20, sortedX = TRUE)
+    res <- binYonX(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
+                   fromIdx = 11, toIdx = 20, sortedX = TRUE)
     checkEquals(res$y, c(12, 14, 16, 18, 20))
     checkEquals(res$x, breakMidPoint(brks))
-    res <- xcms:::binYonX(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
-                          fromIdx = 11, toIdx = 20, sortedX = TRUE,
-                          returnIndex = TRUE)
+    res <- binYonX(X, Y, nBins = 5L, binFromX = 1, binToX = 10,
+                   fromIdx = 11, toIdx = 20, sortedX = TRUE,
+                   returnIndex = TRUE)
     checkEquals(res$index, c(12, 14, 16, 18, 20))
     ##  re-order X
     X <- sample(X, size = length(X))
-    res <- xcms:::binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10)
+    res <- binYonX(X, X, nBins = 5L, binFromX = 1, binToX = 10)
     checkEquals(res$y, c(2, 4, 6, 8, 10))
     checkEquals(res$x,
-                breakMidPoint(xcms:::breaks_on_nBins(min(X), max(X), 5L)))
+                breakMidPoint(breaks_on_nBins(min(X), max(X), 5L)))
 
     ## Exceptions:
     X <- 1:10
-    checkException(xcms:::binYonX(X, X, nBins = -4))
-    checkException(xcms:::binYonX(X, X, nBins = 0))
-    checkException(xcms:::binYonX(X, X, nBins = 4, fromIdx = 0))
-    checkException(xcms:::binYonX(X, X, nBins = 4, toIdx = 0))
-    checkException(xcms:::binYonX(X, X, nBins = 4, fromIdx = 7, toIdx = 3))
-    checkException(xcms:::binYonX(X, X, nBins = 4, toIdx = 30))
+    checkException(binYonX(X, X, nBins = -4))
+    checkException(binYonX(X, X, nBins = 0))
+    checkException(binYonX(X, X, nBins = 4, fromIdx = 0))
+    checkException(binYonX(X, X, nBins = 4, toIdx = 0))
+    checkException(binYonX(X, X, nBins = 4, fromIdx = 7, toIdx = 3))
+    checkException(binYonX(X, X, nBins = 4, toIdx = 30))
 
     ## o binSize
     X <- 1:10
-    res <- xcms:::binYonX(X, X, binSize = 0.5, baseValue = 0)
-    brks <- xcms:::breaks_on_binSize(1, 10, binSize = 0.5)
+    res <- binYonX(X, X, binSize = 0.5, baseValue = 0)
+    brks <- breaks_on_binSize(1, 10, binSize = 0.5)
     ##  We expect: every other bin is 0. The last value has to be 10, the first 1.
     ## 1-1.5, 1.5-2, 2-2.5, 2.5-3, 3-3.5, 3.5-4, 4-4.5, 4.5-5, 5-5.5, 5.5-6,
     ## 6-6.5, 6.5-7, 7-7.5, 7.5-8, 8-8.5, 8.5-9, 9-9.5. 9.5-10.
@@ -337,21 +337,21 @@ test_binning_max <- function() {
                             0, 9, 10))
     checkIdentical(res$x, breakMidPoint(brks))
     ##
-    res <- xcms:::binYonX(X, X, binSize = 1.45)
-    brks <- xcms:::breaks_on_binSize(1, 10, binSize = 1.45)
+    res <- binYonX(X, X, binSize = 1.45)
+    brks <- breaks_on_binSize(1, 10, binSize = 1.45)
     ## bins:
     ## 1-2.45, 2.45-3.9, 3.9-5.35, 5.35-6.8, 6.8-8.25, 8.25-10
     checkIdentical(res$y, c(2, 3, 5, 6, 8, 10))
     checkIdentical(res$x, breakMidPoint(brks))
     ##
-    res <- xcms:::binYonX(X, X, binSize = 1.45, binFromX = 3, binToX = 9)
-    brks <- xcms:::breaks_on_binSize(3, 9, 1.45)
+    res <- binYonX(X, X, binSize = 1.45, binFromX = 3, binToX = 9)
+    brks <- breaks_on_binSize(3, 9, 1.45)
     checkIdentical(res$y, c(4, 5, 7, 9))
     checkIdentical(res$x, breakMidPoint(brks))
     ##
-    res <- xcms:::binYonX(X, X, binSize = 1.45, fromIdx = 3, toIdx = 10,
-                          binFromX = min(X), binToX = max(X), baseValue = 0)
-    brks <- xcms:::breaks_on_binSize(1, 10, 1.45)
+    res <- binYonX(X, X, binSize = 1.45, fromIdx = 3, toIdx = 10,
+                   binFromX = min(X), binToX = max(X), baseValue = 0)
+    brks <- breaks_on_binSize(1, 10, 1.45)
     ## bins:
     ## 1-2.45, 2.45-3.90, 3.90-5.35, 5.35-6.80, 6.80-8.25, 8.25-9.70, 9.70-10.00
     checkIdentical(res$y, c(0, 3, 5, 6, 8, 10))
@@ -360,17 +360,17 @@ test_binning_max <- function() {
     ## o breaks
     X <- 1:10
     brks <- seq(1, 10, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks)
-    checkEquals(res$y, xcms:::binYonX(X, X, nBins = 4L)$y)
+    res <- binYonX(X, breaks = brks)
+    checkEquals(res$y, binYonX(X, X, nBins = 4L)$y)
     checkEquals(res$x, breakMidPoint(brks))
     ##  same breaks but sub-setting x
-    res <- xcms:::binYonX(X, X, breaks = brks, fromIdx = 4, toIdx = 9,
-                          baseValue = 0)
+    res <- binYonX(X, X, breaks = brks, fromIdx = 4, toIdx = 9,
+                   baseValue = 0)
     checkEquals(res$y, c(0, 5, 7, 9))
     checkEquals(res$x, breakMidPoint(brks))
     ##  breaks spanning a sub-set of x
     brks <- seq(3, 9, length.out = 5)
-    res <- xcms:::binYonX(X, X, breaks = brks)
+    res <- binYonX(X, X, breaks = brks)
     checkEquals(res$y, c(4, 5, 7, 9))
     checkEquals(res$x, breakMidPoint(brks))
 
@@ -395,9 +395,9 @@ test_binning_max <- function() {
     nBins <- length(mass)
     resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- xcms:::binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                          binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                          baseValue = 0)
+    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+                   baseValue = 0)
     checkEquals(res$y, resR)
 
     ## Next
@@ -408,9 +408,9 @@ test_binning_max <- function() {
     nBins <- length(mass)
     resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- xcms:::binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                          binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                          baseValue = 0)
+    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+                   baseValue = 0)
     checkEquals(res$y, resR)
     shift <- FALSE
     mass <- seq(floor(min(xRangeFull)/step)*step,
@@ -418,9 +418,9 @@ test_binning_max <- function() {
     nBins <- length(mass)
     resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- xcms:::binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                          binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                          baseValue = 0)
+    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+                   baseValue = 0)
     checkEquals(res$y, resR)
 
     step <- 0.13
@@ -430,9 +430,9 @@ test_binning_max <- function() {
     nBins <- length(mass)
     resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
-    res <- xcms:::binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
-                          binToX = max(xRangeFull), shiftByHalfBinSize = shift,
-                          baseValue = 0)
+    res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
+                   binToX = max(xRangeFull), shiftByHalfBinSize = shift,
+                   baseValue = 0)
     checkEquals(res$y, resR)
 }
 
@@ -445,51 +445,51 @@ test_binning_min <- function() {
     }
 
     ## o nBins
-    res <- xcms:::binYonX(X, nBins = 5L, method = "min")
+    res <- binYonX(X, nBins = 5L, method = "min")
     checkEquals(res$y, c(1, 3, 5, 7, 9))
-    res <- xcms:::binYonX(X, nBins = 5L, method = "min", returnIndex = TRUE)
+    res <- binYonX(X, nBins = 5L, method = "min", returnIndex = TRUE)
     checkEquals(res$index, c(1, 3, 5, 7, 9))
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
-    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10, method = "min")
+    res <- binYonX(X, nBins = 5L, binFromX = 1, binToX = 10, method = "min")
     checkEquals(res$y, c(1, 3, 5, 7, 9))
     ##  Define fromIdx, toIdx
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10, method = "min",
-                          binFromX = min(X), binToX = max(X),
-                          baseValue = 0)
-    brks <- xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
+    res <- binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10, method = "min",
+                   binFromX = min(X), binToX = max(X),
+                   baseValue = 0)
+    brks <- breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkEquals(res$y, c(1, 4, 6, 9, 0))
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
-                          method = "min", binFromX = min(X), binToX = max(X),
-                          returnIndex = TRUE)
+    res <- binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                   method = "min", binFromX = min(X), binToX = max(X),
+                   returnIndex = TRUE)
     checkEquals(res$index, c(1, 4, 6, 9, NA))
 
     ## o binSize
     X <- 1:10
-    res <- xcms:::binYonX(X, binSize = 0.5, method = "min", baseValue = 0)
+    res <- binYonX(X, binSize = 0.5, method = "min", baseValue = 0)
     ##  We expect: every other bin is 0. The last value has to be 10, the first 1.
     ## 1-1.5, 1.5-2, 2-2.5, 2.5-3, 3-3.5, 3.5-4, 4-4.5, 4.5-5, 5-5.5, 5.5-6,
     ## 6-6.5, 6.5-7, 7-7.5, 7.5-8, 8-8.5, 8.5-9, 9-9.5. 9.5-10.
-    xcms:::breaks_on_binSize(min(X), max(X), binSize = 0.5)
+    breaks_on_binSize(min(X), max(X), binSize = 0.5)
     checkIdentical(res$y, c(1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 10))
     ##
-    res <- xcms:::binYonX(X, binSize = 1.45, method = "min")
-    xcms:::breaks_on_binSize(min(X), max(X), binSize = 1.45)
+    res <- binYonX(X, binSize = 1.45, method = "min")
+    breaks_on_binSize(min(X), max(X), binSize = 1.45)
     checkIdentical(res$y, c(1, 3, 4, 6, 7, 9))
 
     ## o breaks
     X <- 1:10
     brks <- seq(1, 10, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks, method = "min")
+    res <- binYonX(X, breaks = brks, method = "min")
     checkEquals(res$y, c(1, 4, 6, 8))
     ##  same breaks but sub-setting x
-    res <- xcms:::binYonX(X, breaks = brks, fromIdx = 4, toIdx = 9, method = "min",
-                          baseValue = 0)
+    res <- binYonX(X, breaks = brks, fromIdx = 4, toIdx = 9, method = "min",
+                   baseValue = 0)
     checkIdentical(res$y, c(0, 4, 6, 8))
     ##  breaks spanning a sub-set of x
     brks <- seq(3, 9, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks, method = "min")
+    res <- binYonX(X, breaks = brks, method = "min")
     checkIdentical(res$y, c(3, 5, 6, 8))
 }
 
@@ -502,49 +502,49 @@ test_binning_sum <- function() {
     }
 
     ## o nBins
-    res <- xcms:::binYonX(X, nBins = 5L, method = "sum")
-    xcms:::breaks_on_nBins(1, 10, nBins = 5)
+    res <- binYonX(X, nBins = 5L, method = "sum")
+    breaks_on_nBins(1, 10, nBins = 5)
     checkEquals(res$y, c(3, 7, 11, 15, 19))
     ##  Defining fromX, toX
     X <- c(1, 2.05, 3, 4, 5, 6, 7, 8, 9, 10, 10.5,
            11, 11.124, 11.125, 11.126, 12, 13)
-    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
-                          method = "sum")
+    res <- binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
+                   method = "sum")
     checkEquals(res$y, c(3.05, 7, 11, 15, 19))
-    res <- xcms:::binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
-                          method = "sum", returnIndex = TRUE)
+    res <- binYonX(X, nBins = 5L, binFromX = 1, binToX = 10,
+                   method = "sum", returnIndex = TRUE)
     checkEquals(length(res), 2)
     ##  Define fromIdx, toIdx
-    res <- xcms:::binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
-                          method = "sum", binFromX = min(X),
-                          binToX = max(X), baseValue = 0)
-    xcms:::breaks_on_nBins(min(X), max(X), nBins = 5L)
+    res <- binYonX(X, nBins = 5L, fromIdx = 1, toIdx = 10,
+                   method = "sum", binFromX = min(X),
+                   binToX = max(X), baseValue = 0)
+    breaks_on_nBins(min(X), max(X), nBins = 5L)
     checkIdentical(res$y, c(6.05, 9, 21, 19, 0))
 
     ## o binSize
     X <- 1:10
-    res <- xcms:::binYonX(X, binSize = 0.5, method = "sum", baseValue = 0)
-    xcms:::breaks_on_binSize(min(X), max(X), binSize = 0.5)
+    res <- binYonX(X, binSize = 0.5, method = "sum", baseValue = 0)
+    breaks_on_binSize(min(X), max(X), binSize = 0.5)
     ##  We expect: every other bin is 0. The last value has to be 10, the first 1.
     ## 1-1.5, 1.5-2, 2-2.5, 2.5-3, 3-3.5, 3.5-4, 4-4.5, 4.5-5, 5-5.5, 5.5-6,
     ## 6-6.5, 6.5-7, 7-7.5, 7.5-8, 8-8.5, 8.5-9, 9-9.5. 9.5-10.
     checkIdentical(res$y, c(1, 0, 2, 0, 3, 0, 4, 0, 5, 0, 6, 0, 7, 0, 8, 0, 9, 10))
-    res <- xcms:::binYonX(X, binSize = 1.45, method = "sum")
-    xcms:::breaks_on_binSize(min(X), max(X), binSize = 1.45)
+    res <- binYonX(X, binSize = 1.45, method = "sum")
+    breaks_on_binSize(min(X), max(X), binSize = 1.45)
     checkIdentical(res$y, c(3, 3, 9, 6, 15, 19))
 
     ## o breaks
     X <- 1:10
     brks <- seq(1, 10, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks, method = "sum")
+    res <- binYonX(X, breaks = brks, method = "sum")
     checkIdentical(res$y, c(6, 9, 13, 27))
     ##  same breaks but sub-setting x
-    res <- xcms:::binYonX(X, X, breaks = brks, fromIdx = 4, toIdx = 9,
-                          method = "sum", baseValue = 0)
+    res <- binYonX(X, X, breaks = brks, fromIdx = 4, toIdx = 9,
+                   method = "sum", baseValue = 0)
     checkIdentical(res$y, c(0, 9, 13, 17))
     ##  breaks spanning a sub-set of x
     brks <- seq(3, 9, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks, method = "sum")
+    res <- binYonX(X, breaks = brks, method = "sum")
     checkIdentical(res$y, c(7, 5, 13, 17))
 }
 
@@ -557,17 +557,17 @@ test_binning_mean <- function() {
     }
 
     ## o nBins
-    res <- xcms:::binYonX(X, nBins = 5L, method = "mean")
-    xcms:::breaks_on_nBins(1, 10, nBins = 5)
+    res <- binYonX(X, nBins = 5L, method = "mean")
+    breaks_on_nBins(1, 10, nBins = 5)
     checkEquals(res$y, c(1.5, 3.5, 5.5, 7.5, 9.5))
     Y <- X
     Y[3] <- NA
-    res <- xcms:::binYonX(X, Y, nBins = 5L, method = "mean")
+    res <- binYonX(X, Y, nBins = 5L, method = "mean")
     checkEquals(res$y, c(1.5, 4, 5.5, 7.5, 9.5))
 
     ## o binSize
     X <- 1:10
-    res <- xcms:::binYonX(X, binSize = 0.5, method = "mean", baseValue = 0)
+    res <- binYonX(X, binSize = 0.5, method = "mean", baseValue = 0)
     ##  We expect: every other bin is 0. The last value has to be 10, the first 1.
     ## 1-1.5, 1.5-2, 2-2.5, 2.5-3, 3-3.5, 3.5-4, 4-4.5, 4.5-5, 5-5.5, 5.5-6,
     ## 6-6.5, 6.5-7, 7-7.5, 7.5-8, 8-8.5, 8.5-9, 9-9.5. 9.5-10.
@@ -576,7 +576,7 @@ test_binning_mean <- function() {
     ## o breaks
     X <- 1:10
     brks <- seq(1, 10, length.out = 5)
-    res <- xcms:::binYonX(X, breaks = brks, method = "mean")
+    res <- binYonX(X, breaks = brks, method = "mean")
     checkEquals(res$y, c(2, 4.5, 6.5, 9))
 }
 
@@ -587,42 +587,42 @@ test_breaks <- function() {
 
     ## Test generation of breaks for binning.
     ## o nBins
-    res <- xcms:::breaks_on_nBins(1, 10, 4)
+    res <- breaks_on_nBins(1, 10, 4)
     checkIdentical(res, seq(1, 10, length.out = 5))
-    res <- xcms:::breaks_on_nBins(2, 8, 20)
+    res <- breaks_on_nBins(2, 8, 20)
     checkIdentical(res, seq(2, 8, length.out = 21))
     ##
     brksR <- seq(200, 600, length.out = 2002)
-    brks <- xcms:::breaks_on_nBins(200, 600, nBins = 2001)
+    brks <- breaks_on_nBins(200, 600, nBins = 2001)
     checkIdentical(brks, brksR)
     ## Simulate shift by half bin size
     brksR <- seq((200 - 0.1), (600 + 0.1), length.out = 2002)
-    brks <- xcms:::breaks_on_nBins(200, 600, nBins = 2001,
-                                   shiftByHalfBinSize = TRUE)
+    brks <- breaks_on_nBins(200, 600, nBins = 2001,
+                            shiftByHalfBinSize = TRUE)
     checkIdentical(brks, brksR)
 
     ## o binSize
-    res <- xcms:::breaks_on_binSize(1, 10, 0.13)
+    res <- breaks_on_binSize(1, 10, 0.13)
     resR <- seq(1, 10, by = 0.13)
     checkIdentical(res[-length(res)], resR[-length(resR)])
     checkIdentical(res[length(res)], 10)
     ##   Will create one bin more.
-    res <- xcms:::breaks_on_binSize(1, 10, 0.51)
+    res <- breaks_on_binSize(1, 10, 0.51)
     resR <- seq(1, 10, by = 0.51)
     checkIdentical(res[-length(res)], resR)
     checkIdentical(res[length(res)], 10)
     ##
     brksR <- seq(200, 600, by = 0.2)
-    brks <- xcms:::breaks_on_binSize(200, 600, binSize = 0.2)
+    brks <- breaks_on_binSize(200, 600, binSize = 0.2)
     checkIdentical(brks, brksR)
     ## Simulate shift by half bin size
     brksR <- seq((200 - 0.1), (600 + 0.1), by = 0.2)
-    brks <- xcms:::breaks_on_binSize((200 - 0.1), (600 + 0.1),
-                                     binSize = 0.2)
+    brks <- breaks_on_binSize((200 - 0.1), (600 + 0.1),
+                              binSize = 0.2)
     checkIdentical(brks, brksR)
     ##
     brksR <- seq((200 - 0.1), (600), by = 0.2)
-    brks <- xcms:::breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
+    brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
     checkTrue(length(brks) > length(brksR))
     checkIdentical(brks[-length(brks)], brksR)
     checkIdentical(brks[length(brks)], 600)
@@ -636,48 +636,73 @@ test_imputation_lin <- function() {
     library(RUnit)
 
     X <- 1:11
-    brks <- xcms:::breaks_on_nBins(1, 11, 5L)
+    brks <- breaks_on_nBins(1, 11, 5L)
 
     Y <- c(1, NA, NA, NA, 5, 6, NA, NA, 9, 10, 11)
     ## No imputation
-    resVals <- xcms:::binYonX(X, Y, nBins = 5L)$y
+    resVals <- binYonX(X, Y, nBins = 5L)$y
     ## Expect NA for bins 2 and 4
     checkIdentical(resVals, c(1, NA, 6, NA, 11))
-    res <- xcms:::imputeLinInterpol(resVals, method = "lin")
+    res <- imputeLinInterpol(resVals, method = "lin")
     checkIdentical(res, c(1, 3.5, 6, 8.5, 11))
 
     ## Empty bin at the start.
     Y <- c(NA, 4, 6, 8, 11)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkIdentical(res, c(2, 4, 6, 8, 11))
     Y <- c(NA, 3, 6, 8, 11)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkIdentical(res, c(1.5, 3, 6, 8, 11))
 
     ## Two empty bins at the start.
     Y <- c(NA, NA, 5, 8, 11)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkIdentical(res, c(5/3, 2*5/3, 5, 8, 11))
 
     ## Empty bin at the end.
     Y <- c(2, 4, 6, 9, NA)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkEquals(res, c(2, 4, 6, 9, 4.5))
 
     ## Two empty bins at the end.
     Y <- c(2, 4, 6, NA, NA)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkEquals(res, c(2, 4, 6, 4, 2))
 
     ## 3 empty bins at the end.
     Y <- c(2, 4, NA, NA, NA)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkEquals(res, c(2, 4, 3, 2, 1))
 
     ## 2 consecutive empty bins.
     Y <- c(2, NA, NA, 8, 10)
-    res <- xcms:::imputeLinInterpol(Y, method = "lin")
+    res <- imputeLinInterpol(Y, method = "lin")
     checkEquals(res, c(2, 4, 6, 8, 10))
+
+    ## Simulate the profBinLin: no interpolation at both ends:
+    Y <- c(2, NA, NA, 8, 10)
+    res <- imputeLinInterpol(Y, method = "lin", noInterpolAtEnds = TRUE)
+    checkEquals(res, c(2, 4, 6, 8, 10))
+
+    ## One NA at start:
+    Y <- c(NA, 4, 6, 8, 11)
+    res <- imputeLinInterpol(Y, method = "lin", noInterpolAtEnds = TRUE)
+    checkIdentical(res, c(0, 4, 6, 8, 11))
+
+    ## Two NAs at the start.
+    Y <- c(NA, NA, 5, 8, 11)
+    res <- imputeLinInterpol(Y, method = "lin", noInterpolAtEnds = TRUE)
+    checkIdentical(res, c(0, 0, 5, 8, 11))
+
+    ## NA at the end.
+    Y <- c(2, 4, 6, 9, NA)
+    res <- imputeLinInterpol(Y, method = "lin", noInterpolAtEnds = TRUE)
+    checkEquals(res, c(2, 4, 6, 9, 0))
+
+    ## Two NAs at the end.
+    Y <- c(2, 4, 6, NA, NA)
+    res <- imputeLinInterpol(Y, method = "lin", noInterpolAtEnds = TRUE)
+    checkEquals(res, c(2, 4, 6, 0, 0))
 }
 
 ############################################################
@@ -692,14 +717,14 @@ test_imputation_linbin <- function() {
     ## We're using the same test than we did for profBinLinBase.
     Y <- c(3, NA, 1, 2, NA, NA, 4, NA, NA, NA, 3, NA, NA, NA, NA, 2)
     nas <- is.na(Y)
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase",
-                                    baseValue = 0.5, distance = 0)
+    res <- imputeLinInterpol(Y, method = "linbase",
+                             baseValue = 0.5, distance = 0)
     dummy <- Y
     dummy[is.na(dummy)] <- 0.5
     checkEquals(res, dummy)
 
     ## Modify basespace such that 1 neighboring bin is considered.
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase")
+    res <- imputeLinInterpol(Y, method = "linbase")
     expect <- c(3, 2, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
                 0.5, 0.5 + 2.5/2, 3, 3 - 2.5/2, 0.5, 0.5, 0.5 + 1.5/2, 2)
     checkEquals(res, expect)
@@ -710,7 +735,7 @@ test_imputation_linbin <- function() {
     }
 
     ## Modify basespace such that 2 neighboring bins are considered.
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 2L)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 2L)
     expect <- c(3, 2, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 1/4, 4 - 2/4,
                 4 - 3/4, 3, 3 - 1/5, 3 - 2/5, 3 - 3/5, 3 - 4/5, 2)
     checkEquals(res, expect)
@@ -722,7 +747,7 @@ test_imputation_linbin <- function() {
 
     ## What happens if there are all NAs up to the end?
     Y[16] <- NA
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 1)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 1)
     expect <- c(3, 2, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
                 0.5, 0.5 + 2.5/2, 3, 3 - 2.5/2, 0.5, 0.5, 0.5, 0.5)
     checkEquals(res, expect)
@@ -734,7 +759,7 @@ test_imputation_linbin <- function() {
 
     ## And if we start with NAs?
     Y[1] <- NA
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 1)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 1)
     expect <- c(0.5, 0.75, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
                 0.5, 0.5 + 2.5/2, 3, 3 - 2.5/2, 0.5, 0.5, 0.5, 0.5)
     checkEquals(res, expect)
@@ -746,7 +771,7 @@ test_imputation_linbin <- function() {
 
     ## Only the first is an NA:
     Y[2] <- 2
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 1)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 1)
     expect <- c(0.5 + 1.5/2, 2, 1, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
                 0.5, 0.5 + 2.5/2, 3, 3 - 2.5/2, 0.5, 0.5, 0.5, 0.5)
     checkEquals(res, expect)
@@ -758,8 +783,8 @@ test_imputation_linbin <- function() {
 
     ## Stretch of NAs from the beginning.
     Y[1:3] <- NA
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 1,
-                                    baseValue = 0.5)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 1,
+                             baseValue = 0.5)
     expect <- c(0.5, 0.5, 0.5 + 1.5/2, 2, 2+2/3, 2+2*2/3, 4, 4 - 3.5/2,
                 0.5, 0.5 + 2.5/2, 3, 3 - 2.5/2, 0.5, 0.5, 0.5, 0.5)
     checkEquals(res, expect)
@@ -770,8 +795,8 @@ test_imputation_linbin <- function() {
     }
 
     ## The same but considering two neighboring elements.
-    res <- xcms:::imputeLinInterpol(Y, method = "linbase", distance = 2,
-                                    baseValue = 0.5)
+    res <- imputeLinInterpol(Y, method = "linbase", distance = 2,
+                             baseValue = 0.5)
     expect <- c(0.5, 0.5 + 1.5/3, 0.5 + 2* 1.5/3, 2, 2+2/3, 2+2*2/3, 4, 4 - 1/4,
                 4 - 2/4, 4 - 3/4, 3, 3 - 2.5/3, 3 - 2*2.5/3, 0.5, 0.5, 0.5)
     checkEquals(res, expect)
@@ -812,40 +837,40 @@ test_binYonX_multi <- function() {
     X <- 1:30
     fromIdx <- c(1, 3, 14)
     toIdx <- c(8, 11, 28)
-    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
-                           toIdx = toIdx)
+    resM <- binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                    toIdx = toIdx)
     checkEquals(length(resM), 3)
     for (i in 1:length(fromIdx)) {
-        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
-                                              fromIdx = fromIdx[i],
-                                              toIdx = toIdx[i]))
+        checkEquals(resM[[i]], binYonX(X, X, nBins = nBins,
+                                       fromIdx = fromIdx[i],
+                                       toIdx = toIdx[i]))
     }
 
     ## GC-torture; check if objects in C are save.
     gctorture(on = TRUE)
-    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
-                           toIdx = toIdx)
+    resM <- binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                    toIdx = toIdx)
     gctorture(on = FALSE)
     for (i in 1:length(fromIdx)) {
-        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
-                                              fromIdx = fromIdx[i],
-                                              toIdx = toIdx[i]))
+        checkEquals(resM[[i]], binYonX(X, X, nBins = nBins,
+                                       fromIdx = fromIdx[i],
+                                       toIdx = toIdx[i]))
     }
 
     X <- 1:30
     fromIdx <- c(1, 3, 14)
     toIdx <- c(8, 11, 28)
-    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
-                                 toIdx = toIdx)
+    resM <- binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                    toIdx = toIdx)
     checkEquals(length(resM), 3)
     for (i in 1:length(fromIdx)) {
-        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
-                                              fromIdx = fromIdx[i],
-                                              toIdx = toIdx[i]))
+        checkEquals(resM[[i]], binYonX(X, X, nBins = nBins,
+                                       fromIdx = fromIdx[i],
+                                       toIdx = toIdx[i]))
     }
     ## Returning also the index
-    resM <- xcms:::binYonX(X, nBins = nBins, fromIdx = fromIdx, toIdx = toIdx,
-                           returnIndex = TRUE)
+    resM <- binYonX(X, nBins = nBins, fromIdx = fromIdx, toIdx = toIdx,
+                    returnIndex = TRUE)
     checkTrue(all(unlist(lapply(resM, function(z) {
         return(any(names(z) == "index"))
     })) == TRUE))
@@ -854,21 +879,21 @@ test_binYonX_multi <- function() {
     ## be defined on these values.
     fromX <- 1
     toX <- 30
-    resM <- xcms:::binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
-                           toIdx = toIdx, binFromX = fromX, binToX = toX,
-                           baseValue = 17)
+    resM <- binYonX(X, X, nBins = nBins, fromIdx = fromIdx,
+                    toIdx = toIdx, binFromX = fromX, binToX = toX,
+                    baseValue = 17)
     checkEquals(length(resM), 3)
     for (i in 1:length(fromIdx)) {
-        checkEquals(resM[[i]], xcms:::binYonX(X, X, nBins = nBins,
-                                              fromIdx = fromIdx[i],
-                                              toIdx = toIdx[i],
-                                              binFromX = fromX,
-                                              binToX = toX,
-                                              baseValue = 17))
+        checkEquals(resM[[i]], binYonX(X, X, nBins = nBins,
+                                       fromIdx = fromIdx[i],
+                                       toIdx = toIdx[i],
+                                       binFromX = fromX,
+                                       binToX = toX,
+                                       baseValue = 17))
     }
 
     ## Error checks.
-    checkException(xcms:::binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = c(2, 3)))
+    checkException(binYonX(X, X, nBins = 5L, fromIdx = 1, toIdx = c(2, 3)))
 }
 
 
@@ -890,22 +915,22 @@ test_compare_with_profBin <- function() {
     set.seed(18011977)
     X <- sort(abs(rnorm(500000, mean = 500, sd = 50)))
     a <- xcms:::profBin(X, X, 1000)
-    b <- xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
-                        shiftByHalfBinSize = TRUE,
-                        baseValue = 0)
+    b <- binYonX(X, X, nBins = 1000, sortedX = TRUE,
+                 shiftByHalfBinSize = TRUE,
+                 baseValue = 0)
     checkIdentical(a, b$y)
 
     ## library(microbenchmark)
     ## microbenchmark(xcms:::profBin(X, X, 1000),
-    ##                xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
+    ##                binYonX(X, X, nBins = 1000, sortedX = TRUE,
     ##                               shiftByHalfBinSize = TRUE,
     ##                               baseValue = 0))
 
     ## To be on the save side, compare also with binSize:
     binS <- unique(diff(b$x))[1]
-    c <- xcms:::binYonX(X, binSize = binS, sortedX = TRUE,
-                        shiftByHalfBinSize = TRUE,
-                        baseValue = 0)
+    c <- binYonX(X, binSize = binS, sortedX = TRUE,
+                 shiftByHalfBinSize = TRUE,
+                 baseValue = 0)
     checkIdentical(length(b$x), length(c$x))
     ## The bins will be the same except for the last one.
     checkEquals(b$x[-length(b$x)], c$x[-length(c$x)])
@@ -914,8 +939,8 @@ test_compare_with_profBin <- function() {
     ## NA handling
     X[20:30] <- NA
     checkException(a <- xcms:::profBin(X, X, 1000))
-    checkException(b <- xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
-                                       shiftByHalfBinSize = TRUE))
+    checkException(b <- binYonX(X, X, nBins = 1000, sortedX = TRUE,
+                                shiftByHalfBinSize = TRUE))
 
     ## Using real data:
     library(faahKO)
@@ -933,10 +958,10 @@ test_compare_with_profBin <- function() {
     nBins <- length(mass)
     resX <- xcms:::profBin(X, Y, nBins, xstart = min(mass),
                            xend = max(mass))
-    resB <- xcms:::binYonX(X, Y, nBins = nBins, binFromX = min(mass),
-                           binToX = max(mass), sortedX = TRUE,
-                           shiftByHalfBinSize = TRUE,
-                           baseValue = 0)
+    resB <- binYonX(X, Y, nBins = nBins, binFromX = min(mass),
+                    binToX = max(mass), sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE,
+                    baseValue = 0)
     checkIdentical(resX, resB$y)
     ## Do the same with the reference implementation
     resR <- xcms:::profBinR(X, Y, nBins = nBins, fromX = min(mass), toX = max(mass))
@@ -948,10 +973,10 @@ test_compare_with_profBin <- function() {
     nBins <- length(mass)
     resX <- xcms:::profBin(X, Y, nBins, xstart = min(mass),
                            xend = max(mass))
-    resB <- xcms:::binYonX(X, Y, nBins = nBins, binFromX = min(mass),
-                           binToX = max(mass), sortedX = TRUE,
-                           shiftByHalfBinSize = TRUE,
-                           baseValue = 0)
+    resB <- binYonX(X, Y, nBins = nBins, binFromX = min(mass),
+                    binToX = max(mass), sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE,
+                    baseValue = 0)
     checkIdentical(resX, resB$y)
     ## Do the same with the reference implementation
     resR <- xcms:::profBinR(X, Y, nBins = nBins, fromX = min(mass), toX = max(mass))
@@ -977,9 +1002,9 @@ test_compare_with_profBinM <- function() {
     nBins <- 5L
 
     resX <- xcms:::profBinM(X, X, scIndex, nBins)
-    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = min(X), binToX = max(X),
-                           fromIdx = fromX, toIdx = toX,
-                           shiftByHalfBinSize = TRUE, baseValue = 0)
+    resM <- binYonX(X, nBins = nBins, binFromX = min(X), binToX = max(X),
+                    fromIdx = fromX, toIdx = toX,
+                    shiftByHalfBinSize = TRUE, baseValue = 0)
     M <- do.call(cbind, lapply(resM, function(x) {x$y}))
     checkIdentical(resX, M)
 
@@ -996,9 +1021,9 @@ test_compare_with_profBinM <- function() {
     tX <- max(X)
     ## Calculate
     resX <- xcms:::profBinM(X, X, scIndex, nBins, xstart = fX, xend = tX)
-    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
-                           fromIdx = fromX, toIdx = toX, baseValue = 0,
-                           shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    resM <- binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+                    fromIdx = fromX, toIdx = toX, baseValue = 0,
+                    shiftByHalfBinSize = TRUE, sortedX = TRUE)
     M <- do.call(cbind, lapply(resM, function(x) {x$y}))
     checkIdentical(resX, M)
 
@@ -1020,11 +1045,11 @@ test_compare_with_profBinM <- function() {
     toX <- cumsum(valsPerSpect)
     fromX <- c(1L, toX[-length(toX)] + 1L)
     ## binYonX
-    resB <- xcms:::binYonX(X, Y, nBins = nBins, binFromX = mass[1],
-                           binToX = max(mass), fromIdx = fromX,
-                           toIdx = toX, sortedX = TRUE,
-                           shiftByHalfBinSize = TRUE,
-                           baseValue = 0)
+    resB <- binYonX(X, Y, nBins = nBins, binFromX = mass[1],
+                    binToX = max(mass), fromIdx = fromX,
+                    toIdx = toX, sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE,
+                    baseValue = 0)
     resB <- do.call(cbind, lapply(resB, function(z) return(z$y)))
     checkIdentical(resB, resX)
 
@@ -1035,18 +1060,18 @@ test_compare_with_profBinM <- function() {
     nBins <- length(mass)
     resX <- xcms:::profBinM(X, Y, scanidx, nBins, xstart = mass[1],
                             xend = max(mass))
-    resB <- xcms:::binYonX(X, Y, nBins = nBins, binFromX = mass[1],
-                           binToX = max(mass), fromIdx = fromX,
-                           toIdx = toX, sortedX = TRUE,
-                           shiftByHalfBinSize = TRUE,
-                           baseValue = 0)
+    resB <- binYonX(X, Y, nBins = nBins, binFromX = mass[1],
+                    binToX = max(mass), fromIdx = fromX,
+                    toIdx = toX, sortedX = TRUE,
+                    shiftByHalfBinSize = TRUE,
+                    baseValue = 0)
     resB <- do.call(cbind, lapply(resB, function(z) return(z$y)))
     checkIdentical(resB, resX)
     binSize <- (max(mass) - min(mass)) / (nBins - 1)
     brks <- seq(min(mass) - binSize/2, max(mass) + binSize/2, by = binSize)
-    resB <- xcms:::binYonX(X, Y, breaks = brks, fromIdx = fromX,
-                           toIdx = toX, sortedX = TRUE,
-                           baseValue = 0)
+    resB <- binYonX(X, Y, breaks = brks, fromIdx = fromX,
+                    toIdx = toX, sortedX = TRUE,
+                    baseValue = 0)
     resB <- do.call(cbind, lapply(resB, function(z) return(z$y)))
     checkIdentical(resB, resX)
 }
@@ -1065,15 +1090,15 @@ test_compare_with_profBinLin <- function() {
     library(RUnit)
 
     X <- 1:11
-    brks <- xcms:::breaks_on_nBins(1, 11, 5L, TRUE)
+    brks <- breaks_on_nBins(1, 11, 5L, TRUE)
 
     ## One missing bin in the middle
     Y <- c(1, 2, 3, 4, NA, NA, NA, 8, 9, 10, 11)
     nas <- is.na(Y)
     resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5)
-    res <- xcms:::binYonX(X, Y, nBins = 5L,
-                          shiftByHalfBinSize = TRUE)
-    resM <- xcms:::imputeLinInterpol(res$y, method = "lin")
+    res <- binYonX(X, Y, nBins = 5L,
+                   shiftByHalfBinSize = TRUE)
+    resM <- imputeLinInterpol(res$y, method = "lin")
     checkEquals(resX[-1], resM[-1])
 
     ## One missing bin at the end
@@ -1081,21 +1106,79 @@ test_compare_with_profBinLin <- function() {
     nas <- is.na(Y)
     resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5,
                               xstart = 1, xend = 11)
-    res <- xcms:::binYonX(X, Y, nBins = 5L,
-                          shiftByHalfBinSize = TRUE)
-    resM <- xcms:::imputeLinInterpol(res$y, method = "lin")
+    res <- binYonX(X, Y, nBins = 5L,
+                   shiftByHalfBinSize = TRUE)
+    resM <- imputeLinInterpol(res$y, method = "lin")
     ## checkEquals(resX[-1], resM[-1])
     ## HEEEECK! profBinLin reports 0, which I think is wrong!
     ## -> reported in new_functionality.org
+
+    ## Issue #49
+    X <- 1:11
+    set.seed(123)
+    Y <- sort(rnorm(11, mean = 20, sd = 10))
+    ## removing some of the values in the middle
+    Y[5:9] <- NA
+    nas <- is.na(Y)
+    ## Do interpolation with profBinLin:
+    resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5, xstart = min(X),
+                              xend = max(X))
+    resX
+    ## Do the same with binYonX and imputeLinInterpol.
+    res <- binYonX(X, Y, nBins = 5L, shiftByHalfBinSize = TRUE)
+    resM <- imputeLinInterpol(res$y, method = "lin")
+    resM
+    ## First bin value is wrong (issue #46)
+
+    ## Visualize
+    plot(x = X, y = Y, pch = 16)
+    ## Plot the breaks
+    abline(v = breaks_on_nBins(min(X), max(X), 5L, TRUE), col = "grey")
+    ## Result from profBinLin:
+    points(x = res$x, y = resX, col = "blue", type = "b")
+    ## Results from imputeLinInterpol
+    points(x = res$x, y = resM, col = "green", type = "b",
+           pch = 4, lty = 2)
+
+
+
+    ## Remove values at the end
+    set.seed(123)
+    Y <- sort(rnorm(11, mean = 20, sd = 10))
+    Y[9:11] <- NA
+    nas <- is.na(Y)
+    ## Do interpolation with profBinLin:
+    resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5, xstart = min(X),
+                              xend = max(X))
+    resX
+    ## No interpolation performed.
+    ## Do the same with binYonX and imputeLinInterpol.
+    res <- binYonX(X, Y, nBins = 5L, shiftByHalfBinSize = TRUE)
+    resM <- imputeLinInterpol(res$y, method = "lin")
+    resM
+
+    ## Results form profBinLin are quite different.
+
+    ## Visualize
+    plot(x = X, y = Y, pch = 16, ylim = c(0, max(Y, na.rm = TRUE)))
+    ## Plot the breaks
+    abline(v = breaks_on_nBins(min(X), max(X), 5L, TRUE), col = "grey")
+    ## Result from profBinLin:
+    points(x = res$x, y = resX, col = "blue", type = "b")
+    ## Results from imputeLinInterpol
+    points(x = res$x, y = resM, col = "green", type = "b",
+           pch = 4, lty = 2)
+    ## END ISSUE
+
 
     ## Two missing in the middle.
     Y <- c(1, 2, 3, 4, NA, NA, NA, NA, NA, 10, 11)
     nas <- is.na(Y)
     resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5,
                               xstart = 1, xend = 11)
-    res <- xcms:::binYonX(X, Y, nBins = 5L,
-                          shiftByHalfBinSize = TRUE)
-    resM <- xcms:::imputeLinInterpol(res$y, method = "lin")
+    res <- binYonX(X, Y, nBins = 5L,
+                   shiftByHalfBinSize = TRUE)
+    resM <- imputeLinInterpol(res$y, method = "lin")
     checkIdentical(resX[-1], resM[-1])
 
     ## Larger Test:
@@ -1103,16 +1186,16 @@ test_compare_with_profBinLin <- function() {
     X <- sort(abs(rnorm(500000, mean = 500, sd = 50)))
     a <- xcms:::profBinLin(X, X, 1000)
     a2 <- xcms:::profBin(X, X, 1000)
-    b <- xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
-                        shiftByHalfBinSize = TRUE)
-    bres <- xcms:::imputeLinInterpol(b$y, method = "lin")
+    b <- binYonX(X, X, nBins = 1000, sortedX = TRUE,
+                 shiftByHalfBinSize = TRUE)
+    bres <- imputeLinInterpol(b$y, method = "lin")
     checkIdentical(a, bres)
 
     ## Benchmark
     ## myProfBinLin <- function(x, nBins) {
-    ##     res <- xcms:::binYonX(x, nBins = nBins, sortedX = TRUE,
+    ##     res <- binYonX(x, nBins = nBins, sortedX = TRUE,
     ##                           shiftByHalfBinSize = TRUE)
-    ##     return(xcms:::imputeLinInterpol(res$y, method = "lin"))
+    ##     return(imputeLinInterpol(res$y, method = "lin"))
     ## }
     ## library(microbenchmark)
     ## microbenchmark(xcms:::profBinLin(X, X, 1000),
@@ -1136,21 +1219,21 @@ test_compare_with_profBinLinM <- function() {
     tX <- max(X)
     ## Calculate
     resX <- xcms:::profBinLinM(X, X, scIndex, nBins, xstart = fX, xend = tX)
-    resM <- xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
-                           fromIdx = fromX, toIdx = toX,
-                           shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    resM <- binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+                    fromIdx = fromX, toIdx = toX,
+                    shiftByHalfBinSize = TRUE, sortedX = TRUE)
     ## imputation:
     vals <- lapply(resM, function(z) {
-        return(xcms:::imputeLinInterpol(z$y, method = "lin"))
+        return(imputeLinInterpol(z$y, method = "lin"))
     })
     M <- do.call(cbind, vals)
     ## Can not compare that sucker!!!
     doplot <- FALSE
     if (doplot) {
         ## Evaluate with a plot.
-        resM2 <- xcms:::binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
-                                fromIdx = fromX, toIdx = toX,
-                                shiftByHalfBinSize = TRUE, sortedX = TRUE)
+        resM2 <- binYonX(X, nBins = nBins, binFromX = fX, binToX = tX,
+                         fromIdx = fromX, toIdx = toX,
+                         shiftByHalfBinSize = TRUE, sortedX = TRUE)
         ## Get the first non-0 element in the first sub-set
         idx <- which(resM2[[1]]$y > 0)[1]
         ##plot(resM[[1]]$x[1:50], resM[[1]]$y[1:50])
@@ -1167,9 +1250,9 @@ test_compare_with_profBinLinM <- function() {
 
     ## Benchmark.
     ## myProfBinLinM <- function(x, ...) {
-    ##     res <- xcms:::binYonX(x, ...)
+    ##     res <- binYonX(x, ...)
     ##     return(lapply(res, function(z) {
-    ##         return(xcms:::imputeLinInterpol(z$y, method = "lin"))
+    ##         return(imputeLinInterpol(z$y, method = "lin"))
     ##     }))
     ## }
     ## library(microbenchmark)
@@ -1221,25 +1304,25 @@ dontrun_tackle_binning_differences <- function() {
     toIdx <- cumsum(diff(c(scanindex, length(mz))))
     fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
     ## Full matrix
-    myBuf <- xcms:::binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
-                            binFromX = min(mass), binToX = max(mass),
-                            binSize = 0.2, baseValue = 0,
-                            shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    myBuf <- binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
+                     binFromX = min(mass), binToX = max(mass),
+                     binSize = 0.2, baseValue = 0,
+                     shiftByHalfBinSize = TRUE, sortedX = TRUE)
     myBuf <- do.call(cbind, lapply(myBuf, function(z) z$y))
     checkEquals(myBuf, buf)  ## OK
     checkEquals(myBuf[1:100, ], buf_subset)  ## FAILS!
     ## subset
-    myBuf_subset <- xcms:::binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
-                                   binFromX = min(mass), binToX = mass[100],
-                                   binSize = 0.2, baseValue = 0,
-                                   shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    myBuf_subset <- binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
+                            binFromX = min(mass), binToX = mass[100],
+                            binSize = 0.2, baseValue = 0,
+                            shiftByHalfBinSize = TRUE, sortedX = TRUE)
     myBuf_subset <- do.call(cbind, lapply(myBuf_subset, function(z) z$y))
     checkEquals(myBuf_subset, myBuf[1:100, ])  ## OK
     ## Second subset
-    myBuf_subset <- xcms:::binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
-                                   binFromX = mass[101], binToX = mass[200],
-                                   binSize = 0.2, baseValue = 0,
-                                   shiftByHalfBinSize = TRUE, sortedX = TRUE)
+    myBuf_subset <- binYonX(mz, int, fromIdx = fromIdx, toIdx = toIdx,
+                            binFromX = mass[101], binToX = mass[200],
+                            binSize = 0.2, baseValue = 0,
+                            shiftByHalfBinSize = TRUE, sortedX = TRUE)
     myBuf_subset <- do.call(cbind, lapply(myBuf_subset, function(z) z$y))
     checkEquals(myBuf_subset, myBuf[101:200, ])  ## OK
     ## Conclusion: binYonX is "stable".
@@ -1269,16 +1352,16 @@ dontrun_tackle_binning_differences <- function() {
     set.seed(18011977)
     X <- sort(abs(rnorm(500000, mean = 500, sd = 300)))
     a <- xcms:::profBin(X, X, 1000)
-    b <- xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE)
+    b <- binYonX(X, X, nBins = 1000, sortedX = TRUE)
 
     microbenchmark(xcms:::profBin(X, X, 5),
-                   xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE))
+                   binYonX(X, X, nBins = 1000, sortedX = TRUE))
     ## So, we're 2 times faster.
-    microbenchmark(xcms:::binYonX(X, X, binSize = 1.65, sortedX = TRUE),
-                   xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE))
+    microbenchmark(binYonX(X, X, binSize = 1.65, sortedX = TRUE),
+                   binYonX(X, X, nBins = 1000, sortedX = TRUE))
     ## binLin:
     microbenchmark(xcms:::profBinLin(X, X, 1000),
-                   xcms:::binYonX(X, X, nBins = 1000, sortedX = TRUE,
-                                  impute = "lin"))
+                   binYonX(X, X, nBins = 1000, sortedX = TRUE,
+                           impute = "lin"))
     ## Also here we're 2 times faster.
 }

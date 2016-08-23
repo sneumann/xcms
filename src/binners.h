@@ -79,7 +79,7 @@ static void _fill_missing_with_value(double *ans, double init_value, int n_bin);
  * That would actually be better, but does not fit with the original
  * xcms binLin implementation.
  */
-static void _impute_linearly_interpolate_x(double *x, int n_bin);
+static void _impute_linearly_interpolate_x(double *x, int n_bin, int no_interpol_at_ends);
 
 /*
  * The name might be misleading; this does essentially what the binLinBase from xcms
