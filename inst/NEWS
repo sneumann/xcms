@@ -6,7 +6,8 @@ NEW FEATURES:
 + imputeLinInterpol function providing linear interpolation of missing values.
 + breaks_on_binSize and breaks_on_nBins functions to calculate breaks defining
   bins.
-
++ New vignette "new_functionality.Rmd" describing new and modified functionality
+  in xcms.
 
 CHANGES IN VERSION 1.49.5
 -------------------------

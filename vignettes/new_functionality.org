@@ -1,7 +1,51 @@
-* Overview of new and modified functionality in =xcms=
+#+TITLE: New and modified functionality in xcms
+#+AUTHOR:    Johannes Rainer
+#+EMAIL:     johannes.rainer@eurac.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS: ^:{} toc:nil
+#+PROPERTY: exports code
+#+PROPERTY: session *R*
 
-Thus far this is more to remind me what has been added/changed. In the end it
-would be nice to have a vignette describing all these methods in detail.
+#+BEGIN_html
+---
+title: "New and modified functionality in xcms"
+graphics: yes
+output:
+  BiocStyle::html_document2
+vignette: >
+  %\VignetteIndexEntry{New and modified functionality in xcms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,RColorBrewer}
+  %\VignettePackage{xcms}
+  %\VignetteKeywords{mass spectrometry, metabolomics}
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+#+END_html
+
+#+BEGIN_html
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer<br />
+**Modified**: 24 August, 2016<br />
+**Compiled**: `r date()`
+#+END_html
+
+
+* New functionality in =xcms=
+
+This document describes new functionality and changes to existing functionality
+in the =xcms= package introduced during the update to version /3/.
+
+#+BEGIN_SRC R :ravel message = FALSE
+  library(xcms)
+  library(RColorBrewer)
+#+END_SRC
 
 ** Binning and missing value imputation functions
 
@@ -31,55 +75,118 @@ into bins defined by their M/Z values implemented in the =profBin=, =profBinLin=
 The missing value imputation logic inherently build into the =profBinLin= and
 =profBinLinBase= methods has been implemented in the =imputeLinInterpol= function.
 
+The example below illustrates the binning and imputation with the =binYtoX= and
+=imputeLinInterpol= functions. After binning of the test vectors below some of the
+bins have missing values, for which we impute a value using
+=imputeLinInterpol=. By default, =binYonX= selects the largest value within each
+bin, but other aggregation methods are also available (i.e. min, max, mean,
+sum).
 
-* Changes in analysis results due to bug fixes and modified functionality
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Defining the variables:
+  set.seed(123)
+  X <- sort(abs(rnorm(30, mean = 20, sd = 25))) ## 10
+  Y <- abs(rnorm(30, mean = 50, sd = 30))
 
-** Differences for linear interpolation of missing values (=profBinLin=).
+  ## Bin the values in Y into 20 bins defined on X
+  res <- binYonX(X, Y, nBins = 22)
 
-The first bin value calculated by =profBinLin= can be wrong (issue #46 on Github).
+  res
+#+END_SRC
 
-Also, if no values were present for the last bin =profBinLin= reports a bin value
-of =0=, while =imputeLinInterpol= would interpolate that value considering the last
-non-missing bin value and the base value (=0=):
+As a result we get a =list= with the bin mid-points (=$x=) and the binned =y= values
+(=$y=).
 
-The example below illustrates both differences, the wrong first bin value and
-the difference in the last value.
+Next we use two different imputation approaches, a simple linear interpolation
+and the linear imputation approach that was defined in the =profBinLinBase=
+method. The latter performs linear interpolation only considering a certain
+neighborhood of missing values otherwise replacing the =NA= with a base value.
+
+#+BEGIN_SRC R :ravel binning-imputation-example, message = FALSE, fig.width = 10, fig.height = 7, fig.cap = 'Binning and missing value imputation results. Black points represent the input values, red the results from the binning and blue and green the results from the imputation (with method lin and linbase, respectively).'
+  ## Plot the actual data values.
+  plot(X, Y, pch = 16, ylim = c(0, max(Y)))
+  ## Visualizing the bins
+  abline(v = breaks_on_nBins(min(X), max(X), nBins = 22), col = "grey")
+
+  ## Define colors:
+  point_colors <- paste0(brewer.pal(4, "Set1"), 80)
+  ## Plot the binned values.
+  points(x = res$x, y = res$y, col = point_colors[1], pch = 15)
+
+  ## Perform the linear imputation.
+  res_lin <- imputeLinInterpol(res$y)
+
+  points(x = res$x, y = res_lin, col = point_colors[2], type = "b")
+
+  ## Perform the linear imputation "linbase"
+  res_linbase <- imputeLinInterpol(res$y, method = "linbase")
+  points(x = res$x, y = res_linbase, col = point_colors[3], type = "b", lty = 2)
+#+END_SRC
+
+The difference between the linear interpolation method =lin= and =linbase= is that
+the latter only performs the linear interpolation in a pre-defined neighborhood
+of the bin with the missing value (=1= by default). The other missing values are
+set to a base value corresponding to half of the smallest bin value. Both
+methods thus yield same results, except for bins 15-17 (see Figure above).
+
+* Changes due to bug fixes and modified functionality
+
+** Differences in linear interpolation of missing values (=profBinLin=).
+
+Two bugs are present in the =profBinLin= method (reported as issues [[https://github.com/sneumann/xcms/issues/46][#46]] and [[https://github.com/sneumann/xcms/issues/49][#49]] on
+github) which are fixed in the new =binYonX= and =imputeLinInterpol= functions:
+
++ The first bin value calculated by =profBinLin= can be wrong (i.e. not being the
+  max value within that bin, but the first).
++ If the last bin contains also missing values, the method fails to determine
+  a correct value for that bin.
+
+The =profBinLin= method is used in =findPeaks.matchedFilter= when =method= is set to
+"lin".
+
+The example below illustrates both differences.
 
 #+BEGIN_SRC R
   ## Define a vector with empty values at the end.
-  Y <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, NA, NA)
+  X <- 1:11
+  set.seed(123)
+  Y <- sort(rnorm(11, mean = 20, sd = 10))
+  Y[9:11] <- NA
   nas <- is.na(Y)
-  resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5,
-                            xstart = 1, xend = 11)
-  ## profBinLin reports a last bin value of 0
+  ## Do interpolation with profBinLin:
+  resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5, xstart = min(X),
+                            xend = max(X))
   resX
-
-  ## The same binning and linear interpolation using binYonX
-  ## and imputeLinInterpol:
-  res <- xcms:::binYonX(X, Y, nBins = 5L,
-                        shiftByHalfBinSize = TRUE)
-  resM <- xcms:::imputeLinInterpol(res$y, method = "lin")
+  res <- binYonX(X, Y, nBins = 5L, shiftByHalfBinSize = TRUE)
+  resM <- imputeLinInterpol(res$y, method = "lin",
+                            noInterpolAtEnds = TRUE)
   resM
 #+END_SRC
 
-** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter=
+Plotting the results helps to better evaluate the differences. The black points
+in the figure below represent the actual values of =Y= and the grey vertical lines
+the breaks defining the bins. The blue lines and points represent the result
+from the =profBinLin= method. The bin values for the first and 4th bin are clearly
+wrong. The green colored points and lines represent the results from the =binYonX=
+and =imputeLinInterpol= functions (showing the correct binning and interpolation).
 
-The iterative binning of only small sub-sets of data causes problems with
-=profBinLinBase=, in which data imputation might be skipped in some iterations
-while it is performed in others.
+#+BEGIN_SRC R :ravel profBinLin-problems, message = FALSE, fig.align = 'center', fig.width=10, fig.height = 7, fig.cap = "Illustration of the two bugs in profBinLin. The input values are represented by black points, grey vertical lines indicate the bins. The results from binning and interpolation with profBinLin are shown in blue and those from binYonX in combination with imputeLinInterpol in green."
+  plot(x = X, y = Y, pch = 16, ylim = c(0, max(Y, na.rm = TRUE)),
+       xlim = c(0, 12))
+  ## Plot the breaks
+  abline(v = breaks_on_nBins(min(X), max(X), 5L, TRUE), col = "grey")
+  ## Result from profBinLin:
+  points(x = res$x, y = resX, col = "blue", type = "b")
+  ## Results from imputeLinInterpol
+  points(x = res$x, y = resM, col = "green", type = "b",
+         pch = 4, lty = 2)
 
-Iterative buffering has both conceptual and computational issues.
-+ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to
-  impute missing values. This is obviously affected by the input data, i.e. if
-  only a small subset of input data is considered, the imputation can change.
+#+END_SRC
 
-+ Computational: it's slower; simple as that.
-
-Example with =profBinLinBase= resulting in an error: if =step= and =basespace= are
-both =0.1= it seems that not in all buffer-generation iterations a interpolation
-is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
-(interpolation with neighboring bins) and sometimes to =0=.
-
+Note that by default =imputeLinInterpol= would also interpolate missing values at
+the beginning and the end of the provided numeric vector. This can be disabled
+(to be compliant with =profBinLin=) by setting parameter =noInterpolAtEnds= to
+=TRUE= (like in the example above).
 
 ** Different binning results due to /internal/ and /external/ breaks definition :noexport:
 
@@ -103,4 +210,24 @@ using the =seq= function, but they are not identical.
   ## used.
   range(brks - brks2)
 #+END_SRC
+
+
+** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
+
+The iterative binning of only small sub-sets of data causes problems with
+=profBinLinBase=, in which data imputation might be skipped in some iterations
+while it is performed in others.
+
+Iterative buffering has both conceptual and computational issues.
++ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to
+  impute missing values. This is obviously affected by the input data, i.e. if
+  only a small subset of input data is considered, the imputation can change.
+
++ Computational: it's slower; simple as that.
+
+Example with =profBinLinBase= resulting in an error: if =step= and =basespace= are
+both =0.1= it seems that not in all buffer-generation iterations a interpolation
+is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
+(interpolation with neighboring bins) and sometimes to =0=.
+
 
