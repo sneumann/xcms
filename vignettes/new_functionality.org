@@ -231,3 +231,32 @@ is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1
 (interpolation with neighboring bins) and sometimes to =0=.
 
 
+
+** Implementation and comparison for =matchedFilter=
+
+These results base on the test =dontrun_test_do_detectFeatures_matchedFilter_impl=
+defined in /test_do_detectFeatures_matchedFilter.R/
+
+We have 4 different functions to test and compare to the original one:
++ *A*: =do_detectFeatures_matchedFilter=: it's the original code.
++ *B*: =do_detectFeatures_matchedFilter_binYonX_iter=: uses the same sequential
+  buffering than the original code, but uses =binYonX= for binning and
+  =imputeLinInterpol= for interpolation.
++ *C*: =do_detectFeatures_matchedFilter_no_iter=: contains the original code, but
+  avoids sequential buffering, i.e. creates the whole matrix in one go.
++ *D*: =do_detectFeatures_matchedFilter_binYonX_no_iter=: my favorite: uses =binYonX= and
+  =imputeLinInterpol= and avoids the sequential buffering by creating the full
+  matrix in one go.
+
+Notes: for plain =bin= we expect that results with and without iterative buffering
+are identical.
+
+*Comparisons*:
++ [ ] *A* /vs/ original: is always OK for =bin=.
++ [ ] *B* /vs/ original: =bin=: OK unless =step= is =0.2=: most likely rounding problem.
++ [ ] *C* /vs/ original: =bin=: OK unless =step= is =0.2=:
++ [ ] *D* /vs/ original: =bin=: OK unless =step= is =0.2=: most likely rounding problem.
++ [ ] *B* /vs/ *C*: =bin=: always OK.
++ [ ] *B* /vs/ *D*: =bin=: always OK.
++ [ ] *C* /vs/ *D*: =bin=: always OK.
+

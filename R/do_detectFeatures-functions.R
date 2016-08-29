@@ -673,16 +673,35 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
     binSize <- (binToX - binFromX) / (length(mass) - 1)
     brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
 
+    ## Problem with sequential binning is that we don't want to have the condition
+    ## <= last_break in each iteration since this would cause some values being
+    ## considered for multiple bins. Thus we add an additional last bin, for which
+    ## we however want to get rid of later.
     binRes <- binYonX(mz, int,
-                      breaks = brks[1:(bufsize+1)],
+                      breaks = brks[1:(bufsize+2)],
                       fromIdx = fromIdx,
                       toIdx = toIdx,
                       baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
                       sortedX = TRUE,
                       returnIndex = TRUE
                       )
+    ## binRes <- binYonX(mz, int,
+    ##                   breaks = brks[1:(bufsize+1)],
+    ##                   fromIdx = fromIdx,
+    ##                   toIdx = toIdx,
+    ##                   baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
+    ##                   sortedX = TRUE,
+    ##                   returnIndex = TRUE
+    ##                   )
     if (length(toIdx) == 1)
         binRes <- list(binRes)
+    ## Remove the last bin value unless bufsize + 2 is equal to the length of brks
+    if (length(brks) > (bufsize + 2)) {
+        binRes <- lapply(binRes, function(z) {
+            len <- length(z$x)
+            return(list(x = z$x[-len], y = z$y[-len], index = z$index[-len]))
+        })
+    }
     bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
     bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
     ## If profFun is binlin or binlinbase we have to call in addition the impute function.
@@ -734,9 +753,16 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
             idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind,
                                                       length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
+            ## Avoid the problem reported above for the sequential buffering:
+            ## add an additional bin for which we remove the value afterwards.
+            additionalBin <- 0
+            if ((idxrange[2] + 1) < length(brks)) {
+                additionalBin <- 1
+            }
             ## Re-fill buffer.
             binRes <- binYonX(mz, int,
-                              breaks = brks[idxrange[1]:(idxrange[2] + 1)],
+                              breaks = brks[idxrange[1]:(idxrange[2] + 1 +
+                                                         additionalBin)],
                               fromIdx = fromIdx,
                               toIdx = toIdx,
                               baseValue = ifelse(profFun == "bin", yes = 0,
@@ -746,6 +772,13 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
                               )
             if (length(toIdx) == 1)
                 binRes <- list(binRes)
+            if (additionalBin == 1) {
+                binRes <- lapply(binRes, function(z) {
+                    len <- length(z$x)
+                    return(list(x = z$x[-len], y = z$y[-len],
+                                index = z$index[-len]))
+                })
+            }
             bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
             ## If profFun is binlin or binlinbase we have to call
             ## in addition the impute function.
@@ -1029,10 +1062,12 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
         ## Calculate a the "scanindex" from the number of values per spectrum:
         scanindex <- valueCount2ScanIndex(valsPerSpect)
         bufsize <- length(mass)
-        ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
+        ## This returns a matrix, ncol equals the number of spectra, nrow the
+        ## bufsize.
         ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
         ##                TRUE, profparam)
-        buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
+        buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize,
+                                            mass[1], mass[bufsize],
                                             TRUE))
         ## The full matrix, nrow is the total number of (binned) M/Z values.
         bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
@@ -1040,8 +1075,8 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
     } else {
         ## Binning the data.
         ## Create and translate settings for binYonX
-        toX <- cumsum(valsPerSpect)
-        fromX <- c(1L, toX[-length(toX)] + 1L)
+        toIdx <- cumsum(valsPerSpect)
+        fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
         shiftBy = TRUE
         ## Calculate breaks and "correct" binSize; using seq ensures we're closer
         ## to the xcms profBin* results.
@@ -1050,17 +1085,23 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
         binSize <- (binToX - binFromX) / (length(mass) - 1)
         brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
 
-        ## For profFun bin we're using a baseValue of 0 and NA otherwise, to
-        ## not interfere with the later imputation method.
+        ## Calculate the breaks; we will re-use these in all calls.
+        ## Calculate breaks and "correct" binSize; using seq ensures we're closer
+        ## to the xcms profBin* results.
+        binFromX <- min(mass)
+        binToX <- max(mass)
+        binSize <- (binToX - binFromX) / (length(mass) - 1)
+        brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
+
         binRes <- binYonX(mz, int,
                           breaks = brks,
-                          fromIdx = fromX,
-                          toIdx = toX,
+                          fromIdx = fromIdx,
+                          toIdx = toIdx,
                           baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
                           sortedX = TRUE,
-##                          shiftByHalfBinSize = shiftBy,
-                          returnIndex = TRUE)
-        if (length(toX) == 1)
+                          returnIndex = TRUE
+                          )
+        if (length(toIdx) == 1)
             binRes <- list(binRes)
         bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
         bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]

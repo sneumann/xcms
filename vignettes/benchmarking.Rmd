@@ -8,11 +8,19 @@ vignette: >
   % \VignetteEngine{knitr::rmarkdown}
   % \VignetteKeyword{metabolomics, mass spectrometry}
   % \VignettePackage{xcms}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,microbenchmark}
 ---
 
 ```{r style, echo = FALSE, results = 'asis', message=FALSE}
 BiocStyle::markdown()
 ```
+
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer<br />
+**Modified**: 26 August, 2016<br />
+**Compiled**: `r date()`
+
 
 # Introduction
 
@@ -41,41 +49,55 @@ X <- sort(abs(rnorm(500000, mean = 500, sd = 100)))
 
 ```
 
-Bin this vector into 1000 bins using `profBin` and using the `binYonX` function
+Bin this vector into 300 bins using `profBin` and using the `binYonX` function
 and compare their performance.
 
 ```{r runProfBin}
 library(microbenchmark)
 microbenchmark(xcms:::profBin(X, X, 300),
-               xcms:::binYonX(X, nBins = 300, sortedX = TRUE,
-                              shiftByHalfBinSize = TRUE, baseValue = 0),
-               times = 100)
+               binYonX(X, nBins = 300, sortedX = TRUE,
+                       shiftByHalfBinSize = TRUE, baseValue = 0),
+               times = 50)
 ```
 
 With the results being identical.
 
 ```{r binResults}
 a <- xcms:::profBin(X, X, 300)
-b <- xcms:::binYonX(X, nBins = 300, sortedX = TRUE,
-                    shiftByHalfBinSize = TRUE, baseValue = 0)
+b <- binYonX(X, nBins = 300, sortedX = TRUE,
+             shiftByHalfBinSize = TRUE, baseValue = 0)
 all.equal(a, b$y)
 ```
 
-Data binning and imputation of missing values, performed by e.g. `profBinLin`,
-has been separated into the two functions `binYonX` and `imputeLinInterpol`.
+Data binning and missing value imputation were performed in `xcms` within the
+same method e.g. `profBinLin`. The data binning and missing value imputation has
+been separated now into the `binYonX` and `imputeLinInterpol` functions. Below
+we compare the performance of the `profBinLin` with a combination of the two
+latter functions.
 
 ```{r runProfBinLin}
 ## Define a function that performs data binning and imputation
 myProfBinLin <- function(x, ...) {
-    res <- xcms:::binYonX(x, ...)
-    return(xcms:::imputeLinInterpol(res$y, method = "lin"))
+    res <- binYonX(x, ...)
+    return(imputeLinInterpol(res$y, method = "lin"))
 }
 
 microbenchmark(xcms:::profBinLin(X, X, 1000),
                myProfBinLin(X, nBins = 1000, sortedX = TRUE,
                             shiftByHalfBinSize = TRUE),
-               times = 100)
+               times = 50)
 
 ```
 
+# Feature detection
 
+The original `findPeaks.*` methods will be in the long run replaced with the
+`do_detectFeatures*` functions. The code in the new functions is for the largest
+part identical to the old methods, but it has been cleaned and, where possible,
+tuned to increase performance.
+
+
+
+```{r sessioninfo}
+sessionInfo()
+```

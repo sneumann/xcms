@@ -8,6 +8,8 @@ NEW FEATURES:
   bins.
 + New vignette "new_functionality.Rmd" describing new and modified functionality
   in xcms.
++ New vignette "benchmarking.Rmd" providing some benchmarking results.
+
 
 CHANGES IN VERSION 1.49.5
 -------------------------

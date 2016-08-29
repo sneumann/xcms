@@ -1,5 +1,5 @@
 ## Test detectFeatures matchedFilter
-
+## LLLL clean up.
 library(xcms)
 library(RUnit)
 
@@ -14,80 +14,238 @@ test_do_detectFeatures_matchedFilter <- function() {
     ## We expect that changing a parameter has an influence on the result.
 }
 
-
-fails_do_matchedFilter_tackle_differences <- function() {
-    ## Try to tackle what causes the problem: the iterative buffering or the
-    ## binning function. The puzzling thing is that there is a problem for
-    ## step = 0.2, 0.4 and similar, but not for other step sizes!
-    ##
+############################################################
+## Compare each individual function to the original one changing
+## settings.
+## Comparing each of the functions to the original one:
+## A: do_detectFeatures_matchedFilter
+## B: do_detectFeatures_matchedFilter_binYonX_iter
+## C: do_detectFeatures_matchedFilter_no_iter
+## D: do_detectFeatures_matchedFilter_binYonX_no_iter
+dontrun_test_do_detectFeatures_matchedFilter_impl <- function {
 
     library(xcms)
     library(RUnit)
 
     library(faahKO)
-    fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xr <- xcmsRaw(fs)
-    mz <- xr@env$mz
-    int <- xr@env$intensity
-    scantime <- xr@scantime
-    scanindex <- xr@scanindex
+    fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+            system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+            system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+            system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+    i <- 1
 
-    ## do and do* new HAVE to yield same results since for both the profFun is
-    ## used.
-    step <- 0.1
-    resDo <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
-                                                    diff(c(scanindex, length(mz))),
-                                                    step = step)
-    resDo_new <- xcms:::do_detectFeatures_matchedFilter_no_iter(mz, int, scantime,
-                                                                diff(c(scanindex, length(mz))),
-                                                                step = step)
-    checkEquals(resDo, resDo_new)
-    ## newbin: new binning function but also iterative buffer filling
-    resDo_newbin <- xcms:::do_detectFeatures_matchedFilter_binYonX_iter(mz, int,
-                                                                        scantime,
-                                                                        diff(c(scanindex,
-                                                                               length(mz))),
-                                                                        step = step)
-    checkEquals(resDo, resDo_newbin)
+    for (i in 1:length(fs)) {
 
+        xr <- xcmsRaw(fs[i])
+        mz <- xr@env$mz
+        int <- xr@env$intensity
+        scantime <- xr@scantime
+        scanindex <- xr@scanindex
+        valsPerSpect <- diff(c(scanindex, length(mz)))
 
-    ## THAT'S PUZZLING!!!
-    step <- 0.2
-    ## Original code.
-    resDo <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
-                                                    diff(c(scanindex, length(mz))),
-                                                    step = step)
-    resDo2 <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
-                                                    diff(c(scanindex, length(mz))),
-                                                    step = step)
-    ## Original code, but no iterative buffer binning.
-    resDo_new <- xcms:::do_detectFeatures_matchedFilter_no_iter(mz, int, scantime,
-                                                                diff(c(scanindex, length(mz))),
-                                                                step = step)
-    checkEquals(resDo, resDo_new)  ## FAILS!
-    ## Where is the difference?
-    for (i in 1:ncol(resDo)) {
-        cat("* ", colnames(resDo)[i], ": ")
-        cat(all.equal(sort(resDo[, i]), sort(resDo_new[, i])), "\n")
-        ##cat(paste(which(resDo[, i] != resDo_new[, i]), collapse = ", "), "\n")
+        profFun <- "bin"
+        profparam <- list()
+        fwhm <- 30
+        sigma <- fwhm / 2.3548
+        max <- 5
+        snthresh <- 10
+        step <- 0.1
+        steps <- 2
+        mzdiff <- 0.8 - step * steps
+        index <- FALSE
+        verbose.columns <- FALSE
+
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns)    # OK
+        steps <- 4
+        mzdiff <- 0.8 - step * steps
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns)    # OK
+        steps <- 5
+        mzdiff <- 0.8 - step * steps
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns)    # OK
+        ## THIS WILL FAIL!!! REASONE: rounding error in bin definition.
+        step <- 0.2
+        steps <- 2
+        mzdiff <- 0.8 - step * steps
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns, stopOnError = FALSE)    #
+        step <- 0.1999
+        steps <- 2
+        mzdiff <- 0.8 - step * steps
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns, stopOnError = TRUE)    # OK
+        snthresh <- 4
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns, stopOnError = TRUE)    # OK
+        fwhm <- 15
+        sigma <- fwhm / 2.3548
+        .compare_em(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                    fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                    verbose.columns, stopOnError = TRUE)    # OK
+
+        ## ######
+        ## binLin
+
+        ## ######
+        ## binLinBase
     }
 
-    resDo_newbin <- xcms:::do_detectFeatures_matchedFilter_binYonX_iter(mz, int,
-                                                                        scantime,
-                                                                        diff(c(scanindex,
-                                                                               length(mz))),
-                                                                        step = step)
-    checkEquals(resDo, resDo_newbin)  ## FAILS!
-    checkEquals(resDo_new, resDo_newbin)  ## FAILS!!
-
-    ## See dontrun_tackle_binning_differences function in
-    ## test_binning.R for reasons of the difference!
 }
+
+
+.compare_em <- function(xr, mz, int, scantime, valsPerSpect, profFun, profparam,
+                        fwhm, sigma, max, snthresh, step, steps, mzdiff, index,
+                        verbose.columns, stopOnError = TRUE) {
+    profMethod(xr) <- profFun
+    xr@profparam <- profparam
+    if (any(names(profparam) == "basespace")) {
+        baseSpace <- profparam$basespace
+    } else {
+        baseSpace <- 0.075
+    }
+    ## The reference is the old code.
+    orig <- findPeaks.matchedFilter(xr,
+                                    fwhm = fwhm,
+                                    sigma = sigma,
+                                    max = max,
+                                    snthresh = snthresh,
+                                    step = step,
+                                    steps = steps,
+                                    mzdiff = mzdiff,
+                                    index = index,
+                                    verbose.columns)@.Data
+
+    ## A
+    A <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
+                                                valsPerSpect,
+                                                profFun = profFun,
+                                                profparam = profparam,
+                                                fwhm = fwhm,
+                                                sigma = sigma,
+                                                max = max,
+                                                snthresh = snthresh,
+                                                step = step,
+                                                steps = steps,
+                                                mzdiff = mzdiff,
+                                                index = index,
+                                                verbose.columns)
+    res <- all.equal(orig, A)
+    if (is.character(res)) {
+        msg <- paste0("A vs original FAILED! ", res, "\n")
+        cat(msg)
+        if (stopOnError)
+            stop(msg)
+    } else {
+        cat("A vs original OK\n")
+    }
+    ## B
+    B <- xcms:::do_detectFeatures_matchedFilter_binYonX_iter(mz, int, scantime,
+                                                             valsPerSpect,
+                                                             profFun = profFun,
+                                                             fwhm = fwhm,
+                                                             sigma = sigma,
+                                                             max = max,
+                                                             snthresh = snthresh,
+                                                             step = step,
+                                                             steps = steps,
+                                                             mzdiff = mzdiff,
+                                                             index = index,
+                                                             verbose.columns)
+    res <- all.equal(orig, B)
+    if (is.character(res)) {
+        msg <- paste0("B vs original FAILED! ", res, "\n")
+        cat(msg)
+        if (stopOnError)
+            stop(msg)
+    } else {
+        cat("B vs original OK\n")
+    }
+    ## C
+    C <- xcms:::do_detectFeatures_matchedFilter_no_iter(mz, int, scantime,
+                                                     valsPerSpect,
+                                                     profFun = profFun,
+                                                     profparam = profparam,
+                                                     fwhm = fwhm,
+                                                     sigma = sigma,
+                                                     max = max,
+                                                     snthresh = snthresh,
+                                                     step = step,
+                                                     steps = steps,
+                                                     mzdiff = mzdiff,
+                                                     index = index,
+                                                     verbose.columns)
+    res <- all.equal(orig, C)
+    if (is.character(res)) {
+        msg <- paste0("C vs original FAILED! ", res, "\n")
+        cat(msg)
+        if (stopOnError)
+            stop(msg)
+    } else {
+        cat("C vs original OK\n")
+    }
+    ## D
+    D <- xcms:::do_detectFeatures_matchedFilter_binYonX_no_iter(mz, int, scantime,
+                                                                valsPerSpect,
+                                                                profFun = profFun,
+                                                                fwhm = fwhm,
+                                                                sigma = sigma,
+                                                                max = max,
+                                                                snthresh = snthresh,
+                                                                step = step,
+                                                                steps = steps,
+                                                                mzdiff = mzdiff,
+                                                                index = index,
+                                                                verbose.columns)
+    res <- all.equal(orig, D)
+    if (is.character(res)) {
+        msg <- paste0("D vs original FAILED! ", res, "\n")
+        cat(msg)
+        if (stopOnError)
+            stop(msg)
+    } else {
+        cat("D vs original OK\n")
+    }
+    ## Now compare between:
+    res <- all.equal(B, C)
+    if (is.character(res)) {
+        msg <- paste0("B vs C FAILED! ", res, "\n")
+        cat(msg)
+    } else {
+        cat("B vs C OK\n")
+    }
+    res <- all.equal(B, D)
+    if (is.character(res)) {
+        msg <- paste0("B vs D FAILED! ", res, "\n")
+        cat(msg)
+    } else {
+        cat("B vs D OK\n")
+    }
+    res <- all.equal(C, D)
+    if (is.character(res)) {
+        msg <- paste0("C vs D FAILED! ", res, "\n")
+        cat(msg)
+    } else {
+        cat("C vs D OK\n")
+    }
+}
+
 
 ############################################################
 ## This is only relevant during development of the do_ function
 ## to evaluate that results are identical.
-dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
+## Actually, we don't expect all results to be identical:
+## o profBinLin is buggy.
+## o A step = 0.2 leads to slightly different bin definitions (C rounding)
+##   and thus to different results.
+dontrun_test_do_detectFeatures_matchedFilter_impl_old <- function() {
 
     library(xcms)
     library(RUnit)
@@ -112,44 +270,59 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
 
         #######
         ## bin
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        .matchedFilter_no_iter(xr, profFun, profparam, fwhm, sigma, max,
+                               snthresh, step, steps, mzdiff, index,
+                               verbose.columns)
+        ## OK
         steps <- 4
         mzdiff <- 0.8 - step * steps
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        .matchedFilter_no_iter(xr, profFun, profparam, fwhm, sigma, max,
+                               snthresh, step, steps, mzdiff, index,
+                               verbose.columns)
+        ## OK
         steps <- 5
         mzdiff <- 0.8 - step * steps
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        .matchedFilter_no_iter(xr, profFun, profparam, fwhm, sigma, max,
+                               snthresh, step, steps, mzdiff, index,
+                               verbose.columns)
+        ## OK
         step <- 0.2  ## LLLL FIX THIS! difference between xrDo_new and xrPeaks
         ## This is a puzzling one!, it's the same for 0.4, 0.6, 0.8, 1.2
         ## Not for any other number up to 1.4 (including 1.0, 1.4).
         steps <- 2
         mzdiff <- 0.8 - step * steps
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        ## FAIL: These differences are due to small binning differences.
 
         step <- 0.13
         steps <- 2
         mzdiff <- 0.8 - step * steps
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
-
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        ## OK
         snthresh <- 4
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        ## OK
         fwhm <- 15
         sigma <- fwhm / 2.3548
-        .runAndCompare_matchedFilter(xr, profFun, profparam, fwhm, sigma, max,
-                                     snthresh, step, steps, mzdiff, index,
-                                     verbose.columns)
+        .matchedFilter_iter(xr, profFun, profparam, fwhm, sigma, max,
+                            snthresh, step, steps, mzdiff, index,
+                            verbose.columns)
+        ## OK
 
         ## #####
         ## using binlinbase.
@@ -231,10 +404,15 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
 }
 
 
-.runAndCompare_matchedFilter <- function(xr, profFun, profparam, fwhm, sigma,
-                                         max, snthresh, step, steps, mzdiff,
-                                         index, verbose.columns,
-                                         skipNew = FALSE) {
+############################################################
+## This compares all iterative approaches:
+## o Original code: findPeaks.matchedFilter
+## o Original code within a "do_" function: do_detectFeatures_matchedFilter
+## o New implementation using binYonX: do_detectFeatures_matchedFilter_binYonX_iter
+.matchedFilter_iter <- function(xr, profFun, profparam, fwhm,
+                                sigma, max, snthresh, step, steps,
+                                mzdiff, index, verbose.columns,
+                                stopOnError = TRUE) {
     require(RUnit)
     mz <- xr@env$mz
     int <- xr@env$intensity
@@ -247,22 +425,19 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
     } else {
         baseSpace <- 0.075
     }
-    ## Run the findPeaks.matchedFilter on the xcmsRaw.
-    a <- system.time(
-        xrPeaks <- findPeaks.matchedFilter(xr,
-                                           fwhm = fwhm,
-                                           sigma = sigma,
-                                           max = max,
-                                           snthresh = snthresh,
-                                           step = step,
-                                           steps = steps,
-                                           mzdiff = mzdiff,
-                                           index = index,
-                                           verbose.columns = verboseColumns)
-    )  ##
-    cat("XCMS matchedFilter: ", a, "\n")
-    b <- system.time(
-        xrDo <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
+    ## The reference is the old code.
+    ref <- findPeaks.matchedFilter(xr,
+                                   fwhm = fwhm,
+                                   sigma = sigma,
+                                   max = max,
+                                   snthresh = snthresh,
+                                   step = step,
+                                   steps = steps,
+                                   mzdiff = mzdiff,
+                                   index = index,
+                                   verbose.columns = verboseColumns)
+    ## Old code as-is.
+    old_iter <- xcms:::do_detectFeatures_matchedFilter(mz, int, scantime,
                                                        diff(c(scanindex, length(mz))),
                                                        profFun = profFun,
                                                        profparam = profparam,
@@ -275,93 +450,150 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                                        mzdiff = mzdiff,
                                                        index = index,
                                                        verboseColumns = verboseColumns)
-    ) ##
-    cat("do_ original code: ", b, "\n")
-    if (!checkEquals(new("xcmsPeaks", xrDo), xrPeaks))
-        stop("do_ and xcms yield different results!")
-    c <- system.time(
-        xrDo_new <- xcms:::do_detectFeatures_matchedFilter_new(mz, int, scantime,
-                                                               diff(c(scanindex, length(mz))),
-                                                               profFun = profFun,
-                                                               profparam = profparam,
-                                                               fwhm = fwhm,
-                                                               sigma = sigma,
-                                                               max = max,
-                                                               snthresh = snthresh,
-                                                               step = step,
-                                                               steps = steps,
-                                                               mzdiff = mzdiff,
-                                                               index = index,
-                                                               verboseColumns = verboseColumns)
-    ) ##
-    if (!checkEquals(new("xcmsPeaks", xrDo_new), xrPeaks))
-        stop("do_*_new and xcms yield different results!")
-    cat("do_*_new full matrix binning: ", c, "\n")
-    if (!skipNew) {
-        d <- system.time(
-            xrDo_newer <- xcms:::do_detectFeatures_matchedFilter_newer(mz, int, scantime,
-                                                                       diff(c(scanindex, length(mz))),
-                                                                       profFun = profFun,
-                                                                       baseSpace = baseSpace,
-                                                                       fwhm = fwhm,
-                                                                       sigma = sigma,
-                                                                       max = max,
-                                                                       snthresh = snthresh,
-                                                                       step = step,
-                                                                       steps = steps,
-                                                                       mzdiff = mzdiff,
-                                                                       index = index,
-                                                                       verboseColumns = verboseColumns)
-        ) ##
-        cat("do_*_newer binYonX: ", d, "\n")
-        if (!checkEquals(new("xcmsPeaks", xrDo_newer), xrPeaks))
-            stop("do_*_newer and xcms yield different results!")
+    res <- all.equal(ref@.Data, old_iter)
+    ## if (!checkEquals(new("xcmsPeaks", old_iter), ref)) {
+    if (is.character(res)) {
+        msg <- paste0("do_*_matchedFilter and findPeaks.matchedFilter yield",
+                      " different results: ", res, "\n")
+        if (stopOnError) {
+            stop(msg)
+        } else {
+            cat(msg)
+            warning(msg)
+        }
+    } else {
+        cat("Same results for do_*_matchedFilter and findPeaks.matchedFilter.\n")
+    }
+    ## new code but with iteration.
+    new_iter <- xcms:::do_detectFeatures_matchedFilter_binYonX_iter(mz, int, scantime,
+                                                                    diff(c(scanindex,
+                                                                           length(mz))),
+
+                                                                    profFun = profFun,
+                                                                    baseSpace = baseSpace,
+                                                                    fwhm = fwhm,
+                                                                    sigma = sigma,
+                                                                    max = max,
+                                                                    snthresh = snthresh,
+                                                                    step = step,
+                                                                    steps = steps,
+                                                                    mzdiff = mzdiff,
+                                                                    index = index,
+                                                                    verboseColumns = verboseColumns)
+    res <- all.equal(old_iter, new_iter)
+    ## if (!checkEquals(old_iter, new_iter)){
+    if (is.character(res)) {
+        msg <- paste0("do_*_matchedFilter and do_*_matchedFilter_binYonX_iter",
+                      " yield different results: ", res, "\n")
+        if (stopOnError) {
+            stop(msg)
+        } else {
+            cat(msg)
+            warning(msg)
+        }
+    } else {
+        cat("Same results for do_*_matchedFilter and",
+            " do_*_matchedFilter_binYonX_iter.\n")
     }
 }
 
 
-## Some speed tests.
-.otherTest <- function() {
-    Testv <- c(2, 4.2, 34.1, 34.5, 6.4, 6.3, 1.2)
-    RforM <- matrix(nrow = 0, ncol = length(Testv))
-    system.time(
-        for(i in 1:5000){
-            RforM <- rbind(RforM, Testv)
+############################################################
+## This compares all iterative agains non-iterative approaches:
+## o Original code: findPeaks.matchedFilter
+## o Single matrix generation using original code:
+##   do_detectFeatures_matchedFilter_no_iter
+## o New implementation using binYonX:
+##   do_detectFeatures_matchedFilter_binYonX_no_iter
+.matchedFilter_no_iter <- function(xr, profFun, profparam, fwhm,
+                                   sigma, max, snthresh, step, steps,
+                                   mzdiff, index, verbose.columns,
+                                   stopOnError = TRUE) {
+    require(RUnit)
+    mz <- xr@env$mz
+    int <- xr@env$intensity
+    scantime <- xr@scantime
+    scanindex <- xr@scanindex
+    profMethod(xr) <- profFun
+    xr@profparam <- profparam
+    if (any(names(profparam) == "basespace")) {
+        baseSpace <- profparam$basespace
+    } else {
+        baseSpace <- 0.075
+    }
+    ## The reference is the old code.
+    ref <- findPeaks.matchedFilter(xr,
+                                   fwhm = fwhm,
+                                   sigma = sigma,
+                                   max = max,
+                                   snthresh = snthresh,
+                                   step = step,
+                                   steps = steps,
+                                   mzdiff = mzdiff,
+                                   index = index,
+                                   verbose.columns = verboseColumns)
+    ## Old code as-is.
+    old <- xcms:::do_detectFeatures_matchedFilter_no_iter(mz, int, scantime,
+                                                          diff(c(scanindex, length(mz))),
+                                                          profFun = profFun,
+                                                          profparam = profparam,
+                                                          fwhm = fwhm,
+                                                          sigma = sigma,
+                                                          max = max,
+                                                          snthresh = snthresh,
+                                                          step = step,
+                                                          steps = steps,
+                                                          mzdiff = mzdiff,
+                                                          index = index,
+                                                          verboseColumns = verboseColumns)
+    ## if (!checkEquals(new("xcmsPeaks", old), ref)) {
+    res <- all.equal(ref@.Data, old)
+    if (is.character(res)) {
+        msg <- paste0("do_*_matchedFilter_no_iter and findPeaks.matchedFilter yield",
+                      " different results: ", res, "\n")
+        if (stopOnError) {
+            stop(msg)
+        } else {
+            cat(msg)
+            warning(msg)
         }
-    ) ## 1.27
-    ## with append to list.
-    RforL <- vector("list", 0)
-    system.time(
-        for(i in 1:5000){
-            RforL <- c(RforL, Testv)
-        }
-    ) ## 1.12
-    system.time(
-        RapplyL <- lapply(1:5000, function(z) {return(Testv)})
-    ) ## 0.003
-    RM <- matrix(nrow=5000, ncol = length(Testv))
-    system.time(
-        for (i in 1:5000) {
-            RM[i, ] <- Testv
-        }
-    ) ## 0.006
+    } else {
+        cat("Same results for do_*_matchedFilter_no_iter",
+            " and findPeaks.matchedFilter.\n")
+    }
+    ## new code but with iteration.
+    new <- xcms:::do_detectFeatures_matchedFilter_binYonX_no_iter(mz, int, scantime,
+                                                                  diff(c(scanindex,
+                                                                         length(mz))),
 
-    ## Compare adding to list instead of adding to existing. [[]]
-    RexL <- vector("list", 5000)
-    system.time(
-        for (i in 1:5000){
-            RexL[[i]] <- Testv
+                                                                  profFun = profFun,
+                                                                  baseSpace = baseSpace,
+                                                                  fwhm = fwhm,
+                                                                  sigma = sigma,
+                                                                  max = max,
+                                                                  snthresh = snthresh,
+                                                                  step = step,
+                                                                  steps = steps,
+                                                                  mzdiff = mzdiff,
+                                                                  index = index,
+                                                                  verboseColumns = verboseColumns)
+    ## if (!checkEquals(old, new)){
+    res <- all.equal(old, new)
+    if (is.character(res)) {
+        msg <- paste0("do_*_matchedFilter_no_iter and do_*_matchedFilter_binYonX_no_iter",
+                      " yield different results: ", res, "\n")
+        if (stopOnError) {
+            stop(msg)
+        } else {
+            cat(msg)
+            warning(msg)
         }
-    ) ## 0.005
-    ## Dynamically...
-    RexL <- list()
-    system.time(
-        for (i in 1:5000){
-            RexL[[i]] <- Testv
-        }
-    ) ## 0.005
-
+    } else {
+        cat("Same results for do_*_matchedFilter_no_iter and",
+            " do_*_matchedFilter_binYonX_no_iter.\n")
+    }
 }
+
 
 ############################################################
 ## Lengthy explanation:

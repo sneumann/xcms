@@ -51,6 +51,15 @@ test_profBin <- function() {
     resR <- xcms:::profBinR(X, Y, nBins = nBins, fromX = min(mass),
                             toX = max(mass))
     checkEquals(resX, resR)
+
+    ## Test iterative binning with profBin
+    X <- 1:30
+    Y <- 1:30
+    step <- 1
+    bufsize <- 10
+    mass <- seq(floor(min(X)/step) * step, ceiling(max(X)/step) * step,
+                by = step)
+    res1 <- xcms:::profBin(X, Y, bufsize, mass[1], mass[bufsize])
 }
 
 

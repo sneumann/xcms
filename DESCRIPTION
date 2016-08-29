@@ -32,6 +32,7 @@ Suggests:
     msdata,
     ncdf4,
     rgl,
+    microbenchmark,
     RUnit
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of chromatographically
