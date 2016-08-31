@@ -354,7 +354,8 @@ imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L,
         noInter <- 0L
         if (noInterpolAtEnds)
             noInter <- 1L
-        return(.Call("impute_with_linear_interpolation", x, noInter, PACKAGE = "xcms"))
+        return(.Call("impute_with_linear_interpolation", x, noInter,
+                     PACKAGE = "xcms"))
     }
     if (method == "linbase") {
         if (missing(baseValue))

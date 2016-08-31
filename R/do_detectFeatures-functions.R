@@ -13,7 +13,70 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##
+##' @title Feature detection using the centWave method
+##'
+##' @description This function performs peak density and wavelet based feature
+##' detection for high resulution LC/MS data in centroid mode [Tautenhahn 2008].
+##'
+##' @details This function exposes core feature detection functionality of
+##' the \emph{centWave} method. While this function can be called directly,
+##' users will generally call the corresponding method for the data object instead.
+##'
+##' @note This function was designed to work on centroided mode, thus it is expected that such data is presented to the function.
+##'
+##' @param mz
+##' @param int
+##' @param scantime
+##' @param valsPerSpect Numeric vector with the number of values for each
+##' spectrum.
+##' @param ppm Maximal tolerated M/Z deviation in consecutive scans in parts
+##' per million (ppm).
+##' @param peakwidth Expected approximate feature/peak width in chromatographic
+##' space.
+##' @param snthresh
+##' @param prefilter
+##' @param mzCenterFun
+##' @param integrate
+##' @param mzdiff
+##' @param fitgauss
+##' @param noise
+##' @param verboseColumns
+##' @param ROIs
+##' @family core feature detection functions
+##'
+##' @references
+##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
+##' 2008, 9:504
+##' @return
+##' A matrix, each row representing an intentified feature, with columns:
+##' \enumerate{
+##' \item{mz}{Intensity weighted mean of M/Z values of the feature across scans.}
+##' \item{mzmin}{Minimum M/Z of the feature.}
+##' \item{mzmax}{Maximum M/Z of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+##' \code{sd} being the standard deviation of local chromatographic noise.}
+##' \item{egauss}{RMSE of Gaussian fit.}
+##' }
+##' Additional columns for \code{verboseColumns = TRUE}:
+##' \itemize{
+##' \item{mu}{Gaussian parameter mu.}
+##' \item{sigma}{Gaussian parameter sigma.}
+##' \item{h}{Gaussian parameter h.}
+##' \item{f}{Region number of the M/Z ROI where the peak was localized.}
+##' \item{dppm}{M/Z deviation of mass trace across scanns in ppk.}
+##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
+##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+##' }
+##' @author Ralf Tautenhahn, Johannes Rainer
 do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
                                        peakwidth = c(20, 50),
@@ -77,9 +140,11 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     ## If no ROIs are supplied then search for them.
     if (length(ROIs) == 0) {
         message("Detecting mass traces at ", ppm, "ppm")
-        ## We're including the findmzROI code in this function to reduce the need to copy
-        ## objects etc.
-        ## We could also sort the data by M/Z anyway; wouldn't need that much time.
+        ## We're including the findmzROI code in this function to reduce
+        ## the need to copy objects etc.
+        ## We could also sort the data by M/Z anyway; wouldn't need that
+        ## much time. Once we're using classes from MSnbase we can be
+        ## sure that values are correctly sorted.
         withRestarts(
             tryCatch({
                 ROIs <- .Call("findmzROI",
@@ -97,7 +162,8 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                               {invokeRestart("fixSort")} else {simpleError(e)}}),
             fixSort = function() {
                 ## Force ordering of values within spectrum by mz:
-                ##  o split values into a list -> mz per spectrum, intensity per spectrum.
+                ##  o split values into a list -> mz per spectrum, intensity per
+                ##    spectrum.
                 ##  o define the ordering.
                 ##  o re-order the mz and intensity and unlist again.
                 ## Note: the Rle split is faster than the "conventional" factor split.
@@ -453,10 +519,10 @@ do_detectFeatures_massifquant <- function() {
 }
 
 ## The version of matchedFilter:
-## _matchedFilter: original code, iterative buffer creation.
-## _matchedFilter_binYonX_iter: iterative buffer creation but using our binning function.
-## _matchedFilter_no_iter: original binning, but a single binning call.
-## _matchedFilter_binYonX_no_iter: single binning call using our binning function.
+## .matchedFilter_orig: original code, iterative buffer creation.
+## .matchedFilter_binYonX_iter: iterative buffer creation but using our binning function.
+## .matchedFilter_no_iter: original binning, but a single binning call.
+## .matchedFilter_binYonX_no_iter: single binning call using our binning function.
 
 ############################################################
 ## matchedFilter
@@ -480,22 +546,53 @@ do_detectFeatures_massifquant <- function() {
 ##     be converted to what xcms calls the scanindex.
 ##  TODO: in the long run it would be better to avoid buffer creation, extending, filling
 ##     and all this stuff being done in a for loop.
-## profFun: bin, binlin, binlinbase, intlin
+## impute: none (=bin), binlin, binlinbase, intlin
+## baseValue default: min(int)/2 (smallest value in the whole data set).
+
 do_detectFeatures_matchedFilter <- function(mz,
                                             int,
                                             scantime,
                                             valsPerSpect,
-                                            profFun = "bin",
-                                            profparam=list(),
+                                            binSize = 0.1,
+                                            impute = "none",
+                                            baseValue,
+                                            distance,
                                             fwhm = 30,
                                             sigma = fwhm/2.3548,
                                             max = 5,
                                             snthresh = 10,
-                                            step = 0.1,
                                             steps = 2,
-                                            mzdiff = 0.8 - step * steps,
+                                            mzdiff = 0.8 - binSize * steps,
                                             index = FALSE,
                                             verboseColumns = FALSE){
+    ## Eventually switch here to some other function, e.g.
+    ## .matchedFilter_inYonX_no_iter
+    return(.matchedFilter_orig(mz, int, scantime, valsPerSpect, binSize, impute,
+                               baseValue, distance, fwhm, sigma, max, snthresh,
+                               steps, mzdiff, index, verboseColumns))
+}
+.matchedFilter_orig <- function(mz,
+                                int,
+                                scantime,
+                                valsPerSpect,
+                                binSize = 0.1,
+                                impute = "none",
+                                baseValue,
+                                distance,
+                                fwhm = 30,
+                               sigma = fwhm/2.3548,
+                                max = 5,
+                                snthresh = 10,
+                                steps = 2,
+                                mzdiff = 0.8 - binSize * steps,
+                                index = FALSE,
+                                verboseColumns = FALSE){
+    ## Map arguments to findPeaks.matchedFilter arguments.
+    step <- binSize
+    profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")
+    names(profMeths) <- c("none", "lin", "linbase", "intlin")
+    impute <- match.arg(impute, names(profMeths))
+    profFun <- profMeths[impute]
 
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -506,9 +603,6 @@ do_detectFeatures_matchedFilter <- function(mz,
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
              " have to much. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
-    ## get the profile/binning function:
-    profFun <- match.arg(profFun, names(.profFunctions))
-    profFun <- .profFunctions[[profFun]]
     ## Calculate a the "scanindex" from the number of values per spectrum:
     scanindex <- valueCount2ScanIndex(valsPerSpect)
 
@@ -516,14 +610,25 @@ do_detectFeatures_matchedFilter <- function(mz,
     mrange <- range(mz)
     ## Create a numeric vector of masses; these will be the mid-points of the bins.
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    ## Calculate the /real/ bin size (as in xcms.c code).
+    bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
     bufsize <- min(100, length(mass))
+    ## Define profparam:
+    profp <- list()
+    if (missing(baseValue))
+        baseValue <- min(int, na.rm = TRUE) / 2
+    profp$baselevel <- baseValue
+    if (!missing(distance)) {
+        profp$basespace <- distance * bin_size
+    } else {
+        profp$basespace <- 0.075
+        distance <- floor(0.075 / bin_size)
+    }
     ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
     buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
-                                        mass[bufsize], TRUE, profparam))
-    ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-    ##                TRUE, profparam)
+                                        mass[bufsize], TRUE, profp))
     bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-                          TRUE, profparam)
+                          TRUE, profp)
     bufidx <- integer(length(mass))
     idxrange <- c(1, bufsize)
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -547,15 +652,15 @@ do_detectFeatures_matchedFilter <- function(mz,
         ## Update EIC buffer if necessary
         if (bufidx[i+lookahead] == 0) {
             bufidx[idxrange[1]:idxrange[2]] <- 0
-            idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind, length(mass)))
+            idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind,
+                                                      length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
             buf <- do.call(profFun, args = list(mz, int, scanindex, diff(idxrange)+1,
                                                 mass[idxrange[1]], mass[idxrange[2]],
-                                                TRUE, profparam))
-            ## buf <- profFun(mz, int, scanindex, diff(idxrange)+1, mass[idxrange[1]],
-            ##                mass[idxrange[2]], TRUE, profparam)
-            bufMax <- profMaxIdxM(mz, int, scanindex, diff(idxrange)+1, mass[idxrange[1]],
-                                  mass[idxrange[2]], TRUE, profparam)
+                                                TRUE, profp))
+            bufMax <- profMaxIdxM(mz, int, scanindex, diff(idxrange)+1,
+                                  mass[idxrange[1]],
+                                  mass[idxrange[2]], TRUE, profp)
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
         ysums <- colMax(ymat)
@@ -616,7 +721,8 @@ do_detectFeatures_matchedFilter <- function(mz,
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
     }
-    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
+    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak
+    ## and report that.
     uorder <- order(rmat[,"into"], decreasing=TRUE)
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                                 uorder, mzdiff)
@@ -629,21 +735,24 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##
 ## o Using the binYtoX and imputeLinInterpol instead of the
 ##   profBin* methods.
-do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
-                                                         int,
-                                                         scantime,
-                                                         valsPerSpect,
-                                                         profFun = "bin",
-                                                         fwhm = 30,
-                                                         sigma = fwhm/2.3548,
-                                                         max = 5,
-                                                         snthresh = 10,
-                                                         step = 0.1,
-                                                         steps = 2,
-                                                         mzdiff = 0.8 - step * steps,
-                                                         index = FALSE,
-                                                         verboseColumns = FALSE,
-                                                         ...){
+## THIS IS MATTER OF REMOVAL
+.matchedFilter_binYonX_iter <- function(mz,
+                                        int,
+                                        scantime,
+                                        valsPerSpect,
+                                        binSize = 0.1,
+                                        impute = "none",
+                                        baseValue,
+                                        distance,
+                                        fwhm = 30,
+                                        sigma = fwhm/2.3548,
+                                        max = 5,
+                                        snthresh = 10,
+                                        steps = 2,
+                                        mzdiff = 0.8 - binSize * steps,
+                                        index = FALSE,
+                                        verboseColumns = FALSE){
+
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
@@ -653,16 +762,17 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
              " have to much. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
-    ## Get the profile/binning function: allowed: bin, binlin, binlinbase and intlin
-    profFun <- match.arg(profFun, names(.profFunctions))
-    if (profFun == "intlin")
+    ## Get the profile/binning function: allowed: bin, lin, linbase and intlin
+    impute <- match.arg(impute, c("none", "lin", "linbase", "intlin"))
+    if (impute == "intlin")
         stop("Not yet implemented!")
     toIdx <- cumsum(valsPerSpect)
     fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
 
     ## Create EIC buffer
     mrange <- range(mz)
-    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    mass <- seq(floor(mrange[1]/binSize)*binSize,
+                ceiling(mrange[2]/binSize)*binSize, by = binSize)
     bufsize <- min(100, length(mass))
 
     ## Calculate the breaks; we will re-use these in all calls.
@@ -670,8 +780,8 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
     ## to the xcms profBin* results.
     binFromX <- min(mass)
     binToX <- max(mass)
-    binSize <- (binToX - binFromX) / (length(mass) - 1)
-    brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
+    bin_size <- (binToX - binFromX) / (length(mass) - 1)
+    brks <- seq(binFromX - bin_size/2, binToX + bin_size/2, by = bin_size)
 
     ## Problem with sequential binning is that we don't want to have the condition
     ## <= last_break in each iteration since this would cause some values being
@@ -681,18 +791,10 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
                       breaks = brks[1:(bufsize+2)],
                       fromIdx = fromIdx,
                       toIdx = toIdx,
-                      baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
+                      baseValue = ifelse(impute == "none", yes = 0, no = NA),
                       sortedX = TRUE,
                       returnIndex = TRUE
                       )
-    ## binRes <- binYonX(mz, int,
-    ##                   breaks = brks[1:(bufsize+1)],
-    ##                   fromIdx = fromIdx,
-    ##                   toIdx = toIdx,
-    ##                   baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
-    ##                   sortedX = TRUE,
-    ##                   returnIndex = TRUE
-    ##                   )
     if (length(toIdx) == 1)
         binRes <- list(binRes)
     ## Remove the last bin value unless bufsize + 2 is equal to the length of brks
@@ -704,27 +806,16 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
     }
     bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
     bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
-    ## If profFun is binlin or binlinbase we have to call in addition the impute function.
-    if (profFun == "binlin") {
-        binVals <- lapply(binRes, function(z) {
-            return(imputeLinInterpol(z$y, method = "lin"))
-        })
-    } else if (profFun == "binlinbase") {
-        if (missing(baseValue))
-            baseValue <- min(int, na.rm = TRUE) / 2
-        if (missing(baseSpace))
-            baseSpace <- 0.075
-        distance <- floor(baseSpace / bin_size)
-        binVals <- lapply(binRes, function(z) {
-            return(imputeLinInterpol(z$y, method = "linbase",
-                                     distance = distance,
-                                     baseValue = baseValue))
-        })
-    } else {
-        binVals <- lapply(binRes, function(z) {
-            return(z$y)
-        })
-    }
+    if (missing(baseValue))
+        baseValue <- min(int, na.rm = TRUE) / 2
+    if (missing(distance))
+        distance <- floor(0.075 / bin_size)
+    binVals <- lapply(binRes, function(z) {
+        return(imputeLinInterpol(z$y, method = impute,
+                                 noInterpolAtEnds = TRUE,
+                                 distance = distance,
+                                 baseValue = baseValue))
+    })
     buf <- do.call(cbind, binVals)
 
     bufidx <- integer(length(mass))
@@ -765,7 +856,7 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
                                                          additionalBin)],
                               fromIdx = fromIdx,
                               toIdx = toIdx,
-                              baseValue = ifelse(profFun == "bin", yes = 0,
+                              baseValue = ifelse(impute == "none", yes = 0,
                                                  no = NA),
                               sortedX = TRUE,
                               returnIndex = TRUE
@@ -780,28 +871,12 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
                 })
             }
             bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
-            ## If profFun is binlin or binlinbase we have to call
-            ## in addition the impute function.
-            if (profFun == "binlin") {
-                binVals <- lapply(binRes, function(z) {
-                    return(imputeLinInterpol(z$y, method = "lin"))
-                })
-            } else if (profFun == "binlinbase") {
-                if (missing(baseValue))
-                    baseValue <- min(int, na.rm = TRUE) / 2
-                if (missing(baseSpace))
-                    baseSpace <- 0.075
-                distance <- floor(baseSpace / bin_size)
-                binVals <- lapply(binRes, function(z) {
-                    return(imputeLinInterpol(z$y, method = "linbase",
-                                             distance = distance,
-                                             baseValue = baseValue))
-                })
-            } else {
-                binVals <- lapply(binRes, function(z) {
-                    return(z$y)
-                })
-            }
+            binVals <- lapply(binRes, function(z) {
+                return(imputeLinInterpol(z$y, method = impute,
+                                         noInterpolAtEnds = TRUE,
+                                         distance = distance,
+                                         baseValue = baseValue))
+            })
             buf <- do.call(cbind, binVals)
         }
         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
@@ -855,9 +930,9 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
     }
     colnames(rmat) <- cnames
     rmat <- rmat[seq(length = num),]
-    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
+    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/binSize)
     if (index)
-        mzdiff <- mzdiff/step
+        mzdiff <- mzdiff/binSize
     else {
         rmat[,"rt"] <- scantime[rmat[,"rt"]]
         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
@@ -875,26 +950,33 @@ do_detectFeatures_matchedFilter_binYonX_iter <- function(mz,
 ############################################################
 ## The code of this function is basically the same than of the original
 ## findPeaks.matchedFilter method in xcms with the following differences:
-##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once instead of
-##    repeatedly creating a "buffer" of 100 M/Z values.
-##  o Append the identified peaks to a list instead of generating a matrix with a fixed
-##    set of rows which is doubled in its size each time more peaks are identified than
-##    there are rows in the matrix.
-do_detectFeatures_matchedFilter_no_iter <- function(mz,
-                                                    int,
-                                                    scantime,
-                                                    valsPerSpect,
-                                                    profFun = "bin",
-                                                    profparam = list(),
-                                                    fwhm = 30,
-                                                    sigma = fwhm/2.3548,
-                                                    max = 5,
-                                                    snthresh = 10,
-                                                    step = 0.1,
-                                                    steps = 2,
-                                                    mzdiff = 0.8 - step * steps,
-                                                    index = FALSE,
-                                                    verboseColumns = FALSE){
+##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once
+##    instead of repeatedly creating a "buffer" of 100 M/Z values.
+##  o Append the identified peaks to a list instead of generating a matrix
+##    with a fixed set of rows which is doubled in its size each time more
+##    peaks are identified than there are rows in the matrix.
+.matchedFilter_no_iter <- function(mz,
+                                   int,
+                                   scantime,
+                                   valsPerSpect,
+                                   binSize = 0.1,
+                                   impute = "none",
+                                   baseValue,
+                                   distance,
+                                   fwhm = 30,
+                                   sigma = fwhm/2.3548,
+                                   max = 5,
+                                   snthresh = 10,
+                                   steps = 2,
+                                   mzdiff = 0.8 - binSize * steps,
+                                   index = FALSE,
+                                   verboseColumns = FALSE){
+    ## Map arguments to findPeaks.matchedFilter arguments.
+    step <- binSize
+    profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")
+    names(profMeths) <- c("none", "lin", "linbase", "intlin")
+    impute <- match.arg(impute, names(profMeths))
+    profFun <- profMeths[impute]
 
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -905,26 +987,29 @@ do_detectFeatures_matchedFilter_no_iter <- function(mz,
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
              " have to much. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
-    ## get the profile/binning function:
-    profFun <- match.arg(profFun, names(.profFunctions))
-    profFun <- .profFunctions[[profFun]]
     ## Calculate a the "scanindex" from the number of values per spectrum:
     scanindex <- valueCount2ScanIndex(valsPerSpect)
 
     ## Create the full profile matrix.
     mrange <- range(mz)
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    ## Calculate the /real/ bin size (as in xcms.c code).
+    bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
     ## bufsize <- min(100, length(mass))
     bufsize <- length(mass)
+    ## Define profparam:
+    profp <- list()
+    if (!missing(baseValue))
+        profp$baselevel <- baseValue
+    if (!missing(distance))
+        profp$basespace <- distance * bin_size
     ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
-    ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-    ##                TRUE, profparam)
-    buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-                   TRUE, profparam))
+    buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
+                                        mass[bufsize], TRUE, profp))
 
     ## The full matrix, nrow is the total number of (binned) M/Z values.
     bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-                          TRUE, profparam)
+                          TRUE, profp)
     ## bufidx <- integer(length(mass))
     ## idxrange <- c(1, bufsize)
     ## bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
@@ -993,7 +1078,15 @@ do_detectFeatures_matchedFilter_no_iter <- function(mz,
                 break
         }
     }
+    if (length(ResList) == 0) {
+        rmat <- matrix(nrow = 0, ncol = length(cnames))
+        colnames(rmat) <- cnames
+        return(rmat)
+    }
     rmat <- do.call(rbind, ResList)
+    if (is.null(dim(rmat))) {
+        rmat <- matrix(rmat, nrow = 1)
+    }
     colnames(rmat) <- cnames
     max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
     if (index)
@@ -1015,31 +1108,28 @@ do_detectFeatures_matchedFilter_no_iter <- function(mz,
 ############################################################
 ## The code of this function is basically the same than of the original
 ## findPeaks.matchedFilter method in xcms with the following differences:
-##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once instead of
-##    repeatedly creating a "buffer" of 100 M/Z values.
-##  o Append the identified peaks to a list instead of generating a matrix with a fixed
-##    set of rows which is doubled in its size each time more peaks are identified than
-##    there are rows in the matrix.
+##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once
+##    instead of repeatedly creating a "buffer" of 100 M/Z values.
+##  o Append the identified peaks to a list instead of generating a matrix
+##    with a fixed set of rows which is doubled in its size each time more
+##    peaks are identified than there are rows in the matrix.
 ##  o Use binYonX and imputeLinInterpol instead of the profBin... methods.
-do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
-                                                            int,
-                                                            scantime,
-                                                            valsPerSpect,
-                                                            profFun = "bin",
-                                                            step = 0.1,
-                                                            baseValue,
-                                                            baseSpace,
-                                                            fwhm = 30,
-                                                            sigma = fwhm/2.3548,
-                                                            max = 5,
-                                                            snthresh = 10,
-                                                            steps = 2,
-                                                            mzdiff = 0.8 - step * steps,
-                                                            index = FALSE,
-                                                            verboseColumns = FALSE,
-                                                            ...){
-    ## ... arguments are passed down to the binning function.
-
+.matchedFilter_binYonX_no_iter <- function(mz,
+                                           int,
+                                           scantime,
+                                           valsPerSpect,
+                                           binSize = 0.1,
+                                           impute = "none",
+                                           baseValue,
+                                           distance,
+                                           fwhm = 30,
+                                           sigma = fwhm/2.3548,
+                                           max = 5,
+                                           snthresh = 10,
+                                           steps = 2,
+                                           mzdiff = 0.8 - binSize * steps,
+                                           index = FALSE,
+                                           verboseColumns = FALSE){
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
@@ -1052,52 +1142,42 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
 
     ## Generate the 'profile' matrix, i.e. perform the binning:
     mrange <- range(mz)
-    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
-    ## Get the profile/binning function: allowed: bin, binlin, binlinbase and intlin
-    profFun <- match.arg(profFun, names(.profFunctions))
+    mass <- seq(floor(mrange[1] / binSize) * binSize,
+                ceiling(mrange[2] / binSize) * binSize,
+                by = binSize)
+    ## Get the imputation method: allowed: none, lin, linbase and intlin
+    impute <- match.arg(impute, c("none", "lin", "linbase", "intlin"))
     ## Select the profFun and the settings for it...
-    if (profFun == "intlin") {
+    if (impute == "intlin") {
         ## intlin not yet implemented...
         profFun = "profIntLinM"
+        profp <- list()
         ## Calculate a the "scanindex" from the number of values per spectrum:
         scanindex <- valueCount2ScanIndex(valsPerSpect)
         bufsize <- length(mass)
-        ## This returns a matrix, ncol equals the number of spectra, nrow the
-        ## bufsize.
-        ## buf <- profFun(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-        ##                TRUE, profparam)
         buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize,
                                             mass[1], mass[bufsize],
                                             TRUE))
         ## The full matrix, nrow is the total number of (binned) M/Z values.
-        bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-                              TRUE, profparam)
+        bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1],
+                              mass[bufsize], TRUE, profp)
     } else {
         ## Binning the data.
         ## Create and translate settings for binYonX
         toIdx <- cumsum(valsPerSpect)
         fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
         shiftBy = TRUE
-        ## Calculate breaks and "correct" binSize; using seq ensures we're closer
-        ## to the xcms profBin* results.
         binFromX <- min(mass)
         binToX <- max(mass)
-        binSize <- (binToX - binFromX) / (length(mass) - 1)
-        brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
-
-        ## Calculate the breaks; we will re-use these in all calls.
-        ## Calculate breaks and "correct" binSize; using seq ensures we're closer
-        ## to the xcms profBin* results.
-        binFromX <- min(mass)
-        binToX <- max(mass)
-        binSize <- (binToX - binFromX) / (length(mass) - 1)
-        brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
-
+        ## binSize <- (binToX - binFromX) / (length(mass) - 1)
+        ## brks <- seq(binFromX - binSize/2, binToX + binSize/2, by = binSize)
+        brks <- breaks_on_nBins(fromX = binFromX, toX = binToX,
+                                nBins = length(mass), shiftByHalfBinSize = TRUE)
         binRes <- binYonX(mz, int,
                           breaks = brks,
                           fromIdx = fromIdx,
                           toIdx = toIdx,
-                          baseValue = ifelse(profFun == "bin", yes = 0, no = NA),
+                          baseValue = ifelse(impute == "none", yes = 0, no = NA),
                           sortedX = TRUE,
                           returnIndex = TRUE
                           )
@@ -1105,27 +1185,16 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
             binRes <- list(binRes)
         bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
         bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
-        ## If profFun is binlin or binlinbase we have to call in addition the impute function.
-        if (profFun == "binlin") {
-            binVals <- lapply(binRes, function(z) {
-                return(imputeLinInterpol(z$y, method = "lin"))
-            })
-        } else if (profFun == "binlinbase") {
-            if (missing(baseValue))
-                baseValue <- min(int, na.rm = TRUE) / 2
-            if (missing(baseSpace))
-                baseSpace <- 0.075
-            distance <- floor(baseSpace / bin_size)
-            binVals <- lapply(binRes, function(z) {
-                return(imputeLinInterpol(z$y, method = "linbase",
-                                         distance = distance,
-                                         baseValue = baseValue))
-            })
-        } else {
-            binVals <- lapply(binRes, function(z) {
-                return(z$y)
-            })
-        }
+        ## Missing value imputation
+        if (missing(baseValue))
+            baseValue <- min(int, na.rm = TRUE) / 2
+        if (missing(distance))
+            distance <- floor(0.075 / bin_size)
+        binVals <- lapply(binRes, function(z) {
+            return(imputeLinInterpol(z$y, method = impute, distance = distance,
+                                     noInterpolAtEnds = TRUE,
+                                     baseValue = baseValue))
+        })
         buf <- do.call(cbind, binVals)
     }
 
@@ -1135,16 +1204,17 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
 
     N <- nextn(length(scantime))
     xrange <- range(scantime)
-    x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
+    x <- c(0:(N/2), -(ceiling(N/2-1)):-1) *
+        (xrange[2]-xrange[1])/(length(scantime)-1)
 
-    filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
+    filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi)) *
+                                  exp(-x^2/(2*sigma^2)), "x")), "hessian")
     filt <- filt/sqrt(sum(filt^2))
     filt <- fft(filt, inverse = TRUE)/length(filt)
 
     cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
                 "maxo", "maxf", "i", "sn")
     num <- 0
-
     ResList <- list()
 
     ## Can not do much here, lapply/apply won't work because of the 'steps' parameter.
@@ -1173,13 +1243,13 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
                     next
                 }
                 mzrange <- range(mzmat, na.rm = TRUE)
-                massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
+                massmean <- weighted.mean(mzmat, intmat[which.intMax],
+                                          na.rm = TRUE)
                 ## This case (the only non-na m/z had intensity 0) was reported
                 ## by Gregory Alan Barding "binlin processing"
                 if(any(is.na(massmean))) {
                     massmean <- mean(mzmat, na.rm = TRUE)
                 }
-
                 pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
                     (peakrange[2] - peakrange[1])
                 into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
@@ -1188,23 +1258,32 @@ do_detectFeatures_matchedFilter_binYonX_no_iter <- function(mz,
                 maxf <- yfilt[maxy]
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
-                ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
-                                    into, intf, maxo, maxf, j, sn)
+                ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy,
+                                    peakrange, into, intf, maxo, maxf, j, sn)
             } else
                 break
         }
     }
+    if (length(ResList) == 0) {
+        rmat <- matrix(nrow = 0, ncol = length(cnames))
+        colnames(rmat) <- cnames
+        return(rmat)
+    }
     rmat <- do.call(rbind, ResList)
+    if (is.null(dim(rmat))) {
+        rmat <- matrix(rmat, nrow = 1)
+    }
     colnames(rmat) <- cnames
-    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
+    max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/binSize)
     if (index)
-        mzdiff <- mzdiff/step
+        mzdiff <- mzdiff/binSize
     else {
         rmat[, "rt"] <- scantime[rmat[, "rt"]]
         rmat[, "rtmin"] <- scantime[rmat[, "rtmin"]]
         rmat[, "rtmax"] <- scantime[rmat[, "rtmax"]]
     }
-    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
+    ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak
+    ## and report that.
     uorder <- order(rmat[, "into"], decreasing = TRUE)
     uindex <- rectUnique(rmat[, c("mzmin", "mzmax", "rtmin", "rtmax"),
                               drop = FALSE],

@@ -60,6 +60,23 @@ profBin <- function(x, y, num, xstart = min(x), xend = max(x),
        PACKAGE = "xcms")$out
 }
 
+profBin_test <- function(x, y, num, xstart = min(x), xend = max(x),
+                         param = list(), the_dx) {
+
+    if (!is.double(x)) x <- as.double(x)
+    if (!is.double(y)) y <- as.double(y)
+    .C("ProfBin_test",
+       x,
+       y,
+       as.integer(length(x)),
+       as.double(xstart),
+       as.double(xend),
+       as.integer(num),
+       out = double(num),
+       the_dx = double(1),
+       PACKAGE = "xcms")$the_dx
+}
+
 ## o zidx: start position of each new segment (e.g. spectrum).
 profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                      NAOK = FALSE, param = list()) {

@@ -55,11 +55,28 @@ test_profBin <- function() {
     ## Test iterative binning with profBin
     X <- 1:30
     Y <- 1:30
-    step <- 1
+    step <- 0.2
     bufsize <- 10
     mass <- seq(floor(min(X)/step) * step, ceiling(max(X)/step) * step,
                 by = step)
+    bufidx <- integer(length(mass))
+    idxrange <- c(1, bufsize)
+    bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
+    lookahead <- 1
+    lookbehind <- 1
     res1 <- xcms:::profBin(X, Y, bufsize, mass[1], mass[bufsize])
+    res1_dx <- xcms:::profBin_test(X, Y, bufsize, mass[1], mass[bufsize])
+    i <- 10
+    bufidx[i + lookahead] == 0
+    ## re-read buffer.
+    bufidx[idxrange[1]:idxrange[2]] <- 0
+    idxrange <- c(max(1, i - lookbehind), min(bufsize + i -1 - lookbehind,
+                                              length(mass)))
+    bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange) + 1)
+    res2 <- xcms:::profBin(X, Y, diff(idxrange) + 1, mass[idxrange[1]],
+                           mass[idxrange[2]])
+    res2_dx <- xcms:::profBin_test(X, Y, diff(idxrange) + 1, mass[idxrange[1]],
+                                   mass[idxrange[2]])
 }
 
 

@@ -216,14 +216,21 @@ using the =seq= function, but they are not identical.
 
 The iterative binning of only small sub-sets of data causes problems with
 =profBinLinBase=, in which data imputation might be skipped in some iterations
-while it is performed in others.
+while it is performed in others (also discussed in issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github).
 
 Iterative buffering has both conceptual and computational issues.
-+ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to
-  impute missing values. This is obviously affected by the input data, i.e. if
-  only a small subset of input data is considered, the imputation can change.
++ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to impute
+  missing values. This is obviously affected by the input data, i.e. if only a
+  small subset of input data is considered, the imputation can change.
 
-+ Computational: it's slower; simple as that.
++ Computational: the iterative buffering is slower than binning of the full
+  data.
+
+An additional problem comes with the implementation of the =profBin= method in
+=xcms= that was used in the =findPeaks.matchedFilter= method for method being =lin=:
+the bin size is calculated anew in each call, thus, due to rounding errors
+(imprecision of floating point numbers), the bin size will be slightly different
+in each call, which can lead to wrong binning results (see issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github).
 
 Example with =profBinLinBase= resulting in an error: if =step= and =basespace= are
 both =0.1= it seems that not in all buffer-generation iterations a interpolation
@@ -232,19 +239,19 @@ is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1
 
 
 
-** Implementation and comparison for =matchedFilter=
+** Implementation and comparison for =matchedFilter=		   :noexport:
 
 These results base on the test =dontrun_test_do_detectFeatures_matchedFilter_impl=
 defined in /test_do_detectFeatures_matchedFilter.R/
 
 We have 4 different functions to test and compare to the original one:
-+ *A*: =do_detectFeatures_matchedFilter=: it's the original code.
-+ *B*: =do_detectFeatures_matchedFilter_binYonX_iter=: uses the same sequential
++ *A*: =.matchedFilter_orig=: it's the original code.
++ *B*: =.matchedFilter_binYonX_iter=: uses the same sequential
   buffering than the original code, but uses =binYonX= for binning and
   =imputeLinInterpol= for interpolation.
-+ *C*: =do_detectFeatures_matchedFilter_no_iter=: contains the original code, but
++ *C*: =.matchedFilter_no_iter=: contains the original code, but
   avoids sequential buffering, i.e. creates the whole matrix in one go.
-+ *D*: =do_detectFeatures_matchedFilter_binYonX_no_iter=: my favorite: uses =binYonX= and
++ *D*: =.matchedFilter_binYonX_no_iter=: my favorite: uses =binYonX= and
   =imputeLinInterpol= and avoids the sequential buffering by creating the full
   matrix in one go.
 
@@ -252,11 +259,73 @@ Notes: for plain =bin= we expect that results with and without iterative bufferi
 are identical.
 
 *Comparisons*:
-+ [ ] *A* /vs/ original: is always OK for =bin=.
-+ [ ] *B* /vs/ original: =bin=: OK unless =step= is =0.2=: most likely rounding problem.
-+ [ ] *C* /vs/ original: =bin=: OK unless =step= is =0.2=:
-+ [ ] *D* /vs/ original: =bin=: OK unless =step= is =0.2=: most likely rounding problem.
-+ [ ] *B* /vs/ *C*: =bin=: always OK.
-+ [ ] *B* /vs/ *D*: =bin=: always OK.
-+ [ ] *C* /vs/ *D*: =bin=: always OK.
++ [X] *A* /vs/ original:
+  - =bin=: always OK.
+  - =binlin=: always OK.
+  - =binlinbase=: always OK.
++ [X] *B* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=: most likely rounding problem.
+  - =binlin=: only once OK. Results are not equal, but comparable.
+  - =binlinbase=: similar but not equal.
++ [X] *C* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=:
+  - =binlin=: never OK: due to interpolation on full, or subset data.
+  - =binlinbase=: similar but not equal.
++ [X] *D* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=: most likely rounding problem.
+  - =binlin=: never OK: due to interpolation on full, or subset data AND due to
+    fix of the bug in =profBinLin=.
+  - =binlinbase=: similar but not equal.
++ [X] *B* /vs/ *C*:
+  - =bin=: always OK.
+  - =binlin=: results similar but not equal; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: highly similar.
++ [X] *B* /vs/ *D*:
+  - =bin=: always OK.
+  - =binlin=: results similar but not equal; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: highly similar.
++ [X] *C* /vs/ *D*:
+  - =bin=: always OK.
+  - =binlin=: results almost identical; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: always OK.
 
+
+*Conclusions*:
++ =none= (only binning, but no linear interpolation; corresponds to method =bin= in
+  =findPeaks.matchedFilter=): The results are identical between all methods for
+  all except one setting: with =step= being =0.2= (or =0.4= etc) on one test file the
+  results differ between methods with and without iterative buffering. The
+  reason for this is most likely rounding errors in floating point number
+  representation: =profBin= calculates the size of the bin in each call, thus,
+  when called repeatedly based on different input values, the size is slightly
+  different, which then can lead to binning differences (see also [[https://github.com/sneumann/xcms/issues/47][issue #47]] on
+  github).
+
++ =lin= (binning followed by linear interpolation to impute missing values; method
+  =binlin= in =findPeaks.matchedFilter=): There are two reasons for differences
+  observed here: 1) the first bin value (and eventually the last bin value) are
+  sometimes wrong (issue [[https://github.com/sneumann/xcms/issues/46][#46]]). This results in differences between =binYonX= and
+  =imputeKinInterpol= based approach and =profBinLin= (with the former being
+  presumably correct). Also, this has a bigger influence when the
+  binning/missing value imputation is performed iteratively. Thus, the
+  difference between the =binYonX= - =imputeLinInterpol= and =profBinLin= approach
+  without iterative buffering are only very small. 2) Linear interpolation on
+  the full data set compared to subsequent sub-sets will undoubtedly lead to
+  differences. Because based on the full data set, the non-iterative approach
+  results in the expected and more accurate results.
+
++ =linbase=: results are identical if =basespace= (respectively =distance=) is such
+  that no interpolation takes place. With interpolation (e.g. =distance= being =1=)
+  differences (albeit small) are present between approaches with and without iterative
+  buffering. The results for the approaches without iterative buffering (using
+  =profBinBase= respectively =binYonX= with =imputeLinIterpol=) are identical, again
+  arguing in favor of these approaches.
+
+Thus, summarizing, the approaches without the iterative buffering yield more
+reliable (and presumably correct) results. Given also that the =binYonX= in
+combination with =imputeLinInterpol= identify similar peaks than the non-iterative
+approaches using the original code, we can change the code to use these former
+methods as default.
