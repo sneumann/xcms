@@ -154,12 +154,11 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
 ############################################################
 ## findPeaks.matchedFilter
-setMethod("findPeaks.matchedFilter", "xcmsRaw", function(object, fwhm = 30, sigma = fwhm/2.3548,
-                                                         max = 5, snthresh = 10, step = 0.1,
-                                                         steps = 2, mzdiff = 0.8 - step*steps,
-                                                         index = FALSE, sleep = 0,
-                                                         verbose.columns = FALSE,
-                                                         scanrange= numeric()) {
+setMethod("findPeaks.matchedFilter", "xcmsRaw",
+          function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
+                   snthresh = 10, step = 0.1, steps = 2,
+                   mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
+                   verbose.columns = FALSE, scanrange= numeric()) {
 
     profFun <- match.profFun(object)
 
@@ -1431,8 +1430,6 @@ setMethod("profMz", "xcmsRaw", function(object) {
 setMethod("profMethod", "xcmsRaw", function(object) {
     object@profmethod
 })
-.profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
-                       binlinbase = "profBinLinBaseM", bin = "profBinM")
 setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
     if (! (value %in% names(.profFunctions)))
@@ -1692,8 +1689,8 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
                 if(is.unsorted(scan[,"mz"])){
                     message("Scan ", i, " is unsorted. Fixing.")
                     o <- order(scan[,"mz"])
-                    start <- object@scanindex[i]
-                    end <- start+nrow(scan)
+                    start <- object@scanindex[i] + 1
+                    end <- start+nrow(scan) - 1
                     object@env$mz[start:end] <- scan[o, "mz"]
                     object@env$intensity[start:end] <- scan[o, "intensity"]
                 }
