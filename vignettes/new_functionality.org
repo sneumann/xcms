@@ -51,7 +51,7 @@ in the =xcms= package introduced during the update to version /3/.
 
 The binning/profile matrix generation functions have been completely
 rewritten. The new =binYonX= function replaces the binning of intensity values
-into bins defined by their M/Z values implemented in the =profBin=, =profBinLin= and
+into bins defined by their m/z values implemented in the =profBin=, =profBinLin= and
 =profBinLinBase= methods. The =binYonX= function provides also additional functionality:
 
 + Breaks for the bins can be defined based on either the number of desired bins
@@ -141,8 +141,8 @@ github) which are fixed in the new =binYonX= and =imputeLinInterpol= functions:
 + If the last bin contains also missing values, the method fails to determine
   a correct value for that bin.
 
-The =profBinLin= method is used in =findPeaks.matchedFilter= when =method= is set to
-"lin".
+The =profBinLin= method is used in =findPeaks.matchedFilter= if the profile
+method is set to "binlin".
 
 The example below illustrates both differences.
 
@@ -187,6 +187,38 @@ Note that by default =imputeLinInterpol= would also interpolate missing values a
 the beginning and the end of the provided numeric vector. This can be disabled
 (to be compliant with =profBinLin=) by setting parameter =noInterpolAtEnds= to
 =TRUE= (like in the example above).
+
+
+** Differences due to updates in =do_detectFeatures_matchedFilter=, respectively =findPeaks.matchedFilter=.
+
+The original =findPeaks.matchedFilter= (up to version XXX) had several
+shortcomings and bugs that have been fixed in the new
+=do_detectFeatures_matchedFilter= method:
+
++ The internal iterative processing of smaller chunks of the full data (also
+  referred to as /iterative buffering/) could result, for some bin (step) sizes to
+  unstable binning results (discussed in issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github): calculation of
+  the breaks, or to be precise, the actually used bin size was performed in each
+  iteration and could lead to slightly different sizes between iterations (due
+  to rounding errors caused by floating point number representations in C).
+
++ The iterative buffering raises also a conceptual issue when linear
+  interpolation is performed to impute missing values: the linear imputation
+  will only consider values within the actually processed buffer and can thus
+  lead to wrong or inaccurate imputations.
+
++ The =profBinLin= implementation contains two bugs, one that can result in
+  failing to identify the maximal value in the first and last bin (see issue
+  [[https://github.com/sneumann/xcms/issues/46][#46]]) and one that fails to assign a value to a bin (issue [[https://github.com/sneumann/xcms/issues/49][#49]]). Both are fixed
+  in the =do_detectFeatures_matchedFilter= implementation.
+
+A detailed description of tests comparing all implementations is available in
+issue [[https://github.com/sneumann/xcms/issues/52][#52]] on github.
+
+*NOTE* by default the =findPeaks.matchedFilter= and =do_detectFeatures_matchedFilter=
+use the /original/ (old) code, to switch to the new implementation call
+=useOriginalCode(FALSE)=.
+
 
 ** Different binning results due to /internal/ and /external/ breaks definition :noexport:
 
@@ -237,7 +269,7 @@ both =0.1= it seems that not in all buffer-generation iterations a interpolation
 is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
 (interpolation with neighboring bins) and sometimes to =0=.
 
-
+This is now also nicely documented in issue [[https://github.com/sneumann/xcms/issues/52][#52]].
 
 ** Implementation and comparison for =matchedFilter=		   :noexport:
 

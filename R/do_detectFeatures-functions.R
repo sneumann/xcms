@@ -18,30 +18,69 @@
 ##' @description This function performs peak density and wavelet based feature
 ##' detection for high resulution LC/MS data in centroid mode [Tautenhahn 2008].
 ##'
-##' @details This function exposes core feature detection functionality of
+##' @details This algorithm is most suitable for high resolution
+##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
+##' method identifies \emph{regions of interest} (ROIs) representing mass traces
+##' that are characterized as regions with less than \code{ppm} m/z deviation in
+##' consecutive scans in the LC/MS map. These ROIs are then subsequently
+##' analyzed using continuous wavelet transform (CWT) to locate chromatographic
+##' peaks on different scales. The first analysis step is skipped, if regions
+##' of interest are passed with the \code{ROIs} parameter.
+##'
+##' @note The \emph{centWave} was designed to work on centroided mode, thus it
+##' is expected that such data is presented to the function.
+##'
+##' This function exposes core feature detection functionality of
 ##' the \emph{centWave} method. While this function can be called directly,
-##' users will generally call the corresponding method for the data object instead.
+##' users will generally call the corresponding method for the data object
+##' instead.
 ##'
-##' @note This function was designed to work on centroided mode, thus it is expected that such data is presented to the function.
-##'
-##' @param mz
-##' @param int
-##' @param scantime
+##' @param mz Numeric vector with the individual m/z values from all scans/
+##' spectra of one file/sample.
+##' @param int Numeric vector with the individual intensity values from all
+##' scans/spectra of one file/sample.
+##' @param scantime Numeric vector of length equal to the number of
+##' spectra/scans of the data representing the retention time of each scan.
 ##' @param valsPerSpect Numeric vector with the number of values for each
 ##' spectrum.
-##' @param ppm Maximal tolerated M/Z deviation in consecutive scans in parts
+##' @param ppm Maximal tolerated m/z deviation in consecutive scans in parts
 ##' per million (ppm).
-##' @param peakwidth Expected approximate feature/peak width in chromatographic
-##' space.
-##' @param snthresh
-##' @param prefilter
-##' @param mzCenterFun
-##' @param integrate
-##' @param mzdiff
-##' @param fitgauss
-##' @param noise
-##' @param verboseColumns
-##' @param ROIs
+##' @param peakwidth Numeric of length 2 with the expected approximate
+##' feature/peak width in chromatographic space. Given as a range (min, max)
+##' in seconds.
+##' @param snthresh Signal to noise ratio cutoff.
+##' @param prefilter Numeric of length 2: \code{c(k, I)} specifying the prefilter
+##' step for the first analysis step (ROI detection). Mass traces are only
+##' retained if they contain at least \code{k} peaks with intensity >= \code{I}.
+##' @param mzCenterFun Name of the function to calculate the m/z center of the
+##' feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's
+##' m/z values, \code{"mean"}: mean of the feature's m/z values, \code{"apex"}:
+##' use the m/z value at the peak apex, \code{"wMeanApex3"}: intensity weighted
+##' mean of the m/z value at the peak apex and the m/z values left and right of
+##' it and \code{"meanApex3"}: mean of the m/z value of the peak apex and the
+##' m/z values left and right of it.
+##' @param integrate Integration method. For \code{integrate = 1} peak limits
+##' are found through descent on the mexican hat filtered data, for
+##' \code{integrate = 2} the descent is done on the real data. The latter method
+##' is more accurate but prone to noise, while the former is more robust, but
+##' less exact.
+##' @param mzdiff Numeric representing the minimum difference in m/z dimension
+##' for peaks with overlapping retention times; can be negatove to allow overlap.
+##' @param fitgauss Logical whether or not a Gaussian should be fitted to each
+##' peak.
+##' @param noise Numeric of length 1 allowing to set a minimum intensity required
+##' for centroids to be considered in the first analysis step (centroids with
+##' intensity \code{< noise} are omitted from ROI detection).
+##' @param verboseColumns Logical whether additional feature meta data columns
+##' should be returned.
+##' @param ROIs An optional list of regions-of-interest (ROI) representing
+##' detected mass traces. If ROIs are submitted the first analysis step is
+##' omitted and feature detection is performed on the submitted ROIs. Each
+##' ROI object in the list is expected to have the following slots specified:
+##' \code{scmin} (start scan index), \code{scmax} (end scan index),
+##' \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
+##' (number of scans), \code{intensity} (summed intensity).
+##'
 ##' @family core feature detection functions
 ##'
 ##' @references
@@ -50,10 +89,10 @@
 ##' 2008, 9:504
 ##' @return
 ##' A matrix, each row representing an intentified feature, with columns:
-##' \enumerate{
-##' \item{mz}{Intensity weighted mean of M/Z values of the feature across scans.}
-##' \item{mzmin}{Minimum M/Z of the feature.}
-##' \item{mzmax}{Maximum M/Z of the feature.}
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
 ##' \item{rt}{Retention time of the feature's midpoint.}
 ##' \item{rtmin}{Minimum retention time of the feature.}
 ##' \item{rtmax}{Maximum retention time of the feature.}
@@ -65,18 +104,33 @@
 ##' \item{egauss}{RMSE of Gaussian fit.}
 ##' }
 ##' Additional columns for \code{verboseColumns = TRUE}:
-##' \itemize{
+##' \describe{
 ##' \item{mu}{Gaussian parameter mu.}
 ##' \item{sigma}{Gaussian parameter sigma.}
 ##' \item{h}{Gaussian parameter h.}
-##' \item{f}{Region number of the M/Z ROI where the peak was localized.}
-##' \item{dppm}{M/Z deviation of mass trace across scanns in ppk.}
+##' \item{f}{Region number of the m/z ROI where the peak was localized.}
+##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
 ##' \item{scale}{Scale on which the feature was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 ##' }
 ##' @author Ralf Tautenhahn, Johannes Rainer
+##' @examples
+##' ## Load the test file
+##' library(faahKO)
+##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' xr <- xcmsRaw(fs)
+##'
+##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' mzVals <- xr@env$mz
+##' intVals <- xr@env$intensity
+##' ## Define the values per spectrum:
+##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+##'
+##' res <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
+##' head(res)
 do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
                                        peakwidth = c(20, 50),
@@ -136,13 +190,13 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     scRangeTol <-  maxDescOutlier <- floor(minPeakWidth/2)
     scanrange <- c(1, length(scantime))
 
-    ## Search for potential peaks in M/Z direction.
+    ## Search for potential peaks in m/z direction.
     ## If no ROIs are supplied then search for them.
     if (length(ROIs) == 0) {
         message("Detecting mass traces at ", ppm, "ppm")
         ## We're including the findmzROI code in this function to reduce
         ## the need to copy objects etc.
-        ## We could also sort the data by M/Z anyway; wouldn't need that
+        ## We could also sort the data by m/z anyway; wouldn't need that
         ## much time. Once we're using classes from MSnbase we can be
         ## sure that values are correctly sorted.
         withRestarts(
@@ -239,7 +293,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
         ##                    as.integer(length(scanindex)), PACKAGE="xcms")
         idxs <- which(eic$scan %in% seq(scrange[1], scrange[2]))
         mzROI.EIC <- list(scan=eic$scan[idxs], intensity=eic$intensity[idxs])
-        ## Get the actual M/Z matching these values.
+        ## Get the actual m/z matching these values.
         omz <- .Call("getMZ",mz, int, scanindex, as.double(mzrange),
                      as.integer(scrange),
                      as.integer(length(scantime)), PACKAGE = 'xcms')
@@ -506,7 +560,6 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     pr <- p[uindex,,drop=FALSE]
 
     return(pr)
-
 }
 
 
@@ -530,7 +583,7 @@ do_detectFeatures_massifquant <- function() {
 ##  That's the function that matches the code from the
 ##  findPeaks.matchedFilter method from the xcms package.
 ##  The peak detection is performed on the binned data. Depending on the variable
-##  `bufsize` the function iteratively bins the intensity values on M/Z dimension into
+##  `bufsize` the function iteratively bins the intensity values on m/z dimension into
 ##  bins of size `step` always binning into `bufsize` bins. While ensuring low memory
 ##  usage, this iterative buffering is actually quite time consuming.
 ##  The loop runs over the variable `mass` which corresponds to the midpoints of the
@@ -540,7 +593,7 @@ do_detectFeatures_massifquant <- function() {
 ##
 ##  This function takes basic R-objects and might thus be used as the base analysis
 ##  method for a future xcms API.
-##  mz is a numeric vector with all M/Z values.
+##  mz is a numeric vector with all m/z values.
 ##  int is a numeric vector with the intensities.
 ##  valsPerSpect: is an integer vector with the number of values per spectrum. This will
 ##     be converted to what xcms calls the scanindex.
@@ -548,6 +601,7 @@ do_detectFeatures_massifquant <- function() {
 ##     and all this stuff being done in a for loop.
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
+
 
 do_detectFeatures_matchedFilter <- function(mz,
                                             int,
@@ -565,11 +619,21 @@ do_detectFeatures_matchedFilter <- function(mz,
                                             mzdiff = 0.8 - binSize * steps,
                                             index = FALSE,
                                             verboseColumns = FALSE){
-    ## Eventually switch here to some other function, e.g.
-    ## .matchedFilter_inYonX_no_iter
-    return(.matchedFilter_orig(mz, int, scantime, valsPerSpect, binSize, impute,
-                               baseValue, distance, fwhm, sigma, max, snthresh,
-                               steps, mzdiff, index, verboseColumns))
+    ## Use original code
+    if (useOriginalCode()) {
+        ## warning("Old xcms code was used; be aware that this code",
+        ##         " may contain bugs.")
+        return(.matchedFilter_orig(mz, int, scantime, valsPerSpect,
+                                   binSize, impute, baseValue, distance,
+                                   fwhm, sigma, max, snthresh,
+                                   steps, mzdiff, index, verboseColumns))
+    } else {
+        return(.matchedFilter_binYonX_no_iter(mz, int, scantime, valsPerSpect,
+                                              binSize, impute, baseValue,
+                                              distance, fwhm, sigma, max,
+                                              snthresh, steps, mzdiff, index,
+                                              verboseColumns))
+    }
 }
 .matchedFilter_orig <- function(mz,
                                 int,
@@ -580,7 +644,7 @@ do_detectFeatures_matchedFilter <- function(mz,
                                 baseValue,
                                 distance,
                                 fwhm = 30,
-                               sigma = fwhm/2.3548,
+                                sigma = fwhm/2.3548,
                                 max = 5,
                                 snthresh = 10,
                                 steps = 2,
@@ -950,8 +1014,8 @@ do_detectFeatures_matchedFilter <- function(mz,
 ############################################################
 ## The code of this function is basically the same than of the original
 ## findPeaks.matchedFilter method in xcms with the following differences:
-##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once
-##    instead of repeatedly creating a "buffer" of 100 M/Z values.
+##  o Create the full 'profile matrix' (i.e. the m/z binned matrix) once
+##    instead of repeatedly creating a "buffer" of 100 m/z values.
 ##  o Append the identified peaks to a list instead of generating a matrix
 ##    with a fixed set of rows which is doubled in its size each time more
 ##    peaks are identified than there are rows in the matrix.
@@ -1007,7 +1071,7 @@ do_detectFeatures_matchedFilter <- function(mz,
     buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
                                         mass[bufsize], TRUE, profp))
 
-    ## The full matrix, nrow is the total number of (binned) M/Z values.
+    ## The full matrix, nrow is the total number of (binned) m/z values.
     bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
                           TRUE, profp)
     ## bufidx <- integer(length(mass))
@@ -1108,8 +1172,8 @@ do_detectFeatures_matchedFilter <- function(mz,
 ############################################################
 ## The code of this function is basically the same than of the original
 ## findPeaks.matchedFilter method in xcms with the following differences:
-##  o Create the full 'profile matrix' (i.e. the M/Z binned matrix) once
-##    instead of repeatedly creating a "buffer" of 100 M/Z values.
+##  o Create the full 'profile matrix' (i.e. the m/z binned matrix) once
+##    instead of repeatedly creating a "buffer" of 100 m/z values.
 ##  o Append the identified peaks to a list instead of generating a matrix
 ##    with a fixed set of rows which is doubled in its size each time more
 ##    peaks are identified than there are rows in the matrix.
@@ -1158,7 +1222,7 @@ do_detectFeatures_matchedFilter <- function(mz,
         buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize,
                                             mass[1], mass[bufsize],
                                             TRUE))
-        ## The full matrix, nrow is the total number of (binned) M/Z values.
+        ## The full matrix, nrow is the total number of (binned) m/z values.
         bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1],
                               mass[bufsize], TRUE, profp)
     } else {

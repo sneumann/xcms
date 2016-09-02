@@ -74,7 +74,8 @@
                      group.method=group.method, group.methods=group.methods,
                      retcor.method=retcor.method, retcor.methods=retcor.methods,
                      fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods,
-                     specDist.methods=specDist.methods, getEIC.method=getEIC.method)
+                     specDist.methods=specDist.methods, getEIC.method=getEIC.method,
+                     useOriginalCode = TRUE)
 
     class(xcms.opt) <- "BioCPkg"
 

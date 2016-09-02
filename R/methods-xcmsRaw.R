@@ -154,7 +154,9 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 
 ############################################################
 ## findPeaks.matchedFilter
-setMethod("findPeaks.matchedFilter", "xcmsRaw",
+setGeneric("findPeaks.matchedFilter_orig", function(object, ...)
+    standardGeneric("findPeaks.matchedFilter_orig"))
+setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
                    mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
@@ -298,6 +300,114 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
                          uorder, mzdiff)
     rmat <- rmat[uindex,,drop=FALSE]
     invisible(new("xcmsPeaks", rmat))
+})
+
+############################################################
+## findPeaks.matchedFilter
+##' .. content for \description{} (no empty lines) ..
+##'
+##' .. content for \details{} ..
+##' @title
+##'
+##' @description
+##' @details
+##' @param object
+##' @param fwhm
+##' @param sigma
+##' @param max
+##' @param snthresh
+##' @param step
+##' @param steps
+##' @param mzdiff
+##' @param index
+##' @param sleep
+##' @param verbose.columns
+##' @param scanrange
+##' @return
+##' @author Johannes Rainer
+setMethod("findPeaks.matchedFilter", "xcmsRaw",
+          function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
+                   snthresh = 10, step = 0.1, steps = 2,
+                   mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
+                   verbose.columns = FALSE, scanrange= numeric()) {
+
+              ## Sub-set the xcmsRaw baesd on scanrange
+              scanrange.old <- scanrange
+              ## sanitize if too few or too many scanrange is given
+              if (length(scanrange) < 2)
+                  scanrange <- c(1, length(object@scantime))
+              else
+                  scanrange <- range(scanrange)
+              ## restrict and sanitize scanrange to maximally cover all scans
+              scanrange[1] <- max(1,scanrange[1])
+              scanrange[2] <- min(length(object@scantime),scanrange[2])
+              ## Mild warning if the actual scanrange doesn't match the scanrange
+              ## argument
+              if (!(identical(scanrange.old, scanrange)) && (length(scanrange.old) > 0)) {
+                  cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+                  ## Scanrange filtering
+                  keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+                  object <- split(object, f=keepidx)[["TRUE"]]
+              }
+              ## Determine the impute method:
+              imputeMeths <- c("none", "lin", "linbase", "intlin")
+              names(imputeMeths) <- c("bin", "binlin",
+                                      "binlinbase", "intlin")
+              profFun <- profMethod(object)
+              profFun <- match.arg(profFun, names(imputeMeths))
+              imputeMeth <- imputeMeths[profFun]
+              if (imputeMeth == "linbase") {
+                  profp <- object@profparam
+                  if (length(profp) == 0)
+                      profp <- list()
+                  ## Determine the settings for this:
+                  ## o distance
+                  ##   Define the distance argument; that's tricky, as it
+                  ##   requires the bin_size, not the step.
+                  mrange <- range(object@env$mz)
+                  mass <- seq(floor(mrange[1]/step)*step,
+                              ceiling(mrange[2]/step)*step, by = step)
+                  mlength <- length(mass)
+                  bin_size <- (mass[mlength] - mass[1]) / (mlength - 1)
+                  rm(mass)
+                  if (length(profp$basespace) > 0) {
+                      if (!is.numeric(profp$basespace))
+                          stop("Profile parameter 'basespace' has to be numeric!")
+                      distance <- floor(profp$basespace[1] / bin_size)
+                  } else {
+                      distance <- floor(0.075 / bin_size)
+                  }
+                  ## o baseValue
+                  if (length(profp$baseleve) > 0) {
+                      if (!is.numeric(profp$baselevel))
+                          stop("Profile parameter 'baselevel' has to be numeric!")
+                      baseValue <- profp$baselevel[1]
+                  } else {
+                      baseValue <- min(object@env$intensity) / 2
+                  }
+              } else {
+                  ## For other methods these are not used anyway.
+                  distance <- 0
+                  baseValue <- 0
+              }
+              res <- do_detectFeatures_matchedFilter(mz = object@env$mz,
+                                                     int = object@env$intensity,
+                                                     scantime = object@scantime,
+                                                     valsPerSpect = diff(c(object@scanindex,
+                                                                           length(object@env$mz))),
+                                                     binSize = step,
+                                                     impute = imputeMeth,
+                                                     baseValue = baseValue,
+                                                     distance = distance,
+                                                     fwhm = fwhm,
+                                                     sigma = sigma,
+                                                     max = max,
+                                                     snthresh = snthresh,
+                                                     steps = steps,
+                                                     mzdiff = mzdiff,
+                                                     index = index,
+                                                     verboseColumns = verbose.columns)
+              invisible(new("xcmsPeaks", res))
 })
 
 ############################################################

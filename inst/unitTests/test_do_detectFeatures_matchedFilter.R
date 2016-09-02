@@ -1,5 +1,4 @@
 ## Test detectFeatures matchedFilter
-## LLLL clean up.
 library(xcms)
 library(RUnit)
 
@@ -13,6 +12,44 @@ test_do_detectFeatures_matchedFilter <- function() {
     xr <- xcmsRaw(fs[1])
     ## We expect that changing a parameter has an influence on the result.
 }
+
+## ## Test that the original and the version calling do_ get the
+## ## same results
+## test_findPeaks.matchedFilter <- function() {
+##     library(xcms)
+##     library(RUnit)
+##     xr <- xcmsRaw(fs[1])
+
+##     ## Default.
+##     res1 <- findPeaks.matchedFilter(xr)
+##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr)
+##     checkEquals(res1, res2)
+
+##     ## binlin.
+##     profMethod(xr) <- "binlin"
+##     res1 <- findPeaks.matchedFilter(xr, step = 0.2, snthresh = 50)
+##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.2, snthresh = 50)
+##     checkEquals(res1, res2)
+
+##     ## binlinbase
+##     profMethod(xr) <- "binlinbase"
+##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
+##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
+##     checkEquals(res1, res2)
+
+##     profp <- list()
+##     profp$baselevel <- 300
+##     xr@profparam <- profp
+##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
+##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
+##     checkEquals(res1, res2)
+
+##     profp$basespace <- 0.3
+##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
+##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
+##     checkEquals(res1, res2)
+## }
+
 
 ############################################################
 ## Compare each individual function to the original one changing
@@ -292,33 +329,35 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
     }
     xr@profparam <- profparam
     ## The reference is the old code.
-    orig <- findPeaks.matchedFilter(xr,
-                                    fwhm = fwhm,
-                                    sigma = sigma,
-                                    max = max,
-                                    snthresh = snthresh,
-                                    step = binSize,
-                                    steps = steps,
-                                    mzdiff = mzdiff,
-                                    index = index,
-                                    verbose.columns = verbose.columns)@.Data
-
-    ## A
-    A <- xcms:::do_detectFeatures_matchedFilter(mz = mz, int = int,
-                                                scantime = scantime,
-                                                valsPerSpect = valsPerSpect,
-                                                binSize = binSize,
-                                                impute = impute,
-                                                baseValue,
-                                                distance,
+    ## Have to use the _orig method here, since the "official" one uses
+    ## already do_detectFeatures...
+    orig <- xcms:::findPeaks.matchedFilter_orig(xr,
                                                 fwhm = fwhm,
                                                 sigma = sigma,
                                                 max = max,
                                                 snthresh = snthresh,
+                                                step = binSize,
                                                 steps = steps,
                                                 mzdiff = mzdiff,
                                                 index = index,
-                                                verboseColumns = verbose.columns)
+                                                verbose.columns = verbose.columns)@.Data
+
+    ## A
+    A <- xcms:::.matchedFilter_orig(mz = mz, int = int,
+                                    scantime = scantime,
+                                    valsPerSpect = valsPerSpect,
+                                    binSize = binSize,
+                                    impute = impute,
+                                    baseValue,
+                                    distance,
+                                    fwhm = fwhm,
+                                    sigma = sigma,
+                                    max = max,
+                                    snthresh = snthresh,
+                                    steps = steps,
+                                    mzdiff = mzdiff,
+                                    index = index,
+                                    verboseColumns = verbose.columns)
     res <- all.equal(orig, A)
     if (is.character(res)) {
         msg <- paste0("A vs original FAILED! ", res, "\n")
