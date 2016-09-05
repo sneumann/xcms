@@ -148,8 +148,8 @@ The full set of parameters can be seen by viewing the documentation
 for the \Rfunction{xcmsSet} function and \Rmethod{findPeaks} method.
 
 The method \Rmethod{findPeaks} can make use of different algorithms
-for peak detection. Currently \Rmethod{findPeaks.matchedFilter}
-and \Rmethod{findPeaks.centWave} are available,
+for peak detection. Currently \Rmethod{findPeaks.matchedFilter},
+\Rmethod{findPeaks.centWave}, and \Rmethod{findPeaks.centWaveWithPredictedIsotopeROIs} are available,
 \Rmethod{findPeaks.matchedFilter} is used by default.
 First, several of the most important parameters of
 \Rmethod{findPeaks.matchedFilter} will be discussed.
@@ -236,6 +236,10 @@ peaks. Some efforts are made to detect the exact peak boundaries to get
 precise peak integrals.  The peak attributes \Robject{sn}
 (Signal/Noise Ratio) and \Robject{egauss} (root-mean-square-error of
 the gaussian fit) can be used to assess the peak quality.
+
+\textbf{findPeaks.centWaveWithPredictedIsotopeROIs} \\
+The method \Rmethod{findPeaks.centWaveWithPredictedIsotopeROIs} performs two steps of peak picking.
+In the first peak picking step, the method \Rmethod{findPeaks.centWave} is used as described in the previous section. In the first peak picking step, the method \Rmethod{findPeaks.centWave} is used on basis of a set of predicted regions of interest (ROIs) which are specific for isotope peaks. This enables a more sensitive detection of isotope peaks.
 
 
 \section{Matching Peaks Across Samples}
