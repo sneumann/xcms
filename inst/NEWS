@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.49.6
+-------------------------
+
+USER VISIBLE CHANGES:
++ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs(),
+  which allows more sensitive feature detection within predicted ROIs.
+
+
 CHANGES IN VERSION 1.49.5
 -------------------------
 
