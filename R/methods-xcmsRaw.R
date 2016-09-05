@@ -160,7 +160,7 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
                    mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
-                   verbose.columns = FALSE, scanrange= numeric()) {
+                   scanrange= numeric()) {
 
     profFun <- match.profFun(object)
 
@@ -304,32 +304,49 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 
 ############################################################
 ## findPeaks.matchedFilter
-##' .. content for \description{} (no empty lines) ..
+##' @title Feature detection in the chromatographic time domain
 ##'
-##' .. content for \details{} ..
-##' @title
-##'
-##' @description
-##' @details
-##' @param object
-##' @param fwhm
-##' @param sigma
-##' @param max
-##' @param snthresh
-##' @param step
-##' @param steps
-##' @param mzdiff
-##' @param index
-##' @param sleep
-##' @param verbose.columns
-##' @param scanrange
-##' @return
-##' @author Johannes Rainer
+##' @aliases findPeaks.matchedFilter
+##' @description Find features (peaks) in the chromatographic time domain of the
+##' profile matrix. For more details see \code{\link{do_detectFeatures_matchedFilter}}.
+##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature detection
+##' should be performed.
+##' @inheritParams do_detectFeatures_matchedFilter
+##' @param step Numeric of length one specifying the width of the
+##' bins/slices in m/z dimension.
+##' @param sleep (DEFUNCT). This parameter is no longer functional, as it would cause
+##' problems in parallel processing mode.
+##' @param scanrange Numeric vector defining the range of scans to which the original
+##' \code{object} should be sub-setted before feature detection.
+##' @author Colin A. Smith
+##' @return A matrix, each row representing an intentified feature, with columns:
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{intf}{Integrated intensity of the filtered peak.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{maxf}{Maximum intensity of the filtered peak.}
+##' \item{i}{Rank of feature in merged EIC (\code{<= max}).}
+##' \item{sn}{Signal to noise ratio of the feature}
+##' }
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+##' @family feature detection methods
+##' @seealso \code{\linkS4class{xcmsRaw}}. \code{\link{do_detectFeatures_matchedFilter}}
+##' for the core function performing the feature detection.
 setMethod("findPeaks.matchedFilter", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
                    mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
-                   verbose.columns = FALSE, scanrange= numeric()) {
+                   scanrange= numeric()) {
 
               ## Sub-set the xcmsRaw baesd on scanrange
               scanrange.old <- scanrange
@@ -405,8 +422,8 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
                                                      snthresh = snthresh,
                                                      steps = steps,
                                                      mzdiff = mzdiff,
-                                                     index = index,
-                                                     verboseColumns = verbose.columns)
+                                                     index = index
+                                                     )
               invisible(new("xcmsPeaks", res))
 })
 

@@ -8,6 +8,21 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 test_do_detectFeatures_centWave <- function() {
     xr <- xcmsRaw(fs[1])
+    ## We expect that changing a parameter has an influence on the result.
+    mzVals <- xr@env$mz
+    intVals <- xr@env$intensity
+    ## Define the values per spectrum:
+    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+    res1 <- do_detectFeatures_centWave(mz = mzVals,
+                                       int = intVals,
+                                       scantime = xr@scantime,
+                                       valsPerSpect)
+    res2 <- do_detectFeatures_centWave(mz = mzVals,
+                                       int = intVals,
+                                       scantime = xr@scantime,
+                                       valsPerSpect,
+                                       snthresh = 100)
+    checkTrue(nrow(res1) > nrow(res2))
 }
 
 

@@ -82,7 +82,6 @@
 ##' (number of scans), \code{intensity} (summed intensity).
 ##'
 ##' @family core feature detection functions
-##'
 ##' @references
 ##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 ##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
@@ -601,8 +600,100 @@ do_detectFeatures_massifquant <- function() {
 ##     and all this stuff being done in a for loop.
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
-
-
+##
+##' @title Feature detection in the chromatographic time domain
+##'
+##' @description This function identifies features in the chromatographic
+##' time domain as described in [Smith 2006]. The intensity values are
+##' binned by cutting The LC/MS data into slices (bins) of a mass unit
+##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is
+##' selected. The feature detection is then performed in each bin by
+##' extending it based on the \code{steps} parameter to generate slices
+##' comprising bins \code{current_bin - steps +1} to \code{current_bin + steps - 1}.
+##' Each of these slices is then filtered with matched filtration using
+##' a second-derative Gaussian as the model feature/peak shape. After filtration
+##' features are detected using a signal-to-ration cut-off. For more details
+##' and illustrations see [Smith 2006].
+##'
+##' @details The intensities are binned by the provided m/z values within each
+##' spectrum (scan). Binning is performed such that the bins are centered around
+##' the m/z values (i.e. the first bin includes all m/z values between
+##' \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+##'
+##' For more details on binning and missing value imputation see
+##' \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+##'
+##' @note
+##' This function exposes core feature detection functionality of
+##' the \emph{matchedFilter} method. While this function can be called directly,
+##' users will generally call the corresponding method for the data object
+##' instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
+##'
+##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams imputeLinInterpol
+##' @param binSize Numeric of length one specifying the width of the
+##' bins/slices in m/z dimension.
+##' @param impute Character string specifying the method to be used for missing
+##' value imputation. Allowed values are \code{"none"} (no linear interpolation),
+##' \code{"lin"} (linear interpolation), \code{"linbase"} (linear interpolation
+##' within a certain bin-neighborhood) and \code{"intlin"}. See
+##' \code{\link{imputeLinInterpol}} for more details.
+##' @param fwhm Numeric of length one specifying the full width at half maximum
+##' of matched filtration gaussian model peak. Only used to calculate the actual
+##' sigma, see below.
+##' @param sigma Numeric of length one specifying the standard deviation (width)
+##' of the matched filtration model peak.
+##' @param max Numeric of length one representing the maximum number of peaks
+##' that are expected/will be identified per slice.
+##' @param snthresh Numeric of length one defining the signal to noise cutoff
+##' to be used in the feature detection step.
+##' @param steps Numeric of length one defining the number of bins to be
+##' merged before filtration (i.e. the number of neighboring bins that will be
+##' joined to the slice in which filtration and peak detection will be
+##' performed).
+##' @param mzdiff Numeric of length one defining the minimum difference
+##' in m/z for peaks with overlapping retention times
+##' @param index Logical specifying whether indicies should be returned instead
+##' of values for m/z and retention times.
+##' @return A matrix, each row representing an intentified feature, with columns:
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{intf}{Integrated intensity of the filtered peak.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{maxf}{Maximum intensity of the filtered peak.}
+##' \item{i}{Rank of feature in merged EIC (\code{<= max}).}
+##' \item{sn}{Signal to noise ratio of the feature}
+##' }
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+##' @author Colin A Smith, Johannes Rainer
+##' @family core feature detection functions
+##' @seealso \code{\link{binYonX}} for a binning function,
+##' \code{\link{imputeLinInterpol}} for the interpolation of missing values.
+##' @examples
+##' ## Load the test file
+##' library(faahKO)
+##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' xr <- xcmsRaw(fs)
+##'
+##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' mzVals <- xr@env$mz
+##' intVals <- xr@env$intensity
+##' ## Define the values per spectrum:
+##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+##'
+##' res <- do_detectFeatures_matchedFilter(mz = mzVals, int = intVals,
+##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
+##' head(res)
 do_detectFeatures_matchedFilter <- function(mz,
                                             int,
                                             scantime,
@@ -617,8 +708,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                             snthresh = 10,
                                             steps = 2,
                                             mzdiff = 0.8 - binSize * steps,
-                                            index = FALSE,
-                                            verboseColumns = FALSE){
+                                            index = FALSE
+                                            ){
     ## Use original code
     if (useOriginalCode()) {
         ## warning("Old xcms code was used; be aware that this code",
@@ -626,13 +717,13 @@ do_detectFeatures_matchedFilter <- function(mz,
         return(.matchedFilter_orig(mz, int, scantime, valsPerSpect,
                                    binSize, impute, baseValue, distance,
                                    fwhm, sigma, max, snthresh,
-                                   steps, mzdiff, index, verboseColumns))
+                                   steps, mzdiff, index))
     } else {
         return(.matchedFilter_binYonX_no_iter(mz, int, scantime, valsPerSpect,
                                               binSize, impute, baseValue,
                                               distance, fwhm, sigma, max,
-                                              snthresh, steps, mzdiff, index,
-                                              verboseColumns))
+                                              snthresh, steps, mzdiff, index
+                                              ))
     }
 }
 .matchedFilter_orig <- function(mz,
@@ -649,8 +740,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                 snthresh = 10,
                                 steps = 2,
                                 mzdiff = 0.8 - binSize * steps,
-                                index = FALSE,
-                                verboseColumns = FALSE){
+                                index = FALSE
+                                ){
     ## Map arguments to findPeaks.matchedFilter arguments.
     step <- binSize
     profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")
@@ -730,6 +821,7 @@ do_detectFeatures_matchedFilter <- function(mz,
         ysums <- colMax(ymat)
         yfilt <- filtfft(ysums, filt)
         gmax <- max(yfilt)
+        ## Just look for 'max' number of peaks within the bin/slice.
         for (j in seq(length = max)) {
             maxy <- which.max(yfilt)
             noise <- mean(ysums[ysums > 0])
@@ -814,8 +906,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                         snthresh = 10,
                                         steps = 2,
                                         mzdiff = 0.8 - binSize * steps,
-                                        index = FALSE,
-                                        verboseColumns = FALSE){
+                                        index = FALSE
+                                        ){
 
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -1033,8 +1125,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                    snthresh = 10,
                                    steps = 2,
                                    mzdiff = 0.8 - binSize * steps,
-                                   index = FALSE,
-                                   verboseColumns = FALSE){
+                                   index = FALSE
+                                   ){
     ## Map arguments to findPeaks.matchedFilter arguments.
     step <- binSize
     profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")
@@ -1192,8 +1284,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                            snthresh = 10,
                                            steps = 2,
                                            mzdiff = 0.8 - binSize * steps,
-                                           index = FALSE,
-                                           verboseColumns = FALSE){
+                                           index = FALSE
+                                           ){
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",

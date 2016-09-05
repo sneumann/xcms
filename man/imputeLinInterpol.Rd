@@ -30,8 +30,8 @@ A numeric vector with empty values imputed based on the selected
 }
 \description{
 This method resembles some of the functionality of the xcms
-profBinLin and profBinLinBase functions, more specifically, the missing
-value imputation based on linear interpolation.
+\code{\link{profBinLin}} and \code{\link{profBinLinBase}} functions, more
+specifically, the missing value imputation based on linear interpolation.
 }
 \details{
 Values for NAs in input vector \code{x} can be imputed using methods

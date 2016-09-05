@@ -9,6 +9,8 @@ NEW FEATURES:
 + New vignette "new_functionality.Rmd" describing new and modified functionality
   in xcms.
 + New vignette "benchmarking.Rmd" providing some benchmarking results.
++ Add do_detectFeatures_matchedFilter function.
++ Add do_detectFeatures_centWave function.
 + Add useOriginalCode function to enable switching between old and new code
   for findPeaks.matchedFilter (see issue #52).
 

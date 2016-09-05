@@ -250,8 +250,8 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
 ## imputeLinInterpol
 ##
 ##' @description This method resembles some of the functionality of the xcms
-##' profBinLin and profBinLinBase functions, more specifically, the missing
-##' value imputation based on linear interpolation.
+##' \code{\link{profBinLin}} and \code{\link{profBinLinBase}} functions, more
+##' specifically, the missing value imputation based on linear interpolation.
 ##'
 ##' @details Values for NAs in input vector \code{x} can be imputed using methods
 ##' \code{"lin"} and \code{"linbase"}:
@@ -384,6 +384,8 @@ imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L,
 ##' @return A numeric vector of length \code{nBins + 1} defining the lower and
 ##' upper bounds of the bins.
 ##' @author Johannes Rainer
+##' @family functions to define bins
+##' @seealso \code{\link{binYonX}} for a binning function.
 ##' @examples
 ##' ## Create breaks to bin values from 3 to 20 into 20 bins
 ##' breaks_on_nBins(3, 20, nBins = 20)
@@ -417,6 +419,8 @@ breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
 ##' @param binSize Numeric of length 1 defining the size of a bin.
 ##' @return A numeric vector defining the lower and upper bounds of the bins.
 ##' @author Johannes Rainer
+##' @family functions to define bins
+##' @seealso \code{\link{binYonX}} for a binning function.
 ##' @examples
 ##' ## Define breaks with a size of 0.13 for a data range from 1 to 10:
 ##' breaks_on_binSize(1, 10, 0.13)

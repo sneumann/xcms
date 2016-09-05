@@ -48,4 +48,9 @@ seq(1, 10, by = 0.51)
 \author{
 Johannes Rainer
 }
+\seealso{
+\code{\link{binYonX}} for a binning function.
+
+Other functions to define bins: \code{\link{breaks_on_nBins}}
+}
 

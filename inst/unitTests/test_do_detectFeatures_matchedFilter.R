@@ -11,6 +11,28 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 test_do_detectFeatures_matchedFilter <- function() {
     xr <- xcmsRaw(fs[1])
     ## We expect that changing a parameter has an influence on the result.
+    mzVals <- xr@env$mz
+    intVals <- xr@env$intensity
+    ## Define the values per spectrum:
+    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+    res1 <- do_detectFeatures_matchedFilter(mz = mzVals,
+                                            int = intVals,
+                                            scantime = xr@scantime,
+                                            valsPerSpect,
+                                            binSize = 1)
+    res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
+                                            int = intVals,
+                                            scantime = xr@scantime,
+                                            valsPerSpect,
+                                            binSize = 1,
+                                            snthresh = 100)
+    checkTrue(nrow(res1) > nrow(res2))
+    res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
+                                            int = intVals,
+                                            scantime = xr@scantime,
+                                            valsPerSpect,
+                                            binSize = 2)
+    checkTrue(nrow(res1) > nrow(res2))
 }
 
 ## ## Test that the original and the version calling do_ get the
@@ -109,7 +131,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
         steps <- 2
         mzdiff <- 0.8 - step * steps
         index <- FALSE
-        verbose.columns <- FALSE
 
         ## bin
         res <- .compare_em(xr, mz = mz, int = int, scantime = scantime,
@@ -117,7 +138,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns)    # OK
+                           index = index)    # OK
         steps <- 4
         mzdiff <- 0.8 - step * steps
         res <- .compare_em(xr, mz = mz, int = int, scantime = scantime,
@@ -125,7 +146,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns)    # OK
+                           index = index)    # OK
         steps <- 5
         mzdiff <- 0.8 - step * steps
         res <- .compare_em(xr, mz = mz, int = int, scantime = scantime,
@@ -133,7 +154,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns)    # OK
+                           index = index)    # OK
         ## THIS WILL FAIL!!! REASONE: rounding error in bin definition.
         step <- 0.2
         steps <- 2
@@ -143,7 +164,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns,
+                           index = index,
                            stopOnError = FALSE)    # FAIL
         step <- 0.1999
         steps <- 2
@@ -153,21 +174,21 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns)    # OK
+                           index = index)    # OK
         snthresh <- 4
         res <- .compare_em(xr, mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect, impute = impute,
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step,
                            steps = steps, mzdiff = mzdiff,
-                           index = index, verbose.columns)    # OK
+                           index = index)    # OK
         fwhm <- 15
         sigma <- fwhm / 2.3548
         res <- .compare_em(xr, mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect, impute = impute,
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
-                           mzdiff = mzdiff, index = index, verbose.columns)    # OK
+                           mzdiff = mzdiff, index = index)    # OK
 
         ## ######
         ## binLin EXPECT DIFFERENCES HERE:
@@ -184,14 +205,12 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
         steps <- 2
         mzdiff <- 0.8 - step * steps
         index <- FALSE
-        verbose.columns <- FALSE
 
         res <- .compare_em(xr = xr, mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect, impute = impute,
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)
         ## Differences: B != orig, C != orig, C != orig, B != C, B != D, C != D
         ## But results are comparable.
@@ -202,7 +221,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)
         ## Differences: B != orig, C != orig, C != orig, B != C, B != D, C != D
         step <- 0.1
@@ -213,7 +231,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)
         ## Differences: B != orig, C != orig, C != orig, B != C, B != D
         fwhm <- 15
@@ -224,7 +241,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)
         step <- 10 ## Smaller step (0.01 etc) results in larger differences
         fwhm <- 30
@@ -235,7 +251,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)
 
         ## ######
@@ -251,14 +266,12 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
         steps <- 2
         mzdiff <- 0.8 - step * steps
         index <- FALSE
-        verbose.columns <- FALSE
 
         res <- .compare_em(xr = xr, mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect, impute = impute,
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = TRUE)  # OK; but there was no interpolation
         ## Changing baseValue.
         baseV <- 233
@@ -268,7 +281,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = TRUE)  ## OK; but also no interpolation
         ## Changing distance:
         distance <- 1L
@@ -278,7 +290,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)  ## A vs orig and C vs D OK
         ## and not passing baseVal
         res <- .compare_em(xr = xr, mz = mz, int = int, scantime = scantime,
@@ -287,7 +298,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)  ## A vs orig and C vs D OK
         distance <- 5L
         ## and not passing baseVal
@@ -297,7 +307,6 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                            fwhm = fwhm, sigma = sigma, max = max,
                            snthresh = snthresh, binSize = step, steps = steps,
                            mzdiff = mzdiff, index = index,
-                           verbose.columns = verbose.columns,
                            stopOnError = FALSE)  ## A vs orig and C vs D OK
     }
 }
@@ -305,7 +314,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
 
 .compare_em <- function(xr, mz, int, scantime, valsPerSpect, impute, baseValue,
                         distance, fwhm, sigma, max, snthresh, binSize, steps, mzdiff,
-                        index, verbose.columns, stopOnError = TRUE) {
+                        index, stopOnError = TRUE) {
     if (impute == "none") {
         profMethod(xr) <- "bin"
     }
@@ -339,8 +348,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                                 step = binSize,
                                                 steps = steps,
                                                 mzdiff = mzdiff,
-                                                index = index,
-                                                verbose.columns = verbose.columns)@.Data
+                                                index = index)@.Data
 
     ## A
     A <- xcms:::.matchedFilter_orig(mz = mz, int = int,
@@ -356,8 +364,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                     snthresh = snthresh,
                                     steps = steps,
                                     mzdiff = mzdiff,
-                                    index = index,
-                                    verboseColumns = verbose.columns)
+                                    index = index)
     res <- all.equal(orig, A)
     if (is.character(res)) {
         msg <- paste0("A vs original FAILED! ", res, "\n")
@@ -383,8 +390,8 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                             snthresh = snthresh,
                                             steps = steps,
                                             mzdiff = mzdiff,
-                                            index = index,
-                                            verboseColumns = verbose.columns)
+                                            index = index
+                                            )
     res <- all.equal(orig, B)
     if (is.character(res)) {
         msg <- paste0("B vs original FAILED! ", res, "\n")
@@ -409,8 +416,8 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                        snthresh = snthresh,
                                        steps = steps,
                                        mzdiff = mzdiff,
-                                       index = index,
-                                       verboseColumns = verbose.columns)
+                                       index = index
+                                       )
     res <- all.equal(orig, C)
     if (is.character(res)) {
         msg <- paste0("C vs original FAILED! ", res, "\n")
@@ -436,8 +443,8 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
                                                snthresh = snthresh,
                                                steps = steps,
                                                mzdiff = mzdiff,
-                                               index = index,
-                                               verboseColumns = verbose.columns)
+                                               index = index
+                                               )
     res <- all.equal(orig, D)
     if (is.character(res)) {
         msg <- paste0("D vs original FAILED! ", res, "\n")
@@ -547,4 +554,64 @@ notrun_odd_matchedFilter_behaviour <- function() {
     ## Check what we've got:
     checkEquals(res_with_inter, res_stable)
     checkTrue(nrow(res_no_inter) > nrow(res_with_inter))
+}
+
+############################################################
+## Check what happens with the max parameter if we provide a file with
+## presumably large number of peaks.
+dontrun_check_matchedFilter_max_param <- function() {
+
+    f <- "/Volumes/Ext64/data/2016/2016-06/PILOT_POS/140616_POOL_IntraP_PE_POS_2.mzML"
+    xr <- xcmsRaw(f, step = 0)
+
+    res1 <- xcms:::.matchedFilter_orig(mz = xr@env$mz,
+                                       int = xr@env$intensity,
+                                       scantime = xr@scantime,
+                                       valsPerSpect = diff(c(xr@scanindex,
+                                                             length(xr@env$mz))),
+                                       binSize = 0.1,
+                                       max = 5)
+    res2 <- xcms:::.matchedFilter_binYonX_no_iter(mz = xr@env$mz,
+                                                  int = xr@env$intensity,
+                                                  scantime = xr@scantime,
+                                                  valsPerSpect = diff(c(xr@scanindex,
+                                                                        length(xr@env$mz))),
+                                                  binSize = 0.1,
+                                                  max = 5)
+    checkEquals(res1, res2)
+    ## max 20
+    res1 <- xcms:::.matchedFilter_orig(mz = xr@env$mz,
+                                       int = xr@env$intensity,
+                                       scantime = xr@scantime,
+                                       valsPerSpect = diff(c(xr@scanindex,
+                                                             length(xr@env$mz))),
+                                       binSize = 0.2,
+                                       max = 20)
+    res2 <- xcms:::.matchedFilter_binYonX_no_iter(mz = xr@env$mz,
+                                                  int = xr@env$intensity,
+                                                  scantime = xr@scantime,
+                                                  valsPerSpect = diff(c(xr@scanindex,
+                                                                        length(xr@env$mz))),
+                                                  binSize = 0.2,
+                                                  max = 20)
+    checkEquals(res1, res2)
+    ## Just a performance comparison:
+    library(microbenchmark)
+    microbenchmark(xcms:::.matchedFilter_orig(mz = xr@env$mz,
+                                              int = xr@env$intensity,
+                                              scantime = xr@scantime,
+                                              valsPerSpect = diff(c(xr@scanindex,
+                                                                    length(xr@env$mz))),
+                                              binSize = 0.1,
+                                              max = 5),
+                   xcms:::.matchedFilter_binYonX_no_iter(mz = xr@env$mz,
+                                                         int = xr@env$intensity,
+                                                         scantime = xr@scantime,
+                                                         valsPerSpect = diff(c(xr@scanindex,
+                                                                               length(xr@env$mz))),
+                                                         binSize = 0.1,
+                                                         max = 5),
+                   times = 10
+                   )
+    ## Result: original code: 18.8 sec, mine: 5.2 secs.
 }
