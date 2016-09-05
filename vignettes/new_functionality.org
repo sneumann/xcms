@@ -13,7 +13,8 @@
 title: "New and modified functionality in xcms"
 graphics: yes
 output:
-  BiocStyle::html_document2
+  BiocStyle::html_document2:
+    toc: false
 vignette: >
   %\VignetteIndexEntry{New and modified functionality in xcms}
   %\VignetteEngine{knitr::rmarkdown}
@@ -21,6 +22,14 @@ vignette: >
   %\VignetteDepends{xcms,RColorBrewer}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
+bibliography: references.bib
+csl: biomed-central.csl
+references:
+- id: dummy
+  title: no title
+  author:
+  - family: noname
+    given: noname
 ---
 
 ```{r style, echo = FALSE, results = 'asis', message=FALSE}
@@ -32,7 +41,7 @@ BiocStyle::markdown()
 #+BEGIN_html
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 24 August, 2016<br />
+**Modified**: 5 September, 2016<br />
 **Compiled**: `r date()`
 #+END_html
 
@@ -128,6 +137,24 @@ the latter only performs the linear interpolation in a pre-defined neighborhood
 of the bin with the missing value (=1= by default). The other missing values are
 set to a base value corresponding to half of the smallest bin value. Both
 methods thus yield same results, except for bins 15-17 (see Figure above).
+
+
+** Core feature detection functions
+
+The core logic from the feature detection methods =findPeaks.centWave=,
+=findPeaks.massifquant=, =findPeaks.matchedFilter= has been extracted and put into
+functions with the common prefix =do_detectFeatures= with the aim, as detailed in
+issue [[https://github.com/sneumann/xcms/issues/30][#30]], to separate the core logic from the analysis methods invoked by the
+users to enable also the use of the feature detection functions using base R
+parameters (i.e. without specific classes containing the data such as the
+=xcmsRaw= class). This simplifies also the re-use of these functions in other
+packages. The implemented functions are:
+
++ =do_detectFeatures_centWave=: peak density and wavelet based feature detection
+  for high resolution LC/MS data in centroid mode \cite{Tautenhahn:2008fx}.
++ =do_detectFeatures_matchedFilter=: identification of features in the
+  chromatographic domain based on matched filtration \cite{Smith:2006ic}.
+
 
 * Changes due to bug fixes and modified functionality
 
@@ -361,3 +388,5 @@ reliable (and presumably correct) results. Given also that the =binYonX= in
 combination with =imputeLinInterpol= identify similar peaks than the non-iterative
 approaches using the original code, we can change the code to use these former
 methods as default.
+
+* References
