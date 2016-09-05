@@ -389,4 +389,58 @@ combination with =imputeLinInterpol= identify similar peaks than the non-iterati
 approaches using the original code, we can change the code to use these former
 methods as default.
 
+
+* Introducing =DRanges=.						   :noexport:
+
+The idea is to use all of the =IRanges= functionality, but for any =numeric=
+ranges. Examples for such ranges could be the m/z range of a feature, or the
+retention time range defining a feature.
+
+The idea is pretty simple, the =DRanges= (/D/ standing for /double/, alternatively /N/
+for /numeric/) extends the =IRanges=, the =start= and =end= of the =IRanges= are
+calculated by multiplying the start and end defining the numeric range by =10^d=
+with =d= being the number of decimal places.
+
+First thing is to get the number of decimal places: using code from a pretty old
+post on stackoverflow
+(http://stackoverflow.com/questions/5173692/how-to-return-number-of-decimal-places-in-r):
+
+
+#+BEGIN_SRC R
+  decimalplaces <- function(x) {
+      if ((x %% 1) != 0) {
+          nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
+      } else {
+          return(0)
+      }
+  }
+
+  num.decimals <- function(x) {
+      stopifnot(class(x)=="numeric")
+      x <- sub("0+$","",x)
+      x <- sub("^.+[.]","",x)
+      nchar(x)
+  }
+
+
+#+END_SRC
+
+The former is actually faster.
+
+Eventually even =C=?
+http://stackoverflow.com/questions/1083304/c-c-counting-the-number-of-decimals
+
+#+BEGIN_EXAMPLE
+  string number = "543.014";
+  size_t dotFound;
+  stoi(number, &dotFound));
+  string(number).substr(dotFound).size()
+#+END_EXAMPLE
+
+Be aware that =number= MUST be a float/double!
+
+alternatively:
+http://stackoverflow.com/questions/9843999/calculate-number-of-decimal-places-for-a-float-value-without-libraries.
+
+
 * References

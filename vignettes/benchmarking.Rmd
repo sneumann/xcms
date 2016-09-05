@@ -96,7 +96,34 @@ The original `findPeaks.*` methods will be in the long run replaced with the
 part identical to the old methods, but it has been cleaned and, where possible,
 tuned to increase performance.
 
+Below we load the test data set and compare the performance of different
+`matchedFilter` implementations: using the original code and using the `binYonX`
+function that bins the full data matrix once (instead of the iterative binning
+of small data chunks that is performed in the original code).
 
+```{r matchedFilter}
+## Load the test data set.
+library(faahKO)
+fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+xr <- xcmsRaw(fs)
+## Extracting the data from the xcmsRaw
+mzVals <- xr@env$mz
+intVals <- xr@env$intensity
+## Define the values per spectrum:
+valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+
+microbenchmark(xcms:::.matchedFilter_orig(mzVals, intVals, xr@scantime,
+                                          valsPerSpect, binSize = 2),
+               xcms:::.matchedFilter_binYonX_no_iter(mzVals, intVals,
+                                                     xr@scantime,
+                                                     valsPerSpect,
+                                                     binSize = 2),
+               times = 4)
+
+```
+
+Note: on another test file containing 1721 scans/spectra the new implementation
+outperformed the original code by a factor of 4.
 
 ```{r sessioninfo}
 sessionInfo()
