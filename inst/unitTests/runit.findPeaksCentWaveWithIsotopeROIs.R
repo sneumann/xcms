@@ -19,7 +19,7 @@ test.findPeaksCentWaveWithIsotopeROIs <- function() {
       addROIsParams = addROIsParams
     )
     
-    checkTrue(nrow(p1)>nrow(p2))
+    checkTrue(nrow(p1)<nrow(p2))
     
 }
 
