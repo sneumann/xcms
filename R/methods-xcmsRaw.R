@@ -706,6 +706,11 @@ setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw", function(obje
         intensity = xcmsPeaks[[peakIdx, "intb"]],## XXX not used!
         scale     = xcmsPeaks[[peakIdx, "scale"]]## XXX not used!
       )
+      
+      if(abs(xcmsPeaks[[peakIdx, "mzmax"]] - xcmsPeaks[[peakIdx, "mzmin"]]) < xcmsPeaks[[peakIdx, "mz"]] * ppm / 1E6){
+        presentROIs.list[[peakIdx]]$mzmin <- xcmsPeaks[[peakIdx, "mz"]] - xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
+        presentROIs.list[[peakIdx]]$mzmax <- xcmsPeaks[[peakIdx, "mz"]] + xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
+      }
     }
     
     ## fetch predicted ROIs
@@ -837,8 +842,10 @@ removeROIsOutOfRange <- function(object, roi.matrix){
   
   minMz <- min(object@env$mz)
   maxMz <- max(object@env$mz)
-  minScanRange <- min(object@scantime)
-  maxScanRange <- max(object@scantime)
+  minScanRange <- 1
+  maxScanRange <- length(object@scantime)
+  #minScanRange <- min(object@scantime)
+  #maxScanRange <- max(object@scantime)
   
   roiWithinRange <- rep(x = TRUE, times = numberOfROIs)
   roiWithinRange <- roiWithinRange & (roi.matrix[, "mzmin"] >= minMz)
