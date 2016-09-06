@@ -1,18 +1,9 @@
-CHANGES IN VERSION 1.49.X
+CHANGES IN VERSION 1.49.6
 -------------------------
 
-NEW FEATURES:
-+ binYonX binning function.
-+ imputeLinInterpol function providing linear interpolation of missing values.
-+ breaks_on_binSize and breaks_on_nBins functions to calculate breaks defining
-  bins.
-+ New vignette "new_functionality.Rmd" describing new and modified functionality
-  in xcms.
-+ New vignette "benchmarking.Rmd" providing some benchmarking results.
-+ Add do_detectFeatures_matchedFilter function.
-+ Add do_detectFeatures_centWave function.
-+ Add useOriginalCode function to enable switching between old and new code
-  for findPeaks.matchedFilter (see issue #52).
+USER VISIBLE CHANGES:
++ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs(),
+  which allows more sensitive feature detection within predicted ROIs.
 
 
 CHANGES IN VERSION 1.49.5
