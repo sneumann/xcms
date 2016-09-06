@@ -1,32 +1,31 @@
-\name{findPeaks.centWave-methods}
+\name{findPeaks.addPredictedIsotopeFeatures-methods}
 \docType{methods}
-\alias{findPeaks.centWave}
-\alias{findPeaks.centWave,xcmsRaw-method}
-\title{Feature detection for high resolution LC/MS data}
+\alias{findPeaks.addPredictedIsotopeFeatures}
+\alias{findPeaks.addPredictedIsotopeFeatures,xcmsRaw-method}
+\title{Feature detection based on predicted isotope features for high resolution LC/MS data}
 \description{
-  Peak density and wavelet based feature detection for high resolution LC/MS data in centroid mode
+  Peak density and wavelet based feature detection aiming at isotope peaks for high resolution LC/MS data in centroid mode
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), 
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list()),
-    firstBaselineCheck=TRUE, roiScales=NULL
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, xcmsPeaks, snthresh=10, addROIsParams = list("setNewROIs" = FALSE))
   }
 }
 }}
 \details{
-  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase of the method mass traces (characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
+  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase of the method isotope ROIs (regions of interest) in the LC/MS map are predicted.
   In the second phase these mass traces are further analysed.
   Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales.
+  The resulting peak list and the given peak list (\code{xcmsPeaks}) are merged and redundant peaks are removed.
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
   \item{ppm}{maxmial tolerated m/z deviation in consecutive scans, in ppm (parts per million)}
   \item{peakwidth}{Chromatographic peak width, given as range (min,max) in seconds}
-  \item{snthresh}{signal to noise ratio cutoff, definition see below.}
   \item{prefilter}{\code{prefilter=c(k,I)}. Prefilter step for the first phase. Mass traces are only retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
   \item{mzCenterFun}{Function to calculate the m/z center of the feature: \code{wMean} intensity weighted mean of the feature m/z values, \code{mean} mean of the feature m/z values, \code{apex} use m/z value at peak apex,
         \code{wMeanApex3} intensity weighted mean of the m/z value at peak apex and the m/z value left and right of it, \code{meanApex3} mean of the m/z value at peak apex and the m/z value left and right of it.
@@ -50,22 +49,11 @@
   \item{verbose.columns}{
     logical, if TRUE additional peak meta data columns are returned
   }
-  \item{ROI.list}{
-    A optional list of ROIs that represents detected mass traces (ROIs).  If this list is empty (default) then centWave detects the mass trace ROIs,
-    otherwise this step is skipped and the supplied ROIs are used in the peak detection phase.  Each ROI object in the list has the following slots:
-    \code{scmin} start scan index,
-    \code{scmax} end scan index,
-    \code{mzmin} minimum m/z,
-    \code{mzmax} maximum m/z,
-    \code{length} number of scans,
-    \code{intensity} summed intensity.
-  }
-  \item{firstBaselineCheck}{
-    logical, if TRUE continuous data within ROI is checked to be above 1st baseline
-  }
-  \item{roiScales}{
-    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets 
-  }
+  \item{xcmsPeaks}{peak list picked using the \code{centWave} algorithm with parameter \code{verbose.columns} set to TRUE (columns \code{scmin} and \code{scmax} needed)}
+  \item{snthresh}{signal to noise ratio cutoff, definition see below.}
+  \item{maxcharge}{max. number of the isotope charge.}
+  \item{maxiso}{max. number of the isotope peaks to predict for each detected feature.}
+  \item{mzIntervalExtension}{logical, if TRUE predicted isotope ROIs (regions of interest) are extended in the m/z dimension to increase the detection of low intensity and hence noisy peaks.}
 }
 \value{
   A matrix with columns:
@@ -122,9 +110,13 @@
 \references{
   Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
-  BMC Bioinformatics 2008, 9:504
+  BMC Bioinformatics 2008, 9:504\\
+  Hendrik Treutler and Steffen Neumann. 
+  "Prediction, detection, and validation of isotope clusters in mass spectrometry data"
+  Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }
 \seealso{
+  \code{\link{findPeaks.centWave-methods}}
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
 }

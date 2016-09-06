@@ -85,6 +85,7 @@ exportMethods(
               "fillPeaks.MSW",
               "fillPeaks.chrom",
               "findPeaks.centWave",
+              "findPeaks.addPredictedIsotopeFeatures",
               "findPeaks.centWaveWithPredictedIsotopeROIs",
               "findPeaks.massifquant",
               "findPeaks.matchedFilter",
