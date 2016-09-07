@@ -8,8 +8,16 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
-    object@filepath <- xcmsSource(filename)
-    rawdata <- loadRaw(object@filepath, includeMSn)
+
+    ## Change between old and new code; new code uses the "newer" mzR approach
+    ## to read the file.
+    if (useOriginalCode()) {
+        object@filepath <- xcmsSource(filename)
+        rawdata <- loadRaw(object@filepath, includeMSn)
+    } else {
+        object@filepath <- new("xcmsFileSource", filename)
+        rawdata <- readRawData(filename, includeMSn = includeMSn)
+    }
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))

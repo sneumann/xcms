@@ -443,4 +443,18 @@ alternatively:
 http://stackoverflow.com/questions/9843999/calculate-number-of-decimal-places-for-a-float-value-without-libraries.
 
 
+* Internal changes						   :noexport:
+
+** Changing the way how data is imported
+
+Random errors happen when processing a large number of files with =xcms=. This
+might indicate some memory problems, eventually related to the =mzR= package
+(similar to the ones spotted in =MSnbase=).
+
+What I want to test:
++ [X] Does =mzR::openMSFile= work also for /netCDF/? No. we would have to check for
+  the file type and specify the =backend= based on that.
++ [ ] What about writing a new importer that does not need all the objects and
+  the presumably old code in =mzR=?
+
 * References

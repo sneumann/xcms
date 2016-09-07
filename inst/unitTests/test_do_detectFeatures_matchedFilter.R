@@ -106,7 +106,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
     cat(paste0("- C: .matchedFilter_no_iter: original code but without",
                " iterative buffering."))
     cat(paste0("- D: .matchedFilter_binYonX_no_iter: new code without",
-               " iterative buffering."))
+               " iterative buffering.\n\n"))
 
     for (i in 1:length(fs)) {
         cat("============================================================\n")

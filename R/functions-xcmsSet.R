@@ -17,9 +17,12 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
 
     ## initialise progress information
     xcms.options <- getOption("BioC")$xcms
-    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."), paste("findPeaks", xcms.options$findPeaks.methods,sep="."),
-                      paste("retcor", xcms.options$retcor.methods,sep="."), paste("fillPeaks", xcms.options$fillPeaks.methods,sep="."))
-    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",sep="",collapse=","),")") ))
+    xcms.methods <- c(paste("group", xcms.options$group.methods,sep="."),
+                      paste("findPeaks", xcms.options$findPeaks.methods,sep="."),
+                      paste("retcor", xcms.options$retcor.methods,sep="."),
+                      paste("fillPeaks", xcms.options$fillPeaks.methods,sep="."))
+    eval(parse(text=paste("object@progressInfo <- list(",paste(xcms.methods,"=0",
+                                                               sep="",collapse=","),")") ))
 
     if (is.function(progressCallback))
         object@progressCallback <- progressCallback

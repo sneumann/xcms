@@ -16,8 +16,10 @@ findPeaksPar <- function(arg) {
     method <- paste("findPeaks", method, sep=".")
 
     ## What about using the getXcmsRaw call here???
-    xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod, profparam=params$profparam, profstep = 0,
-                    includeMSn=params$includeMSn, mslevel=params$mslevel, scanrange=params$scanrange)
+    xRaw <- xcmsRaw(arg$file, profmethod=params$profmethod,
+                    profparam=params$profparam, profstep = 0,
+                    includeMSn=params$includeMSn, mslevel=params$mslevel,
+                    scanrange=params$scanrange)
     if(params$lockMassFreq == TRUE){
         xRaw<-stitch(xRaw, AutoLockMass(xRaw))
     }
