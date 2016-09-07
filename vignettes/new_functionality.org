@@ -454,7 +454,24 @@ might indicate some memory problems, eventually related to the =mzR= package
 What I want to test:
 + [X] Does =mzR::openMSFile= work also for /netCDF/? No. we would have to check for
   the file type and specify the =backend= based on that.
-+ [ ] What about writing a new importer that does not need all the objects and
-  the presumably old code in =mzR=?
++ [X] What about writing a new importer that does not need all the objects and
+  the presumably old code in =mzR=? -> =readRawData=.
+
+** Functions and methods to be deprecated and removed.
+
++ [ ] =xcmsSource= method: not needed anymore, reading is done by =readRawData=.
++ [ ] =loadRaw=, =initialize= for =netCdfSource= and =rampSource=: replaced by
+  =readRawData=.
++ [ ] =netCdfSource= and =rampSource= S4 classes: not needed anymore, reading is
+  done by =readRawData=.
+
+** Unneeded /R/ files
+
++ [ ] /netCDF.R/.
++ [ ] /ramp.R/.
+
+*** Unit tests to be removed
+
++ [ ] /runit.ramp.R/.
 
 * References

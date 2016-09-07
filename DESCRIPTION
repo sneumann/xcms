@@ -57,6 +57,7 @@ Collate:
     'do_detectFeatures-functions.R'
     'fastMatch.R'
     'functions-utils.R'
+    'functions-IO.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'

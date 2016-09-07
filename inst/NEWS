@@ -16,6 +16,7 @@ NEW FEATURES:
 + Add useOriginalCode function to enable switching between old and new code
   for findPeaks.matchedFilter (see issue #52).
 
+
 CHANGES IN VERSION 1.49.5
 -------------------------
 
