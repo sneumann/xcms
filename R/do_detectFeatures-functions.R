@@ -4,6 +4,8 @@
 ############################################################
 ## centWave
 ##
+## TODO @jo update this method with the new one in methods-xcmsRaw!
+##
 ## Some notes on a potential speed up:
 ## Tried:
 ## o initialize peaks matrix in the inner loop instead of rbind: slower.
@@ -595,10 +597,10 @@ do_detectFeatures_massifquant <- function() {
 ##  method for a future xcms API.
 ##  mz is a numeric vector with all m/z values.
 ##  int is a numeric vector with the intensities.
-##  valsPerSpect: is an integer vector with the number of values per spectrum. This will
-##     be converted to what xcms calls the scanindex.
-##  TODO: in the long run it would be better to avoid buffer creation, extending, filling
-##     and all this stuff being done in a for loop.
+##  valsPerSpect: is an integer vector with the number of values per spectrum.
+##  This will be converted to what xcms calls the scanindex.
+##  TODO: in the long run it would be better to avoid buffer creation, extending,
+##  filling and all this stuff being done in a for loop.
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
 ##
@@ -1453,6 +1455,39 @@ do_detectFeatures_matchedFilter <- function(mz,
 ############################################################
 ## MSW
 ##
+##' @title Feature detection for single-spectrum non-chromatography MS data
+##'
+##' @description This function performs feature detection in mass spectrometry
+##' direct injection spectrum using a wavelet based algorithm.
+##'
+##' @details This is a wrapper around the peak picker in Bioconductor's
+##' \code{MassSpecWavelet} package calling
+##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+##' \code{\link[MassSpecWavelet]{tuneIn.peakInfo}} functions.
+##'
+##' @inheritParams do_detectFeatures_centWave
+##' @param ... Additional parameters to be passed to the
+##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
+##'
+##' @return
+##' A matrix, each row representing an intentified feature, with columns:
+##' \describe{
+##' \item{mz}{m/z value of the feature at the centroid position.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Always \code{-1}.}
+##' \item{rtmin}{Always \code{-1}.}
+##' \item{rtmax}{Always \code{-1}.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{intf}{Always \code{NA}.}
+##' \item{maxf}{Maximum MSW-filter response of the feature.}
+##' \item{sn}{Signal to noise ratio.}
+##' }
+##'
+##' @family core feature detection functions
+##' @seealso \code{\link[MassSpecWavelet]{peakDetectionCWT}}.
+##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
                                   verboseColumns = FALSE, ...) {
     ## Input argument checking.
@@ -1467,6 +1502,8 @@ do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
     .MSW_orig(int = int, mz = mz, snthresh = snthresh,
               verboseColumns = verboseColumns, ...)
 }
+############################################################
+## The original code
 .MSW_orig <- function(int, mz, snthresh = 3, verboseColumns = FALSE, ...) {
 
     ## MassSpecWavelet Calls
@@ -1528,11 +1565,79 @@ do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
     cat('\n')
 
     ## Filter additional (verbose) columns
-    if (!verbose.columns)
+    if (!verboseColumns)
         peaklist <- peaklist[,basenames,drop=FALSE]
 
-    invisible(new("xcmsPeaks", peaklist))
+    peaklist
 }
+############################################################
+## Slightly modified and tuned original code
+.MSW <- function(int, mz, snthresh = 3, verboseColumns = FALSE, ...) {
+
+    ## MassSpecWavelet Calls
+    peakInfo <- peakDetectionCWT(int, SNR.Th = snthresh, ...)
+    majorPeakInfo <- peakInfo$majorPeakInfo
+
+    sumIntos <- function(into, inpos, scale){
+        scale = floor(scale)
+        sum(into[(inpos-scale):(inpos+scale)])
+    }
+    maxIntos <- function(into, inpos, scale){
+        scale = floor(scale)
+        max(into[(inpos-scale):(inpos+scale)])
+    }
+    betterPeakInfo <- tuneInPeakInfo(int,
+                                     majorPeakInfo)
+    peakIndex <- betterPeakInfo$peakIndex
+    nPeaks <- length(peakIndex)
+
+    ## sum and max of raw values, sum and max of filter-response
+    rints <- numeric(nPeaks)
+    fints <- NA
+    maxRints <- numeric(nPeaks)
+    maxFints <- NA
+
+    for (a in 1:nPeaks) {
+        rints[a] <- sumIntos(int, peakIndex[a],
+                             betterPeakInfo$peakScale[a])
+        maxRints[a] <- maxIntos(int, peakIndex[a],
+                                betterPeakInfo$peakScale[a])
+    }
+    ## filter-response is not summed here, the maxF-value is the one
+    ## which was "xcmsRaw$into" earlier
+
+    ## Assemble result
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+                   "into","maxo","sn","intf","maxf")
+
+    peaklist <- matrix(-1, nrow = nPeaks, ncol = length(basenames))
+    colnames(peaklist) <- c(basenames)
+
+    peaklist[,"mz"] <- mz[peakIndex]
+    peaklist[,"mzmin"] <- mz[(peakIndex - betterPeakInfo$peakScale)]
+    peaklist[,"mzmax"] <- mz[(peakIndex + betterPeakInfo$peakScale)]
+
+    ## peaklist[,"rt"]    <- rep(-1, length(peakIndex))
+    ## peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
+    ## peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
+
+    peaklist[,"into"] <- rints ## sum of raw-intensities
+    peaklist[,"maxo"] <- maxRints
+    peaklist[,"intf"] <- rep(NA, nPeaks)
+    peaklist[,"maxf"] <- betterPeakInfo$peakValue
+
+    peaklist[,"sn"]   <- betterPeakInfo$peakSNR
+
+    cat('\n')
+
+    ## Filter additional (verbose) columns
+    if (!verboseColumns)
+        peaklist <- peaklist[,basenames,drop=FALSE]
+
+    peaklist
+}
+
+
 
 ############################################################
 ## MS1

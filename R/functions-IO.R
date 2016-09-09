@@ -38,6 +38,7 @@ isMzMLFile <- function(x) {
 ## returns list with rt, tic, scanindex, mz and intensity
 readRawData <- function(x, includeMSn = FALSE) {
     def_backend <- "Ramp"  ## Eventually use pwiz...
+    message("Using ", def_backend, " backend to read the raw data.")
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
     if (isCdfFile(x)) {
         backend <- "netCDF"

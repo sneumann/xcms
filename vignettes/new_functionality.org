@@ -190,7 +190,7 @@ The example below illustrates both differences.
   resM
 #+END_SRC
 
-Plotting the results helps to better evaluate the differences. The black points
+Plotting the results helps to better compare the differences. The black points
 in the figure below represent the actual values of =Y= and the grey vertical lines
 the breaks defining the bins. The blue lines and points represent the result
 from the =profBinLin= method. The bin values for the first and 4th bin are clearly
@@ -298,6 +298,7 @@ is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1
 
 This is now also nicely documented in issue [[https://github.com/sneumann/xcms/issues/52][#52]].
 
+
 ** Implementation and comparison for =matchedFilter=		   :noexport:
 
 These results base on the test =dontrun_test_do_detectFeatures_matchedFilter_impl=
@@ -391,6 +392,26 @@ methods as default.
 
 
 * Introducing =DRanges=.						   :noexport:
+
+*Note*: the code for this is in the =dranges= branch. The last status/problem is
+that it is not quite clear how to determine the /correct/ number of decimal
+places: =as.character= uses =options()$scipen= to determine how many decimal places
+are represented, =sprintf= allows much more decimal places, e.g. with =%.30f=, but
+these become unstable and random. The /best/ solution for now would be to limit to
+a certain number of /secure/ decimal places (16?) and specify this as global
+option that might be changed later. Check also =.Machine= for details on
+precision, max integer etc. Note also that we are pretty much limited by the
+largest =integer= that can be represented.
+
+The =multiplier= thus has definitely be smaller than:
+#+BEGIN_SRC R
+  maxPos <- nchar(as.character(.Machine$integer.max))
+  maxMult <- 10^maxPos
+
+#+END_SRC
+
+Note that we would actually just have to check that the to-be-transformed
+integers don't get too large; thus we could allow more decimal places.
 
 The idea is to use all of the =IRanges= functionality, but for any =numeric=
 ranges. Examples for such ranges could be the m/z range of a feature, or the

@@ -137,6 +137,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \code{\link{binYonX}} for a binning function,
 \code{\link{imputeLinInterpol}} for the interpolation of missing values.
 
-Other core feature detection functions: \code{\link{do_detectFeatures_centWave}}
+Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
+  \code{\link{do_detectFeatures_centWave}}
 }
 

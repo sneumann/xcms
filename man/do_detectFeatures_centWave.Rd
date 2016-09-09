@@ -147,6 +147,7 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 2008, 9:504
 }
 \seealso{
-Other core feature detection functions: \code{\link{do_detectFeatures_matchedFilter}}
+Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
+  \code{\link{do_detectFeatures_matchedFilter}}
 }
 

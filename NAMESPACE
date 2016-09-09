@@ -171,6 +171,7 @@ export(
     "breaks_on_nBins",
     "do_detectFeatures_centWave",
     "do_detectFeatures_matchedFilter",
+    "do_detectFeatures_MSW",
     "imputeLinInterpol",
     "useOriginalCode"
 )

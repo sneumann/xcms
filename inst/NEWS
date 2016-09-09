@@ -15,6 +15,8 @@ NEW FEATURES:
 + Add do_detectFeatures_centWave function.
 + Add useOriginalCode function to enable switching between old and new code
   for findPeaks.matchedFilter (see issue #52).
++ Implement a new data import function.
++ Add do_detectFeatures_MSW function and unit test.
 
 
 CHANGES IN VERSION 1.49.5
