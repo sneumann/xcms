@@ -12,7 +12,7 @@
   \code{
     findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), 
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, xcmsPeaks, snthresh=10, addROIsParams = list("setNewROIs" = FALSE))
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, xcmsPeaks, snthresh=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
   }
 }
 }}

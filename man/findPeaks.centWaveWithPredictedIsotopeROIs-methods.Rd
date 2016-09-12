@@ -14,7 +14,7 @@
     findPeaks.centWaveWithPredictedIsotopeROIs(object, ppm=25, peakwidth=c(20,50), snthresh=10, 
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
     scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list(),
-    firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, addROIsParams = list("setNewROIs" = FALSE))
+    firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
   }
 }
 }}
