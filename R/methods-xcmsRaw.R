@@ -1255,8 +1255,10 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
 ##' \item{maxf}{Maximum MSW-filter response of the feature.}
 ##' \item{sn}{Signal to noise ratio.}
 ##' }
-##' @seealso \code{\link{do_detectFeatures_MSW}}.
-##' \code{\link[MassSpecWavelet]{peakDetectionCWT}}.
+##' @seealso \code{\link{do_detectFeatures_MSW}} for the downstream analysis
+##' function or
+##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}
+##' for details on the algorithm and additionally supported parameters.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 setMethod("findPeaks.MSW", "xcmsRaw",
           function(object, snthresh=3, verbose.columns = FALSE, ...) {
@@ -1847,11 +1849,25 @@ setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
 
 ############################################################
 ## findPeaks.massifquant
-setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
-                                                       prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                       fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                       sleep=0, verbose.columns=FALSE, criticalValue = 1.125, consecMissedLimit = 2,
-                                                       unions = 1, checkBack = 0, withWave = 0) {
+setMethod("findPeaks.massifquant", "xcmsRaw",
+          function(object,
+                   ppm=10,
+                   peakwidth=c(20,50),
+                   snthresh=10,
+                   prefilter=c(3,100),
+                   mzCenterFun="wMean",
+                   integrate=1,
+                   mzdiff=-0.001,
+                   fitgauss=FALSE,
+                   scanrange= numeric(),
+                   noise=0, ## noise.local=TRUE,
+                   sleep=0,
+                   verbose.columns=FALSE,
+                   criticalValue = 1.125,
+                   consecMissedLimit = 2,
+                   unions = 1,
+                   checkBack = 0,
+                   withWave = 0) {
 
     cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
     cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");

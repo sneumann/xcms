@@ -3,6 +3,11 @@
 ## findPeaks slave function for parallel execution
 ##
 
+############################################################
+## findPeaksPar
+##
+## This should at some point be replaced by a call that does not need
+## parameter lists and getting options from the environment.
 findPeaksPar <- function(arg) {
     require(xcms)
 
@@ -23,16 +28,36 @@ findPeaksPar <- function(arg) {
     if(params$lockMassFreq == TRUE){
         xRaw<-stitch(xRaw, AutoLockMass(xRaw))
     }
-    ## params["object"] <- xRaw
 
     ## remove parameters which are not used by method() from the parameter list
-    params["method"] <- params["id"] <- params["profmethod"] <- params["profparam"] <- params["includeMSn"] <- params["lockMassFreq"] <-  params["mslevel"] <- NULL
-
+    params["method"] <- NULL
+    params["id"] <- NULL
+    params["profmethod"] <- NULL
+    params["profparam"] <- NULL
+    params["includeMSn"] <- NULL
+    params["lockMassFreq"] <- NULL
+    params["mslevel"] <- NULL
     params["scanrange"] <- NULL ## avoid filtering scanrange twice, first in xRaw then in findPeaks
 
+    ## Could wrap this inside a tryCatch.
     peaks <- do.call(method, args = c(list(object = xRaw), params))
 
-    list(scantime=xRaw@scantime, peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
+    list(scantime=xRaw@scantime,
+         peaks=cbind(peaks, sample = rep.int(myID, nrow(peaks))))
+}
+
+############################################################
+## detectFeatures
+##
+## Same as findPeaksPar but without the need to pass argument lists
+## and read settings from the global options.
+## args should be a list with arguments
+## o file: the file name
+## o readParams: parameter class to read the file; actually we would only
+##   need the scanrange, the includeMSn and the lockMassFreq here.
+## o detectParams: parameter class for the peak detection.
+detectFeaturesInFile <- function(args) {
+    ## Placeholder
 }
 
 

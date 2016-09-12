@@ -51,7 +51,9 @@ This is a wrapper around the peak picker in Bioconductor's
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
 \seealso{
-\code{\link{do_detectFeatures_MSW}}.
-\code{\link[MassSpecWavelet]{peakDetectionCWT}}.
+\code{\link{do_detectFeatures_MSW}} for the downstream analysis
+function or
+\code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}
+for details on the algorithm and additionally supported parameters.
 }
 

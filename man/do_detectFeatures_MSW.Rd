@@ -45,13 +45,13 @@ direct injection spectrum using a wavelet based algorithm.
 This is a wrapper around the peak picker in Bioconductor's
 \code{MassSpecWavelet} package calling
 \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-\code{\link[MassSpecWavelet]{tuneIn.peakInfo}} functions.
+\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
 \seealso{
-\code{\link[MassSpecWavelet]{peakDetectionCWT}}.
+\code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_centWave}},
   \code{\link{do_detectFeatures_matchedFilter}}

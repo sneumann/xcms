@@ -572,6 +572,82 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##
 do_detectFeatures_massifquant <- function() {
 }
+## The original code.
+.massifquant_orig <- function(mz,
+                              int,
+                              scantime,
+                              valsPerSpect,
+                              ppm=10,
+                              peakwidth=c(20,50),
+                              snthresh=10,
+                              prefilter=c(3,100),
+                              mzCenterFun="wMean",
+                              integrate=1,
+                              mzdiff=-0.001,
+                              fitgauss=FALSE,
+                              scanrange= numeric(),
+                              noise=0, ## noise.local=TRUE,
+                              sleep=0,
+                              verbose.columns=FALSE,
+                              criticalValue = 1.125,
+                              consecMissedLimit = 2,
+                              unions = 1,
+                              checkBack = 0,
+                              withWave = 0) {
+    cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
+    cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
+    flush.console();
+
+    ##keeep this check since massifquant doesn't check internally
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
+
+    cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
+    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
+    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
+
+    if (withWave == 1) {
+        featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
+        prefilter, mzCenterFun, integrate, mzdiff, fitgauss,
+        scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
+    }
+    else {
+        basenames <- c("mz","mzmin","mzmax","rtmin","rtmax","rt", "into")
+        if (length(massifquantROIs) == 0) {
+            cat("\nNo peaks found !\n");
+            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)));
+            colnames(nopeaks) <- basenames;
+            return(invisible(nopeaks));
+        }
+
+        p <- t(sapply(massifquantROIs, unlist));
+        colnames(p) <- basenames;
+
+        #get the max intensity for each feature
+        maxo <- sapply(seq_len(nrow(p)), function(i) {
+            raw <- rawMat(object, mzrange = p[i,c("mzmin", "mzmax")],
+                          scanrange = p[i,c("rtmin", "rtmax")])
+            max(raw[,3])
+        })
+        p <- cbind(p, maxo)
+
+        #calculate median index
+        p[,"rt"] = as.integer(p[,"rtmin"] + ( (p[,"rt"] + 1) / 2 ) - 1);
+        #convert from index into actual time
+        p[,"rtmin"] = object@scantime[p[,"rtmin"]];
+        p[,"rtmax"] = object@scantime[p[,"rtmax"]];
+        p[,"rt"] = object@scantime[p[,"rt"]];
+
+        uorder <- order(p[,"into"], decreasing=TRUE);
+        pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]);
+
+        uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
+        featlist <- p[uindex,,drop=FALSE];
+        cat("\n",dim(featlist)[1]," Peaks.\n");
+        invisible(new("xcmsPeaks", featlist));
+    }
+    return(invisible(featlist));
+}
 
 ## The version of matchedFilter:
 ## .matchedFilter_orig: original code, iterative buffer creation.
@@ -1463,7 +1539,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' @details This is a wrapper around the peak picker in Bioconductor's
 ##' \code{MassSpecWavelet} package calling
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-##' \code{\link[MassSpecWavelet]{tuneIn.peakInfo}} functions.
+##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 ##'
 ##' @inheritParams do_detectFeatures_centWave
 ##' @param ... Additional parameters to be passed to the
@@ -1486,7 +1562,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' }
 ##'
 ##' @family core feature detection functions
-##' @seealso \code{\link[MassSpecWavelet]{peakDetectionCWT}}.
+##' @seealso \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
                                   verboseColumns = FALSE, ...) {

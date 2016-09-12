@@ -42,13 +42,14 @@ setMethod("show", "xcmsSet", function(object) {
 
 
 
-#' @description This method updates an \emph{old} \code{xcmsSet} object to the latest
-#' definition.
-#' @title Update an \code{xcmsSet} object
-#' @param object The \code{xcmsSet} object to update.
+#' @description This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
+#' object to the latest definition.
+#' @title Update an \code{\linkS4class{xcmsSet}} object
+#' @param object The \code{\linkS4class{xcmsSet}} object to update.
 #' @param ... Optional additional arguments. Currently ignored.
 #' @param verbose Currently ignored.
-#' @return An updated \code{xcmsSet} containing all data from the input object.
+#' @return An updated \code{\linkS4class{xcmsSet}} containing all data from
+#' the input object.
 #' @author Johannes Rainer
 setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     ## Create a new empty xcmsSet and start filling it with the slot
