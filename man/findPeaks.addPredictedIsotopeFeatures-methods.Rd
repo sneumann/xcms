@@ -116,7 +116,7 @@
   Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }
 \seealso{
-  \code{\link{findPeaks.centWave-methods}}
+  \code{\link{findPeaks.centWave}}
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
 }
