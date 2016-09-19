@@ -3,15 +3,23 @@
 
 ## The "constructor"
 ## The "new" xcmsSet method using BiocParallel.
-xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
-                    profmethod = "bin", profparam = list(),
-                    polarity = NULL, lockMassFreq=FALSE,
-                    mslevel=NULL, nSlaves=0, progressCallback=NULL,
-                    scanrange=NULL, BPPARAM=bpparam(), ...) {
+xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
+                    phenoData = NULL, profmethod = "bin",
+                    profparam = list(), polarity = NULL,
+                    lockMassFreq=FALSE, mslevel=NULL, nSlaves=0,
+                    progressCallback=NULL, scanrange=NULL,
+                    BPPARAM=bpparam(), stopOnError = TRUE, ...) {
 
     if (nSlaves != 0)
         warning("Use of argument 'nSlaves' is deprecated!",
                 " Please use 'BPPARAM' instead.")
+    if (!is.logical(stopOnError))
+        stop("'stopOnError' has to be a logical.")
+    ## Overwriting the stop.on.error in BPPARAM:
+    ## bpstopOnError(BPPARAM) <- stopOnError
+    orig <- bpstopOnError(BPPARAM)
+    on.exit(BPPARAM@.xData$stop.on.error <- orig)
+    BPPARAM@.xData$stop.on.error <- stopOnError
 
     object <- new("xcmsSet")
 
@@ -125,8 +133,35 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     argList <- apply(ft ,1 ,function(x) list(file = x["file"],
                                            id = as.numeric(x["id"]),
                                            params = params))
-    ## Use BiocParallel:
-    res <- bplapply(argList, findPeaksPar, BPPARAM = BPPARAM)
+    ## Use BiocParallel: bplapply along with bptry
+    res <- bptry(bplapply(argList, findPeaksPar, BPPARAM = BPPARAM))
+    ## Catch the error.
+    if (stopOnError) {
+        if (inherits(res, "bperror"))
+            stop(res)
+    } else {
+        isOK <- bpok(res)
+        if (any(!isOK)) {
+            ## OK; process the errors:
+            if (all(!isOK))
+                stop("Feature detection failed for all files!",
+                     " The first error was: ", res[[1]])
+            ## Keep the results and mention the errors as warnings
+            warning("Feature detection failed in ", sum(!isOK), " of ",
+                    length(isOK), " files!")
+            ## Fix each of the errors to allow proceeding with the valid results
+            notErr <- res[[which(isOK)[1]]]$peaks
+            sct <- res[[which(isOK)[1]]]$scantime
+            emptyMat <- matrix(ncol = ncol(notErr), nrow = 0)
+            colnames(emptyMat) <- colnames(notErr)
+            for (i in which(!isOK)) {
+                warning("Feature detection failed in file: ", files[i],
+                        "! Error was: ", res[[i]])
+                res[[i]] <- list(scantime = sct, peaks = emptyMat)
+            }
+        }
+    }
+
     peaklist <- lapply(res, function(x) x$peaks)
     rtlist$raw <-  rtlist$corrected <- lapply(res, function(x) x$scantime)
     if(lockMassFreq){
@@ -136,7 +171,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL
     lapply(1:length(peaklist), function(i) {
         if (is.null(peaklist[[i]]))
             warning("No peaks found in sample ", snames[i], call. = FALSE)
-        else  if (nrow(peaklist[[i]]) == 0)
+        else if (nrow(peaklist[[i]]) == 0)
             warning("No peaks found in sample ", snames[i], call. = FALSE)
         else if (nrow(peaklist[[i]]) == 1)
             warning("Only 1 peak found in sample ", snames[i], call. = FALSE)

@@ -573,22 +573,23 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 do_detectFeatures_massifquant <- function() {
 }
 ## The original code.
+## Not much to speed up here; it's more code tidying.
 .massifquant_orig <- function(mz,
                               int,
                               scantime,
                               valsPerSpect,
-                              ppm=10,
-                              peakwidth=c(20,50),
-                              snthresh=10,
-                              prefilter=c(3,100),
-                              mzCenterFun="wMean",
-                              integrate=1,
-                              mzdiff=-0.001,
-                              fitgauss=FALSE,
-                              scanrange= numeric(),
-                              noise=0, ## noise.local=TRUE,
-                              sleep=0,
-                              verbose.columns=FALSE,
+                              ppm = 10,
+                              peakwidth = c(20,50),
+                              snthresh = 10,
+                              prefilter = c(3,100),
+                              mzCenterFun = "wMean",
+                              integrate = 1,
+                              mzdiff = -0.001,
+                              fitgauss = FALSE,
+                              scanrange = numeric(),
+                              noise = 0, ## noise.local=TRUE,
+                              sleep = 0,
+                              verboseColumns = FALSE,
                               criticalValue = 1.125,
                               consecMissedLimit = 2,
                               unions = 1,
@@ -598,18 +599,40 @@ do_detectFeatures_massifquant <- function() {
     cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
     flush.console();
 
-    ##keeep this check since massifquant doesn't check internally
-    if (!isCentroided(object))
-        warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
+    ## TODO @jo Ensure in upstream method that data is in centroided mode!
+    ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
+    ## Input argument checking.
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to much. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+    scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
+    mz <- as.double(mz)
+    int <- as.double(int)
+    ## Fix the mzCenterFun
+    mzCenterFun <- paste("mzCenter",
+                         gsub(mzCenterFun, pattern = "mzCenter.",
+                              replacement = "", fixed = TRUE), sep=".")
+    if (!exists(mzCenterFun, mode="function"))
+        stop("Error: >", mzCenterFun, "< not defined !")
 
     cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
-    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
-    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
+    ## LLLL
+    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2],
+                                    minCentroids = peakwidth[1], criticalVal = criticalValue,
+                                    consecMissedLim = consecMissedLimit,
+                                    segs = unions, scanBack = checkBack, ppm = ppm);
 
     if (withWave == 1) {
-        featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
-        prefilter, mzCenterFun, integrate, mzdiff, fitgauss,
-        scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
+        ## LLLL
+        featlist = do_detectFeatures_centWave()
+        ## featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
+        ## prefilter, mzCenterFun, integrate, mzdiff, fitgauss,
+        ## scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
     }
     else {
         basenames <- c("mz","mzmin","mzmax","rtmin","rtmax","rt", "into")
@@ -644,9 +667,11 @@ do_detectFeatures_massifquant <- function() {
         uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
         featlist <- p[uindex,,drop=FALSE];
         cat("\n",dim(featlist)[1]," Peaks.\n");
-        invisible(new("xcmsPeaks", featlist));
+        ## invisible(new("xcmsPeaks", featlist));
+        return(featlist)
     }
-    return(invisible(featlist));
+    ## return(invisible(featlist));
+    return(featlist)
 }
 
 ## The version of matchedFilter:
@@ -1575,11 +1600,13 @@ do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
         stop("Length of 'int' and 'mz' do not match!")
     if (!is.numeric(int) | !is.numeric(mz))
         stop("'int' and 'mz' are supposed to be numeric vectors!")
-    .MSW_orig(int = int, mz = mz, snthresh = snthresh,
-              verboseColumns = verboseColumns, ...)
+
+    .MSW(int = int, mz = mz, snthresh = snthresh,
+         verboseColumns = verboseColumns, ...)
 }
 ############################################################
 ## The original code
+## This should be removed at some point.
 .MSW_orig <- function(int, mz, snthresh = 3, verboseColumns = FALSE, ...) {
 
     ## MassSpecWavelet Calls
