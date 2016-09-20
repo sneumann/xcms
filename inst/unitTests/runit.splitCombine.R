@@ -1,3 +1,11 @@
+library(faahKO)
+fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+
+xs_1 <- xcmsSet(fs, profparam = list(step = 1))
+
 testSplit <- function() {
     xsl <- split(faahko,sampclass(faahko))
     checkEqualsNumeric(length(xsl), 2)
@@ -25,12 +33,88 @@ testSplitNone <- function() {
     checkEqualsNumeric(length(xsl), 1)
 }
 
+############################################################
+## Test splitting and .@processHistory slot.
+test_split_ProcessHistory <- function() {
+    spl <- split(faahko, sampclass(faahko))
+    checkTrue(length(spl[[1]]@.processHistory) == 0)
+
+    spl <- split(xs_1, f = c(1, 2, 1, 2))
+    ph <- xs_1@.processHistory[c(1, 3)]
+    ph[[1]]@fileIndex <- 1L
+    ph[[2]]@fileIndex <- 2L
+    checkEquals(spl[[1]]@.processHistory, ph)
+
+    ph <- xs_1@.processHistory[c(2, 4)]
+    ph[[1]]@fileIndex <- 1L
+    ph[[2]]@fileIndex <- 2L
+    checkEquals(spl[[2]]@.processHistory, ph)
+
+    ## Add fake ProcessHistory steps.
+    ph <- xs_1@.processHistory
+    ph <- c(list(xcms:::ProcessHistory(fileIndex = 1:4)), ph,
+            list(xcms:::ProcessHistory()))
+    xs_2 <- xs_1
+    xs_2@.processHistory <- ph
+    ##
+    spl <- split(xs_2, f = c(2, 1, 1, 1))
+    ph <- xs_2@.processHistory[c(1, 3, 4, 5)]
+    ph[[1]]@fileIndex <- 1L:3L
+    ph[[2]]@fileIndex <- 1L
+    ph[[3]]@fileIndex <- 2L
+    ph[[4]]@fileIndex <- 3L
+    checkEquals(spl[[1]]@.processHistory, ph)
+
+    ph <- xs_2@.processHistory[c(1, 2)]
+    ph[[1]]@fileIndex <- 1L
+    ph[[2]]@fileIndex <- 1L
+    checkEquals(spl[[2]]@.processHistory, ph)
+}
+
+test_c_ProcessHistory <- function() {
+    spl <- split(faahko, sampclass(faahko))
+    conc <- do.call("c", spl)
+    checkEquals(length(conc@.processHistory), 0)
+
+    spl <- split(xs_1, c(1, 1, 2, 2))
+    conc <- c(spl[[1]], spl[[2]])
+    checkEquals(xs_1@.processHistory, conc@.processHistory)
+
+    ## Different ordering
+    xs_1.1 <- xs_1[, c(1, 3)]
+    xs_1.2 <- xs_1[, 2]
+    xs_1.3 <- xs_1[, 4]
+    ## Add a fake processing for the second one.
+    ph <- xs_1.2@.processHistory
+    ph <- c(list(xcms:::ProcessHistory(fileIndex = 1)), ph)
+    xs_1.2@.processHistory <- ph
+    checkTrue(xcms:::.validProcessHistory(xs_1.2))
+    ## Combine them.
+    conc <- c(xs_1.1, xs_1.2, xs_1.3)
+    ## 1st
+    checkEquals(conc@.processHistory[[1]], xs_1@.processHistory[[1]])
+    ## 2nd
+    ph <- xs_1@.processHistory[[3]]
+    ph@fileIndex <- 2L
+    checkEquals(conc@.processHistory[[2]], ph)
+    ## 3rd
+    ph <- xs_1.2@.processHistory[[1]]
+    ph@fileIndex <- 3L
+    checkEquals(conc@.processHistory[[3]], ph)
+    ## 4th
+    ph <- xs_1@.processHistory[[2]]
+    ph@fileIndex <- 3L
+    checkEquals(conc@.processHistory[[4]], ph)
+    ## 5th
+    ph <- xs_1@.processHistory[[4]]
+    ph@fileIndex <- 4L
+    checkEquals(conc@.processHistory[[5]], ph)
+}
 
 testCombine <- function() {
     xsl <- split(faahko,sampclass(faahko))
     checkEqualsNumeric(length(sampnames(c(xsl[[1]], xsl[[2]]))), 12)
 }
-
 
 testSplitFactorShort = function() {
   f = c(1,2,2)
@@ -115,6 +199,34 @@ testSubset <- function(){
     checkException(xset[1, ])
     checkException(xset[, 20])
     checkException(xset[, "not there"])
+
+    ## Testing subsetting with .processHistory:
+    xsub <- xs_1[, c(2, 3)]
+    ph <- xs_1@.processHistory[c(2, 3)]
+    ph[[1]]@fileIndex <- 1L
+    ph[[2]]@fileIndex <- 2L
+    checkEquals(xsub@.processHistory, ph)
+    ## Reverse ordering:
+    xsub <- xs_1[, c(3, 2)]
+    ph <- xs_1@.processHistory[[3]]
+    ph@fileIndex <- 1L
+    checkEquals(xcms:::.getProcessHistory(xsub, fileIndex = 1), list(ph))
+    ph <- xs_1@.processHistory[[2]]
+    ph@fileIndex <- 2L
+    checkEquals(xcms:::.getProcessHistory(xsub, fileIndex = 2), list(ph))
+
+    ## Add fake ProcessHistory before and after the real ones.
+    ph <- xs_1@.processHistory
+    ph <- c(list(xcms:::ProcessHistory(fileIndex = 1:4)), ph,
+            list(xcms:::ProcessHistory(fileIndex = 1:4)))
+    xs_1@.processHistory <- ph
+    xsub <- xs_1[, c(2, 3)]
+    ph <- xs_1@.processHistory[c(1, 3, 4, 6)]
+    ph[[1]]@fileIndex <- 1L:2L
+    ph[[2]]@fileIndex <- 1L
+    ph[[3]]@fileIndex <- 2L
+    ph[[4]]@fileIndex <- 1L:2L
+    checkEquals(xsub@.processHistory, ph)
 }
 
 
@@ -152,4 +264,13 @@ testSubset <- function(){
         }
         cat("OK\n")
     }
+}
+
+############################################################
+## Test the internal .getProcessHistory function to retrieve
+## specific processing history steps.
+test_getProcessHistory <- function() {
+
+    checkEquals(xcms:::.getProcessHistory(xs_1, fileIndex = 2:3),
+                xs_1@.processHistory[2:3])
 }

@@ -175,3 +175,8 @@ export(
     "imputeLinInterpol",
     "useOriginalCode"
 )
+
+## New methods
+exportMethods(
+    "showError"
+)

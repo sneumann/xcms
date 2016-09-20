@@ -126,6 +126,7 @@ setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
 setGeneric("scanrange", function(object, ...) standardGeneric("scanrange"))
 setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-"))
+setGeneric("showError", function(object, ...) standardGeneric("showError"))
 setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
 setGeneric("specDist", function(object, ...) standardGeneric("specDist"))
 setGeneric("specDist.meanMZmatch",

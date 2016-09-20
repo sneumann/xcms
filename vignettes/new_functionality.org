@@ -464,6 +464,25 @@ alternatively:
 http://stackoverflow.com/questions/9843999/calculate-number-of-decimal-places-for-a-float-value-without-libraries.
 
 
+* Currently internal functionality				   :noexport:
+
+** =ProcessHistory=: track processing steps
+
+This functionality comprises the =ProcessHistory= class and the =.processHistory=
+slot of the =xcmsSet= objects. The =xcmsSet= function already adds a feature
+detection processing step for each file to this slot. Subsetting of =xcmsSet=
+objects with =[= or =split= correctly process also this slot as does concatenation
+using =c=. For processing steps other than /feature detection/ a new element should
+be added to the variable =.PROCSTEPS= (defined in /DataClasses.R/.
+At some point we could implement methods =getProcessErrors= and =getProcessHistory=
+(essentially just calling the =.getProcessErrors= and =.getProcessHistory=
+functions in /functions-xcmsSet.R/.
+
+Some additional functionality that could be implemented:
++ Sort the processing history by the =date= slot.
++ Save also analysis properties into an object extending the =ProcessHistory=:
+  this would enable to get the exact settings for each processing step.
+
 * Internal changes						   :noexport:
 
 ** Changing the way how data is imported

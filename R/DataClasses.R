@@ -2,6 +2,12 @@
 #' @include AllGenerics.R
 
 ############################################################
+## Class unions
+setClassUnion("characterOrNULL", c("character", "NULL"))
+##setClassUnion("ANYorNULL", c("ANY", "NULL"))
+
+
+############################################################
 ## xcmsSet
 ##
 setClass("xcmsSet",
@@ -18,7 +24,8 @@ setClass("xcmsSet",
                                          progressInfo = "list",
                                          progressCallback="function",
                                          mslevel = "numeric",
-                                         scanrange = "numeric"),
+                                         scanrange = "numeric",
+                                         .processHistory = "list"),
          prototype = prototype(peaks = matrix(nrow = 0, ncol = 0),
                                groups = matrix(nrow = 0, ncol = 0),
                                groupidx = list(),
@@ -32,7 +39,8 @@ setClass("xcmsSet",
                                progressInfo = list(),
                                mslevel = numeric(0),
                                scanrange= numeric(0),
-                               progressCallback = function(progress) NULL),
+                               progressCallback = function(progress) NULL,
+                               .processHistory = list()),
          validity = function(object) {
              msg <- validMsg(NULL, NULL)
              ## Check if all slots are present.
@@ -47,6 +55,15 @@ setClass("xcmsSet",
                                              paste(missingSlots, collapse = ","),
                                              ". Please update the object using",
                                              " the 'updateObject' method."))
+             ## Check the .processHistory slot.
+             if (!any(missingSlots == ".processHistory")) {
+                 inh <- unlist(lapply(object@.processHistory,
+                                      FUN = function(z) {
+                                          return(inherits(z, "ProcessHistory"))
+                                      }))
+                 if (!all(inh))
+                     msg <- validMsg(msg, "Slot '.processHistory' should only contain 'ProcessHistory' objects!")
+             }
              if (!is.null(msg))
                  return(msg)
              return(TRUE)
@@ -172,3 +189,43 @@ setClass("rampSource",
 ## xcmsPeaks
 setClass("xcmsPeaks", contains = "matrix")
 
+############################################################
+## Processing history type statics
+.PROCSTEP.UNKNOWN <- "Unknown"
+.PROCSTEP.FEATURE.DETECTION <- "Feature detection"
+.PROCSTEPS <- c(
+    .PROCSTEP.UNKNOWN,
+    .PROCSTEP.FEATURE.DETECTION
+)
+
+############################################################
+## ProcessHistory
+setClass("ProcessHistory",
+         slots = c(
+             type = "character",
+             date = "character",
+             info = "character",
+             fileIndex = "integer",
+             error = "ANY"
+         ),
+         contains = "Versioned",
+         prototype = prototype(
+             type = .PROCSTEP.UNKNOWN,
+             date = character(),
+             info = character(),
+             fileIndex = integer(),  ## This can be of length 1 or > 1.
+             error = NULL,
+             new("Versioned", versions = c(ProcessHistory = "0.0.2"))
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             ## check type:
+             if (!any(object@type == .PROCSTEPS))
+                 msg <- validMsg(msg, paste0("Got invalid type '", object@type,
+                                             "'! Allowd are: ",
+                                             paste0("\"", .PROCSTEPS, "\"",
+                                                    collapse = ", ")))
+             if (is.null(msg)) TRUE
+             else msg
+         }
+         )

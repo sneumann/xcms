@@ -13,10 +13,13 @@ test_BiocParallel <- function() {
     ## Default.
     library(BiocParallel)
     bpp <- bpparam()
-    bpprogressbar(bpp) <- TRUE
+    ## bpprogressbar(bpp) <- TRUE
     xs2 <- xcmsSet(fs, BPPARAM=bpp)
 
     bpp <- SerialParam()
     xs3 <- xcmsSet(fs, BPPARAM=bpp)
+    ## Drop the processHistory
+    xs2@.processHistory <- list()
+    xs3@.processHistory <- list()
     checkIdentical(xs2, xs3)
 }

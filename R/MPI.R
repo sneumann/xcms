@@ -11,6 +11,7 @@
 findPeaksPar <- function(arg) {
     require(xcms)
 
+    procDate <- date()
     params <- arg$params
     myID <- arg$id
     if (is.null(params$method))
@@ -43,7 +44,8 @@ findPeaksPar <- function(arg) {
 
     list(scantime=xRaw@scantime,
          peaks=cbind(peaks,
-                     sample = rep.int(myID, nrow(peaks))))
+                     sample = rep.int(myID, nrow(peaks))),
+         date = procDate)
 }
 
 ############################################################

@@ -139,52 +139,73 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     if (stopOnError) {
         if (inherits(res, "bperror"))
             stop(res)
-    } else {
-        isOK <- bpok(res)
-        if (any(!isOK)) {
-            ## OK; process the errors:
-            if (all(!isOK))
-                stop("Feature detection failed for all files!",
-                     " The first error was: ", res[[1]])
-            ## Keep the results and mention the errors as warnings
-            warning("Feature detection failed in ", sum(!isOK), " of ",
-                    length(isOK), " files!")
-            ## Fix each of the errors to allow proceeding with the valid results
-            notErr <- res[[which(isOK)[1]]]$peaks
-            sct <- res[[which(isOK)[1]]]$scantime
-            emptyMat <- matrix(ncol = ncol(notErr), nrow = 0)
-            colnames(emptyMat) <- colnames(notErr)
-            for (i in which(!isOK)) {
-                warning("Feature detection failed in file: ", files[i],
-                        "! Error was: ", res[[i]])
-                res[[i]] <- list(scantime = sct, peaks = emptyMat)
-            }
-        }
     }
 
-    peaklist <- lapply(res, function(x) x$peaks)
-    rtlist$raw <-  rtlist$corrected <- lapply(res, function(x) x$scantime)
+    ## Processing the results
+    ## Feature detection in <file>: xy peaks. -> info
+    ## Error identifying features in <>: Error:... -> info + error
+    isOK <- bpok(res)
+    if (all(!isOK))
+        stop("Feature detection failed for all files!",
+             " The first error was: ", res[[1]])
+    if (any(!isOK)) {
+        ## Use scantime from a working file one of the failing ones.
+        scnt <- res[[which(isOK)[1]]]$scantime
+    }
+    nres <- length(res)
+    peaklist <- vector("list", length = nres)
+    proclist <- vector("list", length = nres)
+    scntlist <- vector("list", length = nres)
+    ## Loop trough the results and gather information.
+    for (i in 1:nres) {
+        if (isOK[i]) {
+            scntlist[[i]] <- res[[i]]$scantime
+            pks <- res[[i]]$peaks
+            peaklist[[i]] <- pks
+            if (is.null(pks))
+                warning("No peaks found in sample ", snames[i], ".")
+            else if (nrow(pks) == 0)
+                warning("No peaks found in sample ", snames[i], ".")
+            else if (nrow(pks) == 1)
+                warning("Only 1 peak found in sample ", snames[i], ".")
+            else if (nrow(pks) < 5)
+                warning("Only ", nrow(pks), " found in sample ", snames[i], ".")
+            proclist[[i]] <- ProcessHistory(info = paste0("Feature detection in '",
+                                                          basename(files[i]),
+                                                          "': ", nrow(pks),
+                                                          " features identified."),
+                                            date = res[[i]]$date,
+                                            type = .PROCSTEP.FEATURE.DETECTION,
+                                            fileIndex = i)
+        } else {
+            scntlist[[i]] <- scnt
+            peaklist[[i]] <- NULL
+            proclist[[i]] <- ProcessHistory(info = paste0("Error identifying",
+                                                          " features in '",
+                                                          basename(files[i]),
+                                                          "': ", res[[i]]),
+                                            error = res[[i]],
+                                            type = .PROCSTEP.FEATURE.DETECTION,
+                                            fileIndex = i)
+            warning("Feature detection failed in '", files[i], "':", res[[i]])
+        }
+    }
+    ## peaklist <- lapply(res, function(x) x$peaks)
+    ## rtlist$raw <-  rtlist$corrected <- lapply(res, function(x) x$scantime)
     if(lockMassFreq){
         object@dataCorrection[1:length(files)] <- 1
     }
 
-    lapply(1:length(peaklist), function(i) {
-        if (is.null(peaklist[[i]]))
-            warning("No peaks found in sample ", snames[i], call. = FALSE)
-        else if (nrow(peaklist[[i]]) == 0)
-            warning("No peaks found in sample ", snames[i], call. = FALSE)
-        else if (nrow(peaklist[[i]]) == 1)
-            warning("Only 1 peak found in sample ", snames[i], call. = FALSE)
-        else if (nrow(peaklist[[i]]) < 10)
-            warning("Only ", nrow(peaklist[[i]]), " peaks found in sample",
-                    snames[i], call. = FALSE)
-    })
-
+    rtlist$raw <- rtlist$corrected <- scntlist
     peaks(object) <- do.call(rbind, peaklist)
     object@rt <- rtlist
+    object@.processHistory <- proclist
 
     mslevel(object) <- as.numeric(mslevel)
     scanrange(object) <- as.numeric(scanrange)
+    OK <- .validProcessHistory(object)
+    if (!is.logical(OK))
+       stop(OK)
     object
 }
 
@@ -204,6 +225,8 @@ c.xcmsSet <- function(...) {
     cdflist <- vector("list", length(lcsets))
     rtraw <- vector("list", 0)
     rtcor <- vector("list", 0)
+    procHist <- vector("list", 0)
+    startIdx <- 1
     nsamp <- 0
     for (i in seq(along = lcsets)) {
         peaklist[[i]] <- peaks(lcsets[[i]])
@@ -217,6 +240,20 @@ c.xcmsSet <- function(...) {
         sampidx <- seq(along = namelist[[i]]) + nsamp
         peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
         nsamp <- nsamp + length(namelist[[i]])
+        if (.hasSlot(lcsets[[i]], ".processHistory")) {
+            ph <- .getProcessHistory(lcsets[[i]])
+            if (length(ph) > 0) {
+                num_files <- length(namelist[[i]])
+                ph <- lapply(ph, updateFileIndex, old = 1:num_files,
+                             new = startIdx:(startIdx+num_files-1))
+            } else {
+                ph <- list()
+            }
+            procHist <- c(procHist, ph)
+        } else {
+            procHist <- c(procHist, list())
+        }
+        startIdx <- startIdx + length(namelist[[i]])
     }
 
     peaks(object) <- do.call(rbind, peaklist)
@@ -227,12 +264,18 @@ c.xcmsSet <- function(...) {
     profinfo(object) <- profinfo(lcsets[[1]])
     object@rt <- list(raw = rtraw, corrected = rtcor)
 
+    object@.processHistory <- procHist
+    OK <- .validProcessHistory(object)
+    if (!is.logical(OK))
+        stop(OK)
     invisible(object)
 }
 
 ############################################################
 ## split
 split.xcmsSet <- function(x, f, drop = TRUE, ...) {
+    ## Update the object
+    x <- updateObject(x)
     if (!is.factor(f))
         f <- factor(f)
     sampidx <- unclass(f)
@@ -258,7 +301,7 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         scanR <- scanrange(x)
         )
     pol <- x@polarity
-
+    procHist <- x@.processHistory
     for (i in unique(sampidx)) {
         samptrans = which(sampidx == i)
         samptrans = samptrans[samptrans <= nrow(x@phenoData)]
@@ -292,6 +335,14 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
         profinfo(lcsets[[i]]) <- prof
         lcsets[[i]]@rt$raw <- rtraw[samptrans]
         lcsets[[i]]@rt$corrected <- rtcor[samptrans]
+        ## .processHistory
+        procHist <- .getProcessHistory(x, fileIndex = samptrans)
+        procHist <- lapply(procHist, updateFileIndex, old = samptrans,
+                           new = 1:length(samptrans))
+        lcsets[[i]]@.processHistory <- procHist
+        OK <- .validProcessHistory(lcsets[[i]])
+        if (!is.logical(OK))
+            stop(OK)
     }
 
     if (drop)
@@ -638,4 +689,88 @@ filtfft <- function(y, filt) {
     yfilt <- fft(fft(yfilt, inverse = TRUE) * filt)
 
     Re(yfilt[1:length(y)])
+}
+
+############################################################
+## getProcessErrors
+## get ProcessHistory objects with an error.
+.getProcessErrors <- function(x, PROCSTEP = .PROCSTEPS) {
+    if (!missing(PROCSTEP)) {
+        PROCSTEP <- PROCSTEP %in% .PROCSTEPS
+        if (length(PROCSTEP) == 0)
+            stop("PROCSTEP not OK.")
+    }
+    if (.hasSlot(x, ".processHistory")) {
+        errs <- lapply(x@.processHistory, function(z) {
+            if (!is.null(z@error)) {
+                return(z)
+            }
+        })
+        errs <- errs[lengths(errs) > 0]
+        return(errs)
+    }
+    return(list())
+}
+
+############################################################
+## .getProcessHistory
+## Get ProcessHistory objects allowing to retrieve either ProcessHistory
+## objects for selected fileIndex, or for a specific PROCSTEP
+.getProcessHistory <- function(x, fileIndex, PROCSTEP = .PROCSTEPS) {
+    if (!missing(PROCSTEP)) {
+        PROCSTEP <- PROCSTEP %in% .PROCSTEPS
+        if (length(PROCSTEP) == 0)
+            stop("PROCSTEP not OK.")
+    }
+    if (missing(fileIndex)) {
+        fileIndex <- 1:length(filepaths(x))
+    } else {
+        if (!all(fileIndex %in% 1:length(filepaths(x))))
+            stop("'fileIndex' does not match the number of files.")
+    }
+    if (.hasSlot(x, ".processHistory")) {
+        phs <- lapply(x@.processHistory, function(z) {
+            if (any(z@fileIndex %in% fileIndex) & z@type %in% PROCSTEP) {
+                return(z)
+            }
+        })
+        phs <- phs[lengths(phs) > 0]
+        return(phs)
+    }
+    return(list())
+}
+
+############################################################
+## .validProcessHistory
+## Check the validity of the .processHistory slot.
+.validProcessHistory <- function(x) {
+    msg <- validMsg(NULL, NULL)
+    if (.hasSlot(x, ".processHistory")) {
+        if (length(x@.processHistory) > 0) {
+            ## All elements have to inherit from ProcessHistory
+            if (!all(unlist(lapply(x@.processHistory, function(z) {
+                return(inherits(z, "ProcessHistory"))
+            }))))
+                msg <- validMsg(msg, paste0("All objects in slot .processHistory",
+                                            " have to be 'ProcessHistory' objects!"))
+            ## Each element has to be valid
+            vals <- lapply(x@.processHistory, validObject)
+            for (i in seq_along(vals)) {
+                if (!is.logical(vals[[i]]))
+                    msg <- validMsg(msg, vals[[i]])
+            }
+            ## The fileIndex has to be within 1:length(filepaths(x))
+            fidx <- 1:length(filepaths(x))
+            for (z in x@.processHistory) {
+                if (length(z@fileIndex) == 0 |
+                    !(all(z@fileIndex %in% fidx)))
+                    msg <- validMsg(msg, paste0("Value of 'fileIndex' slot of some",
+                                                " ProcessHistory objects does not",
+                                                " match the number of available",
+                                                " files!"))
+            }
+        }
+    }
+    if (is.null(msg)) TRUE
+    else msg
 }

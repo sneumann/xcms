@@ -5,33 +5,45 @@
 ## show
 setMethod("show", "xcmsSet", function(object) {
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
-    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"),
-        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"),
+    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
+                              collapse = "-"),
+        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
+                            collapse = "-"),
         " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"),
-        "m/z\n")
+    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
+                             collapse = "-"), "m/z\n")
     cat("Peaks:", nrow(object@peaks), "(about",
         round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
 
+    ## Processing info.
+    ## Feature detection errors.
+    cat("Feature detection:\n")
     if(.hasSlot(object, "mslevel")){
         MSn <- mslevel(object)
         if(is.null(MSn))
             MSn <- 1
-        cat(paste0("Peak picking was performed on MS", MSn, ".\n"))
+        cat(paste0(" o Peak picking performed on MS", MSn, ".\n"))
     }
     if(.hasSlot(object, "scanrange")){
         if(!is.null(scanrange(object))){
-            cat("Scan range limited to ", scanrange(object)[1], "-", scanrange(object)[2], "\n")
+            cat(" o Scan range limited to ", scanrange(object)[1], "-",
+                scanrange(object)[2], "\n")
         }
+    }
+    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.FEATURE.DETECTION)
+    if (length(errs) > 0) {
+        cat(" o Detection errors: ", length(errs), " files failed.\n",
+            "   Use method 'showError' to list the error(s).\n\n", sep ="")
     }
 
     if (length(object@profinfo)) {
         cat("Profile settings: ")
         for (i in seq(along = object@profinfo)) {
             if (i != 1) cat("                  ")
-            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]], "\n", sep = "")
+            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]],
+                "\n", sep = "")
         }
         cat("\n")
     }
@@ -69,6 +81,7 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     msl <- numeric(0)
     scnr <- numeric(0)
     prgCb <- function(progress) NULL
+    procH <- list()
 
     ## Now replace the values with the slots... if present.
     if (.hasSlot(object, "peaks"))
@@ -99,6 +112,8 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
         scnr <- object@scanrange
     if (.hasSlot(object, "progressCallback"))
         prgCb <- object@progressCallback
+    if (.hasSlot(object, ".processHistory"))
+        procH <- object@.processHistory
 
     ## Generate the new object.
     newXs <- new("xcmsSet",
@@ -115,7 +130,8 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
                  progressInfo = prgInfo,
                  mslevel = msl,
                  scanrange = scnr,
-                 progressCallback = prgCb
+                 progressCallback = prgCb,
+                 .processHistory = procH
                  )
     return(newXs)
 })
@@ -1828,6 +1844,8 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
                  "' to access phenoData variables")
         return(x)
     }
+    ## Update the xcmsSet
+    x <- updateObject(x)
     ## don't allow i, but allow j to be: numeric or logical. If
     ## it's a character vector <- has to fit to sampnames(x)
     if(!missing(i))
@@ -1918,11 +1936,19 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
     }
     ## 5) filled
     if(length(x@filled) > 0){
-        xsub@filled <- (1:nrow(keep.peaks))[rownames(keep.peaks) %in% as.character(x@filled)]
+        xsub@filled <- (1:nrow(keep.peaks))[rownames(keep.peaks) %in%
+                                            as.character(x@filled)]
     }
     ## 6) dataCorrection
     if(length(x@dataCorrection)>0)
-        xset@dataCorrection <- x@dataCorrection[j]
+        xsub@dataCorrection <- x@dataCorrection[j]
+    ## 7) processHistory: we want to make sure that the ordering of the objects stays
+    procHist <- .getProcessHistory(x, fileIndex = j)
+    procHist <- lapply(procHist, updateFileIndex, old = j, new = 1:length(j))
+    xsub@.processHistory <- procHist
+    OK <- .validProcessHistory(xsub)
+    if (!is.logical(OK))
+        stop(OK)
     return(xsub)
 })
 
@@ -2014,4 +2040,36 @@ setMethod("specDist", signature(object="xcmsSet"),
               method <- paste("specDist", method, sep=".")
               distance <- do.call(method, alist<-list(peakTable1, peakTable2, ...))
               distance
+          })
+
+############################################################
+## showError
+##' @title Extract processing errors
+##' @aliases showError
+##'
+##' @description If feature detection is performed with \code{\link{findPeaks}}
+##' setting argument \code{stopOnError = FALSE} eventual errors during the
+##' process do not cause to stop the processing but are recorded inside of the
+##' resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed
+##' with the \code{showError} method.
+##'
+##' @param object An \code{\linkS4class{xcmsSet}} object.
+##' @param message. Logical indicating whether only the error message, or the
+##' error itself should be returned.
+##' @param ... Additional arguments.
+##' @return A list of error messages (if \code{message. = TRUE}) or errors or an
+##' empty list if no errors are present.
+##' @author Johannes Rainer
+setMethod("showError", signature(object = "xcmsSet"),
+          function(object, message. = TRUE, ...) {
+              errs <- .getProcessErrors(object, ...)
+              if (length(errs) > 0) {
+                  res <- lapply(errs, function(z) {
+                      if (message.)
+                          return(z@info)
+                      else return(z@error)
+                  })
+                  return(res)
+              }
+              return(list())
           })

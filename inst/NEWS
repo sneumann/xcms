@@ -1,3 +1,13 @@
+CHANGES IN VERSION xxx
+-------------------------
+
+NEW FEATURES:
++ Argument stopOnError in xcmsSet function that allows to perform feature
+  detection on all files without stopping on errors.
++ Method showError for xcmsSet objects that list all errors during feature
+  detection (if stopOnError = FALSE in the xcmsSet function).
+
+
 CHANGES IN VERSION 1.49.6
 -------------------------
 

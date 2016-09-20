@@ -1231,7 +1231,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
 ##' @details This is a wrapper around the peak picker in Bioconductor's
 ##' \code{MassSpecWavelet} package calling
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-##' \code{\link[MassSpecWavelet]{tuneIn.peakInfo}} functions.
+##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 ##'
 ##' @inheritParams do_detectFeatures_MSW
 ##' @inheritParams do_detectFeatures_centWave
