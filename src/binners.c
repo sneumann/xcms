@@ -131,10 +131,14 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     have_index = 1;
     break;
   case 3:
+    PROTECT(index = allocVector(INTSXP, 1));
+    count_protect++;
     _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 				from_idx, to_idx);
     break;
   case 4:
+    PROTECT(index = allocVector(INTSXP, 1));
+    count_protect++;
     _bin_y_on_x_with_breaks_mean(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 				 from_idx, to_idx);
     break;
@@ -662,8 +666,8 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
   int idx_last_non_empty_bin = -1; // index of the last non-empty bin.
   int current_idx = 0;             // the current index; incremented in loop.
   double last_bin_value = base_value;  // the value of the last non-empty bin.
-  double incrementer = 0;
-  double new_value;
+  //jo double incrementer = 0;
+  //jo double new_value;
 
   while (current_idx < n_bin) {
     if (ISNA(x[current_idx])) {
@@ -724,7 +728,7 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
   }
   /* If the last bin is empty. In that case we assume that the next value is = base_value. */
   if (is_empty_bin == 1) {
-    double next_bin_value = base_value;
+    //jo double next_bin_value = base_value;
     for (int i = idx_start_empty_bin; i < current_idx; i++) {
       if ((i - idx_last_non_empty_bin) <= inter_bin) {
 	x[i] = last_bin_value + (base_value - last_bin_value) /

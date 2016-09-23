@@ -2,18 +2,6 @@ CHANGES IN VERSION xxx
 -------------------------
 
 NEW FEATURES:
-+ Argument stopOnError in xcmsSet function that allows to perform feature
-  detection on all files without stopping on errors.
-+ Method showError for xcmsSet objects that list all errors during feature
-  detection (if stopOnError = FALSE in the xcmsSet function).
-
-
-CHANGES IN VERSION 1.49.6
--------------------------
-
-NEW FEATURES:
-+ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs(),
-  which allows more sensitive feature detection within predicted ROIs.
 + binYonX binning function.
 + imputeLinInterpol function providing linear interpolation of missing values.
 + breaks_on_binSize and breaks_on_nBins functions to calculate breaks defining
@@ -27,6 +15,21 @@ NEW FEATURES:
   for findPeaks.matchedFilter (see issue #52).
 + Implement a new data import function.
 + Add do_detectFeatures_MSW function and unit test.
++ Argument stopOnError in xcmsSet function that allows to perform feature
+  detection on all files without stopping on errors.
++ Method showError for xcmsSet objects that list all errors during feature
+  detection (if stopOnError = FALSE in the xcmsSet function).
+
+BUG FIXES:
++ Fixed bug in rawMat (issue #58).
+
+
+CHANGES IN VERSION 1.49.6
+-------------------------
+
+NEW FEATURES:
++ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs(),
+  which allows more sensitive feature detection within predicted ROIs.
 
 
 CHANGES IN VERSION 1.49.5
