@@ -35,43 +35,6 @@ test_do_detectFeatures_matchedFilter <- function() {
     checkTrue(nrow(res1) > nrow(res2))
 }
 
-## ## Test that the original and the version calling do_ get the
-## ## same results
-## test_findPeaks.matchedFilter <- function() {
-##     library(xcms)
-##     library(RUnit)
-##     xr <- xcmsRaw(fs[1])
-
-##     ## Default.
-##     res1 <- findPeaks.matchedFilter(xr)
-##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr)
-##     checkEquals(res1, res2)
-
-##     ## binlin.
-##     profMethod(xr) <- "binlin"
-##     res1 <- findPeaks.matchedFilter(xr, step = 0.2, snthresh = 50)
-##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.2, snthresh = 50)
-##     checkEquals(res1, res2)
-
-##     ## binlinbase
-##     profMethod(xr) <- "binlinbase"
-##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
-##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
-##     checkEquals(res1, res2)
-
-##     profp <- list()
-##     profp$baselevel <- 300
-##     xr@profparam <- profp
-##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
-##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
-##     checkEquals(res1, res2)
-
-##     profp$basespace <- 0.3
-##     res1 <- findPeaks.matchedFilter(xr, step = 0.3)
-##     res2 <- xcms:::findPeaks.matchedFilter_orig(xr, step = 0.3)
-##     checkEquals(res1, res2)
-## }
-
 
 ############################################################
 ## Compare each individual function to the original one changing

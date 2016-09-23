@@ -4,7 +4,7 @@
 ############################################################
 ## centWave
 ##
-## TODO @jo update this method with the new one in methods-xcmsRaw!
+## TODO LLLL @jo update this method with the new one in methods-xcmsRaw!
 ##
 ## Some notes on a potential speed up:
 ## Tried:
@@ -144,6 +144,26 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                                        noise = 0,
                                        verboseColumns = FALSE,
                                        ROIs = list()) {
+    .centWave_old(mz = mz, int = int, scantime = scantime,
+                  valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
+                  snthresh = snthresh, prefilter = prefilter,
+                  mzCenterFun = mzCenterFun, integrate = integrate,
+                  mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                  verboseColumns = verboseColumns, ROIs = ROIs)
+}
+.centWave_old <- function(mz, int, scantime, valsPerSpect,
+                                       ppm = 25,
+                                       peakwidth = c(20, 50),
+                                       snthresh = 10,
+                                       prefilter = c(3, 100),
+                                       mzCenterFun = "wMean",
+                                       integrate = 1,
+                                       mzdiff = -0.001,
+                                       fitgauss = FALSE,
+                                       noise = 0,
+                                       verboseColumns = FALSE,
+                                       ROIs = list()) {
+    ## TODO @jo Ensure in upstream method that data is in centroided mode!
     ## TODO @jo Ensure in upstream method that data is in centroided mode!
     ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
     ## Input argument checking.
@@ -156,8 +176,10 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
              " have to much. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
-    mz <- as.double(mz)
-    int <- as.double(int)
+    if (!is.double(mz))
+        mz <- as.double(mz)
+    if (!is.double(int))
+        int <- as.double(int)
     ## Fix the mzCenterFun
     mzCenterFun <- paste("mzCenter",
                          gsub(mzCenterFun, pattern = "mzCenter.",
@@ -284,8 +306,9 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                 min(scanrange[2], scrange[2] + max(noiserange)))
 
         ## Directly call the C:
-        eic <- .Call("getEIC", mz, int, scanindex, as.double(mzrange), as.integer(sr),
-                     as.integer(length(scanindex)), PACKAGE = "xcms")
+        eic <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
+                     as.integer(sr), as.integer(length(scanindex)),
+                     PACKAGE = "xcms")
 
         d <- eic$intensity
         td <- sr[1]:sr[2]
@@ -570,34 +593,52 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
-do_detectFeatures_massifquant <- function() {
+do_detectFeatures_massifquant <- function(mz,
+                                          int,
+                                          scantime,
+                                          valsPerSpect,
+                                          ppm = 10,
+                                          peakwidth = c(20, 50),
+                                          snthresh = 10,
+                                          prefilter = c(3, 100),
+                                          mzCenterFun = "wMean",
+                                          integrate = 1,
+                                          mzdiff = -0.001,
+                                          fitgauss = FALSE,
+                                          noise = 0,
+                                          verboseColumns = FALSE,
+                                          criticalValue = 1.125,
+                                          consecMissedLimit = 2,
+                                          unions = 1,
+                                          checkBack = 0,
+                                          withWave = 0) {
 }
 ## The original code.
 ## Not much to speed up here; it's more code tidying.
-.massifquant_orig <- function(mz,
-                              int,
-                              scantime,
-                              valsPerSpect,
-                              ppm = 10,
-                              peakwidth = c(20,50),
-                              snthresh = 10,
-                              prefilter = c(3,100),
-                              mzCenterFun = "wMean",
-                              integrate = 1,
-                              mzdiff = -0.001,
-                              fitgauss = FALSE,
-                              scanrange = numeric(),
-                              noise = 0, ## noise.local=TRUE,
-                              sleep = 0,
-                              verboseColumns = FALSE,
-                              criticalValue = 1.125,
-                              consecMissedLimit = 2,
-                              unions = 1,
-                              checkBack = 0,
-                              withWave = 0) {
-    cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
-    cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
-    flush.console();
+## LLLL Test this function
+.massifquant <- function(mz,
+                         int,
+                         scantime,
+                         valsPerSpect,
+                         ppm = 10,
+                         peakwidth = c(20,50),
+                         snthresh = 10,
+                         prefilter = c(3,100),
+                         mzCenterFun = "wMean",
+                         integrate = 1,
+                         mzdiff = -0.001,
+                         fitgauss = FALSE,
+                         noise = 0, ## noise.local=TRUE,
+                         verboseColumns = FALSE,
+                         criticalValue = 1.125,
+                         consecMissedLimit = 2,
+                         unions = 1,
+                         checkBack = 0,
+                         withWave = 0) {
+    cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.")
+    cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY.",
+        " See LICENSE for details.\n", sep ="")
+    flush.console()
 
     ## TODO @jo Ensure in upstream method that data is in centroided mode!
     ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
@@ -610,9 +651,10 @@ do_detectFeatures_massifquant <- function() {
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
              " have to much. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
-    scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
-    mz <- as.double(mz)
-    int <- as.double(int)
+    if (!is.double(mz))
+        mz <- as.double(mz)
+    if (!is.double(int))
+        int <- as.double(int)
     ## Fix the mzCenterFun
     mzCenterFun <- paste("mzCenter",
                          gsub(mzCenterFun, pattern = "mzCenter.",
@@ -620,57 +662,71 @@ do_detectFeatures_massifquant <- function() {
     if (!exists(mzCenterFun, mode="function"))
         stop("Error: >", mzCenterFun, "< not defined !")
 
-    cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
-    ## LLLL
-    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2],
-                                    minCentroids = peakwidth[1], criticalVal = criticalValue,
-                                    consecMissedLim = consecMissedLimit,
-                                    segs = unions, scanBack = checkBack, ppm = ppm);
-
+    cat("\n Detecting  mass traces at ",ppm,"ppm ... \n")
+    flush.console()
+    massifquantROIs <- do_findKalmanROI(mz = mz, int = int, scantime = scantime,
+                                        valsPerSpect = valsPerSpect,
+                                        minIntensity = prefilter[2],
+                                        minCentroids = peakwidth[1],
+                                        criticalVal = criticalValue,
+                                        consecMissedLim = consecMissedLimit,
+                                        segs = unions, scanBack = checkBack,
+                                        ppm = ppm)
     if (withWave == 1) {
-        ## LLLL
-        featlist = do_detectFeatures_centWave()
-        ## featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
-        ## prefilter, mzCenterFun, integrate, mzdiff, fitgauss,
-        ## scanrange, noise, sleep, verbose.columns, ROI.list= massifquantROIs);
+        featlist <- do_detectFeatures_centWave(mz = mz, int = int,
+                                               scantime = scantime,
+                                               valsPerSpect = valsPerSpect,
+                                               ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               prefilter = prefilter,
+                                               mzCenterFun = mzCenterFun,
+                                               integrate = integrate,
+                                               mzdiff = mzdiff,
+                                               fitgauss = fitgauss,
+                                               noise = noise,
+                                               verboseColumns = verboseColumns,
+                                               ROIs = massifquantROIs)
     }
     else {
+        ## Get index vector for C calls
+        scanindex <- valueCount2ScanIndex(valsPerSpect)
         basenames <- c("mz","mzmin","mzmax","rtmin","rtmax","rt", "into")
         if (length(massifquantROIs) == 0) {
-            cat("\nNo peaks found !\n");
-            nopeaks <- new("xcmsPeaks", matrix(nrow=0, ncol=length(basenames)));
-            colnames(nopeaks) <- basenames;
-            return(invisible(nopeaks));
+            cat("\nNo peaks found !\n")
+            nopeaks <- matrix(nrow=0, ncol=length(basenames))
+            colnames(nopeaks) <- basenames
+            return(nopeaks)
         }
 
-        p <- t(sapply(massifquantROIs, unlist));
-        colnames(p) <- basenames;
-
-        #get the max intensity for each feature
-        maxo <- sapply(seq_len(nrow(p)), function(i) {
-            raw <- rawMat(object, mzrange = p[i,c("mzmin", "mzmax")],
-                          scanrange = p[i,c("rtmin", "rtmax")])
-            max(raw[,3])
+        ## Get the max intensity for each feature.
+        maxo <- lapply(massifquantROIs, function(z) {
+            raw <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
+                           valsPerSpect = valsPerSpect,
+                           mzrange = c(z$mzmin, z$mzmax),
+                           scanrange = c(z$scmin, z$scmax))
+            max(raw[, 3])
         })
-        p <- cbind(p, maxo)
+
+        ## p <- t(sapply(massifquantROIs, unlist))
+        p <- do.call(rbind, lapply(massifquantROIs, unlist, use.names = FALSE))
+        colnames(p) <- basenames
+        p <- cbind(p, maxo = unlist(maxo))
 
         #calculate median index
-        p[,"rt"] = as.integer(p[,"rtmin"] + ( (p[,"rt"] + 1) / 2 ) - 1);
+        p[, "rt"] <- as.integer(p[, "rtmin"] + ( (p[, "rt"] + 1) / 2 ) - 1)
         #convert from index into actual time
-        p[,"rtmin"] = object@scantime[p[,"rtmin"]];
-        p[,"rtmax"] = object@scantime[p[,"rtmax"]];
-        p[,"rt"] = object@scantime[p[,"rt"]];
+        p[, "rtmin"] <- scantime[p[, "rtmin"]]
+        p[, "rtmax"] <- scantime[p[, "rtmax"]]
+        p[, "rt"] <- scantime[p[, "rt"]]
 
-        uorder <- order(p[,"into"], decreasing=TRUE);
-        pm <- as.matrix(p[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]);
-
-        uindex <- rectUnique(pm,uorder,mzdiff,ydiff = -0.00001) ## allow adjacent peaks;
-        featlist <- p[uindex,,drop=FALSE];
-        cat("\n",dim(featlist)[1]," Peaks.\n");
-        ## invisible(new("xcmsPeaks", featlist));
+        uorder <- order(p[, "into"], decreasing = TRUE)
+        pm <- as.matrix(p[, c("mzmin", "mzmax", "rtmin", "rtmax"),
+                          drop = FALSE])
+        uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks;
+        featlist <- p[uindex, , drop = FALSE]
+        cat("\n", dim(featlist)[1]," Peaks.\n");
         return(featlist)
     }
-    ## return(invisible(featlist));
     return(featlist)
 }
 
@@ -1589,7 +1645,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' @family core feature detection functions
 ##' @seealso \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
-do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
+do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
                                   verboseColumns = FALSE, ...) {
     ## Input argument checking.
     if (missing(int))
@@ -1607,7 +1663,7 @@ do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
 ############################################################
 ## The original code
 ## This should be removed at some point.
-.MSW_orig <- function(int, mz, snthresh = 3, verboseColumns = FALSE, ...) {
+.MSW_orig <- function(mz, int, snthresh = 3, verboseColumns = FALSE, ...) {
 
     ## MassSpecWavelet Calls
     peakInfo <- peakDetectionCWT(int, SNR.Th=snthresh, ...)
@@ -1675,7 +1731,7 @@ do_detectFeatures_MSW <- function(int, mz, snthresh = 3,
 }
 ############################################################
 ## Slightly modified and tuned original code
-.MSW <- function(int, mz, snthresh = 3, verboseColumns = FALSE, ...) {
+.MSW <- function(mz, int, snthresh = 3, verboseColumns = FALSE, ...) {
 
     ## MassSpecWavelet Calls
     peakInfo <- peakDetectionCWT(int, SNR.Th = snthresh, ...)
@@ -1749,3 +1805,33 @@ do_detectFeatures_MS1 <- function() {
 }
 
 
+############################################################
+## do_findKalmanROI
+do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
+                             mzrange = c(0.0, 0.0),
+                             scanrange = c(1, length(scantime)),
+                             minIntensity, minCentroids, consecMissedLim,
+                             criticalVal, ppm, segs, scanBack) {
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to much. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+    scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
+    ## Call the C function.
+    if (!is.double(mz))
+        mz <- as.double(mz)
+    if (!is.double(int))
+        int <- as.double(int)
+    if (!is.integer(scanindex))
+        scanindex <- as.integer(scanindex)
+    if (!is.double(scantime))
+        scantime <- as.double(scantime)
+    .Call("massifquant", mz, int, scanindex, scantime, as.double(mzrange),
+          as.integer(scanrange), as.integer(length(scantime)),
+          as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
+          as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+}

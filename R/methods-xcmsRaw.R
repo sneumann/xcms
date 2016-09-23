@@ -5,16 +5,18 @@
 ## show
 setMethod("show", "xcmsRaw", function(object) {
 
-    cat("An \"xcmsRaw\" object with", length(object@scantime), "mass spectra\n\n")
-
+    cat("An \"xcmsRaw\" object with", length(object@scantime),
+        "mass spectra\n\n")
     if (length(object@scantime)>0) {
-        cat("Time range: ", paste(round(range(object@scantime), 1), collapse = "-"),
-            " seconds (", paste(round(range(object@scantime)/60, 1), collapse = "-"),
+        cat("Time range: ", paste(round(range(object@scantime), 1),
+                                  collapse = "-"),
+            " seconds (", paste(round(range(object@scantime)/60, 1),
+                                collapse = "-"),
             " minutes)\n", sep = "")
-        cat("Mass range:", paste(round(range(object@env$mz), 4), collapse = "-"),
-            "m/z\n")
-        cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
-            "\n\n")
+        cat("Mass range:", paste(round(range(object@env$mz), 4),
+                                 collapse = "-"), "m/z\n")
+        cat("Intensity range:", paste(signif(range(object@env$intensity), 6),
+                                      collapse = "-"), "\n\n")
     }
 
     ## summary MSn data
@@ -37,7 +39,8 @@ setMethod("show", "xcmsRaw", function(object) {
         cat("Profile parameters: ")
         for (i in seq(along = object@profparam)) {
             if (i != 1) cat("                    ")
-            cat(names(object@profparam)[i], " = ", object@profparam[[i]], "\n", sep = "")
+            cat(names(object@profparam)[i], " = ", object@profparam[[i]], "\n",
+                sep = "")
         }
     }
 
@@ -1268,7 +1271,7 @@ setMethod("findPeaks.MSW", "xcmsRaw",
                                            verboseColumns = verbose.columns,
                                            ...)
               invisible(new("xcmsPeaks", res))
-      })
+          })
 
 ############################################################
 ## findPeaks.MS1
@@ -1456,44 +1459,82 @@ setMethod("rawMat", "xcmsRaw", function(object,
                                         scanrange = numeric(),
                                         log=FALSE) {
 
+    ## if (length(rtrange) >= 2) {
+    ##     rtrange <- range(rtrange)
+    ##     scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+    ##     scanrange <- c(match(TRUE, scanidx),
+    ##                    length(scanidx) - match(TRUE, rev(scanidx)))
+    ## }
+    ## else if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else scanrange <- range(scanrange)
+    ## startidx <- object@scanindex[scanrange[1]] + 1
+    ## endidx <- length(object@env$mz)
+    ## if (scanrange[2] < length(object@scanindex))
+    ##     endidx <- object@scanindex[scanrange[2] + 1]
+    ## ##scans <- integer(endidx - startidx + 1)
+    ## scans <- rep(scanrange[1]:scanrange[2],
+    ##              diff(c(object@scanindex[scanrange[1]:scanrange[2]], endidx)))
+    ## ##for (i in scanrange[1]:scanrange[2]) {
+    ## ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
+    ## ##        1], length(object@env$mz), na.rm = TRUE)
+    ## ##    scans[idx - startidx + 1] <- i
+    ## ##}
+    ## rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
+    ## masses <- object@env$mz[startidx:endidx]
+    ## int <- object@env$intensity[startidx:endidx]
+    ## massidx <- 1:length(masses)
+    ## if (length(mzrange) >= 2) {
+    ##     mzrange <- range(mzrange)
+    ##     massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+    ## }
+    ## else mzrange <- range(masses)
+
+    ## y <- int[massidx]
+    ## if (log && (length(y)>0))
+    ##     y <- log(y + max(1 - min(y), 0))
+
+    ## cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
+    ##       intensity = y)
+    .rawMat(mz = object@env$mz, int = object@env$intensity,
+            scantime = object@scantime,
+            valsPerSpect = diff(c(object@scanindex, length(object@env$mz))),
+            mzrange = mzrange, rtrange = rtrange, scanrange = scanrange,
+            log = log)
+})
+## @jo TODO LLL replace that with an implementation in C.
+.rawMat <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
+                    rtrange = numeric(), scanrange = numeric,
+                    log = FALSE) {
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
-        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        scanrange <- c(match(TRUE, scanidx),
-                       length(scanidx) - match(TRUE, rev(scanidx)))
+        scanrange <- range(which((scantime >= rtrange[1]) &
+                                 (scantime <= rtrange[2])))
     }
-    else if (length(scanrange) < 2)
-        scanrange <- c(1, length(object@scantime))
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(valsPerSpect))
     else scanrange <- range(scanrange)
-    startidx <- object@scanindex[scanrange[1]] + 1
-    endidx <- length(object@env$mz)
-    if (scanrange[2] < length(object@scanindex))
-        endidx <- object@scanindex[scanrange[2] + 1]
-    ##scans <- integer(endidx - startidx + 1)
+    if (scanrange[1] == 1)
+        startidx <- 1
+    else
+        startidx <- sum(valsPerSpect[1:(scanrange[1]-1)]) + 1
+    endidx <- sum(valsPerSpect[1:scanrange[2]])
     scans <- rep(scanrange[1]:scanrange[2],
-                 diff(c(object@scanindex[scanrange[1]:scanrange[2]], endidx)))
-    ##for (i in scanrange[1]:scanrange[2]) {
-    ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
-    ##        1], length(object@env$mz), na.rm = TRUE)
-    ##    scans[idx - startidx + 1] <- i
-    ##}
-    rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
-    masses <- object@env$mz[startidx:endidx]
-    int <- object@env$intensity[startidx:endidx]
+                 valsPerSpect[scanrange[1]:scanrange[2]])
+    masses <- mz[startidx:endidx]
     massidx <- 1:length(masses)
     if (length(mzrange) >= 2) {
         mzrange <- range(mzrange)
-        massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+        massidx <- massidx[(masses >= mzrange[1] & (masses <= mzrange[2]))]
     }
-    else mzrange <- range(masses)
+    int <- int[startidx:endidx][massidx]
+    if (log && (length(int) > 0))
+        int <- log(int + max(1 - min(int), 0))
+    cbind(time = scantime[scans[massidx]],
+          mz = masses[massidx],
+          intensity = int)
+}
 
-    y <- int[massidx]
-    if (log && (length(y)>0))
-        y <- log(y + max(1 - min(y), 0))
-
-    cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
-          intensity = y)
-})
 
 ############################################################
 ## plotRaw
@@ -1695,20 +1736,26 @@ setMethod("rawEIC", "xcmsRaw", function(object,
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
         scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
+        scanrange <- c(match(TRUE, scanidx), length(scanidx) -
+                                             match(TRUE, rev(scanidx)))
     }  else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
     else
         scanrange <- range(scanrange)
 
     scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    scanrange[2] <- min(length(object@scantime), scanrange[2])
 
-    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+    if (!is.double(object@env$mz))
+        object@env$mz <- as.double(object@env$mz)
+    if (!is.double(object@env$intensity))
+        object@env$intensity <- as.double(object@env$intensity)
+    if (!is.integer(object@scanindex))
+        object@scanindex <- as.integer(object@scanindex)
 
-    .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+    .Call("getEIC", object@env$mz, object@env$intensity, object@scanindex,
+          as.double(mzrange), as.integer(scanrange),
+          as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
 ############################################################
@@ -1828,23 +1875,32 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
 ############################################################
 ## findKalmanROI
 setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
-                                               scanrange=c(1,length(object@scantime)), minIntensity,
-                                               minCentroids, consecMissedLim, criticalVal, ppm,  segs, scanBack){
+                                               scanrange=c(1,length(object@scantime)),
+                                               minIntensity, minCentroids,
+                                               consecMissedLim, criticalVal,
+                                               ppm,  segs, scanBack){
 
-    scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    scanrange[1] <- max(1, scanrange[1])
+    scanrange[2] <- min(length(object@scantime), scanrange[2])
 
-    ## var type checking
-    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
-    if (!is.double(object@scantime)) object@scantime <- as.double(object@scantime)
+    ## Subset object by scanrange.
 
+    valsPS <- diff(c(object@scanindex, length(object@env$mz)))
+    do_findKalmanROI(mz = object@env$mz, int = object@env$intensity,
+                     scantime = object@scantime,
+                     valsPerSpect = valsPS, mzrange = mzrange,
+                     scanrange = scanrange, minIntensity = minIntensity,
+                     minCentroids = minCentroids,
+                     consecMissedLim = consecMissedLim,
+                     criticalVal = criticalVal, ppm = ppm, segs = segs,
+                     scanBack = scanBack)
 
-    .Call("massifquant", object@env$mz,object@env$intensity,object@scanindex, object@scantime,
-          as.double(mzrange), as.integer(scanrange), as.integer(length(object@scantime)),
-          as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
-          as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+    ## .Call("massifquant", object@env$mz, object@env$intensity, object@scanindex,
+    ##       object@scantime, as.double(mzrange), as.integer(scanrange),
+    ##       as.integer(length(object@scantime)), as.double(minIntensity),
+    ##       as.integer(minCentroids),as.double(consecMissedLim), as.double(ppm),
+    ##       as.double(criticalVal), as.integer(segs), as.integer(scanBack),
+    ##       PACKAGE ='xcms' )
 })
 
 ############################################################
@@ -1872,14 +1928,20 @@ setMethod("findPeaks.massifquant", "xcmsRaw",
     cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
     cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
     flush.console();
+              ## Seems we're not considering scanrange here at all.
 
     ##keeep this check since massifquant doesn't check internally
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
 
     cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
-    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
-    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
+              massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2],
+                                              minCentroids = peakwidth[1],
+                                              criticalVal = criticalValue,
+                                              consecMissedLim = consecMissedLimit,
+                                              segs = unions,
+                                              scanBack = checkBack,
+                                              ppm=ppm)
 
     if (withWave == 1) {
         featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
