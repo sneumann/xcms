@@ -1593,7 +1593,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                 if (capabilities("png")){
                     png(file.path(specdir, "%003d.png"), width = w, height = h)
                 }else{
-                    pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
+                    pdf(file.path(specdir, "%003d.pdf"), width = w/72,
                         height = h/72, onefile = FALSE)
                 }
             }

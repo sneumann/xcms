@@ -4,14 +4,14 @@
 \alias{do_detectFeatures_MSW}
 \title{Feature detection for single-spectrum non-chromatography MS data}
 \usage{
-do_detectFeatures_MSW(int, mz, snthresh = 3, verboseColumns = FALSE, ...)
+do_detectFeatures_MSW(mz, int, snthresh = 3, verboseColumns = FALSE, ...)
 }
 \arguments{
-\item{int}{Numeric vector with the individual intensity values from all
-scans/spectra of one file/sample.}
-
 \item{mz}{Numeric vector with the individual m/z values from all scans/
 spectra of one file/sample.}
+
+\item{int}{Numeric vector with the individual intensity values from all
+scans/spectra of one file/sample.}
 
 \item{snthresh}{Signal to noise ratio cutoff.}
 

@@ -1265,8 +1265,8 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 setMethod("findPeaks.MSW", "xcmsRaw",
           function(object, snthresh=3, verbose.columns = FALSE, ...) {
-              res <- do_detectFeatures_MSW(object@env$intensity,
-                                           object@env$mz,
+              res <- do_detectFeatures_MSW(mz = object@env$mz,
+                                           int = object@env$intensity,
                                            snthresh = snthresh,
                                            verboseColumns = verbose.columns,
                                            ...)
