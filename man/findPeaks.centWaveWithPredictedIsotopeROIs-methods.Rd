@@ -1,26 +1,27 @@
-\name{findPeaks.centWave-methods}
+\name{findPeaks.centWaveWithPredictedIsotopeROIs-methods}
 \docType{methods}
-\alias{findPeaks.centWave}
-\alias{findPeaks.centWave,xcmsRaw-method}
-\title{Feature detection for high resolution LC/MS data}
+\alias{findPeaks.centWaveWithPredictedIsotopeROIs}
+\alias{findPeaks.centWaveWithPredictedIsotopeROIs,xcmsRaw-method}
+\title{Feature detection with centWave and additional isotope features}
 \description{
-  Peak density and wavelet based feature detection for high resolution LC/MS data in centroid mode
+  Peak density and wavelet based feature detection for high resolution LC/MS data in centroid mode with additional peak picking of isotope features on basis of isotope peak predictions
 }
 \section{Methods}{
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+    findPeaks.centWaveWithPredictedIsotopeROIs(object, ppm=25, peakwidth=c(20,50), snthresh=10, 
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list()),
-    firstBaselineCheck=TRUE, roiScales=NULL
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list(),
+    firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
   }
 }
 }}
 \details{
-  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase of the method mass traces (characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located.
-  In the second phase these mass traces are further analysed.
-  Continuous wavelet transform (CWT) is used to locate chromatographic peaks on different scales.
+  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. 
+  The \code{centWave} algorithm is applied in two peak picking steps as follows. In the first peak picking step ROIs (regions of interest, characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located and further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
+  In the second peak picking step isotope ROIs in the LC/MS map are predicted further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
+  The peak lists resulting from both peak picking steps are merged and redundant peaks are removed.
 }
 \arguments{
   \item{object}{\code{xcmsSet} object}
@@ -66,6 +67,10 @@
   \item{roiScales}{
     numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets 
   }
+  \item{snthreshIsoROIs}{signal to noise ratio cutoff for predicted isotope ROIs, definition see below.}
+  \item{maxcharge}{max. number of the isotope charge.}
+  \item{maxiso}{max. number of the isotope peaks to predict for each detected feature.}
+  \item{mzIntervalExtension}{logical, if TRUE predicted isotope ROIs (regions of interest) are extended in the m/z dimension to increase the detection of low intensity and hence noisy peaks.}
 }
 \value{
   A matrix with columns:
@@ -122,9 +127,14 @@
 \references{
   Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
-  BMC Bioinformatics 2008, 9:504
+  BMC Bioinformatics 2008, 9:504\\
+  Hendrik Treutler and Steffen Neumann. 
+  "Prediction, detection, and validation of isotope clusters in mass spectrometry data"
+  Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }
 \seealso{
+  \code{\link{findPeaks.addPredictedIsotopeFeatures}}
+  \code{\link{findPeaks.centWave}}
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
 }
