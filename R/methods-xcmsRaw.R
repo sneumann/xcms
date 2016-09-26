@@ -492,7 +492,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                 maxpi <- which.max(inti)
                                 if (length(maxpi) > 1) {
                                     m <- wCoefs[opp[maxpi],maxpi]
-                                    bestcol <- which(m == max(m),arr=T)[2]
+                                    bestcol <- which(m == max(m),arr.ind=T)[2]
                                     best.scale.nr <- maxpi[bestcol]
                                 } else  best.scale.nr <- maxpi
                             }

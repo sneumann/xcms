@@ -1,8 +1,7 @@
 \name{findPeaks.centWaveWithPredictedIsotopeROIs-methods}
 \docType{methods}
 \alias{findPeaks.centWaveWithPredictedIsotopeROIs}
-\alias{findPeaks.addPredictedIsotopeFeatures}
-\alias{xcmsRaw-method}
+\alias{findPeaks.centWaveWithPredictedIsotopeROIs,xcmsRaw-method}
 \title{Feature detection with centWave and additional isotope features}
 \description{
   Peak density and wavelet based feature detection for high resolution LC/MS data in centroid mode with additional peak picking of isotope features on basis of isotope peak predictions
