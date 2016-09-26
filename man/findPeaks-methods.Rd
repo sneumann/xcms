@@ -72,6 +72,8 @@
 \seealso{
   \code{\link{findPeaks.matchedFilter}}
   \code{\link{findPeaks.centWave}}
+  \code{\link{findPeaks.addPredictedIsotopeFeatures}}
+  \code{\link{findPeaks.centWaveWithPredictedIsotopeROIs}}
   \code{\link{xcmsRaw-class}}
 }
 \keyword{methods}

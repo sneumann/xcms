@@ -306,7 +306,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                                     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                     fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
                                                     sleep=0, verbose.columns=FALSE, ROI.list=list(), 
-                                                    perform1stBaselineCheck=TRUE, roiScales=NULL) {
+                                                    firstBaselineCheck=TRUE, roiScales=NULL) {
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
 
@@ -314,6 +314,19 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     if (!exists(mzCenterFun, mode="function"))
         stop("Error: >",mzCenterFun,"< not defined ! \n")
 
+    if (!is.logical(firstBaselineCheck))
+      stop("Error: parameter >firstBaselineCheck< is not a vector ! \n")
+    if (length(firstBaselineCheck) != 1)
+      stop("Error: parameter >firstBaselineCheck< is not a single logical ! \n")
+    if (!is.null(roiScales)){
+      if (!is.vector(roiScales))
+        stop("Error: parameter >roiScales< is not a vector ! \n")
+      if(!is.numeric(roiScales))
+        stop("Error: parameter >roiScales< is not a vector of type numeric ! \n")
+      if(!length(roiScales) == length(ROI.list))
+        stop("Error: length of parameter >roiScales< is not equal to the length of parameter >ROI.list< ! \n")
+    }
+    
     scanrange.old <- scanrange
     if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
@@ -422,7 +435,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
         noise <- estimateChromNoise(noised, trim=0.05, minPts=3*minPeakWidth)
 
         ## any continuous data above 1st baseline ?
-        if (perform1stBaselineCheck & !continuousPtsAboveThreshold(fd,threshold=noise,num=minPtsAboveBaseLine))
+        if (firstBaselineCheck & !continuousPtsAboveThreshold(fd,threshold=noise,num=minPtsAboveBaseLine))
             next;
 
         ## 2nd baseline estimate using not-peak-range
@@ -479,7 +492,7 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
                                 maxpi <- which.max(inti)
                                 if (length(maxpi) > 1) {
                                     m <- wCoefs[opp[maxpi],maxpi]
-                                    bestcol <- which(m == max(m),arr=T)[2]
+                                    bestcol <- which(m == max(m),arr.ind=T)[2]
                                     best.scale.nr <- maxpi[bestcol]
                                 } else  best.scale.nr <- maxpi
                             }
@@ -673,165 +686,186 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
 ############################################################
 ## findPeaks.centWaveWithPredictedIsotopeROIs
-setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
+setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10, 
                                                                             prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
                                                                             fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
                                                                             sleep=0, verbose.columns=FALSE, ROI.list=list(), 
-                                                                            addROIsParams = list("setNewROIs" = FALSE)) {
+                                                                            firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
   ## perform tradictional peak picking
   xcmsPeaks <- findPeaks.centWave(
     object = object, ppm=ppm, peakwidth=peakwidth, snthresh=snthresh,
     prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
     fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-    sleep=sleep, verbose.columns=TRUE, ROI.list=ROI.list
+    sleep=sleep, verbose.columns=TRUE, ROI.list=ROI.list,
+    firstBaselineCheck=firstBaselineCheck, roiScales=roiScales
   )
   
-  if(nrow(xcmsPeaks) == 0)
-    return(xcmsPeaks)
+  xcmsPeaksWithAdditionalIsotopeFeatures <- findPeaks.addPredictedIsotopeFeatures(
+    object = object, ppm=ppm, peakwidth=peakwidth, 
+    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
+    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
+    sleep=sleep, verbose.columns=verbose.columns, 
+    xcmsPeaks=xcmsPeaks, snthresh=snthreshIsoROIs, maxcharge=maxcharge, maxiso=maxiso, mzIntervalExtension=mzIntervalExtension
+  )
   
-  if(addROIsParams$addNewROIs){
-    ####################################################################################
-    ## predict new ROIs
-    
-    ## convert present peaks to list of lists
-    presentROIs.list <- list()
-    for(peakIdx in 1:nrow(xcmsPeaks)){
-      presentROIs.list[[peakIdx]] <- list(
-        mz        = xcmsPeaks[[peakIdx, "mz"]],## XXX not used!
-        mzmin     = xcmsPeaks[[peakIdx, "mzmin"]],
-        mzmax     = xcmsPeaks[[peakIdx, "mzmax"]],
-        scmin     = xcmsPeaks[[peakIdx, "scmin"]],
-        scmax     = xcmsPeaks[[peakIdx, "scmax"]],
-        length    = -1,## XXX not used!
-        intensity = xcmsPeaks[[peakIdx, "intb"]],## XXX not used!
-        scale     = xcmsPeaks[[peakIdx, "scale"]]## XXX not used!
-      )
-      
-      if(abs(xcmsPeaks[[peakIdx, "mzmax"]] - xcmsPeaks[[peakIdx, "mzmin"]]) < xcmsPeaks[[peakIdx, "mz"]] * ppm / 1E6){
-        presentROIs.list[[peakIdx]]$mzmin <- xcmsPeaks[[peakIdx, "mz"]] - xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-        presentROIs.list[[peakIdx]]$mzmax <- xcmsPeaks[[peakIdx, "mz"]] + xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-      }
-    }
-    
-    ## fetch predicted ROIs
-    resultObj <- createAdditionalROIs(object, presentROIs.list, ppm, addROIsParams)
-    newRoiCounter <- resultObj$newRoiCounter
-    numberOfAdditionalIsotopeROIs <- resultObj$numberOfAdditionalIsotopeROIs
-    numberOfAdditionalAdductROIs <- resultObj$numberOfAdditionalAdductROIs
-    newROI.matrix <- resultObj$newROI.matrix
-    
-    if(nrow(newROI.matrix) == 0)
-      return(xcmsPeaks)
-    
-    ## remove ROIs with weak signal content
-    intensityThreshold <- 10
-    newROI.matrix <- removeROIsWithoutSignal(object, newROI.matrix, intensityThreshold)
-    
-    ## convert to list of lists
-    newROI.list <- list()
-    for(idx in 1:nrow(newROI.matrix))
-      ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
-      newROI.list[[length(newROI.list) + 1]] <- as.list(newROI.matrix[idx, ])
-    
-    cat("Predicted ROIs: ", length(newROI.list), " new ROIs (", numberOfAdditionalIsotopeROIs, " isotope ROIs, ", numberOfAdditionalAdductROIs, " adduct ROIs) for ", length(presentROIs.list)," present ROIs.", "\n")
-    
-    ####################################################################################
-    ## perform peak picking for predicted ROIs
-    roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
-    xcmsPeaks2 <- findPeaks.centWave(
-      object = object, ppm=ppm, peakwidth=peakwidth, snthresh=addROIsParams$snthreshOfGeneratedROIs,
-      prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
-      fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-      sleep=sleep, verbose.columns=verbose.columns, ROI.list=newROI.list, perform1stBaselineCheck=FALSE, roiScales=roiScales
+  return(xcmsPeaksWithAdditionalIsotopeFeatures)
+})
+setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), 
+                                                                            prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
+                                                                            fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
+                                                                            sleep=0, verbose.columns=FALSE, 
+                                                                            xcmsPeaks, snthresh=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
+  if(nrow(xcmsPeaks) == 0){
+    warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
+    return(xcmsPeaks)
+  }
+  if(class(xcmsPeaks) != "xcmsPeaks")
+    stop("Error: parameter >xcmsPeaks< is not of class 'xcmsPeaks' ! \n")
+  if(any(is.na(match(x = c("scmin", "scmax"), table = colnames(xcmsPeaks)))))
+    stop("Error: peak list >xcmsPeaks< is missing the columns 'scmin' and 'scmax' ! Please set parameter >verbose.columns< to TRUE for peak picking with 'centWave' and try again ! \n")
+  
+  addNewIsotopeROIs <- TRUE
+  addNewAdductROIs  <- FALSE
+  polarity <- object@polarity
+  
+  ####################################################################################
+  ## predict new ROIs
+  
+  ## convert present peaks to list of lists
+  presentROIs.list <- list()
+  for(peakIdx in 1:nrow(xcmsPeaks)){
+    presentROIs.list[[peakIdx]] <- list(
+      mz        = xcmsPeaks[[peakIdx, "mz"]],## XXX not used!
+      mzmin     = xcmsPeaks[[peakIdx, "mzmin"]],
+      mzmax     = xcmsPeaks[[peakIdx, "mzmax"]],
+      scmin     = xcmsPeaks[[peakIdx, "scmin"]],
+      scmax     = xcmsPeaks[[peakIdx, "scmax"]],
+      length    = -1,## XXX not used!
+      intensity = xcmsPeaks[[peakIdx, "intb"]],## XXX not used!
+      scale     = xcmsPeaks[[peakIdx, "scale"]]## XXX not used!
     )
     
-    if(nrow(xcmsPeaks2) > 0){
-      ## remove NaN values
-      rowsWithNaN <- which(apply(X = xcmsPeaks2[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax")], MARGIN = 1, FUN = function(x){any(is.na(x))}))
-      if(length(rowsWithNaN) > 0)
-        xcmsPeaks2 <- xcmsPeaks2[-rowsWithNaN, ]
-      
-      noArea <- which((xcmsPeaks2[, "mzmax"] - xcmsPeaks2[, "mzmin"]) == 0 || (xcmsPeaks2[, "rtmax"] - xcmsPeaks2[, "rtmin"]) == 0)
-      if(length(noArea) > 0)
-        xcmsPeaks2 <- xcmsPeaks2[-noArea, ]
+    if(abs(xcmsPeaks[[peakIdx, "mzmax"]] - xcmsPeaks[[peakIdx, "mzmin"]]) < xcmsPeaks[[peakIdx, "mz"]] * ppm / 1E6){
+      presentROIs.list[[peakIdx]]$mzmin <- xcmsPeaks[[peakIdx, "mz"]] - xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
+      presentROIs.list[[peakIdx]]$mzmax <- xcmsPeaks[[peakIdx, "mz"]] + xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
     }
-    
-    ## make present peaks and new peaks distinct by removing overlapping peaks
-    if(nrow(xcmsPeaks2) > 0){
-      ## remove ROIs which are already there
-      overlapProportionThreshold <- 0.01
-      drop <- apply(X = xcmsPeaks2, MARGIN = 1, FUN = function(x){
-        roiInt  <- x[["into"]]
-        peakInt  <- xcmsPeaks[, "into"]
-        roiMzMin  <- x[["mzmin"]]
-        roiMzMax  <- x[["mzmax"]]
-        peakMzMin <- xcmsPeaks[, "mzmin"]
-        peakMzMax <- xcmsPeaks[, "mzmax"]
-        roiMzCenter  = (roiMzMin  + roiMzMax ) / 2;
-        peakMzCenter = (peakMzMin + peakMzMax) / 2;
-        roiMzRadius  = (roiMzMax  - roiMzMin ) / 2;
-        peakMzRadius = (peakMzMax - peakMzMin) / 2;
-        overlappingmz <- abs(peakMzCenter - roiMzCenter) <= (roiMzRadius + peakMzRadius)
-        
-        roiRtMin  <- x[["rtmin"]]
-        roiRtMax  <- x[["rtmax"]]
-        peakRtMin <- xcmsPeaks[, "rtmin"]
-        peakRtMax <- xcmsPeaks[, "rtmax"]
-        roiRtCenter  = (roiRtMin  + roiRtMax ) / 2;
-        peakRtCenter = (peakRtMin + peakRtMax) / 2;
-        roiRtRadius  = (roiRtMax  - roiRtMin ) / 2;
-        peakRtRadius = (peakRtMax - peakRtMin) / 2;
-        overlappingrt <- abs(peakRtCenter - roiRtCenter) <= (roiRtRadius + peakRtRadius)
-        
-        overlapping <- overlappingmz & overlappingrt
-        
-        overlappingPeaks <- which(overlapping)
-        overlappingPeaksInt <- peakInt[overlappingPeaks]
-        
-        removeROI <- FALSE
-        peaksToRemove <- NULL
-        if(any(overlapping)){
-          if(any(overlappingPeaksInt > roiInt))
-            return(TRUE)
-          else
-            return(overlappingPeaks)
-        } else {
-          ## no overlap
-          return(FALSE)
-        }
-        
-        return(isOverlap)
-      })
-      
-      removeROI <- unlist(lapply(X = drop, FUN = function(x){
-        if(is.logical(x)){
-          return(x)
-        } else {
-          return(FALSE)
-        }
-      }))
-      removePeaks <- unique(unlist(lapply(X = drop, FUN = function(x){
-        if(is.logical(x)){
-          return(NULL)
-        } else {
-          return(x)
-        }
-      })))
-      
-      if(length(removePeaks) > 0)
-        xcmsPeaks <- xcmsPeaks[-removePeaks, ]
-      xcmsPeaks2 <- xcmsPeaks2[!removeROI, ]
-    }
-    
-    ## merge result with present results
-    if(!verbose.columns)
-      xcmsPeaks <- xcmsPeaks[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn")]
-    
-    xcmsPeaks <- rbind(xcmsPeaks, xcmsPeaks2)
-  } else {
-    if(!verbose.columns)
-      xcmsPeaks <- xcmsPeaks[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn")]
   }
+  
+  ## fetch predicted ROIs
+  resultObj <- createAdditionalROIs(object, presentROIs.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity)
+  newRoiCounter <- resultObj$newRoiCounter
+  numberOfAdditionalIsotopeROIs <- resultObj$numberOfAdditionalIsotopeROIs
+  numberOfAdditionalAdductROIs <- resultObj$numberOfAdditionalAdductROIs
+  newROI.matrix <- resultObj$newROI.matrix
+  
+  if(nrow(newROI.matrix) == 0)
+    return(xcmsPeaks)
+  
+  ## remove ROIs with weak signal content
+  intensityThreshold <- 10
+  newROI.matrix <- removeROIsWithoutSignal(object, newROI.matrix, intensityThreshold)
+  
+  ## convert to list of lists
+  newROI.list <- list()
+  for(idx in 1:nrow(newROI.matrix))
+    ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
+    newROI.list[[length(newROI.list) + 1]] <- as.list(newROI.matrix[idx, ])
+  
+  cat("Predicted ROIs: ", length(newROI.list), " new ROIs (", numberOfAdditionalIsotopeROIs, " isotope ROIs, ", numberOfAdditionalAdductROIs, " adduct ROIs) for ", length(presentROIs.list)," present ROIs.", "\n")
+  
+  ####################################################################################
+  ## perform peak picking for predicted ROIs
+  roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
+  xcmsPeaks2 <- findPeaks.centWave(
+    object = object, ppm=ppm, peakwidth=peakwidth, snthresh=snthresh,
+    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
+    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
+    sleep=sleep, verbose.columns=verbose.columns, ROI.list=newROI.list, firstBaselineCheck=FALSE, roiScales=roiScales
+  )
+  
+  if(nrow(xcmsPeaks2) > 0){
+    ## remove NaN values
+    rowsWithNaN <- which(apply(X = xcmsPeaks2[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax")], MARGIN = 1, FUN = function(x){any(is.na(x))}))
+    if(length(rowsWithNaN) > 0)
+      xcmsPeaks2 <- xcmsPeaks2[-rowsWithNaN, ]
+    
+    noArea <- which((xcmsPeaks2[, "mzmax"] - xcmsPeaks2[, "mzmin"]) == 0 || (xcmsPeaks2[, "rtmax"] - xcmsPeaks2[, "rtmin"]) == 0)
+    if(length(noArea) > 0)
+      xcmsPeaks2 <- xcmsPeaks2[-noArea, ]
+  }
+  
+  ## make present peaks and new peaks distinct by removing overlapping peaks
+  if(nrow(xcmsPeaks2) > 0){
+    ## remove ROIs which are already there
+    overlapProportionThreshold <- 0.01
+    drop <- apply(X = xcmsPeaks2, MARGIN = 1, FUN = function(x){
+      roiInt  <- x[["into"]]
+      peakInt  <- xcmsPeaks[, "into"]
+      roiMzMin  <- x[["mzmin"]]
+      roiMzMax  <- x[["mzmax"]]
+      peakMzMin <- xcmsPeaks[, "mzmin"]
+      peakMzMax <- xcmsPeaks[, "mzmax"]
+      roiMzCenter  = (roiMzMin  + roiMzMax ) / 2;
+      peakMzCenter = (peakMzMin + peakMzMax) / 2;
+      roiMzRadius  = (roiMzMax  - roiMzMin ) / 2;
+      peakMzRadius = (peakMzMax - peakMzMin) / 2;
+      overlappingmz <- abs(peakMzCenter - roiMzCenter) <= (roiMzRadius + peakMzRadius)
+      
+      roiRtMin  <- x[["rtmin"]]
+      roiRtMax  <- x[["rtmax"]]
+      peakRtMin <- xcmsPeaks[, "rtmin"]
+      peakRtMax <- xcmsPeaks[, "rtmax"]
+      roiRtCenter  = (roiRtMin  + roiRtMax ) / 2;
+      peakRtCenter = (peakRtMin + peakRtMax) / 2;
+      roiRtRadius  = (roiRtMax  - roiRtMin ) / 2;
+      peakRtRadius = (peakRtMax - peakRtMin) / 2;
+      overlappingrt <- abs(peakRtCenter - roiRtCenter) <= (roiRtRadius + peakRtRadius)
+      
+      overlapping <- overlappingmz & overlappingrt
+      
+      overlappingPeaks <- which(overlapping)
+      overlappingPeaksInt <- peakInt[overlappingPeaks]
+      
+      removeROI <- FALSE
+      peaksToRemove <- NULL
+      if(any(overlapping)){
+        if(any(overlappingPeaksInt > roiInt))
+          return(TRUE)
+        else
+          return(overlappingPeaks)
+      } else {
+        ## no overlap
+        return(FALSE)
+      }
+      
+      return(isOverlap)
+    })
+    
+    removeROI <- unlist(lapply(X = drop, FUN = function(x){
+      if(is.logical(x)){
+        return(x)
+      } else {
+        return(FALSE)
+      }
+    }))
+    removePeaks <- unique(unlist(lapply(X = drop, FUN = function(x){
+      if(is.logical(x)){
+        return(NULL)
+      } else {
+        return(x)
+      }
+    })))
+    
+    if(length(removePeaks) > 0)
+      xcmsPeaks <- xcmsPeaks[-removePeaks, ]
+    xcmsPeaks2 <- xcmsPeaks2[!removeROI, ]
+  }
+  
+  ## merge result with present results
+  if(!verbose.columns)
+    xcmsPeaks <- xcmsPeaks[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn")]
+  
+  xcmsPeaks <- rbind(xcmsPeaks, xcmsPeaks2)
   
   return(xcmsPeaks)
 })
@@ -875,14 +909,14 @@ removeROIsWithoutSignal <- function(object, roi.matrix, intensityThreshold){
   return(roi.matrix)
 }
 
-createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
+createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity){
   ###############################################################################################
   ## isotope ROIs
-  if(addROIsParams$addNewIsotopeROIs){
+  if(addNewIsotopeROIs){
     ## init
     isotopeDistance <- 1.0033548378
-    charges <- 1:addROIsParams$maxcharge
-    isos <- 1:addROIsParams$maxiso
+    charges <- 1:maxcharge
+    isos <- 1:maxiso
     
     isotopeStepSizesForCharge <- list()
     for(charge in charges)
@@ -911,7 +945,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
       for(mzIdx in 1:length(isotopePopulationMz)){
         ## create new ROI!
         mzDifference <- isotopePopulationMz[[mzIdx]]
-        if(addROIsParams$mzIntervalExtension)
+        if(mzIntervalExtension)
           ## extend m/z interval for weak peaks
           #mzIntervalExtension <- ROI.list[[roiIdx]]$mz * ppm / 1E6
           mzIntervalExtension <- (ROI.list[[roiIdx]]$mzmax - ROI.list[[roiIdx]]$mzmin) * 2
@@ -938,7 +972,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
   }
   ###############################################################################################
   ## adduct ROIs
-  if(addROIsParams$addNewAdductROIs){
+  if(addNewAdductROIs){
     ## considered adduct distances
     ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion cyclotron resonance mass spectrometer for acquisition, analysis, and e-mailing of high-resolution exact-mass electrospray ionization mass spectral data
     ## see also for contaminants: Interferences and contaminants encountered in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
@@ -963,7 +997,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
     mHAc     <- mC+mH*3+mC+mO+mO+mH # acetic acid
     mTFA     <- mC+mF*3+mC+mO+mO+mH # trifluoroacetic acid
     
-    switch(addROIsParams$polarity,
+    switch(polarity,
            "positive"={
              adductPopulationMz <- unlist(c(
                ## [M+H]+ to [M+H]+  (Reference)
@@ -1022,7 +1056,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
            "unknown"={
              warning(paste("Unknown polarity! No adduct ROIs have been added.", sep = ""))
            },
-           stop(paste("Unknown polarity (", addROIsParams$polarity, ")!", sep = ""))
+           stop(paste("Unknown polarity (", polarity, ")!", sep = ""))
     )
     
     numberOfAdductROIs <- length(ROI.list) * length(adductPopulationMz)
@@ -1063,10 +1097,10 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addROIsParams){
   ## filter out m/z's out of range and without sufficient intensity
   intensityThreshold <- 10
   
-  if(addROIsParams$addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsOutOfRange(object, isotopeROIs.matrix)
-  if(addROIsParams$addNewAdductROIs)  adductROIs.matrix  <- removeROIsOutOfRange(object, adductROIs.matrix)
-  if(addROIsParams$addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsWithoutSignal(object, isotopeROIs.matrix, intensityThreshold)
-  if(addROIsParams$addNewAdductROIs)  adductROIs.matrix  <- removeROIsWithoutSignal(object, adductROIs.matrix, intensityThreshold)
+  if(addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsOutOfRange(object, isotopeROIs.matrix)
+  if(addNewAdductROIs)  adductROIs.matrix  <- removeROIsOutOfRange(object, adductROIs.matrix)
+  if(addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsWithoutSignal(object, isotopeROIs.matrix, intensityThreshold)
+  if(addNewAdductROIs)  adductROIs.matrix  <- removeROIsWithoutSignal(object, adductROIs.matrix, intensityThreshold)
   
   numberOfAdditionalIsotopeROIs <- nrow(isotopeROIs.matrix)
   numberOfAdditionalAdductROIs  <- nrow(adductROIs.matrix )
