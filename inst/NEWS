@@ -19,6 +19,7 @@ NEW FEATURES:
   detection on all files without stopping on errors.
 + Method showError for xcmsSet objects that list all errors during feature
   detection (if stopOnError = FALSE in the xcmsSet function).
++ [ method to subset xcmsRaw objects by scans.
 
 BUG FIXES:
 + Fixed bug in rawMat (issue #58).

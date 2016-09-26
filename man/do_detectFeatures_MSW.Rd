@@ -22,7 +22,7 @@ should be returned.}
 \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.}
 }
 \value{
-A matrix, each row representing an intentified feature, with columns:
+A matrix, each row representing an identified feature, with columns:
 \describe{
 \item{mz}{m/z value of the feature at the centroid position.}
 \item{mzmin}{Minimum m/z of the feature.}
@@ -45,7 +45,8 @@ direct injection spectrum using a wavelet based algorithm.
 This is a wrapper around the peak picker in Bioconductor's
 \code{MassSpecWavelet} package calling
 \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+\emph{xcmsDirect} vignette for more information.
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
@@ -54,6 +55,7 @@ Joachim Kutzera, Steffen Neumann, Johannes Rainer
 \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_centWave}},
+  \code{\link{do_detectFeatures_massifquant}},
   \code{\link{do_detectFeatures_matchedFilter}}
 }
 

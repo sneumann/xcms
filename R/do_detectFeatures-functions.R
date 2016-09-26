@@ -89,7 +89,7 @@
 ##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 ##' 2008, 9:504
 ##' @return
-##' A matrix, each row representing an intentified feature, with columns:
+##' A matrix, each row representing an identified feature, with columns:
 ##' \describe{
 ##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
 ##' \item{mzmin}{Minimum m/z of the feature.}
@@ -173,7 +173,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
     if (!is.double(mz))
@@ -593,6 +593,115 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
+##' @title Feature detection using the massifquant method
+##'
+##' @description Massifquant is a Kalman filter (KF)-based feature
+##' detection for XC-MS data in centroid mode. The identified features
+##' can be further refined with the \emph{centWave} method (see
+##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
+##' by specifying \code{withWave = TRUE}.
+##'
+##' @details This algorithm's performance has been tested rigorously
+##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+##' Simultaneous kalman filters identify features and calculate their
+##' area under the curve. The default parameters are set to operate on
+##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
+##' simple exploratory data analysis to find out where to set a minimum
+##' intensity, and identify how many scans an average feature spans. The
+##' \code{consecMissedLimit} parameter has yielded good performance on
+##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
+##' to be at (\code{1}). This may change as the algorithm has yet to be
+##' tested on many samples. The \code{criticalValue} parameter is perhaps
+##' most dificult to dial in appropriately and visual inspection of peak
+##' identification is the best suggested tool for quick optimization.
+##' The \code{ppm} and \code{checkBack} parameters have shown less influence
+##' than the other parameters and exist to give users flexibility and
+##' better accuracy.
+##' @inheritParams do_detectFeatures_centWave
+##' @param peakwidth Numeric of length 2. Only the first element is used by
+##' massifquant, which specifices the minimum feature length in time scans.
+##' For \code{withWave = TRUE} the second argument represents the maximum
+##' feature length subject to being greater than the mininum feature length
+##' (see also documentation of \code{\link{do_detectFeatures_centWave}}).
+##' @param prefilter Numeric of length 2. The first argument is only used
+##' if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
+##' for details. The second argument specifies the minimum threshold for the
+##' maximum intensity of a feature that must be met.
+##' @param criticalValue Numeric of length 1. Suggested values:
+##' (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
+##' prediciton margin of error. A real centroid belonging to a bonafide
+##' feature must fall within the KF prediction margin of error. Much like
+##' in the construction of a confidence interval, \code{criticalVal} loosely
+##' translates to be a multiplier of the standard error of the prediction
+##' reported by the Kalman Filter. If the features in the XC-MS sample have
+##' a small mass deviance in ppm error, a smaller critical value might be
+##' better and vice versa.
+##' @param consecMissedLimit Integer: Suggested values: (\code{1,2,3}). While
+##' a feature is in the proces of being detected by a Kalman Filter, the
+##' Kalman Filter may not find a predicted centroid in every scan. After 1
+##' or more consecutive failed predictions, this setting informs Massifquant
+##' when to stop a Kalman Filter from following a candidate feature.
+##' @param unions Integer: set to \code{1} if apply t-test union on
+##' segmentation; set to \code{0} if no t-test to be applied on
+##' chromatographically continous features sharing same m/z range.
+##' Explanation: With very few data points, sometimes a Kalman Filter stops
+##' tracking a feature prematurely. Another Kalman Filter is instantiated
+##' and begins following the rest of the signal. Because tracking is done
+##' backwards to forwards, this algorithmic defect leaves a real feature
+##' divided into two segments or more. With this option turned on, the
+##' program identifies segmented features and combines them (merges them)
+##' into one with a two sample t-test. The potential danger of this option
+##' is that some truly distinct features may be merged.
+##' @param checkBack Integer: set to \code{1} if turned on; set to \code{0}
+##' if turned off. The convergence of a Kalman Filter to a feature's precise
+##' m/z mapping is very fast, but sometimes it incorporates erroneous centroids
+##' as part of a feature (especially early on). The \code{scanBack} option is an
+##' attempt to remove the occasional outlier that lies beyond the converged
+##' bounds of the Kalman Filter. The option does not directly affect
+##' identification of a feature because it is a postprocessing measure; it
+##' has not shown to be a extremely useful thus far and the default is set
+##' to being turned off.
+##' @param withWave Logical: if \code{TRUE}, the features identified first
+##' with Massifquant are subsequently filtered with the second step of the
+##' centWave algorithm, which includes wavelet estimation.
+##' @return
+##' A matrix, each row representing an identified feature, with columns:
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the features across
+##' scans.}
+##' \item{mzmin}{Minumum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' }
+##' If \code{withWave} is set to \code{TRUE}, the result is the same as
+##' returned by the \code{\link{do_detectFeatures_centWave}} method.
+##' @family core feature detection functions
+##' @seealso \code{\link{findPeaks.massifquant}}
+##' @references
+##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
+##' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
+##' detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
+##' @author Christopher Conley
+##' @examples
+##' library(faahKO)
+##' library(xcms)
+##' #load all the wild type and Knock out samples
+##' cdfpath <- system.file("cdf", package = "faahKO")
+##' cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+##' ## run the massifquant analysis
+##'
+##' xset <- xcmsSet(cdffiles, method = "massifquant",
+##'                 consecMissedLimit = 1,
+##'                 snthresh = 10,
+##'                 criticalValue = 1.73,
+##'                 ppm = 10,
+##'                 peakwidth= c(30, 60),
+##'                 prefilter= c(1, 3000),
+##'                 withWave = 0)
 do_detectFeatures_massifquant <- function(mz,
                                           int,
                                           scantime,
@@ -611,34 +720,11 @@ do_detectFeatures_massifquant <- function(mz,
                                           consecMissedLimit = 2,
                                           unions = 1,
                                           checkBack = 0,
-                                          withWave = 0) {
-}
-## The original code.
-## Not much to speed up here; it's more code tidying.
-## LLLL Test this function
-.massifquant <- function(mz,
-                         int,
-                         scantime,
-                         valsPerSpect,
-                         ppm = 10,
-                         peakwidth = c(20,50),
-                         snthresh = 10,
-                         prefilter = c(3,100),
-                         mzCenterFun = "wMean",
-                         integrate = 1,
-                         mzdiff = -0.001,
-                         fitgauss = FALSE,
-                         noise = 0, ## noise.local=TRUE,
-                         verboseColumns = FALSE,
-                         criticalValue = 1.125,
-                         consecMissedLimit = 2,
-                         unions = 1,
-                         checkBack = 0,
-                         withWave = 0) {
-    cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.")
-    cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY.",
-        " See LICENSE for details.\n", sep ="")
-    flush.console()
+                                          withWave = FALSE) {
+    message("\n Massifquant, Copyright (C) 2013 Brigham Young University.")
+    message(" Massifquant comes with ABSOLUTELY NO WARRANTY.",
+        " See LICENSE for details.", sep ="")
+    ## flush.console()
 
     ## TODO @jo Ensure in upstream method that data is in centroided mode!
     ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
@@ -646,10 +732,10 @@ do_detectFeatures_massifquant <- function(mz,
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
              " are required!")
-    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
-        | length(mz) != sum(valsPerSpect))
+    if ((length(mz) != length(int)) | (length(valsPerSpect) != length(scantime))
+        | (length(mz) != sum(valsPerSpect)))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     if (!is.double(mz))
         mz <- as.double(mz)
@@ -662,7 +748,7 @@ do_detectFeatures_massifquant <- function(mz,
     if (!exists(mzCenterFun, mode="function"))
         stop("Error: >", mzCenterFun, "< not defined !")
 
-    cat("\n Detecting  mass traces at ",ppm,"ppm ... \n")
+    message("\n Detecting  mass traces at ",ppm,"ppm ... ", appendLF = FALSE)
     flush.console()
     massifquantROIs <- do_findKalmanROI(mz = mz, int = int, scantime = scantime,
                                         valsPerSpect = valsPerSpect,
@@ -672,7 +758,8 @@ do_detectFeatures_massifquant <- function(mz,
                                         consecMissedLim = consecMissedLimit,
                                         segs = unions, scanBack = checkBack,
                                         ppm = ppm)
-    if (withWave == 1) {
+    message("OK")
+    if (withWave) {
         featlist <- do_detectFeatures_centWave(mz = mz, int = int,
                                                scantime = scantime,
                                                valsPerSpect = valsPerSpect,
@@ -692,7 +779,7 @@ do_detectFeatures_massifquant <- function(mz,
         scanindex <- valueCount2ScanIndex(valsPerSpect)
         basenames <- c("mz","mzmin","mzmax","rtmin","rtmax","rt", "into")
         if (length(massifquantROIs) == 0) {
-            cat("\nNo peaks found !\n")
+            warning("\nNo peaks found!")
             nopeaks <- matrix(nrow=0, ncol=length(basenames))
             colnames(nopeaks) <- basenames
             return(nopeaks)
@@ -724,7 +811,7 @@ do_detectFeatures_massifquant <- function(mz,
                           drop = FALSE])
         uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks;
         featlist <- p[uindex, , drop = FALSE]
-        cat("\n", dim(featlist)[1]," Peaks.\n");
+        message(" ", dim(featlist)[1]," Peaks.");
         return(featlist)
     }
     return(featlist)
@@ -815,7 +902,7 @@ do_detectFeatures_massifquant <- function(mz,
 ##' in m/z for peaks with overlapping retention times
 ##' @param index Logical specifying whether indicies should be returned instead
 ##' of values for m/z and retention times.
-##' @return A matrix, each row representing an intentified feature, with columns:
+##' @return A matrix, each row representing an identified feature, with columns:
 ##' \describe{
 ##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
 ##' \item{mzmin}{Minimum m/z of the feature.}
@@ -916,7 +1003,7 @@ do_detectFeatures_matchedFilter <- function(mz,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     ## Calculate a the "scanindex" from the number of values per spectrum:
     scanindex <- valueCount2ScanIndex(valsPerSpect)
@@ -1076,7 +1163,7 @@ do_detectFeatures_matchedFilter <- function(mz,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     ## Get the profile/binning function: allowed: bin, lin, linbase and intlin
     impute <- match.arg(impute, c("none", "lin", "linbase", "intlin"))
@@ -1301,7 +1388,7 @@ do_detectFeatures_matchedFilter <- function(mz,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     ## Calculate a the "scanindex" from the number of values per spectrum:
     scanindex <- valueCount2ScanIndex(valsPerSpect)
@@ -1453,7 +1540,7 @@ do_detectFeatures_matchedFilter <- function(mz,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
 
     ## Generate the 'profile' matrix, i.e. perform the binning:
@@ -1620,14 +1707,15 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' @details This is a wrapper around the peak picker in Bioconductor's
 ##' \code{MassSpecWavelet} package calling
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+##' \emph{xcmsDirect} vignette for more information.
 ##'
 ##' @inheritParams do_detectFeatures_centWave
 ##' @param ... Additional parameters to be passed to the
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
 ##'
 ##' @return
-##' A matrix, each row representing an intentified feature, with columns:
+##' A matrix, each row representing an identified feature, with columns:
 ##' \describe{
 ##' \item{mz}{m/z value of the feature at the centroid position.}
 ##' \item{mzmin}{Minimum m/z of the feature.}
@@ -1657,8 +1745,67 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
     if (!is.numeric(int) | !is.numeric(mz))
         stop("'int' and 'mz' are supposed to be numeric vectors!")
 
-    .MSW(int = int, mz = mz, snthresh = snthresh,
-         verboseColumns = verboseColumns, ...)
+    ## MassSpecWavelet Calls
+    peakInfo <- peakDetectionCWT(int, SNR.Th = snthresh, ...)
+    majorPeakInfo <- peakInfo$majorPeakInfo
+
+    sumIntos <- function(into, inpos, scale){
+        scale = floor(scale)
+        sum(into[(inpos-scale):(inpos+scale)])
+    }
+    maxIntos <- function(into, inpos, scale){
+        scale = floor(scale)
+        max(into[(inpos-scale):(inpos+scale)])
+    }
+    betterPeakInfo <- tuneInPeakInfo(int,
+                                     majorPeakInfo)
+    peakIndex <- betterPeakInfo$peakIndex
+    nPeaks <- length(peakIndex)
+
+    ## sum and max of raw values, sum and max of filter-response
+    rints <- numeric(nPeaks)
+    fints <- NA
+    maxRints <- numeric(nPeaks)
+    maxFints <- NA
+
+    for (a in 1:nPeaks) {
+        rints[a] <- sumIntos(int, peakIndex[a],
+                             betterPeakInfo$peakScale[a])
+        maxRints[a] <- maxIntos(int, peakIndex[a],
+                                betterPeakInfo$peakScale[a])
+    }
+    ## filter-response is not summed here, the maxF-value is the one
+    ## which was "xcmsRaw$into" earlier
+
+    ## Assemble result
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+                   "into","maxo","sn","intf","maxf")
+
+    peaklist <- matrix(-1, nrow = nPeaks, ncol = length(basenames))
+    colnames(peaklist) <- c(basenames)
+
+    peaklist[,"mz"] <- mz[peakIndex]
+    peaklist[,"mzmin"] <- mz[(peakIndex - betterPeakInfo$peakScale)]
+    peaklist[,"mzmax"] <- mz[(peakIndex + betterPeakInfo$peakScale)]
+
+    ## peaklist[,"rt"]    <- rep(-1, length(peakIndex))
+    ## peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
+    ## peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
+
+    peaklist[,"into"] <- rints ## sum of raw-intensities
+    peaklist[,"maxo"] <- maxRints
+    peaklist[,"intf"] <- rep(NA, nPeaks)
+    peaklist[,"maxf"] <- betterPeakInfo$peakValue
+
+    peaklist[,"sn"]   <- betterPeakInfo$peakSNR
+
+    ## cat('\n')
+
+    ## Filter additional (verbose) columns
+    if (!verboseColumns)
+        peaklist <- peaklist[,basenames,drop=FALSE]
+
+    peaklist
 }
 ############################################################
 ## The original code
@@ -1729,72 +1876,6 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 
     peaklist
 }
-############################################################
-## Slightly modified and tuned original code
-.MSW <- function(mz, int, snthresh = 3, verboseColumns = FALSE, ...) {
-
-    ## MassSpecWavelet Calls
-    peakInfo <- peakDetectionCWT(int, SNR.Th = snthresh, ...)
-    majorPeakInfo <- peakInfo$majorPeakInfo
-
-    sumIntos <- function(into, inpos, scale){
-        scale = floor(scale)
-        sum(into[(inpos-scale):(inpos+scale)])
-    }
-    maxIntos <- function(into, inpos, scale){
-        scale = floor(scale)
-        max(into[(inpos-scale):(inpos+scale)])
-    }
-    betterPeakInfo <- tuneInPeakInfo(int,
-                                     majorPeakInfo)
-    peakIndex <- betterPeakInfo$peakIndex
-    nPeaks <- length(peakIndex)
-
-    ## sum and max of raw values, sum and max of filter-response
-    rints <- numeric(nPeaks)
-    fints <- NA
-    maxRints <- numeric(nPeaks)
-    maxFints <- NA
-
-    for (a in 1:nPeaks) {
-        rints[a] <- sumIntos(int, peakIndex[a],
-                             betterPeakInfo$peakScale[a])
-        maxRints[a] <- maxIntos(int, peakIndex[a],
-                                betterPeakInfo$peakScale[a])
-    }
-    ## filter-response is not summed here, the maxF-value is the one
-    ## which was "xcmsRaw$into" earlier
-
-    ## Assemble result
-    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
-                   "into","maxo","sn","intf","maxf")
-
-    peaklist <- matrix(-1, nrow = nPeaks, ncol = length(basenames))
-    colnames(peaklist) <- c(basenames)
-
-    peaklist[,"mz"] <- mz[peakIndex]
-    peaklist[,"mzmin"] <- mz[(peakIndex - betterPeakInfo$peakScale)]
-    peaklist[,"mzmax"] <- mz[(peakIndex + betterPeakInfo$peakScale)]
-
-    ## peaklist[,"rt"]    <- rep(-1, length(peakIndex))
-    ## peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
-    ## peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
-
-    peaklist[,"into"] <- rints ## sum of raw-intensities
-    peaklist[,"maxo"] <- maxRints
-    peaklist[,"intf"] <- rep(NA, nPeaks)
-    peaklist[,"maxf"] <- betterPeakInfo$peakValue
-
-    peaklist[,"sn"]   <- betterPeakInfo$peakSNR
-
-    cat('\n')
-
-    ## Filter additional (verbose) columns
-    if (!verboseColumns)
-        peaklist <- peaklist[,basenames,drop=FALSE]
-
-    peaklist
-}
 
 
 
@@ -1818,7 +1899,7 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
         | length(mz) != sum(valsPerSpect))
         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-             " have to much. Also, 'length(mz)' should be equal to",
+             " have to match. Also, 'length(mz)' should be equal to",
              " 'sum(valsPerSpect)'.")
     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
     ## Call the C function.
@@ -1830,8 +1911,13 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
         scanindex <- as.integer(scanindex)
     if (!is.double(scantime))
         scantime <- as.double(scantime)
-    .Call("massifquant", mz, int, scanindex, scantime, as.double(mzrange),
-          as.integer(scanrange), as.integer(length(scantime)),
-          as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
-          as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+    tmp <- capture.output(
+    res <- .Call("massifquant", mz, int, scanindex, scantime,
+                 as.double(mzrange), as.integer(scanrange),
+                 as.integer(length(scantime)), as.double(minIntensity),
+                 as.integer(minCentroids), as.double(consecMissedLim),
+                 as.double(ppm), as.double(criticalVal), as.integer(segs),
+                 as.integer(scanBack), PACKAGE ='xcms' )
+    )
+    res
 }

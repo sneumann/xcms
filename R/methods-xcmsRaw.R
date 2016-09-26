@@ -1904,8 +1904,10 @@ setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
 })
 
 ############################################################
-## findPeaks.massifquant
-setMethod("findPeaks.massifquant", "xcmsRaw",
+## This should be replaced soon; is only for testing purposes.
+setGeneric("findPeaks.massifquant_orig", function(object, ...)
+    standardGeneric("findPeaks.massifquant_orig"))
+setMethod("findPeaks.massifquant_orig", "xcmsRaw",
           function(object,
                    ppm=10,
                    peakwidth=c(20,50),
@@ -1984,6 +1986,76 @@ setMethod("findPeaks.massifquant", "xcmsRaw",
         invisible(new("xcmsPeaks", featlist));
     }
     return(invisible(featlist));
+})
+
+############################################################
+## findPeaks.massifquant: Note the original code returned, if withWave = 1,
+## a Peaks object otherwise a matrix!
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
+                                                       ppm=10,
+                                                       peakwidth = c(20,50),
+                                                       snthresh = 10,
+                                                       prefilter = c(3,100),
+                                                       mzCenterFun = "wMean",
+                                                       integrate = 1,
+                                                       mzdiff = -0.001,
+                                                       fitgauss = FALSE,
+                                                       scanrange = numeric(),
+                                                       noise = 0,
+                                                       sleep = 0,
+                                                       verbose.columns = FALSE,
+                                                       criticalValue = 1.125,
+                                                       consecMissedLimit = 2,
+                                                       unions = 1,
+                                                       checkBack = 0,
+                                                       withWave = 0) {
+
+    if (sleep > 0)
+        cat("'sleep' argument is defunct and will be ignored.")
+
+    ## Sub-set the xcmsRaw baesd on scanrange
+    scanrange.old <- scanrange
+    ## sanitize if too few or too many scanrange is given
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(object@scantime))
+    else
+        scanrange <- range(scanrange)
+    ## restrict and sanitize scanrange to maximally cover all scans
+    scanrange[1] <- max(1,scanrange[1])
+    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    ## Mild warning if the actual scanrange doesn't match the scanrange
+    ## argument
+    if (!(identical(scanrange.old, scanrange)) &&
+        (length(scanrange.old) > 0)) {
+        cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+        ## Scanrange filtering
+        keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+        object <- split(object, f=keepidx)[["TRUE"]]
+    }
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode.",
+                " Massifquant can process only centroid mode data !\n")
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    res <- do_detectFeatures_massifquant(mz = object@env$mz,
+                                         int = object@env$intensity,
+                                         scantime = object@scantime,
+                                         valsPerSpect = vps,
+                                         ppm = ppm, peakwidth = peakwidth,
+                                         snthresh = snthresh,
+                                         prefilter = prefilter,
+                                         mzCenterFun = mzCenterFun,
+                                         integrate = integrate,
+                                         mzdiff = mzdiff, fitgauss = fitgauss,
+                                         noise = noise,
+                                         verboseColumns = verbose.columns,
+                                         criticalValue = criticalValue,
+                                         consecMissedLimit = consecMissedLimit,
+                                         unions = unions, checkBack = checkBack,
+                                         withWave = as.logical(withWave))
+    ## Compatibility with "old" code, i.e. return a matrix if withWave is 0
+    if (withWave == 0)
+        return(res)
+    invisible(new("xcmsPeaks", res));
 })
 
 ############################################################
@@ -2645,3 +2717,87 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
     return(ob)
 })
 
+############################################################
+## [
+## Subset by scan.
+##' @title Subset an xcmsRaw object by scans
+##'
+##' @description Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
+##' returned \code{\linkS4class{xcmsRaw}} object contains values for all scans
+##' specified with argument \code{i}.
+##'
+##' @details Only subsetting by scan index in increasing order or by a logical
+##' vector are supported. If not ordered, argument \code{i} is sorted
+##' automatically. Indices which are larger than the total number of scans
+##' are discarded.
+##' @param x The \code{\linkS4class{xcmsRaw}} object that should be sub-setted.
+##' @param i Integer or logical vector specifying the scans/spectra to which \code{x} should be sub-setted.
+##' @param j Not supported.
+##' @param drop Not supported.
+##' @return The sub-setted \code{\linkS4class{xcmsRaw}} object.
+##' @author Johannes Rainer
+##' @seealso \code{\link{split.xcmsRaw}}
+##' @examples
+##' ## Load a test file
+##' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' xraw <- xcmsRaw(file)
+##' ## The number of scans/spectra:
+##' length(xraw@scantime)
+##'
+##' ## Subset the object to scans with a scan time from 3500 to 4000.
+##' xsub <- xraw[xraw@scantime >= 3500 & xraw@scantime <= 4000]
+##' range(xsub@scantime)
+##' ## The number of scans:
+##' length(xsub@scantime)
+##' ## The number of values of the subset:
+##' length(xsub@env$mz)
+setMethod("[", signature(x = "xcmsRaw",
+                         i = "logicalOrNumeric",
+                         j = "missing",
+                         drop = "missing"),
+          function(x, i, j, drop) {
+              nScans <- length(x@scantime)
+              if (is.logical(i))
+                  i <- which(i)
+              if (length(i) == 0)
+                  return(new("xcmsRaw"))
+              ## Ensure i is sorted.
+              if (is.unsorted(i)) {
+                  warning("'i' has been sorted as subsetting supports",
+                          " only sorted indices.")
+                  i <- sort(i)
+              }
+              ## Ensure that we're not supposed to return duplicated scans!
+              i <- unique(i)
+              ## Check that i is within the number of scans
+              outsideRange <- !(i %in% 1:nScans)
+              if (any(outsideRange)) {
+                  ## Throw an error or just a warning?
+                  iOut <- i[outsideRange]
+                  i <- i[!outsideRange]
+                  warning("Some of the indices in 'i' are larger than the",
+                          " total number of scans which is ", nScans)
+              }
+              valsPerSpect <- diff(c(x@scanindex, length(x@env$mz)))
+              ## Subset:
+              ## 1) scantime
+              x@scantime <- x@scantime[i]
+              ## 2) scanindex
+              x@scanindex <- x@scanindex[i]
+              ## 3) @env$mz
+              newE <- new.env()
+              valsInScn <- rep(1:nScans, valsPerSpect) %in% i
+              newE$mz <- x@env$mz[valsInScn]
+              ## 4) @env$intensity
+              newE$intensity <- x@env$intensity[valsInScn]
+              x@env <- newE
+              ## 5) The remaining slots
+              x@tic <- x@tic[i]
+              if (length(x@polarity) == nScans)
+                  x@polarity <- x@polarity[i]
+              if (length(x@acquisitionNum) == nScans)
+                  x@acquisitionNum <- x@acquisitionNum[i]
+              x@mzrange <- range(x@env$mz)
+              ## TODO: what with the MSn data?
+              return(x)
+          })

@@ -64,7 +64,7 @@ in m/z for peaks with overlapping retention times}
 of values for m/z and retention times.}
 }
 \value{
-A matrix, each row representing an intentified feature, with columns:
+A matrix, each row representing an identified feature, with columns:
 \describe{
 \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
 \item{mzmin}{Minimum m/z of the feature.}
@@ -138,6 +138,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \code{\link{imputeLinInterpol}} for the interpolation of missing values.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
-  \code{\link{do_detectFeatures_centWave}}
+  \code{\link{do_detectFeatures_centWave}},
+  \code{\link{do_detectFeatures_massifquant}}
 }
 

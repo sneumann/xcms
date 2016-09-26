@@ -71,7 +71,7 @@ ROI object in the list is expected to have the following slots specified:
 (number of scans), \code{intensity} (summed intensity).}
 }
 \value{
-A matrix, each row representing an intentified feature, with columns:
+A matrix, each row representing an identified feature, with columns:
 \describe{
 \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
 \item{mzmin}{Minimum m/z of the feature.}
@@ -148,6 +148,7 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 }
 \seealso{
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
+  \code{\link{do_detectFeatures_massifquant}},
   \code{\link{do_detectFeatures_matchedFilter}}
 }
 

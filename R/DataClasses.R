@@ -4,6 +4,7 @@
 ############################################################
 ## Class unions
 setClassUnion("characterOrNULL", c("character", "NULL"))
+setClassUnion("logicalOrNumeric", c("logical", "numeric"))
 ##setClassUnion("ANYorNULL", c("ANY", "NULL"))
 
 

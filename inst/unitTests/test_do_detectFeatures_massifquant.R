@@ -1,12 +1,31 @@
 ############################################################
 ## do_detectFeatures_massifquant tests
 
-library(msdata)
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+library(faahKO)
+fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+xraw <- xcmsRaw(fs, profstep = 0)
 
-xraw <- xcmsRaw(mzf[1], profstep = 0)
-
+############################################################
+## Simple test comparing results from various massifquant runs and
+## centWave analyses.
+test_do_detectFeatures_massifquant <- function() {
+    res <- findPeaks.massifquant(xraw)
+    mz <- xraw@env$mz
+    int <- xraw@env$intensity
+    valsPerSpect <- diff(c(xraw@scanindex, length(mz)))
+    scantime <- xraw@scantime
+    res_2 <- do_detectFeatures_massifquant(mz = mz, int = int,
+                                           valsPerSpect = valsPerSpect,
+                                           scantime = scantime)
+    checkEquals(res@.Data, res_2)
+    ## With centWave:
+    res_3 <- do_detectFeatures_massifquant(mz = mz, int = int,
+                                           valsPerSpect = valsPerSpect,
+                                           scantime = scantime, withWave = TRUE)
+    res_4 <- findPeaks.massifquant(xraw, withWave = 1)
+    checkEquals(res_3, res_4@.Data)
+    checkTrue(nrow(res_3) < nrow(res_2))
+}
 
 ############################################################
 ## Test the implementation of the "do" function, i.e. whether
@@ -41,26 +60,29 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
         consecMissedLimit <- 2
         unions <- 1
         withWave <- 0
+        ## Now, this method calls do_detectFeatures_massifquant.
         a <- findPeaks.massifquant(xr, ppm = ppm, peakwidth = peakwidth,
                                    snthresh = snthresh,
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime = scantime,
-        ##                               valsPerSpect = valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a@.Data, b)
+        ## LLL: compare the _orig method
+        ## 1) check if scanrange works between both.
+        ## 2) compare the orig_ with the do
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions,
+                                           withWave = as.logical(withWave))
         checkEquals(a@.Data, d)
 
 
@@ -78,20 +100,20 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a@.Data, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
                                  valsPerSpect = valsPerSpect,
                                  ppm = ppm, peakwidth = peakwidth,
                                  snthresh = snthresh,
                                  criticalValue = criticalValue,
                                  consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+                                 unions = unions,
+                                 withWave = as.logical(withWave))
         checkEquals(a@.Data, d)
 
         ppm <- 20
@@ -106,20 +128,19 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions, withWave = withWave)
         checkEquals(a@.Data, d)
 
         ppm <- 20
@@ -134,20 +155,19 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions, withWave = withWave)
         checkEquals(a@.Data, d)
 
         ppm <- 20
@@ -162,20 +182,19 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a@.Data, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions, withWave = withWave)
         checkEquals(a@.Data, d)
 
         ppm <- 20
@@ -190,20 +209,19 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a@.Data, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions, withWave = withWave)
         checkEquals(a@.Data, d)
 
         ppm <- 20
@@ -218,27 +236,62 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                    criticalValue = criticalValue,
                                    consecMissedLimit = consecMissedLimit,
                                    unions = unions, withWave = withWave)
-        ## b <- xcms:::.massifquant_orig(mz, int, scantime, valsPerSpect,
-        ##                               ppm = ppm, peakwidth = peakwidth,
-        ##                               snthresh = snthresh,
-        ##                               criticalValue = criticalValue,
-        ##                               consecMissedLimit = consecMissedLimit,
-        ##                               unions = unions, withWave = withWave)
-        ## checkEquals(a@.Data, b)
-        d <- xcms:::.massifquant(mz, int, scantime = scantime,
-                                 valsPerSpect = valsPerSpect,
-                                 ppm = ppm, peakwidth = peakwidth,
-                                 snthresh = snthresh,
-                                 criticalValue = criticalValue,
-                                 consecMissedLimit = consecMissedLimit,
-                                 unions = unions, withWave = withWave)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave)
+        checkEquals(a, b)
+        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+                                           valsPerSpect = valsPerSpect,
+                                           ppm = ppm, peakwidth = peakwidth,
+                                           snthresh = snthresh,
+                                           criticalValue = criticalValue,
+                                           consecMissedLimit = consecMissedLimit,
+                                           unions = unions, withWave = withWave)
         checkEquals(a@.Data, d)
+
+        ## Specifying scanrange:
+        scnr <- c(300, 800)
+        a <- findPeaks.massifquant(xr, ppm = ppm, peakwidth = peakwidth,
+                                   snthresh = snthresh,
+                                   criticalValue = criticalValue,
+                                   consecMissedLimit = consecMissedLimit,
+                                   unions = unions, withWave = withWave,
+                                   scanrange = scnr)
+        ## That fails because scanrange is not considered in the Kalman filter
+        ## based peak detection. This has been reported as issue #61
+        checkException(
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave,
+                                               scanrange = scnr)
+        )
+        ## without withWave
+        withWave <- 0
+        scnr <- c(400, 410)
+        ## ??? scanrange ignored???
+        a <- findPeaks.massifquant(xr, ppm = ppm, peakwidth = peakwidth,
+                                   snthresh = snthresh,
+                                   criticalValue = criticalValue,
+                                   consecMissedLimit = consecMissedLimit,
+                                   unions = unions, withWave = withWave,
+                                   scanrange = scnr)
+        b <- xcms:::findPeaks.massifquant_orig(xr, ppm = ppm, peakwidth = peakwidth,
+                                               snthresh = snthresh,
+                                               criticalValue = criticalValue,
+                                               consecMissedLimit = consecMissedLimit,
+                                               unions = unions, withWave = withWave,
+                                               scanrange = scnr)
+        checkEquals(a@.Data, b)
     }
 }
 
 ############################################################
 ## Benchmarking.
-dontrun_benchmar_massifquant <- function() {
+dontrun_benchmark_massifquant <- function() {
     library(microbenchmark)
     mz <- xraw@env$mz
     int <- xraw@env$intensity
