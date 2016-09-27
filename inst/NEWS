@@ -1,4 +1,4 @@
-CHANGES IN VERSION xxx
+CHANGES IN VERSION 1.49.7
 -------------------------
 
 NEW FEATURES:
@@ -28,10 +28,9 @@ BUG FIXES:
 CHANGES IN VERSION 1.49.6
 -------------------------
 
-NEW FEATURES:
-+ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs(),
-  which allows more sensitive feature detection within predicted ROIs.
-
+USER VISIBLE CHANGES:
++ Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs() and findPeaks.addPredictedIsotopeFeatures(),
+  which allow more sensitive detection of isotope features.
 
 CHANGES IN VERSION 1.49.5
 -------------------------
