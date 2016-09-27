@@ -1,5 +1,6 @@
 useDynLib(xcms)
 
+importFrom("utils", "capture.output")
 import("methods")
 importFrom("ProtGenerics", "peaks")
 importFrom("BiocGenerics", "updateObject")

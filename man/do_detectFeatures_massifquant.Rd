@@ -153,19 +153,21 @@ better accuracy.
 \examples{
 library(faahKO)
 library(xcms)
-#load all the wild type and Knock out samples
 cdfpath <- system.file("cdf", package = "faahKO")
 cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-## run the massifquant analysis
 
-xset <- xcmsSet(cdffiles, method = "massifquant",
-                consecMissedLimit = 1,
-                snthresh = 10,
-                criticalValue = 1.73,
-                ppm = 10,
-                peakwidth= c(30, 60),
-                prefilter= c(1, 3000),
-                withWave = 0)
+## Read the first file
+xraw <- xcmsRaw(cdffiles[1])
+## Extract the required data
+mzVals <- xraw@env$mz
+intVals <- xraw@env$intensity
+## Define the values per spectrum:
+valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
+
+## Perform the feature detection using massifquant
+res <- do_detectFeatures_massifquant(mz = mzVals, int = intVals,
+scantime = xraw@scantime, valsPerSpect = valsPerSpect)
+head(res)
 }
 \author{
 Christopher Conley

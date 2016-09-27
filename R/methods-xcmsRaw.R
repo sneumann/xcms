@@ -2086,10 +2086,7 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
                                          consecMissedLimit = consecMissedLimit,
                                          unions = unions, checkBack = checkBack,
                                          withWave = as.logical(withWave))
-    ## Compatibility with "old" code, i.e. return a matrix if withWave is 0
-    if (withWave == 0)
-        return(res)
-    invisible(new("xcmsPeaks", res));
+    invisible(new("xcmsPeaks", res))
 })
 
 ############################################################

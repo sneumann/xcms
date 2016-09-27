@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.49.7
+CHANGES IN VERSION 1.49.x
 -------------------------
 
 NEW FEATURES:
@@ -23,6 +23,14 @@ NEW FEATURES:
 
 BUG FIXES:
 + Fixed bug in rawMat (issue #58).
++ Fix issue #60: findPeaks.massifquant always returns a xcmsPeaks object.
+
+
+CHANGES IN VERSION 1.49.7
+-------------------------
+
+BUG FIXES:
++ Fix documentation warnings.
 
 
 CHANGES IN VERSION 1.49.6
