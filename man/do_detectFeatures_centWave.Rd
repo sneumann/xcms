@@ -7,7 +7,8 @@
 do_detectFeatures_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
   peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
   mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE, ROIs = list())
+  fitgauss = FALSE, noise = 0, verboseColumns = FALSE, roiList = list(),
+  firstBaselineCheck = TRUE, roiScales = NULL)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -62,13 +63,20 @@ intensity \code{< noise} are omitted from ROI detection).}
 \item{verboseColumns}{Logical whether additional feature meta data columns
 should be returned.}
 
-\item{ROIs}{An optional list of regions-of-interest (ROI) representing
+\item{roiList}{An optional list of regions-of-interest (ROI) representing
 detected mass traces. If ROIs are submitted the first analysis step is
 omitted and feature detection is performed on the submitted ROIs. Each
 ROI object in the list is expected to have the following slots specified:
 \code{scmin} (start scan index), \code{scmax} (end scan index),
 \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
 (number of scans), \code{intensity} (summed intensity).}
+
+\item{firstBaselineCheck}{Logical of length 1. If \code{TRUE} continuous
+data within regions of interest is checked to be above the first baseline.}
+
+\item{roiScales}{Optional numeric vector with length equal to \code{roiList}
+defining the scale for each region of interest in \code{roiList} that should
+be used for the centWave-wavelets.}
 }
 \value{
 A matrix, each row representing an identified feature, with columns:

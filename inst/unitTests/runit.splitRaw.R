@@ -47,13 +47,15 @@ testSplitRawNone <- function() {
 
 ############################################################
 ## Subset an xcmsRaw object by scan index.
-test_bracked_subset_xcmsRaw <- function() {
+test_bracket_subset_xcmsRaw <- function() {
     ## Get scans 1:10
     xsub <- xraw[1:10]
     checkIdentical(xraw@scantime[1:10], xsub@scantime)
     checkIdentical(xraw@scanindex[1:10], xsub@scanindex[1:10])
     checkIdentical(xraw@env$mz[1:xraw@scanindex[11]], xsub@env$mz)
     checkIdentical(xraw@env$intensity[1:xraw@scanindex[11]], xsub@env$intensity)
+
+    ## Check if mz is sorted:
 
     ## Check using logical
     bm <- rep(FALSE, length(xraw@scanindex))
@@ -74,6 +76,10 @@ test_bracked_subset_xcmsRaw <- function() {
     i <- c(5, 99, 317)
     xsub <- xraw[i]
     checkIdentical(xsub@scantime, xraw@scantime[i])
+    ## scanindex:
+    vps <- diff(c(xraw@scanindex, length(xraw@env$mz)))
+    scnidx <- xcms:::valueCount2ScanIndex(vps[i])
+    checkEquals(scnidx, xsub@scanindex)
     whichIdx <- c(((xraw@scanindex[5] + 1):xraw@scanindex[6]),
     ((xraw@scanindex[99] + 1):xraw@scanindex[100]),
     ((xraw@scanindex[317] + 1):xraw@scanindex[318]))

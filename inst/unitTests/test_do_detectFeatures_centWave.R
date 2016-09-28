@@ -31,54 +31,56 @@ test_do_detectFeatures_centWave <- function() {
 ## to evaluate that results are identical.
 dontrun_test_do_detectFeatures_centWave_impl <- function() {
 
-    ppm = 25
-    peakwidth = c(20, 50)
-    snthresh = 10
-    prefilter = c(3, 100)
-    mzCenterFun = "wMean"
-    integrate = 1
-    mzdiff = -0.001
-    fitgauss = FALSE
-    noise = 0
-    verboseColumns = FALSE
+    for (i in 1:length(fs)) {
+        ppm = 25
+        peakwidth = c(20, 50)
+        snthresh = 10
+        prefilter = c(3, 100)
+        mzCenterFun = "wMean"
+        integrate = 1
+        mzdiff = -0.001
+        fitgauss = FALSE
+        noise = 0
+        verboseColumns = FALSE
 
-    xr <- xcmsRaw(fs[1])
+        xr <- xcmsRaw(fs[i])
 
-    ## Default settings
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+        ## Default settings
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+                       integrate, mzdiff, fitgauss, noise, verboseColumns)
+        ## xcms: 14.6 sec
+        ## do_ : 13 sec
+
+        ppm <- 10
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
                    integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 14.6 sec
-    ## do_ : 13 sec
+        ## xcms: 15 sec
+        ## do_ : 13.3 sec
 
-    ppm <- 10
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
-                   integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 15 sec
-    ## do_ : 13.3 sec
+        peakwidth <- c(3, 30)
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+                       integrate, mzdiff, fitgauss, noise, verboseColumns)
+        ## xcms: 11.4 sec
+        ## do_ :  9.5 sec
 
-    peakwidth <- c(3, 30)
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
-                   integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 11.4 sec
-    ## do_ :  9.5 sec
+        snthresh <- 15
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+                       integrate, mzdiff, fitgauss, noise, verboseColumns)
+        ## xcms: 10.6 sec
+        ## do_ :  8.8 sec
 
-    snthresh <- 15
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
-                   integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 10.6 sec
-    ## do_ :  8.8 sec
+        fitgauss <- TRUE
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+                       integrate, mzdiff, fitgauss, noise, verboseColumns)
+        ## xcms: 12.5 sec
+        ## do_ : 10.7 sec
 
-    fitgauss <- TRUE
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
-                   integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 12.5 sec
-    ## do_ : 10.7 sec
-
-    verboseColumns <- TRUE
-    .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
-                   integrate, mzdiff, fitgauss, noise, verboseColumns)
-    ## xcms: 12.2 sec
-    ## do_ : 10.6 sec
+        verboseColumns <- TRUE
+        .runAndCompare(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
+                       integrate, mzdiff, fitgauss, noise, verboseColumns)
+        ## xcms: 12.2 sec
+        ## do_ : 10.6 sec
+    }
 }
 
 
@@ -90,18 +92,29 @@ dontrun_test_do_detectFeatures_centWave_impl <- function() {
     scantime <- xr@scantime
     scanindex <- xr@scanindex
     a <- system.time(
-        xrDo <- xcms:::do_detectFeatures_centWave(mz, int, scantime,
-                                                  diff(c(scanindex, length(mz))),
-                                                  ppm = ppm,
-                                                  peakwidth = peakwidth,
-                                                  snthresh = snthresh,
-                                                  prefilter = prefilter,
-                                                  mzCenterFun = mzCenterFun,
-                                                  integrate = integrate,
-                                                  mzdiff = mzdiff,
-                                                  fitgauss = fitgauss,
-                                                  noise = noise,
-                                                  verboseColumns = verboseColumns)
+        ## xrDo <- xcms:::do_detectFeatures_centWave(mz, int, scantime,
+        ##                                           diff(c(scanindex, length(mz))),
+        ##                                           ppm = ppm,
+        ##                                           peakwidth = peakwidth,
+        ##                                           snthresh = snthresh,
+        ##                                           prefilter = prefilter,
+        ##                                           mzCenterFun = mzCenterFun,
+        ##                                           integrate = integrate,
+        ##                                           mzdiff = mzdiff,
+        ##                                           fitgauss = fitgauss,
+        ##                                           noise = noise,
+        ##                                           verboseColumns = verboseColumns)
+        xrDo <- xcms:::.centWave_orig(mz = mz, int = int, scantime = scantime,
+                                      valsPerSpect = diff(c(scanindex, length(mz))),
+                                      ppm = ppm, peakwidth = peakwidth,
+                                      snthresh = snthresh,
+                                      prefilter = prefilter,
+                                      mzCenterFun = mzCenterFun,
+                                      integrate = integrate,
+                                      mzdiff = mzdiff,
+                                      fitgauss = fitgauss,
+                                      noise = noise,
+                                      verboseColumns = verboseColumns)
     ) ## 12.7
     ## Run the findPeaks.centWave on the xcmsRaw.
     b <- system.time(
