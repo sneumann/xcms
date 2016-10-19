@@ -25,6 +25,18 @@ test_do_detectFeatures_massifquant <- function() {
     res_4 <- findPeaks.massifquant(xraw, withWave = 1)
     checkEquals(res_3, res_4@.Data)
     checkTrue(nrow(res_3) < nrow(res_2))
+
+    ## Subsetted data and scanrange:
+    res_1 <- findPeaks.massifquant(xraw, scanrange = c(90, 345))
+    xsub <- xraw[90:345]
+    mz <- xsub@env$mz
+    int <- xsub@env$intensity
+    valsPerSpect <- diff(c(xsub@scanindex, length(mz)))
+    scantime <- xsub@scantime
+    res_2 <- do_detectFeatures_massifquant(mz = mz, int = int,
+                                           valsPerSpect = valsPerSpect,
+                                           scantime = scantime)
+    checkIdentical(res_1@.Data, res_2)
 }
 
 ############################################################

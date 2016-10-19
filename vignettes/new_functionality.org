@@ -254,10 +254,26 @@ use the /original/ (old) code, to switch to the new implementation call
 
 ** Differences in =findPeaks.massifquant=
 
-+ Argument =scanindex= was ignored in the /original/ old code (issue #61).
++ Argument =scanrange= was ignored in the /original/ old code (issue [[https://github.com/sneumann/xcms/issues/61][#61]]).
 + The method returned a =matrix= if =withWave= was =0= and a =xcmsPeaks= object
   otherwise. The updated version returns *always* an =xcmsPeaks= object (issue #60).
 
+
+** =scanrange= parameter in all =findPeaks= methods
+
+The =scanrange= in the =findPeaks= methods is supposed to enable the peak detection
+only within a user-defined range of scans. This was however not performed in
+each method. Due to a bug in =findPeaks.matchedFilter='s original code the
+argument was ignored, except if the upper scan number of the user defined range
+was larger than the total number of available scans (see issue [[https://github.com/sneumann/xcms/issues/63][#63]]). In
+=findPeaks.massifquant= the argument was completely ignored (see issue [[https://github.com/sneumann/xcms/issues/61][#61]]) and,
+while the argument was considered in =findPeaks.centWave= and feature detection
+was performed within the specified scan range, but the original =@scantime= slot
+was used throughout the code instead of just the scan times for the specified
+scan indices (see issue [[https://github.com/sneumann/xcms/issues/64][#64]]).
+
+These problems have been fixed by first sub-setting the =xcmsRaw= object (using
+the =[= method) before actually performing the feature detection.
 
 ** Different binning results due to /internal/ and /external/ breaks definition :noexport:
 
