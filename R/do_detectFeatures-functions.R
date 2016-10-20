@@ -1058,6 +1058,8 @@ do_detectFeatures_matchedFilter <- function(mz,
                                 mzdiff = 0.8 - binSize * steps,
                                 index = FALSE
                                 ){
+    .Deprecated(msg = paste0("Use of the original code with iterative binning",
+                             " is discouraged!"))
     ## Map arguments to findPeaks.matchedFilter arguments.
     step <- binSize
     profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")

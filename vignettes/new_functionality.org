@@ -41,7 +41,7 @@ BiocStyle::markdown()
 #+BEGIN_html
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 5 September, 2016<br />
+**Modified**: 20 October, 2016<br />
 **Compiled**: `r date()`
 #+END_html
 
@@ -154,7 +154,11 @@ packages. The implemented functions are:
   for high resolution LC/MS data in centroid mode \cite{Tautenhahn:2008fx}.
 + =do_detectFeatures_matchedFilter=: identification of features in the
   chromatographic domain based on matched filtration \cite{Smith:2006ic}.
++ =do_detectFeatures_massifquant=: iden
 
+On possible drawback from the introduction of this new layer is, that more
+objects get copied by R which /could/ eventually result in a larger memory demand
+or performance decrease (while no such was decrease was observed up to now).
 
 ** Usability improvements
 
@@ -223,7 +227,7 @@ the beginning and the end of the provided numeric vector. This can be disabled
 
 ** Differences due to updates in =do_detectFeatures_matchedFilter=, respectively =findPeaks.matchedFilter=.
 
-The original =findPeaks.matchedFilter= (up to version XXX) had several
+The original =findPeaks.matchedFilter= (up to version 1.49.7) had several
 shortcomings and bugs that have been fixed in the new
 =do_detectFeatures_matchedFilter= method:
 
@@ -247,10 +251,8 @@ shortcomings and bugs that have been fixed in the new
 A detailed description of tests comparing all implementations is available in
 issue [[https://github.com/sneumann/xcms/issues/52][#52]] on github.
 
-*NOTE* by default the =findPeaks.matchedFilter= and =do_detectFeatures_matchedFilter=
-use the /original/ (old) code, to switch to the new implementation call
-=useOriginalCode(FALSE)=.
-
+While it is strongly discouraged, it is still possible to use to /old/ code (from
+1.49.7) by calling =useOriginalCode(TRUE)=.
 
 ** Differences in =findPeaks.massifquant=
 
@@ -271,9 +273,9 @@ was performed within the specified scan range, but the original =@scantime= slot
 was used throughout the code instead of just the scan times for the specified
 scan indices (see issue [[https://github.com/sneumann/xcms/issues/64][#64]]).
 
-These problems have been fixed by first sub-setting the =xcmsRaw= object (using
-the =[= method) before actually performing the feature detection.
-
+These problems have been fixed in version 1.51.1 by first sub-setting the
+=xcmsRaw= object (using the =[= method) before actually performing the feature
+detection.
 
 ** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
 
@@ -415,6 +417,13 @@ reliable (and presumably correct) results. Given also that the =binYonX= in
 combination with =imputeLinInterpol= identify similar peaks than the non-iterative
 approaches using the original code, we can change the code to use these former
 methods as default.
+
+
+* Under the hood changes
+
+These changes and update will not have any large impact on the day-to-day use of
+=xcms= and are listed here for completeness.
+
 
 
 * Introducing =DRanges=.						   :noexport:

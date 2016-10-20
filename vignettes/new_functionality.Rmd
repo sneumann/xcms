@@ -27,7 +27,7 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 5 September, 2016<br />
+**Modified**: 20 October, 2016<br />
 **Compiled**: `r date()`
 
 # New functionality in `xcms`
@@ -137,6 +137,16 @@ packages. The implemented functions are:
     for high resolution LC/MS data in centroid mode [@Tautenhahn:2008fx].
 -   `do_detectFeatures_matchedFilter`: identification of features in the
     chromatographic domain based on matched filtration [@Smith:2006ic].
+-   `do_detectFeatures_massifquant`: iden
+
+On possible drawback from the introduction of this new layer is, that more
+objects get copied by R which *could* eventually result in a larger memory demand
+or performance decrease (while no such was decrease was observed up to now).
+
+## Usability improvements
+
+-   `[` subsetting method for `xcmsRaw` objects that enables to subset an `xcmsRaw`
+      object to specific scans/spectra.
 
 # Changes due to bug fixes and modified functionality
 
@@ -172,7 +182,7 @@ resM <- imputeLinInterpol(res$y, method = "lin",
 resM
 ```
 
-Plotting the results helps to better evaluate the differences. The black points
+Plotting the results helps to better compare the differences. The black points
 in the figure below represent the actual values of `Y` and the grey vertical lines
 the breaks defining the bins. The blue lines and points represent the result
 from the `profBinLin` method. The bin values for the first and 4th bin are clearly
@@ -198,7 +208,7 @@ the beginning and the end of the provided numeric vector. This can be disabled
 
 ## Differences due to updates in `do_detectFeatures_matchedFilter`, respectively `findPeaks.matchedFilter`.
 
-The original `findPeaks.matchedFilter` (up to version XXX) had several
+The original `findPeaks.matchedFilter` (up to version 1.49.7) had several
 shortcomings and bugs that have been fixed in the new
 `do_detectFeatures_matchedFilter` method:
 
@@ -222,8 +232,35 @@ shortcomings and bugs that have been fixed in the new
 A detailed description of tests comparing all implementations is available in
 issue [#52](https://github.com/sneumann/xcms/issues/52) on github.
 
-**NOTE** by default the `findPeaks.matchedFilter` and `do_detectFeatures_matchedFilter`
-use the *original* (old) code, to switch to the new implementation call
-`useOriginalCode(FALSE)`.
+While it is strongly discouraged, it is still possible to use to *old* code (from
+1.49.7) by calling `useOriginalCode(TRUE)`.
+
+## Differences in `findPeaks.massifquant`
+
+-   Argument `scanrange` was ignored in the *original* old code (issue [#61](https://github.com/sneumann/xcms/issues/61)).
+-   The method returned a `matrix` if `withWave` was `0` and a `xcmsPeaks` object
+    otherwise. The updated version returns **always** an `xcmsPeaks` object (issue #60).
+
+## `scanrange` parameter in all `findPeaks` methods
+
+The `scanrange` in the `findPeaks` methods is supposed to enable the peak detection
+only within a user-defined range of scans. This was however not performed in
+each method. Due to a bug in `findPeaks.matchedFilter`'s original code the
+argument was ignored, except if the upper scan number of the user defined range
+was larger than the total number of available scans (see issue [#63](https://github.com/sneumann/xcms/issues/63)). In
+`findPeaks.massifquant` the argument was completely ignored (see issue [#61](https://github.com/sneumann/xcms/issues/61)) and,
+while the argument was considered in `findPeaks.centWave` and feature detection
+was performed within the specified scan range, but the original `@scantime` slot
+was used throughout the code instead of just the scan times for the specified
+scan indices (see issue [#64](https://github.com/sneumann/xcms/issues/64)).
+
+These problems have been fixed in version 1.51.1 by first sub-setting the
+`xcmsRaw` object (using the `[` method) before actually performing the feature
+detection.
+
+# Under the hood changes
+
+These changes and update will not have any large impact on the day-to-day use of
+`xcms` and are listed here for completeness.
 
 # References
