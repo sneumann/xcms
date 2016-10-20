@@ -258,7 +258,6 @@ use the /original/ (old) code, to switch to the new implementation call
 + The method returned a =matrix= if =withWave= was =0= and a =xcmsPeaks= object
   otherwise. The updated version returns *always* an =xcmsPeaks= object (issue #60).
 
-
 ** =scanrange= parameter in all =findPeaks= methods
 
 The =scanrange= in the =findPeaks= methods is supposed to enable the peak detection
@@ -274,29 +273,6 @@ scan indices (see issue [[https://github.com/sneumann/xcms/issues/64][#64]]).
 
 These problems have been fixed by first sub-setting the =xcmsRaw= object (using
 the =[= method) before actually performing the feature detection.
-
-** Different binning results due to /internal/ and /external/ breaks definition :noexport:
-
-*FIXED*: the bin calculation in C uses now also a multiplication instead of a
-addition thus resulting in identical breaks!
-
-Breaks calculated by the =breaks_on_nBins= function are equal as breaks calculated
-using the =seq= function, but they are not identical.
-
-#+BEGIN_SRC R
-  library(xcms)
-
-  ## Define breaks from 200 to 600
-  brks <- seq(200, 600, length.out = 2002)
-  brks2 <- xcms:::breaks_on_nBins(200, 600, nBins = 2001)
-  all.equal(brks, brks2)
-  identical(brks, brks2)
-
-  ## The difference is very small, but could still, in the binning
-  ## yield slightly different results depending on which breaks are
-  ## used.
-  range(brks - brks2)
-#+END_SRC
 
 
 ** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
@@ -324,8 +300,30 @@ both =0.1= it seems that not in all buffer-generation iterations a interpolation
 is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
 (interpolation with neighboring bins) and sometimes to =0=.
 
-This is now also nicely documented in issue [[https://github.com/sneumann/xcms/issues/52][#52]].
+This is also extensively documented in issue [[https://github.com/sneumann/xcms/issues/52][#52]].
 
+** Different binning results due to /internal/ and /external/ breaks definition :noexport:
+
+*FIXED*: the bin calculation in C uses now also a multiplication instead of a
+addition thus resulting in identical breaks!
+
+Breaks calculated by the =breaks_on_nBins= function are equal as breaks calculated
+using the =seq= function, but they are not identical.
+
+#+BEGIN_SRC R
+  library(xcms)
+
+  ## Define breaks from 200 to 600
+  brks <- seq(200, 600, length.out = 2002)
+  brks2 <- xcms:::breaks_on_nBins(200, 600, nBins = 2001)
+  all.equal(brks, brks2)
+  identical(brks, brks2)
+
+  ## The difference is very small, but could still, in the binning
+  ## yield slightly different results depending on which breaks are
+  ## used.
+  range(brks - brks2)
+#+END_SRC
 
 ** Implementation and comparison for =matchedFilter=		   :noexport:
 

@@ -188,19 +188,16 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                          gsub(mzCenterFun, pattern = "mzCenter.",
                               replacement = "", fixed = TRUE), sep=".")
     if (!exists(mzCenterFun, mode="function"))
-        stop("Error: >", mzCenterFun, "< not defined !")
+        stop("Function '", mzCenterFun, "' not defined !")
 
     if (!is.logical(firstBaselineCheck))
-      stop("Error: parameter >firstBaselineCheck< is not a vector ! \n")
+      stop("Parameter 'firstBaselineCheck' should be logical!")
     if (length(firstBaselineCheck) != 1)
-      stop("Error: parameter >firstBaselineCheck< is not a single logical ! \n")
-    if (!is.null(roiScales)){
-      if (!is.vector(roiScales))
-        stop("Error: parameter >roiScales< is not a vector ! \n")
-      if(!is.numeric(roiScales))
-        stop("Error: parameter >roiScales< is not a vector of type numeric ! \n")
-      if(!length(roiScales) == length(roiList))
-        stop("Error: length of parameter >roiScales< is not equal to the length of parameter >roiList< ! \n")
+      stop("Parameter 'firstBaselineCheck' should be a single logical !")
+    if (!is.null(roiScales)) {
+        if (!is.numeric(roiScales) | length(roiScales) != length(roiList))
+            stop("Parameter 'roiScales' has to be a numeric of length equal to",
+                 " parameter 'roiList'!")
     }
 
     basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax",
@@ -317,7 +314,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 
     ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
     ## lp <- -1
-    message("Detecting peaks in ", length(roiList),
+    message("Detecting features in ", length(roiList),
             " regions of interest ...", appendLF = FALSE)
 
     for (f in  1:lf) {
@@ -640,7 +637,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
             nopeaks <- matrix(nrow = 0, ncol = length(basenames))
             colnames(nopeaks) <- c(basenames)
         }
-        message(" none found!")
+        message(" FAIL: none found!")
         return(nopeaks)
     }
 
@@ -652,7 +649,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
     pr <- p[uindex, , drop = FALSE]
-    message(" found ", nrow(pr), ".")
+    message(" OK: ", nrow(pr), " found.")
 
     return(pr)
 }

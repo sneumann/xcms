@@ -366,6 +366,7 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
                   message("Provided scanrange was adjusted to ", scanrange)
               }
               object <- object[scanrange[1]:scanrange[2]]
+              scanrange <- c(1, length(object@scantime))
               ## ## Sub-set the xcmsRaw baesd on scanrange
               ## scanrange.old <- scanrange
               ## ## sanitize if too few or too many scanrange is given
@@ -450,13 +451,76 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
 
 ############################################################
 ## findPeaks.centWave
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
-                                                    prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                    fitgauss=FALSE, scanrange = numeric(), noise=0, ## noise.local=TRUE,
-                                                    sleep=0, verbose.columns=FALSE, ROI.list=list(),
-                                                    firstBaselineCheck=TRUE, roiScales=NULL) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25,
+                                                    peakwidth=c(20,50),
+                                                    snthresh=10,
+                                                    prefilter=c(3,100),
+                                                    mzCenterFun="wMean",
+                                                    integrate=1, mzdiff=-0.001,
+                                                    fitgauss=FALSE,
+                                                    scanrange = numeric(),
+                                                    noise=0, ## noise.local=TRUE,
+                                                    sleep=0,
+                                                    verbose.columns=FALSE,
+                                                    ROI.list=list(),
+                                                    firstBaselineCheck=TRUE,
+                                                    roiScales=NULL) {
     if (!isCentroided(object))
-        warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
+        warning("It looks like this file is in profile mode. centWave can",
+                " process only centroid mode data !\n")
+
+    ## Fix issue #64:
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
+        scanrange <- c(1, length(object@scantime))
+    } else {
+        scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    res <- do_detectFeatures_centWave(mz = object@env$mz,
+                                      int = object@env$intensity,
+                                      scantime = object@scantime,
+                                      valsPerSpect = vps,
+                                      ppm = ppm, peakwidth = peakwidth,
+                                      snthresh = snthresh,
+                                      prefilter = prefilter,
+                                      mzCenterFun = mzCenterFun,
+                                      integrate = integrate,
+                                      mzdiff = mzdiff, fitgauss = fitgauss,
+                                      noise = noise,
+                                      verboseColumns = verbose.columns,
+                                      roiList = ROI.list,
+                                      firstBaselineCheck = firstBaselineCheck,
+                                      roiScales = roiScales
+                                      )
+    invisible(new("xcmsPeaks", res))
+})
+## The original code wrapped into a function. This should be REMOVED once we
+## checked that the do_ function yields identical results.
+.findPeaks.centWave_orig <- function(object, ppm=25,
+                                     peakwidth=c(20,50),
+                                     snthresh=10,
+                                     prefilter=c(3,100),
+                                     mzCenterFun="wMean",
+                                     integrate=1, mzdiff=-0.001,
+                                     fitgauss=FALSE,
+                                     scanrange = numeric(),
+                                     noise=0, ## noise.local=TRUE,
+                                     sleep=0,
+                                     verbose.columns=FALSE,
+                                     ROI.list=list(),
+                                     firstBaselineCheck=TRUE,
+                                     roiScales=NULL) {
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode. centWave can",
+                " process only centroid mode data !\n")
 
     mzCenterFun <- paste("mzCenter", mzCenterFun, sep=".")
     if (!exists(mzCenterFun, mode="function"))
@@ -472,20 +536,34 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       if(!is.numeric(roiScales))
         stop("Error: parameter >roiScales< is not a vector of type numeric ! \n")
       if(!length(roiScales) == length(ROI.list))
-        stop("Error: length of parameter >roiScales< is not equal to the length of parameter >ROI.list< ! \n")
+          stop("Error: length of parameter >roiScales< is not equal to the",
+               " length of parameter >ROI.list< ! \n")
     }
 
-    scanrange.old <- scanrange
-    if (length(scanrange) < 2)
+    ## Fix issue #64:
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
         scanrange <- c(1, length(object@scantime))
-    else
+    } else {
         scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+    scanrange <- c(1, length(object@scantime))
 
-    scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
-
-    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
-        cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+    ## scanrange.old <- scanrange
+    ## if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else
+    ##     scanrange <- range(scanrange)
+    ## scanrange[1] <- max(1,scanrange[1])
+    ## scanrange[2] <- min(length(object@scantime),scanrange[2])
+    ## if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
+    ##     cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
     basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
     verbosenames <- c("egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
@@ -830,7 +908,8 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     cat("\n",dim(pr)[1]," Peaks.\n")
 
     invisible(new("xcmsPeaks", pr))
-})
+}
+
 
 
 ############################################################
@@ -2064,6 +2143,7 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
     if (sleep > 0)
         cat("'sleep' argument is defunct and will be ignored.")
 
+    ## Fix issue #61
     ## Sub-set the xcmsRaw based on scanrange
     if (length(scanrange) < 2) {
         scanrange <- c(1, length(object@scantime))
@@ -2076,6 +2156,7 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
         message("Provided scanrange was adjusted to ", scanrange)
     }
     object <- object[scanrange[1]:scanrange[2]]
+    scanrange <- c(1, length(object@scantime))
     ## scanrange.old <- scanrange
     ## ## sanitize if too few or too many scanrange is given
     ## if (length(scanrange) < 2)

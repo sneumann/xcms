@@ -16,13 +16,25 @@ test_do_detectFeatures_centWave <- function() {
     res1 <- do_detectFeatures_centWave(mz = mzVals,
                                        int = intVals,
                                        scantime = xr@scantime,
-                                       valsPerSpect)
+                                       valsPerSpect,
+                                       snthresh = 200)
     res2 <- do_detectFeatures_centWave(mz = mzVals,
                                        int = intVals,
                                        scantime = xr@scantime,
                                        valsPerSpect,
-                                       snthresh = 100)
+                                       snthresh = 500)
     checkTrue(nrow(res1) > nrow(res2))
+
+    ## Check scanrange on findPeaks.centWave.
+    res_1 <- findPeaks.centWave(xr, scanrange = c(90, 345))
+    xr <- xr[90:345]
+    mzVals <- xr@env$mz
+    intVals <- xr@env$intensity
+    ## Define the values per spectrum:
+    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+    res_2 <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+                                        scantime = xr@scantime, valsPerSpect)
+    checkEquals(res_1@.Data, res_2)
 }
 
 
@@ -83,7 +95,7 @@ dontrun_test_do_detectFeatures_centWave_impl <- function() {
     }
 }
 
-
+## That's to compare the functions in version 1.49.7.
 .runAndCompare <- function(xr, ppm, peakwidth, snthresh, prefilter, mzCenterFun,
                            integrate, mzdiff, fitgauss, noise, verboseColumns) {
     require(RUnit)
@@ -92,18 +104,7 @@ dontrun_test_do_detectFeatures_centWave_impl <- function() {
     scantime <- xr@scantime
     scanindex <- xr@scanindex
     a <- system.time(
-        ## xrDo <- xcms:::do_detectFeatures_centWave(mz, int, scantime,
-        ##                                           diff(c(scanindex, length(mz))),
-        ##                                           ppm = ppm,
-        ##                                           peakwidth = peakwidth,
-        ##                                           snthresh = snthresh,
-        ##                                           prefilter = prefilter,
-        ##                                           mzCenterFun = mzCenterFun,
-        ##                                           integrate = integrate,
-        ##                                           mzdiff = mzdiff,
-        ##                                           fitgauss = fitgauss,
-        ##                                           noise = noise,
-        ##                                           verboseColumns = verboseColumns)
+        ## That's the method called inside do_...
         xrDo <- xcms:::.centWave_orig(mz = mz, int = int, scantime = scantime,
                                       valsPerSpect = diff(c(scanindex, length(mz))),
                                       ppm = ppm, peakwidth = peakwidth,
@@ -116,19 +117,19 @@ dontrun_test_do_detectFeatures_centWave_impl <- function() {
                                       noise = noise,
                                       verboseColumns = verboseColumns)
     ) ## 12.7
-    ## Run the findPeaks.centWave on the xcmsRaw.
+    ## Run the original centWave code on xcmsRaw:
     b <- system.time(
-        xrPeaks <- findPeaks.centWave(xr,
-                                      ppm = ppm,
-                                      peakwidth = peakwidth,
-                                      snthresh = snthresh,
-                                      prefilter = prefilter,
-                                      mzCenterFun = mzCenterFun,
-                                      integrate = integrate,
-                                      mzdiff = mzdiff,
-                                      fitgauss = fitgauss,
-                                      noise = noise,
-                                      verbose.columns = verboseColumns)
+        xrPeaks <- xcms:::.findPeaks.centWave_orig(xr,
+                                                   ppm = ppm,
+                                                   peakwidth = peakwidth,
+                                                   snthresh = snthresh,
+                                                   prefilter = prefilter,
+                                                   mzCenterFun = mzCenterFun,
+                                                   integrate = integrate,
+                                                   mzdiff = mzdiff,
+                                                   fitgauss = fitgauss,
+                                                   noise = noise,
+                                                   verbose.columns = verboseColumns)
     )  ## 15.4
     ## Compare.
     cat("DO: ", a, "\n")

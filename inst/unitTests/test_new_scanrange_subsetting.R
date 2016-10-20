@@ -10,23 +10,27 @@ xraw <- xcmsRaw(fs, profstep = 0)
 test_scanrange_centWave <- function() {
     ## Without sub-setting
     res_1 <- findPeaks.centWave(xraw)
-    res_2 <- xcms:::.findPeaks.centWave_scanrange(xraw)
+    res_2 <- xcms:::.findPeaks.centWave_orig(xraw)
     checkIdentical(res_1, res_2)
 
     scnr <- c(90, 345)
     res_1 <- findPeaks.centWave(xraw, scanrange = scnr)
-    ## res_2 <- xcms:::.findPeaks.centWave_scanrange(xraw, scanrange = scnr)
-    ## checkIdentical(res_1, res_2)
-    ## Does NOT work: scalerange e.g. depends on scantime.
+    res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr)
+    checkIdentical(res_1, res_2)
+
+    ## Compare with do_
     xsub <- xraw[90:345]
-    res_1 <- findPeaks.centWave(xsub)
-    ## res_2 <- xcms:::.findPeaks.centWave_scanrange(xraw, scanrange = scnr)
+    res_3 <- do_detectFeatures_centWave(mz = xsub@env$mz,
+                                        int = xsub@env$intensity,
+                                        scantime = xsub@scantime,
+                                        valsPerSpect = diff(c(xsub@scanindex,
+                                                              length(xsub@env$mz))))
+    checkIdentical(res_3, res_1@.Data)
 
     scnr <- c(1, 400)
     res_1 <- findPeaks.centWave(xraw, scanrange = scnr)
-    res_2 <- xcms:::.findPeaks.centWave_scanrange(xraw, scanrange = scnr)
-    ## checkIdentical(res_1, res_2)
-    ## Does NOT work: scalerange e.g. depends on scantime.
+    res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr)
+    checkIdentical(res_1, res_2)
 }
 
 test_scanrange_matchedFilter <- function() {
