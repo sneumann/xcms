@@ -27,7 +27,7 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 20 October, 2016<br />
+**Modified**: 21 October, 2016<br />
 **Compiled**: `r date()`
 
 # New functionality in `xcms`
@@ -152,6 +152,9 @@ or performance decrease (while no such was decrease was observed up to now).
 
 ## Differences in linear interpolation of missing values (`profBinLin`).
 
+From `xcms` version 1.51.1 on the new binning functions are used, thus, the bug
+described here are fixed.
+
 Two bugs are present in the `profBinLin` method (reported as issues [#46](https://github.com/sneumann/xcms/issues/46) and [#49](https://github.com/sneumann/xcms/issues/49) on
 github) which are fixed in the new `binYonX` and `imputeLinInterpol` functions:
 
@@ -262,5 +265,8 @@ detection.
 
 These changes and update will not have any large impact on the day-to-day use of
 `xcms` and are listed here for completeness.
+
+-   From `xcms` version 1.51.1 on the default methods from the `mzR` package are used
+    for data import.
 
 # References

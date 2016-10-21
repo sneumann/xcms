@@ -41,7 +41,7 @@ BiocStyle::markdown()
 #+BEGIN_html
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 20 October, 2016<br />
+**Modified**: 21 October, 2016<br />
 **Compiled**: `r date()`
 #+END_html
 
@@ -169,6 +169,9 @@ or performance decrease (while no such was decrease was observed up to now).
 
 ** Differences in linear interpolation of missing values (=profBinLin=).
 
+From =xcms= version 1.51.1 on the new binning functions are used, thus, the bug
+described here are fixed.
+
 Two bugs are present in the =profBinLin= method (reported as issues [[https://github.com/sneumann/xcms/issues/46][#46]] and [[https://github.com/sneumann/xcms/issues/49][#49]] on
 github) which are fixed in the new =binYonX= and =imputeLinInterpol= functions:
 
@@ -278,6 +281,8 @@ These problems have been fixed in version 1.51.1 by first sub-setting the
 detection.
 
 ** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
+
+The problem described here has been fixed in =xcms= >= 1.51.1.
 
 The iterative binning of only small sub-sets of data causes problems with
 =profBinLinBase=, in which data imputation might be skipped in some iterations
