@@ -170,23 +170,23 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                 warning("Only 1 peak found in sample ", snames[i], ".")
             else if (nrow(pks) < 5)
                 warning("Only ", nrow(pks), " found in sample ", snames[i], ".")
-            proclist[[i]] <- ProcessHistory(info = paste0("Feature detection in '",
+            proclist[[i]] <- ProcessHistory(info. = paste0("Feature detection in '",
                                                           basename(files[i]),
                                                           "': ", nrow(pks),
                                                           " features identified."),
                                             date = res[[i]]$date,
-                                            type = .PROCSTEP.FEATURE.DETECTION,
-                                            fileIndex = i)
+                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            fileIndex. = i)
         } else {
             scntlist[[i]] <- scnt
             peaklist[[i]] <- NULL
-            proclist[[i]] <- ProcessHistory(info = paste0("Error identifying",
+            proclist[[i]] <- ProcessHistory(info. = paste0("Error identifying",
                                                           " features in '",
                                                           basename(files[i]),
                                                           "': ", res[[i]]),
-                                            error = res[[i]],
-                                            type = .PROCSTEP.FEATURE.DETECTION,
-                                            fileIndex = i)
+                                            error. = res[[i]],
+                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            fileIndex. = i)
             warning("Feature detection failed in '", files[i], "':", res[[i]])
         }
     }

@@ -165,26 +165,28 @@ setClass("xcmsRaw", representation(env = "environment",
 ############################################################
 ## netCdfSource
 setClass("netCdfSource",
-         representation(cdf="integer"),
+         ## representation(cdf="integer"),
          contains="xcmsFileSource",
-         validity=function(object) {
-             if (!is.null(attr(object@cdf, "errortext"))) {
-                 mzR:::netCDFClose(object@cdf)
-                 attr(object@cdf, "errortext")
-             } else TRUE
-         })
+         ## validity=function(object) {
+         ##     if (!is.null(attr(object@cdf, "errortext"))) {
+         ##         mzR:::netCDFClose(object@cdf)
+         ##         attr(object@cdf, "errortext")
+         ##     } else TRUE
+         ## }
+         )
 
 ############################################################
 ## rampSource
 setClass("rampSource",
-         representation(rampid="integer"),
+         ## representation(rampid="integer"),
          contains="xcmsFileSource",
-         validity=function(object) {
-             if (object@rampid < 0) {
-                 mzR:::rampClose(object@rampid)
-                 paste("Could not open mzML/mzXML/mzData file:", object)
-             } else TRUE
-         })
+         ## validity=function(object) {
+         ##     if (object@rampid < 0) {
+         ##         mzR:::rampClose(object@rampid)
+         ##         paste("Could not open mzML/mzXML/mzData file:", object)
+         ##     } else TRUE
+         ## }
+         )
 
 ############################################################
 ## xcmsPeaks

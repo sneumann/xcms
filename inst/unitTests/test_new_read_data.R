@@ -38,6 +38,39 @@ test_compare_readRawData <- function() {
     ## ## Rocks!
 }
 
+## Testing also the modified xcmsSource, loadRaw etc.
+test_evaluate_xcmsSource <- function() {
+    library(msdata)
+    mz_file <- system.file("microtofq/MM8.mzML", package = "msdata")
+    src <- xcms:::xcmsSource(mz_file)
+    checkTrue(is(src, "rampSource"))
+    tmp <- loadRaw(src)
+    checkEquals(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
+                              "mz", "intensity", "polarity"))
+
+    cdf_file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+    src <- xcms:::xcmsSource(cdf_file)
+    checkTrue(is(src, "netCdfSource"))
+    tmp <- loadRaw(src)
+    checkEquals(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
+                              "mz", "intensity", "polarity"))
+
+    ## MSn:
+    mzdatapath <- system.file("iontrap", package = "msdata")
+    mzdatafiles <- list.files(mzdatapath, pattern="extracted.mzData",
+                              recursive = TRUE, full.names = TRUE)
+    src <- xcms:::xcmsSource(mzdatafiles[1])
+    tmp <- loadRaw(src, includeMSn = TRUE)
+
+    ## OLD code:
+    rid <- mzR:::rampOpen(mzdatafiles[1])
+    rawdata <- mzR:::rampRawData(rid)
+    rawdata$MSn <- mzR:::rampRawDataMSn(rid)
+    mzR:::rampClose(rid)
+    rm(rid)
+    checkEquals(rawdata, tmp)
+}
+
 dontrun_benchmarks <- function() {
     library(microbenchmark)
 
@@ -53,4 +86,41 @@ dontrun_benchmarks <- function() {
     microbenchmark(loadRaw(xcmsSource(mz_file)),
                    xcms:::readRawData(mz_file), times = 30)
     ## readRawData is faster.
+}
+
+dontrun_evaluate_memory <- function() {
+    ## Increased memory demand was observed using the original loadRaw compared
+    ## to the newer function. Problem is that can not be easily quantified.
+    ## Running feature detection in parallel in the same file.
+    tmpDir <- tempdir()
+    for (i in 1:40)
+        file.copy(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+                  to = paste0(tmpDir, "/", i, ".CDF"))
+    fls <- dir(tmpDir, pattern = "CDF", full.names = TRUE)
+    ## use the "original" code
+    useOriginalCode(TRUE)
+    ## 6.7 GB mem free. 1.6 swap used
+    system.time(
+        xs <- xcmsSet(fls)
+    )
+    useOriginalCode(FALSE)
+    system.time(
+        xs <- xcmsSet(fls)
+    )
+    ## Nothing abnormal observed; but 15 seconds faster.
+    tmpDir <- tempdir()
+    for (i in 1:40)
+        file.copy("../../local_data/mzML-files/130616_10004685_PC_POS.mzML",
+                  to = paste0(tmpDir, "/", i, ".mzML"))
+    ##
+    fls <- dir(tmpDir, pattern = "mzML", full.names = TRUE)
+    useOriginalCode(TRUE)
+    system.time(
+        xs <- xcmsSet(fls, method = "centWave")
+    ) ## 370 seconds. Lots of R processes open even after calculation finished;
+    ## is BiocParallel not closing the connections properly?
+    useOriginalCode(FALSE)
+    system.time(
+        xs <- xcmsSet(fls, method = "centWave")
+    ) ## 380 seconds. There seem to be still some (2) R's open.
 }

@@ -69,6 +69,7 @@ Collate:
     'methods-netCdfSource.R'
     'methods-rampSource.R'
     'methods-xcmsEIC.R'
+    'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'
     'methods-xcmsPeaks.R'
     'methods-xcmsRaw.R'

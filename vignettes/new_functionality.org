@@ -424,6 +424,8 @@ methods as default.
 These changes and update will not have any large impact on the day-to-day use of
 =xcms= and are listed here for completeness.
 
++ From =xcms= version 1.51.1 on the default methods from the =mzR= package are used
+  for data import.
 
 
 * Introducing =DRanges=.						   :noexport:

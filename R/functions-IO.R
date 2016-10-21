@@ -33,32 +33,43 @@ isMzMLFile <- function(x) {
 ############################################################
 ## readRawData
 ##
-## Function to read the raw data from an cdf, mzml file. Might eventually
-## replace the loadRaw methods.
-## returns list with rt, tic, scanindex, mz and intensity
-readRawData <- function(x, includeMSn = FALSE) {
-    def_backend <- "Ramp"  ## Eventually use pwiz...
-    message("Using ", def_backend, " backend to read the raw data.")
+##' Function to read the raw data from an cdf, mzml file. Might eventually
+##' replace the loadRaw methods.
+##' returns list with rt, tic, scanindex, mz and intensity
+##' see issue #65.
+##' @param x The file name.
+##' @param includeMSn Logical indicating whether MS level > 1 should be loaded
+##' too. Only supported for mzML files.
+##' @param backendMzML Default backend to be used for mzML files. Can b wither
+##' \code{"Ramp"} or \code{"pwiz"}.
+##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
+##' @noRd
+readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp") {
+    ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
     if (isCdfFile(x)) {
         backend <- "netCDF"
     } else {
         if (isMzMLFile(x)) {
-            backend <- def_backend
+            backend <- backendMzML
             header_cols <- c(header_cols, "polarity")
         } else {
             stop("Unknown file type.")
         }
     }
     msd <- mzR::openMSfile(x, backend = backend)
-    on.exit(mzR::close(msd))
+    on.exit(if(!is.null(msd)) mzR::close(msd))
     ## That's due to issue https://github.com/lgatto/MSnbase/issues/151
+    on.exit(rm(msd), add = TRUE)
     on.exit(gc(), add = TRUE)
     hdr <- mzR::header(msd)
     idx_ms1 <- which(hdr$msLevel == 1)
     if (length(idx_ms1) == 0)
         stop("No MS1 data found in file ", x, "!")
     pks <- mzR::peaks(msd, idx_ms1)
+    ## Fix problem with single spectrum files (issue #66)
+    if (is(pks, "matrix"))
+        pks <- list(pks)
     valsPerSpect <- lengths(pks) / 2
     pks <- do.call(rbind, pks)
     hdr_ms1 <- hdr[idx_ms1, header_cols,
@@ -70,7 +81,6 @@ readRawData <- function(x, includeMSn = FALSE) {
                     mz = pks[, 1],
                     intensity = pks[, 2],
                     polarity = hdr_ms1$polarity)
-
     if (includeMSn) {
         if (backend == "netCDF") {
             warning("Reading of MSn spectra for NetCDF not supported.")
@@ -80,6 +90,8 @@ readRawData <- function(x, includeMSn = FALSE) {
             if (length(idx_ms2) > 0) {
                 hdr_ms2 <- hdr[idx_ms2, , drop = FALSE]
                 pks <- mzR::peaks(msd, idx_ms2)
+                if (is(pks, "matrix"))
+                    pks <- list(pks)
                 valsPerSpect <- lengths(pks) / 2
                 pks <- do.call(rbind, pks)
                 resList$MSn <- list(rt = hdr_ms2$retentionTime,
@@ -95,9 +107,11 @@ readRawData <- function(x, includeMSn = FALSE) {
                                     mz = pks[, 1],
                                     intensity = pks[, 2])
             } else {
-                warning("MSn spectra requested but not found.")
+                warning("MSn spectra requested but none present in the file.")
             }
         }
     }
+    mzR::close(msd)
+    mzR <- NULL
     resList
 }

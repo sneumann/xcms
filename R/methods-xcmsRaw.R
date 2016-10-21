@@ -790,9 +790,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25,
 
                 ## narrow down peak rt boundaries by skipping zeros
                 pd <- d[lm[1]:lm[2]]; np <- length(pd)
-                lm.l <-  xcms:::findEqualGreaterUnsorted(pd,1)
+                lm.l <-  findEqualGreaterUnsorted(pd,1)
                 lm.l <- max(1, lm.l - 1)
-                lm.r <- xcms:::findEqualGreaterUnsorted(rev(pd),1)
+                lm.r <- findEqualGreaterUnsorted(rev(pd),1)
                 lm.r <- max(1, lm.r - 1)
                 lm <- lm + c(lm.l - 1, -(lm.r - 1) )
 

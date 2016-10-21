@@ -11,13 +11,13 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
 
     ## Change between old and new code; new code uses the "newer" mzR approach
     ## to read the file.
-    if (useOriginalCode()) {
-        object@filepath <- xcmsSource(filename)
-        rawdata <- loadRaw(object@filepath, includeMSn)
-    } else {
-        object@filepath <- new("xcmsFileSource", filename)
-        rawdata <- readRawData(filename, includeMSn = includeMSn)
-    }
+    ## if (useOriginalCode()) {
+    object@filepath <- xcmsSource(filename)
+    rawdata <- loadRaw(object@filepath, includeMSn = includeMSn)
+    ## } else {
+    ##     object@filepath <- new("xcmsFileSource", filename)
+    ##     rawdata <- readRawData(filename, includeMSn = includeMSn)
+    ## }
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
