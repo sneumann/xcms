@@ -13,7 +13,7 @@ import("RColorBrewer")
 import("BiocParallel")
 
 importClassesFrom("S4Vectors", "Rle")
-importFrom("S4Vectors", "split")
+importFrom("S4Vectors", "split", "Rle")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",

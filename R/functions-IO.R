@@ -34,17 +34,23 @@ isMzMLFile <- function(x) {
 ## readRawData
 ##
 ##' Function to read the raw data from an cdf, mzml file. Might eventually
-##' replace the loadRaw methods.
-##' returns list with rt, tic, scanindex, mz and intensity
-##' see issue #65.
+##' replace the loadRaw methods. The function returns list with rt, tic,
+##' scanindex, mz and intensity. For more details on the motivation to implement
+##' this function see issue #65 on github.
 ##' @param x The file name.
 ##' @param includeMSn Logical indicating whether MS level > 1 should be loaded
 ##' too. Only supported for mzML files.
 ##' @param backendMzML Default backend to be used for mzML files. Can b wither
 ##' \code{"Ramp"} or \code{"pwiz"}.
+##' @param dropEmptyScans Scans/spectra without peaks are not returned if
+##' \code{dropEmptyScans = TRUE}. If \code{FALSE} all spectra from the input
+##' file are returned. This is to be consistent with the code before
+##' xcms version 1.51.1 (see issue #67
+##' https://github.com/sneumann/xcms/issues/67).
 ##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
 ##' @noRd
-readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp") {
+readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp",
+                        dropEmptyScans = TRUE) {
     ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
     if (isCdfFile(x)) {
@@ -64,6 +70,10 @@ readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp") {
     on.exit(gc(), add = TRUE)
     hdr <- mzR::header(msd)
     idx_ms1 <- which(hdr$msLevel == 1)
+    ## Drop empty spectra; see https://github.com/sneumann/xcms/issues/67
+    if (dropEmptyScans & length(idx_ms1) > 0) {
+        idx_ms1 <- idx_ms1[hdr[idx_ms1, "peaksCount"] > 0]
+    }
     if (length(idx_ms1) == 0)
         stop("No MS1 data found in file ", x, "!")
     pks <- mzR::peaks(msd, idx_ms1)
@@ -87,6 +97,10 @@ readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp") {
         } else {
             ## Read MSn data
             idx_ms2 <- which(hdr$msLevel > 1)
+            ## Drop empty spectra; see https://github.com/sneumann/xcms/issues/67
+            if (dropEmptyScans & length(idx_ms2) > 0) {
+                idx_ms2 <- idx_ms2[hdr[idx_ms2, "peaksCount"] > 0]
+            }
             if (length(idx_ms2) > 0) {
                 hdr_ms2 <- hdr[idx_ms2, , drop = FALSE]
                 pks <- mzR::peaks(msd, idx_ms2)

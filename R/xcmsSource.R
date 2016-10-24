@@ -1,3 +1,6 @@
+## Methods related to xcmsSource
+#' @include AllGenerics.R DataClasses.R
+
 setMethod("xcmsSource", "character", function(object) {
     ## if (useOriginalCode()) {
     ##     if (! file.exists(object)) {

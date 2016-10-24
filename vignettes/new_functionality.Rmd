@@ -27,7 +27,7 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 21 October, 2016<br />
+**Modified**: 24 October, 2016<br />
 **Compiled**: `r date()`
 
 # New functionality in `xcms`
@@ -131,15 +131,18 @@ issue [#30](https://github.com/sneumann/xcms/issues/30), to separate the core lo
 users to enable also the use of the feature detection functions using base R
 parameters (i.e. without specific classes containing the data such as the
 `xcmsRaw` class). This simplifies also the re-use of these functions in other
-packages. The implemented functions are:
+packages and simplifies the future implementation of the feature detection
+algorithms for e.g. the `MSnExp` or `OnDiskMSnExp` objects from the `MSnbase`
+Bioconductor package. The implemented functions are:
 
 -   `do_detectFeatures_centWave`: peak density and wavelet based feature detection
     for high resolution LC/MS data in centroid mode [@Tautenhahn:2008fx].
 -   `do_detectFeatures_matchedFilter`: identification of features in the
     chromatographic domain based on matched filtration [@Smith:2006ic].
--   `do_detectFeatures_massifquant`: iden
+-   `do_detectFeatures_massifquant`: identification of features using Kalman
+    filters.
 
-On possible drawback from the introduction of this new layer is, that more
+One possible drawback from the introduction of this new layer is, that more
 objects get copied by R which *could* eventually result in a larger memory demand
 or performance decrease (while no such was decrease was observed up to now).
 
@@ -267,6 +270,7 @@ These changes and update will not have any large impact on the day-to-day use of
 `xcms` and are listed here for completeness.
 
 -   From `xcms` version 1.51.1 on the default methods from the `mzR` package are used
-    for data import.
+    for data import. Besides ensuring easier maintenance, this enables also data
+    import from *gzipped* mzML files.
 
 # References

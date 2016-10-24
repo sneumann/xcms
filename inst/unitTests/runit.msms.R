@@ -45,11 +45,11 @@ test.xcmsSetms2cw <- function() {
 test.msn2xcmsRaw <- function() {
  msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
  xrmsn <- xcmsRaw(msnfile, includeMSn=TRUE)
- xrms1 <- xcmsRaw(msnfile, includeMSn=TRUE)
  xr <- msn2xcmsRaw(xrmsn)
 
- checkEqualsNumeric(length(xrms1@env$mz), 502598)
  checkEqualsNumeric(length(xr@env$mz), 3132)
  checkEqualsNumeric(length(xr@env$intensity), 3132)
+ ## In reality, it seems there are 1612 MS2 spectra in the file, just that
+ ## 1121 have a peaksCount > 0
  checkEqualsNumeric(length(xr@scantime), 1121)
 }
