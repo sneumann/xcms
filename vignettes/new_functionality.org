@@ -560,6 +560,29 @@ are now used by default.
 
 + [ ] /runit.ramp.R/.
 
+* Deprecated functions and files				   :noexport:
+
+Here we list all of the functions and related files that are deprecated.
+
+** Deprecated
+
+*** xcms 1.49:
+
++ =xcmsParallelSetup= (Deprecated.R)
++ =xcmsPapply= (Deprecated.R)
++ =xcmsClusterApply= (Deprecated.R)
+
+*** xcms 1.51:
+
++ =profBin= (c.R)
++ =profBinM= (c.R)
++ =profBinLin= (c.R)
++ =profBinLinM= (c.R)
++ =profBinLinBase= (c.R)
++ =profBinLinBaseM= (c.R)
+
+** Defunct
+
 * TODOs								   :noexport:
 
 ** TODO Deprecate binning functions.

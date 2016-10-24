@@ -43,7 +43,7 @@
 ##' that is used for binning is expanded by \code{binSize} (i.e. the lower boundary
 ##' will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
 ##' this argument to \code{TRUE} resembles the binning that is/was used in
-##' \code{xcms} \code{\link{profBin}} and similar methods.
+##' \code{profBin} function from \code{xcms} < 1.51.
 ##'
 ##' \code{NA} handling: by default the function ignores \code{NA} values in
 ##' \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
@@ -95,7 +95,7 @@
 ##' the index of the max or min (depending on whether \code{method = "max"} or
 ##' \code{method = "min"}) value within each bin in input vector \code{x}.
 ##' @author Johannes Rainer
-##' @seealso \code{\link{imputeLinInterpol}}, \code{\link{profBin}}
+##' @seealso \code{\link{imputeLinInterpol}}
 ##' @examples
 ##' ########
 ##' ## Simple example illustrating the breaks and the binning.
@@ -249,9 +249,10 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
 ############################################################
 ## imputeLinInterpol
 ##
-##' @description This method resembles some of the functionality of the xcms
-##' \code{\link{profBinLin}} and \code{\link{profBinLinBase}} functions, more
-##' specifically, the missing value imputation based on linear interpolation.
+##' @description This function provides missing value imputation based on linear
+##' interpolation and resembles some of the functionality of the
+##' \code{profBinLin} and \code{profBinLinBase} functions deprecated from
+##' version 1.51 on.
 ##'
 ##' @details Values for NAs in input vector \code{x} can be imputed using methods
 ##' \code{"lin"} and \code{"linbase"}:
@@ -259,7 +260,7 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
 ##' \code{impute = "lin"} uses simple linear imputation to derive a value for an
 ##' empty element in input vector \code{x} from its neighboring non-empty elements.
 ##' This method is equivalent to the linear interpolation in the
-##' \code{\link{profBinLin}} method. Whether interpolation is performed if missing
+##' \code{profBinLin} method. Whether interpolation is performed if missing
 ##' values are present at the beginning and end of \code{x} can be set with argument
 ##' \code{noInterpolAtEnds}. By default interpolation is also performed at the ends
 ##' interpolating from \code{0} at the beginning and towards \code{0} at the end. For
@@ -279,14 +280,14 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
 ##' adjacent non-empty elements while, if the next neighbors of the current
 ##' empty element are also \code{NA}, it's vale is set to \code{baseValue}.
 ##' This corresponds to the linear interpolation performed by the
-##' \code{\link{profBinLinBase}} method.
+##' \code{profBinLinBase} method.
 ##' For more details see examples below.
 ##'
 ##' @title Impute values for empty elements in a vector using linear interpolation
 ##' @param x A numeric vector with eventual missing (\code{NA}) values.
 ##' @param baseValue The base value to which empty elements should be set. This
 ##' is only considered for \code{method = "linbase"} and corresponds to the
-##' \code{\link{profBinLinBase}}'s \code{baselevel} argument.
+##' \code{profBinLinBase}'s \code{baselevel} argument.
 ##' @param method One of \code{"none"}, \code{"lin"} or \code{"linbase"}.
 ##' @param distance For \code{method = "linbase"}: number of non-empty neighboring
 ##' element of an empty element that should be considered for linear interpolation. See
@@ -454,7 +455,7 @@ breaks_on_binSize <- function(fromX, toX, binSize) {
 ## @description This function is a reference implementation in R for the profBin
 ## C-function.
 ##
-## @details Same as the \code{\link{profBin}} method, this function calculates
+## @details Same as the \code{profBin} method, this function calculates
 ## centered breaks (i.e. shifted by half the bin-size, thus the center for the
 ## first bin is the value of \code{fromX}) and bins the input vector \code{x}
 ## into the bins defined by these breaks. The maximum \code{y} value corresponding
