@@ -3,6 +3,7 @@
 \docType{methods}
 \name{[,xcmsRaw,logicalOrNumeric,missing,missing-method}
 \alias{[,xcmsRaw,logicalOrNumeric,missing,missing-method}
+\alias{subset-xcmsRaw}
 \title{Subset an xcmsRaw object by scans}
 \usage{
 \S4method{[}{xcmsRaw,logicalOrNumeric,missing,missing}(x, i, j, drop)
@@ -22,7 +23,9 @@ The sub-setted \code{\linkS4class{xcmsRaw}} object.
 \description{
 Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
 returned \code{\linkS4class{xcmsRaw}} object contains values for all scans
-specified with argument \code{i}.
+specified with argument \code{i}. Note that the \code{scanrange} slot of the
+returned \code{xcmsRaw} will be \code{c(1, length(object@scantime))} and
+hence not \code{range(i)}.
 }
 \details{
 Only subsetting by scan index in increasing order or by a logical

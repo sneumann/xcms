@@ -12,7 +12,7 @@ imputeLinInterpol(x, baseValue, method = "lin", distance = 1L,
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
-\code{\link{profBinLinBase}}'s \code{baselevel} argument.}
+\code{profBinLinBase}'s \code{baselevel} argument.}
 
 \item{method}{One of \code{"none"}, \code{"lin"} or \code{"linbase"}.}
 
@@ -29,9 +29,10 @@ A numeric vector with empty values imputed based on the selected
 \code{method}.
 }
 \description{
-This method resembles some of the functionality of the xcms
-\code{\link{profBinLin}} and \code{\link{profBinLinBase}} functions, more
-specifically, the missing value imputation based on linear interpolation.
+This function provides missing value imputation based on linear
+interpolation and resembles some of the functionality of the
+\code{profBinLin} and \code{profBinLinBase} functions deprecated from
+version 1.51 on.
 }
 \details{
 Values for NAs in input vector \code{x} can be imputed using methods
@@ -40,7 +41,7 @@ Values for NAs in input vector \code{x} can be imputed using methods
 \code{impute = "lin"} uses simple linear imputation to derive a value for an
 empty element in input vector \code{x} from its neighboring non-empty elements.
 This method is equivalent to the linear interpolation in the
-\code{\link{profBinLin}} method. Whether interpolation is performed if missing
+\code{profBinLin} method. Whether interpolation is performed if missing
 values are present at the beginning and end of \code{x} can be set with argument
 \code{noInterpolAtEnds}. By default interpolation is also performed at the ends
 interpolating from \code{0} at the beginning and towards \code{0} at the end. For
@@ -60,7 +61,7 @@ means that the value for an empty element is interpolated from directly
 adjacent non-empty elements while, if the next neighbors of the current
 empty element are also \code{NA}, it's vale is set to \code{baseValue}.
 This corresponds to the linear interpolation performed by the
-\code{\link{profBinLinBase}} method.
+\code{profBinLinBase} method.
 For more details see examples below.
 }
 \examples{

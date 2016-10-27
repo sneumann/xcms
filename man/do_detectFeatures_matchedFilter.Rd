@@ -33,7 +33,7 @@ within a certain bin-neighborhood) and \code{"intlin"}. See
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
-\code{\link{profBinLinBase}}'s \code{baselevel} argument.}
+\code{profBinLinBase}'s \code{baselevel} argument.}
 
 \item{distance}{For \code{method = "linbase"}: number of non-empty neighboring
 element of an empty element that should be considered for linear interpolation. See

@@ -114,7 +114,7 @@ Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of values
 that is used for binning is expanded by \code{binSize} (i.e. the lower boundary
 will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
 this argument to \code{TRUE} resembles the binning that is/was used in
-\code{xcms} \code{\link{profBin}} and similar methods.
+\code{profBin} function from \code{xcms} < 1.51.
 
 \code{NA} handling: by default the function ignores \code{NA} values in
 \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
@@ -186,6 +186,6 @@ binYonX(X, nBins = 5L, fromIdx = fIdx, toIdx = tIdx, binFromX = 4, binToX = 28)
 Johannes Rainer
 }
 \seealso{
-\code{\link{imputeLinInterpol}}, \code{\link{profBin}}
+\code{\link{imputeLinInterpol}}
 }
 
