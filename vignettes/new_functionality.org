@@ -166,6 +166,10 @@ or performance decrease (while no such was decrease was observed up to now).
 
 + =[= subsetting method for =xcmsRaw= objects that enables to subset an =xcmsRaw=
   object to specific scans/spectra.
++ =profMat= method to extract the /profile/ matrix from the =xcmsRaw= object. This
+  method should be used instead of directly accessing the =@env$profile= slot, as
+  it will create the profile matrix on the fly if it was not pre-calculated (or
+  if profile matrix generation settings have been changed).
 
 * Changes due to bug fixes and modified functionality
 
@@ -228,7 +232,6 @@ Note that by default =imputeLinInterpol= would also interpolate missing values a
 the beginning and the end of the provided numeric vector. This can be disabled
 (to be compliant with =profBinLin=) by setting parameter =noInterpolAtEnds= to
 =TRUE= (like in the example above).
-
 
 ** Differences due to updates in =do_detectFeatures_matchedFilter=, respectively =findPeaks.matchedFilter=.
 

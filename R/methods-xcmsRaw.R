@@ -1716,8 +1716,16 @@ setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
     if (! (value %in% names(.profFunctions)))
         stop("Invalid profile method")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
+        return(object)
+    }
+    have_profmethod <- object@profmethod
+    ## Re-calculate the profile matrix if method differs
+    if (have_profmethod != value & profStep(object) > 0) {
+        object@env$profile <- profMat(object, method = value)
+    }
     object@profmethod <- value
-    profStep(object) <- profStep(object)
     object
 })
 
@@ -1729,30 +1737,53 @@ setMethod("profStep", "xcmsRaw", function(object) {
     else
         diff(object@mzrange)/(nrow(object@env$profile)-1)
 })
+## Update: related to issue #71
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
+    ## if ("profile" %in% ls(object@env))
+    ##     rm("profile", envir = object@env)
+    ## if (!value)
+    ##     return(object)
+    ## if (length(object@env$mz)==0) {
+    ##     warning("MS1 scans empty. Skipping profile matrix calculation.")
+    ##     return(object)
+    ## }
+    ## minmass <- round(min(object@env$mz)/value)*value
+    ## maxmass <- round(max(object@env$mz)/value)*value
 
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    if (!value)
-        return(object)
-    if (length(object@env$mz)==0) {
-        warning("MS1 scans empty. Skipping profile matrix calculation.")
+    ## num <- (maxmass - minmass)/value + 1
+    ## profFun <- match.profFun(object)
+    ## object@env$profile <- profFun(object@env$mz, object@env$intensity,
+    ##                               object@scanindex, num, minmass, maxmass,
+    ##                               FALSE, object@profparam)
+    ## object@mzrange <- c(minmass, maxmass)
+    ## return(object)
+    if (!is.numeric(value) && value < 0)
+        stop("'value' has to be a positive number!")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
         return(object)
     }
-    minmass <- round(min(object@env$mz)/value)*value
-    maxmass <- round(max(object@env$mz)/value)*value
-
-    num <- (maxmass - minmass)/value + 1
-    profFun <- match.profFun(object)
-    object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                  object@scanindex, num, minmass, maxmass,
-                                  FALSE, object@profparam)
-    object@mzrange <- c(minmass, maxmass)
+    if (value == 0) {
+        if ("profile" %in% ls(object@env)) {
+            rm("profile", envir = object@env)
+            message("Removing profile matrix.")
+        }
+        return(object)
+    }
+    have_step <- profStep(object)
+    ## Check if the value differs from step and only calculate if different.
+    if (have_step != value) {
+        ## OK, now we're re-calculating
+        minmass <- round(min(object@env$mz) / value) * value
+        maxmass <- round(max(object@env$mz) / value) * value
+        object@mzrange <- c(minmass, maxmass)
+        object@env$profile <- profMat(object, step = value)
+    }
     return(object)
 })
 
 ############################################################
-## profStepPad
+## profStepPad ???
 setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
 
     if ("profile" %in% ls(object@env))
@@ -2861,10 +2892,13 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 ## [
 ## Subset by scan.
 ##' @title Subset an xcmsRaw object by scans
+##' @aliases subset-xcmsRaw
 ##'
 ##' @description Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
 ##' returned \code{\linkS4class{xcmsRaw}} object contains values for all scans
-##' specified with argument \code{i}.
+##' specified with argument \code{i}. Note that the \code{scanrange} slot of the
+##' returned \code{xcmsRaw} will be \code{c(1, length(object@scantime))} and
+##' hence not \code{range(i)}.
 ##'
 ##' @details Only subsetting by scan index in increasing order or by a logical
 ##' vector are supported. If not ordered, argument \code{i} is sorted
@@ -2918,6 +2952,10 @@ setMethod("[", signature(x = "xcmsRaw",
                   warning("Some of the indices in 'i' are larger than the",
                           " total number of scans which is ", nScans)
               }
+              ## If i is equal to the number of scans just return the object
+              if (all(1:nScans %in% i))
+                  return(x)
+              have_profstep <- profStep(x)
               valsPerSpect <- diff(c(x@scanindex, length(x@env$mz)))
               ## Subset:
               ## 1) scantime
@@ -2938,6 +2976,82 @@ setMethod("[", signature(x = "xcmsRaw",
               if (length(x@acquisitionNum) == nScans)
                   x@acquisitionNum <- x@acquisitionNum[i]
               x@mzrange <- range(x@env$mz)
+              scanrange(x) <- c(1, length(x@scantime))
+              ## Profile matrix
+              if (have_profstep > 0) {
+                  ## Create the profile matrix.
+                  x@env$profile <- profMat(x, step = have_profstep)
+              }
               ## TODO: what with the MSn data?
               return(x)
           })
+
+##' @title The profile matrix
+##'
+##' @description The \emph{profile} matrix is an n x m matrix, n (rows)
+##' representing equally spaced m/z values (bins) and m (columns) scans and each
+##' cell containing the maximum intensity measured for the specific scan and m/z
+##' values falling within the bin.
+##'
+##' The \code{profMat} creates a new profile matrix or returns the
+##' profile matrix within the object's \code{@env} slot if available. Settings
+##' for the profile matrix generation, such as \code{step} (the bin size),
+##' \code{method} or additional settings are extracted from the respective slots
+##' of the \code{\linkS4class{xcmsRaw}} object.
+##'
+##' @details
+##'
+##' @note From \code{xcms} version 1.51.1 on only the \code{profMat} method
+##' should be used to extract the profile matrix instead of the previously
+##' default way to access it directly.
+##'
+##' @param x The \code{\linkS4class{xcmsRaw}} object.
+##' @seealso \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
+##' \code{\link{imputeLinInterpol}} for the employed binning respectively
+##' missing value imputation methods.
+##' @return \code{profMat} returns the profile matrix (rows representing scans,
+##' columns equally spaced m/z values).
+##' @noRd
+setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
+                                                             step,
+                                                             baselevel,
+                                                             basespace) {
+    ## Call the .createProfileMatrix if the internal profile matrix is empty or
+    ## if the settings differ from the internal settings.
+    pi <- profinfo(object)
+    if (missing(method))
+        method <- pi$method
+    if (missing(step))
+        step <- pi$step
+    if (missing(baselevel))
+        baselevel <- pi$baselevel
+    if (missing(basespace))
+        basespace <- pi$basespace
+    if (length(object@env$profile) > 0) {
+        ## Check if the settings are the same...
+        have_method <- pi$method
+        have_step <- pi$step
+        have_basespace <- pi$basespace
+        have_baselevel <- pi$baselevel
+        if (!is.character(all.equal(list(method, step, basespace, baselevel),
+                                    list(have_method, have_step,
+                                         have_basespace, have_baselevel)))) {
+            return(object@env$profile)
+        }
+    }
+    ## Calculate the profile matrix
+    if (step <= 0)
+        stop("Can not calculate a profile matrix with step=",step, "! Either",
+             " provide a positive number with argument 'step' or use the",
+             " 'profStep' method to set the step parameter for the xcmsSet.")
+    message("Create profile matrix with method '", method,
+            "' and step ", step, " ... ", appendLF = FALSE)
+    res <- .createProfileMatrix(mz = object@env$mz, int = object@env$intensity,
+                                valsPerSpect = diff(c(object@scanindex,
+                                                      length(object@env$mz))),
+                                method = method, step = step,
+                                baselevel = baselevel,
+                                basespace = basespace)
+    message("OK")
+    res
+})

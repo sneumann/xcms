@@ -28,14 +28,19 @@
 
 \section{Slots}{
   \describe{
-    \item{\code{acquisitionNum}:}{acquisitionNum}
+    \item{\code{acquisitionNum}:}{Numeric representing the acquisition
+      number of the individual scans/spectra. Length of
+      \code{acquisitionNum} is equal to the number of spectra/scans in the
+      object and hence equal to the \code{scantime} slot. Note however that
+      this information is only available in mzML files.}
     \item{\code{env}:}{
       environment with three variables: \code{mz} - concatenated
       m/z values for all scans, \code{intensity} - corresponding
       signal intensity for each m/z value, and \code{profile} -
       matrix represention of the intensity values with columns
       representing scans and rows representing equally spaced m/z
-      values
+      values. The profile matrix should be extracted with the
+      \code{\link{profMat}} method.
     }
     \item{\code{filepath}:}{Path to the raw data file}
     \item{\code{gradient}:}{
@@ -44,17 +49,18 @@
       fractions at each point
     }
     \item{\code{msnAcquisitionNum}:}{for each scan a unique acquisition
-  number as reported via "spectrum id" (mzData) or "<scan num=...>" and
-  "<scanOrigin num=...>" (mzXML)}
+      number as reported via "spectrum id" (mzData) or "<scan num=...>" and
+      "<scanOrigin num=...>" (mzXML)}
     \item{\code{msnCollisionEnergy}:}{"CollisionEnergy" (mzData) or
-  "collisionEnergy" (mzXML)}
+      "collisionEnergy" (mzXML)}
     \item{\code{msnLevel}:}{for each scan the "msLevel" (both mzData and mzXML)}
-%    \item{\code{msnPeakCount}:}{msnPeakCount is equal to scan length} OBSOLETED
+    %    \item{\code{msnPeakCount}:}{msnPeakCount is equal to scan length} OBSOLETED
     \item{\code{msnPrecursorCharge}:}{"ChargeState" (mzData) and
-  "precursorCharge" (mzXML)}
-    \item{\code{msnPrecursorIntensity}:}{"Intensity" (mzData) or "precursorIntensity" (mzXML)}
+      "precursorCharge" (mzXML)}
+    \item{\code{msnPrecursorIntensity}:}{"Intensity" (mzData) or
+      "precursorIntensity" (mzXML)}
     \item{\code{msnPrecursorMz}:}{"MassToChargeRatio" (mzData) or
-  "precursorMz" (mzXML)}
+      "precursorMz" (mzXML)}
     \item{\code{msnPrecursorScan}:}{"spectrumRef" (both mzData and mzXML)}
     \item{\code{msnRt}:}{Retention time of the scan}
     \item{\code{msnScanindex}:}{msnScanindex}
@@ -65,17 +71,19 @@
     \item{\code{polarity}:}{polarity}
     \item{\code{profmethod}:}{
       characer value with name of method used for generating the
-      profile matrix
+      profile matrix.
     }
-    \item{\code{profparam}:}{profparam}
+    \item{\code{profparam}:}{list to store additional profile matrix
+      generation settings. Use the \code{\link{profinfo}} method to
+      extract all profile matrix creation relevant information.}
     \item{\code{scanindex}:}{
       integer vector with starting positions of each scan in the
       \code{mz} and \code{intensity} variables (note that index
-      values are based off a 0 initial position instead of 1)
+      values are based off a 0 initial position instead of 1).
     }
     \item{\code{scantime}:}{
       numeric vector with acquisition time (in seconds) for each
-      scan
+      scan.
     }
     \item{\code{tic}:}{
       numeric vector with total ion count (intensity) for each scan
@@ -88,7 +96,12 @@
     \item{\code{scanrange}:}{
       Numeric of length 2 specifying the scan range (or \code{NULL} for
       the full range). This slot should be accessed through its getter
-      method \code{scanrange}.
+      method \code{scanrange}. Note that the \code{scanrange} will
+      always be 1 to the number of scans within the \code{xcmsRaw}
+      object, which does not necessarily have to match to the scan index in
+      the original mzML file (e.g. if the original data was sub-setted). The
+      \code{acquisitionNum} information can be used to track the
+      original \emph{position} of each scan in the mzML file.
     }
 
   }
@@ -206,11 +219,12 @@
   A parallel effort in metabolite profiling data sharing:
   \url{http://metlin.scripps.edu/}
 }
-\author{Colin A. Smith, \email{csmith@scripps.edu}, Johannes Rainer \email{johannes.rainer@eurac.edu}}
+\author{Colin A. Smith, \email{csmith@scripps.edu},
+  Johannes Rainer \email{johannes.rainer@eurac.edu}}
 \note{
   No notes yet.
 }
 \seealso{
-  \code{\link{xcmsRaw}}
+  \code{\link{xcmsRaw}}, \code{\link{subset-xcmsRaw}} for subsetting by spectra.
 }
 \keyword{classes}

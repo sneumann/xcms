@@ -56,3 +56,24 @@ test_scanrange_massifquant <- function() {
     res_2 <- findPeaks.massifquant(xsub, withWave = 1)
     checkIdentical(res_1, res_2)
 }
+
+test_scanrange_xcmsRaw <- function() {
+    ## Use xcmsRaw with scanrange and check if results are identical to
+    ## later subsetting.
+    x_1 <- xcmsRaw(fs, scanrange = c(90, 345))
+    x_2 <- xcmsRaw(fs)
+    x_2_sub <- x_2[90:345]
+    checkTrue(length(x_1@scantime) < length(x_2@scantime))
+    checkEquals(x_1@scantime, x_2_sub@scantime)
+    length(x_1@acquisitionNum)
+    length(x_2@acquisitionNum)
+    length(x_2_sub@acquisitionNum)
+    checkTrue(length(x_1@acquisitionNum) < length(x_2@acquisitionNum))
+    checkEquals(x_1@acquisitionNum, x_2_sub@acquisitionNum)
+    x_1@scanrange
+    x_2@scanrange
+    x_2_sub@scanrange
+    checkEquals(x_1@scanrange, x_2_sub@scanrange)
+
+    checkEquals(x_1, x_2_sub)
+}

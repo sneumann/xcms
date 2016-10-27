@@ -1626,7 +1626,7 @@ do_detectFeatures_matchedFilter <- function(mz,
         ## intlin not yet implemented...
         profFun = "profIntLinM"
         profp <- list()
-        ## Calculate a the "scanindex" from the number of values per spectrum:
+        ## Calculate the "scanindex" from the number of values per spectrum:
         scanindex <- valueCount2ScanIndex(valsPerSpect)
         bufsize <- length(mass)
         buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize,
