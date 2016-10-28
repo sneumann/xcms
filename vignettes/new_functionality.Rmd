@@ -27,7 +27,7 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 24 October, 2016<br />
+**Modified**: 28 October, 2016<br />
 **Compiled**: `r date()`
 
 # New functionality in `xcms`
@@ -150,6 +150,10 @@ or performance decrease (while no such was decrease was observed up to now).
 
 -   `[` subsetting method for `xcmsRaw` objects that enables to subset an `xcmsRaw`
       object to specific scans/spectra.
+-   `profMat` method to extract the *profile* matrix from the `xcmsRaw` object. This
+    method should be used instead of directly accessing the `@env$profile` slot, as
+    it will create the profile matrix on the fly if it was not pre-calculated (or
+    if profile matrix generation settings have been changed).
 
 # Changes due to bug fixes and modified functionality
 
@@ -236,7 +240,9 @@ shortcomings and bugs that have been fixed in the new
     in the `do_detectFeatures_matchedFilter` implementation.
 
 A detailed description of tests comparing all implementations is available in
-issue [#52](https://github.com/sneumann/xcms/issues/52) on github.
+issue [#52](https://github.com/sneumann/xcms/issues/52) on github. Note also that in course of these changes also the `getEIC`
+method has been updated to use the new binning and missing value imputation
+function.
 
 While it is strongly discouraged, it is still possible to use to *old* code (from
 1.49.7) by calling `useOriginalCode(TRUE)`.
@@ -266,7 +272,7 @@ detection.
 
 # Under the hood changes
 
-These changes and update will not have any large impact on the day-to-day use of
+These changes and updates will not have any large impact on the day-to-day use of
 `xcms` and are listed here for completeness.
 
 -   From `xcms` version 1.51.1 on the default methods from the `mzR` package are used

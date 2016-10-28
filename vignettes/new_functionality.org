@@ -41,7 +41,7 @@ BiocStyle::markdown()
 #+BEGIN_html
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
-**Modified**: 24 October, 2016<br />
+**Modified**: 28 October, 2016<br />
 **Compiled**: `r date()`
 #+END_html
 
@@ -257,7 +257,9 @@ shortcomings and bugs that have been fixed in the new
   in the =do_detectFeatures_matchedFilter= implementation.
 
 A detailed description of tests comparing all implementations is available in
-issue [[https://github.com/sneumann/xcms/issues/52][#52]] on github.
+issue [[https://github.com/sneumann/xcms/issues/52][#52]] on github. Note also that in course of these changes also the =getEIC=
+method has been updated to use the new binning and missing value imputation
+function.
 
 While it is strongly discouraged, it is still possible to use to /old/ code (from
 1.49.7) by calling =useOriginalCode(TRUE)=.
@@ -430,7 +432,7 @@ methods as default.
 
 * Under the hood changes
 
-These changes and update will not have any large impact on the day-to-day use of
+These changes and updates will not have any large impact on the day-to-day use of
 =xcms= and are listed here for completeness.
 
 + From =xcms= version 1.51.1 on the default methods from the =mzR= package are used

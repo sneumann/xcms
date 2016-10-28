@@ -20,6 +20,7 @@ NEW FEATURES:
 + Method showError for xcmsSet objects that list all errors during feature
   detection (if stopOnError = FALSE in the xcmsSet function).
 + [ method to subset xcmsRaw objects by scans.
++ profMat method to extract/create the profile matrix from/for an xcmsRaw.
 
 BUG FIXES:
 + Fixed bug in rawMat (issue #58).

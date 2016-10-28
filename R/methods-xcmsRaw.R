@@ -1570,16 +1570,22 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
 ############################################################
 ## getEIC
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
-              FUN <- getOption("BioC")$xcms$getEIC.method
-              if(FUN == "getEICOld"){
-                  return(getEICOld(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
-              }else if(FUN == "getEICNew"){
-                  return(getEICNew(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
-              }else{
-                  stop("Method ", FUN, " not known! getEIC.method should be either getEICOld or getEICnew!")
-              }
-          })
+## Issue #74: implement an alternative (improved) getEIC method.
+setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL,
+                                        step = 0.1) {
+    ## FUN <- getOption("BioC")$xcms$getEIC.method
+    ## if(FUN == "getEICOld"){
+    ##     return(getEICOld(object=object, mzrange=mzrange,
+    ##                      rtrange=rtrange, step=step))
+    ## }else if(FUN == "getEICNew"){
+    ##     return(getEICNew(object=object, mzrange=mzrange,
+    ##                      rtrange=rtrange, step=step))
+    ## }else{
+    ##     stop("Method ", FUN, " not known! getEIC.method should",
+    ##          " be either getEICOld or getEICnew!")
+    ## }
+    profEIC(object, mzrange = mzrange, rtrange = rtrange, step = step)
+})
 
 ############################################################
 ## rawMat
@@ -2988,30 +2994,87 @@ setMethod("[", signature(x = "xcmsRaw",
 
 ##' @title The profile matrix
 ##'
-##' @description The \emph{profile} matrix is an n x m matrix, n (rows)
-##' representing equally spaced m/z values (bins) and m (columns) scans and each
-##' cell containing the maximum intensity measured for the specific scan and m/z
-##' values falling within the bin.
+##' @aliases profile-matrix profMat
 ##'
-##' The \code{profMat} creates a new profile matrix or returns the
-##' profile matrix within the object's \code{@env} slot if available. Settings
+##' @description The \emph{profile} matrix is an n x m matrix, n (rows)
+##' representing equally spaced m/z values (bins) and m (columns) the
+##' retention time of the corresponding scans. Each cell contains the maximum
+##' intensity measured for the specific scan and m/z values falling within the
+##' m/z bin.
+##'
+##' The \code{profMat} method creates a new profile matrix or returns the
+##' profile matrix within the object's \code{@env} slot, if available. Settings
 ##' for the profile matrix generation, such as \code{step} (the bin size),
 ##' \code{method} or additional settings are extracted from the respective slots
-##' of the \code{\linkS4class{xcmsRaw}} object.
+##' of the \code{\linkS4class{xcmsRaw}} object. Alternatively it is possible to
+##' specify all of the settings as additional parameters.
 ##'
-##' @details
+##' @details Profile matrix generation methods:
+##' \describe{
+##' \item{bin}{The default profile matrix generation method that does a simple
+##' binning, i.e. aggregating of intensity values falling within an m/z bin.}
+##' \item{binlin}{Binning followed by linear interpolation to impute missing
+##' values. The value for m/z bins without a measured intensity are inferred by
+##' a linear interpolation between neighboring bins with a measured intensity.}
+##' \item{binlinbase}{Binning followed by a linear interpolation to impute
+##' values for empty elements (m/z bins) within a user-definable proximity to
+##' non-empty elements while stetting the element's value to the
+##' \code{baselevel} otherwise. See \code{impute = "linbase"} parameter of
+##' \code{\link{imputeLinInterpol}} for more details.}
+##' \item{intlin}{Set the elements' values to the integral of the linearly
+##' interpolated data from plus to minus half the step size.}
+##' }
 ##'
 ##' @note From \code{xcms} version 1.51.1 on only the \code{profMat} method
 ##' should be used to extract the profile matrix instead of the previously
-##' default way to access it directly.
+##' default way to access it directly \emph{via} \code{object@env$profile}.
 ##'
-##' @param x The \code{\linkS4class{xcmsRaw}} object.
+##' @param object The \code{\linkS4class{xcmsRaw}} object.
+##'
+##' @param method The profile matrix generation method. Allowed are \code{"bin"},
+##' \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
+##' section for more information.
+##'
+##' @param step Numeric of length 1 representing the m/z bin size.
+##'
+##' @param baselevel Numeric of length one representing the base value to which
+##' empty elements (i.e. m/z bins without a measured intensity) should be set.
+##' Only considered if \code{method = "binlinbase"}. See \code{baseValue}
+##' parameter of \code{\link{imputeLinInterpol}} for more details.
+##'
+##' @param basespace Numeric of length one representing the m/z length after
+##' which the signal will drop to the base level. Linear interpolation will be
+##' used between consecutive data points falling within \code{2 * basespace} to
+##' each other. Only considered if \code{method = "binlinbase"}. If not
+##' specified, it defaults to \code{0.075}. Internally this parameter is
+##' translated into the \code{distance} parameter of the
+##' \code{\link{imputeLinInterpol}} function by
+##' \code{distance = floor(basespace / step)}. See \code{distance} parameter
+##' of \code{\link{imputeLinInterpol}} for more details.
+##'
 ##' @seealso \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
-##' \code{\link{imputeLinInterpol}} for the employed binning respectively
-##' missing value imputation methods.
+##' \code{\link{imputeLinInterpol}} for the employed binning and
+##' missing value imputation methods, respectively.
+##'
 ##' @return \code{profMat} returns the profile matrix (rows representing scans,
 ##' columns equally spaced m/z values).
-##' @noRd
+##'
+##' @author Johannes Rainer
+##' @examples
+##' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' ## Load the data without generating the profile matrix (profstep = 0)
+##' xraw <- xcmsRaw(file, profstep = 0)
+##' ## Extract the profile matrix
+##' profmat <- profMat(xraw, step = 0.3)
+##' dim(profmat)
+##' ## If not otherwise specified, the settings from the xraw object are used:
+##' profinfo(xraw)
+##' ## To extract a profile matrix with linear interpolation use
+##' profmat <- profMat(xraw, step = 0.3, method = "binlin")
+##' ## Alternatively, the profMethod of the xraw objects could be changed
+##' profMethod(xraw) <- "binlin"
+##' profmat_2 <- profMat(xraw, step = 0.3)
+##' all.equal(profmat, profmat_2)
 setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
                                                              step,
                                                              baselevel,
