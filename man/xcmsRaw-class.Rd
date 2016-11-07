@@ -203,7 +203,8 @@
       data points for each scan
     }
     \item{scanrange}{
-      Getter method for the \code{scanrange} slot.
+      Getter method for the \code{scanrange} slot. See slot description
+      above for more information.
     }
     \item{sortMz}{
       \code{signature(object = "xcmsRaw")}: sort the data points

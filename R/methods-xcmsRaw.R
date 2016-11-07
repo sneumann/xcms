@@ -2986,7 +2986,8 @@ setMethod("[", signature(x = "xcmsRaw",
               ## Profile matrix
               if (have_profstep > 0) {
                   ## Create the profile matrix.
-                  x@env$profile <- profMat(x, step = have_profstep)
+                  ## Call profStep<- that will also update the mzrange properly
+                  profStep(x) <- have_profstep
               }
               ## TODO: what with the MSn data?
               return(x)

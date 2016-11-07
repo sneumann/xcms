@@ -113,7 +113,8 @@
     \item{scanrange}{
       Numeric of length 2 specifying the scan range (or \code{NULL} for
       the full range). This slot should be accessed through its getter
-      method \code{scanrange}.
+      method \code{scanrange}. The scan range provided in this slot
+      represents the scans to which the whole raw data is subsetted.
     }
     \item{.processHistory}{
       Internal slot to be used to keep track of performed processing
@@ -236,7 +237,8 @@
       \code{signature(object = "xcmsSet")}: get the \code{progressCallback} slot
     }
     \item{scanrange}{
-      Getter method for the \code{scanrange} slot.
+      Getter method for the \code{scanrange} slot. See scanrange slot
+      description above for more details.
     }
     \item{sampnames<-}{
       \code{signature(object = "xcmsSet")}: set rownames in the

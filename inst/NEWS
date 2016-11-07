@@ -22,6 +22,11 @@ NEW FEATURES:
 + [ method to subset xcmsRaw objects by scans.
 + profMat method to extract/create the profile matrix from/for an xcmsRaw.
 
+USER VISIBLE CHANGES:
++ scanrange,xcmsRaw reports always a scanrange of 1 and length(object@scantime).
++ scanrange,xcmsSet reports the scanrange eventually specified by the user in
+  the xcmsSet function.
+
 BUG FIXES:
 + Fixed bug in rawMat (issue #58).
 + Fix issue #60: findPeaks.massifquant always returns a xcmsPeaks object.

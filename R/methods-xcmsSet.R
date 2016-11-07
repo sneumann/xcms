@@ -1636,8 +1636,10 @@ setReplaceMethod("$", "xcmsSet", function(x, name, value) {
 ############################################################
 ## getXcmsRaw
 ## read the raw data for a xset.
-## argument which allows to specify which file from the xcmsSet should be read, if length > 1
-## a list of xcmsRaw is returned
+## sampleidx: argument which allows to specify which file from the xcmsSet
+## should be read, if length > 1 a list of xcmsRaw is returned
+## Note: if scanrange is submitted here I have to subset the xcmsRaw objects
+## AFTER having filled in adjusted retention times etc.
 setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                                             profmethod = profMethod(object),
                                             profstep = profStep(object),
@@ -1646,70 +1648,91 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                                             scanrange = NULL,
                                             rt = c("corrected", "raw"),
                                             BPPARAM = bpparam()) {
-              if (is.numeric(sampleidx))
-                  sampleidx <- sampnames(object)[sampleidx]
-              sampidx <- match(sampleidx, sampnames(object)) ## numeric
-              if (length(sampidx) == 0)
-                  stop("submitted value for sampleidx outside of the available files!")
-              fn <- filepaths(object)[sampidx]
-              rt <- match.arg(rt)
-              if (rt == "corrected" & !any(names(object@rt) == "corrected")) {
-                  message("No RT correction has been performed, thus returning raw",
-                          " retention times.")
-                  rt <- "raw"
-              }
-              if (missing(mslevel)) {
-                  msl <- mslevel(object)
-              } else {
-                  msl <- mslevel
-              }
-              if (missing(scanrange)) {
-                  srange <- scanrange(object)
-              } else {
-                  srange <- scanrange
-              }
-              ## include MSn?
-              includeMsn <- FALSE
-              if (!is.null(msl)) {
-                  if(msl > 1)
-                      includeMsn <- TRUE
-              }
-              ret <- bplapply(as.list(fn), FUN = function(z) {
-                                  raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep,
-                                                 mslevel=msl, scanrange=srange,
-                                                 includeMSn=includeMsn)
-                                  return(raw)
-                            }, BPPARAM=BPPARAM)
-              ## do corrections etc.
-              for(i in 1:length(ret)){
-                  if(length(object@dataCorrection) > 1){
-                      if(object@dataCorrection[[sampidx[i]]] == 1){
-                          ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
-                          message(paste0("Applying lock Waters mass correction to ", fn[i]))
-                      }
-                  }
-                  if(rt == "corrected"){
-                      ## check if there is any need to apply correction...
-                      ## This includes fix for the bug reported by Aleksandr (issue 44)
-                      if(all(object@rt$corrected[[sampidx[i]]] == object@rt$raw[[sampidx[i]]])){
-                          message("No need to perform retention time correction,",
-                                  " raw and corrected rt are identical for ", fn[i])
-                          ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
-                      }else{
-                          message(paste0("Applying retention time correction to ", fn[i]))
-                          ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
-                      }
-                  }
-              }
+    if (is.numeric(sampleidx))
+        sampleidx <- sampnames(object)[sampleidx]
+    sampidx <- match(sampleidx, sampnames(object)) ## numeric
+    if (length(sampidx) == 0)
+        stop("submitted value for sampleidx outside of the",
+             " available files!")
+    fn <- filepaths(object)[sampidx]
+    rt <- match.arg(rt)
+    if (rt == "corrected" & !any(names(object@rt) == "corrected")) {
+        message("No RT correction has been performed, thus returning",
+                " raw retention times.")
+        rt <- "raw"
+    }
+    if (missing(mslevel)) {
+        msl <- mslevel(object)
+    } else {
+        msl <- mslevel
+    }
+    ## if (missing(scanrange)) {
+    ##     srange <- scanrange(object)
+    ## } else {
+    ##     srange <- scanrange
+    ## }
+    ## If scanrange is NULL we don't have to do subset and can skip some stuff.
+    ## If scanrange is provided we don't want to subset in xcmsRaw but subset
+    ## at the very end using []
+    srange <- NULL ## ensures we're reading all data.
+    if (is.null(scanrange) | length(scanrange) < 2) {
+        srange <- scanrange(object)
+    } else {
+        scanrange <- range(scanrange)
+    }
+    ## include MSn?
+    includeMsn <- FALSE
+    if (!is.null(msl)) {
+        if(msl > 1)
+            includeMsn <- TRUE
+    }
+    ret <- bplapply(as.list(fn), FUN = function(z) {
+        raw <- xcmsRaw(z, profmethod = profmethod,
+                       profstep = profstep, mslevel = msl,
+                       scanrange = srange,
+                       includeMSn = includeMsn)
+        return(raw)
+    }, BPPARAM=BPPARAM)
+    ## do corrections etc.
+    for(i in 1:length(ret)){
+        if(length(object@dataCorrection) > 1){
+            if(object@dataCorrection[[sampidx[i]]] == 1){
+                ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
+                message(paste0("Applying lock Waters mass correction",
+                               " to ", basename(fn[i])))
+            }
+        }
+        if(rt == "corrected"){
+            ## check if there is any need to apply correction...
+            ## This includes fix for the bug reported by Aleksandr (issue 44)
+            if(all(object@rt$corrected[[sampidx[i]]] ==
+                   object@rt$raw[[sampidx[i]]])){
+                message("No need to perform retention time correction,",
+                        " raw and corrected rt are identical for ",
+                        basename(fn[i]), ".")
+                ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
+            }else{
+                message(paste0("Applying retention time correction",
+                               " to ", basename(fn[i]), "."))
+                ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
+            }
+        }
+        ## Finally doing the sub-setting...
+        if (length(scanrange) > 1) {
+            ## Doing the sub-setting here ensures that the scantime, profile
+            ## matrix and everything matches the scanrange.
+            ret[[i]] <- ret[[i]][scanrange[1]:scanrange[2]]
+        }
+    }
 
-              ## what's missing?
-              ## + consider calibration(s)?
-              ## + what with polarity?
+    ## what's missing?
+    ## + consider calibration(s)?
+    ## + what with polarity?
 
-              if(length(ret)==1)
-                  return(ret[[1]])
-              return(ret)
-          })
+    if(length(ret)==1)
+        return(ret[[1]])
+    return(ret)
+})
 
 ############################################################
 ## levelplot

@@ -1,3 +1,5 @@
+## Splitting of xcmsRaw objects.
+
 file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 xraw <- xcmsRaw(file)
 
@@ -85,4 +87,19 @@ test_bracket_subset_xcmsRaw <- function() {
     ((xraw@scanindex[317] + 1):xraw@scanindex[318]))
     checkIdentical(xsub@env$mz, xraw@env$mz[whichIdx])
     checkIdentical(xsub@env$intensity, xraw@env$intensity[whichIdx])
+
+    ## Finally check that we get the same object by calling getXcmsRaw from an
+    ## xcmsSet and by subsetting or using xcmsRaw with scanrange:
+    xraw <- xcmsRaw(file, profstep = 2)
+    xraw_sub <- xraw[5:100]
+    xset <- xcmsSet(file, scanrange = c(5, 100), step = 2)
+    xraw_xset <- getXcmsRaw(xset)
+    checkEquals(scanrange(xraw_sub), scanrange(xraw_xset))
+    ## Load the object using xcmsRaw and scanrange
+    xraw_2 <- xcmsRaw(file, scanrange = c(5, 100), profstep = 2)
+    checkEquals(scanrange(xraw_sub), scanrange(xraw_2))
+    ## Compare objects
+    checkEquals(xraw_sub, xraw_xset)
+    checkEquals(xraw_sub, xraw_2)
+    checkEquals(xraw_xset, xraw_2)
 }

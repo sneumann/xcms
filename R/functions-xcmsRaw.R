@@ -3,8 +3,8 @@
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
-                    includeMSn = FALSE, mslevel=NULL,
-                    scanrange=NULL) {
+                    includeMSn = FALSE, mslevel = NULL,
+                    scanrange = NULL) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)

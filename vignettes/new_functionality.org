@@ -8,7 +8,7 @@
 #+PROPERTY: exports code
 #+PROPERTY: session *R*
 
-#+BEGIN_html
+#+BEGIN_EXPORT html
 ---
 title: "New and modified functionality in xcms"
 graphics: yes
@@ -36,14 +36,14 @@ references:
 BiocStyle::markdown()
 ```
 
-#+END_html
+#+END_EXPORT
 
-#+BEGIN_html
+#+BEGIN_EXPORT html
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
 **Modified**: 28 October, 2016<br />
 **Compiled**: `r date()`
-#+END_html
+#+END_EXPORT
 
 
 * New functionality in =xcms=

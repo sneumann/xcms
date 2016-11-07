@@ -12,21 +12,38 @@ test.getXcmsRaw <- function(){
     xr <- getXcmsRaw(xset, sampleidx=1:4)
     ## check if the settings are translated correctly
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xs <- xcmsSet(file, step=2)
+    xs <- xcmsSet(file, step = 2)
     xr <- getXcmsRaw(xs)
+    xr_orig <- xcmsRaw(file, profstep = 2)
+    checkEquals(xr, xr_orig)
     ## check the prof step:
     checkEqualsNumeric(profStep(xs), 2)
     ## check all *new* methods for xcmsSet
     checkEquals(mslevel(xs), mslevel(xr))
     checkEquals(profMethod(xs), profMethod(xr))
     checkEquals(profStep(xs), profStep(xr))
-    checkEquals(scanrange(xs), scanrange(xr))
+    ## scanrange for the xcmsSet is NULL which means we're reading all data from
+    ## the raw data files, while the one of the xcmsRaw is always
+    ## (1, lenght(scans)).
+    ## checkEquals(scanrange(xs), scanrange(xr))
     profinfo(xs)
     profinfo(xr)
     ## testing alternative scan range.
-    xr2 <- getXcmsRaw(xs, scanrange=c(5, 100))
+    xr2 <- getXcmsRaw(xs, scanrange = c(5, 100))
     scanrange(xr2)
-    checkEquals(scanrange(xr2), c(5, 100))
+    xr2_orig <- xcmsRaw(file, scanrange = c(5, 100), profstep = 2)
+    checkEquals(xr2, xr2_orig)
+    ## This scanrange is expected to be from 1 to length(xr@scantime)
+    checkEquals(scanrange(xr2), c(1, length(xr2@scantime)))
+    ## Test xcmsSet with scanrange:
+    xs <- xcmsSet(file, step = 2, scanrange = c(5, 100))
+    checkEquals(scanrange(xs), c(5, 100))
+    ## BUT: if we extract the xcmsRaw from this xcmsSet object we will get
+    ## (1, 96) instead of (5, 100).
+    xr <- getXcmsRaw(xs)
+    checkEquals(scanrange(xr), c(1, length(xr@scantime)))
+    xr_2 <- xcmsRaw(file, scanrange = c(5, 100), profstep = 2)
+    checkEquals(xr, xr_2)
 }
 
 
