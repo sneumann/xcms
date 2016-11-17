@@ -184,3 +184,12 @@ export(
 exportMethods(
     "showError"
 )
+
+
+## New Param classes
+exportClasses(
+    "CentWaveParam"
+)
+## Param class functions
+export("CentWaveParam")
+## Param class methods.

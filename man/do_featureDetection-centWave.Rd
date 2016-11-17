@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_detectFeatures-functions.R
 \name{do_detectFeatures_centWave}
 \alias{do_detectFeatures_centWave}
-\title{Feature detection using the centWave method}
+\title{Core API function of centWave feature detection}
 \usage{
 do_detectFeatures_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
   peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),

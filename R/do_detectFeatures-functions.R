@@ -13,7 +13,7 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##' @title Feature detection using the centWave method
+##' @title Core API function of centWave feature detection
 ##'
 ##' @description This function performs peak density and wavelet based feature
 ##' detection for high resulution LC/MS data in centroid mode [Tautenhahn 2008].
@@ -120,6 +120,9 @@
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 ##' }
 ##' @author Ralf Tautenhahn, Johannes Rainer
+##'
+##' @rdname do_featureDetection-centWave
+##'
 ##' @examples
 ##' ## Load the test file
 ##' library(faahKO)
