@@ -27,6 +27,7 @@
 ##' \code{CentWaveParam} classes.
 ##'
 ##' @inheritParams do_detectFeatures_centWave
+##'
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
 ##' class instance with all of the settings specified for feature detection by
 ##' the centWave method.

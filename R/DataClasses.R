@@ -239,24 +239,66 @@ setClass("Param",
          representation = representation("VIRTUAL"),
          contains = c("Versioned"))
 
+## General detectFeatures method.
+##' @title Feature detection methods.
+##'
+##' @description The \code{detectFeature} methods are part of the modernized
+##' \code{xcms} user interface. \code{detectFeature}
+##'
+##' The implemented feature detection methods are:
+##' \describe{
+##' \item{centWave}{: feature detection using the \emph{centWave} method.
+##' See \code{\link{detectFeatures-centWave}} for more details.}
+##' }
+##' @name featureDetection
+##' @author Johannes Rainer
+NULL
+#> NULL
+
+## Main centWave documentation.
 ##' @title Feature detection using the centWave method
 ##'
+##' @aliases centWave
+##'
+##' @description The centWave algorithm perform peak density and wavelet based
+##' feature detection for high resolution LC/MS data in centroid
+##' mode [Tautenhahn 2008].
+##'
+##' @details The centWave algorithm is most suitable for high resolution
+##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
+##' method identifies \emph{regions of interest} (ROIs) representing mass traces
+##' that are characterized as regions with less than \code{ppm} m/z deviation in
+##' consecutive scans in the LC/MS map. These ROIs are then subsequently
+##' analyzed using continuous wavelet transform (CWT) to locate chromatographic
+##' peaks on different scales. The first analysis step is skipped, if regions
+##' of interest are passed \emph{via} the \code{param} parameter.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' objects (both defined in the \code{MSnbase} package). All of the settings
+##' to the centWave algorithm can be passed with a \code{CentWaveParam} object.
+##'
+##' @family feature detection methods
+##' @seealso The \code{\link{do_detectFeatures_centWave}} core API function and
+##' \code{\link{findPeaks.centWave}} for the old user interface.
+##'
+##' @references
+##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
+##' 2008, 9:504
+##' @name featureDetection-centWave
+##' @author Ralf Tautenhahn, Johannes Rainer
+NULL
+#> NULL
+
 ##' @description The \code{CentWaveParam} class allows to specify all settings for
-##' a feature detection using the centWave method.
+##' a feature detection using the centWave method. Instances should be created
+##' with the \code{CentWaveParam} constructor.
 ##'
 ##' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselinCheck,roiScales See corresponding parameter above.
-## @slot peakwidth See corresponding parameter below.
-## @slot snthresh See corresponding parameter below.
-## @slot prefilter See corresponding parameter below.
-## @slot mzCenterFun See corresponding parameter below.
-## @slot integrate See corresponding parameter below.
-## @slot mzdiff See corresponding parameter below.
-## @slot fitgauss See corresponding parameter below.
-## @slot noise See corresponding parameter below.
-## @slot verboseColumns See corresponding parameter below.
-## @slot roiList See corresponding parameter below.
-## @slot firstBaselineCheck See corresponding parameter below.
-## @slot roiScales See corresponding parameter below.
+##'
 ##' @rdname featureDetection-centWave
 setClass("CentWaveParam",
          slots = c(

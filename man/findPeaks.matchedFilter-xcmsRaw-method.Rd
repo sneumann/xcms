@@ -81,5 +81,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \seealso{
 \code{\linkS4class{xcmsRaw}}. \code{\link{do_detectFeatures_matchedFilter}}
 for the core function performing the feature detection.
+
+Other feature detection methods: \code{\link{featureDetection-centWave}}
 }
 

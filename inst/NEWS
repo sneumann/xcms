@@ -1,4 +1,4 @@
-CHANGES IN VERSION 1.49.x
+CHANGES IN VERSION 1.xx.x
 -------------------------
 
 NEW FEATURES:
@@ -21,6 +21,10 @@ NEW FEATURES:
   detection (if stopOnError = FALSE in the xcmsSet function).
 + [ method to subset xcmsRaw objects by scans.
 + profMat method to extract/create the profile matrix from/for an xcmsRaw.
++ Add new detectFeatures methods for MSnExp and OnDiskMSnExp objects from the
+  MSnbase package.
++ Add new CentWaveParam parameter class to perform method dispatch in the
+  detectFeatures method.
 
 
 USER VISIBLE CHANGES:

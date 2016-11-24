@@ -56,6 +56,30 @@ in the =xcms= package introduced during the update to version /3/.
   library(RColorBrewer)
 #+END_SRC
 
+** Modernized user interface
+
+The modernization of the user interface comprises the definition of a new method
+for feature detection, namely =detectFeatures=, that performs the dispatching to
+the various algorithms (e.g. /centWave/, /matchedFilter/) based on a parameter class
+submitted /via/ the =param= argument. The rationale behind changing the name from
+=findPeaks= to =detectFeatures= to discriminate /peak/ (i.e. mass peak mostly used in
+proteomics), from /feature/ (which describes a peak in chromatographic space).
+
+The encapsulation of the parameters to a function into a parameter class (such
+as =CentWaveParam=) avoids busy function calls (with many single parameters to
+specify) and enables saving, reloading and reuse of settings. In addition,
+parameter validation can be performed within the parameter object and hence is
+no longer required in the analysis function.
+
+The implementation of the =detectFeatures= method for =OnDiskMSnExp= and =MSnExp=
+objects (from the =MSnbase= package) enable feature detection on these types of
+objects that represent the full MS data of an experiment along with all
+experiment relevant metadata. Loading the files first into an =MSnExp= or
+=OnDiskMSnExp= (the latter being specifically designed for large scale
+experiments) enables a first data inspection and quality assessment, followed by
+eventual subsetting and filtering (e.g. on retention time) before performing the
+feature detection on the thus processed data.
+
 ** Binning and missing value imputation functions
 
 The binning/profile matrix generation functions have been completely

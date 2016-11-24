@@ -36,6 +36,11 @@ importFrom("multtest", "mt.teststat")
 importFrom("RANN", "nn2")
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
+## MSnbase:
+importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
+importFrom("MSnbase", "intensity", "mz", "rtime", "as.data.frame.Spectrum",
+           "filterFile", "filterMsLevel")
+
 export(
     "etg",
     "medianFilter",
@@ -182,7 +187,8 @@ export(
 
 ## New methods
 exportMethods(
-    "showError"
+    "showError",
+    "detectFeatures"
 )
 
 

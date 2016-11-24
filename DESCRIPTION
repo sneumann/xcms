@@ -24,7 +24,8 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors
+    S4Vectors,
+    MSnbase (>= 2.1.2)
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),
@@ -58,6 +59,7 @@ Collate:
     'fastMatch.R'
     'functions-utils.R'
     'functions-IO.R'
+    'functions-OnDiskMSnExp.R'
     'functions-Params.R'
     'functions-ProcessHistory.R'
     'functions-xcmsEIC.R'
@@ -67,6 +69,7 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-IO.R'
+    'methods-OnDiskMSnExp.R'
     'methods-Params.R'
     'methods-netCdfSource.R'
     'methods-rampSource.R'

@@ -16,7 +16,7 @@
 ##' @title Core API function of centWave feature detection
 ##'
 ##' @description This function performs peak density and wavelet based feature
-##' detection for high resulution LC/MS data in centroid mode [Tautenhahn 2008].
+##' detection for high resolution LC/MS data in centroid mode [Tautenhahn 2008].
 ##'
 ##' @details This algorithm is most suitable for high resolution
 ##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
@@ -25,7 +25,7 @@
 ##' consecutive scans in the LC/MS map. These ROIs are then subsequently
 ##' analyzed using continuous wavelet transform (CWT) to locate chromatographic
 ##' peaks on different scales. The first analysis step is skipped, if regions
-##' of interest are passed with the \code{ROIs} parameter.
+##' of interest are passed with the \code{roiList} parameter.
 ##'
 ##' @note The \emph{centWave} was designed to work on centroided mode, thus it
 ##' is expected that such data is presented to the function.
@@ -121,7 +121,7 @@
 ##' }
 ##' @author Ralf Tautenhahn, Johannes Rainer
 ##'
-##' @rdname do_featureDetection-centWave
+##' @rdname do_featureDetection_centWave
 ##'
 ##' @examples
 ##' ## Load the test file
@@ -196,12 +196,16 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
     if (!is.logical(firstBaselineCheck))
       stop("Parameter 'firstBaselineCheck' should be logical!")
     if (length(firstBaselineCheck) != 1)
-      stop("Parameter 'firstBaselineCheck' should be a single logical !")
-    if (!is.null(roiScales)) {
-        if (!is.numeric(roiScales) | length(roiScales) != length(roiList))
-            stop("Parameter 'roiScales' has to be a numeric of length equal to",
-                 " parameter 'roiList'!")
-    }
+        stop("Parameter 'firstBaselineCheck' should be a single logical !")
+    if (length(roiScales) > 0)
+        if (length(roiScales) != length(roiList) | !is.numeric(roiScales))
+            stop("If provided, parameter 'roiScales' has to be a numeric with",
+                 " length equal to the length of 'roiList'!")
+    ## if (!is.null(roiScales)) {
+    ##     if (!is.numeric(roiScales) | length(roiScales) != length(roiList))
+    ##         stop("Parameter 'roiScales' has to be a numeric of length equal to",
+    ##              " parameter 'roiList'!")
+    ##}
 
     basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax",
                    "into", "intb", "maxo", "sn")
@@ -421,7 +425,9 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                     if (any(dv)) { ## peaks in orig. data range
                         ## Final S/N check
                         if (any(d[pp[dv]]- baseline >= sdthr)) {
-                            if(!is.null(roiScales)) {
+                            ## if(!is.null(roiScales)) {
+                            ## allow roiScales to be a numeric of length 0
+                            if(length(roiScales) > 0) {
                                 ## use given scale
                                 best.scale.nr <- which(scales == roiScales[[f]])
                                 if(best.scale.nr > length(opp))

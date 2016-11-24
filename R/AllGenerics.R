@@ -11,6 +11,8 @@ setGeneric("collect", function(object, ...) standardGeneric("collect"))
 
 ## D
 setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
+setGeneric("detectFeatures", function(object, param, ...)
+           standardGeneric("detectFeatures"))
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 
 ## F

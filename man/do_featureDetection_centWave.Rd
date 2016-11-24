@@ -109,7 +109,7 @@ Additional columns for \code{verboseColumns = TRUE}:
 }
 \description{
 This function performs peak density and wavelet based feature
-detection for high resulution LC/MS data in centroid mode [Tautenhahn 2008].
+detection for high resolution LC/MS data in centroid mode [Tautenhahn 2008].
 }
 \details{
 This algorithm is most suitable for high resolution
@@ -119,7 +119,7 @@ that are characterized as regions with less than \code{ppm} m/z deviation in
 consecutive scans in the LC/MS map. These ROIs are then subsequently
 analyzed using continuous wavelet transform (CWT) to locate chromatographic
 peaks on different scales. The first analysis step is skipped, if regions
-of interest are passed with the \code{ROIs} parameter.
+of interest are passed with the \code{roiList} parameter.
 }
 \note{
 The \emph{centWave} was designed to work on centroided mode, thus it

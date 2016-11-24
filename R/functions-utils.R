@@ -68,5 +68,3 @@ useOriginalCode <- function(x) {
 ## .ORIGINAL_FUNCTIONS <- c(
 ##     matchedFilter = ".matchedFilter_orig"
 ## )
-
-
