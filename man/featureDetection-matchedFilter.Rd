@@ -4,32 +4,48 @@
 \name{featureDetection-matchedFilter}
 \alias{MatchedFilterParam}
 \alias{MatchedFilterParam-class}
+\alias{baseValue}
 \alias{baseValue,MatchedFilterParam-method}
+\alias{baseValue<-}
 \alias{baseValue<-,MatchedFilterParam-method}
+\alias{binSize}
 \alias{binSize,MatchedFilterParam-method}
+\alias{binSize<-}
 \alias{binSize<-,MatchedFilterParam-method}
 \alias{detectFeatures,MSnExp,MatchedFilterParam-method}
 \alias{detectFeatures,OnDiskMSnExp,MatchedFilterParam-method}
+\alias{distance}
 \alias{distance,MatchedFilterParam-method}
+\alias{distance<-}
 \alias{distance<-,MatchedFilterParam-method}
 \alias{featureDetection-matchedFilter}
+\alias{fwhm}
 \alias{fwhm,MatchedFilterParam-method}
+\alias{fwhm<-}
 \alias{fwhm<-,MatchedFilterParam-method}
 \alias{impute,MatchedFilterParam-method}
+\alias{impute<-}
 \alias{impute<-,MatchedFilterParam-method}
+\alias{index}
 \alias{index,MatchedFilterParam-method}
+\alias{index<-}
 \alias{index<-,MatchedFilterParam-method}
 \alias{matchedFilter}
 \alias{max,MatchedFilterParam-method}
+\alias{max<-}
 \alias{max<-,MatchedFilterParam-method}
 \alias{mzdiff,MatchedFilterParam-method}
 \alias{mzdiff<-,MatchedFilterParam-method}
 \alias{show,MatchedFilterParam-method}
+\alias{sigma}
 \alias{sigma,MatchedFilterParam-method}
+\alias{sigma<-}
 \alias{sigma<-,MatchedFilterParam-method}
 \alias{snthresh,MatchedFilterParam-method}
 \alias{snthresh<-,MatchedFilterParam-method}
+\alias{steps}
 \alias{steps,MatchedFilterParam-method}
+\alias{steps<-}
 \alias{steps<-,MatchedFilterParam-method}
 \title{Peak detection in the chromatographic time domain}
 \usage{
@@ -182,9 +198,6 @@ The \code{MatchedFilterParam} class allows to specify all
 settings for a feature detection using the matchedFilter method. Instances
 should be created with the \code{MatchedFilterParam} constructor.
 
-\code{MatchedFilterParam}: constructor function for
-\code{MatchedFilterParam} classes.
-
 The \code{detectFeatures,OnDiskMSnExp,MatchedFilterParam}
 method performs feature detection using the \emph{matchedFilter} algorithm
 on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
@@ -259,10 +272,23 @@ to the matchedFilter algorithm can be passed with a
 \examples{
 
 ## Create a MatchedFilterParam object
-mfp <- MatchedFilterParam(binSize = 0.2)
+mfp <- MatchedFilterParam(binSize = 0.5)
 ## Change snthresh parameter
 snthresh(mfp) <- 15
 mfp
+
+## Perform the feature detection using matchecFilter on the files from the
+## faahKO package. Files are read using the readMSData2 from the MSnbase
+## package
+library(faahKO)
+library(MSnbase)
+fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+           full.names = TRUE)
+raw_data <- readMSData2(fls)
+## Perform the feature detection using the settings defined above. We're
+## returning the results as an xcmsSet object.
+res <- detectFeatures(raw_data, param = mfp, return.type = "xcmsSet")
+head(peaks(res))
 }
 \author{
 Colin A Smith, Johannes Rainer

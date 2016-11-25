@@ -3,6 +3,7 @@
 
 ############################################################
 ## Param
+###
 setMethod("as.list", signature(x = "Param"), function(x, ...) {
     return(.param2list(x))
 })
@@ -18,10 +19,12 @@ setMethod("initialize", "Param", function(.Object, ...) {
 
 ############################################################
 ## CentWaveParam
+###
 setMethod("initialize", "CentWaveParam", function(.Object, ...) {
     classVersion(.Object)["CentWaveParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
+
 ## ##' @rdname featureDetection-centWave
 ## setMethod("print", "CentWaveParam", function(x, ...) show(x))
 ##' @rdname featureDetection-centWave
@@ -42,15 +45,14 @@ setMethod("show", "CentWaveParam", function(object) {
     cat(" firstBaselineCheck", firstBaselineCheck(object), "\n")
     cat(" roiScales length:", length(roiScales(object)), "\n")
 })
-## All the getter and setter methods.
-## o ppm
+
+##' @aliases ppm
 ##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 ##' slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("ppm", "CentWaveParam", function(object){ return(object@ppm)})
+##' @aliases ppm<-
 ##' @param value The value for the slot.
-##'
 ##' @rdname featureDetection-centWave
 setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
     object@ppm <- value
@@ -59,13 +61,14 @@ setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o peakwidth
+
+##' @aliases peakwidth
 ##' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
 ##' \code{peakwidth} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("peakwidth", "CentWaveParam", function(object)
     return(object@peakwidth))
+##' @aliases peakwidth<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
     object@peakwidth <- value
@@ -74,13 +77,14 @@ setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o snthresh
+
+##' @aliases snthresh
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("snthresh", "CentWaveParam", function(object)
     return(object@snthresh))
+##' @aliases snthresh<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
     object@snthresh <- value
@@ -89,13 +93,14 @@ setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o prefilter
+
+##' @aliases prefilter
 ##' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
 ##' \code{prefilter} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("prefilter", "CentWaveParam", function(object)
     return(object@prefilter))
+##' @aliases prefilter<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
     object@prefilter <- value
@@ -104,13 +109,14 @@ setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o mzCenterFun
+
+##' @aliases mzCenterFun
 ##' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
 ##' \code{mzCenterFun} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("mzCenterFun", "CentWaveParam", function(object)
     return(object@mzCenterFun))
+##' @aliases mzCenterFun<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
     object@mzCenterFun <- value
@@ -119,15 +125,15 @@ setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o integrate
+
 ##' @description \code{integrate},\code{integrate<-}: getter and setter for the
 ##' \code{integrate} slot of the object.
-##'
 ##' @param f For \code{integrate}: a \code{CentWaveParam} object.
 ##'
 ##' @rdname featureDetection-centWave
 setMethod("integrate", signature(f = "CentWaveParam"), function(f)
     return(f@integrate))
+##' @aliases integrate<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
     if (!is.integer(value))
@@ -138,13 +144,14 @@ setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o mzdiff
+
+##' @aliases mzdiff
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 ##' \code{mzdiff} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("mzdiff", "CentWaveParam", function(object)
     return(object@mzdiff))
+##' @aliases mzdiff<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
     object@mzdiff <- value
@@ -153,13 +160,14 @@ setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o fitgauss
+
+##' @aliases fitgauss
 ##' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
 ##' \code{fitgauss} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("fitgauss", "CentWaveParam", function(object)
     return(object@fitgauss))
+##' @aliases fitgauss<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
     object@fitgauss <- value
@@ -168,13 +176,14 @@ setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o noise
+
+##' @aliases noise
 ##' @description \code{noise},\code{noise<-}: getter and setter for the
 ##' \code{noise} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("noise", "CentWaveParam", function(object)
     return(object@noise))
+##' @aliases noise<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("noise", "CentWaveParam", function(object, value) {
     object@noise <- value
@@ -183,13 +192,14 @@ setReplaceMethod("noise", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o verboseColumns
+
+##' @aliases verboseColumns
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
 ##' setter for the \code{verboseColumns} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("verboseColumns", "CentWaveParam", function(object)
     return(object@verboseColumns))
+##' @aliases verboseColumns<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
     object@verboseColumns <- value
@@ -198,13 +208,14 @@ setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o roiList
+
+##' @aliases roiList
 ##' @description \code{roiList},\code{roiList<-}: getter and setter for the
 ##' \code{roiList} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("roiList", "CentWaveParam", function(object)
     return(object@roiList))
+##' @aliases roiList<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
     object@roiList <- value
@@ -213,13 +224,14 @@ setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
         stop(OK)
     return(object)
 })
-## o firstBaselineCheck
+
+##' @aliases firstBaselineCheck
 ##' @description \code{fistBaselineCheck},\code{firstBaselineCheck<-}: getter
 ##' and setter for the \code{firstBaselineCheck} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("firstBaselineCheck", "CentWaveParam", function(object)
     return(object@firstBaselineCheck))
+##' @aliases firstBaselineCheck<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) {
     object@firstBaselineCheck <- value
@@ -228,13 +240,14 @@ setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) 
         stop(OK)
     return(object)
 })
-## o roiScales
+
+##' @aliases roiScales
 ##' @description \code{roiScales},\code{roiScales<-}: getter and setter for the
 ##' \code{roiScales} slot of the object.
-##'
 ##' @rdname featureDetection-centWave
 setMethod("roiScales", "CentWaveParam", function(object)
     return(object@roiScales))
+##' @aliases roiScales<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
     object@roiScales <- value
@@ -267,14 +280,15 @@ setMethod("show", "MatchedFilterParam", function(object) {
     cat(" mzdiff:", mzdiff(object), "\n")
     cat(" index:", index(object), "\n")
 })
+
+##' @aliases binSize
 ##' @description \code{binSize},\code{binSize<-}: getter and setter for the
 ##' \code{binSize} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("binSize", "MatchedFilterParam", function(object)
     return(object@binSize))
+##' @aliases binSize<-
 ##' @param value The value for the slot.
-##'
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
     object@binSize <- value
@@ -283,12 +297,13 @@ setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
 ##' @description \code{impute},\code{impute<-}: getter and setter for the
 ##' \code{impute} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("impute", "MatchedFilterParam", function(object)
     return(object@impute))
+##' @aliases impute<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
     object@impute <- value
@@ -297,12 +312,14 @@ setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases baseValue
 ##' @description \code{baseValue},\code{baseValue<-}: getter and setter for the
 ##' \code{baseValue} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("baseValue", "MatchedFilterParam", function(object)
     return(object@baseValue))
+##' @aliases baseValue<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
     object@baseValue <- value
@@ -311,12 +328,14 @@ setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases distance
 ##' @description \code{distance},\code{distance<-}: getter and setter for the
 ##' \code{distance} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("distance", "MatchedFilterParam", function(object)
     return(object@distance))
+##' @aliases distance<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
     object@distance <- value
@@ -325,12 +344,14 @@ setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases fwhm
 ##' @description \code{fwhm},\code{fwhm<-}: getter and setter for the
 ##' \code{fwhm} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("fwhm", "MatchedFilterParam", function(object)
     return(object@fwhm))
+##' @aliases fwhm<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
     object@fwhm <- value
@@ -339,12 +360,14 @@ setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases sigma
 ##' @description \code{sigma},\code{sigma<-}: getter and setter for the
 ##' \code{sigma} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("sigma", "MatchedFilterParam", function(object)
     return(object@sigma))
+##' @aliases sigma<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
     object@sigma <- value
@@ -353,14 +376,14 @@ setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
 ##' @description \code{max},\code{max<-}: getter and setter for the
 ##' \code{max} slot of the object.
-##'
 ##' @param x For \code{max}: a \code{MatchedFilterParam} object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("max", signature(x="MatchedFilterParam"),
           function(x) return(x@max))
+##' @aliases max<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
     object@max <- value
@@ -369,9 +392,9 @@ setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("snthresh", "MatchedFilterParam", function(object)
     return(object@snthresh))
@@ -383,12 +406,14 @@ setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases steps
 ##' @description \code{steps},\code{steps<-}: getter and setter for the
 ##' \code{steps} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("steps", "MatchedFilterParam", function(object)
     return(object@steps))
+##' @aliases steps<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
     object@steps <- value
@@ -397,9 +422,9 @@ setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 ##' \code{mzdiff} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("mzdiff", "MatchedFilterParam", function(object)
     return(object@mzdiff))
@@ -411,12 +436,14 @@ setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+##' @aliases index
 ##' @description \code{index},\code{index<-}: getter and setter for the
 ##' \code{index} slot of the object.
-##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("index", "MatchedFilterParam", function(object)
     return(object@index))
+##' @aliases index<-
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value

@@ -23,9 +23,6 @@
 ############################################################
 ## CentWaveParam
 
-##' @description \code{CentWaveParam}: constructor function for
-##' \code{CentWaveParam} classes.
-##'
 ##' @inheritParams do_detectFeatures_centWave
 ##'
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
@@ -50,9 +47,6 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 ############################################################
 ## MatchedFilterParam
 
-##' @description \code{MatchedFilterParam}: constructor function for
-##' \code{MatchedFilterParam} classes.
-##'
 ##' @inheritParams do_detectFeatures_matchedFilter
 ##'
 ##' @return The \code{MatchedFilterParam} function returns a

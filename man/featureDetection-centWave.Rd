@@ -8,32 +8,57 @@
 \alias{detectFeatures,MSnExp,CentWaveParam-method}
 \alias{detectFeatures,OnDiskMSnExp,CentWaveParam-method}
 \alias{featureDetection-centWave}
+\alias{firstBaselineCheck}
 \alias{firstBaselineCheck,CentWaveParam-method}
+\alias{firstBaselineCheck<-}
 \alias{firstBaselineCheck<-,CentWaveParam-method}
+\alias{fitgauss}
 \alias{fitgauss,CentWaveParam-method}
+\alias{fitgauss<-}
 \alias{fitgauss<-,CentWaveParam-method}
 \alias{integrate,CentWaveParam-method}
+\alias{integrate<-}
 \alias{integrate<-,CentWaveParam-method}
+\alias{mzCenterFun}
 \alias{mzCenterFun,CentWaveParam-method}
+\alias{mzCenterFun<-}
 \alias{mzCenterFun<-,CentWaveParam-method}
+\alias{mzdiff}
 \alias{mzdiff,CentWaveParam-method}
+\alias{mzdiff<-}
 \alias{mzdiff<-,CentWaveParam-method}
+\alias{noise}
 \alias{noise,CentWaveParam-method}
+\alias{noise<-}
 \alias{noise<-,CentWaveParam-method}
+\alias{peakwidth}
 \alias{peakwidth,CentWaveParam-method}
+\alias{peakwidth<-}
 \alias{peakwidth<-,CentWaveParam-method}
+\alias{ppm}
 \alias{ppm,CentWaveParam-method}
+\alias{ppm<-}
 \alias{ppm<-,CentWaveParam-method}
+\alias{prefilter}
 \alias{prefilter,CentWaveParam-method}
+\alias{prefilter<-}
 \alias{prefilter<-,CentWaveParam-method}
+\alias{roiList}
 \alias{roiList,CentWaveParam-method}
+\alias{roiList<-}
 \alias{roiList<-,CentWaveParam-method}
+\alias{roiScales}
 \alias{roiScales,CentWaveParam-method}
+\alias{roiScales<-}
 \alias{roiScales<-,CentWaveParam-method}
 \alias{show,CentWaveParam-method}
+\alias{snthresh}
 \alias{snthresh,CentWaveParam-method}
+\alias{snthresh<-}
 \alias{snthresh<-,CentWaveParam-method}
+\alias{verboseColumns}
 \alias{verboseColumns,CentWaveParam-method}
+\alias{verboseColumns<-}
 \alias{verboseColumns<-,CentWaveParam-method}
 \title{Feature detection using the centWave method}
 \usage{
@@ -200,9 +225,6 @@ The \code{CentWaveParam} class allows to specify all settings for
 a feature detection using the centWave method. Instances should be created
 with the \code{CentWaveParam} constructor.
 
-\code{CentWaveParam}: constructor function for
-\code{CentWaveParam} classes.
-
 The \code{detectFeatures,OnDiskMSnExp,CentWaveParam} method
 performs feature detection using the \emph{centWave} algorithm on all
 samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
@@ -285,8 +307,22 @@ to the centWave algorithm can be passed with a \code{CentWaveParam} object.
 ## Create a CentWaveParam object
 cwp <- CentWaveParam(ppm = 20)
 ## Change snthresh parameter
-snthresh(cwp) <- 5
+snthresh(cwp) <- 25
 cwp
+
+## Perform the feature detection using centWave on some of the files from the
+## faahKO package. Files are read using the readMSData2 from the MSnbase
+## package
+library(faahKO)
+library(MSnbase)
+fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+           full.names = TRUE)
+raw_data <- readMSData2(fls[1:2])
+
+## Perform the feature detection using the settings defined above. We're
+## returning the results as an xcmsSet object.
+res <- detectFeatures(raw_data, param = cwp, return.type = "xcmsSet")
+head(peaks(res))
 }
 \author{
 Ralf Tautenhahn, Johannes Rainer

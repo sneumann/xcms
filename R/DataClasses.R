@@ -314,8 +314,22 @@ NULL
 ##' ## Create a CentWaveParam object
 ##' cwp <- CentWaveParam(ppm = 20)
 ##' ## Change snthresh parameter
-##' snthresh(cwp) <- 5
+##' snthresh(cwp) <- 25
 ##' cwp
+##'
+##' ## Perform the feature detection using centWave on some of the files from the
+##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+##' ## package
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the settings defined above. We're
+##' ## returning the results as an xcmsSet object.
+##' res <- detectFeatures(raw_data, param = cwp, return.type = "xcmsSet")
+##' head(peaks(res))
 setClass("CentWaveParam",
          slots = c(
              ppm = "numeric",
@@ -493,10 +507,23 @@ NULL
 ##' @examples
 ##'
 ##' ## Create a MatchedFilterParam object
-##' mfp <- MatchedFilterParam(binSize = 0.2)
+##' mfp <- MatchedFilterParam(binSize = 0.5)
 ##' ## Change snthresh parameter
 ##' snthresh(mfp) <- 15
 ##' mfp
+##'
+##' ## Perform the feature detection using matchecFilter on the files from the
+##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+##' ## package
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' raw_data <- readMSData2(fls)
+##' ## Perform the feature detection using the settings defined above. We're
+##' ## returning the results as an xcmsSet object.
+##' res <- detectFeatures(raw_data, param = mfp, return.type = "xcmsSet")
+##' head(peaks(res))
 setClass("MatchedFilterParam",
          slots = c(
              binSize = "numeric",
