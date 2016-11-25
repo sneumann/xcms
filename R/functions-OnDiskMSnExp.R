@@ -118,7 +118,7 @@ detectFeatures_Spectrum_list <- function(x, method = "centWave", param, rt) {
                                                          basename(fnames[i]),
                                                          "': ", n_pks,
                                                          " features identified."),
-                                          date = x[[i]]$date,
+                                          date. = x[[i]]$date,
                                           type. = .PROCSTEP.FEATURE.DETECTION,
                                           fileIndex. = i
                                           )

@@ -38,8 +38,10 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
-importFrom("MSnbase", "intensity", "mz", "rtime", "as.data.frame.Spectrum",
-           "filterFile", "filterMsLevel")
+importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
+                  "filterFile", "filterMsLevel", "msLevel", "scanIndex",
+                  "spectra", "impute")
+importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
     "etg",
@@ -194,8 +196,57 @@ exportMethods(
 
 ## New Param classes
 exportClasses(
-    "CentWaveParam"
+    "CentWaveParam",
+    "MatchedFilterParam"
+)
+## Param methods
+exportMethods(
+    "ppm",
+    "ppm<-",
+    "peakwidth",
+    "peakwidth<-",
+    "snthresh",
+    "snthresh<-",
+    "prefilter",
+    "prefilter<-",
+    "mzCenterFun",
+    "mzCenterFun<-",
+    "integrate",
+    "integrate<-",
+    "mzdiff",
+    "mzdiff<-",
+    "fitgauss",
+    "fitgauss<-",
+    "noise",
+    "noise<-",
+    "verboseColumns",
+    "verboseColumns<-",
+    "roiList",
+    "roiList<-",
+    "firstBaselineCheck",
+    "firstBaselineCheck<-",
+    "roiScales",
+    "roiScales",
+    ## MatchedFilter
+    "binSize",
+    "binSize<-",
+    "impute",
+    "impute<-",
+    "baseValue",
+    "baseValue<-",
+    "distance",
+    "distance<-",
+    "fwhm",
+    "fwhm<-",
+    "sigma",
+    "sigma<-",
+    "max",
+    "max<-",
+    "steps",
+    "steps<-",
+    "index",
+    "index<-"
 )
 ## Param class functions
-export("CentWaveParam")
+export("CentWaveParam", "MatchedFilterParam")
 ## Param class methods.

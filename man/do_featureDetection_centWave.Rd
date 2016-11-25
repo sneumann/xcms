@@ -34,7 +34,7 @@ in seconds.}
 
 \item{prefilter}{Numeric of length 2: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
-retained if they contain at least \code{k} peaks with intensity >= \code{I}.}
+retained if they contain at least \code{k} peaks with intensity \code{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
 feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's
@@ -155,6 +155,8 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 2008, 9:504
 }
 \seealso{
+\code{\link{centWave}} for the standard user interface method.
+
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
   \code{\link{do_detectFeatures_massifquant}},
   \code{\link{do_detectFeatures_matchedFilter}}

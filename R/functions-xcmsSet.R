@@ -174,7 +174,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                                                           basename(files[i]),
                                                           "': ", nrow(pks),
                                                           " features identified."),
-                                            date = res[[i]]$date,
+                                            date. = res[[i]]$date,
                                             type. = .PROCSTEP.FEATURE.DETECTION,
                                             fileIndex. = i)
         } else {

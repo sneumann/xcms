@@ -67,9 +67,10 @@ proteomics), from /feature/ (which describes a peak in chromatographic space).
 
 The encapsulation of the parameters to a function into a parameter class (such
 as =CentWaveParam=) avoids busy function calls (with many single parameters to
-specify) and enables saving, reloading and reuse of settings. In addition,
-parameter validation can be performed within the parameter object and hence is
-no longer required in the analysis function.
+specify) and enables saving, reloading and reusing settings as well as, by
+adding them to the result objects, enabling the documentation of the data
+processing history. In addition, parameter validation can be performed within
+the parameter object and hence is no longer required in the analysis function.
 
 The implementation of the =detectFeatures= method for =OnDiskMSnExp= and =MSnExp=
 objects (from the =MSnbase= package) enable feature detection on these types of
@@ -79,6 +80,11 @@ experiment relevant metadata. Loading the files first into an =MSnExp= or
 experiments) enables a first data inspection and quality assessment, followed by
 eventual subsetting and filtering (e.g. on retention time) before performing the
 feature detection on the thus processed data.
+
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
+  ## Reading the raw data using the MSnbase package
+  library(MSnbase)
+#+END_SRC
 
 ** Binning and missing value imputation functions
 

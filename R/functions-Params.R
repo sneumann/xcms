@@ -45,3 +45,28 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales))
 }
+
+
+############################################################
+## MatchedFilterParam
+
+##' @description \code{MatchedFilterParam}: constructor function for
+##' \code{MatchedFilterParam} classes.
+##'
+##' @inheritParams do_detectFeatures_matchedFilter
+##'
+##' @return The \code{MatchedFilterParam} function returns a
+##' \code{MatchedFilterParam} class instance with all of the settings specified
+##' for feature detection by the centWave method.
+##'
+##' @rdname featureDetection-matchedFilter
+MatchedFilterParam <- function(binSize = 0.1, impute = "none",
+                               baseValue = numeric(), distance = numeric(),
+                               fwhm = 30, sigma = fwhm / 2.3548,
+                               max = 5, snthresh = 10, steps = 2,
+                               mzdiff = 0.8 - binSize * steps, index = FALSE) {
+    return(new("MatchedFilterParam", binSize = binSize, impute = impute,
+               baseValue = baseValue, distance = distance, fwhm = fwhm,
+               sigma = sigma, max = max, snthresh = snthresh, steps = steps,
+               mzdiff = mzdiff, index = index))
+}

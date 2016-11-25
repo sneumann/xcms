@@ -51,7 +51,7 @@
 ##' @param snthresh Signal to noise ratio cutoff.
 ##' @param prefilter Numeric of length 2: \code{c(k, I)} specifying the prefilter
 ##' step for the first analysis step (ROI detection). Mass traces are only
-##' retained if they contain at least \code{k} peaks with intensity >= \code{I}.
+##' retained if they contain at least \code{k} peaks with intensity \code{>= I}.
 ##' @param mzCenterFun Name of the function to calculate the m/z center of the
 ##' feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's
 ##' m/z values, \code{"mean"}: mean of the feature's m/z values, \code{"apex"}:
@@ -122,6 +122,7 @@
 ##' @author Ralf Tautenhahn, Johannes Rainer
 ##'
 ##' @rdname do_featureDetection_centWave
+##' @seealso \code{\link{centWave}} for the standard user interface method.
 ##'
 ##' @examples
 ##' ## Load the test file
@@ -865,7 +866,7 @@ do_detectFeatures_massifquant <- function(mz,
 
         ## Get the max intensity for each feature.
         maxo <- lapply(massifquantROIs, function(z) {
-            raw <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
+            raw <- .rawMat(mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect,
                            mzrange = c(z$mzmin, z$mzmax),
                            scanrange = c(z$scmin, z$scmax))
@@ -1098,9 +1099,13 @@ do_detectFeatures_matchedFilter <- function(mz,
     ## Define profparam:
     profp <- list()
     if (missing(baseValue))
+        baseValue <- numeric()
+    if (length(baseValue) == 0)
         baseValue <- min(int, na.rm = TRUE) / 2
     profp$baselevel <- baseValue
-    if (!missing(distance)) {
+    if (missing(distance))
+        distance <- numeric()
+    if (length(distance) != 0) {
         profp$basespace <- distance * bin_size
     } else {
         profp$basespace <- 0.075
@@ -1290,8 +1295,12 @@ do_detectFeatures_matchedFilter <- function(mz,
     bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
     bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
     if (missing(baseValue))
+        baseValue <- numeric()
+    if (length(baseValue) == 0)
         baseValue <- min(int, na.rm = TRUE) / 2
     if (missing(distance))
+        distance <- numeric()
+    if (length(distance) == 0)
         distance <- floor(0.075 / bin_size)
     binVals <- lapply(binRes, function(z) {
         return(imputeLinInterpol(z$y, method = impute,
@@ -1482,9 +1491,13 @@ do_detectFeatures_matchedFilter <- function(mz,
     bufsize <- length(mass)
     ## Define profparam:
     profp <- list()
-    if (!missing(baseValue))
+    if (missing(baseValue))
+        baseValue <- numeric()
+    if (length(baseValue) != 0)
         profp$baselevel <- baseValue
-    if (!missing(distance))
+    if (missing(distance))
+        distance <- numeric()
+    if (length(distance) != 0)
         profp$basespace <- distance * bin_size
     ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
     buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
@@ -1670,8 +1683,12 @@ do_detectFeatures_matchedFilter <- function(mz,
         bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
         ## Missing value imputation
         if (missing(baseValue))
+            baseValue <- numeric()
+        if (length(baseValue) == 0)
             baseValue <- min(int, na.rm = TRUE) / 2
         if (missing(distance))
+            distance <- numeric()
+        if (length(distance) == 0)
             distance <- floor(0.075 / bin_size)
         binVals <- lapply(binRes, function(z) {
             return(imputeLinInterpol(z$y, method = impute, distance = distance,
@@ -1964,6 +1981,16 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 ##
 do_detectFeatures_MS1 <- function() {
 }
+
+############################################################
+## Part of the functionality from the "centWaveWithPredictedIsotopeROIs"
+do_detectPredictedIsotopeROIs <- function() {
+    ## Take the functionality from the findPeaks.centWaveWithPredictedIsotopeROIs
+    ## that identifies the ROIs and return the corresponding roiList that can
+    ## then be fed into the corresponding do_detectFeatures_centWave function.
+    ## That would then be similar to the massifquant thingy.
+}
+
 
 
 ############################################################

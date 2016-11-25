@@ -243,14 +243,20 @@ setClass("Param",
 ##' @title Feature detection methods.
 ##'
 ##' @description The \code{detectFeature} methods are part of the modernized
-##' \code{xcms} user interface. \code{detectFeature}
+##' \code{xcms} user interface.
 ##'
 ##' The implemented feature detection methods are:
 ##' \describe{
 ##' \item{centWave}{: feature detection using the \emph{centWave} method.
-##' See \code{\link{detectFeatures-centWave}} for more details.}
+##' See \code{\link{centWave}} for more details.}
+##'
+##' \item{matchedFilter}{: peak detection in chromatographic space. See
+##' \code{\link{matchedFilter}} for more details.}
 ##' }
-##' @name featureDetection
+##' @name detectFeatures
+##' @family feature detection methods
+##' @seealso \code{\link{findPeaks}} for the \emph{old} feature detection
+##' methods.
 ##' @author Johannes Rainer
 NULL
 #> NULL
@@ -297,9 +303,19 @@ NULL
 ##' a feature detection using the centWave method. Instances should be created
 ##' with the \code{CentWaveParam} constructor.
 ##'
-##' @slot ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselinCheck,roiScales See corresponding parameter above.
+##' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
 ##' @rdname featureDetection-centWave
+##'
+##' @examples
+##'
+##' ## Create a CentWaveParam object
+##' cwp <- CentWaveParam(ppm = 20)
+##' ## Change snthresh parameter
+##' snthresh(cwp) <- 5
+##' cwp
 setClass("CentWaveParam",
          slots = c(
              ppm = "numeric",
@@ -365,12 +381,24 @@ setClass("CentWaveParam",
                                              " or 2."))
              ## mzdiff: length 1.
              if (length(object@mzdiff) != 1)
-                 msg <- valisMsg(msg, paste0("'mzdiff' has to be a numeric of",
+                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric of",
                                              " length 1."))
              ## noise: length 1.
              if (length(object@noise) != 1)
-                 msg <- valisMsg(msg, paste0("'noise' has to be a numeric of",
+                 msg <- validMsg(msg, paste0("'noise' has to be a numeric of",
                                              " length 1."))
+             ## fitgauss: length 1.
+             if (length(object@fitgauss) != 1)
+                 msg <- validMsg(msg, paste0("'fitgauss' has to be a numeric of",
+                                             " length 1."))
+             ## verboseColumns: length 1.
+             if (length(object@verboseColumns) != 1)
+                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
+                                             "numeric of length 1."))
+             ## firstBaselineCheck: length 1.
+             if (length(object@firstBaselineCheck) != 1)
+                 msg <- validMsg(msg, paste0("'firstBaselineCheck' has to be a",
+                                             " numeric of length 1."))
              ## roiList: check
              if (length(object@roiList) > 0) {
                  doHaveExpectedEls <- function(z) {
@@ -395,6 +423,156 @@ setClass("CentWaveParam",
                  length(object@roiList) != length(object@roiScales))
                  msg <- validMsg(msg, paste0("'roiScales' has to have the same",
                                              " length than 'roiList'."))
+             if (is.null(msg)) {
+                 return(TRUE)
+             } else {
+                 return(msg)
+             }
+         })
+
+## Main matchedFilter documentation.
+##' @title Peak detection in the chromatographic time domain
+##'
+##' @aliases matchedFilter
+##'
+##' @description The \emph{matchedFilter} algorithm identifies features in the
+##' chromatographic time domain as described in [Smith 2006]. The intensity
+##' values are binned by cutting The LC/MS data into slices (bins) of a mass unit
+##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is selected.
+##' The feature detection is then performed in each bin by extending it based on
+##' the \code{steps} parameter to generate slices comprising bins
+##' \code{current_bin - steps +1} to \code{current_bin + steps - 1}. Each of
+##' these slices is then filtered with matched filtration using a second-derative
+##' Gaussian as the model feature/peak shape. After filtration features are
+##' detected using a signal-to-ration cut-off. For more details and
+##' illustrations see [Smith 2006].
+##'
+##' @details The intensities are binned by the provided m/z values within each
+##' spectrum (scan). Binning is performed such that the bins are centered around
+##' the m/z values (i.e. the first bin includes all m/z values between
+##' \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+##'
+##' For more details on binning and missing value imputation see
+##' \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' objects (both defined in the \code{MSnbase} package). All of the settings
+##' to the matchedFilter algorithm can be passed with a
+##' \code{MatchedFilterParam} object.
+##'
+##' @inheritParams imputeLinInterpol
+##'
+##' @family feature detection methods
+##' @seealso The \code{\link{do_detectFeatures_matchedFilter}} core API function
+##' and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+##'
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+##' @author Colin A Smith, Johannes Rainer
+##'
+##' @name featureDetection-matchedFilter
+NULL
+#> NULL
+
+##' @description The \code{MatchedFilterParam} class allows to specify all
+##' settings for a feature detection using the matchedFilter method. Instances
+##' should be created with the \code{MatchedFilterParam} constructor.
+##'
+##' @slot .__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname featureDetection-matchedFilter
+##'
+##' @examples
+##'
+##' ## Create a MatchedFilterParam object
+##' mfp <- MatchedFilterParam(binSize = 0.2)
+##' ## Change snthresh parameter
+##' snthresh(mfp) <- 15
+##' mfp
+setClass("MatchedFilterParam",
+         slots = c(
+             binSize = "numeric",
+             impute = "character",
+             baseValue = "numeric",
+             distance = "numeric",
+             fwhm = "numeric",
+             sigma = "numeric",
+             max = "numeric",
+             snthresh = "numeric",
+             steps = "numeric",
+             mzdiff = "numeric",
+             index = "logical"
+         ),
+         contains = c("Param"),
+         prototype = prototype(
+             binSize = 0.1,
+             impute = "none",
+             baseValue = numeric(),
+             distance = numeric(),
+             fwhm = 30,
+             sigma = 12.73994,
+             max = 5,
+             snthresh = 10,
+             steps = 2,
+             mzdiff = 0.6,
+             index = FALSE
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             ## Check the values.
+             ## binSize positive numeric of length 1.
+             if (length(object@binSize) != 1 | object@binSize < 0)
+                 msg <- validMsg(msg, paste0("'binSize' has to be positive",
+                                             " numeric of length 1."))
+             ## impute
+             if (!any(c("none", "lin", "linbase") == object@impute))
+                 msg <- validMsg(msg,
+                                 paste0("Only values 'none', 'lin' and ",
+                                        "'linbase' are allowed for'impute'"))
+             ## baseValue
+             if (length(object@baseValue) > 1)
+                 msg <- validMsg(msg, paste0("'baseValue' has to be a",
+                                             " numeric of length 1."))
+             ## distance
+             if (length(object@distance) > 1)
+                 msg <- validMsg(msg, paste0("'distance' has to be a numeric",
+                                             " of length 1."))
+             ## fwhm
+             if (length(object@fwhm) != 1)
+                 msg <- validMsg(msg, paste0("'fwhm' has to be a numeric",
+                                             " of length 1."))
+             ## sigma
+             if (length(object@sigma) != 1)
+                 msg <- validMsg(msg, paste0("'sigma' has to be a numeric",
+                                             " of length 1."))
+             ## max
+             if (length(object@max) != 1)
+                 msg <- validMsg(msg, paste0("'max' has to be a numeric",
+                                             " of length 1."))
+             ## snthresh
+             if (length(object@snthresh) != 1)
+                 msg <- validMsg(msg, paste0("'snthresh' has to be a numeric",
+                                             " of length 1."))
+             ## steps
+             if (length(object@steps) != 1)
+                 msg <- validMsg(msg, paste0("'steps' has to be a numeric",
+                                             " of length 1."))
+             ## mzdiff
+             if (length(object@mzdiff) != 1)
+                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric",
+                                             " of length 1."))
+             ## index
+             if (length(object@index) != 1)
+                 msg <- validMsg(msg, paste0("'index' has to be a logical",
+                                             " of length 1."))
              if (is.null(msg)) {
                  return(TRUE)
              } else {

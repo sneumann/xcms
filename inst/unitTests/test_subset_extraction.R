@@ -25,30 +25,30 @@ dontrun_test_rawMat <- function() {
     rtr <- numeric()
     scr <- numeric()
     rm <- rawMat(xraw, mzrange = mzr, rtrange = rtr, scanrange = scr)
-    rm_2 <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
-                           valsPerSpect = vps, mzrange = mzr,
-                           rtrange = rtr, scanrange = scr)
+    rm_2 <- .rawMat(mz = mz, int = int, scantime = scantime,
+                    valsPerSpect = vps, mzrange = mzr,
+                    rtrange = rtr, scanrange = scr)
     checkEquals(rm, rm_2)
     ## mzr
     mzr <- c(130, 150)
     rm <- rawMat(xraw, mzrange = mzr, rtrange = rtr, scanrange = scr)
-    rm_2 <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
-                           valsPerSpect = vps, mzrange = mzr,
-                           rtrange = rtr, scanrange = scr)
+    rm_2 <- .rawMat(mz = mz, int = int, scantime = scantime,
+                    valsPerSpect = vps, mzrange = mzr,
+                    rtrange = rtr, scanrange = scr)
     checkEquals(rm, rm_2)
     ## scr
     scr <- c(3, 9)
     rm <- rawMat(xraw, mzrange = mzr, rtrange = rtr, scanrange = scr)
-    rm_2 <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
-                           valsPerSpect = vps, mzrange = mzr,
-                           rtrange = rtr, scanrange = scr)
+    rm_2 <- .rawMat(mz = mz, int = int, scantime = scantime,
+                    valsPerSpect = vps, mzrange = mzr,
+                    rtrange = rtr, scanrange = scr)
     checkEquals(rm, rm_2)
     ## rtr
     rtr <- c(280, 290)
     rm <- rawMat(xraw, mzrange = mzr, rtrange = rtr, scanrange = scr)
-    rm_2 <- xcms:::.rawMat(mz = mz, int = int, scantime = scantime,
-                           valsPerSpect = vps, mzrange = mzr,
-                           rtrange = rtr, scanrange = scr)
+    rm_2 <- .rawMat(mz = mz, int = int, scantime = scantime,
+                    valsPerSpect = vps, mzrange = mzr,
+                    rtrange = rtr, scanrange = scr)
     checkEquals(rm, rm_2)
 }
 

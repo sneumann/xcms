@@ -1,4 +1,4 @@
-## Test detectFeatures matchedFilter
+## Testo detectFeatures matchedFilter
 library(xcms)
 library(RUnit)
 
@@ -7,6 +7,11 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+library(msdata)
+f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+         system.file("microtofq/MM8.mzML", package = "msdata"))
+
 
 test_do_detectFeatures_matchedFilter <- function() {
     xr <- xcmsRaw(fs[1])
@@ -35,6 +40,58 @@ test_do_detectFeatures_matchedFilter <- function() {
     checkTrue(nrow(res1) > nrow(res2))
 }
 
+## Evaluate the featureDetection method using matchedFilter on MSnExp and
+## OnDiskMSnExp objects. For now we can't read CDF files, so we have to restrict
+## to provided mzML files.
+test_featureDetection_matchedFilter <- function() {
+    library(MSnbase)
+    mfp <- MatchedFilterParam(binSize = 0.2, impute = "lin")
+    res <- xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
+                   step = binSize(mfp))
+    ## onDisk
+    onDisk <- readMSData2(mzf)
+    res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
+    checkEquals(peaks(res_o), peaks(res))
+    checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+    ## inMem
+    inMem <- readMSData(mzf, msLevel. = 1)
+    res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
+    checkEquals(peaks(res_i), peaks(res))
+    checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
+
+    ## Do the same on the CDF files:
+    res <- xcmsSet(fs, method = "matchedFilter", profmethod = "binlin",
+                   step = binSize(mfp))
+    onDisk <- readMSData2(fs)
+    res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
+    checkEquals(peaks(res), peaks(res_o))
+
+    inMem <- readMSData(fs, msLevel. = 1)
+    res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
+    checkEquals(peaks(res), peaks(res_i))
+}
+
+## Some benchmarks
+dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
+    library(microbenchmark)
+    library(MSnbase)
+    mfp <- MatchedFilterParam(binSize = 0.2, impute = "lin")
+    onDisk <- readMSData2(mzf)
+    inMem <- readMSData(mzf, msLevel. = 1)
+    microbenchmark(xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
+                           step = binSize(mfp)),
+                   detectFeatures(onDisk, param = mfp, return.type = "xcmsSet"),
+                   detectFeatures(inMem, param = mfp, return.type = "xcmsSet"),
+                   times = 3)
+    ## netCDF.
+    onDisk <- readMSData2(fs)
+    inMem <- readMSData(fs, msLevel. = 1)
+    microbenchmark(xcmsSet(fs, method = "matchedFilter", profmethod = "binlin",
+                           step = binSize(mfp)),
+                   detectFeatures(onDisk, param = mfp, return.type = "xcmsSet"),
+                   detectFeatures(inMem, param = mfp, return.type = "xcmsSet"),
+                   times = 3)
+}
 
 ############################################################
 ## Compare each individual function to the original one changing

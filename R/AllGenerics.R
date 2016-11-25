@@ -5,6 +5,12 @@
 setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
 setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
 
+## B
+setGeneric("baseValue", function(object, ...) standardGeneric("baseValue"))
+setGeneric("baseValue<-", function(object, value) standardGeneric("baseValue<-"))
+setGeneric("binSize", function(object, ...) standardGeneric("binSize"))
+setGeneric("binSize<-", function(object, value) standardGeneric("binSize<-"))
+
 ## C
 setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
 setGeneric("collect", function(object, ...) standardGeneric("collect"))
@@ -14,6 +20,8 @@ setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
 setGeneric("detectFeatures", function(object, param, ...)
            standardGeneric("detectFeatures"))
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
+setGeneric("distance", function(object, ...) standardGeneric("distance"))
+setGeneric("distance<-", function(object, value) standardGeneric("distance<-"))
 
 ## F
 setGeneric("filepaths", function(object) standardGeneric("filepaths"))
@@ -45,7 +53,14 @@ setGeneric("findPeaks.MSW", function(object, ...)
     standardGeneric("findPeaks.MSW"))
 setGeneric("findPeaks.MS1", function(object, ...)
     standardGeneric("findPeaks.MS1"))
-
+setGeneric("firstBaselineCheck", function(object, ...)
+    standardGeneric("firstBaselineCheck"))
+setGeneric("firstBaselineCheck<-", function(object, value)
+    standardGeneric("firstBaselineCheck<-"))
+setGeneric("fitgauss", function(object, ...) standardGeneric("fitgauss"))
+setGeneric("fitgauss<-", function(object, value) standardGeneric("fitgauss<-"))
+setGeneric("fwhm", function(object, ...) standardGeneric("fwhm"))
+setGeneric("fwhm<-", function(object, value) standardGeneric("fwhm<-"))
 
 ## G
 setGeneric("getEIC", function(object, ...) standardGeneric("getEIC"))
@@ -71,6 +86,12 @@ setGeneric("hasMSn", function(object, ...) standardGeneric("hasMSn"))
 
 ## I
 setGeneric("image", function(x, ...) standardGeneric("image"))
+setGeneric("impute<-", function(object, value) standardGeneric("impute<-"))
+setGeneric("index", function(object, ...) standardGeneric("index"))
+setGeneric("index<-", function(object, value) standardGeneric("index<-"))
+setGeneric("integrate")
+##setGeneric("integrate", function(object, ...) standardGeneric("integrate"))
+setGeneric("integrate<-", function(object, value) standardGeneric("integrate<-"))
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
 ## L
@@ -78,16 +99,30 @@ setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
 
 ## M
+##setGeneric("max", function(x, ...) standardGeneric("max"))
+setGeneric("max")
+setGeneric("max<-", function(object, value) standardGeneric("max<-"))
 setGeneric("makeacqNum", function(object, freq, start=1) standardGeneric("makeacqNum"))
 setGeneric("mslevel", function(object, ...) standardGeneric("mslevel"))
 setGeneric("mslevel<-", function(object, value) standardGeneric("mslevel<-"))
 setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms"))
 setGeneric("msn2ms", function(object, ...) standardGeneric("msn2ms"))
+setGeneric("mzdiff", function(object, ...) standardGeneric("mzdiff"))
+setGeneric("mzdiff<-", function(object, value) standardGeneric("mzdiff<-"))
 setGeneric("mzrange", function(object) standardGeneric("mzrange"))
+setGeneric("mzCenterFun", function(object, ...) standardGeneric("mzCenterFun"))
+setGeneric("mzCenterFun<-", function(object, value)
+    standardGeneric("mzCenterFun<-"))
+
+## N
+setGeneric("noise", function(object, ...) standardGeneric("noise"))
+setGeneric("noise<-", function(object, value) standardGeneric("noise<-"))
 
 ## P
 setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 setGeneric("peakTable", function(object, ...) standardGeneric("peakTable"))
+setGeneric("peakwidth", function(object, ...) standardGeneric("peakwidth"))
+setGeneric("peakwidth<-", function(object, value) standardGeneric("peakwidth<-"))
 setGeneric("plotChrom", function(object, ...) standardGeneric("plotChrom"))
 setGeneric("plotEIC", function(object, ...) standardGeneric("plotEIC"))
 setGeneric("plotPeaks", function(object, ...) standardGeneric("plotPeaks"))
@@ -98,6 +133,10 @@ setGeneric("plotSpec", function(object, ...) standardGeneric("plotSpec"))
 setGeneric("plotSurf", function(object, ...) standardGeneric("plotSurf"))
 setGeneric("plotTIC", function(object, ...) standardGeneric("plotTIC"))
 setGeneric("plotTree", function(object, ...) standardGeneric("plotTree"))
+setGeneric("ppm", function(object, ...) standardGeneric("ppm"))
+setGeneric("ppm<-", function(object, value) standardGeneric("ppm<-"))
+setGeneric("prefilter", function(object, ...) standardGeneric("prefilter"))
+setGeneric("prefilter<-", function(object, value) standardGeneric("prefilter<-"))
 setGeneric("present", function(object, class, minfrac) standardGeneric("present"))
 setGeneric("profinfo", function(object) standardGeneric("profinfo"))
 setGeneric("profinfo<-", function(object, value) standardGeneric("profinfo<-"))
@@ -122,6 +161,10 @@ setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
 setGeneric("retcor.peakgroups", function(object, ...) standardGeneric("retcor.peakgroups"))
 setGeneric("retcor.obiwarp", function(object, ...) standardGeneric("retcor.obiwarp"))
 setGeneric("revMz", function(object, ...) standardGeneric("revMz"))
+setGeneric("roiList", function(object, ...) standardGeneric("roiList"))
+setGeneric("roiList<-", function(object, value) standardGeneric("roiList<-"))
+setGeneric("roiScales", function(object, ...) standardGeneric("roiScales"))
+setGeneric("roiScales<-", function(object, value) standardGeneric("roiScales<-"))
 setGeneric("rtrange", function(object) standardGeneric("rtrange"))
 
 ## S
@@ -131,7 +174,11 @@ setGeneric("sampnames", function(object) standardGeneric("sampnames"))
 setGeneric("sampnames<-", function(object, value) standardGeneric("sampnames<-"))
 setGeneric("scanrange", function(object, ...) standardGeneric("scanrange"))
 setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-"))
+setGeneric("sigma")
+setGeneric("sigma<-", function(object, value) standardGeneric("sigma<-"))
 setGeneric("showError", function(object, ...) standardGeneric("showError"))
+setGeneric("snthresh", function(object, ...) standardGeneric("snthresh"))
+setGeneric("snthresh<-", function(object, value) standardGeneric("snthresh<-"))
 setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
 setGeneric("specDist", function(object, ...) standardGeneric("specDist"))
 setGeneric("specDist.meanMZmatch",
@@ -146,11 +193,17 @@ setGeneric("specDist.cosine",
 setGeneric("specDist.peakCount",
            function(peakTable1, peakTable2, mzabs=0.001, mzppm=10,symmetric=FALSE)
                standardGeneric("specDist.peakCount"))
+setGeneric("steps", function(object, ...) standardGeneric("steps"))
+setGeneric("steps<-", function(object, value) standardGeneric("steps<-"))
 setGeneric("stitch", function(object, lockMass, ...) standardGeneric("stitch"))
 setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"))
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
 
+## V
+setGeneric("verboseColumns", function(object, ...) standardGeneric("verboseColumns"))
+setGeneric("verboseColumns<-", function(object, value)
+    standardGeneric("verboseColumns<-"))
 
 ## W
 setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))

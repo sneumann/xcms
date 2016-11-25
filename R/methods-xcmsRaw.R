@@ -344,9 +344,10 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 ##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
-##' @family feature detection methods
-##' @seealso \code{\linkS4class{xcmsRaw}}. \code{\link{do_detectFeatures_matchedFilter}}
-##' for the core function performing the feature detection.
+##' @family Old feature detection methods
+##' @seealso \code{\linkS4class{xcmsRaw}},
+##' \code{\link{do_detectFeatures_matchedFilter}} for the core function
+##' performing the feature detection.
 setMethod("findPeaks.matchedFilter", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
@@ -1066,6 +1067,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
         return(FALSE)
       }
 
+      ## TODO FIXXXX, isOverlap is not defined!!! what should be returned here?
       return(isOverlap)
     })
 

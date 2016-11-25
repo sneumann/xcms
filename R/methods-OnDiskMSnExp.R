@@ -1,21 +1,25 @@
 ## Methods for MSnbase's OnDiskMSnExp and MSnExp objects.
 #' @include functions-OnDiskMSnExp.R
 
+
 ## Main roxygen documentation for the centWace feature detection is in
 ## DataClasses, before the definition of the CentWaveParam class.
 
 ## The centWave feature detection method for OnDiskMSnExp:
 ##' @title Feature detection using the centWave method
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp} method performs feature
-##' detection on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' @description The \code{detectFeatures,OnDiskMSnExp,CentWaveParam} method
+##' performs feature detection using the \emph{centWave} algorithm on all
+##' samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 ##' data and load the spectra data (mz and intensity values) on the fly from the
 ##' original files applying also all eventual data manipulations.
 ##'
-##' @param object Either an \code{\link[MSnbase]{OnDiskMSnExp}} or an
-##' \code{\link[MSnbase]{MSnExp}} object containing the MS- and all other
-##' experiment-relevant data.
+##' @param object For \code{detectFeatures}: Either an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
+##' object containing the MS- and all other experiment-relevant data.
+##'
+##' For all other methods: a parameter object.
 ##'
 ##' @param param An \code{CentWaveParam} object containing all settings for the
 ##' centWave algorithm.
@@ -73,10 +77,11 @@ setMethod("detectFeatures",
 ## The centWave feature detection method for MSnExp:
 ##' @title Feature detection using the centWave method
 ##'
-##' @description The \code{detectFeatures,MSnExp} method performs feature
-##' detection on all samples from an \code{\link[MSnbase]{MSnExp}} object. These
-##' objects contain mz and intensity values of all spectra hence no additional
-##' data input from the original files is required.
+##' @description The \code{detectFeatures,MSnExp,CentWaveParam} method performs
+##' feature detection using the \emph{centWave} algorithm on all samples from
+##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
+##' intensity values of all spectra hence no additional data input from the
+##' original files is required.
 ##'
 ##' @rdname featureDetection-centWave
 setMethod("detectFeatures",
@@ -101,6 +106,110 @@ setMethod("detectFeatures",
                                                param = param)
               }, BPPARAM = BPPARAM)
               ## (3) collect the results.
+              res <- .processResultList(resList,
+                                        getProcHist = return.type != "list",
+                                        fnames = fileNames(object))
+              if (return.type == "list")
+                  return(res$peaks)
+              if (return.type == "xcmsSet") {
+                  xs <- .pSet2xcmsSet(object)
+                  peaks(xs) <- do.call(rbind, res$peaks)
+                  xs@.processHistory <- res$procHist
+                  OK <- .validProcessHistory(xs)
+                  if (!is.logical(OK))
+                      stop(OK)
+                  if (!any(colnames(pData(object)) == "class"))
+                      message("Note: you might want to set/adjust the",
+                              " 'sampclass' of the returned xcmSet object",
+                              " before proceeding with the analysis.")
+                  return(xs)
+              }
+          })
+
+## The matchedFilter feature detection method for OnDiskMSnExp:
+##' @title Peak detection in the chromatographic time domain
+##'
+##' @description The \code{detectFeatures,OnDiskMSnExp,MatchedFilterParam}
+##' method performs feature detection using the \emph{matchedFilter} algorithm
+##' on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
+##' data and load the spectra data (mz and intensity values) on the fly from the
+##' original files applying also all eventual data manipulations.
+##'
+##' @param object For \code{detectFeatures}: Either an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
+##' object containing the MS- and all other experiment-relevant data.
+##'
+##' For all other methods: a parameter object.
+##'
+##' @param param An \code{MatchedFilterParam} object containing all settings for
+##' the matchedFilter algorithm.
+##'
+##' @inheritParams featureDetection-centWave
+##'
+##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
+##' length equal to the number of samples with matrices specifying the
+##' identified features/peaks. If \code{return.type = "xcmsSet"} an
+##' \code{\linkS4class{xcmsSet}} object with the results of the feature
+##' detection.
+##'
+##' @rdname featureDetection-matchedFilter
+setMethod("detectFeatures",
+          signature(object = "OnDiskMSnExp", param = "MatchedFilterParam"),
+          function(object, param, BPPARAM = bpparam(), return.type = "list") {
+              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+              ## Restrict to MS1 data.
+              object <- filterMsLevel(object, msLevel. = 1)
+              ## (1) split the object per file.
+              ## (2) use bplapply to do the feature detection.
+              resList <- bplapply(lapply(1:length(fileNames(object)),
+                                     filterFile, object = object),
+                              FUN = detectFeatures_OnDiskMSnExp,
+                              method = "matchedFilter", param = param)
+              ## (3) collect the results.
+              res <- .processResultList(resList,
+                                        getProcHist = return.type != "list",
+                                        fnames = fileNames(object))
+              if (return.type == "list")
+                  return(res$peaks)
+              if (return.type == "xcmsSet") {
+                  xs <- .pSet2xcmsSet(object)
+                  peaks(xs) <- do.call(rbind, res$peaks)
+                  xs@.processHistory <- res$procHist
+                  OK <- .validProcessHistory(object)
+                  if (!is.logical(OK))
+                      stop(OK)
+                  if (!any(colnames(pData(object)) == "class"))
+                      message("Note: you might want to set/adjust the",
+                              " 'sampclass' of the returned xcmSet object",
+                              " before proceeding with the analysis.")
+                  return(xs)
+              }
+          })
+
+##' @title Peak detection in the chromatographic time domain
+##'
+##' @description The \code{detectFeatures,MSnExp,MatchedFilterParam} method
+##' performs feature detection using the \emph{matchedFilter} method on all
+##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
+##' mz and intensity values of all spectra hence no additional
+##' data input from the original files is required.
+##'
+##' @rdname featureDetection-matchedFilter
+setMethod("detectFeatures",
+          signature(object = "MSnExp", param = "MatchedFilterParam"),
+          function(object, param, BPPARAM = bpparam(), return.type = "list") {
+              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+              ms1_idx <- which(unname(msLevel(object)) == 1)
+              if (length(ms1_idx) == 0)
+                  stop("No MS1 spectra available for feature detection!")
+              spect_list <- split(spectra(object)[ms1_idx],
+                                  fromFile(object)[ms1_idx])
+              resList <- bplapply(spect_list, function(z) {
+                  detectFeatures_Spectrum_list(z,
+                                               method = "matchedFilter",
+                                               param = param)
+              }, BPPARAM = BPPARAM)
               res <- .processResultList(resList,
                                         getProcHist = return.type != "list",
                                         fnames = fileNames(object))
