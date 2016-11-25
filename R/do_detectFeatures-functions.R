@@ -802,7 +802,7 @@ do_detectFeatures_massifquant <- function(mz,
                                           withWave = FALSE) {
     message("\n Massifquant, Copyright (C) 2013 Brigham Young University.")
     message(" Massifquant comes with ABSOLUTELY NO WARRANTY.",
-        " See LICENSE for details.", sep ="")
+            " See LICENSE for details.", sep ="")
     ## flush.console()
 
     ## TODO @jo Ensure in upstream method that data is in centroided mode!

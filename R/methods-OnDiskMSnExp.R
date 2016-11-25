@@ -46,6 +46,10 @@ setMethod("detectFeatures",
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
+              ## Check if the data is centroided
+              if (!isCentroided(object[[1]]))
+                  warning("Your data appears to be not centroided! CentWave",
+                          " works best on data in centroid mode.")
               ## (1) split the object per file.
               ## (2) use bplapply to do the feature detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
@@ -97,6 +101,10 @@ setMethod("detectFeatures",
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
                   stop("No MS1 spectra available for feature detection!")
+              ## Check if the data is centroided
+              if (!isCentroided(object[[ms1_idx[1]]]))
+                  warning("Your data appears to be not centroided! CentWave",
+                          " works best on data in centroid mode.")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
               ## (2) use bplapply to do the feature detection.
