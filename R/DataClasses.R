@@ -772,3 +772,4 @@ setClass("MassifquantParam",
 ## o only pSet and hope dispatch will call the method from either the MSnExp or
 ##   the OnDiskMSnExp?
 ## o Two objects, XCOnDiskMSnExp and XCMSnExp???
+## o Call as(x, XCMSnExp)
