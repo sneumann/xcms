@@ -37,7 +37,7 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           firstBaselineCheck = TRUE, roiScales = numeric()) {
     return(new("CentWaveParam", ppm = ppm, peakwidth = peakwidth,
                snthresh = snthresh, prefilter = prefilter,
-               mzCenterFun = mzCenterFun, integrate = integrate,
+               mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
                mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                verboseColumns = verboseColumns, roiList = roiList,
                firstBaselineCheck = firstBaselineCheck, roiScales = roiScales))
@@ -63,4 +63,31 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                baseValue = baseValue, distance = distance, fwhm = fwhm,
                sigma = sigma, max = max, snthresh = snthresh, steps = steps,
                mzdiff = mzdiff, index = index))
+}
+
+############################################################
+## MassifquantParam
+
+##' @inheritParams do_detectFeatures_massifquant
+##' @inheritParams do_detectFeatures_centWave
+##'
+##' @return The \code{MassifquantParam} function returns a \code{MassifquantParam}
+##' class instance with all of the settings specified for feature detection by
+##' the centWave method.
+##'
+##' @rdname featureDetection-massifquant
+MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
+                             prefilter = c(3, 100), mzCenterFun = "wMean",
+                             integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
+                             noise = 0, verboseColumns = FALSE,
+                             criticalValue = 1.125, consecMissedLimit = 2,
+                             unions = 1, checkBack = 0, withWave = FALSE) {
+    return(new("MassifquantParam", ppm = ppm, peakwidth = peakwidth,
+               snthresh = snthresh, prefilter = prefilter,
+               mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
+               mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+               verboseColumns = verboseColumns, criticalValue = criticalValue,
+               consecMissedLimit = as.integer(consecMissedLimit),
+               unions = as.integer(unions), checkBack = as.integer(checkBack),
+               withWave = withWave))
 }

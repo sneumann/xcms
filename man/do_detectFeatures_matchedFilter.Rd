@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_detectFeatures-functions.R
 \name{do_detectFeatures_matchedFilter}
 \alias{do_detectFeatures_matchedFilter}
-\title{Feature detection in the chromatographic time domain}
+\title{Core API function for matchedFilter feature detection}
 \usage{
 do_detectFeatures_matchedFilter(mz, int, scantime, valsPerSpect,
   binSize = 0.1, impute = "none", baseValue, distance, fwhm = 30,
@@ -136,6 +136,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \seealso{
 \code{\link{binYonX}} for a binning function,
 \code{\link{imputeLinInterpol}} for the interpolation of missing values.
+\code{\link{matchedFilter}} for the standard user interface method.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
   \code{\link{do_detectFeatures_centWave}},

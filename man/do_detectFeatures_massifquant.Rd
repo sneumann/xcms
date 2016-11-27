@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_detectFeatures-functions.R
 \name{do_detectFeatures_massifquant}
 \alias{do_detectFeatures_massifquant}
-\title{Feature detection using the massifquant method}
+\title{Core API function for massifquant feature detection}
 \usage{
 do_detectFeatures_massifquant(mz, int, scantime, valsPerSpect, ppm = 10,
   peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
@@ -178,7 +178,7 @@ Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 }
 \seealso{
-\code{\link{findPeaks.massifquant}}
+\code{\link{massifquant}} for the standard user interface method.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
   \code{\link{do_detectFeatures_centWave}},

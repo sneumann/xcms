@@ -14,6 +14,10 @@ See \code{\link{centWave}} for more details.}
 
 \item{matchedFilter}{: peak detection in chromatographic space. See
 \code{\link{matchedFilter}} for more details.}
+
+\item{massifquant}{: peak detection using the Kalman filter-based feature
+method. See \code{\link{massifquant}} for more details.}
+
 }
 }
 \author{
@@ -24,6 +28,7 @@ Johannes Rainer
 methods.
 
 Other feature detection methods: \code{\link{featureDetection-centWave}},
+  \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}
 }
 

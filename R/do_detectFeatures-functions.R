@@ -13,7 +13,7 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##' @title Core API function of centWave feature detection
+##' @title Core API function for centWave feature detection
 ##'
 ##' @description This function performs peak density and wavelet based feature
 ##' detection for high resolution LC/MS data in centroid mode [Tautenhahn 2008].
@@ -670,7 +670,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
-##' @title Feature detection using the massifquant method
+##' @title Core API function for massifquant feature detection
 ##'
 ##' @description Massifquant is a Kalman filter (KF)-based feature
 ##' detection for XC-MS data in centroid mode. The identified features
@@ -757,7 +757,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' If \code{withWave} is set to \code{TRUE}, the result is the same as
 ##' returned by the \code{\link{do_detectFeatures_centWave}} method.
 ##' @family core feature detection functions
-##' @seealso \code{\link{findPeaks.massifquant}}
+##' @seealso \code{\link{massifquant}} for the standard user interface method.
 ##' @references
 ##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 ##' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
@@ -927,7 +927,7 @@ do_detectFeatures_massifquant <- function(mz,
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
 ##
-##' @title Feature detection in the chromatographic time domain
+##' @title Core API function for matchedFilter feature detection
 ##'
 ##' @description This function identifies features in the chromatographic
 ##' time domain as described in [Smith 2006]. The intensity values are
@@ -1005,6 +1005,7 @@ do_detectFeatures_massifquant <- function(mz,
 ##' @family core feature detection functions
 ##' @seealso \code{\link{binYonX}} for a binning function,
 ##' \code{\link{imputeLinInterpol}} for the interpolation of missing values.
+##' \code{\link{matchedFilter}} for the standard user interface method.
 ##' @examples
 ##' ## Load the test file
 ##' library(faahKO)
@@ -1796,7 +1797,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 ############################################################
 ## MSW
 ##
-##' @title Feature detection for single-spectrum non-chromatography MS data
+##' @title Core API function for single-spectrum non-chromatography MS data feature detection
 ##'
 ##' @description This function performs feature detection in mass spectrometry
 ##' direct injection spectrum using a wavelet based algorithm.

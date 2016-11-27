@@ -252,6 +252,10 @@ setClass("Param",
 ##'
 ##' \item{matchedFilter}{: peak detection in chromatographic space. See
 ##' \code{\link{matchedFilter}} for more details.}
+##'
+##' \item{massifquant}{: peak detection using the Kalman filter-based feature
+##' method. See \code{\link{massifquant}} for more details.}
+##'
 ##' }
 ##' @name detectFeatures
 ##' @family feature detection methods
@@ -364,62 +368,47 @@ setClass("CentWaveParam",
          ),
          validity = function(object) {
              msg <- validMsg(NULL, NULL)
-             ## Check the values.
-             ## ppm positive numeric of length 1.
-             if (length(object@ppm) != 1 | object@ppm < 0)
+             if (length(object@ppm) != 1 | any(object@ppm < 0))
                  msg <- validMsg(msg, paste0("'ppm' has to be positive numeric",
                                              " of length 1."))
-             ## peakwidth
              if (length(object@peakwidth) != 2 | any(object@peakwidth < 0))
                  msg <- validMsg(msg, paste0("'peakwidth' has to be a numeric",
                                              " of length 2 with only positive",
                                              " values."))
-             ## snthresh positive numeric of length 1.
-             if (length(object@snthresh) != 1 | object@snthresh < 0)
+             if (length(object@snthresh) != 1 | any(object@snthresh < 0))
                  msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
                                              " numeric of length 1."))
-             ## prefilter: numeric of length 2.
              if (length(object@prefilter) != 2)
                  msg <- validMsg(msg, paste0("'prefilter' has to be a numeric",
                                              " of length 2."))
-             ## mzCenterFun: check if method exists.
              allowed_vals <- c("wMean", "mean", "apex", "wMeanApex3",
                                "meanApex3")
              if (!(object@mzCenterFun) %in% allowed_vals)
                  msg <- validMsg(msg, paste0("'mzCenterFun' has to be one of ",
                                              paste0("'", allowed_vals, "'",
                                              collapse = ", "), "."))
-             ## integrate: 1 or 2.
              if (!(object@integrate %in% c(1L, 2L)))
                  msg <- validMsg(msg, paste0("'integrate' has to be either 1",
                                              " or 2."))
-             ## mzdiff: length 1.
              if (length(object@mzdiff) != 1)
                  msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric of",
                                              " length 1."))
-             ## noise: length 1.
              if (length(object@noise) != 1)
                  msg <- validMsg(msg, paste0("'noise' has to be a numeric of",
                                              " length 1."))
-             ## fitgauss: length 1.
              if (length(object@fitgauss) != 1)
                  msg <- validMsg(msg, paste0("'fitgauss' has to be a numeric of",
                                              " length 1."))
-             ## verboseColumns: length 1.
              if (length(object@verboseColumns) != 1)
                  msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
                                              "numeric of length 1."))
-             ## firstBaselineCheck: length 1.
              if (length(object@firstBaselineCheck) != 1)
                  msg <- validMsg(msg, paste0("'firstBaselineCheck' has to be a",
                                              " numeric of length 1."))
-             ## roiList: check
              if (length(object@roiList) > 0) {
                  doHaveExpectedEls <- function(z) {
                      need <- c("scmax", "scmin", "mzmin", "mzmax", "length",
                                "intensity")
-                     ## Each element should be of length (nrow) 1 and should
-                     ## have scmax, scmin, mzmin, mzmax, length, intensity.
                      if (is.null(nrow(z))) {
                          OK <- all(need %in% names(z))
                      } else {
@@ -432,7 +421,6 @@ setClass("CentWaveParam",
                      msg <- validMsg(msg, paste0("'roiList' does not provide ",
                                                  "all required fields!"))
              }
-             ## roiScales: same length then roiList.
              if (length(object@roiList) > 0 &
                  length(object@roiList) != length(object@roiScales))
                  msg <- validMsg(msg, paste0("'roiScales' has to have the same",
@@ -554,49 +542,37 @@ setClass("MatchedFilterParam",
          ),
          validity = function(object) {
              msg <- validMsg(NULL, NULL)
-             ## Check the values.
-             ## binSize positive numeric of length 1.
-             if (length(object@binSize) != 1 | object@binSize < 0)
+             if (length(object@binSize) != 1 | any(object@binSize < 0))
                  msg <- validMsg(msg, paste0("'binSize' has to be positive",
                                              " numeric of length 1."))
-             ## impute
              if (!any(c("none", "lin", "linbase") == object@impute))
                  msg <- validMsg(msg,
                                  paste0("Only values 'none', 'lin' and ",
                                         "'linbase' are allowed for'impute'"))
-             ## baseValue
              if (length(object@baseValue) > 1)
                  msg <- validMsg(msg, paste0("'baseValue' has to be a",
                                              " numeric of length 1."))
-             ## distance
              if (length(object@distance) > 1)
                  msg <- validMsg(msg, paste0("'distance' has to be a numeric",
                                              " of length 1."))
-             ## fwhm
              if (length(object@fwhm) != 1)
                  msg <- validMsg(msg, paste0("'fwhm' has to be a numeric",
                                              " of length 1."))
-             ## sigma
              if (length(object@sigma) != 1)
                  msg <- validMsg(msg, paste0("'sigma' has to be a numeric",
                                              " of length 1."))
-             ## max
              if (length(object@max) != 1)
                  msg <- validMsg(msg, paste0("'max' has to be a numeric",
                                              " of length 1."))
-             ## snthresh
              if (length(object@snthresh) != 1)
                  msg <- validMsg(msg, paste0("'snthresh' has to be a numeric",
                                              " of length 1."))
-             ## steps
              if (length(object@steps) != 1)
                  msg <- validMsg(msg, paste0("'steps' has to be a numeric",
                                              " of length 1."))
-             ## mzdiff
              if (length(object@mzdiff) != 1)
                  msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric",
                                              " of length 1."))
-             ## index
              if (length(object@index) != 1)
                  msg <- validMsg(msg, paste0("'index' has to be a logical",
                                              " of length 1."))
@@ -606,3 +582,193 @@ setClass("MatchedFilterParam",
                  return(msg)
              }
          })
+
+
+## Main massifquant documentation.
+##' @title Feature detection using the massifquant method
+##'
+##' @aliases massifquant
+##'
+##' @description Massifquant is a Kalman filter (KF)-based feature
+##' detection for XC-MS data in centroid mode. The identified features
+##' can be further refined with the \emph{centWave} method (see
+##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
+##' by specifying \code{withWave = TRUE}.
+##'
+##' @details This algorithm's performance has been tested rigorously
+##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+##' Simultaneous kalman filters identify features and calculate their
+##' area under the curve. The default parameters are set to operate on
+##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
+##' simple exploratory data analysis to find out where to set a minimum
+##' intensity, and identify how many scans an average feature spans. The
+##' \code{consecMissedLimit} parameter has yielded good performance on
+##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
+##' to be at (\code{1}). This may change as the algorithm has yet to be
+##' tested on many samples. The \code{criticalValue} parameter is perhaps
+##' most dificult to dial in appropriately and visual inspection of peak
+##' identification is the best suggested tool for quick optimization.
+##' The \code{ppm} and \code{checkBack} parameters have shown less influence
+##' than the other parameters and exist to give users flexibility and
+##' better accuracy.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' objects (both defined in the \code{MSnbase} package). All of the settings
+##' to the massifquant and centWave algorithm can be passed with a
+##' \code{MassifquantParam} object.
+##'
+##' @inheritParams do_detectFeature_centWave
+##' @inheritParams do_detectFeature_massifquant
+##'
+##' @family feature detection methods
+##' @seealso The \code{\link{do_detectFeatures_massifquant}} core API function
+##' and \code{\link{findPeaks.massifquant}} for the old user interface.
+##'
+##' @references
+##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
+##' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
+##' detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
+##' @author Christopher Conley, Johannes Rainer
+##'
+##' @name featureDetection-massifquant
+NULL
+#> NULL
+
+##' @description The \code{MassifquantParam} class allows to specify all
+##' settings for a feature detection using the massifquant method eventually in
+##' combination with the centWave algorithm. Instances should be created with
+##' the \code{MassifquantParam} constructor.
+##'
+##' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave. See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname featureDetection-massifquant
+##'
+##' @examples
+##'
+##' ## Create a MassifquantParam object
+##' mqp <- MassifquantParam()
+##' ## Change snthresh parameter
+##' snthresh(mqp) <- 15
+##' mqp
+##'
+##' ## Perform the feature detection using massifquant on the files from the
+##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+##' ## package
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' raw_data <- readMSData2(fls)
+##' ## Perform the feature detection using the settings defined above. We're
+##' ## returning the results as an xcmsSet object.
+##' res <- detectFeatures(raw_data, param = mqp, return.type = "xcmsSet")
+##' head(peaks(res))
+setClass("MassifquantParam",
+         slots = c(
+             ppm = "numeric",
+             peakwidth = "numeric",
+             snthresh = "numeric",
+             prefilter = "numeric",
+             mzCenterFun = "character",
+             integrate = "integer",
+             mzdiff = "numeric",
+             fitgauss = "logical",
+             noise = "numeric",
+             verboseColumns = "logical",
+             criticalValue = "numeric",
+             consecMissedLimit = "integer",
+             unions = "integer",
+             checkBack = "integer",
+             withWave = "logical"
+         ),
+         contains = c("Param"),
+         prototype = prototype(
+             ppm = 25,
+             peakwidth = c(20, 50),
+             snthresh = 10,
+             prefilter = c(3, 100),
+             mzCenterFun = "wMean",
+             integrate = 1L,
+             mzdiff = -0.001,
+             fitgauss = FALSE,
+             noise = 0,
+             verboseColumns = FALSE,
+             criticalValue = 1.125,
+             consecMissedLimit = 2L,
+             unions = 1L,
+             checkBack = 0L,
+             withWave = FALSE
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@ppm) != 1 | any(object@ppm < 0))
+                 msg <- validMsg(msg, paste0("'ppm' has to be positive numeric",
+                                             " of length 1."))
+             if (length(object@peakwidth) != 2 | any(object@peakwidth < 0))
+                 msg <- validMsg(msg, paste0("'peakwidth' has to be a numeric",
+                                             " of length 2 with only positive",
+                                             " values."))
+             if (length(object@snthresh) != 1 | any(object@snthresh < 0))
+                 msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
+                                             " numeric of length 1."))
+             if (length(object@prefilter) != 2)
+                 msg <- validMsg(msg, paste0("'prefilter' has to be a numeric",
+                                             " of length 2."))
+             allowed_vals <- c("wMean", "mean", "apex", "wMeanApex3",
+                               "meanApex3")
+             if (!(object@mzCenterFun) %in% allowed_vals)
+                 msg <- validMsg(msg, paste0("'mzCenterFun' has to be one of ",
+                                             paste0("'", allowed_vals, "'",
+                                             collapse = ", "), "."))
+             if (!(object@integrate %in% c(1L, 2L)))
+                 msg <- validMsg(msg, paste0("'integrate' has to be either 1",
+                                             " or 2."))
+             if (length(object@mzdiff) != 1)
+                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric of",
+                                             " length 1."))
+             if (length(object@noise) != 1)
+                 msg <- validMsg(msg, paste0("'noise' has to be a numeric of",
+                                             " length 1."))
+             if (length(object@fitgauss) != 1)
+                 msg <- validMsg(msg, paste0("'fitgauss' has to be a numeric of",
+                                             " length 1."))
+             if (length(object@verboseColumns) != 1)
+                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
+                                             "numeric of length 1."))
+             if (length(object@criticalValue) != 1)
+                 msg <- validMsg(msg, paste0("'criticalValue' has to be a ",
+                                             "numeric of length 1."))
+             if (length(object@consecMissedLimit) != 1)
+                 msg <- validMsg(msg, paste0("'consecMissedLimit' has to be a ",
+                                             "numeric of length 1."))
+             if (length(object@unions) != 1)
+                 msg <- validMsg(msg, paste0("'unions' has to be a ",
+                                             "numeric of length 1."))
+             if (object@unions != 0 & object@unions != 1)
+                 msg <- validMsg(msg, paste0("'unions' has to be either 0 or 1!"))
+             if (length(object@checkBack) != 1)
+                 msg <- validMsg(msg, paste0("'checkBack' has to be a ",
+                                             "numeric of length 1."))
+             if (object@checkBack != 0 & object@checkBack != 1)
+                 msg <- validMsg(msg, paste0("'checkBack' has to be either 0",
+                                             " or 1!"))
+             if (length(object@withWave) != 1)
+                 msg <- validMsg(msg, paste0("'withWave' has to be a ",
+                                             "numeric of length 1."))
+             if (is.null(msg)) {
+                 return(TRUE)
+             } else {
+                 return(msg)
+             }
+         })
+
+## The result object XCMSnExp/XCMSnSet: double inheritance???
+## o pSet and OnDiskMSnExp.
+## o only pSet and hope dispatch will call the method from either the MSnExp or
+##   the OnDiskMSnExp?
+## o Two objects, XCOnDiskMSnExp and XCMSnExp???

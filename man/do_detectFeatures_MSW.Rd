@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_detectFeatures-functions.R
 \name{do_detectFeatures_MSW}
 \alias{do_detectFeatures_MSW}
-\title{Feature detection for single-spectrum non-chromatography MS data}
+\title{Core API function for single-spectrum non-chromatography MS data feature detection}
 \usage{
 do_detectFeatures_MSW(mz, int, snthresh = 3, verboseColumns = FALSE, ...)
 }

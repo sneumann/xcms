@@ -136,9 +136,7 @@ setMethod("integrate", signature(f = "CentWaveParam"), function(f)
 ##' @aliases integrate<-
 ##' @rdname featureDetection-centWave
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
-    if (!is.integer(value))
-        value <- as.integer(value)
-    object@integrate <- value
+    object@integrate <- as.integer(value)
     OK <- validObject(object)
     if (is.character(OK))
         stop(OK)
@@ -447,6 +445,253 @@ setMethod("index", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+############################################################
+## MassifquantParam
+###
+setMethod("initialize", "MassifquantParam", function(.Object, ...) {
+    classVersion(.Object)["MassifquantParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname featureDetection-massifquant
+setMethod("show", "MassifquantParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" ppm:", ppm(object), "\n")
+    cat(" peakwidth:", paste(peakwidth(object), collapse = ", "), "\n")
+    cat(" snthresh:", snthresh(object), "\n")
+    cat(" prefilter:", paste(prefilter(object), collapse = ", "), "\n")
+    cat(" mzCenterFun:", mzCenterFun(object), "\n")
+    cat(" integrate:", integrate(object), "\n")
+    cat(" mzdiff:", mzdiff(object), "\n")
+    cat(" fitgauss:", fitgauss(object), "\n")
+    cat(" noise:", noise(object), "\n")
+    cat(" verboseColumns:", verboseColumns(object), "\n")
+    cat(" criticalValue:", criticalValue(object), "\n")
+    cat(" consecMissedLimit:", consecMissedLimit(object), "\n")
+    cat(" unions:", unions(object), "\n")
+    cat(" checkBack:", checkBack(object), "\n")
+    cat(" withWave:", withWave(object), "\n")
+})
+
+##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+##' slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("ppm", "MassifquantParam", function(object){ return(object@ppm)})
+##' @param value The value for the slot.
+##' @rdname featureDetection-massifquant
+setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
+    object@ppm <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
+##' \code{peakwidth} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("peakwidth", "MassifquantParam", function(object)
+    return(object@peakwidth))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
+    object@peakwidth <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
+##' \code{snthresh} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("snthresh", "MassifquantParam", function(object)
+    return(object@snthresh))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
+    object@snthresh <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
+##' \code{prefilter} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("prefilter", "MassifquantParam", function(object)
+    return(object@prefilter))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
+    object@prefilter <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
+##' \code{mzCenterFun} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("mzCenterFun", "MassifquantParam", function(object)
+    return(object@mzCenterFun))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
+    object@mzCenterFun <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{integrate},\code{integrate<-}: getter and setter for the
+##' \code{integrate} slot of the object.
+##' @param f For \code{integrate}: a \code{MassifquantParam} object.
+##'
+##' @rdname featureDetection-massifquant
+setMethod("integrate", signature(f = "MassifquantParam"), function(f)
+    return(f@integrate))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
+    object@integrate <- as.integer(value)
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
+##' \code{mzdiff} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("mzdiff", "MassifquantParam", function(object)
+    return(object@mzdiff))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
+    object@mzdiff <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
+##' \code{fitgauss} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("fitgauss", "MassifquantParam", function(object)
+    return(object@fitgauss))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
+    object@fitgauss <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{noise},\code{noise<-}: getter and setter for the
+##' \code{noise} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("noise", "MassifquantParam", function(object)
+    return(object@noise))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("noise", "MassifquantParam", function(object, value) {
+    object@noise <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
+##' setter for the \code{verboseColumns} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("verboseColumns", "MassifquantParam", function(object)
+    return(object@verboseColumns))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
+    object@verboseColumns <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases criticalValue
+##' @description \code{criticalValue},\code{criticalValue<-}: getter and
+##' setter for the \code{criticalValue} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("criticalValue", "MassifquantParam", function(object)
+    return(object@criticalValue))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
+    object@criticalValue <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases consecMissedLimit
+##' @description \code{consecMissedLimit},\code{consecMissedLimit<-}: getter and
+##' setter for the \code{consecMissedLimit} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("consecMissedLimit", "MassifquantParam", function(object)
+    return(object@consecMissedLimit))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("consecMissedLimit", "MassifquantParam",
+                 function(object, value) {
+                     object@consecMissedLimit <- as.integer(value)
+                     OK <- validObject(object)
+                     if (is.character(OK))
+                         stop(OK)
+                     return(object)
+                 })
+
+##' @aliases unions
+##' @description \code{unions},\code{unions<-}: getter and
+##' setter for the \code{unions} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("unions", "MassifquantParam", function(object)
+    return(object@unions))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("unions", "MassifquantParam", function(object, value) {
+    object@unions <- as.integer(value)
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases checkBack
+##' @description \code{checkBack},\code{checkBack<-}: getter and
+##' setter for the \code{checkBack} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("checkBack", "MassifquantParam", function(object)
+    return(object@checkBack))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
+    object@checkBack <- as.integer(value)
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases withWave
+##' @description \code{withWave},\code{withWave<-}: getter and
+##' setter for the \code{withWave} slot of the object.
+##' @rdname featureDetection-massifquant
+setMethod("withWave", "MassifquantParam", function(object)
+    return(object@withWave))
+##' @rdname featureDetection-massifquant
+setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
+    object@withWave <- value
     OK <- validObject(object)
     if (is.character(OK))
         stop(OK)

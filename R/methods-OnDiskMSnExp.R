@@ -237,3 +237,5 @@ setMethod("detectFeatures",
                   return(xs)
               }
           })
+
+## massifquant

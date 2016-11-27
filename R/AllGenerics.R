@@ -13,7 +13,17 @@ setGeneric("binSize<-", function(object, value) standardGeneric("binSize<-"))
 
 ## C
 setGeneric("calibrate", function(object, ...) standardGeneric("calibrate"))
+setGeneric("checkBack", function(object, ...) standardGeneric("checkBack"))
+setGeneric("checkBack<-", function(object, value) standardGeneric("checkBack<-"))
 setGeneric("collect", function(object, ...) standardGeneric("collect"))
+setGeneric("consecMissedLimit", function(object, ...)
+    standardGeneric("consecMissedLimit"))
+setGeneric("consecMissedLimit<-", function(object, value)
+    standardGeneric("consecMissedLimit<-"))
+setGeneric("criticalValue", function(object, ...)
+    standardGeneric("criticalValue"))
+setGeneric("criticalValue<-", function(object, value)
+    standardGeneric("criticalValue<-"))
 
 ## D
 setGeneric("deepCopy", function(object) standardGeneric("deepCopy"))
@@ -200,12 +210,18 @@ setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
 
+## U
+setGeneric("unions", function(object, ...) standardGeneric("unions"))
+setGeneric("unions<-", function(object, value) standardGeneric("unions<-"))
+
 ## V
 setGeneric("verboseColumns", function(object, ...) standardGeneric("verboseColumns"))
 setGeneric("verboseColumns<-", function(object, value)
     standardGeneric("verboseColumns<-"))
 
 ## W
+setGeneric("withWave", function(object, ...) standardGeneric("withWave"))
+setGeneric("withWave<-", function(object, value) standardGeneric("withWave<-"))
 setGeneric("write.cdf", function(object, ...) standardGeneric("write.cdf"))
 setGeneric("write.mzdata", function(object, ...) standardGeneric("write.mzdata"))
 setGeneric("write.mzQuantML", function(object, ...) standardGeneric("write.mzQuantML"))
