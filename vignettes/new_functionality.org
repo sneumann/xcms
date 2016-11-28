@@ -595,9 +595,19 @@ are now used by default.
 
 + [ ] /runit.ramp.R/.
 
-* Deprecated functions and files				   :noexport:
+* Deprecated functions and files
 
 Here we list all of the functions and related files that are deprecated.
+
++ =xcmsParallelSetup=, =xcmsPapply=, =xcmsClusterApply=: use =BiocParallel= package
+  instead to setup and perform parallel processing, either /via/ the =BPPARAM=
+  parameter to function and methods, or by calling =register= to globally set
+  parallel processing.
+
++ =profBin=, =profBinM=, =profBinLin=, =profBinLinM=, =profBinLinBase=, =profBinLinBaseM=:
+  replaced by the =binYonX= and =imputeLinInterpol= functions. Also, to create or
+  extract the profile matrix from an =xcmsRaw= object, the =profMat= method.
+
 
 ** Deprecated
 
@@ -621,6 +631,35 @@ Here we list all of the functions and related files that are deprecated.
 * TODOs								   :noexport:
 
 ** TODO Deprecate binning functions.
+
+All done except for the retention time correction!!!
+
 ** TODO Continue implementing the =do_= functions.
+** TODO Define a new object to contain the preprocessing results
+
+This object should replace the =xcmsSet= object and should provide the same
+functionality while in addition add a better integration of the original raw
+data files. The object should contain:
+
++ Peak/feature data (similar to the =xcmsSet@peaks= slot).
++ Alignment across samples information (similar to the =xcmsSet@groups= slot).
++ Corrected retention time (similar to the =xcmsSet@rt$adjusted= slot).
++ All experimental and phenotypical information.
++ A /link/ to the raw data.
++ History on data manipulation and processing.
+
+Based on these prerequisites, an object extending Biobase's =MSnExp= or
+=OnDiskMSnExp= would be ideal. The =MSnExp= would however be /too mighty/ (as it
+contains all of the raw data) and the more light weight =OnDiskMSnExp= should
+hence be used. While being somewhat similar to the =xcmsSet= =xcmsRaw= object setup,
+the new implementation would ensure a better and less error prone import of the
+raw (or even processed) data. Some data (TIC etc) are even cached within the
+=OnDiskMSnExp= enabling faster data access.
+
+Note that the lack of easy access to raw data disqualifies the =MSnSet= object
+from the =MSnbase= package.
+
+The feature data should be placed into the =assayData= environment of the object
+to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
 
 * References

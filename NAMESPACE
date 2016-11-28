@@ -261,3 +261,6 @@ exportMethods(
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam")
 ## Param class methods.
+
+## New Classes
+exportClasses("XCMSnSet")

@@ -301,7 +301,7 @@ to the massifquant and centWave algorithm can be passed with a
 \examples{
 
 ## Create a MassifquantParam object
-mqp <- MassifquantParam(binSize = 0.5)
+mqp <- MassifquantParam()
 ## Change snthresh parameter
 snthresh(mqp) <- 15
 mqp

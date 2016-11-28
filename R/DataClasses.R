@@ -203,6 +203,19 @@ setClass("xcmsPeaks", contains = "matrix")
 
 ############################################################
 ## ProcessHistory
+##' @title Keeping track of data processing
+##'
+##' @description Objects of the type \code{ProcessHistory} or extending it allow
+##' to keep track of any data processing step in an metabolomics experiment.
+##'
+##' @slot type (character): string defining the type of the processing step.
+##' @slot date (character): date time stamp when the processing step was started.
+##' @slot info (character): optional additional information.
+##' @slot fileIndex (integer): integer of length 1 or > 1 to specify on which
+##' samples of the object the processing was performed.
+##' @slot error (ANY): used to store eventual calculation errors.
+##' @name ProcessHistory
+##' @noRd
 setClass("ProcessHistory",
          slots = c(
              type = "character",
@@ -217,8 +230,8 @@ setClass("ProcessHistory",
              date = character(),
              info = character(),
              fileIndex = integer(),  ## This can be of length 1 or > 1.
-             error = NULL,
-             new("Versioned", versions = c(ProcessHistory = "0.0.2"))
+             error = NULL
+##             new("Versioned", versions = c(ProcessHistory = "0.0.2"))
          ),
          validity = function(object) {
              msg <- validMsg(NULL, NULL)
@@ -238,6 +251,36 @@ setClass("ProcessHistory",
 setClass("Param",
          representation = representation("VIRTUAL"),
          contains = c("Versioned"))
+setClassUnion("ParamOrNULL", c("Param", "NULL"))
+
+##' @description The \code{XProcessHistory} extends the \code{ProcessHistory} by
+##' adding a slot \code{param} that allows to store the actual parameter class
+##' of the processing step.
+##' @slot param (Param): an object of type \code{Param} specifying the settings
+##' of the processing step.
+##' @rdname ProcessHistory
+##' @noRd
+setClass("XProcessHistory",
+         slots = c(
+             param = "ParamOrNULL"
+         ),
+         contains = "ProcessHistory",
+         prototype = prototype(
+             param = NULL
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@param) > 0)
+                 if(!is(object@param, "Param"))
+                     msg <- validMsg(msg,
+                                     paste0("Only objects from type 'Param' ",
+                                            "allowed in slot '@param'! I got ",
+                                            class(object@param)))
+             if (is.null(msg)) TRUE
+             else msg
+         })
+
+
 
 ## General detectFeatures method.
 ##' @title Feature detection methods.
@@ -767,9 +810,60 @@ setClass("MassifquantParam",
              }
          })
 
+## What should the data contain:
+## o The peak/feature data.
+## o The grouping of features across samples.
+## o The corrected retention time.
+## o Experimental data and pheno data.
+## o The link to the raw data and eventual data processing.
+
+## OnDiskMSnExp and MSnExp would provide all that what is needed.
+## o MSnExp might be to mighty, as the full raw data is contained.
+## o OnDiskMSnExp should be OK, as it represents a light-weight raw data
+##   container and provides a history of data processing.
+
+## Where to put the data?
+## specific slots or all into the "assayData"?
+
 ## The result object XCMSnExp/XCMSnSet: double inheritance???
 ## o pSet and OnDiskMSnExp.
 ## o only pSet and hope dispatch will call the method from either the MSnExp or
 ##   the OnDiskMSnExp?
 ## o Two objects, XCOnDiskMSnExp and XCMSnExp???
 ## o Call as(x, XCMSnExp)
+## Have to drop features and or groups depending on the methods:
+## o [ subsetting: drop groups.
+## o Any data manipulation method (removePeaks etc): drop features, groups, rtcor.
+## o corrected retention time should be added to the fData.
+
+####
+## Test results so far:
+## 1) if XCMSnSet contains MSnExp, as("OnDiskMSnExp", "XCMSnSet") does not work.
+## 2) Double inheritance MSnExp,OnDiskMSnExp does NOT work! No matter from what
+##    object the XCMSnSet is created, it always calls the OnDiskMSnExp method!
+
+
+setClass("XCMSnSet",
+         slots = c(
+             .processHistory = "list"
+         ),
+         prototype = prototype(
+             .processHistory = list()
+         ),
+         contains = c("OnDiskMSnExp"),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@.processHistory) > 0) {
+                 isOK <- unlist(lapply(object@.processHistory, function(z) {
+                     return(inherits(z, "ProcessHistory"))
+                 }))
+                 if (!all(isOK))
+                     msg <- validMsg(msg, paste0("Only 'ProcessHistory' ",
+                                                 "objects are allowed in slot ",
+                                                 ".processHistory!"))
+             }
+             if (is.null(msg))
+                 return(TRUE)
+             else return(msg)
+         }
+)

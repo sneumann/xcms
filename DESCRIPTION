@@ -25,7 +25,7 @@ Imports:
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
     S4Vectors,
-    MSnbase (>= 2.1.2)
+    MSnbase (>= 2.1.4)
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),
@@ -71,6 +71,7 @@ Collate:
     'methods-IO.R'
     'methods-OnDiskMSnExp.R'
     'methods-Params.R'
+    'methods-ProcessHistory.R'
     'methods-netCdfSource.R'
     'methods-rampSource.R'
     'methods-xcmsEIC.R'

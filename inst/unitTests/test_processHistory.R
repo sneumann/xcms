@@ -65,3 +65,24 @@ test_ProcessHistory_c_xcmsSet <- function() {
 }
 
 
+############################################################
+## Test XProcessHistory
+test_XProcessHistory_class <- function() {
+    ph <- xcms:::XProcessHistory()
+    checkTrue(is(ph, "XProcessHistory"))
+    checkTrue(inherits(ph, "ProcessHistory"))
+
+    ph <- xcms:::XProcessHistory(info = "some info",
+                                 type = xcms:::.PROCSTEP.FEATURE.DETECTION)
+    checkEquals(ph@info, "some info")
+    checkEquals(ph@type, xcms:::.PROCSTEP.FEATURE.DETECTION)
+
+    ph@type <- "other"
+    checkException(validObject(ph))
+
+    ph <- xcms:::XProcessHistory(info = "some info",
+                                 type = xcms:::.PROCSTEP.FEATURE.DETECTION,
+                                 param = CentWaveParam())
+
+    checkTrue(is(ph@param, "CentWaveParam"))
+}

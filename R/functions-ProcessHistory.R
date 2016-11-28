@@ -38,3 +38,16 @@ updateFileIndex <- function(x, old = integer(), new = integer()) {
     x@fileIndex <- fidx
     return(x)
 }
+
+############################################################
+## XProcessHistory
+XProcessHistory <- function(param = NULL, ...) {
+    obj <- ProcessHistory(...)
+    obj <- as(obj, "XProcessHistory")
+    obj@param <- param
+    classVersion(obj)["XProcessHistory"] <- "0.0.1"
+    OK <- validObject(obj)
+    if (is.character(OK))
+        stop(OK)
+    return(obj)
+}
