@@ -252,6 +252,11 @@ the m/z values (i.e. the first bin includes all m/z values between
 
 For more details on binning and missing value imputation see
 \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+
+Parallel processing (one process per sample) is supported and can
+be configured either by the \code{BPPARAM} parameter or by globally defining
+the parallel processing mode using the \code{\link[BiocParallel]{register}}
+method from the \code{BiocParallel} package.
 }
 \section{Slots}{
 

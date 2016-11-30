@@ -299,6 +299,9 @@ setClass("XProcessHistory",
 ##' \item{massifquant}{: peak detection using the Kalman filter-based feature
 ##' method. See \code{\link{massifquant}} for more details.}
 ##'
+##' \item{MSW}{: single-spectrum non-chromatography MS data feature detection.
+##' See \code{\link{MSW}} for more details.}
+##'
 ##' }
 ##' @name detectFeatures
 ##' @family feature detection methods
@@ -809,6 +812,128 @@ setClass("MassifquantParam",
                  return(msg)
              }
          })
+
+## Main MSW documentation.
+##' @title Single-spectrum non-chromatography MS data feature detection
+##'
+##' @aliases MSW
+##'
+##' @description Perform feature detection in mass spectrometry
+##' direct injection spectrum using a wavelet based algorithm.
+##'
+##' @details This is a wrapper for the peak picker in Bioconductor's
+##' \code{MassSpecWavelet} package calling
+##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+##' \emph{xcmsDirect} vignette for more information.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' objects (both defined in the \code{MSnbase} package). All of the settings
+##' to the massifquant and centWave algorithm can be passed with a
+##' \code{MassifquantParam} object.
+##'
+##' @inheritParams do_detectFeature_centWave
+##' @inheritParams do_detectFeature_massifquant
+##'
+##' @family feature detection methods
+##' @seealso The \code{\link{do_detectFeatures_MSW}} core API function
+##' and \code{\link{findPeaks.MSW}} for the old user interface.
+##'
+##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
+##'
+##' @name featureDetection-MSW
+NULL
+#> NULL
+
+##' @description The \code{MSWParam} class allows to specify all
+##' settings for a feature detection using the MSW method. Instances should be
+##' created with the \code{MSWParam} constructor.
+##'
+##' @slot .__classVersion__,snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams. See corresponding parameter above. \code{.__classVersion__} stores the version from the class. Slots values
+##' should exclusively be accessed \emph{via} the corresponding getter and
+##' setter methods listed above.
+##'
+##' @rdname featureDetection-MSW
+##'
+##' @examples
+##'
+##' ## Create a MassifquantParam object
+##' mp <- MSWParam()
+##' ## Change snthresh parameter
+##' snthresh(mp) <- 15
+##' mp
+##'
+setClass("MSWParam",
+         slots = c(
+             snthresh = "numeric",
+             verboseColumns = "logical",
+             ## params from the peakDetectionCWT
+             scales = "numeric",
+             nearbyPeak = "logical",
+             peakScaleRange = "numeric",
+             ampTh = "numeric",
+             minNoiseLevel = "numeric",
+             ridgeLength = "numeric",
+             peakThr = "numeric",
+             tuneIn = "logical",
+             addParams = "list"
+         ),
+         contains = c("Param"),
+         prototype = prototype(
+             snthresh = 3,
+             verboseColumns = FALSE,
+             scales = c(1, seq(2, 30, 2), seq(32, 64, 4)),
+             nearByPeak = TRUE,
+             peakScaleRange = 5,
+             ampTh = 0.01,
+             minNoiseLevel = (0.01 / 3),
+             ridgeLength = 24,
+             peakThr = numeric(),
+             tuneIn = FALSE,
+             addParams = list()
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@snthresh) != 1 | any(object@snthresh < 0))
+                 msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
+                                             " numeric of length 1."))
+             if (length(object@verboseColumns) != 1)
+                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
+                                             "numeric of length 1."))
+             if (length(object@nearbyPeak) != 1)
+                 msg <- validMsg(msg, paste0("'nearbyPeak' has to be a ",
+                                             "numeric of length 1."))
+             if (length(object@peakScaleRange) != 1 |
+                 any(object@peakScaleRange < 0))
+                 msg <- validMsg(msg, paste0("'peakScaleRange' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@ampTh) != 1 | any(object@ampTh < 0))
+                 msg <- validMsg(msg, paste0("'ampTh' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@minNoiseLevel) != 1 |
+                 any(object@minNoiseLevel < 0))
+                 msg <- validMsg(msg, paste0("'minNoiseLevel' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@ridgeLength) != 1 |
+                 any(object@ridgeLength < 0))
+                 msg <- validMsg(msg, paste0("'ridgeLength' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@peakThr) > 1)
+                 msg <- validMsg(msg, paste0("'peakThr' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@tuneIn) != 1)
+                 msg <- validMsg(msg, paste0("'tuneIn' has to be a ",
+                                             "numeric of length 1."))
+             if (is.null(msg)) {
+                 return(TRUE)
+             } else {
+                 return(msg)
+             }
+         })
+
 
 ## What should the data contain:
 ## o The peak/feature data.

@@ -345,7 +345,8 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
 ##' @family Old feature detection methods
-##' @seealso \code{\linkS4class{xcmsRaw}},
+##' @seealso \code{\link{matchedFilter}} for the new user interface.
+##' \code{\linkS4class{xcmsRaw}},
 ##' \code{\link{do_detectFeatures_matchedFilter}} for the core function
 ##' performing the feature detection.
 setMethod("findPeaks.matchedFilter", "xcmsRaw",
@@ -1390,10 +1391,12 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
 ##' \item{maxf}{Maximum MSW-filter response of the feature.}
 ##' \item{sn}{Signal to noise ratio.}
 ##' }
-##' @seealso \code{\link{do_detectFeatures_MSW}} for the downstream analysis
-##' function or
-##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}
-##' for details on the algorithm and additionally supported parameters.
+##' @seealso \code{\link{MSW}} for the new user interface,
+##' \code{\link{do_detectFeatures_MSW}} for the downstream analysis
+##' function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+##' \code{MassSpecWavelet} for details on the algorithm and additionally supported
+##' parameters.
+##'
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 setMethod("findPeaks.MSW", "xcmsRaw",
           function(object, snthresh=3, verbose.columns = FALSE, ...) {

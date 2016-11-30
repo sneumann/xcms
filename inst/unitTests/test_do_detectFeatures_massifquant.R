@@ -5,6 +5,11 @@ library(faahKO)
 fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 xraw <- xcmsRaw(fs, profstep = 0)
 
+library(msdata)
+f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+         system.file("microtofq/MM8.mzML", package = "msdata"))
+
 ############################################################
 ## Simple test comparing results from various massifquant runs and
 ## centWave analyses.
@@ -38,6 +43,25 @@ test_do_detectFeatures_massifquant <- function() {
                                            scantime = scantime)
     checkIdentical(res_1@.Data, res_2)
 }
+
+## Evaluate the featureDetection method using massifquant on MSnExp and
+## OnDiskMSnExp objects.
+test_featureDetection_massifquant <- function() {
+    library(MSnbase)
+    mqp <- MassifquantParam(ppm = 20, criticalValue = 1.2)
+    res <- xcmsSet(fs, method = "massifquant", ppm = 20, criticalValue = 1.2)
+    ## onDisk
+    onDisk <- readMSData2(fs)
+    res_o <- detectFeatures(onDisk, param = mqp, return.type = "xcmsSet")
+    checkEquals(peaks(res_o), peaks(res))
+    checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+    ## inMem
+    inMem <- readMSData(fs, msLevel. = 1)
+    res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
+    checkEquals(peaks(res_i), peaks(res))
+    checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
+}
+
 
 ############################################################
 ## Test the implementation of the "do" function, i.e. whether

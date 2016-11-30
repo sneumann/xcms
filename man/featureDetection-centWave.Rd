@@ -286,6 +286,11 @@ consecutive scans in the LC/MS map. These ROIs are then subsequently
 analyzed using continuous wavelet transform (CWT) to locate chromatographic
 peaks on different scales. The first analysis step is skipped, if regions
 of interest are passed \emph{via} the \code{param} parameter.
+
+Parallel processing (one process per sample) is supported and can
+be configured either by the \code{BPPARAM} parameter or by globally defining
+the parallel processing mode using the \code{\link[BiocParallel]{register}}
+method from the \code{BiocParallel} package.
 }
 \section{Slots}{
 

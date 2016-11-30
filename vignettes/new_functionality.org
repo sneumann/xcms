@@ -81,10 +81,53 @@ experiments) enables a first data inspection and quality assessment, followed by
 eventual subsetting and filtering (e.g. on retention time) before performing the
 feature detection on the thus processed data.
 
+Below we load the raw data files from the =faahKO= package as an =OnDiskMSnExp=
+object using the =readMSData2= function from the =MSnbase= package.
+
 #+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   ## Reading the raw data using the MSnbase package
   library(MSnbase)
+  library(xcms)
+  ## Load the CDF files from the faahKO
+  cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
+                   full.names = TRUE)
+
+  ## Define the sample grouping.
+  s_groups <- rep("KO", length(cdf_files))
+  s_groups[grep(cdf_files, pattern = "WT")] <- "WT"
+  ## Define a data.frame that will be used as phenodata
+  pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
+					replacement = "", fixed = TRUE),
+                      sample_group = s_groups, stringsAsFactors = FALSE)
+
+  ## Read the data.
+  raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
 #+END_SRC
+
+We next plot the total ion chromatogram (TIC) for all files within the
+experiment. Note that we are iteratively sub-setting the full data per file,
+which for =OnDiskMSnExp= is an efficient way to subset the data while ensuring
+that all data, including metadata, stays consistent.
+
+#+NAME: faahKO-tic
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = 'center', fig.width = 8, fig.height = 4
+  library(RColorBrewer)
+  sample_colors <- brewer.pal(3, "Set1")[1:2]
+  names(sample_colors) <- c("KO", "WT")
+  ## Subset the full raw data by file and plot the data.
+  tmp <- filterFile(raw_data, file = 1)
+  plot(x = rtime(tmp), y = tic(tmp), xlab = "retention time", ylab = "TIC",
+       col = sample_colors[pData(tmp)$sample_group], type = "l")
+  for (i in 2:length(fileNames(raw_data))) {
+      tmp <- filterFile(raw_data, file = i)
+      points(rtime(tmp), tic(tmp), type = "l",
+             col = sample_colors[pData(tmp)$sample_group])
+  }
+  legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
+#+END_SRC
+
++ Do the feature detection.
++ Describe the feature detection methods.
 
 ** Binning and missing value imputation functions
 
@@ -637,7 +680,7 @@ All done except for the retention time correction!!!
 ** TODO Continue implementing the =do_= functions.
 ** TODO Define a new object to contain the preprocessing results
 
-This object should replace the =xcmsSet= object and should provide the same
+This object should replace in the long run the =xcmsSet= object providing the same
 functionality while in addition add a better integration of the original raw
 data files. The object should contain:
 

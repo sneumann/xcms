@@ -628,6 +628,7 @@ setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
 ##' @rdname featureDetection-massifquant
 setMethod("criticalValue", "MassifquantParam", function(object)
     return(object@criticalValue))
+##' @aliases criticalValue<-
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
     object@criticalValue <- value
@@ -643,6 +644,7 @@ setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
 ##' @rdname featureDetection-massifquant
 setMethod("consecMissedLimit", "MassifquantParam", function(object)
     return(object@consecMissedLimit))
+##' @aliases consecMissedLimit<-
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  function(object, value) {
@@ -659,6 +661,7 @@ setReplaceMethod("consecMissedLimit", "MassifquantParam",
 ##' @rdname featureDetection-massifquant
 setMethod("unions", "MassifquantParam", function(object)
     return(object@unions))
+##' @aliases unions<-
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("unions", "MassifquantParam", function(object, value) {
     object@unions <- as.integer(value)
@@ -674,6 +677,7 @@ setReplaceMethod("unions", "MassifquantParam", function(object, value) {
 ##' @rdname featureDetection-massifquant
 setMethod("checkBack", "MassifquantParam", function(object)
     return(object@checkBack))
+##' @aliases checkBack<-
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
     object@checkBack <- as.integer(value)
@@ -689,6 +693,7 @@ setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
 ##' @rdname featureDetection-massifquant
 setMethod("withWave", "MassifquantParam", function(object)
     return(object@withWave))
+##' @aliases withWave<-
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
     object@withWave <- value
@@ -697,3 +702,212 @@ setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
         stop(OK)
     return(object)
 })
+
+
+############################################################
+## MSWParam
+###
+setMethod("initialize", "MSWParam", function(.Object, ...) {
+    classVersion(.Object)["MSWParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname featureDetection-MSW
+setMethod("show", "MSWParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" snthresh:", snthresh(object), "\n")
+    cat(" verboseColumns:", verboseColumns(object), "\n")
+    cat(" scales:", paste(scales(object), collapse = ","), "\n")
+    cat(" nearbyPeak:", nearbyPeak(object), "\n")
+    cat(" peakScaleRange:", peakScaleRange(object), "\n")
+    cat(" ampTh:", ampTh(object), "\n")
+    cat(" minNoiseLevel:", minNoiseLevel(object), "\n")
+    cat(" ridgeLength:", ridgeLength(object), "\n")
+    cat(" peakThr:", peakThr(object), "\n")
+    cat(" tuneIn:", tuneIn(object), "\n")
+    parms <- addParams(object)
+    if (length(parms) > 0) {
+        cat(" additional parameters:\n")
+        for (i in 1:length(parms)) {
+            cat("  ", names(parms)[i], ": ", parms[[i]], "\n", sep = "")
+        }
+    }
+})
+
+##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
+##' \code{snthresh} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("snthresh", "MSWParam", function(object){ return(object@snthresh)})
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("snthresh", "MSWParam", function(object, value) {
+    object@snthresh <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and setter
+##' for the \code{verboseColumns} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("verboseColumns", "MSWParam", function(object){
+    return(object@verboseColumns)})
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
+    object@verboseColumns <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases scales
+##' @description \code{scales},\code{scales<-}: getter and setter for the
+##' \code{scales} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("scales", "MSWParam", function(object){ return(object@scales)})
+##' @aliases scales<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("scales", "MSWParam", function(object, value) {
+    object@scales <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases nearbyPeak
+##' @description \code{nearbyPeak},\code{nearbyPeak<-}: getter and setter for the
+##' \code{nearbyPeak} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)})
+##' @aliases nearbyPeak<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
+    object@nearbyPeak <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases peakScaleRange
+##' @description \code{peakScaleRange},\code{peakScaleRange<-}: getter and setter
+##' for the \code{peakScaleRange} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("peakScaleRange", "MSWParam", function(object){
+    return(object@peakScaleRange)})
+##' @aliases peakScaleRange<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
+    object@peakScaleRange <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases ampTh
+##' @description \code{ampTh},\code{ampTh<-}: getter and setter for the
+##' \code{ampTh} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
+##' @aliases ampTh<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("ampTh", "MSWParam", function(object, value) {
+    object@ampTh <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases minNoiseLevel
+##' @description \code{minNoiseLevel},\code{minNoiseLevel<-}: getter and setter
+##' for the \code{minNoiseLevel} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("minNoiseLevel", "MSWParam", function(object){
+    return(object@minNoiseLevel)})
+##' @aliases minNoiseLevel<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
+    object@minNoiseLevel <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases ridgeLength
+##' @description \code{ridgeLength},\code{ridgeLength<-}: getter and setter for
+##' the \code{ridgeLength} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("ridgeLength", "MSWParam", function(object){
+    return(object@ridgeLength)})
+##' @aliases ridgeLength
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
+    object@ridgeLength <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases peakThr
+##' @description \code{peakThr},\code{peakThr<-}: getter and setter for the
+##' \code{peakThr} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
+##' @aliases peakThr<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("peakThr", "MSWParam", function(object, value) {
+    object@peakThr <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases tuneIn
+##' @description \code{tuneIn},\code{tuneIn<-}: getter and setter for the
+##' \code{tuneIn} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
+##' @aliases tuneIn<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
+    object@tuneIn <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+
+##' @aliases addParams
+##' @description \code{addParams},\code{addParams<-}: getter and setter for the
+##' \code{addParams} slot of the object.
+##' @rdname featureDetection-MSW
+setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
+##' @aliases addParams<-
+##' @param value The value for the slot.
+##' @rdname featureDetection-MSW
+setReplaceMethod("addParams", "MSWParam", function(object, value) {
+    object@addParams <- value
+    OK <- validObject(object)
+    if (is.character(OK))
+        stop(OK)
+    return(object)
+})
+

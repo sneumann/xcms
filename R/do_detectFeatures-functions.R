@@ -1797,7 +1797,8 @@ do_detectFeatures_matchedFilter <- function(mz,
 ############################################################
 ## MSW
 ##
-##' @title Core API function for single-spectrum non-chromatography MS data feature detection
+##' @title Core API function for single-spectrum non-chromatography MS data
+##' feature detection
 ##'
 ##' @description This function performs feature detection in mass spectrometry
 ##' direct injection spectrum using a wavelet based algorithm.
