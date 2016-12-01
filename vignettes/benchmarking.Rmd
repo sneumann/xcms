@@ -1,7 +1,7 @@
 ---
 title: "xcms3 benchmarking"
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc: false
 vignette: >
   % \VignetteIndexEntry{xcms3 benchmarking}

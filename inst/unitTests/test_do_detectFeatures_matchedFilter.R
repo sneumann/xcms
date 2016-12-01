@@ -60,15 +60,16 @@ test_featureDetection_matchedFilter <- function() {
     checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
 
     ## Do the same on the CDF files:
-    res <- xcmsSet(fs, method = "matchedFilter", profmethod = "binlin",
+    res <- xcmsSet(fs[1:2], method = "matchedFilter", profmethod = "binlin",
                    step = binSize(mfp))
-    onDisk <- readMSData2(fs)
+    onDisk <- readMSData2(fs[1:2])
     res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res), peaks(res_o))
 
-    inMem <- readMSData(fs, msLevel. = 1)
-    res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
-    checkEquals(peaks(res), peaks(res_i))
+    ## That's terribly slow.
+    ## inMem <- readMSData(fs[1:2], msLevel. = 1)
+    ## res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
+    ## checkEquals(peaks(res), peaks(res_i))
 }
 
 ## Some benchmarks

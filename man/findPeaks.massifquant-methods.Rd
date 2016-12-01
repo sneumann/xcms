@@ -65,7 +65,8 @@ library(faahKO)
 library(xcms)
 #load all the wild type and Knock out samples
 cdfpath <- system.file("cdf", package = "faahKO")
-cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+## Subset to only the first 4
+cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)[1:4]
 # run the massifquant analysis
 
 xset <- xcmsSet(cdffiles, method = "massifquant",

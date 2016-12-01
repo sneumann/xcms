@@ -22,6 +22,10 @@ if(require("RUnit", quietly=TRUE)) {
     attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
+    ## Disable parallel processing for the unit tests
+    library(BiocParallel)
+    register(SerialParam())
+
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))
     ##     attach(loadNamespace(pkg), name=paste("namespace", pkg, sep=":"), pos=3)

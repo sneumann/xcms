@@ -14,7 +14,7 @@ mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
 ## Simple test comparing results from various massifquant runs and
 ## centWave analyses.
 test_do_detectFeatures_massifquant <- function() {
-    res <- findPeaks.massifquant(xraw)
+    res <- findPeaks.massifquant(xraw, snthresh = 100)
     mz <- xraw@env$mz
     int <- xraw@env$intensity
     valsPerSpect <- diff(c(xraw@scanindex, length(mz)))
@@ -26,8 +26,10 @@ test_do_detectFeatures_massifquant <- function() {
     ## With centWave:
     res_3 <- do_detectFeatures_massifquant(mz = mz, int = int,
                                            valsPerSpect = valsPerSpect,
-                                           scantime = scantime, withWave = TRUE)
-    res_4 <- findPeaks.massifquant(xraw, withWave = 1)
+                                           scantime = scantime, withWave = TRUE,
+                                           snthresh = 100, noise = 4000)
+    res_4 <- findPeaks.massifquant(xraw, withWave = 1, snthresh = 100,
+                                   noise = 4000)
     checkEquals(res_3, res_4@.Data)
     checkTrue(nrow(res_3) < nrow(res_2))
 
@@ -49,14 +51,14 @@ test_do_detectFeatures_massifquant <- function() {
 test_featureDetection_massifquant <- function() {
     library(MSnbase)
     mqp <- MassifquantParam(ppm = 20, criticalValue = 1.2)
-    res <- xcmsSet(fs, method = "massifquant", ppm = 20, criticalValue = 1.2)
+    res <- xcmsSet(mzf[1], method = "massifquant", ppm = 20, criticalValue = 1.2)
     ## onDisk
-    onDisk <- readMSData2(fs)
+    onDisk <- readMSData2(mzf[1])
     res_o <- detectFeatures(onDisk, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
     ## inMem
-    inMem <- readMSData(fs, msLevel. = 1)
+    inMem <- readMSData(mzf[1], msLevel. = 1)
     res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_i), peaks(res))
     checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)

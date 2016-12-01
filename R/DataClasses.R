@@ -624,7 +624,9 @@ NULL
 ##'            full.names = TRUE)
 ##' raw_data <- readMSData2(fls)
 ##' ## Perform the feature detection using the settings defined above. We're
-##' ## returning the results as an xcmsSet object.
+##' ## returning the results as an xcmsSet object. Note that we are also
+##' ## disabling parallel processing in this example by registering a "SerialParam"
+##' register(SerialParam())
 ##' res <- detectFeatures(raw_data, param = mfp, return.type = "xcmsSet")
 ##' head(peaks(res))
 setClass("MatchedFilterParam",
@@ -814,7 +816,7 @@ NULL
 ##' ## Create a MassifquantParam object
 ##' mqp <- MassifquantParam()
 ##' ## Change snthresh parameter
-##' snthresh(mqp) <- 15
+##' snthresh(mqp) <- 30
 ##' mqp
 ##'
 ##' ## Perform the feature detection using massifquant on the files from the
@@ -824,7 +826,7 @@ NULL
 ##' library(MSnbase)
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ##'            full.names = TRUE)
-##' raw_data <- readMSData2(fls)
+##' raw_data <- readMSData2(fls[1:2])
 ##' ## Perform the feature detection using the settings defined above. We're
 ##' ## returning the results as an xcmsSet object.
 ##' res <- detectFeatures(raw_data, param = mqp, return.type = "xcmsSet")

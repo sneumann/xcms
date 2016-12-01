@@ -2,7 +2,7 @@
 title: "New and modified functionality in xcms"
 graphics: yes
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc: false
 vignette: >
   %\VignetteIndexEntry{New and modified functionality in xcms}
