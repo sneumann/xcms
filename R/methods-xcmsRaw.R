@@ -954,55 +954,12 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
   if(any(is.na(match(x = c("scmin", "scmax"), table = colnames(xcmsPeaks)))))
     stop("Error: peak list >xcmsPeaks< is missing the columns 'scmin' and 'scmax' ! Please set parameter >verbose.columns< to TRUE for peak picking with 'centWave' and try again ! \n")
 
-  addNewIsotopeROIs <- TRUE
-  addNewAdductROIs  <- FALSE
-  polarity <- object@polarity
-
   ####################################################################################
   ## predict new ROIs
-
-  ## convert present peaks to list of lists
-  presentROIs.list <- list()
-  for(peakIdx in 1:nrow(xcmsPeaks)){
-    presentROIs.list[[peakIdx]] <- list(
-      mz        = xcmsPeaks[[peakIdx, "mz"]],## XXX not used!
-      mzmin     = xcmsPeaks[[peakIdx, "mzmin"]],
-      mzmax     = xcmsPeaks[[peakIdx, "mzmax"]],
-      scmin     = xcmsPeaks[[peakIdx, "scmin"]],
-      scmax     = xcmsPeaks[[peakIdx, "scmax"]],
-      length    = -1,## XXX not used!
-      intensity = xcmsPeaks[[peakIdx, "intb"]],## XXX not used!
-      scale     = xcmsPeaks[[peakIdx, "scale"]]## XXX not used!
-    )
-
-    if(abs(xcmsPeaks[[peakIdx, "mzmax"]] - xcmsPeaks[[peakIdx, "mzmin"]]) < xcmsPeaks[[peakIdx, "mz"]] * ppm / 1E6){
-      presentROIs.list[[peakIdx]]$mzmin <- xcmsPeaks[[peakIdx, "mz"]] - xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-      presentROIs.list[[peakIdx]]$mzmax <- xcmsPeaks[[peakIdx, "mz"]] + xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-    }
-  }
-
-  ## fetch predicted ROIs
-  resultObj <- createAdditionalROIs(object, presentROIs.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity)
-  newRoiCounter <- resultObj$newRoiCounter
-  numberOfAdditionalIsotopeROIs <- resultObj$numberOfAdditionalIsotopeROIs
-  numberOfAdditionalAdductROIs <- resultObj$numberOfAdditionalAdductROIs
-  newROI.matrix <- resultObj$newROI.matrix
-
-  if(nrow(newROI.matrix) == 0)
+  newROI.list <- do_predictIsotopeROIs(object, xcmsPeaks, ppm, maxcharge, maxiso, mzIntervalExtension)
+  if(length(newROI.list) == 0)
     return(xcmsPeaks)
-
-  ## remove ROIs with weak signal content
-  intensityThreshold <- 10
-  newROI.matrix <- removeROIsWithoutSignal(object, newROI.matrix, intensityThreshold)
-
-  ## convert to list of lists
-  newROI.list <- list()
-  for(idx in 1:nrow(newROI.matrix))
-    ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
-    newROI.list[[length(newROI.list) + 1]] <- as.list(newROI.matrix[idx, ])
-
-  cat("Predicted ROIs: ", length(newROI.list), " new ROIs (", numberOfAdditionalIsotopeROIs, " isotope ROIs, ", numberOfAdditionalAdductROIs, " adduct ROIs) for ", length(presentROIs.list)," present ROIs.", "\n")
-
+  
   ####################################################################################
   ## perform peak picking for predicted ROIs
   roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
