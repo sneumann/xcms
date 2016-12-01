@@ -19,7 +19,9 @@ detection should be performed.}
 should be returned.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} function.}
+\code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
+\code{\link[MassSpecWavelet]{sav.gol}} functions from the
+\code{MassSpecWavelet} package.}
 }
 \value{
 A matrix, each row representing an intentified feature, with columns:
@@ -51,9 +53,10 @@ This is a wrapper around the peak picker in Bioconductor's
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
 \seealso{
+\code{\link{MSW}} for the new user interface,
 \code{\link{do_detectFeatures_MSW}} for the downstream analysis
-function or
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}
-for details on the algorithm and additionally supported parameters.
+function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+\code{MassSpecWavelet} for details on the algorithm and additionally supported
+parameters.
 }
 

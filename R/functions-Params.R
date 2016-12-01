@@ -1,19 +1,34 @@
 ## Functions related to the Param class and sub-classes.
-#' @include DataClasses.R c.R
+#' @include DataClasses.R
 
-## Extract all slot values and put them into a list, names being the slot
-## names.
+##
+##' @description Extract all slot values and put them into a list, names being
+##' the slot names. If a slot \code{addParams} exist its content will be
+##' appended to the returned list.
+##'
+##' @param x A Param class.
+##' @author Johannes Rainer
+##' @noRd
 .param2list <- function(x) {
     ## Get all slot names, skip those matching the provided pattern.
     sNames <- slotNames(x)
     skipSome <- grep(sNames, pattern = "^\\.")
     if(length(skipSome) > 0)
         sNames <- sNames[-skipSome]
+    ## handle a slot called "addParams" differently: this is thougth to contain
+    ## ... arguments thus we have to skip this one too.
+    if (any(sNames == "addParams")) {
+        sNames <- sNames[sNames != "addParams"]
+        addP <- x@addParams
+    } else {
+        addP <- list()
+    }
     if(length(sNames) > 0){
         resL <- vector("list", length(sNames))
         for(i in 1:length(sNames))
             resL[[i]] <- slot(x, name = sNames[i])
         names(resL) <- sNames
+        resL <- c(resL, addP)
         return(resL)
     }else{
           return(list())
@@ -23,8 +38,6 @@
 ############################################################
 ## CentWaveParam
 
-##' @inheritParams do_detectFeatures_centWave
-##'
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
 ##' class instance with all of the settings specified for feature detection by
 ##' the centWave method.
@@ -47,8 +60,6 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 ############################################################
 ## MatchedFilterParam
 
-##' @inheritParams do_detectFeatures_matchedFilter
-##'
 ##' @return The \code{MatchedFilterParam} function returns a
 ##' \code{MatchedFilterParam} class instance with all of the settings specified
 ##' for feature detection by the centWave method.
@@ -68,9 +79,6 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
 ############################################################
 ## MassifquantParam
 
-##' @inheritParams do_detectFeatures_massifquant
-##' @inheritParams do_detectFeatures_centWave
-##'
 ##' @return The \code{MassifquantParam} function returns a \code{MassifquantParam}
 ##' class instance with all of the settings specified for feature detection by
 ##' the centWave method.
@@ -91,3 +99,60 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                unions = as.integer(unions), checkBack = as.integer(checkBack),
                withWave = withWave))
 }
+
+############################################################
+## MSWParam
+##' @inheritParams featureDetection-centWave
+##'
+##' @param scales Numeric defining the scales of the continuous wavelet
+##' transform (CWT).
+##'
+##' @param nearbyPeak logical of length one whether to include nearby peaks of
+##' major peaks.
+##'
+##' @param peakScaleRange numeric of length one defining the scale range of the
+##' peak (larger than 5 by default).
+##'
+##' @param ampTh numeric of length one defining the minimum required relative
+##' amplitude of the peak (ratio of the maximum of CWT coefficients).
+##'
+##' @param minNoiseLevel numeric of length one defining the minimum noise level
+##' used in computing the SNR.
+##'
+##' @param ridgeLength numeric of length one defining the minimum highest scale
+##' of the peak in 2-D CWT coefficient matrix.
+##'
+##' @param peakThr numeric of length one with the minimum absolute intensity
+##' (above baseline) of peaks to be picked. If provided, the smoothing function
+##' \code{\link[MassSpecWavelet]{sav.gol}} function is called to estimate the
+##' local intensity.
+##'
+##' @param tuneIn logical of length one whther to tune in the parameter
+##' estimation of the detected peaks.
+##'
+##' @param ... Additional parameters to be passed to the
+##' \code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
+##' \code{\link[MassSpecWavelet]{sav.gol}} functions from the
+##' \code{MassSpecWavelet} package.
+##'
+##' @return The \code{MSWParam} function returns a \code{MSWParam}
+##' class instance with all of the settings specified for feature detection by
+##' the centWave method.
+##'
+##' @rdname featureDetection-MSW
+MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
+                     scales = c(1, seq(2, 30, 2), seq(32, 64, 4)),
+                     nearbyPeak = TRUE, peakScaleRange = 5,
+                     ampTh = 0.01, minNoiseLevel = ampTh / snthresh,
+                     ridgeLength = 24, peakThr = NULL, tuneIn = FALSE,
+                     ... ) {
+    addParams <- list(...)
+    if (is.null(peakThr))
+        peakThr <- numeric()
+    return(new("MSWParam", snthresh = snthresh, verboseColumns = verboseColumns,
+               scales = scales, nearbyPeak = nearbyPeak,
+               peakScaleRange = peakScaleRange, ampTh = ampTh,
+               minNoiseLevel = minNoiseLevel, ridgeLength = ridgeLength,
+               peakThr = peakThr, tuneIn = tuneIn, addParams = addParams))
+}
+

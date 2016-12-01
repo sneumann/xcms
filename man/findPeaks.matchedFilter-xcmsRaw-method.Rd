@@ -79,6 +79,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
 }
 \seealso{
+\code{\link{matchedFilter}} for the new user interface.
 \code{\linkS4class{xcmsRaw}},
 \code{\link{do_detectFeatures_matchedFilter}} for the core function
 performing the feature detection.

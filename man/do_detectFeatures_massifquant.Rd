@@ -27,18 +27,15 @@ spectrum.}
 \item{ppm}{Maximal tolerated m/z deviation in consecutive scans in parts
 per million (ppm).}
 
-\item{peakwidth}{Numeric of length 2. Only the first element is used by
-massifquant, which specifices the minimum feature length in time scans.
-For \code{withWave = TRUE} the second argument represents the maximum
-feature length subject to being greater than the mininum feature length
-(see also documentation of \code{\link{do_detectFeatures_centWave}}).}
+\item{peakwidth}{Numeric of length 2 with the expected approximate
+feature/peak width in chromatographic space. Given as a range (min, max)
+in seconds.}
 
 \item{snthresh}{Signal to noise ratio cutoff.}
 
-\item{prefilter}{Numeric of length 2. The first argument is only used
-if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
-for details. The second argument specifies the minimum threshold for the
-maximum intensity of a feature that must be met.}
+\item{prefilter}{Numeric of length 2: \code{c(k, I)} specifying the prefilter
+step for the first analysis step (ROI detection). Mass traces are only
+retained if they contain at least \code{k} peaks with intensity \code{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
 feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's

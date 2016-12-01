@@ -55,9 +55,38 @@ detectFeatures_Spectrum_list <- function(x, method = "centWave", param, rt) {
                                                            use.names = FALSE),
                                               valsPerSpect = lengths(mzs, FALSE),
                                               scantime = rt),
-                                         .param2list(param))),
+                                         as(param, "list"))),
                 date = procDat))
 }
+
+## That's a special case since we don't expect to have rt available for this.
+detectFeatures_MSW_OnDiskMSnExp <- function(object, method = "MSW",
+                                            param) {
+    if (missing(param))
+        stop("'param' has to be specified!")
+    ## pass the spectra to the _Spectrum_list function
+    return(detectFeatures_MSW_Spectrum_list(x = spectra(object), method = method,
+                                            param = param))
+}
+detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
+    method <- match.arg(method, c("MSW"))
+    method <- paste0("do_detectFeatures_", method)
+    if (missing(param))
+        stop("'param' has to be specified!")
+    mzs <- lapply(x, mz)
+    procDat <- date()
+    return(list(peaks = do.call(method,
+                                args = c(list(mz = unlist(mzs,
+                                                          use.names = FALSE),
+                                              int = unlist(lapply(x, intensity),
+                                                           use.names = FALSE)
+                                              ),
+                                         as(param, "list"))),
+                date = procDat))
+}
+
+
+
 
 ############################################################
 ##' @description Fill some settings and data from an OnDiskMSnExp or pSet into an

@@ -23,8 +23,8 @@ NEW FEATURES:
 + profMat method to extract/create the profile matrix from/for an xcmsRaw.
 + Add new detectFeatures methods for MSnExp and OnDiskMSnExp objects from the
   MSnbase package.
-+ Add new CentWaveParam and MatchedFilterParam parameter class to perform
-  method dispatch in the detectFeatures method.
++ Add new CentWaveParam, MatchedFilterParam, MassifquantParam and MSWParam
+  parameter class to perform method dispatch in the detectFeatures method.
 
 
 USER VISIBLE CHANGES:

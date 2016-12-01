@@ -258,10 +258,29 @@ exportMethods(
     "checkBack",
     "checkBack<-",
     "withWave",
-    "withWave<-"
+    "withWave<-",
+    ## MSWParam
+    "scales",
+    "scales<-",
+    "nearbyPeak",
+    "nearbyPeak<-",
+    "peakScaleRange",
+    "peakScaleRange<-",
+    "ampTh",
+    "ampTh<-",
+    "minNoiseLevel",
+    "minNoiseLevel<-",
+    "ridgeLength",
+    "ridgeLength<-",
+    "peakThr",
+    "peakThr<-",
+    "tuneIn",
+    "tuneIn<-",
+    "addParams",
+    "addParams<-"
 )
 ## Param class functions
-export("CentWaveParam", "MatchedFilterParam", "MassifquantParam")
+export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam")
 ## Param class methods.
 
 ## New Classes

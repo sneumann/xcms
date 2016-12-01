@@ -18,6 +18,9 @@ See \code{\link{centWave}} for more details.}
 \item{massifquant}{: peak detection using the Kalman filter-based feature
 method. See \code{\link{massifquant}} for more details.}
 
+\item{MSW}{: single-spectrum non-chromatography MS data feature detection.
+See \code{\link{MSW}} for more details.}
+
 }
 }
 \author{
@@ -27,7 +30,8 @@ Johannes Rainer
 \code{\link{findPeaks}} for the \emph{old} feature detection
 methods.
 
-Other feature detection methods: \code{\link{featureDetection-centWave}},
+Other feature detection methods: \code{\link{featureDetection-MSW}},
+  \code{\link{featureDetection-centWave}},
   \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}
 }

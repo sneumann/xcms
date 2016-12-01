@@ -316,7 +316,7 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 ##' profile matrix. For more details see \code{\link{do_detectFeatures_matchedFilter}}.
 ##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature detection
 ##' should be performed.
-##' @inheritParams do_detectFeatures_matchedFilter
+##' @inheritParams featureDetection-matchedFilter
 ##' @param step Numeric of length one specifying the width of the
 ##' bins/slices in m/z dimension.
 ##' @param sleep (DEFUNCT). This parameter is no longer functional, as it would cause
@@ -1369,8 +1369,8 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
 ##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 ##'
-##' @inheritParams do_detectFeatures_MSW
-##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams featureDetection-MSW
+##' @inheritParams featureDetection-centWave
 ##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature
 ##' detection should be performed.
 ##' @param verbose.columns Logical whether additional feature meta data columns

@@ -2,7 +2,8 @@
 % Please edit documentation in R/do_detectFeatures-functions.R
 \name{do_detectFeatures_MSW}
 \alias{do_detectFeatures_MSW}
-\title{Core API function for single-spectrum non-chromatography MS data feature detection}
+\title{Core API function for single-spectrum non-chromatography MS data
+feature detection}
 \usage{
 do_detectFeatures_MSW(mz, int, snthresh = 3, verboseColumns = FALSE, ...)
 }
@@ -52,7 +53,9 @@ This is a wrapper around the peak picker in Bioconductor's
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
 \seealso{
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
+##' \code{\link{MSW}} for the standard user interface
+method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+\code{MassSpecWavelet} package.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_centWave}},
   \code{\link{do_detectFeatures_massifquant}},

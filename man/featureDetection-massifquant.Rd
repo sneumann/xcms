@@ -6,12 +6,15 @@
 \alias{MassifquantParam-class}
 \alias{checkBack}
 \alias{checkBack,MassifquantParam-method}
+\alias{checkBack<-}
 \alias{checkBack<-,MassifquantParam-method}
 \alias{consecMissedLimit}
 \alias{consecMissedLimit,MassifquantParam-method}
+\alias{consecMissedLimit<-}
 \alias{consecMissedLimit<-,MassifquantParam-method}
 \alias{criticalValue}
 \alias{criticalValue,MassifquantParam-method}
+\alias{criticalValue<-}
 \alias{criticalValue<-,MassifquantParam-method}
 \alias{detectFeatures,MSnExp,MassifquantParam-method}
 \alias{detectFeatures,OnDiskMSnExp,MassifquantParam-method}
@@ -38,11 +41,13 @@
 \alias{snthresh<-,MassifquantParam-method}
 \alias{unions}
 \alias{unions,MassifquantParam-method}
+\alias{unions<-}
 \alias{unions<-,MassifquantParam-method}
 \alias{verboseColumns,MassifquantParam-method}
 \alias{verboseColumns<-,MassifquantParam-method}
 \alias{withWave}
 \alias{withWave,MassifquantParam-method}
+\alias{withWave<-}
 \alias{withWave<-,MassifquantParam-method}
 \title{Feature detection using the massifquant method}
 \usage{
@@ -213,7 +218,7 @@ object containing the MS- and all other experiment-relevant data.
 For all other methods: a parameter object.}
 
 \item{param}{An \code{MassifquantParam} object containing all settings for
-the matchedFilter algorithm.}
+the massifquant algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
 should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
@@ -335,7 +340,7 @@ method from the \code{BiocParallel} package.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave.}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
@@ -382,6 +387,7 @@ The \code{\link{do_detectFeatures_massifquant}} core API function
 and \code{\link{findPeaks.massifquant}} for the old user interface.
 
 Other feature detection methods: \code{\link{detectFeatures}},
+  \code{\link{featureDetection-MSW}},
   \code{\link{featureDetection-centWave}},
   \code{\link{featureDetection-matchedFilter}}
 }

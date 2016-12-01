@@ -342,6 +342,7 @@ The \code{\link{do_detectFeatures_centWave}} core API function and
 \code{\link{findPeaks.centWave}} for the old user interface.
 
 Other feature detection methods: \code{\link{detectFeatures}},
+  \code{\link{featureDetection-MSW}},
   \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}
 }

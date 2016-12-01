@@ -240,3 +240,104 @@ test_MassifquantParam <- function() {
     checkEquals(withWave(p), TRUE)
     checkException(withWave(p) <- c(TRUE, FALSE))
 }
+
+
+test_MSWParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("MSWParam", snthresh = 14)
+    checkEquals(snthresh(p), 14)
+    snthresh(p) <- 13
+    checkEquals(snthresh(p), 13)
+    p <- MSWParam(snthresh = 21)
+    checkEquals(snthresh(p), 21)
+    checkException(MSWParam(snthresh = -4))
+
+    p <- new("MSWParam", verboseColumns = TRUE)
+    checkEquals(verboseColumns(p), TRUE)
+    verboseColumns(p) <- FALSE
+    checkEquals(verboseColumns(p), FALSE)
+    p <- MSWParam(verboseColumns = TRUE)
+    checkEquals(verboseColumns(p), TRUE)
+    checkException(MSWParam(verboseColumns = c(FALSE, TRUE)))
+
+    p <- new("MSWParam", scales = 1:5)
+    checkEquals(scales(p), 1:5)
+    scales(p) <- 6:12
+    checkEquals(scales(p), 6:12)
+    p <- MSWParam(scales = 1:3)
+    checkEquals(scales(p), 1:3)
+
+    p <- new("MSWParam", nearbyPeak = FALSE)
+    checkEquals(nearbyPeak(p), FALSE)
+    nearbyPeak(p) <- TRUE
+    checkEquals(nearbyPeak(p), TRUE)
+    p <- MSWParam(nearbyPeak = FALSE)
+    checkEquals(nearbyPeak(p), FALSE)
+    checkException(nearbyPeak(p) <- c(TRUE, FALSE))
+
+    p <- new("MSWParam", peakScaleRange = 8)
+    checkEquals(peakScaleRange(p), 8)
+    peakScaleRange(p) <- 7
+    checkEquals(peakScaleRange(p), 7)
+    p <- MSWParam(peakScaleRange = 9)
+    checkEquals(peakScaleRange(p), 9)
+    checkException(peakScaleRange(p) <- 4:6)
+
+    p <- new("MSWParam", ampTh = 0.4)
+    checkEquals(ampTh(p), 0.4)
+    ampTh(p) <- 7
+    checkEquals(ampTh(p), 7)
+    p <- MSWParam(ampTh = 9)
+    checkEquals(ampTh(p), 9)
+    checkException(ampTh(p) <- 4:6)
+
+    p <- new("MSWParam", minNoiseLevel = 0.4)
+    checkEquals(minNoiseLevel(p), 0.4)
+    minNoiseLevel(p) <- 7
+    checkEquals(minNoiseLevel(p), 7)
+    p <- MSWParam(minNoiseLevel = 9)
+    checkEquals(minNoiseLevel(p), 9)
+    checkException(minNoiseLevel(p) <- -4)
+
+    p <- new("MSWParam", ridgeLength = 14)
+    checkEquals(ridgeLength(p), 14)
+    ridgeLength(p) <- 7
+    checkEquals(ridgeLength(p), 7)
+    p <- MSWParam(ridgeLength = 9)
+    checkEquals(ridgeLength(p), 9)
+    checkException(ridgeLength(p) <- -4)
+
+    p <- new("MSWParam", peakThr = 14)
+    checkEquals(peakThr(p), 14)
+    peakThr(p) <- 7
+    checkEquals(peakThr(p), 7)
+    p <- MSWParam(peakThr = 9)
+    checkEquals(peakThr(p), 9)
+    checkException(peakThr(p) <- 3:5)
+
+    p <- new("MSWParam", tuneIn = FALSE)
+    checkEquals(tuneIn(p), FALSE)
+    tuneIn(p) <- TRUE
+    checkEquals(tuneIn(p), TRUE)
+    p <- MSWParam(tuneIn = FALSE)
+    checkEquals(tuneIn(p), FALSE)
+    checkException(tuneIn(p) <- c(TRUE, TRUE))
+
+    p <- new("MSWParam", addParams = list(a = 3, b = 4))
+    checkEquals(addParams(p), list(a = 3, b = 4))
+    addParams(p) <- list(d = "a", e = 2:4)
+    checkEquals(addParams(p), list(d = "a", e = 2:4))
+    p <- MSWParam(otherp = 1:4, z = "a")
+    checkEquals(addParams(p), list(otherp = 1:4, z = "a"))
+
+    ## Check the .param2list method:
+    p <- new("MSWParam", addParams = list(z = "z", bla = 1:4))
+    L <- xcms:::.param2list(p)
+    checkEquals(L$z, "z")
+    checkEquals(L$bla, 1:4)
+    checkEquals(L$snthresh, 3)
+    p <- new("MSWParam")
+    L <- xcms:::.param2list(p)
+    checkTrue(!any(names(L) == "addParams"))
+    checkEquals(L$snthresh, 3)
+}

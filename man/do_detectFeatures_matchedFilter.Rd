@@ -49,16 +49,15 @@ of the matched filtration model peak.}
 \item{max}{Numeric of length one representing the maximum number of peaks
 that are expected/will be identified per slice.}
 
-\item{snthresh}{Numeric of length one defining the signal to noise cutoff
-to be used in the feature detection step.}
+\item{snthresh}{Signal to noise ratio cutoff.}
 
 \item{steps}{Numeric of length one defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will be
 joined to the slice in which filtration and peak detection will be
 performed).}
 
-\item{mzdiff}{Numeric of length one defining the minimum difference
-in m/z for peaks with overlapping retention times}
+\item{mzdiff}{Numeric representing the minimum difference in m/z dimension
+for peaks with overlapping retention times; can be negatove to allow overlap.}
 
 \item{index}{Logical specifying whether indicies should be returned instead
 of values for m/z and retention times.}

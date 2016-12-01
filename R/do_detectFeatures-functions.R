@@ -43,48 +43,7 @@
 ##' spectra/scans of the data representing the retention time of each scan.
 ##' @param valsPerSpect Numeric vector with the number of values for each
 ##' spectrum.
-##' @param ppm Maximal tolerated m/z deviation in consecutive scans in parts
-##' per million (ppm).
-##' @param peakwidth Numeric of length 2 with the expected approximate
-##' feature/peak width in chromatographic space. Given as a range (min, max)
-##' in seconds.
-##' @param snthresh Signal to noise ratio cutoff.
-##' @param prefilter Numeric of length 2: \code{c(k, I)} specifying the prefilter
-##' step for the first analysis step (ROI detection). Mass traces are only
-##' retained if they contain at least \code{k} peaks with intensity \code{>= I}.
-##' @param mzCenterFun Name of the function to calculate the m/z center of the
-##' feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's
-##' m/z values, \code{"mean"}: mean of the feature's m/z values, \code{"apex"}:
-##' use the m/z value at the peak apex, \code{"wMeanApex3"}: intensity weighted
-##' mean of the m/z value at the peak apex and the m/z values left and right of
-##' it and \code{"meanApex3"}: mean of the m/z value of the peak apex and the
-##' m/z values left and right of it.
-##' @param integrate Integration method. For \code{integrate = 1} peak limits
-##' are found through descent on the mexican hat filtered data, for
-##' \code{integrate = 2} the descent is done on the real data. The latter method
-##' is more accurate but prone to noise, while the former is more robust, but
-##' less exact.
-##' @param mzdiff Numeric representing the minimum difference in m/z dimension
-##' for peaks with overlapping retention times; can be negatove to allow overlap.
-##' @param fitgauss Logical whether or not a Gaussian should be fitted to each
-##' peak.
-##' @param noise Numeric of length 1 allowing to set a minimum intensity required
-##' for centroids to be considered in the first analysis step (centroids with
-##' intensity \code{< noise} are omitted from ROI detection).
-##' @param verboseColumns Logical whether additional feature meta data columns
-##' should be returned.
-##' @param roiList An optional list of regions-of-interest (ROI) representing
-##' detected mass traces. If ROIs are submitted the first analysis step is
-##' omitted and feature detection is performed on the submitted ROIs. Each
-##' ROI object in the list is expected to have the following slots specified:
-##' \code{scmin} (start scan index), \code{scmax} (end scan index),
-##' \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
-##' (number of scans), \code{intensity} (summed intensity).
-##' @param firstBaselineCheck Logical of length 1. If \code{TRUE} continuous
-##' data within regions of interest is checked to be above the first baseline.
-##' @param roiScales Optional numeric vector with length equal to \code{roiList}
-##' defining the scale for each region of interest in \code{roiList} that should
-##' be used for the centWave-wavelets.
+##' @inheritParams featureDetection-centWave
 ##'
 ##' @family core feature detection functions
 ##' @references
@@ -121,7 +80,6 @@
 ##' }
 ##' @author Ralf Tautenhahn, Johannes Rainer
 ##'
-##' @rdname do_featureDetection_centWave
 ##' @seealso \code{\link{centWave}} for the standard user interface method.
 ##'
 ##' @examples
@@ -695,52 +653,8 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' than the other parameters and exist to give users flexibility and
 ##' better accuracy.
 ##' @inheritParams do_detectFeatures_centWave
-##' @param peakwidth Numeric of length 2. Only the first element is used by
-##' massifquant, which specifices the minimum feature length in time scans.
-##' For \code{withWave = TRUE} the second argument represents the maximum
-##' feature length subject to being greater than the mininum feature length
-##' (see also documentation of \code{\link{do_detectFeatures_centWave}}).
-##' @param prefilter Numeric of length 2. The first argument is only used
-##' if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
-##' for details. The second argument specifies the minimum threshold for the
-##' maximum intensity of a feature that must be met.
-##' @param criticalValue Numeric of length 1. Suggested values:
-##' (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
-##' prediciton margin of error. A real centroid belonging to a bonafide
-##' feature must fall within the KF prediction margin of error. Much like
-##' in the construction of a confidence interval, \code{criticalVal} loosely
-##' translates to be a multiplier of the standard error of the prediction
-##' reported by the Kalman Filter. If the features in the XC-MS sample have
-##' a small mass deviance in ppm error, a smaller critical value might be
-##' better and vice versa.
-##' @param consecMissedLimit Integer: Suggested values: (\code{1,2,3}). While
-##' a feature is in the proces of being detected by a Kalman Filter, the
-##' Kalman Filter may not find a predicted centroid in every scan. After 1
-##' or more consecutive failed predictions, this setting informs Massifquant
-##' when to stop a Kalman Filter from following a candidate feature.
-##' @param unions Integer: set to \code{1} if apply t-test union on
-##' segmentation; set to \code{0} if no t-test to be applied on
-##' chromatographically continous features sharing same m/z range.
-##' Explanation: With very few data points, sometimes a Kalman Filter stops
-##' tracking a feature prematurely. Another Kalman Filter is instantiated
-##' and begins following the rest of the signal. Because tracking is done
-##' backwards to forwards, this algorithmic defect leaves a real feature
-##' divided into two segments or more. With this option turned on, the
-##' program identifies segmented features and combines them (merges them)
-##' into one with a two sample t-test. The potential danger of this option
-##' is that some truly distinct features may be merged.
-##' @param checkBack Integer: set to \code{1} if turned on; set to \code{0}
-##' if turned off. The convergence of a Kalman Filter to a feature's precise
-##' m/z mapping is very fast, but sometimes it incorporates erroneous centroids
-##' as part of a feature (especially early on). The \code{scanBack} option is an
-##' attempt to remove the occasional outlier that lies beyond the converged
-##' bounds of the Kalman Filter. The option does not directly affect
-##' identification of a feature because it is a postprocessing measure; it
-##' has not shown to be a extremely useful thus far and the default is set
-##' to being turned off.
-##' @param withWave Logical: if \code{TRUE}, the features identified first
-##' with Massifquant are subsequently filtered with the second step of the
-##' centWave algorithm, which includes wavelet estimation.
+##' @inheritParams featureDetection-centWave
+##' @inheritParams featureDetection-massifquant
 ##' @return
 ##' A matrix, each row representing an identified feature, with columns:
 ##' \describe{
@@ -956,31 +870,10 @@ do_detectFeatures_massifquant <- function(mz,
 ##' instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
 ##'
 ##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams featureDetection-centWave
 ##' @inheritParams imputeLinInterpol
-##' @param binSize Numeric of length one specifying the width of the
-##' bins/slices in m/z dimension.
-##' @param impute Character string specifying the method to be used for missing
-##' value imputation. Allowed values are \code{"none"} (no linear interpolation),
-##' \code{"lin"} (linear interpolation), \code{"linbase"} (linear interpolation
-##' within a certain bin-neighborhood) and \code{"intlin"}. See
-##' \code{\link{imputeLinInterpol}} for more details.
-##' @param fwhm Numeric of length one specifying the full width at half maximum
-##' of matched filtration gaussian model peak. Only used to calculate the actual
-##' sigma, see below.
-##' @param sigma Numeric of length one specifying the standard deviation (width)
-##' of the matched filtration model peak.
-##' @param max Numeric of length one representing the maximum number of peaks
-##' that are expected/will be identified per slice.
-##' @param snthresh Numeric of length one defining the signal to noise cutoff
-##' to be used in the feature detection step.
-##' @param steps Numeric of length one defining the number of bins to be
-##' merged before filtration (i.e. the number of neighboring bins that will be
-##' joined to the slice in which filtration and peak detection will be
-##' performed).
-##' @param mzdiff Numeric of length one defining the minimum difference
-##' in m/z for peaks with overlapping retention times
-##' @param index Logical specifying whether indicies should be returned instead
-##' of values for m/z and retention times.
+##' @inheritParams featureDetection-matchedFilter
+##'
 ##' @return A matrix, each row representing an identified feature, with columns:
 ##' \describe{
 ##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
@@ -1810,6 +1703,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' \emph{xcmsDirect} vignette for more information.
 ##'
 ##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams featureDetection-centWave
 ##' @param ... Additional parameters to be passed to the
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
 ##'
@@ -1830,7 +1724,9 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' }
 ##'
 ##' @family core feature detection functions
-##' @seealso \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the \code{MassSpecWavelet}.
+##' @seealso ##' \code{\link{MSW}} for the standard user interface
+##' method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+##' \code{MassSpecWavelet} package.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
                                   verboseColumns = FALSE, ...) {

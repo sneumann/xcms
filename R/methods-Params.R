@@ -754,7 +754,6 @@ setReplaceMethod("snthresh", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("verboseColumns", "MSWParam", function(object){
     return(object@verboseColumns)})
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
     object@verboseColumns <- value
@@ -770,7 +769,6 @@ setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("scales", "MSWParam", function(object){ return(object@scales)})
 ##' @aliases scales<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("scales", "MSWParam", function(object, value) {
     object@scales <- value
@@ -786,7 +784,6 @@ setReplaceMethod("scales", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)})
 ##' @aliases nearbyPeak<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
     object@nearbyPeak <- value
@@ -803,7 +800,6 @@ setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
 setMethod("peakScaleRange", "MSWParam", function(object){
     return(object@peakScaleRange)})
 ##' @aliases peakScaleRange<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
     object@peakScaleRange <- value
@@ -819,7 +815,6 @@ setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
 ##' @aliases ampTh<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("ampTh", "MSWParam", function(object, value) {
     object@ampTh <- value
@@ -836,7 +831,6 @@ setReplaceMethod("ampTh", "MSWParam", function(object, value) {
 setMethod("minNoiseLevel", "MSWParam", function(object){
     return(object@minNoiseLevel)})
 ##' @aliases minNoiseLevel<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
     object@minNoiseLevel <- value
@@ -852,8 +846,7 @@ setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("ridgeLength", "MSWParam", function(object){
     return(object@ridgeLength)})
-##' @aliases ridgeLength
-##' @param value The value for the slot.
+##' @aliases ridgeLength<-
 ##' @rdname featureDetection-MSW
 setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
     object@ridgeLength <- value
@@ -869,7 +862,6 @@ setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
 ##' @aliases peakThr<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("peakThr", "MSWParam", function(object, value) {
     object@peakThr <- value
@@ -885,7 +877,6 @@ setReplaceMethod("peakThr", "MSWParam", function(object, value) {
 ##' @rdname featureDetection-MSW
 setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
 ##' @aliases tuneIn<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
     object@tuneIn <- value
@@ -897,11 +888,15 @@ setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
 
 ##' @aliases addParams
 ##' @description \code{addParams},\code{addParams<-}: getter and setter for the
-##' \code{addParams} slot of the object.
+##' \code{addParams} slot of the object. This slot stores optional additional
+##' parameters to be passed to the
+##' \code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
+##' \code{\link[MassSpecWavelet]{sav.gol}} functions from the
+##' \code{MassSpecWavelet} package.
+##'
 ##' @rdname featureDetection-MSW
 setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
 ##' @aliases addParams<-
-##' @param value The value for the slot.
 ##' @rdname featureDetection-MSW
 setReplaceMethod("addParams", "MSWParam", function(object, value) {
     object@addParams <- value
@@ -910,4 +905,18 @@ setReplaceMethod("addParams", "MSWParam", function(object, value) {
         stop(OK)
     return(object)
 })
-
+## The 'setAs' method.
+setAs("MSWParam" ,"list", function(from){
+    L <- .param2list(from)
+    ## Rename ampTh to amp.Th
+    names(L) <- sub(names(L), pattern = "ampTh", replacement = "amp.Th",
+                    fixed = TRUE)
+    return(L)
+})
+setMethod("as.list", signature(x = "MSWParam"), function(x, ...) {
+    L <- .param2list(x)
+    ## Rename ampTh to amp.Th
+    names(L) <- sub(names(L), pattern = "ampTh", replacement = "amp.Th",
+                    fixed = TRUE)
+    return(L)
+})

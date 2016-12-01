@@ -1,5 +1,5 @@
 ## Methods for MSnbase's OnDiskMSnExp and MSnExp objects.
-#' @include functions-OnDiskMSnExp.R
+#' @include functions-OnDiskMSnExp.R do_detectFeatures-functions.R
 
 
 ## Main roxygen documentation for the centWace feature detection is in
@@ -271,7 +271,7 @@ setMethod("detectFeatures",
 ##' For all other methods: a parameter object.
 ##'
 ##' @param param An \code{MassifquantParam} object containing all settings for
-##' the matchedFilter algorithm.
+##' the massifquant algorithm.
 ##'
 ##' @inheritParams featureDetection-centWave
 ##'
@@ -338,6 +338,120 @@ setMethod("detectFeatures",
                   detectFeatures_Spectrum_list(z,
                                                method = "massifquant",
                                                param = param)
+              }, BPPARAM = BPPARAM)
+              res <- .processResultList(resList,
+                                        getProcHist = return.type != "list",
+                                        fnames = fileNames(object))
+              if (return.type == "list")
+                  return(res$peaks)
+              if (return.type == "xcmsSet") {
+                  xs <- .pSet2xcmsSet(object)
+                  peaks(xs) <- do.call(rbind, res$peaks)
+                  xs@.processHistory <- res$procHist
+                  OK <- .validProcessHistory(xs)
+                  if (!is.logical(OK))
+                      stop(OK)
+                  if (!any(colnames(pData(object)) == "class"))
+                      message("Note: you might want to set/adjust the",
+                              " 'sampclass' of the returned xcmSet object",
+                              " before proceeding with the analysis.")
+                  return(xs)
+              }
+          })
+
+
+## MSW
+## The MSW feature detection method for OnDiskMSnExp:
+##' @title Single-spectrum non-chromatography MS data feature detection
+##'
+##' @description The \code{detectFeatures,OnDiskMSnExp,MSWParam}
+##' method performs feature detection in single-spectrum non-chromatography MS
+##' data using functionality from the \code{MassSpecWavelet} package on all
+##' samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
+##' data and load the spectra data (mz and intensity values) on the fly from the
+##' original files applying also all eventual data manipulations.
+##'
+##' @details Parallel processing (one process per sample) is supported and can
+##' be configured either by the \code{BPPARAM} parameter or by globally defining
+##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
+##' method from the \code{BiocParallel} package.
+##'
+##' @param object For \code{detectFeatures}: Either an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
+##' object containing the MS- and all other experiment-relevant data.
+##'
+##' For all other methods: a parameter object.
+##'
+##' @param param An \code{MSWParam} object containing all settings for
+##' the algorithm.
+##'
+##' @inheritParams featureDetection-centWave
+##'
+##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
+##' length equal to the number of samples with matrices specifying the
+##' identified features/peaks. If \code{return.type = "xcmsSet"} an
+##' \code{\linkS4class{xcmsSet}} object with the results of the feature
+##' detection.
+##'
+##' @rdname featureDetection-MSW
+setMethod("detectFeatures",
+          signature(object = "OnDiskMSnExp", param = "MSWParam"),
+          function(object, param, BPPARAM = bpparam(), return.type = "list") {
+              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+              ## TODO @jo: ensure that we're having single spectra files!
+              ## Restrict to MS1 data.
+              object <- filterMsLevel(object, msLevel. = 1)
+              ## (1) split the object per file.
+              ## (2) use bplapply to do the feature detection.
+              resList <- bplapply(lapply(1:length(fileNames(object)),
+                                     filterFile, object = object),
+                              FUN = detectFeatures_MSW_OnDiskMSnExp,
+                              method = "MSW", param = param)
+              ## (3) collect the results.
+              res <- .processResultList(resList,
+                                        getProcHist = return.type != "list",
+                                        fnames = fileNames(object))
+              if (return.type == "list")
+                  return(res$peaks)
+              if (return.type == "xcmsSet") {
+                  xs <- .pSet2xcmsSet(object)
+                  peaks(xs) <- do.call(rbind, res$peaks)
+                  xs@.processHistory <- res$procHist
+                  OK <- .validProcessHistory(object)
+                  if (!is.logical(OK))
+                      stop(OK)
+                  if (!any(colnames(pData(object)) == "class"))
+                      message("Note: you might want to set/adjust the",
+                              " 'sampclass' of the returned xcmSet object",
+                              " before proceeding with the analysis.")
+                  return(xs)
+              }
+          })
+
+##' @title Single-spectrum non-chromatography MS data feature detection
+##'
+##' @description The \code{detectFeatures,MSnExp,MSWParam} method
+##' performs feature detection in single-spectrum non-chromatography MS
+##' data using functionality from the \code{MassSpecWavelet} package on all
+##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
+##' mz and intensity values of all spectra hence no additional
+##' data input from the original files is required.
+##'
+##' @rdname featureDetection-MSW
+setMethod("detectFeatures",
+          signature(object = "MSnExp", param = "MSWParam"),
+          function(object, param, BPPARAM = bpparam(), return.type = "list") {
+              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+              ms1_idx <- which(unname(msLevel(object)) == 1)
+              if (length(ms1_idx) == 0)
+                  stop("No MS1 spectra available for feature detection!")
+              spect_list <- split(spectra(object)[ms1_idx],
+                                  fromFile(object)[ms1_idx])
+              resList <- bplapply(spect_list, function(z) {
+                  detectFeatures_MSW_Spectrum_list(z,
+                                                   method = "MSW",
+                                                   param = param)
               }, BPPARAM = BPPARAM)
               res <- .processResultList(resList,
                                         getProcHist = return.type != "list",
