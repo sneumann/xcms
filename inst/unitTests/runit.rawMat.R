@@ -2,7 +2,7 @@
 ## Test the rawMat method.
 test.rawMat <- function() {
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xraw <- xcmsRaw(file)
+    xraw <- xcmsRaw(file, profstep = 0)
     ## That's the old test; pretty arbitrary
     ##rawmat <- rawMat(xraw, mzrange = c(200,300), rtrange = c(2500,3000))
     ##checkEqualsNumeric(nrow(rawmat),31770)
