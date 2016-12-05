@@ -14,7 +14,7 @@ mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
 
 
 test_do_detectFeatures_matchedFilter <- function() {
-    xr <- xcmsRaw(fs[1])
+    xr <- xcmsRaw(fs[1], profstep = 0)
     ## We expect that changing a parameter has an influence on the result.
     mzVals <- xr@env$mz
     intVals <- xr@env$intensity
@@ -24,19 +24,19 @@ test_do_detectFeatures_matchedFilter <- function() {
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
-                                            binSize = 1)
+                                            binSize = 10)
     res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
-                                            binSize = 1,
+                                            binSize = 10,
                                             snthresh = 100)
     checkTrue(nrow(res1) > nrow(res2))
     res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
-                                            binSize = 2)
+                                            binSize = 20)
     checkTrue(nrow(res1) > nrow(res2))
 }
 
@@ -45,9 +45,11 @@ test_do_detectFeatures_matchedFilter <- function() {
 ## to provided mzML files.
 test_featureDetection_matchedFilter <- function() {
     library(MSnbase)
-    mfp <- MatchedFilterParam(binSize = 0.2, impute = "lin")
-    res <- xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
-                   step = binSize(mfp))
+    mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
+    suppressWarnings(
+        res <- xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
+                       step = binSize(mfp))
+    )
     ## onDisk
     onDisk <- readMSData2(mzf)
     res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")

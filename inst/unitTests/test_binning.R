@@ -13,7 +13,7 @@ test_profBin <- function() {
     ## Using real data:
     library(faahKO)
     fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
-    xr <- xcmsRaw(fs)
+    xr <- xcmsRaw(fs, profstep = 0)
     X <- xr@env$mz
     Y <- xr@env$intensity
     scanidx <- xr@scanindex

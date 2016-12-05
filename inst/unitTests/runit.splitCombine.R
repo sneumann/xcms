@@ -4,7 +4,8 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
 
-xs_1 <- xcmsSet(fs, profparam = list(step = 1))
+xs_1 <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
+                noise = 10000, snthresh = 50)
 
 testSplit <- function() {
     xsl <- split(faahko,sampclass(faahko))

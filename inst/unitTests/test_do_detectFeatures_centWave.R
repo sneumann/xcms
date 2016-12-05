@@ -68,18 +68,26 @@ test_featureDetection_centWave <- function() {
     ## OnDiskMSnExp
     onDisk <- readMSData2(f[1], msLevel. = 1)
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
-    res <- detectFeatures(onDisk, param = cwp, return.type = "list")
+    suppressWarnings(
+        res <- detectFeatures(onDisk, param = cwp, return.type = "list")
+    )
     checkEquals(res[[1]], peaks(xs)@.Data)
 
     ## MSnExp
     inMem <- readMSData(f[1], msLevel. = 1)
-    res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    suppressWarnings(
+        res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    )
     checkEquals(res_2[[1]], peaks(xs)@.Data)
 
     ## returning an xcmsSet
-    res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    suppressWarnings(
+        res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    )
     checkEquals(peaks(res), peaks(xs))
-    res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    suppressWarnings(
+        res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    )
     checkEquals(peaks(res), peaks(xs))
 }
 

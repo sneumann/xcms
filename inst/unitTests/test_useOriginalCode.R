@@ -16,11 +16,11 @@ test_useOriginalCode <- function() {
 ## Check if we switch between new and old code correctly:
 ## The results for binSize = 0.2 should differ between old
 ## and new (rounding errors).
-test_matchedFilter_orig_code <- function() {
+dontrun_test_matchedFilter_orig_code <- function() {
     require(faahKO)
     fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 
-    xr <- xcmsRaw(fs)
+    xr <- xcmsRaw(fs, profstep = 0)
     mz <- xr@env$mz
     int <- xr@env$intensity
     scantime <- xr@scantime
