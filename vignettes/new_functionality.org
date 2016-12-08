@@ -11,17 +11,17 @@
 #+BEGIN_EXPORT html
 ---
 title: "New and modified functionality in xcms"
+author: "Johannes Rainer"
 graphics: yes
+package: xcms
 output:
-  BiocStyle::html_document:
-    toc: false
+  BiocStyle::html_document2:
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{New and modified functionality in xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{xcms,RColorBrewer}
-  %\VignettePackage{xcms}
-  %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
 csl: biomed-central.csl
 references:
@@ -32,26 +32,14 @@ references:
     given: noname
 ---
 
-```{r style, echo = FALSE, results = 'asis', message=FALSE}
-BiocStyle::markdown()
-```
-
 #+END_EXPORT
-
-#+BEGIN_EXPORT html
-**Package**: `r Biocpkg("xcms")`<br />
-**Authors**: Johannes Rainer<br />
-**Modified**: 28 October, 2016<br />
-**Compiled**: `r date()`
-#+END_EXPORT
-
 
 * New functionality in =xcms=
 
 This document describes new functionality and changes to existing functionality
 in the =xcms= package introduced during the update to version /3/.
 
-#+BEGIN_SRC R :ravel message = FALSE
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   library(xcms)
   library(RColorBrewer)
 #+END_SRC

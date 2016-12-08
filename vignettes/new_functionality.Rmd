@@ -1,16 +1,16 @@
 ---
 title: "New and modified functionality in xcms"
+author: "Johannes Rainer"
 graphics: yes
+package: xcms
 output:
-  BiocStyle::html_document:
-    toc: false
+  BiocStyle::html_document2:
+    toc_float: true
 vignette: >
   %\VignetteIndexEntry{New and modified functionality in xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{xcms,RColorBrewer}
-  %\VignettePackage{xcms}
-  %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
 csl: biomed-central.csl
 references:
@@ -21,14 +21,6 @@ references:
     given: noname
 ---
 
-```{r style, echo = FALSE, results = 'asis', message=FALSE}
-BiocStyle::markdown()
-```
-
-**Package**: `r Biocpkg("xcms")`<br />
-**Authors**: Johannes Rainer<br />
-**Modified**: 28 October, 2016<br />
-**Compiled**: `r date()`
 
 # New functionality in `xcms`
 
@@ -39,6 +31,80 @@ in the `xcms` package introduced during the update to version *3*.
 library(xcms)
 library(RColorBrewer)
 ```
+
+
+## Modernized user interface
+
+The modernization of the user interface comprises the definition of a new method
+for feature detection, namely `detectFeatures`, that performs the dispatching to
+the various algorithms (e.g. *centWave*, *matchedFilter*) based on a parameter class
+submitted *via* the `param` argument. The rationale behind changing the name from
+`findPeaks` to `detectFeatures` to discriminate *peak* (i.e. mass peak mostly used in
+proteomics), from *feature* (which describes a peak in chromatographic space).
+
+The encapsulation of the parameters to a function into a parameter class (such
+as `CentWaveParam`) avoids busy function calls (with many single parameters to
+specify) and enables saving, reloading and reusing settings as well as, by
+adding them to the result objects, enabling the documentation of the data
+processing history. In addition, parameter validation can be performed within
+the parameter object and hence is no longer required in the analysis function.
+
+The implementation of the `detectFeatures` method for `OnDiskMSnExp` and `MSnExp`
+objects (from the `MSnbase` package) enable feature detection on these types of
+objects that represent the full MS data of an experiment along with all
+experiment relevant metadata. Loading the files first into an `MSnExp` or
+`OnDiskMSnExp` (the latter being specifically designed for large scale
+experiments) enables a first data inspection and quality assessment, followed by
+eventual subsetting and filtering (e.g. on retention time) before performing the
+feature detection on the thus processed data.
+
+Below we load the raw data files from the `faahKO` package as an `OnDiskMSnExp`
+object using the `readMSData2` function from the `MSnbase` package.
+
+```{r message = FALSE, warning = FALSE}
+## Reading the raw data using the MSnbase package
+library(MSnbase)
+library(xcms)
+## Load the CDF files from the faahKO
+cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
+		 full.names = TRUE)
+
+## Define the sample grouping.
+s_groups <- rep("KO", length(cdf_files))
+s_groups[grep(cdf_files, pattern = "WT")] <- "WT"
+## Define a data.frame that will be used as phenodata
+pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
+				      replacement = "", fixed = TRUE),
+		    sample_group = s_groups, stringsAsFactors = FALSE)
+
+## Read the data.
+raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
+```
+
+We next plot the total ion chromatogram (TIC) for all files within the
+experiment. Note that we are iteratively sub-setting the full data per file,
+which for `OnDiskMSnExp` is an efficient way to subset the data while ensuring
+that all data, including metadata, stays consistent.
+
+```{r faahKO-tic, message = FALSE, fig.align = 'center', fig.width = 8, fig.height = 4}
+library(RColorBrewer)
+sample_colors <- brewer.pal(3, "Set1")[1:2]
+names(sample_colors) <- c("KO", "WT")
+## Subset the full raw data by file and plot the data.
+tmp <- filterFile(raw_data, file = 1)
+plot(x = rtime(tmp), y = tic(tmp), xlab = "retention time", ylab = "TIC",
+     col = sample_colors[pData(tmp)$sample_group], type = "l")
+for (i in 2:length(fileNames(raw_data))) {
+    tmp <- filterFile(raw_data, file = i)
+    points(rtime(tmp), tic(tmp), type = "l",
+	   col = sample_colors[pData(tmp)$sample_group])
+}
+legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
+```
+
+-   Do the feature detection.
+-   Describe the feature detection methods.
+
 
 ## Binning and missing value imputation functions
 
@@ -122,6 +188,7 @@ of the bin with the missing value (`1` by default). The other missing values are
 set to a base value corresponding to half of the smallest bin value. Both
 methods thus yield same results, except for bins 15-17 (see Figure above).
 
+
 ## Core feature detection functions
 
 The core logic from the feature detection methods `findPeaks.centWave`,
@@ -146,16 +213,19 @@ One possible drawback from the introduction of this new layer is, that more
 objects get copied by R which *could* eventually result in a larger memory demand
 or performance decrease (while no such was decrease was observed up to now).
 
+
 ## Usability improvements
 
 -   `[` subsetting method for `xcmsRaw` objects that enables to subset an `xcmsRaw`
-      object to specific scans/spectra.
+    object to specific scans/spectra.
 -   `profMat` method to extract the *profile* matrix from the `xcmsRaw` object. This
     method should be used instead of directly accessing the `@env$profile` slot, as
     it will create the profile matrix on the fly if it was not pre-calculated (or
     if profile matrix generation settings have been changed).
 
+
 # Changes due to bug fixes and modified functionality
+
 
 ## Differences in linear interpolation of missing values (`profBinLin`).
 
@@ -216,6 +286,7 @@ the beginning and the end of the provided numeric vector. This can be disabled
 (to be compliant with `profBinLin`) by setting parameter `noInterpolAtEnds` to
 `TRUE` (like in the example above).
 
+
 ## Differences due to updates in `do_detectFeatures_matchedFilter`, respectively `findPeaks.matchedFilter`.
 
 The original `findPeaks.matchedFilter` (up to version 1.49.7) had several
@@ -247,11 +318,13 @@ function.
 While it is strongly discouraged, it is still possible to use to *old* code (from
 1.49.7) by calling `useOriginalCode(TRUE)`.
 
+
 ## Differences in `findPeaks.massifquant`
 
 -   Argument `scanrange` was ignored in the *original* old code (issue [#61](https://github.com/sneumann/xcms/issues/61)).
 -   The method returned a `matrix` if `withWave` was `0` and a `xcmsPeaks` object
     otherwise. The updated version returns **always** an `xcmsPeaks` object (issue #60).
+
 
 ## `scanrange` parameter in all `findPeaks` methods
 
@@ -270,6 +343,7 @@ These problems have been fixed in version 1.51.1 by first sub-setting the
 `xcmsRaw` object (using the `[` method) before actually performing the feature
 detection.
 
+
 # Under the hood changes
 
 These changes and updates will not have any large impact on the day-to-day use of
@@ -279,4 +353,43 @@ These changes and updates will not have any large impact on the day-to-day use o
     for data import. Besides ensuring easier maintenance, this enables also data
     import from *gzipped* mzML files.
 
+
+# Deprecated functions and files
+
+Here we list all of the functions and related files that are deprecated.
+
+-   `xcmsParallelSetup`, `xcmsPapply`, `xcmsClusterApply`: use `BiocParallel` package
+    instead to setup and perform parallel processing, either *via* the `BPPARAM`
+    parameter to function and methods, or by calling `register` to globally set
+    parallel processing.
+
+-   `profBin`, `profBinM`, `profBinLin`, `profBinLinM`, `profBinLinBase`, `profBinLinBaseM`:
+    replaced by the `binYonX` and `imputeLinInterpol` functions. Also, to create or
+    extract the profile matrix from an `xcmsRaw` object, the `profMat` method.
+
+
+## Deprecated
+
+
+### xcms 1.49:
+
+-   `xcmsParallelSetup` (Deprecated.R)
+-   `xcmsPapply` (Deprecated.R)
+-   `xcmsClusterApply` (Deprecated.R)
+
+
+### xcms 1.51:
+
+-   `profBin` (c.R)
+-   `profBinM` (c.R)
+-   `profBinLin` (c.R)
+-   `profBinLinM` (c.R)
+-   `profBinLinBase` (c.R)
+-   `profBinLinBaseM` (c.R)
+
+
+## Defunct
+
+
 # References
+
