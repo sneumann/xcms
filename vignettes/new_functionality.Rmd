@@ -27,7 +27,7 @@ references:
 This document describes new functionality and changes to existing functionality
 in the `xcms` package introduced during the update to version *3*.
 
-```{r message = FALSE}
+```{r message = FALSE, warning = FALSE}
 library(xcms)
 library(RColorBrewer)
 ```
@@ -324,6 +324,15 @@ While it is strongly discouraged, it is still possible to use to *old* code (fro
 -   Argument `scanrange` was ignored in the *original* old code (issue [#61](https://github.com/sneumann/xcms/issues/61)).
 -   The method returned a `matrix` if `withWave` was `0` and a `xcmsPeaks` object
     otherwise. The updated version returns **always** an `xcmsPeaks` object (issue #60).
+
+
+## Differences in *obiwarp* retention time correction
+
+Retention time correction using the obiwarp method uses the *profile* matrix
+(i.e. intensities binned in discrete bins along the mz axis). Profile matrix
+generation uses now the `binYonX` method which fixed some problems in the original
+binning and linear interpolation methods. Thus results might be slightly
+different.
 
 
 ## `scanrange` parameter in all `findPeaks` methods

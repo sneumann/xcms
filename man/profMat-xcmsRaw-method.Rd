@@ -7,7 +7,8 @@
 \alias{profile-matrix}
 \title{The profile matrix}
 \usage{
-\S4method{profMat}{xcmsRaw}(object, method, step, baselevel, basespace)
+\S4method{profMat}{xcmsRaw}(object, method, step, baselevel, basespace,
+  mzrange.)
 }
 \arguments{
 \item{object}{The \code{\linkS4class{xcmsRaw}} object.}
@@ -16,14 +17,14 @@
 \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
 section for more information.}
 
-\item{step}{Numeric of length 1 representing the m/z bin size.}
+\item{step}{numeric(1) representing the m/z bin size.}
 
-\item{baselevel}{Numeric of length one representing the base value to which
+\item{baselevel}{numeric(1) representing the base value to which
 empty elements (i.e. m/z bins without a measured intensity) should be set.
 Only considered if \code{method = "binlinbase"}. See \code{baseValue}
 parameter of \code{\link{imputeLinInterpol}} for more details.}
 
-\item{basespace}{Numeric of length one representing the m/z length after
+\item{basespace}{numeric(1) representing the m/z length after
 which the signal will drop to the base level. Linear interpolation will be
 used between consecutive data points falling within \code{2 * basespace} to
 each other. Only considered if \code{method = "binlinbase"}. If not
@@ -32,6 +33,9 @@ translated into the \code{distance} parameter of the
 \code{\link{imputeLinInterpol}} function by
 \code{distance = floor(basespace / step)}. See \code{distance} parameter
 of \code{\link{imputeLinInterpol}} for more details.}
+
+\item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
+be used for binnind. If not provided, the whole mz value range is used.}
 }
 \value{
 \code{profMat} returns the profile matrix (rows representing scans,

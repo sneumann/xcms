@@ -322,11 +322,11 @@ NULL
 ##'
 ##' @param ppm Maximal tolerated m/z deviation in consecutive scans in parts
 ##' per million (ppm).
-##' @param peakwidth Numeric of length 2 with the expected approximate
+##' @param peakwidth numeric(2) with the expected approximate
 ##' feature/peak width in chromatographic space. Given as a range (min, max)
 ##' in seconds.
-##' @param snthresh Signal to noise ratio cutoff.
-##' @param prefilter Numeric of length 2: \code{c(k, I)} specifying the prefilter
+##' @param snthresh numeric(1) defining the signal to noise ratio cutoff.
+##' @param prefilter numeric(2): \code{c(k, I)} specifying the prefilter
 ##' step for the first analysis step (ROI detection). Mass traces are only
 ##' retained if they contain at least \code{k} peaks with intensity \code{>= I}.
 ##' @param mzCenterFun Name of the function to calculate the m/z center of the
@@ -345,7 +345,7 @@ NULL
 ##' for peaks with overlapping retention times; can be negatove to allow overlap.
 ##' @param fitgauss Logical whether or not a Gaussian should be fitted to each
 ##' peak.
-##' @param noise Numeric of length 1 allowing to set a minimum intensity required
+##' @param noise numeric(1) allowing to set a minimum intensity required
 ##' for centroids to be considered in the first analysis step (centroids with
 ##' intensity \code{< noise} are omitted from ROI detection).
 ##' @param verboseColumns Logical whether additional feature meta data columns
@@ -357,7 +357,7 @@ NULL
 ##' \code{scmin} (start scan index), \code{scmax} (end scan index),
 ##' \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
 ##' (number of scans), \code{intensity} (summed intensity).
-##' @param firstBaselineCheck Logical of length 1. If \code{TRUE} continuous
+##' @param firstBaselineCheck logical(1). If \code{TRUE} continuous
 ##' data within regions of interest is checked to be above the first baseline.
 ##' @param roiScales Optional numeric vector with length equal to \code{roiList}
 ##' defining the scale for each region of interest in \code{roiList} that should
@@ -538,27 +538,27 @@ setClass("CentWaveParam",
 ##' detected using a signal-to-ration cut-off. For more details and
 ##' illustrations see [Smith 2006].
 ##'
-##' @param binSize Numeric of length one specifying the width of the
+##' @param binSize numeric(1) specifying the width of the
 ##' bins/slices in m/z dimension.
 ##' @param impute Character string specifying the method to be used for missing
 ##' value imputation. Allowed values are \code{"none"} (no linear interpolation),
 ##' \code{"lin"} (linear interpolation), \code{"linbase"} (linear interpolation
 ##' within a certain bin-neighborhood) and \code{"intlin"}. See
 ##' \code{\link{imputeLinInterpol}} for more details.
-##' @param fwhm Numeric of length one specifying the full width at half maximum
+##' @param fwhm numeric(1) specifying the full width at half maximum
 ##' of matched filtration gaussian model peak. Only used to calculate the actual
 ##' sigma, see below.
-##' @param sigma Numeric of length one specifying the standard deviation (width)
+##' @param sigma numeric(1) specifying the standard deviation (width)
 ##' of the matched filtration model peak.
-##' @param max Numeric of length one representing the maximum number of peaks
+##' @param max numeric(1) representing the maximum number of peaks
 ##' that are expected/will be identified per slice.
-##' @param snthresh Numeric of length one defining the signal to noise cutoff
+##' @param snthresh numeric(1) defining the signal to noise cutoff
 ##' to be used in the feature detection step.
-##' @param steps Numeric of length one defining the number of bins to be
+##' @param steps numeric(1) defining the number of bins to be
 ##' merged before filtration (i.e. the number of neighboring bins that will be
 ##' joined to the slice in which filtration and peak detection will be
 ##' performed).
-##' @param mzdiff Numeric of length one defining the minimum difference
+##' @param mzdiff numeric(1) defining the minimum difference
 ##' in m/z for peaks with overlapping retention times
 ##' @param index Logical specifying whether indicies should be returned instead
 ##' of values for m/z and retention times.
@@ -712,16 +712,16 @@ setClass("MatchedFilterParam",
 ##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
 ##' by specifying \code{withWave = TRUE}.
 ##'
-##' @param peakwidth Numeric of length 2. Only the first element is used by
+##' @param peakwidth numeric(2). Only the first element is used by
 ##' massifquant, which specifices the minimum feature length in time scans.
 ##' For \code{withWave = TRUE} the second argument represents the maximum
 ##' feature length subject to being greater than the mininum feature length
 ##' (see also documentation of \code{\link{do_detectFeatures_centWave}}).
-##' @param prefilter Numeric of length 2. The first argument is only used
+##' @param prefilter numeric(2). The first argument is only used
 ##' if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
 ##' for details. The second argument specifies the minimum threshold for the
 ##' maximum intensity of a feature that must be met.
-##' @param criticalValue Numeric of length 1. Suggested values:
+##' @param criticalValue numeric(1). Suggested values:
 ##' (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
 ##' prediciton margin of error. A real centroid belonging to a bonafide
 ##' feature must fall within the KF prediction margin of error. Much like

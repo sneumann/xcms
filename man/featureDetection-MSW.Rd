@@ -109,7 +109,7 @@ MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2, 30,
 \S4method{addParams}{MSWParam}(object) <- value
 }
 \arguments{
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
 \item{verboseColumns}{Logical whether additional feature meta data columns
 should be returned.}
@@ -117,27 +117,27 @@ should be returned.}
 \item{scales}{Numeric defining the scales of the continuous wavelet
 transform (CWT).}
 
-\item{nearbyPeak}{logical of length one whether to include nearby peaks of
+\item{nearbyPeak}{logical(1) whether to include nearby peaks of
 major peaks.}
 
-\item{peakScaleRange}{numeric of length one defining the scale range of the
+\item{peakScaleRange}{numeric(1) defining the scale range of the
 peak (larger than 5 by default).}
 
-\item{ampTh}{numeric of length one defining the minimum required relative
+\item{ampTh}{numeric(1) defining the minimum required relative
 amplitude of the peak (ratio of the maximum of CWT coefficients).}
 
-\item{minNoiseLevel}{numeric of length one defining the minimum noise level
+\item{minNoiseLevel}{numeric(1) defining the minimum noise level
 used in computing the SNR.}
 
-\item{ridgeLength}{numeric of length one defining the minimum highest scale
+\item{ridgeLength}{numeric(1) defining the minimum highest scale
 of the peak in 2-D CWT coefficient matrix.}
 
-\item{peakThr}{numeric of length one with the minimum absolute intensity
+\item{peakThr}{numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing function
 \code{\link[MassSpecWavelet]{sav.gol}} function is called to estimate the
 local intensity.}
 
-\item{tuneIn}{logical of length one whther to tune in the parameter
+\item{tuneIn}{logical(1) whther to tune in the parameter
 estimation of the detected peaks.}
 
 \item{...}{Additional parameters to be passed to the

@@ -22,7 +22,7 @@ spectra/scans of the data representing the retention time of each scan.}
 \item{valsPerSpect}{Numeric vector with the number of values for each
 spectrum.}
 
-\item{binSize}{Numeric of length one specifying the width of the
+\item{binSize}{numeric(1) specifying the width of the
 bins/slices in m/z dimension.}
 
 \item{impute}{Character string specifying the method to be used for missing
@@ -39,19 +39,19 @@ is only considered for \code{method = "linbase"} and corresponds to the
 element of an empty element that should be considered for linear interpolation. See
 details section for more information.}
 
-\item{fwhm}{Numeric of length one specifying the full width at half maximum
+\item{fwhm}{numeric(1) specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the actual
 sigma, see below.}
 
-\item{sigma}{Numeric of length one specifying the standard deviation (width)
+\item{sigma}{numeric(1) specifying the standard deviation (width)
 of the matched filtration model peak.}
 
-\item{max}{Numeric of length one representing the maximum number of peaks
+\item{max}{numeric(1) representing the maximum number of peaks
 that are expected/will be identified per slice.}
 
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
-\item{steps}{Numeric of length one defining the number of bins to be
+\item{steps}{numeric(1) defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will be
 joined to the slice in which filtration and peak detection will be
 performed).}

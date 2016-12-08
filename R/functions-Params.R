@@ -107,27 +107,27 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 ##' @param scales Numeric defining the scales of the continuous wavelet
 ##' transform (CWT).
 ##'
-##' @param nearbyPeak logical of length one whether to include nearby peaks of
+##' @param nearbyPeak logical(1) whether to include nearby peaks of
 ##' major peaks.
 ##'
-##' @param peakScaleRange numeric of length one defining the scale range of the
+##' @param peakScaleRange numeric(1) defining the scale range of the
 ##' peak (larger than 5 by default).
 ##'
-##' @param ampTh numeric of length one defining the minimum required relative
+##' @param ampTh numeric(1) defining the minimum required relative
 ##' amplitude of the peak (ratio of the maximum of CWT coefficients).
 ##'
-##' @param minNoiseLevel numeric of length one defining the minimum noise level
+##' @param minNoiseLevel numeric(1) defining the minimum noise level
 ##' used in computing the SNR.
 ##'
-##' @param ridgeLength numeric of length one defining the minimum highest scale
+##' @param ridgeLength numeric(1) defining the minimum highest scale
 ##' of the peak in 2-D CWT coefficient matrix.
 ##'
-##' @param peakThr numeric of length one with the minimum absolute intensity
+##' @param peakThr numeric(1) with the minimum absolute intensity
 ##' (above baseline) of peaks to be picked. If provided, the smoothing function
 ##' \code{\link[MassSpecWavelet]{sav.gol}} function is called to estimate the
 ##' local intensity.
 ##'
-##' @param tuneIn logical of length one whther to tune in the parameter
+##' @param tuneIn logical(1) whther to tune in the parameter
 ##' estimation of the detected peaks.
 ##'
 ##' @param ... Additional parameters to be passed to the

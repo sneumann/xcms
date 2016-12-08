@@ -924,6 +924,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         s <- idx[si]
         cat(samples[s], " ")
 
+        ##
+        ## Might be better to just get the profile matrix from the center object
+        ## outside of the for loop and then modifying a internal variable within
+        ## the loop - avoids creation of two profile matrices in each iteration.
         profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
 		if(is.null(scanrange)){
 			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)

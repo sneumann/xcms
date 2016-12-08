@@ -7,11 +7,11 @@
 breaks_on_binSize(fromX, toX, binSize)
 }
 \arguments{
-\item{fromX}{Numeric of length 1 specifying the lowest value for the bins.}
+\item{fromX}{numeric(1) specifying the lowest value for the bins.}
 
-\item{toX}{Numeric of length 1 specifying the largest value for the bins.}
+\item{toX}{numeric(1) specifying the largest value for the bins.}
 
-\item{binSize}{Numeric of length 1 defining the size of a bin.}
+\item{binSize}{numeric(1) defining the size of a bin.}
 }
 \value{
 A numeric vector defining the lower and upper bounds of the bins.

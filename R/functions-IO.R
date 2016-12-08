@@ -38,7 +38,7 @@ isMzMLFile <- function(x) {
 ##' scanindex, mz and intensity. For more details on the motivation to implement
 ##' this function see issue #65 on github.
 ##' @param x The file name.
-##' @param includeMSn Logical indicating whether MS level > 1 should be loaded
+##' @param includeMSn logical(1) indicating whether MS level > 1 should be loaded
 ##' too. Only supported for mzML files.
 ##' @param backendMzML Default backend to be used for mzML files. Can b wither
 ##' \code{"Ramp"} or \code{"pwiz"}.

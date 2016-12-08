@@ -7,12 +7,12 @@
 useOriginalCode(x)
 }
 \arguments{
-\item{x}{Logical of length one to specify whether or not original
+\item{x}{logical(1) to specify whether or not original
 old code should be used in corresponding functions. If not provided the
 function simply returns the value of the global option.}
 }
 \value{
-A logical of length one indicating whether old code is being
+logical(1) indicating whether old code is being
 used.
 }
 \description{

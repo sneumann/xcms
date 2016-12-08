@@ -27,13 +27,13 @@ spectrum.}
 \item{ppm}{Maximal tolerated m/z deviation in consecutive scans in parts
 per million (ppm).}
 
-\item{peakwidth}{Numeric of length 2 with the expected approximate
+\item{peakwidth}{numeric(2) with the expected approximate
 feature/peak width in chromatographic space. Given as a range (min, max)
 in seconds.}
 
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
-\item{prefilter}{Numeric of length 2: \code{c(k, I)} specifying the prefilter
+\item{prefilter}{numeric(2): \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
 retained if they contain at least \code{k} peaks with intensity \code{>= I}.}
 
@@ -57,14 +57,14 @@ for peaks with overlapping retention times; can be negatove to allow overlap.}
 \item{fitgauss}{Logical whether or not a Gaussian should be fitted to each
 peak.}
 
-\item{noise}{Numeric of length 1 allowing to set a minimum intensity required
+\item{noise}{numeric(1) allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity \code{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{Logical whether additional feature meta data columns
 should be returned.}
 
-\item{criticalValue}{Numeric of length 1. Suggested values:
+\item{criticalValue}{numeric(1). Suggested values:
 (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
 feature must fall within the KF prediction margin of error. Much like

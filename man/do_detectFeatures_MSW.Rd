@@ -14,7 +14,7 @@ spectra of one file/sample.}
 \item{int}{Numeric vector with the individual intensity values from all
 scans/spectra of one file/sample.}
 
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
 \item{verboseColumns}{Logical whether additional feature meta data columns
 should be returned.}

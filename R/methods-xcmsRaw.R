@@ -317,8 +317,8 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 ##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature detection
 ##' should be performed.
 ##' @inheritParams featureDetection-matchedFilter
-##' @param step Numeric of length one specifying the width of the
-##' bins/slices in m/z dimension.
+##' @param step numeric(1) specifying the width of the bins/slices in m/z
+##' dimension.
 ##' @param sleep (DEFUNCT). This parameter is no longer functional, as it would cause
 ##' problems in parallel processing mode.
 ##' @param scanrange Numeric vector defining the range of scans to which the original
@@ -959,7 +959,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
   newROI.list <- do_predictIsotopeROIs(object, xcmsPeaks, ppm, maxcharge, maxiso, mzIntervalExtension)
   if(length(newROI.list) == 0)
     return(xcmsPeaks)
-  
+
   ####################################################################################
   ## perform peak picking for predicted ROIs
   roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
@@ -1751,29 +1751,31 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
 })
 
 ############################################################
-## profStepPad ???
+## profStepPad
+## The difference to the profStep? seems only to be the way how the range
+## is calculated:
+## profStep: minmass <- round(min(object@env$mz)/value)*value
+## profStepPad: floor(mzrange(range(object@env$mz))[1])
 setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
-
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    if (!value)
-        return(object)
-
-    if (length(object@env$mz)==0) {
-        warning("MS1 scans empty. Skipping profile matrix calculation.")
+    if (!is.numeric(value) && value < 0)
+        stop("'value' has to be a positive number!")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
         return(object)
     }
-    mzrange <- range(object@env$mz)
-    ## calculate the profile matrix with whole-number limits
-    minmass <- floor(mzrange[1])
-    maxmass <- ceiling(mzrange[2])
-
-    num <- (maxmass - minmass)/value + 1
-    profFun <- match.profFun(object)
-    object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                  object@scanindex, num, minmass, maxmass,
-                                  FALSE, object@profparam)
+    if (value == 0) {
+        if ("profile" %in% ls(object@env)) {
+            rm("profile", envir = object@env)
+            message("Removing profile matrix.")
+        }
+        return(object)
+    }
+    mzr <- range(object@env$mz)
+    minmass <- floor(mzr[1])
+    maxmass <- ceiling(mzr[2])
     object@mzrange <- c(minmass, maxmass)
+    object@env$profile <- profMat(object, step = value,
+                                  mzrange. = c(minmass, maxmass))
     return(object)
 })
 
@@ -2998,14 +3000,14 @@ setMethod("[", signature(x = "xcmsRaw",
 ##' \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
 ##' section for more information.
 ##'
-##' @param step Numeric of length 1 representing the m/z bin size.
+##' @param step numeric(1) representing the m/z bin size.
 ##'
-##' @param baselevel Numeric of length one representing the base value to which
+##' @param baselevel numeric(1) representing the base value to which
 ##' empty elements (i.e. m/z bins without a measured intensity) should be set.
 ##' Only considered if \code{method = "binlinbase"}. See \code{baseValue}
 ##' parameter of \code{\link{imputeLinInterpol}} for more details.
 ##'
-##' @param basespace Numeric of length one representing the m/z length after
+##' @param basespace numeric(1) representing the m/z length after
 ##' which the signal will drop to the base level. Linear interpolation will be
 ##' used between consecutive data points falling within \code{2 * basespace} to
 ##' each other. Only considered if \code{method = "binlinbase"}. If not
@@ -3014,6 +3016,9 @@ setMethod("[", signature(x = "xcmsRaw",
 ##' \code{\link{imputeLinInterpol}} function by
 ##' \code{distance = floor(basespace / step)}. See \code{distance} parameter
 ##' of \code{\link{imputeLinInterpol}} for more details.
+##'
+##' @param mzrange. Optional numeric(2) manually specifying the mz value range to
+##' be used for binnind. If not provided, the whole mz value range is used.
 ##'
 ##' @seealso \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
 ##' \code{\link{imputeLinInterpol}} for the employed binning and
@@ -3041,7 +3046,8 @@ setMethod("[", signature(x = "xcmsRaw",
 setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
                                                              step,
                                                              baselevel,
-                                                             basespace) {
+                                                             basespace,
+                                                             mzrange.) {
     ## Call the .createProfileMatrix if the internal profile matrix is empty or
     ## if the settings differ from the internal settings.
     pi <- profinfo(object)
@@ -3065,6 +3071,12 @@ setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
             return(object@env$profile)
         }
     }
+    if (missing(mzrange.)) {
+        mzrange. <- NULL
+    } else {
+        if (length(mzrange.) != 2 | !is.numeric(mzrange.))
+            stop("If provided, 'mzrange.' has to be a numeric of length 2!")
+    }
     ## Calculate the profile matrix
     if (step <= 0)
         stop("Can not calculate a profile matrix with step=",step, "! Either",
@@ -3076,8 +3088,8 @@ setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
                                 valsPerSpect = diff(c(object@scanindex,
                                                       length(object@env$mz))),
                                 method = method, step = step,
-                                baselevel = baselevel,
-                                basespace = basespace)
+                                baselevel = baselevel, basespace = basespace,
+                                mzrange. = mzrange.)
     message("OK")
     res
 })

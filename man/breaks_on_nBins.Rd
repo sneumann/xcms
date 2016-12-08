@@ -7,11 +7,11 @@
 breaks_on_nBins(fromX, toX, nBins, shiftByHalfBinSize = FALSE)
 }
 \arguments{
-\item{fromX}{Numeric of length 1 specifying the lowest value for the bins.}
+\item{fromX}{numeric(1) specifying the lowest value for the bins.}
 
-\item{toX}{Numeric of length 1 specifying the largest value for the bins.}
+\item{toX}{numeric(1) specifying the largest value for the bins.}
 
-\item{nBins}{Integer of length 1 defining the number of bins.}
+\item{nBins}{numeric(1) defining the number of bins.}
 
 \item{shiftByHalfBinSize}{Logical indicating whether the bins should be shifted
 left by half bin size. This results centered bins, i.e. the first bin being

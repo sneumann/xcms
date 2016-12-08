@@ -39,10 +39,10 @@ valueCount2ScanIndex <- function(valCount){
 ##' \itemize{
 ##' \item \code{\link{do_detectFeatures_matchedFilter}}
 ##' }
-##' @param x Logical of length one to specify whether or not original
+##' @param x logical(1) to specify whether or not original
 ##' old code should be used in corresponding functions. If not provided the
 ##' function simply returns the value of the global option.
-##' @return A logical of length one indicating whether old code is being
+##' @return logical(1) indicating whether old code is being
 ##' used.
 ##' @author Johannes Rainer
 useOriginalCode <- function(x) {

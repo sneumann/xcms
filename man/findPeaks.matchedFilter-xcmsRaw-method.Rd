@@ -15,28 +15,28 @@
 \item{object}{The \code{\linkS4class{xcmsRaw}} object on which feature detection
 should be performed.}
 
-\item{fwhm}{Numeric of length one specifying the full width at half maximum
+\item{fwhm}{numeric(1) specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the actual
 sigma, see below.}
 
-\item{sigma}{Numeric of length one specifying the standard deviation (width)
+\item{sigma}{numeric(1) specifying the standard deviation (width)
 of the matched filtration model peak.}
 
-\item{max}{Numeric of length one representing the maximum number of peaks
+\item{max}{numeric(1) representing the maximum number of peaks
 that are expected/will be identified per slice.}
 
-\item{snthresh}{Numeric of length one defining the signal to noise cutoff
+\item{snthresh}{numeric(1) defining the signal to noise cutoff
 to be used in the feature detection step.}
 
-\item{step}{Numeric of length one specifying the width of the
-bins/slices in m/z dimension.}
+\item{step}{numeric(1) specifying the width of the bins/slices in m/z
+dimension.}
 
-\item{steps}{Numeric of length one defining the number of bins to be
+\item{steps}{numeric(1) defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will be
 joined to the slice in which filtration and peak detection will be
 performed).}
 
-\item{mzdiff}{Numeric of length one defining the minimum difference
+\item{mzdiff}{numeric(1) defining the minimum difference
 in m/z for peaks with overlapping retention times}
 
 \item{index}{Logical specifying whether indicies should be returned instead

@@ -557,19 +557,25 @@ remakeTIC<-function(object){
 ##' @param step Numeric specifying the size of the m/z bins.
 ##' @param baselevel Numeric specifying the base value.
 ##' @param basespace Numeric.
+##' @param mzrange. numeric(2) optionally specifying the mz value range
+##' for binning. This is to adopt the old profStepPad<- method used for obiwarp
+##' retention time correction that did the binning from whole-number limits.
 ##' @noRd
 .createProfileMatrix <- function(mz, int, valsPerSpect,
                                  method, step = 0.1, baselevel = NULL,
-                                 basespace = NULL) {
+                                 basespace = NULL,
+                                 mzrange. = NULL) {
     profMeths <- c("bin", "binlin", "binlinbase", "intlin")
     names(profMeths) <- c("none", "lin", "linbase", "intlin")
     method <- match.arg(method, profMeths)
     impute <- names(profMeths)[profMeths == method]
 
-    mrange <- range(mz)
-    mass <- seq(floor(mrange[1] / step) * step,
-                ceiling(mrange[2] / step) * step,
-                by = step)
+    if (length(mzrange.) != 2) {
+        mrange <- range(mz)
+        mzrange. <- c(floor(mrange[1] / step) * step,
+                      ceiling(mrange[2] / step) * step)
+    }
+    mass <- seq(mzrange.[1], mzrange.[2], by = step)
     mlength <- length(mass)
     ## Calculate the "real" bin size; old xcms code oddity that that's different
     ## from step.

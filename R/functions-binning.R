@@ -56,9 +56,9 @@
 ##' be used.
 ##' @param breaks Numeric vector defining the breaks for the bins, i.e. the
 ##' lower and upper values for each bin. See examples below.
-##' @param nBins Integer of length one defining the number of desired bins.
-##' @param binSize Numeric of length one defining the desired bin size.
-##' @param binFromX Optional numeric of length one allowing to manually specify
+##' @param nBins integer(1) defining the number of desired bins.
+##' @param binSize numeric(1) defining the desired bin size.
+##' @param binFromX Optional numeric(1) allowing to manually specify
 ##' the range of x-values to be used for binning.
 ##' This will affect only the calculation of the breaks for the bins
 ##' (i.e. if \code{nBins} or \code{binSize} is provided).
@@ -376,9 +376,9 @@ imputeLinInterpol <- function(x, baseValue, method = "lin", distance = 1L,
 ##' in the result vector thus defines the lower and upper boundary for the first
 ##' bin, the second and third value for the second bin and so on.
 ##' @title Generate breaks for binning
-##' @param fromX Numeric of length 1 specifying the lowest value for the bins.
-##' @param toX Numeric of length 1 specifying the largest value for the bins.
-##' @param nBins Integer of length 1 defining the number of bins.
+##' @param fromX numeric(1) specifying the lowest value for the bins.
+##' @param toX numeric(1) specifying the largest value for the bins.
+##' @param nBins numeric(1) defining the number of bins.
 ##' @param shiftByHalfBinSize Logical indicating whether the bins should be shifted
 ##' left by half bin size. This results centered bins, i.e. the first bin being
 ##' centered at \code{fromX} and the last around \code{toX}.
@@ -415,9 +415,9 @@ breaks_on_nBins <- function(fromX, toX, nBins, shiftByHalfBinSize = FALSE) {
 ##' desired bin size.
 ##' See examples for more details and a comparisom to R's \code{seq} function.
 ##' @title Generate breaks for binning using a defined bin size.
-##' @param fromX Numeric of length 1 specifying the lowest value for the bins.
-##' @param toX Numeric of length 1 specifying the largest value for the bins.
-##' @param binSize Numeric of length 1 defining the size of a bin.
+##' @param fromX numeric(1) specifying the lowest value for the bins.
+##' @param toX numeric(1) specifying the largest value for the bins.
+##' @param binSize numeric(1) defining the size of a bin.
 ##' @return A numeric vector defining the lower and upper bounds of the bins.
 ##' @author Johannes Rainer
 ##' @family functions to define bins

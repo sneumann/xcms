@@ -25,7 +25,7 @@ NEW FEATURES:
   MSnbase package.
 + Add new CentWaveParam, MatchedFilterParam, MassifquantParam and MSWParam
   parameter class to perform method dispatch in the detectFeatures method.
-
++ retcor.obiwarp uses the new binning methods for profile matrix generation.
 
 USER VISIBLE CHANGES:
 + scanrange,xcmsRaw reports always a scanrange of 1 and length(object@scantime).

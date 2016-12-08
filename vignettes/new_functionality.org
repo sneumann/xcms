@@ -331,6 +331,15 @@ While it is strongly discouraged, it is still possible to use to /old/ code (fro
 + The method returned a =matrix= if =withWave= was =0= and a =xcmsPeaks= object
   otherwise. The updated version returns *always* an =xcmsPeaks= object (issue #60).
 
+** Differences in /obiwarp/ retention time correction
+
+Retention time correction using the obiwarp method uses the /profile/ matrix
+(i.e. intensities binned in discrete bins along the mz axis). Profile matrix
+generation uses now the =binYonX= method which fixed some problems in the original
+binning and linear interpolation methods. Thus results might be slightly
+different.
+
+
 ** =scanrange= parameter in all =findPeaks= methods
 
 The =scanrange= in the =findPeaks= methods is supposed to enable the peak detection

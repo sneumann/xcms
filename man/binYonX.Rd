@@ -18,11 +18,11 @@ be used.}
 \item{breaks}{Numeric vector defining the breaks for the bins, i.e. the
 lower and upper values for each bin. See examples below.}
 
-\item{nBins}{Integer of length one defining the number of desired bins.}
+\item{nBins}{integer(1) defining the number of desired bins.}
 
-\item{binSize}{Numeric of length one defining the desired bin size.}
+\item{binSize}{numeric(1) defining the desired bin size.}
 
-\item{binFromX}{Optional numeric of length one allowing to manually specify
+\item{binFromX}{Optional numeric(1) allowing to manually specify
 the range of x-values to be used for binning.
 This will affect only the calculation of the breaks for the bins
 (i.e. if \code{nBins} or \code{binSize} is provided).

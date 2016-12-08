@@ -129,15 +129,15 @@ MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 \item{ppm}{Maximal tolerated m/z deviation in consecutive scans in parts
 per million (ppm).}
 
-\item{peakwidth}{Numeric of length 2. Only the first element is used by
+\item{peakwidth}{numeric(2). Only the first element is used by
 massifquant, which specifices the minimum feature length in time scans.
 For \code{withWave = TRUE} the second argument represents the maximum
 feature length subject to being greater than the mininum feature length
 (see also documentation of \code{\link{do_detectFeatures_centWave}}).}
 
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
-\item{prefilter}{Numeric of length 2. The first argument is only used
+\item{prefilter}{numeric(2). The first argument is only used
 if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
 for details. The second argument specifies the minimum threshold for the
 maximum intensity of a feature that must be met.}
@@ -162,14 +162,14 @@ for peaks with overlapping retention times; can be negatove to allow overlap.}
 \item{fitgauss}{Logical whether or not a Gaussian should be fitted to each
 peak.}
 
-\item{noise}{Numeric of length 1 allowing to set a minimum intensity required
+\item{noise}{numeric(1) allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with
 intensity \code{< noise} are omitted from ROI detection).}
 
 \item{verboseColumns}{Logical whether additional feature meta data columns
 should be returned.}
 
-\item{criticalValue}{Numeric of length 1. Suggested values:
+\item{criticalValue}{numeric(1). Suggested values:
 (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
 prediciton margin of error. A real centroid belonging to a bonafide
 feature must fall within the KF prediction margin of error. Much like
@@ -358,7 +358,7 @@ to the massifquant and centWave algorithm can be passed with a
 ## Create a MassifquantParam object
 mqp <- MassifquantParam()
 ## Change snthresh parameter
-snthresh(mqp) <- 15
+snthresh(mqp) <- 30
 mqp
 
 ## Perform the feature detection using massifquant on the files from the
@@ -368,7 +368,7 @@ library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData2(fls)
+raw_data <- readMSData2(fls[1:2])
 ## Perform the feature detection using the settings defined above. We're
 ## returning the results as an xcmsSet object.
 res <- detectFeatures(raw_data, param = mqp, return.type = "xcmsSet")

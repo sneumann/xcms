@@ -13,7 +13,7 @@
 \item{object}{The \code{\linkS4class{xcmsRaw}} object on which feature
 detection should be performed.}
 
-\item{snthresh}{Signal to noise ratio cutoff.}
+\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
 
 \item{verbose.columns}{Logical whether additional feature meta data columns
 should be returned.}
