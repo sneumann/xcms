@@ -1880,7 +1880,15 @@ do_detectFeatures_MS1 <- function() {
 }
 
 ############################################################
-## Part of the functionality from the "findPeaks.addPredictedIsotopeFeatures" / "findPeaks.centWaveWithPredictedIsotopeROIs"
+## Part of the functionality from the "findPeaks.addPredictedIsotopeFeatures" /
+## "findPeaks.centWaveWithPredictedIsotopeROIs"
+## Takes the peaks from an centWave run as input.
+##
+## The full centWaveWithPredictedIsotopeROIs method should then:
+## 1) call do_detectFeatures_centWave, with verboseColumns = TRUE
+## 2) call do_preditIsotopeROIs for the peaks from above.
+## 3) run a second do_detectFeautes_centWave using the isotope ROIs as ROIs.
+## 4) finally merge all peaks.
 do_predictIsotopeROIs <- function(object,
                                   xcmsPeaks, ppm=25,
                                   maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
@@ -1927,6 +1935,7 @@ do_predictIsotopeROIs <- function(object,
   if(nrow(newROI.matrix) == 0)
     return(list())
 
+  ## This should not be needed, as it has already been performed above.
   ## remove ROIs with weak signal content
   intensityThreshold <- 10
   newROI.matrix <- removeROIsWithoutSignal(object, newROI.matrix, intensityThreshold)
@@ -1940,6 +1949,402 @@ do_predictIsotopeROIs <- function(object,
   cat("Predicted ROIs: ", length(newROI.list), " new ROIs (", numberOfAdditionalIsotopeROIs, " isotope ROIs, ", numberOfAdditionalAdductROIs, " adduct ROIs) for ", length(presentROIs.list)," present ROIs.", "\n")
 
   return(newROI.list)
+}
+
+############################################################
+## Add new isotopes function.
+## Code taken from createNewIsotopes and put in here.
+do_define_isotopes_orig <- function(roiList, maxcharge = 3, maxiso = 5,
+                                    mzIntervalExtension = TRUE) {
+    isotopeDistance <- 1.0033548378
+    charges <- 1:maxcharge
+    isos <- 1:maxiso
+
+    isotopeStepSizesForCharge <- list()
+    for(charge in charges)
+        isotopeStepSizesForCharge[[charge]] <- isotopeDistance / charge
+
+    isotopeStepSizes <- list()
+    for(charge in charges)
+        isotopeStepSizes[[charge]] <- list()
+
+    for(charge in charges)
+        for(iso in isos)
+            isotopeStepSizes[[charge]][[iso]] <- isotopeStepSizesForCharge[[charge]] * iso
+
+    isotopePopulationMz <- list()
+    for(charge in charges)
+        for(iso in isos)
+            isotopePopulationMz[[length(isotopePopulationMz) + 1]] <- isotopeStepSizes[[charge]][[iso]]
+    isotopePopulationMz <- unlist(unique(isotopePopulationMz))
+
+    numberOfIsotopeROIs <- length(roiList) * length(isotopePopulationMz)
+    isotopeROIs.matrix <- matrix(nrow = numberOfIsotopeROIs, ncol = 8)
+    colnames(isotopeROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
+
+    ## complement found ROIs
+    for(roiIdx in 1:(length(roiList))){
+        for(mzIdx in 1:length(isotopePopulationMz)){
+            ## create new ROI!
+            mzDifference <- isotopePopulationMz[[mzIdx]]
+            if(mzIntervalExtension)
+                ## extend m/z interval for weak peaks
+                                        #mzIntervalExtension <- ROI.list[[roiIdx]]$mz * ppm / 1E6
+                mzIntervalExtension <- (roiList[[roiIdx]]["mzmax"] -
+                                        roiList[[roiIdx]]["mzmin"]) * 2
+            else
+                mzIntervalExtension <- 0
+
+            idx <- (roiIdx - 1) * length(isotopePopulationMz) + mzIdx
+            isotopeROIs.matrix[idx, ] <- c(
+                roiList[[roiIdx]]["mz"] + mzDifference,## XXX not used!
+                roiList[[roiIdx]]["mzmin"] + mzDifference - mzIntervalExtension,
+                roiList[[roiIdx]]["mzmax"] + mzDifference + mzIntervalExtension,
+                roiList[[roiIdx]]["scmin"],
+                roiList[[roiIdx]]["scmax"],
+                -1,  ##roiList[[roiIdx]]["length"],## XXX not used!
+                -1,  #ROI.list[[roiIdx]]$intensity ## XXX not used!
+                roiList[[roiIdx]]["scale"]
+            )
+        }
+    }
+    return(isotopeROIs.matrix)
+}
+## Tuned from the original code.
+##' @param features. \code{matrix} or \code{data.frame} with features for which
+##' isotopes should be predicted. Required columns are \code{"mz"},
+##' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
+##' \code{"intb"} and \code{"scale"}.
+##'
+##' @return a \code{matrix} with columns \code{"mz"}, \code{"mzmin"},
+##' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
+##' \code{"intensity"} (always -1) and \code{"scale"}.
+##' @noRd
+do_define_isotopes <- function(features., maxcharge = 3, maxiso = 5,
+                               mzIntervalExtension = TRUE) {
+    req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
+    if (is.null(dim(features.)))
+        stop("'features' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(features.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(features.))]
+        stop("'features' lacks required columns ",
+             paste0("'", not_there, "'", collapse = ","), "!")
+    }
+    if (is.data.frame(features.))
+        features. <- as.matrix(features.)
+
+    isotopeDistance <- 1.0033548378
+    charges <- 1:maxcharge
+    isos <- 1:maxiso
+
+    isotopePopulationMz <- unique(as.numeric(matrix(isos, ncol = 1) %*%
+                                             (isotopeDistance / charges)))
+    ## split the features into a list.
+    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+
+    newRois <- lapply(roiL, function(z) {
+        if (mzIntervalExtension)
+            mz_ext <- (z[3] - z[2]) * 2
+        else
+            mz_ext <- 0
+        return(cbind(mz = z[1] + isotopePopulationMz,
+                     mzmin = z[2] + isotopePopulationMz - mz_ext,
+                     mzmax = z[3] + isotopePopulationMz + mz_ext,
+                     scmin = z[4],
+                     scmax = z[5],
+                     length = -1,
+                     intensity = -1,
+                     scale = z[6])
+               )
+    })
+    return(do.call(rbind, newRois))
+}
+
+## Add new adducts function.
+do_define_adducts_orig <- function(roiList, polarity = "positive") {
+    ## considered adduct distances
+    ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion cyclotron resonance mass spectrometer for acquisition, analysis, and e-mailing of high-resolution exact-mass electrospray ionization mass spectral data
+    ## see also for contaminants: Interferences and contaminants encountered in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
+
+    mH  <-  1.0078250322
+    mNa <- 22.98976928
+    mK  <- 38.96370649
+    mC  <- 12
+    mN  <- 14.003074004
+    mO  <- 15.994914620
+    mS  <- 31.972071174
+    mCl <- 34.9688527
+    mBr <- 78.918338
+    mF  <- 18.998403163
+    mDMSO    <- mC*2+mH*6+mS+mO     # dimethylsulfoxid
+    mACN     <- mC*2+mH*3+mN        # acetonitril
+    mIsoProp <- mC*3+mH*8+mO        # isopropanol
+    mNH4     <- mN+mH*4             # ammonium
+    mCH3OH   <- mC+mH*3+mO+mH       # methanol
+    mH2O     <- mH*2+mO             # water
+    mFA      <- mC+mH*2+mO*2        # formic acid
+    mHAc     <- mC+mH*3+mC+mO+mO+mH # acetic acid
+    mTFA     <- mC+mF*3+mC+mO+mO+mH # trifluoroacetic acid
+
+    switch(polarity,
+           "positive"={
+               adductPopulationMz <- unlist(c(
+                   ## [M+H]+ to [M+H]+  (Reference)
+                   function(mass){ mass-mH+mNH4 },               ## [M+H]+ to [M+NH4]+
+                   function(mass){ mass-mH+mNa },                ## [M+H]+ to [M+Na]+
+                   function(mass){ mass+mCH3OH },                ## [M+H]+ to [M+CH3OH+H]+
+                   function(mass){ mass-mH+mK },                 ## [M+H]+ to [M+K]+
+                   function(mass){ mass+mACN },                  ## [M+H]+ to [M+ACN+H]+
+                   function(mass){ mass-2*mH+2*mNa },            ## [M+H]+ to [M+2Na-H]+
+                   function(mass){ mass+mIsoProp },              ## [M+H]+ to [M+IsoProp+H]+
+                   function(mass){ mass-mH+mACN+mNa },           ## [M+H]+ to [M+ACN+Na]+
+                   function(mass){ mass-2*mH+2*mK },             ## [M+H]+ to [M+2K-H]+
+                   function(mass){ mass+mDMSO },                 ## [M+H]+ to [M+DMSO+H]+
+                   function(mass){ mass+2*mACN },                ## [M+H]+ to [M+2*ACN+H]+
+                   function(mass){ mass+mIsoProp+mNa },          ## [M+H]+ to [M+IsoProp+Na+H]+ TODO double-charged?
+                   function(mass){ (mass-mH)*2+mH },             ## [M+H]+ to [2M+H]+
+                   function(mass){ (mass-mH)*2+mNH4 },           ## [M+H]+ to [2M+NH4]+
+                   function(mass){ (mass-mH)*2+mNa },            ## [M+H]+ to [2M+Na]+
+                   function(mass){ (mass-mH)*2+mK },             ## [M+H]+ to [2M+K]+
+               function(mass){ (mass-mH)*2+mACN+mH },        ## [M+H]+ to [2M+ACN+H]+
+               function(mass){ (mass-mH)*2+mACN+mNa },       ## [M+H]+ to [2M+ACN+Na]+
+               function(mass){((mass-mH)*2+3*mH2O+2*mH)/2 }, ## [M+H]+ to [2M+3*H2O+2*H]2+
+               function(mass){ (mass+mH)/2 },                ## [M+H]+ to [M+2*H]2+
+               function(mass){ (mass+mNH4)/2 },              ## [M+H]+ to [M+H+NH4]2+
+               function(mass){ (mass+mNa)/2 },               ## [M+H]+ to [M+H+Na]2+
+               function(mass){ (mass+mK)/2 },                ## [M+H]+ to [M+H+K]2+
+               function(mass){ (mass+mACN+mH)/2 },           ## [M+H]+ to [M+ACN+2*H]2+
+               function(mass){ (mass-mH+2*mNa)/2 },          ## [M+H]+ to [M+2*Na]2+
+               function(mass){ (mass+2*mACN+mH)/2 },         ## [M+H]+ to [M+2*ACN+2*H]2+
+               function(mass){ (mass+3*mACN+mH)/2 },         ## [M+H]+ to [M+3*ACN+2*H]2+
+               function(mass){ (mass+2*mH)/3 },              ## [M+H]+ to [M+3*H]3+
+               function(mass){ (mass+mH+mNa)/3 },            ## [M+H]+ to [M+2*H+Na]3+
+               function(mass){ (mass+2*mNa)/3 },             ## [M+H]+ to [M+H+2*Na]3+
+               function(mass){ (mass-mH+3*mNa)/3 }           ## [M+H]+ to [M+3*Na]3+
+             ))
+           },
+           "negative"={
+             adductPopulationMz <- unlist(c(
+               ## [M-H]+ to [M-H]+  (Reference)
+               function(mass){ mass-mH2O },             ## [M-H]+ to [M-H2O-H]+
+               function(mass){ mass-mH+mNa },           ## [M-H]+ to [M+Na-2*H]+
+               function(mass){ mass+mH+mCl },           ## [M-H]+ to [M+Cl]+
+               function(mass){ mass-mH+mK },            ## [M-H]+ to [M+K-2*H]+
+               function(mass){ mass+mFA },              ## [M-H]+ to [M+FA-H]+
+               function(mass){ mass+mHAc },             ## [M-H]+ to [M+HAc-H]+
+               function(mass){ mass+mH+mBr },           ## [M-H]+ to [M+Br]+
+               function(mass){ mass+mTFA },             ## [M-H]+ to [M+TFA-H]+
+               function(mass){ (mass+mH)*2-mH },        ## [M-H]+ to [2M-H]+
+               function(mass){ (mass+mH)*2+mFA-mH },    ## [M-H]+ to [2M+FA-H]+
+               function(mass){ (mass+mH)*2+mHAc-mH },   ## [M-H]+ to [2M+HAc-H]+
+               function(mass){ (mass+mH)*3-mH },        ## [M-H]+ to [3M-H]+
+               function(mass){ (mass-mH)/2 },           ## [M-H]+ to [M-2*H]2+
+               function(mass){ (mass-2*mH)/3 }          ## [M-H]+ to [M-3*H]3+
+             ))
+           },
+           "unknown"={
+             warning(paste("Unknown polarity! No adduct ROIs have been added.", sep = ""))
+           },
+           stop(paste("Unknown polarity (", polarity, ")!", sep = ""))
+    )
+
+    numberOfAdductROIs <- length(roiList) * length(adductPopulationMz)
+    adductROIs.matrix <- matrix(nrow = numberOfAdductROIs, ncol = 8)
+    colnames(adductROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
+
+    for(roiIdx in 1:(length(roiList))){
+      for(mzIdx in 1:length(adductPopulationMz)){
+        ## create new ROI!
+        mzDifference <- adductPopulationMz[[mzIdx]](roiList[[roiIdx]]["mz"])
+        idx <- (roiIdx - 1) * length(adductPopulationMz) + mzIdx
+        if(roiList[[roiIdx]]["mzmin"] + mzDifference > 0){
+          adductROIs.matrix[idx, ] <- c(
+            roiList[[roiIdx]]["mz"] + mzDifference,## XXX not used!
+            roiList[[roiIdx]]["mzmin"] + mzDifference,
+            roiList[[roiIdx]]["mzmax"] + mzDifference,
+            roiList[[roiIdx]]["scmin"],
+            roiList[[roiIdx]]["scmax"],
+            -1, ## roiList[[roiIdx]]["length"],## XXX not used!
+            -1,  #ROI.list[[roiIdx]]$intensity ## XXX not used!
+            roiList[[roiIdx]]["scale"]
+          )
+        }
+      }
+    }
+    return(adductROIs.matrix)
+}
+##' @features. see do_define_isotopes
+##' @param polarity character(1) defining the polarity, either \code{"positive"}
+##' or \code{"negative"}.
+##' @return see do_define_isotopes.
+do_define_adducts <- function(features., polarity = "positive") {
+    req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
+    if (is.null(dim(features.)))
+        stop("'features' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(features.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(features.))]
+        stop("'features' lacks required columns ",
+             paste0("'", not_there, "'", collapse = ","), "!")
+    }
+    if (is.data.frame(features.))
+        features. <- as.matrix(features.)
+    ## considered adduct distances
+    ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc
+    ## Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion
+    ## cyclotron resonance mass spectrometer for acquisition, analysis, and
+    ## e-mailing of high-resolution exact-mass electrospray ionization mass
+    ## spectral data
+    ## see also for contaminants: Interferences and contaminants encountered
+    ## in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young
+    ## and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
+
+    mH  <-  1.0078250322
+    mNa <- 22.98976928
+    mK  <- 38.96370649
+    mC  <- 12
+    mN  <- 14.003074004
+    mO  <- 15.994914620
+    mS  <- 31.972071174
+    mCl <- 34.9688527
+    mBr <- 78.918338
+    mF  <- 18.998403163
+    mDMSO    <- mC * 2 + mH * 6 + mS + mO        # dimethylsulfoxid
+    mACN     <- mC * 2 + mH * 3 + mN             # acetonitril
+    mIsoProp <- mC * 3 + mH * 8 + mO             # isopropanol
+    mNH4     <- mN + mH * 4                      # ammonium
+    mCH3OH   <- mC + mH * 3 + mO + mH            # methanol
+    mH2O     <- mH * 2 + mO                      # water
+    mFA      <- mC + mH * 2 + mO * 2             # formic acid
+    mHAc     <- mC + mH * 3 + mC + mO + mO + mH  # acetic acid
+    mTFA     <- mC + mF * 3 + mC + mO + mO + mH  # trifluoroacetic acid
+
+    switch(polarity,
+           "positive"={
+               adductPopulationMz <- unlist(c(
+                   ## [M+H]+ to [M+H]+  (Reference)
+                   ## [M+H]+ to [M+NH4]+
+                   function(mass){ mass - mH + mNH4 },
+                   ## [M+H]+ to [M+Na]+
+                   function(mass){ mass - mH + mNa },
+                   ## [M+H]+ to [M+CH3OH+H]+
+                   function(mass){ mass + mCH3OH },
+                   ## [M+H]+ to [M+K]+
+                   function(mass){ mass - mH + mK },
+                   ## [M+H]+ to [M+ACN+H]+
+                   function(mass){ mass + mACN },
+                   ## [M+H]+ to [M+2Na-H]+
+                   function(mass){ mass - 2 * mH + 2 * mNa },
+                   ## [M+H]+ to [M+IsoProp+H]+
+                   function(mass){ mass + mIsoProp },
+                   ## [M+H]+ to [M+ACN+Na]+
+                   function(mass){ mass - mH + mACN + mNa },
+                   ## [M+H]+ to [M+2K-H]+
+                   function(mass){ mass - 2 * mH + 2 * mK },
+                   ## [M+H]+ to [M+DMSO+H]+
+                   function(mass){ mass + mDMSO },
+                   ## [M+H]+ to [M+2*ACN+H]+
+                   function(mass){ mass + 2 * mACN },
+                   ## [M+H]+ to [M+IsoProp+Na+H]+ TODO double-charged?
+                   function(mass){ mass + mIsoProp + mNa },
+                   ## [M+H]+ to [2M+H]+
+                   function(mass){ (mass - mH) * 2 + mH },
+                   ## [M+H]+ to [2M+NH4]+
+                   function(mass){ (mass - mH) * 2 + mNH4 },
+                   ## [M+H]+ to [2M+Na]+
+                   function(mass){ (mass - mH) * 2 + mNa },
+                   ## [M+H]+ to [2M+K]+
+                   function(mass){ (mass - mH) * 2 + mK },
+                   ## [M+H]+ to [2M+ACN+H]+
+                   function(mass){ (mass - mH) * 2 + mACN + mH },
+                   ## [M+H]+ to [2M+ACN+Na]+
+                   function(mass){ (mass - mH) * 2 + mACN + mNa },
+                   ## [M+H]+ to [2M+3*H2O+2*H]2+
+                   function(mass){((mass - mH) * 2 + 3 * mH2O + 2 * mH) / 2 },
+                   ## [M+H]+ to [M+2*H]2+
+                   function(mass){ (mass + mH) / 2 },
+                   ## [M+H]+ to [M+H+NH4]2+
+                   function(mass){ (mass + mNH4) / 2 },
+                   ## [M+H]+ to [M+H+Na]2+
+                   function(mass){ (mass + mNa) / 2 },
+                   ## [M+H]+ to [M+H+K]2+
+                   function(mass){ (mass + mK) / 2 },
+                   ## [M+H]+ to [M+ACN+2*H]2+
+                   function(mass){ (mass + mACN + mH) / 2 },
+                   ## [M+H]+ to [M+2*Na]2+
+                   function(mass){ (mass - mH + 2 * mNa) / 2 },
+                   ## [M+H]+ to [M+2*ACN+2*H]2+
+                   function(mass){ (mass + 2 * mACN + mH) / 2 },
+                   ## [M+H]+ to [M+3*ACN+2*H]2+
+                   function(mass){ (mass + 3 * mACN + mH) / 2 },
+                   ## [M+H]+ to [M+3*H]3+
+                   function(mass){ (mass + 2 * mH) / 3 },
+                   ## [M+H]+ to [M+2*H+Na]3+
+                   function(mass){ (mass + mH + mNa) / 3 },
+                   ## [M+H]+ to [M+H+2*Na]3+
+                   function(mass){ (mass + 2 * mNa) / 3 },
+                   ## [M+H]+ to [M+3*Na]3+
+                   function(mass){ (mass - mH + 3 * mNa) / 3 }
+               ))
+           },
+           "negative" = {
+               adductPopulationMz <- unlist(c(
+                   ## [M-H]+ to [M-H]+  (Reference)
+                   ## [M-H]+ to [M-H2O-H]+
+                   function(mass){ mass - mH2O },
+                   ## [M-H]+ to [M+Na-2*H]+
+                   function(mass){ mass - mH + mNa },
+                   ## [M-H]+ to [M+Cl]+
+                   function(mass){ mass + mH + mCl },
+                   ## [M-H]+ to [M+K-2*H]+
+                   function(mass){ mass - mH + mK },
+                   ## [M-H]+ to [M+FA-H]+
+                   function(mass){ mass + mFA },
+                   ## [M-H]+ to [M+HAc-H]+
+                   function(mass){ mass + mHAc },
+                   ## [M-H]+ to [M+Br]+
+                   function(mass){ mass + mH + mBr },
+                   ## [M-H]+ to [M+TFA-H]+
+                   function(mass){ mass + mTFA },
+                   ## [M-H]+ to [2M-H]+
+                   function(mass){ (mass + mH) * 2 - mH },
+                   ## [M-H]+ to [2M+FA-H]+
+                   function(mass){ (mass + mH) * 2 + mFA - mH },
+                   ## [M-H]+ to [2M+HAc-H]+
+                   function(mass){ (mass + mH) * 2 + mHAc - mH },
+                   ## [M-H]+ to [3M-H]+
+                   function(mass){ (mass + mH) * 3 - mH },
+                   ## [M-H]+ to [M-2*H]2+
+                   function(mass){ (mass - mH) / 2 },
+                   ## [M-H]+ to [M-3*H]3+
+                   function(mass){ (mass - 2 * mH) / 3 }
+               ))
+           },
+           "unknown"={
+             warning("Unknown polarity! No adduct ROIs have been added.")
+           },
+           stop("Unknown polarity (", polarity, ")!")
+    )
+
+    req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
+    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+
+    newRois <- lapply(roiL, function(z) {
+        mzDiff <- unlist(lapply(adductPopulationMz, function(x) {
+            do.call(x, list(mass = z[1]))
+        }))
+        return(cbind(mz = z[1] + mzDiff,
+                     mzmin = z[2] + mzDiff,
+                     mzmax = z[3] + mzDiff,
+                     scmin = z[4],
+                     scmax = z[5],
+                     length = -1,
+                     intensity = -1,
+                     scale = z[6]))
+    })
+
+    newRois <- do.call(rbind, newRois)
+    ## Remove ROIs with negative or zero mzmin.
+    return(newRois[newRois[, "mzmin"] > 0, , drop = FALSE])
 }
 
 
@@ -1978,4 +2383,47 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
                  as.integer(scanBack), PACKAGE ='xcms' )
     )
     res
+}
+
+############################################################
+## do_centWaveOnPredictedIsotopes
+## This is essentially the new part of the centWaveWithPredictedIsotopeROIs:
+## Given the peaks from an centWave run:
+## 1) Predict isotope ROIs
+## 2) Predict adduct ROIs
+## 3) Remove redundant and overlapping ROIs.
+## 4) Remove ROIs that are empty or not within the mz range.
+## 5) run centWave on the new ones.
+do_detectFeatures_centWaveOnPredictedIsotopes <- function(mz, int, scantime,
+                                                          valsPerSpect, ppm = 25,
+                                                          peakwidth = c(20, 50),
+                                                          snthresh = 10,
+                                                          prefilter = c(3, 100),
+                                                          mzCenterFun = "wMean",
+                                                          integrate = 1,
+                                                          mzdiff = -0.001,
+                                                          fitgauss = FALSE,
+                                                          noise = 0,
+                                                          verboseColumns = FALSE,
+                                                          roiList = list(),
+                                                          firstBaselineCheck = TRUE,
+                                                          roiScales = NULL,
+                                                          snthreshIsoROIs = 6.25,
+                                                          maxCharge = 3,
+                                                          maxIso = 5,
+                                                          mzIntervalExtension = TRUE,
+                                                          polarity = "unknown") {
+    ## First centWave
+
+    ## polarity.
+
+    ## Check features. parameter.
+    if (addNewIsotopeROIs)
+        iso_ROIs <- do_define_isotopes(features. = features.,
+                                       maxcharge = maxcharge,
+                                       maxiso = maxiso,
+                                       mzIntervalExtension = mzIntervalExtension)
+    if (addNewAdductROIs)
+        add_ROIs <- do_define_adducts(features. = features., polarity = polarity)
+
 }

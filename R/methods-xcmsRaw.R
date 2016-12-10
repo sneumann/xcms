@@ -916,35 +916,56 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25,
 
 ############################################################
 ## findPeaks.centWaveWithPredictedIsotopeROIs
-setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
-                                                                            prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                                            fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                                            sleep=0, verbose.columns=FALSE, ROI.list=list(),
-                                                                            firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
-  ## perform tradictional peak picking
-  xcmsPeaks <- findPeaks.centWave(
-    object = object, ppm=ppm, peakwidth=peakwidth, snthresh=snthresh,
-    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
-    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-    sleep=sleep, verbose.columns=TRUE, ROI.list=ROI.list,
-    firstBaselineCheck=firstBaselineCheck, roiScales=roiScales
-  )
+## Performs first a centWave analysis and based on the identified features
+## defines ROIs for a second centWave run to check for presence of
+## predicted isotopes for the first features.
+setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw",
+          function(object, ppm = 25, peakwidth = c(20,50), snthresh = 10,
+                   prefilter = c(3,100), mzCenterFun = "wMean", integrate = 1,
+                   mzdiff = -0.001, fitgauss = FALSE, scanrange = numeric(),
+                   noise = 0, sleep = 0, verbose.columns = FALSE,
+                   ROI.list = list(), firstBaselineCheck = TRUE,
+                   roiScales = NULL, snthreshIsoROIs = 6.25, maxcharge = 3,
+                   maxiso = 5, mzIntervalExtension = TRUE) {
+              ## perform tradictional peak picking
+              xcmsPeaks <- findPeaks.centWave(
+                  object = object, ppm = ppm, peakwidth = peakwidth,
+                  snthresh = snthresh, prefilter = prefilter,
+                  mzCenterFun = mzCenterFun, integrate = integrate,
+                  mzdiff = mzdiff, fitgauss = fitgauss, scanrange = scanrange,
+                  noise = noise, sleep = sleep, verbose.columns = TRUE,
+                  ROI.list = ROI.list, firstBaselineCheck = firstBaselineCheck,
+                  roiScales = roiScales)
 
-  xcmsPeaksWithAdditionalIsotopeFeatures <- findPeaks.addPredictedIsotopeFeatures(
-    object = object, ppm=ppm, peakwidth=peakwidth,
-    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
-    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-    sleep=sleep, verbose.columns=verbose.columns,
-    xcmsPeaks=xcmsPeaks, snthresh=snthreshIsoROIs, maxcharge=maxcharge, maxiso=maxiso, mzIntervalExtension=mzIntervalExtension
-  )
+              return(
+                  findPeaks.addPredictedIsotopeFeatures(object = object,
+                                                        ppm = ppm,
+                                                        peakwidth = peakwidth,
+                                                        prefilter = prefilter,
+                                                        mzCenterFun = mzCenterFun,
+                                                        integrate = integrate,
+                                                        mzdiff = mzdiff,
+                                                        fitgauss = fitgauss,
+                                                        scanrange = scanrange,
+                                                        noise = noise,
+                                                        sleep = sleep,
+                                                        verbose.columns = verbose.columns,
+                                                        xcmsPeaks = xcmsPeaks,
+                                                        snthresh = snthreshIsoROIs,
+                                                        maxcharge = maxcharge,
+                                                        maxiso = maxiso,
+                                                        mzIntervalExtension = mzIntervalExtension
+                                                        ))
+          })
 
-  return(xcmsPeaksWithAdditionalIsotopeFeatures)
-})
-setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50),
-                                                                            prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                                            fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                                            sleep=0, verbose.columns=FALSE,
-                                                                            xcmsPeaks, snthresh=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
+setMethod("findPeaks.addPredictedIsotopeFeatures",
+          "xcmsRaw", function(object, ppm = 25, peakwidth = c(20,50),
+                              prefilter = c(3,100), mzCenterFun = "wMean",
+                              integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
+                              scanrange = numeric(), noise=0, ## noise.local=TRUE,
+                              sleep = 0, verbose.columns = FALSE,
+                              xcmsPeaks, snthresh = 6.25, maxcharge = 3,
+                              maxiso = 5, mzIntervalExtension = TRUE) {
   if(nrow(xcmsPeaks) == 0){
     warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
     return(xcmsPeaks)
@@ -954,13 +975,14 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
   if(any(is.na(match(x = c("scmin", "scmax"), table = colnames(xcmsPeaks)))))
     stop("Error: peak list >xcmsPeaks< is missing the columns 'scmin' and 'scmax' ! Please set parameter >verbose.columns< to TRUE for peak picking with 'centWave' and try again ! \n")
 
-  ####################################################################################
+  ##############################################################################
   ## predict new ROIs
-  newROI.list <- do_predictIsotopeROIs(object, xcmsPeaks, ppm, maxcharge, maxiso, mzIntervalExtension)
+  newROI.list <- do_predictIsotopeROIs(object, xcmsPeaks, ppm, maxcharge,
+                                       maxiso, mzIntervalExtension)
   if(length(newROI.list) == 0)
     return(xcmsPeaks)
 
-  ####################################################################################
+  ##############################################################################
   ## perform peak picking for predicted ROIs
   roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
   xcmsPeaks2 <- findPeaks.centWave(
@@ -1312,6 +1334,9 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
 
   return(resultObj)
 }
+
+
+
 
 ############################################################
 ## findPeaks.MSW

@@ -63,7 +63,10 @@ setClass("xcmsSet",
                                           return(inherits(z, "ProcessHistory"))
                                       }))
                  if (!all(inh))
-                     msg <- validMsg(msg, "Slot '.processHistory' should only contain 'ProcessHistory' objects!")
+                     msg <- validMsg(msg,
+                                     paste0("Slot '.processHistory' should",
+                                            " only contain 'ProcessHistory'",
+                                            " objects!"))
              }
              if (!is.null(msg))
                  return(msg)
@@ -353,10 +356,11 @@ NULL
 ##' @param roiList An optional list of regions-of-interest (ROI) representing
 ##' detected mass traces. If ROIs are submitted the first analysis step is
 ##' omitted and feature detection is performed on the submitted ROIs. Each
-##' ROI object in the list is expected to have the following slots specified:
+##' ROI is expected to have the following elements specified:
 ##' \code{scmin} (start scan index), \code{scmax} (end scan index),
 ##' \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
-##' (number of scans), \code{intensity} (summed intensity).
+##' (number of scans), \code{intensity} (summed intensity). Each ROI should be
+##' represented by a \code{list} of elements or a single row \code{data.frame}.
 ##' @param firstBaselineCheck logical(1). If \code{TRUE} continuous
 ##' data within regions of interest is checked to be above the first baseline.
 ##' @param roiScales Optional numeric vector with length equal to \code{roiList}
@@ -1050,6 +1054,7 @@ setClass("MSWParam",
              }
          })
 
+##
 
 ## What should the data contain:
 ## o The peak/feature data.

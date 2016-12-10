@@ -5,7 +5,7 @@ test.addPredictedIsotopeFeatures <- function() {
     p1 <- findPeaks.centWave(xr, verbose.columns = TRUE, noise = 10000)
 
     p2 <- findPeaks.addPredictedIsotopeFeatures(
-        object = xr, xcmsPeaks = p1 )
+        object = xr, xcmsPeaks = p1, noise = 10000 )
 
     checkTrue(nrow(p1) < nrow(p2))
 }

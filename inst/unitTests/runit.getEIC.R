@@ -339,10 +339,17 @@ test.issue7 <- function(){
     ## options(BioC=BioCBefore)
 }
 
-test.getEICxset <- function() {
+test_getEICxset <- function() {
     xset <- fillPeaks(group(faahko))
     e <- getEIC(xset, sampleidx = c(1,2), groupidx = c(1,2), rtrange=200)
-    plot(e)
+    checkEquals(sampnames(e), c("ko15", "ko16"))
+    ## plot(e)
+    ## Reproduce issue #92
+    e <- getEIC(xset, sampleidx = c(5, 9), groupidx = c(1, 2), rtrange = 200)
+    checkEquals(sampnames(e), sampnames(xset)[c(5, 9)])
+    sn <- sampnames(xset)[c(5, 9)]
+    e <- getEIC(xset, sampleidx = sn, groupidx = c(1, 2), rtrange = 200)
+    checkEquals(sampnames(e), sn)
 }
 
 test.getEICretcor <- function() {
