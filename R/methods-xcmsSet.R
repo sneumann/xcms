@@ -1394,7 +1394,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         flush.console()
         ## getXcmsRaw takes care of rt correction, susetting to scanrage and other
         ## stuff.
-        lcraw <- getXcmsRaw(object, sampleidx=i, rt=rt)
+        lcraw <- getXcmsRaw(object, sampleidx = sampidx[i], rt=rt)
         currenteic <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
         eic[[i]] <- currenteic@eic[[1]]
         rm(lcraw)

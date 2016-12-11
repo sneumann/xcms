@@ -125,7 +125,30 @@ test.issue7 <- function(){
 test.getEICxset <- function() {
     xset <- fillPeaks(group(faahko))
     e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2), rtrange=200)
-    plot(e)
+    ## plot(e)
+    ## Reproduce issue #92
+    e <- getEIC(xset, sampleidx = c(5, 9), groupidx = c(1, 2), rtrange = 200)
+    checkEquals(sampnames(e), sampnames(xset)[c(5, 9)])
+    ## Compare with raw data.
+    rtr <- matrix(c(2876, 2932), nrow = 1)
+    mzr <- matrix(c(200.1, 200.1), nrow = 1)
+    e <- getEIC(xset, sampleidx = c(1), mzrange = mzr,
+                rtrange = rtr, rt = "raw")
+    ## Read the raw data of file 1:
+    xr <- xcmsRaw(filepaths(xset)[1], profstep = profStep(xset))
+    e_2 <- getEIC(xr, mzrange = mzr, rtrange = rtr, step = 0.1)
+    checkEquals(e_2@eic[[1]][[1]], e@eic[[1]][[1]])
+    ## Check what happens if we select another -> issue #92
+    e <- getEIC(xset, sampleidx = c(5, 9), mzrange = mzr,
+                rtrange = rtr, rt = "raw")
+    ## sample 5
+    xr <- xcmsRaw(filepaths(xset)[5], profstep = profStep(xset))
+    e_2 <- getEIC(xr, mzrange = mzr, rtrange = rtr, step = 0.1)
+    checkEquals(e_2@eic[[1]][[1]], e@eic[[1]][[1]])
+    ## sample 9
+    xr <- xcmsRaw(filepaths(xset)[9], profstep = profStep(xset))
+    e_2 <- getEIC(xr, mzrange = mzr, rtrange = rtr, step = 0.1)
+    checkEquals(e_2@eic[[1]][[1]], e@eic[[2]][[1]])
 }
 
 test.getEICretcor <- function() {
