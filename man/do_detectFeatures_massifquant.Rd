@@ -178,6 +178,7 @@ detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 \code{\link{massifquant}} for the standard user interface method.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
+  \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}},
   \code{\link{do_detectFeatures_centWave}},
   \code{\link{do_detectFeatures_matchedFilter}}
 }

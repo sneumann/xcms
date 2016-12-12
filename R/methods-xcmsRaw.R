@@ -927,36 +927,94 @@ setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw",
                    ROI.list = list(), firstBaselineCheck = TRUE,
                    roiScales = NULL, snthreshIsoROIs = 6.25, maxcharge = 3,
                    maxiso = 5, mzIntervalExtension = TRUE) {
-              ## perform tradictional peak picking
-              xcmsPeaks <- findPeaks.centWave(
-                  object = object, ppm = ppm, peakwidth = peakwidth,
-                  snthresh = snthresh, prefilter = prefilter,
-                  mzCenterFun = mzCenterFun, integrate = integrate,
-                  mzdiff = mzdiff, fitgauss = fitgauss, scanrange = scanrange,
-                  noise = noise, sleep = sleep, verbose.columns = TRUE,
-                  ROI.list = ROI.list, firstBaselineCheck = firstBaselineCheck,
-                  roiScales = roiScales)
+              if (!isCentroided(object))
+                  warning("It looks like this file is in profile mode. centWave",
+                          " can process only centroid mode data !\n")
 
-              return(
-                  findPeaks.addPredictedIsotopeFeatures(object = object,
-                                                        ppm = ppm,
-                                                        peakwidth = peakwidth,
-                                                        prefilter = prefilter,
-                                                        mzCenterFun = mzCenterFun,
-                                                        integrate = integrate,
-                                                        mzdiff = mzdiff,
-                                                        fitgauss = fitgauss,
-                                                        scanrange = scanrange,
-                                                        noise = noise,
-                                                        sleep = sleep,
-                                                        verbose.columns = verbose.columns,
-                                                        xcmsPeaks = xcmsPeaks,
-                                                        snthresh = snthreshIsoROIs,
-                                                        maxcharge = maxcharge,
-                                                        maxiso = maxiso,
-                                                        mzIntervalExtension = mzIntervalExtension
-                                                        ))
+              ## Sub-set the xcmsRaw based on scanrange
+              if (length(scanrange) < 2) {
+                  scanrange <- c(1, length(object@scantime))
+              } else {
+                  scanrange <- range(scanrange)
+              }
+              if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+                  scanrange[1] <- max(1, scanrange[1])
+                  scanrange[2] <- min(length(object@scantime), scanrange[2])
+                  message("Provided scanrange was adjusted to ", scanrange)
+              }
+              object <- object[scanrange[1]:scanrange[2]]
+
+              vps <- diff(c(object@scanindex, length(object@env$mz)))
+              res <- do_detectFeatures_centWaveWithPredIsoROIs(mz = object@env$mz,
+                                                               int = object@env$intensity,
+                                                               scantime = object@scantime,
+                                                               valsPerSpect = vps,
+                                                               ppm = ppm,
+                                                               peakwidth = peakwidth,
+                                                               snthresh = snthresh,
+                                                               prefilter = prefilter,
+                                                               mzCenterFun = mzCenterFun,
+                                                               integrate = integrate,
+                                                               mzdiff = mzdiff,
+                                                               fitgauss = fitgauss,
+                                                               noise = noise,
+                                                               verboseColumns = verbose.columns,
+                                                               roiList = ROI.list,
+                                                               firstBaselineCheck = firstBaselineCheck,
+                                                               roiScales = roiScales,
+                                                               snthreshIsoROIs = snthreshIsoROIs,
+                                                      maxCharge = maxcharge,
+                                                      maxIso = maxiso,
+                                                      mzIntervalExtension = mzIntervalExtension
+                                                      )
+              invisible(new("xcmsPeaks", res))
           })
+## Original code: TODO REMOVE ME once method is validated.
+.centWaveWithPredictedIsotopeROIs <- function(object, ppm = 25,
+                                              peakwidth = c(20,50), snthresh = 10,
+                                              prefilter = c(3,100),
+                                              mzCenterFun = "wMean", integrate = 1,
+                                              mzdiff = -0.001, fitgauss = FALSE,
+                                              scanrange = numeric(),
+                                              noise = 0, sleep = 0,
+                                              verbose.columns = FALSE,
+                                              ROI.list = list(),
+                                              firstBaselineCheck = TRUE,
+                                              roiScales = NULL,
+                                              snthreshIsoROIs = 6.25,
+                                              maxcharge = 3,
+                                              maxiso = 5,
+                                              mzIntervalExtension = TRUE) {
+    ## perform tradictional peak picking
+    xcmsPeaks <- findPeaks.centWave(
+        object = object, ppm = ppm, peakwidth = peakwidth,
+        snthresh = snthresh, prefilter = prefilter,
+        mzCenterFun = mzCenterFun, integrate = integrate,
+        mzdiff = mzdiff, fitgauss = fitgauss, scanrange = scanrange,
+        noise = noise, sleep = sleep, verbose.columns = TRUE,
+        ROI.list = ROI.list, firstBaselineCheck = firstBaselineCheck,
+        roiScales = roiScales)
+
+    return(
+        .addPredictedIsotopeFeatures(object = object,
+                                     ppm = ppm,
+                                     peakwidth = peakwidth,
+                                     prefilter = prefilter,
+                                     mzCenterFun = mzCenterFun,
+                                     integrate = integrate,
+                                     mzdiff = mzdiff,
+                                     fitgauss = fitgauss,
+                                     scanrange = scanrange,
+                                     noise = noise,
+                                     sleep = sleep,
+                                     verbose.columns = verbose.columns,
+                                     xcmsPeaks = xcmsPeaks,
+                                     snthresh = snthreshIsoROIs,
+                                     maxcharge = maxcharge,
+                                     maxiso = maxiso,
+                                     mzIntervalExtension = mzIntervalExtension
+                                     ))
+}
 
 setMethod("findPeaks.addPredictedIsotopeFeatures",
           "xcmsRaw", function(object, ppm = 25, peakwidth = c(20,50),
@@ -966,6 +1024,56 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
                               sleep = 0, verbose.columns = FALSE,
                               xcmsPeaks, snthresh = 6.25, maxcharge = 3,
                               maxiso = 5, mzIntervalExtension = TRUE) {
+              if (!isCentroided(object))
+                  warning("It looks like this file is in profile mode. centWave",
+                          " can process only centroid mode data !\n")
+
+              ## Sub-set the xcmsRaw based on scanrange
+              if (length(scanrange) < 2) {
+                  scanrange <- c(1, length(object@scantime))
+              } else {
+                  scanrange <- range(scanrange)
+              }
+              if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+                  scanrange[1] <- max(1, scanrange[1])
+                  scanrange[2] <- min(length(object@scantime), scanrange[2])
+                  message("Provided scanrange was adjusted to ", scanrange)
+              }
+              object <- object[scanrange[1]:scanrange[2]]
+              if(class(xcmsPeaks) != "xcmsPeaks")
+                  stop("Pparameter >xcmsPeaks< is not of class 'xcmsPeaks'!\n")
+
+              vps <- diff(c(object@scanindex, length(object@env$mz)))
+              res <- do_detectFeatures_addPredIsoROIs(mz = object@env$mz,
+                                                      int = object@env$intensity,
+                                                      scantime = object@scantime,
+                                                      valsPerSpect = vps,
+                                                      ppm = ppm,
+                                                      peakwidth = peakwidth,
+                                                      snthresh = snthresh,
+                                                      prefilter = prefilter,
+                                                      mzCenterFun = mzCenterFun,
+                                                      integrate = integrate,
+                                                      mzdiff = mzdiff,
+                                                      fitgauss = fitgauss,
+                                                      noise = noise,
+                                                      verboseColumns = verbose.columns,
+                                                      features. = xcmsPeaks@.Data,
+                                                      maxCharge = maxcharge,
+                                                      maxIso = maxiso,
+                                                      mzIntervalExtension = mzIntervalExtension
+                                                      )
+              invisible(new("xcmsPeaks", res))
+          })
+## Original code: TODO REMOVE ME once method is validated.
+.addPredictedIsotopeFeatures <-
+    function(object, ppm = 25, peakwidth = c(20,50),
+             prefilter = c(3,100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
+             scanrange = numeric(), noise=0, ## noise.local=TRUE,
+             sleep = 0, verbose.columns = FALSE,
+             xcmsPeaks, snthresh = 6.25, maxcharge = 3,
+             maxiso = 5, mzIntervalExtension = TRUE) {
   if(nrow(xcmsPeaks) == 0){
     warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
     return(xcmsPeaks)
@@ -982,6 +1090,8 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
   if(length(newROI.list) == 0)
     return(xcmsPeaks)
 
+  ## HOOK_1
+  ## return(newROI.list)
   ##############################################################################
   ## perform peak picking for predicted ROIs
   roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
@@ -992,6 +1102,8 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
     sleep=sleep, verbose.columns=verbose.columns, ROI.list=newROI.list, firstBaselineCheck=FALSE, roiScales=roiScales
   )
 
+  ## HOOK_2
+  ## return(xcmsPeaks2)
   if(nrow(xcmsPeaks2) > 0){
     ## remove NaN values
     rowsWithNaN <- which(apply(X = xcmsPeaks2[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax")], MARGIN = 1, FUN = function(x){any(is.na(x))}))
@@ -1002,6 +1114,9 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
     if(length(noArea) > 0)
       xcmsPeaks2 <- xcmsPeaks2[-noArea, ]
   }
+
+  ## HOOK_3
+  ## return(xcmsPeaks2)  ## Compare these results
 
   ## make present peaks and new peaks distinct by removing overlapping peaks
   if(nrow(xcmsPeaks2) > 0){
@@ -1047,8 +1162,8 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
         return(FALSE)
       }
 
-      ## TODO FIXXXX, isOverlap is not defined!!! what should be returned here?
-      return(isOverlap)
+      ## Will never reach the condition below.
+      ## return(isOverlap)
     })
 
     removeROI <- unlist(lapply(X = drop, FUN = function(x){
@@ -1077,9 +1192,10 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 
   xcmsPeaks <- rbind(xcmsPeaks, xcmsPeaks2)
 
-  return(xcmsPeaks)
-})
+  invisible(new("xcmsPeaks", xcmsPeaks))
+}
 
+## Original code: TODO REMOVE ME once method is validated.
 removeROIsOutOfRange <- function(object, roi.matrix){
   ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
   numberOfROIs <- nrow(roi.matrix)
@@ -1101,6 +1217,7 @@ removeROIsOutOfRange <- function(object, roi.matrix){
 
   return(roi.matrix)
 }
+## Original code: TODO REMOVE ME once method is validated.
 removeROIsWithoutSignal <- function(object, roi.matrix, intensityThreshold){
   ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
   numberOfROIs <- nrow(roi.matrix)
@@ -1119,6 +1236,7 @@ removeROIsWithoutSignal <- function(object, roi.matrix, intensityThreshold){
   return(roi.matrix)
 }
 
+## Original code: TODO REMOVE ME once method is validated.
 createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity){
   ###############################################################################################
   ## isotope ROIs

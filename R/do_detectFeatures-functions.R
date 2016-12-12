@@ -1879,16 +1879,7 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 do_detectFeatures_MS1 <- function() {
 }
 
-############################################################
-## Part of the functionality from the "findPeaks.addPredictedIsotopeFeatures" /
-## "findPeaks.centWaveWithPredictedIsotopeROIs"
-## Takes the peaks from an centWave run as input.
-##
-## The full centWaveWithPredictedIsotopeROIs method should then:
-## 1) call do_detectFeatures_centWave, with verboseColumns = TRUE
-## 2) call do_preditIsotopeROIs for the peaks from above.
-## 3) run a second do_detectFeautes_centWave using the isotope ROIs as ROIs.
-## 4) finally merge all peaks.
+## Original code: TODO REMOVE ME once method is validated.
 do_predictIsotopeROIs <- function(object,
                                   xcmsPeaks, ppm=25,
                                   maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
@@ -1951,65 +1942,6 @@ do_predictIsotopeROIs <- function(object,
   return(newROI.list)
 }
 
-############################################################
-## Add new isotopes function.
-## Code taken from createNewIsotopes and put in here.
-do_define_isotopes_orig <- function(roiList, maxcharge = 3, maxiso = 5,
-                                    mzIntervalExtension = TRUE) {
-    isotopeDistance <- 1.0033548378
-    charges <- 1:maxcharge
-    isos <- 1:maxiso
-
-    isotopeStepSizesForCharge <- list()
-    for(charge in charges)
-        isotopeStepSizesForCharge[[charge]] <- isotopeDistance / charge
-
-    isotopeStepSizes <- list()
-    for(charge in charges)
-        isotopeStepSizes[[charge]] <- list()
-
-    for(charge in charges)
-        for(iso in isos)
-            isotopeStepSizes[[charge]][[iso]] <- isotopeStepSizesForCharge[[charge]] * iso
-
-    isotopePopulationMz <- list()
-    for(charge in charges)
-        for(iso in isos)
-            isotopePopulationMz[[length(isotopePopulationMz) + 1]] <- isotopeStepSizes[[charge]][[iso]]
-    isotopePopulationMz <- unlist(unique(isotopePopulationMz))
-
-    numberOfIsotopeROIs <- length(roiList) * length(isotopePopulationMz)
-    isotopeROIs.matrix <- matrix(nrow = numberOfIsotopeROIs, ncol = 8)
-    colnames(isotopeROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
-
-    ## complement found ROIs
-    for(roiIdx in 1:(length(roiList))){
-        for(mzIdx in 1:length(isotopePopulationMz)){
-            ## create new ROI!
-            mzDifference <- isotopePopulationMz[[mzIdx]]
-            if(mzIntervalExtension)
-                ## extend m/z interval for weak peaks
-                                        #mzIntervalExtension <- ROI.list[[roiIdx]]$mz * ppm / 1E6
-                mzIntervalExtension <- (roiList[[roiIdx]]["mzmax"] -
-                                        roiList[[roiIdx]]["mzmin"]) * 2
-            else
-                mzIntervalExtension <- 0
-
-            idx <- (roiIdx - 1) * length(isotopePopulationMz) + mzIdx
-            isotopeROIs.matrix[idx, ] <- c(
-                roiList[[roiIdx]]["mz"] + mzDifference,## XXX not used!
-                roiList[[roiIdx]]["mzmin"] + mzDifference - mzIntervalExtension,
-                roiList[[roiIdx]]["mzmax"] + mzDifference + mzIntervalExtension,
-                roiList[[roiIdx]]["scmin"],
-                roiList[[roiIdx]]["scmax"],
-                -1,  ##roiList[[roiIdx]]["length"],## XXX not used!
-                -1,  #ROI.list[[roiIdx]]$intensity ## XXX not used!
-                roiList[[roiIdx]]["scale"]
-            )
-        }
-    }
-    return(isotopeROIs.matrix)
-}
 ## Tuned from the original code.
 ##' @param features. \code{matrix} or \code{data.frame} with features for which
 ##' isotopes should be predicted. Required columns are \code{"mz"},
@@ -2020,22 +1952,22 @@ do_define_isotopes_orig <- function(roiList, maxcharge = 3, maxiso = 5,
 ##' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
 ##' \code{"intensity"} (always -1) and \code{"scale"}.
 ##' @noRd
-do_define_isotopes <- function(features., maxcharge = 3, maxiso = 5,
+do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
                                mzIntervalExtension = TRUE) {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
     if (is.null(dim(features.)))
-        stop("'features' has to be a matrix or data.frame!")
+        stop("'features.' has to be a matrix or data.frame!")
     if (!all(req_cols %in% colnames(features.))) {
         not_there <- req_cols[!(req_cols %in% colnames(features.))]
-        stop("'features' lacks required columns ",
+        stop("'features.' lacks required columns ",
              paste0("'", not_there, "'", collapse = ","), "!")
     }
     if (is.data.frame(features.))
         features. <- as.matrix(features.)
 
     isotopeDistance <- 1.0033548378
-    charges <- 1:maxcharge
-    isos <- 1:maxiso
+    charges <- 1:maxCharge
+    isos <- 1:maxIso
 
     isotopePopulationMz <- unique(as.numeric(matrix(isos, ncol = 1) %*%
                                              (isotopeDistance / charges)))
@@ -2060,123 +1992,11 @@ do_define_isotopes <- function(features., maxcharge = 3, maxiso = 5,
     return(do.call(rbind, newRois))
 }
 
-## Add new adducts function.
-do_define_adducts_orig <- function(roiList, polarity = "positive") {
-    ## considered adduct distances
-    ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion cyclotron resonance mass spectrometer for acquisition, analysis, and e-mailing of high-resolution exact-mass electrospray ionization mass spectral data
-    ## see also for contaminants: Interferences and contaminants encountered in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
-
-    mH  <-  1.0078250322
-    mNa <- 22.98976928
-    mK  <- 38.96370649
-    mC  <- 12
-    mN  <- 14.003074004
-    mO  <- 15.994914620
-    mS  <- 31.972071174
-    mCl <- 34.9688527
-    mBr <- 78.918338
-    mF  <- 18.998403163
-    mDMSO    <- mC*2+mH*6+mS+mO     # dimethylsulfoxid
-    mACN     <- mC*2+mH*3+mN        # acetonitril
-    mIsoProp <- mC*3+mH*8+mO        # isopropanol
-    mNH4     <- mN+mH*4             # ammonium
-    mCH3OH   <- mC+mH*3+mO+mH       # methanol
-    mH2O     <- mH*2+mO             # water
-    mFA      <- mC+mH*2+mO*2        # formic acid
-    mHAc     <- mC+mH*3+mC+mO+mO+mH # acetic acid
-    mTFA     <- mC+mF*3+mC+mO+mO+mH # trifluoroacetic acid
-
-    switch(polarity,
-           "positive"={
-               adductPopulationMz <- unlist(c(
-                   ## [M+H]+ to [M+H]+  (Reference)
-                   function(mass){ mass-mH+mNH4 },               ## [M+H]+ to [M+NH4]+
-                   function(mass){ mass-mH+mNa },                ## [M+H]+ to [M+Na]+
-                   function(mass){ mass+mCH3OH },                ## [M+H]+ to [M+CH3OH+H]+
-                   function(mass){ mass-mH+mK },                 ## [M+H]+ to [M+K]+
-                   function(mass){ mass+mACN },                  ## [M+H]+ to [M+ACN+H]+
-                   function(mass){ mass-2*mH+2*mNa },            ## [M+H]+ to [M+2Na-H]+
-                   function(mass){ mass+mIsoProp },              ## [M+H]+ to [M+IsoProp+H]+
-                   function(mass){ mass-mH+mACN+mNa },           ## [M+H]+ to [M+ACN+Na]+
-                   function(mass){ mass-2*mH+2*mK },             ## [M+H]+ to [M+2K-H]+
-                   function(mass){ mass+mDMSO },                 ## [M+H]+ to [M+DMSO+H]+
-                   function(mass){ mass+2*mACN },                ## [M+H]+ to [M+2*ACN+H]+
-                   function(mass){ mass+mIsoProp+mNa },          ## [M+H]+ to [M+IsoProp+Na+H]+ TODO double-charged?
-                   function(mass){ (mass-mH)*2+mH },             ## [M+H]+ to [2M+H]+
-                   function(mass){ (mass-mH)*2+mNH4 },           ## [M+H]+ to [2M+NH4]+
-                   function(mass){ (mass-mH)*2+mNa },            ## [M+H]+ to [2M+Na]+
-                   function(mass){ (mass-mH)*2+mK },             ## [M+H]+ to [2M+K]+
-               function(mass){ (mass-mH)*2+mACN+mH },        ## [M+H]+ to [2M+ACN+H]+
-               function(mass){ (mass-mH)*2+mACN+mNa },       ## [M+H]+ to [2M+ACN+Na]+
-               function(mass){((mass-mH)*2+3*mH2O+2*mH)/2 }, ## [M+H]+ to [2M+3*H2O+2*H]2+
-               function(mass){ (mass+mH)/2 },                ## [M+H]+ to [M+2*H]2+
-               function(mass){ (mass+mNH4)/2 },              ## [M+H]+ to [M+H+NH4]2+
-               function(mass){ (mass+mNa)/2 },               ## [M+H]+ to [M+H+Na]2+
-               function(mass){ (mass+mK)/2 },                ## [M+H]+ to [M+H+K]2+
-               function(mass){ (mass+mACN+mH)/2 },           ## [M+H]+ to [M+ACN+2*H]2+
-               function(mass){ (mass-mH+2*mNa)/2 },          ## [M+H]+ to [M+2*Na]2+
-               function(mass){ (mass+2*mACN+mH)/2 },         ## [M+H]+ to [M+2*ACN+2*H]2+
-               function(mass){ (mass+3*mACN+mH)/2 },         ## [M+H]+ to [M+3*ACN+2*H]2+
-               function(mass){ (mass+2*mH)/3 },              ## [M+H]+ to [M+3*H]3+
-               function(mass){ (mass+mH+mNa)/3 },            ## [M+H]+ to [M+2*H+Na]3+
-               function(mass){ (mass+2*mNa)/3 },             ## [M+H]+ to [M+H+2*Na]3+
-               function(mass){ (mass-mH+3*mNa)/3 }           ## [M+H]+ to [M+3*Na]3+
-             ))
-           },
-           "negative"={
-             adductPopulationMz <- unlist(c(
-               ## [M-H]+ to [M-H]+  (Reference)
-               function(mass){ mass-mH2O },             ## [M-H]+ to [M-H2O-H]+
-               function(mass){ mass-mH+mNa },           ## [M-H]+ to [M+Na-2*H]+
-               function(mass){ mass+mH+mCl },           ## [M-H]+ to [M+Cl]+
-               function(mass){ mass-mH+mK },            ## [M-H]+ to [M+K-2*H]+
-               function(mass){ mass+mFA },              ## [M-H]+ to [M+FA-H]+
-               function(mass){ mass+mHAc },             ## [M-H]+ to [M+HAc-H]+
-               function(mass){ mass+mH+mBr },           ## [M-H]+ to [M+Br]+
-               function(mass){ mass+mTFA },             ## [M-H]+ to [M+TFA-H]+
-               function(mass){ (mass+mH)*2-mH },        ## [M-H]+ to [2M-H]+
-               function(mass){ (mass+mH)*2+mFA-mH },    ## [M-H]+ to [2M+FA-H]+
-               function(mass){ (mass+mH)*2+mHAc-mH },   ## [M-H]+ to [2M+HAc-H]+
-               function(mass){ (mass+mH)*3-mH },        ## [M-H]+ to [3M-H]+
-               function(mass){ (mass-mH)/2 },           ## [M-H]+ to [M-2*H]2+
-               function(mass){ (mass-2*mH)/3 }          ## [M-H]+ to [M-3*H]3+
-             ))
-           },
-           "unknown"={
-             warning(paste("Unknown polarity! No adduct ROIs have been added.", sep = ""))
-           },
-           stop(paste("Unknown polarity (", polarity, ")!", sep = ""))
-    )
-
-    numberOfAdductROIs <- length(roiList) * length(adductPopulationMz)
-    adductROIs.matrix <- matrix(nrow = numberOfAdductROIs, ncol = 8)
-    colnames(adductROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
-
-    for(roiIdx in 1:(length(roiList))){
-      for(mzIdx in 1:length(adductPopulationMz)){
-        ## create new ROI!
-        mzDifference <- adductPopulationMz[[mzIdx]](roiList[[roiIdx]]["mz"])
-        idx <- (roiIdx - 1) * length(adductPopulationMz) + mzIdx
-        if(roiList[[roiIdx]]["mzmin"] + mzDifference > 0){
-          adductROIs.matrix[idx, ] <- c(
-            roiList[[roiIdx]]["mz"] + mzDifference,## XXX not used!
-            roiList[[roiIdx]]["mzmin"] + mzDifference,
-            roiList[[roiIdx]]["mzmax"] + mzDifference,
-            roiList[[roiIdx]]["scmin"],
-            roiList[[roiIdx]]["scmax"],
-            -1, ## roiList[[roiIdx]]["length"],## XXX not used!
-            -1,  #ROI.list[[roiIdx]]$intensity ## XXX not used!
-            roiList[[roiIdx]]["scale"]
-          )
-        }
-      }
-    }
-    return(adductROIs.matrix)
-}
-##' @features. see do_define_isotopes
+##' param @features. see do_define_isotopes
 ##' @param polarity character(1) defining the polarity, either \code{"positive"}
 ##' or \code{"negative"}.
 ##' @return see do_define_isotopes.
+##' @noRd
 do_define_adducts <- function(features., polarity = "positive") {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
     if (is.null(dim(features.)))
@@ -2386,44 +2206,290 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 }
 
 ############################################################
-## do_centWaveOnPredictedIsotopes
-## This is essentially the new part of the centWaveWithPredictedIsotopeROIs:
-## Given the peaks from an centWave run:
-## 1) Predict isotope ROIs
-## 2) Predict adduct ROIs
-## 3) Remove redundant and overlapping ROIs.
-## 4) Remove ROIs that are empty or not within the mz range.
-## 5) run centWave on the new ones.
-do_detectFeatures_centWaveOnPredictedIsotopes <- function(mz, int, scantime,
-                                                          valsPerSpect, ppm = 25,
-                                                          peakwidth = c(20, 50),
-                                                          snthresh = 10,
-                                                          prefilter = c(3, 100),
-                                                          mzCenterFun = "wMean",
-                                                          integrate = 1,
-                                                          mzdiff = -0.001,
-                                                          fitgauss = FALSE,
-                                                          noise = 0,
-                                                          verboseColumns = FALSE,
-                                                          roiList = list(),
-                                                          firstBaselineCheck = TRUE,
-                                                          roiScales = NULL,
-                                                          snthreshIsoROIs = 6.25,
-                                                          maxCharge = 3,
-                                                          maxIso = 5,
-                                                          mzIntervalExtension = TRUE,
-                                                          polarity = "unknown") {
-    ## First centWave
+## do_detectFeatyres_centWaveWithPredIsoROIs
+## 1) Run a centWave.
+## 2) Predict isotope ROIs for the identified features.
+## 3) centWave on the predicted isotope ROIs.
+## 4) combine both lists of identified features removing overlapping ones by
+##    keeping the feature with the largest signal intensity.
+##' @title Two-step centWave feature detection condidering also feature isotopes
+##'
+##' @description The \code{do_detectFeatures_centWaveWithPredIsoROIs} performs a
+##' two-step centWave based feature detection: features are identified using
+##' centWave followed by a prediction of the location of the identified features'
+##' isotopes in the mz-retention time space. These locations are fed as
+##' \emph{regions of interest} (ROIs) to a subsequent centWave run. All non
+##' overlapping features from these two feature detection runs are reported as
+##' the final list of identified features.
+##'
+##' @details For more details on the centWave algorithm see
+##' \code{\link{centWave}}.
+##'
+##' @param maxCharge integer(1) defining the maximal isotope charge. Isotopes
+##' will be defined for charges \code{1:maxCharge}.
+##'
+##' @param maxIso integer(1) defining the number of isotope peaks that should be
+##' predicted for each feature identified in the first centWave run.
+##'
+##' @param mzIntervalExtension logical(1) whether the mz range for the predicted
+##' isotope ROIs should be extended to increase detection of low intensity peaks.
+##'
+##' @param snthreshIsoROIs numeric(1) defining the signal to noise ratio cutoff
+##' to be used in the second centWave run to identify features for predicted
+##' isotope ROIs.
+##'
+##' @param polarity character(1) specifying the polarity of the data. Currently
+##' not used, but has to be \code{"positive"}, \code{"negative"} or
+##' \code{"unknown"} if provided.
+##'
+##' @inheritParams featureDetection-centWave
+##' @inheritParams do_detectFeatures_centWave
+##'
+##' @family core feature detection functions
+##' @return
+##' A matrix, each row representing an identified feature. All non-overlapping
+##' features identified in both centWave runs are reported.
+##' The matrix columns are:
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+##' \code{sd} being the standard deviation of local chromatographic noise.}
+##' \item{egauss}{RMSE of Gaussian fit.}
+##' }
+##' Additional columns for \code{verboseColumns = TRUE}:
+##' \describe{
+##' \item{mu}{Gaussian parameter mu.}
+##' \item{sigma}{Gaussian parameter sigma.}
+##' \item{h}{Gaussian parameter h.}
+##' \item{f}{Region number of the m/z ROI where the peak was localized.}
+##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
+##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
+##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+##' }
+##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
+##' @author Hendrik Treutler, Johannes Rainer
+do_detectFeatures_centWaveWithPredIsoROIs <-
+    function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
+             snthresh = 10, prefilter = c(3, 100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+             verboseColumns = FALSE, roiList = list(),
+             firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
+             maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
+             polarity = "unknown") {
+        ## Input argument checking: most of it will be done in
+        ## do_detectFeatures_centWave
+        polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
-    ## polarity.
+        ## 1) First centWave
+        feats_1 <- do_detectFeatures_centWave(mz = mz, int = int,
+                                              scantime = scantime,
+                                              valsPerSpect = valsPerSpect,
+                                              ppm = ppm,
+                                              peakwidth = peakwidth,
+                                              snthresh = snthresh,
+                                              prefilter = prefilter,
+                                              mzCenterFun = mzCenterFun,
+                                              integrate = integrate,
+                                              mzdiff = mzdiff, fitgauss = fitgauss,
+                                              noise = noise,
+                                              verboseColumns = TRUE,
+                                              roiList = roiList,
+                                              firstBaselineCheck = firstBaselineCheck,
+                                              roiScales = roiScales)
+        return(do_detectFeatures_addPredIsoROIs(mz = mz, int = int,
+                                                scantime = scantime,
+                                                valsPerSpect = valsPerSpect,
+                                                ppm = ppm,
+                                                peakwidth = peakwidth,
+                                                snthresh = snthreshIsoROIs,
+                                                prefilter = prefilter,
+                                                mzCenterFun = mzCenterFun,
+                                                integrate = integrate,
+                                                mzdiff = mzdiff,
+                                                fitgauss = fitgauss,
+                                                noise = noise,
+                                                verboseColumns = verboseColumns,
+                                                features. = feats_1,
+                                                maxCharge = maxCharge,
+                                                maxIso = maxIso,
+                                                mzIntervalExtension = mzIntervalExtension,
+                                                polarity = polarity))
+    }
+##' @description The \code{do_detectFeatures_centWaveAddPredIsoROIs} performs
+##' centWave based feature detection based in regions of interest (ROIs)
+##' representing predicted isotopes for the features submitted with argument
+##' \code{features.}. The function returns a matrix with the identified features
+##' consisting of all input features and features representing predicted isotopes
+##' of these (if found by the centWave algorithm).
+##'
+##' @param features. A matrix or \code{xcmsPeaks} object such as one returned by
+##' a call to \code{link{do_detectFeatures_centWave}} or
+##' \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
+##' with the features for which isotopes should be predicted and used for an
+##' additional feature detectoin using the centWave method. Required columns are:
+##' \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
+##' \code{"scale"} and \code{"into"}.
+##'
+##' @param snthresh For \code{do_detectFeatures_addPredIsoROIs}:
+##' numeric(1) defining the signal to noise threshold for the centWave algorithm.
+##' For \code{do_detectFeatures_centWaveWithPredIsoROIs}: numeric(1) defining the
+##' signal to noise threshold for the initial (first) centWave run.
+##'
+##' @inheritParams featureDetection-centWave
+##' @inheritParams do_detectFeatures_centWave
+##'
+##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
+do_detectFeatures_addPredIsoROIs <-
+    function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
+             snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+             verboseColumns = FALSE, features. = NULL,
+             maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
+             polarity = "unknown") {
+        ## Input argument checking: most of it will be done in
+        ## do_detectFeatures_centWave
+        polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
-    ## Check features. parameter.
-    if (addNewIsotopeROIs)
-        iso_ROIs <- do_define_isotopes(features. = features.,
-                                       maxcharge = maxcharge,
-                                       maxiso = maxiso,
-                                       mzIntervalExtension = mzIntervalExtension)
-    if (addNewAdductROIs)
-        add_ROIs <- do_define_adducts(features. = features., polarity = polarity)
+        ## These variables might at some point be added as function args.
+        addNewIsotopeROIs <- TRUE
+        addNewAdductROIs <- FALSE
+        ## 2) predict isotope and/or adduct ROIs
+        f_mod <- features.
+        ## Extend the mzmin and mzmax if needed.
+        tittle <- features.[, "mz"] * (ppm / 2) / 1E6
+        expand_mz <- (features.[, "mzmax"] - features.[, "mzmin"]) < (tittle * 2)
+        if (any(expand_mz)) {
+            f_mod[expand_mz, "mzmin"] <- features.[expand_mz, "mz"] -
+                tittle[expand_mz]
+            f_mod[expand_mz, "mzmax"] <- features.[expand_mz, "mz"] + tittle[expand_mz]
+        }
+        ## Add predicted ROIs
+        if (addNewIsotopeROIs) {
+            iso_ROIs <- do_define_isotopes(features. = f_mod,
+                                           maxCharge = maxCharge,
+                                           maxIso = maxIso,
+                                           mzIntervalExtension = mzIntervalExtension)
+        } else {
+            iso_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        if (addNewAdductROIs) {
+            add_ROIs <- do_define_adducts(features. = f_mod, polarity = polarity)
+        } else {
+            add_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        newROIs <- rbind(iso_ROIs, add_ROIs)
+        rm(f_mod)
+        if (nrow(newROIs) == 0)
+            return(features.)
+        ## Remove ROIs that are out of mz range:
+        mz_range <- range(mz)
+        newROIs <- newROIs[newROIs[, "mzmin"] >= mz_range[1] &
+                           newROIs[, "mzmax"] <= mz_range[2], , drop = FALSE]
+        ## Remove ROIs with too low signal:
+        keep_me <- logical(nrow(newROIs))
+        scanindex <- as.integer(xcms:::valueCount2ScanIndex(valsPerSpect))
+        for (i in 1:nrow(newROIs)) {
+            vals <- .Call("getEIC", mz, int, scanindex,
+                          as.double(newROIs[i, c("mzmin", "mzmax")]),
+                          as.integer(newROIs[i, c("scmin", "scmax")]),
+                          as.integer(length(scantime)), PACKAGE ='xcms' )
+            keep_me[i] <- sum(vals$intensity, na.rm = TRUE) >= 10
+        }
+        newROIs <- newROIs[keep_me, , drop = FALSE]
 
+        if (nrow(newROIs) == 0) {
+            warning("No isotope or adduct ROIs for the identified features with a ",
+                    "valid signal found!")
+            return(features.)
+        }
+
+        ## 3) centWave using the identified ROIs.
+        roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
+        feats_2 <- do_detectFeatures_centWave(mz = mz, int = int,
+                                              scantime = scantime,
+                                              valsPerSpect = valsPerSpect,
+                                              ppm = ppm, peakwidth = peakwidth,
+                                              snthresh = snthresh,
+                                              prefilter = prefilter,
+                                              mzCenterFun = mzCenterFun,
+                                              integrate = integrate,
+                                              mzdiff = mzdiff, fitgauss = fitgauss,
+                                              noise = noise,
+                                              verboseColumns = verboseColumns,
+                                              roiList = roiL,
+                                              firstBaselineCheck = FALSE,
+                                              roiScales = newROIs[, "scale"])
+        ## Clean up of the results:
+        if (nrow(feats_2) > 0) {
+            ## remove NaNs
+            any_na <- is.na(rowSums(feats_2[, c("mz", "mzmin", "mzmax", "rt",
+                                                "rtmin", "rtmax")]))
+            if (any(any_na))
+                feats_2 <- feats_2[!any_na, , drop = FALSE]
+            ## remove empty area
+            no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
+                (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            if (any(no_area))
+                feats_2 <- feats_2[!no_area, , drop = FALSE]
+        }
+
+        ## 4) Check and remove ROIs overlapping with peaks.
+        if (nrow(feats_2) > 0) {
+            ## Comparing each ROI with each peak; slightly modified from the original
+            ## code in which we prevent calling apply followed by two lapply.
+            removeROIs <- rep(FALSE, nrow(feats_2))
+            removeFeats <- rep(FALSE, nrow(features.))
+            overlapProportionThreshold <- 0.01
+            for (i in 1:nrow(feats_2)) {
+                ## Compare ROI i with all features (peaks) and check if its
+                ## overlapping
+                ## mz
+                roiMzCenter <- (feats_2[i, "mzmin"] + feats_2[i, "mzmax"]) / 2
+                peakMzCenter <- (features.[, "mzmin"] + features.[, "mzmax"]) / 2
+                roiMzRadius <- (feats_2[i, "mzmax"] - feats_2[i, "mzmin"]) / 2
+                peakMzRadius <- (features.[, "mzmax"] - features.[, "mzmin"]) / 2
+                overlappingMz <- abs(peakMzCenter - roiMzCenter) <=
+                    (roiMzRadius + peakMzRadius)
+                ## rt
+                roiRtCenter <- (feats_2[i, "rtmin"] + feats_2[i, "rtmax"]) / 2
+                peakRtCenter <- (features.[, "rtmin"] + features.[, "rtmax"]) / 2
+                roiRtRadius <- (feats_2[i, "rtmax"] - feats_2[i, "rtmin"]) / 2
+                peakRtRadius <- (features.[, "rtmax"] - features.[, "rtmin"]) / 2
+                overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
+                    (roiRtRadius + peakRtRadius)
+                is_overlapping <- overlappingMz & overlappingRt
+                ## Now determine whether we remove the ROI or the peak, depending
+                ## on the raw signal intensity.
+                if (any(is_overlapping)) {
+                    if (any(features.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                        removeROIs[i] <- TRUE
+                    } else {
+                        removeFeats[is_overlapping] <- TRUE
+                    }
+                }
+            }
+            feats_2 <- feats_2[!removeROIs, , drop = FALSE]
+            features. <- features.[!removeFeats, , drop = FALSE]
+        }
+        if (!verboseColumns)
+            features. <- features.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                        "rtmax", "into", "intb", "maxo", "sn")]
+        if (nrow(feats_2) == 0)
+            return(features.)
+        else
+            return(rbind(features., feats_2))
 }

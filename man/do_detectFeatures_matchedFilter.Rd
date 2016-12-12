@@ -138,6 +138,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \code{\link{matchedFilter}} for the standard user interface method.
 
 Other core feature detection functions: \code{\link{do_detectFeatures_MSW}},
+  \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}},
   \code{\link{do_detectFeatures_centWave}},
   \code{\link{do_detectFeatures_massifquant}}
 }

@@ -183,6 +183,8 @@ export(
     "do_detectFeatures_massifquant",
     "do_detectFeatures_matchedFilter",
     "do_detectFeatures_MSW",
+    "do_detectFeatures_centWaveWithPredIsoROIs",
+    "do_detectFeatures_addPredIsoROIs",
     "imputeLinInterpol",
     "useOriginalCode"
 )

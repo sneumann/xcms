@@ -57,7 +57,8 @@ Joachim Kutzera, Steffen Neumann, Johannes Rainer
 method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
 \code{MassSpecWavelet} package.
 
-Other core feature detection functions: \code{\link{do_detectFeatures_centWave}},
+Other core feature detection functions: \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}},
+  \code{\link{do_detectFeatures_centWave}},
   \code{\link{do_detectFeatures_massifquant}},
   \code{\link{do_detectFeatures_matchedFilter}}
 }
