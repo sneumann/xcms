@@ -2212,7 +2212,7 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 ## 3) centWave on the predicted isotope ROIs.
 ## 4) combine both lists of identified features removing overlapping ones by
 ##    keeping the feature with the largest signal intensity.
-##' @title Two-step centWave feature detection condidering also feature isotopes
+##' @title Core API function for two-step centWave feature detection with feature isotopes
 ##'
 ##' @description The \code{do_detectFeatures_centWaveWithPredIsoROIs} performs a
 ##' two-step centWave based feature detection: features are identified using
@@ -2225,24 +2225,8 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 ##' @details For more details on the centWave algorithm see
 ##' \code{\link{centWave}}.
 ##'
-##' @param maxCharge integer(1) defining the maximal isotope charge. Isotopes
-##' will be defined for charges \code{1:maxCharge}.
-##'
-##' @param maxIso integer(1) defining the number of isotope peaks that should be
-##' predicted for each feature identified in the first centWave run.
-##'
-##' @param mzIntervalExtension logical(1) whether the mz range for the predicted
-##' isotope ROIs should be extended to increase detection of low intensity peaks.
-##'
-##' @param snthreshIsoROIs numeric(1) defining the signal to noise ratio cutoff
-##' to be used in the second centWave run to identify features for predicted
-##' isotope ROIs.
-##'
-##' @param polarity character(1) specifying the polarity of the data. Currently
-##' not used, but has to be \code{"positive"}, \code{"negative"} or
-##' \code{"unknown"} if provided.
-##'
 ##' @inheritParams featureDetection-centWave
+##' @inheritParams featureDetection-centWaveWithPredIsoROIs
 ##' @inheritParams do_detectFeatures_centWave
 ##'
 ##' @family core feature detection functions

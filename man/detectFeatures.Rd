@@ -9,16 +9,16 @@ The \code{detectFeature} methods are part of the modernized
 
 The implemented feature detection methods are:
 \describe{
-\item{centWave}{: feature detection using the \emph{centWave} method.
+\item{centWave}{feature detection using the \emph{centWave} method.
 See \code{\link{centWave}} for more details.}
 
-\item{matchedFilter}{: peak detection in chromatographic space. See
+\item{matchedFilter}{peak detection in chromatographic space. See
 \code{\link{matchedFilter}} for more details.}
 
-\item{massifquant}{: peak detection using the Kalman filter-based feature
+\item{massifquant}{peak detection using the Kalman filter-based feature
 method. See \code{\link{massifquant}} for more details.}
 
-\item{MSW}{: single-spectrum non-chromatography MS data feature detection.
+\item{MSW}{single-spectrum non-chromatography MS data feature detection.
 See \code{\link{MSW}} for more details.}
 
 }
@@ -31,6 +31,7 @@ Johannes Rainer
 methods.
 
 Other feature detection methods: \code{\link{featureDetection-MSW}},
+  \code{\link{featureDetection-centWaveWithPredIsoROIs}},
   \code{\link{featureDetection-centWave}},
   \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}

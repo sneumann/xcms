@@ -3,7 +3,7 @@
 \name{do_detectFeatures_centWaveWithPredIsoROIs}
 \alias{do_detectFeatures_addPredIsoROIs}
 \alias{do_detectFeatures_centWaveWithPredIsoROIs}
-\title{Two-step centWave feature detection condidering also feature isotopes}
+\title{Core API function for two-step centWave feature detection with feature isotopes}
 \usage{
 do_detectFeatures_centWaveWithPredIsoROIs(mz, int, scantime, valsPerSpect,
   ppm = 25, peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),

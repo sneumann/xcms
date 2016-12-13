@@ -56,10 +56,8 @@ setMethod("ppm", "CentWaveParam", function(object){ return(object@ppm)})
 ##' @rdname featureDetection-centWave
 setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
     object@ppm <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases peakwidth
@@ -72,10 +70,8 @@ setMethod("peakwidth", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
     object@peakwidth <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases snthresh
@@ -88,10 +84,8 @@ setMethod("snthresh", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
     object@snthresh <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases prefilter
@@ -104,10 +98,8 @@ setMethod("prefilter", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
     object@prefilter <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases mzCenterFun
@@ -120,10 +112,8 @@ setMethod("mzCenterFun", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
     object@mzCenterFun <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{integrate},\code{integrate<-}: getter and setter for the
@@ -137,10 +127,8 @@ setMethod("integrate", signature(f = "CentWaveParam"), function(f)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
     object@integrate <- as.integer(value)
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases mzdiff
@@ -153,10 +141,8 @@ setMethod("mzdiff", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
     object@mzdiff <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases fitgauss
@@ -169,10 +155,8 @@ setMethod("fitgauss", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
     object@fitgauss <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases noise
@@ -185,10 +169,8 @@ setMethod("noise", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("noise", "CentWaveParam", function(object, value) {
     object@noise <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases verboseColumns
@@ -201,10 +183,8 @@ setMethod("verboseColumns", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
     object@verboseColumns <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases roiList
@@ -217,10 +197,8 @@ setMethod("roiList", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
     object@roiList <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases firstBaselineCheck
@@ -233,10 +211,8 @@ setMethod("firstBaselineCheck", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) {
     object@firstBaselineCheck <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases roiScales
@@ -249,10 +225,8 @@ setMethod("roiScales", "CentWaveParam", function(object)
 ##' @rdname featureDetection-centWave
 setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
     object@roiScales <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 
@@ -290,10 +264,8 @@ setMethod("binSize", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
     object@binSize <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{impute},\code{impute<-}: getter and setter for the
@@ -305,10 +277,8 @@ setMethod("impute", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
     object@impute <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases baseValue
@@ -321,10 +291,8 @@ setMethod("baseValue", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
     object@baseValue <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases distance
@@ -337,10 +305,8 @@ setMethod("distance", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
     object@distance <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases fwhm
@@ -353,10 +319,8 @@ setMethod("fwhm", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
     object@fwhm <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases sigma
@@ -369,10 +333,8 @@ setMethod("sigma", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
     object@sigma <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{max},\code{max<-}: getter and setter for the
@@ -385,10 +347,8 @@ setMethod("max", signature(x="MatchedFilterParam"),
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
     object@max <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
@@ -399,10 +359,8 @@ setMethod("snthresh", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
     object@snthresh <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases steps
@@ -415,10 +373,8 @@ setMethod("steps", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
     object@steps <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
@@ -429,10 +385,8 @@ setMethod("mzdiff", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
     object@mzdiff <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases index
@@ -445,10 +399,8 @@ setMethod("index", "MatchedFilterParam", function(object)
 ##' @rdname featureDetection-matchedFilter
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ############################################################
@@ -488,10 +440,8 @@ setMethod("ppm", "MassifquantParam", function(object){ return(object@ppm)})
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
     object@ppm <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
@@ -502,10 +452,8 @@ setMethod("peakwidth", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
     object@peakwidth <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
@@ -516,10 +464,8 @@ setMethod("snthresh", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
     object@snthresh <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
@@ -530,10 +476,8 @@ setMethod("prefilter", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
     object@prefilter <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
@@ -544,10 +488,8 @@ setMethod("mzCenterFun", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
     object@mzCenterFun <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{integrate},\code{integrate<-}: getter and setter for the
@@ -560,10 +502,8 @@ setMethod("integrate", signature(f = "MassifquantParam"), function(f)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
     object@integrate <- as.integer(value)
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
@@ -574,10 +514,8 @@ setMethod("mzdiff", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
     object@mzdiff <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
@@ -588,10 +526,8 @@ setMethod("fitgauss", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
     object@fitgauss <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{noise},\code{noise<-}: getter and setter for the
@@ -602,10 +538,8 @@ setMethod("noise", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("noise", "MassifquantParam", function(object, value) {
     object@noise <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
@@ -616,10 +550,8 @@ setMethod("verboseColumns", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
     object@verboseColumns <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases criticalValue
@@ -632,10 +564,8 @@ setMethod("criticalValue", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
     object@criticalValue <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases consecMissedLimit
@@ -649,10 +579,8 @@ setMethod("consecMissedLimit", "MassifquantParam", function(object)
 setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  function(object, value) {
                      object@consecMissedLimit <- as.integer(value)
-                     OK <- validObject(object)
-                     if (is.character(OK))
-                         stop(OK)
-                     return(object)
+                     if (validObject(object))
+                         return(object)
                  })
 
 ##' @aliases unions
@@ -665,10 +593,8 @@ setMethod("unions", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("unions", "MassifquantParam", function(object, value) {
     object@unions <- as.integer(value)
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases checkBack
@@ -681,10 +607,8 @@ setMethod("checkBack", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
     object@checkBack <- as.integer(value)
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases withWave
@@ -697,10 +621,8 @@ setMethod("withWave", "MassifquantParam", function(object)
 ##' @rdname featureDetection-massifquant
 setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
     object@withWave <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 
@@ -743,10 +665,8 @@ setMethod("snthresh", "MSWParam", function(object){ return(object@snthresh)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("snthresh", "MSWParam", function(object, value) {
     object@snthresh <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and setter
@@ -757,10 +677,8 @@ setMethod("verboseColumns", "MSWParam", function(object){
 ##' @rdname featureDetection-MSW
 setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
     object@verboseColumns <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases scales
@@ -772,10 +690,8 @@ setMethod("scales", "MSWParam", function(object){ return(object@scales)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("scales", "MSWParam", function(object, value) {
     object@scales <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases nearbyPeak
@@ -787,10 +703,8 @@ setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)}
 ##' @rdname featureDetection-MSW
 setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
     object@nearbyPeak <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases peakScaleRange
@@ -803,10 +717,8 @@ setMethod("peakScaleRange", "MSWParam", function(object){
 ##' @rdname featureDetection-MSW
 setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
     object@peakScaleRange <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases ampTh
@@ -818,10 +730,8 @@ setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("ampTh", "MSWParam", function(object, value) {
     object@ampTh <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases minNoiseLevel
@@ -834,10 +744,8 @@ setMethod("minNoiseLevel", "MSWParam", function(object){
 ##' @rdname featureDetection-MSW
 setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
     object@minNoiseLevel <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases ridgeLength
@@ -850,10 +758,8 @@ setMethod("ridgeLength", "MSWParam", function(object){
 ##' @rdname featureDetection-MSW
 setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
     object@ridgeLength <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases peakThr
@@ -865,10 +771,8 @@ setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("peakThr", "MSWParam", function(object, value) {
     object@peakThr <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases tuneIn
@@ -880,10 +784,8 @@ setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
     object@tuneIn <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 
 ##' @aliases addParams
@@ -900,10 +802,8 @@ setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
 ##' @rdname featureDetection-MSW
 setReplaceMethod("addParams", "MSWParam", function(object, value) {
     object@addParams <- value
-    OK <- validObject(object)
-    if (is.character(OK))
-        stop(OK)
-    return(object)
+    if (validObject(object))
+        return(object)
 })
 ## The 'setAs' method.
 setAs("MSWParam" ,"list", function(from){
@@ -919,4 +819,106 @@ setMethod("as.list", signature(x = "MSWParam"), function(x, ...) {
     names(L) <- sub(names(L), pattern = "ampTh", replacement = "amp.Th",
                     fixed = TRUE)
     return(L)
+})
+
+############################################################
+## CentWavePredIsoParam
+###
+setMethod("initialize", "CentWavePredIsoParam", function(.Object, ...) {
+    classVersion(.Object)["CentWavePredIsoParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("show", "CentWavePredIsoParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" ppm:", ppm(object), "\n")
+    cat(" peakwidth:", paste(peakwidth(object), collapse = ", "), "\n")
+    cat(" snthresh:", snthresh(object), "\n")
+    cat(" prefilter:", paste(prefilter(object), collapse = ", "), "\n")
+    cat(" mzCenterFun:", mzCenterFun(object), "\n")
+    cat(" integrate:", integrate(object), "\n")
+    cat(" mzdiff:", mzdiff(object), "\n")
+    cat(" fitgauss:", fitgauss(object), "\n")
+    cat(" noise:", noise(object), "\n")
+    cat(" verboseColumns:", verboseColumns(object), "\n")
+    cat(" roiList length:", length(roiList(object)), "\n")
+    cat(" firstBaselineCheck", firstBaselineCheck(object), "\n")
+    cat(" roiScales length:", length(roiScales(object)), "\n")
+    cat(" snthreshIsoROIs:", snthreshIsoROIs(object), "\n")
+    cat(" maxCharge:", maxCharge(object), "\n")
+    cat(" maxIso:", maxIso(object), "\n")
+    cat(" mzIntervalExtension:", mzIntervalExtension(object), "\n")
+    cat(" polarity:", polarity(object), "\n")
+})
+
+##' @aliases snthreshIsoROIs
+##' @description \code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
+##' setter for the \code{snthreshIsoROIs} slot of the object.
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object){
+    return(object@snthreshIsoROIs)})
+##' @aliases snthreshIsoROIs<-
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, value) {
+    object@snthreshIsoROIs <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases maxCharge
+##' @description \code{maxCharge},\code{maxCharge<-}: getter and
+##' setter for the \code{maxCharge} slot of the object.
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("maxCharge", "CentWavePredIsoParam", function(object){
+    return(object@maxCharge)})
+##' @aliases maxCharge<-
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
+    object@maxCharge <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases maxIso
+##' @description \code{maxIso},\code{maxIso<-}: getter and
+##' setter for the \code{maxIso} slot of the object.
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("maxIso", "CentWavePredIsoParam", function(object){
+    return(object@maxIso)})
+##' @aliases maxIso<-
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
+    object@maxIso <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases mzIntervalExtension
+##' @description \code{mzIntervalExtension},\code{mzIntervalExtension<-}: getter
+##' and setter for the \code{mzIntervalExtension} slot of the object.
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("mzIntervalExtension", "CentWavePredIsoParam", function(object){
+    return(object@mzIntervalExtension)})
+##' @aliases mzIntervalExtension<-
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
+                 function(object, value) {
+                     object@mzIntervalExtension <- value
+                     if (validObject(object))
+                         return(object)
+                 })
+
+##' @description \code{polarity},\code{polarity<-}: getter and
+##' setter for the \code{polarity} slot of the object.
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setMethod("polarity", "CentWavePredIsoParam", function(object){
+    return(object@polarity)})
+##' @aliases polarity<-
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
+    object@polarity <- value
+    if (validObject(object))
+        return(object)
 })

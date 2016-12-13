@@ -293,16 +293,16 @@ setClass("XProcessHistory",
 ##'
 ##' The implemented feature detection methods are:
 ##' \describe{
-##' \item{centWave}{: feature detection using the \emph{centWave} method.
+##' \item{centWave}{feature detection using the \emph{centWave} method.
 ##' See \code{\link{centWave}} for more details.}
 ##'
-##' \item{matchedFilter}{: peak detection in chromatographic space. See
+##' \item{matchedFilter}{peak detection in chromatographic space. See
 ##' \code{\link{matchedFilter}} for more details.}
 ##'
-##' \item{massifquant}{: peak detection using the Kalman filter-based feature
+##' \item{massifquant}{peak detection using the Kalman filter-based feature
 ##' method. See \code{\link{massifquant}} for more details.}
 ##'
-##' \item{MSW}{: single-spectrum non-chromatography MS data feature detection.
+##' \item{MSW}{single-spectrum non-chromatography MS data feature detection.
 ##' See \code{\link{MSW}} for more details.}
 ##'
 ##' }
@@ -1053,6 +1053,123 @@ setClass("MSWParam",
                  return(msg)
              }
          })
+
+## Main centWave documentation.
+##' @title Two-step centWave feature detection considering also feature isotopes
+##'
+##' @aliases centWaveWithPredIsoROIs
+##'
+##' @description This method performs a two-step centWave-based feature
+##' detection: in a first centWave run features are identified for which then
+##' the location of their potential isotopes in the mz-retention time is
+##' predicted. A second centWave run is then performed on these
+##' \emph{regions of interest} (ROIs). The final list of features comprises all
+##' non-overlapping features from both centWave runs.
+##'
+##' @inheritParams featureDetection-centWave
+##'
+##' @param maxCharge integer(1) defining the maximal isotope charge. Isotopes
+##' will be defined for charges \code{1:maxCharge}.
+##'
+##' @param maxIso integer(1) defining the number of isotope peaks that should be
+##' predicted for each feature identified in the first centWave run.
+##'
+##' @param mzIntervalExtension logical(1) whether the mz range for the predicted
+##' isotope ROIs should be extended to increase detection of low intensity peaks.
+##'
+##' @param snthreshIsoROIs numeric(1) defining the signal to noise ratio cutoff
+##' to be used in the second centWave run to identify features for predicted
+##' isotope ROIs.
+##'
+##' @param polarity character(1) specifying the polarity of the data. Currently
+##' not used, but has to be \code{"positive"}, \code{"negative"} or
+##' \code{"unknown"} if provided.
+##'
+##' @details See \code{\link{centWave}} for details on the centWave method.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' objects (both defined in the \code{MSnbase} package). All of the settings
+##' to the centWave algorithm can be passed with a \code{CentWaveParam} object.
+##'
+##' @family feature detection methods
+##' @seealso The \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}} core
+##' API function and \code{\link{findPeaks.centWave}} for the old user interface.
+##' \code{\link{CentWaveParam}} for the class the \code{CentWavePredIsoParam}
+##' extends.
+##'
+##' @name featureDetection-centWaveWithPredIsoROIs
+##' @author Hendrik Treutler, Johannes Rainer
+NULL
+#> NULL
+
+##' @description The \code{CentWavePredIsoParam} class allows to specify all
+##' settings for the two-step centWave-based feature detection considering also
+##' predicted isotopes of features identified in the first centWave run.
+##' Instances should be created with the \code{CentWavePredIsoParam} constructor.
+##' See also the documentation of the \code{\link{CentWaveParam}} for all methods
+##' and arguments this class inherits.
+##'
+##' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,snthreshIsoROIs,maxCharge,maxIso,mzIntervalExtension,polarity See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+##'
+##' @examples
+##'
+##' ## Create a CentWaveParam object
+##' p <- CentWavePredIsoParam(maxCharge = 4)
+##' ## Change snthresh parameter
+##' snthresh(p) <- 25
+##' p
+##'
+setClass("CentWavePredIsoParam",
+         slots = c(
+             snthreshIsoROIs = "numeric",
+             maxCharge = "integer",
+             maxIso = "integer",
+             mzIntervalExtension = "logical",
+             polarity = "character"
+         ),
+         contains = c("CentWaveParam"),
+         prototype = prototype(
+             snthreshIsoROIs = 6.25,
+             maxCharge = 3L,
+             maxIso = 5L,
+             mzIntervalExtension = TRUE,
+             polarity = "unknown"
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@snthreshIsoROIs) != 1 |
+                 any(object@snthreshIsoROIs < 0))
+                 msg <- validMsg(msg, paste0("'snthreshIsoROIs' has to be a ",
+                                             "positive numeric of length 1."))
+             if (length(object@maxCharge) != 1 | any(object@maxCharge < 0))
+                 msg <- validMsg(msg, paste0("'maxCharge' has to be a ",
+                                             "positive integer of length 1."))
+             if (length(object@maxIso) != 1 | any(object@maxIso < 0))
+                 msg <- validMsg(msg, paste0("'maxIso' has to be a ",
+                                             "positive integer of length 1."))
+             if (length(object@mzIntervalExtension) != 1)
+                 msg <- validMsg(msg, paste0("'mzIntervalExtension' has to be a",
+                                             " logical of length 1."))
+             if (length(object@polarity) != 1)
+                 msg <- validMsg(msg, paste0("'polarity' has to be a",
+                                             " character of length 1."))
+             if (!(object@polarity %in% c("positive", "negative", "unknown")))
+                 msg <- validMsg(msg, paste0("'polarity' has to be either ",
+                                             "'positive', 'negative' or ",
+                                             "'unknown'!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
 
 ##
 

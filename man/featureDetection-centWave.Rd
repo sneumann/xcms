@@ -344,6 +344,7 @@ The \code{\link{do_detectFeatures_centWave}} core API function and
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-MSW}},
+  \code{\link{featureDetection-centWaveWithPredIsoROIs}},
   \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}
 }

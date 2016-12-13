@@ -156,3 +156,29 @@ MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
                peakThr = peakThr, tuneIn = tuneIn, addParams = addParams))
 }
 
+############################################################
+## CentWavePredIsoParam
+
+##' @return The \code{CentWavePredIsoParam} function returns a
+##' \code{CentWavePredIsoParam} class instance with all of the settings
+##' specified for the two-step centWave-based feature detection considering also
+##' feature isotopes.
+##'
+##' @rdname featureDetection-centWaveWithPredIsoROIs
+CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
+                          prefilter = c(3, 100), mzCenterFun = "wMean",
+                          integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
+                          noise = 0, verboseColumns = FALSE, roiList = list(),
+                          firstBaselineCheck = TRUE, roiScales = numeric(),
+                          snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
+                          mzIntervalExtension = TRUE, polarity = "unknown") {
+    return(new("CentWavePredIsoParam", ppm = ppm, peakwidth = peakwidth,
+               snthresh = snthresh, prefilter = prefilter,
+               mzCenterFun = mzCenterFun, integrate = as.integer(integrate),
+               mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+               verboseColumns = verboseColumns, roiList = roiList,
+               firstBaselineCheck = firstBaselineCheck, roiScales = roiScales,
+               snthreshIsoROIs = snthreshIsoROIs, maxIso = as.integer(maxIso),
+               maxCharge = as.integer(maxCharge),
+               mzIntervalExtension = mzIntervalExtension, polarity = polarity))
+}

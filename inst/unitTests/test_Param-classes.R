@@ -341,3 +341,139 @@ test_MSWParam <- function() {
     checkTrue(!any(names(L) == "addParams"))
     checkEquals(L$snthresh, 3)
 }
+
+test_CentWavePredIsoParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("CentWavePredIsoParam", ppm = 14)
+    checkEquals(ppm(p), 14)
+    ppm(p) <- 13
+    checkEquals(ppm(p), 13)
+    p <- CentWavePredIsoParam(ppm = 21)
+    checkEquals(ppm(p), 21)
+    checkException(CentWavePredIsoParam(ppm = -4))
+
+    p <- new("CentWavePredIsoParam", peakwidth = c(1, 2))
+    checkEquals(peakwidth(p), c(1, 2))
+    peakwidth(p) <- c(2, 3)
+    checkEquals(peakwidth(p), c(2, 3))
+    p <- CentWavePredIsoParam(peakwidth = c(3, 4))
+    checkEquals(peakwidth(p), c(3, 4))
+    checkException(CentWavePredIsoParam(peakwidth = 1:3))
+
+    p <- new("CentWavePredIsoParam", snthresh = 5)
+    checkEquals(snthresh(p), 5)
+    snthresh(p) <- 6
+    checkEquals(snthresh(p), 6)
+    p <- CentWavePredIsoParam(snthresh = 7)
+    checkEquals(snthresh(p), 7)
+    checkException(CentWavePredIsoParam(snthresh = 1:3))
+
+    p <- new("CentWavePredIsoParam", prefilter = c(1, 2))
+    checkEquals(prefilter(p), c(1, 2))
+    prefilter(p) <- c(2, 3)
+    checkEquals(prefilter(p), c(2, 3))
+    p <- CentWavePredIsoParam(prefilter = c(3, 4))
+    checkEquals(prefilter(p), c(3, 4))
+    checkException(CentWavePredIsoParam(prefilter = 1:3))
+
+    p <- new("CentWavePredIsoParam", mzCenterFun = "meanApex3")
+    checkEquals(mzCenterFun(p), "meanApex3")
+    mzCenterFun(p) <- "mean"
+    checkEquals(mzCenterFun(p), "mean")
+    p <- CentWavePredIsoParam(mzCenterFun = "mean")
+    checkEquals(mzCenterFun(p), "mean")
+    checkException(CentWavePredIsoParam(mzCenterFun = "median"))
+
+    p <- new("CentWavePredIsoParam", integrate = 2L)
+    checkEquals(integrate(p), 2L)
+    integrate(p) <- 1L
+    checkEquals(integrate(p), 1L)
+    p <- CentWavePredIsoParam(integrate = 2L)
+    checkEquals(integrate(p), 2L)
+    checkException(CentWavePredIsoParam(integrate = 3L))
+
+    p <- new("CentWavePredIsoParam", mzdiff = 1)
+    checkEquals(mzdiff(p), 1)
+    mzdiff(p) <- 2
+    checkEquals(mzdiff(p), 2)
+    p <- CentWavePredIsoParam(mzdiff = 3)
+    checkEquals(mzdiff(p), 3)
+    checkException(CentWavePredIsoParam(mzdiff = 2:3))
+
+    p <- new("CentWavePredIsoParam", fitgauss = TRUE)
+    checkEquals(fitgauss(p), TRUE)
+    fitgauss(p) <- FALSE
+    checkEquals(fitgauss(p), FALSE)
+    p <- CentWavePredIsoParam(fitgauss = TRUE)
+    checkEquals(fitgauss(p), TRUE)
+    checkException(CentWavePredIsoParam(fitgauss = c(TRUE, FALSE)))
+
+    p <- new("CentWavePredIsoParam", noise = 3)
+    checkEquals(noise(p), 3)
+    noise(p) <- 6
+    checkEquals(noise(p), 6)
+    p <- CentWavePredIsoParam(noise = 8)
+    checkEquals(noise(p), 8)
+    checkException(CentWavePredIsoParam(noise = c(3, 5)))
+
+    p <- new("CentWavePredIsoParam", verboseColumns = TRUE)
+    checkEquals(verboseColumns(p), TRUE)
+    verboseColumns(p) <- FALSE
+    checkEquals(verboseColumns(p), FALSE)
+    p <- CentWavePredIsoParam(verboseColumns = TRUE)
+    checkEquals(verboseColumns(p), TRUE)
+    checkException(CentWavePredIsoParam(verboseColumns = c(TRUE, FALSE)))
+
+    p <- new("CentWavePredIsoParam", firstBaselineCheck = TRUE)
+    checkEquals(firstBaselineCheck(p), TRUE)
+    firstBaselineCheck(p) <- FALSE
+    checkEquals(firstBaselineCheck(p), FALSE)
+    p <- CentWavePredIsoParam(firstBaselineCheck = FALSE)
+    checkEquals(firstBaselineCheck(p), FALSE)
+    checkException(CentWavePredIsoParam(firstBaselineCheck = c(TRUE, FALSE)))
+
+    p <- new("CentWavePredIsoParam", snthreshIsoROIs = 5)
+    checkEquals(snthreshIsoROIs(p), 5)
+    snthreshIsoROIs(p) <- 6
+    checkEquals(snthreshIsoROIs(p), 6)
+    p <- CentWavePredIsoParam(snthreshIsoROIs = 7)
+    checkEquals(snthreshIsoROIs(p), 7)
+    checkException(CentWavePredIsoParam(snthreshIsoROIs = 1:3))
+
+    p <- new("CentWavePredIsoParam", maxCharge = 5L)
+    checkEquals(maxCharge(p), 5L)
+    maxCharge(p) <- 6
+    checkEquals(maxCharge(p), 6L)
+    p <- CentWavePredIsoParam(maxCharge = 7)
+    checkEquals(maxCharge(p), 7L)
+    checkException(CentWavePredIsoParam(maxCharge = 1:3))
+
+    p <- new("CentWavePredIsoParam", maxIso = 5L)
+    checkEquals(maxIso(p), 5L)
+    maxIso(p) <- 6
+    checkEquals(maxIso(p), 6L)
+    p <- CentWavePredIsoParam(maxIso = 7)
+    checkEquals(maxIso(p), 7L)
+    checkException(CentWavePredIsoParam(maxIso = 1:3))
+
+    p <- new("CentWavePredIsoParam", mzIntervalExtension = FALSE)
+    checkEquals(mzIntervalExtension(p), FALSE)
+    mzIntervalExtension(p) <- TRUE
+    checkEquals(mzIntervalExtension(p), TRUE)
+    p <- CentWavePredIsoParam(mzIntervalExtension = FALSE)
+    checkEquals(mzIntervalExtension(p), FALSE)
+    checkException(CentWavePredIsoParam(mzIntervalExtension = c(TRUE, FALSE)))
+
+    p <- new("CentWavePredIsoParam", polarity = "positive")
+    checkEquals(polarity(p), "positive")
+    polarity(p) <- "negative"
+    checkEquals(polarity(p), "negative")
+    p <- CentWavePredIsoParam(polarity = "negative")
+    checkEquals(polarity(p), "negative")
+    checkException(CentWavePredIsoParam(polarity = "bla"))
+
+    ## Check the .param2list method:
+    p <- new("CentWavePredIsoParam", snthresh = 123)
+    L <- xcms:::.param2list(p)
+    checkEquals(L$snthresh, 123)
+}

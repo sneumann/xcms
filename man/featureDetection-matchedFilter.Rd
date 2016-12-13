@@ -312,6 +312,7 @@ and \code{\link{findPeaks.matchedFilter}} for the old user interface.
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-MSW}},
+  \code{\link{featureDetection-centWaveWithPredIsoROIs}},
   \code{\link{featureDetection-centWave}},
   \code{\link{featureDetection-massifquant}}
 }

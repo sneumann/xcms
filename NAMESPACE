@@ -40,7 +40,7 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
-                  "spectra", "impute", "isCentroided")
+                  "spectra", "impute", "isCentroided", "polarity")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -201,7 +201,8 @@ exportClasses(
     "CentWaveParam",
     "MatchedFilterParam",
     "MassifquantParam",
-    "MSWParam"
+    "MSWParam",
+    "CentWavePredIsoParam"
 )
 ## Param methods
 exportMethods(
@@ -279,10 +280,21 @@ exportMethods(
     "tuneIn",
     "tuneIn<-",
     "addParams",
-    "addParams<-"
+    "addParams<-",
+    "snthreshIsoROIs",
+    "snthreshIsoROIs<-",
+    "maxCharge",
+    "maxCharge<-",
+    "maxIso",
+    "maxIso<-",
+    "mzIntervalExtension",
+    "mzIntervalExtension<-",
+    "polarity",
+    "polarity<-"
 )
 ## Param class functions
-export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam")
+export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
+       "CentWavePredIsoParam")
 ## Param class methods.
 
 ## New Classes

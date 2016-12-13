@@ -281,6 +281,7 @@ The \code{\link{do_detectFeatures_MSW}} core API function
 and \code{\link{findPeaks.MSW}} for the old user interface.
 
 Other feature detection methods: \code{\link{detectFeatures}},
+  \code{\link{featureDetection-centWaveWithPredIsoROIs}},
   \code{\link{featureDetection-centWave}},
   \code{\link{featureDetection-massifquant}},
   \code{\link{featureDetection-matchedFilter}}
