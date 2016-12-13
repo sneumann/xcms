@@ -1,3 +1,9 @@
+CHANGES IN VERSION 1.51.1
+-------------------------
+
+BUG FIXES:
++ Fix incorrrect indexing getEIC function reported by Will Edmands, closes #92
+
 CHANGES IN VERSION 1.49.7
 -------------------------
 
