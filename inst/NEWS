@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.51.2
+-------------------------
+
+USER VISIBLE CHANGES:
++ As suggested by Jan Stanstrup, do not error if a centWave ROI 
+  contains no data, closes #90
+
 CHANGES IN VERSION 1.51.1
 -------------------------
 
