@@ -416,12 +416,19 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
         ## original mzROI range
         mzROI.EIC <- rawEIC(object,mzrange=mzrange,scanrange=scrange)
         omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
-        if (all(omz == 0))
-            stop("centWave: debug me: (omz == 0)?\n")
+        
+        if (all(omz == 0)){
+            warning("centWave: No peaks found in ROI.\n")
+            next
+        }
+        
         od  <- mzROI.EIC$intensity
         otd <- mzROI.EIC$scan
-        if (all(od == 0))
-            stop("centWave: debug me: (all(od == 0))?\n")
+        
+        if (all(od == 0)){
+            warning("centWave: No peaks found in ROI.\n")
+            next
+        }
 
         ##  scrange + scRangeTol, used for gauss fitting and continuous data above 1st baseline detection
         ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)], scrange[2] + scRangeTol)
