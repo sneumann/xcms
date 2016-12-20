@@ -25,7 +25,11 @@ of measurement to detect time drift}
 "rtdevsample": median RT deviation for each sample, indicates outliers}
 }
 \value{
-No return value
+List with four matrices, each of dimension features * samples:
+ "mz":    median mz deviation for each sample
+ "mzdev": median mz deviation for each sample
+ "rt":    median RT deviation for each sample
+ "rtdev": median RT deviation for each sample
 }
 \description{
 Use "democracy" to determine the average m/z and RT deviations
