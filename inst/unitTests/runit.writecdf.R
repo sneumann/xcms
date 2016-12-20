@@ -1,6 +1,6 @@
 test.write.cdf <- function() {
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xraw <- xcmsRaw(file)
+    xraw <- xcmsRaw(file, profstep = 0)
 
     cdffile <- paste(tempdir(), "ko15.cdf", sep="/")
 
@@ -10,7 +10,7 @@ test.write.cdf <- function() {
 
     checkTrue(all(xraw@env$mz == xrawCopy@env$mz))
     checkTrue(all(xraw@env$intensity == xrawCopy@env$intensity))
-    
+
 }
 
 if (FALSE) {

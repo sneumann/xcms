@@ -24,7 +24,11 @@
 #'  "rtdevsample": median RT deviation for each sample, indicates outliers
 #'
 #'
-#' @return No return value
+#' @return List with four matrices, each of dimension features * samples:
+#'  "mz":    median mz deviation for each sample
+#'  "mzdev": median mz deviation for each sample
+#'  "rt":    median RT deviation for each sample
+#'  "rtdev": median RT deviation for each sample
 #'
 #' @examples
 #' library(faahKO)
@@ -135,6 +139,7 @@ plotQC <- function(object,
               col = sampColors, xlab = "", ylab = "Retention Time Deviation",
               names.arg = sampNames, las = 2)
   }
+  invisible(deviations)
 }
 
 

@@ -64,7 +64,7 @@
     logical, if TRUE continuous data within ROI is checked to be above 1st baseline
   }
   \item{roiScales}{
-    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets 
+    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets
   }
 }
 \value{
@@ -125,6 +125,7 @@
   BMC Bioinformatics 2008, 9:504
 }
 \seealso{
+  \code{\link{centWave}} for the new user interface.
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
 }

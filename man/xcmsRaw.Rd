@@ -18,7 +18,8 @@ deepCopy(object)
 \arguments{
   \item{filename}{path name of the NetCDF or mzXML file to read}
   \item{profstep}{step size (in m/z) to use for profile generation}
-  \item{profmethod}{method to use for profile generation}
+  \item{profmethod}{method to use for profile generation. See
+    \code{\link{profile-matrix}} for details and supported values.}
   \item{profparam}{extra parameters to use for profile generation}
   \item{includeMSn}{only for XML file formats: also read MS$^n$
     (Tandem-MS of Ion-/Orbi- Trap spectra)}
@@ -28,9 +29,12 @@ deepCopy(object)
   \item{object}{An xcmsRaw object}
 }
 \details{
+  See \code{\link{profile-matrix}} for details on profile matrix
+  generation methods and settings.
+
   The scanrange to import can be restricted, otherwise all MS1 data
   is read. If \code{profstep} is set to 0, no profile matrix is generated.
-  Unless includeMSn=TRUE only first level MS data is read, not MS/MS,
+  Unless \code{includeMSn = TRUE} only first level MS data is read, not MS/MS,
   etc.
 
   deepCopy(xraw) will create a copy of the xcmsRaw object with its own

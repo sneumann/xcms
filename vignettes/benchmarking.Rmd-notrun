@@ -1,0 +1,130 @@
+---
+title: "xcms3 benchmarking"
+output:
+  BiocStyle::html_document:
+    toc: false
+vignette: >
+  % \VignetteIndexEntry{xcms3 benchmarking}
+  % \VignetteEngine{knitr::rmarkdown}
+  % \VignetteKeyword{metabolomics, mass spectrometry}
+  % \VignettePackage{xcms}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,microbenchmark}
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer<br />
+**Modified**: 26 August, 2016<br />
+**Compiled**: `r date()`
+
+
+# Introduction
+
+In this vignette we evaluate the performance of some recently added/modified
+functionality of the `xcms` package and compare it, where possible, with the
+*old* functions and methods from the `xcms` package.
+
+```{r libs, message = FALSE}
+library(xcms)
+```
+
+# Data binning
+
+`xcms` uses binning of the MS data to generate the *profile* matrix on which
+e.g. the `findPeaks.matchedFilter` method identified the MS1 features. Different
+binning methods are available, such as `profBin`, that bins M/Z values into
+equal-sized bins and identifies for all M/Z values falling into each bin the
+maximal intensity value. This concept of data binning has been generalized and
+is provided by the `binYonX` function that allows to bin any given numeric
+vector. The function calls C-routines to ensure a high performance. In the
+example below we compare the speed of the `profBin` and `binYonX` functions.
+
+```{r binYonXbenchPrepare}
+## Define a large numeric vector of sorted values.
+X <- sort(abs(rnorm(500000, mean = 500, sd = 100)))
+
+```
+
+Bin this vector into 300 bins using `profBin` and using the `binYonX` function
+and compare their performance.
+
+```{r runProfBin}
+library(microbenchmark)
+microbenchmark(xcms:::profBin(X, X, 300),
+               binYonX(X, nBins = 300, sortedX = TRUE,
+                       shiftByHalfBinSize = TRUE, baseValue = 0),
+               times = 50)
+```
+
+With the results being identical.
+
+```{r binResults}
+a <- xcms:::profBin(X, X, 300)
+b <- binYonX(X, nBins = 300, sortedX = TRUE,
+             shiftByHalfBinSize = TRUE, baseValue = 0)
+all.equal(a, b$y)
+```
+
+Data binning and missing value imputation were performed in `xcms` within the
+same method e.g. `profBinLin`. The data binning and missing value imputation has
+been separated now into the `binYonX` and `imputeLinInterpol` functions. Below
+we compare the performance of the `profBinLin` with a combination of the two
+latter functions.
+
+```{r runProfBinLin}
+## Define a function that performs data binning and imputation
+myProfBinLin <- function(x, ...) {
+    res <- binYonX(x, ...)
+    return(imputeLinInterpol(res$y, method = "lin"))
+}
+
+microbenchmark(xcms:::profBinLin(X, X, 1000),
+               myProfBinLin(X, nBins = 1000, sortedX = TRUE,
+                            shiftByHalfBinSize = TRUE),
+               times = 50)
+
+```
+
+# Feature detection
+
+The original `findPeaks.*` methods will be in the long run replaced with the
+`do_detectFeatures*` functions. The code in the new functions is for the largest
+part identical to the old methods, but it has been cleaned and, where possible,
+tuned to increase performance.
+
+Below we load the test data set and compare the performance of different
+`matchedFilter` implementations: using the original code and using the `binYonX`
+function that bins the full data matrix once (instead of the iterative binning
+of small data chunks that is performed in the original code).
+
+```{r matchedFilter}
+## Load the test data set.
+library(faahKO)
+fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+xr <- xcmsRaw(fs)
+## Extracting the data from the xcmsRaw
+mzVals <- xr@env$mz
+intVals <- xr@env$intensity
+## Define the values per spectrum:
+valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+
+microbenchmark(xcms:::.matchedFilter_orig(mzVals, intVals, xr@scantime,
+                                          valsPerSpect, binSize = 2),
+               xcms:::.matchedFilter_binYonX_no_iter(mzVals, intVals,
+                                                     xr@scantime,
+                                                     valsPerSpect,
+                                                     binSize = 2),
+               times = 4)
+
+```
+
+Note: on another test file containing 1721 scans/spectra the new implementation
+outperformed the original code by a factor of 4.
+
+```{r sessioninfo}
+sessionInfo()
+```

@@ -10,8 +10,9 @@
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
         polarity = NULL, lockMassFreq=FALSE,
-		mslevel=NULL, nSlaves=0, progressCallback=NULL,
-                scanrange = NULL, BPPARAM = bpparam(), ...)
+	mslevel=NULL, nSlaves=0, progressCallback=NULL,
+        scanrange = NULL, BPPARAM = bpparam(),
+        stopOnError = TRUE, ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
@@ -43,6 +44,12 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
     created by the \code{\link[BiocParallel]{SerialParam}},
     \code{\link[BiocParallel]{MulticoreParam}} or
     \code{\link[BiocParallel]{SnowParam}} functions.
+  }
+  \item{stopOnError}{Logical specifying whether the feature detection
+    call should stop on the first encountered error (the default), or
+    whether feature detection is performed in all files regardless
+    eventual failures for individual files in which case all errors are
+    reported as \code{warnings}.
   }
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
