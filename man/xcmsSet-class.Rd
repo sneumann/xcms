@@ -63,57 +63,62 @@
 }
 \section{Slots}{
   \describe{
-    \item{\code{peaks}:}{
-      matrix containing peak data
+    \item{peaks}{
+      \code{matrix} containing peak data.
     }
-    \item{\code{filled}:}{
-      a vector with peak indices of peaks which have been added by a
-      \code{\link{fillPeaks}} method,
+    \item{filled}{
+      A vector with peak indices of peaks which have been added by a
+      \code{\link{fillPeaks}} method.
     }
-    \item{\code{groups}:}{
-      matrix containing statistics about peak groups
+    \item{groups}{
+      Matrix containing statistics about peak groups.
     }
-    \item{\code{groupidx}:}{
-      list containing indices of peaks in each group
+    \item{groupidx}{
+      List containing indices of peaks in each group.
     }
-    \item{\code{phenoData}:}{
-      a data frame containing the experimental design factors
+    \item{phenoData}{
+      A \code{data.frame} containing the experimental design factors.
     }
-    \item{\code{rt}:}{
-      list containing two lists, \code{raw} and \code{corrected},
-      each containing retention times for every scan of every sample
+    \item{rt}{
+      \code{list} containing two lists, \code{raw} and \code{corrected},
+      each containing retention times for every scan of every sample.
     }
-    \item{\code{filepaths}:}{
-      character vector with absolute path name of each NetCDF file
+    \item{filepaths}{
+      Character vector with absolute path name of each NetCDF file.
     }
-    \item{\code{profinfo}:}{
-      list containing the values \code{method} - profile generation
+    \item{profinfo}{
+      \code{list} containing the values \code{method} - profile generation
       method, and \code{step} - profile m/z step size and eventual
       additional parameters to the profile function.
     }
-	\item{dataCorrection}{
-	  logical vector filled if the waters Lock mass correction
-		parameter is used.
-	}
-    \item{\code{polarity}:}{
-      a string ("positive" or "negative" or NULL) describing whether only
+    \item{dataCorrection}{
+      \code{logical} vector filled if the waters Lock mass correction
+      parameter is used.
+    }
+    \item{polarity}{
+      A string ("positive" or "negative" or NULL) describing whether only
       positive or negative scans have been used reading the raw data.
     }
-    \item{\code{progressInfo}:}{
-       progress informations for some xcms functions (for GUI)
+    \item{progressInfo}{
+       Progress informations for some xcms functions (for GUI).
     }
-    \item{\code{progressCallback}:}{
-       function to be called, when progressInfo changes (for GUI)
+    \item{progressCallback}{
+       Function to be called, when progressInfo changes (for GUI).
     }
-    \item{\code{mslevel}:}{
+    \item{mslevel}{
       Numeric representing the MS level on which the peak picking was
       performed (by default on MS1). This slot should be accessed
       through its getter method \code{mslevel}.
     }
-    \item{\code{scanrange}:}{
+    \item{scanrange}{
       Numeric of length 2 specifying the scan range (or \code{NULL} for
       the full range). This slot should be accessed through its getter
-      method \code{scanrange}.
+      method \code{scanrange}. The scan range provided in this slot
+      represents the scans to which the whole raw data is subsetted.
+    }
+    \item{.processHistory}{
+      Internal slot to be used to keep track of performed processing
+      steps. This slot should not be directly accessed by the user.
     }
   }
 }
@@ -232,7 +237,8 @@
       \code{signature(object = "xcmsSet")}: get the \code{progressCallback} slot
     }
     \item{scanrange}{
-      Getter method for the \code{scanrange} slot.
+      Getter method for the \code{scanrange} slot. See scanrange slot
+      description above for more details.
     }
     \item{sampnames<-}{
       \code{signature(object = "xcmsSet")}: set rownames in the

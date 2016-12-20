@@ -36,12 +36,23 @@ minifm <- function(v1, v2, mzabs, mzppm, symmetric) {
 
     for (a in 1:length(m)) {
         if (is.numeric(m[[a]])) {
-            mns <- abs(v2[m[[a]]]-v1[a])
-            if (min(mns)<(mzabs + (v1[a]/1000000)*mzppm)) {
-                idx1[idpos]<-a
-                idx2[idpos]<-m[[a]][which(mns == min(mns))]
+            ## we have a map from v1 to v2: calculate difference
+            mns <- abs(v2[m[[a]]] - v1[a])
+            ## This can now be of length 1 or larger; select the smallest one
+            ## and ensure we're having one index only.
+            min_idx <- which.min(mns)[1]
+            ## Check if that's smaller then the tolerance
+            if (mns[min_idx] < (mzabs + (v1[a] / 1000000) * mzppm)) {
+                idx1[idpos] <- a
+                idx2[idpos] <- m[[a]][min_idx]
                 idpos <- idpos + 1
             }
+            ## if (min(mns) < (mzabs + (v1[a]/1000000) * mzppm)) {
+            ##     idx1[idpos]<-a
+            ##     ## This causes problems here.
+            ##     idx2[idpos]<-m[[a]][which(mns == min(mns))]
+            ##     idpos <- idpos + 1
+            ## }
         }
     }
     list(idx1=idx1, idx2=idx2)

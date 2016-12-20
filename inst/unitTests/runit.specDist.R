@@ -7,3 +7,4 @@ test.specDist <- function() {
     checkEquals(round(dist2,3), 3.183)
     checkEquals(dist3, 129)
 }
+

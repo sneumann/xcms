@@ -1,13 +1,128 @@
-* Overview of new and modified functionality in =xcms=
+#+TITLE: New and modified functionality in xcms
+#+AUTHOR:    Johannes Rainer
+#+EMAIL:     johannes.rainer@eurac.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS: ^:{} toc:nil
+#+PROPERTY: exports code
+#+PROPERTY: session *R*
 
-Thus far this is more to remind me what has been added/changed. In the end it
-would be nice to have a vignette describing all these methods in detail.
+#+BEGIN_EXPORT html
+---
+title: "New and modified functionality in xcms"
+author: "Johannes Rainer"
+graphics: yes
+package: xcms
+output:
+  BiocStyle::html_document2:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{New and modified functionality in xcms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,RColorBrewer}
+bibliography: references.bib
+csl: biomed-central.csl
+references:
+- id: dummy
+  title: no title
+  author:
+  - family: noname
+    given: noname
+---
 
-** Binning functions
+#+END_EXPORT
+
+* New functionality in =xcms=
+
+This document describes new functionality and changes to existing functionality
+in the =xcms= package introduced during the update to version /3/.
+
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
+  library(xcms)
+  library(RColorBrewer)
+#+END_SRC
+
+** Modernized user interface
+
+The modernization of the user interface comprises the definition of a new method
+for feature detection, namely =detectFeatures=, that performs the dispatching to
+the various algorithms (e.g. /centWave/, /matchedFilter/) based on a parameter class
+submitted /via/ the =param= argument. The rationale behind changing the name from
+=findPeaks= to =detectFeatures= to discriminate /peak/ (i.e. mass peak mostly used in
+proteomics), from /feature/ (which describes a peak in chromatographic space).
+
+The encapsulation of the parameters to a function into a parameter class (such
+as =CentWaveParam=) avoids busy function calls (with many single parameters to
+specify) and enables saving, reloading and reusing settings as well as, by
+adding them to the result objects, enabling the documentation of the data
+processing history. In addition, parameter validation can be performed within
+the parameter object and hence is no longer required in the analysis function.
+
+The implementation of the =detectFeatures= method for =OnDiskMSnExp= and =MSnExp=
+objects (from the =MSnbase= package) enable feature detection on these types of
+objects that represent the full MS data of an experiment along with all
+experiment relevant metadata. Loading the files first into an =MSnExp= or
+=OnDiskMSnExp= (the latter being specifically designed for large scale
+experiments) enables a first data inspection and quality assessment, followed by
+eventual subsetting and filtering (e.g. on retention time) before performing the
+feature detection on the thus processed data.
+
+Below we load the raw data files from the =faahKO= package as an =OnDiskMSnExp=
+object using the =readMSData2= function from the =MSnbase= package.
+
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
+  ## Reading the raw data using the MSnbase package
+  library(MSnbase)
+  library(xcms)
+  ## Load the CDF files from the faahKO
+  cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
+                   full.names = TRUE)
+
+  ## Define the sample grouping.
+  s_groups <- rep("KO", length(cdf_files))
+  s_groups[grep(cdf_files, pattern = "WT")] <- "WT"
+  ## Define a data.frame that will be used as phenodata
+  pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
+					replacement = "", fixed = TRUE),
+                      sample_group = s_groups, stringsAsFactors = FALSE)
+
+  ## Read the data.
+  raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
+#+END_SRC
+
+We next plot the total ion chromatogram (TIC) for all files within the
+experiment. Note that we are iteratively sub-setting the full data per file,
+which for =OnDiskMSnExp= is an efficient way to subset the data while ensuring
+that all data, including metadata, stays consistent.
+
+#+NAME: faahKO-tic
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = 'center', fig.width = 8, fig.height = 4
+  library(RColorBrewer)
+  sample_colors <- brewer.pal(3, "Set1")[1:2]
+  names(sample_colors) <- c("KO", "WT")
+  ## Subset the full raw data by file and plot the data.
+  tmp <- filterFile(raw_data, file = 1)
+  plot(x = rtime(tmp), y = tic(tmp), xlab = "retention time", ylab = "TIC",
+       col = sample_colors[pData(tmp)$sample_group], type = "l")
+  for (i in 2:length(fileNames(raw_data))) {
+      tmp <- filterFile(raw_data, file = i)
+      points(rtime(tmp), tic(tmp), type = "l",
+             col = sample_colors[pData(tmp)$sample_group])
+  }
+  legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
+#+END_SRC
+
++ Do the feature detection.
++ Describe the feature detection methods.
+
+** Binning and missing value imputation functions
 
 The binning/profile matrix generation functions have been completely
-rewritten. The new =binYonX= function replaces =profBin=, =profBinLin= and
-=profBinLinBase= methods. The function provides also additional functionality:
+rewritten. The new =binYonX= function replaces the binning of intensity values
+into bins defined by their m/z values implemented in the =profBin=, =profBinLin= and
+=profBinLinBase= methods. The =binYonX= function provides also additional functionality:
 
 + Breaks for the bins can be defined based on either the number of desired bins
   (=nBins=) or the size of a bin (=binSize=). In addition it is possible to provide
@@ -20,4 +135,571 @@ rewritten. The new =binYonX= function replaces =profBin=, =profBinLin= and
 + Values in input vector =y= can be aggregated within each bin with different
   methods: =max=, =min=, =sum= and =mean=.
 
++ The index of the largest (or smallest for =method= being "min") within each bin
+  can be returned by setting argument =returnIndex= to =TRUE=.
 
++ Binning can be performed on single or multiple sub-sets of the input vectors
+  using the =fromIdx= and =toIdx= arguments. This replaces the /M/ methods (such as
+  =profBinM=). These sub-sets can be overlapping.
+
+The missing value imputation logic inherently build into the =profBinLin= and
+=profBinLinBase= methods has been implemented in the =imputeLinInterpol= function.
+
+The example below illustrates the binning and imputation with the =binYtoX= and
+=imputeLinInterpol= functions. After binning of the test vectors below some of the
+bins have missing values, for which we impute a value using
+=imputeLinInterpol=. By default, =binYonX= selects the largest value within each
+bin, but other aggregation methods are also available (i.e. min, max, mean,
+sum).
+
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Defining the variables:
+  set.seed(123)
+  X <- sort(abs(rnorm(30, mean = 20, sd = 25))) ## 10
+  Y <- abs(rnorm(30, mean = 50, sd = 30))
+
+  ## Bin the values in Y into 20 bins defined on X
+  res <- binYonX(X, Y, nBins = 22)
+
+  res
+#+END_SRC
+
+As a result we get a =list= with the bin mid-points (=$x=) and the binned =y= values
+(=$y=).
+
+Next we use two different imputation approaches, a simple linear interpolation
+and the linear imputation approach that was defined in the =profBinLinBase=
+method. The latter performs linear interpolation only considering a certain
+neighborhood of missing values otherwise replacing the =NA= with a base value.
+
+#+BEGIN_SRC R :ravel binning-imputation-example, message = FALSE, fig.width = 10, fig.height = 7, fig.cap = 'Binning and missing value imputation results. Black points represent the input values, red the results from the binning and blue and green the results from the imputation (with method lin and linbase, respectively).'
+  ## Plot the actual data values.
+  plot(X, Y, pch = 16, ylim = c(0, max(Y)))
+  ## Visualizing the bins
+  abline(v = breaks_on_nBins(min(X), max(X), nBins = 22), col = "grey")
+
+  ## Define colors:
+  point_colors <- paste0(brewer.pal(4, "Set1"), 80)
+  ## Plot the binned values.
+  points(x = res$x, y = res$y, col = point_colors[1], pch = 15)
+
+  ## Perform the linear imputation.
+  res_lin <- imputeLinInterpol(res$y)
+
+  points(x = res$x, y = res_lin, col = point_colors[2], type = "b")
+
+  ## Perform the linear imputation "linbase"
+  res_linbase <- imputeLinInterpol(res$y, method = "linbase")
+  points(x = res$x, y = res_linbase, col = point_colors[3], type = "b", lty = 2)
+#+END_SRC
+
+The difference between the linear interpolation method =lin= and =linbase= is that
+the latter only performs the linear interpolation in a pre-defined neighborhood
+of the bin with the missing value (=1= by default). The other missing values are
+set to a base value corresponding to half of the smallest bin value. Both
+methods thus yield same results, except for bins 15-17 (see Figure above).
+
+** Core feature detection functions
+
+The core logic from the feature detection methods =findPeaks.centWave=,
+=findPeaks.massifquant=, =findPeaks.matchedFilter= has been extracted and put into
+functions with the common prefix =do_detectFeatures= with the aim, as detailed in
+issue [[https://github.com/sneumann/xcms/issues/30][#30]], to separate the core logic from the analysis methods invoked by the
+users to enable also the use of the feature detection functions using base R
+parameters (i.e. without specific classes containing the data such as the
+=xcmsRaw= class). This simplifies also the re-use of these functions in other
+packages and simplifies the future implementation of the feature detection
+algorithms for e.g. the =MSnExp= or =OnDiskMSnExp= objects from the =MSnbase=
+Bioconductor package. The implemented functions are:
+
++ =do_detectFeatures_centWave=: peak density and wavelet based feature detection
+  for high resolution LC/MS data in centroid mode \cite{Tautenhahn:2008fx}.
++ =do_detectFeatures_matchedFilter=: identification of features in the
+  chromatographic domain based on matched filtration \cite{Smith:2006ic}.
++ =do_detectFeatures_massifquant=: identification of features using Kalman
+  filters.
+
+One possible drawback from the introduction of this new layer is, that more
+objects get copied by R which /could/ eventually result in a larger memory demand
+or performance decrease (while no such was decrease was observed up to now).
+
+** Usability improvements
+
++ =[= subsetting method for =xcmsRaw= objects that enables to subset an =xcmsRaw=
+  object to specific scans/spectra.
++ =profMat= method to extract the /profile/ matrix from the =xcmsRaw= object. This
+  method should be used instead of directly accessing the =@env$profile= slot, as
+  it will create the profile matrix on the fly if it was not pre-calculated (or
+  if profile matrix generation settings have been changed).
+
+* Changes due to bug fixes and modified functionality
+
+** Differences in linear interpolation of missing values (=profBinLin=).
+
+From =xcms= version 1.51.1 on the new binning functions are used, thus, the bug
+described here are fixed.
+
+Two bugs are present in the =profBinLin= method (reported as issues [[https://github.com/sneumann/xcms/issues/46][#46]] and [[https://github.com/sneumann/xcms/issues/49][#49]] on
+github) which are fixed in the new =binYonX= and =imputeLinInterpol= functions:
+
++ The first bin value calculated by =profBinLin= can be wrong (i.e. not being the
+  max value within that bin, but the first).
++ If the last bin contains also missing values, the method fails to determine
+  a correct value for that bin.
+
+The =profBinLin= method is used in =findPeaks.matchedFilter= if the profile
+method is set to "binlin".
+
+The example below illustrates both differences.
+
+#+BEGIN_SRC R
+  ## Define a vector with empty values at the end.
+  X <- 1:11
+  set.seed(123)
+  Y <- sort(rnorm(11, mean = 20, sd = 10))
+  Y[9:11] <- NA
+  nas <- is.na(Y)
+  ## Do interpolation with profBinLin:
+  resX <- xcms:::profBinLin(X[!nas], Y[!nas], 5, xstart = min(X),
+                            xend = max(X))
+  resX
+  res <- binYonX(X, Y, nBins = 5L, shiftByHalfBinSize = TRUE)
+  resM <- imputeLinInterpol(res$y, method = "lin",
+                            noInterpolAtEnds = TRUE)
+  resM
+#+END_SRC
+
+Plotting the results helps to better compare the differences. The black points
+in the figure below represent the actual values of =Y= and the grey vertical lines
+the breaks defining the bins. The blue lines and points represent the result
+from the =profBinLin= method. The bin values for the first and 4th bin are clearly
+wrong. The green colored points and lines represent the results from the =binYonX=
+and =imputeLinInterpol= functions (showing the correct binning and interpolation).
+
+#+BEGIN_SRC R :ravel profBinLin-problems, message = FALSE, fig.align = 'center', fig.width=10, fig.height = 7, fig.cap = "Illustration of the two bugs in profBinLin. The input values are represented by black points, grey vertical lines indicate the bins. The results from binning and interpolation with profBinLin are shown in blue and those from binYonX in combination with imputeLinInterpol in green."
+  plot(x = X, y = Y, pch = 16, ylim = c(0, max(Y, na.rm = TRUE)),
+       xlim = c(0, 12))
+  ## Plot the breaks
+  abline(v = breaks_on_nBins(min(X), max(X), 5L, TRUE), col = "grey")
+  ## Result from profBinLin:
+  points(x = res$x, y = resX, col = "blue", type = "b")
+  ## Results from imputeLinInterpol
+  points(x = res$x, y = resM, col = "green", type = "b",
+         pch = 4, lty = 2)
+
+#+END_SRC
+
+Note that by default =imputeLinInterpol= would also interpolate missing values at
+the beginning and the end of the provided numeric vector. This can be disabled
+(to be compliant with =profBinLin=) by setting parameter =noInterpolAtEnds= to
+=TRUE= (like in the example above).
+
+** Differences due to updates in =do_detectFeatures_matchedFilter=, respectively =findPeaks.matchedFilter=.
+
+The original =findPeaks.matchedFilter= (up to version 1.49.7) had several
+shortcomings and bugs that have been fixed in the new
+=do_detectFeatures_matchedFilter= method:
+
++ The internal iterative processing of smaller chunks of the full data (also
+  referred to as /iterative buffering/) could result, for some bin (step) sizes to
+  unstable binning results (discussed in issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github): calculation of
+  the breaks, or to be precise, the actually used bin size was performed in each
+  iteration and could lead to slightly different sizes between iterations (due
+  to rounding errors caused by floating point number representations in C).
+
++ The iterative buffering raises also a conceptual issue when linear
+  interpolation is performed to impute missing values: the linear imputation
+  will only consider values within the actually processed buffer and can thus
+  lead to wrong or inaccurate imputations.
+
++ The =profBinLin= implementation contains two bugs, one that can result in
+  failing to identify the maximal value in the first and last bin (see issue
+  [[https://github.com/sneumann/xcms/issues/46][#46]]) and one that fails to assign a value to a bin (issue [[https://github.com/sneumann/xcms/issues/49][#49]]). Both are fixed
+  in the =do_detectFeatures_matchedFilter= implementation.
+
+A detailed description of tests comparing all implementations is available in
+issue [[https://github.com/sneumann/xcms/issues/52][#52]] on github. Note also that in course of these changes also the =getEIC=
+method has been updated to use the new binning and missing value imputation
+function.
+
+While it is strongly discouraged, it is still possible to use to /old/ code (from
+1.49.7) by calling =useOriginalCode(TRUE)=.
+
+** Differences in =findPeaks.massifquant=
+
++ Argument =scanrange= was ignored in the /original/ old code (issue [[https://github.com/sneumann/xcms/issues/61][#61]]).
++ The method returned a =matrix= if =withWave= was =0= and a =xcmsPeaks= object
+  otherwise. The updated version returns *always* an =xcmsPeaks= object (issue #60).
+
+** Differences in /obiwarp/ retention time correction
+
+Retention time correction using the obiwarp method uses the /profile/ matrix
+(i.e. intensities binned in discrete bins along the mz axis). Profile matrix
+generation uses now the =binYonX= method which fixed some problems in the original
+binning and linear interpolation methods. Thus results might be slightly
+different.
+
+
+** =scanrange= parameter in all =findPeaks= methods
+
+The =scanrange= in the =findPeaks= methods is supposed to enable the peak detection
+only within a user-defined range of scans. This was however not performed in
+each method. Due to a bug in =findPeaks.matchedFilter='s original code the
+argument was ignored, except if the upper scan number of the user defined range
+was larger than the total number of available scans (see issue [[https://github.com/sneumann/xcms/issues/63][#63]]). In
+=findPeaks.massifquant= the argument was completely ignored (see issue [[https://github.com/sneumann/xcms/issues/61][#61]]) and,
+while the argument was considered in =findPeaks.centWave= and feature detection
+was performed within the specified scan range, but the original =@scantime= slot
+was used throughout the code instead of just the scan times for the specified
+scan indices (see issue [[https://github.com/sneumann/xcms/issues/64][#64]]).
+
+These problems have been fixed in version 1.51.1 by first sub-setting the
+=xcmsRaw= object (using the =[= method) before actually performing the feature
+detection.
+
+** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
+
+The problem described here has been fixed in =xcms= >= 1.51.1.
+
+The iterative binning of only small sub-sets of data causes problems with
+=profBinLinBase=, in which data imputation might be skipped in some iterations
+while it is performed in others (also discussed in issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github).
+
+Iterative buffering has both conceptual and computational issues.
++ Conceptual: =profBinLin= and =profBinLinBase= do a linear interpolation to impute
+  missing values. This is obviously affected by the input data, i.e. if only a
+  small subset of input data is considered, the imputation can change.
+
++ Computational: the iterative buffering is slower than binning of the full
+  data.
+
+An additional problem comes with the implementation of the =profBin= method in
+=xcms= that was used in the =findPeaks.matchedFilter= method for method being =lin=:
+the bin size is calculated anew in each call, thus, due to rounding errors
+(imprecision of floating point numbers), the bin size will be slightly different
+in each call, which can lead to wrong binning results (see issue [[https://github.com/sneumann/xcms/issues/47][#47]] on github).
+
+Example with =profBinLinBase= resulting in an error: if =step= and =basespace= are
+both =0.1= it seems that not in all buffer-generation iterations a interpolation
+is initiated, i.e. the variable =ibase= in the C-function is sometimes set to =1=
+(interpolation with neighboring bins) and sometimes to =0=.
+
+This is also extensively documented in issue [[https://github.com/sneumann/xcms/issues/52][#52]].
+
+** Different binning results due to /internal/ and /external/ breaks definition :noexport:
+
+*FIXED*: the bin calculation in C uses now also a multiplication instead of a
+addition thus resulting in identical breaks!
+
+Breaks calculated by the =breaks_on_nBins= function are equal as breaks calculated
+using the =seq= function, but they are not identical.
+
+#+BEGIN_SRC R
+  library(xcms)
+
+  ## Define breaks from 200 to 600
+  brks <- seq(200, 600, length.out = 2002)
+  brks2 <- xcms:::breaks_on_nBins(200, 600, nBins = 2001)
+  all.equal(brks, brks2)
+  identical(brks, brks2)
+
+  ## The difference is very small, but could still, in the binning
+  ## yield slightly different results depending on which breaks are
+  ## used.
+  range(brks - brks2)
+#+END_SRC
+
+** Implementation and comparison for =matchedFilter=		   :noexport:
+
+These results base on the test =dontrun_test_do_detectFeatures_matchedFilter_impl=
+defined in /test_do_detectFeatures_matchedFilter.R/
+
+We have 4 different functions to test and compare to the original one:
++ *A*: =.matchedFilter_orig=: it's the original code.
++ *B*: =.matchedFilter_binYonX_iter=: uses the same sequential
+  buffering than the original code, but uses =binYonX= for binning and
+  =imputeLinInterpol= for interpolation.
++ *C*: =.matchedFilter_no_iter=: contains the original code, but
+  avoids sequential buffering, i.e. creates the whole matrix in one go.
++ *D*: =.matchedFilter_binYonX_no_iter=: my favorite: uses =binYonX= and
+  =imputeLinInterpol= and avoids the sequential buffering by creating the full
+  matrix in one go.
+
+Notes: for plain =bin= we expect that results with and without iterative buffering
+are identical.
+
+*Comparisons*:
++ [X] *A* /vs/ original:
+  - =bin=: always OK.
+  - =binlin=: always OK.
+  - =binlinbase=: always OK.
++ [X] *B* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=: most likely rounding problem.
+  - =binlin=: only once OK. Results are not equal, but comparable.
+  - =binlinbase=: similar but not equal.
++ [X] *C* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=:
+  - =binlin=: never OK: due to interpolation on full, or subset data.
+  - =binlinbase=: similar but not equal.
++ [X] *D* /vs/ original:
+  - =bin=: OK unless =step= is =0.2=: most likely rounding problem.
+  - =binlin=: never OK: due to interpolation on full, or subset data AND due to
+    fix of the bug in =profBinLin=.
+  - =binlinbase=: similar but not equal.
++ [X] *B* /vs/ *C*:
+  - =bin=: always OK.
+  - =binlin=: results similar but not equal; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: highly similar.
++ [X] *B* /vs/ *D*:
+  - =bin=: always OK.
+  - =binlin=: results similar but not equal; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: highly similar.
++ [X] *C* /vs/ *D*:
+  - =bin=: always OK.
+  - =binlin=: results almost identical; higher =snthresh= results in higher
+    similarity.
+  - =binlinbase=: always OK.
+
+
+*Conclusions*:
++ =none= (only binning, but no linear interpolation; corresponds to method =bin= in
+  =findPeaks.matchedFilter=): The results are identical between all methods for
+  all except one setting: with =step= being =0.2= (or =0.4= etc) on one test file the
+  results differ between methods with and without iterative buffering. The
+  reason for this is most likely rounding errors in floating point number
+  representation: =profBin= calculates the size of the bin in each call, thus,
+  when called repeatedly based on different input values, the size is slightly
+  different, which then can lead to binning differences (see also [[https://github.com/sneumann/xcms/issues/47][issue #47]] on
+  github).
+
++ =lin= (binning followed by linear interpolation to impute missing values; method
+  =binlin= in =findPeaks.matchedFilter=): There are two reasons for differences
+  observed here: 1) the first bin value (and eventually the last bin value) are
+  sometimes wrong (issue [[https://github.com/sneumann/xcms/issues/46][#46]]). This results in differences between =binYonX= and
+  =imputeKinInterpol= based approach and =profBinLin= (with the former being
+  presumably correct). Also, this has a bigger influence when the
+  binning/missing value imputation is performed iteratively. Thus, the
+  difference between the =binYonX= - =imputeLinInterpol= and =profBinLin= approach
+  without iterative buffering are only very small. 2) Linear interpolation on
+  the full data set compared to subsequent sub-sets will undoubtedly lead to
+  differences. Because based on the full data set, the non-iterative approach
+  results in the expected and more accurate results.
+
++ =linbase=: results are identical if =basespace= (respectively =distance=) is such
+  that no interpolation takes place. With interpolation (e.g. =distance= being =1=)
+  differences (albeit small) are present between approaches with and without iterative
+  buffering. The results for the approaches without iterative buffering (using
+  =profBinBase= respectively =binYonX= with =imputeLinIterpol=) are identical, again
+  arguing in favor of these approaches.
+
+Thus, summarizing, the approaches without the iterative buffering yield more
+reliable (and presumably correct) results. Given also that the =binYonX= in
+combination with =imputeLinInterpol= identify similar peaks than the non-iterative
+approaches using the original code, we can change the code to use these former
+methods as default.
+
+* Under the hood changes
+
+These changes and updates will not have any large impact on the day-to-day use of
+=xcms= and are listed here for completeness.
+
++ From =xcms= version 1.51.1 on the default methods from the =mzR= package are used
+  for data import. Besides ensuring easier maintenance, this enables also data
+  import from /gzipped/ mzML files.
+
+
+* Introducing =DRanges=.						   :noexport:
+
+*Note*: the code for this is in the =dranges= branch. The last status/problem is
+that it is not quite clear how to determine the /correct/ number of decimal
+places: =as.character= uses =options()$scipen= to determine how many decimal places
+are represented, =sprintf= allows much more decimal places, e.g. with =%.30f=, but
+these become unstable and random. The /best/ solution for now would be to limit to
+a certain number of /secure/ decimal places (16?) and specify this as global
+option that might be changed later. Check also =.Machine= for details on
+precision, max integer etc. Note also that we are pretty much limited by the
+largest =integer= that can be represented.
+
+The =multiplier= thus has definitely be smaller than:
+#+BEGIN_SRC R
+  maxPos <- nchar(as.character(.Machine$integer.max))
+  maxMult <- 10^maxPos
+
+#+END_SRC
+
+Note that we would actually just have to check that the to-be-transformed
+integers don't get too large; thus we could allow more decimal places.
+
+The idea is to use all of the =IRanges= functionality, but for any =numeric=
+ranges. Examples for such ranges could be the m/z range of a feature, or the
+retention time range defining a feature.
+
+The idea is pretty simple, the =DRanges= (/D/ standing for /double/, alternatively /N/
+for /numeric/) extends the =IRanges=, the =start= and =end= of the =IRanges= are
+calculated by multiplying the start and end defining the numeric range by =10^d=
+with =d= being the number of decimal places.
+
+First thing is to get the number of decimal places: using code from a pretty old
+post on stackoverflow
+(http://stackoverflow.com/questions/5173692/how-to-return-number-of-decimal-places-in-r):
+
+
+#+BEGIN_SRC R
+  decimalplaces <- function(x) {
+      if ((x %% 1) != 0) {
+          nchar(strsplit(sub('0+$', '', as.character(x)), ".", fixed=TRUE)[[1]][[2]])
+      } else {
+          return(0)
+      }
+  }
+
+  num.decimals <- function(x) {
+      stopifnot(class(x)=="numeric")
+      x <- sub("0+$","",x)
+      x <- sub("^.+[.]","",x)
+      nchar(x)
+  }
+
+
+#+END_SRC
+
+The former is actually faster.
+
+Eventually even =C=?
+http://stackoverflow.com/questions/1083304/c-c-counting-the-number-of-decimals
+
+#+BEGIN_EXAMPLE
+  string number = "543.014";
+  size_t dotFound;
+  stoi(number, &dotFound));
+  string(number).substr(dotFound).size()
+#+END_EXAMPLE
+
+Be aware that =number= MUST be a float/double!
+
+alternatively:
+http://stackoverflow.com/questions/9843999/calculate-number-of-decimal-places-for-a-float-value-without-libraries.
+
+* Currently internal functionality 				   :noexport:
+
+** =ProcessHistory=: track processing steps
+
+This functionality comprises the =ProcessHistory= class and the =.processHistory=
+slot of the =xcmsSet= objects. The =xcmsSet= function already adds a feature
+detection processing step for each file to this slot. Subsetting of =xcmsSet=
+objects with =[= or =split= correctly process also this slot as does concatenation
+using =c=. For processing steps other than /feature detection/ a new element should
+be added to the variable =.PROCSTEPS= (defined in /DataClasses.R/.
+At some point we could implement methods =getProcessErrors= and =getProcessHistory=
+(essentially just calling the =.getProcessErrors= and =.getProcessHistory=
+functions in /functions-xcmsSet.R/.
+
+Some additional functionality that could be implemented:
++ Sort the processing history by the =date= slot.
++ Save also analysis properties into an object extending the =ProcessHistory=:
+  this would enable to get the exact settings for each processing step.
+
+* Internal changes						   :noexport:
+
+** Changing the way how data is imported
+
+Random errors happen when processing a large number of files with =xcms=. This
+might indicate some memory problems, eventually related to the =mzR= package
+(similar to the ones spotted in =MSnbase=).
+
+What I want to test:
++ [X] Does =mzR::openMSFile= work also for /netCDF/? No. we would have to check for
+  the file type and specify the =backend= based on that.
++ [X] What about writing a new importer that does not need all the objects and
+  the presumably old code in =mzR=? -> =readRawData=.
+
+That has been fixed (see above). The /default/ methods for data import form =mzR=
+are now used by default.
+
+** Functions and methods to be deprecated and removed.
+
++ [ ] =xcmsSource= method: not needed anymore, reading is done by =readRawData=.
++ [ ] =loadRaw=, =initialize= for =netCdfSource= and =rampSource=: replaced by
+  =readRawData=.
++ [ ] =netCdfSource= and =rampSource= S4 classes: not needed anymore, reading is
+  done by =readRawData=.
+
+** Unneeded /R/ files
+
++ [ ] /netCDF.R/.
++ [ ] /ramp.R/.
+
+*** Unit tests to be removed
+
++ [ ] /runit.ramp.R/.
+
+* Deprecated functions and files
+
+Here we list all of the functions and related files that are deprecated.
+
++ =xcmsParallelSetup=, =xcmsPapply=, =xcmsClusterApply=: use =BiocParallel= package
+  instead to setup and perform parallel processing, either /via/ the =BPPARAM=
+  parameter to function and methods, or by calling =register= to globally set
+  parallel processing.
+
++ =profBin=, =profBinM=, =profBinLin=, =profBinLinM=, =profBinLinBase=, =profBinLinBaseM=:
+  replaced by the =binYonX= and =imputeLinInterpol= functions. Also, to create or
+  extract the profile matrix from an =xcmsRaw= object, the =profMat= method.
+
+
+** Deprecated
+
+*** xcms 1.49:
+
++ =xcmsParallelSetup= (Deprecated.R)
++ =xcmsPapply= (Deprecated.R)
++ =xcmsClusterApply= (Deprecated.R)
+
+*** xcms 1.51:
+
++ =profBin= (c.R)
++ =profBinM= (c.R)
++ =profBinLin= (c.R)
++ =profBinLinM= (c.R)
++ =profBinLinBase= (c.R)
++ =profBinLinBaseM= (c.R)
+
+** Defunct
+
+* TODOs								   :noexport:
+
+** TODO Deprecate binning functions.
+
+All done except for the retention time correction!!!
+
+** TODO Continue implementing the =do_= functions.
+** TODO Define a new object to contain the preprocessing results
+
+This object should replace in the long run the =xcmsSet= object providing the same
+functionality while in addition add a better integration of the original raw
+data files. The object should contain:
+
++ Peak/feature data (similar to the =xcmsSet@peaks= slot).
++ Alignment across samples information (similar to the =xcmsSet@groups= slot).
++ Corrected retention time (similar to the =xcmsSet@rt$adjusted= slot).
++ All experimental and phenotypical information.
++ A /link/ to the raw data.
++ History on data manipulation and processing.
+
+Based on these prerequisites, an object extending Biobase's =MSnExp= or
+=OnDiskMSnExp= would be ideal. The =MSnExp= would however be /too mighty/ (as it
+contains all of the raw data) and the more light weight =OnDiskMSnExp= should
+hence be used. While being somewhat similar to the =xcmsSet= =xcmsRaw= object setup,
+the new implementation would ensure a better and less error prone import of the
+raw (or even processed) data. Some data (TIC etc) are even cached within the
+=OnDiskMSnExp= enabling faster data access.
+
+Note that the lack of easy access to raw data disqualifies the =MSnSet= object
+from the =MSnbase= package.
+
+The feature data should be placed into the =assayData= environment of the object
+to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
+
+* References

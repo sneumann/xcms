@@ -1,12 +1,14 @@
-testMultiFactor <- function() {
-    library(faahKO)
+library(faahKO)
+data(faahko)
+files <- system.file(c("cdf/KO/ko15.CDF", "cdf/KO/ko16.CDF",
+                       "cdf/KO/ko18.CDF", "cdf/KO/ko19.CDF",
+                       "cdf/KO/ko21.CDF", "cdf/KO/ko22.CDF",
+                       "cdf/WT/wt15.CDF", "cdf/WT/wt16.CDF",
+                       "cdf/WT/wt18.CDF", "cdf/WT/wt19.CDF",
+                       "cdf/WT/wt21.CDF", "cdf/WT/wt22.CDF"),
+                     package = "faahKO")
 
-    files <- c("./E260/const/KO/ko15.CDF", "./E260/const/KO/ko16.CDF",
-               "./E260/const/KO/ko18.CDF", "./E260/const/KO/ko19.CDF",
-               "./E260/const/KO/ko21.CDF", "./E260/const/KO/ko22.CDF",
-               "./E261/const/WT/wt15.CDF", "./E261/const/WT/wt16.CDF",
-               "./E261/const/WT/wt18.CDF", "./E261/const/WT/wt19.CDF",
-               "./E261/const/WT/wt21.CDF", "./E261/const/WT/wt22.CDF")
+testMultiFactor <- function() {
     pd <- xcms:::phenoDataFromPaths(files)
     xs <- faahko
 
@@ -18,21 +20,17 @@ testMultiFactor <- function() {
 }
 
 testMultiFactorDiffreport <- function() {
-    library(faahKO)
-
-    files <- c("./E260/const/KO/ko15.CDF", "./E260/const/KO/ko16.CDF",
-               "./E260/const/KO/ko18.CDF", "./E260/const/KO/ko19.CDF",
-               "./E260/const/KO/ko21.CDF", "./E260/const/KO/ko22.CDF",
-               "./E261/const/WT/wt15.CDF", "./E261/const/WT/wt16.CDF",
-               "./E261/const/WT/wt18.CDF", "./E261/const/WT/wt19.CDF",
-               "./E261/const/WT/wt21.CDF", "./E261/const/WT/wt22.CDF")
     pd <- xcms:::phenoDataFromPaths(files)
     xs <- faahko
 
     ##xcms::phenoData(xs) <- pd
     ## https://stat.ethz.ch/pipermail/r-devel/2008-April/049184.html
     xs <- xcms::`phenoData<-`(xs, pd)
-
-    xs <- fillPeaks(group(xs))
-    dr <- diffreport(xs, class1="E260.KO", class2="E261.WT")
+    xs <- group(xs)
+    ## Setting the filepaths again; otherwise we will have problem finding these
+    ## files ... obviously.
+    filepaths(xs) <- files
+    xs <- fillPeaks(xs)
+    dr <- diffreport(xs, class1="KO", class2="WT")
+    checkTrue(nrow(dr) > 0)
 }

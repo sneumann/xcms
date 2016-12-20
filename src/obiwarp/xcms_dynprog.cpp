@@ -501,7 +501,7 @@ void DynProg::path_accuracy(VecF &m_tm, VecF &n_tm, VecI &mWarpMap, VecI &nWarpM
   VecF _nWarpMapFt(nWarpMap.length());
   for (int i = 0; i < mWarpMap.length(); ++i) {
     if (mWarpMap[i] < 0 || mWarpMap[i] >= m_tm.length()) {
-      Rprintf("ASKING FOR VAL OUTSIDE RANGE, length: %d requested: %d\n", 
+      Rprintf("ASKING FOR VAL OUTSIDE RANGE, length: %d requested: %d\n",
 	      m_tm.length(), mWarpMap[i]);
     }
     _mWarpMapFt[i] = m_tm[mWarpMap[i]];

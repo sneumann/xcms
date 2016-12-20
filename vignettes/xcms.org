@@ -1,0 +1,123 @@
+#+TITLE: LCMS data preprocessing and analysis with =xcms= version 3
+#+AUTHOR:    Johannes Rainer
+#+EMAIL:     johannes.rainer@eurac.edu
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS: ^:{} toc:nil
+#+PROPERTY: header-args :exports code
+#+PROPERTY: header-args :session *R*
+
+#+BEGIN_EXPORT html
+---
+title: "LCMS data preprocessing and analysis with xcms version 3"
+graphics: yes
+output:
+  BiocStyle::html_document:
+    toc: false
+vignette: >
+  %\VignetteIndexEntry{LCMS data preprocessing and analysis with xcms version 3}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,RColorBrewer,MSnbase,faahKO}
+  %\VignettePackage{xcms}
+  %\VignetteKeywords{mass spectrometry, metabolomics}
+bibliography: xcms.bib
+csl: biomed-central.csl
+references:
+- id: dummy
+  title: no title
+  author:
+  - family: noname
+    given: noname
+---
+
+```{r style, echo = FALSE, results = 'asis', message=FALSE}
+BiocStyle::markdown()
+```
+
+#+END_EXPORT
+
+#+BEGIN_EXPORT html
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer<br />
+**Modified**: `r file.info("ensembldb.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+#+END_EXPORT
+
+#+BEGIN_SRC R :results silent :exports none :ravel echo = FALSE, results = 'hide', message = FALSE, warning = FALSE
+  ## Silently loading all packages
+  library(BiocStyle)
+  library(xcms)
+  library(MSnbase)
+  library(faahKO)
+#+END_SRC
+
+* Introduction
+
+This documents describes data import, exploration, preprocessing and analysis of
+LCMS experiments with =xcms= version 3. The examples and basic workflow was
+adapted from the original /LC/MS Preprocessing and Analysis with xcms/ vignette
+from Colin A. Smith.
+
+* Data import
+
+=xcms= supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML
+and mzData format. For the actual data import Bioconductor's SRC_R[:exports
+both]{Biocpkg("mzR")} is used. For demonstration purpose we will analyze a
+subset of the data from \cite{Saghatelian04} in which the metabolic consequences
+of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was
+investigated. The raw data files (in NetCDF format) are provided with the =faahKO=
+data package. The data set consists of samples fmor the spinal cords of 6
+knock-out and 6 wild-type mice. Each file contains data in centroid mode
+acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds.
+
+Below we load all required packages, locate the raw CDF files within the =faahKO=
+package and build a /phenodata/ data frame describing the experiment.
+
+#+NAME: load-libs-pheno
+#+BEGIN_SRC R :results silent
+  library(xcms)
+  library(MSnbase)
+  library(faahKO)
+
+  ## Get the full path to the CDF files
+  cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
+              recursive = TRUE)
+  ## Create a phenodata data.frame
+  pd <- data.frame(sample_name = sub(basename(cdfs), pattern = ".CDF",
+                                     replacement = "", fixed = TRUE),
+                   sample_group = c(rep("KO", 6), rep("WT", 6)),
+                   stringsAsFactors = FALSE)
+#+END_SRC
+
+Subsequently we load the raw data as an =OnDiskMSnExp= object using the
+=readMSData2= method from the =MSnbase= package. While the =MSnbase= package was
+originally developed for proteomics data processing, many of its functionality,
+including raw data import and data representation, can be shared and reused in
+metabolomics data analysis.
+
+#+NAME: load-with-msnbase
+#+BEGIN_SRC R :results silent
+
+#+END_SRC
+
+The =OnDiskMSnExp= object contains general information about the number of
+spectra, retention times, the measured total ion current etc, but does not
+contain the full raw data (i.e. the m/z and intensity values from each measured
+spectrum). Its memory footprint is thus rather small making it an ideal object
+to represent large metabolomics experiments while still allowing to perform
+simple quality controls, data inspection and exploration as well as data
+sub-setting operations. The m/z and intensity values are imported on the fly
+when needed hence the location of the raw data files should not be changed after
+initial data import.
+
+
+
+
+* TODOs                                                            :noexport:
+
+** TODO General data import and data exploration section.
+** TODO Feature detection section.
+** TODO Sample alignment section.
+** TODO Retention time correction section.

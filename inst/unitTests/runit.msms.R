@@ -3,7 +3,7 @@ test.xcmsRawms1 <- function() {
     filename <- system.file('microtofq/MM14.mzdata', package = "msdata")
 
     ## This file has no MS/MS data at all, but should not fail
-    x1 <- xcmsRaw(filename, includeMSn=TRUE)
+    x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0)
 
 }
 
@@ -11,9 +11,9 @@ test.xcmsRawms123 <- function() {
 
     filename <- system.file('iontrap/extracted.mzData', package = "msdata")
 
-    x1 <- xcmsRaw(filename, includeMSn=TRUE)
-    x2 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=2)
-    x3 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=3)
+    x1 <- xcmsRaw(filename, includeMSn=TRUE, profstep = 0)
+    x2 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=2, profstep = 0)
+    x3 <- xcmsRaw(filename, includeMSn=TRUE, mslevel=3, profstep = 0)
 
     checkTrue(length(x1@env$msnMz) == length(x2@env$mz) + length(x3@env$mz))
 
@@ -32,13 +32,13 @@ test.xcmsRawms123 <- function() {
 test.xcmsSetms2mf <- function() {
 
     filename <- system.file('iontrap/extracted.mzData', package = "msdata")
-    xs2 <- xcmsSet(filename, snthresh=4, mslevel=2)
+    xs2 <- xcmsSet(filename, snthresh = 4, mslevel = 2)
 }
 
 test.xcmsSetms2cw <- function() {
 
     filename <- system.file('iontrap/extracted.mzData', package = "msdata")
-    xs2 <- xcmsSet(filename, method="centWave", mslevel=2)
+    xs2 <- xcmsSet(filename, method="centWave", mslevel = 2)
 
 }
 
@@ -49,5 +49,7 @@ test.msn2xcmsRaw <- function() {
 
  checkEqualsNumeric(length(xr@env$mz), 3132)
  checkEqualsNumeric(length(xr@env$intensity), 3132)
+ ## In reality, it seems there are 1612 MS2 spectra in the file, just that
+ ## 1121 have a peaksCount > 0
  checkEqualsNumeric(length(xr@scantime), 1121)
 }
