@@ -1,6 +1,6 @@
 test.write.mzdata <- function() {
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xraw <- xcmsRaw(file)
+    xraw <- xcmsRaw(file, profstep = 0)
 
     mzdataFile <- paste(tempdir(), "ko15.mzData", sep="/")
 
@@ -15,7 +15,7 @@ test.write.mzdata <- function() {
 
 test.writeMS2.mzdata <- function() {
     file <- system.file('microtofq/MSMSpos20_6.mzML', package = "msdata")
-    xraw <- xcmsRaw(file, includeMSn=TRUE)
+    xraw <- xcmsRaw(file, includeMSn=TRUE, profstep = 0)
 
     mzdataFile <- paste(tempdir(), "MSMSpos20_6.mzData", sep="/")
 
@@ -29,7 +29,7 @@ test.writeMS2.mzdata <- function() {
 
 test.writeMSn.mzdata <- function() {
     file <- system.file('threonine/threonine_i2_e35_pH_tree.mzXML', package = "msdata")
-    xraw <- xcmsRaw(file, includeMSn=TRUE)
+    xraw <- xcmsRaw(file, includeMSn=TRUE, profstep = 0)
 
     mzdataFile <- paste(tempdir(), "threonine_i2_e35_pH_tree.mzData", sep="/")
 
@@ -43,7 +43,7 @@ test.writeMSn.mzdata <- function() {
 
 test.writePolarity.mzdata <- function() {
     file <- system.file('microtofq/MM14.mzdata', package = "msdata")
-    xraw <- xcmsRaw(file)
+    xraw <- xcmsRaw(file, profstep = 0)
 
     oldpolarity <- xraw@polarity
 

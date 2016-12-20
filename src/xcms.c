@@ -233,10 +233,36 @@ void ProfBin(double *xvals, double *yvals, int *numin,
     endx = *xend + dx;
     FindEqualGreater(xvals, numin, &startx, &i);
     for (; i < *numin && xvals[i] < endx; i++) {
-        outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
-        if (outi >= 0 && outi < *numout)
-            if (out[outi] < yvals[i])
-                out[outi] = yvals[i];
+      outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
+      if (outi >= 0 && outi < *numout)
+	if (out[outi] < yvals[i])
+	  out[outi] = yvals[i];
+    }
+}
+
+void ProfBin_test(double *xvals, double *yvals, int *numin,
+		  double *xstart, double *xend, int *numout,
+		  double *out, double *the_dx) {
+
+    int    i, outi = 0;
+    double dx, startx, endx;
+
+    // calculate the step size
+    dx = (*numout != 1) ? (*xend - *xstart)/(*numout - 1) : (*xend - *xstart);
+
+    the_dx[0] = dx;
+    // fill out with 0s.
+    for (i = 0; i < *numout; i++)
+        out[i] = 0;
+
+    startx = *xstart - dx;
+    endx = *xend + dx;
+    FindEqualGreater(xvals, numin, &startx, &i);
+    for (; i < *numin && xvals[i] < endx; i++) {
+      outi = (int)floor((xvals[i] - *xstart)/dx + 0.5);
+      if (outi >= 0 && outi < *numout)
+	if (out[outi] < yvals[i])
+	  out[outi] = yvals[i];
     }
 }
 

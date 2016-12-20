@@ -10,7 +10,7 @@
 \describe{
 \item{object = "xcmsRaw"}{
   \code{
-    findPeaks.centWaveWithPredictedIsotopeROIs(object, ppm=25, peakwidth=c(20,50), snthresh=10, 
+    findPeaks.centWaveWithPredictedIsotopeROIs(object, ppm=25, peakwidth=c(20,50), snthresh=10,
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
     scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list(),
     firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE)
@@ -18,7 +18,7 @@
 }
 }}
 \details{
-  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. 
+  This algorithm is most suitable for high resolution LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode.
   The \code{centWave} algorithm is applied in two peak picking steps as follows. In the first peak picking step ROIs (regions of interest, characterised as regions with less than \code{ppm} m/z deviation in consecutive scans) in the LC/MS map are located and further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
   In the second peak picking step isotope ROIs in the LC/MS map are predicted further analysed using continuous wavelet transform (CWT) for the localization of chromatographic peaks on different scales.
   The peak lists resulting from both peak picking steps are merged and redundant peaks are removed.
@@ -65,7 +65,7 @@
     logical, if TRUE continuous data within ROI is checked to be above 1st baseline
   }
   \item{roiScales}{
-    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets 
+    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets
   }
   \item{snthreshIsoROIs}{signal to noise ratio cutoff for predicted isotope ROIs, definition see below.}
   \item{maxcharge}{max. number of the isotope charge.}
@@ -128,11 +128,13 @@
   Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann
   "Highly sensitive feature detection for high resolution LC/MS"
   BMC Bioinformatics 2008, 9:504\\
-  Hendrik Treutler and Steffen Neumann. 
+  Hendrik Treutler and Steffen Neumann.
   "Prediction, detection, and validation of isotope clusters in mass spectrometry data"
   Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }
 \seealso{
+  \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}} for the
+  corresponding core API function.
   \code{\link{findPeaks.addPredictedIsotopeFeatures}}
   \code{\link{findPeaks.centWave}}
   \code{\link{findPeaks-methods}}

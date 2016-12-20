@@ -46,7 +46,7 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 ## o xend: minimal value in x to which we go.
 profBin <- function(x, y, num, xstart = min(x), xend = max(x),
                     param = list()) {
-
+    .Deprecated(new = "binYonX")
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBin",
@@ -60,10 +60,27 @@ profBin <- function(x, y, num, xstart = min(x), xend = max(x),
        PACKAGE = "xcms")$out
 }
 
+## profBin_test <- function(x, y, num, xstart = min(x), xend = max(x),
+##                          param = list(), the_dx) {
+
+##     if (!is.double(x)) x <- as.double(x)
+##     if (!is.double(y)) y <- as.double(y)
+##     .C("ProfBin_test",
+##        x,
+##        y,
+##        as.integer(length(x)),
+##        as.double(xstart),
+##        as.double(xend),
+##        as.integer(num),
+##        out = double(num),
+##        the_dx = double(1),
+##        PACKAGE = "xcms")$the_dx
+## }
+
 ## o zidx: start position of each new segment (e.g. spectrum).
 profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                      NAOK = FALSE, param = list()) {
-
+    .Deprecated(new = "binYonX")
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinM",
@@ -81,7 +98,9 @@ profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
                        param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLin' is deprecated! Use 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLin",
@@ -97,7 +116,9 @@ profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
 
 profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                         NAOK = FALSE, param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinM' is deprecated! Use 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLinM",
@@ -115,7 +136,10 @@ profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
 
 profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
                            param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinBase' is deprecated! Use",
+                             " 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (is.null(param$baselevel))
         baselevel <- min(y)/2
     else
@@ -142,6 +166,10 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
 
 profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                             NAOK = FALSE, param = list()) {
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinBaseM' is deprecated! Use",
+                             " 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
 
     if (is.null(param$baselevel))
         baselevel <- min(y)/2

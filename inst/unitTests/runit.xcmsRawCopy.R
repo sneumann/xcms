@@ -1,6 +1,6 @@
 test.rawMat <- function() {
     file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xraw <- xcmsRaw(file)
+    xraw <- xcmsRaw(file, profstep = 0)
     xrawCopy <- deepCopy(xraw)
 
     checkTrue(all(xraw@env$mz == xrawCopy@env$mz))
