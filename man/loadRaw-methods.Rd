@@ -2,6 +2,7 @@
 \alias{loadRaw}
 \alias{loadRaw-methods}
 \alias{loadRaw,xcmsSource-method}
+\alias{loadRaw,xcmsFileSource-method}
 \title{Read binary data from a source}
 \description{
   This function extracts the raw data which will be used an
@@ -29,9 +30,9 @@
 
   A list containing elements describing the data source. The \code{rt},
   \code{scanindex}, \code{tic}, and \code{acquisitionNum} components
-  each have one entry per scan. They are "parallel" in the sense that
+  each have one entry per scan. They are \emph{parallel} in the sense that
   \code{rt[1]}, \code{scanindex[1]}, and \code{acquisitionNum[1]} all
-  refer to the same scan. The list containst he following components:
+  refer to the same scan. The list containst the following components:
 
   \item{\code{rt}}{
     Numeric vector with acquisition time (in seconds) for each scan

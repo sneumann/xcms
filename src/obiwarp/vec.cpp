@@ -631,7 +631,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
     else if ( pchst(del1,del2) < 0 ) {
         // need to do this check only if monotonicity switches
         dmax = three * del1;
-        if (fabs(tmp_derivs[0]) > fabs(dmax)) {
+        if (abs(tmp_derivs[0]) > abs(dmax)) {
             tmp_derivs[0] = dmax;
         }
     }
@@ -657,8 +657,8 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
             hsumt3 = hsum+hsum+hsum;
             w1 = (hsum + h1)/hsumt3;
             w2 = (hsum + h2)/hsumt3;
-            dmax = (int)max( fabs(del1), fabs(del2) );
-            dmin = (int)min( fabs(del1), fabs(del2) );
+            dmax = (int)max( abs(del1), abs(del2) );
+            dmin = (int)min( abs(del1), abs(del2) );
             drat1 = del1/dmax;
             drat2 = del2/dmax;
             tmp_derivs[ind] = dmin/(w1*drat1 + w2*drat2);
@@ -688,7 +688,7 @@ void VecI::chim(VecI &x, VecI &y, VecI &out_derivs) {
     else if ( VecI::pchst(del1, del2) < 0) {
         // NEED DO THIS CHECK ONLY IF MONOTONICITY SWITCHES.
         dmax = three*del2;
-        if (fabs(tmp_derivs[ind]) > fabs(dmax)) {
+        if (abs(tmp_derivs[ind]) > abs(dmax)) {
             tmp_derivs[ind] = dmax;
         }
     }
@@ -1007,7 +1007,7 @@ double VecI::avg_sq_res_yeqx(VecI &x, VecI &y) {
 double VecI::avg_abs_diff(VecI &x, VecI &y) {
     double sum = 0.0;
     for (int i = 0; i < x.length(); ++i) {
-        sum += fabs(x[i] - y[i]);
+      sum += (double)abs(x[i] - y[i]);
     }
     return sum/x.length();
 }

@@ -39,7 +39,7 @@ test.fillPeaksColumns <- function() {
   sampclass(xsgf) <- c(rep("KO", 5), rep("WT", 7))
   xsgf <- group(xsgf, minfrac=1)
   xsgf <- fillPeaks(xsgf) # parallel disabled: , nSlaves=2)
-  
+
 }
 
 
