@@ -5,16 +5,18 @@
 ## show
 setMethod("show", "xcmsRaw", function(object) {
 
-    cat("An \"xcmsRaw\" object with", length(object@scantime), "mass spectra\n\n")
-
+    cat("An \"xcmsRaw\" object with", length(object@scantime),
+        "mass spectra\n\n")
     if (length(object@scantime)>0) {
-        cat("Time range: ", paste(round(range(object@scantime), 1), collapse = "-"),
-            " seconds (", paste(round(range(object@scantime)/60, 1), collapse = "-"),
+        cat("Time range: ", paste(round(range(object@scantime), 1),
+                                  collapse = "-"),
+            " seconds (", paste(round(range(object@scantime)/60, 1),
+                                collapse = "-"),
             " minutes)\n", sep = "")
-        cat("Mass range:", paste(round(range(object@env$mz), 4), collapse = "-"),
-            "m/z\n")
-        cat("Intensity range:", paste(signif(range(object@env$intensity), 6), collapse = "-"),
-            "\n\n")
+        cat("Mass range:", paste(round(range(object@env$mz), 4),
+                                 collapse = "-"), "m/z\n")
+        cat("Intensity range:", paste(signif(range(object@env$intensity), 6),
+                                      collapse = "-"), "\n\n")
     }
 
     ## summary MSn data
@@ -37,7 +39,8 @@ setMethod("show", "xcmsRaw", function(object) {
         cat("Profile parameters: ")
         for (i in seq(along = object@profparam)) {
             if (i != 1) cat("                    ")
-            cat(names(object@profparam)[i], " = ", object@profparam[[i]], "\n", sep = "")
+            cat(names(object@profparam)[i], " = ", object@profparam[[i]], "\n",
+                sep = "")
         }
     }
 
@@ -153,12 +156,16 @@ setMethod("getSpec", "xcmsRaw", function(object, ...) {
 })
 
 ############################################################
-## findPeaks.matchedFilter
-setMethod("findPeaks.matchedFilter", "xcmsRaw",
+## findPeaks.matchedFilter_orig
+## We're keeping this one only for comparison in unit tests; this
+## should be removed soon!
+setGeneric("findPeaks.matchedFilter_orig", function(object, ...)
+    standardGeneric("findPeaks.matchedFilter_orig"))
+setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
           function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
                    snthresh = 10, step = 0.1, steps = 2,
                    mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
-                   verbose.columns = FALSE, scanrange= numeric()) {
+                   scanrange= numeric()) {
 
     profFun <- match.profFun(object)
 
@@ -301,14 +308,221 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
 })
 
 ############################################################
+## findPeaks.matchedFilter
+##' @title Feature detection in the chromatographic time domain
+##'
+##' @aliases findPeaks.matchedFilter
+##' @description Find features (peaks) in the chromatographic time domain of the
+##' profile matrix. For more details see \code{\link{do_detectFeatures_matchedFilter}}.
+##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature detection
+##' should be performed.
+##' @inheritParams featureDetection-matchedFilter
+##' @param step numeric(1) specifying the width of the bins/slices in m/z
+##' dimension.
+##' @param sleep (DEFUNCT). This parameter is no longer functional, as it would cause
+##' problems in parallel processing mode.
+##' @param scanrange Numeric vector defining the range of scans to which the original
+##' \code{object} should be sub-setted before feature detection.
+##' @author Colin A. Smith
+##' @return A matrix, each row representing an intentified feature, with columns:
+##' \describe{
+##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Retention time of the feature's midpoint.}
+##' \item{rtmin}{Minimum retention time of the feature.}
+##' \item{rtmax}{Maximum retention time of the feature.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{intf}{Integrated intensity of the filtered peak.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{maxf}{Maximum intensity of the filtered peak.}
+##' \item{i}{Rank of feature in merged EIC (\code{<= max}).}
+##' \item{sn}{Signal to noise ratio of the feature}
+##' }
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+##' @family Old feature detection methods
+##' @seealso \code{\link{matchedFilter}} for the new user interface.
+##' \code{\linkS4class{xcmsRaw}},
+##' \code{\link{do_detectFeatures_matchedFilter}} for the core function
+##' performing the feature detection.
+setMethod("findPeaks.matchedFilter", "xcmsRaw",
+          function(object, fwhm = 30, sigma = fwhm/2.3548, max = 5,
+                   snthresh = 10, step = 0.1, steps = 2,
+                   mzdiff = 0.8 - step*steps, index = FALSE, sleep = 0,
+                   scanrange = numeric()) {
+
+              ## Fix issue #63:
+              ## Sub-set the xcmsRaw based on scanrange
+              if (length(scanrange) < 2) {
+                  scanrange <- c(1, length(object@scantime))
+              } else {
+                  scanrange <- range(scanrange)
+              }
+              if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+                  scanrange[1] <- max(1, scanrange[1])
+                  scanrange[2] <- min(length(object@scantime), scanrange[2])
+                  message("Provided scanrange was adjusted to ", scanrange)
+              }
+              object <- object[scanrange[1]:scanrange[2]]
+              scanrange <- c(1, length(object@scantime))
+              ## ## Sub-set the xcmsRaw baesd on scanrange
+              ## scanrange.old <- scanrange
+              ## ## sanitize if too few or too many scanrange is given
+              ## if (length(scanrange) < 2)
+              ##     scanrange <- c(1, length(object@scantime))
+              ## else
+              ##     scanrange <- range(scanrange)
+              ## ## restrict and sanitize scanrange to maximally cover all scans
+              ## scanrange[1] <- max(1,scanrange[1])
+              ## scanrange[2] <- min(length(object@scantime),scanrange[2])
+              ## ## Mild warning if the actual scanrange doesn't match the scanrange
+              ## ## argument
+              ## if (!(identical(scanrange.old, scanrange)) &&
+              ##     (length(scanrange.old) > 0)) {
+              ##     cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+              ##     ## Scanrange filtering
+              ##     keepidx <- seq.int(1, length(object@scantime))
+              ##     %in% seq.int(scanrange[1], scanrange[2])
+              ##     object <- split(object, f=keepidx)[["TRUE"]]
+              ## }
+              ## Determine the impute method:
+              imputeMeths <- c("none", "lin", "linbase", "intlin")
+              names(imputeMeths) <- c("bin", "binlin",
+                                      "binlinbase", "intlin")
+              profFun <- profMethod(object)
+              profFun <- match.arg(profFun, names(imputeMeths))
+              imputeMeth <- imputeMeths[profFun]
+              if (imputeMeth == "linbase") {
+                  profp <- object@profparam
+                  if (length(profp) == 0)
+                      profp <- list()
+                  ## Determine the settings for this:
+                  ## o distance
+                  ##   Define the distance argument; that's tricky, as it
+                  ##   requires the bin_size, not the step.
+                  mrange <- range(object@env$mz)
+                  mass <- seq(floor(mrange[1]/step)*step,
+                              ceiling(mrange[2]/step)*step, by = step)
+                  mlength <- length(mass)
+                  bin_size <- (mass[mlength] - mass[1]) / (mlength - 1)
+                  rm(mass)
+                  if (length(profp$basespace) > 0) {
+                      if (!is.numeric(profp$basespace))
+                          stop("Profile parameter 'basespace' has to be numeric!")
+                      distance <- floor(profp$basespace[1] / bin_size)
+                  } else {
+                      distance <- floor(0.075 / bin_size)
+                  }
+                  ## o baseValue
+                  if (length(profp$baseleve) > 0) {
+                      if (!is.numeric(profp$baselevel))
+                          stop("Profile parameter 'baselevel' has to be numeric!")
+                      baseValue <- profp$baselevel[1]
+                  } else {
+                      baseValue <- min(object@env$intensity) / 2
+                  }
+              } else {
+                  ## For other methods these are not used anyway.
+                  distance <- 0
+                  baseValue <- 0
+              }
+              res <- do_detectFeatures_matchedFilter(mz = object@env$mz,
+                                                     int = object@env$intensity,
+                                                     scantime = object@scantime,
+                                                     valsPerSpect = diff(c(object@scanindex,
+                                                                           length(object@env$mz))),
+                                                     binSize = step,
+                                                     impute = imputeMeth,
+                                                     baseValue = baseValue,
+                                                     distance = distance,
+                                                     fwhm = fwhm,
+                                                     sigma = sigma,
+                                                     max = max,
+                                                     snthresh = snthresh,
+                                                     steps = steps,
+                                                     mzdiff = mzdiff,
+                                                     index = index
+                                                     )
+              invisible(new("xcmsPeaks", res))
+})
+
+
+############################################################
 ## findPeaks.centWave
-setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10,
-                                                    prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                    fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                    sleep=0, verbose.columns=FALSE, ROI.list=list(), 
-                                                    firstBaselineCheck=TRUE, roiScales=NULL) {
+setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25,
+                                                    peakwidth=c(20,50),
+                                                    snthresh=10,
+                                                    prefilter=c(3,100),
+                                                    mzCenterFun="wMean",
+                                                    integrate=1, mzdiff=-0.001,
+                                                    fitgauss=FALSE,
+                                                    scanrange = numeric(),
+                                                    noise=0, ## noise.local=TRUE,
+                                                    sleep=0,
+                                                    verbose.columns=FALSE,
+                                                    ROI.list=list(),
+                                                    firstBaselineCheck=TRUE,
+                                                    roiScales=NULL) {
     if (!isCentroided(object))
-        warning("It looks like this file is in profile mode. centWave can process only centroid mode data !\n")
+        warning("It looks like this file is in profile mode. centWave can",
+                " process only centroid mode data !\n")
+
+    ## Fix issue #64:
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
+        scanrange <- c(1, length(object@scantime))
+    } else {
+        scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    res <- do_detectFeatures_centWave(mz = object@env$mz,
+                                      int = object@env$intensity,
+                                      scantime = object@scantime,
+                                      valsPerSpect = vps,
+                                      ppm = ppm, peakwidth = peakwidth,
+                                      snthresh = snthresh,
+                                      prefilter = prefilter,
+                                      mzCenterFun = mzCenterFun,
+                                      integrate = integrate,
+                                      mzdiff = mzdiff, fitgauss = fitgauss,
+                                      noise = noise,
+                                      verboseColumns = verbose.columns,
+                                      roiList = ROI.list,
+                                      firstBaselineCheck = firstBaselineCheck,
+                                      roiScales = roiScales
+                                      )
+    invisible(new("xcmsPeaks", res))
+})
+## The original code wrapped into a function. This should be REMOVED once we
+## checked that the do_ function yields identical results.
+.findPeaks.centWave_orig <- function(object, ppm=25,
+                                     peakwidth=c(20,50),
+                                     snthresh=10,
+                                     prefilter=c(3,100),
+                                     mzCenterFun="wMean",
+                                     integrate=1, mzdiff=-0.001,
+                                     fitgauss=FALSE,
+                                     scanrange = numeric(),
+                                     noise=0, ## noise.local=TRUE,
+                                     sleep=0,
+                                     verbose.columns=FALSE,
+                                     ROI.list=list(),
+                                     firstBaselineCheck=TRUE,
+                                     roiScales=NULL) {
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode. centWave can",
+                " process only centroid mode data !\n")
 
     mzCenterFun <- paste("mzCenter", mzCenterFun, sep=".")
     if (!exists(mzCenterFun, mode="function"))
@@ -324,20 +538,34 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
       if(!is.numeric(roiScales))
         stop("Error: parameter >roiScales< is not a vector of type numeric ! \n")
       if(!length(roiScales) == length(ROI.list))
-        stop("Error: length of parameter >roiScales< is not equal to the length of parameter >ROI.list< ! \n")
+          stop("Error: length of parameter >roiScales< is not equal to the",
+               " length of parameter >ROI.list< ! \n")
     }
-    
-    scanrange.old <- scanrange
-    if (length(scanrange) < 2)
+
+    ## Fix issue #64:
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
         scanrange <- c(1, length(object@scantime))
-    else
+    } else {
         scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+    scanrange <- c(1, length(object@scantime))
 
-    scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
-
-    if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
-        cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+    ## scanrange.old <- scanrange
+    ## if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else
+    ##     scanrange <- range(scanrange)
+    ## scanrange[1] <- max(1,scanrange[1])
+    ## scanrange[2] <- min(length(object@scantime),scanrange[2])
+    ## if (!(identical(scanrange.old,scanrange)) && (length(scanrange.old) >0))
+    ##     cat("Warning: scanrange was adjusted to ",scanrange,"\n")
 
     basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax","into","intb","maxo","sn")
     verbosenames <- c("egauss","mu","sigma","h","f", "dppm", "scale","scpos","scmin","scmax","lmin","lmax")
@@ -571,9 +799,9 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
 
                 ## narrow down peak rt boundaries by skipping zeros
                 pd <- d[lm[1]:lm[2]]; np <- length(pd)
-                lm.l <-  xcms:::findEqualGreaterUnsorted(pd,1)
+                lm.l <-  findEqualGreaterUnsorted(pd,1)
                 lm.l <- max(1, lm.l - 1)
-                lm.r <- xcms:::findEqualGreaterUnsorted(rev(pd),1)
+                lm.r <- findEqualGreaterUnsorted(rev(pd),1)
                 lm.r <- max(1, lm.r - 1)
                 lm <- lm + c(lm.l - 1, -(lm.r - 1) )
 
@@ -689,39 +917,170 @@ setMethod("findPeaks.centWave", "xcmsRaw", function(object, ppm=25, peakwidth=c(
     cat("\n",dim(pr)[1]," Peaks.\n")
 
     invisible(new("xcmsPeaks", pr))
-})
+}
+
+
 
 ############################################################
 ## findPeaks.centWaveWithPredictedIsotopeROIs
-setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), snthresh=10, 
-                                                                            prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                                            fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                                            sleep=0, verbose.columns=FALSE, ROI.list=list(), 
-                                                                            firstBaselineCheck=TRUE, roiScales=NULL, snthreshIsoROIs=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
-  ## perform tradictional peak picking
-  xcmsPeaks <- findPeaks.centWave(
-    object = object, ppm=ppm, peakwidth=peakwidth, snthresh=snthresh,
-    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
-    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-    sleep=sleep, verbose.columns=TRUE, ROI.list=ROI.list,
-    firstBaselineCheck=firstBaselineCheck, roiScales=roiScales
-  )
-  
-  xcmsPeaksWithAdditionalIsotopeFeatures <- findPeaks.addPredictedIsotopeFeatures(
-    object = object, ppm=ppm, peakwidth=peakwidth, 
-    prefilter=prefilter, mzCenterFun=mzCenterFun, integrate=integrate, mzdiff=mzdiff,
-    fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
-    sleep=sleep, verbose.columns=verbose.columns, 
-    xcmsPeaks=xcmsPeaks, snthresh=snthreshIsoROIs, maxcharge=maxcharge, maxiso=maxiso, mzIntervalExtension=mzIntervalExtension
-  )
-  
-  return(xcmsPeaksWithAdditionalIsotopeFeatures)
-})
-setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, ppm=25, peakwidth=c(20,50), 
-                                                                            prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                                            fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                                            sleep=0, verbose.columns=FALSE, 
-                                                                            xcmsPeaks, snthresh=6.25, maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
+## Performs first a centWave analysis and based on the identified features
+## defines ROIs for a second centWave run to check for presence of
+## predicted isotopes for the first features.
+setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw",
+          function(object, ppm = 25, peakwidth = c(20,50), snthresh = 10,
+                   prefilter = c(3,100), mzCenterFun = "wMean", integrate = 1,
+                   mzdiff = -0.001, fitgauss = FALSE, scanrange = numeric(),
+                   noise = 0, sleep = 0, verbose.columns = FALSE,
+                   ROI.list = list(), firstBaselineCheck = TRUE,
+                   roiScales = NULL, snthreshIsoROIs = 6.25, maxcharge = 3,
+                   maxiso = 5, mzIntervalExtension = TRUE) {
+              if (!isCentroided(object))
+                  warning("It looks like this file is in profile mode. centWave",
+                          " can process only centroid mode data !\n")
+
+              ## Sub-set the xcmsRaw based on scanrange
+              if (length(scanrange) < 2) {
+                  scanrange <- c(1, length(object@scantime))
+              } else {
+                  scanrange <- range(scanrange)
+              }
+              if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+                  scanrange[1] <- max(1, scanrange[1])
+                  scanrange[2] <- min(length(object@scantime), scanrange[2])
+                  message("Provided scanrange was adjusted to ", scanrange)
+              }
+              object <- object[scanrange[1]:scanrange[2]]
+
+              vps <- diff(c(object@scanindex, length(object@env$mz)))
+              res <- do_detectFeatures_centWaveWithPredIsoROIs(mz = object@env$mz,
+                                                               int = object@env$intensity,
+                                                               scantime = object@scantime,
+                                                               valsPerSpect = vps,
+                                                               ppm = ppm,
+                                                               peakwidth = peakwidth,
+                                                               snthresh = snthresh,
+                                                               prefilter = prefilter,
+                                                               mzCenterFun = mzCenterFun,
+                                                               integrate = integrate,
+                                                               mzdiff = mzdiff,
+                                                               fitgauss = fitgauss,
+                                                               noise = noise,
+                                                               verboseColumns = verbose.columns,
+                                                               roiList = ROI.list,
+                                                               firstBaselineCheck = firstBaselineCheck,
+                                                               roiScales = roiScales,
+                                                               snthreshIsoROIs = snthreshIsoROIs,
+                                                      maxCharge = maxcharge,
+                                                      maxIso = maxiso,
+                                                      mzIntervalExtension = mzIntervalExtension
+                                                      )
+              invisible(new("xcmsPeaks", res))
+          })
+## Original code: TODO REMOVE ME once method is validated.
+.centWaveWithPredictedIsotopeROIs <- function(object, ppm = 25,
+                                              peakwidth = c(20,50), snthresh = 10,
+                                              prefilter = c(3,100),
+                                              mzCenterFun = "wMean", integrate = 1,
+                                              mzdiff = -0.001, fitgauss = FALSE,
+                                              scanrange = numeric(),
+                                              noise = 0, sleep = 0,
+                                              verbose.columns = FALSE,
+                                              ROI.list = list(),
+                                              firstBaselineCheck = TRUE,
+                                              roiScales = NULL,
+                                              snthreshIsoROIs = 6.25,
+                                              maxcharge = 3,
+                                              maxiso = 5,
+                                              mzIntervalExtension = TRUE) {
+    ## perform tradictional peak picking
+    xcmsPeaks <- findPeaks.centWave(
+        object = object, ppm = ppm, peakwidth = peakwidth,
+        snthresh = snthresh, prefilter = prefilter,
+        mzCenterFun = mzCenterFun, integrate = integrate,
+        mzdiff = mzdiff, fitgauss = fitgauss, scanrange = scanrange,
+        noise = noise, sleep = sleep, verbose.columns = TRUE,
+        ROI.list = ROI.list, firstBaselineCheck = firstBaselineCheck,
+        roiScales = roiScales)
+
+    return(
+        .addPredictedIsotopeFeatures(object = object,
+                                     ppm = ppm,
+                                     peakwidth = peakwidth,
+                                     prefilter = prefilter,
+                                     mzCenterFun = mzCenterFun,
+                                     integrate = integrate,
+                                     mzdiff = mzdiff,
+                                     fitgauss = fitgauss,
+                                     scanrange = scanrange,
+                                     noise = noise,
+                                     sleep = sleep,
+                                     verbose.columns = verbose.columns,
+                                     xcmsPeaks = xcmsPeaks,
+                                     snthresh = snthreshIsoROIs,
+                                     maxcharge = maxcharge,
+                                     maxiso = maxiso,
+                                     mzIntervalExtension = mzIntervalExtension
+                                     ))
+}
+
+setMethod("findPeaks.addPredictedIsotopeFeatures",
+          "xcmsRaw", function(object, ppm = 25, peakwidth = c(20,50),
+                              prefilter = c(3,100), mzCenterFun = "wMean",
+                              integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
+                              scanrange = numeric(), noise=0, ## noise.local=TRUE,
+                              sleep = 0, verbose.columns = FALSE,
+                              xcmsPeaks, snthresh = 6.25, maxcharge = 3,
+                              maxiso = 5, mzIntervalExtension = TRUE) {
+              if (!isCentroided(object))
+                  warning("It looks like this file is in profile mode. centWave",
+                          " can process only centroid mode data !\n")
+
+              ## Sub-set the xcmsRaw based on scanrange
+              if (length(scanrange) < 2) {
+                  scanrange <- c(1, length(object@scantime))
+              } else {
+                  scanrange <- range(scanrange)
+              }
+              if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+                  scanrange[1] <- max(1, scanrange[1])
+                  scanrange[2] <- min(length(object@scantime), scanrange[2])
+                  message("Provided scanrange was adjusted to ", scanrange)
+              }
+              object <- object[scanrange[1]:scanrange[2]]
+              if(class(xcmsPeaks) != "xcmsPeaks")
+                  stop("Pparameter >xcmsPeaks< is not of class 'xcmsPeaks'!\n")
+
+              vps <- diff(c(object@scanindex, length(object@env$mz)))
+              res <- do_detectFeatures_addPredIsoROIs(mz = object@env$mz,
+                                                      int = object@env$intensity,
+                                                      scantime = object@scantime,
+                                                      valsPerSpect = vps,
+                                                      ppm = ppm,
+                                                      peakwidth = peakwidth,
+                                                      snthresh = snthresh,
+                                                      prefilter = prefilter,
+                                                      mzCenterFun = mzCenterFun,
+                                                      integrate = integrate,
+                                                      mzdiff = mzdiff,
+                                                      fitgauss = fitgauss,
+                                                      noise = noise,
+                                                      verboseColumns = verbose.columns,
+                                                      features. = xcmsPeaks@.Data,
+                                                      maxCharge = maxcharge,
+                                                      maxIso = maxiso,
+                                                      mzIntervalExtension = mzIntervalExtension
+                                                      )
+              invisible(new("xcmsPeaks", res))
+          })
+## Original code: TODO REMOVE ME once method is validated.
+.addPredictedIsotopeFeatures <-
+    function(object, ppm = 25, peakwidth = c(20,50),
+             prefilter = c(3,100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
+             scanrange = numeric(), noise=0, ## noise.local=TRUE,
+             sleep = 0, verbose.columns = FALSE,
+             xcmsPeaks, snthresh = 6.25, maxcharge = 3,
+             maxiso = 5, mzIntervalExtension = TRUE) {
   if(nrow(xcmsPeaks) == 0){
     warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
     return(xcmsPeaks)
@@ -730,57 +1089,17 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
     stop("Error: parameter >xcmsPeaks< is not of class 'xcmsPeaks' ! \n")
   if(any(is.na(match(x = c("scmin", "scmax"), table = colnames(xcmsPeaks)))))
     stop("Error: peak list >xcmsPeaks< is missing the columns 'scmin' and 'scmax' ! Please set parameter >verbose.columns< to TRUE for peak picking with 'centWave' and try again ! \n")
-  
-  addNewIsotopeROIs <- TRUE
-  addNewAdductROIs  <- FALSE
-  polarity <- object@polarity
-  
-  ####################################################################################
+
+  ##############################################################################
   ## predict new ROIs
-  
-  ## convert present peaks to list of lists
-  presentROIs.list <- list()
-  for(peakIdx in 1:nrow(xcmsPeaks)){
-    presentROIs.list[[peakIdx]] <- list(
-      mz        = xcmsPeaks[[peakIdx, "mz"]],## XXX not used!
-      mzmin     = xcmsPeaks[[peakIdx, "mzmin"]],
-      mzmax     = xcmsPeaks[[peakIdx, "mzmax"]],
-      scmin     = xcmsPeaks[[peakIdx, "scmin"]],
-      scmax     = xcmsPeaks[[peakIdx, "scmax"]],
-      length    = -1,## XXX not used!
-      intensity = xcmsPeaks[[peakIdx, "intb"]],## XXX not used!
-      scale     = xcmsPeaks[[peakIdx, "scale"]]## XXX not used!
-    )
-    
-    if(abs(xcmsPeaks[[peakIdx, "mzmax"]] - xcmsPeaks[[peakIdx, "mzmin"]]) < xcmsPeaks[[peakIdx, "mz"]] * ppm / 1E6){
-      presentROIs.list[[peakIdx]]$mzmin <- xcmsPeaks[[peakIdx, "mz"]] - xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-      presentROIs.list[[peakIdx]]$mzmax <- xcmsPeaks[[peakIdx, "mz"]] + xcmsPeaks[[peakIdx, "mz"]] * (ppm/2) / 1E6
-    }
-  }
-  
-  ## fetch predicted ROIs
-  resultObj <- createAdditionalROIs(object, presentROIs.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity)
-  newRoiCounter <- resultObj$newRoiCounter
-  numberOfAdditionalIsotopeROIs <- resultObj$numberOfAdditionalIsotopeROIs
-  numberOfAdditionalAdductROIs <- resultObj$numberOfAdditionalAdductROIs
-  newROI.matrix <- resultObj$newROI.matrix
-  
-  if(nrow(newROI.matrix) == 0)
+  newROI.list <- do_predictIsotopeROIs(object, xcmsPeaks, ppm, maxcharge,
+                                       maxiso, mzIntervalExtension)
+  if(length(newROI.list) == 0)
     return(xcmsPeaks)
-  
-  ## remove ROIs with weak signal content
-  intensityThreshold <- 10
-  newROI.matrix <- removeROIsWithoutSignal(object, newROI.matrix, intensityThreshold)
-  
-  ## convert to list of lists
-  newROI.list <- list()
-  for(idx in 1:nrow(newROI.matrix))
-    ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
-    newROI.list[[length(newROI.list) + 1]] <- as.list(newROI.matrix[idx, ])
-  
-  cat("Predicted ROIs: ", length(newROI.list), " new ROIs (", numberOfAdditionalIsotopeROIs, " isotope ROIs, ", numberOfAdditionalAdductROIs, " adduct ROIs) for ", length(presentROIs.list)," present ROIs.", "\n")
-  
-  ####################################################################################
+
+  ## HOOK_1
+  ## return(newROI.list)
+  ##############################################################################
   ## perform peak picking for predicted ROIs
   roiScales <- unlist(lapply(X = newROI.list, FUN = function(x){x$scale}))
   xcmsPeaks2 <- findPeaks.centWave(
@@ -789,18 +1108,23 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
     fitgauss=fitgauss, scanrange=scanrange, noise=noise, ## noise.local=noise.local,
     sleep=sleep, verbose.columns=verbose.columns, ROI.list=newROI.list, firstBaselineCheck=FALSE, roiScales=roiScales
   )
-  
+
+  ## HOOK_2
+  ## return(xcmsPeaks2)
   if(nrow(xcmsPeaks2) > 0){
     ## remove NaN values
     rowsWithNaN <- which(apply(X = xcmsPeaks2[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax")], MARGIN = 1, FUN = function(x){any(is.na(x))}))
     if(length(rowsWithNaN) > 0)
       xcmsPeaks2 <- xcmsPeaks2[-rowsWithNaN, ]
-    
+
     noArea <- which((xcmsPeaks2[, "mzmax"] - xcmsPeaks2[, "mzmin"]) == 0 || (xcmsPeaks2[, "rtmax"] - xcmsPeaks2[, "rtmin"]) == 0)
     if(length(noArea) > 0)
       xcmsPeaks2 <- xcmsPeaks2[-noArea, ]
   }
-  
+
+  ## HOOK_3
+  ## return(xcmsPeaks2)  ## Compare these results
+
   ## make present peaks and new peaks distinct by removing overlapping peaks
   if(nrow(xcmsPeaks2) > 0){
     ## remove ROIs which are already there
@@ -817,7 +1141,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
       roiMzRadius  = (roiMzMax  - roiMzMin ) / 2;
       peakMzRadius = (peakMzMax - peakMzMin) / 2;
       overlappingmz <- abs(peakMzCenter - roiMzCenter) <= (roiMzRadius + peakMzRadius)
-      
+
       roiRtMin  <- x[["rtmin"]]
       roiRtMax  <- x[["rtmax"]]
       peakRtMin <- xcmsPeaks[, "rtmin"]
@@ -827,12 +1151,12 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
       roiRtRadius  = (roiRtMax  - roiRtMin ) / 2;
       peakRtRadius = (peakRtMax - peakRtMin) / 2;
       overlappingrt <- abs(peakRtCenter - roiRtCenter) <= (roiRtRadius + peakRtRadius)
-      
+
       overlapping <- overlappingmz & overlappingrt
-      
+
       overlappingPeaks <- which(overlapping)
       overlappingPeaksInt <- peakInt[overlappingPeaks]
-      
+
       removeROI <- FALSE
       peaksToRemove <- NULL
       if(any(overlapping)){
@@ -844,10 +1168,11 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
         ## no overlap
         return(FALSE)
       }
-      
-      return(isOverlap)
+
+      ## Will never reach the condition below.
+      ## return(isOverlap)
     })
-    
+
     removeROI <- unlist(lapply(X = drop, FUN = function(x){
       if(is.logical(x)){
         return(x)
@@ -862,42 +1187,44 @@ setMethod("findPeaks.addPredictedIsotopeFeatures", "xcmsRaw", function(object, p
         return(x)
       }
     })))
-    
+
     if(length(removePeaks) > 0)
       xcmsPeaks <- xcmsPeaks[-removePeaks, ]
     xcmsPeaks2 <- xcmsPeaks2[!removeROI, ]
   }
-  
+
   ## merge result with present results
   if(!verbose.columns)
     xcmsPeaks <- xcmsPeaks[, c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intb", "maxo", "sn")]
-  
-  xcmsPeaks <- rbind(xcmsPeaks, xcmsPeaks2)
-  
-  return(xcmsPeaks)
-})
 
+  xcmsPeaks <- rbind(xcmsPeaks, xcmsPeaks2)
+
+  invisible(new("xcmsPeaks", xcmsPeaks))
+}
+
+## Original code: TODO REMOVE ME once method is validated.
 removeROIsOutOfRange <- function(object, roi.matrix){
   ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
   numberOfROIs <- nrow(roi.matrix)
-  
+
   minMz <- min(object@env$mz)
   maxMz <- max(object@env$mz)
   minScanRange <- 1
   maxScanRange <- length(object@scantime)
   #minScanRange <- min(object@scantime)
   #maxScanRange <- max(object@scantime)
-  
+
   roiWithinRange <- rep(x = TRUE, times = numberOfROIs)
   roiWithinRange <- roiWithinRange & (roi.matrix[, "mzmin"] >= minMz)
   roiWithinRange <- roiWithinRange & (roi.matrix[, "mzmax"] <= maxMz)
   roiWithinRange <- roiWithinRange & (roi.matrix[, "scmin"] >= minScanRange)
   roiWithinRange <- roiWithinRange & (roi.matrix[, "scmax"] <= maxScanRange)
-  
+
   roi.matrix <- roi.matrix[roiWithinRange, ]
-  
+
   return(roi.matrix)
 }
+## Original code: TODO REMOVE ME once method is validated.
 removeROIsWithoutSignal <- function(object, roi.matrix, intensityThreshold){
   ## c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity")
   numberOfROIs <- nrow(roi.matrix)
@@ -907,15 +1234,16 @@ removeROIsWithoutSignal <- function(object, roi.matrix, intensityThreshold){
     scanrange <- c(roi.matrix[[roiIdx, "scmin"]], roi.matrix[[roiIdx, "scmax"]])
     mzROI.EIC <- rawEIC(object, mzrange=mzrange, scanrange=scanrange)
     sumOfIntensities <- sum(mzROI.EIC$intensity)
-    
+
     if(sumOfIntensities < intensityThreshold)
       sufficientSignalThere[[roiIdx]] <- FALSE
   }
   roi.matrix <- roi.matrix[sufficientSignalThere, ]
-  
+
   return(roi.matrix)
 }
 
+## Original code: TODO REMOVE ME once method is validated.
 createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxcharge, maxiso, mzIntervalExtension, addNewAdductROIs, polarity){
   ###############################################################################################
   ## isotope ROIs
@@ -924,29 +1252,29 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
     isotopeDistance <- 1.0033548378
     charges <- 1:maxcharge
     isos <- 1:maxiso
-    
+
     isotopeStepSizesForCharge <- list()
     for(charge in charges)
       isotopeStepSizesForCharge[[charge]] <- isotopeDistance / charge
-    
+
     isotopeStepSizes <- list()
     for(charge in charges)
       isotopeStepSizes[[charge]] <- list()
-    
+
     for(charge in charges)
       for(iso in isos)
         isotopeStepSizes[[charge]][[iso]] <- isotopeStepSizesForCharge[[charge]] * iso
-    
+
     isotopePopulationMz <- list()
     for(charge in charges)
       for(iso in isos)
         isotopePopulationMz[[length(isotopePopulationMz) + 1]] <- isotopeStepSizes[[charge]][[iso]]
     isotopePopulationMz <- unlist(unique(isotopePopulationMz))
-    
+
     numberOfIsotopeROIs <- length(ROI.list) * length(isotopePopulationMz)
     isotopeROIs.matrix <- matrix(nrow = numberOfIsotopeROIs, ncol = 8)
     colnames(isotopeROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
-    
+
     ## complement found ROIs
     for(roiIdx in 1:(length(ROI.list))){
       for(mzIdx in 1:length(isotopePopulationMz)){
@@ -958,7 +1286,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
           mzIntervalExtension <- (ROI.list[[roiIdx]]$mzmax - ROI.list[[roiIdx]]$mzmin) * 2
         else
           mzIntervalExtension <- 0
-        
+
         idx <- (roiIdx - 1) * length(isotopePopulationMz) + mzIdx
         isotopeROIs.matrix[idx, ] <- c(
           ROI.list[[roiIdx]]$mz + mzDifference,## XXX not used!
@@ -983,7 +1311,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
     ## considered adduct distances
     ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion cyclotron resonance mass spectrometer for acquisition, analysis, and e-mailing of high-resolution exact-mass electrospray ionization mass spectral data
     ## see also for contaminants: Interferences and contaminants encountered in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
-    
+
     mH  <-  1.0078250322
     mNa <- 22.98976928
     mK  <- 38.96370649
@@ -1003,7 +1331,7 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
     mFA      <- mC+mH*2+mO*2        # formic acid
     mHAc     <- mC+mH*3+mC+mO+mO+mH # acetic acid
     mTFA     <- mC+mF*3+mC+mO+mO+mH # trifluoroacetic acid
-    
+
     switch(polarity,
            "positive"={
              adductPopulationMz <- unlist(c(
@@ -1065,11 +1393,11 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
            },
            stop(paste("Unknown polarity (", polarity, ")!", sep = ""))
     )
-    
+
     numberOfAdductROIs <- length(ROI.list) * length(adductPopulationMz)
     adductROIs.matrix <- matrix(nrow = numberOfAdductROIs, ncol = 8)
     colnames(adductROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
-    
+
     for(roiIdx in 1:(length(ROI.list))){
       for(mzIdx in 1:length(adductPopulationMz)){
         ## create new ROI!
@@ -1094,29 +1422,29 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
     adductROIs.matrix <- matrix(nrow = 0, ncol = 8)
     colnames(adductROIs.matrix) <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "length", "intensity", "scale")
   }
-  
+
   numberOfAdditionalIsotopeROIsUnfiltered <- nrow(isotopeROIs.matrix)
   numberOfAdditionalAdductROIsUnfiltered  <- nrow(adductROIs.matrix )
   numberOfAdditionalROIsUnfiltered        <- numberOfAdditionalIsotopeROIsUnfiltered + numberOfAdditionalAdductROIsUnfiltered
   newROI.matrixUnfiltered <- rbind(isotopeROIs.matrix, adductROIs.matrix)
-  
+
   ###############################################################################################
   ## filter out m/z's out of range and without sufficient intensity
   intensityThreshold <- 10
-  
+
   if(addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsOutOfRange(object, isotopeROIs.matrix)
   if(addNewAdductROIs)  adductROIs.matrix  <- removeROIsOutOfRange(object, adductROIs.matrix)
   if(addNewIsotopeROIs) isotopeROIs.matrix <- removeROIsWithoutSignal(object, isotopeROIs.matrix, intensityThreshold)
   if(addNewAdductROIs)  adductROIs.matrix  <- removeROIsWithoutSignal(object, adductROIs.matrix, intensityThreshold)
-  
+
   numberOfAdditionalIsotopeROIs <- nrow(isotopeROIs.matrix)
   numberOfAdditionalAdductROIs  <- nrow(adductROIs.matrix )
   numberOfAdditionalROIs        <- numberOfAdditionalIsotopeROIs + numberOfAdditionalAdductROIs
-  
+
   ###############################################################################################
   ## box
   newROI.matrix <- rbind(isotopeROIs.matrix, adductROIs.matrix)
-  
+
   resultObj <- list()
   ## unfiltered
   resultObj$newROI.matrixUnfiltered <- newROI.matrixUnfiltered
@@ -1128,84 +1456,64 @@ createAdditionalROIs <- function(object, ROI.list, ppm, addNewIsotopeROIs, maxch
   resultObj$numberOfAdditionalROIs        <- numberOfAdditionalROIs
   resultObj$numberOfAdditionalIsotopeROIs <- numberOfAdditionalIsotopeROIs
   resultObj$numberOfAdditionalAdductROIs  <- numberOfAdditionalAdductROIs
-  
+
   return(resultObj)
 }
 
+
+
+
 ############################################################
 ## findPeaks.MSW
-setMethod("findPeaks.MSW", "xcmsRaw", function(object, snthresh=3, verbose.columns = FALSE, ...)
-{
-    ## Should consider to put MassSpecWavelet into Imports instead of Suggests.
-          ## require(MassSpecWavelet) || stop("Couldn't load MassSpecWavelet")
-
-          ## MassSpecWavelet Calls
-          peakInfo <- peakDetectionCWT(object@env$intensity, SNR.Th=snthresh, ...)
-          majorPeakInfo <- peakInfo$majorPeakInfo
-
-          sumIntos <- function(into, inpos, scale){
-              scale=floor(scale)
-              sum(into[(inpos-scale):(inpos+scale)])
-          }
-
-          maxIntos <- function(into, inpos, scale){
-              scale=floor(scale)
-              max(into[(inpos-scale):(inpos+scale)])
-          }
-
-
-          betterPeakInfo <- tuneInPeakInfo(object@env$intensity,
-                                           majorPeakInfo)
-
-          peakIndex <- betterPeakInfo$peakIndex
-
-          ## sum and max of raw values, sum and max of filter-response
-          rints<-NA;fints<-NA
-          maxRints<-NA;maxFints<-NA
-
-          for (a in 1:length(peakIndex)){
-              rints[a]<-    sumIntos(object@env$intensity,peakIndex[a],
-                                     betterPeakInfo$peakScale[a])
-              maxRints[a]<- maxIntos(object@env$intensity,peakIndex[a],
-                                     betterPeakInfo$peakScale[a])
-          }
-          ## filter-response is not summed here, the maxF-value is the one
-          ## which was "xcmsRaw$into" earlier
-
-
-          ## Assemble result
-
-          basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
-                         "into","maxo","sn","intf","maxf")
-
-          peaklist <- matrix(-1, nrow = length(peakIndex), ncol = length(basenames))
-
-          colnames(peaklist) <- c(basenames)
-
-          peaklist[,"mz"] <- object@env$mz[peakIndex]
-          peaklist[,"mzmin"] <- object@env$mz[(peakIndex-betterPeakInfo$peakScale)]
-          peaklist[,"mzmax"] <- object@env$mz[(peakIndex+betterPeakInfo$peakScale)]
-
-          peaklist[,"rt"]    <- rep(-1, length(peakIndex))
-          peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
-          peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
-
-          peaklist[,"into"] <- rints ## sum of raw-intensities
-          peaklist[,"maxo"] <- maxRints
-          peaklist[,"intf"] <- rep(NA,length(peakIndex))
-          peaklist[,"maxf"] <- betterPeakInfo$peakValue
-
-          peaklist[,"sn"]   <- betterPeakInfo$peakSNR
-
-          cat('\n')
-
-          ## Filter additional (verbose) columns
-          if (!verbose.columns)
-              peaklist <- peaklist[,basenames,drop=FALSE]
-
-          invisible(new("xcmsPeaks", peaklist))
-      }
-      )
+##' @title Feature detection for single-spectrum non-chromatography MS data
+##' @aliases findPeaks.MSW
+##'
+##' @description This method performs feature detection in mass spectrometry
+##' direct injection spectrum using a wavelet based algorithm.
+##'
+##' @details This is a wrapper around the peak picker in Bioconductor's
+##' \code{MassSpecWavelet} package calling
+##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+##'
+##' @inheritParams featureDetection-MSW
+##' @inheritParams featureDetection-centWave
+##' @param object The \code{\linkS4class{xcmsRaw}} object on which feature
+##' detection should be performed.
+##' @param verbose.columns Logical whether additional feature meta data columns
+##' should be returned.
+##'
+##' @return
+##' A matrix, each row representing an intentified feature, with columns:
+##' \describe{
+##' \item{mz}{m/z value of the feature at the centroid position.}
+##' \item{mzmin}{Minimum m/z of the feature.}
+##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{rt}{Always \code{-1}.}
+##' \item{rtmin}{Always \code{-1}.}
+##' \item{rtmax}{Always \code{-1}.}
+##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{intf}{Always \code{NA}.}
+##' \item{maxf}{Maximum MSW-filter response of the feature.}
+##' \item{sn}{Signal to noise ratio.}
+##' }
+##' @seealso \code{\link{MSW}} for the new user interface,
+##' \code{\link{do_detectFeatures_MSW}} for the downstream analysis
+##' function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+##' \code{MassSpecWavelet} for details on the algorithm and additionally supported
+##' parameters.
+##'
+##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
+setMethod("findPeaks.MSW", "xcmsRaw",
+          function(object, snthresh=3, verbose.columns = FALSE, ...) {
+              res <- do_detectFeatures_MSW(mz = object@env$mz,
+                                           int = object@env$intensity,
+                                           snthresh = snthresh,
+                                           verboseColumns = verbose.columns,
+                                           ...)
+              invisible(new("xcmsPeaks", res))
+          })
 
 ############################################################
 ## findPeaks.MS1
@@ -1374,16 +1682,22 @@ setMethod("plotPeaks", "xcmsRaw", function(object, peaks, figs, width = 200) {
 
 ############################################################
 ## getEIC
-setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL, step = 0.1) {
-              FUN <- getOption("BioC")$xcms$getEIC.method
-              if(FUN == "getEICOld"){
-                  return(getEICOld(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
-              }else if(FUN == "getEICNew"){
-                  return(getEICNew(object=object, mzrange=mzrange, rtrange=rtrange, step=step))
-              }else{
-                  stop("Method ", FUN, " not known! getEIC.method should be either getEICOld or getEICnew!")
-              }
-          })
+## Issue #74: implement an alternative (improved) getEIC method.
+setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL,
+                                        step = 0.1) {
+    ## FUN <- getOption("BioC")$xcms$getEIC.method
+    ## if(FUN == "getEICOld"){
+    ##     return(getEICOld(object=object, mzrange=mzrange,
+    ##                      rtrange=rtrange, step=step))
+    ## }else if(FUN == "getEICNew"){
+    ##     return(getEICNew(object=object, mzrange=mzrange,
+    ##                      rtrange=rtrange, step=step))
+    ## }else{
+    ##     stop("Method ", FUN, " not known! getEIC.method should",
+    ##          " be either getEICOld or getEICnew!")
+    ## }
+    profEIC(object, mzrange = mzrange, rtrange = rtrange, step = step)
+})
 
 ############################################################
 ## rawMat
@@ -1393,44 +1707,82 @@ setMethod("rawMat", "xcmsRaw", function(object,
                                         scanrange = numeric(),
                                         log=FALSE) {
 
+    ## if (length(rtrange) >= 2) {
+    ##     rtrange <- range(rtrange)
+    ##     scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
+    ##     scanrange <- c(match(TRUE, scanidx),
+    ##                    length(scanidx) - match(TRUE, rev(scanidx)))
+    ## }
+    ## else if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else scanrange <- range(scanrange)
+    ## startidx <- object@scanindex[scanrange[1]] + 1
+    ## endidx <- length(object@env$mz)
+    ## if (scanrange[2] < length(object@scanindex))
+    ##     endidx <- object@scanindex[scanrange[2] + 1]
+    ## ##scans <- integer(endidx - startidx + 1)
+    ## scans <- rep(scanrange[1]:scanrange[2],
+    ##              diff(c(object@scanindex[scanrange[1]:scanrange[2]], endidx)))
+    ## ##for (i in scanrange[1]:scanrange[2]) {
+    ## ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
+    ## ##        1], length(object@env$mz), na.rm = TRUE)
+    ## ##    scans[idx - startidx + 1] <- i
+    ## ##}
+    ## rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
+    ## masses <- object@env$mz[startidx:endidx]
+    ## int <- object@env$intensity[startidx:endidx]
+    ## massidx <- 1:length(masses)
+    ## if (length(mzrange) >= 2) {
+    ##     mzrange <- range(mzrange)
+    ##     massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+    ## }
+    ## else mzrange <- range(masses)
+
+    ## y <- int[massidx]
+    ## if (log && (length(y)>0))
+    ##     y <- log(y + max(1 - min(y), 0))
+
+    ## cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
+    ##       intensity = y)
+    .rawMat(mz = object@env$mz, int = object@env$intensity,
+            scantime = object@scantime,
+            valsPerSpect = diff(c(object@scanindex, length(object@env$mz))),
+            mzrange = mzrange, rtrange = rtrange, scanrange = scanrange,
+            log = log)
+})
+## @jo TODO LLL replace that with an implementation in C.
+.rawMat <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
+                    rtrange = numeric(), scanrange = numeric,
+                    log = FALSE) {
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
-        scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        scanrange <- c(match(TRUE, scanidx),
-                       length(scanidx) - match(TRUE, rev(scanidx)))
+        scanrange <- range(which((scantime >= rtrange[1]) &
+                                 (scantime <= rtrange[2])))
     }
-    else if (length(scanrange) < 2)
-        scanrange <- c(1, length(object@scantime))
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(valsPerSpect))
     else scanrange <- range(scanrange)
-    startidx <- object@scanindex[scanrange[1]] + 1
-    endidx <- length(object@env$mz)
-    if (scanrange[2] < length(object@scanindex))
-        endidx <- object@scanindex[scanrange[2] + 1]
-    ##scans <- integer(endidx - startidx + 1)
+    if (scanrange[1] == 1)
+        startidx <- 1
+    else
+        startidx <- sum(valsPerSpect[1:(scanrange[1]-1)]) + 1
+    endidx <- sum(valsPerSpect[1:scanrange[2]])
     scans <- rep(scanrange[1]:scanrange[2],
-                 diff(c(object@scanindex[scanrange[1]:scanrange[2]], endidx)))
-    ##for (i in scanrange[1]:scanrange[2]) {
-    ##    idx <- (object@scanindex[i] + 1):min(object@scanindex[i +
-    ##        1], length(object@env$mz), na.rm = TRUE)
-    ##    scans[idx - startidx + 1] <- i
-    ##}
-    rtrange <- c(object@scantime[scanrange[1]], object@scantime[scanrange[2]])
-    masses <- object@env$mz[startidx:endidx]
-    int <- object@env$intensity[startidx:endidx]
+                 valsPerSpect[scanrange[1]:scanrange[2]])
+    masses <- mz[startidx:endidx]
     massidx <- 1:length(masses)
     if (length(mzrange) >= 2) {
         mzrange <- range(mzrange)
-        massidx <- massidx[(masses >= mzrange[1]) & (masses <= mzrange[2])]
+        massidx <- massidx[(masses >= mzrange[1] & (masses <= mzrange[2]))]
     }
-    else mzrange <- range(masses)
+    int <- int[startidx:endidx][massidx]
+    if (log && (length(int) > 0))
+        int <- log(int + max(1 - min(int), 0))
+    cbind(time = scantime[scans[massidx]],
+          mz = masses[massidx],
+          intensity = int)
+}
 
-    y <- int[massidx]
-    if (log && (length(y)>0))
-        y <- log(y + max(1 - min(y), 0))
-
-    cbind(time = object@scantime[scans[massidx]], mz = masses[massidx],
-          intensity = y)
-})
 
 ############################################################
 ## plotRaw
@@ -1482,8 +1834,16 @@ setReplaceMethod("profMethod", "xcmsRaw", function(object, value) {
 
     if (! (value %in% names(.profFunctions)))
         stop("Invalid profile method")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
+        return(object)
+    }
+    have_profmethod <- object@profmethod
+    ## Re-calculate the profile matrix if method differs
+    if (have_profmethod != value & profStep(object) > 0) {
+        object@env$profile <- profMat(object, method = value)
+    }
     object@profmethod <- value
-    profStep(object) <- profStep(object)
     object
 })
 
@@ -1495,52 +1855,77 @@ setMethod("profStep", "xcmsRaw", function(object) {
     else
         diff(object@mzrange)/(nrow(object@env$profile)-1)
 })
+## Update: related to issue #71
 setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
+    ## if ("profile" %in% ls(object@env))
+    ##     rm("profile", envir = object@env)
+    ## if (!value)
+    ##     return(object)
+    ## if (length(object@env$mz)==0) {
+    ##     warning("MS1 scans empty. Skipping profile matrix calculation.")
+    ##     return(object)
+    ## }
+    ## minmass <- round(min(object@env$mz)/value)*value
+    ## maxmass <- round(max(object@env$mz)/value)*value
 
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    if (!value)
-        return(object)
-    if (length(object@env$mz)==0) {
-        warning("MS1 scans empty. Skipping profile matrix calculation.")
+    ## num <- (maxmass - minmass)/value + 1
+    ## profFun <- match.profFun(object)
+    ## object@env$profile <- profFun(object@env$mz, object@env$intensity,
+    ##                               object@scanindex, num, minmass, maxmass,
+    ##                               FALSE, object@profparam)
+    ## object@mzrange <- c(minmass, maxmass)
+    ## return(object)
+    if (!is.numeric(value) && value < 0)
+        stop("'value' has to be a positive number!")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
         return(object)
     }
-    minmass <- round(min(object@env$mz)/value)*value
-    maxmass <- round(max(object@env$mz)/value)*value
-
-    num <- (maxmass - minmass)/value + 1
-    profFun <- match.profFun(object)
-    object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                  object@scanindex, num, minmass, maxmass,
-                                  FALSE, object@profparam)
-    object@mzrange <- c(minmass, maxmass)
+    if (value == 0) {
+        if ("profile" %in% ls(object@env)) {
+            rm("profile", envir = object@env)
+            message("Removing profile matrix.")
+        }
+        return(object)
+    }
+    have_step <- profStep(object)
+    ## Check if the value differs from step and only calculate if different.
+    if (have_step != value) {
+        ## OK, now we're re-calculating
+        minmass <- round(min(object@env$mz) / value) * value
+        maxmass <- round(max(object@env$mz) / value) * value
+        object@mzrange <- c(minmass, maxmass)
+        object@env$profile <- profMat(object, step = value)
+    }
     return(object)
 })
 
 ############################################################
 ## profStepPad
+## The difference to the profStep? seems only to be the way how the range
+## is calculated:
+## profStep: minmass <- round(min(object@env$mz)/value)*value
+## profStepPad: floor(mzrange(range(object@env$mz))[1])
 setReplaceMethod("profStepPad", "xcmsRaw", function(object, value) {
-
-    if ("profile" %in% ls(object@env))
-        rm("profile", envir = object@env)
-    if (!value)
-        return(object)
-
-    if (length(object@env$mz)==0) {
-        warning("MS1 scans empty. Skipping profile matrix calculation.")
+    if (!is.numeric(value) && value < 0)
+        stop("'value' has to be a positive number!")
+    if (length(object@env$mz) == 0) {
+        warning("MS1 scans empty. Skipping profile matrix creation.")
         return(object)
     }
-    mzrange <- range(object@env$mz)
-    ## calculate the profile matrix with whole-number limits
-    minmass <- floor(mzrange[1])
-    maxmass <- ceiling(mzrange[2])
-
-    num <- (maxmass - minmass)/value + 1
-    profFun <- match.profFun(object)
-    object@env$profile <- profFun(object@env$mz, object@env$intensity,
-                                  object@scanindex, num, minmass, maxmass,
-                                  FALSE, object@profparam)
+    if (value == 0) {
+        if ("profile" %in% ls(object@env)) {
+            rm("profile", envir = object@env)
+            message("Removing profile matrix.")
+        }
+        return(object)
+    }
+    mzr <- range(object@env$mz)
+    minmass <- floor(mzr[1])
+    maxmass <- ceiling(mzr[2])
     object@mzrange <- c(minmass, maxmass)
+    object@env$profile <- profMat(object, step = value,
+                                  mzrange. = c(minmass, maxmass))
     return(object)
 })
 
@@ -1632,20 +2017,26 @@ setMethod("rawEIC", "xcmsRaw", function(object,
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
         scanidx <- (object@scantime >= rtrange[1]) & (object@scantime <= rtrange[2])
-        scanrange <- c(match(TRUE, scanidx), length(scanidx) - match(TRUE, rev(scanidx)))
+        scanrange <- c(match(TRUE, scanidx), length(scanidx) -
+                                             match(TRUE, rev(scanidx)))
     }  else if (length(scanrange) < 2)
         scanrange <- c(1, length(object@scantime))
     else
         scanrange <- range(scanrange)
 
     scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    scanrange[2] <- min(length(object@scantime), scanrange[2])
 
-    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
+    if (!is.double(object@env$mz))
+        object@env$mz <- as.double(object@env$mz)
+    if (!is.double(object@env$intensity))
+        object@env$intensity <- as.double(object@env$intensity)
+    if (!is.integer(object@scanindex))
+        object@scanindex <- as.integer(object@scanindex)
 
-    .Call("getEIC",object@env$mz,object@env$intensity,object@scanindex,as.double(mzrange),as.integer(scanrange),as.integer(length(object@scantime)), PACKAGE ='xcms' )
+    .Call("getEIC", object@env$mz, object@env$intensity, object@scanindex,
+          as.double(mzrange), as.integer(scanrange),
+          as.integer(length(object@scantime)), PACKAGE ='xcms' )
 })
 
 ############################################################
@@ -1765,44 +2156,75 @@ setMethod("findmzROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0), scanrange
 ############################################################
 ## findKalmanROI
 setMethod("findKalmanROI", "xcmsRaw", function(object, mzrange=c(0.0,0.0),
-                                               scanrange=c(1,length(object@scantime)), minIntensity,
-                                               minCentroids, consecMissedLim, criticalVal, ppm,  segs, scanBack){
+                                               scanrange=c(1,length(object@scantime)),
+                                               minIntensity, minCentroids,
+                                               consecMissedLim, criticalVal,
+                                               ppm,  segs, scanBack){
 
-    scanrange[1] <- max(1,scanrange[1])
-    scanrange[2] <- min(length(object@scantime),scanrange[2])
+    scanrange[1] <- max(1, scanrange[1])
+    scanrange[2] <- min(length(object@scantime), scanrange[2])
 
-    ## var type checking
-    if (!is.double(object@env$mz))  object@env$mz <- as.double(object@env$mz)
-    if (!is.double(object@env$intensity)) object@env$intensity <- as.double(object@env$intensity)
-    if (!is.integer(object@scanindex)) object@scanindex <- as.integer(object@scanindex)
-    if (!is.double(object@scantime)) object@scantime <- as.double(object@scantime)
+    ## Subset object by scanrange.
 
+    valsPS <- diff(c(object@scanindex, length(object@env$mz)))
+    do_findKalmanROI(mz = object@env$mz, int = object@env$intensity,
+                     scantime = object@scantime,
+                     valsPerSpect = valsPS, mzrange = mzrange,
+                     scanrange = scanrange, minIntensity = minIntensity,
+                     minCentroids = minCentroids,
+                     consecMissedLim = consecMissedLim,
+                     criticalVal = criticalVal, ppm = ppm, segs = segs,
+                     scanBack = scanBack)
 
-    .Call("massifquant", object@env$mz,object@env$intensity,object@scanindex, object@scantime,
-          as.double(mzrange), as.integer(scanrange), as.integer(length(object@scantime)),
-          as.double(minIntensity),as.integer(minCentroids),as.double(consecMissedLim),
-          as.double(ppm), as.double(criticalVal), as.integer(segs), as.integer(scanBack), PACKAGE ='xcms' )
+    ## .Call("massifquant", object@env$mz, object@env$intensity, object@scanindex,
+    ##       object@scantime, as.double(mzrange), as.integer(scanrange),
+    ##       as.integer(length(object@scantime)), as.double(minIntensity),
+    ##       as.integer(minCentroids),as.double(consecMissedLim), as.double(ppm),
+    ##       as.double(criticalVal), as.integer(segs), as.integer(scanBack),
+    ##       PACKAGE ='xcms' )
 })
 
 ############################################################
-## findPeaks.massifquant
-setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth=c(20,50), snthresh=10,
-                                                       prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-                                                       fitgauss=FALSE, scanrange= numeric(), noise=0, ## noise.local=TRUE,
-                                                       sleep=0, verbose.columns=FALSE, criticalValue = 1.125, consecMissedLimit = 2,
-                                                       unions = 1, checkBack = 0, withWave = 0) {
+## This should be replaced soon; is only for testing purposes.
+setGeneric("findPeaks.massifquant_orig", function(object, ...)
+    standardGeneric("findPeaks.massifquant_orig"))
+setMethod("findPeaks.massifquant_orig", "xcmsRaw",
+          function(object,
+                   ppm=10,
+                   peakwidth=c(20,50),
+                   snthresh=10,
+                   prefilter=c(3,100),
+                   mzCenterFun="wMean",
+                   integrate=1,
+                   mzdiff=-0.001,
+                   fitgauss=FALSE,
+                   scanrange= numeric(),
+                   noise=0, ## noise.local=TRUE,
+                   sleep=0,
+                   verbose.columns=FALSE,
+                   criticalValue = 1.125,
+                   consecMissedLimit = 2,
+                   unions = 1,
+                   checkBack = 0,
+                   withWave = 0) {
 
     cat("\n Massifquant, Copyright (C) 2013 Brigham Young University.");
     cat("\n Massifquant comes with ABSOLUTELY NO WARRANTY. See LICENSE for details.\n");
     flush.console();
+              ## Seems we're not considering scanrange here at all.
 
     ##keeep this check since massifquant doesn't check internally
     if (!isCentroided(object))
         warning("It looks like this file is in profile mode. massifquant can process only centroid mode data !\n")
 
     cat("\n Detecting  mass traces at",ppm,"ppm ... \n"); flush.console();
-    massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2], minCentroids = peakwidth[1], criticalVal = criticalValue,
-    consecMissedLim = consecMissedLimit, segs = unions, scanBack = checkBack,ppm=ppm);
+              massifquantROIs = findKalmanROI(object, minIntensity = prefilter[2],
+                                              minCentroids = peakwidth[1],
+                                              criticalVal = criticalValue,
+                                              consecMissedLim = consecMissedLimit,
+                                              segs = unions,
+                                              scanBack = checkBack,
+                                              ppm=ppm)
 
     if (withWave == 1) {
         featlist = findPeaks.centWave(object, ppm, peakwidth, snthresh,
@@ -1845,6 +2267,86 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object, ppm=10, peakwidth
         invisible(new("xcmsPeaks", featlist));
     }
     return(invisible(featlist));
+})
+
+############################################################
+## findPeaks.massifquant: Note the original code returned, if withWave = 1,
+## a Peaks object otherwise a matrix!
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
+                                                       ppm=10,
+                                                       peakwidth = c(20,50),
+                                                       snthresh = 10,
+                                                       prefilter = c(3,100),
+                                                       mzCenterFun = "wMean",
+                                                       integrate = 1,
+                                                       mzdiff = -0.001,
+                                                       fitgauss = FALSE,
+                                                       scanrange = numeric(),
+                                                       noise = 0,
+                                                       sleep = 0,
+                                                       verbose.columns = FALSE,
+                                                       criticalValue = 1.125,
+                                                       consecMissedLimit = 2,
+                                                       unions = 1,
+                                                       checkBack = 0,
+                                                       withWave = 0) {
+
+    if (sleep > 0)
+        cat("'sleep' argument is defunct and will be ignored.")
+
+    ## Fix issue #61
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
+        scanrange <- c(1, length(object@scantime))
+    } else {
+        scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+    scanrange <- c(1, length(object@scantime))
+    ## scanrange.old <- scanrange
+    ## ## sanitize if too few or too many scanrange is given
+    ## if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else
+    ##     scanrange <- range(scanrange)
+    ## ## restrict and sanitize scanrange to maximally cover all scans
+    ## scanrange[1] <- max(1,scanrange[1])
+    ## scanrange[2] <- min(length(object@scantime),scanrange[2])
+    ## ## Mild warning if the actual scanrange doesn't match the scanrange
+    ## ## argument
+    ## if (!(identical(scanrange.old, scanrange)) &&
+    ##     (length(scanrange.old) > 0)) {
+    ##     cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+    ##     ## Scanrange filtering
+    ##     keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+    ##     object <- split(object, f=keepidx)[["TRUE"]]
+    ## }
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode.",
+                " Massifquant can process only centroid mode data !\n")
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    res <- do_detectFeatures_massifquant(mz = object@env$mz,
+                                         int = object@env$intensity,
+                                         scantime = object@scantime,
+                                         valsPerSpect = vps,
+                                         ppm = ppm, peakwidth = peakwidth,
+                                         snthresh = snthresh,
+                                         prefilter = prefilter,
+                                         mzCenterFun = mzCenterFun,
+                                         integrate = integrate,
+                                         mzdiff = mzdiff, fitgauss = fitgauss,
+                                         noise = noise,
+                                         verboseColumns = verbose.columns,
+                                         criticalValue = criticalValue,
+                                         consecMissedLimit = consecMissedLimit,
+                                         unions = unions, checkBack = checkBack,
+                                         withWave = as.logical(withWave))
+    invisible(new("xcmsPeaks", res))
 })
 
 ############################################################
@@ -2506,3 +3008,238 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
     return(ob)
 })
 
+############################################################
+## [
+## Subset by scan.
+##' @title Subset an xcmsRaw object by scans
+##' @aliases subset-xcmsRaw
+##'
+##' @description Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
+##' returned \code{\linkS4class{xcmsRaw}} object contains values for all scans
+##' specified with argument \code{i}. Note that the \code{scanrange} slot of the
+##' returned \code{xcmsRaw} will be \code{c(1, length(object@scantime))} and
+##' hence not \code{range(i)}.
+##'
+##' @details Only subsetting by scan index in increasing order or by a logical
+##' vector are supported. If not ordered, argument \code{i} is sorted
+##' automatically. Indices which are larger than the total number of scans
+##' are discarded.
+##' @param x The \code{\linkS4class{xcmsRaw}} object that should be sub-setted.
+##' @param i Integer or logical vector specifying the scans/spectra to which \code{x} should be sub-setted.
+##' @param j Not supported.
+##' @param drop Not supported.
+##' @return The sub-setted \code{\linkS4class{xcmsRaw}} object.
+##' @author Johannes Rainer
+##' @seealso \code{\link{split.xcmsRaw}}
+##' @examples
+##' ## Load a test file
+##' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' xraw <- xcmsRaw(file)
+##' ## The number of scans/spectra:
+##' length(xraw@scantime)
+##'
+##' ## Subset the object to scans with a scan time from 3500 to 4000.
+##' xsub <- xraw[xraw@scantime >= 3500 & xraw@scantime <= 4000]
+##' range(xsub@scantime)
+##' ## The number of scans:
+##' length(xsub@scantime)
+##' ## The number of values of the subset:
+##' length(xsub@env$mz)
+setMethod("[", signature(x = "xcmsRaw",
+                         i = "logicalOrNumeric",
+                         j = "missing",
+                         drop = "missing"),
+          function(x, i, j, drop) {
+              nScans <- length(x@scantime)
+              if (is.logical(i))
+                  i <- which(i)
+              if (length(i) == 0)
+                  return(new("xcmsRaw"))
+              ## Ensure i is sorted.
+              if (is.unsorted(i)) {
+                  warning("'i' has been sorted as subsetting supports",
+                          " only sorted indices.")
+                  i <- sort(i)
+              }
+              ## Ensure that we're not supposed to return duplicated scans!
+              i <- unique(i)
+              ## Check that i is within the number of scans
+              outsideRange <- !(i %in% 1:nScans)
+              if (any(outsideRange)) {
+                  ## Throw an error or just a warning?
+                  iOut <- i[outsideRange]
+                  i <- i[!outsideRange]
+                  warning("Some of the indices in 'i' are larger than the",
+                          " total number of scans which is ", nScans)
+              }
+              ## If i is equal to the number of scans just return the object
+              if (all(1:nScans %in% i))
+                  return(x)
+              have_profstep <- profStep(x)
+              valsPerSpect <- diff(c(x@scanindex, length(x@env$mz)))
+              ## Subset:
+              ## 1) scantime
+              x@scantime <- x@scantime[i]
+              ## 2) scanindex
+              x@scanindex <- valueCount2ScanIndex(valsPerSpect[i])
+              ## 3) @env$mz
+              newE <- new.env()
+              valsInScn <- rep(1:nScans, valsPerSpect) %in% i
+              newE$mz <- x@env$mz[valsInScn]
+              ## 4) @env$intensity
+              newE$intensity <- x@env$intensity[valsInScn]
+              x@env <- newE
+              ## 5) The remaining slots
+              x@tic <- x@tic[i]
+              if (length(x@polarity) == nScans)
+                  x@polarity <- x@polarity[i]
+              if (length(x@acquisitionNum) == nScans)
+                  x@acquisitionNum <- x@acquisitionNum[i]
+              x@mzrange <- range(x@env$mz)
+              scanrange(x) <- c(1, length(x@scantime))
+              ## Profile matrix
+              if (have_profstep > 0) {
+                  ## Create the profile matrix.
+                  ## Call profStep<- that will also update the mzrange properly
+                  profStep(x) <- have_profstep
+              }
+              ## TODO: what with the MSn data?
+              return(x)
+          })
+
+##' @title The profile matrix
+##'
+##' @aliases profile-matrix profMat
+##'
+##' @description The \emph{profile} matrix is an n x m matrix, n (rows)
+##' representing equally spaced m/z values (bins) and m (columns) the
+##' retention time of the corresponding scans. Each cell contains the maximum
+##' intensity measured for the specific scan and m/z values falling within the
+##' m/z bin.
+##'
+##' The \code{profMat} method creates a new profile matrix or returns the
+##' profile matrix within the object's \code{@env} slot, if available. Settings
+##' for the profile matrix generation, such as \code{step} (the bin size),
+##' \code{method} or additional settings are extracted from the respective slots
+##' of the \code{\linkS4class{xcmsRaw}} object. Alternatively it is possible to
+##' specify all of the settings as additional parameters.
+##'
+##' @details Profile matrix generation methods:
+##' \describe{
+##' \item{bin}{The default profile matrix generation method that does a simple
+##' binning, i.e. aggregating of intensity values falling within an m/z bin.}
+##' \item{binlin}{Binning followed by linear interpolation to impute missing
+##' values. The value for m/z bins without a measured intensity are inferred by
+##' a linear interpolation between neighboring bins with a measured intensity.}
+##' \item{binlinbase}{Binning followed by a linear interpolation to impute
+##' values for empty elements (m/z bins) within a user-definable proximity to
+##' non-empty elements while stetting the element's value to the
+##' \code{baselevel} otherwise. See \code{impute = "linbase"} parameter of
+##' \code{\link{imputeLinInterpol}} for more details.}
+##' \item{intlin}{Set the elements' values to the integral of the linearly
+##' interpolated data from plus to minus half the step size.}
+##' }
+##'
+##' @note From \code{xcms} version 1.51.1 on only the \code{profMat} method
+##' should be used to extract the profile matrix instead of the previously
+##' default way to access it directly \emph{via} \code{object@env$profile}.
+##'
+##' @param object The \code{\linkS4class{xcmsRaw}} object.
+##'
+##' @param method The profile matrix generation method. Allowed are \code{"bin"},
+##' \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
+##' section for more information.
+##'
+##' @param step numeric(1) representing the m/z bin size.
+##'
+##' @param baselevel numeric(1) representing the base value to which
+##' empty elements (i.e. m/z bins without a measured intensity) should be set.
+##' Only considered if \code{method = "binlinbase"}. See \code{baseValue}
+##' parameter of \code{\link{imputeLinInterpol}} for more details.
+##'
+##' @param basespace numeric(1) representing the m/z length after
+##' which the signal will drop to the base level. Linear interpolation will be
+##' used between consecutive data points falling within \code{2 * basespace} to
+##' each other. Only considered if \code{method = "binlinbase"}. If not
+##' specified, it defaults to \code{0.075}. Internally this parameter is
+##' translated into the \code{distance} parameter of the
+##' \code{\link{imputeLinInterpol}} function by
+##' \code{distance = floor(basespace / step)}. See \code{distance} parameter
+##' of \code{\link{imputeLinInterpol}} for more details.
+##'
+##' @param mzrange. Optional numeric(2) manually specifying the mz value range to
+##' be used for binnind. If not provided, the whole mz value range is used.
+##'
+##' @seealso \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
+##' \code{\link{imputeLinInterpol}} for the employed binning and
+##' missing value imputation methods, respectively.
+##'
+##' @return \code{profMat} returns the profile matrix (rows representing scans,
+##' columns equally spaced m/z values).
+##'
+##' @author Johannes Rainer
+##' @examples
+##' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+##' ## Load the data without generating the profile matrix (profstep = 0)
+##' xraw <- xcmsRaw(file, profstep = 0)
+##' ## Extract the profile matrix
+##' profmat <- profMat(xraw, step = 0.3)
+##' dim(profmat)
+##' ## If not otherwise specified, the settings from the xraw object are used:
+##' profinfo(xraw)
+##' ## To extract a profile matrix with linear interpolation use
+##' profmat <- profMat(xraw, step = 0.3, method = "binlin")
+##' ## Alternatively, the profMethod of the xraw objects could be changed
+##' profMethod(xraw) <- "binlin"
+##' profmat_2 <- profMat(xraw, step = 0.3)
+##' all.equal(profmat, profmat_2)
+setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
+                                                             step,
+                                                             baselevel,
+                                                             basespace,
+                                                             mzrange.) {
+    ## Call the .createProfileMatrix if the internal profile matrix is empty or
+    ## if the settings differ from the internal settings.
+    pi <- profinfo(object)
+    if (missing(method))
+        method <- pi$method
+    if (missing(step))
+        step <- pi$step
+    if (missing(baselevel))
+        baselevel <- pi$baselevel
+    if (missing(basespace))
+        basespace <- pi$basespace
+    if (length(object@env$profile) > 0) {
+        ## Check if the settings are the same...
+        have_method <- pi$method
+        have_step <- pi$step
+        have_basespace <- pi$basespace
+        have_baselevel <- pi$baselevel
+        if (!is.character(all.equal(list(method, step, basespace, baselevel),
+                                    list(have_method, have_step,
+                                         have_basespace, have_baselevel)))) {
+            return(object@env$profile)
+        }
+    }
+    if (missing(mzrange.)) {
+        mzrange. <- NULL
+    } else {
+        if (length(mzrange.) != 2 | !is.numeric(mzrange.))
+            stop("If provided, 'mzrange.' has to be a numeric of length 2!")
+    }
+    ## Calculate the profile matrix
+    if (step <= 0)
+        stop("Can not calculate a profile matrix with step=",step, "! Either",
+             " provide a positive number with argument 'step' or use the",
+             " 'profStep' method to set the step parameter for the xcmsSet.")
+    message("Create profile matrix with method '", method,
+            "' and step ", step, " ... ", appendLF = FALSE)
+    res <- .createProfileMatrix(mz = object@env$mz, int = object@env$intensity,
+                                valsPerSpect = diff(c(object@scanindex,
+                                                      length(object@env$mz))),
+                                method = method, step = step,
+                                baselevel = baselevel, basespace = basespace,
+                                mzrange. = mzrange.)
+    message("OK")
+    res
+})

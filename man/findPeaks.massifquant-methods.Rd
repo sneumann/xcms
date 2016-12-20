@@ -13,7 +13,7 @@ Massifquant is a Kalman filter (KF) based feature detection for XC-MS data in ce
   \code{
 findPeaks.massifquant(object, ppm=10, peakwidth=c(20,50), snthresh=10,
      prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001,
-     fitgauss=FALSE, scanrange= numeric(), noise=0, 
+     fitgauss=FALSE, scanrange= numeric(), noise=0,
      sleep=0, verbose.columns=FALSE, criticalValue = 1.125, consecMissedLimit = 2,
      unions = 1, checkBack = 0, withWave = 0)
 }
@@ -37,7 +37,7 @@ The following arguments are specific to Massifquant. Any additional arguments su
 }
 \value{
 If the method findPeaks.massifquant(...) is used, then a matrix is returned with rows corresponding to features, and properties of the features listed with the following column names. Otherwise,
-if centWave feature is used also (withWave = 1), or Massifquant is called through the xcmsSet(...) method, then their corresponding return values are used. 
+if centWave feature is used also (withWave = 1), or Massifquant is called through the xcmsSet(...) method, then their corresponding return values are used.
   \item{mz}{
     weighted m/z mean (weighted by intensity) of the feature
   }
@@ -54,7 +54,7 @@ if centWave feature is used also (withWave = 1), or Massifquant is called throug
      starting scan time of the feature
   }
   \item{into}{
-   the raw quantitation (area under the curve) of the feature. 
+   the raw quantitation (area under the curve) of the feature.
   }
   \item{area}{
     feature area that is not normalized by the scan rate.
@@ -65,10 +65,11 @@ library(faahKO)
 library(xcms)
 #load all the wild type and Knock out samples
 cdfpath <- system.file("cdf", package = "faahKO")
-cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-# run the massifquant analysis 
+## Subset to only the first 4
+cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)[1:4]
+# run the massifquant analysis
 
-xset <- xcmsSet(cdffiles, method = "massifquant", 
+xset <- xcmsSet(cdffiles, method = "massifquant",
                 consecMissedLimit = 1,
                 snthresh = 10,
                 criticalValue = 1.73,
@@ -80,9 +81,10 @@ xset <- xcmsSet(cdffiles, method = "massifquant",
 \author{Christopher Conley}
 \encoding{UTF-8}
 \references{
-    Submitted for review. Christopher Conley, Ralf J .O Torgrip. Ryan Taylor, and John T. Prince.  "Massifquant: open-source Kalman filter based XC-MS feature detection". August 2013. 
+    Submitted for review. Christopher Conley, Ralf J .O Torgrip. Ryan Taylor, and John T. Prince.  "Massifquant: open-source Kalman filter based XC-MS feature detection". August 2013.
 }
 \seealso{
+  \code{\link{centWave}} for the new user interface.
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsSet}}
   \code{\link{xcmsRaw}}

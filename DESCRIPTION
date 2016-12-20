@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.51.2
-Date: 2016-12-13
+Version: 1.51.3
+Date: 2016-12-20
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -24,7 +24,8 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors
+    S4Vectors,
+    MSnbase (>= 2.1.4)
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),
@@ -32,6 +33,7 @@ Suggests:
     msdata,
     ncdf4,
     rgl,
+    microbenchmark,
     RUnit
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of chromatographically
@@ -56,6 +58,10 @@ Collate:
     'do_detectFeatures-functions.R'
     'fastMatch.R'
     'functions-utils.R'
+    'functions-IO.R'
+    'functions-OnDiskMSnExp.R'
+    'functions-Params.R'
+    'functions-ProcessHistory.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'
@@ -63,9 +69,13 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-IO.R'
+    'methods-OnDiskMSnExp.R'
+    'methods-Params.R'
+    'methods-ProcessHistory.R'
     'methods-netCdfSource.R'
     'methods-rampSource.R'
     'methods-xcmsEIC.R'
+    'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'
     'methods-xcmsPeaks.R'
     'methods-xcmsRaw.R'

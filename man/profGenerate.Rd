@@ -67,6 +67,13 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   functions execpt that the return the integer index of which x,y
   pair would be placed in a particular cell.
 }
+\note{
+  There are some issues with the \code{profBinLin} method, see
+  \url{https://github.com/sneumann/xcms/issues/46} and
+  \url{https://github.com/sneumann/xcms/issues/49}. Thus it is suggested
+  to use the functions \code{\link{binYonX}} in combination with
+  \code{\link{imputeLinInterpol}} instead.
+}
 \value{
   For \code{prof*}, a numeric vector of length \code{num}.
 

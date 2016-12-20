@@ -5,33 +5,45 @@
 ## show
 setMethod("show", "xcmsSet", function(object) {
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
-    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1), collapse = "-"),
-        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1), collapse = "-"),
+    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
+                              collapse = "-"),
+        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
+                            collapse = "-"),
         " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4), collapse = "-"),
-        "m/z\n")
+    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
+                             collapse = "-"), "m/z\n")
     cat("Peaks:", nrow(object@peaks), "(about",
         round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
     cat("Peak Groups:", nrow(object@groups), "\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
 
+    ## Processing info.
+    ## Feature detection errors.
+    cat("Feature detection:\n")
     if(.hasSlot(object, "mslevel")){
         MSn <- mslevel(object)
         if(is.null(MSn))
             MSn <- 1
-        cat(paste0("Peak picking was performed on MS", MSn, ".\n"))
+        cat(paste0(" o Peak picking performed on MS", MSn, ".\n"))
     }
     if(.hasSlot(object, "scanrange")){
         if(!is.null(scanrange(object))){
-            cat("Scan range limited to ", scanrange(object)[1], "-", scanrange(object)[2], "\n")
+            cat(" o Scan range limited to ", scanrange(object)[1], "-",
+                scanrange(object)[2], "\n")
         }
+    }
+    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.FEATURE.DETECTION)
+    if (length(errs) > 0) {
+        cat(" o Detection errors: ", length(errs), " files failed.\n",
+            "   Use method 'showError' to list the error(s).\n\n", sep ="")
     }
 
     if (length(object@profinfo)) {
         cat("Profile settings: ")
         for (i in seq(along = object@profinfo)) {
             if (i != 1) cat("                  ")
-            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]], "\n", sep = "")
+            cat(names(object@profinfo)[i], " = ", object@profinfo[[i]],
+                "\n", sep = "")
         }
         cat("\n")
     }
@@ -42,13 +54,14 @@ setMethod("show", "xcmsSet", function(object) {
 
 
 
-#' @description This method updates an \emph{old} \code{xcmsSet} object to the latest
-#' definition.
-#' @title Update an \code{xcmsSet} object
-#' @param object The \code{xcmsSet} object to update.
+#' @description This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
+#' object to the latest definition.
+#' @title Update an \code{\linkS4class{xcmsSet}} object
+#' @param object The \code{\linkS4class{xcmsSet}} object to update.
 #' @param ... Optional additional arguments. Currently ignored.
 #' @param verbose Currently ignored.
-#' @return An updated \code{xcmsSet} containing all data from the input object.
+#' @return An updated \code{\linkS4class{xcmsSet}} containing all data from
+#' the input object.
 #' @author Johannes Rainer
 setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     ## Create a new empty xcmsSet and start filling it with the slot
@@ -68,6 +81,7 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     msl <- numeric(0)
     scnr <- numeric(0)
     prgCb <- function(progress) NULL
+    procH <- list()
 
     ## Now replace the values with the slots... if present.
     if (.hasSlot(object, "peaks"))
@@ -98,6 +112,8 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
         scnr <- object@scanrange
     if (.hasSlot(object, "progressCallback"))
         prgCb <- object@progressCallback
+    if (.hasSlot(object, ".processHistory"))
+        procH <- object@.processHistory
 
     ## Generate the new object.
     newXs <- new("xcmsSet",
@@ -114,7 +130,8 @@ setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
                  progressInfo = prgInfo,
                  mslevel = msl,
                  scanrange = scnr,
-                 progressCallback = prgCb
+                 progressCallback = prgCb,
+                 .processHistory = procH
                  )
     return(newXs)
 })
@@ -907,6 +924,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         s <- idx[si]
         cat(samples[s], " ")
 
+        ##
+        ## Might be better to just get the profile matrix from the center object
+        ## outside of the for loop and then modifying a internal variable within
+        ## the loop - avoids creation of two profile matrices in each iteration.
         profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
 		if(is.null(scanrange)){
 			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
@@ -1576,7 +1597,7 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
                 if (capabilities("png")){
                     png(file.path(specdir, "%003d.png"), width = w, height = h)
                 }else{
-                    pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
+                    pdf(file.path(specdir, "%003d.pdf"), width = w/72,
                         height = h/72, onefile = FALSE)
                 }
             }
@@ -1619,8 +1640,10 @@ setReplaceMethod("$", "xcmsSet", function(x, name, value) {
 ############################################################
 ## getXcmsRaw
 ## read the raw data for a xset.
-## argument which allows to specify which file from the xcmsSet should be read, if length > 1
-## a list of xcmsRaw is returned
+## sampleidx: argument which allows to specify which file from the xcmsSet
+## should be read, if length > 1 a list of xcmsRaw is returned
+## Note: if scanrange is submitted here I have to subset the xcmsRaw objects
+## AFTER having filled in adjusted retention times etc.
 setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                                             profmethod = profMethod(object),
                                             profstep = profStep(object),
@@ -1629,70 +1652,91 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                                             scanrange = NULL,
                                             rt = c("corrected", "raw"),
                                             BPPARAM = bpparam()) {
-              if (is.numeric(sampleidx))
-                  sampleidx <- sampnames(object)[sampleidx]
-              sampidx <- match(sampleidx, sampnames(object)) ## numeric
-              if (length(sampidx) == 0)
-                  stop("submitted value for sampleidx outside of the available files!")
-              fn <- filepaths(object)[sampidx]
-              rt <- match.arg(rt)
-              if (rt == "corrected" & !any(names(object@rt) == "corrected")) {
-                  message("No RT correction has been performed, thus returning raw",
-                          " retention times.")
-                  rt <- "raw"
-              }
-              if (missing(mslevel)) {
-                  msl <- mslevel(object)
-              } else {
-                  msl <- mslevel
-              }
-              if (missing(scanrange)) {
-                  srange <- scanrange(object)
-              } else {
-                  srange <- scanrange
-              }
-              ## include MSn?
-              includeMsn <- FALSE
-              if (!is.null(msl)) {
-                  if(msl > 1)
-                      includeMsn <- TRUE
-              }
-              ret <- bplapply(as.list(fn), FUN = function(z) {
-                                  raw <- xcmsRaw(z, profmethod=profmethod, profstep=profstep,
-                                                 mslevel=msl, scanrange=srange,
-                                                 includeMSn=includeMsn)
-                                  return(raw)
-                            }, BPPARAM=BPPARAM)
-              ## do corrections etc.
-              for(i in 1:length(ret)){
-                  if(length(object@dataCorrection) > 1){
-                      if(object@dataCorrection[[sampidx[i]]] == 1){
-                          ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
-                          message(paste0("Applying lock Waters mass correction to ", fn[i]))
-                      }
-                  }
-                  if(rt == "corrected"){
-                      ## check if there is any need to apply correction...
-                      ## This includes fix for the bug reported by Aleksandr (issue 44)
-                      if(all(object@rt$corrected[[sampidx[i]]] == object@rt$raw[[sampidx[i]]])){
-                          message("No need to perform retention time correction,",
-                                  " raw and corrected rt are identical for ", fn[i])
-                          ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
-                      }else{
-                          message(paste0("Applying retention time correction to ", fn[i]))
-                          ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
-                      }
-                  }
-              }
+    if (is.numeric(sampleidx))
+        sampleidx <- sampnames(object)[sampleidx]
+    sampidx <- match(sampleidx, sampnames(object)) ## numeric
+    if (length(sampidx) == 0)
+        stop("submitted value for sampleidx outside of the",
+             " available files!")
+    fn <- filepaths(object)[sampidx]
+    rt <- match.arg(rt)
+    if (rt == "corrected" & !any(names(object@rt) == "corrected")) {
+        message("No RT correction has been performed, thus returning",
+                " raw retention times.")
+        rt <- "raw"
+    }
+    if (missing(mslevel)) {
+        msl <- mslevel(object)
+    } else {
+        msl <- mslevel
+    }
+    ## if (missing(scanrange)) {
+    ##     srange <- scanrange(object)
+    ## } else {
+    ##     srange <- scanrange
+    ## }
+    ## If scanrange is NULL we don't have to do subset and can skip some stuff.
+    ## If scanrange is provided we don't want to subset in xcmsRaw but subset
+    ## at the very end using []
+    srange <- NULL ## ensures we're reading all data.
+    if (is.null(scanrange) | length(scanrange) < 2) {
+        srange <- scanrange(object)
+    } else {
+        scanrange <- range(scanrange)
+    }
+    ## include MSn?
+    includeMsn <- FALSE
+    if (!is.null(msl)) {
+        if(msl > 1)
+            includeMsn <- TRUE
+    }
+    ret <- bplapply(as.list(fn), FUN = function(z) {
+        raw <- xcmsRaw(z, profmethod = profmethod,
+                       profstep = profstep, mslevel = msl,
+                       scanrange = srange,
+                       includeMSn = includeMsn)
+        return(raw)
+    }, BPPARAM=BPPARAM)
+    ## do corrections etc.
+    for(i in 1:length(ret)){
+        if(length(object@dataCorrection) > 1){
+            if(object@dataCorrection[[sampidx[i]]] == 1){
+                ret[[i]] <- stitch(ret[[i]], AutoLockMass(ret[[i]]))
+                message(paste0("Applying lock Waters mass correction",
+                               " to ", basename(fn[i])))
+            }
+        }
+        if(rt == "corrected"){
+            ## check if there is any need to apply correction...
+            ## This includes fix for the bug reported by Aleksandr (issue 44)
+            if(all(object@rt$corrected[[sampidx[i]]] ==
+                   object@rt$raw[[sampidx[i]]])){
+                message("No need to perform retention time correction,",
+                        " raw and corrected rt are identical for ",
+                        basename(fn[i]), ".")
+                ret[[i]]@scantime <- object@rt$raw[[sampidx[i]]]
+            }else{
+                message(paste0("Applying retention time correction",
+                               " to ", basename(fn[i]), "."))
+                ret[[i]]@scantime <- object@rt$corrected[[sampidx[i]]]
+            }
+        }
+        ## Finally doing the sub-setting...
+        if (length(scanrange) > 1) {
+            ## Doing the sub-setting here ensures that the scantime, profile
+            ## matrix and everything matches the scanrange.
+            ret[[i]] <- ret[[i]][scanrange[1]:scanrange[2]]
+        }
+    }
 
-              ## what's missing?
-              ## + consider calibration(s)?
-              ## + what with polarity?
+    ## what's missing?
+    ## + consider calibration(s)?
+    ## + what with polarity?
 
-              if(length(ret)==1)
-                  return(ret[[1]])
-              return(ret)
-          })
+    if(length(ret)==1)
+        return(ret[[1]])
+    return(ret)
+})
 
 ############################################################
 ## levelplot
@@ -1827,6 +1871,8 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
                  "' to access phenoData variables")
         return(x)
     }
+    ## Update the xcmsSet
+    x <- updateObject(x)
     ## don't allow i, but allow j to be: numeric or logical. If
     ## it's a character vector <- has to fit to sampnames(x)
     if(!missing(i))
@@ -1917,11 +1963,19 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
     }
     ## 5) filled
     if(length(x@filled) > 0){
-        xsub@filled <- (1:nrow(keep.peaks))[rownames(keep.peaks) %in% as.character(x@filled)]
+        xsub@filled <- (1:nrow(keep.peaks))[rownames(keep.peaks) %in%
+                                            as.character(x@filled)]
     }
     ## 6) dataCorrection
     if(length(x@dataCorrection)>0)
-        xset@dataCorrection <- x@dataCorrection[j]
+        xsub@dataCorrection <- x@dataCorrection[j]
+    ## 7) processHistory: we want to make sure that the ordering of the objects stays
+    procHist <- .getProcessHistory(x, fileIndex = j)
+    procHist <- lapply(procHist, updateFileIndex, old = j, new = 1:length(j))
+    xsub@.processHistory <- procHist
+    OK <- .validProcessHistory(xsub)
+    if (!is.logical(OK))
+        stop(OK)
     return(xsub)
 })
 
@@ -2013,4 +2067,36 @@ setMethod("specDist", signature(object="xcmsSet"),
               method <- paste("specDist", method, sep=".")
               distance <- do.call(method, alist<-list(peakTable1, peakTable2, ...))
               distance
+          })
+
+############################################################
+## showError
+##' @title Extract processing errors
+##' @aliases showError
+##'
+##' @description If feature detection is performed with \code{\link{findPeaks}}
+##' setting argument \code{stopOnError = FALSE} eventual errors during the
+##' process do not cause to stop the processing but are recorded inside of the
+##' resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed
+##' with the \code{showError} method.
+##'
+##' @param object An \code{\linkS4class{xcmsSet}} object.
+##' @param message. Logical indicating whether only the error message, or the
+##' error itself should be returned.
+##' @param ... Additional arguments.
+##' @return A list of error messages (if \code{message. = TRUE}) or errors or an
+##' empty list if no errors are present.
+##' @author Johannes Rainer
+setMethod("showError", signature(object = "xcmsSet"),
+          function(object, message. = TRUE, ...) {
+              errs <- .getProcessErrors(object, ...)
+              if (length(errs) > 0) {
+                  res <- lapply(errs, function(z) {
+                      if (message.)
+                          return(z@info)
+                      else return(z@error)
+                  })
+                  return(res)
+              }
+              return(list())
           })

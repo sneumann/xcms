@@ -116,7 +116,7 @@ void SegProc::collapseSubsets() {
 
         if (noDups.at(i) == 0) { continue; }
 
-        int combinedUnions = 0;
+        //jo int combinedUnions = 0;
         std::vector<int> iUIdx = createSequence(unionIdx.at(i), unionIdx.at(i + 1) - 1, 1);
         std::vector<int> iSegs2Union = copySubIdx(segIdx, iUIdx);
 
@@ -159,7 +159,7 @@ void SegProc::collapseSubsets() {
                     jCounts != interEleNum) { //there is not perfect containment
 
                 //cout << "...unite them at J: " << j << endl;
-                combinedUnions = 1;
+                //jo combinedUnions = 1;
                 noDups.at(j) = 0;
                 std::vector<int> tmpVec(iSegs2Union.size() + jSIdx.size() - 1, -1);
 

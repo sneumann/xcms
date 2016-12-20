@@ -3,13 +3,21 @@
 
 xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
                     profparam = list(),
-                    includeMSn = FALSE, mslevel=NULL,
-                    scanrange=NULL) {
+                    includeMSn = FALSE, mslevel = NULL,
+                    scanrange = NULL) {
 
     object <- new("xcmsRaw")
     object@env <- new.env(parent=.GlobalEnv)
+
+    ## Change between old and new code; new code uses the "newer" mzR approach
+    ## to read the file.
+    ## if (useOriginalCode()) {
     object@filepath <- xcmsSource(filename)
-    rawdata <- loadRaw(object@filepath, includeMSn)
+    rawdata <- loadRaw(object@filepath, includeMSn = includeMSn)
+    ## } else {
+    ##     object@filepath <- new("xcmsFileSource", filename)
+    ##     rawdata <- readRawData(filename, includeMSn = includeMSn)
+    ## }
 
     rtdiff <- diff(rawdata$rt)
     if (any(rtdiff == 0))
@@ -28,32 +36,28 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     object@scanindex <- rawdata$scanindex
     object@env$mz <- rawdata$mz
     object@env$intensity <- rawdata$intensity
-    ## setting the scanrange.
-    scanrange(object) <- as.numeric(scanrange)
-    mslevel(object) <- as.numeric(mslevel)
 
-    object@profmethod <- profmethod
-    object@profparam <- profparam
-    if (profstep)
-        profStep(object) <- profstep
-
+    ## Doing first an eventual scanrange subsetting so that we don't have to
+    ## re-calculate the profile matrix later.
+    if (length(scanrange) < 2) {
+        scanrange <- c(1, length(object@scantime))
+    } else {
+        scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
     if (!is.null(rawdata$acquisitionNum)) {
         ## defined only for mzData and mzXML
         object@acquisitionNum <- rawdata$acquisitionNum
     }
-
     if (!is.null(rawdata$polarity)) {
         object@polarity <- factor(rawdata$polarity,
                                   levels=c(0,1,-1),
-                                  labels=c("negative", "positive", "unknown"));
+                                  labels=c("negative", "positive", "unknown"))
     }
-
-    if (!is.null(scanrange)) {
-        ## Scanrange filtering
-        keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
-        object <- split(object, f=keepidx)[["TRUE"]]
-    }
-
     ##
     ## After the MS1 data, take care of MSn
     ##
@@ -64,12 +68,34 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
         object@msnAcquisitionNum <- rawdata$MSn$acquisitionNum
         object@msnLevel <- rawdata$MSn$msLevel
         object@msnRt <- rawdata$MSn$rt
-        object@msnPrecursorScan <- match(rawdata$MSn$precursorNum, object@acquisitionNum)
+        object@msnPrecursorScan <- match(rawdata$MSn$precursorNum,
+                                         object@acquisitionNum)
         object@msnPrecursorMz <- rawdata$MSn$precursorMZ
         object@msnPrecursorIntensity <- rawdata$MSn$precursorIntensity
         object@msnPrecursorCharge <- rawdata$MSn$precursorCharge
         object@msnCollisionEnergy <- rawdata$MSn$collisionEnergy
     }
+    ## setting the scanrange.
+    scanrange(object) <- as.numeric(scanrange)
+
+    ## Subset by scanrange
+    object <- object[scanrange[1]:scanrange[2]]
+
+    mslevel(object) <- as.numeric(mslevel)
+    object@mzrange <- range(object@env$mz, na.rm = TRUE)
+
+    object@profmethod <- profmethod
+    object@profparam <- profparam
+    ## Creating profile matrix if profstep > 0
+    if (profstep)
+        profStep(object) <- profstep
+
+    ## if (!is.null(scanrange)) {
+    ##     ## Scanrange filtering
+    ##     keepidx <- seq.int(1, length(object@scantime)) %in%
+    ##         seq.int(scanrange[1], scanrange[2])
+    ##     object <- split(object, f=keepidx)[["TRUE"]]
+    ## }
 
     if (!missing(mslevel) & !is.null(mslevel)) {
         object <- msn2ms(object)
@@ -128,6 +154,175 @@ specPeaks <- function(spec, sn = 20, mzgap = .2) {
     }
 
     spectab
+}
+
+
+## issue #74
+##' @title Extract an EIC from the profile matrix
+##'
+##' @description The \code{profEIC} does extract the EIC not from the raw data,
+##' but from the profile matrix. To get the EIC from the raw data use the
+##' \code{\link{rawEIC}} method. The \code{profEIC} is a replacement of the
+##' old \code{getEIC} method implementation (both of functions \code{getEICold}
+##' and \code{getEICnew}) supporting the same input arguments and returning the
+##' same result object, but with more sanity checks and using the newer binning
+##' and interpolation functions.
+##'
+##' @note This method uses the new binning and linear interpolation functionality
+##' i.e. the \code{\link{binYonX}} and \code{\link{imputeLinInterpol}}. In
+##' contrast to the old \code{getEIC} implementation (pre xcms 1.51.1), this
+##' method performs also considerably more input parameter validations.
+##' @noRd
+profEIC <- function(object, mzrange, rtrange = NULL, step = 0.1) {
+    ## Input argument checking:
+    if (missing(mzrange)) {
+        mzrange <- matrix(object@mzrange, nrow = 1)
+    } else {
+        if (length(mzrange) == 2)
+            mzrange <- matrix(as.numeric(mzrange), nrow = 1)
+        if (!is.matrix(mzrange))
+            stop("'mzrange' is supposed to be a two-column matrix with each row",
+                 " containing the min and max value specifying the mz range.")
+    }
+    if (all(c("mzmin", "mzmax") %in% colnames(mzrange)))
+        mzrange <- mzrange[, c("mzmin", "mzmax"), drop = FALSE]
+    ## rtrange
+    if (is.null(rtrange)) {
+        rtrange <- matrix(range(object@scantime), nrow = 1)
+    } else {
+        if (length(rtrange) == 2)
+            rtrange <- matrix(as.numeric(rtrange), nrow = 1)
+        if (!is.matrix(rtrange))
+            stop("'rtrange' is supposed to be a two-column matrix with each row",
+                 " containing the min and max value specifying the rt range.")
+    }
+    ## Check sizes...
+    if (nrow(rtrange) != nrow(mzrange)) {
+        ## Try to fix:
+        if (nrow(rtrange) == 1)
+            rtrange <- matrix(rep(rtrange[1, ], each = nrow(mzrange)),
+                              nrow = nrow(mzrange))
+        if (nrow(mzrange) == 1)
+            mzrange <- matrix(rep(mzrange[1, ], each = nrow(rtrange)),
+                              nrow = nrow(rtrange))
+        if (nrow(rtrange) != nrow(mzrange))
+            stop("'rtrange' and 'mzrange' have to have the same number of rows!")
+    }
+    if (ncol(rtrange) != 2 | ncol(mzrange) != 2)
+        stop("Number of columns of 'rtrange' and 'mzrange' have to be 2!")
+    ## Profile generation settings:
+    profmat <- NULL
+    pi <- profinfo(object)
+    method <- pi$method
+    baselevel <- pi$baselevel
+    if (is.null(baselevel)) {
+        baseValue <- min(object@env$intensity, na.rm = TRUE) / 2
+    } else {
+        baseValue <- baselevel
+    }
+    basespace <- pi$basespace
+    impMeths <- c("none", "lin", "linbase", "intlin")
+    names(impMeths) <- c("bin", "binlin", "binlinbase", "intlin")
+    impute <- impMeths[method]
+    if (impute == "intlin") {
+        ## Have to calculate the full profile matrix...
+        suppressMessages(
+            profmat <- profMat(object, method = "intlin", step = step)
+        )
+    }
+    ## Re-use the existing profile matrix?
+    if (length(object@env$profile) > 0) {
+        ## If the settings are the same:
+        if (profStep(object) == step)
+            profmat <- object@env$profile
+    }
+    if (is.null(profmat)) {
+        valsPerSpect <- diff(c(object@scanindex, length(object@env$mz)))
+        toIdx <- cumsum(valsPerSpect)
+        fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
+    } else {
+        mass <- seq(floor(min(object@env$mz) / step) * step,
+                    ceiling(max(object@env$mz) / step) * step,
+                    by = step)
+    }
+    ## Get the global ranges; individual ranges have to be within these!
+    object_rtrange <- range(object@scantime)
+    object_mzrange <- object@mzrange
+    ## Initialize object
+    eic <- vector("list", nrow(rtrange))
+    for (i in 1:nrow(rtrange)) {
+        rtr <- range(rtrange[i, ])
+        mzr <- range(mzrange[i, ])
+        ## Check the parameters!
+        if (!(rtr[2] <= object_rtrange[2] & rtr[1] >= object_rtrange[1]))
+            stop("'rtrange' number ", i, " (", paste(rtr, collapse = ", "), ") ",
+                 "is outside of the retention time range of 'object'")
+        if (!(mzr[2] <= object_mzrange[2] & mzr[1] >= object_mzrange[1]))
+            stop("'mzrange' number ", i, " (", paste(mzr, collapse = ", "), ") ",
+                 "is outside of the mz value range of 'object'")
+        if (!is.null(profmat)) {
+            ## Re-use the existing profile matrix to calculate.
+            imz <- findRange(mass, c(mzr[1]-.5*step, mzr[2]+0.5*step), TRUE)
+            irt <- which(object@scantime >= rtr[1]
+                         & object@scantime <= rtr[2])
+            if (length(imz) == 0)
+                stop("Specified mz range ", mzr, " outside of the measured",
+                     " mz range!")
+            if (length(irt) == 0)
+                stop("Specified retention time range ", rtr, " outside of ",
+                     "the measured retention time range!")
+            eic[[i]] <- cbind(rt = object@scantime[irt],
+                              intensity = colMax(profmat[imz[1]:imz[2], irt,
+                                                         drop=FALSE]))
+        } else {
+            ## 1) Determine which spectra to consider
+            inSpectra <- which(object@scantime >= rtr[1]
+                               & object@scantime <= rtr[2])
+            if (length(inSpectra) == 0)
+                stop("Specified retention time range ", rtr, " outside of ",
+                     "the measured retention time range!")
+            mass <- seq(floor(mzr[1]/step)*step,
+                        ceiling(mzr[2]/step)*step, by = step)
+            nBins <- length(mass)
+            binRes <- binYonX(x = object@env$mz,
+                              y = object@env$intensity,
+                              nBins = nBins,
+                              binFromX = mass[1],
+                              binToX = mass[nBins],
+                              fromIdx = fromIdx[inSpectra],
+                              toIdx = toIdx[inSpectra],
+                              baseValue = ifelse(impute == "none",
+                                                 yes = 0, no = NA),
+                              shiftByHalfBinSize = TRUE,
+                              sortedX = TRUE)
+            if (length(toIdx) == 1)
+                binRes <- list(binRes)
+            bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
+            if (is.null(basespace)) {
+                distance <- floor(0.075 / bin_size)
+            } else {
+                distance <- floor(basespace[1] / bin_size)
+            }
+            binVals <- lapply(binRes, function(z) {
+                return(max(imputeLinInterpol(z$y, method = impute,
+                                             distance = distance,
+                                             noInterpolAtEnds = TRUE,
+                                             baseValue = baseValue),
+                           na.rm = TRUE))
+            })
+            eic[[i]] <- cbind(rt = object@scantime[inSpectra],
+                              intensity = unlist(binVals, use.names = FALSE))
+        }
+    }
+    new("xcmsEIC", eic = list(xcmsRaw=eic), mzrange = mzrange, rtrange = rtrange,
+        rt = "raw", groupnames = character(0))
+}
+
+profEIC2 <- function(object, mzrange, rtrange = NULL, step = 0.1) {
+    ## This version does guess the indices to be passed directly to binYonX.
+    ## binFromX binToX represents the mz range.
+    ## fromIdx toIdx can be used to specify the
+
 }
 
 
@@ -337,4 +532,109 @@ remakeTIC<-function(object){
         object@tic[i]<-sum(getScan(object, i)[,"intensity"])
     }
     return(object)
+}
+
+############################################################
+## .createProfileMatrix
+##' @title Create the profile matrix
+##'
+##' @description This function creates a \emph{profile} matrix, i.e. a rt times
+##' m/z matrix of aggregated intensity values with values aggregated within bins
+##' along the m/z dimension.
+##'
+##' @details This is somewhat the successor function for the deprecated
+##' \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
+##' \code{profBinLinBaseM} and \code{profIntLin}).
+##'
+##' @param mz Numeric representing the m/z values across all scans/spectra.
+##' @param int Numeric representing the intensity values across all
+##' scans/spectra.
+##' @param valsPerSpect Numeric representing the number of measurements for each
+##' scan/spectrum.
+##' @param method A character string specifying the profile matrix generation
+##' method. Allowed are \code{"bin"}, \code{"binlin"},
+##' \code{"binlinbase"} and \code{"intlin"}.
+##' @param step Numeric specifying the size of the m/z bins.
+##' @param baselevel Numeric specifying the base value.
+##' @param basespace Numeric.
+##' @param mzrange. numeric(2) optionally specifying the mz value range
+##' for binning. This is to adopt the old profStepPad<- method used for obiwarp
+##' retention time correction that did the binning from whole-number limits.
+##' @noRd
+.createProfileMatrix <- function(mz, int, valsPerSpect,
+                                 method, step = 0.1, baselevel = NULL,
+                                 basespace = NULL,
+                                 mzrange. = NULL) {
+    profMeths <- c("bin", "binlin", "binlinbase", "intlin")
+    names(profMeths) <- c("none", "lin", "linbase", "intlin")
+    method <- match.arg(method, profMeths)
+    impute <- names(profMeths)[profMeths == method]
+
+    if (length(mzrange.) != 2) {
+        mrange <- range(mz)
+        mzrange. <- c(floor(mrange[1] / step) * step,
+                      ceiling(mrange[2] / step) * step)
+    }
+    mass <- seq(mzrange.[1], mzrange.[2], by = step)
+    mlength <- length(mass)
+    ## Calculate the "real" bin size; old xcms code oddity that that's different
+    ## from step.
+    bin_size <- (mass[mlength] - mass[1]) / (mlength - 1)
+    ## for profIntLinM we have to use the old code.
+    if (impute == "intlin") {
+        profFun <- "profIntLinM"
+        profp <- list()
+        scanindex <- valueCount2ScanIndex(valsPerSpect)
+        buf <- do.call(profFun, args = list(mz, int,
+                                            scanindex, mlength,
+                                            mass[1], mass[mlength],
+                                            TRUE))
+    } else {
+        ## Binning the data.
+        toIdx <- cumsum(valsPerSpect)
+        fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
+        shiftBy <- TRUE
+        binFromX <- min(mass)
+        binToX <- max(mass)
+        brks <- breaks_on_nBins(fromX = binFromX, toX = binToX,
+                                nBins = mlength, shiftByHalfBinSize = TRUE)
+        binRes <- binYonX(mz, int,
+                          breaks = brks,
+                          fromIdx = fromIdx,
+                          toIdx = toIdx,
+                          baseValue = ifelse(impute == "none", yes = 0, no = NA),
+                          sortedX = TRUE,
+                          returnIndex = FALSE
+                          )
+        if (length(toIdx) == 1)
+            binRes <- list(binRes)
+        ## Missing value imputation.
+        if (impute == "linbase") {
+            ## need arguments distance and baseValue.
+            if (length(basespace) > 0) {
+                if (!is.numeric(basespace))
+                    stop("'basespace' has to be numeric!")
+                distance <- floor(basespace[1] / bin_size)
+            } else {
+                distance <- floor(0.075 / bin_size)
+            }
+            if (length(baselevel) > 0) {
+                if (!is.numeric(baselevel))
+                    stop("'baselevel' has to be numeric!")
+                baseValue <- baselevel
+            } else {
+                baseValue <- min(int, na.rm = TRUE) / 2
+            }
+        } else {
+            distance <- 0
+            baseValue <- 0
+        }
+        binVals <- lapply(binRes, function(z) {
+            return(imputeLinInterpol(z$y, method = impute, distance = distance,
+                                     noInterpolAtEnds = TRUE,
+                                     baseValue = baseValue))
+        })
+        buf <- do.call(cbind, binVals)
+    }
+    buf
 }

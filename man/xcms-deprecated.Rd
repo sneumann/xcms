@@ -12,8 +12,13 @@
   The following functions/methods are deprecated.
 
   \itemize{
-    \item{xcmsPapply: this function is no longer available and the use
-    of \code{\link[BiocParallel]{bplapply}} is suggested.}
+    \item{\code{xcmsPapply}: this function is no longer available and the use
+      of \code{\link[BiocParallel]{bplapply}} is suggested.}
+
+    \item{\code{profBin}, \code{profBinM}, \code{profBinLin},
+      \code{profBinLinM}, \code{profBinLinBase}, \code{profBinLinBaseM}
+      have been deprecated and \code{\link{binYonX}}} in combination
+      with \code{\link{imputeLinInterpol}} should be used instead.
   }
 }
 

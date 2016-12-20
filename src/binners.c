@@ -98,12 +98,14 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   } else {
     /* Calculating breaks based on bin size. */
     bin_size = REAL(binSize)[0];
-    if (shift_by_half_bin_size > 0) {
-      from_x = from_x - bin_size / 2;
-    }
     if (bin_size < 0)
       error("'binSize' has to be > 0!");
-    n_bin = (int)ceil((to_x - from_x) / bin_size);
+    if (shift_by_half_bin_size > 0) {
+      from_x = from_x - (bin_size / 2);
+      to_x = to_x + (bin_size / 2);
+    }
+    /* Also here: note that we might want to use round instead. */
+    n_bin = (int)round((to_x - from_x) / bin_size);
     PROTECT(brks = allocVector(REALSXP, n_bin + 1));
     count_protect++;
     p_brks = REAL(brks);
@@ -129,10 +131,14 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     have_index = 1;
     break;
   case 3:
+    PROTECT(index = allocVector(INTSXP, 1));
+    count_protect++;
     _bin_y_on_x_with_breaks_sum(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 				from_idx, to_idx);
     break;
   case 4:
+    PROTECT(index = allocVector(INTSXP, 1));
+    count_protect++;
     _bin_y_on_x_with_breaks_mean(REAL(x), REAL(y), p_brks, p_ans, n_bin,
 				 from_idx, to_idx);
     break;
@@ -221,13 +227,14 @@ SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   return(res);
 }
 
-SEXP impute_with_linear_interpolation(SEXP x) {
+SEXP impute_with_linear_interpolation(SEXP x, SEXP noInterAtEnds) {
   SEXP x_copy;
   int x_length = LENGTH(x);
+  int no_inter_at_ends = asInteger(noInterAtEnds);
   double *p_x;
   x_copy = PROTECT(duplicate(x));
   p_x = REAL(x_copy);
-  _impute_linearly_interpolate_x(p_x, x_length);
+  _impute_linearly_interpolate_x(p_x, x_length, no_inter_at_ends);
   UNPROTECT(1);
   return x_copy;
 }
@@ -272,7 +279,9 @@ SEXP breaks_on_binSize(SEXP fromX, SEXP toX, SEXP binSize) {
   bin_size = REAL(binSize)[0];
   from_x = REAL(fromX)[0];
   to_x = REAL(toX)[0];
-  n_bin = (int)ceil((to_x - from_x) / bin_size);
+  /* Use round to define the number of bins.
+   */
+  n_bin = (int)round((to_x - from_x) / bin_size);
   PROTECT(ans = allocVector(REALSXP, n_bin + 1));
   _breaks_on_binSize(from_x, to_x, n_bin, bin_size, REAL(ans));
   UNPROTECT(1);
@@ -296,18 +305,22 @@ void _breaks_on_nBins(double from_val, double to_val, int n_bin,
   /* If we're going to shift the bin mid-points we have to ensure that the bin_size
    * will be slightly larger to include also the to_val (+ bin_size/2).
    */
-  bin_size = (to_val - from_val) / ((double)n_bin - (double)shift_by_half_bin_size);
   if (shift_by_half_bin_size > 0) {
-    current_val = from_val - (bin_size / 2);
+    bin_size = (to_val - from_val) / (double)(n_bin - 1.0f);
+    current_val = from_val - (bin_size / 2.0f);
   } else {
+    bin_size = (to_val - from_val) / (double)n_bin;
     current_val = from_val;
   }
   for (i = 0; i <= n_bin; i++) {
-    brks[i] = current_val;
-    current_val += bin_size;
+    /* Use multiplication to be conform with R*/
+    brks[i] = current_val + i * bin_size;
+    /* brks[i] = current_val; */
+    /* current_val = current_val + bin_size; */
   }
   return;
 }
+
 
 /*
  * Create breaks for binning: seq(from_val, to_val, by = bin_size).
@@ -318,14 +331,26 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
   // no of breaks: ceil(from_val - to_val / bin_size)
   // We have to assume that the *brks array has already been sized to the
   // correct length (i.e. ceil((from_val - to_val) / bin_size))
-  double current_val;
-  current_val = from_val;
+  int idx = 0;
   for (int i = 0; i < n_bin; i++) {
-    brks[i] = current_val;
-    current_val += bin_size;
+    brks[i] = from_val + i * bin_size;
   }
+  /* while (current_val < to_val) { */
+  /*   brks[idx] = from_val + idx * bin_size; */
+  /*   /\* current_val = current_val + bin_size; *\/ */
+  /*   idx++; */
+  /* } */
+  // The last one should be to_val.
   brks[n_bin] = to_val;
   return;
+
+  /* current_val = from_val; */
+  /* for (int i = 0; i < n_bin; i++) { */
+  /*   brks[i] = current_val; */
+  /*   current_val += bin_size; */
+  /* } */
+  /* brks[n_bin] = to_val; */
+  /* return; */
 }
 
 /*
@@ -554,7 +579,7 @@ static void _fill_missing_with_value(double *ans, double init_value, int n_bin) 
  * That would actually be better, but does not fit with the original
  * xcms binLin implementation.
  */
-static void _impute_linearly_interpolate_x(double *x, int n_bin) {
+static void _impute_linearly_interpolate_x(double *x, int n_bin, int no_interpol_at_ends) {
   int is_empty_bin = 0;  // To check whether we are in a series of empty bins.
   int start_x = 0;  // index of the first empty bin of a potential empty bin series.
   int idx_last_non_empty_bin = -1;  // index of the last bin with a value.
@@ -568,10 +593,6 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
       /* Found a bin without a value, now I have to look for the next with
        * a value. If the first one is empty, I have to set start_x to -1.
        */
-      /* if (current_x == 0) { */
-      /* 	start_x = -1; */
-      /* 	is_empty_bin = 1; */
-      /* } else */
       if (is_empty_bin == 0) {
 	start_x = current_x;
 	is_empty_bin = 1;
@@ -582,12 +603,16 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
 	 * missing bins in between. First calculate the increment per bin and
 	 * then loop through the empty bin to fill with values.
 	 */
-	//incrementer = (x[current_x] - last_bin_value) / (double)(current_x - start_x + 1);
-	for (int i = start_x; i < current_x; i++) {
+	if (idx_last_non_empty_bin < 0 && no_interpol_at_ends > 0) {
+	  /* No interpolation at the start, fill with base_value */
+	  for (int i = start_x; i < current_x; i++) {
+	    x[i] = base_value;
+	  }
+	} else {
+	  for (int i = start_x; i < current_x; i++) {
 	    x[i] = last_bin_value + (x[current_x] - last_bin_value) /
 	      (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
-	    //last_bin_value = last_bin_value + incrementer;
-	    //x[i] = last_bin_value;
+	  }
 	}
       }
       /* Keep track of the last non-empty bin value. */
@@ -599,13 +624,16 @@ static void _impute_linearly_interpolate_x(double *x, int n_bin) {
   }
   /* Check if the last bin is empty too */
   if (is_empty_bin == 1) {
-        // incrementer = (base_value - last_bin_value) / (double)(current_x - start_x + 1);
-	for (int i = start_x; i < current_x; i++) {
-	  x[i] = last_bin_value + (x[current_x] - last_bin_value) /
-	    (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
-	  // last_bin_value = last_bin_value + incrementer;
-	  //x[i] = last_bin_value;
-	}
+    if (no_interpol_at_ends > 0) {
+      for (int i = start_x; i < current_x; i++) {
+	x[i] = base_value;
+      }
+    } else {
+      for (int i = start_x; i < current_x; i++) {
+	x[i] = last_bin_value + (base_value - last_bin_value) /
+	  (double)(current_x - idx_last_non_empty_bin) * (double)(i - idx_last_non_empty_bin);
+      }
+    }
   }
   return;
 }
@@ -638,8 +666,9 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
   int idx_last_non_empty_bin = -1; // index of the last non-empty bin.
   int current_idx = 0;             // the current index; incremented in loop.
   double last_bin_value = base_value;  // the value of the last non-empty bin.
-  double incrementer = 0;
-  double new_value;
+  //jo double incrementer = 0;
+  //jo double new_value;
+
   while (current_idx < n_bin) {
     if (ISNA(x[current_idx])) {
       /* Found a bin without a value, now I have to look for the next with
@@ -660,13 +689,11 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
 	    /* That's the special case when the stretch of empty values starts
 	     * at the beginning of the vector. We're interpolating from base_value to
 	     * the current value.*/
-	    Rprintf("Index %d handle start\n", i);
 	    x[i] = x[current_idx] + (x[current_idx] - base_value) /
 	      (double)(inter_bin + 1) * (double)(i - current_idx);
 	  }
 	  else if ((idx_last_non_empty_bin >= 0) &&
 		   ((current_idx - idx_last_non_empty_bin) <= (2 * inter_bin + 1))) {
-	    Rprintf("Index %d 1\n", i);
 	    /* Interpolating between two non-empty bins as they are close enough. */
 	    x[i] = last_bin_value + (x[current_idx] - last_bin_value) /
 	      (double)(current_idx - idx_last_non_empty_bin) *
@@ -674,7 +701,6 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
 	  } else if ((idx_last_non_empty_bin >= 0) &&
 		     ((i - idx_last_non_empty_bin) <= inter_bin) &&
 		     ((current_idx - i) > inter_bin)) {
-	    Rprintf("Index %d 2\n", i);
 	    /* Current bin is close enough to last non-empty bin and far enough from
 	     * next non-empty bin: interpolate from last value to base value */
 	    x[i] = last_bin_value + (base_value - last_bin_value) /
@@ -683,13 +709,11 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
 	  } else if ((idx_last_non_empty_bin >= 0) &&
 		     ((i - idx_last_non_empty_bin) > inter_bin) &&
 		     ((current_idx - i) <= inter_bin)) {
-	    Rprintf("Index %d 3\n", i);
 	    /* Current bin is far enough from last non-empty bin and close enough to
 	     * next non-empty bin: interpolate from base value to current value. */
 	    x[i] = x[current_idx] + (x[current_idx] - base_value) /
 	      (double)(inter_bin + 1) * (double)(i - current_idx);
 	  } else {
-	    Rprintf("Index %d 4\n", i);
 	    /* Just set the base value. */
 	    x[i] = base_value;
 	  }
@@ -704,7 +728,7 @@ static void _impute_linearly_interpolate_base_x(double *x, int n_bin, double bas
   }
   /* If the last bin is empty. In that case we assume that the next value is = base_value. */
   if (is_empty_bin == 1) {
-    double next_bin_value = base_value;
+    //jo double next_bin_value = base_value;
     for (int i = idx_start_empty_bin; i < current_idx; i++) {
       if ((i - idx_last_non_empty_bin) <= inter_bin) {
 	x[i] = last_bin_value + (base_value - last_bin_value) /
