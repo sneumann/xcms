@@ -146,6 +146,8 @@ setGeneric("noise", function(object, ...) standardGeneric("noise"))
 setGeneric("noise<-", function(object, value) standardGeneric("noise<-"))
 
 ## P
+setGeneric("param", function(object, ...) standardGeneric("param"))
+setGeneric("param<-", function(object, value) standardGeneric("param<-"))
 setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 setGeneric("peakScaleRange", function(object, ...)
     standardGeneric("peakScaleRange"))

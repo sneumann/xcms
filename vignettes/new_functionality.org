@@ -702,4 +702,21 @@ from the =MSnbase= package.
 The feature data should be placed into the =assayData= environment of the object
 to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
 
+*** Some notes on data usage:
++ Subset by sample: have to extract the corresponding features from the
+  features matrix in =assayData= and remove all grouping/alignment
+  information. This actually bypasses also the problem to check that feature
+  indexes have to be updated.
+
++ Rename =peaks= to =features=.
+
++ Better alternative for =groups=: =alignedFeatures=.
++ =groupval=? =featureMatrix=.
+
+*** Design and implementation:
++ =features= should be still implemented as =matrix= (for performance issues).
++ Alignment information could be implemented as =DataFrame= with the indices added
+  to a column =idx=.
+
+
 * References

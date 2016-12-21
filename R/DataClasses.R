@@ -199,9 +199,13 @@ setClass("xcmsPeaks", contains = "matrix")
 ## Processing history type statics
 .PROCSTEP.UNKNOWN <- "Unknown"
 .PROCSTEP.FEATURE.DETECTION <- "Feature detection"
+.PROCSTEP.FEATURE.ALIGNMENT <- "Feature alignment"
+.PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
-    .PROCSTEP.FEATURE.DETECTION
+    .PROCSTEP.FEATURE.DETECTION,
+    .PROCSTEP.FEATURE.ALIGNMENT,
+    .PROCSTEP.RTIME.CORRECTION
 )
 
 ############################################################
@@ -1205,13 +1209,52 @@ setClass("CentWavePredIsoParam",
 ## 2) Double inheritance MSnExp,OnDiskMSnExp does NOT work! No matter from what
 ##    object the XCMSnSet is created, it always calls the OnDiskMSnExp method!
 
+####
+## DataFrame or matrix?
+## row subsetting: 400:800, : matrix very fast, data.frame, DataFrame.
+## column subsetting: , 2: data.frame fast, matrix, DataFrame
+## splitting: matrix fastest (but return type is not a matrix).
 
-setClass("XCMSnSet",
+##' @title Data container storing xcms preprocessing results
+##'
+##' @description The \code{MsFeatureData} class is designed to encapsule all
+##' data related to the preprocessing of metabolomics data using the \code{xcms}
+##' package, i.e. it contains a \code{matrix} with the features identified by the
+##' feature detection, a \code{DataFrame} with the information on aligned
+##' features across samples and a \code{list} with the adjusted retention times
+##' per sample.
+##'
+##' @author Johannes Rainer
+##' @noRd
+setClass("MsFeatureData", contains = c("environment", "Versioned"),
+         prototype = prototype(.xData = new.env(parent = emptyenv())))
+
+.XCMS_REQ_FEATS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                          "rtmax", "into", "sample")
+.XCMS_REQ_FEATG_COLS <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                          "featureidx")
+
+##' @description The \code{XCMSnExp} object is designed to contain all results
+##' from metabolomics data preprocessing (feature detection, feature alignment
+##' and retention time correction).
+##'
+##' @slot .processHistory \code{list} with \code{XProcessHistory} objects
+##' tracking all individual analysis steps that have been performed.
+##'
+##' @slot resultData \code{environment} containing the results from a feature
+##' detection, feature alignment and retention time correction steps.
+##'
+##' @author Johannnes Rainer
+##' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
+##' @noRd
+setClass("XCMSnExp",
          slots = c(
-             .processHistory = "list"
+             .processHistory = "list",
+             msFeatureData = "MsFeatureData"
          ),
          prototype = prototype(
-             .processHistory = list()
+             .processHistory = list(),
+             msFeatureData = new("MsFeatureData")
          ),
          contains = c("OnDiskMSnExp"),
          validity = function(object) {
@@ -1225,8 +1268,23 @@ setClass("XCMSnSet",
                                                  "objects are allowed in slot ",
                                                  ".processHistory!"))
              }
+             ## TODO @jo add checks:
+             ## 1) call validMsFeatureData
+             ## 2) features[, "sample"] is within 1: number of samples
+             ## 3) If we've got features, check that we have also a related
+             ##    processing history step.
              if (is.null(msg))
                  return(TRUE)
              else return(msg)
          }
 )
+
+## testfun <- function(x, value = "index") {
+##     res <- lapply(x@groupidx, function(z, nsamps = length(filepaths(x))) {
+##         sampidx <- x@peaks[z, c("into", "sample"), drop = FALSE]
+##         tmp <- rep(NA, nsamps)
+##         tmp[sampidx[, "sample"]] <- z
+##         return(tmp)
+##     })
+##     return(do.call(rbind, res))
+## }

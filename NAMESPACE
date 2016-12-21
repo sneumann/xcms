@@ -12,8 +12,8 @@ importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
 
-importClassesFrom("S4Vectors", "Rle")
-importFrom("S4Vectors", "split", "Rle")
+importClassesFrom("S4Vectors", "Rle", "DataFrame")
+importFrom("S4Vectors", "split", "Rle", "DataFrame")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -298,4 +298,4 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-## exportClasses("XCMSnSet")
+## exportClasses("XCMSnExp", "MsFeatureData")
