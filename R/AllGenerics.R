@@ -5,6 +5,9 @@
 setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
 setGeneric("addParams", function(object, ...) standardGeneric("addParams"))
 setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-"))
+setGeneric("adjustedRtime", function(object, ...) standardGeneric("adjustedRtime"))
+setGeneric("adjustedRtime<-", function(object, value)
+    standardGeneric("adjustedRtime<-"))
 setGeneric("ampTh", function(object, ...) standardGeneric("ampTh"))
 setGeneric("ampTh<-", function(object, value) standardGeneric("ampTh<-"))
 setGeneric("AutoLockMass", function(object) standardGeneric("AutoLockMass"))
@@ -38,6 +41,12 @@ setGeneric("distance", function(object, ...) standardGeneric("distance"))
 setGeneric("distance<-", function(object, value) standardGeneric("distance<-"))
 
 ## F
+setGeneric("features", function(object, ...) standardGeneric("features"))
+setGeneric("features<-", function(object, value)
+    standardGeneric("features<-"))
+setGeneric("featureGroups", function(object, ...) standardGeneric("featureGroups"))
+setGeneric("featureGroups<-", function(object, value)
+    standardGeneric("featureGroups<-"))
 setGeneric("filepaths", function(object) standardGeneric("filepaths"))
 setGeneric("filepaths<-", function(object, value) standardGeneric("filepaths<-"))
 setGeneric("fillPeaks.chrom", function(object, ...)
@@ -97,6 +106,13 @@ setGeneric("groupval", function(object, ...) standardGeneric("groupval"))
 
 ## H
 setGeneric("hasMSn", function(object, ...) standardGeneric("hasMSn"))
+setGeneric("hasAdjustedRtime", function(object, ...)
+    standardGeneric("hasAdjustedRtime"))
+setGeneric("hasAlignedFeatures", function(object, ...)
+    standardGeneric("hasAlignedFeatures"))
+setGeneric("hasDetectedFeatures", function(object, ...)
+    standardGeneric("hasDetectedFeatures"))
+
 
 ## I
 setGeneric("image", function(x, ...) standardGeneric("image"))

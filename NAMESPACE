@@ -189,12 +189,11 @@ export(
     "useOriginalCode"
 )
 
-## New methods
+## New analysis methods
 exportMethods(
     "showError",
     "detectFeatures"
 )
-
 
 ## New Param classes
 exportClasses(
@@ -298,4 +297,15 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-## exportClasses("XCMSnExp", "MsFeatureData")
+exportClasses("XCMSnExp", "MsFeatureData")
+## New methods for these classes
+exportMethods("hasDetectedFeatures",
+              "hasAlignedFeatures",
+              "hasAdjustedRtime",
+              "adjustedRtime",
+              "adjustedRtime<-",
+              "featureGroups",
+              "featureGroups<-",
+              "features",
+              "features<-"
+              )

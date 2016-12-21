@@ -25,32 +25,49 @@ test_XCMSnExp_class <- function() {
     xs@.processHistory <- list(xcms:::ProcessHistory())
     checkTrue(validObject(xs))
     xod <- as(od, "XCMSnExp")
-    ## Check errors related to features matrix.
-    fts <- matrix(ncol = 3, nrow = 4)
-    colnames(fts) <- c("a", "b", "c")
-    ## Unlock the assayData first.
-    newE <- xcms:::.copy_env(xod@assayData)
-    newE$features <- fts
-    lockEnvironment(newE, bindings = TRUE)
-    xod@assayData <- newE
+    checkTrue(validObject(xod))
+    ## MsFeatureData error
+    xod@msFeatureData$features <- 3
     checkException(validObject(xod))
-    ## Now check for wrong sample assignments.
-    fts <- matrix(ncol = 8, nrow = 4)
-    colnames(fts) <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
-                       "sample")
-    fts[, "sample"] <- c(1, 5, 0, 3)
-    newE <- xcms:::.copy_env(xod@assayData)
-    newE$features <- fts
-    lockEnvironment(newE, bindings = TRUE)
-    xod@assayData <- newE
+    xod@msFeatureData$features <- xs_2@peaks
+    checkTrue(validObject(xod))
+    xod@msFeatureData$features[1, "sample"] <- 40
     checkException(validObject(xod))
-    ## Not a matrix
-    newE <- xcms:::.copy_env(xod@assayData)
-    newE$features <- "a"
-    lockEnvironment(newE, bindings = TRUE)
-    xod@assayData <- newE
+    xod@msFeatureData$features[1, "sample"] <- 4
+    xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected
+    checkTrue(validObject(xod))
+    xod@msFeatureData$adjustedRtime[[2]] <- 1:4
     checkException(validObject(xod))
+    xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected[1:3]
+    checkException(validObject(xod))
+}
 
+test_XCMSnExp_class_accessors <- function() {
+    xs <- new("XCMSnExp")
+    checkTrue(!hasAdjustedRtime(xs))
+    checkTrue(!hasAlignedFeatures(xs))
+    checkTrue(!hasDetectedFeatures(xs))
+    ## Filling with data...
+    xod <- as(od, "XCMSnExp")
+    ## features
+    checkTrue(!hasDetectedFeatures(xod))
+    features(xod) <- xs_2@peaks
+    checkTrue(hasDetectedFeatures(xod))
+    checkEquals(features(xod), xs_2@peaks)
+    checkException(features(xod) <- 4)
+    ## featureGroups
+    checkTrue(!hasAlignedFeatures(xod))
+    library(S4Vectors)
+    fd <- DataFrame(xs_2@groups)
+    fd$featureidx <- xs_2@groupidx
+    featureGroups(xod) <- fd
+    checkTrue(hasAlignedFeatures(xod))
+    checkEquals(featureGroups(xod), fd)
+    ## adjustedRtime
+    checkTrue(!hasAdjustedRtime(xod))
+    adjustedRtime(xod) <- xs_2@rt$corrected
+    checkTrue(hasAdjustedRtime(xod))
+    checkEquals(adjustedRtime(xod), xs_2@rt$corrected)
 }
 
 test_MsFeatureData_class_validation <- function() {
@@ -100,6 +117,31 @@ test_MsFeatureData_class_validation <- function() {
     fg <- DataFrame(xs_2@groups)
     fg$featureidx <- xs_2@groupidx
     checkTrue(xcms:::validateMsFeatureData(fd))
+}
+
+test_MsFeatureData_class_accessors <- function() {
+    fd <- new("MsFeatureData")
+    library(S4Vectors)
+    checkTrue(!hasDetectedFeatures(fd))
+    checkTrue(!hasAdjustedRtime(fd))
+    checkTrue(!hasAlignedFeatures(fd))
+    suppressWarnings(checkEquals(features(fd), NULL))
+    suppressWarnings(checkEquals(featureGroups(fd), NULL))
+    suppressWarnings(checkEquals(adjustedRtime(fd), NULL))
+    ## features
+    features(fd) <- xs_2@peaks
+    checkTrue(hasDetectedFeatures(fd))
+    checkEquals(features(fd), xs_2@peaks)
+    ## featureGroups
+    fg <- DataFrame(xs_2@groups)
+    fg$featureidx <- xs_2@groupidx
+    featureGroups(fd) <- fg
+    checkTrue(hasAlignedFeatures(fd))
+    checkEquals(featureGroups(fd), fg)
+    ## adjustedRtime
+    adjustedRtime(fd) <- xs_2@rt$corrected
+    checkTrue(hasAdjustedRtime(fd))
+    checkEquals(adjustedRtime(fd), xs_2@rt$corrected)
 }
 
 dontrun_test_XCMSnExp <- function() {

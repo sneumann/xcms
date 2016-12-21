@@ -1,3 +1,13 @@
+CHANGES IN VERSION 1.xz.u
+-------------------------
+
+NEW FEATURES:
++ MsFeatureData and XCMSnExp objects.
++ features, features<-, adjustedRtime, adjustedRtime<-, featureGroups,
+  featureGroups<-, hasAlignedFeatures, hasAdjustedRtime and hasDetectedFeatures
+  methods.
+
+
 CHANGES IN VERSION 1.xx.x
 -------------------------
 
@@ -36,7 +46,7 @@ CHANGES IN VERSION 1.51.2
 -------------------------
 
 USER VISIBLE CHANGES:
-+ As suggested by Jan Stanstrup, do not error if a centWave ROI 
++ As suggested by Jan Stanstrup, do not error if a centWave ROI
   contains no data, closes #90
 
 CHANGES IN VERSION 1.51.1
