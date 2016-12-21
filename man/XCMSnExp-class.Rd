@@ -33,6 +33,7 @@
 \alias{hasDetectedFeatures}
 \alias{hasDetectedFeatures,MsFeatureData-method}
 \alias{hasDetectedFeatures,XCMSnExp-method}
+\alias{rtime,XCMSnExp-method}
 \alias{show,MsFeatureData-method}
 \alias{show,XCMSnExp-method}
 \title{Data container storing xcms preprocessing results}
@@ -76,11 +77,16 @@
 \S4method{features}{XCMSnExp}(object)
 
 \S4method{features}{XCMSnExp}(object) <- value
+
+\S4method{rtime}{XCMSnExp}(object)
 }
 \arguments{
-\item{object}{Either a \code{XCMSnExp} or \code{MsFeatureData} object.}
+\item{object}{For \code{adjustedRtime}, \code{featureGroups},
+\code{features}, \code{hasAdjustedRtime}, \code{hasAlignedFeatures} and
+\code{hasDetectedFeatures} either a \code{MsFeatureData} or a \code{XCMSnExp}
+object, for all other methods a \code{XCMSnExp} object.}
 
-\item{value}{For \code{adjustedRtime}: a \code{list} (length equal to the
+\item{value}{For \code{adjustedRtime<-}: a \code{list} (length equal to the
 number of samples) with numeric vectors representing the adjusted retention
 times per scan.
 
@@ -115,6 +121,9 @@ time for the peak apex), \code{"rtmin"} (minimal retention time), \code{"rtmax"}
 the feature) and \code{"sample"} (sample index in which the feature was
 identified). Depending on the employed feature detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
+
+For \code{rtime}: a \code{list} with numeric vectors representing the
+original retention time for each scan in each sample.
 }
 \description{
 The \code{MsFeatureData} class is designed to encapsule all
@@ -155,6 +164,11 @@ the matrix containing the information on identified features. See description
 on the return value for details on the matrix columns. Users usually don't
 have to use the \code{features<-} method directly as detected features are
 added to the object by the \code{\link{detectFeatures}} method.
+
+The \code{rtime} method extracts the retention time for each
+scan. In contrast to the \code{rtime} method for
+\code{\link[MSnbase]{OnDiskMSnExp}} objects it returns the retention time
+as a \code{list} grouped by sample.
 }
 \section{Slots}{
 

@@ -68,6 +68,9 @@ test_XCMSnExp_class_accessors <- function() {
     adjustedRtime(xod) <- xs_2@rt$corrected
     checkTrue(hasAdjustedRtime(xod))
     checkEquals(adjustedRtime(xod), xs_2@rt$corrected)
+    ## rtime
+    rtm <- rtime(xod)
+    checkEquals(rtm, split(rtime(od), fromFile(od)))
 }
 
 test_MsFeatureData_class_validation <- function() {

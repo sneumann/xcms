@@ -1225,9 +1225,12 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' \code{"features"}), feature alignment (element \code{"featureGroups"}) and
 ##' retention time correction (element \code{""}) steps.
 ##'
-##' @param object Either a \code{XCMSnExp} or \code{MsFeatureData} object.
+##' @param object For \code{adjustedRtime}, \code{featureGroups},
+##' \code{features}, \code{hasAdjustedRtime}, \code{hasAlignedFeatures} and
+##' \code{hasDetectedFeatures} either a \code{MsFeatureData} or a \code{XCMSnExp}
+##' object, for all other methods a \code{XCMSnExp} object.
 ##'
-##' @param value For \code{adjustedRtime}: a \code{list} (length equal to the
+##' @param value For \code{adjustedRtime<-}: a \code{list} (length equal to the
 ##' number of samples) with numeric vectors representing the adjusted retention
 ##' times per scan.
 ##'

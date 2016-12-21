@@ -140,3 +140,17 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
         return(object)
     }
 })
+
+##' @description The \code{rtime} method extracts the retention time for each
+##' scan. In contrast to the \code{rtime} method for
+##' \code{\link[MSnbase]{OnDiskMSnExp}} objects it returns the retention time
+##' as a \code{list} grouped by sample.
+##'
+##' @return For \code{rtime}: a \code{list} with numeric vectors representing the
+##' original retention time for each scan in each sample.
+##'
+##' @rdname XCMSnExp-class
+setMethod("rtime", "XCMSnExp", function(object) {
+    res <- callNextMethod()
+    return(split(res, fromFile(object)))
+})
