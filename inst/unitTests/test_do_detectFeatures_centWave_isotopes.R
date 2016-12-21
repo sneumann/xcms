@@ -7,8 +7,9 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xr <- xcmsRaw(fs[1], profstep = 0)
 mzVals <- xr@env$mz
 intVals <- xr@env$intensity
+f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
 
-test_detectFeatures_centWaveWithPredIsoROIs <- function() {
+test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
     ## initial centWave:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
     feats_1 <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
@@ -31,6 +32,52 @@ test_detectFeatures_centWaveWithPredIsoROIs <- function() {
     old_all <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, noise = 1500)
     checkEquals(all_f, old_all@.Data)
 }
+
+## Evaluate the featureDetection method using the centWaveWithPreIsoROIs method
+## on OnDiskMSnExp and on MSnExp objects.
+test_detectFeatures_centWaveWithPredIsoROIs <- function() {
+    ## Control
+    library(MSnbase)
+    xr <- xcmsRaw(fs[1], profstep = 0)
+    ##ppm <- 40
+    snth <- 20
+    ns <- 2500
+    snthIso <- 5
+    res_x <- findPeaks.centWaveWithPredictedIsotopeROIs(xr, noise = ns,
+                                                        snthresh = snth,
+                                                        snthreshIsoROIs = snthIso)@.Data
+    ## Bypass xcmsRaw
+    xs <- xcmsSet(fs[1], profparam = list(profstep = 0), snthresh = snth,
+                  method = "centWaveWithPredictedIsotopeROIs", noise = ns,
+                  snthreshIsoROIs = snthIso)
+    checkEquals(xs@peaks[, colnames(res_x)], res_x)
+    ## OnDiskMSnExp
+    onDisk <- readMSData2(fs[1], msLevel. = 1)
+    cwp <- CentWavePredIsoParam(snthresh = snth, noise = ns,
+                                snthreshIsoROIs = snthIso)
+    res <- detectFeatures(onDisk, param = cwp, return.type = "list")
+    checkEquals(res[[1]], peaks(xs)@.Data)
+
+    ## MSnExp
+    inMem <- readMSData(fs[1], msLevel. = 1)
+    res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    checkEquals(res_2[[1]], peaks(xs)@.Data)
+
+    ## returning an xcmsSet
+    res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    checkEquals(peaks(res), peaks(xs))
+    res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    checkEquals(peaks(res), peaks(xs))
+
+    ## Check on the full data.
+    ## xs <- xcmsSet(fs, profparam = list(profstep = 0), snthresh = snth,
+    ##               method = "centWaveWithPredictedIsotopeROIs", noise = ns,
+    ##               snthreshIsoROIs = snthIso)
+    ## onDisk <- readMSData2(fs, msLevel. = 1)
+    ## res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    ## checkEquals(peaks(res), peaks(xs))
+}
+
 
 ## That is to test and evaluate the original code with the do_ code.
 dontrun_test_impl_centWave_add <- function() {
@@ -106,149 +153,5 @@ dontrun_test_do_define_adducts <- function() {
     orig_ <- xcms:::do_define_adducts_orig(roiList = roiL)
     new_ <- xcms:::do_define_adducts(res1)
     checkIdentical(new_, orig_)
-}
-
-dontrun_test_impl <- function() {
-    ## Default parameter:
-    ppm <- 25
-    peakwidth <- c(20, 50)
-    prefilter <- c(3, 100)
-    mzCenterFun <- "wMean"
-    integrate <- 1
-    mzdiff <- -0.001
-    fitgauss <- FALSE
-    noise <- 0
-    snthresh <- 10  ## That's for the first centWave.
-    snthreshIsoROIs <- 6.25  ## That"s for the second centWave.
-    verboseColumns <- FALSE
-    firstBaselineCheck <- TRUE
-    ## New ones
-    maxCharge <- 3
-    maxIso <- 5
-    mzIntervalExtension <- TRUE
-
-    ## First file
-    xr <- xcmsRaw(fs[1], profstep = 0)
-    mzVals <- xr@env$mz
-    intVals <- xr@env$intensity
-    ## Define the values per spectrum:
-    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-
-    orig <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, ppm = ppm,
-                                                       peakwidth = peakwidth,
-                                                       snthresh = snthresh,
-                                                       prefilter = prefilter,
-                                                       mzdiff = mzdiff,
-                                                       fitgauss = fitgauss,
-                                                       noise = noise,
-                                                       snthreshIsoROIs = snthreshIsoROIs,
-                                                       maxcharge = maxCharge,
-                                                       maxiso = maxIso,
-                                                       mzIntervalExtension = TRUE)
-    d <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals,
-                                                   int = intVals,
-                                                   scantime = xr@scantime,
-                                                   valsPerSpect = valsPerSpect,
-                                                   ppm = ppm,
-                                                   peakwidth = peakwidth,
-                                                   snthresh = snthresh,
-                                                   prefilter = prefilter,
-                                                   mzdiff = mzdiff,
-                                                   fitgauss = fitgauss,
-                                                   noise = noise,
-                                                   snthreshIsoROIs = snthreshIsoROIs,
-                                                   maxCharge = maxCharge,
-                                                   maxIso = maxIso,
-                                                   mzIntervalExtension = mzIntervalExtension)
-    checkEquals(orig@.Data, d)
-    ## Modify settings
-    snthresh <- 50
-    snthreshIsoROIs <- 12
-    orig <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, ppm = ppm,
-                                                     peakwidth = peakwidth,
-                                                     snthresh = snthresh,
-                                                     prefilter = prefilter,
-                                                     mzdiff = mzdiff,
-                                                     fitgauss = fitgauss,
-                                                     noise = noise,
-                                                     snthreshIsoROIs = snthreshIsoROIs,
-                                                     maxcharge = maxCharge,
-                                                     maxiso = maxIso,
-                                                     mzIntervalExtension = TRUE)
-    d <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals,
-                                                   int = intVals,
-                                                   scantime = xr@scantime,
-                                                   valsPerSpect = valsPerSpect,
-                                                   ppm = ppm,
-                                                   peakwidth = peakwidth,
-                                                   snthresh = snthresh,
-                                                   prefilter = prefilter,
-                                                   mzdiff = mzdiff,
-                                                   fitgauss = fitgauss,
-                                                   noise = noise,
-                                                   snthreshIsoROIs = snthreshIsoROIs,
-                                                   maxCharge = maxCharge,
-                                                   maxIso = maxIso,
-                                                   mzIntervalExtension = mzIntervalExtension)
-    checkEquals(orig@.Data, d)
-    ##
-    maxCharge <- 5
-    maxIso <- 8
-    orig <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, ppm = ppm,
-                                                     peakwidth = peakwidth,
-                                                     snthresh = snthresh,
-                                                     prefilter = prefilter,
-                                                     mzdiff = mzdiff,
-                                                     fitgauss = fitgauss,
-                                                     noise = noise,
-                                                     snthreshIsoROIs = snthreshIsoROIs,
-                                                     maxcharge = maxCharge,
-                                                     maxiso = maxIso,
-                                                     mzIntervalExtension = TRUE)
-    d <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals,
-                                                   int = intVals,
-                                                   scantime = xr@scantime,
-                                                   valsPerSpect = valsPerSpect,
-                                                   ppm = ppm,
-                                                   peakwidth = peakwidth,
-                                                   snthresh = snthresh,
-                                                   prefilter = prefilter,
-                                                   mzdiff = mzdiff,
-                                                   fitgauss = fitgauss,
-                                                   noise = noise,
-                                                   snthreshIsoROIs = snthreshIsoROIs,
-                                                   maxCharge = maxCharge,
-                                                   maxIso = maxIso,
-                                                   mzIntervalExtension = mzIntervalExtension)
-    checkEquals(orig@.Data, d)
-    ##
-    mzIntervalExtension <- FALSE
-    orig <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, ppm = ppm,
-                                                     peakwidth = peakwidth,
-                                                     snthresh = snthresh,
-                                                     prefilter = prefilter,
-                                                     mzdiff = mzdiff,
-                                                     fitgauss = fitgauss,
-                                                     noise = noise,
-                                                     snthreshIsoROIs = snthreshIsoROIs,
-                                                     maxcharge = maxCharge,
-                                                     maxiso = maxIso,
-                                                     mzIntervalExtension = mzIntervalExtension)
-    d <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals,
-                                                   int = intVals,
-                                                   scantime = xr@scantime,
-                                                   valsPerSpect = valsPerSpect,
-                                                   ppm = ppm,
-                                                   peakwidth = peakwidth,
-                                                   snthresh = snthresh,
-                                                   prefilter = prefilter,
-                                                   mzdiff = mzdiff,
-                                                   fitgauss = fitgauss,
-                                                   noise = noise,
-                                                   snthreshIsoROIs = snthreshIsoROIs,
-                                                   maxCharge = maxCharge,
-                                                   maxIso = maxIso,
-                                                   mzIntervalExtension = mzIntervalExtension)
-    checkEquals(orig@.Data, d)
 }
 
