@@ -1212,7 +1212,6 @@ setClass("CentWavePredIsoParam",
 ##' features across samples and a \code{list} with the adjusted retention times
 ##' per sample.
 ##'
-##' @author Johannes Rainer
 ##' @rdname XCMSnExp-class
 setClass("MsFeatureData", contains = c("environment", "Versioned"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
@@ -1233,7 +1232,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' \code{list} of numeric vectors). Note that these should not be accessed
 ##' directly but rather \emph{via} their accessor methods. Along with the results,
 ##' the object contains the processing history that allow to track each
-##' processing step along with the used settings.
+##' processing step along with the used settings. The object also directly
+##' extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
+##' access to the full data on which the feature detection was performed.
 ##'
 ##' @note The \code{"features"} element in the \code{msFeatureData} slot is
 ##' equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the

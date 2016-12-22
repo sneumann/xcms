@@ -9,7 +9,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 library(msdata)
 mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
          system.file("microtofq/MM8.mzML", package = "msdata"))
-f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
 
 
 test_do_detectFeatures_centWave <- function() {
@@ -51,44 +51,43 @@ test_do_detectFeatures_centWave <- function() {
 test_featureDetection_centWave <- function() {
     ## Control
     library(MSnbase)
-    xr <- xcmsRaw(f[1], profstep = 0)
+    xr <- xcmsRaw(fs[1], profstep = 0)
     ppm <- 40
     snthresh <- 40
-    suppressWarnings(
-        res_x <- findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh,
-                                    noise = 100000)@.Data
-    )
+    res_x <- findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh,
+                                noise = 100000)@.Data
     ## Bypass xcmsRaw
-    suppressWarnings(
-        xs <- xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
-                      snthresh = snthresh, method = "centWave",
-                      noise = 100000)
-    )
+    xs <- xcmsSet(fs[1], profparam = list(profstep = 0), ppm = ppm,
+                  snthresh = snthresh, method = "centWave",
+                  noise = 100000)
     checkEquals(xs@peaks[, colnames(res_x)], res_x)
     ## OnDiskMSnExp
-    onDisk <- readMSData2(f[1], msLevel. = 1)
+    onDisk <- readMSData2(fs[1], msLevel. = 1)
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
-    suppressWarnings(
-        res <- detectFeatures(onDisk, param = cwp, return.type = "list")
-    )
+    res <- detectFeatures(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
-    ## MSnExp
-    inMem <- readMSData(f[1], msLevel. = 1)
-    suppressWarnings(
-        res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
-    )
-    checkEquals(res_2[[1]], peaks(xs)@.Data)
+    ## ## MSnExp
+    ## inMem <- readMSData(f[1], msLevel. = 1)
+    ## suppressWarnings(
+    ##     res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    ## )
+    ## checkEquals(res_2[[1]], peaks(xs)@.Data)
 
     ## returning an xcmsSet
-    suppressWarnings(
-        res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
-    )
+    res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
     checkEquals(peaks(res), peaks(xs))
-    suppressWarnings(
-        res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
-    )
-    checkEquals(peaks(res), peaks(xs))
+    ## suppressWarnings(
+    ##     res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    ## )
+    ## checkEquals(peaks(res), peaks(xs))
+
+    ## Return type XCMSnExp
+    res <- detectFeatures(onDisk, param = cwp)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasAlignedFeatures(res))
+    checkEquals(peaks(xs)@.Data, features(res))
 }
 
 dontrun_test_benchmark_centWaves <- function() {

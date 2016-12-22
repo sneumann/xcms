@@ -7,7 +7,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xr <- xcmsRaw(fs[1], profstep = 0)
 mzVals <- xr@env$mz
 intVals <- xr@env$intensity
-f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
 
 test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
     ## initial centWave:
@@ -38,7 +38,6 @@ test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
 test_detectFeatures_centWaveWithPredIsoROIs <- function() {
     ## Control
     library(MSnbase)
-    xr <- xcmsRaw(fs[1], profstep = 0)
     ##ppm <- 40
     snth <- 20
     ns <- 2500
@@ -58,24 +57,31 @@ test_detectFeatures_centWaveWithPredIsoROIs <- function() {
     res <- detectFeatures(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
-    ## MSnExp
-    inMem <- readMSData(fs[1], msLevel. = 1)
-    res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
-    checkEquals(res_2[[1]], peaks(xs)@.Data)
+    ## ## MSnExp
+    ## inMem <- readMSData(fs[1], msLevel. = 1)
+    ## res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    ## checkEquals(res_2[[1]], peaks(xs)@.Data)
 
     ## returning an xcmsSet
     res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
     checkEquals(peaks(res), peaks(xs))
-    res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
-    checkEquals(peaks(res), peaks(xs))
+    ## res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    ## checkEquals(peaks(res), peaks(xs))
+
+    ## Return an XCMSnExp
+    res <- detectFeatures(onDisk, param = cwp)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasAlignedFeatures(res))
+    checkEquals(peaks(xs)@.Data, features(res))
 
     ## Check on the full data.
     ## xs <- xcmsSet(fs, profparam = list(profstep = 0), snthresh = snth,
     ##               method = "centWaveWithPredictedIsotopeROIs", noise = ns,
     ##               snthreshIsoROIs = snthIso)
     ## onDisk <- readMSData2(fs, msLevel. = 1)
-    ## res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
-    ## checkEquals(peaks(res), peaks(xs))
+    ## res <- detectFeatures(onDisk, param = cwp)
+    ## checkEquals(features(res), peaks(xs)@.Data)
 }
 
 

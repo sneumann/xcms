@@ -38,7 +38,7 @@ CentWavePredIsoParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
   mzIntervalExtension = TRUE, polarity = "unknown")
 
 \S4method{detectFeatures}{OnDiskMSnExp,CentWavePredIsoParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
+  BPPARAM = bpparam(), return.type = "XCMSnExp")
 
 \S4method{detectFeatures}{MSnExp,CentWavePredIsoParam}(object, param,
   BPPARAM = bpparam(), return.type = "list")
@@ -155,7 +155,8 @@ processing is enables, feature detection is performed in parallel on several
 of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"list"} or \code{"xcmsSet"}.}
+return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+\code{"xcmsSet"}.}
 
 \item{value}{The value for the slot.}
 }
@@ -165,11 +166,12 @@ The \code{CentWavePredIsoParam} function returns a
 specified for the two-step centWave-based feature detection considering also
 feature isotopes.
 
-For \code{detectFeatures}: if \code{return.type = "list"} a list of
-length equal to the number of samples with matrices specifying the
-identified features/peaks. If \code{return.type = "xcmsSet"} an
-\code{\linkS4class{xcmsSet}} object with the results of the feature
-detection.
+For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+\code{\link{XCMSnExp}} object with the results of the feature detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified features/peaks.
+If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+with the results of the feature detection.
 }
 \description{
 This method performs a two-step centWave-based feature
@@ -254,6 +256,9 @@ The \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}} core
 API function and \code{\link{findPeaks.centWave}} for the old user interface.
 \code{\link{CentWaveParam}} for the class the \code{CentWavePredIsoParam}
 extends.
+
+\code{\link{XCMSnExp}} for the object containing the results of
+the feature detection.
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-MSW}},

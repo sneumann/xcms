@@ -55,7 +55,7 @@ MatchedFilterParam(binSize = 0.1, impute = "none", baseValue = numeric(),
   index = FALSE)
 
 \S4method{detectFeatures}{OnDiskMSnExp,MatchedFilterParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
+  BPPARAM = bpparam(), return.type = "XCMSnExp")
 
 \S4method{detectFeatures}{MSnExp,MatchedFilterParam}(object, param,
   BPPARAM = bpparam(), return.type = "list")
@@ -164,7 +164,8 @@ processing is enables, feature detection is performed in parallel on several
 of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"list"} or \code{"xcmsSet"}.}
+return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+\code{"xcmsSet"}.}
 
 \item{value}{The value for the slot.}
 
@@ -175,11 +176,12 @@ The \code{MatchedFilterParam} function returns a
 \code{MatchedFilterParam} class instance with all of the settings specified
 for feature detection by the centWave method.
 
-For \code{detectFeatures}: if \code{return.type = "list"} a list of
-length equal to the number of samples with matrices specifying the
-identified features/peaks. If \code{return.type = "xcmsSet"} an
-\code{\linkS4class{xcmsSet}} object with the results of the feature
-detection.
+For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+\code{\link{XCMSnExp}} object with the results of the feature detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified features/peaks.
+If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+with the results of the feature detection.
 }
 \description{
 The \emph{matchedFilter} algorithm identifies features in the
@@ -309,6 +311,9 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \seealso{
 The \code{\link{do_detectFeatures_matchedFilter}} core API function
 and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+
+\code{\link{XCMSnExp}} for the object containing the results of
+the feature detection.
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-MSW}},

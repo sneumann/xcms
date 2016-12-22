@@ -46,32 +46,28 @@ test_do_detectFeatures_matchedFilter <- function() {
 test_featureDetection_matchedFilter <- function() {
     library(MSnbase)
     mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
-    suppressWarnings(
-        res <- xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
-                       step = binSize(mfp))
-    )
+    res <- xcmsSet(fs[1], method = "matchedFilter", profmethod = "binlin",
+                   step = binSize(mfp))
     ## onDisk
-    onDisk <- readMSData2(mzf)
+    onDisk <- readMSData2(fs[1])
     res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
     ## inMem
-    inMem <- readMSData(mzf, msLevel. = 1)
-    res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
-    checkEquals(peaks(res_i), peaks(res))
-    checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
-
-    ## Do the same on the CDF files:
-    res <- xcmsSet(fs[1:2], method = "matchedFilter", profmethod = "binlin",
-                   step = binSize(mfp))
-    onDisk <- readMSData2(fs[1:2])
-    res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
-    checkEquals(peaks(res), peaks(res_o))
-
-    ## That's terribly slow.
-    ## inMem <- readMSData(fs[1:2], msLevel. = 1)
+    ## inMem <- readMSData(mzf, msLevel. = 1)
     ## res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
-    ## checkEquals(peaks(res), peaks(res_i))
+    ## checkEquals(peaks(res_i), peaks(res))
+    ## checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
+
+    ## xs <- xcmsSet(fs, , method = "matchedFilter", profmethod = "binlin",
+    ##               step = binSize(mfp))
+    ## onDisk <- readMSData2(fs)
+    ## res <- detectFeatures(onDisk, param = mfp)
+    ## checkTrue(hasDetectedFeatures(res))
+    ## checkTrue(!hasAdjustedRtime(res))
+    ## checkTrue(!hasAlignedFeatures(res))
+    ## checkEquals(peaks(xs)@.Data, features(res))
+    ## checkEquals(processParam(processHistory(res)[[1]]), mfp)
 }
 
 ## Some benchmarks

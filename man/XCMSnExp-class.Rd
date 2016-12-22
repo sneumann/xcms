@@ -153,7 +153,9 @@ and retention time correction). The corresponding elements in the
 \code{list} of numeric vectors). Note that these should not be accessed
 directly but rather \emph{via} their accessor methods. Along with the results,
 the object contains the processing history that allow to track each
-processing step along with the used settings.
+processing step along with the used settings. The object also directly
+extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
+access to the full data on which the feature detection was performed.
 
 \code{hasAdjustedRtime}: whether the object provides adjusted
 retention times.
@@ -204,8 +206,6 @@ equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
 \code{"featureGroups"} contains information from the \code{}
 }
 \author{
-Johannes Rainer
-
 Johannes Rainer
 }
 \seealso{

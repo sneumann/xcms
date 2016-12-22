@@ -1,9 +1,11 @@
 ############################################################
 ## do_detectFeatures_massifquant tests
-
 library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xraw <- xcmsRaw(fs, profstep = 0)
+fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+xraw <- xcmsRaw(fs[1], profstep = 0)
 
 library(msdata)
 f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
@@ -57,11 +59,21 @@ test_featureDetection_massifquant <- function() {
     res_o <- detectFeatures(onDisk, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+
+    ## Full data
+    ## onDisk <- readMSData2(mzf)
+    ## res <- detectFeatures(onDisk, param = mqp)
+    ## xs <- xcmsSet(mzf, method = "massifquant", ppm = 20, criticalValue = 1.2)
+    ## checkTrue(hasDetectedFeatures(res))
+    ## checkTrue(!hasAdjustedRtime(res))
+    ## checkTrue(!hasAlignedFeatures(res))
+    ## checkEquals(peaks(xs)@.Data, features(res))
+
     ## inMem
-    inMem <- readMSData(mzf[1], msLevel. = 1)
-    res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
-    checkEquals(peaks(res_i), peaks(res))
-    checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
+    ## inMem <- readMSData(mzf[1], msLevel. = 1)
+    ## res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
+    ## checkEquals(peaks(res_i), peaks(res))
+    ## checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
 }
 
 

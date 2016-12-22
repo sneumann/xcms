@@ -26,31 +26,31 @@ test_detectFeatures_MSW <- function() {
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1))
     mp <- MSWParam()
     res_2 <- detectFeatures(od1, param = mp)
-    checkEquals(res_1, res_2)
+    checkEquals(res_1, features(res_2)[, colnames(res_1), drop = FALSE])
     ## Changing settings.
     snthresh(mp) <- 1
     nearbyPeak(mp) <- FALSE
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE)
-    res_2 <- detectFeatures(od1, param = mp)
+    res_2 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_1, res_2[[1]][, colnames(res_1)])
     peakThr(mp) <- 200
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200)
-    res_2 <- detectFeatures(od1, param = mp)
+    res_2 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_1, res_2[[1]][, colnames(res_1)])
     addParams(mp) <- list(forder = 2)
     res_3 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200, forder = 2)
-    res_4 <- detectFeatures(od1, param = mp)
+    res_4 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_3, res_4[[1]][, colnames(res_3)])
     addParams(mp) <- list(forder = 2, dorder = 1)
     res_3 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200, forder = 2, dorder = 1)
-    res_4 <- detectFeatures(od1, param = mp)
+    res_4 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_3, res_4[[1]][, colnames(res_3)])
 }
 

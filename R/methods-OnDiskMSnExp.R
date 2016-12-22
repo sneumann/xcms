@@ -36,19 +36,26 @@
 ##' of the input samples.
 ##'
 ##' @param return.type Character specifying what type of object the method should
-##' return. Can be either \code{"list"} or \code{"xcmsSet"}.
+##' return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+##' \code{"xcmsSet"}.
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
-##' length equal to the number of samples with matrices specifying the
-##' identified features/peaks. If \code{return.type = "xcmsSet"} an
-##' \code{\linkS4class{xcmsSet}} object with the results of the feature
-##' detection.
+##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' If \code{return.type = "list"} a list of length equal to the number of
+##' samples with matrices specifying the identified features/peaks.
+##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+##' with the results of the feature detection.
+##'
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature detection.
 ##'
 ##' @rdname featureDetection-centWave
 setMethod("detectFeatures",
           signature(object = "OnDiskMSnExp", param = "CentWaveParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              return.type <- match.arg(return.type, c("XCMSnExp", "list",
+                                                      "xcmsSet"))
+              startDate <- date()
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## Check if the data is centroided
@@ -63,8 +70,23 @@ setMethod("detectFeatures",
                               method = "centWave", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
+                                        getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object))
+              if (return.type == "XCMSnExp") {
+                  ## Creating one XProcessHistory for all; eventually change
+                  ## that later, but for now seems reasonable to have it in one,
+                  ## since we're calling the method once on all.
+                  xph <- XProcessHistory(param = param, date. = startDate,
+                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         fileIndex = 1:length(fileNames(object)))
+                  object <- as(object, "XCMSnExp")
+                  object@.processHistory <- list(xph)
+                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                      object@msFeatureData <- new("MsFeatureData")
+                  features(object) <- do.call(rbind, res$peaks)
+                  if (validObject(object))
+                      return(object)
+              }
               if (return.type == "list")
                   return(res$peaks)
               if (return.type == "xcmsSet") {
@@ -165,17 +187,23 @@ setMethod("detectFeatures",
 ##'
 ##' @inheritParams featureDetection-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
-##' length equal to the number of samples with matrices specifying the
-##' identified features/peaks. If \code{return.type = "xcmsSet"} an
-##' \code{\linkS4class{xcmsSet}} object with the results of the feature
-##' detection.
+##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' If \code{return.type = "list"} a list of length equal to the number of
+##' samples with matrices specifying the identified features/peaks.
+##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+##' with the results of the feature detection.
+##'
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature detection.
 ##'
 ##' @rdname featureDetection-matchedFilter
 setMethod("detectFeatures",
           signature(object = "OnDiskMSnExp", param = "MatchedFilterParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              return.type <- match.arg(return.type, c("XCMSnExp", "list",
+                                                      "xcmsSet"))
+              startDate <- date()
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## (1) split the object per file.
@@ -186,8 +214,23 @@ setMethod("detectFeatures",
                               method = "matchedFilter", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
+                                        getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object))
+              if (return.type == "XCMSnExp") {
+                  ## Creating one XProcessHistory for all; eventually change
+                  ## that later, but for now seems reasonable to have it in one,
+                  ## since we're calling the method once on all.
+                  xph <- XProcessHistory(param = param, date. = startDate,
+                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         fileIndex = 1:length(fileNames(object)))
+                  object <- as(object, "XCMSnExp")
+                  object@.processHistory <- list(xph)
+                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                      object@msFeatureData <- new("MsFeatureData")
+                  features(object) <- do.call(rbind, res$peaks)
+                  if (validObject(object))
+                      return(object)
+              }
               if (return.type == "list")
                   return(res$peaks)
               if (return.type == "xcmsSet") {
@@ -275,17 +318,23 @@ setMethod("detectFeatures",
 ##'
 ##' @inheritParams featureDetection-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
-##' length equal to the number of samples with matrices specifying the
-##' identified features/peaks. If \code{return.type = "xcmsSet"} an
-##' \code{\linkS4class{xcmsSet}} object with the results of the feature
-##' detection.
+##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' If \code{return.type = "list"} a list of length equal to the number of
+##' samples with matrices specifying the identified features/peaks.
+##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+##' with the results of the feature detection.
+##'
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature detection.
 ##'
 ##' @rdname featureDetection-massifquant
 setMethod("detectFeatures",
           signature(object = "OnDiskMSnExp", param = "MassifquantParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              return.type <- match.arg(return.type, c("XCMSnExp", "list",
+                                                      "xcmsSet"))
+              startDate <- date()
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## (1) split the object per file.
@@ -296,8 +345,23 @@ setMethod("detectFeatures",
                               method = "massifquant", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
+                                        getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object))
+              if (return.type == "XCMSnExp") {
+                  ## Creating one XProcessHistory for all; eventually change
+                  ## that later, but for now seems reasonable to have it in one,
+                  ## since we're calling the method once on all.
+                  xph <- XProcessHistory(param = param, date. = startDate,
+                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         fileIndex = 1:length(fileNames(object)))
+                  object <- as(object, "XCMSnExp")
+                  object@.processHistory <- list(xph)
+                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                      object@msFeatureData <- new("MsFeatureData")
+                  features(object) <- do.call(rbind, res$peaks)
+                  if (validObject(object))
+                      return(object)
+              }
               if (return.type == "list")
                   return(res$peaks)
               if (return.type == "xcmsSet") {
@@ -388,17 +452,23 @@ setMethod("detectFeatures",
 ##'
 ##' @inheritParams featureDetection-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
-##' length equal to the number of samples with matrices specifying the
-##' identified features/peaks. If \code{return.type = "xcmsSet"} an
-##' \code{\linkS4class{xcmsSet}} object with the results of the feature
-##' detection.
+##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' If \code{return.type = "list"} a list of length equal to the number of
+##' samples with matrices specifying the identified features/peaks.
+##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+##' with the results of the feature detection.
+##'
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature detection.
 ##'
 ##' @rdname featureDetection-MSW
 setMethod("detectFeatures",
           signature(object = "OnDiskMSnExp", param = "MSWParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              return.type <- match.arg(return.type, c("XCMSnExp", "list",
+                                                      "xcmsSet"))
+              startDate <- date()
               ## TODO @jo: ensure that we're having single spectra files!
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
@@ -410,8 +480,23 @@ setMethod("detectFeatures",
                               method = "MSW", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
+                                        getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object))
+              if (return.type == "XCMSnExp") {
+                  ## Creating one XProcessHistory for all; eventually change
+                  ## that later, but for now seems reasonable to have it in one,
+                  ## since we're calling the method once on all.
+                  xph <- XProcessHistory(param = param, date. = startDate,
+                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         fileIndex = 1:length(fileNames(object)))
+                  object <- as(object, "XCMSnExp")
+                  object@.processHistory <- list(xph)
+                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                      object@msFeatureData <- new("MsFeatureData")
+                  features(object) <- do.call(rbind, res$peaks)
+                  if (validObject(object))
+                      return(object)
+              }
               if (return.type == "list")
                   return(res$peaks)
               if (return.type == "xcmsSet") {
@@ -490,17 +575,23 @@ setMethod("detectFeatures",
 ##'
 ##' @inheritParams featureDetection-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "list"} a list of
-##' length equal to the number of samples with matrices specifying the
-##' identified features/peaks. If \code{return.type = "xcmsSet"} an
-##' \code{\linkS4class{xcmsSet}} object with the results of the feature
-##' detection.
+##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' If \code{return.type = "list"} a list of length equal to the number of
+##' samples with matrices specifying the identified features/peaks.
+##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+##' with the results of the feature detection.
+##'
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature detection.
 ##'
 ##' @rdname featureDetection-centWaveWithPredIsoROIs
 setMethod("detectFeatures",
           signature(object = "OnDiskMSnExp", param = "CentWavePredIsoParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              return.type <- match.arg(return.type, c("XCMSnExp", "list",
+                                                      "xcmsSet"))
+              startDate <- date()
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## Check if the data is centroided
@@ -515,8 +606,23 @@ setMethod("detectFeatures",
                               method = "centWaveWithPredIsoROIs", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
+                                        getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object))
+              if (return.type == "XCMSnExp") {
+                  ## Creating one XProcessHistory for all; eventually change
+                  ## that later, but for now seems reasonable to have it in one,
+                  ## since we're calling the method once on all.
+                  xph <- XProcessHistory(param = param, date. = startDate,
+                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         fileIndex = 1:length(fileNames(object)))
+                  object <- as(object, "XCMSnExp")
+                  object@.processHistory <- list(xph)
+                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                      object@msFeatureData <- new("MsFeatureData")
+                  features(object) <- do.call(rbind, res$peaks)
+                  if (validObject(object))
+                      return(object)
+              }
               if (return.type == "list")
                   return(res$peaks)
               if (return.type == "xcmsSet") {
