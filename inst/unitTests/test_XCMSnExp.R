@@ -73,6 +73,24 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(rtm, split(rtime(od), fromFile(od)))
 }
 
+test_XCMSnExp_processHistory <- function() {
+    ph <- xcms:::ProcessHistory(fileIndex. = 2, info. = "For file 2")
+    ph_2 <- xcms:::ProcessHistory(fileIndex. = 2:4, info. = "For files 2 to 4")
+    xod <- as(od, "XCMSnExp")
+    xod@.processHistory <- list(ph, ph_2)
+    checkEquals(processHistory(xod), list(ph, ph_2))
+    checkEquals(processHistory(xod, fileIndex = 2), list(ph, ph_2))
+    checkEquals(processHistory(xod, fileIndex = 4), list(ph_2))
+    checkEquals(processHistory(xod, fileIndex = 1), list())
+    checkException(processHistory(xod, fileIndex = 5))
+
+    ph_3 <- xcms:::XProcessHistory(fileIndex = 1, param = CentWaveParam())
+    xod <- xcms:::addProcessHistory(xod, ph_3)
+    checkEquals(length(processHistory(xod)), 3)
+    checkEquals(processHistory(xod)[[3]], ph_3)
+    checkEquals(processHistory(xod, fileIndex = 1), list(ph_3))
+}
+
 test_MsFeatureData_class_validation <- function() {
     fd <- new("MsFeatureData")
     library(S4Vectors)

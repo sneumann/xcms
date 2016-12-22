@@ -33,6 +33,8 @@
 \alias{hasDetectedFeatures}
 \alias{hasDetectedFeatures,MsFeatureData-method}
 \alias{hasDetectedFeatures,XCMSnExp-method}
+\alias{processHistory}
+\alias{processHistory,XCMSnExp-method}
 \alias{rtime,XCMSnExp-method}
 \alias{show,MsFeatureData-method}
 \alias{show,XCMSnExp-method}
@@ -79,6 +81,8 @@
 \S4method{features}{XCMSnExp}(object) <- value
 
 \S4method{rtime}{XCMSnExp}(object)
+
+\S4method{processHistory}{XCMSnExp}(object, fileIndex)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureGroups},
@@ -97,6 +101,10 @@ for the expected format.
 For \code{features<-}: a \code{matrix} with information on
 detected features. See return value for the \code{features} method for the
 expected format.}
+
+\item{fileIndex}{For \code{processHistory}: optional \code{numeric}
+specifying the index of the files/samples for which the
+\code{\link{ProcessHistory}} objects should be retrieved.}
 }
 \value{
 For \code{adjustedRtime}: a \code{list} (length equal to the number
@@ -124,6 +132,10 @@ identified). Depending on the employed feature detection algorithm and the
 
 For \code{rtime}: a \code{list} with numeric vectors representing the
 original retention time for each scan in each sample.
+
+For \code{processHistory}: a \code{list} of
+\code{\link{ProcessHistory}} objects providing the details of the individual
+data processing steps that have been performed.
 }
 \description{
 The \code{MsFeatureData} class is designed to encapsule all
@@ -169,6 +181,11 @@ The \code{rtime} method extracts the retention time for each
 scan. In contrast to the \code{rtime} method for
 \code{\link[MSnbase]{OnDiskMSnExp}} objects it returns the retention time
 as a \code{list} grouped by sample.
+
+The \code{processHistory} method returns a \code{list} with
+\code{\link{ProcessHistory}} objects (or objects inheriting from this base
+class) representing the individual processing steps that have been performed,
+eventually along with their settings (\code{Param} parameter class).
 }
 \section{Slots}{
 

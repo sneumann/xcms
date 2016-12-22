@@ -46,6 +46,13 @@ in the =xcms= package introduced during the update to version /3/.
 
 ** Modernized user interface
 
+The modernization of the user interface comprises new classes for data
+representation and new data analysis methods. In addition, the core logic for
+the data processing has been extracted from the old methods and put into a set
+of R functions, the so called core API functions (or =do_= functions), that take
+standard R data structures as input and can hence also easily be included in
+other R packages.
+
 The modernization of the user interface comprises the definition of a new method
 for feature detection, namely =detectFeatures=, that performs the dispatching to
 the various algorithms (e.g. /centWave/, /matchedFilter/) based on a parameter class

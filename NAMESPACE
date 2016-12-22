@@ -298,7 +298,7 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData")
+exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory", "XProcessHistory")
 ## New methods for these classes
 exportMethods("hasDetectedFeatures",
               "hasAlignedFeatures",
@@ -308,5 +308,11 @@ exportMethods("hasDetectedFeatures",
               "featureGroups",
               "featureGroups<-",
               "features",
-              "features<-"
+              "features<-",
+              "processHistory",
+              "fileIndex",
+              "processDate",
+              "processInfo",
+              "processParam",
+              "processType"
               )

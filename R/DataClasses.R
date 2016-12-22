@@ -210,19 +210,25 @@ setClass("xcmsPeaks", contains = "matrix")
 
 ############################################################
 ## ProcessHistory
-##' @title Keeping track of data processing
+##' @aliases ProcessHistory
+##' @title Tracking data processing
 ##'
-##' @description Objects of the type \code{ProcessHistory} or extending it allow
-##' to keep track of any data processing step in an metabolomics experiment.
+##' @description Objects of the type \code{ProcessHistory} allow to keep track
+##' of any data processing step in an metabolomics experiment. They are created
+##' by the data processing methods, such as \code{\link{detectFeatures}} and
+##' added to the corresponding results objects. Thus, usually, users don't need
+##' to create them.
 ##'
-##' @slot type (character): string defining the type of the processing step.
-##' @slot date (character): date time stamp when the processing step was started.
-##' @slot info (character): optional additional information.
-##' @slot fileIndex (integer): integer of length 1 or > 1 to specify on which
+##' @slot type character(1): string defining the type of the processing step.
+##' This string has to match predefined values defined in the internal variable
+##' \code{.PROCSTEPS}.
+##'
+##' @slot date character(1): date time stamp when the processing step was started.
+##' @slot info character(1): optional additional information.
+##' @slot fileIndex integer of length 1 or > 1 to specify on which
 ##' samples of the object the processing was performed.
 ##' @slot error (ANY): used to store eventual calculation errors.
-##' @name ProcessHistory
-##' @noRd
+##' @rdname ProcessHistory-class
 setClass("ProcessHistory",
          slots = c(
              type = "character",
@@ -248,6 +254,15 @@ setClass("ProcessHistory",
                                              "'! Allowd are: ",
                                              paste0("\"", .PROCSTEPS, "\"",
                                                     collapse = ", ")))
+             if (length(object@type) > 1)
+                 msg <- validMsg(msg, paste0("length of 'type' should not be ",
+                                             "larger than 1!"))
+             if (length(object@date) > 1)
+                 msg <- validMsg(msg, paste0("length of 'date' should not be ",
+                                             "larger than 1!"))
+             if (length(object@info) > 1)
+                 msg <- validMsg(msg, paste0("length of 'info' should not be ",
+                                             "larger than 1!"))
              if (is.null(msg)) TRUE
              else msg
          }
@@ -260,13 +275,16 @@ setClass("Param",
          contains = c("Versioned"))
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
+##' @aliases XProcessHistory
+##' @title Tracking data processing
+##'
 ##' @description The \code{XProcessHistory} extends the \code{ProcessHistory} by
 ##' adding a slot \code{param} that allows to store the actual parameter class
 ##' of the processing step.
-##' @slot param (Param): an object of type \code{Param} specifying the settings
-##' of the processing step.
-##' @rdname ProcessHistory
-##' @noRd
+##'
+##' @slot param (Param): an object of type \code{Param} (e.g.
+##' \code{\link{CentWaveParam}}) specifying the settings of the processing step.
+##' @rdname ProcessHistory-class
 setClass("XProcessHistory",
          slots = c(
              param = "ParamOrNULL"

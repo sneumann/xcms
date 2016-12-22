@@ -8,8 +8,15 @@ setMethod("initialize", "XCMSnExp", function(.Object, ...) {
 
 ##' @rdname XCMSnExp-class
 setMethod("show", "XCMSnExp", function(object) {
-    cat("Object of class: ", class(object), "\n")
     callNextMethod()
+    ## And not XCMSnExp related stuff.
+    cat("- - - xcms preprocessing - - -\n")
+    if (hasDetectedFeatures(object)) {
+    }
+    if (hasAlignedFeatures(object)) {
+    }
+    if (hasAdjustedRtime(object)) {
+    }
 })
 
 ##' @aliases hasAdjustedRtime
@@ -153,4 +160,54 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
 setMethod("rtime", "XCMSnExp", function(object) {
     res <- callNextMethod()
     return(split(res, fromFile(object)))
+})
+
+## processHistory
+##' @aliases processHistory
+##' @description The \code{processHistory} method returns a \code{list} with
+##' \code{\link{ProcessHistory}} objects (or objects inheriting from this base
+##' class) representing the individual processing steps that have been performed,
+##' eventually along with their settings (\code{Param} parameter class).
+##'
+##' @param fileIndex For \code{processHistory}: optional \code{numeric}
+##' specifying the index of the files/samples for which the
+##' \code{\link{ProcessHistory}} objects should be retrieved.
+##'
+##' @return For \code{processHistory}: a \code{list} of
+##' \code{\link{ProcessHistory}} objects providing the details of the individual
+##' data processing steps that have been performed.
+##'
+##' @rdname XCMSnExp-class
+setMethod("processHistory", "XCMSnExp", function(object, fileIndex) {
+    ph <- object@.processHistory
+    if (length(ph)) {
+        if (!missing(fileIndex)) {
+            if (!all(fileIndex %in% 1:length(fileNames(object))))
+                stop("'fileIndex' has to be within 1 and the number of samples!")
+            gotIt <- unlist(lapply(ph, function(z) {
+                return(any(z@fileIndex %in% fileIndex))
+            }))
+            if (!any(gotIt))
+                return(list())
+            ph <- ph[gotIt]
+        }
+        return(ph)
+    } else {
+        return(list())
+    }
+})
+
+##' @description The \code{addProcessHistory} method adds (appends) a single
+##' \code{\link{ProcessHistory}} object to the \code{.processHistory} slot.
+##'
+##' @return The \code{addProcessHistory} method returns the input object with the
+##' provided \code{\link{ProcessHistory}} appended.
+##' @noRd
+setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
+    if (!inherits(ph, "ProcessHistory"))
+        stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
+             "extending it!")
+    object@.processHistory[[(length(object@.processHistory) + 1)]] <- ph
+    if (validObject(object))
+        return(object)
 })
