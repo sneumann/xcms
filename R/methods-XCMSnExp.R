@@ -12,6 +12,12 @@ setMethod("show", "XCMSnExp", function(object) {
     ## And not XCMSnExp related stuff.
     cat("- - - xcms preprocessing - - -\n")
     if (hasDetectedFeatures(object)) {
+        cat("Feature detection:\n")
+        cat(" ", nrow(features(object)), " features identified in ",
+            length(fileNames(object)), " samples.\n", sep = "")
+        cat(" On average ",
+            format(mean(table(features(object)[, "sample"])), digits = 3),
+            " features per sample.\n", sep = "")
     }
     if (hasAlignedFeatures(object)) {
     }
