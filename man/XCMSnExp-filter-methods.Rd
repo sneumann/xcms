@@ -18,13 +18,15 @@ results.}
 
 \S4method{filterMz}{XCMSnExp}(object, mz, msLevel., ...)
 
-\S4method{filterRt}{XCMSnExp}(object, rt, msLevel.)
+\S4method{filterRt}{XCMSnExp}(object, rt, msLevel., adjusted = FALSE)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object.}
 
 \item{file}{For \code{filterFile}: \code{integer} defining the file index
-within the object to subset the object by file.}
+within the object to subset the object by file or \code{character} specifying
+the file names to sub set. The indices are expected to be increasingly
+ordered, if not they are ordered internally.}
 
 \item{mz}{For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 mz value for the filtering.}
@@ -48,8 +50,10 @@ for these files are retained while eventually all present feature
 alignment/grouping information and adjusted retention times are dropped..
 
 The \code{filterMz} method filters the data set based on the
-provided mz value range. If features are present, all features within the
-specified mz range are retained.
+provided mz value range. All features and feature groups (aligned features)
+falling completely within the provided mz value range are retained (if their
+minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
+Adjusted retention times, if present, are not altered by the filtering.
 
 The \code{filterRt} method filters the data set based on the
 provided retention time range. If features are present, all features within
@@ -57,9 +61,41 @@ the specified retention time window are retained while alignment information
 and adjusted retention times are dropped.
 }
 \note{
+The \code{filterFile} method removes also process history steps not
+related to the files to which the object should be sub-setted and updates
+the \code{fileIndex} attribute accordingly. Also, the method does not allow
+arbitrary ordering of the files or re-ordering of the files within the
+object.
+
 The \code{filterRt} method drops feature alignment and retention time
 correction results, since only retention time subsetting by original
 retention time is supported thus far.
+}
+\examples{
+
+## Load some of the files from the faahKO package.
+library(faahKO)
+fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+## Read the files
+od <- readMSData2(fs)
+
+## Perform feature detection on them using default matched filter settings.
+mfp <- MatchedFilterParam()
+xod <- detectFeatures(od, param = mfp)
+
+## Subset the dataset to the first and third file.
+xod_sub <- filterFile(xod, file = c(1, 3))
+
+## The number of features per file for the full object
+table(features(xod)[, "sample"])
+
+## The number of features per file for the subset
+table(features(xod_sub)[, "sample"])
+
+basename(fileNames(xod))
+basename(fileNames(xod_sub))
 }
 \author{
 Johannes Rainer

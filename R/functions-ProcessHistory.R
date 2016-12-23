@@ -55,6 +55,8 @@ XProcessHistory <- function(param = NULL, ...) {
 
 ##' Takes a list of ProcessHistory objects and removes those matching the
 ##' provided type.
+##'
+##' @noRd
 dropProcessHistoriesByType <- function(x, type) {
     toRem <- unlist(lapply(x, function(z) {
         return(processType(z) %in% type)

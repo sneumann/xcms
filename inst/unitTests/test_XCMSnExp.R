@@ -11,7 +11,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 ##          system.file("microtofq/MM8.mzML", package = "msdata"))
 od <- readMSData2(fs)
 cwp <- CentWaveParam(noise = 10000, snthresh = 40)
-od <- filterRt(od, rt = c(3000, 4000))
+## od <- filterRt(od, rt = c(3000, 4000))
 od_x <- detectFeatures(od, param = cwp)
 xs <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
               noise = 10000, snthresh = 40)
@@ -236,6 +236,33 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(!any(b))
 }
 
+test_XCMSnExp_filterMz <- function() {
+    od_x2 <- od_x
+    new_e <- xcms:::.copy_env(od_x2@msFeatureData)
+    xcms:::adjustedRtime(od_x2) <- xs_2@rt$corrected
+    library(S4Vectors)
+    fd <- DataFrame(xs_2@groups)
+    fd$featureidx <- xs_2@groupidx
+    featureGroups(od_x2) <- fd
+
+    ## Subset
+    tmp <- filterMz(od_x2, mz = c(300, 400))
+    checkTrue(length(tmp@spectraProcessingQueue) == 1)
+    checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
+    checkTrue(validObject(tmp@msFeatureData))
+    checkTrue(all(featureGroups(tmp)$mzmed >= 300 &
+                                    featureGroups(tmp)$mzmed <= 400))
+    checkEquals(adjustedRtime(tmp), adjustedRtime(od_x2))
+    checkTrue(nrow(features(tmp)) < nrow(features(od_x2)))
+    checkTrue(hasDetectedFeatures(tmp))
+    checkTrue(hasAlignedFeatures(tmp))
+    ## second
+    tmp <- filterMz(od_x, mz = c(300, 400))
+    checkTrue(hasDetectedFeatures(tmp))
+    checkTrue(!hasAlignedFeatures(tmp))
+    checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
+    checkTrue(validObject(tmp@msFeatureData))
+}
 
 test_MsFeatureData_class_validation <- function() {
     fd <- new("MsFeatureData")

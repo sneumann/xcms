@@ -401,6 +401,31 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' @seealso \code{\link{XCMSnExp}} for base class documentation.
 ##'
 ##' @rdname XCMSnExp-filter-methods
+##' @examples
+##'
+##' ## Load some of the files from the faahKO package.
+##' library(faahKO)
+##' fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+##'         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+##'         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+##' ## Read the files
+##' od <- readMSData2(fs)
+##'
+##' ## Perform feature detection on them using default matched filter settings.
+##' mfp <- MatchedFilterParam()
+##' xod <- detectFeatures(od, param = mfp)
+##'
+##' ## Subset the dataset to the first and third file.
+##' xod_sub <- filterFile(xod, file = c(1, 3))
+##'
+##' ## The number of features per file for the full object
+##' table(features(xod)[, "sample"])
+##'
+##' ## The number of features per file for the subset
+##' table(features(xod_sub)[, "sample"])
+##'
+##' basename(fileNames(xod))
+##' basename(fileNames(xod_sub))
 setMethod("filterFile", "XCMSnExp", function(object, file) {
     if (missing(file)) return(object)
     if (is.character(file)) {
@@ -449,8 +474,10 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
 })
 
 ##' @description The \code{filterMz} method filters the data set based on the
-##' provided mz value range. If features are present, all features within the
-##' specified mz range are retained.
+##' provided mz value range. All features and feature groups (aligned features)
+##' falling completely within the provided mz value range are retained (if their
+##' minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
+##' Adjusted retention times, if present, are not altered by the filtering.
 ##'
 ##' @param mz For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 ##' mz value for the filtering.
@@ -463,14 +490,22 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
 ##'
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
-    stop("IMPLEMENT")
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
-        warning("Removed preprocessing results")
+    if (missing(mz))
+        return(object)
+    if (!is.numeric(mz) | length(mz) != 2)
+        stop("'mz' has to be a numeric vector of length(2)!")
+    mz <- range(mz)
+    ## Subset features if present.
+    object <- callNextMethod()  # just adds to processing queue.
+
+    if (hasDetectedFeatures(object)) {
+        fts <- features(object)
+        keepIdx <- which(fts[, "mzmin"] >= mz[1] & fts[, "mzmax"] <= mz[2])
+        newE <- .filterFeatures(object@msFeatureData, idx = keepIdx)
+        lockEnvironment(newE, binding = TRUE)
+        object@msFeatureData <- newE
     }
-    callNextMethod()
+    return(object)
 })
 
 ##' @description The \code{filterRt} method filters the data set based on the
@@ -486,8 +521,18 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 ##' window (lowe and upper bound) for the filtering.
 ##'
 ##' @rdname XCMSnExp-filter-methods
-setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.) {
-    stop("IMPLEMENT")
+setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
+                                           adjusted = FALSE) {
+    ## Here we have to drop for now the adjusted retention time
+    ## Drop featureGroups.
+    ## Keep features with rt within the range.
+
+    ## WARN: will have to get index of spectra to keep using rtime(object) (or
+    ## adjustedRtime(object) for adjusted = TRUE) since we've overwritten the
+    ## original method. Hence we can also NOT use the callNextMethod here!
+    ## Will have to subset manually using [
+    ## For adjusted = TRUE: use the adjusted retention time. Here we have to
+    ## define the spectra to keep from the adjustedRtime(object) rtime(object)
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
         object@.processHistory <- list()

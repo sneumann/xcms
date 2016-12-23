@@ -103,3 +103,39 @@ validateMsFeatureData <- function(x) {
         return(TRUE)
     else return(msg)
 }
+
+##' @description Filter features and sync them with with the present
+##' filterGroups, i.e. update their featureidx column or remove them.
+##'
+##' @author Johannes Rainer
+##' @noRd
+.filterFeatures <- function(x, idx) {
+    if (missing(idx))
+        return(x)
+    if (!hasDetectedFeatures(x))
+        return(x)
+    fts <- features(x)
+    idx <- sort(idx)
+    if (!all(idx %in% 1:nrow(fts)))
+        stop("All indices in 'idx' have to be within 1 and nrow of the feature",
+             " matrix.")
+    new_e <- new("MsFeatureData")
+    features(new_e) <- fts[idx, , drop = FALSE]
+    if (hasAlignedFeatures(x)) {
+        af <- featureGroups(x)
+        af <- split(af, 1:nrow(af))
+        afL <- lapply(af, function(z) {
+            if(all(z$featureidx[[1]] %in% idx)) {
+                z$featureidx <- list(match(z$featureidx[[1]], idx))
+                return(z)
+            } else {
+                return(NULL)
+            }
+        })
+        af <- do.call(rbind, afL)
+        featureGroups(new_e) <- af
+    }
+    if (hasAdjustedRtime(x))
+        adjustedRtime(new_e) <- adjustedRtime(x)
+    return(new_e)
+}

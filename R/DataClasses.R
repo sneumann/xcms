@@ -1315,7 +1315,7 @@ setClass("XCMSnExp",
              }
              ## 3) Check that the length of the adjustedRtime matches!
              if (any(ls(object@msFeatureData) == "adjustedRtime")) {
-                 rt <- split(rtime(object), fromFile(object))
+                 rt <- rtime(object)
                  if (length(rt) != length(object@msFeatureData$adjustedRtime)) {
                      msg <- validMsg(msg, paste0("The number of numeric vectors",
                                                  " in the 'adjustedRtime' element",
