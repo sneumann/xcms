@@ -1,6 +1,6 @@
 msn2xcmsRaw <-
 function(xmsn) {
-    x <- xmsn
+    x <- deepCopy(xmsn)
 
     x@tic <- x@msnAcquisitionNum
                                         
