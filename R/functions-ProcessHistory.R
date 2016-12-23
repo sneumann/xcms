@@ -23,6 +23,7 @@ ProcessHistory <- function(type., date., info., error., fileIndex.) {
 ## updateFileIndex
 ## Update the file index mapping index in 'old' to index in 'new' dropping
 ## all indices that are not in 'new'
+## To remove indices, use NA in new
 updateFileIndex <- function(x, old = integer(), new = integer()) {
     if (length(old) == 0 & length(new) == 0)
         return(x)
@@ -35,7 +36,7 @@ updateFileIndex <- function(x, old = integer(), new = integer()) {
     for (i in 1:length(fidx)) {
         fidx[i] <- new[old == fidx[i]]
     }
-    x@fileIndex <- fidx
+    x@fileIndex <- as.integer(fidx[!is.na(fidx)])
     return(x)
 }
 
@@ -50,4 +51,15 @@ XProcessHistory <- function(param = NULL, ...) {
     if (is.character(OK))
         stop(OK)
     return(obj)
+}
+
+##' Takes a list of ProcessHistory objects and removes those matching the
+##' provided type.
+dropProcessHistoriesByType <- function(x, type) {
+    toRem <- unlist(lapply(x, function(z) {
+        return(processType(z) %in% type)
+    }))
+    if (any(toRem))
+        x[!toRem]
+    return(x)
 }

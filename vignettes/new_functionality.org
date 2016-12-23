@@ -53,17 +53,23 @@ of R functions, the so called core API functions (or =do_= functions), that take
 standard R data structures as input and can hence also easily be included in
 other R packages. The new user interface aims at simplifying and streamlining
 the =xcms= workflow while guaranteeing data integrity and performance also for
-large scale metabolomics experiments.
+large scale metabolomics experiments. All objects in the new user interface
+ensuring data integrity /via/ validation methods and class versioning, all methods
+are tested internally in extensive unit tests to guarantee proper functionality.
 
 In the new user interface, objects from the =MSnbase= Bioconductor package are
 used, namely the =OnDiskMSnExp= object. This object is specifically designed for
 large scale experiments by just loading basic information from the raw files and
 reading the actual spectra data (mz and intensity values) on demand from the
 files. In contrast to the old =xcmsRaw= objects this object contains information
-from all files of an experiment. A new result object for =xcms=-based
-preprocessing has also implemented: the =XCMSnExp= object. This is similar to the
-old =xcmsSet= object, but by extending the =OnDiskMSnExp= object it provides a
-simple and streamlined access to the (raw) data on which the processing was performed.
+from all files of an experiment. In addition, by using this object from the
+=MSnbase= package as container for the raw data, data normalization and adjustment
+methods defined for this class can be applied directly without having them to be
+re-implemented in the =xcms= package. In the new user interface the results from
+the pre-processing steps are stored in a new results object, the =XCMSnExp=
+object. This is similar to the old =xcmsSet= object, but by extending the
+=OnDiskMSnExp= object it inherits all of its methods and hence provides a simple
+and streamlined access to the (raw) data on which the processing was performed.
 
 For feature detection (peak calling), and thus replacing the =findPeaks.*=
 methods, the =detectFeatures= method has been implemented.  The reason for

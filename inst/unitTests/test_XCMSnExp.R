@@ -4,17 +4,21 @@ library(RUnit)
 library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko19.CDF', package = "faahKO"))
-library(msdata)
-f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
-library(MSnbase)
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+## library(msdata)
+## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+## mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+##          system.file("microtofq/MM8.mzML", package = "msdata"))
 od <- readMSData2(fs)
-xs <- xcmsSet(fs, profparam = list(step = 1))
+cwp <- CentWaveParam(noise = 10000, snthresh = 40)
+od <- filterRt(od, rt = c(3000, 4000))
+od_x <- detectFeatures(od, param = cwp)
+xs <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
+              noise = 10000, snthresh = 40)
 xs_2 <- group(xs)
-xs_2 <- retcor(xs_2)
+suppressWarnings(
+    xs_2 <- retcor(xs_2)
+)
 xs_2 <- group(xs_2)
 
 test_XCMSnExp_class <- function() {
@@ -75,21 +79,163 @@ test_XCMSnExp_class_accessors <- function() {
 
 test_XCMSnExp_processHistory <- function() {
     ph <- xcms:::ProcessHistory(fileIndex. = 2, info. = "For file 2")
-    ph_2 <- xcms:::ProcessHistory(fileIndex. = 2:4, info. = "For files 2 to 4")
+    ph_2 <- xcms:::ProcessHistory(fileIndex. = 1:2, info. = "For files 1 to 2")
     xod <- as(od, "XCMSnExp")
     xod@.processHistory <- list(ph, ph_2)
     checkEquals(processHistory(xod), list(ph, ph_2))
     checkEquals(processHistory(xod, fileIndex = 2), list(ph, ph_2))
-    checkEquals(processHistory(xod, fileIndex = 4), list(ph_2))
-    checkEquals(processHistory(xod, fileIndex = 1), list())
+    checkEquals(processHistory(xod, fileIndex = 1), list(ph))
     checkException(processHistory(xod, fileIndex = 5))
 
     ph_3 <- xcms:::XProcessHistory(fileIndex = 1, param = CentWaveParam())
     xod <- xcms:::addProcessHistory(xod, ph_3)
     checkEquals(length(processHistory(xod)), 3)
     checkEquals(processHistory(xod)[[3]], ph_3)
-    checkEquals(processHistory(xod, fileIndex = 1), list(ph_3))
+    checkEquals(processHistory(xod, fileIndex = 1), list(ph_2, ph_3))
 }
+
+## Testing all inherited methods for XCMSnExp classes that perform data
+## manipulations - for all of these we have to ensure that eventual preprocessing
+## results are removed.
+test_XCMSnExp_inherited_methods <- function() {
+    ## [
+    tmp_1 <- od[1:10]
+    suppressWarnings(
+        tmp_2 <- od_x[1:10]
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## bin
+    tmp_1 <- bin(od)
+    suppressWarnings(
+        tmp_2 <- bin(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## clean
+    tmp_1 <- clean(od)
+    suppressWarnings(
+        tmp_2 <- clean(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## filterAcquisitionNum
+    tmp_1 <- filterAcquisitionNum(od)
+    suppressWarnings(
+        tmp_2 <- filterAcquisitionNum(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## filterMsLevel
+    tmp_1 <- filterMsLevel(od)
+    suppressWarnings(
+        tmp_2 <- filterMsLevel(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## normalize
+    tmp_1 <- normalize(od)
+    suppressWarnings(
+        tmp_2 <- normalize(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## pickPeaks
+    tmp_1 <- pickPeaks(od)
+    suppressWarnings(
+        tmp_2 <- pickPeaks(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## removePeaks
+    tmp_1 <- removePeaks(od)
+    suppressWarnings(
+        tmp_2 <- removePeaks(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    ## smooth
+    tmp_1 <- smooth(od)
+    suppressWarnings(
+        tmp_2 <- smooth(od_x)
+    )
+    checkTrue(length(processHistory(tmp_2)) == 0)
+    checkTrue(!hasDetectedFeatures(tmp_2))
+    tmp_1@processingData <- new("MSnProcess")
+    tmp_2@processingData <- new("MSnProcess")
+    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+}
+
+## Test XCMSnExp filter methods.
+test_XCMSnExp_filterFile <- function() {
+    ## filterFile
+    tmp <- filterFile(od_x, file = 2)
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkTrue(!hasAlignedFeatures(tmp))
+    checkTrue(all(features(tmp)[, "sample"] == 1))
+    checkEquals(features(tmp)[, -ncol(features(tmp))],
+                features(od_x)[features(od_x)[, "sample"] == 2,
+                               -ncol(features(od_x))])
+    checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
+    ## check with other index.
+    tmp <- filterFile(od_x, file = c(1, 3))
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkTrue(!hasAlignedFeatures(tmp))
+    checkTrue(all(features(tmp)[, "sample"] %in% c(1, 2)))
+    a <- features(tmp)
+    b <- features(od_x)
+    checkEquals(a[, -ncol(a)], b[b[, "sample"] %in% c(1, 3), -ncol(b)])
+    checkEquals(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
+
+    ## Errors
+    checkException(filterFile(od_x, file = 5))
+    checkException(filterFile(od_x, file = 1:5))
+
+    ## Little mockup to check correctness of Process history.
+    od_2 <- od_x
+    od_2 <- xcms:::addProcessHistory(od_2,
+                                     xcms:::ProcessHistory(type = xcms:::.PROCSTEP.RTIME.CORRECTION))
+    od_2 <- xcms:::addProcessHistory(od_2, xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN, fileIndex = 2, info. = "I should be here"))
+    od_2 <- xcms:::addProcessHistory(od_2, xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN, fileIndex = 1, info. = "EEEEEE"))
+
+    tmp <- filterFile(od_2, file = 2)
+    ph <- processHistory(tmp)
+    checkTrue(length(ph) == 2)
+    checkEquals(processType(ph[[2]]), xcms:::.PROCSTEP.UNKNOWN)
+    b <- unlist(lapply(ph, function(z) {
+        processInfo(z) == "I should be here"
+    }))
+    checkTrue(any(b))
+    b <- unlist(lapply(ph, function(z) {
+        processInfo(z) == "EEEEEE"
+    }))
+    checkTrue(!any(b))
+}
+
 
 test_MsFeatureData_class_validation <- function() {
     fd <- new("MsFeatureData")

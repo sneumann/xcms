@@ -40,7 +40,10 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
-                  "spectra", "impute", "isCentroided", "polarity")
+                  "spectra", "impute", "isCentroided", "polarity", "[", "bin",
+                  "clean", "featureNames", "filterAcquisitionNum", "filterMz",
+                  "filterRt", "normalize", "pickPeaks", "removePeaks",
+                  "removeReporters", "smooth", "trimMz")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -314,5 +317,16 @@ exportMethods("hasDetectedFeatures",
               "processDate",
               "processInfo",
               "processParam",
-              "processType"
+              "processType",
+              "bin",
+              "clean",
+              "filterAcquisitionNum",
+              "filterFile",
+              "filterMsLevel",
+              "filterMz",
+              "filterRt",
+              "normalize",
+              "pickPeaks",
+              "removePeaks",
+              "smooth"
               )

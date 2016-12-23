@@ -217,3 +217,368 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
     if (validObject(object))
         return(object)
 })
+
+############################################################
+## Methods inherited from OnDiskMSnExp.
+## For some of these methods (altering the raw data or subsetting) we have to
+## remove the results.
+## Methods to consider:
+## o [ subset spectra, return an OnDiskMSnExp.
+## o bin remove the results
+## o clean remove the results.
+## o featureNames returns the names of the spectra.
+## o filterAcquisitionNum remove the results.
+## o filterFile remove the results.
+## o filterMsLevel remove the results.
+## o filterMz remove the results.
+## o filterRt remove the results.
+## o fromFile<-
+## o normalize remove the results.
+## o pickPeaks remove the results.
+## o removePeaks remove the results.
+## o smooth remove the results.
+
+##' @title XCMSnExp data manipulation methods inherited from MSnbase
+##'
+##' @description The methods listed on this page are \code{\link{XCMSnExp}}
+##' methods inherited from its parent, the \code{\link[MSnbase]{OnDiskMSnExp}}
+##' class from the \code{MSnbase} package, that alter the raw data or are related
+##' to data subsetting. Thus calling any of these methods causes all \code{xcms}
+##' pre-processing results to be removed from the \code{\link{XCMSnExp}} object
+##' to ensure its data integrity.
+##'
+##' The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
+##' spectra. For more details and examples see the documentation for
+##' \code{\link[MSnbase]{OnDiskMSnExp}}.
+##'
+##' @param x For \code{[}: an \code{\link{XCMSnExp}} object.
+##'
+##' @param i For \code{[}: \code{numeric} or \code{logical} vector specifying to
+##' which spectra the data set should be reduced.
+##'
+##' @param j For \code{[}: not supported.
+##'
+##' @param drop For \code{[}: not supported.
+##'
+##' @return For all methods: a \code{XCMSnExp} object.
+##'
+##' @rdname XCMSnExp-inherited-methods
+##'
+##' @seealso \code{\link{XCMSnExp-filter}} for methods to filter and subset
+##' \code{XCMSnExp} objects.
+##' @seealso \code{\link{XCMSnExp}} for base class documentation.
+##' @seealso \code{\link[MSnbase]{OnDiskMSnExp}} for the documentation of the
+##' parent class.
+##'
+##' @author Johannes Rainer
+setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
+                         drop = "missing"),
+          function(x, i, j, drop) {
+              if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
+                  hasDetectedFeatures(x)) {
+                  x@.processHistory <- list()
+                  x@msFeatureData <- new("MsFeatureData")
+                  warning("Removed preprocessing results")
+              }
+              callNextMethod()
+          })
+
+##' @description The \code{bin} method allows to \emph{bin} spectra. See
+##' \code{\link[MSnbase]{bin}} documentation for more details and examples.
+##'
+##' @param object An \code{\link{XCMSnExp}} object.
+##'
+##' @param binSize \code{numeric(1)} defining the size of a bin (in Dalton).
+##'
+##' @param msLevel. For \code{bin}, \code{clean}, \code{filterMsLevel},
+##' \code{removePeaks}:  \code{numeric(1)} defining the MS level(s)
+##' to which operations should be applied or to which the object should be
+##' subsetted.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' @description The \code{clean} method removes unused \code{0} intensity data
+##' points. See \code{\link[MSnbase]{clean}} documentation for details and
+##' examples.
+##'
+##' @param all For \code{clean}: \code{logical(1)}, if \code{TRUE} all zeros are
+##' removed.
+##'
+##' @param verbose \code{logical(1)} whether progress information should be
+##' displayed.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("clean", "XCMSnExp", function(object, all = FALSE,
+                                        verbose = FALSE, msLevel.) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' @description The \code{filterMsLevel} reduces the \code{\link{XCMSnExp}}
+##' object to spectra of the specified MS level(s). See
+##' \code{\link[MSnbase]{filterMsLevel}} documentation for details and examples.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' @description The \code{filterAcquisitionNum} method filters the
+##' \code{\link{XCMSnExp}} object keeping only spectra with the provided
+##' acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
+##' details and examples.
+##'
+##' @param n For \code{filterAcquisitionNum}: \code{integer} defining the
+##' acquisition numbers of the spectra to which the data set should be
+##' sub-setted.
+##'
+##' @param file For \code{filterAcquisitionNum}:
+##' \code{integer} defining the file index within the object to subset the
+##' object by file.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' @aliases XCMSnExp-filter
+##' @title XCMSnExp filtering and subsetting
+##'
+##' The methods listed on this page allow to filter and subset
+##' \code{\link{XCMSnExp}} objects. Most of them are inherited from the
+##' \code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
+##' \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
+##' results.
+##'
+##' @description The \code{filterFile} method allows to reduce the
+##' \code{\link{XCMSnExp}} to data from only certain files. Identified features
+##' for these files are retained while eventually all present feature
+##' alignment/grouping information and adjusted retention times are dropped..
+##'
+##' @note The \code{filterFile} method removes also process history steps not
+##' related to the files to which the object should be sub-setted and updates
+##' the \code{fileIndex} attribute accordingly. Also, the method does not allow
+##' arbitrary ordering of the files or re-ordering of the files within the
+##' object.
+##'
+##' @param object A \code{\link{XCMSnExp}} object.
+##'
+##' @param file For \code{filterFile}: \code{integer} defining the file index
+##' within the object to subset the object by file or \code{character} specifying
+##' the file names to sub set. The indices are expected to be increasingly
+##' ordered, if not they are ordered internally.
+##'
+##' @return All methods return an \code{\link{XCMSnExp}} object.
+##'
+##' @author Johannes Rainer
+##'
+##' @seealso \code{\link{XCMSnExp}} for base class documentation.
+##'
+##' @rdname XCMSnExp-filter-methods
+setMethod("filterFile", "XCMSnExp", function(object, file) {
+    if (missing(file)) return(object)
+    if (is.character(file)) {
+        file <- base::match(file, basename(fileNames(object)))
+    }
+    ## This will not work if we want to get the files in a different
+    ## order (i.e. c(3, 1, 2, 5))
+    file <- base::sort(unique(file))
+    ## Error checking - seems that's not performed downstream.
+    if (!all(file %in% 1:length(fileNames(object))))
+        stop("'file' has to be within 1 and the number of files in the object!")
+    ## Get the data we want to keep/subset
+    fts <- features(object)
+    ph <- processHistory(object)
+    if (hasAdjustedRtime(object))
+        warning("Adjusted retention times removed.")
+    if (hasAlignedFeatures(object))
+        warning("Feature alignment information removed.")
+    ## The next method will actually clean everything, process history and
+    ## msFeatureData
+    suppressWarnings(
+        object <- callNextMethod()
+    )
+    ## Process the processing history.
+    if (length(ph))
+        ph <- dropProcessHistoriesByType(ph, type = c(.PROCSTEP.FEATURE.ALIGNMENT,
+                                                      .PROCSTEP.RTIME.CORRECTION))
+    ## Remove ProcessHistory not related to any of the files.
+    if (length(ph)) {
+        kp <- unlist(lapply(ph, function(z) {
+            any(fileIndex(z) %in% file)
+        }))
+        ph <- ph[kp]
+    }
+    if (length(ph)) {
+        ph <- lapply(ph, function(z) {
+            updateFileIndex(z, old = file, new = 1:length(file))
+        })
+    }
+    ## Process features.
+    fts <- fts[fts[, "sample"] %in% file, ]
+    fts[, "sample"] <- match(fts[, "sample"], file)
+    features(object) <- fts
+    object@.processHistory <- ph
+    return(object)
+})
+
+##' @description The \code{filterMz} method filters the data set based on the
+##' provided mz value range. If features are present, all features within the
+##' specified mz range are retained.
+##'
+##' @param mz For \code{filterMz}: \code{numeric(2)} defining the lower and upper
+##' mz value for the filtering.
+##'
+##' @param msLevel. For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
+##' defining the MS level(s) to which operations should be applied or to which
+##' the object should be subsetted.
+##'
+##' @param ... Optional additional arguments.
+##'
+##' @rdname XCMSnExp-filter-methods
+setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
+    stop("IMPLEMENT")
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' @description The \code{filterRt} method filters the data set based on the
+##' provided retention time range. If features are present, all features within
+##' the specified retention time window are retained while alignment information
+##' and adjusted retention times are dropped.
+##'
+##' @note The \code{filterRt} method drops feature alignment and retention time
+##' correction results, since only retention time subsetting by original
+##' retention time is supported thus far.
+##'
+##' @param rt For \code{filterRt}: \code{numeric(2)} defining the retention time
+##' window (lowe and upper bound) for the filtering.
+##'
+##' @rdname XCMSnExp-filter-methods
+setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.) {
+    stop("IMPLEMENT")
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' The \code{normalize} method performs basic normalization of spectra
+##' intensities. See \code{\link[MSnbase]{normalize}} documentation for details
+##' and examples.
+##'
+##' @param method For \code{normalize}: \code{character(1)} specifying the
+##' normalization method. See \code{\link[MSnbase]{normalize}} for details.
+##' For \code{pickPeaks}: \code{character(1)} defining the method. See
+##' \code{\link[MSnbase]{pickPeaks}} for options. For \code{smooth}:
+##' \code{character(1)} defining the method. See \code{\link[MSnbase]{smooth}}
+##' for options and details.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
+                                            ...) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' The \code{pickPeaks} method performs peak picking. See
+##' \code{\link[MSnbase]{pickPeaks}} documentation for details and examples.
+##'
+##' @param halfWindowSize For \code{pickPeaks} and \code{smooth}:
+##' \code{integer(1)} defining the window size for the peak picking. See
+##' \code{\link[MSnbase]{pickPeaks}} and \code{\link[MSnbase]{smooth}} for
+##' details and options.
+##'
+##' @param SNR For \code{pickPeaks}: \code{numeric(1)} defining the signal to
+##' noise ratio to be considered. See \code{\link[MSnbase]{pickPeaks}}
+##' documentation for details.
+##'
+##' @param ... Optional additional arguments.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
+                                            method = c("MAD", "SuperSmoother"),
+                                            SNR = 0L, ...) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' The \code{removePeaks} method removes peaks (intensities) lower than a
+##' threshold. Note that these peaks are not features! See \code{\link[MSnbase]{removePeaks}} documentation for details and examples.
+##'
+##' @param t For \code{removePeaks}: either a \code{numeric(1)} or \code{"min"}
+##' defining the threshold (method) to be used. See
+##' \code{\link[MSnbase]{removePeaks}} for details.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE,
+                                              msLevel.) {
+    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
+        hasDetectedFeatures(object)) {
+        object@.processHistory <- list()
+        object@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})
+
+##' The \code{smooth} method smooths spectra. See \code{\link[MSnbase]{smooth}}
+##' documentation for details and examples.
+##'
+##' @rdname XCMSnExp-inherited-methods
+setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
+                                                       "MovingAverage"),
+                                         halfWindowSize = 2L, verbose = FALSE,
+                                         ...) {
+    if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
+        hasDetectedFeatures(x)) {
+        x@.processHistory <- list()
+        x@msFeatureData <- new("MsFeatureData")
+        warning("Removed preprocessing results")
+    }
+    callNextMethod()
+})

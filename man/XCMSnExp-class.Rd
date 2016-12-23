@@ -157,6 +157,9 @@ processing step along with the used settings. The object also directly
 extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
 access to the full data on which the feature detection was performed.
 
+Objects from this class should not be created directly, they are returned as
+result from the \code{\link{detectFeatures}} method.
+
 \code{hasAdjustedRtime}: whether the object provides adjusted
 retention times.
 
@@ -211,9 +214,10 @@ Johannes Rainer
 \seealso{
 \code{\linkS4class{xcmsSet}} for the old implementation.
 
-\code{\link[MSnbase]{OnDiskMSnExp}} for a complete list of inherited
-methods.
+\code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
+and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
 
-\code{\link{detectFeatures}} for available feature detection methods.
+\code{\link{detectFeatures}} for available feature detection methods
+returning a \code{XCMSnExp} object as a result.
 }
 

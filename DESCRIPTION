@@ -15,7 +15,8 @@ Depends:
     mzR (>= 1.1.6),
     BiocGenerics,
     ProtGenerics,
-    Biobase
+    Biobase,
+    MSnbase (>= 2.1.4)
 Imports:
     lattice,
     RColorBrewer,
@@ -24,8 +25,7 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors,
-    MSnbase (>= 2.1.4)
+    S4Vectors
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),

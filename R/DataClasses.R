@@ -1236,6 +1236,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
 ##' access to the full data on which the feature detection was performed.
 ##'
+##' Objects from this class should not be created directly, they are returned as
+##' result from the \code{\link{detectFeatures}} method.
+##'
 ##' @note The \code{"features"} element in the \code{msFeatureData} slot is
 ##' equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
 ##' \code{"featureGroups"} contains information from the \code{}
@@ -1268,9 +1271,10 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' @author Johannes Rainer
 ##'
 ##' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
-##' @seealso \code{\link[MSnbase]{OnDiskMSnExp}} for a complete list of inherited
-##' methods.
-##' @seealso \code{\link{detectFeatures}} for available feature detection methods.
+##' @seealso \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
+##' and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+##' @seealso \code{\link{detectFeatures}} for available feature detection methods
+##' returning a \code{XCMSnExp} object as a result.
 ##'
 ##' @rdname XCMSnExp-class
 setClass("XCMSnExp",
