@@ -8,7 +8,13 @@ NEW FEATURES:
   methods.
 
 
-CHANGES IN VERSION 1.xx.x
+CHANGES IN VERSION 1.51.4
+-------------------------
+
+BUG FIXES:
++ added deepCopy to avoid corrupting the original object, thanks to J. Stanstrup, closes #93
+
+CHANGES IN VERSION 1.51.3
 -------------------------
 
 NEW FEATURES:

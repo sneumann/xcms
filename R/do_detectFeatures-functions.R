@@ -1870,6 +1870,77 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 
     peaklist
 }
+############################################################
+## The original code
+## This should be removed at some point.
+.MSW_orig <- function(mz, int, snthresh = 3, verboseColumns = FALSE, ...) {
+
+    ## MassSpecWavelet Calls
+    peakInfo <- peakDetectionCWT(int, SNR.Th=snthresh, ...)
+    majorPeakInfo <- peakInfo$majorPeakInfo
+
+    sumIntos <- function(into, inpos, scale){
+        scale=floor(scale)
+        sum(into[(inpos-scale):(inpos+scale)])
+    }
+
+    maxIntos <- function(into, inpos, scale){
+        scale=floor(scale)
+              max(into[(inpos-scale):(inpos+scale)])
+    }
+
+    betterPeakInfo <- tuneInPeakInfo(int,
+                                     majorPeakInfo)
+
+    peakIndex <- betterPeakInfo$peakIndex
+
+    ## sum and max of raw values, sum and max of filter-response
+    rints<-NA;fints<-NA
+    maxRints<-NA;maxFints<-NA
+
+    for (a in 1:length(peakIndex)) {
+        rints[a] <- sumIntos(int,peakIndex[a],
+                             betterPeakInfo$peakScale[a])
+        maxRints[a] <- maxIntos(int,peakIndex[a],
+                                betterPeakInfo$peakScale[a])
+    }
+    ## filter-response is not summed here, the maxF-value is the one
+    ## which was "xcmsRaw$into" earlier
+
+    ## Assemble result
+
+    basenames <- c("mz","mzmin","mzmax","rt","rtmin","rtmax",
+                   "into","maxo","sn","intf","maxf")
+
+    peaklist <- matrix(-1, nrow = length(peakIndex), ncol = length(basenames))
+
+    colnames(peaklist) <- c(basenames)
+
+    peaklist[,"mz"] <- mz[peakIndex]
+    peaklist[,"mzmin"] <- mz[(peakIndex-betterPeakInfo$peakScale)]
+    peaklist[,"mzmax"] <- mz[(peakIndex+betterPeakInfo$peakScale)]
+
+    peaklist[,"rt"]    <- rep(-1, length(peakIndex))
+    peaklist[,"rtmin"] <- rep(-1, length(peakIndex))
+    peaklist[,"rtmax"] <- rep(-1, length(peakIndex))
+
+    peaklist[,"into"] <- rints ## sum of raw-intensities
+    peaklist[,"maxo"] <- maxRints
+    peaklist[,"intf"] <- rep(NA, length(peakIndex))
+    peaklist[,"maxf"] <- betterPeakInfo$peakValue
+
+    peaklist[,"sn"]   <- betterPeakInfo$peakSNR
+
+    cat('\n')
+
+    ## Filter additional (verbose) columns
+    if (!verboseColumns)
+        peaklist <- peaklist[,basenames,drop=FALSE]
+
+    peaklist
+}
+
+
 
 
 

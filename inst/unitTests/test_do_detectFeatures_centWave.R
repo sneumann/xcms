@@ -131,6 +131,48 @@ dontrun_test_benchmark_centWaves <- function() {
                    times = 3)
 }
 
+dontrun_test_benchmark_centWaves <- function() {
+    library(msdata)
+    f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+    library(microbenchmark)
+    library(MSnbase)
+    library(xcms)
+    ##
+    xr <- xcmsRaw(f[1], profstep = 0)
+    ppm <- 40
+    snthresh <- 40
+
+    cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh)
+    onDisk <- readMSData2(f[1], msLevel. = 1)
+    register(SerialParam())
+    system.time(
+        tmp <- detectFeatures(onDisk, param = cwp)
+    ) ## 9.7sec
+    system.time(
+        tmp <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    ) ## 12sec
+    system.time(
+        tmp <- xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
+                       snthresh = snthresh, method = "centWave")
+    ) ## 11.99sec
+
+    inMem <- readMSData(f[1], msLevel. = 1)
+    register(SerialParam())
+
+    ## detectFeatures,MSnExp and findPeaks.centWave should be about similar.
+    microbenchmark(findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh),
+                   detectFeatures(inMem, param = cwp), times = 3)
+    ## findPeaks.centWave is about 1 second faster.
+
+    ## detectFeatures,OnDiskMSnExp and xcmsSet should be about similar.
+    microbenchmark(xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
+                           snthresh = snthresh, method = "centWave"),
+                   detectFeatures(onDisk, param = cwp),
+                   detectFeatures(inMem, param = cwp),
+                   times = 3)
+}
+
+
 
 
 ############################################################

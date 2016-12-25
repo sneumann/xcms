@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.51.2
-Date: 2016-12-13
+Version: 1.51.4
+Date: 2016-12-20
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -25,7 +25,8 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors
+    S4Vectors,
+    MSnbase (>= 2.1.4)
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),

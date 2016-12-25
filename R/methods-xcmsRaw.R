@@ -2283,6 +2283,86 @@ setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
 })
 
 ############################################################
+## findPeaks.massifquant: Note the original code returned, if withWave = 1,
+## a Peaks object otherwise a matrix!
+setMethod("findPeaks.massifquant", "xcmsRaw", function(object,
+                                                       ppm=10,
+                                                       peakwidth = c(20,50),
+                                                       snthresh = 10,
+                                                       prefilter = c(3,100),
+                                                       mzCenterFun = "wMean",
+                                                       integrate = 1,
+                                                       mzdiff = -0.001,
+                                                       fitgauss = FALSE,
+                                                       scanrange = numeric(),
+                                                       noise = 0,
+                                                       sleep = 0,
+                                                       verbose.columns = FALSE,
+                                                       criticalValue = 1.125,
+                                                       consecMissedLimit = 2,
+                                                       unions = 1,
+                                                       checkBack = 0,
+                                                       withWave = 0) {
+
+    if (sleep > 0)
+        cat("'sleep' argument is defunct and will be ignored.")
+
+    ## Fix issue #61
+    ## Sub-set the xcmsRaw based on scanrange
+    if (length(scanrange) < 2) {
+        scanrange <- c(1, length(object@scantime))
+    } else {
+        scanrange <- range(scanrange)
+    }
+    if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
+        scanrange[1] <- max(1, scanrange[1])
+        scanrange[2] <- min(length(object@scantime), scanrange[2])
+        message("Provided scanrange was adjusted to ", scanrange)
+    }
+    object <- object[scanrange[1]:scanrange[2]]
+    scanrange <- c(1, length(object@scantime))
+    ## scanrange.old <- scanrange
+    ## ## sanitize if too few or too many scanrange is given
+    ## if (length(scanrange) < 2)
+    ##     scanrange <- c(1, length(object@scantime))
+    ## else
+    ##     scanrange <- range(scanrange)
+    ## ## restrict and sanitize scanrange to maximally cover all scans
+    ## scanrange[1] <- max(1,scanrange[1])
+    ## scanrange[2] <- min(length(object@scantime),scanrange[2])
+    ## ## Mild warning if the actual scanrange doesn't match the scanrange
+    ## ## argument
+    ## if (!(identical(scanrange.old, scanrange)) &&
+    ##     (length(scanrange.old) > 0)) {
+    ##     cat("Warning: scanrange was adjusted to ",scanrange,"\n")
+    ##     ## Scanrange filtering
+    ##     keepidx <- seq.int(1, length(object@scantime)) %in% seq.int(scanrange[1], scanrange[2])
+    ##     object <- split(object, f=keepidx)[["TRUE"]]
+    ## }
+    if (!isCentroided(object))
+        warning("It looks like this file is in profile mode.",
+                " Massifquant can process only centroid mode data !\n")
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    res <- do_detectFeatures_massifquant(mz = object@env$mz,
+                                         int = object@env$intensity,
+                                         scantime = object@scantime,
+                                         valsPerSpect = vps,
+                                         ppm = ppm, peakwidth = peakwidth,
+                                         snthresh = snthresh,
+                                         prefilter = prefilter,
+                                         mzCenterFun = mzCenterFun,
+                                         integrate = integrate,
+                                         mzdiff = mzdiff, fitgauss = fitgauss,
+                                         noise = noise,
+                                         verboseColumns = verbose.columns,
+                                         criticalValue = criticalValue,
+                                         consecMissedLimit = consecMissedLimit,
+                                         unions = unions, checkBack = checkBack,
+                                         withWave = as.logical(withWave))
+    invisible(new("xcmsPeaks", res))
+})
+
+############################################################
 ## isCentroided
 setMethod("isCentroided", "xcmsRaw", function(object){
     if (length(getScan(object,length(object@scantime) / 2)) >2 ) {
