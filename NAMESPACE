@@ -328,5 +328,8 @@ exportMethods("hasDetectedFeatures",
               "normalize",
               "pickPeaks",
               "removePeaks",
-              "smooth"
+              "smooth",
+              "dropAdjustedRtime",
+              "dropFeatureGroups",
+              "dropFeatures"
               )

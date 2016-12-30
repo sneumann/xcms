@@ -80,6 +80,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
     if (validObject(object)) {
         ## Lock the environment so that only accessor methods can change values.
         lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
         return(object)
     }
 })
@@ -114,6 +115,7 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
     if (validObject(object)) {
         ## Lock the environment so that only accessor methods can change values.
         lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
         return(object)
     }
 })
@@ -150,6 +152,7 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
     if (validObject(object)) {
         ## Lock the environment so that only accessor methods can change values.
         lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
         return(object)
     }
 })
@@ -207,7 +210,7 @@ setMethod("processHistory", "XCMSnExp", function(object, fileIndex) {
 ##' \code{\link{ProcessHistory}} object to the \code{.processHistory} slot.
 ##'
 ##' @return The \code{addProcessHistory} method returns the input object with the
-##' provided \code{\link{ProcessHistory}} appended.
+##' provided \code{\link{ProcessHistory}} appended to the process history.
 ##' @noRd
 setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
     if (!inherits(ph, "ProcessHistory"))
@@ -217,6 +220,96 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
     if (validObject(object))
         return(object)
 })
+
+##' @aliases dropFeatures
+##'
+##' @description The \code{dropFeatures} method drops any identified features
+##' and returns the object without that information. Note that for
+##' \code{XCMSnExp} objects the method drops all results from a feature alignment
+##' or retention time adjustment. For \code{XCMSnExp} objects the method drops
+##' also any related process history steps.
+##'
+##' @rdname XCMSnExp-class
+setMethod("dropFeatures", "XCMSnExp", function(object) {
+    if (hasDetectedFeatures(object)) {
+        object <- dropFeatureGroups(object)
+        object <- dropAdjustedRtime(object)
+        idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
+                        .PROCSTEP.FEATURE.DETECTION)
+        if (length(idx_fd) > 0)
+            object@.processHistory <- object@.processHistory[-idx_fd]
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        newFd <- dropFeatures(newFd)
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+    }
+    if (validObject(object))
+        return(object)
+})
+##' @aliases dropFeatureGroups
+##'
+##' @description The \code{dropFeatureGroups} method drops aligned feature
+##' information (i.e. feature groups) and returns the object
+##' without that information. Note that for \code{XCMSnExp} objects the method
+##' drops also retention time adjustments.
+##' For \code{XCMSnExp} objects the method drops also any related process history
+##' steps.
+##'
+##' @rdname XCMSnExp-class
+setMethod("dropFeatureGroups", "XCMSnExp", function(object) {
+    if (hasAlignedFeatures(object)) {
+        phTypes <- unlist(lapply(processHistory(object), processType))
+        idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
+        idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
+        if (length(idx_fal) > 0)
+            object@.processHistory <- object@.processHistory[-idx_fal]
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        newFd <- dropFeatureGroups(newFd)
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+        if (hasAdjustedRtime(object)) {
+            ## ALWAYS drop retention time adjustments, since these are performed
+            ## after alignment.
+            object <- dropAdjustedRtime(object)
+        }
+    }
+    if (validObject(object))
+        return(object)
+})
+##' @aliases dropAdjustedRtime
+##'
+##' @description The \code{dropAdjustedRtime} method drops any retention time
+##' adjustment information and returns the object without adjusted retention
+##' time. Note that for \code{XCMSnExp} objects the method drops also all feature
+##' alignment results if these were performed after the retention time adjustment.
+##' For \code{XCMSnExp} objects the method drops also any related process history
+##' steps.
+##'
+##' @rdname XCMSnExp-class
+setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
+    if (hasAdjustedRtime(object)) {
+        phTypes <- unlist(lapply(processHistory(object), function(z)
+            processType(z)))
+        idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
+        idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
+        ## Drop retention time
+        object@.processHistory <- object@.processHistory[-idx_art]
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        newFd <- dropAdjustedRtime(newFd)
+        object@msFeatureData <- newFd
+        lockEnvironment(newFd, bindings = TRUE)
+        if (hasAlignedFeatures(object)) {
+            if (max(idx_fal) > max(idx_art))
+                object <- dropFeatureGroups(object)
+        }
+    }
+    if (validObject(object))
+        return(object)
+})
+
 
 ############################################################
 ## Methods inherited from OnDiskMSnExp.
@@ -502,30 +595,33 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
         fts <- features(object)
         keepIdx <- which(fts[, "mzmin"] >= mz[1] & fts[, "mzmax"] <= mz[2])
         newE <- .filterFeatures(object@msFeatureData, idx = keepIdx)
-        lockEnvironment(newE, binding = TRUE)
+        lockEnvironment(newE, bindings = TRUE)
         object@msFeatureData <- newE
     }
-    return(object)
+    if (validObject)
+        return(object)
 })
 
 ##' @description The \code{filterRt} method filters the data set based on the
-##' provided retention time range. If features are present, all features within
-##' the specified retention time window are retained while alignment information
-##' and adjusted retention times are dropped.
-##'
-##' @note The \code{filterRt} method drops feature alignment and retention time
-##' correction results, since only retention time subsetting by original
-##' retention time is supported thus far.
+##' provided retention time range. All features and feature groups within
+##' the specified retention time window are retained.
 ##'
 ##' @param rt For \code{filterRt}: \code{numeric(2)} defining the retention time
 ##' window (lowe and upper bound) for the filtering.
 ##'
+##' @param adjusted For \code{filterRt}: \code{logical} indicating whether the
+##' object should be filtered by original (\code{adjusted = FALSE}) or adjusted
+##' retention times (\code{adjusted = TRUE}).
+##'
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
                                            adjusted = FALSE) {
-    ## Here we have to drop for now the adjusted retention time
-    ## Drop featureGroups.
-    ## Keep features with rt within the range.
+
+    ## Get index of spectra within the rt window.
+    ## Subset using [
+    ## Subset features
+    ## Subset feature groups
+    ## Subset adjusted retention time
 
     ## WARN: will have to get index of spectra to keep using rtime(object) (or
     ## adjustedRtime(object) for adjusted = TRUE) since we've overwritten the

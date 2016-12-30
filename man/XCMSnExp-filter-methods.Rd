@@ -39,6 +39,10 @@ the object should be subsetted.}
 
 \item{rt}{For \code{filterRt}: \code{numeric(2)} defining the retention time
 window (lowe and upper bound) for the filtering.}
+
+\item{adjusted}{For \code{filterRt}: \code{logical} indicating whether the
+object should be filtered by original (\code{adjusted = FALSE}) or adjusted
+retention times (\code{adjusted = TRUE}).}
 }
 \value{
 All methods return an \code{\link{XCMSnExp}} object.
@@ -56,9 +60,8 @@ minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
 Adjusted retention times, if present, are not altered by the filtering.
 
 The \code{filterRt} method filters the data set based on the
-provided retention time range. If features are present, all features within
-the specified retention time window are retained while alignment information
-and adjusted retention times are dropped.
+provided retention time range. All features and feature groups within
+the specified retention time window are retained.
 }
 \note{
 The \code{filterFile} method removes also process history steps not
@@ -66,10 +69,6 @@ related to the files to which the object should be sub-setted and updates
 the \code{fileIndex} attribute accordingly. Also, the method does not allow
 arbitrary ordering of the files or re-ordering of the files within the
 object.
-
-The \code{filterRt} method drops feature alignment and retention time
-correction results, since only retention time subsetting by original
-retention time is supported thus far.
 }
 \examples{
 

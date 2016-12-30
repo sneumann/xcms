@@ -41,6 +41,12 @@ setGeneric("detectFeatures", function(object, param, ...)
 setGeneric("diffreport", function(object, ...) standardGeneric("diffreport"))
 setGeneric("distance", function(object, ...) standardGeneric("distance"))
 setGeneric("distance<-", function(object, value) standardGeneric("distance<-"))
+setGeneric("dropAdjustedRtime", function(object, ...)
+    standardGeneric("dropAdjustedRtime"))
+setGeneric("dropFeatureGroups", function(object, ...)
+    standardGeneric("dropFeatureGroups"))
+setGeneric("dropFeatures", function(object, ...)
+    standardGeneric("dropFeatures"))
 
 ## F
 setGeneric("features", function(object, ...) standardGeneric("features"))

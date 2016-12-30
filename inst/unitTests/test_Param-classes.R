@@ -3,6 +3,7 @@
 ############################################################
 ## CentWaveParam
 test_CentWaveParam <- function() {
+    ##checkTrue(FALSE)
     p <- new("CentWaveParam")
     checkDefaultValues <- function(x) {
         checkEquals(x@ppm, 25)

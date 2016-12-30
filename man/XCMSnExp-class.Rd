@@ -12,6 +12,15 @@
 \alias{adjustedRtime<-}
 \alias{adjustedRtime<-,MsFeatureData-method}
 \alias{adjustedRtime<-,XCMSnExp-method}
+\alias{dropAdjustedRtime}
+\alias{dropAdjustedRtime,MsFeatureData-method}
+\alias{dropAdjustedRtime,XCMSnExp-method}
+\alias{dropFeatureGroups}
+\alias{dropFeatureGroups,MsFeatureData-method}
+\alias{dropFeatureGroups,XCMSnExp-method}
+\alias{dropFeatures}
+\alias{dropFeatures,MsFeatureData-method}
+\alias{dropFeatures,XCMSnExp-method}
 \alias{featureGroups}
 \alias{featureGroups,MsFeatureData-method}
 \alias{featureGroups,XCMSnExp-method}
@@ -52,13 +61,19 @@
 
 \S4method{adjustedRtime}{MsFeatureData}(object) <- value
 
+\S4method{dropAdjustedRtime}{MsFeatureData}(object)
+
 \S4method{featureGroups}{MsFeatureData}(object)
 
 \S4method{featureGroups}{MsFeatureData}(object) <- value
 
+\S4method{dropFeatureGroups}{MsFeatureData}(object)
+
 \S4method{features}{MsFeatureData}(object)
 
 \S4method{features}{MsFeatureData}(object) <- value
+
+\S4method{dropFeatures}{MsFeatureData}(object)
 
 \S4method{show}{XCMSnExp}(object)
 
@@ -83,6 +98,12 @@
 \S4method{rtime}{XCMSnExp}(object)
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex)
+
+\S4method{dropFeatures}{XCMSnExp}(object)
+
+\S4method{dropFeatureGroups}{XCMSnExp}(object)
+
+\S4method{dropAdjustedRtime}{XCMSnExp}(object)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureGroups},
@@ -191,6 +212,26 @@ The \code{processHistory} method returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base
 class) representing the individual processing steps that have been performed,
 eventually along with their settings (\code{Param} parameter class).
+
+The \code{dropFeatures} method drops any identified features
+and returns the object without that information. Note that for
+\code{XCMSnExp} objects the method drops all results from a feature alignment
+or retention time adjustment. For \code{XCMSnExp} objects the method drops
+also any related process history steps.
+
+The \code{dropFeatureGroups} method drops aligned feature
+information (i.e. feature groups) and returns the object
+without that information. Note that for \code{XCMSnExp} objects the method
+drops also retention time adjustments.
+For \code{XCMSnExp} objects the method drops also any related process history
+steps.
+
+The \code{dropAdjustedRtime} method drops any retention time
+adjustment information and returns the object without adjusted retention
+time. Note that for \code{XCMSnExp} objects the method drops also all feature
+alignment results if these were performed after the retention time adjustment.
+For \code{XCMSnExp} objects the method drops also any related process history
+steps.
 }
 \section{Slots}{
 

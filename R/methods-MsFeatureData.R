@@ -54,6 +54,12 @@ setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
     if (validObject(object))
         return(object)
 })
+##' @rdname XCMSnExp-class
+setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
+    if (hasAdjustedRtime(object))
+        rm(list = "adjustedRtime", envir = object)
+    return(object)
+})
 
 ##' @rdname XCMSnExp-class
 setMethod("featureGroups", "MsFeatureData", function(object) {
@@ -68,6 +74,12 @@ setReplaceMethod("featureGroups", "MsFeatureData", function(object, value) {
     if (validObject(object))
         return(object)
 })
+##' @rdname XCMSnExp-class
+setMethod("dropFeatureGroups", "MsFeatureData", function(object) {
+    if (hasAlignedFeatures(object))
+        rm(list = "featureGroups", envir = object)
+    return(object)
+})
 
 ##' @rdname XCMSnExp-class
 setMethod("features", "MsFeatureData", function(object) {
@@ -81,4 +93,10 @@ setReplaceMethod("features", "MsFeatureData", function(object, value) {
     object$features <- value
     if (validObject(object))
         return(object)
+})
+##' @rdname XCMSnExp-class
+setMethod("dropFeatures", "MsFeatureData", function(object) {
+    if (hasDetectedFeatures(object))
+        rm(list = "features", envir = object)
+    return(object)
 })
