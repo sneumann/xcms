@@ -357,7 +357,7 @@ to the massifquant and centWave algorithm can be passed with a
 }
 \examples{
 
-## Create a MassifquantParam object
+## Create a MassifquantParam object.
 mqp <- MassifquantParam()
 ## Change snthresh parameter
 snthresh(mqp) <- 30

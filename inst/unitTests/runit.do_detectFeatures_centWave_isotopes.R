@@ -1,10 +1,11 @@
 ## Tests related to the findPeaks.centWaveWithAddIsotopeROIs.
-library(faahKO)
+## library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
-xr <- xcmsRaw(fs[1], profstep = 0)
+## xr <- xcmsRaw(fs[1], profstep = 0)
+xr <- deepCopy(faahko_xr_1)
 mzVals <- xr@env$mz
 intVals <- xr@env$intensity
 ## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
@@ -29,8 +30,8 @@ test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
                                                        noise = 1500)
     ## Comparisons.
     checkEquals(all_f, feats_2)
-    old_all <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, noise = 1500)
-    checkEquals(all_f, old_all@.Data)
+    ## old_all <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, noise = 1500)
+    ## checkEquals(all_f, old_all@.Data)
 }
 
 ## Evaluate the featureDetection method using the centWaveWithPreIsoROIs method

@@ -434,8 +434,10 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a CentWaveParam object
-##' cwp <- CentWaveParam(ppm = 20)
+##' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
+##' ## speed up the execution of the example - in a real use case the default
+##' ## value should be used, or it should be set to a reasonable value.
+##' cwp <- CentWaveParam(ppm = 20, noise = 10000)
 ##' ## Change snthresh parameter
 ##' snthresh(cwp) <- 25
 ##' cwp
@@ -843,7 +845,7 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a MassifquantParam object
+##' ## Create a MassifquantParam object.
 ##' mqp <- MassifquantParam()
 ##' ## Change snthresh parameter
 ##' snthresh(mqp) <- 30

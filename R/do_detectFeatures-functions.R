@@ -86,15 +86,19 @@
 ##' ## Load the test file
 ##' library(faahKO)
 ##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-##' xr <- xcmsRaw(fs)
+##' xr <- xcmsRaw(fs, profstep = 0)
 ##'
 ##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
 ##' mzVals <- xr@env$mz
 ##' intVals <- xr@env$intensity
 ##' ## Define the values per spectrum:
 ##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+##'
+##' ## Calling the function. We're using a large value for noise to speed up
+##' ## the call in the example performance - in a real use case we would either
+##' ## set the value to a reasonable value or use the default value.
 ##' res <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
-##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
+##' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
 ##' head(res)
 do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,

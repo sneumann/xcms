@@ -1,19 +1,16 @@
 ## Test functions to evaluate binning of values.
+## library(faahKO)
+## fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
+## xr <- xcmsRaw(fs, profstep = 0)
 
 ############################################################
 ## Test profBin
 ##
 ## profBin matches with the implementation in R.
 ## Does however not match with binYonX, step = 0.2!
-test_profBin <- function() {
-
-    library(xcms)
-    library(RUnit)
-
-    ## Using real data:
-    library(faahKO)
-    fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
-    xr <- xcmsRaw(fs, profstep = 0)
+## profBin is now deprecated!
+dontrun_test_profBin <- function() {
+    xr <- deepCopy(faahko_xr_1)
     X <- xr@env$mz
     Y <- xr@env$intensity
     scanidx <- xr@scanindex
@@ -172,15 +169,13 @@ fails_test_profBinLin <- function() {
 
 ############################################################
 ## Test profBinLinBase
-test_profBinLinBase <- function() {
+## profBinLinBase is now deprecated!
+dontrun_test_profBinLinBase <- function() {
     ## According to the help:
     ## o baselevel: half of minimal signal in the data.
     ## o basespace: 0.075. Linear interpolation is used for data points falling
     ##   within 2*basespace of each other. -> m/z length after which the
     ##   signal drops to baselevel.
-
-    library(xcms)
-    library(RUnit)
 
     X <- 1:16
     Y <- c(3, NA, 1, 2, NA, NA, 4, NA, NA, NA, 3, NA, NA, NA, NA, 2)
@@ -401,9 +396,7 @@ test_binning_max <- function() {
     checkEquals(res$x, breakMidPoint(brks))
 
     ## Test on real data:
-    library(faahKO)
-    fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
-    xr <- xcmsRaw(fs)
+    xr <- deepCopy(faahko_xr_1)
     X <- xr@env$mz
     Y <- xr@env$intensity
     xRangeFull <- range(X)
@@ -933,10 +926,7 @@ test_binYonX_multi <- function() {
 ## Compare binYonX, max, with plain profBin
 ##
 ## We might drop this test once we drop the profBin method.
-test_compare_with_profBin <- function() {
-
-    library(xcms)
-    library(RUnit)
+dontrun_test_compare_with_profBin <- function() {
 
     set.seed(18011977)
     X <- sort(abs(rnorm(500000, mean = 500, sd = 50)))
@@ -968,10 +958,7 @@ test_compare_with_profBin <- function() {
     checkException(b <- binYonX(X, X, nBins = 1000, sortedX = TRUE,
                                 shiftByHalfBinSize = TRUE))
 
-    ## Using real data:
-    library(faahKO)
-    fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
-    xr <- xcmsRaw(fs)
+    xr <- deepCopy(faahko_xr_1)
     X <- xr@env$mz
     Y <- xr@env$intensity
     scanidx <- xr@scanindex
@@ -1014,10 +1001,7 @@ test_compare_with_profBin <- function() {
 ## Compare with profBinM
 ##
 ## We might drop this test once we deprecate the profBinM method.
-test_compare_with_profBinM <- function() {
-
-    library(xcms)
-    library(RUnit)
+dontrun_test_compare_with_profBinM <- function() {
 
     ## profBinM: takes vectors of data and a second one specifying
     ## non-overlapping sub-sets.
@@ -1053,10 +1037,7 @@ test_compare_with_profBinM <- function() {
     M <- do.call(cbind, lapply(resM, function(x) {x$y}))
     checkIdentical(resX, M)
 
-    ## Work on "real" data.
-    library(faahKO)
-    fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"))
-    xr <- xcmsRaw(fs)
+    xr <- deepCopy(faahko_xr_1)
     X <- xr@env$mz
     Y <- xr@env$intensity
     scanidx <- xr@scanindex
@@ -1106,14 +1087,11 @@ test_compare_with_profBinM <- function() {
 ## Compare with profBinLin
 ##
 ## We might drop this test once we deprecate the profBinLin method.
-test_compare_with_profBinLin <- function() {
+dontrun_test_compare_with_profBinLin <- function() {
     ## binLin does linear interpolation of values, in which nothing
     ## was binned... let's see.
     ## binLin does the imputation on the already binned values, this was also
     ## implemented in the impute = "lin" method.
-
-    library(xcms)
-    library(RUnit)
 
     X <- 1:11
     brks <- breaks_on_nBins(1, 11, 5L, TRUE)
@@ -1230,7 +1208,8 @@ test_compare_with_profBinLin <- function() {
 
 ############################################################
 ## Compare with profBinLinM
-test_compare_with_profBinLinM <- function() {
+## profBinLinM is now deprecated!
+dontrun_test_compare_with_profBinLinM <- function() {
 
     ## A more realistic example.
     set.seed(18011977)
@@ -1304,9 +1283,7 @@ dontrun_tackle_binning_differences <- function() {
     library(xcms)
     library(RUnit)
 
-    library(faahKO)
-    fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xr <- xcmsRaw(fs)
+    xr <- deepCopy(faahko_xr_1)
     mz <- xr@env$mz
     int <- xr@env$intensity
     scantime <- xr@scantime

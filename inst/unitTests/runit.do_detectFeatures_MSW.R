@@ -1,11 +1,7 @@
 ############################################################
 ## do_detectFeatures_MSW tests
 
-library(msdata)
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
-
-xraw <- xcmsRaw(mzf[1], profstep = 0)
+xraw <- deepCopy(microtofq_xr)
 
 test_do_detectFeatures_MSW <- function() {
     feats1 <- xcms:::do_detectFeatures_MSW(xraw@env$intensity,
@@ -18,8 +14,9 @@ test_do_detectFeatures_MSW <- function() {
 }
 
 test_detectFeatures_MSW <- function() {
-    library(MSnbase)
-    od <- readMSData2(mzf)
+    ## library(MSnbase)
+    ## od <- readMSData2(mzf)
+    od <- microtofq_od
     ## Restrict to first spectrum
     od1 <- od[1]
     sp1 <- od[[1]]

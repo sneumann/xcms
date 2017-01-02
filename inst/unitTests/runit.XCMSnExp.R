@@ -1,90 +1,105 @@
 ## tests related to the new XCMSnExp object.
 library(RUnit)
 
-library(faahKO)
-fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-## library(msdata)
-## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
-## mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-##          system.file("microtofq/MM8.mzML", package = "msdata"))
-od <- readMSData2(fs)
 cwp <- CentWaveParam(noise = 10000, snthresh = 40)
 ## od <- filterRt(od, rt = c(3000, 4000))
-od_x <- detectFeatures(od, param = cwp)
-xs <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
+od_x <- detectFeatures(faahko_od, param = cwp)
+xs <- xcmsSet(faahko_3_files, profparam = list(step = 0), method = "centWave",
               noise = 10000, snthresh = 40)
 xs_2 <- group(xs)
 suppressWarnings(
     xs_2 <- retcor(xs_2)
 )
 xs_2 <- group(xs_2)
+od_fa <- faahko_od
+
+## Just checking if we can create an empty objects - got strange cases in which
+## a newly created object was not empty.
+.checkCreationOfEmptyObject <- function() {
+    x <- new("XCMSnExp")
+    checkTrue(!hasAdjustedRtime(x))
+    checkTrue(!hasAlignedFeatures(x))
+    checkTrue(!hasDetectedFeatures(x))
+}
 
 test_XCMSnExp_class <- function() {
+    .checkCreationOfEmptyObject()
     ## Basic contructor.
-    xs <- new("XCMSnExp")
-    xs@.processHistory <- list("a")
-    checkException(validObject(xs))
-    xs@.processHistory <- list(xcms:::ProcessHistory())
-    checkTrue(validObject(xs))
-    xod <- as(od, "XCMSnExp")
+    x <- new("XCMSnExp")
+    x@.processHistory <- list("a")
+    checkException(validObject(x))
+    x@.processHistory <- list(xcms:::ProcessHistory())
+    checkTrue(validObject(x))
+    xod <- as(od_fa, "XCMSnExp")
     checkTrue(validObject(xod))
-    ## MsFeatureData error
-    xod@msFeatureData$features <- 3
-    checkException(validObject(xod))
-    xod@msFeatureData$features <- xs_2@peaks
+    ## MsFeatureData error: environment is locked
+    checkException(xod@msFeatureData$features <- 3)
+    checkException(xod@msFeatureData$bla <- 4)
     checkTrue(validObject(xod))
-    xod@msFeatureData$features[1, "sample"] <- 40
-    checkException(validObject(xod))
-    xod@msFeatureData$features[1, "sample"] <- 4
-    xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected
-    checkTrue(validObject(xod))
-    xod@msFeatureData$adjustedRtime[[2]] <- 1:4
-    checkException(validObject(xod))
-    xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected[1:3]
-    checkException(validObject(xod))
+
+    .checkCreationOfEmptyObject()
+    ## xod@msFeatureData$features <- xs_2@peaks
+    ## checkTrue(validObject(xod))
+    ## xod@msFeatureData$features[1, "sample"] <- 40
+    ## checkException(validObject(xod))
+    ## xod@msFeatureData$features[1, "sample"] <- 3
+    ## xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected
+    ## checkTrue(validObject(xod))
+    ## xod@msFeatureData$adjustedRtime[[2]] <- 1:4
+    ## checkException(validObject(xod))
+    ## xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected[1:2]
+    ## checkException(validObject(xod))
+    ## That code above resulted in the strange effect that newly created objects
+    ## were not empty.
 }
 
 test_XCMSnExp_class_accessors <- function() {
-    xs <- new("XCMSnExp")
-    checkTrue(!hasAdjustedRtime(xs))
-    checkTrue(!hasAlignedFeatures(xs))
-    checkTrue(!hasDetectedFeatures(xs))
+    .checkCreationOfEmptyObject()
     ## Filling with data...
-    xod <- as(od, "XCMSnExp")
+    xod <- as(od_fa, "XCMSnExp")
     ## features
     checkTrue(!hasDetectedFeatures(xod))
     features(xod) <- xs_2@peaks
     checkTrue(hasDetectedFeatures(xod))
     checkEquals(features(xod), xs_2@peaks)
     checkException(features(xod) <- 4)
+    ## Wrong assignments.
+    pks <- xs_2@peaks
+    pks[1, "sample"] <- 40
+    checkException(features(xod) <- pks)
     ## featureGroups
     checkTrue(!hasAlignedFeatures(xod))
     library(S4Vectors)
     fd <- DataFrame(xs_2@groups)
     fd$featureidx <- xs_2@groupidx
     featureGroups(xod) <- fd
+    checkTrue(hasDetectedFeatures(xod))
     checkTrue(hasAlignedFeatures(xod))
     checkEquals(featureGroups(xod), fd)
     ## adjustedRtime
     checkTrue(!hasAdjustedRtime(xod))
     adjustedRtime(xod) <- xs_2@rt$corrected
     checkTrue(hasAdjustedRtime(xod))
+    checkTrue(hasDetectedFeatures(xod))
+    checkTrue(hasAlignedFeatures(xod))
     checkEquals(adjustedRtime(xod), xs_2@rt$corrected)
+    ## Wrong assignments.
+    checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
     ## rtime
     rtm <- rtime(xod)
-    checkEquals(rtm, split(rtime(od), fromFile(od)))
+    checkEquals(rtm, split(rtime(od_fa), fromFile(od_fa)))
+    .checkCreationOfEmptyObject()
 }
+
 
 test_XCMSnExp_processHistory <- function() {
     ph <- xcms:::ProcessHistory(fileIndex. = 2, info. = "For file 2")
     ph_2 <- xcms:::ProcessHistory(fileIndex. = 1:2, info. = "For files 1 to 2")
-    xod <- as(od, "XCMSnExp")
+    xod <- as(od_fa, "XCMSnExp")
     xod@.processHistory <- list(ph, ph_2)
     checkEquals(processHistory(xod), list(ph, ph_2))
     checkEquals(processHistory(xod, fileIndex = 2), list(ph, ph_2))
-    checkEquals(processHistory(xod, fileIndex = 1), list(ph))
+    checkEquals(processHistory(xod, fileIndex = 1), list(ph_2))
     checkException(processHistory(xod, fileIndex = 5))
 
     ph_3 <- xcms:::XProcessHistory(fileIndex = 1, param = CentWaveParam())
@@ -92,10 +107,12 @@ test_XCMSnExp_processHistory <- function() {
     checkEquals(length(processHistory(xod)), 3)
     checkEquals(processHistory(xod)[[3]], ph_3)
     checkEquals(processHistory(xod, fileIndex = 1), list(ph_2, ph_3))
+    checkTrue(validObject(xod))
 }
 
 test_XCMSnExp_droppers <- function() {
     ##checkTrue(FALSE)
+    .checkCreationOfEmptyObject()
 
     res <- dropFeatures(od_x)
     checkTrue(!hasDetectedFeatures(res))
@@ -229,6 +246,7 @@ test_XCMSnExp_droppers <- function() {
     checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
     checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
     checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
+    .checkCreationOfEmptyObject()
 }
 
 
@@ -236,8 +254,9 @@ test_XCMSnExp_droppers <- function() {
 ## manipulations - for all of these we have to ensure that eventual preprocessing
 ## results are removed.
 test_XCMSnExp_inherited_methods <- function() {
+    .checkCreationOfEmptyObject()
     ## [
-    tmp_1 <- od[1:10]
+    tmp_1 <- od_fa[1:10]
     suppressWarnings(
         tmp_2 <- od_x[1:10]
     )
@@ -247,7 +266,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## bin
-    tmp_1 <- bin(od)
+    tmp_1 <- bin(od_fa)
     suppressWarnings(
         tmp_2 <- bin(od_x)
     )
@@ -257,7 +276,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## clean
-    tmp_1 <- clean(od)
+    tmp_1 <- clean(od_fa)
     suppressWarnings(
         tmp_2 <- clean(od_x)
     )
@@ -267,7 +286,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## filterAcquisitionNum
-    tmp_1 <- filterAcquisitionNum(od)
+    tmp_1 <- filterAcquisitionNum(od_fa)
     suppressWarnings(
         tmp_2 <- filterAcquisitionNum(od_x)
     )
@@ -277,7 +296,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## filterMsLevel
-    tmp_1 <- filterMsLevel(od)
+    tmp_1 <- filterMsLevel(od_fa)
     suppressWarnings(
         tmp_2 <- filterMsLevel(od_x)
     )
@@ -287,7 +306,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## normalize
-    tmp_1 <- normalize(od)
+    tmp_1 <- normalize(od_fa)
     suppressWarnings(
         tmp_2 <- normalize(od_x)
     )
@@ -297,7 +316,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## pickPeaks
-    tmp_1 <- pickPeaks(od)
+    tmp_1 <- pickPeaks(od_fa)
     suppressWarnings(
         tmp_2 <- pickPeaks(od_x)
     )
@@ -307,7 +326,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## removePeaks
-    tmp_1 <- removePeaks(od)
+    tmp_1 <- removePeaks(od_fa)
     suppressWarnings(
         tmp_2 <- removePeaks(od_x)
     )
@@ -317,7 +336,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## smooth
-    tmp_1 <- smooth(od)
+    tmp_1 <- smooth(od_fa)
     suppressWarnings(
         tmp_2 <- smooth(od_x)
     )
@@ -326,6 +345,7 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    .checkCreationOfEmptyObject()
 }
 
 ## Test XCMSnExp filter methods.

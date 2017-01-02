@@ -22,9 +22,32 @@ if(require("RUnit", quietly=TRUE)) {
     attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
+    ## faahko_grouped <- group(faahko)
+    ## faahko_grouped_filled <- fillPeaks(faahko_grouped)
+    ## faahko_processed <- fillPeaks(group(retcor(faahko_grouped)))
+
     ## Disable parallel processing for the unit tests
     library(BiocParallel)
     register(SerialParam())
+
+    ## Create some objects we can re-use in different tests:
+    ## Needed in runit.XCMSnExp.R
+    faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+    ## library(MSnbase)
+
+    ## An xcmsRaw for the first file:
+    faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                           profstep = 0)
+    faahko_od <- readMSData2(faahko_3_files)
+
+    ## microtofq
+    library(msdata)
+    microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+                      system.file("microtofq/MM8.mzML", package = "msdata"))
+    microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
+    microtofq_od <- readMSData2(microtofq_fs)
 
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))

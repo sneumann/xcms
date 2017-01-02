@@ -1,19 +1,20 @@
 ## Test detectFeatures centWave
 
-library(faahKO)
+## library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
 
-library(msdata)
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+## library(msdata)
+## mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+##          system.file("microtofq/MM8.mzML", package = "msdata"))
 ## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
-
+xr <- deepCopy(faahko_xr_1)
+onDisk <- filterFile(faahko_od, file = 1)
 
 test_do_detectFeatures_centWave <- function() {
-    xr <- xcmsRaw(fs[1], profstep = 0)
+    ## xr <- xcmsRaw(fs[1], profstep = 0)
     ## We expect that changing a parameter has an influence on the result.
     mzVals <- xr@env$mz
     intVals <- xr@env$intensity
@@ -51,7 +52,7 @@ test_do_detectFeatures_centWave <- function() {
 test_featureDetection_centWave <- function() {
     ## Control
     library(MSnbase)
-    xr <- xcmsRaw(fs[1], profstep = 0)
+    ## xr <- xcmsRaw(fs[1], profstep = 0)
     ppm <- 40
     snthresh <- 40
     res_x <- findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh,
@@ -62,7 +63,7 @@ test_featureDetection_centWave <- function() {
                   noise = 100000)
     checkEquals(xs@peaks[, colnames(res_x)], res_x)
     ## OnDiskMSnExp
-    onDisk <- readMSData2(fs[1], msLevel. = 1)
+    ## onDisk <- readMSData2(fs[1], msLevel. = 1)
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
     res <- detectFeatures(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
@@ -97,12 +98,12 @@ dontrun_test_benchmark_centWaves <- function() {
     library(MSnbase)
     library(xcms)
     ##
-    xr <- xcmsRaw(f[1], profstep = 0)
+    ## xr <- xcmsRaw(f[1], profstep = 0)
     ppm <- 40
     snthresh <- 40
 
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh)
-    onDisk <- readMSData2(f[1], msLevel. = 1)
+    ## onDisk <- readMSData2(f[1], msLevel. = 1)
     register(SerialParam())
     system.time(
         tmp <- detectFeatures(onDisk, param = cwp)
@@ -138,12 +139,12 @@ dontrun_test_benchmark_centWaves <- function() {
     library(MSnbase)
     library(xcms)
     ##
-    xr <- xcmsRaw(f[1], profstep = 0)
+    ## xr <- xcmsRaw(f[1], profstep = 0)
     ppm <- 40
     snthresh <- 40
 
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh)
-    onDisk <- readMSData2(f[1], msLevel. = 1)
+    ## onDisk <- readMSData2(f[1], msLevel. = 1)
     register(SerialParam())
     system.time(
         tmp <- detectFeatures(onDisk, param = cwp)

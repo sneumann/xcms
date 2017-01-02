@@ -26,7 +26,6 @@ Imports:
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
     S4Vectors,
-    MSnbase (>= 2.1.4)
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),

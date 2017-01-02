@@ -1,20 +1,21 @@
 ## Testo detectFeatures matchedFilter
-library(xcms)
-library(RUnit)
+## library(xcms)
+## library(RUnit)
 
-library(faahKO)
+## library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
-library(msdata)
-f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+## library(msdata)
+## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+## mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+##          system.file("microtofq/MM8.mzML", package = "msdata"))
 
 
 test_do_detectFeatures_matchedFilter <- function() {
-    xr <- xcmsRaw(fs[1], profstep = 0)
+    ## xr <- xcmsRaw(fs[1], profstep = 0)
+    xr <- deepCopy(faahko_xr_1)
     ## We expect that changing a parameter has an influence on the result.
     mzVals <- xr@env$mz
     intVals <- xr@env$intensity
@@ -49,7 +50,8 @@ test_featureDetection_matchedFilter <- function() {
     res <- xcmsSet(fs[1], method = "matchedFilter", profmethod = "binlin",
                    step = binSize(mfp))
     ## onDisk
-    onDisk <- readMSData2(fs[1])
+    ## onDisk <- readMSData2(fs[1])
+    onDisk <- filterFile(faahko_od, file = 1)
     res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)

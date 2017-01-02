@@ -36,10 +36,11 @@ test_CentWaveParam <- function() {
     checkException(new("CentWaveParam", prefilter = c(3, 4, 5)))
 
     p@mzCenterFun <- "other"
-    checkTrue(is.character(validObject(p)))
+    checkException(validObject(p))
     ##plist <- as.list(p)
 
     ## Check getter/setter methods:
+    p <- new("CentWaveParam")
     ppm(p) <- 1
     checkEquals(ppm(p), 1)
     checkException(ppm(p) <- "a")
@@ -69,9 +70,9 @@ test_CentWaveParam <- function() {
     verboseColumns(p) <- TRUE
     checkEquals(verboseColumns(p), TRUE)
     checkException(verboseColumns(p) <- c(TRUE, TRUE))
-    firstBaselineCheck(b) <- TRUE
-    checkEquals(firstBaselineCheck(b), TRUE)
-    checkException(firstBaselineCheck(p) c(TRUE, TRUE))
+    firstBaselineCheck(p) <- TRUE
+    checkEquals(firstBaselineCheck(p), TRUE)
+    checkException(firstBaselineCheck(p) <- c(TRUE, TRUE))
 }
 
 ############################################################

@@ -3,7 +3,9 @@
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     classVersion(.Object)["XCMSnExp"] <- "0.0.1"
-    callNextMethod(.Object, ...)
+    .Object <- callNextMethod(.Object, ...)
+    lockEnvironment(.Object@msFeatureData)
+    return(.Object)
 })
 
 ##' @rdname XCMSnExp-class
@@ -598,7 +600,7 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
         lockEnvironment(newE, bindings = TRUE)
         object@msFeatureData <- newE
     }
-    if (validObject)
+    if (validObject(object))
         return(object)
 })
 
