@@ -63,6 +63,7 @@ Collate:
     'functions-OnDiskMSnExp.R'
     'functions-Params.R'
     'functions-ProcessHistory.R'
+    'functions-XCMSnExp.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'

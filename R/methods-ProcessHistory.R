@@ -1,4 +1,5 @@
 ## Methods for ProcessHistory and XProcessHistory.
+#' @include functions-ProcessHistory.R
 
 setMethod("initialize", "ProcessHistory", function(.Object, ...) {
     classVersion(.Object)["ProcessHistory"] <- "0.0.2"

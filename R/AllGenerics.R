@@ -300,4 +300,3 @@ setGeneric("write.mzQuantML", function(object, ...) standardGeneric("write.mzQua
 
 ## X
 setGeneric("xcmsSource", function(object, ...) standardGeneric("xcmsSource"))
-

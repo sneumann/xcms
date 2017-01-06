@@ -1,5 +1,6 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
+#' @include functions-XCMSnExp.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     classVersion(.Object)["XCMSnExp"] <- "0.0.1"
@@ -150,11 +151,12 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     features(newFd) <- value
+    lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     if (validObject(object)) {
-        ## Lock the environment so that only accessor methods can change values.
-        lockEnvironment(newFd, bindings = TRUE)
-        object@msFeatureData <- newFd
+        ## ## Lock the environment so that only accessor methods can change values.
+        ## lockEnvironment(newFd, bindings = TRUE)
+        ## object@msFeatureData <- newFd
         return(object)
     }
 })
@@ -236,10 +238,11 @@ setMethod("dropFeatures", "XCMSnExp", function(object) {
     if (hasDetectedFeatures(object)) {
         object <- dropFeatureGroups(object)
         object <- dropAdjustedRtime(object)
-        idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
-                        .PROCSTEP.FEATURE.DETECTION)
-        if (length(idx_fd) > 0)
-            object@.processHistory <- object@.processHistory[-idx_fd]
+        object <- dropProcessHistories(object, type = .PROCSTEP.FEATURE.DETECTION)
+        ## idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
+        ##                 .PROCSTEP.FEATURE.DETECTION)
+        ## if (length(idx_fd) > 0)
+        ##     object@.processHistory <- object@.processHistory[-idx_fd]
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropFeatures(newFd)
@@ -261,11 +264,12 @@ setMethod("dropFeatures", "XCMSnExp", function(object) {
 ##' @rdname XCMSnExp-class
 setMethod("dropFeatureGroups", "XCMSnExp", function(object) {
     if (hasAlignedFeatures(object)) {
-        phTypes <- unlist(lapply(processHistory(object), processType))
-        idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
-        idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
-        if (length(idx_fal) > 0)
-            object@.processHistory <- object@.processHistory[-idx_fal]
+        ## phTypes <- unlist(lapply(processHistory(object), processType))
+        ## idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
+        ## idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
+        ## if (length(idx_fal) > 0)
+        ##     object@.processHistory <- object@.processHistory[-idx_fal]
+        object <- dropProcessHistories(object, type = .PROCSTEP.FEATURE.ALIGNMENT)
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropFeatureGroups(newFd)
@@ -371,8 +375,11 @@ setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
           function(x, i, j, drop) {
               if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
                   hasDetectedFeatures(x)) {
-                  x@.processHistory <- list()
-                  x@msFeatureData <- new("MsFeatureData")
+                  ## x@.processHistory <- list()
+                  ## x@msFeatureData <- new("MsFeatureData")
+                  x <- dropAdjustedRtime(x)
+                  x <- dropFeatureGroups(x)
+                  x <- dropFeatures(x)
                   warning("Removed preprocessing results")
               }
               callNextMethod()
@@ -394,8 +401,11 @@ setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
 setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -416,8 +426,11 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
                                         verbose = FALSE, msLevel.) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -431,8 +444,11 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
 setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -455,8 +471,11 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
 setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -534,20 +553,23 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
         stop("'file' has to be within 1 and the number of files in the object!")
     ## Get the data we want to keep/subset
     fts <- features(object)
-    ph <- processHistory(object)
-    if (hasAdjustedRtime(object))
+    if (hasAdjustedRtime(object)) {
         warning("Adjusted retention times removed.")
-    if (hasAlignedFeatures(object))
+        object <- dropAdjustedRtime(object)
+    }
+    if (hasAlignedFeatures(object)) {
         warning("Feature alignment information removed.")
+        object <- dropFeatureGroups(object)
+    }
+    ## Process the processing history.
+    object <- dropProcessHistories(object, type = c(.PROCSTEP.FEATURE.ALIGNMENT,
+                                                    .PROCSTEP.RTIME.CORRECTION))
+    ph <- processHistory(object)
     ## The next method will actually clean everything, process history and
     ## msFeatureData
     suppressWarnings(
         object <- callNextMethod()
     )
-    ## Process the processing history.
-    if (length(ph))
-        ph <- dropProcessHistoriesByType(ph, type = c(.PROCSTEP.FEATURE.ALIGNMENT,
-                                                      .PROCSTEP.RTIME.CORRECTION))
     ## Remove ProcessHistory not related to any of the files.
     if (length(ph)) {
         kp <- unlist(lapply(ph, function(z) {
@@ -561,7 +583,7 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
         })
     }
     ## Process features.
-    fts <- fts[fts[, "sample"] %in% file, ]
+    fts <- fts[fts[, "sample"] %in% file, , drop = FALSE]
     fts[, "sample"] <- match(fts[, "sample"], file)
     features(object) <- fts
     object@.processHistory <- ph
@@ -656,8 +678,11 @@ setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
                                             ...) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -683,8 +708,11 @@ setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
                                             SNR = 0L, ...) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -702,8 +730,11 @@ setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE
                                               msLevel.) {
     if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
         hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
+        ## object@.processHistory <- list()
+        ## object@msFeatureData <- new("MsFeatureData")
+        object <- dropAdjustedRtime(object)
+        object <- dropFeatureGroups(object)
+        object <- dropFeatures(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -719,8 +750,11 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
                                          ...) {
     if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
         hasDetectedFeatures(x)) {
-        x@.processHistory <- list()
-        x@msFeatureData <- new("MsFeatureData")
+        ## x@.processHistory <- list()
+        ## x@msFeatureData <- new("MsFeatureData")
+        x <- dropAdjustedRtime(x)
+        x <- dropFeatureGroups(x)
+        x <- dropFeatures(x)
         warning("Removed preprocessing results")
     }
     callNextMethod()
