@@ -77,6 +77,13 @@ setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
     res <- adjustedRtime(object@msFeatureData)
     ## Adjusted retention time is a list of retention times.
     if (!bySample) {
+        ## Have to re-order the adjusted retention times by spectrum name, such
+        ## that rtime are.
+        res <- unlist(res, use.names = FALSE)
+        sNames <- unlist(split(featureNames(object), fromFile(object)),
+                         use.names = FALSE)
+        names(res) <- sNames
+        res <- res[featureNames(object)]
     }
     return(res)
 })
@@ -123,11 +130,12 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     featureGroups(newFd) <- value
+    lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     if (validObject(object)) {
         ## Lock the environment so that only accessor methods can change values.
-        lockEnvironment(newFd, bindings = TRUE)
-        object@msFeatureData <- newFd
+        ## lockEnvironment(newFd, bindings = TRUE)
+        ## object@msFeatureData <- newFd
         return(object)
     }
 })

@@ -212,7 +212,9 @@ detection results.
 
 The \code{adjustedRtime},\code{adjustedRtime<-} method
 extract/set adjusted retention times. Retention times are adjusted by
-retention time correction/adjustment methods.
+retention time correction/adjustment methods. The \code{bySample} parameter
+allows to specify whether the adjusted retention time should be grouped by
+sample (file).
 
 The \code{featureGroups}, \code{featureGroups<-} methods extract
 or set the feature alignment results.
