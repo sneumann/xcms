@@ -293,7 +293,9 @@ exportMethods(
     "mzIntervalExtension<-",
     "polarity",
     "polarity<-",
-    "rtime"
+    "rtime",
+    "mz",
+    "intensity"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",

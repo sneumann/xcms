@@ -62,15 +62,23 @@ setMethod("hasDetectedFeatures", "XCMSnExp", function(object) {
 ##'
 ##' @description The \code{adjustedRtime},\code{adjustedRtime<-} method
 ##' extract/set adjusted retention times. Retention times are adjusted by
-##' retention time correction/adjustment methods.
+##' retention time correction/adjustment methods. The \code{bySample} parameter
+##' allows to specify whether the adjusted retention time should be grouped by
+##' sample (file).
 ##'
-##' @return For \code{adjustedRtime}: a \code{list} (length equal to the number
-##' of samples) with numeric vectors with the adjusted retention time for each
-##' scan or \code{NULL} if no such data is present.
+##' @return For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
+##' vector with the adjusted retention for each spectrum of all files/samples
+##' within the object. If \code{bySample = TRUE } a \code{list} (length equal to
+##' the number of samples) with adjusted retention times grouped by sample.
+##' Returns \code{NULL} if no adjusted retention times are present.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("adjustedRtime", "XCMSnExp", function(object) {
-    return(adjustedRtime(object@msFeatureData))
+setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
+    res <- adjustedRtime(object@msFeatureData)
+    ## Adjusted retention time is a list of retention times.
+    if (!bySample) {
+    }
+    return(res)
 })
 ##' @aliases adjustedRtime<-
 ##'
@@ -79,11 +87,12 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     adjustedRtime(newFd) <- value
+    lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     if (validObject(object)) {
         ## Lock the environment so that only accessor methods can change values.
-        lockEnvironment(newFd, bindings = TRUE)
-        object@msFeatureData <- newFd
+        ## lockEnvironment(newFd, bindings = TRUE)
+        ## object@msFeatureData <- newFd
         return(object)
     }
 })
@@ -162,17 +171,63 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
 })
 
 ##' @description The \code{rtime} method extracts the retention time for each
-##' scan. In contrast to the \code{rtime} method for
-##' \code{\link[MSnbase]{OnDiskMSnExp}} objects it returns the retention time
-##' as a \code{list} grouped by sample.
+##' scan. The \code{bySample} parameter allows to return the values grouped
+##' by sample/file.
 ##'
-##' @return For \code{rtime}: a \code{list} with numeric vectors representing the
-##' original retention time for each scan in each sample.
+##' @param bySample logical(1) specifying whether results should be grouped by
+##' sample.
+##'
+##' @return For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the
+##' retention times of each scan, if \code{bySample = TRUE} a \code{list} of
+##' numeric vectors with the retention times per sample.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("rtime", "XCMSnExp", function(object) {
-    res <- callNextMethod()
-    return(split(res, fromFile(object)))
+setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE) {
+    ## Alternative:
+    ## theM <- getMethod("rtime", "OnDiskMSnExp")
+    ## res <- theM(object)
+    res <- callNextMethod(object = object)
+    if (bySample)
+        res <- split(res, fromFile(object))
+    return(res)
+})
+
+##' @description The \code{mz} method extracts the mz values from each scan of
+##' all files within an \code{XCMSnExp} object. These values are extracted from
+##' the original data files and eventual processing steps are applied
+##' \emph{on the fly}. Using the \code{bySample} parameter it is possible to
+##' switch from the default grouping of mz values by spectrum/scan to a grouping
+##' by sample/file.
+##'
+##' @return For \code{mz}: if \code{bySample = FALSE} a \code{list} with the mz
+##' values (numeric vectors) of each scan. If \code{bySample = TRUE} a
+##' \code{list} with the mz values per sample.
+##'
+##' @rdname XCMSnExp-class
+setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
+    res <- callNextMethod(object = object)
+    if (bySample)
+        res <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+    return(res)
+})
+
+##' @description The \code{intensity} method extracts the intensity values from
+##' each scan of all files within an \code{XCMSnExp} object. These values are
+##' extracted from the original data files and eventual processing steps are
+##' applied \emph{on the fly}. Using the \code{bySample} parameter it is possible
+##' to switch from the default grouping of intensity values by spectrum/scan to
+##' a grouping by sample/file.
+##'
+##' @return For \code{intensity}: if \code{bySample = FALSE} a \code{list} with
+##' the intensity values (numeric vectors) of each scan. If
+##' \code{bySample = TRUE} a \code{list} with the intensity values per sample.
+##'
+##' @rdname XCMSnExp-class
+setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
+    res <- callNextMethod(object = object)
+    if (bySample)
+        res <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+    return(res)
 })
 
 ## processHistory
@@ -628,10 +683,12 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 
 ##' @description The \code{filterRt} method filters the data set based on the
 ##' provided retention time range. All features and feature groups within
-##' the specified retention time window are retained.
+##' the specified retention time window are retained. Filtering by retention time
+##' does not drop any preprocessing results. The method returns an empty object
+##' if no spectrum or feature is within the specified retention time range.
 ##'
 ##' @param rt For \code{filterRt}: \code{numeric(2)} defining the retention time
-##' window (lowe and upper bound) for the filtering.
+##' window (lower and upper bound) for the filtering.
 ##'
 ##' @param adjusted For \code{filterRt}: \code{logical} indicating whether the
 ##' object should be filtered by original (\code{adjusted = FALSE}) or adjusted
@@ -640,26 +697,55 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
                                            adjusted = FALSE) {
-
+    stop("Not implemented yet.")
+    if (missing(rt))
+        return(object)
+    rt <- range(rt)
     ## Get index of spectra within the rt window.
     ## Subset using [
     ## Subset features
     ## Subset feature groups
     ## Subset adjusted retention time
-
-    ## WARN: will have to get index of spectra to keep using rtime(object) (or
-    ## adjustedRtime(object) for adjusted = TRUE) since we've overwritten the
-    ## original method. Hence we can also NOT use the callNextMethod here!
-    ## Will have to subset manually using [
-    ## For adjusted = TRUE: use the adjusted retention time. Here we have to
-    ## define the spectra to keep from the adjustedRtime(object) rtime(object)
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
-        object@.processHistory <- list()
-        object@msFeatureData <- new("MsFeatureData")
-        warning("Removed preprocessing results")
+    ## NOOOO WAY!!! rtime is a problem!!! Does no longer match.
+    if (!adjusted) {
+        have_rt <- unlist(rtime(object))
+    } else {
+        have_rt <- unlist(adjustedRtime(object))
+        if (is.null(have_rt))
+            stop("No adjusted retention time available!")
     }
-    callNextMethod()
+    keep_idx <- which(have_rt >= rt[1] & have_rt <= rt[2])
+    msg <- paste0("Filter: select retention time [",
+                  paste0(rt, collapse = "-"),
+                  "] and MS level(s), ",
+                  paste(unique(msLevel.),
+                        collapse = " "))
+    msg <- paste0(msg, " [", date(), "]")
+    if (length(keep_idx) == 0) {
+        res <- new("XCMSnExp")
+        res@processingData@processing <- c(res@processingData@processing, msg)
+        return(res)
+    }
+
+    ## Extract the stuff we want to keep
+    mfd <- as(.copy_env(object@msFeatureData), "MsFeatureData")
+    ph <- processHistory(object)
+    ## 1) Subset the OnDiskMSnExp part
+    object <- object[keep_idx]
+    ## 2) Subset features within the retention time range
+    if (hasDetectedFeatures(mfd)) {
+    }
+    ## 3) Subset featureGroups
+    if (hasAlignedFeatures(mfd)) {
+    }
+    ## 4) Subset adjusted retention time
+    if (hasAdjustedRtime(mfd)) {
+    }
+    ## Put the stuff back
+    object@processingData@processing <- c(object@processingData@processing, msg)
+    object@msFeatureData <- mfd
+    if (validObject(object))
+        return(object)
 })
 
 ##' The \code{normalize} method performs basic normalization of spectra

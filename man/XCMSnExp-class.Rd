@@ -42,6 +42,8 @@
 \alias{hasDetectedFeatures}
 \alias{hasDetectedFeatures,MsFeatureData-method}
 \alias{hasDetectedFeatures,XCMSnExp-method}
+\alias{intensity,XCMSnExp-method}
+\alias{mz,XCMSnExp-method}
 \alias{processHistory}
 \alias{processHistory,XCMSnExp-method}
 \alias{rtime,XCMSnExp-method}
@@ -83,7 +85,7 @@
 
 \S4method{hasDetectedFeatures}{XCMSnExp}(object)
 
-\S4method{adjustedRtime}{XCMSnExp}(object)
+\S4method{adjustedRtime}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
@@ -95,7 +97,11 @@
 
 \S4method{features}{XCMSnExp}(object) <- value
 
-\S4method{rtime}{XCMSnExp}(object)
+\S4method{rtime}{XCMSnExp}(object, bySample = FALSE)
+
+\S4method{mz}{XCMSnExp}(object, bySample = FALSE)
+
+\S4method{intensity}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex)
 
@@ -123,14 +129,19 @@ For \code{features<-}: a \code{matrix} with information on
 detected features. See return value for the \code{features} method for the
 expected format.}
 
+\item{bySample}{logical(1) specifying whether results should be grouped by
+sample.}
+
 \item{fileIndex}{For \code{processHistory}: optional \code{numeric}
 specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
 }
 \value{
-For \code{adjustedRtime}: a \code{list} (length equal to the number
-of samples) with numeric vectors with the adjusted retention time for each
-scan or \code{NULL} if no such data is present.
+For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
+vector with the adjusted retention for each spectrum of all files/samples
+within the object. If \code{bySample = TRUE } a \code{list} (length equal to
+the number of samples) with adjusted retention times grouped by sample.
+Returns \code{NULL} if no adjusted retention times are present.
 
 For \code{featureGroups}: a \code{DataFrame} with feature alignment
 information, each row corresponding to one group of aligned features (across
@@ -151,8 +162,17 @@ the feature) and \code{"sample"} (sample index in which the feature was
 identified). Depending on the employed feature detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
 
-For \code{rtime}: a \code{list} with numeric vectors representing the
-original retention time for each scan in each sample.
+For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the
+retention times of each scan, if \code{bySample = TRUE} a \code{list} of
+numeric vectors with the retention times per sample.
+
+For \code{mz}: if \code{bySample = FALSE} a \code{list} with the mz
+values (numeric vectors) of each scan. If \code{bySample = TRUE} a
+\code{list} with the mz values per sample.
+
+For \code{intensity}: if \code{bySample = FALSE} a \code{list} with
+the intensity values (numeric vectors) of each scan. If
+\code{bySample = TRUE} a \code{list} with the intensity values per sample.
 
 For \code{processHistory}: a \code{list} of
 \code{\link{ProcessHistory}} objects providing the details of the individual
@@ -204,9 +224,22 @@ have to use the \code{features<-} method directly as detected features are
 added to the object by the \code{\link{detectFeatures}} method.
 
 The \code{rtime} method extracts the retention time for each
-scan. In contrast to the \code{rtime} method for
-\code{\link[MSnbase]{OnDiskMSnExp}} objects it returns the retention time
-as a \code{list} grouped by sample.
+scan. The \code{bySample} parameter allows to return the values grouped
+by sample/file.
+
+The \code{mz} method extracts the mz values from each scan of
+all files within an \code{XCMSnExp} object. These values are extracted from
+the original data files and eventual processing steps are applied
+\emph{on the fly}. Using the \code{bySample} parameter it is possible to
+switch from the default grouping of mz values by spectrum/scan to a grouping
+by sample/file.
+
+The \code{intensity} method extracts the intensity values from
+each scan of all files within an \code{XCMSnExp} object. These values are
+extracted from the original data files and eventual processing steps are
+applied \emph{on the fly}. Using the \code{bySample} parameter it is possible
+to switch from the default grouping of intensity values by spectrum/scan to
+a grouping by sample/file.
 
 The \code{processHistory} method returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base

@@ -6,6 +6,9 @@ NEW FEATURES:
 + features, features<-, adjustedRtime, adjustedRtime<-, featureGroups,
   featureGroups<-, hasAlignedFeatures, hasAdjustedRtime and hasDetectedFeatures
   methods.
++ dropFeatures, dropFeatureGroups and dropAdjustedRtime methods.
++ mz, intensity and rtime methods for XCMSnExp allowing to return values grouped
+  by sample.
 
 
 CHANGES IN VERSION 1.51.4

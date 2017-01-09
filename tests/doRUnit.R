@@ -35,7 +35,6 @@ if(require("RUnit", quietly=TRUE)) {
     faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-    ## library(MSnbase)
 
     ## An xcmsRaw for the first file:
     faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),

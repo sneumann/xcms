@@ -53,6 +53,46 @@ test_XCMSnExp_class <- function() {
     ## were not empty.
 }
 
+test_XCMSnExp_rtime <- function() {
+    rts <- rtime(faahko_od)
+    rts_2 <- rtime(od_x)
+    checkEquals(rts, rts_2)
+    ## Test with bySample.
+    rts_3 <- rtime(od_x, bySample = TRUE)
+    checkEquals(rts_3, split(rts, f = fromFile(faahko_od)))
+    ## Check if rtimes are correctly ordered for bySample
+    rts_4 <- rtime(filterFile(faahko_od, file = 2))
+    checkEquals(rts_4, rts_3[[2]])
+    rts_4 <- rtime(filterFile(faahko_od, file = 3))
+    checkEquals(rts_4, rts_3[[3]])
+}
+
+test_XCMSnExp_mz <- function() {
+    mzs <- mz(faahko_od)
+    ## The check below has to work, since we're calling the mz,OnDiskMSnExp.
+    ## mzs_2 <- mz(od_x)
+    ## checkEquals(mzs, mzs_2)
+    mzs_2 <- mz(od_x, bySample = TRUE)
+    tmp <- split(mzs, fromFile(faahko_od))
+    checkEquals(lapply(tmp, unlist, use.names = FALSE), mzs_2)
+    ## Check if mz are correctly ordered for bySample
+    mzs_3 <- mz(filterFile(faahko_od, file = 2))
+    checkEquals(unlist(mzs_3, use.names = FALSE), mzs_2[[2]])
+}
+
+test_XCMSnExp_intensity <- function() {
+    ints <- intensity(faahko_od)
+    ## The check below has to work, since we're calling the intensity,OnDiskMSnExp.
+    ## ints_2 <- intensity(od_x)
+    ## checkEquals(ints, ints_2)
+    ints_2 <- intensity(od_x, bySample = TRUE)
+    tmp <- split(ints, fromFile(faahko_od))
+    checkEquals(lapply(tmp, unlist, use.names = FALSE), ints_2)
+    ## Check if mz are correctly ordered for bySample
+    ints_3 <- intensity(filterFile(faahko_od, file = 2))
+    checkEquals(unlist(ints_3, use.names = FALSE), ints_2[[2]])
+}
+
 test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
     ## Filling with data...
@@ -85,9 +125,6 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(adjustedRtime(xod), xs_2@rt$corrected)
     ## Wrong assignments.
     checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
-    ## rtime
-    rtm <- rtime(xod)
-    checkEquals(rtm, split(rtime(od_fa), fromFile(od_fa)))
     .checkCreationOfEmptyObject()
 }
 

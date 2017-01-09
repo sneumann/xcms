@@ -38,7 +38,7 @@ the object should be subsetted.}
 \item{...}{Optional additional arguments.}
 
 \item{rt}{For \code{filterRt}: \code{numeric(2)} defining the retention time
-window (lowe and upper bound) for the filtering.}
+window (lower and upper bound) for the filtering.}
 
 \item{adjusted}{For \code{filterRt}: \code{logical} indicating whether the
 object should be filtered by original (\code{adjusted = FALSE}) or adjusted
@@ -61,7 +61,9 @@ Adjusted retention times, if present, are not altered by the filtering.
 
 The \code{filterRt} method filters the data set based on the
 provided retention time range. All features and feature groups within
-the specified retention time window are retained.
+the specified retention time window are retained. Filtering by retention time
+does not drop any preprocessing results. The method returns an empty object
+if no spectrum or feature is within the specified retention time range.
 }
 \note{
 The \code{filterFile} method removes also process history steps not
