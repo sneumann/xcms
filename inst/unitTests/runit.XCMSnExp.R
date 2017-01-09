@@ -122,7 +122,14 @@ test_XCMSnExp_class_accessors <- function() {
     checkTrue(hasAdjustedRtime(xod))
     checkTrue(hasDetectedFeatures(xod))
     checkTrue(hasAlignedFeatures(xod))
-    checkEquals(adjustedRtime(xod), xs_2@rt$corrected)
+    checkEquals(adjustedRtime(xod, bySample = TRUE), xs_2@rt$corrected)
+    ## Indirect test that the ordering of the adjusted retention times matches
+    ## ordering of rtime.
+    tmp <- unlist(adjustedRtime(xod, bySample = TRUE))
+    tmp_diff <- tmp - rtime(xod)
+    tmp_diff_2 <- adjustedRtime(xod, bySample = FALSE) - rtime(xod)
+    checkTrue(max(tmp_diff) > max(tmp_diff_2))
+    checkEquals(names(adjustedRtime(xod)), names(rtime(xod)))
     ## Wrong assignments.
     checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
     .checkCreationOfEmptyObject()
