@@ -107,6 +107,10 @@ validateMsFeatureData <- function(x) {
 ##' @description Filter features and sync them with with the present
 ##' filterGroups, i.e. update their featureidx column or remove them.
 ##'
+##' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
+##' @param idx \code{numeric} with the indices of the features to keep.
+##'
+##' @return A \code{MsFeatureData}.
 ##' @author Johannes Rainer
 ##' @noRd
 .filterFeatures <- function(x, idx) {
@@ -135,7 +139,12 @@ validateMsFeatureData <- function(x) {
         af <- do.call(rbind, afL)
         featureGroups(new_e) <- af
     }
-    if (hasAdjustedRtime(x))
-        adjustedRtime(new_e) <- adjustedRtime(x)
+    if (hasAdjustedRtime(x)) {
+        if (is(x, "XCMSnExp"))
+            adjustedRtime(new_e) <- adjustedRtime(x, bySample = TRUE)
+        else
+            adjustedRtime(new_e) <- adjustedRtime(x)
+
+    }
     return(new_e)
 }

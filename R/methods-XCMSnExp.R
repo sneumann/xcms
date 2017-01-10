@@ -293,8 +293,8 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
 ##' @description The \code{dropFeatures} method drops any identified features
 ##' and returns the object without that information. Note that for
 ##' \code{XCMSnExp} objects the method drops all results from a feature alignment
-##' or retention time adjustment. For \code{XCMSnExp} objects the method drops
-##' also any related process history steps.
+##' or retention time adjustment too. For \code{XCMSnExp} objects the method
+##' drops also any related process history steps.
 ##'
 ##' @rdname XCMSnExp-class
 setMethod("dropFeatures", "XCMSnExp", function(object) {
@@ -392,8 +392,8 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 ## o filterAcquisitionNum remove the results.
 ## o filterFile remove the results.
 ## o filterMsLevel remove the results.
-## o filterMz remove the results.
-## o filterRt remove the results.
+## o filterMz
+## o filterRt
 ## o fromFile<-
 ## o normalize remove the results.
 ## o pickPeaks remove the results.
@@ -705,53 +705,74 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
                                            adjusted = FALSE) {
-    stop("Not implemented yet.")
     if (missing(rt))
         return(object)
+    if (!missing(msLevel.))
+        warning("Parameter 'msLevel.' currently ignored.")
     rt <- range(rt)
     ## Get index of spectra within the rt window.
     ## Subset using [
     ## Subset features
     ## Subset feature groups
     ## Subset adjusted retention time
-    ## NOOOO WAY!!! rtime is a problem!!! Does no longer match.
     if (!adjusted) {
-        have_rt <- unlist(rtime(object))
+        have_rt <- rtime(object)
     } else {
-        have_rt <- unlist(adjustedRtime(object))
+        have_rt <- adjustedRtime(object, bySample = FALSE)
         if (is.null(have_rt))
             stop("No adjusted retention time available!")
     }
-    keep_idx <- which(have_rt >= rt[1] & have_rt <= rt[2])
+    keep_logical <- have_rt >= rt[1] & have_rt <= rt[2]
     msg <- paste0("Filter: select retention time [",
                   paste0(rt, collapse = "-"),
                   "] and MS level(s), ",
-                  paste(unique(msLevel.),
+                  paste(unique(msLevel(object)),
                         collapse = " "))
     msg <- paste0(msg, " [", date(), "]")
-    if (length(keep_idx) == 0) {
+    if (!any(keep_logical)) {
         res <- new("XCMSnExp")
         res@processingData@processing <- c(res@processingData@processing, msg)
         return(res)
     }
 
     ## Extract the stuff we want to keep
-    mfd <- as(.copy_env(object@msFeatureData), "MsFeatureData")
+    ## mfd <- as(.copy_env(object@msFeatureData), "MsFeatureData")
+    newMfd <- new("MsFeatureData")
     ph <- processHistory(object)
-    ## 1) Subset the OnDiskMSnExp part
-    object <- object[keep_idx]
-    ## 2) Subset features within the retention time range
-    if (hasDetectedFeatures(mfd)) {
+    ## 1) Subset features within the retention time range and feature groups.
+    keep_fts <- numeric()
+    if (hasDetectedFeatures(object)) {
+        keep_fts <- which(features(object)[, "rtmin"] >= rt[1] &
+                          features(object)[, "rtmax"] <= rt[2])
+        if (length(keep_fts))
+            newMfd <- .filterFeatures(object, idx = keep_fts)
+            ## features(newMfd) <- features(object)[keep_fts, , drop = FALSE]
+        else
+            ph <- dropProcessHistoriesList(ph,
+                                           type = c(.PROCSTEP.FEATURE.DETECTION,
+                                                    .PROCSTEP.FEATURE.ALIGNMENT,
+                                                    .PROCSTEP.RTIME.CORRECTION))
     }
-    ## 3) Subset featureGroups
-    if (hasAlignedFeatures(mfd)) {
+    ## 2) Subset adjusted retention time
+    if (hasAdjustedRtime(object) & length(keep_fts)) {
+        ## Subset the adjusted retention times (which are stored as a list of
+        ## rts by file):
+        keep_by_file <- split(keep_logical, fromFile(object))
+        adj_rt <- mapply(FUN = function(y, z) {
+            return(y[z])
+        }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
+        SIMPLIFY = FALSE)
+        adjustedRtime(newMfd) <- adj_rt
     }
-    ## 4) Subset adjusted retention time
-    if (hasAdjustedRtime(mfd)) {
-    }
+    ## 3) Subset the OnDiskMSnExp part
+    suppressWarnings(
+        object <- object[which(keep_logical)]
+    )
     ## Put the stuff back
     object@processingData@processing <- c(object@processingData@processing, msg)
-    object@msFeatureData <- mfd
+    lockEnvironment(newMfd, bindings = TRUE)
+    object@msFeatureData <- newMfd
+    object@.processHistory <- ph
     if (validObject(object))
         return(object)
 })

@@ -396,6 +396,7 @@ test_XCMSnExp_inherited_methods <- function() {
 test_XCMSnExp_filterFile <- function() {
     ## filterFile
     tmp <- filterFile(od_x, file = 2)
+    checkException(tmp@msFeatureData$bla <- 3)
     checkTrue(!hasAdjustedRtime(tmp))
     checkTrue(!hasAlignedFeatures(tmp))
     checkTrue(all(features(tmp)[, "sample"] == 1))
@@ -449,6 +450,7 @@ test_XCMSnExp_filterMz <- function() {
 
     ## Subset
     tmp <- filterMz(od_x2, mz = c(300, 400))
+    checkException(tmp@msFeatureData$bla <- 3)
     checkTrue(length(tmp@spectraProcessingQueue) == 1)
     checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
     checkTrue(validObject(tmp@msFeatureData))
@@ -464,6 +466,138 @@ test_XCMSnExp_filterMz <- function() {
     checkTrue(!hasAlignedFeatures(tmp))
     checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
     checkTrue(validObject(tmp@msFeatureData))
+}
+
+test_XCMSnExp_filterRt <- function() {
+    od_x2 <- od_x
+
+    ## Testing with only feature data present:
+    res <- filterRt(od_x2, rt = c(2700, 2900))
+    ## MsFeatureData has to be locked!
+    checkException(res@msFeatureData$bla <- 3)
+    ## Retention time has to be within the range.
+    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    ## features have to be within the range.
+    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
+                  features(res)[, "rtmax"] <= 2900))
+    ## features have to match the subsetted ones.
+    are_within <- features(od_x2)[, "rtmin"] >= 2700 &
+        features(od_x2)[, "rtmax"] <= 2900
+    checkEquals(features(res), features(od_x2)[are_within,])
+    ## Have a feature detection process history.
+    checkEquals(processType(processHistory(res)[[1]]),
+                xcms:::.PROCSTEP.FEATURE.DETECTION)
+    ## filter such that we keep some spectra but no features:
+    res <- filterRt(od_x2, rt = c(4200, 4400))
+    checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
+    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res)) == 0)
+    ## No rt
+    res <- filterRt(od_x2, rt = c(10, 20))
+    checkTrue(length(res) == 0)
+
+    ## With adjusted retention times.
+    ## new_e <- xcms:::.copy_env(od_x2@msFeatureData)
+    od_x2 <- od_x
+    xcms:::adjustedRtime(od_x2) <- xs_2@rt$corrected
+    od_x2 <- xcms:::addProcessHistory(od_x2,
+                                      xcms:::ProcessHistory(
+                                                 type. = xcms:::.PROCSTEP.RTIME.CORRECTION,
+                                                 date. = date(),
+                                                 fileIndex. = 1:length(fileNames(od_x2))))
+    ## Filtering for rt with no features drops also the adjusted rt.
+    res <- filterRt(od_x2, rt = c(4200, 4400))
+    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res)) == 0)
+    ## Correct filtering:
+    res <- filterRt(od_x2, rt = c(2700, 2900))
+    checkEquals(processType(processHistory(res)[[2]]),
+                xcms:::.PROCSTEP.RTIME.CORRECTION)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(hasAdjustedRtime(res))
+    keep_em <- rtime(od_x2) >= 2700 & rtime(od_x2) <= 2900
+    checkEquals(rtime(res), rtime(od_x2)[keep_em])
+    checkEquals(adjustedRtime(res), adjustedRtime(od_x2)[keep_em])
+    ## Filter using adjusted retention times.
+    res_2 <- filterRt(od_x2, rt = c(2700, 2900), adjusted = TRUE)
+    checkEquals(processType(processHistory(res)[[2]]),
+                xcms:::.PROCSTEP.RTIME.CORRECTION)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(hasAdjustedRtime(res))
+    ## That might not be true anymore.
+    checkTrue(!all(rtime(res_2) >= 2700 & rtime(res_2) <= 2900))
+    checkTrue(all(adjustedRtime(res_2) >= 2700 & adjustedRtime(res_2) <= 2900))
+    keep_em <- adjustedRtime(od_x2) >= 2700 & adjustedRtime(od_x2) <= 2900
+    checkEquals(rtime(res_2), rtime(od_x2)[keep_em])
+    checkEquals(adjustedRtime(res_2), adjustedRtime(od_x2)[keep_em])
+
+    ## Grouping with adjusted retention time.
+    library(S4Vectors)
+    fd <- DataFrame(xs_2@groups)
+    fd$featureidx <- xs_2@groupidx
+    featureGroups(od_x2) <- fd
+    od_x2 <- xcms:::addProcessHistory(od_x2,
+                                      xcms:::ProcessHistory(
+                                                 type. = xcms:::.PROCSTEP.FEATURE.ALIGNMENT,
+                                                 date. = date(),
+                                                 fileIndex. = 1:length(fileNames(od_x2))))
+    checkTrue(hasDetectedFeatures(od_x2))
+    checkTrue(hasAdjustedRtime(od_x2))
+    checkTrue(hasAlignedFeatures(od_x2))
+    ## empty
+    res <- filterRt(od_x2, rt = c(4200, 4400))
+    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res)) == 0)
+    ##
+    res <- filterRt(od_x2, rt = c(2700, 2900))
+    checkEquals(processType(processHistory(res)[[3]]),
+                xcms:::.PROCSTEP.FEATURE.ALIGNMENT)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
+                  features(res)[, "rtmax"] <= 2900))
+    checkTrue(hasAdjustedRtime(res))
+    keep_em <- rtime(od_x2) >= 2700 & rtime(od_x2) <= 2900
+    checkEquals(rtime(res), rtime(od_x2)[keep_em])
+    checkEquals(adjustedRtime(res), adjustedRtime(od_x2)[keep_em])
+    checkTrue(hasAlignedFeatures(res))
+    checkTrue(all(featureGroups(res)[, "rtmin"] >= 2700 &
+                  featureGroups(res)[, "rtmax"] <= 2900))
+    validObject(res)
+
+    ## Grouping without adjusted retention time.
+    od_x2 <- od_x
+    fd <- DataFrame(xs_2@groups)
+    fd$featureidx <- xs_2@groupidx
+    featureGroups(od_x2) <- fd
+    od_x2 <- xcms:::addProcessHistory(od_x2,
+                                      xcms:::ProcessHistory(
+                                                 type. = xcms:::.PROCSTEP.FEATURE.ALIGNMENT,
+                                                 date. = date(),
+                                                 fileIndex. = 1:length(fileNames(od_x2))))
+    checkTrue(hasDetectedFeatures(od_x2))
+    checkTrue(!hasAdjustedRtime(od_x2))
+    checkTrue(hasAlignedFeatures(od_x2))
+    ## empty
+    res <- filterRt(od_x2, rt = c(4200, 4400))
+    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res)) == 0)
+    ##
+    res <- filterRt(od_x2, rt = c(2700, 2900))
+    checkEquals(processType(processHistory(res)[[2]]),
+                xcms:::.PROCSTEP.FEATURE.ALIGNMENT)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
+                  features(res)[, "rtmax"] <= 2900))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(hasAlignedFeatures(res))
+    checkTrue(all(featureGroups(res)[, "rtmin"] >= 2700 &
+                  featureGroups(res)[, "rtmax"] <= 2900))
+    validObject(res)
 }
 
 test_MsFeatureData_class_validation <- function() {
