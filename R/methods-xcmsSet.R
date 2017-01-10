@@ -1435,7 +1435,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 
     for (i in seq(along = sampidx)) {
 
-        cat(sampleidx[i], "")
+        ## cat(sampleidx[i], "")
         flush.console()
         ## getXcmsRaw takes care of rt correction, susetting to scanrage and other
         ## stuff.
@@ -1445,7 +1445,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         rm(lcraw)
         gc()
     }
-    cat("\n")
+    ## cat("\n")
 
     invisible(new("xcmsEIC", eic = eic, mzrange = mzrange, rtrange = rtrange,
                   rt = rt, groupnames = gnames))
@@ -1721,6 +1721,7 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                        includeMSn = includeMsn)
         return(raw)
     }, BPPARAM=BPPARAM)
+
     ## do corrections etc.
     for(i in 1:length(ret)){
         if(length(object@dataCorrection) > 1){
