@@ -31,44 +31,79 @@ dropProcessHistoriesList <- function(x, type) {
 
 ##' Convert an XCMSnExp to an xcmsSet.
 ##' @noRd
-.XCMSnExp2xcmsSet <- function(x) {
+.XCMSnExp2xcmsSet <- function(from) {
+    if (any(msLevel(from) > 1))
+        stop("Coercing an XCMSnExp with MS level > 1 is not yet supported!")
     xs <- new("xcmsSet")
     ## @peaks <- features
-    if (hasDetectedFeatures(x))
-        xs@peaks <- features(x)
+    if (hasDetectedFeatures(from))
+        xs@peaks <- features(from)
     ## @groups <- part of featureGroups
     ## @groupidx <- featureGroups(x)$featureidx
-    if (hasAlignedFeatures(x)){
-        fgs <- featureGroups(x)
+    if (hasAlignedFeatures(from)){
+        fgs <- featureGroups(from)
         xs@groups <- as.matrix(fgs[, -ncol(fgs)])
         xs@groupidx <- fgs$featureidx
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
-    rts$raw <- rtime(x, bySample = TRUE)
-    if (hasAdjustedRtime(x))
-        rts$corrected <- adjustedRtime(x, bySample = TRUE)
+    rts$raw <- rtime(from, bySample = TRUE)
+    if (hasAdjustedRtime(from))
+        rts$corrected <- adjustedRtime(from, bySample = TRUE)
     else
         rts$corrected <- rts$raw
-
     xs@rt <- rts
 
-    ## @filled ... not yet.
-    ## @phenoData <- phenoData?
-    ## @filepaths <- fileNames(x) ?
+    ## @phenoData
+    xs@phenoData <- pData(from)
+    ## @filepaths
+    xs@filepaths <- fileNames(from)
+
     ## @profinfo (list)
     profMethod <- "bin"
     profStep <- 0.1
     profParam <- list()
     ## If we've got any MatchedFilterParam we can take the values from there
+    ph <- processHistory(from, type = .PROCSTEP.FEATURE.DETECTION)
+    if (length(ph)) {
+        if (is(ph[[1]], "XProcessHistory")) {
+            prm <- processParam(ph[[1]])
+            if (is(prm, "MatchedFilterParam")) {
+                if (impute(prm) != "none") {
+                    profMethod <- paste0("bin", impute(prm))
+                    profStep <- binSize(prm)
+                    if (profMethod == "binlinbase")
+                        warning("Optional parameters for 'binlinbase' can not be",
+                                " converted yet, using default parameters.")
+                ## distance
+                ## baseValue
+                }
+            }
+        }
+    }
     profinfo(xs) <- c(list(method = profMethod, step = profStep), profParam)
+
+    ## @mslevel <- msLevel?
+    xs@mslevel <- unique(msLevel(from))
+
+    ## @scanrange
+    xs@scanrange <- range(scanIndex(from))
+
+    ## .processHistory: just take the processHistory as is.
+    xs@.processHistory <- processHistory(from)
+
+    ## Implement later or skip:
+    ## @polarity (character), has to be "positive" or "negative"; not clear how
+    ## and if this is used at all.
+
+    ## @filled ... not yet.
     ## @dataCorrection (numeric) ? in xcmsSet function, if lockMassFreq.
-    ## @polarity (character) ?
     ## @progressInfo skip
     ## @progressCallback skip
-    ## @mslevel <- msLevel?
-    ## @scanrange <- ?
-    ## .processHistory <- ? or coerced from XCMSnExp.
+    if (!any(colnames(pData(from)) == "class"))
+        message("Note: you might want to set/adjust the",
+                " 'sampclass' of the returned xcmSet object",
+                " before proceeding with the analysis.")
     if (validObject(xs))
         return(xs)
 }

@@ -189,7 +189,8 @@ export(
     "do_detectFeatures_centWaveWithPredIsoROIs",
     "do_detectFeatures_addPredIsoROIs",
     "imputeLinInterpol",
-    "useOriginalCode"
+    "useOriginalCode",
+    "setAs"
 )
 
 ## New analysis methods

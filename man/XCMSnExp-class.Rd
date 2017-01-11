@@ -47,6 +47,7 @@
 \alias{processHistory}
 \alias{processHistory,XCMSnExp-method}
 \alias{rtime,XCMSnExp-method}
+\alias{setAs}
 \alias{show,MsFeatureData-method}
 \alias{show,XCMSnExp-method}
 \title{Data container storing xcms preprocessing results}
@@ -103,7 +104,7 @@
 
 \S4method{intensity}{XCMSnExp}(object, bySample = FALSE)
 
-\S4method{processHistory}{XCMSnExp}(object, fileIndex)
+\S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
 
 \S4method{dropFeatures}{XCMSnExp}(object)
 
@@ -135,6 +136,11 @@ sample.}
 \item{fileIndex}{For \code{processHistory}: optional \code{numeric}
 specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
+
+\item{type}{For \code{processHistory}: restrict returned
+\code{\link{ProcessHistory}} objects to analysis steps of a certain type.
+Supported values are \code{"Unknown"}, \code{"Feature detection"},
+\code{"Feature alignment"} and \code{"Retention time correction"}.}
 }
 \value{
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
@@ -201,6 +207,9 @@ access to the full data on which the feature detection was performed.
 Objects from this class should not be created directly, they are returned as
 result from the \code{\link{detectFeatures}} method.
 
+\code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
+objects using the \code{as} method.
+
 \code{hasAdjustedRtime}: whether the object provides adjusted
 retention times.
 
@@ -246,13 +255,15 @@ a grouping by sample/file.
 The \code{processHistory} method returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base
 class) representing the individual processing steps that have been performed,
-eventually along with their settings (\code{Param} parameter class).
+eventually along with their settings (\code{Param} parameter class). Optional
+arguments \code{fileIndex} and \code{type} allow to restrict to process steps
+of a certain type or performed on a certain file.
 
 The \code{dropFeatures} method drops any identified features
 and returns the object without that information. Note that for
 \code{XCMSnExp} objects the method drops all results from a feature alignment
-or retention time adjustment. For \code{XCMSnExp} objects the method drops
-also any related process history steps.
+or retention time adjustment too. For \code{XCMSnExp} objects the method
+drops also any related process history steps.
 
 The \code{dropFeatureGroups} method drops aligned feature
 information (i.e. feature groups) and returns the object
@@ -283,6 +294,75 @@ retention time correction (element \code{""}) steps.}
 The \code{"features"} element in the \code{msFeatureData} slot is
 equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
 \code{"featureGroups"} contains information from the \code{}
+}
+\examples{
+
+## Loading the data from 2 files of the faahKO package.
+library(faahKO)
+od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+                    system.file("cdf/KO/ko16.CDF", package = "faahKO")))
+## Now we perform a feature detection on this data set using the
+## matched filter method. We are tuning the settings such that it performs
+## faster.
+mfp <- MatchedFilterParam(binSize = 4)
+xod <- detectFeatures(od, param = mfp)
+
+## The results from the feature detection are now stored in the XCMSnExp
+## object
+xod
+
+## The detected features can be accessed with the features method.
+head(features(xod))
+
+## The settings of the feature detection can be accessed with the
+## processHistory method
+processHistory(xod)
+
+## Also the parameter class for the feature detection can be accessed
+processParam(processHistory(xod)[[1]])
+
+## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
+## defined in Bioconductor's MSnbase package. To access the (raw) retention
+## time for each spectrum we can use the rtime method. Setting bySample = TRUE
+## would cause the retention times to be grouped by sample
+head(rtime(xod))
+
+## Similarly it is possible to extract the mz values or the intensity values
+## using the mz and intensity method, respectively, also with the option to
+## return the results grouped by sample instead of the default, which is
+## grouped by spectrum. Finally, to extract all of the data we can use the
+## spectra method which returns Spectrum objects containing all raw data.
+## Note that all these methods read the information from the original input
+## files and subsequently apply eventual data processing steps to them.
+head(mz(xod, bySample = TRUE))
+
+## Reading all data
+spctr <- spectra(xod)
+## To get all spectra of the first file we can split them by file
+head(split(spctr, fromFile(xod))[[1]])
+
+############
+## Filtering
+##
+## XCMSnExp objects can be filtered by file, retention time, mz values or
+## MS level. For some of these filter preprocessing results (mostly
+## retention time correction and feature alignment results) will be dropped.
+## Below we filter the XCMSnExp object by file to extract the results for
+## only the second file.
+xod_2 <- filterFile(xod, file = 2)
+xod_2
+
+## Now the objects contains only the idenfified features for the second file
+head(features(xod_2))
+
+head(features(xod)[features(xod)[, "sample"] == 2, ])
+
+##########
+## Coercing to an xcmsSet object
+##
+## We can also coerce the XCMSnExp object into an xcmsSet object:
+xs <- as(xod, "xcmsSet")
+head(peaks(xs))
 }
 \author{
 Johannes Rainer

@@ -1690,6 +1690,10 @@ setMethod("getEIC", "xcmsRaw", function(object, mzrange, rtrange = NULL,
 
 ############################################################
 ## rawMat
+##' @description Extracts a matrix with columns time (retention time), mz and
+##' intensity from an xcmsRaw object.
+##'
+##' @noRd
 setMethod("rawMat", "xcmsRaw", function(object,
                                         mzrange = numeric(),
                                         rtrange = numeric(),

@@ -243,18 +243,25 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
 ##' @description The \code{processHistory} method returns a \code{list} with
 ##' \code{\link{ProcessHistory}} objects (or objects inheriting from this base
 ##' class) representing the individual processing steps that have been performed,
-##' eventually along with their settings (\code{Param} parameter class).
+##' eventually along with their settings (\code{Param} parameter class). Optional
+##' arguments \code{fileIndex} and \code{type} allow to restrict to process steps
+##' of a certain type or performed on a certain file.
 ##'
 ##' @param fileIndex For \code{processHistory}: optional \code{numeric}
 ##' specifying the index of the files/samples for which the
 ##' \code{\link{ProcessHistory}} objects should be retrieved.
+##'
+##' @param type For \code{processHistory}: restrict returned
+##' \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
+##' Supported values are \code{"Unknown"}, \code{"Feature detection"},
+##' \code{"Feature alignment"} and \code{"Retention time correction"}.
 ##'
 ##' @return For \code{processHistory}: a \code{list} of
 ##' \code{\link{ProcessHistory}} objects providing the details of the individual
 ##' data processing steps that have been performed.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("processHistory", "XCMSnExp", function(object, fileIndex) {
+setMethod("processHistory", "XCMSnExp", function(object, fileIndex, type) {
     ph <- object@.processHistory
     if (length(ph)) {
         if (!missing(fileIndex)) {
@@ -265,6 +272,14 @@ setMethod("processHistory", "XCMSnExp", function(object, fileIndex) {
             }))
             if (!any(gotIt))
                 return(list())
+            ph <- ph[gotIt]
+        }
+        if (!missing(type) & length(ph)) {
+            gotIt <- unlist(lapply(ph, function(z) {
+                return(any(type == processType(z)))
+            }))
+            if (!any(gotIt))
+                return(list)
             ph <- ph[gotIt]
         }
         return(ph)
@@ -874,3 +889,11 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
     }
     callNextMethod()
 })
+
+## @param from For \code{setAs} and \code{as}: an \code{XCMSnExp} object.
+## @param to For \code{setAs} and \code{as}: \code{"xcmsSet"}
+##'
+##' @aliases setAs
+##' @rdname XCMSnExp-class
+##' @name XCMSnExp-class
+setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)

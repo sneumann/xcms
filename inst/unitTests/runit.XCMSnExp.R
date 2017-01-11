@@ -600,6 +600,68 @@ test_XCMSnExp_filterRt <- function() {
     validObject(res)
 }
 
+## Test the coercion method.
+test_as_XCMSnExp_xcmsSet <- function() {
+    res <- xcms:::.XCMSnExp2xcmsSet(od_x)
+    res <- as(od_x, "xcmsSet")
+    ## Results should be the same as in xs.
+    checkEquals(res@peaks, features(od_x))
+    checkEquals(res@.processHistory, processHistory(od_x))
+    checkEquals(phenoData(res), pData(od_x))
+    checkEquals(filepaths(res), fileNames(od_x))
+    checkEquals(res@rt$raw, res@rt$corrected)
+    checkEquals(res@rt$raw, rtime(od_x, bySample = TRUE))
+    checkEquals(profMethod(res), "bin")
+    checkEquals(profStep(res), 0.1)
+    ## Can we further process this?
+    sampclass(res) <- rep("K", 3)
+    res <- group(res)
+    res <- fillPeaks(res)
+
+    ## Add groups.
+    od_2 <- od_x
+    od_2 <- xcms:::addProcessHistory(od_2,
+                                     xcms:::ProcessHistory(fileIndex. = 1:3,
+                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
+    library(S4Vectors)
+    fd <- DataFrame(xs_2@groups)
+    fd$featureidx <- xs_2@groupidx
+    featureGroups(od_2) <- fd
+    ## Add retention time adjustment.
+    od_3 <- od_2
+    od_3 <- xcms:::addProcessHistory(od_3,
+                                     xcms:::ProcessHistory(fileIndex. = 1:3,
+                                                           type = xcms:::.PROCSTEP.RTIME.CORRECTION))
+    adjustedRtime(od_3) <- xs_2@rt$corrected
+
+    ## With groups.
+    res <- as(od_2, "xcmsSet")
+    checkEquals(res@groups, xs_2@groups)
+    checkEquals(res@groupidx, xs_2@groupidx)
+
+    ## With adjusted retention time.
+    res <- as(od_3, "xcmsSet")
+    checkTrue(any(unlist(res@rt$raw) != unlist(res@rt$corrected)))
+    checkEquals(res@rt$corrected, xs_2@rt$corrected)
+
+    ## Test with different binning methods:
+    ## o binlin
+    mfp <- MatchedFilterParam(impute = "lin", binSize = 3)
+    od_2 <- od_x
+    xcms:::processParam(od_2@.processHistory[[1]]) <- mfp
+    res <- as(od_2, "xcmsSet")
+    checkEquals(profStep(res), 3)
+    checkEquals(profMethod(res), "binlin")
+    ## o binlinbase
+    mfp <- MatchedFilterParam(impute = "linbase", binSize = 2)
+    xcms:::processParam(od_2@.processHistory[[1]]) <- mfp
+    suppressWarnings(
+        res <- as(od_2, "xcmsSet")
+    )
+    checkEquals(profStep(res), 2)
+    checkEquals(profMethod(res), "binlinbase")
+}
+
 test_MsFeatureData_class_validation <- function() {
     fd <- new("MsFeatureData")
     library(S4Vectors)
@@ -674,11 +736,4 @@ test_MsFeatureData_class_accessors <- function() {
     checkEquals(adjustedRtime(fd), xs_2@rt$corrected)
 }
 
-dontrun_test_XCMSnExp <- function() {
-    ## MsFeatureData
-
-    ## Some checks how to deal and best represent the data from an xcmsSet
-
-    ## Cast from OnDiskMSnExp.
-}
 
