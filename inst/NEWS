@@ -7,8 +7,13 @@ NEW FEATURES:
   featureGroups<-, hasAlignedFeatures, hasAdjustedRtime and hasDetectedFeatures
   methods.
 + dropFeatures, dropFeatureGroups and dropAdjustedRtime methods.
++ filterMz, filterRt, filterFile etc implemented.
 + mz, intensity and rtime methods for XCMSnExp allowing to return values grouped
   by sample.
+
+BUG FIXES:
++ Issue #99 (rtrange outside of retention time range in getEIC,xcmsSet).
++ Issue #101 (xcmsRaw function returns NULL if mslevel = 1 is specified).
 
 
 CHANGES IN VERSION 1.51.4
