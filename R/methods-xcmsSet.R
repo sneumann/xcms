@@ -1411,7 +1411,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     rtr <- c(max(unlist(lapply(rtrs, "[", 1))),
              min(unlist(lapply(rtrs, "[", 2))))
     ## Check if we've got a range which is completely off:
-    if (rtrange[, "rtmin"] >= rtr[2] | rtrange[, "rtmax"] <= rtr[1]) {
+    if (any(rtrange[, "rtmin"] >= rtr[2] | rtrange[, "rtmax"] <= rtr[1])) {
         outs <- which(rtrange[, "rtmin"] >= rtr[2] |
                       rtrange[, "rtmax"] <= rtr[1])
         stop(length(outs), " of the specified 'rtrange' are completely outside ",
