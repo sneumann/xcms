@@ -1410,17 +1410,19 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
     rtrs <- lapply(object@rt[[rt]], range)
     rtr <- c(max(unlist(lapply(rtrs, "[", 1))),
              min(unlist(lapply(rtrs, "[", 2))))
+    ## Check if we've got a range which is completely off:
+    if (rtrange[, "rtmin"] >= rtr[2] | rtrange[, "rtmax"] <= rtr[1]) {
+        outs <- which(rtrange[, "rtmin"] >= rtr[2] |
+                      rtrange[, "rtmax"] <= rtr[1])
+        stop(length(outs), " of the specified 'rtrange' are completely outside ",
+             "of the retention time range of 'object' which is (", rtr[1], ", ",
+                 rtr[2], "). The first was: (", rtrange[outs[1], "rtmin"], ", ",
+                 rtrange[outs[1], "rtmax"], "!")
+    }
     lower_rt_outside <- rtrange[, "rtmin"] < rtr[1]
     upper_rt_outside <- rtrange[, "rtmax"] > rtr[2]
     if (any(lower_rt_outside) | any(upper_rt_outside)) {
-        ## Throw an error if both are outside!
-        if (any(lower_rt_outside & upper_rt_outside)) {
-            outs <- which(lower_rt_outside & upper_rt_outside)
-            stop(length(outs), " of the specified 'rtrange' are outside of the",
-                 " retention time range of 'object' which is (", rts[1], ", ",
-                 rts[2], "). The first was: (", rtrange[outs[1], "rtmin"], ", ",
-                 rtrange[outs[1], "rtmax"], "!")
-        }
+        ## Silently fix these ranges.
         rtrange[lower_rt_outside, "rtmin"] <- rtr[1]
         rtrange[upper_rt_outside, "rtmax"] <- rtr[2]
     }
