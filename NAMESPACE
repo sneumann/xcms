@@ -334,5 +334,6 @@ exportMethods("hasDetectedFeatures",
               "smooth",
               "dropAdjustedRtime",
               "dropFeatureGroups",
-              "dropFeatures"
+              "dropFeatures",
+              "spectra"
               )

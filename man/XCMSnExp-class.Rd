@@ -50,6 +50,7 @@
 \alias{setAs}
 \alias{show,MsFeatureData-method}
 \alias{show,XCMSnExp-method}
+\alias{spectra,XCMSnExp-method}
 \title{Data container storing xcms preprocessing results}
 \usage{
 \S4method{show}{MsFeatureData}(object)
@@ -103,6 +104,8 @@
 \S4method{mz}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{intensity}{XCMSnExp}(object, bySample = FALSE)
+
+\S4method{spectra}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
 
@@ -184,6 +187,12 @@ For \code{intensity}: if \code{bySample = FALSE} a \code{list} with
 the intensity values (numeric vectors) of each scan. If
 \code{bySample = TRUE} a \code{list} with the intensity values per sample.
 
+For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
+\code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the result
+is grouped by sample, i.e. as a \code{list} of \code{lists}, each element in
+the \emph{outer} \code{list} being the \code{list} of spectra of the specific
+file.
+
 For \code{processHistory}: a \code{list} of
 \code{\link{ProcessHistory}} objects providing the details of the individual
 data processing steps that have been performed.
@@ -258,6 +267,12 @@ extracted from the original data files and eventual processing steps are
 applied \emph{on the fly}. Using the \code{bySample} parameter it is possible
 to switch from the default grouping of intensity values by spectrum/scan to
 a grouping by sample/file.
+
+The \code{spectra} method extracts the
+\code{\link[MSnbase]{Spectrum}} objects containing all data from
+\code{object}. These values are extracted from the original data files and
+eventual processing steps are applied \emph{on the fly}. Setting
+\code{bySample = TRUE} the spectra are returned grouped by sample/file.
 
 The \code{processHistory} method returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base

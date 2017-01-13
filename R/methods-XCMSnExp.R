@@ -171,6 +171,7 @@ setMethod("features", "XCMSnExp", function(object, bySample = FALSE) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected features.
         res <- vector("list", length(fileNames(object)))
+        names(res) <- as.character(1:length(res))
         tmp <- split.data.frame(features(object), f = features(object)[, "sample"])
         res[as.numeric(names(tmp))] <- tmp
         if (any(lengths(res) == 0)) {
@@ -217,8 +218,12 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE) {
     ## theM <- getMethod("rtime", "OnDiskMSnExp")
     ## res <- theM(object)
     res <- callNextMethod(object = object)
-    if (bySample)
-        res <- split(res, fromFile(object))
+    if (bySample) {
+        tmp <- split(res, fromFile(object))
+        res <- vector("list", length(fileNames(object)))
+        names(res) <- as.character(1:length(res))
+        res[as.numeric(names(tmp))] <- tmp
+    }
     return(res)
 })
 
@@ -236,8 +241,12 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE) {
 ##' @rdname XCMSnExp-class
 setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
     res <- callNextMethod(object = object)
-    if (bySample)
-        res <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+    if (bySample) {
+        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        res <- vector("list", length(fileNames(object)))
+        names(res) <- as.character(1:length(res))
+        res[as.numeric(names(tmp))] <- tmp
+    }
     return(res)
 })
 
@@ -255,8 +264,37 @@ setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
 ##' @rdname XCMSnExp-class
 setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
     res <- callNextMethod(object = object)
-    if (bySample)
-        res <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+    if (bySample) {
+        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        res <- vector("list", length(fileNames(object)))
+        names(res) <- as.character(1:length(res))
+        res[as.numeric(names(tmp))] <- tmp
+    }
+    return(res)
+})
+
+##' @description The \code{spectra} method extracts the
+##' \code{\link[MSnbase]{Spectrum}} objects containing all data from
+##' \code{object}. These values are extracted from the original data files and
+##' eventual processing steps are applied \emph{on the fly}. Setting
+##' \code{bySample = TRUE} the spectra are returned grouped by sample/file.
+##'
+##' @return For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
+##' \code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the result
+##' is grouped by sample, i.e. as a \code{list} of \code{lists}, each element in
+##' the \emph{outer} \code{list} being the \code{list} of spectra of the specific
+##' file.
+##'
+##' @rdname XCMSnExp-class
+setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE) {
+    res <- callNextMethod(object = object)
+    if (bySample) {
+        tmp <- split(res, fromFile(object))
+        ## That's to ensure that we're always returning something for all files.
+        res <- vector("list", length(fileNames(object)))
+        names(res) <- as.character(1:length(res))
+        res[as.numeric(names(tmp))] <- tmp
+    }
     return(res)
 })
 

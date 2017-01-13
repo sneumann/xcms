@@ -93,6 +93,13 @@ test_XCMSnExp_intensity <- function() {
     checkEquals(unlist(ints_3, use.names = FALSE), ints_2[[2]])
 }
 
+test_XCMSnExp_spectra <- function() {
+    xod <- as(faahko_od, "XCMSnExp")
+    res <- spectra(xod)
+    res_2 <- spectra(xod, bySample = TRUE)
+    checkEquals(split(res, fromFile(xod)), res_2)
+}
+
 test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
     ## Filling with data...
