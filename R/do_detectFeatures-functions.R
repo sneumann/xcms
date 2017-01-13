@@ -321,12 +321,16 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                      as.integer(scrange), as.integer(length(scantime)),
                      PACKAGE = 'xcms')
         ## omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
-        if (all(omz == 0))
-            stop("centWave: debug me: (omz == 0)?\n")
+        if (all(omz == 0)) {
+            warning("centWave: no peaks found in ROI.")
+            next
+        }
         od  <- mzROI.EIC$intensity
         otd <- mzROI.EIC$scan
-        if (all(od == 0))
-            stop("centWave: debug me: (all(od == 0))?\n")
+        if (all(od == 0)) {
+            warning("centWave: no peaks found in ROI.")
+            next
+        }
 
         ## scrange + scRangeTol, used for gauss fitting and continuous
         ## data above 1st baseline detection
