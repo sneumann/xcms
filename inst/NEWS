@@ -14,6 +14,8 @@ NEW FEATURES:
 BUG FIXES:
 + Issue #99 (rtrange outside of retention time range in getEIC,xcmsSet).
 + Issue #101 (xcmsRaw function returns NULL if mslevel = 1 is specified).
++ Issue #102 (centWave returns empty matrix if scales not OK). Thanks to J. Stanstrup.
++ Issue #91 (warning instead of error if no peaks in ROI). Thanks to J. Stanstrup.
 
 
 CHANGES IN VERSION 1.51.4

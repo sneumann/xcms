@@ -179,8 +179,18 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 
     if (length(z <- which(scalerange == 0)))
         scalerange <- scalerange[-z]
-    if (length(scalerange) < 1)
-        stop("No scales ? Please check peak width!\n")
+    if (length(scalerange) < 1) {
+        warning("No scales? Please check peak width!")
+        if (verboseColumns) {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
+                                            length(verbosenames))
+            colnames(nopeaks) <- c(basenames, verbosenames)
+        } else {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
+            colnames(nopeaks) <- c(basenames)
+        }
+        return(invisible(nopeaks))
+    }
 
     if (length(scalerange) > 1)
         scales <- seq(from = scalerange[1], to = scalerange[2], by = 2)
