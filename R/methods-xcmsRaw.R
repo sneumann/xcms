@@ -1832,7 +1832,14 @@ setReplaceMethod("profStep", "xcmsRaw", function(object, value) {
         minmass <- round(min(object@env$mz) / value) * value
         maxmass <- round(max(object@env$mz) / value) * value
         object@mzrange <- c(minmass, maxmass)
-        object@env$profile <- profMat(object, step = value)
+        ## Fix for issue #98: to be in accordance with the "old" code we require
+        ## that the number of rows of the profile matrix matches minmass to
+        ## maxmass in steps of value
+        ## To me that is somewhat problematic, as it means that the @mzrange does
+        ## not correctly correspond to the range(object@env$mz)!
+        tmp <- seq(minmass, maxmass, by = value)
+        prf <- profMat(object, step = value)
+        object@env$profile <- prf[1:min(c(length(tmp), nrow(prf))), ]
     }
     return(object)
 })
