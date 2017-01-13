@@ -94,7 +94,7 @@
 
 \S4method{featureGroups}{XCMSnExp}(object) <- value
 
-\S4method{features}{XCMSnExp}(object)
+\S4method{features}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{features}{XCMSnExp}(object) <- value
 
@@ -159,14 +159,18 @@ contains a \code{list} with indices of features (rows) in the matrix returned
 by the \code{features} method that belong to that feature group. The method
 returns \code{NULL} if no aligned feature information is present.
 
-For \code{features}: a \code{matrix} with at least the following
-columns: \code{"mz"} (mz value for the largest intensity), \code{"mzmin"} (
-minimal mz value), \code{"mzmax"} (maximal mz value), \code{"rt"} (retention
-time for the peak apex), \code{"rtmin"} (minimal retention time), \code{"rtmax"}
-(maximal retention time), \code{"into"} (integrated, original, intensity of
-the feature) and \code{"sample"} (sample index in which the feature was
-identified). Depending on the employed feature detection algorithm and the
+For \code{features}: if \code{bySample = FALSE} a \code{matrix} with
+at least the following columns: \code{"mz"} (mz value for the largest
+intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
+value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
+(minimal retention time), \code{"rtmax"} (maximal retention time),
+\code{"into"} (integrated, original, intensity of the feature) and
+\code{"sample"} (sample index in which the feature was identified).
+Depending on the employed feature detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
+For \code{bySample = TRUE} the features are returned as a \code{list} of
+matrices, each containing the features of a specific sample. For sample in
+which no feastures were detected a matrix with 0 rows is returned.
 
 For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the
 retention times of each scan, if \code{bySample = TRUE} a \code{list} of
@@ -229,10 +233,13 @@ The \code{featureGroups}, \code{featureGroups<-} methods extract
 or set the feature alignment results.
 
 The \code{features}, \code{features<-} methods extract or set
-the matrix containing the information on identified features. See description
-on the return value for details on the matrix columns. Users usually don't
-have to use the \code{features<-} method directly as detected features are
-added to the object by the \code{\link{detectFeatures}} method.
+the matrix containing the information on identified features. Parameter
+\code{bySample} allows to specify whether features should be returned
+ungrouped (default \code{bySample = FALSE}) or grouped by sample (
+\code{bySample = TRUE}).
+See description on the return value for details on the matrix columns. Users
+usually don't have to use the \code{features<-} method directly as detected
+features are added to the object by the \code{\link{detectFeatures}} method.
 
 The \code{rtime} method extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped

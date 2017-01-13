@@ -143,23 +143,45 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 ##' @aliases features
 ##'
 ##' @description The \code{features}, \code{features<-} methods extract or set
-##' the matrix containing the information on identified features. See description
-##' on the return value for details on the matrix columns. Users usually don't
-##' have to use the \code{features<-} method directly as detected features are
-##' added to the object by the \code{\link{detectFeatures}} method.
+##' the matrix containing the information on identified features. Parameter
+##' \code{bySample} allows to specify whether features should be returned
+##' ungrouped (default \code{bySample = FALSE}) or grouped by sample (
+##' \code{bySample = TRUE}).
+##' See description on the return value for details on the matrix columns. Users
+##' usually don't have to use the \code{features<-} method directly as detected
+##' features are added to the object by the \code{\link{detectFeatures}} method.
 ##'
-##' @return For \code{features}: a \code{matrix} with at least the following
-##' columns: \code{"mz"} (mz value for the largest intensity), \code{"mzmin"} (
-##' minimal mz value), \code{"mzmax"} (maximal mz value), \code{"rt"} (retention
-##' time for the peak apex), \code{"rtmin"} (minimal retention time), \code{"rtmax"}
-##' (maximal retention time), \code{"into"} (integrated, original, intensity of
-##' the feature) and \code{"sample"} (sample index in which the feature was
-##' identified). Depending on the employed feature detection algorithm and the
+##' @return For \code{features}: if \code{bySample = FALSE} a \code{matrix} with
+##' at least the following columns: \code{"mz"} (mz value for the largest
+##' intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
+##' value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
+##' (minimal retention time), \code{"rtmax"} (maximal retention time),
+##' \code{"into"} (integrated, original, intensity of the feature) and
+##' \code{"sample"} (sample index in which the feature was identified).
+##' Depending on the employed feature detection algorithm and the
 ##' \code{verboseColumns} parameter of it additional columns might be returned.
+##' For \code{bySample = TRUE} the features are returned as a \code{list} of
+##' matrices, each containing the features of a specific sample. For sample in
+##' which no feastures were detected a matrix with 0 rows is returned.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("features", "XCMSnExp", function(object) {
-    return(features(object@msFeatureData))
+setMethod("features", "XCMSnExp", function(object, bySample = FALSE) {
+    if (bySample) {
+        tmp <- split(features(object), f = features(object)[, "sample"])
+        ## Ensure we return something for each sample in case there is a sample
+        ## without detected features.
+        res <- vector("list", length(fileNames(object)))
+        tmp <- split.data.frame(features(object), f = features(object)[, "sample"])
+        res[as.numeric(names(tmp))] <- tmp
+        if (any(lengths(res) == 0)) {
+            emat <- matrix(nrow = 0, ncol = ncol(tmp[[1]]))
+            colnamers(emat) <- colnames(tmp[[1]])
+            res[lengths(res) == 0] <- emat
+        }
+        return(res)
+    } else {
+        return(features(object@msFeatureData))
+    }
 })
 ##' @aliases features<-
 ##'
@@ -892,6 +914,7 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 
 ## @param from For \code{setAs} and \code{as}: an \code{XCMSnExp} object.
 ## @param to For \code{setAs} and \code{as}: \code{"xcmsSet"}
+##' @title Data container storing xcms preprocessing results
 ##'
 ##' @aliases setAs
 ##' @rdname XCMSnExp-class

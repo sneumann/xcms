@@ -103,6 +103,11 @@ test_XCMSnExp_class_accessors <- function() {
     checkTrue(hasDetectedFeatures(xod))
     checkEquals(features(xod), xs_2@peaks)
     checkException(features(xod) <- 4)
+    tmp <- features(xod, bySample = TRUE)
+    checkTrue(length(tmp) == length(fileNames(xod)))
+    tmp <- do.call(rbind, tmp)
+    rownames(tmp) <- NULL
+    checkEquals(tmp, features(xod))
     ## Wrong assignments.
     pks <- xs_2@peaks
     pks[1, "sample"] <- 40
@@ -734,6 +739,118 @@ test_MsFeatureData_class_accessors <- function() {
     adjustedRtime(fd) <- xs_2@rt$corrected
     checkTrue(hasAdjustedRtime(fd))
     checkEquals(adjustedRtime(fd), xs_2@rt$corrected)
+}
+
+############################################################
+## Test getEIC alternatives.
+dontrun_getEIC_alternatives <- function() {
+    library(xcms)
+
+    fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+             system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+             system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+    od <- readMSData2(fls)
+    cwp <- CentWaveParam(noise = 10000, snthresh = 40)
+    od_x <- detectFeatures(od, param = cwp)
+    xs <- as(od_x, "xcmsSet")
+    sampclass(xs) <- rep("KO", 3)
+    xs_2 <- group(xs)
+    suppressWarnings(
+        xs_2 <- retcor(xs_2)
+    )
+    xs_2 <- group(xs_2)
+
+    rtr <- groups(xs_2)[1:5, c("rtmin", "rtmax")]
+    mzr <- groups(xs_2)[1:5, c("mzmin", "mzmax")]
+
+    ## Extract the EIC:
+    system.time(
+        eic <- getEIC(xs_2, rtrange = rtr, mzrange = mzr, rt = "raw")
+    ) ## 3.7sec
+
+    ## Now try to do the same using MSnbase stuff.
+    rts <- rtime(od_x)
+    idx <- apply(rtr, MARGIN = 1, function(z) {
+        which(rts >= z[1] & rts <= z[2])
+    })
+    ## Subset the od_x
+    od_ss <- od[sort(unique(unlist(idx)))]
+    system.time(
+        scts <- spectra(od_ss)
+    ) ## 0.7 secs.
+
+    ## This is somewhat similar to the getEIC, just that it extracts for each
+    ## mz/rt range pair a data.frame with rt, mz, intensity per sample.
+    ## This version works on a single rt/mz range pair at a time.
+    ## CHECK:
+    ## 1) mz range outside.
+    ## 2) rt range outside.
+    extractMsData <- function(x, rtrange, mzrange) {
+        ## Subset the OnDiskMSnExp
+        fns <- fileNames(x)
+        tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+        fromF <- match(fileNames(tmp), fns)
+        ## Now extract mz-intensity pairs from each spectrum.
+        ## system.time(
+        ## suppressWarnings(
+        ##     dfs <- spectrapply(tmp, as.data.frame)
+        ## )
+        ## ) ## 0.73sec
+        ## system.time(
+        suppressWarnings(
+            dfs <- spectrapply(tmp, function(z) {
+                if (peaksCount(z))
+                    return(data.frame(rt = rep_len(rtime(z), length(z@mz)),
+                                      as.data.frame(z)))
+                else
+                    return(data.frame(rt = numeric(), mz = numeric(),
+                                      i = integer()))
+            })
+        )
+        ## ) ## 0.701
+        ## dfs[] <- mapply(FUN = function(y, z) {
+        ##     return(cbind(rt = rep.int(z, nrow(y)), y))
+        ## }, y = dfs, z = rtime(tmp), SIMPLIFY = FALSE, USE.NAMES = FALSE)
+        res <- vector(mode = "list", length = length(fns))
+        res[fromF] <- split(dfs, f = fromFile(tmp))
+        return(lapply(res, do.call, what = rbind))
+    }
+
+    ## Tests.
+    rtrange <- rtr[3, ]
+    mzrange <- mzr[3, ]
+    system.time(
+        tmp <- extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+
+    ## For all of em:
+    system.time(
+        tmp <- mapply(rtrange = split(rtr, f = seq_len(nrow(rtr))),
+                      mzrange = split(mzr, f = seq_len(nrow(mzr))),
+                      FUN = extractMsData, MoreArgs = list(x = od),
+                      SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    ) ## 3.589
+    ## That's fine as long as we don't extract too many of em.
+
+    ############################################################
+    ## Alternative: do it by file.
+    ## 1) Subset the od selecting all spectra that fall into the rt ranges.
+    ## 2) Work on that subsetted od: load into memory.
+    ## 3) loop over the rtrange and mzrange.
+
+
+    ## For a single one:
+    ## BE AWARE: we have use the fileNames matching to the original file names to
+    ## match to the CORRECT indices.
+    system.time(
+        dfs <- spectrapply(tmp, as.data.frame)
+    )
+
+    ## mz outside:
+    mzrange <- c(600, 601)
+    tmp <- filterMz(filterRt(od, rt = rtrange), mz = mzrange)
+    dfs <- spectrapply(tmp, as.data.frame)
+    ## Funny, it returns something - 0.
 }
 
 

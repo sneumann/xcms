@@ -107,3 +107,19 @@ dropProcessHistoriesList <- function(x, type) {
     if (validObject(xs))
         return(xs)
 }
+
+##' @title Extract spectra subsets
+##'
+##' Extract subsets of spectra matching the given mz and retention time ranges.
+##' @noRd
+.spectraSubsets <- function(x, rtrange, mzrange) {
+    ## o Should allow to provide single ranges, but also matrices of rtrange
+    ##   and/or mzranges.
+    ## o Perform the data fetching by file.
+    ## o Return the (mz subsetted) spectra by file and by ranges.
+    ## o Since data should be processed on a by-file basis representation of the
+    ##   result as a list (files) of list(ranges) of list(spectra) seems to be
+    ##   best.
+    ## SEE runit.XCMSnExp.R,
+}
+
