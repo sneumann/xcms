@@ -65,10 +65,12 @@ library(faahKO)
 library(xcms)
 #load all the wild type and Knock out samples
 cdfpath <- system.file("cdf", package = "faahKO")
-## Subset to only the first 4
-cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)[1:4]
-# run the massifquant analysis
+## Subset to only the first 2 files.
+cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)[1:2]
 
+## Run the massifquant analysis. Setting the noise level to 10000 to speed up
+## execution of the examples - in a real use case it should be set to a reasoable
+## value.
 xset <- xcmsSet(cdffiles, method = "massifquant",
                 consecMissedLimit = 1,
                 snthresh = 10,
@@ -76,7 +78,8 @@ xset <- xcmsSet(cdffiles, method = "massifquant",
                 ppm = 10,
                 peakwidth= c(30, 60),
                 prefilter= c(1,3000),
-                withWave = 0);
+                noise = 10000,
+                withWave = 0)
 }
 \author{Christopher Conley}
 \encoding{UTF-8}

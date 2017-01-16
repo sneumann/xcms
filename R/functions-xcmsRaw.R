@@ -98,8 +98,12 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     ## }
 
     if (!missing(mslevel) & !is.null(mslevel)) {
-        object <- msn2ms(object)
-        object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
+        ## Issue #101
+        ## Copy the ms2 level data only if mslevel > 1
+        if (max(mslevel) > 1) {
+            object <- msn2ms(object)
+            object <- split(object, f=object@msnLevel==mslevel)$"TRUE"
+        }
         ## fix xcmsRaw metadata, or always calculate later than here ?
     }
     return(object)
