@@ -1,11 +1,7 @@
 ############################################################
 ## do_detectFeatures_MSW tests
 
-library(msdata)
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
-
-xraw <- xcmsRaw(mzf[1], profstep = 0)
+xraw <- deepCopy(microtofq_xr)
 
 test_do_detectFeatures_MSW <- function() {
     feats1 <- xcms:::do_detectFeatures_MSW(xraw@env$intensity,
@@ -18,39 +14,40 @@ test_do_detectFeatures_MSW <- function() {
 }
 
 test_detectFeatures_MSW <- function() {
-    library(MSnbase)
-    od <- readMSData2(mzf)
+    ## library(MSnbase)
+    ## od <- readMSData2(mzf)
+    od <- microtofq_od
     ## Restrict to first spectrum
     od1 <- od[1]
     sp1 <- od[[1]]
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1))
     mp <- MSWParam()
     res_2 <- detectFeatures(od1, param = mp)
-    checkEquals(res_1, res_2)
+    checkEquals(res_1, features(res_2)[, colnames(res_1), drop = FALSE])
     ## Changing settings.
     snthresh(mp) <- 1
     nearbyPeak(mp) <- FALSE
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE)
-    res_2 <- detectFeatures(od1, param = mp)
+    res_2 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_1, res_2[[1]][, colnames(res_1)])
     peakThr(mp) <- 200
     res_1 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200)
-    res_2 <- detectFeatures(od1, param = mp)
+    res_2 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_1, res_2[[1]][, colnames(res_1)])
     addParams(mp) <- list(forder = 2)
     res_3 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200, forder = 2)
-    res_4 <- detectFeatures(od1, param = mp)
+    res_4 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_3, res_4[[1]][, colnames(res_3)])
     addParams(mp) <- list(forder = 2, dorder = 1)
     res_3 <- do_detectFeatures_MSW(mz = mz(sp1), int = intensity(sp1),
                                    snthresh = 1, nearbyPeak = FALSE,
                                    peakThr = 200, forder = 2, dorder = 1)
-    res_4 <- detectFeatures(od1, param = mp)
+    res_4 <- detectFeatures(od1, param = mp, return.type = "list")
     checkEquals(res_3, res_4[[1]][, colnames(res_3)])
 }
 

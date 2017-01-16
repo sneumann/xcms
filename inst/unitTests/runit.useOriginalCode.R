@@ -3,13 +3,13 @@
 
 test_useOriginalCode <- function() {
 
-    orig <- useOriginalCode()
-    checkTrue(useOriginalCode())
-    checkTrue(useOriginalCode(TRUE))
-    checkTrue(useOriginalCode())
-    checkTrue(!useOriginalCode(FALSE))
-    checkTrue(!useOriginalCode())
-    useOriginalCode(orig)
+    ## orig <- useOriginalCode()
+    ## checkTrue(useOriginalCode())
+    ## checkTrue(useOriginalCode(TRUE))
+    ## checkTrue(useOriginalCode())
+    ## checkTrue(!useOriginalCode(FALSE))
+    ## checkTrue(!useOriginalCode())
+    ## useOriginalCode(orig)
 }
 
 ############################################################

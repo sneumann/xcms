@@ -68,3 +68,25 @@ useOriginalCode <- function(x) {
 ## .ORIGINAL_FUNCTIONS <- c(
 ##     matchedFilter = ".matchedFilter_orig"
 ## )
+
+##' @title Copy the content from an environment to another one
+##' This function copies the content of an environment into another one.
+##' @param env environment from which to copy.
+##' @param inheritLocks logical(1) whether the locking status should be copied
+##' too
+##' @return an env.
+##' @noRd
+.copy_env <- function(env, inheritLocks = FALSE) {
+    new_e <- new.env(parent = emptyenv())
+    eNames <- ls(env, all.names = TRUE)
+    if (length(eNames) > 0) {
+        for (eN in eNames) {
+            new_e[[eN]] <- env[[eN]]
+        }
+    }
+    if (inheritLocks) {
+        if (environmentIsLocked(env))
+            lockEnvironment(new_e)
+    }
+    return(new_e)
+}

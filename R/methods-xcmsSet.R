@@ -1401,6 +1401,32 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         stop("rtrange must be a matrix or single number")
     colnames(rtrange) <- c("rtmin", "rtmax")
 
+    ## Ensure that we've got corrected retention time if requested.
+    if (is.null(object@rt[[rt]]))
+        stop(rt, " retention times not present in 'object'!")
+
+    ## Ensure that the defined retention time range is within the rtrange of the
+    ## object: we're using the max minimal rt of all files and the min maximal rt
+    rtrs <- lapply(object@rt[[rt]], range)
+    rtr <- c(max(unlist(lapply(rtrs, "[", 1))),
+             min(unlist(lapply(rtrs, "[", 2))))
+    ## Check if we've got a range which is completely off:
+    if (any(rtrange[, "rtmin"] >= rtr[2] | rtrange[, "rtmax"] <= rtr[1])) {
+        outs <- which(rtrange[, "rtmin"] >= rtr[2] |
+                      rtrange[, "rtmax"] <= rtr[1])
+        stop(length(outs), " of the specified 'rtrange' are completely outside ",
+             "of the retention time range of 'object' which is (", rtr[1], ", ",
+                 rtr[2], "). The first was: (", rtrange[outs[1], "rtmin"], ", ",
+                 rtrange[outs[1], "rtmax"], "!")
+    }
+    lower_rt_outside <- rtrange[, "rtmin"] < rtr[1]
+    upper_rt_outside <- rtrange[, "rtmax"] > rtr[2]
+    if (any(lower_rt_outside) | any(upper_rt_outside)) {
+        ## Silently fix these ranges.
+        rtrange[lower_rt_outside, "rtmin"] <- rtr[1]
+        rtrange[upper_rt_outside, "rtmax"] <- rtr[2]
+    }
+
     if (missing(groupidx))
         gnames <- character(0)
     else
@@ -1411,7 +1437,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
 
     for (i in seq(along = sampidx)) {
 
-        cat(sampleidx[i], "")
+        ## cat(sampleidx[i], "")
         flush.console()
         ## getXcmsRaw takes care of rt correction, susetting to scanrage and other
         ## stuff.
@@ -1421,7 +1447,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         rm(lcraw)
         gc()
     }
-    cat("\n")
+    ## cat("\n")
 
     invisible(new("xcmsEIC", eic = eic, mzrange = mzrange, rtrange = rtrange,
                   rt = rt, groupnames = gnames))
@@ -1697,6 +1723,7 @@ setMethod("getXcmsRaw", "xcmsSet", function(object, sampleidx = 1,
                        includeMSn = includeMsn)
         return(raw)
     }, BPPARAM=BPPARAM)
+
     ## do corrections etc.
     for(i in 1:length(ret)){
         if(length(object@dataCorrection) > 1){

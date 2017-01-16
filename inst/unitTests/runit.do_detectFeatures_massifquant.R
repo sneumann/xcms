@@ -1,12 +1,14 @@
 ############################################################
 ## do_detectFeatures_massifquant tests
+fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+## xraw <- xcmsRaw(fs[1], profstep = 0)
+xr <- deepCopy(faahko_xr_1)
 
-library(faahKO)
-fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xraw <- xcmsRaw(fs, profstep = 0)
-
-library(msdata)
-f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
+## library(msdata)
+## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
 mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
          system.file("microtofq/MM8.mzML", package = "msdata"))
 
@@ -14,11 +16,11 @@ mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
 ## Simple test comparing results from various massifquant runs and
 ## centWave analyses.
 test_do_detectFeatures_massifquant <- function() {
-    res <- findPeaks.massifquant(xraw, snthresh = 100)
-    mz <- xraw@env$mz
-    int <- xraw@env$intensity
-    valsPerSpect <- diff(c(xraw@scanindex, length(mz)))
-    scantime <- xraw@scantime
+    res <- findPeaks.massifquant(xr, snthresh = 100)
+    mz <- xr@env$mz
+    int <- xr@env$intensity
+    valsPerSpect <- diff(c(xr@scanindex, length(mz)))
+    scantime <- xr@scantime
     res_2 <- do_detectFeatures_massifquant(mz = mz, int = int,
                                            valsPerSpect = valsPerSpect,
                                            scantime = scantime)
@@ -28,14 +30,14 @@ test_do_detectFeatures_massifquant <- function() {
                                            valsPerSpect = valsPerSpect,
                                            scantime = scantime, withWave = TRUE,
                                            snthresh = 100, noise = 4000)
-    res_4 <- findPeaks.massifquant(xraw, withWave = 1, snthresh = 100,
+    res_4 <- findPeaks.massifquant(xr, withWave = 1, snthresh = 100,
                                    noise = 4000)
     checkEquals(res_3, res_4@.Data)
     checkTrue(nrow(res_3) < nrow(res_2))
 
     ## Subsetted data and scanrange:
-    res_1 <- findPeaks.massifquant(xraw, scanrange = c(90, 345))
-    xsub <- xraw[90:345]
+    res_1 <- findPeaks.massifquant(xr, scanrange = c(90, 345))
+    xsub <- xr[90:345]
     mz <- xsub@env$mz
     int <- xsub@env$intensity
     valsPerSpect <- diff(c(xsub@scanindex, length(mz)))
@@ -57,11 +59,21 @@ test_featureDetection_massifquant <- function() {
     res_o <- detectFeatures(onDisk, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+
+    ## Full data
+    ## onDisk <- readMSData2(mzf)
+    ## res <- detectFeatures(onDisk, param = mqp)
+    ## xs <- xcmsSet(mzf, method = "massifquant", ppm = 20, criticalValue = 1.2)
+    ## checkTrue(hasDetectedFeatures(res))
+    ## checkTrue(!hasAdjustedRtime(res))
+    ## checkTrue(!hasAlignedFeatures(res))
+    ## checkEquals(peaks(xs)@.Data, features(res))
+
     ## inMem
-    inMem <- readMSData(mzf[1], msLevel. = 1)
-    res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
-    checkEquals(peaks(res_i), peaks(res))
-    checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
+    ## inMem <- readMSData(mzf[1], msLevel. = 1)
+    ## res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
+    ## checkEquals(peaks(res_i), peaks(res))
+    ## checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
 }
 
 
@@ -331,12 +343,12 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
 ## Benchmarking.
 dontrun_benchmark_massifquant <- function() {
     library(microbenchmark)
-    mz <- xraw@env$mz
-    int <- xraw@env$intensity
-    valsPerSpect <- diff(c(xraw@scanindex, length(mz)))
-    scantime <- xraw@scantime
+    mz <- xr@env$mz
+    int <- xr@env$intensity
+    valsPerSpect <- diff(c(xr@scanindex, length(mz)))
+    scantime <- xr@scantime
 
-    microbenchmark(findPeaks.massifquant(xraw),
+    microbenchmark(findPeaks.massifquant(xr),
                    xcms:::.massifquant_orig(mz, int, scantime = scantime,
                                             valsPerSpect))
     microbenchmark(xcms:::.massifquant(mz, int, scantime = scantime,

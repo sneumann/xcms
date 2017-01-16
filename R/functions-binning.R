@@ -171,7 +171,8 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
         stop("One of 'breaks', 'nBins' or 'binSize' has to be defined!")
     if (!sortedX) {
         message("'x' is not sorted, will sort 'x' and 'y'.")
-        o <- order(x, method = "radix")
+        ## Sort method; see issue #180 for MSnbase
+        o <- order(x, method = options()$BioC$xcms$sortMethod)
         x <- x[o]
         y <- y[o]
     }
