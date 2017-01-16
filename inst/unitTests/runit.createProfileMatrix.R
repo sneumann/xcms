@@ -5,12 +5,14 @@
 ## o profStep<- method for xcmsRaw.
 ## o profMethod<- method for xcmsRaw.
 
-library(faahKO)
+## library(faahKO)
 fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xr <- xcmsRaw(fs, profstep = 0)
+## xr <- deepCopy(faahko_xr_1)
+## xr <- xcmsRaw(fs, profstep = 0)
 
 ## .createProfileMatrix
 test_createProfileMatrix <- function() {
+    xr <- deepCopy(faahko_xr_1)
     mz <- xr@env$mz
     int <- xr@env$intensity
     numPerSc <- diff(c(xr@scanindex, length(xr@env$mz)))
@@ -57,6 +59,8 @@ test_createProfileMatrix <- function() {
 ## profMat
 test_profMat <- function() {
     ## Create a new profile matrix:
+
+    xr <- deepCopy(faahko_xr_1)
     checkException(pm <- profMat(xr))
 
     xr_2 <- xcmsRaw(fs, profstep = 2)
@@ -72,7 +76,9 @@ test_profMat <- function() {
 test_profStepReplace <- function() {
     ## Profile matrix will be generated/replaced if the step parameter is > 0
     ## and differs from the one within the object.
-    xr_2 <- xcmsRaw(fs, profstep = 0)
+    ## xr <- xcmsRaw(fs, profstep = 0)
+    xr <- deepCopy(faahko_xr_1)
+    xr_2 <- xr
     checkTrue(length(xr_2@env$profile) == 0)
     profStep(xr_2) <- 2
     checkTrue(length(xr_2@env$profile) > 0)
@@ -83,7 +89,8 @@ test_profStepReplace <- function() {
 ## profMethod<-
 test_profMethodReplace <- function() {
     ## Profile matrix will be generated/replaced if profMethod is changed.
-    xr_2 <- xcmsRaw(fs, profstep = 0)
+    xr <- deepCopy(faahko_xr_1)
+    xr_2 <- xr
     checkTrue(length(xr_2@env$profile) == 0)
     ## Just setting profMethod doesn't help here
     profMethod(xr_2) <- "binlin"
@@ -104,6 +111,7 @@ test_profMethodReplace <- function() {
 
 ## This test compares the new methods to the old deprecated one.
 dontrun_createProfileMatrix <- function() {
+    xr <- deepCopy(faahko_xr_1)
     mz <- xr@env$mz
     int <- xr@env$intensity
     numPerSc <- diff(c(xr@scanindex, length(xr@env$mz)))

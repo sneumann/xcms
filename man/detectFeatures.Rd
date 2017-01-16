@@ -12,6 +12,10 @@ The implemented feature detection methods are:
 \item{centWave}{feature detection using the \emph{centWave} method.
 See \code{\link{centWave}} for more details.}
 
+\item{centWave with predicted isotopes}{feature detection using a two-step
+centWave-based approach considering also feature isotopes. See
+\code{\link{centWaveWithPredIsoROIs}} for more details.}
+
 \item{matchedFilter}{peak detection in chromatographic space. See
 \code{\link{matchedFilter}} for more details.}
 

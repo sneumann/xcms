@@ -8,9 +8,6 @@
 ## Compare the readRawData results to the loadRaw.
 test_compare_readRawData <- function() {
 
-    library(faahKO)
-    library(xcms)
-    library(RUnit)
     cdf_file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 
     ## loadRaw

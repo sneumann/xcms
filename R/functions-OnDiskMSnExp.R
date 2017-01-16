@@ -37,7 +37,7 @@ detectFeatures_OnDiskMSnExp <- function(object, method = "centWave",
 ##' @noRd
 detectFeatures_Spectrum_list <- function(x, method = "centWave", param, rt) {
     method <- match.arg(method, c("centWave", "massifquant", "matchedFilter",
-                                  "MSW"))
+                                  "MSW", "centWaveWithPredIsoROIs"))
     method <- paste0("do_detectFeatures_", method)
     if (missing(param))
         stop("'param' has to be specified!")

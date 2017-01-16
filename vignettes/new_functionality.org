@@ -46,19 +46,44 @@ in the =xcms= package introduced during the update to version /3/.
 
 ** Modernized user interface
 
-The modernization of the user interface comprises the definition of a new method
-for feature detection, namely =detectFeatures=, that performs the dispatching to
-the various algorithms (e.g. /centWave/, /matchedFilter/) based on a parameter class
-submitted /via/ the =param= argument. The rationale behind changing the name from
-=findPeaks= to =detectFeatures= to discriminate /peak/ (i.e. mass peak mostly used in
-proteomics), from /feature/ (which describes a peak in chromatographic space).
+The modernization of the user interface comprises new classes for data
+representation and new data analysis methods. In addition, the core logic for
+the data processing has been extracted from the old methods and put into a set
+of R functions, the so called core API functions (or =do_= functions), that take
+standard R data structures as input and can hence also easily be included in
+other R packages. The new user interface aims at simplifying and streamlining
+the =xcms= workflow while guaranteeing data integrity and performance also for
+large scale metabolomics experiments. All objects in the new user interface
+ensuring data integrity /via/ validation methods and class versioning, all methods
+are tested internally in extensive unit tests to guarantee proper functionality.
 
-The encapsulation of the parameters to a function into a parameter class (such
-as =CentWaveParam=) avoids busy function calls (with many single parameters to
-specify) and enables saving, reloading and reusing settings as well as, by
-adding them to the result objects, enabling the documentation of the data
-processing history. In addition, parameter validation can be performed within
-the parameter object and hence is no longer required in the analysis function.
+In the new user interface, objects from the =MSnbase= Bioconductor package are
+used, namely the =OnDiskMSnExp= object. This object is specifically designed for
+large scale experiments by just loading basic information from the raw files and
+reading the actual spectra data (mz and intensity values) on demand from the
+files. In contrast to the old =xcmsRaw= objects this object contains information
+from all files of an experiment. In addition, by using this object from the
+=MSnbase= package as container for the raw data, data normalization and adjustment
+methods defined for this class can be applied directly without having them to be
+re-implemented in the =xcms= package. In the new user interface the results from
+the pre-processing steps are stored in a new results object, the =XCMSnExp=
+object. This is similar to the old =xcmsSet= object, but by extending the
+=OnDiskMSnExp= object it inherits all of its methods and hence provides a simple
+and streamlined access to the (raw) data on which the processing was performed.
+
+For feature detection (peak calling), and thus replacing the =findPeaks.*=
+methods, the =detectFeatures= method has been implemented.  The reason for
+changing the name from =findPeaks= to =detectFeatures= was to discriminate /peak/
+(i.e. mass peak mostly used in proteomics), from /feature/ (which describes a peak
+in chromatographic space). The =detectFeatures= method performs dispatching to
+the various algorithms (e.g. /centWave/, /matchedFilter/) based on a parameter class
+submitted /via/ the =param= argument. This encapsulation of the parameters to a
+function into a parameter class (such as =CentWaveParam=) avoids busy function
+calls (with many single parameters to specify) and enables saving, reloading and
+reusing settings as well as, by adding them to the result objects, enabling the
+documentation of the data processing history. In addition, parameter validation
+can be performed within the parameter object and hence is no longer required in
+the analysis function.
 
 The implementation of the =detectFeatures= method for =OnDiskMSnExp= and =MSnExp=
 objects (from the =MSnbase= package) enable feature detection on these types of
@@ -116,6 +141,28 @@ that all data, including metadata, stays consistent.
 
 + Do the feature detection.
 + Describe the feature detection methods.
+
+** New data classes
+
+*** =OnDiskMSnExp=
+
+This object is defined and documented in the =MSnbase= package. In brief, it is a
+container for the full raw data from an MS-based experiment. To keep the memory
+footprint low the mz and intensity values are only loaded from the raw data
+files when required. The =OnDiskMSnExp= object replaces the =xcmsRaw= object.
+
+*** =XCMSnExp=
+
+The =XCMSnExp= class extends the =OnDiskMSnExp= object from the =MSnbase= package and
+represents a container for the xcms-based preprocessing results while (since it
+inherits all functionality from its parent class) keeping a direct relation to
+the (raw) data on which the processing was performed. An additional slot
+=.processHistory= in the object allows to keep track of all performed processing
+steps. Each analysis method, such as =detectFeatures= adds an =XProcessHistory=
+object which includes also the parameter class passed to the analysis
+method. Hence not only the time and type of the analysis, but its exact settings
+are reported within the =XCMSnExp= object. The =XCMSnExp= is thus equivalent to the
+=xcmsSet= from the original =xcms= implementation.
 
 ** Binning and missing value imputation functions
 
@@ -701,5 +748,22 @@ from the =MSnbase= package.
 
 The feature data should be placed into the =assayData= environment of the object
 to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
+
+*** Some notes on data usage:
++ Subset by sample: have to extract the corresponding features from the
+  features matrix in =assayData= and remove all grouping/alignment
+  information. This actually bypasses also the problem to check that feature
+  indexes have to be updated.
+
++ Rename =peaks= to =features=.
+
++ Better alternative for =groups=: =alignedFeatures=.
++ =groupval=? =featureMatrix=.
+
+*** Design and implementation:
++ =features= should be still implemented as =matrix= (for performance issues).
++ Alignment information could be implemented as =DataFrame= with the indices added
+  to a column =idx=.
+
 
 * References

@@ -3,21 +3,22 @@
 ## of xcmsRaw objects in the findPeaks methods prior to feature
 ## detection has been tested and is working as expected.
 ## issue #62
-library(faahKO)
+## library(faahKO)
 fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-xraw <- xcmsRaw(fs, profstep = 0)
+## xraw <- xcmsRaw(fs, profstep = 0)
+xraw <- deepCopy(faahko_xr_1)
 
 test_scanrange_centWave <- function() {
     ## Without sub-setting
     res_1 <- findPeaks.centWave(xraw, noise = 10000)
-    res_2 <- xcms:::.findPeaks.centWave_orig(xraw, noise = 10000)
-    checkIdentical(res_1, res_2)
+    ## res_2 <- xcms:::.findPeaks.centWave_orig(xraw, noise = 10000)
+    ## checkIdentical(res_1, res_2)
 
     scnr <- c(90, 345)
     res_1 <- findPeaks.centWave(xraw, scanrange = scnr, noise = 5000)
-    res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr,
-                                             noise = 5000)
-    checkIdentical(res_1, res_2)
+    ## res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr,
+    ##                                          noise = 5000)
+    ## checkIdentical(res_1, res_2)
 
     ## Compare with do_
     xsub <- xraw[90:345]
@@ -31,22 +32,22 @@ test_scanrange_centWave <- function() {
 
     scnr <- c(1, 400)
     res_1 <- findPeaks.centWave(xraw, scanrange = scnr, noise = 5000)
-    res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr,
-                                             noise = 5000)
-    checkIdentical(res_1, res_2)
+    ## res_2 <- xcms:::.findPeaks.centWave_orig(xraw, scanrange = scnr,
+    ##                                          noise = 5000)
+    ## checkIdentical(res_1, res_2)
 }
 
 test_scanrange_matchedFilter <- function() {
     scnr <- c(90, 50000)
     res_1 <- findPeaks.matchedFilter(xraw, scanrange = scnr)
-    suppressWarnings(
-        res_2 <- xcms:::findPeaks.matchedFilter_orig(xraw, scanrange = scnr)
-    )
+    ## suppressWarnings(
+    ##     res_2 <- xcms:::findPeaks.matchedFilter_orig(xraw, scanrange = scnr)
+    ## )
     suppressWarnings(
         xsub <- xraw[90:50000]
     )
     res_3 <- findPeaks.matchedFilter(xsub)
-    checkIdentical(res_1, res_2)
+    ## checkIdentical(res_1, res_2)
     checkIdentical(res_1, res_3)
 }
 

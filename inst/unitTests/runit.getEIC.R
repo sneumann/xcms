@@ -42,10 +42,11 @@
 
 ## Testing the profEIC as well as the getEIC method.
 test_profEIC <- function() {
-    file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+    ## file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
     ## Compare the results with manual calculations on the profile matrix.
     step <- 1
-    xraw <- xcmsRaw(file, profstep = 0)
+    ## xraw <- xcmsRaw(file, profstep = 0)
+    xraw <- deepCopy(faahko_xr_1)
     profmat <- profMat(xraw, step = step)
     mzr <- c(200, 201)
     rtr <- c(3000, 3500)
@@ -341,6 +342,7 @@ test.issue7 <- function(){
 
 test_getEICxset <- function() {
     xset <- fillPeaks(group(faahko))
+    ## xset <- faahko_grouped_filled
     e <- getEIC(xset, sampleidx = c(1,2), groupidx = c(1,2), rtrange=200)
     checkEquals(sampnames(e), c("ko15", "ko16"))
     ## plot(e)
@@ -371,6 +373,7 @@ test_getEICxset <- function() {
 
 test.getEICretcor <- function() {
     xset <- fillPeaks(group(retcor(group(faahko))))
+    ## xset <- faahko_processed
     opt.warn <- options("warn")$warn
     options("warn" = 2) ## turns warning into errors
     e <- getEIC(xset, sampleidx=c(1,2), groupidx=c(1,2),
@@ -380,8 +383,9 @@ test.getEICretcor <- function() {
 }
 
 test.plotEIC <- function() {
-    file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-    xraw <- xcmsRaw(file)
+    ## file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+    ## xraw <- xcmsRaw(file)
+    xraw <- deepCopy(faahko_xr_1)
     e <- getEIC(xraw, rtrange=cbind(3000,3500), mzrange=cbind(200,201))
     plot(e)
 }

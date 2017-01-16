@@ -74,23 +74,35 @@ readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp",
     if (dropEmptyScans & length(idx_ms1) > 0) {
         idx_ms1 <- idx_ms1[hdr[idx_ms1, "peaksCount"] > 0]
     }
-    if (length(idx_ms1) == 0)
+    ## Fix issue #174 in RMassBank.
+    if (length(idx_ms1) == 0 & !includeMSn)
         stop("No MS1 data found in file ", x, "!")
-    pks <- mzR::peaks(msd, idx_ms1)
-    ## Fix problem with single spectrum files (issue #66)
-    if (is(pks, "matrix"))
-        pks <- list(pks)
-    valsPerSpect <- lengths(pks) / 2
-    pks <- do.call(rbind, pks)
-    hdr_ms1 <- hdr[idx_ms1, header_cols,
-                   drop = FALSE]
-    resList <- list(rt = hdr_ms1$retentionTime,
-                    acquisitionNum = hdr_ms1$acquisitionNum,
-                    tic = hdr_ms1$totIonCurrent,
-                    scanindex = valueCount2ScanIndex(valsPerSpect),
-                    mz = pks[, 1],
-                    intensity = pks[, 2],
-                    polarity = hdr_ms1$polarity)
+    if (length(idx_ms1)) {
+        pks <- mzR::peaks(msd, idx_ms1)
+        ## Fix problem with single spectrum files (issue #66)
+        if (is(pks, "matrix"))
+            pks <- list(pks)
+        valsPerSpect <- lengths(pks) / 2
+        pks <- do.call(rbind, pks)
+        hdr_ms1 <- hdr[idx_ms1, header_cols,
+                       drop = FALSE]
+        resList <- list(rt = hdr_ms1$retentionTime,
+                        acquisitionNum = hdr_ms1$acquisitionNum,
+                        tic = hdr_ms1$totIonCurrent,
+                        scanindex = valueCount2ScanIndex(valsPerSpect),
+                        mz = pks[, 1],
+                        intensity = pks[, 2],
+                        polarity = hdr_ms1$polarity)
+    } else {
+        warning("No MS1 spectra available in file ", basename(x))
+        resList <- list(rt = numeric(),
+                        acquisitionNum = integer(),
+                        tic = numeric(),
+                        scanindex = integer(),
+                        mz = numeric(),
+                        intensity = numeric(),
+                        polarity = numeric())
+    }
     if (includeMSn) {
         if (backend == "netCDF") {
             warning("Reading of MSn spectra for NetCDF not supported.")

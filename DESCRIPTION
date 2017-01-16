@@ -15,7 +15,8 @@ Depends:
     mzR (>= 1.1.6),
     BiocGenerics,
     ProtGenerics,
-    Biobase
+    Biobase,
+    MSnbase (>= 2.1.4)
 Imports:
     lattice,
     RColorBrewer,
@@ -24,8 +25,7 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors,
-    MSnbase (>= 2.1.4)
+    S4Vectors
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),
@@ -59,9 +59,11 @@ Collate:
     'fastMatch.R'
     'functions-utils.R'
     'functions-IO.R'
+    'functions-MsFeatureData.R'
     'functions-OnDiskMSnExp.R'
     'functions-Params.R'
     'functions-ProcessHistory.R'
+    'functions-XCMSnExp.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'
@@ -69,9 +71,11 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-IO.R'
+    'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'
     'methods-Params.R'
     'methods-ProcessHistory.R'
+    'methods-XCMSnExp.R'
     'methods-netCdfSource.R'
     'methods-rampSource.R'
     'methods-xcmsEIC.R'

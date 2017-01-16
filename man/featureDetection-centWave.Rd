@@ -68,7 +68,7 @@ CentWaveParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
   roiList = list(), firstBaselineCheck = TRUE, roiScales = numeric())
 
 \S4method{detectFeatures}{OnDiskMSnExp,CentWaveParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
+  BPPARAM = bpparam(), return.type = "XCMSnExp")
 
 \S4method{detectFeatures}{MSnExp,CentWaveParam}(object, param,
   BPPARAM = bpparam(), return.type = "list")
@@ -200,7 +200,8 @@ processing is enables, feature detection is performed in parallel on several
 of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"list"} or \code{"xcmsSet"}.}
+return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+\code{"xcmsSet"}.}
 
 \item{value}{The value for the slot.}
 
@@ -211,11 +212,12 @@ The \code{CentWaveParam} function returns a \code{CentWaveParam}
 class instance with all of the settings specified for feature detection by
 the centWave method.
 
-For \code{detectFeatures}: if \code{return.type = "list"} a list of
-length equal to the number of samples with matrices specifying the
-identified features/peaks. If \code{return.type = "xcmsSet"} an
-\code{\linkS4class{xcmsSet}} object with the results of the feature
-detection.
+For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+\code{\link{XCMSnExp}} object with the results of the feature detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified features/peaks.
+If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+with the results of the feature detection.
 }
 \description{
 The centWave algorithm perform peak density and wavelet based
@@ -310,8 +312,10 @@ to the centWave algorithm can be passed with a \code{CentWaveParam} object.
 }
 \examples{
 
-## Create a CentWaveParam object
-cwp <- CentWaveParam(ppm = 20)
+## Create a CentWaveParam object. Note that the noise is set to 10000 to
+## speed up the execution of the example - in a real use case the default
+## value should be used, or it should be set to a reasonable value.
+cwp <- CentWaveParam(ppm = 20, noise = 10000)
 ## Change snthresh parameter
 snthresh(cwp) <- 25
 cwp
@@ -341,6 +345,9 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 \seealso{
 The \code{\link{do_detectFeatures_centWave}} core API function and
 \code{\link{findPeaks.centWave}} for the old user interface.
+
+\code{\link{XCMSnExp}} for the object containing the results of
+the feature detection.
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-MSW}},
