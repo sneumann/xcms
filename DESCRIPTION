@@ -25,7 +25,7 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     BiocParallel,
-    S4Vectors,
+    S4Vectors
 Suggests:
     BiocStyle,
     knitr (>= 1.1.0),
