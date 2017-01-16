@@ -12,6 +12,19 @@ test_ProcessHistory_class <- function() {
     ph@type <- "FAILURE"
     checkException(validObject(ph))
     checkException(xcms:::ProcessHistory(type = "any"))
+
+    ## Accessor methods.
+    checkException(xcms:::processType(ph) <- "OOOO")
+    xcms:::processType(ph) <- xcms:::.PROCSTEP.UNKNOWN
+    checkEquals(processType(ph), xcms:::.PROCSTEP.UNKNOWN)
+    checkException(xcms:::processDate(ph) <- c("a", "b"))
+    xcms:::processDate(ph) <- "A"
+    checkEquals(processDate(ph), "A")
+    checkException(xcms:::processInfo(ph) <- c("a", "b"))
+    xcms:::processInfo(ph) <- "B"
+    checkEquals(processInfo(ph), "B")
+    xcms:::fileIndex(ph) <- 1:3
+    checkEquals(fileIndex(ph), 1:3)
 }
 
 ############################################################
@@ -85,4 +98,5 @@ test_XProcessHistory_class <- function() {
                                  param = CentWaveParam())
 
     checkTrue(is(ph@param, "CentWaveParam"))
+    checkTrue(is(processParam(ph), "CentWaveParam"))
 }

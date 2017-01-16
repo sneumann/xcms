@@ -12,8 +12,8 @@ importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
 
-importClassesFrom("S4Vectors", "Rle")
-importFrom("S4Vectors", "split", "Rle")
+importClassesFrom("S4Vectors", "Rle", "DataFrame")
+importFrom("S4Vectors", "split", "Rle", "DataFrame")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -40,7 +40,10 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
-                  "spectra", "impute", "isCentroided", "polarity")
+                  "spectra", "impute", "isCentroided", "polarity", "[", "bin",
+                  "clean", "featureNames", "filterAcquisitionNum", "filterMz",
+                  "filterRt", "normalize", "pickPeaks", "removePeaks",
+                  "removeReporters", "smooth", "trimMz")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -186,15 +189,15 @@ export(
     "do_detectFeatures_centWaveWithPredIsoROIs",
     "do_detectFeatures_addPredIsoROIs",
     "imputeLinInterpol",
-    "useOriginalCode"
+    "useOriginalCode",
+    "setAs"
 )
 
-## New methods
+## New analysis methods
 exportMethods(
     "showError",
     "detectFeatures"
 )
-
 
 ## New Param classes
 exportClasses(
@@ -290,7 +293,10 @@ exportMethods(
     "mzIntervalExtension",
     "mzIntervalExtension<-",
     "polarity",
-    "polarity<-"
+    "polarity<-",
+    "rtime",
+    "mz",
+    "intensity"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
@@ -298,4 +304,36 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-## exportClasses("XCMSnSet")
+exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory", "XProcessHistory")
+## New methods for these classes
+exportMethods("hasDetectedFeatures",
+              "hasAlignedFeatures",
+              "hasAdjustedRtime",
+              "adjustedRtime",
+              "adjustedRtime<-",
+              "featureGroups",
+              "featureGroups<-",
+              "features",
+              "features<-",
+              "processHistory",
+              "fileIndex",
+              "processDate",
+              "processInfo",
+              "processParam",
+              "processType",
+              "bin",
+              "clean",
+              "filterAcquisitionNum",
+              "filterFile",
+              "filterMsLevel",
+              "filterMz",
+              "filterRt",
+              "normalize",
+              "pickPeaks",
+              "removePeaks",
+              "smooth",
+              "dropAdjustedRtime",
+              "dropFeatureGroups",
+              "dropFeatures",
+              "spectra"
+              )

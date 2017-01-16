@@ -4,14 +4,15 @@
 ## of the tests here are "notrun" as they are used to validate the
 ## "transition phase" from using the original code and some unified
 ## new functions.
-library(xcms)
-library(RUnit)
+## library(xcms)
+## library(RUnit)
 
-library(msdata)
-mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
-         system.file("microtofq/MM8.mzML", package = "msdata"))
+## library(msdata)
+## mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
+##          system.file("microtofq/MM8.mzML", package = "msdata"))
 
-xraw <- xcmsRaw(mzf[1], profstep = 0)
+## xraw <- xcmsRaw(mzf[1], profstep = 0)
+xraw <- deepCopy(faahko_xr_1)
 
 dontrun_test_rawMat <- function() {
 

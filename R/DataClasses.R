@@ -199,26 +199,36 @@ setClass("xcmsPeaks", contains = "matrix")
 ## Processing history type statics
 .PROCSTEP.UNKNOWN <- "Unknown"
 .PROCSTEP.FEATURE.DETECTION <- "Feature detection"
+.PROCSTEP.FEATURE.ALIGNMENT <- "Feature alignment"
+.PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
-    .PROCSTEP.FEATURE.DETECTION
+    .PROCSTEP.FEATURE.DETECTION,
+    .PROCSTEP.FEATURE.ALIGNMENT,
+    .PROCSTEP.RTIME.CORRECTION
 )
 
 ############################################################
 ## ProcessHistory
-##' @title Keeping track of data processing
+##' @aliases ProcessHistory
+##' @title Tracking data processing
 ##'
-##' @description Objects of the type \code{ProcessHistory} or extending it allow
-##' to keep track of any data processing step in an metabolomics experiment.
+##' @description Objects of the type \code{ProcessHistory} allow to keep track
+##' of any data processing step in an metabolomics experiment. They are created
+##' by the data processing methods, such as \code{\link{detectFeatures}} and
+##' added to the corresponding results objects. Thus, usually, users don't need
+##' to create them.
 ##'
-##' @slot type (character): string defining the type of the processing step.
-##' @slot date (character): date time stamp when the processing step was started.
-##' @slot info (character): optional additional information.
-##' @slot fileIndex (integer): integer of length 1 or > 1 to specify on which
+##' @slot type character(1): string defining the type of the processing step.
+##' This string has to match predefined values defined in the internal variable
+##' \code{.PROCSTEPS}.
+##'
+##' @slot date character(1): date time stamp when the processing step was started.
+##' @slot info character(1): optional additional information.
+##' @slot fileIndex integer of length 1 or > 1 to specify on which
 ##' samples of the object the processing was performed.
 ##' @slot error (ANY): used to store eventual calculation errors.
-##' @name ProcessHistory
-##' @noRd
+##' @rdname ProcessHistory-class
 setClass("ProcessHistory",
          slots = c(
              type = "character",
@@ -244,6 +254,15 @@ setClass("ProcessHistory",
                                              "'! Allowd are: ",
                                              paste0("\"", .PROCSTEPS, "\"",
                                                     collapse = ", ")))
+             if (length(object@type) > 1)
+                 msg <- validMsg(msg, paste0("length of 'type' should not be ",
+                                             "larger than 1!"))
+             if (length(object@date) > 1)
+                 msg <- validMsg(msg, paste0("length of 'date' should not be ",
+                                             "larger than 1!"))
+             if (length(object@info) > 1)
+                 msg <- validMsg(msg, paste0("length of 'info' should not be ",
+                                             "larger than 1!"))
              if (is.null(msg)) TRUE
              else msg
          }
@@ -256,13 +275,16 @@ setClass("Param",
          contains = c("Versioned"))
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
+##' @aliases XProcessHistory
+##' @title Tracking data processing
+##'
 ##' @description The \code{XProcessHistory} extends the \code{ProcessHistory} by
 ##' adding a slot \code{param} that allows to store the actual parameter class
 ##' of the processing step.
-##' @slot param (Param): an object of type \code{Param} specifying the settings
-##' of the processing step.
-##' @rdname ProcessHistory
-##' @noRd
+##'
+##' @slot param (Param): an object of type \code{Param} (e.g.
+##' \code{\link{CentWaveParam}}) specifying the settings of the processing step.
+##' @rdname ProcessHistory-class
 setClass("XProcessHistory",
          slots = c(
              param = "ParamOrNULL"
@@ -295,6 +317,10 @@ setClass("XProcessHistory",
 ##' \describe{
 ##' \item{centWave}{feature detection using the \emph{centWave} method.
 ##' See \code{\link{centWave}} for more details.}
+##'
+##' \item{centWave with predicted isotopes}{feature detection using a two-step
+##' centWave-based approach considering also feature isotopes. See
+##' \code{\link{centWaveWithPredIsoROIs}} for more details.}
 ##'
 ##' \item{matchedFilter}{peak detection in chromatographic space. See
 ##' \code{\link{matchedFilter}} for more details.}
@@ -408,8 +434,10 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a CentWaveParam object
-##' cwp <- CentWaveParam(ppm = 20)
+##' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
+##' ## speed up the execution of the example - in a real use case the default
+##' ## value should be used, or it should be set to a reasonable value.
+##' cwp <- CentWaveParam(ppm = 20, noise = 10000)
 ##' ## Change snthresh parameter
 ##' snthresh(cwp) <- 25
 ##' cwp
@@ -817,7 +845,7 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a MassifquantParam object
+##' ## Create a MassifquantParam object.
 ##' mqp <- MassifquantParam()
 ##' ## Change snthresh parameter
 ##' snthresh(mqp) <- 30
@@ -1170,48 +1198,167 @@ setClass("CentWavePredIsoParam",
                  return(msg)
          })
 
-
-##
-
-## What should the data contain:
-## o The peak/feature data.
-## o The grouping of features across samples.
-## o The corrected retention time.
-## o Experimental data and pheno data.
-## o The link to the raw data and eventual data processing.
-
-## OnDiskMSnExp and MSnExp would provide all that what is needed.
-## o MSnExp might be to mighty, as the full raw data is contained.
-## o OnDiskMSnExp should be OK, as it represents a light-weight raw data
-##   container and provides a history of data processing.
-
-## Where to put the data?
-## specific slots or all into the "assayData"?
-
-## The result object XCMSnExp/XCMSnSet: double inheritance???
-## o pSet and OnDiskMSnExp.
-## o only pSet and hope dispatch will call the method from either the MSnExp or
-##   the OnDiskMSnExp?
-## o Two objects, XCOnDiskMSnExp and XCMSnExp???
-## o Call as(x, XCMSnExp)
-## Have to drop features and or groups depending on the methods:
-## o [ subsetting: drop groups.
-## o Any data manipulation method (removePeaks etc): drop features, groups, rtcor.
-## o corrected retention time should be added to the fData.
-
 ####
-## Test results so far:
-## 1) if XCMSnSet contains MSnExp, as("OnDiskMSnExp", "XCMSnSet") does not work.
-## 2) Double inheritance MSnExp,OnDiskMSnExp does NOT work! No matter from what
-##    object the XCMSnSet is created, it always calls the OnDiskMSnExp method!
+## DataFrame or matrix?
+## row subsetting: 400:800, : matrix very fast, data.frame, DataFrame.
+## column subsetting: , 2: data.frame fast, matrix, DataFrame
+## splitting: matrix fastest (but return type is not a matrix).
 
+##' @aliases MsFeatureData
+##' @title Data container storing xcms preprocessing results
+##'
+##' @description The \code{MsFeatureData} class is designed to encapsule all
+##' data related to the preprocessing of metabolomics data using the \code{xcms}
+##' package, i.e. it contains a \code{matrix} with the features identified by the
+##' feature detection, a \code{DataFrame} with the information on aligned
+##' features across samples and a \code{list} with the adjusted retention times
+##' per sample.
+##'
+##' @rdname XCMSnExp-class
+setClass("MsFeatureData", contains = c("environment", "Versioned"),
+         prototype = prototype(.xData = new.env(parent = emptyenv())))
 
-setClass("XCMSnSet",
+.XCMS_REQ_FEATS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                          "rtmax", "into", "sample")
+.XCMS_REQ_FEATG_COLS <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                          "featureidx")
+
+##' @aliases XCMSnExp
+##' @title Data container storing xcms preprocessing results
+##'
+##' @description The \code{XCMSnExp} object is designed to contain all results
+##' from metabolomics data preprocessing (feature detection, feature alignment
+##' and retention time correction). The corresponding elements in the
+##' \code{msFeatureData} slot are \code{"features"} (a \code{matrix}),
+##' \code{"featureGroups"} (a \code{DataFrame}) and \code{"adjustedRtime"} (a
+##' \code{list} of numeric vectors). Note that these should not be accessed
+##' directly but rather \emph{via} their accessor methods. Along with the results,
+##' the object contains the processing history that allow to track each
+##' processing step along with the used settings. The object also directly
+##' extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
+##' access to the full data on which the feature detection was performed.
+##'
+##' Objects from this class should not be created directly, they are returned as
+##' result from the \code{\link{detectFeatures}} method.
+##'
+##' \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
+##' objects using the \code{as} method.
+##'
+##' @note The \code{"features"} element in the \code{msFeatureData} slot is
+##' equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
+##' \code{"featureGroups"} contains information from the \code{}
+##'
+##' @slot .processHistory \code{list} with \code{XProcessHistory} objects
+##' tracking all individual analysis steps that have been performed.
+##'
+##' @slot msFeatureData \code{MsFeatureData} class extending \code{environment}
+##' and containing the results from a feature detection (element
+##' \code{"features"}), feature alignment (element \code{"featureGroups"}) and
+##' retention time correction (element \code{""}) steps.
+##'
+##' @param object For \code{adjustedRtime}, \code{featureGroups},
+##' \code{features}, \code{hasAdjustedRtime}, \code{hasAlignedFeatures} and
+##' \code{hasDetectedFeatures} either a \code{MsFeatureData} or a \code{XCMSnExp}
+##' object, for all other methods a \code{XCMSnExp} object.
+##'
+##' @param value For \code{adjustedRtime<-}: a \code{list} (length equal to the
+##' number of samples) with numeric vectors representing the adjusted retention
+##' times per scan.
+##'
+##' For \code{featureGroups<-}: a \code{DataFrame} with feature
+##' alignment information. See return value for the \code{featureGroups} method
+##' for the expected format.
+##'
+##' For \code{features<-}: a \code{matrix} with information on
+##' detected features. See return value for the \code{features} method for the
+##' expected format.
+##'
+##' @author Johannes Rainer
+##'
+##' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
+##' @seealso \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
+##' and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+##' @seealso \code{\link{detectFeatures}} for available feature detection methods
+##' returning a \code{XCMSnExp} object as a result.
+##'
+##' @rdname XCMSnExp-class
+##'
+##' @examples
+##'
+##' ## Loading the data from 2 files of the faahKO package.
+##' library(faahKO)
+##' od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+##'                     system.file("cdf/KO/ko16.CDF", package = "faahKO")))
+##' ## Now we perform a feature detection on this data set using the
+##' ## matched filter method. We are tuning the settings such that it performs
+##' ## faster.
+##' mfp <- MatchedFilterParam(binSize = 4)
+##' xod <- detectFeatures(od, param = mfp)
+##'
+##' ## The results from the feature detection are now stored in the XCMSnExp
+##' ## object
+##' xod
+##'
+##' ## The detected features can be accessed with the features method.
+##' head(features(xod))
+##'
+##' ## The settings of the feature detection can be accessed with the
+##' ## processHistory method
+##' processHistory(xod)
+##'
+##' ## Also the parameter class for the feature detection can be accessed
+##' processParam(processHistory(xod)[[1]])
+##'
+##' ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
+##' ## defined in Bioconductor's MSnbase package. To access the (raw) retention
+##' ## time for each spectrum we can use the rtime method. Setting bySample = TRUE
+##' ## would cause the retention times to be grouped by sample
+##' head(rtime(xod))
+##'
+##' ## Similarly it is possible to extract the mz values or the intensity values
+##' ## using the mz and intensity method, respectively, also with the option to
+##' ## return the results grouped by sample instead of the default, which is
+##' ## grouped by spectrum. Finally, to extract all of the data we can use the
+##' ## spectra method which returns Spectrum objects containing all raw data.
+##' ## Note that all these methods read the information from the original input
+##' ## files and subsequently apply eventual data processing steps to them.
+##' head(mz(xod, bySample = TRUE))
+##'
+##' ## Reading all data
+##' spctr <- spectra(xod)
+##' ## To get all spectra of the first file we can split them by file
+##' head(split(spctr, fromFile(xod))[[1]])
+##'
+##' ############
+##' ## Filtering
+##' ##
+##' ## XCMSnExp objects can be filtered by file, retention time, mz values or
+##' ## MS level. For some of these filter preprocessing results (mostly
+##' ## retention time correction and feature alignment results) will be dropped.
+##' ## Below we filter the XCMSnExp object by file to extract the results for
+##' ## only the second file.
+##' xod_2 <- filterFile(xod, file = 2)
+##' xod_2
+##'
+##' ## Now the objects contains only the idenfified features for the second file
+##' head(features(xod_2))
+##'
+##' head(features(xod)[features(xod)[, "sample"] == 2, ])
+##'
+##' ##########
+##' ## Coercing to an xcmsSet object
+##' ##
+##' ## We can also coerce the XCMSnExp object into an xcmsSet object:
+##' xs <- as(xod, "xcmsSet")
+##' head(peaks(xs))
+setClass("XCMSnExp",
          slots = c(
-             .processHistory = "list"
+             .processHistory = "list",
+             msFeatureData = "MsFeatureData"
          ),
          prototype = prototype(
-             .processHistory = list()
+             .processHistory = list(),
+             msFeatureData = new("MsFeatureData")
          ),
          contains = c("OnDiskMSnExp"),
          validity = function(object) {
@@ -1225,8 +1372,55 @@ setClass("XCMSnSet",
                                                  "objects are allowed in slot ",
                                                  ".processHistory!"))
              }
+             ## TODO @jo add checks:
+             ## 1) call validMsFeatureData
+             msg <- validMsg(msg, validateMsFeatureData(object@msFeatureData))
+             if (!is.null(msg)) return(msg)
+             ## 2) features[, "sample"] is within 1:number of samples
+             if (any(ls(object@msFeatureData) == "features")) {
+                 if (!all(object@msFeatureData$features[, "sample"] %in%
+                          1:length(fileNames(object))))
+                     msg <- validMsg(msg, paste0("The number of available ",
+                                                 "samples does not match with ",
+                                                 "the sample assignment of ",
+                                                 "features in the 'features' ",
+                                                 "element of the msFeatureData ",
+                                                 "slot!"))
+             }
+             ## 3) Check that the length of the adjustedRtime matches!
+             if (any(ls(object@msFeatureData) == "adjustedRtime")) {
+                 rt <- rtime(object, bySample = TRUE)
+                 if (length(rt) != length(object@msFeatureData$adjustedRtime)) {
+                     msg <- validMsg(msg, paste0("The number of numeric vectors",
+                                                 " in the 'adjustedRtime' element",
+                                                 " of the msFeatureData slot does",
+                                                 " not match the number of",
+                                                 " samples!"))
+                 } else {
+                     if (any(lengths(rt) !=
+                             lengths(object@msFeatureData$adjustedRtime)))
+                         msg <- validMsg(msg,
+                                         paste0("The lengths of the numeric ",
+                                                "vectors in the 'adjustedRtime'",
+                                                " element of the msFeatureData ",
+                                                "slot does not match the number",
+                                                " of scans per sample!"))
+                 }
+             }
+             ## 3) If we've got features, check that we have also a related
+             ##    processing history step.
              if (is.null(msg))
                  return(TRUE)
              else return(msg)
          }
 )
+
+## testfun <- function(x, value = "index") {
+##     res <- lapply(x@groupidx, function(z, nsamps = length(filepaths(x))) {
+##         sampidx <- x@peaks[z, c("into", "sample"), drop = FALSE]
+##         tmp <- rep(NA, nsamps)
+##         tmp[sampidx[, "sample"]] <- z
+##         return(tmp)
+##     })
+##     return(do.call(rbind, res))
+## }

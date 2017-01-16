@@ -57,7 +57,7 @@ MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2, 30,
   peakThr = NULL, tuneIn = FALSE, ...)
 
 \S4method{detectFeatures}{OnDiskMSnExp,MSWParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
+  BPPARAM = bpparam(), return.type = "XCMSnExp")
 
 \S4method{detectFeatures}{MSnExp,MSWParam}(object, param, BPPARAM = bpparam(),
   return.type = "list")
@@ -161,7 +161,8 @@ processing is enables, feature detection is performed in parallel on several
 of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
-return. Can be either \code{"list"} or \code{"xcmsSet"}.}
+return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+\code{"xcmsSet"}.}
 
 \item{value}{The value for the slot.}
 }
@@ -170,11 +171,12 @@ The \code{MSWParam} function returns a \code{MSWParam}
 class instance with all of the settings specified for feature detection by
 the centWave method.
 
-For \code{detectFeatures}: if \code{return.type = "list"} a list of
-length equal to the number of samples with matrices specifying the
-identified features/peaks. If \code{return.type = "xcmsSet"} an
-\code{\linkS4class{xcmsSet}} object with the results of the feature
-detection.
+For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
+\code{\link{XCMSnExp}} object with the results of the feature detection.
+If \code{return.type = "list"} a list of length equal to the number of
+samples with matrices specifying the identified features/peaks.
+If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+with the results of the feature detection.
 }
 \description{
 Perform feature detection in mass spectrometry
@@ -279,6 +281,9 @@ Joachim Kutzera, Steffen Neumann, Johannes Rainer
 \seealso{
 The \code{\link{do_detectFeatures_MSW}} core API function
 and \code{\link{findPeaks.MSW}} for the old user interface.
+
+\code{\link{XCMSnExp}} for the object containing the results of
+the feature detection.
 
 Other feature detection methods: \code{\link{detectFeatures}},
   \code{\link{featureDetection-centWaveWithPredIsoROIs}},
