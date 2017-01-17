@@ -23,6 +23,17 @@ setMethod("show", "XCMSnExp", function(object) {
             " features per sample.\n", sep = "")
     }
     if (hasAlignedFeatures(object)) {
+        cat("Feature alignment:\n")
+        cat(" ", nrow(featureGroups(object)), " featureGroups identified.\n",
+            sep = "")
+        cat(" Median mz range of feature groups: ",
+            format(median(featureGroups(object)[, "mzmax"] -
+                          featureGroups(object)[, "mzmin"]), digits = 5),
+            "\n", sep = "")
+        cat(" Median rt range of feature groups: ",
+            format(median(featureGroups(object)[, "rtmax"] -
+                          featureGroups(object)[, "rtmin"]), digits = 5),
+            "\n", sep = "")
     }
     if (hasAdjustedRtime(object)) {
     }
@@ -958,3 +969,73 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 ##' @rdname XCMSnExp-class
 ##' @name XCMSnExp-class
 setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
+
+
+##' @title Feature alignment based on time dimension feature densities
+##'
+##' @description The \code{groupFeatures,XCMSnExp,FeatureDensityParam} method
+##' performs feature alignment (within and across samples) within in mz dimension
+##' overlapping slices of MS data based on the density distribution of the
+##' identified features in the slice along the time axis.
+##'
+##' @note Calling \code{groupFeatures} on an \code{XCMSnExp} object will cause
+##' all eventually present previous alignment results to be dropped.
+##'
+##' @param object For \code{groupFeatures}: an \code{\link{XCMSnExp}} object
+##' containing the results from a previous feature detection analysis (see
+##' \code{\link{detectFeatures}}).
+##'
+##' For all other methods: a \code{FeatureDensityParam} object.
+##' 
+##' @param param A \code{FeatureDensityParam} object containing all settings for
+##' the feature alignment algorithm.
+##'
+##' @return For \code{detectFeatures}: a \code{\link{XCMSnExp}} object with the
+##' results of the feature alignment step. These can be accessed with the
+##' \code{\link{featureGroups}} method.
+##' 
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature alignment.
+##' 
+##' @rdname groupFeatures-density
+setMethod("groupFeatures",
+          signature(object = "XCMSnExp", param = "FeatureDensityParam"),
+          function(object, param){
+              if (!hasDetectedFeatures(object))
+                  stop("No feature detection results in 'object'! Please ",
+                       "perform first a feature detection using the ",
+                       "'detectFeatures' method.")
+              ## Get rid of any previous results.
+              if (hasAlignedFeatures(object))
+                  object <- dropFeatureGroups(object)
+              ## Check if we've got any sample groups:
+              if (length(sampleGroups(param)) == 0) {
+                  sampleGroups(param) <- rep(1, length(fileNames(object)))
+                  message("Empty 'sampleGroups' in 'param', assuming all ",
+                          "samples to be in the same group.")
+              } else {
+                  ## Check that the sampleGroups are OK
+                  if (length(sampleGroups(param)) != length(fileNames(object)))
+                      stop("The 'sampleGroups' value in the provided 'param' ",
+                           "class does not match the number of available files/",
+                           "samples!")
+              }
+              startDate <- date()
+              res <- do_groupFeatures_density(features(object),
+                                              sampleGroups = sampleGroups(param),
+                                              bw = bw(param),
+                                              minFraction = minFraction(param),
+                                              minSamples = minSamples(param),
+                                              binSize = binSize(param),
+                                              maxFeatures = maxFeatures(param))
+              xph <- XProcessHistory(param = param, date. = startDate,
+                                     type. = .PROCSTEP.FEATURE.ALIGNMENT,
+                                     fileIndex = 1:length(fileNames(object)))
+              object <- addProcessHistory(object, xph)              
+              ## Add the results.
+              df <- DataFrame(res$featureGroups)
+              df$featureidx <- res$featureIndex
+              featureGroups(object) <- df
+              if (validObject(object))
+                  return(object)
+          })

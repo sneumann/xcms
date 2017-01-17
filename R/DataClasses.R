@@ -1197,10 +1197,30 @@ setClass("CentWavePredIsoParam",
                  return(msg)
          })
 
+
+## General groupFeatures method.
+##' @title Feature alignment methods.
+##'
+##' @description The \code{groupFeatures} method(s) perform alignment of features
+##' within and between samples. These methods are part of the modernized
+##' \code{xcms} user interface.
+##'
+##' The implemented feature alignment methods are:
+##' \describe{
+##' \item{density}{feature alignment based on time dimension feature densities.
+##' See \code{\link{groupFeatures-density}} for more details.}
+##'
+##' }
+##' @name groupFeatures
+##' @family feature alignment methods
+##' @seealso \code{\link{group}} for the \emph{old} feature alignment
+##' methods.
+##' @author Johannes Rainer
+NULL
+#> NULL
+
 ## Main group.density documentation.
-##' @title Align features across samples based on time dimension feature densities
-##' 
-##' @aliases groupFeaturesDensity
+##' @title Feature alignment based on time dimension feature densities
 ##'
 ##' @description This method performs performs feature alignment based on the
 ##' density (distribution) of identified features along the retention time axis
@@ -1268,6 +1288,38 @@ NULL
 ##' ## Change hte minSamples slot
 ##' minSamples(p) <- 3
 ##' p
+##'
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment using the density method.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment
+##' fdp <- FeatureDensityParam()
+##' res <- groupFeatures(res, fdp)
+##'
+##' ## The results from the feature alignment:
+##' featureGroups(res)
+##'
+##' ## The process history:
+##' processHistory(res)
 setClass("FeatureDensityParam",
          slots = c(sampleGroups = "ANY",
                    bw = "numeric",

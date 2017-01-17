@@ -197,7 +197,8 @@ export(
 ## New analysis methods
 exportMethods(
     "showError",
-    "detectFeatures"
+    "detectFeatures",
+    "groupFeatures"
 )
 
 ## New Param classes

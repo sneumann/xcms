@@ -1,11 +1,9 @@
 ## tests related to the new XCMSnExp object.
 library(RUnit)
 
-cwp <- CentWaveParam(noise = 10000, snthresh = 40)
-## od <- filterRt(od, rt = c(3000, 4000))
-od_x <- detectFeatures(faahko_od, param = cwp)
-xs <- xcmsSet(faahko_3_files, profparam = list(step = 0), method = "centWave",
-              noise = 10000, snthresh = 40)
+od_x <- faahko_xod
+xs <- faahko_xs
+
 xs_2 <- group(xs)
 suppressWarnings(
     xs_2 <- retcor(xs_2)

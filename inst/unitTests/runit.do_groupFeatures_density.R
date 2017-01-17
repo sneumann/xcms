@@ -1,3 +1,32 @@
+test_groupFeatures_FeatureDensityParam <- function() {
+    od_x <- faahko_xod
+    xs <- faahko_xs
+
+    fdp <- FeatureDensityParam(sampleGroups = xs$class)
+    od_x <- groupFeatures(od_x, param = fdp)
+    xs <- group(xs, method = "density")
+    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
+    fg <- featureGroups(od_x)
+    fg <- as.matrix(fg[, -ncol(fg)])
+    checkEquals(xs@groups, fg)
+    checkTrue(length(processHistory(od_x)) == 2)
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), fdp)
+
+    fdp2 <- FeatureDensityParam(sampleGroups = xs$class, binSize = 2,
+                                minFraction = 0.8)
+    od_x <- groupFeatures(od_x, param = fdp2)
+    xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
+    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
+    fg <- featureGroups(od_x)
+    fg <- as.matrix(fg[, -ncol(fg)])
+    checkEquals(xs@groups, fg)
+    checkTrue(length(processHistory(od_x)) == 2)
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), fdp2)    
+}
+
+
 test_do_groupFeatures_density <- function() {
     fts <- peaks(faahko)
     res <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko))

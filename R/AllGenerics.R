@@ -109,6 +109,8 @@ setGeneric("group.density", function(object, ...) standardGeneric("group.density
 setGeneric("group.mzClust", function(object, ...) standardGeneric("group.mzClust"))
 setGeneric("group.nearest", function(object, ...) standardGeneric("group.nearest"))
 setGeneric("group", function(object, ...) standardGeneric("group"))
+setGeneric("groupFeatures", function(object, param, ...)
+           standardGeneric("groupFeatures"))
 setGeneric("groupidx", function(object) standardGeneric("groupidx"))
 setGeneric("groupidx<-", function(object, value) standardGeneric("groupidx<-"))
 setGeneric("groupnames", function(object, ...) standardGeneric("groupnames"))
