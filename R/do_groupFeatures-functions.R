@@ -202,3 +202,137 @@ do_groupFeatures_density <- function(features, sampleGroups,
                 featureIndex = groupindex[uindex]))
 }
 
+## Just to check if we could squeeze a little bit more out using parallel
+## processing...
+do_groupFeatures_density_par <- function(features, sampleGroups,
+                                         bw = 30, minFraction = 0.5,
+                                         minSamples = 1, binSize = 0.25,
+                                         maxFeatures = 50) {
+    if (missing(sampleGroups))
+        stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
+             "length equal to the number of samples specifying the group ",
+             "assignment of the samples.")
+    if (missing(features))
+        stop("Parameter 'peaks' is missing!")
+    if (!is.matrix(features) | is.data.frame(features))
+        stop("Peaks has to be a 'matrix' or a 'data.frame'!")
+    ## Check that we've got all required columns
+    .reqCols <- c("mz", "rt", "sample")
+    if (!all(.reqCols %in% colnames(features)))
+        stop("Required columns ",
+             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
+                    collapse = ", "), " not found in 'features' parameter")
+
+    ## samples <- sampnames(object)
+    ## classlabel <- sampclass(object)
+    ## classnames <- as.character(unique(sampclass(object)))
+    ## classlabel <- as.vector(unclass(classlabel))
+    ## classnum <- table(classlabel)
+
+    sampleGroups <- as.character(sampleGroups)
+    sampleGroupNames <- unique(sampleGroups)
+    sampleGroupTable <- table(sampleGroups)
+    nSampleGroups <- length(sampleGroupTable)
+
+    ## peakmat <- peaks(object)
+    ## porder <- order(peakmat[,"mz"])
+    ## peakmat <- peakmat[porder,, drop=FALSE]
+    ## rownames(peakmat) <- NULL
+    ## retrange <- range(peakmat[,"rt"])
+
+    ## Order features matrix by mz
+    featureOrder <- order(features[, "mz"])
+    features <- features[featureOrder, .reqCols, drop = FALSE]
+    rownames(features) <- NULL
+    rtRange <- range(features[, "rt"])
+
+    ## Define the mass slices and the index in the features matrix with an mz
+    ## value >= mass[i].
+    mass <- seq(features[1, "mz"], features[nrow(features), "mz"] + binSize,
+                by = binSize / 2)
+    masspos <- findEqualGreaterM(features[,"mz"], mass)
+
+    groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
+    groupindex <- vector("list", 512)
+
+    ## endIdx <- 0
+    ## num <- 0
+
+    ## Create the list of feature data subsets.
+    ftsL <- vector("list", length(mass))
+    for (i in seq_len(length(mass) - 2)) {
+        startIdx <- masspos[i]
+        endIdx <- masspos[i + 2] - 1
+        return(cbind(features[startIdx:endIdx, , drop = FALSE],
+                     idx = startIdx:endIdx))
+    }
+    ftsL <- ftsL[lengths(ftsL) > 0]
+    ## Here we can run bplapply:
+    res <- bplapply(ftsL, function(z, rtr, bw, maxF, sampleGrps,
+                                   sampleGroupTbl, minFr, minSmpls,
+                                   sampleGroupNms, featureOrdr) {
+        den <- density(z, bw, from = rtr[1] - 3 * bw,
+                       to = rtr[2] + 3 * bw)
+        maxden <- max(den$y)
+        deny <- den$y
+        snum <- 0
+        tmpL <- vector("list", maxF)
+        tmpL2 <- tmpL
+        while (deny[maxy <- which.max(deny)] > maxden / 20 && snum < maxF) {
+            grange <- xcms::descendMin(deny, maxy)
+            deny[grange[1]:grange[2]] <- 0
+            gidx <- which(z[,"rt"] >= den$x[grange[1]] &
+                          z[,"rt"] <= den$x[grange[2]])
+            ## Determine the sample group of the samples in which the features
+            ## were detected and check if they correspond to the required limits.
+            tt <- table(sampleGrps[unique(z[gidx, "sample"])])
+            if (!any(tt / sampleGroupTbl[names(tt)] >= minFr &
+                     tt >= minSmpls))
+                next
+            snum <- snum + 1
+            gcount <- rep(0, length(sampleGroupNms))
+            names(gcount) <- sampleGroupNms
+            gcount[names(tt)] <- as.numeric(tt)
+
+            tmpL[[snum]] <- c(median(z[gidx, "mz"]),
+                              range(z[gidx, "mz"]),
+                              median(z[gidx, "rt"]),
+                              range(z[gidx, "rt"]),
+                              length(gidx),
+                              gcount)
+            tmpL2[[snum]] <- sort(featureOrdr[z[, "idx"][gidx]])
+        }
+        tmpL <- tmpL[lengths(tmpL) > 0]
+        tmpL2 <- tmpL2[lengths(tmpL2) > 0]
+        return(list(grps = do.call(rbind, tmpL), idx = tmpL2))
+    }, rtr = rtRange, bw = bw, maxF = maxFeatures, sampleGrps = sampleGroups,
+    sampleGroupTbl = sampleGroupTable, minFr = minFraction,
+    minSmpls = minSamples, sampleGroupNms = sampleGroupNames,
+    featureOrdr = featureOrder)
+
+    return(res)
+    
+    ## Now we have to process that sucker.
+    groupmat <- do.call(rbind, lapply(res, function(z) z[["grps"]]))
+    groupidx <- lapplz(function(z) z[["idx"]])
+    
+    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                            "npeaks", sampleGroupNames)
+
+    groupmat <- groupmat[seq_len(num), , drop = FALSE]
+    groupindex <- groupindex[seq_len(num)]
+
+    ## Remove groups that overlap with more "well-behaved" groups
+    numsamp <- rowSums(groupmat[, (match("npeaks",
+                                         colnames(groupmat))+1):ncol(groupmat),
+                                drop = FALSE])
+    uorder <- order(-numsamp, groupmat[, "npeaks"])
+
+    uindex <- rectUnique(groupmat[, c("mzmin","mzmax","rtmin","rtmax"),
+                                  drop = FALSE],
+                         uorder)
+
+    return(list(featureGroups = groupmat[uindex, , drop = FALSE],
+                featureIndex = groupindex[uindex]))
+}
+
