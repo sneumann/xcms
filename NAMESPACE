@@ -190,7 +190,8 @@ export(
     "do_detectFeatures_addPredIsoROIs",
     "imputeLinInterpol",
     "useOriginalCode",
-    "setAs"
+    "setAs",
+    "do_groupFeatures_density"
 )
 
 ## New analysis methods
