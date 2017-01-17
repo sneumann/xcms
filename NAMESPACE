@@ -206,7 +206,8 @@ exportClasses(
     "MatchedFilterParam",
     "MassifquantParam",
     "MSWParam",
-    "CentWavePredIsoParam"
+    "CentWavePredIsoParam",
+    "FeatureDensityParam"
 )
 ## Param methods
 exportMethods(
@@ -301,7 +302,7 @@ exportMethods(
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam")
+       "CentWavePredIsoParam", "FeatureDensityParam")
 ## Param class methods.
 
 ## New Classes
@@ -336,5 +337,15 @@ exportMethods("hasDetectedFeatures",
               "dropAdjustedRtime",
               "dropFeatureGroups",
               "dropFeatures",
-              "spectra"
+              "spectra",
+              "sampleGroups",
+              "sampleGroups<-",
+              "bw",
+              "bw<-",
+              "minFraction",
+              "minFraction<-",
+              "minSamples",
+              "minSamples<-",
+              "maxFeatures",
+              "maxFeatures<-"
               )

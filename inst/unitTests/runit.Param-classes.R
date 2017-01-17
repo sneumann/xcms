@@ -479,3 +479,61 @@ test_CentWavePredIsoParam <- function() {
     L <- xcms:::.param2list(p)
     checkEquals(L$snthresh, 123)
 }
+
+test_FeatureDensityParam <- function() {
+    library(RUnit)
+    library(xcms)
+    ## Check getter/setter methods:
+    p <- new("FeatureDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- FeatureDensityParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("FeatureDensityParam", bw = 3)
+    checkEquals(bw(p), 3)
+    bw(p) <- 20
+    checkEquals(bw(p), 20)
+    p <- FeatureDensityParam(bw = 33)
+    checkEquals(bw(p), 33)
+    checkException(FeatureDensityParam(bw = -4))
+
+    ## minFraction
+    p <- new("FeatureDensityParam", minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    minFraction(p) <- 0.2
+    checkEquals(minFraction(p), 0.2)
+    p <- FeatureDensityParam(minFraction = 0.4)
+    checkEquals(minFraction(p), 0.4)
+    checkException(FeatureDensityParam(minFraction = -4))
+    checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
+    checkException(minFraction(p) <- 2)
+
+    ## minSamples
+    p <- new("FeatureDensityParam", minSamples = 3)
+    checkEquals(minSamples(p), 3)
+    minSamples(p) <- 20
+    checkEquals(minSamples(p), 20)
+    p <- FeatureDensityParam(minSamples = 33)
+    checkEquals(minSamples(p), 33)
+    checkException(FeatureDensityParam(minSamples = -4))
+
+    ## binSize
+    p <- new("FeatureDensityParam", binSize = 3)
+    checkEquals(binSize(p), 3)
+    binSize(p) <- 20
+    checkEquals(binSize(p), 20)
+    p <- FeatureDensityParam(binSize = 0.3)
+    checkEquals(binSize(p), 0.3)
+    checkException(FeatureDensityParam(binSize = -4))
+
+    ## maxFeatures
+    p <- new("FeatureDensityParam", maxFeatures = 3)
+    checkEquals(maxFeatures(p), 3)
+    maxFeatures(p) <- 20
+    checkEquals(maxFeatures(p), 20)
+    p <- FeatureDensityParam(maxFeatures = 33)
+    checkEquals(maxFeatures(p), 33)
+    checkException(FeatureDensityParam(maxFeatures = -4))
+}

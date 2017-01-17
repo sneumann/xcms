@@ -2,7 +2,7 @@
 % Please edit documentation in R/do_groupFeatures-functions.R
 \name{do_groupFeatures_density}
 \alias{do_groupFeatures_density}
-\title{Align features across samples based on time dimension feature densities}
+\title{Core API function for feature density based feature alignment}
 \usage{
 do_groupFeatures_density(features, sampleGroups, bw = 30, minFraction = 0.5,
   minSamples = 1, binSize = 0.25, maxFeatures = 50)
@@ -10,7 +10,9 @@ do_groupFeatures_density(features, sampleGroups, bw = 30, minFraction = 0.5,
 \arguments{
 \item{features}{A \code{matrix} or \code{data.frame} with the mz values and
 retention times of the identified features in all samples of an experiment.
-Required columns are \code{"mz"}, \code{"rt"}.}
+Required columns are \code{"mz"}, \code{"rt"} and \code{"sample"}. The latter
+should contain \code{numeric} values representing the index of the sample in
+which the feature was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments.}
@@ -63,6 +65,11 @@ For overlapping slices along the mz dimension, the function
 calculates the density distribution of identified features along the
 retention time axis and groups features from the same or different samples
 that are close to each other. See [Smith 2006] for more details.
+}
+\note{
+The default settings might not be appropriate for all LC/GC-MS setups,
+especially the \code{bw} and \code{binSize} parameter should be adjusted
+accordingly.
 }
 \examples{
 ## Load the test data set

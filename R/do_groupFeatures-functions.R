@@ -1,7 +1,7 @@
 ## Alignment functions.
 #' @include functions-Params.R
 
-##' @title Align features across samples based on time dimension feature densities
+##' @title Core API function for feature density based feature alignment
 ##'
 ##' @description The \code{do_groupFeatures_density} function performs feature
 ##' alignment based on the density (distribution) of features, found in different
@@ -12,30 +12,17 @@
 ##' retention time axis and groups features from the same or different samples
 ##' that are close to each other. See [Smith 2006] for more details.
 ##'
+##' @note The default settings might not be appropriate for all LC/GC-MS setups,
+##' especially the \code{bw} and \code{binSize} parameter should be adjusted
+##' accordingly.
+##' 
 ##' @param features A \code{matrix} or \code{data.frame} with the mz values and
 ##' retention times of the identified features in all samples of an experiment.
-##' Required columns are \code{"mz"}, \code{"rt"}.
+##' Required columns are \code{"mz"}, \code{"rt"} and \code{"sample"}. The latter
+##' should contain \code{numeric} values representing the index of the sample in
+##' which the feature was found.
 ##'
-##' @param sampleGroups A vector of the same length than samples defining the
-##' sample group assignments.
-##'
-##' @param bw numeric(1) defining the bandwidth (standard deviation ot the
-##' smoothing kernel) to be used. This argument is passed to the
-##' \code{\link{density}} method.
-##'
-##' @param minFraction numeric(1) defining the minimum fraction of samples in at
-##' least one sample group in which the features have to be present to be
-##' considered as a feature group.
-##'
-##' @param minSamples numeric(1) with the minimum number of samples in at least
-##' one sample group in which the features have to be detected to be considered
-##' as a feature group.
-##'
-##' @param binSize numeric(1) defining the size of the overlapping slices in mz
-##' dimension.
-##'
-##' @param maxFeatures numeric(1) with the maximum number of feature groups to
-##' be identified in a single mz slice.
+##' @inheritParams groupFeatures-density
 ##'
 ##' @return A \code{list} with elements \code{"featureGroups"} and
 ##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
@@ -104,6 +91,12 @@ do_groupFeatures_density <- function(features, sampleGroups,
     sampleGroupNames <- unique(sampleGroups)
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
+
+    ## Check that sample groups matches with sample column.
+    if (max(features[, "sample"]) > length(sampleGroups))
+        stop("Sample indices in 'features' are larger than there are sample",
+             " groups specified with 'sampleGroups'!")
+    
     ## Order features matrix by mz
     featureOrder <- order(features[, "mz"])
     features <- features[featureOrder, .reqCols, drop = FALSE]

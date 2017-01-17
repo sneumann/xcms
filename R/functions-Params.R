@@ -182,3 +182,20 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                maxCharge = as.integer(maxCharge),
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
+
+
+############################################################
+## FeatureDensityParam
+
+##' @return The \code{FeatureDensityParam} function returns a
+##' \code{FeatureDensityParam} class instance with all of the settings
+##' specified for feature alignment based on feature densities.
+##' 
+##' @rdname groupFeatures-density
+FeatureDensityParam <- function(sampleGroups = numeric(), bw = 30,
+                                minFraction = 0.5, minSamples = 1,
+                                binSize = 0.25, maxFeatures = 50) {
+    return(new("FeatureDensityParam", sampleGroups = sampleGroups, bw = bw,
+               minFraction = minFraction, minSamples = minSamples,
+               binSize = binSize, maxFeatures = maxFeatures))
+}

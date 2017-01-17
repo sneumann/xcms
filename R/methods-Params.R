@@ -922,3 +922,109 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+
+############################################################
+## FeatureDensityParam
+setMethod("initialize", "FeatureDensityParam", function(.Object, ...) {
+    classVersion(.Object)["FeatureDensityParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+## ##' @rdname groupFeatures-density
+## setMethod("print", "CentWaveParam", function(x, ...) show(x))
+##' @rdname groupFeatures-density
+setMethod("show", "FeatureDensityParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" bw:", object@bw, "\n")
+    cat(" minFraction:", minFraction(object), "\n")
+    cat(" minSamples:", minSamples(object), "\n")
+    cat(" binSize:", binSize(object), "\n")
+    cat(" maxFeatures:", maxFeatures(object), "\n")
+})
+
+##' @aliases sampleGroups
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("sampleGroups", "FeatureDensityParam", function(object){
+    return(object@sampleGroups)})
+##' @aliases sampleGroups<-
+##' @param value The value for the slot.
+##' @rdname groupFeatures-density
+setReplaceMethod("sampleGroups", "FeatureDensityParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases bw
+##' @description \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+##' of the object.
+##' @rdname groupFeatures-density
+setMethod("bw", "FeatureDensityParam", function(object){
+    return(object@bw)})
+##' @aliases bw<-
+##' @rdname groupFeatures-density
+setReplaceMethod("bw", "FeatureDensityParam", function(object, value) {
+    object@bw <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases minFraction
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
+##' the \code{minFraction} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("minFraction", "FeatureDensityParam", function(object){
+    return(object@minFraction)})
+##' @aliases minFraction<-
+##' @rdname groupFeatures-density
+setReplaceMethod("minFraction", "FeatureDensityParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases minSamples
+##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
+##' \code{minSamples} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("minSamples", "FeatureDensityParam", function(object){
+    return(object@minSamples)})
+##' @aliases minSamples<-
+##' @rdname groupFeatures-density
+setReplaceMethod("minSamples", "FeatureDensityParam", function(object, value) {
+    object@minSamples <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{binSize},\code{binSize<-}: getter and setter for the
+##' \code{binSize} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("binSize", "FeatureDensityParam", function(object){
+    return(object@binSize)})
+##' @rdname groupFeatures-density
+setReplaceMethod("binSize", "FeatureDensityParam", function(object, value) {
+    object@binSize <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases maxFeatures
+##' @description \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
+##' the \code{maxFeatures} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("maxFeatures", "FeatureDensityParam", function(object){
+    return(object@maxFeatures)})
+##' @aliases maxFeatures<-
+##' @rdname groupFeatures-density
+setReplaceMethod("maxFeatures", "FeatureDensityParam", function(object, value) {
+    object@maxFeatures <- value
+    if (validObject(object))
+        return(object)
+})

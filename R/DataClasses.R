@@ -1082,7 +1082,6 @@ setClass("MSWParam",
              }
          })
 
-## Main centWave documentation.
 ##' @title Two-step centWave feature detection considering also feature isotopes
 ##'
 ##' @aliases centWaveWithPredIsoROIs
@@ -1198,11 +1197,117 @@ setClass("CentWavePredIsoParam",
                  return(msg)
          })
 
-####
-## DataFrame or matrix?
-## row subsetting: 400:800, : matrix very fast, data.frame, DataFrame.
-## column subsetting: , 2: data.frame fast, matrix, DataFrame
-## splitting: matrix fastest (but return type is not a matrix).
+## Main group.density documentation.
+##' @title Align features across samples based on time dimension feature densities
+##' 
+##' @aliases groupFeaturesDensity
+##'
+##' @description This method performs performs feature alignment based on the
+##' density (distribution) of identified features along the retention time axis
+##' within slices of overlapping mz ranges. All features (from the same or from
+##' different samples) being close on the retention time axis are grouped into
+##' a \emph{feature group}.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{FeatureDensityParam} object.
+##'
+##' @param sampleGroups A vector of the same length than samples defining the
+##' sample group assignments.
+##'
+##' @param bw numeric(1) defining the bandwidth (standard deviation ot the
+##' smoothing kernel) to be used. This argument is passed to the
+##' \code{\link{density}} method.
+##'
+##' @param minFraction numeric(1) defining the minimum fraction of samples in at
+##' least one sample group in which the features have to be present to be
+##' considered as a feature group.
+##'
+##' @param minSamples numeric(1) with the minimum number of samples in at least
+##' one sample group in which the features have to be detected to be considered
+##' as a feature group.
+##'
+##' @param binSize numeric(1) defining the size of the overlapping slices in mz
+##' dimension.
+##'
+##' @param maxFeatures numeric(1) with the maximum number of feature groups to
+##' be identified in a single mz slice.
+##' 
+##' @family feature alignment methods
+##' @seealso The \code{\link{do_groupFeatures_density}} core
+##' API function and \code{\link{group.density}} for the old user interface.
+##'
+##' @name groupFeatures-density
+##' 
+##' @author Colin Smith, Johannes Rainer
+##'
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+NULL
+#> NULL
+
+##' @description The \code{FeatureDensityParam} class allows to specify all
+##' settings for the feature alignment based on feature densities along the time
+##' dimension. Instances should be created with the \code{FeatureDensityParam}
+##' constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-density
+##'
+##' @examples
+##'
+##' ## Create a FeatureDensityParam object
+##' p <- FeatureDensityParam(binSize = 0.05)
+##' ## Change hte minSamples slot
+##' minSamples(p) <- 3
+##' p
+setClass("FeatureDensityParam",
+         slots = c(sampleGroups = "ANY",
+                   bw = "numeric",
+                   minFraction = "numeric",
+                   minSamples = "numeric",
+                   binSize = "numeric",
+                   maxFeatures = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             bw = 30,
+             minFraction = 0.5,
+             minSamples = 1,
+             binSize = 0.25,
+             maxFeatures = 50),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@bw) > 1 | any(object@bw < 0))
+                 msg <- validMsg(msg, paste0("'bw' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
+                                             "single positive number between ",
+                                             "0 and 1!"))
+             if (length(object@minSamples) > 1 | any(object@minSamples < 0))
+                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@binSize) > 1 | any(object@binSize < 0))
+                 msg <- validMsg(msg, paste0("'binSize' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@maxFeatures) > 1 | any(object@maxFeatures < 0))
+                 msg <- validMsg(msg, paste0("'maxFeatures' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
 
 ##' @aliases MsFeatureData
 ##' @title Data container storing xcms preprocessing results
