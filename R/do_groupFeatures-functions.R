@@ -100,23 +100,10 @@ do_groupFeatures_density <- function(features, sampleGroups,
              paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
                     collapse = ", "), " not found in 'features' parameter")
 
-    ## samples <- sampnames(object)
-    ## classlabel <- sampclass(object)
-    ## classnames <- as.character(unique(sampclass(object)))
-    ## classlabel <- as.vector(unclass(classlabel))
-    ## classnum <- table(classlabel)
-
     sampleGroups <- as.character(sampleGroups)
     sampleGroupNames <- unique(sampleGroups)
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
-
-    ## peakmat <- peaks(object)
-    ## porder <- order(peakmat[,"mz"])
-    ## peakmat <- peakmat[porder,, drop=FALSE]
-    ## rownames(peakmat) <- NULL
-    ## retrange <- range(peakmat[,"rt"])
-
     ## Order features matrix by mz
     featureOrder <- order(features[, "mz"])
     features <- features[featureOrder, .reqCols, drop = FALSE]
@@ -132,6 +119,8 @@ do_groupFeatures_density <- function(features, sampleGroups,
     groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
     groupindex <- vector("list", 512)
 
+    densFrom <- rtRange[1] - 3 * bw
+    densTo <- rtRange[2] + 3 * bw
     endIdx <- 0
     num <- 0
     gcount <- integer(nSampleGroups)
@@ -142,11 +131,10 @@ do_groupFeatures_density <- function(features, sampleGroups,
         if (endIdx - startIdx < 0)
             next
         curMat <- features[startIdx:endIdx, , drop = FALSE]
-        den <- density(curMat[,"rt"], bw, from = rtRange[1] - 3 * bw,
-                       to = rtRange[2] + 3 * bw)
+        den <- density(curMat[, "rt"], bw = bw, from = densFrom, to = densTo)
         maxden <- max(den$y)
         deny <- den$y
-        gmat <- matrix(nrow = 5, ncol = 2 + gcount)
+        ## gmat <- matrix(nrow = 5, ncol = 2 + gcount)
         snum <- 0
         ## What's that 20 there?
         while (deny[maxy <- which.max(deny)] > maxden / 20 && snum < maxFeatures) {
@@ -223,22 +211,10 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
              paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
                     collapse = ", "), " not found in 'features' parameter")
 
-    ## samples <- sampnames(object)
-    ## classlabel <- sampclass(object)
-    ## classnames <- as.character(unique(sampclass(object)))
-    ## classlabel <- as.vector(unclass(classlabel))
-    ## classnum <- table(classlabel)
-
     sampleGroups <- as.character(sampleGroups)
     sampleGroupNames <- unique(sampleGroups)
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
-
-    ## peakmat <- peaks(object)
-    ## porder <- order(peakmat[,"mz"])
-    ## peakmat <- peakmat[porder,, drop=FALSE]
-    ## rownames(peakmat) <- NULL
-    ## retrange <- range(peakmat[,"rt"])
 
     ## Order features matrix by mz
     featureOrder <- order(features[, "mz"])
@@ -255,23 +231,20 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
     groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
     groupindex <- vector("list", 512)
 
-    ## endIdx <- 0
-    ## num <- 0
-
     ## Create the list of feature data subsets.
     ftsL <- vector("list", length(mass))
     for (i in seq_len(length(mass) - 2)) {
         startIdx <- masspos[i]
         endIdx <- masspos[i + 2] - 1
-        return(cbind(features[startIdx:endIdx, , drop = FALSE],
-                     idx = startIdx:endIdx))
+        ftsL[[i]] <- cbind(features[startIdx:endIdx, , drop = FALSE],
+                         idx = startIdx:endIdx)
     }
     ftsL <- ftsL[lengths(ftsL) > 0]
     ## Here we can run bplapply:
     res <- bplapply(ftsL, function(z, rtr, bw, maxF, sampleGrps,
                                    sampleGroupTbl, minFr, minSmpls,
                                    sampleGroupNms, featureOrdr) {
-        den <- density(z, bw, from = rtr[1] - 3 * bw,
+        den <- density(z[, "rt"], bw = bw, from = rtr[1] - 3 * bw,
                        to = rtr[2] + 3 * bw)
         maxden <- max(den$y)
         deny <- den$y
@@ -279,7 +252,7 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
         tmpL <- vector("list", maxF)
         tmpL2 <- tmpL
         while (deny[maxy <- which.max(deny)] > maxden / 20 && snum < maxF) {
-            grange <- xcms::descendMin(deny, maxy)
+            grange <- xcms:::descendMin(deny, maxy)
             deny[grange[1]:grange[2]] <- 0
             gidx <- which(z[,"rt"] >= den$x[grange[1]] &
                           z[,"rt"] <= den$x[grange[2]])
@@ -304,23 +277,23 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
         }
         tmpL <- tmpL[lengths(tmpL) > 0]
         tmpL2 <- tmpL2[lengths(tmpL2) > 0]
-        return(list(grps = do.call(rbind, tmpL), idx = tmpL2))
+        if (length(tmpL))
+            return(list(grps = do.call(rbind, tmpL), idx = tmpL2))
     }, rtr = rtRange, bw = bw, maxF = maxFeatures, sampleGrps = sampleGroups,
     sampleGroupTbl = sampleGroupTable, minFr = minFraction,
     minSmpls = minSamples, sampleGroupNms = sampleGroupNames,
     featureOrdr = featureOrder)
 
-    return(res)
-    
-    ## Now we have to process that sucker.
+    res <- res[lengths(res) > 0]
+    ## Now we have to process that list of results.
     groupmat <- do.call(rbind, lapply(res, function(z) z[["grps"]]))
-    groupidx <- lapplz(function(z) z[["idx"]])
+    groupidx <- unlist(lapply(res, function(z) z[["idx"]]), recursive = FALSE)
     
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", sampleGroupNames)
 
-    groupmat <- groupmat[seq_len(num), , drop = FALSE]
-    groupindex <- groupindex[seq_len(num)]
+    ## groupmat <- groupmat[seq_len(num), , drop = FALSE]
+    ## groupindex <- groupindex[seq_len(num)]
 
     ## Remove groups that overlap with more "well-behaved" groups
     numsamp <- rowSums(groupmat[, (match("npeaks",
@@ -333,6 +306,6 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
                          uorder)
 
     return(list(featureGroups = groupmat[uindex, , drop = FALSE],
-                featureIndex = groupindex[uindex]))
+                featureIndex = groupidx[uindex]))
 }
 

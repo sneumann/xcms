@@ -1,7 +1,39 @@
+test_do_groupFeatures_density <- function() {
+    fts <- peaks(faahko)
+    res <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko))
+    res_2 <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko),
+                                      minFraction = 0.9)
+    checkTrue(nrow(res$featureGroups) > nrow(res_2$featureGroups))
+}
+
+dontrun_do_groupFeatures_density_parallel <- function() {
+    library(xcms)
+    library(faahKO)
+    library(RUnit)
+    data(faahko)
+    fts <- peaks(faahko)
+
+    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko))
+    res_2 <- do_groupFeatures_density(fts, sampclass(faahko))
+    checkEquals(res$featureGroups, res_2$featureGroups)
+    checkEquals(res$featureIndex, res_2$featureIndex)
+
+    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko), bw = 10)
+    res_2 <- do_groupFeatures_density(fts, sampclass(faahko), bw = 10)
+    checkEquals(res$featureGroups, res_2$featureGroups)
+    checkEquals(res$featureIndex, res_2$featureIndex)
+
+    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko),
+                                               minFraction = 0.9)
+    res_2 <- do_groupFeatures_density(fts, sampclass(faahko), minFraction = 0.9)
+    checkEquals(res$featureGroups, res_2$featureGroups)
+    checkEquals(res$featureIndex, res_2$featureIndex)
+}
+
 ## This is to ensure that the do_groupFeatures_density yields identical results
 ## than the group.density method. Once we're sure of that we rename this to
 ## "dontrun" and replace the code within the group.density method.
-test_do_groupFeatures_density_compare <- function() {
+dontrun_do_groupFeatures_density_compare <- function() {
     xs <- faahko
     
     fts <- peaks(xs)
