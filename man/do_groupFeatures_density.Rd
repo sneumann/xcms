@@ -97,4 +97,7 @@ Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
 }
+\seealso{
+Other core feature alignment algorithms: \code{\link{do_groupFeatures_mzClust}}
+}
 

@@ -302,3 +302,86 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
                 featureIndex = groupidx[uindex]))
 }
 
+##' @title Core API function for feature alignment using mzClust
+##'
+##' @description The \code{do_groupFeatures_mzClust} function performs high
+##' resolution alignment on single spectra samples.
+##' 
+##' @inheritParams groupFeatures-density
+##' @inheritParams do_groupFeatures_density
+##' 
+##' @return A \code{list} with elements \code{"featureGroups"} and
+##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
+##' representing an aligned feature group and with columns:
+##' \describe{
+##' \item{"mzmed"}{median of the features' apex mz values.}
+##' \item{"mzmin"}{smallest mz value of all features' apex within the feature
+##' group.}
+##' \item{"mzmax"}{largest mz value of all features' apex within the feature
+##' group.}
+##' \item{"rtmed"}{always \code{-1}.}
+##' \item{"rtmin"}{always \code{-1}.}
+##' \item{"rtmax"}{always \code{-1}.}
+##' \item{"npeaks"}{the total number of features assigned to the feature group.
+##' Note that this number can be larger than the total number of samples, since
+##' multiple features from the same sample could be assigned to a group.}
+##' }
+##' \code{"featureIndex"} is a \code{list} with the indices of all features in a
+##' feature group in the \code{features} input matrix.
+##'
+##' @family core feature alignment algorithms
+##'
+##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
+##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
+##' development of a heuristic approach for metabolomics}.\cr Metabolomics,
+##' Vol. 2, No. 2, 75-83 (2006)
+do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
+                                     absMz = 0, minFraction = 0.5,
+                                     minSamples = 1) {
+    if (missing(sampleGroups))
+        stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
+             "length equal to the number of samples specifying the group ",
+             "assignment of the samples.")
+    if (missing(features))
+        stop("Parameter 'peaks' is missing!")
+    if (!is.matrix(features) | is.data.frame(features))
+        stop("Peaks has to be a 'matrix' or a 'data.frame'!")
+    ## Check that we've got all required columns
+    .reqCols <- c("mz", "sample")
+    if (!all(.reqCols %in% colnames(features)))
+        stop("Required columns ",
+             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
+                    collapse = ", "), " not found in 'features' parameter")
+    if (!is.factor(sampleGroups))
+        sampleGroups <- factor(sampleGroups, levels = unique(sampleGroups))
+    sampleGroupNames <- levels(sampleGroups)
+    sampleGroupTable <- table(sampleGroups)
+    nSampleGroups <- length(sampleGroupTable)
+    ##sampleGroups <- as.numeric(sampleGroups)
+    
+    ## Check that sample groups matches with sample column.
+    if (max(features[, "sample"]) > length(sampleGroups))
+        stop("Sample indices in 'features' are larger than there are sample",
+             " groups specified with 'sampleGroups'!")
+
+    ##features <- features[, .reqCols, drop = FALSE]
+    grps <- mzClustGeneric(features[, .reqCols, drop = FALSE],
+                           sampclass = sampleGroups,
+                           mzppm = ppm,
+                           mzabs = absMz,
+                           minsamp = minSamples,
+                           minfrac = minFraction)
+    grpmat <- grps$mat
+    if (is.null(nrow(grpmat))) {
+        matColNames <- names(grpmat)
+        grpmat <- matrix(grpmat, ncol = length(grpmat), byrow = FALSE)
+        colnames(grpmat) <- matColNames
+    }
+    rts <- rep(-1, nrow(grpmat))
+    cns <- colnames(grpmat)
+    grpmat <- cbind(grpmat[, 1:3, drop = FALSE], rts, rts, rts,
+                    grpmat[, 4:ncol(grpmat), drop = FALSE])
+    colnames(grpmat) <- c(cns[1:3], c("rtmed", "rtmin", "rtmax"),
+                          cns[4:length(cns)])
+    return(list(featureGroups = grpmat, featureIndex = grps$idx))    
+}

@@ -1,3 +1,9 @@
+## Unit tests for all do_groupFeatures_* functions.
+
+############################################################
+## density
+##
+
 test_groupFeatures_FeatureDensityParam <- function() {
     od_x <- faahko_xod
     xs <- faahko_xs
@@ -196,4 +202,60 @@ dontrun_groupFeatures_density_implementation <- function() {
     }
     res_x <- res_x[lengths(res_x) > 0]
     idxs <- idxs[lengths(idxs) > 0]
+}
+
+
+############################################################
+## mzClust
+##
+
+## This is to compare the function to the group.mzClust method. Once all is fine
+## rename it to "dontrun"
+test_groupFeatures_mzClust_compare <- function() {
+    library(RUnit)
+    library(xcms)
+    library(msdata)
+    mzdatapath <- system.file("fticr", package = "msdata")
+    mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
+
+    ## old
+    xs <- xcmsSet(method="MSW", files=mzdatafiles, scales=c(1,7),
+                  SNR.method='data.mean' , winSize.noise=500,
+                  peakThr=80000,  amp.Th=0.005)
+    xsg <- group(xs, method="mzClust")
+
+    ## new
+    od <- readMSData2(mzdatafiles, msLevel. = 1)
+    p <- MSWParam(scales = c(1, 7), ampTh = 0.005, peakThr = 80000,
+                  SNR.method = 'data.mean', winSize.noise = 500)
+    xod <- detectFeatures(od, param = p)
+    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sampclass(xs))
+    
+    checkEquals(peaks(xs), features(xod))
+    checkEquals(res$featureGroups, xsg@groups)
+    checkEquals(res$featureIndex, xsg@groupidx)
+    
+    ## Check with different class ordering!
+    sc_orig <- sampclass(xs)
+    sc <- c(2, 2, 1, 1, 4, 4, 4, 3, 3, 3)
+    sampclass(xs) <- factor(sc)
+    xsg <- group(xs, method="mzClust", minfrac = 0.2)
+    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+                                    minFraction = 0.2)
+    checkEquals(res$featureGroups, xsg@groups)
+    checkEquals(res$featureIndex, xsg@groupidx)
+
+    sc <- c("z", "z", "b", "a", "a", "a", "z", "b", "e", "e")
+    sampclass(xs) <- factor(sc)
+    xsg <- group(xs, method="mzClust", minfrac = 0.2, mzppm = 40)
+    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+                                    minFraction = 0.1, ppm = 40)
+    checkEquals(res$featureGroups, xsg@groups)
+    checkEquals(res$featureIndex, xsg@groupidx)
+
+    xsg <- group(xs, method="mzClust", minfrac = 0.2, mzppm = 40, mzabs = 0.1)
+    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+                                    minFraction = 0.1, ppm = 40, absMz = 0.1)
+    checkEquals(res$featureGroups, xsg@groups)
+    checkEquals(res$featureIndex, xsg@groupidx)
 }

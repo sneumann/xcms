@@ -191,7 +191,8 @@ export(
     "imputeLinInterpol",
     "useOriginalCode",
     "setAs",
-    "do_groupFeatures_density"
+    "do_groupFeatures_density",
+    "do_groupFeatures_mzClust"
 )
 
 ## New analysis methods
