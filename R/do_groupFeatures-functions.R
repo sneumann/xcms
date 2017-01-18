@@ -309,6 +309,11 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
 ##' 
 ##' @inheritParams groupFeatures-density
 ##' @inheritParams do_groupFeatures_density
+##'
+##' @param ppm numeric(1) representing the relative mz error for the
+##' clustering/grouping (in parts per million).
+##'
+##' @param absMz numeric(1) representing the absolute mz error for the clustering.
 ##' 
 ##' @return A \code{list} with elements \code{"featureGroups"} and
 ##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
