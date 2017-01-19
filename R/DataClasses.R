@@ -1008,12 +1008,24 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a MassifquantParam object
+##' ## Create a MSWParam object
 ##' mp <- MSWParam()
 ##' ## Change snthresh parameter
 ##' snthresh(mp) <- 15
 ##' mp
 ##'
+##' ## Loading a small subset of direct injection, single spectrum files
+##' library(msdata)
+##' fticrf <- list.files(system.file("fticr", package = "msdata"),
+##'                     recursive = TRUE, full.names = TRUE)
+##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+##'
+##' ## Perform the MSW feature detection on these:
+##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+##'              SNR.method = "data.mean", winSize.noise = 500)
+##' fticr <- detectFeatures(fticr, param = p)
+##'
+##' head(features(fticr))
 setClass("MSWParam",
          slots = c(
              snthresh = "numeric",
@@ -1405,12 +1417,26 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a FeatureDensityParam object
-##' p <- FeatureDensityParam(binSize = 0.05)
-##' ## Change hte minSamples slot
-##' minSamples(p) <- 3
-##' p
+##' ## Loading a small subset of direct injection, single spectrum files
+##' library(msdata)
+##' fticrf <- list.files(system.file("fticr", package = "msdata"),
+##'                     recursive = TRUE, full.names = TRUE)
+##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
 ##'
+##' ## Perform the MSW feature detection on these:
+##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+##'              SNR.method = "data.mean", winSize.noise = 500)
+##' fticr <- detectFeatures(fticr, param = p)
+##'
+##' head(features(fticr))
+##'
+##' ## Now create the MzClustParam parameter object: we're assuming here that
+##' ## both samples are from the same sample group.
+##' p <- MzClustParam(sampleGroups = c(1, 1))
+##'
+##' fticr <- groupFeatures(fticr, param = p)
+##'
+##' featureGroups(fticr)
 setClass("MzClustParam",
          slots = c(sampleGroups = "ANY",
                    ppm = "numeric",

@@ -32,7 +32,6 @@ test_groupFeatures_FeatureDensityParam <- function() {
     checkEquals(processParam(ph), fdp2)    
 }
 
-
 test_do_groupFeatures_density <- function() {
     fts <- peaks(faahko)
     res <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko))
@@ -208,6 +207,29 @@ dontrun_groupFeatures_density_implementation <- function() {
 ############################################################
 ## mzClust
 ##
+library(msdata)
+fticrf <- list.files(system.file("fticr", package = "msdata"),
+                     recursive = TRUE, full.names = TRUE)
+
+## old
+fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
+                    SNR.method='data.mean' , winSize.noise=500,
+                    peakThr=80000,  amp.Th=0.005)
+## new
+fticr_od <- readMSData2(fticrf[1:2], msLevel. = 1)
+p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+              SNR.method = "data.mean", winSize.noise = 500)
+fticr_xod <- detectFeatures(fticr_od, param = p)
+
+test_do_groupFeatures_mzClust <- function() {
+    fts <- peaks(fticr_xs)
+    res <- do_groupFeatures_mzClust(features = fts,
+                                    sampleGroups = sampclass(fticr_xs))
+    res_2 <- do_groupFeatures_mzClust(features = fts,
+                                      sampleGroups = sampclass(fticr_xs),
+                                      minFraction = 0, absMz = 2)
+    checkTrue(nrow(res$featureGroups) > nrow(res_2$featureGroups))
+}
 
 ## This is to compare the function to the group.mzClust method. Once all is fine
 ## rename it to "dontrun"
@@ -258,4 +280,33 @@ test_groupFeatures_mzClust_compare <- function() {
                                     minFraction = 0.1, ppm = 40, absMz = 0.1)
     checkEquals(res$featureGroups, xsg@groups)
     checkEquals(res$featureIndex, xsg@groupidx)
+}
+
+test_groupFeatures_MzClustParam <- function() {
+
+    p <- MzClustParam(sampleGroups = sampclass(fticr_xs))
+    
+    fticr_xod2 <- groupFeatures(fticr_xod, param = p)
+    fticr_xs2 <- group(fticr_xs, method = "mzClust")
+    checkEquals(fticr_xs2@groupidx, featureGroups(fticr_xod2)$featureidx)
+    fg <- featureGroups(fticr_xod2)
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    checkEquals(fticr_xs2@groups, fg)
+    checkTrue(length(processHistory(fticr_xod2)) == 2)
+    ph <- processHistory(fticr_xod2,
+                         type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), p)
+
+    p2 <- MzClustParam(sampleGroups = fticr_xs$class, absMz = 1,
+                       minFraction = 0.8)
+    fticr_xod2 <- groupFeatures(fticr_xod, param = p2)
+    fticr_xs2 <- group(fticr_xs, method = "mzClust", minfrac = 0.8, mzabs = 1)
+    checkEquals(fticr_xs2@groupidx, featureGroups(fticr_xod2)$featureidx)
+    fg <- featureGroups(fticr_xod2)
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    checkEquals(fticr_xs2@groups, fg)
+    checkTrue(length(processHistory(fticr_xod2)) == 2)
+    ph <- processHistory(fticr_xod2,
+                         type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), p2)    
 }
