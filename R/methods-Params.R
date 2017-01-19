@@ -1028,3 +1028,88 @@ setReplaceMethod("maxFeatures", "FeatureDensityParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+
+############################################################
+## MzClustParam
+setMethod("initialize", "MzClustParam", function(.Object, ...) {
+    classVersion(.Object)["MzClustParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+## ##' @rdname groupFeatures-mzClust
+## setMethod("print", "CentWaveParam", function(x, ...) show(x))
+##' @rdname groupFeatures-mzClust
+setMethod("show", "MzClustParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" ppm:", object@ppm, "\n")
+    cat(" absMz:", object@absMz, "\n")
+    cat(" minFraction:", minFraction(object), "\n")
+    cat(" minSamples:", minSamples(object), "\n")
+})
+
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("sampleGroups", "MzClustParam", function(object){
+    return(object@sampleGroups)})
+##' @param value The value for the slot.
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+##' slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("ppm", "MzClustParam", function(object){
+    return(object@ppm)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("ppm", "MzClustParam", function(object, value) {
+    object@ppm <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases absMz
+##' @description \code{absMz},\code{absMz<-}: getter and setter for the
+##' \code{absMz} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("absMz", "MzClustParam", function(object){
+    return(object@absMz)})
+##' @aliases absMz<-
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("absMz", "MzClustParam", function(object, value) {
+    object@absMz <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
+##' the \code{minFraction} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("minFraction", "MzClustParam", function(object){
+    return(object@minFraction)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
+##' \code{minSamples} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("minSamples", "MzClustParam", function(object){
+    return(object@minSamples)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
+    object@minSamples <- value
+    if (validObject(object))
+        return(object)
+})

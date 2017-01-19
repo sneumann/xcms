@@ -13,6 +13,8 @@ The implemented feature alignment methods are:
 \item{density}{feature alignment based on time dimension feature densities.
 See \code{\link{groupFeatures-density}} for more details.}
 
+\item{mzClust}{high resolution feature alignment for single spectra (direct
+infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
 }
 }
 \author{
@@ -22,6 +24,7 @@ Johannes Rainer
 \code{\link{group}} for the \emph{old} feature alignment
 methods.
 
-Other feature alignment methods: \code{\link{groupFeatures-density}}
+Other feature alignment methods: \code{\link{groupFeatures-density}},
+  \code{\link{groupFeatures-mzClust}}
 }
 

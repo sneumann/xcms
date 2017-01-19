@@ -3,6 +3,8 @@
 
 ## A
 setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
+setGeneric("absMz", function(object, ...) standardGeneric("absMz"))
+setGeneric("absMz<-", function(object, value) standardGeneric("absMz<-"))
 setGeneric("addParams", function(object, ...) standardGeneric("addParams"))
 setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-"))
 setGeneric("addProcessHistory", function(object, ...)
@@ -261,7 +263,7 @@ setGeneric("scales", function(object, ...) standardGeneric("scales"))
 setGeneric("scales<-", function(object, value) standardGeneric("scales<-"))
 setGeneric("scanrange", function(object, ...) standardGeneric("scanrange"))
 setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-"))
-setGeneric("sigma")
+setGeneric("sigma", function(object, value) standardGeneric("sigma"))
 setGeneric("sigma<-", function(object, value) standardGeneric("sigma<-"))
 setGeneric("showError", function(object, ...) standardGeneric("showError"))
 setGeneric("snthresh", function(object, ...) standardGeneric("snthresh"))

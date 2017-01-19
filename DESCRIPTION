@@ -24,7 +24,7 @@ Imports:
     RANN,
     multtest,
     MassSpecWavelet (>= 1.5.2),
-    BiocParallel,
+    BiocParallel (>= 1.8.0),
     S4Vectors
 Suggests:
     BiocStyle,

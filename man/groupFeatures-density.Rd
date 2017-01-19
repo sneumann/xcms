@@ -211,6 +211,7 @@ API function and \code{\link{group.density}} for the old user interface.
 \code{\link{XCMSnExp}} for the object containing the results of
 the feature alignment.
 
-Other feature alignment methods: \code{\link{groupFeatures}}
+Other feature alignment methods: \code{\link{groupFeatures-mzClust}},
+  \code{\link{groupFeatures}}
 }
 

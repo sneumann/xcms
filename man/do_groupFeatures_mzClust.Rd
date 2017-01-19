@@ -17,6 +17,11 @@ which the feature was found.}
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments.}
 
+\item{ppm}{numeric(1) representing the relative mz error for the
+clustering/grouping (in parts per million).}
+
+\item{absMz}{numeric(1) representing the absolute mz error for the clustering.}
+
 \item{minFraction}{numeric(1) defining the minimum fraction of samples in at
 least one sample group in which the features have to be present to be
 considered as a feature group.}

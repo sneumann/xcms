@@ -1210,6 +1210,8 @@ setClass("CentWavePredIsoParam",
 ##' \item{density}{feature alignment based on time dimension feature densities.
 ##' See \code{\link{groupFeatures-density}} for more details.}
 ##'
+##' \item{mzClust}{high resolution feature alignment for single spectra (direct
+##' infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
 ##' }
 ##' @name groupFeatures
 ##' @family feature alignment methods
@@ -1353,6 +1355,90 @@ setClass("FeatureDensityParam",
                                              "positive numeric of length 1!"))
              if (length(object@maxFeatures) > 1 | any(object@maxFeatures < 0))
                  msg <- validMsg(msg, paste0("'maxFeatures' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+## Main group.mzClust documentation.
+##' @title High resolution feature alignment for single spectra samples
+##'
+##' @description This method performs high resolution alignment for single
+##' spectra samples.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{MzClustParam} object.
+##'
+##' @inheritParams groupFeatures-density
+##'
+##' @param ppm numeric(1) representing the relative mz error for the
+##' clustering/grouping (in parts per million).
+##' 
+##' @param absMz numeric(1) representing the absolute mz error for the clustering.
+##' 
+##' @family feature alignment methods
+##' @seealso The \code{\link{do_groupFeatures_mzClust}} core
+##' API function and \code{\link{group.mzClust}} for the old user interface.
+##'
+##' @name groupFeatures-mzClust
+##'
+##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
+##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
+##' development of a heuristic approach for metabolomics}.\cr Metabolomics,
+##' Vol. 2, No. 2, 75-83 (2006)
+NULL
+#> NULL
+
+##' @description The \code{MzClustParam} class allows to specify all
+##' settings for the feature alignment based on the \emph{mzClust} algorithm.
+##' Instances should be created with the \code{MzClustParam} constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-mzClust
+##'
+##' @examples
+##'
+##' ## Create a FeatureDensityParam object
+##' p <- FeatureDensityParam(binSize = 0.05)
+##' ## Change hte minSamples slot
+##' minSamples(p) <- 3
+##' p
+##'
+setClass("MzClustParam",
+         slots = c(sampleGroups = "ANY",
+                   ppm = "numeric",
+                   absMz = "numeric",
+                   minFraction = "numeric",
+                   minSamples = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             ppm = 20,
+             absMz = 0,
+             minFraction = 0.5,
+             minSamples = 1),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@ppm) > 1 | any(object@ppm < 0))
+                 msg <- validMsg(msg, paste0("'ppm' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absMz) > 1 | any(object@absMz < 0))
+                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
+                                             "single positive number between ",
+                                             "0 and 1!"))
+             if (length(object@minSamples) > 1 | any(object@minSamples < 0))
+                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
                                              "positive numeric of length 1!"))
              if (is.null(msg))
                  return(TRUE)

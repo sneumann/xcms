@@ -13,7 +13,7 @@ test_groupFeatures_FeatureDensityParam <- function() {
     xs <- group(xs, method = "density")
     checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
     fg <- featureGroups(od_x)
-    fg <- as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
@@ -25,7 +25,7 @@ test_groupFeatures_FeatureDensityParam <- function() {
     xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
     checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
     fg <- featureGroups(od_x)
-    fg <- as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]

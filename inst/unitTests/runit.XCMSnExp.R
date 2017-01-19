@@ -612,6 +612,7 @@ test_XCMSnExp_filterRt <- function() {
 
 ## Test the coercion method.
 test_as_XCMSnExp_xcmsSet <- function() {
+    od_x <- faahko_xod
     res <- xcms:::.XCMSnExp2xcmsSet(od_x)
     res <- as(od_x, "xcmsSet")
     ## Results should be the same as in xs.
@@ -629,6 +630,7 @@ test_as_XCMSnExp_xcmsSet <- function() {
     res <- fillPeaks(res)
 
     ## Add groups.
+    ## od_2 <- groupFeatures(od_x, param = FeatureDensityParam())
     od_2 <- od_x
     od_2 <- xcms:::addProcessHistory(od_2,
                                      xcms:::ProcessHistory(fileIndex. = 1:3,

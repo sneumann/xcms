@@ -199,3 +199,18 @@ FeatureDensityParam <- function(sampleGroups = numeric(), bw = 30,
                minFraction = minFraction, minSamples = minSamples,
                binSize = binSize, maxFeatures = maxFeatures))
 }
+
+############################################################
+## MzClustParam
+
+##' @return The \code{MzClustParam} function returns a
+##' \code{MzClustParam} class instance with all of the settings
+##' specified for high resolution single spectra feature alignment.
+##' 
+##' @rdname groupFeatures-mzClust
+MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
+                                minFraction = 0.5, minSamples = 1) {
+    return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
+               absMz = absMz, minFraction = minFraction,
+               minSamples = minSamples))
+}

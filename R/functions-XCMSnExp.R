@@ -42,7 +42,8 @@ dropProcessHistoriesList <- function(x, type) {
     ## @groupidx <- featureGroups(x)$featureidx
     if (hasAlignedFeatures(from)){
         fgs <- featureGroups(from)
-        xs@groups <- as.matrix(fgs[, -ncol(fgs)])
+        xs@groups <- S4Vectors::as.matrix(fgs[, -ncol(fgs)])
+        rownames(xs@groups) <- NULL
         xs@groupidx <- fgs$featureidx
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)

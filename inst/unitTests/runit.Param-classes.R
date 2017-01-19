@@ -481,8 +481,6 @@ test_CentWavePredIsoParam <- function() {
 }
 
 test_FeatureDensityParam <- function() {
-    library(RUnit)
-    library(xcms)
     ## Check getter/setter methods:
     p <- new("FeatureDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
@@ -536,4 +534,50 @@ test_FeatureDensityParam <- function() {
     p <- FeatureDensityParam(maxFeatures = 33)
     checkEquals(maxFeatures(p), 33)
     checkException(FeatureDensityParam(maxFeatures = -4))
+}
+
+test_MzClustParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("MzClustParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- MzClustParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("MzClustParam", ppm = 3)
+    checkEquals(ppm(p), 3)
+    ppm(p) <- 20
+    checkEquals(ppm(p), 20)
+    p <- MzClustParam(ppm = 33)
+    checkEquals(ppm(p), 33)
+    checkException(MzClustParam(ppm = -4))
+
+    p <- new("MzClustParam", absMz = 3)
+    checkEquals(absMz(p), 3)
+    absMz(p) <- 20
+    checkEquals(absMz(p), 20)
+    p <- MzClustParam(absMz = 33)
+    checkEquals(absMz(p), 33)
+    checkException(MzClustParam(absMz = -4))
+    
+    ## minFraction
+    p <- new("MzClustParam", minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    minFraction(p) <- 0.2
+    checkEquals(minFraction(p), 0.2)
+    p <- MzClustParam(minFraction = 0.4)
+    checkEquals(minFraction(p), 0.4)
+    checkException(MzClustParam(minFraction = -4))
+    checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
+    checkException(minFraction(p) <- 2)
+
+    ## minSamples
+    p <- new("MzClustParam", minSamples = 3)
+    checkEquals(minSamples(p), 3)
+    minSamples(p) <- 20
+    checkEquals(minSamples(p), 20)
+    p <- MzClustParam(minSamples = 33)
+    checkEquals(minSamples(p), 33)
+    checkException(MzClustParam(minSamples = -4))
 }

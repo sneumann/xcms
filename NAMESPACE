@@ -12,8 +12,10 @@ importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
 
+## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame")
+importMethodsFrom("S4Vectors", "as.matrix")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -209,7 +211,8 @@ exportClasses(
     "MassifquantParam",
     "MSWParam",
     "CentWavePredIsoParam",
-    "FeatureDensityParam"
+    "FeatureDensityParam",
+    "MzClustParam"
 )
 ## Param methods
 exportMethods(
@@ -298,13 +301,24 @@ exportMethods(
     "mzIntervalExtension<-",
     "polarity",
     "polarity<-",
-    "rtime",
-    "mz",
-    "intensity"
+    ## FeatureDensityParam
+    "sampleGroups",
+    "sampleGroups<-",
+    "bw",
+    "bw<-",
+    "minFraction",
+    "minFraction<-",
+    "minSamples",
+    "minSamples<-",
+    "maxFeatures",
+    "maxFeatures<-",
+    ## MzClustParam
+    "absMz",
+    "absMz<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam", "FeatureDensityParam")
+       "CentWavePredIsoParam", "FeatureDensityParam", "MzClustParam")
 ## Param class methods.
 
 ## New Classes
@@ -340,14 +354,7 @@ exportMethods("hasDetectedFeatures",
               "dropFeatureGroups",
               "dropFeatures",
               "spectra",
-              "sampleGroups",
-              "sampleGroups<-",
-              "bw",
-              "bw<-",
-              "minFraction",
-              "minFraction<-",
-              "minSamples",
-              "minSamples<-",
-              "maxFeatures",
-              "maxFeatures<-"
+              "rtime",
+              "mz",
+              "intensity"
               )
