@@ -194,7 +194,8 @@ export(
     "useOriginalCode",
     "setAs",
     "do_groupFeatures_density",
-    "do_groupFeatures_mzClust"
+    "do_groupFeatures_mzClust",
+    "do_groupFeatures_nearest"
 )
 
 ## New analysis methods
