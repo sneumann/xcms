@@ -335,6 +335,34 @@ test_do_groupFeatures_nearest <- function() {
     checkEquals(res_x@groups, res$featureGroups)
 }
 
+test_groupFeatures_NearestFeaturesParam <- function() {
+    od_x <- faahko_xod
+    xs <- faahko_xs
+
+    p <- NearestFeaturesParam(sampleGroups = xs$class)
+    od_x <- groupFeatures(od_x, param = p)
+    xs <- group(xs, method = "nearest")
+    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
+    fg <- featureGroups(od_x)
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    checkEquals(xs@groups, fg)
+    checkTrue(length(processHistory(od_x)) == 2)
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), p)
+
+    fdp2 <- NearestFeaturesParam(sampleGroups = xs$class, kNN = 3)
+    od_x <- groupFeatures(od_x, param = fdp2)
+    xs <- group(xs, method = "nearest", kNN = 3)
+    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
+    fg <- featureGroups(od_x)
+    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    checkEquals(xs@groups, fg)
+    checkTrue(length(processHistory(od_x)) == 2)
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    checkEquals(processParam(ph), fdp2)    
+}
+
+
 ## That's to ensure that the do_ function yields identical results than the
 ## group.nearest method. Once we've replaced the code in the latter we rename
 ## this function to "dontrun".

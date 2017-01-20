@@ -15,6 +15,10 @@ See \code{\link{groupFeatures-density}} for more details.}
 
 \item{mzClust}{high resolution feature alignment for single spectra (direct
 infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
+
+\item{nearest}{feature alignment based on their proximity in the mz-rt space.
+See \code{\link{groupFeatures-nearest}} for more details.}
+
 }
 }
 \author{

@@ -1224,6 +1224,10 @@ setClass("CentWavePredIsoParam",
 ##'
 ##' \item{mzClust}{high resolution feature alignment for single spectra (direct
 ##' infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
+##'
+##' \item{nearest}{feature alignment based on their proximity in the mz-rt space.
+##' See \code{\link{groupFeatures-nearest}} for more details.}
+##' 
 ##' }
 ##' @name groupFeatures
 ##' @family feature alignment methods
@@ -1477,7 +1481,7 @@ setClass("MzClustParam",
 ##'
 ##' @description This method is inspired by the alignment algorithm of mzMine
 ##' [Katajamaa 2006] and performs alignment based on proximity of features in the
-##' space spanned by the rt and mz values.
+##' space spanned by retention time and mz values.
 ##' The method creates first a \emph{master feature list} consisting of all
 ##' features from the sample in which most features were identified, and
 ##' starting from that, calculates distances to features from the sample with the
@@ -1525,6 +1529,41 @@ NULL
 ##'
 ##' @examples
 ##'
+##' ## Create a NearestFeaturesParam object
+##' p <- NearestFeaturesParam(kNN = 3)
+##' p
+##'
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment using the "nearest" method.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment
+##' p <- NearestFeaturesParam()
+##' res <- groupFeatures(res, param = p)
+##'
+##' ## The results from the feature alignment:
+##' featureGroups(res)
+##'
+##' ## The process history:
+##' processHistory(res)
 setClass("NearestFeaturesParam",
          slots = c(sampleGroups = "ANY",
                    mzVsRtBalance = "numeric",
@@ -1772,12 +1811,3 @@ setClass("XCMSnExp",
          }
 )
 
-## testfun <- function(x, value = "index") {
-##     res <- lapply(x@groupidx, function(z, nsamps = length(filepaths(x))) {
-##         sampidx <- x@peaks[z, c("into", "sample"), drop = FALSE]
-##         tmp <- rep(NA, nsamps)
-##         tmp[sampidx[, "sample"]] <- z
-##         return(tmp)
-##     })
-##     return(do.call(rbind, res))
-## }

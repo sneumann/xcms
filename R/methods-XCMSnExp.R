@@ -1000,7 +1000,7 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 ##' @rdname groupFeatures-density
 setMethod("groupFeatures",
           signature(object = "XCMSnExp", param = "FeatureDensityParam"),
-          function(object, param){
+          function(object, param) {
               if (!hasDetectedFeatures(object))
                   stop("No feature detection results in 'object'! Please ",
                        "perform first a feature detection using the ",
@@ -1069,7 +1069,7 @@ setMethod("groupFeatures",
 ##' @rdname groupFeatures-mzClust
 setMethod("groupFeatures",
           signature(object = "XCMSnExp", param = "MzClustParam"),
-          function(object, param){
+          function(object, param) {
               if (!hasDetectedFeatures(object))
                   stop("No feature detection results in 'object'! Please ",
                        "perform first a feature detection using the ",
@@ -1106,6 +1106,74 @@ setMethod("groupFeatures",
                                      type. = .PROCSTEP.FEATURE.ALIGNMENT,
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)              
+              ## Add the results.
+              df <- DataFrame(res$featureGroups)
+              df$featureidx <- res$featureIndex
+              featureGroups(object) <- df
+              if (validObject(object))
+                  return(object)
+          })
+
+
+##' @title Feature alignment based on proximity in the mz-rt space
+##'
+##' @description The \code{groupFeatures,XCMSnExp,NearestFeaturesParam} method
+##' performs feature alignment based on the proximity between features from
+##' different samples in the mz-rt range.
+##'
+##' @note Calling \code{groupFeatures} on an \code{XCMSnExp} object will cause
+##' all eventually present previous alignment results to be dropped.
+##'
+##' @param object For \code{groupFeatures}: an \code{\link{XCMSnExp}} object
+##' containing the results from a previous feature detection analysis (see
+##' \code{\link{detectFeatures}}).
+##'
+##' For all other methods: a \code{NearestFeaturesParam} object.
+##' 
+##' @param param A \code{NearestFeaturesParam} object containing all settings for
+##' the feature alignment algorithm.
+##'
+##' @return For \code{detectFeatures}: a \code{\link{XCMSnExp}} object with the
+##' results of the feature alignment step. These can be accessed with the
+##' \code{\link{featureGroups}} method.
+##' 
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature alignment.
+##' 
+##' @rdname groupFeatures-nearest
+setMethod("groupFeatures",
+          signature(object = "XCMSnExp", param = "NearestFeaturesParam"),
+          function(object, param) {
+              if (!hasDetectedFeatures(object))
+                  stop("No feature detection results in 'object'! Please ",
+                       "perform first a feature detection using the ",
+                       "'detectFeatures' method.")
+              ## Get rid of any previous results.
+              if (hasAlignedFeatures(object))
+                  object <- dropFeatureGroups(object)
+              ## Check if we've got any sample groups:
+              if (length(sampleGroups(param)) == 0) {
+                  sampleGroups(param) <- rep(1, length(fileNames(object)))
+                  message("Empty 'sampleGroups' in 'param', assuming all ",
+                          "samples to be in the same group.")
+              } else {
+                  ## Check that the sampleGroups are OK
+                  if (length(sampleGroups(param)) != length(fileNames(object)))
+                      stop("The 'sampleGroups' value in the provided 'param' ",
+                           "class does not match the number of available files/",
+                           "samples!")
+              }
+              startDate <- date()
+              res <- do_groupFeatures_nearest(features(object),
+                                              sampleGroups = sampleGroups(param),
+                                              mzVsRtBalance = mzVsRtBalance(param),
+                                              absMz = absMz(param),
+                                              absRt = absRt(param),
+                                              kNN = kNN(param))
+              xph <- XProcessHistory(param = param, date. = startDate,
+                                     type. = .PROCSTEP.FEATURE.ALIGNMENT,
+                                     fileIndex = 1:length(fileNames(object)))
+              object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureGroups)
               df$featureidx <- res$featureIndex
