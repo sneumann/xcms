@@ -386,3 +386,209 @@ do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
                           cns[4:length(cns)])
     return(list(featureGroups = grpmat, featureIndex = grps$idx))    
 }
+
+##' @title Core API function for feature alignment using a nearest neighbor approach
+##'
+##' @description The \code{do_groupFeatures_nearest} function groups features
+##' across samples by creating a master feature list and assigning corresponding
+##' features from all samples to each feature group. The method is inspired by
+##' the alignment algorithm of mzMine [Katajamaa 2006].
+##' 
+##' @inheritParams do_groupFeatures_density
+##'
+##' @param mzVsRtBalance numeric(1) representing the factor by which mz values are
+##' multiplied before calculating the (euclician) distance between two features.
+##'
+##' @param absMz numeric(1) maximum tolerated distance for mz values.
+##'
+##' @param absRt numeric(1) maximum tolerated distance for rt values.
+##'
+##' @param kNN numeric(1) representing the number of nearest neighbors to check.
+##' 
+##' @return A \code{list} with elements \code{"featureGroups"} and
+##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
+##' representing an aligned feature group and with columns:
+##' \describe{
+##' \item{"mzmed"}{median of the features' apex mz values.}
+##' \item{"mzmin"}{smallest mz value of all features' apex within the feature
+##' group.}
+##' \item{"mzmax"}{largest mz value of all features' apex within the feature
+##' group.}
+##' \item{"rtmed"}{the median of the features' retention times.}
+##' \item{"rtmin"}{the smallest retention time of the features in the group.}
+##' \item{"rtmax"}{the largest retention time of the features in the group.}
+##' \item{"npeaks"}{the total number of features assigned to the feature group.}
+##' }
+##' \code{"featureIndex"} is a \code{list} with the indices of all features in a
+##' feature group in the \code{features} input matrix.
+##'
+##' @family core feature alignment algorithms
+##'
+##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
+##' processing and visualization of mass spectrometry based molecular profile
+##' data. \emph{Bioinformatics} 2006, 22:634-636. 
+do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
+                                     absMz = 0.2, absRt = 15, kNN = 10) {
+    if (missing(sampleGroups))
+        stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
+             "length equal to the number of samples specifying the group ",
+             "assignment of the samples.")
+    if (missing(features))
+        stop("Parameter 'peaks' is missing!")
+    if (!is.matrix(features) | is.data.frame(features))
+        stop("Peaks has to be a 'matrix' or a 'data.frame'!")
+    ## Check that we've got all required columns
+    .reqCols <- c("mz", "rt", "sample")
+    if (!all(.reqCols %in% colnames(features)))
+        stop("Required columns ",
+             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
+                    collapse = ", "), " not found in 'features' parameter")
+    if (!is.factor(sampleGroups))
+        sampleGroups <- factor(sampleGroups, levels = unique(sampleGroups))
+    sampleGroupNames <- levels(sampleGroups)
+    sampleGroupTable <- table(sampleGroups)
+    nSampleGroups <- length(sampleGroupTable)
+
+    ## sampleGroups == classlabel
+    ## nSampleGroups == gcount
+    ## features == peakmat
+
+    features <- features[, .reqCols, drop = FALSE]
+    
+    parameters <- list(mzVsRTBalance = mzVsRtBalance, mzcheck = absMz,
+                       rtcheck = absRt, knn = kNN)
+
+    ptable <- table(features[,"sample"])
+    pord <- ptable[order(ptable, decreasing = TRUE)]
+    sid <- as.numeric(names(pord))
+    pn <- as.numeric(pord)
+
+    ## environment - probably not a good idea for parallel processing - we
+    ## would like to have data copying there (or better just provide the data
+    ## chunk it needs to process).
+    mplenv <- new.env(parent = .GlobalEnv)
+    mplenv$mplist <- matrix(0, pn[1], length(sid))
+    mplenv$mplist[, sid[1]] <- which(features[,"sample"] == sid[1])
+    mplenv$mplistmean <- data.frame(features[which(features[,"sample"] == sid[1]),
+                                            c("mz", "rt")])
+    mplenv$peakmat <- features
+    assign("peakmat", features, envir = mplenv)  ## double assignment?
+
+    sapply(sid[2:length(sid)], function(sample, mplenv){
+        ## require(parallel)
+        ## cl <- makeCluster(getOption("cl.cores", nSlaves))
+        ## clusterEvalQ(cl, library(RANN))
+        ## parSapply(cl, 2:length(samples), function(sample,mplenv, object){
+        ## might slightly improve on this for loop.
+        for (mml in seq(mplenv$mplist[,1])) {
+            mplenv$mplistmean[mml, "mz"] <-
+                mean(mplenv$peakmat[mplenv$mplist[mml, ], "mz"])
+            mplenv$mplistmean[mml, "rt"] <-
+                mean(mplenv$peakmat[mplenv$mplist[mml, ], "rt"])
+        }
+
+        mplenv$peakIdxList <- data.frame(
+            peakidx = which(mplenv$peakmat[, "sample"] == sample),
+            isJoinedPeak = FALSE
+        )
+        if (length(mplenv$peakIdxList$peakidx) == 0)
+            message("Warning: No peaks in sample number ", sample)
+        
+        ## this really doesn't take a long time not worth parallel version here.
+        ## but make an apply loop now faster even with rearranging the data :D : PB
+        scoreList <- sapply(mplenv$peakIdxList$peakidx,
+                            function(currPeak, para, mplenv){
+                                patternVsRowScore(currPeak, para, mplenv)
+                            }, parameters, mplenv)
+        if (is.list(scoreList)) {
+            ## Why a comparison to "NULL"?
+            idx <- which(scoreList != "NULL")
+            ## Use do.call rbind instead?
+            scoreList <- matrix(unlist(scoreList[idx]), ncol = 5,
+                                nrow = length(idx), byrow = T)
+            colnames(scoreList) <- c("score", "peak", "mpListRow",
+                                     "isJoinedPeak", "isJoinedRow")
+        } else {
+            ## What do I get here?
+            scoreList <- data.frame(score = unlist(scoreList["score", ]),
+                                    peak = unlist(scoreList["peak", ]),
+                                    mpListRow = unlist(scoreList["mpListRow", ]),
+                                    isJoinedPeak = unlist(scoreList["isJoinedPeak", ]),
+                                    isJoinedRow = unlist(scoreList["isJoinedRow", ])
+                                    )
+        }
+
+        ## Browse scores in order of descending goodness-of-fit
+        scoreListcurr <- scoreList[order(scoreList[, "score"]), ]
+        if (nrow(scoreListcurr) > 0) {
+            for (scoreIter in 1:nrow(scoreListcurr)) {
+
+                iterPeak <- scoreListcurr[scoreIter, "peak"]
+                iterRow <- scoreListcurr[scoreIter, "mpListRow"]
+
+                ## Check if master list row is already assigned with peak
+                if (scoreListcurr[scoreIter, "isJoinedRow"] == TRUE)
+                    next
+
+                ## Check if peak is already assigned to some master list row
+                if (scoreListcurr[scoreIter, "isJoinedPeak"] == TRUE)
+                    next
+
+                ##  Check if score good enough
+                ## Assign peak to master peak list row
+                mplenv$mplist[iterRow, sample] <- iterPeak
+
+                ## Mark peak as joined
+                setTrue <- which(scoreListcurr[, "mpListRow"] == iterRow)
+                scoreListcurr[setTrue, "isJoinedRow"] <- TRUE
+                setTrue <- which(scoreListcurr[, "peak"] == iterPeak)
+                scoreListcurr[setTrue, "isJoinedPeak"] <- TRUE
+                mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx == iterPeak),
+                                   "isJoinedPeak"] <- TRUE
+            }
+        }
+        notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak == FALSE), "peakidx"]
+        
+        for (notJoinedPeak in notJoinedPeaks) {
+            mplenv$mplist <- rbind(mplenv$mplist,
+                                   matrix(0, 1, dim(mplenv$mplist)[2]))
+            mplenv$mplist[length(mplenv$mplist[,1]), sample] <- notJoinedPeak
+        }
+
+        ## Clear "Joined" information from all master peaklist rows
+        rm(list = "peakIdxList", envir = mplenv)
+
+    }, mplenv)
+    ## stopCluster(cl)
+
+    groupmat <- matrix( 0, nrow(mplenv$mplist),  7 + nSampleGroups)
+    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                            "npeaks", sampleGroupNames)
+    groupindex <- vector("list", nrow(mplenv$mplist))
+    ## Variable to count samples for a feature
+    sampCounts <- rep_len(0, nSampleGroups)
+    names(sampCounts) <- sampleGroupNames
+    ## gcount <- integer(nSampleGroups)
+    ## Can we vectorize that below somehow?
+    for (i in 1:nrow(mplenv$mplist)) {
+        groupmat[i, "mzmed"] <- median(features[mplenv$mplist[i, ], "mz"])
+        groupmat[i, c("mzmin", "mzmax")] <- range(features[mplenv$mplist[i, ], "mz"])
+        groupmat[i, "rtmed"] <- median(features[mplenv$mplist[i, ], "rt"])
+        groupmat[i, c("rtmin", "rtmax")] <- range(features[mplenv$mplist[i, ], "rt"])
+
+        groupmat[i, "npeaks"] <- length(which(features[mplenv$mplist[i, ]] > 0))
+
+        ## Now summarizing the number of samples in which the peak was identified
+        sampCounts[] <- 0
+        tbl <- table(sampleGroups[features[mplenv$mplist[i, ], "sample"]])
+        sampCounts[names(tbl)] <- as.numeric(tbl)
+        groupmat[i, 7 + seq_len(nSampleGroups)] <- sampCounts
+        ## gnum <- sampleGroups[unique(features[mplenv$mplist[i, ], "sample"])]
+        ## for (j in seq(along = gcount))
+        ##     gcount[j] <- sum(gnum == j)
+        ## groupmat[i, 7 + seq(along = gcount)] <- gcount
+        groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
+    }
+    
+    return(list(featureGroups = groupmat, featureIndex = groupindex))    
+}

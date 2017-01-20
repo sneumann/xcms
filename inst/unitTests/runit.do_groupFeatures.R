@@ -310,3 +310,79 @@ test_groupFeatures_MzClustParam <- function() {
                          type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
     checkEquals(processParam(ph), p2)    
 }
+
+############################################################
+## nearest
+##
+
+## That's to ensure that the do_ function yields identical results than the
+## group.nearest method. Once we've replaced the code in the latter we rename
+## this function to "dontrun".
+test_nearest_impl <- function() {
+    ## library(RUnit)
+    ## library(xcms)
+    ## library(faahKO)
+    ## data(faahko)
+    xs <- faahko    
+    features <- peaks(xs)
+    sampleGroups <- sampclass(xs)
+    mzVsRtBalance <- 10
+    mzCheck <- 0.2
+    rtCheck <- 15
+    kNN <- 10
+
+    res <- group(xs, method = "nearest") ## Oh, nasty warnings! These were
+    ## already there in version 1.51.0!
+    ## 1.48.0: Yup.    
+    res_2 <- do_groupFeatures_nearest(features, sampleGroups)
+
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    ## change sample grouping.
+    sc <- c("b", "b", "a", "a", "z", "z", "a", "b", "e", "e", "e", "e")
+    sampclass(xs) <- sc
+    ## levels are NOT ordered.
+    res <- group(xs, method = "nearest")
+    res_2 <- do_groupFeatures_nearest(features, sc)
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    ## Use sample assignment with ordered levels.
+    sampclass(xs) <- factor(sc) ## this re-orders levels!
+    res_3 <- group(xs, method = "nearest")
+    res_4 <- do_groupFeatures_nearest(features, factor(sc))
+    checkEquals(res_3@groups, res@groups)
+    ## Now, the do functions does NOT re-order levels!
+    checkEquals(res@groups[, 1:7], res_4$featureGroups[, 1:7])
+    checkEquals(res@groups[, levels(factor(sc))],
+                res_4$featureGroups[, levels(factor(sc))])
+    checkEquals(res@groupidx, res_4$featureIndex)
+    
+    ## Now change settings.
+    sampclass(xs) <- sc
+    res <- group(xs, method = "nearest", mzVsRTbalance = 5)
+    res_2 <- do_groupFeatures_nearest(features, sc, mzVsRtBalance = 5)
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    res <- group(xs, method = "nearest", kNN = 3)
+    res_2 <- do_groupFeatures_nearest(features, sc, kNN = 3)
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    res <- group(xs, method = "nearest", mzCheck = 0.5)
+    res_2 <- do_groupFeatures_nearest(features, sc, absMz = 0.5)
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    res <- group(xs, method = "nearest", rtCheck = 3)
+    res_2 <- do_groupFeatures_nearest(features, sc, absRt = 3)
+    checkEquals(res@groups, res_2$featureGroups)
+    checkEquals(res@groupidx, res_2$featureIndex)
+
+    ## library(profvis)
+    ## profvis({
+    ##     res_2 <- xcms:::do_groupFeatures_nearest(features, sampleGroups)
+    ## })
+}

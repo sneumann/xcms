@@ -98,6 +98,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
 }
 \seealso{
-Other core feature alignment algorithms: \code{\link{do_groupFeatures_mzClust}}
+Other core feature alignment algorithms: \code{\link{do_groupFeatures_mzClust}},
+  \code{\link{do_groupFeatures_nearest}}
 }
 

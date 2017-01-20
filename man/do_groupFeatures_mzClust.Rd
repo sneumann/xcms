@@ -61,6 +61,7 @@ development of a heuristic approach for metabolomics}.\cr Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)
 }
 \seealso{
-Other core feature alignment algorithms: \code{\link{do_groupFeatures_density}}
+Other core feature alignment algorithms: \code{\link{do_groupFeatures_density}},
+  \code{\link{do_groupFeatures_nearest}}
 }
 
