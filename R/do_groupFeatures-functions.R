@@ -475,11 +475,14 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
     assign("peakmat", features, envir = mplenv)  ## double assignment?
 
     sapply(sid[2:length(sid)], function(sample, mplenv){
+        message("Processing sample number ", sample, " ... ", appendLF = FALSE)
         ## require(parallel)
         ## cl <- makeCluster(getOption("cl.cores", nSlaves))
         ## clusterEvalQ(cl, library(RANN))
         ## parSapply(cl, 2:length(samples), function(sample,mplenv, object){
         ## might slightly improve on this for loop.
+        ## Calculating for each row (peak) the mean mz or rt for features
+        ## assigned yet to this feature group.
         for (mml in seq(mplenv$mplist[,1])) {
             mplenv$mplistmean[mml, "mz"] <-
                 mean(mplenv$peakmat[mplenv$mplist[mml, ], "mz"])
@@ -498,25 +501,9 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
         ## but make an apply loop now faster even with rearranging the data :D : PB
         scoreList <- sapply(mplenv$peakIdxList$peakidx,
                             function(currPeak, para, mplenv){
-                                patternVsRowScore(currPeak, para, mplenv)
-                            }, parameters, mplenv)
-        if (is.list(scoreList)) {
-            ## Why a comparison to "NULL"?
-            idx <- which(scoreList != "NULL")
-            ## Use do.call rbind instead?
-            scoreList <- matrix(unlist(scoreList[idx]), ncol = 5,
-                                nrow = length(idx), byrow = T)
-            colnames(scoreList) <- c("score", "peak", "mpListRow",
-                                     "isJoinedPeak", "isJoinedRow")
-        } else {
-            ## What do I get here?
-            scoreList <- data.frame(score = unlist(scoreList["score", ]),
-                                    peak = unlist(scoreList["peak", ]),
-                                    mpListRow = unlist(scoreList["mpListRow", ]),
-                                    isJoinedPeak = unlist(scoreList["isJoinedPeak", ]),
-                                    isJoinedRow = unlist(scoreList["isJoinedRow", ])
-                                    )
-        }
+                                xcms:::patternVsRowScore(currPeak, para, mplenv)
+                            }, parameters, mplenv, simplify = FALSE)
+        scoreList <- do.call(rbind, scoreList)
 
         ## Browse scores in order of descending goodness-of-fit
         scoreListcurr <- scoreList[order(scoreList[, "score"]), ]
@@ -557,9 +544,8 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
 
         ## Clear "Joined" information from all master peaklist rows
         rm(list = "peakIdxList", envir = mplenv)
-
+        message("OK")
     }, mplenv)
-    ## stopCluster(cl)
 
     groupmat <- matrix( 0, nrow(mplenv$mplist),  7 + nSampleGroups)
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
