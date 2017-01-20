@@ -212,6 +212,7 @@ API function and \code{\link{group.density}} for the old user interface.
 the feature alignment.
 
 Other feature alignment methods: \code{\link{groupFeatures-mzClust}},
+  \code{\link{groupFeatures-nearest}},
   \code{\link{groupFeatures}}
 }
 

@@ -165,6 +165,7 @@ API function and \code{\link{group.mzClust}} for the old user interface.
 the feature alignment.
 
 Other feature alignment methods: \code{\link{groupFeatures-density}},
+  \code{\link{groupFeatures-nearest}},
   \code{\link{groupFeatures}}
 }
 

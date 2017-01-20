@@ -214,3 +214,19 @@ MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                absMz = absMz, minFraction = minFraction,
                minSamples = minSamples))
 }
+
+
+############################################################
+## NearestFeaturesParam
+
+##' @return The \code{NearestFeaturesParam} function returns a
+##' \code{NearestFeaturesParam} class instance with all of the settings
+##' specified for high resolution single spectra feature alignment.
+##' 
+##' @rdname groupFeatures-nearest
+NearestFeaturesParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
+                                 absMz = 0.2, absRt = 15, kNN = 10) {
+    return(new("NearestFeaturesParam", sampleGroups = sampleGroups,
+               mzVsRtBalance = mzVsRtBalance, absMz = absMz, absRt = absRt,
+               kNN = kNN))
+}

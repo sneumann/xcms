@@ -1472,6 +1472,94 @@ setClass("MzClustParam",
                  return(msg)
          })
 
+## Main group.nearest documentation.
+##' @title Feature alignment based on proximity in the mz-rt space
+##'
+##' @description This method is inspired by the alignment algorithm of mzMine
+##' [Katajamaa 2006] and performs alignment based on proximity of features in the
+##' space spanned by the rt and mz values.
+##' The method creates first a \emph{master feature list} consisting of all
+##' features from the sample in which most features were identified, and
+##' starting from that, calculates distances to features from the sample with the
+##' next most features. If features are closer than the defined threshold they
+##' are grouped together.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{NearestFeaturesParam} object.
+##'
+##' @inheritParams groupFeatures-density
+##'
+##' @param mzVsRtBalance numeric(1) representing the factor by which mz values are
+##' multiplied before calculating the (euclician) distance between two features.
+##'
+##' @param absMz numeric(1) maximum tolerated distance for mz values.
+##'
+##' @param absRt numeric(1) maximum tolerated distance for rt values.
+##'
+##' @param kNN numeric(1) representing the number of nearest neighbors to check.
+##' 
+##' @family feature alignment methods
+##' 
+##' @seealso The \code{\link{do_groupFeatures_nearest}} core
+##' API function and \code{\link{group.nearest}} for the old user interface.
+##'
+##' @name groupFeatures-nearest
+##'
+##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
+##' processing and visualization of mass spectrometry based molecular profile
+##' data. \emph{Bioinformatics} 2006, 22:634-636. 
+NULL
+#> NULL
+
+##' @description The \code{NearestFeaturesParam} class allows to specify all
+##' settings for the feature alignment based on the \emph{nearest} algorithm.
+##' Instances should be created with the \code{NearestFeaturesParam} constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-nearest
+##'
+##' @examples
+##'
+setClass("NearestFeaturesParam",
+         slots = c(sampleGroups = "ANY",
+                   mzVsRtBalance = "numeric",
+                   absMz = "numeric",
+                   absRt = "numeric",
+                   kNN = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             mzVsRtBalance = 10,
+             absMz = 0.2,
+             absRt = 15,
+             kNN = 10),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@mzVsRtBalance) > 1 |
+                 any(object@mzVsRtBalance < 0))
+                 msg <- validMsg(msg, paste0("'mzVsRtBalance' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absMz) > 1 | any(object@absMz < 0))
+                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absRt) > 1 | any(object@absRt < 0))
+                 msg <- validMsg(msg, paste0("'absRt' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@kNN) > 1 | any(object@kNN < 0))
+                 msg <- validMsg(msg, paste0("'kNN' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+
 
 ##' @aliases MsFeatureData
 ##' @title Data container storing xcms preprocessing results

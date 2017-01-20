@@ -5,6 +5,8 @@
 setGeneric("absent", function(object, class, minfrac) standardGeneric("absent"))
 setGeneric("absMz", function(object, ...) standardGeneric("absMz"))
 setGeneric("absMz<-", function(object, value) standardGeneric("absMz<-"))
+setGeneric("absRt", function(object, ...) standardGeneric("absRt"))
+setGeneric("absRt<-", function(object, value) standardGeneric("absRt<-"))
 setGeneric("addParams", function(object, ...) standardGeneric("addParams"))
 setGeneric("addParams<-", function(object, value) standardGeneric("addParams<-"))
 setGeneric("addProcessHistory", function(object, ...)
@@ -140,6 +142,11 @@ setGeneric("integrate")
 setGeneric("integrate<-", function(object, value) standardGeneric("integrate<-"))
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
 
+## K
+setGeneric("kNN", function(object, ...) standardGeneric("kNN"))
+setGeneric("kNN<-", function(object, value) standardGeneric("kNN<-"))
+
+
 ## L
 setGeneric("levelplot", function(x, data, ...) standardGeneric("levelplot"))
 setGeneric("loadRaw", function(object, ...) standardGeneric("loadRaw"))
@@ -176,6 +183,10 @@ setGeneric("mzIntervalExtension", function(object, ...)
     standardGeneric("mzIntervalExtension"))
 setGeneric("mzIntervalExtension<-", function(object, value)
     standardGeneric("mzIntervalExtension<-"))
+setGeneric("mzVsRtBalance", function(object, ...)
+    standardGeneric("mzVsRtBalance"))
+setGeneric("mzVsRtBalance<-", function(object, value)
+    standardGeneric("mzVsRtBalance<-"))
 
 ## N
 setGeneric("nearbyPeak", function(object, ...) standardGeneric("nearbyPeak"))

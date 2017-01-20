@@ -1113,3 +1113,91 @@ setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+
+############################################################
+## NearestFeaturesParam
+setMethod("initialize", "NearestFeaturesParam", function(.Object, ...) {
+    classVersion(.Object)["NearestFeaturesParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname groupFeatures-nearest
+setMethod("show", "NearestFeaturesParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" mzVsRtBalance:", object@mzVsRtBalance, "\n")
+    cat(" absMz:", object@absMz, "\n")
+    cat(" absRt:", object@absRt, "\n")
+    cat(" kNN:", object@kNN, "\n")
+})
+
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("sampleGroups", "NearestFeaturesParam", function(object){
+    return(object@sampleGroups)})
+##' @param value The value for the slot.
+##' @rdname groupFeatures-nearest
+setReplaceMethod("sampleGroups", "NearestFeaturesParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases mzVsRtBalance
+##' @description \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
+##' for the \code{mzVsRtBalance} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("mzVsRtBalance", "NearestFeaturesParam", function(object){
+    return(object@mzVsRtBalance)})
+##' @aliases mzVsRtBalance<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("mzVsRtBalance", "NearestFeaturesParam", function(object, value) {
+    object@mzVsRtBalance <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{absMz},\code{absMz<-}: getter and setter for the
+##' \code{absMz} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("absMz", "NearestFeaturesParam", function(object){
+    return(object@absMz)})
+##' @rdname groupFeatures-nearest
+setReplaceMethod("absMz", "NearestFeaturesParam", function(object, value) {
+    object@absMz <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases absRt
+##' @description \code{absRt},\code{absRt<-}: getter and setter for the
+##' \code{absRt} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("absRt", "NearestFeaturesParam", function(object){
+    return(object@absRt)})
+##' @aliases absRt<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("absRt", "NearestFeaturesParam", function(object, value) {
+    object@absRt <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases kNN
+##' @description \code{kNN},\code{kNN<-}: getter and setter for the
+##' \code{kNN} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("kNN", "NearestFeaturesParam", function(object){
+    return(object@kNN)})
+##' @aliases kNN<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("kNN", "NearestFeaturesParam", function(object, value) {
+    object@kNN <- value
+    if (validObject(object))
+        return(object)
+})
+

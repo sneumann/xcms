@@ -581,3 +581,49 @@ test_MzClustParam <- function() {
     checkEquals(minSamples(p), 33)
     checkException(MzClustParam(minSamples = -4))
 }
+
+test_NearestFeaturesParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("NearestFeaturesParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- NearestFeaturesParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("NearestFeaturesParam", mzVsRtBalance = 3)
+    checkEquals(mzVsRtBalance(p), 3)
+    mzVsRtBalance(p) <- 20
+    checkEquals(mzVsRtBalance(p), 20)
+    p <- NearestFeaturesParam(mzVsRtBalance = 33)
+    checkEquals(mzVsRtBalance(p), 33)
+    checkException(NearestFeaturesParam(mzVsRtBalance = -4))
+    checkException(NearestFeaturesParam(mzVsRtBalance = 1:4))
+
+    p <- new("NearestFeaturesParam", absMz = 3)
+    checkEquals(absMz(p), 3)
+    absMz(p) <- 20
+    checkEquals(absMz(p), 20)
+    p <- NearestFeaturesParam(absMz = 33)
+    checkEquals(absMz(p), 33)
+    checkException(NearestFeaturesParam(absMz = -4))
+    checkException(NearestFeaturesParam(absMz = 1:3))
+
+    p <- new("NearestFeaturesParam", absRt = 3)
+    checkEquals(absRt(p), 3)
+    absRt(p) <- 20
+    checkEquals(absRt(p), 20)
+    p <- NearestFeaturesParam(absRt = 33)
+    checkEquals(absRt(p), 33)
+    checkException(NearestFeaturesParam(absRt = -4))
+    checkException(NearestFeaturesParam(absRt = 1:3))
+    
+    p <- new("NearestFeaturesParam", kNN = 3)
+    checkEquals(kNN(p), 3)
+    kNN(p) <- 20
+    checkEquals(kNN(p), 20)
+    p <- NearestFeaturesParam(kNN = 33)
+    checkEquals(kNN(p), 33)
+    checkException(NearestFeaturesParam(kNN = -4))
+    checkException(NearestFeaturesParam(kNN = 1:3))
+}

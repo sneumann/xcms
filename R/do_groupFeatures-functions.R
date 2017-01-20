@@ -395,15 +395,7 @@ do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
 ##' the alignment algorithm of mzMine [Katajamaa 2006].
 ##' 
 ##' @inheritParams do_groupFeatures_density
-##'
-##' @param mzVsRtBalance numeric(1) representing the factor by which mz values are
-##' multiplied before calculating the (euclician) distance between two features.
-##'
-##' @param absMz numeric(1) maximum tolerated distance for mz values.
-##'
-##' @param absRt numeric(1) maximum tolerated distance for rt values.
-##'
-##' @param kNN numeric(1) representing the number of nearest neighbors to check.
+##' @inheritParams groupFeatures-nearest
 ##' 
 ##' @return A \code{list} with elements \code{"featureGroups"} and
 ##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row

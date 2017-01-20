@@ -25,6 +25,7 @@ Johannes Rainer
 methods.
 
 Other feature alignment methods: \code{\link{groupFeatures-density}},
-  \code{\link{groupFeatures-mzClust}}
+  \code{\link{groupFeatures-mzClust}},
+  \code{\link{groupFeatures-nearest}}
 }
 
