@@ -1,6 +1,7 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
-#' @include functions-XCMSnExp.R
+#' @include functions-XCMSnExp.R do_groupFeatures-functions.R
+#' do_adjustRtime-functions.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     classVersion(.Object)["XCMSnExp"] <- "0.0.1"

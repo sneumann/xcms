@@ -142,6 +142,23 @@ that all data, including metadata, stays consistent.
 + Do the feature detection.
 + Describe the feature detection methods.
 
+** New naming convention
+
+Methods for data analysis from the original =xcms= code have been renamed to avoid
+potential confusions:
+
++ =detectFeatures= instead of =findPeaks=: for new functions and methods the term
+  /peak/ is avoided as much as possible, as it is usually used to describe a mass
+  peak in mz dimension. To clearly distinguish between these peaks and peaks in
+  retention time space, the latter are referred to as /features/.
+
++ =groupFeatures= instead of =group= to clearly indicate what is being
+  grouped. Group might be a sample group or a feature group, hence groups of
+  features are always referred to as /feature groups/.
+
++ =adjustRtime= instead of =retcor= for retention time correction. The word /cor/ in
+  /retcor/ might be easily misinterpreted as /correlation/ instead of correction.
+
 ** New data classes
 
 *** =OnDiskMSnExp=
