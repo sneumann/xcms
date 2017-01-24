@@ -500,9 +500,15 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
     if (length(idx) == 0)
         stop("No peak groups found for retention time correction")
-    idx <- idx[order(groupmat[idx,"rtmed"])]
+    ## Ordering the feature groups by the rtmed might not represent the ordering
+    ## of the below selected "representative" feature for each feature group.
+    ## See issue #110
+    ## idx <- idx[order(groupmat[idx,"rtmed"])]
 
     rt <- groupval(object, "maxint", "rt")[idx,, drop=FALSE]
+    ## And now order them by median retention time: issue #110
+    rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
+    
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 

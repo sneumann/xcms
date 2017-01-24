@@ -8,7 +8,7 @@
 
 ##' @title Align spectrum retention times across samples using feature groups
 ##' found in most samples
-##' 
+##'
 ##' @description The function performs retention time correction by assessing
 ##' the retention time deviation across all samples using feature groups containg
 ##' features present in most/all samples. The retention time deviation
