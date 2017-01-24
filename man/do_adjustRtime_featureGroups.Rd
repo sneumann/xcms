@@ -46,7 +46,8 @@ Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
 \code{\link{loess}} for more information.}
 }
 \value{
-A \code{numeric} vector with the adjusted retention times.
+A \code{list} with \code{numeric} vectors with the adjusted retention
+times grouped by sample.
 }
 \description{
 The function performs retention time correction by assessing

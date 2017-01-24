@@ -1201,3 +1201,92 @@ setReplaceMethod("kNN", "NearestFeaturesParam", function(object, value) {
         return(object)
 })
 
+
+############################################################
+## FeatureGroupsParam
+setMethod("initialize", "FeatureGroupsParam", function(.Object, ...) {
+    classVersion(.Object)["FeatureGroupsParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname adjustRtime-featureGroups
+setMethod("show", "FeatureGroupsParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" minFraction:", object@minFraction, "\n")
+    cat(" extraFeatures:", object@extraFeatures, "\n")
+    cat(" smooth:", object@smooth, "\n")
+    cat(" span:", object@span, "\n")
+    cat(" family:", object@family, "\n")
+})
+
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter
+##' for the \code{minFraction} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("minFraction", "FeatureGroupsParam", function(object){
+    return(object@minFraction)})
+##' @param value The value for the slot.
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("minFraction", "FeatureGroupsParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases extraFeatures
+##' @description \code{extraFeatures},\code{extraFeatures<-}: getter and setter
+##' for the \code{extraFeatures} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("extraFeatures", "FeatureGroupsParam", function(object){
+    return(object@extraFeatures)})
+##' @aliases extraFeatures<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("extraFeatures", "FeatureGroupsParam", function(object, value) {
+    object@extraFeatures <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases smooth
+##' @description \code{smooth},\code{smooth<-}: getter and setter
+##' for the \code{smooth} slot of the object.
+##' @param x a \code{FeatureGroupsParam} object.
+##' @rdname adjustRtime-featureGroups
+setMethod("smooth", "FeatureGroupsParam", function(x){
+    return(x@smooth)})
+##' @aliases smooth<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("smooth", "FeatureGroupsParam", function(object, value) {
+    object@smooth <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases span
+##' @description \code{span},\code{span<-}: getter and setter
+##' for the \code{span} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("span", "FeatureGroupsParam", function(object){
+    return(object@span)})
+##' @aliases span<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("span", "FeatureGroupsParam", function(object, value) {
+    object@span <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases family
+##' @description \code{family},\code{family<-}: getter and setter
+##' for the \code{family} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("family", "FeatureGroupsParam", function(object){
+    return(object@family)})
+##' @aliases family<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("family", "FeatureGroupsParam", function(object, value) {
+    object@family <- value
+    if (validObject(object))
+        return(object)
+})
+

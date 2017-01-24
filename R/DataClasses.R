@@ -1159,7 +1159,7 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a CentWaveParam object
+##' ## Create a param object
 ##' p <- CentWavePredIsoParam(maxCharge = 4)
 ##' ## Change snthresh parameter
 ##' snthresh(p) <- 25
@@ -1592,6 +1592,120 @@ setClass("NearestFeaturesParam",
              if (length(object@kNN) > 1 | any(object@kNN < 0))
                  msg <- validMsg(msg, paste0("'kNN' has to be a ",
                                              "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+
+## Main retcor.peakgroups documentation.
+##' @title Retention time correction based on alignment of house keeping feature
+##' groups
+##'
+##' @description This method performs retention time adjustment based on the
+##' alignment of feature groups present in all/most samples (hence corresponding
+##' to house keeping compounds). First the retention time deviation of these
+##' feature groups is described by fitting either a polynomial
+##' (\code{smooth = "loess"}) or a linear (\code{smooth = "linear"}) model to the
+##' data points. These models are subsequently used to adjust the retention time
+##' of each spectrum in each sample.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{FeatureGroupsParam} object.
+##'
+##' @param minFraction numeric(1) between 0 and 1 defining the minimum required
+##' fraction of samples in which features for the feature group were identified.
+##' Feature groups passing this criteria will aligned across samples and retention
+##' times of individual spectra will be adjusted based on this alignment. For
+##' \code{minFraction = 1} the feature group has to contain features in all
+##' samples of the experiment.
+##' 
+##' @param extraFeatures numeric(1) defining the maximal number of additional
+##' features for all samples to be assigned to a feature group for retention time
+##' correction. For a data set with 6 samples, \code{extraFeatures = 1} uses all
+##' feature groups with a total feature count \code{<= 6 + 1}. The total feature
+##' count is the total number of features being assigned to a feature group and
+##' considers also multiple features within a sample being assigned to the group.
+##'
+##' @param smooth character defining the function to be used, to interpolate
+##' corrected retention times for all feature groups. Either \code{"loess"} or
+##' \code{"linear"}.
+##'
+##' @param span numeric(1) defining the degree of smoothing (if
+##' \code{smooth = "loess"}). This parameter is passed to the internal call
+##' to \code{\link{loess}}.
+##'
+##' @param family character defining the method to be used for loess smoothing.
+##' Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
+##' \code{\link{loess}} for more information.
+##' 
+##' @family retention time correction methods
+##' 
+##' @seealso The \code{\link{do_adjustRtime_featureGroups}} core
+##' API function and \code{\link{retcor.peakgroups}} for the old user interface.
+##'
+##' @name adjustRtime-featureGroups
+##'
+##' @author Colin Smith, Johannes Rainer
+##' 
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+NULL
+#> NULL
+
+##' @description The \code{FeatureGroupsParam} class allows to specify all
+##' settings for the retention time adjustment based on \emph{house keeping}
+##' feature groups present in most samples.
+##' Instances should be created with the \code{FeatureGroupsParam} constructor.
+##'
+##' @slot .__classVersion__,minFraction,extraFeatures,smooth,span,family See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname adjustRtime-featureGroups
+##'
+setClass("FeatureGroupsParam",
+         slots = c(minFraction = "numeric",
+                   extraFeatures = "numeric",
+                   smooth = "character",
+                   span = "numeric",
+                   family = "character"),
+         contains = "Param",
+         prototype = prototype(
+             minFraction = 0.9,
+             extraFeatures = 1,
+             smooth = "loess",
+             span = 0.2,
+             family = "gaussian"
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@minFraction) > 1 |
+                 any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a single",
+                                             " number between 0 and 1!"))
+             if (length(object@extraFeatures) > 1 |
+                 any(object@extraFeatures < 0))
+                 msg <- validMsg(msg, paste0("'extraFeatures' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@span) > 1 | any(object@span < 0))
+                 msg <- validMsg(msg, paste0("'span' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@smooth) > 1 |
+                 !all(object@smooth %in% c("loess", "linear")))
+                 msg <- validMsg(msg, paste0("'smooth' has to be either \"",
+                                             "loess\" or \"linear\"!"))
+             if (length(object@family) > 1 |
+                 !all(object@family %in% c("gaussian", "symmetric")))
+                 msg <- validMsg(msg, paste0("'family' has to be either \"",
+                                             "gaussian\" or \"symmetric\"!"))
              if (is.null(msg))
                  return(TRUE)
              else

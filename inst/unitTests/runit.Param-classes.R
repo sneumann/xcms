@@ -627,3 +627,53 @@ test_NearestFeaturesParam <- function() {
     checkException(NearestFeaturesParam(kNN = -4))
     checkException(NearestFeaturesParam(kNN = 1:3))
 }
+
+test_FeatureGroupsParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("FeatureGroupsParam", minFraction = 0.8)
+    checkEquals(minFraction(p), 0.8)
+    minFraction(p) <- 0.3
+    checkEquals(minFraction(p), 0.3)
+    p <- FeatureGroupsParam(minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    checkException(minFraction(p) <- c(2, 2))
+    checkException(minFraction(p) <- -1)
+    checkException(minFraction(p) <- 3)
+    
+    p <- new("FeatureGroupsParam", extraFeatures = 2)
+    checkEquals(extraFeatures(p), 2)
+    extraFeatures(p) <- 0.3
+    checkEquals(extraFeatures(p), 0.3)
+    p <- FeatureGroupsParam(extraFeatures = 7)
+    checkEquals(extraFeatures(p), 7)
+    checkException(extraFeatures(p) <- c(2, 2))
+    checkException(extraFeatures(p) <- -1)
+
+    p <- new("FeatureGroupsParam", span = 0.5)
+    checkEquals(span(p), 0.5)
+    span(p) <- 0.3
+    checkEquals(span(p), 0.3)
+    p <- FeatureGroupsParam(span = 7)
+    checkEquals(span(p), 7)
+    checkException(span(p) <- c(2, 2))
+    checkException(span(p) <- -1)
+
+    p <- new("FeatureGroupsParam", smooth = "linear")
+    checkEquals(smooth(p), "linear")
+    smooth(p) <- "loess"
+    checkEquals(smooth(p), "loess")
+    p <- FeatureGroupsParam(smooth = "linear")
+    checkEquals(smooth(p), "linear")
+    checkException(smooth(p) <- "other")
+    checkException(smooth(p) <- c("linear", "loess"))
+
+    p <- new("FeatureGroupsParam", family = "symmetric")
+    checkEquals(family(p), "symmetric")
+    family(p) <- "gaussian"
+    checkEquals(family(p), "gaussian")
+    p <- FeatureGroupsParam(family = "symmetric")
+    checkEquals(family(p), "symmetric")
+    checkException(family(p) <- "other")
+    checkException(family(p) <- c("symmetric", "gaussian"))
+}
+

@@ -54,7 +54,15 @@ setGeneric("dropFeatureGroups", function(object, ...)
 setGeneric("dropFeatures", function(object, ...)
     standardGeneric("dropFeatures"))
 
+## E
+setGeneric("extraFeatures", function(object, ...)
+    standardGeneric("extraFeatures"))
+setGeneric("extraFeatures<-", function(object, value)
+    standardGeneric("extraFeatures<-"))
+
 ## F
+setGeneric("family", function(object, ...) standardGeneric("family"))
+setGeneric("family<-", function(object, value) standardGeneric("family<-"))
 setGeneric("features", function(object, ...) standardGeneric("features"))
 setGeneric("features<-", function(object, value)
     standardGeneric("features<-"))
@@ -277,6 +285,7 @@ setGeneric("scanrange<-", function(object, value) standardGeneric("scanrange<-")
 setGeneric("sigma", function(object, value) standardGeneric("sigma"))
 setGeneric("sigma<-", function(object, value) standardGeneric("sigma<-"))
 setGeneric("showError", function(object, ...) standardGeneric("showError"))
+setGeneric("smooth<-", function(object, value) standardGeneric("smooth<-"))
 setGeneric("snthresh", function(object, ...) standardGeneric("snthresh"))
 setGeneric("snthresh<-", function(object, value) standardGeneric("snthresh<-"))
 setGeneric("snthreshIsoROIs", function(object, ...)
@@ -284,6 +293,8 @@ setGeneric("snthreshIsoROIs", function(object, ...)
 setGeneric("snthreshIsoROIs<-", function(object, value)
     standardGeneric("snthreshIsoROIs<-"))
 setGeneric("sortMz", function(object, ...) standardGeneric("sortMz"))
+setGeneric("span", function(object, ...) standardGeneric("span"))
+setGeneric("span<-", function(object, value) standardGeneric("span<-"))
 setGeneric("specDist", function(object, ...) standardGeneric("specDist"))
 setGeneric("specDist.meanMZmatch",
            function(peakTable1, peakTable2, matchdist=1, matchrate=1,

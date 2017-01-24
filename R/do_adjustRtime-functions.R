@@ -1,5 +1,5 @@
 ## Retention time correction methods.
-#' @include functions-MsFeatureData.R
+#' @include DataClasses.R functions-MsFeatureData.R
 
 ## Needs:
 ## o features
@@ -24,6 +24,8 @@
 ##' \code{minFraction} and \code{extraFeatures} can be used to fine tune which
 ##' feature groups should be used for the alignment (i.e. which feature groups
 ##' most likely correspond to the above mentioned house keeping compounds).
+##'
+##' @inheritParams adjustRtime-featureGroups
 ##' 
 ##' @param features a \code{matrix} or \code{data.frame} with the identified
 ##' features in the samples.
@@ -34,33 +36,8 @@
 ##' @param rtime A \code{list} of \code{numeric} vectors with the retention times
 ##' per file/sample.
 ##' 
-##' @param minFraction numeric(1) between 0 and 1 defining the minimum required
-##' fraction of samples in which features for the feature group were identified.
-##' Feature groups passing this criteria will aligned across samples and retention
-##' times of individual spectra will be adjusted based on this alignment. For
-##' \code{minFraction = 1} the feature group has to contain features in all
-##' samples of the experiment.
-##' 
-##' @param extraFeatures numeric(1) defining the maximal number of additional
-##' features for all samples to be assigned to a feature group for retention time
-##' correction. For a data set with 6 samples, \code{extraFeatures = 1} uses all
-##' feature groups with a total feature count \code{<= 6 + 1}. The total feature
-##' count is the total number of features being assigned to a feature group and
-##' considers also multiple features within a sample being assigned to the group.
-##'
-##' @param smooth character defining the function to be used, to interpolate
-##' corrected retention times for all feature groups. Either \code{"loess"} or
-##' \code{"linear"}.
-##'
-##' @param span numeric(1) defining the degree of smoothing (if
-##' \code{smooth = "loess"}). This parameter is passed to the internal call
-##' to \code{\link{loess}}.
-##'
-##' @param family character defining the method to be used for loess smoothing.
-##' Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
-##' \code{\link{loess}} for more information.
-##' 
-##' @return A \code{numeric} vector with the adjusted retention times.
+##' @return A \code{list} with \code{numeric} vectors with the adjusted retention
+##' times grouped by sample.
 ##'
 ##' @family core retention time correction algorithms
 ##'

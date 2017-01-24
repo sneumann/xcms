@@ -464,6 +464,7 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
     invisible(do.call(method, alist(object, ...)))
 })
 
+
 ############################################################
 ## retcor.peakgroups
 setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 1,
@@ -494,7 +495,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
-
+    
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
 
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
@@ -592,8 +593,11 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         rtrange <- range(do.call(c, rtcor))
         devrange <- range(do.call(c, rtdevsmo))
 
-        plot(0, 0, type="n", xlim = rtrange, ylim = devrange, main = "Retention Time Deviation vs. Retention Time", xlab = "Retention Time", ylab = "Retention Time Deviation")
-        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
+        plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
+             main = "Retention Time Deviation vs. Retention Time",
+             xlab = "Retention Time", ylab = "Retention Time Deviation")
+        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty,
+               pch = ceiling(1:n/length(mypal)), xjust = 1)
 
         for (i in 1:n) {
             points(data.frame(rt = rt[,i], rtdev = rtdev[,i]), col = mypal[col[i]], pch = ty[i], type="p")
@@ -633,6 +637,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     groupidx(object) <- list()
     invisible(object)
 })
+
 
 ############################################################
 ## retcor.obiwarp

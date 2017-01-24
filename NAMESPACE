@@ -215,7 +215,8 @@ exportClasses(
     "CentWavePredIsoParam",
     "FeatureDensityParam",
     "MzClustParam",
-    "NearestFeaturesParam"
+    "NearestFeaturesParam",
+    "FeatureGroupsParam"
 )
 ## Param methods
 exportMethods(
@@ -324,12 +325,20 @@ exportMethods(
     "mzVsRtBalance",
     "mzVsRtBalance<-",
     "kNN",
-    "kNN<-"
+    "kNN<-",
+    "extraFeatures",
+    "extraFeatures<-",
+    "smooth",
+    "smooth<-",
+    "span",
+    "span<-",
+    "family",
+    "family<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
        "CentWavePredIsoParam", "FeatureDensityParam", "MzClustParam",
-       "NearestFeaturesParam")
+       "NearestFeaturesParam", "FeatureGroupsParam")
 ## Param class methods.
 
 ## New Classes

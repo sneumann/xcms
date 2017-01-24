@@ -230,3 +230,21 @@ NearestFeaturesParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                mzVsRtBalance = mzVsRtBalance, absMz = absMz, absRt = absRt,
                kNN = kNN))
 }
+
+
+############################################################
+## FeatureGroupsParam
+
+##' @return The \code{FeatureGroupsParam} function returns a
+##' \code{FeatureGroupsParam} class instance with all of the settings
+##' specified for retention time adjustment based on \emph{house keeping}
+##' feature groups.
+##' 
+##' @rdname adjustRtime-featureGroups
+FeatureGroupsParam <- function(minFraction = 0.9, extraFeatures = 1,
+                               smooth = "loess", span = 0.2,
+                               family = "gaussian") {
+    return(new("FeatureGroupsParam", minFraction = minFraction,
+               extraFeatures = extraFeatures, smooth = smooth, span = span,
+               family = family))
+}
