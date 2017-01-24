@@ -1,5 +1,74 @@
 ## retention time correction methods.
 
+## That's to evaluate the do_ function with the original code. Once the
+## retcor.peakgroups calls the do_function we rename it to dontrun.
+test_do_adjustRtime_featureGroups_implementation <- function() {
+    xs <- faahko
+    xsg <- group(xs)
+
+    misSamp <- 1
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
+
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr)
+    checkEquals(xsa@rt$corrected, res)
+
+    ## Change settings.
+    misSamp <- 3
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
+
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr)
+    checkEquals(xsa@rt$corrected, res)
+
+    misSamp <- 2
+    xtr <- 2
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr)
+
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr, extraFeatures = xtr)
+    checkEquals(xsa@rt$corrected, res)
+
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
+                  smooth = "linear")
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr, extraFeatures = xtr,
+                                        smooth = "linear")
+    checkEquals(xsa@rt$corrected, res)
+
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
+                  family = "symmetric")
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr, extraFeatures = xtr,
+                                        family = "symmetric")
+    checkEquals(xsa@rt$corrected, res)
+
+    xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
+                  span = 1)
+    minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    res <- do_adjustRtime_featureGroups(features = peaks(xs),
+                                        featureIndex = xsg@groupidx,
+                                        rtime = xsg@rt$raw,
+                                        minFraction = minFr, extraFeatures = xtr,
+                                        span = 1)
+    checkEquals(xsa@rt$corrected, res)
+}
+
 dontrun_do_adjustRtime_peakgroups_implementation <- function() {
     library(xcms)
     library(RUnit)

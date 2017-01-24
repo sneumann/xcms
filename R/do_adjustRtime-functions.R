@@ -213,23 +213,6 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
                 "parameter or switching to the linear smoothing method.")
     }
 
-    ## Oh my god! We're really adjusting the retention times for the identified
-    ## features here!!! This should be done in the xcmsSet or the XCMSnExp
-    ## object!!!
-    ## for (i in 1:n) {
-
-    ##     cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]])/2, rtcor[[i]] - rtdevsmo[[i]])
-    ##     rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
-
-    ##     sidx <- which(corpeaks[,"sample"] == i)
-    ##     corpeaks[sidx, c("rt", "rtmin", "rtmax")] <- cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
-    ## }
-
-    ## object@rt$corrected <- rtcor
-    ## peaks(object) <- corpeaks
-    ## groups(object) <- matrix(nrow = 0, ncol = 0)
-    ## groupidx(object) <- list()
-    ## invisible(object)
     return(rtime)
 }
 
