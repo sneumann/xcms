@@ -111,7 +111,8 @@
 
 \S4method{dropFeatures}{XCMSnExp}(object)
 
-\S4method{dropFeatureGroups}{XCMSnExp}(object)
+\S4method{dropFeatureGroups}{XCMSnExp}(object, keepAdjRtime = FALSE,
+  dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
 }
@@ -144,6 +145,18 @@ specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
 Supported values are \code{"Unknown"}, \code{"Feature detection"},
 \code{"Feature alignment"} and \code{"Retention time correction"}.}
+
+\item{keepAdjRtime}{For \code{dropFeatureGroups,XCMSnExp}: logical(1)
+defining whether eventually present retention time adjustment should not be
+dropped. By default dropping feature groups drops retention time adjustment
+results too.}
+
+\item{dropLastN}{For \code{dropFeatureGroups,XCMSnExp}: numeric(1) defining
+the number of feature alignment related process history steps to remove. By
+default \code{dropLastN = -1}, dropping the features removes all process
+history steps related to feature alignment. Setting e.g. \code{dropLastN = 1}
+will only remove the most recent feature alignment related process history
+step.}
 }
 \value{
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
@@ -233,10 +246,12 @@ alignment results.
 detection results.
 
 The \code{adjustedRtime},\code{adjustedRtime<-} method
-extract/set adjusted retention times. Retention times are adjusted by
-retention time correction/adjustment methods. The \code{bySample} parameter
-allows to specify whether the adjusted retention time should be grouped by
-sample (file).
+extract/set adjusted retention times. \code{adjustedRtime<-} should not be
+called manually, it is called internally by the \code{\link{adjustRtime}}
+methods. For \code{XCMSnExp} objects, \code{adjustedRtime<-} does also apply
+the retention time adjustment to the features in the object.
+The \code{bySample} parameter allows to specify whether the adjusted
+retention time should be grouped by sample (file).
 
 The \code{featureGroups}, \code{featureGroups<-} methods extract
 or set the feature alignment results.
@@ -245,8 +260,10 @@ The \code{features}, \code{features<-} methods extract or set
 the matrix containing the information on identified features. Parameter
 \code{bySample} allows to specify whether features should be returned
 ungrouped (default \code{bySample = FALSE}) or grouped by sample (
-\code{bySample = TRUE}).
-See description on the return value for details on the matrix columns. Users
+\code{bySample = TRUE}). The \code{features<-} method for \code{XCMSnExp}
+objects removes also all feature alignment and retention time correction
+results.
+See description of the return value for details on the returned matrix. Users
 usually don't have to use the \code{features<-} method directly as detected
 features are added to the object by the \code{\link{detectFeatures}} method.
 
@@ -288,18 +305,21 @@ or retention time adjustment too. For \code{XCMSnExp} objects the method
 drops also any related process history steps.
 
 The \code{dropFeatureGroups} method drops aligned feature
-information (i.e. feature groups) and returns the object
+results (i.e. feature groups) and returns the object
 without that information. Note that for \code{XCMSnExp} objects the method
-drops also retention time adjustments.
-For \code{XCMSnExp} objects the method drops also any related process history
-steps.
+will also drop retention time adjustment results, if these were performed
+after the last feature alignment (i.e. which base on the results from the
+feature alignment that are going to be removed). For \code{XCMSnExp} objects
+also all related process history steps are removed.
 
 The \code{dropAdjustedRtime} method drops any retention time
 adjustment information and returns the object without adjusted retention
-time. Note that for \code{XCMSnExp} objects the method drops also all feature
-alignment results if these were performed after the retention time adjustment.
-For \code{XCMSnExp} objects the method drops also any related process history
-steps.
+time. For \code{XCMSnExp} object this also reverts the retention times
+reported for the features in the feature matrix to the original, raw, ones
+(after feature detection). Note that for \code{XCMSnExp} objects the method
+drops also all feature alignment results if these were performed \emph{after}
+the retention time adjustment. For \code{XCMSnExp} objects the method drops
+also any related process history steps.
 }
 \section{Slots}{
 

@@ -228,7 +228,7 @@ do_adjustRtime_obiwarp <- function() {
 ##' xcmsSet).
 ##' 
 ##' @noRd
-.applyRtAdjustmentToFeatures <- function(x, rtraw, rtadj) {
+.applyRtAdjToFeatures <- function(x, rtraw, rtadj) {
     if (!is.list(rtraw) | !is.list(rtadj))
         stop("'rtraw' and 'rtadj' are supposed to be lists!")
     if (length(rtraw) != length(rtadj))

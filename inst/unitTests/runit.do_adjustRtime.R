@@ -1,11 +1,93 @@
 ## retention time correction methods.
 
+test_adjustRtime_FeatureGroups <- function() {
+    xod <- faahko_xod
+    xs <- faahko_xs
+
+    ## Group these
+    xsg <- group(xs)
+    xodg <- groupFeatures(xod,
+                          param = FeatureDensityParam(sampleGroups = xs$class))
+    checkEquals(peaks(xsg), features(xodg))
+    checkEquals(xsg@groupidx, featureGroups(xodg)$featureidx)
+    checkTrue(length(processHistory(xodg,
+                                    type = xcms:::.PROCSTEP.FEATURE.DETECTION)) == 1)
+    checkTrue(length(processHistory(xodg,
+                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 1)
+    ## Now do the retention time correction
+    xsr <- retcor(xsg, method = "peakgroups")
+    minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
+    p <- FeatureGroupsParam(minFraction = minFr)
+    xodr <- adjustRtime(xodg, param = p)
+    ## Check that we've got process histories.
+    checkTrue(validObject(xodr))
+    checkTrue(hasDetectedFeatures(xodr))
+    checkTrue(!hasAlignedFeatures(xodr))
+    ## But we would like to keep the related process history step:
+    checkTrue(hasAdjustedRtime(xodr))
+    checkTrue(hasAlignedFeatures(xodg))
+    ## We want to keep the process history step of the feature alignment!
+    checkTrue(length(processHistory(xodr,
+                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 1)
+    checkTrue(length(processHistory(xodr,
+                                    type = xcms:::.PROCSTEP.RTIME.CORRECTION)) == 1)
+    ## Different from original:
+    checkTrue(sum(features(xod)[, "rt"] != features(xodr)[, "rt"]) > 200)
+    checkTrue(sum(features(xod)[, "rtmin"] != features(xodr)[, "rtmin"]) > 200)
+    checkTrue(sum(features(xod)[, "rtmax"] != features(xodr)[, "rtmax"]) > 200)
+    ## between xcmsSet and XCMSnExp
+    checkEquals(features(xodr), peaks(xsr))
+    ## To compare the adjusted retention time we have to extract it by sample!
+    ## Otherwise the ordering will not be the same, as rtime is ordered by
+    ## retention time, but @rt$raw by sample.
+    checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
+                unlist(xsr@rt$corrected, use.names = FALSE))
+    ## Just to ensure - are the raw rt the same?
+    checkEquals(unlist(rtime(xod, bySample = TRUE), use.names = FALSE),
+                unlist(xs@rt$raw, use.names = FALSE))
+    ## Doing an additional grouping
+    xodrg <- groupFeatures(xodr, param = FeatureDensityParam(sampleGroups =
+                                                                 xs$class))
+    checkTrue(length(processHistory(xodrg,
+                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 2)
+    checkTrue(hasAdjustedRtime(xodrg))
+    checkTrue(hasAlignedFeatures(xodrg))
+    xsrg <- group(xsr)
+    checkEquals(xsrg@groupidx, featureGroups(xodrg)$featureidx)
+    
+    ## Mod settings:
+    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
+    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+                                                         span = 1))
+    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
+                unlist(xsr@rt$corrected, use.names = FALSE))
+
+    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
+                  smooth = "linear")
+    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+                                                         span = 1,
+                                                         smooth = "linear"))
+    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
+                unlist(xsr@rt$corrected, use.names = FALSE))
+
+    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
+                  family = "symmetric")
+    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+                                                         span = 1,
+                                                         family = "symmetric"))
+    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
+                unlist(xsr@rt$corrected, use.names = FALSE))
+}
+
 ## That's to evaluate the do_ function with the original code. Once the
 ## retcor.peakgroups calls the do_function we rename it to dontrun.
 test_do_adjustRtime_featureGroups_implementation <- function() {
     xs <- faahko
     xsg <- group(xs)
-
+    
     misSamp <- 1
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
 
@@ -141,13 +223,13 @@ test_applyRtAdjustment <- function() {
     ## align em.
     xsa <- retcor(xsg, method = "peakgroups")
 
-    pksAdj <- xcms:::.applyRtAdjustmentToFeatures(peaks(xsg),
-                                                  rtraw = xsa@rt$raw,
-                                                  rtadj = xsa@rt$corrected)
+    pksAdj <- xcms:::.applyRtAdjToFeatures(peaks(xsg),
+                                           rtraw = xsa@rt$raw,
+                                           rtadj = xsa@rt$corrected)
     checkEquals(pksAdj, peaks(xsa))
     ## Reset em.
-    pksRaw <- xcms:::.applyRtAdjustmentToFeatures(pksAdj,
-                                                  rtraw = xsa@rt$corrected,
-                                                  rtadj = xsa@rt$raw)
+    pksRaw <- xcms:::.applyRtAdjToFeatures(pksAdj,
+                                           rtraw = xsa@rt$corrected,
+                                           rtadj = xsa@rt$raw)
     checkEquals(pksRaw, peaks(xsg))
 }

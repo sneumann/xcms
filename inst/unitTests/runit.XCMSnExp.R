@@ -63,6 +63,10 @@ test_XCMSnExp_rtime <- function() {
     checkEquals(rts_4, rts_3[[2]])
     rts_4 <- rtime(filterFile(faahko_od, file = 3))
     checkEquals(rts_4, rts_3[[3]])
+    ## Compare with the values we get from an xcmsSet:
+    rtx <- faahko_xs@rt$raw
+    checkEquals(unlist(rtx, use.names = FALSE),
+                unlist(rtime(faahko_xod, bySample = TRUE), use.names = FALSE))
 }
 
 test_XCMSnExp_mz <- function() {
@@ -165,141 +169,130 @@ test_XCMSnExp_processHistory <- function() {
 }
 
 test_XCMSnExp_droppers <- function() {
-    ##checkTrue(FALSE)
+    ## How are the drop functions expected to work?
     .checkCreationOfEmptyObject()
-
+    type_feat_det <- xcms:::.PROCSTEP.FEATURE.DETECTION
+    type_feat_algn <- xcms:::.PROCSTEP.FEATURE.ALIGNMENT
+    type_rt_adj <- xcms:::.PROCSTEP.RTIME.CORRECTION
+    ## Perform alignment.
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    checkTrue(hasAlignedFeatures(od_xg))
+    checkTrue(length(processHistory(od_xg, type = type_feat_algn)) == 1)
+    ## Retention time adjustment.
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 1))
+    checkTrue(hasDetectedFeatures(od_xgr))
+    checkTrue(length(processHistory(od_xgr, type = type_feat_det)) == 1)
+    checkTrue(!hasAlignedFeatures(od_xgr))  ## These should have been removed
+    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(od_xgr))
+    checkTrue(length(processHistory(od_xgr, type = type_rt_adj))
+              == 1)
+    ## Most of the retention times are different
+    checkTrue(sum(features(od_xgr)[, "rt"] != features(od_x)[, "rt"]) >
+              nrow(features(od_x)) / 2)
+    ## Alignment after retention time adjustment.
+    od_xgrg <- groupFeatures(od_xgr, param = FeatureDensityParam())
+    checkTrue(hasDetectedFeatures(od_xgrg))
+    checkEquals(features(od_xgrg), features(od_xgr))
+    checkTrue(hasAdjustedRtime(od_xgrg))
+    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasAlignedFeatures(od_xgrg))
+    checkTrue(length(processHistory(od_xgrg, type = type_feat_algn)) == 2)
+       
+    ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropFeatures(od_x)
     checkTrue(!hasDetectedFeatures(res))
-
-    ## Add grouping.
-    od_2 <- od_x
-    od_2 <- xcms:::addProcessHistory(od_2,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    library(S4Vectors)
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_2) <- fd
-    ## Add retention time adjustment.
-    od_3 <- od_2
-    od_3 <- xcms:::addProcessHistory(od_3,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.RTIME.CORRECTION))
-    adjustedRtime(od_3) <- xs_2@rt$corrected
-    ## and grouping
-    od_4 <- od_3
-    od_4 <- xcms:::addProcessHistory(od_4,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    ## Tests
-    ## drop features:
-    res <- dropFeatures(od_2)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xg)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatures(od_3)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xgr)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatures(od_4)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xgrg)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop feature groups
-    ## adjusted retention times are always dropped.
-    res <- dropFeatureGroups(od_x)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    
+    ## 2) dropFeatureGroups:
+    ##    a) drop the feature groups and the latest related process history
+    ##    b) if retention time correction was performed AFTER the latest feature
+    ##       grouping, drop also the retention time correction and all related
+    ##       process histories.
+    res <- dropFeatureGroups(od_xg)
+    checkEquals(res, od_x)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ## No feature groups - so there is nothing that this function does here.
+    res <- dropFeatureGroups(od_xgr)
+    checkEquals(res, od_xgr)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatureGroups(od_2)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    ## Remove the latest ones.
+    res <- dropFeatureGroups(od_xgrg)
+    checkEquals(res, od_xgr)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatureGroups(od_3)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
 
-    res <- dropFeatureGroups(od_4)
+    ## 3) dropAdjustedRtime:
+    ##    a) drop the retention time adjustment and related process histories
+    ##    b) if grouping has been performed AFTER retention time correction,
+    ##       drop the feature alignment and all related process histories.
+    ##    c) if grouping has been performed BEFORE retention time correction,
+    ##       do nothing.
+    res <- dropAdjustedRtime(od_xg)
+    checkEquals(res, od_xg)
+    ## This drops also the process history for alignment.
+    res <- dropAdjustedRtime(od_xgr)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(features(res), features(od_x))
+    checkEquals(res, od_x)
+    ## This drops also the feature alignment performed later.
+    res <- dropAdjustedRtime(od_xgrg)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop aligned rtime
-    ## Feature alignments are only dropped if they were performed after the
-    ## retention time adjustments.
-    res <- dropAdjustedRtime(od_x)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropAdjustedRtime(od_2)
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Now dropping the adjusted retention time, but not the feature alignment.
-    res <- dropAdjustedRtime(od_3)
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(od_3))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop adjusted retention time AND feature alignment.
-    res <- dropAdjustedRtime(od_4)
-    checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(od_4))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(features(res), features(od_x))
+    checkEquals(res, od_x)
+    
     .checkCreationOfEmptyObject()
 }
 

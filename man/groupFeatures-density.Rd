@@ -100,7 +100,7 @@ The \code{FeatureDensityParam} function returns a
 \code{FeatureDensityParam} class instance with all of the settings
 specified for feature alignment based on feature densities.
 
-For \code{detectFeatures}: a \code{\link{XCMSnExp}} object with the
+For \code{groupFeatures}: a \code{\link{XCMSnExp}} object with the
 results of the feature alignment step. These can be accessed with the
 \code{\link{featureGroups}} method.
 }

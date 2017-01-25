@@ -1599,6 +1599,28 @@ setClass("NearestFeaturesParam",
          })
 
 
+
+##' @title Retention time correction methods.
+##'
+##' @description The \code{adjustRtime} method(s) perform retention time
+##' correction between chromatograms of different samples. These methods are
+##' part of the modernized \code{xcms} user interface.
+##'
+##' The implemented feature alignment methods are:
+##' \describe{
+##' \item{featureGroups}{retention time correction based on aligment of feature
+##' groups present in most/all samples.
+##' See \code{\link{adjustRtime-featureGroups}} for more details.}
+##' 
+##' }
+##' @name adjustRtime
+##' @family retention time correction methods
+##' @seealso \code{\link{retcor}} for the \emph{old} retention time correction 
+##' methods.
+##' @author Johannes Rainer
+NULL
+#> NULL
+
 ## Main retcor.peakgroups documentation.
 ##' @title Retention time correction based on alignment of house keeping feature
 ##' groups

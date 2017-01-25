@@ -81,7 +81,7 @@ The \code{NearestFeaturesParam} function returns a
 \code{NearestFeaturesParam} class instance with all of the settings
 specified for high resolution single spectra feature alignment.
 
-For \code{detectFeatures}: a \code{\link{XCMSnExp}} object with the
+For \code{groupFeatures}: a \code{\link{XCMSnExp}} object with the
 results of the feature alignment step. These can be accessed with the
 \code{\link{featureGroups}} method.
 }

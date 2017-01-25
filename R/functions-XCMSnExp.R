@@ -3,9 +3,11 @@
 ##' Takes a XCMSnExp and drops ProcessHistory steps from the @.processHistory
 ##' slot matching the provided type.
 ##'
+##' @param num which should be dropped? If \code{-1} all matching will be dropped,
+##' otherwise just the most recent num.
 ##' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
 ##' @noRd
-dropProcessHistories <- function(x, type) {
+dropProcessHistories <- function(x, type, num = -1) {
     ## ## Drop processing history steps by type.
     ## if (!missing(type)) {
     ##     toRem <- unlist(lapply(processHistory(x), function(z) {
@@ -14,17 +16,26 @@ dropProcessHistories <- function(x, type) {
     ##     if (any(toRem))
     ##         x@.processHistory <- processHistory(x)[!toRem]
     ## }
-    x@.processHistory <- dropProcessHistoriesList(processHistory(x), type = type)
+    x@.processHistory <- dropProcessHistoriesList(processHistory(x),
+                                                  type = type, num = num)
     return(x)
 }
 
-dropProcessHistoriesList <- function(x, type) {
+dropProcessHistoriesList <- function(x, type, num = -1) {
     if (!missing(type)) {
         toRem <- unlist(lapply(x, function(z) {
             return(processType(z) %in% type)
         }))
-        if (any(toRem))
-            x <- x[!toRem]
+        if (any(toRem)) {
+            if (num < 0) {
+                x <- x[!toRem]
+            } else {
+                idx <- which(toRem)
+                idx <- tail(idx, n = num)
+                if (length(idx))
+                x <- x[-idx]
+            }
+        }
     }
     return(x)
 }

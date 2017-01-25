@@ -1,5 +1,5 @@
 ## Methods for the MsFeatureData class.
-#' @include functions-MsFeatureData.R
+#' @include functions-MsFeatureData.R do_adjustRtime-functions.R
 
 setMethod("initialize", "MsFeatureData", function(.Object, ...) {
     classVersion(.Object)["MsFeatureData"] <- "0.0.1"
@@ -56,8 +56,9 @@ setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
 })
 ##' @rdname XCMSnExp-class
 setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
-    if (hasAdjustedRtime(object))
+    if (hasAdjustedRtime(object)) {
         rm(list = "adjustedRtime", envir = object)
+    }
     return(object)
 })
 
