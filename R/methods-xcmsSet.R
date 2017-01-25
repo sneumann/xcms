@@ -468,11 +468,133 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
 ############################################################
 ## retcor.peakgroups
 setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 1,
-                                                   smooth = c("loess", "linear"), span = .2,
+                                                   smooth = c("loess", "linear"),
+                                                   span = .2,
                                                    family = c("gaussian", "symmetric"),
                                                    plottype = c("none", "deviation", "mdevden"),
                                                    col = NULL, ty = NULL) {
+    
+    peakmat <- peaks(object)
+    groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
+    samples <- sampnames(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
+    n <- length(samples)
+    corpeaks <- peakmat
+    smooth <- match.arg(smooth)
+    plottype <- match.arg(plottype)
+    family <- match.arg(family)
+    if (length(object@rt) == 2)
+        rtcor <- object@rt$corrected
+    else {
+        fnames <- filepaths(object)
+        rtcor <- vector("list", length(fnames))
+        for (i in seq(along = fnames)) {
+            xraw <- xcmsRaw(fnames[i])
+            rtcor[[i]] <- xraw@scantime
+        }
+        object@rt <- list(raw = rtcor, corrected = rtcor)
+    }
 
+    minFr <- (n - missing) / n
+    res <- do_adjustRtime_featureGroups(features = peakmat,
+                                        featureIndex = object@groupidx,
+                                        rtime = rtcor,
+                                        minFraction = minFr,
+                                        extraFeatures = extra,
+                                        smooth = smooth,
+                                        span = span,
+                                        family = family)
+    rtdevsmo <- vector("list", n)
+    for (i in 1:n) {
+        rtdevsmo[[i]] <- rtcor[[i]] - res[[i]]
+    }
+    ## rtdevsmo <- mapply(FUN = function(a, b) {
+    ##     return(a - b)
+    ## }, rtcor, res)
+
+    if (plottype == "mdevden") {
+        split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
+        screen(1)
+        par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
+    }
+
+    if (plottype %in% c("deviation", "mdevden")) {
+        ## Need also the 'rt' matrix:
+        rt <- .getFeatureGroupsRtMatrix(peakmat, object@groupidx, n,
+                                    missing, extra)
+        rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
+        
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
+
+        rtrange <- range(do.call(c, rtcor))
+        devrange <- range(do.call(c, rtdevsmo))
+
+        plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
+             main = "Retention Time Deviation vs. Retention Time",
+             xlab = "Retention Time", ylab = "Retention Time Deviation")
+        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty,
+               pch = ceiling(1:n/length(mypal)), xjust = 1)
+
+        for (i in 1:n) {
+            points(data.frame(rt = rt[,i], rtdev = rtdev[,i]),
+                   col = mypal[col[i]], pch = ty[i], type = "p")
+            points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]],
+                   lty = ty[i])
+        }
+    }
+
+    if (plottype == "mdevden") {
+
+        screen(2)
+        par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1],
+                          to = rtrange[2], na.rm = TRUE)[c("x","y")]
+        allden$y <- allden$y / sum(allden$y)
+        corden$y <- corden$y / sum(corden$y)
+        maxden <- max(allden$y, corden$y)
+        plot(c(0,0), xlim = rtrange, ylim = c(0, maxden), type = "n",
+             main = "", xlab = "Retention Time", ylab = "Peak Density")
+        points(allden, type = "l", col = 1)
+        points(corden, type = "l", col = 2)
+        abline(h = 0, col = "grey")
+        legend(rtrange[2], maxden, c("All", "Correction"), col = 1:2,
+               lty = c(1,1), xjust = 1)
+        close.screen(all.screens = TRUE)
+    }
+
+    for (i in 1:n) {
+        cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]]) / 2,
+                        rtcor[[i]] - rtdevsmo[[i]])
+        rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
+
+        sidx <- which(corpeaks[,"sample"] == i)
+        corpeaks[sidx, c("rt", "rtmin", "rtmax")] <-
+            cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
+    }
+
+    object@rt$corrected <- rtcor
+    peaks(object) <- corpeaks
+    groups(object) <- matrix(nrow = 0, ncol = 0)
+    groupidx(object) <- list()
+    invisible(object)
+})
+## The original code!
+.retcor.peakgroups_orig <- function(object, missing = 1, extra = 1,
+                                    smooth = c("loess", "linear"), span = .2,
+                                    family = c("gaussian", "symmetric"),
+                                    plottype = c("none", "deviation", "mdevden"),
+                                    col = NULL, ty = NULL) {
+    
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -636,7 +758,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     groups(object) <- matrix(nrow = 0, ncol = 0)
     groupidx(object) <- list()
     invisible(object)
-})
+}
 
 
 ############################################################

@@ -82,6 +82,61 @@ test_adjustRtime_FeatureGroups <- function() {
                 unlist(xsr@rt$corrected, use.names = FALSE))
 }
 
+## This is to ensure that the original code works with the new one using the
+## do_ function
+dontrun_test_retcor.peakgroups <- function() {
+    xs <- faahko
+    xsg <- group(xs)
+
+    res_1 <- retcor.peakgroups(xsg)
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg)
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+    
+    res_1 <- retcor.peakgroups(xsg, missing = 2)
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, missing = 2)
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+
+    res_1 <- retcor.peakgroups(xsg, extra = 3)
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, extra = 3)
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+
+    res_1 <- retcor.peakgroups(xsg, smooth = "linear")
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, smooth = "linear")
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+
+    res_1 <- retcor.peakgroups(xsg, span = 1)
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, span = 1)
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+
+    res_1 <- retcor.peakgroups(xsg, family = "symmetric")
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, family = "symmetric")
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+    
+    res_1 <- retcor.peakgroups(xsg, plottype = "deviation")
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, plottype = "deviation")
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+
+    res_1 <- retcor.peakgroups(xsg, plottype = "mdevden")
+    res_2 <- xcms:::.retcor.peakgroups_orig(xsg, plottype = "mdevden")
+    checkEquals(unlist(res_1@rt$corrected, use.names = FALSE),
+                unlist(res_2@rt$corrected, use.names = FALSE))
+    checkEquals(res_1, res_2)
+}
+
 ## That's to evaluate the do_ function with the original code. Once the
 ## retcor.peakgroups calls the do_function we rename it to dontrun.
 test_do_adjustRtime_featureGroups_implementation <- function() {

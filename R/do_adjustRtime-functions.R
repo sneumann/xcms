@@ -85,33 +85,9 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
    
-    ## For each feature group:
-    ## o extract the retention time of the feature with the highest intensity.
-    ## o skip feature groups if they are not assigned a feature in at least a
-    ##   minimum number of samples OR if have too many features from the same
-    ##   sample assigned to it.
-    seq_samp <- seq_len(nSamples)
-    rt <- lapply(featureIndex, function(z) {
-        cur_fts <- features[z, c("rt", "into", "sample"), drop = FALSE]
-        ## Return NULL if we've got less samples that required or is the total
-        ## number of features is larger than a certain threshold.
-        ## Note that the original implementation is not completely correct!
-        ## nsamp > nsamp + extraFeatures might be correct.
-        nsamp <- length(unique(cur_fts[, "sample"]))
-        if (nsamp < (nSamples - missingSample) |
-            nrow(cur_fts) > (nsamp + extraFeatures))
-            return(NULL)
-        cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), ]
-        cur_fts[match(seq_samp, cur_fts[, 3]), 1]
-    })
-    rt <- do.call(rbind, rt)
-    ## Order them by median retention time. NOTE: this is different from the
-    ## original code, in which the feature groups are ordered by the median
-    ## retention time that is calculated over ALL features within the feature
-    ## group, not only to one feature selected for each sample (for multi
-    ## feature per sample assignments).
-    rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
-    
+    rt <- .getFeatureGroupsRtMatrix(features, featureIndex, nSamples,
+                                    missingSample, extraFeatures)
+
     message("Performing retention time correction using ", nrow(rt),
             " feature groups.")
 
@@ -244,4 +220,34 @@ do_adjustRtime_obiwarp <- function() {
         }
     }
     return(x)
+}
+
+.getFeatureGroupsRtMatrix <- function(features, featureIndex, nSamples,
+                                      missingSample, extraFeatures) {
+    ## For each feature group:
+    ## o extract the retention time of the feature with the highest intensity.
+    ## o skip feature groups if they are not assigned a feature in at least a
+    ##   minimum number of samples OR if have too many features from the same
+    ##   sample assigned to it.
+    seq_samp <- seq_len(nSamples)
+    rt <- lapply(featureIndex, function(z) {
+        cur_fts <- features[z, c("rt", "into", "sample"), drop = FALSE]
+        ## Return NULL if we've got less samples that required or is the total
+        ## number of features is larger than a certain threshold.
+        ## Note that the original implementation is not completely correct!
+        ## nsamp > nsamp + extraFeatures might be correct.
+        nsamp <- length(unique(cur_fts[, "sample"]))
+        if (nsamp < (nSamples - missingSample) |
+            nrow(cur_fts) > (nsamp + extraFeatures))
+            return(NULL)
+        cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), ]
+        cur_fts[match(seq_samp, cur_fts[, 3]), 1]
+    })
+    rt <- do.call(rbind, rt)
+    ## Order them by median retention time. NOTE: this is different from the
+    ## original code, in which the feature groups are ordered by the median
+    ## retention time that is calculated over ALL features within the feature
+    ## group, not only to one feature selected for each sample (for multi
+    ## feature per sample assignments).
+    return(rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE])
 }
