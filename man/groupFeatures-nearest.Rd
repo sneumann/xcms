@@ -114,7 +114,7 @@ for the \code{mzVsRtBalance} slot of the object.
 \code{kNN},\code{kNN<-}: getter and setter for the
 \code{kNN} slot of the object.
 
-The \code{groupFeatures,XCMSnExp,NearestFeaturesParam} method
+\code{groupFeatures,XCMSnExp,NearestFeaturesParam}:
 performs feature alignment based on the proximity between features from
 different samples in the mz-rt range.
 }

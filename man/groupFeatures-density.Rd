@@ -134,7 +134,7 @@ the \code{minFraction} slot of the object.
 \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
 the \code{maxFeatures} slot of the object.
 
-The \code{groupFeatures,XCMSnExp,FeatureDensityParam} method
+\code{groupFeatures,XCMSnExp,FeatureDensityParam}:
 performs feature alignment (within and across samples) within in mz dimension
 overlapping slices of MS data based on the density distribution of the
 identified features in the slice along the time axis.

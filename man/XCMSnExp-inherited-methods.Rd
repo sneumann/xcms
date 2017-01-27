@@ -44,7 +44,7 @@ which spectra the data set should be reduced.}
 
 \item{drop}{For \code{[}: not supported.}
 
-\item{object}{An \code{\link{XCMSnExp}} object.}
+\item{object}{An \code{\link{XCMSnExp}} or \code{OnDiskMSnExp} object.}
 
 \item{binSize}{\code{numeric(1)} defining the size of a bin (in Dalton).}
 
@@ -104,18 +104,18 @@ The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
 spectra. For more details and examples see the documentation for
 \code{\link[MSnbase]{OnDiskMSnExp}}.
 
-The \code{bin} method allows to \emph{bin} spectra. See
+\code{bin}: allows to \emph{bin} spectra. See
 \code{\link[MSnbase]{bin}} documentation for more details and examples.
 
-The \code{clean} method removes unused \code{0} intensity data
+\code{clean}: removes unused \code{0} intensity data
 points. See \code{\link[MSnbase]{clean}} documentation for details and
 examples.
 
-The \code{filterMsLevel} reduces the \code{\link{XCMSnExp}}
+\code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
 object to spectra of the specified MS level(s). See
 \code{\link[MSnbase]{filterMsLevel}} documentation for details and examples.
 
-The \code{filterAcquisitionNum} method filters the
+\code{filterAcquisitionNum}: filters the
 \code{\link{XCMSnExp}} object keeping only spectra with the provided
 acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
 details and examples.

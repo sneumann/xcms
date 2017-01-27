@@ -108,7 +108,7 @@ the \code{minFraction} slot of the object.
 \code{minSamples},\code{minSamples<-}: getter and setter for the
 \code{minSamples} slot of the object.
 
-The \code{groupFeatures,XCMSnExp,MzClustParam} method
+\code{groupFeatures,XCMSnExp,MzClustParam}:
 performs high resolution feature alignment for single spectrum metabolomics
 data.
 }

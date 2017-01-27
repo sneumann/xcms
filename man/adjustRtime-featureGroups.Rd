@@ -138,7 +138,7 @@ for the \code{span} slot of the object.
 \code{family},\code{family<-}: getter and setter
 for the \code{family} slot of the object.
 
-The \code{adjustRtime,XCMSnExp,FeatureGroupsParam} method
+\code{adjustRtime,XCMSnExp,FeatureGroupsParam}:
 performs retention time correction based on the alignment of feature groups
 found in all/most samples.
 }

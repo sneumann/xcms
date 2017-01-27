@@ -1,7 +1,7 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
 #' @include functions-XCMSnExp.R do_groupFeatures-functions.R
-#' do_adjustRtime-functions.R
+#' do_adjustRtime-functions.R methods-xcmsRaw.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     classVersion(.Object)["XCMSnExp"] <- "0.0.1"
@@ -72,7 +72,7 @@ setMethod("hasDetectedFeatures", "XCMSnExp", function(object) {
 
 ##' @aliases adjustedRtime
 ##'
-##' @description The \code{adjustedRtime},\code{adjustedRtime<-} method
+##' @description \code{adjustedRtime},\code{adjustedRtime<-}:
 ##' extract/set adjusted retention times. \code{adjustedRtime<-} should not be
 ##' called manually, it is called internally by the \code{\link{adjustRtime}}
 ##' methods. For \code{XCMSnExp} objects, \code{adjustedRtime<-} does also apply
@@ -134,7 +134,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 
 ##' @aliases featureGroups
 ##'
-##' @description The \code{featureGroups}, \code{featureGroups<-} methods extract
+##' @description \code{featureGroups}, \code{featureGroups<-}: extract
 ##' or set the feature alignment results.
 ##'
 ##' @return For \code{featureGroups}: a \code{DataFrame} with feature alignment
@@ -172,7 +172,7 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
 
 ##' @aliases features
 ##'
-##' @description The \code{features}, \code{features<-} methods extract or set
+##' @description \code{features}, \code{features<-}: extract or set
 ##' the matrix containing the information on identified features. Parameter
 ##' \code{bySample} allows to specify whether features should be returned
 ##' ungrouped (default \code{bySample = FALSE}) or grouped by sample (
@@ -235,7 +235,7 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
     }
 })
 
-##' @description The \code{rtime} method extracts the retention time for each
+##' @description \code{rtime}: extracts the retention time for each
 ##' scan. The \code{bySample} parameter allows to return the values grouped
 ##' by sample/file.
 ##'
@@ -261,7 +261,7 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE) {
     return(res)
 })
 
-##' @description The \code{mz} method extracts the mz values from each scan of
+##' @description \code{mz}: extracts the mz values from each scan of
 ##' all files within an \code{XCMSnExp} object. These values are extracted from
 ##' the original data files and eventual processing steps are applied
 ##' \emph{on the fly}. Using the \code{bySample} parameter it is possible to
@@ -284,7 +284,7 @@ setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
     return(res)
 })
 
-##' @description The \code{intensity} method extracts the intensity values from
+##' @description \code{intensity}: extracts the intensity values from
 ##' each scan of all files within an \code{XCMSnExp} object. These values are
 ##' extracted from the original data files and eventual processing steps are
 ##' applied \emph{on the fly}. Using the \code{bySample} parameter it is possible
@@ -307,7 +307,7 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
     return(res)
 })
 
-##' @description The \code{spectra} method extracts the
+##' @description \code{spectra}: extracts the
 ##' \code{\link[MSnbase]{Spectrum}} objects containing all data from
 ##' \code{object}. These values are extracted from the original data files and
 ##' eventual processing steps are applied \emph{on the fly}. Setting
@@ -334,7 +334,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE) {
 
 ## processHistory
 ##' @aliases processHistory
-##' @description The \code{processHistory} method returns a \code{list} with
+##' @description \code{processHistory}: returns a \code{list} with
 ##' \code{\link{ProcessHistory}} objects (or objects inheriting from this base
 ##' class) representing the individual processing steps that have been performed,
 ##' eventually along with their settings (\code{Param} parameter class). Optional
@@ -382,7 +382,7 @@ setMethod("processHistory", "XCMSnExp", function(object, fileIndex, type) {
     }
 })
 
-##' @description The \code{addProcessHistory} method adds (appends) a single
+##' @description \code{addProcessHistory}: adds (appends) a single
 ##' \code{\link{ProcessHistory}} object to the \code{.processHistory} slot.
 ##'
 ##' @return The \code{addProcessHistory} method returns the input object with the
@@ -399,7 +399,7 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
 
 ##' @aliases dropFeatures
 ##'
-##' @description The \code{dropFeatures} method drops any identified features
+##' @description \code{dropFeatures}: drops any identified features
 ##' and returns the object without that information. Note that for
 ##' \code{XCMSnExp} objects the method drops all results from a feature alignment
 ##' or retention time adjustment too. For \code{XCMSnExp} objects the method
@@ -432,7 +432,7 @@ setMethod("dropFeatures", "XCMSnExp", function(object) {
 })
 ##' @aliases dropFeatureGroups
 ##'
-##' @description The \code{dropFeatureGroups} method drops aligned feature
+##' @description \code{dropFeatureGroups}: drops aligned feature
 ##' results (i.e. feature groups) and returns the object
 ##' without that information. Note that for \code{XCMSnExp} objects the method
 ##' will also drop retention time adjustment results, if these were performed
@@ -494,7 +494,7 @@ setMethod("dropFeatureGroups", "XCMSnExp", function(object, keepAdjRtime = FALSE
 
 ##' @aliases dropAdjustedRtime
 ##'
-##' @description The \code{dropAdjustedRtime} method drops any retention time
+##' @description \code{dropAdjustedRtime}: drops any retention time
 ##' adjustment information and returns the object without adjusted retention
 ##' time. For \code{XCMSnExp} object this also reverts the retention times
 ##' reported for the features in the feature matrix to the original, raw, ones
@@ -615,6 +615,9 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
                          drop = "missing"),
           function(x, i, j, drop) {
+              ## Want to support subsetting of the features!
+              ## This means that we will also have to adjust the process
+              ## history accordingly.
               if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
                   hasDetectedFeatures(x)) {
                   ## x@.processHistory <- list()
@@ -627,10 +630,22 @@ setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
               callNextMethod()
           })
 
-##' @description The \code{bin} method allows to \emph{bin} spectra. See
+## setMethod("splitByFile", c("XCMSnExp", "factor"), function(x, f) {
+##     if (length(f) != length(fileNames(x)))
+##         stop("length of 'f' has to match the length of samples/files in 'object'.")
+##     idxs <- lapply(levels(f), function(z) which(f == z))
+##     ## Now I can run a filterFile on these.
+##     res <- lapply(idxs, function(z) {
+##         return(filterFile(x, file = z))
+##     })
+##     names(res) <- levels(f)
+##     return(res)
+## })
+
+##' @description \code{bin}: allows to \emph{bin} spectra. See
 ##' \code{\link[MSnbase]{bin}} documentation for more details and examples.
 ##'
-##' @param object An \code{\link{XCMSnExp}} object.
+##' @param object An \code{\link{XCMSnExp}} or \code{OnDiskMSnExp} object.
 ##'
 ##' @param binSize \code{numeric(1)} defining the size of a bin (in Dalton).
 ##'
@@ -653,7 +668,7 @@ setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
     callNextMethod()
 })
 
-##' @description The \code{clean} method removes unused \code{0} intensity data
+##' @description \code{clean}: removes unused \code{0} intensity data
 ##' points. See \code{\link[MSnbase]{clean}} documentation for details and
 ##' examples.
 ##'
@@ -678,7 +693,7 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
     callNextMethod()
 })
 
-##' @description The \code{filterMsLevel} reduces the \code{\link{XCMSnExp}}
+##' @description \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
 ##' object to spectra of the specified MS level(s). See
 ##' \code{\link[MSnbase]{filterMsLevel}} documentation for details and examples.
 ##'
@@ -696,7 +711,7 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
     callNextMethod()
 })
 
-##' @description The \code{filterAcquisitionNum} method filters the
+##' @description \code{filterAcquisitionNum}: filters the
 ##' \code{\link{XCMSnExp}} object keeping only spectra with the provided
 ##' acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
 ##' details and examples.
@@ -732,7 +747,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
 ##' results.
 ##'
-##' @description The \code{filterFile} method allows to reduce the
+##' @description \code{filterFile}: allows to reduce the
 ##' \code{\link{XCMSnExp}} to data from only certain files. Identified features
 ##' for these files are retained while eventually all present feature
 ##' alignment/grouping information and adjusted retention times are dropped..
@@ -832,7 +847,7 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
     return(object)
 })
 
-##' @description The \code{filterMz} method filters the data set based on the
+##' @description \code{filterMz}: filters the data set based on the
 ##' provided mz value range. All features and feature groups (aligned features)
 ##' falling completely within the provided mz value range are retained (if their
 ##' minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
@@ -868,7 +883,7 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
         return(object)
 })
 
-##' @description The \code{filterRt} method filters the data set based on the
+##' @description \code{filterRt}: filters the data set based on the
 ##' provided retention time range. All features and feature groups within
 ##' the specified retention time window are retained. Filtering by retention time
 ##' does not drop any preprocessing results. The method returns an empty object
@@ -1066,7 +1081,7 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
 ##' @title Feature alignment based on time dimension feature densities
 ##'
-##' @description The \code{groupFeatures,XCMSnExp,FeatureDensityParam} method
+##' @description \code{groupFeatures,XCMSnExp,FeatureDensityParam}:
 ##' performs feature alignment (within and across samples) within in mz dimension
 ##' overlapping slices of MS data based on the density distribution of the
 ##' identified features in the slice along the time axis.
@@ -1136,7 +1151,7 @@ setMethod("groupFeatures",
 
 ##' @title Single-spectrum non-chromatography MS data feature detection
 ##'
-##' @description The \code{groupFeatures,XCMSnExp,MzClustParam} method
+##' @description \code{groupFeatures,XCMSnExp,MzClustParam}:
 ##' performs high resolution feature alignment for single spectrum metabolomics
 ##' data.
 ##'
@@ -1210,7 +1225,7 @@ setMethod("groupFeatures",
 
 ##' @title Feature alignment based on proximity in the mz-rt space
 ##'
-##' @description The \code{groupFeatures,XCMSnExp,NearestFeaturesParam} method
+##' @description \code{groupFeatures,XCMSnExp,NearestFeaturesParam}:
 ##' performs feature alignment based on the proximity between features from
 ##' different samples in the mz-rt range.
 ##'
@@ -1278,7 +1293,7 @@ setMethod("groupFeatures",
 ##' @title Retention time correction based on alignment of house keeping feature
 ##' groups
 ##'
-##' @description The \code{adjustRtime,XCMSnExp,FeatureGroupsParam} method
+##' @description \code{adjustRtime,XCMSnExp,FeatureGroupsParam}:
 ##' performs retention time correction based on the alignment of feature groups
 ##' found in all/most samples.
 ##'
@@ -1346,3 +1361,77 @@ setMethod("adjustRtime",
               if (validObject(object))
                   return(object)
           })
+
+## profMat for XCMSnExp
+##' @rdname XCMSnExp-class
+setMethod("profMat", signature(object = "XCMSnExp"), function(object,
+                                                              method = "bin",
+                                                              step = 0.1,
+                                                              baselevel = NULL,
+                                                              basespace = NULL,
+                                                              mzrange. = NULL,
+                                                              fileIndex) {
+    ## We want to coerce that as OnDiskMSnExp so we don't slow down in the
+    ## filterFile, that would, if rt adjustments are present, revert the whole
+    ## thing.
+    return(profMat(as(object, "OnDiskMSnExp"), method = method, step = step,
+                   baselevel = baselevel, basespace = basespace,
+                   mzrange. = mzrange., fileIndex = fileIndex))
+})
+
+## profMat method for XCMSnExp/OnDiskMSnExp.
+##' @description \code{profMat}: creates a \emph{profile matrix}, which
+##' is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
+##' m (columns) the retention time of the corresponding scans. Each cell contains
+##' the maximum intensity measured for the specific scan and m/z values. See
+##' \code{\link{profMat}} for more details and description of the various binning
+##' methods.
+##'
+##' @return For \code{profMat}: a \code{list} with a the profile matrix
+##' \code{matrix} (or matrices if \code{fileIndex} was not specified or if
+##' \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
+##' help and information about the profile matrix.
+##'
+##' @inheritParams profMat-xcmsSet
+##'
+##' @rdname XCMSnExp-class
+setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
+                                                                  method = "bin",
+                                                                  step = 0.1,
+                                                                  baselevel = NULL,
+                                                                  basespace = NULL,
+                                                                  mzrange. = NULL,
+                                                                  fileIndex) {
+    ## Subset the object by fileIndex.
+    if (!missing(fileIndex)) {
+        if (!is.numeric(fileIndex))
+            stop("'fileIndex' has to be an integer.")
+        if (!all(fileIndex %in% seq_along(fileNames(object))))
+            stop("'fileIndex' has to be an integer between 1 and ",
+                 length(fileNames(object)), "!")
+        object <- filterFile(object, fileIndex)
+    }
+    ## Split it by file and bplapply over it to generate the profile matrix.
+    theF <- factor(seq_along(fileNames(object)))
+    res <- bplapply(splitByFile(object, f = theF), function(z) {
+        require(xcms, quietly = TRUE)
+        ## Note: this is way faster than spectrapply with
+        ## as.data.frame!
+        sps <- spectra(z)
+        mzs <- lapply(sps, mz)
+        vps <- lengths(mzs, use.names = FALSE)
+        return(.createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
+                                    int = unlist(lapply(sps, intensity),
+                                                 use.names = FALSE),
+                                    valsPerSpect = vps,
+                                    method = method,
+                                    step = step,
+                                    baselevel = baselevel,
+                                    basespace = basespace,
+                                    mzrange. = mzrange.)
+               )
+    })
+    return(res)
+})
+
+

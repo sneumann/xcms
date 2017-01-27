@@ -46,6 +46,8 @@
 \alias{mz,XCMSnExp-method}
 \alias{processHistory}
 \alias{processHistory,XCMSnExp-method}
+\alias{profMat,OnDiskMSnExp-method}
+\alias{profMat,XCMSnExp-method}
 \alias{rtime,XCMSnExp-method}
 \alias{setAs}
 \alias{show,MsFeatureData-method}
@@ -115,6 +117,12 @@
   dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
+
+\S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex)
+
+\S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureGroups},
@@ -157,6 +165,30 @@ default \code{dropLastN = -1}, dropping the features removes all process
 history steps related to feature alignment. Setting e.g. \code{dropLastN = 1}
 will only remove the most recent feature alignment related process history
 step.}
+
+\item{method}{The profile matrix generation method. Allowed are \code{"bin"},
+\code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
+section for more information.}
+
+\item{step}{numeric(1) representing the m/z bin size.}
+
+\item{baselevel}{numeric(1) representing the base value to which
+empty elements (i.e. m/z bins without a measured intensity) should be set.
+Only considered if \code{method = "binlinbase"}. See \code{baseValue}
+parameter of \code{\link{imputeLinInterpol}} for more details.}
+
+\item{basespace}{numeric(1) representing the m/z length after
+which the signal will drop to the base level. Linear interpolation will be
+used between consecutive data points falling within \code{2 * basespace} to
+each other. Only considered if \code{method = "binlinbase"}. If not
+specified, it defaults to \code{0.075}. Internally this parameter is
+translated into the \code{distance} parameter of the
+\code{\link{imputeLinInterpol}} function by
+\code{distance = floor(basespace / step)}. See \code{distance} parameter
+of \code{\link{imputeLinInterpol}} for more details.}
+
+\item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
+be used for binnind. If not provided, the whole mz value range is used.}
 }
 \value{
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
@@ -209,6 +241,11 @@ file.
 For \code{processHistory}: a \code{list} of
 \code{\link{ProcessHistory}} objects providing the details of the individual
 data processing steps that have been performed.
+
+For \code{profMat}: a \code{list} with a the profile matrix
+\code{matrix} (or matrices if \code{fileIndex} was not specified or if
+\code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
+help and information about the profile matrix.
 }
 \description{
 The \code{MsFeatureData} class is designed to encapsule all
@@ -245,7 +282,7 @@ alignment results.
 \code{hasDetectedFeatures}: whether the object contains feature
 detection results.
 
-The \code{adjustedRtime},\code{adjustedRtime<-} method
+\code{adjustedRtime},\code{adjustedRtime<-}:
 extract/set adjusted retention times. \code{adjustedRtime<-} should not be
 called manually, it is called internally by the \code{\link{adjustRtime}}
 methods. For \code{XCMSnExp} objects, \code{adjustedRtime<-} does also apply
@@ -253,10 +290,10 @@ the retention time adjustment to the features in the object.
 The \code{bySample} parameter allows to specify whether the adjusted
 retention time should be grouped by sample (file).
 
-The \code{featureGroups}, \code{featureGroups<-} methods extract
+\code{featureGroups}, \code{featureGroups<-}: extract
 or set the feature alignment results.
 
-The \code{features}, \code{features<-} methods extract or set
+\code{features}, \code{features<-}: extract or set
 the matrix containing the information on identified features. Parameter
 \code{bySample} allows to specify whether features should be returned
 ungrouped (default \code{bySample = FALSE}) or grouped by sample (
@@ -267,44 +304,44 @@ See description of the return value for details on the returned matrix. Users
 usually don't have to use the \code{features<-} method directly as detected
 features are added to the object by the \code{\link{detectFeatures}} method.
 
-The \code{rtime} method extracts the retention time for each
+\code{rtime}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped
 by sample/file.
 
-The \code{mz} method extracts the mz values from each scan of
+\code{mz}: extracts the mz values from each scan of
 all files within an \code{XCMSnExp} object. These values are extracted from
 the original data files and eventual processing steps are applied
 \emph{on the fly}. Using the \code{bySample} parameter it is possible to
 switch from the default grouping of mz values by spectrum/scan to a grouping
 by sample/file.
 
-The \code{intensity} method extracts the intensity values from
+\code{intensity}: extracts the intensity values from
 each scan of all files within an \code{XCMSnExp} object. These values are
 extracted from the original data files and eventual processing steps are
 applied \emph{on the fly}. Using the \code{bySample} parameter it is possible
 to switch from the default grouping of intensity values by spectrum/scan to
 a grouping by sample/file.
 
-The \code{spectra} method extracts the
+\code{spectra}: extracts the
 \code{\link[MSnbase]{Spectrum}} objects containing all data from
 \code{object}. These values are extracted from the original data files and
 eventual processing steps are applied \emph{on the fly}. Setting
 \code{bySample = TRUE} the spectra are returned grouped by sample/file.
 
-The \code{processHistory} method returns a \code{list} with
+\code{processHistory}: returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base
 class) representing the individual processing steps that have been performed,
 eventually along with their settings (\code{Param} parameter class). Optional
 arguments \code{fileIndex} and \code{type} allow to restrict to process steps
 of a certain type or performed on a certain file.
 
-The \code{dropFeatures} method drops any identified features
+\code{dropFeatures}: drops any identified features
 and returns the object without that information. Note that for
 \code{XCMSnExp} objects the method drops all results from a feature alignment
 or retention time adjustment too. For \code{XCMSnExp} objects the method
 drops also any related process history steps.
 
-The \code{dropFeatureGroups} method drops aligned feature
+\code{dropFeatureGroups}: drops aligned feature
 results (i.e. feature groups) and returns the object
 without that information. Note that for \code{XCMSnExp} objects the method
 will also drop retention time adjustment results, if these were performed
@@ -312,7 +349,7 @@ after the last feature alignment (i.e. which base on the results from the
 feature alignment that are going to be removed). For \code{XCMSnExp} objects
 also all related process history steps are removed.
 
-The \code{dropAdjustedRtime} method drops any retention time
+\code{dropAdjustedRtime}: drops any retention time
 adjustment information and returns the object without adjusted retention
 time. For \code{XCMSnExp} object this also reverts the retention times
 reported for the features in the feature matrix to the original, raw, ones
@@ -320,6 +357,13 @@ reported for the features in the feature matrix to the original, raw, ones
 drops also all feature alignment results if these were performed \emph{after}
 the retention time adjustment. For \code{XCMSnExp} objects the method drops
 also any related process history steps.
+
+\code{profMat}: creates a \emph{profile matrix}, which
+is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
+m (columns) the retention time of the corresponding scans. Each cell contains
+the maximum intensity measured for the specific scan and m/z values. See
+\code{\link{profMat}} for more details and description of the various binning
+methods.
 }
 \section{Slots}{
 

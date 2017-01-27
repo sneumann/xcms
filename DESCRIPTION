@@ -16,7 +16,7 @@ Depends:
     BiocGenerics,
     ProtGenerics,
     Biobase,
-    MSnbase (>= 2.1.9)
+    MSnbase (>= 2.1.10)
 Imports:
     lattice,
     RColorBrewer,

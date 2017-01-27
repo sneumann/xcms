@@ -45,7 +45,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
-                  "removeReporters", "smooth", "trimMz")
+                  "removeReporters", "smooth", "trimMz", "splitByFile", "[[")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
