@@ -1290,3 +1290,184 @@ setReplaceMethod("family", "FeatureGroupsParam", function(object, value) {
         return(object)
 })
 
+
+############################################################
+## ObiwarpParam
+setMethod("initialize", "ObiwarpParam", function(.Object, ...) {
+    classVersion(.Object)["ObiwarpParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname adjustRtime-obiwarp
+setMethod("show", "ObiwarpParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" profStep:", profStep(object), "\n")
+    cat(" centerSample:", centerSample(object), "\n")
+    cat(" response:", response(object), "\n")
+    cat(" distFun:", distFun(object), "\n")
+    cat(" gapInit:", gapInit(object), "\n")
+    cat(" gapExtend:", gapExtend(object), "\n")
+    cat(" factorDiag:", factorDiag(object), "\n")
+    cat(" factorGap:", factorGap(object), "\n")
+    cat(" localAlignment:", localAlignment(object), "\n")
+    cat(" initPenalty:", initPenalty(object), "\n")
+})
+
+##' @description \code{profStep},\code{profStep<-}: getter and setter
+##' for the \code{profStep} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("profStep", "ObiwarpParam", function(object){
+    return(object@profStep)})
+##' @param value The value for the slot.
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("profStep", "ObiwarpParam", function(object, value) {
+    object@profStep <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases centerSample
+##' @description \code{centerSample},\code{centerSample<-}: getter and setter
+##' for the \code{centerSample} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("centerSample", "ObiwarpParam", function(object){
+    return(object@centerSample)})
+##' @aliases centerSample<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
+    object@centerSample <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases response
+##' @description \code{response},\code{response<-}: getter and setter
+##' for the \code{response} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("response", "ObiwarpParam", function(object){
+    return(object@response)})
+##' @aliases response<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("response", "ObiwarpParam", function(object, value) {
+    object@response <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases distFun
+##' @description \code{distFun},\code{distFun<-}: getter and setter
+##' for the \code{distFun} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("distFun", "ObiwarpParam", function(object){
+    return(object@distFun)})
+##' @aliases distFun<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
+    object@distFun <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases gapInit
+##' @description \code{gapInit},\code{gapInit<-}: getter and setter
+##' for the \code{gapInit} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("gapInit", "ObiwarpParam", function(object){
+    if (length(object@gapInit) == 0) {
+        if (object@distFun == "cor" | object@distFun == "cor_opt")
+            return(0.3)
+        if (object@distFun == "cov" | object@distFun == "prd")
+            return(0)
+        if (object@distFun == "euc")
+            return(0.9)
+    }
+    return(object@gapInit)})
+##' @aliases gapInit<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
+    object@gapInit <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases gapExtend
+##' @description \code{gapExtend},\code{gapExtend<-}: getter and setter
+##' for the \code{gapExtend} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("gapExtend", "ObiwarpParam", function(object){
+    if (length(object@gapExtend) == 0) {
+        if (object@distFun == "cor" | object@distFun == "cor_opt")
+            return(2.4)
+        if (object@distFun == "cov")
+            return(11.7)
+        if (object@distFun == "euc")
+            return(1.8)
+        if (object@distFun == "prd")
+            return(7.8)
+    }
+    return(object@gapExtend)})
+##' @aliases gapExtend<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
+    object@gapExtend <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases factorDiag
+##' @description \code{factorDiag},\code{factorDiag<-}: getter and setter
+##' for the \code{factorDiag} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("factorDiag", "ObiwarpParam", function(object){
+    return(object@factorDiag)})
+##' @aliases factorDiag<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
+    object@factorDiag <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases factorGap
+##' @description \code{factorGap},\code{factorGap<-}: getter and setter
+##' for the \code{factorGap} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("factorGap", "ObiwarpParam", function(object){
+    return(object@factorGap)})
+##' @aliases factorGap<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
+    object@factorGap <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases localAlignment
+##' @description \code{localAlignment},\code{localAlignment<-}: getter and setter
+##' for the \code{localAlignment} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("localAlignment", "ObiwarpParam", function(object){
+    return(object@localAlignment)})
+##' @aliases localAlignment<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
+    object@localAlignment <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases initPenalty
+##' @description \code{initPenalty},\code{initPenalty<-}: getter and setter
+##' for the \code{initPenalty} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("initPenalty", "ObiwarpParam", function(object){
+    return(object@initPenalty)})
+##' @aliases initPenalty<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
+    object@initPenalty <- value
+    if (validObject(object))
+        return(object)
+})
+

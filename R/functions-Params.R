@@ -248,3 +248,24 @@ FeatureGroupsParam <- function(minFraction = 0.9, extraFeatures = 1,
                extraFeatures = extraFeatures, smooth = smooth, span = span,
                family = family))
 }
+
+
+############################################################
+## ObiwarpParam
+
+##' @return The \code{ObiwarpParam} function returns a
+##' \code{ObiwarpParam} class instance with all of the settings
+##' specified for obiwarp retention time adjustment and alignment.
+##' 
+##' @rdname adjustRtime-obiwarp
+ObiwarpParam <- function(profStep = 1, centerSample = integer(), response = 1L,
+                         distFun = "cor_opt", gapInit = numeric(),
+                         gapExtend = numeric(), factorDiag = 2, factorGap = 1,
+                         localAlignment = FALSE, initPenalty = 0) {
+    return(new("ObiwarpParam", profStep = profStep,
+               centerSample = as.integer(centerSample),
+               response = as.integer(response), distFun = distFun,
+               gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
+               factorGap = factorGap, localAlignment = localAlignment,
+               initPenalty = initPenalty))
+}

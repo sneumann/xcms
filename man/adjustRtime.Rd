@@ -23,6 +23,7 @@ Johannes Rainer
 \code{\link{retcor}} for the \emph{old} retention time correction 
 methods.
 
-Other retention time correction methods: \code{\link{adjustRtime-featureGroups}}
+Other retention time correction methods: \code{\link{adjustRtime-featureGroups}},
+  \code{\link{adjustRtime-obiwarp}}
 }
 

@@ -119,10 +119,10 @@
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
 
 \S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex)
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
 
 \S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex)
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureGroups},
@@ -189,6 +189,8 @@ of \code{\link{imputeLinInterpol}} for more details.}
 
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}
+
+\item{...}{Additional parameters.}
 }
 \value{
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}

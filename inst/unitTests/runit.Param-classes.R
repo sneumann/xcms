@@ -677,3 +677,111 @@ test_FeatureGroupsParam <- function() {
     checkException(family(p) <- c("symmetric", "gaussian"))
 }
 
+
+test_ObiwarpParam <- function() {
+    library(xcms)
+    library(RUnit)
+    ## Check getter/setter methods:
+    p <- new("ObiwarpParam", profStep = 0.8)
+    checkEquals(profStep(p), 0.8)
+    profStep(p) <- 0.3
+    checkEquals(profStep(p), 0.3)
+    p <- ObiwarpParam(profStep = 0.7)
+    checkEquals(profStep(p), 0.7)
+    checkException(profStep(p) <- c(2, 2))
+    checkException(profStep(p) <- -1)
+    
+    p <- new("ObiwarpParam", centerSample = 2L)
+    checkEquals(centerSample(p), 2L)
+    centerSample(p) <- 1
+    checkEquals(centerSample(p), 1L)
+    p <- ObiwarpParam(centerSample = 7)
+    checkEquals(centerSample(p), 7)
+    checkException(centerSample(p) <- c(2, 2))
+    checkException(centerSample(p) <- -1)
+
+    p <- new("ObiwarpParam", response = 3L)
+    checkEquals(response(p), 3L)
+    response(p) <- 5
+    checkEquals(response(p), 5L)
+    p <- ObiwarpParam(response = 7)
+    checkEquals(response(p), 7)
+    checkException(response(p) <- c(2, 2))
+    checkException(response(p) <- -1)
+    checkException(response(p) <- 200)
+
+    p <- new("ObiwarpParam", distFun = "euc")
+    checkEquals(distFun(p), "euc")
+    checkEquals(gapInit(p), 0.9)
+    checkEquals(gapExtend(p), 1.8)
+    distFun(p) <- "cor"
+    checkEquals(distFun(p), "cor")
+    checkEquals(gapInit(p), 0.3)
+    checkEquals(gapExtend(p), 2.4)
+    distFun(p) <- "cov"
+    checkEquals(distFun(p), "cov")
+    checkEquals(gapInit(p), 0)
+    checkEquals(gapExtend(p), 11.7)
+    distFun(p) <- "prd"
+    checkEquals(distFun(p), "prd")
+    checkEquals(gapInit(p), 0)
+    checkEquals(gapExtend(p), 7.8)
+    p <- ObiwarpParam(distFun = "cov")
+    checkEquals(distFun(p), "cov")
+    checkException(distFun(p) <- c("a", "cov"))
+    checkException(distFun(p) <- "other")
+
+    p <- new("ObiwarpParam", gapInit = 4.2)
+    checkEquals(gapInit(p), 4.2)
+    gapInit(p) <- 5.2
+    checkEquals(gapInit(p), 5.2)
+    p <- ObiwarpParam(gapInit = 3.1)
+    checkEquals(gapInit(p), 3.1)
+    checkException(gapInit(p) <- c(2, 2))
+    checkException(gapInit(p) <- -1)
+
+    p <- new("ObiwarpParam", gapExtend = 4.2)
+    checkEquals(gapExtend(p), 4.2)
+    gapExtend(p) <- 5.2
+    checkEquals(gapExtend(p), 5.2)
+    p <- ObiwarpParam(gapExtend = 3.1)
+    checkEquals(gapExtend(p), 3.1)
+    checkException(gapExtend(p) <- c(2, 2))
+    checkException(gapExtend(p) <- -1)
+
+    p <- new("ObiwarpParam", factorDiag = 4.2)
+    checkEquals(factorDiag(p), 4.2)
+    factorDiag(p) <- 1.2
+    checkEquals(factorDiag(p), 1.2)
+    p <- ObiwarpParam(factorDiag = 3.1)
+    checkEquals(factorDiag(p), 3.1)
+    checkException(factorDiag(p) <- c(2, 2))
+    checkException(factorDiag(p) <- -1)
+
+    p <- new("ObiwarpParam", factorGap = 4.2)
+    checkEquals(factorGap(p), 4.2)
+    factorGap(p) <- 4.2
+    checkEquals(factorGap(p), 4.2)
+    p <- ObiwarpParam(factorGap = 3.1)
+    checkEquals(factorGap(p), 3.1)
+    checkException(factorGap(p) <- c(2, 2))
+    checkException(factorGap(p) <- -1)
+
+    p <- new("ObiwarpParam", localAlignment = TRUE)
+    checkEquals(localAlignment(p), TRUE)
+    localAlignment(p) <- FALSE
+    checkEquals(localAlignment(p), FALSE)
+    p <- ObiwarpParam(localAlignment = TRUE)
+    checkEquals(localAlignment(p), TRUE)
+    checkException(localAlignment(p) <- c(TRUE, FALSE))
+
+    p <- new("ObiwarpParam", initPenalty = 4.2)
+    checkEquals(initPenalty(p), 4.2)
+    initPenalty(p) <- 2.2
+    checkEquals(initPenalty(p), 2.2)
+    p <- ObiwarpParam(initPenalty = 3.1)
+    checkEquals(initPenalty(p), 3.1)
+    checkException(factorGap(p) <- c(2, 2))
+    checkException(factorGap(p) <- -1)
+}
+

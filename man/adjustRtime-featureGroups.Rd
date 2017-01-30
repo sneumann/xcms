@@ -174,6 +174,7 @@ API function and \code{\link{retcor.peakgroups}} for the old user interface.
 \code{\link{XCMSnExp}} for the object containing the results of
 the feature alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime}}
+Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
+  \code{\link{adjustRtime}}
 }
 

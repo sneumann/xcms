@@ -823,6 +823,12 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
 	## added t automatically find the correct scan range from the xcmsSet object
 	if(length(obj1@scantime) != length(object@rt$raw[[center]])){
+            ## This is in case the xcmsSet was read using a scanrange, i.e. if
+            ## the data was read in with defining a scan range, then we would have a
+            ## mismatch here. This code essentially ensures that the retention time
+            ## of the raw object would match the retention time present in the xcmsSet.
+            ## This was before the days in which @scanrange was added as a slot to
+            ## xcmsSet.
 		##figure out the scan time range
 		scantime.start	<-object@rt$raw[[center]][1]
 		scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
@@ -861,6 +867,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         scantime1 <- obj1@scantime
         scantime2 <- obj2@scantime
 
+        ## median difference between spectras' scan times.
         mstdiff <- median(c(diff(scantime1), diff(scantime2)))
 
         rtup1 <- c(1:length(scantime1))
@@ -881,8 +888,11 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         scantime1 <- scantime1[rtup1]
         scantime2 <- scantime2[rtup2]
 
+        ## Drift of measured scan times - expected to be largest at the end.
         rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
                                 scantime2[length(scantime2)])))
+        ## If the drift is larger than the threshold, cut the matrix up to the
+        ## max allowed difference.
         if(rtmaxdiff>(5*mstdiff)){
             rtmax <- min(scantime1[length(scantime1)],
                          scantime2[length(scantime2)])
@@ -895,6 +905,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         valscantime1 <- length(scantime1)
         valscantime2 <- length(scantime2)
 
+        ## Restrict the profile matrix to columns 1:valscantime
         if(length(obj1@scantime)>valscantime1) {
             obj1@env$profile <- obj1@env$profile[,-c((valscantime1+1):length(obj1@scantime))]
         }
@@ -902,11 +913,14 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             obj2@env$profile <- obj2@env$profile[,-c((valscantime2+1):length(obj2@scantime))]
         }
 
+        ## Now ensure that the nrow of the profile matrix matches.
+        ## Add empty rows at the beginning
         if(mzmin < obj1@mzrange[1]) {
             seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep))-1
             x <- matrix(0, seqlen,dim(obj1@env$profile)[2])
             obj1@env$profile <- rbind(x, obj1@env$profile)
         }
+        ## Add emtpy rows at the end.
         if(mzmax > obj1@mzrange[2]){
             seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep))-1
             x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
@@ -923,6 +937,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             obj2@env$profile <- rbind(obj2@env$profile, x)
         }
 
+        ## OK, now that the matrices are "aligned" extract the intensities
         intensity1 <- obj1@env$profile
         intensity2 <- obj2@env$profile
 
@@ -938,6 +953,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
                               factorDiag, factorGap,
                               localAlignment, initPenalty)
 
+        ## Hm, silently add the raw retention times if we cut the retention time
+        ## vector above - would merit at least a warning I believe.
         if(length(obj2@scantime) > valscantime2) {
             object@rt$corrected[[s]] <- c(rtimecor[[s]],
                                           obj2@scantime[(max(rtup2)+1):length(obj2@scantime)])

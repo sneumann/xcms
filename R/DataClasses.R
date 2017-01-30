@@ -1734,6 +1734,159 @@ setClass("FeatureGroupsParam",
                  return(msg)
          })
 
+##' @title Align retention times across samples using Obiwarp
+##'
+##' @description This method performs retention time adjustment using the
+##' Obiwarp method [Prince 2006]. It is based on the code at
+##' \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
+##' samples by aligning each against a \emph{center} sample. The alignment is
+##' performed directly on the \code{\link{profile-matrix}} and can hence be
+##' performed independently of the feature detection or feature grouping.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{retcor}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{ObiwarpParam} object.
+##'
+##' @param object For \code{adjustRtime}: an \code{\link{OnDiskMSnExp}} or
+##' \code{\link{XCMSnExp}} object. For all other methods an \code{ObiwarpParam}
+##' object.
+##' 
+##' @param profStep numeric(1) defining the bin size (in mz dimension) to be used
+##' for the \emph{profile matrix} generation. See \code{step} parameter in
+##' \code{\link{profile-matrix}} documentation for more details.
+##'
+##' @param centerSample integer(1) defining the index of the center sample in the
+##' experiment. It defaults to \code{floor(median(1:length(fileNames(object))))}.
+##'
+##' @param response numeric(1) defining the \emph{responsiveness} of warping with
+##' \code{response = 0} giving linear warping on start and end points and
+##' \code{response = 100} warping using all bijective anchors.
+##'
+##' @param distFun character defining the distance function to be used. Allowed
+##' values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"} (calculate
+##' only 10\% diagonal band of distance matrix; better runtime), \code{"cov"}
+##' (covariance), \code{"prd"} (product) and \code{"euc"} (Euclidian distance).
+##' The default value is \code{distFun = "cor_opt"}.
+##'
+##' @param gapInit numeric(1) defining the penalty for gap opening. The default
+##' value for \code{gapInit} depends on the value of \code{distFun}: for
+##' \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{0.3}, for
+##' \code{distFun = "cov"} and \code{distFun = "prd"} \code{0.0} and for
+##' \code{distFun = "euc"} \code{0.9}.
+##'
+##' @param gapExtend numeric(1) defining the penalty for gap enlargement. The
+##' default value for \code{gapExtend} depends on the value of \code{distFun},
+##' for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{2.4},
+##' for \code{distFun = "cov"} \code{11.7}, for \code{distFun = "euc"} \code{1.8}
+##' and for \code{distFun = "prd"} {7.8}.
+##'
+##' @param factorDiag numeric(1) defining the local weight applied to diagonal
+##' moves in the alignment.
+##'
+##' @param factorGap numeric(1) defining the local weight for gap moves in the
+##' alignment.
+##'
+##' @param localAlignment logical(1) whether a local alignment should be
+##' performed instead of the default global alignment.
+##'
+##' @param initPenalty numeric(1) defining the penalty for initiating an
+##' alignment (for local alignment only).
+##' 
+##' @family retention time correction methods
+##' 
+##' @seealso \code{\link{retcor.obiwarp}} for the old user interface.
+##'
+##' @name adjustRtime-obiwarp
+##'
+##' @author Colin Smith, Johannes Rainer
+##' 
+##' @references
+##' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
+##' ESI-LC-MS Proteomics Data Sets by Ordered Bijective Interpolated Warping"
+##' \emph{Anal. Chem.} 2006, 78(17):6140-6152.
+
+NULL
+#> NULL
+
+##' @description The \code{ObiwarpParam} class allows to specify all
+##' settings for the retention time adjustment based on the \emph{obiwarp}
+##' method. Class Instances should be created using the
+##' \code{ObiwarpParam} constructor.
+##'
+##' @slot .__classVersion__,profStep,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname adjustRtime-obiwarp
+setClass("ObiwarpParam",
+         slots = c(profStep = "numeric",
+                   centerSample = "integer",
+                   response = "integer",
+                   distFun = "character",
+                   gapInit = "numeric",
+                   gapExtend = "numeric",
+                   factorDiag = "numeric",
+                   factorGap = "numeric",
+                   localAlignment = "logical",
+                   initPenalty = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             profStep = 1,
+             centerSample = integer(),
+             response = 1L,
+             distFun = "cor_opt",
+             gapInit = numeric(),
+             gapExtend = numeric(),
+             factorDiag = 2,
+             factorGap = 1,
+             localAlignment = FALSE,
+             initPenalty = 0),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@profStep) > 1 |
+                 any(object@profStep < 0))
+                 msg <- validMsg(msg, paste0("'profStep' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@centerSample) > 1 |
+                 any(object@centerSample < 0))
+                 msg <- validMsg(msg, paste0("'centerSample' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@response) > 1 |
+                 any(object@response < 0) |
+                 any(object@response > 100))
+                 msg <- validMsg(msg, paste0("'response' has to be a single ",
+                                             " integer from 1 to 100!"))
+             if (length(object@distFun) > 1 |
+                 any(!(object@distFun %in% c("cor", "cor_opt", "cov", "euc",
+                                             "prd"))))
+                 msg <- validMsg(msg, paste0("'distFun' has to be one of \"cor\"",
+                                             ", \"cor_opt\", \"cov\", \"euc\"",
+                                             " or \"prd\"!"))
+             if (length(object@gapInit) > 1 | any(object@gapInit < 0))
+                 msg <- validMsg(msg, paste0("'gapInit' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@gapExtend) > 1 | any(object@gapExtend < 0))
+                 msg <- validMsg(msg, paste0("'gapExtend' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@factorDiag) > 1 | any(object@factorDiag < 0))
+                 msg <- validMsg(msg, paste0("'factorDiag' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@factorGap) > 1 | any(object@factorGap < 0))
+                 msg <- validMsg(msg, paste0("'factorGap' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@localAlignment) > 1)
+                 msg <- validMsg(msg, paste0("'localAlignment' has to be a ",
+                                             "logical of length 1!"))
+             if (length(object@initPenalty) > 1 | any(object@initPenalty < 0))
+                 msg <- validMsg(msg, paste0("'initPenalty' has to be a positive",
+                                             " numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
 
 
 ##' @aliases MsFeatureData

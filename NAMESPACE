@@ -217,7 +217,8 @@ exportClasses(
     "FeatureDensityParam",
     "MzClustParam",
     "NearestFeaturesParam",
-    "FeatureGroupsParam"
+    "FeatureGroupsParam",
+    "ObiwarpParam"
 )
 ## Param methods
 exportMethods(
@@ -334,12 +335,31 @@ exportMethods(
     "span",
     "span<-",
     "family",
-    "family<-"
+    "family<-",
+    ## ObiwarpParam
+    "centerSample",
+    "centerSample<-",
+    "response",
+    "response<-",
+    "distFun",
+    "distFun<-",
+    "gapInit",
+    "gapInit<-",
+    "gapExtend",
+    "gapExtend<-",
+    "factorDiag",
+    "factorDiag<-",
+    "factorGap",
+    "factorGap<-",
+    "localAlignment",
+    "localAlignment<-",
+    "initPenalty",
+    "initPenalty<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
        "CentWavePredIsoParam", "FeatureDensityParam", "MzClustParam",
-       "NearestFeaturesParam", "FeatureGroupsParam")
+       "NearestFeaturesParam", "FeatureGroupsParam", "ObiwarpParam")
 ## Param class methods.
 
 ## New Classes
