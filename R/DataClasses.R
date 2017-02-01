@@ -1747,12 +1747,8 @@ setClass("FeatureGroupsParam",
 ##' \code{xcms} user interface which will eventually replace the
 ##' \code{\link{retcor}} methods. All of the settings to the alignment algorithm
 ##' can be passed with a \code{ObiwarpParam} object.
-##'
-##' @param object For \code{adjustRtime}: an \code{\link{OnDiskMSnExp}} or
-##' \code{\link{XCMSnExp}} object. For all other methods an \code{ObiwarpParam}
-##' object.
 ##' 
-##' @param profStep numeric(1) defining the bin size (in mz dimension) to be used
+##' @param binSize numeric(1) defining the bin size (in mz dimension) to be used
 ##' for the \emph{profile matrix} generation. See \code{step} parameter in
 ##' \code{\link{profile-matrix}} documentation for more details.
 ##'
@@ -1814,13 +1810,13 @@ NULL
 ##' method. Class Instances should be created using the
 ##' \code{ObiwarpParam} constructor.
 ##'
-##' @slot .__classVersion__,profStep,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty See corresponding parameter above. \code{.__classVersion__} stores
+##' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
 ##' @rdname adjustRtime-obiwarp
 setClass("ObiwarpParam",
-         slots = c(profStep = "numeric",
+         slots = c(binSize = "numeric",
                    centerSample = "integer",
                    response = "integer",
                    distFun = "character",
@@ -1832,7 +1828,7 @@ setClass("ObiwarpParam",
                    initPenalty = "numeric"),
          contains = "Param",
          prototype = prototype(
-             profStep = 1,
+             binSize = 1,
              centerSample = integer(),
              response = 1L,
              distFun = "cor_opt",
@@ -1844,9 +1840,9 @@ setClass("ObiwarpParam",
              initPenalty = 0),
          validity = function(object) {
              msg <- validMsg(NULL, NULL)
-             if (length(object@profStep) > 1 |
-                 any(object@profStep < 0))
-                 msg <- validMsg(msg, paste0("'profStep' has to be a positive",
+             if (length(object@binSize) > 1 |
+                 any(object@binSize < 0))
+                 msg <- validMsg(msg, paste0("'binSize' has to be a positive",
                                              " numeric of length 1!"))
              if (length(object@centerSample) > 1 |
                  any(object@centerSample < 0))

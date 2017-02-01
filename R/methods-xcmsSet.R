@@ -962,6 +962,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             object@rt$corrected[[s]] <- rtimecor[[s]]
         }
 
+        ## Why are we rounding here, but NOT in the retcor.peakgroups?
+        ## -> issue #
         rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
 
         rm(obj2)

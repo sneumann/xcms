@@ -1302,7 +1302,7 @@ setMethod("initialize", "ObiwarpParam", function(.Object, ...) {
 setMethod("show", "ObiwarpParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
-    cat(" profStep:", profStep(object), "\n")
+    cat(" binSize:", binSize(object), "\n")
     cat(" centerSample:", centerSample(object), "\n")
     cat(" response:", response(object), "\n")
     cat(" distFun:", distFun(object), "\n")
@@ -1314,15 +1314,15 @@ setMethod("show", "ObiwarpParam", function(object) {
     cat(" initPenalty:", initPenalty(object), "\n")
 })
 
-##' @description \code{profStep},\code{profStep<-}: getter and setter
-##' for the \code{profStep} slot of the object.
+##' @description \code{binSize},\code{binSize<-}: getter and setter
+##' for the \code{binSize} slot of the object.
 ##' @rdname adjustRtime-obiwarp
-setMethod("profStep", "ObiwarpParam", function(object){
-    return(object@profStep)})
+setMethod("binSize", "ObiwarpParam", function(object){
+    return(object@binSize)})
 ##' @param value The value for the slot.
 ##' @rdname adjustRtime-obiwarp
-setReplaceMethod("profStep", "ObiwarpParam", function(object, value) {
-    object@profStep <- value
+setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
+    object@binSize <- value
     if (validObject(object))
         return(object)
 })

@@ -1,7 +1,7 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
 #' @include functions-XCMSnExp.R do_groupFeatures-functions.R
-#' do_adjustRtime-functions.R methods-xcmsRaw.R
+#' do_adjustRtime-functions.R methods-xcmsRaw.R functions-OnDiskMSnExp.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     classVersion(.Object)["XCMSnExp"] <- "0.0.1"
@@ -1362,6 +1362,67 @@ setMethod("adjustRtime",
                   return(object)
           })
 
+
+##' @title Align retention times across samples using Obiwarp
+##'
+##' @description \code{adjustRtime,XCMSnExp,ObiwarpParam}:
+##' performs retention time correction based on the alignment of feature groups
+##' found in all/most samples.
+##'
+##' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
+##' all feature grouping (alignment) results to be dropped.
+##'
+##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
+##'
+##' For all other methods: a \code{ObiwarpParam} object.
+##' 
+##' @param param A \code{ObiwarpParam} object containing all settings for
+##' the retention time correction method.
+##'
+##' @return For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
+##' \code{\link{XCMSnExp}} object with the results of the retention time
+##' adjustment step. These can be accessed with the \code{\link{adjustedRtime}}
+##' method. Retention time correction does also adjust the retention time of the
+##' identified features (accessed \emph{via} \code{\link{features}}. Note that
+##' retention time correction drops all previous alignment results from the
+##' result object.
+##'
+##' For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with the
+##' adjusted retention times per spectra (in the same order than \code{rtime}).
+##' 
+##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+##' the feature alignment.
+##' 
+##' @rdname adjustRtime-obiwarp
+setMethod("adjustRtime",
+          signature(object = "XCMSnExp", param = "ObiwarpParam"),
+          function(object, param) {
+              ## We don't require any detected or aligned features.
+              ## if (!hasDetectedFeatures(object))
+              ##     stop("No feature detection results in 'object'! Please ",
+              ##          "perform first a feature detection using the ",
+              ##          "'detectFeatures' method.")
+              ## if (!hasAlignedFeatures(object))
+              ##     stop("No feature alignment results in 'object'! Please ",
+              ##          "perform first a feature alignment using the ",
+              ##          "'groupFeatures' method.")
+              startDate <- date()
+              res <- .obiwarp(as(object, "OnDiskMSnExp"), param = param)
+              ## Dropping the feature groups.
+              object <- dropFeatureGroups(object)
+              ## Add the results. adjustedRtime<- should also fix the retention
+              ## times for the features! Want to keep also the lates alignment
+              ## information
+              adjustedRtime(object) <- res
+              ## Add the process history step.
+              xph <- XProcessHistory(param = param, date. = startDate,
+                                     type. = .PROCSTEP.RTIME.CORRECTION,
+                                     fileIndex = 1:length(fileNames(object)))
+              object <- addProcessHistory(object, xph)
+              if (validObject(object))
+                  return(object)
+          })
+
 ## profMat for XCMSnExp
 ##' @rdname XCMSnExp-class
 setMethod("profMat", signature(object = "XCMSnExp"), function(object,
@@ -1380,357 +1441,3 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
                    mzrange. = mzrange., fileIndex = fileIndex, ...))
 })
 
-## profMat method for XCMSnExp/OnDiskMSnExp.
-##' @description \code{profMat}: creates a \emph{profile matrix}, which
-##' is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
-##' m (columns) the retention time of the corresponding scans. Each cell contains
-##' the maximum intensity measured for the specific scan and m/z values. See
-##' \code{\link{profMat}} for more details and description of the various binning
-##' methods.
-##'
-##' @param ... Additional parameters.
-##' 
-##' @return For \code{profMat}: a \code{list} with a the profile matrix
-##' \code{matrix} (or matrices if \code{fileIndex} was not specified or if
-##' \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
-##' help and information about the profile matrix.
-##'
-##' @inheritParams profMat-xcmsSet
-##'
-##' @rdname XCMSnExp-class
-setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
-                                                                  method = "bin",
-                                                                  step = 0.1,
-                                                                  baselevel = NULL,
-                                                                  basespace = NULL,
-                                                                  mzrange. = NULL,
-                                                                  fileIndex,
-                                                                  ...) {
-    ## Subset the object by fileIndex.
-    if (!missing(fileIndex)) {
-        if (!is.numeric(fileIndex))
-            stop("'fileIndex' has to be an integer.")
-        if (!all(fileIndex %in% seq_along(fileNames(object))))
-            stop("'fileIndex' has to be an integer between 1 and ",
-                 length(fileNames(object)), "!")
-        object <- filterFile(object, fileIndex)
-    }
-    ## Split it by file and bplapply over it to generate the profile matrix.
-    theF <- factor(seq_along(fileNames(object)))
-    theDots <- list(...)
-    if (any(names(theDots) == "returnBreaks"))
-        returnBreaks <- theDots$returnBreaks
-    else
-        returnBreaks <- FALSE
-    res <- bplapply(splitByFile(object, f = theF), function(z, bmethod, bstep,
-                                                            bbaselevel,
-                                                            bbasespace,
-                                                            bmzrange.,
-                                                            breturnBreaks) {
-        require(xcms, quietly = TRUE)
-        ## Note: this is way faster than spectrapply with
-        ## as.data.frame!
-        sps <- spectra(z)
-        mzs <- lapply(sps, mz)
-        vps <- lengths(mzs, use.names = FALSE)
-        return(.createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
-                                    int = unlist(lapply(sps, intensity),
-                                                 use.names = FALSE),
-                                    valsPerSpect = vps,
-                                    method = bmethod,
-                                    step = bstep,
-                                    baselevel = bbaselevel,
-                                    basespace = bbasespace,
-                                    mzrange. = bmzrange.,
-                                    returnBreaks = breturnBreaks)
-               )
-    }, bmethod = method, bstep = step, bbaselevel = baselevel,
-    bbasespace = basespace, bmzrange. = mzrange., breturnBreaks = returnBreaks)
-    return(res)
-})
-
-## This is for test purposes until we really get to know how to use the function
-.adjustRtime_obiwarp <- function(object, profStep = 1, centerSamples = NULL,
-                                 response = 1, distFun = "cor_opt",
-                                 gapInit = NULL, gapExtend = NULL,
-                                 factorDiag = 2, factorGap = 1,
-                                 localAlignment = FALSE, initPenalty = 0) {
-    ## Load test files...
-    faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-    faahko_od <- readMSData2(faahko_3_files)
-
-    ## Feature alignment on those:
-    object <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
-                                                              snthresh = 40))
-    xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
-                  method = "centWave", noise = 10000, snthresh = 40)
-    
-    profStep = 1
-    centerSample = NULL
-    response = 1
-    distFun = "cor_opt"
-    gapInit = NULL
-    gapExtend = NULL
-    factorDiag = 2
-    factorGap = 1
-    localAlignment = FALSE
-    initPenalty = 0
-    ##
-
-    ## Input checking:
-    if (!hasDetectedFeatures(object))
-        stop("No feature detection results in 'object'! Please ",
-             "perform first a feature detection using the ",
-             "'detectFeatures' method.")
-    ## if (!hasAlignedFeatures(object))
-    ##     stop("No feature alignment results in 'object'! Please ",
-    ##          "perform first a feature alignment using the ",
-    ##          "'groupFeatures' method.")
-    startDate <- date()
-    
-    nSamples <- length(fileNames(object))
-
-    ## centerSample
-    if (!is.null(centerSample)) {
-        if (length(centerSample) > 1 | !(centerSample %in% 1:nSamples))
-            stop("'centerSample' has to be a single integer between 1 and ",
-                 nSamples, "!")
-    } else {
-        tbl <- sort(table(features(object)[, "sample"]), decreasing = TRUE)
-        centerSample <- as.numeric(names(tbl)[1])
-    }
-    ## Note: localAlignment has to be converted to a number.
-
-    ## set default parameter. PUT THAT INTO THE PARAMETER CLASS!
-    if (is.null(gapInit)) {
-        if (distFunc == "cor") gapInit = 0.3
-        if (distFunc == "cor_opt") gapInit = 0.3
-        if (distFunc == "cov") gapInit = 0.0
-        if (distFunc == "euc") gapInit = 0.9
-        if (distFunc == "prd") gapInit = 0.0
-    }
-    if (is.null(gapExtend)) {
-        if (distFunc == "cor") gapExtend = 2.4
-        if (distFunc == "cor_opt") gapExtend = 2.4
-        if (distFunc == "cov") gapExtend = 11.7
-        if (distFunc == "euc") gapExtend = 1.8
-        if (distFunc == "prd") gapExtend = 7.8
-    }
-
-    ## peakmat: features
-    ## rtcor: rtime
-    ## samples
-    
-    ## peakmat <- peaks(object)
-    ## samples <- sampnames(object)
-    ## classlabel <- as.vector(unclass(sampclass(object)))
-    ## N <- length(samples)
-    ## corpeaks <- peakmat
-    ## plottype <- match.arg(plottype)
-
-    ## Initialize result lists.
-    rtimecor <- vector("list", nSamples)
-    rtdevsmo <- vector("list", nSamples)
-
-    ## Now for XCMSnExp (or OnDiskMSnExp) objects:
-    ## o Have to ensure that the scan range of all objects fits with the center
-    ##   sample - let's to that within the lapply though - just like in the
-    ##   original function.
-    ## o split it by file
-    ## o Extract the center sample, remove it from the list
-    ## o do an lapply over them:
-    
-    message("Sample number ", centerSample, " used as center sample.")
-
-    ## Casting the XCMSnExp to an OnDiskMSnExp, so we don't run into any problems
-    ## ... essentially, we could run the obiwarp ON A OnDiskMSnExp!!!
-    
-LLLLL    
-###### BEWARE: OLD CODE BELOW.
-    N <- nSamples
-    center <- centerSample
-    scanrange <- NULL
-    idx <- which(seq(1,N) != center)
-    obj1 <- xcmsRaw(xs@filepaths[center], profmethod="bin", profstep=0)
-
-    ##     ## added t automatically find the correct scan range from the xcmsSet object
-    ## if(length(obj1@scantime) != length(xs@rt$raw[[center]])){
-    ##     ## This is in case the xcmsSet was read using a scanrange, i.e. if
-    ##     ## the data was read in with defining a scan range, then we would have a
-    ##     ## mismatch here. This code essentially ensures that the retention time
-    ##     ## of the raw object would match the retention time present in the xcmsSet.
-    ##     ## This was before the days in which @scanrange was added as a slot to
-    ##     ## xcmsSet.
-    ##     ##figure out the scan time range
-    ##     scantime.start	<-object@rt$raw[[center]][1]
-    ##     scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
-        
-    ##     scanrange.start	<-which.min(abs(obj1@scantime - scantime.start))
-    ##     scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
-    ##     scanrange<-c(scanrange.start, scanrange.end)
-    ##     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0, scanrange=scanrange)
-    ## } else{
-    ##     scanrange<-NULL
-    ## }
-    
-    for (si in 1:length(idx)) {
-        s <- idx[si]
-        cat(samples[s], " ")
-
-        ##
-        ## Might be better to just get the profile matrix from the center object
-        ## outside of the for loop and then modifying a internal variable within
-        ## the loop - avoids creation of two profile matrices in each iteration.
-        xcms:::profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
-		if(is.null(scanrange)){
-			obj2 <- xcmsRaw(xs@filepaths[s], profmethod="bin", profstep=0)
-		} else{
-			obj2 <- xcmsRaw(xs@filepaths[s], profmethod="bin", profstep=0, scanrange=scanrange)
-		}
-        xcms:::profStepPad(obj2) <- profStep ## generate profile matrix
-
-        mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
-        mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
-
-        mz <- seq(mzmin,mzmax, by=profStep)
-        mz <- as.double(mz)
-        mzval <- length(mz)
-
-        scantime1 <- obj1@scantime
-        scantime2 <- obj2@scantime
-
-        ## median difference between spectras' scan time.
-        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
-
-        rtup1 <- c(1:length(scantime1))
-        rtup2 <- c(1:length(scantime2))
-
-        ## OK, will have to use that 1:1
-        mst1 <- which(diff(scantime1) > 5 * mstdiff)[1]
-        if(!is.na(mst1)) {
-            rtup1 <- which(rtup1<=mst1)
-            cat("Found gaps: cut scantime-vector at ", scantime1[mst1],"seconds", "\n")
-        }
-
-        mst2 <- which(diff(scantime2)>5*mstdiff)[1]
-        if(!is.na(mst2)) {
-            rtup2 <- which(rtup2<=mst2)
-            cat("Found gaps: cut scantime-vector at ", scantime2[mst2],"seconds", "\n")
-        }
-
-        scantime1 <- scantime1[rtup1]
-        scantime2 <- scantime2[rtup2]
-
-        ## Drift of measured scan times - expected to be largest at the end.
-        rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
-                                scantime2[length(scantime2)])))
-        ## If the drift is larger than the threshold, cut the matrix up to the
-        ## max allowed difference.
-        if(rtmaxdiff > (5 * mstdiff)){
-            rtmax <- min(scantime1[length(scantime1)],
-                         scantime2[length(scantime2)])
-            rtup1 <- which(scantime1<=rtmax)
-            rtup2 <- which(scantime2<=rtmax)
-        }
-
-        scantime1 <- scantime1[rtup1]
-        scantime2 <- scantime2[rtup2]
-        valscantime1 <- length(scantime1)
-        valscantime2 <- length(scantime2)
-
-        ## Restrict the profile matrix to columns 1:valscantime
-        if(length(obj1@scantime)>valscantime1) {
-            obj1@env$profile <- obj1@env$profile[,-c((valscantime1+1):length(obj1@scantime))]
-        }
-        if(length(obj2@scantime)>valscantime2) {
-            obj2@env$profile <- obj2@env$profile[,-c((valscantime2+1):length(obj2@scantime))]
-        }
-
-        ## Now ensure that the nrow of the profile matrix matches.
-        ## Add empty rows at the beginning
-        if(mzmin < obj1@mzrange[1]) {
-            seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep))-1
-            x <- matrix(0, seqlen,dim(obj1@env$profile)[2])
-            obj1@env$profile <- rbind(x, obj1@env$profile)
-        }
-        ## Add emtpy rows at the end.
-        if(mzmax > obj1@mzrange[2]){
-            seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep))-1
-            x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
-            obj1@env$profile <- rbind(obj1@env$profile, x)
-        }
-        if(mzmin < obj2@mzrange[1]){
-            seqlen <- length(seq(mzmin, obj2@mzrange[1], profStep))-1
-            x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
-            obj2@env$profile <- rbind(x, obj2@env$profile)
-        }
-        if(mzmax > obj2@mzrange[2]){
-            seqlen <- length(seq(obj2@mzrange[2], mzmax, profStep))-1
-            x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
-            obj2@env$profile <- rbind(obj2@env$profile, x)
-        }
-
-        ## OK, now that the matrices are "aligned" extract the intensities
-        intensity1 <- obj1@env$profile
-        intensity2 <- obj2@env$profile
-
-        if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
-            stop("Dimensions of profile matrices do not match !\n")
-
-        ## Would it be possible to supply non-binned data too???
-        ## valsscantime1, valsscantime2: INTEGER
-        ## scantime1, scantime2: REAL
-        ## mzval: coerceVector INTSXP?
-        ## mz1, mz2: REAL
-        ## intensity1, intensity2: REAL
-        ## response: INTEGER from 0 to 100
-        ## localAlignment: INTEGER
-        rtimecor[[s]] <-.Call("R_set_from_xcms",
-                              valscantime1,scantime1,mzval,mz,intensity1,
-                              valscantime2,scantime2,mzval,mz,intensity2,
-                              response, distFunc,
-                              gapInit, gapExtend,
-                              factorDiag, factorGap,
-                              localAlignment, initPenalty)
-
-        ## Hm, silently add the raw retention times if we cut the retention time
-        ## vector above - would merit at least a warning I believe.
-        if(length(obj2@scantime) > valscantime2) {
-            xs@rt$corrected[[s]] <- c(rtimecor[[s]],
-                                          obj2@scantime[(max(rtup2)+1):length(obj2@scantime)])
-        } else {
-            xs@rt$corrected[[s]] <- rtimecor[[s]]
-        }
-
-        ## why are we rounding here???
-        rtdevsmo[[s]] <- round(rtime[[s]]-object@rt$corrected[[s]],2)
-
-        rm(obj2)
-        gc()
-
-        ## updateProgressInfo
-        object@progressInfo$retcor.obiwarp <-  si / length(idx)
-        xcms:::progressInfoUpdate(object)
-
-    }
-
-    cat("\n")
-    rtdevsmo[[center]] <- round(rtime[[center]] - object@rt$corrected[[center]], 2)
-
-
-    for (i in 1:N) {
-        cfun <- stepfun(rtime[[i]][-1] - diff(rtime[[i]])/2, rtime[[i]] - rtdevsmo[[i]])
-        rtime[[i]] <- rtime[[i]] - rtdevsmo[[i]]
-
-        sidx <- which(corpeaks[,"sample"] == i)
-        corpeaks[sidx, c("rt", "rtmin", "rtmax")] <- cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
-    }
-
-    peaks(object) <- corpeaks
-    groups(object) <- matrix(nrow = 0, ncol = 0)
-    groupidx(object) <- list()
-    invisible(object)
-
-}

@@ -288,3 +288,140 @@ test_applyRtAdjustment <- function() {
                                            rtadj = xsa@rt$raw)
     checkEquals(pksRaw, peaks(xsg))
 }
+
+## Obiwarp:
+test_obiwarp <- function() {
+
+    xs <- faahko_xs
+    od <- faahko_od
+    xod <- faahko_xod
+    ## Feature alignment on those:
+    ## object <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
+    ##                                                           snthresh = 40))
+    prm <- ObiwarpParam(binSize = 1)
+    xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm))
+    checkEquals(xs_2@rt$raw[[2]], xs_2@rt$corrected[[2]])
+    checkTrue(sum(xs_2@rt$raw[[1]] != xs_2@rt$corrected[[1]]) > 500)
+    checkTrue(sum(xs_2@rt$raw[[3]] != xs_2@rt$corrected[[3]]) > 500)
+    
+    ## And the OnDiskMSnExp implementation:
+    res <- xcms:::.obiwarp(od, param = prm)
+    checkEquals(xs_2@rt$corrected, res)
+    res_2 <- adjustRtime(od, param = prm)
+    res_3 <- adjustRtime(xod, param = prm)
+    checkEquals(adjustedRtime(res_3), res_2)
+    checkEquals(adjustedRtime(res_3, bySample = TRUE), res)
+    checkEquals(adjustedRtime(res_3, bySample = TRUE),
+                unname(split(unname(res_2), fromFile(od))))
+    ## Check if features were corrected correctly
+    ## File issue on that! retcor.obiwarp does use round for the adjustment!
+    ## checkEquals(features(res_3), peaks(xs_2))
+    
+    ## Manually specify center Sample
+    centerSample(prm) <- 3
+    xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm), center = centerSample(prm))
+    checkEquals(xs_2@rt$raw[[centerSample(prm)]],
+                xs_2@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(od, param = prm)
+    checkEquals(xs_2@rt$corrected, res)
+    ## change some settings
+    gapInit(prm) <- 3.1
+    gapExtend(prm) <- 0.9
+    xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm), gapInit = gapInit(prm),
+                           center = centerSample(prm), gapExtend = gapExtend(prm))
+    checkEquals(xs_2@rt$raw[[centerSample(prm)]],
+                xs_2@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(od, param = prm)
+    checkEquals(xs_2@rt$corrected, res)
+}
+
+## Run this test manually to perform an exhaustive test to validate obiwarp
+## Results.
+exhaustive_test <- function() {
+    ## Load test files...
+    faahko_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                      system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                      system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+                      system.file('cdf/WT/wt15.CDF', package = "faahKO"),
+                      system.file('cdf/WT/wt16.CDF', package = "faahKO"),
+                      system.file('cdf/WT/wt18.CDF', package = "faahKO"))
+    library(RUnit)
+    library(xcms)
+    ob <- readMSData2(faahko_files)
+    xs <- xcmsSet(faahko_files, profparam = list(step = 0), method = "centWave",
+                  noise = 10000, snthresh = 40)
+    prm <- ObiwarpParam(binSize = 1, centerSample = 2)
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm))
+    checkEquals(xs_r@rt$raw[[2]], xs_r@rt$corrected[[2]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    ## binSize
+    binSize(prm) <- 0.2
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm))
+    checkEquals(xs_r@rt$raw[[2]], xs_r@rt$corrected[[2]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    ## centersampe
+    binSize(prm) <- 2
+    centerSample(prm) <- 4
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm),
+                           center = centerSample(prm))
+    checkEquals(xs_r@rt$raw[[centerSample(prm)]],
+                xs_r@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    ## distFun
+    distFun(prm) <- "euc"
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm),
+                           center = centerSample(prm), distFunc = distFun(prm))
+    checkEquals(xs_r@rt$raw[[centerSample(prm)]],
+                xs_r@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    ## localAlignment
+    localAlignment(prm) <- TRUE
+    distFun(prm) <- "cor"
+    ## Uh huh! GET AN C ALLOCATION ERROR with local, stepsize 2 and euc
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm), localAlignment = 1,
+                           center = centerSample(prm), distFunc = distFun(prm))
+    checkEquals(xs_r@rt$raw[[centerSample(prm)]],
+                xs_r@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    ## factorDiag
+    factorDiag(prm) <- 2.7
+    localAlignment(prm) <- FALSE
+    xs_r <- retcor.obiwarp(xs, profStep = binSize(prm), factorDiag = factorDiag(prm),
+                           center = centerSample(prm), distFunc = distFun(prm))
+    checkEquals(xs_r@rt$raw[[centerSample(prm)]],
+                xs_r@rt$corrected[[centerSample(prm)]])
+    res <- xcms:::.obiwarp(ob, param = prm)
+    checkEquals(res, xs_r@rt$corrected)
+    
+    ## And all again using some of my own files.
+    fls <- dir("/Users/jo/data/2016/2016-11/NoSN/", pattern = "mzML",
+               full.names = TRUE)
+    if (length(fls)) {
+        fls <- fls[1:20]
+        xs <- xcmsSet(fls, profparam = list(step = 0), method = "centWave",
+                      noise = 10000, snthresh = 40)
+        ## Compare also the timings!
+        ## HM, why, with binSize 1.2 I get a "Dimension of profile matrices do
+        ## not match"!
+        prm <- ObiwarpParam(centerSample = 11, binSize = 1)
+        system.time(
+            xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm), center = 11)
+        )
+        od <- readMSData2(fls)
+        ## ???? dimension of profile matrix does not match???
+        ## z <- filterFile(od, file = 1)
+        ## cntr <- filterFile(od, file = centerSample(prm))
+        ## cntrPr <- profMat(cntr, step = binSize(prm), returnBreaks = TRUE)[[1]]
+        ## parms <- prm
+        ##
+        system.time(
+            res <- xcms:::.obiwarp(od, param = prm)
+        )
+        checkEquals(res, xs_2@rt$corrected)
+    }
+}

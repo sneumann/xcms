@@ -682,14 +682,14 @@ test_ObiwarpParam <- function() {
     library(xcms)
     library(RUnit)
     ## Check getter/setter methods:
-    p <- new("ObiwarpParam", profStep = 0.8)
-    checkEquals(profStep(p), 0.8)
-    profStep(p) <- 0.3
-    checkEquals(profStep(p), 0.3)
-    p <- ObiwarpParam(profStep = 0.7)
-    checkEquals(profStep(p), 0.7)
-    checkException(profStep(p) <- c(2, 2))
-    checkException(profStep(p) <- -1)
+    p <- new("ObiwarpParam", binSize = 0.8)
+    checkEquals(binSize(p), 0.8)
+    binSize(p) <- 0.3
+    checkEquals(binSize(p), 0.3)
+    p <- ObiwarpParam(binSize = 0.7)
+    checkEquals(binSize(p), 0.7)
+    checkException(binSize(p) <- c(2, 2))
+    checkException(binSize(p) <- -1)
     
     p <- new("ObiwarpParam", centerSample = 2L)
     checkEquals(centerSample(p), 2L)

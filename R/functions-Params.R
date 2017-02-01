@@ -258,11 +258,11 @@ FeatureGroupsParam <- function(minFraction = 0.9, extraFeatures = 1,
 ##' specified for obiwarp retention time adjustment and alignment.
 ##' 
 ##' @rdname adjustRtime-obiwarp
-ObiwarpParam <- function(profStep = 1, centerSample = integer(), response = 1L,
+ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
                          localAlignment = FALSE, initPenalty = 0) {
-    return(new("ObiwarpParam", profStep = profStep,
+    return(new("ObiwarpParam", binSize = binSize,
                centerSample = as.integer(centerSample),
                response = as.integer(response), distFun = distFun,
                gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,

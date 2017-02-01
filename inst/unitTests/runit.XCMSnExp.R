@@ -807,6 +807,7 @@ dontrun_getEIC_alternatives <- function() {
                                       i = integer()))
             })
         )
+        ## I should check if returning just the spectra is not faster!
         ## ) ## 0.701
         ## dfs[] <- mapply(FUN = function(y, z) {
         ##     return(cbind(rt = rep.int(z, nrow(y)), y))

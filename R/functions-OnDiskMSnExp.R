@@ -156,84 +156,167 @@ detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 }
 
 
-.obiwarp <- function(object, profStep = 1, centerSample = NULL,
-                     response = 1, distFun = "cor_opt",
-                     gapInit = NULL, gapExtend = NULL,
-                     factorDiag = 2, factorGap = 1,
-                     localAlignment = FALSE, initPenalty = 0) {
-    ## Load test files...
-    faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-    library(RUnit)
-    library(xcms)
-    object <- readMSData2(faahko_3_files)
-
-    ## Feature alignment on those:
-    ## object <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
-    ##                                                           snthresh = 40))
-    xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
-                  method = "centWave", noise = 10000, snthresh = 40)
-    
-    profStep = 1
-    centerSample = NULL
-    response = 1
-    distFun = "cor_opt"
-    gapInit = NULL
-    gapExtend = NULL
-    factorDiag = 2
-    factorGap = 1
-    localAlignment = FALSE
-    initPenalty = 0
-    ##
-
+##' Calculate adjusted retention times by aligning each sample against a center
+##' sample.
+##' @param object An \code{OnDiskMSnExp}.
+##' @param param An \code{ObiwarpParam}.
+##' @return The function returns a \code{list} of adjusted retention times
+##' grouped by file.
+##' @noRd
+.obiwarp <- function(object, param) {
+    if (missing(object))
+        stop("'object' is mandatory!")
+    if (missing(param))
+        param <- ObiwarpParam()    
     nSamples <- length(fileNames(object))
     if (nSamples <= 1)
         stop("Can not perform a retention time correction on less than to files.")
     
     ## centerSample
-    if (!is.null(centerSample)) {
-        if (length(centerSample) > 1 | !(centerSample %in% 1:nSamples))
+    if (length(centerSample(param))) {
+        if (!(centerSample(param) %in% 1:nSamples))
             stop("'centerSample' has to be a single integer between 1 and ",
                  nSamples, "!")
     } else {
-        centerSample <- floor(median(1:nSamples))
+        centerSample(param) <- floor(median(1:nSamples))
     }
-    ## Note: localAlignment has to be converted to a number.
-
-    ## set default parameter. PUT THAT INTO THE PARAMETER CLASS!
-    if (is.null(gapInit)) {
-        if (distFun == "cor") gapInit = 0.3
-        if (distFun == "cor_opt") gapInit = 0.3
-        if (distFun == "cov") gapInit = 0.0
-        if (distFun == "euc") gapInit = 0.9
-        if (distFun == "prd") gapInit = 0.0
-    }
-    if (is.null(gapExtend)) {
-        if (distFun == "cor") gapExtend = 2.4
-        if (distFun == "cor_opt") gapExtend = 2.4
-        if (distFun == "cov") gapExtend = 11.7
-        if (distFun == "euc") gapExtend = 1.8
-        if (distFun == "prd") gapExtend = 7.8
-    }
-    message("Sample number ", centerSample, " used as center sample.")
+    message("Sample number ", centerSample(param), " used as center sample.")
 
     ## Get the profile matrix of the center sample:
     ## Using the (hidden) parameter returnBreaks to return also the breaks of
     ## the bins of the profile matrix. I can use them to align the matrices
     ## later.
-    profCtr <- profMat(object, method = "bin", step = profStep,
-                       fileIndex = centerSample, returnBreaks = TRUE)[[1]]
+    ## NOTE: it might be event better to just re-use the breaks from the center
+    ## sample for the profile matrix generation of all following samples.
+    suppressMessages(
+        profCtr <- profMat(object, method = "bin", step = binSize(param),
+                           fileIndex = centerSample(param),
+                           returnBreaks = TRUE)[[1]]
+    )
     ## Now split the object by file
     objL <- splitByFile(object, f = factor(seq_len(nSamples)))
-    objL <- objL[-centerSample]
+    objL <- objL[-centerSample(param)]
+    centerObject <- filterFile(object, file = centerSample(param))
     ## Now we can bplapply here!
     res <- bplapply(objL, function(z, cntr, cntrPr, parms) {
+        message("Aligning ", basename(fileNames(z)), " against ",
+                basename(fileNames(cntr)), " ... ", appendLF = FALSE)
         ## Get the profile matrix for the current file.
-        curP <- profMat(z, method = "bin", step = profStep,
-                        returnBreaks = TRUE)[[1]]
-        ## Check the scan times of both objects.
-        ## Check the breaks to see whether we have to fix something there.
-    }, cntr = filterFile(object, file = centerSample), cntrPr = profCtr,
-    parms = param)
+        suppressMessages(
+            curP <- profMat(z, method = "bin", step = binSize(parms),
+                            returnBreaks = TRUE)[[1]]
+        )
+        ## ---------------------------------------
+        ## 1)Check the scan times of both objects:
+        scantime1 <- unname(rtime(cntr))
+        scantime2 <- unname(rtime(z))
+        ## median difference between spectras' scan time.
+        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
+
+        ## rtup1 <- seq_along(scantime1)
+        ## rtup2 <- seq_along(scantime2)
+
+        mst1 <- which(diff(scantime1) > 5 * mstdiff)[1]
+        if (!is.na(mst1)) {
+            scantime1 <- scantime1[seq_len((mst1 - 1))]
+            message("Found gaps in scan times of the center sample: cut ",
+                    "scantime-vector at ", scantime1[mst1]," seconds.")
+        }
+        mst2 <- which(diff(scantime2) > 5 * mstdiff)[1]
+        if(!is.na(mst2)) {
+            scantime2 <- scantime2[seq_len((mst2 - 1))]
+            message("Found gaps in scan time of file ", basename(fileNames(z)),
+                    ": cut scantime-vector at ", scantime2[mst2]," seconds.")
+        }
+        ## Drift of measured scan times - expected to be largest at the end.
+        rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
+                                scantime2[length(scantime2)])))
+        ## If the drift is larger than the threshold, cut the matrix up to the
+        ## max allowed difference.
+        if(rtmaxdiff > (5 * mstdiff)){
+            rtmax <- min(scantime1[length(scantime1)],
+                         scantime2[length(scantime2)])
+            scantime1 <- scantime1[scantime1 <= rtmax]
+            scantime2 <- scantime2[scantime2 <= rtmax]
+        }
+        valscantime1 <- length(scantime1)
+        valscantime2 <- length(scantime2)
+        ## Finally, restrict the profile matrix to columns 1:valscantime
+        if (ncol(cntrPr$profMat) > valscantime1) {
+            cntrPr$profMat <- cntrPr$profMat[, -c((valscantime1 + 1):
+                                                  ncol(cntrPr$profMat))]
+        }
+        if(ncol(curP$profMat) > valscantime2) {
+            curP$profMat <- curP$profMat[, -c((valscantime2 + 1):
+                                              ncol(curP$profMat))]
+        }
+        ## ---------------------------------
+        ## 2) Now match the breaks/mz range.
+        ##    The -1 below is because the breaks define the upper and lower
+        ##    boundary. Have to do it that way to be in line with the orignal
+        ##    code... would be better to use the breaks as is.
+        mzr1 <- c(cntrPr$breaks[1], cntrPr$breaks[length(cntrPr$breaks) - 1])
+        mzr2 <- c(curP$breaks[1], curP$breaks[length(curP$breaks) - 1])
+        mzmin <- min(c(mzr1[1], mzr2[1]))
+        mzmax <- max(c(mzr1[2], mzr2[2]))
+        mzs <- seq(mzmin, mzmax, by = binSize(parms))
+        ## Eventually add empty rows at the beginning
+        if (mzmin < mzr1[1]) {
+            tmp <- matrix(0, (length(seq(mzmin, mzr1[1], binSize(parms))) - 1),
+                          ncol = ncol(cntrPr$profMat))
+            cntrPr$profMat <- rbind(tmp, cntrPr$profMat)
+        }
+        ## Eventually add empty rows at the end
+        if (mzmax > mzr1[2]) {
+            tmp <- matrix(0, (length(seq(mzr1[2], mzmax, binSize(parms))) - 1),
+                          ncol = ncol(cntrPr$profMat))
+            cntrPr$profMat <- rbind(cntrPr$profMat, tmp)
+        }
+        ## Eventually add empty rows at the beginning
+        if (mzmin < mzr2[1]) {
+            tmp <- matrix(0, (length(seq(mzmin, mzr2[1], binSize(parms))) - 1),
+                          ncol = ncol(curP$profMat))
+            curP$profMat <- rbind(tmp, curP$profMat)
+        }
+        ## Eventually add empty rows at the end
+        if (mzmax > mzr2[2]) {
+            tmp <- matrix(0, (length(seq(mzr2[2], mzmax, binSize(parms))) - 1),
+                          ncol = ncol(curP$profMat))
+            curP$profMat <- rbind(curP$profMat, tmp)
+        }
+        ## A final check of the data.
+        mzvals <- length(mzs)
+        cntrVals <- length(cntrPr$profMat)
+        curVals <- length(curP$profMat)
+        if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals
+            | cntrVals != curVals)
+            stop("Dimensions of profile matrices of files ",
+                 basename(fileNames(cntr)), " and ", basename(fileNames(z)),
+                 " do not match!")
+        ## Done with preparatory stuff - now I can perform the alignment.
+        rtadj <- .Call("R_set_from_xcms", valscantime1, scantime1, mzvals, mzs,
+                       cntrPr$profMat, valscantime2, scantime2, mzvals, mzs,
+                       curP$profMat, response(parms), distFun(parms),
+                       gapInit(parms), gapExtend(parms), factorDiag(parms),
+                       factorGap(parms), as.numeric(localAlignment(parms)),
+                       initPenalty(parms))
+        if (length(rtime(z)) > valscantime2) {
+            ## Adding the raw retention times if we were unable to align all of
+            ## them.
+            rtadj <- c(rtadj, rtime(z)[(valscantime2 + 1):length(rtime(z))])
+            warning(basename(fileNames(z)), " :could only align up to a ",
+                    "retention time of ", rtime(z)[valscantime2], " seconds. ",
+                    "After that raw retention times are reported.")
+        }
+        message("OK")
+        return(rtadj)
+    }, cntr = centerObject, cntrPr = profCtr, parms = param)
+    ## Add also the rtime of the center sample:
+    adjRt <- vector("list", nSamples)
+    adjRt[centerSample(param)] <- list(unname(rtime(centerObject)))
+    ## Add the result.
+    idxs <- 1:nSamples
+    idxs <- idxs[idxs != centerSample(param)]
+    adjRt[idxs] <- res
+    return(adjRt)
 }
