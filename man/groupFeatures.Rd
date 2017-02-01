@@ -28,6 +28,9 @@ Johannes Rainer
 \code{\link{group}} for the \emph{old} feature alignment
 methods.
 
+\code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+for methods to access feature grouping results.
+
 Other feature alignment methods: \code{\link{groupFeatures-density}},
   \code{\link{groupFeatures-mzClust}},
   \code{\link{groupFeatures-nearest}}

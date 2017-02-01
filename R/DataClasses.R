@@ -1233,6 +1233,9 @@ setClass("CentWavePredIsoParam",
 ##' @family feature alignment methods
 ##' @seealso \code{\link{group}} for the \emph{old} feature alignment
 ##' methods.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
+##' 
 ##' @author Johannes Rainer
 NULL
 #> NULL
@@ -1275,6 +1278,8 @@ NULL
 ##' @family feature alignment methods
 ##' @seealso The \code{\link{do_groupFeatures_density}} core
 ##' API function and \code{\link{group.density}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
 ##'
 ##' @name groupFeatures-density
 ##' 
@@ -1399,6 +1404,8 @@ setClass("FeatureDensityParam",
 ##' @family feature alignment methods
 ##' @seealso The \code{\link{do_groupFeatures_mzClust}} core
 ##' API function and \code{\link{group.mzClust}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
 ##'
 ##' @name groupFeatures-mzClust
 ##'
@@ -1508,6 +1515,8 @@ setClass("MzClustParam",
 ##' 
 ##' @seealso The \code{\link{do_groupFeatures_nearest}} core
 ##' API function and \code{\link{group.nearest}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
 ##'
 ##' @name groupFeatures-nearest
 ##'
@@ -1961,6 +1970,10 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
 ##' @seealso \code{\link{detectFeatures}} for available feature detection methods
 ##' returning a \code{XCMSnExp} object as a result.
+##' @seealso \code{\link{groupFeatures}} for available feature grouping methods
+##' and \code{\link{groupval,XCMSnExp-method}} for the method to extract feature
+##' grouping results.
+##' @seealso \code{\link{adjustRtime}} for retention time adjustment methods.
 ##'
 ##' @rdname XCMSnExp-class
 ##'

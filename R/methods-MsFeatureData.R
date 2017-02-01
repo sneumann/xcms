@@ -28,17 +28,20 @@ setMethod("show", "MsFeatureData", function(object) {
 
 ##' @rdname XCMSnExp-class
 setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
-    return(any(ls(object) == "adjustedRtime"))
+    return(!is.null(object$adjustedRtime))
+    ## return(any(ls(object) == "adjustedRtime"))
 })
 
 ##' @rdname XCMSnExp-class
 setMethod("hasAlignedFeatures", "MsFeatureData", function(object) {
-    return(any(ls(object) == "featureGroups"))
+    return(!is.null(object$featureGroups))
+    ## return(any(ls(object) == "featureGroups"))
 })
 
 ##' @rdname XCMSnExp-class
 setMethod("hasDetectedFeatures", "MsFeatureData", function(object) {
-    return(any(ls(object) == "features"))
+    return(!is.null(object$features))
+    ## return(any(ls(object) == "features"))
 })
 
 ##' @rdname XCMSnExp-class

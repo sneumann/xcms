@@ -463,5 +463,11 @@ and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
 
 \code{\link{detectFeatures}} for available feature detection methods
 returning a \code{XCMSnExp} object as a result.
+
+\code{\link{groupFeatures}} for available feature grouping methods
+and \code{\link{groupval,XCMSnExp-method}} for the method to extract feature
+grouping results.
+
+\code{\link{adjustRtime}} for retention time adjustment methods.
 }
 

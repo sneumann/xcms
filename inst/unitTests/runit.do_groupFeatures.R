@@ -1,4 +1,24 @@
-## Unit tests for all do_groupFeatures_* functions.
+## Unit tests for all do_groupFeatures_* functions and methods/functions related
+## to feature grouping.
+
+## General functions/methods
+test_groupval_XCMSnExp <- function() {
+    od_x <- faahko_xod    
+    xs <- faahko_xs
+    
+    p <- FeatureDensityParam(sampleGroups = xs$class)
+    od_x <- groupFeatures(od_x, param = p)
+
+    xs <- group(xs, method = "density")
+
+    checkEquals(unname(groupval(xs, value = "into")),
+                unname(groupval(od_x, value = "into")))
+    checkEquals(unname(groupval(xs, method = "maxint", value = "into")),
+                unname(groupval(od_x, method = "maxint", value = "into")))
+    ## Checking errors
+    checkException(groupval(od_x, value = "bla"))
+    
+}
 
 ############################################################
 ## density

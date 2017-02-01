@@ -1441,3 +1441,106 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
                    mzrange. = mzrange., fileIndex = fileIndex, ...))
 })
 
+
+##' @title Accessing feature grouping results
+##' 
+##' @description \code{groupval,XCMSnExp}: extract a \code{matrix} for feature
+##' values with rows representing feature groups and columns samples. Parameter
+##' \code{value} allows to define which column from the \code{\link{features}}
+##' matrix should be returned. Multiple features from the same sample can be
+##' assigned to a feature group. Parameter \code{method} allows to specify the
+##' method to be used in such cases to chose from which of the features the value
+##' should be returned.
+##'
+##' @param object A \code{\link{XCMSnExp}} object providing the feature grouping
+##' results.
+##' 
+##' @param method \code{character} specifying the method to resolve
+##' multi-feature mappings within the same sample, i.e. to define the
+##' \emph{representative} feature for a feature groups in samples where more than
+##' one feature was assigned to the feature group. If \code{"medret"}: select the
+##' feature closest to the median retention time of the feature group.
+##' If \code{"maxint"}: select the feature yielding the largest signal.
+##'
+##' @param value \code{character} specifying the name of the column in
+##' \code{features(object)} that should be returned or \code{"index"} (the
+##' default) to return the index of the feature in the \code{features(object)}
+##' matrix corresponding to the \emph{representative} feature for the feature
+##' group in the respective sample.
+##'
+##' @param intensity \code{character} specifying the name of the column in the
+##' \code{features(objects)} matrix containing the intensity value of the
+##' feature that should be used for the conflict resolution if
+##' \code{method = "maxint"}.
+##'
+##' @return For \code{groupval}: a \code{matrix} with feature values, columns
+##' representing samples, rows feature groups. The order of the feature groups
+##' matches the order found in the \code{featureGroups(object)} \code{DataFrame}.
+##' An \code{NA} is reported for feature groups without corresponding
+##' features in the respective sample(s).
+##' 
+##' @author Johannes Rainer
+##' 
+##' @seealso
+##' \code{\link{XCMSnExp}} for information on the data object.
+##' \code{\link{featureGroups}} to extract the \code{DataFrame} with the
+##' feature group definition.
+##' \code{\link{hasAlignedFeatures}} to evaluate whether the
+##' \code{\link{XCMSnExp}} provides feature groups.
+##' 
+##' @rdname XCMSnExp-feature-grouping-results
+setMethod("groupval",
+          signature(object = "XCMSnExp"),
+          function(object, method = c("medret", "maxint"), value = "index",
+                   intensity = "into") {
+              ## Input argument checkings
+              if (!hasAlignedFeatures(object))
+                  stop("No feature groups present! Use 'groupFeatures' first.")
+              if (!hasDetectedFeatures(object))
+                  stop("No detected features present! Use 'detectFeatures' first.")
+              method <- match.arg(method)
+              fNames <- basename(fileNames(object))
+              nSamples <- seq_along(fNames)
+              ## Copy all of the objects to avoid costly S4 method calls -
+              ## improves speed at the cost of higher memory demand.
+              fts <- features(object)
+              grps <- featureGroups(object)
+              ftIdx <- grps$featureidx
+              ## Match columns
+              idx_rt <- match("rt", colnames(fts))
+              idx_int <- match(intensity, colnames(fts))
+              idx_samp <- match("sample", colnames(fts))
+              
+              vals <- matrix(nrow = length(ftIdx), ncol = length(nSamples))
+              
+              ## Get the indices for the elements.
+              if (method == "medret") {
+                  medret <- grps$rtmed
+                  for (i in seq_along(ftIdx)) {
+                      gidx <- ftIdx[[i]][base::order(base::abs(fts[ftIdx[[i]],
+                                                                   idx_rt] -
+                                                               medret[i]))]
+                      vals[i, ] <- gidx[base::match(nSamples, fts[gidx,
+                                                                  idx_samp])]
+                  }
+              } else {
+                  for (i in seq_along(ftIdx)) {
+                      gidx <- ftIdx[[i]][base::order(fts[ftIdx[[i]], idx_int],
+                                                     decreasing = TRUE)]
+                      vals[i, ] <- gidx[base::match(nSamples, fts[gidx, idx_samp])]
+                  }
+              }
+              
+              if (value != "index") {
+                  if (!any(colnames(fts) == value))
+                      stop("Column '", value,
+                           "' not present in the features matrix!")
+                  vals <- fts[vals, value]
+                  dim(vals) <- c(length(ftIdx), length(nSamples))
+              }
+              colnames(vals) <- fNames
+              ## Let's skip row names for now.
+              ## rownames(vals) <- paste(base::round(grps$mzmed, 3),
+              ##                         base::round(grps$rtmed), sep = "/")
+              return(vals)
+})

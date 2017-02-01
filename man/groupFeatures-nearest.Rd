@@ -181,6 +181,9 @@ data. \emph{Bioinformatics} 2006, 22:634-636.
 The \code{\link{do_groupFeatures_nearest}} core
 API function and \code{\link{group.nearest}} for the old user interface.
 
+\code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+for methods to access feature grouping results.
+
 \code{\link{XCMSnExp}} for the object containing the results of
 the feature alignment.
 

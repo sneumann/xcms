@@ -208,6 +208,9 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 The \code{\link{do_groupFeatures_density}} core
 API function and \code{\link{group.density}} for the old user interface.
 
+\code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+for methods to access feature grouping results.
+
 \code{\link{XCMSnExp}} for the object containing the results of
 the feature alignment.
 

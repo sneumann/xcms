@@ -161,6 +161,9 @@ Vol. 2, No. 2, 75-83 (2006)
 The \code{\link{do_groupFeatures_mzClust}} core
 API function and \code{\link{group.mzClust}} for the old user interface.
 
+\code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+for methods to access feature grouping results.
+
 \code{\link{XCMSnExp}} for the object containing the results of
 the feature alignment.
 

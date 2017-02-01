@@ -315,6 +315,7 @@ test_obiwarp <- function() {
                 unname(split(unname(res_2), fromFile(od))))
     ## Check if features were corrected correctly
     ## File issue on that! retcor.obiwarp does use round for the adjustment!
+    ## -> issue #122
     ## checkEquals(features(res_3), peaks(xs_2))
     
     ## Manually specify center Sample
