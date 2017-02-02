@@ -902,11 +902,13 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 
 ##' @description \code{filterRt}: filters the data set based on the
 ##' provided retention time range. All features and feature groups within
-##' the specified retention time window are retained. If retention time
-##' correction has been performed, the method will by default filter the object
-##' by adjusted retention times. The argument \code{adjusted} allows to specify
-##' manually whether filtering should be performed by raw or adjusted retention
-##' times. Filtering by retention time does not drop any preprocessing results.
+##' the specified retention time window are retained (i.e. if the retention time
+##' corresponding to the feature's peak is within the specified rt range).
+##' If retention time correction has been performed, the method will by default
+##' filter the object by adjusted retention times. The argument \code{adjusted}
+##' allows to specify manually whether filtering should be performed by raw or
+##' adjusted retention times. Filtering by retention time does not drop any
+##' preprocessing results.
 ##' The method returns an empty object if no spectrum or feature is within the
 ##' specified retention time range.
 ##'
@@ -931,7 +933,7 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     ## Subset feature groups
     ## Subset adjusted retention time
     if (!adjusted) {
-        have_rt <- rtime(object)
+        have_rt <- rtime(object, adjusted = FALSE, bySample = FALSE)
     } else {
         have_rt <- adjustedRtime(object, bySample = FALSE)
         if (is.null(have_rt))
@@ -941,7 +943,7 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     msg <- paste0("Filter: select retention time [",
                   paste0(rt, collapse = "-"),
                   "] and MS level(s), ",
-                  paste(unique(msLevel(object)),
+                  paste(base::unique(msLevel(object)),
                         collapse = " "))
     msg <- paste0(msg, " [", date(), "]")
     if (!any(keep_logical)) {
@@ -957,8 +959,16 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     ## 1) Subset features within the retention time range and feature groups.
     keep_fts <- numeric()
     if (hasDetectedFeatures(object)) {
-        keep_fts <- which(features(object)[, "rtmin"] >= rt[1] &
-                          features(object)[, "rtmax"] <= rt[2])
+        ftrt <- features(object)[, "rt"]
+        if (!adjusted & hasAdjustedRtime(object)) {
+            ## Have to convert the rt before subsetting.
+            fts <- .applyRtAdjToFeatures(features(object),
+                                         rtraw = rtime(object, bySample = TRUE),
+                                         rtadj = rtime(object, bySample = TRUE,
+                                                       adjusted = FALSE))
+            ftrt <- fts[, "rt"]
+        }
+        keep_fts <- base::which(ftrt >= rt[1] & ftrt <= rt[2])
         if (length(keep_fts))
             newMfd <- .filterFeatures(object, idx = keep_fts)
             ## features(newMfd) <- features(object)[keep_fts, , drop = FALSE]
@@ -972,17 +982,24 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     if (hasAdjustedRtime(object) & length(keep_fts)) {
         ## Subset the adjusted retention times (which are stored as a list of
         ## rts by file):
-        keep_by_file <- split(keep_logical, fromFile(object))
-        adj_rt <- mapply(FUN = function(y, z) {
+        keep_by_file <- base::split(keep_logical, fromFile(object))
+        adj_rt <- base::mapply(FUN = function(y, z) {
             return(y[z])
         }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
         SIMPLIFY = FALSE)
         adjustedRtime(newMfd) <- adj_rt
     }
     ## 3) Subset the OnDiskMSnExp part
-    suppressWarnings(
-        object <- object[which(keep_logical)]
-    )
+    ## suppressWarnings(
+        ## Specifically call the [ from the OnDiskMSnExp!
+        ## Otherwise we unnecessarily have to drop stuff which has a negative
+        ## impact on performance.
+        theM <- getMethod("[", signature = c(x = "OnDiskMSnExp",
+                                             i = "logicalOrNumeric",
+                                             j = "missing",
+                                             drop = "missing"))
+        object <- theM(x = object, i = base::which(keep_logical))
+    ## )
     ## Put the stuff back
     object@processingData@processing <- c(object@processingData@processing, msg)
     lockEnvironment(newMfd, bindings = TRUE)

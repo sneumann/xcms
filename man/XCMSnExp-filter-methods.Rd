@@ -62,11 +62,13 @@ Adjusted retention times, if present, are not altered by the filtering.
 
 \code{filterRt}: filters the data set based on the
 provided retention time range. All features and feature groups within
-the specified retention time window are retained. If retention time
-correction has been performed, the method will by default filter the object
-by adjusted retention times. The argument \code{adjusted} allows to specify
-manually whether filtering should be performed by raw or adjusted retention
-times. Filtering by retention time does not drop any preprocessing results.
+the specified retention time window are retained (i.e. if the retention time
+corresponding to the feature's peak is within the specified rt range).
+If retention time correction has been performed, the method will by default
+filter the object by adjusted retention times. The argument \code{adjusted}
+allows to specify manually whether filtering should be performed by raw or
+adjusted retention times. Filtering by retention time does not drop any
+preprocessing results.
 The method returns an empty object if no spectrum or feature is within the
 specified retention time range.
 }
