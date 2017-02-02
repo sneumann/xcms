@@ -135,3 +135,61 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ##   best.
     ## SEE runit.XCMSnExp.R,
 }
+
+## This is somewhat similar to the getEIC, just that it extracts for each
+## mz/rt range pair a data.frame with rt, mz, intensity per sample.
+## This version works on a single rt/mz range pair at a time.
+## CHECK:
+## 1) mz range outside.
+## 2) rt range outside.
+.extractMsData <- function(x, rtrange, mzrange) {
+    ## Subset the OnDiskMSnExp
+    fns <- fileNames(x)
+    tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    fromF <- match(fileNames(tmp), fns)
+    ## Now extract mz-intensity pairs from each spectrum.
+    ## system.time(
+    ## suppressWarnings(
+    ##     dfs <- spectrapply(tmp, as.data.frame)
+    ## )
+    ## ) ## 0.73sec
+    ## system.time(
+    suppressWarnings(
+        dfs <- spectrapply(tmp, function(z) {
+            if (peaksCount(z))
+                return(data.frame(rt = rep_len(rtime(z), length(z@mz)),
+                                  as.data.frame(z)))
+            else
+                return(data.frame(rt = numeric(), mz = numeric(),
+                                  i = integer()))
+        })
+    )
+    ## I should check if returning just the spectra is not faster!
+    ## ) ## 0.701
+    ## dfs[] <- mapply(FUN = function(y, z) {
+    ##     return(cbind(rt = rep.int(z, nrow(y)), y))
+    ## }, y = dfs, z = rtime(tmp), SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    res <- vector(mode = "list", length = length(fns))
+    res[fromF] <- split(dfs, f = fromFile(tmp))
+    return(lapply(res, do.call, what = rbind))
+}
+
+## Same as above, but we're applying a function - or none.
+.sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
+    fns <- fileNames(x)
+    ## Now, the filterRt might get heavy for XCMSnExp objects if we're filtering
+    ## also the features and featureGroups!
+    msfd <- new("MsFeatureData")
+    if (hasAdjustedRtime(x)) {
+        ## just copy over the retention time.
+        msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
+    }
+    lockEnvironment(msfd, bindings = TRUE)
+    x@msFeatureData <- msfd
+    ## with an XCMSnExp without features and featureGroups filterRt should be
+    ## faster.
+    tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    fromF <- base::match(fileNames(tmp), fns)
+    res <- spectrapply(tmp, FUN = FUN)
+    return(res)
+}

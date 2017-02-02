@@ -755,6 +755,7 @@ test_MsFeatureData_class_accessors <- function() {
 ############################################################
 ## Test getEIC alternatives.
 dontrun_getEIC_alternatives <- function() {
+    library(RUnit)
     library(xcms)
 
     fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -763,6 +764,7 @@ dontrun_getEIC_alternatives <- function() {
     od <- readMSData2(fls)
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- detectFeatures(od, param = cwp)
+
     xs <- as(od_x, "xcmsSet")
     sampclass(xs) <- rep("KO", 3)
     xs_2 <- group(xs)
@@ -780,6 +782,35 @@ dontrun_getEIC_alternatives <- function() {
     ) ## 3.7sec
 
     ## Now try to do the same using MSnbase stuff.
+    system.time(
+        res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ) ## 0.7 sec.
+    system.time(
+        res <- xcms:::.extractMsData(od_x, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ) ## 0.74 sec.
+
+    ## Let's see what happens if we've got adjusted rtimes:
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    rtr <- as.matrix(featureGroups(od_xg)[1:5, c("rtmin", "rtmax")])
+    mzr <- as.matrix(featureGroups(od_xg)[1:5, c("mzmin", "mzmax")])
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
+
+    system.time(
+        res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    
+    library(profvis)
+    profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
+    
     rts <- rtime(od_x)
     idx <- apply(rtr, MARGIN = 1, function(z) {
         which(rts >= z[1] & rts <= z[2])
@@ -789,44 +820,6 @@ dontrun_getEIC_alternatives <- function() {
     system.time(
         scts <- spectra(od_ss)
     ) ## 0.7 secs.
-
-    ## This is somewhat similar to the getEIC, just that it extracts for each
-    ## mz/rt range pair a data.frame with rt, mz, intensity per sample.
-    ## This version works on a single rt/mz range pair at a time.
-    ## CHECK:
-    ## 1) mz range outside.
-    ## 2) rt range outside.
-    extractMsData <- function(x, rtrange, mzrange) {
-        ## Subset the OnDiskMSnExp
-        fns <- fileNames(x)
-        tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-        fromF <- match(fileNames(tmp), fns)
-        ## Now extract mz-intensity pairs from each spectrum.
-        ## system.time(
-        ## suppressWarnings(
-        ##     dfs <- spectrapply(tmp, as.data.frame)
-        ## )
-        ## ) ## 0.73sec
-        ## system.time(
-        suppressWarnings(
-            dfs <- spectrapply(tmp, function(z) {
-                if (peaksCount(z))
-                    return(data.frame(rt = rep_len(rtime(z), length(z@mz)),
-                                      as.data.frame(z)))
-                else
-                    return(data.frame(rt = numeric(), mz = numeric(),
-                                      i = integer()))
-            })
-        )
-        ## I should check if returning just the spectra is not faster!
-        ## ) ## 0.701
-        ## dfs[] <- mapply(FUN = function(y, z) {
-        ##     return(cbind(rt = rep.int(z, nrow(y)), y))
-        ## }, y = dfs, z = rtime(tmp), SIMPLIFY = FALSE, USE.NAMES = FALSE)
-        res <- vector(mode = "list", length = length(fns))
-        res[fromF] <- split(dfs, f = fromFile(tmp))
-        return(lapply(res, do.call, what = rbind))
-    }
 
     ## Tests.
     rtrange <- rtr[3, ]
