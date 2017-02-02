@@ -9,6 +9,9 @@ NEW FEATURES:
 + filterMz, filterRt, filterFile etc implemented.
 + mz, intensity and rtime methods for XCMSnExp allowing to return values grouped
   by sample.
++ groupFeatures and adjustRtime methods for XCMSnExp objects.
++ New Param classes for groupFeatures and adjustRtime analysis methods: FeatureDensityParam,
+  MzClustParam, NearestFeaturesParam, FeatureGroupsParam and ObiwarpParam.
 
 BUG FIXES:
 + Issue #99 (rtrange outside of retention time range in getEIC,xcmsSet).
