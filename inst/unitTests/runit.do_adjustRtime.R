@@ -1,4 +1,5 @@
-## retention time correction methods.
+## retention time correction methods and functionality related to adjusted
+## retention times.
 
 test_adjustRtime_FeatureGroups <- function() {
     xod <- faahko_xod

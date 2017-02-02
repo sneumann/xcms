@@ -59,7 +59,8 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
-    rts$raw <- rtime(from, bySample = TRUE)
+    ## Ensure we're getting the raw rt
+    rts$raw <- rtime(from, bySample = TRUE, adjusted = FALSE)
     if (hasAdjustedRtime(from))
         rts$corrected <- adjustedRtime(from, bySample = TRUE)
     else

@@ -1341,6 +1341,10 @@ NULL
 ##' ## The results from the feature alignment:
 ##' featureGroups(res)
 ##'
+##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## the feature groups per sample.
+##' head(groupval(res, value = "into"))
+##' 
 ##' ## The process history:
 ##' processHistory(res)
 setClass("FeatureDensityParam",
@@ -1571,6 +1575,10 @@ NULL
 ##' ## The results from the feature alignment:
 ##' featureGroups(res)
 ##'
+##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## the feature groups per sample.
+##' head(groupval(res, value = "into"))
+##'
 ##' ## The process history:
 ##' processHistory(res)
 setClass("NearestFeaturesParam",
@@ -1701,6 +1709,53 @@ NULL
 ##'
 ##' @rdname adjustRtime-featureGroups
 ##'
+##' @examples
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment using the "feature density" method.
+##' p <- FeatureDensityParam(sampleGroups = c(1, 1))
+##' res <- groupFeatures(res, param = p)
+##'
+##' ## Perform the retention time adjustment using feature groups found in both
+##' ## files.
+##' fgp <- FeatureGroupsParam(minFraction = 1)
+##' res <- adjustRtime(res, param = fgp)
+##'
+##' ## Any grouping information was dropped
+##' hasAlignedFeatures(res)
+##'
+##' ## Plot the raw against the adjusted retention times.
+##' plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+##'
+##' ## Adjusterd retention times can be accessed using
+##' ## rtime(object, adjusted = TRUE) and adjustedRtime
+##' all.equal(rtime(res), adjustedRtime(res))
+##'
+##' ## To get the raw, unadjusted retention times:
+##' all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
+##'
+##' ## To extract the retention times grouped by sample/file:
+##' rts <- rtime(res, bySample = TRUE)
 setClass("FeatureGroupsParam",
          slots = c(minFraction = "numeric",
                    extraFeatures = "numeric",
@@ -1824,6 +1879,43 @@ NULL
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
 ##' @rdname adjustRtime-obiwarp
+##'
+##' @examples
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform retention time correction on the OnDiskMSnExp:
+##' res <- adjustRtime(raw_data, param = ObiwarpParam())
+##' 
+##' ## As a result we get a numeric vector with the adjusted retention times for
+##' ## all spectra.
+##' head(res)
+##'
+##' ## We can split this by file to get the adjusted retention times for each
+##' ## file
+##' resL <- split(res, fromFile(raw_data))
+##'
+##' ##############################
+##' ## Perform retention time correction on an XCMSnExp:
+##' ##
+##' ## Perform first the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' ## Performing the retention time adjustment using obiwarp.
+##' res_2 <- adjustRtime(res, param = ObiwarpParam())
+##'
+##' head(rtime(res_2))
+##' head(rtime(raw_data))
+##'
+##' ## Also the retention times of the detected features were adjusted.
+##' tail(features(res))
+##' tail(features(res_2))
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",

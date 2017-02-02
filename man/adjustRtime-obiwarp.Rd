@@ -229,6 +229,43 @@ can be passed with a \code{ObiwarpParam} object.
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 all feature grouping (alignment) results to be dropped.
 }
+\examples{
+library(faahKO)
+library(MSnbase)
+fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+           full.names = TRUE)
+
+## Reading 2 of the KO samples
+raw_data <- readMSData2(fls[1:2])
+
+## Perform retention time correction on the OnDiskMSnExp:
+res <- adjustRtime(raw_data, param = ObiwarpParam())
+
+## As a result we get a numeric vector with the adjusted retention times for
+## all spectra.
+head(res)
+
+## We can split this by file to get the adjusted retention times for each
+## file
+resL <- split(res, fromFile(raw_data))
+
+##############################
+## Perform retention time correction on an XCMSnExp:
+##
+## Perform first the feature detection using the matchedFilter method.
+mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+res <- detectFeatures(raw_data, param = mfp)
+
+## Performing the retention time adjustment using obiwarp.
+res_2 <- adjustRtime(res, param = ObiwarpParam())
+
+head(rtime(res_2))
+head(rtime(raw_data))
+
+## Also the retention times of the detected features were adjusted.
+tail(features(res))
+tail(features(res_2))
+}
 \author{
 Colin Smith, Johannes Rainer
 }

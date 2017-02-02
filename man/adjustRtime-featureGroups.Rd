@@ -158,6 +158,54 @@ can be passed with a \code{FeatureGroupsParam} object.
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 all feature grouping (alignment) results to be dropped.
 }
+\examples{
+##############################
+## feature detection and alignment.
+##
+## Below we perform first a feature detection (using the matchedFilter
+## method) on some of the test files from the faahKO package followed by
+## a feature alignment.
+library(faahKO)
+library(MSnbase)
+fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+           full.names = TRUE)
+
+## Reading 2 of the KO samples
+raw_data <- readMSData2(fls[1:2])
+
+## Perform the feature detection using the matchedFilter method.
+mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+res <- detectFeatures(raw_data, param = mfp)
+
+head(features(res))
+## The number of features identified per sample:
+table(features(res)[, "sample"])
+
+## Performing the feature alignment using the "feature density" method.
+p <- FeatureDensityParam(sampleGroups = c(1, 1))
+res <- groupFeatures(res, param = p)
+
+## Perform the retention time adjustment using feature groups found in both
+## files.
+fgp <- FeatureGroupsParam(minFraction = 1)
+res <- adjustRtime(res, param = fgp)
+
+## Any grouping information was dropped
+hasAlignedFeatures(res)
+
+## Plot the raw against the adjusted retention times.
+plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+
+## Adjusterd retention times can be accessed using
+## rtime(object, adjusted = TRUE) and adjustedRtime
+all.equal(rtime(res), adjustedRtime(res))
+
+## To get the raw, unadjusted retention times:
+all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
+
+## To extract the retention times grouped by sample/file:
+rts <- rtime(res, bySample = TRUE)
+}
 \author{
 Colin Smith, Johannes Rainer
 }

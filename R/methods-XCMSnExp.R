@@ -237,17 +237,33 @@ setReplaceMethod("features", "XCMSnExp", function(object, value) {
 
 ##' @description \code{rtime}: extracts the retention time for each
 ##' scan. The \code{bySample} parameter allows to return the values grouped
-##' by sample/file.
+##' by sample/file and \code{adjusted} whether adjusted or raw retention times
+##' should be returned. By default the method returns adjusted retention times,
+##' if they are available (i.e. if retention times were adjusted using the
+##' \code{\link{adjustRtime}} method).
 ##'
 ##' @param bySample logical(1) specifying whether results should be grouped by
 ##' sample.
 ##'
+##' @param adjusted logical(1) whether adjusted or raw (i.e. the original
+##' retention times reported in the files) should be returned.
+##' 
 ##' @return For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the
 ##' retention times of each scan, if \code{bySample = TRUE} a \code{list} of
 ##' numeric vectors with the retention times per sample.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE) {
+setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE,
+                                        adjusted = hasAdjustedRtime(object)) {
+    if (adjusted) {
+        ## ensure that we DO have adjusted retention times.
+        if (hasAdjustedRtime(object)) {
+            return(adjustedRtime(object = object, bySample = bySample))
+        } else {
+            warning("Adjusted retention times requested but none present. ",
+                    "returning raw retention times instead.")
+        }
+    }
     ## Alternative:
     ## theM <- getMethod("rtime", "OnDiskMSnExp")
     ## res <- theM(object)
@@ -523,7 +539,8 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
                                          rtraw = adjustedRtime(object,
                                                                bySample = TRUE),
                                          rtadj = rtime(object,
-                                                       bySample = TRUE))
+                                                       bySample = TRUE,
+                                                       adjusted = FALSE))
             ## Replacing features in MsFeatureData, not in XCMSnExp to avoid
             ## all results being removed.
             features(newFd) <- fts
@@ -885,9 +902,13 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 
 ##' @description \code{filterRt}: filters the data set based on the
 ##' provided retention time range. All features and feature groups within
-##' the specified retention time window are retained. Filtering by retention time
-##' does not drop any preprocessing results. The method returns an empty object
-##' if no spectrum or feature is within the specified retention time range.
+##' the specified retention time window are retained. If retention time
+##' correction has been performed, the method will by default filter the object
+##' by adjusted retention times. The argument \code{adjusted} allows to specify
+##' manually whether filtering should be performed by raw or adjusted retention
+##' times. Filtering by retention time does not drop any preprocessing results.
+##' The method returns an empty object if no spectrum or feature is within the
+##' specified retention time range.
 ##'
 ##' @param rt For \code{filterRt}: \code{numeric(2)} defining the retention time
 ##' window (lower and upper bound) for the filtering.
@@ -898,7 +919,7 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 ##'
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
-                                           adjusted = FALSE) {
+                                           adjusted = hasAdjustedRtime(object)) {
     if (missing(rt))
         return(object)
     if (!missing(msLevel.))

@@ -18,7 +18,8 @@ results.}
 
 \S4method{filterMz}{XCMSnExp}(object, mz, msLevel., ...)
 
-\S4method{filterRt}{XCMSnExp}(object, rt, msLevel., adjusted = FALSE)
+\S4method{filterRt}{XCMSnExp}(object, rt, msLevel.,
+  adjusted = hasAdjustedRtime(object))
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object.}
@@ -61,9 +62,13 @@ Adjusted retention times, if present, are not altered by the filtering.
 
 \code{filterRt}: filters the data set based on the
 provided retention time range. All features and feature groups within
-the specified retention time window are retained. Filtering by retention time
-does not drop any preprocessing results. The method returns an empty object
-if no spectrum or feature is within the specified retention time range.
+the specified retention time window are retained. If retention time
+correction has been performed, the method will by default filter the object
+by adjusted retention times. The argument \code{adjusted} allows to specify
+manually whether filtering should be performed by raw or adjusted retention
+times. Filtering by retention time does not drop any preprocessing results.
+The method returns an empty object if no spectrum or feature is within the
+specified retention time range.
 }
 \note{
 The \code{filterFile} method removes also process history steps not

@@ -104,7 +104,8 @@
 
 \S4method{features}{XCMSnExp}(object) <- value
 
-\S4method{rtime}{XCMSnExp}(object, bySample = FALSE)
+\S4method{rtime}{XCMSnExp}(object, bySample = FALSE,
+  adjusted = hasAdjustedRtime(object))
 
 \S4method{mz}{XCMSnExp}(object, bySample = FALSE)
 
@@ -174,6 +175,9 @@ specifying the index of the files/samples for which the
 
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
+
+\item{adjusted}{logical(1) whether adjusted or raw (i.e. the original
+retention times reported in the files) should be returned.}
 
 \item{type}{For \code{processHistory}: restrict returned
 \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
@@ -315,7 +319,10 @@ features are added to the object by the \code{\link{detectFeatures}} method.
 
 \code{rtime}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped
-by sample/file.
+by sample/file and \code{adjusted} whether adjusted or raw retention times
+should be returned. By default the method returns adjusted retention times,
+if they are available (i.e. if retention times were adjusted using the
+\code{\link{adjustRtime}} method).
 
 \code{mz}: extracts the mz values from each scan of
 all files within an \code{XCMSnExp} object. These values are extracted from

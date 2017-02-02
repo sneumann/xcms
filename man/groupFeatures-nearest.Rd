@@ -169,6 +169,10 @@ res <- groupFeatures(res, param = p)
 ## The results from the feature alignment:
 featureGroups(res)
 
+## Using the groupval method to extract a matrix with the intensities of
+## the feature groups per sample.
+head(groupval(res, value = "into"))
+
 ## The process history:
 processHistory(res)
 }
