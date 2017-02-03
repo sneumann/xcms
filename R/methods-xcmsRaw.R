@@ -3133,7 +3133,7 @@ setMethod("[", signature(x = "xcmsRaw",
 
 ##' @title The profile matrix
 ##'
-##' @aliases profile-matrix profMat
+##' @aliases profile-matrix profMat profMat,xcmsRaw-method
 ##'
 ##' @description The \emph{profile} matrix is an n x m matrix, n (rows)
 ##' representing equally spaced m/z values (bins) and m (columns) the
@@ -3197,11 +3197,14 @@ setMethod("[", signature(x = "xcmsRaw",
 ##' @seealso \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
 ##' \code{\link{imputeLinInterpol}} for the employed binning and
 ##' missing value imputation methods, respectively.
+##' \code{\link{profMat,XCMSnExp-method}} for the method on \code{\link{XCMSnExp}}
+##' objects.
 ##'
 ##' @return \code{profMat} returns the profile matrix (rows representing scans,
 ##' columns equally spaced m/z values).
 ##'
 ##' @author Johannes Rainer
+##'
 ##' @examples
 ##' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 ##' ## Load the data without generating the profile matrix (profstep = 0)
@@ -3217,6 +3220,9 @@ setMethod("[", signature(x = "xcmsRaw",
 ##' profMethod(xraw) <- "binlin"
 ##' profmat_2 <- profMat(xraw, step = 0.3)
 ##' all.equal(profmat, profmat_2)
+##'
+##' @rdname profMat-xcmsSet
+##' @name profMat-xcmsSet
 setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
                                                              step,
                                                              baselevel,

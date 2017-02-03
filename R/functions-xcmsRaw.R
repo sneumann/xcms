@@ -564,16 +564,21 @@ remakeTIC<-function(object){
 ##' @param mzrange. numeric(2) optionally specifying the mz value range
 ##' for binning. This is to adopt the old profStepPad<- method used for obiwarp
 ##' retention time correction that did the binning from whole-number limits.
+##' @param returnBreaks logical(1): hack to return the breaks of the bins.
+##' Setting this to TRUE causes the function to return a \code{list} with
+##' elements \code{"$profMat"} and \code{"breaks"}.
 ##' @noRd
 .createProfileMatrix <- function(mz, int, valsPerSpect,
                                  method, step = 0.1, baselevel = NULL,
                                  basespace = NULL,
-                                 mzrange. = NULL) {
+                                 mzrange. = NULL,
+                                 returnBreaks = FALSE) {
     profMeths <- c("bin", "binlin", "binlinbase", "intlin")
     names(profMeths) <- c("none", "lin", "linbase", "intlin")
     method <- match.arg(method, profMeths)
     impute <- names(profMeths)[profMeths == method]
-
+    brks <- NULL
+    
     if (length(mzrange.) != 2) {
         mrange <- range(mz)
         mzrange. <- c(floor(mrange[1] / step) * step,
@@ -640,5 +645,7 @@ remakeTIC<-function(object){
         })
         buf <- do.call(cbind, binVals)
     }
+    if (returnBreaks)
+        buf <- list(profMat = buf, breaks = brks)
     buf
 }

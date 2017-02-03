@@ -3,9 +3,11 @@
 ##' Takes a XCMSnExp and drops ProcessHistory steps from the @.processHistory
 ##' slot matching the provided type.
 ##'
+##' @param num which should be dropped? If \code{-1} all matching will be dropped,
+##' otherwise just the most recent num.
 ##' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
 ##' @noRd
-dropProcessHistories <- function(x, type) {
+dropProcessHistories <- function(x, type, num = -1) {
     ## ## Drop processing history steps by type.
     ## if (!missing(type)) {
     ##     toRem <- unlist(lapply(processHistory(x), function(z) {
@@ -14,17 +16,26 @@ dropProcessHistories <- function(x, type) {
     ##     if (any(toRem))
     ##         x@.processHistory <- processHistory(x)[!toRem]
     ## }
-    x@.processHistory <- dropProcessHistoriesList(processHistory(x), type = type)
+    x@.processHistory <- dropProcessHistoriesList(processHistory(x),
+                                                  type = type, num = num)
     return(x)
 }
 
-dropProcessHistoriesList <- function(x, type) {
+dropProcessHistoriesList <- function(x, type, num = -1) {
     if (!missing(type)) {
         toRem <- unlist(lapply(x, function(z) {
             return(processType(z) %in% type)
         }))
-        if (any(toRem))
-            x <- x[!toRem]
+        if (any(toRem)) {
+            if (num < 0) {
+                x <- x[!toRem]
+            } else {
+                idx <- which(toRem)
+                idx <- tail(idx, n = num)
+                if (length(idx))
+                x <- x[-idx]
+            }
+        }
     }
     return(x)
 }
@@ -42,12 +53,14 @@ dropProcessHistoriesList <- function(x, type) {
     ## @groupidx <- featureGroups(x)$featureidx
     if (hasAlignedFeatures(from)){
         fgs <- featureGroups(from)
-        xs@groups <- as.matrix(fgs[, -ncol(fgs)])
+        xs@groups <- S4Vectors::as.matrix(fgs[, -ncol(fgs)])
+        rownames(xs@groups) <- NULL
         xs@groupidx <- fgs$featureidx
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
-    rts$raw <- rtime(from, bySample = TRUE)
+    ## Ensure we're getting the raw rt
+    rts$raw <- rtime(from, bySample = TRUE, adjusted = FALSE)
     if (hasAdjustedRtime(from))
         rts$corrected <- adjustedRtime(from, bySample = TRUE)
     else
@@ -123,3 +136,71 @@ dropProcessHistoriesList <- function(x, type) {
     ## SEE runit.XCMSnExp.R,
 }
 
+## This is somewhat similar to the getEIC, just that it extracts for each
+## mz/rt range pair a data.frame with rt, mz, intensity per sample.
+## This version works on a single rt/mz range pair at a time.
+## CHECK:
+## 1) mz range outside.
+## 2) rt range outside.
+.extractMsData <- function(x, rtrange, mzrange) {
+    ## Subset the OnDiskMSnExp
+    fns <- fileNames(x)
+    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    if (length(subs) == 0) {
+        return(NULL)
+    }
+    fromF <- base::match(fileNames(subs), fns)
+    ## Now extract mz-intensity pairs from each spectrum.
+    ## system.time(
+    ## suppressWarnings(
+    ##     dfs <- spectrapply(tmp, as.data.frame)
+    ## )
+    ## ) ## 0.73sec
+    ## system.time(
+    suppressWarnings(
+        dfs <- spectrapply(subs, FUN = function(z) {
+            if (peaksCount(z))
+                return(base::data.frame(rt = rep_len(rtime(z), length(z@mz)),
+                                        as.data.frame(z)))
+            else
+                return(base::data.frame(rt = numeric(), mz = numeric(),
+                                        i = integer()))
+        })
+    )
+    ## Now I want to rbind the spectrum data frames per file
+    ff <- fromFile(subs)
+    L <- split(dfs, f = ff)
+    L <- lapply(L, do.call, what = rbind)
+    ## Put them into a vector same length that we have files.
+    res <- vector(mode = "list", length = length(fns))
+    res[fromF] <- L
+    return(res)
+}
+
+## Same as above, but we're applying a function - or none.
+.sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
+    fns <- fileNames(x)
+    if (is(x, "XCMSnExp")) {
+        ## Now, the filterRt might get heavy for XCMSnExp objects if we're
+        ## filtering also the features and featureGroups!
+        msfd <- new("MsFeatureData")
+        if (hasAdjustedRtime(x)) {
+            ## just copy over the retention time.
+            msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
+        }
+        lockEnvironment(msfd, bindings = TRUE)
+        x@msFeatureData <- msfd
+        ## with an XCMSnExp without features and featureGroups filterRt should be
+        ## faster.
+    }
+    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    if (base::length(subs) == 0) {
+        return(list())
+    }
+    fromF <- base::match(fileNames(subs), fns)
+    suppressWarnings(
+        res <- spectrapply(subs, FUN = FUN)
+    )
+    ## WARN: fromFile reported within the Spectra might not be correct!!!
+    return(res)
+}

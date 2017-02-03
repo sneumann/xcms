@@ -922,3 +922,552 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+
+############################################################
+## FeatureDensityParam
+setMethod("initialize", "FeatureDensityParam", function(.Object, ...) {
+    classVersion(.Object)["FeatureDensityParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+## ##' @rdname groupFeatures-density
+## setMethod("print", "CentWaveParam", function(x, ...) show(x))
+##' @rdname groupFeatures-density
+setMethod("show", "FeatureDensityParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" bw:", object@bw, "\n")
+    cat(" minFraction:", minFraction(object), "\n")
+    cat(" minSamples:", minSamples(object), "\n")
+    cat(" binSize:", binSize(object), "\n")
+    cat(" maxFeatures:", maxFeatures(object), "\n")
+})
+
+##' @aliases sampleGroups
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("sampleGroups", "FeatureDensityParam", function(object){
+    return(object@sampleGroups)})
+##' @aliases sampleGroups<-
+##' @param value The value for the slot.
+##' @rdname groupFeatures-density
+setReplaceMethod("sampleGroups", "FeatureDensityParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases bw
+##' @description \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+##' of the object.
+##' @rdname groupFeatures-density
+setMethod("bw", "FeatureDensityParam", function(object){
+    return(object@bw)})
+##' @aliases bw<-
+##' @rdname groupFeatures-density
+setReplaceMethod("bw", "FeatureDensityParam", function(object, value) {
+    object@bw <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases minFraction
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
+##' the \code{minFraction} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("minFraction", "FeatureDensityParam", function(object){
+    return(object@minFraction)})
+##' @aliases minFraction<-
+##' @rdname groupFeatures-density
+setReplaceMethod("minFraction", "FeatureDensityParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases minSamples
+##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
+##' \code{minSamples} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("minSamples", "FeatureDensityParam", function(object){
+    return(object@minSamples)})
+##' @aliases minSamples<-
+##' @rdname groupFeatures-density
+setReplaceMethod("minSamples", "FeatureDensityParam", function(object, value) {
+    object@minSamples <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{binSize},\code{binSize<-}: getter and setter for the
+##' \code{binSize} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("binSize", "FeatureDensityParam", function(object){
+    return(object@binSize)})
+##' @rdname groupFeatures-density
+setReplaceMethod("binSize", "FeatureDensityParam", function(object, value) {
+    object@binSize <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases maxFeatures
+##' @description \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
+##' the \code{maxFeatures} slot of the object.
+##' @rdname groupFeatures-density
+setMethod("maxFeatures", "FeatureDensityParam", function(object){
+    return(object@maxFeatures)})
+##' @aliases maxFeatures<-
+##' @rdname groupFeatures-density
+setReplaceMethod("maxFeatures", "FeatureDensityParam", function(object, value) {
+    object@maxFeatures <- value
+    if (validObject(object))
+        return(object)
+})
+
+
+############################################################
+## MzClustParam
+setMethod("initialize", "MzClustParam", function(.Object, ...) {
+    classVersion(.Object)["MzClustParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+## ##' @rdname groupFeatures-mzClust
+## setMethod("print", "CentWaveParam", function(x, ...) show(x))
+##' @rdname groupFeatures-mzClust
+setMethod("show", "MzClustParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" ppm:", object@ppm, "\n")
+    cat(" absMz:", object@absMz, "\n")
+    cat(" minFraction:", minFraction(object), "\n")
+    cat(" minSamples:", minSamples(object), "\n")
+})
+
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("sampleGroups", "MzClustParam", function(object){
+    return(object@sampleGroups)})
+##' @param value The value for the slot.
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+##' slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("ppm", "MzClustParam", function(object){
+    return(object@ppm)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("ppm", "MzClustParam", function(object, value) {
+    object@ppm <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases absMz
+##' @description \code{absMz},\code{absMz<-}: getter and setter for the
+##' \code{absMz} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("absMz", "MzClustParam", function(object){
+    return(object@absMz)})
+##' @aliases absMz<-
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("absMz", "MzClustParam", function(object, value) {
+    object@absMz <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
+##' the \code{minFraction} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("minFraction", "MzClustParam", function(object){
+    return(object@minFraction)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
+##' \code{minSamples} slot of the object.
+##' @rdname groupFeatures-mzClust
+setMethod("minSamples", "MzClustParam", function(object){
+    return(object@minSamples)})
+##' @rdname groupFeatures-mzClust
+setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
+    object@minSamples <- value
+    if (validObject(object))
+        return(object)
+})
+
+
+############################################################
+## NearestFeaturesParam
+setMethod("initialize", "NearestFeaturesParam", function(.Object, ...) {
+    classVersion(.Object)["NearestFeaturesParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname groupFeatures-nearest
+setMethod("show", "NearestFeaturesParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" sampleGroups:", class(object@sampleGroups), "of length",
+        length(object@sampleGroups), "\n")
+    cat(" mzVsRtBalance:", object@mzVsRtBalance, "\n")
+    cat(" absMz:", object@absMz, "\n")
+    cat(" absRt:", object@absRt, "\n")
+    cat(" kNN:", object@kNN, "\n")
+})
+
+##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
+##' for the \code{sampleGroups} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("sampleGroups", "NearestFeaturesParam", function(object){
+    return(object@sampleGroups)})
+##' @param value The value for the slot.
+##' @rdname groupFeatures-nearest
+setReplaceMethod("sampleGroups", "NearestFeaturesParam", function(object, value) {
+    object@sampleGroups <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases mzVsRtBalance
+##' @description \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
+##' for the \code{mzVsRtBalance} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("mzVsRtBalance", "NearestFeaturesParam", function(object){
+    return(object@mzVsRtBalance)})
+##' @aliases mzVsRtBalance<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("mzVsRtBalance", "NearestFeaturesParam", function(object, value) {
+    object@mzVsRtBalance <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{absMz},\code{absMz<-}: getter and setter for the
+##' \code{absMz} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("absMz", "NearestFeaturesParam", function(object){
+    return(object@absMz)})
+##' @rdname groupFeatures-nearest
+setReplaceMethod("absMz", "NearestFeaturesParam", function(object, value) {
+    object@absMz <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases absRt
+##' @description \code{absRt},\code{absRt<-}: getter and setter for the
+##' \code{absRt} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("absRt", "NearestFeaturesParam", function(object){
+    return(object@absRt)})
+##' @aliases absRt<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("absRt", "NearestFeaturesParam", function(object, value) {
+    object@absRt <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases kNN
+##' @description \code{kNN},\code{kNN<-}: getter and setter for the
+##' \code{kNN} slot of the object.
+##' @rdname groupFeatures-nearest
+setMethod("kNN", "NearestFeaturesParam", function(object){
+    return(object@kNN)})
+##' @aliases kNN<-
+##' @rdname groupFeatures-nearest
+setReplaceMethod("kNN", "NearestFeaturesParam", function(object, value) {
+    object@kNN <- value
+    if (validObject(object))
+        return(object)
+})
+
+
+############################################################
+## FeatureGroupsParam
+setMethod("initialize", "FeatureGroupsParam", function(.Object, ...) {
+    classVersion(.Object)["FeatureGroupsParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname adjustRtime-featureGroups
+setMethod("show", "FeatureGroupsParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" minFraction:", object@minFraction, "\n")
+    cat(" extraFeatures:", object@extraFeatures, "\n")
+    cat(" smooth:", object@smooth, "\n")
+    cat(" span:", object@span, "\n")
+    cat(" family:", object@family, "\n")
+})
+
+##' @description \code{minFraction},\code{minFraction<-}: getter and setter
+##' for the \code{minFraction} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("minFraction", "FeatureGroupsParam", function(object){
+    return(object@minFraction)})
+##' @param value The value for the slot.
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("minFraction", "FeatureGroupsParam", function(object, value) {
+    object@minFraction <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases extraFeatures
+##' @description \code{extraFeatures},\code{extraFeatures<-}: getter and setter
+##' for the \code{extraFeatures} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("extraFeatures", "FeatureGroupsParam", function(object){
+    return(object@extraFeatures)})
+##' @aliases extraFeatures<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("extraFeatures", "FeatureGroupsParam", function(object, value) {
+    object@extraFeatures <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases smooth
+##' @description \code{smooth},\code{smooth<-}: getter and setter
+##' for the \code{smooth} slot of the object.
+##' @param x a \code{FeatureGroupsParam} object.
+##' @rdname adjustRtime-featureGroups
+setMethod("smooth", "FeatureGroupsParam", function(x){
+    return(x@smooth)})
+##' @aliases smooth<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("smooth", "FeatureGroupsParam", function(object, value) {
+    object@smooth <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases span
+##' @description \code{span},\code{span<-}: getter and setter
+##' for the \code{span} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("span", "FeatureGroupsParam", function(object){
+    return(object@span)})
+##' @aliases span<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("span", "FeatureGroupsParam", function(object, value) {
+    object@span <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases family
+##' @description \code{family},\code{family<-}: getter and setter
+##' for the \code{family} slot of the object.
+##' @rdname adjustRtime-featureGroups
+setMethod("family", "FeatureGroupsParam", function(object){
+    return(object@family)})
+##' @aliases family<-
+##' @rdname adjustRtime-featureGroups
+setReplaceMethod("family", "FeatureGroupsParam", function(object, value) {
+    object@family <- value
+    if (validObject(object))
+        return(object)
+})
+
+
+############################################################
+## ObiwarpParam
+setMethod("initialize", "ObiwarpParam", function(.Object, ...) {
+    classVersion(.Object)["ObiwarpParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+##' @rdname adjustRtime-obiwarp
+setMethod("show", "ObiwarpParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" binSize:", binSize(object), "\n")
+    cat(" centerSample:", centerSample(object), "\n")
+    cat(" response:", response(object), "\n")
+    cat(" distFun:", distFun(object), "\n")
+    cat(" gapInit:", gapInit(object), "\n")
+    cat(" gapExtend:", gapExtend(object), "\n")
+    cat(" factorDiag:", factorDiag(object), "\n")
+    cat(" factorGap:", factorGap(object), "\n")
+    cat(" localAlignment:", localAlignment(object), "\n")
+    cat(" initPenalty:", initPenalty(object), "\n")
+})
+
+##' @description \code{binSize},\code{binSize<-}: getter and setter
+##' for the \code{binSize} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("binSize", "ObiwarpParam", function(object){
+    return(object@binSize)})
+##' @param value The value for the slot.
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
+    object@binSize <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases centerSample
+##' @description \code{centerSample},\code{centerSample<-}: getter and setter
+##' for the \code{centerSample} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("centerSample", "ObiwarpParam", function(object){
+    return(object@centerSample)})
+##' @aliases centerSample<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
+    object@centerSample <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases response
+##' @description \code{response},\code{response<-}: getter and setter
+##' for the \code{response} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("response", "ObiwarpParam", function(object){
+    return(object@response)})
+##' @aliases response<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("response", "ObiwarpParam", function(object, value) {
+    object@response <- as.integer(value)
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases distFun
+##' @description \code{distFun},\code{distFun<-}: getter and setter
+##' for the \code{distFun} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("distFun", "ObiwarpParam", function(object){
+    return(object@distFun)})
+##' @aliases distFun<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
+    object@distFun <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases gapInit
+##' @description \code{gapInit},\code{gapInit<-}: getter and setter
+##' for the \code{gapInit} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("gapInit", "ObiwarpParam", function(object){
+    if (length(object@gapInit) == 0) {
+        if (object@distFun == "cor" | object@distFun == "cor_opt")
+            return(0.3)
+        if (object@distFun == "cov" | object@distFun == "prd")
+            return(0)
+        if (object@distFun == "euc")
+            return(0.9)
+    }
+    return(object@gapInit)})
+##' @aliases gapInit<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
+    object@gapInit <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases gapExtend
+##' @description \code{gapExtend},\code{gapExtend<-}: getter and setter
+##' for the \code{gapExtend} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("gapExtend", "ObiwarpParam", function(object){
+    if (length(object@gapExtend) == 0) {
+        if (object@distFun == "cor" | object@distFun == "cor_opt")
+            return(2.4)
+        if (object@distFun == "cov")
+            return(11.7)
+        if (object@distFun == "euc")
+            return(1.8)
+        if (object@distFun == "prd")
+            return(7.8)
+    }
+    return(object@gapExtend)})
+##' @aliases gapExtend<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
+    object@gapExtend <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases factorDiag
+##' @description \code{factorDiag},\code{factorDiag<-}: getter and setter
+##' for the \code{factorDiag} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("factorDiag", "ObiwarpParam", function(object){
+    return(object@factorDiag)})
+##' @aliases factorDiag<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
+    object@factorDiag <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases factorGap
+##' @description \code{factorGap},\code{factorGap<-}: getter and setter
+##' for the \code{factorGap} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("factorGap", "ObiwarpParam", function(object){
+    return(object@factorGap)})
+##' @aliases factorGap<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
+    object@factorGap <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases localAlignment
+##' @description \code{localAlignment},\code{localAlignment<-}: getter and setter
+##' for the \code{localAlignment} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("localAlignment", "ObiwarpParam", function(object){
+    return(object@localAlignment)})
+##' @aliases localAlignment<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
+    object@localAlignment <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases initPenalty
+##' @description \code{initPenalty},\code{initPenalty<-}: getter and setter
+##' for the \code{initPenalty} slot of the object.
+##' @rdname adjustRtime-obiwarp
+setMethod("initPenalty", "ObiwarpParam", function(object){
+    return(object@initPenalty)})
+##' @aliases initPenalty<-
+##' @rdname adjustRtime-obiwarp
+setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
+    object@initPenalty <- value
+    if (validObject(object))
+        return(object)
+})
+

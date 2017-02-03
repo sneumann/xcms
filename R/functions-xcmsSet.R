@@ -387,33 +387,39 @@ phenoDataFromPaths <- function(paths) {
 ## patternVsRowScore
 patternVsRowScore <- function(currPeak, parameters, mplenv)
 {
-    mplistmeanCurr <- mplenv$mplistmean[,c("mz","rt")]
-    mplistmeanCurr[,"mz"] <- mplistmeanCurr[,"mz"] * parameters$mzVsRTBalance
-    peakmatCurr <- mplenv$peakmat[currPeak,c("mz","rt"),drop=FALSE]
-    peakmatCurr[,"mz"] <- peakmatCurr[,"mz"] * parameters$mzVsRTBalance
+    mplistmeanCurr <- mplenv$mplistmean[, c("mz", "rt")]
+    mplistmeanCurr[, "mz"] <- mplistmeanCurr[, "mz"] * parameters$mzVsRTBalance
+    peakmatCurr <- mplenv$peakmat[currPeak, c("mz", "rt"), drop = FALSE]
+    peakmatCurr[, "mz"] <- peakmatCurr[, "mz"] * parameters$mzVsRTBalance
 
-    nnDist <- nn2(mplistmeanCurr,peakmatCurr[,c("mz","rt"),drop=FALSE],
-                  k=min(length(mplistmeanCurr[,1]),parameters$knn))
+    nnDist <- nn2(mplistmeanCurr, peakmatCurr[, c("mz", "rt"), drop = FALSE],
+                  k = min(length(mplistmeanCurr[, 1]), parameters$knn))
 
-    scoreListcurr <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
-                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
+    scoreListcurr <- data.frame(score = numeric(0),
+                                peak = integer(0),
+                                mpListRow = integer(0),
+                                isJoinedPeak = logical(0),
+                                isJoinedRow = logical(0))
 
     rtTolerance = parameters$rtcheck
 
-    for(mplRow in 1:length(nnDist$nn.idx)){
-        mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
-        mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
-
-        ## Calculate differences between M/Z and RT values of current peak and median of the row
-        diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
-        diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
+    for (mplRow in 1:length(nnDist$nn.idx)) {
+        mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "mz"]
+        mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "rt"]
+        
+        ## Calculate differences between M/Z and RT values of current peak and
+        ## median of the row
+        diffMZ = abs(mplistMZ - mplenv$peakmat[[currPeak, "mz"]])
+        diffRT = abs(mplistRT - mplenv$peakmat[[currPeak, "rt"]])
 
         ## Calculate if differences within tolerancdiffRT < rtTolerance)es
-        if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
+        if ( (diffMZ < parameters$mzcheck) & (diffRT < rtTolerance) ) {
             scoreListcurr <- rbind(scoreListcurr,
-                                   data.frame(score=nnDist$nn.dists[mplRow],
-                                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-                                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
+                                   data.frame(score = nnDist$nn.dists[mplRow],
+                                              peak = currPeak,
+                                              mpListRow = nnDist$nn.idx[mplRow],
+                                              isJoinedPeak = FALSE,
+                                              isJoinedRow = FALSE))
             ## goodEnough = true
             return(scoreListcurr)
         }
