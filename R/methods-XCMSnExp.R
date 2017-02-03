@@ -991,15 +991,22 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     }
     ## 3) Subset the OnDiskMSnExp part
     ## suppressWarnings(
-        ## Specifically call the [ from the OnDiskMSnExp!
-        ## Otherwise we unnecessarily have to drop stuff which has a negative
-        ## impact on performance.
-        theM <- getMethod("[", signature = c(x = "OnDiskMSnExp",
-                                             i = "logicalOrNumeric",
-                                             j = "missing",
-                                             drop = "missing"))
-        object <- theM(x = object, i = base::which(keep_logical))
+    ## Specifically call the [ from the OnDiskMSnExp!
+    ## Otherwise we unnecessarily have to drop stuff which has a negative
+    ## impact on performance.
+    ## theM <- getMethod("[", signature = c(x = "OnDiskMSnExp",
+    ##                                      i = "logicalOrNumeric",
+    ##                                      j = "missing",
+    ##                                      drop = "missing"))
+    ## object <- theM(x = object, i = base::which(keep_logical))
     ## )
+    ## Fix for issue #124
+    ## Now, this casting is not ideal - have to find an easier way to call the
+    ## subset method from OnDiskMSnExp...
+    ## Note: this is still slightly faster than dropping the msFeatureData and
+    ## calling it on the XCMSnExp!
+    tmp <- as(object, "OnDiskMSnExp")[base::which(keep_logical)]
+    object <- as(tmp, "XCMSnExp")
     ## Put the stuff back
     object@processingData@processing <- c(object@processingData@processing, msg)
     lockEnvironment(newMfd, bindings = TRUE)
@@ -1008,6 +1015,7 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     if (validObject(object))
         return(object)
 })
+
 
 ##' The \code{normalize} method performs basic normalization of spectra
 ##' intensities. See \code{\link[MSnbase]{normalize}} documentation for details

@@ -14,6 +14,7 @@ NEW FEATURES:
   MzClustParam, NearestFeaturesParam, FeatureGroupsParam and ObiwarpParam.
 
 BUG FIXES:
++ Issue #124 (filterRt,XCMSnExp returned empty object).
 + Issue #99 (rtrange outside of retention time range in getEIC,xcmsSet).
 + Issue #101 (xcmsRaw function returns NULL if mslevel = 1 is specified).
 + Issue #102 (centWave returns empty matrix if scales not OK). Thanks to J. Stanstrup.

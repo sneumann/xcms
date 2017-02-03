@@ -145,8 +145,11 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 .extractMsData <- function(x, rtrange, mzrange) {
     ## Subset the OnDiskMSnExp
     fns <- fileNames(x)
-    tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-    fromF <- match(fileNames(tmp), fns)
+    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    if (length(subs) == 0) {
+        return(NULL)
+    }
+    fromF <- base::match(fileNames(subs), fns)
     ## Now extract mz-intensity pairs from each spectrum.
     ## system.time(
     ## suppressWarnings(
@@ -155,41 +158,49 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## ) ## 0.73sec
     ## system.time(
     suppressWarnings(
-        dfs <- spectrapply(tmp, function(z) {
+        dfs <- spectrapply(subs, FUN = function(z) {
             if (peaksCount(z))
-                return(data.frame(rt = rep_len(rtime(z), length(z@mz)),
-                                  as.data.frame(z)))
+                return(base::data.frame(rt = rep_len(rtime(z), length(z@mz)),
+                                        as.data.frame(z)))
             else
-                return(data.frame(rt = numeric(), mz = numeric(),
-                                  i = integer()))
+                return(base::data.frame(rt = numeric(), mz = numeric(),
+                                        i = integer()))
         })
     )
-    ## I should check if returning just the spectra is not faster!
-    ## ) ## 0.701
-    ## dfs[] <- mapply(FUN = function(y, z) {
-    ##     return(cbind(rt = rep.int(z, nrow(y)), y))
-    ## }, y = dfs, z = rtime(tmp), SIMPLIFY = FALSE, USE.NAMES = FALSE)
+    ## Now I want to rbind the spectrum data frames per file
+    ff <- fromFile(subs)
+    L <- split(dfs, f = ff)
+    L <- lapply(L, do.call, what = rbind)
+    ## Put them into a vector same length that we have files.
     res <- vector(mode = "list", length = length(fns))
-    res[fromF] <- split(dfs, f = fromFile(tmp))
-    return(lapply(res, do.call, what = rbind))
+    res[fromF] <- L
+    return(res)
 }
 
 ## Same as above, but we're applying a function - or none.
 .sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
     fns <- fileNames(x)
-    ## Now, the filterRt might get heavy for XCMSnExp objects if we're filtering
-    ## also the features and featureGroups!
-    msfd <- new("MsFeatureData")
-    if (hasAdjustedRtime(x)) {
-        ## just copy over the retention time.
-        msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
+    if (is(x, "XCMSnExp")) {
+        ## Now, the filterRt might get heavy for XCMSnExp objects if we're
+        ## filtering also the features and featureGroups!
+        msfd <- new("MsFeatureData")
+        if (hasAdjustedRtime(x)) {
+            ## just copy over the retention time.
+            msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
+        }
+        lockEnvironment(msfd, bindings = TRUE)
+        x@msFeatureData <- msfd
+        ## with an XCMSnExp without features and featureGroups filterRt should be
+        ## faster.
     }
-    lockEnvironment(msfd, bindings = TRUE)
-    x@msFeatureData <- msfd
-    ## with an XCMSnExp without features and featureGroups filterRt should be
-    ## faster.
-    tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-    fromF <- base::match(fileNames(tmp), fns)
-    res <- spectrapply(tmp, FUN = FUN)
+    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    if (base::length(subs) == 0) {
+        return(list())
+    }
+    fromF <- base::match(fileNames(subs), fns)
+    suppressWarnings(
+        res <- spectrapply(subs, FUN = FUN)
+    )
+    ## WARN: fromFile reported within the Spectra might not be correct!!!
     return(res)
 }

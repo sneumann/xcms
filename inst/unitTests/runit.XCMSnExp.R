@@ -150,6 +150,10 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(names(adjustedRtime(xod)), names(rtime(xod)))
     ## Wrong assignments.
     checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
+    ## bracket subset
+    tmp <- xod[1]
+    checkTrue(length(tmp[[1]]) == 1)
+    checkTrue(length(xod[[1]]) == 1)
     .checkCreationOfEmptyObject()
 }
 
@@ -343,6 +347,7 @@ test_XCMSnExp_inherited_methods <- function() {
     suppressWarnings(
         tmp_2 <- filterAcquisitionNum(od_x)
     )
+    checkTrue(length(tmp_2[[1]]) > 0)
     checkTrue(length(processHistory(tmp_2)) == 0)
     checkTrue(!hasDetectedFeatures(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
@@ -415,6 +420,7 @@ test_XCMSnExp_filterFile <- function() {
     checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(od_x, file = c(1, 3))
+    checkTrue(length(tmp[[1]]) == 1)
     checkTrue(!hasAdjustedRtime(tmp))
     checkTrue(!hasAlignedFeatures(tmp))
     checkTrue(all(features(tmp)[, "sample"] %in% c(1, 2)))
@@ -459,6 +465,7 @@ test_XCMSnExp_filterMz <- function() {
 
     ## Subset
     tmp <- filterMz(od_x2, mz = c(300, 400))
+    checkTrue(length(tmp[[1]]) == 1)
     checkException(tmp@msFeatureData$bla <- 3)
     checkTrue(length(tmp@spectraProcessingQueue) == 1)
     checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
@@ -482,6 +489,10 @@ test_XCMSnExp_filterRt <- function() {
 
     ## Testing with only feature data present:
     res <- filterRt(od_x2, rt = c(2700, 2900))
+    ## Check if the object is OK:
+    checkEquals(pData(res), pData(od_x2))
+    checkTrue(length(spectra(res)) > 0)
+    
     ## MsFeatureData has to be locked!
     checkException(res@msFeatureData$bla <- 3)
     ## Retention time has to be within the range.
@@ -765,6 +776,33 @@ dontrun_getEIC_alternatives <- function() {
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- detectFeatures(od, param = cwp)
 
+    rtr <- c(2600, 2601)
+    res <- filterRt(od_x, rt = rtr)
+
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
+
+    rtr <- as.matrix(featureGroups(od_xg)[1:5, c("rtmin", "rtmax")])
+    mzr <- as.matrix(featureGroups(od_xg)[1:5, c("mzmin", "mzmax")])
+
+    system.time(
+        res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    
+    library(profvis)
+    profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
+    
+
+    ## Compare with getEIC
     xs <- as(od_x, "xcmsSet")
     sampclass(xs) <- rep("KO", 3)
     xs_2 <- group(xs)
@@ -788,28 +826,7 @@ dontrun_getEIC_alternatives <- function() {
     system.time(
         res <- xcms:::.extractMsData(od_x, rtrange = rtr[1, ], mzrange = mzr[1, ])
     ) ## 0.74 sec.
-
-    ## Let's see what happens if we've got adjusted rtimes:
-    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
-    rtr <- as.matrix(featureGroups(od_xg)[1:5, c("rtmin", "rtmax")])
-    mzr <- as.matrix(featureGroups(od_xg)[1:5, c("mzmin", "mzmax")])
-    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
-
-    system.time(
-        res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
     
-    library(profvis)
-    profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
     
     rts <- rtime(od_x)
     idx <- apply(rtr, MARGIN = 1, function(z) {
