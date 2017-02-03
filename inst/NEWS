@@ -1,3 +1,15 @@
+CHANGES IN VERSION 1.51.6
+-------------------------
+
+NEW FEATURES:
++ groupFeatures and adjustRtime methods for XCMSnExp objects.
++ New Param classes for groupFeatures and adjustRtime analysis methods: FeatureDensityParam,
+  MzClustParam, NearestFeaturesParam, FeatureGroupsParam and ObiwarpParam.
+
+BUG FIXES:
++ Issue #124 (filterRt,XCMSnExp returned empty object).
+
+
 CHANGES IN VERSION 1.51.5
 -------------------------
 

@@ -1008,12 +1008,24 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a MassifquantParam object
+##' ## Create a MSWParam object
 ##' mp <- MSWParam()
 ##' ## Change snthresh parameter
 ##' snthresh(mp) <- 15
 ##' mp
 ##'
+##' ## Loading a small subset of direct injection, single spectrum files
+##' library(msdata)
+##' fticrf <- list.files(system.file("fticr", package = "msdata"),
+##'                     recursive = TRUE, full.names = TRUE)
+##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+##'
+##' ## Perform the MSW feature detection on these:
+##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+##'              SNR.method = "data.mean", winSize.noise = 500)
+##' fticr <- detectFeatures(fticr, param = p)
+##'
+##' head(features(fticr))
 setClass("MSWParam",
          slots = c(
              snthresh = "numeric",
@@ -1082,7 +1094,6 @@ setClass("MSWParam",
              }
          })
 
-## Main centWave documentation.
 ##' @title Two-step centWave feature detection considering also feature isotopes
 ##'
 ##' @aliases centWaveWithPredIsoROIs
@@ -1148,7 +1159,7 @@ NULL
 ##'
 ##' @examples
 ##'
-##' ## Create a CentWaveParam object
+##' ## Create a param object
 ##' p <- CentWavePredIsoParam(maxCharge = 4)
 ##' ## Change snthresh parameter
 ##' snthresh(p) <- 25
@@ -1198,11 +1209,782 @@ setClass("CentWavePredIsoParam",
                  return(msg)
          })
 
-####
-## DataFrame or matrix?
-## row subsetting: 400:800, : matrix very fast, data.frame, DataFrame.
-## column subsetting: , 2: data.frame fast, matrix, DataFrame
-## splitting: matrix fastest (but return type is not a matrix).
+
+## General groupFeatures method.
+##' @title Feature alignment methods.
+##'
+##' @description The \code{groupFeatures} method(s) perform alignment of features
+##' within and between samples. These methods are part of the modernized
+##' \code{xcms} user interface.
+##'
+##' The implemented feature alignment methods are:
+##' \describe{
+##' \item{density}{feature alignment based on time dimension feature densities.
+##' See \code{\link{groupFeatures-density}} for more details.}
+##'
+##' \item{mzClust}{high resolution feature alignment for single spectra (direct
+##' infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
+##'
+##' \item{nearest}{feature alignment based on their proximity in the mz-rt space.
+##' See \code{\link{groupFeatures-nearest}} for more details.}
+##' 
+##' }
+##' @name groupFeatures
+##' @family feature alignment methods
+##' @seealso \code{\link{group}} for the \emph{old} feature alignment
+##' methods.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
+##' 
+##' @author Johannes Rainer
+NULL
+#> NULL
+
+## Main group.density documentation.
+##' @title Feature alignment based on time dimension feature densities
+##'
+##' @description This method performs performs feature alignment based on the
+##' density (distribution) of identified features along the retention time axis
+##' within slices of overlapping mz ranges. All features (from the same or from
+##' different samples) being close on the retention time axis are grouped into
+##' a \emph{feature group}.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{FeatureDensityParam} object.
+##'
+##' @param sampleGroups A vector of the same length than samples defining the
+##' sample group assignments.
+##'
+##' @param bw numeric(1) defining the bandwidth (standard deviation ot the
+##' smoothing kernel) to be used. This argument is passed to the
+##' \code{\link{density}} method.
+##'
+##' @param minFraction numeric(1) defining the minimum fraction of samples in at
+##' least one sample group in which the features have to be present to be
+##' considered as a feature group.
+##'
+##' @param minSamples numeric(1) with the minimum number of samples in at least
+##' one sample group in which the features have to be detected to be considered
+##' as a feature group.
+##'
+##' @param binSize numeric(1) defining the size of the overlapping slices in mz
+##' dimension.
+##'
+##' @param maxFeatures numeric(1) with the maximum number of feature groups to
+##' be identified in a single mz slice.
+##' 
+##' @family feature alignment methods
+##' @seealso The \code{\link{do_groupFeatures_density}} core
+##' API function and \code{\link{group.density}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
+##'
+##' @name groupFeatures-density
+##' 
+##' @author Colin Smith, Johannes Rainer
+##'
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+NULL
+#> NULL
+
+##' @description The \code{FeatureDensityParam} class allows to specify all
+##' settings for the feature alignment based on feature densities along the time
+##' dimension. Instances should be created with the \code{FeatureDensityParam}
+##' constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-density
+##'
+##' @examples
+##'
+##' ## Create a FeatureDensityParam object
+##' p <- FeatureDensityParam(binSize = 0.05)
+##' ## Change hte minSamples slot
+##' minSamples(p) <- 3
+##' p
+##'
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment using the density method.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment
+##' fdp <- FeatureDensityParam()
+##' res <- groupFeatures(res, fdp)
+##'
+##' ## The results from the feature alignment:
+##' featureGroups(res)
+##'
+##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## the feature groups per sample.
+##' head(groupval(res, value = "into"))
+##' 
+##' ## The process history:
+##' processHistory(res)
+setClass("FeatureDensityParam",
+         slots = c(sampleGroups = "ANY",
+                   bw = "numeric",
+                   minFraction = "numeric",
+                   minSamples = "numeric",
+                   binSize = "numeric",
+                   maxFeatures = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             bw = 30,
+             minFraction = 0.5,
+             minSamples = 1,
+             binSize = 0.25,
+             maxFeatures = 50),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@bw) > 1 | any(object@bw < 0))
+                 msg <- validMsg(msg, paste0("'bw' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
+                                             "single positive number between ",
+                                             "0 and 1!"))
+             if (length(object@minSamples) > 1 | any(object@minSamples < 0))
+                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@binSize) > 1 | any(object@binSize < 0))
+                 msg <- validMsg(msg, paste0("'binSize' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@maxFeatures) > 1 | any(object@maxFeatures < 0))
+                 msg <- validMsg(msg, paste0("'maxFeatures' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+## Main group.mzClust documentation.
+##' @title High resolution feature alignment for single spectra samples
+##'
+##' @description This method performs high resolution alignment for single
+##' spectra samples.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{MzClustParam} object.
+##'
+##' @inheritParams groupFeatures-density
+##'
+##' @param ppm numeric(1) representing the relative mz error for the
+##' clustering/grouping (in parts per million).
+##' 
+##' @param absMz numeric(1) representing the absolute mz error for the clustering.
+##' 
+##' @family feature alignment methods
+##' @seealso The \code{\link{do_groupFeatures_mzClust}} core
+##' API function and \code{\link{group.mzClust}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
+##'
+##' @name groupFeatures-mzClust
+##'
+##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
+##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
+##' development of a heuristic approach for metabolomics}.\cr Metabolomics,
+##' Vol. 2, No. 2, 75-83 (2006)
+NULL
+#> NULL
+
+##' @description The \code{MzClustParam} class allows to specify all
+##' settings for the feature alignment based on the \emph{mzClust} algorithm.
+##' Instances should be created with the \code{MzClustParam} constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-mzClust
+##'
+##' @examples
+##'
+##' ## Loading a small subset of direct injection, single spectrum files
+##' library(msdata)
+##' fticrf <- list.files(system.file("fticr", package = "msdata"),
+##'                     recursive = TRUE, full.names = TRUE)
+##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+##'
+##' ## Perform the MSW feature detection on these:
+##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+##'              SNR.method = "data.mean", winSize.noise = 500)
+##' fticr <- detectFeatures(fticr, param = p)
+##'
+##' head(features(fticr))
+##'
+##' ## Now create the MzClustParam parameter object: we're assuming here that
+##' ## both samples are from the same sample group.
+##' p <- MzClustParam(sampleGroups = c(1, 1))
+##'
+##' fticr <- groupFeatures(fticr, param = p)
+##'
+##' featureGroups(fticr)
+setClass("MzClustParam",
+         slots = c(sampleGroups = "ANY",
+                   ppm = "numeric",
+                   absMz = "numeric",
+                   minFraction = "numeric",
+                   minSamples = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             ppm = 20,
+             absMz = 0,
+             minFraction = 0.5,
+             minSamples = 1),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@ppm) > 1 | any(object@ppm < 0))
+                 msg <- validMsg(msg, paste0("'ppm' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absMz) > 1 | any(object@absMz < 0))
+                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
+                                             "single positive number between ",
+                                             "0 and 1!"))
+             if (length(object@minSamples) > 1 | any(object@minSamples < 0))
+                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+## Main group.nearest documentation.
+##' @title Feature alignment based on proximity in the mz-rt space
+##'
+##' @description This method is inspired by the alignment algorithm of mzMine
+##' [Katajamaa 2006] and performs alignment based on proximity of features in the
+##' space spanned by retention time and mz values.
+##' The method creates first a \emph{master feature list} consisting of all
+##' features from the sample in which most features were identified, and
+##' starting from that, calculates distances to features from the sample with the
+##' next most features. If features are closer than the defined threshold they
+##' are grouped together.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{NearestFeaturesParam} object.
+##'
+##' @inheritParams groupFeatures-density
+##'
+##' @param mzVsRtBalance numeric(1) representing the factor by which mz values are
+##' multiplied before calculating the (euclician) distance between two features.
+##'
+##' @param absMz numeric(1) maximum tolerated distance for mz values.
+##'
+##' @param absRt numeric(1) maximum tolerated distance for rt values.
+##'
+##' @param kNN numeric(1) representing the number of nearest neighbors to check.
+##' 
+##' @family feature alignment methods
+##' 
+##' @seealso The \code{\link{do_groupFeatures_nearest}} core
+##' API function and \code{\link{group.nearest}} for the old user interface.
+##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
+##' for methods to access feature grouping results.
+##'
+##' @name groupFeatures-nearest
+##'
+##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
+##' processing and visualization of mass spectrometry based molecular profile
+##' data. \emph{Bioinformatics} 2006, 22:634-636. 
+NULL
+#> NULL
+
+##' @description The \code{NearestFeaturesParam} class allows to specify all
+##' settings for the feature alignment based on the \emph{nearest} algorithm.
+##' Instances should be created with the \code{NearestFeaturesParam} constructor.
+##'
+##' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname groupFeatures-nearest
+##'
+##' @examples
+##'
+##' ## Create a NearestFeaturesParam object
+##' p <- NearestFeaturesParam(kNN = 3)
+##' p
+##'
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment using the "nearest" method.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment
+##' p <- NearestFeaturesParam()
+##' res <- groupFeatures(res, param = p)
+##'
+##' ## The results from the feature alignment:
+##' featureGroups(res)
+##'
+##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## the feature groups per sample.
+##' head(groupval(res, value = "into"))
+##'
+##' ## The process history:
+##' processHistory(res)
+setClass("NearestFeaturesParam",
+         slots = c(sampleGroups = "ANY",
+                   mzVsRtBalance = "numeric",
+                   absMz = "numeric",
+                   absRt = "numeric",
+                   kNN = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             sampleGroups = numeric(),
+             mzVsRtBalance = 10,
+             absMz = 0.2,
+             absRt = 15,
+             kNN = 10),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@mzVsRtBalance) > 1 |
+                 any(object@mzVsRtBalance < 0))
+                 msg <- validMsg(msg, paste0("'mzVsRtBalance' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absMz) > 1 | any(object@absMz < 0))
+                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@absRt) > 1 | any(object@absRt < 0))
+                 msg <- validMsg(msg, paste0("'absRt' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@kNN) > 1 | any(object@kNN < 0))
+                 msg <- validMsg(msg, paste0("'kNN' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+
+
+##' @title Retention time correction methods.
+##'
+##' @description The \code{adjustRtime} method(s) perform retention time
+##' correction between chromatograms of different samples. These methods are
+##' part of the modernized \code{xcms} user interface.
+##'
+##' The implemented feature alignment methods are:
+##' \describe{
+##' \item{featureGroups}{retention time correction based on aligment of feature
+##' groups present in most/all samples.
+##' See \code{\link{adjustRtime-featureGroups}} for more details.}
+##' 
+##' }
+##' @name adjustRtime
+##' @family retention time correction methods
+##' @seealso \code{\link{retcor}} for the \emph{old} retention time correction 
+##' methods.
+##' @author Johannes Rainer
+NULL
+#> NULL
+
+## Main retcor.peakgroups documentation.
+##' @title Retention time correction based on alignment of house keeping feature
+##' groups
+##'
+##' @description This method performs retention time adjustment based on the
+##' alignment of feature groups present in all/most samples (hence corresponding
+##' to house keeping compounds). First the retention time deviation of these
+##' feature groups is described by fitting either a polynomial
+##' (\code{smooth = "loess"}) or a linear (\code{smooth = "linear"}) model to the
+##' data points. These models are subsequently used to adjust the retention time
+##' of each spectrum in each sample.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{FeatureGroupsParam} object.
+##'
+##' @param minFraction numeric(1) between 0 and 1 defining the minimum required
+##' fraction of samples in which features for the feature group were identified.
+##' Feature groups passing this criteria will aligned across samples and retention
+##' times of individual spectra will be adjusted based on this alignment. For
+##' \code{minFraction = 1} the feature group has to contain features in all
+##' samples of the experiment.
+##' 
+##' @param extraFeatures numeric(1) defining the maximal number of additional
+##' features for all samples to be assigned to a feature group for retention time
+##' correction. For a data set with 6 samples, \code{extraFeatures = 1} uses all
+##' feature groups with a total feature count \code{<= 6 + 1}. The total feature
+##' count is the total number of features being assigned to a feature group and
+##' considers also multiple features within a sample being assigned to the group.
+##'
+##' @param smooth character defining the function to be used, to interpolate
+##' corrected retention times for all feature groups. Either \code{"loess"} or
+##' \code{"linear"}.
+##'
+##' @param span numeric(1) defining the degree of smoothing (if
+##' \code{smooth = "loess"}). This parameter is passed to the internal call
+##' to \code{\link{loess}}.
+##'
+##' @param family character defining the method to be used for loess smoothing.
+##' Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
+##' \code{\link{loess}} for more information.
+##' 
+##' @family retention time correction methods
+##' 
+##' @seealso The \code{\link{do_adjustRtime_featureGroups}} core
+##' API function and \code{\link{retcor.peakgroups}} for the old user interface.
+##'
+##' @name adjustRtime-featureGroups
+##'
+##' @author Colin Smith, Johannes Rainer
+##' 
+##' @references
+##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+##' \emph{Anal. Chem.} 2006, 78:779-787.
+NULL
+#> NULL
+
+##' @description The \code{FeatureGroupsParam} class allows to specify all
+##' settings for the retention time adjustment based on \emph{house keeping}
+##' feature groups present in most samples.
+##' Instances should be created with the \code{FeatureGroupsParam} constructor.
+##'
+##' @slot .__classVersion__,minFraction,extraFeatures,smooth,span,family See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname adjustRtime-featureGroups
+##'
+##' @examples
+##' ##############################
+##' ## feature detection and alignment.
+##' ##
+##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## method) on some of the test files from the faahKO package followed by
+##' ## a feature alignment.
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' head(features(res))
+##' ## The number of features identified per sample:
+##' table(features(res)[, "sample"])
+##'
+##' ## Performing the feature alignment using the "feature density" method.
+##' p <- FeatureDensityParam(sampleGroups = c(1, 1))
+##' res <- groupFeatures(res, param = p)
+##'
+##' ## Perform the retention time adjustment using feature groups found in both
+##' ## files.
+##' fgp <- FeatureGroupsParam(minFraction = 1)
+##' res <- adjustRtime(res, param = fgp)
+##'
+##' ## Any grouping information was dropped
+##' hasAlignedFeatures(res)
+##'
+##' ## Plot the raw against the adjusted retention times.
+##' plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+##'
+##' ## Adjusterd retention times can be accessed using
+##' ## rtime(object, adjusted = TRUE) and adjustedRtime
+##' all.equal(rtime(res), adjustedRtime(res))
+##'
+##' ## To get the raw, unadjusted retention times:
+##' all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
+##'
+##' ## To extract the retention times grouped by sample/file:
+##' rts <- rtime(res, bySample = TRUE)
+setClass("FeatureGroupsParam",
+         slots = c(minFraction = "numeric",
+                   extraFeatures = "numeric",
+                   smooth = "character",
+                   span = "numeric",
+                   family = "character"),
+         contains = "Param",
+         prototype = prototype(
+             minFraction = 0.9,
+             extraFeatures = 1,
+             smooth = "loess",
+             span = 0.2,
+             family = "gaussian"
+         ),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@minFraction) > 1 |
+                 any(object@minFraction < 0) |
+                 any(object@minFraction > 1))
+                 msg <- validMsg(msg, paste0("'minFraction' has to be a single",
+                                             " number between 0 and 1!"))
+             if (length(object@extraFeatures) > 1 |
+                 any(object@extraFeatures < 0))
+                 msg <- validMsg(msg, paste0("'extraFeatures' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@span) > 1 | any(object@span < 0))
+                 msg <- validMsg(msg, paste0("'span' has to be a ",
+                                             "positive numeric of length 1!"))
+             if (length(object@smooth) > 1 |
+                 !all(object@smooth %in% c("loess", "linear")))
+                 msg <- validMsg(msg, paste0("'smooth' has to be either \"",
+                                             "loess\" or \"linear\"!"))
+             if (length(object@family) > 1 |
+                 !all(object@family %in% c("gaussian", "symmetric")))
+                 msg <- validMsg(msg, paste0("'family' has to be either \"",
+                                             "gaussian\" or \"symmetric\"!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+##' @title Align retention times across samples using Obiwarp
+##'
+##' @description This method performs retention time adjustment using the
+##' Obiwarp method [Prince 2006]. It is based on the code at
+##' \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
+##' samples by aligning each against a \emph{center} sample. The alignment is
+##' performed directly on the \code{\link{profile-matrix}} and can hence be
+##' performed independently of the feature detection or feature grouping.
+##'
+##' @note These methods and classes are part of the updated and modernized
+##' \code{xcms} user interface which will eventually replace the
+##' \code{\link{retcor}} methods. All of the settings to the alignment algorithm
+##' can be passed with a \code{ObiwarpParam} object.
+##' 
+##' @param binSize numeric(1) defining the bin size (in mz dimension) to be used
+##' for the \emph{profile matrix} generation. See \code{step} parameter in
+##' \code{\link{profile-matrix}} documentation for more details.
+##'
+##' @param centerSample integer(1) defining the index of the center sample in the
+##' experiment. It defaults to \code{floor(median(1:length(fileNames(object))))}.
+##'
+##' @param response numeric(1) defining the \emph{responsiveness} of warping with
+##' \code{response = 0} giving linear warping on start and end points and
+##' \code{response = 100} warping using all bijective anchors.
+##'
+##' @param distFun character defining the distance function to be used. Allowed
+##' values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"} (calculate
+##' only 10\% diagonal band of distance matrix; better runtime), \code{"cov"}
+##' (covariance), \code{"prd"} (product) and \code{"euc"} (Euclidian distance).
+##' The default value is \code{distFun = "cor_opt"}.
+##'
+##' @param gapInit numeric(1) defining the penalty for gap opening. The default
+##' value for \code{gapInit} depends on the value of \code{distFun}: for
+##' \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{0.3}, for
+##' \code{distFun = "cov"} and \code{distFun = "prd"} \code{0.0} and for
+##' \code{distFun = "euc"} \code{0.9}.
+##'
+##' @param gapExtend numeric(1) defining the penalty for gap enlargement. The
+##' default value for \code{gapExtend} depends on the value of \code{distFun},
+##' for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{2.4},
+##' for \code{distFun = "cov"} \code{11.7}, for \code{distFun = "euc"} \code{1.8}
+##' and for \code{distFun = "prd"} {7.8}.
+##'
+##' @param factorDiag numeric(1) defining the local weight applied to diagonal
+##' moves in the alignment.
+##'
+##' @param factorGap numeric(1) defining the local weight for gap moves in the
+##' alignment.
+##'
+##' @param localAlignment logical(1) whether a local alignment should be
+##' performed instead of the default global alignment.
+##'
+##' @param initPenalty numeric(1) defining the penalty for initiating an
+##' alignment (for local alignment only).
+##' 
+##' @family retention time correction methods
+##' 
+##' @seealso \code{\link{retcor.obiwarp}} for the old user interface.
+##'
+##' @name adjustRtime-obiwarp
+##'
+##' @author Colin Smith, Johannes Rainer
+##' 
+##' @references
+##' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
+##' ESI-LC-MS Proteomics Data Sets by Ordered Bijective Interpolated Warping"
+##' \emph{Anal. Chem.} 2006, 78(17):6140-6152.
+
+NULL
+#> NULL
+
+##' @description The \code{ObiwarpParam} class allows to specify all
+##' settings for the retention time adjustment based on the \emph{obiwarp}
+##' method. Class Instances should be created using the
+##' \code{ObiwarpParam} constructor.
+##'
+##' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty See corresponding parameter above. \code{.__classVersion__} stores
+##' the version from the class. Slots values should exclusively be accessed
+##' \emph{via} the corresponding getter and setter methods listed above.
+##'
+##' @rdname adjustRtime-obiwarp
+##'
+##' @examples
+##' library(faahKO)
+##' library(MSnbase)
+##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+##'            full.names = TRUE)
+##' 
+##' ## Reading 2 of the KO samples
+##' raw_data <- readMSData2(fls[1:2])
+##'
+##' ## Perform retention time correction on the OnDiskMSnExp:
+##' res <- adjustRtime(raw_data, param = ObiwarpParam())
+##' 
+##' ## As a result we get a numeric vector with the adjusted retention times for
+##' ## all spectra.
+##' head(res)
+##'
+##' ## We can split this by file to get the adjusted retention times for each
+##' ## file
+##' resL <- split(res, fromFile(raw_data))
+##'
+##' ##############################
+##' ## Perform retention time correction on an XCMSnExp:
+##' ##
+##' ## Perform first the feature detection using the matchedFilter method.
+##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+##' res <- detectFeatures(raw_data, param = mfp)
+##'
+##' ## Performing the retention time adjustment using obiwarp.
+##' res_2 <- adjustRtime(res, param = ObiwarpParam())
+##'
+##' head(rtime(res_2))
+##' head(rtime(raw_data))
+##'
+##' ## Also the retention times of the detected features were adjusted.
+##' tail(features(res))
+##' tail(features(res_2))
+setClass("ObiwarpParam",
+         slots = c(binSize = "numeric",
+                   centerSample = "integer",
+                   response = "integer",
+                   distFun = "character",
+                   gapInit = "numeric",
+                   gapExtend = "numeric",
+                   factorDiag = "numeric",
+                   factorGap = "numeric",
+                   localAlignment = "logical",
+                   initPenalty = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             binSize = 1,
+             centerSample = integer(),
+             response = 1L,
+             distFun = "cor_opt",
+             gapInit = numeric(),
+             gapExtend = numeric(),
+             factorDiag = 2,
+             factorGap = 1,
+             localAlignment = FALSE,
+             initPenalty = 0),
+         validity = function(object) {
+             msg <- validMsg(NULL, NULL)
+             if (length(object@binSize) > 1 |
+                 any(object@binSize < 0))
+                 msg <- validMsg(msg, paste0("'binSize' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@centerSample) > 1 |
+                 any(object@centerSample < 0))
+                 msg <- validMsg(msg, paste0("'centerSample' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@response) > 1 |
+                 any(object@response < 0) |
+                 any(object@response > 100))
+                 msg <- validMsg(msg, paste0("'response' has to be a single ",
+                                             " integer from 1 to 100!"))
+             if (length(object@distFun) > 1 |
+                 any(!(object@distFun %in% c("cor", "cor_opt", "cov", "euc",
+                                             "prd"))))
+                 msg <- validMsg(msg, paste0("'distFun' has to be one of \"cor\"",
+                                             ", \"cor_opt\", \"cov\", \"euc\"",
+                                             " or \"prd\"!"))
+             if (length(object@gapInit) > 1 | any(object@gapInit < 0))
+                 msg <- validMsg(msg, paste0("'gapInit' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@gapExtend) > 1 | any(object@gapExtend < 0))
+                 msg <- validMsg(msg, paste0("'gapExtend' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@factorDiag) > 1 | any(object@factorDiag < 0))
+                 msg <- validMsg(msg, paste0("'factorDiag' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@factorGap) > 1 | any(object@factorGap < 0))
+                 msg <- validMsg(msg, paste0("'factorGap' has to be a positive",
+                                             " numeric of length 1!"))
+             if (length(object@localAlignment) > 1)
+                 msg <- validMsg(msg, paste0("'localAlignment' has to be a ",
+                                             "logical of length 1!"))
+             if (length(object@initPenalty) > 1 | any(object@initPenalty < 0))
+                 msg <- validMsg(msg, paste0("'initPenalty' has to be a positive",
+                                             " numeric of length 1!"))
+             if (is.null(msg))
+                 return(TRUE)
+             else
+                 return(msg)
+         })
+
+
 
 ##' @aliases MsFeatureData
 ##' @title Data container storing xcms preprocessing results
@@ -1280,6 +2062,10 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
 ##' @seealso \code{\link{detectFeatures}} for available feature detection methods
 ##' returning a \code{XCMSnExp} object as a result.
+##' @seealso \code{\link{groupFeatures}} for available feature grouping methods
+##' and \code{\link{groupval,XCMSnExp-method}} for the method to extract feature
+##' grouping results.
+##' @seealso \code{\link{adjustRtime}} for retention time adjustment methods.
 ##'
 ##' @rdname XCMSnExp-class
 ##'
@@ -1415,12 +2201,3 @@ setClass("XCMSnExp",
          }
 )
 
-## testfun <- function(x, value = "index") {
-##     res <- lapply(x@groupidx, function(z, nsamps = length(filepaths(x))) {
-##         sampidx <- x@peaks[z, c("into", "sample"), drop = FALSE]
-##         tmp <- rep(NA, nsamps)
-##         tmp[sampidx[, "sample"]] <- z
-##         return(tmp)
-##     })
-##     return(do.call(rbind, res))
-## }

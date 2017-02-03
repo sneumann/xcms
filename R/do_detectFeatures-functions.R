@@ -1964,9 +1964,13 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 
 ############################################################
 ## MS1
+## This one might be too cumbersome to do it for plain vectors. It would be ideal
+## for MSnExp objects though.
 ##
-do_detectFeatures_MS1 <- function() {
-}
+## do_detectFeatures_MS1 <- function(mz, int, scantime, valsPerSpect) {
+##     ## Checks: do I have
+## }
+
 
 ## ## Original code: TODO REMOVE ME once method is validated.
 ## do_predictIsotopeROIs <- function(object,

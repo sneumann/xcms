@@ -1,4 +1,4 @@
-#+TITLE: New and modified functionality in xcms
+s#+TITLE: New and modified functionality in xcms
 #+AUTHOR:    Johannes Rainer
 #+EMAIL:     johannes.rainer@eurac.edu
 #+DESCRIPTION:
@@ -141,6 +141,23 @@ that all data, including metadata, stays consistent.
 
 + Do the feature detection.
 + Describe the feature detection methods.
+
+** New naming convention
+
+Methods for data analysis from the original =xcms= code have been renamed to avoid
+potential confusions:
+
++ =detectFeatures= instead of =findPeaks=: for new functions and methods the term
+  /peak/ is avoided as much as possible, as it is usually used to describe a mass
+  peak in mz dimension. To clearly distinguish between these peaks and peaks in
+  retention time space, the latter are referred to as /features/.
+
++ =groupFeatures= instead of =group= to clearly indicate what is being
+  grouped. Group might be a sample group or a feature group, hence groups of
+  features are always referred to as /feature groups/.
+
++ =adjustRtime= instead of =retcor= for retention time correction. The word /cor/ in
+  /retcor/ might be easily misinterpreted as /correlation/ instead of correction.
 
 ** New data classes
 
@@ -386,6 +403,24 @@ generation uses now the =binYonX= method which fixed some problems in the origin
 binning and linear interpolation methods. Thus results might be slightly
 different.
 
+
+** =retcor.peaksgroups=: change in the way how /well behaved/ feature groups are ordered
+
+The =retcor.peakgroups= defines first the feature groups (peaks groups) that are
+used for the alignment of all spectra. Once these are identified, the retention
+time of the feature with the highest intensity in a sample for a given feature
+group is returned and the feature groups are ordered increasingly by retention
+time (which is required for the later fitting of either a polynomial or a linear
+model to the data). The selection of the retention time of the feature with the
+highest intensity within a feature group and samples, denoted as /representative/
+feature for a given feature group in a sample, ensures that only the retention
+time of a single feature per sample and feature group is selected (multiple
+features within the same sample can be assigned to a feature group).  In the
+original code the ordering of the feature groups was however performed using the
+median retention time of the complete feature group (which includes also
+potential additional features per sample). This has been changed and the feature
+groups are ordered now by the median retention time across samples of the
+representative features.
 
 ** =scanrange= parameter in all =findPeaks= methods
 

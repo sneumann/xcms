@@ -2,7 +2,7 @@
 if(require("RUnit", quietly=TRUE)) {
 
     ## --- Setup ---
-
+    
     pkg <- "xcms" # <-- Change to package name!
     if(Sys.getenv("RCMDCHECK") == "FALSE") {
         ## Path to unit tests for standalone running under Makefile (not R CMD check)
@@ -29,18 +29,24 @@ if(require("RUnit", quietly=TRUE)) {
     ## Disable parallel processing for the unit tests
     library(BiocParallel)
     register(SerialParam())
-
+    
     ## Create some objects we can re-use in different tests:
     ## Needed in runit.XCMSnExp.R
     faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
+    
     ## An xcmsRaw for the first file:
     faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                            profstep = 0)
     faahko_od <- readMSData2(faahko_3_files)
 
+    ## Feature alignment on those:
+    faahko_xod <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
+                                                                  snthresh = 40))
+    faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
+                         method = "centWave", noise = 10000, snthresh = 40)
+    
     ## microtofq
     library(msdata)
     microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),

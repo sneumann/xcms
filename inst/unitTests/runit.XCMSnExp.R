@@ -1,11 +1,9 @@
 ## tests related to the new XCMSnExp object.
 library(RUnit)
 
-cwp <- CentWaveParam(noise = 10000, snthresh = 40)
-## od <- filterRt(od, rt = c(3000, 4000))
-od_x <- detectFeatures(faahko_od, param = cwp)
-xs <- xcmsSet(faahko_3_files, profparam = list(step = 0), method = "centWave",
-              noise = 10000, snthresh = 40)
+od_x <- faahko_xod
+xs <- faahko_xs
+
 xs_2 <- group(xs)
 suppressWarnings(
     xs_2 <- retcor(xs_2)
@@ -65,6 +63,10 @@ test_XCMSnExp_rtime <- function() {
     checkEquals(rts_4, rts_3[[2]])
     rts_4 <- rtime(filterFile(faahko_od, file = 3))
     checkEquals(rts_4, rts_3[[3]])
+    ## Compare with the values we get from an xcmsSet:
+    rtx <- faahko_xs@rt$raw
+    checkEquals(unlist(rtx, use.names = FALSE),
+                unlist(rtime(faahko_xod, bySample = TRUE), use.names = FALSE))
 }
 
 test_XCMSnExp_mz <- function() {
@@ -135,6 +137,10 @@ test_XCMSnExp_class_accessors <- function() {
     checkTrue(hasDetectedFeatures(xod))
     checkTrue(hasAlignedFeatures(xod))
     checkEquals(adjustedRtime(xod, bySample = TRUE), xs_2@rt$corrected)
+    ## rtime should now also return adjusted retention times
+    checkEquals(rtime(xod), adjustedRtime(xod))
+    checkEquals(rtime(xod, adjusted = FALSE), rtime(as(xod, "OnDiskMSnExp")))
+    checkEquals(rtime(xod, adjusted = TRUE), adjustedRtime(xod))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
     tmp <- unlist(adjustedRtime(xod, bySample = TRUE))
@@ -144,6 +150,10 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(names(adjustedRtime(xod)), names(rtime(xod)))
     ## Wrong assignments.
     checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
+    ## bracket subset
+    tmp <- xod[1]
+    checkTrue(length(tmp[[1]]) == 1)
+    checkTrue(length(xod[[1]]) == 1)
     .checkCreationOfEmptyObject()
 }
 
@@ -167,141 +177,132 @@ test_XCMSnExp_processHistory <- function() {
 }
 
 test_XCMSnExp_droppers <- function() {
-    ##checkTrue(FALSE)
+    ## How are the drop functions expected to work?
     .checkCreationOfEmptyObject()
-
+    type_feat_det <- xcms:::.PROCSTEP.FEATURE.DETECTION
+    type_feat_algn <- xcms:::.PROCSTEP.FEATURE.ALIGNMENT
+    type_rt_adj <- xcms:::.PROCSTEP.RTIME.CORRECTION
+    ## Perform alignment.
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    checkTrue(hasAlignedFeatures(od_xg))
+    checkTrue(length(processHistory(od_xg, type = type_feat_algn)) == 1)
+    ## Retention time adjustment.
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 1))
+    checkTrue(hasDetectedFeatures(od_xgr))
+    checkTrue(length(processHistory(od_xgr, type = type_feat_det)) == 1)
+    checkTrue(!hasAlignedFeatures(od_xgr))  ## These should have been removed
+    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(od_xgr))
+    checkTrue(length(processHistory(od_xgr, type = type_rt_adj)) == 1)
+    ## Most of the retention times are different
+    checkTrue(sum(features(od_xgr)[, "rt"] != features(od_x)[, "rt"]) >
+              nrow(features(od_x)) / 2)
+    ## Alignment after retention time adjustment.
+    od_xgrg <- groupFeatures(od_xgr, param = FeatureDensityParam())
+    checkTrue(hasDetectedFeatures(od_xgrg))
+    checkEquals(features(od_xgrg), features(od_xgr))
+    checkTrue(hasAdjustedRtime(od_xgrg))
+    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasAlignedFeatures(od_xgrg))
+    checkTrue(length(processHistory(od_xgrg, type = type_feat_algn)) == 2)
+       
+    ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropFeatures(od_x)
     checkTrue(!hasDetectedFeatures(res))
-
-    ## Add grouping.
-    od_2 <- od_x
-    od_2 <- xcms:::addProcessHistory(od_2,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    library(S4Vectors)
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_2) <- fd
-    ## Add retention time adjustment.
-    od_3 <- od_2
-    od_3 <- xcms:::addProcessHistory(od_3,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.RTIME.CORRECTION))
-    adjustedRtime(od_3) <- xs_2@rt$corrected
-    ## and grouping
-    od_4 <- od_3
-    od_4 <- xcms:::addProcessHistory(od_4,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    ## Tests
-    ## drop features:
-    res <- dropFeatures(od_2)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xg)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatures(od_3)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xgr)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatures(od_4)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ##
+    res <- dropFeatures(od_xgrg)
     checkTrue(!hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop feature groups
-    ## adjusted retention times are always dropped.
-    res <- dropFeatureGroups(od_x)
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    
+    ## 2) dropFeatureGroups:
+    ##    a) drop the feature groups and the latest related process history
+    ##    b) if retention time correction was performed AFTER the latest feature
+    ##       grouping, drop also the retention time correction and all related
+    ##       process histories.
+    res <- dropFeatureGroups(od_xg)
+    checkEquals(res, od_x)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    ## No feature groups - so there is nothing that this function does here.
+    res <- dropFeatureGroups(od_xgr)
+    checkEquals(res, od_xgr)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatureGroups(od_2)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    ## Remove the latest ones.
+    res <- dropFeatureGroups(od_xgrg)
+    checkEquals(res, od_xgr)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropFeatureGroups(od_3)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
 
-    res <- dropFeatureGroups(od_4)
+    ## 3) dropAdjustedRtime:
+    ##    a) drop the retention time adjustment and related process histories
+    ##    b) if grouping has been performed AFTER retention time correction,
+    ##       drop the feature alignment and all related process histories.
+    ##    c) if grouping has been performed BEFORE retention time correction,
+    ##       do nothing.
+    res <- dropAdjustedRtime(od_xg)
+    checkEquals(res, od_xg)
+    ## This drops also the process history for alignment.
+    res <- dropAdjustedRtime(od_xgr)
+    checkTrue(hasDetectedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(features(res), features(od_x))
+    checkEquals(res, od_x)
+    checkEquals(rtime(res), rtime(od_x))
+    checkEquals(rtime(res), rtime(od_xgr, adjusted = FALSE))
+    ## This drops also the feature alignment performed later.
+    res <- dropAdjustedRtime(od_xgrg)
     checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop aligned rtime
-    ## Feature alignments are only dropped if they were performed after the
-    ## retention time adjustments.
-    res <- dropAdjustedRtime(od_x)
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
     checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    res <- dropAdjustedRtime(od_2)
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Now dropping the adjusted retention time, but not the feature alignment.
-    res <- dropAdjustedRtime(od_3)
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(od_3))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
-
-    ## Drop adjusted retention time AND feature alignment.
-    res <- dropAdjustedRtime(od_4)
-    checkTrue(!hasAlignedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(od_4))
-    types <- unlist(lapply(processHistory(res), processType))
-    checkTrue(any(types == xcms:::.PROCSTEP.FEATURE.DETECTION))
-    checkTrue(!any(types == xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    checkTrue(!any(types == xcms:::.PROCSTEP.RTIME.CORRECTION))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(features(res), features(od_x))
+    checkEquals(res, od_x)
+    checkEquals(rtime(res), rtime(od_xgrg, adjusted = FALSE))
+    
     .checkCreationOfEmptyObject()
 }
 
@@ -346,6 +347,7 @@ test_XCMSnExp_inherited_methods <- function() {
     suppressWarnings(
         tmp_2 <- filterAcquisitionNum(od_x)
     )
+    checkTrue(length(tmp_2[[1]]) > 0)
     checkTrue(length(processHistory(tmp_2)) == 0)
     checkTrue(!hasDetectedFeatures(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
@@ -418,6 +420,7 @@ test_XCMSnExp_filterFile <- function() {
     checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(od_x, file = c(1, 3))
+    checkTrue(length(tmp[[1]]) == 1)
     checkTrue(!hasAdjustedRtime(tmp))
     checkTrue(!hasAlignedFeatures(tmp))
     checkTrue(all(features(tmp)[, "sample"] %in% c(1, 2)))
@@ -462,6 +465,7 @@ test_XCMSnExp_filterMz <- function() {
 
     ## Subset
     tmp <- filterMz(od_x2, mz = c(300, 400))
+    checkTrue(length(tmp[[1]]) == 1)
     checkException(tmp@msFeatureData$bla <- 3)
     checkTrue(length(tmp@spectraProcessingQueue) == 1)
     checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
@@ -485,16 +489,20 @@ test_XCMSnExp_filterRt <- function() {
 
     ## Testing with only feature data present:
     res <- filterRt(od_x2, rt = c(2700, 2900))
+    ## Check if the object is OK:
+    checkEquals(pData(res), pData(od_x2))
+    checkTrue(length(spectra(res)) > 0)
+    
     ## MsFeatureData has to be locked!
     checkException(res@msFeatureData$bla <- 3)
     ## Retention time has to be within the range.
     checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
     ## features have to be within the range.
-    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
-                  features(res)[, "rtmax"] <= 2900))
+    checkTrue(all(features(res)[, "rt"] >= 2700 &
+                  features(res)[, "rt"] <= 2900))
     ## features have to match the subsetted ones.
-    are_within <- features(od_x2)[, "rtmin"] >= 2700 &
-        features(od_x2)[, "rtmax"] <= 2900
+    are_within <- features(od_x2)[, "rt"] >= 2700 &
+        features(od_x2)[, "rt"] <= 2900
     checkEquals(features(res), features(od_x2)[are_within,])
     ## Have a feature detection process history.
     checkEquals(processType(processHistory(res)[[1]]),
@@ -508,112 +516,124 @@ test_XCMSnExp_filterRt <- function() {
     res <- filterRt(od_x2, rt = c(10, 20))
     checkTrue(length(res) == 0)
 
-    ## With adjusted retention times.
-    ## new_e <- xcms:::.copy_env(od_x2@msFeatureData)
-    od_x2 <- od_x
-    xcms:::adjustedRtime(od_x2) <- xs_2@rt$corrected
-    od_x2 <- xcms:::addProcessHistory(od_x2,
-                                      xcms:::ProcessHistory(
-                                                 type. = xcms:::.PROCSTEP.RTIME.CORRECTION,
-                                                 date. = date(),
-                                                 fileIndex. = 1:length(fileNames(od_x2))))
+    ## With feature groups:
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    res <- filterRt(od_xg, rt = c(2700, 2900))
+    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xg))
+    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xg))
+    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Feature alignment")) == 1)
+    ## Retention time has to be within the range.
+    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    ## features have to be within the range.
+    checkTrue(all(features(res)[, "rt"] >= 2700 &
+                  features(res)[, "rt"] <= 2900))
+    ## feature groups have to be within range:
+    checkTrue(all(featureGroups(res)$rtmed >= 2700 &
+                                    featureGroups(res)$rtmed <= 2900))
+    ## All feature idx have to match.
+    checkTrue(all(unlist(featureGroups(res)$featureidx) %in%
+                  1:nrow(features(res))))
+    ## Filter such that we don't have any features.
+    res <- filterRt(od_xg, rt = c(4200, 4400))
+    checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
+    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(length(processHistory(res)) == 0)
+    ## No rt
+    res <- filterRt(od_xg, rt = c(10, 20))
+    checkTrue(length(res) == 0)
+
+    ## With adjusted retention time.
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.5))
+    res <- filterRt(od_xgr, rt = c(2700, 2900))
+    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xgr))
+    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xgr))
+    checkEquals(hasAdjustedRtime(res), hasAdjustedRtime(od_xgr))
+    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Feature alignment")) == 1)
+    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
+    ## Retention time has to be within the range. By default we're supposed to
+    ## filter by adjusted rtime.
+    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkTrue(!all(rtime(res, adjusted = FALSE) >= 2700 &
+                   rtime(res, adjusted = FALSE) <= 2900))
+    ## Check if rtime is what we expect it to be:
+    keep_em <- rtime(od_xgr) >= 2700 & rtime(od_xgr) <= 2900
+    checkEquals(rtime(res), rtime(od_xgr)[keep_em])
+    checkEquals(rtime(res, adjusted = FALSE),
+                rtime(od_xgr, adjusted = FALSE)[keep_em])
+    checkEquals(adjustedRtime(res), adjustedRtime(od_xgr)[keep_em])
+    ## Check features.
+    keep_em <- features(od_xgr)[, "rt"] >= 2700 & features(od_xgr)[, "rt"] <= 2900
+    checkEquals(features(od_xgr)[keep_em, ], features(res))
     ## Filtering for rt with no features drops also the adjusted rt.
-    res <- filterRt(od_x2, rt = c(4200, 4400))
+    res <- filterRt(od_xgr, rt = c(4200, 4400))
     checkTrue(!hasDetectedFeatures(res))
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res)) == 0)
-    ## Correct filtering:
-    res <- filterRt(od_x2, rt = c(2700, 2900))
-    checkEquals(processType(processHistory(res)[[2]]),
-                xcms:::.PROCSTEP.RTIME.CORRECTION)
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(res))
-    keep_em <- rtime(od_x2) >= 2700 & rtime(od_x2) <= 2900
-    checkEquals(rtime(res), rtime(od_x2)[keep_em])
-    checkEquals(adjustedRtime(res), adjustedRtime(od_x2)[keep_em])
-    ## Filter using adjusted retention times.
-    res_2 <- filterRt(od_x2, rt = c(2700, 2900), adjusted = TRUE)
-    checkEquals(processType(processHistory(res)[[2]]),
-                xcms:::.PROCSTEP.RTIME.CORRECTION)
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(hasAdjustedRtime(res))
-    ## That might not be true anymore.
-    checkTrue(!all(rtime(res_2) >= 2700 & rtime(res_2) <= 2900))
-    checkTrue(all(adjustedRtime(res_2) >= 2700 & adjustedRtime(res_2) <= 2900))
-    keep_em <- adjustedRtime(od_x2) >= 2700 & adjustedRtime(od_x2) <= 2900
-    checkEquals(rtime(res_2), rtime(od_x2)[keep_em])
-    checkEquals(adjustedRtime(res_2), adjustedRtime(od_x2)[keep_em])
-
-    ## Grouping with adjusted retention time.
-    library(S4Vectors)
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_x2) <- fd
-    od_x2 <- xcms:::addProcessHistory(od_x2,
-                                      xcms:::ProcessHistory(
-                                                 type. = xcms:::.PROCSTEP.FEATURE.ALIGNMENT,
-                                                 date. = date(),
-                                                 fileIndex. = 1:length(fileNames(od_x2))))
-    checkTrue(hasDetectedFeatures(od_x2))
-    checkTrue(hasAdjustedRtime(od_x2))
-    checkTrue(hasAlignedFeatures(od_x2))
-    ## empty
-    res <- filterRt(od_x2, rt = c(4200, 4400))
+    ## Enforce filtering on adjusted:
+    ## checkEquals(filterRt(od_xgr, rt = c(2700, 2900)),
+    ##             filterRt(od_xgr, rt = c(2700, 2900), adjusted = TRUE))
+    ## Filter using raw retention times
+    res <- filterRt(od_xgr, rt = c(2700, 2900), adjusted = FALSE)
+    checkTrue(!all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkTrue(all(rtime(res, adjusted = FALSE) >= 2700 &
+                  rtime(res, adjusted = FALSE) <= 2900))
+    ## Features - can not really check here.
+    checkTrue(all(features(res)[, "rt"] >= 2700 &
+                  features(res)[, "rt"] <= 2900))
+    
+    ## Adjusted retention time AND grouping
+    od_xgrg <- groupFeatures(od_xgr, param = FeatureDensityParam())
+    res <- filterRt(od_xgrg, rt = c(2700, 2900))
+    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xgrg))
+    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xgrg))
+    checkEquals(hasAdjustedRtime(res), hasAdjustedRtime(od_xgrg))
+    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Feature alignment")) == 2)
+    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
+    ## Retention time has to be within the range. By default we're supposed to
+    ## filter by adjusted rtime.
+    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkTrue(!all(rtime(res, adjusted = FALSE) >= 2700 &
+                   rtime(res, adjusted = FALSE) <= 2900))
+    ## Check if rtime is what we expect it to be:
+    keep_em <- rtime(od_xgrg) >= 2700 & rtime(od_xgrg) <= 2900
+    checkEquals(rtime(res), rtime(od_xgrg)[keep_em])
+    checkEquals(rtime(res, adjusted = FALSE),
+                rtime(od_xgrg, adjusted = FALSE)[keep_em])
+    checkEquals(adjustedRtime(res), adjustedRtime(od_xgrg)[keep_em])
+    ## Check features.
+    keep_em <- features(od_xgrg)[, "rt"] >= 2700 & features(od_xgrg)[, "rt"] <= 2900
+    checkEquals(features(od_xgrg)[keep_em, ], features(res))
+    ## Feature groups.
+    checkTrue(all(featureGroups(res)$rtmed >= 2700 &
+                                    featureGroups(res)$rtmed <= 2900))
+    validObject(res)
+    ## Filtering for rt with no features drops also the adjusted rt.
+    res <- filterRt(od_xgrg, rt = c(4200, 4400))
     checkTrue(!hasDetectedFeatures(res))
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasAlignedFeatures(res))
     checkTrue(length(processHistory(res)) == 0)
-    ##
-    res <- filterRt(od_x2, rt = c(2700, 2900))
-    checkEquals(processType(processHistory(res)[[3]]),
-                xcms:::.PROCSTEP.FEATURE.ALIGNMENT)
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
-                  features(res)[, "rtmax"] <= 2900))
-    checkTrue(hasAdjustedRtime(res))
-    keep_em <- rtime(od_x2) >= 2700 & rtime(od_x2) <= 2900
-    checkEquals(rtime(res), rtime(od_x2)[keep_em])
-    checkEquals(adjustedRtime(res), adjustedRtime(od_x2)[keep_em])
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(all(featureGroups(res)[, "rtmin"] >= 2700 &
-                  featureGroups(res)[, "rtmax"] <= 2900))
-    validObject(res)
+    ## Enforce filtering on adjusted:
+    ## checkEquals(filterRt(od_xgrg, rt = c(2700, 2900)),
+    ##             filterRt(od_xgrg, rt = c(2700, 2900), adjusted = TRUE))
+    ## Filter using raw retention times
+    res <- filterRt(od_xgrg, rt = c(2700, 2900), adjusted = FALSE)
+    checkTrue(!all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkTrue(all(rtime(res, adjusted = FALSE) >= 2700 &
+                  rtime(res, adjusted = FALSE) <= 2900))
+    ## Features - can not really check here.
+    checkTrue(all(features(res)[, "rt"] >= 2700 &
+                  features(res)[, "rt"] <= 2900))
 
-    ## Grouping without adjusted retention time.
-    od_x2 <- od_x
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_x2) <- fd
-    od_x2 <- xcms:::addProcessHistory(od_x2,
-                                      xcms:::ProcessHistory(
-                                                 type. = xcms:::.PROCSTEP.FEATURE.ALIGNMENT,
-                                                 date. = date(),
-                                                 fileIndex. = 1:length(fileNames(od_x2))))
-    checkTrue(hasDetectedFeatures(od_x2))
-    checkTrue(!hasAdjustedRtime(od_x2))
-    checkTrue(hasAlignedFeatures(od_x2))
-    ## empty
-    res <- filterRt(od_x2, rt = c(4200, 4400))
-    checkTrue(!hasDetectedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(!hasAlignedFeatures(res))
-    checkTrue(length(processHistory(res)) == 0)
-    ##
-    res <- filterRt(od_x2, rt = c(2700, 2900))
-    checkEquals(processType(processHistory(res)[[2]]),
-                xcms:::.PROCSTEP.FEATURE.ALIGNMENT)
-    checkTrue(hasDetectedFeatures(res))
-    checkTrue(all(features(res)[, "rtmin"] >= 2700 &
-                  features(res)[, "rtmax"] <= 2900))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(hasAlignedFeatures(res))
-    checkTrue(all(featureGroups(res)[, "rtmin"] >= 2700 &
-                  featureGroups(res)[, "rtmax"] <= 2900))
-    validObject(res)
 }
 
 ## Test the coercion method.
 test_as_XCMSnExp_xcmsSet <- function() {
+    od_x <- faahko_xod
     res <- xcms:::.XCMSnExp2xcmsSet(od_x)
     res <- as(od_x, "xcmsSet")
     ## Results should be the same as in xs.
@@ -627,35 +647,30 @@ test_as_XCMSnExp_xcmsSet <- function() {
     checkEquals(profStep(res), 0.1)
     ## Can we further process this?
     sampclass(res) <- rep("K", 3)
-    res <- group(res)
-    res <- fillPeaks(res)
+    res <- group.density(res, minfrac = 0.5)
+    ## res <- fillPeaks(res)
 
     ## Add groups.
-    od_2 <- od_x
-    od_2 <- xcms:::addProcessHistory(od_2,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT))
-    library(S4Vectors)
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_2) <- fd
-    ## Add retention time adjustment.
-    od_3 <- od_2
-    od_3 <- xcms:::addProcessHistory(od_3,
-                                     xcms:::ProcessHistory(fileIndex. = 1:3,
-                                                           type = xcms:::.PROCSTEP.RTIME.CORRECTION))
-    adjustedRtime(od_3) <- xs_2@rt$corrected
+    od_2 <- groupFeatures(od_x, param = FeatureDensityParam())
+    checkEquals(featureGroups(od_2)$featureidx, groupidx(res))
 
+    ## rt correction
+    od_3 <- adjustRtime(od_2, param = FeatureGroupsParam(minFraction = 1,
+                                                         span = 0.4))
     ## With groups.
     res <- as(od_2, "xcmsSet")
-    checkEquals(res@groups, xs_2@groups)
-    checkEquals(res@groupidx, xs_2@groupidx)
+    checkEquals(res@groups,
+                S4Vectors::as.matrix(featureGroups(od_2)[, -ncol(featureGroups(od_2))]))
+    checkEquals(res@groupidx, featureGroups(od_2)$featureidx)
 
     ## With adjusted retention time.
+    res_2 <- retcor.peakgroups(res, missing = 0, span = 0.4)
     res <- as(od_3, "xcmsSet")
     checkTrue(any(unlist(res@rt$raw) != unlist(res@rt$corrected)))
-    checkEquals(res@rt$corrected, xs_2@rt$corrected)
-
+    checkEquals(res@rt$corrected, res_2@rt$corrected)
+    checkEquals(features(od_3), peaks(res))
+    checkEquals(peaks(res_2), peaks(res))
+    
     ## Test with different binning methods:
     ## o binlin
     mfp <- MatchedFilterParam(impute = "lin", binSize = 3)
@@ -751,6 +766,7 @@ test_MsFeatureData_class_accessors <- function() {
 ############################################################
 ## Test getEIC alternatives.
 dontrun_getEIC_alternatives <- function() {
+    library(RUnit)
     library(xcms)
 
     fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -759,6 +775,34 @@ dontrun_getEIC_alternatives <- function() {
     od <- readMSData2(fls)
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- detectFeatures(od, param = cwp)
+
+    rtr <- c(2600, 2601)
+    res <- filterRt(od_x, rt = rtr)
+
+    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
+    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
+
+    rtr <- as.matrix(featureGroups(od_xg)[1:5, c("rtmin", "rtmax")])
+    mzr <- as.matrix(featureGroups(od_xg)[1:5, c("mzmin", "mzmax")])
+
+    system.time(
+        res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    system.time(
+        res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    )
+    
+    library(profvis)
+    profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
+    
+
+    ## Compare with getEIC
     xs <- as(od_x, "xcmsSet")
     sampclass(xs) <- rep("KO", 3)
     xs_2 <- group(xs)
@@ -776,6 +820,14 @@ dontrun_getEIC_alternatives <- function() {
     ) ## 3.7sec
 
     ## Now try to do the same using MSnbase stuff.
+    system.time(
+        res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ) ## 0.7 sec.
+    system.time(
+        res <- xcms:::.extractMsData(od_x, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ) ## 0.74 sec.
+    
+    
     rts <- rtime(od_x)
     idx <- apply(rtr, MARGIN = 1, function(z) {
         which(rts >= z[1] & rts <= z[2])
@@ -785,43 +837,6 @@ dontrun_getEIC_alternatives <- function() {
     system.time(
         scts <- spectra(od_ss)
     ) ## 0.7 secs.
-
-    ## This is somewhat similar to the getEIC, just that it extracts for each
-    ## mz/rt range pair a data.frame with rt, mz, intensity per sample.
-    ## This version works on a single rt/mz range pair at a time.
-    ## CHECK:
-    ## 1) mz range outside.
-    ## 2) rt range outside.
-    extractMsData <- function(x, rtrange, mzrange) {
-        ## Subset the OnDiskMSnExp
-        fns <- fileNames(x)
-        tmp <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-        fromF <- match(fileNames(tmp), fns)
-        ## Now extract mz-intensity pairs from each spectrum.
-        ## system.time(
-        ## suppressWarnings(
-        ##     dfs <- spectrapply(tmp, as.data.frame)
-        ## )
-        ## ) ## 0.73sec
-        ## system.time(
-        suppressWarnings(
-            dfs <- spectrapply(tmp, function(z) {
-                if (peaksCount(z))
-                    return(data.frame(rt = rep_len(rtime(z), length(z@mz)),
-                                      as.data.frame(z)))
-                else
-                    return(data.frame(rt = numeric(), mz = numeric(),
-                                      i = integer()))
-            })
-        )
-        ## ) ## 0.701
-        ## dfs[] <- mapply(FUN = function(y, z) {
-        ##     return(cbind(rt = rep.int(z, nrow(y)), y))
-        ## }, y = dfs, z = rtime(tmp), SIMPLIFY = FALSE, USE.NAMES = FALSE)
-        res <- vector(mode = "list", length = length(fns))
-        res[fromF] <- split(dfs, f = fromFile(tmp))
-        return(lapply(res, do.call, what = rbind))
-    }
 
     ## Tests.
     rtrange <- rtr[3, ]

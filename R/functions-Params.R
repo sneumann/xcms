@@ -182,3 +182,90 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                maxCharge = as.integer(maxCharge),
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
+
+
+############################################################
+## FeatureDensityParam
+
+##' @return The \code{FeatureDensityParam} function returns a
+##' \code{FeatureDensityParam} class instance with all of the settings
+##' specified for feature alignment based on feature densities.
+##' 
+##' @rdname groupFeatures-density
+FeatureDensityParam <- function(sampleGroups = numeric(), bw = 30,
+                                minFraction = 0.5, minSamples = 1,
+                                binSize = 0.25, maxFeatures = 50) {
+    return(new("FeatureDensityParam", sampleGroups = sampleGroups, bw = bw,
+               minFraction = minFraction, minSamples = minSamples,
+               binSize = binSize, maxFeatures = maxFeatures))
+}
+
+############################################################
+## MzClustParam
+
+##' @return The \code{MzClustParam} function returns a
+##' \code{MzClustParam} class instance with all of the settings
+##' specified for high resolution single spectra feature alignment.
+##' 
+##' @rdname groupFeatures-mzClust
+MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
+                                minFraction = 0.5, minSamples = 1) {
+    return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
+               absMz = absMz, minFraction = minFraction,
+               minSamples = minSamples))
+}
+
+
+############################################################
+## NearestFeaturesParam
+
+##' @return The \code{NearestFeaturesParam} function returns a
+##' \code{NearestFeaturesParam} class instance with all of the settings
+##' specified for high resolution single spectra feature alignment.
+##' 
+##' @rdname groupFeatures-nearest
+NearestFeaturesParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
+                                 absMz = 0.2, absRt = 15, kNN = 10) {
+    return(new("NearestFeaturesParam", sampleGroups = sampleGroups,
+               mzVsRtBalance = mzVsRtBalance, absMz = absMz, absRt = absRt,
+               kNN = kNN))
+}
+
+
+############################################################
+## FeatureGroupsParam
+
+##' @return The \code{FeatureGroupsParam} function returns a
+##' \code{FeatureGroupsParam} class instance with all of the settings
+##' specified for retention time adjustment based on \emph{house keeping}
+##' feature groups.
+##' 
+##' @rdname adjustRtime-featureGroups
+FeatureGroupsParam <- function(minFraction = 0.9, extraFeatures = 1,
+                               smooth = "loess", span = 0.2,
+                               family = "gaussian") {
+    return(new("FeatureGroupsParam", minFraction = minFraction,
+               extraFeatures = extraFeatures, smooth = smooth, span = span,
+               family = family))
+}
+
+
+############################################################
+## ObiwarpParam
+
+##' @return The \code{ObiwarpParam} function returns a
+##' \code{ObiwarpParam} class instance with all of the settings
+##' specified for obiwarp retention time adjustment and alignment.
+##' 
+##' @rdname adjustRtime-obiwarp
+ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
+                         distFun = "cor_opt", gapInit = numeric(),
+                         gapExtend = numeric(), factorDiag = 2, factorGap = 1,
+                         localAlignment = FALSE, initPenalty = 0) {
+    return(new("ObiwarpParam", binSize = binSize,
+               centerSample = as.integer(centerSample),
+               response = as.integer(response), distFun = distFun,
+               gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
+               factorGap = factorGap, localAlignment = localAlignment,
+               initPenalty = initPenalty))
+}

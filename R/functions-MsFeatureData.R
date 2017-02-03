@@ -1,6 +1,33 @@
 ## Functions for MsFeatureData classes.
 #' @include DataClasses.R
 
+##' Validates a 'feature' matrix or data.frame and ensures that it contains all
+##' required columns and that all columns are of numeric data type.
+##' @return \code{TRUE} or a \code{character} with the error message.
+##' @noRd
+.validFeatureMatrix <- function(x) {
+    msg <- validMsg(NULL, NULL)
+    if (length(x)) {
+        if (!(is.matrix(x) | is.data.frame(x)))
+            return(paste0("'features' has to be a matrix or a data.frame!"))
+        hasReqCols <- .XCMS_REQ_FEATS_COLS %in% colnames(x)
+        if (any(!hasReqCols))
+            return(paste0("Required columns ",
+                          paste0("'", .XCMS_REQ_FEATS_COLS[!hasReqCols],
+                                 "'", collapse = ", "), " not",
+                          " present in 'features' matrix!"))
+        ## Check data.types - all have to be numeric.
+        typeOK <- apply(x[, .XCMS_REQ_FEATS_COLS, drop = FALSE], MARGIN = 2,
+                        is.numeric)
+        if (any(!typeOK))
+            return(paste0("Values in column(s) ",
+                          paste0("'", names(typeOK)[!typeOK], "'", collapse = ", ")),
+                   " of the 'features' matrix are not numeric!")
+    }
+    return(TRUE)
+}
+
+
 ##' @description Performs a validation check of all elements within the object:
 ##' 1) Allowed are: features (matrix), featureGroups (DataFrame) and
 ##'    adjustedRtime (list).
@@ -20,19 +47,9 @@ validateMsFeatureData <- function(x) {
         }
         haveFts <- any(ks == "features")
         if (haveFts) {
-            if (is.matrix(x$features)) {
-                hasReqCols <- .XCMS_REQ_FEATS_COLS %in% colnames(x$features)
-                if (any(!hasReqCols))
-                    msg <- validMsg(msg,
-                                    paste0("Required columns ",
-                                           paste0("'", .XCMS_REQ_FEATS_COLS[!hasReqCols],
-                                                  "'", collapse = ", "), " not",
-                                           " present in 'features' matrix!"))
-            } else {
-                msg <- validMsg(msg, paste0("The 'features' element has to be ",
-                                            "of type 'matrix' and not '",
-                                            class(x$features), "'!"))
-            }
+            OK <- .validFeatureMatrix(x$features)
+            if (is.character(OK))
+                msg <- validMsg(msg, OK)
         }
         haveFGs <- any(ks == "featureGroups")
         if (haveFGs) {

@@ -18,7 +18,8 @@ results.}
 
 \S4method{filterMz}{XCMSnExp}(object, mz, msLevel., ...)
 
-\S4method{filterRt}{XCMSnExp}(object, rt, msLevel., adjusted = FALSE)
+\S4method{filterRt}{XCMSnExp}(object, rt, msLevel.,
+  adjusted = hasAdjustedRtime(object))
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object.}
@@ -48,22 +49,28 @@ retention times (\code{adjusted = TRUE}).}
 All methods return an \code{\link{XCMSnExp}} object.
 }
 \description{
-The \code{filterFile} method allows to reduce the
+\code{filterFile}: allows to reduce the
 \code{\link{XCMSnExp}} to data from only certain files. Identified features
 for these files are retained while eventually all present feature
 alignment/grouping information and adjusted retention times are dropped..
 
-The \code{filterMz} method filters the data set based on the
+\code{filterMz}: filters the data set based on the
 provided mz value range. All features and feature groups (aligned features)
 falling completely within the provided mz value range are retained (if their
 minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
 Adjusted retention times, if present, are not altered by the filtering.
 
-The \code{filterRt} method filters the data set based on the
+\code{filterRt}: filters the data set based on the
 provided retention time range. All features and feature groups within
-the specified retention time window are retained. Filtering by retention time
-does not drop any preprocessing results. The method returns an empty object
-if no spectrum or feature is within the specified retention time range.
+the specified retention time window are retained (i.e. if the retention time
+corresponding to the feature's peak is within the specified rt range).
+If retention time correction has been performed, the method will by default
+filter the object by adjusted retention times. The argument \code{adjusted}
+allows to specify manually whether filtering should be performed by raw or
+adjusted retention times. Filtering by retention time does not drop any
+preprocessing results.
+The method returns an empty object if no spectrum or feature is within the
+specified retention time range.
 }
 \note{
 The \code{filterFile} method removes also process history steps not

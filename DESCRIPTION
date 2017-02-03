@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.51.4
-Date: 2017-01-16
+Version: 1.51.6
+Date: 2017-02-03
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -16,7 +16,7 @@ Depends:
     BiocGenerics,
     ProtGenerics,
     Biobase,
-    MSnbase (>= 2.1.4)
+    MSnbase (>= 2.1.10)
 Imports:
     lattice,
     RColorBrewer,
@@ -24,7 +24,7 @@ Imports:
     RANN,
     multtest,
     MassSpecWavelet (>= 1.5.2),
-    BiocParallel,
+    BiocParallel (>= 1.8.0),
     S4Vectors
 Suggests:
     BiocStyle,
@@ -54,14 +54,16 @@ Collate:
     'c.R'
     'cwTools.R'
     'databases.R'
+    'functions-MsFeatureData.R'
+    'do_adjustRtime-functions.R'
     'functions-binning.R'
     'do_detectFeatures-functions.R'
+    'functions-Params.R'
+    'do_groupFeatures-functions.R'
     'fastMatch.R'
     'functions-utils.R'
     'functions-IO.R'
-    'functions-MsFeatureData.R'
     'functions-OnDiskMSnExp.R'
-    'functions-Params.R'
     'functions-ProcessHistory.R'
     'functions-XCMSnExp.R'
     'functions-xcmsEIC.R'
