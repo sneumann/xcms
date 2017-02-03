@@ -268,12 +268,24 @@ to the massifquant and centWave algorithm can be passed with a
 }
 \examples{
 
-## Create a MassifquantParam object
+## Create a MSWParam object
 mp <- MSWParam()
 ## Change snthresh parameter
 snthresh(mp) <- 15
 mp
 
+## Loading a small subset of direct injection, single spectrum files
+library(msdata)
+fticrf <- list.files(system.file("fticr", package = "msdata"),
+                    recursive = TRUE, full.names = TRUE)
+fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+
+## Perform the MSW feature detection on these:
+p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+             SNR.method = "data.mean", winSize.noise = 500)
+fticr <- detectFeatures(fticr, param = p)
+
+head(features(fticr))
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

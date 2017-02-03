@@ -4,6 +4,7 @@
 ## o profMat method for xcmsRaw.
 ## o profStep<- method for xcmsRaw.
 ## o profMethod<- method for xcmsRaw.
+## o profMethod for XCMSnExp and OnDiskMSnExp
 
 ## library(faahKO)
 fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
@@ -71,6 +72,24 @@ test_profMat <- function() {
                                           baselevel = 666666))
     checkEquals(xr_3@env$profile, profMat(xr_3))
 }
+
+test_profMat_OnDiskMSnExp <- function() {
+    ## Get it from all 3 files in one go.
+    res <- profMat(faahko_od, step = 2)
+    res_2 <- profMat(xcmsRaw(faahko_3_files[2], profstep = 0), step = 2)
+    checkEquals(res_2, res[[2]])
+    res_2 <- profMat(xcmsRaw(faahko_3_files[3], profstep = 0), step = 2)
+    checkEquals(res_2, res[[3]])
+
+    res_2 <- profMat(faahko_xod, step = 2)
+    checkEquals(res, res_2)
+
+    res <- profMat(faahko_od, step = 2, method = "binlin", fileIndex = 2)
+    res_2 <- profMat(xcmsRaw(faahko_3_files[2], profstep = 0), step = 2,
+                     method = "binlin")
+    checkEquals(res_2, res[[1]])
+}
+
 
 ## profStep<-
 test_profStepReplace <- function() {

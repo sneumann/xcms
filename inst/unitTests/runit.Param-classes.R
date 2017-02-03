@@ -479,3 +479,309 @@ test_CentWavePredIsoParam <- function() {
     L <- xcms:::.param2list(p)
     checkEquals(L$snthresh, 123)
 }
+
+test_FeatureDensityParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("FeatureDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- FeatureDensityParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("FeatureDensityParam", bw = 3)
+    checkEquals(bw(p), 3)
+    bw(p) <- 20
+    checkEquals(bw(p), 20)
+    p <- FeatureDensityParam(bw = 33)
+    checkEquals(bw(p), 33)
+    checkException(FeatureDensityParam(bw = -4))
+
+    ## minFraction
+    p <- new("FeatureDensityParam", minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    minFraction(p) <- 0.2
+    checkEquals(minFraction(p), 0.2)
+    p <- FeatureDensityParam(minFraction = 0.4)
+    checkEquals(minFraction(p), 0.4)
+    checkException(FeatureDensityParam(minFraction = -4))
+    checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
+    checkException(minFraction(p) <- 2)
+
+    ## minSamples
+    p <- new("FeatureDensityParam", minSamples = 3)
+    checkEquals(minSamples(p), 3)
+    minSamples(p) <- 20
+    checkEquals(minSamples(p), 20)
+    p <- FeatureDensityParam(minSamples = 33)
+    checkEquals(minSamples(p), 33)
+    checkException(FeatureDensityParam(minSamples = -4))
+
+    ## binSize
+    p <- new("FeatureDensityParam", binSize = 3)
+    checkEquals(binSize(p), 3)
+    binSize(p) <- 20
+    checkEquals(binSize(p), 20)
+    p <- FeatureDensityParam(binSize = 0.3)
+    checkEquals(binSize(p), 0.3)
+    checkException(FeatureDensityParam(binSize = -4))
+
+    ## maxFeatures
+    p <- new("FeatureDensityParam", maxFeatures = 3)
+    checkEquals(maxFeatures(p), 3)
+    maxFeatures(p) <- 20
+    checkEquals(maxFeatures(p), 20)
+    p <- FeatureDensityParam(maxFeatures = 33)
+    checkEquals(maxFeatures(p), 33)
+    checkException(FeatureDensityParam(maxFeatures = -4))
+}
+
+test_MzClustParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("MzClustParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- MzClustParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("MzClustParam", ppm = 3)
+    checkEquals(ppm(p), 3)
+    ppm(p) <- 20
+    checkEquals(ppm(p), 20)
+    p <- MzClustParam(ppm = 33)
+    checkEquals(ppm(p), 33)
+    checkException(MzClustParam(ppm = -4))
+
+    p <- new("MzClustParam", absMz = 3)
+    checkEquals(absMz(p), 3)
+    absMz(p) <- 20
+    checkEquals(absMz(p), 20)
+    p <- MzClustParam(absMz = 33)
+    checkEquals(absMz(p), 33)
+    checkException(MzClustParam(absMz = -4))
+    
+    ## minFraction
+    p <- new("MzClustParam", minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    minFraction(p) <- 0.2
+    checkEquals(minFraction(p), 0.2)
+    p <- MzClustParam(minFraction = 0.4)
+    checkEquals(minFraction(p), 0.4)
+    checkException(MzClustParam(minFraction = -4))
+    checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
+    checkException(minFraction(p) <- 2)
+
+    ## minSamples
+    p <- new("MzClustParam", minSamples = 3)
+    checkEquals(minSamples(p), 3)
+    minSamples(p) <- 20
+    checkEquals(minSamples(p), 20)
+    p <- MzClustParam(minSamples = 33)
+    checkEquals(minSamples(p), 33)
+    checkException(MzClustParam(minSamples = -4))
+}
+
+test_NearestFeaturesParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("NearestFeaturesParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
+    sampleGroups(p) <- 1:4
+    checkEquals(sampleGroups(p), 1:4)
+    p <- NearestFeaturesParam(sampleGroups = c("a", "a", "b"))
+    checkEquals(sampleGroups(p), c("a", "a", "b"))
+
+    p <- new("NearestFeaturesParam", mzVsRtBalance = 3)
+    checkEquals(mzVsRtBalance(p), 3)
+    mzVsRtBalance(p) <- 20
+    checkEquals(mzVsRtBalance(p), 20)
+    p <- NearestFeaturesParam(mzVsRtBalance = 33)
+    checkEquals(mzVsRtBalance(p), 33)
+    checkException(NearestFeaturesParam(mzVsRtBalance = -4))
+    checkException(NearestFeaturesParam(mzVsRtBalance = 1:4))
+
+    p <- new("NearestFeaturesParam", absMz = 3)
+    checkEquals(absMz(p), 3)
+    absMz(p) <- 20
+    checkEquals(absMz(p), 20)
+    p <- NearestFeaturesParam(absMz = 33)
+    checkEquals(absMz(p), 33)
+    checkException(NearestFeaturesParam(absMz = -4))
+    checkException(NearestFeaturesParam(absMz = 1:3))
+
+    p <- new("NearestFeaturesParam", absRt = 3)
+    checkEquals(absRt(p), 3)
+    absRt(p) <- 20
+    checkEquals(absRt(p), 20)
+    p <- NearestFeaturesParam(absRt = 33)
+    checkEquals(absRt(p), 33)
+    checkException(NearestFeaturesParam(absRt = -4))
+    checkException(NearestFeaturesParam(absRt = 1:3))
+    
+    p <- new("NearestFeaturesParam", kNN = 3)
+    checkEquals(kNN(p), 3)
+    kNN(p) <- 20
+    checkEquals(kNN(p), 20)
+    p <- NearestFeaturesParam(kNN = 33)
+    checkEquals(kNN(p), 33)
+    checkException(NearestFeaturesParam(kNN = -4))
+    checkException(NearestFeaturesParam(kNN = 1:3))
+}
+
+test_FeatureGroupsParam <- function() {
+    ## Check getter/setter methods:
+    p <- new("FeatureGroupsParam", minFraction = 0.8)
+    checkEquals(minFraction(p), 0.8)
+    minFraction(p) <- 0.3
+    checkEquals(minFraction(p), 0.3)
+    p <- FeatureGroupsParam(minFraction = 0.7)
+    checkEquals(minFraction(p), 0.7)
+    checkException(minFraction(p) <- c(2, 2))
+    checkException(minFraction(p) <- -1)
+    checkException(minFraction(p) <- 3)
+    
+    p <- new("FeatureGroupsParam", extraFeatures = 2)
+    checkEquals(extraFeatures(p), 2)
+    extraFeatures(p) <- 0.3
+    checkEquals(extraFeatures(p), 0.3)
+    p <- FeatureGroupsParam(extraFeatures = 7)
+    checkEquals(extraFeatures(p), 7)
+    checkException(extraFeatures(p) <- c(2, 2))
+    checkException(extraFeatures(p) <- -1)
+
+    p <- new("FeatureGroupsParam", span = 0.5)
+    checkEquals(span(p), 0.5)
+    span(p) <- 0.3
+    checkEquals(span(p), 0.3)
+    p <- FeatureGroupsParam(span = 7)
+    checkEquals(span(p), 7)
+    checkException(span(p) <- c(2, 2))
+    checkException(span(p) <- -1)
+
+    p <- new("FeatureGroupsParam", smooth = "linear")
+    checkEquals(smooth(p), "linear")
+    smooth(p) <- "loess"
+    checkEquals(smooth(p), "loess")
+    p <- FeatureGroupsParam(smooth = "linear")
+    checkEquals(smooth(p), "linear")
+    checkException(smooth(p) <- "other")
+    checkException(smooth(p) <- c("linear", "loess"))
+
+    p <- new("FeatureGroupsParam", family = "symmetric")
+    checkEquals(family(p), "symmetric")
+    family(p) <- "gaussian"
+    checkEquals(family(p), "gaussian")
+    p <- FeatureGroupsParam(family = "symmetric")
+    checkEquals(family(p), "symmetric")
+    checkException(family(p) <- "other")
+    checkException(family(p) <- c("symmetric", "gaussian"))
+}
+
+
+test_ObiwarpParam <- function() {
+    library(xcms)
+    library(RUnit)
+    ## Check getter/setter methods:
+    p <- new("ObiwarpParam", binSize = 0.8)
+    checkEquals(binSize(p), 0.8)
+    binSize(p) <- 0.3
+    checkEquals(binSize(p), 0.3)
+    p <- ObiwarpParam(binSize = 0.7)
+    checkEquals(binSize(p), 0.7)
+    checkException(binSize(p) <- c(2, 2))
+    checkException(binSize(p) <- -1)
+    
+    p <- new("ObiwarpParam", centerSample = 2L)
+    checkEquals(centerSample(p), 2L)
+    centerSample(p) <- 1
+    checkEquals(centerSample(p), 1L)
+    p <- ObiwarpParam(centerSample = 7)
+    checkEquals(centerSample(p), 7)
+    checkException(centerSample(p) <- c(2, 2))
+    checkException(centerSample(p) <- -1)
+
+    p <- new("ObiwarpParam", response = 3L)
+    checkEquals(response(p), 3L)
+    response(p) <- 5
+    checkEquals(response(p), 5L)
+    p <- ObiwarpParam(response = 7)
+    checkEquals(response(p), 7)
+    checkException(response(p) <- c(2, 2))
+    checkException(response(p) <- -1)
+    checkException(response(p) <- 200)
+
+    p <- new("ObiwarpParam", distFun = "euc")
+    checkEquals(distFun(p), "euc")
+    checkEquals(gapInit(p), 0.9)
+    checkEquals(gapExtend(p), 1.8)
+    distFun(p) <- "cor"
+    checkEquals(distFun(p), "cor")
+    checkEquals(gapInit(p), 0.3)
+    checkEquals(gapExtend(p), 2.4)
+    distFun(p) <- "cov"
+    checkEquals(distFun(p), "cov")
+    checkEquals(gapInit(p), 0)
+    checkEquals(gapExtend(p), 11.7)
+    distFun(p) <- "prd"
+    checkEquals(distFun(p), "prd")
+    checkEquals(gapInit(p), 0)
+    checkEquals(gapExtend(p), 7.8)
+    p <- ObiwarpParam(distFun = "cov")
+    checkEquals(distFun(p), "cov")
+    checkException(distFun(p) <- c("a", "cov"))
+    checkException(distFun(p) <- "other")
+
+    p <- new("ObiwarpParam", gapInit = 4.2)
+    checkEquals(gapInit(p), 4.2)
+    gapInit(p) <- 5.2
+    checkEquals(gapInit(p), 5.2)
+    p <- ObiwarpParam(gapInit = 3.1)
+    checkEquals(gapInit(p), 3.1)
+    checkException(gapInit(p) <- c(2, 2))
+    checkException(gapInit(p) <- -1)
+
+    p <- new("ObiwarpParam", gapExtend = 4.2)
+    checkEquals(gapExtend(p), 4.2)
+    gapExtend(p) <- 5.2
+    checkEquals(gapExtend(p), 5.2)
+    p <- ObiwarpParam(gapExtend = 3.1)
+    checkEquals(gapExtend(p), 3.1)
+    checkException(gapExtend(p) <- c(2, 2))
+    checkException(gapExtend(p) <- -1)
+
+    p <- new("ObiwarpParam", factorDiag = 4.2)
+    checkEquals(factorDiag(p), 4.2)
+    factorDiag(p) <- 1.2
+    checkEquals(factorDiag(p), 1.2)
+    p <- ObiwarpParam(factorDiag = 3.1)
+    checkEquals(factorDiag(p), 3.1)
+    checkException(factorDiag(p) <- c(2, 2))
+    checkException(factorDiag(p) <- -1)
+
+    p <- new("ObiwarpParam", factorGap = 4.2)
+    checkEquals(factorGap(p), 4.2)
+    factorGap(p) <- 4.2
+    checkEquals(factorGap(p), 4.2)
+    p <- ObiwarpParam(factorGap = 3.1)
+    checkEquals(factorGap(p), 3.1)
+    checkException(factorGap(p) <- c(2, 2))
+    checkException(factorGap(p) <- -1)
+
+    p <- new("ObiwarpParam", localAlignment = TRUE)
+    checkEquals(localAlignment(p), TRUE)
+    localAlignment(p) <- FALSE
+    checkEquals(localAlignment(p), FALSE)
+    p <- ObiwarpParam(localAlignment = TRUE)
+    checkEquals(localAlignment(p), TRUE)
+    checkException(localAlignment(p) <- c(TRUE, FALSE))
+
+    p <- new("ObiwarpParam", initPenalty = 4.2)
+    checkEquals(initPenalty(p), 4.2)
+    initPenalty(p) <- 2.2
+    checkEquals(initPenalty(p), 2.2)
+    p <- ObiwarpParam(initPenalty = 3.1)
+    checkEquals(initPenalty(p), 3.1)
+    checkException(factorGap(p) <- c(2, 2))
+    checkException(factorGap(p) <- -1)
+}
+

@@ -12,8 +12,10 @@ importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
 
+## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame")
+importMethodsFrom("S4Vectors", "as.matrix")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -43,7 +45,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
-                  "removeReporters", "smooth", "trimMz")
+                  "removeReporters", "smooth", "trimMz", "splitByFile", "[[")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -190,13 +192,19 @@ export(
     "do_detectFeatures_addPredIsoROIs",
     "imputeLinInterpol",
     "useOriginalCode",
-    "setAs"
+    "setAs",
+    "do_groupFeatures_density",
+    "do_groupFeatures_mzClust",
+    "do_groupFeatures_nearest",
+    "do_adjustRtime_featureGroups"
 )
 
 ## New analysis methods
 exportMethods(
     "showError",
-    "detectFeatures"
+    "detectFeatures",
+    "groupFeatures",
+    "adjustRtime"
 )
 
 ## New Param classes
@@ -205,7 +213,12 @@ exportClasses(
     "MatchedFilterParam",
     "MassifquantParam",
     "MSWParam",
-    "CentWavePredIsoParam"
+    "CentWavePredIsoParam",
+    "FeatureDensityParam",
+    "MzClustParam",
+    "NearestFeaturesParam",
+    "FeatureGroupsParam",
+    "ObiwarpParam"
 )
 ## Param methods
 exportMethods(
@@ -294,13 +307,59 @@ exportMethods(
     "mzIntervalExtension<-",
     "polarity",
     "polarity<-",
-    "rtime",
-    "mz",
-    "intensity"
+    ## FeatureDensityParam
+    "sampleGroups",
+    "sampleGroups<-",
+    "bw",
+    "bw<-",
+    "minFraction",
+    "minFraction<-",
+    "minSamples",
+    "minSamples<-",
+    "maxFeatures",
+    "maxFeatures<-",
+    ## MzClustParam
+    "absMz",
+    "absMz<-",
+    ## NearestFeaturesParam
+    "absRt",
+    "absRt<-",
+    "mzVsRtBalance",
+    "mzVsRtBalance<-",
+    "kNN",
+    "kNN<-",
+    "extraFeatures",
+    "extraFeatures<-",
+    "smooth",
+    "smooth<-",
+    "span",
+    "span<-",
+    "family",
+    "family<-",
+    ## ObiwarpParam
+    "centerSample",
+    "centerSample<-",
+    "response",
+    "response<-",
+    "distFun",
+    "distFun<-",
+    "gapInit",
+    "gapInit<-",
+    "gapExtend",
+    "gapExtend<-",
+    "factorDiag",
+    "factorDiag<-",
+    "factorGap",
+    "factorGap<-",
+    "localAlignment",
+    "localAlignment<-",
+    "initPenalty",
+    "initPenalty<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam")
+       "CentWavePredIsoParam", "FeatureDensityParam", "MzClustParam",
+       "NearestFeaturesParam", "FeatureGroupsParam", "ObiwarpParam")
 ## Param class methods.
 
 ## New Classes
@@ -335,5 +394,8 @@ exportMethods("hasDetectedFeatures",
               "dropAdjustedRtime",
               "dropFeatureGroups",
               "dropFeatures",
-              "spectra"
+              "spectra",
+              "rtime",
+              "mz",
+              "intensity"
               )

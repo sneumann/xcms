@@ -241,7 +241,7 @@ to the centWave algorithm can be passed with a \code{CentWaveParam} object.
 }
 \examples{
 
-## Create a CentWaveParam object
+## Create a param object
 p <- CentWavePredIsoParam(maxCharge = 4)
 ## Change snthresh parameter
 snthresh(p) <- 25

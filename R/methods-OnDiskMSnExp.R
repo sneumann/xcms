@@ -1,5 +1,5 @@
 ## Methods for MSnbase's OnDiskMSnExp and MSnExp objects.
-#' @include functions-OnDiskMSnExp.R do_detectFeatures-functions.R
+#' @include DataClasses.R functions-OnDiskMSnExp.R do_detectFeatures-functions.R
 
 
 ## Main roxygen documentation for the centWace feature detection is in
@@ -695,4 +695,86 @@ setMethod("detectFeatures",
                               " before proceeding with the analysis.")
                   return(xs)
               }
+          })
+
+## profMat method for XCMSnExp/OnDiskMSnExp.
+##' @description \code{profMat}: creates a \emph{profile matrix}, which
+##' is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
+##' m (columns) the retention time of the corresponding scans. Each cell contains
+##' the maximum intensity measured for the specific scan and m/z values. See
+##' \code{\link{profMat}} for more details and description of the various binning
+##' methods.
+##'
+##' @param ... Additional parameters.
+##' 
+##' @return For \code{profMat}: a \code{list} with a the profile matrix
+##' \code{matrix} (or matrices if \code{fileIndex} was not specified or if
+##' \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
+##' help and information about the profile matrix.
+##'
+##' @inheritParams profMat-xcmsSet
+##'
+##' @rdname XCMSnExp-class
+setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
+                                                                  method = "bin",
+                                                                  step = 0.1,
+                                                                  baselevel = NULL,
+                                                                  basespace = NULL,
+                                                                  mzrange. = NULL,
+                                                                  fileIndex,
+                                                                  ...) {
+    ## Subset the object by fileIndex.
+    if (!missing(fileIndex)) {
+        if (!is.numeric(fileIndex))
+            stop("'fileIndex' has to be an integer.")
+        if (!all(fileIndex %in% seq_along(fileNames(object))))
+            stop("'fileIndex' has to be an integer between 1 and ",
+                 length(fileNames(object)), "!")
+        object <- filterFile(object, fileIndex)
+    }
+    ## Split it by file and bplapply over it to generate the profile matrix.
+    theF <- factor(seq_along(fileNames(object)))
+    theDots <- list(...)
+    if (any(names(theDots) == "returnBreaks"))
+        returnBreaks <- theDots$returnBreaks
+    else
+        returnBreaks <- FALSE
+    res <- bplapply(splitByFile(object, f = theF), function(z, bmethod, bstep,
+                                                            bbaselevel,
+                                                            bbasespace,
+                                                            bmzrange.,
+                                                            breturnBreaks) {
+        require(xcms, quietly = TRUE)
+        ## Note: this is way faster than spectrapply with
+        ## as.data.frame!
+        sps <- spectra(z)
+        mzs <- lapply(sps, mz)
+        vps <- lengths(mzs, use.names = FALSE)
+        return(.createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
+                                    int = unlist(lapply(sps, intensity),
+                                                 use.names = FALSE),
+                                    valsPerSpect = vps,
+                                    method = bmethod,
+                                    step = bstep,
+                                    baselevel = bbaselevel,
+                                    basespace = bbasespace,
+                                    mzrange. = bmzrange.,
+                                    returnBreaks = breturnBreaks)
+               )
+    }, bmethod = method, bstep = step, bbaselevel = baselevel,
+    bbasespace = basespace, bmzrange. = mzrange., breturnBreaks = returnBreaks)
+    return(res)
+})
+
+##' @rdname adjustRtime-obiwarp
+setMethod("adjustRtime",
+          signature(object = "OnDiskMSnExp", param = "ObiwarpParam"),
+          function(object, param) {
+              res <- .obiwarp(object, param = param)
+              res <- unlist(res, use.names = FALSE)
+              sNames <- unlist(split(featureNames(object), fromFile(object)),
+                               use.names = FALSE)
+              names(res) <- sNames
+              res <- res[featureNames(object)]
+              return(res)
           })
