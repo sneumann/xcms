@@ -1,4 +1,4 @@
-s#+TITLE: New and modified functionality in xcms
+#+TITLE: New and modified functionality in xcms
 
 ---
 title: "New and modified functionality in xcms"

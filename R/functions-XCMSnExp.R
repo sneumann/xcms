@@ -204,3 +204,50 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## WARN: fromFile reported within the Spectra might not be correct!!!
     return(res)
 }
+
+##' @description Extract a chromatogram from an \code{OnDiskMSnExp} or
+##' \code{XCMSnExp} subsetting to the provided retention time range
+##' (\code{rtrange}) and using the function \code{aggregationFun} to aggregate
+##' intensity values for the same retention time across the mz range
+##' (\code{mzrange}).
+##'
+##' @param x An \code{OnDiskMSnExp} or \code{XCMSnExp} object.
+##'
+##' @param rtrange \code{numeric(2)} providing the lower and upper retention time.
+##' @param mzrange \code{numeric(2)} providing the lower and upper mz value for
+##' the mz range.
+##' @param aggregationFun The function to be used to aggregate intensity values
+##' across the mz range for the same retention time.
+##'
+##' @return A \code{list} with the \code{Chromatogram} objects. If no data was
+##' present for the specified \code{rtrange} and \code{mzrange} the function
+##' returns a \code{list} of length \code{0}.
+##'
+##' @author Johannes Rainer
+##' @noRd
+.extractChromatogram <- function(x, rtrange, mzrange, aggregationFun = "sum") {
+    if (!missing(rtrange)) {
+        rtrange <- range(rtrange, na.rm = TRUE)
+        if (length(rtrange) != 2)
+            stop("'rtrange' has to be a numeric of length 2!")
+    }
+    if (!missing(mzrange)) {
+        mzrange <- range(mzrange, na.rm = TRUE)
+        if (length(mzrange) != 2)
+            stop("'mzrange' has to be a numeric of length 2!")
+    }
+    ## Subset the object based on rt and mz range.
+    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+    if (length(subs) == 0) {
+        return(list())
+    }
+    ## Now, call spectrapply on the object to return the data we need from each
+    ## Spectrum: the aggregated intensity values per spectrum and the mz value
+    ## range.
+    res <- spectrapply(subs, FUN = function(z) {
+        return(list(mzrange = range(z@mz),
+                    int = do.call(aggregationFun, list(z@intensity))))
+    })
+    ## Have to split that by fromFile and build the Chromatogram objects based
+    ## on that.
+}

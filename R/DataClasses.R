@@ -2201,3 +2201,33 @@ setClass("XCMSnExp",
          }
 )
 
+## Note: for now we're NOT extending the versioned class.
+##' @title Representation of chromatographic MS data
+##'
+##' @description The \code{Chromatogram} class is designed to store
+##' chromatographic MS data, i.e. pairs of retention time and intensity values.
+##' Instances of the class can be created with the \code{Chromatogram}
+##' constructor function but in most cases the dedicated methods for
+##' \code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}} objects extracting
+##' chromatograms should be used instead.
+##' 
+##' @rdname Chromatogram-class
+##' @author Johannes Rainer
+setClass("Chromatogram",
+         slots = c(
+             rtime = "numeric",
+             intensity = "numeric",
+             mzrange = "numeric",
+             fromFile = "integer",
+             aggregationFun = "character"
+         ),
+         prototype = prototype(
+             rtime = numeric(),
+             intensity = numeric(),
+             mzrange = c(0, 0),
+             fromFile = integer(),
+             aggregationFun = character()
+         ),
+         validity = function(object)
+             validChromatogram(object)
+         )
