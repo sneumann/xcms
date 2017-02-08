@@ -1590,3 +1590,59 @@ setMethod("groupval",
               ##                         base::round(grps$rtmed), sep = "/")
               return(vals)
 })
+
+#' @title Extracting chromatograms
+#'
+#' @description \code{extractChromatograms}: the method allows to extract
+#' chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
+#' \code{\link{XCMSnExp}} objects.
+#'
+#' @details Arguments \code{rt} and \code{mz} allow to specify the MS
+#' data slice from which the chromatogram should be extracted. By specifying the
+#' function to be used to aggregate intensity values across the mz range for the
+#' same retention time it is possible to extract e.g. a
+#' \emph{total ion chromatogram} (TIC, \code{aggregationFun = "sum"}) or a
+#' \emph{base peak chromatogram} (BPC, \code{aggregationFun = "max"}).
+#'
+#' @param object Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
+#' \code{\link{XCMSnExp}} object from which the chromatograms should be extracted.
+#'
+#' @param rt \code{numeric(2)} defining the lower and upper boundary for the
+#' retention time range. If not specified, the full retention time range of the
+#' original data will be used. It is also possible to submit a \code{numeric(1)}
+#' in which case \code{range} is called on it to transform it to a
+#' \code{numeric(2)}.
+#'
+#' @param mz \code{numeric(2)} defining the lower and upper mz value for the
+#' MS data slice. If not specified, the chromatograms will be calculated on the
+#' full mz range. It is also possible to submit a \code{numeric(1)} in which case
+#' \code{range} is called on it to transform it to a \code{numeric(2)}.
+#'
+#' @param adjustedRtime For \code{extractChromatograms,XCMSnExp}: whether the
+#' adjusted (\code{adjustedRtime = TRUE}) or raw retention times
+#' (\code{adjustedRtime = FALSE}) should be used for filtering and returned in
+#' the resulting \code{\link{Chromatogram}} object. Adjusted retention times are
+#' used by default if available.
+#'
+#' @param aggregationFun \code{character} specifying the function to be used to
+#' aggregate intensity values across the mz value range for the same retention
+#' time. Allowed values are \code{"sum"}, \code{"max"}, \code{"mean"} and
+#' \code{"min"}.
+#' 
+#' @author Johannes Rainer
+#'
+#' @seealso \code{\link{XCMSnExp}} for the data object.
+#' \code{\link{Chromatogram}} for the object representing chromatographic data.
+#'
+#' @noRd
+#' @rdname extractChromatograms-method 
+setMethod("extractChromatograms",
+          signature(object = "XCMSnExp"),
+          function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
+                   aggregationFun = "sum") {
+              return(.extractChromatogram(x = object, rt = rt, mz = mz,
+                                          aggregationFun = aggregationFun,
+                                          adjusted = adjustedRtime))
+          })
+
+

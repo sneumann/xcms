@@ -1,5 +1,11 @@
 #' @include DataClasses.R functions-Chromatogram.R
 
+setMethod("initialize", "Chromatogram", function(.Object, ...) {
+    classVersion(.Object)["Chromatogram"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+
+
 ##' @rdname Chromatogram-class
 setMethod("show", "Chromatogram", function(object) {
     cat("Object of class: ", class(object), "\n", sep = "")
@@ -7,7 +13,10 @@ setMethod("show", "Chromatogram", function(object) {
         cat(names(.SUPPORTED_AGG_FUN_CHROM)[.SUPPORTED_AGG_FUN_CHROM ==
                                             object@aggregationFun], "\n")
     cat("length of object: ", length(object@rtime), "\n", sep = "")
-    cat("mzrange: [", object@mzrange[1], ", ", object@mzrange[2], "]\n", sep = "")
+    cat("from file: ", object@fromFile, "\n", sep = "")
+    cat("mz range: [", object@mz[1], ", ", object@mz[2], "]\n", sep = "")
+    rtr <- range(object@rtime)
+    cat("rt range: [", rtr[1], ", ", rtr[2], "]\n", sep = "")
 })
 
 ## Methods:
@@ -32,16 +41,22 @@ setMethod("intensity", "Chromatogram", function(object) {
     return(object@intensity)
 })
 
-## mzrange
-##' @description \code{mzrange} get or set the mz range of the
+## mz
+##' @description \code{mz} get or set the mz range of the
 ##' chromatogram.
+##'
+##' @param filter For \code{mz}: whether the mz range used to filter the
+##' original object should be returned (\code{filter = TRUE}), or the mz range
+##' calculated on the real data (\code{filter = FALSE}).
 ##' 
 ##' @rdname Chromatogram-class
-setMethod("mzrange", "Chromatogram", function(object) {
-    return(object@mzrange)
+setMethod("mzrange", "Chromatogram", function(object, filter = FALSE) {
+    if (filter)
+        return(object@filterMz)
+    return(object@mz)
 })
 ## ##' @rdname Chromatogram-class
-## setReplaceMethod("mzrange", "CentWaveParam", function(object, value) {
+## setReplaceMethod("mz", "CentWaveParam", function(object, value) {
 ##     object@mzrange <- value
 ##     if (validObject(object))
 ##         return(object)

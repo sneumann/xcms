@@ -2201,7 +2201,6 @@ setClass("XCMSnExp",
          }
 )
 
-## Note: for now we're NOT extending the versioned class.
 ##' @title Representation of chromatographic MS data
 ##'
 ##' @description The \code{Chromatogram} class is designed to store
@@ -2210,6 +2209,12 @@ setClass("XCMSnExp",
 ##' constructor function but in most cases the dedicated methods for
 ##' \code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}} objects extracting
 ##' chromatograms should be used instead.
+##'
+##' @details The \code{mz}, \code{filterMz} are stored as a \code{numeric(2)}
+##' representing a range even if the chromatogram represent the chromatogram for
+##' a single ion (represented as a single mz value). Representing the \code{mz}
+##' as a range allows this class also to be used for a total ion chromatogram
+##' or base peak chromatogram.
 ##' 
 ##' @rdname Chromatogram-class
 ##' @author Johannes Rainer
@@ -2217,14 +2222,17 @@ setClass("Chromatogram",
          slots = c(
              rtime = "numeric",
              intensity = "numeric",
-             mzrange = "numeric",
+             mz = "numeric",
+             filterMz = "numeric",
              fromFile = "integer",
              aggregationFun = "character"
          ),
+         contains = "Versioned",
          prototype = prototype(
              rtime = numeric(),
              intensity = numeric(),
-             mzrange = c(0, 0),
+             mz = c(0, 0),
+             filterMz = c(0, 0),
              fromFile = integer(),
              aggregationFun = character()
          ),

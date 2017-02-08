@@ -21,14 +21,18 @@ validChromatogram <- function(object) {
     msg <- validMsg(NULL, NULL)
     if (length(object@rtime) != length(object@intensity))
         msg <- validMsg(msg, "Length of 'rt' and 'intensity' have to match!")
-    if (is.unsorted(object@mzrange))
-        msg <- validMsg(msg, "'mzrange' has to be increasingly ordered!")
+    if (is.unsorted(object@mz))
+        msg <- validMsg(msg, "'mz' has to be increasingly ordered!")
     if (is.unsorted(object@rtime))
         msg <- validMsg(msg, paste0("'rtime' has to be increasingly ordered!"))
-    if (length(object@mzrange) > 0 & length(object@mzrange) != 2)
-        msg <- validMsg(msg, paste0("'mzrange' is supposed to contain the ",
+    if (length(object@mz) > 0 & length(object@mz) != 2)
+        msg <- validMsg(msg, paste0("'mz' is supposed to contain the ",
                                     "minimum and maximum mz values for the ",
                                     "chromatogram."))
+    if (length(object@filterMz) > 0 & length(object@filterMz) != 2)
+        msg <- validMsg(msg, paste0("'filterMz' is supposed to contain the ",
+                                    "minimum and maximum mz values of the filter",
+                                    " used to create the chromatogram."))
     if (length(object@fromFile) > 1 | any(object@fromFile < 0))
         msg <- validMsg(msg, paste0("'fromFile' is supposed to be a single ",
                                     "positive integer!"))
@@ -54,10 +58,15 @@ validChromatogram <- function(object) {
 ##' @param intensity \code{numeric} with the intensity values (length has to be
 ##' equal to the length of \code{rtime}).
 ##'
-##' @param mzrange \code{numeric(2)} representing the mz value range (min, max)
-##' on which the chromatogram was created. If not applicable use
-##' \code{mzrange = c(0, 0)}.
+##' @param mz \code{numeric(2)} representing the mz value range (min, max)
+##' on which the chromatogram was created. This is supposed to contain the
+##' \emph{real} range of mz values in contrast to the \code{filterMz} below.
+##' If not applicable use \code{mzrange = c(0, 0)}.
 ##'
+##' @param filterMz \code{numeric(2)} representing the mz value range (min,
+##' max) that was used to filter the original object on mz dimension. If not
+##' applicable use \code{filterMz = c(0, 0)}.
+##' 
 ##' @param fromFile \code{integer(1)} the index of the file within the
 ##' \code{\link{OnDiskMSnExp}} or \code{\link{XCMSnExp}} from which the
 ##' chromatogram was extracted.
@@ -67,13 +76,14 @@ validChromatogram <- function(object) {
 ##' mz range. Supported are \code{"sum"} (total ion chromatogram), \code{"max"}
 ##' (base peak chromatogram), \code{"min"} and \code{"mean"}.
 ##' 
-##' @slot rtime,intensity,mzrange,fromFile,aggregationFun See corresponding parameter above.
+##' @slot rtime,intensity,mzrange,filterMzrange,fromFile,aggregationFun See corresponding parameter above.
 ##' 
 ##' @rdname Chromatogram-class
 Chromatogram <- function(rtime = numeric(), intensity = numeric(),
-                         mzrange = c(0, 0), fromFile = integer(),
+                         mz = c(0, 0), filterMz = c(0, 0),
+                         fromFile = integer(),
                          aggregationFun = character()) {
     return(new("Chromatogram", rtime = rtime, intensity = intensity,
-               mzrange = range(mzrange), fromFile = as.integer(fromFile),
-               aggregationFun = aggregationFun))
+               mz = range(mz), filterMz = range(filterMz),
+               fromFile = as.integer(fromFile), aggregationFun = aggregationFun))
 }

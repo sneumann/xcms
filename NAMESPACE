@@ -196,8 +196,8 @@ export(
     "do_groupFeatures_density",
     "do_groupFeatures_mzClust",
     "do_groupFeatures_nearest",
-    "do_adjustRtime_featureGroups",
-    "Chromatogram"
+    ## "Chromatogram",
+    "do_adjustRtime_featureGroups"
 )
 
 ## New analysis methods
@@ -364,8 +364,10 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory", "XProcessHistory",
-              "Chromatogram")
+exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
+              ## "Chromatogram",
+              "XProcessHistory"
+              )
 ## New methods for these classes
 exportMethods("hasDetectedFeatures",
               "hasAlignedFeatures",
@@ -401,5 +403,6 @@ exportMethods("hasDetectedFeatures",
               "mz",
               "intensity",
               "aggregationFun",
+##              "extractChromatograms",
               "as.data.frame"
               )

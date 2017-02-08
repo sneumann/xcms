@@ -154,7 +154,8 @@ validateMsFeatureData <- function(x) {
             }
         })
         af <- do.call(rbind, afL)
-        featureGroups(new_e) <- af
+        if (length(af) > 0)
+            featureGroups(new_e) <- af
     }
     if (hasAdjustedRtime(x)) {
         if (is(x, "XCMSnExp"))

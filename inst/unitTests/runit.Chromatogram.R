@@ -35,4 +35,12 @@ test_Chromatogram_class <- function() {
     ## as.data.frame
     df <- as.data.frame(ch)
     checkEquals(df, data.frame(rtime = rt, intensity = int))
-} 
+    ch <- Chromatogram(mzrange = c(1, 3))
+    checkEquals(ch@mzrange, c(1, 3))
+    checkEquals(mzrange(ch), c(1, 3))
+    checkEquals(mzrange(ch, filter = TRUE), c(0, 0))
+    ch <- Chromatogram(filterMzrange = c(1, 3))
+    checkEquals(ch@filterMzrange, c(1, 3))
+    checkEquals(mzrange(ch, filter = TRUE), c(1, 3))
+    checkEquals(mzrange(ch, filter = FALSE), c(0, 0))
+}

@@ -1,7 +1,12 @@
 ## tests related to the new XCMSnExp object.
 library(RUnit)
 
-od_x <- faahko_xod
+od_x <- faahko_od
+xod_x <- faahko_xod
+xod_xg <- groupFeatures(xod_x, param = FeatureDensityParam())
+xod_xgr <- adjustRtime(xod_xg, param = FeatureGroupsParam(span = 0.4))
+xod_xgrg <- groupFeatures(xod_xgr, param = FeatureDensityParam())
+
 xs <- faahko_xs
 
 xs_2 <- group(xs)
@@ -482,6 +487,12 @@ test_XCMSnExp_filterMz <- function() {
     checkTrue(!hasAlignedFeatures(tmp))
     checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
     checkTrue(validObject(tmp@msFeatureData))
+
+    ## With groups - no groups within this range
+    mzr <- c(120, 130)
+    tmp <- filterMz(xod_xg, mz = mzr)
+    checkTrue(!hasAlignedFeatures(tmp))
+    checkTrue(hasDetectedFeatures(tmp))
 }
 
 test_XCMSnExp_filterRt <- function() {
@@ -763,6 +774,50 @@ test_MsFeatureData_class_accessors <- function() {
     checkEquals(adjustedRtime(fd), xs_2@rt$corrected)
 }
 
+
+## Test extraction of chromatograms.
+test_extractChromatograms <- function() {
+    ## Have: od_x: OnDiskMSNnExp
+    ## xod_x: XCMSnExp, with detected features.
+    ## xod_xg: with feature groups.
+    ## xod_xgr: with adjusted retention times (no feature groups)
+    ## xod_xgrg: adjusted rt and feature groups.
+
+    ## XCMSnExp: TIC - can NOT compare with the reported TIC, as that is
+    ## different! Eventually some background adjustment performed?
+    ## BPC - CDF don't habe a BPC.
+    rtr <- c(2600, 2700)
+    res <- xcms:::extractChromatograms(xod_x, aggregationFun = "max", rt = rtr)
+    checkTrue(all(rtime(res[[1]]) >= rtr[1]))
+    checkTrue(all(rtime(res[[1]]) <= rtr[2]))
+    checkTrue(all(rtime(res[[2]]) >= rtr[1]))
+    checkTrue(all(rtime(res[[2]]) <= rtr[2]))
+    checkTrue(all(rtime(res[[3]]) >= rtr[1]))
+    checkTrue(all(rtime(res[[3]]) <= rtr[2]))
+    tmp <- filterRt(filterFile(xod_x, file = 2), rt = rtr)
+    checkEquals(rtime(tmp), rtime(res[[2]]))
+    ints <- spectrapply(tmp, function(z) return(max(intensity(z))))
+    checkEquals(unlist(ints), intensity(res[[2]]))
+    ## Check names
+    checkEquals(names(rtime(res[[1]])), names(intensity(res[[1]])))
+    ## Assure we get the same with an OnDiskMSnExp and grouped XCMSnExp
+    res_2 <- xcms:::extractChromatograms(od_x, aggregationFun = "max", rt = rtr)
+    checkEquals(res, res_2)
+    res_3 <- xcms:::extractChromatograms(xod_xg, aggregationFun = "max", rt = rtr)
+    checkEquals(res, res_3)
+    
+    ## XCMSnExp: with mzrange and rtrange:
+    mzr <- c(120, 130)
+    tmp <- filterMz(xod_xg, mz = mzr)
+    featureGroups(tmp)
+    tmp <- filterRt(xod_xg, rt = rtr)
+    featureGroups(tmp)
+    res_2 <- xcms:::extractChromatograms(xod_xg, rt = rtr, mz = mzr)
+    ##
+
+    ## XCMSnExp with adjusted rtime
+}
+
 ############################################################
 ## Test getEIC alternatives.
 dontrun_getEIC_alternatives <- function() {
@@ -776,9 +831,23 @@ dontrun_getEIC_alternatives <- function() {
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- detectFeatures(od, param = cwp)
 
-    rtr <- c(2600, 2601)
+    ## with this one we get 3 spectras back, one in each file.
+    rtr <- c(2787, 2788)    
     res <- filterRt(od_x, rt = rtr)
 
+    ## -----------
+    ## That's to test .extractChromatogram
+    mzr <- c(279, 279)
+    chrs <- extractChromatograms(od_x, mzrange = mzr)
+    ##   input parameter
+    x <- od_x
+    rm(rtrange)
+    rm(mzrange)
+    mzrange <- mzr
+    aggregationFun <- "sum"
+    ##   function call
+    ## -----------
+    
     od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
     od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
 

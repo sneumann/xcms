@@ -68,6 +68,9 @@ setGeneric("extraFeatures", function(object, ...)
     standardGeneric("extraFeatures"))
 setGeneric("extraFeatures<-", function(object, value)
     standardGeneric("extraFeatures<-"))
+setGeneric("extractChromatograms", function(object, ...)
+    standardGeneric("extractChromatograms"))
+
 
 ## F
 setGeneric("factorDiag", function(object) standardGeneric("factorDiag"))
@@ -204,7 +207,7 @@ setGeneric("msnparent2ms", function(object, ...) standardGeneric("msnparent2ms")
 setGeneric("msn2ms", function(object, ...) standardGeneric("msn2ms"))
 setGeneric("mzdiff", function(object, ...) standardGeneric("mzdiff"))
 setGeneric("mzdiff<-", function(object, value) standardGeneric("mzdiff<-"))
-setGeneric("mzrange", function(object) standardGeneric("mzrange"))
+setGeneric("mzrange", function(object, ...) standardGeneric("mzrange"))
 setGeneric("mzCenterFun", function(object, ...) standardGeneric("mzCenterFun"))
 setGeneric("mzCenterFun<-", function(object, value)
     standardGeneric("mzCenterFun<-"))
