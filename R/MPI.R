@@ -42,9 +42,13 @@ findPeaksPar <- function(arg) {
 
     peaks <- do.call(method, args = c(list(object = xRaw), params))
 
-    list(scantime=xRaw@scantime,
-         peaks=cbind(peaks,
-                     sample = rep.int(myID, nrow(peaks))),
+    ## Ensure to remove data to avoid memory accumulation.
+    scanT <- xRaw@scantime
+    rm(xRaw)
+    gc()
+    list(scantime = scanT,
+         peaks = cbind(peaks,
+                       sample = rep.int(myID, nrow(peaks))),
          date = procDate)
 }
 
