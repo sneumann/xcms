@@ -10,20 +10,20 @@ mzVals <- xr@env$mz
 intVals <- xr@env$intensity
 ## f <- msdata::proteomics(full.names = TRUE, pattern = "TMT_Erwinia")
 
-test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
+test_do_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     ## initial centWave:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    feats_1 <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+    feats_1 <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
                                           scantime = xr@scantime,
                                           valsPerSpect = valsPerSpect,
                                           noise = 1500, verboseColumns = TRUE)
-    feats_2 <- do_detectFeatures_addPredIsoROIs(mz = mzVals,
+    feats_2 <- do_findChromPeaks_addPredIsoROIs(mz = mzVals,
                                                 int = intVals,
                                                 scantime = xr@scantime,
                                                 valsPerSpect = valsPerSpect,
                                                 noise = 1500,
-                                                features. = feats_1)
-    all_f <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals,
+                                                peaks. = feats_1)
+    all_f <- do_findChromPeaks_centWaveWithPredIsoROIs(mz = mzVals,
                                                        int = intVals,
                                                        scantime = xr@scantime,
                                                        valsPerSpect = valsPerSpect,
@@ -34,9 +34,9 @@ test_do_detectFeatures_centWaveWithPredIsoROIs <- function() {
     ## checkEquals(all_f, old_all@.Data)
 }
 
-## Evaluate the featureDetection method using the centWaveWithPreIsoROIs method
+## Evaluate the peak detection method using the centWaveWithPreIsoROIs method
 ## on OnDiskMSnExp and on MSnExp objects.
-test_detectFeatures_centWaveWithPredIsoROIs <- function() {
+test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     ## Control
     library(MSnbase)
     ##ppm <- 40
@@ -55,33 +55,33 @@ test_detectFeatures_centWaveWithPredIsoROIs <- function() {
     onDisk <- readMSData2(fs[1], msLevel. = 1)
     cwp <- CentWavePredIsoParam(snthresh = snth, noise = ns,
                                 snthreshIsoROIs = snthIso)
-    res <- detectFeatures(onDisk, param = cwp, return.type = "list")
+    res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
     ## ## MSnExp
     ## inMem <- readMSData(fs[1], msLevel. = 1)
-    ## res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    ## res_2 <- findChromPeaks(inMem, param = cwp, return.type = "list")
     ## checkEquals(res_2[[1]], peaks(xs)@.Data)
 
     ## returning an xcmsSet
-    res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
     checkEquals(peaks(res), peaks(xs))
-    ## res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    ## res <- findChromPeaks(inMem, param = cwp, return.type = "xcmsSet")
     ## checkEquals(peaks(res), peaks(xs))
 
     ## Return an XCMSnExp
-    res <- detectFeatures(onDisk, param = cwp)
-    checkTrue(hasDetectedFeatures(res))
+    res <- findChromPeaks(onDisk, param = cwp)
+    checkTrue(hasChromPeaks(res))
     checkTrue(!hasAdjustedRtime(res))
-    checkTrue(!hasAlignedFeatures(res))
-    checkEquals(peaks(xs)@.Data, features(res))
+    checkTrue(!hasFeatures(res))
+    checkEquals(peaks(xs)@.Data, chromPeaks(res))
 
     ## Check on the full data.
     ## xs <- xcmsSet(fs, profparam = list(profstep = 0), snthresh = snth,
     ##               method = "centWaveWithPredictedIsotopeROIs", noise = ns,
     ##               snthreshIsoROIs = snthIso)
     ## onDisk <- readMSData2(fs, msLevel. = 1)
-    ## res <- detectFeatures(onDisk, param = cwp)
+    ## res <- findChromPeaks(onDisk, param = cwp)
     ## checkEquals(features(res), peaks(xs)@.Data)
 }
 
@@ -90,15 +90,15 @@ test_detectFeatures_centWaveWithPredIsoROIs <- function() {
 dontrun_test_impl_centWave_add <- function() {
     ## Using the do functions:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    do_1 <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+    do_1 <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
                                        scantime = xr@scantime,
                                        valsPerSpect = valsPerSpect,
                                        verboseColumns = TRUE)
-    do_2 <- do_detectFeatures_addPredIsoROIs(mz = mzVals, int = intVals,
+    do_2 <- do_findChromPeaks_addPredIsoROIs(mz = mzVals, int = intVals,
                                              scantime = xr@scantime,
                                              valsPerSpect = valsPerSpect,
-                                             features. = do_1)
-    do_3 <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals, int = intVals,
+                                             peaks. = do_1)
+    do_3 <- do_findChromPeaks_centWaveWithPredIsoROIs(mz = mzVals, int = intVals,
                                                       scantime = xr@scantime,
                                                       valsPerSpect = valsPerSpect)
     checkEquals(do_2, do_3)
@@ -116,7 +116,7 @@ dontrun_test_impl_centWave_add <- function() {
     checkEquals(fp_2, xs_2)
 
     ##
-    do_4 <- do_detectFeatures_centWaveWithPredIsoROIs(mz = mzVals, int = intVals,
+    do_4 <- do_findChromPeaks_centWaveWithPredIsoROIs(mz = mzVals, int = intVals,
                                                       scantime = xr@scantime,
                                                       valsPerSpect = valsPerSpect,
                                                       noise = 500,

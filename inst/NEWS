@@ -1,6 +1,12 @@
 CHANGES IN VERSION 1.51.7
 -------------------------
 
+USER VISIBLE CHANGES:
++ Major renaming of methods and classes to follow the naming convention:
+  - chromatographic peak (chromPeak): the peaks identified in rt dimension.
+  - feature: mz-rt feature, being the grouped chromatographic peaks within and
+    across samples.
+
 NEW FEATURES:
 + Chromatogram class.
 

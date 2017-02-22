@@ -46,16 +46,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     if (any(msLevel(from) > 1))
         stop("Coercing an XCMSnExp with MS level > 1 is not yet supported!")
     xs <- new("xcmsSet")
-    ## @peaks <- features
-    if (hasDetectedFeatures(from))
-        xs@peaks <- features(from)
-    ## @groups <- part of featureGroups
-    ## @groupidx <- featureGroups(x)$featureidx
-    if (hasAlignedFeatures(from)){
-        fgs <- featureGroups(from)
+    ## @peaks <- chromPeaks
+    if (hasChromPeaks(from))
+        xs@peaks <- chromPeaks(from)
+    ## @groups <- part of featureDefinitions
+    ## @groupidx <- featureDefinitions(x)$peakidx
+    if (hasFeatures(from)){
+        fgs <- featureDefinitions(from)
         xs@groups <- S4Vectors::as.matrix(fgs[, -ncol(fgs)])
         rownames(xs@groups) <- NULL
-        xs@groupidx <- fgs$featureidx
+        xs@groupidx <- fgs$peakidx
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
@@ -77,7 +77,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     profStep <- 0.1
     profParam <- list()
     ## If we've got any MatchedFilterParam we can take the values from there
-    ph <- processHistory(from, type = .PROCSTEP.FEATURE.DETECTION)
+    ph <- processHistory(from, type = .PROCSTEP.PEAK.DETECTION)
     if (length(ph)) {
         if (is(ph[[1]], "XProcessHistory")) {
             prm <- processParam(ph[[1]])
@@ -182,7 +182,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     fns <- fileNames(x)
     if (is(x, "XCMSnExp")) {
         ## Now, the filterRt might get heavy for XCMSnExp objects if we're
-        ## filtering also the features and featureGroups!
+        ## filtering also the chromatographic peaks and features!
         msfd <- new("MsFeatureData")
         if (hasAdjustedRtime(x)) {
             ## just copy over the retention time.
@@ -190,8 +190,8 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         }
         lockEnvironment(msfd, bindings = TRUE)
         x@msFeatureData <- msfd
-        ## with an XCMSnExp without features and featureGroups filterRt should be
-        ## faster.
+        ## with an XCMSnExp without chrom. peaks and features filterRt
+        ## should be faster.
     }
     subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
     if (base::length(subs) == 0) {

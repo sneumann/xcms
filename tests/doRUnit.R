@@ -42,7 +42,7 @@ if(require("RUnit", quietly=TRUE)) {
     faahko_od <- readMSData2(faahko_3_files)
 
     ## Feature alignment on those:
-    faahko_xod <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
+    faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                          method = "centWave", noise = 10000, snthresh = 40)

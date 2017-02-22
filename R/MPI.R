@@ -53,7 +53,7 @@ findPeaksPar <- function(arg) {
 }
 
 ############################################################
-## detectFeatures
+## findChromPeaks
 ##
 ## Same as findPeaksPar but without the need to pass argument lists
 ## and read settings from the global options.
@@ -62,7 +62,7 @@ findPeaksPar <- function(arg) {
 ## o readParams: parameter class to read the file; actually we would only
 ##   need the scanrange, the includeMSn and the lockMassFreq here.
 ## o detectParams: parameter class for the peak detection.
-detectFeaturesInFile <- function(args) {
+findChromPeaksInFile <- function(args) {
     ## Placeholder
 }
 

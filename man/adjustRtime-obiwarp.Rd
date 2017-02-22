@@ -100,16 +100,17 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 \S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param)
 }
 \arguments{
-\item{binSize}{numeric(1) defining the bin size (in mz dimension) to be used
-for the \emph{profile matrix} generation. See \code{step} parameter in
-\code{\link{profile-matrix}} documentation for more details.}
+\item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
+to be used for the \emph{profile matrix} generation. See \code{step}
+parameter in \code{\link{profile-matrix}} documentation for more details.}
 
-\item{centerSample}{integer(1) defining the index of the center sample in the
-experiment. It defaults to \code{floor(median(1:length(fileNames(object))))}.}
+\item{centerSample}{\code{integer(1)} defining the index of the center sample
+in the experiment. It defaults to
+\code{floor(median(1:length(fileNames(object))))}.}
 
-\item{response}{numeric(1) defining the \emph{responsiveness} of warping with
-\code{response = 0} giving linear warping on start and end points and
-\code{response = 100} warping using all bijective anchors.}
+\item{response}{\code{numeric(1)} defining the \emph{responsiveness} of
+warping with \code{response = 0} giving linear warping on start and end
+points and \code{response = 100} warping using all bijective anchors.}
 
 \item{distFun}{character defining the distance function to be used. Allowed
 values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"} (calculate
@@ -117,28 +118,28 @@ only 10\% diagonal band of distance matrix; better runtime), \code{"cov"}
 (covariance), \code{"prd"} (product) and \code{"euc"} (Euclidian distance).
 The default value is \code{distFun = "cor_opt"}.}
 
-\item{gapInit}{numeric(1) defining the penalty for gap opening. The default
-value for \code{gapInit} depends on the value of \code{distFun}: for
+\item{gapInit}{\code{numeric(1)} defining the penalty for gap opening. The
+default value for \code{gapInit} depends on the value of \code{distFun}: for
 \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{0.3}, for
 \code{distFun = "cov"} and \code{distFun = "prd"} \code{0.0} and for
 \code{distFun = "euc"} \code{0.9}.}
 
-\item{gapExtend}{numeric(1) defining the penalty for gap enlargement. The
-default value for \code{gapExtend} depends on the value of \code{distFun},
+\item{gapExtend}{\code{numeric(1)} defining the penalty for gap enlargement.
+The default value for \code{gapExtend} depends on the value of \code{distFun},
 for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{2.4},
 for \code{distFun = "cov"} \code{11.7}, for \code{distFun = "euc"} \code{1.8}
 and for \code{distFun = "prd"} {7.8}.}
 
-\item{factorDiag}{numeric(1) defining the local weight applied to diagonal
-moves in the alignment.}
+\item{factorDiag}{\code{numeric(1)} defining the local weight applied to
+diagonal moves in the alignment.}
 
-\item{factorGap}{numeric(1) defining the local weight for gap moves in the
-alignment.}
+\item{factorGap}{\code{numeric(1)} defining the local weight for gap moves
+in the alignment.}
 
-\item{localAlignment}{logical(1) whether a local alignment should be
+\item{localAlignment}{\code{logical(1)} whether a local alignment should be
 performed instead of the default global alignment.}
 
-\item{initPenalty}{numeric(1) defining the penalty for initiating an
+\item{initPenalty}{\code{numeric(1)} defining the penalty for initiating an
 alignment (for local alignment only).}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
@@ -146,7 +147,7 @@ alignment (for local alignment only).}
 For all other methods: a \code{ObiwarpParam} object.}
 
 \item{param}{A \code{ObiwarpParam} object containing all settings for
-the retention time correction method.}
+the alignment method.}
 
 \item{value}{The value for the slot.}
 }
@@ -159,9 +160,9 @@ For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
 \code{\link{XCMSnExp}} object with the results of the retention time
 adjustment step. These can be accessed with the \code{\link{adjustedRtime}}
 method. Retention time correction does also adjust the retention time of the
-identified features (accessed \emph{via} \code{\link{features}}. Note that
-retention time correction drops all previous alignment results from the
-result object.
+identified chromatographic peaks (accessed \emph{via}
+\code{\link{chromPeaks}}. Note that retention time correction drops all
+previous peak grouping results from the result object.
 
 For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with the
 adjusted retention times per spectra (in the same order than \code{rtime}).
@@ -172,7 +173,7 @@ Obiwarp method [Prince 2006]. It is based on the code at
 \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
 samples by aligning each against a \emph{center} sample. The alignment is
 performed directly on the \code{\link{profile-matrix}} and can hence be
-performed independently of the feature detection or feature grouping.
+performed independently of the peak detection or peak grouping.
 
 The \code{ObiwarpParam} class allows to specify all
 settings for the retention time adjustment based on the \emph{obiwarp}
@@ -210,8 +211,8 @@ for the \code{localAlignment} slot of the object.
 for the \code{initPenalty} slot of the object.
 
 \code{adjustRtime,XCMSnExp,ObiwarpParam}:
-performs retention time correction based on the alignment of feature groups
-found in all/most samples.
+performs retention time correction/alignment based on the total mz-rt data
+using the \emph{obiwarp} method.
 }
 \section{Slots}{
 
@@ -227,7 +228,7 @@ These methods and classes are part of the updated and modernized
 can be passed with a \code{ObiwarpParam} object.
 
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-all feature grouping (alignment) results to be dropped.
+all peak grouping (correspondence) results to be dropped.
 }
 \examples{
 library(faahKO)
@@ -252,9 +253,10 @@ resL <- split(res, fromFile(raw_data))
 ##############################
 ## Perform retention time correction on an XCMSnExp:
 ##
-## Perform first the feature detection using the matchedFilter method.
+## Perform first the chromatographic peak detection using the matchedFilter
+## method.
 mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- detectFeatures(raw_data, param = mfp)
+res <- findChromPeaks(raw_data, param = mfp)
 
 ## Performing the retention time adjustment using obiwarp.
 res_2 <- adjustRtime(res, param = ObiwarpParam())
@@ -262,9 +264,9 @@ res_2 <- adjustRtime(res, param = ObiwarpParam())
 head(rtime(res_2))
 head(rtime(raw_data))
 
-## Also the retention times of the detected features were adjusted.
-tail(features(res))
-tail(features(res_2))
+## Also the retention times of the detected peaks were adjusted.
+tail(chromPeaks(res))
+tail(chromPeaks(res_2))
 }
 \author{
 Colin Smith, Johannes Rainer
@@ -273,14 +275,18 @@ Colin Smith, Johannes Rainer
 John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
 ESI-LC-MS Proteomics Data Sets by Ordered Bijective Interpolated Warping"
 \emph{Anal. Chem.} 2006, 78(17):6140-6152.
+
+John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
+ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
+\emph{Anal. Chem.} 2006, 78 (17), 6140-6152.
 }
 \seealso{
 \code{\link{retcor.obiwarp}} for the old user interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the feature alignment.
+the alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime-featureGroups}},
+Other retention time correction methods: \code{\link{adjustRtime-peakGroups}},
   \code{\link{adjustRtime}}
 }
 

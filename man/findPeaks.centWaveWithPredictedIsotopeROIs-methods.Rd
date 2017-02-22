@@ -133,7 +133,7 @@
   Submitted to Metabolites 2016, Special Issue "Bioinformatics and Data Analysis"
 }
 \seealso{
-  \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}} for the
+  \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} for the
   corresponding core API function.
   \code{\link{findPeaks.addPredictedIsotopeFeatures}}
   \code{\link{findPeaks.centWave}}

@@ -4,18 +4,18 @@
 \name{findPeaks.MSW,xcmsRaw-method}
 \alias{findPeaks.MSW}
 \alias{findPeaks.MSW,xcmsRaw-method}
-\title{Feature detection for single-spectrum non-chromatography MS data}
+\title{Peak detection for single-spectrum non-chromatography MS data}
 \usage{
 \S4method{findPeaks.MSW}{xcmsRaw}(object, snthresh = 3,
   verbose.columns = FALSE, ...)
 }
 \arguments{
-\item{object}{The \code{\linkS4class{xcmsRaw}} object on which feature
+\item{object}{The \code{\linkS4class{xcmsRaw}} object on which peak
 detection should be performed.}
 
-\item{snthresh}{numeric(1) defining the signal to noise ratio cutoff.}
+\item{snthresh}{\code{numeric(1)} defining the signal to noise ratio cutoff.}
 
-\item{verbose.columns}{Logical whether additional feature meta data columns
+\item{verbose.columns}{Logical whether additional peak meta data columns
 should be returned.}
 
 \item{...}{Additional parameters to be passed to the
@@ -24,23 +24,23 @@ should be returned.}
 \code{MassSpecWavelet} package.}
 }
 \value{
-A matrix, each row representing an intentified feature, with columns:
+A matrix, each row representing an intentified peak, with columns:
 \describe{
-\item{mz}{m/z value of the feature at the centroid position.}
-\item{mzmin}{Minimum m/z of the feature.}
-\item{mzmax}{Maximum m/z of the feature.}
+\item{mz}{m/z value of the peak at the centroid position.}
+\item{mzmin}{Minimum m/z of the peak.}
+\item{mzmax}{Maximum m/z of the peak.}
 \item{rt}{Always \code{-1}.}
 \item{rtmin}{Always \code{-1}.}
 \item{rtmax}{Always \code{-1}.}
-\item{into}{Integrated (original) intensity of the feature.}
-\item{maxo}{Maximum intensity of the feature.}
+\item{into}{Integrated (original) intensity of the peak.}
+\item{maxo}{Maximum intensity of the peak.}
 \item{intf}{Always \code{NA}.}
-\item{maxf}{Maximum MSW-filter response of the feature.}
+\item{maxf}{Maximum MSW-filter response of the peak.}
 \item{sn}{Signal to noise ratio.}
 }
 }
 \description{
-This method performs feature detection in mass spectrometry
+This method performs peak detection in mass spectrometry
 direct injection spectrum using a wavelet based algorithm.
 }
 \details{
@@ -54,7 +54,7 @@ Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
 \seealso{
 \code{\link{MSW}} for the new user interface,
-\code{\link{do_detectFeatures_MSW}} for the downstream analysis
+\code{\link{do_findPeaks_MSW}} for the downstream analysis
 function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
 \code{MassSpecWavelet} for details on the algorithm and additionally supported
 parameters.

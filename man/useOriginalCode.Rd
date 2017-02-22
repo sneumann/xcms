@@ -23,7 +23,7 @@ details for functions affected.
 \details{
 The functions/methods that will be affected by this are:
 \itemize{
-\item \code{\link{do_detectFeatures_matchedFilter}}
+\item \code{\link{do_findChromPeaks_matchedFilter}}
 }
 }
 \note{

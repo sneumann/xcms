@@ -1,44 +1,47 @@
 ## Functions for MSnbase's OnDiskMSnExp objects
-#' @include do_detectFeatures-functions.R DataClasses.R
+#' @include do_findChromPeaks-functions.R DataClasses.R
 
 
 ##' @param x an OnDiskMSnExp representing the whole experiment.
-##' @param method The feature detection method to be used. Can be "centWave" etc.
+##' @param method The (chromatographic) peak detection method to be used. Can be
+##' "centWave" etc.
 ##' @param param A class extending Param containing all parameters for the
-##' feature detection method.
+##' peak detection method.
 ##'
 ##' @return a list of length 2, \code{peaks} containing a matrix with the
-##' identified peaks and \code{date} the time stamp when the feature detection
+##' identified peaks and \code{date} the time stamp when the peak detection
 ##' was started.
 ##' @noRd
-detectFeatures_OnDiskMSnExp <- function(object, method = "centWave",
+findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
                                         param) {
     if (missing(param))
         stop("'param' has to be specified!")
     ## pass the spectra to the _Spectrum_list function
-    return(detectFeatures_Spectrum_list(x = spectra(object), method = method,
+    return(findChromPeaks_Spectrum_list(x = spectra(object), method = method,
                                         param = param, rt = rtime(object)))
 }
 
 
-##' Run the feature detection on a list of Spectrum1 objects from the same
+##' Run the peak detection on a list of Spectrum1 objects from the same
 ##' file
 ##'
 ##' @param x A list of Spectrum1 objects of a sample.
-##' @param method The feature detection method to be used. Can be "centWave" etc.
+##' @param method The peak detection method to be used. Can be "centWave" etc.
 ##' @param param A class extending Param containing all parameters for the
-##' feature detection method.
+##' peak detection method.
 ##' @param rt Numeric with the retention times for the spectra. If not provided
 ##' it is extracted from the spectra.
 ##' @return a list of length 2, \code{peaks} containing a matrix with the
-##' identified peaks and \code{date} the time stamp when the feature detection
+##' identified peaks and \code{date} the time stamp when the peak detection
 ##' was started.
 ##' @author Johannes Rainer
 ##' @noRd
-detectFeatures_Spectrum_list <- function(x, method = "centWave", param, rt) {
+findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     method <- match.arg(method, c("centWave", "massifquant", "matchedFilter",
                                   "MSW", "centWaveWithPredIsoROIs"))
-    method <- paste0("do_detectFeatures_", method)
+    method <- paste0("do_findChromPeaks_", method)
+    if (method == "MSW")
+        method <- paste0("do_findPeaks_", method)
     if (missing(param))
         stop("'param' has to be specified!")
     ## Check if the spectra are orderd by rt.
@@ -60,17 +63,17 @@ detectFeatures_Spectrum_list <- function(x, method = "centWave", param, rt) {
 }
 
 ## That's a special case since we don't expect to have rt available for this.
-detectFeatures_MSW_OnDiskMSnExp <- function(object, method = "MSW",
+findPeaks_MSW_OnDiskMSnExp <- function(object, method = "MSW",
                                             param) {
     if (missing(param))
         stop("'param' has to be specified!")
     ## pass the spectra to the _Spectrum_list function
-    return(detectFeatures_MSW_Spectrum_list(x = spectra(object), method = method,
+    return(findPeaks_MSW_Spectrum_list(x = spectra(object), method = method,
                                             param = param))
 }
-detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
+findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     method <- match.arg(method, c("MSW"))
-    method <- paste0("do_detectFeatures_", method)
+    method <- paste0("do_findPeaks_", method)
     if (missing(param))
         stop("'param' has to be specified!")
     mzs <- lapply(x, mz)
@@ -118,9 +121,9 @@ detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 }
 
 ##' @description Processes the result list returned by an lapply/bplapply to
-##' detectFeatures_Spectrum_list or detectFeatures_OnDiskMSnExp and returns a
+##' findChromPeaks_Spectrum_list or findChromPeaks_OnDiskMSnExp and returns a
 ##' list with two elements: \code{$peaks} the peaks matrix of identified
-##' features and \code{$procHist} a list of ProcessHistory objects (empty if
+##' peaks and \code{$procHist} a list of ProcessHistory objects (empty if
 ##' \code{getProcHist = FALSE}).
 ##' @param x See description above.
 ##' @param getProcHist Wheter ProcessHistory objects should be returned too.
@@ -143,14 +146,14 @@ detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
             pks[[i]] <- cbind(x[[i]]$peaks, sample = rep.int(i, n_pks))
         }
         if (getProcHist)
-            phList[[i]] <- ProcessHistory(info. = paste0("Feature detection in '",
-                                                         basename(fnames[i]),
-                                                         "': ", n_pks,
-                                                         " features identified."),
-                                          date. = x[[i]]$date,
-                                          type. = .PROCSTEP.FEATURE.DETECTION,
-                                          fileIndex. = i
-                                          )
+            phList[[i]] <- ProcessHistory(
+                info. = paste0("Chromatographic peak detection in '",
+                               basename(fnames[i]), "': ", n_pks,
+                               " peaks identified."),
+                date. = x[[i]]$date,
+                type. = .PROCSTEP.PEAK.DETECTION,
+                fileIndex. = i
+            )
     }
     return(list(peaks = pks, procHist = phList))
 }
@@ -310,6 +313,9 @@ detectFeatures_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         }
         message("OK")
         return(rtadj)
+        ## Related to issue #122: try to resemble the rounding done in the
+        ## recor.obiwarp method.
+        ## return(round(rtadj, 2))
     }, cntr = centerObject, cntrPr = profCtr, parms = param)
     ## Add also the rtime of the center sample:
     adjRt <- vector("list", nSamples)

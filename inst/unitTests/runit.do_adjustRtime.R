@@ -1,43 +1,43 @@
 ## retention time correction methods and functionality related to adjusted
 ## retention times.
 
-test_adjustRtime_FeatureGroups <- function() {
+test_adjustRtime_PeakGroups <- function() {
     xod <- faahko_xod
     xs <- faahko_xs
 
     ## Group these
     xsg <- group(xs)
-    xodg <- groupFeatures(xod,
-                          param = FeatureDensityParam(sampleGroups = xs$class))
-    checkEquals(peaks(xsg), features(xodg))
-    checkEquals(xsg@groupidx, featureGroups(xodg)$featureidx)
+    xodg <- groupChromPeaks(xod,
+                            param = PeakDensityParam(sampleGroups = xs$class))
+    checkEquals(peaks(xsg), chromPeaks(xodg))
+    checkEquals(xsg@groupidx, featureDefinitions(xodg)$peakidx)
     checkTrue(length(processHistory(xodg,
-                                    type = xcms:::.PROCSTEP.FEATURE.DETECTION)) == 1)
+                                    type = xcms:::.PROCSTEP.PEAK.DETECTION)) == 1)
     checkTrue(length(processHistory(xodg,
-                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 1)
+                                    type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 1)
     ## Now do the retention time correction
     xsr <- retcor(xsg, method = "peakgroups")
     minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
-    p <- FeatureGroupsParam(minFraction = minFr)
+    p <- PeakGroupsParam(minFraction = minFr)
     xodr <- adjustRtime(xodg, param = p)
     ## Check that we've got process histories.
     checkTrue(validObject(xodr))
-    checkTrue(hasDetectedFeatures(xodr))
-    checkTrue(!hasAlignedFeatures(xodr))
+    checkTrue(hasChromPeaks(xodr))
+    checkTrue(!hasFeatures(xodr))
     ## But we would like to keep the related process history step:
     checkTrue(hasAdjustedRtime(xodr))
-    checkTrue(hasAlignedFeatures(xodg))
+    checkTrue(hasFeatures(xodg))
     ## We want to keep the process history step of the feature alignment!
     checkTrue(length(processHistory(xodr,
-                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 1)
+                                    type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 1)
     checkTrue(length(processHistory(xodr,
                                     type = xcms:::.PROCSTEP.RTIME.CORRECTION)) == 1)
     ## Different from original:
-    checkTrue(sum(features(xod)[, "rt"] != features(xodr)[, "rt"]) > 200)
-    checkTrue(sum(features(xod)[, "rtmin"] != features(xodr)[, "rtmin"]) > 200)
-    checkTrue(sum(features(xod)[, "rtmax"] != features(xodr)[, "rtmax"]) > 200)
+    checkTrue(sum(chromPeaks(xod)[, "rt"] != chromPeaks(xodr)[, "rt"]) > 200)
+    checkTrue(sum(chromPeaks(xod)[, "rtmin"] != chromPeaks(xodr)[, "rtmin"]) > 200)
+    checkTrue(sum(chromPeaks(xod)[, "rtmax"] != chromPeaks(xodr)[, "rtmax"]) > 200)
     ## between xcmsSet and XCMSnExp
-    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr), peaks(xsr))
     ## To compare the adjusted retention time we have to extract it by sample!
     ## Otherwise the ordering will not be the same, as rtime is ordered by
     ## retention time, but @rt$raw by sample.
@@ -47,38 +47,38 @@ test_adjustRtime_FeatureGroups <- function() {
     checkEquals(unlist(rtime(xod, bySample = TRUE), use.names = FALSE),
                 unlist(xs@rt$raw, use.names = FALSE))
     ## Doing an additional grouping
-    xodrg <- groupFeatures(xodr, param = FeatureDensityParam(sampleGroups =
-                                                                 xs$class))
+    xodrg <- groupChromPeaks(xodr, param = PeakDensityParam(sampleGroups =
+                                                                   xs$class))
     checkTrue(length(processHistory(xodrg,
-                                    type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)) == 2)
+                                    type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 2)
     checkTrue(hasAdjustedRtime(xodrg))
-    checkTrue(hasAlignedFeatures(xodrg))
+    checkTrue(hasFeatures(xodrg))
     xsrg <- group(xsr)
-    checkEquals(xsrg@groupidx, featureGroups(xodrg)$featureidx)
+    checkEquals(xsrg@groupidx, featureDefinitions(xodrg)$peakidx)
     
     ## Mod settings:
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
-    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+    xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1))
-    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr), peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
                   smooth = "linear")
-    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+    xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1,
                                                          smooth = "linear"))
-    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr), peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
                   family = "symmetric")
-    xodr <- adjustRtime(xodg, param = FeatureGroupsParam(minFraction = 1,
+    xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1,
                                                          family = "symmetric"))
-    checkEquals(features(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr), peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 }
@@ -140,7 +140,7 @@ dontrun_test_retcor.peakgroups <- function() {
 
 ## That's to evaluate the do_ function with the original code. Once the
 ## retcor.peakgroups calls the do_function we rename it to dontrun.
-test_do_adjustRtime_featureGroups_implementation <- function() {
+test_do_adjustRtime_peakGroups_implementation <- function() {
     xs <- faahko
     xsg <- group(xs)
     
@@ -148,8 +148,8 @@ test_do_adjustRtime_featureGroups_implementation <- function() {
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
 
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
                                         minFraction = minFr)
     checkEquals(xsa@rt$corrected, res)
@@ -159,8 +159,8 @@ test_do_adjustRtime_featureGroups_implementation <- function() {
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
 
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
                                         minFraction = minFr)
     checkEquals(xsa@rt$corrected, res)
@@ -170,39 +170,39 @@ test_do_adjustRtime_featureGroups_implementation <- function() {
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr)
 
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
-                                        minFraction = minFr, extraFeatures = xtr)
+                                        minFraction = minFr, extraPeaks = xtr)
     checkEquals(xsa@rt$corrected, res)
 
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
                   smooth = "linear")
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
-                                        minFraction = minFr, extraFeatures = xtr,
+                                        minFraction = minFr, extraPeaks = xtr,
                                         smooth = "linear")
     checkEquals(xsa@rt$corrected, res)
 
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
                   family = "symmetric")
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
-                                        minFraction = minFr, extraFeatures = xtr,
+                                        minFraction = minFr, extraPeaks = xtr,
                                         family = "symmetric")
     checkEquals(xsa@rt$corrected, res)
 
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp, extra = xtr,
                   span = 1)
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
-    res <- do_adjustRtime_featureGroups(features = peaks(xs),
-                                        featureIndex = xsg@groupidx,
+    res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                        peakIndex = xsg@groupidx,
                                         rtime = xsg@rt$raw,
-                                        minFraction = minFr, extraFeatures = xtr,
+                                        minFraction = minFr, extraPeaks = xtr,
                                         span = 1)
     checkEquals(xsa@rt$corrected, res)
 }
@@ -219,15 +219,15 @@ dontrun_do_adjustRtime_peakgroups_implementation <- function() {
 
     od <- readMSData2(faahko_files)
 
-    xod <- detectFeatures(od, param = CentWaveParam(noise = 100,
+    xod <- findChromPeaks(od, param = CentWaveParam(noise = 100,
                                                     snthresh = 20))
     xs <- xcmsSet(faahko_files, profparam = list(step = 0),
                   method = "centWave", noise = 100, snthresh = 20)
 
-    checkEquals(features(xod), peaks(xs))
+    checkEquals(chromPeaks(xod), peaks(xs))
     ## feature grouping
-    p <- FeatureDensityParam(sampleGroups = rep(c("KO", "WT"), each = 3))
-    xod <- groupFeatures(xod, param = p)
+    p <- PeakDensityParam(sampleGroups = rep(c("KO", "WT"), each = 3))
+    xod <- groupChromPeaks(xod, param = p)
     xs <- group(xs, method = "density")
     
     ## Feature alignment on those:
@@ -235,8 +235,8 @@ dontrun_do_adjustRtime_peakgroups_implementation <- function() {
 
     ##
     minFr <- 5/6
-    res <- xcms:::do_adjustRtime_featureGroups(features = features(xod),
-                                               featureGroups(xod)$featureidx,
+    res <- xcms:::do_adjustRtime_peakGroups(peaks = chromPeaks(xod),
+                                               featureDefinitions(xod)$peakidx,
                                                rtime = rtime(xod, bySample = TRUE),
                                                minFraction = minFr)
     a <- unname(unlist(res, use.names = FALSE))
@@ -254,20 +254,20 @@ dontrun_do_adjustRtime_peakgroups_implementation <- function() {
     ## That's strange!
     ## cfun <- stepfun(rtr[-1] - diff(rtr) / 2, rtr - rtdevsmo)
     cfun <- stepfun(rtr[-1] - diff(rtr) / 2, rtc)
-    corFeat <- features(xod)
+    corFeat <- chromPeaks(xod)
     whichSamp <- which(corFeat[, "sample"] == 1)
     corFeat[whichSamp, c("rt", "rtmin", "rtmax")] <-
         cfun(corFeat[whichSamp, c("rt", "rtmin", "rtmax")])
 
     checkEquals(corFeat[whichSamp, ], peaks(xs)[whichSamp, ])
-    checkTrue(any(peaks(xs) != features(xod)))
+    checkTrue(any(peaks(xs) != chromPeaks(xod)))
     
     ## Do the backwards correction.
     adjFun <- stepfun(rtc[-1] - diff(rtc) / 2, rtr)
     origFeats <- corFeat
     origFeats[whichSamp, c("rt", "rtmin", "rtmax")] <-
         adjFun(corFeat[whichSamp, c("rt", "rtmin", "rtmax")])
-    checkEquals(features(xod)[whichSamp, ], origFeats[whichSamp, ])
+    checkEquals(chromPeaks(xod)[whichSamp, ], origFeats[whichSamp, ])
     ## OK.
 }
 
@@ -279,14 +279,14 @@ test_applyRtAdjustment <- function() {
     ## align em.
     xsa <- retcor(xsg, method = "peakgroups")
 
-    pksAdj <- xcms:::.applyRtAdjToFeatures(peaks(xsg),
-                                           rtraw = xsa@rt$raw,
-                                           rtadj = xsa@rt$corrected)
+    pksAdj <- xcms:::.applyRtAdjToChromPeaks(peaks(xsg),
+                                             rtraw = xsa@rt$raw,
+                                             rtadj = xsa@rt$corrected)
     checkEquals(pksAdj, peaks(xsa))
     ## Reset em.
-    pksRaw <- xcms:::.applyRtAdjToFeatures(pksAdj,
-                                           rtraw = xsa@rt$corrected,
-                                           rtadj = xsa@rt$raw)
+    pksRaw <- xcms:::.applyRtAdjToChromPeaks(pksAdj,
+                                             rtraw = xsa@rt$corrected,
+                                             rtadj = xsa@rt$raw)
     checkEquals(pksRaw, peaks(xsg))
 }
 
@@ -297,7 +297,7 @@ test_obiwarp <- function() {
     od <- faahko_od
     xod <- faahko_xod
     ## Feature alignment on those:
-    ## object <- detectFeatures(faahko_od, param = CentWaveParam(noise = 10000,
+    ## object <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
     ##                                                           snthresh = 40))
     prm <- ObiwarpParam(binSize = 1)
     xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm))
@@ -314,10 +314,18 @@ test_obiwarp <- function() {
     checkEquals(adjustedRtime(res_3, bySample = TRUE), res)
     checkEquals(adjustedRtime(res_3, bySample = TRUE),
                 unname(split(unname(res_2), fromFile(od))))
-    ## Check if features were corrected correctly
-    ## File issue on that! retcor.obiwarp does use round for the adjustment!
+    ## Check if peaks were corrected correctly
+    checkTrue(sum(chromPeaks(res_3)[, "rt"] == chromPeaks(xod)) <
+              nrow(chromPeaks(res_3)) / 2)
+    ## Dropping the adjusted rtime on these
+    hasAdjustedRtime(res_3)
+    tmp <- dropAdjustedRtime(res_3)
+    checkEquals(chromPeaks(tmp), chromPeaks(xod))
+    
+    ## File issue on that! retcor.obiwarp does use round for the adjustment of
+    ## the peak!
     ## -> issue #122
-    ## checkEquals(features(res_3), peaks(xs_2))
+    ## checkEquals(chromPeaks(res_3), peaks(xs_2))
     
     ## Manually specify center Sample
     centerSample(prm) <- 3

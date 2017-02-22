@@ -1,11 +1,10 @@
 ## tests related to the new XCMSnExp object.
-library(RUnit)
 
 od_x <- faahko_od
 xod_x <- faahko_xod
-xod_xg <- groupFeatures(xod_x, param = FeatureDensityParam())
-xod_xgr <- adjustRtime(xod_xg, param = FeatureGroupsParam(span = 0.4))
-xod_xgrg <- groupFeatures(xod_xgr, param = FeatureDensityParam())
+xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
 
 xs <- faahko_xs
 
@@ -21,8 +20,8 @@ od_fa <- faahko_od
 .checkCreationOfEmptyObject <- function() {
     x <- new("XCMSnExp")
     checkTrue(!hasAdjustedRtime(x))
-    checkTrue(!hasAlignedFeatures(x))
-    checkTrue(!hasDetectedFeatures(x))
+    checkTrue(!hasFeatures(x))
+    checkTrue(!hasChromPeaks(x))
 }
 
 test_XCMSnExp_class <- function() {
@@ -36,16 +35,16 @@ test_XCMSnExp_class <- function() {
     xod <- as(od_fa, "XCMSnExp")
     checkTrue(validObject(xod))
     ## MsFeatureData error: environment is locked
-    checkException(xod@msFeatureData$features <- 3)
+    checkException(xod@msFeatureData$chromPeaks <- 3)
     checkException(xod@msFeatureData$bla <- 4)
     checkTrue(validObject(xod))
 
     .checkCreationOfEmptyObject()
-    ## xod@msFeatureData$features <- xs_2@peaks
+    ## xod@msFeatureData$chromPeaks <- xs_2@peaks
     ## checkTrue(validObject(xod))
-    ## xod@msFeatureData$features[1, "sample"] <- 40
+    ## xod@msFeatureData$chromPeaks[1, "sample"] <- 40
     ## checkException(validObject(xod))
-    ## xod@msFeatureData$features[1, "sample"] <- 3
+    ## xod@msFeatureData$chromPeaks[1, "sample"] <- 3
     ## xod@msFeatureData$adjustedRtime <- xs_2@rt$corrected
     ## checkTrue(validObject(xod))
     ## xod@msFeatureData$adjustedRtime[[2]] <- 1:4
@@ -61,7 +60,7 @@ test_XCMSnExp_rtime <- function() {
     rts_2 <- rtime(od_x)
     checkEquals(rts, rts_2)
     ## Test with bySample.
-    rts_3 <- rtime(od_x, bySample = TRUE)
+    rts_3 <- rtime(xod_x, bySample = TRUE)
     checkEquals(rts_3, split(rts, f = fromFile(faahko_od)))
     ## Check if rtimes are correctly ordered for bySample
     rts_4 <- rtime(filterFile(faahko_od, file = 2))
@@ -79,7 +78,7 @@ test_XCMSnExp_mz <- function() {
     ## The check below has to work, since we're calling the mz,OnDiskMSnExp.
     ## mzs_2 <- mz(od_x)
     ## checkEquals(mzs, mzs_2)
-    mzs_2 <- mz(od_x, bySample = TRUE)
+    mzs_2 <- mz(xod_x, bySample = TRUE)
     tmp <- split(mzs, fromFile(faahko_od))
     checkEquals(lapply(tmp, unlist, use.names = FALSE), mzs_2)
     ## Check if mz are correctly ordered for bySample
@@ -92,7 +91,7 @@ test_XCMSnExp_intensity <- function() {
     ## The check below has to work, since we're calling the intensity,OnDiskMSnExp.
     ## ints_2 <- intensity(od_x)
     ## checkEquals(ints, ints_2)
-    ints_2 <- intensity(od_x, bySample = TRUE)
+    ints_2 <- intensity(xod_x, bySample = TRUE)
     tmp <- split(ints, fromFile(faahko_od))
     checkEquals(lapply(tmp, unlist, use.names = FALSE), ints_2)
     ## Check if mz are correctly ordered for bySample
@@ -111,54 +110,64 @@ test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
     ## Filling with data...
     xod <- as(od_fa, "XCMSnExp")
-    ## features
-    checkTrue(!hasDetectedFeatures(xod))
-    features(xod) <- xs_2@peaks
-    checkTrue(hasDetectedFeatures(xod))
-    checkEquals(features(xod), xs_2@peaks)
-    checkException(features(xod) <- 4)
-    tmp <- features(xod, bySample = TRUE)
+    ## peaks
+    checkTrue(!hasChromPeaks(xod))
+    chromPeaks(xod) <- xs_2@peaks
+    checkTrue(hasChromPeaks(xod))
+    checkEquals(chromPeaks(xod), xs_2@peaks)
+    checkException(chromPeaks(xod) <- 4)
+    tmp <- chromPeaks(xod, bySample = TRUE)
     checkTrue(length(tmp) == length(fileNames(xod)))
     tmp <- do.call(rbind, tmp)
     rownames(tmp) <- NULL
-    checkEquals(tmp, features(xod))
+    checkEquals(tmp, chromPeaks(xod))
     ## Wrong assignments.
     pks <- xs_2@peaks
     pks[1, "sample"] <- 40
-    checkException(features(xod) <- pks)
-    ## featureGroups
-    checkTrue(!hasAlignedFeatures(xod))
+    checkException(chromPeaks(xod) <- pks)
+    ## featureDefinitions
+    checkTrue(!hasFeatures(xod))
     library(S4Vectors)
     fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(xod) <- fd
-    checkTrue(hasDetectedFeatures(xod))
-    checkTrue(hasAlignedFeatures(xod))
-    checkEquals(featureGroups(xod), fd)
+    fd$peakidx <- xs_2@groupidx
+    featureDefinitions(xod) <- fd
+    checkTrue(hasChromPeaks(xod))
+    checkTrue(hasFeatures(xod))
+    checkEquals(featureDefinitions(xod), fd)
     ## adjustedRtime
     checkTrue(!hasAdjustedRtime(xod))
-    adjustedRtime(xod) <- xs_2@rt$corrected
-    checkTrue(hasAdjustedRtime(xod))
-    checkTrue(hasDetectedFeatures(xod))
-    checkTrue(hasAlignedFeatures(xod))
-    checkEquals(adjustedRtime(xod, bySample = TRUE), xs_2@rt$corrected)
+    xod2 <- xod
+    adjustedRtime(xod2) <- xs_2@rt$corrected
+    checkTrue(hasAdjustedRtime(xod2))
+    checkTrue(hasChromPeaks(xod2))
+    checkTrue(hasFeatures(xod2))
+    checkEquals(adjustedRtime(xod2, bySample = TRUE), xs_2@rt$corrected)
+    ## The chromatographic peaks should be different to the unadjusted ones.
+    tmp <- chromPeaks(xod)[, "rt"] == chromPeaks(xod2)[, "rt"]
+    ## Most of the rts should be different
+    checkTrue(sum(tmp) < length(tmp)/4)
+    tmp <- chromPeaks(xod)[, "rtmin"] == chromPeaks(xod2)[, "rtmin"]
+    checkTrue(sum(tmp) < length(tmp)/4)
+    tmp <- chromPeaks(xod)[, "rtmax"] == chromPeaks(xod2)[, "rtmax"]
+    checkTrue(sum(tmp) < length(tmp)/4)
     ## rtime should now also return adjusted retention times
-    checkEquals(rtime(xod), adjustedRtime(xod))
-    checkEquals(rtime(xod, adjusted = FALSE), rtime(as(xod, "OnDiskMSnExp")))
-    checkEquals(rtime(xod, adjusted = TRUE), adjustedRtime(xod))
+    checkEquals(rtime(xod2), adjustedRtime(xod2))
+    checkEquals(rtime(xod2, adjusted = FALSE), rtime(as(xod2, "OnDiskMSnExp")))
+    checkEquals(rtime(xod2, adjusted = FALSE), rtime(xod))
+    checkEquals(rtime(xod2, adjusted = TRUE), adjustedRtime(xod2))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
-    tmp <- unlist(adjustedRtime(xod, bySample = TRUE))
-    tmp_diff <- tmp - rtime(xod)
-    tmp_diff_2 <- adjustedRtime(xod, bySample = FALSE) - rtime(xod)
+    tmp <- unlist(adjustedRtime(xod2, bySample = TRUE))
+    tmp_diff <- tmp - rtime(xod2)
+    tmp_diff_2 <- adjustedRtime(xod2, bySample = FALSE) - rtime(xod2)
     checkTrue(max(tmp_diff) > max(tmp_diff_2))
-    checkEquals(names(adjustedRtime(xod)), names(rtime(xod)))
+    checkEquals(names(adjustedRtime(xod2)), names(rtime(xod2)))
     ## Wrong assignments.
-    checkException(adjustedRtime(xod) <- xs_2@rt$corrected[1:2])
+    checkException(adjustedRtime(xod2) <- xs_2@rt$corrected[1:2])
     ## bracket subset
-    tmp <- xod[1]
+    tmp <- xod2[1]
     checkTrue(length(tmp[[1]]) == 1)
-    checkTrue(length(xod[[1]]) == 1)
+    checkTrue(length(xod2[[1]]) == 1)
     .checkCreationOfEmptyObject()
 }
 
@@ -184,97 +193,110 @@ test_XCMSnExp_processHistory <- function() {
 test_XCMSnExp_droppers <- function() {
     ## How are the drop functions expected to work?
     .checkCreationOfEmptyObject()
-    type_feat_det <- xcms:::.PROCSTEP.FEATURE.DETECTION
-    type_feat_algn <- xcms:::.PROCSTEP.FEATURE.ALIGNMENT
+    type_feat_det <- xcms:::.PROCSTEP.PEAK.DETECTION
+    type_feat_algn <- xcms:::.PROCSTEP.PEAK.GROUPING
     type_rt_adj <- xcms:::.PROCSTEP.RTIME.CORRECTION
     ## Perform alignment.
-    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
-    checkTrue(hasAlignedFeatures(od_xg))
-    checkTrue(length(processHistory(od_xg, type = type_feat_algn)) == 1)
+    ## xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+    checkTrue(hasFeatures(xod_xg))
+    checkTrue(hasChromPeaks(xod_x))
+    checkTrue(hasChromPeaks(xod_xg))
+    checkTrue(!hasAdjustedRtime(xod_xg))
+    checkTrue(length(processHistory(xod_xg, type = type_feat_algn)) == 1)
     ## Retention time adjustment.
-    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 1))
-    checkTrue(hasDetectedFeatures(od_xgr))
-    checkTrue(length(processHistory(od_xgr, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(od_xgr))  ## These should have been removed
-    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
-    checkTrue(hasAdjustedRtime(od_xgr))
-    checkTrue(length(processHistory(od_xgr, type = type_rt_adj)) == 1)
+    ## xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 1))
+    checkTrue(hasChromPeaks(xod_xgr))
+    checkTrue(length(processHistory(xod_xgr, type = type_feat_det)) == 1)
+    checkTrue(!hasFeatures(xod_xgr))  ## These should have been removed
+    checkTrue(length(processHistory(xod_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasAdjustedRtime(xod_xgr))
+    checkTrue(length(processHistory(xod_xgr, type = type_rt_adj)) == 1)
     ## Most of the retention times are different
-    checkTrue(sum(features(od_xgr)[, "rt"] != features(od_x)[, "rt"]) >
-              nrow(features(od_x)) / 2)
+    checkTrue(sum(chromPeaks(xod_xgr)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
+              nrow(chromPeaks(xod_x)) / 2)
+    checkTrue(sum(rtime(xod_xgr) == rtime(xod_xg)) < length(rtime(xod_xg) / 2))
     ## Alignment after retention time adjustment.
-    od_xgrg <- groupFeatures(od_xgr, param = FeatureDensityParam())
-    checkTrue(hasDetectedFeatures(od_xgrg))
-    checkEquals(features(od_xgrg), features(od_xgr))
-    checkTrue(hasAdjustedRtime(od_xgrg))
-    checkTrue(length(processHistory(od_xgr, type = type_feat_algn)) == 1)
-    checkTrue(hasAlignedFeatures(od_xgrg))
-    checkTrue(length(processHistory(od_xgrg, type = type_feat_algn)) == 2)
+    ## xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+    checkTrue(hasChromPeaks(xod_xgrg))
+    checkEquals(chromPeaks(xod_xgrg), chromPeaks(xod_xgr))
+    checkTrue(hasAdjustedRtime(xod_xgrg))
+    checkEquals(rtime(xod_xgrg), rtime(xod_xgr))
+    checkEquals(rtime(xod_xgrg, adjusted = FALSE), rtime(od_x))
+    checkTrue(length(processHistory(xod_xgr, type = type_feat_algn)) == 1)
+    checkTrue(hasFeatures(xod_xgrg))
+    checkTrue(length(processHistory(xod_xgrg, type = type_feat_algn)) == 2)
        
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
-    res <- dropFeatures(od_x)
-    checkTrue(!hasDetectedFeatures(res))
+    res <- dropChromPeaks(xod_x)
+    checkTrue(!hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(rtime(res), rtime(od_x))
     ##
-    res <- dropFeatures(od_xg)
-    checkTrue(!hasDetectedFeatures(res))
+    res <- dropChromPeaks(xod_xg)
+    checkTrue(!hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(rtime(res), rtime(od_x))
     ##
-    res <- dropFeatures(od_xgr)
-    checkTrue(!hasDetectedFeatures(res))
+    res <- dropChromPeaks(xod_xgr)
+    checkTrue(!hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(rtime(res), rtime(od_x))
     ##
-    res <- dropFeatures(od_xgrg)
-    checkTrue(!hasDetectedFeatures(res))
+    res <- dropChromPeaks(xod_xgrg)
+    checkTrue(!hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(rtime(res), rtime(od_x))
     
-    ## 2) dropFeatureGroups:
+    ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history
     ##    b) if retention time correction was performed AFTER the latest feature
     ##       grouping, drop also the retention time correction and all related
     ##       process histories.
-    res <- dropFeatureGroups(od_xg)
-    checkEquals(res, od_x)
-    checkTrue(hasDetectedFeatures(res))
+    res <- dropFeatureDefinitions(xod_xg)
+    checkEquals(res, xod_x)
+    checkTrue(hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
+    checkEquals(rtime(res), rtime(od_x))
     ## No feature groups - so there is nothing that this function does here.
-    res <- dropFeatureGroups(od_xgr)
-    checkEquals(res, od_xgr)
-    checkTrue(hasDetectedFeatures(res))
+    res <- dropFeatureDefinitions(xod_xgr)
+    checkEquals(res, xod_xgr)
+    checkTrue(hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
     checkTrue(hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
     ## Remove the latest ones.
-    res <- dropFeatureGroups(od_xgrg)
-    checkEquals(res, od_xgr)
-    checkTrue(hasDetectedFeatures(res))
+    res <- dropFeatureDefinitions(xod_xgrg)
+    checkEquals(res, xod_xgr)
+    checkTrue(hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 1)
     checkTrue(hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    checkEquals(rtime(res, adjusted = FALSE), rtime(od_x))
+    checkEquals(rtime(res, adjusted = TRUE), rtime(xod_xgr))
 
     ## 3) dropAdjustedRtime:
     ##    a) drop the retention time adjustment and related process histories
@@ -282,31 +304,31 @@ test_XCMSnExp_droppers <- function() {
     ##       drop the feature alignment and all related process histories.
     ##    c) if grouping has been performed BEFORE retention time correction,
     ##       do nothing.
-    res <- dropAdjustedRtime(od_xg)
-    checkEquals(res, od_xg)
+    res <- dropAdjustedRtime(xod_xg)
+    checkEquals(res, xod_xg)
     ## This drops also the process history for alignment.
-    res <- dropAdjustedRtime(od_xgr)
-    checkTrue(hasDetectedFeatures(res))
+    res <- dropAdjustedRtime(xod_xgr)
+    checkTrue(hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
-    checkEquals(features(res), features(od_x))
-    checkEquals(res, od_x)
-    checkEquals(rtime(res), rtime(od_x))
-    checkEquals(rtime(res), rtime(od_xgr, adjusted = FALSE))
+    checkEquals(chromPeaks(res), chromPeaks(xod_x))
+    checkEquals(res, xod_x)
+    checkEquals(rtime(res), rtime(xod_x))
+    checkEquals(rtime(res), rtime(xod_xgr, adjusted = FALSE))
     ## This drops also the feature alignment performed later.
-    res <- dropAdjustedRtime(od_xgrg)
-    checkTrue(hasDetectedFeatures(res))
+    res <- dropAdjustedRtime(xod_xgrg)
+    checkTrue(hasChromPeaks(res))
     checkTrue(length(processHistory(res, type = type_feat_det)) == 1)
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
-    checkEquals(features(res), features(od_x))
-    checkEquals(res, od_x)
-    checkEquals(rtime(res), rtime(od_xgrg, adjusted = FALSE))
+    checkEquals(chromPeaks(res), chromPeaks(xod_x))
+    checkEquals(res, xod_x)
+    checkEquals(rtime(res), rtime(xod_xgrg, adjusted = FALSE))
     
     .checkCreationOfEmptyObject()
 }
@@ -320,91 +342,91 @@ test_XCMSnExp_inherited_methods <- function() {
     ## [
     tmp_1 <- od_fa[1:10]
     suppressWarnings(
-        tmp_2 <- od_x[1:10]
+        tmp_2 <- xod_x[1:10]
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## bin
     tmp_1 <- bin(od_fa)
     suppressWarnings(
-        tmp_2 <- bin(od_x)
+        tmp_2 <- bin(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## clean
     tmp_1 <- clean(od_fa)
     suppressWarnings(
-        tmp_2 <- clean(od_x)
+        tmp_2 <- clean(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## filterAcquisitionNum
     tmp_1 <- filterAcquisitionNum(od_fa)
     suppressWarnings(
-        tmp_2 <- filterAcquisitionNum(od_x)
+        tmp_2 <- filterAcquisitionNum(xod_x)
     )
     checkTrue(length(tmp_2[[1]]) > 0)
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## filterMsLevel
     tmp_1 <- filterMsLevel(od_fa)
     suppressWarnings(
-        tmp_2 <- filterMsLevel(od_x)
+        tmp_2 <- filterMsLevel(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## normalize
     tmp_1 <- normalize(od_fa)
     suppressWarnings(
-        tmp_2 <- normalize(od_x)
+        tmp_2 <- normalize(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## pickPeaks
     tmp_1 <- pickPeaks(od_fa)
     suppressWarnings(
-        tmp_2 <- pickPeaks(od_x)
+        tmp_2 <- pickPeaks(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## removePeaks
     tmp_1 <- removePeaks(od_fa)
     suppressWarnings(
-        tmp_2 <- removePeaks(od_x)
+        tmp_2 <- removePeaks(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
     ## smooth
     tmp_1 <- smooth(od_fa)
     suppressWarnings(
-        tmp_2 <- smooth(od_x)
+        tmp_2 <- smooth(xod_x)
     )
     checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasDetectedFeatures(tmp_2))
+    checkTrue(!hasChromPeaks(tmp_2))
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
@@ -414,36 +436,45 @@ test_XCMSnExp_inherited_methods <- function() {
 ## Test XCMSnExp filter methods.
 test_XCMSnExp_filterFile <- function() {
     ## filterFile
-    tmp <- filterFile(od_x, file = 2)
+    tmp <- filterFile(xod_x, file = 2)
     checkException(tmp@msFeatureData$bla <- 3)
     checkTrue(!hasAdjustedRtime(tmp))
-    checkTrue(!hasAlignedFeatures(tmp))
-    checkTrue(all(features(tmp)[, "sample"] == 1))
-    checkEquals(features(tmp)[, -ncol(features(tmp))],
-                features(od_x)[features(od_x)[, "sample"] == 2,
-                               -ncol(features(od_x))])
+    checkTrue(!hasFeatures(tmp))
+    checkTrue(all(chromPeaks(tmp)[, "sample"] == 1))
+    checkEquals(chromPeaks(tmp)[, -ncol(chromPeaks(tmp))],
+                chromPeaks(xod_x)[chromPeaks(xod_x)[, "sample"] == 2,
+                                  -ncol(chromPeaks(xod_x))])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
-    tmp <- filterFile(od_x, file = c(1, 3))
+    tmp <- filterFile(xod_x, file = c(1, 3))
     checkTrue(length(tmp[[1]]) == 1)
     checkTrue(!hasAdjustedRtime(tmp))
-    checkTrue(!hasAlignedFeatures(tmp))
-    checkTrue(all(features(tmp)[, "sample"] %in% c(1, 2)))
-    a <- features(tmp)
-    b <- features(od_x)
+    checkTrue(!hasFeatures(tmp))
+    checkTrue(all(chromPeaks(tmp)[, "sample"] %in% c(1, 2)))
+    a <- chromPeaks(tmp)
+    b <- chromPeaks(xod_x)
     checkEquals(a[, -ncol(a)], b[b[, "sample"] %in% c(1, 3), -ncol(b)])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
 
     ## Errors
-    checkException(filterFile(od_x, file = 5))
-    checkException(filterFile(od_x, file = 1:5))
+    checkException(filterFile(xod_x, file = 5))
+    checkException(filterFile(xod_x, file = 1:5))
 
     ## Little mockup to check correctness of Process history.
-    od_2 <- od_x
-    od_2 <- xcms:::addProcessHistory(od_2,
-                                     xcms:::ProcessHistory(type = xcms:::.PROCSTEP.RTIME.CORRECTION))
-    od_2 <- xcms:::addProcessHistory(od_2, xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN, fileIndex = 2, info. = "I should be here"))
-    od_2 <- xcms:::addProcessHistory(od_2, xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN, fileIndex = 1, info. = "EEEEEE"))
+    od_2 <- xod_x
+    od_2 <- xcms:::addProcessHistory(
+                       od_2,
+                       xcms:::ProcessHistory(
+                                  type = xcms:::.PROCSTEP.RTIME.CORRECTION))
+    od_2 <- xcms:::addProcessHistory(
+                       od_2,
+                       xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN,
+                                             fileIndex = 2,
+                                             info. = "I should be here"))
+    od_2 <- xcms:::addProcessHistory(
+                       od_2,
+                       xcms:::ProcessHistory(type = xcms:::.PROCSTEP.UNKNOWN,
+                                             fileIndex = 1, info. = "EEEEEE"))
 
     tmp <- filterFile(od_2, file = 2)
     ph <- processHistory(tmp)
@@ -457,189 +488,332 @@ test_XCMSnExp_filterFile <- function() {
         processInfo(z) == "EEEEEE"
     }))
     checkTrue(!any(b))
+    ## Do filterFile on xod_xg
+    res <- filterFile(xod_xg, file = 2)
+    checkTrue(hasChromPeaks(res))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    tmp <- chromPeaks(xod_xg)
+    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
+    ## Do filterFile on xod_xgr
+    ## Should remove adjusted rts and revert the original peak rts.
+    res <- filterFile(xod_xgr, file = 2)
+    checkTrue(hasChromPeaks(res))
+    tmp <- chromPeaks(xod_xg)
+    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 1)
+    checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
+    ## The same but keep the adjusted retention times.
+    res <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    checkTrue(hasChromPeaks(res))
+    tmp <- chromPeaks(xod_xgr)
+    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    ## has to be different from the ones in xod_x
+    tmp <- chromPeaks(xod_x)
+    checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] == 2, "rt"]) <
+              nrow(tmp) / 4)
+    checkEquals(rtime(res), rtime(xod_xgr, bySample = TRUE)[[2]])
+    checkEquals(adjustedRtime(res), adjustedRtime(xod_xgr, bySample = TRUE)[[2]])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 2)
+    checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
+    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
+    ## Do filterFile on xod_xgrg
+    res <- filterFile(xod_xgrg, file = c(1, 3))
+    checkTrue(hasChromPeaks(res))
+    tmp <- chromPeaks(xod_x)
+    checkEquals(chromPeaks(res)[, -ncol(tmp)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    checkEquals(unname(rtime(res, bySample = TRUE)),
+                unname(rtime(xod_xg, bySample = TRUE)[c(1, 3)]))
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 1)
+    checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
+    ## keep adjusted rtime
+    res <- filterFile(xod_xgrg, file = c(1, 3), keepAdjustedRtime = TRUE)
+    checkTrue(hasChromPeaks(res))
+    tmp <- chromPeaks(xod_xgr)
+    checkEquals(chromPeaks(res)[, -ncol(tmp)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    ## has to be different from the ones in xod_x
+    tmp <- chromPeaks(xod_x)
+    checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] %in% c(1, 3), "rt"]) <
+              nrow(tmp) / 4)
+    checkEquals(rtime(res, bySample = TRUE),
+                rtime(xod_xgr, bySample = TRUE)[c(1, 3)])
+    checkEquals(adjustedRtime(res, bySample = TRUE),
+                adjustedRtime(xod_xgr, bySample = TRUE)[c(1, 3)])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 2)
+    checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
+    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
 }
 
 test_XCMSnExp_filterMz <- function() {
-    od_x2 <- od_x
-    new_e <- xcms:::.copy_env(od_x2@msFeatureData)
-    xcms:::adjustedRtime(od_x2) <- xs_2@rt$corrected
-    library(S4Vectors)
-    fd <- DataFrame(xs_2@groups)
-    fd$featureidx <- xs_2@groupidx
-    featureGroups(od_x2) <- fd
+    ## od_x2 <- od_x
+    ## new_e <- xcms:::.copy_env(od_x2@msFeatureData)
+    ## xcms:::adjustedRtime(od_x2) <- xs_2@rt$corrected
+    ## library(S4Vectors)
+    ## fd <- DataFrame(xs_2@groups)
+    ## fd$peakidx <- xs_2@groupidx
+    ## featureDefinitions(od_x2) <- fd
 
-    ## Subset
-    tmp <- filterMz(od_x2, mz = c(300, 400))
-    checkTrue(length(tmp[[1]]) == 1)
-    checkException(tmp@msFeatureData$bla <- 3)
-    checkTrue(length(tmp@spectraProcessingQueue) == 1)
-    checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
-    checkTrue(validObject(tmp@msFeatureData))
-    checkTrue(all(featureGroups(tmp)$mzmed >= 300 &
-                                    featureGroups(tmp)$mzmed <= 400))
-    checkEquals(adjustedRtime(tmp), adjustedRtime(od_x2))
-    checkTrue(nrow(features(tmp)) < nrow(features(od_x2)))
-    checkTrue(hasDetectedFeatures(tmp))
-    checkTrue(hasAlignedFeatures(tmp))
-    ## second
-    tmp <- filterMz(od_x, mz = c(300, 400))
-    checkTrue(hasDetectedFeatures(tmp))
-    checkTrue(!hasAlignedFeatures(tmp))
-    checkTrue(all(features(tmp)[, "mz"] >= 300 & features(tmp)[, "mz"] <= 400))
-    checkTrue(validObject(tmp@msFeatureData))
-
+    ## subset on xod_x
+    res <- filterMz(xod_x, mz = c(300, 400))
+    suppressWarnings(
+        checkTrue(length(res[[1]]) == 1)
+    )
+    checkTrue(length(res@spectraProcessingQueue) == 1)
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 300 & chromPeaks(res)[, "mz"] <= 400))
+    checkTrue(nrow(chromPeaks(res)) < nrow(chromPeaks(xod_x)))
+    idx <- which(chromPeaks(xod_x)[, "mzmin"] >= 300 &
+                 chromPeaks(xod_x)[, "mzmax"] <= 400)
+    checkEquals(chromPeaks(res), chromPeaks(xod_x)[idx, ])
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(!hasFeatures(res))
+    ## subset on xod_xg
+    res <- filterMz(xod_xg, mz = c(300, 400))
+    checkTrue(validObject(res))
+    suppressWarnings(
+        checkTrue(length(res[[1]]) == 1)
+    )
+    checkTrue(length(res@spectraProcessingQueue) == 1)
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 300 & chromPeaks(res)[, "mz"] <= 400))
+    checkTrue(nrow(chromPeaks(res)) < nrow(chromPeaks(xod_x)))
+    idx <- which(chromPeaks(xod_xg)[, "mzmin"] >= 300 &
+                 chromPeaks(xod_xg)[, "mzmax"] <= 400)
+    checkEquals(chromPeaks(res), chromPeaks(xod_xg)[idx, ])
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(hasFeatures(res))
+    checkTrue(nrow(featureDefinitions(res)) < nrow(featureDefinitions(xod_xg)))
+    checkTrue(all(featureDefinitions(res)[, "mzmed"] >= 300 &
+                  featureDefinitions(res)[, "mzmed"] <= 400))
+    checkTrue(all(featureDefinitions(res)[, "mzmin"] >= 300 &
+                  featureDefinitions(res)[, "mzmin"] <= 400))
+    checkTrue(all(featureDefinitions(res)[, "mzmax"] >= 300 &
+                  featureDefinitions(res)[, "mzmax"] <= 400))
+    ## subset on xod_xgr
+    ## o keep chromPeaks
+    ## o keep adjusted rtime
+    res <- filterMz(xod_xgr, mz = c(300, 400))
+    checkTrue(validObject(res))
+    suppressWarnings(
+        checkTrue(length(res[[1]]) == 1)
+    )
+    checkTrue(length(res@spectraProcessingQueue) == 1)
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 300 & chromPeaks(res)[, "mz"] <= 400))
+    checkTrue(nrow(chromPeaks(res)) < nrow(chromPeaks(xod_x)))
+    idx <- which(chromPeaks(xod_xgr)[, "mzmin"] >= 300 &
+                 chromPeaks(xod_xgr)[, "mzmax"] <= 400)
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgr)[idx, ])
+    checkTrue(hasAdjustedRtime(res))
+    checkEquals(adjustedRtime(res), adjustedRtime(xod_xgr))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 3)
+    ## subset xod_xgrg
+    res <- filterMz(xod_xgrg, mz = c(300, 400))
+    checkTrue(validObject(res))
+    suppressWarnings(
+        checkTrue(length(res[[1]]) == 1)
+    )
+    checkTrue(length(res@spectraProcessingQueue) == 1)
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 300 & chromPeaks(res)[, "mz"] <= 400))
+    checkTrue(nrow(chromPeaks(res)) < nrow(chromPeaks(xod_xgrg)))
+    idx <- which(chromPeaks(xod_xgrg)[, "mzmin"] >= 300 &
+                 chromPeaks(xod_xgrg)[, "mzmax"] <= 400)
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgrg)[idx, ])
+    checkTrue(hasAdjustedRtime(res))
+    checkEquals(adjustedRtime(res), adjustedRtime(xod_xgrg))
+    checkTrue(hasFeatures(res))
+    checkTrue(nrow(featureDefinitions(res)) < nrow(featureDefinitions(xod_xgrg)))
+    checkTrue(all(featureDefinitions(res)[, "mzmed"] >= 300 &
+                  featureDefinitions(res)[, "mzmed"] <= 400))
+    checkTrue(all(featureDefinitions(res)[, "mzmin"] >= 300 &
+                  featureDefinitions(res)[, "mzmin"] <= 400))
+    checkTrue(all(featureDefinitions(res)[, "mzmax"] >= 300 &
+                  featureDefinitions(res)[, "mzmax"] <= 400))
     ## With groups - no groups within this range
     mzr <- c(120, 130)
-    tmp <- filterMz(xod_xg, mz = mzr)
-    checkTrue(!hasAlignedFeatures(tmp))
-    checkTrue(hasDetectedFeatures(tmp))
+    res <- filterMz(xod_xg, mz = mzr)
+    checkTrue(!hasFeatures(res))
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))
+    res <- filterMz(xod_xgrg, mz = mzr)
+    checkTrue(!hasFeatures(res))
+    checkTrue(hasChromPeaks(res))
+    checkTrue(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))    
 }
 
 test_XCMSnExp_filterRt <- function() {
-    od_x2 <- od_x
 
-    ## Testing with only feature data present:
-    res <- filterRt(od_x2, rt = c(2700, 2900))
+    ## xod_x
+    res <- filterRt(xod_x, rt = c(2700, 2900))
     ## Check if the object is OK:
-    checkEquals(pData(res), pData(od_x2))
-    checkTrue(length(spectra(res)) > 0)
-    
+    checkEquals(pData(res), pData(xod_x))
+    spct <- spectra(res)
+    checkTrue(length(spct) > 0)    
     ## MsFeatureData has to be locked!
     checkException(res@msFeatureData$bla <- 3)
     ## Retention time has to be within the range.
     checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
-    ## features have to be within the range.
-    checkTrue(all(features(res)[, "rt"] >= 2700 &
-                  features(res)[, "rt"] <= 2900))
-    ## features have to match the subsetted ones.
-    are_within <- features(od_x2)[, "rt"] >= 2700 &
-        features(od_x2)[, "rt"] <= 2900
-    checkEquals(features(res), features(od_x2)[are_within,])
+    rtm <- unlist(lapply(spct, rtime))
+    checkTrue(all(rtm >= 2700 & rtm <= 2900))
+    ## peaks have to be within the range.
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_x)[, "rt"] >= 2700 &
+        chromPeaks(xod_x)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_x)[are_within,])
     ## Have a feature detection process history.
+    checkEquals(length(processHistory(res)), 1)
     checkEquals(processType(processHistory(res)[[1]]),
-                xcms:::.PROCSTEP.FEATURE.DETECTION)
-    ## filter such that we keep some spectra but no features:
-    res <- filterRt(od_x2, rt = c(4200, 4400))
+                xcms:::.PROCSTEP.PEAK.DETECTION)
+    ## filter such that we keep some spectra but no chromPeaks:
+    res <- filterRt(xod_x, rt = c(4200, 4400))
     checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
-    checkTrue(!hasDetectedFeatures(res))
+    checkTrue(!hasChromPeaks(res))
     checkTrue(length(processHistory(res)) == 0)
     ## No rt
-    res <- filterRt(od_x2, rt = c(10, 20))
+    res <- filterRt(xod_x, rt = c(10, 20))
     checkTrue(length(res) == 0)
 
-    ## With feature groups:
-    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
-    res <- filterRt(od_xg, rt = c(2700, 2900))
-    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xg))
-    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xg))
-    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
-    checkTrue(length(processHistory(res, type = "Feature alignment")) == 1)
-    ## Retention time has to be within the range.
+    ## xod_xg
+    ## o keep also the feature groups that are within the window.
+    res <- filterRt(xod_xg, rt = c(2700, 2900))
     checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
-    ## features have to be within the range.
-    checkTrue(all(features(res)[, "rt"] >= 2700 &
-                  features(res)[, "rt"] <= 2900))
-    ## feature groups have to be within range:
-    checkTrue(all(featureGroups(res)$rtmed >= 2700 &
-                                    featureGroups(res)$rtmed <= 2900))
+    checkEquals(hasChromPeaks(res), hasChromPeaks(xod_xg))
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_x)[, "rt"] >= 2700 &
+        chromPeaks(xod_x)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_xg)[are_within,])
+    checkTrue(!hasAdjustedRtime(res))
+    checkTrue(hasFeatures(res))
+    checkTrue(all(featureDefinitions(res)$rtmed >= 2700 &
+                                    featureDefinitions(res)$rtmed <= 2900))
+    checkTrue(nrow(featureDefinitions(res)) < nrow(featureDefinitions(xod_xg)))
+    checkTrue(length(processHistory(res)) == 2)
+    checkTrue(length(processHistory(res, type = "Peak detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Peak grouping")) == 1)
     ## All feature idx have to match.
-    checkTrue(all(unlist(featureGroups(res)$featureidx) %in%
-                  1:nrow(features(res))))
-    ## Filter such that we don't have any features.
-    res <- filterRt(od_xg, rt = c(4200, 4400))
+    checkTrue(all(unlist(featureDefinitions(res)$peakidx) %in%
+                  1:nrow(chromPeaks(res))))
+    ## Filter such that we don't have any chromPeaks.
+    res <- filterRt(xod_xg, rt = c(4200, 4400))
     checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
-    checkTrue(!hasDetectedFeatures(res))
-    checkTrue(!hasAlignedFeatures(res))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(!hasFeatures(res))
     checkTrue(length(processHistory(res)) == 0)
     ## No rt
-    res <- filterRt(od_xg, rt = c(10, 20))
+    res <- filterRt(xod_xg, rt = c(10, 20))
     checkTrue(length(res) == 0)
 
-    ## With adjusted retention time.
-    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.5))
-    res <- filterRt(od_xgr, rt = c(2700, 2900))
-    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xgr))
-    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xgr))
-    checkEquals(hasAdjustedRtime(res), hasAdjustedRtime(od_xgr))
-    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
-    checkTrue(length(processHistory(res, type = "Feature alignment")) == 1)
-    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
-    ## Retention time has to be within the range. By default we're supposed to
-    ## filter by adjusted rtime.
+    ## xod_xgr
+    res <- filterRt(xod_xgr, rt = c(2700, 2900))
     checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkEquals(hasChromPeaks(res), hasChromPeaks(xod_xg))
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_xgr)[, "rt"] >= 2700 &
+        chromPeaks(xod_xgr)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgr)[are_within,])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(all(adjustedRtime(res) >= 2700 & adjustedRtime(res) <= 2900))
     checkTrue(!all(rtime(res, adjusted = FALSE) >= 2700 &
                    rtime(res, adjusted = FALSE) <= 2900))
-    ## Check if rtime is what we expect it to be:
-    keep_em <- rtime(od_xgr) >= 2700 & rtime(od_xgr) <= 2900
-    checkEquals(rtime(res), rtime(od_xgr)[keep_em])
-    checkEquals(rtime(res, adjusted = FALSE),
-                rtime(od_xgr, adjusted = FALSE)[keep_em])
-    checkEquals(adjustedRtime(res), adjustedRtime(od_xgr)[keep_em])
-    ## Check features.
-    keep_em <- features(od_xgr)[, "rt"] >= 2700 & features(od_xgr)[, "rt"] <= 2900
-    checkEquals(features(od_xgr)[keep_em, ], features(res))
-    ## Filtering for rt with no features drops also the adjusted rt.
-    res <- filterRt(od_xgr, rt = c(4200, 4400))
-    checkTrue(!hasDetectedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(length(processHistory(res)) == 0)
-    ## Enforce filtering on adjusted:
-    ## checkEquals(filterRt(od_xgr, rt = c(2700, 2900)),
-    ##             filterRt(od_xgr, rt = c(2700, 2900), adjusted = TRUE))
-    ## Filter using raw retention times
-    res <- filterRt(od_xgr, rt = c(2700, 2900), adjusted = FALSE)
-    checkTrue(!all(rtime(res) >= 2700 & rtime(res) <= 2900))
-    checkTrue(all(rtime(res, adjusted = FALSE) >= 2700 &
-                  rtime(res, adjusted = FALSE) <= 2900))
-    ## Features - can not really check here.
-    checkTrue(all(features(res)[, "rt"] >= 2700 &
-                  features(res)[, "rt"] <= 2900))
-    
-    ## Adjusted retention time AND grouping
-    od_xgrg <- groupFeatures(od_xgr, param = FeatureDensityParam())
-    res <- filterRt(od_xgrg, rt = c(2700, 2900))
-    checkEquals(hasDetectedFeatures(res), hasDetectedFeatures(od_xgrg))
-    checkEquals(hasAlignedFeatures(res), hasAlignedFeatures(od_xgrg))
-    checkEquals(hasAdjustedRtime(res), hasAdjustedRtime(od_xgrg))
-    checkTrue(length(processHistory(res, type = "Feature detection")) == 1)
-    checkTrue(length(processHistory(res, type = "Feature alignment")) == 2)
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res, type = "Peak detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Peak grouping")) == 1)
     checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
-    ## Retention time has to be within the range. By default we're supposed to
-    ## filter by adjusted rtime.
-    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
-    checkTrue(!all(rtime(res, adjusted = FALSE) >= 2700 &
-                   rtime(res, adjusted = FALSE) <= 2900))
-    ## Check if rtime is what we expect it to be:
-    keep_em <- rtime(od_xgrg) >= 2700 & rtime(od_xgrg) <= 2900
-    checkEquals(rtime(res), rtime(od_xgrg)[keep_em])
-    checkEquals(rtime(res, adjusted = FALSE),
-                rtime(od_xgrg, adjusted = FALSE)[keep_em])
-    checkEquals(adjustedRtime(res), adjustedRtime(od_xgrg)[keep_em])
-    ## Check features.
-    keep_em <- features(od_xgrg)[, "rt"] >= 2700 & features(od_xgrg)[, "rt"] <= 2900
-    checkEquals(features(od_xgrg)[keep_em, ], features(res))
-    ## Feature groups.
-    checkTrue(all(featureGroups(res)$rtmed >= 2700 &
-                                    featureGroups(res)$rtmed <= 2900))
-    validObject(res)
-    ## Filtering for rt with no features drops also the adjusted rt.
-    res <- filterRt(od_xgrg, rt = c(4200, 4400))
-    checkTrue(!hasDetectedFeatures(res))
-    checkTrue(!hasAdjustedRtime(res))
-    checkTrue(!hasAlignedFeatures(res))
-    checkTrue(length(processHistory(res)) == 0)
-    ## Enforce filtering on adjusted:
-    ## checkEquals(filterRt(od_xgrg, rt = c(2700, 2900)),
-    ##             filterRt(od_xgrg, rt = c(2700, 2900), adjusted = TRUE))
-    ## Filter using raw retention times
-    res <- filterRt(od_xgrg, rt = c(2700, 2900), adjusted = FALSE)
+    ## Filter such that we don't have any chromPeaks.
+    res <- filterRt(xod_xgr, rt = c(4200, 4400), adjusted = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(all(adjustedRtime(res) >= 4200 & adjustedRtime(res) <= 4400))
+    checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
+    checkTrue(!all(rtime(res, adjusted = FALSE) >= 4200 &
+                   rtime(res, adjusted = FALSE) <= 4400))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 1)
+    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
+    ## No rt
+    res <- filterRt(xod_xgr, rt = c(10, 20))
+    checkTrue(length(res) == 0)
+    ## filter using raw rt
+    res <- filterRt(xod_xgr, rt = c(2700, 2900), adjusted = FALSE)
     checkTrue(!all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkEquals(hasChromPeaks(res), hasChromPeaks(xod_xg))
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_xgr)[, "rt"] >= 2700 &
+        chromPeaks(xod_xgr)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgr)[are_within,])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(!all(adjustedRtime(res) >= 2700 & adjustedRtime(res) <= 2900))
     checkTrue(all(rtime(res, adjusted = FALSE) >= 2700 &
                   rtime(res, adjusted = FALSE) <= 2900))
-    ## Features - can not really check here.
-    checkTrue(all(features(res)[, "rt"] >= 2700 &
-                  features(res)[, "rt"] <= 2900))
+    checkTrue(!hasFeatures(res))
 
+    ## xod_xgrg
+    res <- filterRt(xod_xgrg, rt = c(2700, 2900))
+    checkTrue(all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkEquals(hasChromPeaks(res), hasChromPeaks(xod_xg))
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_xgrg)[, "rt"] >= 2700 &
+        chromPeaks(xod_xgr)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgrg)[are_within,])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(all(adjustedRtime(res) >= 2700 & adjustedRtime(res) <= 2900))
+    checkTrue(!all(rtime(res, adjusted = FALSE) >= 2700 &
+                   rtime(res, adjusted = FALSE) <= 2900))
+    checkTrue(length(processHistory(res, type = "Peak detection")) == 1)
+    checkTrue(length(processHistory(res, type = "Peak grouping")) == 2)
+    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
+    checkTrue(hasFeatures(res))
+    checkTrue(all(featureDefinitions(res)$rtmed >= 2700 &
+                                    featureDefinitions(res)$rtmed <= 2900))
+    ## Filter such that we don't have any chromPeaks.
+    res <- filterRt(xod_xgrg, rt = c(4200, 4400), adjusted = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(all(adjustedRtime(res) >= 4200 & adjustedRtime(res) <= 4400))
+    checkTrue(all(rtime(res) >= 4200 & rtime(res) <= 4400))
+    checkTrue(!all(rtime(res, adjusted = FALSE) >= 4200 &
+                   rtime(res, adjusted = FALSE) <= 4400))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res)) == 1)
+    checkTrue(length(processHistory(res, type = "Retention time correction")) == 1)
+    ## No rt
+    res <- filterRt(xod_xgrg, rt = c(10, 20))
+    checkTrue(length(res) == 0)
+    ## filter using raw rt
+    res <- filterRt(xod_xgrg, rt = c(2700, 2900), adjusted = FALSE)
+    checkTrue(!all(rtime(res) >= 2700 & rtime(res) <= 2900))
+    checkEquals(hasChromPeaks(res), hasChromPeaks(xod_xg))
+    checkTrue(all(chromPeaks(res)[, "rt"] >= 2700 &
+                  chromPeaks(res)[, "rt"] <= 2900))
+    are_within <- chromPeaks(xod_xgrg)[, "rt"] >= 2700 &
+        chromPeaks(xod_xgrg)[, "rt"] <= 2900
+    checkEquals(chromPeaks(res), chromPeaks(xod_xgrg)[are_within,])
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(!all(adjustedRtime(res) >= 2700 & adjustedRtime(res) <= 2900))
+    checkTrue(all(rtime(res, adjusted = FALSE) >= 2700 &
+                  rtime(res, adjusted = FALSE) <= 2900))
+    checkTrue(hasFeatures(res))
+    checkTrue(all(featureDefinitions(res)$rtmed >= 2700 &
+                                    featureDefinitions(res)$rtmed <= 2900))
 }
 
 ## Test the coercion method.
@@ -648,7 +822,7 @@ test_as_XCMSnExp_xcmsSet <- function() {
     res <- xcms:::.XCMSnExp2xcmsSet(od_x)
     res <- as(od_x, "xcmsSet")
     ## Results should be the same as in xs.
-    checkEquals(res@peaks, features(od_x))
+    checkEquals(res@peaks, chromPeaks(od_x))
     checkEquals(res@.processHistory, processHistory(od_x))
     checkEquals(phenoData(res), pData(od_x))
     checkEquals(filepaths(res), fileNames(od_x))
@@ -662,24 +836,24 @@ test_as_XCMSnExp_xcmsSet <- function() {
     ## res <- fillPeaks(res)
 
     ## Add groups.
-    od_2 <- groupFeatures(od_x, param = FeatureDensityParam())
-    checkEquals(featureGroups(od_2)$featureidx, groupidx(res))
+    od_2 <- groupChromPeaks(od_x, param = PeakDensityParam())
+    checkEquals(featureDefinitions(od_2)$peakidx, groupidx(res))
 
     ## rt correction
-    od_3 <- adjustRtime(od_2, param = FeatureGroupsParam(minFraction = 1,
+    od_3 <- adjustRtime(od_2, param = PeakGroupsParam(minFraction = 1,
                                                          span = 0.4))
     ## With groups.
     res <- as(od_2, "xcmsSet")
     checkEquals(res@groups,
-                S4Vectors::as.matrix(featureGroups(od_2)[, -ncol(featureGroups(od_2))]))
-    checkEquals(res@groupidx, featureGroups(od_2)$featureidx)
+                S4Vectors::as.matrix(featureDefinitions(od_2)[, -ncol(featureDefinitions(od_2))]))
+    checkEquals(res@groupidx, featureDefinitions(od_2)$peakidx)
 
     ## With adjusted retention time.
     res_2 <- retcor.peakgroups(res, missing = 0, span = 0.4)
     res <- as(od_3, "xcmsSet")
     checkTrue(any(unlist(res@rt$raw) != unlist(res@rt$corrected)))
     checkEquals(res@rt$corrected, res_2@rt$corrected)
-    checkEquals(features(od_3), peaks(res))
+    checkEquals(chromPeaks(od_3), peaks(res))
     checkEquals(peaks(res_2), peaks(res))
     
     ## Test with different binning methods:
@@ -707,67 +881,67 @@ test_MsFeatureData_class_validation <- function() {
     fd$a <- 5
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     rm("a", envir = fd)
-    ## Check features
-    fd$features <- 4
+    ## Check chromPeaks
+    fd$chromPeaks <- 4
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     fdm <- matrix(ncol = 3, nrow = 5)
     colnames(fdm) <- c("a", "b", "sample")
-    fd$features <- fdm
+    fd$chromPeaks <- fdm
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
-    rm("features", envir = fd)
-    ## featureGroups
-    fd$features <- xs_2@peaks
-    fd$featureGroups <- 4
+    rm("chromPeaks", envir = fd)
+    ## featureDefinitions
+    fd$chromPeaks <- xs_2@peaks
+    fd$featureDefinitions <- 4
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     fg <- DataFrame(fdm)
-    fd$featureGroups <- fg
+    fd$featureDefinitions <- fg
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     fg <- DataFrame(xs_2@groups)
-    fg$featureidx <- xs_2@groupidx
+    fg$peakidx <- xs_2@groupidx
     fg_2 <- fg
     fg_2$mzmin <- "a"
-    fd$featureGroups <- fg_2
+    fd$featureDefinitions <- fg_2
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     fg_2 <- fg
-    fg_2$featureidx[[1]] <- c(50000, 3)
-    fd$featureGroups <- fg_2
+    fg_2$peakidx[[1]] <- c(50000, 3)
+    fd$featureDefinitions <- fg_2
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     ## adjustedRtime
-    fd$featureGroups <- fg
+    fd$featureDefinitions <- fg
     fd$adjustedRtime <- 4
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     fd$adjustedRtime <- list(1:5, "b")
     checkTrue(!is.logical(xcms:::validateMsFeatureData(fd)))
     ## Now check that we pass if we put all correct data into the object:
     fd <- new("MsFeatureData")
-    fd$features <- xs_2@peaks
-    checkTrue(xcms:::validateMsFeatureData(fd))
+    fd$chromPeaks <- xs_2@peaks
+    checkTrue(length(xcms:::validateMsFeatureData(fd)) == 0)
     fd$adjustedRtime <- xs_2@rt$corrected
-    checkTrue(xcms:::validateMsFeatureData(fd))
+    checkTrue(length(xcms:::validateMsFeatureData(fd)) == 0)
     fg <- DataFrame(xs_2@groups)
-    fg$featureidx <- xs_2@groupidx
-    checkTrue(xcms:::validateMsFeatureData(fd))
+    fg$peakidx <- xs_2@groupidx
+    checkTrue(length(xcms:::validateMsFeatureData(fd)) == 0)
 }
 
 test_MsFeatureData_class_accessors <- function() {
     fd <- new("MsFeatureData")
     library(S4Vectors)
-    checkTrue(!hasDetectedFeatures(fd))
+    checkTrue(!hasChromPeaks(fd))
     checkTrue(!hasAdjustedRtime(fd))
-    checkTrue(!hasAlignedFeatures(fd))
-    suppressWarnings(checkEquals(features(fd), NULL))
-    suppressWarnings(checkEquals(featureGroups(fd), NULL))
+    checkTrue(!hasFeatures(fd))
+    suppressWarnings(checkEquals(chromPeaks(fd), NULL))
+    suppressWarnings(checkEquals(featureDefinitions(fd), NULL))
     suppressWarnings(checkEquals(adjustedRtime(fd), NULL))
-    ## features
-    features(fd) <- xs_2@peaks
-    checkTrue(hasDetectedFeatures(fd))
-    checkEquals(features(fd), xs_2@peaks)
-    ## featureGroups
+    ## chromPeaks
+    chromPeaks(fd) <- xs_2@peaks
+    checkTrue(hasChromPeaks(fd))
+    checkEquals(chromPeaks(fd), xs_2@peaks)
+    ## featureDefinitions
     fg <- DataFrame(xs_2@groups)
-    fg$featureidx <- xs_2@groupidx
-    featureGroups(fd) <- fg
-    checkTrue(hasAlignedFeatures(fd))
-    checkEquals(featureGroups(fd), fg)
+    fg$peakidx <- xs_2@groupidx
+    featureDefinitions(fd) <- fg
+    checkTrue(hasFeatures(fd))
+    checkEquals(featureDefinitions(fd), fg)
     ## adjustedRtime
     adjustedRtime(fd) <- xs_2@rt$corrected
     checkTrue(hasAdjustedRtime(fd))
@@ -778,7 +952,7 @@ test_MsFeatureData_class_accessors <- function() {
 ## Test extraction of chromatograms.
 test_extractChromatograms <- function() {
     ## Have: od_x: OnDiskMSNnExp
-    ## xod_x: XCMSnExp, with detected features.
+    ## xod_x: XCMSnExp, with detected chromPeaks.
     ## xod_xg: with feature groups.
     ## xod_xgr: with adjusted retention times (no feature groups)
     ## xod_xgrg: adjusted rt and feature groups.
@@ -809,9 +983,9 @@ test_extractChromatograms <- function() {
     ## XCMSnExp: with mzrange and rtrange:
     mzr <- c(120, 130)
     tmp <- filterMz(xod_xg, mz = mzr)
-    featureGroups(tmp)
+    featureDefinitions(tmp)
     tmp <- filterRt(xod_xg, rt = rtr)
-    featureGroups(tmp)
+    featureDefinitions(tmp)
     res_2 <- xcms:::extractChromatograms(xod_xg, rt = rtr, mz = mzr)
     ##
 
@@ -829,7 +1003,7 @@ dontrun_getEIC_alternatives <- function() {
              system.file('cdf/KO/ko18.CDF', package = "faahKO"))
     od <- readMSData2(fls)
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
-    od_x <- detectFeatures(od, param = cwp)
+    od_x <- findChromPeaks(od, param = cwp)
 
     ## with this one we get 3 spectras back, one in each file.
     rtr <- c(2787, 2788)    
@@ -848,11 +1022,11 @@ dontrun_getEIC_alternatives <- function() {
     ##   function call
     ## -----------
     
-    od_xg <- groupFeatures(od_x, param = FeatureDensityParam())
-    od_xgr <- adjustRtime(od_xg, param = FeatureGroupsParam(span = 0.4))
+    od_xg <- groupChromPeaks(od_x, param = PeakDensityParam())
+    od_xgr <- adjustRtime(od_xg, param = PeakGroupsParam(span = 0.4))
 
-    rtr <- as.matrix(featureGroups(od_xg)[1:5, c("rtmin", "rtmax")])
-    mzr <- as.matrix(featureGroups(od_xg)[1:5, c("mzmin", "mzmax")])
+    rtr <- as.matrix(featureDefinitions(od_xg)[1:5, c("rtmin", "rtmax")])
+    mzr <- as.matrix(featureDefinitions(od_xg)[1:5, c("mzmin", "mzmax")])
 
     system.time(
         res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])

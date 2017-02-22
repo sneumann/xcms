@@ -127,8 +127,11 @@ and examples.
 The \code{pickPeaks} method performs peak picking. See
 \code{\link[MSnbase]{pickPeaks}} documentation for details and examples.
 
-The \code{removePeaks} method removes peaks (intensities) lower than a
-threshold. Note that these peaks are not features! See \code{\link[MSnbase]{removePeaks}} documentation for details and examples.
+The \code{removePeaks} method removes mass peaks (intensities) lower than a
+threshold. Note that these peaks refer to \emph{mass} peaks, which are
+different to the chromatographic peaks detected and analyzed in a
+metabolomics experiment! See \code{\link[MSnbase]{removePeaks}}
+documentation for details and examples.
 
 The \code{smooth} method smooths spectra. See \code{\link[MSnbase]{smooth}}
 documentation for details and examples.

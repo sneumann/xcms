@@ -1,5 +1,5 @@
 ############################################################
-## do_detectFeatures_massifquant tests
+## do_findChromPeaks_massifquant tests
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
@@ -15,18 +15,18 @@ mzf <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
 ############################################################
 ## Simple test comparing results from various massifquant runs and
 ## centWave analyses.
-test_do_detectFeatures_massifquant <- function() {
+test_do_findChromPeaks_massifquant <- function() {
     res <- findPeaks.massifquant(xr, snthresh = 100)
     mz <- xr@env$mz
     int <- xr@env$intensity
     valsPerSpect <- diff(c(xr@scanindex, length(mz)))
     scantime <- xr@scantime
-    res_2 <- do_detectFeatures_massifquant(mz = mz, int = int,
+    res_2 <- do_findChromPeaks_massifquant(mz = mz, int = int,
                                            valsPerSpect = valsPerSpect,
                                            scantime = scantime)
     checkEquals(res@.Data, res_2)
     ## With centWave:
-    res_3 <- do_detectFeatures_massifquant(mz = mz, int = int,
+    res_3 <- do_findChromPeaks_massifquant(mz = mz, int = int,
                                            valsPerSpect = valsPerSpect,
                                            scantime = scantime, withWave = TRUE,
                                            snthresh = 100, noise = 4000)
@@ -42,36 +42,36 @@ test_do_detectFeatures_massifquant <- function() {
     int <- xsub@env$intensity
     valsPerSpect <- diff(c(xsub@scanindex, length(mz)))
     scantime <- xsub@scantime
-    res_2 <- do_detectFeatures_massifquant(mz = mz, int = int,
+    res_2 <- do_findChromPeaks_massifquant(mz = mz, int = int,
                                            valsPerSpect = valsPerSpect,
                                            scantime = scantime)
     checkIdentical(res_1@.Data, res_2)
 }
 
-## Evaluate the featureDetection method using massifquant on MSnExp and
+## Evaluate the peak detection method using massifquant on MSnExp and
 ## OnDiskMSnExp objects.
-test_featureDetection_massifquant <- function() {
+test_findChromPeaks_massifquant <- function() {
     library(MSnbase)
     mqp <- MassifquantParam(ppm = 20, criticalValue = 1.2)
     res <- xcmsSet(mzf[1], method = "massifquant", ppm = 20, criticalValue = 1.2)
     ## onDisk
     onDisk <- readMSData2(mzf[1])
-    res_o <- detectFeatures(onDisk, param = mqp, return.type = "xcmsSet")
+    res_o <- findChromPeaks(onDisk, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
 
     ## Full data
     ## onDisk <- readMSData2(mzf)
-    ## res <- detectFeatures(onDisk, param = mqp)
+    ## res <- findChromPeaks(onDisk, param = mqp)
     ## xs <- xcmsSet(mzf, method = "massifquant", ppm = 20, criticalValue = 1.2)
-    ## checkTrue(hasDetectedFeatures(res))
+    ## checkTrue(hasChromPeaks(res))
     ## checkTrue(!hasAdjustedRtime(res))
-    ## checkTrue(!hasAlignedFeatures(res))
-    ## checkEquals(peaks(xs)@.Data, features(res))
+    ## checkTrue(!hasFeatures(res))
+    ## checkEquals(peaks(xs)@.Data, chromPeaks(res))
 
     ## inMem
     ## inMem <- readMSData(mzf[1], msLevel. = 1)
-    ## res_i <- detectFeatures(inMem, param = mqp, return.type = "xcmsSet")
+    ## res_i <- findChromPeaks(inMem, param = mqp, return.type = "xcmsSet")
     ## checkEquals(peaks(res_i), peaks(res))
     ## checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
 }
@@ -80,7 +80,7 @@ test_featureDetection_massifquant <- function() {
 ############################################################
 ## Test the implementation of the "do" function, i.e. whether
 ## the results are the same between versions and implementations.
-dontrun_test_do_detectFeatures_massifquant_impl <- function() {
+dontrun_test_do_findChromPeaks_massifquant_impl <- function() {
 
     library(xcms)
     library(RUnit)
@@ -110,7 +110,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
         consecMissedLimit <- 2
         unions <- 1
         withWave <- 0
-        ## Now, this method calls do_detectFeatures_massifquant.
+        ## Now, this method calls do_findChromPeaks_massifquant.
         a <- findPeaks.massifquant(xr, ppm = ppm, peakwidth = peakwidth,
                                    snthresh = snthresh,
                                    criticalValue = criticalValue,
@@ -125,7 +125,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
         ## LLL: compare the _orig method
         ## 1) check if scanrange works between both.
         ## 2) compare the orig_ with the do
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
@@ -156,7 +156,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a@.Data, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                  valsPerSpect = valsPerSpect,
                                  ppm = ppm, peakwidth = peakwidth,
                                  snthresh = snthresh,
@@ -184,7 +184,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
@@ -211,7 +211,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
@@ -238,7 +238,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a@.Data, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
@@ -265,7 +265,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a@.Data, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
@@ -292,7 +292,7 @@ dontrun_test_do_detectFeatures_massifquant_impl <- function() {
                                                consecMissedLimit = consecMissedLimit,
                                                unions = unions, withWave = withWave)
         checkEquals(a, b)
-        d <- do_detectFeatures_massifquant(mz, int, scantime = scantime,
+        d <- do_findChromPeaks_massifquant(mz, int, scantime = scantime,
                                            valsPerSpect = valsPerSpect,
                                            ppm = ppm, peakwidth = peakwidth,
                                            snthresh = snthresh,
