@@ -7,8 +7,8 @@ USER VISIBLE CHANGES:
   - feature: mz-rt feature, being the grouped chromatographic peaks within and
     across samples.
 
-NEW FEATURES:
-+ Chromatogram class.
+BUG FIXES:
++ Issue #127: failing unit test on Windows build machine.
 
 
 CHANGES IN VERSION 1.51.6
