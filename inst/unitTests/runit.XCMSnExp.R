@@ -192,6 +192,13 @@ test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
 }
 
+test_XCMSnExp_findChromPeaks <- function() {
+    ## Call findChromPeaks on an XCMSnExp
+    tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
+                                                       snthresh = 40))
+    checkEquals(chromPeaks(tmp), chromPeaks(xod_x))
+}
+
 
 test_XCMSnExp_processHistory <- function() {
     ph <- xcms:::ProcessHistory(fileIndex. = 2, info. = "For file 2")

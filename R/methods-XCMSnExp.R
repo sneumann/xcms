@@ -1748,4 +1748,20 @@ setMethod("extractChromatograms",
                                           adjusted = adjustedRtime))
           })
 
-
+##' @rdname XCMSnExp-class
+setMethod("findChromPeaks",
+          signature(object = "XCMSnExp", param = "ANY"),
+          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
+              ## Remove all previous results.
+              if (hasFeatures(object))
+                  object <- dropFeatureDefinitions(object)
+              if (hasAdjustedRtime(object))
+                  object <- dropAdjustedRtime(object)
+              if (hasChromPeaks(object))
+                  object <- dropChromPeaks(object)
+              suppressMessages(
+                  object <- callNextMethod()
+              )
+              object@.processHistory <- list()
+              return(object)
+})

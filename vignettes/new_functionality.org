@@ -250,7 +250,12 @@ a mz-rt /feature/.
   xod <- groupChromPeaks(xod, param = pdp)
 #+END_SRC
 
+The definitions of the features can be accessed with the =featureDefinitions=,
+which lists the mz-rt space specific to a feature. Column ="peakidx"= lists the
+indices (in the =chromPeaks= matrix) of the individual chromatographic peaks
+belonging to the feature.
 
+NEED THE FILLPEAKS AND FEATUREVALUES METHODS!
 
 
 ** New naming convention
