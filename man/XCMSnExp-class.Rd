@@ -111,7 +111,8 @@
 
 \S4method{intensity}{XCMSnExp}(object, bySample = FALSE)
 
-\S4method{spectra}{XCMSnExp}(object, bySample = FALSE)
+\S4method{spectra}{XCMSnExp}(object, bySample = FALSE,
+  adjusted = hasAdjustedRtime(object))
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
 
@@ -344,9 +345,12 @@ a grouping by sample/file.
 
 \code{spectra}: extracts the
 \code{\link[MSnbase]{Spectrum}} objects containing all data from
-\code{object}. These values are extracted from the original data files and
-eventual processing steps are applied \emph{on the fly}. Setting
-\code{bySample = TRUE} the spectra are returned grouped by sample/file.
+\code{object}. The values are extracted from the original data files and
+eventual processing steps are applied \emph{on the fly}. By setting
+\code{bySample = TRUE}, the spectra are returned grouped by sample/file. If
+the \code{XCMSnExp} object contains adjusted retention times, these are
+returned by default in the \code{Spectrum} objects (can be overwritten
+by setting \code{adjusted = FALSE}).
 
 \code{processHistory}: returns a \code{list} with
 \code{\link{ProcessHistory}} objects (or objects inheriting from this base

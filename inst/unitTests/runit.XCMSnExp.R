@@ -1,10 +1,10 @@
 ## tests related to the new XCMSnExp object.
 
-od_x <- faahko_od
-xod_x <- faahko_xod
-xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
-xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
-xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+## od_x <- faahko_od
+## xod_x <- faahko_xod
+## xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+## xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+## xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
 
 xs <- faahko_xs
 
@@ -104,6 +104,27 @@ test_XCMSnExp_spectra <- function() {
     res <- spectra(xod)
     res_2 <- spectra(xod, bySample = TRUE)
     checkEquals(split(res, fromFile(xod)), res_2)
+    ## xod_x
+    tmp <- filterRt(xod_x, rt = c(2700, 2900))
+    res <- spectra(tmp)
+    rts <- unlist(lapply(res, rtime))
+    checkEquals(rts, rtime(tmp))
+    ## Check with adjusted retention times.
+    tmp2 <- filterRt(xod_xgr, rt = c(2700, 2900))
+    res2 <- spectra(tmp2)
+    rts2 <- unlist(lapply(res2, rtime))
+    checkEquals(rts2, rtime(tmp2))
+    ## Now do it on one file:
+    tmp <- filterFile(xod_x, file = 2)
+    res <- spectra(tmp)
+    checkEquals(rtime(tmp), unlist(lapply(res, rtime)))
+    tmp2 <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    res2 <- spectra(tmp2)
+    checkEquals(rtime(tmp2), unlist(lapply(res2, rtime)))
+    checkTrue(sum(unlist(lapply(res2, rtime)) ==
+                  unlist(lapply(res, rtime))) < length(rtime(tmp)) / 4)
+    res3 <- spectra(tmp2, adjusted = FALSE)
+    checkEquals(res, res3)    
 }
 
 test_XCMSnExp_class_accessors <- function() {

@@ -784,13 +784,11 @@ setMethod("adjustRtime",
               return(res)
           })
 
-
 #' @rdname extractChromatograms-method
 #' @noRd
 setMethod("extractChromatograms",
           signature(object = "OnDiskMSnExp"),
           function(object, rt, mz, aggregationFun = "sum") {
               return(.extractChromatogram(x = object, rt = rt, mz = mz,
-                                          aggregationFun = aggregationFun,
-                                          adjusted = FALSE))
+                                          aggregationFun = aggregationFun))
           })

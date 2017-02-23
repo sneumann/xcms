@@ -197,7 +197,7 @@ export(
     "do_groupChromPeaks_density",
     "do_groupPeaks_mzClust",
     "do_groupChromPeaks_nearest",
-    ## "Chromatogram",
+    "Chromatogram",
     "do_adjustRtime_peakGroups"
 )
 
@@ -366,7 +366,7 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 
 ## New Classes
 exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
-              ## "Chromatogram",
+              "Chromatogram",
               "XProcessHistory"
               )
 ## New methods for these classes
@@ -404,6 +404,8 @@ exportMethods("hasChromPeaks",
               "mz",
               "intensity",
               "aggregationFun",
-##              "extractChromatograms",
+              "extractChromatograms",
+              "parentMz",
+              "productMz",
               "as.data.frame"
               )

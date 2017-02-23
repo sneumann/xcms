@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.51.8
+-------------------------
+
+NEW FEATURES:
++ Add Chromatogram class and extractChromatograms method.
+
+
 CHANGES IN VERSION 1.51.7
 -------------------------
 

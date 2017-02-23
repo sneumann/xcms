@@ -256,34 +256,44 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Now, call spectrapply on the object to return the data we need from each
     ## Spectrum: the aggregated intensity values per spectrum and the mz value
     ## range.
-    res <- spectrapply(subs, FUN = function(z) {
-        if (!z@peaksCount)
-            return(list())
-        return(c(range(z@mz), do.call(aggregationFun, list(z@intensity))))
-    })
+    ## Note: we're returning NA in case we don't have a valid measurement for a
+    ## retention time within the specified mz
+    suppressWarnings(
+        res <- spectrapply(subs, FUN = function(z) {
+            if (!z@peaksCount)
+                return(c(NA_real_, NA_real_, NA_real_))
+            ## return(list())
+            return(c(range(z@mz), do.call(aggregationFun, list(z@intensity))))
+        })
+    )
     ## Do I want to drop the names?
-    not_empty <- base::which(base::lengths(res) > 0)
-    if (length(not_empty)) {
-        res <- split(res[not_empty], f = fromFile(subs)[not_empty])
-        rtm <- split(rtime(subs)[not_empty], f = fromFile(subs)[not_empty])
-        ## We want to have one Chromatogram per file.
-        ## Let's use a simple for loop here - no need for an mapply (yet).
-        resL <- vector("list", length(res))
-        for (i in 1:length(res)) {
-            allVals <- unlist(res[[i]], use.names = FALSE)
-            idx <- seq(3, length(allVals), by = 3)
-            mzr <- range(allVals[-idx], na.rm = TRUE, finite = TRUE)
-            ## Or should we drop the names completely?
-            ints <- allVals[idx]
-            names(ints) <- names(rtm[[i]])
-            resL[[i]] <- Chromatogram(rtime = rtm[[i]],
-                                      intensity = ints, mz = mzr,
-                                      filterMz = fmzr,
-                                      fromFile = as.integer(names(res)[i]),
-                                      aggregationFun = aggregationFun)
-        }
-        return(resL)
-    } else {
+    nas <- unlist(lapply(res, function(z) is.na(z[3])), use.names = FALSE)
+    if (all(nas))
         return(list())
+    ## not_empty <- base::which(base::lengths(res) > 0)
+    ## if (length(not_empty)) {
+    ## res <- split(res[not_empty], f = fromFile(subs)[not_empty])
+    ## rtm <- split(rtime(subs, ...)[not_empty], f = fromFile(subs)[not_empty])
+    res <- split(res, f = fromFile(subs))
+    rtm <- split(rtime(subs, ...), f = fromFile(subs))
+    ## We want to have one Chromatogram per file.
+    ## Let's use a simple for loop here - no need for an mapply (yet).
+    resL <- vector("list", length(res))
+    for (i in 1:length(res)) {
+        allVals <- unlist(res[[i]], use.names = FALSE)
+        idx <- seq(3, length(allVals), by = 3)
+        mzr <- range(allVals[-idx], na.rm = TRUE, finite = TRUE)
+        ## Or should we drop the names completely?
+        ints <- allVals[idx]
+        names(ints) <- names(rtm[[i]])
+        resL[[i]] <- Chromatogram(rtime = rtm[[i]],
+                                  intensity = ints, mz = mzr,
+                                  filterMz = fmzr,
+                                  fromFile = as.integer(names(res)[i]),
+                                  aggregationFun = aggregationFun)
     }
+    return(resL)
+    ## } else {
+    ##     return(list())
+    ## }
 }

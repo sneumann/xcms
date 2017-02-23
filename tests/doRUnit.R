@@ -46,6 +46,12 @@ if(require("RUnit", quietly=TRUE)) {
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                          method = "centWave", noise = 10000, snthresh = 40)
+    ## Doing also the retention time correction etc
+    od_x <- faahko_od
+    xod_x <- faahko_xod
+    xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+    xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+    xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
     
     ## microtofq
     library(msdata)

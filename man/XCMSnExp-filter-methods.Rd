@@ -48,7 +48,9 @@ window (lower and upper bound) for the filtering.}
 
 \item{adjusted}{For \code{filterRt}: \code{logical} indicating whether the
 object should be filtered by original (\code{adjusted = FALSE}) or adjusted
-retention times (\code{adjusted = TRUE}).}
+retention times (\code{adjusted = TRUE}).
+For \code{spectra}: whether the retention times in the individual
+\code{Spectrum} objects should be the adjusted or raw retention times.}
 }
 \value{
 All methods return an \code{\link{XCMSnExp}} object.

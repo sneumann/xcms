@@ -103,7 +103,6 @@ files from the =faahKO= package using the =readMSData2= from the =MSnbase= packa
 
 #+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   ## Reading the raw data using the MSnbase package
-  library(MSnbase)
   library(xcms)
   ## Load 6 of the CDF files from the faahKO
   cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
@@ -146,14 +145,69 @@ consistent.
 
 In addition we can plot the distribution of the total ion counts per file.
 
+#+NAME: faahKO-tic-boxplot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+  ## Get the total ion current by file
+  tc <- split(tic(raw_data), f = fromFile(raw_data))
+  boxplot(tc, col = paste0(sample_colors[pData(raw_data)$sample_group], 80),
+          ylab = "intensity", main = "Total ion current")
+#+END_SRC
 
 The =tic= (and for mzML files) the =bpi= methods are very fast, even for large data
 sets, as these information are stored in the header of the raw files avoiding
 the need to read the raw data from each file.
 
-+ Do the chromatographic peak detection.
+Next we perform the chromatographic peak detection using the /centWave/
+algorithm. In the example below we use most of the standard parameters, but the
+settings should be adjusted to each experiment individually based on e.g. the 
+expected width of the chromatographic peaks etc.
 
-+ Describe the peak detection methods.
+#+NAME: faahKO-centWave
+#+BEGIN_SRC R :message = FALSE
+  ## Defining the settings for the centWave peak detection.
+  cwp <- CentWaveParam(snthresh = 20, noise = 1000)
+  xod <- findChromPeaks(raw_data, param = cwp)
+#+END_SRC
+
+The identified peaks can be accessed with the =chromPeaks= parameter which returns
+a =matrix=, each line representing an identified peak. Column ="sample"= specifies
+in which /sample/ (i.e. file) of the experiment the peak was detected. Below we
+plot the signal distribution of the identified peaks per sample.
+
+#+NAME: faahKO-peak-intensity-boxplot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+  ints <- split(chromPeaks(xod)[, "into"], f = chromPeaks(xod)[, "sample"])
+  ints <- lapply(ints, log2)
+  boxplot(ints, varwidth = TRUE, col = sample_colors[pData(xod)$sample_group],
+          ylab = expression(log[2]~intensity), main = "Peak intensities")
+#+END_SRC
+
+Next we align the samples using the /obiwarp/ method. This method does, in
+contrast to other alignment/retention time correction methods, not require any
+identified peaks and could thus also be applied to an =OnDiskMSnExp= object. Note
+that all retention time adjustment methods do also adjust the retention times
+reported for the individual peaks in =chromPeaks=.
+
+#+NAME: faahKO-obiwarp
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Doing the obiwarp alignment using the default settings.
+  xod <- adjustRtime(xod, param = ObiwarpParam())
+#+END_SRC
+
+Note that any pre-processing results can be removed at any time using a /drop/
+method, such as =dropChromPeaks=, =dropFeatures= or =dropAdjustedRtime=. Below we draw
+the difference of the adjusted to the raw retention times.
+
+#+NAME: faahKO-adjusted-rtime-plot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+  ## Calculate the difference between the adjusted and the raw retention times.
+  diffRt <- rtime(xod) - rtime(xod, adjusted = FALSE)
+
+  ## By default, rtime and most other accessor methods return a numeric vector. To
+  ## get the values grouped by sample we have to split this vector by file/sample
+  diffRt <- split(diffRt, fromFile(xod))
+#+END_SRC
+
 
 + Describe subsetting methods filter etc.
 
@@ -770,13 +824,19 @@ Here we list all of the functions and related files that are deprecated.
 
 * TODOs								   :noexport:
 
-** TODO Deprecate binning functions.
+** DONE Deprecate binning functions.
+   CLOSED: [2017-02-23 Thu 07:47]
 
+   - State "DONE"       from "TODO"       [2017-02-23 Thu 07:47]
 All done except for the retention time correction!!!
 
-** TODO Continue implementing the =do_= functions.
-** TODO Define a new object to contain the preprocessing results
+** DONE Continue implementing the =do_= functions.
+   CLOSED: [2017-02-23 Thu 07:47]
+   - State "DONE"       from "TODO"       [2017-02-23 Thu 07:47]
+** DONE Define a new object to contain the preprocessing results
+   CLOSED: [2017-02-23 Thu 07:47]
 
+   - State "DONE"       from "TODO"       [2017-02-23 Thu 07:47]
 This object should replace in the long run the =xcmsSet= object providing the same
 functionality while in addition add a better integration of the original raw
 data files. The object should contain:
@@ -818,8 +878,10 @@ to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
 + Alignment information could be implemented as =DataFrame= with the indices added
   to a column =idx=.
 
-** TODO Rename objects, functions and methods
+** DONE Rename objects, functions and methods
+   CLOSED: [2017-02-23 Thu 07:47]
 
+   - State "DONE"       from "TODO"       [2017-02-23 Thu 07:47]
 + [X] =features=: =chromPeaks=.
 + [X] =hasDetectedFeatures=: =hasChromPeaks=.
 + [ ] feature: chromatographic peak.
@@ -862,5 +924,29 @@ RT correction.
   \cite{Sugimoto:2012jt}.
 + [X] Correspondence: (grouping) registration of recurring signals from the same
   analyte over replicate samples \cite{Smith:2014di}.
+
+
+** TODO Implement the =Chromatogram= class
+
+Now, to accommodate all possibilities:
+https://en.wikipedia.org/wiki/Triple_quadrupole_mass_spectrometer
+Triple Q-TOF measurements:
++ Product Ion Scan
+  - Q1 fixed
+  - Q3 scan
++ Precursor Ion Scan
+  - Q1 scan
+  - Q3 fixed
++ Neutral Loss Scan
+  - Q1 scan at mz = m_{product}
+  - Q3 scan at mz = m_{product} - m_{neutral molecule}
++ Selected Reaction monitoring (SRM, MRM): Q1 is used to select the precursor
+  ion, Q3 cycles through the product ions. Precursor/product pair is referred to
+  as a /transition/.
+  - Q1 fixed at mz = m_{precursor}
+  - Q3 scan at mz = m_{product}
+
+
+
 
 * References

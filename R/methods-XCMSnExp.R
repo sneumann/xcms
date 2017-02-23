@@ -331,9 +331,12 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
 
 ##' @description \code{spectra}: extracts the
 ##' \code{\link[MSnbase]{Spectrum}} objects containing all data from
-##' \code{object}. These values are extracted from the original data files and
-##' eventual processing steps are applied \emph{on the fly}. Setting
-##' \code{bySample = TRUE} the spectra are returned grouped by sample/file.
+##' \code{object}. The values are extracted from the original data files and
+##' eventual processing steps are applied \emph{on the fly}. By setting
+##' \code{bySample = TRUE}, the spectra are returned grouped by sample/file. If
+##' the \code{XCMSnExp} object contains adjusted retention times, these are
+##' returned by default in the \code{Spectrum} objects (can be overwritten
+##' by setting \code{adjusted = FALSE}).
 ##'
 ##' @return For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
 ##' \code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the result
@@ -342,8 +345,17 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
 ##' file.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE) {
+setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
+                                          adjusted = hasAdjustedRtime(object)) {
     res <- callNextMethod(object = object)
+    ## replace the rtime of these with the adjusted ones - if present.
+    if (adjusted & hasAdjustedRtime(object)) {
+        rts <- adjustedRtime(object)
+        res <- mapply(FUN = function(a, b) {
+            a@rt <- b
+            return(a)
+        }, a = res, b = rts)
+    }
     if (bySample) {
         tmp <- split(res, fromFile(object))
         ## That's to ensure that we're always returning something for all files.
@@ -936,7 +948,7 @@ setMethod("filterFile", "XCMSnExp", function(object, file,
 setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
     if (missing(mz))
         return(object)
-    if (!is.numeric(mz) | length(mz) != 2)
+    if (!is.numeric(mz))
         stop("'mz' has to be a numeric vector of length(2)!")
     mz <- range(mz)
     ## Subset peaks if present.
@@ -971,6 +983,8 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 ##' @param adjusted For \code{filterRt}: \code{logical} indicating whether the
 ##' object should be filtered by original (\code{adjusted = FALSE}) or adjusted
 ##' retention times (\code{adjusted = TRUE}).
+##' For \code{spectra}: whether the retention times in the individual
+##' \code{Spectrum} objects should be the adjusted or raw retention times.
 ##'
 ##' @rdname XCMSnExp-filter-methods
 setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
@@ -1655,12 +1669,23 @@ setMethod("groupval",
 #' \code{\link{XCMSnExp}} objects.
 #'
 #' @details Arguments \code{rt} and \code{mz} allow to specify the MS
-#' data slice from which the chromatogram should be extracted. By specifying the
-#' function to be used to aggregate intensity values across the mz range for the
-#' same retention time it is possible to extract e.g. a
-#' \emph{total ion chromatogram} (TIC, \code{aggregationFun = "sum"}) or a
-#' \emph{base peak chromatogram} (BPC, \code{aggregationFun = "max"}).
+#' data slice from which the chromatogram should be extracted. The parameter
+#' \code{aggregationSum} allows to specify the function to be used to aggregate
+#' the intensities across the mz range for the same retention time. Setting
+#' \code{aggregationFun = "sum"} would e.g. allow to calculate the \emph{total
+#' ion chromatogram} (TIC), \code{aggregationFun = "max"} the \emph{base peak
+#' chromatogram} (BPC).
 #'
+#' @note
+#' \code{Chromatogram} objects extracted with \code{extractChromatogram} contain
+#' \code{NA_real_} values if, for a given retention time, no valid measurement
+#' was available for the provided mz range.
+#'
+#' For \code{\link{XCMSnExp}} objects, if adjusted retention times are
+#' available, the \code{extractChromatograms} method will by default report and
+#' use these (for the subsetting based on the provided parameter \code{rt}). This
+#' can be overwritten with the parameter \code{adjustedRtime}.
+#' 
 #' @param object Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
 #' \code{\link{XCMSnExp}} object from which the chromatograms should be extracted.
 #'
@@ -1691,8 +1716,28 @@ setMethod("groupval",
 #' @seealso \code{\link{XCMSnExp}} for the data object.
 #' \code{\link{Chromatogram}} for the object representing chromatographic data.
 #'
-#' @noRd
-#' @rdname extractChromatograms-method 
+#' @export
+#' @rdname extractChromatograms-method
+#'
+#' @examples
+#' ## Read some files from the faahKO package.
+#' library(xcms)
+#' library(faahKO)
+#' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#'
+#' od <- readMSData2(faahko_3_files)
+#'
+#' ## Extract the ion chromatogram for one chromatographic peak in the data.
+#' chrs <- extractChromatograms(od, rt = c(2700, 2900), mz = 335)
+#'
+#' ## plot the data
+#' plot(rtime(chrs[[2]]), intensity(chrs[[2]]), type = "l", xlab = "rtime",
+#'      ylab = "intensity", col = "000080")
+#' for(i in c(1, 3)) {
+#'   points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l", col = "00000080")
+#' }
 setMethod("extractChromatograms",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
