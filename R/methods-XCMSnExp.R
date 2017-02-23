@@ -1662,6 +1662,7 @@ setMethod("groupval",
               return(vals)
 })
 
+#' @aliases extractChromatograms
 #' @title Extracting chromatograms
 #'
 #' @description \code{extractChromatograms}: the method allows to extract

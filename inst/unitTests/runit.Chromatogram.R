@@ -7,9 +7,9 @@ test_Chromatogram_class <- function() {
     ch@mz <- 3
     checkException(validObject(ch))
     ch@mz <- c(1, 3)
-    ch@parentMz <- 4
+    ch@precursorMz <- 4
     checkException(validObject(ch))
-    ch@parentMz <- c(4, 4)
+    ch@precursorMz <- c(4, 4)
     ch@productMz <- 5
     checkException(validObject(ch))
     ##
@@ -50,9 +50,9 @@ test_Chromatogram_class <- function() {
     checkEquals(ch@filterMz, c(1, 3))
     checkEquals(mz(ch, filter = TRUE), c(1, 3))
     checkEquals(mz(ch, filter = FALSE), c(0, 0))
-    ch <- xcms:::Chromatogram(parentMz = 123)
-    checkEquals(ch@parentMz, c(123, 123))
-    checkEquals(parentMz(ch), c(123, 123))
+    ch <- xcms:::Chromatogram(precursorMz = 123)
+    checkEquals(ch@precursorMz, c(123, 123))
+    checkEquals(precursorMz(ch), c(123, 123))
     ch <- xcms:::Chromatogram(productMz = 123)
     checkEquals(ch@productMz, c(123, 123))
     checkEquals(productMz(ch), c(123, 123))

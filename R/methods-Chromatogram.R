@@ -62,13 +62,12 @@ setMethod("mz", "Chromatogram", function(object, filter = FALSE) {
 ##         return(object)
 ## })
 
-##' @aliases parentMz
-##' @description \code{parentMz} get the mz of the parent chromatogram/ion. The
+##' @description \code{precursorMz} get the mz of the precursor ion. The
 ##' function returns a \code{numeric(2)} with the lower and upper mz value.
 ##' 
 ##' @rdname Chromatogram-class
-setMethod("parentMz", "Chromatogram", function(object) {
-    return(object@parentMz)
+setMethod("precursorMz", "Chromatogram", function(object) {
+    return(object@precursorMz)
 })
 
 ##' @aliases productMz

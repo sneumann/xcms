@@ -33,8 +33,8 @@ validChromatogram <- function(object) {
         msg <- c(msg, paste0("'filterMz' is supposed to contain the ",
                              "minimum and maximum mz values of the filter",
                              " used to create the chromatogram."))
-    if (length(object@parentMz) > 0 & length(object@parentMz) != 2)
-        msg <- c(msg, paste0("'parentMz' is supposed to be a numeric of",
+    if (length(object@precursorMz) > 0 & length(object@precursorMz) != 2)
+        msg <- c(msg, paste0("'precursorMz' is supposed to be a numeric of",
                              " length 2."))
     if (length(object@productMz) > 0 & length(object@productMz) != 2)
         msg <- c(msg, paste0("'productMz' is supposed to be a numeric of",
@@ -46,8 +46,7 @@ validChromatogram <- function(object) {
         msg <- c(msg, "Length of 'aggregationFun' has to be 1!")
     if (length(object@aggregationFun)) {
         if (!object@aggregationFun %in% .SUPPORTED_AGG_FUN_CHROM)
-            msg <- c(msg, paste0("Invalid value for 'aggregationFun'! ",
-                                 "only ",
+            msg <- c(msg, paste0("Invalid value for 'aggregationFun'! only ",
                                  paste0("'", .SUPPORTED_AGG_FUN_CHROM,"'",
                                         collapse = ","), " are allowed!"))
     }
@@ -73,11 +72,11 @@ validChromatogram <- function(object) {
 ##' max) that was used to filter the original object on mz dimension. If not
 ##' applicable use \code{filterMz = c(0, 0)}.
 ##'
-##' @param parentMz \code{numeric(2)} for MRM transition tracking. Represents the
-##' mz of the parent ion. See details for more information.
+##' @param precursorMz \code{numeric(2)} for SRM/MRM transitions.
+##' Represents the mz of the precursor ion. See details for more information.
 ##' 
-##' @param productMz \code{numeric(2)} for MRM transition tracking. Represents
-##' the mz of the product. See details for more information.
+##' @param productMz \code{numeric(2)} for SRM/MRM transitions.
+##' Represents the mz of the product. See details for more information.
 ##' 
 ##' @param fromFile \code{integer(1)} the index of the file within the
 ##' \code{\link{OnDiskMSnExp}} or \code{\link{XCMSnExp}} from which the
@@ -88,17 +87,17 @@ validChromatogram <- function(object) {
 ##' mz range. Supported are \code{"sum"} (total ion chromatogram), \code{"max"}
 ##' (base peak chromatogram), \code{"min"} and \code{"mean"}.
 ##' 
-##' @slot rtime,intensity,mz,filterMz,fromFile,aggregationFun See corresponding parameter above.
+##' @slot .__classVersion__,rtime,intensity,mz,filterMz,precursorMz,productMz,fromFile,aggregationFun See corresponding parameter above.
 ##' 
 ##' @rdname Chromatogram-class
 Chromatogram <- function(rtime = numeric(), intensity = numeric(),
                          mz = c(0, 0), filterMz = c(0, 0),
-                         parentMz = c(NA_real_, NA_real_),
+                         precursorMz = c(NA_real_, NA_real_),
                          productMz = c(NA_real_, NA_real_),
                          fromFile = integer(),
                          aggregationFun = character()) {
     return(new("Chromatogram", rtime = rtime, intensity = intensity,
                mz = range(mz), filterMz = range(filterMz),
-               parentMz = range(parentMz), productMz = range(productMz),
+               precursorMz = range(precursorMz), productMz = range(productMz),
                fromFile = as.integer(fromFile), aggregationFun = aggregationFun))
 }

@@ -155,7 +155,10 @@ In addition we can plot the distribution of the total ion counts per file.
 
 The =tic= (and for mzML files) the =bpi= methods are very fast, even for large data
 sets, as these information are stored in the header of the raw files avoiding
-the need to read the raw data from each file.
+the need to read the raw data from each file. Also, we could subset the whole
+object using the filter functions =filterFile=, =filterRt= or =filterMz= to
+e.g. remove problematic samples or restrict the retention time range in which we
+want to perform the chromatographic peak detection.
 
 Next we perform the chromatographic peak detection using the /centWave/
 algorithm. In the example below we use most of the standard parameters, but the
@@ -195,8 +198,11 @@ reported for the individual peaks in =chromPeaks=.
 #+END_SRC
 
 Note that any pre-processing results can be removed at any time using a /drop/
-method, such as =dropChromPeaks=, =dropFeatures= or =dropAdjustedRtime=. Below we draw
-the difference of the adjusted to the raw retention times.
+method, such as =dropChromPeaks=, =dropFeatureDefinitions= or
+=dropAdjustedRtime=. Below we draw the difference of the adjusted to the raw
+retention times. The deviation from the raw retention times should be within the
+expected variance/shift from the chromatography. Too large differences could
+indicate poorly performing samples.
 
 #+NAME: faahKO-adjusted-rtime-plot
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
@@ -206,10 +212,46 @@ the difference of the adjusted to the raw retention times.
   ## By default, rtime and most other accessor methods return a numeric vector. To
   ## get the values grouped by sample we have to split this vector by file/sample
   diffRt <- split(diffRt, fromFile(xod))
+
+  ## Get the raw retention times grouped by sample
+  rawRt <- rtime(xod, bySample = TRUE, adjusted = FALSE)
+  plot(rawRt[[1]], diffRt[[1]], type = "l", ylab = "adjusted - raw rt",
+       xlab = "raw rt", main = "Obiwarp alignment results", ylim = range(diffRt),
+       col = paste0(sample_colors[pData(xod)$sample_group[1]], 80))
+  for (i in 2:length(rawRt)) {
+      points(rawRt[[i]], diffRt[[i]], type = "l",
+             col = paste0(sample_colors[pData(xod)$sample_group[i]], 80))
+  }
+#+END_SRC
+
+The distribution of retention time differences could also be used for quality
+assessment.
+
+#+NAME: faahKO-adjusted-rtime-boxplot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+  boxplot(diffRt, col = sample_colors[pData(xod)$sample_group],
+          main = "Obiwarp alignment results", ylab = "adjusted - raw rt")
+#+END_SRC
+
+The 3rd sample was used as /center/ sample against which all other samples were
+aligned to, hence its adjusted retention times are identical to the raw
+retention times.
+
+Next we group identified chromatographic peaks across samples. We use the /peak
+density/ method \cite{Smith:2006ic} specifying that a chromatographic peak have
+to be present in at least 1/3 of the samples within each group to be combined to
+a mz-rt /feature/.
+
+#+NAME: faahKO-groupPeakDensity
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Define the PeakDensityParam
+  pdp <- PeakDensityParam(sampleGroups = pData(xod)$sample_group,
+                          maxFeatures = 300, minFraction = 0.66)
+  xod <- groupChromPeaks(xod, param = pdp)
 #+END_SRC
 
 
-+ Describe subsetting methods filter etc.
+
 
 ** New naming convention
 
@@ -947,6 +989,10 @@ Triple Q-TOF measurements:
   - Q3 scan at mz = m_{product}
 
 
+Other resources:
+https://en.wikipedia.org/wiki/Mass_chromatogram#Selected-ion_monitoring_chromatogram_.28SIM.29
+http://proteowizard.sourceforge.net/dox/structpwiz_1_1msdata_1_1_chromatogram.html
+https://sourceforge.net/p/proteowizard/mailman/message/27571266/
 
 
 * References

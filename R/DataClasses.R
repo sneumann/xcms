@@ -2222,19 +2222,16 @@ setClass("XCMSnExp",
 ##' chromatograms should be used instead (i.e. the
 ##' \code{\link{extractChromatograms}}).
 ##'
-##' @details The \code{mz}, \code{filterMz}, \code{parentMz} and \code{productMz}
+##' @details The \code{mz}, \code{filterMz}, \code{precursorMz} and \code{productMz}
 ##' are stored as a \code{numeric(2)} representing a range even if the
-##' chromatogram represent the chromatogram for a single ion (represented as a
-##' single mz value). Representing the \code{mz} as a range allows this class
-##' also to be used for a total ion chromatogram or base peak chromatogram.
+##' chromatogram was generated for only a single ion (i.e. a single mz value).
+##' Using ranges for \code{mz} values allow this class to be used also for e.g.
+##' total ion chromatograms or base peak chromatograms.
 ##'
-##' The slots \code{parentMz} and \code{productMz} allow to track chromatograms
-##' in SRM (single reaction monitoring) and MRM (multiple SRM) modes. As example,
-##' the result from an MRM transition 273 -> 153 will be two \code{Chromatogram}
-##' classes, the first with \code{@mz = c(273, 273)},
-##' \code{@parentMz = c(NA_real_, NA_real_)} and \code{@productMz = c(153, 153)}
-##' and the second \code{Chromatogram} with \code{@mz = c(153, 153)},
-##' \code{@parentMz = c(273, 273)} and \code{@productMz = c(NA_real_, NA_real_)}.
+##' The slots \code{precursorMz} and \code{productMz} allow to represent SRM
+##' (single reaction monitoring) and MRM (multiple SRM) chromatograms. As example,
+##' a \code{Chromatogram} for a SRM transition 273 -> 153 will have a
+##' \code{@precursorMz = c(273, 273)} and a \code{@productMz = c(153, 153)}.
 ##' 
 ##' @rdname Chromatogram-class
 ##' @export
@@ -2249,8 +2246,8 @@ setClass("Chromatogram",
              intensity = "numeric",
              mz = "numeric",
              filterMz = "numeric",
-             parentMz = "numeric", ## Or call that precursorMz?
-             productMz = "numeric",
+             precursorMz = "numeric", ## Or call that Q1mz?
+             productMz = "numeric",   ## Or call that Q3mz?
              fromFile = "integer",
              aggregationFun = "character"
          ),
@@ -2260,7 +2257,7 @@ setClass("Chromatogram",
              intensity = numeric(),
              mz = c(0, 0),
              filterMz = c(0, 0),
-             parentMz = c(NA_real_, NA_real_),
+             precursorMz = c(NA_real_, NA_real_),
              productMz = c(NA_real_, NA_real_),
              fromFile = integer(),
              aggregationFun = character()

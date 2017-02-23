@@ -46,7 +46,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
-                  "spectrapply", "peaksCount")
+                  "spectrapply", "peaksCount", "precursorMz")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -405,7 +405,7 @@ exportMethods("hasChromPeaks",
               "intensity",
               "aggregationFun",
               "extractChromatograms",
-              "parentMz",
+              "precursorMz",
               "productMz",
               "as.data.frame"
               )

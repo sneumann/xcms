@@ -11,8 +11,7 @@
 \alias{intensity,Chromatogram-method}
 \alias{length,Chromatogram-method}
 \alias{mz,Chromatogram-method}
-\alias{parentMz}
-\alias{parentMz,Chromatogram-method}
+\alias{precursorMz,Chromatogram-method}
 \alias{productMz}
 \alias{productMz,Chromatogram-method}
 \alias{rtime,Chromatogram-method}
@@ -20,7 +19,7 @@
 \title{Representation of chromatographic MS data}
 \usage{
 Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(0, 0),
-  filterMz = c(0, 0), parentMz = c(NA_real_, NA_real_),
+  filterMz = c(0, 0), precursorMz = c(NA_real_, NA_real_),
   productMz = c(NA_real_, NA_real_), fromFile = integer(),
   aggregationFun = character())
 
@@ -32,7 +31,7 @@ Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(0, 0),
 
 \S4method{mz}{Chromatogram}(object, filter = FALSE)
 
-\S4method{parentMz}{Chromatogram}(object)
+\S4method{precursorMz}{Chromatogram}(object)
 
 \S4method{productMz}{Chromatogram}(object)
 
@@ -60,11 +59,11 @@ If not applicable use \code{mzrange = c(0, 0)}.}
 max) that was used to filter the original object on mz dimension. If not
 applicable use \code{filterMz = c(0, 0)}.}
 
-\item{parentMz}{\code{numeric(2)} for MRM transition tracking. Represents the
-mz of the parent ion. See details for more information.}
+\item{precursorMz}{\code{numeric(2)} for SRM/MRM transitions.
+Represents the mz of the precursor ion. See details for more information.}
 
-\item{productMz}{\code{numeric(2)} for MRM transition tracking. Represents
-the mz of the product. See details for more information.}
+\item{productMz}{\code{numeric(2)} for SRM/MRM transitions.
+Represents the mz of the product. See details for more information.}
 
 \item{fromFile}{\code{integer(1)} the index of the file within the
 \code{\link{OnDiskMSnExp}} or \code{\link{XCMSnExp}} from which the
@@ -105,7 +104,7 @@ chromatograms should be used instead (i.e. the
 \code{mz} get the mz (range) of the chromatogram. The
 function returns a \code{numeric(2)} with the lower and upper mz value.
 
-\code{parentMz} get the mz of the parent chromatogram/ion. The
+\code{precursorMz} get the mz of the precursor ion. The
 function returns a \code{numeric(2)} with the lower and upper mz value.
 
 \code{productMz} get the mz of the product chromatogram/ion. The
@@ -123,24 +122,21 @@ intensity pairs) of the chromatogram.
 \code{intensity} values from the object as \code{data.frame}.
 }
 \details{
-The \code{mz}, \code{filterMz}, \code{parentMz} and \code{productMz}
+The \code{mz}, \code{filterMz}, \code{precursorMz} and \code{productMz}
 are stored as a \code{numeric(2)} representing a range even if the
-chromatogram represent the chromatogram for a single ion (represented as a
-single mz value). Representing the \code{mz} as a range allows this class
-also to be used for a total ion chromatogram or base peak chromatogram.
+chromatogram was generated for only a single ion (i.e. a single mz value).
+Using ranges for \code{mz} values allow this class to be used also for e.g.
+total ion chromatograms or base peak chromatograms.
 
-The slots \code{parentMz} and \code{productMz} allow to track chromatograms
-in SRM (single reaction monitoring) and MRM (multiple SRM) modes. As example,
-the result from an MRM transition 273 -> 153 will be two \code{Chromatogram}
-classes, the first with \code{@mz = c(273, 273)},
-\code{@parentMz = c(NA_real_, NA_real_)} and \code{@productMz = c(153, 153)}
-and the second \code{Chromatogram} with \code{@mz = c(153, 153)},
-\code{@parentMz = c(273, 273)} and \code{@productMz = c(NA_real_, NA_real_)}.
+The slots \code{precursorMz} and \code{productMz} allow to represent SRM
+(single reaction monitoring) and MRM (multiple SRM) chromatograms. As example,
+a \code{Chromatogram} for a SRM transition 273 -> 153 will have a
+\code{@precursorMz = c(273, 273)} and a \code{@productMz = c(153, 153)}.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{rtime,intensity,mz,filterMz,fromFile,aggregationFun}}{See corresponding parameter above.}
+\item{\code{.__classVersion__,rtime,intensity,mz,filterMz,precursorMz,productMz,fromFile,aggregationFun}}{See corresponding parameter above.}
 }}
 \author{
 Johannes Rainer

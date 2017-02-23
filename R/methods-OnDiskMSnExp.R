@@ -785,7 +785,6 @@ setMethod("adjustRtime",
           })
 
 #' @rdname extractChromatograms-method
-#' @noRd
 setMethod("extractChromatograms",
           signature(object = "OnDiskMSnExp"),
           function(object, rt, mz, aggregationFun = "sum") {
