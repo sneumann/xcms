@@ -49,7 +49,7 @@
   An \code{xcmsSet} object with peak group assignments and statistics.
 }
 \seealso{
-  \code{\link{do_groupFeatures_density}} for the core API function
+  \code{\link{do_groupChromPeaks_density}} for the core API function
   performing the analysis.
   \code{\link{xcmsSet-class}},
   \code{\link{density}}

@@ -1,4 +1,4 @@
-## Testo detectFeatures matchedFilter
+## Testo findChromPeaks matchedFilter
 ## library(xcms)
 ## library(RUnit)
 
@@ -13,7 +13,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 ##          system.file("microtofq/MM8.mzML", package = "msdata"))
 
 
-test_do_detectFeatures_matchedFilter <- function() {
+test_do_findChromPeaks_matchedFilter <- function() {
     ## xr <- xcmsRaw(fs[1], profstep = 0)
     xr <- deepCopy(faahko_xr_1)
     ## We expect that changing a parameter has an influence on the result.
@@ -21,19 +21,19 @@ test_do_detectFeatures_matchedFilter <- function() {
     intVals <- xr@env$intensity
     ## Define the values per spectrum:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    res1 <- do_detectFeatures_matchedFilter(mz = mzVals,
+    res1 <- do_findChromPeaks_matchedFilter(mz = mzVals,
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
                                             binSize = 10)
-    res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
+    res2 <- do_findChromPeaks_matchedFilter(mz = mzVals,
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
                                             binSize = 10,
                                             snthresh = 100)
     checkTrue(nrow(res1) > nrow(res2))
-    res2 <- do_detectFeatures_matchedFilter(mz = mzVals,
+    res2 <- do_findChromPeaks_matchedFilter(mz = mzVals,
                                             int = intVals,
                                             scantime = xr@scantime,
                                             valsPerSpect,
@@ -41,10 +41,10 @@ test_do_detectFeatures_matchedFilter <- function() {
     checkTrue(nrow(res1) > nrow(res2))
 }
 
-## Evaluate the featureDetection method using matchedFilter on MSnExp and
+## Evaluate the peak detection method using matchedFilter on MSnExp and
 ## OnDiskMSnExp objects. For now we can't read CDF files, so we have to restrict
 ## to provided mzML files.
-test_featureDetection_matchedFilter <- function() {
+test_findChromPeaks_matchedFilter <- function() {
     library(MSnbase)
     mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
     res <- xcmsSet(fs[1], method = "matchedFilter", profmethod = "binlin",
@@ -52,23 +52,23 @@ test_featureDetection_matchedFilter <- function() {
     ## onDisk
     ## onDisk <- readMSData2(fs[1])
     onDisk <- filterFile(faahko_od, file = 1)
-    res_o <- detectFeatures(onDisk, param = mfp, return.type = "xcmsSet")
+    res_o <- findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
     ## inMem
     ## inMem <- readMSData(mzf, msLevel. = 1)
-    ## res_i <- detectFeatures(inMem, param = mfp, return.type = "xcmsSet")
+    ## res_i <- findChromPeaks(inMem, param = mfp, return.type = "xcmsSet")
     ## checkEquals(peaks(res_i), peaks(res))
     ## checkEquals(res_i@rt$raw, res@rt$raw, checkNames = FALSE)
 
     ## xs <- xcmsSet(fs, , method = "matchedFilter", profmethod = "binlin",
     ##               step = binSize(mfp))
     ## onDisk <- readMSData2(fs)
-    ## res <- detectFeatures(onDisk, param = mfp)
-    ## checkTrue(hasDetectedFeatures(res))
+    ## res <- findChromPeaks(onDisk, param = mfp)
+    ## checkTrue(hasChromPeaks(res))
     ## checkTrue(!hasAdjustedRtime(res))
-    ## checkTrue(!hasAlignedFeatures(res))
-    ## checkEquals(peaks(xs)@.Data, features(res))
+    ## checkTrue(!hasFeatures(res))
+    ## checkEquals(peaks(xs)@.Data, chromPeaks(res))
     ## checkEquals(processParam(processHistory(res)[[1]]), mfp)
 }
 
@@ -81,16 +81,16 @@ dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
     inMem <- readMSData(mzf, msLevel. = 1)
     microbenchmark(xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
                            step = binSize(mfp)),
-                   detectFeatures(onDisk, param = mfp, return.type = "xcmsSet"),
-                   detectFeatures(inMem, param = mfp, return.type = "xcmsSet"),
+                   findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet"),
+                   findChromPeaks(inMem, param = mfp, return.type = "xcmsSet"),
                    times = 3)
     ## netCDF.
     onDisk <- readMSData2(fs)
     inMem <- readMSData(fs, msLevel. = 1)
     microbenchmark(xcmsSet(fs, method = "matchedFilter", profmethod = "binlin",
                            step = binSize(mfp)),
-                   detectFeatures(onDisk, param = mfp, return.type = "xcmsSet"),
-                   detectFeatures(inMem, param = mfp, return.type = "xcmsSet"),
+                   findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet"),
+                   findChromPeaks(inMem, param = mfp, return.type = "xcmsSet"),
                    times = 3)
 }
 
@@ -98,7 +98,7 @@ dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
 ## Compare each individual function to the original one changing
 ## settings.
 ## Comparing each of the functions to the original one:
-## A: do_detectFeatures_matchedFilter (original code)
+## A: do_findChromPeaks_matchedFilter (original code)
 ## B: .matchedFilter_binYonX_iter
 ## C: .matchedFilter_no_iter
 ## D: .matchedFilter_binYonX_no_iter
@@ -106,7 +106,7 @@ dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
 ## https://github.com/sneumann/xcms/issues/47
 ## A description of the results is provided in section "Implementation and
 ## comparison for matchedFilter" section of "new_functionality.org".
-dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
+dontrun_test_do_findChromPeaks_matchedFilter_impl <- function() {
 
     library(xcms)
     library(RUnit)
@@ -120,7 +120,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
 
     cat("Comparison of results from different implementations:\n")
     cat("- orig: the original findPeaks.matchedFilter method.\n")
-    cat("- A: do_detectFeatures_matchedFilter (containing original code).\n")
+    cat("- A: do_findChromPeaks_matchedFilter (containing original code).\n")
     cat(paste0("- B: .matchedFilter_binYonX_iter: new function using binYonX",
                " for binning and imputeLinInterpol for interpolation. Uses",
                " iterative buffering like the original code."))
@@ -360,7 +360,7 @@ dontrun_test_do_detectFeatures_matchedFilter_impl <- function() {
     xr@profparam <- profparam
     ## The reference is the old code.
     ## Have to use the _orig method here, since the "official" one uses
-    ## already do_detectFeatures...
+    ## already do_findChromPeaks...
     orig <- xcms:::findPeaks.matchedFilter_orig(xr,
                                                 fwhm = fwhm,
                                                 sigma = sigma,

@@ -4,7 +4,7 @@
 \name{findPeaks.matchedFilter,xcmsRaw-method}
 \alias{findPeaks.matchedFilter}
 \alias{findPeaks.matchedFilter,xcmsRaw-method}
-\title{Feature detection in the chromatographic time domain}
+\title{Peak detection in the chromatographic time domain}
 \usage{
 \S4method{findPeaks.matchedFilter}{xcmsRaw}(object, fwhm = 30,
   sigma = fwhm/2.3548, max = 5, snthresh = 10, step = 0.1, steps = 2,
@@ -12,62 +12,64 @@
   scanrange = numeric())
 }
 \arguments{
-\item{object}{The \code{\linkS4class{xcmsRaw}} object on which feature detection
+\item{object}{The \code{\linkS4class{xcmsRaw}} object on which peak detection
 should be performed.}
 
-\item{fwhm}{numeric(1) specifying the full width at half maximum
+\item{fwhm}{\code{numeric(1)} specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the actual
 sigma, see below.}
 
-\item{sigma}{numeric(1) specifying the standard deviation (width)
+\item{sigma}{\code{numeric(1)} specifying the standard deviation (width)
 of the matched filtration model peak.}
 
-\item{max}{numeric(1) representing the maximum number of peaks
+\item{max}{\code{numeric(1)} representing the maximum number of peaks
 that are expected/will be identified per slice.}
 
-\item{snthresh}{numeric(1) defining the signal to noise cutoff
-to be used in the feature detection step.}
+\item{snthresh}{\code{numeric(1)} defining the signal to noise cutoff
+to be used in the chromatographic peak detection step.}
 
 \item{step}{numeric(1) specifying the width of the bins/slices in m/z
 dimension.}
 
-\item{steps}{numeric(1) defining the number of bins to be
+\item{steps}{\code{numeric(1)} defining the number of bins to be
 merged before filtration (i.e. the number of neighboring bins that will be
 joined to the slice in which filtration and peak detection will be
 performed).}
 
-\item{mzdiff}{numeric(1) defining the minimum difference
+\item{mzdiff}{\code{numeric(1)} defining the minimum difference
 in m/z for peaks with overlapping retention times}
 
-\item{index}{Logical specifying whether indicies should be returned instead
+\item{index}{\code{logical(1)} specifying whether indicies should be returned instead
 of values for m/z and retention times.}
 
 \item{sleep}{(DEFUNCT). This parameter is no longer functional, as it would cause
 problems in parallel processing mode.}
 
 \item{scanrange}{Numeric vector defining the range of scans to which the original
-\code{object} should be sub-setted before feature detection.}
+\code{object} should be sub-setted before peak detection.}
 }
 \value{
-A matrix, each row representing an intentified feature, with columns:
+A matrix, each row representing an intentified chromatographic peak,
+with columns:
 \describe{
-\item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-\item{mzmin}{Minimum m/z of the feature.}
-\item{mzmax}{Maximum m/z of the feature.}
-\item{rt}{Retention time of the feature's midpoint.}
-\item{rtmin}{Minimum retention time of the feature.}
-\item{rtmax}{Maximum retention time of the feature.}
-\item{into}{Integrated (original) intensity of the feature.}
+\item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+\item{mzmin}{Minimum m/z of the peak.}
+\item{mzmax}{Maximum m/z of the peak.}
+\item{rt}{Retention time of the peak's midpoint.}
+\item{rtmin}{Minimum retention time of the peak.}
+\item{rtmax}{Maximum retention time of the peak.}
+\item{into}{Integrated (original) intensity of the peak.}
 \item{intf}{Integrated intensity of the filtered peak.}
-\item{maxo}{Maximum intensity of the feature.}
+\item{maxo}{Maximum intensity of the peak.}
 \item{maxf}{Maximum intensity of the filtered peak.}
-\item{i}{Rank of feature in merged EIC (\code{<= max}).}
-\item{sn}{Signal to noise ratio of the feature}
+\item{i}{Rank of peak in merged EIC (\code{<= max}).}
+\item{sn}{Signal to noise ratio of the peak.}
 }
 }
 \description{
-Find features (peaks) in the chromatographic time domain of the
-profile matrix. For more details see \code{\link{do_detectFeatures_matchedFilter}}.
+Find peaks in the chromatographic time domain of the
+profile matrix. For more details see
+\code{\link{do_findChromPeaks_matchedFilter}}.
 }
 \author{
 Colin A. Smith
@@ -81,7 +83,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \seealso{
 \code{\link{matchedFilter}} for the new user interface.
 \code{\linkS4class{xcmsRaw}},
-\code{\link{do_detectFeatures_matchedFilter}} for the core function
-performing the feature detection.
+\code{\link{do_findChromPeaks_matchedFilter}} for the core function
+performing the peak detection.
 }
 

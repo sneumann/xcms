@@ -1,16 +1,16 @@
 ## Methods for MSnbase's OnDiskMSnExp and MSnExp objects.
-#' @include DataClasses.R functions-OnDiskMSnExp.R do_detectFeatures-functions.R
+#' @include DataClasses.R functions-OnDiskMSnExp.R do_findChromPeaks-functions.R
 
 
 ## Main roxygen documentation for the centWace feature detection is in
 ## DataClasses, before the definition of the CentWaveParam class.
 
-## The centWave feature detection method for OnDiskMSnExp:
-##' @title Feature detection using the centWave method
+## The centWave peak detection method for OnDiskMSnExp:
+##' @title Chromatographic peak detection using the centWave method
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp,CentWaveParam} method
-##' performs feature detection using the \emph{centWave} algorithm on all
-##' samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' @description The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
+##' performs chromatographic peak detection using the \emph{centWave} algorithm
+##' on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 ##' data and load the spectra data (mz and intensity values) on the fly from the
 ##' original files applying also all eventual data manipulations.
@@ -20,7 +20,7 @@
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{detectFeatures}: Either an
+##' @param object For \code{findChromPeaks}: Either an
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
 ##' object containing the MS- and all other experiment-relevant data.
 ##'
@@ -32,25 +32,25 @@
 ##' @param BPPARAM A parameter class specifying if and how parallel processing
 ##' should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
 ##' See documentation of the \code{BiocParallel} for more details. If parallel
-##' processing is enables, feature detection is performed in parallel on several
+##' processing is enables, peak detection is performed in parallel on several
 ##' of the input samples.
 ##'
 ##' @param return.type Character specifying what type of object the method should
-##' return. Can be either \code{"XCMSnExp"} (code), \code{"list"} or
+##' return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 ##' \code{"xcmsSet"}.
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
-##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
-##' samples with matrices specifying the identified features/peaks.
+##' samples with matrices specifying the identified peaks.
 ##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-##' with the results of the feature detection.
+##' with the results of the peak detection.
 ##'
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature detection.
+##' the peak detection.
 ##'
-##' @rdname featureDetection-centWave
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-centWave
+setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "CentWaveParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
@@ -63,10 +63,10 @@ setMethod("detectFeatures",
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               ## (1) split the object per file.
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
-                              FUN = detectFeatures_OnDiskMSnExp,
+                              FUN = findChromPeaks_OnDiskMSnExp,
                               method = "centWave", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
@@ -77,13 +77,13 @@ setMethod("detectFeatures",
                   ## that later, but for now seems reasonable to have it in one,
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
-                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         type. = .PROCSTEP.PEAK.DETECTION,
                                          fileIndex = 1:length(fileNames(object)))
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                  if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  features(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- do.call(rbind, res$peaks)
                   if (validObject(object))
                       return(object)
               }
@@ -105,17 +105,17 @@ setMethod("detectFeatures",
           })
 
 
-## The centWave feature detection method for MSnExp:
-##' @title Feature detection using the centWave method
+## The centWave peak detection method for MSnExp:
+##' @title Chromatographic peak detection using the centWave method
 ##'
-##' @description The \code{detectFeatures,MSnExp,CentWaveParam} method performs
-##' feature detection using the \emph{centWave} algorithm on all samples from
+##' @description The \code{findChromPeaks,MSnExp,CentWaveParam} method performs
+##' peak detection using the \emph{centWave} algorithm on all samples from
 ##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
 ##' intensity values of all spectra hence no additional data input from the
 ##' original files is required.
 ##'
-##' @rdname featureDetection-centWave
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-centWave
+setMethod("findChromPeaks",
           signature(object = "MSnExp", param = "CentWaveParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "list") {
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
@@ -127,16 +127,17 @@ setMethod("detectFeatures",
               ##     filterFile is pretty slow on MSnExp.
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for feature detection!")
+                  stop("No MS1 spectra available for chromatographic peak",
+                       " detection!")
               ## Check if the data is centroided
               if (!isCentroided(object[[ms1_idx[1]]]))
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(spect_list, function(z) {
-                  detectFeatures_Spectrum_list(z,
+                  findChromPeaks_Spectrum_list(z,
                                                method = "centWave",
                                                param = param)
               }, BPPARAM = BPPARAM)
@@ -161,11 +162,11 @@ setMethod("detectFeatures",
               }
           })
 
-## The matchedFilter feature detection method for OnDiskMSnExp:
+## The matchedFilter peak detection method for OnDiskMSnExp:
 ##' @title Peak detection in the chromatographic time domain
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp,MatchedFilterParam}
-##' method performs feature detection using the \emph{matchedFilter} algorithm
+##' @description The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
+##' method performs peak detection using the \emph{matchedFilter} algorithm
 ##' on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 ##' data and load the spectra data (mz and intensity values) on the fly from the
@@ -176,7 +177,7 @@ setMethod("detectFeatures",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 
-##' @param object For \code{detectFeatures}: Either an
+##' @param object For \code{findChromPeaks}: Either an
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
 ##' object containing the MS- and all other experiment-relevant data.
 ##'
@@ -185,20 +186,20 @@ setMethod("detectFeatures",
 ##' @param param An \code{MatchedFilterParam} object containing all settings for
 ##' the matchedFilter algorithm.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
-##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
-##' samples with matrices specifying the identified features/peaks.
+##' samples with matrices specifying the identified peaks.
 ##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-##' with the results of the feature detection.
+##' with the results of the peak detection.
 ##'
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature detection.
+##' the chromatographic peak detection.
 ##'
-##' @rdname featureDetection-matchedFilter
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-matchedFilter
+setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MatchedFilterParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
@@ -207,10 +208,10 @@ setMethod("detectFeatures",
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## (1) split the object per file.
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
-                              FUN = detectFeatures_OnDiskMSnExp,
+                              FUN = findChromPeaks_OnDiskMSnExp,
                               method = "matchedFilter", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
@@ -221,13 +222,13 @@ setMethod("detectFeatures",
                   ## that later, but for now seems reasonable to have it in one,
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
-                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         type. = .PROCSTEP.PEAK.DETECTION,
                                          fileIndex = 1:length(fileNames(object)))
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                  if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  features(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- do.call(rbind, res$peaks)
                   if (validObject(object))
                       return(object)
               }
@@ -250,24 +251,25 @@ setMethod("detectFeatures",
 
 ##' @title Peak detection in the chromatographic time domain
 ##'
-##' @description The \code{detectFeatures,MSnExp,MatchedFilterParam} method
-##' performs feature detection using the \emph{matchedFilter} method on all
+##' @description The \code{findChromPeaks,MSnExp,MatchedFilterParam} method
+##' performs peak detection using the \emph{matchedFilter} method on all
 ##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
 ##' mz and intensity values of all spectra hence no additional
 ##' data input from the original files is required.
 ##'
-##' @rdname featureDetection-matchedFilter
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-matchedFilter
+setMethod("findChromPeaks",
           signature(object = "MSnExp", param = "MatchedFilterParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "list") {
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for feature detection!")
+                  stop("No MS1 spectra available for chromatographic peak",
+                       " detection!")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
               resList <- bplapply(spect_list, function(z) {
-                  detectFeatures_Spectrum_list(z,
+                  findChromPeaks_Spectrum_list(z,
                                                method = "matchedFilter",
                                                param = param)
               }, BPPARAM = BPPARAM)
@@ -292,12 +294,12 @@ setMethod("detectFeatures",
           })
 
 ## massifquant
-## The massifquant feature detection method for OnDiskMSnExp:
-##' @title Feature detection using the massifquant method
+## The massifquant peak detection method for OnDiskMSnExp:
+##' @title Chromatographic peak detection using the massifquant method
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp,MassifquantParam}
-##' method performs feature detection using the \emph{massifquant} algorithm
-##' on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' @description The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
+##' method performs chromatographic peak detection using the \emph{massifquant}
+##' algorithm on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 ##' data and load the spectra data (mz and intensity values) on the fly from the
 ##' original files applying also all eventual data manipulations.
@@ -307,7 +309,7 @@ setMethod("detectFeatures",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{detectFeatures}: Either an
+##' @param object For \code{findChromPeaks}: Either an
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
 ##' object containing the MS- and all other experiment-relevant data.
 ##'
@@ -316,20 +318,20 @@ setMethod("detectFeatures",
 ##' @param param An \code{MassifquantParam} object containing all settings for
 ##' the massifquant algorithm.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
-##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
-##' samples with matrices specifying the identified features/peaks.
+##' samples with matrices specifying the identified peaks.
 ##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-##' with the results of the feature detection.
+##' with the results of the peak detection.
 ##'
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature detection.
+##' the peak detection.
 ##'
-##' @rdname featureDetection-massifquant
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-massifquant
+setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MassifquantParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
@@ -338,10 +340,10 @@ setMethod("detectFeatures",
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## (1) split the object per file.
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peaks detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
-                              FUN = detectFeatures_OnDiskMSnExp,
+                              FUN = findChromPeaks_OnDiskMSnExp,
                               method = "massifquant", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
@@ -352,13 +354,13 @@ setMethod("detectFeatures",
                   ## that later, but for now seems reasonable to have it in one,
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
-                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         type. = .PROCSTEP.PEAK.DETECTION,
                                          fileIndex = 1:length(fileNames(object)))
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                  if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  features(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- do.call(rbind, res$peaks)
                   if (validObject(object))
                       return(object)
               }
@@ -380,26 +382,27 @@ setMethod("detectFeatures",
           })
 
 
-##' @title Feature detection using the massifquant method
+##' @title Chromatographic peak detection using the massifquant method
 ##'
-##' @description The \code{detectFeatures,MSnExp,MassifquantParam} method
-##' performs feature detection using the \emph{massifquant} method on all
-##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
-##' mz and intensity values of all spectra hence no additional
+##' @description The \code{findChromPeaks,MSnExp,MassifquantParam} method
+##' performs chromatographic peak detection using the \emph{massifquant} method
+##' on all samples from an \code{\link[MSnbase]{MSnExp}} object. These objects
+##' contain mz and intensity values of all spectra hence no additional
 ##' data input from the original files is required.
 ##'
-##' @rdname featureDetection-massifquant
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-massifquant
+setMethod("findChromPeaks",
           signature(object = "MSnExp", param = "MassifquantParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "list") {
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for feature detection!")
+                  stop("No MS1 spectra available for chromatographic peak",
+                       " detection!")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
               resList <- bplapply(spect_list, function(z) {
-                  detectFeatures_Spectrum_list(z,
+                  findChromPeaks_Spectrum_list(z,
                                                method = "massifquant",
                                                param = param)
               }, BPPARAM = BPPARAM)
@@ -425,11 +428,11 @@ setMethod("detectFeatures",
 
 
 ## MSW
-## The MSW feature detection method for OnDiskMSnExp:
-##' @title Single-spectrum non-chromatography MS data feature detection
+## The MSW peak detection method for OnDiskMSnExp:
+##' @title Single-spectrum non-chromatography MS data peak detection
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp,MSWParam}
-##' method performs feature detection in single-spectrum non-chromatography MS
+##' @description The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
+##' method performs peak detection in single-spectrum non-chromatography MS
 ##' data using functionality from the \code{MassSpecWavelet} package on all
 ##' samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
@@ -441,7 +444,7 @@ setMethod("detectFeatures",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{detectFeatures}: Either an
+##' @param object For \code{findChromPeaks}: Either an
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
 ##' object containing the MS- and all other experiment-relevant data.
 ##'
@@ -450,20 +453,20 @@ setMethod("detectFeatures",
 ##' @param param An \code{MSWParam} object containing all settings for
 ##' the algorithm.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
-##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
-##' samples with matrices specifying the identified features/peaks.
+##' samples with matrices specifying the identified peaks.
 ##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-##' with the results of the feature detection.
+##' with the results of the detection.
 ##'
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature detection.
+##' the peak detection.
 ##'
-##' @rdname featureDetection-MSW
-setMethod("detectFeatures",
+##' @rdname findPeaks-MSW
+setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "MSWParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
@@ -473,10 +476,10 @@ setMethod("detectFeatures",
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## (1) split the object per file.
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
-                              FUN = detectFeatures_MSW_OnDiskMSnExp,
+                              FUN = findPeaks_MSW_OnDiskMSnExp,
                               method = "MSW", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
@@ -487,13 +490,13 @@ setMethod("detectFeatures",
                   ## that later, but for now seems reasonable to have it in one,
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
-                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         type. = .PROCSTEP.PEAK.DETECTION,
                                          fileIndex = 1:length(fileNames(object)))
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                  if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  features(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- do.call(rbind, res$peaks)
                   if (validObject(object))
                       return(object)
               }
@@ -514,29 +517,30 @@ setMethod("detectFeatures",
               }
           })
 
-##' @title Single-spectrum non-chromatography MS data feature detection
+##' @title Single-spectrum non-chromatography MS data peak detection
 ##'
-##' @description The \code{detectFeatures,MSnExp,MSWParam} method
-##' performs feature detection in single-spectrum non-chromatography MS
+##' @description The \code{findChromPeaks,MSnExp,MSWParam} method
+##' performs peak detection in single-spectrum non-chromatography MS
 ##' data using functionality from the \code{MassSpecWavelet} package on all
 ##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
 ##' mz and intensity values of all spectra hence no additional
 ##' data input from the original files is required.
 ##'
-##' @rdname featureDetection-MSW
-setMethod("detectFeatures",
+##' @rdname findPeaks-MSW
+setMethod("findChromPeaks",
           signature(object = "MSnExp", param = "MSWParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "list") {
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for feature detection!")
+                  stop("No MS1 spectra available for chromatographic peak",
+                       " detection!")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
               resList <- bplapply(spect_list, function(z) {
-                  detectFeatures_MSW_Spectrum_list(z,
-                                                   method = "MSW",
-                                                   param = param)
+                  findPeaks_MSW_Spectrum_list(z,
+                                              method = "MSW",
+                                              param = param)
               }, BPPARAM = BPPARAM)
               res <- .processResultList(resList,
                                         getProcHist = return.type != "list",
@@ -558,35 +562,35 @@ setMethod("detectFeatures",
               }
           })
 
-## The centWave with predicted isotope feature detection method for OnDiskMSnExp:
-##' @title Two-step centWave feature detection considering also feature isotopes
+## The centWave with predicted isotope peak detection method for OnDiskMSnExp:
+##' @title Two-step centWave peak detection considering also isotopes
 ##'
-##' @description The \code{detectFeatures,OnDiskMSnExp,CentWavePredIsoParam} method
-##' performs a two-step centWave-based feature detection on all samples from an
-##' \code{\link[MSnbase]{OnDiskMSnExp}} object. \code{\link[MSnbase]{OnDiskMSnExp}}
-##' objects encapsule all experiment specific data and load the spectra data
-##' (mz and intensity values) on the fly from the original files applying also
-##' all eventual data manipulations.
+##' @description The \code{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam} method
+##' performs a two-step centWave-based chromatographic peak detection on all
+##' samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+##' \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
+##' data and load the spectra data (mz and intensity values) on the fly from
+##' the original files applying also all eventual data manipulations.
 ##'
 ##' @details Parallel processing (one process per sample) is supported and can
 ##' be configured either by the \code{BPPARAM} parameter or by globally defining
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @return For \code{detectFeatures}: if \code{return.type = "XCMSnExp"} an
-##' \code{\link{XCMSnExp}} object with the results of the feature detection.
+##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
+##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
-##' samples with matrices specifying the identified features/peaks.
+##' samples with matrices specifying the identified peaks.
 ##' If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-##' with the results of the feature detection.
+##' with the results of the peak detection.
 ##'
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature detection.
+##' the peak detection.
 ##'
-##' @rdname featureDetection-centWaveWithPredIsoROIs
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
+setMethod("findChromPeaks",
           signature(object = "OnDiskMSnExp", param = "CentWavePredIsoParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
@@ -599,10 +603,10 @@ setMethod("detectFeatures",
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               ## (1) split the object per file.
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
-                              FUN = detectFeatures_OnDiskMSnExp,
+                              FUN = findChromPeaks_OnDiskMSnExp,
                               method = "centWaveWithPredIsoROIs", param = param)
               ## (3) collect the results.
               res <- .processResultList(resList,
@@ -613,13 +617,13 @@ setMethod("detectFeatures",
                   ## that later, but for now seems reasonable to have it in one,
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
-                                         type. = .PROCSTEP.FEATURE.DETECTION,
+                                         type. = .PROCSTEP.PEAK.DETECTION,
                                          fileIndex = 1:length(fileNames(object)))
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasAlignedFeatures(object))
+                  if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  features(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- do.call(rbind, res$peaks)
                   if (validObject(object))
                       return(object)
               }
@@ -641,17 +645,17 @@ setMethod("detectFeatures",
           })
 
 
-## The centWave with predicted isotope feature detection method for MSnExp:
-##' @title Two-step centWave feature detection considering also feature isotopes
+## The centWave with predicted isotope peak detection method for MSnExp:
+##' @title Two-step centWave peak detection considering also isotopes
 ##'
-##' @description The \code{detectFeatures,MSnExp,CentWavePredIsoParam} method
-##' performs a two-step centWave-based feature detection on all samples from
+##' @description The \code{findChromPeaks,MSnExp,CentWavePredIsoParam} method
+##' performs a two-step centWave-based peak detection on all samples from
 ##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
 ##' intensity values of all spectra hence no additional data input from the
 ##' original files is required.
 ##'
-##' @rdname featureDetection-centWaveWithPredIsoROIs
-setMethod("detectFeatures",
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
+setMethod("findChromPeaks",
           signature(object = "MSnExp", param = "CentWavePredIsoParam"),
           function(object, param, BPPARAM = bpparam(), return.type = "list") {
               return.type <- match.arg(return.type, c("list", "xcmsSet"))
@@ -663,16 +667,17 @@ setMethod("detectFeatures",
               ##     filterFile is pretty slow on MSnExp.
               ms1_idx <- which(unname(msLevel(object)) == 1)
               if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for feature detection!")
+                  stop("No MS1 spectra available for chromatographic peak",
+                       " detection!")
               ## Check if the data is centroided
               if (!isCentroided(object[[ms1_idx[1]]]))
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               spect_list <- split(spectra(object)[ms1_idx],
                                   fromFile(object)[ms1_idx])
-              ## (2) use bplapply to do the feature detection.
+              ## (2) use bplapply to do the peak detection.
               resList <- bplapply(spect_list, function(z) {
-                  detectFeatures_Spectrum_list(z,
+                  findChromPeaks_Spectrum_list(z,
                                                method = "centWaveWithPredIsoROIs",
                                                param = param)
               }, BPPARAM = BPPARAM)
@@ -777,4 +782,15 @@ setMethod("adjustRtime",
               names(res) <- sNames
               res <- res[featureNames(object)]
               return(res)
+          })
+
+
+#' @rdname extractChromatograms-method
+#' @noRd
+setMethod("extractChromatograms",
+          signature(object = "OnDiskMSnExp"),
+          function(object, rt, mz, aggregationFun = "sum") {
+              return(.extractChromatogram(x = object, rt = rt, mz = mz,
+                                          aggregationFun = aggregationFun,
+                                          adjusted = FALSE))
           })

@@ -39,10 +39,10 @@
 ## CentWaveParam
 
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for chromatographic peak
+##' detection by the centWave method.
 ##'
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           prefilter = c(3, 100), mzCenterFun = "wMean",
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -62,9 +62,9 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 ##' @return The \code{MatchedFilterParam} function returns a
 ##' \code{MatchedFilterParam} class instance with all of the settings specified
-##' for feature detection by the centWave method.
+##' for chromatographic detection by the \emph{matchedFilter} method.
 ##'
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                                baseValue = numeric(), distance = numeric(),
                                fwhm = 30, sigma = fwhm / 2.3548,
@@ -80,10 +80,10 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
 ## MassifquantParam
 
 ##' @return The \code{MassifquantParam} function returns a \code{MassifquantParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for chromatographic peak
+##' detection by the \emph{massifquant} method.
 ##'
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                              prefilter = c(3, 100), mzCenterFun = "wMean",
                              integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -102,7 +102,7 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 ############################################################
 ## MSWParam
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
 ##' @param scales Numeric defining the scales of the continuous wavelet
 ##' transform (CWT).
@@ -136,10 +136,10 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 ##' \code{MassSpecWavelet} package.
 ##'
 ##' @return The \code{MSWParam} function returns a \code{MSWParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for peak detection by
+##' the \emph{MSW} method.
 ##'
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
                      scales = c(1, seq(2, 30, 2), seq(32, 64, 4)),
                      nearbyPeak = TRUE, peakScaleRange = 5,
@@ -161,10 +161,10 @@ MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
 
 ##' @return The \code{CentWavePredIsoParam} function returns a
 ##' \code{CentWavePredIsoParam} class instance with all of the settings
-##' specified for the two-step centWave-based feature detection considering also
-##' feature isotopes.
+##' specified for the two-step centWave-based peak detection considering also
+##' isotopes.
 ##'
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           prefilter = c(3, 100), mzCenterFun = "wMean",
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -185,17 +185,17 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 
 ############################################################
-## FeatureDensityParam
+## PeakDensityParam
 
-##' @return The \code{FeatureDensityParam} function returns a
-##' \code{FeatureDensityParam} class instance with all of the settings
-##' specified for feature alignment based on feature densities.
+##' @return The \code{PeakDensityParam} function returns a
+##' \code{PeakDensityParam} class instance with all of the settings
+##' specified for chromatographic peak alignment based on peak densities.
 ##' 
-##' @rdname groupFeatures-density
-FeatureDensityParam <- function(sampleGroups = numeric(), bw = 30,
+##' @rdname groupChromPeaks-density
+PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                                 minFraction = 0.5, minSamples = 1,
                                 binSize = 0.25, maxFeatures = 50) {
-    return(new("FeatureDensityParam", sampleGroups = sampleGroups, bw = bw,
+    return(new("PeakDensityParam", sampleGroups = sampleGroups, bw = bw,
                minFraction = minFraction, minSamples = minSamples,
                binSize = binSize, maxFeatures = maxFeatures))
 }
@@ -205,9 +205,9 @@ FeatureDensityParam <- function(sampleGroups = numeric(), bw = 30,
 
 ##' @return The \code{MzClustParam} function returns a
 ##' \code{MzClustParam} class instance with all of the settings
-##' specified for high resolution single spectra feature alignment.
+##' specified for high resolution single spectra peak alignment.
 ##' 
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                                 minFraction = 0.5, minSamples = 1) {
     return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
@@ -217,35 +217,35 @@ MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
 
 
 ############################################################
-## NearestFeaturesParam
+## NearestPeaksParam
 
-##' @return The \code{NearestFeaturesParam} function returns a
-##' \code{NearestFeaturesParam} class instance with all of the settings
-##' specified for high resolution single spectra feature alignment.
+##' @return The \code{NearestPeaksParam} function returns a
+##' \code{NearestPeaksParam} class instance with all of the settings
+##' specified for peak alignment based on peak proximity.
 ##' 
-##' @rdname groupFeatures-nearest
-NearestFeaturesParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
-                                 absMz = 0.2, absRt = 15, kNN = 10) {
-    return(new("NearestFeaturesParam", sampleGroups = sampleGroups,
+##' @rdname groupChromPeaks-nearest
+NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
+                              absMz = 0.2, absRt = 15, kNN = 10) {
+    return(new("NearestPeaksParam", sampleGroups = sampleGroups,
                mzVsRtBalance = mzVsRtBalance, absMz = absMz, absRt = absRt,
                kNN = kNN))
 }
 
 
 ############################################################
-## FeatureGroupsParam
+## PeakGroupsParam
 
-##' @return The \code{FeatureGroupsParam} function returns a
-##' \code{FeatureGroupsParam} class instance with all of the settings
+##' @return The \code{PeakGroupsParam} function returns a
+##' \code{PeakGroupsParam} class instance with all of the settings
 ##' specified for retention time adjustment based on \emph{house keeping}
-##' feature groups.
+##' features/peak groups.
 ##' 
-##' @rdname adjustRtime-featureGroups
-FeatureGroupsParam <- function(minFraction = 0.9, extraFeatures = 1,
+##' @rdname adjustRtime-peakGroups
+PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                                family = "gaussian") {
-    return(new("FeatureGroupsParam", minFraction = minFraction,
-               extraFeatures = extraFeatures, smooth = smooth, span = span,
+    return(new("PeakGroupsParam", minFraction = minFraction,
+               extraPeaks = extraPeaks, smooth = smooth, span = span,
                family = family))
 }
 

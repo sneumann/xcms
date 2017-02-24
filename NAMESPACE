@@ -45,7 +45,8 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
-                  "removeReporters", "smooth", "trimMz", "splitByFile", "[[")
+                  "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
+                  "spectrapply", "peaksCount")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -184,26 +185,27 @@ export(
     "binYonX",
     "breaks_on_binSize",
     "breaks_on_nBins",
-    "do_detectFeatures_centWave",
-    "do_detectFeatures_massifquant",
-    "do_detectFeatures_matchedFilter",
-    "do_detectFeatures_MSW",
-    "do_detectFeatures_centWaveWithPredIsoROIs",
-    "do_detectFeatures_addPredIsoROIs",
+    "do_findChromPeaks_centWave",
+    "do_findChromPeaks_massifquant",
+    "do_findChromPeaks_matchedFilter",
+    "do_findPeaks_MSW",
+    "do_findChromPeaks_centWaveWithPredIsoROIs",
+    "do_findChromPeaks_addPredIsoROIs",
     "imputeLinInterpol",
     "useOriginalCode",
     "setAs",
-    "do_groupFeatures_density",
-    "do_groupFeatures_mzClust",
-    "do_groupFeatures_nearest",
-    "do_adjustRtime_featureGroups"
+    "do_groupChromPeaks_density",
+    "do_groupPeaks_mzClust",
+    "do_groupChromPeaks_nearest",
+    ## "Chromatogram",
+    "do_adjustRtime_peakGroups"
 )
 
 ## New analysis methods
 exportMethods(
     "showError",
-    "detectFeatures",
-    "groupFeatures",
+    "findChromPeaks",
+    "groupChromPeaks",
     "adjustRtime"
 )
 
@@ -214,10 +216,10 @@ exportClasses(
     "MassifquantParam",
     "MSWParam",
     "CentWavePredIsoParam",
-    "FeatureDensityParam",
+    "PeakDensityParam",
     "MzClustParam",
-    "NearestFeaturesParam",
-    "FeatureGroupsParam",
+    "NearestPeaksParam",
+    "PeakGroupsParam",
     "ObiwarpParam"
 )
 ## Param methods
@@ -307,7 +309,7 @@ exportMethods(
     "mzIntervalExtension<-",
     "polarity",
     "polarity<-",
-    ## FeatureDensityParam
+    ## PeakDensityParam
     "sampleGroups",
     "sampleGroups<-",
     "bw",
@@ -321,15 +323,15 @@ exportMethods(
     ## MzClustParam
     "absMz",
     "absMz<-",
-    ## NearestFeaturesParam
+    ## NearestPeaksParam
     "absRt",
     "absRt<-",
     "mzVsRtBalance",
     "mzVsRtBalance<-",
     "kNN",
     "kNN<-",
-    "extraFeatures",
-    "extraFeatures<-",
+    "extraPeaks",
+    "extraPeaks<-",
     "smooth",
     "smooth<-",
     "span",
@@ -358,22 +360,25 @@ exportMethods(
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam", "FeatureDensityParam", "MzClustParam",
-       "NearestFeaturesParam", "FeatureGroupsParam", "ObiwarpParam")
+       "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
+       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam")
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory", "XProcessHistory")
+exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
+              ## "Chromatogram",
+              "XProcessHistory"
+              )
 ## New methods for these classes
-exportMethods("hasDetectedFeatures",
-              "hasAlignedFeatures",
+exportMethods("hasChromPeaks",
+              "hasFeatures",
               "hasAdjustedRtime",
               "adjustedRtime",
               "adjustedRtime<-",
-              "featureGroups",
-              "featureGroups<-",
-              "features",
-              "features<-",
+              "featureDefinitions",
+              "featureDefinitions<-",
+              "chromPeaks",
+              "chromPeaks<-",
               "processHistory",
               "fileIndex",
               "processDate",
@@ -392,10 +397,13 @@ exportMethods("hasDetectedFeatures",
               "removePeaks",
               "smooth",
               "dropAdjustedRtime",
-              "dropFeatureGroups",
-              "dropFeatures",
+              "dropFeatureDefinitions",
+              "dropChromPeaks",
               "spectra",
               "rtime",
               "mz",
-              "intensity"
+              "intensity",
+              "aggregationFun",
+##              "extractChromatograms",
+              "as.data.frame"
               )

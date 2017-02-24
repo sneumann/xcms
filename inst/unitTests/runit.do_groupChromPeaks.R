@@ -1,4 +1,4 @@
-## Unit tests for all do_groupFeatures_* functions and methods/functions related
+## Unit tests for all do_groupChromPeaks_* functions and methods/functions related
 ## to feature grouping.
 
 ## General functions/methods
@@ -6,8 +6,8 @@ test_groupval_XCMSnExp <- function() {
     od_x <- faahko_xod    
     xs <- faahko_xs
     
-    p <- FeatureDensityParam(sampleGroups = xs$class)
-    od_x <- groupFeatures(od_x, param = p)
+    p <- PeakDensityParam(sampleGroups = xs$class)
+    od_x <- groupChromPeaks(od_x, param = p)
 
     xs <- group(xs, method = "density")
 
@@ -24,70 +24,70 @@ test_groupval_XCMSnExp <- function() {
 ## density
 ##
 
-test_groupFeatures_FeatureDensityParam <- function() {
+test_groupChromPeaks_PeakDensityParam <- function() {
     od_x <- faahko_xod
     xs <- faahko_xs
 
-    fdp <- FeatureDensityParam(sampleGroups = xs$class)
-    od_x <- groupFeatures(od_x, param = fdp)
+    fdp <- PeakDensityParam(sampleGroups = xs$class)
+    od_x <- groupChromPeaks(od_x, param = fdp)
     xs <- group(xs, method = "density")
-    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
-    fg <- featureGroups(od_x)
+    checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
+    fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), fdp)
 
-    fdp2 <- FeatureDensityParam(sampleGroups = xs$class, binSize = 2,
+    fdp2 <- PeakDensityParam(sampleGroups = xs$class, binSize = 2,
                                 minFraction = 0.8)
-    od_x <- groupFeatures(od_x, param = fdp2)
+    od_x <- groupChromPeaks(od_x, param = fdp2)
     xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
-    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
-    fg <- featureGroups(od_x)
+    checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
+    fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), fdp2)    
 }
 
-test_do_groupFeatures_density <- function() {
+test_do_groupChromPeaks_density <- function() {
     fts <- peaks(faahko)
-    res <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko))
-    res_2 <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko),
+    res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
+    res_2 <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko),
                                       minFraction = 0.9)
-    checkTrue(nrow(res$featureGroups) > nrow(res_2$featureGroups))
+    checkTrue(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
 }
 
-dontrun_do_groupFeatures_density_parallel <- function() {
+dontrun_do_groupChromPeaks_density_parallel <- function() {
     library(xcms)
     library(faahKO)
     library(RUnit)
     data(faahko)
     fts <- peaks(faahko)
 
-    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko))
-    res_2 <- do_groupFeatures_density(fts, sampclass(faahko))
-    checkEquals(res$featureGroups, res_2$featureGroups)
-    checkEquals(res$featureIndex, res_2$featureIndex)
+    res <- xcms:::do_groupChromPeaks_density_par(fts, sampclass(faahko))
+    res_2 <- do_groupChromPeaks_density(fts, sampclass(faahko))
+    checkEquals(res$featureDefinitions, res_2$featureDefinitions)
+    checkEquals(res$peakIndex, res_2$peakIndex)
 
-    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko), bw = 10)
-    res_2 <- do_groupFeatures_density(fts, sampclass(faahko), bw = 10)
-    checkEquals(res$featureGroups, res_2$featureGroups)
-    checkEquals(res$featureIndex, res_2$featureIndex)
+    res <- xcms:::do_groupChromPeaks_density_par(fts, sampclass(faahko), bw = 10)
+    res_2 <- do_groupChromPeaks_density(fts, sampclass(faahko), bw = 10)
+    checkEquals(res$featureDefinitions, res_2$featureDefinitions)
+    checkEquals(res$peakIndex, res_2$peakIndex)
 
-    res <- xcms:::do_groupFeatures_density_par(fts, sampclass(faahko),
+    res <- xcms:::do_groupChromPeaks_density_par(fts, sampclass(faahko),
                                                minFraction = 0.9)
-    res_2 <- do_groupFeatures_density(fts, sampclass(faahko), minFraction = 0.9)
-    checkEquals(res$featureGroups, res_2$featureGroups)
-    checkEquals(res$featureIndex, res_2$featureIndex)
+    res_2 <- do_groupChromPeaks_density(fts, sampclass(faahko), minFraction = 0.9)
+    checkEquals(res$featureDefinitions, res_2$featureDefinitions)
+    checkEquals(res$peakIndex, res_2$peakIndex)
 }
 
-## This is to ensure that the do_groupFeatures_density yields identical results
+## This is to ensure that the do_groupChromPeaks_density yields identical results
 ## than the group.density method. Once we're sure of that we rename this to
 ## "dontrun" and replace the code within the group.density method.
-dontrun_do_groupFeatures_density_compare <- function() {
+dontrun_do_groupChromPeaks_density_compare <- function() {
     xs <- faahko
     
     fts <- peaks(xs)
@@ -98,7 +98,7 @@ dontrun_do_groupFeatures_density_compare <- function() {
     minSmp <- 1
     mzW <- 0.25
     maxFts <- 50
-    ftGrps <- xcms:::do_groupFeatures_density(features = fts,
+    ftGrps <- xcms:::do_groupChromPeaks_density(peaks = fts,
                                               sampleGroups = smpGrp,
                                               bw = theBw,
                                               minFraction = minFr,
@@ -108,8 +108,8 @@ dontrun_do_groupFeatures_density_compare <- function() {
     xs$class <- smpGrp
     res_x <- group.density(xs, bw = theBw, minfrac = minFr,
                            minsamp = minSmp, mzwid = mzW, max = maxFts)
-    checkEquals(res_x@groups, ftGrps$featureGroups)
-    checkEquals(res_x@groupidx, ftGrps$featureIndex)
+    checkEquals(res_x@groups, ftGrps$featureDefinitions)
+    checkEquals(res_x@groupidx, ftGrps$peakIndex)
     ## o All one group, different bw
     smpGrp <- rep(1, length(filepaths(xs)))
     theBw <- 10
@@ -117,7 +117,7 @@ dontrun_do_groupFeatures_density_compare <- function() {
     minSmp <- 1
     mzW <- 0.25
     maxFts <- 50
-    ftGrps <- xcms:::do_groupFeatures_density(features = fts,
+    ftGrps <- xcms:::do_groupChromPeaks_density(peaks = fts,
                                               sampleGroups = smpGrp,
                                               bw = theBw,
                                               minFraction = minFr,
@@ -127,8 +127,8 @@ dontrun_do_groupFeatures_density_compare <- function() {
     xs$class <- smpGrp
     res_x <- group.density(xs, bw = theBw, minfrac = minFr,
                            minsamp = minSmp, mzwid = mzW, max = maxFts)
-    checkEquals(res_x@groups, ftGrps$featureGroups)
-    checkEquals(res_x@groupidx, ftGrps$featureIndex)
+    checkEquals(res_x@groups, ftGrps$featureDefinitions)
+    checkEquals(res_x@groupidx, ftGrps$peakIndex)
     ## o Three groups, minfrac
     smpGrp <- c(1, 1, 2, 2, 3, 3, 3, 3, 2, 2, 3, 3)
     theBw <- 30
@@ -136,7 +136,7 @@ dontrun_do_groupFeatures_density_compare <- function() {
     minSmp <- 1
     mzW <- 0.4
     maxFts <- 50
-    ftGrps <- xcms:::do_groupFeatures_density(features = fts,
+    ftGrps <- xcms:::do_groupChromPeaks_density(peaks = fts,
                                               sampleGroups = smpGrp,
                                               bw = theBw,
                                               minFraction = minFr,
@@ -146,8 +146,8 @@ dontrun_do_groupFeatures_density_compare <- function() {
     xs$class <- smpGrp
     res_x <- group.density(xs, bw = theBw, minfrac = minFr,
                            minsamp = minSmp, mzwid = mzW, max = maxFts)
-    checkEquals(res_x@groups, ftGrps$featureGroups)
-    checkEquals(res_x@groupidx, ftGrps$featureIndex)
+    checkEquals(res_x@groups, ftGrps$featureDefinitions)
+    checkEquals(res_x@groupidx, ftGrps$peakIndex)
     ## o change also minSmp and maxFts
     smpGrp <- c(1, 1, 2, 2, 3, 3, 1, 1, 2, 2, 3, 3)
     theBw <- 30
@@ -155,7 +155,7 @@ dontrun_do_groupFeatures_density_compare <- function() {
     minSmp <- 2
     mzW <- 0.4
     maxFts <- 10
-    ftGrps <- xcms:::do_groupFeatures_density(features = fts,
+    ftGrps <- xcms:::do_groupChromPeaks_density(peaks = fts,
                                               sampleGroups = smpGrp,
                                               bw = theBw,
                                               minFraction = minFr,
@@ -165,12 +165,12 @@ dontrun_do_groupFeatures_density_compare <- function() {
     xs$class <- smpGrp
     res_x <- group.density(xs, bw = theBw, minfrac = minFr,
                            minsamp = minSmp, mzwid = mzW, max = maxFts)
-    checkEquals(res_x@groups, ftGrps$featureGroups)
-    checkEquals(res_x@groupidx, ftGrps$featureIndex)
+    checkEquals(res_x@groups, ftGrps$featureDefinitions)
+    checkEquals(res_x@groupidx, ftGrps$peakIndex)
 }
 
 
-dontrun_groupFeatures_density_implementation <- function() {
+dontrun_groupChromPeaks_density_implementation <- function() {
     library(faahKO)
     data("faahko")
     ## 1) check whether the bins are really overlapping.
@@ -239,25 +239,25 @@ fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
 fticr_od <- readMSData2(fticrf[1:2], msLevel. = 1)
 p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
               SNR.method = "data.mean", winSize.noise = 500)
-fticr_xod <- detectFeatures(fticr_od, param = p)
+fticr_xod <- findChromPeaks(fticr_od, param = p)
 
-test_do_groupFeatures_mzClust <- function() {
+test_do_groupPeaks_mzClust <- function() {
     fts <- peaks(fticr_xs)
-    res <- do_groupFeatures_mzClust(features = fts,
+    res <- do_groupPeaks_mzClust(peaks = fts,
                                     sampleGroups = sampclass(fticr_xs))
-    res_2 <- do_groupFeatures_mzClust(features = fts,
+    res_2 <- do_groupPeaks_mzClust(peaks = fts,
                                       sampleGroups = sampclass(fticr_xs),
                                       minFraction = 0, absMz = 2)
-    checkTrue(nrow(res$featureGroups) > nrow(res_2$featureGroups))
+    checkTrue(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
 
     res_x <- group(fticr_xs, method = "mzClust")
-    checkEquals(res_x@groups, res$featureGroups)
-    checkEquals(res_x@groupidx, res$featureIndex)
+    checkEquals(res_x@groups, res$featureDefinitions)
+    checkEquals(res_x@groupidx, res$peakIndex)
 }
 
 ## This is to compare the function to the group.mzClust method. Once all is fine
 ## rename it to "dontrun"
-dontrun_test_groupFeatures_mzClust_compare <- function() {
+dontrun_test_groupPeaks_mzClust_compare <- function() {
     library(RUnit)
     library(xcms)
     library(msdata)
@@ -274,64 +274,64 @@ dontrun_test_groupFeatures_mzClust_compare <- function() {
     od <- readMSData2(mzdatafiles, msLevel. = 1)
     p <- MSWParam(scales = c(1, 7), ampTh = 0.005, peakThr = 80000,
                   SNR.method = 'data.mean', winSize.noise = 500)
-    xod <- detectFeatures(od, param = p)
-    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sampclass(xs))
+    xod <- findChromPeaks(od, param = p)
+    res <- do_groupPeaks_mzClust(chromPeaks(xod), sampleGroups = sampclass(xs))
     
-    checkEquals(peaks(xs), features(xod))
-    checkEquals(res$featureGroups, xsg@groups)
-    checkEquals(res$featureIndex, xsg@groupidx)
+    checkEquals(peaks(xs), chromPeaks(xod))
+    checkEquals(res$featureDefinitions, xsg@groups)
+    checkEquals(res$peakIndex, xsg@groupidx)
     
     ## Check with different class ordering!
     sc_orig <- sampclass(xs)
     sc <- c(2, 2, 1, 1, 4, 4, 4, 3, 3, 3)
     sampclass(xs) <- factor(sc)
     xsg <- group(xs, method="mzClust", minfrac = 0.2)
-    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+    res <- do_groupPeaks_mzClust(chromPeaks(xod), sampleGroups = sc,
                                     minFraction = 0.2)
-    checkEquals(res$featureGroups, xsg@groups)
-    checkEquals(res$featureIndex, xsg@groupidx)
+    checkEquals(res$featureDefinitions, xsg@groups)
+    checkEquals(res$peakIndex, xsg@groupidx)
 
     sc <- c("z", "z", "b", "a", "a", "a", "z", "b", "e", "e")
     sampclass(xs) <- factor(sc)
     xsg <- group(xs, method="mzClust", minfrac = 0.2, mzppm = 40)
-    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+    res <- do_groupPeaks_mzClust(chromPeaks(xod), sampleGroups = sc,
                                     minFraction = 0.1, ppm = 40)
-    checkEquals(res$featureGroups, xsg@groups)
-    checkEquals(res$featureIndex, xsg@groupidx)
+    checkEquals(res$featureDefinitions, xsg@groups)
+    checkEquals(res$peakIndex, xsg@groupidx)
 
     xsg <- group(xs, method="mzClust", minfrac = 0.2, mzppm = 40, mzabs = 0.1)
-    res <- do_groupFeatures_mzClust(features(xod), sampleGroups = sc,
+    res <- do_groupPeaks_mzClust(chromPeaks(xod), sampleGroups = sc,
                                     minFraction = 0.1, ppm = 40, absMz = 0.1)
-    checkEquals(res$featureGroups, xsg@groups)
-    checkEquals(res$featureIndex, xsg@groupidx)
+    checkEquals(res$featureDefinitions, xsg@groups)
+    checkEquals(res$peakIndex, xsg@groupidx)
 }
 
-test_groupFeatures_MzClustParam <- function() {
+test_groupPeaks_MzClustParam <- function() {
 
     p <- MzClustParam(sampleGroups = sampclass(fticr_xs))
     
-    fticr_xod2 <- groupFeatures(fticr_xod, param = p)
+    fticr_xod2 <- groupChromPeaks(fticr_xod, param = p)
     fticr_xs2 <- group(fticr_xs, method = "mzClust")
-    checkEquals(fticr_xs2@groupidx, featureGroups(fticr_xod2)$featureidx)
-    fg <- featureGroups(fticr_xod2)
+    checkEquals(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
+    fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(fticr_xs2@groups, fg)
     checkTrue(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
-                         type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+                         type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p)
 
     p2 <- MzClustParam(sampleGroups = fticr_xs$class, absMz = 1,
                        minFraction = 0.8)
-    fticr_xod2 <- groupFeatures(fticr_xod, param = p2)
+    fticr_xod2 <- groupChromPeaks(fticr_xod, param = p2)
     fticr_xs2 <- group(fticr_xs, method = "mzClust", minfrac = 0.8, mzabs = 1)
-    checkEquals(fticr_xs2@groupidx, featureGroups(fticr_xod2)$featureidx)
-    fg <- featureGroups(fticr_xod2)
+    checkEquals(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
+    fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(fticr_xs2@groups, fg)
     checkTrue(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
-                         type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+                         type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p2)    
 }
 
@@ -339,7 +339,7 @@ test_groupFeatures_MzClustParam <- function() {
 ## nearest
 ##
 
-test_do_groupFeatures_nearest <- function() {
+test_do_groupChromPeaks_nearest <- function() {
     xs <- faahko    
     features <- peaks(xs)
     sampleGroups <- sampclass(xs)
@@ -348,37 +348,37 @@ test_do_groupFeatures_nearest <- function() {
     rtCheck <- 15
     kNN <- 10
 
-    res <- do_groupFeatures_nearest(features, sampleGroups)
-    res_2 <- do_groupFeatures_nearest(features, sampleGroups, absRt = 3)
-    checkTrue(nrow(res$featureGroups) < nrow(res_2$featureGroups))
+    res <- do_groupChromPeaks_nearest(features, sampleGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sampleGroups, absRt = 3)
+    checkTrue(nrow(res$featureDefinitions) < nrow(res_2$featureDefinitions))
     res_x <- group(xs, method = "nearest")
-    checkEquals(res_x@groups, res$featureGroups)
+    checkEquals(res_x@groups, res$featureDefinitions)
 }
 
-test_groupFeatures_NearestFeaturesParam <- function() {
+test_groupChromPeaks_NearestPeaksParam <- function() {
     od_x <- faahko_xod
     xs <- faahko_xs
 
-    p <- NearestFeaturesParam(sampleGroups = xs$class)
-    od_x <- groupFeatures(od_x, param = p)
+    p <- NearestPeaksParam(sampleGroups = xs$class)
+    od_x <- groupChromPeaks(od_x, param = p)
     xs <- group(xs, method = "nearest")
-    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
-    fg <- featureGroups(od_x)
+    checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
+    fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p)
 
-    fdp2 <- NearestFeaturesParam(sampleGroups = xs$class, kNN = 3)
-    od_x <- groupFeatures(od_x, param = fdp2)
+    fdp2 <- NearestPeaksParam(sampleGroups = xs$class, kNN = 3)
+    od_x <- groupChromPeaks(od_x, param = fdp2)
     xs <- group(xs, method = "nearest", kNN = 3)
-    checkEquals(xs@groupidx, featureGroups(od_x)$featureidx)
-    fg <- featureGroups(od_x)
+    checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
+    fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.FEATURE.ALIGNMENT)[[1]]
+    ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), fdp2)    
 }
 
@@ -402,76 +402,76 @@ dontrun_test_nearest_impl <- function() {
     res <- group(xs, method = "nearest") ## Oh, nasty warnings! These were
     ## already there in version 1.51.0!
     ## 1.48.0: Yup.    
-    res_2 <- do_groupFeatures_nearest(features, sampleGroups)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sampleGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sampleGroups)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sampleGroups)
     
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     ## change sample grouping.
     sc <- c("b", "b", "a", "a", "z", "z", "a", "b", "e", "e", "e", "e")
     sampclass(xs) <- sc
     ## levels are NOT ordered.
     res <- group(xs, method = "nearest")
-    res_2 <- do_groupFeatures_nearest(features, sc)
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sc)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sc)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sc)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     ## Use sample assignment with ordered levels.
     sampclass(xs) <- factor(sc) ## this re-orders levels!
     res_3 <- group(xs, method = "nearest")
-    res_4 <- do_groupFeatures_nearest(features, factor(sc))
+    res_4 <- do_groupChromPeaks_nearest(features, factor(sc))
     checkEquals(res_3@groups, res@groups)
     ## Now, the do functions does NOT re-order levels!
-    checkEquals(res@groups[, 1:7], res_4$featureGroups[, 1:7])
+    checkEquals(res@groups[, 1:7], res_4$featureDefinitions[, 1:7])
     checkEquals(res@groups[, levels(factor(sc))],
-                res_4$featureGroups[, levels(factor(sc))])
-    checkEquals(res@groupidx, res_4$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, factor(sc))
-    checkEquals(res_n$featureIndex, res_4$featureIndex)
-    checkEquals(res_n$featureGroups, res_4$featureGroups)
+                res_4$featureDefinitions[, levels(factor(sc))])
+    checkEquals(res@groupidx, res_4$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, factor(sc))
+    checkEquals(res_n$peakIndex, res_4$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_4$featureDefinitions)
     
     ## Now change settings.
     sampclass(xs) <- sc
     res <- group(xs, method = "nearest", mzVsRTbalance = 5)
-    res_2 <- do_groupFeatures_nearest(features, sc, mzVsRtBalance = 5)
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sc, mzVsRtBalance = 5)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sc, mzVsRtBalance = 5)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sc, mzVsRtBalance = 5)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     res <- group(xs, method = "nearest", kNN = 3)
-    res_2 <- do_groupFeatures_nearest(features, sc, kNN = 3)
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sc, kNN)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sc, kNN = 3)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sc, kNN)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     res <- group(xs, method = "nearest", mzCheck = 0.5)
-    res_2 <- do_groupFeatures_nearest(features, sc, absMz = 0.5)
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sc, absMz = 0.5)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sc, absMz = 0.5)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sc, absMz = 0.5)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     res <- group(xs, method = "nearest", rtCheck = 3)
-    res_2 <- do_groupFeatures_nearest(features, sc, absRt = 3)
-    checkEquals(res@groups, res_2$featureGroups)
-    checkEquals(res@groupidx, res_2$featureIndex)
-    res_n <- xcms:::do_groupFeatures_nearest_mod(features, sc, absRt = 3)
-    checkEquals(res_n$featureIndex, res_2$featureIndex)
-    checkEquals(res_n$featureGroups, res_2$featureGroups)
+    res_2 <- do_groupChromPeaks_nearest(features, sc, absRt = 3)
+    checkEquals(res@groups, res_2$featureDefinitions)
+    checkEquals(res@groupidx, res_2$peakIndex)
+    res_n <- xcms:::do_groupChromPeaks_nearest_mod(features, sc, absRt = 3)
+    checkEquals(res_n$peakIndex, res_2$peakIndex)
+    checkEquals(res_n$featureDefinitions, res_2$featureDefinitions)
 
     ## library(profvis)
     ## profvis({
-    ##     res_2 <- xcms:::do_groupFeatures_nearest(features, sampleGroups)
+    ##     res_2 <- xcms:::do_groupChromPeaks_nearest(features, sampleGroups)
     ## })
 }

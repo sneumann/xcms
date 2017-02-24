@@ -1,6 +1,6 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
-#' @include functions-XCMSnExp.R do_groupFeatures-functions.R
+#' @include functions-XCMSnExp.R do_groupChromPeaks-functions.R
 #' do_adjustRtime-functions.R methods-xcmsRaw.R functions-OnDiskMSnExp.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
@@ -15,25 +15,25 @@ setMethod("show", "XCMSnExp", function(object) {
     callNextMethod()
     ## And not XCMSnExp related stuff.
     cat("- - - xcms preprocessing - - -\n")
-    if (hasDetectedFeatures(object)) {
-        cat("Feature detection:\n")
-        cat(" ", nrow(features(object)), " features identified in ",
+    if (hasChromPeaks(object)) {
+        cat("Chromatographic peak detection:\n")
+        cat(" ", nrow(chromPeaks(object)), " peaks identified in ",
             length(fileNames(object)), " samples.\n", sep = "")
         cat(" On average ",
-            format(mean(table(features(object)[, "sample"])), digits = 3),
-            " features per sample.\n", sep = "")
+            format(mean(table(chromPeaks(object)[, "sample"])), digits = 3),
+            " chromatographic peaks per sample.\n", sep = "")
     }
-    if (hasAlignedFeatures(object)) {
-        cat("Feature alignment:\n")
-        cat(" ", nrow(featureGroups(object)), " featureGroups identified.\n",
+    if (hasFeatures(object)) {
+        cat("Correspondence:\n")
+        cat(" ", nrow(featureDefinitions(object)), " features identified.\n",
             sep = "")
-        cat(" Median mz range of feature groups: ",
-            format(median(featureGroups(object)[, "mzmax"] -
-                          featureGroups(object)[, "mzmin"]), digits = 5),
+        cat(" Median mz range of features: ",
+            format(median(featureDefinitions(object)[, "mzmax"] -
+                          featureDefinitions(object)[, "mzmin"]), digits = 5),
             "\n", sep = "")
-        cat(" Median rt range of feature groups: ",
-            format(median(featureGroups(object)[, "rtmax"] -
-                          featureGroups(object)[, "rtmin"]), digits = 5),
+        cat(" Median rt range of features: ",
+            format(median(featureDefinitions(object)[, "rtmax"] -
+                          featureDefinitions(object)[, "rtmin"]), digits = 5),
             "\n", sep = "")
     }
     if (hasAdjustedRtime(object)) {
@@ -50,24 +50,24 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
     return(hasAdjustedRtime(object@msFeatureData))
 })
 
-##' @aliases hasAlignedFeatures
+##' @aliases hasFeatures
 ##'
-##' @description \code{hasAlignedFeatures}: whether the object contains feature
-##' alignment results.
+##' @description \code{hasFeatures}: whether the object contains correspondence
+##' results (i.e. features).
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("hasAlignedFeatures", "XCMSnExp", function(object) {
-    return(hasAlignedFeatures(object@msFeatureData))
+setMethod("hasFeatures", "XCMSnExp", function(object) {
+    return(hasFeatures(object@msFeatureData))
 })
 
-##' @aliases hasDetectedFeatures
+##' @aliases hasChromPeaks
 ##'
-##' @description \code{hasDetectedFeatures}: whether the object contains feature
+##' @description \code{hasChromPeaks}: whether the object contains peak
 ##' detection results.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("hasDetectedFeatures", "XCMSnExp", function(object) {
-    return(hasDetectedFeatures(object@msFeatureData))
+setMethod("hasChromPeaks", "XCMSnExp", function(object) {
+    return(hasChromPeaks(object@msFeatureData))
 })
 
 ##' @aliases adjustedRtime
@@ -76,7 +76,7 @@ setMethod("hasDetectedFeatures", "XCMSnExp", function(object) {
 ##' extract/set adjusted retention times. \code{adjustedRtime<-} should not be
 ##' called manually, it is called internally by the \code{\link{adjustRtime}}
 ##' methods. For \code{XCMSnExp} objects, \code{adjustedRtime<-} does also apply
-##' the retention time adjustment to the features in the object.
+##' the retention time adjustment to the chromatographic peaks in the object.
 ##' The \code{bySample} parameter allows to specify whether the adjusted
 ##' retention time should be grouped by sample (file).
 ##'
@@ -89,6 +89,8 @@ setMethod("hasDetectedFeatures", "XCMSnExp", function(object) {
 ##' @rdname XCMSnExp-class
 setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
     res <- adjustedRtime(object@msFeatureData)
+    if (length(res) == 0)
+        return(res)
     ## Adjusted retention time is a list of retention times.
     if (!bySample) {
         ## Have to re-order the adjusted retention times by spectrum name, such
@@ -112,18 +114,18 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     adjustedRtime(newFd) <- value
-    if (hasDetectedFeatures(newFd)) {
-        ## Change also the retention times reported in the features matrix.
+    if (hasChromPeaks(newFd)) {
+        ## Change also the retention times reported in the peak matrix.
         if (length(value) != length(rtime(object, bySample = TRUE)))
             stop("The length of 'value' has to match the number of samples!")
         message("Applying retention time adjustment to the identified",
-                " features ... ", appendLF = FALSE)
-        fts <- .applyRtAdjToFeatures(features(newFd),
-                                     rtraw = rtime(object, bySample = TRUE),
-                                     rtadj = value)
+                " chromatographic peaks ... ", appendLF = FALSE)
+        fts <- .applyRtAdjToChromPeaks(chromPeaks(newFd),
+                                       rtraw = rtime(object, bySample = TRUE),
+                                       rtadj = value)
         ## Calling this on the MsFeatureData to avoid all results being removed
-        ## again by the features<- method.
-        features(newFd) <- fts
+        ## again by the chromPeaks<- method.
+        chromPeaks(newFd) <- fts
         message("OK")
     }
     lockEnvironment(newFd, bindings = TRUE)
@@ -132,34 +134,35 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
         return(object)
 })
 
-##' @aliases featureGroups
+##' @aliases featureDefinitions
 ##'
-##' @description \code{featureGroups}, \code{featureGroups<-}: extract
-##' or set the feature alignment results.
+##' @description \code{featureDefinitions}, \code{featureDefinitions<-}: extract
+##' or set the correspondence results, i.e. the mz-rt features (peak groups).
 ##'
-##' @return For \code{featureGroups}: a \code{DataFrame} with feature alignment
-##' information, each row corresponding to one group of aligned features (across
-##' samples) and columns \code{"mzmed"} (median mz value), \code{"mzmin"}
-##' (minimal mz value), \code{"mzmax"} (maximum mz value), \code{"rtmed"} (median
-##' retention time), \code{"rtmin"} (minimal retention time), \code{"rtmax"}
-##' (maximal retention time) and \code{"featureidx"}. Column \code{"featureidx"}
-##' contains a \code{list} with indices of features (rows) in the matrix returned
-##' by the \code{features} method that belong to that feature group. The method
-##' returns \code{NULL} if no aligned feature information is present.
+##' @return For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
+##' information, each row corresponding to one mz-rt feature (grouped peaks
+##' within and across samples) and columns \code{"mzmed"} (median mz value),
+##' \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
+##' \code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
+##' time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
+##' Column \code{"peakidx"} contains a \code{list} with indices of
+##' chromatographic peaks (rows) in the matrix returned by the \code{chromPeaks}
+##' method that belong to that feature group. The method returns \code{NULL} if
+##' no feature definitions are present.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("featureGroups", "XCMSnExp", function(object) {
-    return(featureGroups(object@msFeatureData))
+setMethod("featureDefinitions", "XCMSnExp", function(object) {
+    return(featureDefinitions(object@msFeatureData))
 })
-##' @aliases featureGroups<-
+##' @aliases featureDefinitions<-
 ##'
 ##' @rdname XCMSnExp-class
-setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
-    if (hasAlignedFeatures(object))
-        object <- dropFeatureGroups(object)
+setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
+    if (hasFeatures(object))
+        object <- dropFeatureDefinitions(object)
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
-    featureGroups(newFd) <- value
+    featureDefinitions(newFd) <- value
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     if (validObject(object)) {
@@ -170,41 +173,44 @@ setReplaceMethod("featureGroups", "XCMSnExp", function(object, value) {
     }
 })
 
-##' @aliases features
+##' @aliases chromPeaks
 ##'
-##' @description \code{features}, \code{features<-}: extract or set
-##' the matrix containing the information on identified features. Parameter
-##' \code{bySample} allows to specify whether features should be returned
-##' ungrouped (default \code{bySample = FALSE}) or grouped by sample (
-##' \code{bySample = TRUE}). The \code{features<-} method for \code{XCMSnExp}
-##' objects removes also all feature alignment and retention time correction
-##' results.
+##' @description \code{chromPeaks}, \code{chromPeaks<-}: extract or set
+##' the matrix containing the information on identified chromatographic peaks.
+##' Parameter \code{bySample} allows to specify whether peaks should be
+##' returned ungrouped (default \code{bySample = FALSE}) or grouped by sample (
+##' \code{bySample = TRUE}). The \code{chromPeaks<-} method for \code{XCMSnExp}
+##' objects removes also all correspondence (peak grouping) and retention time
+##' correction (alignment) results.
 ##' See description of the return value for details on the returned matrix. Users
-##' usually don't have to use the \code{features<-} method directly as detected
-##' features are added to the object by the \code{\link{detectFeatures}} method.
+##' usually don't have to use the \code{chromPeaks<-} method directly as detected
+##' chromatographic peaks are added to the object by the
+##' \code{\link{findChromPeaks}} method.
 ##'
-##' @return For \code{features}: if \code{bySample = FALSE} a \code{matrix} with
+##' @return For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} with
 ##' at least the following columns: \code{"mz"} (mz value for the largest
 ##' intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
 ##' value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
 ##' (minimal retention time), \code{"rtmax"} (maximal retention time),
-##' \code{"into"} (integrated, original, intensity of the feature) and
-##' \code{"sample"} (sample index in which the feature was identified).
-##' Depending on the employed feature detection algorithm and the
+##' \code{"into"} (integrated, original, intensity of the peak) and
+##' \code{"sample"} (sample index in which the peak was identified).
+##' Depending on the employed peak detection algorithm and the
 ##' \code{verboseColumns} parameter of it additional columns might be returned.
-##' For \code{bySample = TRUE} the features are returned as a \code{list} of
-##' matrices, each containing the features of a specific sample. For sample in
-##' which no feastures were detected a matrix with 0 rows is returned.
+##' For \code{bySample = TRUE} the chronatographic peaks are returned as a
+##' \code{list} of matrices, each containing the chromatographic peak of a
+##' specific sample. For sample in which no feastures were detected a matrix
+##' with 0 rows is returned.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("features", "XCMSnExp", function(object, bySample = FALSE) {
+setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE) {
     if (bySample) {
-        tmp <- split(features(object), f = features(object)[, "sample"])
+        tmp <- split(chromPeaks(object), f = chromPeaks(object)[, "sample"])
         ## Ensure we return something for each sample in case there is a sample
-        ## without detected features.
+        ## without detected peaks.
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
-        tmp <- split.data.frame(features(object), f = features(object)[, "sample"])
+        tmp <- split.data.frame(chromPeaks(object),
+                                f = chromPeaks(object)[, "sample"])
         res[as.numeric(names(tmp))] <- tmp
         if (any(lengths(res) == 0)) {
             emat <- matrix(nrow = 0, ncol = ncol(tmp[[1]]))
@@ -213,21 +219,21 @@ setMethod("features", "XCMSnExp", function(object, bySample = FALSE) {
         }
         return(res)
     } else {
-        return(features(object@msFeatureData))
+        return(chromPeaks(object@msFeatureData))
     }
 })
-##' @aliases features<-
+##' @aliases chromPeaks<-
 ##'
 ##' @rdname XCMSnExp-class
-setReplaceMethod("features", "XCMSnExp", function(object, value) {
+setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     newFd <- new("MsFeatureData")
     ## Dropping all alignment results and all retention time corrections.
     suppressMessages(
-        object <- dropFeatures(object)
+        object <- dropChromPeaks(object)
     )
     ## Ensure that we remove ALL related process history steps
     newFd@.xData <- .copy_env(object@msFeatureData)
-    features(newFd) <- value
+    chromPeaks(newFd) <- value
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     if (validObject(object)) {
@@ -363,8 +369,8 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE) {
 ##'
 ##' @param type For \code{processHistory}: restrict returned
 ##' \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
-##' Supported values are \code{"Unknown"}, \code{"Feature detection"},
-##' \code{"Feature alignment"} and \code{"Retention time correction"}.
+##' Supported values are \code{"Unknown"}, \code{"Peak detection"},
+##' \code{"Peak grouping"} and \code{"Retention time correction"}.
 ##'
 ##' @return For \code{processHistory}: a \code{list} of
 ##' \code{\link{ProcessHistory}} objects providing the details of the individual
@@ -413,79 +419,86 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
         return(object)
 })
 
-##' @aliases dropFeatures
+##' @aliases dropChromPeaks
 ##'
-##' @description \code{dropFeatures}: drops any identified features
-##' and returns the object without that information. Note that for
-##' \code{XCMSnExp} objects the method drops all results from a feature alignment
-##' or retention time adjustment too. For \code{XCMSnExp} objects the method
-##' drops also any related process history steps.
+##' @description \code{dropChromPeaks}: drops any identified chromatographic
+##' peaks and returns the object without that information. Note that for
+##' \code{XCMSnExp} objects the method drops all results from a correspondence
+##' (peak grouping) or alignment (retention time adjustment) too.
+##' For \code{XCMSnExp} objects the method drops also any related process
+##' history steps.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("dropFeatures", "XCMSnExp", function(object) {
-    if (hasDetectedFeatures(object)) {
-        object <- dropProcessHistories(object, type = .PROCSTEP.FEATURE.DETECTION)
+setMethod("dropChromPeaks", "XCMSnExp", function(object) {
+    if (hasChromPeaks(object)) {
+        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.DETECTION)
         ## Make sure we delete all related process history steps
         object <- dropProcessHistories(object, type = .PROCSTEP.RTIME.CORRECTION)
-        object <- dropProcessHistories(object, type = .PROCSTEP.FEATURE.ALIGNMENT)
+        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING)
         ## idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
-        ##                 .PROCSTEP.FEATURE.DETECTION)
+        ##                 .PROCSTEP.PEAK.DETECTION)
         ## if (length(idx_fd) > 0)
         ##     object@.processHistory <- object@.processHistory[-idx_fd]
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
-        newFd <- dropFeatures(newFd)
+        newFd <- dropChromPeaks(newFd)
         ## Dropping other results from the environment (not the object).
         if (hasAdjustedRtime(newFd))
             newFd <- dropAdjustedRtime(newFd)
-        if (hasAlignedFeatures(newFd))
-            newFd <- dropFeatureGroups(newFd)
+        if (hasFeatures(newFd))
+            newFd <- dropFeatureDefinitions(newFd)
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
     }
     if (validObject(object))
         return(object)
 })
-##' @aliases dropFeatureGroups
+##' @aliases dropFeatureDefinitions
 ##'
-##' @description \code{dropFeatureGroups}: drops aligned feature
-##' results (i.e. feature groups) and returns the object
-##' without that information. Note that for \code{XCMSnExp} objects the method
-##' will also drop retention time adjustment results, if these were performed
-##' after the last feature alignment (i.e. which base on the results from the
-##' feature alignment that are going to be removed). For \code{XCMSnExp} objects
-##' also all related process history steps are removed.
+##' @description \code{dropFeatureDefinitions}: drops the results from a
+##' correspondence (peak grouping) analysis, i.e. the definition of the mz-rt
+##' features and returns the object without that information. Note that for
+##' \code{XCMSnExp} objects the method will also drop retention time adjustment
+##' results, if these were performed after the last peak grouping (i.e. which
+##' base on the results from the peak grouping that are going to be removed).
+##' For \code{XCMSnExp} objects also all related process history steps are
+##' removed.
 ##'
-##' @param keepAdjRtime For \code{dropFeatureGroups,XCMSnExp}: logical(1)
-##' defining whether eventually present retention time adjustment should not be
-##' dropped. By default dropping feature groups drops retention time adjustment
-##' results too.
+##' @param keepAdjRtime For \code{dropFeatureDefinitions,XCMSnExp}:
+##' \code{logical(1)} defining whether eventually present retention time
+##' adjustment should not be dropped. By default dropping feature definitions
+##' drops retention time adjustment results too.
 ##'
-##' @param dropLastN For \code{dropFeatureGroups,XCMSnExp}: numeric(1) defining
-##' the number of feature alignment related process history steps to remove. By
-##' default \code{dropLastN = -1}, dropping the features removes all process
-##' history steps related to feature alignment. Setting e.g. \code{dropLastN = 1}
-##' will only remove the most recent feature alignment related process history
-##' step.
+##' @param dropLastN For \code{dropFeatureDefinitions,XCMSnExp}:
+##' \code{numeric(1)} defining the number of peak grouping related process
+##' history steps to remove. By default \code{dropLastN = -1}, dropping the
+##' chromatographic peaks removes all process history steps related to peak
+##' grouping. Setting e.g. \code{dropLastN = 1} will only remove the most recent
+##' peak grouping related process history step.
 ##' 
 ##' @rdname XCMSnExp-class
-setMethod("dropFeatureGroups", "XCMSnExp", function(object, keepAdjRtime = FALSE,
-                                                    dropLastN = -1) {
-    if (hasAlignedFeatures(object)) {
+setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
+                                                         keepAdjRtime = FALSE,
+                                                         dropLastN = -1) {
+    if (hasFeatures(object)) {
         phTypes <- unlist(lapply(processHistory(object), function(z)
             processType(z)))
         idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
-        idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
+        idx_fal <- which(phTypes == .PROCSTEP.PEAK.GROUPING)
+        if (length(idx_art) == 0)
+            idx_art <- -1L
+        if (length(idx_fal) == 0)
+            idx_fal <- -1L
         ## 1) drop last related process history step and results
         object <- dropProcessHistories(object,
-                                       type = .PROCSTEP.FEATURE.ALIGNMENT,
+                                       type = .PROCSTEP.PEAK.GROUPING,
                                        num = 1)
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
-        newFd <- dropFeatureGroups(newFd)
+        newFd <- dropFeatureDefinitions(newFd)
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
-        ## 2) If retention time correction was performed after the latest feature
+        ## 2) If retention time correction was performed after the latest peak
         ##    alignment, drop also the retention time correction and all related
         ##    process history steps.
         ##    Otherwise (grouping performed after retention time adjustment) do
@@ -494,13 +507,13 @@ setMethod("dropFeatureGroups", "XCMSnExp", function(object, keepAdjRtime = FALSE
         if (hasAdjustedRtime(object)) {
             if (max(idx_art) > max(idx_fal)) {
                 object <- dropProcessHistories(object,
-                                               type = .PROCSTEP.FEATURE.ALIGNMENT)
-                ## This will ensure that the retention times of the features
+                                               type = .PROCSTEP.PEAK.GROUPING)
+                ## This will ensure that the retention times of the peaks
                 ## are restored.
                 object <- dropAdjustedRtime(object)
-                warning("Removed also feature alignment results as these based",
-                        " on the retention time correction results that were",
-                        " dropped.")
+                warning("Removed also correspondence (peak grouping) results as",
+                        " these based on the retention time correction results",
+                        " that were dropped.")
             }
         }
     }
@@ -513,11 +526,12 @@ setMethod("dropFeatureGroups", "XCMSnExp", function(object, keepAdjRtime = FALSE
 ##' @description \code{dropAdjustedRtime}: drops any retention time
 ##' adjustment information and returns the object without adjusted retention
 ##' time. For \code{XCMSnExp} object this also reverts the retention times
-##' reported for the features in the feature matrix to the original, raw, ones
-##' (after feature detection). Note that for \code{XCMSnExp} objects the method
-##' drops also all feature alignment results if these were performed \emph{after}
-##' the retention time adjustment. For \code{XCMSnExp} objects the method drops
-##' also any related process history steps.
+##' reported for the chromatographic peaks in the peak matrix to the original,
+##' raw, ones (after chromatographic peak detection). Note that for
+##' \code{XCMSnExp} objects the method drops also all peak grouping results
+##' if these were performed \emph{after} the retention time adjustment.
+##' For \code{XCMSnExp} objects the method drops also any related process history
+##' steps.
 ##'
 ##' @rdname XCMSnExp-class
 setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
@@ -527,23 +541,27 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
         phTypes <- unlist(lapply(processHistory(object), function(z)
             processType(z)))
         idx_art <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
-        idx_fal <- which(phTypes == .PROCSTEP.FEATURE.ALIGNMENT)
+        idx_fal <- which(phTypes == .PROCSTEP.PEAK.GROUPING)
+        if (length(idx_art) == 0)
+            idx_art <- -1L
+        if (length(idx_fal) == 0)
+            idx_fal <- -1L
         ## Copy the content of the object
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)        
-        ## Revert applied adjustments in features:
-        if (hasDetectedFeatures(newFd)) {
-            message("Reverting retention times of identified features to ",
+        ## Revert applied adjustments in peaks:
+        if (hasChromPeaks(newFd)) {
+            message("Reverting retention times of identified peaks to ",
                     "original values ... ", appendLF = FALSE)
-            fts <- .applyRtAdjToFeatures(features(newFd),
-                                         rtraw = adjustedRtime(object,
-                                                               bySample = TRUE),
-                                         rtadj = rtime(object,
-                                                       bySample = TRUE,
-                                                       adjusted = FALSE))
-            ## Replacing features in MsFeatureData, not in XCMSnExp to avoid
+            fts <- .applyRtAdjToChromPeaks(chromPeaks(newFd),
+                                           rtraw = adjustedRtime(object,
+                                                                 bySample = TRUE),
+                                           rtadj = rtime(object,
+                                                         bySample = TRUE,
+                                                         adjusted = FALSE))
+            ## Replacing peaks in MsFeatureData, not in XCMSnExp to avoid
             ## all results being removed.
-            features(newFd) <- fts
+            chromPeaks(newFd) <- fts
             message("OK")
         }
         ## 1) Drop the retention time adjustment and (the latest) related process
@@ -556,18 +574,18 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
         lockEnvironment(newFd, bindings = TRUE)
         ## 2) If grouping has been performed AFTER retention time correction it
         ##    has to be dropped too, including ALL related process histories.
-        if (hasAlignedFeatures(object)) {
+        if (hasFeatures(object)) {
             if (max(idx_fal) > max(idx_art)) {
-                object <- dropFeatureGroups(object)
+                object <- dropFeatureDefinitions(object)
                 object <- dropProcessHistories(object,
-                                               type = .PROCSTEP.FEATURE.ALIGNMENT,
+                                               type = .PROCSTEP.PEAK.GROUPING,
                                                num = -1)
             }
         } else {
-            ## If there is any feature alignment related process history, but no
-            ## feature alignment results, drop them.
+            ## If there is any peak alignment related process history, but no
+            ## peak alignment results, drop them.
             object <- dropProcessHistories(object,
-                                           type = .PROCSTEP.FEATURE.ALIGNMENT,
+                                           type = .PROCSTEP.PEAK.GROUPING,
                                            num = -1)
         }
     }
@@ -575,26 +593,6 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
         return(object)
 })
 
-
-############################################################
-## Methods inherited from OnDiskMSnExp.
-## For some of these methods (altering the raw data or subsetting) we have to
-## remove the results.
-## Methods to consider:
-## o [ subset spectra, return an OnDiskMSnExp.
-## o bin remove the results
-## o clean remove the results.
-## o featureNames returns the names of the spectra.
-## o filterAcquisitionNum remove the results.
-## o filterFile remove the results.
-## o filterMsLevel remove the results.
-## o filterMz
-## o filterRt
-## o fromFile<-
-## o normalize remove the results.
-## o pickPeaks remove the results.
-## o removePeaks remove the results.
-## o smooth remove the results.
 
 ##' @title XCMSnExp data manipulation methods inherited from MSnbase
 ##'
@@ -632,16 +630,22 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
                          drop = "missing"),
           function(x, i, j, drop) {
-              ## Want to support subsetting of the features!
+              ## Want to support subsetting of the peaks!
               ## This means that we will also have to adjust the process
               ## history accordingly.
-              if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
-                  hasDetectedFeatures(x)) {
+              if (hasAdjustedRtime(x) | hasFeatures(x) |
+                  hasChromPeaks(x)) {
                   ## x@.processHistory <- list()
                   ## x@msFeatureData <- new("MsFeatureData")
-                  x <- dropAdjustedRtime(x)
-                  x <- dropFeatureGroups(x)
-                  x <- dropFeatures(x)
+                  suppressMessages(
+                      x <- dropAdjustedRtime(x)
+                  )
+                  suppressMessages(
+                      x <- dropFeatureDefinitions(x)
+                  )
+                  suppressMessages(
+                      x <- dropChromPeaks(x)
+                  )
                   warning("Removed preprocessing results")
               }
               callNextMethod()
@@ -673,13 +677,13 @@ setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
 ##'
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -698,13 +702,13 @@ setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("clean", "XCMSnExp", function(object, all = FALSE,
                                         verbose = FALSE, msLevel.) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -716,13 +720,13 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
 ##'
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -743,13 +747,13 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.) {
 ##'
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -765,9 +769,12 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' results.
 ##'
 ##' @description \code{filterFile}: allows to reduce the
-##' \code{\link{XCMSnExp}} to data from only certain files. Identified features
-##' for these files are retained while eventually all present feature
-##' alignment/grouping information and adjusted retention times are dropped..
+##' \code{\link{XCMSnExp}} to data from only certain files. Identified
+##' chromatographic peaks for these files are retained while all eventually
+##' present features (peak grouping information) are dropped. By default also
+##' adjusted retention times are removed. This can be overwritten by setting
+##' \code{keepAdjustedRtime = TRUE}, but users should use this option with
+##' caution.
 ##'
 ##' @note The \code{filterFile} method removes also process history steps not
 ##' related to the files to which the object should be sub-setted and updates
@@ -782,6 +789,11 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' the file names to sub set. The indices are expected to be increasingly
 ##' ordered, if not they are ordered internally.
 ##'
+##' @param keepAdjustedRtime For \code{filterFile}: \code{logical(1)} defining
+##' whether the adjusted retention times should be kept, even if features are
+##' being removed (and the retention time correction being potentially performed
+##' on these features).
+##' 
 ##' @return All methods return an \code{\link{XCMSnExp}} object.
 ##'
 ##' @author Johannes Rainer
@@ -799,22 +811,42 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' ## Read the files
 ##' od <- readMSData2(fs)
 ##'
-##' ## Perform feature detection on them using default matched filter settings.
+##' ## Perform peak detection on them using default matched filter settings.
 ##' mfp <- MatchedFilterParam()
-##' xod <- detectFeatures(od, param = mfp)
+##' xod <- findChromPeaks(od, param = mfp)
 ##'
 ##' ## Subset the dataset to the first and third file.
 ##' xod_sub <- filterFile(xod, file = c(1, 3))
 ##'
-##' ## The number of features per file for the full object
-##' table(features(xod)[, "sample"])
+##' ## The number of chromatographic peaks per file for the full object
+##' table(chromPeaks(xod)[, "sample"])
 ##'
-##' ## The number of features per file for the subset
-##' table(features(xod_sub)[, "sample"])
+##' ## The number of chromatographic peaks per file for the subset
+##' table(chromPeaks(xod_sub)[, "sample"])
 ##'
 ##' basename(fileNames(xod))
 ##' basename(fileNames(xod_sub))
-setMethod("filterFile", "XCMSnExp", function(object, file) {
+##'
+##' ## Filter on mz values; chromatographic peaks and features within the
+##' ## mz range are retained (as well as adjusted retention times).
+##' xod_sub <- filterMz(xod, mz = c(300, 400))
+##' head(chromPeaks(xod_sub))
+##' nrow(chromPeaks(xod_sub))
+##' nrow(chromPeaks(xod))
+##'
+##' ## Filter on rt values. All chromatographic peaks and features within the
+##' ## retention time range are retained. Filtering is performed by default on
+##' ## adjusted retention times, if present.
+##' xod_sub <- filterRt(xod, rt = c(2700, 2900))
+##'
+##' range(rtime(xod_sub))
+##' head(chromPeaks(xod_sub))
+##' range(chromPeaks(xod_sub)[, "rt"])
+##'
+##' nrow(chromPeaks(xod))
+##' nrow(chromPeaks(xod_sub))
+setMethod("filterFile", "XCMSnExp", function(object, file,
+                                             keepAdjustedRtime = FALSE) {
     if (missing(file)) return(object)
     if (is.character(file)) {
         file <- base::match(file, basename(fileNames(object)))
@@ -825,24 +857,33 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
     ## Error checking - seems that's not performed downstream.
     if (!all(file %in% 1:length(fileNames(object))))
         stop("'file' has to be within 1 and the number of files in the object!")
-    ## Get the data we want to keep/subset
-    fts <- features(object)
-    if (hasAdjustedRtime(object)) {
-        warning("Adjusted retention times removed.")
+    ## Dropping data.
+    if (hasAdjustedRtime(object) & !keepAdjustedRtime) {
+        message("Adjusted retention times removed.")
         object <- dropAdjustedRtime(object)
     }
-    if (hasAlignedFeatures(object)) {
-        warning("Feature alignment information removed.")
-        object <- dropFeatureGroups(object)
-    }
-    ## Process the processing history.
-    object <- dropProcessHistories(object, type = c(.PROCSTEP.FEATURE.ALIGNMENT,
-                                                    .PROCSTEP.RTIME.CORRECTION))
+    suppressWarnings(
+        adjRt <- adjustedRtime(object, bySample = TRUE)
+    )
+    ## Get the data we want to keep/subset.
+    fts <- chromPeaks(object)
+    ## Keep also the processHistory
     ph <- processHistory(object)
+    if (hasFeatures(object)) {
+        message("Correspondence results (features) removed.")
+        suppressMessages(
+            object <- dropFeatureDefinitions(object)
+        )
+    }
+    ph <- dropProcessHistoriesList(ph, type = .PROCSTEP.PEAK.GROUPING)
+    ## ## Process the processing history.
+    ## object <- dropProcessHistories(object, type = c(.PROCSTEP.PEAK.GROUPING,
+    ##                                                 .PROCSTEP.RTIME.CORRECTION))
+    ## ph <- processHistory(object)
     ## The next method will actually clean everything, process history and
     ## msFeatureData
     suppressWarnings(
-        object <- callNextMethod()
+        object <- callNextMethod(object = object, file = file)
     )
     ## Remove ProcessHistory not related to any of the files.
     if (length(ph)) {
@@ -856,19 +897,31 @@ setMethod("filterFile", "XCMSnExp", function(object, file) {
             updateFileIndex(z, old = file, new = 1:length(file))
         })
     }
-    ## Process features.
+    ## Process peaks.
     fts <- fts[fts[, "sample"] %in% file, , drop = FALSE]
     fts[, "sample"] <- match(fts[, "sample"], file)
-    features(object) <- fts
+    if (length(adjRt) & keepAdjustedRtime) {
+        ## Put all directly into the msFeatureData environment to avoid an
+        ## additional correction of the peak retention times by the adjusted rt.
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        chromPeaks(newFd) <- fts
+        adjustedRtime(newFd) <- adjRt[file]
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+    } else {
+        chromPeaks(object) <- fts
+    }
     object@.processHistory <- ph
     return(object)
 })
 
 ##' @description \code{filterMz}: filters the data set based on the
-##' provided mz value range. All features and feature groups (aligned features)
-##' falling completely within the provided mz value range are retained (if their
-##' minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
-##' Adjusted retention times, if present, are not altered by the filtering.
+##' provided mz value range. All chromatographic peaks and features (grouped
+##' peaks) falling completely within the provided mz value range are retained
+##' (if their minimal mz value is \code{>= mz[1]} and the maximal mz value
+##' \code{<= mz[2]}. Adjusted retention times, if present, are not altered by
+##' the filtering.
 ##'
 ##' @param mz For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 ##' mz value for the filtering.
@@ -886,13 +939,13 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
     if (!is.numeric(mz) | length(mz) != 2)
         stop("'mz' has to be a numeric vector of length(2)!")
     mz <- range(mz)
-    ## Subset features if present.
+    ## Subset peaks if present.
     object <- callNextMethod()  # just adds to processing queue.
 
-    if (hasDetectedFeatures(object)) {
-        fts <- features(object)
+    if (hasChromPeaks(object)) {
+        fts <- chromPeaks(object)
         keepIdx <- which(fts[, "mzmin"] >= mz[1] & fts[, "mzmax"] <= mz[2])
-        newE <- .filterFeatures(object@msFeatureData, idx = keepIdx)
+        newE <- .filterChromPeaks(object@msFeatureData, idx = keepIdx)
         lockEnvironment(newE, bindings = TRUE)
         object@msFeatureData <- newE
     }
@@ -901,14 +954,14 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 })
 
 ##' @description \code{filterRt}: filters the data set based on the
-##' provided retention time range. All features and feature groups within
-##' the specified retention time window are retained (i.e. if the retention time
-##' corresponding to the feature's peak is within the specified rt range).
-##' If retention time correction has been performed, the method will by default
-##' filter the object by adjusted retention times. The argument \code{adjusted}
-##' allows to specify manually whether filtering should be performed by raw or
-##' adjusted retention times. Filtering by retention time does not drop any
-##' preprocessing results.
+##' provided retention time range. All chromatographic peaks and features
+##' (grouped peaks) the specified retention time window are retained (i.e. if
+##' the retention time corresponding to the peak's apex is within the specified
+##' rt range). If retention time correction has been performed, the method will
+##' by default filter the object by adjusted retention times.
+##' The argument \code{adjusted} allows to specify manually whether filtering
+##' should be performed by raw or adjusted retention times. Filtering by
+##' retention time does not drop any preprocessing results.
 ##' The method returns an empty object if no spectrum or feature is within the
 ##' specified retention time range.
 ##'
@@ -929,8 +982,8 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     rt <- range(rt)
     ## Get index of spectra within the rt window.
     ## Subset using [
+    ## Subset peaks
     ## Subset features
-    ## Subset feature groups
     ## Subset adjusted retention time
     if (!adjusted) {
         have_rt <- rtime(object, adjusted = FALSE, bySample = FALSE)
@@ -956,30 +1009,30 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     ## mfd <- as(.copy_env(object@msFeatureData), "MsFeatureData")
     newMfd <- new("MsFeatureData")
     ph <- processHistory(object)
-    ## 1) Subset features within the retention time range and feature groups.
+    ## 1) Subset peaks within the retention time range and peak groups.
     keep_fts <- numeric()
-    if (hasDetectedFeatures(object)) {
-        ftrt <- features(object)[, "rt"]
+    if (hasChromPeaks(object)) {
+        ftrt <- chromPeaks(object)[, "rt"]
         if (!adjusted & hasAdjustedRtime(object)) {
             ## Have to convert the rt before subsetting.
-            fts <- .applyRtAdjToFeatures(features(object),
-                                         rtraw = rtime(object, bySample = TRUE),
-                                         rtadj = rtime(object, bySample = TRUE,
-                                                       adjusted = FALSE))
+            fts <- .applyRtAdjToChromPeaks(chromPeaks(object),
+                                           rtraw = rtime(object, bySample = TRUE),
+                                           rtadj = rtime(object, bySample = TRUE,
+                                                         adjusted = FALSE))
             ftrt <- fts[, "rt"]
         }
         keep_fts <- base::which(ftrt >= rt[1] & ftrt <= rt[2])
         if (length(keep_fts))
-            newMfd <- .filterFeatures(object, idx = keep_fts)
+            newMfd <- .filterChromPeaks(object, idx = keep_fts)
             ## features(newMfd) <- features(object)[keep_fts, , drop = FALSE]
         else
             ph <- dropProcessHistoriesList(ph,
-                                           type = c(.PROCSTEP.FEATURE.DETECTION,
-                                                    .PROCSTEP.FEATURE.ALIGNMENT,
-                                                    .PROCSTEP.RTIME.CORRECTION))
+                                           type = c(.PROCSTEP.PEAK.DETECTION,
+                                                    .PROCSTEP.PEAK.GROUPING))
     }
     ## 2) Subset adjusted retention time
-    if (hasAdjustedRtime(object) & length(keep_fts)) {
+    ## if (hasAdjustedRtime(object) & length(keep_fts)) {
+    if (hasAdjustedRtime(object)) {
         ## Subset the adjusted retention times (which are stored as a list of
         ## rts by file):
         keep_by_file <- base::split(keep_logical, fromFile(object))
@@ -1031,13 +1084,13 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
                                             ...) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1061,20 +1114,23 @@ setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
 setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
                                             method = c("MAD", "SuperSmoother"),
                                             SNR = 0L, ...) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
 })
 
-##' The \code{removePeaks} method removes peaks (intensities) lower than a
-##' threshold. Note that these peaks are not features! See \code{\link[MSnbase]{removePeaks}} documentation for details and examples.
+##' The \code{removePeaks} method removes mass peaks (intensities) lower than a
+##' threshold. Note that these peaks refer to \emph{mass} peaks, which are
+##' different to the chromatographic peaks detected and analyzed in a
+##' metabolomics experiment! See \code{\link[MSnbase]{removePeaks}}
+##' documentation for details and examples.
 ##'
 ##' @param t For \code{removePeaks}: either a \code{numeric(1)} or \code{"min"}
 ##' defining the threshold (method) to be used. See
@@ -1083,13 +1139,13 @@ setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
 ##' @rdname XCMSnExp-inherited-methods
 setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE,
                                               msLevel.) {
-    if (hasAdjustedRtime(object) | hasAlignedFeatures(object) |
-        hasDetectedFeatures(object)) {
+    if (hasAdjustedRtime(object) | hasFeatures(object) |
+        hasChromPeaks(object)) {
         ## object@.processHistory <- list()
         ## object@msFeatureData <- new("MsFeatureData")
         object <- dropAdjustedRtime(object)
-        object <- dropFeatureGroups(object)
-        object <- dropFeatures(object)
+        object <- dropFeatureDefinitions(object)
+        object <- dropChromPeaks(object)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1103,13 +1159,13 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
                                                        "MovingAverage"),
                                          halfWindowSize = 2L, verbose = FALSE,
                                          ...) {
-    if (hasAdjustedRtime(x) | hasAlignedFeatures(x) |
-        hasDetectedFeatures(x)) {
+    if (hasAdjustedRtime(x) | hasFeatures(x) |
+        hasChromPeaks(x)) {
         ## x@.processHistory <- list()
         ## x@msFeatureData <- new("MsFeatureData")
         x <- dropAdjustedRtime(x)
-        x <- dropFeatureGroups(x)
-        x <- dropFeatures(x)
+        x <- dropFeatureDefinitions(x)
+        x <- dropChromPeaks(x)
         warning("Removed preprocessing results")
     }
     callNextMethod()
@@ -1125,43 +1181,43 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
 
-##' @title Feature alignment based on time dimension feature densities
+##' @title Peak grouping/correspondence based on time dimension peak densities
 ##'
-##' @description \code{groupFeatures,XCMSnExp,FeatureDensityParam}:
-##' performs feature alignment (within and across samples) within in mz dimension
-##' overlapping slices of MS data based on the density distribution of the
-##' identified features in the slice along the time axis.
+##' @description \code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
+##' performs correspondence (peak grouping within and across samples) within in
+##' mz dimension overlapping slices of MS data based on the density distribution
+##' of the identified chromatographic peaks in the slice along the time axis.
 ##'
-##' @note Calling \code{groupFeatures} on an \code{XCMSnExp} object will cause
-##' all eventually present previous alignment results to be dropped.
+##' @note Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
+##' all eventually present previous correspondence results to be dropped.
 ##'
-##' @param object For \code{groupFeatures}: an \code{\link{XCMSnExp}} object
-##' containing the results from a previous feature detection analysis (see
-##' \code{\link{detectFeatures}}).
+##' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
+##' containing the results from a previous peak detection analysis (see
+##' \code{\link{findChromPeaks}}).
 ##'
-##' For all other methods: a \code{FeatureDensityParam} object.
+##' For all other methods: a \code{PeakDensityParam} object.
 ##' 
-##' @param param A \code{FeatureDensityParam} object containing all settings for
-##' the feature alignment algorithm.
+##' @param param A \code{PeakDensityParam} object containing all settings for
+##' the peak grouping algorithm.
 ##'
-##' @return For \code{groupFeatures}: a \code{\link{XCMSnExp}} object with the
-##' results of the feature alignment step. These can be accessed with the
-##' \code{\link{featureGroups}} method.
+##' @return For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
+##' results of the correspondence analysis. The definition of the resulting mz-rt
+##' features can be accessed with the \code{\link{featureDefinitions}} method.
 ##' 
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature alignment.
+##' the correspondence.
 ##' 
-##' @rdname groupFeatures-density
-setMethod("groupFeatures",
-          signature(object = "XCMSnExp", param = "FeatureDensityParam"),
+##' @rdname groupChromPeaks-density
+setMethod("groupChromPeaks",
+          signature(object = "XCMSnExp", param = "PeakDensityParam"),
           function(object, param) {
-              if (!hasDetectedFeatures(object))
-                  stop("No feature detection results in 'object'! Please ",
-                       "perform first a feature detection using the ",
-                       "'detectFeatures' method.")
+              if (!hasChromPeaks(object))
+                  stop("No chromatographic peak detection results in 'object'! ",
+                       "Please perform first a peak detection using the ",
+                       "'findChromPeaks' method.")
               ## Get rid of any previous results.
-              if (hasAlignedFeatures(object))
-                  object <- dropFeatureGroups(object)
+              if (hasFeatures(object))
+                  object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
                   sampleGroups(param) <- rep(1, length(fileNames(object)))
@@ -1175,59 +1231,59 @@ setMethod("groupFeatures",
                            "samples!")
               }
               startDate <- date()
-              res <- do_groupFeatures_density(features(object),
-                                              sampleGroups = sampleGroups(param),
-                                              bw = bw(param),
-                                              minFraction = minFraction(param),
-                                              minSamples = minSamples(param),
-                                              binSize = binSize(param),
-                                              maxFeatures = maxFeatures(param))
+              res <- do_groupChromPeaks_density(chromPeaks(object),
+                                                sampleGroups = sampleGroups(param),
+                                                bw = bw(param),
+                                                minFraction = minFraction(param),
+                                                minSamples = minSamples(param),
+                                                binSize = binSize(param),
+                                                maxFeatures = maxFeatures(param))
               xph <- XProcessHistory(param = param, date. = startDate,
-                                     type. = .PROCSTEP.FEATURE.ALIGNMENT,
+                                     type. = .PROCSTEP.PEAK.GROUPING,
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)              
               ## Add the results.
-              df <- DataFrame(res$featureGroups)
-              df$featureidx <- res$featureIndex
-              featureGroups(object) <- df
+              df <- DataFrame(res$featureDefinitions)
+              df$peakidx <- res$peakIndex
+              featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
           })
 
 
-##' @title Single-spectrum non-chromatography MS data feature detection
+##' @title Single-spectrum non-chromatography MS data peak grouping
 ##'
-##' @description \code{groupFeatures,XCMSnExp,MzClustParam}:
-##' performs high resolution feature alignment for single spectrum metabolomics
-##' data.
+##' @description \code{groupChromPeaks,XCMSnExp,MzClustParam}:
+##' performs high resolution peak grouping for single spectrum
+##' metabolomics data.
 ##'
-##' @note Calling \code{groupFeatures} on an \code{XCMSnExp} object will cause
-##' all eventually present previous alignment results to be dropped.
+##' @note Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
+##' all eventually present previous correspondence results to be dropped.
 ##'
-##' @param object For \code{groupFeatures}: an \code{\link{XCMSnExp}} object
-##' containing the results from a previous feature detection analysis (see
-##' \code{\link{detectFeatures}}).
+##' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
+##' containing the results from a previous chromatographic peak detection
+##' analysis (see \code{\link{findChromPeaks}}).
 ##'
 ##' For all other methods: a \code{MzClustParam} object.
 ##' 
 ##' @param param A \code{MzClustParam} object containing all settings for
-##' the feature alignment algorithm.
+##' the peak grouping algorithm.
 ##'
-##' @return For \code{groupFeatures}: a \code{\link{XCMSnExp}} object with the
-##' results of the feature alignment step. These can be accessed with the
-##' \code{\link{featureGroups}} method.
+##' @return For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
+##' results of the peak grouping step (i.e. the features). These can be accessed
+##' with the \code{\link{featureDefinitions}} method.
 ##' 
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature alignment.
+##' the peak grouping.
 ##' 
-##' @rdname groupFeatures-mzClust
-setMethod("groupFeatures",
+##' @rdname groupChromPeaks-mzClust
+setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "MzClustParam"),
           function(object, param) {
-              if (!hasDetectedFeatures(object))
-                  stop("No feature detection results in 'object'! Please ",
-                       "perform first a feature detection using the ",
-                       "'detectFeatures' method.")
+              if (!hasChromPeaks(object))
+                  stop("No chromatographic peak detection results in 'object'! ",
+                       "Please perform first a peak detection using the ",
+                       "'findChromPeak' method.")
               ## I'm expecting a single spectrum per file!
               rtL <- split(rtime(object), f = fromFile(object))
               if (any(lengths(rtL) > 1))
@@ -1235,8 +1291,8 @@ setMethod("groupFeatures",
                        "algorithm does only work for single spectra ",
                        "files/samples!")
               ## Get rid of any previous results.
-              if (hasAlignedFeatures(object))
-                  object <- dropFeatureGroups(object)
+              if (hasFeatures(object))
+                  object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
                   sampleGroups(param) <- rep(1, length(fileNames(object)))
@@ -1250,61 +1306,61 @@ setMethod("groupFeatures",
                            "samples!")
               }
               startDate <- date()
-              res <- do_groupFeatures_mzClust(features(object),
-                                              sampleGroups = sampleGroups(param),
-                                              ppm = ppm(param),
-                                              absMz = absMz(param),
-                                              minFraction = minFraction(param),
-                                              minSamples = minSamples(param))
+              res <- do_groupPeaks_mzClust(chromPeaks(object),
+                                           sampleGroups = sampleGroups(param),
+                                           ppm = ppm(param),
+                                           absMz = absMz(param),
+                                           minFraction = minFraction(param),
+                                           minSamples = minSamples(param))
               xph <- XProcessHistory(param = param, date. = startDate,
-                                     type. = .PROCSTEP.FEATURE.ALIGNMENT,
+                                     type. = .PROCSTEP.PEAK.GROUPING,
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)              
               ## Add the results.
-              df <- DataFrame(res$featureGroups)
-              df$featureidx <- res$featureIndex
-              featureGroups(object) <- df
+              df <- DataFrame(res$featureDefinitions)
+              df$peakidx <- res$peakIndex
+              featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
           })
 
 
-##' @title Feature alignment based on proximity in the mz-rt space
+##' @title Peak grouping/correspondence based on proximity in the mz-rt space
 ##'
-##' @description \code{groupFeatures,XCMSnExp,NearestFeaturesParam}:
-##' performs feature alignment based on the proximity between features from
-##' different samples in the mz-rt range.
+##' @description \code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
+##' performs peak grouping based on the proximity between chromatographic
+##' peaks from different samples in the mz-rt range.
 ##'
-##' @note Calling \code{groupFeatures} on an \code{XCMSnExp} object will cause
+##' @note Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 ##' all eventually present previous alignment results to be dropped.
 ##'
-##' @param object For \code{groupFeatures}: an \code{\link{XCMSnExp}} object
-##' containing the results from a previous feature detection analysis (see
-##' \code{\link{detectFeatures}}).
+##' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
+##' containing the results from a previous chromatographic peak detection
+##' analysis (see \code{\link{findChromPeaks}}).
 ##'
-##' For all other methods: a \code{NearestFeaturesParam} object.
+##' For all other methods: a \code{NearestPeaksParam} object.
 ##' 
-##' @param param A \code{NearestFeaturesParam} object containing all settings for
-##' the feature alignment algorithm.
+##' @param param A \code{NearestPeaksParam} object containing all settings for
+##' the peak grouping algorithm.
 ##'
-##' @return For \code{groupFeatures}: a \code{\link{XCMSnExp}} object with the
-##' results of the feature alignment step. These can be accessed with the
-##' \code{\link{featureGroups}} method.
+##' @return For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
+##' results of the peak grouping/correspondence step (i.e. the mz-rt features).
+##' These can be accessed with the \code{\link{featureDefinitions}} method.
 ##' 
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature alignment.
+##' the peak grouping.
 ##' 
-##' @rdname groupFeatures-nearest
-setMethod("groupFeatures",
-          signature(object = "XCMSnExp", param = "NearestFeaturesParam"),
+##' @rdname groupChromPeaks-nearest
+setMethod("groupChromPeaks",
+          signature(object = "XCMSnExp", param = "NearestPeaksParam"),
           function(object, param) {
-              if (!hasDetectedFeatures(object))
-                  stop("No feature detection results in 'object'! Please ",
-                       "perform first a feature detection using the ",
-                       "'detectFeatures' method.")
+              if (!hasChromPeaks(object))
+                  stop("No chromatographic peak detection results in 'object'! ",
+                       "Please perform first a peak detection using the ",
+                       "'findChromPeaks' method.")
               ## Get rid of any previous results.
-              if (hasAlignedFeatures(object))
-                  object <- dropFeatureGroups(object)
+              if (hasFeatures(object))
+                  object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
                   sampleGroups(param) <- rep(1, length(fileNames(object)))
@@ -1318,82 +1374,85 @@ setMethod("groupFeatures",
                            "samples!")
               }
               startDate <- date()
-              res <- do_groupFeatures_nearest(features(object),
-                                              sampleGroups = sampleGroups(param),
-                                              mzVsRtBalance = mzVsRtBalance(param),
-                                              absMz = absMz(param),
-                                              absRt = absRt(param),
-                                              kNN = kNN(param))
+              res <- do_groupChromPeaks_nearest(chromPeaks(object),
+                                                sampleGroups = sampleGroups(param),
+                                                mzVsRtBalance = mzVsRtBalance(param),
+                                                absMz = absMz(param),
+                                                absRt = absRt(param),
+                                                kNN = kNN(param))
               xph <- XProcessHistory(param = param, date. = startDate,
-                                     type. = .PROCSTEP.FEATURE.ALIGNMENT,
+                                     type. = .PROCSTEP.PEAK.GROUPING,
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)
               ## Add the results.
-              df <- DataFrame(res$featureGroups)
-              df$featureidx <- res$featureIndex
-              featureGroups(object) <- df
+              df <- DataFrame(res$featureDefinitions)
+              df$peakidx <- res$peakIndex
+              featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
           })
 
-##' @title Retention time correction based on alignment of house keeping feature
+##' @title Retention time correction based on alignment of house keeping peak
 ##' groups
 ##'
-##' @description \code{adjustRtime,XCMSnExp,FeatureGroupsParam}:
-##' performs retention time correction based on the alignment of feature groups
-##' found in all/most samples.
+##' @description \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
+##' performs retention time correction based on the alignment of peak groups
+##' (features) found in all/most samples.
 ##'
-##' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-##' all feature grouping (alignment) results to be dropped.
+##' @note This method requires that a correspondence has been performed on the
+##' data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on an
+##' \code{XCMSnExp} object will cause all peak grouping (correspondence) results
+##' to be dropped after rt correction.
 ##'
 ##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
-##' containing the results from a previous feature detection (see
-##' \code{\link{detectFeatures}}) and alignment analysis (see
-##' \code{\link{groupFeatures}}).
+##' containing the results from a previous chromatographic peak detection (see
+##' \code{\link{findChromPeaks}}) and alignment analysis (see
+##' \code{\link{groupChromPeaks}}).
 ##'
-##' For all other methods: a \code{FeatureGroupsParam} object.
+##' For all other methods: a \code{PeakGroupsParam} object.
 ##' 
-##' @param param A \code{FeatureGroupsParam} object containing all settings for
+##' @param param A \code{PeakGroupsParam} object containing all settings for
 ##' the retention time correction method..
 ##'
 ##' @return For \code{adjustRtime}: a \code{\link{XCMSnExp}} object with the
 ##' results of the retention time adjustment step. These can be accessed with the
 ##' \code{\link{adjustedRtime}} method. Retention time correction does also adjust
-##' the retention time of the identified features (accessed \emph{via}
-##' \code{\link{features}}. Note that retention time correction drops
-##' all previous alignment results from the result object.
+##' the retention time of the identified chromatographic peaks (accessed
+##' \emph{via} \code{\link{chromPeaks}}. Note that retention time correction
+##' drops all previous alignment results from the result object.
 ##' 
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature alignment.
+##' the alignment.
 ##' 
-##' @rdname adjustRtime-featureGroups
+##' @rdname adjustRtime-peakGroups
 setMethod("adjustRtime",
-          signature(object = "XCMSnExp", param = "FeatureGroupsParam"),
+          signature(object = "XCMSnExp", param = "PeakGroupsParam"),
           function(object, param) {
-              if (!hasDetectedFeatures(object))
-                  stop("No feature detection results in 'object'! Please ",
-                       "perform first a feature detection using the ",
-                       "'detectFeatures' method.")
-              if (!hasAlignedFeatures(object))
-                  stop("No feature alignment results in 'object'! Please ",
-                       "perform first a feature alignment using the ",
-                       "'groupFeatures' method.")
+              if (!hasChromPeaks(object))
+                  stop("No chromatographic peak detection results in 'object'! ",
+                       "Please perform first a peak detection using the ",
+                       "'findChromPeaks' method.")
+              if (!hasFeatures(object))
+                  stop("No feature definitions found in 'object'! Please ",
+                       "perform first a peak grouping using the ",
+                       "'groupChromPeak' method.")
               startDate <- date()
-              res <- do_adjustRtime_featureGroups(features(object),
-                                                  featureIndex = featureGroups(object)$featureidx,
-                                                  rtime = rtime(object, bySample = TRUE),
-                                                  minFraction = minFraction(param),
-                                                  extraFeatures = extraFeatures(param),
-                                                  smooth = smooth(param),
-                                                  span = span(param),
-                                                  family = family(param)
-                                                  )
-              ## Dropping the feature groups but don't remove its process history
+              res <- do_adjustRtime_peakGroups(
+                  chromPeaks(object),
+                  peakIndex = featureDefinitions(object)$peakidx,
+                  rtime = rtime(object, bySample = TRUE),
+                  minFraction = minFraction(param),
+                  extraPeaks = extraPeaks(param),
+                  smooth = smooth(param),
+                  span = span(param),
+                  family = family(param)
+              )
+              ## Dropping the peak groups but don't remove its process history
               ## step.
-              ph <- processHistory(object, type = .PROCSTEP.FEATURE.ALIGNMENT)
-              object <- dropFeatureGroups(object)
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
+              object <- dropFeatureDefinitions(object)
               ## Add the results. adjustedRtime<- should also fix the retention
-              ## times for the features! Want to keep also the lates alignment
+              ## times for the peaks! Want to keep also the lates alignment
               ## information
               adjustedRtime(object) <- res
               if (length(ph)) {
@@ -1412,52 +1471,49 @@ setMethod("adjustRtime",
 ##' @title Align retention times across samples using Obiwarp
 ##'
 ##' @description \code{adjustRtime,XCMSnExp,ObiwarpParam}:
-##' performs retention time correction based on the alignment of feature groups
-##' found in all/most samples.
+##' performs retention time correction/alignment based on the total mz-rt data
+##' using the \emph{obiwarp} method.
 ##'
 ##' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-##' all feature grouping (alignment) results to be dropped.
+##' all peak grouping (correspondence) results to be dropped.
 ##'
 ##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 ##'
 ##' For all other methods: a \code{ObiwarpParam} object.
 ##' 
 ##' @param param A \code{ObiwarpParam} object containing all settings for
-##' the retention time correction method.
+##' the alignment method.
 ##'
 ##' @return For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
 ##' \code{\link{XCMSnExp}} object with the results of the retention time
 ##' adjustment step. These can be accessed with the \code{\link{adjustedRtime}}
 ##' method. Retention time correction does also adjust the retention time of the
-##' identified features (accessed \emph{via} \code{\link{features}}. Note that
-##' retention time correction drops all previous alignment results from the
-##' result object.
+##' identified chromatographic peaks (accessed \emph{via}
+##' \code{\link{chromPeaks}}. Note that retention time correction drops all
+##' previous peak grouping results from the result object.
 ##'
 ##' For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with the
 ##' adjusted retention times per spectra (in the same order than \code{rtime}).
 ##' 
 ##' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-##' the feature alignment.
+##' the alignment.
+##'
+##' @references
+##' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
+##' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
+##' \emph{Anal. Chem.} 2006, 78 (17), 6140-6152.
 ##' 
 ##' @rdname adjustRtime-obiwarp
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "ObiwarpParam"),
           function(object, param) {
-              ## We don't require any detected or aligned features.
-              ## if (!hasDetectedFeatures(object))
-              ##     stop("No feature detection results in 'object'! Please ",
-              ##          "perform first a feature detection using the ",
-              ##          "'detectFeatures' method.")
-              ## if (!hasAlignedFeatures(object))
-              ##     stop("No feature alignment results in 'object'! Please ",
-              ##          "perform first a feature alignment using the ",
-              ##          "'groupFeatures' method.")
+              ## We don't require any detected or aligned peaks.
               startDate <- date()
               res <- .obiwarp(as(object, "OnDiskMSnExp"), param = param)
               ## Dropping the feature groups.
-              object <- dropFeatureGroups(object)
+              object <- dropFeatureDefinitions(object)
               ## Add the results. adjustedRtime<- should also fix the retention
-              ## times for the features! Want to keep also the lates alignment
+              ## times for the peaks! Want to keep also the lates alignment
               ## information
               adjustedRtime(object) <- res
               ## Add the process history step.
@@ -1488,70 +1544,71 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 })
 
 
-##' @title Accessing feature grouping results
+##' @title Accessing mz-rt feature data values
 ##' 
 ##' @description \code{groupval,XCMSnExp}: extract a \code{matrix} for feature
-##' values with rows representing feature groups and columns samples. Parameter
-##' \code{value} allows to define which column from the \code{\link{features}}
-##' matrix should be returned. Multiple features from the same sample can be
-##' assigned to a feature group. Parameter \code{method} allows to specify the
-##' method to be used in such cases to chose from which of the features the value
-##' should be returned.
+##' values with rows representing features and columns samples. Parameter
+##' \code{value} allows to define which column from the \code{\link{chromPeaks}}
+##' matrix should be returned. Multiple chromatographic peaks from the same
+##' sample can be assigned to a feature. Parameter \code{method} allows to
+##' specify the method to be used in such cases to chose from which of the peaks
+##' the value should be returned.
 ##'
-##' @param object A \code{\link{XCMSnExp}} object providing the feature grouping
-##' results.
+##' @param object A \code{\link{XCMSnExp}} object providing the feature
+##' definitions.
 ##' 
 ##' @param method \code{character} specifying the method to resolve
-##' multi-feature mappings within the same sample, i.e. to define the
-##' \emph{representative} feature for a feature groups in samples where more than
-##' one feature was assigned to the feature group. If \code{"medret"}: select the
-##' feature closest to the median retention time of the feature group.
-##' If \code{"maxint"}: select the feature yielding the largest signal.
+##' multi-peak mappings within the same sample, i.e. to define the
+##' \emph{representative} peak for a feature in samples where more than
+##' one peak was assigned to the feature. If \code{"medret"}: select the
+##' peak closest to the median retention time of the feature.
+##' If \code{"maxint"}: select the peak yielding the largest signal.
 ##'
 ##' @param value \code{character} specifying the name of the column in
-##' \code{features(object)} that should be returned or \code{"index"} (the
-##' default) to return the index of the feature in the \code{features(object)}
-##' matrix corresponding to the \emph{representative} feature for the feature
-##' group in the respective sample.
+##' \code{chromPeaks(object)} that should be returned or \code{"index"} (the
+##' default) to return the index of the peak in the \code{chromPeaks(object)}
+##' matrix corresponding to the \emph{representative} peak for the feature
+##' in the respective sample.
 ##'
 ##' @param intensity \code{character} specifying the name of the column in the
-##' \code{features(objects)} matrix containing the intensity value of the
-##' feature that should be used for the conflict resolution if
+##' \code{chromPeaks(objects)} matrix containing the intensity value of the
+##' peak that should be used for the conflict resolution if
 ##' \code{method = "maxint"}.
 ##'
 ##' @return For \code{groupval}: a \code{matrix} with feature values, columns
-##' representing samples, rows feature groups. The order of the feature groups
-##' matches the order found in the \code{featureGroups(object)} \code{DataFrame}.
-##' An \code{NA} is reported for feature groups without corresponding
-##' features in the respective sample(s).
+##' representing samples, rows features. The order of the features
+##' matches the order found in the \code{featureDefinitions(object)}
+##' \code{DataFrame}. An \code{NA} is reported for features without corresponding
+##' chromatographic peak in the respective sample(s).
 ##' 
 ##' @author Johannes Rainer
 ##' 
 ##' @seealso
 ##' \code{\link{XCMSnExp}} for information on the data object.
-##' \code{\link{featureGroups}} to extract the \code{DataFrame} with the
-##' feature group definition.
-##' \code{\link{hasAlignedFeatures}} to evaluate whether the
-##' \code{\link{XCMSnExp}} provides feature groups.
+##' \code{\link{featureDefinitions}} to extract the \code{DataFrame} with the
+##' feature definitions.
+##' \code{\link{hasFeatures}} to evaluate whether the
+##' \code{\link{XCMSnExp}} provides feature definitions.
 ##' 
-##' @rdname XCMSnExp-feature-grouping-results
+##' @rdname XCMSnExp-peak-grouping-results
 setMethod("groupval",
           signature(object = "XCMSnExp"),
           function(object, method = c("medret", "maxint"), value = "index",
                    intensity = "into") {
               ## Input argument checkings
-              if (!hasAlignedFeatures(object))
-                  stop("No feature groups present! Use 'groupFeatures' first.")
-              if (!hasDetectedFeatures(object))
-                  stop("No detected features present! Use 'detectFeatures' first.")
+              if (!hasFeatures(object))
+                  stop("No peak groups present! Use 'groupChromPeaks' first.")
+              if (!hasChromPeaks(object))
+                  stop("No detected chromatographic peaks present! Use ",
+                       "'findChromPeaks' first.")
               method <- match.arg(method)
               fNames <- basename(fileNames(object))
               nSamples <- seq_along(fNames)
               ## Copy all of the objects to avoid costly S4 method calls -
               ## improves speed at the cost of higher memory demand.
-              fts <- features(object)
-              grps <- featureGroups(object)
-              ftIdx <- grps$featureidx
+              fts <- chromPeaks(object)
+              grps <- featureDefinitions(object)
+              ftIdx <- grps$peakidx
               ## Match columns
               idx_rt <- match("rt", colnames(fts))
               idx_int <- match(intensity, colnames(fts))
@@ -1580,7 +1637,7 @@ setMethod("groupval",
               if (value != "index") {
                   if (!any(colnames(fts) == value))
                       stop("Column '", value,
-                           "' not present in the features matrix!")
+                           "' not present in the chromatographic peaks matrix!")
                   vals <- fts[vals, value]
                   dim(vals) <- c(length(ftIdx), length(nSamples))
               }
@@ -1590,3 +1647,59 @@ setMethod("groupval",
               ##                         base::round(grps$rtmed), sep = "/")
               return(vals)
 })
+
+#' @title Extracting chromatograms
+#'
+#' @description \code{extractChromatograms}: the method allows to extract
+#' chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
+#' \code{\link{XCMSnExp}} objects.
+#'
+#' @details Arguments \code{rt} and \code{mz} allow to specify the MS
+#' data slice from which the chromatogram should be extracted. By specifying the
+#' function to be used to aggregate intensity values across the mz range for the
+#' same retention time it is possible to extract e.g. a
+#' \emph{total ion chromatogram} (TIC, \code{aggregationFun = "sum"}) or a
+#' \emph{base peak chromatogram} (BPC, \code{aggregationFun = "max"}).
+#'
+#' @param object Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
+#' \code{\link{XCMSnExp}} object from which the chromatograms should be extracted.
+#'
+#' @param rt \code{numeric(2)} defining the lower and upper boundary for the
+#' retention time range. If not specified, the full retention time range of the
+#' original data will be used. It is also possible to submit a \code{numeric(1)}
+#' in which case \code{range} is called on it to transform it to a
+#' \code{numeric(2)}.
+#'
+#' @param mz \code{numeric(2)} defining the lower and upper mz value for the
+#' MS data slice. If not specified, the chromatograms will be calculated on the
+#' full mz range. It is also possible to submit a \code{numeric(1)} in which case
+#' \code{range} is called on it to transform it to a \code{numeric(2)}.
+#'
+#' @param adjustedRtime For \code{extractChromatograms,XCMSnExp}: whether the
+#' adjusted (\code{adjustedRtime = TRUE}) or raw retention times
+#' (\code{adjustedRtime = FALSE}) should be used for filtering and returned in
+#' the resulting \code{\link{Chromatogram}} object. Adjusted retention times are
+#' used by default if available.
+#'
+#' @param aggregationFun \code{character} specifying the function to be used to
+#' aggregate intensity values across the mz value range for the same retention
+#' time. Allowed values are \code{"sum"}, \code{"max"}, \code{"mean"} and
+#' \code{"min"}.
+#' 
+#' @author Johannes Rainer
+#'
+#' @seealso \code{\link{XCMSnExp}} for the data object.
+#' \code{\link{Chromatogram}} for the object representing chromatographic data.
+#'
+#' @noRd
+#' @rdname extractChromatograms-method 
+setMethod("extractChromatograms",
+          signature(object = "XCMSnExp"),
+          function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
+                   aggregationFun = "sum") {
+              return(.extractChromatogram(x = object, rt = rt, mz = mz,
+                                          aggregationFun = aggregationFun,
+                                          adjusted = adjustedRtime))
+          })
+
+

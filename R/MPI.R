@@ -42,14 +42,18 @@ findPeaksPar <- function(arg) {
 
     peaks <- do.call(method, args = c(list(object = xRaw), params))
 
-    list(scantime=xRaw@scantime,
-         peaks=cbind(peaks,
-                     sample = rep.int(myID, nrow(peaks))),
+    ## Ensure to remove data to avoid memory accumulation.
+    scanT <- xRaw@scantime
+    rm(xRaw)
+    gc()
+    list(scantime = scanT,
+         peaks = cbind(peaks,
+                       sample = rep.int(myID, nrow(peaks))),
          date = procDate)
 }
 
 ############################################################
-## detectFeatures
+## findChromPeaks
 ##
 ## Same as findPeaksPar but without the need to pass argument lists
 ## and read settings from the global options.
@@ -58,7 +62,7 @@ findPeaksPar <- function(arg) {
 ## o readParams: parameter class to read the file; actually we would only
 ##   need the scanrange, the includeMSn and the lockMassFreq here.
 ## o detectParams: parameter class for the peak detection.
-detectFeaturesInFile <- function(args) {
+findChromPeaksInFile <- function(args) {
     ## Placeholder
 }
 

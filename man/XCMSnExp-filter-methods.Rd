@@ -14,7 +14,7 @@ The methods listed on this page allow to filter and subset
 \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
 results.}
 \usage{
-\S4method{filterFile}{XCMSnExp}(object, file)
+\S4method{filterFile}{XCMSnExp}(object, file, keepAdjustedRtime = FALSE)
 
 \S4method{filterMz}{XCMSnExp}(object, mz, msLevel., ...)
 
@@ -28,6 +28,11 @@ results.}
 within the object to subset the object by file or \code{character} specifying
 the file names to sub set. The indices are expected to be increasingly
 ordered, if not they are ordered internally.}
+
+\item{keepAdjustedRtime}{For \code{filterFile}: \code{logical(1)} defining
+whether the adjusted retention times should be kept, even if features are
+being removed (and the retention time correction being potentially performed
+on these features).}
 
 \item{mz}{For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 mz value for the filtering.}
@@ -50,25 +55,29 @@ All methods return an \code{\link{XCMSnExp}} object.
 }
 \description{
 \code{filterFile}: allows to reduce the
-\code{\link{XCMSnExp}} to data from only certain files. Identified features
-for these files are retained while eventually all present feature
-alignment/grouping information and adjusted retention times are dropped..
+\code{\link{XCMSnExp}} to data from only certain files. Identified
+chromatographic peaks for these files are retained while all eventually
+present features (peak grouping information) are dropped. By default also
+adjusted retention times are removed. This can be overwritten by setting
+\code{keepAdjustedRtime = TRUE}, but users should use this option with
+caution.
 
 \code{filterMz}: filters the data set based on the
-provided mz value range. All features and feature groups (aligned features)
-falling completely within the provided mz value range are retained (if their
-minimal mz value is \code{>= mz[1]} and the maximal mz value \code{<= mz[2]}.
-Adjusted retention times, if present, are not altered by the filtering.
+provided mz value range. All chromatographic peaks and features (grouped
+peaks) falling completely within the provided mz value range are retained
+(if their minimal mz value is \code{>= mz[1]} and the maximal mz value
+\code{<= mz[2]}. Adjusted retention times, if present, are not altered by
+the filtering.
 
 \code{filterRt}: filters the data set based on the
-provided retention time range. All features and feature groups within
-the specified retention time window are retained (i.e. if the retention time
-corresponding to the feature's peak is within the specified rt range).
-If retention time correction has been performed, the method will by default
-filter the object by adjusted retention times. The argument \code{adjusted}
-allows to specify manually whether filtering should be performed by raw or
-adjusted retention times. Filtering by retention time does not drop any
-preprocessing results.
+provided retention time range. All chromatographic peaks and features
+(grouped peaks) the specified retention time window are retained (i.e. if
+the retention time corresponding to the peak's apex is within the specified
+rt range). If retention time correction has been performed, the method will
+by default filter the object by adjusted retention times.
+The argument \code{adjusted} allows to specify manually whether filtering
+should be performed by raw or adjusted retention times. Filtering by
+retention time does not drop any preprocessing results.
 The method returns an empty object if no spectrum or feature is within the
 specified retention time range.
 }
@@ -89,21 +98,40 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 ## Read the files
 od <- readMSData2(fs)
 
-## Perform feature detection on them using default matched filter settings.
+## Perform peak detection on them using default matched filter settings.
 mfp <- MatchedFilterParam()
-xod <- detectFeatures(od, param = mfp)
+xod <- findChromPeaks(od, param = mfp)
 
 ## Subset the dataset to the first and third file.
 xod_sub <- filterFile(xod, file = c(1, 3))
 
-## The number of features per file for the full object
-table(features(xod)[, "sample"])
+## The number of chromatographic peaks per file for the full object
+table(chromPeaks(xod)[, "sample"])
 
-## The number of features per file for the subset
-table(features(xod_sub)[, "sample"])
+## The number of chromatographic peaks per file for the subset
+table(chromPeaks(xod_sub)[, "sample"])
 
 basename(fileNames(xod))
 basename(fileNames(xod_sub))
+
+## Filter on mz values; chromatographic peaks and features within the
+## mz range are retained (as well as adjusted retention times).
+xod_sub <- filterMz(xod, mz = c(300, 400))
+head(chromPeaks(xod_sub))
+nrow(chromPeaks(xod_sub))
+nrow(chromPeaks(xod))
+
+## Filter on rt values. All chromatographic peaks and features within the
+## retention time range are retained. Filtering is performed by default on
+## adjusted retention times, if present.
+xod_sub <- filterRt(xod, rt = c(2700, 2900))
+
+range(rtime(xod_sub))
+head(chromPeaks(xod_sub))
+range(chromPeaks(xod_sub)[, "rt"])
+
+nrow(chromPeaks(xod))
+nrow(chromPeaks(xod_sub))
 }
 \author{
 Johannes Rainer
