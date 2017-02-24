@@ -37,7 +37,7 @@ valueCount2ScanIndex <- function(valCount){
 ##' to be used mainly in the transition phase from xcms to xcms version 3.
 ##' @details The functions/methods that will be affected by this are:
 ##' \itemize{
-##' \item \code{\link{do_detectFeatures_matchedFilter}}
+##' \item \code{\link{do_findChromPeaks_matchedFilter}}
 ##' }
 ##' @param x logical(1) to specify whether or not original
 ##' old code should be used in corresponding functions. If not provided the

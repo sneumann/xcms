@@ -56,7 +56,7 @@ of the files/samples on which the processing step was applied.
 \description{
 Objects of the type \code{ProcessHistory} allow to keep track
 of any data processing step in an metabolomics experiment. They are created
-by the data processing methods, such as \code{\link{detectFeatures}} and
+by the data processing methods, such as \code{\link{findChromPeaks}} and
 added to the corresponding results objects. Thus, usually, users don't need
 to create them.
 
@@ -84,7 +84,9 @@ the processing step was applied.
 \describe{
 \item{\code{type}}{character(1): string defining the type of the processing step.
 This string has to match predefined values defined in the internal variable
-\code{.PROCSTEPS}.}
+\code{.PROCSTEPS} (allowed values are \code{"Unknown"},
+\code{"Peak detection"}, \code{"Peak grouping"} and
+\code{"Retention time correction"}).}
 
 \item{\code{date}}{character(1): date time stamp when the processing step was started.}
 

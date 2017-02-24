@@ -2,18 +2,21 @@
 % Please edit documentation in R/DataClasses.R
 \name{adjustRtime}
 \alias{adjustRtime}
-\title{Retention time correction methods.}
+\title{Alignment: Retention time correction methods.}
 \description{
 The \code{adjustRtime} method(s) perform retention time
-correction between chromatograms of different samples. These methods are
-part of the modernized \code{xcms} user interface.
+correction (alignment) between chromatograms of different samples. These
+methods are part of the modernized \code{xcms} user interface.
 
-The implemented feature alignment methods are:
+The implemented retention time adjustment methods are:
 \describe{
-\item{featureGroups}{retention time correction based on aligment of feature
-groups present in most/all samples.
-See \code{\link{adjustRtime-featureGroups}} for more details.}
+\item{peakGroups}{retention time correction based on aligment of features
+(peak groups) present in most/all samples.
+See \code{\link{adjustRtime-peakGroups}} for more details.}
 
+\item{obiwarp}{alignment based on the complete mz-rt data. This method does
+not require any identified peaks or defined features. See
+\code{\link{adjustRtime-obiwarp}} for more details.}
 }
 }
 \author{
@@ -23,7 +26,7 @@ Johannes Rainer
 \code{\link{retcor}} for the \emph{old} retention time correction 
 methods.
 
-Other retention time correction methods: \code{\link{adjustRtime-featureGroups}},
-  \code{\link{adjustRtime-obiwarp}}
+Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
+  \code{\link{adjustRtime-peakGroups}}
 }
 

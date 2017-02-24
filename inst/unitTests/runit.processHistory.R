@@ -86,15 +86,15 @@ test_XProcessHistory_class <- function() {
     checkTrue(inherits(ph, "ProcessHistory"))
 
     ph <- xcms:::XProcessHistory(info = "some info",
-                                 type = xcms:::.PROCSTEP.FEATURE.DETECTION)
+                                 type = xcms:::.PROCSTEP.PEAK.DETECTION)
     checkEquals(ph@info, "some info")
-    checkEquals(ph@type, xcms:::.PROCSTEP.FEATURE.DETECTION)
+    checkEquals(ph@type, xcms:::.PROCSTEP.PEAK.DETECTION)
 
     ph@type <- "other"
     checkException(validObject(ph))
 
     ph <- xcms:::XProcessHistory(info = "some info",
-                                 type = xcms:::.PROCSTEP.FEATURE.DETECTION,
+                                 type = xcms:::.PROCSTEP.PEAK.DETECTION,
                                  param = CentWaveParam())
 
     checkTrue(is(ph@param, "CentWaveParam"))

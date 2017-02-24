@@ -25,9 +25,9 @@ setMethod("initialize", "CentWaveParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
-## ##' @rdname featureDetection-centWave
+## ##' @rdname findChromPeaks-centWave
 ## setMethod("print", "CentWaveParam", function(x, ...) show(x))
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("show", "CentWaveParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -49,11 +49,11 @@ setMethod("show", "CentWaveParam", function(object) {
 ##' @aliases ppm
 ##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 ##' slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("ppm", "CentWaveParam", function(object){ return(object@ppm)})
 ##' @aliases ppm<-
 ##' @param value The value for the slot.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
@@ -63,11 +63,11 @@ setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
 ##' @aliases peakwidth
 ##' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
 ##' \code{peakwidth} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("peakwidth", "CentWaveParam", function(object)
     return(object@peakwidth))
 ##' @aliases peakwidth<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
     object@peakwidth <- value
     if (validObject(object))
@@ -77,11 +77,11 @@ setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
 ##' @aliases snthresh
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("snthresh", "CentWaveParam", function(object)
     return(object@snthresh))
 ##' @aliases snthresh<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
@@ -91,11 +91,11 @@ setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
 ##' @aliases prefilter
 ##' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
 ##' \code{prefilter} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("prefilter", "CentWaveParam", function(object)
     return(object@prefilter))
 ##' @aliases prefilter<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
     object@prefilter <- value
     if (validObject(object))
@@ -105,11 +105,11 @@ setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
 ##' @aliases mzCenterFun
 ##' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
 ##' \code{mzCenterFun} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("mzCenterFun", "CentWaveParam", function(object)
     return(object@mzCenterFun))
 ##' @aliases mzCenterFun<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
     object@mzCenterFun <- value
     if (validObject(object))
@@ -120,11 +120,11 @@ setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
 ##' \code{integrate} slot of the object.
 ##' @param f For \code{integrate}: a \code{CentWaveParam} object.
 ##'
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("integrate", signature(f = "CentWaveParam"), function(f)
     return(f@integrate))
 ##' @aliases integrate<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
     object@integrate <- as.integer(value)
     if (validObject(object))
@@ -134,11 +134,11 @@ setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
 ##' @aliases mzdiff
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 ##' \code{mzdiff} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("mzdiff", "CentWaveParam", function(object)
     return(object@mzdiff))
 ##' @aliases mzdiff<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
@@ -148,11 +148,11 @@ setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
 ##' @aliases fitgauss
 ##' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
 ##' \code{fitgauss} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("fitgauss", "CentWaveParam", function(object)
     return(object@fitgauss))
 ##' @aliases fitgauss<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
     object@fitgauss <- value
     if (validObject(object))
@@ -162,11 +162,11 @@ setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
 ##' @aliases noise
 ##' @description \code{noise},\code{noise<-}: getter and setter for the
 ##' \code{noise} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("noise", "CentWaveParam", function(object)
     return(object@noise))
 ##' @aliases noise<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("noise", "CentWaveParam", function(object, value) {
     object@noise <- value
     if (validObject(object))
@@ -176,11 +176,11 @@ setReplaceMethod("noise", "CentWaveParam", function(object, value) {
 ##' @aliases verboseColumns
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
 ##' setter for the \code{verboseColumns} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("verboseColumns", "CentWaveParam", function(object)
     return(object@verboseColumns))
 ##' @aliases verboseColumns<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
@@ -190,11 +190,11 @@ setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
 ##' @aliases roiList
 ##' @description \code{roiList},\code{roiList<-}: getter and setter for the
 ##' \code{roiList} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("roiList", "CentWaveParam", function(object)
     return(object@roiList))
 ##' @aliases roiList<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
     object@roiList <- value
     if (validObject(object))
@@ -204,11 +204,11 @@ setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
 ##' @aliases firstBaselineCheck
 ##' @description \code{fistBaselineCheck},\code{firstBaselineCheck<-}: getter
 ##' and setter for the \code{firstBaselineCheck} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("firstBaselineCheck", "CentWaveParam", function(object)
     return(object@firstBaselineCheck))
 ##' @aliases firstBaselineCheck<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) {
     object@firstBaselineCheck <- value
     if (validObject(object))
@@ -218,11 +218,11 @@ setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) 
 ##' @aliases roiScales
 ##' @description \code{roiScales},\code{roiScales<-}: getter and setter for the
 ##' \code{roiScales} slot of the object.
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setMethod("roiScales", "CentWaveParam", function(object)
     return(object@roiScales))
 ##' @aliases roiScales<-
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
     object@roiScales <- value
     if (validObject(object))
@@ -236,7 +236,7 @@ setMethod("initialize", "MatchedFilterParam", function(.Object, ...) {
     classVersion(.Object)["MatchedFilterParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("show", "MatchedFilterParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -256,12 +256,12 @@ setMethod("show", "MatchedFilterParam", function(object) {
 ##' @aliases binSize
 ##' @description \code{binSize},\code{binSize<-}: getter and setter for the
 ##' \code{binSize} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("binSize", "MatchedFilterParam", function(object)
     return(object@binSize))
 ##' @aliases binSize<-
 ##' @param value The value for the slot.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
@@ -270,11 +270,11 @@ setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
 
 ##' @description \code{impute},\code{impute<-}: getter and setter for the
 ##' \code{impute} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("impute", "MatchedFilterParam", function(object)
     return(object@impute))
 ##' @aliases impute<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
     object@impute <- value
     if (validObject(object))
@@ -284,11 +284,11 @@ setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
 ##' @aliases baseValue
 ##' @description \code{baseValue},\code{baseValue<-}: getter and setter for the
 ##' \code{baseValue} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("baseValue", "MatchedFilterParam", function(object)
     return(object@baseValue))
 ##' @aliases baseValue<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
     object@baseValue <- value
     if (validObject(object))
@@ -298,11 +298,11 @@ setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
 ##' @aliases distance
 ##' @description \code{distance},\code{distance<-}: getter and setter for the
 ##' \code{distance} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("distance", "MatchedFilterParam", function(object)
     return(object@distance))
 ##' @aliases distance<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
     object@distance <- value
     if (validObject(object))
@@ -312,11 +312,11 @@ setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
 ##' @aliases fwhm
 ##' @description \code{fwhm},\code{fwhm<-}: getter and setter for the
 ##' \code{fwhm} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("fwhm", "MatchedFilterParam", function(object)
     return(object@fwhm))
 ##' @aliases fwhm<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
     object@fwhm <- value
     if (validObject(object))
@@ -326,11 +326,11 @@ setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
 ##' @aliases sigma
 ##' @description \code{sigma},\code{sigma<-}: getter and setter for the
 ##' \code{sigma} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("sigma", "MatchedFilterParam", function(object)
     return(object@sigma))
 ##' @aliases sigma<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
     object@sigma <- value
     if (validObject(object))
@@ -340,11 +340,11 @@ setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
 ##' @description \code{max},\code{max<-}: getter and setter for the
 ##' \code{max} slot of the object.
 ##' @param x For \code{max}: a \code{MatchedFilterParam} object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("max", signature(x="MatchedFilterParam"),
           function(x) return(x@max))
 ##' @aliases max<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
     object@max <- value
     if (validObject(object))
@@ -353,10 +353,10 @@ setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
 
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("snthresh", "MatchedFilterParam", function(object)
     return(object@snthresh))
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
@@ -366,11 +366,11 @@ setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
 ##' @aliases steps
 ##' @description \code{steps},\code{steps<-}: getter and setter for the
 ##' \code{steps} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("steps", "MatchedFilterParam", function(object)
     return(object@steps))
 ##' @aliases steps<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
     object@steps <- value
     if (validObject(object))
@@ -379,10 +379,10 @@ setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
 
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 ##' \code{mzdiff} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("mzdiff", "MatchedFilterParam", function(object)
     return(object@mzdiff))
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
@@ -392,11 +392,11 @@ setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
 ##' @aliases index
 ##' @description \code{index},\code{index<-}: getter and setter for the
 ##' \code{index} slot of the object.
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setMethod("index", "MatchedFilterParam", function(object)
     return(object@index))
 ##' @aliases index<-
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value
     if (validObject(object))
@@ -411,7 +411,7 @@ setMethod("initialize", "MassifquantParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("show", "MassifquantParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -434,10 +434,10 @@ setMethod("show", "MassifquantParam", function(object) {
 
 ##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 ##' slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("ppm", "MassifquantParam", function(object){ return(object@ppm)})
 ##' @param value The value for the slot.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
@@ -446,10 +446,10 @@ setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
 
 ##' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
 ##' \code{peakwidth} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("peakwidth", "MassifquantParam", function(object)
     return(object@peakwidth))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
     object@peakwidth <- value
     if (validObject(object))
@@ -458,10 +458,10 @@ setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
 
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("snthresh", "MassifquantParam", function(object)
     return(object@snthresh))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
@@ -470,10 +470,10 @@ setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
 
 ##' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
 ##' \code{prefilter} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("prefilter", "MassifquantParam", function(object)
     return(object@prefilter))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
     object@prefilter <- value
     if (validObject(object))
@@ -482,10 +482,10 @@ setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
 
 ##' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
 ##' \code{mzCenterFun} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("mzCenterFun", "MassifquantParam", function(object)
     return(object@mzCenterFun))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
     object@mzCenterFun <- value
     if (validObject(object))
@@ -496,10 +496,10 @@ setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
 ##' \code{integrate} slot of the object.
 ##' @param f For \code{integrate}: a \code{MassifquantParam} object.
 ##'
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("integrate", signature(f = "MassifquantParam"), function(f)
     return(f@integrate))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
     object@integrate <- as.integer(value)
     if (validObject(object))
@@ -508,10 +508,10 @@ setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
 
 ##' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 ##' \code{mzdiff} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("mzdiff", "MassifquantParam", function(object)
     return(object@mzdiff))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
     object@mzdiff <- value
     if (validObject(object))
@@ -520,10 +520,10 @@ setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
 
 ##' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
 ##' \code{fitgauss} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("fitgauss", "MassifquantParam", function(object)
     return(object@fitgauss))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
     object@fitgauss <- value
     if (validObject(object))
@@ -532,10 +532,10 @@ setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
 
 ##' @description \code{noise},\code{noise<-}: getter and setter for the
 ##' \code{noise} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("noise", "MassifquantParam", function(object)
     return(object@noise))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("noise", "MassifquantParam", function(object, value) {
     object@noise <- value
     if (validObject(object))
@@ -544,10 +544,10 @@ setReplaceMethod("noise", "MassifquantParam", function(object, value) {
 
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
 ##' setter for the \code{verboseColumns} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("verboseColumns", "MassifquantParam", function(object)
     return(object@verboseColumns))
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
@@ -557,11 +557,11 @@ setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
 ##' @aliases criticalValue
 ##' @description \code{criticalValue},\code{criticalValue<-}: getter and
 ##' setter for the \code{criticalValue} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("criticalValue", "MassifquantParam", function(object)
     return(object@criticalValue))
 ##' @aliases criticalValue<-
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
     object@criticalValue <- value
     if (validObject(object))
@@ -571,11 +571,11 @@ setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
 ##' @aliases consecMissedLimit
 ##' @description \code{consecMissedLimit},\code{consecMissedLimit<-}: getter and
 ##' setter for the \code{consecMissedLimit} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("consecMissedLimit", "MassifquantParam", function(object)
     return(object@consecMissedLimit))
 ##' @aliases consecMissedLimit<-
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  function(object, value) {
                      object@consecMissedLimit <- as.integer(value)
@@ -586,11 +586,11 @@ setReplaceMethod("consecMissedLimit", "MassifquantParam",
 ##' @aliases unions
 ##' @description \code{unions},\code{unions<-}: getter and
 ##' setter for the \code{unions} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("unions", "MassifquantParam", function(object)
     return(object@unions))
 ##' @aliases unions<-
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("unions", "MassifquantParam", function(object, value) {
     object@unions <- as.integer(value)
     if (validObject(object))
@@ -600,11 +600,11 @@ setReplaceMethod("unions", "MassifquantParam", function(object, value) {
 ##' @aliases checkBack
 ##' @description \code{checkBack},\code{checkBack<-}: getter and
 ##' setter for the \code{checkBack} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("checkBack", "MassifquantParam", function(object)
     return(object@checkBack))
 ##' @aliases checkBack<-
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
     object@checkBack <- as.integer(value)
     if (validObject(object))
@@ -614,11 +614,11 @@ setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
 ##' @aliases withWave
 ##' @description \code{withWave},\code{withWave<-}: getter and
 ##' setter for the \code{withWave} slot of the object.
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setMethod("withWave", "MassifquantParam", function(object)
     return(object@withWave))
 ##' @aliases withWave<-
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
     object@withWave <- value
     if (validObject(object))
@@ -634,7 +634,7 @@ setMethod("initialize", "MSWParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("show", "MSWParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -659,10 +659,10 @@ setMethod("show", "MSWParam", function(object) {
 
 ##' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 ##' \code{snthresh} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("snthresh", "MSWParam", function(object){ return(object@snthresh)})
 ##' @param value The value for the slot.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("snthresh", "MSWParam", function(object, value) {
     object@snthresh <- value
     if (validObject(object))
@@ -671,10 +671,10 @@ setReplaceMethod("snthresh", "MSWParam", function(object, value) {
 
 ##' @description \code{verboseColumns},\code{verboseColumns<-}: getter and setter
 ##' for the \code{verboseColumns} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("verboseColumns", "MSWParam", function(object){
     return(object@verboseColumns)})
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
     object@verboseColumns <- value
     if (validObject(object))
@@ -684,10 +684,10 @@ setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
 ##' @aliases scales
 ##' @description \code{scales},\code{scales<-}: getter and setter for the
 ##' \code{scales} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("scales", "MSWParam", function(object){ return(object@scales)})
 ##' @aliases scales<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("scales", "MSWParam", function(object, value) {
     object@scales <- value
     if (validObject(object))
@@ -697,10 +697,10 @@ setReplaceMethod("scales", "MSWParam", function(object, value) {
 ##' @aliases nearbyPeak
 ##' @description \code{nearbyPeak},\code{nearbyPeak<-}: getter and setter for the
 ##' \code{nearbyPeak} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)})
 ##' @aliases nearbyPeak<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
     object@nearbyPeak <- value
     if (validObject(object))
@@ -710,11 +710,11 @@ setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
 ##' @aliases peakScaleRange
 ##' @description \code{peakScaleRange},\code{peakScaleRange<-}: getter and setter
 ##' for the \code{peakScaleRange} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("peakScaleRange", "MSWParam", function(object){
     return(object@peakScaleRange)})
 ##' @aliases peakScaleRange<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
     object@peakScaleRange <- value
     if (validObject(object))
@@ -724,10 +724,10 @@ setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
 ##' @aliases ampTh
 ##' @description \code{ampTh},\code{ampTh<-}: getter and setter for the
 ##' \code{ampTh} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
 ##' @aliases ampTh<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("ampTh", "MSWParam", function(object, value) {
     object@ampTh <- value
     if (validObject(object))
@@ -737,11 +737,11 @@ setReplaceMethod("ampTh", "MSWParam", function(object, value) {
 ##' @aliases minNoiseLevel
 ##' @description \code{minNoiseLevel},\code{minNoiseLevel<-}: getter and setter
 ##' for the \code{minNoiseLevel} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("minNoiseLevel", "MSWParam", function(object){
     return(object@minNoiseLevel)})
 ##' @aliases minNoiseLevel<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
     object@minNoiseLevel <- value
     if (validObject(object))
@@ -751,11 +751,11 @@ setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
 ##' @aliases ridgeLength
 ##' @description \code{ridgeLength},\code{ridgeLength<-}: getter and setter for
 ##' the \code{ridgeLength} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("ridgeLength", "MSWParam", function(object){
     return(object@ridgeLength)})
 ##' @aliases ridgeLength<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
     object@ridgeLength <- value
     if (validObject(object))
@@ -765,10 +765,10 @@ setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
 ##' @aliases peakThr
 ##' @description \code{peakThr},\code{peakThr<-}: getter and setter for the
 ##' \code{peakThr} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
 ##' @aliases peakThr<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("peakThr", "MSWParam", function(object, value) {
     object@peakThr <- value
     if (validObject(object))
@@ -778,10 +778,10 @@ setReplaceMethod("peakThr", "MSWParam", function(object, value) {
 ##' @aliases tuneIn
 ##' @description \code{tuneIn},\code{tuneIn<-}: getter and setter for the
 ##' \code{tuneIn} slot of the object.
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
 ##' @aliases tuneIn<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
     object@tuneIn <- value
     if (validObject(object))
@@ -796,10 +796,10 @@ setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
 ##' \code{\link[MassSpecWavelet]{sav.gol}} functions from the
 ##' \code{MassSpecWavelet} package.
 ##'
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
 ##' @aliases addParams<-
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 setReplaceMethod("addParams", "MSWParam", function(object, value) {
     object@addParams <- value
     if (validObject(object))
@@ -829,7 +829,7 @@ setMethod("initialize", "CentWavePredIsoParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("show", "CentWavePredIsoParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -856,11 +856,11 @@ setMethod("show", "CentWavePredIsoParam", function(object) {
 ##' @aliases snthreshIsoROIs
 ##' @description \code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
 ##' setter for the \code{snthreshIsoROIs} slot of the object.
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object){
     return(object@snthreshIsoROIs)})
 ##' @aliases snthreshIsoROIs<-
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, value) {
     object@snthreshIsoROIs <- value
     if (validObject(object))
@@ -870,11 +870,11 @@ setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, val
 ##' @aliases maxCharge
 ##' @description \code{maxCharge},\code{maxCharge<-}: getter and
 ##' setter for the \code{maxCharge} slot of the object.
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("maxCharge", "CentWavePredIsoParam", function(object){
     return(object@maxCharge)})
 ##' @aliases maxCharge<-
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
     object@maxCharge <- as.integer(value)
     if (validObject(object))
@@ -884,11 +884,11 @@ setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
 ##' @aliases maxIso
 ##' @description \code{maxIso},\code{maxIso<-}: getter and
 ##' setter for the \code{maxIso} slot of the object.
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("maxIso", "CentWavePredIsoParam", function(object){
     return(object@maxIso)})
 ##' @aliases maxIso<-
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
     object@maxIso <- as.integer(value)
     if (validObject(object))
@@ -898,11 +898,11 @@ setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
 ##' @aliases mzIntervalExtension
 ##' @description \code{mzIntervalExtension},\code{mzIntervalExtension<-}: getter
 ##' and setter for the \code{mzIntervalExtension} slot of the object.
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("mzIntervalExtension", "CentWavePredIsoParam", function(object){
     return(object@mzIntervalExtension)})
 ##' @aliases mzIntervalExtension<-
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
                  function(object, value) {
                      object@mzIntervalExtension <- value
@@ -912,11 +912,11 @@ setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
 
 ##' @description \code{polarity},\code{polarity<-}: getter and
 ##' setter for the \code{polarity} slot of the object.
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("polarity", "CentWavePredIsoParam", function(object){
     return(object@polarity)})
 ##' @aliases polarity<-
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
     object@polarity <- value
     if (validObject(object))
@@ -925,16 +925,16 @@ setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
 
 
 ############################################################
-## FeatureDensityParam
-setMethod("initialize", "FeatureDensityParam", function(.Object, ...) {
-    classVersion(.Object)["FeatureDensityParam"] <- "0.0.1"
+## PeakDensityParam
+setMethod("initialize", "PeakDensityParam", function(.Object, ...) {
+    classVersion(.Object)["PeakDensityParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
-## ##' @rdname groupFeatures-density
+## ##' @rdname groupChromPeaks-density
 ## setMethod("print", "CentWaveParam", function(x, ...) show(x))
-##' @rdname groupFeatures-density
-setMethod("show", "FeatureDensityParam", function(object) {
+##' @rdname groupChromPeaks-density
+setMethod("show", "PeakDensityParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
     cat(" sampleGroups:", class(object@sampleGroups), "of length",
@@ -949,13 +949,13 @@ setMethod("show", "FeatureDensityParam", function(object) {
 ##' @aliases sampleGroups
 ##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 ##' for the \code{sampleGroups} slot of the object.
-##' @rdname groupFeatures-density
-setMethod("sampleGroups", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("sampleGroups", "PeakDensityParam", function(object){
     return(object@sampleGroups)})
 ##' @aliases sampleGroups<-
 ##' @param value The value for the slot.
-##' @rdname groupFeatures-density
-setReplaceMethod("sampleGroups", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
         return(object)
@@ -964,12 +964,12 @@ setReplaceMethod("sampleGroups", "FeatureDensityParam", function(object, value) 
 ##' @aliases bw
 ##' @description \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
 ##' of the object.
-##' @rdname groupFeatures-density
-setMethod("bw", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("bw", "PeakDensityParam", function(object){
     return(object@bw)})
 ##' @aliases bw<-
-##' @rdname groupFeatures-density
-setReplaceMethod("bw", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
     object@bw <- value
     if (validObject(object))
         return(object)
@@ -978,12 +978,12 @@ setReplaceMethod("bw", "FeatureDensityParam", function(object, value) {
 ##' @aliases minFraction
 ##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
 ##' the \code{minFraction} slot of the object.
-##' @rdname groupFeatures-density
-setMethod("minFraction", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("minFraction", "PeakDensityParam", function(object){
     return(object@minFraction)})
 ##' @aliases minFraction<-
-##' @rdname groupFeatures-density
-setReplaceMethod("minFraction", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
@@ -992,12 +992,12 @@ setReplaceMethod("minFraction", "FeatureDensityParam", function(object, value) {
 ##' @aliases minSamples
 ##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
 ##' \code{minSamples} slot of the object.
-##' @rdname groupFeatures-density
-setMethod("minSamples", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("minSamples", "PeakDensityParam", function(object){
     return(object@minSamples)})
 ##' @aliases minSamples<-
-##' @rdname groupFeatures-density
-setReplaceMethod("minSamples", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
         return(object)
@@ -1005,11 +1005,11 @@ setReplaceMethod("minSamples", "FeatureDensityParam", function(object, value) {
 
 ##' @description \code{binSize},\code{binSize<-}: getter and setter for the
 ##' \code{binSize} slot of the object.
-##' @rdname groupFeatures-density
-setMethod("binSize", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("binSize", "PeakDensityParam", function(object){
     return(object@binSize)})
-##' @rdname groupFeatures-density
-setReplaceMethod("binSize", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
     object@binSize <- value
     if (validObject(object))
         return(object)
@@ -1018,12 +1018,12 @@ setReplaceMethod("binSize", "FeatureDensityParam", function(object, value) {
 ##' @aliases maxFeatures
 ##' @description \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
 ##' the \code{maxFeatures} slot of the object.
-##' @rdname groupFeatures-density
-setMethod("maxFeatures", "FeatureDensityParam", function(object){
+##' @rdname groupChromPeaks-density
+setMethod("maxFeatures", "PeakDensityParam", function(object){
     return(object@maxFeatures)})
 ##' @aliases maxFeatures<-
-##' @rdname groupFeatures-density
-setReplaceMethod("maxFeatures", "FeatureDensityParam", function(object, value) {
+##' @rdname groupChromPeaks-density
+setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
     object@maxFeatures <- value
     if (validObject(object))
         return(object)
@@ -1037,9 +1037,9 @@ setMethod("initialize", "MzClustParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
-## ##' @rdname groupFeatures-mzClust
+## ##' @rdname groupChromPeaks-mzClust
 ## setMethod("print", "CentWaveParam", function(x, ...) show(x))
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("show", "MzClustParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
@@ -1053,11 +1053,11 @@ setMethod("show", "MzClustParam", function(object) {
 
 ##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 ##' for the \code{sampleGroups} slot of the object.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("sampleGroups", "MzClustParam", function(object){
     return(object@sampleGroups)})
 ##' @param value The value for the slot.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
@@ -1066,10 +1066,10 @@ setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
 
 ##' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 ##' slot of the object.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("ppm", "MzClustParam", function(object){
     return(object@ppm)})
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setReplaceMethod("ppm", "MzClustParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))
@@ -1079,11 +1079,11 @@ setReplaceMethod("ppm", "MzClustParam", function(object, value) {
 ##' @aliases absMz
 ##' @description \code{absMz},\code{absMz<-}: getter and setter for the
 ##' \code{absMz} slot of the object.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("absMz", "MzClustParam", function(object){
     return(object@absMz)})
 ##' @aliases absMz<-
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setReplaceMethod("absMz", "MzClustParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
@@ -1092,10 +1092,10 @@ setReplaceMethod("absMz", "MzClustParam", function(object, value) {
 
 ##' @description \code{minFraction},\code{minFraction<-}: getter and setter for
 ##' the \code{minFraction} slot of the object.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("minFraction", "MzClustParam", function(object){
     return(object@minFraction)})
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
@@ -1104,10 +1104,10 @@ setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
 
 ##' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
 ##' \code{minSamples} slot of the object.
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setMethod("minSamples", "MzClustParam", function(object){
     return(object@minSamples)})
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
     object@minSamples <- value
     if (validObject(object))
@@ -1116,14 +1116,14 @@ setReplaceMethod("minSamples", "MzClustParam", function(object, value) {
 
 
 ############################################################
-## NearestFeaturesParam
-setMethod("initialize", "NearestFeaturesParam", function(.Object, ...) {
-    classVersion(.Object)["NearestFeaturesParam"] <- "0.0.1"
+## NearestPeaksParam
+setMethod("initialize", "NearestPeaksParam", function(.Object, ...) {
+    classVersion(.Object)["NearestPeaksParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
-##' @rdname groupFeatures-nearest
-setMethod("show", "NearestFeaturesParam", function(object) {
+##' @rdname groupChromPeaks-nearest
+setMethod("show", "NearestPeaksParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
     cat(" sampleGroups:", class(object@sampleGroups), "of length",
@@ -1136,12 +1136,12 @@ setMethod("show", "NearestFeaturesParam", function(object) {
 
 ##' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 ##' for the \code{sampleGroups} slot of the object.
-##' @rdname groupFeatures-nearest
-setMethod("sampleGroups", "NearestFeaturesParam", function(object){
+##' @rdname groupChromPeaks-nearest
+setMethod("sampleGroups", "NearestPeaksParam", function(object){
     return(object@sampleGroups)})
 ##' @param value The value for the slot.
-##' @rdname groupFeatures-nearest
-setReplaceMethod("sampleGroups", "NearestFeaturesParam", function(object, value) {
+##' @rdname groupChromPeaks-nearest
+setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
     object@sampleGroups <- value
     if (validObject(object))
         return(object)
@@ -1150,12 +1150,12 @@ setReplaceMethod("sampleGroups", "NearestFeaturesParam", function(object, value)
 ##' @aliases mzVsRtBalance
 ##' @description \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
 ##' for the \code{mzVsRtBalance} slot of the object.
-##' @rdname groupFeatures-nearest
-setMethod("mzVsRtBalance", "NearestFeaturesParam", function(object){
+##' @rdname groupChromPeaks-nearest
+setMethod("mzVsRtBalance", "NearestPeaksParam", function(object){
     return(object@mzVsRtBalance)})
 ##' @aliases mzVsRtBalance<-
-##' @rdname groupFeatures-nearest
-setReplaceMethod("mzVsRtBalance", "NearestFeaturesParam", function(object, value) {
+##' @rdname groupChromPeaks-nearest
+setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
     object@mzVsRtBalance <- value
     if (validObject(object))
         return(object)
@@ -1163,11 +1163,11 @@ setReplaceMethod("mzVsRtBalance", "NearestFeaturesParam", function(object, value
 
 ##' @description \code{absMz},\code{absMz<-}: getter and setter for the
 ##' \code{absMz} slot of the object.
-##' @rdname groupFeatures-nearest
-setMethod("absMz", "NearestFeaturesParam", function(object){
+##' @rdname groupChromPeaks-nearest
+setMethod("absMz", "NearestPeaksParam", function(object){
     return(object@absMz)})
-##' @rdname groupFeatures-nearest
-setReplaceMethod("absMz", "NearestFeaturesParam", function(object, value) {
+##' @rdname groupChromPeaks-nearest
+setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
     object@absMz <- value
     if (validObject(object))
         return(object)
@@ -1176,12 +1176,12 @@ setReplaceMethod("absMz", "NearestFeaturesParam", function(object, value) {
 ##' @aliases absRt
 ##' @description \code{absRt},\code{absRt<-}: getter and setter for the
 ##' \code{absRt} slot of the object.
-##' @rdname groupFeatures-nearest
-setMethod("absRt", "NearestFeaturesParam", function(object){
+##' @rdname groupChromPeaks-nearest
+setMethod("absRt", "NearestPeaksParam", function(object){
     return(object@absRt)})
 ##' @aliases absRt<-
-##' @rdname groupFeatures-nearest
-setReplaceMethod("absRt", "NearestFeaturesParam", function(object, value) {
+##' @rdname groupChromPeaks-nearest
+setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
     object@absRt <- value
     if (validObject(object))
         return(object)
@@ -1190,12 +1190,12 @@ setReplaceMethod("absRt", "NearestFeaturesParam", function(object, value) {
 ##' @aliases kNN
 ##' @description \code{kNN},\code{kNN<-}: getter and setter for the
 ##' \code{kNN} slot of the object.
-##' @rdname groupFeatures-nearest
-setMethod("kNN", "NearestFeaturesParam", function(object){
+##' @rdname groupChromPeaks-nearest
+setMethod("kNN", "NearestPeaksParam", function(object){
     return(object@kNN)})
 ##' @aliases kNN<-
-##' @rdname groupFeatures-nearest
-setReplaceMethod("kNN", "NearestFeaturesParam", function(object, value) {
+##' @rdname groupChromPeaks-nearest
+setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
     object@kNN <- value
     if (validObject(object))
         return(object)
@@ -1203,18 +1203,18 @@ setReplaceMethod("kNN", "NearestFeaturesParam", function(object, value) {
 
 
 ############################################################
-## FeatureGroupsParam
-setMethod("initialize", "FeatureGroupsParam", function(.Object, ...) {
-    classVersion(.Object)["FeatureGroupsParam"] <- "0.0.1"
+## PeakGroupsParam
+setMethod("initialize", "PeakGroupsParam", function(.Object, ...) {
+    classVersion(.Object)["PeakGroupsParam"] <- "0.0.1"
     callNextMethod(.Object, ...)
 })
 
-##' @rdname adjustRtime-featureGroups
-setMethod("show", "FeatureGroupsParam", function(object) {
+##' @rdname adjustRtime-peakGroups
+setMethod("show", "PeakGroupsParam", function(object) {
     cat("Object of class: ", class(object), "\n")
     cat("Parameters:\n")
     cat(" minFraction:", object@minFraction, "\n")
-    cat(" extraFeatures:", object@extraFeatures, "\n")
+    cat(" extraPeaks:", object@extraPeaks, "\n")
     cat(" smooth:", object@smooth, "\n")
     cat(" span:", object@span, "\n")
     cat(" family:", object@family, "\n")
@@ -1222,27 +1222,27 @@ setMethod("show", "FeatureGroupsParam", function(object) {
 
 ##' @description \code{minFraction},\code{minFraction<-}: getter and setter
 ##' for the \code{minFraction} slot of the object.
-##' @rdname adjustRtime-featureGroups
-setMethod("minFraction", "FeatureGroupsParam", function(object){
+##' @rdname adjustRtime-peakGroups
+setMethod("minFraction", "PeakGroupsParam", function(object){
     return(object@minFraction)})
 ##' @param value The value for the slot.
-##' @rdname adjustRtime-featureGroups
-setReplaceMethod("minFraction", "FeatureGroupsParam", function(object, value) {
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
     object@minFraction <- value
     if (validObject(object))
         return(object)
 })
 
-##' @aliases extraFeatures
-##' @description \code{extraFeatures},\code{extraFeatures<-}: getter and setter
-##' for the \code{extraFeatures} slot of the object.
-##' @rdname adjustRtime-featureGroups
-setMethod("extraFeatures", "FeatureGroupsParam", function(object){
-    return(object@extraFeatures)})
-##' @aliases extraFeatures<-
-##' @rdname adjustRtime-featureGroups
-setReplaceMethod("extraFeatures", "FeatureGroupsParam", function(object, value) {
-    object@extraFeatures <- value
+##' @aliases extraPeaks
+##' @description \code{extraPeaks},\code{extraPeaks<-}: getter and setter
+##' for the \code{extraPeaks} slot of the object.
+##' @rdname adjustRtime-peakGroups
+setMethod("extraPeaks", "PeakGroupsParam", function(object){
+    return(object@extraPeaks)})
+##' @aliases extraPeaks<-
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
+    object@extraPeaks <- value
     if (validObject(object))
         return(object)
 })
@@ -1250,13 +1250,13 @@ setReplaceMethod("extraFeatures", "FeatureGroupsParam", function(object, value) 
 ##' @aliases smooth
 ##' @description \code{smooth},\code{smooth<-}: getter and setter
 ##' for the \code{smooth} slot of the object.
-##' @param x a \code{FeatureGroupsParam} object.
-##' @rdname adjustRtime-featureGroups
-setMethod("smooth", "FeatureGroupsParam", function(x){
+##' @param x a \code{PeakGroupsParam} object.
+##' @rdname adjustRtime-peakGroups
+setMethod("smooth", "PeakGroupsParam", function(x){
     return(x@smooth)})
 ##' @aliases smooth<-
-##' @rdname adjustRtime-featureGroups
-setReplaceMethod("smooth", "FeatureGroupsParam", function(object, value) {
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
     object@smooth <- value
     if (validObject(object))
         return(object)
@@ -1265,12 +1265,12 @@ setReplaceMethod("smooth", "FeatureGroupsParam", function(object, value) {
 ##' @aliases span
 ##' @description \code{span},\code{span<-}: getter and setter
 ##' for the \code{span} slot of the object.
-##' @rdname adjustRtime-featureGroups
-setMethod("span", "FeatureGroupsParam", function(object){
+##' @rdname adjustRtime-peakGroups
+setMethod("span", "PeakGroupsParam", function(object){
     return(object@span)})
 ##' @aliases span<-
-##' @rdname adjustRtime-featureGroups
-setReplaceMethod("span", "FeatureGroupsParam", function(object, value) {
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
     object@span <- value
     if (validObject(object))
         return(object)
@@ -1279,12 +1279,12 @@ setReplaceMethod("span", "FeatureGroupsParam", function(object, value) {
 ##' @aliases family
 ##' @description \code{family},\code{family<-}: getter and setter
 ##' for the \code{family} slot of the object.
-##' @rdname adjustRtime-featureGroups
-setMethod("family", "FeatureGroupsParam", function(object){
+##' @rdname adjustRtime-peakGroups
+setMethod("family", "PeakGroupsParam", function(object){
     return(object@family)})
 ##' @aliases family<-
-##' @rdname adjustRtime-featureGroups
-setReplaceMethod("family", "FeatureGroupsParam", function(object, value) {
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
     object@family <- value
     if (validObject(object))
         return(object)

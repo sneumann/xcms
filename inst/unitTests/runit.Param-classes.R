@@ -480,60 +480,60 @@ test_CentWavePredIsoParam <- function() {
     checkEquals(L$snthresh, 123)
 }
 
-test_FeatureDensityParam <- function() {
+test_PeakDensityParam <- function() {
     ## Check getter/setter methods:
-    p <- new("FeatureDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    p <- new("PeakDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
     sampleGroups(p) <- 1:4
     checkEquals(sampleGroups(p), 1:4)
-    p <- FeatureDensityParam(sampleGroups = c("a", "a", "b"))
+    p <- PeakDensityParam(sampleGroups = c("a", "a", "b"))
     checkEquals(sampleGroups(p), c("a", "a", "b"))
 
-    p <- new("FeatureDensityParam", bw = 3)
+    p <- new("PeakDensityParam", bw = 3)
     checkEquals(bw(p), 3)
     bw(p) <- 20
     checkEquals(bw(p), 20)
-    p <- FeatureDensityParam(bw = 33)
+    p <- PeakDensityParam(bw = 33)
     checkEquals(bw(p), 33)
-    checkException(FeatureDensityParam(bw = -4))
+    checkException(PeakDensityParam(bw = -4))
 
     ## minFraction
-    p <- new("FeatureDensityParam", minFraction = 0.7)
+    p <- new("PeakDensityParam", minFraction = 0.7)
     checkEquals(minFraction(p), 0.7)
     minFraction(p) <- 0.2
     checkEquals(minFraction(p), 0.2)
-    p <- FeatureDensityParam(minFraction = 0.4)
+    p <- PeakDensityParam(minFraction = 0.4)
     checkEquals(minFraction(p), 0.4)
-    checkException(FeatureDensityParam(minFraction = -4))
+    checkException(PeakDensityParam(minFraction = -4))
     checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
     checkException(minFraction(p) <- 2)
 
     ## minSamples
-    p <- new("FeatureDensityParam", minSamples = 3)
+    p <- new("PeakDensityParam", minSamples = 3)
     checkEquals(minSamples(p), 3)
     minSamples(p) <- 20
     checkEquals(minSamples(p), 20)
-    p <- FeatureDensityParam(minSamples = 33)
+    p <- PeakDensityParam(minSamples = 33)
     checkEquals(minSamples(p), 33)
-    checkException(FeatureDensityParam(minSamples = -4))
+    checkException(PeakDensityParam(minSamples = -4))
 
     ## binSize
-    p <- new("FeatureDensityParam", binSize = 3)
+    p <- new("PeakDensityParam", binSize = 3)
     checkEquals(binSize(p), 3)
     binSize(p) <- 20
     checkEquals(binSize(p), 20)
-    p <- FeatureDensityParam(binSize = 0.3)
+    p <- PeakDensityParam(binSize = 0.3)
     checkEquals(binSize(p), 0.3)
-    checkException(FeatureDensityParam(binSize = -4))
+    checkException(PeakDensityParam(binSize = -4))
 
     ## maxFeatures
-    p <- new("FeatureDensityParam", maxFeatures = 3)
+    p <- new("PeakDensityParam", maxFeatures = 3)
     checkEquals(maxFeatures(p), 3)
     maxFeatures(p) <- 20
     checkEquals(maxFeatures(p), 20)
-    p <- FeatureDensityParam(maxFeatures = 33)
+    p <- PeakDensityParam(maxFeatures = 33)
     checkEquals(maxFeatures(p), 33)
-    checkException(FeatureDensityParam(maxFeatures = -4))
+    checkException(PeakDensityParam(maxFeatures = -4))
 }
 
 test_MzClustParam <- function() {
@@ -582,96 +582,96 @@ test_MzClustParam <- function() {
     checkException(MzClustParam(minSamples = -4))
 }
 
-test_NearestFeaturesParam <- function() {
+test_NearestPeaksParam <- function() {
     ## Check getter/setter methods:
-    p <- new("NearestFeaturesParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
+    p <- new("NearestPeaksParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     checkEquals(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
     sampleGroups(p) <- 1:4
     checkEquals(sampleGroups(p), 1:4)
-    p <- NearestFeaturesParam(sampleGroups = c("a", "a", "b"))
+    p <- NearestPeaksParam(sampleGroups = c("a", "a", "b"))
     checkEquals(sampleGroups(p), c("a", "a", "b"))
 
-    p <- new("NearestFeaturesParam", mzVsRtBalance = 3)
+    p <- new("NearestPeaksParam", mzVsRtBalance = 3)
     checkEquals(mzVsRtBalance(p), 3)
     mzVsRtBalance(p) <- 20
     checkEquals(mzVsRtBalance(p), 20)
-    p <- NearestFeaturesParam(mzVsRtBalance = 33)
+    p <- NearestPeaksParam(mzVsRtBalance = 33)
     checkEquals(mzVsRtBalance(p), 33)
-    checkException(NearestFeaturesParam(mzVsRtBalance = -4))
-    checkException(NearestFeaturesParam(mzVsRtBalance = 1:4))
+    checkException(NearestPeaksParam(mzVsRtBalance = -4))
+    checkException(NearestPeaksParam(mzVsRtBalance = 1:4))
 
-    p <- new("NearestFeaturesParam", absMz = 3)
+    p <- new("NearestPeaksParam", absMz = 3)
     checkEquals(absMz(p), 3)
     absMz(p) <- 20
     checkEquals(absMz(p), 20)
-    p <- NearestFeaturesParam(absMz = 33)
+    p <- NearestPeaksParam(absMz = 33)
     checkEquals(absMz(p), 33)
-    checkException(NearestFeaturesParam(absMz = -4))
-    checkException(NearestFeaturesParam(absMz = 1:3))
+    checkException(NearestPeaksParam(absMz = -4))
+    checkException(NearestPeaksParam(absMz = 1:3))
 
-    p <- new("NearestFeaturesParam", absRt = 3)
+    p <- new("NearestPeaksParam", absRt = 3)
     checkEquals(absRt(p), 3)
     absRt(p) <- 20
     checkEquals(absRt(p), 20)
-    p <- NearestFeaturesParam(absRt = 33)
+    p <- NearestPeaksParam(absRt = 33)
     checkEquals(absRt(p), 33)
-    checkException(NearestFeaturesParam(absRt = -4))
-    checkException(NearestFeaturesParam(absRt = 1:3))
+    checkException(NearestPeaksParam(absRt = -4))
+    checkException(NearestPeaksParam(absRt = 1:3))
     
-    p <- new("NearestFeaturesParam", kNN = 3)
+    p <- new("NearestPeaksParam", kNN = 3)
     checkEquals(kNN(p), 3)
     kNN(p) <- 20
     checkEquals(kNN(p), 20)
-    p <- NearestFeaturesParam(kNN = 33)
+    p <- NearestPeaksParam(kNN = 33)
     checkEquals(kNN(p), 33)
-    checkException(NearestFeaturesParam(kNN = -4))
-    checkException(NearestFeaturesParam(kNN = 1:3))
+    checkException(NearestPeaksParam(kNN = -4))
+    checkException(NearestPeaksParam(kNN = 1:3))
 }
 
-test_FeatureGroupsParam <- function() {
+test_PeakGroupsParam <- function() {
     ## Check getter/setter methods:
-    p <- new("FeatureGroupsParam", minFraction = 0.8)
+    p <- new("PeakGroupsParam", minFraction = 0.8)
     checkEquals(minFraction(p), 0.8)
     minFraction(p) <- 0.3
     checkEquals(minFraction(p), 0.3)
-    p <- FeatureGroupsParam(minFraction = 0.7)
+    p <- PeakGroupsParam(minFraction = 0.7)
     checkEquals(minFraction(p), 0.7)
     checkException(minFraction(p) <- c(2, 2))
     checkException(minFraction(p) <- -1)
     checkException(minFraction(p) <- 3)
     
-    p <- new("FeatureGroupsParam", extraFeatures = 2)
-    checkEquals(extraFeatures(p), 2)
-    extraFeatures(p) <- 0.3
-    checkEquals(extraFeatures(p), 0.3)
-    p <- FeatureGroupsParam(extraFeatures = 7)
-    checkEquals(extraFeatures(p), 7)
-    checkException(extraFeatures(p) <- c(2, 2))
-    checkException(extraFeatures(p) <- -1)
+    p <- new("PeakGroupsParam", extraPeaks = 2)
+    checkEquals(extraPeaks(p), 2)
+    extraPeaks(p) <- 0.3
+    checkEquals(extraPeaks(p), 0.3)
+    p <- PeakGroupsParam(extraPeaks = 7)
+    checkEquals(extraPeaks(p), 7)
+    checkException(extraPeaks(p) <- c(2, 2))
+    checkException(extraPeaks(p) <- -1)
 
-    p <- new("FeatureGroupsParam", span = 0.5)
+    p <- new("PeakGroupsParam", span = 0.5)
     checkEquals(span(p), 0.5)
     span(p) <- 0.3
     checkEquals(span(p), 0.3)
-    p <- FeatureGroupsParam(span = 7)
+    p <- PeakGroupsParam(span = 7)
     checkEquals(span(p), 7)
     checkException(span(p) <- c(2, 2))
     checkException(span(p) <- -1)
 
-    p <- new("FeatureGroupsParam", smooth = "linear")
+    p <- new("PeakGroupsParam", smooth = "linear")
     checkEquals(smooth(p), "linear")
     smooth(p) <- "loess"
     checkEquals(smooth(p), "loess")
-    p <- FeatureGroupsParam(smooth = "linear")
+    p <- PeakGroupsParam(smooth = "linear")
     checkEquals(smooth(p), "linear")
     checkException(smooth(p) <- "other")
     checkException(smooth(p) <- c("linear", "loess"))
 
-    p <- new("FeatureGroupsParam", family = "symmetric")
+    p <- new("PeakGroupsParam", family = "symmetric")
     checkEquals(family(p), "symmetric")
     family(p) <- "gaussian"
     checkEquals(family(p), "gaussian")
-    p <- FeatureGroupsParam(family = "symmetric")
+    p <- PeakGroupsParam(family = "symmetric")
     checkEquals(family(p), "symmetric")
     checkException(family(p) <- "other")
     checkException(family(p) <- c("symmetric", "gaussian"))

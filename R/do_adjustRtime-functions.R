@@ -1,37 +1,33 @@
 ## Retention time correction methods.
 #' @include DataClasses.R functions-MsFeatureData.R
 
-## Needs:
-## o features
-## o feature groups
-## o rtime
-
-##' @title Align spectrum retention times across samples using feature groups
+##' @title Align spectrum retention times across samples using peak groups
 ##' found in most samples
 ##'
 ##' @description The function performs retention time correction by assessing
-##' the retention time deviation across all samples using feature groups containg
-##' features present in most/all samples. The retention time deviation
-##' for these feature groups in each sample is described by fitting either a
-##' polynomial (\code{smooth = "loess"}) or a linear (\code{smooth = "linear"})
-##' model to the data points. The models are subsequently used to adjust the
-##' retention time for each spectrum in each sample. 
+##' the retention time deviation across all samples using peak groups (features)
+##' containg chromatographic peaks present in most/all samples. The retention
+##' time deviation for these features in each sample is described by fitting
+##' either a polynomial (\code{smooth = "loess"}) or a linear
+##' (\code{smooth = "linear"}) model to the data points. The models are
+##' subsequently used to adjust the retention time for each spectrum in each
+##' sample. 
 ##'
 ##' @details The alignment bases on the presence of compounds that can be found
 ##' in all/most samples of an experiment. The retention times of individual
-##' spectra are then adjusted based on the alignment of the feature groups
+##' spectra are then adjusted based on the alignment of the features 
 ##' corresponding to these \emph{house keeping compounds}. The paraneters
-##' \code{minFraction} and \code{extraFeatures} can be used to fine tune which
-##' feature groups should be used for the alignment (i.e. which feature groups
+##' \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+##' features should be used for the alignment (i.e. which features 
 ##' most likely correspond to the above mentioned house keeping compounds).
 ##'
-##' @inheritParams adjustRtime-featureGroups
+##' @inheritParams adjustRtime-peakGroups
 ##' 
-##' @param features a \code{matrix} or \code{data.frame} with the identified
-##' features in the samples.
+##' @param peaks a \code{matrix} or \code{data.frame} with the identified
+##' chromatographic peaks in the samples.
 ##'
-##' @param featureIndex a \code{list} of indices that provides the grouping
-##' information of the features (across and within samples).
+##' @param peakIndex a \code{list} of indices that provides the grouping
+##' information of the chromatographic peaks (across and within samples).
 ##' 
 ##' @param rtime A \code{list} of \code{numeric} vectors with the retention times
 ##' per file/sample.
@@ -48,50 +44,50 @@
 ##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
-do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
-                                         minFraction = 0.9, extraFeatures = 1,
-                                         smooth = c("loess", "linear"), span = 0.2,
-                                         family = c("gaussian", "symmetric")) {
+do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
+                                      minFraction = 0.9, extraPeaks = 1,
+                                      smooth = c("loess", "linear"), span = 0.2,
+                                      family = c("gaussian", "symmetric")) {
     ## Check input.
-    if (missing(features) | missing(featureIndex) | missing(rtime))
-        stop("Arguments 'features', 'featureIndex' and 'rtime' are required!")
+    if (missing(peaks) | missing(peakIndex) | missing(rtime))
+        stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")
     smooth <- match.arg(smooth)
     family <- match.arg(family)
     ## minFraction
     if (any(minFraction > 1) | any(minFraction < 0))
         stop("'minFraction' has to be between 0 and 1!")
     
-    ## Check features:
-    OK <- .validFeatureMatrix(features)
+    ## Check peaks:
+    OK <- .validChromPeaksMatrix(peaks)
     if (is.character(OK))
         stop(OK)
-    ## Check featureIndex:
-    if (any(!(unique(unlist(featureIndex)) %in% seq_len(nrow(features)))))
-        stop("Some indices listed in 'featureIndex' are outside of ",
-             "1:nrow(features)!")
+    ## Check peakIndex:
+    if (any(!(unique(unlist(peakIndex)) %in% seq_len(nrow(peaks)))))
+        stop("Some indices listed in 'peakIndex' are outside of ",
+             "1:nrow(peaks)!")
     ## Check rtime: in line with the total number of samples we've got in
-    ## features?
+    ## peaks?
     if (!is.list(rtime))
         stop("'rtime' should be a list of numeric vectors with the retention ",
              "times of the spectra per sample!")
     if (!all(unlist(lapply(rtime, is.numeric), use.names = FALSE)))
         stop("'rtime' should be a list of numeric vectors with the retention ",
              "times of the spectra per sample!")
-    if (length(rtime) != max(features[, "sample"]))
+    if (length(rtime) != max(peaks[, "sample"]))
         stop("The length of 'rtime' does not match with the total number of ",
-             "samples according to the 'features' matrix!")
+             "samples according to the 'peaks' matrix!")
     
     nSamples <- length(rtime)
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
    
-    rt <- .getFeatureGroupsRtMatrix(features, featureIndex, nSamples,
-                                    missingSample, extraFeatures)
+    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
+                                 missingSample, extraPeaks)
 
     message("Performing retention time correction using ", nrow(rt),
-            " feature groups.")
+            " peak groups.")
 
-    ## Calculate the deviation of each feature group in each sample from its
+    ## Calculate the deviation of each peak group in each sample from its
     ## median
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
@@ -99,12 +95,12 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
         mingroups <- min(colSums(!is.na(rt)))
         if (mingroups < 4) {
             smooth <- "linear"
-            warning("Too few feature groups for 'loess', reverting to linear",
+            warning("Too few peak groups for 'loess', reverting to linear",
                     " method")
         } else if (mingroups * span < 4) {
             span <- 4 / mingroups
             warning("Span too small for 'loess' and the available number of ",
-                    "feature groups, resetting to ", round(span, 2))
+                    "peak groups, resetting to ", round(span, 2))
         }
     }
 
@@ -143,7 +139,7 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
                 warn.overcorrect <- TRUE
         } else {
             if (nrow(pts) < 2) {
-                stop("Not enough feature groups even for linear smoothing ",
+                stop("Not enough peak groups even for linear smoothing ",
                      "available!")
             }
             ## Use lm instead?
@@ -185,7 +181,7 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
 ##' @examples
 ##'
 ##' ## Perform retention time correction:
-##' ## feats is supposed to be the features matrix FOR A SINGLE SAMPLE, rtr and
+##' ## feats is supposed to be the peaks matrix FOR A SINGLE SAMPLE, rtr and
 ##' ## rtc the raw and adjusted retention times of the spectras from the same
 ##' ## samples:
 ##' ## adjFts <- feats
@@ -198,11 +194,11 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
 }
 
 ##' Helper function to apply retention time adjustment to already identified
-##' features in the features matrix of an XCMSnExp (or peaks matrix of an
+##' peaks in the peaks matrix of an XCMSnExp (or peaks matrix of an
 ##' xcmsSet).
 ##' 
 ##' @noRd
-.applyRtAdjToFeatures <- function(x, rtraw, rtadj) {
+.applyRtAdjToChromPeaks <- function(x, rtraw, rtadj) {
     if (!is.list(rtraw) | !is.list(rtadj))
         stop("'rtraw' and 'rtadj' are supposed to be lists!")
     if (length(rtraw) != length(rtadj))
@@ -221,37 +217,37 @@ do_adjustRtime_featureGroups <- function(features, featureIndex, rtime,
 }
 
 ##' Simple helper function to create a matrix with retention times for well
-##' aligned feature groups, each row containing the rt of a feature group,
+##' aligned peak groups, each row containing the rt of a peak group,
 ##' columns being samples.
 ##' @details This function is called internally by the
-##' do_adjustRtime_featureGroups function and the retcor.peakgroups method.
+##' do_adjustRtime_peakGroups function and the retcor.peakgroups method.
 ##' @noRd
-.getFeatureGroupsRtMatrix <- function(features, featureIndex, nSamples,
-                                      missingSample, extraFeatures) {
-    ## For each feature group:
-    ## o extract the retention time of the feature with the highest intensity.
-    ## o skip feature groups if they are not assigned a feature in at least a
-    ##   minimum number of samples OR if have too many features from the same
+.getPeakGroupsRtMatrix <- function(peaks, peakIndex, nSamples,
+                                   missingSample, extraPeaks) {
+    ## For each peak group:
+    ## o extract the retention time of the peak with the highest intensity.
+    ## o skip peak groups if they are not assigned a peak in at least a
+    ##   minimum number of samples OR if have too many peaks from the same
     ##   sample assigned to it.
     seq_samp <- seq_len(nSamples)
-    rt <- lapply(featureIndex, function(z) {
-        cur_fts <- features[z, c("rt", "into", "sample"), drop = FALSE]
+    rt <- lapply(peakIndex, function(z) {
+        cur_fts <- peaks[z, c("rt", "into", "sample"), drop = FALSE]
         ## Return NULL if we've got less samples that required or is the total
-        ## number of features is larger than a certain threshold.
+        ## number of peaks is larger than a certain threshold.
         ## Note that the original implementation is not completely correct!
-        ## nsamp > nsamp + extraFeatures might be correct.
+        ## nsamp > nsamp + extraPeaks might be correct.
         nsamp <- length(unique(cur_fts[, "sample"]))
         if (nsamp < (nSamples - missingSample) |
-            nrow(cur_fts) > (nsamp + extraFeatures))
+            nrow(cur_fts) > (nsamp + extraPeaks))
             return(NULL)
         cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), ]
         cur_fts[match(seq_samp, cur_fts[, 3]), 1]
     })
     rt <- do.call(rbind, rt)
     ## Order them by median retention time. NOTE: this is different from the
-    ## original code, in which the feature groups are ordered by the median
-    ## retention time that is calculated over ALL features within the feature
-    ## group, not only to one feature selected for each sample (for multi
-    ## feature per sample assignments).
+    ## original code, in which the peak groups are ordered by the median
+    ## retention time that is calculated over ALL peaks within the peak
+    ## group, not only to one peak selected for each sample (for multi
+    ## peak per sample assignments).
     return(rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE])
 }
