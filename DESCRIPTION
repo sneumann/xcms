@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.51.6
-Date: 2017-02-03
+Version: 1.51.7
+Date: 2017-02-21
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -57,10 +57,11 @@ Collate:
     'functions-MsFeatureData.R'
     'do_adjustRtime-functions.R'
     'functions-binning.R'
-    'do_detectFeatures-functions.R'
+    'do_findChromPeaks-functions.R'
     'functions-Params.R'
-    'do_groupFeatures-functions.R'
+    'do_groupChromPeaks-functions.R'
     'fastMatch.R'
+    'functions-Chromatogram.R'
     'functions-utils.R'
     'functions-IO.R'
     'functions-OnDiskMSnExp.R'
@@ -72,6 +73,7 @@ Collate:
     'functions-xcmsSet.R'
     'init.R'
     'matchpeaks.R'
+    'methods-Chromatogram.R'
     'methods-IO.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'

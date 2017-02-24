@@ -46,16 +46,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     if (any(msLevel(from) > 1))
         stop("Coercing an XCMSnExp with MS level > 1 is not yet supported!")
     xs <- new("xcmsSet")
-    ## @peaks <- features
-    if (hasDetectedFeatures(from))
-        xs@peaks <- features(from)
-    ## @groups <- part of featureGroups
-    ## @groupidx <- featureGroups(x)$featureidx
-    if (hasAlignedFeatures(from)){
-        fgs <- featureGroups(from)
+    ## @peaks <- chromPeaks
+    if (hasChromPeaks(from))
+        xs@peaks <- chromPeaks(from)
+    ## @groups <- part of featureDefinitions
+    ## @groupidx <- featureDefinitions(x)$peakidx
+    if (hasFeatures(from)){
+        fgs <- featureDefinitions(from)
         xs@groups <- S4Vectors::as.matrix(fgs[, -ncol(fgs)])
         rownames(xs@groups) <- NULL
-        xs@groupidx <- fgs$featureidx
+        xs@groupidx <- fgs$peakidx
     }
     ## @rt combination from rtime(x) and adjustedRtime(x)
     rts <- list()
@@ -77,7 +77,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     profStep <- 0.1
     profParam <- list()
     ## If we've got any MatchedFilterParam we can take the values from there
-    ph <- processHistory(from, type = .PROCSTEP.FEATURE.DETECTION)
+    ph <- processHistory(from, type = .PROCSTEP.PEAK.DETECTION)
     if (length(ph)) {
         if (is(ph[[1]], "XProcessHistory")) {
             prm <- processParam(ph[[1]])
@@ -182,7 +182,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     fns <- fileNames(x)
     if (is(x, "XCMSnExp")) {
         ## Now, the filterRt might get heavy for XCMSnExp objects if we're
-        ## filtering also the features and featureGroups!
+        ## filtering also the chromatographic peaks and features!
         msfd <- new("MsFeatureData")
         if (hasAdjustedRtime(x)) {
             ## just copy over the retention time.
@@ -190,8 +190,8 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         }
         lockEnvironment(msfd, bindings = TRUE)
         x@msFeatureData <- msfd
-        ## with an XCMSnExp without features and featureGroups filterRt should be
-        ## faster.
+        ## with an XCMSnExp without chrom. peaks and features filterRt
+        ## should be faster.
     }
     subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
     if (base::length(subs) == 0) {
@@ -203,4 +203,87 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     )
     ## WARN: fromFile reported within the Spectra might not be correct!!!
     return(res)
+}
+
+##' @description Extract a chromatogram from an \code{OnDiskMSnExp} or
+##' \code{XCMSnExp} subsetting to the provided retention time range
+##' (\code{rt}) and using the function \code{aggregationFun} to aggregate
+##' intensity values for the same retention time across the mz range
+##' (\code{mz}).
+##'
+##' @param x An \code{OnDiskMSnExp} or \code{XCMSnExp} object.
+##'
+##' @param rt \code{numeric(2)} providing the lower and upper retention time. It
+##' is also possible to submit a \code{numeric(1)} in which case \code{range} is
+##' called on it to transform it to a \code{numeric(2)}.
+##' 
+##' @param mz \code{numeric(2)} providing the lower and upper mz value for
+##' the mz range. It is also possible to submit a \code{numeric(1)} in which case
+##' \code{range} is called on it to transform it to a \code{numeric(2)}.
+##' 
+##' @param aggregationFun The function to be used to aggregate intensity values
+##' across the mz range for the same retention time.
+##'
+##' @param ... Additional arguments to be passed to the object's \code{rtime}
+##' call.
+##' 
+##' @return A \code{list} with the \code{Chromatogram} objects. If no data was
+##' present for the specified \code{rtrange} and \code{mzrange} the function
+##' returns a \code{list} of length \code{0}.
+##'
+##' @author Johannes Rainer
+##' @noRd
+.extractChromatogram <- function(x, rt, mz, aggregationFun = "sum", ...) {
+    if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
+        stop("'aggregationFun' should be one of ",
+             paste0("'", .SUPPORTED_AGG_FUN_CHROM, "'", collapse = ", "))
+    if (!missing(rt)) {
+        rt <- range(rt, na.rm = TRUE)
+        if (length(rt) != 2)
+            stop("'rt' has to be a numeric of length 2!")
+    }
+    if (!missing(mz)) {
+        mz <- range(mz, na.rm = TRUE)
+        if (length(mz) != 2)
+            stop("'mz' has to be a numeric of length 2!")
+        fmzr <- mz
+    } else fmzr <- c(0, 0)
+    ## Subset the object based on rt and mz range.
+    subs <- filterMz(filterRt(x, rt = rt), mz = mz)
+    if (length(subs) == 0) {
+        return(list())
+    }
+    ## Now, call spectrapply on the object to return the data we need from each
+    ## Spectrum: the aggregated intensity values per spectrum and the mz value
+    ## range.
+    res <- spectrapply(subs, FUN = function(z) {
+        if (!z@peaksCount)
+            return(list())
+        return(c(range(z@mz), do.call(aggregationFun, list(z@intensity))))
+    })
+    ## Do I want to drop the names?
+    not_empty <- base::which(base::lengths(res) > 0)
+    if (length(not_empty)) {
+        res <- split(res[not_empty], f = fromFile(subs)[not_empty])
+        rtm <- split(rtime(subs)[not_empty], f = fromFile(subs)[not_empty])
+        ## We want to have one Chromatogram per file.
+        ## Let's use a simple for loop here - no need for an mapply (yet).
+        resL <- vector("list", length(res))
+        for (i in 1:length(res)) {
+            allVals <- unlist(res[[i]], use.names = FALSE)
+            idx <- seq(3, length(allVals), by = 3)
+            mzr <- range(allVals[-idx], na.rm = TRUE, finite = TRUE)
+            ## Or should we drop the names completely?
+            ints <- allVals[idx]
+            names(ints) <- names(rtm[[i]])
+            resL[[i]] <- Chromatogram(rtime = rtm[[i]],
+                                      intensity = ints, mz = mzr,
+                                      filterMz = fmzr,
+                                      fromFile = as.integer(names(res)[i]),
+                                      aggregationFun = aggregationFun)
+        }
+        return(resL)
+    } else {
+        return(list())
+    }
 }

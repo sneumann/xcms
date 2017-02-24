@@ -1,4 +1,4 @@
-## Test detectFeatures centWave
+## Test findChromPeaks centWave
 
 ## library(faahKO)
 fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
@@ -13,20 +13,20 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xr <- deepCopy(faahko_xr_1)
 onDisk <- filterFile(faahko_od, file = 1)
 
-test_do_detectFeatures_centWave <- function() {
+test_do_findChromPeaks_centWave <- function() {
     ## xr <- xcmsRaw(fs[1], profstep = 0)
     ## We expect that changing a parameter has an influence on the result.
     mzVals <- xr@env$mz
     intVals <- xr@env$intensity
     ## Define the values per spectrum:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    res1 <- do_detectFeatures_centWave(mz = mzVals,
+    res1 <- do_findChromPeaks_centWave(mz = mzVals,
                                        int = intVals,
                                        scantime = xr@scantime,
                                        valsPerSpect,
                                        snthresh = 200,
                                        noise = 4000)
-    res2 <- do_detectFeatures_centWave(mz = mzVals,
+    res2 <- do_findChromPeaks_centWave(mz = mzVals,
                                        int = intVals,
                                        scantime = xr@scantime,
                                        valsPerSpect,
@@ -41,15 +41,15 @@ test_do_detectFeatures_centWave <- function() {
     intVals <- xr@env$intensity
     ## Define the values per spectrum:
     valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    res_2 <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+    res_2 <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
                                         scantime = xr@scantime, valsPerSpect,
                                         noise = 2000)
     checkEquals(res_1@.Data, res_2)
 }
 
-## Evaluate the featureDetection method using the centWave method on
+## Evaluate the peak detection method using the centWave method on
 ## OnDiskMSnExp and on MSnExp objects.
-test_featureDetection_centWave <- function() {
+test_findChromPeaks_centWave <- function() {
     ## Control
     library(MSnbase)
     ## xr <- xcmsRaw(fs[1], profstep = 0)
@@ -65,30 +65,30 @@ test_featureDetection_centWave <- function() {
     ## OnDiskMSnExp
     ## onDisk <- readMSData2(fs[1], msLevel. = 1)
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
-    res <- detectFeatures(onDisk, param = cwp, return.type = "list")
+    res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
     ## ## MSnExp
     ## inMem <- readMSData(f[1], msLevel. = 1)
     ## suppressWarnings(
-    ##     res_2 <- detectFeatures(inMem, param = cwp, return.type = "list")
+    ##     res_2 <- findChromPeaks(inMem, param = cwp, return.type = "list")
     ## )
     ## checkEquals(res_2[[1]], peaks(xs)@.Data)
 
     ## returning an xcmsSet
-    res <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+    res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
     checkEquals(peaks(res), peaks(xs))
     ## suppressWarnings(
-    ##     res <- detectFeatures(inMem, param = cwp, return.type = "xcmsSet")
+    ##     res <- findChromPeaks(inMem, param = cwp, return.type = "xcmsSet")
     ## )
     ## checkEquals(peaks(res), peaks(xs))
 
     ## Return type XCMSnExp
-    res <- detectFeatures(onDisk, param = cwp)
-    checkTrue(hasDetectedFeatures(res))
+    res <- findChromPeaks(onDisk, param = cwp)
+    checkTrue(hasChromPeaks(res))
     checkTrue(!hasAdjustedRtime(res))
-    checkTrue(!hasAlignedFeatures(res))
-    checkEquals(peaks(xs)@.Data, features(res))
+    checkTrue(!hasFeatures(res))
+    checkEquals(peaks(xs)@.Data, chromPeaks(res))
 }
 
 dontrun_test_benchmark_centWaves <- function() {
@@ -106,10 +106,10 @@ dontrun_test_benchmark_centWaves <- function() {
     ## onDisk <- readMSData2(f[1], msLevel. = 1)
     register(SerialParam())
     system.time(
-        tmp <- detectFeatures(onDisk, param = cwp)
+        tmp <- findChromPeaks(onDisk, param = cwp)
     ) ## 9.7sec
     system.time(
-        tmp <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+        tmp <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
     ) ## 12sec
     system.time(
         tmp <- xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
@@ -119,16 +119,16 @@ dontrun_test_benchmark_centWaves <- function() {
     inMem <- readMSData(f[1], msLevel. = 1)
     register(SerialParam())
 
-    ## detectFeatures,MSnExp and findPeaks.centWave should be about similar.
+    ## findChromPeaks,MSnExp and findPeaks.centWave should be about similar.
     microbenchmark(findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh),
-                   detectFeatures(inMem, param = cwp), times = 3)
+                   findChromPeaks(inMem, param = cwp), times = 3)
     ## findPeaks.centWave is about 1 second faster.
 
-    ## detectFeatures,OnDiskMSnExp and xcmsSet should be about similar.
+    ## findChromPeaks,OnDiskMSnExp and xcmsSet should be about similar.
     microbenchmark(xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
                            snthresh = snthresh, method = "centWave"),
-                   detectFeatures(onDisk, param = cwp),
-                   detectFeatures(inMem, param = cwp),
+                   findChromPeaks(onDisk, param = cwp),
+                   findChromPeaks(inMem, param = cwp),
                    times = 3)
 }
 
@@ -147,10 +147,10 @@ dontrun_test_benchmark_centWaves <- function() {
     ## onDisk <- readMSData2(f[1], msLevel. = 1)
     register(SerialParam())
     system.time(
-        tmp <- detectFeatures(onDisk, param = cwp)
+        tmp <- findChromPeaks(onDisk, param = cwp)
     ) ## 9.7sec
     system.time(
-        tmp <- detectFeatures(onDisk, param = cwp, return.type = "xcmsSet")
+        tmp <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
     ) ## 12sec
     system.time(
         tmp <- xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
@@ -160,16 +160,16 @@ dontrun_test_benchmark_centWaves <- function() {
     inMem <- readMSData(f[1], msLevel. = 1)
     register(SerialParam())
 
-    ## detectFeatures,MSnExp and findPeaks.centWave should be about similar.
+    ## findChromPeaks,MSnExp and findPeaks.centWave should be about similar.
     microbenchmark(findPeaks.centWave(xr, ppm = ppm, snthresh = snthresh),
-                   detectFeatures(inMem, param = cwp), times = 3)
+                   findChromPeaks(inMem, param = cwp), times = 3)
     ## findPeaks.centWave is about 1 second faster.
 
-    ## detectFeatures,OnDiskMSnExp and xcmsSet should be about similar.
+    ## findChromPeaks,OnDiskMSnExp and xcmsSet should be about similar.
     microbenchmark(xcmsSet(f[1], profparam = list(profstep = 0), ppm = ppm,
                            snthresh = snthresh, method = "centWave"),
-                   detectFeatures(onDisk, param = cwp),
-                   detectFeatures(inMem, param = cwp),
+                   findChromPeaks(onDisk, param = cwp),
+                   findChromPeaks(inMem, param = cwp),
                    times = 3)
 }
 
@@ -179,7 +179,7 @@ dontrun_test_benchmark_centWaves <- function() {
 ############################################################
 ## This is only relevant during development of the do_ function
 ## to evaluate that results are identical.
-dontrun_test_do_detectFeatures_centWave_impl <- function() {
+dontrun_test_do_findChromPeaks_centWave_impl <- function() {
 
     for (i in 1:length(fs)) {
         ppm = 25

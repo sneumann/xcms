@@ -1,49 +1,49 @@
-## Alignment functions.
+## Correspondence functions.
 #' @include functions-Params.R
 
-##' @title Core API function for feature density based feature alignment
+##' @title Core API function for peak density based chromatographic peak
+##' grouping
 ##'
-##' @description The \code{do_groupFeatures_density} function performs feature
-##' alignment based on the density (distribution) of features, found in different
-##' samples, along the retention time axis in slices of overlapping mz ranges.
+##' @description The \code{do_groupChromPeaks_density} function performs
+##' chromatographic peak grouping based on the density (distribution) of peaks,
+##' found in different samples, along the retention time axis in slices of
+##' overlapping mz ranges.
 ##'
 ##' @details For overlapping slices along the mz dimension, the function
-##' calculates the density distribution of identified features along the
-##' retention time axis and groups features from the same or different samples
+##' calculates the density distribution of identified peaks along the
+##' retention time axis and groups peaks from the same or different samples
 ##' that are close to each other. See [Smith 2006] for more details.
 ##'
 ##' @note The default settings might not be appropriate for all LC/GC-MS setups,
 ##' especially the \code{bw} and \code{binSize} parameter should be adjusted
 ##' accordingly.
 ##' 
-##' @param features A \code{matrix} or \code{data.frame} with the mz values and
-##' retention times of the identified features in all samples of an experiment.
-##' Required columns are \code{"mz"}, \code{"rt"} and \code{"sample"}. The latter
-##' should contain \code{numeric} values representing the index of the sample in
-##' which the feature was found.
+##' @param peaks A \code{matrix} or \code{data.frame} with the mz values and
+##' retention times of the identified chromatographic peaks in all samples of an
+##' experiment. Required columns are \code{"mz"}, \code{"rt"} and
+##' \code{"sample"}. The latter should contain \code{numeric} values representing
+##' the index of the sample in which the peak was found.
 ##'
-##' @inheritParams groupFeatures-density
+##' @inheritParams groupChromPeaks-density
 ##'
-##' @return A \code{list} with elements \code{"featureGroups"} and
-##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
-##' representing an aligned feature group and with columns:
+##' @return A \code{list} with elements \code{"featureDefinitions"} and
+##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
+##' representing a (mz-rt) feature (i.e. a peak group) with columns:
 ##' \describe{
-##' \item{"mzmed"}{median of the features' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all features' apex within the feature
-##' group.}
-##' \item{"mzmax"}{largest mz value of all features' apex within the feature
-##' group.}
-##' \item{"rtmed"}{the median of the features' retention times.}
-##' \item{"rtmin"}{the smallest retention time of the features in the group.}
-##' \item{"rtmax"}{the largest retention time of the features in the group.}
-##' \item{"npeaks"}{the total number of features assigned to the feature group.
+##' \item{"mzmed"}{median of the peaks' apex mz values.}
+##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
+##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
+##' \item{"rtmed"}{the median of the peaks' retention times.}
+##' \item{"rtmin"}{the smallest retention time of the peaks in the group.}
+##' \item{"rtmax"}{the largest retention time of the peaks in the group.}
+##' \item{"npeaks"}{the total number of peaks assigned to the feature.
 ##' Note that this number can be larger than the total number of samples, since
-##' multiple features from the same sample could be assigned to a group.}
+##' multiple peaks from the same sample could be assigned to a feature.}
 ##' }
-##' \code{"featureIndex"} is a \code{list} with the indices of all features in a
-##' feature group in the \code{features} input matrix.
+##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
+##' feature in the \code{peaks} input matrix.
 ##'
-##' @family core feature alignment algorithms
+##' @family core peak grouping algorithms
 ##'
 ##' @references
 ##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
@@ -58,34 +58,34 @@
 ##' library(faahKO)
 ##' data(faahko)
 ##'
-##' ## Extract the matrix with the identified features from the xcmsSet:
+##' ## Extract the matrix with the identified peaks from the xcmsSet:
 ##' fts <- peaks(faahko)
 ##'
-##' ## Perform the feature alignment with default settings:
-##' res <- do_groupFeatures_density(fts, sampleGroups = sampclass(faahko))
+##' ## Perform the peak grouping with default settings:
+##' res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
 ##'
-##' ## The feature groups:
-##' head(res$featureGroups)
+##' ## The feature definitions:
+##' head(res$featureDefinitions)
 ##'
-##' ## The assignment of features from the input matrix to the feature groups
-##' head(res$featureIndex)
-do_groupFeatures_density <- function(features, sampleGroups,
-                                     bw = 30, minFraction = 0.5, minSamples = 1,
-                                     binSize = 0.25, maxFeatures = 50) {
+##' ## The assignment of peaks from the input matrix to the features
+##' head(res$peakIndex)
+do_groupChromPeaks_density <- function(peaks, sampleGroups,
+                                       bw = 30, minFraction = 0.5, minSamples = 1,
+                                       binSize = 0.25, maxFeatures = 50) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
              "assignment of the samples.")
-    if (missing(features))
+    if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(features) | is.data.frame(features))
-        stop("Peaks has to be a 'matrix' or a 'data.frame'!")
+    if (!is.matrix(peaks) | is.data.frame(peaks))
+        stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
-    if (!all(.reqCols %in% colnames(features)))
+    if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
-             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
-                    collapse = ", "), " not found in 'features' parameter")
+             paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
+                    collapse = ", "), " not found in 'peaks' parameter")
 
     sampleGroups <- as.character(sampleGroups)
     sampleGroupNames <- unique(sampleGroups)
@@ -93,21 +93,21 @@ do_groupFeatures_density <- function(features, sampleGroups,
     nSampleGroups <- length(sampleGroupTable)
 
     ## Check that sample groups matches with sample column.
-    if (max(features[, "sample"]) > length(sampleGroups))
-        stop("Sample indices in 'features' are larger than there are sample",
+    if (max(peaks[, "sample"]) > length(sampleGroups))
+        stop("Sample indices in 'peaks' are larger than there are sample",
              " groups specified with 'sampleGroups'!")
     
-    ## Order features matrix by mz
-    featureOrder <- order(features[, "mz"])
-    features <- features[featureOrder, .reqCols, drop = FALSE]
-    rownames(features) <- NULL
-    rtRange <- range(features[, "rt"])
+    ## Order peaks matrix by mz
+    peakOrder <- order(peaks[, "mz"])
+    peaks <- peaks[peakOrder, .reqCols, drop = FALSE]
+    rownames(peaks) <- NULL
+    rtRange <- range(peaks[, "rt"])
 
-    ## Define the mass slices and the index in the features matrix with an mz
+    ## Define the mass slices and the index in the peaks matrix with an mz
     ## value >= mass[i].
-    mass <- seq(features[1, "mz"], features[nrow(features), "mz"] + binSize,
+    mass <- seq(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
                 by = binSize / 2)
-    masspos <- findEqualGreaterM(features[,"mz"], mass)
+    masspos <- findEqualGreaterM(peaks[,"mz"], mass)
 
     groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
     groupindex <- vector("list", 512)
@@ -123,7 +123,7 @@ do_groupFeatures_density <- function(features, sampleGroups,
         endIdx <- masspos[i + 2] - 1
         if (endIdx - startIdx < 0)
             next
-        curMat <- features[startIdx:endIdx, , drop = FALSE]
+        curMat <- peaks[startIdx:endIdx, , drop = FALSE]
         den <- density(curMat[, "rt"], bw = bw, from = densFrom, to = densTo)
         maxden <- max(den$y)
         deny <- den$y
@@ -135,7 +135,7 @@ do_groupFeatures_density <- function(features, sampleGroups,
             deny[grange[1]:grange[2]] <- 0
             gidx <- which(curMat[,"rt"] >= den$x[grange[1]] &
                           curMat[,"rt"] <= den$x[grange[2]])
-            ## Determine the sample group of the samples in which the features
+            ## Determine the sample group of the samples in which the peaks
             ## were detected and check if they correspond to the required limits.
             tt <- table(sampleGroups[unique(curMat[gidx, "sample"])])
             if (!any(tt / sampleGroupTable[names(tt)] >= minFraction &
@@ -159,7 +159,7 @@ do_groupFeatures_density <- function(features, sampleGroups,
             groupmat[num, 5:6] <- range(curMat[gidx, "rt"])
             groupmat[num, 7] <- length(gidx)
             groupmat[num, 7 + seq(along = gcount)] <- gcount
-            groupindex[[num]] <- sort(featureOrder[(startIdx:endIdx)[gidx]])
+            groupindex[[num]] <- sort(peakOrder[(startIdx:endIdx)[gidx]])
         }
     }
 
@@ -179,13 +179,13 @@ do_groupFeatures_density <- function(features, sampleGroups,
                                   drop = FALSE],
                          uorder)
 
-    return(list(featureGroups = groupmat[uindex, , drop = FALSE],
-                featureIndex = groupindex[uindex]))
+    return(list(featureDefinitions = groupmat[uindex, , drop = FALSE],
+                peakIndex = groupindex[uindex]))
 }
 
 ## Just to check if we could squeeze a little bit more out using parallel
 ## processing...
-do_groupFeatures_density_par <- function(features, sampleGroups,
+do_groupChromPeaks_density_par <- function(peaks, sampleGroups,
                                          bw = 30, minFraction = 0.5,
                                          minSamples = 1, binSize = 0.25,
                                          maxFeatures = 50) {
@@ -193,50 +193,50 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
              "assignment of the samples.")
-    if (missing(features))
+    if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(features) | is.data.frame(features))
+    if (!is.matrix(peaks) | is.data.frame(peaks))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
-    if (!all(.reqCols %in% colnames(features)))
+    if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
-             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
-                    collapse = ", "), " not found in 'features' parameter")
+             paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
+                    collapse = ", "), " not found in 'peaks' parameter")
 
     sampleGroups <- as.character(sampleGroups)
     sampleGroupNames <- unique(sampleGroups)
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
 
-    ## Order features matrix by mz
-    featureOrder <- order(features[, "mz"])
-    features <- features[featureOrder, .reqCols, drop = FALSE]
-    rownames(features) <- NULL
-    rtRange <- range(features[, "rt"])
+    ## Order peaks matrix by mz
+    peakOrder <- order(peaks[, "mz"])
+    peaks <- peaks[peakOrder, .reqCols, drop = FALSE]
+    rownames(peaks) <- NULL
+    rtRange <- range(peaks[, "rt"])
 
-    ## Define the mass slices and the index in the features matrix with an mz
+    ## Define the mass slices and the index in the peaks matrix with an mz
     ## value >= mass[i].
-    mass <- seq(features[1, "mz"], features[nrow(features), "mz"] + binSize,
+    mass <- seq(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
                 by = binSize / 2)
-    masspos <- findEqualGreaterM(features[,"mz"], mass)
+    masspos <- findEqualGreaterM(peaks[,"mz"], mass)
 
     groupmat <- matrix(nrow = 512, ncol = 7 + nSampleGroups)
     groupindex <- vector("list", 512)
 
-    ## Create the list of feature data subsets.
+    ## Create the list of peak data subsets.
     ftsL <- vector("list", length(mass))
     for (i in seq_len(length(mass) - 2)) {
         startIdx <- masspos[i]
         endIdx <- masspos[i + 2] - 1
-        ftsL[[i]] <- cbind(features[startIdx:endIdx, , drop = FALSE],
+        ftsL[[i]] <- cbind(peaks[startIdx:endIdx, , drop = FALSE],
                          idx = startIdx:endIdx)
     }
     ftsL <- ftsL[lengths(ftsL) > 0]
     ## Here we can run bplapply:
     res <- bplapply(ftsL, function(z, rtr, bw, maxF, sampleGrps,
                                    sampleGroupTbl, minFr, minSmpls,
-                                   sampleGroupNms, featureOrdr) {
+                                   sampleGroupNms, peakOrdr) {
         den <- density(z[, "rt"], bw = bw, from = rtr[1] - 3 * bw,
                        to = rtr[2] + 3 * bw)
         maxden <- max(den$y)
@@ -249,7 +249,7 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
             deny[grange[1]:grange[2]] <- 0
             gidx <- which(z[,"rt"] >= den$x[grange[1]] &
                           z[,"rt"] <= den$x[grange[2]])
-            ## Determine the sample group of the samples in which the features
+            ## Determine the sample group of the samples in which the peaks
             ## were detected and check if they correspond to the required limits.
             tt <- table(sampleGrps[unique(z[gidx, "sample"])])
             if (!any(tt / sampleGroupTbl[names(tt)] >= minFr &
@@ -266,7 +266,7 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
                               range(z[gidx, "rt"]),
                               length(gidx),
                               gcount)
-            tmpL2[[snum]] <- sort(featureOrdr[z[, "idx"][gidx]])
+            tmpL2[[snum]] <- sort(peakOrdr[z[, "idx"][gidx]])
         }
         tmpL <- tmpL[lengths(tmpL) > 0]
         tmpL2 <- tmpL2[lengths(tmpL2) > 0]
@@ -275,7 +275,7 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
     }, rtr = rtRange, bw = bw, maxF = maxFeatures, sampleGrps = sampleGroups,
     sampleGroupTbl = sampleGroupTable, minFr = minFraction,
     minSmpls = minSamples, sampleGroupNms = sampleGroupNames,
-    featureOrdr = featureOrder)
+    peakOrdr = peakOrder)
 
     res <- res[lengths(res) > 0]
     ## Now we have to process that list of results.
@@ -298,61 +298,59 @@ do_groupFeatures_density_par <- function(features, sampleGroups,
                                   drop = FALSE],
                          uorder)
 
-    return(list(featureGroups = groupmat[uindex, , drop = FALSE],
-                featureIndex = groupidx[uindex]))
+    return(list(featureDefinitions = groupmat[uindex, , drop = FALSE],
+                peakIndex = groupidx[uindex]))
 }
 
-##' @title Core API function for feature alignment using mzClust
+##' @title Core API function for peak grouping using mzClust
 ##'
-##' @description The \code{do_groupFeatures_mzClust} function performs high
-##' resolution alignment on single spectra samples.
+##' @description The \code{do_groupPeaks_mzClust} function performs high
+##' resolution correspondence on single spectra samples.
 ##' 
-##' @inheritParams groupFeatures-density
-##' @inheritParams do_groupFeatures_density
-##' @inheritParams groupFeatures-mzClust
+##' @inheritParams groupChromPeaks-density
+##' @inheritParams do_groupChromPeaks_density
+##' @inheritParams groupChromPeaks-mzClust
 ##' 
-##' @return A \code{list} with elements \code{"featureGroups"} and
-##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
-##' representing an aligned feature group and with columns:
+##' @return A \code{list} with elements \code{"featureDefinitions"} and
+##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
+##' representing an (mz-rt) feature (i.e. peak group) with columns:
 ##' \describe{
-##' \item{"mzmed"}{median of the features' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all features' apex within the feature
-##' group.}
-##' \item{"mzmax"}{largest mz value of all features' apex within the feature
-##' group.}
+##' \item{"mzmed"}{median of the peaks' apex mz values.}
+##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
+##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
 ##' \item{"rtmed"}{always \code{-1}.}
 ##' \item{"rtmin"}{always \code{-1}.}
 ##' \item{"rtmax"}{always \code{-1}.}
-##' \item{"npeaks"}{the total number of features assigned to the feature group.
+##' \item{"npeaks"}{the total number of peaks assigned to the feature.
 ##' Note that this number can be larger than the total number of samples, since
-##' multiple features from the same sample could be assigned to a group.}
+##' multiple peaks from the same sample could be assigned to a group.}
 ##' }
-##' \code{"featureIndex"} is a \code{list} with the indices of all features in a
-##' feature group in the \code{features} input matrix.
+##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
+##' peak group in the \code{peaks} input matrix.
 ##'
-##' @family core feature alignment algorithms
+##' @family core peak grouping algorithms
 ##'
 ##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
 ##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
 ##' development of a heuristic approach for metabolomics}.\cr Metabolomics,
 ##' Vol. 2, No. 2, 75-83 (2006)
-do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
-                                     absMz = 0, minFraction = 0.5,
-                                     minSamples = 1) {
+do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
+                                  absMz = 0, minFraction = 0.5,
+                                  minSamples = 1) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
              "assignment of the samples.")
-    if (missing(features))
+    if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(features) | is.data.frame(features))
+    if (!is.matrix(peaks) | is.data.frame(peaks))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "sample")
-    if (!all(.reqCols %in% colnames(features)))
+    if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
-             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
-                    collapse = ", "), " not found in 'features' parameter")
+             paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
+                    collapse = ", "), " not found in 'peaks' parameter")
     if (!is.factor(sampleGroups))
         sampleGroups <- factor(sampleGroups, levels = unique(sampleGroups))
     sampleGroupNames <- levels(sampleGroups)
@@ -361,12 +359,12 @@ do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
     ##sampleGroups <- as.numeric(sampleGroups)
     
     ## Check that sample groups matches with sample column.
-    if (max(features[, "sample"]) > length(sampleGroups))
-        stop("Sample indices in 'features' are larger than there are sample",
+    if (max(peaks[, "sample"]) > length(sampleGroups))
+        stop("Sample indices in 'peaks' are larger than there are sample",
              " groups specified with 'sampleGroups'!")
 
-    ##features <- features[, .reqCols, drop = FALSE]
-    grps <- mzClustGeneric(features[, .reqCols, drop = FALSE],
+    ##peaks <- peaks[, .reqCols, drop = FALSE]
+    grps <- mzClustGeneric(peaks[, .reqCols, drop = FALSE],
                            sampclass = sampleGroups,
                            mzppm = ppm,
                            mzabs = absMz,
@@ -384,57 +382,56 @@ do_groupFeatures_mzClust <- function(features, sampleGroups, ppm = 20,
                     grpmat[, 4:ncol(grpmat), drop = FALSE])
     colnames(grpmat) <- c(cns[1:3], c("rtmed", "rtmin", "rtmax"),
                           cns[4:length(cns)])
-    return(list(featureGroups = grpmat, featureIndex = grps$idx))    
+    return(list(featureDefinitions = grpmat, peakIndex = grps$idx))    
 }
 
-##' @title Core API function for feature alignment using a nearest neighbor approach
+##' @title Core API function for chromatic peak grouping using a nearest
+##' neighbor approach
 ##'
-##' @description The \code{do_groupFeatures_nearest} function groups features
-##' across samples by creating a master feature list and assigning corresponding
-##' features from all samples to each feature group. The method is inspired by
-##' the alignment algorithm of mzMine [Katajamaa 2006].
+##' @description The \code{do_groupChromPeaks_nearest} function groups peaks
+##' across samples by creating a master peak list and assigning corresponding
+##' peaks from all samples to each peak group (i.e. feature). The method is
+##' inspired by the correspondence algorithm of mzMine [Katajamaa 2006].
 ##' 
-##' @inheritParams do_groupFeatures_density
-##' @inheritParams groupFeatures-nearest
+##' @inheritParams do_groupChromPeaks_density
+##' @inheritParams groupChromPeaks-nearest
 ##' 
-##' @return A \code{list} with elements \code{"featureGroups"} and
-##' \code{"featureIndex"}. \code{"featureGroups"} is a \code{matrix}, each row
-##' representing an aligned feature group and with columns:
+##' @return A \code{list} with elements \code{"featureDefinitions"} and
+##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
+##' representing an (mz-rt) feature (i.e. peak group) with columns:
 ##' \describe{
-##' \item{"mzmed"}{median of the features' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all features' apex within the feature
-##' group.}
-##' \item{"mzmax"}{largest mz value of all features' apex within the feature
-##' group.}
-##' \item{"rtmed"}{the median of the features' retention times.}
-##' \item{"rtmin"}{the smallest retention time of the features in the group.}
-##' \item{"rtmax"}{the largest retention time of the features in the group.}
-##' \item{"npeaks"}{the total number of features assigned to the feature group.}
+##' \item{"mzmed"}{median of the peaks' apex mz values.}
+##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
+##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
+##' \item{"rtmed"}{the median of the peaks' retention times.}
+##' \item{"rtmin"}{the smallest retention time of the peaks in the feature.}
+##' \item{"rtmax"}{the largest retention time of the peaks in the feature.}
+##' \item{"npeaks"}{the total number of peaks assigned to the feature.}
 ##' }
-##' \code{"featureIndex"} is a \code{list} with the indices of all features in a
-##' feature group in the \code{features} input matrix.
+##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
+##' feature in the \code{peaks} input matrix.
 ##'
-##' @family core feature alignment algorithms
+##' @family core peak grouping algorithms
 ##'
 ##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 ##' processing and visualization of mass spectrometry based molecular profile
 ##' data. \emph{Bioinformatics} 2006, 22:634-636. 
-do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
-                                     absMz = 0.2, absRt = 15, kNN = 10) {
+do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
+                                       absMz = 0.2, absRt = 15, kNN = 10) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
              "assignment of the samples.")
-    if (missing(features))
+    if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(features) | is.data.frame(features))
+    if (!is.matrix(peaks) | is.data.frame(peaks))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
-    if (!all(.reqCols %in% colnames(features)))
+    if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
-             paste0("'", .reqCols[!.reqCols %in% colnames(features)],"'",
-                    collapse = ", "), " not found in 'features' parameter")
+             paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
+                    collapse = ", "), " not found in 'peaks' parameter")
     if (!is.factor(sampleGroups))
         sampleGroups <- factor(sampleGroups, levels = unique(sampleGroups))
     sampleGroupNames <- levels(sampleGroups)
@@ -443,14 +440,14 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
 
     ## sampleGroups == classlabel
     ## nSampleGroups == gcount
-    ## features == peakmat
+    ## peaks == peakmat
 
-    features <- features[, .reqCols, drop = FALSE]
+    peaks <- peaks[, .reqCols, drop = FALSE]
     
     parameters <- list(mzVsRTBalance = mzVsRtBalance, mzcheck = absMz,
                        rtcheck = absRt, knn = kNN)
 
-    ptable <- table(features[,"sample"])
+    ptable <- table(peaks[,"sample"])
     pord <- ptable[order(ptable, decreasing = TRUE)]
     sid <- as.numeric(names(pord))
     pn <- as.numeric(pord)
@@ -460,11 +457,11 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
     ## chunk it needs to process).
     mplenv <- new.env(parent = .GlobalEnv)
     mplenv$mplist <- matrix(0, pn[1], length(sid))
-    mplenv$mplist[, sid[1]] <- which(features[,"sample"] == sid[1])
-    mplenv$mplistmean <- data.frame(features[which(features[,"sample"] == sid[1]),
+    mplenv$mplist[, sid[1]] <- which(peaks[,"sample"] == sid[1])
+    mplenv$mplistmean <- data.frame(peaks[which(peaks[,"sample"] == sid[1]),
                                             c("mz", "rt")])
-    mplenv$peakmat <- features
-    assign("peakmat", features, envir = mplenv)  ## double assignment?
+    mplenv$peakmat <- peaks
+    assign("peakmat", peaks, envir = mplenv)  ## double assignment?
 
     sapply(sid[2:length(sid)], function(sample, mplenv){
         message("Processing sample number ", sample, " ... ", appendLF = FALSE)
@@ -473,8 +470,8 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
         ## clusterEvalQ(cl, library(RANN))
         ## parSapply(cl, 2:length(samples), function(sample,mplenv, object){
         ## might slightly improve on this for loop.
-        ## Calculating for each row (peak) the mean mz or rt for features
-        ## assigned yet to this feature group.
+        ## Calculating for each row (peak) the mean mz or rt for peaks
+        ## assigned yet to this peak group.
         for (mml in seq(mplenv$mplist[,1])) {
             mplenv$mplistmean[mml, "mz"] <-
                 mean(mplenv$peakmat[mplenv$mplist[mml, ], "mz"])
@@ -543,30 +540,30 @@ do_groupFeatures_nearest <- function(features, sampleGroups, mzVsRtBalance = 10,
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", sampleGroupNames)
     groupindex <- vector("list", nrow(mplenv$mplist))
-    ## Variable to count samples for a feature
+    ## Variable to count samples for a peak
     sampCounts <- rep_len(0, nSampleGroups)
     names(sampCounts) <- sampleGroupNames
     ## gcount <- integer(nSampleGroups)
     ## Can we vectorize that below somehow?
     for (i in 1:nrow(mplenv$mplist)) {
-        groupmat[i, "mzmed"] <- median(features[mplenv$mplist[i, ], "mz"])
-        groupmat[i, c("mzmin", "mzmax")] <- range(features[mplenv$mplist[i, ], "mz"])
-        groupmat[i, "rtmed"] <- median(features[mplenv$mplist[i, ], "rt"])
-        groupmat[i, c("rtmin", "rtmax")] <- range(features[mplenv$mplist[i, ], "rt"])
+        groupmat[i, "mzmed"] <- median(peaks[mplenv$mplist[i, ], "mz"])
+        groupmat[i, c("mzmin", "mzmax")] <- range(peaks[mplenv$mplist[i, ], "mz"])
+        groupmat[i, "rtmed"] <- median(peaks[mplenv$mplist[i, ], "rt"])
+        groupmat[i, c("rtmin", "rtmax")] <- range(peaks[mplenv$mplist[i, ], "rt"])
 
-        groupmat[i, "npeaks"] <- length(which(features[mplenv$mplist[i, ]] > 0))
+        groupmat[i, "npeaks"] <- length(which(peaks[mplenv$mplist[i, ]] > 0))
 
         ## Now summarizing the number of samples in which the peak was identified
         sampCounts[] <- 0
-        tbl <- table(sampleGroups[features[mplenv$mplist[i, ], "sample"]])
+        tbl <- table(sampleGroups[peaks[mplenv$mplist[i, ], "sample"]])
         sampCounts[names(tbl)] <- as.numeric(tbl)
         groupmat[i, 7 + seq_len(nSampleGroups)] <- sampCounts
-        ## gnum <- sampleGroups[unique(features[mplenv$mplist[i, ], "sample"])]
+        ## gnum <- sampleGroups[unique(peaks[mplenv$mplist[i, ], "sample"])]
         ## for (j in seq(along = gcount))
         ##     gcount[j] <- sum(gnum == j)
         ## groupmat[i, 7 + seq(along = gcount)] <- gcount
         groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
     }
     
-    return(list(featureGroups = groupmat, featureIndex = groupindex))    
+    return(list(featureDefinitions = groupmat, peakIndex = groupindex))    
 }

@@ -29,12 +29,12 @@ dontrun_test_matchedFilter_orig_code <- function() {
     step <- 0.2
 
     orig <- useOriginalCode()
-    res_new <- xcms:::do_detectFeatures_matchedFilter(mz, int,
+    res_new <- xcms:::do_findChromPeaks_matchedFilter(mz, int,
                                                       scantime,
                                                       valsPerSpect,
                                                       binSize = step)
     useOriginalCode(TRUE)
-    res_old <- xcms:::do_detectFeatures_matchedFilter(mz, int,
+    res_old <- xcms:::do_findChromPeaks_matchedFilter(mz, int,
                                                       scantime,
                                                       valsPerSpect,
                                                       binSize = step)

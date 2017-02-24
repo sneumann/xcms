@@ -12,36 +12,36 @@
 \alias{adjustedRtime<-}
 \alias{adjustedRtime<-,MsFeatureData-method}
 \alias{adjustedRtime<-,XCMSnExp-method}
+\alias{chromPeaks}
+\alias{chromPeaks,MsFeatureData-method}
+\alias{chromPeaks,XCMSnExp-method}
+\alias{chromPeaks<-}
+\alias{chromPeaks<-,MsFeatureData-method}
+\alias{chromPeaks<-,XCMSnExp-method}
 \alias{dropAdjustedRtime}
 \alias{dropAdjustedRtime,MsFeatureData-method}
 \alias{dropAdjustedRtime,XCMSnExp-method}
-\alias{dropFeatureGroups}
-\alias{dropFeatureGroups,MsFeatureData-method}
-\alias{dropFeatureGroups,XCMSnExp-method}
-\alias{dropFeatures}
-\alias{dropFeatures,MsFeatureData-method}
-\alias{dropFeatures,XCMSnExp-method}
-\alias{featureGroups}
-\alias{featureGroups,MsFeatureData-method}
-\alias{featureGroups,XCMSnExp-method}
-\alias{featureGroups<-}
-\alias{featureGroups<-,MsFeatureData-method}
-\alias{featureGroups<-,XCMSnExp-method}
-\alias{features}
-\alias{features,MsFeatureData-method}
-\alias{features,XCMSnExp-method}
-\alias{features<-}
-\alias{features<-,MsFeatureData-method}
-\alias{features<-,XCMSnExp-method}
+\alias{dropChromPeaks}
+\alias{dropChromPeaks,MsFeatureData-method}
+\alias{dropChromPeaks,XCMSnExp-method}
+\alias{dropFeatureDefinitions}
+\alias{dropFeatureDefinitions,MsFeatureData-method}
+\alias{dropFeatureDefinitions,XCMSnExp-method}
+\alias{featureDefinitions}
+\alias{featureDefinitions,MsFeatureData-method}
+\alias{featureDefinitions,XCMSnExp-method}
+\alias{featureDefinitions<-}
+\alias{featureDefinitions<-,MsFeatureData-method}
+\alias{featureDefinitions<-,XCMSnExp-method}
 \alias{hasAdjustedRtime}
 \alias{hasAdjustedRtime,MsFeatureData-method}
 \alias{hasAdjustedRtime,XCMSnExp-method}
-\alias{hasAlignedFeatures}
-\alias{hasAlignedFeatures,MsFeatureData-method}
-\alias{hasAlignedFeatures,XCMSnExp-method}
-\alias{hasDetectedFeatures}
-\alias{hasDetectedFeatures,MsFeatureData-method}
-\alias{hasDetectedFeatures,XCMSnExp-method}
+\alias{hasChromPeaks}
+\alias{hasChromPeaks,MsFeatureData-method}
+\alias{hasChromPeaks,XCMSnExp-method}
+\alias{hasFeatures}
+\alias{hasFeatures,MsFeatureData-method}
+\alias{hasFeatures,XCMSnExp-method}
 \alias{intensity,XCMSnExp-method}
 \alias{mz,XCMSnExp-method}
 \alias{processHistory}
@@ -59,9 +59,9 @@
 
 \S4method{hasAdjustedRtime}{MsFeatureData}(object)
 
-\S4method{hasAlignedFeatures}{MsFeatureData}(object)
+\S4method{hasFeatures}{MsFeatureData}(object)
 
-\S4method{hasDetectedFeatures}{MsFeatureData}(object)
+\S4method{hasChromPeaks}{MsFeatureData}(object)
 
 \S4method{adjustedRtime}{MsFeatureData}(object)
 
@@ -69,17 +69,17 @@
 
 \S4method{dropAdjustedRtime}{MsFeatureData}(object)
 
-\S4method{featureGroups}{MsFeatureData}(object)
+\S4method{featureDefinitions}{MsFeatureData}(object)
 
-\S4method{featureGroups}{MsFeatureData}(object) <- value
+\S4method{featureDefinitions}{MsFeatureData}(object) <- value
 
-\S4method{dropFeatureGroups}{MsFeatureData}(object)
+\S4method{dropFeatureDefinitions}{MsFeatureData}(object)
 
-\S4method{features}{MsFeatureData}(object)
+\S4method{chromPeaks}{MsFeatureData}(object)
 
-\S4method{features}{MsFeatureData}(object) <- value
+\S4method{chromPeaks}{MsFeatureData}(object) <- value
 
-\S4method{dropFeatures}{MsFeatureData}(object)
+\S4method{dropChromPeaks}{MsFeatureData}(object)
 
 \S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
   baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
@@ -88,21 +88,21 @@
 
 \S4method{hasAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{hasAlignedFeatures}{XCMSnExp}(object)
+\S4method{hasFeatures}{XCMSnExp}(object)
 
-\S4method{hasDetectedFeatures}{XCMSnExp}(object)
+\S4method{hasChromPeaks}{XCMSnExp}(object)
 
 \S4method{adjustedRtime}{XCMSnExp}(object, bySample = FALSE)
 
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
-\S4method{featureGroups}{XCMSnExp}(object)
+\S4method{featureDefinitions}{XCMSnExp}(object)
 
-\S4method{featureGroups}{XCMSnExp}(object) <- value
+\S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
-\S4method{features}{XCMSnExp}(object, bySample = FALSE)
+\S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE)
 
-\S4method{features}{XCMSnExp}(object) <- value
+\S4method{chromPeaks}{XCMSnExp}(object) <- value
 
 \S4method{rtime}{XCMSnExp}(object, bySample = FALSE,
   adjusted = hasAdjustedRtime(object))
@@ -115,9 +115,9 @@
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
 
-\S4method{dropFeatures}{XCMSnExp}(object)
+\S4method{dropChromPeaks}{XCMSnExp}(object)
 
-\S4method{dropFeatureGroups}{XCMSnExp}(object, keepAdjRtime = FALSE,
+\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjRtime = FALSE,
   dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
@@ -126,21 +126,21 @@
   baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
 }
 \arguments{
-\item{object}{For \code{adjustedRtime}, \code{featureGroups},
-\code{features}, \code{hasAdjustedRtime}, \code{hasAlignedFeatures} and
-\code{hasDetectedFeatures} either a \code{MsFeatureData} or a \code{XCMSnExp}
+\item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
+\code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and
+\code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
 object, for all other methods a \code{XCMSnExp} object.}
 
 \item{value}{For \code{adjustedRtime<-}: a \code{list} (length equal to the
 number of samples) with numeric vectors representing the adjusted retention
 times per scan.
 
-For \code{featureGroups<-}: a \code{DataFrame} with feature
-alignment information. See return value for the \code{featureGroups} method
-for the expected format.
+For \code{featureDefinitions<-}: a \code{DataFrame} with peak
+grouping information. See return value for the \code{featureDefinitions}
+method for the expected format.
 
-For \code{features<-}: a \code{matrix} with information on
-detected features. See return value for the \code{features} method for the
+For \code{chromPeaks<-}: a \code{matrix} with information on
+detected peaks. See return value for the \code{chromPeaks} method for the
 expected format.}
 
 \item{method}{The profile matrix generation method. Allowed are \code{"bin"},
@@ -181,20 +181,20 @@ retention times reported in the files) should be returned.}
 
 \item{type}{For \code{processHistory}: restrict returned
 \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
-Supported values are \code{"Unknown"}, \code{"Feature detection"},
-\code{"Feature alignment"} and \code{"Retention time correction"}.}
+Supported values are \code{"Unknown"}, \code{"Peak detection"},
+\code{"Peak grouping"} and \code{"Retention time correction"}.}
 
-\item{keepAdjRtime}{For \code{dropFeatureGroups,XCMSnExp}: logical(1)
-defining whether eventually present retention time adjustment should not be
-dropped. By default dropping feature groups drops retention time adjustment
-results too.}
+\item{keepAdjRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
+\code{logical(1)} defining whether eventually present retention time
+adjustment should not be dropped. By default dropping feature definitions
+drops retention time adjustment results too.}
 
-\item{dropLastN}{For \code{dropFeatureGroups,XCMSnExp}: numeric(1) defining
-the number of feature alignment related process history steps to remove. By
-default \code{dropLastN = -1}, dropping the features removes all process
-history steps related to feature alignment. Setting e.g. \code{dropLastN = 1}
-will only remove the most recent feature alignment related process history
-step.}
+\item{dropLastN}{For \code{dropFeatureDefinitions,XCMSnExp}:
+\code{numeric(1)} defining the number of peak grouping related process
+history steps to remove. By default \code{dropLastN = -1}, dropping the
+chromatographic peaks removes all process history steps related to peak
+grouping. Setting e.g. \code{dropLastN = 1} will only remove the most recent
+peak grouping related process history step.}
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
@@ -208,28 +208,30 @@ within the object. If \code{bySample = TRUE } a \code{list} (length equal to
 the number of samples) with adjusted retention times grouped by sample.
 Returns \code{NULL} if no adjusted retention times are present.
 
-For \code{featureGroups}: a \code{DataFrame} with feature alignment
-information, each row corresponding to one group of aligned features (across
-samples) and columns \code{"mzmed"} (median mz value), \code{"mzmin"}
-(minimal mz value), \code{"mzmax"} (maximum mz value), \code{"rtmed"} (median
-retention time), \code{"rtmin"} (minimal retention time), \code{"rtmax"}
-(maximal retention time) and \code{"featureidx"}. Column \code{"featureidx"}
-contains a \code{list} with indices of features (rows) in the matrix returned
-by the \code{features} method that belong to that feature group. The method
-returns \code{NULL} if no aligned feature information is present.
+For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
+information, each row corresponding to one mz-rt feature (grouped peaks
+within and across samples) and columns \code{"mzmed"} (median mz value),
+\code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
+\code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
+time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
+Column \code{"peakidx"} contains a \code{list} with indices of
+chromatographic peaks (rows) in the matrix returned by the \code{chromPeaks}
+method that belong to that feature group. The method returns \code{NULL} if
+no feature definitions are present.
 
-For \code{features}: if \code{bySample = FALSE} a \code{matrix} with
+For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} with
 at least the following columns: \code{"mz"} (mz value for the largest
 intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
 value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
 (minimal retention time), \code{"rtmax"} (maximal retention time),
-\code{"into"} (integrated, original, intensity of the feature) and
-\code{"sample"} (sample index in which the feature was identified).
-Depending on the employed feature detection algorithm and the
+\code{"into"} (integrated, original, intensity of the peak) and
+\code{"sample"} (sample index in which the peak was identified).
+Depending on the employed peak detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
-For \code{bySample = TRUE} the features are returned as a \code{list} of
-matrices, each containing the features of a specific sample. For sample in
-which no feastures were detected a matrix with 0 rows is returned.
+For \code{bySample = TRUE} the chronatographic peaks are returned as a
+\code{list} of matrices, each containing the chromatographic peak of a
+specific sample. For sample in which no feastures were detected a matrix
+with 0 rows is returned.
 
 For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the
 retention times of each scan, if \code{bySample = TRUE} a \code{list} of
@@ -256,25 +258,26 @@ data processing steps that have been performed.
 \description{
 The \code{MsFeatureData} class is designed to encapsule all
 data related to the preprocessing of metabolomics data using the \code{xcms}
-package, i.e. it contains a \code{matrix} with the features identified by the
-feature detection, a \code{DataFrame} with the information on aligned
-features across samples and a \code{list} with the adjusted retention times
-per sample.
+package, i.e. it contains a \code{matrix} with the chromatographic peaks
+identified by the peak detection, a \code{DataFrame} with the definition on
+grouped chromatographic peaks across samples and a \code{list} with the
+adjusted retention times per sample.
 
 The \code{XCMSnExp} object is designed to contain all results
-from metabolomics data preprocessing (feature detection, feature alignment
-and retention time correction). The corresponding elements in the
-\code{msFeatureData} slot are \code{"features"} (a \code{matrix}),
-\code{"featureGroups"} (a \code{DataFrame}) and \code{"adjustedRtime"} (a
-\code{list} of numeric vectors). Note that these should not be accessed
-directly but rather \emph{via} their accessor methods. Along with the results,
-the object contains the processing history that allow to track each
-processing step along with the used settings. The object also directly
-extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
-access to the full data on which the feature detection was performed.
+from metabolomics data preprocessing (chromatographic peak detection, peak
+grouping (correspondence) and retention time correction). The corresponding
+elements in the \code{msFeatureData} slot are \code{"chromPeaks"}
+(a \code{matrix}), \code{"featureDefinitions"} (a \code{DataFrame}) and
+\code{"adjustedRtime"} (a \code{list} of numeric vectors). Note that these
+should not be accessed directly but rather \emph{via} their accessor methods.
+Along with the results, the object contains the processing history that
+allow to track each processing step along with the used settings. The object
+also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence
+allowing easy access to the full data on which the peak detection was
+performed.
 
 Objects from this class should not be created directly, they are returned as
-result from the \code{\link{detectFeatures}} method.
+result from the \code{\link{findChromPeaks}} method.
 
 \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
 objects using the \code{as} method.
@@ -289,33 +292,34 @@ methods.
 \code{hasAdjustedRtime}: whether the object provides adjusted
 retention times.
 
-\code{hasAlignedFeatures}: whether the object contains feature
-alignment results.
+\code{hasFeatures}: whether the object contains correspondence
+results (i.e. features).
 
-\code{hasDetectedFeatures}: whether the object contains feature
+\code{hasChromPeaks}: whether the object contains peak
 detection results.
 
 \code{adjustedRtime},\code{adjustedRtime<-}:
 extract/set adjusted retention times. \code{adjustedRtime<-} should not be
 called manually, it is called internally by the \code{\link{adjustRtime}}
 methods. For \code{XCMSnExp} objects, \code{adjustedRtime<-} does also apply
-the retention time adjustment to the features in the object.
+the retention time adjustment to the chromatographic peaks in the object.
 The \code{bySample} parameter allows to specify whether the adjusted
 retention time should be grouped by sample (file).
 
-\code{featureGroups}, \code{featureGroups<-}: extract
-or set the feature alignment results.
+\code{featureDefinitions}, \code{featureDefinitions<-}: extract
+or set the correspondence results, i.e. the mz-rt features (peak groups).
 
-\code{features}, \code{features<-}: extract or set
-the matrix containing the information on identified features. Parameter
-\code{bySample} allows to specify whether features should be returned
-ungrouped (default \code{bySample = FALSE}) or grouped by sample (
-\code{bySample = TRUE}). The \code{features<-} method for \code{XCMSnExp}
-objects removes also all feature alignment and retention time correction
-results.
+\code{chromPeaks}, \code{chromPeaks<-}: extract or set
+the matrix containing the information on identified chromatographic peaks.
+Parameter \code{bySample} allows to specify whether peaks should be
+returned ungrouped (default \code{bySample = FALSE}) or grouped by sample (
+\code{bySample = TRUE}). The \code{chromPeaks<-} method for \code{XCMSnExp}
+objects removes also all correspondence (peak grouping) and retention time
+correction (alignment) results.
 See description of the return value for details on the returned matrix. Users
-usually don't have to use the \code{features<-} method directly as detected
-features are added to the object by the \code{\link{detectFeatures}} method.
+usually don't have to use the \code{chromPeaks<-} method directly as detected
+chromatographic peaks are added to the object by the
+\code{\link{findChromPeaks}} method.
 
 \code{rtime}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped
@@ -351,28 +355,31 @@ eventually along with their settings (\code{Param} parameter class). Optional
 arguments \code{fileIndex} and \code{type} allow to restrict to process steps
 of a certain type or performed on a certain file.
 
-\code{dropFeatures}: drops any identified features
-and returns the object without that information. Note that for
-\code{XCMSnExp} objects the method drops all results from a feature alignment
-or retention time adjustment too. For \code{XCMSnExp} objects the method
-drops also any related process history steps.
+\code{dropChromPeaks}: drops any identified chromatographic
+peaks and returns the object without that information. Note that for
+\code{XCMSnExp} objects the method drops all results from a correspondence
+(peak grouping) or alignment (retention time adjustment) too.
+For \code{XCMSnExp} objects the method drops also any related process
+history steps.
 
-\code{dropFeatureGroups}: drops aligned feature
-results (i.e. feature groups) and returns the object
-without that information. Note that for \code{XCMSnExp} objects the method
-will also drop retention time adjustment results, if these were performed
-after the last feature alignment (i.e. which base on the results from the
-feature alignment that are going to be removed). For \code{XCMSnExp} objects
-also all related process history steps are removed.
+\code{dropFeatureDefinitions}: drops the results from a
+correspondence (peak grouping) analysis, i.e. the definition of the mz-rt
+features and returns the object without that information. Note that for
+\code{XCMSnExp} objects the method will also drop retention time adjustment
+results, if these were performed after the last peak grouping (i.e. which
+base on the results from the peak grouping that are going to be removed).
+For \code{XCMSnExp} objects also all related process history steps are
+removed.
 
 \code{dropAdjustedRtime}: drops any retention time
 adjustment information and returns the object without adjusted retention
 time. For \code{XCMSnExp} object this also reverts the retention times
-reported for the features in the feature matrix to the original, raw, ones
-(after feature detection). Note that for \code{XCMSnExp} objects the method
-drops also all feature alignment results if these were performed \emph{after}
-the retention time adjustment. For \code{XCMSnExp} objects the method drops
-also any related process history steps.
+reported for the chromatographic peaks in the peak matrix to the original,
+raw, ones (after chromatographic peak detection). Note that for
+\code{XCMSnExp} objects the method drops also all peak grouping results
+if these were performed \emph{after} the retention time adjustment.
+For \code{XCMSnExp} objects the method drops also any related process history
+steps.
 }
 \section{Slots}{
 
@@ -381,14 +388,15 @@ also any related process history steps.
 tracking all individual analysis steps that have been performed.}
 
 \item{\code{msFeatureData}}{\code{MsFeatureData} class extending \code{environment}
-and containing the results from a feature detection (element
-\code{"features"}), feature alignment (element \code{"featureGroups"}) and
-retention time correction (element \code{""}) steps.}
+and containing the results from a chromatographic peak detection (element
+\code{"chromPeaks"}), peak grouping (element \code{"featureDefinitions"})
+and retention time correction (element \code{"adjustedRtime"}) steps.}
 }}
 \note{
-The \code{"features"} element in the \code{msFeatureData} slot is
+The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
 equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
-\code{"featureGroups"} contains information from the \code{}
+\code{"featureDefinitions"} contains information from the \code{@groups} and
+\code{@groupidx} slots from an \code{xcmsSet} object.
 }
 \examples{
 
@@ -396,24 +404,24 @@ equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
 library(faahKO)
 od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
                     system.file("cdf/KO/ko16.CDF", package = "faahKO")))
-## Now we perform a feature detection on this data set using the
+## Now we perform a chromatographic peak detection on this data set using the
 ## matched filter method. We are tuning the settings such that it performs
 ## faster.
 mfp <- MatchedFilterParam(binSize = 4)
-xod <- detectFeatures(od, param = mfp)
+xod <- findChromPeaks(od, param = mfp)
 
-## The results from the feature detection are now stored in the XCMSnExp
+## The results from the peak detection are now stored in the XCMSnExp
 ## object
 xod
 
-## The detected features can be accessed with the features method.
-head(features(xod))
+## The detected peaks can be accessed with the chromPeaks method.
+head(chromPeaks(xod))
 
-## The settings of the feature detection can be accessed with the
-## processHistory method
+## The settings of the chromatographic peak detection can be accessed with
+## the processHistory method
 processHistory(xod)
 
-## Also the parameter class for the feature detection can be accessed
+## Also the parameter class for the peak detection can be accessed
 processParam(processHistory(xod)[[1]])
 
 ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
@@ -441,16 +449,16 @@ head(split(spctr, fromFile(xod))[[1]])
 ##
 ## XCMSnExp objects can be filtered by file, retention time, mz values or
 ## MS level. For some of these filter preprocessing results (mostly
-## retention time correction and feature alignment results) will be dropped.
+## retention time correction and peak grouping results) will be dropped.
 ## Below we filter the XCMSnExp object by file to extract the results for
 ## only the second file.
 xod_2 <- filterFile(xod, file = 2)
 xod_2
 
-## Now the objects contains only the idenfified features for the second file
-head(features(xod_2))
+## Now the objects contains only the idenfified peaks for the second file
+head(chromPeaks(xod_2))
 
-head(features(xod)[features(xod)[, "sample"] == 2, ])
+head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
 
 ##########
 ## Coercing to an xcmsSet object
@@ -468,12 +476,12 @@ Johannes Rainer
 \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
 and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
 
-\code{\link{detectFeatures}} for available feature detection methods
+\code{\link{findChromPeaks}} for available peak detection methods
 returning a \code{XCMSnExp} object as a result.
 
-\code{\link{groupFeatures}} for available feature grouping methods
-and \code{\link{groupval,XCMSnExp-method}} for the method to extract feature
-grouping results.
+\code{\link{groupChromPeaks}} for available peak grouping
+methods and \code{\link{featureDefinitions}} for the method to extract
+the feature definitions representing the peak grouping results.
 
 \code{\link{adjustRtime}} for retention time adjustment methods.
 }

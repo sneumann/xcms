@@ -1,4 +1,5 @@
-## All low level (API) analysis functions for feature detection should go in here.
+## All low level (API) analysis functions for chromatographic peak detection
+## should go in here.
 #' @include c.R functions-binning.R cwTools.R
 
 ############################################################
@@ -13,10 +14,11 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##' @title Core API function for centWave feature detection
+##' @title Core API function for centWave peak detection
 ##'
-##' @description This function performs peak density and wavelet based feature
-##' detection for high resolution LC/MS data in centroid mode [Tautenhahn 2008].
+##' @description This function performs peak density and wavelet based
+##' chromatographic peak detection for high resolution LC/MS data in centroid
+##' mode [Tautenhahn 2008].
 ##'
 ##' @details This algorithm is most suitable for high resolution
 ##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
@@ -30,7 +32,7 @@
 ##' @note The \emph{centWave} was designed to work on centroided mode, thus it
 ##' is expected that such data is presented to the function.
 ##'
-##' This function exposes core feature detection functionality of
+##' This function exposes core chromatographic peak detection functionality of
 ##' the \emph{centWave} method. While this function can be called directly,
 ##' users will generally call the corresponding method for the data object
 ##' instead.
@@ -43,25 +45,26 @@
 ##' spectra/scans of the data representing the retention time of each scan.
 ##' @param valsPerSpect Numeric vector with the number of values for each
 ##' spectrum.
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @references
 ##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 ##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 ##' 2008, 9:504
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
 ##' \code{sd} being the standard deviation of local chromatographic noise.}
 ##' \item{egauss}{RMSE of Gaussian fit.}
@@ -73,7 +76,7 @@
 ##' \item{h}{Gaussian parameter h.}
 ##' \item{f}{Region number of the m/z ROI where the peak was localized.}
 ##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scale}{Scale on which the peak was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
@@ -88,7 +91,7 @@
 ##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 ##' xr <- xcmsRaw(fs, profstep = 0)
 ##'
-##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
 ##' mzVals <- xr@env$mz
 ##' intVals <- xr@env$intensity
 ##' ## Define the values per spectrum:
@@ -97,10 +100,10 @@
 ##' ## Calling the function. We're using a large value for noise to speed up
 ##' ## the call in the example performance - in a real use case we would either
 ##' ## set the value to a reasonable value or use the default value.
-##' res <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+##' res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
 ##' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
 ##' head(res)
-do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
+do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
                                        peakwidth = c(20, 50),
                                        snthresh = 10,
@@ -293,7 +296,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 
     ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
     ## lp <- -1
-    message("Detecting features in ", length(roiList),
+    message("Detecting chromatographic peaks in ", length(roiList),
             " regions of interest ...", appendLF = FALSE)
 
     for (f in  1:lf) {
@@ -645,21 +648,21 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
-##' @title Core API function for massifquant feature detection
+##' @title Core API function for massifquant peak detection
 ##'
-##' @description Massifquant is a Kalman filter (KF)-based feature
-##' detection for XC-MS data in centroid mode. The identified features
+##' @description Massifquant is a Kalman filter (KF)-based chromatographic peak
+##' detection for XC-MS data in centroid mode. The identified peaks
 ##' can be further refined with the \emph{centWave} method (see
-##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
+##' \code{\link{do_findChromPeaks_centWave}} for details on centWave)
 ##' by specifying \code{withWave = TRUE}.
 ##'
 ##' @details This algorithm's performance has been tested rigorously
 ##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
-##' Simultaneous kalman filters identify features and calculate their
+##' Simultaneous kalman filters identify peaks and calculate their
 ##' area under the curve. The default parameters are set to operate on
 ##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
 ##' simple exploratory data analysis to find out where to set a minimum
-##' intensity, and identify how many scans an average feature spans. The
+##' intensity, and identify how many scans an average peak spans. The
 ##' \code{consecMissedLimit} parameter has yielded good performance on
 ##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
 ##' to be at (\code{1}). This may change as the algorithm has yet to be
@@ -669,25 +672,26 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' The \code{ppm} and \code{checkBack} parameters have shown less influence
 ##' than the other parameters and exist to give users flexibility and
 ##' better accuracy.
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
-##' @inheritParams featureDetection-massifquant
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams findChromPeaks-massifquant
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the features across
+##' \item{mz}{Intensity weighted mean of m/z values of the peaks across
 ##' scans.}
-##' \item{mzmin}{Minumum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mzmin}{Minumum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' }
 ##' If \code{withWave} is set to \code{TRUE}, the result is the same as
-##' returned by the \code{\link{do_detectFeatures_centWave}} method.
-##' @family core feature detection functions
+##' returned by the \code{\link{do_findChromPeaks_centWave}} method.
+##' @family core peak detection functions
 ##' @seealso \code{\link{massifquant}} for the standard user interface method.
 ##' @references
 ##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
@@ -708,11 +712,11 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' ## Define the values per spectrum:
 ##' valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
 ##'
-##' ## Perform the feature detection using massifquant
-##' res <- do_detectFeatures_massifquant(mz = mzVals, int = intVals,
+##' ## Perform the peak detection using massifquant
+##' res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
 ##' scantime = xraw@scantime, valsPerSpect = valsPerSpect)
 ##' head(res)
-do_detectFeatures_massifquant <- function(mz,
+do_findChromPeaks_massifquant <- function(mz,
                                           int,
                                           scantime,
                                           valsPerSpect,
@@ -770,7 +774,7 @@ do_detectFeatures_massifquant <- function(mz,
                                         ppm = ppm)
     message("OK")
     if (withWave) {
-        featlist <- do_detectFeatures_centWave(mz = mz, int = int,
+        featlist <- do_findChromPeaks_centWave(mz = mz, int = int,
                                                scantime = scantime,
                                                valsPerSpect = valsPerSpect,
                                                ppm = ppm, peakwidth = peakwidth,
@@ -795,7 +799,7 @@ do_detectFeatures_massifquant <- function(mz,
             return(nopeaks)
         }
 
-        ## Get the max intensity for each feature.
+        ## Get the max intensity for each peak.
         maxo <- lapply(massifquantROIs, function(z) {
             raw <- .rawMat(mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect,
@@ -858,18 +862,18 @@ do_detectFeatures_massifquant <- function(mz,
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
 ##
-##' @title Core API function for matchedFilter feature detection
+##' @title Core API function for matchedFilter peak detection
 ##'
-##' @description This function identifies features in the chromatographic
+##' @description This function identifies peaks in the chromatographic
 ##' time domain as described in [Smith 2006]. The intensity values are
 ##' binned by cutting The LC/MS data into slices (bins) of a mass unit
 ##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is
-##' selected. The feature detection is then performed in each bin by
+##' selected. The peak detection is then performed in each bin by
 ##' extending it based on the \code{steps} parameter to generate slices
 ##' comprising bins \code{current_bin - steps +1} to \code{current_bin + steps - 1}.
 ##' Each of these slices is then filtered with matched filtration using
-##' a second-derative Gaussian as the model feature/peak shape. After filtration
-##' features are detected using a signal-to-ration cut-off. For more details
+##' a second-derative Gaussian as the model peak shape. After filtration
+##' peaks are detected using a signal-to-ration cut-off. For more details
 ##' and illustrations see [Smith 2006].
 ##'
 ##' @details The intensities are binned by the provided m/z values within each
@@ -881,30 +885,31 @@ do_detectFeatures_massifquant <- function(mz,
 ##' \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
 ##'
 ##' @note
-##' This function exposes core feature detection functionality of
+##' This function exposes core peak detection functionality of
 ##' the \emph{matchedFilter} method. While this function can be called directly,
 ##' users will generally call the corresponding method for the data object
 ##' instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
 ##'
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
 ##' @inheritParams imputeLinInterpol
-##' @inheritParams featureDetection-matchedFilter
+##' @inheritParams findChromPeaks-matchedFilter
 ##'
-##' @return A matrix, each row representing an identified feature, with columns:
+##' @return A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
 ##' \item{intf}{Integrated intensity of the filtered peak.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{maxf}{Maximum intensity of the filtered peak.}
-##' \item{i}{Rank of feature in merged EIC (\code{<= max}).}
-##' \item{sn}{Signal to noise ratio of the feature}
+##' \item{i}{Rank of peak in merged EIC (\code{<= max}).}
+##' \item{sn}{Signal to noise ratio of the peak}
 ##' }
 ##' @references
 ##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
@@ -912,7 +917,7 @@ do_detectFeatures_massifquant <- function(mz,
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
 ##' @author Colin A Smith, Johannes Rainer
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @seealso \code{\link{binYonX}} for a binning function,
 ##' \code{\link{imputeLinInterpol}} for the interpolation of missing values.
 ##' \code{\link{matchedFilter}} for the standard user interface method.
@@ -922,16 +927,16 @@ do_detectFeatures_massifquant <- function(mz,
 ##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 ##' xr <- xcmsRaw(fs)
 ##'
-##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
 ##' mzVals <- xr@env$mz
 ##' intVals <- xr@env$intensity
 ##' ## Define the values per spectrum:
 ##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
 ##'
-##' res <- do_detectFeatures_matchedFilter(mz = mzVals, int = intVals,
+##' res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
 ##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
 ##' head(res)
-do_detectFeatures_matchedFilter <- function(mz,
+do_findChromPeaks_matchedFilter <- function(mz,
                                             int,
                                             scantime,
                                             valsPerSpect,
@@ -1130,7 +1135,7 @@ do_detectFeatures_matchedFilter <- function(mz,
 }
 
 ## ############################################################
-## ## Same as do_detectFeatures_matchedFilter except:
+## ## Same as do_findChromPeaks_matchedFilter except:
 ## ##
 ## ## o Using the binYtoX and imputeLinInterpol instead of the
 ## ##   profBin* methods.
@@ -1708,9 +1713,9 @@ do_detectFeatures_matchedFilter <- function(mz,
 ## MSW
 ##
 ##' @title Core API function for single-spectrum non-chromatography MS data
-##' feature detection
+##' peak detection
 ##'
-##' @description This function performs feature detection in mass spectrometry
+##' @description This function performs peak detection in mass spectrometry
 ##' direct injection spectrum using a wavelet based algorithm.
 ##'
 ##' @details This is a wrapper around the peak picker in Bioconductor's
@@ -1719,33 +1724,33 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
 ##' \emph{xcmsDirect} vignette for more information.
 ##'
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
 ##' @param ... Additional parameters to be passed to the
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
 ##'
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified peak, with columns:
 ##' \describe{
-##' \item{mz}{m/z value of the feature at the centroid position.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{mz}{m/z value of the peak at the centroid position.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
 ##' \item{rt}{Always \code{-1}.}
 ##' \item{rtmin}{Always \code{-1}.}
 ##' \item{rtmax}{Always \code{-1}.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{intf}{Always \code{NA}.}
-##' \item{maxf}{Maximum MSW-filter response of the feature.}
+##' \item{maxf}{Maximum MSW-filter response of the peak.}
 ##' \item{sn}{Signal to noise ratio.}
 ##' }
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @seealso ##' \code{\link{MSW}} for the standard user interface
 ##' method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
 ##' \code{MassSpecWavelet} package.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
-do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
+do_findPeaks_MSW <- function(mz, int, snthresh = 3,
                                   verboseColumns = FALSE, ...) {
     ## Input argument checking.
     if (missing(int))
@@ -1967,7 +1972,7 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 ## This one might be too cumbersome to do it for plain vectors. It would be ideal
 ## for MSnExp objects though.
 ##
-## do_detectFeatures_MS1 <- function(mz, int, scantime, valsPerSpect) {
+## do_findChromPeaks_MS1 <- function(mz, int, scantime, valsPerSpect) {
 ##     ## Checks: do I have
 ## }
 
@@ -1977,7 +1982,7 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 ##                                   xcmsPeaks, ppm=25,
 ##                                   maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
 ##   if(nrow(xcmsPeaks) == 0){
-##     warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
+##     warning("Warning: There are no peaks (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
 ##     return(list())
 ##   }
 ##   if(class(xcmsPeaks) != "xcmsPeaks")
@@ -2036,7 +2041,7 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 ## }
 
 ## Tuned from the original code.
-##' @param features. \code{matrix} or \code{data.frame} with features for which
+##' @param peaks. \code{matrix} or \code{data.frame} with peaks for which
 ##' isotopes should be predicted. Required columns are \code{"mz"},
 ##' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
 ##' \code{"intb"} and \code{"scale"}.
@@ -2045,18 +2050,18 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 ##' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
 ##' \code{"intensity"} (always -1) and \code{"scale"}.
 ##' @noRd
-do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
+do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
                                mzIntervalExtension = TRUE) {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    if (is.null(dim(features.)))
-        stop("'features.' has to be a matrix or data.frame!")
-    if (!all(req_cols %in% colnames(features.))) {
-        not_there <- req_cols[!(req_cols %in% colnames(features.))]
-        stop("'features.' lacks required columns ",
+    if (is.null(dim(peaks.)))
+        stop("'peaks.' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(peaks.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(peaks.))]
+        stop("'peaks.' lacks required columns ",
              paste0("'", not_there, "'", collapse = ","), "!")
     }
-    if (is.data.frame(features.))
-        features. <- as.matrix(features.)
+    if (is.data.frame(peaks.))
+        peaks. <- as.matrix(peaks.)
 
     isotopeDistance <- 1.0033548378
     charges <- 1:maxCharge
@@ -2064,8 +2069,8 @@ do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
 
     isotopePopulationMz <- unique(as.numeric(matrix(isos, ncol = 1) %*%
                                              (isotopeDistance / charges)))
-    ## split the features into a list.
-    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+    ## split the peaks into a list.
+    roiL <- split(peaks.[, req_cols, drop = FALSE], f = 1:nrow(peaks.))
 
     newRois <- lapply(roiL, function(z) {
         if (mzIntervalExtension)
@@ -2085,22 +2090,22 @@ do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
     return(do.call(rbind, newRois))
 }
 
-##' param @features. see do_define_isotopes
+##' param @peaks. see do_define_isotopes
 ##' @param polarity character(1) defining the polarity, either \code{"positive"}
 ##' or \code{"negative"}.
 ##' @return see do_define_isotopes.
 ##' @noRd
-do_define_adducts <- function(features., polarity = "positive") {
+do_define_adducts <- function(peaks., polarity = "positive") {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    if (is.null(dim(features.)))
-        stop("'features' has to be a matrix or data.frame!")
-    if (!all(req_cols %in% colnames(features.))) {
-        not_there <- req_cols[!(req_cols %in% colnames(features.))]
-        stop("'features' lacks required columns ",
+    if (is.null(dim(peaks.)))
+        stop("'peaks.' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(peaks.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(peaks.))]
+        stop("'peaks.' lacks required columns ",
              paste0("'", not_there, "'", collapse = ","), "!")
     }
-    if (is.data.frame(features.))
-        features. <- as.matrix(features.)
+    if (is.data.frame(peaks.))
+        peaks. <- as.matrix(peaks.)
     ## considered adduct distances
     ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc
     ## Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion
@@ -2239,7 +2244,7 @@ do_define_adducts <- function(features., polarity = "positive") {
     )
 
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+    roiL <- split(peaks.[, req_cols, drop = FALSE], f = 1:nrow(peaks.))
 
     newRois <- lapply(roiL, function(z) {
         mzDiff <- unlist(lapply(adductPopulationMz, function(x) {
@@ -2299,44 +2304,44 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 }
 
 ############################################################
-## do_detectFeatyres_centWaveWithPredIsoROIs
+## do_findChromPeaks_centWaveWithPredIsoROIs
 ## 1) Run a centWave.
-## 2) Predict isotope ROIs for the identified features.
+## 2) Predict isotope ROIs for the identified peaks.
 ## 3) centWave on the predicted isotope ROIs.
-## 4) combine both lists of identified features removing overlapping ones by
-##    keeping the feature with the largest signal intensity.
-##' @title Core API function for two-step centWave feature detection with feature isotopes
+## 4) combine both lists of identified peaks removing overlapping ones by
+##    keeping the peak with the largest signal intensity.
+##' @title Core API function for two-step centWave peak detection with isotopes
 ##'
-##' @description The \code{do_detectFeatures_centWaveWithPredIsoROIs} performs a
-##' two-step centWave based feature detection: features are identified using
-##' centWave followed by a prediction of the location of the identified features'
-##' isotopes in the mz-retention time space. These locations are fed as
+##' @description The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
+##' two-step centWave based peak detection: chromatographic peaks are identified
+##' using centWave followed by a prediction of the location of the identified
+##' peaks' isotopes in the mz-retention time space. These locations are fed as
 ##' \emph{regions of interest} (ROIs) to a subsequent centWave run. All non
-##' overlapping features from these two feature detection runs are reported as
-##' the final list of identified features.
+##' overlapping peaks from these two peak detection runs are reported as
+##' the final list of identified peaks.
 ##'
 ##' @details For more details on the centWave algorithm see
 ##' \code{\link{centWave}}.
 ##'
-##' @inheritParams featureDetection-centWave
-##' @inheritParams featureDetection-centWaveWithPredIsoROIs
-##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams findChromPeaks-centWaveWithPredIsoROIs
+##' @inheritParams do_findChromPeaks_centWave
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @return
-##' A matrix, each row representing an identified feature. All non-overlapping
-##' features identified in both centWave runs are reported.
+##' A matrix, each row representing an identified chromatographic peak. All
+##' non-overlapping peaks identified in both centWave runs are reported.
 ##' The matrix columns are:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
+##' \item{mzmin}{Minimum m/z of the peaks.}
+##' \item{mzmax}{Maximum m/z of the peaks.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
 ##' \code{sd} being the standard deviation of local chromatographic noise.}
 ##' \item{egauss}{RMSE of Gaussian fit.}
@@ -2348,14 +2353,14 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 ##' \item{h}{Gaussian parameter h.}
 ##' \item{f}{Region number of the m/z ROI where the peak was localized.}
 ##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scale}{Scale on which the peak was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 ##' }
-##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
+##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
 ##' @author Hendrik Treutler, Johannes Rainer
-do_detectFeatures_centWaveWithPredIsoROIs <-
+do_findChromPeaks_centWaveWithPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 10, prefilter = c(3, 100), mzCenterFun = "wMean",
              integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
@@ -2364,11 +2369,11 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
         ## Input argument checking: most of it will be done in
-        ## do_detectFeatures_centWave
+        ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
         ## 1) First centWave
-        feats_1 <- do_detectFeatures_centWave(mz = mz, int = int,
+        feats_1 <- do_findChromPeaks_centWave(mz = mz, int = int,
                                               scantime = scantime,
                                               valsPerSpect = valsPerSpect,
                                               ppm = ppm,
@@ -2383,7 +2388,7 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
                                               roiScales = roiScales)
-        return(do_detectFeatures_addPredIsoROIs(mz = mz, int = int,
+        return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
                                                 ppm = ppm,
@@ -2396,63 +2401,63 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
                                                 fitgauss = fitgauss,
                                                 noise = noise,
                                                 verboseColumns = verboseColumns,
-                                                features. = feats_1,
+                                                peaks. = feats_1,
                                                 maxCharge = maxCharge,
                                                 maxIso = maxIso,
                                                 mzIntervalExtension = mzIntervalExtension,
                                                 polarity = polarity))
     }
-##' @description The \code{do_detectFeatures_centWaveAddPredIsoROIs} performs
-##' centWave based feature detection based in regions of interest (ROIs)
-##' representing predicted isotopes for the features submitted with argument
-##' \code{features.}. The function returns a matrix with the identified features
-##' consisting of all input features and features representing predicted isotopes
+##' @description The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
+##' centWave based peak detection based in regions of interest (ROIs)
+##' representing predicted isotopes for the peaks submitted with argument
+##' \code{peaks.}. The function returns a matrix with the identified peaks
+##' consisting of all input peaks and peaks representing predicted isotopes
 ##' of these (if found by the centWave algorithm).
 ##'
-##' @param features. A matrix or \code{xcmsPeaks} object such as one returned by
-##' a call to \code{link{do_detectFeatures_centWave}} or
+##' @param peaks. A matrix or \code{xcmsPeaks} object such as one returned by
+##' a call to \code{link{do_findChromPeaks_centWave}} or
 ##' \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
-##' with the features for which isotopes should be predicted and used for an
-##' additional feature detectoin using the centWave method. Required columns are:
+##' with the peaks for which isotopes should be predicted and used for an
+##' additional peak detectoin using the centWave method. Required columns are:
 ##' \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
 ##' \code{"scale"} and \code{"into"}.
 ##'
-##' @param snthresh For \code{do_detectFeatures_addPredIsoROIs}:
+##' @param snthresh For \code{do_findChromPeaks_addPredIsoROIs}:
 ##' numeric(1) defining the signal to noise threshold for the centWave algorithm.
-##' For \code{do_detectFeatures_centWaveWithPredIsoROIs}: numeric(1) defining the
+##' For \code{do_findChromPeaks_centWaveWithPredIsoROIs}: numeric(1) defining the
 ##' signal to noise threshold for the initial (first) centWave run.
 ##'
-##' @inheritParams featureDetection-centWave
-##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams do_findChromPeaks_centWave
 ##'
-##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
-do_detectFeatures_addPredIsoROIs <-
+##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
+do_findChromPeaks_addPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",
              integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-             verboseColumns = FALSE, features. = NULL,
+             verboseColumns = FALSE, peaks. = NULL,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
         ## Input argument checking: most of it will be done in
-        ## do_detectFeatures_centWave
+        ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
         ## These variables might at some point be added as function args.
         addNewIsotopeROIs <- TRUE
         addNewAdductROIs <- FALSE
         ## 2) predict isotope and/or adduct ROIs
-        f_mod <- features.
+        f_mod <- peaks.
         ## Extend the mzmin and mzmax if needed.
-        tittle <- features.[, "mz"] * (ppm / 2) / 1E6
-        expand_mz <- (features.[, "mzmax"] - features.[, "mzmin"]) < (tittle * 2)
+        tittle <- peaks.[, "mz"] * (ppm / 2) / 1E6
+        expand_mz <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) < (tittle * 2)
         if (any(expand_mz)) {
-            f_mod[expand_mz, "mzmin"] <- features.[expand_mz, "mz"] -
+            f_mod[expand_mz, "mzmin"] <- peaks.[expand_mz, "mz"] -
                 tittle[expand_mz]
-            f_mod[expand_mz, "mzmax"] <- features.[expand_mz, "mz"] + tittle[expand_mz]
+            f_mod[expand_mz, "mzmax"] <- peaks.[expand_mz, "mz"] + tittle[expand_mz]
         }
         ## Add predicted ROIs
         if (addNewIsotopeROIs) {
-            iso_ROIs <- do_define_isotopes(features. = f_mod,
+            iso_ROIs <- do_define_isotopes(peaks. = f_mod,
                                            maxCharge = maxCharge,
                                            maxIso = maxIso,
                                            mzIntervalExtension = mzIntervalExtension)
@@ -2462,7 +2467,7 @@ do_detectFeatures_addPredIsoROIs <-
                                     "length", "intensity", "scale")
         }
         if (addNewAdductROIs) {
-            add_ROIs <- do_define_adducts(features. = f_mod, polarity = polarity)
+            add_ROIs <- do_define_adducts(peaks. = f_mod, polarity = polarity)
         } else {
             add_ROIs <- matrix(nrow = 0, ncol = 8)
             colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
@@ -2471,7 +2476,7 @@ do_detectFeatures_addPredIsoROIs <-
         newROIs <- rbind(iso_ROIs, add_ROIs)
         rm(f_mod)
         if (nrow(newROIs) == 0)
-            return(features.)
+            return(peaks.)
         ## Remove ROIs that are out of mz range:
         mz_range <- range(mz)
         newROIs <- newROIs[newROIs[, "mzmin"] >= mz_range[1] &
@@ -2489,14 +2494,14 @@ do_detectFeatures_addPredIsoROIs <-
         newROIs <- newROIs[keep_me, , drop = FALSE]
 
         if (nrow(newROIs) == 0) {
-            warning("No isotope or adduct ROIs for the identified features with a ",
+            warning("No isotope or adduct ROIs for the identified peaks with a ",
                     "valid signal found!")
-            return(features.)
+            return(peaks.)
         }
 
         ## 3) centWave using the identified ROIs.
         roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
-        feats_2 <- do_detectFeatures_centWave(mz = mz, int = int,
+        feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
                                               scantime = scantime,
                                               valsPerSpect = valsPerSpect,
                                               ppm = ppm, peakwidth = peakwidth,
@@ -2529,30 +2534,30 @@ do_detectFeatures_addPredIsoROIs <-
             ## Comparing each ROI with each peak; slightly modified from the original
             ## code in which we prevent calling apply followed by two lapply.
             removeROIs <- rep(FALSE, nrow(feats_2))
-            removeFeats <- rep(FALSE, nrow(features.))
+            removeFeats <- rep(FALSE, nrow(peaks.))
             overlapProportionThreshold <- 0.01
             for (i in 1:nrow(feats_2)) {
-                ## Compare ROI i with all features (peaks) and check if its
+                ## Compare ROI i with all peaks (peaks) and check if its
                 ## overlapping
                 ## mz
                 roiMzCenter <- (feats_2[i, "mzmin"] + feats_2[i, "mzmax"]) / 2
-                peakMzCenter <- (features.[, "mzmin"] + features.[, "mzmax"]) / 2
+                peakMzCenter <- (peaks.[, "mzmin"] + peaks.[, "mzmax"]) / 2
                 roiMzRadius <- (feats_2[i, "mzmax"] - feats_2[i, "mzmin"]) / 2
-                peakMzRadius <- (features.[, "mzmax"] - features.[, "mzmin"]) / 2
+                peakMzRadius <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) / 2
                 overlappingMz <- abs(peakMzCenter - roiMzCenter) <=
                     (roiMzRadius + peakMzRadius)
                 ## rt
                 roiRtCenter <- (feats_2[i, "rtmin"] + feats_2[i, "rtmax"]) / 2
-                peakRtCenter <- (features.[, "rtmin"] + features.[, "rtmax"]) / 2
+                peakRtCenter <- (peaks.[, "rtmin"] + peaks.[, "rtmax"]) / 2
                 roiRtRadius <- (feats_2[i, "rtmax"] - feats_2[i, "rtmin"]) / 2
-                peakRtRadius <- (features.[, "rtmax"] - features.[, "rtmin"]) / 2
+                peakRtRadius <- (peaks.[, "rtmax"] - peaks.[, "rtmin"]) / 2
                 overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
                     (roiRtRadius + peakRtRadius)
                 is_overlapping <- overlappingMz & overlappingRt
                 ## Now determine whether we remove the ROI or the peak, depending
                 ## on the raw signal intensity.
                 if (any(is_overlapping)) {
-                    if (any(features.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                    if (any(peaks.[is_overlapping, "into"] > feats_2[i, "into"])) {
                         removeROIs[i] <- TRUE
                     } else {
                         removeFeats[is_overlapping] <- TRUE
@@ -2560,13 +2565,13 @@ do_detectFeatures_addPredIsoROIs <-
                 }
             }
             feats_2 <- feats_2[!removeROIs, , drop = FALSE]
-            features. <- features.[!removeFeats, , drop = FALSE]
+            peaks. <- peaks.[!removeFeats, , drop = FALSE]
         }
         if (!verboseColumns)
-            features. <- features.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
-                                        "rtmax", "into", "intb", "maxo", "sn")]
+            peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                  "rtmax", "into", "intb", "maxo", "sn")]
         if (nrow(feats_2) == 0)
-            return(features.)
+            return(peaks.)
         else
-            return(rbind(features., feats_2))
+            return(rbind(peaks., feats_2))
 }

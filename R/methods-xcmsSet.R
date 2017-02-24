@@ -32,7 +32,7 @@ setMethod("show", "xcmsSet", function(object) {
                 scanrange(object)[2], "\n")
         }
     }
-    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.FEATURE.DETECTION)
+    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.PEAK.DETECTION)
     if (length(errs) > 0) {
         cat(" o Detection errors: ", length(errs), " files failed.\n",
             "   Use method 'showError' to list the error(s).\n\n", sep ="")
@@ -343,8 +343,8 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
                                                minsamp = 1, mzwid = 0.25,
                                                max = 50, sleep = 0) {
-    ## Using now the do_groupFeatures_density function:
-    res <- do_groupFeatures_density(peaks(object),
+    ## Using now the do_groupChromPeaks_density function:
+    res <- do_groupChromPeaks_density(peaks(object),
                                     sampleGroups = sampclass(object),
                                     bw = bw,
                                     minFraction = minfrac,
@@ -352,8 +352,8 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
                                     binSize = mzwid,
                                     maxFeatures = max)
     
-    groups(object) <- res$featureGroups
-    groupidx(object) <- res$featureIndex
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
     object
 })
 
@@ -365,14 +365,14 @@ setMethod("group.mzClust", "xcmsSet", function(object,
                                                minsamp = 1,
                                                minfrac=0.5) {
 
-    res <- do_groupFeatures_mzClust(features = peaks(object),
-                                    sampleGroups = sampclass(object),
-                                    ppm = mzppm,
-                                    absMz = mzabs,
-                                    minFraction = minfrac,
-                                    minSamples = minsamp)
-    groups(object) <- res$featureGroups
-    groupidx(object) <- res$featureIndex
+    res <- do_groupPeaks_mzClust(peaks = peaks(object),
+                                 sampleGroups = sampclass(object),
+                                 ppm = mzppm,
+                                 absMz = mzabs,
+                                 minFraction = minfrac,
+                                 minSamples = minsamp)
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
     object
 })
 
@@ -381,14 +381,14 @@ setMethod("group.mzClust", "xcmsSet", function(object,
 setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
                                                mzCheck=0.2, rtCheck=15, kNN=10) {
 
-    res <- do_groupFeatures_nearest(features = peaks(object),
-                                    sampleGroups = sampclass(object),
-                                    mzVsRtBalance = mzVsRTbalance,
-                                    absMz = mzCheck,
-                                    absRt = rtCheck,
-                                    kNN = kNN)
-    groups(object) <- res$featureGroups
-    groupidx(object) <- res$featureIndex
+    res <- do_groupChromPeaks_nearest(peaks = peaks(object),
+                                      sampleGroups = sampclass(object),
+                                      mzVsRtBalance = mzVsRTbalance,
+                                      absMz = mzCheck,
+                                      absRt = rtCheck,
+                                      kNN = kNN)
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
 
     invisible(object)
 })
@@ -498,14 +498,14 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     }
 
     minFr <- (n - missing) / n
-    res <- do_adjustRtime_featureGroups(features = peakmat,
-                                        featureIndex = object@groupidx,
-                                        rtime = rtcor,
-                                        minFraction = minFr,
-                                        extraFeatures = extra,
-                                        smooth = smooth,
-                                        span = span,
-                                        family = family)
+    res <- do_adjustRtime_peakGroups(peaks = peakmat,
+                                     peakIndex = object@groupidx,
+                                     rtime = rtcor,
+                                     minFraction = minFr,
+                                     extraPeaks = extra,
+                                     smooth = smooth,
+                                     span = span,
+                                     family = family)
     rtdevsmo <- vector("list", n)
     for (i in 1:n) {
         rtdevsmo[[i]] <- rtcor[[i]] - res[[i]]
@@ -522,8 +522,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     if (plottype %in% c("deviation", "mdevden")) {
         ## Need also the 'rt' matrix:
-        rt <- .getFeatureGroupsRtMatrix(peakmat, object@groupidx, n,
-                                    missing, extra)
+        rt <- .getPeakGroupsRtMatrix(peakmat, object@groupidx, n,
+                                     missing, extra)
         rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
         
         ## define the colors and line types and returns a list of
@@ -623,8 +623,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
     if (length(idx) == 0)
         stop("No peak groups found for retention time correction")
-    ## Ordering the feature groups by the rtmed might not represent the ordering
-    ## of the below selected "representative" feature for each feature group.
+    ## Ordering the peaks by the rtmed might not represent the ordering
+    ## of the below selected "representative" peak for each peak.
     ## See issue #110
     ## idx <- idx[order(groupmat[idx,"rtmed"])]
 
@@ -964,6 +964,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
         ## Why are we rounding here, but NOT in the retcor.peakgroups?
         ## -> issue #122
+        ## The point is we're using the un-rounded adjusted rt for the rt, BUT
+        ## use the rounded values for the adjustment of the peak rts.        
         rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
 
         rm(obj2)
@@ -976,6 +978,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     }
 
     cat("\n")
+    ## Why are we rounding here, but NOT in the retcor.peakgroups?
+    ## -> issue #122
     rtdevsmo[[center]] <- round(rtcor[[center]] - object@rt$corrected[[center]], 2)
 
     if (plottype == "deviation") {
@@ -2036,7 +2040,7 @@ setMethod("specDist", signature(object="xcmsSet"),
 ##' @title Extract processing errors
 ##' @aliases showError
 ##'
-##' @description If feature detection is performed with \code{\link{findPeaks}}
+##' @description If peak detection is performed with \code{\link{findPeaks}}
 ##' setting argument \code{stopOnError = FALSE} eventual errors during the
 ##' process do not cause to stop the processing but are recorded inside of the
 ##' resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed

@@ -1,5 +1,5 @@
 ## Functions for xcmsSet objects.
-#' @include DataClasses.R do_detectFeatures-functions.R
+#' @include DataClasses.R do_findChromPeaks-functions.R
 
 ## The "constructor"
 ## The "new" xcmsSet method using BiocParallel.
@@ -146,7 +146,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     ## Error identifying features in <>: Error:... -> info + error
     isOK <- bpok(res)
     if (all(!isOK))
-        stop("Feature detection failed for all files!",
+        stop("Chromatographic peak detection failed for all files!",
              " The first error was: ", res[[1]])
     if (any(!isOK)) {
         ## Use scantime from a working file one of the failing ones.
@@ -170,24 +170,24 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                 warning("Only 1 peak found in sample ", snames[i], ".")
             else if (nrow(pks) < 5)
                 warning("Only ", nrow(pks), " found in sample ", snames[i], ".")
-            proclist[[i]] <- ProcessHistory(info. = paste0("Feature detection in '",
+            proclist[[i]] <- ProcessHistory(info. = paste0("Peak detection in '",
                                                           basename(files[i]),
                                                           "': ", nrow(pks),
-                                                          " features identified."),
+                                                          " peaks identified."),
                                             date. = res[[i]]$date,
-                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            type. = .PROCSTEP.PEAK.DETECTION,
                                             fileIndex. = i)
         } else {
             scntlist[[i]] <- scnt
             peaklist[[i]] <- NULL
             proclist[[i]] <- ProcessHistory(info. = paste0("Error identifying",
-                                                          " features in '",
+                                                          " peaks in '",
                                                           basename(files[i]),
                                                           "': ", res[[i]]),
                                             error. = res[[i]],
-                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            type. = .PROCSTEP.PEAK.DETECTION,
                                             fileIndex. = i)
-            warning("Feature detection failed in '", files[i], "':", res[[i]])
+            warning("Peak detection failed in '", files[i], "':", res[[i]])
         }
     }
     ## peaklist <- lapply(res, function(x) x$peaks)

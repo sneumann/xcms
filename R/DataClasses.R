@@ -43,7 +43,7 @@ setClass("xcmsSet",
                                progressCallback = function(progress) NULL,
                                .processHistory = list()),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              ## Check if all slots are present.
              slNames <- slotNames(object)
              missingSlots <- character()
@@ -52,10 +52,10 @@ setClass("xcmsSet",
                      missingSlots <- c(missingSlots, slNames[i])
              }
              if (length(missingSlots) > 0)
-                 msg <- validMsg(msg, paste0("This xcmsSet lacks slot(s): ",
-                                             paste(missingSlots, collapse = ","),
-                                             ". Please update the object using",
-                                             " the 'updateObject' method."))
+                 msg <- c(msg, paste0("This xcmsSet lacks slot(s): ",
+                                      paste(missingSlots, collapse = ","),
+                                      ". Please update the object using",
+                                      " the 'updateObject' method."))
              ## Check the .processHistory slot.
              if (!any(missingSlots == ".processHistory")) {
                  inh <- unlist(lapply(object@.processHistory,
@@ -63,16 +63,15 @@ setClass("xcmsSet",
                                           return(inherits(z, "ProcessHistory"))
                                       }))
                  if (!all(inh))
-                     msg <- validMsg(msg,
-                                     paste0("Slot '.processHistory' should",
-                                            " only contain 'ProcessHistory'",
-                                            " objects!"))
+                     msg <- c(msg,
+                              paste0("Slot '.processHistory' should",
+                                     " only contain 'ProcessHistory'",
+                                     " objects!"))
              }
-             if (!is.null(msg))
+             if (length(msg))
                  return(msg)
              return(TRUE)
-         }
-         )
+         })
 
 ############################################################
 ## xcmsEIC
@@ -198,13 +197,13 @@ setClass("xcmsPeaks", contains = "matrix")
 ############################################################
 ## Processing history type statics
 .PROCSTEP.UNKNOWN <- "Unknown"
-.PROCSTEP.FEATURE.DETECTION <- "Feature detection"
-.PROCSTEP.FEATURE.ALIGNMENT <- "Feature alignment"
+.PROCSTEP.PEAK.DETECTION <- "Peak detection"
+.PROCSTEP.PEAK.GROUPING <- "Peak grouping"
 .PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
-    .PROCSTEP.FEATURE.DETECTION,
-    .PROCSTEP.FEATURE.ALIGNMENT,
+    .PROCSTEP.PEAK.DETECTION,
+    .PROCSTEP.PEAK.GROUPING,
     .PROCSTEP.RTIME.CORRECTION
 )
 
@@ -215,13 +214,15 @@ setClass("xcmsPeaks", contains = "matrix")
 ##'
 ##' @description Objects of the type \code{ProcessHistory} allow to keep track
 ##' of any data processing step in an metabolomics experiment. They are created
-##' by the data processing methods, such as \code{\link{detectFeatures}} and
+##' by the data processing methods, such as \code{\link{findChromPeaks}} and
 ##' added to the corresponding results objects. Thus, usually, users don't need
 ##' to create them.
 ##'
 ##' @slot type character(1): string defining the type of the processing step.
 ##' This string has to match predefined values defined in the internal variable
-##' \code{.PROCSTEPS}.
+##' \code{.PROCSTEPS} (allowed values are \code{"Unknown"},
+##' \code{"Peak detection"}, \code{"Peak grouping"} and
+##' \code{"Retention time correction"}).
 ##'
 ##' @slot date character(1): date time stamp when the processing step was started.
 ##' @slot info character(1): optional additional information.
@@ -247,24 +248,26 @@ setClass("ProcessHistory",
 ##             new("Versioned", versions = c(ProcessHistory = "0.0.2"))
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              ## check type:
              if (!any(object@type == .PROCSTEPS))
-                 msg <- validMsg(msg, paste0("Got invalid type '", object@type,
-                                             "'! Allowd are: ",
-                                             paste0("\"", .PROCSTEPS, "\"",
-                                                    collapse = ", ")))
+                 msg <- c(msg, paste0("Got invalid type '", object@type,
+                                      "'! Allowd are: ",
+                                      paste0("\"", .PROCSTEPS, "\"",
+                                             collapse = ", ")))
              if (length(object@type) > 1)
-                 msg <- validMsg(msg, paste0("length of 'type' should not be ",
-                                             "larger than 1!"))
+                 msg <- c(msg, paste0("length of 'type' should not be ",
+                                      "larger than 1!"))
              if (length(object@date) > 1)
-                 msg <- validMsg(msg, paste0("length of 'date' should not be ",
-                                             "larger than 1!"))
+                 msg <- c(msg, paste0("length of 'date' should not be ",
+                                      "larger than 1!"))
              if (length(object@info) > 1)
-                 msg <- validMsg(msg, paste0("length of 'info' should not be ",
-                                             "larger than 1!"))
-             if (is.null(msg)) TRUE
-             else msg
+                 msg <- c(msg, paste0("length of 'info' should not be ",
+                                      "larger than 1!"))
+             if (length(msg))
+                 msg
+             else
+                 TRUE
          }
          )
 
@@ -294,100 +297,102 @@ setClass("XProcessHistory",
              param = NULL
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@param) > 0)
                  if(!is(object@param, "Param"))
-                     msg <- validMsg(msg,
-                                     paste0("Only objects from type 'Param' ",
-                                            "allowed in slot '@param'! I got ",
-                                            class(object@param)))
-             if (is.null(msg)) TRUE
-             else msg
+                     msg <- c(msg,
+                              paste0("Only objects from type 'Param' ",
+                                     "allowed in slot '@param'! I got ",
+                                     class(object@param)))
+             if (length(msg)) msg
+             else TRUE
          })
 
 
 
-## General detectFeatures method.
-##' @title Feature detection methods.
+##' @aliases findChromPeaks
+##' @title Chromatographic peak detection methods.
 ##'
-##' @description The \code{detectFeature} methods are part of the modernized
-##' \code{xcms} user interface.
+##' @description The \code{findChromPeaks} methods perform the chromatographic
+##' peak detection on LC/GC-MS data and are part of the modernized \code{xcms}
+##' user interface.
 ##'
-##' The implemented feature detection methods are:
+##' The implemented peak detection methods in chromatographic space are:
 ##' \describe{
-##' \item{centWave}{feature detection using the \emph{centWave} method.
-##' See \code{\link{centWave}} for more details.}
+##' \item{centWave}{chromatographic peak detection using the \emph{centWave}
+##' method. See \code{\link{centWave}} for more details.}
 ##'
-##' \item{centWave with predicted isotopes}{feature detection using a two-step
+##' \item{centWave with predicted isotopes}{peak detection using a two-step
 ##' centWave-based approach considering also feature isotopes. See
 ##' \code{\link{centWaveWithPredIsoROIs}} for more details.}
 ##'
 ##' \item{matchedFilter}{peak detection in chromatographic space. See
 ##' \code{\link{matchedFilter}} for more details.}
 ##'
-##' \item{massifquant}{peak detection using the Kalman filter-based feature
+##' \item{massifquant}{peak detection using the Kalman filter-based 
 ##' method. See \code{\link{massifquant}} for more details.}
 ##'
-##' \item{MSW}{single-spectrum non-chromatography MS data feature detection.
+##' \item{MSW}{single-spectrum non-chromatography MS data peak detection.
 ##' See \code{\link{MSW}} for more details.}
 ##'
 ##' }
-##' @name detectFeatures
-##' @family feature detection methods
-##' @seealso \code{\link{findPeaks}} for the \emph{old} feature detection
+##' @name chromatographic-peak-detection
+##' @family peak detection methods
+##' @seealso \code{\link{findPeaks}} for the \emph{old} peak detection
 ##' methods.
 ##' @author Johannes Rainer
 NULL
 #> NULL
 
 ## Main centWave documentation.
-##' @title Feature detection using the centWave method
+##' @title Chromatographic peak detection using the centWave method
 ##'
 ##' @aliases centWave
 ##'
 ##' @description The centWave algorithm perform peak density and wavelet based
-##' feature detection for high resolution LC/MS data in centroid
+##' chromatographic peak detection for high resolution LC/MS data in centroid
 ##' mode [Tautenhahn 2008].
 ##'
-##' @param ppm Maximal tolerated m/z deviation in consecutive scans in parts
-##' per million (ppm).
-##' @param peakwidth numeric(2) with the expected approximate
-##' feature/peak width in chromatographic space. Given as a range (min, max)
+##' @param ppm \code{numeric(1)} defining the maximal tolerated m/z deviation in
+##' consecutive scans in parts per million (ppm) for the initial ROI definition.
+##' @param peakwidth \code{numeric(2)} with the expected approximate
+##' peak width in chromatographic space. Given as a range (min, max)
 ##' in seconds.
-##' @param snthresh numeric(1) defining the signal to noise ratio cutoff.
-##' @param prefilter numeric(2): \code{c(k, I)} specifying the prefilter
+##' @param snthresh \code{numeric(1)} defining the signal to noise ratio cutoff.
+##' @param prefilter \code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 ##' step for the first analysis step (ROI detection). Mass traces are only
 ##' retained if they contain at least \code{k} peaks with intensity \code{>= I}.
 ##' @param mzCenterFun Name of the function to calculate the m/z center of the
-##' feature. Allowed are: \code{"wMean"}: intensity weighted mean of the feature's
-##' m/z values, \code{"mean"}: mean of the feature's m/z values, \code{"apex"}:
-##' use the m/z value at the peak apex, \code{"wMeanApex3"}: intensity weighted
-##' mean of the m/z value at the peak apex and the m/z values left and right of
-##' it and \code{"meanApex3"}: mean of the m/z value of the peak apex and the
-##' m/z values left and right of it.
+##' chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted mean of
+##' the peak's m/z values, \code{"mean"}: mean of the peak's m/z values,
+##' \code{"apex"}: use the m/z value at the peak apex, \code{"wMeanApex3"}:
+##' intensity weighted mean of the m/z value at the peak apex and the m/z values
+##' left and right of it and \code{"meanApex3"}: mean of the m/z value of the
+##' peak apex and the m/z values left and right of it.
 ##' @param integrate Integration method. For \code{integrate = 1} peak limits
 ##' are found through descent on the mexican hat filtered data, for
 ##' \code{integrate = 2} the descent is done on the real data. The latter method
 ##' is more accurate but prone to noise, while the former is more robust, but
 ##' less exact.
-##' @param mzdiff Numeric representing the minimum difference in m/z dimension
-##' for peaks with overlapping retention times; can be negatove to allow overlap.
-##' @param fitgauss Logical whether or not a Gaussian should be fitted to each
-##' peak.
-##' @param noise numeric(1) allowing to set a minimum intensity required
+##' @param mzdiff \code{numeric(1)} representing the minimum difference in m/z
+##' dimension for peaks with overlapping retention times; can be negatove to
+##' allow overlap.
+##' @param fitgauss \code{logical(1)} whether or not a Gaussian should be fitted
+##' to each peak.
+##' @param noise \code{numeric(1)} allowing to set a minimum intensity required
 ##' for centroids to be considered in the first analysis step (centroids with
 ##' intensity \code{< noise} are omitted from ROI detection).
-##' @param verboseColumns Logical whether additional feature meta data columns
-##' should be returned.
+##' @param verboseColumns \code{logical(1)} whether additional peak meta data
+##' columns should be returned.
 ##' @param roiList An optional list of regions-of-interest (ROI) representing
 ##' detected mass traces. If ROIs are submitted the first analysis step is
-##' omitted and feature detection is performed on the submitted ROIs. Each
-##' ROI is expected to have the following elements specified:
+##' omitted and chromatographic peak detection is performed on the submitted
+##' ROIs. Each ROI is expected to have the following elements specified:
 ##' \code{scmin} (start scan index), \code{scmax} (end scan index),
 ##' \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
 ##' (number of scans), \code{intensity} (summed intensity). Each ROI should be
 ##' represented by a \code{list} of elements or a single row \code{data.frame}.
-##' @param firstBaselineCheck logical(1). If \code{TRUE} continuous
+##' @param firstBaselineCheck \code{logical(1)}. If \code{TRUE} continuous
 ##' data within regions of interest is checked to be above the first baseline.
 ##' @param roiScales Optional numeric vector with length equal to \code{roiList}
 ##' defining the scale for each region of interest in \code{roiList} that should
@@ -404,33 +409,33 @@ NULL
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link{findPeaks}} methods. It supports peak detection on
 ##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
 ##' objects (both defined in the \code{MSnbase} package). All of the settings
 ##' to the centWave algorithm can be passed with a \code{CentWaveParam} object.
 ##'
-##' @family feature detection methods
-##' @seealso The \code{\link{do_detectFeatures_centWave}} core API function and
+##' @family peak detection methods
+##' @seealso The \code{\link{do_findChromPeaks_centWave}} core API function and
 ##' \code{\link{findPeaks.centWave}} for the old user interface.
 ##'
 ##' @references
 ##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 ##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 ##' 2008, 9:504
-##' @name featureDetection-centWave
+##' @name findChromPeaks-centWave
 ##' @author Ralf Tautenhahn, Johannes Rainer
 NULL
 #> NULL
 
-##' @description The \code{CentWaveParam} class allows to specify all settings for
-##' a feature detection using the centWave method. Instances should be created
-##' with the \code{CentWaveParam} constructor.
+##' @description The \code{CentWaveParam} class allows to specify all settings
+##' for a chromatographic peak detection using the centWave method. Instances
+##' should be created with the \code{CentWaveParam} constructor.
 ##'
 ##' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 ##'
 ##' @examples
 ##'
@@ -442,7 +447,7 @@ NULL
 ##' snthresh(cwp) <- 25
 ##' cwp
 ##'
-##' ## Perform the feature detection using centWave on some of the files from the
+##' ## Perform the peak detection using centWave on some of the files from the
 ##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
 ##' ## package
 ##' library(faahKO)
@@ -451,10 +456,9 @@ NULL
 ##'            full.names = TRUE)
 ##' raw_data <- readMSData2(fls[1:2])
 ##'
-##' ## Perform the feature detection using the settings defined above. We're
-##' ## returning the results as an xcmsSet object.
-##' res <- detectFeatures(raw_data, param = cwp, return.type = "xcmsSet")
-##' head(peaks(res))
+##' ## Perform the peak detection using the settings defined above.
+##' res <- findChromPeaks(raw_data, param = cwp)
+##' head(chromPeaks(res))
 setClass("CentWaveParam",
          slots = c(
              ppm = "numeric",
@@ -488,44 +492,44 @@ setClass("CentWaveParam",
              roiScales = numeric()
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@ppm) != 1 | any(object@ppm < 0))
-                 msg <- validMsg(msg, paste0("'ppm' has to be positive numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'ppm' has to be positive numeric",
+                                      " of length 1."))
              if (length(object@peakwidth) != 2 | any(object@peakwidth < 0))
-                 msg <- validMsg(msg, paste0("'peakwidth' has to be a numeric",
-                                             " of length 2 with only positive",
-                                             " values."))
+                 msg <- c(msg, paste0("'peakwidth' has to be a numeric",
+                                      " of length 2 with only positive",
+                                      " values."))
              if (length(object@snthresh) != 1 | any(object@snthresh < 0))
-                 msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'snthresh' has to be a positive",
+                                      " numeric of length 1."))
              if (length(object@prefilter) != 2)
-                 msg <- validMsg(msg, paste0("'prefilter' has to be a numeric",
-                                             " of length 2."))
+                 msg <- c(msg, paste0("'prefilter' has to be a numeric",
+                                      " of length 2."))
              allowed_vals <- c("wMean", "mean", "apex", "wMeanApex3",
                                "meanApex3")
              if (!(object@mzCenterFun) %in% allowed_vals)
-                 msg <- validMsg(msg, paste0("'mzCenterFun' has to be one of ",
-                                             paste0("'", allowed_vals, "'",
+                 msg <- c(msg, paste0("'mzCenterFun' has to be one of ",
+                                      paste0("'", allowed_vals, "'",
                                              collapse = ", "), "."))
              if (!(object@integrate %in% c(1L, 2L)))
-                 msg <- validMsg(msg, paste0("'integrate' has to be either 1",
-                                             " or 2."))
+                 msg <- c(msg, paste0("'integrate' has to be either 1",
+                                      " or 2."))
              if (length(object@mzdiff) != 1)
-                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'mzdiff' has to be a numeric of",
+                                      " length 1."))
              if (length(object@noise) != 1)
-                 msg <- validMsg(msg, paste0("'noise' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'noise' has to be a numeric of",
+                                      " length 1."))
              if (length(object@fitgauss) != 1)
-                 msg <- validMsg(msg, paste0("'fitgauss' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'fitgauss' has to be a numeric of",
+                                      " length 1."))
              if (length(object@verboseColumns) != 1)
-                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'verboseColumns' has to be a ",
+                                      "numeric of length 1."))
              if (length(object@firstBaselineCheck) != 1)
-                 msg <- validMsg(msg, paste0("'firstBaselineCheck' has to be a",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'firstBaselineCheck' has to be a",
+                                      " numeric of length 1."))
              if (length(object@roiList) > 0) {
                  doHaveExpectedEls <- function(z) {
                      need <- c("scmax", "scmin", "mzmin", "mzmax", "length",
@@ -539,18 +543,17 @@ setClass("CentWaveParam",
                  }
                  OKs <- unlist(lapply(object@roiList, doHaveExpectedEls))
                  if (any(!OKs))
-                     msg <- validMsg(msg, paste0("'roiList' does not provide ",
-                                                 "all required fields!"))
+                     msg <- c(msg, paste0("'roiList' does not provide ",
+                                          "all required fields!"))
              }
              if (length(object@roiList) > 0 &
                  length(object@roiList) != length(object@roiScales))
-                 msg <- validMsg(msg, paste0("'roiScales' has to have the same",
-                                             " length than 'roiList'."))
-             if (is.null(msg)) {
-                 return(TRUE)
-             } else {
-                 return(msg)
-             }
+                 msg <- c(msg, paste0("'roiScales' has to have the same",
+                                      " length than 'roiList'."))
+             if (length(msg))
+                 msg
+             else
+                 TRUE
          })
 
 ## Main matchedFilter documentation.
@@ -558,41 +561,41 @@ setClass("CentWaveParam",
 ##'
 ##' @aliases matchedFilter
 ##'
-##' @description The \emph{matchedFilter} algorithm identifies features in the
+##' @description The \emph{matchedFilter} algorithm identifies peaks in the
 ##' chromatographic time domain as described in [Smith 2006]. The intensity
 ##' values are binned by cutting The LC/MS data into slices (bins) of a mass unit
 ##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is selected.
-##' The feature detection is then performed in each bin by extending it based on
-##' the \code{steps} parameter to generate slices comprising bins
+##' The chromatographic peak detection is then performed in each bin by extending
+##' it based on the \code{steps} parameter to generate slices comprising bins
 ##' \code{current_bin - steps +1} to \code{current_bin + steps - 1}. Each of
 ##' these slices is then filtered with matched filtration using a second-derative
-##' Gaussian as the model feature/peak shape. After filtration features are
-##' detected using a signal-to-ration cut-off. For more details and
-##' illustrations see [Smith 2006].
+##' Gaussian as the model peak shape. After filtration peaks are detected using
+##' a signal-to-ration cut-off. For more details and illustrations see
+##' [Smith 2006].
 ##'
-##' @param binSize numeric(1) specifying the width of the
+##' @param binSize \code{numeric(1)} specifying the width of the
 ##' bins/slices in m/z dimension.
 ##' @param impute Character string specifying the method to be used for missing
 ##' value imputation. Allowed values are \code{"none"} (no linear interpolation),
 ##' \code{"lin"} (linear interpolation), \code{"linbase"} (linear interpolation
 ##' within a certain bin-neighborhood) and \code{"intlin"}. See
 ##' \code{\link{imputeLinInterpol}} for more details.
-##' @param fwhm numeric(1) specifying the full width at half maximum
+##' @param fwhm \code{numeric(1)} specifying the full width at half maximum
 ##' of matched filtration gaussian model peak. Only used to calculate the actual
 ##' sigma, see below.
-##' @param sigma numeric(1) specifying the standard deviation (width)
+##' @param sigma \code{numeric(1)} specifying the standard deviation (width)
 ##' of the matched filtration model peak.
-##' @param max numeric(1) representing the maximum number of peaks
+##' @param max \code{numeric(1)} representing the maximum number of peaks
 ##' that are expected/will be identified per slice.
-##' @param snthresh numeric(1) defining the signal to noise cutoff
-##' to be used in the feature detection step.
-##' @param steps numeric(1) defining the number of bins to be
+##' @param snthresh \code{numeric(1)} defining the signal to noise cutoff
+##' to be used in the chromatographic peak detection step.
+##' @param steps \code{numeric(1)} defining the number of bins to be
 ##' merged before filtration (i.e. the number of neighboring bins that will be
 ##' joined to the slice in which filtration and peak detection will be
 ##' performed).
-##' @param mzdiff numeric(1) defining the minimum difference
+##' @param mzdiff \code{numeric(1)} defining the minimum difference
 ##' in m/z for peaks with overlapping retention times
-##' @param index Logical specifying whether indicies should be returned instead
+##' @param index \code{logical(1)} specifying whether indicies should be returned instead
 ##' of values for m/z and retention times.
 ##'
 ##' @details The intensities are binned by the provided m/z values within each
@@ -605,17 +608,17 @@ setClass("CentWaveParam",
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{findPeaks}} methods. It supports feature detection on
-##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' \code{\link{findPeaks}} methods. It supports chromatographic peak detection
+##' on \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
 ##' objects (both defined in the \code{MSnbase} package). All of the settings
 ##' to the matchedFilter algorithm can be passed with a
 ##' \code{MatchedFilterParam} object.
 ##'
 ##' @inheritParams imputeLinInterpol
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @family feature detection methods
-##' @seealso The \code{\link{do_detectFeatures_matchedFilter}} core API function
+##' @family peak detection methods
+##' @seealso The \code{\link{do_findChromPeaks_matchedFilter}} core API function
 ##' and \code{\link{findPeaks.matchedFilter}} for the old user interface.
 ##'
 ##' @references
@@ -625,19 +628,19 @@ setClass("CentWaveParam",
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
 ##' @author Colin A Smith, Johannes Rainer
 ##'
-##' @name featureDetection-matchedFilter
+##' @name findChromPeaks-matchedFilter
 NULL
 #> NULL
 
 ##' @description The \code{MatchedFilterParam} class allows to specify all
-##' settings for a feature detection using the matchedFilter method. Instances
-##' should be created with the \code{MatchedFilterParam} constructor.
+##' settings for a chromatographic peak detection using the matchedFilter method.
+##' Instances should be created with the \code{MatchedFilterParam} constructor.
 ##'
 ##' @slot .__classVersion__,binSize,impute,baseValue,distance,fwhm,sigma,max,snthresh,steps,mzdiff,index See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 ##'
 ##' @examples
 ##'
@@ -647,7 +650,7 @@ NULL
 ##' snthresh(mfp) <- 15
 ##' mfp
 ##'
-##' ## Perform the feature detection using matchecFilter on the files from the
+##' ## Perform the peak detection using matchecFilter on the files from the
 ##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
 ##' ## package
 ##' library(faahKO)
@@ -655,12 +658,12 @@ NULL
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ##'            full.names = TRUE)
 ##' raw_data <- readMSData2(fls)
-##' ## Perform the feature detection using the settings defined above. We're
-##' ## returning the results as an xcmsSet object. Note that we are also
-##' ## disabling parallel processing in this example by registering a "SerialParam"
+##' ## Perform the chromatographic peak detection using the settings defined
+##' ## above. Note that we are also disabling parallel processing in this
+##' ## example by registering a "SerialParam"
 ##' register(SerialParam())
-##' res <- detectFeatures(raw_data, param = mfp, return.type = "xcmsSet")
-##' head(peaks(res))
+##' res <- findChromPeaks(raw_data, param = mfp)
+##' head(chromPeaks(res))
 setClass("MatchedFilterParam",
          slots = c(
              binSize = "numeric",
@@ -690,114 +693,113 @@ setClass("MatchedFilterParam",
              index = FALSE
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@binSize) != 1 | any(object@binSize < 0))
-                 msg <- validMsg(msg, paste0("'binSize' has to be positive",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'binSize' has to be positive",
+                                      " numeric of length 1."))
              if (!any(c("none", "lin", "linbase") == object@impute))
-                 msg <- validMsg(msg,
-                                 paste0("Only values 'none', 'lin' and ",
-                                        "'linbase' are allowed for'impute'"))
+                 msg <- c(msg,
+                          paste0("Only values 'none', 'lin' and ",
+                                 "'linbase' are allowed for'impute'"))
              if (length(object@baseValue) > 1)
-                 msg <- validMsg(msg, paste0("'baseValue' has to be a",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'baseValue' has to be a",
+                                      " numeric of length 1."))
              if (length(object@distance) > 1)
-                 msg <- validMsg(msg, paste0("'distance' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'distance' has to be a numeric",
+                                      " of length 1."))
              if (length(object@fwhm) != 1)
-                 msg <- validMsg(msg, paste0("'fwhm' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'fwhm' has to be a numeric",
+                                      " of length 1."))
              if (length(object@sigma) != 1)
-                 msg <- validMsg(msg, paste0("'sigma' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'sigma' has to be a numeric",
+                                      " of length 1."))
              if (length(object@max) != 1)
-                 msg <- validMsg(msg, paste0("'max' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'max' has to be a numeric",
+                                      " of length 1."))
              if (length(object@snthresh) != 1)
-                 msg <- validMsg(msg, paste0("'snthresh' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'snthresh' has to be a numeric",
+                                      " of length 1."))
              if (length(object@steps) != 1)
-                 msg <- validMsg(msg, paste0("'steps' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'steps' has to be a numeric",
+                                      " of length 1."))
              if (length(object@mzdiff) != 1)
-                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'mzdiff' has to be a numeric",
+                                      " of length 1."))
              if (length(object@index) != 1)
-                 msg <- validMsg(msg, paste0("'index' has to be a logical",
-                                             " of length 1."))
-             if (is.null(msg)) {
-                 return(TRUE)
-             } else {
-                 return(msg)
-             }
+                 msg <- c(msg, paste0("'index' has to be a logical",
+                                      " of length 1."))
+             if (length(msg))
+                 msg
+             else
+                 TRUE
          })
 
 
 ## Main massifquant documentation.
-##' @title Feature detection using the massifquant method
+##' @title Chromatographic peak detection using the massifquant method
 ##'
 ##' @aliases massifquant
 ##'
-##' @description Massifquant is a Kalman filter (KF)-based feature
-##' detection for XC-MS data in centroid mode. The identified features
+##' @description Massifquant is a Kalman filter (KF)-based chromatographic peak
+##' detection for XC-MS data in centroid mode. The identified peaks
 ##' can be further refined with the \emph{centWave} method (see
-##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
+##' \code{\link{findChromPeaks-centWave}} for details on centWave)
 ##' by specifying \code{withWave = TRUE}.
 ##'
-##' @param peakwidth numeric(2). Only the first element is used by
-##' massifquant, which specifices the minimum feature length in time scans.
+##' @param peakwidth \code{numeric(2)}. Only the first element is used by
+##' massifquant, which specifices the minimum peak length in time scans.
 ##' For \code{withWave = TRUE} the second argument represents the maximum
-##' feature length subject to being greater than the mininum feature length
-##' (see also documentation of \code{\link{do_detectFeatures_centWave}}).
-##' @param prefilter numeric(2). The first argument is only used
-##' if (\code{withWave = TRUE}); see \code{\link{do_detectFeatures_centWave}}
+##' peak length subject to being greater than the mininum peak length
+##' (see also documentation of \code{\link{do_findChromPeaks_centWave}}).
+##' @param prefilter \code{numeric(2)}. The first argument is only used
+##' if (\code{withWave = TRUE}); see \code{\link{findChromPeaks-centWave}}
 ##' for details. The second argument specifies the minimum threshold for the
-##' maximum intensity of a feature that must be met.
-##' @param criticalValue numeric(1). Suggested values:
+##' maximum intensity of a chromatographic peak that must be met.
+##' @param criticalValue \code{numeric(1)}. Suggested values:
 ##' (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
 ##' prediciton margin of error. A real centroid belonging to a bonafide
-##' feature must fall within the KF prediction margin of error. Much like
+##' peak must fall within the KF prediction margin of error. Much like
 ##' in the construction of a confidence interval, \code{criticalVal} loosely
 ##' translates to be a multiplier of the standard error of the prediction
-##' reported by the Kalman Filter. If the features in the XC-MS sample have
+##' reported by the Kalman Filter. If the peak in the XC-MS sample have
 ##' a small mass deviance in ppm error, a smaller critical value might be
 ##' better and vice versa.
-##' @param consecMissedLimit Integer: Suggested values: (\code{1,2,3}). While
-##' a feature is in the proces of being detected by a Kalman Filter, the
+##' @param consecMissedLimit \code{integer(1)} Suggested values: (\code{1,2,3}).
+##' While a peak is in the proces of being detected by a Kalman Filter, the
 ##' Kalman Filter may not find a predicted centroid in every scan. After 1
 ##' or more consecutive failed predictions, this setting informs Massifquant
-##' when to stop a Kalman Filter from following a candidate feature.
-##' @param unions Integer: set to \code{1} if apply t-test union on
+##' when to stop a Kalman Filter from following a candidate peak.
+##' @param unions \code{integer(1)} set to \code{1} if apply t-test union on
 ##' segmentation; set to \code{0} if no t-test to be applied on
-##' chromatographically continous features sharing same m/z range.
+##' chromatographically continous peaks sharing same m/z range.
 ##' Explanation: With very few data points, sometimes a Kalman Filter stops
-##' tracking a feature prematurely. Another Kalman Filter is instantiated
+##' tracking a peak prematurely. Another Kalman Filter is instantiated
 ##' and begins following the rest of the signal. Because tracking is done
-##' backwards to forwards, this algorithmic defect leaves a real feature
+##' backwards to forwards, this algorithmic defect leaves a real peak
 ##' divided into two segments or more. With this option turned on, the
-##' program identifies segmented features and combines them (merges them)
+##' program identifies segmented peaks and combines them (merges them)
 ##' into one with a two sample t-test. The potential danger of this option
-##' is that some truly distinct features may be merged.
-##' @param checkBack Integer: set to \code{1} if turned on; set to \code{0}
-##' if turned off. The convergence of a Kalman Filter to a feature's precise
-##' m/z mapping is very fast, but sometimes it incorporates erroneous centroids
-##' as part of a feature (especially early on). The \code{scanBack} option is an
-##' attempt to remove the occasional outlier that lies beyond the converged
+##' is that some truly distinct peaks may be merged.
+##' @param checkBack \code{integer(1)} set to \code{1} if turned on; set to
+##' \code{0} if turned off. The convergence of a Kalman Filter to a peak's
+##' precise m/z mapping is very fast, but sometimes it incorporates erroneous
+##' centroids as part of a peak (especially early on). The \code{scanBack} option
+##' is an attempt to remove the occasional outlier that lies beyond the converged
 ##' bounds of the Kalman Filter. The option does not directly affect
-##' identification of a feature because it is a postprocessing measure; it
+##' identification of a peak because it is a postprocessing measure; it
 ##' has not shown to be a extremely useful thus far and the default is set
 ##' to being turned off.
-##' @param withWave Logical: if \code{TRUE}, the features identified first
+##' @param withWave \code{logical(1)} if \code{TRUE}, the peaks identified first
 ##' with Massifquant are subsequently filtered with the second step of the
 ##' centWave algorithm, which includes wavelet estimation.
 ##'
 ##' @details This algorithm's performance has been tested rigorously
 ##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
-##' Simultaneous kalman filters identify features and calculate their
-##' area under the curve. The default parameters are set to operate on
+##' Simultaneous kalman filters identify chromatographic peaks and calculate
+##' their area under the curve. The default parameters are set to operate on
 ##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
 ##' simple exploratory data analysis to find out where to set a minimum
-##' intensity, and identify how many scans an average feature spans. The
+##' intensity, and identify how many scans an average peak spans. The
 ##' \code{consecMissedLimit} parameter has yielded good performance on
 ##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
 ##' to be at (\code{1}). This may change as the algorithm has yet to be
@@ -810,16 +812,16 @@ setClass("MatchedFilterParam",
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{findPeaks}} methods. It supports feature detection on
-##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' \code{\link{findPeaks}} methods. It supports chromatographic peak detection
+##' on \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
 ##' objects (both defined in the \code{MSnbase} package). All of the settings
 ##' to the massifquant and centWave algorithm can be passed with a
 ##' \code{MassifquantParam} object.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @family feature detection methods
-##' @seealso The \code{\link{do_detectFeatures_massifquant}} core API function
+##' @family peak detection methods
+##' @seealso The \code{\link{do_findChromPeaks_massifquant}} core API function
 ##' and \code{\link{findPeaks.massifquant}} for the old user interface.
 ##'
 ##' @references
@@ -828,20 +830,20 @@ setClass("MatchedFilterParam",
 ##' detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 ##' @author Christopher Conley, Johannes Rainer
 ##'
-##' @name featureDetection-massifquant
+##' @name findChromPeaks-massifquant
 NULL
 #> NULL
 
 ##' @description The \code{MassifquantParam} class allows to specify all
-##' settings for a feature detection using the massifquant method eventually in
-##' combination with the centWave algorithm. Instances should be created with
-##' the \code{MassifquantParam} constructor.
+##' settings for a chromatographic peak detection using the massifquant method
+##' eventually in combination with the centWave algorithm. Instances should be
+##' created with the \code{MassifquantParam} constructor.
 ##'
 ##' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,criticalValue,consecMissedLimit,unions,checkBack,withWave See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 ##'
 ##' @examples
 ##'
@@ -851,7 +853,7 @@ NULL
 ##' snthresh(mqp) <- 30
 ##' mqp
 ##'
-##' ## Perform the feature detection using massifquant on the files from the
+##' ## Perform the peak detection using massifquant on the files from the
 ##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
 ##' ## package
 ##' library(faahKO)
@@ -859,10 +861,9 @@ NULL
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ##'            full.names = TRUE)
 ##' raw_data <- readMSData2(fls[1:2])
-##' ## Perform the feature detection using the settings defined above. We're
-##' ## returning the results as an xcmsSet object.
-##' res <- detectFeatures(raw_data, param = mqp, return.type = "xcmsSet")
-##' head(peaks(res))
+##' ## Perform the peak detection using the settings defined above.
+##' res <- findChromPeaks(raw_data, param = mqp)
+##' head(chromPeaks(res))
 setClass("MassifquantParam",
          slots = c(
              ppm = "numeric",
@@ -900,74 +901,72 @@ setClass("MassifquantParam",
              withWave = FALSE
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@ppm) != 1 | any(object@ppm < 0))
-                 msg <- validMsg(msg, paste0("'ppm' has to be positive numeric",
-                                             " of length 1."))
+                 msg <- c(msg, paste0("'ppm' has to be positive numeric",
+                                      " of length 1."))
              if (length(object@peakwidth) != 2 | any(object@peakwidth < 0))
-                 msg <- validMsg(msg, paste0("'peakwidth' has to be a numeric",
-                                             " of length 2 with only positive",
-                                             " values."))
+                 msg <- c(msg, paste0("'peakwidth' has to be a numeric",
+                                      " of length 2 with only positive",
+                                      " values."))
              if (length(object@snthresh) != 1 | any(object@snthresh < 0))
-                 msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'snthresh' has to be a positive",
+                                      " numeric of length 1."))
              if (length(object@prefilter) != 2)
-                 msg <- validMsg(msg, paste0("'prefilter' has to be a numeric",
-                                             " of length 2."))
+                 msg <- c(msg, paste0("'prefilter' has to be a numeric",
+                                      " of length 2."))
              allowed_vals <- c("wMean", "mean", "apex", "wMeanApex3",
                                "meanApex3")
              if (!(object@mzCenterFun) %in% allowed_vals)
-                 msg <- validMsg(msg, paste0("'mzCenterFun' has to be one of ",
-                                             paste0("'", allowed_vals, "'",
+                 msg <- c(msg, paste0("'mzCenterFun' has to be one of ",
+                                      paste0("'", allowed_vals, "'",
                                              collapse = ", "), "."))
              if (!(object@integrate %in% c(1L, 2L)))
-                 msg <- validMsg(msg, paste0("'integrate' has to be either 1",
-                                             " or 2."))
+                 msg <- c(msg, paste0("'integrate' has to be either 1",
+                                      " or 2."))
              if (length(object@mzdiff) != 1)
-                 msg <- validMsg(msg, paste0("'mzdiff' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'mzdiff' has to be a numeric of",
+                                      " length 1."))
              if (length(object@noise) != 1)
-                 msg <- validMsg(msg, paste0("'noise' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'noise' has to be a numeric of",
+                                      " length 1."))
              if (length(object@fitgauss) != 1)
-                 msg <- validMsg(msg, paste0("'fitgauss' has to be a numeric of",
-                                             " length 1."))
+                 msg <- c(msg, paste0("'fitgauss' has to be a numeric of",
+                                      " length 1."))
              if (length(object@verboseColumns) != 1)
-                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'verboseColumns' has to be a ",
+                                      "numeric of length 1."))
              if (length(object@criticalValue) != 1)
-                 msg <- validMsg(msg, paste0("'criticalValue' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'criticalValue' has to be a ",
+                                      "numeric of length 1."))
              if (length(object@consecMissedLimit) != 1)
-                 msg <- validMsg(msg, paste0("'consecMissedLimit' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'consecMissedLimit' has to be a ",
+                                      "numeric of length 1."))
              if (length(object@unions) != 1)
-                 msg <- validMsg(msg, paste0("'unions' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'unions' has to be a ",
+                                      "numeric of length 1."))
              if (object@unions != 0 & object@unions != 1)
-                 msg <- validMsg(msg, paste0("'unions' has to be either 0 or 1!"))
+                 msg <- c(msg, paste0("'unions' has to be either 0 or 1!"))
              if (length(object@checkBack) != 1)
-                 msg <- validMsg(msg, paste0("'checkBack' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'checkBack' has to be a ",
+                                      "numeric of length 1."))
              if (object@checkBack != 0 & object@checkBack != 1)
-                 msg <- validMsg(msg, paste0("'checkBack' has to be either 0",
-                                             " or 1!"))
+                 msg <- c(msg, paste0("'checkBack' has to be either 0",
+                                      " or 1!"))
              if (length(object@withWave) != 1)
-                 msg <- validMsg(msg, paste0("'withWave' has to be a ",
-                                             "numeric of length 1."))
-             if (is.null(msg)) {
-                 return(TRUE)
-             } else {
-                 return(msg)
-             }
+                 msg <- c(msg, paste0("'withWave' has to be a ",
+                                      "numeric of length 1."))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
 ## Main MSW documentation.
-##' @title Single-spectrum non-chromatography MS data feature detection
+##' @title Single-spectrum non-chromatography MS data peak detection
 ##'
 ##' @aliases MSW
 ##'
-##' @description Perform feature detection in mass spectrometry
+##' @description Perform peak detection in mass spectrometry
 ##' direct injection spectrum using a wavelet based algorithm.
 ##'
 ##' @details This is a wrapper for the peak picker in Bioconductor's
@@ -978,33 +977,32 @@ setClass("MassifquantParam",
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{findPeaks}} methods. It supports feature detection on
+##' \code{\link{findPeaks}} methods. It supports peak detection on
 ##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
 ##' objects (both defined in the \code{MSnbase} package). All of the settings
-##' to the massifquant and centWave algorithm can be passed with a
-##' \code{MassifquantParam} object.
+##' to the algorithm can be passed with a \code{MSWParam} object.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @family feature detection methods
-##' @seealso The \code{\link{do_detectFeatures_MSW}} core API function
+##' @family peak detection methods
+##' @seealso The \code{\link{do_findPeaks_MSW}} core API function
 ##' and \code{\link{findPeaks.MSW}} for the old user interface.
 ##'
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 ##'
-##' @name featureDetection-MSW
+##' @name findPeaks-MSW
 NULL
 #> NULL
 
 ##' @description The \code{MSWParam} class allows to specify all
-##' settings for a feature detection using the MSW method. Instances should be
+##' settings for a peak detection using the MSW method. Instances should be
 ##' created with the \code{MSWParam} constructor.
 ##'
 ##' @slot .__classVersion__,snthresh,verboseColumns,scales,nearbyPeak,peakScaleRange,ampTh,minNoiseLevel,ridgeLength,peakThr,tuneIn,addParams See corresponding parameter above. \code{.__classVersion__} stores the version from the class. Slots values
 ##' should exclusively be accessed \emph{via} the corresponding getter and
 ##' setter methods listed above.
 ##'
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 ##'
 ##' @examples
 ##'
@@ -1020,12 +1018,12 @@ NULL
 ##'                     recursive = TRUE, full.names = TRUE)
 ##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
 ##'
-##' ## Perform the MSW feature detection on these:
+##' ## Perform the MSW peak detection on these:
 ##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
 ##'              SNR.method = "data.mean", winSize.noise = 500)
-##' fticr <- detectFeatures(fticr, param = p)
+##' fticr <- findChromPeaks(fticr, param = p)
 ##'
-##' head(features(fticr))
+##' head(chromPeaks(fticr))
 setClass("MSWParam",
          slots = c(
              snthresh = "numeric",
@@ -1056,97 +1054,96 @@ setClass("MSWParam",
              addParams = list()
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@snthresh) != 1 | any(object@snthresh < 0))
-                 msg <- validMsg(msg, paste0("'snthresh' has to be a positive",
-                                             " numeric of length 1."))
+                 msg <- c(msg, paste0("'snthresh' has to be a positive",
+                                      " numeric of length 1."))
              if (length(object@verboseColumns) != 1)
-                 msg <- validMsg(msg, paste0("'verboseColumns' has to be a ",
-                                             "numeric of length 1."))
+                 msg <- c(msg, paste0("'verboseColumns' has to be a ",
+                                      "numeric of length 1."))
              if (length(object@nearbyPeak) != 1)
-                 msg <- validMsg(msg, paste0("'nearbyPeak' has to be a ",
-                                             "logical of length 1."))
+                 msg <- c(msg, paste0("'nearbyPeak' has to be a ",
+                                      "logical of length 1."))
              if (length(object@peakScaleRange) != 1 |
                  any(object@peakScaleRange < 0))
-                 msg <- validMsg(msg, paste0("'peakScaleRange' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'peakScaleRange' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@ampTh) != 1 | any(object@ampTh < 0))
-                 msg <- validMsg(msg, paste0("'ampTh' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'ampTh' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@minNoiseLevel) != 1 |
                  any(object@minNoiseLevel < 0))
-                 msg <- validMsg(msg, paste0("'minNoiseLevel' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'minNoiseLevel' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@ridgeLength) != 1 |
                  any(object@ridgeLength < 0))
-                 msg <- validMsg(msg, paste0("'ridgeLength' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'ridgeLength' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@peakThr) > 1)
-                 msg <- validMsg(msg, paste0("'peakThr' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'peakThr' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@tuneIn) != 1)
-                 msg <- validMsg(msg, paste0("'tuneIn' has to be a ",
-                                             "logical of length 1."))
-             if (is.null(msg)) {
-                 return(TRUE)
-             } else {
-                 return(msg)
-             }
+                 msg <- c(msg, paste0("'tuneIn' has to be a ",
+                                      "logical of length 1."))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
-##' @title Two-step centWave feature detection considering also feature isotopes
+##' @title Two-step centWave peak detection considering also isotopes
 ##'
 ##' @aliases centWaveWithPredIsoROIs
 ##'
-##' @description This method performs a two-step centWave-based feature
-##' detection: in a first centWave run features are identified for which then
+##' @description This method performs a two-step centWave-based chromatographic
+##' peak detection: in a first centWave run peaks are identified for which then
 ##' the location of their potential isotopes in the mz-retention time is
 ##' predicted. A second centWave run is then performed on these
-##' \emph{regions of interest} (ROIs). The final list of features comprises all
-##' non-overlapping features from both centWave runs.
+##' \emph{regions of interest} (ROIs). The final list of chromatographic peaks
+##' comprises all non-overlapping peaks from both centWave runs.
 ##'
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @param maxCharge integer(1) defining the maximal isotope charge. Isotopes
-##' will be defined for charges \code{1:maxCharge}.
+##' @param maxCharge \code{integer(1)} defining the maximal isotope charge.
+##' Isotopes will be defined for charges \code{1:maxCharge}.
 ##'
-##' @param maxIso integer(1) defining the number of isotope peaks that should be
-##' predicted for each feature identified in the first centWave run.
+##' @param maxIso \code{integer(1)} defining the number of isotope peaks that
+##' should be predicted for each peak identified in the first centWave run.
 ##'
-##' @param mzIntervalExtension logical(1) whether the mz range for the predicted
-##' isotope ROIs should be extended to increase detection of low intensity peaks.
+##' @param mzIntervalExtension \code{logical(1)} whether the mz range for the
+##' predicted isotope ROIs should be extended to increase detection of low
+##' intensity peaks.
 ##'
-##' @param snthreshIsoROIs numeric(1) defining the signal to noise ratio cutoff
-##' to be used in the second centWave run to identify features for predicted
+##' @param snthreshIsoROIs \code{numeric(1)} defining the signal to noise ratio
+##' cutoff to be used in the second centWave run to identify peaks for predicted
 ##' isotope ROIs.
 ##'
-##' @param polarity character(1) specifying the polarity of the data. Currently
-##' not used, but has to be \code{"positive"}, \code{"negative"} or
+##' @param polarity \code{character(1)} specifying the polarity of the data.
+##' Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 ##' \code{"unknown"} if provided.
 ##'
 ##' @details See \code{\link{centWave}} for details on the centWave method.
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{findPeaks}} methods. It supports feature detection on
-##' \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+##' \code{\link{findPeaks}} methods. It supports chromatographic peak detection
+##' on \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
 ##' objects (both defined in the \code{MSnbase} package). All of the settings
-##' to the centWave algorithm can be passed with a \code{CentWaveParam} object.
+##' to the algorithm can be passed with a \code{CentWavePredIsoParam} object.
 ##'
-##' @family feature detection methods
-##' @seealso The \code{\link{do_detectFeatures_centWaveWithPredIsoROIs}} core
+##' @family peak detection methods
+##' @seealso The \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} core
 ##' API function and \code{\link{findPeaks.centWave}} for the old user interface.
 ##' \code{\link{CentWaveParam}} for the class the \code{CentWavePredIsoParam}
 ##' extends.
 ##'
-##' @name featureDetection-centWaveWithPredIsoROIs
+##' @name findChromPeaks-centWaveWithPredIsoROIs
 ##' @author Hendrik Treutler, Johannes Rainer
 NULL
 #> NULL
 
 ##' @description The \code{CentWavePredIsoParam} class allows to specify all
-##' settings for the two-step centWave-based feature detection considering also
-##' predicted isotopes of features identified in the first centWave run.
+##' settings for the two-step centWave-based peak detection considering also
+##' predicted isotopes of peaks identified in the first centWave run.
 ##' Instances should be created with the \code{CentWavePredIsoParam} constructor.
 ##' See also the documentation of the \code{\link{CentWaveParam}} for all methods
 ##' and arguments this class inherits.
@@ -1155,7 +1152,7 @@ NULL
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 ##'
 ##' @examples
 ##'
@@ -1182,106 +1179,109 @@ setClass("CentWavePredIsoParam",
              polarity = "unknown"
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@snthreshIsoROIs) != 1 |
                  any(object@snthreshIsoROIs < 0))
-                 msg <- validMsg(msg, paste0("'snthreshIsoROIs' has to be a ",
-                                             "positive numeric of length 1."))
+                 msg <- c(msg, paste0("'snthreshIsoROIs' has to be a ",
+                                      "positive numeric of length 1."))
              if (length(object@maxCharge) != 1 | any(object@maxCharge < 0))
-                 msg <- validMsg(msg, paste0("'maxCharge' has to be a ",
-                                             "positive integer of length 1."))
+                 msg <- c(msg, paste0("'maxCharge' has to be a ",
+                                      "positive integer of length 1."))
              if (length(object@maxIso) != 1 | any(object@maxIso < 0))
-                 msg <- validMsg(msg, paste0("'maxIso' has to be a ",
-                                             "positive integer of length 1."))
+                 msg <- c(msg, paste0("'maxIso' has to be a ",
+                                      "positive integer of length 1."))
              if (length(object@mzIntervalExtension) != 1)
-                 msg <- validMsg(msg, paste0("'mzIntervalExtension' has to be a",
-                                             " logical of length 1."))
+                 msg <- c(msg, paste0("'mzIntervalExtension' has to be a",
+                                      " logical of length 1."))
              if (length(object@polarity) != 1)
-                 msg <- validMsg(msg, paste0("'polarity' has to be a",
-                                             " character of length 1."))
+                 msg <- c(msg, paste0("'polarity' has to be a",
+                                      " character of length 1."))
              if (!(object@polarity %in% c("positive", "negative", "unknown")))
-                 msg <- validMsg(msg, paste0("'polarity' has to be either ",
-                                             "'positive', 'negative' or ",
-                                             "'unknown'!"))
-             if (is.null(msg))
-                 return(TRUE)
-             else
-                 return(msg)
+                 msg <- c(msg, paste0("'polarity' has to be either ",
+                                      "'positive', 'negative' or ",
+                                      "'unknown'!"))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
 
-## General groupFeatures method.
-##' @title Feature alignment methods.
+## General groupChromPeaks method.
+##' @title Correspondence: Chromatographic peak grouping methods.
 ##'
-##' @description The \code{groupFeatures} method(s) perform alignment of features
-##' within and between samples. These methods are part of the modernized
-##' \code{xcms} user interface.
+##' @description The \code{groupChromPeaks} method(s) perform the correspondence,
+##' i.e. the grouping of chromatographic peaks within and between samples.
+##' These methods are part of the modernized \code{xcms} user interface.
+##' The resulting peak groups are referred to as (mz-rt) features and can be
+##' accessed \emph{via} the \code{\link{featureDefinitions}} method on the result
+##' object.
 ##'
-##' The implemented feature alignment methods are:
+##' The implemented peak grouping methods are:
 ##' \describe{
-##' \item{density}{feature alignment based on time dimension feature densities.
-##' See \code{\link{groupFeatures-density}} for more details.}
+##' \item{density}{peak grouping based on time dimension peak densities.
+##' See \code{\link{groupChromPeaks-density}} for more details.}
 ##'
-##' \item{mzClust}{high resolution feature alignment for single spectra (direct
-##' infusion) MS data. See \code{\link{groupFeatures-mzClust}} for more details.}
+##' \item{mzClust}{high resolution peak grouping for single spectra (direct
+##' infusion) MS data. See \code{\link{groupChromPeaks-mzClust}} for more
+##' details.}
 ##'
-##' \item{nearest}{feature alignment based on their proximity in the mz-rt space.
-##' See \code{\link{groupFeatures-nearest}} for more details.}
+##' \item{nearest}{chromatographic peak grouping based on their proximity in
+##' the mz-rt space. See \code{\link{groupChromPeaks-nearest}} for more details.}
 ##' 
 ##' }
-##' @name groupFeatures
-##' @family feature alignment methods
-##' @seealso \code{\link{group}} for the \emph{old} feature alignment
-##' methods.
-##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
-##' for methods to access feature grouping results.
+##' @name groupChromPeaks
+##' @family peak grouping methods
+##' @seealso \code{\link{group}} for the \emph{old} peak grouping methods.
+##' @seealso \code{\link{featureDefinitions}} and
+##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' results.
 ##' 
 ##' @author Johannes Rainer
 NULL
 #> NULL
 
-## Main group.density documentation.
-##' @title Feature alignment based on time dimension feature densities
+##' @title Peak grouping based on time dimension peak densities
 ##'
-##' @description This method performs performs feature alignment based on the
-##' density (distribution) of identified features along the retention time axis
-##' within slices of overlapping mz ranges. All features (from the same or from
-##' different samples) being close on the retention time axis are grouped into
-##' a \emph{feature group}.
+##' @description This method performs performs correspondence (chromatographic
+##' peak grouping) based on the density (distribution) of identified peaks
+##' along the retention time axis within slices of overlapping mz ranges.
+##' All peaks (from the same or from different samples) being close on the
+##' retention time axis are grouped into a feature (\emph{peak group}).
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{group}} methods. All of the settings to the alignment algorithm
-##' can be passed with a \code{FeatureDensityParam} object.
+##' \code{\link{group}} methods. All of the settings to the algorithm
+##' can be passed with a \code{PeakDensityParam} object.
 ##'
 ##' @param sampleGroups A vector of the same length than samples defining the
-##' sample group assignments.
+##' sample group assignments (i.e. which samples belong to which sample group).
 ##'
-##' @param bw numeric(1) defining the bandwidth (standard deviation ot the
+##' @param bw \code{numeric(1)} defining the bandwidth (standard deviation ot the
 ##' smoothing kernel) to be used. This argument is passed to the
 ##' \code{\link{density}} method.
 ##'
-##' @param minFraction numeric(1) defining the minimum fraction of samples in at
-##' least one sample group in which the features have to be present to be
-##' considered as a feature group.
+##' @param minFraction \code{numeric(1)} defining the minimum fraction of samples
+##' in at least one sample group in which the peaks have to be present to be
+##' considered as a peak group (feature).
 ##'
-##' @param minSamples numeric(1) with the minimum number of samples in at least
-##' one sample group in which the features have to be detected to be considered
-##' as a feature group.
+##' @param minSamples \code{numeric(1)} with the minimum number of samples in at
+##' least one sample group in which the peaks have to be detected to be
+##' considered a peak group (feature).
 ##'
-##' @param binSize numeric(1) defining the size of the overlapping slices in mz
-##' dimension.
+##' @param binSize \code{numeric(1)} defining the size of the overlapping slices
+##' in mz dimension.
 ##'
-##' @param maxFeatures numeric(1) with the maximum number of feature groups to
-##' be identified in a single mz slice.
+##' @param maxFeatures \code{numeric(1)} with the maximum number of peak groups
+##' to be identified in a single mz slice.
 ##' 
-##' @family feature alignment methods
-##' @seealso The \code{\link{do_groupFeatures_density}} core
+##' @family peak grouping methods
+##' @seealso The \code{\link{do_groupChromPeaks_density}} core
 ##' API function and \code{\link{group.density}} for the old user interface.
-##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
-##' for methods to access feature grouping results.
+##' @seealso \code{\link{featureDefinitions}} and
+##' \code{\link{groupval,XCMSnExp-method}} for methods to access the features
+##' (i.e. the peak grouping results).
 ##'
-##' @name groupFeatures-density
+##' @name groupChromPeaks-density
 ##' 
 ##' @author Colin Smith, Johannes Rainer
 ##'
@@ -1293,31 +1293,31 @@ NULL
 NULL
 #> NULL
 
-##' @description The \code{FeatureDensityParam} class allows to specify all
-##' settings for the feature alignment based on feature densities along the time
-##' dimension. Instances should be created with the \code{FeatureDensityParam}
+##' @description The \code{PeakDensityParam} class allows to specify all
+##' settings for the peak grouping based on peak densities along the time
+##' dimension. Instances should be created with the \code{PeakDensityParam}
 ##' constructor.
 ##'
 ##' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname groupFeatures-density
+##' @rdname groupChromPeaks-density
 ##'
 ##' @examples
 ##'
-##' ## Create a FeatureDensityParam object
-##' p <- FeatureDensityParam(binSize = 0.05)
+##' ## Create a PeakDensityParam object
+##' p <- PeakDensityParam(binSize = 0.05)
 ##' ## Change hte minSamples slot
 ##' minSamples(p) <- 3
 ##' p
 ##'
 ##' ##############################
-##' ## feature detection and alignment.
+##' ## Chromatographic peak detection and grouping.
 ##' ##
-##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## Below we perform first a peak detection (using the matchedFilter
 ##' ## method) on some of the test files from the faahKO package followed by
-##' ## a feature alignment using the density method.
+##' ## a peak grouping using the density method.
 ##' library(faahKO)
 ##' library(MSnbase)
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
@@ -1326,28 +1326,28 @@ NULL
 ##' ## Reading 2 of the KO samples
 ##' raw_data <- readMSData2(fls[1:2])
 ##'
-##' ## Perform the feature detection using the matchedFilter method.
+##' ## Perform the chromatographic peak detection using the matchedFilter method.
 ##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-##' res <- detectFeatures(raw_data, param = mfp)
+##' res <- findChromPeaks(raw_data, param = mfp)
 ##'
-##' head(features(res))
-##' ## The number of features identified per sample:
-##' table(features(res)[, "sample"])
+##' head(chromPeaks(res))
+##' ## The number of peaks identified per sample:
+##' table(chromPeaks(res)[, "sample"])
 ##'
-##' ## Performing the feature alignment
-##' fdp <- FeatureDensityParam()
-##' res <- groupFeatures(res, fdp)
+##' ## Performing the chromatographic peak grouping
+##' fdp <- PeakDensityParam()
+##' res <- groupChromPeaks(res, fdp)
 ##'
-##' ## The results from the feature alignment:
-##' featureGroups(res)
+##' ## The definition of the features (peak groups):
+##' featureDefinitions(res)
 ##'
 ##' ## Using the groupval method to extract a matrix with the intensities of
-##' ## the feature groups per sample.
+##' ## the features per sample.
 ##' head(groupval(res, value = "into"))
 ##' 
 ##' ## The process history:
 ##' processHistory(res)
-setClass("FeatureDensityParam",
+setClass("PeakDensityParam",
          slots = c(sampleGroups = "ANY",
                    bw = "numeric",
                    minFraction = "numeric",
@@ -1363,55 +1363,57 @@ setClass("FeatureDensityParam",
              binSize = 0.25,
              maxFeatures = 50),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@bw) > 1 | any(object@bw < 0))
-                 msg <- validMsg(msg, paste0("'bw' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'bw' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
                  any(object@minFraction > 1))
-                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
-                                             "single positive number between ",
-                                             "0 and 1!"))
+                 msg <- c(msg, paste0("'minFraction' has to be a ",
+                                      "single positive number between ",
+                                      "0 and 1!"))
              if (length(object@minSamples) > 1 | any(object@minSamples < 0))
-                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'minSamples' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@binSize) > 1 | any(object@binSize < 0))
-                 msg <- validMsg(msg, paste0("'binSize' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'binSize' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@maxFeatures) > 1 | any(object@maxFeatures < 0))
-                 msg <- validMsg(msg, paste0("'maxFeatures' has to be a ",
+                 msg <- c(msg, paste0("'maxFeatures' has to be a ",
                                              "positive numeric of length 1!"))
-             if (is.null(msg))
-                 return(TRUE)
-             else
+             if (length(msg))
                  return(msg)
+             else
+                 return(TRUE)
          })
 
 ## Main group.mzClust documentation.
-##' @title High resolution feature alignment for single spectra samples
+##' @title High resolution peak grouping for single spectra samples
 ##'
-##' @description This method performs high resolution alignment for single
+##' @description This method performs high resolution correspondence for single
 ##' spectra samples.
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{group}} methods. All of the settings to the alignment algorithm
+##' \code{\link{group}} methods. All of the settings to the algorithm
 ##' can be passed with a \code{MzClustParam} object.
 ##'
-##' @inheritParams groupFeatures-density
+##' @inheritParams groupChromPeaks-density
 ##'
-##' @param ppm numeric(1) representing the relative mz error for the
+##' @param ppm \code{numeric(1)} representing the relative mz error for the
 ##' clustering/grouping (in parts per million).
 ##' 
-##' @param absMz numeric(1) representing the absolute mz error for the clustering.
+##' @param absMz \code{numeric(1)} representing the absolute mz error for the
+##' clustering.
 ##' 
-##' @family feature alignment methods
-##' @seealso The \code{\link{do_groupFeatures_mzClust}} core
+##' @family peak grouping methods
+##' @seealso The \code{\link{do_groupPeaks_mzClust}} core
 ##' API function and \code{\link{group.mzClust}} for the old user interface.
-##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
-##' for methods to access feature grouping results.
+##' @seealso \code{\link{featureDefinitions}} and
+##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' results (i.e. the features).
 ##'
-##' @name groupFeatures-mzClust
+##' @name groupChromPeaks-mzClust
 ##'
 ##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
 ##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
@@ -1421,14 +1423,14 @@ NULL
 #> NULL
 
 ##' @description The \code{MzClustParam} class allows to specify all
-##' settings for the feature alignment based on the \emph{mzClust} algorithm.
+##' settings for the peak grouping based on the \emph{mzClust} algorithm.
 ##' Instances should be created with the \code{MzClustParam} constructor.
 ##'
 ##' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname groupFeatures-mzClust
+##' @rdname groupChromPeaks-mzClust
 ##'
 ##' @examples
 ##'
@@ -1438,20 +1440,21 @@ NULL
 ##'                     recursive = TRUE, full.names = TRUE)
 ##' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
 ##'
-##' ## Perform the MSW feature detection on these:
+##' ## Perform the MSW peak detection on these:
 ##' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
 ##'              SNR.method = "data.mean", winSize.noise = 500)
-##' fticr <- detectFeatures(fticr, param = p)
+##' fticr <- findChromPeaks(fticr, param = p)
 ##'
-##' head(features(fticr))
+##' head(chromPeaks(fticr))
 ##'
 ##' ## Now create the MzClustParam parameter object: we're assuming here that
 ##' ## both samples are from the same sample group.
 ##' p <- MzClustParam(sampleGroups = c(1, 1))
 ##'
-##' fticr <- groupFeatures(fticr, param = p)
+##' fticr <- groupChromPeaks(fticr, param = p)
 ##'
-##' featureGroups(fticr)
+##' ## Get the definition of the features.
+##' featureDefinitions(fticr)
 setClass("MzClustParam",
          slots = c(sampleGroups = "ANY",
                    ppm = "numeric",
@@ -1466,63 +1469,66 @@ setClass("MzClustParam",
              minFraction = 0.5,
              minSamples = 1),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@ppm) > 1 | any(object@ppm < 0))
-                 msg <- validMsg(msg, paste0("'ppm' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'ppm' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@absMz) > 1 | any(object@absMz < 0))
-                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'absMz' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@minFraction) > 1 | any(object@minFraction < 0) |
                  any(object@minFraction > 1))
-                 msg <- validMsg(msg, paste0("'minFraction' has to be a ",
-                                             "single positive number between ",
-                                             "0 and 1!"))
+                 msg <- c(msg, paste0("'minFraction' has to be a ",
+                                      "single positive number between ",
+                                      "0 and 1!"))
              if (length(object@minSamples) > 1 | any(object@minSamples < 0))
-                 msg <- validMsg(msg, paste0("'minSamples' has to be a ",
-                                             "positive numeric of length 1!"))
-             if (is.null(msg))
-                 return(TRUE)
+                 msg <- c(msg, paste0("'minSamples' has to be a ",
+                                      "positive numeric of length 1!"))
+             if (length(msg))
+                 msg
              else
-                 return(msg)
+                 TRUE
          })
 
 ## Main group.nearest documentation.
-##' @title Feature alignment based on proximity in the mz-rt space
+##' @title Peak grouping based on proximity in the mz-rt space
 ##'
-##' @description This method is inspired by the alignment algorithm of mzMine
-##' [Katajamaa 2006] and performs alignment based on proximity of features in the
-##' space spanned by retention time and mz values.
-##' The method creates first a \emph{master feature list} consisting of all
-##' features from the sample in which most features were identified, and
-##' starting from that, calculates distances to features from the sample with the
-##' next most features. If features are closer than the defined threshold they
-##' are grouped together.
+##' @description This method is inspired by the grouping algorithm of mzMine
+##' [Katajamaa 2006] and performs correspondence based on proximity of peaks in
+##' the space spanned by retention time and mz values.
+##' The method creates first a \emph{master peak list} consisting of all
+##' chromatographic peaks from the sample in which most peaks were identified,
+##' and starting from that, calculates distances to peaks from the sample with
+##' the next most number of peaks. If peaks are closer than the defined
+##' threshold they are grouped together.
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{group}} methods. All of the settings to the alignment algorithm
-##' can be passed with a \code{NearestFeaturesParam} object.
+##' \code{\link{group}} methods. All of the settings to the algorithm
+##' can be passed with a \code{NearestPeaksParam} object.
 ##'
-##' @inheritParams groupFeatures-density
+##' @inheritParams groupChromPeaks-density
 ##'
-##' @param mzVsRtBalance numeric(1) representing the factor by which mz values are
-##' multiplied before calculating the (euclician) distance between two features.
+##' @param mzVsRtBalance \code{numeric(1)} representing the factor by which mz
+##' values are multiplied before calculating the (euclician) distance between
+##' two peaks.
 ##'
-##' @param absMz numeric(1) maximum tolerated distance for mz values.
+##' @param absMz \code{numeric(1)} maximum tolerated distance for mz values.
 ##'
-##' @param absRt numeric(1) maximum tolerated distance for rt values.
+##' @param absRt \code{numeric(1)} maximum tolerated distance for rt values.
 ##'
-##' @param kNN numeric(1) representing the number of nearest neighbors to check.
+##' @param kNN \code{numeric(1)} representing the number of nearest neighbors
+##' to check.
 ##' 
-##' @family feature alignment methods
+##' @family peak grouping methods
 ##' 
-##' @seealso The \code{\link{do_groupFeatures_nearest}} core
+##' @seealso The \code{\link{do_groupChromPeaks_nearest}} core
 ##' API function and \code{\link{group.nearest}} for the old user interface.
-##' @seealso \code{\link{featureGroups}} and \code{\link{groupval,XCMSnExp-method}}
-##' for methods to access feature grouping results.
+##' @seealso \code{\link{featureDefinitions}} and
+##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' results (i.e. the features).
 ##'
-##' @name groupFeatures-nearest
+##' @name groupChromPeaks-nearest
 ##'
 ##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 ##' processing and visualization of mass spectrometry based molecular profile
@@ -1530,28 +1536,28 @@ setClass("MzClustParam",
 NULL
 #> NULL
 
-##' @description The \code{NearestFeaturesParam} class allows to specify all
-##' settings for the feature alignment based on the \emph{nearest} algorithm.
-##' Instances should be created with the \code{NearestFeaturesParam} constructor.
+##' @description The \code{NearestPeaksParam} class allows to specify all
+##' settings for the peak grouping based on the \emph{nearest} algorithm.
+##' Instances should be created with the \code{NearestPeaksParam} constructor.
 ##'
 ##' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname groupFeatures-nearest
+##' @rdname groupChromPeaks-nearest
 ##'
 ##' @examples
 ##'
-##' ## Create a NearestFeaturesParam object
-##' p <- NearestFeaturesParam(kNN = 3)
+##' ## Create a NearestPeaksParam object
+##' p <- NearestPeaksParam(kNN = 3)
 ##' p
 ##'
 ##' ##############################
-##' ## feature detection and alignment.
+##' ## Chromatographi peak detection and grouping.
 ##' ##
-##' ## Below we perform first a feature detection (using the matchedFilter
-##' ## method) on some of the test files from the faahKO package followed by
-##' ## a feature alignment using the "nearest" method.
+##' ## Below we perform first a chromatographic peak detection (using the
+##' ## matchedFilter method) on some of the test files from the faahKO package
+##' ## followed by a peaks grouping using the "nearest" method.
 ##' library(faahKO)
 ##' library(MSnbase)
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
@@ -1560,28 +1566,28 @@ NULL
 ##' ## Reading 2 of the KO samples
 ##' raw_data <- readMSData2(fls[1:2])
 ##'
-##' ## Perform the feature detection using the matchedFilter method.
+##' ## Perform the peak detection using the matchedFilter method.
 ##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-##' res <- detectFeatures(raw_data, param = mfp)
+##' res <- findChromPeaks(raw_data, param = mfp)
 ##'
-##' head(features(res))
-##' ## The number of features identified per sample:
-##' table(features(res)[, "sample"])
+##' head(chromPeaks(res))
+##' ## The number of peaks identified per sample:
+##' table(chromPeaks(res)[, "sample"])
 ##'
-##' ## Performing the feature alignment
-##' p <- NearestFeaturesParam()
-##' res <- groupFeatures(res, param = p)
+##' ## Performing the peak grouping
+##' p <- NearestPeaksParam()
+##' res <- groupChromPeaks(res, param = p)
 ##'
-##' ## The results from the feature alignment:
-##' featureGroups(res)
+##' ## The results from the peak grouping:
+##' featureDefinitions(res)
 ##'
 ##' ## Using the groupval method to extract a matrix with the intensities of
-##' ## the feature groups per sample.
+##' ## the features per sample.
 ##' head(groupval(res, value = "into"))
 ##'
 ##' ## The process history:
 ##' processHistory(res)
-setClass("NearestFeaturesParam",
+setClass("NearestPeaksParam",
          slots = c(sampleGroups = "ANY",
                    mzVsRtBalance = "numeric",
                    absMz = "numeric",
@@ -1595,40 +1601,42 @@ setClass("NearestFeaturesParam",
              absRt = 15,
              kNN = 10),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@mzVsRtBalance) > 1 |
                  any(object@mzVsRtBalance < 0))
-                 msg <- validMsg(msg, paste0("'mzVsRtBalance' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'mzVsRtBalance' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@absMz) > 1 | any(object@absMz < 0))
-                 msg <- validMsg(msg, paste0("'absMz' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'absMz' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@absRt) > 1 | any(object@absRt < 0))
-                 msg <- validMsg(msg, paste0("'absRt' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'absRt' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@kNN) > 1 | any(object@kNN < 0))
-                 msg <- validMsg(msg, paste0("'kNN' has to be a ",
-                                             "positive numeric of length 1!"))
-             if (is.null(msg))
-                 return(TRUE)
-             else
-                 return(msg)
+                 msg <- c(msg, paste0("'kNN' has to be a ",
+                                      "positive numeric of length 1!"))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
 
 
-##' @title Retention time correction methods.
+##' @title Alignment: Retention time correction methods.
 ##'
 ##' @description The \code{adjustRtime} method(s) perform retention time
-##' correction between chromatograms of different samples. These methods are
-##' part of the modernized \code{xcms} user interface.
+##' correction (alignment) between chromatograms of different samples. These
+##' methods are part of the modernized \code{xcms} user interface.
 ##'
-##' The implemented feature alignment methods are:
+##' The implemented retention time adjustment methods are:
 ##' \describe{
-##' \item{featureGroups}{retention time correction based on aligment of feature
-##' groups present in most/all samples.
-##' See \code{\link{adjustRtime-featureGroups}} for more details.}
-##' 
+##' \item{peakGroups}{retention time correction based on aligment of features
+##' (peak groups) present in most/all samples.
+##' See \code{\link{adjustRtime-peakGroups}} for more details.}
+##'
+##' \item{obiwarp}{alignment based on the complete mz-rt data. This method does
+##' not require any identified peaks or defined features. See
+##' \code{\link{adjustRtime-obiwarp}} for more details.}
 ##' }
 ##' @name adjustRtime
 ##' @family retention time correction methods
@@ -1639,13 +1647,13 @@ NULL
 #> NULL
 
 ## Main retcor.peakgroups documentation.
-##' @title Retention time correction based on alignment of house keeping feature
+##' @title Retention time correction based on alignment of house keeping peak
 ##' groups
 ##'
 ##' @description This method performs retention time adjustment based on the
-##' alignment of feature groups present in all/most samples (hence corresponding
-##' to house keeping compounds). First the retention time deviation of these
-##' feature groups is described by fitting either a polynomial
+##' alignment of chromatographic peak groups present in all/most samples (hence
+##' corresponding to house keeping compounds). First the retention time deviation
+##' of these peak groups is described by fitting either a polynomial
 ##' (\code{smooth = "loess"}) or a linear (\code{smooth = "linear"}) model to the
 ##' data points. These models are subsequently used to adjust the retention time
 ##' of each spectrum in each sample.
@@ -1653,27 +1661,28 @@ NULL
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
 ##' \code{\link{group}} methods. All of the settings to the alignment algorithm
-##' can be passed with a \code{FeatureGroupsParam} object.
+##' can be passed with a \code{PeakGroupsParam} object.
 ##'
-##' @param minFraction numeric(1) between 0 and 1 defining the minimum required
-##' fraction of samples in which features for the feature group were identified.
-##' Feature groups passing this criteria will aligned across samples and retention
-##' times of individual spectra will be adjusted based on this alignment. For
-##' \code{minFraction = 1} the feature group has to contain features in all
-##' samples of the experiment.
+##' @param minFraction \code{numeric(1)} between 0 and 1 defining the minimum
+##' required fraction of samples in which peaks for the peak group were
+##' identified. Peak groups passing this criteria will aligned across samples
+##' and retention times of individual spectra will be adjusted based on this
+##' alignment. For \code{minFraction = 1} the peak group has to contain peaks
+##' in all samples of the experiment.
 ##' 
-##' @param extraFeatures numeric(1) defining the maximal number of additional
-##' features for all samples to be assigned to a feature group for retention time
-##' correction. For a data set with 6 samples, \code{extraFeatures = 1} uses all
-##' feature groups with a total feature count \code{<= 6 + 1}. The total feature
-##' count is the total number of features being assigned to a feature group and
-##' considers also multiple features within a sample being assigned to the group.
+##' @param extraPeaks \code{numeric(1)} defining the maximal number of additional
+##' peaks for all samples to be assigned to a peak group (i.e. feature) for
+##' retention time correction. For a data set with 6 samples,
+##' \code{extraPeaks = 1} uses all peak groups with a total peak count
+##' \code{<= 6 + 1}. The total peak count is the total number of peaks being
+##' assigned to a peak group and considers also multiple peaks within a sample
+##' being assigned to the group.
 ##'
 ##' @param smooth character defining the function to be used, to interpolate
-##' corrected retention times for all feature groups. Either \code{"loess"} or
+##' corrected retention times for all peak groups. Either \code{"loess"} or
 ##' \code{"linear"}.
 ##'
-##' @param span numeric(1) defining the degree of smoothing (if
+##' @param span \code{numeric(1)} defining the degree of smoothing (if
 ##' \code{smooth = "loess"}). This parameter is passed to the internal call
 ##' to \code{\link{loess}}.
 ##'
@@ -1683,10 +1692,10 @@ NULL
 ##' 
 ##' @family retention time correction methods
 ##' 
-##' @seealso The \code{\link{do_adjustRtime_featureGroups}} core
+##' @seealso The \code{\link{do_adjustRtime_peakGroups}} core
 ##' API function and \code{\link{retcor.peakgroups}} for the old user interface.
 ##'
-##' @name adjustRtime-featureGroups
+##' @name adjustRtime-peakGroups
 ##'
 ##' @author Colin Smith, Johannes Rainer
 ##' 
@@ -1698,51 +1707,51 @@ NULL
 NULL
 #> NULL
 
-##' @description The \code{FeatureGroupsParam} class allows to specify all
+##' @description The \code{PeakGroupsParam} class allows to specify all
 ##' settings for the retention time adjustment based on \emph{house keeping}
-##' feature groups present in most samples.
-##' Instances should be created with the \code{FeatureGroupsParam} constructor.
+##' peak groups present in most samples.
+##' Instances should be created with the \code{PeakGroupsParam} constructor.
 ##'
-##' @slot .__classVersion__,minFraction,extraFeatures,smooth,span,family See corresponding parameter above. \code{.__classVersion__} stores
+##' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
-##' @rdname adjustRtime-featureGroups
+##' @rdname adjustRtime-peakGroups
 ##'
 ##' @examples
 ##' ##############################
-##' ## feature detection and alignment.
+##' ## Chromatographic peak detection and grouping.
 ##' ##
-##' ## Below we perform first a feature detection (using the matchedFilter
+##' ## Below we perform first a peak detection (using the matchedFilter
 ##' ## method) on some of the test files from the faahKO package followed by
-##' ## a feature alignment.
+##' ## a peak grouping.
 ##' library(faahKO)
-##' library(MSnbase)
+##' library(xcms)
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ##'            full.names = TRUE)
 ##' 
 ##' ## Reading 2 of the KO samples
 ##' raw_data <- readMSData2(fls[1:2])
 ##'
-##' ## Perform the feature detection using the matchedFilter method.
+##' ## Perform the peak detection using the matchedFilter method.
 ##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-##' res <- detectFeatures(raw_data, param = mfp)
+##' res <- findChromPeaks(raw_data, param = mfp)
 ##'
-##' head(features(res))
-##' ## The number of features identified per sample:
-##' table(features(res)[, "sample"])
+##' head(chromPeaks(res))
+##' ## The number of peaks identified per sample:
+##' table(chromPeaks(res)[, "sample"])
 ##'
-##' ## Performing the feature alignment using the "feature density" method.
-##' p <- FeatureDensityParam(sampleGroups = c(1, 1))
-##' res <- groupFeatures(res, param = p)
+##' ## Performing the peak grouping using the "peak density" method.
+##' p <- PeakDensityParam(sampleGroups = c(1, 1))
+##' res <- groupChromPeaks(res, param = p)
 ##'
-##' ## Perform the retention time adjustment using feature groups found in both
+##' ## Perform the retention time adjustment using peak groups found in both
 ##' ## files.
-##' fgp <- FeatureGroupsParam(minFraction = 1)
+##' fgp <- PeakGroupsParam(minFraction = 1)
 ##' res <- adjustRtime(res, param = fgp)
 ##'
 ##' ## Any grouping information was dropped
-##' hasAlignedFeatures(res)
+##' hasFeatures(res)
 ##'
 ##' ## Plot the raw against the adjusted retention times.
 ##' plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
@@ -1756,46 +1765,45 @@ NULL
 ##'
 ##' ## To extract the retention times grouped by sample/file:
 ##' rts <- rtime(res, bySample = TRUE)
-setClass("FeatureGroupsParam",
+setClass("PeakGroupsParam",
          slots = c(minFraction = "numeric",
-                   extraFeatures = "numeric",
+                   extraPeaks = "numeric",
                    smooth = "character",
                    span = "numeric",
                    family = "character"),
          contains = "Param",
          prototype = prototype(
              minFraction = 0.9,
-             extraFeatures = 1,
+             extraPeaks = 1,
              smooth = "loess",
              span = 0.2,
              family = "gaussian"
          ),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@minFraction) > 1 |
                  any(object@minFraction < 0) |
                  any(object@minFraction > 1))
-                 msg <- validMsg(msg, paste0("'minFraction' has to be a single",
-                                             " number between 0 and 1!"))
-             if (length(object@extraFeatures) > 1 |
-                 any(object@extraFeatures < 0))
-                 msg <- validMsg(msg, paste0("'extraFeatures' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'minFraction' has to be a single",
+                                      " number between 0 and 1!"))
+             if (length(object@extraPeaks) > 1 |
+                 any(object@extraPeaks < 0))
+                 msg <- c(msg, paste0("'extraPeaks' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@span) > 1 | any(object@span < 0))
-                 msg <- validMsg(msg, paste0("'span' has to be a ",
-                                             "positive numeric of length 1!"))
+                 msg <- c(msg, paste0("'span' has to be a ",
+                                      "positive numeric of length 1!"))
              if (length(object@smooth) > 1 |
                  !all(object@smooth %in% c("loess", "linear")))
-                 msg <- validMsg(msg, paste0("'smooth' has to be either \"",
-                                             "loess\" or \"linear\"!"))
+                 msg <- c(msg, paste0("'smooth' has to be either \"",
+                                      "loess\" or \"linear\"!"))
              if (length(object@family) > 1 |
                  !all(object@family %in% c("gaussian", "symmetric")))
-                 msg <- validMsg(msg, paste0("'family' has to be either \"",
-                                             "gaussian\" or \"symmetric\"!"))
-             if (is.null(msg))
-                 return(TRUE)
-             else
-                 return(msg)
+                 msg <- c(msg, paste0("'family' has to be either \"",
+                                      "gaussian\" or \"symmetric\"!"))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
 ##' @title Align retention times across samples using Obiwarp
@@ -1805,23 +1813,24 @@ setClass("FeatureGroupsParam",
 ##' \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
 ##' samples by aligning each against a \emph{center} sample. The alignment is
 ##' performed directly on the \code{\link{profile-matrix}} and can hence be
-##' performed independently of the feature detection or feature grouping.
+##' performed independently of the peak detection or peak grouping.
 ##'
 ##' @note These methods and classes are part of the updated and modernized
 ##' \code{xcms} user interface which will eventually replace the
 ##' \code{\link{retcor}} methods. All of the settings to the alignment algorithm
 ##' can be passed with a \code{ObiwarpParam} object.
 ##' 
-##' @param binSize numeric(1) defining the bin size (in mz dimension) to be used
-##' for the \emph{profile matrix} generation. See \code{step} parameter in
-##' \code{\link{profile-matrix}} documentation for more details.
+##' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
+##' to be used for the \emph{profile matrix} generation. See \code{step}
+##' parameter in \code{\link{profile-matrix}} documentation for more details.
 ##'
-##' @param centerSample integer(1) defining the index of the center sample in the
-##' experiment. It defaults to \code{floor(median(1:length(fileNames(object))))}.
+##' @param centerSample \code{integer(1)} defining the index of the center sample
+##' in the experiment. It defaults to
+##' \code{floor(median(1:length(fileNames(object))))}.
 ##'
-##' @param response numeric(1) defining the \emph{responsiveness} of warping with
-##' \code{response = 0} giving linear warping on start and end points and
-##' \code{response = 100} warping using all bijective anchors.
+##' @param response \code{numeric(1)} defining the \emph{responsiveness} of
+##' warping with \code{response = 0} giving linear warping on start and end
+##' points and \code{response = 100} warping using all bijective anchors.
 ##'
 ##' @param distFun character defining the distance function to be used. Allowed
 ##' values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"} (calculate
@@ -1829,28 +1838,28 @@ setClass("FeatureGroupsParam",
 ##' (covariance), \code{"prd"} (product) and \code{"euc"} (Euclidian distance).
 ##' The default value is \code{distFun = "cor_opt"}.
 ##'
-##' @param gapInit numeric(1) defining the penalty for gap opening. The default
-##' value for \code{gapInit} depends on the value of \code{distFun}: for
+##' @param gapInit \code{numeric(1)} defining the penalty for gap opening. The
+##' default value for \code{gapInit} depends on the value of \code{distFun}: for
 ##' \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{0.3}, for
 ##' \code{distFun = "cov"} and \code{distFun = "prd"} \code{0.0} and for
 ##' \code{distFun = "euc"} \code{0.9}.
 ##'
-##' @param gapExtend numeric(1) defining the penalty for gap enlargement. The
-##' default value for \code{gapExtend} depends on the value of \code{distFun},
+##' @param gapExtend \code{numeric(1)} defining the penalty for gap enlargement.
+##' The default value for \code{gapExtend} depends on the value of \code{distFun},
 ##' for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{2.4},
 ##' for \code{distFun = "cov"} \code{11.7}, for \code{distFun = "euc"} \code{1.8}
 ##' and for \code{distFun = "prd"} {7.8}.
 ##'
-##' @param factorDiag numeric(1) defining the local weight applied to diagonal
-##' moves in the alignment.
+##' @param factorDiag \code{numeric(1)} defining the local weight applied to
+##' diagonal moves in the alignment.
 ##'
-##' @param factorGap numeric(1) defining the local weight for gap moves in the
-##' alignment.
+##' @param factorGap \code{numeric(1)} defining the local weight for gap moves
+##' in the alignment.
 ##'
-##' @param localAlignment logical(1) whether a local alignment should be
+##' @param localAlignment \code{logical(1)} whether a local alignment should be
 ##' performed instead of the default global alignment.
 ##'
-##' @param initPenalty numeric(1) defining the penalty for initiating an
+##' @param initPenalty \code{numeric(1)} defining the penalty for initiating an
 ##' alignment (for local alignment only).
 ##' 
 ##' @family retention time correction methods
@@ -1903,9 +1912,10 @@ NULL
 ##' ##############################
 ##' ## Perform retention time correction on an XCMSnExp:
 ##' ##
-##' ## Perform first the feature detection using the matchedFilter method.
+##' ## Perform first the chromatographic peak detection using the matchedFilter
+##' ## method.
 ##' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-##' res <- detectFeatures(raw_data, param = mfp)
+##' res <- findChromPeaks(raw_data, param = mfp)
 ##'
 ##' ## Performing the retention time adjustment using obiwarp.
 ##' res_2 <- adjustRtime(res, param = ObiwarpParam())
@@ -1913,9 +1923,9 @@ NULL
 ##' head(rtime(res_2))
 ##' head(rtime(raw_data))
 ##'
-##' ## Also the retention times of the detected features were adjusted.
-##' tail(features(res))
-##' tail(features(res_2))
+##' ## Also the retention times of the detected peaks were adjusted.
+##' tail(chromPeaks(res))
+##' tail(chromPeaks(res_2))
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",
@@ -1940,48 +1950,47 @@ setClass("ObiwarpParam",
              localAlignment = FALSE,
              initPenalty = 0),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@binSize) > 1 |
                  any(object@binSize < 0))
-                 msg <- validMsg(msg, paste0("'binSize' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'binSize' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@centerSample) > 1 |
                  any(object@centerSample < 0))
-                 msg <- validMsg(msg, paste0("'centerSample' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'centerSample' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@response) > 1 |
                  any(object@response < 0) |
                  any(object@response > 100))
-                 msg <- validMsg(msg, paste0("'response' has to be a single ",
-                                             " integer from 1 to 100!"))
+                 msg <- c(msg, paste0("'response' has to be a single ",
+                                      " integer from 1 to 100!"))
              if (length(object@distFun) > 1 |
                  any(!(object@distFun %in% c("cor", "cor_opt", "cov", "euc",
                                              "prd"))))
-                 msg <- validMsg(msg, paste0("'distFun' has to be one of \"cor\"",
-                                             ", \"cor_opt\", \"cov\", \"euc\"",
-                                             " or \"prd\"!"))
+                 msg <- c(msg, paste0("'distFun' has to be one of \"cor\"",
+                                      ", \"cor_opt\", \"cov\", \"euc\"",
+                                      " or \"prd\"!"))
              if (length(object@gapInit) > 1 | any(object@gapInit < 0))
-                 msg <- validMsg(msg, paste0("'gapInit' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'gapInit' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@gapExtend) > 1 | any(object@gapExtend < 0))
-                 msg <- validMsg(msg, paste0("'gapExtend' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'gapExtend' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@factorDiag) > 1 | any(object@factorDiag < 0))
-                 msg <- validMsg(msg, paste0("'factorDiag' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'factorDiag' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@factorGap) > 1 | any(object@factorGap < 0))
-                 msg <- validMsg(msg, paste0("'factorGap' has to be a positive",
-                                             " numeric of length 1!"))
+                 msg <- c(msg, paste0("'factorGap' has to be a positive",
+                                      " numeric of length 1!"))
              if (length(object@localAlignment) > 1)
-                 msg <- validMsg(msg, paste0("'localAlignment' has to be a ",
-                                             "logical of length 1!"))
+                 msg <- c(msg, paste0("'localAlignment' has to be a ",
+                                      "logical of length 1!"))
              if (length(object@initPenalty) > 1 | any(object@initPenalty < 0))
-                 msg <- validMsg(msg, paste0("'initPenalty' has to be a positive",
-                                             " numeric of length 1!"))
-             if (is.null(msg))
-                 return(TRUE)
-             else
-                 return(msg)
+                 msg <- c(msg, paste0("'initPenalty' has to be a positive",
+                                      " numeric of length 1!"))
+             if (length(msg))
+                 msg
+             else TRUE
          })
 
 
@@ -1991,68 +2000,70 @@ setClass("ObiwarpParam",
 ##'
 ##' @description The \code{MsFeatureData} class is designed to encapsule all
 ##' data related to the preprocessing of metabolomics data using the \code{xcms}
-##' package, i.e. it contains a \code{matrix} with the features identified by the
-##' feature detection, a \code{DataFrame} with the information on aligned
-##' features across samples and a \code{list} with the adjusted retention times
-##' per sample.
+##' package, i.e. it contains a \code{matrix} with the chromatographic peaks
+##' identified by the peak detection, a \code{DataFrame} with the definition on
+##' grouped chromatographic peaks across samples and a \code{list} with the
+##' adjusted retention times per sample.
 ##'
 ##' @rdname XCMSnExp-class
 setClass("MsFeatureData", contains = c("environment", "Versioned"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
 
-.XCMS_REQ_FEATS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",
-                          "rtmax", "into", "sample")
-.XCMS_REQ_FEATG_COLS <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
-                          "featureidx")
+.REQ_PEAKS_COLS <- c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                     "rtmax", "into", "sample")
+.REQ_PEAKG_COLS <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
+                     "peakidx")
 
 ##' @aliases XCMSnExp
 ##' @title Data container storing xcms preprocessing results
 ##'
 ##' @description The \code{XCMSnExp} object is designed to contain all results
-##' from metabolomics data preprocessing (feature detection, feature alignment
-##' and retention time correction). The corresponding elements in the
-##' \code{msFeatureData} slot are \code{"features"} (a \code{matrix}),
-##' \code{"featureGroups"} (a \code{DataFrame}) and \code{"adjustedRtime"} (a
-##' \code{list} of numeric vectors). Note that these should not be accessed
-##' directly but rather \emph{via} their accessor methods. Along with the results,
-##' the object contains the processing history that allow to track each
-##' processing step along with the used settings. The object also directly
-##' extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence allowing easy
-##' access to the full data on which the feature detection was performed.
+##' from metabolomics data preprocessing (chromatographic peak detection, peak
+##' grouping (correspondence) and retention time correction). The corresponding
+##' elements in the \code{msFeatureData} slot are \code{"chromPeaks"}
+##' (a \code{matrix}), \code{"featureDefinitions"} (a \code{DataFrame}) and
+##' \code{"adjustedRtime"} (a \code{list} of numeric vectors). Note that these
+##' should not be accessed directly but rather \emph{via} their accessor methods.
+##' Along with the results, the object contains the processing history that
+##' allow to track each processing step along with the used settings. The object
+##' also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence
+##' allowing easy access to the full data on which the peak detection was
+##' performed.
 ##'
 ##' Objects from this class should not be created directly, they are returned as
-##' result from the \code{\link{detectFeatures}} method.
+##' result from the \code{\link{findChromPeaks}} method.
 ##'
 ##' \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
 ##' objects using the \code{as} method.
 ##'
-##' @note The \code{"features"} element in the \code{msFeatureData} slot is
+##' @note The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
 ##' equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
-##' \code{"featureGroups"} contains information from the \code{}
+##' \code{"featureDefinitions"} contains information from the \code{@groups} and
+##' \code{@groupidx} slots from an \code{xcmsSet} object.
 ##'
 ##' @slot .processHistory \code{list} with \code{XProcessHistory} objects
 ##' tracking all individual analysis steps that have been performed.
 ##'
 ##' @slot msFeatureData \code{MsFeatureData} class extending \code{environment}
-##' and containing the results from a feature detection (element
-##' \code{"features"}), feature alignment (element \code{"featureGroups"}) and
-##' retention time correction (element \code{""}) steps.
+##' and containing the results from a chromatographic peak detection (element
+##' \code{"chromPeaks"}), peak grouping (element \code{"featureDefinitions"})
+##' and retention time correction (element \code{"adjustedRtime"}) steps.
 ##'
-##' @param object For \code{adjustedRtime}, \code{featureGroups},
-##' \code{features}, \code{hasAdjustedRtime}, \code{hasAlignedFeatures} and
-##' \code{hasDetectedFeatures} either a \code{MsFeatureData} or a \code{XCMSnExp}
+##' @param object For \code{adjustedRtime}, \code{featureDefinitions},
+##' \code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and
+##' \code{hasChromPeaks} either a \code{MsFeatureData} or a \code{XCMSnExp}
 ##' object, for all other methods a \code{XCMSnExp} object.
 ##'
 ##' @param value For \code{adjustedRtime<-}: a \code{list} (length equal to the
 ##' number of samples) with numeric vectors representing the adjusted retention
 ##' times per scan.
 ##'
-##' For \code{featureGroups<-}: a \code{DataFrame} with feature
-##' alignment information. See return value for the \code{featureGroups} method
-##' for the expected format.
+##' For \code{featureDefinitions<-}: a \code{DataFrame} with peak
+##' grouping information. See return value for the \code{featureDefinitions}
+##' method for the expected format.
 ##'
-##' For \code{features<-}: a \code{matrix} with information on
-##' detected features. See return value for the \code{features} method for the
+##' For \code{chromPeaks<-}: a \code{matrix} with information on
+##' detected peaks. See return value for the \code{chromPeaks} method for the
 ##' expected format.
 ##'
 ##' @author Johannes Rainer
@@ -2060,11 +2071,11 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
 ##' @seealso \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
 ##' and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
-##' @seealso \code{\link{detectFeatures}} for available feature detection methods
+##' @seealso \code{\link{findChromPeaks}} for available peak detection methods
 ##' returning a \code{XCMSnExp} object as a result.
-##' @seealso \code{\link{groupFeatures}} for available feature grouping methods
-##' and \code{\link{groupval,XCMSnExp-method}} for the method to extract feature
-##' grouping results.
+##' @seealso \code{\link{groupChromPeaks}} for available peak grouping
+##' methods and \code{\link{featureDefinitions}} for the method to extract
+##' the feature definitions representing the peak grouping results.
 ##' @seealso \code{\link{adjustRtime}} for retention time adjustment methods.
 ##'
 ##' @rdname XCMSnExp-class
@@ -2075,24 +2086,24 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' library(faahKO)
 ##' od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 ##'                     system.file("cdf/KO/ko16.CDF", package = "faahKO")))
-##' ## Now we perform a feature detection on this data set using the
+##' ## Now we perform a chromatographic peak detection on this data set using the
 ##' ## matched filter method. We are tuning the settings such that it performs
 ##' ## faster.
 ##' mfp <- MatchedFilterParam(binSize = 4)
-##' xod <- detectFeatures(od, param = mfp)
+##' xod <- findChromPeaks(od, param = mfp)
 ##'
-##' ## The results from the feature detection are now stored in the XCMSnExp
+##' ## The results from the peak detection are now stored in the XCMSnExp
 ##' ## object
 ##' xod
 ##'
-##' ## The detected features can be accessed with the features method.
-##' head(features(xod))
+##' ## The detected peaks can be accessed with the chromPeaks method.
+##' head(chromPeaks(xod))
 ##'
-##' ## The settings of the feature detection can be accessed with the
-##' ## processHistory method
+##' ## The settings of the chromatographic peak detection can be accessed with
+##' ## the processHistory method
 ##' processHistory(xod)
 ##'
-##' ## Also the parameter class for the feature detection can be accessed
+##' ## Also the parameter class for the peak detection can be accessed
 ##' processParam(processHistory(xod)[[1]])
 ##'
 ##' ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
@@ -2120,16 +2131,16 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 ##' ##
 ##' ## XCMSnExp objects can be filtered by file, retention time, mz values or
 ##' ## MS level. For some of these filter preprocessing results (mostly
-##' ## retention time correction and feature alignment results) will be dropped.
+##' ## retention time correction and peak grouping results) will be dropped.
 ##' ## Below we filter the XCMSnExp object by file to extract the results for
 ##' ## only the second file.
 ##' xod_2 <- filterFile(xod, file = 2)
 ##' xod_2
 ##'
-##' ## Now the objects contains only the idenfified features for the second file
-##' head(features(xod_2))
+##' ## Now the objects contains only the idenfified peaks for the second file
+##' head(chromPeaks(xod_2))
 ##'
-##' head(features(xod)[features(xod)[, "sample"] == 2, ])
+##' head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
 ##'
 ##' ##########
 ##' ## Coercing to an xcmsSet object
@@ -2148,56 +2159,94 @@ setClass("XCMSnExp",
          ),
          contains = c("OnDiskMSnExp"),
          validity = function(object) {
-             msg <- validMsg(NULL, NULL)
+             msg <- character()
              if (length(object@.processHistory) > 0) {
                  isOK <- unlist(lapply(object@.processHistory, function(z) {
                      return(inherits(z, "ProcessHistory"))
                  }))
                  if (!all(isOK))
-                     msg <- validMsg(msg, paste0("Only 'ProcessHistory' ",
-                                                 "objects are allowed in slot ",
-                                                 ".processHistory!"))
+                     msg <- c(msg, paste0("Only 'ProcessHistory' ",
+                                          "objects are allowed in slot ",
+                                          ".processHistory!"))
              }
              ## TODO @jo add checks:
              ## 1) call validMsFeatureData
-             msg <- validMsg(msg, validateMsFeatureData(object@msFeatureData))
-             if (!is.null(msg)) return(msg)
-             ## 2) features[, "sample"] is within 1:number of samples
-             if (any(ls(object@msFeatureData) == "features")) {
-                 if (!all(object@msFeatureData$features[, "sample"] %in%
+             msg <- c(msg, validateMsFeatureData(object@msFeatureData))
+             if (length(msg)) return(msg)
+             ## 2) peaks[, "sample"] is within 1:number of samples
+             if (any(ls(object@msFeatureData) == "chromPeaks")) {
+                 if (!all(object@msFeatureData$chromPeaks[, "sample"] %in%
                           1:length(fileNames(object))))
-                     msg <- validMsg(msg, paste0("The number of available ",
-                                                 "samples does not match with ",
-                                                 "the sample assignment of ",
-                                                 "features in the 'features' ",
-                                                 "element of the msFeatureData ",
-                                                 "slot!"))
+                     msg <- c(msg, paste0("The number of available ",
+                                          "samples does not match with ",
+                                          "the sample assignment of ",
+                                          "peaks in the 'chromPeaks' ",
+                                          "element of the msFeatureData ",
+                                          "slot!"))
              }
              ## 3) Check that the length of the adjustedRtime matches!
              if (any(ls(object@msFeatureData) == "adjustedRtime")) {
                  rt <- rtime(object, bySample = TRUE)
                  if (length(rt) != length(object@msFeatureData$adjustedRtime)) {
-                     msg <- validMsg(msg, paste0("The number of numeric vectors",
-                                                 " in the 'adjustedRtime' element",
-                                                 " of the msFeatureData slot does",
-                                                 " not match the number of",
-                                                 " samples!"))
+                     msg <- c(msg, paste0("The number of numeric vectors",
+                                          " in the 'adjustedRtime' element",
+                                          " of the msFeatureData slot does",
+                                          " not match the number of",
+                                          " samples!"))
                  } else {
                      if (any(lengths(rt) !=
                              lengths(object@msFeatureData$adjustedRtime)))
-                         msg <- validMsg(msg,
-                                         paste0("The lengths of the numeric ",
-                                                "vectors in the 'adjustedRtime'",
-                                                " element of the msFeatureData ",
-                                                "slot does not match the number",
-                                                " of scans per sample!"))
+                         msg <- c(msg,
+                                  paste0("The lengths of the numeric ",
+                                         "vectors in the 'adjustedRtime'",
+                                         " element of the msFeatureData ",
+                                         "slot does not match the number",
+                                         " of scans per sample!"))
                  }
              }
-             ## 3) If we've got features, check that we have also a related
+             ## 3) If we've got peaks, check that we have also a related
              ##    processing history step.
-             if (is.null(msg))
-                 return(TRUE)
-             else return(msg)
+             if (length(msg))
+                 msg
+             else TRUE
          }
 )
 
+##' @title Representation of chromatographic MS data
+##'
+##' @description The \code{Chromatogram} class is designed to store
+##' chromatographic MS data, i.e. pairs of retention time and intensity values.
+##' Instances of the class can be created with the \code{Chromatogram}
+##' constructor function but in most cases the dedicated methods for
+##' \code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}} objects extracting
+##' chromatograms should be used instead.
+##'
+##' @details The \code{mz}, \code{filterMz} are stored as a \code{numeric(2)}
+##' representing a range even if the chromatogram represent the chromatogram for
+##' a single ion (represented as a single mz value). Representing the \code{mz}
+##' as a range allows this class also to be used for a total ion chromatogram
+##' or base peak chromatogram.
+##' 
+##' @rdname Chromatogram-class
+##' @author Johannes Rainer
+setClass("Chromatogram",
+         slots = c(
+             rtime = "numeric",
+             intensity = "numeric",
+             mz = "numeric",
+             filterMz = "numeric",
+             fromFile = "integer",
+             aggregationFun = "character"
+         ),
+         contains = "Versioned",
+         prototype = prototype(
+             rtime = numeric(),
+             intensity = numeric(),
+             mz = c(0, 0),
+             filterMz = c(0, 0),
+             fromFile = integer(),
+             aggregationFun = character()
+         ),
+         validity = function(object)
+             validChromatogram(object)
+         )
