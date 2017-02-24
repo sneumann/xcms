@@ -20,9 +20,9 @@
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{findChromPeaks}: Either an
-##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-##' object containing the MS- and all other experiment-relevant data.
+##' @param object For \code{findChromPeaks}: an
+##' \code{\link[MSnbase]{OnDiskMSnExp}}  object containing the MS- and all other
+##' experiment-relevant data.
 ##'
 ##' For all other methods: a parameter object.
 ##'
@@ -83,7 +83,8 @@ setMethod("findChromPeaks",
                   object@.processHistory <- list(xph)
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  chromPeaks(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
+                                              is_filled = rep(0, length(res$peaks)))
                   if (validObject(object))
                       return(object)
               }
@@ -105,62 +106,62 @@ setMethod("findChromPeaks",
           })
 
 
-## The centWave peak detection method for MSnExp:
-##' @title Chromatographic peak detection using the centWave method
-##'
-##' @description The \code{findChromPeaks,MSnExp,CentWaveParam} method performs
-##' peak detection using the \emph{centWave} algorithm on all samples from
-##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
-##' intensity values of all spectra hence no additional data input from the
-##' original files is required.
-##'
-##' @rdname findChromPeaks-centWave
-setMethod("findChromPeaks",
-          signature(object = "MSnExp", param = "CentWaveParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
-              ## Restrict to MS1 data.
-              ## Man, that's too slow! We're doing the MS1 restriction below.
-              ## object <- filterMsLevel(object, msLevel. = 1)
-              ## (1) split the spectra per file - this means we have a second
-              ##     copy of the data, but there is no way around that as
-              ##     filterFile is pretty slow on MSnExp.
-              ms1_idx <- which(unname(msLevel(object)) == 1)
-              if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for chromatographic peak",
-                       " detection!")
-              ## Check if the data is centroided
-              if (!isCentroided(object[[ms1_idx[1]]]))
-                  warning("Your data appears to be not centroided! CentWave",
-                          " works best on data in centroid mode.")
-              spect_list <- split(spectra(object)[ms1_idx],
-                                  fromFile(object)[ms1_idx])
-              ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(spect_list, function(z) {
-                  findChromPeaks_Spectrum_list(z,
-                                               method = "centWave",
-                                               param = param)
-              }, BPPARAM = BPPARAM)
-              ## (3) collect the results.
-              res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
-                                        fnames = fileNames(object))
-              if (return.type == "list")
-                  return(res$peaks)
-              if (return.type == "xcmsSet") {
-                  xs <- .pSet2xcmsSet(object)
-                  peaks(xs) <- do.call(rbind, res$peaks)
-                  xs@.processHistory <- res$procHist
-                  OK <- .validProcessHistory(xs)
-                  if (!is.logical(OK))
-                      stop(OK)
-                  if (!any(colnames(pData(object)) == "class"))
-                      message("Note: you might want to set/adjust the",
-                              " 'sampclass' of the returned xcmSet object",
-                              " before proceeding with the analysis.")
-                  return(xs)
-              }
-          })
+## ## The centWave peak detection method for MSnExp:
+## ##' @title Chromatographic peak detection using the centWave method
+## ##'
+## ##' @description The \code{findChromPeaks,MSnExp,CentWaveParam} method performs
+## ##' peak detection using the \emph{centWave} algorithm on all samples from
+## ##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
+## ##' intensity values of all spectra hence no additional data input from the
+## ##' original files is required.
+## ##'
+## ##' @rdname findChromPeaks-centWave
+## setMethod("findChromPeaks",
+##           signature(object = "MSnExp", param = "CentWaveParam"),
+##           function(object, param, BPPARAM = bpparam(), return.type = "list") {
+##               return.type <- match.arg(return.type, c("list", "xcmsSet"))
+##               ## Restrict to MS1 data.
+##               ## Man, that's too slow! We're doing the MS1 restriction below.
+##               ## object <- filterMsLevel(object, msLevel. = 1)
+##               ## (1) split the spectra per file - this means we have a second
+##               ##     copy of the data, but there is no way around that as
+##               ##     filterFile is pretty slow on MSnExp.
+##               ms1_idx <- which(unname(msLevel(object)) == 1)
+##               if (length(ms1_idx) == 0)
+##                   stop("No MS1 spectra available for chromatographic peak",
+##                        " detection!")
+##               ## Check if the data is centroided
+##               if (!isCentroided(object[[ms1_idx[1]]]))
+##                   warning("Your data appears to be not centroided! CentWave",
+##                           " works best on data in centroid mode.")
+##               spect_list <- split(spectra(object)[ms1_idx],
+##                                   fromFile(object)[ms1_idx])
+##               ## (2) use bplapply to do the peak detection.
+##               resList <- bplapply(spect_list, function(z) {
+##                   findChromPeaks_Spectrum_list(z,
+##                                                method = "centWave",
+##                                                param = param)
+##               }, BPPARAM = BPPARAM)
+##               ## (3) collect the results.
+##               res <- .processResultList(resList,
+##                                         getProcHist = return.type != "list",
+##                                         fnames = fileNames(object))
+##               if (return.type == "list")
+##                   return(res$peaks)
+##               if (return.type == "xcmsSet") {
+##                   xs <- .pSet2xcmsSet(object)
+##                   peaks(xs) <- do.call(rbind, res$peaks)
+##                   xs@.processHistory <- res$procHist
+##                   OK <- .validProcessHistory(xs)
+##                   if (!is.logical(OK))
+##                       stop(OK)
+##                   if (!any(colnames(pData(object)) == "class"))
+##                       message("Note: you might want to set/adjust the",
+##                               " 'sampclass' of the returned xcmSet object",
+##                               " before proceeding with the analysis.")
+##                   return(xs)
+##               }
+##           })
 
 ## The matchedFilter peak detection method for OnDiskMSnExp:
 ##' @title Peak detection in the chromatographic time domain
@@ -176,10 +177,10 @@ setMethod("findChromPeaks",
 ##' be configured either by the \code{BPPARAM} parameter or by globally defining
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
-
-##' @param object For \code{findChromPeaks}: Either an
-##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-##' object containing the MS- and all other experiment-relevant data.
+##' 
+##' @param object For \code{findChromPeaks}: an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+##' experiment-relevant data.
 ##'
 ##' For all other methods: a parameter object.
 ##'
@@ -228,7 +229,9 @@ setMethod("findChromPeaks",
                   object@.processHistory <- list(xph)
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  chromPeaks(object) <- do.call(rbind, res$peaks)
+                  ## chromPeaks(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
+                                              is_filled = rep(0, length(res$peaks)))
                   if (validObject(object))
                       return(object)
               }
@@ -249,49 +252,49 @@ setMethod("findChromPeaks",
               }
           })
 
-##' @title Peak detection in the chromatographic time domain
-##'
-##' @description The \code{findChromPeaks,MSnExp,MatchedFilterParam} method
-##' performs peak detection using the \emph{matchedFilter} method on all
-##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
-##' mz and intensity values of all spectra hence no additional
-##' data input from the original files is required.
-##'
-##' @rdname findChromPeaks-matchedFilter
-setMethod("findChromPeaks",
-          signature(object = "MSnExp", param = "MatchedFilterParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
-              ms1_idx <- which(unname(msLevel(object)) == 1)
-              if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for chromatographic peak",
-                       " detection!")
-              spect_list <- split(spectra(object)[ms1_idx],
-                                  fromFile(object)[ms1_idx])
-              resList <- bplapply(spect_list, function(z) {
-                  findChromPeaks_Spectrum_list(z,
-                                               method = "matchedFilter",
-                                               param = param)
-              }, BPPARAM = BPPARAM)
-              res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
-                                        fnames = fileNames(object))
-              if (return.type == "list")
-                  return(res$peaks)
-              if (return.type == "xcmsSet") {
-                  xs <- .pSet2xcmsSet(object)
-                  peaks(xs) <- do.call(rbind, res$peaks)
-                  xs@.processHistory <- res$procHist
-                  OK <- .validProcessHistory(xs)
-                  if (!is.logical(OK))
-                      stop(OK)
-                  if (!any(colnames(pData(object)) == "class"))
-                      message("Note: you might want to set/adjust the",
-                              " 'sampclass' of the returned xcmSet object",
-                              " before proceeding with the analysis.")
-                  return(xs)
-              }
-          })
+## ##' @title Peak detection in the chromatographic time domain
+## ##'
+## ##' @description The \code{findChromPeaks,MSnExp,MatchedFilterParam} method
+## ##' performs peak detection using the \emph{matchedFilter} method on all
+## ##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
+## ##' mz and intensity values of all spectra hence no additional
+## ##' data input from the original files is required.
+## ##'
+## ##' @rdname findChromPeaks-matchedFilter
+## setMethod("findChromPeaks",
+##           signature(object = "MSnExp", param = "MatchedFilterParam"),
+##           function(object, param, BPPARAM = bpparam(), return.type = "list") {
+##               return.type <- match.arg(return.type, c("list", "xcmsSet"))
+##               ms1_idx <- which(unname(msLevel(object)) == 1)
+##               if (length(ms1_idx) == 0)
+##                   stop("No MS1 spectra available for chromatographic peak",
+##                        " detection!")
+##               spect_list <- split(spectra(object)[ms1_idx],
+##                                   fromFile(object)[ms1_idx])
+##               resList <- bplapply(spect_list, function(z) {
+##                   findChromPeaks_Spectrum_list(z,
+##                                                method = "matchedFilter",
+##                                                param = param)
+##               }, BPPARAM = BPPARAM)
+##               res <- .processResultList(resList,
+##                                         getProcHist = return.type != "list",
+##                                         fnames = fileNames(object))
+##               if (return.type == "list")
+##                   return(res$peaks)
+##               if (return.type == "xcmsSet") {
+##                   xs <- .pSet2xcmsSet(object)
+##                   peaks(xs) <- do.call(rbind, res$peaks)
+##                   xs@.processHistory <- res$procHist
+##                   OK <- .validProcessHistory(xs)
+##                   if (!is.logical(OK))
+##                       stop(OK)
+##                   if (!any(colnames(pData(object)) == "class"))
+##                       message("Note: you might want to set/adjust the",
+##                               " 'sampclass' of the returned xcmSet object",
+##                               " before proceeding with the analysis.")
+##                   return(xs)
+##               }
+##           })
 
 ## massifquant
 ## The massifquant peak detection method for OnDiskMSnExp:
@@ -309,9 +312,9 @@ setMethod("findChromPeaks",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{findChromPeaks}: Either an
-##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-##' object containing the MS- and all other experiment-relevant data.
+##' @param object For \code{findChromPeaks}: an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+##' experiment-relevant data.
 ##'
 ##' For all other methods: a parameter object.
 ##'
@@ -360,7 +363,9 @@ setMethod("findChromPeaks",
                   object@.processHistory <- list(xph)
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  chromPeaks(object) <- do.call(rbind, res$peaks)
+                  ## chromPeaks(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
+                                              is_filled = rep(0, length(res$peaks)))
                   if (validObject(object))
                       return(object)
               }
@@ -382,49 +387,49 @@ setMethod("findChromPeaks",
           })
 
 
-##' @title Chromatographic peak detection using the massifquant method
-##'
-##' @description The \code{findChromPeaks,MSnExp,MassifquantParam} method
-##' performs chromatographic peak detection using the \emph{massifquant} method
-##' on all samples from an \code{\link[MSnbase]{MSnExp}} object. These objects
-##' contain mz and intensity values of all spectra hence no additional
-##' data input from the original files is required.
-##'
-##' @rdname findChromPeaks-massifquant
-setMethod("findChromPeaks",
-          signature(object = "MSnExp", param = "MassifquantParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
-              ms1_idx <- which(unname(msLevel(object)) == 1)
-              if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for chromatographic peak",
-                       " detection!")
-              spect_list <- split(spectra(object)[ms1_idx],
-                                  fromFile(object)[ms1_idx])
-              resList <- bplapply(spect_list, function(z) {
-                  findChromPeaks_Spectrum_list(z,
-                                               method = "massifquant",
-                                               param = param)
-              }, BPPARAM = BPPARAM)
-              res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
-                                        fnames = fileNames(object))
-              if (return.type == "list")
-                  return(res$peaks)
-              if (return.type == "xcmsSet") {
-                  xs <- .pSet2xcmsSet(object)
-                  peaks(xs) <- do.call(rbind, res$peaks)
-                  xs@.processHistory <- res$procHist
-                  OK <- .validProcessHistory(xs)
-                  if (!is.logical(OK))
-                      stop(OK)
-                  if (!any(colnames(pData(object)) == "class"))
-                      message("Note: you might want to set/adjust the",
-                              " 'sampclass' of the returned xcmSet object",
-                              " before proceeding with the analysis.")
-                  return(xs)
-              }
-          })
+## ##' @title Chromatographic peak detection using the massifquant method
+## ##'
+## ##' @description The \code{findChromPeaks,MSnExp,MassifquantParam} method
+## ##' performs chromatographic peak detection using the \emph{massifquant} method
+## ##' on all samples from an \code{\link[MSnbase]{MSnExp}} object. These objects
+## ##' contain mz and intensity values of all spectra hence no additional
+## ##' data input from the original files is required.
+## ##'
+## ##' @rdname findChromPeaks-massifquant
+## setMethod("findChromPeaks",
+##           signature(object = "MSnExp", param = "MassifquantParam"),
+##           function(object, param, BPPARAM = bpparam(), return.type = "list") {
+##               return.type <- match.arg(return.type, c("list", "xcmsSet"))
+##               ms1_idx <- which(unname(msLevel(object)) == 1)
+##               if (length(ms1_idx) == 0)
+##                   stop("No MS1 spectra available for chromatographic peak",
+##                        " detection!")
+##               spect_list <- split(spectra(object)[ms1_idx],
+##                                   fromFile(object)[ms1_idx])
+##               resList <- bplapply(spect_list, function(z) {
+##                   findChromPeaks_Spectrum_list(z,
+##                                                method = "massifquant",
+##                                                param = param)
+##               }, BPPARAM = BPPARAM)
+##               res <- .processResultList(resList,
+##                                         getProcHist = return.type != "list",
+##                                         fnames = fileNames(object))
+##               if (return.type == "list")
+##                   return(res$peaks)
+##               if (return.type == "xcmsSet") {
+##                   xs <- .pSet2xcmsSet(object)
+##                   peaks(xs) <- do.call(rbind, res$peaks)
+##                   xs@.processHistory <- res$procHist
+##                   OK <- .validProcessHistory(xs)
+##                   if (!is.logical(OK))
+##                       stop(OK)
+##                   if (!any(colnames(pData(object)) == "class"))
+##                       message("Note: you might want to set/adjust the",
+##                               " 'sampclass' of the returned xcmSet object",
+##                               " before proceeding with the analysis.")
+##                   return(xs)
+##               }
+##           })
 
 
 ## MSW
@@ -444,9 +449,9 @@ setMethod("findChromPeaks",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
-##' @param object For \code{findChromPeaks}: Either an
-##' \code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-##' object containing the MS- and all other experiment-relevant data.
+##' @param object For \code{findChromPeaks}: an
+##' \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+##' experiment-relevant data.
 ##'
 ##' For all other methods: a parameter object.
 ##'
@@ -496,7 +501,9 @@ setMethod("findChromPeaks",
                   object@.processHistory <- list(xph)
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  chromPeaks(object) <- do.call(rbind, res$peaks)
+                  ## chromPeaks(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
+                                              is_filled = rep(0, length(res$peaks)))
                   if (validObject(object))
                       return(object)
               }
@@ -517,50 +524,50 @@ setMethod("findChromPeaks",
               }
           })
 
-##' @title Single-spectrum non-chromatography MS data peak detection
-##'
-##' @description The \code{findChromPeaks,MSnExp,MSWParam} method
-##' performs peak detection in single-spectrum non-chromatography MS
-##' data using functionality from the \code{MassSpecWavelet} package on all
-##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
-##' mz and intensity values of all spectra hence no additional
-##' data input from the original files is required.
-##'
-##' @rdname findPeaks-MSW
-setMethod("findChromPeaks",
-          signature(object = "MSnExp", param = "MSWParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
-              ms1_idx <- which(unname(msLevel(object)) == 1)
-              if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for chromatographic peak",
-                       " detection!")
-              spect_list <- split(spectra(object)[ms1_idx],
-                                  fromFile(object)[ms1_idx])
-              resList <- bplapply(spect_list, function(z) {
-                  findPeaks_MSW_Spectrum_list(z,
-                                              method = "MSW",
-                                              param = param)
-              }, BPPARAM = BPPARAM)
-              res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
-                                        fnames = fileNames(object))
-              if (return.type == "list")
-                  return(res$peaks)
-              if (return.type == "xcmsSet") {
-                  xs <- .pSet2xcmsSet(object)
-                  peaks(xs) <- do.call(rbind, res$peaks)
-                  xs@.processHistory <- res$procHist
-                  OK <- .validProcessHistory(xs)
-                  if (!is.logical(OK))
-                      stop(OK)
-                  if (!any(colnames(pData(object)) == "class"))
-                      message("Note: you might want to set/adjust the",
-                              " 'sampclass' of the returned xcmSet object",
-                              " before proceeding with the analysis.")
-                  return(xs)
-              }
-          })
+## ##' @title Single-spectrum non-chromatography MS data peak detection
+## ##'
+## ##' @description The \code{findChromPeaks,MSnExp,MSWParam} method
+## ##' performs peak detection in single-spectrum non-chromatography MS
+## ##' data using functionality from the \code{MassSpecWavelet} package on all
+## ##' samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
+## ##' mz and intensity values of all spectra hence no additional
+## ##' data input from the original files is required.
+## ##'
+## ##' @rdname findPeaks-MSW
+## setMethod("findChromPeaks",
+##           signature(object = "MSnExp", param = "MSWParam"),
+##           function(object, param, BPPARAM = bpparam(), return.type = "list") {
+##               return.type <- match.arg(return.type, c("list", "xcmsSet"))
+##               ms1_idx <- which(unname(msLevel(object)) == 1)
+##               if (length(ms1_idx) == 0)
+##                   stop("No MS1 spectra available for chromatographic peak",
+##                        " detection!")
+##               spect_list <- split(spectra(object)[ms1_idx],
+##                                   fromFile(object)[ms1_idx])
+##               resList <- bplapply(spect_list, function(z) {
+##                   findPeaks_MSW_Spectrum_list(z,
+##                                               method = "MSW",
+##                                               param = param)
+##               }, BPPARAM = BPPARAM)
+##               res <- .processResultList(resList,
+##                                         getProcHist = return.type != "list",
+##                                         fnames = fileNames(object))
+##               if (return.type == "list")
+##                   return(res$peaks)
+##               if (return.type == "xcmsSet") {
+##                   xs <- .pSet2xcmsSet(object)
+##                   peaks(xs) <- do.call(rbind, res$peaks)
+##                   xs@.processHistory <- res$procHist
+##                   OK <- .validProcessHistory(xs)
+##                   if (!is.logical(OK))
+##                       stop(OK)
+##                   if (!any(colnames(pData(object)) == "class"))
+##                       message("Note: you might want to set/adjust the",
+##                               " 'sampclass' of the returned xcmSet object",
+##                               " before proceeding with the analysis.")
+##                   return(xs)
+##               }
+##           })
 
 ## The centWave with predicted isotope peak detection method for OnDiskMSnExp:
 ##' @title Two-step centWave peak detection considering also isotopes
@@ -577,8 +584,10 @@ setMethod("findChromPeaks",
 ##' the parallel processing mode using the \code{\link[BiocParallel]{register}}
 ##' method from the \code{BiocParallel} package.
 ##'
+##' @param param An \code{CentWavePredIsoParam} object with the settings for the
+##' chromatographic peak detection algorithm.
 ##' @inheritParams findChromPeaks-centWave
-##'
+##' 
 ##' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
 ##' \code{\link{XCMSnExp}} object with the results of the peak detection.
 ##' If \code{return.type = "list"} a list of length equal to the number of
@@ -623,7 +632,9 @@ setMethod("findChromPeaks",
                   object@.processHistory <- list(xph)
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
-                  chromPeaks(object) <- do.call(rbind, res$peaks)
+                  ## chromPeaks(object) <- do.call(rbind, res$peaks)
+                  chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
+                                              is_filled = rep(0, length(res$peaks)))
                   if (validObject(object))
                       return(object)
               }
@@ -645,62 +656,62 @@ setMethod("findChromPeaks",
           })
 
 
-## The centWave with predicted isotope peak detection method for MSnExp:
-##' @title Two-step centWave peak detection considering also isotopes
-##'
-##' @description The \code{findChromPeaks,MSnExp,CentWavePredIsoParam} method
-##' performs a two-step centWave-based peak detection on all samples from
-##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
-##' intensity values of all spectra hence no additional data input from the
-##' original files is required.
-##'
-##' @rdname findChromPeaks-centWaveWithPredIsoROIs
-setMethod("findChromPeaks",
-          signature(object = "MSnExp", param = "CentWavePredIsoParam"),
-          function(object, param, BPPARAM = bpparam(), return.type = "list") {
-              return.type <- match.arg(return.type, c("list", "xcmsSet"))
-              ## Restrict to MS1 data.
-              ## Man, that's too slow! We're doing the MS1 restriction below.
-              ## object <- filterMsLevel(object, msLevel. = 1)
-              ## (1) split the spectra per file - this means we have a second
-              ##     copy of the data, but there is no way around that as
-              ##     filterFile is pretty slow on MSnExp.
-              ms1_idx <- which(unname(msLevel(object)) == 1)
-              if (length(ms1_idx) == 0)
-                  stop("No MS1 spectra available for chromatographic peak",
-                       " detection!")
-              ## Check if the data is centroided
-              if (!isCentroided(object[[ms1_idx[1]]]))
-                  warning("Your data appears to be not centroided! CentWave",
-                          " works best on data in centroid mode.")
-              spect_list <- split(spectra(object)[ms1_idx],
-                                  fromFile(object)[ms1_idx])
-              ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(spect_list, function(z) {
-                  findChromPeaks_Spectrum_list(z,
-                                               method = "centWaveWithPredIsoROIs",
-                                               param = param)
-              }, BPPARAM = BPPARAM)
-              ## (3) collect the results.
-              res <- .processResultList(resList,
-                                        getProcHist = return.type != "list",
-                                        fnames = fileNames(object))
-              if (return.type == "list")
-                  return(res$peaks)
-              if (return.type == "xcmsSet") {
-                  xs <- .pSet2xcmsSet(object)
-                  peaks(xs) <- do.call(rbind, res$peaks)
-                  xs@.processHistory <- res$procHist
-                  OK <- .validProcessHistory(xs)
-                  if (!is.logical(OK))
-                      stop(OK)
-                  if (!any(colnames(pData(object)) == "class"))
-                      message("Note: you might want to set/adjust the",
-                              " 'sampclass' of the returned xcmSet object",
-                              " before proceeding with the analysis.")
-                  return(xs)
-              }
-          })
+## ## The centWave with predicted isotope peak detection method for MSnExp:
+## ##' @title Two-step centWave peak detection considering also isotopes
+## ##'
+## ##' @description The \code{findChromPeaks,MSnExp,CentWavePredIsoParam} method
+## ##' performs a two-step centWave-based peak detection on all samples from
+## ##' an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
+## ##' intensity values of all spectra hence no additional data input from the
+## ##' original files is required.
+## ##'
+## ##' @rdname findChromPeaks-centWaveWithPredIsoROIs
+## setMethod("findChromPeaks",
+##           signature(object = "MSnExp", param = "CentWavePredIsoParam"),
+##           function(object, param, BPPARAM = bpparam(), return.type = "list") {
+##               return.type <- match.arg(return.type, c("list", "xcmsSet"))
+##               ## Restrict to MS1 data.
+##               ## Man, that's too slow! We're doing the MS1 restriction below.
+##               ## object <- filterMsLevel(object, msLevel. = 1)
+##               ## (1) split the spectra per file - this means we have a second
+##               ##     copy of the data, but there is no way around that as
+##               ##     filterFile is pretty slow on MSnExp.
+##               ms1_idx <- which(unname(msLevel(object)) == 1)
+##               if (length(ms1_idx) == 0)
+##                   stop("No MS1 spectra available for chromatographic peak",
+##                        " detection!")
+##               ## Check if the data is centroided
+##               if (!isCentroided(object[[ms1_idx[1]]]))
+##                   warning("Your data appears to be not centroided! CentWave",
+##                           " works best on data in centroid mode.")
+##               spect_list <- split(spectra(object)[ms1_idx],
+##                                   fromFile(object)[ms1_idx])
+##               ## (2) use bplapply to do the peak detection.
+##               resList <- bplapply(spect_list, function(z) {
+##                   findChromPeaks_Spectrum_list(z,
+##                                                method = "centWaveWithPredIsoROIs",
+##                                                param = param)
+##               }, BPPARAM = BPPARAM)
+##               ## (3) collect the results.
+##               res <- .processResultList(resList,
+##                                         getProcHist = return.type != "list",
+##                                         fnames = fileNames(object))
+##               if (return.type == "list")
+##                   return(res$peaks)
+##               if (return.type == "xcmsSet") {
+##                   xs <- .pSet2xcmsSet(object)
+##                   peaks(xs) <- do.call(rbind, res$peaks)
+##                   xs@.processHistory <- res$procHist
+##                   OK <- .validProcessHistory(xs)
+##                   if (!is.logical(OK))
+##                       stop(OK)
+##                   if (!any(colnames(pData(object)) == "class"))
+##                       message("Note: you might want to set/adjust the",
+##                               " 'sampclass' of the returned xcmSet object",
+##                               " before proceeding with the analysis.")
+##                   return(xs)
+##               }
+##           })
 
 ## profMat method for XCMSnExp/OnDiskMSnExp.
 ##' @description \code{profMat}: creates a \emph{profile matrix}, which

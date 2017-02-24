@@ -9,7 +9,7 @@ test_adjustRtime_PeakGroups <- function() {
     xsg <- group(xs)
     xodg <- groupChromPeaks(xod,
                             param = PeakDensityParam(sampleGroups = xs$class))
-    checkEquals(peaks(xsg), chromPeaks(xodg))
+    checkEquals(peaks(xsg), chromPeaks(xodg)[, colnames(peaks(xsg))])
     checkEquals(xsg@groupidx, featureDefinitions(xodg)$peakidx)
     checkTrue(length(processHistory(xodg,
                                     type = xcms:::.PROCSTEP.PEAK.DETECTION)) == 1)
@@ -37,7 +37,7 @@ test_adjustRtime_PeakGroups <- function() {
     checkTrue(sum(chromPeaks(xod)[, "rtmin"] != chromPeaks(xodr)[, "rtmin"]) > 200)
     checkTrue(sum(chromPeaks(xod)[, "rtmax"] != chromPeaks(xodr)[, "rtmax"]) > 200)
     ## between xcmsSet and XCMSnExp
-    checkEquals(chromPeaks(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     ## To compare the adjusted retention time we have to extract it by sample!
     ## Otherwise the ordering will not be the same, as rtime is ordered by
     ## retention time, but @rt$raw by sample.
@@ -60,7 +60,7 @@ test_adjustRtime_PeakGroups <- function() {
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1))
-    checkEquals(chromPeaks(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 
@@ -69,7 +69,7 @@ test_adjustRtime_PeakGroups <- function() {
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1,
                                                          smooth = "linear"))
-    checkEquals(chromPeaks(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 
@@ -78,7 +78,7 @@ test_adjustRtime_PeakGroups <- function() {
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                          span = 1,
                                                          family = "symmetric"))
-    checkEquals(chromPeaks(xodr), peaks(xsr))
+    checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
 }

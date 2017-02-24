@@ -33,6 +33,7 @@
 \alias{featureDefinitions<-}
 \alias{featureDefinitions<-,MsFeatureData-method}
 \alias{featureDefinitions<-,XCMSnExp-method}
+\alias{findChromPeaks,XCMSnExp,ANY-method}
 \alias{hasAdjustedRtime}
 \alias{hasAdjustedRtime,MsFeatureData-method}
 \alias{hasAdjustedRtime,XCMSnExp-method}
@@ -125,6 +126,9 @@
 
 \S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
   baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
+
+\S4method{findChromPeaks}{XCMSnExp,ANY}(object, param, BPPARAM = bpparam(),
+  return.type = "XCMSnExp")
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -196,6 +200,21 @@ history steps to remove. By default \code{dropLastN = -1}, dropping the
 chromatographic peaks removes all process history steps related to peak
 grouping. Setting e.g. \code{dropLastN = 1} will only remove the most recent
 peak grouping related process history step.}
+
+\item{param}{A \code{\link{CentWaveParam}}, \code{\link{MatchedFilterParam}},
+\code{\link{MassifquantParam}}, \code{\link{MSWParam}} or
+\code{\link{CentWavePredIsoParam}} object with the settings for the
+chromatographic peak detection algorithm.}
+
+\item{BPPARAM}{A parameter class specifying if and how parallel processing
+should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
+See documentation of the \code{BiocParallel} for more details. If parallel
+processing is enables, peak detection is performed in parallel on several
+of the input samples.}
+
+\item{return.type}{Character specifying what type of object the method should
+return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
+\code{"xcmsSet"}.}
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
@@ -225,8 +244,11 @@ at least the following columns: \code{"mz"} (mz value for the largest
 intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
 value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
 (minimal retention time), \code{"rtmax"} (maximal retention time),
-\code{"into"} (integrated, original, intensity of the peak) and
-\code{"sample"} (sample index in which the peak was identified).
+\code{"into"} (integrated, original, intensity of the peak),
+\code{"sample"} (sample index in which the peak was identified) and
+\code{"is_filled"} defining whether the chromatographic peak was identified
+by the peak picking algorithm (\code{0}) or was added by the
+\code{fillChromPeaks} method (\code{1}).
 Depending on the employed peak detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
 For \code{bySample = TRUE} the chronatographic peaks are returned as a

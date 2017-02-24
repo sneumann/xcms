@@ -74,7 +74,7 @@ test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     checkTrue(hasChromPeaks(res))
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkEquals(peaks(xs)@.Data, chromPeaks(res))
+    checkEquals(peaks(xs)@.Data, chromPeaks(res)[, colnames(peaks(xs)@.Data)])
 
     ## Check on the full data.
     ## xs <- xcmsSet(fs, profparam = list(profstep = 0), snthresh = snth,

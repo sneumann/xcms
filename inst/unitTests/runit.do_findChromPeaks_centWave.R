@@ -88,7 +88,7 @@ test_findChromPeaks_centWave <- function() {
     checkTrue(hasChromPeaks(res))
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkEquals(peaks(xs)@.Data, chromPeaks(res))
+    checkEquals(peaks(xs)@.Data, chromPeaks(res)[, -ncol(chromPeaks(res))])
 }
 
 dontrun_test_benchmark_centWaves <- function() {

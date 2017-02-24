@@ -469,9 +469,9 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(!hasAdjustedRtime(tmp))
     checkTrue(!hasFeatures(tmp))
     checkTrue(all(chromPeaks(tmp)[, "sample"] == 1))
-    checkEquals(chromPeaks(tmp)[, -ncol(chromPeaks(tmp))],
+    checkEquals(chromPeaks(tmp)[, -(ncol(chromPeaks(tmp)) - 1)],
                 chromPeaks(xod_x)[chromPeaks(xod_x)[, "sample"] == 2,
-                                  -ncol(chromPeaks(xod_x))])
+                                  -(ncol(chromPeaks(xod_x)) - 1)])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(xod_x, file = c(1, 3))
@@ -481,7 +481,8 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(all(chromPeaks(tmp)[, "sample"] %in% c(1, 2)))
     a <- chromPeaks(tmp)
     b <- chromPeaks(xod_x)
-    checkEquals(a[, -ncol(a)], b[b[, "sample"] %in% c(1, 3), -ncol(b)])
+    checkEquals(a[, -(ncol(a) - 1)],
+                b[b[, "sample"] %in% c(1, 3), -(ncol(b) - 1)])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
 
     ## Errors
@@ -522,14 +523,16 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
     tmp <- chromPeaks(xod_xg)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     ## Do filterFile on xod_xgr
     ## Should remove adjusted rts and revert the original peak rts.
     res <- filterFile(xod_xgr, file = 2)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xg)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
@@ -539,7 +542,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] == 2, "rt"]) <
@@ -555,8 +559,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgrg, file = c(1, 3))
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_x)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)],
-                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
     checkEquals(unname(rtime(res, bySample = TRUE)),
                 unname(rtime(xod_xg, bySample = TRUE)[c(1, 3)]))
     checkTrue(!hasAdjustedRtime(res))
@@ -567,8 +571,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgrg, file = c(1, 3), keepAdjustedRtime = TRUE)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)],
-                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] %in% c(1, 3), "rt"]) <

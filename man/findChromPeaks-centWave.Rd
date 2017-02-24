@@ -5,7 +5,6 @@
 \alias{CentWaveParam}
 \alias{CentWaveParam-class}
 \alias{centWave}
-\alias{findChromPeaks,MSnExp,CentWaveParam-method}
 \alias{findChromPeaks,OnDiskMSnExp,CentWaveParam-method}
 \alias{findChromPeaks-centWave}
 \alias{firstBaselineCheck}
@@ -69,9 +68,6 @@ CentWaveParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 \S4method{findChromPeaks}{OnDiskMSnExp,CentWaveParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp")
-
-\S4method{findChromPeaks}{MSnExp,CentWaveParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
 
 \S4method{show}{CentWaveParam}(object)
 
@@ -185,9 +181,9 @@ data within regions of interest is checked to be above the first baseline.}
 defining the scale for each region of interest in \code{roiList} that should
 be used for the centWave-wavelets.}
 
-\item{object}{For \code{findChromPeaks}: Either an
-\code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-object containing the MS- and all other experiment-relevant data.
+\item{object}{For \code{findChromPeaks}: an
+\code{\link[MSnbase]{OnDiskMSnExp}}  object containing the MS- and all other
+experiment-relevant data.
 
 For all other methods: a parameter object.}
 
@@ -235,12 +231,6 @@ on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
-
-The \code{findChromPeaks,MSnExp,CentWaveParam} method performs
-peak detection using the \emph{centWave} algorithm on all samples from
-an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
-intensity values of all spectra hence no additional data input from the
-original files is required.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 slot of the object.
