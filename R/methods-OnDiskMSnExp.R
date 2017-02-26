@@ -84,7 +84,7 @@ setMethod("findChromPeaks",
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
                   chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
-                                              is_filled = rep(0, length(res$peaks)))
+                                              is_filled = 0)
                   if (validObject(object))
                       return(object)
               }
@@ -231,7 +231,7 @@ setMethod("findChromPeaks",
                       object@msFeatureData <- new("MsFeatureData")
                   ## chromPeaks(object) <- do.call(rbind, res$peaks)
                   chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
-                                              is_filled = rep(0, length(res$peaks)))
+                                              is_filled = 0)
                   if (validObject(object))
                       return(object)
               }
@@ -365,7 +365,7 @@ setMethod("findChromPeaks",
                       object@msFeatureData <- new("MsFeatureData")
                   ## chromPeaks(object) <- do.call(rbind, res$peaks)
                   chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
-                                              is_filled = rep(0, length(res$peaks)))
+                                              is_filled = 0)
                   if (validObject(object))
                       return(object)
               }
@@ -503,7 +503,7 @@ setMethod("findChromPeaks",
                       object@msFeatureData <- new("MsFeatureData")
                   ## chromPeaks(object) <- do.call(rbind, res$peaks)
                   chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
-                                              is_filled = rep(0, length(res$peaks)))
+                                              is_filled = 0)
                   if (validObject(object))
                       return(object)
               }
@@ -634,7 +634,7 @@ setMethod("findChromPeaks",
                       object@msFeatureData <- new("MsFeatureData")
                   ## chromPeaks(object) <- do.call(rbind, res$peaks)
                   chromPeaks(object) <- cbind(do.call(rbind, res$peaks),
-                                              is_filled = rep(0, length(res$peaks)))
+                                              is_filled = 0)
                   if (validObject(object))
                       return(object)
               }

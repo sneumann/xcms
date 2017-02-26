@@ -999,5 +999,44 @@ https://en.wikipedia.org/wiki/Mass_chromatogram#Selected-ion_monitoring_chromato
 http://proteowizard.sourceforge.net/dox/structpwiz_1_1msdata_1_1_chromatogram.html
 https://sourceforge.net/p/proteowizard/mailman/message/27571266/
 
+** TODO Implement a =findBackgroundIons= method
+
+Check on one of our own files.
+
+#+BEGIN_SRC R
+  library(xcms)
+
+  rd <- readMSData2("/Volumes/Ext64/data/2016/2016-11/NoSN/250516_QC_NORM_3_POS_3.mzML")
+
+  ## Evaluate the mz-rt matrix - can we spot already something there?
+  sps <- spectra(rd)
+  dfs <- lapply(sps, as.data.frame)
+  ## cut the intensities at 5000
+  dfs <- lapply(dfs, function(z) {
+      z[z[, "i"] > 5000, "i"] <- 5000
+      return(z)
+  })
+
+  library(RColorBrewer)
+  library(lattice)
+  colR <- colorRampPalette(brewer.pal(9, "YlOrRd"))(255)
+  brks <- do.breaks(c(0, 5000), length(colR))
+
+  mzR <- range(mz(rd))
+  rtR <- range(rtime(rd))
+
+  plot(3, 3, pch = NA, xlim = rtR, ylim = mzR)
+  for(i in 1:length(dfs)) {
+      intC <- level.colors(dfs[[i]]$i, at = brks, col.regions = colR)
+      xs <- rep(rtime(rd)[i], length(intC))
+      points(x = xs, y = dfs[[i]]$mz, col = intC, cex = 0.1, pch = 16)
+  }
+  ## level.colors(x, at = brks, col.regions = colR)
+#+END_SRC
+
+A simple approach would be to walk along the mz and evaluate whether, for a
+certain mz (bin?) the signal is higher than a threshold in 70% of the spectra,
+i.e. that the % of values is larger than a percentage.
+
 
 * References

@@ -1790,64 +1790,36 @@ setMethod("findChromPeaks",
     ## parallel function. Estimate the area better!
 
     ## Original code: use the median of the min/max rt and mz per peak.
-    aggFun <- median
-    pkRange <- do.call(rbind,
-                       lapply(
-                           featureDefinitions(object)$peakidx, function(z) {
-                               tmp <- chromPeaks(object)[z, c("rtmin", "rtmax",
-                                                              "mzmin", "mzmax"),
-                                                         drop = FALSE]
-                               c(aggFun(tmp[, 1]), aggFun(tmp[, 2]),
-                                 aggFun(tmp[, 3]), aggFun(tmp[, 3]))
-                           }
-                       ))
-    
-    rtRange <- do.call(rbind,
-                       lapply(
-                           featureDefinitions(object)$peakidx, function(z) {
-                               range(chromPeaks(object)[z, c("rtmin", "rtmax")])
-                           }))
-    mzRange <- do.call(rbind,
-                       lapply(
-                           featureDefinitions(object)$peakidx, function(z) {
-                               range(chromPeaks(object)[z, c("mzmin", "mzmax")])
-                           }))
+    aggFunLow <- median
+    aggFunHigh <- median
+    pkArea <- do.call(rbind,
+                      lapply(
+                          featureDefinitions(object)$peakidx, function(z) {
+                              tmp <- chromPeaks(object)[z, c("rtmin", "rtmax",
+                                                             "mzmin", "mzmax"),
+                                                        drop = FALSE]
+                              c(aggFunLow(tmp[, 1]), aggFunHigh(tmp[, 2]),
+                                aggFunLow(tmp[, 3]), aggFunHigh(tmp[, 4]))
+                          }
+                      ))
+    colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
 
-    
-    groupmat <- featureDefinitions(object)
-    ## Remove groups that overlap with more "well-behaved" groups
-    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
-    uorder <- order(-numsamp, groupmat[,"npeaks"])
-    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
-                         uorder)
-    groupmat <- groupmat[uindex,]
-    groupindex <- groupidx(object)[uindex]
-    gvals <- groupval(object)[uindex,]
+    ## Pass that peak area definition to the actual function along with the, by
+    ## file splitted object, and the "groupval"
+    ftVal <- as.list(as.data.frame(groupval(object)))
+    objectL <- vector("list", length(fileNames(object)))
+    for (i in 1:length(fileNames(object))) {
+        suppressMessages(
+            objectL[[i]] <- filterFile(object, file = i, keepAdjustedRtime = TRUE)
+        )
+    }
 
-    peakrange <- matrix(nrow = nrow(gvals), ncol = 4)
-    colnames(peakrange) <- c("mzmin","mzmax","rtmin","rtmax")
+    ## Do the bpmapply on these.
 
-    mzmin <- peakmat[gvals,"mzmin"]
-    dim(mzmin) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmin"] <- apply(mzmin, 1, median, na.rm = TRUE)
-    mzmax <- peakmat[gvals,"mzmax"]
-    dim(mzmax) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"mzmax"] <- apply(mzmax, 1, median, na.rm = TRUE)
-    retmin <- peakmat[gvals,"rtmin"]
-    dim(retmin) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"rtmin"] <- apply(retmin, 1, median, na.rm = TRUE)
-    retmax <- peakmat[gvals,"rtmax"]
-    dim(retmax) <- c(nrow(gvals), ncol(gvals))
-    peakrange[,"rtmax"] <- apply(retmax, 1, median, na.rm = TRUE)
 
-    lastpeak <- nrow(peakmat)
-    lastpeakOrig <- lastpeak
-
-    ##    peakmat <- rbind(peakmat, matrix(nrow = sum(is.na(gvals)), ncol = ncol(peakmat)))
-
-    cnames <- colnames(object@peaks)
     
 }
+
 
 ## Add a column "is_filled" to the chromPeaks matrix.
 ## dropFilledChromPeaks.

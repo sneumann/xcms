@@ -41,16 +41,28 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     if (is.null(files))
         files <- getwd()
     info <- file.info(files)
-    listed <- list.files(files[info$isdir], pattern = filepattern,
-                         recursive = TRUE, full.names = TRUE)
-    files <- c(files[!info$isdir], listed)
+    if (any(info$isdir)) {
+        message("Scanning files in directory ", files[info$isdir], " ... ",
+                appendLF = FALSE)
+        listed <- list.files(files[info$isdir], pattern = filepattern,
+                             recursive = TRUE, full.names = TRUE)
+        message("found ", length(listed), " files")
+        files <- c(files[!info$isdir], listed)
+    }
     ## try making paths absolute
     files_abs <- file.path(getwd(), files)
+    cat("length files_abs: ", length(files_abs), "\n")
+    cat("6\n")
     exists <- file.exists(files_abs)
+    cat("7\n")
     files[exists] <- files_abs[exists]
+    cat("length files: ", length(files), "\n")
+    cat("8\n")
     if (length(files) == 0 | all(is.na(files)))
         stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
-
+    for (i in 1:length(files))
+        cat(i, " file: ", files[i], "\n")
+    
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
         lockMass.files<-grep("02.CDF", files)
@@ -237,9 +249,13 @@ c.xcmsSet <- function(...) {
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
 
-        sampidx <- seq(along = namelist[[i]]) + nsamp
-        peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
-        nsamp <- nsamp + length(namelist[[i]])
+        ## Update samples only if we've got any peaks. Issue #133
+        if (nrow(peaks(lcsets[[i]]))) {
+            sampidx <- seq(along = namelist[[i]]) + nsamp
+            peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
+            ## Don't increment if we don't have any peaks
+            nsamp <- nsamp + length(namelist[[i]])
+        }
         if (.hasSlot(lcsets[[i]], ".processHistory")) {
             ph <- .getProcessHistory(lcsets[[i]])
             if (length(ph) > 0) {

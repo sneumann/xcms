@@ -1024,6 +1024,104 @@ test_extractChromatograms <- function() {
     ## XCMSnExp with adjusted rtime
 }
 
+test_signal_integration <- function() {
+    ## Testing the signal integration of peaks.
+    ## For centWave
+    tmp <- xod_xgrg
+    rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
+    mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
+    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[[1]]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
+
+    tmp <- filterFile(xod_xgrg, file = 2)
+    idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
+    ## Now, for i = 20, for 6 rt I got an NA. Should I remove these measurements?
+    ## idxs <- 1:nrow(chromPeaks(tmp))
+    for (i in idxs) {
+        rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
+        mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
+        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        ints <- intensity(chr)
+        pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
+        ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
+        checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
+    }
+
+    ## Now for matchedfilter.
+    tmp <- findChromPeaks(filterFile(od_x, 2), param = MatchedFilterParam())
+    rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
+    mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
+    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[[1]]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    chromPeaks(tmp)[1, "into"]
+    checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
+    idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
+    ## idxs <- 1:nrow(chromPeaks(tmp))
+    for (i in idxs) {
+        rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
+        mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
+        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        ints <- intensity(chr)
+        pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
+        ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
+        checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
+    }
+}
+
+
+dontrun_test_getPeakInt_functions <- function() {
+    ## Testing whether the .getPeakInt functions are correct and which one is
+    ## more performant.
+    tmp <- filterFile(xod_xgrg, file = 3)
+    pkInt <- xcms:::.getPeakInt(tmp, chromPeaks(tmp))
+    pkInt2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    checkEquals(pkInt, pkInt2)
+    checkEquals(pkInt, chromPeaks(tmp)[, "into"])
+    checkEquals(pkInt2, chromPeaks(tmp)[, "into"])
+
+    library(microbenchmark)
+    microbenchmark(xcms:::.getPeakInt(tmp, chromPeaks(tmp)[1, , drop = FALSE]),
+                   xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[1, , drop = FALSE]),
+                   times = 10)
+    ## 271 ms vs 570 ms
+    microbenchmark(xcms:::.getPeakInt(tmp, chromPeaks(tmp)[1:5, ]),
+                   xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[1:5, ]),
+                   times = 10)
+    ## 1386 ms vs 488 ms
+    microbenchmark(xcms:::.getPeakInt(tmp, chromPeaks(tmp)[1:10, ]),
+                   xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[1:10, ]),
+                   times = 10)
+    ## 2795 ms vs 586 ms
+    microbenchmark(xcms:::.getPeakInt(tmp, chromPeaks(tmp)),
+                   xcms:::.getPeakInt2(tmp, chromPeaks(tmp)),
+                   times = 10)
+    ## 17216 ms vs 619 ms
+    ## Well. getPeakInt2 is considerably faster!    
+}
+
+dontrun_getPeakInt_validity <- function() {
+    ## Do extensive tests on the .getPeakInt2 function to ensure it is really
+    ## returning what it should.
+    ## faahKO centWave peaks
+    tmp <- filterFile(xod_xgrg, file = 2)
+    pkInt2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    checkEquals(pkInt2, chromPeaks(tmp)[, "into"])
+
+    ## faahKO matchedFilter peaks
+    tmp <- findChromPeaks(od_x, param = MatchedFilterParam())
+    tmp <- filterFile(tmp, file = 1)
+    pkInt2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    checkEquals(pkInt2, chromPeaks(tmp)[, "into"])
+
+    ## own file centWave peaks
+
+    ## own file matchedFilter peaks
+}
+
+
 ############################################################
 ## Test getEIC alternatives.
 dontrun_getEIC_alternatives <- function() {
