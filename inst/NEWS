@@ -4,6 +4,11 @@ CHANGES IN VERSION 1.51.8
 NEW FEATURES:
 + Add Chromatogram class and extractChromatograms method.
 
+BUG FIXES:
++ Issue #118: failing unit test on Windows build machine.
++ Issue #133: error with c() and xcmsSet without peaks.
++ Issue #134: xcmsSet constructor endless loop.
+
 
 CHANGES IN VERSION 1.51.7
 -------------------------
