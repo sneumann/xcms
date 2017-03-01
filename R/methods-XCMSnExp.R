@@ -1781,6 +1781,9 @@ setMethod("findChromPeaks",
         stop("'object' does not provide feature definitions! Please run ",
              "'groupChromPeaks' first.")
     ## Don't do that if we have already filled peaks?
+    if (any(chromPeaks(object)[, "is_filled"] != 0))
+        stop("'object' contains already fille-in chromatographic peaks! Drop ",
+             "these using 'dropFilledChromPeaks' before calling this function.")
     
     ## What of just splitting the thing by file, for each file determine whether
     ## we do have peaks to fill in, i.e. if we've got an NA for a sample.
@@ -1815,11 +1818,12 @@ setMethod("findChromPeaks",
     }
 
     ## Do the bpmapply on these.
-
+    ## NOTE: if peak detection has been done using matchedFilter we should
+    ## fill the peaks based on the profile matrix! Otherwise we use the
+    ## .getPeakInt3 function.
 
     
 }
 
 
-## Add a column "is_filled" to the chromPeaks matrix.
 ## dropFilledChromPeaks.

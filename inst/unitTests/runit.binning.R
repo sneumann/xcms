@@ -641,14 +641,17 @@ test_breaks <- function() {
     checkEquals(brks, brksR)
     ##
     ## Ultimate fix for issue #118 
-    ## brksR <- seq((200 - 0.1), (600), by = 0.2)
-    ## brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
-    ## cmn <- 1:min(c(length(brks), length(brksR)))
-    ## checkEquals(brks[cmn], brksR[cmn])
+    brksR <- seq((200 - 0.1), (600), by = 0.2)
+    brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
+    ## Compare them up to the last value, since in R that will be 600-01, while
+    ## breaks_on_binSize will ensure that the upper limit (600) is still within
+    ## the breaks
+    cmn <- 1:(length(brksR) - 1)
+    checkEquals(brks[cmn], brksR[cmn])
     ## Now, that below breaks on a windows build machine (issue #127)
     ## checkTrue(length(brks) > length(brksR))
     ## checkEquals(brks[-length(brks)], brksR)
-    ## checkEquals(brks[length(brks)], 600)
+    checkEquals(brks[length(brks)], 600)
 }
 
 ############################################################

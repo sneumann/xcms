@@ -300,6 +300,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 
 #' Integrates the intensities for chromatograpic peak(s). This is supposed to be
 #' called by the fillChromPeaks method.
+#'
+#' @note Use one of .getPeakInt2 or .getPeakInt3 instead!
+#' 
 #' @param object An \code{XCMSnExp} object representing a single sample.
 #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
 #' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
@@ -370,3 +373,50 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     }
     return(unname(res))
 }
+
+#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
+#' called by the fillChromPeaks method.
+#'
+#' @note This reads the full data first and does the subsetting later in R. This
+#' function uses the C getEIC function.
+#' 
+#' @param object An \code{XCMSnExp} object representing a single sample.
+#' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
+#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' @noRd
+.getPeakInt3 <- function(object, peakArea) {
+    if (length(fileNames(object)) != 1)
+        stop("'object' should be an XCMSnExp for a single file!")
+    res <- numeric(nrow(peakArea))
+    spctr <- spectra(object)
+    mzs <- lapply(spctr, mz)
+    valsPerSpect <- lengths(mzs)
+    scanindex <- valueCount2ScanIndex(valsPerSpect) ## Index vector for C calls
+    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    rm(spctr)
+    mzs <- unlist(mzs, use.names = FALSE)
+    rtim <- rtime(object)
+    for (i in 1:length(res)) {
+        rtr <- peakArea[i, c("rtmin", "rtmax")]
+        sr <- c(min(which(rtim >= rtr[1])), max(which(rtim <= rtr[2])))
+        eic <- .Call("getEIC", mzs, ints, scanindex,
+                     as.double(peakArea[i, c("mzmin", "mzmax")]),
+                     as.integer(sr), as.integer(length(scanindex)),
+                     PACKAGE = "xcms")
+        if (length(eic$intensity)) {
+            ## How to calculate the area: (1)sum of all intensities / (2)by
+            ## the number of data points (REAL ones, considering also NAs)
+            ## and multiplied with the (3)rt width.
+            if (!all(is.na(eic$intensity))) {
+                res[i] <- sum(eic$intensity, na.rm = TRUE) *
+                    ((rtr[2] - rtr[1]) / (length(eic$intensity) - 1))
+            } else {
+                res[i] <- NA_real_
+            }
+        } else {
+            res[i] <- NA_real_
+        }
+    }
+    return(unname(res))
+}
+
