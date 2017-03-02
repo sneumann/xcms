@@ -387,6 +387,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 .getPeakInt3 <- function(object, peakArea) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
+    if (nrow(peakArea) == 0) {
+        return(numeric())
+    }
     res <- numeric(nrow(peakArea))
     spctr <- spectra(object)
     mzs <- lapply(spctr, mz)
