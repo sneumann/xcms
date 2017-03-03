@@ -1570,16 +1570,20 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 })
 
 
+##' @aliases featureValues
 ##' @title Accessing mz-rt feature data values
 ##' 
-##' @description \code{groupval,XCMSnExp}: extract a \code{matrix} for feature
-##' values with rows representing features and columns samples. Parameter
-##' \code{value} allows to define which column from the \code{\link{chromPeaks}}
-##' matrix should be returned. Multiple chromatographic peaks from the same
-##' sample can be assigned to a feature. Parameter \code{method} allows to
-##' specify the method to be used in such cases to chose from which of the peaks
-##' the value should be returned.
+##' @description \code{featureValues,XCMSnExp} :
+##' extract a \code{matrix} for feature values with rows representing features
+##' and columns samples. Parameter \code{value} allows to define which column
+##' from the \code{\link{chromPeaks}} matrix should be returned. Multiple
+##' chromatographic peaks from the same sample can be assigned to a feature.
+##' Parameter \code{method} allows to specify the method to be used in such
+##' cases to chose from which of the peaks the value should be returned.
 ##'
+##' @note This method is equivalent to the \code{\link{groupval}} for
+##' \code{xcmsSet} objects.
+##' 
 ##' @param object A \code{\link{XCMSnExp}} object providing the feature
 ##' definitions.
 ##' 
@@ -1601,9 +1605,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 ##' peak that should be used for the conflict resolution if
 ##' \code{method = "maxint"}.
 ##'
-##' @return For \code{groupval}: a \code{matrix} with feature values, columns
-##' representing samples, rows features. The order of the features
-##' matches the order found in the \code{featureDefinitions(object)}
+##' @return For \code{featureValues}: a \code{matrix} with
+##' feature values, columns representing samples, rows features. The order of
+##' the features matches the order found in the \code{featureDefinitions(object)}
 ##' \code{DataFrame}. An \code{NA} is reported for features without corresponding
 ##' chromatographic peak in the respective sample(s).
 ##' 
@@ -1615,9 +1619,10 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 ##' feature definitions.
 ##' \code{\link{hasFeatures}} to evaluate whether the
 ##' \code{\link{XCMSnExp}} provides feature definitions.
+##' \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 ##' 
 ##' @rdname XCMSnExp-peak-grouping-results
-setMethod("groupval",
+setMethod("featureValues",
           signature(object = "XCMSnExp"),
           function(object, method = c("medret", "maxint"), value = "index",
                    intensity = "into") {
@@ -1673,6 +1678,15 @@ setMethod("groupval",
               ##                         base::round(grps$rtmed), sep = "/")
               return(vals)
 })
+## ##' @rdname XCMSnExp-peak-grouping-results
+## setMethod("groupval",
+##           signature(object = "XCMSnExp"),
+##           function(object, method = c("medret", "maxint"), value = "index",
+##                    intensity = "into") {
+##               featureValues(object = object, method = method, value = value,
+##                             intensity = intensity)
+## })
+
 
 #' @aliases extractChromatograms
 #' @title Extracting chromatograms
@@ -1807,8 +1821,8 @@ setMethod("findChromPeaks",
 #' the signal was integrated.
 #' Note that no peak is filled in if no signal was present in a file/sample in
 #' the respective mz-rt area. These samples will still show a \code{NA} in the
-#' matrix returned by the \code{\link{groupval}} method. Growing the mz-rt area
-#' using the \code{expandMz} and \code{expandRt} might help.
+#' matrix returned by the \code{\link{featureValues}} method. Growing the mz-rt
+#' area using the \code{expandMz} and \code{expandRt} might help.
 #'
 #' @param object \code{XCMSnExp} object with identified and grouped
 #' chromatographic peaks.
@@ -1900,7 +1914,7 @@ setMethod("fillChromPeaks",
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea)
               
               ## Split the object by file and define the peaks for which 
-              pkGrpVal <- groupval(object)
+              pkGrpVal <- featureValues(object)
               ## Check if there is anything to fill...
               if (!any(is.na(rowSums(pkGrpVal)))) {
                   message("No missing peaks present.")

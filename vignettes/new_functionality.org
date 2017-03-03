@@ -918,7 +918,7 @@ to avoid copying etc of the data. Check also =assayDataElement()= in =MSnbase=.
 + Rename =peaks= to =features=.
 
 + Better alternative for =groups=: =alignedFeatures=.
-+ =groupval=? =featureMatrix=.
++ =groupval=? =featureValues=.
 
 *** Design and implementation:
 + =features= should be still implemented as =matrix= (for performance issues).

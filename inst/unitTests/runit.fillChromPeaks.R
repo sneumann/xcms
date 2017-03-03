@@ -21,7 +21,7 @@ test_fillChromPeaks <- function() {
     }
     ## Plot the data for some...
     if (FALSE) {
-        pk_idx <- groupval(res)[1, ]
+        pk_idx <- featureValues(res)[1, ]
         pks <- chromPeaks(res)[pk_idx, ]
         rtr <- c(min(pks[, "rtmin"]), max(pks[, "rtmax"]))
         rtr[1] <- rtr[1] - 10
@@ -40,7 +40,7 @@ test_fillChromPeaks <- function() {
     }
 
     ## Check for the NAs if there is really no signal
-    gv <- groupval(res)
+    gv <- featureValues(res)
     feat_i <- which(is.na(gv[, 1]))
     tmp <- chromPeaks(res)[featureDefinitions(res)$peakidx[[feat_i]],
                            c("rtmin", "rtmax", "mzmin", "mzmax")]
@@ -77,7 +77,7 @@ test_fillChromPeaks <- function() {
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(ppm = 40,
                                                                 expandMz = 5,
                                                                 expandRt = 2))
-    checkTrue(all(!is.na(rowSums(groupval(res_2)))))
+    checkTrue(all(!is.na(rowSums(featureValues(res_2)))))
     ## Drop them.
     res_rem <- dropFilledChromPeaks(res)
     checkTrue(!xcms:::.hasFilledPeaks(res_rem))
@@ -167,7 +167,7 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
         checkEquals(unname(into), unname(cfp[1, "into"]))
     }
     ## Check those with an NA.
-    gv <- groupval(filled)
+    gv <- featureValues(filled)
     with_na <- is.na(rowSums(gv))
     idxs <- sample(which(with_na), 20)
     for (i in idxs) {
@@ -180,13 +180,13 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
         chr <- extractChromatograms(tmp, rt = pkArea[1:2], mz = pkArea[3:4])
         checkTrue(length(chr) == 0)
     }
-    still_missing <- is.na(rowSums(groupval(filled)))
+    still_missing <- is.na(rowSums(featureValues(filled)))
     ## Try using ppm:
     filled <- fillChromPeaks(pks_noRt, param = FillChromPeaksParam(ppm = 40))
-    checkTrue(sum(still_missing) > sum(is.na(rowSums(groupval(filled)))))
+    checkTrue(sum(still_missing) > sum(is.na(rowSums(featureValues(filled)))))
     filled <- fillChromPeaks(pks_noRt, param = FillChromPeaksParam(ppm = 40,
                                                                    expandMz = 2))
-    checkTrue(sum(still_missing) > sum(is.na(rowSums(groupval(filled)))))
+    checkTrue(sum(still_missing) > sum(is.na(rowSums(featureValues(filled)))))
     
     ## With adjusted retention times.
     pks <- adjustRtime(pks, param = ObiwarpParam())
@@ -209,7 +209,7 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
         checkEquals(unname(into), unname(cfp[1, "into"]))
     }
     ## Check those with an NA.
-    gv <- groupval(filled)
+    gv <- featureValues(filled)
     with_na <- is.na(rowSums(gv))
     idxs <- sample(which(with_na), 20)
     for (i in idxs) {
@@ -230,7 +230,7 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
     ## They are about the same, no difference.
     
     ## what is the intensity for those with NA against those without?
-    maxo <- rowMeans(groupval(filled, value = "maxo"), na.rm = TRUE)
+    maxo <- rowMeans(featureValues(filled, value = "maxo"), na.rm = TRUE)
     boxplot(list(filled = log2(maxo[!with_na]), failed = log2(maxo[with_na])),
             varwidth = TRUE)
     ## No difference.

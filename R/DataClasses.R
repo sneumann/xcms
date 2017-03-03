@@ -1280,7 +1280,7 @@ setClass("CentWavePredIsoParam",
 ##' @family peak grouping methods
 ##' @seealso \code{\link{group}} for the \emph{old} peak grouping methods.
 ##' @seealso \code{\link{featureDefinitions}} and
-##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' \code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 ##' results.
 ##' 
 ##' @author Johannes Rainer
@@ -1325,7 +1325,7 @@ NULL
 ##' @seealso The \code{\link{do_groupChromPeaks_density}} core
 ##' API function and \code{\link{group.density}} for the old user interface.
 ##' @seealso \code{\link{featureDefinitions}} and
-##' \code{\link{groupval,XCMSnExp-method}} for methods to access the features
+##' \code{\link{featureValues,XCMSnExp-method}} for methods to access the features
 ##' (i.e. the peak grouping results).
 ##'
 ##' @name groupChromPeaks-density
@@ -1388,9 +1388,9 @@ NULL
 ##' ## The definition of the features (peak groups):
 ##' featureDefinitions(res)
 ##'
-##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## Using the featureValues method to extract a matrix with the intensities of
 ##' ## the features per sample.
-##' head(groupval(res, value = "into"))
+##' head(featureValues(res, value = "into"))
 ##' 
 ##' ## The process history:
 ##' processHistory(res)
@@ -1457,7 +1457,7 @@ setClass("PeakDensityParam",
 ##' @seealso The \code{\link{do_groupPeaks_mzClust}} core
 ##' API function and \code{\link{group.mzClust}} for the old user interface.
 ##' @seealso \code{\link{featureDefinitions}} and
-##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' \code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 ##' results (i.e. the features).
 ##'
 ##' @name groupChromPeaks-mzClust
@@ -1572,7 +1572,7 @@ setClass("MzClustParam",
 ##' @seealso The \code{\link{do_groupChromPeaks_nearest}} core
 ##' API function and \code{\link{group.nearest}} for the old user interface.
 ##' @seealso \code{\link{featureDefinitions}} and
-##' \code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+##' \code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 ##' results (i.e. the features).
 ##'
 ##' @name groupChromPeaks-nearest
@@ -1628,9 +1628,9 @@ NULL
 ##' ## The results from the peak grouping:
 ##' featureDefinitions(res)
 ##'
-##' ## Using the groupval method to extract a matrix with the intensities of
+##' ## Using the featureValues method to extract a matrix with the intensities of
 ##' ## the features per sample.
-##' head(groupval(res, value = "into"))
+##' head(featureValues(res, value = "into"))
 ##'
 ##' ## The process history:
 ##' processHistory(res)

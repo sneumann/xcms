@@ -2,7 +2,7 @@
 ## to feature grouping.
 
 ## General functions/methods
-test_groupval_XCMSnExp <- function() {
+test_featureValues_XCMSnExp <- function() {
     od_x <- faahko_xod    
     xs <- faahko_xs
     
@@ -12,11 +12,11 @@ test_groupval_XCMSnExp <- function() {
     xs <- group(xs, method = "density")
 
     checkEquals(unname(groupval(xs, value = "into")),
-                unname(groupval(od_x, value = "into")))
+                unname(featureValues(od_x, value = "into")))
     checkEquals(unname(groupval(xs, method = "maxint", value = "into")),
-                unname(groupval(od_x, method = "maxint", value = "into")))
+                unname(featureValues(od_x, method = "maxint", value = "into")))
     ## Checking errors
-    checkException(groupval(od_x, value = "bla"))
+    checkException(featureValues(od_x, value = "bla"))
     
 }
 

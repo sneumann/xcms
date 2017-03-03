@@ -116,8 +116,8 @@ The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
 the signal was integrated.
 Note that no peak is filled in if no signal was present in a file/sample in
 the respective mz-rt area. These samples will still show a \code{NA} in the
-matrix returned by the \code{\link{groupval}} method. Growing the mz-rt area
-using the \code{expandMz} and \code{expandRt} might help.
+matrix returned by the \code{\link{featureValues}} method. Growing the mz-rt
+area using the \code{expandMz} and \code{expandRt} might help.
 }
 \author{
 Johannes Rainer
