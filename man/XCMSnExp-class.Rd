@@ -27,6 +27,8 @@
 \alias{dropFeatureDefinitions}
 \alias{dropFeatureDefinitions,MsFeatureData-method}
 \alias{dropFeatureDefinitions,XCMSnExp-method}
+\alias{dropFilledChromPeaks}
+\alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{featureDefinitions}
 \alias{featureDefinitions,MsFeatureData-method}
 \alias{featureDefinitions,XCMSnExp-method}
@@ -129,6 +131,8 @@
 
 \S4method{findChromPeaks}{XCMSnExp,ANY}(object, param, BPPARAM = bpparam(),
   return.type = "XCMSnExp")
+
+\S4method{dropFilledChromPeaks}{XCMSnExp}(object)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -395,7 +399,8 @@ features and returns the object without that information. Note that for
 results, if these were performed after the last peak grouping (i.e. which
 base on the results from the peak grouping that are going to be removed).
 For \code{XCMSnExp} objects also all related process history steps are
-removed.
+removed. Also eventually filled in peaks (by \code{\link{fillChromPeaks}})
+will be removed too.
 
 \code{dropAdjustedRtime}: drops any retention time
 adjustment information and returns the object without adjusted retention
@@ -406,6 +411,10 @@ raw, ones (after chromatographic peak detection). Note that for
 if these were performed \emph{after} the retention time adjustment.
 For \code{XCMSnExp} objects the method drops also any related process history
 steps.
+
+\code{dropFilledChromPeaks}: drops any filled-in chromatographic
+peaks (filled in by the \code{\link{fillChromPeaks}} method) and all related
+process history steps.
 }
 \section{Slots}{
 
@@ -510,5 +519,8 @@ methods and \code{\link{featureDefinitions}} for the method to extract
 the feature definitions representing the peak grouping results.
 
 \code{\link{adjustRtime}} for retention time adjustment methods.
+
+\code{\link{fillChromPeaks}} for the method to fill-in eventually
+missing chromatographic peaks for a feature in some samples.
 }
 

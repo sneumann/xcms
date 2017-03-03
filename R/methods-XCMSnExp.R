@@ -450,6 +450,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object) {
         ## Make sure we delete all related process history steps
         object <- dropProcessHistories(object, type = .PROCSTEP.RTIME.CORRECTION)
         object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING)
+        object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
         ## idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
         ##                 .PROCSTEP.PEAK.DETECTION)
         ## if (length(idx_fd) > 0)
@@ -477,7 +478,8 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object) {
 ##' results, if these were performed after the last peak grouping (i.e. which
 ##' base on the results from the peak grouping that are going to be removed).
 ##' For \code{XCMSnExp} objects also all related process history steps are
-##' removed.
+##' removed. Also eventually filled in peaks (by \code{\link{fillChromPeaks}})
+##' will be removed too.
 ##'
 ##' @param keepAdjRtime For \code{dropFeatureDefinitions,XCMSnExp}:
 ##' \code{logical(1)} defining whether eventually present retention time
@@ -511,6 +513,13 @@ setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropFeatureDefinitions(newFd)
+        if (.hasFilledPeaks(object)) {
+            ## Remove filled in peaks
+            chromPeaks(newFd) <-
+                chromPeaks(newFd)[chromPeaks(newFd)[, "is_filled"] == 0, ,
+                                  drop = FALSE]
+            object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
+        }
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
         ## 2) If retention time correction was performed after the latest peak
@@ -1833,6 +1842,7 @@ setMethod("findChromPeaks",
 #' @author Johannes Rainer
 #' @seealso \code{\link{groupChromPeaks}} for methods to perform the
 #' correspondence.
+#' \code{link{dropFilledChromPeaks}} for the method to remove filled in peaks.
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
           function(object, param, BPPARAM = bpparam()) {
@@ -1840,7 +1850,7 @@ setMethod("fillChromPeaks",
                   stop("'object' does not provide feature definitions! Please ",
                        "run 'groupChromPeaks' first.")
               ## Don't do that if we have already filled peaks?
-              if (any(chromPeaks(object)[, "is_filled"] != 0))
+              if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
               
@@ -1977,6 +1987,34 @@ setMethod(
                                  BPPARAM = BPPARAM)
               })
 
-## dropFilledChromPeaks.
-## Remove all peaks with is_filled.
-## Update the peakidx in featureDefinitions
+##' @aliases dropFilledChromPeaks
+##'
+##' @description \code{dropFilledChromPeaks}: drops any filled-in chromatographic
+##' peaks (filled in by the \code{\link{fillChromPeaks}} method) and all related
+##' process history steps.
+##'
+##' @rdname XCMSnExp-class
+##' @seealso \code{\link{fillChromPeaks}} for the method to fill-in eventually
+##' missing chromatographic peaks for a feature in some samples.
+setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
+    if (!.hasFilledPeaks(object))
+        return(object)
+    keep_pks <- which(chromPeaks(object)[, "is_filled"] == 0)
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    ## Update index in featureDefinitions
+    fd <- featureDefinitions(newFd)
+    fd <- split(fd, 1:nrow(fd))
+    fdL <- lapply(fd, function(z) {
+        z$peakidx <- list(z$peakidx[[1]][z$peakidx[[1]] %in% keep_pks])
+        return(z)
+    })
+    featureDefinitions(newFd) <- do.call(rbind, fdL)
+    ## Remove peaks
+    chromPeaks(newFd) <- chromPeaks(newFd)[keep_pks, , drop = FALSE]
+    ## newFd <- .filterChromPeaks(object@msFeatureData, idx = keep_pks)
+    object@msFeatureData <- newFd
+    object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
+    if (validObject(object))
+        return(object)
+})

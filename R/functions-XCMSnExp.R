@@ -502,3 +502,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     return(res)
 }
 
+.hasFilledPeaks <- function(object) {
+    if (hasChromPeaks(object))
+        if (any(colnames(chromPeaks(object)) == "is_filled"))
+            return(any(chromPeaks(object)[, "is_filled"] == 1))
+    FALSE
+}

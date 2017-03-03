@@ -125,5 +125,6 @@ Johannes Rainer
 \seealso{
 \code{\link{groupChromPeaks}} for methods to perform the
 correspondence.
+\code{link{dropFilledChromPeaks}} for the method to remove filled in peaks.
 }
 

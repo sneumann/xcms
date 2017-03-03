@@ -1,6 +1,8 @@
 test_fillChromPeaks <- function() {
     ## No adjusted retention times
+    checkTrue(!xcms:::.hasFilledPeaks(xod_xg))
     res <- fillChromPeaks(xod_xg)
+    checkTrue(xcms:::.hasFilledPeaks(res))
     ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
     checkTrue(length(ph) == 1)
     checkEquals(ph[[1]]@param, FillChromPeaksParam())
@@ -76,6 +78,15 @@ test_fillChromPeaks <- function() {
                                                                 expandMz = 5,
                                                                 expandRt = 2))
     checkTrue(all(!is.na(rowSums(groupval(res_2)))))
+    ## Drop them.
+    res_rem <- dropFilledChromPeaks(res)
+    checkTrue(!xcms:::.hasFilledPeaks(res_rem))
+    checkEquals(res_rem, xod_xg)
+    ## Drop feature definitions from res -> also filled peaks should be dropped.
+    res_rem <- dropFeatureDefinitions(res)
+    checkTrue(!xcms:::.hasFilledPeaks(res_rem))
+    checkTrue(!any(chromPeaks(res_rem)[, "is_filled"] == 1))
+    checkEquals(res_rem, xod_x)
     
     ## With adjusted rtime.
     res_2 <- fillChromPeaks(xod_xgrg)
@@ -114,6 +125,11 @@ test_fillChromPeaks <- function() {
              (sum(rtim >= fp[i, "rtmin"] & rtim <= fp[i, "rtmax"]) - 1))
         checkEquals(unname(into), unname(fp[i, "into"]))
     }
+
+    ## Drop them.
+    res_rem <- dropFilledChromPeaks(res_2)
+    checkTrue(!xcms:::.hasFilledPeaks(res_rem))
+    checkEquals(res_rem, xod_xgrg)
 
     ## ## Alternative without rawMat:
     ## for (i in idx) {
