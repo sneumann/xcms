@@ -110,6 +110,10 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## and if this is used at all.
 
     ## @filled ... not yet.
+    if (any(chromPeaks(from)[, "is_filled"] == 1)) {
+        fld <- which(chromPeaks(from)[, "is_filled"] == 1)
+        xs@filled <- as.integer(fld)
+    }
     ## @dataCorrection (numeric) ? in xcmsSet function, if lockMassFreq.
     ## @progressInfo skip
     ## @progressCallback skip
