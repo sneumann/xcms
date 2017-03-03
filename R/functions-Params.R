@@ -35,6 +35,31 @@
     }
 }
 
+## Just get the name of the algorithm for each Parameter class.
+.param2string <- function(x) {
+    if (is(x, "CentWaveParam"))
+        return("centWave")
+    if (is(x, "MatchedFilterParam"))
+        return("matchedFilter")
+    if (is(x, "MassifquantParam"))
+        return("massifquant")
+    if (is(x, "MSWParam"))
+        return("MSW")
+    if (is(x, "CentWavePredIsoParam"))
+        return("centWave with predicted isotope ROIs")
+    if (is(x, "PeakDensityParam"))
+        return("chromatographic peak density")
+    if (is(x, "MzClustParam"))
+        return("mzClust")
+    if (is(x, "NearestPeaksParam"))
+        return("nearest peaks")
+    if (is(x, "PeakGroupsParam"))
+        return("peak groups")
+    if (is(x, "ObiwarpParam"))
+        return("obiwarp")
+    return("unknown")
+}
+
 ############################################################
 ## GenericParam
 #' @return The \code{GenericParam} function returns a \code{GenericParam} object.
