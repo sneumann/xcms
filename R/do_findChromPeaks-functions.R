@@ -840,7 +840,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 
     for (f in  1:lf) {
 
-        cat("\nProcess roi ", f, "\n")
+        ## cat("\nProcess roi ", f, "\n")
         feat <- roiList[[f]]
         N <- feat$scmax - feat$scmin + 1
         peaks <- peakinfo <- NULL
@@ -969,12 +969,12 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             p1 <- match(td[lwpos], otd)[1]
                             p2 <- match(td[rwpos], otd)
                             p2 <- p2[length(p2)]
-                            cat("p1: ", p1, " p2: ", p2, "\n")
+                            ## cat("p1: ", p1, " p2: ", p2, "\n")
                             if (is.na(p1)) p1 <- 1
                             if (is.na(p2)) p2 <- N
                             mz.value <- omz[p1:p2]
-                            cat("mz.value: ", paste0(mz.value, collapse = ", "),
-                                "\n")
+                            ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
+                            ##     "\n")
                             mz.int <- od[p1:p2]
                             maxint <- max(mz.int)
                             ## @MOD1: Remove mz values for which no intensity was
@@ -982,16 +982,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             ## if nothing was measured.
                             mz.value <- mz.value[mz.int > 0]
                             mz.int <- mz.int[mz.int > 0]
-                            cat("mz.value: ", paste0(mz.value, collapse = ", "),
-                                "\n")
+                            ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
+                            ##     "\n")
 
                             ## re-calculate m/z value for peak range
-                            cat("mzrange refined: [",
-                                paste0(mzrange, collapse = ", "), "]")
+                            ## cat("mzrange refined: [",
+                            ##     paste0(mzrange, collapse = ", "), "]")
                             ## hm, shouldn't we get rid of the mz = 0 here?
                             mzrange <- range(mz.value)
-                            cat(" -> [",
-                                paste0(mzrange, collapse = ", "), "]\n")
+                            ## cat(" -> [",
+                            ##     paste0(mzrange, collapse = ", "), "]\n")
                             mzmean <- do.call(mzCenterFun,
                                               list(mz = mz.value,
                                                    intensity = mz.int))
@@ -1096,8 +1096,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 peaks[p, "intb"] <- pwid * sum(db[db>0])
                 peaks[p, "lmin"] <- lm[1]
                 peaks[p, "lmax"] <- lm[2]
-                cat("[", paste0(peaks[p, c("rtmin", "rtmax")], collapse = ", "),
-                    "] into ", peaks[p, "into"], "\n")
+                ## cat("[", paste0(peaks[p, c("rtmin", "rtmax")], collapse = ", "),
+                ##     "] into ", peaks[p, "into"], "\n")
 
                 if (fitgauss) {
                     ## perform gaussian fits, use wavelets for inital parameters
@@ -1130,13 +1130,11 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 } else
                     peaks[p, "rt"] <- scantime[peaks[p, "scpos"]]
             }
-            cat("length peaks ", length(peaks))
             ## Use d here instead of current_ints
             peaks <- joinOverlappingPeaks(td, d, otd, omz, od,
                                           scantime, scan.range, peaks,
                                           maxGaussOverlap,
                                           mzCenterFun = mzCenterFun)
-            cat(" -> ", length(peaks), "\n")
         }
         if (!is.null(peaks)) {
             peaklist[[length(peaklist) + 1]] <- peaks
@@ -1158,7 +1156,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         return(nopeaks)
     }
 
-    cat("length peaklist: ", length(peaklist), "\n")
+    ## cat("length peaklist: ", length(peaklist), "\n")
     p <- do.call(rbind, peaklist)
     if (!verboseColumns)
         p <- p[, basenames, drop = FALSE]
@@ -3029,12 +3027,9 @@ do_findChromPeaks_addPredIsoROIs <-
                     "valid signal found!")
             return(peaks.)
         }
-        ## info:
-        cat("input peaks: ", nrow(peaks.), "\n")
         
         ## 3) centWave using the identified ROIs.
         roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
-        cat("identified ROIs: ", length(roiL), "\n")
         feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
                                               scantime = scantime,
                                               valsPerSpect = valsPerSpect,
@@ -3049,7 +3044,6 @@ do_findChromPeaks_addPredIsoROIs <-
                                               roiList = roiL,
                                               firstBaselineCheck = FALSE,
                                               roiScales = newROIs[, "scale"])
-        cat("centWave on these: ", nrow(feats_2), "\n")
         ## Clean up of the results:
         if (nrow(feats_2) > 0) {
             ## remove NaNs
@@ -3057,13 +3051,171 @@ do_findChromPeaks_addPredIsoROIs <-
                                                 "rtmin", "rtmax")]))
             if (any(any_na))
                 feats_2 <- feats_2[!any_na, , drop = FALSE]
+            no_mz_width <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0
+            no_rt_width <- (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
             ## remove empty area
-            no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
-                (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
+            ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            no_area <- no_mz_width || no_rt_width
             if (any(no_area))
                 feats_2 <- feats_2[!no_area, , drop = FALSE]
         }
-        cat("After removing NAs: ", nrow(feats_2), "\n")
+        ## 4) Check and remove ROIs overlapping with peaks.
+        if (nrow(feats_2) > 0) {
+            ## Comparing each ROI with each peak; slightly modified from the original
+            ## code in which we prevent calling apply followed by two lapply.
+            removeROIs <- rep(FALSE, nrow(feats_2))
+            removeFeats <- rep(FALSE, nrow(peaks.))
+            overlapProportionThreshold <- 0.01
+            for (i in 1:nrow(feats_2)) {
+                ## Compare ROI i with all peaks (peaks) and check if its
+                ## overlapping
+                ## mz
+                roiMzCenter <- (feats_2[i, "mzmin"] + feats_2[i, "mzmax"]) / 2
+                peakMzCenter <- (peaks.[, "mzmin"] + peaks.[, "mzmax"]) / 2
+                roiMzRadius <- (feats_2[i, "mzmax"] - feats_2[i, "mzmin"]) / 2
+                peakMzRadius <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) / 2
+                overlappingMz <- abs(peakMzCenter - roiMzCenter) <=
+                    (roiMzRadius + peakMzRadius)
+                ## rt
+                roiRtCenter <- (feats_2[i, "rtmin"] + feats_2[i, "rtmax"]) / 2
+                peakRtCenter <- (peaks.[, "rtmin"] + peaks.[, "rtmax"]) / 2
+                roiRtRadius <- (feats_2[i, "rtmax"] - feats_2[i, "rtmin"]) / 2
+                peakRtRadius <- (peaks.[, "rtmax"] - peaks.[, "rtmin"]) / 2
+                overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
+                    (roiRtRadius + peakRtRadius)
+                is_overlapping <- overlappingMz & overlappingRt
+                ## Now determine whether we remove the ROI or the peak, depending
+                ## on the raw signal intensity.
+                if (any(is_overlapping)) {
+                    if (any(peaks.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                        removeROIs[i] <- TRUE
+                    } else {
+                        removeFeats[is_overlapping] <- TRUE
+                    }
+                }
+            }
+            feats_2 <- feats_2[!removeROIs, , drop = FALSE]
+            peaks. <- peaks.[!removeFeats, , drop = FALSE]
+        }
+        if (!verboseColumns)
+            peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                  "rtmax", "into", "intb", "maxo", "sn")]
+        if (nrow(feats_2) == 0)
+            return(peaks.)
+        else
+            return(rbind(peaks., feats_2))
+}
+
+do_findChromPeaks_addPredIsoROIs_mod <-
+    function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
+             snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+             verboseColumns = FALSE, peaks. = NULL,
+             maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
+             polarity = "unknown") {
+        ## Input argument checking: most of it will be done in
+        ## do_findChromPeaks_centWave
+        polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
+
+        ## These variables might at some point be added as function args.
+        addNewIsotopeROIs <- TRUE
+        addNewAdductROIs <- FALSE
+        ## 2) predict isotope and/or adduct ROIs
+        f_mod <- peaks.
+        ## Extend the mzmin and mzmax if needed.
+        tittle <- peaks.[, "mz"] * (ppm / 2) / 1E6
+        expand_mz <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) < (tittle * 2)
+        if (any(expand_mz)) {
+            f_mod[expand_mz, "mzmin"] <- peaks.[expand_mz, "mz"] -
+                tittle[expand_mz]
+            f_mod[expand_mz, "mzmax"] <- peaks.[expand_mz, "mz"] + tittle[expand_mz]
+        }
+        ## Add predicted ROIs
+        if (addNewIsotopeROIs) {
+            iso_ROIs <- do_define_isotopes(peaks. = f_mod,
+                                           maxCharge = maxCharge,
+                                           maxIso = maxIso,
+                                           mzIntervalExtension = mzIntervalExtension)
+        } else {
+            iso_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        if (addNewAdductROIs) {
+            add_ROIs <- do_define_adducts(peaks. = f_mod, polarity = polarity)
+        } else {
+            add_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        newROIs <- rbind(iso_ROIs, add_ROIs)
+        rm(f_mod)
+        if (nrow(newROIs) == 0)
+            return(peaks.)
+        ## Remove ROIs that are out of mz range:
+        mz_range <- range(mz)
+        newROIs <- newROIs[newROIs[, "mzmin"] >= mz_range[1] &
+                           newROIs[, "mzmax"] <= mz_range[2], , drop = FALSE]
+        ## Remove ROIs with too low signal:
+        keep_me <- logical(nrow(newROIs))
+        scanindex <- as.integer(valueCount2ScanIndex(valsPerSpect))
+        for (i in 1:nrow(newROIs)) {
+            vals <- .Call("getEIC", mz, int, scanindex,
+                          as.double(newROIs[i, c("mzmin", "mzmax")]),
+                          as.integer(newROIs[i, c("scmin", "scmax")]),
+                          as.integer(length(scantime)), PACKAGE ='xcms' )
+            keep_me[i] <- sum(vals$intensity, na.rm = TRUE) >= 10
+        }
+        newROIs <- newROIs[keep_me, , drop = FALSE]
+
+        if (nrow(newROIs) == 0) {
+            warning("No isotope or adduct ROIs for the identified peaks with a ",
+                    "valid signal found!")
+            return(peaks.)
+        }
+        cat("No. of input peaks: ", nrow(peaks.), "\n")
+        
+        ## 3) centWave using the identified ROIs.
+        roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
+        cat("Identified iso ROIs: ", length(roiL), "\n")
+        feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
+                                              scantime = scantime,
+                                              valsPerSpect = valsPerSpect,
+                                              ppm = ppm, peakwidth = peakwidth,
+                                              snthresh = snthresh,
+                                              prefilter = prefilter,
+                                              mzCenterFun = mzCenterFun,
+                                              integrate = integrate,
+                                              mzdiff = mzdiff, fitgauss = fitgauss,
+                                              noise = noise,
+                                              verboseColumns = verboseColumns,
+                                              roiList = roiL,
+                                              firstBaselineCheck = FALSE,
+                                              roiScales = newROIs[, "scale"])
+        cat("No. of chrom. peaks found in ROIs: ", nrow(feats_2), "\n")
+        ## Clean up of the results:
+        if (nrow(feats_2) > 0) {
+            ## remove NaNs
+            any_na <- is.na(rowSums(feats_2[, c("mz", "mzmin", "mzmax", "rt",
+                                                "rtmin", "rtmax")]))
+            if (any(any_na))
+                feats_2 <- feats_2[!any_na, , drop = FALSE]
+            no_mz_width <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0
+            no_rt_width <- (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+
+            cat("No. of peaks with NA values: ", sum(any_na), "\n")
+            cat("No. of peaks without mz width: ", sum(no_mz_width), "\n")
+            cat("No. of peaks without rt width: ", sum(no_rt_width), "\n")
+            ## remove empty area
+            ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
+            ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            ## no_area <- no_mz_width || no_rt_width
+            no_area <- no_mz_width
+            if (any(no_area))
+                feats_2 <- feats_2[!no_area, , drop = FALSE]
+        }
+        cat("After removing NAs or empty are peaks: ", nrow(feats_2), "\n")
         ## 4) Check and remove ROIs overlapping with peaks.
         if (nrow(feats_2) > 0) {
             ## Comparing each ROI with each peak; slightly modified from the original
@@ -3107,6 +3259,8 @@ do_findChromPeaks_addPredIsoROIs <-
         if (!verboseColumns)
             peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
                                   "rtmax", "into", "intb", "maxo", "sn")]
+        ## For now just return the new ones.
+        return(feats_2)
         if (nrow(feats_2) == 0)
             return(peaks.)
         else

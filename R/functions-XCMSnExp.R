@@ -347,7 +347,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     rtim <- rtime(object)
     for (i in 1:length(res)) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
-        mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtim,
+        mtx <- .rawMat(mz = mzs, int = ints, scantime = rtim,
                        valsPerSpect = valsPerSpect, rtrange = rtr,
                        mzrange = peakArea[i, c("mzmin", "mzmax")])
         if (length(mtx)) {
@@ -383,6 +383,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' @param object An \code{XCMSnExp} object representing a single sample.
 #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
 #' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#'
 #' @noRd
 .getPeakInt3 <- function(object, peakArea) {
     if (length(fileNames(object)) != 1)
@@ -390,6 +391,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     if (nrow(peakArea) == 0) {
         return(numeric())
     }
+    res <- matrix(ncol = 4, nrow = nrow(peakArea))
     res <- numeric(nrow(peakArea))
     spctr <- spectra(object)
     mzs <- lapply(spctr, mz)
@@ -410,7 +412,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             ## How to calculate the area: (1)sum of all intensities / (2)by
             ## the number of data points (REAL ones, considering also NAs)
             ## and multiplied with the (3)rt width.
-            if (!all(is.na(eic$intensity))) {
+            if (!all(is.na(eic$intensity)) && !all(eic$intensity == 0)) {
                 res[i] <- sum(eic$intensity, na.rm = TRUE) *
                     ((rtr[2] - rtr[1]) / (length(eic$intensity) - 1))
             } else {
@@ -421,5 +423,78 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         }
     }
     return(unname(res))
+}
+
+
+#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
+#' called by the fillChromPeaks method.
+#'
+#' @note This reads the full data first and does the subsetting later in R.
+#' 
+#' @param object An \code{XCMSnExp} object representing a single sample.
+#' 
+#' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
+#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#'
+#' @param sample_idx \code{integer(1)} with the index of the sample in the
+#' object.
+#'
+#' @param cn \code{character} with the names of the result matrix.
+#' 
+#' @return A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
+#' \code{"into"} and \code{"maxo"} with the mz and rt or the maximal intensity
+#' in the area, the integrated signal in the area and the maximal signal in the
+#' area.
+#' @noRd
+.getChromPeakData <- function(object, peakArea, sample_idx,
+                              cn = c("mz", "rt", "into", "maxo", "sample")) {
+    if (length(fileNames(object)) != 1)
+        stop("'object' should be an XCMSnExp for a single file!")
+    ncols <- length(cn)
+    res <- matrix(ncol = ncols, nrow = nrow(peakArea))
+    colnames(res) <- cn
+    res[, "sample"] <- sample_idx
+    res[, c("mzmin", "mzmax", "rtmin", "rtmax")] <-
+        peakArea[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+    ## Load the data
+    message("Reguesting ", nrow(res), " missing peaks from ",
+             basename(fileNames(object)), " ... ", appendLF = FALSE)
+    spctr <- spectra(object)
+    mzs <- lapply(spctr, mz)
+    valsPerSpect <- lengths(mzs)
+    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    rm(spctr)
+    mzs <- unlist(mzs, use.names = FALSE)
+    rtim <- rtime(object)
+    for (i in 1:nrow(res)) {
+        rtr <- peakArea[i, c("rtmin", "rtmax")]
+        mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtim,
+                       valsPerSpect = valsPerSpect, rtrange = rtr,
+                       mzrange = peakArea[i, c("mzmin", "mzmax")])
+        if (length(mtx)) {
+            if (!all(is.na(mtx[, 3]))) {
+                ## How to calculate the area: (1)sum of all intensities / (2)by
+                ## the number of data points (REAL ones, considering also NAs)
+                ## and multiplied with the (3)rt width.
+                ## (1) sum(mtx[, 3], na.rm = TRUE)
+                ## (2) sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1 ; if we used
+                ## nrow(mtx) here, which would correspond to the non-NA
+                ## intensities within the rt range we don't get the same results
+                ## as e.g. centWave.
+                ## (3) rtr[2] - rtr[1]
+                res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE) *
+                    ((rtr[2] - rtr[1]) /
+                     (sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1))
+                maxi <- which.max(mtx[, 3])
+                res[i, c("rt", "mz", "maxo")] <- mtx[maxi[1], ]
+            } else {
+                res[i, ] <- rep(NA_real_, ncols)
+            }
+        } else {
+            res[i, ] <- rep(NA_real_, ncols)
+        }
+    }
+    message("got ", sum(!is.na(res[, "into"])), ".")
+    return(res)
 }
 

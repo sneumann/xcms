@@ -34,6 +34,34 @@ test_do_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     ## checkEquals(all_f, old_all@.Data)
 }
 
+## Check the influence of the modified centWave on the isotope centWave
+dontrun_test_original_new_centWave_isotopes <- function() {
+    fl <- system.file("cdf/ko15.CDF", package = "msdata")
+    raw <- readMSData2(fl)
+    ## Default settings
+    cwp <- CentWaveParam(verboseColumns = TRUE)
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+
+    ## Do the isoROIs.
+    mz <- mz(raw)
+    vps <- lengths(mz)
+    options(originalCentWave = TRUE)
+    iso_orig <- xcms:::do_findChromPeaks_addPredIsoROIs_mod(mz = unlist(mz),
+                                                            int = unlist(intensity(raw)),
+                                                            scantime = rtime(raw),
+                                                            valsPerSpect = vps,
+                                                            peaks. = chromPeaks(orig))
+    options(originalCentWave = FALSE)
+    iso_modi <- xcms:::do_findChromPeaks_addPredIsoROIs_mod(mz = unlist(mz),
+                                                            int = unlist(intensity(raw)),
+                                                            scantime = rtime(raw),
+                                                            valsPerSpect = vps,
+                                                            peaks. = chromPeaks(orig))
+
+    ## LLLL How do peaks look like when they have an mz width of 0?
+}
+
 ## Evaluate the peak detection method using the centWaveWithPreIsoROIs method
 ## on OnDiskMSnExp and on MSnExp objects.
 test_findChromPeaks_centWaveWithPredIsoROIs <- function() {

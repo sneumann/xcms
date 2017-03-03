@@ -200,11 +200,13 @@ setClass("xcmsPeaks", contains = "matrix")
 .PROCSTEP.PEAK.DETECTION <- "Peak detection"
 .PROCSTEP.PEAK.GROUPING <- "Peak grouping"
 .PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
+.PROCSTEP.PEAK.FILLING <- "Missing peak filling"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
     .PROCSTEP.PEAK.DETECTION,
     .PROCSTEP.PEAK.GROUPING,
-    .PROCSTEP.RTIME.CORRECTION
+    .PROCSTEP.RTIME.CORRECTION,
+    .PROCSTEP.PEAK.FILLING
 )
 
 ############################################################
@@ -277,6 +279,51 @@ setClass("Param",
          representation = representation("VIRTUAL"),
          contains = c("Versioned"))
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
+
+#' @aliases GenericParam
+#' @title Generic parameter class
+#'
+#' @description The \code{GenericParam} class allows to store generic parameter
+#' information such as the name of the function that was/has to be called (slot
+#' \code{fun}) and its arguments (slot \code{args}). This object is used to track
+#' the process history of the data processings of an \code{\link{XCMSnExp}}
+#' object. This is in contrast to e.g. the \code{\link{CentWaveParam}} object
+#' that is passed to the actual processing method.
+#'
+#' @seealso \code{\link{processHistory}} for how to access the process history
+#' of an \code{\link{XCMSnExp}} object.
+#'
+#' @slot fun \code{character} specifying the function name.
+#' @slot args \code{list} (ideally named) with the arguments to the
+#' function.
+#' @slot .__classVersion__ the version of the class.
+#' 
+#' @author Johannes Rainer
+#' @rdname GenericParam
+#' @examples
+#' prm <- GenericParam(fun = "mean")
+#'
+#' prm <- GenericParam(fun = "mean", args = list(na.rm = TRUE))
+setClass("GenericParam",
+         slots = c(fun = "character",
+                   args = "list"),
+         contains = "Param",
+         prototype = prototype(
+             fun = character(),
+             args = list()
+         ),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@args) > 0)
+                 if (!length(object@fun) > 0)
+                     msg <- c(msg, paste0("No function name specified in '@fun'",
+                                          " but got '@args'"))
+             if (length(object@fun) > 1)
+                 msg <- c(msg, paste0("'@fun' has to be of length 1"))
+             if (length(msg)) msg
+             else TRUE
+         }
+         )
 
 ##' @aliases XProcessHistory
 ##' @title Tracking data processing
@@ -1993,7 +2040,36 @@ setClass("ObiwarpParam",
              else TRUE
          })
 
-
+#' @description The \code{FillChromPeaksParam} object encapsules all settings for
+#' the signal integration for missing peaks.
+#' 
+#' @slot .__classVersion__,expandMz,expandRt,ppm See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
+#' 
+#' @rdname fillChromPeaks
+setClass("FillChromPeaksParam",
+         slots = c(expandMz = "numeric",
+                   expandRt = "numeric",
+                   ppm = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             expandMz = 0,
+             expandRt = 0,
+             ppm = 0
+         ),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@expandMz) > 1 | any(object@expandMz < -1))
+                 msg <- c(msg, "'expandMz' has to be > -1 and of length 1")
+             if (length(object@expandRt) > 1 | any(object@expandRt < -1))
+                 msg <- c(msg, "'expandRt' has to be > -1 and of length 1")
+             if (length(object@ppm) > 1 | any(object@ppm < 0))
+                 msg <- c(msg, paste0("'ppm' has to be a positive",
+                                      " numeric of length 1!"))
+             if (length(msg))
+                 msg
+             else TRUE
+         }
+         )
 
 ##' @aliases MsFeatureData
 ##' @title Data container storing xcms preprocessing results

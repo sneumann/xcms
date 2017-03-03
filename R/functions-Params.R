@@ -36,6 +36,16 @@
 }
 
 ############################################################
+## GenericParam
+#' @return The \code{GenericParam} function returns a \code{GenericParam} object.
+#' @param fun \code{character} representing the name of the function.
+#' @param args \code{list} (ideally named) with the arguments to the function.
+#' @rdname GenericParam
+GenericParam <- function(fun = character(), args = list()) {
+    return(new("GenericParam", fun = fun, args = args))
+}
+
+############################################################
 ## CentWaveParam
 
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
@@ -268,4 +278,15 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
                factorGap = factorGap, localAlignment = localAlignment,
                initPenalty = initPenalty))
+}
+
+############################################################
+## FillChromPeaksParam
+
+#' @return The \code{FillChromPeaksParam} function returns a
+#' \code{FillChromPeaksParam} object.
+#' @rdname fillChromPeaks
+FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0) {
+    return(new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
+               ppm = ppm))
 }

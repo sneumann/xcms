@@ -1,6 +1,9 @@
 CHANGES IN VERSION 1.51.9
 -------------------------
 
+NEW FEATURES:
++ fillChromPeaks method and FillChromPeaksParam class.
+
 BUG FIXES:
 + Issue #135: fix peak signal integration for centWave.
 

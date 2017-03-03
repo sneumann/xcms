@@ -16,6 +16,27 @@ setMethod("initialize", "Param", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 
+############################################################
+## GenericParam
+###
+setMethod("initialize", "GenericParam", function(.Object, ...) {
+    classVersion(.Object)["GenericParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+#' @param object \code{GenericParam} object.
+#' @rdname GenericParam
+setMethod("show", "GenericParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat(" fun:", object@fun, "\n")
+    cat(" arguments:\n")
+    if (length(object@args) > 0) {
+        for (i in 1:length(object@args)) {
+            if (!is.null(names(object@args)))
+                cat(" ", names(object@args)[i], "= ")
+            cat(object@args[[i]], "\n")
+        }
+    }
+})
 
 ############################################################
 ## CentWaveParam
@@ -1471,3 +1492,61 @@ setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
         return(object)
 })
 
+############################################################
+## FillChromPeaksParam
+###
+setMethod("initialize", "FillChromPeaksParam", function(.Object, ...) {
+    classVersion(.Object)["FillChromPeaksParam"] <- "0.0.1"
+    callNextMethod(.Object, ...)
+})
+#' @rdname fillChromPeaks
+setMethod("show", "FillChromPeaksParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" expandMz:", object@expandMz, "\n")
+    cat(" expandRt:", object@expandRt, "\n")
+    cat(" ppm:", object@ppm, "\n")
+})
+
+##' @aliases expandMz
+##' @description \code{expandMz},\code{expandMz<-}: getter and setter
+##' for the \code{expandMz} slot of the object.
+##'
+##' @param value The value for the slot.
+##' 
+##' @rdname fillChromPeaks
+setMethod("expandMz", "FillChromPeaksParam", function(object){
+    return(object@expandMz)})
+##' @aliases expandMz<-
+##' @rdname fillChromPeaks
+setReplaceMethod("expandMz", "FillChromPeaksParam", function(object, value) {
+    object@expandMz <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases expandRt
+##' @description \code{expandRt},\code{expandRt<-}: getter and setter
+##' for the \code{expandRt} slot of the object.
+##' @rdname fillChromPeaks
+setMethod("expandRt", "FillChromPeaksParam", function(object){
+    return(object@expandRt)})
+##' @aliases expandRt<-
+##' @rdname fillChromPeaks
+setReplaceMethod("expandRt", "FillChromPeaksParam", function(object, value) {
+    object@expandRt <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @description \code{ppm},\code{ppm<-}: getter and setter
+##' for the \code{ppm} slot of the object.
+##' @rdname fillChromPeaks
+setMethod("ppm", "FillChromPeaksParam", function(object){
+    return(object@ppm)})
+##' @rdname fillChromPeaks
+setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
+    object@ppm <- value
+    if (validObject(object))
+        return(object)
+})

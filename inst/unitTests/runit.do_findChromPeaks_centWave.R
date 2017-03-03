@@ -313,7 +313,79 @@ dontrun_exhaustive_original_new_centWave_comparison <- function() {
         plot(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i])
         checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i]) > 0.98)
     }
-    
+
+    ## Is there something common to the peaks found only by the modified version?
+    common_pks <- chromPeaks(modi)[cmn, ]
+    unique_pks <- chromPeaks(modi)[-cmn, ]
+    cn <- colnames(common_pks)
+    ## mz
+    boxplot(list(common = common_pks[, "mz"], unique = unique_pks[, "mz"]),
+            varwidth = TRUE, main = "mz")
+    ## OK, average mz of unique peaks is smaller.
+
+    ## mzrange
+    boxplot(list(common = common_pks[, "mzmax"] - common_pks[, "mzmin"],
+                 unique = unique_pks[, "mzmax"] - unique_pks[, "mzmin"]),
+            varwidth = TRUE, main = "mz range")
+    ## Seems to be smaller too.
+
+    ## rt
+    boxplot(list(common = common_pks[, "rt"], unique = unique_pks[, "rt"]),
+            varwidth = TRUE, main = "rt")
+    ## hm, rt larger in unique
+
+    ## rtrange
+    boxplot(list(common = log2(common_pks[, "rtmax"] - common_pks[, "rtmin"]),
+                 unique = log2(unique_pks[, "rtmax"] - unique_pks[, "rtmin"])),
+            varwidth = TRUE, main = "rt range")
+    ## rtrange is same.
+
+    ## into
+    boxplot(list(common = log2(common_pks[, "into"]),
+                 unique = log2(unique_pks[, "into"])),
+            varwidth = TRUE, main = "into")
+    ## same.
+
+    ## sn
+    boxplot(list(common = log2(common_pks[, "sn"]),
+                 unique = log2(unique_pks[, "sn"])),
+            varwidth = TRUE, main = "sn")
+    ## sn is higher in unique
+
+    ## Check chromatogram for some:
+    chrPlot <- function(i, raw) {
+        rtr <- common_pks[i, c("rtmin", "rtmax")]
+        rtr[1] <- rtr[1] - 2
+        rtr[2] <- rtr[2] + 2
+        chr_cmn <- extractChromatograms(raw, rt = rtr,
+                                        mz = common_pks[i, c("mzmin", "mzmax")])
+        rtr <- unique_pks[i, c("rtmin", "rtmax")]
+        rtr[1] <- rtr[1] - 2
+        rtr[2] <- rtr[2] + 2
+        chr_unq <- extractChromatograms(raw, rt = rtr,
+                                        mz = unique_pks[i, c("mzmin", "mzmax")])
+        par(mfrow = c(1, 2))
+        plot(rtime(chr_cmn[[1]]), intensity(chr_cmn[[1]]), main = "common peak",
+             type = "l")
+        abline(v = common_pks[i, c("rtmin", "rtmax")], col = "grey")
+        plot(rtime(chr_unq[[1]]), intensity(chr_unq[[1]]), main = "unique peak",
+             type = "l")
+        abline(v = unique_pks[i, c("rtmin", "rtmax")], col = "grey")
+    }
+    chrPlot(1, raw = raw)
+
+    i <- sample(1:nrow(unique_pks), 10)
+    chrPlot(i[1], raw = raw)
+    chrPlot(i[2], raw = raw)
+    chrPlot(i[3], raw = raw)
+    chrPlot(i[4], raw = raw)
+    chrPlot(i[5], raw = raw)
+    chrPlot(i[6], raw = raw)
+    chrPlot(i[7], raw = raw)
+    chrPlot(i[8], raw = raw)
+    chrPlot(i[9], raw = raw)
+    chrPlot(i[10], raw = raw)
+
     ## Summary:
     ## Same peaks are identified by both methods, but the modified centWave finds
     ## eventually more peaks.

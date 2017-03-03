@@ -1775,55 +1775,208 @@ setMethod("findChromPeaks",
 })
 
 ## fillChromPeaks:
-.fillChromPeaks <- function(object, expandMz = 1, expandRt = 1,
-                            BPPARAM = bpparam()) {
-    if (!hasFeatures(object))
-        stop("'object' does not provide feature definitions! Please run ",
-             "'groupChromPeaks' first.")
-    ## Don't do that if we have already filled peaks?
-    if (any(chromPeaks(object)[, "is_filled"] != 0))
-        stop("'object' contains already fille-in chromatographic peaks! Drop ",
-             "these using 'dropFilledChromPeaks' before calling this function.")
-    
-    ## What of just splitting the thing by file, for each file determine whether
-    ## we do have peaks to fill in, i.e. if we've got an NA for a sample.
-    ## Use filterFile with keepAdjustedRtime = TRUE. But I loose the feature
-    ## groups!
-    ## pass the featureGroups (at least the mzmin, mzmax, rtmin and rtmax) to the
-    ## parallel function. Estimate the area better!
-
-    ## Original code: use the median of the min/max rt and mz per peak.
-    aggFunLow <- median
-    aggFunHigh <- median
-    pkArea <- do.call(rbind,
-                      lapply(
-                          featureDefinitions(object)$peakidx, function(z) {
-                              tmp <- chromPeaks(object)[z, c("rtmin", "rtmax",
-                                                             "mzmin", "mzmax"),
-                                                        drop = FALSE]
-                              c(aggFunLow(tmp[, 1]), aggFunHigh(tmp[, 2]),
-                                aggFunLow(tmp[, 3]), aggFunHigh(tmp[, 4]))
+#' @aliases fillChromPeaks
+#' @title Integrate areas of missing peaks
+#'
+#' @description Integrate signal in the mz-rt area of a feature (chromatographic
+#' peak group) for samples in which no chromatographic peak for this feature was
+#' identified and add it to the \code{chromPeaks}. Such peaks will have a value
+#' of \code{1} in the \code{"is_filled"} column of the \code{\link{chromPeaks}}
+#' matrix of the object.
+#'
+#' @details After correspondence (i.e. grouping of chromatographic peaks across
+#' samples) there will always be features (peak groups) that do not include peaks
+#' from every sample. The \code{fillChromPeaks} method defines intensity values
+#' for such features in the missing samples by integrating the signal in the
+#' mz-rt region of the feature. The mz-rt area is defined by the median mz and
+#' rt start and end points of the other detected chromatographic peaks for a
+#' given feature.
+#' Adjusted retention times will be used if available.
+#' 
+#' @note The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
+#' \code{"rtmax"} for the filled peaks represents the actual MS area from which
+#' the signal was integrated.
+#' Note that no peak is filled in if no signal was present in a file/sample in
+#' the respective mz-rt area. These samples will still show a \code{NA} in the
+#' matrix returned by the \code{\link{groupval}} method. Growing the mz-rt area
+#' using the \code{expandMz} and \code{expandRt} might help.
+#'
+#' @param object \code{XCMSnExp} object with identified and grouped
+#' chromatographic peaks.
+#'
+#' @param param A \code{FillChromPeaksParam} object with all settings.
+#' 
+#' @param expandMz \code{numeric(1)} defining the value by which the mz width of
+#' peaks should be expanded. Each peak is expanded in mz direction by \code{expandMz *} their original mz width. A value of \code{0} means no expansion, a value of
+#' \code{1} grows each peak by 1 * the mz width of the peak resulting in peakswith twice their original size in mz direction (expansion by half mz width to both sides).
+#'
+#' @param expandRt \code{numeric(1)}, same as \code{expandRt} but for the
+#' retention time width.
+#'
+#' @param ppm \code{numeric(1)} optionally specifying a \emph{ppm} by which the
+#' mz width of the peak region should be expanded. For peaks with an mz width
+#' smaller than \code{mean(c(mzmin, mzmax)) * ppm / 1e6}, the \code{mzmin} will
+#' be replaced by
+#' \code{mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}
+#' and \code{mzmax} by
+#' \code{mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}. This
+#' is applied before eventually expanding the mz width using the \code{expandMz}
+#' parameter.
+#'
+#' @param BPPARAM Parallel processing settings.
+#' 
+#' @return A \code{\link{XCMSnExp}} object with previously missing
+#' chromatographic peaks for features filled into its \code{chromPeaks} matrix.
+#'
+#' @rdname fillChromPeaks
+#' 
+#' @author Johannes Rainer
+#' @seealso \code{\link{groupChromPeaks}} for methods to perform the
+#' correspondence.
+setMethod("fillChromPeaks",
+          signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
+          function(object, param, BPPARAM = bpparam()) {
+              if (!hasFeatures(object))
+                  stop("'object' does not provide feature definitions! Please ",
+                       "run 'groupChromPeaks' first.")
+              ## Don't do that if we have already filled peaks?
+              if (any(chromPeaks(object)[, "is_filled"] != 0))
+                  message("Filled peaks already present, adding still missing",
+                          " peaks.")
+              
+              startDate <- date()
+              expandMz <- expandMz(param)
+              expandRt <- expandRt(param)
+              ppm <- ppm(param)
+              ## Define or extend the peak area from which the signal should be
+              ## extracted.
+              ## Original code: use the median of the min/max rt and mz per peak.
+              fdef <- featureDefinitions(object)
+              aggFunLow <- median
+              aggFunHigh <- median
+              pkArea <- do.call(
+                  rbind,
+                  lapply(
+                      fdef$peakidx, function(z) {
+                          tmp <- chromPeaks(object)[z, c("rtmin", "rtmax",
+                                                         "mzmin", "mzmax"),
+                                                    drop = FALSE]
+                          pa <- c(aggFunLow(tmp[, 1]), aggFunHigh(tmp[, 2]),
+                                  aggFunLow(tmp[, 3]), aggFunHigh(tmp[, 4]))
+                          ## Check if we have to apply ppm replacement:
+                          if (ppm != 0) {
+                              mzmean <- mean(pa[3:4])
+                              tittle <- mzmean * (ppm / 2) / 1E6
+                              if ((pa[4] - pa[3]) < (tittle * 2)) {
+                                  pa[3] <- mzmean - tittle
+                                  pa[4] <- mzmean + tittle
+                              }
                           }
-                      ))
-    colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
-
-    ## Pass that peak area definition to the actual function along with the, by
-    ## file splitted object, and the "groupval"
-    ftVal <- as.list(as.data.frame(groupval(object)))
-    objectL <- vector("list", length(fileNames(object)))
-    for (i in 1:length(fileNames(object))) {
-        suppressMessages(
-            objectL[[i]] <- filterFile(object, file = i, keepAdjustedRtime = TRUE)
-        )
-    }
-
-    ## Do the bpmapply on these.
-    ## NOTE: if peak detection has been done using matchedFilter we should
-    ## fill the peaks based on the profile matrix! Otherwise we use the
-    ## .getPeakInt3 function.
-
+                          ## Expand it.
+                          if (expandRt != 0) {
+                              diffRt <- (pa[2] - pa[1]) * expandRt / 2
+                              pa[1] <- pa[1] - diffRt
+                              pa[2] <- pa[2] + diffRt
+                          }
+                          if (expandMz != 0) {
+                              diffMz <- (pa[4] - pa[3]) * expandMz / 2
+                              pa[3] <- pa[3] - diffMz
+                              pa[4] <- pa[4] + diffMz
+                          }
+                          return(pa)
+                      }
+                  ))
+              colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
+              pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea)
+              
+              ## Split the object by file and define the peaks for which 
+              pkGrpVal <- groupval(object)
+              ## Check if there is anything to fill...
+              if (!any(is.na(rowSums(pkGrpVal)))) {
+                  message("No missing peaks present.")
+                  return(object)
+              }
+              objectL <- vector("list", length(fileNames(object)))
+              pkAreaL <- objectL
+              for (i in 1:length(fileNames(object))) {
+                  suppressMessages(
+                      objectL[[i]] <- filterFile(object, file = i,
+                                                 keepAdjustedRtime = TRUE)
+                  )
+                  ## Want to extract intensities only for peaks that were not
+                  ## found in a sample.
+                  pkAreaL[[i]] <- pkArea[is.na(pkGrpVal[, i]), , drop = FALSE]
+              }
     
-}
+              ## Check if chromatographic peak detection was performed using
+              ## MatchedFilter, if so we have to integrate the profile matrix.
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+              do_profile <- FALSE
+              if (length(ph)) {
+                  if (is(ph[[1]], "XProcessHistory")) {
+                      prm <- ph[[1]]@param
+                      if (is(prm, "MatchedFilterParam"))
+                          do_profile <- TRUE
+                  }
+              }
+              
+              if (!do_profile) {
+                  res <- bpmapply(FUN = xcms:::.getChromPeakData, objectL,
+                                  pkAreaL, as.list(1:length(objectL)),
+                                  MoreArgs = list(cn = colnames(chromPeaks(object))),
+                                  BPPARAM = BPPARAM, SIMPLIFY = FALSE)
+              } else {
+                  stop("Not implemented yet!")
+              }
+              
+              res <- do.call(rbind, res)
+              if (any(colnames(res) == "is_filled"))
+                  res[, "is_filled"] <- 1
+              else
+                  res <- cbind(res, is_filled = 1)
+              ## cbind the group_idx column to track the feature/peak group.
+              res <- cbind(res, group_idx = do.call(rbind, pkAreaL)[, "group_idx"])
+              ## Remove those without a signal
+              res <- res[!is.na(res[, "into"]), , drop = FALSE]
+              if (nrow(res) == 0) {
+                  warning("Could not integrate any signal for the missing ",
+                          "peaks! Consider increasing 'expandMz' and 'expandRt'.")
+                  return(object)
+              }
+              
+              ## Get the msFeatureData:
+              newFd <- new("MsFeatureData")
+              newFd@.xData <- .copy_env(object@msFeatureData)
+              incr <- nrow(chromPeaks(object))
+              for (i in unique(res[, "group_idx"])) {
+                  fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
+                  (match(i, res[, "group_idx"]) + incr))
+              }
+              
+              chromPeaks(newFd) <- rbind(chromPeaks(object), res[, -ncol(res)])
+              featureDefinitions(newFd) <- fdef
+              lockEnvironment(newFd, bindings = TRUE)
+              object@msFeatureData <- newFd
+              ## Add a process history step
+              ph <- XProcessHistory(param = param,
+                                    date. = startDate,
+                                    type. = .PROCSTEP.PEAK.FILLING,
+                                    fileIndex = 1:length(fileNames(object)))
+              object <- addProcessHistory(object, ph) ## this also validates object.
+              return(object)
+          })
 
+#' @rdname fillChromPeaks
+setMethod(
+    "fillChromPeaks",
+    signature(object = "XCMSnExp", param = "missing"),
+              function(object,
+                       param,
+                       BPPARAM = bpparam()) {
+                  fillChromPeaks(object, param = FillChromPeaksParam(),
+                                 BPPARAM = BPPARAM)
+              })
 
 ## dropFilledChromPeaks.
+## Remove all peaks with is_filled.
+## Update the peakidx in featureDefinitions

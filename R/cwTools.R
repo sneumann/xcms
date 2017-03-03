@@ -423,15 +423,15 @@ fitGauss <- function(td, d, pgauss = NA) {
     as.data.frame(t(fit$m$getPars()))
 }
 
-#' @param
-#' @param d numeric vector with intensities of centroids within the peak.
-#' @param otd
-#' @param omz
-#' @param od
-#' @param scantime
-#' @param scan.range
-#' @param peaks
-#' @noRd
+## ' @param
+## ' @param d numeric vector with intensities of centroids within the peak.
+## ' @param otd
+## ' @param omz
+## ' @param od
+## ' @param scantime
+## ' @param scan.range
+## ' @param peaks
+## ' @noRd
 joinOverlappingPeaks <- function(td, d, otd, omz, od, scantime, scan.range,
                                  peaks, maxGaussOverlap=0.5, mzCenterFun) {
 

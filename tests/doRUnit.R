@@ -59,7 +59,7 @@ if(require("RUnit", quietly=TRUE)) {
                       system.file("microtofq/MM8.mzML", package = "msdata"))
     microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
     microtofq_od <- readMSData2(microtofq_fs)
-
+    ## microtofq_xod <- findChromPeaks(microtofq_od, param = MSWParam())
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))
     ##     attach(loadNamespace(pkg), name=paste("namespace", pkg, sep=":"), pos=3)

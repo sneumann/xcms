@@ -51,17 +51,10 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     }
     ## try making paths absolute
     files_abs <- file.path(getwd(), files)
-    cat("length files_abs: ", length(files_abs), "\n")
-    cat("6\n")
     exists <- file.exists(files_abs)
-    cat("7\n")
     files[exists] <- files_abs[exists]
-    cat("length files: ", length(files), "\n")
-    cat("8\n")
     if (length(files) == 0 | all(is.na(files)))
         stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
-    for (i in 1:length(files))
-        cat(i, " file: ", files[i], "\n")
     
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
