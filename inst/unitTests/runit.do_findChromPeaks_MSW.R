@@ -1,15 +1,20 @@
 ############################################################
 ## do_findPeaks_MSW tests
 
-xraw <- deepCopy(microtofq_xr)
+## xraw <- deepCopy(microtofq_xr)
 
 test_do_findPeaks_MSW <- function() {
-    feats1 <- xcms:::do_findPeaks_MSW(xraw@env$intensity,
-                                      xraw@env$mz,
-                                      snthresh = 100)
-    feats2 <- xcms:::do_findPeaks_MSW(xraw@env$intensity,
-                                      xraw@env$mz,
-                                      snthresh = 50)
+    first_file <- filterFile(fticr, file = 1)
+    spctr <- spectra(first_file)
+    checkTrue(length(spctr) == 1)
+    mzs <- unname(mz(spctr[[1]]))
+    ints <- unname(intensity(spctr[[1]]))
+    feats1 <- do_findPeaks_MSW(mz = mzs[10000:20000],
+                               int = ints[10000:20000],
+                               snthresh = 100)
+    feats2 <- do_findPeaks_MSW(mz = mzs[10000:20000],
+                               int = ints[10000:20000],
+                               snthresh = 50)
     checkTrue(nrow(feats2) > nrow(feats1))
 }
 
@@ -49,6 +54,10 @@ test_findChromPeaks_MSW <- function() {
                               peakThr = 200, forder = 2, dorder = 1)
     res_4 <- findChromPeaks(od1, param = mp, return.type = "list")
     checkEquals(res_3, res_4[[1]][, colnames(res_3)])
+
+    ## Compare old vs new:
+    checkEquals(chromPeaks(fticr_xod)[, -ncol(chromPeaks(fticr_xod))],
+                peaks(fticr_xs))
 }
 
 

@@ -143,23 +143,15 @@ test_fillChromPeaks <- function() {
 
 ## fillChromPeaks for MSW peak detection.
 test_fillChromPeaks_MSW <- function() {
-    fticrf <- list.files(system.file("fticr", package = "msdata"),
-                         recursive = TRUE, full.names = TRUE)
-    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
-    p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
-                  SNR.method = "data.mean", winSize.noise = 500)
-    fticr <- findChromPeaks(fticr, param = p)
-    ## Now create the MzClustParam parameter object: we're assuming here that
-    ## both samples are from the same sample group.
     p <- MzClustParam()
-    fticr <- groupChromPeaks(fticr, param = p)
-    res <- fillChromPeaks(fticr)
+    fticr_xodg <- groupChromPeaks(fticr_xod, param = p)
+    checkException(res <- fillChromPeaks(fticr_xod))
+    res <- fillChromPeaks(fticr_xodg)
+    
     ## Got a signal for all of em.
     checkTrue(!any(is.na(featureValues(res))))
     ## 1) Compare with what I get for xcmsSet.
-    tmp_x <- xcmsSet(fticrf[1:2], method = "MSW", SNR.method = "data.mean",
-                     winSize.noise = 500, scales = c(1, 7), peakThr = 80000,
-                     amp.Th = 0.005)
+    tmp_x <- fticr_xs
     tmp_x <- group(tmp_x, method = "mzClust")
     tmp_x <- fillPeaks(tmp_x, method = "MSW")
     ## Compare
@@ -177,14 +169,14 @@ test_fillChromPeaks_MSW <- function() {
     ## OK
     ## 2) Check if the fillChromPeaks returns same/similar data than the
     ##    findChromPeaks does:
-    fdef <- featureDefinitions(fticr)
+    fdef <- featureDefinitions(fticr_xodg)
     pkArea <- do.call(
         rbind,
         lapply(
             fdef$peakidx, function(z) {
-                tmp <- chromPeaks(fticr)[z, c("rtmin", "rtmax",
-                                               "mzmin", "mzmax"),
-                                          drop = FALSE]
+                tmp <- chromPeaks(fticr_xodg)[z, c("rtmin", "rtmax",
+                                                   "mzmin", "mzmax"),
+                                              drop = FALSE]
                 pa <- c(median(tmp[, 1]), median(tmp[, 2]),
                         median(tmp[, 3]), median(tmp[, 4]))
                 return(pa)
@@ -194,10 +186,10 @@ test_fillChromPeaks_MSW <- function() {
     pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                     mzmed = fdef$mzmed)
     ## Get peak data for all peaks in the first file
-    allPks <- xcms:::.getMSWPeakData(filterFile(fticr, file = 1),
+    allPks <- xcms:::.getMSWPeakData(filterFile(fticr_xodg, file = 1),
                                      peakArea = pkArea,
                                      sample_idx = 1,
-                                     cn = colnames(chromPeaks(fticr)))
+                                     cn = colnames(chromPeaks(fticr_xodg)))
     curP <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ]
     curP <- curP[order(curP[, "mz"]), ]
     checkEquals(allPks[, "mz"], curP[, "mz"])

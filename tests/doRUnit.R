@@ -59,6 +59,19 @@ if(require("RUnit", quietly=TRUE)) {
                       system.file("microtofq/MM8.mzML", package = "msdata"))
     microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
     microtofq_od <- readMSData2(microtofq_fs)
+
+    ## Direct injection data:
+    fticrf <- list.files(system.file("fticr", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+    fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
+                                                peakThr = 80000, ampTh = 0.005,
+                                                SNR.method = "data.mean",
+                                                winSize.noise = 500))
+    fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
+                        SNR.method='data.mean' , winSize.noise=500,
+                        peakThr=80000,  amp.Th=0.005)
+    
     ## microtofq_xod <- findChromPeaks(microtofq_od, param = MSWParam())
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))
