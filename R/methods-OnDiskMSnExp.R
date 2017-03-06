@@ -484,9 +484,14 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## TODO @jo: ensure that we're having single spectra files!
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
+
+              rts <- split(rtime(object), f = fromFile(object))
+              if (any(lengths(rts)) > 1)
+                  stop("The MSW method can only be applied to single spectrum,",
+                       " non-chromatogrphic, files (i.e. with a single ",
+                       "retention time).")
               ## (1) split the object per file.
               ## (2) use bplapply to do the peak detection.
               resList <- bplapply(lapply(1:length(fileNames(object)),

@@ -141,6 +141,178 @@ test_fillChromPeaks <- function() {
     ## }
 }
 
+## fillChromPeaks for MSW peak detection.
+test_fillChromPeaks_MSW <- function() {
+    fticrf <- list.files(system.file("fticr", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+    p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+                  SNR.method = "data.mean", winSize.noise = 500)
+    fticr <- findChromPeaks(fticr, param = p)
+    ## Now create the MzClustParam parameter object: we're assuming here that
+    ## both samples are from the same sample group.
+    p <- MzClustParam()
+    fticr <- groupChromPeaks(fticr, param = p)
+    res <- fillChromPeaks(fticr)
+    ## Got a signal for all of em.
+    checkTrue(!any(is.na(featureValues(res))))
+    ## 1) Compare with what I get for xcmsSet.
+    tmp_x <- xcmsSet(fticrf[1:2], method = "MSW", SNR.method = "data.mean",
+                     winSize.noise = 500, scales = c(1, 7), peakThr = 80000,
+                     amp.Th = 0.005)
+    tmp_x <- group(tmp_x, method = "mzClust")
+    tmp_x <- fillPeaks(tmp_x, method = "MSW")
+    ## Compare
+    checkEquals(unname(groupval(tmp_x)), unname(featureValues(res)))
+    checkEquals(unname(groupval(tmp_x, value = "maxo")),
+                unname(featureValues(res, value = "maxo")))
+    checkEquals(unname(groupval(tmp_x, value = "into")),
+                unname(featureValues(res, value = "into")))
+    checkEquals(unname(groupval(tmp_x, value = "mz")),
+                unname(featureValues(res, value = "mz")))
+    checkEquals(unname(groupval(tmp_x, value = "mzmin")),
+                unname(featureValues(res, value = "mzmin")))
+    checkEquals(unname(groupval(tmp_x, value = "mzmax")),
+                unname(featureValues(res, value = "mzmax")))
+    ## OK
+    ## 2) Check if the fillChromPeaks returns same/similar data than the
+    ##    findChromPeaks does:
+    fdef <- featureDefinitions(fticr)
+    pkArea <- do.call(
+        rbind,
+        lapply(
+            fdef$peakidx, function(z) {
+                tmp <- chromPeaks(fticr)[z, c("rtmin", "rtmax",
+                                               "mzmin", "mzmax"),
+                                          drop = FALSE]
+                pa <- c(median(tmp[, 1]), median(tmp[, 2]),
+                        median(tmp[, 3]), median(tmp[, 4]))
+                return(pa)
+            }
+        ))
+    colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
+    pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
+                    mzmed = fdef$mzmed)
+    ## Get peak data for all peaks in the first file
+    allPks <- xcms:::.getMSWPeakData(filterFile(fticr, file = 1),
+                                     peakArea = pkArea,
+                                     sample_idx = 1,
+                                     cn = colnames(chromPeaks(fticr)))
+    curP <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ]
+    curP <- curP[order(curP[, "mz"]), ]
+    checkEquals(allPks[, "mz"], curP[, "mz"])
+    checkEquals(allPks[, "maxo"], curP[, "maxo"])
+    checkTrue(cor(allPks[, "into"], curP[, "into"]) > 0.99) ## Not exactly the
+    ## same but highly similar.
+}
+
+dontrun_exhaustive_fillChromPeaks_MSW <- function() {
+    library(xcms)
+    library(RUnit)
+    library(msdata)
+    fticrf <- list.files(system.file("fticr", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fticr <- readMSData2(fticrf, msLevel. = 1)
+    p <- MSWParam(scales = c(1, 7), ampTh = 0.005,
+                  SNR.method = "data.mean", winSize.noise = 500)
+    fticr <- findChromPeaks(fticr, param = p)
+    ## Now create the MzClustParam parameter object: we're assuming here that
+    ## both samples are from the same sample group.
+    p <- MzClustParam()
+    fticr <- groupChromPeaks(fticr, param = p)
+    res <- fillChromPeaks(fticr)
+    ## Got a signal for all of em.
+    checkTrue(!any(is.na(featureValues(res))))
+    
+    ## 1) Compare with what I get for xcmsSet.
+    tmp_x <- xcmsSet(fticrf, method = "MSW", SNR.method = "data.mean",
+                     winSize.noise = 500, scales = c(1, 7),
+                     amp.Th = 0.005)
+    sampclass(tmp_x) <- rep(1, length(sampnames(tmp_x)))
+    tmp_x <- group(tmp_x, method = "mzClust")
+    checkEquals(unname(groupval(tmp_x)), unname(featureValues(fticr)))
+    checkEquals(unname(groupval(tmp_x, value = "maxo")),
+                unname(featureValues(fticr, value = "maxo")))
+    checkEquals(unname(groupval(tmp_x, value = "into")),
+                unname(featureValues(fticr, value = "into")))
+    checkEquals(unname(groupval(tmp_x, value = "mz")),
+                unname(featureValues(fticr, value = "mz")))
+    checkEquals(unname(groupval(tmp_x, value = "mzmin")),
+                unname(featureValues(fticr, value = "mzmin")))
+    checkEquals(unname(groupval(tmp_x, value = "mzmax")),
+                unname(featureValues(fticr, value = "mzmax")))
+    ## Fill peaks
+    tmp_x <- fillPeaks(tmp_x, method = "MSW")
+    checkTrue(!any(is.na(groupval(tmp_x))))
+    checkEquals(unname(groupval(tmp_x)), unname(featureValues(res)))
+    checkEquals(unname(groupval(tmp_x, value = "maxo")),
+                unname(featureValues(res, value = "maxo")))
+    ## This below could be made equal if we used the same approach to define
+    ## which values to use. See comments on issue #130.
+    ## checkEquals(unname(groupval(tmp_x, value = "into")),
+    ##             unname(featureValues(res, value = "into")))
+    ## plot(groupval(tmp_x, value = "into"), featureValues(res, value = "into"))
+    checkTrue(cor(as.numeric(groupval(tmp_x, value = "into")),
+                  as.numeric(featureValues(res, value = "into"))) > 0.999)
+    ## plot(groupval(tmp_x, value = "mz"), featureValues(res, value = "mz"))
+    checkTrue(cor(as.numeric(groupval(tmp_x, value = "mz")),
+                  as.numeric(featureValues(res, value = "mz"))) > 0.999)
+    checkEquals(unname(groupval(tmp_x, value = "mzmin")),
+                unname(featureValues(res, value = "mzmin")))
+    checkEquals(unname(groupval(tmp_x, value = "mzmax")),
+                unname(featureValues(res, value = "mzmax")))
+
+    ## Check if I could get what MSW gets.
+    fdef <- featureDefinitions(fticr)
+    pkArea <- do.call(
+        rbind,
+        lapply(
+            fdef$peakidx, function(z) {
+                tmp <- chromPeaks(fticr)[z, c("rtmin", "rtmax",
+                                               "mzmin", "mzmax"),
+                                          drop = FALSE]
+                pa <- c(median(tmp[, 1]), median(tmp[, 2]),
+                        median(tmp[, 3]), median(tmp[, 4]))
+                return(pa)
+            }
+        ))
+    colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
+    pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
+                    mzmed = fdef$mzmed)
+    allPks <- xcms:::.getMSWPeakData(filterFile(fticr, file = 1),
+                                     peakArea = pkArea,
+                                     sample_idx = 1,
+                                     cn = colnames(chromPeaks(fticr)))
+    ## Get all chrom peaks part of a feature
+    curP <- chromPeaks(res)[unique(unlist(featureDefinitions(res)$peakidx)), ]
+    curP <- curP[curP[, "sample"] == 1, ]
+    curP <- curP[order(curP[, "mz"]), ]
+    ## checkEquals(allPks[, "mz"], curP[, "mz"])
+    ## checkEquals(allPks[, "maxo"], curP[, "maxo"])
+
+    ## ## INVESTIGATE FURTHER!
+    fld <- curP[, "is_filled"] == 1
+    plot(allPks[fld, "mz"], curP[fld, "mz"], main = "filled")
+    abline(0, 1, col = "grey") ## same
+    checkEquals(allPks[fld, "mz"], curP[fld, "mz"])
+    plot(allPks[!fld, "mz"], curP[!fld, "mz"], main = "not filled")
+    abline(0, 1, col = "grey") ## highly similar!!!    
+    ## checkEquals(allPks[!fld, "mz"], curP[!fld, "mz"]) ## HIGHLY similar though
+    ## into:
+    plot(allPks[fld, "into"], curP[fld, "into"], main = "filled")
+    checkEquals(allPks[fld, "into"], curP[fld, "into"])
+    abline(0, 1, col = "grey") ## same
+    plot(allPks[!fld, "into"], curP[!fld, "into"], main = "not filled")
+    abline(0, 1, col = "grey") ## somewhat different!!!
+
+    plot(allPks[fld, "maxo"], curP[fld, "maxo"], main = "filled")
+    checkEquals(allPks[fld, "maxo"], curP[fld, "maxo"])
+    abline(0, 1, col = "grey") ## same
+    plot(allPks[!fld, "maxo"], curP[!fld, "maxo"], main = "not filled")
+    abline(0, 1, col = "grey") ## somewhat different!!!
+}
+
+
 dontrun_exhaustive_fillChromPeaks_test <- function() {
     fls <- c("/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_15.mzML",
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_19.mzML",
@@ -187,6 +359,22 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
     filled <- fillChromPeaks(pks_noRt, param = FillChromPeaksParam(ppm = 40,
                                                                    expandMz = 2))
     checkTrue(sum(still_missing) > sum(is.na(rowSums(featureValues(filled)))))
+    ## Check that the mz and rt are all within the mzmin-mzmax and rtmin-rtmax
+    ## of the features.
+    fts <- featureDefinitions(filled)
+    for (i in 1:nrow(fts)) {
+        pks <- chromPeaks(filled)[fts[i, "peakidx"][[1]], ]
+        checkTrue(all(pks[, "mz"] >= fts[i, "mzmin"] &
+                      pks[, "mz"] <= fts[i, "mzmax"]))
+        checkTrue(all(pks[, "rt"] >= fts[i, "rtmin"] &
+                      pks[, "rt"] <= fts[i, "rtmax"]))
+    }
+    checkTrue(all(chromPeaks(filled)[, "rt"] >= chromPeaks(filled)[, "rtmin"] &
+                  chromPeaks(filled)[, "rt"] <= chromPeaks(filled)[, "rtmax"]))
+    to_test <- chromPeaks(filled)[, "mz"] >= chromPeaks(filled)[, "mzmin"] &
+        chromPeaks(filled)[, "mz"] <= chromPeaks(filled)[, "mzmax"]
+    chromPeaks(filled)[!to_test, ]
+    ## checkTrue(all(to_test))
     
     ## With adjusted retention times.
     pks <- adjustRtime(pks, param = ObiwarpParam())

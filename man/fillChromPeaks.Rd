@@ -44,8 +44,11 @@ FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0)
 }
 \arguments{
 \item{expandMz}{\code{numeric(1)} defining the value by which the mz width of
-peaks should be expanded. Each peak is expanded in mz direction by \code{expandMz *} their original mz width. A value of \code{0} means no expansion, a value of
-\code{1} grows each peak by 1 * the mz width of the peak resulting in peakswith twice their original size in mz direction (expansion by half mz width to both sides).}
+peaks should be expanded. Each peak is expanded in mz direction by
+\code{expandMz *} their original mz width. A value of \code{0} means no
+expansion, a value of \code{1} grows each peak by 1 * the mz width of the peak
+resulting in peakswith twice their original size in mz direction (expansion
+by half mz width to both sides).}
 
 \item{expandRt}{\code{numeric(1)}, same as \code{expandRt} but for the
 retention time width.}
@@ -103,7 +106,20 @@ for such features in the missing samples by integrating the signal in the
 mz-rt region of the feature. The mz-rt area is defined by the median mz and
 rt start and end points of the other detected chromatographic peaks for a
 given feature.
+
 Adjusted retention times will be used if available.
+
+Based on the peak finding algorithm that was used to identify the
+(chromatographic) peaks different internal functions are employed to guarantee
+that the integrated peak signal matches as much as possible the peak signal
+integration used during the peak detection. For peaks identified with the
+\code{\link{matchedFilter}} method, signal integration is performed on the
+\emph{profile matrix} generated with the same settings used during peak
+finding (using the same \code{bin} size for example). For direct injection
+data and peaks identified with the \code{\link{MSW}} algorithm signal is
+integrated only along the mz dimension. For all other methods the complete
+(raw) signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
+\code{"rtmin"} and \code{"rtmax"} is used.
 }
 \section{Slots}{
 
@@ -118,6 +134,63 @@ Note that no peak is filled in if no signal was present in a file/sample in
 the respective mz-rt area. These samples will still show a \code{NA} in the
 matrix returned by the \code{\link{featureValues}} method. Growing the mz-rt
 area using the \code{expandMz} and \code{expandRt} might help.
+}
+\examples{
+
+## Perform the peak detection using centWave on some of the files from the
+## faahKO package. Files are read using the readMSData2 from the MSnbase
+## package
+library(faahKO)
+library(xcms)
+fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+           full.names = TRUE)
+raw_data <- readMSData2(fls[1:2])
+
+## Create a CentWaveParam object. Note that the noise is set to 10000 to
+## speed up the execution of the example - in a real use case the default
+## value should be used, or it should be set to a reasonable value.
+cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 25)
+
+res <- findChromPeaks(raw_data, param = cwp)
+
+## Perform the correspondence.
+res <- groupChromPeaks(res, param = PeakDensityParam())
+
+## For how many features do we lack an integrated peak signal?
+sum(is.na(featureValues(res)))
+
+## Filling missing peak data using default settings.
+res <- fillChromPeaks(res)
+
+## Get the peaks that have been filled in:
+fp <- chromPeaks(res)[chromPeaks(res)[, "is_filled"] == 1, ]
+head(fp)
+
+## Did we get a signal for all missing peaks?
+sum(is.na(featureValues(res)))
+
+## No.
+
+## Get the process history step along with the parameters used to perform
+## The peak filling: 
+ph <- processHistory(res, type = "Missing peak filling")[[1]]
+ph
+
+## The parameter class:
+ph@param
+
+## Drop the filled in peaks:
+res <- dropFilledChromPeaks(res)
+
+## Perform the peak filling with modified settings: allow expansion of the
+## mz range by a specified ppm and expanding the mz range by mz width/2 
+prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
+res <- fillChromPeaks(res, param = prm)
+
+## Did we get a signal for all missing peaks?
+sum(is.na(featureValues(res)))
+
+## Still the same missing peaks.
 }
 \author{
 Johannes Rainer

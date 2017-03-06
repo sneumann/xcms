@@ -498,7 +498,7 @@ NULL
 ##' ## faahKO package. Files are read using the readMSData2 from the MSnbase
 ##' ## package
 ##' library(faahKO)
-##' library(MSnbase)
+##' library(xcms)
 ##' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ##'            full.names = TRUE)
 ##' raw_data <- readMSData2(fls[1:2])

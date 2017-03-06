@@ -443,14 +443,18 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' @param sample_idx \code{integer(1)} with the index of the sample in the
 #' object.
 #'
+#' @param mzCenterFun Name of the function to be used to calculate the mz value.
+#' Defaults to \code{weighted.mean}, i.e. the intensity weighted mean mz.
+#' 
 #' @param cn \code{character} with the names of the result matrix.
 #' 
 #' @return A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
-#' \code{"into"} and \code{"maxo"} with the mz and rt or the maximal intensity
-#' in the area, the integrated signal in the area and the maximal signal in the
-#' area.
+#' \code{"into"} and \code{"maxo"} with the by intensity weighted mean of mz,
+#' rt or the maximal intensity in the area, the integrated signal in the area
+#' and the maximal signal in the area.
 #' @noRd
 .getChromPeakData <- function(object, peakArea, sample_idx,
+                              mzCenterFun = "weighted.mean",
                               cn = c("mz", "rt", "into", "maxo", "sample")) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
@@ -458,10 +462,10 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     res <- matrix(ncol = ncols, nrow = nrow(peakArea))
     colnames(res) <- cn
     res[, "sample"] <- sample_idx
-    res[, c("mzmin", "mzmax", "rtmin", "rtmax")] <-
-        peakArea[, c("mzmin", "mzmax", "rtmin", "rtmax")]
+    res[, c("mzmin", "mzmax")] <-
+        peakArea[, c("mzmin", "mzmax")]
     ## Load the data
-    message("Reguesting ", nrow(res), " missing peaks from ",
+    message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
     spctr <- spectra(object)
     mzs <- lapply(spctr, mz)
@@ -470,9 +474,13 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     rm(spctr)
     mzs <- unlist(mzs, use.names = FALSE)
     rtim <- rtime(object)
+    rtim_range <- range(rtim)
     for (i in 1:nrow(res)) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
-        mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtim,
+        ## Ensure that the rt region is within the rtrange of the data.
+        rtr[1] <- max(rtr[1], rtim_range[1])
+        rtr[2] <- min(rtr[2], rtim_range[2])
+        mtx <- .rawMat(mz = mzs, int = ints, scantime = rtim,
                        valsPerSpect = valsPerSpect, rtrange = rtr,
                        mzrange = peakArea[i, c("mzmin", "mzmax")])
         if (length(mtx)) {
@@ -490,7 +498,12 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
                     ((rtr[2] - rtr[1]) /
                      (sum(rtim >= rtr[1] & rtim <= rtr[2]) - 1))
                 maxi <- which.max(mtx[, 3])
-                res[i, c("rt", "mz", "maxo")] <- mtx[maxi[1], ]
+                res[i, c("rt", "maxo")] <- mtx[maxi[1], c(1, 3)]
+                res[i, c("rtmin", "rtmax")] <- rtr
+                ## Calculate the intensity weighted mean mz
+                meanMz <- do.call(mzCenterFun, list(mtx[, 2], mtx[, 3]))
+                if (is.na(meanMz)) meanMz <- mtx[maxi[1], 2]
+                res[i, "mz"] <- meanMz
             } else {
                 res[i, ] <- rep(NA_real_, ncols)
             }
@@ -501,6 +514,113 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     message("got ", sum(!is.na(res[, "into"])), ".")
     return(res)
 }
+
+#' Same as getChromPeakData, just without retention time.
+#' @note The mz and maxo are however estimated differently than for the
+#' getChromPeakData: mz is the mz closest to the median mz of the feature and
+#' maxo its intensity.
+#' @noRd
+.getMSWPeakData <- function(object, peakArea, sample_idx,
+                              cn = c("mz", "rt", "into", "maxo", "sample")) {
+    if (length(fileNames(object)) != 1)
+        stop("'object' should be an XCMSnExp for a single file!")
+    ncols <- length(cn)
+    res <- matrix(ncol = ncols, nrow = nrow(peakArea))
+    colnames(res) <- cn
+    res[, "sample"] <- sample_idx
+    res[, "rt"] <- -1
+    res[, "rtmin"] <- -1
+    res[, "rtmax"] <- -1
+    res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
+    ## Load the data
+    message("Requesting ", nrow(res), " missing peaks from ",
+             basename(fileNames(object)), " ... ", appendLF = FALSE)
+    spctr <- spectra(object)
+    mzs <- lapply(spctr, mz)
+    valsPerSpect <- lengths(mzs)
+    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    rm(spctr)
+    mzs <- unlist(mzs, use.names = FALSE)
+    for (i in 1:nrow(res)) {
+        mz_area <- which(mzs >= peakArea[i, "mzmin"] &
+                         mzs <= peakArea[i, "mzmax"])
+        ## Alternative version from original code: but this can also pick up
+        ## mzs from outside of the range! See also comments on issue #130
+        ## mz_area <- seq(which.min(abs(mzs - peakArea[i, "mzmin"])),
+        ##                which.min(abs(mzs - peakArea[i, "mzmax"])))
+        mtx <- cbind(time = -1, mz = mzs[mz_area], intensity = ints[mz_area])
+        ## mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtime(object),
+        ##                valsPerSpect = valsPerSpect,
+        ##                mzrange = peakArea[i, c("mzmin", "mzmax")])
+        if (length(mtx)) {
+            if (!all(is.na(mtx[, 3]))) {
+                ## How to calculate the area: (1)sum of all intensities
+                res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE)
+                ## Get the index of the mz value(s) closest to the mzmed of the
+                ## feature
+                mzDiff <- abs(mtx[, 2] - peakArea[i, "mzmed"])
+                mz_idx <- which(mzDiff == min(mzDiff))
+                ## Now get the one with the highest intensity.
+                maxi <- mz_idx[which.max(mtx[mz_idx, 3])]
+                ## Return these.
+                res[i, c("mz", "maxo")] <- mtx[maxi, 2:3]
+                ## ## mz should be the weighted mean!
+                ## res[i, c("mz", "maxo")] <- c(weighted.mean(mtx[, 2], mtx[, 3]),
+                ##                              mtx[maxi[1], 3])
+            } else {
+                res[i, ] <- rep(NA_real_, ncols)
+            }
+        } else {
+            res[i, ] <- rep(NA_real_, ncols)
+        }
+    }
+    message("got ", sum(!is.na(res[, "into"])), ".")
+    return(res)
+}
+## The same version as above, but the maxo is the maximum signal of the peak,
+## and the mz the intensity weighted mean mz.
+.getMSWPeakData2 <- function(object, peakArea, sample_idx,
+                              cn = c("mz", "rt", "into", "maxo", "sample")) {
+    if (length(fileNames(object)) != 1)
+        stop("'object' should be an XCMSnExp for a single file!")
+    ncols <- length(cn)
+    res <- matrix(ncol = ncols, nrow = nrow(peakArea))
+    colnames(res) <- cn
+    res[, "sample"] <- sample_idx
+    res[, "rt"] <- -1
+    res[, "rtmin"] <- -1
+    res[, "rtmax"] <- -1
+    res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
+    ## Load the data
+    message("Reguesting ", nrow(res), " missing peaks from ",
+             basename(fileNames(object)), " ... ", appendLF = FALSE)
+    spctr <- spectra(object)
+    mzs <- lapply(spctr, mz)
+    valsPerSpect <- lengths(mzs)
+    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    rm(spctr)
+    mzs <- unlist(mzs, use.names = FALSE)
+    for (i in 1:nrow(res)) {
+        mtx <- .rawMat(mz = mzs, int = ints, scantime = rtime(object),
+                       valsPerSpect = valsPerSpect,
+                       mzrange = peakArea[i, c("mzmin", "mzmax")])
+        if (length(mtx)) {
+            if (!all(is.na(mtx[, 3]))) {
+                ## How to calculate the area: (1)sum of all intensities
+                res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE)
+                res[i, c("mz", "maxo")] <- c(weighted.mean(mtx[, 2], mtx[, 3]),
+                                             max(mtx[, 3], na.rm = TRUE))
+            } else {
+                res[i, ] <- rep(NA_real_, ncols)
+            }
+        } else {
+            res[i, ] <- rep(NA_real_, ncols)
+        }
+    }
+    message("got ", sum(!is.na(res[, "into"])), ".")
+    return(res)
+}
+
 
 .hasFilledPeaks <- function(object) {
     if (hasChromPeaks(object))

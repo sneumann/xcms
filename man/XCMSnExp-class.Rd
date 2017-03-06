@@ -244,11 +244,16 @@ method that belong to that feature group. The method returns \code{NULL} if
 no feature definitions are present.
 
 For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} with
-at least the following columns: \code{"mz"} (mz value for the largest
-intensity), \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximal mz
-value), \code{"rt"} (retention time for the peak apex), \code{"rtmin"}
-(minimal retention time), \code{"rtmax"} (maximal retention time),
+at least the following columns:
+\code{"mz"} (intensity-weighted mean of mz values of the peak across scans/
+retention times),
+\code{"mzmin"} (minimal mz value),
+\code{"mzmax"} (maximal mz value),
+\code{"rt"} (retention time for the peak apex),
+\code{"rtmin"} (minimal retention time),
+\code{"rtmax"} (maximal retention time),
 \code{"into"} (integrated, original, intensity of the peak),
+\code{"maxo"} (maximum intentity of the peak),
 \code{"sample"} (sample index in which the peak was identified) and
 \code{"is_filled"} defining whether the chromatographic peak was identified
 by the peak picking algorithm (\code{0}) or was added by the
@@ -256,8 +261,8 @@ by the peak picking algorithm (\code{0}) or was added by the
 Depending on the employed peak detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be returned.
 For \code{bySample = TRUE} the chronatographic peaks are returned as a
-\code{list} of matrices, each containing the chromatographic peak of a
-specific sample. For sample in which no feastures were detected a matrix
+\code{list} of matrices, each containing the chromatographic peaks of a
+specific sample. For samples in which no peaks were detected a matrix
 with 0 rows is returned.
 
 For \code{rtime}: if \code{bySample = FALSE} a numeric vector with the

@@ -1508,43 +1508,43 @@ setMethod("show", "FillChromPeaksParam", function(object) {
     cat(" ppm:", object@ppm, "\n")
 })
 
-##' @aliases expandMz
-##' @description \code{expandMz},\code{expandMz<-}: getter and setter
-##' for the \code{expandMz} slot of the object.
-##'
-##' @param value The value for the slot.
-##' 
-##' @rdname fillChromPeaks
+#' @aliases expandMz
+#' @description \code{expandMz},\code{expandMz<-}: getter and setter
+#' for the \code{expandMz} slot of the object.
+#'
+#' @param value The value for the slot.
+#' 
+#' @rdname fillChromPeaks
 setMethod("expandMz", "FillChromPeaksParam", function(object){
     return(object@expandMz)})
-##' @aliases expandMz<-
-##' @rdname fillChromPeaks
+#' @aliases expandMz<-
+#' @rdname fillChromPeaks
 setReplaceMethod("expandMz", "FillChromPeaksParam", function(object, value) {
     object@expandMz <- value
     if (validObject(object))
         return(object)
 })
 
-##' @aliases expandRt
-##' @description \code{expandRt},\code{expandRt<-}: getter and setter
-##' for the \code{expandRt} slot of the object.
-##' @rdname fillChromPeaks
+#' @aliases expandRt
+#' @description \code{expandRt},\code{expandRt<-}: getter and setter
+#' for the \code{expandRt} slot of the object.
+#' @rdname fillChromPeaks
 setMethod("expandRt", "FillChromPeaksParam", function(object){
     return(object@expandRt)})
-##' @aliases expandRt<-
-##' @rdname fillChromPeaks
+#' @aliases expandRt<-
+#' @rdname fillChromPeaks
 setReplaceMethod("expandRt", "FillChromPeaksParam", function(object, value) {
     object@expandRt <- value
     if (validObject(object))
         return(object)
 })
 
-##' @description \code{ppm},\code{ppm<-}: getter and setter
-##' for the \code{ppm} slot of the object.
-##' @rdname fillChromPeaks
+#' @description \code{ppm},\code{ppm<-}: getter and setter
+#' for the \code{ppm} slot of the object.
+#' @rdname fillChromPeaks
 setMethod("ppm", "FillChromPeaksParam", function(object){
     return(object@ppm)})
-##' @rdname fillChromPeaks
+#' @rdname fillChromPeaks
 setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     object@ppm <- value
     if (validObject(object))

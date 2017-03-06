@@ -522,7 +522,6 @@ generation uses now the =binYonX= method which fixed some problems in the origin
 binning and linear interpolation methods. Thus results might be slightly
 different.
 
-
 ** =retcor.peaksgroups=: change in the way how /well behaved/ peak groups are ordered
 
 The =retcor.peakgroups= defines first the chromatographic peak groups that are
@@ -557,6 +556,23 @@ scan indices (see issue [[https://github.com/sneumann/xcms/issues/64][#64]]).
 These problems have been fixed in version 1.51.1 by first sub-setting the
 =xcmsRaw= object (using the =[= method) before actually performing the feature
 detection.
+
+** =fillPeaks= (=fillChromPeaks=) differences
+
+In the original =fillPeaks.MSW=, the mz range from which the signal is to be
+integrated was defined using 
+
+#+BEGIN_SRC R :eval = "never", :ravel eval = FALSE
+  mzarea <- seq(which.min(abs(mzs - peakArea[i, "mzmin"])),
+		which.min(abs(mzs - peakArea[i, "mzmax"])))
+
+#+END_SRC
+
+Depending on the data this could lead to the inclusion of signal in the
+integration that are just outside of the mz range. In the new =fillChromPeaks=
+method signal is integrated only for mz values >= mzmin and <= mzmax thus
+ensuring that only signal is used that is truly within the peak area defined by
+columns ="mzmin"=, ="mzmax"=, ="rtmin"= and ="rtmax"=.
 
 ** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
 

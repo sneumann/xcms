@@ -1251,16 +1251,30 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0), sample=NUL
             for (g in ngs)
             {
                 nppos <- nppos+1
-                mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
-                mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] == max(lcraw@env$intensity[mzpos]))]
+                ## Get the index of the mz value(s) closest to the mzmed of the
+                ## group; could eventually be more than one.
+                mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) ==
+                               min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
+                ## Get the index of the maximum intensity for the above mz index.
+                mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] ==
+                                      max(lcraw@env$intensity[mzpos]))]
+                ## Eventually increase the range around the mzmed.
                 mmzr <- seq((mmzpos-mrange[1]),(mmzpos+mrange[2]))
+                ## maxo is the maximum signal for mz values that are closest to
+                ## the mzmed of the feature.
                 maxo <- max(lcraw@env$intensity[mmzr])
                 ## this is the new one, summing the scale-range
-                ## calculating scale, adding intensitiesin this scale
+                ## calculating scale, adding intensities in this scale
                 medMZmin <- median(peakmat[groupindex[[g]],"mzmin"])
                 medMZmax <- median(peakmat[groupindex[[g]],"mzmax"])
-                minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) == min(abs(lcraw@env$mz - medMZmin))))
-                maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) == min(abs(lcraw@env$mz - medMZmax))))
+                ## mz values to be considered: from median mzmin of all peaks in
+                ## the current peak group/feature to median mzmax.
+                ## Might eventually be easier to just check for $mz >= medMZmin
+                minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) ==
+                                      min(abs(lcraw@env$mz - medMZmin))))
+                maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) ==
+                                      min(abs(lcraw@env$mz - medMZmax))))
+                ## into: the sum of intensities in this range.
                 into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
                 newpeaks[nppos,] <- c(groupmat[g,"mzmed"],medMZmin,medMZmax,-1,-1,-1,into,maxo,i)
             }

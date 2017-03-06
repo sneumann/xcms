@@ -1186,19 +1186,25 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
                            TRUE, object@profparam)
         }
+        ## Extract the intensity matrix for the mz-rt range: rows are mz, cols
+        ## rt values.
         ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
+        ## Define the maximum intensity, is one value per mz.
         ymax <- colMax(ymat)
         iymax <- which.max(ymax)
 
+        ## The width in rt.
         pwid <- diff(stime[iret])/diff(iret)
 
+        ## Calculate sum across rt. For each mz we get one value.
         rosm <- rowSums(ymat)
         limz <- length(imz[1]:imz[2])
         if (length(rosm) != limz) { ## that happens for some reason
             warning("weighted.mean  : x and w must have the same length \n")
             rosm <- rep(1, limz)  ## fallback to mean
         }
-        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm)
+        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm) ## mz; its not the
+        ## position of the largest intensity!
         if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()  results in NA (not NaN) for zero weights
             rmat[i,1] <- mean(peakrange[i,1:2])
 
@@ -1211,8 +1217,8 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
                     "is out of retention time range for this sample (",object@filepath,"), using zero intensity value.\n")
             rmat[i,7:8] <- 0
         } else {
-            rmat[i,7] <- pwid*sum(ymax)
-            rmat[i,8] <- ymax[iymax]
+            rmat[i,7] <- pwid*sum(ymax)  ## into
+            rmat[i,8] <- ymax[iymax]     ## maxo
         }
     }
     invisible(rmat)
