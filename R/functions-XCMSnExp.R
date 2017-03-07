@@ -1,4 +1,4 @@
-#' @include DataClasses.R
+#' @include DataClasses.R functions-utils.R
 
 ##' Takes a XCMSnExp and drops ProcessHistory steps from the @.processHistory
 ##' slot matching the provided type.
@@ -616,6 +616,116 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         } else {
             res[i, ] <- rep(NA_real_, ncols)
         }
+    }
+    message("got ", sum(!is.na(res[, "into"])), ".")
+    return(res)
+}
+
+## Same as .getChromPeakData but for matchedFilter, i.e. using the profile
+## matrix instead of the original signal.
+.getChromPeakData_matchedFilter <- function(object, peakArea, sample_idx,
+                                            mzCenterFun = "weighted.mean",
+                                            param = MatchedFilterParam(),
+                                            cn = c("mz", "rt", "into", "maxo",
+                                                   "sample")) {
+    if (length(fileNames(object)) != 1)
+        stop("'object' should be an XCMSnExp for a single file!")
+    ncols <- length(cn)
+    res <- matrix(ncol = ncols, nrow = nrow(peakArea))
+    colnames(res) <- cn
+    res[, "sample"] <- sample_idx
+    res[, c("mzmin", "mzmax")] <-
+        peakArea[, c("mzmin", "mzmax")]
+    ## Load the data
+    message("Requesting ", nrow(res), " missing peaks from ",
+            basename(fileNames(object)), " ... ", appendLF = FALSE)
+    spctr <- spectra(object)
+    mzs <- lapply(spctr, mz)
+    vps <- lengths(mzs)
+    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    rm(spctr)
+    mzs <- unlist(mzs, use.names = FALSE)
+    rtim <- rtime(object)
+    rtim_range <- range(rtim)
+    ## Now, if we do have "distance" defined it get's tricky:
+    basespc <- NULL
+    if (length(distance(param)) > 0) {
+        mass <- seq(floor(min(mzs) / binSize(param)) * binSize(param),
+                    ceiling(max(mzs) / binSize(param)) * binSize(param),
+                    by = binSize(param))
+        bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
+        basespc <- distance(param) * bin_size
+    }
+    ## Create the profile matrix:
+    pMat <- .createProfileMatrix(mz = mzs, int = ints, valsPerSpect = vps,
+                                 method = .impute2method(param),
+                                 step = binSize(param),
+                                 baselevel = baseValue(param),
+                                 basespace = basespc,
+                                 returnBreaks = TRUE,
+                                 baseValue = NA)  # We want to return NA not 0
+                                        # if nothing was found
+    brks <- pMat$breaks
+    pMat <- pMat$profMat  ## rows are masses, cols are retention times/scans.
+    bin_size <- diff(brks[1:2])
+    bin_half <- bin_size / 2
+    ## Calculate the mean mass per bin using the breaks used for the binning.
+    mass <- brks[-length(brks)] + bin_half ## midpoint for the breaks
+    mass_range <- range(mass)
+
+    for (i in 1:nrow(res)) {
+        rtr <- peakArea[i, c("rtmin", "rtmax")]
+        mzr <- peakArea[i, c("mzmin", "mzmax")]
+        ## Ensure that the rt region is within the rtrange of the data.
+        rtr[1] <- max(rtr[1], rtim_range[1])
+        rtr[2] <- min(rtr[2], rtim_range[2])
+        mzr[1] <- max(mzr[1], mass_range[1])
+        mzr[2] <- min(mzr[2], mass_range[2])
+        ## Get the index of rt in rtim that are within the rt range rtr
+        ## range_rt <- c(min(which(rtim >= rtr[1])), max(which(rtim <= rtr[2])))
+        ## range_rt <- c(which.min(abs(rtim - rtr[1])),
+        ##               which.min(abs(rtim - rtr[2])))
+        range_rt <- findRange(rtim, rtr, TRUE)
+        idx_rt <- range_rt[1]:range_rt[2]
+        ## Get the index of the mz in the data that are within the mz range.
+        ##range_mz <- c(min(which(brks >= mzr[1])) - 1, max(which(brks <= mzr[2])))
+        range_mz <- findRange(mass, c(mzr[1] - bin_half, mzr[2] + bin_half),
+                              TRUE)
+        idx_mz <- range_mz[1]:range_mz[2]
+
+        if (length(idx_mz) > 0 & length(idx_rt) > 0) {
+            intMat <- pMat[idx_mz, idx_rt, drop = FALSE]
+            is_na <- is.na(intMat)
+            if (all(is_na)) {
+                res[i, ] <- rep(NA_real_, ncols)
+                next
+            }
+            intMat_0 <- intMat
+            intMat_0[is.na(intMat)] <- 0
+            ## Calculate the mean mz value using a intensity weighted mean.
+            mz_ints <- rowSums(intMat, na.rm = TRUE)
+            ## mz_ints <- Biobase::rowMax(intMat)
+            if (length(mz_ints) != length(idx_mz)) {
+                ## Take from original code...
+                warning("weighted.mean: x and weights have to have same length!")
+                mz_ints <- rep(1, length(idx_mz))
+            }
+            ## mean mz: intensity weighted mean
+            mean_mz <- weighted.mean(mass[idx_mz], mz_ints, na.rm = TRUE)
+            if (is.nan(mean_mz) || is.na(mean_mz))
+                mean_mz <- mean(mzr, na.rm = TRUE)
+            res[i, "mz"] <- mean_mz
+            ## mean rt: position of the maximum intensity (along rt.)
+            rt_ints <- colMax(intMat_0, na.rm = TRUE)
+            res[i, c("rt", "rtmin", "rtmax")] <-
+                c(rtim[idx_rt][which.max(rt_ints)], rtr)
+            ## maxo
+            res[i, "maxo"] <- max(rt_ints, na.rm = TRUE)
+            ## into
+            rt_width <- diff(rtim[range_rt])/diff(range_rt)
+            res[i, "into"] <- rt_width * sum(rt_ints, na.rm = TRUE)
+        } else
+            res[i, ] <- rep(NA_real_, ncols)
     }
     message("got ", sum(!is.na(res[, "into"])), ".")
     return(res)

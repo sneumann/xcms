@@ -574,6 +574,10 @@ method signal is integrated only for mz values >= mzmin and <= mzmax thus
 ensuring that only signal is used that is truly within the peak area defined by
 columns ="mzmin"=, ="mzmax"=, ="rtmin"= and ="rtmax"=.
 
+Also, the =fillPeaks.chrom= method did return ="into"= and ="maxo"= values of =0= if no
+signal was found in the peak area. The new method does not integrate any signal
+in such cases and does not fill in that peak.
+
 ** Problems with iterative binning of small data sub-sets in =findPeaks.matchedFilter= :noexport:
 
 The problem described here has been fixed in =xcms= >= 1.51.1.

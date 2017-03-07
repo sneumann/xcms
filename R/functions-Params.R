@@ -110,6 +110,18 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                sigma = sigma, max = max, snthresh = snthresh, steps = steps,
                mzdiff = mzdiff, index = index))
 }
+#' Convert the impute method to the old-style method name (e.g. for profMat
+#' calls)
+#' @noRd
+.impute2method <- function(x) {
+    if (impute(x) == "none")
+        return("bin")
+    if (impute(x) == "lin")
+        return("binlin")
+    if (impute(x) == "linbase")
+        return("binlinbase")
+    return("intlin")
+}
 
 ############################################################
 ## MassifquantParam

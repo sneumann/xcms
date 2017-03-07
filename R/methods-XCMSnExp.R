@@ -1840,7 +1840,7 @@ setMethod("findChromPeaks",
 #' that the integrated peak signal matches as much as possible the peak signal
 #' integration used during the peak detection. For peaks identified with the
 #' \code{\link{matchedFilter}} method, signal integration is performed on the
-#' \emph{profile matrix} generated with the same settings used during peak
+#' \emph{profile matrix} generated with the same settings used also during peak
 #' finding (using the same \code{bin} size for example). For direct injection
 #' data and peaks identified with the \code{\link{MSW}} algorithm signal is
 #' integrated only along the mz dimension. For all other methods the complete
@@ -1852,8 +1852,11 @@ setMethod("findChromPeaks",
 #' the signal was integrated.
 #' Note that no peak is filled in if no signal was present in a file/sample in
 #' the respective mz-rt area. These samples will still show a \code{NA} in the
-#' matrix returned by the \code{\link{featureValues}} method. Growing the mz-rt
-#' area using the \code{expandMz} and \code{expandRt} might help.
+#' matrix returned by the \code{\link{featureValues}} method. This is in contrast
+#' to the \code{\link{fillPeaks.chrom}} method that returned an \code{"into"} and
+#' \code{"maxo"} of \code{0} for such peak areas. Growing the mz-rt area using
+#' the \code{expandMz} and \code{expandRt} might help to reduce the number of
+#' missing peak signals after filling.
 #'
 #' @param object \code{XCMSnExp} object with identified and grouped
 #' chromatographic peaks.
@@ -1890,7 +1893,7 @@ setMethod("findChromPeaks",
 #' @author Johannes Rainer
 #' @seealso \code{\link{groupChromPeaks}} for methods to perform the
 #' correspondence.
-#' \code{link{dropFilledChromPeaks}} for the method to remove filled in peaks.
+#' \code{\link{dropFilledChromPeaks}} for the method to remove filled in peaks.
 #'
 #' @examples
 #' 
@@ -2060,7 +2063,12 @@ setMethod("fillChromPeaks",
                                       cn = colnames(chromPeaks(object))),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else if (findPeakMethod == "matchedFilter") {
-                  stop("Not implemented yet!")
+                  res <- bpmapply(FUN = .getChromPeakData_matchedFilter,
+                                  objectL, pkAreaL, as.list(1:length(objectL)),
+                                  MoreArgs = list(
+                                      cn = colnames(chromPeaks(object)),
+                                      param = prm
+                                  ))
               } else {
                   res <- bpmapply(FUN = .getChromPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),

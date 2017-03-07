@@ -39,6 +39,29 @@ test_fillChromPeaks <- function() {
         }
     }
 
+    ## Check if the results are similar that we get with findChromPeaks
+    for (i in 1:length(fileNames(xod_xg))) {
+        fnd_pks <- chromPeaks(xod_xg)[chromPeaks(xod_xg)[, "sample"] == i, ]
+        prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
+        ## Extract the data for these using the internal function.
+        fld_pks <- xcms:::.getChromPeakData(filterFile(xod_xg, i),
+                                            peakArea = fnd_pks,
+                                            sample_idx = i,
+                                            cn = colnames(fnd_pks))
+        ## rt
+        checkTrue(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
+        ## mz
+        checkTrue(cor(fnd_pks[, "mz"], fld_pks[, "mz"]) > 0.99)
+        checkEquals(fnd_pks[, "mz"], fld_pks[, "mz"])
+        ## into
+        checkTrue(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
+        checkEquals(fnd_pks[, "into"], fld_pks[, "into"])
+        ## checkEquals(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## maxo
+        checkEquals(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
+        checkEquals(fnd_pks[, "maxo"], fld_pks[, "maxo"])
+    }
+    
     ## Check for the NAs if there is really no signal
     gv <- featureValues(res)
     feat_i <- which(is.na(gv[, 1]))
@@ -196,6 +219,178 @@ test_fillChromPeaks_MSW <- function() {
     checkEquals(allPks[, "maxo"], curP[, "maxo"])
     checkTrue(cor(allPks[, "into"], curP[, "into"]) > 0.99) ## Not exactly the
     ## same but highly similar.
+}
+
+test_fillChromPeaks_matchedFilter <- function() {
+    tmp <- findChromPeaks(faahko_od, param = MatchedFilterParam())
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+
+    tmp_filled <- fillChromPeaks(tmp)
+    checkTrue(sum(is.na(featureValues(tmp_filled))) <
+              sum(is.na(featureValues(tmp))))
+    nas <- is.na(featureValues(tmp)[, 1]) | is.na(featureValues(tmp)[, 2])
+    checkTrue(cor(featureValues(tmp, value = "into")[!nas, 1],
+                  featureValues(tmp, value = "into")[!nas, 2]) > 0.97)
+    ## plot(featureValues(tmp, value = "into")[!nas, 1],
+    ##      featureValues(tmp, value = "into")[!nas, 2])
+    checkTrue(cor(featureValues(tmp_filled, value = "into")[, 1],
+                  featureValues(tmp_filled, value = "into")[, 2],
+                  use = "complete.obs") > 0.97)
+    ## plot(featureValues(tmp_filled, value = "into")[, 1],
+    ##      featureValues(tmp_filled, value = "into")[, 2])
+
+    ## Check signal generation for already found peaks.
+    for (i in 1:length(fileNames(tmp))) {
+        fnd_pks <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] == i, ]
+        prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
+        ## Extract the data for these using the internal function.
+        fld_pks <- xcms:::.getChromPeakData_matchedFilter(filterFile(tmp, i),
+                                                          peakArea = fnd_pks,
+                                                          sample_idx = i,
+                                                          param = prm,
+                                                          cn = colnames(fnd_pks))
+        ## rt can not be the same, since for fillChromPeaks it is the rt of the
+        ## maximum signal and for findChromPeaks it is the rt of the apex of the
+        ## filtered/fitted peak.
+        checkTrue(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
+        ## mz: also not the same; most likely due to slightly different binning.
+        diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
+        checkTrue(max(diffs) < 1e-4)
+        ## into
+        checkEquals(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## maxo
+        checkEquals(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
+    }
+
+    ## modify fillChromPeaks settings.
+    tmp_fld_2 <- fillChromPeaks(
+        tmp, param = FillChromPeaksParam(ppm = 40, expandRt = 1))
+    checkTrue(sum(is.na(featureValues(tmp_filled))) <
+              sum(is.na(featureValues(tmp))))
+    checkTrue(sum(is.na(featureValues(tmp_fld_2))) <
+              sum(is.na(featureValues(tmp_filled))))
+    nas <- is.na(featureValues(tmp)[, 1]) | is.na(featureValues(tmp)[, 2])
+    checkTrue(cor(featureValues(tmp_fld_2, value = "into")[, 1],
+                  featureValues(tmp_fld_2, value = "into")[, 2],
+                  use = "complete.obs") > 0.97)
+}
+
+dontrun_exhaustive_fillChromPeaks_matchedFilter <- function() {
+    ## Different step sizes.
+    prm <- MatchedFilterParam(binSize = 0.6)
+    tmp <- findChromPeaks(faahko_od, param = prm)
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+    tmp_fld <- fillChromPeaks(tmp)
+    checkTrue(sum(is.na(featureValues(tmp_fld))) <
+              sum(is.na(featureValues(tmp))))
+    nas <- is.na(featureValues(tmp)[, 1]) | is.na(featureValues(tmp)[, 2])
+    checkTrue(cor(featureValues(tmp, value = "into")[!nas, 1],
+                  featureValues(tmp, value = "into")[!nas, 2]) > 0.97)
+    checkTrue(cor(featureValues(tmp_fld, value = "into")[, 1],
+                  featureValues(tmp_fld, value = "into")[, 2],
+                  use = "complete.obs") > 0.97)
+    ## Check signal generation for already found peaks.
+    for (i in 1:length(fileNames(tmp))) {
+        fnd_pks <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] == i, ]
+        prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
+        ## Extract the data for these using the internal function.
+        fld_pks <- xcms:::.getChromPeakData_matchedFilter(filterFile(tmp, i),
+                                                          peakArea = fnd_pks,
+                                                          sample_idx = i,
+                                                          param = prm,
+                                                          cn = colnames(fnd_pks))
+        ## rt can not be the same, since for fillChromPeaks it is the rt of the
+        ## maximum signal and for findChromPeaks it is the rt of the apex of the
+        ## filtered/fitted peak.
+        checkTrue(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
+        ## mz: also not the same; in here we're weighting by sum of intensities
+        ## per mz and in findChromPeaks by individual intensities.
+        ## diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
+        ## checkTrue(max(diffs) < 1e-4)
+        checkTrue(cor(fnd_pks[, "mz"], fld_pks[, "mz"]) > 0.99)
+        ## into
+        checkTrue(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
+        ## checkEquals(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## maxo
+        checkEquals(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
+    }
+
+    ## Imputation.
+    prm <- MatchedFilterParam(binSize = 0.2, impute = "lin")
+    tmp <- findChromPeaks(faahko_od, param = prm)
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+    tmp_fld <- fillChromPeaks(tmp)
+    checkTrue(sum(is.na(featureValues(tmp_fld))) <
+              sum(is.na(featureValues(tmp))))
+    nas <- is.na(featureValues(tmp)[, 1]) | is.na(featureValues(tmp)[, 2])
+    checkTrue(cor(featureValues(tmp, value = "into")[!nas, 1],
+                  featureValues(tmp, value = "into")[!nas, 2]) > 0.9)
+    ## Check signal generation for already found peaks.
+    for (i in 1:length(fileNames(tmp))) {
+        fnd_pks <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] == i, ]
+        prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
+        ## Extract the data for these using the internal function.
+        fld_pks <- xcms:::.getChromPeakData_matchedFilter(filterFile(tmp, i),
+                                                          peakArea = fnd_pks,
+                                                          sample_idx = i,
+                                                          param = prm,
+                                                          cn = colnames(fnd_pks))
+        ## rt can not be the same, since for fillChromPeaks it is the rt of the
+        ## maximum signal and for findChromPeaks it is the rt of the apex of the
+        ## filtered/fitted peak.
+        checkTrue(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
+        ## mz: also not the same; in here we're weighting by sum of intensities
+        ## per mz and in findChromPeaks by individual intensities.
+        ## diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
+        ## checkTrue(max(diffs) < 1e-4)
+        checkTrue(cor(fnd_pks[, "mz"], fld_pks[, "mz"]) > 0.99)
+        ## into
+        checkTrue(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
+        ## checkEquals(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## maxo
+        checkTrue(cor(fnd_pks[, "maxo"], fld_pks[, "maxo"]) > 0.99)    
+    }
+    
+    ## Own files.
+    fls <- c("/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_15.mzML",
+             "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_19.mzML",
+             "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_11.mzML")
+    raw <- readMSData2(fls)
+    pks <- findChromPeaks(raw, param = MatchedFilterParam(binSize = 0.05))
+    pks <- groupChromPeaks(pks, param = PeakDensityParam())
+    tmp_fld <- fillChromPeaks(pks)
+    nas <- is.na(featureValues(pks)[, 1]) | is.na(featureValues(pks)[, 2])
+    checkTrue(cor(featureValues(pks, value = "into")[!nas, 1],
+                  featureValues(pks, value = "into")[!nas, 2]) > 0.97)
+    checkTrue(cor(featureValues(tmp_fld, value = "into")[, 1],
+                  featureValues(tmp_fld, value = "into")[, 2],
+                  use = "complete.obs") > 0.97)
+    ## Check signal generation for already found peaks.
+    for (i in 1:length(fileNames(pks))) {
+        fnd_pks <- chromPeaks(pks)[chromPeaks(pks)[, "sample"] == i, ]
+        prm <- processHistory(pks, type ="Peak detection")[[1]]@param
+        ## Extract the data for these using the internal function.
+        fld_pks <- xcms:::.getChromPeakData_matchedFilter(filterFile(pks, i),
+                                                          peakArea = fnd_pks,
+                                                          sample_idx = i,
+                                                          param = prm,
+                                                          cn = colnames(fnd_pks))
+        ## rt can not be the same, since for fillChromPeaks it is the rt of the
+        ## maximum signal and for findChromPeaks it is the rt of the apex of the
+        ## filtered/fitted peak.
+        checkTrue(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
+        ## mz: also not the same; in here we're weighting by sum of intensities
+        ## per mz and in findChromPeaks by individual intensities.
+        ## diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
+        ## checkTrue(max(diffs) < 1e-4)
+        checkTrue(cor(fnd_pks[, "mz"], fld_pks[, "mz"]) > 0.99)
+        ## into
+        checkTrue(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
+        checkEquals(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## maxo
+        checkTrue(cor(fnd_pks[, "maxo"], fld_pks[, "maxo"]) > 0.99)    
+        checkEquals(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
+    }
 }
 
 dontrun_exhaustive_fillChromPeaks_MSW <- function() {
