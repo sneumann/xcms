@@ -401,10 +401,9 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 ##' \code{\link{ProcessHistory}} objects should be retrieved.
 ##'
 ##' @param type For \code{processHistory}: restrict returned
-##' \code{\link{ProcessHistory}} objects to analysis steps of a certain type.
-##' Supported values are \code{"Unknown"}, \code{"Peak detection"},
-##' \code{"Peak grouping"} and \code{"Retention time correction"}.
-##'
+##' \code{\link{ProcessHistory}} objects to analysis steps of a certain type. Use
+##' the \code{processHistoryTypes} to list all supported values.
+##' 
 ##' @return For \code{processHistory}: a \code{list} of
 ##' \code{\link{ProcessHistory}} objects providing the details of the individual
 ##' data processing steps that have been performed.
@@ -804,13 +803,13 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 ##' @aliases XCMSnExp-filter
 ##' @title XCMSnExp filtering and subsetting
 ##'
-##' The methods listed on this page allow to filter and subset
+##' @description The methods listed on this page allow to filter and subset
 ##' \code{\link{XCMSnExp}} objects. Most of them are inherited from the
 ##' \code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
 ##' \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
 ##' results.
 ##'
-##' @description \code{filterFile}: allows to reduce the
+##' \code{filterFile}: allows to reduce the
 ##' \code{\link{XCMSnExp}} to data from only certain files. Identified
 ##' chromatographic peaks for these files are retained while all eventually
 ##' present features (peak grouping information) are dropped. By default also

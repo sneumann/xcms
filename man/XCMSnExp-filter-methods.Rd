@@ -6,13 +6,7 @@
 \alias{filterFile,XCMSnExp-method}
 \alias{filterMz,XCMSnExp-method}
 \alias{filterRt,XCMSnExp-method}
-\title{XCMSnExp filtering and subsetting
-
-The methods listed on this page allow to filter and subset
-\code{\link{XCMSnExp}} objects. Most of them are inherited from the
-\code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
-\code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
-results.}
+\title{XCMSnExp filtering and subsetting}
 \usage{
 \S4method{filterFile}{XCMSnExp}(object, file, keepAdjustedRtime = FALSE)
 
@@ -56,6 +50,12 @@ For \code{spectra}: whether the retention times in the individual
 All methods return an \code{\link{XCMSnExp}} object.
 }
 \description{
+The methods listed on this page allow to filter and subset
+\code{\link{XCMSnExp}} objects. Most of them are inherited from the
+\code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
+\code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
+results.
+
 \code{filterFile}: allows to reduce the
 \code{\link{XCMSnExp}} to data from only certain files. Identified
 chromatographic peaks for these files are retained while all eventually

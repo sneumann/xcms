@@ -2,10 +2,16 @@ CHANGES IN VERSION 1.51.9
 -------------------------
 
 NEW FEATURES:
-+ fillChromPeaks method and FillChromPeaksParam class.
++ fillChromPeaks, dropFilledChromPeaks methods and FillChromPeaksParam class.
++ featureValues method.
+
+USER VISIBLE CHANGES:
++ Extended new_functionality vignette.
 
 BUG FIXES:
 + Issue #135: fix peak signal integration for centWave.
++ Issue #139: problem with expand.mz and expand.rt in fillPeaks.chrom.
++ Issue #137: Error in findChromPeaks if no peaks are found.
 
 
 CHANGES IN VERSION 1.51.8

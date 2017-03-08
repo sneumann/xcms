@@ -198,7 +198,8 @@ export(
     "do_groupPeaks_mzClust",
     "do_groupChromPeaks_nearest",
     "Chromatogram",
-    "do_adjustRtime_peakGroups"
+    "do_adjustRtime_peakGroups",
+    "processHistoryTypes"
 )
 
 ## New analysis methods

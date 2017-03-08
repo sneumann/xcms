@@ -2,6 +2,15 @@
 ## Functions for ProcessHistory objects
 #' @include DataClasses.R
 
+#' @description \code{processHistoryTypes} returns the available \emph{types} of
+#' process histories. These can be passed with argument \code{type} to the
+#' \code{processHistory} method to extract specific process step(s).
+#'
+#' @rdname XCMSnExp-class
+processHistoryTypes <- function() {
+    .PROCSTEPS
+}
+
 ############################################################
 ## Constructor
 ProcessHistory <- function(type., date., info., error., fileIndex.) {
