@@ -118,7 +118,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        firstBaselineCheck = TRUE,
                                        roiScales = NULL) {
     if (getOption("originalCentWave", default = TRUE)) {
-        message("DEBUG: using original centWave.")
+        ## message("DEBUG: using original centWave.")
         .centWave_orig(mz = mz, int = int, scantime = scantime,
                        valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
                        snthresh = snthresh, prefilter = prefilter,
@@ -128,7 +128,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        firstBaselineCheck = firstBaselineCheck,
                        roiScales = roiScales)
     } else {
-        message("DEBUG: using modified centWave.")
+        ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
                       valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
                       snthresh = snthresh, prefilter = prefilter,
