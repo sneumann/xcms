@@ -46,7 +46,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
-                  "spectrapply", "peaksCount")
+                  "spectrapply", "peaksCount", "precursorMz")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -197,8 +197,9 @@ export(
     "do_groupChromPeaks_density",
     "do_groupPeaks_mzClust",
     "do_groupChromPeaks_nearest",
-    ## "Chromatogram",
-    "do_adjustRtime_peakGroups"
+    "Chromatogram",
+    "do_adjustRtime_peakGroups",
+    "processHistoryTypes"
 )
 
 ## New analysis methods
@@ -220,7 +221,9 @@ exportClasses(
     "MzClustParam",
     "NearestPeaksParam",
     "PeakGroupsParam",
-    "ObiwarpParam"
+    "ObiwarpParam",
+    "GenericParam",
+    "FillChromPeaksParam"
 )
 ## Param methods
 exportMethods(
@@ -356,17 +359,23 @@ exportMethods(
     "localAlignment",
     "localAlignment<-",
     "initPenalty",
-    "initPenalty<-"
+    "initPenalty<-",
+    ## FillChromPeaksParam
+    "expandMz",
+    "expandMz<-",
+    "expandRt",
+    "expandRt<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
        "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
-       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam")
+       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam", "GenericParam",
+       "FillChromPeaksParam")
 ## Param class methods.
 
 ## New Classes
 exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
-              ## "Chromatogram",
+              "Chromatogram",
               "XProcessHistory"
               )
 ## New methods for these classes
@@ -377,6 +386,7 @@ exportMethods("hasChromPeaks",
               "adjustedRtime<-",
               "featureDefinitions",
               "featureDefinitions<-",
+              "featureValues",
               "chromPeaks",
               "chromPeaks<-",
               "processHistory",
@@ -404,6 +414,10 @@ exportMethods("hasChromPeaks",
               "mz",
               "intensity",
               "aggregationFun",
-##              "extractChromatograms",
-              "as.data.frame"
+              "extractChromatograms",
+              "precursorMz",
+              "productMz",
+              "fillChromPeaks",
+              "as.data.frame",
+              "dropFilledChromPeaks"
               )

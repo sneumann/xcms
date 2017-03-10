@@ -117,8 +117,7 @@ do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                          degree = 1, family = family))
             
-            rtdevsmo[[i]] <- xcms:::na.flatfill(predict(lo,
-                                                        data.frame(rt = rtime[[i]])))
+            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
             ## Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
                           quantile(abs(rtdevsmo[[i]]), 0.9) * 2] <- NA

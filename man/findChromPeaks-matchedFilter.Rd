@@ -16,7 +16,6 @@
 \alias{distance,MatchedFilterParam-method}
 \alias{distance<-}
 \alias{distance<-,MatchedFilterParam-method}
-\alias{findChromPeaks,MSnExp,MatchedFilterParam-method}
 \alias{findChromPeaks,OnDiskMSnExp,MatchedFilterParam-method}
 \alias{findChromPeaks-matchedFilter}
 \alias{fwhm}
@@ -56,9 +55,6 @@ MatchedFilterParam(binSize = 0.1, impute = "none", baseValue = numeric(),
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp")
-
-\S4method{findChromPeaks}{MSnExp,MatchedFilterParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
 
 \S4method{show}{MatchedFilterParam}(object)
 
@@ -148,9 +144,9 @@ in m/z for peaks with overlapping retention times}
 \item{index}{\code{logical(1)} specifying whether indicies should be returned instead
 of values for m/z and retention times.}
 
-\item{object}{For \code{findChromPeaks}: Either an
-\code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-object containing the MS- and all other experiment-relevant data.
+\item{object}{For \code{findChromPeaks}: an
+\code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+experiment-relevant data.
 
 For all other methods: a parameter object.}
 
@@ -206,12 +202,6 @@ on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
-
-The \code{findChromPeaks,MSnExp,MatchedFilterParam} method
-performs peak detection using the \emph{matchedFilter} method on all
-samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
-mz and intensity values of all spectra hence no additional
-data input from the original files is required.
 
 \code{binSize},\code{binSize<-}: getter and setter for the
 \code{binSize} slot of the object.

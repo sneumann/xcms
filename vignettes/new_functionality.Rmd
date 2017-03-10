@@ -1,5 +1,3 @@
-s#+TITLE: New and modified functionality in xcms
-
 ---
 title: "New and modified functionality in xcms"
 author: "Johannes Rainer"
@@ -44,27 +42,27 @@ of R functions, the so called core API functions (or `do_` functions). These
 functions take standard R data structures as input and return standard R data
 types as result and can hence be easily included in other R packages.
 
-Over and above, the new user interface aims at simplifying and streamlining the
-`xcms` workflow while guaranteeing data integrity and performance also for large
-scale metabolomics experiments. An important aspect was also to enable an easy
-access to the raw data files. 
+The new user interface aims at simplifying and streamlining the `xcms` workflow
+while guaranteeing data integrity and performance also for large scale
+metabolomics experiments. Importantly, a simplified access to the original raw
+data should be provided throughout the whole metabolomics data analysis workflow.
 
 The new interface re-uses objects from the `MSnbase` Bioconductor package, such as
 the `OnDiskMSnExp` object. This object is specifically designed for large scale MS
 experiments as it initially reads just the scan header information from the mzML
 while the mz-intensity value pairs from all or from selected spectra of a file
-or are read on demand hence minimizing the memory footprint. Also in contrast to
-the old `xcmsRaw` object the `OnDiskMSnExp` contains information from all files of
+are read on demand hence minimizing the memory demand. Also, in contrast to
+the old `xcmsRaw` object, the `OnDiskMSnExp` contains information from all files of
 an experiment. In addition, all data normalization and adjustment methods
 implemented in the `MSnbase` package can be directly applied to the MS data
 without the need to re-implement such methods in `xcms`. Results from `xcms`
 preprocessings, such as chromatographic peak detection or correspondence are
 stored into the new `XCMSnExp` object. This object extends the `OnDiskMSnExp` object
-and enables thus an easy access of the raw data on which the preprocessing was
-performed.
+and inherits thus all of its methods including raw data access.
 
-Class and method/function names follow also a new naming convention and avoid
-the partially confusing nomenclature of the original `xcms` methods. To
+Class and method/function names follow also a new naming convention trying tp
+avoid the partially confusing nomenclature of the original `xcms` methods (such as
+the `group` method to perform the correspondence of peaks across samples). To
 distinguish them from mass peaks, the peaks identified by the peak detection in
 an LS/GC-MS experiment are referred to as *chromatographic peaks*. The respective
 method to identify such peaks is hence called `findChromPeaks` and the identified
@@ -81,16 +79,16 @@ function into a parameter class (such as `CentWaveParam`) avoids busy function
 calls (with many single parameters) and enables saving, reloading and reusing
 the settings. In addition, the parameter classes are added, along with other
 information to the process history of an `XCMSnExp` object thus providing a
-detailed documentation of each processing step of an analysis. In addition,
-validation of the parameters can be performed within the parameter object and
-hence is no longer required in the analysis function.
+detailed documentation of each processing step of an analysis, with the
+possibility to recall all settings of the performed analyses at any stage. In
+addition, validation of the parameters can be performed within the parameter
+object and hence is no longer required in the analysis function.
 
 The example below illustrates the new user interface. First we load the raw data
 files from the `faahKO` package using the `readMSData2` from the `MSnbase` package.
 
 ```{r message = FALSE, warning = FALSE}
 ## Reading the raw data using the MSnbase package
-library(MSnbase)
 library(xcms)
 ## Load 6 of the CDF files from the faahKO
 cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
@@ -130,17 +128,208 @@ for (i in 2:length(fileNames(raw_data))) {
 legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
 ```
 
-In addition we can plot the distribution of the total ion counts per file.
+Alternatively we can use the `extractChromatograms` method that extracts a
+chromatogram from the object. In the example below we extract the *base peak
+chromatogram* (BPC) by setting `aggregationFun` to `"max"` and not specifying an `rt`
+or `mz` range to extract only a data subset. Note that this function reads the
+data from the raw files.
+
+```{r faahKO-bpi, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+## Get the base peak chromatograms. This reads data from the files.
+bpis <- extractChromatograms(raw_data, aggregationFun = "max")
+plot(3, 3, pch = NA, xlim = range(unlist(lapply(bpis, rtime))),
+     ylim = range(unlist(lapply(bpis, intensity))), main = "BPC",
+     xlab = "rtime", ylab = "intensity")
+for (i in 1:length(bpis)) {
+    points(rtime(bpis[[i]]), intensity(bpis[[i]]), type = "l",
+	   col = paste0(sample_colors[pData(raw_data)$sample_group[i]], 80))
+}
+```
+
+Note that we could restrict the analysis to a certain retention time range by
+sub-setting `raw_data` with the `filterRt` method.
+
+In addition we can plot the distribution of the total ion counts per file. In
+contrast to sub-setting the object we split the numeric vector returned by the
+`tic` by file using the `fromFile` method that provides the mapping of the
+experiment's spectra to the originating files.
+
+```{r faahKO-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+## Get the total ion current by file
+tc <- split(tic(raw_data), f = fromFile(raw_data))
+boxplot(tc, col = paste0(sample_colors[pData(raw_data)$sample_group], 80),
+	ylab = "intensity", main = "Total ion current")
+```
 
 The `tic` (and for mzML files) the `bpi` methods are very fast, even for large data
 sets, as these information are stored in the header of the raw files avoiding
-the need to read the raw data from each file.
+the need to read the raw data from each file. Also, we could subset the whole
+object using the filter functions `filterFile`, `filterRt` or `filterMz` to
+e.g. remove problematic samples or restrict the retention time range in which we
+want to perform the chromatographic peak detection.
 
--   Do the chromatographic peak detection.
+Next we perform the chromatographic peak detection using the *centWave* algorithm
+[@Tautenhahn:2008fx]. In the example below we use most of the standard
+parameters, but the settings should be adjusted to each experiment individually
+based on e.g. the expected width of the chromatographic peaks etc.
 
--   Describe the peak detection methods.
+```{r faahKO-centWave}
+## Defining the settings for the centWave peak detection.
+cwp <- CentWaveParam(snthresh = 20, noise = 1000)
+xod <- findChromPeaks(raw_data, param = cwp)
+```
 
--   Describe subsetting methods filter etc.
+The identified peaks can be accessed with the `chromPeaks` parameter which returns
+a `matrix`, each line representing an identified peak. Column `"sample"` specifies
+in which *sample* (i.e. file) of the experiment the peak was detected. Below we
+plot the signal distribution of the identified peaks per sample.
+
+```{r faahKO-peak-intensity-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+ints <- split(chromPeaks(xod)[, "into"], f = chromPeaks(xod)[, "sample"])
+ints <- lapply(ints, log2)
+boxplot(ints, varwidth = TRUE, col = sample_colors[pData(xod)$sample_group],
+	ylab = expression(log[2]~intensity), main = "Peak intensities")
+```
+
+Next we align the samples using the *obiwarp* method [@Prince:2006jj]. This
+method does, in contrast to other alignment/retention time correction methods,
+not require any identified peaks and could thus also be applied to an
+`OnDiskMSnExp` object. Note that all retention time adjustment methods do also
+adjust the retention times reported for the individual peaks in `chromPeaks`.
+
+```{r faahKO-obiwarp, message = FALSE}
+## Doing the obiwarp alignment using the default settings.
+xod <- adjustRtime(xod, param = ObiwarpParam())
+```
+
+Note that any pre-processing results can be removed at any time using a *drop*
+method, such as `dropChromPeaks`, `dropFeatureDefinitions` or
+`dropAdjustedRtime`.
+
+To evaluate the impact of the alignment we can plot again the BPC of each
+sample.
+
+```{r faahKO-bpi-obiwarp, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+## Get the base peak chromatograms. This reads data from the files.
+bpis <- extractChromatograms(xod, aggregationFun = "max")
+plot(3, 3, pch = NA, xlim = range(unlist(lapply(bpis, rtime))),
+     ylim = range(unlist(lapply(bpis, intensity))), main = "BPC",
+     xlab = "rtime", ylab = "intensity")
+for (i in 1:length(bpis)) {
+    points(rtime(bpis[[i]]), intensity(bpis[[i]]), type = "l",
+	   col = paste0(sample_colors[pData(raw_data)$sample_group[i]], 80))
+}
+```
+
+Below we draw the difference of the adjusted to the raw retention times. The
+deviation from the raw retention times should be within the expected
+variance/shift from the chromatography. Too large differences could indicate
+poorly performing samples.
+
+```{r faahKO-adjusted-rtime-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+## Calculate the difference between the adjusted and the raw retention times.
+diffRt <- rtime(xod) - rtime(xod, adjusted = FALSE)
+
+## By default, rtime and most other accessor methods return a numeric vector. To
+## get the values grouped by sample we have to split this vector by file/sample
+diffRt <- split(diffRt, fromFile(xod))
+
+## Get the raw retention times grouped by sample
+rawRt <- rtime(xod, bySample = TRUE, adjusted = FALSE)
+plot(rawRt[[1]], diffRt[[1]], type = "l", ylab = "adjusted - raw rt",
+     xlab = "raw rt", main = "Obiwarp alignment results", ylim = range(diffRt),
+     col = paste0(sample_colors[pData(xod)$sample_group[1]], 80))
+for (i in 2:length(rawRt)) {
+    points(rawRt[[i]], diffRt[[i]], type = "l",
+	   col = paste0(sample_colors[pData(xod)$sample_group[i]], 80))
+}
+```
+
+The distribution of retention time differences could also be used for quality
+assessment.
+
+```{r faahKO-adjusted-rtime-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4}
+boxplot(diffRt, col = sample_colors[pData(xod)$sample_group],
+	main = "Obiwarp alignment results", ylab = "adjusted - raw rt")
+```
+
+The 3rd sample was used as *center* sample against which all other samples were
+aligned to, hence its adjusted retention times are identical to the raw
+retention times.
+
+Next we group identified chromatographic peaks across samples. We use the *peak
+density* method [@Smith:2006ic] specifying that a chromatographic peak have
+to be present in at least 1/3 of the samples within each group to be combined to
+a mz-rt *feature*.
+
+```{r faahKO-groupPeakDensity, message = FALSE}
+## Define the PeakDensityParam
+pdp <- PeakDensityParam(sampleGroups = pData(xod)$sample_group,
+			maxFeatures = 300, minFraction = 0.66)
+xod <- groupChromPeaks(xod, param = pdp)
+```
+
+The definitions of the features can be accessed with the `featureDefinitions`,
+which lists the mz-rt space specific to a feature. Column `"peakidx"` lists the
+indices (in the `chromPeaks` matrix) of the individual chromatographic peaks
+belonging to the feature.
+
+```{r faahKO-featureDefinitions, message = FALSE}
+head(featureDefinitions(xod))
+```
+
+To extract *values* for the features, the `featureValues` method can be used. This
+method returns a matrix with rows being the features and column the samples. The
+`value` parameter allows to specify the value that should be returned. Below we
+extract the `"into"` signal, i.e. the per-peak integrated intensity for each
+feature.
+
+```{r faahKO-featureValues, message = FALSE}
+## Extract the "into" peak integrated signal.
+head(featureValues(xod, value = "into"))
+```
+
+After correspondence there will always be features that do not include peaks
+from every sample (being it that the peak finding algorithm failed to identify a
+peak or that no signal was measured in the respective mz-rt area). For such
+features an `NA` is returned by the `featureValues` method. Here, `xcms` allows to
+infer values for such missing peaks using the `fillChromPeaks` method. This method
+integrates in files where a peak was not found the signal from the mz-rt area
+where it is expected and adds it to the `chromPeaks` matrix. Such *filled-in* peaks
+have a value of `1` in the `"is_filled"` column of the `chromPeaks` matrix.
+
+```{r faahKO-fillPeaks, message = FALSE}
+## Fill in peaks with default settings. Settings can be adjusted by passing
+## a FillChromPeaksParam object to the method.
+xod <- fillChromPeaks(xod)
+
+head(featureValues(xod))
+```
+
+Not for all missing peaks a value could be integrated (because at the respective
+location no measurements are available). The peak area from which signal is to
+be extracted can also be increased modifying the settings by passing a
+`FillChromPeaksParam` object.
+
+At last we can inspect the `processHistory` of the analysis. As described earlier,
+this records all (major) processing steps along with the corresponding parameter
+classes.
+
+```{r faahKO-processHistory, message = FALSE}
+## List the full process history
+processHistory(xod)
+```
+
+It is also possible to extract specific processing steps by specifying its
+type. Available types can be listed with the `processHistoryTypes` function. Below
+we extract the parameter class for the alignment/retention time adjustment step.
+
+```{r faahKO-processHistory-select, message = FALSE}
+ph <- processHistory(xod, type = "Retention time correction")
+
+## Access the parameter
+processParam(ph[[1]])
+```
 
 
 ## New naming convention
@@ -297,7 +486,7 @@ objects get copied by R which *could* eventually result in a larger memory deman
 or performance decrease (while no such was decrease was observed up to now).
 
 
-## Usability improvements
+## Usability improvements in the *old* user interface
 
 -   `[` subsetting method for `xcmsRaw` objects that enables to subset an `xcmsRaw`
     object to specific scans/spectra.
@@ -417,6 +606,16 @@ generation uses now the `binYonX` method which fixed some problems in the origin
 binning and linear interpolation methods. Thus results might be slightly
 different.
 
+Also, the `retcor.obiwarp` method reports (un-rounded) adjusted retention times,
+but adjusts the retention time of eventually already identified peaks using
+rounded adjusted retention times. The new `adjustRtime` method(s) does adjust
+identified peaks using the reported adjusted retention times (not rounded). This
+guarantees that e.g. removing retention time adjustment/alignment results from
+an object restores the object to its initial state (i.e. the adjusted retention
+times of the identified peaks are reverted to the retention times before
+alignment).
+See issue [#122](https://github.com/sneumann/xcms/issues/122) for more details.
+
 
 ## `retcor.peaksgroups`: change in the way how *well behaved* peak groups are ordered
 
@@ -453,6 +652,30 @@ scan indices (see issue [#64](https://github.com/sneumann/xcms/issues/64)).
 These problems have been fixed in version 1.51.1 by first sub-setting the
 `xcmsRaw` object (using the `[` method) before actually performing the feature
 detection.
+
+
+## `fillPeaks` (`fillChromPeaks`) differences
+
+In the original `fillPeaks.MSW`, the mz range from which the signal is to be
+integrated was defined using 
+
+```{r eval = FALSE}
+mzarea <- seq(which.min(abs(mzs - peakArea[i, "mzmin"])),
+	      which.min(abs(mzs - peakArea[i, "mzmax"])))
+```
+
+Depending on the data this could lead to the inclusion of signal in the
+integration that are just outside of the mz range. In the new `fillChromPeaks`
+method signal is integrated only for mz values >= mzmin and <= mzmax thus
+ensuring that only signal is used that is truly within the peak area defined by
+columns `"mzmin"`, `"mzmax"`, `"rtmin"` and `"rtmax"`.
+
+Also, the `fillPeaks.chrom` method did return `"into"` and `"maxo"` values of `0` if no
+signal was found in the peak area. The new method does not integrate any signal
+in such cases and does not fill in that peak.
+
+See also issue [#130](https://github.com/sneumann/xcms/issues/130) for more
+information.
 
 
 # Under the hood changes

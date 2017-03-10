@@ -13,7 +13,6 @@
 \alias{ampTh,MSWParam-method}
 \alias{ampTh<-}
 \alias{ampTh<-,MSWParam-method}
-\alias{findChromPeaks,MSnExp,MSWParam-method}
 \alias{findChromPeaks,OnDiskMSnExp,MSWParam-method}
 \alias{findPeaks-MSW}
 \alias{minNoiseLevel}
@@ -58,9 +57,6 @@ MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2, 30,
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MSWParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp")
-
-\S4method{findChromPeaks}{MSnExp,MSWParam}(object, param, BPPARAM = bpparam(),
-  return.type = "list")
 
 \S4method{show}{MSWParam}(object)
 
@@ -145,9 +141,9 @@ estimation of the detected peaks.}
 \code{\link[MassSpecWavelet]{sav.gol}} functions from the
 \code{MassSpecWavelet} package.}
 
-\item{object}{For \code{findChromPeaks}: Either an
-\code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-object containing the MS- and all other experiment-relevant data.
+\item{object}{For \code{findChromPeaks}: an
+\code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+experiment-relevant data.
 
 For all other methods: a parameter object.}
 
@@ -193,13 +189,6 @@ samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
-
-The \code{findChromPeaks,MSnExp,MSWParam} method
-performs peak detection in single-spectrum non-chromatography MS
-data using functionality from the \code{MassSpecWavelet} package on all
-samples from an \code{\link[MSnbase]{MSnExp}} object. These objects contain
-mz and intensity values of all spectra hence no additional
-data input from the original files is required.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
 \code{snthresh} slot of the object.

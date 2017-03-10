@@ -18,34 +18,39 @@ names(.SUPPORTED_AGG_FUN_CHROM) <-
 ##' @author Johannes Rainer
 ##' @noRd
 validChromatogram <- function(object) {
-    msg <- validMsg(NULL, NULL)
+    msg <- character()
     if (length(object@rtime) != length(object@intensity))
-        msg <- validMsg(msg, "Length of 'rt' and 'intensity' have to match!")
+        msg <- c(msg, "Length of 'rt' and 'intensity' have to match!")
     if (is.unsorted(object@mz))
-        msg <- validMsg(msg, "'mz' has to be increasingly ordered!")
+        msg <- c(msg, "'mz' has to be increasingly ordered!")
     if (is.unsorted(object@rtime))
-        msg <- validMsg(msg, paste0("'rtime' has to be increasingly ordered!"))
+        msg <- c(msg, paste0("'rtime' has to be increasingly ordered!"))
     if (length(object@mz) > 0 & length(object@mz) != 2)
-        msg <- validMsg(msg, paste0("'mz' is supposed to contain the ",
-                                    "minimum and maximum mz values for the ",
-                                    "chromatogram."))
+        msg <- c(msg, paste0("'mz' is supposed to contain the ",
+                             "minimum and maximum mz values for the ",
+                             "chromatogram."))
     if (length(object@filterMz) > 0 & length(object@filterMz) != 2)
-        msg <- validMsg(msg, paste0("'filterMz' is supposed to contain the ",
-                                    "minimum and maximum mz values of the filter",
-                                    " used to create the chromatogram."))
+        msg <- c(msg, paste0("'filterMz' is supposed to contain the ",
+                             "minimum and maximum mz values of the filter",
+                             " used to create the chromatogram."))
+    if (length(object@precursorMz) > 0 & length(object@precursorMz) != 2)
+        msg <- c(msg, paste0("'precursorMz' is supposed to be a numeric of",
+                             " length 2."))
+    if (length(object@productMz) > 0 & length(object@productMz) != 2)
+        msg <- c(msg, paste0("'productMz' is supposed to be a numeric of",
+                             " length 2."))
     if (length(object@fromFile) > 1 | any(object@fromFile < 0))
-        msg <- validMsg(msg, paste0("'fromFile' is supposed to be a single ",
-                                    "positive integer!"))
+        msg <- c(msg, paste0("'fromFile' is supposed to be a single ",
+                             "positive integer!"))
     if (length(object@aggregationFun) > 1)
-        msg <- validMsg(msg, "Length of 'aggregationFun' has to be 1!")
+        msg <- c(msg, "Length of 'aggregationFun' has to be 1!")
     if (length(object@aggregationFun)) {
         if (!object@aggregationFun %in% .SUPPORTED_AGG_FUN_CHROM)
-            msg <- validMsg(msg, paste0("Invalid value for 'aggregationFun'! ",
-                                        "only ",
-                                        paste0("'", .SUPPORTED_AGG_FUN_CHROM,"'",
-                                              collapse = ","), " are allowed!"))
+            msg <- c(msg, paste0("Invalid value for 'aggregationFun'! only ",
+                                 paste0("'", .SUPPORTED_AGG_FUN_CHROM,"'",
+                                        collapse = ","), " are allowed!"))
     }
-    if (is.null(msg)) TRUE
+    if (length(msg) == 0) TRUE
     else msg
 }
 
@@ -66,6 +71,12 @@ validChromatogram <- function(object) {
 ##' @param filterMz \code{numeric(2)} representing the mz value range (min,
 ##' max) that was used to filter the original object on mz dimension. If not
 ##' applicable use \code{filterMz = c(0, 0)}.
+##'
+##' @param precursorMz \code{numeric(2)} for SRM/MRM transitions.
+##' Represents the mz of the precursor ion. See details for more information.
+##' 
+##' @param productMz \code{numeric(2)} for SRM/MRM transitions.
+##' Represents the mz of the product. See details for more information.
 ##' 
 ##' @param fromFile \code{integer(1)} the index of the file within the
 ##' \code{\link{OnDiskMSnExp}} or \code{\link{XCMSnExp}} from which the
@@ -76,14 +87,17 @@ validChromatogram <- function(object) {
 ##' mz range. Supported are \code{"sum"} (total ion chromatogram), \code{"max"}
 ##' (base peak chromatogram), \code{"min"} and \code{"mean"}.
 ##' 
-##' @slot rtime,intensity,mzrange,filterMzrange,fromFile,aggregationFun See corresponding parameter above.
+##' @slot .__classVersion__,rtime,intensity,mz,filterMz,precursorMz,productMz,fromFile,aggregationFun See corresponding parameter above.
 ##' 
 ##' @rdname Chromatogram-class
 Chromatogram <- function(rtime = numeric(), intensity = numeric(),
                          mz = c(0, 0), filterMz = c(0, 0),
+                         precursorMz = c(NA_real_, NA_real_),
+                         productMz = c(NA_real_, NA_real_),
                          fromFile = integer(),
                          aggregationFun = character()) {
     return(new("Chromatogram", rtime = rtime, intensity = intensity,
                mz = range(mz), filterMz = range(filterMz),
+               precursorMz = range(precursorMz), productMz = range(productMz),
                fromFile = as.integer(fromFile), aggregationFun = aggregationFun))
 }

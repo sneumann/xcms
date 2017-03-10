@@ -1,5 +1,5 @@
 ## All Methods for xcmsRaw should be here.
-#' @include functions-xcmsRaw.R
+#' @include functions-xcmsRaw.R functions-utils.R
 
 ############################################################
 ## show
@@ -1160,6 +1160,7 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
     stime <- object@scantime
 
 ### Create EIC buffer
+    ## This is NOT calculated for the full file.
     mrange <- range(peakrange[,1:2])
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     bufsize <- min(100, length(mass))
@@ -1186,33 +1187,40 @@ setMethod("getPeaks", "xcmsRaw", function(object, peakrange, step = 0.1) {
                            diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
                            TRUE, object@profparam)
         }
+        ## Extract the intensity matrix for the mz-rt range: rows are mz, cols
+        ## rt values.
         ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
+        ## Define the maximum intensity, is one value per mz.
         ymax <- colMax(ymat)
         iymax <- which.max(ymax)
 
+        ## The width in rt.
         pwid <- diff(stime[iret])/diff(iret)
 
+        ## Calculate sum across rt. For each mz we get one value.
         rosm <- rowSums(ymat)
         limz <- length(imz[1]:imz[2])
         if (length(rosm) != limz) { ## that happens for some reason
             warning("weighted.mean  : x and w must have the same length \n")
             rosm <- rep(1, limz)  ## fallback to mean
         }
-        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm)
+        ## mean mz:
+        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm) ## mz; its not the
+        ## position of the largest intensity!
         if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()  results in NA (not NaN) for zero weights
             rmat[i,1] <- mean(peakrange[i,1:2])
 
-        rmat[i,2:3] <- peakrange[i,1:2]
-        rmat[i,4] <- stime[iret[1]:iret[2]][iymax]
-        rmat[i,5:6] <- peakrange[i,3:4]
+        rmat[i,2:3] <- peakrange[i,1:2]            ## mzmin, mzmax
+        rmat[i,4] <- stime[iret[1]:iret[2]][iymax] ## rt
+        rmat[i,5:6] <- peakrange[i,3:4]            ## rtmin, rtmax
 
         if (peakrange[i,3] <  stime[1] || peakrange[i,4] > stime[length(stime)] || is.nan(pwid)) {
             warning("getPeaks: Peak  m/z:",peakrange[i,1],"-",peakrange[i,2], ",  RT:",peakrange[i,3],"-",peakrange[i,4],
                     "is out of retention time range for this sample (",object@filepath,"), using zero intensity value.\n")
             rmat[i,7:8] <- 0
         } else {
-            rmat[i,7] <- pwid*sum(ymax)
-            rmat[i,8] <- ymax[iymax]
+            rmat[i,7] <- pwid*sum(ymax)  ## into
+            rmat[i,8] <- ymax[iymax]     ## maxo
         }
     }
     invisible(rmat)
@@ -1273,9 +1281,43 @@ setMethod("rawMat", "xcmsRaw", function(object,
             log = log)
 })
 ## @jo TODO LLL replace that with an implementation in C.
+## Note: this function silently drops retention times for which no intensity-mz
+## pair was measured.
 .rawMat <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
                     rtrange = numeric(), scanrange = numeric,
                     log = FALSE) {
+    if (length(rtrange) >= 2) {
+        rtrange <- range(rtrange)
+        scanrange <- range(which((scantime >= rtrange[1]) &
+                                 (scantime <= rtrange[2])))
+    }
+    if (length(scanrange) < 2)
+        scanrange <- c(1, length(valsPerSpect))
+    else scanrange <- range(scanrange)
+    if (scanrange[1] == 1)
+        startidx <- 1
+    else
+        startidx <- sum(valsPerSpect[1:(scanrange[1]-1)]) + 1
+    endidx <- sum(valsPerSpect[1:scanrange[2]])
+    scans <- rep(scanrange[1]:scanrange[2],
+                 valsPerSpect[scanrange[1]:scanrange[2]])
+    masses <- mz[startidx:endidx]
+    massidx <- 1:length(masses)
+    if (length(mzrange) >= 2) {
+        mzrange <- range(mzrange)
+        massidx <- massidx[(masses >= mzrange[1] & (masses <= mzrange[2]))]
+    }
+    int <- int[startidx:endidx][massidx]
+    if (log && (length(int) > 0))
+        int <- log(int + max(1 - min(int), 0))
+    cbind(time = scantime[scans[massidx]],
+          mz = masses[massidx],
+          intensity = int)
+}
+
+.rawMat2 <- function(mz, int, scantime, valsPerSpect, mzrange = numeric(),
+                     rtrange = numeric(), scanrange = numeric,
+                     log = FALSE) {
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
         scanrange <- range(which((scantime >= rtrange[1]) &

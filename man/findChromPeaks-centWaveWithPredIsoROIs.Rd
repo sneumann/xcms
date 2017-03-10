@@ -5,7 +5,6 @@
 \alias{CentWavePredIsoParam}
 \alias{CentWavePredIsoParam-class}
 \alias{centWaveWithPredIsoROIs}
-\alias{findChromPeaks,MSnExp,CentWavePredIsoParam-method}
 \alias{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam-method}
 \alias{findChromPeaks-centWaveWithPredIsoROIs}
 \alias{maxCharge}
@@ -39,9 +38,6 @@ CentWavePredIsoParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 \S4method{findChromPeaks}{OnDiskMSnExp,CentWavePredIsoParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp")
-
-\S4method{findChromPeaks}{MSnExp,CentWavePredIsoParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
 
 \S4method{show}{CentWavePredIsoParam}(object)
 
@@ -141,14 +137,14 @@ intensity peaks.}
 Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
 
-\item{object}{For \code{findChromPeaks}: Either an
-\code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-object containing the MS- and all other experiment-relevant data.
+\item{object}{For \code{findChromPeaks}: an
+\code{\link[MSnbase]{OnDiskMSnExp}}  object containing the MS- and all other
+experiment-relevant data.
 
 For all other methods: a parameter object.}
 
-\item{param}{An \code{CentWaveParam} object containing all settings for the
-centWave algorithm.}
+\item{param}{An \code{CentWavePredIsoParam} object with the settings for the
+chromatographic peak detection algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
 should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
@@ -196,12 +192,6 @@ samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 data and load the spectra data (mz and intensity values) on the fly from
 the original files applying also all eventual data manipulations.
-
-The \code{findChromPeaks,MSnExp,CentWavePredIsoParam} method
-performs a two-step centWave-based peak detection on all samples from
-an \code{\link[MSnbase]{MSnExp}} object. These objects contain mz and
-intensity values of all spectra hence no additional data input from the
-original files is required.
 
 \code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
 setter for the \code{snthreshIsoROIs} slot of the object.
