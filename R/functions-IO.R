@@ -13,7 +13,7 @@ isCdfFile <- function(x) {
     res <- sapply(patts, function(z) {
         grep(z, x, ignore.case = TRUE)
     })
-    return(any(unlist(res)))
+    any(unlist(res))
 }
 
 ############################################################
@@ -21,14 +21,29 @@ isCdfFile <- function(x) {
 ##
 ## Just guessing whether the file is a mzML file based on its ending.
 isMzMLFile <- function(x) {
-    fileEnds <- c("mzxml", "mzml", "mzdata")
+    fileEnds <- c("mzml")
     ## check for endings and and ending followed by a . (e.g. mzML.gz)
     patts <- paste0("\\.", fileEnds, "($|\\.)")
     res <- sapply(patts, function(z) {
         grep(z, x, ignore.case = TRUE)
     })
-    return(any(unlist(res)))
+    any(unlist(res))
 }
+
+############################################################
+## isRampFile
+##
+## Files that have to be read using the Ramp backend.
+isRampFile <- function(x) {
+    fileEnds <- c("mzxml", "mzdata")
+    ## check for endings and and ending followed by a . (e.g. mzML.gz)
+    patts <- paste0("\\.", fileEnds, "($|\\.)")
+    res <- sapply(patts, function(z) {
+        grep(z, x, ignore.case = TRUE)
+    })
+    any(unlist(res))
+}
+
 
 ############################################################
 ## readRawData
@@ -40,8 +55,6 @@ isMzMLFile <- function(x) {
 ##' @param x The file name.
 ##' @param includeMSn logical(1) indicating whether MS level > 1 should be loaded
 ##' too. Only supported for mzML files.
-##' @param backendMzML Default backend to be used for mzML files. Can b wither
-##' \code{"Ramp"} or \code{"pwiz"}.
 ##' @param dropEmptyScans Scans/spectra without peaks are not returned if
 ##' \code{dropEmptyScans = TRUE}. If \code{FALSE} all spectra from the input
 ##' file are returned. This is to be consistent with the code before
@@ -49,20 +62,20 @@ isMzMLFile <- function(x) {
 ##' https://github.com/sneumann/xcms/issues/67).
 ##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
 ##' @noRd
-readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp",
-                        dropEmptyScans = TRUE) {
+readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE) {
     ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
-    if (isCdfFile(x)) {
+    backend <- NA
+    if (isCdfFile(x))
         backend <- "netCDF"
-    } else {
-        if (isMzMLFile(x)) {
-            backend <- backendMzML
-            header_cols <- c(header_cols, "polarity")
-        } else {
-            stop("Unknown file type.")
-        }
+    if (isRampFile(x))
+        backend <- "Ramp"
+    if (isMzMLFile(x)) {
+        backend <- "pwiz"
+        header_cols <- c(header_cols, "polarity")
     }
+    if (is.na(backend))
+        stop("Unsupported file type.")
     msd <- mzR::openMSfile(x, backend = backend)
     on.exit(if(!is.null(msd)) mzR::close(msd))
     ## That's due to issue https://github.com/lgatto/MSnbase/issues/151
@@ -139,5 +152,6 @@ readRawData <- function(x, includeMSn = FALSE, backendMzML = "Ramp",
     }
     mzR::close(msd)
     mzR <- NULL
+    gc()
     resList
 }
