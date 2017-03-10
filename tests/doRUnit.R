@@ -46,6 +46,12 @@ if(require("RUnit", quietly=TRUE)) {
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                          method = "centWave", noise = 10000, snthresh = 40)
+    ## Doing also the retention time correction etc
+    od_x <- faahko_od
+    xod_x <- faahko_xod
+    xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+    xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+    xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
     
     ## microtofq
     library(msdata)
@@ -54,6 +60,19 @@ if(require("RUnit", quietly=TRUE)) {
     microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
     microtofq_od <- readMSData2(microtofq_fs)
 
+    ## Direct injection data:
+    fticrf <- list.files(system.file("fticr", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+    fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
+                                                peakThr = 80000, ampTh = 0.005,
+                                                SNR.method = "data.mean",
+                                                winSize.noise = 500))
+    fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
+                        SNR.method='data.mean' , winSize.noise=500,
+                        peakThr=80000,  amp.Th=0.005)
+    
+    ## microtofq_xod <- findChromPeaks(microtofq_od, param = MSWParam())
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))
     ##     attach(loadNamespace(pkg), name=paste("namespace", pkg, sep=":"), pos=3)

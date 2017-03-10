@@ -51,15 +51,19 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
         stop("Spectra are not ordered by retention time!")
     mzs <- lapply(x, mz)
     procDat <- date()
-    return(list(peaks = do.call(method,
-                                args = c(list(mz = unlist(mzs,
-                                                          use.names = FALSE),
-                                              int = unlist(lapply(x, intensity),
-                                                           use.names = FALSE),
-                                              valsPerSpect = lengths(mzs, FALSE),
-                                              scantime = rt),
-                                         as(param, "list"))),
-                date = procDat))
+    res <- do.call(method, args = c(list(mz = unlist(mzs,
+                                                     use.names = FALSE),
+                                         int = unlist(lapply(x, intensity),
+                                                      use.names = FALSE),
+                                         valsPerSpect = lengths(mzs, FALSE),
+                                         scantime = rt),
+                                    as(param, "list")))
+    ## Ensure that we call the garbage collector to eventually clean unused stuff
+    rm(mzs)
+    rm(x)
+    rm(rt)
+    gc()
+    return(list(peaks = res, date = procDat))
 }
 
 ## That's a special case since we don't expect to have rt available for this.

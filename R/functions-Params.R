@@ -35,6 +35,41 @@
     }
 }
 
+## Just get the name of the algorithm for each Parameter class.
+.param2string <- function(x) {
+    if (is(x, "CentWaveParam"))
+        return("centWave")
+    if (is(x, "MatchedFilterParam"))
+        return("matchedFilter")
+    if (is(x, "MassifquantParam"))
+        return("massifquant")
+    if (is(x, "MSWParam"))
+        return("MSW")
+    if (is(x, "CentWavePredIsoParam"))
+        return("centWave with predicted isotope ROIs")
+    if (is(x, "PeakDensityParam"))
+        return("chromatographic peak density")
+    if (is(x, "MzClustParam"))
+        return("mzClust")
+    if (is(x, "NearestPeaksParam"))
+        return("nearest peaks")
+    if (is(x, "PeakGroupsParam"))
+        return("peak groups")
+    if (is(x, "ObiwarpParam"))
+        return("obiwarp")
+    return("unknown")
+}
+
+############################################################
+## GenericParam
+#' @return The \code{GenericParam} function returns a \code{GenericParam} object.
+#' @param fun \code{character} representing the name of the function.
+#' @param args \code{list} (ideally named) with the arguments to the function.
+#' @rdname GenericParam
+GenericParam <- function(fun = character(), args = list()) {
+    return(new("GenericParam", fun = fun, args = args))
+}
+
 ############################################################
 ## CentWaveParam
 
@@ -74,6 +109,18 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                baseValue = baseValue, distance = distance, fwhm = fwhm,
                sigma = sigma, max = max, snthresh = snthresh, steps = steps,
                mzdiff = mzdiff, index = index))
+}
+#' Convert the impute method to the old-style method name (e.g. for profMat
+#' calls)
+#' @noRd
+.impute2method <- function(x) {
+    if (impute(x) == "none")
+        return("bin")
+    if (impute(x) == "lin")
+        return("binlin")
+    if (impute(x) == "linbase")
+        return("binlinbase")
+    return("intlin")
 }
 
 ############################################################
@@ -268,4 +315,15 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
                factorGap = factorGap, localAlignment = localAlignment,
                initPenalty = initPenalty))
+}
+
+############################################################
+## FillChromPeaksParam
+
+#' @return The \code{FillChromPeaksParam} function returns a
+#' \code{FillChromPeaksParam} object.
+#' @rdname fillChromPeaks
+FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0) {
+    return(new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
+               ppm = ppm))
 }

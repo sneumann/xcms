@@ -42,15 +42,15 @@ setMethod("intensity", "Chromatogram", function(object) {
 })
 
 ## mz
-##' @description \code{mz} get or set the mz range of the
-##' chromatogram.
+##' @description \code{mz} get the mz (range) of the chromatogram. The
+##' function returns a \code{numeric(2)} with the lower and upper mz value.
 ##'
 ##' @param filter For \code{mz}: whether the mz range used to filter the
 ##' original object should be returned (\code{filter = TRUE}), or the mz range
 ##' calculated on the real data (\code{filter = FALSE}).
 ##' 
 ##' @rdname Chromatogram-class
-setMethod("mzrange", "Chromatogram", function(object, filter = FALSE) {
+setMethod("mz", "Chromatogram", function(object, filter = FALSE) {
     if (filter)
         return(object@filterMz)
     return(object@mz)
@@ -61,6 +61,23 @@ setMethod("mzrange", "Chromatogram", function(object, filter = FALSE) {
 ##     if (validObject(object))
 ##         return(object)
 ## })
+
+##' @description \code{precursorMz} get the mz of the precursor ion. The
+##' function returns a \code{numeric(2)} with the lower and upper mz value.
+##' 
+##' @rdname Chromatogram-class
+setMethod("precursorMz", "Chromatogram", function(object) {
+    return(object@precursorMz)
+})
+
+##' @aliases productMz
+##' @description \code{productMz} get the mz of the product chromatogram/ion. The
+##' function returns a \code{numeric(2)} with the lower and upper mz value.
+##' 
+##' @rdname Chromatogram-class
+setMethod("productMz", "Chromatogram", function(object) {
+    return(object@productMz)
+})
 
 ## aggregationFun
 ##' @aliases aggregationFun

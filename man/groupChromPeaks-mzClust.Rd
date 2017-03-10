@@ -164,7 +164,7 @@ The \code{\link{do_groupPeaks_mzClust}} core
 API function and \code{\link{group.mzClust}} for the old user interface.
 
 \code{\link{featureDefinitions}} and
-\code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+\code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of

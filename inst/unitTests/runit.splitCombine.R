@@ -162,6 +162,18 @@ testSplitPhenoData <- function(){
     checkEquals(xset@polarity, xsetList[[1]]@polarity)
 }
 
+## Issue #133
+test_c_empty <- function() {
+    library(msdata)
+    suppressWarnings(
+        xs <- xcmsSet(system.file("microtofq/MM8.mzML", package="msdata"),
+                      method="centWave", ppm=25, peakwidth=c(20, 50))
+    )
+    xs2 <- xcmsSet(system.file("microtofq/MM14.mzML", package="msdata"),
+                   method="centWave", ppm=25, peakwidth=c(20, 50))
+    comb <- c(xs, xs2)
+    checkTrue(nrow(peaks(comb)) == 0)
+}
 
 testSubset <- function(){
     ## first testing just the plain xset

@@ -2,7 +2,7 @@
 ## to feature grouping.
 
 ## General functions/methods
-test_groupval_XCMSnExp <- function() {
+test_featureValues_XCMSnExp <- function() {
     od_x <- faahko_xod    
     xs <- faahko_xs
     
@@ -12,11 +12,11 @@ test_groupval_XCMSnExp <- function() {
     xs <- group(xs, method = "density")
 
     checkEquals(unname(groupval(xs, value = "into")),
-                unname(groupval(od_x, value = "into")))
+                unname(featureValues(od_x, value = "into")))
     checkEquals(unname(groupval(xs, method = "maxint", value = "into")),
-                unname(groupval(od_x, method = "maxint", value = "into")))
+                unname(featureValues(od_x, method = "maxint", value = "into")))
     ## Checking errors
-    checkException(groupval(od_x, value = "bla"))
+    checkException(featureValues(od_x, value = "bla"))
     
 }
 
@@ -227,27 +227,24 @@ dontrun_groupChromPeaks_density_implementation <- function() {
 ############################################################
 ## mzClust
 ##
-library(msdata)
-fticrf <- list.files(system.file("fticr", package = "msdata"),
-                     recursive = TRUE, full.names = TRUE)
+## library(msdata)
+## fticrf <- list.files(system.file("fticr", package = "msdata"),
+##                      recursive = TRUE, full.names = TRUE)
 
-## old
-fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
-                    SNR.method='data.mean' , winSize.noise=500,
-                    peakThr=80000,  amp.Th=0.005)
-## new
-fticr_od <- readMSData2(fticrf[1:2], msLevel. = 1)
-p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
-              SNR.method = "data.mean", winSize.noise = 500)
-fticr_xod <- findChromPeaks(fticr_od, param = p)
+## ## old
+## ## new
+## fticr_od <- readMSData2(fticrf[1:2], msLevel. = 1)
+## p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
+##               SNR.method = "data.mean", winSize.noise = 500)
+## fticr_xod <- findChromPeaks(fticr_od, param = p)
 
 test_do_groupPeaks_mzClust <- function() {
     fts <- peaks(fticr_xs)
     res <- do_groupPeaks_mzClust(peaks = fts,
-                                    sampleGroups = sampclass(fticr_xs))
+                                 sampleGroups = sampclass(fticr_xs))
     res_2 <- do_groupPeaks_mzClust(peaks = fts,
-                                      sampleGroups = sampclass(fticr_xs),
-                                      minFraction = 0, absMz = 2)
+                                   sampleGroups = sampclass(fticr_xs),
+                                   minFraction = 0, absMz = 2)
     checkTrue(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
 
     res_x <- group(fticr_xs, method = "mzClust")

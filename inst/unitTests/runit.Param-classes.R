@@ -785,3 +785,42 @@ test_ObiwarpParam <- function() {
     checkException(factorGap(p) <- -1)
 }
 
+test_GenericParam <- function() {
+    prm <- GenericParam(fun = "mean")
+    checkEquals(prm@fun, "mean")
+    ## Errors
+    checkException(GenericParam(args = list(na.rm = TRUE)))
+    checkException(GenericParam(fun = c("a", "b")))
+}
+
+test_FillChromPeaksParam <- function() {
+    library(xcms)
+    library(RUnit)
+    ## Check getter/setter methods:
+    p <- new("FillChromPeaksParam", expandMz = 0.8)
+    checkEquals(expandMz(p), 0.8)
+    expandMz(p) <- 0.3
+    checkEquals(expandMz(p), 0.3)
+    p <- FillChromPeaksParam(expandMz = 0.7)
+    checkEquals(expandMz(p), 0.7)
+    checkException(expandMz(p) <- c(2, 2))
+    checkException(expandMz(p) <- -2)
+
+    p <- new("FillChromPeaksParam", expandRt = 0.8)
+    checkEquals(expandRt(p), 0.8)
+    expandRt(p) <- 0.3
+    checkEquals(expandRt(p), 0.3)
+    p <- FillChromPeaksParam(expandRt = 0.7)
+    checkEquals(expandRt(p), 0.7)
+    checkException(expandRt(p) <- c(2, 2))
+    checkException(expandRt(p) <- -2)
+
+    p <- new("FillChromPeaksParam", ppm = 8)
+    checkEquals(ppm(p), 8)
+    ppm(p) <- 3
+    checkEquals(ppm(p), 3)
+    p <- FillChromPeaksParam(ppm = 7)
+    checkEquals(ppm(p), 7)
+    checkException(ppm(p) <- c(2, 2))
+    checkException(ppm(p) <- -2)
+}

@@ -1,10 +1,10 @@
 ## tests related to the new XCMSnExp object.
 
-od_x <- faahko_od
-xod_x <- faahko_xod
-xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
-xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
-xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+## od_x <- faahko_od
+## xod_x <- faahko_xod
+## xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+## xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+## xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
 
 xs <- faahko_xs
 
@@ -104,6 +104,27 @@ test_XCMSnExp_spectra <- function() {
     res <- spectra(xod)
     res_2 <- spectra(xod, bySample = TRUE)
     checkEquals(split(res, fromFile(xod)), res_2)
+    ## xod_x
+    tmp <- filterRt(xod_x, rt = c(2700, 2900))
+    res <- spectra(tmp)
+    rts <- unlist(lapply(res, rtime))
+    checkEquals(rts, rtime(tmp))
+    ## Check with adjusted retention times.
+    tmp2 <- filterRt(xod_xgr, rt = c(2700, 2900))
+    res2 <- spectra(tmp2)
+    rts2 <- unlist(lapply(res2, rtime))
+    checkEquals(rts2, rtime(tmp2))
+    ## Now do it on one file:
+    tmp <- filterFile(xod_x, file = 2)
+    res <- spectra(tmp)
+    checkEquals(rtime(tmp), unlist(lapply(res, rtime)))
+    tmp2 <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    res2 <- spectra(tmp2)
+    checkEquals(rtime(tmp2), unlist(lapply(res2, rtime)))
+    checkTrue(sum(unlist(lapply(res2, rtime)) ==
+                  unlist(lapply(res, rtime))) < length(rtime(tmp)) / 4)
+    res3 <- spectra(tmp2, adjusted = FALSE)
+    checkEquals(res, res3)    
 }
 
 test_XCMSnExp_class_accessors <- function() {
@@ -169,6 +190,13 @@ test_XCMSnExp_class_accessors <- function() {
     checkTrue(length(tmp[[1]]) == 1)
     checkTrue(length(xod2[[1]]) == 1)
     .checkCreationOfEmptyObject()
+}
+
+test_XCMSnExp_findChromPeaks <- function() {
+    ## Call findChromPeaks on an XCMSnExp
+    tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
+                                                       snthresh = 40))
+    checkEquals(chromPeaks(tmp), chromPeaks(xod_x))
 }
 
 
@@ -441,9 +469,9 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(!hasAdjustedRtime(tmp))
     checkTrue(!hasFeatures(tmp))
     checkTrue(all(chromPeaks(tmp)[, "sample"] == 1))
-    checkEquals(chromPeaks(tmp)[, -ncol(chromPeaks(tmp))],
+    checkEquals(chromPeaks(tmp)[, -(ncol(chromPeaks(tmp)) - 1)],
                 chromPeaks(xod_x)[chromPeaks(xod_x)[, "sample"] == 2,
-                                  -ncol(chromPeaks(xod_x))])
+                                  -(ncol(chromPeaks(xod_x)) - 1)])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(xod_x, file = c(1, 3))
@@ -453,7 +481,8 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(all(chromPeaks(tmp)[, "sample"] %in% c(1, 2)))
     a <- chromPeaks(tmp)
     b <- chromPeaks(xod_x)
-    checkEquals(a[, -ncol(a)], b[b[, "sample"] %in% c(1, 3), -ncol(b)])
+    checkEquals(a[, -(ncol(a) - 1)],
+                b[b[, "sample"] %in% c(1, 3), -(ncol(b) - 1)])
     checkEquals(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
 
     ## Errors
@@ -494,14 +523,16 @@ test_XCMSnExp_filterFile <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
     tmp <- chromPeaks(xod_xg)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     ## Do filterFile on xod_xgr
     ## Should remove adjusted rts and revert the original peak rts.
     res <- filterFile(xod_xgr, file = 2)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xg)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     checkEquals(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
@@ -511,7 +542,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)], tmp[tmp[, "sample"] == 2, -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] == 2, "rt"]) <
@@ -527,8 +559,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgrg, file = c(1, 3))
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_x)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)],
-                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
     checkEquals(unname(rtime(res, bySample = TRUE)),
                 unname(rtime(xod_xg, bySample = TRUE)[c(1, 3)]))
     checkTrue(!hasAdjustedRtime(res))
@@ -539,8 +571,8 @@ test_XCMSnExp_filterFile <- function() {
     res <- filterFile(xod_xgrg, file = c(1, 3), keepAdjustedRtime = TRUE)
     checkTrue(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    checkEquals(chromPeaks(res)[, -ncol(tmp)],
-                tmp[tmp[, "sample"] %in% c(1, 3), -ncol(tmp)])
+    checkEquals(chromPeaks(res)[, -(ncol(tmp) - 1)],
+                tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     checkTrue(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] %in% c(1, 3), "rt"]) <
@@ -991,6 +1023,67 @@ test_extractChromatograms <- function() {
 
     ## XCMSnExp with adjusted rtime
 }
+
+test_signal_integration <- function() {
+    ## Testing the signal integration of peaks.
+    ## For centWave
+    tmp <- xod_xgrg
+    rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
+    mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
+    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[[1]]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
+
+    tmp <- filterFile(xod_xgrg, file = 2)
+    idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
+    ## Now, for i = 20, for 6 rt I got an NA. Should I remove these measurements?
+    ## idxs <- 1:nrow(chromPeaks(tmp))
+    for (i in idxs) {
+        rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
+        mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
+        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        ints <- intensity(chr)
+        pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
+        ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
+        checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
+    }
+    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
+    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
+    
+    ## Now for matchedfilter.
+    tmp <- findChromPeaks(filterFile(od_x, 2), param = MatchedFilterParam())
+    rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
+    mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
+    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[[1]]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    chromPeaks(tmp)[1, "into"]
+    checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
+    idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
+    ## idxs <- 1:nrow(chromPeaks(tmp))
+    for (i in idxs) {
+        rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
+        mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
+        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        ints <- intensity(chr)
+        pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
+        ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
+        checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
+    }
+    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
+    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
+
+    ## ## matchedFilter with wide mz bins.
+    ## ## For matchedFilter I will have to do this on the profile matrix!
+    ## tmp <- findChromPeaks(filterFile(od_x, 2),
+    ##                       param = MatchedFilterParam(binSize = 2))
+    ## idxs <- 1:nrow(chromPeaks(tmp))
+    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
+}
+
+
 
 ############################################################
 ## Test getEIC alternatives.
