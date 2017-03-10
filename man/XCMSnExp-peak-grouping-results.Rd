@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-XCMSnExp.R
 \docType{methods}
 \name{featureValues,XCMSnExp-method}
-\alias{featureValues}
 \alias{featureValues,XCMSnExp-method}
+\alias{featureValues}
 \title{Accessing mz-rt feature data values}
 \usage{
 \S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint"),
@@ -51,9 +51,6 @@ cases to chose from which of the peaks the value should be returned.
 This method is equivalent to the \code{\link{groupval}} for
 \code{xcmsSet} objects.
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{XCMSnExp}} for information on the data object.
 \code{\link{featureDefinitions}} to extract the \code{DataFrame} with the
@@ -62,4 +59,6 @@ feature definitions.
 \code{\link{XCMSnExp}} provides feature definitions.
 \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 }
-
+\author{
+Johannes Rainer
+}

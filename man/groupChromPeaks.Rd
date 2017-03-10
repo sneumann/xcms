@@ -25,9 +25,6 @@ the mz-rt space. See \code{\link{groupChromPeaks-nearest}} for more details.}
 
 }
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{group}} for the \emph{old} peak grouping methods.
 
@@ -39,4 +36,6 @@ Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-mzClust}},
   \code{\link{groupChromPeaks-nearest}}
 }
-
+\author{
+Johannes Rainer
+}

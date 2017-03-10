@@ -2,22 +2,22 @@
 % Please edit documentation in R/DataClasses.R, R/methods-ProcessHistory.R
 \docType{class}
 \name{ProcessHistory-class}
-\alias{ProcessHistory}
 \alias{ProcessHistory-class}
-\alias{XProcessHistory}
+\alias{ProcessHistory}
 \alias{XProcessHistory-class}
-\alias{fileIndex}
-\alias{fileIndex,ProcessHistory-method}
-\alias{processDate}
-\alias{processDate,ProcessHistory-method}
-\alias{processInfo}
-\alias{processInfo,ProcessHistory-method}
-\alias{processParam}
-\alias{processParam,XProcessHistory-method}
-\alias{processType}
-\alias{processType,ProcessHistory-method}
+\alias{XProcessHistory}
 \alias{show,ProcessHistory-method}
 \alias{show,XProcessHistory-method}
+\alias{processParam,XProcessHistory-method}
+\alias{processParam}
+\alias{processType,ProcessHistory-method}
+\alias{processType}
+\alias{processDate,ProcessHistory-method}
+\alias{processDate}
+\alias{processInfo,ProcessHistory-method}
+\alias{processInfo}
+\alias{fileIndex,ProcessHistory-method}
+\alias{fileIndex}
 \title{Tracking data processing}
 \usage{
 \S4method{show}{ProcessHistory}(object)
@@ -100,7 +100,7 @@ samples of the object the processing was performed.}
 \item{\code{param}}{(Param): an object of type \code{Param} (e.g.
 \code{\link{CentWaveParam}}) specifying the settings of the processing step.}
 }}
+
 \author{
 Johannes Rainer
 }
-

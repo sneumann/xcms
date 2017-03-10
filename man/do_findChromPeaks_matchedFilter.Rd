@@ -125,9 +125,6 @@ res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
 scantime = xr@scantime, valsPerSpect = valsPerSpect)
 head(res)
 }
-\author{
-Colin A Smith, Johannes Rainer
-}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -144,4 +141,6 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
   \code{\link{do_findChromPeaks_massifquant}},
   \code{\link{do_findPeaks_MSW}}
 }
-
+\author{
+Colin A Smith, Johannes Rainer
+}

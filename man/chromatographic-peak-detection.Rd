@@ -29,9 +29,6 @@ See \code{\link{MSW}} for more details.}
 
 }
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{findPeaks}} for the \emph{old} peak detection
 methods.
@@ -42,4 +39,6 @@ Other peak detection methods: \code{\link{findChromPeaks-centWaveWithPredIsoROIs
   \code{\link{findChromPeaks-matchedFilter}},
   \code{\link{findPeaks-MSW}}
 }
-
+\author{
+Johannes Rainer
+}

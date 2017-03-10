@@ -316,8 +316,9 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE,
 ##' \code{list} with the mz values per sample.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
-    res <- callNextMethod(object = object)
+setMethod("mz", "XCMSnExp", function(object, bySample = FALSE,
+                                     BPPARAM = bpparam()) {
+    res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
         tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
@@ -339,8 +340,9 @@ setMethod("mz", "XCMSnExp", function(object, bySample = FALSE) {
 ##' \code{bySample = TRUE} a \code{list} with the intensity values per sample.
 ##'
 ##' @rdname XCMSnExp-class
-setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
-    res <- callNextMethod(object = object)
+setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
+                                            BPPARAM = bpparam()) {
+    res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
         tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
@@ -359,6 +361,9 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
 ##' returned by default in the \code{Spectrum} objects (can be overwritten
 ##' by setting \code{adjusted = FALSE}).
 ##'
+##' @param BPPARAM Parameter class for parallel processing. See
+##'     \code{\link[BiocParallel]{bpparam}}.
+##' 
 ##' @return For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
 ##' \code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the result
 ##' is grouped by sample, i.e. as a \code{list} of \code{lists}, each element in
@@ -367,8 +372,9 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE) {
 ##'
 ##' @rdname XCMSnExp-class
 setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
-                                          adjusted = hasAdjustedRtime(object)) {
-    res <- callNextMethod(object = object)
+                                          adjusted = hasAdjustedRtime(object),
+                                          BPPARAM = bpparam()) {
+    res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     ## replace the rtime of these with the adjusted ones - if present.
     if (adjusted & hasAdjustedRtime(object)) {
         rts <- adjustedRtime(object)
@@ -2067,7 +2073,8 @@ setMethod("fillChromPeaks",
                                   MoreArgs = list(
                                       cn = colnames(chromPeaks(object)),
                                       param = prm
-                                  ))
+                                  ),
+                                  BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else {
                   res <- bpmapply(FUN = .getChromPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),

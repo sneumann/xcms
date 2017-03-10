@@ -69,13 +69,12 @@ corresponding to these \emph{house keeping compounds}. The paraneters
 features should be used for the alignment (i.e. which features 
 most likely correspond to the above mentioned house keeping compounds).
 }
-\author{
-Colin Smith, Johannes Rainer
-}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \emph{Anal. Chem.} 2006, 78:779-787.
 }
-
+\author{
+Colin Smith, Johannes Rainer
+}

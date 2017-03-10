@@ -88,9 +88,6 @@ head(res$featureDefinitions)
 ## The assignment of peaks from the input matrix to the features
 head(res$peakIndex)
 }
-\author{
-Colin Smith, Johannes Rainer
-}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -101,4 +98,6 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_nearest}},
   \code{\link{do_groupPeaks_mzClust}}
 }
-
+\author{
+Colin Smith, Johannes Rainer
+}

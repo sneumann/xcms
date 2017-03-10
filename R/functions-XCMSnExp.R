@@ -8,14 +8,6 @@
 ##' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
 ##' @noRd
 dropProcessHistories <- function(x, type, num = -1) {
-    ## ## Drop processing history steps by type.
-    ## if (!missing(type)) {
-    ##     toRem <- unlist(lapply(processHistory(x), function(z) {
-    ##         return(processType(z) %in% type)
-    ##     }))
-    ##     if (any(toRem))
-    ##         x@.processHistory <- processHistory(x)[!toRem]
-    ## }
     x@.processHistory <- dropProcessHistoriesList(processHistory(x),
                                                   type = type, num = num)
     return(x)
@@ -342,7 +334,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     res <- numeric(nrow(peakArea))
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -397,7 +389,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     }
     res <- matrix(ncol = 4, nrow = nrow(peakArea))
     res <- numeric(nrow(peakArea))
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Index vector for C calls
@@ -467,7 +459,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -535,7 +527,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -594,7 +586,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Reguesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -639,7 +631,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
             basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     vps <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)

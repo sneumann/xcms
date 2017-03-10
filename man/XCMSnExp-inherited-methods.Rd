@@ -5,8 +5,8 @@
 \alias{[,XCMSnExp,logicalOrNumeric,missing,missing-method}
 \alias{bin,XCMSnExp-method}
 \alias{clean,XCMSnExp-method}
-\alias{filterAcquisitionNum,XCMSnExp-method}
 \alias{filterMsLevel,XCMSnExp-method}
+\alias{filterAcquisitionNum,XCMSnExp-method}
 \alias{normalize,XCMSnExp-method}
 \alias{pickPeaks,XCMSnExp-method}
 \alias{removePeaks,XCMSnExp-method}
@@ -136,9 +136,6 @@ documentation for details and examples.
 The \code{smooth} method smooths spectra. See \code{\link[MSnbase]{smooth}}
 documentation for details and examples.
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{XCMSnExp-filter}} for methods to filter and subset
 \code{XCMSnExp} objects.
@@ -148,4 +145,6 @@ Johannes Rainer
 \code{\link[MSnbase]{OnDiskMSnExp}} for the documentation of the
 parent class.
 }
-
+\author{
+Johannes Rainer
+}

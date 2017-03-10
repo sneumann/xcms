@@ -49,9 +49,6 @@ This is a wrapper around the peak picker in Bioconductor's
 \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
 \emph{xcmsDirect} vignette for more information.
 }
-\author{
-Joachim Kutzera, Steffen Neumann, Johannes Rainer
-}
 \seealso{
 ##' \code{\link{MSW}} for the standard user interface
 method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
@@ -62,4 +59,6 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
   \code{\link{do_findChromPeaks_massifquant}},
   \code{\link{do_findChromPeaks_matchedFilter}}
 }
-
+\author{
+Joachim Kutzera, Steffen Neumann, Johannes Rainer
+}

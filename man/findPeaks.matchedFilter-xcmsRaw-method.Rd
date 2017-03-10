@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-xcmsRaw.R
 \docType{methods}
 \name{findPeaks.matchedFilter,xcmsRaw-method}
-\alias{findPeaks.matchedFilter}
 \alias{findPeaks.matchedFilter,xcmsRaw-method}
+\alias{findPeaks.matchedFilter}
 \title{Peak detection in the chromatographic time domain}
 \usage{
 \S4method{findPeaks.matchedFilter}{xcmsRaw}(object, fwhm = 30,
@@ -71,9 +71,6 @@ Find peaks in the chromatographic time domain of the
 profile matrix. For more details see
 \code{\link{do_findChromPeaks_matchedFilter}}.
 }
-\author{
-Colin A. Smith
-}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -86,4 +83,6 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \code{\link{do_findChromPeaks_matchedFilter}} for the core function
 performing the peak detection.
 }
-
+\author{
+Colin A. Smith
+}

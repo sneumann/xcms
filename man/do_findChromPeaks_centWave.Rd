@@ -153,9 +153,6 @@ res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
 scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
 head(res)
 }
-\author{
-Ralf Tautenhahn, Johannes Rainer
-}
 \references{
 Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
@@ -169,4 +166,6 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
   \code{\link{do_findChromPeaks_matchedFilter}},
   \code{\link{do_findPeaks_MSW}}
 }
-
+\author{
+Ralf Tautenhahn, Johannes Rainer
+}

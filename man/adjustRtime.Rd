@@ -19,9 +19,6 @@ not require any identified peaks or defined features. See
 \code{\link{adjustRtime-obiwarp}} for more details.}
 }
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{retcor}} for the \emph{old} retention time correction 
 methods.
@@ -29,4 +26,6 @@ methods.
 Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
   \code{\link{adjustRtime-peakGroups}}
 }
-
+\author{
+Johannes Rainer
+}

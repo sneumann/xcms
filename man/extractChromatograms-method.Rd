@@ -2,9 +2,9 @@
 % Please edit documentation in R/methods-OnDiskMSnExp.R, R/methods-XCMSnExp.R
 \docType{methods}
 \name{extractChromatograms,OnDiskMSnExp-method}
-\alias{extractChromatograms}
 \alias{extractChromatograms,OnDiskMSnExp-method}
 \alias{extractChromatograms,XCMSnExp-method}
+\alias{extractChromatograms}
 \title{Extracting chromatograms}
 \usage{
 \S4method{extractChromatograms}{OnDiskMSnExp}(object, rt, mz,
@@ -83,11 +83,10 @@ for(i in c(1, 3)) {
   points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l", col = "00000080")
 }
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{XCMSnExp}} for the data object.
 \code{\link{Chromatogram}} for the object representing chromatographic data.
 }
-
+\author{
+Johannes Rainer
+}

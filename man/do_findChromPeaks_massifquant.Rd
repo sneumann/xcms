@@ -168,9 +168,6 @@ res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
 scantime = xraw@scantime, valsPerSpect = valsPerSpect)
 head(res)
 }
-\author{
-Christopher Conley
-}
 \references{
 Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
@@ -184,4 +181,6 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
   \code{\link{do_findChromPeaks_matchedFilter}},
   \code{\link{do_findPeaks_MSW}}
 }
-
+\author{
+Christopher Conley
+}

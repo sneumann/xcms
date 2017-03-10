@@ -67,7 +67,8 @@ setMethod("findChromPeaks",
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
                               FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "centWave", param = param)
+                              method = "centWave", param = param,
+                              BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -214,7 +215,8 @@ setMethod("findChromPeaks",
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
                               FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "matchedFilter", param = param)
+                              method = "matchedFilter", param = param,
+                              BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -351,7 +353,8 @@ setMethod("findChromPeaks",
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
                               FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "massifquant", param = param)
+                              method = "massifquant", param = param,
+                              BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -497,7 +500,8 @@ setMethod("findChromPeaks",
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
                               FUN = findPeaks_MSW_OnDiskMSnExp,
-                              method = "MSW", param = param)
+                              method = "MSW", param = param,
+                              BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -631,7 +635,8 @@ setMethod("findChromPeaks",
               resList <- bplapply(lapply(1:length(fileNames(object)),
                                      filterFile, object = object),
                               FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "centWaveWithPredIsoROIs", param = param)
+                              method = "centWaveWithPredIsoROIs", param = param,
+                              BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -781,7 +786,7 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
         require(xcms, quietly = TRUE)
         ## Note: this is way faster than spectrapply with
         ## as.data.frame!
-        sps <- spectra(z)
+        sps <- spectra(z, BPPARAM = SerialParam())
         mzs <- lapply(sps, mz)
         vps <- lengths(mzs, use.names = FALSE)
         return(.createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
