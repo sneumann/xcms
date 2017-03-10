@@ -16,7 +16,6 @@
 \alias{criticalValue,MassifquantParam-method}
 \alias{criticalValue<-}
 \alias{criticalValue<-,MassifquantParam-method}
-\alias{findChromPeaks,MSnExp,MassifquantParam-method}
 \alias{findChromPeaks,OnDiskMSnExp,MassifquantParam-method}
 \alias{findChromPeaks-massifquant}
 \alias{fitgauss,MassifquantParam-method}
@@ -59,9 +58,6 @@ MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp")
-
-\S4method{findChromPeaks}{MSnExp,MassifquantParam}(object, param,
-  BPPARAM = bpparam(), return.type = "list")
 
 \S4method{show}{MassifquantParam}(object)
 
@@ -212,9 +208,9 @@ to being turned off.}
 with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.}
 
-\item{object}{For \code{findChromPeaks}: Either an
-\code{\link[MSnbase]{OnDiskMSnExp}} or a \code{\link[MSnbase]{MSnExp}}
-object containing the MS- and all other experiment-relevant data.
+\item{object}{For \code{findChromPeaks}: an
+\code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
+experiment-relevant data.
 
 For all other methods: a parameter object.}
 
@@ -265,12 +261,6 @@ algorithm on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
 \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
 data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
-
-The \code{findChromPeaks,MSnExp,MassifquantParam} method
-performs chromatographic peak detection using the \emph{massifquant} method
-on all samples from an \code{\link[MSnbase]{MSnExp}} object. These objects
-contain mz and intensity values of all spectra hence no additional
-data input from the original files is required.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 slot of the object.

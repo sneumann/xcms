@@ -13,6 +13,461 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xr <- deepCopy(faahko_xr_1)
 onDisk <- filterFile(faahko_od, file = 1)
 
+## Ensure that the reported peak integrated signal corresponds to the correct
+## data. This is to ensure that issue #135 was fixed correctly.
+test_findChromPeaks_centWave_peakIntensity <- function() {
+    ## Reproduce with msdata files:
+    fl <- system.file("microtofq/MM14.mzML", package = "msdata")
+    raw <- readMSData2(fl)
+    options(originalCentWave = TRUE)
+    tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
+    ## Use the getPeakInt2 which uses the rawMat function.
+    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## Use the getPeakInt3 which uses the getEIC C function.
+    pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    ## These fail for the original centWave code.
+    checkTrue(sum(pkI2 != chromPeaks(tmp)[, "into"]) > length(pkI2) / 2)
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
+    ## checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
+    checkEquals(pkI2, pkI3)
+    ## Try with new implementation.
+    options(originalCentWave = FALSE)
+    tmp2 <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
+    ## Find different number of peaks:
+    checkTrue(nrow(chromPeaks(tmp2)) != nrow(chromPeaks(tmp)))
+    ## Are the peaks similar?
+    id_1 <- paste(chromPeaks(tmp)[, "mz"], chromPeaks(tmp)[, "rt"])
+    id_2 <- paste(chromPeaks(tmp2)[, "mz"], chromPeaks(tmp2)[, "rt"])
+    ## But all of the ones from the old are ALSO in the new one.
+    checkTrue(all(id_1 %in% id_2))
+    ## Are the peaks the same?
+    cp2 <- chromPeaks(tmp2)[id_2 %in% id_1, ]
+    cn <- colnames(cp2)
+    cn <- cn[!(cn %in% c("intb", "into", "rtmin", "rtmax"))]
+    checkEquals(cp2[, cn], chromPeaks(tmp)[, cn])
+    ## Are the values related?
+    plot(cp2[, "into"], chromPeaks(tmp)[, "into"])   ## Very similar
+    plot(cp2[, "intb"], chromPeaks(tmp)[, "intb"])   ## Very similar
+    plot(cp2[, "rtmin"], chromPeaks(tmp)[, "rtmin"])   ## Very similar
+    plot(cp2[, "rtmax"], chromPeaks(tmp)[, "rtmax"])   ## Very similar
+    ## Use the getPeakInt3 which uses the getEIC C function.
+    pkI2_2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
+    pkI3_2 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    ## These fail for the original centWave code.
+    checkEquals(unname(pkI2_2), unname(chromPeaks(tmp2)[, "into"]))
+    checkEquals(unname(pkI3_2), unname(chromPeaks(tmp2)[, "into"]))
+    checkEquals(pkI2_2, pkI3_2)
+
+    
+    ## The same for one of the test files; this works even with the original
+    ## centWave code
+    options(originalCentWave = TRUE)
+    tmp <- filterFile(xod_xgrg, file = 3)
+    ## Use the getPeakInt2 which uses the rawMat function.
+    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## Use the getPeakInt3 which uses the getEIC C function.
+    pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    checkEquals(pkI2, pkI3)
+    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
+    checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
+    ## New modified centWave.
+    options(originalCentWave = FALSE)
+    tmp2 <- findChromPeaks(filterFile(faahko_od, file = 3),
+                           CentWaveParam(noise = 10000, snthresh = 40))
+    ## Even the identified peaks are identical!
+    checkEquals(chromPeaks(tmp), chromPeaks(tmp2))
+    ## Use the getPeakInt2 which uses the rawMat function.
+    pkI2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
+    ## Use the getPeakInt3 which uses the getEIC C function.
+    pkI3 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    checkEquals(pkI2, pkI3)
+    checkEquals(unname(pkI2), unname(chromPeaks(tmp2)[, "into"]))
+    checkEquals(unname(pkI3), unname(chromPeaks(tmp2)[, "into"]))
+    options(originalCentWave = TRUE)
+}
+
+## Exhaustive comparison of the original and the modified centWave. We don't
+## expect everything to be the same, but the results should be ideally comparable
+dontrun_exhaustive_original_new_centWave_comparison <- function() {
+    ## faahKO test files.
+    fl <- system.file("cdf/ko15.CDF", package = "msdata")
+    raw <- readMSData2(fl)
+    ## Default settings
+    cwp <- CentWaveParam()
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same?
+    checkEquals(chromPeaks(orig), chromPeaks(modi))  ## YES
+    ## modified settings:
+    cwp <- CentWaveParam(ppm = 40, peakwidth = c(4, 40))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same?
+    checkEquals(chromPeaks(orig), chromPeaks(modi))  ## YES
+    ## Another round
+    cwp <- CentWaveParam(ppm = 10, peakwidth = c(1, 10))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same?
+    checkEquals(chromPeaks(orig), chromPeaks(modi))  ## YES
+    
+    ## msdata test files.
+    fl <- system.file("microtofq/MM14.mzML", package = "msdata")
+    raw <- readMSData2(fl)
+    cwp <- CentWaveParam(ppm = 10, peakwidth = c(1, 10))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same? NO
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[, i]) > 0.99)
+    }
+    ## Different settings.
+    cwp <- CentWaveParam(ppm = 40, peakwidth = c(1, 20))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks? NO
+    checkTrue(nrow(chromPeaks(orig)) < nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same? NO
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    ## Are all from orig also in modi?
+    checkTrue(all(orig_id %in% modi_id))  ## YES
+    modi_pks <- chromPeaks(modi)[match(orig_id, modi_id), ]
+    ## Compare the peaks.
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], modi_pks[, cn])  ## YES
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], modi_pks[, i])
+        checkTrue(cor(chromPeaks(orig)[, i], modi_pks[, i]) > 0.99)
+    }
+    ## Different settings.
+    cwp <- CentWaveParam(ppm = 40, peakwidth = c(1, 10))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same?
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    ## Are all from orig also in modi?
+    checkTrue(all(orig_id %in% modi_id))  ## YES
+    ## Compare the peaks.
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[, cn])  ## YES
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[, i]) > 0.99)
+    }
+    
+    ## Other file
+    fl <- system.file("microtofq/MM8.mzML", package = "msdata")
+    raw <- readMSData2(fl)
+    cwp <- CentWaveParam(ppm = 30, peakwidth = c(1, 10))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks?
+    checkTrue(nrow(chromPeaks(orig)) == nrow(chromPeaks(modi)))  ## YES
+    ## Peaks the same? NO, but all in orig are in modi
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[, i]) > 0.99)
+    }
+    ## Different settings.
+    cwp <- CentWaveParam(ppm = 40, peakwidth = c(3, 30))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks? NO
+    checkTrue(nrow(chromPeaks(orig)) < nrow(chromPeaks(modi)))
+    ## Peaks the same? NO, but all in orig are in modi
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cmn <- match(orig_id, modi_id)
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[cmn, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i]) > 0.99)
+    }
+    
+    ## own files.
+    fl <- "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_12.mzML"
+    raw <- readMSData2(fl)
+    ## Default settings
+    cwp <- CentWaveParam()
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks? NO
+    checkTrue(nrow(chromPeaks(orig)) < nrow(chromPeaks(modi)))
+    ## Peaks the same? NO, but all in orig are in modi
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cmn <- match(orig_id, modi_id)
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax", "maxo")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[cmn, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i]) > 0.99)
+    }
+    ## Different settings
+    cwp <- CentWaveParam(ppm = 30, peakwidth = c(1, 10))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks? NO, more with modified versions
+    checkTrue(nrow(chromPeaks(orig)) < nrow(chromPeaks(modi)))
+    ## Peaks the same? NO, but all in orig are in modi
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cmn <- match(orig_id, modi_id)
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax", "maxo")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[cmn, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i]) > 0.98)
+    }
+    ## Different settings
+    cwp <- CentWaveParam(ppm = 40, peakwidth = c(1, 60))
+    options(originalCentWave = TRUE)
+    orig <- findChromPeaks(raw, param = cwp)
+    options(originalCentWave = FALSE)
+    modi <- findChromPeaks(raw, param = cwp)
+    ## Same number of peaks? NO, more with modified versions
+    checkTrue(nrow(chromPeaks(orig)) < nrow(chromPeaks(modi)))
+    ## Peaks the same? NO, but all in orig are in modi
+    orig_id <- paste(chromPeaks(orig)[, "rt"], chromPeaks(orig)[, "mz"])
+    modi_id <- paste(chromPeaks(modi)[, "rt"], chromPeaks(modi)[, "mz"])
+    checkTrue(all(orig_id %in% modi_id))
+    ## Check peaks and colnames.
+    cmn <- match(orig_id, modi_id)
+    cn <- colnames(chromPeaks(orig))
+    cn_diff <- c("into", "intb", "rtmin", "rtmax", "maxo")
+    cn <- cn[!(cn %in% cn_diff)]
+    checkEquals(chromPeaks(orig)[, cn], chromPeaks(modi)[cmn, cn])  ## YES
+    ## Check those that are different.
+    for (i in cn_diff) {
+        plot(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i])
+        checkTrue(cor(chromPeaks(orig)[, i], chromPeaks(modi)[cmn, i]) > 0.98)
+    }
+
+    ## Is there something common to the peaks found only by the modified version?
+    common_pks <- chromPeaks(modi)[cmn, ]
+    unique_pks <- chromPeaks(modi)[-cmn, ]
+    cn <- colnames(common_pks)
+    ## mz
+    boxplot(list(common = common_pks[, "mz"], unique = unique_pks[, "mz"]),
+            varwidth = TRUE, main = "mz")
+    ## OK, average mz of unique peaks is smaller.
+
+    ## mzrange
+    boxplot(list(common = common_pks[, "mzmax"] - common_pks[, "mzmin"],
+                 unique = unique_pks[, "mzmax"] - unique_pks[, "mzmin"]),
+            varwidth = TRUE, main = "mz range")
+    ## Seems to be smaller too.
+
+    ## rt
+    boxplot(list(common = common_pks[, "rt"], unique = unique_pks[, "rt"]),
+            varwidth = TRUE, main = "rt")
+    ## hm, rt larger in unique
+
+    ## rtrange
+    boxplot(list(common = log2(common_pks[, "rtmax"] - common_pks[, "rtmin"]),
+                 unique = log2(unique_pks[, "rtmax"] - unique_pks[, "rtmin"])),
+            varwidth = TRUE, main = "rt range")
+    ## rtrange is same.
+
+    ## into
+    boxplot(list(common = log2(common_pks[, "into"]),
+                 unique = log2(unique_pks[, "into"])),
+            varwidth = TRUE, main = "into")
+    ## same.
+
+    ## sn
+    boxplot(list(common = log2(common_pks[, "sn"]),
+                 unique = log2(unique_pks[, "sn"])),
+            varwidth = TRUE, main = "sn")
+    ## sn is higher in unique
+
+    ## Check chromatogram for some:
+    chrPlot <- function(i, raw) {
+        rtr <- common_pks[i, c("rtmin", "rtmax")]
+        rtr[1] <- rtr[1] - 2
+        rtr[2] <- rtr[2] + 2
+        chr_cmn <- extractChromatograms(raw, rt = rtr,
+                                        mz = common_pks[i, c("mzmin", "mzmax")])
+        rtr <- unique_pks[i, c("rtmin", "rtmax")]
+        rtr[1] <- rtr[1] - 2
+        rtr[2] <- rtr[2] + 2
+        chr_unq <- extractChromatograms(raw, rt = rtr,
+                                        mz = unique_pks[i, c("mzmin", "mzmax")])
+        par(mfrow = c(1, 2))
+        plot(rtime(chr_cmn[[1]]), intensity(chr_cmn[[1]]), main = "common peak",
+             type = "l")
+        abline(v = common_pks[i, c("rtmin", "rtmax")], col = "grey")
+        plot(rtime(chr_unq[[1]]), intensity(chr_unq[[1]]), main = "unique peak",
+             type = "l")
+        abline(v = unique_pks[i, c("rtmin", "rtmax")], col = "grey")
+    }
+    chrPlot(1, raw = raw)
+
+    i <- sample(1:nrow(unique_pks), 10)
+    chrPlot(i[1], raw = raw)
+    chrPlot(i[2], raw = raw)
+    chrPlot(i[3], raw = raw)
+    chrPlot(i[4], raw = raw)
+    chrPlot(i[5], raw = raw)
+    chrPlot(i[6], raw = raw)
+    chrPlot(i[7], raw = raw)
+    chrPlot(i[8], raw = raw)
+    chrPlot(i[9], raw = raw)
+    chrPlot(i[10], raw = raw)
+
+    ## Summary:
+    ## Same peaks are identified by both methods, but the modified centWave finds
+    ## eventually more peaks.
+    ## The into, intb, rtmin and rtmax differ for some peaks found by both
+    ## methods but values are highly correlated (R > 0.99).
+}
+
+
+## Compare what's the difference between the original centWave and the new one
+## fixing the peak integration problem (issue #135)
+dontrun_compare_orig_new_centWave <- function() {
+    mzVals <- xr@env$mz
+    intVals <- xr@env$intensity
+    ## Define the values per spectrum:
+    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+    res_orig <- xcms:::.centWave_orig(mz = mzVals,
+                                      int = intVals,
+                                      scantime = xr@scantime,
+                                      valsPerSpect,
+                                      noise = 4000, verboseColumns = TRUE)
+    res_new <- xcms:::.centWave_new(mz = mzVals,
+                                    int = intVals,
+                                    scantime = xr@scantime,
+                                    valsPerSpect,
+                                    noise = 4000, verboseColumns = TRUE)
+    checkEquals(res_orig, res_new) ## That should always work.
+    
+    ## Use the previously defined ones as ROIs - this should simulate the
+    ## addIsoROIs
+    ## Slightly increase the mz like in addIsoROIs.
+    rL <- as.data.frame(res_orig)
+    ## Extend the mzmin and mzmax if needed.
+    tittle <- rL[, "mz"] * (25 / 2) / 1E6
+    expand_mz <- (rL[, "mzmax"] - rL[, "mzmin"]) < (tittle * 2)
+    if (any(expand_mz)) {
+        rL[expand_mz, "mzmin"] <- rL[expand_mz, "mz"] -
+            tittle[expand_mz]
+        rL[expand_mz, "mzmax"] <- rL[expand_mz, "mz"] + tittle[expand_mz]
+    }
+    rL <- split(rL, f = 1:nrow(rL))
+    res_orig2 <- xcms:::.centWave_orig(mz = mzVals,
+                                       int = intVals,
+                                       scantime = xr@scantime,
+                                       valsPerSpect,
+                                       noise = 4000, verboseColumns = TRUE,
+                                       roiList = rL,
+                                       firstBaselineCheck = FALSE)
+    res_new2 <- xcms:::.centWave_new(mz = mzVals,
+                                     int = intVals,
+                                     scantime = xr@scantime,
+                                     valsPerSpect,
+                                     noise = 4000, verboseColumns = TRUE,
+                                     roiList = rL,
+                                     firstBaselineCheck = FALSE)
+    ## I get more peaks with the modified version:
+    checkTrue(nrow(res_orig2) < nrow(res_new2))
+    ## Sort them by rt and mz
+    idx <- order(res_orig2[, "rt"], res_orig2[, "mz"])
+    res_orig2 <- res_orig2[idx, ]
+    idx <- order(res_new2[, "rt"], res_new2[, "mz"])
+    res_new2 <- res_new2[idx, ]
+    ## Are identified peaks similar?
+    id_1 <- paste(res_orig2[, "rt"], res_orig2[, "mz"])
+    id_2 <- paste(res_new2[, "rt"], res_new2[, "mz"])
+    ## Are all from res_orig2 in res_new2?
+    checkTrue(length(id_1) == sum(id_1 %in% id_2)) ## YES
+    ## Are the values for these the same?
+    same_new2 <- res_new2[match(id_1, id_2), ]
+    ## check columns:
+    cn <- colnames(same_new2)
+    cn <- cn[!(cn %in% c("mzmin"))]
+    for (i in cn) {
+        checkEquals(res_orig2[, i], same_new2[, i])
+    }
+    ## So, everything is identical, EXCEPT mzmin:
+    idx <- which(same_new2[, "mzmin"] != res_orig2[, "mzmin"])
+    res_orig2[idx, "mzmin"]
+    same_new2[idx, "mzmin"]
+    ## Are the different ones 0?
+    checkTrue(all(res_orig2[idx, "mzmin"] == 0))
+}
+
 test_do_findChromPeaks_centWave <- function() {
     ## xr <- xcmsRaw(fs[1], profstep = 0)
     ## We expect that changing a parameter has an influence on the result.
@@ -88,7 +543,7 @@ test_findChromPeaks_centWave <- function() {
     checkTrue(hasChromPeaks(res))
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkEquals(peaks(xs)@.Data, chromPeaks(res))
+    checkEquals(peaks(xs)@.Data, chromPeaks(res)[, -ncol(chromPeaks(res))])
 }
 
 dontrun_test_benchmark_centWaves <- function() {

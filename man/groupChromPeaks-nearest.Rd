@@ -171,9 +171,9 @@ res <- groupChromPeaks(res, param = p)
 ## The results from the peak grouping:
 featureDefinitions(res)
 
-## Using the groupval method to extract a matrix with the intensities of
+## Using the featureValues method to extract a matrix with the intensities of
 ## the features per sample.
-head(groupval(res, value = "into"))
+head(featureValues(res, value = "into"))
 
 ## The process history:
 processHistory(res)
@@ -188,7 +188,7 @@ The \code{\link{do_groupChromPeaks_nearest}} core
 API function and \code{\link{group.nearest}} for the old user interface.
 
 \code{\link{featureDefinitions}} and
-\code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+\code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of

@@ -70,7 +70,7 @@
 
     ## getEIC method
     getEIC.method="getEICOld"
-
+    
     ## Sort method; see issue #180 for MSnbase
     ## sortMeth <- "auto"
     ## if (as.numeric(R.Version()$major) >= 3 & as.numeric(R.Version()$minor) >= 3)

@@ -192,9 +192,9 @@ res <- groupChromPeaks(res, fdp)
 ## The definition of the features (peak groups):
 featureDefinitions(res)
 
-## Using the groupval method to extract a matrix with the intensities of
+## Using the featureValues method to extract a matrix with the intensities of
 ## the features per sample.
-head(groupval(res, value = "into"))
+head(featureValues(res, value = "into"))
 
 ## The process history:
 processHistory(res)
@@ -213,7 +213,7 @@ The \code{\link{do_groupChromPeaks_density}} core
 API function and \code{\link{group.density}} for the old user interface.
 
 \code{\link{featureDefinitions}} and
-\code{\link{groupval,XCMSnExp-method}} for methods to access the features
+\code{\link{featureValues,XCMSnExp-method}} for methods to access the features
 (i.e. the peak grouping results).
 
 \code{\link{XCMSnExp}} for the object containing the results of

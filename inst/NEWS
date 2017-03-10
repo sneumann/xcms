@@ -1,3 +1,32 @@
+CHANGES IN VERSION 1.51.9
+-------------------------
+
+NEW FEATURES:
++ fillChromPeaks, dropFilledChromPeaks methods and FillChromPeaksParam class.
++ featureValues method.
+
+USER VISIBLE CHANGES:
++ Extended new_functionality vignette.
++ Change default backend for reading mzML files to pwiz.
+
+BUG FIXES:
++ Issue #135: fix peak signal integration for centWave.
++ Issue #139: problem with expand.mz and expand.rt in fillPeaks.chrom.
++ Issue #137: Error in findChromPeaks if no peaks are found.
+
+
+CHANGES IN VERSION 1.51.8
+-------------------------
+
+NEW FEATURES:
++ Add Chromatogram class and extractChromatograms method.
+
+BUG FIXES:
++ Issue #118: failing unit test on Windows build machine.
++ Issue #133: error with c() and xcmsSet without peaks.
++ Issue #134: xcmsSet constructor endless loop.
+
+
 CHANGES IN VERSION 1.51.7
 -------------------------
 

@@ -81,13 +81,13 @@ validateMsFeatureData <- function(x) {
                             msg <- c(msg,
                                      paste0("Some of the indices in column",
                                             " 'peakidx' of element ",
-                                            "'featureDefinitionss' do not match ",
+                                            "'featureDefinitions' do not match ",
                                             "rows of the 'chromPeaks' matrix!"))
                     }
                 }
 
             } else {
-                msg <- c(msg, paste0("The 'featureDefinitionss' element has to",
+                msg <- c(msg, paste0("The 'featureDefinitions' element has to",
                                      " be of type 'DataFrame' and not '",
                                      class(x$featureDefinitions), "'!"))
             }

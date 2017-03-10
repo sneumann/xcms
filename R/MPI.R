@@ -1,4 +1,3 @@
-
 ##
 ## findPeaks slave function for parallel execution
 ##
@@ -112,15 +111,14 @@ fillPeaksChromPar <- function(arg) {
     }
 
 
-                                        # Expanding the peakrange
-    peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-    peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-    peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-    peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-
-
-
-
+    ## Expanding the peakrange
+    incrMz <- (peakrange[, "mzmax"] - peakrange[, "mzmin"]) / 2 * (expand.mz - 1)
+    peakrange[, "mzmax"] <- peakrange[, "mzmax"] + incrMz
+    peakrange[, "mzmin"] <- peakrange[, "mzmin"] - incrMz
+    incrRt <- (peakrange[, "rtmax"] - peakrange[, "rtmin"]) / 2 * (expand.rt - 1)
+    peakrange[, "rtmax"] <- peakrange[, "rtmax"] + incrRt
+    peakrange[, "rtmin"] <- peakrange[, "rtmin"] - incrRt
+    
     naidx <- which(is.na(gvals[,myID]))
 
     newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)

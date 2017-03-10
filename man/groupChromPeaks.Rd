@@ -32,7 +32,7 @@ Johannes Rainer
 \code{\link{group}} for the \emph{old} peak grouping methods.
 
 \code{\link{featureDefinitions}} and
-\code{\link{groupval,XCMSnExp-method}} for methods to access peak grouping
+\code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
 results.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-density}},
