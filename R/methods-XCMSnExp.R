@@ -93,6 +93,9 @@ setMethod("hasChromPeaks", "XCMSnExp", function(object) {
 ##' The \code{bySample} parameter allows to specify whether the adjusted
 ##' retention time should be grouped by sample (file).
 ##'
+##' @note \code{adjustedRtime} and \code{rtime(, adjusted = TRUE)} can in some
+##'     in instances return retention times that are not ordered increasingly.
+##'
 ##' @return For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
 ##' vector with the adjusted retention for each spectrum of all files/samples
 ##' within the object. If \code{bySample = TRUE } a \code{list} (length equal to
@@ -124,6 +127,12 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
         stop("'value' is supposed to be a list of retention time values!")
     if (hasAdjustedRtime(object))
         object <- dropAdjustedRtime(object)
+    ## Check if we have some unsorted retention times (issue #146)
+    unsorted <- unlist(lapply(value, is.unsorted), use.names = FALSE)
+    if (any(unsorted))
+        warning("Adjusted retention times for file(s) ",
+                paste(basename(fileNames(object)[unsorted]), collapse = ", "),
+                " not sorted increasingly.")
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     adjustedRtime(newFd) <- value
@@ -1501,7 +1510,7 @@ setMethod("adjustRtime",
               ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
               object <- dropFeatureDefinitions(object)
               ## Add the results. adjustedRtime<- should also fix the retention
-              ## times for the peaks! Want to keep also the lates alignment
+              ## times for the peaks! Want to keep also the latest alignment
               ## information
               adjustedRtime(object) <- res
               if (length(ph)) {
@@ -1513,7 +1522,7 @@ setMethod("adjustRtime",
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)
               if (validObject(object))
-                  return(object)
+                  object
           })
 
 
@@ -1525,6 +1534,9 @@ setMethod("adjustRtime",
 ##'
 ##' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 ##' all peak grouping (correspondence) results to be dropped.
+##'
+##' Note also that adjusted retention times don't necessarily have to be
+##' ordered increasingly after alignment/retention time correction.
 ##'
 ##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 ##'
