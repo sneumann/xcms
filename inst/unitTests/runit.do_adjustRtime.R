@@ -81,6 +81,9 @@ test_adjustRtime_PeakGroups <- function() {
     checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
+    ## Dropping results.
+    tmp <- dropAdjustedRtime(xodr)
+    checkEquals(tmp, xod)
 }
 
 ## This is to ensure that the original code works with the new one using the

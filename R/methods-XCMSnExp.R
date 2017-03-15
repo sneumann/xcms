@@ -93,9 +93,6 @@ setMethod("hasChromPeaks", "XCMSnExp", function(object) {
 ##' The \code{bySample} parameter allows to specify whether the adjusted
 ##' retention time should be grouped by sample (file).
 ##'
-##' @note \code{adjustedRtime} and \code{rtime(, adjusted = TRUE)} can in some
-##'     in instances return retention times that are not ordered increasingly.
-##'
 ##' @return For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
 ##' vector with the adjusted retention for each spectrum of all files/samples
 ##' within the object. If \code{bySample = TRUE } a \code{list} (length equal to
@@ -1460,7 +1457,10 @@ setMethod("groupChromPeaks",
 ##' @note This method requires that a correspondence has been performed on the
 ##' data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on an
 ##' \code{XCMSnExp} object will cause all peak grouping (correspondence) results
-##' to be dropped after rt correction.
+##' and any previous retention time adjustments to be dropped.
+##' In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
+##' re-adjusts adjusted retention times to ensure them being in the same order
+##' than the raw (original) retention times.
 ##'
 ##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
 ##' containing the results from a previous chromatographic peak detection (see
@@ -1486,6 +1486,8 @@ setMethod("groupChromPeaks",
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "PeakGroupsParam"),
           function(object, param) {
+              if (hasAdjustedRtime(object))
+                  object <- dropAdjustedRtime(object)
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
@@ -1495,7 +1497,7 @@ setMethod("adjustRtime",
                        "perform first a peak grouping using the ",
                        "'groupChromPeak' method.")
               startDate <- date()
-              res <- do_adjustRtime_peakGroups(
+              res <- do_adjustRtime_peakGroups2(
                   chromPeaks(object),
                   peakIndex = featureDefinitions(object)$peakidx,
                   rtime = rtime(object, bySample = TRUE),
@@ -1533,10 +1535,8 @@ setMethod("adjustRtime",
 ##' using the \emph{obiwarp} method.
 ##'
 ##' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-##' all peak grouping (correspondence) results to be dropped.
-##'
-##' Note also that adjusted retention times don't necessarily have to be
-##' ordered increasingly after alignment/retention time correction.
+##' all peak grouping (correspondence) results and any previous retention time
+##' adjustment results to be dropped.
 ##'
 ##' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 ##'
@@ -1568,6 +1568,9 @@ setMethod("adjustRtime",
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "ObiwarpParam"),
           function(object, param) {
+              ## Drop adjusted retention times if there are some.
+              if (hasAdjustedRtime(object))
+                  object <- dropAdjustedRtime(object)
               ## We don't require any detected or aligned peaks.
               startDate <- date()
               res <- .obiwarp(as(object, "OnDiskMSnExp"), param = param)

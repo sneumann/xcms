@@ -1,3 +1,11 @@
+CHANGES IN VERSION 1.51.10
+--------------------------
+
+BUG FIXES:
++ Issue #146: ensure adjusted retention times returned by the peakGroups method
+  to be in the same order than the raw retention times.
+
+
 CHANGES IN VERSION 1.51.9
 -------------------------
 

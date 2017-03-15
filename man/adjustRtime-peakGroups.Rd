@@ -161,7 +161,10 @@ can be passed with a \code{PeakGroupsParam} object.
 This method requires that a correspondence has been performed on the
 data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on an
 \code{XCMSnExp} object will cause all peak grouping (correspondence) results
-to be dropped after rt correction.
+and any previous retention time adjustments to be dropped.
+In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
+re-adjusts adjusted retention times to ensure them being in the same order
+than the raw (original) retention times.
 }
 \examples{
 ##############################

@@ -164,6 +164,8 @@ do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
     return(rtime)
 }
 
+## Essentially the same as above, but tries to avoid adjusted retention times to
+## be in a different order than the raw retention times (issue #146).
 do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
                                       minFraction = 0.9, extraPeaks = 1,
                                       smooth = c("loess", "linear"), span = 0.2,
@@ -201,37 +203,40 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
    
-    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
+    rt <- xcms:::.getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
                                  missingSample, extraPeaks)
-    ## Check if we have peak groups with almost the same retention time. If yes
-    ## select the best matching peaks among these.
-    rtmeds <- rowMedians(rt, na.rm = TRUE)
-    sim_rt <- which(diff(rtmeds) < 1e-6)
-    if (length(sim_rt)) {
-        pk_grps <- list()
-        current_idxs <- NULL
-        last_idx <- -1
-        for (current_idx in sim_rt) {
-            if ((current_idx - last_idx) > 1) {
-                if (!is.null(current_idxs))
-                    pk_grps <- c(pk_grps, list(current_idxs))
-                current_idxs <- c(current_idx - 1, current_idx)
-            } else {
-                ## Just add the index.
-                current_idxs <- c(current_idxs, current_idx)
-            }
-            last_idx <- current_idx
-        }
-        pk_grps <- c(pk_grps, list(current_idxs))
-        ## Now, for each of these select one present in most samples.
-        sel_idx <- lapply(pk_grps, function(z) {
-            tmp <- rt[z, , drop = FALSE]
-        })
-        
-        
-        ## Define the other peaks that we can keep as.is
-        spec_idx <- (1:nrow(rt))[-unique(unlist(pk_grps))]
-    }
+    ## ## Check if we have peak groups with almost the same retention time. If yes
+    ## ## select the best matching peaks among these.
+    ## rtmeds <- rowMedians(rt, na.rm = TRUE)
+    ## sim_rt <- which(diff(rtmeds) < 1e-6)
+    ## if (length(sim_rt)) {
+    ##     pk_grps <- list()
+    ##     current_idxs <- NULL
+    ##     last_idx <- -1
+    ##     for (current_idx in sim_rt) {
+    ##         if ((current_idx - last_idx) > 1) {
+    ##             if (!is.null(current_idxs))
+    ##                 pk_grps <- c(pk_grps, list(current_idxs))
+    ##             current_idxs <- c(current_idx - 1, current_idx)
+    ##         } else {
+    ##             ## Just add the index.
+    ##             current_idxs <- c(current_idxs, current_idx)
+    ##         }
+    ##         last_idx <- current_idx
+    ##     }
+    ##     pk_grps <- c(pk_grps, list(current_idxs))
+    ##     ## Now, for each of these select one present in most samples.
+    ##     sel_idx <- unlist(lapply(pk_grps, function(z) {
+    ##         tmp <- rt[z, , drop = FALSE]
+    ##         z[which.max(apply(tmp, MARGIN = 1, function(zz) sum(!is.na(zz))))]
+    ##     }))
+    ##     ## Define the other peaks that we can keep as.is
+    ##     if (any(!(1:nrow(rt) %in% unique(unlist(pk_grps)))))
+    ##         spec_idx <- (1:nrow(rt))[-unique(unlist(pk_grps))]
+    ##     else spec_idx <- NULL
+    ##     sel_idx <- sort(c(spec_idx, sel_idx))
+    ##     rt <- rt[sel_idx, , drop = FALSE]
+    ## }
     
     message("Performing retention time correction using ", nrow(rt),
             " peak groups.")
@@ -258,7 +263,8 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
     ## Code for checking to see if retention time correction is overcorrecting
     rtdevrange <- range(rtdev, na.rm = TRUE)
     warn.overcorrect <- FALSE
-
+    warn.tweak.rt <- FALSE
+    
     for (i in 1:nSamples) {
         pts <- na.omit(data.frame(rt = rt[, i], rtdev = rtdev[, i]))
 
@@ -266,7 +272,7 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                          degree = 1, family = family))
             
-            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
+            rtdevsmo[[i]] <- xcms:::na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
             ## Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
                           quantile(abs(rtdevsmo[[i]]), 0.9) * 2] <- NA
@@ -275,11 +281,17 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
                     approx(na.omit(data.frame(rtime[[i]], rtdevsmo[[i]])),
                            xout = rtime[[i]][naidx], rule = 2)$y
                 )
+            ## That's to ensure that the adjusted retention times are in the
+            ## same order than the raw retention times - I guess...
             while (length(decidx <- which(diff(rtime[[i]] - rtdevsmo[[i]]) < 0))) {
                 d <- diff(rtime[[i]] - rtdevsmo[[i]])[tail(decidx, 1)]
                 rtdevsmo[[i]][tail(decidx, 1)] <- rtdevsmo[[i]][tail(decidx, 1)] - d
-                if (abs(d) <= 1e-06)
-                    break
+                ## Disabling the check below avoids adjusted retention times to
+                ## be in a different order than the raw retention times (issue #146).
+                warn.tweak.rt <- TRUE  ## Warn that we had to tweak the rts.
+                ## if (abs(d) <= 1e-06) {
+                ##     break
+                ## }
             }
 
             rtdevsmorange <- range(rtdevsmo[[i]])
@@ -308,6 +320,14 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
                 " than 2x. This is dangerous and the algorithm is probably ",
                 "overcorrecting your data. Consider increasing the span ",
                 "parameter or switching to the linear smoothing method.")
+    }
+
+    if (warn.tweak.rt) {
+        warning(call. = FALSE, "Adjusted retention times had to be ",
+                "re-adjusted for some files to ensure them being in the same",
+                " order than the raw retention times. A call to ",
+                "'dropAdjustedRtime' might thus fail to restore retention ",
+                "times of chromatographic peaks to their original values.")
     }
 
     return(rtime)
@@ -341,12 +361,14 @@ do_adjustRtime_peakGroups2 <- function(peaks, peakIndex, rtime,
     if (is.unsorted(rtraw)) {
         idx <- order(rtraw)
         adjFun <- stepfun(rtraw[idx][-1] - diff(rtraw[idx]) / 2, rtadj[idx])
-        ## 
-        return(adjFun(x[idx]))
+        ## if (!is.null(dim(x)))
+        ##     return(adjFun(x[idx, ]))
+        ## else 
+        ##     return(adjFun(x[idx]))
     } else {
         adjFun <- stepfun(rtraw[-1] - diff(rtraw) / 2, rtadj)
-        return(adjFun(x))
     }
+    adjFun(x)
 }
 
 ##' Helper function to apply retention time adjustment to already identified

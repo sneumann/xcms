@@ -230,7 +230,8 @@ These methods and classes are part of the updated and modernized
 can be passed with a \code{ObiwarpParam} object.
 
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-all peak grouping (correspondence) results to be dropped.
+all peak grouping (correspondence) results and any previous retention time
+adjustment results to be dropped.
 }
 \examples{
 library(faahKO)
