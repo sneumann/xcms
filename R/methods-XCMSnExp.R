@@ -1497,7 +1497,7 @@ setMethod("adjustRtime",
                        "perform first a peak grouping using the ",
                        "'groupChromPeak' method.")
               startDate <- date()
-              res <- do_adjustRtime_peakGroups2(
+              res <- do_adjustRtime_peakGroups(
                   chromPeaks(object),
                   peakIndex = featureDefinitions(object)$peakidx,
                   rtime = rtime(object, bySample = TRUE),

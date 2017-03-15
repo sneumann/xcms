@@ -69,6 +69,10 @@ corresponding to these \emph{house keeping compounds}. The paraneters
 features should be used for the alignment (i.e. which features 
 most likely correspond to the above mentioned house keeping compounds).
 }
+\note{
+The method ensures that returned adjusted retention times are
+increasingly ordered, just as the raw retention times.
+}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite

@@ -86,6 +86,52 @@ test_adjustRtime_PeakGroups <- function() {
     checkEquals(tmp, xod)
 }
 
+dontrun_issue146 <- function() {
+    ## For some files it can happen that the adjusted retention times are no
+    ## longer ordered increasingly.
+
+    ## Using my data that caused the problems
+    library(xcms)
+    library(RUnit)
+    load("/Users/jo/R-workspaces/2017/2017-03-Mitra-untargeted/data/RData/mitra-extraction/mitra.RData")
+    mzWid <- 0.02
+    bw_1 <- 1.5
+    bw_2 <- 2
+    
+    ## Retention time adjustment using "PeakGroups"
+    ## First grouping of samples. Setting minFraction
+    pdp <- PeakDensityParam(sampleGroups = pData(mitra)$extraction_name,
+                            bw = bw_1, binSize = mzWid, minFraction = 0.5,
+                            maxFeatures = 200)
+    mitra_pg <- groupChromPeaks(mitra, param = pdp)
+    
+    ## These are if we want to jump into the do_adjustRtime_peakGroups function.
+    peaks <- chromPeaks(mitra_pg)
+    peakIndex <- featureDefinitions(mitra_pg)$peakidx
+    rtime <- rtime(mitra_pg, adjusted = FALSE, bySample = TRUE)
+    minFraction <- 0.85
+    extraPeaks <- 1
+    span <- 0.2
+    family <- "gaussian"
+
+    ## Running the original code.
+    res_o <- xcms:::do_adjustRtime_peakGroups_orig(peaks, peakIndex, rtime = rtime,
+                                       minFraction = minFraction,
+                                       extraPeaks = extraPeaks)
+    sum(unlist(lapply(res_o, is.unsorted)))
+    ## Alternative 1 - uh, does not finish???
+    res_2 <- do_adjustRtime_peakGroups(peaks, peakIndex, rtime = rtime,
+                                       minFraction = minFraction,
+                                       extraPeaks = extraPeaks)
+    sum(unlist(lapply(res_2, is.unsorted)))
+
+    res <- adjustRtime(mitra_pg,
+                       param = PeakGroupsParam(minFraction = minFraction,
+                                               span = 1))
+    tmp <- dropAdjustedRtime(res)
+    checkEquals(chromPeaks(tmp), chromPeaks(mitra))
+}
+
 ## This is to ensure that the original code works with the new one using the
 ## do_ function
 dontrun_test_retcor.peakgroups <- function() {
