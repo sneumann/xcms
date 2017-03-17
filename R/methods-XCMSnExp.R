@@ -25,6 +25,11 @@ setMethod("show", "XCMSnExp", function(object) {
             format(mean(table(chromPeaks(object)[, "sample"])), digits = 3),
             " chromatographic peaks per sample.\n", sep = "")
     }
+    if (hasAdjustedRtime(object)) {
+        cat("Alignment/retention time adjustment:\n")
+        ph <- processHistory(object, type = .PROCSTEP.RTIME.CORRECTION)
+        cat(" method:", .param2string(ph[[1]]@param), "\n")
+    }
     if (hasFeatures(object)) {
         cat("Correspondence:\n")
         ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
@@ -45,11 +50,6 @@ setMethod("show", "XCMSnExp", function(object) {
             cat("", sum(totF), "filled peaks (on average",
                 mean(table(fp[, "sample"])), "per sample).\n")
         }
-    }
-    if (hasAdjustedRtime(object)) {
-        cat("Alignment/retention time adjustment:\n")
-        ph <- processHistory(object, type = .PROCSTEP.RTIME.CORRECTION)
-        cat(" method:", .param2string(ph[[1]]@param), "\n")
     }
 })
 
