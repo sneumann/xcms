@@ -17,6 +17,7 @@
 \alias{fromFile,Chromatogram-method}
 \alias{length,Chromatogram-method}
 \alias{as.data.frame,Chromatogram-method}
+\alias{filterRt,Chromatogram-method}
 \title{Representation of chromatographic MS data}
 \usage{
 Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(0, 0),
@@ -43,6 +44,8 @@ Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(0, 0),
 \S4method{length}{Chromatogram}(x)
 
 \S4method{as.data.frame}{Chromatogram}(x)
+
+\S4method{filterRt}{Chromatogram}(object, rt)
 }
 \arguments{
 \item{rtime}{\code{numeric} with the retention times (length has to be equal
@@ -83,6 +86,9 @@ calculated on the real data (\code{filter = FALSE}).}
 
 \item{x}{For \code{as.data.frame} and \code{length}: a \code{Chromatogram}
 object.}
+
+\item{rt}{For \code{filterRt}: \code{numeric(2)} defining the lower and
+upper retention time for the filtering.}
 }
 \description{
 The \code{Chromatogram} class is designed to store
@@ -121,6 +127,9 @@ intensity pairs) of the chromatogram.
 
 \code{as.data.frame} returns the \code{rtime} and
 \code{intensity} values from the object as \code{data.frame}.
+
+\code{filterRt}: filters the chromatogram based on the provided
+retention time range.
 }
 \details{
 The \code{mz}, \code{filterMz}, \code{precursorMz} and \code{productMz}
@@ -140,6 +149,27 @@ a \code{Chromatogram} for a SRM transition 273 -> 153 will have a
 \item{\code{.__classVersion__,rtime,intensity,mz,filterMz,precursorMz,productMz,fromFile,aggregationFun}}{See corresponding parameter above.}
 }}
 
+\examples{
+
+## Create a simple Chromatogram object based on random values.
+chr <- Chromatogram(intensity = abs(rnorm(1000, mean = 2000, sd = 200)),
+        rtime = sort(abs(rnorm(1000, mean = 10, sd = 5))))
+chr
+
+## Get the intensities
+head(intensity(chr))
+
+## Get the retention time
+head(rtime(chr))
+
+## What is the retention time range of the object?
+range(rtime(chr))
+
+## Filter the chromatogram to keep only values between 4 and 10 seconds
+chr2 <- filterRt(chr, rt = c(4, 10))
+
+range(rtime(chr2))
+}
 \seealso{
 \code{\link{extractChromatograms}} for the method to extract
 \code{Chromatogram} objects from \code{\link{XCMSnExp}} or

@@ -2178,3 +2178,8 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
     if (validObject(object))
         return(object)
 })
+
+## adjustRtimePeakGroups
+## @description \code{adjustRtimePeakGroups} returns the features (peak groups)
+##     which would, depending on the provided \code{\link{PeakGroupsParam}},
+##     be selected for alignment/retention time correction.

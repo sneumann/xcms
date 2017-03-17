@@ -65,6 +65,27 @@ test_Chromatogram_class <- function() {
     checkEquals(productMz(ch), c(123, 123))
 }
 
+test_filterRt_Chromatogram <- function() {
+    int <- rnorm(100, mean = 200, sd = 2)
+    rt <- rnorm(100, mean = 300, sd = 3)
+    chr <- Chromatogram(intensity = int, rtime = sort(rt))
+
+    chr_2 <- filterRt(chr, rt = c(200, 300))
+    checkTrue(all(rtime(chr_2) >= 200))
+    checkTrue(all(rtime(chr_2) <= 300))
+    ints <- intensity(chr_2)
+    checkEquals(ints, intensity(chr)[rtime(chr) >= 200 & rtime(chr) <= 300])
+
+    ## No rt
+    checkEquals(chr, filterRt(chr))
+
+    ## Outside range
+    chr_2 <- filterRt(chr, rt = c(400, 500))
+    checkTrue(length(chr_2) == 0)
+    checkEquals(intensity(chr_2), numeric())
+    checkEquals(rtime(chr_2), numeric())
+}
+
 test_extractChromatograms <- function() {
     ## OnDiskMSnExp
     ## TIC
