@@ -4,6 +4,10 @@ CHANGES IN VERSION 1.51.10
 NEW FEATURES:
 - filterRt for Chromatogram class (issue #142).
 
+USER VISIBLE CHANGES:
+- featureDefinitions and featureValues return DataFrame and matrix with rownames
+  corresponding to arbitrary feature IDs (issue #148).
+
 BUG FIXES:
 - Issue #146: ensure adjusted retention times returned by the peakGroups method
   to be in the same order than the raw retention times.

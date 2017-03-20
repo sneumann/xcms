@@ -1083,6 +1083,24 @@ test_signal_integration <- function() {
     ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
 }
 
+## Test the featureValues method.
+test_featureValues <- function() {
+    od_x <- faahko_xod
+    xs <- faahko_xs
+
+    fdp <- PeakDensityParam(sampleGroups = xs$class)
+    od_x <- groupChromPeaks(od_x, param = fdp)
+    xs <- group(xs, method = "density")
+
+    fvs <- featureValues(od_x, value = "into")
+    checkEquals(rownames(fvs), rownames(featureDefinitions(od_x)))
+    rownames(fvs) <- NULL
+    colnames(fvs) <- NULL
+    gvs <- groupval(xs, value = "into")
+    rownames(gvs) <- NULL
+    colnames(gvs) <- NULL
+    checkEquals(fvs, gvs)
+}
 
 
 ############################################################

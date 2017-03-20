@@ -235,15 +235,15 @@ the number of samples) with adjusted retention times grouped by sample.
 Returns \code{NULL} if no adjusted retention times are present.
 
 For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
-information, each row corresponding to one mz-rt feature (grouped peaks
-within and across samples) and columns \code{"mzmed"} (median mz value),
-\code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
-\code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
-time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
-Column \code{"peakidx"} contains a \code{list} with indices of
-chromatographic peaks (rows) in the matrix returned by the \code{chromPeaks}
-method that belong to that feature group. The method returns \code{NULL} if
-no feature definitions are present.
+    information, each row corresponding to one mz-rt feature (grouped peaks
+    within and across samples) and columns \code{"mzmed"} (median mz value),
+    \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
+    \code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
+    time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
+    Column \code{"peakidx"} contains a \code{list} with indices of
+    chromatographic peaks (rows) in the matrix returned by the
+    \code{chromPeaks} method that belong to that feature group. The method
+    returns \code{NULL} if no feature definitions are present.
 
 For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} with
 at least the following columns:
@@ -345,7 +345,7 @@ The \code{bySample} parameter allows to specify whether the adjusted
 retention time should be grouped by sample (file).
 
 \code{featureDefinitions}, \code{featureDefinitions<-}: extract
-or set the correspondence results, i.e. the mz-rt features (peak groups).
+    or set the correspondence results, i.e. the mz-rt features (peak groups).
 
 \code{chromPeaks}, \code{chromPeaks<-}: extract or set
 the matrix containing the information on identified chromatographic peaks.

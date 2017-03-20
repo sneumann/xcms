@@ -1,6 +1,6 @@
 ## Methods for the XCMSnExp object representing untargeted metabolomics
 ## results
-#' @include functions-XCMSnExp.R do_groupChromPeaks-functions.R
+#' @include functions-XCMSnExp.R do_groupChromPeaks-functions.R functions-utils.R
 #' do_adjustRtime-functions.R methods-xcmsRaw.R functions-OnDiskMSnExp.R
 
 setMethod("initialize", "XCMSnExp", function(.Object, ...) {
@@ -156,18 +156,18 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 ##' @aliases featureDefinitions
 ##'
 ##' @description \code{featureDefinitions}, \code{featureDefinitions<-}: extract
-##' or set the correspondence results, i.e. the mz-rt features (peak groups).
+##'     or set the correspondence results, i.e. the mz-rt features (peak groups).
 ##'
 ##' @return For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
-##' information, each row corresponding to one mz-rt feature (grouped peaks
-##' within and across samples) and columns \code{"mzmed"} (median mz value),
-##' \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
-##' \code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
-##' time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
-##' Column \code{"peakidx"} contains a \code{list} with indices of
-##' chromatographic peaks (rows) in the matrix returned by the \code{chromPeaks}
-##' method that belong to that feature group. The method returns \code{NULL} if
-##' no feature definitions are present.
+##'     information, each row corresponding to one mz-rt feature (grouped peaks
+##'     within and across samples) and columns \code{"mzmed"} (median mz value),
+##'     \code{"mzmin"} (minimal mz value), \code{"mzmax"} (maximum mz value),
+##'     \code{"rtmed"} (median retention time), \code{"rtmin"} (minimal retention
+##'     time), \code{"rtmax"} (maximal retention time) and \code{"peakidx"}.
+##'     Column \code{"peakidx"} contains a \code{list} with indices of
+##'     chromatographic peaks (rows) in the matrix returned by the
+##'     \code{chromPeaks} method that belong to that feature group. The method
+##'     returns \code{NULL} if no feature definitions are present.
 ##'
 ##' @rdname XCMSnExp-class
 setMethod("featureDefinitions", "XCMSnExp", function(object) {
@@ -1300,6 +1300,8 @@ setMethod("groupChromPeaks",
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
+              if (nrow(df) > 0)
+                  rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
@@ -1374,6 +1376,8 @@ setMethod("groupChromPeaks",
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
+              if (nrow(df) > 0)
+                  rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
@@ -1442,6 +1446,8 @@ setMethod("groupChromPeaks",
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
+              if (nrow(df) > 0)
+                  rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               if (validObject(object))
                   return(object)
@@ -1611,43 +1617,45 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 ##' @aliases featureValues
 ##' @title Accessing mz-rt feature data values
 ##' 
-##' @description \code{featureValues,XCMSnExp} :
-##' extract a \code{matrix} for feature values with rows representing features
-##' and columns samples. Parameter \code{value} allows to define which column
-##' from the \code{\link{chromPeaks}} matrix should be returned. Multiple
-##' chromatographic peaks from the same sample can be assigned to a feature.
-##' Parameter \code{method} allows to specify the method to be used in such
-##' cases to chose from which of the peaks the value should be returned.
+##' @description \code{featureValues,XCMSnExp} : extract a \code{matrix} for
+##'     feature values with rows representing features and columns samples.
+##'     Parameter \code{value} allows to define which column from the
+##'     \code{\link{chromPeaks}} matrix should be returned. Multiple
+##'     chromatographic peaks from the same sample can be assigned to a feature.
+##'     Parameter \code{method} allows to specify the method to be used in such
+##'     cases to chose from which of the peaks the value should be returned.
 ##'
 ##' @note This method is equivalent to the \code{\link{groupval}} for
-##' \code{xcmsSet} objects.
+##'     \code{xcmsSet} objects.
 ##' 
 ##' @param object A \code{\link{XCMSnExp}} object providing the feature
-##' definitions.
+##'     definitions.
 ##' 
 ##' @param method \code{character} specifying the method to resolve
-##' multi-peak mappings within the same sample, i.e. to define the
-##' \emph{representative} peak for a feature in samples where more than
-##' one peak was assigned to the feature. If \code{"medret"}: select the
-##' peak closest to the median retention time of the feature.
-##' If \code{"maxint"}: select the peak yielding the largest signal.
+##'     multi-peak mappings within the same sample, i.e. to define the
+##'     \emph{representative} peak for a feature in samples where more than
+##'     one peak was assigned to the feature. If \code{"medret"}: select the
+##'     peak closest to the median retention time of the feature.
+##'     If \code{"maxint"}: select the peak yielding the largest signal.
 ##'
 ##' @param value \code{character} specifying the name of the column in
-##' \code{chromPeaks(object)} that should be returned or \code{"index"} (the
-##' default) to return the index of the peak in the \code{chromPeaks(object)}
-##' matrix corresponding to the \emph{representative} peak for the feature
-##' in the respective sample.
+##'     \code{chromPeaks(object)} that should be returned or \code{"index"} (the
+##'     default) to return the index of the peak in the
+##'     \code{chromPeaks(object)} matrix corresponding to the
+##'     \emph{representative} peak for the feature in the respective sample.
 ##'
 ##' @param intensity \code{character} specifying the name of the column in the
-##' \code{chromPeaks(objects)} matrix containing the intensity value of the
-##' peak that should be used for the conflict resolution if
-##' \code{method = "maxint"}.
+##'     \code{chromPeaks(objects)} matrix containing the intensity value of the
+##'     peak that should be used for the conflict resolution if
+##'     \code{method = "maxint"}.
 ##'
 ##' @return For \code{featureValues}: a \code{matrix} with
-##' feature values, columns representing samples, rows features. The order of
-##' the features matches the order found in the \code{featureDefinitions(object)}
-##' \code{DataFrame}. An \code{NA} is reported for features without corresponding
-##' chromatographic peak in the respective sample(s).
+##'     feature values, columns representing samples, rows features. The order
+##'     of the features matches the order found in the
+##'     \code{featureDefinitions(object)} \code{DataFrame}. The rownames of the
+##'     \code{matrix} are the same than those of the \code{featureDefinitions}
+##'     \code{DataFrame}. \code{NA} is reported for features without
+##'     corresponding chromatographic peak in the respective sample(s).
 ##' 
 ##' @author Johannes Rainer
 ##' 
@@ -1711,10 +1719,8 @@ setMethod("featureValues",
                   dim(vals) <- c(length(ftIdx), length(nSamples))
               }
               colnames(vals) <- fNames
-              ## Let's skip row names for now.
-              ## rownames(vals) <- paste(base::round(grps$mzmed, 3),
-              ##                         base::round(grps$rtmed), sep = "/")
-              return(vals)
+              rownames(vals) <- rownames(grps)
+              vals
 })
 ## ##' @rdname XCMSnExp-peak-grouping-results
 ## setMethod("groupval",
@@ -2183,3 +2189,4 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 ## @description \code{adjustRtimePeakGroups} returns the features (peak groups)
 ##     which would, depending on the provided \code{\link{PeakGroupsParam}},
 ##     be selected for alignment/retention time correction.
+
