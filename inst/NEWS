@@ -3,6 +3,7 @@ CHANGES IN VERSION 1.51.10
 
 NEW FEATURES:
 - filterRt for Chromatogram class (issue #142).
+- adjustRtimePeakGroups function (issue #147).
 
 USER VISIBLE CHANGES:
 - featureDefinitions and featureValues return DataFrame and matrix with rownames

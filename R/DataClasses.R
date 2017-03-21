@@ -1781,6 +1781,22 @@ NULL
 ##' ## Perform the retention time adjustment using peak groups found in both
 ##' ## files.
 ##' fgp <- PeakGroupsParam(minFraction = 1)
+##'
+##' ## Before running the alignment we can evaluate which features (peak groups)
+##' ## would be used based on the specified parameters.
+##' pkGrps <- adjustRtimePeakGroups(res, param = fgp)
+##'
+##' ## We can also plot these to evaluate if the peak groups span a large portion
+##' ## of the retention time range.
+##' plot(x = pkGrps[, 1], y = rep(1, nrow(pkGrps)), xlim = range(rtime(res)),
+##'     ylim = c(1, 2), xlab = "rt", ylab = "", yaxt = "n")
+##' points(x = pkGrps[, 2], y = rep(2, nrow(pkGrps)))
+##' segments(x0 = pkGrps[, 1], x1 = pkGrps[, 2],
+##'     y0 = rep(1, nrow(pkGrps)), y1 = rep(2, nrow(pkGrps)))
+##' grid()
+##' axis(side = 2, at = c(1, 2), labels = colnames(pkGrps))
+##'
+##' ## Next we perform the alignment.
 ##' res <- adjustRtime(res, param = fgp)
 ##'
 ##' ## Any grouping information was dropped

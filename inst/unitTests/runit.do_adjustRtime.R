@@ -86,6 +86,23 @@ test_adjustRtime_PeakGroups <- function() {
     checkEquals(tmp, xod)
 }
 
+test_getPeakGroupsRtMatrix <- function() {
+    param <- PeakGroupsParam()
+    nSamples <- length(fileNames(xod_xg))
+    pkGrp <- xcms:::.getPeakGroupsRtMatrix(
+        peaks = chromPeaks(xod_xg),
+        peakIndex = xcms:::.peakIndex(xod_xg),
+        nSamples = nSamples,
+        missingSample = nSamples - (nSamples * minFraction(param)),
+        extraPeaks = extraPeaks(param)
+        )
+    ## checkEquals(colnames(pkGrp), colnames(chromPeaks(xod_xg)))
+    fts <- featureDefinitions(xod_xg)[rownames(pkGrp), ]
+    checkTrue(all(pkGrp[, 1] >= fts$rtmin & pkGrp[, 1] <= fts$rtmax))
+    checkTrue(all(pkGrp[, 2] >= fts$rtmin & pkGrp[, 2] <= fts$rtmax))
+    checkTrue(all(pkGrp[, 3] >= fts$rtmin & pkGrp[, 3] <= fts$rtmax))
+}
+
 dontrun_issue146 <- function() {
     ## For some files it can happen that the adjusted retention times are no
     ## longer ordered increasingly.

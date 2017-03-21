@@ -418,7 +418,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
                                    rtraw = rtraw[[i]], rtadj = rtadj[[i]])
         }
     }
-    return(x)
+    x
 }
 
 ##' Simple helper function to create a matrix with retention times for well
@@ -429,7 +429,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
 ##' @noRd
 .getPeakGroupsRtMatrix <- function(peaks, peakIndex, nSamples,
                                    missingSample, extraPeaks) {
-    ## For each peak group:
+    ## For each feature:
     ## o extract the retention time of the peak with the highest intensity.
     ## o skip peak groups if they are not assigned a peak in at least a
     ##   minimum number of samples OR if have too many peaks from the same
@@ -454,5 +454,5 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     ## retention time that is calculated over ALL peaks within the peak
     ## group, not only to one peak selected for each sample (for multi
     ## peak per sample assignments).
-    return(rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE])
+    rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
 }

@@ -730,3 +730,43 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             return(any(chromPeaks(object)[, "is_filled"] == 1))
     FALSE
 }
+
+#' @description Simple helper function to extract the peakidx column from the
+#' featureDefinitions DataFrame. The function ensures that the names of the
+#' returned list correspond to the rownames of the DataFrame
+#' 
+#' @noRd
+.peakIndex <- function(object) {
+    if (!hasFeatures(object))
+        stop("No feature definitions present. Please run groupChromPeaks first.")
+    idxs <- featureDefinitions(object)$peakidx
+    names(idxs) <- rownames(featureDefinitions(object))
+    idxs
+}
+
+#' @description \code{adjustRtimePeakGroups} returns the features (peak groups)
+#'     which would, depending on the provided \code{\link{PeakGroupsParam}},
+#'     be selected for alignment/retention time correction.
+#'
+#' @return For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
+#'     features, columns samples, of retention times. The features are ordered
+#'     by the median retention time across columns.
+#'
+#' @rdname adjustRtime-peakGroups
+adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object.")
+    if (!hasFeatures(object))
+        stop("No features present. Please run 'groupChromPeaks' first.")
+    nSamples <- length(fileNames(object))
+    pkGrp <- .getPeakGroupsRtMatrix(
+        peaks = chromPeaks(object),
+        peakIndex = .peakIndex(object),
+        nSamples = nSamples,
+        missingSample = nSamples - (nSamples * minFraction(param)),
+        extraPeaks = extraPeaks(param)
+    )
+    colnames(pkGrp) <- basename(fileNames(object))
+    pkGrp
+}
+
