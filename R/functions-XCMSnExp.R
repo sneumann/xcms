@@ -770,3 +770,24 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
     pkGrp
 }
 
+#' @title Visualization of alignment results
+#' 
+#' @description Plot the difference between the adjusted and the raw retention
+#'     time (y-axis) for each file along the (adjusted) retention time (x-axis).
+#'     It the alignment was performed using the
+#'     \code{\link{adjustRtime-peakGroups}} method, also the features (peak
+#'     groups) used for the alignment are shown.
+#'
+#' @param object A \code{\link{XCMSnExp}} object with the alignment results.
+#'
+#' @param ... Additional arguments to be passed down to the plotting function.
+#' 
+#' @seealso \code{\link{adjustRtime}} for all retention time correction/
+#'     alignment methods.
+#' 
+#' @noRd
+plotAdjustedRtime <- function(object, ...) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object.")
+    ## No legend or anything - just plotting.
+}

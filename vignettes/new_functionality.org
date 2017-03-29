@@ -406,6 +406,20 @@ are reported within the =XCMSnExp= object. The =XCMSnExp= is thus equivalent to 
 =xcmsSet= from the original =xcms= implementation, but keeps in addition a link to
 the raw data on which the preprocessing was performed.
 
+*** =Chromatogram=
+
+The =Chromatogram= class allows a data representation that is orthogonal to the
+=Spectrum= class defined in =MSnbase=. The =Chromatogram= class stores retention time
+and intensity duplets and is designed to accommodate most use cases, from total
+ion chromatogram, base peak chromatogram to extracted ion chromatogram and
+SRM/MRM ion traces.
+
+=Chromatogram= objects can be extracted from =XCMSnExp= objects using the
+=extractChromatograms= method.
+
+Note that this class is still considered developmental and might thus undergo
+some changes in the future.
+
 ** Binning and missing value imputation functions
 
 The binning/profile matrix generation functions have been completely
@@ -488,25 +502,43 @@ of the bin with the missing value (=1= by default). The other missing values are
 set to a base value corresponding to half of the smallest bin value. Both
 methods thus yield same results, except for bins 15-17 (see Figure above).
 
-** Core chromatographic peak detection functions
+** Core functionality exposed /via/ simple functions
 
-The core logic from the chromatographic peak detection methods =findPeaks.centWave=,
-=findPeaks.massifquant=, =findPeaks.matchedFilter= has been extracted and put into
-functions with the common prefix =do_findChromPeaks= with the aim, as detailed in
-issue [[https://github.com/sneumann/xcms/issues/30][#30]], to separate the core logic from the analysis methods invoked by the
-users to enable also the use of the peak detection functions using base R
+The core logic from the chromatographic peak detection methods
+=findPeaks.centWave=, =findPeaks.massifquant=, =findPeaks.matchedFilter= and
+=findPeaks.MSW= and from all alignment (=group.*=) and correspondence (=retcor.*=)
+methods has been extracted and put into functions with the common prefix
+=do_findChromPeaks=, =do_adjustRtime= and =do_groupChromPeaks=, respectively, with the
+aim, as detailed in issue [[https://github.com/sneumann/xcms/issues/30][#30]], to separate the core logic from the analysis
+methods invoked by the users to enable also the use these methods using base R
 parameters (i.e. without specific classes containing the data such as the
 =xcmsRaw= class). This simplifies also the re-use of these functions in other
 packages and simplifies the future implementation of the peak detection
 algorithms for e.g. the =MSnExp= or =OnDiskMSnExp= objects from the =MSnbase=
 Bioconductor package. The implemented functions are:
 
-+ =do_findChromPeaks_centWave=: peak density and wavelet based peak detection
-  for high resolution LC/MS data in centroid mode \cite{Tautenhahn:2008fx}.
-+ =do_findChromPeaks_matchedFilter=: identification of peak in the
-  chromatographic domain based on matched filtration \cite{Smith:2006ic}.
-+ =do_findChromPeaks_massifquant=: identification of peaks using Kalman
-  filters.
++ *peak detection methods*:
+  + =do_findChromPeaks_centWave=: peak density and wavelet based peak detection
+    for high resolution LC/MS data in centroid mode \cite{Tautenhahn:2008fx}.
+  + =do_findChromPeaks_matchedFilter=: identification of peak in the
+    chromatographic domain based on matched filtration \cite{Smith:2006ic}.
+  + =do_findChromPeaks_massifquant=: identification of peaks using Kalman
+    filters.
+  + =do_findChromPeaks_MSW=: single spectrum, non-chromatographic peak detection.
+
++ *alignment methods*:
+  + =do_adjustRtime_peakGroups=: perform sample alignment (retention time
+    correction) using alignment of /well behaved/ chromatographic peaks that are
+    present in most samples (and are expected to have the same retention time).
+
++ *correspondence methods*:
+  + =do_groupChromPeaks_density=: perform chromatographic peak grouping (within
+    and across samples) based on the density distribution of peaks along the
+    retention time axis.
+  + =do_groupChromPeaks_nearest=: groups peaks across samples similar to the
+    method implemented in mzMine.
+  + =do_groupChromPeaks_mzClust=: performs high resolution correspondence on
+    single spectra samples.
 
 One possible drawback from the introduction of this new layer is, that more
 objects get copied by R which /could/ eventually result in a larger memory demand
