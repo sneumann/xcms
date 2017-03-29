@@ -103,6 +103,10 @@ test_getPeakGroupsRtMatrix <- function() {
     checkTrue(all(pkGrp[, 3] >= fts$rtmin & pkGrp[, 3] <= fts$rtmax))
 }
 
+test_plotAdjustedRtime <- function() {
+    xod_xgr
+}
+
 dontrun_issue146 <- function() {
     ## For some files it can happen that the adjusted retention times are no
     ## longer ordered increasingly.

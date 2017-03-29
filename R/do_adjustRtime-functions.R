@@ -51,6 +51,9 @@ do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
                                       minFraction = 0.9, extraPeaks = 1,
                                       smooth = c("loess", "linear"), span = 0.2,
                                       family = c("gaussian", "symmetric")) {
+    ## Add a peakGroupsMatrix parameter. Have to check also this matrix:
+    ## o Same number of samples.
+    ## o range of rt values is within the rtime.
     ## Check input.
     if (missing(peaks) | missing(peakIndex) | missing(rtime))
         stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")

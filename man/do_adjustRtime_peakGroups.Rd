@@ -21,18 +21,18 @@ per file/sample.}
 
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
-identified. Peak groups passing this criteria will aligned across samples
-and retention times of individual spectra will be adjusted based on this
-alignment. For \code{minFraction = 1} the peak group has to contain peaks
-in all samples of the experiment.}
+identified. Peak groups passing this criteria will aligned across
+samples and retention times of individual spectra will be adjusted
+based on this alignment. For \code{minFraction = 1} the peak group
+has to contain peaks in all samples of the experiment.}
 
-\item{extraPeaks}{\code{numeric(1)} defining the maximal number of additional
-peaks for all samples to be assigned to a peak group (i.e. feature) for
-retention time correction. For a data set with 6 samples,
+\item{extraPeaks}{\code{numeric(1)} defining the maximal number of
+additional peaks for all samples to be assigned to a peak group (i.e.
+feature) for retention time correction. For a data set with 6 samples,
 \code{extraPeaks = 1} uses all peak groups with a total peak count
 \code{<= 6 + 1}. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a sample
-being assigned to the group.}
+assigned to a peak group and considers also multiple peaks within a
+sample being assigned to the group.}
 
 \item{smooth}{character defining the function to be used, to interpolate
 corrected retention times for all peak groups. Either \code{"loess"} or

@@ -8,6 +8,7 @@ NEW FEATURES:
 USER VISIBLE CHANGES:
 - featureDefinitions and featureValues return DataFrame and matrix with rownames
   corresponding to arbitrary feature IDs (issue #148).
+- New peakGroupsMatrix slot for PeakGroupsParam class (issue #153).
 
 BUG FIXES:
 - Issue #146: ensure adjusted retention times returned by the peakGroups method

@@ -675,6 +675,14 @@ test_PeakGroupsParam <- function() {
     checkEquals(family(p), "symmetric")
     checkException(family(p) <- "other")
     checkException(family(p) <- c("symmetric", "gaussian"))
+
+    mt <- matrix(1:4, 1:4)
+    p <- new("PeakGroupsParam", peakGroupsMatrix = mt)
+    checkEquals(peakGroupsMatrix(p), mt)
+    peakGroupsMatrix(p) <- mt + 2
+    checkEquals(peakGroupsMatrix(p), mt + 2)
+    p <- PeakGroupsParam(peakGroupsMatrix = mt)
+    checkEquals(peakGroupsMatrix(p), mt)
 }
 
 

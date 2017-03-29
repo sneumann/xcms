@@ -1658,23 +1658,26 @@ setClass("NearestPeaksParam",
 ##' @title Alignment: Retention time correction methods.
 ##'
 ##' @description The \code{adjustRtime} method(s) perform retention time
-##' correction (alignment) between chromatograms of different samples. These
-##' methods are part of the modernized \code{xcms} user interface.
+##'     correction (alignment) between chromatograms of different samples. These
+##'     methods are part of the modernized \code{xcms} user interface.
 ##'
-##' The implemented retention time adjustment methods are:
-##' \describe{
-##' \item{peakGroups}{retention time correction based on aligment of features
-##' (peak groups) present in most/all samples.
-##' See \code{\link{adjustRtime-peakGroups}} for more details.}
+##'     The implemented retention time adjustment methods are:
+##'     \describe{
+##'     \item{peakGroups}{retention time correction based on aligment of
+##'     features (peak groups) present in most/all samples.
+##'     See \code{\link{adjustRtime-peakGroups}} for more details.}
 ##'
-##' \item{obiwarp}{alignment based on the complete mz-rt data. This method does
-##' not require any identified peaks or defined features. See
-##' \code{\link{adjustRtime-obiwarp}} for more details.}
-##' }
+##'     \item{obiwarp}{alignment based on the complete mz-rt data. This method
+##'     does not require any identified peaks or defined features. See
+##'     \code{\link{adjustRtime-obiwarp}} for more details.}
+##'     }
 ##' @name adjustRtime
+##' 
 ##' @family retention time correction methods
+##' 
 ##' @seealso \code{\link{retcor}} for the \emph{old} retention time correction 
-##' methods.
+##'     methods.
+##' 
 ##' @author Johannes Rainer
 NULL
 #> NULL
@@ -1684,49 +1687,56 @@ NULL
 ##' groups
 ##'
 ##' @description This method performs retention time adjustment based on the
-##' alignment of chromatographic peak groups present in all/most samples (hence
-##' corresponding to house keeping compounds). First the retention time deviation
-##' of these peak groups is described by fitting either a polynomial
-##' (\code{smooth = "loess"}) or a linear (\code{smooth = "linear"}) model to the
-##' data points. These models are subsequently used to adjust the retention time
-##' of each spectrum in each sample.
+##'     alignment of chromatographic peak groups present in all/most samples
+##'     (hence corresponding to house keeping compounds). First the retention
+##'     time deviation of these peak groups is described by fitting either a
+##'     polynomial (\code{smooth = "loess"}) or a linear (
+##'     \code{smooth = "linear"}) model to the data points. These models are
+##'     subsequently used to adjust the retention time of each spectrum in
+##'     each sample.
 ##'
 ##' @note These methods and classes are part of the updated and modernized
-##' \code{xcms} user interface which will eventually replace the
-##' \code{\link{group}} methods. All of the settings to the alignment algorithm
-##' can be passed with a \code{PeakGroupsParam} object.
+##'     \code{xcms} user interface which will eventually replace the
+##'     \code{\link{group}} methods. All of the settings to the alignment
+##'     algorithm can be passed with a \code{PeakGroupsParam} object.
 ##'
 ##' @param minFraction \code{numeric(1)} between 0 and 1 defining the minimum
-##' required fraction of samples in which peaks for the peak group were
-##' identified. Peak groups passing this criteria will aligned across samples
-##' and retention times of individual spectra will be adjusted based on this
-##' alignment. For \code{minFraction = 1} the peak group has to contain peaks
-##' in all samples of the experiment.
+##'     required fraction of samples in which peaks for the peak group were
+##'     identified. Peak groups passing this criteria will aligned across
+##'     samples and retention times of individual spectra will be adjusted
+##'     based on this alignment. For \code{minFraction = 1} the peak group
+##'     has to contain peaks in all samples of the experiment.
 ##' 
-##' @param extraPeaks \code{numeric(1)} defining the maximal number of additional
-##' peaks for all samples to be assigned to a peak group (i.e. feature) for
-##' retention time correction. For a data set with 6 samples,
-##' \code{extraPeaks = 1} uses all peak groups with a total peak count
-##' \code{<= 6 + 1}. The total peak count is the total number of peaks being
-##' assigned to a peak group and considers also multiple peaks within a sample
-##' being assigned to the group.
+##' @param extraPeaks \code{numeric(1)} defining the maximal number of
+##'     additional peaks for all samples to be assigned to a peak group (i.e.
+##'     feature) for retention time correction. For a data set with 6 samples,
+##'     \code{extraPeaks = 1} uses all peak groups with a total peak count
+##'     \code{<= 6 + 1}. The total peak count is the total number of peaks being
+##'     assigned to a peak group and considers also multiple peaks within a
+##'     sample being assigned to the group.
 ##'
 ##' @param smooth character defining the function to be used, to interpolate
-##' corrected retention times for all peak groups. Either \code{"loess"} or
-##' \code{"linear"}.
+##'     corrected retention times for all peak groups. Either \code{"loess"} or
+##'     \code{"linear"}.
 ##'
 ##' @param span \code{numeric(1)} defining the degree of smoothing (if
-##' \code{smooth = "loess"}). This parameter is passed to the internal call
-##' to \code{\link{loess}}.
+##'     \code{smooth = "loess"}). This parameter is passed to the internal call
+##'     to \code{\link{loess}}.
 ##'
 ##' @param family character defining the method to be used for loess smoothing.
-##' Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
-##' \code{\link{loess}} for more information.
+##'     Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
+##'     \code{\link{loess}} for more information.
+##'
+##' @param peakGroupsParam optional \code{matrix} of (raw) retention times for
+##'     the peak groups on which the alignment should be performed. Each column
+##'     represents a sample, each row a feature/peak group. Such a matrix is
+##'     for example returned by the \code{\link{adjustRtimePeakGroups}} method.
 ##' 
 ##' @family retention time correction methods
 ##' 
 ##' @seealso The \code{\link{do_adjustRtime_peakGroups}} core
-##' API function and \code{\link{retcor.peakgroups}} for the old user interface.
+##'     API function and \code{\link{retcor.peakgroups}} for the old user
+##'     interface.
 ##'
 ##' @name adjustRtime-peakGroups
 ##'
@@ -1741,11 +1751,11 @@ NULL
 #> NULL
 
 ##' @description The \code{PeakGroupsParam} class allows to specify all
-##' settings for the retention time adjustment based on \emph{house keeping}
-##' peak groups present in most samples.
-##' Instances should be created with the \code{PeakGroupsParam} constructor.
+##'     settings for the retention time adjustment based on \emph{house keeping}
+##'     peak groups present in most samples.
+##'     Instances should be created with the \code{PeakGroupsParam} constructor.
 ##'
-##' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family See corresponding parameter above. \code{.__classVersion__} stores
+##' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakMatrix See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
@@ -1819,14 +1829,16 @@ setClass("PeakGroupsParam",
                    extraPeaks = "numeric",
                    smooth = "character",
                    span = "numeric",
-                   family = "character"),
+                   family = "character",
+                   peakGroupsMatrix = "matrix"),
          contains = "Param",
          prototype = prototype(
              minFraction = 0.9,
              extraPeaks = 1,
              smooth = "loess",
              span = 0.2,
-             family = "gaussian"
+             family = "gaussian",
+             peakGroupsMatrix = matrix()
          ),
          validity = function(object) {
              msg <- character()

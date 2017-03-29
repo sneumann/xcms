@@ -1503,6 +1503,8 @@ setMethod("adjustRtime",
                        "perform first a peak grouping using the ",
                        "'groupChromPeak' method.")
               startDate <- date()
+              ## If param does not contain a peakGroupsMatrix extract one.
+              ## Extract the peak group matrix based on the param.
               res <- do_adjustRtime_peakGroups(
                   chromPeaks(object),
                   peakIndex = featureDefinitions(object)$peakidx,

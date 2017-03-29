@@ -26,12 +26,16 @@
 \alias{family}
 \alias{family<-,PeakGroupsParam-method}
 \alias{family<-}
+\alias{peakGroupsMatrix,PeakGroupsParam-method}
+\alias{peakGroupsMatrix}
+\alias{peakGroupsMatrix<-,PeakGroupsParam-method}
+\alias{peakGroupsMatrix<-}
 \alias{adjustRtime,XCMSnExp,PeakGroupsParam-method}
 \title{Retention time correction based on alignment of house keeping peak
 groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
-  span = 0.2, family = "gaussian")
+  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix())
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -57,23 +61,27 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
 \S4method{family}{PeakGroupsParam}(object) <- value
 
+\S4method{peakGroupsMatrix}{PeakGroupsParam}(object)
+
+\S4method{peakGroupsMatrix}{PeakGroupsParam}(object) <- value
+
 \S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param)
 }
 \arguments{
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
-identified. Peak groups passing this criteria will aligned across samples
-and retention times of individual spectra will be adjusted based on this
-alignment. For \code{minFraction = 1} the peak group has to contain peaks
-in all samples of the experiment.}
+identified. Peak groups passing this criteria will aligned across
+samples and retention times of individual spectra will be adjusted
+based on this alignment. For \code{minFraction = 1} the peak group
+has to contain peaks in all samples of the experiment.}
 
-\item{extraPeaks}{\code{numeric(1)} defining the maximal number of additional
-peaks for all samples to be assigned to a peak group (i.e. feature) for
-retention time correction. For a data set with 6 samples,
+\item{extraPeaks}{\code{numeric(1)} defining the maximal number of
+additional peaks for all samples to be assigned to a peak group (i.e.
+feature) for retention time correction. For a data set with 6 samples,
 \code{extraPeaks = 1} uses all peak groups with a total peak count
 \code{<= 6 + 1}. The total peak count is the total number of peaks being
-assigned to a peak group and considers also multiple peaks within a sample
-being assigned to the group.}
+assigned to a peak group and considers also multiple peaks within a
+sample being assigned to the group.}
 
 \item{smooth}{character defining the function to be used, to interpolate
 corrected retention times for all peak groups. Either \code{"loess"} or
@@ -100,6 +108,11 @@ the retention time correction method..}
 \item{value}{The value for the slot.}
 
 \item{x}{a \code{PeakGroupsParam} object.}
+
+\item{peakGroupsParam}{optional \code{matrix} of (raw) retention times for
+the peak groups on which the alignment should be performed. Each column
+represents a sample, each row a feature/peak group. Such a matrix is
+for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
 }
 \value{
 The \code{PeakGroupsParam} function returns a
@@ -120,21 +133,22 @@ drops all previous alignment results from the result object.
 }
 \description{
 This method performs retention time adjustment based on the
-alignment of chromatographic peak groups present in all/most samples (hence
-corresponding to house keeping compounds). First the retention time deviation
-of these peak groups is described by fitting either a polynomial
-(\code{smooth = "loess"}) or a linear (\code{smooth = "linear"}) model to the
-data points. These models are subsequently used to adjust the retention time
-of each spectrum in each sample.
+    alignment of chromatographic peak groups present in all/most samples
+    (hence corresponding to house keeping compounds). First the retention
+    time deviation of these peak groups is described by fitting either a
+    polynomial (\code{smooth = "loess"}) or a linear (
+    \code{smooth = "linear"}) model to the data points. These models are
+    subsequently used to adjust the retention time of each spectrum in
+    each sample.
 
 The \code{PeakGroupsParam} class allows to specify all
-settings for the retention time adjustment based on \emph{house keeping}
-peak groups present in most samples.
-Instances should be created with the \code{PeakGroupsParam} constructor.
+    settings for the retention time adjustment based on \emph{house keeping}
+    peak groups present in most samples.
+    Instances should be created with the \code{PeakGroupsParam} constructor.
 
 \code{adjustRtimePeakGroups} returns the features (peak groups)
-    which would, depending on the provided \code{\link{PeakGroupsParam}},
-    be selected for alignment/retention time correction.
+    which would, depending on the provided \code{\link{PeakGroupsParam}}, be
+    selected for alignment/retention time correction.
 
 \code{minFraction},\code{minFraction<-}: getter and setter
 for the \code{minFraction} slot of the object.
@@ -151,6 +165,9 @@ for the \code{span} slot of the object.
 \code{family},\code{family<-}: getter and setter
 for the \code{family} slot of the object.
 
+\code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
+    setter for the \code{peakGroupsMatrix} slot of the object.
+
 \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
 performs retention time correction based on the alignment of peak groups
 (features) found in all/most samples.
@@ -158,16 +175,19 @@ performs retention time correction based on the alignment of peak groups
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakMatrix}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{group}} methods. All of the settings to the alignment algorithm
-can be passed with a \code{PeakGroupsParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{group}} methods. All of the settings to the alignment
+    algorithm can be passed with a \code{PeakGroupsParam} object.
+
+\code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
+    sample alignment, but after a correspondence (peak grouping).
 
 This method requires that a correspondence has been performed on the
 data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on an
@@ -249,7 +269,8 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 }
 \seealso{
 The \code{\link{do_adjustRtime_peakGroups}} core
-API function and \code{\link{retcor.peakgroups}} for the old user interface.
+    API function and \code{\link{retcor.peakgroups}} for the old user
+    interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the alignment.

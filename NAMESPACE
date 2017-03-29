@@ -342,6 +342,9 @@ exportMethods(
     "span<-",
     "family",
     "family<-",
+    ## PeakGroupsParam
+    "peakGroupsMatrix",
+    "peakGroupsMatrix<-",
     ## ObiwarpParam
     "centerSample",
     "centerSample<-",

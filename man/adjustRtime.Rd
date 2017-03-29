@@ -5,23 +5,23 @@
 \title{Alignment: Retention time correction methods.}
 \description{
 The \code{adjustRtime} method(s) perform retention time
-correction (alignment) between chromatograms of different samples. These
-methods are part of the modernized \code{xcms} user interface.
+    correction (alignment) between chromatograms of different samples. These
+    methods are part of the modernized \code{xcms} user interface.
 
-The implemented retention time adjustment methods are:
-\describe{
-\item{peakGroups}{retention time correction based on aligment of features
-(peak groups) present in most/all samples.
-See \code{\link{adjustRtime-peakGroups}} for more details.}
+    The implemented retention time adjustment methods are:
+    \describe{
+    \item{peakGroups}{retention time correction based on aligment of
+    features (peak groups) present in most/all samples.
+    See \code{\link{adjustRtime-peakGroups}} for more details.}
 
-\item{obiwarp}{alignment based on the complete mz-rt data. This method does
-not require any identified peaks or defined features. See
-\code{\link{adjustRtime-obiwarp}} for more details.}
-}
+    \item{obiwarp}{alignment based on the complete mz-rt data. This method
+    does not require any identified peaks or defined features. See
+    \code{\link{adjustRtime-obiwarp}} for more details.}
+    }
 }
 \seealso{
 \code{\link{retcor}} for the \emph{old} retention time correction 
-methods.
+    methods.
 
 Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
   \code{\link{adjustRtime-peakGroups}}
