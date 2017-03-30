@@ -16,9 +16,9 @@ test_adjustRtime_PeakGroups <- function() {
     checkTrue(length(processHistory(xodg,
                                     type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 1)
     ## Now do the retention time correction
-    xsr <- retcor(xsg, method = "peakgroups")
-    minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
-    p <- PeakGroupsParam(minFraction = minFr)
+    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 0.3)
+    ## minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
+    p <- PeakGroupsParam(minFraction = 1, span = 0.3)
     xodr <- adjustRtime(xodg, param = p)
     ## Check that we've got process histories.
     checkTrue(validObject(xodr))
@@ -46,9 +46,23 @@ test_adjustRtime_PeakGroups <- function() {
     ## Just to ensure - are the raw rt the same?
     checkEquals(unlist(rtime(xod, bySample = TRUE), use.names = FALSE),
                 unlist(xs@rt$raw, use.names = FALSE))
+    ## Check that we get the same by supplying the peakGroupsMatrix.
+    pgm <- adjustRtimePeakGroups(xodg, param = p)
+    p_2 <- p
+    minFraction(p_2) <- 0.5
+    extraPeaks(p_2) <- 20
+    peakGroupsMatrix(p_2) <- pgm
+    xodr_2 <- adjustRtime(xodg, param = p_2)
+    checkEquals(adjustedRtime(xodr), adjustedRtime(xodr_2))
+    checkEquals(chromPeaks(xodr), chromPeaks(xodr_2))
+    checkEquals(processParam(
+        processHistory(xodr, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]]), p)
+    checkEquals(processParam(
+        processHistory(xodr_2, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]]),
+        p_2)
     ## Doing an additional grouping
     xodrg <- groupChromPeaks(xodr, param = PeakDensityParam(sampleGroups =
-                                                                   xs$class))
+                                                                xs$class))
     checkTrue(length(processHistory(xodrg,
                                     type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 2)
     checkTrue(hasAdjustedRtime(xodrg))

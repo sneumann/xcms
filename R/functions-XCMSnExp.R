@@ -762,6 +762,8 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
     if (!hasFeatures(object))
         stop("No features present. Please run 'groupChromPeaks' first.")
     if (hasAdjustedRtime(object))
+        warning("Alignment/retention time correction was already performed, ",
+                "returning a matrix with adjusted retention times.")
     nSamples <- length(fileNames(object))
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object),
@@ -793,7 +795,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
 plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
                               adjRt = TRUE,
                               xlab = ifelse(adjRt, yes = expression(rt[adj]),
-                                           no = expression(rt[raw]),
+                                           no = expression(rt[raw])),
                               ylab = expression(rt[adj]-rt[raw]), ...) {
     if (!is(object, "XCMSnExp"))
         stop("'object' has to be an 'XCMSnExp' object.")

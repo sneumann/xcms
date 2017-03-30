@@ -35,7 +35,8 @@
 groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
-  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix())
+  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow = 0,
+  ncol = 0))
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -95,6 +96,11 @@ to \code{\link{loess}}.}
 Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
 \code{\link{loess}} for more information.}
 
+\item{peakGroupsMatrix}{optional \code{matrix} of (raw) retention times for
+the peak groups on which the alignment should be performed. Each column
+represents a sample, each row a feature/peak group. Such a matrix is
+for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
+
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
 containing the results from a previous chromatographic peak detection (see
 \code{\link{findChromPeaks}}) and alignment analysis (see
@@ -108,11 +114,6 @@ the retention time correction method..}
 \item{value}{The value for the slot.}
 
 \item{x}{a \code{PeakGroupsParam} object.}
-
-\item{peakGroupsParam}{optional \code{matrix} of (raw) retention times for
-the peak groups on which the alignment should be performed. Each column
-represents a sample, each row a feature/peak group. Such a matrix is
-for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
 }
 \value{
 The \code{PeakGroupsParam} function returns a
@@ -175,7 +176,7 @@ performs retention time correction based on the alignment of peak groups
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakMatrix}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}

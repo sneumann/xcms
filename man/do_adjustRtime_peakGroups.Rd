@@ -7,7 +7,8 @@ found in most samples}
 \usage{
 do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
   extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
-  family = c("gaussian", "symmetric"))
+  family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol = 0,
+  nrow = 0))
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified
@@ -16,8 +17,8 @@ chromatographic peaks in the samples.}
 \item{peakIndex}{a \code{list} of indices that provides the grouping
 information of the chromatographic peaks (across and within samples).}
 
-\item{rtime}{A \code{list} of \code{numeric} vectors with the retention times
-per file/sample.}
+\item{rtime}{a \code{list} of \code{numeric} vectors with the retention
+times per file/sample.}
 
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
 required fraction of samples in which peaks for the peak group were
@@ -45,33 +46,40 @@ to \code{\link{loess}}.}
 \item{family}{character defining the method to be used for loess smoothing.
 Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
 \code{\link{loess}} for more information.}
+
+\item{peakGroupsMatrix}{optional \code{matrix} of (raw) retention times for
+peak groups on which the alignment should be performed. Each column
+represents a sample, each row a feature/peak group. If not provided,
+this matrix will be determined depending on parameters
+\code{minFraction} and \code{extraPeaks}. If provided,
+\code{minFraction} and \code{extraPeaks} will be ignored.}
 }
 \value{
-A \code{list} with \code{numeric} vectors with the adjusted retention
-times grouped by sample.
+A \code{list} with \code{numeric} vectors with the adjusted
+    retention times grouped by sample.
 }
 \description{
 The function performs retention time correction by assessing
-the retention time deviation across all samples using peak groups (features)
-containg chromatographic peaks present in most/all samples. The retention
-time deviation for these features in each sample is described by fitting
-either a polynomial (\code{smooth = "loess"}) or a linear
-(\code{smooth = "linear"}) model to the data points. The models are
-subsequently used to adjust the retention time for each spectrum in each
-sample.
+    the retention time deviation across all samples using peak groups
+    (features) containg chromatographic peaks present in most/all samples.
+    The retention time deviation for these features in each sample is
+    described by fitting either a polynomial (\code{smooth = "loess"}) or
+    a linear (\code{smooth = "linear"}) model to the data points. The
+    models are subsequently used to adjust the retention time for each
+    spectrum in each sample.
 }
 \details{
 The alignment bases on the presence of compounds that can be found
-in all/most samples of an experiment. The retention times of individual
-spectra are then adjusted based on the alignment of the features 
-corresponding to these \emph{house keeping compounds}. The paraneters
-\code{minFraction} and \code{extraPeaks} can be used to fine tune which
-features should be used for the alignment (i.e. which features 
-most likely correspond to the above mentioned house keeping compounds).
+    in all/most samples of an experiment. The retention times of individual
+    spectra are then adjusted based on the alignment of the features 
+    corresponding to these \emph{house keeping compounds}. The paraneters
+     \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+    features should be used for the alignment (i.e. which features 
+    most likely correspond to the above mentioned house keeping compounds).
 }
 \note{
 The method ensures that returned adjusted retention times are
-increasingly ordered, just as the raw retention times.
+    increasingly ordered, just as the raw retention times.
 }
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and

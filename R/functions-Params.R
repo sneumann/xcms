@@ -291,7 +291,7 @@ NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
 PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                             family = "gaussian",
-                            peakGroupsMatrix = matrix()) {
+                            peakGroupsMatrix = matrix(nrow = 0, ncol = 0)) {
     return(new("PeakGroupsParam", minFraction = minFraction,
                extraPeaks = extraPeaks, smooth = smooth, span = span,
                family = family, peakGroupsMatrix = peakGroupsMatrix))

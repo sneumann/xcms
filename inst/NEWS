@@ -4,6 +4,8 @@ CHANGES IN VERSION 1.51.10
 NEW FEATURES:
 - filterRt for Chromatogram class (issue #142).
 - adjustRtimePeakGroups function (issue #147).
+- adjustRtime,XCMSnExp,PeakGroupsParam and do_adjustRtime_peakGroups support
+  use of pre-defined matrix to perform alignment (issue #153).
 
 USER VISIBLE CHANGES:
 - featureDefinitions and featureValues return DataFrame and matrix with rownames

@@ -1727,7 +1727,7 @@ NULL
 ##'     Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
 ##'     \code{\link{loess}} for more information.
 ##'
-##' @param peakGroupsParam optional \code{matrix} of (raw) retention times for
+##' @param peakGroupsMatrix optional \code{matrix} of (raw) retention times for
 ##'     the peak groups on which the alignment should be performed. Each column
 ##'     represents a sample, each row a feature/peak group. Such a matrix is
 ##'     for example returned by the \code{\link{adjustRtimePeakGroups}} method.
@@ -1755,7 +1755,7 @@ NULL
 ##'     peak groups present in most samples.
 ##'     Instances should be created with the \code{PeakGroupsParam} constructor.
 ##'
-##' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakMatrix See corresponding parameter above. \code{.__classVersion__} stores
+##' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix See corresponding parameter above. \code{.__classVersion__} stores
 ##' the version from the class. Slots values should exclusively be accessed
 ##' \emph{via} the corresponding getter and setter methods listed above.
 ##'
@@ -1838,7 +1838,7 @@ setClass("PeakGroupsParam",
              smooth = "loess",
              span = 0.2,
              family = "gaussian",
-             peakGroupsMatrix = matrix()
+             peakGroupsMatrix = matrix(ncol = 0, nrow = 0)
          ),
          validity = function(object) {
              msg <- character()

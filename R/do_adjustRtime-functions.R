@@ -5,38 +5,45 @@
 ##' found in most samples
 ##'
 ##' @description The function performs retention time correction by assessing
-##' the retention time deviation across all samples using peak groups (features)
-##' containg chromatographic peaks present in most/all samples. The retention
-##' time deviation for these features in each sample is described by fitting
-##' either a polynomial (\code{smooth = "loess"}) or a linear
-##' (\code{smooth = "linear"}) model to the data points. The models are
-##' subsequently used to adjust the retention time for each spectrum in each
-##' sample. 
+##'     the retention time deviation across all samples using peak groups
+##'     (features) containg chromatographic peaks present in most/all samples.
+##'     The retention time deviation for these features in each sample is
+##'     described by fitting either a polynomial (\code{smooth = "loess"}) or
+##'     a linear (\code{smooth = "linear"}) model to the data points. The
+##'     models are subsequently used to adjust the retention time for each
+##'     spectrum in each sample. 
 ##'
 ##' @note The method ensures that returned adjusted retention times are
-##' increasingly ordered, just as the raw retention times.
+##'     increasingly ordered, just as the raw retention times.
 ##' 
 ##' @details The alignment bases on the presence of compounds that can be found
-##' in all/most samples of an experiment. The retention times of individual
-##' spectra are then adjusted based on the alignment of the features 
-##' corresponding to these \emph{house keeping compounds}. The paraneters
-##' \code{minFraction} and \code{extraPeaks} can be used to fine tune which
-##' features should be used for the alignment (i.e. which features 
-##' most likely correspond to the above mentioned house keeping compounds).
+##'     in all/most samples of an experiment. The retention times of individual
+##'     spectra are then adjusted based on the alignment of the features 
+##'     corresponding to these \emph{house keeping compounds}. The paraneters
+##'      \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+##'     features should be used for the alignment (i.e. which features 
+##'     most likely correspond to the above mentioned house keeping compounds).
 ##'
 ##' @inheritParams adjustRtime-peakGroups
 ##' 
 ##' @param peaks a \code{matrix} or \code{data.frame} with the identified
-##' chromatographic peaks in the samples.
+##'     chromatographic peaks in the samples.
 ##'
 ##' @param peakIndex a \code{list} of indices that provides the grouping
-##' information of the chromatographic peaks (across and within samples).
+##'     information of the chromatographic peaks (across and within samples).
 ##' 
-##' @param rtime A \code{list} of \code{numeric} vectors with the retention times
-##' per file/sample.
+##' @param rtime a \code{list} of \code{numeric} vectors with the retention
+##'     times per file/sample.
+##'
+##' @param peakGroupsMatrix optional \code{matrix} of (raw) retention times for
+##'     peak groups on which the alignment should be performed. Each column
+##'     represents a sample, each row a feature/peak group. If not provided,
+##'     this matrix will be determined depending on parameters
+##'     \code{minFraction} and \code{extraPeaks}. If provided,
+##'     \code{minFraction} and \code{extraPeaks} will be ignored.
 ##' 
-##' @return A \code{list} with \code{numeric} vectors with the adjusted retention
-##' times grouped by sample.
+##' @return A \code{list} with \code{numeric} vectors with the adjusted
+##'     retention times grouped by sample.
 ##'
 ##' @family core retention time correction algorithms
 ##'
@@ -47,13 +54,12 @@
 ##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
-do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
-                                      minFraction = 0.9, extraPeaks = 1,
-                                      smooth = c("loess", "linear"), span = 0.2,
-                                      family = c("gaussian", "symmetric")) {
-    ## Add a peakGroupsMatrix parameter. Have to check also this matrix:
-    ## o Same number of samples.
-    ## o range of rt values is within the rtime.
+do_adjustRtime_peakGroups <-
+    function(peaks, peakIndex, rtime, minFraction = 0.9, extraPeaks = 1,
+             smooth = c("loess", "linear"), span = 0.2,
+             family = c("gaussian", "symmetric"),
+             peakGroupsMatrix = matrix(ncol = 0, nrow = 0))
+{
     ## Check input.
     if (missing(peaks) | missing(peakIndex) | missing(rtime))
         stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")
@@ -62,7 +68,6 @@ do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
     ## minFraction
     if (any(minFraction > 1) | any(minFraction < 0))
         stop("'minFraction' has to be between 0 and 1!")
-    
     ## Check peaks:
     OK <- .validChromPeaksMatrix(peaks)
     if (is.character(OK))
@@ -81,14 +86,26 @@ do_adjustRtime_peakGroups <- function(peaks, peakIndex, rtime,
              "times of the spectra per sample!")
     if (length(rtime) != max(peaks[, "sample"]))
         stop("The length of 'rtime' does not match with the total number of ",
-             "samples according to the 'peaks' matrix!")
-    
+             "samples according to the 'peaks' matrix!")    
     nSamples <- length(rtime)
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
-   
-    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
-                                 missingSample, extraPeaks)
+    ## Check if we've got a valid peakGroupsMatrix
+    ## o Same number of samples.
+    ## o range of rt values is within the rtime.
+    if (nrow(peakGroupsMatrix)) {
+        if (ncol(peakGroupsMatrix) != nSamples)
+            stop("'peakGroupsMatrix' has to have the same number of columns ",
+                 "as there are samples!")
+        pg_range <- range(peakGroupsMatrix, na.rm = TRUE)
+        rt_range <- range(rtime)
+        if (!(pg_range[1] >= rt_range[1] & pg_range[2] <= rt_range[2]))
+            stop("The retention times in 'peakGroupsMatrix' have to be within",
+                 " the retention time range of the experiment!")
+        rt <- peakGroupsMatrix
+    } else
+        rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
+                                     missingSample, extraPeaks)
     ## ## Check if we have peak groups with almost the same retention time. If yes
     ## ## select the best matching peaks among these.
     ## rtmeds <- rowMedians(rt, na.rm = TRUE)
@@ -368,14 +385,16 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
 ##' provided \code{numeric} vectors \code{rtraw} and \code{rtadj}.
 ##'
 ##' @details The function uses the \code{stepfun} to adjust \code{x} and adjusts
-##' it given \code{rtraw} towards \code{rtadj}. Hence it is possible to perform
-##' or to revert retention time correction in \code{x} depending on what is
-##' provided with parameters \code{rtraw} and \code{rtadj}. See examples for
-##' details.
+##'     it given \code{rtraw} towards \code{rtadj}. Hence it is possible to
+##'     perform or to revert retention time correction in \code{x} depending
+##'     on what is provided with parameters \code{rtraw} and \code{rtadj}.
+##'     See examples for details.
 ##' 
 ##' @param x A numeric or matrix with retention time values that should be
-##' adjusted.
+##'     adjusted.
+##' 
 ##' @noRd
+##' 
 ##' @examples
 ##'
 ##' ## Perform retention time correction:
@@ -427,8 +446,9 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
 ##' Simple helper function to create a matrix with retention times for well
 ##' aligned peak groups, each row containing the rt of a peak group,
 ##' columns being samples.
+##'
 ##' @details This function is called internally by the
-##' do_adjustRtime_peakGroups function and the retcor.peakgroups method.
+##'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
 ##' @noRd
 .getPeakGroupsRtMatrix <- function(peaks, peakIndex, nSamples,
                                    missingSample, extraPeaks) {
