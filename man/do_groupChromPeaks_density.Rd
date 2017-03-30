@@ -16,7 +16,8 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the

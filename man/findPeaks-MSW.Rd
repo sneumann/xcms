@@ -177,11 +177,11 @@ with the results of the detection.
 }
 \description{
 Perform peak detection in mass spectrometry
-direct injection spectrum using a wavelet based algorithm.
+    direct injection spectrum using a wavelet based algorithm.
 
 The \code{MSWParam} class allows to specify all
-settings for a peak detection using the MSW method. Instances should be
-created with the \code{MSWParam} constructor.
+    settings for a peak detection using the MSW method. Instances should be
+    created with the \code{MSWParam} constructor.
 
 The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
 method performs peak detection in single-spectrum non-chromatography MS
@@ -230,10 +230,10 @@ parameters to be passed to the
 }
 \details{
 This is a wrapper for the peak picker in Bioconductor's
-\code{MassSpecWavelet} package calling
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
-\emph{xcmsDirect} vignette for more information.
+    \code{MassSpecWavelet} package calling
+    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+    \emph{xcmsDirect} vignette for more information.
 
 Parallel processing (one process per sample) is supported and can
 be configured either by the \code{BPPARAM} parameter or by globally defining
@@ -250,11 +250,11 @@ setter methods listed above.}
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{findPeaks}} methods. It supports peak detection on
-\code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
-objects (both defined in the \code{MSnbase} package). All of the settings
-to the algorithm can be passed with a \code{MSWParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{findPeaks}} methods. It supports peak detection on
+    \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+    objects (both defined in the \code{MSnbase} package). All of the settings
+    to the algorithm can be passed with a \code{MSWParam} object.
 }
 \examples{
 
@@ -279,7 +279,7 @@ head(chromPeaks(fticr))
 }
 \seealso{
 The \code{\link{do_findPeaks_MSW}} core API function
-and \code{\link{findPeaks.MSW}} for the old user interface.
+    and \code{\link{findPeaks.MSW}} for the old user interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the peak detection.

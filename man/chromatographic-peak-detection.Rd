@@ -6,32 +6,32 @@
 \title{Chromatographic peak detection methods.}
 \description{
 The \code{findChromPeaks} methods perform the chromatographic
-peak detection on LC/GC-MS data and are part of the modernized \code{xcms}
-user interface.
+    peak detection on LC/GC-MS data and are part of the modernized
+    \code{xcms} user interface.
 
-The implemented peak detection methods in chromatographic space are:
-\describe{
-\item{centWave}{chromatographic peak detection using the \emph{centWave}
-method. See \code{\link{centWave}} for more details.}
+    The implemented peak detection methods in chromatographic space are:
+    \describe{
+    \item{centWave}{chromatographic peak detection using the \emph{centWave}
+    method. See \code{\link{centWave}} for more details.}
 
-\item{centWave with predicted isotopes}{peak detection using a two-step
-centWave-based approach considering also feature isotopes. See
-\code{\link{centWaveWithPredIsoROIs}} for more details.}
+    \item{centWave with predicted isotopes}{peak detection using a two-step
+    centWave-based approach considering also feature isotopes. See
+    \code{\link{centWaveWithPredIsoROIs}} for more details.}
 
-\item{matchedFilter}{peak detection in chromatographic space. See
-\code{\link{matchedFilter}} for more details.}
+    \item{matchedFilter}{peak detection in chromatographic space. See
+    \code{\link{matchedFilter}} for more details.}
 
-\item{massifquant}{peak detection using the Kalman filter-based 
-method. See \code{\link{massifquant}} for more details.}
+    \item{massifquant}{peak detection using the Kalman filter-based 
+    method. See \code{\link{massifquant}} for more details.}
 
-\item{MSW}{single-spectrum non-chromatography MS data peak detection.
-See \code{\link{MSW}} for more details.}
+    \item{MSW}{single-spectrum non-chromatography MS data peak detection.
+    See \code{\link{MSW}} for more details.}
 
-}
+    }
 }
 \seealso{
 \code{\link{findPeaks}} for the \emph{old} peak detection
-methods.
+    methods.
 
 Other peak detection methods: \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
   \code{\link{findChromPeaks-centWave}},

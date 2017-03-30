@@ -55,7 +55,8 @@ NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{mzVsRtBalance}{\code{numeric(1)} representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between
@@ -90,17 +91,17 @@ These can be accessed with the \code{\link{featureDefinitions}} method.
 }
 \description{
 This method is inspired by the grouping algorithm of mzMine
-[Katajamaa 2006] and performs correspondence based on proximity of peaks in
-the space spanned by retention time and mz values.
-The method creates first a \emph{master peak list} consisting of all
-chromatographic peaks from the sample in which most peaks were identified,
-and starting from that, calculates distances to peaks from the sample with
-the next most number of peaks. If peaks are closer than the defined
-threshold they are grouped together.
+    [Katajamaa 2006] and performs correspondence based on proximity of peaks
+    in the space spanned by retention time and mz values.
+    The method creates first a \emph{master peak list} consisting of all
+    chromatographic peaks from the sample in which most peaks were
+    identified, and starting from that, calculates distances to peaks from
+    the sample with the next most number of peaks. If peaks are closer than
+    the defined threshold they are grouped together.
 
 The \code{NearestPeaksParam} class allows to specify all
-settings for the peak grouping based on the \emph{nearest} algorithm.
-Instances should be created with the \code{NearestPeaksParam} constructor.
+    settings for the peak grouping based on the \emph{nearest} algorithm.
+    Instances should be created with the \code{NearestPeaksParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
@@ -131,9 +132,9 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{group}} methods. All of the settings to the algorithm
-can be passed with a \code{NearestPeaksParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{group}} methods. All of the settings to the algorithm
+    can be passed with a \code{NearestPeaksParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 all eventually present previous alignment results to be dropped.
@@ -187,11 +188,10 @@ data. \emph{Bioinformatics} 2006, 22:634-636.
 }
 \seealso{
 The \code{\link{do_groupChromPeaks_nearest}} core
-API function and \code{\link{group.nearest}} for the old user interface.
-
-\code{\link{featureDefinitions}} and
-\code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
-results (i.e. the features).
+    API function and \code{\link{group.nearest}} for the old user interface.
+    \code{\link{featureDefinitions}} and
+    \code{\link{featureValues,XCMSnExp-method}} for methods to access
+    peak grouping results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the peak grouping.

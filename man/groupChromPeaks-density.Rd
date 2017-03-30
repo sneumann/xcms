@@ -65,7 +65,8 @@ PeakDensityParam(sampleGroups = numeric(), bw = 30, minFraction = 0.5,
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
@@ -107,15 +108,15 @@ features can be accessed with the \code{\link{featureDefinitions}} method.
 }
 \description{
 This method performs performs correspondence (chromatographic
-peak grouping) based on the density (distribution) of identified peaks
-along the retention time axis within slices of overlapping mz ranges.
-All peaks (from the same or from different samples) being close on the
-retention time axis are grouped into a feature (\emph{peak group}).
+    peak grouping) based on the density (distribution) of identified peaks
+    along the retention time axis within slices of overlapping mz ranges.
+    All peaks (from the same or from different samples) being close on the
+    retention time axis are grouped into a feature (\emph{peak group}).
 
 The \code{PeakDensityParam} class allows to specify all
-settings for the peak grouping based on peak densities along the time
-dimension. Instances should be created with the \code{PeakDensityParam}
-constructor.
+    settings for the peak grouping based on peak densities along the time
+    dimension. Instances should be created with the \code{PeakDensityParam}
+    constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
@@ -150,9 +151,9 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{group}} methods. All of the settings to the algorithm
-can be passed with a \code{PeakDensityParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{group}} methods. All of the settings to the algorithm
+    can be passed with a \code{PeakDensityParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 all eventually present previous correspondence results to be dropped.
@@ -209,11 +210,11 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 }
 \seealso{
 The \code{\link{do_groupChromPeaks_density}} core
-API function and \code{\link{group.density}} for the old user interface.
+    API function and \code{\link{group.density}} for the old user interface.
 
 \code{\link{featureDefinitions}} and
-\code{\link{featureValues,XCMSnExp-method}} for methods to access the features
-(i.e. the peak grouping results).
+    \code{\link{featureValues,XCMSnExp-method}} for methods to access the
+    features (i.e. the peak grouping results).
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the correspondence.

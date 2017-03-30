@@ -1520,6 +1520,8 @@ setMethod("adjustRtime",
                   family = family(param),
                   peakGroupsMatrix = pkGrpMat
               )
+              ## Add the pkGrpMat that's being used to the param object.
+              peakGroupsMatrix(param) <- pkGrpMat
               ## Dropping the peak groups but don't remove its process history
               ## step.
               ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)

@@ -51,7 +51,8 @@ MzClustParam(sampleGroups = numeric(), ppm = 20, absMz = 0,
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{ppm}{\code{numeric(1)} representing the relative mz error for the
 clustering/grouping (in parts per million).}
@@ -89,11 +90,11 @@ with the \code{\link{featureDefinitions}} method.
 }
 \description{
 This method performs high resolution correspondence for single
-spectra samples.
+    spectra samples.
 
 The \code{MzClustParam} class allows to specify all
-settings for the peak grouping based on the \emph{mzClust} algorithm.
-Instances should be created with the \code{MzClustParam} constructor.
+    settings for the peak grouping based on the \emph{mzClust} algorithm.
+    Instances should be created with the \code{MzClustParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
@@ -124,9 +125,9 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{group}} methods. All of the settings to the algorithm
-can be passed with a \code{MzClustParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{group}} methods. All of the settings to the algorithm
+    can be passed with a \code{MzClustParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 all eventually present previous correspondence results to be dropped.
@@ -162,12 +163,11 @@ development of a heuristic approach for metabolomics}.\cr Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)
 }
 \seealso{
-The \code{\link{do_groupPeaks_mzClust}} core
-API function and \code{\link{group.mzClust}} for the old user interface.
-
-\code{\link{featureDefinitions}} and
-\code{\link{featureValues,XCMSnExp-method}} for methods to access peak grouping
-results (i.e. the features).
+The \code{\link{do_groupPeaks_mzClust}} core API function and
+    \code{\link{group.mzClust}} for the old user interface.
+    \code{\link{featureDefinitions}} and
+    \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
+    grouping results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the peak grouping.

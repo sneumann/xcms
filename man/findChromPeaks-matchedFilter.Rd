@@ -108,10 +108,10 @@ MatchedFilterParam(binSize = 0.1, impute = "none", baseValue = numeric(),
 bins/slices in m/z dimension.}
 
 \item{impute}{Character string specifying the method to be used for missing
-value imputation. Allowed values are \code{"none"} (no linear interpolation),
-\code{"lin"} (linear interpolation), \code{"linbase"} (linear interpolation
-within a certain bin-neighborhood) and \code{"intlin"}. See
-\code{\link{imputeLinInterpol}} for more details.}
+value imputation. Allowed values are \code{"none"} (no linear
+interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
+(linear interpolation within a certain bin-neighborhood) and
+\code{"intlin"}. See \code{\link{imputeLinInterpol}} for more details.}
 
 \item{baseValue}{The base value to which empty elements should be set. This
 is only considered for \code{method = "linbase"} and corresponds to the
@@ -122,8 +122,8 @@ element of an empty element that should be considered for linear interpolation. 
 details section for more information.}
 
 \item{fwhm}{\code{numeric(1)} specifying the full width at half maximum
-of matched filtration gaussian model peak. Only used to calculate the actual
-sigma, see below.}
+of matched filtration gaussian model peak. Only used to calculate the
+actual sigma, see below.}
 
 \item{sigma}{\code{numeric(1)} specifying the standard deviation (width)
 of the matched filtration model peak.}
@@ -135,15 +135,15 @@ that are expected/will be identified per slice.}
 to be used in the chromatographic peak detection step.}
 
 \item{steps}{\code{numeric(1)} defining the number of bins to be
-merged before filtration (i.e. the number of neighboring bins that will be
-joined to the slice in which filtration and peak detection will be
+merged before filtration (i.e. the number of neighboring bins that will
+be joined to the slice in which filtration and peak detection will be
 performed).}
 
 \item{mzdiff}{\code{numeric(1)} defining the minimum difference
 in m/z for peaks with overlapping retention times}
 
-\item{index}{\code{logical(1)} specifying whether indicies should be returned instead
-of values for m/z and retention times.}
+\item{index}{\code{logical(1)} specifying whether indicies should be
+returned instead of values for m/z and retention times.}
 
 \item{object}{For \code{findChromPeaks}: an
 \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
@@ -182,20 +182,21 @@ with the results of the peak detection.
 }
 \description{
 The \emph{matchedFilter} algorithm identifies peaks in the
-chromatographic time domain as described in [Smith 2006]. The intensity
-values are binned by cutting The LC/MS data into slices (bins) of a mass unit
-(\code{binSize} m/z) wide. Within each bin the maximal intensity is selected.
-The chromatographic peak detection is then performed in each bin by extending
-it based on the \code{steps} parameter to generate slices comprising bins
-\code{current_bin - steps +1} to \code{current_bin + steps - 1}. Each of
-these slices is then filtered with matched filtration using a second-derative
-Gaussian as the model peak shape. After filtration peaks are detected using
-a signal-to-ration cut-off. For more details and illustrations see
-[Smith 2006].
+    chromatographic time domain as described in [Smith 2006]. The intensity
+    values are binned by cutting The LC/MS data into slices (bins) of a mass
+    unit (\code{binSize} m/z) wide. Within each bin the maximal intensity is
+    selected. The chromatographic peak detection is then performed in each
+    bin by extending it based on the \code{steps} parameter to generate
+    slices comprising bins \code{current_bin - steps +1} to
+    \code{current_bin + steps - 1}. Each of these slices is then filtered
+    with matched filtration using a second-derative Gaussian as the model
+    peak shape. After filtration peaks are detected using a signal-to-ratio
+    cut-off. For more details and illustrations see [Smith 2006].
 
 The \code{MatchedFilterParam} class allows to specify all
-settings for a chromatographic peak detection using the matchedFilter method.
-Instances should be created with the \code{MatchedFilterParam} constructor.
+    settings for a chromatographic peak detection using the matchedFilter
+    method. Instances should be created with the \code{MatchedFilterParam}
+    constructor.
 
 The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
 method performs peak detection using the \emph{matchedFilter} algorithm
@@ -239,12 +240,12 @@ original files applying also all eventual data manipulations.
 }
 \details{
 The intensities are binned by the provided m/z values within each
-spectrum (scan). Binning is performed such that the bins are centered around
-the m/z values (i.e. the first bin includes all m/z values between
-\code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+    spectrum (scan). Binning is performed such that the bins are centered
+    around the m/z values (i.e. the first bin includes all m/z values between
+    \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
 
-For more details on binning and missing value imputation see
-\code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+    For more details on binning and missing value imputation see
+    \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
 
 Parallel processing (one process per sample) is supported and can
 be configured either by the \code{BPPARAM} parameter or by globally defining
@@ -261,12 +262,12 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{findPeaks}} methods. It supports chromatographic peak detection
-on \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
-objects (both defined in the \code{MSnbase} package). All of the settings
-to the matchedFilter algorithm can be passed with a
-\code{MatchedFilterParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{findPeaks}} methods. It supports chromatographic peak
+    detection on \code{\link[MSnbase]{MSnExp}} and
+    \code{\link[MSnbase]{OnDiskMSnExp}} objects (both defined in the
+    \code{MSnbase} package). All of the settings to the matchedFilter
+    algorithm can be passed with a \code{MatchedFilterParam} object.
 }
 \examples{
 
@@ -299,7 +300,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 }
 \seealso{
 The \code{\link{do_findChromPeaks_matchedFilter}} core API function
-and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+    and \code{\link{findPeaks.matchedFilter}} for the old user interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the chromatographic peak detection.

@@ -22,6 +22,7 @@ The \code{adjustRtime} method(s) perform retention time
 \seealso{
 \code{\link{retcor}} for the \emph{old} retention time correction 
     methods.
+    \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
 Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
   \code{\link{adjustRtime-peakGroups}}

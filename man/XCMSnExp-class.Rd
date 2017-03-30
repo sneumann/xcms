@@ -147,16 +147,16 @@ processHistoryTypes()
 object, for all other methods a \code{XCMSnExp} object.}
 
 \item{value}{For \code{adjustedRtime<-}: a \code{list} (length equal to the
-number of samples) with numeric vectors representing the adjusted retention
-times per scan.
+    number of samples) with numeric vectors representing the adjusted
+    retention times per scan.
 
-For \code{featureDefinitions<-}: a \code{DataFrame} with peak
-grouping information. See return value for the \code{featureDefinitions}
-method for the expected format.
+    For \code{featureDefinitions<-}: a \code{DataFrame} with peak
+    grouping information. See return value for the \code{featureDefinitions}
+    method for the expected format.
 
-For \code{chromPeaks<-}: a \code{matrix} with information on
-detected peaks. See return value for the \code{chromPeaks} method for the
-expected format.}
+    For \code{chromPeaks<-}: a \code{matrix} with information on
+    detected peaks. See return value for the \code{chromPeaks} method for the
+    expected format.}
 
 \item{method}{The profile matrix generation method. Allowed are \code{"bin"},
 \code{"binlin"}, \code{"binlinbase"} and \code{"intlin"}. See details
@@ -291,30 +291,32 @@ data processing steps that have been performed.
 }
 \description{
 The \code{MsFeatureData} class is designed to encapsule all
-data related to the preprocessing of metabolomics data using the \code{xcms}
-package, i.e. it contains a \code{matrix} with the chromatographic peaks
-identified by the peak detection, a \code{DataFrame} with the definition on
-grouped chromatographic peaks across samples and a \code{list} with the
-adjusted retention times per sample.
+    data related to the preprocessing of metabolomics data using the
+    \code{xcms} package, i.e. it contains a \code{matrix} with the
+    chromatographic peaks identified by the peak detection, a
+    \code{DataFrame} with the definition on grouped chromatographic peaks
+    across samples and a \code{list} with the adjusted retention times per
+    sample.
 
 The \code{XCMSnExp} object is designed to contain all results
-from metabolomics data preprocessing (chromatographic peak detection, peak
-grouping (correspondence) and retention time correction). The corresponding
-elements in the \code{msFeatureData} slot are \code{"chromPeaks"}
-(a \code{matrix}), \code{"featureDefinitions"} (a \code{DataFrame}) and
-\code{"adjustedRtime"} (a \code{list} of numeric vectors). Note that these
-should not be accessed directly but rather \emph{via} their accessor methods.
-Along with the results, the object contains the processing history that
-allow to track each processing step along with the used settings. The object
-also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}} object hence
-allowing easy access to the full data on which the peak detection was
-performed.
+    from metabolomics data preprocessing (chromatographic peak detection,
+    peak grouping (correspondence) and retention time correction). The
+    corresponding elements in the \code{msFeatureData} slot are
+    \code{"chromPeaks"} (a \code{matrix}), \code{"featureDefinitions"}
+    (a \code{DataFrame}) and \code{"adjustedRtime"} (a \code{list} of
+    numeric vectors). Note that these should not be accessed directly but
+    rather \emph{via} their accessor methods.
+    Along with the results, the object contains the processing history that
+    allow to track each processing step along with the used settings. The
+    object also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}}
+    object hence allowing easy access to the full data on which the peak
+    detection was performed.
 
-Objects from this class should not be created directly, they are returned as
-result from the \code{\link{findChromPeaks}} method.
+    Objects from this class should not be created directly, they are
+    returned as result from the \code{\link{findChromPeaks}} method.
 
-\code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
-objects using the \code{as} method.
+    \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
+    objects using the \code{as} method.
 
 \code{processHistoryTypes} returns the available \emph{types} of
 process histories. These can be passed with argument \code{type} to the
@@ -441,9 +443,9 @@ and retention time correction (element \code{"adjustedRtime"}) steps.}
 
 \note{
 The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
-equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
-\code{"featureDefinitions"} contains information from the \code{@groups} and
-\code{@groupidx} slots from an \code{xcmsSet} object.
+    equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
+    \code{"featureDefinitions"} contains information from the \code{@groups}
+    and \code{@groupidx} slots from an \code{xcmsSet} object.
 }
 \examples{
 
@@ -516,18 +518,14 @@ head(peaks(xs))
 }
 \seealso{
 \code{\linkS4class{xcmsSet}} for the old implementation.
-
-\code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
-and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
-
-\code{\link{findChromPeaks}} for available peak detection methods
-returning a \code{XCMSnExp} object as a result.
-
-\code{\link{groupChromPeaks}} for available peak grouping
-methods and \code{\link{featureDefinitions}} for the method to extract
-the feature definitions representing the peak grouping results.
-
-\code{\link{adjustRtime}} for retention time adjustment methods.
+    \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
+    and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+    \code{\link{findChromPeaks}} for available peak detection methods
+    returning a \code{XCMSnExp} object as a result.
+    \code{\link{groupChromPeaks}} for available peak grouping
+    methods and \code{\link{featureDefinitions}} for the method to extract
+    the feature definitions representing the peak grouping results.
+    \code{\link{adjustRtime}} for retention time adjustment methods.
 
 \code{\link{fillChromPeaks}} for the method to fill-in eventually
 missing chromatographic peaks for a feature in some samples.

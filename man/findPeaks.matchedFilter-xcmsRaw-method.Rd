@@ -16,8 +16,8 @@
 should be performed.}
 
 \item{fwhm}{\code{numeric(1)} specifying the full width at half maximum
-of matched filtration gaussian model peak. Only used to calculate the actual
-sigma, see below.}
+of matched filtration gaussian model peak. Only used to calculate the
+actual sigma, see below.}
 
 \item{sigma}{\code{numeric(1)} specifying the standard deviation (width)
 of the matched filtration model peak.}
@@ -32,15 +32,15 @@ to be used in the chromatographic peak detection step.}
 dimension.}
 
 \item{steps}{\code{numeric(1)} defining the number of bins to be
-merged before filtration (i.e. the number of neighboring bins that will be
-joined to the slice in which filtration and peak detection will be
+merged before filtration (i.e. the number of neighboring bins that will
+be joined to the slice in which filtration and peak detection will be
 performed).}
 
 \item{mzdiff}{\code{numeric(1)} defining the minimum difference
 in m/z for peaks with overlapping retention times}
 
-\item{index}{\code{logical(1)} specifying whether indicies should be returned instead
-of values for m/z and retention times.}
+\item{index}{\code{logical(1)} specifying whether indicies should be
+returned instead of values for m/z and retention times.}
 
 \item{sleep}{(DEFUNCT). This parameter is no longer functional, as it would cause
 problems in parallel processing mode.}

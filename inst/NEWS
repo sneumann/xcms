@@ -6,6 +6,7 @@ NEW FEATURES:
 - adjustRtimePeakGroups function (issue #147).
 - adjustRtime,XCMSnExp,PeakGroupsParam and do_adjustRtime_peakGroups support
   use of pre-defined matrix to perform alignment (issue #153).
+- plotAdjustedRtime to visualize alignment results (issue #141).
 
 USER VISIBLE CHANGES:
 - featureDefinitions and featureValues return DataFrame and matrix with rownames

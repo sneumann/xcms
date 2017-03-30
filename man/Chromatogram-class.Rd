@@ -92,12 +92,12 @@ upper retention time for the filtering.}
 }
 \description{
 The \code{Chromatogram} class is designed to store
-chromatographic MS data, i.e. pairs of retention time and intensity values.
-Instances of the class can be created with the \code{Chromatogram}
-constructor function but in most cases the dedicated methods for
-\code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}} objects extracting
-chromatograms should be used instead (i.e. the
-\code{\link{extractChromatograms}}).
+    chromatographic MS data, i.e. pairs of retention time and intensity
+    values. Instances of the class can be created with the
+    \code{Chromatogram} constructor function but in most cases the dedicated
+    methods for \code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}}
+    objects extracting chromatograms should be used instead (i.e. the
+    \code{\link{extractChromatograms}}).
 
 \code{Chromatogram}: create an instance of the
 \code{Chromatogram} class.
@@ -132,16 +132,17 @@ intensity pairs) of the chromatogram.
 retention time range.
 }
 \details{
-The \code{mz}, \code{filterMz}, \code{precursorMz} and \code{productMz}
-are stored as a \code{numeric(2)} representing a range even if the
-chromatogram was generated for only a single ion (i.e. a single mz value).
-Using ranges for \code{mz} values allow this class to be used also for e.g.
-total ion chromatograms or base peak chromatograms.
+The \code{mz}, \code{filterMz}, \code{precursorMz} and
+    \code{productMz} are stored as a \code{numeric(2)} representing a range
+    even if the chromatogram was generated for only a single ion (i.e. a
+    single mz value). Using ranges for \code{mz} values allow this class to
+    be used also for e.g. total ion chromatograms or base peak chromatograms.
 
-The slots \code{precursorMz} and \code{productMz} allow to represent SRM
-(single reaction monitoring) and MRM (multiple SRM) chromatograms. As example,
-a \code{Chromatogram} for a SRM transition 273 -> 153 will have a
-\code{@precursorMz = c(273, 273)} and a \code{@productMz = c(153, 153)}.
+    The slots \code{precursorMz} and \code{productMz} allow to represent SRM
+    (single reaction monitoring) and MRM (multiple SRM) chromatograms. As
+    example, a \code{Chromatogram} for a SRM transition 273 -> 153 will have
+    a \code{@precursorMz = c(273, 273)} and a
+    \code{@productMz = c(153, 153)}.
 }
 \section{Slots}{
 
@@ -172,8 +173,8 @@ range(rtime(chr2))
 }
 \seealso{
 \code{\link{extractChromatograms}} for the method to extract
-\code{Chromatogram} objects from \code{\link{XCMSnExp}} or
-\code{\link[MSnbase]{OnDiskMSnExp}} objects.
+    \code{Chromatogram} objects from \code{\link{XCMSnExp}} or
+    \code{\link[MSnbase]{OnDiskMSnExp}} objects.
 }
 \author{
 Johannes Rainer

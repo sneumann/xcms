@@ -34,7 +34,8 @@ spectra/scans of the data representing the retention time of each scan.}
 spectrum.}
 
 \item{ppm}{\code{numeric(1)} defining the maximal tolerated m/z deviation in
-consecutive scans in parts per million (ppm) for the initial ROI definition.}
+consecutive scans in parts per million (ppm) for the initial ROI
+definition.}
 
 \item{peakwidth}{\code{numeric(2)} with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
@@ -47,21 +48,23 @@ signal to noise threshold for the initial (first) centWave run.}
 
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
-retained if they contain at least \code{k} peaks with intensity \code{>= I}.}
+retained if they contain at least \code{k} peaks with intensity
+\code{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
-chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted mean of
-the peak's m/z values, \code{"mean"}: mean of the peak's m/z values,
-\code{"apex"}: use the m/z value at the peak apex, \code{"wMeanApex3"}:
-intensity weighted mean of the m/z value at the peak apex and the m/z values
-left and right of it and \code{"meanApex3"}: mean of the m/z value of the
-peak apex and the m/z values left and right of it.}
+chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
+mean of the peak's m/z values, \code{"mean"}: mean of the peak's m/z
+values, \code{"apex"}: use the m/z value at the peak apex,
+\code{"wMeanApex3"}: intensity weighted mean of the m/z value at the
+peak apex and the m/z values left and right of it and \code{"meanApex3"}:
+mean of the m/z value of the peak apex and the m/z values left and right
+of it.}
 
 \item{integrate}{Integration method. For \code{integrate = 1} peak limits
 are found through descent on the mexican hat filtered data, for
-\code{integrate = 2} the descent is done on the real data. The latter method
-is more accurate but prone to noise, while the former is more robust, but
-less exact.}
+\code{integrate = 2} the descent is done on the real data. The latter
+method is more accurate but prone to noise, while the former is more
+robust, but less exact.}
 
 \item{mzdiff}{\code{numeric(1)} representing the minimum difference in m/z
 dimension for peaks with overlapping retention times; can be negatove to
@@ -83,19 +86,20 @@ omitted and chromatographic peak detection is performed on the submitted
 ROIs. Each ROI is expected to have the following elements specified:
 \code{scmin} (start scan index), \code{scmax} (end scan index),
 \code{mzmin} (minimum m/z), \code{mzmax} (maximum m/z), \code{length}
-(number of scans), \code{intensity} (summed intensity). Each ROI should be
-represented by a \code{list} of elements or a single row \code{data.frame}.}
+(number of scans), \code{intensity} (summed intensity). Each ROI should
+be represented by a \code{list} of elements or a single row
+\code{data.frame}.}
 
 \item{firstBaselineCheck}{\code{logical(1)}. If \code{TRUE} continuous
 data within regions of interest is checked to be above the first baseline.}
 
 \item{roiScales}{Optional numeric vector with length equal to \code{roiList}
-defining the scale for each region of interest in \code{roiList} that should
-be used for the centWave-wavelets.}
+defining the scale for each region of interest in \code{roiList} that
+should be used for the centWave-wavelets.}
 
 \item{snthreshIsoROIs}{\code{numeric(1)} defining the signal to noise ratio
-cutoff to be used in the second centWave run to identify peaks for predicted
-isotope ROIs.}
+cutoff to be used in the second centWave run to identify peaks for
+predicted isotope ROIs.}
 
 \item{maxCharge}{\code{integer(1)} defining the maximal isotope charge.
 Isotopes will be defined for charges \code{1:maxCharge}.}

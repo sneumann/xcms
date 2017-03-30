@@ -16,7 +16,8 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{mzVsRtBalance}{\code{numeric(1)} representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between

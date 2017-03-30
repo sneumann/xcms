@@ -187,6 +187,12 @@ These methods and classes are part of the updated and modernized
     \code{\link{group}} methods. All of the settings to the alignment
     algorithm can be passed with a \code{PeakGroupsParam} object.
 
+    The matrix with the (raw) retention times of the peak groups used
+    in the alignment is added to the \code{peakGroupsMatrix} slot of the
+    \code{PeakGroupsParam} object that is stored into the corresponding
+    \emph{process history step} (see \code{\link{processHistory}} for how
+    to access the process history).
+
 \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
     sample alignment, but after a correspondence (peak grouping).
 
@@ -272,6 +278,7 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 The \code{\link{do_adjustRtime_peakGroups}} core
     API function and \code{\link{retcor.peakgroups}} for the old user
     interface.
+    \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the alignment.

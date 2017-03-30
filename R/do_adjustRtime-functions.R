@@ -1,59 +1,59 @@
 ## Retention time correction methods.
 #' @include DataClasses.R functions-MsFeatureData.R
 
-##' @title Align spectrum retention times across samples using peak groups
-##' found in most samples
-##'
-##' @description The function performs retention time correction by assessing
-##'     the retention time deviation across all samples using peak groups
-##'     (features) containg chromatographic peaks present in most/all samples.
-##'     The retention time deviation for these features in each sample is
-##'     described by fitting either a polynomial (\code{smooth = "loess"}) or
-##'     a linear (\code{smooth = "linear"}) model to the data points. The
-##'     models are subsequently used to adjust the retention time for each
-##'     spectrum in each sample. 
-##'
-##' @note The method ensures that returned adjusted retention times are
-##'     increasingly ordered, just as the raw retention times.
-##' 
-##' @details The alignment bases on the presence of compounds that can be found
-##'     in all/most samples of an experiment. The retention times of individual
-##'     spectra are then adjusted based on the alignment of the features 
-##'     corresponding to these \emph{house keeping compounds}. The paraneters
-##'      \code{minFraction} and \code{extraPeaks} can be used to fine tune which
-##'     features should be used for the alignment (i.e. which features 
-##'     most likely correspond to the above mentioned house keeping compounds).
-##'
-##' @inheritParams adjustRtime-peakGroups
-##' 
-##' @param peaks a \code{matrix} or \code{data.frame} with the identified
-##'     chromatographic peaks in the samples.
-##'
-##' @param peakIndex a \code{list} of indices that provides the grouping
-##'     information of the chromatographic peaks (across and within samples).
-##' 
-##' @param rtime a \code{list} of \code{numeric} vectors with the retention
-##'     times per file/sample.
-##'
-##' @param peakGroupsMatrix optional \code{matrix} of (raw) retention times for
-##'     peak groups on which the alignment should be performed. Each column
-##'     represents a sample, each row a feature/peak group. If not provided,
-##'     this matrix will be determined depending on parameters
-##'     \code{minFraction} and \code{extraPeaks}. If provided,
-##'     \code{minFraction} and \code{extraPeaks} will be ignored.
-##' 
-##' @return A \code{list} with \code{numeric} vectors with the adjusted
-##'     retention times grouped by sample.
-##'
-##' @family core retention time correction algorithms
-##'
-##' @author Colin Smith, Johannes Rainer
-##'
-##' @references
-##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-##' \emph{Anal. Chem.} 2006, 78:779-787.
+#' @title Align spectrum retention times across samples using peak groups
+#' found in most samples
+#'
+#' @description The function performs retention time correction by assessing
+#'     the retention time deviation across all samples using peak groups
+#'     (features) containg chromatographic peaks present in most/all samples.
+#'     The retention time deviation for these features in each sample is
+#'     described by fitting either a polynomial (\code{smooth = "loess"}) or
+#'     a linear (\code{smooth = "linear"}) model to the data points. The
+#'     models are subsequently used to adjust the retention time for each
+#'     spectrum in each sample. 
+#'
+#' @note The method ensures that returned adjusted retention times are
+#'     increasingly ordered, just as the raw retention times.
+#' 
+#' @details The alignment bases on the presence of compounds that can be found
+#'     in all/most samples of an experiment. The retention times of individual
+#'     spectra are then adjusted based on the alignment of the features 
+#'     corresponding to these \emph{house keeping compounds}. The paraneters
+#'      \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+#'     features should be used for the alignment (i.e. which features 
+#'     most likely correspond to the above mentioned house keeping compounds).
+#'
+#' @inheritParams adjustRtime-peakGroups
+#' 
+#' @param peaks a \code{matrix} or \code{data.frame} with the identified
+#'     chromatographic peaks in the samples.
+#'
+#' @param peakIndex a \code{list} of indices that provides the grouping
+#'     information of the chromatographic peaks (across and within samples).
+#' 
+#' @param rtime a \code{list} of \code{numeric} vectors with the retention
+#'     times per file/sample.
+#'
+#' @param peakGroupsMatrix optional \code{matrix} of (raw) retention times for
+#'     peak groups on which the alignment should be performed. Each column
+#'     represents a sample, each row a feature/peak group. If not provided,
+#'     this matrix will be determined depending on parameters
+#'     \code{minFraction} and \code{extraPeaks}. If provided,
+#'     \code{minFraction} and \code{extraPeaks} will be ignored.
+#' 
+#' @return A \code{list} with \code{numeric} vectors with the adjusted
+#'     retention times grouped by sample.
+#'
+#' @family core retention time correction algorithms
+#'
+#' @author Colin Smith, Johannes Rainer
+#'
+#' @references
+#' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+#' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+#' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+#' \emph{Anal. Chem.} 2006, 78:779-787.
 do_adjustRtime_peakGroups <-
     function(peaks, peakIndex, rtime, minFraction = 0.9, extraPeaks = 1,
              smooth = c("loess", "linear"), span = 0.2,
@@ -381,30 +381,30 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     return(rtime)
 }
 
-##' This function adjusts retentin times in the vector/matrix \code{x} given the
-##' provided \code{numeric} vectors \code{rtraw} and \code{rtadj}.
-##'
-##' @details The function uses the \code{stepfun} to adjust \code{x} and adjusts
-##'     it given \code{rtraw} towards \code{rtadj}. Hence it is possible to
-##'     perform or to revert retention time correction in \code{x} depending
-##'     on what is provided with parameters \code{rtraw} and \code{rtadj}.
-##'     See examples for details.
-##' 
-##' @param x A numeric or matrix with retention time values that should be
-##'     adjusted.
-##' 
-##' @noRd
-##' 
-##' @examples
-##'
-##' ## Perform retention time correction:
-##' ## feats is supposed to be the peaks matrix FOR A SINGLE SAMPLE, rtr and
-##' ## rtc the raw and adjusted retention times of the spectras from the same
-##' ## samples:
-##' ## adjFts <- feats
-##' ## adjFts[, c("rt", "rtmin", "rtmax")] <- .applyRtAdjustment(feats[, c("rt", "rtmin", "rtmax")], rtr, rtc)
-##'
-##' ## To revert the adjustment: just switch the order of rtr and rtc
+#' This function adjusts retentin times in the vector/matrix \code{x} given the
+#' provided \code{numeric} vectors \code{rtraw} and \code{rtadj}.
+#'
+#' @details The function uses the \code{stepfun} to adjust \code{x} and adjusts
+#'     it given \code{rtraw} towards \code{rtadj}. Hence it is possible to
+#'     perform or to revert retention time correction in \code{x} depending
+#'     on what is provided with parameters \code{rtraw} and \code{rtadj}.
+#'     See examples for details.
+#' 
+#' @param x A numeric or matrix with retention time values that should be
+#'     adjusted.
+#' 
+#' @noRd
+#' 
+#' @examples
+#'
+#' ## Perform retention time correction:
+#' ## feats is supposed to be the peaks matrix FOR A SINGLE SAMPLE, rtr and
+#' ## rtc the raw and adjusted retention times of the spectras from the same
+#' ## samples:
+#' ## adjFts <- feats
+#' ## adjFts[, c("rt", "rtmin", "rtmax")] <- .applyRtAdjustment(feats[, c("rt", "rtmin", "rtmax")], rtr, rtc)
+#'
+#' ## To revert the adjustment: just switch the order of rtr and rtc
 .applyRtAdjustment <- function(x, rtraw, rtadj) {
     ## re-order everything if rtraw is not sorted; issue #146
     if (is.unsorted(rtraw)) {
@@ -420,11 +420,11 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     adjFun(x)
 }
 
-##' Helper function to apply retention time adjustment to already identified
-##' peaks in the peaks matrix of an XCMSnExp (or peaks matrix of an
-##' xcmsSet).
-##' 
-##' @noRd
+#' Helper function to apply retention time adjustment to already identified
+#' peaks in the peaks matrix of an XCMSnExp (or peaks matrix of an
+#' xcmsSet).
+#' 
+#' @noRd
 .applyRtAdjToChromPeaks <- function(x, rtraw, rtadj) {
     if (!is.list(rtraw) | !is.list(rtadj))
         stop("'rtraw' and 'rtadj' are supposed to be lists!")
@@ -443,13 +443,13 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     x
 }
 
-##' Simple helper function to create a matrix with retention times for well
-##' aligned peak groups, each row containing the rt of a peak group,
-##' columns being samples.
-##'
-##' @details This function is called internally by the
-##'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
-##' @noRd
+#' Simple helper function to create a matrix with retention times for well
+#' aligned peak groups, each row containing the rt of a peak group,
+#' columns being samples.
+#'
+#' @details This function is called internally by the
+#'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
+#' @noRd
 .getPeakGroupsRtMatrix <- function(peaks, peakIndex, nSamples,
                                    missingSample, extraPeaks) {
     ## For each feature:

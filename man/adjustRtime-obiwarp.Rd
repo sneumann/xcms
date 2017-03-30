@@ -114,22 +114,23 @@ warping with \code{response = 0} giving linear warping on start and end
 points and \code{response = 100} warping using all bijective anchors.}
 
 \item{distFun}{character defining the distance function to be used. Allowed
-values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"} (calculate
-only 10\% diagonal band of distance matrix; better runtime), \code{"cov"}
-(covariance), \code{"prd"} (product) and \code{"euc"} (Euclidian distance).
-The default value is \code{distFun = "cor_opt"}.}
+values are \code{"cor"} (Pearson's correlation), \code{"cor_opt"}
+(calculate only 10\% diagonal band of distance matrix; better runtime),
+\code{"cov"} (covariance), \code{"prd"} (product) and \code{"euc"}
+(Euclidian distance). The default value is \code{distFun = "cor_opt"}.}
 
 \item{gapInit}{\code{numeric(1)} defining the penalty for gap opening. The
-default value for \code{gapInit} depends on the value of \code{distFun}: for
-\code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{0.3}, for
-\code{distFun = "cov"} and \code{distFun = "prd"} \code{0.0} and for
-\code{distFun = "euc"} \code{0.9}.}
+default value for \code{gapInit} depends on the value of \code{distFun}:
+for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is
+\code{0.3}, for \code{distFun = "cov"} and \code{distFun = "prd"}
+\code{0.0} and for \code{distFun = "euc"} \code{0.9}.}
 
 \item{gapExtend}{\code{numeric(1)} defining the penalty for gap enlargement.
-The default value for \code{gapExtend} depends on the value of \code{distFun},
-for \code{distFun = "cor"} and \code{distFun = "cor_opt"} it is \code{2.4},
-for \code{distFun = "cov"} \code{11.7}, for \code{distFun = "euc"} \code{1.8}
-and for \code{distFun = "prd"} {7.8}.}
+The default value for \code{gapExtend} depends on the value of
+\code{distFun}, for \code{distFun = "cor"} and
+\code{distFun = "cor_opt"} it is \code{2.4}, for \code{distFun = "cov"}
+\code{11.7}, for \code{distFun = "euc"} \code{1.8} and for
+\code{distFun = "prd"} {7.8}.}
 
 \item{factorDiag}{\code{numeric(1)} defining the local weight applied to
 diagonal moves in the alignment.}
@@ -170,16 +171,16 @@ adjusted retention times per spectra (in the same order than \code{rtime}).
 }
 \description{
 This method performs retention time adjustment using the
-Obiwarp method [Prince 2006]. It is based on the code at
-\url{http://obi-warp.sourceforge.net} but supports alignment of multiple
-samples by aligning each against a \emph{center} sample. The alignment is
-performed directly on the \code{\link{profile-matrix}} and can hence be
-performed independently of the peak detection or peak grouping.
+    Obiwarp method [Prince 2006]. It is based on the code at
+    \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
+    samples by aligning each against a \emph{center} sample. The alignment is
+    performed directly on the \code{\link{profile-matrix}} and can hence be
+    performed independently of the peak detection or peak grouping.
 
 The \code{ObiwarpParam} class allows to specify all
-settings for the retention time adjustment based on the \emph{obiwarp}
-method. Class Instances should be created using the
-\code{ObiwarpParam} constructor.
+    settings for the retention time adjustment based on the \emph{obiwarp}
+    method. Class Instances should be created using the
+    \code{ObiwarpParam} constructor.
 
 \code{binSize},\code{binSize<-}: getter and setter
 for the \code{binSize} slot of the object.
@@ -225,9 +226,9 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-\code{xcms} user interface which will eventually replace the
-\code{\link{retcor}} methods. All of the settings to the alignment algorithm
-can be passed with a \code{ObiwarpParam} object.
+    \code{xcms} user interface which will eventually replace the
+    \code{\link{retcor}} methods. All of the settings to the alignment
+    algorithm can be passed with a \code{ObiwarpParam} object.
 
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 all peak grouping (correspondence) results and any previous retention time
@@ -282,6 +283,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 }
 \seealso{
 \code{\link{retcor.obiwarp}} for the old user interface.
+    \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
 \code{\link{XCMSnExp}} for the object containing the results of
 the alignment.

@@ -55,8 +55,10 @@ test_adjustRtime_PeakGroups <- function() {
     xodr_2 <- adjustRtime(xodg, param = p_2)
     checkEquals(adjustedRtime(xodr), adjustedRtime(xodr_2))
     checkEquals(chromPeaks(xodr), chromPeaks(xodr_2))
-    checkEquals(processParam(
-        processHistory(xodr, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]]), p)
+    p_got <- processParam(
+        processHistory(xodr, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]])
+    peakGroupsMatrix(p_got) <- matrix(ncol = 0, nrow = 0)
+    checkEquals(p_got, p)
     checkEquals(processParam(
         processHistory(xodr_2, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]]),
         p_2)
@@ -118,7 +120,10 @@ test_getPeakGroupsRtMatrix <- function() {
 }
 
 test_plotAdjustedRtime <- function() {
-    xod_xgr
+    plotAdjustedRtime(xod_xgr)
+    plotAdjustedRtime(xod_xgrg)
+    plotAdjustedRtime(xod_x)
+    plotAdjustedRtime(xod_xg)
 }
 
 dontrun_issue146 <- function() {

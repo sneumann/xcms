@@ -200,7 +200,8 @@ export(
     "Chromatogram",
     "do_adjustRtime_peakGroups",
     "processHistoryTypes",
-    "adjustRtimePeakGroups"
+    "adjustRtimePeakGroups",
+    "plotAdjustedRtime"
 )
 
 ## New analysis methods
