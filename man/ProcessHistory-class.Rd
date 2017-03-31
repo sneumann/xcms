@@ -2,22 +2,22 @@
 % Please edit documentation in R/DataClasses.R, R/methods-ProcessHistory.R
 \docType{class}
 \name{ProcessHistory-class}
-\alias{ProcessHistory}
 \alias{ProcessHistory-class}
-\alias{XProcessHistory}
+\alias{ProcessHistory}
 \alias{XProcessHistory-class}
-\alias{fileIndex}
-\alias{fileIndex,ProcessHistory-method}
-\alias{processDate}
-\alias{processDate,ProcessHistory-method}
-\alias{processInfo}
-\alias{processInfo,ProcessHistory-method}
-\alias{processParam}
-\alias{processParam,XProcessHistory-method}
-\alias{processType}
-\alias{processType,ProcessHistory-method}
+\alias{XProcessHistory}
 \alias{show,ProcessHistory-method}
 \alias{show,XProcessHistory-method}
+\alias{processParam,XProcessHistory-method}
+\alias{processParam}
+\alias{processType,ProcessHistory-method}
+\alias{processType}
+\alias{processDate,ProcessHistory-method}
+\alias{processDate}
+\alias{processInfo,ProcessHistory-method}
+\alias{processInfo}
+\alias{fileIndex,ProcessHistory-method}
+\alias{fileIndex}
 \title{Tracking data processing}
 \usage{
 \S4method{show}{ProcessHistory}(object)
@@ -55,14 +55,14 @@ of the files/samples on which the processing step was applied.
 }
 \description{
 Objects of the type \code{ProcessHistory} allow to keep track
-of any data processing step in an metabolomics experiment. They are created
-by the data processing methods, such as \code{\link{findChromPeaks}} and
-added to the corresponding results objects. Thus, usually, users don't need
-to create them.
+    of any data processing step in an metabolomics experiment. They are
+    created by the data processing methods, such as
+    \code{\link{findChromPeaks}} and added to the corresponding results
+    objects. Thus, usually, users don't need to create them.
 
 The \code{XProcessHistory} extends the \code{ProcessHistory} by
-adding a slot \code{param} that allows to store the actual parameter class
-of the processing step.
+    adding a slot \code{param} that allows to store the actual parameter
+    class of the processing step.
 
 Get or set the parameter class from an \code{XProcessHistory}
 object.
@@ -83,10 +83,8 @@ the processing step was applied.
 
 \describe{
 \item{\code{type}}{character(1): string defining the type of the processing step.
-This string has to match predefined values defined in the internal variable
-\code{.PROCSTEPS} (allowed values are \code{"Unknown"},
-\code{"Peak detection"}, \code{"Peak grouping"} and
-\code{"Retention time correction"}).}
+This string has to match predefined values. Use
+\code{\link{processHistoryTypes}} to list them.}
 
 \item{\code{date}}{character(1): date time stamp when the processing step was started.}
 
@@ -98,9 +96,10 @@ samples of the object the processing was performed.}
 \item{\code{error}}{(ANY): used to store eventual calculation errors.}
 
 \item{\code{param}}{(Param): an object of type \code{Param} (e.g.
-\code{\link{CentWaveParam}}) specifying the settings of the processing step.}
+\code{\link{CentWaveParam}}) specifying the settings of the processing
+step.}
 }}
+
 \author{
 Johannes Rainer
 }
-

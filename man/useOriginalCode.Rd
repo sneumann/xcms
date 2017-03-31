@@ -33,4 +33,3 @@ to be used mainly in the transition phase from xcms to xcms version 3.
 \author{
 Johannes Rainer
 }
-

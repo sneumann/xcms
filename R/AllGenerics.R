@@ -242,6 +242,10 @@ setGeneric("noise", function(object, ...) standardGeneric("noise"))
 setGeneric("noise<-", function(object, value) standardGeneric("noise<-"))
 
 ## P
+setGeneric("peakGroupsMatrix", function(object, ...)
+    standardGeneric("peakGroupsMatrix"))
+setGeneric("peakGroupsMatrix<-", function(object, value)
+    standardGeneric("peakGroupsMatrix<-"))
 setGeneric("peaks<-", function(object, value) standardGeneric("peaks<-"))
 setGeneric("peakScaleRange", function(object, ...)
     standardGeneric("peakScaleRange"))

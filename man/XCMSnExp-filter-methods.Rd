@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-XCMSnExp.R
 \docType{methods}
 \name{filterFile,XCMSnExp-method}
-\alias{XCMSnExp-filter}
 \alias{filterFile,XCMSnExp-method}
+\alias{XCMSnExp-filter}
 \alias{filterMz,XCMSnExp-method}
 \alias{filterRt,XCMSnExp-method}
 \title{XCMSnExp filtering and subsetting}
@@ -135,10 +135,9 @@ range(chromPeaks(xod_sub)[, "rt"])
 nrow(chromPeaks(xod))
 nrow(chromPeaks(xod_sub))
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{XCMSnExp}} for base class documentation.
 }
-
+\author{
+Johannes Rainer
+}

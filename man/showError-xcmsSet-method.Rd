@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-xcmsSet.R
 \docType{methods}
 \name{showError,xcmsSet-method}
-\alias{showError}
 \alias{showError,xcmsSet-method}
+\alias{showError}
 \title{Extract processing errors}
 \usage{
 \S4method{showError}{xcmsSet}(object, message. = TRUE, ...)
@@ -30,4 +30,3 @@ with the \code{showError} method.
 \author{
 Johannes Rainer
 }
-

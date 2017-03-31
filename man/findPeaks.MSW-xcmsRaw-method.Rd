@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-xcmsRaw.R
 \docType{methods}
 \name{findPeaks.MSW,xcmsRaw-method}
-\alias{findPeaks.MSW}
 \alias{findPeaks.MSW,xcmsRaw-method}
+\alias{findPeaks.MSW}
 \title{Peak detection for single-spectrum non-chromatography MS data}
 \usage{
 \S4method{findPeaks.MSW}{xcmsRaw}(object, snthresh = 3,
@@ -49,9 +49,6 @@ This is a wrapper around the peak picker in Bioconductor's
 \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
 \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 }
-\author{
-Joachim Kutzera, Steffen Neumann, Johannes Rainer
-}
 \seealso{
 \code{\link{MSW}} for the new user interface,
 \code{\link{do_findPeaks_MSW}} for the downstream analysis
@@ -59,4 +56,6 @@ function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
 \code{MassSpecWavelet} for details on the algorithm and additionally supported
 parameters.
 }
-
+\author{
+Joachim Kutzera, Steffen Neumann, Johannes Rainer
+}
