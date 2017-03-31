@@ -16,7 +16,8 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
@@ -88,9 +89,6 @@ head(res$featureDefinitions)
 ## The assignment of peaks from the input matrix to the features
 head(res$peakIndex)
 }
-\author{
-Colin Smith, Johannes Rainer
-}
 \references{
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -101,4 +99,6 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_nearest}},
   \code{\link{do_groupPeaks_mzClust}}
 }
-
+\author{
+Colin Smith, Johannes Rainer
+}

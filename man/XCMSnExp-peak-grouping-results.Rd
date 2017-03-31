@@ -2,8 +2,8 @@
 % Please edit documentation in R/methods-XCMSnExp.R
 \docType{methods}
 \name{featureValues,XCMSnExp-method}
-\alias{featureValues}
 \alias{featureValues,XCMSnExp-method}
+\alias{featureValues}
 \title{Accessing mz-rt feature data values}
 \usage{
 \S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint"),
@@ -22,9 +22,9 @@ If \code{"maxint"}: select the peak yielding the largest signal.}
 
 \item{value}{\code{character} specifying the name of the column in
 \code{chromPeaks(object)} that should be returned or \code{"index"} (the
-default) to return the index of the peak in the \code{chromPeaks(object)}
-matrix corresponding to the \emph{representative} peak for the feature
-in the respective sample.}
+default) to return the index of the peak in the
+\code{chromPeaks(object)} matrix corresponding to the
+\emph{representative} peak for the feature in the respective sample.}
 
 \item{intensity}{\code{character} specifying the name of the column in the
 \code{chromPeaks(objects)} matrix containing the intensity value of the
@@ -33,26 +33,25 @@ peak that should be used for the conflict resolution if
 }
 \value{
 For \code{featureValues}: a \code{matrix} with
-feature values, columns representing samples, rows features. The order of
-the features matches the order found in the \code{featureDefinitions(object)}
-\code{DataFrame}. An \code{NA} is reported for features without corresponding
-chromatographic peak in the respective sample(s).
+    feature values, columns representing samples, rows features. The order
+    of the features matches the order found in the
+    \code{featureDefinitions(object)} \code{DataFrame}. The rownames of the
+    \code{matrix} are the same than those of the \code{featureDefinitions}
+    \code{DataFrame}. \code{NA} is reported for features without
+    corresponding chromatographic peak in the respective sample(s).
 }
 \description{
-\code{featureValues,XCMSnExp} :
-extract a \code{matrix} for feature values with rows representing features
-and columns samples. Parameter \code{value} allows to define which column
-from the \code{\link{chromPeaks}} matrix should be returned. Multiple
-chromatographic peaks from the same sample can be assigned to a feature.
-Parameter \code{method} allows to specify the method to be used in such
-cases to chose from which of the peaks the value should be returned.
+\code{featureValues,XCMSnExp} : extract a \code{matrix} for
+    feature values with rows representing features and columns samples.
+    Parameter \code{value} allows to define which column from the
+    \code{\link{chromPeaks}} matrix should be returned. Multiple
+    chromatographic peaks from the same sample can be assigned to a feature.
+    Parameter \code{method} allows to specify the method to be used in such
+    cases to chose from which of the peaks the value should be returned.
 }
 \note{
 This method is equivalent to the \code{\link{groupval}} for
-\code{xcmsSet} objects.
-}
-\author{
-Johannes Rainer
+    \code{xcmsSet} objects.
 }
 \seealso{
 \code{\link{XCMSnExp}} for information on the data object.
@@ -62,4 +61,6 @@ feature definitions.
 \code{\link{XCMSnExp}} provides feature definitions.
 \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 }
-
+\author{
+Johannes Rainer
+}

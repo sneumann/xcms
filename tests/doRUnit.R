@@ -22,10 +22,6 @@ if(require("RUnit", quietly=TRUE)) {
     attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
-    ## faahko_grouped <- group(faahko)
-    ## faahko_grouped_filled <- fillPeaks(faahko_grouped)
-    ## faahko_processed <- fillPeaks(group(retcor(faahko_grouped)))
-
     ## Disable parallel processing for the unit tests
     library(BiocParallel)
     register(SerialParam())

@@ -199,7 +199,9 @@ export(
     "do_groupChromPeaks_nearest",
     "Chromatogram",
     "do_adjustRtime_peakGroups",
-    "processHistoryTypes"
+    "processHistoryTypes",
+    "adjustRtimePeakGroups",
+    "plotAdjustedRtime"
 )
 
 ## New analysis methods
@@ -341,6 +343,9 @@ exportMethods(
     "span<-",
     "family",
     "family<-",
+    ## PeakGroupsParam
+    "peakGroupsMatrix",
+    "peakGroupsMatrix<-",
     ## ObiwarpParam
     "centerSample",
     "centerSample<-",

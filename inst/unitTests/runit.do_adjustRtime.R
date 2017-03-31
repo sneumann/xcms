@@ -16,9 +16,9 @@ test_adjustRtime_PeakGroups <- function() {
     checkTrue(length(processHistory(xodg,
                                     type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 1)
     ## Now do the retention time correction
-    xsr <- retcor(xsg, method = "peakgroups")
-    minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
-    p <- PeakGroupsParam(minFraction = minFr)
+    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 0.3)
+    ## minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
+    p <- PeakGroupsParam(minFraction = 1, span = 0.3)
     xodr <- adjustRtime(xodg, param = p)
     ## Check that we've got process histories.
     checkTrue(validObject(xodr))
@@ -46,9 +46,25 @@ test_adjustRtime_PeakGroups <- function() {
     ## Just to ensure - are the raw rt the same?
     checkEquals(unlist(rtime(xod, bySample = TRUE), use.names = FALSE),
                 unlist(xs@rt$raw, use.names = FALSE))
+    ## Check that we get the same by supplying the peakGroupsMatrix.
+    pgm <- adjustRtimePeakGroups(xodg, param = p)
+    p_2 <- p
+    minFraction(p_2) <- 0.5
+    extraPeaks(p_2) <- 20
+    peakGroupsMatrix(p_2) <- pgm
+    xodr_2 <- adjustRtime(xodg, param = p_2)
+    checkEquals(adjustedRtime(xodr), adjustedRtime(xodr_2))
+    checkEquals(chromPeaks(xodr), chromPeaks(xodr_2))
+    p_got <- processParam(
+        processHistory(xodr, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]])
+    peakGroupsMatrix(p_got) <- matrix(ncol = 0, nrow = 0)
+    checkEquals(p_got, p)
+    checkEquals(processParam(
+        processHistory(xodr_2, type = xcms:::.PROCSTEP.RTIME.CORRECTION)[[1]]),
+        p_2)
     ## Doing an additional grouping
     xodrg <- groupChromPeaks(xodr, param = PeakDensityParam(sampleGroups =
-                                                                   xs$class))
+                                                                xs$class))
     checkTrue(length(processHistory(xodrg,
                                     type = xcms:::.PROCSTEP.PEAK.GROUPING)) == 2)
     checkTrue(hasAdjustedRtime(xodrg))
@@ -81,6 +97,79 @@ test_adjustRtime_PeakGroups <- function() {
     checkEquals(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
     checkEquals(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                 unlist(xsr@rt$corrected, use.names = FALSE))
+    ## Dropping results.
+    tmp <- dropAdjustedRtime(xodr)
+    checkEquals(tmp, xod)
+}
+
+test_getPeakGroupsRtMatrix <- function() {
+    param <- PeakGroupsParam()
+    nSamples <- length(fileNames(xod_xg))
+    pkGrp <- xcms:::.getPeakGroupsRtMatrix(
+        peaks = chromPeaks(xod_xg),
+        peakIndex = xcms:::.peakIndex(xod_xg),
+        nSamples = nSamples,
+        missingSample = nSamples - (nSamples * minFraction(param)),
+        extraPeaks = extraPeaks(param)
+        )
+    ## checkEquals(colnames(pkGrp), colnames(chromPeaks(xod_xg)))
+    fts <- featureDefinitions(xod_xg)[rownames(pkGrp), ]
+    checkTrue(all(pkGrp[, 1] >= fts$rtmin & pkGrp[, 1] <= fts$rtmax))
+    checkTrue(all(pkGrp[, 2] >= fts$rtmin & pkGrp[, 2] <= fts$rtmax))
+    checkTrue(all(pkGrp[, 3] >= fts$rtmin & pkGrp[, 3] <= fts$rtmax))
+}
+
+test_plotAdjustedRtime <- function() {
+    plotAdjustedRtime(xod_xgr)
+    plotAdjustedRtime(xod_xgrg)
+    plotAdjustedRtime(xod_x)
+    plotAdjustedRtime(xod_xg)
+}
+
+dontrun_issue146 <- function() {
+    ## For some files it can happen that the adjusted retention times are no
+    ## longer ordered increasingly.
+
+    ## Using my data that caused the problems
+    library(xcms)
+    library(RUnit)
+    load("/Users/jo/R-workspaces/2017/2017-03-Mitra-untargeted/data/RData/mitra-extraction/mitra.RData")
+    mzWid <- 0.02
+    bw_1 <- 1.5
+    bw_2 <- 2
+    
+    ## Retention time adjustment using "PeakGroups"
+    ## First grouping of samples. Setting minFraction
+    pdp <- PeakDensityParam(sampleGroups = pData(mitra)$extraction_name,
+                            bw = bw_1, binSize = mzWid, minFraction = 0.5,
+                            maxFeatures = 200)
+    mitra_pg <- groupChromPeaks(mitra, param = pdp)
+    
+    ## These are if we want to jump into the do_adjustRtime_peakGroups function.
+    peaks <- chromPeaks(mitra_pg)
+    peakIndex <- featureDefinitions(mitra_pg)$peakidx
+    rtime <- rtime(mitra_pg, adjusted = FALSE, bySample = TRUE)
+    minFraction <- 0.85
+    extraPeaks <- 1
+    span <- 0.2
+    family <- "gaussian"
+
+    ## Running the original code.
+    res_o <- xcms:::do_adjustRtime_peakGroups_orig(peaks, peakIndex, rtime = rtime,
+                                       minFraction = minFraction,
+                                       extraPeaks = extraPeaks)
+    sum(unlist(lapply(res_o, is.unsorted)))
+    ## Alternative 1 - uh, does not finish???
+    res_2 <- do_adjustRtime_peakGroups(peaks, peakIndex, rtime = rtime,
+                                       minFraction = minFraction,
+                                       extraPeaks = extraPeaks)
+    sum(unlist(lapply(res_2, is.unsorted)))
+
+    res <- adjustRtime(mitra_pg,
+                       param = PeakGroupsParam(minFraction = minFraction,
+                                               span = 1))
+    tmp <- dropAdjustedRtime(res)
+    checkEquals(chromPeaks(tmp), chromPeaks(mitra))
 }
 
 ## This is to ensure that the original code works with the new one using the

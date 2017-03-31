@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.51.9
-Date: 2017-03-08
+Version: 1.51.10
+Date: 2017-03-15
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -45,7 +45,7 @@ URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
 VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Collate:
     'AllGenerics.R'
     'DataClasses.R'

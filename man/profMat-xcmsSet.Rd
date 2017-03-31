@@ -2,10 +2,10 @@
 % Please edit documentation in R/methods-xcmsRaw.R
 \docType{methods}
 \name{profMat-xcmsSet}
-\alias{profMat}
-\alias{profMat,xcmsRaw-method}
 \alias{profMat-xcmsSet}
 \alias{profile-matrix}
+\alias{profMat}
+\alias{profMat,xcmsRaw-method}
 \title{The profile matrix}
 \usage{
 \S4method{profMat}{xcmsRaw}(object, method, step, baselevel, basespace,
@@ -95,9 +95,6 @@ profmat_2 <- profMat(xraw, step = 0.3)
 all.equal(profmat, profmat_2)
 
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
 \code{\link{imputeLinInterpol}} for the employed binning and
@@ -105,4 +102,6 @@ missing value imputation methods, respectively.
 \code{\link{profMat,XCMSnExp-method}} for the method on \code{\link{XCMSnExp}}
 objects.
 }
-
+\author{
+Johannes Rainer
+}

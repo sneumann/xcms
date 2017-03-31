@@ -123,3 +123,48 @@ setMethod("length", "Chromatogram", function(x) {
 setMethod("as.data.frame", "Chromatogram", function(x) {
     return(data.frame(rtime = x@rtime, intensity = x@intensity))
 })
+
+##' @description \code{filterRt}: filters the chromatogram based on the provided
+##' retention time range.
+##'
+##' @param rt For \code{filterRt}: \code{numeric(2)} defining the lower and
+##'     upper retention time for the filtering.
+##'
+##' @rdname Chromatogram-class
+##'
+##' @examples
+##'
+##' ## Create a simple Chromatogram object based on random values.
+##' chr <- Chromatogram(intensity = abs(rnorm(1000, mean = 2000, sd = 200)),
+##'         rtime = sort(abs(rnorm(1000, mean = 10, sd = 5))))
+##' chr
+##'
+##' ## Get the intensities
+##' head(intensity(chr))
+##'
+##' ## Get the retention time
+##' head(rtime(chr))
+##'
+##' ## What is the retention time range of the object?
+##' range(rtime(chr))
+##'
+##' ## Filter the chromatogram to keep only values between 4 and 10 seconds
+##' chr2 <- filterRt(chr, rt = c(4, 10))
+##'
+##' range(rtime(chr2))
+setMethod("filterRt", "Chromatogram", function(object, rt) {
+    if (missing(rt))
+        return(object)
+    rt <- range(rt)
+    ## Use which to be robust against NAs
+    keep_em <- which(rtime(object) >= rt[1] & rtime(object) <= rt[2])
+    if (length(keep_em)) {
+        object@rtime <- rtime(object)[keep_em]
+        object@intensity <- intensity(object)[keep_em]
+    } else {
+        object@rtime <- numeric()
+        object@intensity <- numeric()
+    }
+    if (validObject(object))
+        object
+})

@@ -1226,7 +1226,7 @@ setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
 ############################################################
 ## PeakGroupsParam
 setMethod("initialize", "PeakGroupsParam", function(.Object, ...) {
-    classVersion(.Object)["PeakGroupsParam"] <- "0.0.1"
+    classVersion(.Object)["PeakGroupsParam"] <- "0.0.2"
     callNextMethod(.Object, ...)
 })
 
@@ -1239,6 +1239,9 @@ setMethod("show", "PeakGroupsParam", function(object) {
     cat(" smooth:", object@smooth, "\n")
     cat(" span:", object@span, "\n")
     cat(" family:", object@family, "\n")
+    pgm <- peakGroupsMatrix(object)
+    if (nrow(pgm))
+        cat(" number of peak groups:", nrow(pgm), "\n")
 })
 
 ##' @description \code{minFraction},\code{minFraction<-}: getter and setter
@@ -1307,6 +1310,20 @@ setMethod("family", "PeakGroupsParam", function(object){
 ##' @rdname adjustRtime-peakGroups
 setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
     object@family <- value
+    if (validObject(object))
+        return(object)
+})
+
+##' @aliases peakGroupsMatrix
+##' @description \code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
+##'     setter for the \code{peakGroupsMatrix} slot of the object.
+##' @rdname adjustRtime-peakGroups
+setMethod("peakGroupsMatrix", "PeakGroupsParam", function(object){
+    return(object@peakGroupsMatrix)})
+##' @aliases peakGroupsMatrix<-
+##' @rdname adjustRtime-peakGroups
+setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) {
+    object@peakGroupsMatrix <- value
     if (validObject(object))
         return(object)
 })
