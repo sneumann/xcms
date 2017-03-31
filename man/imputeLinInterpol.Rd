@@ -114,4 +114,3 @@ points(x = 1:length(x), y = xInt, type = "l", col = "grey")
 \author{
 Johannes Rainer
 }
-

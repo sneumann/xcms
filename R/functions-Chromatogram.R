@@ -96,6 +96,12 @@ Chromatogram <- function(rtime = numeric(), intensity = numeric(),
                          productMz = c(NA_real_, NA_real_),
                          fromFile = integer(),
                          aggregationFun = character()) {
+    ## Check if we have to re-order the data (issue #145).
+    if (is.unsorted(rtime)) {
+        idx <- order(rtime)
+        rtime <- rtime[idx]
+        intensity <- intensity[idx]
+    }
     return(new("Chromatogram", rtime = rtime, intensity = intensity,
                mz = range(mz), filterMz = range(filterMz),
                precursorMz = range(precursorMz), productMz = range(productMz),

@@ -117,6 +117,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     endIdx <- 0
     num <- 0
     gcount <- integer(nSampleGroups)
+    message("Processing ", length(mass) - 1, " mz slices ... ", appendLF = FALSE)
     for (i in seq_len(length(mass)-2)) {
         ## That's identifying overlapping mz slices.
         startIdx <- masspos[i]
@@ -162,7 +163,8 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
             groupindex[[num]] <- sort(peakOrder[(startIdx:endIdx)[gidx]])
         }
     }
-
+    message("OK")
+    
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", sampleGroupNames)
 

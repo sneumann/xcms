@@ -8,14 +8,6 @@
 ##' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
 ##' @noRd
 dropProcessHistories <- function(x, type, num = -1) {
-    ## ## Drop processing history steps by type.
-    ## if (!missing(type)) {
-    ##     toRem <- unlist(lapply(processHistory(x), function(z) {
-    ##         return(processType(z) %in% type)
-    ##     }))
-    ##     if (any(toRem))
-    ##         x@.processHistory <- processHistory(x)[!toRem]
-    ## }
     x@.processHistory <- dropProcessHistoriesList(processHistory(x),
                                                   type = type, num = num)
     return(x)
@@ -342,7 +334,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     res <- numeric(nrow(peakArea))
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -397,7 +389,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     }
     res <- matrix(ncol = 4, nrow = nrow(peakArea))
     res <- numeric(nrow(peakArea))
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     scanindex <- valueCount2ScanIndex(valsPerSpect) ## Index vector for C calls
@@ -467,7 +459,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -535,7 +527,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -594,7 +586,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Reguesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     valsPerSpect <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -639,7 +631,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
             basename(fileNames(object)), " ... ", appendLF = FALSE)
-    spctr <- spectra(object)
+    spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     vps <- lengths(mzs)
     ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
@@ -738,3 +730,205 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             return(any(chromPeaks(object)[, "is_filled"] == 1))
     FALSE
 }
+
+#' @description Simple helper function to extract the peakidx column from the
+#' featureDefinitions DataFrame. The function ensures that the names of the
+#' returned list correspond to the rownames of the DataFrame
+#' 
+#' @noRd
+.peakIndex <- function(object) {
+    if (!hasFeatures(object))
+        stop("No feature definitions present. Please run groupChromPeaks first.")
+    idxs <- featureDefinitions(object)$peakidx
+    names(idxs) <- rownames(featureDefinitions(object))
+    idxs
+}
+
+#' @description \code{adjustRtimePeakGroups} returns the features (peak groups)
+#'     which would, depending on the provided \code{\link{PeakGroupsParam}}, be
+#'     selected for alignment/retention time correction.
+#'
+#' @note \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
+#'     sample alignment, but after a correspondence (peak grouping).
+#'
+#' @return For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
+#'     features, columns samples, of retention times. The features are ordered
+#'     by the median retention time across columns.
+#'
+#' @rdname adjustRtime-peakGroups
+adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object.")
+    if (!hasFeatures(object))
+        stop("No features present. Please run 'groupChromPeaks' first.")
+    if (hasAdjustedRtime(object))
+        warning("Alignment/retention time correction was already performed, ",
+                "returning a matrix with adjusted retention times.")
+    nSamples <- length(fileNames(object))
+    pkGrp <- .getPeakGroupsRtMatrix(
+        peaks = chromPeaks(object),
+        peakIndex = .peakIndex(object),
+        nSamples = nSamples,
+        missingSample = nSamples - (nSamples * minFraction(param)),
+        extraPeaks = extraPeaks(param)
+    )
+    colnames(pkGrp) <- basename(fileNames(object))
+    pkGrp
+}
+
+#' @title Visualization of alignment results
+#' 
+#' @description Plot the difference between the adjusted and the raw retention
+#'     time (y-axis) for each file along the (adjusted or raw) retention time
+#'     (x-axis). If alignment was performed using the
+#'     \code{\link{adjustRtime-peakGroups}} method, also the features (peak
+#'     groups) used for the alignment are shown.
+#'
+#' @param object A \code{\link{XCMSnExp}} object with the alignment results.
+#'
+#' @param col colors to be used for the lines corresponding to the individual
+#'     samples.
+#'
+#' @param lty line type to be used for the lines of the individual samples.
+#'
+#' @param type plot type to be used. See help on the \code{par} function for
+#'     supported values.
+#'
+#' @param adjustedRtime logical(1) whether adjusted or raw retention times
+#'     should be shown on the x-axis.
+#'
+#' @param xlab the label for the x-axis.
+#'
+#' @param ylab the label for the y-axis.
+#'
+#' @param peakGroupsCol color to be used for the peak groups (only used if
+#'     alignment was performed using the \code{\link{adjustRtime-peakGroups}}
+#'     method.
+#'
+#' @param peakGroupsPch point character (\code{pch}) to be used for the peak
+#'     groups (only used if alignment was performed using the
+#'     \code{\link{adjustRtime-peakGroups}} method.
+#'
+#' @param peakGroupsLty line type (\code{lty}) to be used to connect points for
+#'     each peak groups (only used if alignment was performed using the
+#'     \code{\link{adjustRtime-peakGroups}} method.
+#' 
+#' @param ... Additional arguments to be passed down to the \code{plot}
+#'     function.
+#' 
+#' @seealso \code{\link{adjustRtime}} for all retention time correction/
+#'     alignment methods.
+#' 
+#' @author Johannes Rainer
+#'
+#' @examples
+#' ## Below we perform first a peak detection (using the matchedFilter
+#' ## method) on some of the test files from the faahKO package followed by
+#' ## a peak grouping and retention time adjustment using the "peak groups"
+#' ## method
+#' library(faahKO)
+#' library(xcms)
+#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+#'            full.names = TRUE)
+#' 
+#' ## Reading 2 of the KO samples
+#' raw_data <- readMSData2(fls[1:2])
+#'
+#' ## Perform the peak detection using the matchedFilter method.
+#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
+#' res <- findChromPeaks(raw_data, param = mfp)
+#'
+#' ## Performing the peak grouping using the "peak density" method.
+#' p <- PeakDensityParam(sampleGroups = c(1, 1))
+#' res <- groupChromPeaks(res, param = p)
+#'
+#' ## Perform the retention time adjustment using peak groups found in both
+#' ## files.
+#' fgp <- PeakGroupsParam(minFraction = 1)
+#' res <- adjustRtime(res, param = fgp)
+#'
+#' ## Visualize the impact of the alignment. We show both versions of the plot,
+#' ## with the raw retention times on the x-axis (top) and with the adjusted
+#' ## retention times (bottom).
+#' par(mfrow = c(2, 1))
+#' plotAdjustedRtime(res, adjusted = FALSE)
+#' grid()
+#' plotAdjustedRtime(res)
+#' grid()
+plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
+                              adjustedRtime = TRUE,
+                              xlab = ifelse(adjustedRtime,
+                                            yes = expression(rt[adj]),
+                                            no = expression(rt[raw])),
+                              ylab = expression(rt[adj]-rt[raw]),
+                              peakGroupsCol = "#00000060",
+                              peakGroupsPch = 16,
+                              peakGroupsLty = 3, ...) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object.")
+    if (!hasAdjustedRtime(object))
+        warning("No alignment/retention time correction results present.")
+    diffRt <- rtime(object, adjusted = TRUE) - rtime(object, adjusted = FALSE)
+    diffRt <- split(diffRt, fromFile(object))
+    ## Define the rt that is shown on x-axis
+    xRt <- rtime(object, adjusted = adjustedRtime, bySample = TRUE)
+    ## Check colors.
+    if (length(col) == 1)
+        col <- rep(col, length(diffRt))
+    if (length(lty) == 1)
+        lty <- rep(lty, length(diffRt))
+    if (length(col) != length(diffRt)) {
+        warning("length of 'col' does not match the number of samples! Will ",
+                "use 'col[1]' for all samples.")
+        col <- rep(col[1], length(diffRt))
+    }
+    if (length(lty) != length(lty)) {
+        warning("length of 'lty' does not match the number of samples! Will ",
+                "use 'lty[1]' for all samples.")
+        lty <- rep(lty[1], length(diffRt))
+    }
+    ## Initialize plot.
+    plot(3, 3, pch = NA, xlim = range(xRt, na.rm = TRUE),
+         ylim = range(diffRt, na.rm = TRUE), xlab = xlab, ylab = ylab, ...)
+    ## Plot all.
+    for (i in 1:length(diffRt))
+        points(x = xRt[[i]], y = diffRt[[i]], col = col[i], lty = lty[i],
+               type = type)
+    ## If alignment was performed using the peak groups method highlight also
+    ## those in the plot.
+    ph <- processHistory(object, type = .PROCSTEP.RTIME.CORRECTION)
+    if (length(ph)) {
+        ph <- ph[[length(ph)]]
+        if (is(ph, "XProcessHistory")) {
+            ## Check if we've got a PeakGroupsParam parameter class
+            prm <- processParam(ph)
+            if (is(prm, "PeakGroupsParam")) {
+                rm(diffRt)
+                rm(xRt)
+                rawRt <- rtime(object, adjusted = FALSE, bySample = TRUE)
+                adjRt <- rtime(object, adjusted = TRUE, bySample = TRUE)
+                pkGroup <- peakGroupsMatrix(prm)
+                ## Have to "adjust" these:
+                pkGroupAdj <- pkGroup
+                for (i in 1:ncol(pkGroup)) {
+                    pkGroupAdj[, i] <- .applyRtAdjustment(pkGroup[, i],
+                                                                 rawRt[[i]],
+                                                                 adjRt[[i]])
+                }
+                diffRt <- pkGroupAdj - pkGroup
+                if (adjustedRtime)
+                    xRt <- pkGroupAdj
+                else
+                    xRt <- pkGroup
+                ## Loop through the rows and plot points - ordered by diffRt!
+                for (i in 1:nrow(xRt)) {
+                    idx <- order(diffRt[i, ])
+                    points(x = xRt[i, ][idx], diffRt[i, ][idx],
+                           col = peakGroupsCol, type = "b",
+                           pch = peakGroupsPch, lty = peakGroupsLty)
+                }
+            }
+        }
+    }
+}
+

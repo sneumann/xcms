@@ -15,7 +15,8 @@ experiment. Required columns are \code{"mz"}, \code{"rt"} and
 the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
-sample group assignments (i.e. which samples belong to which sample group).}
+sample group assignments (i.e. which samples belong to which sample
+group).}
 
 \item{ppm}{\code{numeric(1)} representing the relative mz error for the
 clustering/grouping (in parts per million).}
@@ -63,4 +64,3 @@ Vol. 2, No. 2, 75-83 (2006)
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},
   \code{\link{do_groupChromPeaks_nearest}}
 }
-

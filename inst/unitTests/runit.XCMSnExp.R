@@ -869,16 +869,18 @@ test_as_XCMSnExp_xcmsSet <- function() {
 
     ## Add groups.
     od_2 <- groupChromPeaks(od_x, param = PeakDensityParam())
-    checkEquals(featureDefinitions(od_2)$peakidx, groupidx(res))
+    checkEquals(unname(featureDefinitions(od_2)$peakidx), groupidx(res))
 
     ## rt correction
     od_3 <- adjustRtime(od_2, param = PeakGroupsParam(minFraction = 1,
                                                          span = 0.4))
     ## With groups.
     res <- as(od_2, "xcmsSet")
-    checkEquals(res@groups,
-                S4Vectors::as.matrix(featureDefinitions(od_2)[, -ncol(featureDefinitions(od_2))]))
-    checkEquals(res@groupidx, featureDefinitions(od_2)$peakidx)
+    ftDef <- featureDefinitions(od_2)[, -ncol(featureDefinitions(od_2))]
+    ftDef <- S4Vectors::as.matrix(ftDef)
+    rownames(ftDef) <- NULL
+    checkEquals(res@groups, ftDef)
+    checkEquals(res@groupidx, unname(featureDefinitions(od_2)$peakidx))
 
     ## With adjusted retention time.
     res_2 <- retcor.peakgroups(res, missing = 0, span = 0.4)
@@ -1083,7 +1085,44 @@ test_signal_integration <- function() {
     ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
 }
 
+## Test the featureValues method.
+test_featureValues <- function() {
+    od_x <- faahko_xod
+    xs <- faahko_xs
 
+    fdp <- PeakDensityParam(sampleGroups = xs$class)
+    od_x <- groupChromPeaks(od_x, param = fdp)
+    xs <- group(xs, method = "density")
+
+    fvs <- featureValues(od_x, value = "into")
+    checkEquals(rownames(fvs), rownames(featureDefinitions(od_x)))
+    rownames(fvs) <- NULL
+    colnames(fvs) <- NULL
+    gvs <- groupval(xs, value = "into")
+    rownames(gvs) <- NULL
+    colnames(gvs) <- NULL
+    checkEquals(fvs, gvs)
+}
+
+## Test internal helpers.
+test_peakIndex <- function() {
+    pkI <- xcms:::.peakIndex(xod_xg)
+    checkEquals(names(pkI), rownames(featureDefinitions(xod_xg)))
+    checkEquals(unname(pkI), featureDefinitions(xod_xg)$peakidx)
+}
+
+test_adjustRtimePeakGroups <- function() {
+    pkGrp <- xcms:::adjustRtimePeakGroups(xod_xg,
+                                          param = PeakGroupsParam(minFraction = 1))
+    checkEquals(colnames(pkGrp), basename(fileNames(xod_xg)))
+    ## No NAs allowed across samples:
+    isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
+    checkTrue(all(isNa == 0))
+    pkGrp <- xcms:::adjustRtimePeakGroups(xod_xg,
+                                          param = PeakGroupsParam(minFraction = 0.5))
+    isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
+    checkTrue(max(isNa) == 1)
+}
 
 ############################################################
 ## Test getEIC alternatives.

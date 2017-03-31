@@ -54,4 +54,3 @@ plotQC(xsg, what="rtdevsample")
 \author{
 Michael Wenk, Michael Wenk <michael.wenk@student.uni-halle.de>
 }
-

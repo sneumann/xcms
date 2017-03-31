@@ -214,3 +214,12 @@ useOriginalCode <- function(x) {
         buf <- list(profMat = buf, breaks = brks)
     buf
 }
+
+#' @description This function creates arbitrary IDs for features.
+#' 
+#' @param x integer(1) with the number of IDs that should be generated.
+#'
+#' @noRd
+.featureIDs <- function(x) {
+    sprintf(paste0("FT%0", ceiling(log10(x + 1L)), "d"), 1:x)
+}

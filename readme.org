@@ -1,3 +1,6 @@
+#+HTML: <p align = "center"><a href = "https://github.com/Bioconductor/BiocStickers/"><img src = "https://github.com/Bioconductor/BiocStickers/blob/master/xcms/xcms.png" height = "100"></a></p>
+
+
 * The =xcms3= package
 
 The =xcms3= package is an updated and partially re-written version of the =xcms=
@@ -31,3 +34,5 @@ of the original software's functionality, =xcms3= aims at:
 
 Discussions and suggestions are welcome:
 https://github.com/sneumann/xcms/issues (/xcms3/ tag).
+
+For more information see also the [[file:vignettes/new_functionality.Rmd]] file.

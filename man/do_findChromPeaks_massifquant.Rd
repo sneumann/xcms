@@ -25,7 +25,8 @@ spectra/scans of the data representing the retention time of each scan.}
 spectrum.}
 
 \item{ppm}{\code{numeric(1)} defining the maximal tolerated m/z deviation in
-consecutive scans in parts per million (ppm) for the initial ROI definition.}
+consecutive scans in parts per million (ppm) for the initial ROI
+definition.}
 
 \item{peakwidth}{\code{numeric(2)} with the expected approximate
 peak width in chromatographic space. Given as a range (min, max)
@@ -35,21 +36,23 @@ in seconds.}
 
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
-retained if they contain at least \code{k} peaks with intensity \code{>= I}.}
+retained if they contain at least \code{k} peaks with intensity
+\code{>= I}.}
 
 \item{mzCenterFun}{Name of the function to calculate the m/z center of the
-chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted mean of
-the peak's m/z values, \code{"mean"}: mean of the peak's m/z values,
-\code{"apex"}: use the m/z value at the peak apex, \code{"wMeanApex3"}:
-intensity weighted mean of the m/z value at the peak apex and the m/z values
-left and right of it and \code{"meanApex3"}: mean of the m/z value of the
-peak apex and the m/z values left and right of it.}
+chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
+mean of the peak's m/z values, \code{"mean"}: mean of the peak's m/z
+values, \code{"apex"}: use the m/z value at the peak apex,
+\code{"wMeanApex3"}: intensity weighted mean of the m/z value at the
+peak apex and the m/z values left and right of it and \code{"meanApex3"}:
+mean of the m/z value of the peak apex and the m/z values left and right
+of it.}
 
 \item{integrate}{Integration method. For \code{integrate = 1} peak limits
 are found through descent on the mexican hat filtered data, for
-\code{integrate = 2} the descent is done on the real data. The latter method
-is more accurate but prone to noise, while the former is more robust, but
-less exact.}
+\code{integrate = 2} the descent is done on the real data. The latter
+method is more accurate but prone to noise, while the former is more
+robust, but less exact.}
 
 \item{mzdiff}{\code{numeric(1)} representing the minimum difference in m/z
 dimension for peaks with overlapping retention times; can be negatove to
@@ -96,11 +99,11 @@ is that some truly distinct peaks may be merged.}
 \item{checkBack}{\code{integer(1)} set to \code{1} if turned on; set to
 \code{0} if turned off. The convergence of a Kalman Filter to a peak's
 precise m/z mapping is very fast, but sometimes it incorporates erroneous
-centroids as part of a peak (especially early on). The \code{scanBack} option
-is an attempt to remove the occasional outlier that lies beyond the converged
-bounds of the Kalman Filter. The option does not directly affect
-identification of a peak because it is a postprocessing measure; it
-has not shown to be a extremely useful thus far and the default is set
+centroids as part of a peak (especially early on). The \code{scanBack}
+option is an attempt to remove the occasional outlier that lies beyond
+the converged bounds of the Kalman Filter. The option does not directly
+affect identification of a peak because it is a postprocessing measure;
+it has not shown to be a extremely useful thus far and the default is set
 to being turned off.}
 
 \item{withWave}{\code{logical(1)} if \code{TRUE}, the peaks identified first
@@ -168,9 +171,6 @@ res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
 scantime = xraw@scantime, valsPerSpect = valsPerSpect)
 head(res)
 }
-\author{
-Christopher Conley
-}
 \references{
 Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
 "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
@@ -184,4 +184,6 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
   \code{\link{do_findChromPeaks_matchedFilter}},
   \code{\link{do_findPeaks_MSW}}
 }
-
+\author{
+Christopher Conley
+}

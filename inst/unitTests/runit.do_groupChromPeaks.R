@@ -34,11 +34,14 @@ test_groupChromPeaks_PeakDensityParam <- function() {
     checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), fdp)
-
+    checkEquals(rownames(featureDefinitions(od_x)),
+                xcms:::.featureIDs(nrow(featureDefinitions(od_x))))
+    
     fdp2 <- PeakDensityParam(sampleGroups = xs$class, binSize = 2,
                                 minFraction = 0.8)
     od_x <- groupChromPeaks(od_x, param = fdp2)
@@ -46,10 +49,13 @@ test_groupChromPeaks_PeakDensityParam <- function() {
     checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
-    checkEquals(processParam(ph), fdp2)    
+    checkEquals(processParam(ph), fdp2)
+    checkEquals(rownames(featureDefinitions(od_x)),
+                xcms:::.featureIDs(nrow(featureDefinitions(od_x))))
 }
 
 test_do_groupChromPeaks_density <- function() {
@@ -312,12 +318,15 @@ test_groupPeaks_MzClustParam <- function() {
     checkEquals(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
     fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(fticr_xs2@groups, fg)
     checkTrue(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
                          type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p)
-
+    checkEquals(rownames(featureDefinitions(fticr_xod2)),
+                xcms:::.featureIDs(nrow(featureDefinitions(fticr_xod2))))
+    
     p2 <- MzClustParam(sampleGroups = fticr_xs$class, absMz = 1,
                        minFraction = 0.8)
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p2)
@@ -325,11 +334,14 @@ test_groupPeaks_MzClustParam <- function() {
     checkEquals(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
     fg <- featureDefinitions(fticr_xod2)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(fticr_xs2@groups, fg)
     checkTrue(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
                          type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p2)    
+    checkEquals(rownames(featureDefinitions(fticr_xod2)),
+                xcms:::.featureIDs(nrow(featureDefinitions(fticr_xod2))))
 }
 
 ############################################################
@@ -362,21 +374,27 @@ test_groupChromPeaks_NearestPeaksParam <- function() {
     checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), p)
-
+    checkEquals(rownames(featureDefinitions(od_x)),
+                xcms:::.featureIDs(nrow(featureDefinitions(od_x))))
+    
     fdp2 <- NearestPeaksParam(sampleGroups = xs$class, kNN = 3)
     od_x <- groupChromPeaks(od_x, param = fdp2)
     xs <- group(xs, method = "nearest", kNN = 3)
     checkEquals(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
     fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    rownames(fg) <- NULL
     checkEquals(xs@groups, fg)
     checkTrue(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = xcms:::.PROCSTEP.PEAK.GROUPING)[[1]]
     checkEquals(processParam(ph), fdp2)    
+    checkEquals(rownames(featureDefinitions(od_x)),
+                xcms:::.featureIDs(nrow(featureDefinitions(od_x))))
 }
 
 

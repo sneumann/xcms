@@ -17,7 +17,14 @@ test_Chromatogram_class <- function() {
     rt <- rnorm(100, mean = 300, sd = 3)
     ## check exceptions:
     checkException(xcms:::Chromatogram(intensity = int))
-    checkException(xcms:::Chromatogram(intensity = int, rtime = rt))
+    chr <- Chromatogram()
+    chr@rtime <- rt
+    chr@intensity <- int
+    checkException(validObject(chr))
+    ## issue #145: values are ordered based on rtime
+    chr <- Chromatogram(intensity = int, rtime = rt)
+    checkEquals(rtime(chr), sort(rt))
+    checkEquals(intensity(chr), int[order(rt)])
     rt <- sort(rt)
     ch <- xcms:::Chromatogram(intensity = int, rtime = rt)
     checkEquals(rtime(ch), rt)
@@ -56,6 +63,27 @@ test_Chromatogram_class <- function() {
     ch <- xcms:::Chromatogram(productMz = 123)
     checkEquals(ch@productMz, c(123, 123))
     checkEquals(productMz(ch), c(123, 123))
+}
+
+test_filterRt_Chromatogram <- function() {
+    int <- rnorm(100, mean = 200, sd = 2)
+    rt <- rnorm(100, mean = 300, sd = 3)
+    chr <- Chromatogram(intensity = int, rtime = sort(rt))
+
+    chr_2 <- filterRt(chr, rt = c(200, 300))
+    checkTrue(all(rtime(chr_2) >= 200))
+    checkTrue(all(rtime(chr_2) <= 300))
+    ints <- intensity(chr_2)
+    checkEquals(ints, intensity(chr)[rtime(chr) >= 200 & rtime(chr) <= 300])
+
+    ## No rt
+    checkEquals(chr, filterRt(chr))
+
+    ## Outside range
+    chr_2 <- filterRt(chr, rt = c(400, 500))
+    checkTrue(length(chr_2) == 0)
+    checkEquals(intensity(chr_2), numeric())
+    checkEquals(rtime(chr_2), numeric())
 }
 
 test_extractChromatograms <- function() {
