@@ -144,11 +144,11 @@ consistent.
   legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
 #+END_SRC
 
-Alternatively we can use the =extractChromatograms= method that extracts a
-chromatogram from the object. In the example below we extract the /base peak
+Alternatively we can use the =extractChromatograms= method that extracts
+chromatograms from the object. In the example below we extract the /base peak
 chromatogram/ (BPC) by setting =aggregationFun= to ="max"= and not specifying an =rt=
-or =mz= range to extract only a data subset. Note that this function reads the
-data from the raw files.
+or =mz= range to extract only a data subset. In contrast to the =tic= and =bpi=
+methods, this function reads the data from the raw files.
 
 #+NAME: faahKO-bpi
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
@@ -322,7 +322,7 @@ have a value of =1= in the ="is_filled"= column of the =chromPeaks= matrix.
   ## a FillChromPeaksParam object to the method.
   xod <- fillChromPeaks(xod)
 
-  head(featureValues(xod))
+  head(featureValues(xod, value = "into"))
 #+END_SRC
 
 Not for all missing peaks a value could be integrated (because at the respective
@@ -330,8 +330,8 @@ location no measurements are available). The peak area from which signal is to
 be extracted can also be increased modifying the settings by passing a
 =FillChromPeaksParam= object.
 
-At last we can inspect the =processHistory= of the analysis. As described earlier,
-this records all (major) processing steps along with the corresponding parameter
+Next we inspect the =processHistory= of the analysis. As described earlier, this
+records all (major) processing steps along with the corresponding parameter
 classes.
 
 #+NAME: faahKO-processHistory
@@ -352,6 +352,68 @@ we extract the parameter class for the alignment/retention time adjustment step.
   processParam(ph[[1]])
 #+END_SRC
 
+As described earlier, we can remove specific analysis results at any
+stage. Below we remove the results from the alignment. Since the correspondence
+was performed after that processing step its results will be removed too leaving
+us only with the results from the peak detection step.
+
+#+NAME: faahKO-drop-alignment
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Remove the alignment results
+  xod <- dropAdjustedRtime(xod)
+
+  processHistory(xod)
+#+END_SRC
+
+We can now use a different method to perform the alignment. The /peak groups/
+alignment method bases the alignment of the samples on chromatographic peaks
+present in most samples (so called /well behaved/ peaks). This means we have to
+perform first an initial correspondence analysis to group peaks within and
+across samples.
+
+#+NAME: faahKO-initial-correspondence
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Define the parameter for the correspondence
+  pdparam <- PeakDensityParam(sampleGroups = pData(xod)$sample_group,
+                              minFraction = 0.7, maxFeatures = 100)
+  xod <- groupChromPeaks(xod, param = pdparam)
+#+END_SRC
+
+Before performing the alignment we can also inspect which peak groups might be
+selected for alignment based on the provided =PeakGroupsParam= object.
+
+#+NAME: faahKO-peak-groups-matrix
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Create the parameter class for the alignment
+  pgparam <- PeakGroupsParam(minFraction = 0.9, span = 0.4)
+
+  ## Extract the matrix with (raw) retention times for the peak groups that would
+  ## be used for alignment.
+  adjustRtimePeakGroups(xod, param = pgparam)
+#+END_SRC
+
+If we are not happy with these peak groups (e.g. because we don't have a peak
+group for a rather large time span along the retention time axis) we can try
+different settings. In addition, we could also /manually/ select certain peak
+groups, e.g. for internal controls, and add this matrix with the
+=peakGroupsMatrix= method to the =PeakGroupsParam= class. Below we just use =pgparam=
+we defined and perform the alignment. This will use the peak groups matrix from
+above.
+
+#+NAME: faahKO-peak-groups-alignment
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Perform the alignment using the peak groups method.
+  xod <- adjustRtime(xod, param = pgparam)
+#+END_SRC
+
+We can now also plot the difference between adjusted and raw retention times. If
+alignment was performed using the /peak groups/ method, also these peak groups are
+highlighted in the plot.
+
+#+NAME: faahKO-peak-groups-alignment-plot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+  plotAdjustedRtime(xod, col = sample_colors[pData(xod)$sample_group])
+#+END_SRC
 
 ** New naming convention
 
