@@ -1658,6 +1658,11 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 ##'     peak that should be used for the conflict resolution if
 ##'     \code{method = "maxint"}.
 ##'
+##' @param filled \code{logical(1)} specifying whether values for filled-in
+##'     peaks should be returned or not. If \code{filled = FALSE}, an \code{NA}
+##'     is returned in the matrix for the respective peak. See
+##'     \code{\link{fillChromPeaks}} for details on peak filling. 
+##' 
 ##' @return For \code{featureValues}: a \code{matrix} with
 ##'     feature values, columns representing samples, rows features. The order
 ##'     of the features matches the order found in the
@@ -1680,7 +1685,7 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 setMethod("featureValues",
           signature(object = "XCMSnExp"),
           function(object, method = c("medret", "maxint"), value = "index",
-                   intensity = "into") {
+                   intensity = "into", filled = TRUE) {
               ## Input argument checkings
               if (!hasFeatures(object))
                   stop("No peak groups present! Use 'groupChromPeaks' first.")
@@ -1693,6 +1698,10 @@ setMethod("featureValues",
               ## Copy all of the objects to avoid costly S4 method calls -
               ## improves speed at the cost of higher memory demand.
               fts <- chromPeaks(object)
+
+              ## issue #157: replace all values for filled-in peaks with NA
+              if (!filled)
+                  fts[fts[, "is_filled"] == 1, ] <- NA
               grps <- featureDefinitions(object)
               ftIdx <- grps$peakidx
               ## Match columns

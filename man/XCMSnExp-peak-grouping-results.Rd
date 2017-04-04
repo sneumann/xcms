@@ -7,7 +7,7 @@
 \title{Accessing mz-rt feature data values}
 \usage{
 \S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint"),
-  value = "index", intensity = "into")
+  value = "index", intensity = "into", filled = TRUE)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object providing the feature
@@ -30,6 +30,11 @@ default) to return the index of the peak in the
 \code{chromPeaks(objects)} matrix containing the intensity value of the
 peak that should be used for the conflict resolution if
 \code{method = "maxint"}.}
+
+\item{filled}{\code{logical(1)} specifying whether values for filled-in
+peaks should be returned or not. If \code{filled = FALSE}, an \code{NA}
+is returned in the matrix for the respective peak. See
+\code{\link{fillChromPeaks}} for details on peak filling.}
 }
 \value{
 For \code{featureValues}: a \code{matrix} with

@@ -1,3 +1,10 @@
+CHANGES IN VERSION 1.51.11
+--------------------------
+
+NEW FEATURES:
+- Parameter "filled" for featureValues (issue #157).
+
+
 CHANGES IN VERSION 1.51.10
 --------------------------
 
