@@ -87,10 +87,10 @@ in mz dimension.}
 to be identified in a single mz slice.}
 
 \item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-containing the results from a previous peak detection analysis (see
-\code{\link{findChromPeaks}}).
+    containing the results from a previous peak detection analysis (see
+    \code{\link{findChromPeaks}}).
 
-For all other methods: a \code{PeakDensityParam} object.}
+    For all other methods: a \code{PeakDensityParam} object.}
 
 \item{value}{The value for the slot.}
 
@@ -103,8 +103,9 @@ The \code{PeakDensityParam} function returns a
 specified for chromatographic peak alignment based on peak densities.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-results of the correspondence analysis. The definition of the resulting mz-rt
-features can be accessed with the \code{\link{featureDefinitions}} method.
+    results of the correspondence analysis. The definition of the resulting
+    mz-rt features can be accessed with the \code{\link{featureDefinitions}}
+    method.
 }
 \description{
 This method performs performs correspondence (chromatographic
@@ -119,27 +120,28 @@ The \code{PeakDensityParam} class allows to specify all
     constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-for the \code{sampleGroups} slot of the object.
+    for the \code{sampleGroups} slot of the object.
 
 \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
-of the object.
+    of the object.
 
 \code{minFraction},\code{minFraction<-}: getter and setter for
-the \code{minFraction} slot of the object.
+    the \code{minFraction} slot of the object.
 
 \code{minSamples},\code{minSamples<-}: getter and setter for the
-\code{minSamples} slot of the object.
+    \code{minSamples} slot of the object.
 
 \code{binSize},\code{binSize<-}: getter and setter for the
-\code{binSize} slot of the object.
+    \code{binSize} slot of the object.
 
 \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
-the \code{maxFeatures} slot of the object.
+    the \code{maxFeatures} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
-performs correspondence (peak grouping within and across samples) within in
-mz dimension overlapping slices of MS data based on the density distribution
-of the identified chromatographic peaks in the slice along the time axis.
+    performs correspondence (peak grouping within and across samples) within
+    in mz dimension overlapping slices of MS data based on the density
+    distribution of the identified chromatographic peaks in the slice along
+    the time axis.
 }
 \section{Slots}{
 
@@ -156,7 +158,7 @@ These methods and classes are part of the updated and modernized
     can be passed with a \code{PeakDensityParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous correspondence results to be dropped.
+    all eventually present previous correspondence results to be dropped.
 }
 \examples{
 
@@ -217,7 +219,7 @@ The \code{\link{do_groupChromPeaks_density}} core
     features (i.e. the peak grouping results).
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the correspondence.
+    the correspondence.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-mzClust}},
   \code{\link{groupChromPeaks-nearest}},

@@ -3,7 +3,8 @@ CHANGES IN VERSION 1.51.11
 
 NEW FEATURES:
 - Parameter "filled" for featureValues (issue #157).
-
+- Parameters "rt" and "mz" in chromPeaks method allowing to extract
+  chromatographic peaks from the specified ranges (issue #156).
 
 CHANGES IN VERSION 1.51.10
 --------------------------

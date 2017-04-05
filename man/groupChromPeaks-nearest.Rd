@@ -70,10 +70,10 @@ two peaks.}
 to check.}
 
 \item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-containing the results from a previous chromatographic peak detection
-analysis (see \code{\link{findChromPeaks}}).
+    containing the results from a previous chromatographic peak detection
+    analysis (see \code{\link{findChromPeaks}}).
 
-For all other methods: a \code{NearestPeaksParam} object.}
+    For all other methods: a \code{NearestPeaksParam} object.}
 
 \item{value}{The value for the slot.}
 
@@ -86,8 +86,9 @@ The \code{NearestPeaksParam} function returns a
 specified for peak alignment based on peak proximity.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-results of the peak grouping/correspondence step (i.e. the mz-rt features).
-These can be accessed with the \code{\link{featureDefinitions}} method.
+    results of the peak grouping/correspondence step (i.e. the mz-rt
+    features). These can be accessed with the
+    \code{\link{featureDefinitions}} method.
 }
 \description{
 This method is inspired by the grouping algorithm of mzMine
@@ -104,23 +105,23 @@ The \code{NearestPeaksParam} class allows to specify all
     Instances should be created with the \code{NearestPeaksParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-for the \code{sampleGroups} slot of the object.
+    for the \code{sampleGroups} slot of the object.
 
 \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
-for the \code{mzVsRtBalance} slot of the object.
+    for the \code{mzVsRtBalance} slot of the object.
 
 \code{absMz},\code{absMz<-}: getter and setter for the
-\code{absMz} slot of the object.
+    \code{absMz} slot of the object.
 
 \code{absRt},\code{absRt<-}: getter and setter for the
-\code{absRt} slot of the object.
+    \code{absRt} slot of the object.
 
 \code{kNN},\code{kNN<-}: getter and setter for the
-\code{kNN} slot of the object.
+    \code{kNN} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
-performs peak grouping based on the proximity between chromatographic
-peaks from different samples in the mz-rt range.
+    performs peak grouping based on the proximity between chromatographic
+    peaks from different samples in the mz-rt range.
 }
 \section{Slots}{
 
@@ -137,7 +138,7 @@ These methods and classes are part of the updated and modernized
     can be passed with a \code{NearestPeaksParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous alignment results to be dropped.
+    all eventually present previous alignment results to be dropped.
 }
 \examples{
 
@@ -194,7 +195,7 @@ The \code{\link{do_groupChromPeaks_nearest}} core
     peak grouping results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the peak grouping.
+    the peak grouping.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-mzClust}},

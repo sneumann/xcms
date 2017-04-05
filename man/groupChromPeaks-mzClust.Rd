@@ -69,10 +69,10 @@ least one sample group in which the peaks have to be detected to be
 considered a peak group (feature).}
 
 \item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-containing the results from a previous chromatographic peak detection
-analysis (see \code{\link{findChromPeaks}}).
+    containing the results from a previous chromatographic peak detection
+    analysis (see \code{\link{findChromPeaks}}).
 
-For all other methods: a \code{MzClustParam} object.}
+    For all other methods: a \code{MzClustParam} object.}
 
 \item{value}{The value for the slot.}
 
@@ -85,8 +85,8 @@ The \code{MzClustParam} function returns a
 specified for high resolution single spectra peak alignment.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-results of the peak grouping step (i.e. the features). These can be accessed
-with the \code{\link{featureDefinitions}} method.
+    results of the peak grouping step (i.e. the features). These can be
+    accessed with the \code{\link{featureDefinitions}} method.
 }
 \description{
 This method performs high resolution correspondence for single
@@ -97,23 +97,23 @@ The \code{MzClustParam} class allows to specify all
     Instances should be created with the \code{MzClustParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-for the \code{sampleGroups} slot of the object.
+    for the \code{sampleGroups} slot of the object.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
-slot of the object.
+    slot of the object.
 
 \code{absMz},\code{absMz<-}: getter and setter for the
-\code{absMz} slot of the object.
+    \code{absMz} slot of the object.
 
 \code{minFraction},\code{minFraction<-}: getter and setter for
-the \code{minFraction} slot of the object.
+    the \code{minFraction} slot of the object.
 
 \code{minSamples},\code{minSamples<-}: getter and setter for the
-\code{minSamples} slot of the object.
+    \code{minSamples} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,MzClustParam}:
-performs high resolution peak grouping for single spectrum
-metabolomics data.
+    performs high resolution peak grouping for single spectrum
+    metabolomics data.
 }
 \section{Slots}{
 
@@ -130,7 +130,7 @@ These methods and classes are part of the updated and modernized
     can be passed with a \code{MzClustParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous correspondence results to be dropped.
+    all eventually present previous correspondence results to be dropped.
 }
 \examples{
 
@@ -170,7 +170,7 @@ The \code{\link{do_groupPeaks_mzClust}} core API function and
     grouping results (i.e. the features).
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the peak grouping.
+    the peak grouping.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-nearest}},
