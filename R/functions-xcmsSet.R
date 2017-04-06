@@ -759,33 +759,33 @@ filtfft <- function(y, filt) {
 ## .validProcessHistory
 ## Check the validity of the .processHistory slot.
 .validProcessHistory <- function(x) {
-    msg <- validMsg(NULL, NULL)
+    msg <- character()
     if (.hasSlot(x, ".processHistory")) {
         if (length(x@.processHistory) > 0) {
             ## All elements have to inherit from ProcessHistory
             if (!all(unlist(lapply(x@.processHistory, function(z) {
                 return(inherits(z, "ProcessHistory"))
             }))))
-                msg <- validMsg(msg, paste0("All objects in slot .processHistory",
-                                            " have to be 'ProcessHistory' objects!"))
+                msg <- c(msg, paste0("All objects in slot .processHistory",
+                                     " have to be 'ProcessHistory' objects!"))
             ## Each element has to be valid
             vals <- lapply(x@.processHistory, validObject)
             for (i in seq_along(vals)) {
                 if (!is.logical(vals[[i]]))
-                    msg <- validMsg(msg, vals[[i]])
+                    msg <- c(msg, vals[[i]])
             }
             ## The fileIndex has to be within 1:length(filepaths(x))
             fidx <- 1:length(filepaths(x))
             for (z in x@.processHistory) {
                 if (length(z@fileIndex) == 0 |
                     !(all(z@fileIndex %in% fidx)))
-                    msg <- validMsg(msg, paste0("Value of 'fileIndex' slot of some",
-                                                " ProcessHistory objects does not",
-                                                " match the number of available",
-                                                " files!"))
+                    msg <- c(msg, paste0("Value of 'fileIndex' slot of some",
+                                         " ProcessHistory objects does not",
+                                         " match the number of available",
+                                         " files!"))
             }
         }
     }
-    if (is.null(msg)) TRUE
-    else msg
+    if (length(msg)) msg
+    else TRUE
 }
