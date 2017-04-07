@@ -10,9 +10,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     progressCallback=NULL, scanrange=NULL,
                     BPPARAM=bpparam(), stopOnError = TRUE, ...) {
 
-    if (nSlaves != 0)
-        warning("Use of argument 'nSlaves' is deprecated!",
-                " Please use 'BPPARAM' instead.")
+    if (nSlaves != 0) {
+        message("Use of argument 'nSlaves' is deprecated,",
+                " please use 'BPPARAM' instead.")
+        options(mc.cores = nSlaves)
+    }
     if (!is.logical(stopOnError))
         stop("'stopOnError' has to be a logical.")
     ## Overwriting the stop.on.error in BPPARAM:
