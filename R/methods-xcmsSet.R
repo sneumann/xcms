@@ -818,7 +818,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
         allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], n=max(512, 2^(ceiling(log2(diff(rtrange)/bw)))))[c("x","y")]
-        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE, n=max/512, 2^(ceiling(log2(diff(rtrange)/bw)))))[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE, n=max(512, 2^(ceiling(log2(diff(rtrange)/bw)))))[c("x","y")]
         allden$y <- allden$y / sum(allden$y)
         corden$y <- corden$y / sum(corden$y)
         maxden <- max(allden$y, corden$y)
