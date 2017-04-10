@@ -6,6 +6,10 @@ NEW FEATURES:
 - Parameters "rt" and "mz" in chromPeaks method allowing to extract
   chromatographic peaks from the specified ranges (issue #156).
 
+BUG FIXES:
+- Fixed possible memory problem in obiwarp (issue #159).
+
+
 CHANGES IN VERSION 1.51.10
 --------------------------
 
