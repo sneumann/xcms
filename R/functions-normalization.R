@@ -6,6 +6,10 @@
 #' @description Simple function to fit linear models row-wise to the provided
 #'     data.
 #'
+#' @details For \code{method = "lmrob"} robust regression is performed using
+#'     the \code{\link[robustbase]{lmrob}} function with settings
+#'     \code{settings = "KS2014"} and \code{method = "SMDB"}. 
+#' 
 #' @note Between batch correction in the form of \code{y ~ idx * batch} is
 #'     currently problematic, because we don't yet check if there are too few
 #'     values within each batch.
@@ -65,71 +69,42 @@ fitModel <- function(formula, data, y, minVals = 4,
     do_em <- which(unlist(lapply(y, function(z) sum(!is.na(z)) >= minVals)))
     res <- vector("list", length(y))
     names(res) <- names(y)
+    sttngs <- list()
+    if (method == "lmrob") {
+        ## Force use of the KS2014 settings in lmrob and increase the
+        ## scale-finding iterations to avoid some of the warnings.
+        ## sttngs <- robustbase::lmrob.control("KS2014")
+        ## sttngs$maxit.scale <- 10000
+        ## sttngs$k.max <- 10000
+        ## sttngs$refine.tol <- 1e-7
+    }
     if (length(do_em)) {
         ## fit the model
         res[do_em] <- bplapply(y[do_em], FUN = function(z, formula., data.,
-                                                        minVals., lmeth) {
+                                                        minVals., lmeth,
+                                                        sttngs) {
             ## TODO: need to check what happens if we're also performing between
             ## batch correction and we have too few samples per batch! 
+            ## ## Removing all missing values - could eventually skip that.
             ## z <- as.numeric(z)
             ## not_na <- !is.na(z)
-            ## if (sum(not_na) < minVals)
-            ##     return(NULL)
-            ## data <- droplevels(data.frame(y = z[not_na],
-            ##                               data[not_na, , drop = FALSE]))
+            ## data. <- droplevels(data.frame(y = z[not_na],
+            ##                                data.[not_na, , drop = FALSE]))
             data. <- data.frame(y = as.numeric(z), data.)
-            ## do.call(lmeth, args = list(formula = formula., data = data.))
-            lm(formula., data = data.)
+            if (lmeth == "lm")
+                return(lm(formula., data = data., model = FALSE))
+            if (lmeth == "lmrob") {
+                stop("Not yet implemented")
+                ## set.seed(123)
+                ## return(robustbase::lmrob(formula., data = data., model = FALSE,
+                ##                          setting = sttngs))
+            }
+            if (lmeth == "rlm")
+                stop("Not yet implemented")
+                ## return(MASS::rlm(formula., data = data.))
         }, formula. = formula, data. = data, minVals. = minVals, lmeth = method,
-        BPPARAM = BPPARAM)
+        sttngs = sttngs, BPPARAM = BPPARAM)
     }
     res
 }
 
-
-## fitModel2 <- function(formula, data, y, minVals = 4,
-##                      method = c("lm", "lmrob", "rlm")) {
-##     method <- match.arg(method, c("lm", "lmrob", "rlm"))
-##     if (missing(formula) || !is(formula, "formula"))
-##         stop("'formula' has to be submitted and should be a formula!")
-##     if (missing(data) || !is(data, "data.frame"))
-##         stop("'data' has to be a 'data.frame'!")
-##     if (missing(y))
-##         stop("'y' is missing with no default.")
-##     if (ncol(y) != nrow(data))
-##         stop("ncol(y) has to match nrow(data)!")
-##     ## Check that 'data' contains the variables we're looking for.
-##     vars <- all.vars(formula)
-##     if (vars[1] != "y")
-##         stop("'formula' should start with 'y ~'")
-##     if (!all(vars[-1] %in% colnames(data)))
-##         stop("All of the variables from 'formula' have to be present in 'data'")
-##     ## data shouldn't contain a column y.
-##     if (any(colnames(data) == "y"))
-##         stop("'data' should not contain a column named 'y'")
-##     ## Done with checking.
-##     ## Subset data to contain only explanatory variables
-##     data <- data[, vars[-1], drop = FALSE]
-##     cat(colnames(data))
-##     if (is.null(rownames(y)))
-##         rownames(y) <- 1:nrow(y)
-##     y <- split.data.frame(y, f = rownames(y))
-##     ## Determine which we can skip.
-##     do_em <- which(unlist(lapply(y, function(z) sum(!is.na(z)) >= minVals)))
-##     res <- vector("list", length(y))
-##     names(res) <- names(y)
-##     ## fit the model
-##     res[do_em] <- bplapply(y[do_em], FUN = function(z, formula, data, minVals,
-##                                                     lmeth) {
-##         ## TODO: need to check what happens if we're also performing between
-##         ## batch correction and we have too few samples per batch! 
-##         z <- as.numeric(z)
-##         not_na <- !is.na(z)
-##         if (sum(not_na) < minVals)
-##             return(NULL)
-##         data <- droplevels(data.frame(y = z[not_na],
-##                                       data[not_na, , drop = FALSE]))
-##         do.call(lmeth, args = list(formula = formula, data = data))
-##     }, formula = formula, data = data, minVals = minVals, lmeth = method)
-##     res
-## }
