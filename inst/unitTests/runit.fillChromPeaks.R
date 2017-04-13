@@ -6,6 +6,9 @@ test_fillChromPeaks <- function() {
     ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
     checkTrue(length(ph) == 1)
     checkEquals(ph[[1]]@param, FillChromPeaksParam())
+    ## Check parameter filled in featureValues (issue #157)
+    checkEquals(featureValues(res, filled = FALSE), featureValues(xod_xg))
+    
     ## Check if the signal corresponds to what we expect for some peaks.
     fp <- chromPeaks(res)
     fp <- fp[fp[, "is_filled"] == 1, ]

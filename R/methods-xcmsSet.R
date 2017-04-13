@@ -1079,7 +1079,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 ############################################################
 ## fillPeaks.chrom
 ## New version using BiocParallel instead of nSlaves and manual setup.
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = NULL,
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = 0,
                                                   expand.mz = 1,expand.rt = 1,
                                                   BPPARAM = bpparam()) {
   ## development mockup:
@@ -1092,10 +1092,13 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = NULL,
     attach(pkgEnv)
   }
 
-    if (!is.null(nSlaves))
-        warning("Use of argument 'nSlaves' is deprecated!",
-                " Please use 'BPPARAM' instead.")
-
+    if (!is.null(nSlaves)) {
+        if (nSlaves > 0) {
+            message("Use of argument 'nSlaves' is deprecated,",
+                    " please use 'BPPARAM' instead.")
+            options(mc.cores = nSlaves)
+        }
+    }
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
