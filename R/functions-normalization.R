@@ -8,7 +8,9 @@
 #'
 #' @details For \code{method = "lmrob"} robust regression is performed using
 #'     the \code{\link[robustbase]{lmrob}} function with settings
-#'     \code{settings = "KS2014"} and \code{method = "SMDB"}. 
+#'     \code{settings = "KS2014"} and \code{method = "SMDB"}.
+#'     The function will perform by default parallel fitting of the models
+#'     based on the global parallel processing settings.
 #' 
 #' @note Between batch correction in the form of \code{y ~ idx * batch} is
 #'     currently problematic, because we don't yet check if there are too few
@@ -27,6 +29,13 @@
 #'     used for the fitting. Model fitting is skipped for rows in \code{y} with
 #'     less than \code{minVals} non-NA values.
 #'
+#' @param method \code{character} defining the method/function to be used for
+#'     model fitting. Allowed values are \code{"lm"} for least squares
+#'     regression and \code{"lmrob"} for robust regression using the
+#'     \code{\link[robustbase]{lmrob}} function.
+#'
+#' @param BPPARAM optional parameter specifying parallel processing settings.
+#'
 #' @return A \code{list} with the fitted linear models or \code{NULL} for rows
 #'     with too few data points.
 #'
@@ -34,8 +43,8 @@
 #'
 #' @author Johannes Rainer
 fitModel <- function(formula, data, y, minVals = 4,
-                     method = c("lm", "lmrob", "rlm"), BPPARAM = bpparam()) {
-    method <- match.arg(method, c("lm", "lmrob", "rlm"))
+                     method = c("lm", "lmrob"), BPPARAM = bpparam()) {
+    method <- match.arg(method, c("lm", "lmrob"))
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
@@ -94,14 +103,13 @@ fitModel <- function(formula, data, y, minVals = 4,
             if (lmeth == "lm")
                 return(lm(formula., data = data., model = FALSE))
             if (lmeth == "lmrob") {
-                stop("Not yet implemented")
                 ## set.seed(123)
                 ## return(robustbase::lmrob(formula., data = data., model = FALSE,
                 ##                          setting = sttngs))
             }
             if (lmeth == "rlm")
                 stop("Not yet implemented")
-                ## return(MASS::rlm(formula., data = data.))
+            ##     return(MASS::rlm(formula., data = data.))
         }, formula. = formula, data. = data, minVals. = minVals, lmeth = method,
         sttngs = sttngs, BPPARAM = BPPARAM)
     }
