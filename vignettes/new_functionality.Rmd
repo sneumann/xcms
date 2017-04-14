@@ -30,6 +30,7 @@ in the `xcms` package introduced during the update to version *3*.
 ```{r message = FALSE, warning = FALSE}
 library(xcms)
 library(RColorBrewer)
+register(SerialParam())
 ```
 
 
@@ -191,6 +192,56 @@ boxplot(ints, varwidth = TRUE, col = sample_colors[pData(xod)$sample_group],
 	ylab = expression(log[2]~intensity), main = "Peak intensities")
 ```
 
+After peak detection it might be advisable to evaluate whether the peak
+detection identified e.g. compounds known to be present in the
+sample. Facilitating access to the raw data has thus been one of the major aims
+for the updated user interface.
+
+Next we extract the chromatogram for the rt-mz region corresponding to one
+detected chromatographic peak increasing the region in rt dimension by +/- 60
+seconds. In addition we extract also all chromatographic peaks in that region by
+passing the same `mz` and `rt` parameters to the `chromPeaks` method.
+
+```{r faahKO-chromPeaks-extractChroms, warning = FALSE}
+rtr <- chromPeaks(xod)[68, c("rtmin", "rtmax")]
+## Increase the range:
+rtr[1] <- rtr[1] - 60
+rtr[2] <- rtr[2] + 60
+mzr <- chromPeaks(xod)[68, c("mzmin", "mzmax")]
+
+chrs <- extractChromatograms(xod, rt = rtr, mz = mzr)
+
+## In addition we get all peaks detected in the same region
+pks <- chromPeaks(xod, rt = rtr, mz = mzr)
+```
+
+Next we plot the extracted chromatogram for the data and highlight in addition
+the identified peaks.
+
+```{r faahKO-extracted-chrom-with-peaks, message = FALSE, fig.cap = "Extracted ion chromatogram for one of the identified peaks. Each line represents the signal measured in one sample. The rectangles indicate the margins of the identified chromatographic peak in the respective sample.", fig.align = "center", fig.width = 8, fig.height = 8}
+## Define the limits on x- and y-dimension
+xl <- range(lapply(chrs, rtime), na.rm = TRUE)
+yl <- range(lapply(chrs, intensity), na.rm = TRUE)
+plot(3, 3, pch = NA, main = paste(format(mzr, digits = 6), collapse = "-"),
+     xlab = "rt", ylab = "intensity", xlim = xl, ylim = yl)
+## Plot the chromatogram per sample
+for (i in 1:length(chrs)) {
+    points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l",
+	   col = sample_colors[pData(xod)$sample_group[i]])
+}
+## Highlight the identified chromatographic peaks.
+for (i in 1:nrow(pks)) {
+    rect(xleft = pks[i, "rtmin"], xright = pks[i, "rtmax"], ybottom = 0,
+	 ytop = pks[i, "maxo"],
+	 border = paste0(sample_colors[pData(xod)$sample_group][pks[i, "sample"]], 60))
+}
+```
+
+Note that the `extractChromatograms` does return an `NA` value if in a certain scan
+(i.e. for a specific retention time) no signal was measured in the respective mz
+range. This is reflected by the lines not being drawn as continuous lines in the
+plot above.
+
 Next we align the samples using the *obiwarp* method [@Prince:2006jj]. This
 method does not require, in contrast to other alignment/retention time
 correction methods, any identified peaks and could thus also be applied to an
@@ -247,6 +298,41 @@ boxplot(diffRt, col = sample_colors[pData(xod)$sample_group],
 The 3rd sample was used as *center* sample against which all other samples were
 aligned to, hence its adjusted retention times are identical to the raw
 retention times.
+
+We are again plotting the extracted ion chromatogram for the selected peaks from
+above to evaluate the impact of the alignment.
+
+```{r faahKO-extracted-chrom-with-peaks-aligned, echo = FALSE, message = FALSE, fig.cap = "Extracted ion chromatogram for one of the identified peaks after alignment.", fig.align = "center", fig.width = 8, fig.height = 8}
+rtr <- chromPeaks(xod)[68, c("rtmin", "rtmax")]
+## Increase the range:
+rtr[1] <- rtr[1] - 60
+rtr[2] <- rtr[2] + 60
+mzr <- chromPeaks(xod)[68, c("mzmin", "mzmax")]
+
+chrs <- extractChromatograms(xod, rt = rtr, mz = mzr)
+
+## In addition we get all peaks detected in the same region
+pks <- chromPeaks(xod, rt = rtr, mz = mzr)
+
+## Define the limits on x- and y-dimension
+xl <- range(lapply(chrs, rtime), na.rm = TRUE)
+yl <- range(lapply(chrs, intensity), na.rm = TRUE)
+plot(3, 3, pch = NA, main = paste(format(mzr, digits = 6), collapse = "-"),
+     xlab = "rt", ylab = "intensity", xlim = xl, ylim = yl)
+## Plot the chromatogram per sample
+for (i in 1:length(chrs)) {
+    points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l",
+	   col = sample_colors[pData(xod)$sample_group[i]])
+}
+## Highlight the identified chromatographic peaks.
+for (i in 1:nrow(pks)) {
+    rect(xleft = pks[i, "rtmin"], xright = pks[i, "rtmax"], ybottom = 0,
+	 ytop = pks[i, "maxo"],
+	 border = paste0(sample_colors[pData(xod)$sample_group][pks[i, "sample"]], 60))
+}
+```
+
+After alignment, the peaks are nicely overlapping.
 
 Next we group identified chromatographic peaks across samples. We use the *peak
 density* method [@Smith:2006ic] specifying that a chromatographic peak have

@@ -15,53 +15,56 @@
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
-\code{\link{XCMSnExp}} object from which the chromatograms should be extracted.}
+\code{\link{XCMSnExp}} object from which the chromatograms should be
+extracted.}
 
 \item{rt}{\code{numeric(2)} defining the lower and upper boundary for the
-retention time range. If not specified, the full retention time range of the
-original data will be used. It is also possible to submit a \code{numeric(1)}
-in which case \code{range} is called on it to transform it to a
-\code{numeric(2)}.}
+retention time range. If not specified, the full retention time range of
+the original data will be used. It is also possible to submit a
+\code{numeric(1)} in which case \code{range} is called on it to
+transform it to a \code{numeric(2)}.}
 
 \item{mz}{\code{numeric(2)} defining the lower and upper mz value for the
-MS data slice. If not specified, the chromatograms will be calculated on the
-full mz range. It is also possible to submit a \code{numeric(1)} in which case
-\code{range} is called on it to transform it to a \code{numeric(2)}.}
+MS data slice. If not specified, the chromatograms will be calculated on
+the full mz range. It is also possible to submit a \code{numeric(1)} in
+which case \code{range} is called on it to transform it to a
+\code{numeric(2)}.}
 
 \item{aggregationFun}{\code{character} specifying the function to be used to
-aggregate intensity values across the mz value range for the same retention
-time. Allowed values are \code{"sum"}, \code{"max"}, \code{"mean"} and
-\code{"min"}.}
+aggregate intensity values across the mz value range for the same
+retention time. Allowed values are \code{"sum"}, \code{"max"},
+\code{"mean"} and \code{"min"}.}
 
 \item{adjustedRtime}{For \code{extractChromatograms,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
-(\code{adjustedRtime = FALSE}) should be used for filtering and returned in
-the resulting \code{\link{Chromatogram}} object. Adjusted retention times are
-used by default if available.}
+(\code{adjustedRtime = FALSE}) should be used for filtering and returned
+in the resulting \code{\link{Chromatogram}} object. Adjusted retention
+times are used by default if available.}
 }
 \description{
 \code{extractChromatograms}: the method allows to extract
-chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
-\code{\link{XCMSnExp}} objects.
+    chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
+    \code{\link{XCMSnExp}} objects.
 }
 \details{
 Arguments \code{rt} and \code{mz} allow to specify the MS
-data slice from which the chromatogram should be extracted. The parameter
-\code{aggregationSum} allows to specify the function to be used to aggregate
-the intensities across the mz range for the same retention time. Setting
-\code{aggregationFun = "sum"} would e.g. allow to calculate the \emph{total
-ion chromatogram} (TIC), \code{aggregationFun = "max"} the \emph{base peak
-chromatogram} (BPC).
+    data slice from which the chromatogram should be extracted. The
+    parameter \code{aggregationSum} allows to specify the function to be
+    used to aggregate the intensities across the mz range for the same
+    retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
+    to calculate the \emph{total ion chromatogram} (TIC),
+    \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
 }
 \note{
-\code{Chromatogram} objects extracted with \code{extractChromatogram} contain
-\code{NA_real_} values if, for a given retention time, no valid measurement
-was available for the provided mz range.
+\code{Chromatogram} objects extracted with \code{extractChromatogram}
+    contain \code{NA_real_} values if, for a given retention time, no valid
+    measurement was available for the provided mz range.
 
-For \code{\link{XCMSnExp}} objects, if adjusted retention times are
-available, the \code{extractChromatograms} method will by default report and
-use these (for the subsetting based on the provided parameter \code{rt}). This
-can be overwritten with the parameter \code{adjustedRtime}.
+    For \code{\link{XCMSnExp}} objects, if adjusted retention times are
+    available, the \code{extractChromatograms} method will by default report
+    and use these (for the subsetting based on the provided parameter
+    \code{rt}). This can be overwritten with the parameter
+    \code{adjustedRtime}.
 }
 \examples{
 ## Read some files from the faahKO package.
@@ -85,7 +88,8 @@ for(i in c(1, 3)) {
 }
 \seealso{
 \code{\link{XCMSnExp}} for the data object.
-\code{\link{Chromatogram}} for the object representing chromatographic data.
+    \code{\link{Chromatogram}} for the object representing chromatographic
+    data.
 }
 \author{
 Johannes Rainer

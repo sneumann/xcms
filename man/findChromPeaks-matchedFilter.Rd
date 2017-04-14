@@ -206,37 +206,37 @@ data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
 
 \code{binSize},\code{binSize<-}: getter and setter for the
-\code{binSize} slot of the object.
+    \code{binSize} slot of the object.
 
 \code{impute},\code{impute<-}: getter and setter for the
-\code{impute} slot of the object.
+    \code{impute} slot of the object.
 
 \code{baseValue},\code{baseValue<-}: getter and setter for the
-\code{baseValue} slot of the object.
+    \code{baseValue} slot of the object.
 
 \code{distance},\code{distance<-}: getter and setter for the
-\code{distance} slot of the object.
+    \code{distance} slot of the object.
 
 \code{fwhm},\code{fwhm<-}: getter and setter for the
-\code{fwhm} slot of the object.
+    \code{fwhm} slot of the object.
 
 \code{sigma},\code{sigma<-}: getter and setter for the
-\code{sigma} slot of the object.
+    \code{sigma} slot of the object.
 
 \code{max},\code{max<-}: getter and setter for the
-\code{max} slot of the object.
+     \code{max} slot of the object.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
-\code{snthresh} slot of the object.
+    \code{snthresh} slot of the object.
 
 \code{steps},\code{steps<-}: getter and setter for the
-\code{steps} slot of the object.
+    \code{steps} slot of the object.
 
 \code{mzdiff},\code{mzdiff<-}: getter and setter for the
-\code{mzdiff} slot of the object.
+     \code{mzdiff} slot of the object.
 
 \code{index},\code{index<-}: getter and setter for the
-\code{index} slot of the object.
+    \code{index} slot of the object.
 }
 \details{
 The intensities are binned by the provided m/z values within each

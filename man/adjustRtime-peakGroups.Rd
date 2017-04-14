@@ -102,11 +102,11 @@ represents a sample, each row a feature/peak group. Such a matrix is
 for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
-containing the results from a previous chromatographic peak detection (see
-\code{\link{findChromPeaks}}) and alignment analysis (see
-\code{\link{groupChromPeaks}}).
+    containing the results from a previous chromatographic peak detection
+    (see \code{\link{findChromPeaks}}) and alignment analysis (see
+    \code{\link{groupChromPeaks}}).
 
-For all other methods: a \code{PeakGroupsParam} object.}
+    For all other methods: a \code{PeakGroupsParam} object.}
 
 \item{param}{A \code{PeakGroupsParam} object containing all settings for
 the retention time correction method..}
@@ -126,11 +126,12 @@ For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
     by the median retention time across columns.
 
 For \code{adjustRtime}: a \code{\link{XCMSnExp}} object with the
-results of the retention time adjustment step. These can be accessed with the
-\code{\link{adjustedRtime}} method. Retention time correction does also adjust
-the retention time of the identified chromatographic peaks (accessed
-\emph{via} \code{\link{chromPeaks}}. Note that retention time correction
-drops all previous alignment results from the result object.
+    results of the retention time adjustment step. These can be accessed
+    with the \code{\link{adjustedRtime}} method. Retention time correction
+    does also adjust the retention time of the identified chromatographic
+    peaks (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention
+    time correction drops all previous alignment results from the result
+    object.
 }
 \description{
 This method performs retention time adjustment based on the
@@ -152,26 +153,26 @@ The \code{PeakGroupsParam} class allows to specify all
     selected for alignment/retention time correction.
 
 \code{minFraction},\code{minFraction<-}: getter and setter
-for the \code{minFraction} slot of the object.
+    for the \code{minFraction} slot of the object.
 
 \code{extraPeaks},\code{extraPeaks<-}: getter and setter
-for the \code{extraPeaks} slot of the object.
+    for the \code{extraPeaks} slot of the object.
 
 \code{smooth},\code{smooth<-}: getter and setter
-for the \code{smooth} slot of the object.
+    for the \code{smooth} slot of the object.
 
 \code{span},\code{span<-}: getter and setter
-for the \code{span} slot of the object.
+    for the \code{span} slot of the object.
 
 \code{family},\code{family<-}: getter and setter
-for the \code{family} slot of the object.
+    for the \code{family} slot of the object.
 
 \code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
     setter for the \code{peakGroupsMatrix} slot of the object.
 
 \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
-performs retention time correction based on the alignment of peak groups
-(features) found in all/most samples.
+    performs retention time correction based on the alignment of peak groups
+    (features) found in all/most samples.
 }
 \section{Slots}{
 
@@ -197,12 +198,12 @@ These methods and classes are part of the updated and modernized
     sample alignment, but after a correspondence (peak grouping).
 
 This method requires that a correspondence has been performed on the
-data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on an
-\code{XCMSnExp} object will cause all peak grouping (correspondence) results
-and any previous retention time adjustments to be dropped.
-In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
-re-adjusts adjusted retention times to ensure them being in the same order
-than the raw (original) retention times.
+    data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on
+    an \code{XCMSnExp} object will cause all peak grouping (correspondence)
+    results and any previous retention time adjustments to be dropped.
+    In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
+    re-adjusts adjusted retention times to ensure them being in the same
+    order than the raw (original) retention times.
 }
 \examples{
 ##############################
@@ -281,7 +282,7 @@ The \code{\link{do_adjustRtime_peakGroups}} core
     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the alignment.
+    the alignment.
 
 Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
   \code{\link{adjustRtime}}

@@ -1,3 +1,16 @@
+CHANGES IN VERSION 1.51.11
+--------------------------
+
+NEW FEATURES:
+- Parameter "filled" for featureValues (issue #157).
+- Parameters "rt" and "mz" in chromPeaks method allowing to extract
+  chromatographic peaks from the specified ranges (issue #156).
+
+BUG FIXES:
+- Fixed possible memory problem in obiwarp (issue #159).
+- Update getPeaks to use non-deprecated API (issue #163).
+
+
 CHANGES IN VERSION 1.51.10
 --------------------------
 

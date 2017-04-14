@@ -12,19 +12,27 @@
 \section{Methods}{
 \describe{
 \item{object = "xcmsSet"}{
-  \code{fillPeaks.chrom(object, nSlaves=0,expand.mz=1,expand.rt=1)}
+  \code{fillPeaks.chrom(object, nSlaves=0,expand.mz=1,expand.rt=1,
+    BPPARAM = bpparam())}
 }
 }}
 
 \arguments{
   \item{object}{the \code{xcmsSet} object}
-  \item{nSlaves}{number of slaves/cores to be used for parallel peak filling.
+  \item{nSlaves}{(DEPRECATED): number of slaves/cores to be used for
+    parallel peak filling.
     MPI is used if installed, otherwise the snow package is employed for
     multicore support. If none of the two packages is available it uses
     the parallel package for parallel processing on multiple CPUs of the
-    current machine.}
+    current machine. Users are advised to use the \code{BPPARAM}
+    parameter instead.}
   \item{expand.mz}{Expansion factor for the m/z range used for integration.}
-  \item{expand.rt}{Expansion factor for the rentention time range used for integration.}
+  \item{expand.rt}{Expansion factor for the rentention time range used
+    for integration.}
+  \item{BPPARAM}{allows to define a specific parallel processing setup
+  for the current task (see \code{\link[BiocParallel]{bpparam}} from the
+  \code{BiocParallel} package help more information). The default uses
+  the globally defined parallel setup.}
 }
 \details{
   After peak grouping, there will always be peak groups that do not

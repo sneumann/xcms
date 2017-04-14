@@ -238,43 +238,43 @@ data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
-slot of the object.
+    slot of the object.
 
 \code{peakwidth},\code{peakwidth<-}: getter and setter for the
-\code{peakwidth} slot of the object.
+    \code{peakwidth} slot of the object.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
-\code{snthresh} slot of the object.
+    \code{snthresh} slot of the object.
 
 \code{prefilter},\code{prefilter<-}: getter and setter for the
-\code{prefilter} slot of the object.
+    \code{prefilter} slot of the object.
 
 \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
-\code{mzCenterFun} slot of the object.
+    \code{mzCenterFun} slot of the object.
 
 \code{integrate},\code{integrate<-}: getter and setter for the
-\code{integrate} slot of the object.
+    \code{integrate} slot of the object.
 
 \code{mzdiff},\code{mzdiff<-}: getter and setter for the
-\code{mzdiff} slot of the object.
+    \code{mzdiff} slot of the object.
 
 \code{fitgauss},\code{fitgauss<-}: getter and setter for the
-\code{fitgauss} slot of the object.
+    \code{fitgauss} slot of the object.
 
 \code{noise},\code{noise<-}: getter and setter for the
-\code{noise} slot of the object.
+    \code{noise} slot of the object.
 
 \code{verboseColumns},\code{verboseColumns<-}: getter and
-setter for the \code{verboseColumns} slot of the object.
+    setter for the \code{verboseColumns} slot of the object.
 
 \code{roiList},\code{roiList<-}: getter and setter for the
-\code{roiList} slot of the object.
+    \code{roiList} slot of the object.
 
 \code{fistBaselineCheck},\code{firstBaselineCheck<-}: getter
-and setter for the \code{firstBaselineCheck} slot of the object.
+    and setter for the \code{firstBaselineCheck} slot of the object.
 
 \code{roiScales},\code{roiScales<-}: getter and setter for the
-\code{roiScales} slot of the object.
+    \code{roiScales} slot of the object.
 }
 \details{
 The centWave algorithm is most suitable for high resolution
