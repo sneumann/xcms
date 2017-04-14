@@ -200,19 +200,19 @@ data and load the spectra data (mz and intensity values) on the fly from
 the original files applying also all eventual data manipulations.
 
 \code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
-setter for the \code{snthreshIsoROIs} slot of the object.
+    setter for the \code{snthreshIsoROIs} slot of the object.
 
 \code{maxCharge},\code{maxCharge<-}: getter and
-setter for the \code{maxCharge} slot of the object.
+    setter for the \code{maxCharge} slot of the object.
 
 \code{maxIso},\code{maxIso<-}: getter and
-setter for the \code{maxIso} slot of the object.
+    setter for the \code{maxIso} slot of the object.
 
 \code{mzIntervalExtension},\code{mzIntervalExtension<-}: getter
-and setter for the \code{mzIntervalExtension} slot of the object.
+    and setter for the \code{mzIntervalExtension} slot of the object.
 
 \code{polarity},\code{polarity<-}: getter and
-setter for the \code{polarity} slot of the object.
+    setter for the \code{polarity} slot of the object.
 }
 \details{
 See \code{\link{centWave}} for details on the centWave method.

@@ -192,41 +192,41 @@ data and load the spectra data (mz and intensity values) on the fly from the
 original files applying also all eventual data manipulations.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
-\code{snthresh} slot of the object.
+    \code{snthresh} slot of the object.
 
 \code{verboseColumns},\code{verboseColumns<-}: getter and setter
-for the \code{verboseColumns} slot of the object.
+    for the \code{verboseColumns} slot of the object.
 
 \code{scales},\code{scales<-}: getter and setter for the
-\code{scales} slot of the object.
+    \code{scales} slot of the object.
 
 \code{nearbyPeak},\code{nearbyPeak<-}: getter and setter for the
-\code{nearbyPeak} slot of the object.
+    \code{nearbyPeak} slot of the object.
 
 \code{peakScaleRange},\code{peakScaleRange<-}: getter and setter
-for the \code{peakScaleRange} slot of the object.
+    for the \code{peakScaleRange} slot of the object.
 
 \code{ampTh},\code{ampTh<-}: getter and setter for the
-\code{ampTh} slot of the object.
+    \code{ampTh} slot of the object.
 
 \code{minNoiseLevel},\code{minNoiseLevel<-}: getter and setter
-for the \code{minNoiseLevel} slot of the object.
+    for the \code{minNoiseLevel} slot of the object.
 
 \code{ridgeLength},\code{ridgeLength<-}: getter and setter for
-the \code{ridgeLength} slot of the object.
+    the \code{ridgeLength} slot of the object.
 
 \code{peakThr},\code{peakThr<-}: getter and setter for the
-\code{peakThr} slot of the object.
+    \code{peakThr} slot of the object.
 
 \code{tuneIn},\code{tuneIn<-}: getter and setter for the
-\code{tuneIn} slot of the object.
+    \code{tuneIn} slot of the object.
 
 \code{addParams},\code{addParams<-}: getter and setter for the
-\code{addParams} slot of the object. This slot stores optional additional
-parameters to be passed to the
-\code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
-\code{\link[MassSpecWavelet]{sav.gol}} functions from the
-\code{MassSpecWavelet} package.
+    \code{addParams} slot of the object. This slot stores optional additional
+    parameters to be passed to the
+    \code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
+    \code{\link[MassSpecWavelet]{sav.gol}} functions from the
+    \code{MassSpecWavelet} package.
 }
 \details{
 This is a wrapper for the peak picker in Bioconductor's

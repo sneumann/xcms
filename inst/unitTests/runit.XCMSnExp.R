@@ -142,6 +142,44 @@ test_XCMSnExp_class_accessors <- function() {
     tmp <- do.call(rbind, tmp)
     rownames(tmp) <- NULL
     checkEquals(tmp, chromPeaks(xod))
+    ## chromPeaks with rt
+    all_pks <- chromPeaks(xod_x)
+    pks <- chromPeaks(xod_x, rt = c(2000, 2600), type = "within")
+    checkTrue(nrow(pks) < nrow(all_pks))
+    checkTrue(all(pks[, "rtmin"] >= 2000 & pks[, "rtmax"] <= 2600))
+    pks <- chromPeaks(xod_x, rt = c(2000, 2600), bySample = TRUE,
+                      type = "within")
+    checkTrue(nrow(pks[[2]]) == 0)
+    pks <- chromPeaks(xod_x, rt = c(2000, 2600), type = "any")
+    checkTrue(all(pks[, "rtmax"] >= 2000 & pks[, "rtmin"] <= 2600))
+    pks <- chromPeaks(xod_x, rt = c(2000, 2200))
+    checkTrue(nrow(pks) == 0)
+    pks <- chromPeaks(xod_x, rt = c(2000, 2200), bySample = TRUE)
+    checkTrue(all(lengths(pks) == 0))
+    ## chromPeaks with mz
+    pks <- chromPeaks(xod_x, mz = c(280, 281), type = "within")
+    checkTrue(all(pks[, "mzmin"] >= 280 & pks[, "mzmax"] <= 281))
+    pks <- chromPeaks(xod_x, mz = c(280, 281), bySample = TRUE, type = "within")
+    checkTrue(nrow(pks[[1]]) == 0)
+    checkTrue(nrow(pks[[3]]) == 0)
+    checkTrue(nrow(pks[[2]]) == 1)
+    pks <- chromPeaks(xod_x, mz = c(280, 300), bySample = FALSE, type = "within")
+    checkTrue(all(pks[, "mzmin"] >= 280 & pks[, "mzmax"] <= 300))
+    pks <- chromPeaks(xod_x, mz = c(280, 300), bySample = FALSE, type = "any")
+    checkTrue(all(pks[, "mzmax"] >= 280 & pks[, "mzmin"] <= 300))
+    pks <- chromPeaks(xod_x, mz = c(200, 210), bySample = FALSE)
+    checkTrue(nrow(pks) == 0)
+    pks <- chromPeaks(xod_x, mz = c(200, 210), bySample = TRUE)
+    checkTrue(all(lengths(pks) == 0))
+    ## chromPeaks with both
+    pks <- chromPeaks(xod_x, mz = c(280, 300), rt = c(3000, 3300),
+                      type = "within")
+    checkTrue(all(pks[, "mzmin"] >= 280 & pks[, "mzmax"] <= 300))
+    checkTrue(all(pks[, "rtmin"] >= 3000 & pks[, "rtmax"] <= 3300))
+    pks <- chromPeaks(xod_x, mz = c(280, 300), rt = c(3000, 3300),
+                      type = "any")
+    checkTrue(all(pks[, "mzmax"] >= 280 & pks[, "mzmin"] <= 300))
+    checkTrue(all(pks[, "rtmax"] >= 3000 & pks[, "rtmin"] <= 3300))
     ## Wrong assignments.
     pks <- xs_2@peaks
     pks[1, "sample"] <- 40
