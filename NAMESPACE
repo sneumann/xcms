@@ -4,7 +4,12 @@ importFrom("utils", "capture.output")
 import("methods")
 importFrom("ProtGenerics", "peaks")
 importFrom("BiocGenerics", "updateObject", "fileName")
-import("Biobase")
+## import("Biobase")
+importFrom("Biobase", "AnnotatedDataFrame")
+importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
+importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
+                  "phenoData<-", "pData", "rowMedians")
+
 importFrom("graphics", "plot", "image", "boxplot")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")

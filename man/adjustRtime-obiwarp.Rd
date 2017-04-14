@@ -146,7 +146,7 @@ alignment (for local alignment only).}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 
-For all other methods: a \code{ObiwarpParam} object.}
+    For all other methods: a \code{ObiwarpParam} object.}
 
 \item{param}{A \code{ObiwarpParam} object containing all settings for
 the alignment method.}
@@ -159,15 +159,17 @@ The \code{ObiwarpParam} function returns a
 specified for obiwarp retention time adjustment and alignment.
 
 For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
-\code{\link{XCMSnExp}} object with the results of the retention time
-adjustment step. These can be accessed with the \code{\link{adjustedRtime}}
-method. Retention time correction does also adjust the retention time of the
-identified chromatographic peaks (accessed \emph{via}
-\code{\link{chromPeaks}}. Note that retention time correction drops all
-previous peak grouping results from the result object.
+    \code{\link{XCMSnExp}} object with the results of the retention time
+    adjustment step. These can be accessed with the
+    \code{\link{adjustedRtime}} method. Retention time correction does also
+    adjust the retention time of the identified chromatographic peaks
+    (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention time
+    correction drops all previous peak grouping results from the result
+    object.
 
-For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with the
-adjusted retention times per spectra (in the same order than \code{rtime}).
+    For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with
+    the adjusted retention times per spectra (in the same order than
+    \code{rtime}).
 }
 \description{
 This method performs retention time adjustment using the
@@ -183,38 +185,38 @@ The \code{ObiwarpParam} class allows to specify all
     \code{ObiwarpParam} constructor.
 
 \code{binSize},\code{binSize<-}: getter and setter
-for the \code{binSize} slot of the object.
+    for the \code{binSize} slot of the object.
 
 \code{centerSample},\code{centerSample<-}: getter and setter
-for the \code{centerSample} slot of the object.
+    for the \code{centerSample} slot of the object.
 
 \code{response},\code{response<-}: getter and setter
-for the \code{response} slot of the object.
+    for the \code{response} slot of the object.
 
 \code{distFun},\code{distFun<-}: getter and setter
-for the \code{distFun} slot of the object.
+    for the \code{distFun} slot of the object.
 
 \code{gapInit},\code{gapInit<-}: getter and setter
-for the \code{gapInit} slot of the object.
+    for the \code{gapInit} slot of the object.
 
 \code{gapExtend},\code{gapExtend<-}: getter and setter
-for the \code{gapExtend} slot of the object.
+    for the \code{gapExtend} slot of the object.
 
 \code{factorDiag},\code{factorDiag<-}: getter and setter
-for the \code{factorDiag} slot of the object.
+     for the \code{factorDiag} slot of the object.
 
 \code{factorGap},\code{factorGap<-}: getter and setter
-for the \code{factorGap} slot of the object.
+    for the \code{factorGap} slot of the object.
 
 \code{localAlignment},\code{localAlignment<-}: getter and setter
-for the \code{localAlignment} slot of the object.
+    for the \code{localAlignment} slot of the object.
 
 \code{initPenalty},\code{initPenalty<-}: getter and setter
-for the \code{initPenalty} slot of the object.
+    for the \code{initPenalty} slot of the object.
 
 \code{adjustRtime,XCMSnExp,ObiwarpParam}:
-performs retention time correction/alignment based on the total mz-rt data
-using the \emph{obiwarp} method.
+    performs retention time correction/alignment based on the total mz-rt
+    data using the \emph{obiwarp} method.
 }
 \section{Slots}{
 
@@ -231,8 +233,8 @@ These methods and classes are part of the updated and modernized
     algorithm can be passed with a \code{ObiwarpParam} object.
 
 Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-all peak grouping (correspondence) results and any previous retention time
-adjustment results to be dropped.
+    all peak grouping (correspondence) results and any previous retention
+    time adjustment results to be dropped.
 }
 \examples{
 library(faahKO)
@@ -286,7 +288,7 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the alignment.
+    the alignment.
 
 Other retention time correction methods: \code{\link{adjustRtime-peakGroups}},
   \code{\link{adjustRtime}}

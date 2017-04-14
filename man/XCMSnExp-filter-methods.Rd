@@ -19,21 +19,21 @@
 \item{object}{A \code{\link{XCMSnExp}} object.}
 
 \item{file}{For \code{filterFile}: \code{integer} defining the file index
-within the object to subset the object by file or \code{character} specifying
-the file names to sub set. The indices are expected to be increasingly
-ordered, if not they are ordered internally.}
+within the object to subset the object by file or \code{character}
+specifying the file names to sub set. The indices are expected to be
+increasingly ordered, if not they are ordered internally.}
 
 \item{keepAdjustedRtime}{For \code{filterFile}: \code{logical(1)} defining
 whether the adjusted retention times should be kept, even if features are
-being removed (and the retention time correction being potentially performed
-on these features).}
+being removed (and the retention time correction being potentially
+performed on these features).}
 
 \item{mz}{For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 mz value for the filtering.}
 
 \item{msLevel.}{For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
-defining the MS level(s) to which operations should be applied or to which
-the object should be subsetted.}
+defining the MS level(s) to which operations should be applied or to
+which the object should be subsetted.}
 
 \item{...}{Optional additional arguments.}
 
@@ -41,8 +41,8 @@ the object should be subsetted.}
 window (lower and upper bound) for the filtering.}
 
 \item{adjusted}{For \code{filterRt}: \code{logical} indicating whether the
-object should be filtered by original (\code{adjusted = FALSE}) or adjusted
-retention times (\code{adjusted = TRUE}).
+object should be filtered by original (\code{adjusted = FALSE}) or
+adjusted retention times (\code{adjusted = TRUE}).
 For \code{spectra}: whether the retention times in the individual
 \code{Spectrum} objects should be the adjusted or raw retention times.}
 }
@@ -51,44 +51,44 @@ All methods return an \code{\link{XCMSnExp}} object.
 }
 \description{
 The methods listed on this page allow to filter and subset
-\code{\link{XCMSnExp}} objects. Most of them are inherited from the
-\code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
-\code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
-results.
+    \code{\link{XCMSnExp}} objects. Most of them are inherited from the
+    \code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
+    \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
+    results.
 
-\code{filterFile}: allows to reduce the
-\code{\link{XCMSnExp}} to data from only certain files. Identified
-chromatographic peaks for these files are retained while all eventually
-present features (peak grouping information) are dropped. By default also
-adjusted retention times are removed. This can be overwritten by setting
-\code{keepAdjustedRtime = TRUE}, but users should use this option with
-caution.
+    \code{filterFile}: allows to reduce the
+    \code{\link{XCMSnExp}} to data from only certain files. Identified
+    chromatographic peaks for these files are retained while all eventually
+    present features (peak grouping information) are dropped. By default also
+    adjusted retention times are removed. This can be overwritten by setting
+    \code{keepAdjustedRtime = TRUE}, but users should use this option with
+    caution.
 
 \code{filterMz}: filters the data set based on the
-provided mz value range. All chromatographic peaks and features (grouped
-peaks) falling completely within the provided mz value range are retained
-(if their minimal mz value is \code{>= mz[1]} and the maximal mz value
-\code{<= mz[2]}. Adjusted retention times, if present, are not altered by
-the filtering.
+    provided mz value range. All chromatographic peaks and features (grouped
+    peaks) falling completely within the provided mz value range are retained
+    (if their minimal mz value is \code{>= mz[1]} and the maximal mz value
+    \code{<= mz[2]}. Adjusted retention times, if present, are not altered by
+    the filtering.
 
 \code{filterRt}: filters the data set based on the
-provided retention time range. All chromatographic peaks and features
-(grouped peaks) the specified retention time window are retained (i.e. if
-the retention time corresponding to the peak's apex is within the specified
-rt range). If retention time correction has been performed, the method will
-by default filter the object by adjusted retention times.
-The argument \code{adjusted} allows to specify manually whether filtering
-should be performed by raw or adjusted retention times. Filtering by
-retention time does not drop any preprocessing results.
-The method returns an empty object if no spectrum or feature is within the
-specified retention time range.
+    provided retention time range. All chromatographic peaks and features
+    (grouped peaks) the specified retention time window are retained (i.e. if
+    the retention time corresponding to the peak's apex is within the
+    specified rt range). If retention time correction has been performed,
+    the method will by default filter the object by adjusted retention times.
+    The argument \code{adjusted} allows to specify manually whether filtering
+    should be performed by raw or adjusted retention times. Filtering by
+    retention time does not drop any preprocessing results.
+    The method returns an empty object if no spectrum or feature is within
+    the specified retention time range.
 }
 \note{
 The \code{filterFile} method removes also process history steps not
-related to the files to which the object should be sub-setted and updates
-the \code{fileIndex} attribute accordingly. Also, the method does not allow
-arbitrary ordering of the files or re-ordering of the files within the
-object.
+    related to the files to which the object should be sub-setted and updates
+    the \code{fileIndex} attribute accordingly. Also, the method does not
+    allow arbitrary ordering of the files or re-ordering of the files within
+    the object.
 }
 \examples{
 

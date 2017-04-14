@@ -104,32 +104,44 @@ useOriginalCode <- function(x) {
 ##' @title Create the profile matrix
 ##'
 ##' @description This function creates a \emph{profile} matrix, i.e. a rt times
-##' m/z matrix of aggregated intensity values with values aggregated within bins
-##' along the m/z dimension.
+##'     m/z matrix of aggregated intensity values with values aggregated within
+##'     bins along the m/z dimension.
 ##'
 ##' @details This is somewhat the successor function for the deprecated
-##' \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
-##' \code{profBinLinBaseM} and \code{profIntLin}).
+##'     \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
+##'     \code{profBinLinBaseM} and \code{profIntLin}).
 ##'
 ##' @param mz Numeric representing the m/z values across all scans/spectra.
+##'
 ##' @param int Numeric representing the intensity values across all
-##' scans/spectra.
+##'     scans/spectra.
+##'
 ##' @param valsPerSpect Numeric representing the number of measurements for each
-##' scan/spectrum.
+##'     scan/spectrum.
+##'
 ##' @param method A character string specifying the profile matrix generation
-##' method. Allowed are \code{"bin"}, \code{"binlin"},
-##' \code{"binlinbase"} and \code{"intlin"}.
+##'     method. Allowed are \code{"bin"}, \code{"binlin"},
+##'     \code{"binlinbase"} and \code{"intlin"}.
+##'
 ##' @param step Numeric specifying the size of the m/z bins.
+##'
 ##' @param baselevel Numeric specifying the base value.
+##'
 ##' @param basespace Numeric.
+##'
 ##' @param mzrange. numeric(2) optionally specifying the mz value range
-##' for binning. This is to adopt the old profStepPad<- method used for obiwarp
-##' retention time correction that did the binning from whole-number limits.
+##'     for binning. This is to adopt the old profStepPad<- method used for
+##'     obiwarp retention time correction that did the binning from
+##'     whole-number limits.
+##'
 ##' @param returnBreaks logical(1): hack to return the breaks of the bins.
-##' Setting this to TRUE causes the function to return a \code{list} with
-##' elements \code{"$profMat"} and \code{"breaks"}.
+##'     Setting this to TRUE causes the function to return a \code{list} with
+##'     elements \code{"$profMat"} and \code{"breaks"}.
+##'
 ##' @param baseValue numeric(1) defining the value to be returned if no signal
-##' was found in the corresponding bin. Defaults to 0 for backward compatibility.
+##'     was found in the corresponding bin. Defaults to 0 for backward
+##'     compatibility.
+##'
 ##' @noRd
 .createProfileMatrix <- function(mz, int, valsPerSpect,
                                  method, step = 0.1, baselevel = NULL,
@@ -144,7 +156,7 @@ useOriginalCode <- function(x) {
     brks <- NULL
     
     if (length(mzrange.) != 2) {
-        mrange <- range(mz)
+        mrange <- range(mz, na.rm = TRUE)
         mzrange. <- c(floor(mrange[1] / step) * step,
                       ceiling(mrange[2] / step) * step)
     }
@@ -153,6 +165,14 @@ useOriginalCode <- function(x) {
     ## Calculate the "real" bin size; old xcms code oddity that that's different
     ## from step.
     bin_size <- (mass[mlength] - mass[1]) / (mlength - 1)
+    ## Define the breaks.
+    toIdx <- cumsum(valsPerSpect)
+    fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
+    shiftBy <- TRUE
+    binFromX <- min(mass)
+    binToX <- max(mass)
+    brks <- breaks_on_nBins(fromX = binFromX, toX = binToX,
+                            nBins = mlength, shiftByHalfBinSize = TRUE)
     ## for profIntLinM we have to use the old code.
     if (impute == "intlin") {
         profFun <- "profIntLinM"
@@ -164,13 +184,6 @@ useOriginalCode <- function(x) {
                                             TRUE))
     } else {
         ## Binning the data.
-        toIdx <- cumsum(valsPerSpect)
-        fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
-        shiftBy <- TRUE
-        binFromX <- min(mass)
-        binToX <- max(mass)
-        brks <- breaks_on_nBins(fromX = binFromX, toX = binToX,
-                                nBins = mlength, shiftByHalfBinSize = TRUE)
         binRes <- binYonX(mz, int,
                           breaks = brks,
                           fromIdx = fromIdx,
