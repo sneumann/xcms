@@ -614,10 +614,11 @@ setClass("CentWaveParam",
                      msg <- c(msg, paste0("'roiList' does not provide ",
                                           "all required fields!"))
              }
-             if (length(object@roiList) > 0 &
-                 length(object@roiList) != length(object@roiScales))
-                 msg <- c(msg, paste0("'roiScales' has to have the same",
-                                      " length than 'roiList'."))
+             if (length(object@roiScales) > 0) {   
+                 if (length(object@roiList) != length(object@roiScales))
+                     msg <- c(msg, paste0("'roiScales' has to have the same",
+                                          " length than 'roiList'."))
+             }
              if (length(msg))
                  msg
              else
