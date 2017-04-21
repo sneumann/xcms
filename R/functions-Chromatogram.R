@@ -159,9 +159,6 @@ Chromatogram <- function(rtime = numeric(), intensity = numeric(),
 #'     \code{main = NULL} the mz range of the \code{Chromatogram} object(s) will
 #'     be used as the title.
 #'
-#' @param ylim \code{numeric(2)} defining the y-axis limits. Autodetected if
-#'     \code{ylim = NULL}.
-#' 
 #' @param ... additional parameters to the \code{\link{matplot}} or \code{plot}
 #'     function.
 #'
@@ -243,7 +240,7 @@ plotChromatogram <- function(x, rt, col = "#00000060",
     ##         ylim <- range(ints, na.rm = TRUE, finite = TRUE)
     ## }
     ## Skip columns that have only NAs?
-    keepCol <- which(apply(y, MARGIN = 2, function(z) any(!is.na(z))))
+    keepCol <- which(apply(ints, MARGIN = 2, function(z) any(!is.na(z))))
     if (length(keepCol)) {
         matplot(x = rts[, keepCol, drop = FALSE],
                 y = ints[, keepCol, drop = FALSE], type = type, lty = lty,

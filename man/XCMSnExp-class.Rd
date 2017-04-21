@@ -109,7 +109,7 @@ processHistoryTypes()
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
 \S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE, rt = numeric(),
-  mz = numeric(), ppm = 10, type = "any")
+  mz = numeric(), ppm = 0, type = "any")
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
