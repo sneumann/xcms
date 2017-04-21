@@ -90,6 +90,7 @@ test_extractChromatograms <- function() {
     ## OnDiskMSnExp
     ## TIC
     chrs <- extractChromatograms(filterFile(od_x, file = 2))
+    plotChromatogram(chrs)
     spctr <- spectra(filterFile(od_x, file = 2))
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))

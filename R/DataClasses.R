@@ -2416,6 +2416,8 @@ setClass("XCMSnExp",
 #' @seealso \code{\link{extractChromatograms}} for the method to extract
 #'     \code{Chromatogram} objects from \code{\link{XCMSnExp}} or
 #'     \code{\link[MSnbase]{OnDiskMSnExp}} objects.
+#'
+#'     \code{\link{plotChromatogram}} to plot \code{Chromatogram} objects.
 setClass("Chromatogram",
          slots = c(
              rtime = "numeric",

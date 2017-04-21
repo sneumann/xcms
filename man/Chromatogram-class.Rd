@@ -74,9 +74,9 @@ Represents the mz of the product. See details for more information.}
 chromatogram was extracted.}
 
 \item{aggregationFun}{\code{character} string specifying the function that
-was used to aggregate intensity values for the same retention time across the
-mz range. Supported are \code{"sum"} (total ion chromatogram), \code{"max"}
-(base peak chromatogram), \code{"min"} and \code{"mean"}.}
+was used to aggregate intensity values for the same retention time across
+the mz range. Supported are \code{"sum"} (total ion chromatogram),
+\code{"max"} (base peak chromatogram), \code{"min"} and \code{"mean"}.}
 
 \item{object}{A \code{Chromatogram} object.}
 
@@ -100,7 +100,7 @@ The \code{Chromatogram} class is designed to store
     \code{\link{extractChromatograms}}).
 
 \code{Chromatogram}: create an instance of the
-\code{Chromatogram} class.
+    \code{Chromatogram} class.
 
 \code{rtime} returns the retention times for the rentention time
 - intensity pairs stored in the chromatogram.
@@ -175,6 +175,8 @@ range(rtime(chr2))
 \code{\link{extractChromatograms}} for the method to extract
     \code{Chromatogram} objects from \code{\link{XCMSnExp}} or
     \code{\link[MSnbase]{OnDiskMSnExp}} objects.
+
+    \code{\link{plotChromatogram}} to plot \code{Chromatogram} objects.
 }
 \author{
 Johannes Rainer

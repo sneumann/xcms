@@ -90,6 +90,9 @@ for(i in c(1, 3)) {
 \code{\link{XCMSnExp}} for the data object.
     \code{\link{Chromatogram}} for the object representing chromatographic
     data.
+
+    \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
+    \code{list} of such objects.
 }
 \author{
 Johannes Rainer

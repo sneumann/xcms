@@ -1876,6 +1876,9 @@ setMethod("featureValues",
 #'     \code{\link{Chromatogram}} for the object representing chromatographic
 #'     data.
 #'
+#'     \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
+#'     \code{list} of such objects.
+#'
 #' @export
 #' 
 #' @rdname extractChromatograms-method
