@@ -43,6 +43,8 @@ importFrom("multtest", "mt.teststat")
 importFrom("RANN", "nn2")
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
+importFrom("robustbase", "lmrob.control", "lmrob")
+
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
