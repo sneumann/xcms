@@ -158,6 +158,9 @@ Chromatogram <- function(rtime = numeric(), intensity = numeric(),
 #' @param main The title for the plot. For \code{plotChromatogram}: if
 #'     \code{main = NULL} the mz range of the \code{Chromatogram} object(s) will
 #'     be used as the title.
+#'
+#' @param ylim \code{numeric(2)} defining the y-axis limits. Autodetected if
+#'     \code{ylim = NULL}.
 #' 
 #' @param ... additional parameters to the \code{\link{matplot}} or \code{plot}
 #'     function.
@@ -226,13 +229,29 @@ plotChromatogram <- function(x, rt, col = "#00000060",
     }
     ## If main is NULL use the mz range.
     if (is.null(main)) {
-        mzr <- range(lapply(x, mz), na.rm = TRUE)
+        mzr <- range(lapply(x, mz), na.rm = TRUE, finite = TRUE)
         main <- paste0(format(mzr, digits = 7), collapse = " - ")
     }
     rts <- do.call(cbind, lapply(x, rtime))
     ints <- do.call(cbind, lapply(x, intensity))
-    matplot(x = rts, y = ints, type = type, lty = lty,
-            col = col, xlab = xlab, ylab = ylab, main = main, ...)
+    ## ## Fix problem if we've got only NAs:
+    ## dotList <- list(...)
+    ## if (is.null(ylim)) {
+    ##     if (all(is.na(ints)))
+    ##         ylim <- c(0, 1)
+    ##     else
+    ##         ylim <- range(ints, na.rm = TRUE, finite = TRUE)
+    ## }
+    ## Skip columns that have only NAs?
+    keepCol <- which(apply(y, MARGIN = 2, function(z) any(!is.na(z))))
+    if (length(keepCol)) {
+        matplot(x = rts[, keepCol, drop = FALSE],
+                y = ints[, keepCol, drop = FALSE], type = type, lty = lty,
+                col = col[keepCol], xlab = xlab, ylab = ylab, main = main,
+                ...)
+    } else
+        plot(x = 3, y = 3, pch = NA, xlab = xlab, ylab = ylab, main = main,
+             xlim = range(rts, na.rm = TRUE), ylim = c(0, 1))
 }
 
 #' @description The \code{highlightChromPeaks} function adds chromatographic
@@ -257,7 +276,7 @@ highlightChromPeaks <- function(x, rt, mz,
         stop("'x' has to be a XCMSnExp object")
     if (!hasChromPeaks(x))
         stop("'x' does not contain any detected peaks")
-    pks <- chromPeaks(x, rt = rt, mz = mz)
+    pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0)
     if (length(col) != length(fileNames(x)))
         col <- rep(col[1], length(fileNames(x)))
     if (length(border) != length(fileNames(x)))

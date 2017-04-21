@@ -259,7 +259,8 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             if (!z@peaksCount)
                 return(c(NA_real_, NA_real_, NA_real_))
             ## return(list())
-            return(c(range(z@mz), do.call(aggregationFun, list(z@intensity))))
+            return(c(range(z@mz, na.rm = TRUE, finite = TRUE),
+                     do.call(aggregationFun, list(z@intensity, na.rm = TRUE))))
         })
     )
     ## Do I want to drop the names?

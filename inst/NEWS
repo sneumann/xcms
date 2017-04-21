@@ -4,6 +4,9 @@ CHANGES IN VERSION 1.51.12
 NEW FEATURES:
 - plotChromatogram and highlightChromPeaks functions.
 
+USER VISIBLE CHANGES:
+- Change default for ppm parameter in chromPeaks method to 0.
+
 
 CHANGES IN VERSION 1.51.11
 --------------------------

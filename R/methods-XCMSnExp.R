@@ -247,7 +247,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' @rdname XCMSnExp-class
 setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                                              rt = numeric(), mz = numeric(),
-                                             ppm = 10, type = "any") {
+                                             ppm = 0, type = "any") {
     pks <- chromPeaks(object@msFeatureData)
     type <- match.arg(type, c("any", "within"))
     ## Select peaks within rt range.
@@ -1906,9 +1906,9 @@ setMethod("extractChromatograms",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
                    aggregationFun = "sum") {
-              return(.extractChromatogram(x = object, rt = rt, mz = mz,
+              .extractChromatogram(x = object, rt = rt, mz = mz,
                                           aggregationFun = aggregationFun,
-                                          adjusted = adjustedRtime))
+                                          adjusted = adjustedRtime)
           })
 
 #' @rdname XCMSnExp-class
