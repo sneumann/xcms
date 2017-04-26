@@ -73,7 +73,7 @@ test_fillChromPeaks <- function() {
     ## Get the intensities for the first one.
     pkArea <- apply(tmp, median, MARGIN = 2)
     chr <- extractChromatograms(res, rt = pkArea[1:2], mz = pkArea[3:4])
-    checkTrue(length(chr) == 0)
+    checkTrue(all(lengths(chr) == 0))
     ## Get also the spectra:
     spctr <- spectra(filterRt(filterFile(xod_xg, file = 1), rt = pkArea[1:2]))
     mzs <- unlist(lapply(spctr, mz))

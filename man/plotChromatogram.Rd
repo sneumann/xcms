@@ -103,6 +103,7 @@ plotChromatogram(chrs, col = c("#FF000080", "#00FF0080", "#0000FF80"), lwd = 2)
 highlightChromPeaks(od, rt = rtr, mz = mzr,
     col = c("#FF000005", "#00FF0005", "#0000FF05"),
     border = c("#FF000040", "#00FF0040", "#0000FF40"))
+
 }
 \seealso{
 \code{\link{extractChromatograms}} for how to extract a list of

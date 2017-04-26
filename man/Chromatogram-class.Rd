@@ -20,9 +20,9 @@
 \alias{filterRt,Chromatogram-method}
 \title{Representation of chromatographic MS data}
 \usage{
-Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(0, 0),
-  filterMz = c(0, 0), precursorMz = c(NA_real_, NA_real_),
-  productMz = c(NA_real_, NA_real_), fromFile = integer(),
+Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(NA_real_,
+  NA_real_), filterMz = c(NA_real_, NA_real_), precursorMz = c(NA_real_,
+  NA_real_), productMz = c(NA_real_, NA_real_), fromFile = integer(),
   aggregationFun = character())
 
 \S4method{show}{Chromatogram}(object)

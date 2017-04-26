@@ -1847,17 +1847,17 @@ setMethod("featureValues",
 #'     \code{\link{XCMSnExp}} object from which the chromatograms should be
 #'     extracted.
 #'
-#' @param rt \code{numeric(2)} defining the lower and upper boundary for the
-#'     retention time range. If not specified, the full retention time range of
-#'     the original data will be used. It is also possible to submit a
-#'     \code{numeric(1)} in which case \code{range} is called on it to
-#'     transform it to a \code{numeric(2)}.
+#' @param rt \code{numeric(2)} or two-column \code{matrix} defining the lower
+#'     and upper boundary for the retention time range(s). If not specified,
+#'     the full retention time range of the original data will be used.
+#'     It is also possible to submit a \code{numeric(1)} in which case
+#'     \code{range} is called on it to transform it to a \code{numeric(2)}.
 #'
-#' @param mz \code{numeric(2)} defining the lower and upper mz value for the
-#'     MS data slice. If not specified, the chromatograms will be calculated on
-#'     the full mz range. It is also possible to submit a \code{numeric(1)} in
-#'     which case \code{range} is called on it to transform it to a
-#'     \code{numeric(2)}.
+#' @param mz \code{numeric(2)} or two-column \code{matrix} defining the lower
+#'     and upper mz value for the MS data slice(s). If not specified, the
+#'     chromatograms will be calculated on the full mz range.
+#'     It is also possible to submit a \code{numeric(1)} in which case
+#'     \code{range} is called on it to transform it to a \code{numeric(2)}.
 #'
 #' @param adjustedRtime For \code{extractChromatograms,XCMSnExp}: whether the
 #'     adjusted (\code{adjustedRtime = TRUE}) or raw retention times
@@ -1869,6 +1869,24 @@ setMethod("featureValues",
 #'     aggregate intensity values across the mz value range for the same
 #'     retention time. Allowed values are \code{"sum"}, \code{"max"},
 #'     \code{"mean"} and \code{"min"}.
+#'
+#' @return If a single \code{rt} and \code{mz} range was specified,
+#'     \code{extractChromatograms} returns a \code{list} of
+#'     \code{\link{Chromatogram}} classes each element being the chromatogram
+#'     for one of the samples for the specified range.
+#'     If multiple \code{rt} and \code{mz} ranges were provided (i.e. by passing
+#'     a multi-row \code{matrix} to parameters \code{rt} or \code{mz}), the
+#'     function returns a \code{list} of \code{list}s. The outer list
+#'     representing results for the various ranges, the inner the result across
+#'     files. In other words, \code{result[[1]]} returns a \code{list} with
+#'     \code{Chromatogram} classes length equal to the number of files, each
+#'     element representing the \code{Chromatogram} for the first rt/mz range
+#'     for one file.
+#'     An empty \code{list} is returned if no MS1 data is present in
+#'     \code{object} or if not a single spectrum is available for any of the
+#'     provided retention time ranges in \code{rt}. An empty \code{Chromatogram}
+#'     object is returned at the correponding position in the result \code{list}
+#'     if for a specific file or range no data was available.
 #' 
 #' @author Johannes Rainer
 #'
@@ -1902,13 +1920,36 @@ setMethod("featureValues",
 #' for(i in c(1, 3)) {
 #'   points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l", col = "00000080")
 #' }
+#'
+#' ## Plot the chromatogram using plotChromatogram
+#' plotChromatogram(chrs)
+#'
+#' ## Extract chromatograms for multiple ranges.
+#' mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+#' rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
+#' chrs <- extractChromatograms(od, mz = mzr, rt = rtr)
+#'
+#' ## Plot the extracted chromatograms
+#' par(mfrow = c(1, 2))
+#' plotChromatogram(chrs[[1]])
+#' plotChromatogram(chrs[[2]])
 setMethod("extractChromatograms",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
                    aggregationFun = "sum") {
-              .extractChromatogram(x = object, rt = rt, mz = mz,
-                                          aggregationFun = aggregationFun,
-                                          adjusted = adjustedRtime)
+              ## Coerce to OnDiskMSnExp.
+              if (adjustedRtime)
+                  adj_rt <- rtime(object, adjusted = TRUE)
+              object <- as(object, "OnDiskMSnExp")
+              if (adjustedRtime) {
+                  ## Replace the original rtime with adjusted ones...
+                  object@featureData$retentionTime <- adj_rt
+              }
+              extractChromatograms(object, rt = rt, mz = mz,
+                                   aggregationFun = aggregationFun)
+              ## .extractChromatogram(x = object, rt = rt, mz = mz,
+              ##                             aggregationFun = aggregationFun,
+              ##                             adjusted = adjustedRtime)
           })
 
 #' @rdname XCMSnExp-class

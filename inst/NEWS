@@ -6,6 +6,7 @@ NEW FEATURES:
 
 USER VISIBLE CHANGES:
 - Change default for ppm parameter in chromPeaks method to 0.
+- extractChromatograms supports extraction of multiple rt and mz ranges.
 
 
 CHANGES IN VERSION 1.51.11

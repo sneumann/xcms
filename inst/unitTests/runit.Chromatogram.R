@@ -52,11 +52,11 @@ test_Chromatogram_class <- function() {
     ch <- xcms:::Chromatogram(mz = c(1, 3))
     checkEquals(ch@mz, c(1, 3))
     checkEquals(mz(ch), c(1, 3))
-    checkEquals(mz(ch, filter = TRUE), c(0, 0))
+    checkEquals(mz(ch, filter = TRUE), c(NA_real_, NA_real_))
     ch <- xcms:::Chromatogram(filterMz = c(1, 3))
     checkEquals(ch@filterMz, c(1, 3))
     checkEquals(mz(ch, filter = TRUE), c(1, 3))
-    checkEquals(mz(ch, filter = FALSE), c(0, 0))
+    checkEquals(mz(ch, filter = FALSE), c(NA_real_, NA_real_))
     ch <- xcms:::Chromatogram(precursorMz = 123)
     checkEquals(ch@precursorMz, c(123, 123))
     checkEquals(precursorMz(ch), c(123, 123))
@@ -115,6 +115,10 @@ test_extractChromatograms <- function() {
                                  aggregationFun = "max")
     ints <- unlist(lapply(spctr, function(z)
         return(max(intensity(z)))))
+    chrs_2 <- xcms:::.extractChromatogram(filterFile(xod_x, file = 2),
+                                          aggregationFun = "max")
+    checkEquals(intensity(chrs[[1]]), intensity(chrs_2[[1]]))
+    
     checkEquals(intensity(chrs[[1]]), ints)
     checkEquals(rtime(chrs[[1]]), unlist(lapply(spctr, rtime)))
     ## with adjusted retention times.
@@ -221,7 +225,53 @@ test_extractChromatograms <- function() {
     chrs <- extractChromatograms(od_x, rt = c(5000, 5500))
     checkTrue(length(chrs) == 0)
     chrs <- extractChromatograms(od_x, rt = c(2600, 2700), mz = 12000)
-    checkTrue(length(chrs) == 0)
+    checkTrue(all(lengths(chrs) == 0))
+
+    ## Multiple ranges.
+    rtr <- matrix(c(2700, 2900, 2600, 2800), ncol = 2, byrow = TRUE)
+    mzr <- matrix(c(355, 355, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- extractChromatograms(od_x, rt = rtr, mz = mzr)
+    checkTrue(length(chrs) == 2)
+    
+    checkTrue(all(rtime(chrs[[1]][[1]]) >= 2700 & rtime(chrs[[1]][[1]]) <= 2900))
+    checkTrue(all(rtime(chrs[[1]][[2]]) >= 2700 & rtime(chrs[[1]][[2]]) <= 2900))
+    checkTrue(all(rtime(chrs[[1]][[3]]) >= 2700 & rtime(chrs[[1]][[3]]) <= 2900))
+    checkTrue(all(rtime(chrs[[2]][[1]]) >= 2600 & rtime(chrs[[2]][[1]]) <= 2800))
+    checkTrue(all(rtime(chrs[[2]][[2]]) >= 2600 & rtime(chrs[[2]][[2]]) <= 2800))
+    checkTrue(all(rtime(chrs[[2]][[3]]) >= 2600 & rtime(chrs[[2]][[3]]) <= 2800))
+    spctr <- spectra(filterMz(filterRt(od_x, rt = rtr[1, ]),
+                              mz = mzr[1, ]))
+    ints <- split(unlist(lapply(spctr, function(z) {
+        if (z@peaksCount)
+            return(sum(intensity(z)))
+        else return(NA)
+    })), f = unlist(lapply(spctr, fromFile)))
+    checkEquals(ints[[1]], intensity(chrs[[1]][[1]]))
+    checkEquals(ints[[2]], intensity(chrs[[1]][[2]]))
+    checkEquals(ints[[3]], intensity(chrs[[1]][[3]]))
+    spctr <- spectra(filterMz(filterRt(od_x, rt = rtr[2, ]),
+                              mz = mzr[2, ]))
+    ints <- split(unlist(lapply(spctr, function(z) {
+        if (z@peaksCount)
+            return(sum(intensity(z)))
+        else return(NA)
+    })), f = unlist(lapply(spctr, fromFile)))
+    checkEquals(ints[[1]], intensity(chrs[[2]][[1]]))
+    checkEquals(ints[[2]], intensity(chrs[[2]][[2]]))
+    checkEquals(ints[[3]], intensity(chrs[[2]][[3]]))
+
+    ## Multiple ranges with complete off ranges.
+    rtr <- matrix(c(2700, 2900, 5000, 5500, 2600, 2800), ncol = 2, byrow = TRUE)
+    mzr <- matrix(c(355, 355, 500, 500, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- extractChromatograms(od_x, rt = rtr, mz = mzr)
+    checkTrue(length(chrs) == 3)
+    checkTrue(all(lengths(chrs[[2]]) == 0))
+    
+    rtr <- matrix(c(2700, 2900, 2700, 2900, 2600, 2800), ncol = 2, byrow = TRUE)
+    mzr <- matrix(c(355, 355, 100000, 100000, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- extractChromatograms(od_x, rt = rtr, mz = mzr)
+    checkTrue(length(chrs) == 3)
+    checkTrue(all(lengths(chrs[[2]]) == 0))
 }
 
 dontrun_test_with_MRM <- function() {

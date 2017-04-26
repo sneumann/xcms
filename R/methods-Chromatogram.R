@@ -15,8 +15,10 @@ setMethod("show", "Chromatogram", function(object) {
     cat("length of object: ", length(object@rtime), "\n", sep = "")
     cat("from file: ", object@fromFile, "\n", sep = "")
     cat("mz range: [", object@mz[1], ", ", object@mz[2], "]\n", sep = "")
-    rtr <- range(object@rtime)
-    cat("rt range: [", rtr[1], ", ", rtr[2], "]\n", sep = "")
+    if (length(object@rtime) > 0) {
+        rtr <- range(object@rtime)
+        cat("rt range: [", rtr[1], ", ", rtr[2], "]\n", sep = "")
+    }
 })
 
 ## Methods:

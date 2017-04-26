@@ -1175,44 +1175,44 @@ dontrun_getEIC_alternatives <- function() {
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- findChromPeaks(od, param = cwp)
 
-    ## with this one we get 3 spectras back, one in each file.
-    rtr <- c(2787, 2788)    
-    res <- filterRt(od_x, rt = rtr)
+    ## ## with this one we get 3 spectras back, one in each file.
+    ## rtr <- c(2787, 2788)    
+    ## res <- filterRt(od_x, rt = rtr)
 
-    ## -----------
-    ## That's to test .extractChromatogram
-    mzr <- c(279, 279)
-    chrs <- extractChromatograms(od_x, mzrange = mzr)
-    ##   input parameter
-    x <- od_x
-    rm(rtrange)
-    rm(mzrange)
-    mzrange <- mzr
-    aggregationFun <- "sum"
-    ##   function call
-    ## -----------
+    ## ## -----------
+    ## ## That's to test .extractChromatogram
+    ## mzr <- c(279, 279)
+    ## chrs <- extractChromatograms(od_x, mzrange = mzr)
+    ## ##   input parameter
+    ## x <- od_x
+    ## rm(rtrange)
+    ## rm(mzrange)
+    ## mzrange <- mzr
+    ## aggregationFun <- "sum"
+    ## ##   function call
+    ## ## -----------
     
-    od_xg <- groupChromPeaks(od_x, param = PeakDensityParam())
-    od_xgr <- adjustRtime(od_xg, param = PeakGroupsParam(span = 0.4))
+    ## od_xg <- groupChromPeaks(od_x, param = PeakDensityParam())
+    ## od_xgr <- adjustRtime(od_xg, param = PeakGroupsParam(span = 0.4))
 
-    rtr <- as.matrix(featureDefinitions(od_xg)[1:5, c("rtmin", "rtmax")])
-    mzr <- as.matrix(featureDefinitions(od_xg)[1:5, c("mzmin", "mzmax")])
+    ## rtr <- as.matrix(featureDefinitions(od_xg)[1:5, c("rtmin", "rtmax")])
+    ## mzr <- as.matrix(featureDefinitions(od_xg)[1:5, c("mzmin", "mzmax")])
 
-    system.time(
-        res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
-    system.time(
-        res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
-    )
+    ## system.time(
+    ##     res1 <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ## )
+    ## system.time(
+    ##     res2 <- xcms:::.extractMsData(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ## )
+    ## system.time(
+    ##     res1 <- xcms:::.sliceApply(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ## )
+    ## system.time(
+    ##     res1 <- xcms:::.sliceApply(od_xgr, rtrange = rtr[1, ], mzrange = mzr[1, ])
+    ## )
     
-    library(profvis)
-    profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
+    ## library(profvis)
+    ## profvis(res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ]))
     
 
     ## Compare with getEIC
@@ -1227,11 +1227,38 @@ dontrun_getEIC_alternatives <- function() {
     rtr <- groups(xs_2)[1:5, c("rtmin", "rtmax")]
     mzr <- groups(xs_2)[1:5, c("mzmin", "mzmax")]
 
+    ##
+
+    register(SerialParam())
+    od <- as(od_x, "OnDiskMSnExp")
+    ## Get all of em.
+    chrs <- xcms:::.extractMultipleChromatograms(od, rt = rtr, mz = mzr)
+    for (i in 1:nrow(rtr)) {
+        chrs1 <- extractChromatograms(od_x, rt = rtr[i, ], mz = mzr[i, ])
+        checkEquals(unname(chrs1), unname(chrs[[i]]))
+    }
+
+    library(microbenchmark)
+    microbenchmark(xcms:::.extractChromatogram(od, rt = rtr[1, ], mz = mzr[1, ]),
+                   xcms:::.extractMultipleChromatograms(od, rt = rtr[1, , drop = FALSE],
+                                                        mz = mzr[1, , drop = FALSE]),
+                   times = 10)
+
+    library(profvis)
+    profvis(xcms:::.extractMultipleChromatograms(od, rt = rtr[1, , drop = FALSE],
+                                                 mz = mzr[1, , drop = FALSE]))
+    
     ## Extract the EIC:
     system.time(
         eic <- getEIC(xs_2, rtrange = rtr, mzrange = mzr, rt = "raw")
-    ) ## 3.7sec
+    ) ## 5.5 sec
+    system.time(
+        eic2 <- xcms:::.extractMultipleChromatograms(od, rt = rtr, mz = mzr)
+    ) ## 0.13 sec
 
+    
+
+    
     ## Now try to do the same using MSnbase stuff.
     system.time(
         res <- xcms:::.extractMsData(od, rtrange = rtr[1, ], mzrange = mzr[1, ])
@@ -1269,9 +1296,21 @@ dontrun_getEIC_alternatives <- function() {
 
     ############################################################
     ## Alternative: do it by file.
+    ## IF it's an XCMSnExp: coerce to OnDiskMSnExp by replacing the rtime with
+    ## the adjusted rtime.
     ## 1) Subset the od selecting all spectra that fall into the rt ranges.
-    ## 2) Work on that subsetted od: load into memory.
-    ## 3) loop over the rtrange and mzrange.
+    ##    keep_logical <- have_rt >= rt[1] & have_rt <= rt[2]
+    ##    tmp <- as(object, "OnDiskMSnExp")[base::which(keep_logical)]
+    ## 2) Call a spectrapply, passing the matrix of rts and mzs.
+    ##    (Load the spectra (without any filtering now).)
+    ## 3) spectrapply function loops over the rtrange and mzrange:
+    ##    - select all spectra that are within the range.
+    ##    - lapply on those, apply filterMz with the current mz range.
+    ##    - return a list of Chromatogram classes.
+    ## 4) We get a list of list of Chromatogram objects. [[files]][[ranges]].
+    ##    Rearrange the lists: [[ranges]][[files]].
+    ## Could also put that into a DataFrame... [ranges, files]
+    
 
 
     ## For a single one:
@@ -1281,6 +1320,7 @@ dontrun_getEIC_alternatives <- function() {
         dfs <- spectrapply(tmp, as.data.frame)
     )
 
+    
     ## mz outside:
     mzrange <- c(600, 601)
     tmp <- filterMz(filterRt(od, rt = rtrange), mz = mzrange)

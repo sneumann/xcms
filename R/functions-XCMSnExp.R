@@ -1,12 +1,14 @@
 #' @include DataClasses.R functions-utils.R
 
-##' Takes a XCMSnExp and drops ProcessHistory steps from the @.processHistory
-##' slot matching the provided type.
-##'
-##' @param num which should be dropped? If \code{-1} all matching will be dropped,
-##' otherwise just the most recent num.
-##' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
-##' @noRd
+#' @description Takes a XCMSnExp and drops ProcessHistory steps from the
+#'     @.processHistory slot matching the provided type.
+#'
+#' @param num which should be dropped? If \code{-1} all matching will be dropped,
+#'     otherwise just the most recent num.
+#' 
+#' @return The XCMSnExp input object with selected ProcessHistory steps dropped.
+#'
+#' @noRd
 dropProcessHistories <- function(x, type, num = -1) {
     x@.processHistory <- dropProcessHistoriesList(processHistory(x),
                                                   type = type, num = num)
@@ -32,8 +34,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     return(x)
 }
 
-##' Convert an XCMSnExp to an xcmsSet.
-##' @noRd
+#' Convert an XCMSnExp to an xcmsSet.
+#' 
+#' @noRd
 .XCMSnExp2xcmsSet <- function(from) {
     if (any(msLevel(from) > 1))
         stop("Coercing an XCMSnExp with MS level > 1 is not yet supported!")
@@ -117,118 +120,104 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         return(xs)
 }
 
-##' @title Extract spectra subsets
-##'
-##' Extract subsets of spectra matching the given mz and retention time ranges.
-##' @noRd
-.spectraSubsets <- function(x, rtrange, mzrange) {
-    ## o Should allow to provide single ranges, but also matrices of rtrange
-    ##   and/or mzranges.
-    ## o Perform the data fetching by file.
-    ## o Return the (mz subsetted) spectra by file and by ranges.
-    ## o Since data should be processed on a by-file basis representation of the
-    ##   result as a list (files) of list(ranges) of list(spectra) seems to be
-    ##   best.
-    ## SEE runit.XCMSnExp.R,
-}
+## ## This is somewhat similar to the getEIC, just that it extracts for each
+## ## mz/rt range pair a data.frame with rt, mz, intensity per sample.
+## ## This version works on a single rt/mz range pair at a time.
+## ## CHECK:
+## ## 1) mz range outside.
+## ## 2) rt range outside.
+## .extractMsData <- function(x, rtrange, mzrange) {
+##     ## Subset the OnDiskMSnExp
+##     fns <- fileNames(x)
+##     subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+##     if (length(subs) == 0) {
+##         return(NULL)
+##     }
+##     fromF <- base::match(fileNames(subs), fns)
+##     ## Now extract mz-intensity pairs from each spectrum.
+##     ## system.time(
+##     ## suppressWarnings(
+##     ##     dfs <- spectrapply(tmp, as.data.frame)
+##     ## )
+##     ## ) ## 0.73sec
+##     ## system.time(
+##     suppressWarnings(
+##         dfs <- spectrapply(subs, FUN = function(z) {
+##             if (peaksCount(z))
+##                 return(base::data.frame(rt = rep_len(rtime(z), length(z@mz)),
+##                                         as.data.frame(z)))
+##             else
+##                 return(base::data.frame(rt = numeric(), mz = numeric(),
+##                                         i = integer()))
+##         })
+##     )
+##     ## Now I want to rbind the spectrum data frames per file
+##     ff <- fromFile(subs)
+##     L <- split(dfs, f = ff)
+##     L <- lapply(L, do.call, what = rbind)
+##     ## Put them into a vector same length that we have files.
+##     res <- vector(mode = "list", length = length(fns))
+##     res[fromF] <- L
+##     return(res)
+## }
 
-## This is somewhat similar to the getEIC, just that it extracts for each
-## mz/rt range pair a data.frame with rt, mz, intensity per sample.
-## This version works on a single rt/mz range pair at a time.
-## CHECK:
-## 1) mz range outside.
-## 2) rt range outside.
-.extractMsData <- function(x, rtrange, mzrange) {
-    ## Subset the OnDiskMSnExp
-    fns <- fileNames(x)
-    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-    if (length(subs) == 0) {
-        return(NULL)
-    }
-    fromF <- base::match(fileNames(subs), fns)
-    ## Now extract mz-intensity pairs from each spectrum.
-    ## system.time(
-    ## suppressWarnings(
-    ##     dfs <- spectrapply(tmp, as.data.frame)
-    ## )
-    ## ) ## 0.73sec
-    ## system.time(
-    suppressWarnings(
-        dfs <- spectrapply(subs, FUN = function(z) {
-            if (peaksCount(z))
-                return(base::data.frame(rt = rep_len(rtime(z), length(z@mz)),
-                                        as.data.frame(z)))
-            else
-                return(base::data.frame(rt = numeric(), mz = numeric(),
-                                        i = integer()))
-        })
-    )
-    ## Now I want to rbind the spectrum data frames per file
-    ff <- fromFile(subs)
-    L <- split(dfs, f = ff)
-    L <- lapply(L, do.call, what = rbind)
-    ## Put them into a vector same length that we have files.
-    res <- vector(mode = "list", length = length(fns))
-    res[fromF] <- L
-    return(res)
-}
+## ## Same as above, but we're applying a function - or none.
+## .sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
+##     fns <- fileNames(x)
+##     if (is(x, "XCMSnExp")) {
+##         ## Now, the filterRt might get heavy for XCMSnExp objects if we're
+##         ## filtering also the chromatographic peaks and features!
+##         msfd <- new("MsFeatureData")
+##         if (hasAdjustedRtime(x)) {
+##             ## just copy over the retention time.
+##             msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
+##         }
+##         lockEnvironment(msfd, bindings = TRUE)
+##         x@msFeatureData <- msfd
+##         ## with an XCMSnExp without chrom. peaks and features filterRt
+##         ## should be faster.
+##     }
+##     subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
+##     if (base::length(subs) == 0) {
+##         return(list())
+##     }
+##     fromF <- base::match(fileNames(subs), fns)
+##     suppressWarnings(
+##         res <- spectrapply(subs, FUN = FUN)
+##     )
+##     ## WARN: fromFile reported within the Spectra might not be correct!!!
+##     return(res)
+## }
 
-## Same as above, but we're applying a function - or none.
-.sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
-    fns <- fileNames(x)
-    if (is(x, "XCMSnExp")) {
-        ## Now, the filterRt might get heavy for XCMSnExp objects if we're
-        ## filtering also the chromatographic peaks and features!
-        msfd <- new("MsFeatureData")
-        if (hasAdjustedRtime(x)) {
-            ## just copy over the retention time.
-            msfd$adjustedRtime <- x@msFeatureData$adjustedRtime
-        }
-        lockEnvironment(msfd, bindings = TRUE)
-        x@msFeatureData <- msfd
-        ## with an XCMSnExp without chrom. peaks and features filterRt
-        ## should be faster.
-    }
-    subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-    if (base::length(subs) == 0) {
-        return(list())
-    }
-    fromF <- base::match(fileNames(subs), fns)
-    suppressWarnings(
-        res <- spectrapply(subs, FUN = FUN)
-    )
-    ## WARN: fromFile reported within the Spectra might not be correct!!!
-    return(res)
-}
-
-##' @description Extract a chromatogram from an \code{OnDiskMSnExp} or
-##' \code{XCMSnExp} subsetting to the provided retention time range
-##' (\code{rt}) and using the function \code{aggregationFun} to aggregate
-##' intensity values for the same retention time across the mz range
-##' (\code{mz}).
-##'
-##' @param x An \code{OnDiskMSnExp} or \code{XCMSnExp} object.
-##'
-##' @param rt \code{numeric(2)} providing the lower and upper retention time. It
-##' is also possible to submit a \code{numeric(1)} in which case \code{range} is
-##' called on it to transform it to a \code{numeric(2)}.
-##' 
-##' @param mz \code{numeric(2)} providing the lower and upper mz value for
-##' the mz range. It is also possible to submit a \code{numeric(1)} in which case
-##' \code{range} is called on it to transform it to a \code{numeric(2)}.
-##' 
-##' @param aggregationFun The function to be used to aggregate intensity values
-##' across the mz range for the same retention time.
-##'
-##' @param ... Additional arguments to be passed to the object's \code{rtime}
-##' call.
-##' 
-##' @return A \code{list} with the \code{Chromatogram} objects. If no data was
-##' present for the specified \code{rtrange} and \code{mzrange} the function
-##' returns a \code{list} of length \code{0}.
-##'
-##' @author Johannes Rainer
-##' @noRd
+#' @description Extract a chromatogram from an \code{OnDiskMSnExp} or
+#'     \code{XCMSnExp} subsetting to the provided retention time range
+#'     (\code{rt}) and using the function \code{aggregationFun} to aggregate
+#'     intensity values for the same retention time across the mz range
+#'     (\code{mz}).
+#'
+#' @param x An \code{OnDiskMSnExp} or \code{XCMSnExp} object.
+#'
+#' @param rt \code{numeric(2)} providing the lower and upper retention time. It
+#'     is also possible to submit a \code{numeric(1)} in which case \code{range}
+#'     is called on it to transform it to a \code{numeric(2)}.
+#' 
+#' @param mz \code{numeric(2)} providing the lower and upper mz value for
+#'     the mz range. It is also possible to submit a \code{numeric(1)} in which
+#'     case \code{range} is called on it to transform it to a \code{numeric(2)}.
+#' 
+#' @param aggregationFun The function to be used to aggregate intensity values
+#'     across the mz range for the same retention time.
+#'
+#' @param ... Additional arguments to be passed to the object's \code{rtime}
+#'     call.
+#' 
+#' @return A \code{list} with the \code{Chromatogram} objects. If no data was
+#'     present for the specified \code{rtrange} and \code{mzrange} the function
+#'     returns a \code{list} of length \code{0}.
+#'
+#' @author Johannes Rainer
+#' 
+#' @noRd
 .extractChromatogram <- function(x, rt, mz, aggregationFun = "sum", ...) {
     if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
         stop("'aggregationFun' should be one of ",
@@ -295,14 +284,171 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## }
 }
 
-#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
-#' called by the fillChromPeaks method.
+#' @description This function extracts chromatograms efficiently for multiple
+#'     rt and mz ranges by loading the data per file only once and performing
+#'     the mz subsetting on the already loaded Spectrum1 classes.
+#'
+#' @note Ensure that x is an OnDiskMSnExp and not an e.g. XCMSnExp object.
+#'     Subsetting etc an XCMSnExp might take longer.
+#' 
+#' @param rt \code{matrix} with two columns and number of rows corresponding to
+#'     the number of ranges to extract.
+#'
+#' @param mz \code{matrix} with two columns and number of rows corresponding to
+#'     the number of ranges to extract. nrow of rt and mz have to match.
+#'
+#' @param x OnDiskMSnExp object from which to extract the chromatograms.
+#'
+#' @param return.type either \code{"list"} or \code{"matrix"} to return the
+#'     result as a list or as a matrix.
+#' 
+#' @return A \code{list} or \code{matrix} with the \code{Chromatogram} objects.
+#'     If no data was present for the specified \code{rtrange} and
+#'     \code{mzrange} the function returns a \code{list} of length \code{0}.
+#'     The \code{list} is arranged first by ranges and then by files, such that
+#'     \code{result[[1]]} returns a \code{list} of \code{Chromatogram} objects
+#'     for the same rt/mz range.
+#'     For \code{return.type = "matrix"} a \code{matrix} is returned with rows
+#'     corresponding to ranges and columns to files/samples. \code{result[, 1]}
+#'     will thus return a \code{list} of \code{Chromatogram} objects for the
+#'     first sample/file, while \code{result[1, ]} returns a \code{list} of
+#'     \code{Chromatogram} objects for the same rt/mz range for all files.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.extractMultipleChromatograms <- function(x, rt, mz, aggregationFun = "sum",
+                                          BPPARAM = bpparam(),
+                                          return.type = c("list", "matrix")) {
+    return.type <- match.arg(return.type)
+    if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
+        stop("'aggregationFun' should be one of ",
+             paste0("'", .SUPPORTED_AGG_FUN_CHROM, "'", collapse = ", "))
+    ## Ensure we're working on MS1 only!
+    x <- filterMsLevel(x, 1)
+    if (length(x) == 0)
+        return(list())
+    nranges <- 1
+    if (missing(rt))
+        rt <- matrix(c(-Inf, Inf), nrow = 1)
+    if (missing(mz))
+        mz <- matrix(c(-Inf, Inf), nrow = 1)
+    if (!missing(rt)) {
+        if (ncol(rt) != 2)
+            stop("'rt' has to be a matrix with two columns")
+        ## Replicate if nrow rt is 1 to match nrow of mz.
+        if (nrow(rt) == 1)
+            rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
+    }
+    if (!missing(mz)) {
+        if (ncol(mz) != 2)
+            stop("'mz' has to be a matrix with two coliumns")
+        if (nrow(mz) == 1)
+            mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
+    }
+    if (nrow(rt) != nrow(mz))
+        stop("dimensions of 'rt' and 'mz' have to match")
+    ## Identify indices of all spectra that are within the rt ranges.
+    rtimes <- rtime(x)
+
+    ## 1) Subset x keeping all spectra that fall into any of the provided rt
+    ##    ranges.
+    keep_idx <- unlist(apply(rt, MARGIN = 1, function(z)
+        which(rtimes >= z[1] & rtimes <= z[2])), use.names = FALSE)
+    keep_idx <- sort(unique(as.integer(keep_idx)))
+    if (length(keep_idx) == 0)
+        return(list())
+    subs <- x[keep_idx]
+
+    ## 2) Call the final subsetting on each file separately.
+    subs_by_file <- splitByFile(subs, f = factor(seq_along(fileNames(subs))))
+    suppressWarnings(
+        res <- bpmapply(
+            subs_by_file,
+            seq_along(fileNames(subs)),
+            FUN = function(cur_sample, cur_file, rtm, mzm, aggFun) {
+                ## Load all spectra for that file. applies also any proc steps
+                sps <- spectra(cur_sample)
+                rts <- rtime(cur_sample)
+                cur_res <- vector("list", nrow(rtm))
+                ## Loop through rt and mz.
+                for (i in 1:nrow(rtm)) {
+                    ## - Select all spectra within that range and call a
+                    ##   function on them that does first filterMz and then
+                    ##   aggregate the values per spectrum.
+                    in_rt <- rts >= rtm[i, 1] & rts <= rtm[i, 2]
+                    if (!any(in_rt)) {
+                        cur_res[[i]] <- Chromatogram(
+                            filterMz = mzm[i, ],
+                            fromFile = as.integer(cur_file),
+                            aggregationFun = aggFun)
+                        next
+                    }
+                    cur_sps <- lapply(
+                        sps[in_rt],
+                        function(spct, filter_mz, aggFun) {
+                            spct <- filterMz(spct, filter_mz)
+                            ## Now aggregate the values.
+                            if (!spct@peaksCount)
+                                return(c(NA_real_, NA_real_, NA_real_))
+                            return(c(range(spct@mz, na.rm = TRUE, finite = TRUE),
+                                     do.call(
+                                         aggFun,
+                                         list(spct@intensity, na.rm = TRUE))))
+                        }, filter_mz = mzm[i, ], aggFun = aggFun)
+                    ## Now build the Chromatogram class.
+                    allVals <- unlist(cur_sps, use.names = FALSE)
+                    idx <- seq(3, length(allVals), by = 3)
+                    ## Or should we drop the names completely?
+                    ints <- allVals[idx]
+                    names(ints) <- names(cur_sps)
+                    ## Don't return a Chromatogram object if no values.
+                    if (!all(is.na(ints)))
+                        cur_res[[i]] <- Chromatogram(
+                            rtime = rts[in_rt],
+                            intensity = ints,
+                            mz = range(allVals[-idx], na.rm = TRUE,
+                                       finite = TRUE),
+                            filterMz = mzm[i, ],
+                            fromFile = as.integer(cur_file),
+                            aggregationFun = aggFun)
+                    else
+                        cur_res[[i]] <- Chromatogram(
+                            filterMz = mzm[i, ],
+                            fromFile = as.integer(cur_file),
+                            aggregationFun = aggFun)
+                }
+                cur_res
+            }, MoreArgs = list(rtm = rt, mzm = mz, aggFun = aggregationFun),
+            BPPARAM = BPPARAM, SIMPLIFY = FALSE)
+    )
+    ## Now I need to re-arrange the result.
+    if (return.type == "list") {
+        ## Got [[file]][[range]], but want to have [[range]][[file]]
+        final_res <- vector("list", nrow(rt))
+        for (i in 1:nrow(rt)) {
+            final_res[[i]] <- lapply(res, FUN = `[[`, i)
+        }
+        if (nrow(rt) == 1)
+            final_res <- final_res[[1]]
+    }
+    if (return.type == "matrix") {
+        final_res <- do.call(cbind, res)
+    }
+    final_res
+}
+
+
+#' @description Integrates the intensities for chromatograpic peak(s). This is
+#'     supposed to be called by the fillChromPeaks method.
 #'
 #' @note Use one of .getPeakInt2 or .getPeakInt3 instead!
 #' 
 #' @param object An \code{XCMSnExp} object representing a single sample.
-#' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' 
+#' @param peakArea A \code{matrix} with the peak definition, i.e.
+#'     \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' 
 #' @noRd
 .getPeakInt <- function(object, peakArea) {
     if (length(fileNames(object)) != 1)
@@ -322,14 +468,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     return(unname(res))
 }
 
-#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
-#' called by the fillChromPeaks method.
+#' @description Integrates the intensities for chromatograpic peak(s). This is
+#'     supposed to be called by the fillChromPeaks method.
 #'
 #' @note This reads the full data first and does the subsetting later in R.
 #' 
 #' @param object An \code{XCMSnExp} object representing a single sample.
+#' 
 #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#'     \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' 
 #' @noRd
 .getPeakInt2 <- function(object, peakArea) {
     if (length(fileNames(object)) != 1)
@@ -371,15 +519,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     return(unname(res))
 }
 
-#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
-#' called by the fillChromPeaks method.
+#' @description Integrates the intensities for chromatograpic peak(s). This is
+#'     supposed to be called by the fillChromPeaks method.
 #'
 #' @note This reads the full data first and does the subsetting later in R. This
-#' function uses the C getEIC function.
+#'     function uses the C getEIC function.
 #' 
 #' @param object An \code{XCMSnExp} object representing a single sample.
+#' 
 #' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#'     \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
 #'
 #' @noRd
 .getPeakInt3 <- function(object, peakArea) {
@@ -423,28 +572,29 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 }
 
 
-#' Integrates the intensities for chromatograpic peak(s). This is supposed to be
-#' called by the fillChromPeaks method.
+#' @description Integrates the intensities for chromatograpic peak(s). This is
+#'     supposed to be called by the fillChromPeaks method.
 #'
 #' @note This reads the full data first and does the subsetting later in R.
 #' 
 #' @param object An \code{XCMSnExp} object representing a single sample.
 #' 
-#' @param peakArea A \code{matrix} with the peak definition, i.e. \code{"rtmin"},
-#' \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+#' @param peakArea A \code{matrix} with the peak definition, i.e.
+#'     \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
 #'
 #' @param sample_idx \code{integer(1)} with the index of the sample in the
-#' object.
+#'     object.
 #'
 #' @param mzCenterFun Name of the function to be used to calculate the mz value.
-#' Defaults to \code{weighted.mean}, i.e. the intensity weighted mean mz.
+#'     Defaults to \code{weighted.mean}, i.e. the intensity weighted mean mz.
 #' 
 #' @param cn \code{character} with the names of the result matrix.
 #' 
 #' @return A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
-#' \code{"into"} and \code{"maxo"} with the by intensity weighted mean of mz,
-#' rt or the maximal intensity in the area, the integrated signal in the area
-#' and the maximal signal in the area.
+#'     \code{"into"} and \code{"maxo"} with the by intensity weighted mean of
+#'     mz, rt or the maximal intensity in the area, the integrated signal in
+#'     the area and the maximal signal in the area.
+#'
 #' @noRd
 .getChromPeakData <- function(object, peakArea, sample_idx,
                               mzCenterFun = "weighted.mean",

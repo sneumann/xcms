@@ -23,14 +23,15 @@ validChromatogram <- function(object) {
     msg <- character()
     if (length(object@rtime) != length(object@intensity))
         msg <- c(msg, "Length of 'rt' and 'intensity' have to match!")
-    if (is.unsorted(object@mz))
-        msg <- c(msg, "'mz' has to be increasingly ordered!")
     if (is.unsorted(object@rtime))
         msg <- c(msg, paste0("'rtime' has to be increasingly ordered!"))
     if (length(object@mz) > 0 & length(object@mz) != 2)
         msg <- c(msg, paste0("'mz' is supposed to contain the ",
                              "minimum and maximum mz values for the ",
                              "chromatogram."))
+    if (!all(is.na(object@mz)))
+        if (is.unsorted(object@mz))
+            msg <- c(msg, "'mz' has to be increasingly ordered!")
     if (length(object@filterMz) > 0 & length(object@filterMz) != 2)
         msg <- c(msg, paste0("'filterMz' is supposed to contain the ",
                              "minimum and maximum mz values of the filter",
@@ -93,7 +94,8 @@ validChromatogram <- function(object) {
 #' 
 #' @rdname Chromatogram-class
 Chromatogram <- function(rtime = numeric(), intensity = numeric(),
-                         mz = c(0, 0), filterMz = c(0, 0),
+                         mz = c(NA_real_, NA_real_),
+                         filterMz = c(NA_real_, NA_real_),
                          precursorMz = c(NA_real_, NA_real_),
                          productMz = c(NA_real_, NA_real_),
                          fromFile = integer(),
@@ -195,6 +197,7 @@ Chromatogram <- function(rtime = numeric(), intensity = numeric(),
 #' highlightChromPeaks(od, rt = rtr, mz = mzr,
 #'     col = c("#FF000005", "#00FF0005", "#0000FF05"),
 #'     border = c("#FF000040", "#00FF0040", "#0000FF40"))
+#'
 plotChromatogram <- function(x, rt, col = "#00000060",
                              lty = 1, type = "l", xlab = "retention time",
                              ylab = "intensity", main = NULL, ...) {
@@ -214,6 +217,7 @@ plotChromatogram <- function(x, rt, col = "#00000060",
     })
     if (any(!unlist(isOK)))
         stop("if 'x' is a list it should only contain Chromatogram objects")
+    ## Subset the Chromatogram objects if rt provided.
     if (!missing(rt)) {
         rt <- range(rt)
         x <- lapply(x, function(z) {
@@ -229,18 +233,51 @@ plotChromatogram <- function(x, rt, col = "#00000060",
         mzr <- range(lapply(x, mz), na.rm = TRUE, finite = TRUE)
         main <- paste0(format(mzr, digits = 7), collapse = " - ")
     }
-    rts <- do.call(cbind, lapply(x, rtime))
-    ints <- do.call(cbind, lapply(x, intensity))
-    ## ## Fix problem if we've got only NAs:
-    ## dotList <- list(...)
-    ## if (is.null(ylim)) {
-    ##     if (all(is.na(ints)))
-    ##         ylim <- c(0, 1)
-    ##     else
-    ##         ylim <- range(ints, na.rm = TRUE, finite = TRUE)
-    ## }
-    ## Skip columns that have only NAs?
-    keepCol <- which(apply(ints, MARGIN = 2, function(z) any(!is.na(z))))
+    ## Number of measurements we've got per chromatogram. This can be different
+    ## between samples, from none (if not a single measurement in the rt/mz)
+    ## to the number of data points that were actually measured.
+    lens <- unique(lengths(x))
+    max_len <- max(lens)
+    max_len_vec <- rep_len(NA, max_len)
+    ## Generate the matrix of rt values, columns are samples, rows retention
+    ## time values. Fill each column with NAs up to the maximum number of values
+    ## we've got in a sample/file.
+    rts <- do.call(cbind, lapply(x, function(z) {
+        cur_len <- length(z)
+        if (cur_len == 0)
+            max_len_vec
+        else {
+            ## max_len_vec[,] <- NA  ## don't need that. get's copied.
+            max_len_vec[seq_len(cur_len)] <- rtime(z)
+            max_len_vec
+        }
+    }))
+    ## Same for the intensities.
+    ints <- do.call(cbind, lapply(x, function(z) {
+        cur_len <- length(z)
+        if (length(z) == 0)
+            max_len_vec
+        else {
+            ## max_len_vec[,] <- NA  ## don't need that. get's copied.
+            max_len_vec[seq_len(cur_len)] <- intensity(z)
+            max_len_vec
+        }
+    }))
+    ## Define the x and y limits
+    x_lim <- c(0, 1)
+    y_lim <- c(0, 1)
+    if (all(is.na(rts)))
+        if (!missing(rt))
+            x_lim <- range(rt)
+    else
+        x_lim <- range(rts, na.rm = TRUE, finite = TRUE)
+    if (!all(is.na(ints)))
+        y_lim <- range(ints, na.rm = TRUE, finite = TRUE)
+    ## Identify columns that have only NAs in either intensity or rt - these
+    ## will not be plotted.
+    keepCol <- which(apply(ints, MARGIN = 2, function(z) any(!is.na(z))) |
+                     apply(rts, MARGIN = 2, function(z) any(!is.na(z))))
+    ## Finally plot the data.
     if (length(keepCol)) {
         matplot(x = rts[, keepCol, drop = FALSE],
                 y = ints[, keepCol, drop = FALSE], type = type, lty = lty,
@@ -248,8 +285,10 @@ plotChromatogram <- function(x, rt, col = "#00000060",
                 ...)
     } else
         plot(x = 3, y = 3, pch = NA, xlab = xlab, ylab = ylab, main = main,
-             xlim = range(rts, na.rm = TRUE), ylim = c(0, 1))
+             xlim = x_lim, ylim = y_lim)
 }
+
+
 
 #' @description The \code{highlightChromPeaks} function adds chromatographic
 #'     peak definitions to an existing plot, such as one created by the
