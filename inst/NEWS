@@ -7,6 +7,12 @@ NEW FEATURES:
 USER VISIBLE CHANGES:
 - Change default for ppm parameter in chromPeaks method to 0.
 - extractChromatograms supports extraction of multiple rt and mz ranges.
+- New parameter missing for extractChromatograms allowing to specify the
+  intensity value to be used for rts for which no signal is available within
+  the mz range.
+- extractChromatograms returns Chromatograms of length equal to the number of
+  scans within the specified rt range, even if no signals are measured
+  (intensity values are NA).
 
 
 CHANGES IN VERSION 1.51.11

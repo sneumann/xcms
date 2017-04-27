@@ -8,10 +8,11 @@
 \title{Extracting chromatograms}
 \usage{
 \S4method{extractChromatograms}{OnDiskMSnExp}(object, rt, mz,
-  aggregationFun = "sum")
+  aggregationFun = "sum", missing = NA_real_)
 
 \S4method{extractChromatograms}{XCMSnExp}(object, rt, mz,
-  adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum")
+  adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum",
+  missing = NA_real_)
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
@@ -34,6 +35,12 @@ It is also possible to submit a \code{numeric(1)} in which case
 aggregate intensity values across the mz value range for the same
 retention time. Allowed values are \code{"sum"}, \code{"max"},
 \code{"mean"} and \code{"min"}.}
+
+\item{missing}{\code{numeric(1)} allowing to specify the intensity value to
+be used if for a given retention time no signal was measured within the
+mz range of the corresponding scan. Defaults to \code{NA_real_} (see also
+Details and Notes sections below). Use \code{missing = 0} to resemble the
+behaviour of the \code{getEIC} from the \code{old} user interface.}
 
 \item{adjustedRtime}{For \code{extractChromatograms,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
@@ -58,7 +65,9 @@ If a single \code{rt} and \code{mz} range was specified,
     \code{object} or if not a single spectrum is available for any of the
     provided retention time ranges in \code{rt}. An empty \code{Chromatogram}
     object is returned at the correponding position in the result \code{list}
-    if for a specific file or range no data was available.
+    if for the specific file no scan/spectrum was measured in the provided
+    rt window. In all other cases, a \code{Chromatogram} with length equal
+    to the number of scans/spectra in the provided rt range is returned.
 }
 \description{
 \code{extractChromatograms}: the method allows to extract
@@ -67,17 +76,26 @@ If a single \code{rt} and \code{mz} range was specified,
 }
 \details{
 Arguments \code{rt} and \code{mz} allow to specify the MS
-    data slice from which the chromatogram should be extracted. The
-    parameter \code{aggregationSum} allows to specify the function to be
+    data slice from which the chromatogram should be extracted.
+    The parameter \code{aggregationSum} allows to specify the function to be
     used to aggregate the intensities across the mz range for the same
     retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
     to calculate the \emph{total ion chromatogram} (TIC),
     \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
+    The length of the extracted \code{Chromatogram} object, i.e. the number
+    of available data points, corresponds to the number of scans/spectra
+    measured in the specified retention time range. If in a specific scan
+    (for a give retention time) no signal was measured in the specified mz
+    range, a \code{NA_real_} is reported as intensity for the retention time
+    (see Notes for more information). This can be changed using the
+    \code{missing} parameter.
 }
 \note{
 \code{Chromatogram} objects extracted with \code{extractChromatogram}
-    contain \code{NA_real_} values if, for a given retention time, no valid
-    measurement was available for the provided mz range.
+    contain \code{NA_real_} values if, for a given retention time, no 
+    signal was measured in the specified mz range. If no spectrum/scan is
+    present in the defined retention time window a \code{Chromatogram} object
+    of length 0 is returned.
 
     For \code{\link{XCMSnExp}} objects, if adjusted retention times are
     available, the \code{extractChromatograms} method will by default report

@@ -120,46 +120,65 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         return(xs)
 }
 
-## ## This is somewhat similar to the getEIC, just that it extracts for each
-## ## mz/rt range pair a data.frame with rt, mz, intensity per sample.
-## ## This version works on a single rt/mz range pair at a time.
-## ## CHECK:
-## ## 1) mz range outside.
-## ## 2) rt range outside.
-## .extractMsData <- function(x, rtrange, mzrange) {
-##     ## Subset the OnDiskMSnExp
-##     fns <- fileNames(x)
-##     subs <- filterMz(filterRt(x, rt = rtrange), mz = mzrange)
-##     if (length(subs) == 0) {
-##         return(NULL)
-##     }
-##     fromF <- base::match(fileNames(subs), fns)
-##     ## Now extract mz-intensity pairs from each spectrum.
-##     ## system.time(
-##     ## suppressWarnings(
-##     ##     dfs <- spectrapply(tmp, as.data.frame)
-##     ## )
-##     ## ) ## 0.73sec
-##     ## system.time(
-##     suppressWarnings(
-##         dfs <- spectrapply(subs, FUN = function(z) {
-##             if (peaksCount(z))
-##                 return(base::data.frame(rt = rep_len(rtime(z), length(z@mz)),
-##                                         as.data.frame(z)))
-##             else
-##                 return(base::data.frame(rt = numeric(), mz = numeric(),
-##                                         i = integer()))
-##         })
-##     )
-##     ## Now I want to rbind the spectrum data frames per file
-##     ff <- fromFile(subs)
-##     L <- split(dfs, f = ff)
-##     L <- lapply(L, do.call, what = rbind)
-##     ## Put them into a vector same length that we have files.
-##     res <- vector(mode = "list", length = length(fns))
-##     res[fromF] <- L
-##     return(res)
-## }
+#' @description Extract a \code{data.frame} of retention time, mz and intensity
+#'     values from each file/sample in the provided rt-mz range.
+#'
+#' @note Ideally, \code{x} should be an \code{OnDiskMSnExp} object as subsetting
+#'     of a \code{XCMSnExp} object is more costly (removing of preprocessing
+#'     results, restoring data etc). If retention times reported in the
+#'     featureData are replaced by adjusted retention times, these are set
+#'     in the Spectrum objects as retention time.
+#'
+#' @param x An \code{OnDiskMSnExp} object.
+#'
+#' @param rt \code{numeric(2)} with the retention time range from which the
+#'     data should be extracted.
+#'
+#' @param mz \code{numeric(2)} with the mz range.
+#'
+#' @param return A \code{list} with length equal to the number of files and
+#'     each element being a \code{data.frame} with the extracted values.
+#'
+#' @noRd
+#' 
+#' @author Johannes Rainer
+.extractMsData <- function(x, rt, mz) {
+    if (!missing(rt)) {
+        rt <- range(rt, na.rm = TRUE)
+        if (length(rt) != 2)
+            stop("'rt' has to be a numeric of length 2!")
+    }
+    if (!missing(mz)) {
+        mz <- range(mz, na.rm = TRUE)
+        if (length(mz) != 2)
+            stop("'mz' has to be a numeric of length 2!")
+        fmzr <- mz
+    } else fmzr <- c(0, 0)
+    ## Subset the object based on rt and mz range.
+    subs <- filterMz(filterRt(x, rt = rt), mz = mz)
+    if (length(subs) == 0) {
+        return(list())
+    }
+    suppressWarnings(
+        dfs <- spectrapply(subs, FUN = function(z) {
+            if (!z@peaksCount)
+                return(data.frame(rt = numeric(), mz = numeric(),
+                                  i = integer()))
+            data.frame(rt = rep_len(z@rt, length(z@mz)),
+                       mz = z@mz, i = z@intensity)
+        })
+    )
+    fns <- fileNames(x)
+    fromF <- base::match(fileNames(subs), fns)
+
+    ## Now I want to rbind the spectrum data frames per file
+    L <- split(dfs, f = fromFile(subs))
+    L <- lapply(L, do.call, what = rbind)
+    ## Put them into a vector same length that we have files.
+    res <- vector(mode = "list", length = length(fns))
+    res[fromF] <- L
+    return(res)
+}
 
 ## ## Same as above, but we're applying a function - or none.
 ## .sliceApply <- function(x, FUN = NULL, rtrange, mzrange) {
@@ -194,6 +213,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #'     (\code{rt}) and using the function \code{aggregationFun} to aggregate
 #'     intensity values for the same retention time across the mz range
 #'     (\code{mz}).
+#'     NOTE THIS IS DEPRECATED! USE .extractMultipleChromatogram INSTEAD!
 #'
 #' @param x An \code{OnDiskMSnExp} or \code{XCMSnExp} object.
 #'
@@ -219,6 +239,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' 
 #' @noRd
 .extractChromatogram <- function(x, rt, mz, aggregationFun = "sum", ...) {
+    .Deprecated(msg = "Use '.extractMultipleChromatogram' instead!")
     if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
         stop("'aggregationFun' should be one of ",
              paste0("'", .SUPPORTED_AGG_FUN_CHROM, "'", collapse = ", "))
@@ -301,6 +322,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #'
 #' @param return.type either \code{"list"} or \code{"matrix"} to return the
 #'     result as a list or as a matrix.
+#'
+#' @param missingValue value to be used as intensity if no signal was measured
+#'     for a given rt.
 #' 
 #' @return A \code{list} or \code{matrix} with the \code{Chromatogram} objects.
 #'     If no data was present for the specified \code{rtrange} and
@@ -319,8 +343,10 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' @noRd
 .extractMultipleChromatograms <- function(x, rt, mz, aggregationFun = "sum",
                                           BPPARAM = bpparam(),
-                                          return.type = c("list", "matrix")) {
+                                          return.type = c("list", "matrix"),
+                                          missingValue = NA_real_) {
     return.type <- match.arg(return.type)
+    missingValue <- as.numeric(missingValue)
     if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
         stop("'aggregationFun' should be one of ",
              paste0("'", .SUPPORTED_AGG_FUN_CHROM, "'", collapse = ", "))
@@ -377,6 +403,8 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
                     ##   function on them that does first filterMz and then
                     ##   aggregate the values per spectrum.
                     in_rt <- rts >= rtm[i, 1] & rts <= rtm[i, 2]
+                    ## Return an empty Chromatogram if there is no spectrum/scan
+                    ## within the retention time range.
                     if (!any(in_rt)) {
                         cur_res[[i]] <- Chromatogram(
                             filterMz = mzm[i, ],
@@ -390,7 +418,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
                             spct <- filterMz(spct, filter_mz)
                             ## Now aggregate the values.
                             if (!spct@peaksCount)
-                                return(c(NA_real_, NA_real_, NA_real_))
+                                return(c(NA_real_, NA_real_, missingValue))
                             return(c(range(spct@mz, na.rm = TRUE, finite = TRUE),
                                      do.call(
                                          aggFun,
@@ -403,7 +431,7 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
                     ints <- allVals[idx]
                     names(ints) <- names(cur_sps)
                     ## Don't return a Chromatogram object if no values.
-                    if (!all(is.na(ints)))
+                    if (!all(is.na(ints))) {
                         cur_res[[i]] <- Chromatogram(
                             rtime = rts[in_rt],
                             intensity = ints,
@@ -412,16 +440,45 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
                             filterMz = mzm[i, ],
                             fromFile = as.integer(cur_file),
                             aggregationFun = aggFun)
-                    else
+                    } else {
+                        ## If no measurement if non-NA, still report the NAs and
+                        ## use the filter mz as mz.
                         cur_res[[i]] <- Chromatogram(
+                            rtime = rts[in_rt],
+                            intensity = ints,
+                            mz = mzm[i, ],
                             filterMz = mzm[i, ],
                             fromFile = as.integer(cur_file),
                             aggregationFun = aggFun)
+                    }
                 }
                 cur_res
             }, MoreArgs = list(rtm = rt, mzm = mz, aggFun = aggregationFun),
             BPPARAM = BPPARAM, SIMPLIFY = FALSE)
     )
+    ## Ensure that the lists have the same length than there are samples!
+    fns <- fileNames(x)
+    fromF <- base::match(fileNames(subs), fns)
+
+    ## If we've got some files in which we don't have any signal in any range,
+    ## fill it with empty Chromatograms. This ensures that the result has
+    ## ALWAYS the same length than there are samples.
+    if (length(res) != length(fns)) {
+        res_all_files <- vector(mode = "list", length = length(fns))
+        res_all_files[fromF] <- res
+        empties <- which(lengths(res_all_files) == 0)
+        ## fill these
+        for (i in 1:length(empties)) {
+            empty_list <- vector(mode = "list", length = nrow(rt))
+            for(j in 1:nrow(rt)) {
+                empty_list[j] <- Chromatogram(filterMz = mz[i, ],
+                                              fromFile = as.integer(i),
+                                              aggregationFun = aggregationFun)
+            }
+            res_all_files[[empties[i]]] <- empty_list
+        }
+        res <- res_all_files
+    }
     ## Now I need to re-arrange the result.
     if (return.type == "list") {
         ## Got [[file]][[range]], but want to have [[range]][[file]]
@@ -439,34 +496,34 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 }
 
 
-#' @description Integrates the intensities for chromatograpic peak(s). This is
-#'     supposed to be called by the fillChromPeaks method.
-#'
-#' @note Use one of .getPeakInt2 or .getPeakInt3 instead!
-#' 
-#' @param object An \code{XCMSnExp} object representing a single sample.
-#' 
-#' @param peakArea A \code{matrix} with the peak definition, i.e.
-#'     \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
-#' 
-#' @noRd
-.getPeakInt <- function(object, peakArea) {
-    if (length(fileNames(object)) != 1)
-        stop("'object' should be an XCMSnExp for a single file!")
-    res <- numeric(nrow(peakArea))
-    for (i in 1:length(res)) {
-        rtr <- peakArea[i, c("rtmin", "rtmax")]
-        chr <- extractChromatograms(object,
-                                    rt = rtr,
-                                    mz = peakArea[i, c("mzmin", "mzmax")])[[1]]
-        if (length(chr))
-            res[i] <- sum(intensity(chr), na.rm = TRUE) *
-                ((rtr[2] - rtr[1]) / (length(chr) - 1))
-        else
-            res[i] <- NA_real_
-    }
-    return(unname(res))
-}
+## #' @description Integrates the intensities for chromatograpic peak(s). This is
+## #'     supposed to be called by the fillChromPeaks method.
+## #'
+## #' @note Use one of .getPeakInt2 or .getPeakInt3 instead!
+## #' 
+## #' @param object An \code{XCMSnExp} object representing a single sample.
+## #' 
+## #' @param peakArea A \code{matrix} with the peak definition, i.e.
+## #'     \code{"rtmin"}, \code{"rtmax"}, \code{"mzmin"} and \code{"mzmax"}.
+## #' 
+## #' @noRd
+## .getPeakInt <- function(object, peakArea) {
+##     if (length(fileNames(object)) != 1)
+##         stop("'object' should be an XCMSnExp for a single file!")
+##     res <- numeric(nrow(peakArea))
+##     for (i in 1:length(res)) {
+##         rtr <- peakArea[i, c("rtmin", "rtmax")]
+##         chr <- extractChromatograms(object,
+##                                     rt = rtr,
+##                                     mz = peakArea[i, c("mzmin", "mzmax")])[[1]]
+##         if (length(chr))
+##             res[i] <- sum(intensity(chr), na.rm = TRUE) *
+##                 ((rtr[2] - rtr[1]) / (length(chr) - 1))
+##         else
+##             res[i] <- NA_real_
+##     }
+##     return(unname(res))
+## }
 
 #' @description Integrates the intensities for chromatograpic peak(s). This is
 #'     supposed to be called by the fillChromPeaks method.

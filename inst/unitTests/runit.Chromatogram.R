@@ -115,7 +115,7 @@ test_extractChromatograms <- function() {
                                  aggregationFun = "max")
     ints <- unlist(lapply(spctr, function(z)
         return(max(intensity(z)))))
-    chrs_2 <- xcms:::.extractChromatogram(filterFile(xod_x, file = 2),
+    chrs_2 <- xcms:::.extractMultipleChromatograms(filterFile(xod_x, file = 2),
                                           aggregationFun = "max")
     checkEquals(intensity(chrs[[1]]), intensity(chrs_2[[1]]))
     
@@ -131,7 +131,15 @@ test_extractChromatograms <- function() {
                                  aggregationFun = "max")
     checkEquals(intensity(chrs[[1]]), ints)
     checkEquals(rtime(chrs[[1]]), rtime(xod_xgr, bySample = TRUE)[[2]])
-
+    ## Subset to certain mz range in all files.
+    chrs_adj <- extractChromatograms(xod_xgr, mz = c(300, 330))
+    chrs_raw <- extractChromatograms(xod_x, mz = c(300, 330))
+    checkTrue(sum(rtime(chrs_adj[[1]]) != rtime(chrs_raw[[1]])) >
+              length(chrs_raw[[1]]) / 2)
+    checkEquals(rtime(chrs_adj[[1]]), rtime(xod_xgr, bySample = TRUE)[[1]])
+    checkEquals(rtime(chrs_adj[[2]]), rtime(xod_xgr, bySample = TRUE)[[2]])
+    checkEquals(rtime(chrs_adj[[3]]), rtime(xod_xgr, bySample = TRUE)[[3]])
+    
     ## Now subsetting for mz:
     tmp <- filterFile(od_x, file = 2)
     chrs <- extractChromatograms(tmp, mz = c(300, 400))
@@ -224,14 +232,20 @@ test_extractChromatograms <- function() {
     ## What if we're completely off?
     chrs <- extractChromatograms(od_x, rt = c(5000, 5500))
     checkTrue(length(chrs) == 0)
+    ## Now rt is within range, but mz is completely off. We expect Chromatograms
+    ## with same length than there are spectra in the rt range, but all NA
+    ## values.
     chrs <- extractChromatograms(od_x, rt = c(2600, 2700), mz = 12000)
-    checkTrue(all(lengths(chrs) == 0))
+    rts <- split(rtime(od_x), f = fromFile(od_x))
+    rts <- lapply(rts, function(z) z[z >= 2600 & z <= 2700])
+    checkEquals(lengths(chrs), lengths(chrs))
+    ## All have to be NA.
+    checkTrue(all(unlist(lapply(chrs, function(z) is.na(intensity(z))))))
 
     ## Multiple ranges.
     rtr <- matrix(c(2700, 2900, 2600, 2800), ncol = 2, byrow = TRUE)
     mzr <- matrix(c(355, 355, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- extractChromatograms(od_x, rt = rtr, mz = mzr)
-    checkTrue(length(chrs) == 2)
     
     checkTrue(all(rtime(chrs[[1]][[1]]) >= 2700 & rtime(chrs[[1]][[1]]) <= 2900))
     checkTrue(all(rtime(chrs[[1]][[2]]) >= 2700 & rtime(chrs[[1]][[2]]) <= 2900))
@@ -271,7 +285,8 @@ test_extractChromatograms <- function() {
     mzr <- matrix(c(355, 355, 100000, 100000, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- extractChromatograms(od_x, rt = rtr, mz = mzr)
     checkTrue(length(chrs) == 3)
-    checkTrue(all(lengths(chrs[[2]]) == 0))
+    ## All values in the 2nd Chromosome object have to be NA.
+    checkTrue(all(unlist(lapply(chrs[[2]], function(z) is.na(intensity(z))))))
 }
 
 dontrun_test_with_MRM <- function() {
