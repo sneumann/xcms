@@ -18,6 +18,7 @@
 \alias{length,Chromatogram-method}
 \alias{as.data.frame,Chromatogram-method}
 \alias{filterRt,Chromatogram-method}
+\alias{clean,Chromatogram-method}
 \title{Representation of chromatographic MS data}
 \usage{
 Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(NA_real_,
@@ -46,6 +47,8 @@ Chromatogram(rtime = numeric(), intensity = numeric(), mz = c(NA_real_,
 \S4method{as.data.frame}{Chromatogram}(x)
 
 \S4method{filterRt}{Chromatogram}(object, rt)
+
+\S4method{clean}{Chromatogram}(object, all = FALSE)
 }
 \arguments{
 \item{rtime}{\code{numeric} with the retention times (length has to be equal
@@ -81,14 +84,20 @@ the mz range. Supported are \code{"sum"} (total ion chromatogram),
 \item{object}{A \code{Chromatogram} object.}
 
 \item{filter}{For \code{mz}: whether the mz range used to filter the
-original object should be returned (\code{filter = TRUE}), or the mz range
-calculated on the real data (\code{filter = FALSE}).}
+original object should be returned (\code{filter = TRUE}), or the mz
+range calculated on the real data (\code{filter = FALSE}).}
 
 \item{x}{For \code{as.data.frame} and \code{length}: a \code{Chromatogram}
 object.}
 
 \item{rt}{For \code{filterRt}: \code{numeric(2)} defining the lower and
 upper retention time for the filtering.}
+
+\item{all}{For \code{clean}: \code{logical(1)} whether all \code{0} intensity
+value pairs should be removed (defaults to \code{FALSE}).}
+}
+\value{
+For \code{clean}: a \emph{cleaned} \code{Chromatogram} object.
 }
 \description{
 The \code{Chromatogram} class is designed to store
@@ -103,33 +112,39 @@ The \code{Chromatogram} class is designed to store
     \code{Chromatogram} class.
 
 \code{rtime} returns the retention times for the rentention time
-- intensity pairs stored in the chromatogram.
+    - intensity pairs stored in the chromatogram.
 
 \code{intensity} returns the intensity for the rentention time
-- intensity pairs stored in the chromatogram.
+    - intensity pairs stored in the chromatogram.
 
 \code{mz} get the mz (range) of the chromatogram. The
-function returns a \code{numeric(2)} with the lower and upper mz value.
+    function returns a \code{numeric(2)} with the lower and upper mz value.
 
 \code{precursorMz} get the mz of the precursor ion. The
-function returns a \code{numeric(2)} with the lower and upper mz value.
+    function returns a \code{numeric(2)} with the lower and upper mz value.
 
 \code{productMz} get the mz of the product chromatogram/ion. The
-function returns a \code{numeric(2)} with the lower and upper mz value.
+    function returns a \code{numeric(2)} with the lower and upper mz value.
 
 \code{aggregationFun,aggregationFun<-} get or set the
-aggregation function.
+    aggregation function.
 
 \code{fromFile} returns the value from the \code{fromFile} slot.
 
 \code{length} returns the length (number of retention time -
-intensity pairs) of the chromatogram.
+    intensity pairs) of the chromatogram.
 
 \code{as.data.frame} returns the \code{rtime} and
-\code{intensity} values from the object as \code{data.frame}.
+    \code{intensity} values from the object as \code{data.frame}.
 
 \code{filterRt}: filters the chromatogram based on the provided
-retention time range.
+    retention time range.
+
+\code{clean}: \emph{cleans} a \code{Chromatogram} class by
+    removing all \code{0} and \code{NA} intensity signals (along with the
+    associates retention times). By default (if \code{all = FALSE}) \code{0}
+    values that are directly adjacent to peaks are kept too. \code{NA}
+    values are always removed.
 }
 \details{
 The \code{mz}, \code{filterMz}, \code{precursorMz} and
@@ -170,6 +185,19 @@ range(rtime(chr))
 chr2 <- filterRt(chr, rt = c(4, 10))
 
 range(rtime(chr2))
+
+## Create a simple Chromatogram object
+
+chr <- Chromatogram(rtime = 1:12,
+    intensity = c(0, 0, 20, 0, 0, 0, 123, 124343, 3432, 0, 0, 0))
+
+## Remove 0-intensity values keeping those adjacent to peaks
+chr <- clean(chr)
+intensity(chr)
+
+## Remove all 0-intensity values
+chr <- clean(chr, all = TRUE)
+intensity(chr)
 }
 \seealso{
 \code{\link{extractChromatograms}} for the method to extract

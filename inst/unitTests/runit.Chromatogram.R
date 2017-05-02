@@ -289,6 +289,30 @@ test_extractChromatograms <- function() {
     checkTrue(all(unlist(lapply(chrs[[2]], function(z) is.na(intensity(z))))))
 }
 
+test_clean_chromatogram <- function() {
+    chr <- Chromatogram(
+        rtime = 1:12,
+        intensity = c(0, 0, 20, 0, 0, 0, 123, 124343, 3432, 0, 0, 0))
+    chr_clnd <- clean(chr)
+    checkEquals(rtime(chr_clnd), c(2, 3, 4, 6, 7, 8, 9,10))
+
+    chr_clnd <- clean(chr, all = TRUE)
+    checkTrue(length(chr_clnd) == 4)
+    checkEquals(rtime(chr_clnd), c(3, 7, 8, 9))
+
+    ## With NA
+    chr <- Chromatogram(
+        rtime = 1:12,
+        intensity = c(0, NA, 20, 0, 0, 0, 123, 124343, 3432, 0, 0, 0))
+    chr_clnd <- clean(chr)
+    checkEquals(rtime(chr_clnd), c(3, 4, 6, 7, 8, 9, 10))
+    chr <- Chromatogram(
+        rtime = 1:12,
+        intensity = c(NA, NA, 20, NA, NA, NA, 123, 124343, 3432, NA, NA, NA))
+    chr_clnd <- clean(chr)
+    checkEquals(rtime(chr_clnd), c(3, 7, 8, 9))
+}
+
 dontrun_test_with_MRM <- function() {
     ## Test how we could read the data.
     ## chromatogramsInfo
