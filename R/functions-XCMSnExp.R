@@ -1097,7 +1097,7 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
         ## Extract parameters from the param object
         bw = bw(param)
         ## That's Jan Stanstrup's fix (issue #161).
-        densN <- max(512, 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
+        densN <- max(512, 2^(ceiling(log2(diff(rt) / (bw / 2)))))
         sample_groups <- sampleGroups(param)
         if (length(sample_groups) == 0)
             sample_groups <- rep(1, nsamples)
