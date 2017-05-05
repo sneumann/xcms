@@ -1096,6 +1096,8 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
     if (nrow(pks)) {
         ## Extract parameters from the param object
         bw = bw(param)
+        ## That's Jan Stanstrup's fix (issue #161).
+        densN <- max(512, 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
         sample_groups <- sampleGroups(param)
         if (length(sample_groups) == 0)
             sample_groups <- rep(1, nsamples)
@@ -1106,7 +1108,8 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
         sample_groups_table <- table(sample_groups)
         dens_from <- rt[1] - 3 * bw
         dens_to <- rt[2] + 3 * bw
-        dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to)
+        dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to,
+                        n = densN)
         yl <- c(0, max(dens$y))
         ypos <- seq(from = 0, to = yl[2], length.out = nsamples)
         ## Plot the peaks as points.
