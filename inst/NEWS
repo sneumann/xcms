@@ -1,3 +1,12 @@
+CHANGES IN VERSION 1.53.1
+--------------------------
+
+BUG FIXES:
+- Increase parameter n for the density call in the peak density correspondence
+  method. This enables to separate neighboring peaks using small n (issue #161).
+  Thanks to Jan Stanstrup.
+  
+
 CHANGES IN VERSION 1.51.11
 --------------------------
 
