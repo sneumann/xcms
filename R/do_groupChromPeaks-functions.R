@@ -114,6 +114,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
 
     densFrom <- rtRange[1] - 3 * bw
     densTo <- rtRange[2] + 3 * bw
+    densN <- max(512, 2^(ceiling(log2(diff(rtRange)/(bw/2)))))
     endIdx <- 0
     num <- 0
     gcount <- integer(nSampleGroups)
@@ -125,7 +126,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
         if (endIdx - startIdx < 0)
             next
         curMat <- peaks[startIdx:endIdx, , drop = FALSE]
-        den <- density(curMat[, "rt"], bw = bw, from = densFrom, to = densTo)
+        den <- density(curMat[, "rt"], bw = bw, from = densFrom, to = densTo, n = densN)
         maxden <- max(den$y)
         deny <- den$y
         ## gmat <- matrix(nrow = 5, ncol = 2 + gcount)
@@ -240,7 +241,7 @@ do_groupChromPeaks_density_par <- function(peaks, sampleGroups,
                                    sampleGroupTbl, minFr, minSmpls,
                                    sampleGroupNms, peakOrdr) {
         den <- density(z[, "rt"], bw = bw, from = rtr[1] - 3 * bw,
-                       to = rtr[2] + 3 * bw)
+                       to = rtr[2] + 3 * bw, n = max(512, 2^(ceiling(log2(diff(rtr)/(bw/2))))))
         maxden <- max(den$y)
         deny <- den$y
         snum <- 0
