@@ -731,8 +731,10 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
-        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1],
+                          to = rtrange[2], na.rm = TRUE)[c("x","y")]
         allden$y <- allden$y / sum(allden$y)
         corden$y <- corden$y / sum(corden$y)
         maxden <- max(allden$y, corden$y)
@@ -1069,7 +1071,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
+        allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
         plot(allden, xlim = rtrange, type = "l", main = "", xlab = "Retention Time", ylab = "Peak Density")
         abline(h = 0, col = "grey")
         close.screen(all.screens = TRUE)
