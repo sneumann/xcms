@@ -308,6 +308,10 @@ highlightChromPeaks <- function(x, rt, mz,
                                 lwd = 1, col = NA, type = c("rect", "point"),
                                 ...) {
     type <- match.arg(type)
+    if (missing(rt))
+        rt <- c(-Inf, Inf)
+    if (missing(mz))
+        mz <- c(-Inf, Inf)
     if (!is(x, "XCMSnExp"))
         stop("'x' has to be a XCMSnExp object")
     if (!hasChromPeaks(x))

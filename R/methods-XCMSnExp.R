@@ -263,8 +263,10 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     if (length(mz) && length(pks)) {
         mz <- range(mz)
         ## Increase mz by ppm.
-        mz[1] <- mz[1] - mz[1] * ppm / 1e6
-        mz[2] <- mz[2] + mz[2] * ppm / 1e6
+        if (is.finite(mz[1]))
+            mz[1] <- mz[1] - mz[1] * ppm / 1e6
+        if (is.finite(mz[2]))
+            mz[2] <- mz[2] + mz[2] * ppm / 1e6
         if (type == "within")
             keep <- which(pks[, "mzmin"] >= mz[1] & pks[, "mzmax"] <= mz[2])
         else

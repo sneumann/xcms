@@ -84,10 +84,12 @@ an LS/GC-MS experiment are referred to as /chromatographic peaks/. The respectiv
 method to identify such peaks is hence called =findChromPeaks= and the identified
 peaks can be accessed using the =XCMSnExp= =chromPeaks= method. The results from an
 correspondence analysis which aims to match and group chromatographic peaks
-within and between samples are called /features/. The definition of such mz-rt
-features (i.e. the result from the =groupChromPeaks= method) can be accessed /via/
-the =featureDefinitions= method of the =XCMSnExp= class. Finally, alignment
-(retention time correction) can be performed using the =adjustRtime= method.
+within and between samples are called /features/. A feature corresponds to
+individual ions with a unique mass-to-charge ratio (mz) and a unique retention
+time (rt). The definition of such mz-rt features (i.e. the result from the
+=groupChromPeaks= method) can be accessed /via/ the =featureDefinitions= method of
+the =XCMSnExp= class. Finally, alignment (retention time correction) can be
+performed using the =adjustRtime= method.
 
 The settings for any of the new analysis methods are bundled in /parameter/
 classes, one class for each method. This encapsulation of the parameters to a
@@ -520,7 +522,7 @@ potential confusions:
 + *Correspondence*: =groupChromPeaks= instead of =group= to clearly indicate what is
   being grouped. Group might be a sample group or a peak group, the latter being
   referred to also by (mz-rt) /feature/.
-
+  
 + *Alignment*: =adjustRtime= instead of =retcor= for retention time correction. The
   word /cor/ in /retcor/ might be easily misinterpreted as /correlation/ instead of
   correction.
