@@ -1088,8 +1088,8 @@ test_signal_integration <- function() {
         ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
         checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
     }
-    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
-    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
+    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
     
     ## Now for matchedfilter.
     tmp <- findChromPeaks(filterFile(od_x, 2), param = MatchedFilterParam())
@@ -1111,8 +1111,8 @@ test_signal_integration <- function() {
         ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
         checkEquals(unname(pkI), unname(chromPeaks(tmp)[i, "into"]))
     }
-    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
-    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
+    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
 
     ## ## matchedFilter with wide mz bins.
     ## ## For matchedFilter I will have to do this on the profile matrix!

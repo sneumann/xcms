@@ -21,15 +21,15 @@ test_findChromPeaks_centWave_peakIntensity <- function() {
     raw <- readMSData2(fl)
     options(originalCentWave = TRUE)
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
-    ## Use the getPeakInt2 which uses the rawMat function.
-    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
-    ## Use the getPeakInt3 which uses the getEIC C function.
-    pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
-    ## These fail for the original centWave code.
-    checkTrue(sum(pkI2 != chromPeaks(tmp)[, "into"]) > length(pkI2) / 2)
-    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
-    ## checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
-    checkEquals(pkI2, pkI3)
+    ## ## Use the getPeakInt2 which uses the rawMat function.
+    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## ## Use the getPeakInt3 which uses the getEIC C function.
+    ## pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    ## ## These fail for the original centWave code.
+    ## checkTrue(sum(pkI2 != chromPeaks(tmp)[, "into"]) > length(pkI2) / 2)
+    ## ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
+    ## ## checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
+    ## checkEquals(pkI2, pkI3)
     ## Try with new implementation.
     options(originalCentWave = FALSE)
     tmp2 <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
@@ -51,25 +51,25 @@ test_findChromPeaks_centWave_peakIntensity <- function() {
     plot(cp2[, "rtmin"], chromPeaks(tmp)[, "rtmin"])   ## Very similar
     plot(cp2[, "rtmax"], chromPeaks(tmp)[, "rtmax"])   ## Very similar
     ## Use the getPeakInt3 which uses the getEIC C function.
-    pkI2_2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
-    pkI3_2 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
-    ## These fail for the original centWave code.
-    checkEquals(unname(pkI2_2), unname(chromPeaks(tmp2)[, "into"]))
-    checkEquals(unname(pkI3_2), unname(chromPeaks(tmp2)[, "into"]))
-    checkEquals(pkI2_2, pkI3_2)
+    ## pkI2_2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
+    ## pkI3_2 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    ## ## These fail for the original centWave code.
+    ## checkEquals(unname(pkI2_2), unname(chromPeaks(tmp2)[, "into"]))
+    ## checkEquals(unname(pkI3_2), unname(chromPeaks(tmp2)[, "into"]))
+    ## checkEquals(pkI2_2, pkI3_2)
 
     
     ## The same for one of the test files; this works even with the original
     ## centWave code
     options(originalCentWave = TRUE)
     tmp <- filterFile(xod_xgrg, file = 3)
-    ## Use the getPeakInt2 which uses the rawMat function.
-    pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
-    ## Use the getPeakInt3 which uses the getEIC C function.
-    pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
-    checkEquals(pkI2, pkI3)
-    checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
-    checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
+    ## ## Use the getPeakInt2 which uses the rawMat function.
+    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## ## Use the getPeakInt3 which uses the getEIC C function.
+    ## pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    ## checkEquals(pkI2, pkI3)
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
+    ## checkEquals(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
     ## New modified centWave.
     options(originalCentWave = FALSE)
     tmp2 <- findChromPeaks(filterFile(faahko_od, file = 3),
@@ -77,12 +77,12 @@ test_findChromPeaks_centWave_peakIntensity <- function() {
     ## Even the identified peaks are identical!
     checkEquals(chromPeaks(tmp), chromPeaks(tmp2))
     ## Use the getPeakInt2 which uses the rawMat function.
-    pkI2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
-    ## Use the getPeakInt3 which uses the getEIC C function.
-    pkI3 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
-    checkEquals(pkI2, pkI3)
-    checkEquals(unname(pkI2), unname(chromPeaks(tmp2)[, "into"]))
-    checkEquals(unname(pkI3), unname(chromPeaks(tmp2)[, "into"]))
+    ## pkI2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
+    ## ## Use the getPeakInt3 which uses the getEIC C function.
+    ## pkI3 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    ## checkEquals(pkI2, pkI3)
+    ## checkEquals(unname(pkI2), unname(chromPeaks(tmp2)[, "into"]))
+    ## checkEquals(unname(pkI3), unname(chromPeaks(tmp2)[, "into"]))
     options(originalCentWave = TRUE)
 }
 
