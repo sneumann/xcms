@@ -432,5 +432,6 @@ exportMethods("hasChromPeaks",
               "productMz",
               "fillChromPeaks",
               "as.data.frame",
-              "dropFilledChromPeaks"
+              "dropFilledChromPeaks",
+              "extractMsData"
               )

@@ -214,7 +214,9 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 The \code{\link{do_groupChromPeaks_density}} core
     API function and \code{\link{group.density}} for the old user interface.
 
-\code{\link{featureDefinitions}} and
+\code{\link{plotChromPeakDensity}} to plot peak densities and
+    evaluate different algorithm settings.
+    \code{\link{featureDefinitions}} and
     \code{\link{featureValues,XCMSnExp-method}} for methods to access the
     features (i.e. the peak grouping results).
 

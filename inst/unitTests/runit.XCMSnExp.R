@@ -1162,6 +1162,69 @@ test_adjustRtimePeakGroups <- function() {
     checkTrue(max(isNa) == 1)
 }
 
+test_extractMsData <- function() {
+    ## All the data
+    ## all <- extractMsData(od_x)
+    ## checkEquals(length(all), length(fileNames(od_x)))
+    ## rts <- split(rtime(od_x), f = fromFile(od_x))
+    ## checkEquals(lengths(rts), unlist(lapply(all, nrow)))
+    ## On an OnDiskMSnExp with only mz
+    mzr <- c(300, 302)
+    res <- extractMsData(od_x, mz = mzr)
+    checkEquals(length(res), length(fileNames(od_x)))
+    checkTrue(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[3]][, "mz"] >= mzr[1] & res[[3]][, "mz"] <= mzr[2]))
+    ## On an OnDiskMSnExp with only rt
+    rtr <- c(2500, 2800)
+    res <- extractMsData(od_x, rt = rtr)
+    checkTrue(all(res[[1]][, "rt"] >= rtr[1] & res[[1]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[3]][, "rt"] >= rtr[1] & res[[3]][, "rt"] <= rtr[2]))
+    ## LLLLL TODO Continue here, and then add example to the extractMsData
+    ## help page.
+    ## On an OnDiskMSnExp with mz and rt
+    res <- extractMsData(od_x, rt = rtr, mz = mzr)
+    checkTrue(all(res[[1]][, "rt"] >= rtr[1] & res[[1]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[3]][, "rt"] >= rtr[1] & res[[3]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[3]][, "mz"] >= mzr[1] & res[[3]][, "mz"] <= mzr[2]))
+
+    ## XCMSnExp, xod_xgr
+    ## with adjusted retention times
+    res <- extractMsData(xod_xgr, rt = rtr, mz = mzr)
+    checkTrue(all(res[[1]][, "rt"] >= rtr[1] & res[[1]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[3]][, "rt"] >= rtr[1] & res[[3]][, "rt"] <= rtr[2]))
+    checkTrue(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
+    checkTrue(all(res[[3]][, "mz"] >= mzr[1] & res[[3]][, "mz"] <= mzr[2]))
+    ## without adjusted retention times
+    res_2 <- extractMsData(xod_xgr, adjustedRtime = FALSE, rt = rtr, mz = mzr)
+    checkTrue(all(res_2[[1]][, "rt"] >= rtr[1] & res_2[[1]][, "rt"] <= rtr[2]))
+    checkTrue(all(res_2[[2]][, "rt"] >= rtr[1] & res_2[[2]][, "rt"] <= rtr[2]))
+    checkTrue(all(res_2[[3]][, "rt"] >= rtr[1] & res_2[[3]][, "rt"] <= rtr[2]))
+    checkTrue(all(res_2[[1]][, "mz"] >= mzr[1] & res_2[[1]][, "mz"] <= mzr[2]))
+    checkTrue(all(res_2[[2]][, "mz"] >= mzr[1] & res_2[[2]][, "mz"] <= mzr[2]))
+    checkTrue(all(res_2[[3]][, "mz"] >= mzr[1] & res_2[[3]][, "mz"] <= mzr[2]))
+    checkTrue(nrow(res[[1]]) != nrow(res_2[[1]]))
+    checkTrue(nrow(res[[2]]) != nrow(res_2[[2]]))
+    checkTrue(nrow(res[[3]]) != nrow(res_2[[3]]))
+
+    ## rt and mzr out of range.
+    res <- extractMsData(od_x, rt = c(6000, 6300), mz = c(0, 3))
+    checkEquals(length(res), 3)
+    checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
+    res <- extractMsData(od_x, rt = c(6000, 6300))
+    checkEquals(length(res), 3)
+    checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
+    res <- extractMsData(od_x, mz = c(0, 3))
+    checkEquals(length(res), 3)
+    checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
+}
+
 ############################################################
 ## Test getEIC alternatives.
 dontrun_getEIC_alternatives <- function() {

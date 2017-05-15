@@ -1378,7 +1378,9 @@ NULL
 #' @seealso The \code{\link{do_groupChromPeaks_density}} core
 #'     API function and \code{\link{group.density}} for the old user interface.
 #' 
-#' @seealso \code{\link{featureDefinitions}} and
+#' @seealso \code{\link{plotChromPeakDensity}} to plot peak densities and
+#'     evaluate different algorithm settings.
+#'     \code{\link{featureDefinitions}} and
 #'     \code{\link{featureValues,XCMSnExp-method}} for methods to access the
 #'     features (i.e. the peak grouping results).
 #'
@@ -2244,13 +2246,21 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
 #'     \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
 #'     and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+#'
 #'     \code{\link{findChromPeaks}} for available peak detection methods
 #'     returning a \code{XCMSnExp} object as a result.
+#' 
 #'     \code{\link{groupChromPeaks}} for available peak grouping
 #'     methods and \code{\link{featureDefinitions}} for the method to extract
 #'     the feature definitions representing the peak grouping results.
 #'     \code{\link{adjustRtime}} for retention time adjustment methods.
 #'
+#'     \code{\link{extractChromatograms}} to extract MS data as
+#'     \code{\link{Chromatogram}} objects.
+#' 
+#'     \code{\link{extractMsData}} for the method to extract MS data as
+#'     \code{data.frame}s.
+#' 
 #' @rdname XCMSnExp-class
 #'
 #' @examples

@@ -143,6 +143,9 @@ plotChromatogram(chrs[[2]])
 
     \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
     \code{list} of such objects.
+
+    \code{\link{extractMsData}} for a method to extract the MS data as
+    \code{data.frame}.
 }
 \author{
 Johannes Rainer

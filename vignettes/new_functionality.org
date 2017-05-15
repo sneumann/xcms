@@ -510,6 +510,10 @@ highlighted in the plot.
 
 ** New naming convention
 
+Peaks identified in LC/GC-MS metabolomics are referred to as /chromatographic
+peaks/ where possible to avoid any misconceptions with /mass peaks/ identified in
+mz dimension.
+
 Methods for data analysis from the original =xcms= code have been renamed to avoid
 potential confusions:
 
@@ -526,6 +530,7 @@ potential confusions:
 + *Alignment*: =adjustRtime= instead of =retcor= for retention time correction. The
   word /cor/ in /retcor/ might be easily misinterpreted as /correlation/ instead of
   correction.
+
 
 ** New data classes
 

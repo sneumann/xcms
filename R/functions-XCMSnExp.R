@@ -157,7 +157,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     ## Subset the object based on rt and mz range.
     subs <- filterMz(filterRt(x, rt = rt), mz = mz)
     if (length(subs) == 0) {
-        return(list())
+        ## Return a list with empty data.frames
+        empty_df <- data.frame(rt = numeric(), mz = numeric(), i = integer())
+        return(lapply(1:length(fileNames(x)), FUN = function(z){empty_df}))
     }
     suppressWarnings(
         dfs <- spectrapply(subs, FUN = function(z) {

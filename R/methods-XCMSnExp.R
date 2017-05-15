@@ -1916,6 +1916,9 @@ setMethod("featureValues",
 #'     \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
 #'     \code{list} of such objects.
 #'
+#'     \code{\link{extractMsData}} for a method to extract the MS data as
+#'     \code{data.frame}.
+#'
 #' @export
 #' 
 #' @rdname extractChromatograms-method
@@ -2345,3 +2348,65 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
         return(object)
 })
 
+#' @aliases extractMsData
+#'
+#' @title Extract a \code{data.frame} containing MS data
+#' 
+#' @description Extract a \code{data.frame} of retention time, mz and intensity
+#'     values from each file/sample in the provided rt-mz range (or for the full
+#'     data range if \code{rt} and \code{mz} are not defined).
+#'
+#' @param object A \code{XCMSnExp} or \code{OnDiskMSnExp} object.
+#'
+#' @param rt \code{numeric(2)} with the retention time range from which the
+#'     data should be extracted.
+#'
+#' @param mz \code{numeric(2)} with the mz range.
+#'
+#' @param adjustedRtime (for \code{extractMsData,XCMSnExp}): \code{logical(1)}
+#'     specifying if adjusted or raw retention times should be reported.
+#'     Defaults to adjusted retention times, if these are present in
+#'     \code{object}.
+#'
+#' @return A \code{list} of length equal to the number of samples/files in
+#'     \code{object}. Each element being a \code{data.frame} with columns
+#'     \code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
+#'     intensity tuples of a file. If no data is available for the mz-rt range
+#'     in a file a \code{data.frame} with 0 rows is returned for that file.
+#'
+#' @seealso \code{\link{XCMSnExp}} for the data object.
+#'
+#' @rdname extractMsData-method
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#' ## Read some files from the test data package.
+#' library(faahKO)
+#' library(xcms)
+#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+#'            full.names = TRUE)
+#' raw_data <- readMSData2(fls[1:2])
+#'
+#' ## Read the full MS data for a defined mz-rt region.
+#' res <- extractMsData(raw_data, mz = c(300, 320), rt = c(2700, 2900))
+#'
+#' ## We've got one data.frame per file
+#' length(res)
+#'
+#' ## With number of rows:
+#' nrow(res[[1]])
+#'
+#' head(res[[1]])
+setMethod("extractMsData", "XCMSnExp",
+          function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object)){
+              ## Now, this method takes the adjusted rts, casts the object to
+              ## an OnDiskMSnExp, eventually replaces the rtime in the
+              ## featureData with the adjusted retention times (depending on
+              ## adjustedRtime and calls the method for OnDiskMSnExp.
+              if (adjustedRtime & hasAdjustedRtime(object)) {
+                  fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+              }
+              object <- as(object, "OnDiskMSnExp")
+              extractMsData(object, rt = rt, mz = mz)
+          })

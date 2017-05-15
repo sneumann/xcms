@@ -836,3 +836,9 @@ setMethod("extractChromatograms",
                                             aggregationFun = aggregationFun,
                                             missingValue = missing)
           })
+
+#' @rdname extractMsData-method
+setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
+          function(object, rt, mz) {
+              .extractMsData(object, rt = rt, mz = mz)
+          })
