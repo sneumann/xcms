@@ -4,6 +4,10 @@ CHANGES IN VERSION 2.99.0
 NEW FEATURES:
 - extractMsData to extract raw MS data as a data.frame (issue #120).
 
+BUG FIXES:
+- issue #175: an error is now thrown if no peak group was identified for peak
+  group retention time correction.
+  
 
 CHANGES IN VERSION 2.99.0
 --------------------------

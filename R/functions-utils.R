@@ -284,3 +284,43 @@ useOriginalCode <- function(x) {
     }
     x_new
 }
+
+#' @title Weighted mean around maximum
+#'
+#' @describe Calculate a weighted mean of the values around the value with the
+#'     largest weight. \code{x} could e.g. be mz values and \code{w} the
+#'     corresponding intensity values.
+#'
+#' @param x \code{numeric} vector from which the weighted mean should be
+#'     calculated.
+#'
+#' @param w \code{numeric} of same length than \code{x} with the weights.
+#'
+#' @param i \code{integer(1)} defining the number of data points left and right
+#'     of the index with the largest weight that should be considered for the
+#'     weighted mean calculation.
+#'
+#' @return The weighted mean value.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mz <- c(124.0796, 124.0812, 124.0828, 124.0843, 124.0859, 124.0875,
+#'     124.0890, 124.0906, 124.0922, 124.0938, 124.0953, 124.0969)
+#' ints <- c(10193.8, 28438.0, 56987.6, 85107.6, 102531.6, 104262.6,
+#'     89528.8, 61741.2, 33485.8, 14146.6, 5192.2, 1630.2)
+#'
+#' plot(mz, ints)
+#'
+#' ## What would be found by the max:
+#' abline(v = mz[which.max(ints)], col = "grey")
+#' ## What does the weighted mean around apex return:
+#' abline(v = weightedMeanAroundApex(mz, ints, i = 2), col = "blue")
+weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
+    max_idx <- which.max(w)
+    seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
+    weighted.mean(x[seq_idx], w[seq_idx])
+}
