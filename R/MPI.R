@@ -90,12 +90,12 @@ fillPeaksChromPar <- function(arg) {
     if (length(params$dataCorrection) > 1) {
         ## Note: dataCorrection (as set in the xcmsSet function) is either
         ## 1 for all or for none.
-        if (any(params$dataCorrection) == 1)
+        if (any(params$dataCorrection == 1))
             lcraw <- stitch(lcraw, AutoLockMass(lcraw))
     }
 
     if (exists("params$polarity") && length(params$polarity) >0) {
-        if (length(params$polarity) >0) {
+        if (length(params$polarity) > 0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[params$polarity]]
