@@ -47,7 +47,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
         scanrange[1] <- max(1, scanrange[1])
         scanrange[2] <- min(length(object@scantime), scanrange[2])
-        message("Provided scanrange was adjusted to ", scanrange)
+        message("Provided scanrange was adjusted to ", scanrange[1]," - ", scanrange[2])
     }
     if (!is.null(rawdata$acquisitionNum)) {
         ## defined only for mzData and mzXML
