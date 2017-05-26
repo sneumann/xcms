@@ -1,5 +1,5 @@
 ## Methods for the MsFeatureData class.
-#' @include functions-MsFeatureData.R
+#' @include functions-MsFeatureData.R do_adjustRtime-functions.R
 
 setMethod("initialize", "MsFeatureData", function(.Object, ...) {
     classVersion(.Object)["MsFeatureData"] <- "0.0.1"
@@ -21,24 +21,27 @@ setMethod("show", "MsFeatureData", function(object) {
     }
 })
 
-## features: getter and setter for the features matrix.
-## featureGroups: getter and setter for the featureGroups DataFrame.
+## (features) chromPeaks: getter and setter for the chromatographic peaks matrix.
+## (featureDefinitions) featureDefinitions: getter and setter for the features DataFrame.
 ## adjustedRtime: getter and setter for the adjustedRtime list.
 
 
 ##' @rdname XCMSnExp-class
 setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
-    return(any(ls(object) == "adjustedRtime"))
+    return(!is.null(object$adjustedRtime))
+    ## return(any(ls(object) == "adjustedRtime"))
 })
 
 ##' @rdname XCMSnExp-class
-setMethod("hasAlignedFeatures", "MsFeatureData", function(object) {
-    return(any(ls(object) == "featureGroups"))
+setMethod("hasFeatures", "MsFeatureData", function(object) {
+    return(!is.null(object$featureDefinitions))
+    ## return(any(ls(object) == "featureDefinitions"))
 })
 
 ##' @rdname XCMSnExp-class
-setMethod("hasDetectedFeatures", "MsFeatureData", function(object) {
-    return(any(ls(object) == "features"))
+setMethod("hasChromPeaks", "MsFeatureData", function(object) {
+    return(!is.null(object$chromPeaks))
+    ## return(any(ls(object) == "chromPeaks"))
 })
 
 ##' @rdname XCMSnExp-class
@@ -56,47 +59,48 @@ setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
 })
 ##' @rdname XCMSnExp-class
 setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
-    if (hasAdjustedRtime(object))
+    if (hasAdjustedRtime(object)) {
         rm(list = "adjustedRtime", envir = object)
+    }
     return(object)
 })
 
 ##' @rdname XCMSnExp-class
-setMethod("featureGroups", "MsFeatureData", function(object) {
-    if (hasAlignedFeatures(object))
-        return(object$featureGroups)
+setMethod("featureDefinitions", "MsFeatureData", function(object) {
+    if (hasFeatures(object))
+        return(object$featureDefinitions)
     warning("No aligned feature information available.")
     return(NULL)
 })
 ##' @rdname XCMSnExp-class
-setReplaceMethod("featureGroups", "MsFeatureData", function(object, value) {
-    object$featureGroups <- value
+setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) {
+    object$featureDefinitions <- value
     if (validObject(object))
         return(object)
 })
 ##' @rdname XCMSnExp-class
-setMethod("dropFeatureGroups", "MsFeatureData", function(object) {
-    if (hasAlignedFeatures(object))
-        rm(list = "featureGroups", envir = object)
+setMethod("dropFeatureDefinitions", "MsFeatureData", function(object) {
+    if (hasFeatures(object))
+        rm(list = "featureDefinitions", envir = object)
     return(object)
 })
 
 ##' @rdname XCMSnExp-class
-setMethod("features", "MsFeatureData", function(object) {
-    if (hasDetectedFeatures(object))
-        return(object$features)
-    warning("No detected features available.")
+setMethod("chromPeaks", "MsFeatureData", function(object) {
+    if (hasChromPeaks(object))
+        return(object$chromPeaks)
+    warning("No chromatographic peaks available.")
     return(NULL)
 })
 ##' @rdname XCMSnExp-class
-setReplaceMethod("features", "MsFeatureData", function(object, value) {
-    object$features <- value
+setReplaceMethod("chromPeaks", "MsFeatureData", function(object, value) {
+    object$chromPeaks <- value
     if (validObject(object))
         return(object)
 })
 ##' @rdname XCMSnExp-class
-setMethod("dropFeatures", "MsFeatureData", function(object) {
-    if (hasDetectedFeatures(object))
-        rm(list = "features", envir = object)
+setMethod("dropChromPeaks", "MsFeatureData", function(object) {
+    if (hasChromPeaks(object))
+        rm(list = "chromPeaks", envir = object)
     return(object)
 })

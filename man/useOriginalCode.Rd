@@ -12,25 +12,23 @@ old code should be used in corresponding functions. If not provided the
 function simply returns the value of the global option.}
 }
 \value{
-logical(1) indicating whether old code is being
-used.
+logical(1) indicating whether old code is being used.
 }
 \description{
 This function allows to enable the usage of old, partially
-deprecated code from xcms by setting a corresponding global option. See
-details for functions affected.
+    deprecated code from xcms by setting a corresponding global option. See
+    details for functions affected.
 }
 \details{
 The functions/methods that will be affected by this are:
-\itemize{
-\item \code{\link{do_detectFeatures_matchedFilter}}
-}
+    \itemize{
+    \item \code{\link{do_findChromPeaks_matchedFilter}}
+    }
 }
 \note{
 Usage of old code is strongly dicouraged. This function is thought
-to be used mainly in the transition phase from xcms to xcms version 3.
+    to be used mainly in the transition phase from xcms to xcms version 3.
 }
 \author{
 Johannes Rainer
 }
-

@@ -48,10 +48,9 @@ length(xsub@scantime)
 ## The number of values of the subset:
 length(xsub@env$mz)
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{split.xcmsRaw}}
 }
-
+\author{
+Johannes Rainer
+}

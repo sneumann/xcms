@@ -35,14 +35,49 @@
     }
 }
 
+## Just get the name of the algorithm for each Parameter class.
+.param2string <- function(x) {
+    if (is(x, "CentWaveParam"))
+        return("centWave")
+    if (is(x, "MatchedFilterParam"))
+        return("matchedFilter")
+    if (is(x, "MassifquantParam"))
+        return("massifquant")
+    if (is(x, "MSWParam"))
+        return("MSW")
+    if (is(x, "CentWavePredIsoParam"))
+        return("centWave with predicted isotope ROIs")
+    if (is(x, "PeakDensityParam"))
+        return("chromatographic peak density")
+    if (is(x, "MzClustParam"))
+        return("mzClust")
+    if (is(x, "NearestPeaksParam"))
+        return("nearest peaks")
+    if (is(x, "PeakGroupsParam"))
+        return("peak groups")
+    if (is(x, "ObiwarpParam"))
+        return("obiwarp")
+    return("unknown")
+}
+
+############################################################
+## GenericParam
+#' @return The \code{GenericParam} function returns a \code{GenericParam} object.
+#' @param fun \code{character} representing the name of the function.
+#' @param args \code{list} (ideally named) with the arguments to the function.
+#' @rdname GenericParam
+GenericParam <- function(fun = character(), args = list()) {
+    return(new("GenericParam", fun = fun, args = args))
+}
+
 ############################################################
 ## CentWaveParam
 
 ##' @return The \code{CentWaveParam} function returns a \code{CentWaveParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for chromatographic peak
+##' detection by the centWave method.
 ##'
-##' @rdname featureDetection-centWave
+##' @rdname findChromPeaks-centWave
 CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           prefilter = c(3, 100), mzCenterFun = "wMean",
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -62,9 +97,9 @@ CentWaveParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 ##' @return The \code{MatchedFilterParam} function returns a
 ##' \code{MatchedFilterParam} class instance with all of the settings specified
-##' for feature detection by the centWave method.
+##' for chromatographic detection by the \emph{matchedFilter} method.
 ##'
-##' @rdname featureDetection-matchedFilter
+##' @rdname findChromPeaks-matchedFilter
 MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                                baseValue = numeric(), distance = numeric(),
                                fwhm = 30, sigma = fwhm / 2.3548,
@@ -75,15 +110,27 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
                sigma = sigma, max = max, snthresh = snthresh, steps = steps,
                mzdiff = mzdiff, index = index))
 }
+#' Convert the impute method to the old-style method name (e.g. for profMat
+#' calls)
+#' @noRd
+.impute2method <- function(x) {
+    if (impute(x) == "none")
+        return("bin")
+    if (impute(x) == "lin")
+        return("binlin")
+    if (impute(x) == "linbase")
+        return("binlinbase")
+    return("intlin")
+}
 
 ############################################################
 ## MassifquantParam
 
 ##' @return The \code{MassifquantParam} function returns a \code{MassifquantParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for chromatographic peak
+##' detection by the \emph{massifquant} method.
 ##'
-##' @rdname featureDetection-massifquant
+##' @rdname findChromPeaks-massifquant
 MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                              prefilter = c(3, 100), mzCenterFun = "wMean",
                              integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -102,7 +149,7 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 
 ############################################################
 ## MSWParam
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
 ##' @param scales Numeric defining the scales of the continuous wavelet
 ##' transform (CWT).
@@ -136,10 +183,10 @@ MassifquantParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
 ##' \code{MassSpecWavelet} package.
 ##'
 ##' @return The \code{MSWParam} function returns a \code{MSWParam}
-##' class instance with all of the settings specified for feature detection by
-##' the centWave method.
+##' class instance with all of the settings specified for peak detection by
+##' the \emph{MSW} method.
 ##'
-##' @rdname featureDetection-MSW
+##' @rdname findPeaks-MSW
 MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
                      scales = c(1, seq(2, 30, 2), seq(32, 64, 4)),
                      nearbyPeak = TRUE, peakScaleRange = 5,
@@ -161,10 +208,10 @@ MSWParam <- function(snthresh = 3, verboseColumns = FALSE,
 
 ##' @return The \code{CentWavePredIsoParam} function returns a
 ##' \code{CentWavePredIsoParam} class instance with all of the settings
-##' specified for the two-step centWave-based feature detection considering also
-##' feature isotopes.
+##' specified for the two-step centWave-based peak detection considering also
+##' isotopes.
 ##'
-##' @rdname featureDetection-centWaveWithPredIsoROIs
+##' @rdname findChromPeaks-centWaveWithPredIsoROIs
 CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                           prefilter = c(3, 100), mzCenterFun = "wMean",
                           integrate = 1L, mzdiff = -0.001, fitgauss = FALSE,
@@ -181,4 +228,103 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                snthreshIsoROIs = snthreshIsoROIs, maxIso = as.integer(maxIso),
                maxCharge = as.integer(maxCharge),
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
+}
+
+
+############################################################
+## PeakDensityParam
+
+##' @return The \code{PeakDensityParam} function returns a
+##' \code{PeakDensityParam} class instance with all of the settings
+##' specified for chromatographic peak alignment based on peak densities.
+##' 
+##' @rdname groupChromPeaks-density
+PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
+                                minFraction = 0.5, minSamples = 1,
+                                binSize = 0.25, maxFeatures = 50) {
+    return(new("PeakDensityParam", sampleGroups = sampleGroups, bw = bw,
+               minFraction = minFraction, minSamples = minSamples,
+               binSize = binSize, maxFeatures = maxFeatures))
+}
+
+############################################################
+## MzClustParam
+
+##' @return The \code{MzClustParam} function returns a
+##' \code{MzClustParam} class instance with all of the settings
+##' specified for high resolution single spectra peak alignment.
+##' 
+##' @rdname groupChromPeaks-mzClust
+MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
+                                minFraction = 0.5, minSamples = 1) {
+    return(new("MzClustParam", sampleGroups = sampleGroups, ppm = ppm,
+               absMz = absMz, minFraction = minFraction,
+               minSamples = minSamples))
+}
+
+
+############################################################
+## NearestPeaksParam
+
+##' @return The \code{NearestPeaksParam} function returns a
+##' \code{NearestPeaksParam} class instance with all of the settings
+##' specified for peak alignment based on peak proximity.
+##' 
+##' @rdname groupChromPeaks-nearest
+NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
+                              absMz = 0.2, absRt = 15, kNN = 10) {
+    return(new("NearestPeaksParam", sampleGroups = sampleGroups,
+               mzVsRtBalance = mzVsRtBalance, absMz = absMz, absRt = absRt,
+               kNN = kNN))
+}
+
+
+############################################################
+## PeakGroupsParam
+
+##' @return The \code{PeakGroupsParam} function returns a
+##' \code{PeakGroupsParam} class instance with all of the settings
+##' specified for retention time adjustment based on \emph{house keeping}
+##' features/peak groups.
+##' 
+##' @rdname adjustRtime-peakGroups
+PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
+                               smooth = "loess", span = 0.2,
+                            family = "gaussian",
+                            peakGroupsMatrix = matrix(nrow = 0, ncol = 0)) {
+    return(new("PeakGroupsParam", minFraction = minFraction,
+               extraPeaks = extraPeaks, smooth = smooth, span = span,
+               family = family, peakGroupsMatrix = peakGroupsMatrix))
+}
+
+
+############################################################
+## ObiwarpParam
+
+##' @return The \code{ObiwarpParam} function returns a
+##' \code{ObiwarpParam} class instance with all of the settings
+##' specified for obiwarp retention time adjustment and alignment.
+##' 
+##' @rdname adjustRtime-obiwarp
+ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
+                         distFun = "cor_opt", gapInit = numeric(),
+                         gapExtend = numeric(), factorDiag = 2, factorGap = 1,
+                         localAlignment = FALSE, initPenalty = 0) {
+    return(new("ObiwarpParam", binSize = binSize,
+               centerSample = as.integer(centerSample),
+               response = as.integer(response), distFun = distFun,
+               gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
+               factorGap = factorGap, localAlignment = localAlignment,
+               initPenalty = initPenalty))
+}
+
+############################################################
+## FillChromPeaksParam
+
+#' @return The \code{FillChromPeaksParam} function returns a
+#' \code{FillChromPeaksParam} object.
+#' @rdname fillChromPeaks
+FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0) {
+    return(new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
+               ppm = ppm))
 }

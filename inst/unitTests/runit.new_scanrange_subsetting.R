@@ -22,7 +22,7 @@ test_scanrange_centWave <- function() {
 
     ## Compare with do_
     xsub <- xraw[90:345]
-    res_3 <- do_detectFeatures_centWave(mz = xsub@env$mz,
+    res_3 <- do_findChromPeaks_centWave(mz = xsub@env$mz,
                                         int = xsub@env$intensity,
                                         scantime = xsub@scantime,
                                         noise = 5000,

@@ -25,4 +25,3 @@ object to the latest definition.
 \author{
 Johannes Rainer
 }
-

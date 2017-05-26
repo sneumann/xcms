@@ -56,7 +56,7 @@ test_evaluate_xcmsSource <- function() {
     library(msdata)
     mz_file <- system.file("microtofq/MM8.mzML", package = "msdata")
     src <- xcms:::xcmsSource(mz_file)
-    checkTrue(is(src, "rampSource"))
+    checkTrue(is(src, "pwizSource"))
     tmp <- loadRaw(src)
     checkEquals(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
                               "mz", "intensity", "polarity"))
@@ -81,18 +81,22 @@ test_evaluate_xcmsSource <- function() {
     rawdata$MSn <- mzR:::rampRawDataMSn(rid)
     mzR:::rampClose(rid)
     rm(rid)
+    ## Ramp does not read polarity!
+    tmp$polarity <- rawdata$polarity
     checkEquals(rawdata, tmp)
 
     ## Next example:
     msnfile <- system.file("microtofq/MSMSpos20_6.mzML", package = "msdata")
     src <- xcms:::xcmsSource(msnfile)
     tmp <- loadRaw(src, includeMSn = TRUE)
+    ## checkTrue(all(tmp$polarity == 1))
     ## OLD code:
     rid <- mzR:::rampOpen(msnfile)
     rawdata <- mzR:::rampRawData(rid)
     rawdata$MSn <- mzR:::rampRawDataMSn(rid)
     mzR:::rampClose(rid)
     rm(rid)
+    rawdata$polarity <- tmp$polarity
     checkEquals(rawdata, tmp)
 }
 

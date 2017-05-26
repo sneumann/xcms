@@ -1,4 +1,3 @@
-
 ##
 ## findPeaks slave function for parallel execution
 ##
@@ -42,14 +41,18 @@ findPeaksPar <- function(arg) {
 
     peaks <- do.call(method, args = c(list(object = xRaw), params))
 
-    list(scantime=xRaw@scantime,
-         peaks=cbind(peaks,
-                     sample = rep.int(myID, nrow(peaks))),
+    ## Ensure to remove data to avoid memory accumulation.
+    scanT <- xRaw@scantime
+    rm(xRaw)
+    gc()
+    list(scantime = scanT,
+         peaks = cbind(peaks,
+                       sample = rep.int(myID, nrow(peaks))),
          date = procDate)
 }
 
 ############################################################
-## detectFeatures
+## findChromPeaks
 ##
 ## Same as findPeaksPar but without the need to pass argument lists
 ## and read settings from the global options.
@@ -58,7 +61,7 @@ findPeaksPar <- function(arg) {
 ## o readParams: parameter class to read the file; actually we would only
 ##   need the scanrange, the includeMSn and the lockMassFreq here.
 ## o detectParams: parameter class for the peak detection.
-detectFeaturesInFile <- function(args) {
+findChromPeaksInFile <- function(args) {
     ## Placeholder
 }
 
@@ -87,12 +90,12 @@ fillPeaksChromPar <- function(arg) {
     if (length(params$dataCorrection) > 1) {
         ## Note: dataCorrection (as set in the xcmsSet function) is either
         ## 1 for all or for none.
-        if (any(params$dataCorrection) == 1)
+        if (any(params$dataCorrection == 1))
             lcraw <- stitch(lcraw, AutoLockMass(lcraw))
     }
 
     if (exists("params$polarity") && length(params$polarity) >0) {
-        if (length(params$polarity) >0) {
+        if (length(params$polarity) > 0) {
             ## Retain wanted polarity only
             lcraws <- split(lcraw, lcraw@polarity, DROP=TRUE)
             lcraw <- lcraws[[params$polarity]]
@@ -108,15 +111,14 @@ fillPeaksChromPar <- function(arg) {
     }
 
 
-                                        # Expanding the peakrange
-    peakrange[,"mzmax"]  <-  peakrange[,"mzmax"]   +    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-    peakrange[,"mzmin"]  <-  peakrange[,"mzmin"]   -    (   (peakrange[,"mzmax"]-peakrange[,"mzmin"])/2    )*(expand.mz-1)
-    peakrange[,"rtmax"]  <-  peakrange[,"rtmax"]   +    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-    peakrange[,"rtmin"]  <-  peakrange[,"rtmin"]   -    (   (peakrange[,"rtmax"]-peakrange[,"rtmin"])/2    )*(expand.rt-1)
-
-
-
-
+    ## Expanding the peakrange
+    incrMz <- (peakrange[, "mzmax"] - peakrange[, "mzmin"]) / 2 * (expand.mz - 1)
+    peakrange[, "mzmax"] <- peakrange[, "mzmax"] + incrMz
+    peakrange[, "mzmin"] <- peakrange[, "mzmin"] - incrMz
+    incrRt <- (peakrange[, "rtmax"] - peakrange[, "rtmin"]) / 2 * (expand.rt - 1)
+    peakrange[, "rtmax"] <- peakrange[, "rtmax"] + incrRt
+    peakrange[, "rtmin"] <- peakrange[, "rtmin"] - incrRt
+    
     naidx <- which(is.na(gvals[,myID]))
 
     newpeaks <- getPeaks(lcraw, peakrange[naidx,,drop=FALSE], step = prof$step)

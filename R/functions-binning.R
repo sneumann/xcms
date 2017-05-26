@@ -172,7 +172,9 @@ binYonX <- function(x, y, breaks, nBins, binSize, binFromX,
     if (!sortedX) {
         message("'x' is not sorted, will sort 'x' and 'y'.")
         ## Sort method; see issue #180 for MSnbase
-        o <- order(x, method = options()$BioC$xcms$sortMethod)
+        ## Note: order method = "radix" is considerably faster - but there is no
+        ## method argument for older R versions.
+        o <- order(x)
         x <- x[o]
         y <- y[o]
     }

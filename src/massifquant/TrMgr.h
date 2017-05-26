@@ -54,7 +54,7 @@ class TrMgr {
 
         bool hasMzDeviation(int i);
 
-        bool isSeizmo(int i);
+        /* bool isSeizmo(int i); */
 
     public:
 

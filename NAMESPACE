@@ -4,16 +4,23 @@ importFrom("utils", "capture.output")
 import("methods")
 importFrom("ProtGenerics", "peaks")
 importFrom("BiocGenerics", "updateObject", "fileName")
-import("Biobase")
-importFrom("graphics", "plot", "image", "boxplot")
+## import("Biobase")
+importFrom("Biobase", "AnnotatedDataFrame")
+importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
+importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
+                  "phenoData<-", "pData", "rowMedians")
+
+importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
 
+## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame")
+importMethodsFrom("S4Vectors", "as.matrix")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -43,7 +50,8 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
-                  "removeReporters", "smooth", "trimMz")
+                  "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
+                  "spectrapply", "peaksCount", "precursorMz")
 importFrom("MSnbase", "as.data.frame.Spectrum")
 
 export(
@@ -182,21 +190,34 @@ export(
     "binYonX",
     "breaks_on_binSize",
     "breaks_on_nBins",
-    "do_detectFeatures_centWave",
-    "do_detectFeatures_massifquant",
-    "do_detectFeatures_matchedFilter",
-    "do_detectFeatures_MSW",
-    "do_detectFeatures_centWaveWithPredIsoROIs",
-    "do_detectFeatures_addPredIsoROIs",
+    "do_findChromPeaks_centWave",
+    "do_findChromPeaks_massifquant",
+    "do_findChromPeaks_matchedFilter",
+    "do_findPeaks_MSW",
+    "do_findChromPeaks_centWaveWithPredIsoROIs",
+    "do_findChromPeaks_addPredIsoROIs",
     "imputeLinInterpol",
     "useOriginalCode",
-    "setAs"
+    "setAs",
+    "do_groupChromPeaks_density",
+    "do_groupPeaks_mzClust",
+    "do_groupChromPeaks_nearest",
+    "Chromatogram",
+    "do_adjustRtime_peakGroups",
+    "processHistoryTypes",
+    "adjustRtimePeakGroups",
+    "plotAdjustedRtime",
+    "plotChromatogram",
+    "highlightChromPeaks",
+    "plotChromPeakDensity"
 )
 
 ## New analysis methods
 exportMethods(
     "showError",
-    "detectFeatures"
+    "findChromPeaks",
+    "groupChromPeaks",
+    "adjustRtime"
 )
 
 ## New Param classes
@@ -205,7 +226,14 @@ exportClasses(
     "MatchedFilterParam",
     "MassifquantParam",
     "MSWParam",
-    "CentWavePredIsoParam"
+    "CentWavePredIsoParam",
+    "PeakDensityParam",
+    "MzClustParam",
+    "NearestPeaksParam",
+    "PeakGroupsParam",
+    "ObiwarpParam",
+    "GenericParam",
+    "FillChromPeaksParam"
 )
 ## Param methods
 exportMethods(
@@ -294,27 +322,86 @@ exportMethods(
     "mzIntervalExtension<-",
     "polarity",
     "polarity<-",
-    "rtime",
-    "mz",
-    "intensity"
+    ## PeakDensityParam
+    "sampleGroups",
+    "sampleGroups<-",
+    "bw",
+    "bw<-",
+    "minFraction",
+    "minFraction<-",
+    "minSamples",
+    "minSamples<-",
+    "maxFeatures",
+    "maxFeatures<-",
+    ## MzClustParam
+    "absMz",
+    "absMz<-",
+    ## NearestPeaksParam
+    "absRt",
+    "absRt<-",
+    "mzVsRtBalance",
+    "mzVsRtBalance<-",
+    "kNN",
+    "kNN<-",
+    "extraPeaks",
+    "extraPeaks<-",
+    "smooth",
+    "smooth<-",
+    "span",
+    "span<-",
+    "family",
+    "family<-",
+    ## PeakGroupsParam
+    "peakGroupsMatrix",
+    "peakGroupsMatrix<-",
+    ## ObiwarpParam
+    "centerSample",
+    "centerSample<-",
+    "response",
+    "response<-",
+    "distFun",
+    "distFun<-",
+    "gapInit",
+    "gapInit<-",
+    "gapExtend",
+    "gapExtend<-",
+    "factorDiag",
+    "factorDiag<-",
+    "factorGap",
+    "factorGap<-",
+    "localAlignment",
+    "localAlignment<-",
+    "initPenalty",
+    "initPenalty<-",
+    ## FillChromPeaksParam
+    "expandMz",
+    "expandMz<-",
+    "expandRt",
+    "expandRt<-"
 )
 ## Param class functions
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam")
+       "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
+       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam", "GenericParam",
+       "FillChromPeaksParam")
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory", "XProcessHistory")
+exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
+              "Chromatogram",
+              "XProcessHistory"
+              )
 ## New methods for these classes
-exportMethods("hasDetectedFeatures",
-              "hasAlignedFeatures",
+exportMethods("hasChromPeaks",
+              "hasFeatures",
               "hasAdjustedRtime",
               "adjustedRtime",
               "adjustedRtime<-",
-              "featureGroups",
-              "featureGroups<-",
-              "features",
-              "features<-",
+              "featureDefinitions",
+              "featureDefinitions<-",
+              "featureValues",
+              "chromPeaks",
+              "chromPeaks<-",
               "processHistory",
               "fileIndex",
               "processDate",
@@ -333,7 +420,18 @@ exportMethods("hasDetectedFeatures",
               "removePeaks",
               "smooth",
               "dropAdjustedRtime",
-              "dropFeatureGroups",
-              "dropFeatures",
-              "spectra"
+              "dropFeatureDefinitions",
+              "dropChromPeaks",
+              "spectra",
+              "rtime",
+              "mz",
+              "intensity",
+              "aggregationFun",
+              "extractChromatograms",
+              "precursorMz",
+              "productMz",
+              "fillChromPeaks",
+              "as.data.frame",
+              "dropFilledChromPeaks",
+              "extractMsData"
               )

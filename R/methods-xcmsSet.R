@@ -32,7 +32,7 @@ setMethod("show", "xcmsSet", function(object) {
                 scanrange(object)[2], "\n")
         }
     }
-    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.FEATURE.DETECTION)
+    errs <- .getProcessErrors(object, PROCSTEP = .PROCSTEP.PEAK.DETECTION)
     if (length(errs) > 0) {
         cat(" o Detection errors: ", length(errs), " files failed.\n",
             "   Use method 'showError' to list the error(s).\n\n", sep ="")
@@ -340,98 +340,20 @@ setMethod("groupnames", "xcmsSet", function(object, mzdec = 0, rtdec = 0,
 
 ############################################################
 ## group.density
-setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5, minsamp = 1,
-                                               mzwid = 0.25, max = 50, sleep = 0) {
-
-    samples <- sampnames(object)
-    classlabel <- sampclass(object)
-    classnames <- as.character(unique(sampclass(object)))
-    classlabel <- as.vector(unclass(classlabel))
-    classnum <- table(classlabel)
-
-    peakmat <- peaks(object)
-    porder <- order(peakmat[,"mz"])
-    peakmat <- peakmat[porder,, drop=FALSE]
-    rownames(peakmat) <- NULL
-    retrange <- range(peakmat[,"rt"])
-
-    mass <- seq(peakmat[1,"mz"], peakmat[nrow(peakmat),"mz"] + mzwid, by = mzwid/2)
-    masspos <- findEqualGreaterM(peakmat[,"mz"], mass)
-
-    groupmat <- matrix(nrow = 512, ncol = 7 + length(classnum))
-    groupindex <- vector("list", 512)
-
-    endidx <- 0
-    num <- 0
-    gcount <- integer(length(classnum))
-    for (i in seq(length = length(mass)-2)) {
-        if (i %% 500 == 0) {
-            cat(round(mass[i]), "")
-            flush.console()
-        }
-        startidx <- masspos[i]
-        endidx <- masspos[i+2]-1
-        if (endidx - startidx < 0)
-            next
-        speakmat <- peakmat[startidx:endidx,,drop=FALSE]
-        den <- density(speakmat[,"rt"], bw, from = retrange[1]-3*bw, to = retrange[2]+3*bw)
-        maxden <- max(den$y)
-        deny <- den$y
-        gmat <- matrix(nrow = 5, ncol = 2+length(classnum))
-        snum <- 0
-        while (deny[maxy <- which.max(deny)] > maxden/20 && snum < max) {
-            grange <- descendMin(deny, maxy)
-            deny[grange[1]:grange[2]] <- 0
-            gidx <- which(speakmat[,"rt"] >= den$x[grange[1]] & speakmat[,"rt"] <= den$x[grange[2]])
-            gnum <- classlabel[unique(speakmat[gidx,"sample"])]
-            for (j in seq(along = gcount))
-                gcount[j] <- sum(gnum == j)
-            if (! any(gcount >= classnum*minfrac & gcount >= minsamp))
-                next
-            snum <- snum + 1
-            num <- num + 1
-### Double the size of the output containers if they're full
-            if (num > nrow(groupmat)) {
-                groupmat <- rbind(groupmat, matrix(nrow = nrow(groupmat), ncol = ncol(groupmat)))
-                groupindex <- c(groupindex, vector("list", length(groupindex)))
-            }
-            groupmat[num, 1] <- median(speakmat[gidx, "mz"])
-            groupmat[num, 2:3] <- range(speakmat[gidx, "mz"])
-            groupmat[num, 4] <- median(speakmat[gidx, "rt"])
-            groupmat[num, 5:6] <- range(speakmat[gidx, "rt"])
-            groupmat[num, 7] <- length(gidx)
-            groupmat[num, 7+seq(along = gcount)] <- gcount
-            groupindex[[num]] <- sort(porder[(startidx:endidx)[gidx]])
-        }
-        if (sleep > 0) {
-            plot(den, main = paste(round(min(speakmat[,"mz"]), 2), "-", round(max(speakmat[,"mz"]), 2)))
-            for (i in seq(along = classnum)) {
-                idx <- classlabel[speakmat[,"sample"]] == i
-                points(speakmat[idx,"rt"], speakmat[idx,"into"]/max(speakmat[,"into"])*maxden, col = i, pch=20)
-            }
-            for (i in seq(length = snum))
-                abline(v = groupmat[num-snum+i, 5:6], lty = "dashed", col = i)
-            Sys.sleep(sleep)
-        }
-    }
-    cat("\n")
-
-    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
-                            "npeaks", classnames)
-
-    groupmat <- groupmat[seq(length = num),,drop=FALSE]
-    groupindex <- groupindex[seq(length = num)]
-
-    ## Remove groups that overlap with more "well-behaved" groups
-    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
-    uorder <- order(-numsamp, groupmat[,"npeaks"])
-
-    uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
-                         uorder)
-
-    groups(object) <- groupmat[uindex,,drop=FALSE]
-    groupidx(object) <- groupindex[uindex]
-
+setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
+                                               minsamp = 1, mzwid = 0.25,
+                                               max = 50, sleep = 0) {
+    ## Using now the do_groupChromPeaks_density function:
+    res <- do_groupChromPeaks_density(peaks(object),
+                                    sampleGroups = sampclass(object),
+                                    bw = bw,
+                                    minFraction = minfrac,
+                                    minSamples = minsamp,
+                                    binSize = mzwid,
+                                    maxFeatures = max)
+    
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
     object
 })
 
@@ -441,172 +363,32 @@ setMethod("group.mzClust", "xcmsSet", function(object,
                                                mzppm = 20,
                                                mzabs = 0,
                                                minsamp = 1,
-                                               minfrac=0.5)
-      {
-          samples <- sampnames(object)
-          classlabel <- sampclass(object)
-          peaks <- peaks(object)
-          groups <- mzClustGeneric(peaks[,c("mz","sample")],
-                                   sampclass=classlabel,
-                                   mzppm=mzppm,mzabs=mzabs,
-                                   minsamp=minsamp,
-                                   minfrac=minfrac)
+                                               minfrac=0.5) {
 
-          if(is.null(nrow(groups$mat))) {
-              matColNames <- names(groups$mat)
-              groups$mat <- matrix(groups$mat,
-                                   ncol=length(groups$mat),byrow=F);
-              colnames(groups$mat) <- matColNames
-          }
-
-          rt <- c(rep(-1,nrow(groups$mat)))
-
-          groups(object) <- cbind(groups$mat[,(1:3),drop=FALSE],rt,rt,rt,groups$mat[,(4:ncol(groups$mat)),drop=FALSE])
-          colnames(groups(object)) <- c(colnames(groups$mat[,(1:3),drop=FALSE]), "rtmed", "rtmin", "rtmax", colnames(groups$mat[,(4:ncol(groups$mat)),drop=FALSE]))
-          groupidx(object) <- groups$idx
-
-          object
-      })
+    res <- do_groupPeaks_mzClust(peaks = peaks(object),
+                                 sampleGroups = sampclass(object),
+                                 ppm = mzppm,
+                                 absMz = mzabs,
+                                 minFraction = minfrac,
+                                 minSamples = minsamp)
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
+    object
+})
 
 ############################################################
 ## group.nearest
 setMethod("group.nearest", "xcmsSet", function(object, mzVsRTbalance=10,
                                                mzCheck=0.2, rtCheck=15, kNN=10) {
 
-    ## If ANN is available ...
-    ##RANN = "RANN"
-    ##if (!require(RANN)) {
-    ##    stop("RANN is not installed")
-    ##}
-
-    ## classlabel <- sampclass(object)
-    classlabel <- as.vector(unclass(sampclass(object)))
-
-    samples <- sampnames(object)
-    gcount <- integer(length(unique(sampclass(object))))
-
-    peakmat <- peaks(object)
-    parameters <- list(mzVsRTBalance = mzVsRTbalance, mzcheck = mzCheck, rtcheck = rtCheck, knn = kNN)
-
-    ptable <- table(peaks(object)[,"sample"])
-    pord <- ptable[order(ptable, decreasing = TRUE)]
-    sid <- as.numeric(names(pord))
-    pn <- as.numeric(pord)
-
-    samples <- sampnames(object)
-    cat("sample:", basename(samples[sid[1]]), " ")
-
-    mplenv <- new.env(parent = .GlobalEnv)
-    mplenv$mplist <- matrix(0, pn[1], length(sid))
-    mplenv$mplist[, sid[1]] <- which(peakmat[,"sample"] == sid[1])
-    mplenv$mplistmean <- data.frame(peakmat[which(peakmat[,"sample"] == sid[1]),c("mz","rt")])
-    mplenv$peakmat <- peakmat
-    assign("peakmat", peakmat, envir = mplenv)
-
-    sapply(sid[2:length(sid)], function(sample, mplenv, object){
-        ## require(parallel)
-        ## cl <- makeCluster(getOption("cl.cores", nSlaves))
-        ## clusterEvalQ(cl, library(RANN))
-        ## parSapply(cl, 2:length(samples), function(sample,mplenv, object){
-        for(mml in seq(mplenv$mplist[,1])){
-            mplenv$mplistmean[mml,"mz"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"mz"])
-            mplenv$mplistmean[mml,"rt"] <- mean(mplenv$peakmat[mplenv$mplist[mml,],"rt"])
-        }
-
-        cat("sample:",basename(samples[sample])," ")
-        mplenv$peakIdxList <- data.frame(peakidx=which(mplenv$peakmat[,"sample"]==sample),
-                                         isJoinedPeak=FALSE)
-        if(length(mplenv$peakIdxList$peakidx)==0){
-            cat("Warning: No peaks in sample\n")
-        }
-        ## scoreList <- data.frame(score=numeric(0),peak=integer(0),mpListRow=integer(0),
-        ##                                                       isJoinedPeak=logical(0), isJoinedRow=logical(0))
-        ##
-        ##       for(currPeak in mplenv$peakIdxList$peakidx){
-        ##                       pvrScore <- patternVsRowScore(currPeak,parameters,mplenv) ## does the actual NN
-        ##                       scoreList <- rbind(scoreList,pvrScore)
-        ##       }
-        ## this really doesn't take a long time not worth parallel version here.
-        ## but make an apply loop now faster even with rearranging the data :D : PB
-        scoreList <- sapply(mplenv$peakIdxList$peakidx, function(currPeak, para, mplenv){
-            patternVsRowScore(currPeak,para,mplenv)
-        }, parameters, mplenv)
-        if(is.list(scoreList)){
-            idx<-which(scoreList != "NULL")
-            scoreList<-matrix(unlist(scoreList[idx]), ncol=5, nrow=length(idx), byrow=T)
-            colnames(scoreList)<-c("score", "peak", "mpListRow", "isJoinedPeak", "isJoinedRow")
-        } else {
-            scoreList <- data.frame(score=unlist(scoreList["score",]), peak=unlist(scoreList["peak",]), mpListRow=
-                                    unlist(scoreList["mpListRow",]), isJoinedPeak=unlist(scoreList["isJoinedPeak",]),
-                                    isJoinedRow=unlist(scoreList["isJoinedRow",]))
-        }
-
-        ## Browse scores in order of descending goodness-of-fit
-        scoreListcurr <- scoreList[order(scoreList[,"score"]),]
-        if (nrow(scoreListcurr) > 0)
-            for (scoreIter in 1:nrow(scoreListcurr)) {
-
-                iterPeak <-scoreListcurr[scoreIter, "peak"]
-                iterRow <- scoreListcurr[scoreIter, "mpListRow"]
-
-                ## Check if master list row is already assigned with peak
-                if (scoreListcurr[scoreIter, "isJoinedRow"]==TRUE) {
-                    next
-                }
-
-                ## Check if peak is already assigned to some master list row
-                if (scoreListcurr[scoreIter, "isJoinedPeak"]==TRUE) { next }
-
-                ##  Check if score good enough
-                ## Assign peak to master peak list row
-                mplenv$mplist[iterRow,sample] <- iterPeak
-
-                ## Mark peak as joined
-                setTrue <- which(scoreListcurr[,"mpListRow"] == iterRow)
-                scoreListcurr[setTrue,"isJoinedRow"] <- TRUE
-                setTrue <- which(scoreListcurr[,"peak"] == iterPeak)
-                scoreListcurr[setTrue, "isJoinedPeak"] <- TRUE
-                mplenv$peakIdxList[which(mplenv$peakIdxList$peakidx==iterPeak),]$isJoinedPeak <- TRUE
-            }
-
-        notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak==FALSE),]$peakidx
-        for(notJoinedPeak in notJoinedPeaks) {
-            mplenv$mplist <- rbind(mplenv$mplist,matrix(0,1,dim(mplenv$mplist)[2]))
-            mplenv$mplist[length(mplenv$mplist[,1]),sample] <- notJoinedPeak
-        }
-
-        ## Clear "Joined" information from all master peaklist rows
-        rm(list = "peakIdxList", envir=mplenv)
-
-        ## updateProgressInfo
-        object@progressInfo$group.nearest <- (sample - 1) / (length(samples) - 1)
-        progressInfoUpdate(object)
-    }, mplenv, object)
-    ## stopCluster(cl)
-    gc()
-
-    groupmat <- matrix(0,nrow(mplenv$mplist), 7+length(levels(sampclass(object))))
-    colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
-                            "npeaks", levels(sampclass(object)))
-    groupindex <- vector("list", nrow(mplenv$mplist))
-    for (i in 1:nrow(mplenv$mplist)) {
-        groupmat[i, "mzmed"] <- median(peakmat[mplenv$mplist[i,],"mz"])
-        groupmat[i, c("mzmin", "mzmax")] <- range(peakmat[mplenv$mplist[i,],"mz"])
-        groupmat[i, "rtmed"] <- median(peakmat[mplenv$mplist[i,],"rt"])
-        groupmat[i, c("rtmin", "rtmax")] <- range(peakmat[mplenv$mplist[i,],"rt"])
-
-        groupmat[i, "npeaks"] <- length(which(peakmat[mplenv$mplist[i,]]>0))
-
-        gnum <- classlabel[unique(peakmat[mplenv$mplist[i,],"sample"])]
-        for (j in seq(along = gcount))
-            gcount[j] <- sum(gnum == j)
-        groupmat[i, 7+seq(along = gcount)] <- gcount
-
-        groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
-    }
-
-    groups(object) <- groupmat
-    groupidx(object) <- groupindex
+    res <- do_groupChromPeaks_nearest(peaks = peaks(object),
+                                      sampleGroups = sampclass(object),
+                                      mzVsRtBalance = mzVsRTbalance,
+                                      absMz = mzCheck,
+                                      absRt = rtCheck,
+                                      kNN = kNN)
+    groups(object) <- res$featureDefinitions
+    groupidx(object) <- res$peakIndex
 
     invisible(object)
 })
@@ -671,7 +453,13 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
                                         ...) {
     ## Backward compatibility for old "methods"
     if (method == "linear" || method == "loess") {
-        return(invisible(do.call(retcor.peakgroups, alist(object, smooth=method, ...))))
+        args <- list(...)
+        if (any(names(args) == "smooth"))
+            warning("Provided argument 'smooth' will be replaced with the ",
+                    "value of 'method', i.e. with ", method)
+        args$smooth <- method
+        ## Overwriting eventually provided smooth parameter.
+        return(invisible(do.call(retcor.peakgroups, c(list(object), args))))
     }
 
     method <- match.arg(method, getOption("BioC")$xcms$retcor.methods)
@@ -682,14 +470,16 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
     invisible(do.call(method, alist(object, ...)))
 })
 
+
 ############################################################
 ## retcor.peakgroups
 setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 1,
-                                                   smooth = c("loess", "linear"), span = .2,
+                                                   smooth = c("loess", "linear"),
+                                                   span = .2,
                                                    family = c("gaussian", "symmetric"),
                                                    plottype = c("none", "deviation", "mdevden"),
                                                    col = NULL, ty = NULL) {
-
+    
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -713,14 +503,141 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
 
+    minFr <- (n - missing) / n
+    res <- do_adjustRtime_peakGroups(peaks = peakmat,
+                                     peakIndex = object@groupidx,
+                                     rtime = rtcor,
+                                     minFraction = minFr,
+                                     extraPeaks = extra,
+                                     smooth = smooth,
+                                     span = span,
+                                     family = family)
+    rtdevsmo <- vector("list", n)
+    for (i in 1:n) {
+        rtdevsmo[[i]] <- rtcor[[i]] - res[[i]]
+    }
+    ## rtdevsmo <- mapply(FUN = function(a, b) {
+    ##     return(a - b)
+    ## }, rtcor, res)
+
+    if (plottype == "mdevden") {
+        split.screen(matrix(c(0, 1, .3, 1, 0, 1, 0, .3), ncol = 4, byrow = TRUE))
+        screen(1)
+        par(mar = c(0, 4.1, 4.1, 2), xaxt = "n")
+    }
+
+    if (plottype %in% c("deviation", "mdevden")) {
+        ## Need also the 'rt' matrix:
+        rt <- .getPeakGroupsRtMatrix(peakmat, object@groupidx, n,
+                                     missing, extra)
+        rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
+        
+        ## define the colors and line types and returns a list of
+        ## mypal, col and ty. Uses the original code if no colors are
+        ## submitted. Supports manually selected colors (e.g. in hex)
+        vals <- defineColAndTy(col, ty, classlabel)
+        col <- vals$col
+        mypal <- vals$mypal
+        ty <- vals$ty
+
+        rtrange <- range(do.call(c, rtcor))
+        devrange <- range(do.call(c, rtdevsmo))
+
+        plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
+             main = "Retention Time Deviation vs. Retention Time",
+             xlab = "Retention Time", ylab = "Retention Time Deviation")
+        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty,
+               pch = ceiling(1:n/length(mypal)), xjust = 1)
+
+        for (i in 1:n) {
+            points(data.frame(rt = rt[,i], rtdev = rtdev[,i]),
+                   col = mypal[col[i]], pch = ty[i], type = "p")
+            points(rtcor[[i]], rtdevsmo[[i]], type="l", col = mypal[col[i]],
+                   lty = ty[i])
+        }
+    }
+
+    if (plottype == "mdevden") {
+
+        screen(2)
+        par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1],
+                          to = rtrange[2], na.rm = TRUE)[c("x","y")]
+        allden$y <- allden$y / sum(allden$y)
+        corden$y <- corden$y / sum(corden$y)
+        maxden <- max(allden$y, corden$y)
+        plot(c(0,0), xlim = rtrange, ylim = c(0, maxden), type = "n",
+             main = "", xlab = "Retention Time", ylab = "Peak Density")
+        points(allden, type = "l", col = 1)
+        points(corden, type = "l", col = 2)
+        abline(h = 0, col = "grey")
+        legend(rtrange[2], maxden, c("All", "Correction"), col = 1:2,
+               lty = c(1,1), xjust = 1)
+        close.screen(all.screens = TRUE)
+    }
+
+    for (i in 1:n) {
+        cfun <- stepfun(rtcor[[i]][-1] - diff(rtcor[[i]]) / 2,
+                        rtcor[[i]] - rtdevsmo[[i]])
+        rtcor[[i]] <- rtcor[[i]] - rtdevsmo[[i]]
+
+        sidx <- which(corpeaks[,"sample"] == i)
+        corpeaks[sidx, c("rt", "rtmin", "rtmax")] <-
+            cfun(corpeaks[sidx, c("rt", "rtmin", "rtmax")])
+    }
+
+    object@rt$corrected <- rtcor
+    peaks(object) <- corpeaks
+    groups(object) <- matrix(nrow = 0, ncol = 0)
+    groupidx(object) <- list()
+    invisible(object)
+})
+## The original code!
+.retcor.peakgroups_orig <- function(object, missing = 1, extra = 1,
+                                    smooth = c("loess", "linear"), span = .2,
+                                    family = c("gaussian", "symmetric"),
+                                    plottype = c("none", "deviation", "mdevden"),
+                                    col = NULL, ty = NULL) {
+    
+    peakmat <- peaks(object)
+    groupmat <- groups(object)
+    if (length(groupmat) == 0)
+        stop("No group information found")
+    samples <- sampnames(object)
+    classlabel <- as.vector(unclass(sampclass(object)))
+    n <- length(samples)
+    corpeaks <- peakmat
+    smooth <- match.arg(smooth)
+    plottype <- match.arg(plottype)
+    family <- match.arg(family)
+    if (length(object@rt) == 2)
+        rtcor <- object@rt$corrected
+    else {
+        fnames <- filepaths(object)
+        rtcor <- vector("list", length(fnames))
+        for (i in seq(along = fnames)) {
+            xraw <- xcmsRaw(fnames[i])
+            rtcor[[i]] <- xraw@scantime
+        }
+        object@rt <- list(raw = rtcor, corrected = rtcor)
+    }
+    
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
 
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
     if (length(idx) == 0)
         stop("No peak groups found for retention time correction")
-    idx <- idx[order(groupmat[idx,"rtmed"])]
+    ## Ordering the peaks by the rtmed might not represent the ordering
+    ## of the below selected "representative" peak for each peak.
+    ## See issue #110
+    ## idx <- idx[order(groupmat[idx,"rtmed"])]
 
     rt <- groupval(object, "maxint", "rt")[idx,, drop=FALSE]
+    ## And now order them by median retention time: issue #110
+    rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
+    
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
@@ -804,8 +721,11 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         rtrange <- range(do.call(c, rtcor))
         devrange <- range(do.call(c, rtdevsmo))
 
-        plot(0, 0, type="n", xlim = rtrange, ylim = devrange, main = "Retention Time Deviation vs. Retention Time", xlab = "Retention Time", ylab = "Retention Time Deviation")
-        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty, pch = ceiling(1:n/length(mypal)), xjust = 1)
+        plot(0, 0, type="n", xlim = rtrange, ylim = devrange,
+             main = "Retention Time Deviation vs. Retention Time",
+             xlab = "Retention Time", ylab = "Retention Time Deviation")
+        legend(rtrange[2], devrange[2], samples, col = mypal[col], lty = ty,
+               pch = ceiling(1:n/length(mypal)), xjust = 1)
 
         for (i in 1:n) {
             points(data.frame(rt = rt[,i], rtdev = rtdev[,i]), col = mypal[col[i]], pch = ty[i], type="p")
@@ -817,8 +737,10 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
-        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2], na.rm = TRUE)[c("x","y")]
+        allden <- density(peakmat[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
+        corden <- density(rt, bw = diff(rtrange)/200, from = rtrange[1],
+                          to = rtrange[2], na.rm = TRUE)[c("x","y")]
         allden$y <- allden$y / sum(allden$y)
         corden$y <- corden$y / sum(corden$y)
         maxden <- max(allden$y, corden$y)
@@ -844,7 +766,8 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     groups(object) <- matrix(nrow = 0, ncol = 0)
     groupidx(object) <- list()
     invisible(object)
-})
+}
+
 
 ############################################################
 ## retcor.obiwarp
@@ -908,6 +831,12 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
 
 	## added t automatically find the correct scan range from the xcmsSet object
 	if(length(obj1@scantime) != length(object@rt$raw[[center]])){
+            ## This is in case the xcmsSet was read using a scanrange, i.e. if
+            ## the data was read in with defining a scan range, then we would have a
+            ## mismatch here. This code essentially ensures that the retention time
+            ## of the raw object would match the retention time present in the xcmsSet.
+            ## This was before the days in which @scanrange was added as a slot to
+            ## xcmsSet.
 		##figure out the scan time range
 		scantime.start	<-object@rt$raw[[center]][1]
 		scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
@@ -946,6 +875,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         scantime1 <- obj1@scantime
         scantime2 <- obj2@scantime
 
+        ## median difference between spectras' scan times.
         mstdiff <- median(c(diff(scantime1), diff(scantime2)))
 
         rtup1 <- c(1:length(scantime1))
@@ -966,8 +896,11 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         scantime1 <- scantime1[rtup1]
         scantime2 <- scantime2[rtup2]
 
+        ## Drift of measured scan times - expected to be largest at the end.
         rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],
                                 scantime2[length(scantime2)])))
+        ## If the drift is larger than the threshold, cut the matrix up to the
+        ## max allowed difference.
         if(rtmaxdiff>(5*mstdiff)){
             rtmax <- min(scantime1[length(scantime1)],
                          scantime2[length(scantime2)])
@@ -980,6 +913,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         valscantime1 <- length(scantime1)
         valscantime2 <- length(scantime2)
 
+        ## Restrict the profile matrix to columns 1:valscantime
         if(length(obj1@scantime)>valscantime1) {
             obj1@env$profile <- obj1@env$profile[,-c((valscantime1+1):length(obj1@scantime))]
         }
@@ -987,11 +921,14 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             obj2@env$profile <- obj2@env$profile[,-c((valscantime2+1):length(obj2@scantime))]
         }
 
+        ## Now ensure that the nrow of the profile matrix matches.
+        ## Add empty rows at the beginning
         if(mzmin < obj1@mzrange[1]) {
             seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep))-1
             x <- matrix(0, seqlen,dim(obj1@env$profile)[2])
             obj1@env$profile <- rbind(x, obj1@env$profile)
         }
+        ## Add emtpy rows at the end.
         if(mzmax > obj1@mzrange[2]){
             seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep))-1
             x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
@@ -1008,12 +945,14 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             obj2@env$profile <- rbind(obj2@env$profile, x)
         }
 
+        ## OK, now that the matrices are "aligned" extract the intensities
         intensity1 <- obj1@env$profile
         intensity2 <- obj2@env$profile
 
         if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
             stop("Dimensions of profile matrices do not match !\n")
 
+        ## Would it be possible to supply non-binned data too???
         rtimecor[[s]] <-.Call("R_set_from_xcms",
                               valscantime1,scantime1,mzval,mz,intensity1,
                               valscantime2,scantime2,mzval,mz,intensity2,
@@ -1022,6 +961,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
                               factorDiag, factorGap,
                               localAlignment, initPenalty)
 
+        ## Hm, silently add the raw retention times if we cut the retention time
+        ## vector above - would merit at least a warning I believe.
         if(length(obj2@scantime) > valscantime2) {
             object@rt$corrected[[s]] <- c(rtimecor[[s]],
                                           obj2@scantime[(max(rtup2)+1):length(obj2@scantime)])
@@ -1029,6 +970,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
             object@rt$corrected[[s]] <- rtimecor[[s]]
         }
 
+        ## Why are we rounding here, but NOT in the retcor.peakgroups?
+        ## -> issue #122
+        ## The point is we're using the un-rounded adjusted rt for the rt, BUT
+        ## use the rounded values for the adjustment of the peak rts.        
         rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
 
         rm(obj2)
@@ -1041,6 +986,8 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     }
 
     cat("\n")
+    ## Why are we rounding here, but NOT in the retcor.peakgroups?
+    ## -> issue #122
     rtdevsmo[[center]] <- round(rtcor[[center]] - object@rt$corrected[[center]], 2)
 
     if (plottype == "deviation") {
@@ -1130,7 +1077,8 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 
         screen(2)
         par(mar = c(5.1, 4.1, 0, 2), yaxt = "n")
-        allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200, from = rtrange[1], to = rtrange[2])[c("x","y")]
+        allden <- density(object@peaks[,"rt"], bw = diff(rtrange)/200,
+                          from = rtrange[1], to = rtrange[2])[c("x","y")]
         plot(allden, xlim = rtrange, type = "l", main = "", xlab = "Retention Time", ylab = "Peak Density")
         abline(h = 0, col = "grey")
         close.screen(all.screens = TRUE)
@@ -1140,7 +1088,7 @@ setMethod("plotrt", "xcmsSet", function(object, col = NULL, ty = NULL, leg = TRU
 ############################################################
 ## fillPeaks.chrom
 ## New version using BiocParallel instead of nSlaves and manual setup.
-setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = NULL,
+setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = 0,
                                                   expand.mz = 1,expand.rt = 1,
                                                   BPPARAM = bpparam()) {
   ## development mockup:
@@ -1153,10 +1101,13 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = NULL,
     attach(pkgEnv)
   }
 
-    if (!is.null(nSlaves))
-        warning("Use of argument 'nSlaves' is deprecated!",
-                " Please use 'BPPARAM' instead.")
-
+    if (!is.null(nSlaves)) {
+        if (nSlaves > 0) {
+            message("Use of argument 'nSlaves' is deprecated,",
+                    " please use 'BPPARAM' instead.")
+            options(mc.cores = nSlaves)
+        }
+    }
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -1312,16 +1263,30 @@ setMethod("fillPeaks.MSW", "xcmsSet", function(object, mrange=c(0,0), sample=NUL
             for (g in ngs)
             {
                 nppos <- nppos+1
-                mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) == min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
-                mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] == max(lcraw@env$intensity[mzpos]))]
+                ## Get the index of the mz value(s) closest to the mzmed of the
+                ## group; could eventually be more than one.
+                mzpos <- which(abs(lcraw@env$mz - groupmat[g,"mzmed"]) ==
+                               min(abs(lcraw@env$mz - groupmat[g,"mzmed"])))
+                ## Get the index of the maximum intensity for the above mz index.
+                mmzpos <- mzpos[which(lcraw@env$intensity[mzpos] ==
+                                      max(lcraw@env$intensity[mzpos]))]
+                ## Eventually increase the range around the mzmed.
                 mmzr <- seq((mmzpos-mrange[1]),(mmzpos+mrange[2]))
+                ## maxo is the maximum signal for mz values that are closest to
+                ## the mzmed of the feature.
                 maxo <- max(lcraw@env$intensity[mmzr])
                 ## this is the new one, summing the scale-range
-                ## calculating scale, adding intensitiesin this scale
+                ## calculating scale, adding intensities in this scale
                 medMZmin <- median(peakmat[groupindex[[g]],"mzmin"])
                 medMZmax <- median(peakmat[groupindex[[g]],"mzmax"])
-                minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) == min(abs(lcraw@env$mz - medMZmin))))
-                maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) == min(abs(lcraw@env$mz - medMZmax))))
+                ## mz values to be considered: from median mzmin of all peaks in
+                ## the current peak group/feature to median mzmax.
+                ## Might eventually be easier to just check for $mz >= medMZmin
+                minMzpos <- min(which(abs(lcraw@env$mz - medMZmin) ==
+                                      min(abs(lcraw@env$mz - medMZmin))))
+                maxMzpos <- max(which(abs(lcraw@env$mz - medMZmax) ==
+                                      min(abs(lcraw@env$mz - medMZmax))))
+                ## into: the sum of intensities in this range.
                 into = sum(lcraw@env$intensity[minMzpos:maxMzpos])
                 newpeaks[nppos,] <- c(groupmat[g,"mzmed"],medMZmin,medMZmax,-1,-1,-1,into,maxo,i)
             }
@@ -2101,7 +2066,7 @@ setMethod("specDist", signature(object="xcmsSet"),
 ##' @title Extract processing errors
 ##' @aliases showError
 ##'
-##' @description If feature detection is performed with \code{\link{findPeaks}}
+##' @description If peak detection is performed with \code{\link{findPeaks}}
 ##' setting argument \code{stopOnError = FALSE} eventual errors during the
 ##' process do not cause to stop the processing but are recorded inside of the
 ##' resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed

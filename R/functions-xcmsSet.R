@@ -1,5 +1,5 @@
 ## Functions for xcmsSet objects.
-#' @include DataClasses.R do_detectFeatures-functions.R
+#' @include DataClasses.R do_findChromPeaks-functions.R
 
 ## The "constructor"
 ## The "new" xcmsSet method using BiocParallel.
@@ -10,9 +10,11 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                     progressCallback=NULL, scanrange=NULL,
                     BPPARAM=bpparam(), stopOnError = TRUE, ...) {
 
-    if (nSlaves != 0)
-        warning("Use of argument 'nSlaves' is deprecated!",
-                " Please use 'BPPARAM' instead.")
+    if (nSlaves != 0) {
+        message("Use of argument 'nSlaves' is deprecated,",
+                " please use 'BPPARAM' instead.")
+        options(mc.cores = nSlaves)
+    }
     if (!is.logical(stopOnError))
         stop("'stopOnError' has to be a logical.")
     ## Overwriting the stop.on.error in BPPARAM:
@@ -41,16 +43,21 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     if (is.null(files))
         files <- getwd()
     info <- file.info(files)
-    listed <- list.files(files[info$isdir], pattern = filepattern,
-                         recursive = TRUE, full.names = TRUE)
-    files <- c(files[!info$isdir], listed)
+    if (any(info$isdir)) {
+        message("Scanning files in directory ", files[info$isdir], " ... ",
+                appendLF = FALSE)
+        listed <- list.files(files[info$isdir], pattern = filepattern,
+                             recursive = TRUE, full.names = TRUE)
+        message("found ", length(listed), " files")
+        files <- c(files[!info$isdir], listed)
+    }
     ## try making paths absolute
     files_abs <- file.path(getwd(), files)
     exists <- file.exists(files_abs)
     files[exists] <- files_abs[exists]
     if (length(files) == 0 | all(is.na(files)))
         stop("No NetCDF/mzXML/mzData/mzML files were found.\n")
-
+    
     if(lockMassFreq==TRUE){
         ## remove the 02 files if there here
         lockMass.files<-grep("02.CDF", files)
@@ -146,7 +153,7 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
     ## Error identifying features in <>: Error:... -> info + error
     isOK <- bpok(res)
     if (all(!isOK))
-        stop("Feature detection failed for all files!",
+        stop("Chromatographic peak detection failed for all files!",
              " The first error was: ", res[[1]])
     if (any(!isOK)) {
         ## Use scantime from a working file one of the failing ones.
@@ -170,24 +177,24 @@ xcmsSet <- function(files = NULL, snames = NULL, sclass = NULL,
                 warning("Only 1 peak found in sample ", snames[i], ".")
             else if (nrow(pks) < 5)
                 warning("Only ", nrow(pks), " found in sample ", snames[i], ".")
-            proclist[[i]] <- ProcessHistory(info. = paste0("Feature detection in '",
+            proclist[[i]] <- ProcessHistory(info. = paste0("Peak detection in '",
                                                           basename(files[i]),
                                                           "': ", nrow(pks),
-                                                          " features identified."),
+                                                          " peaks identified."),
                                             date. = res[[i]]$date,
-                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            type. = .PROCSTEP.PEAK.DETECTION,
                                             fileIndex. = i)
         } else {
             scntlist[[i]] <- scnt
             peaklist[[i]] <- NULL
             proclist[[i]] <- ProcessHistory(info. = paste0("Error identifying",
-                                                          " features in '",
+                                                          " peaks in '",
                                                           basename(files[i]),
                                                           "': ", res[[i]]),
                                             error. = res[[i]],
-                                            type. = .PROCSTEP.FEATURE.DETECTION,
+                                            type. = .PROCSTEP.PEAK.DETECTION,
                                             fileIndex. = i)
-            warning("Feature detection failed in '", files[i], "':", res[[i]])
+            warning("Peak detection failed in '", files[i], "':", res[[i]])
         }
     }
     ## peaklist <- lapply(res, function(x) x$peaks)
@@ -237,9 +244,13 @@ c.xcmsSet <- function(...) {
         rtraw <- c(rtraw, lcsets[[i]]@rt$raw)
         rtcor <- c(rtcor, lcsets[[i]]@rt$corrected)
 
-        sampidx <- seq(along = namelist[[i]]) + nsamp
-        peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
-        nsamp <- nsamp + length(namelist[[i]])
+        ## Update samples only if we've got any peaks. Issue #133
+        if (nrow(peaks(lcsets[[i]]))) {
+            sampidx <- seq(along = namelist[[i]]) + nsamp
+            peaklist[[i]][,"sample"] <- sampidx[peaklist[[i]][,"sample"]]
+            ## Don't increment if we don't have any peaks
+            nsamp <- nsamp + length(namelist[[i]])
+        }
         if (.hasSlot(lcsets[[i]], ".processHistory")) {
             ph <- .getProcessHistory(lcsets[[i]])
             if (length(ph) > 0) {
@@ -387,33 +398,39 @@ phenoDataFromPaths <- function(paths) {
 ## patternVsRowScore
 patternVsRowScore <- function(currPeak, parameters, mplenv)
 {
-    mplistmeanCurr <- mplenv$mplistmean[,c("mz","rt")]
-    mplistmeanCurr[,"mz"] <- mplistmeanCurr[,"mz"] * parameters$mzVsRTBalance
-    peakmatCurr <- mplenv$peakmat[currPeak,c("mz","rt"),drop=FALSE]
-    peakmatCurr[,"mz"] <- peakmatCurr[,"mz"] * parameters$mzVsRTBalance
+    mplistmeanCurr <- mplenv$mplistmean[, c("mz", "rt")]
+    mplistmeanCurr[, "mz"] <- mplistmeanCurr[, "mz"] * parameters$mzVsRTBalance
+    peakmatCurr <- mplenv$peakmat[currPeak, c("mz", "rt"), drop = FALSE]
+    peakmatCurr[, "mz"] <- peakmatCurr[, "mz"] * parameters$mzVsRTBalance
 
-    nnDist <- nn2(mplistmeanCurr,peakmatCurr[,c("mz","rt"),drop=FALSE],
-                  k=min(length(mplistmeanCurr[,1]),parameters$knn))
+    nnDist <- nn2(mplistmeanCurr, peakmatCurr[, c("mz", "rt"), drop = FALSE],
+                  k = min(length(mplistmeanCurr[, 1]), parameters$knn))
 
-    scoreListcurr <- data.frame(score=numeric(0),peak=integer(0), mpListRow=integer(0),
-                                isJoinedPeak=logical(0), isJoinedRow=logical(0))
+    scoreListcurr <- data.frame(score = numeric(0),
+                                peak = integer(0),
+                                mpListRow = integer(0),
+                                isJoinedPeak = logical(0),
+                                isJoinedRow = logical(0))
 
     rtTolerance = parameters$rtcheck
 
-    for(mplRow in 1:length(nnDist$nn.idx)){
-        mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"mz"]
-        mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow],"rt"]
-
-        ## Calculate differences between M/Z and RT values of current peak and median of the row
-        diffMZ = abs(mplistMZ-mplenv$peakmat[[currPeak,"mz"]])
-        diffRT = abs(mplistRT-mplenv$peakmat[[currPeak,"rt"]])
+    for (mplRow in 1:length(nnDist$nn.idx)) {
+        mplistMZ <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "mz"]
+        mplistRT <- mplenv$mplistmean[nnDist$nn.idx[mplRow], "rt"]
+        
+        ## Calculate differences between M/Z and RT values of current peak and
+        ## median of the row
+        diffMZ = abs(mplistMZ - mplenv$peakmat[[currPeak, "mz"]])
+        diffRT = abs(mplistRT - mplenv$peakmat[[currPeak, "rt"]])
 
         ## Calculate if differences within tolerancdiffRT < rtTolerance)es
-        if ( (diffMZ < parameters$mzcheck)& (diffRT < rtTolerance) ) {
+        if ( (diffMZ < parameters$mzcheck) & (diffRT < rtTolerance) ) {
             scoreListcurr <- rbind(scoreListcurr,
-                                   data.frame(score=nnDist$nn.dists[mplRow],
-                                              peak=currPeak, mpListRow=nnDist$nn.idx[mplRow],
-                                              isJoinedPeak=FALSE, isJoinedRow=FALSE))
+                                   data.frame(score = nnDist$nn.dists[mplRow],
+                                              peak = currPeak,
+                                              mpListRow = nnDist$nn.idx[mplRow],
+                                              isJoinedPeak = FALSE,
+                                              isJoinedRow = FALSE))
             ## goodEnough = true
             return(scoreListcurr)
         }
@@ -744,33 +761,33 @@ filtfft <- function(y, filt) {
 ## .validProcessHistory
 ## Check the validity of the .processHistory slot.
 .validProcessHistory <- function(x) {
-    msg <- validMsg(NULL, NULL)
+    msg <- character()
     if (.hasSlot(x, ".processHistory")) {
         if (length(x@.processHistory) > 0) {
             ## All elements have to inherit from ProcessHistory
             if (!all(unlist(lapply(x@.processHistory, function(z) {
                 return(inherits(z, "ProcessHistory"))
             }))))
-                msg <- validMsg(msg, paste0("All objects in slot .processHistory",
-                                            " have to be 'ProcessHistory' objects!"))
+                msg <- c(msg, paste0("All objects in slot .processHistory",
+                                     " have to be 'ProcessHistory' objects!"))
             ## Each element has to be valid
             vals <- lapply(x@.processHistory, validObject)
             for (i in seq_along(vals)) {
                 if (!is.logical(vals[[i]]))
-                    msg <- validMsg(msg, vals[[i]])
+                    msg <- c(msg, vals[[i]])
             }
             ## The fileIndex has to be within 1:length(filepaths(x))
             fidx <- 1:length(filepaths(x))
             for (z in x@.processHistory) {
                 if (length(z@fileIndex) == 0 |
                     !(all(z@fileIndex %in% fidx)))
-                    msg <- validMsg(msg, paste0("Value of 'fileIndex' slot of some",
-                                                " ProcessHistory objects does not",
-                                                " match the number of available",
-                                                " files!"))
+                    msg <- c(msg, paste0("Value of 'fileIndex' slot of some",
+                                         " ProcessHistory objects does not",
+                                         " match the number of available",
+                                         " files!"))
             }
         }
     }
-    if (is.null(msg)) TRUE
-    else msg
+    if (length(msg)) msg
+    else TRUE
 }

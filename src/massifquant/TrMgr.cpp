@@ -517,26 +517,26 @@ bool TrMgr::hasMzDeviation(int i) {
         return false;
 }
 
-bool  TrMgr::isSeizmo(int i) {
+// bool  TrMgr::isSeizmo(int i) {
 
-    std::list<double> mzList = trks[i]->getMzList();
-    std::vector<double> mzVec(mzList.begin(), mzList.end());
-    std::vector<double> rmz = mzVec; //make copy
-    int midIdx = int(mzList.size()/2);
-    int n = mzList.size() - midIdx;
-    for (int i = 0; i < 3; ++i) {
-        random_shuffle ( rmz.begin(), rmz.end() );
-        std::vector<double> seizmo(n);
-        int k = 0;
-        for (size_t j = midIdx; j < mzVec.size(); ++j) {
-            seizmo[k] = fabs(rmz.at(j) - mzVec.at(j));
-        }
-        for (size_t z = 0; z < seizmo.size(); ++z) {
-            if (seizmo.at(z) > 0.01) { return true; }
-        }
-    }
-    return false;
-}
+//     std::list<double> mzList = trks[i]->getMzList();
+//     std::vector<double> mzVec(mzList.begin(), mzList.end());
+//     std::vector<double> rmz = mzVec; //make copy
+//     int midIdx = int(mzList.size()/2);
+//     int n = mzList.size() - midIdx;
+//     for (int i = 0; i < 3; ++i) {
+//         random_shuffle ( rmz.begin(), rmz.end() );
+//         std::vector<double> seizmo(n);
+//         int k = 0;
+//         for (size_t j = midIdx; j < mzVec.size(); ++j) {
+//             seizmo[k] = fabs(rmz.at(j) - mzVec.at(j));
+//         }
+//         for (size_t z = 0; z < seizmo.size(); ++z) {
+//             if (seizmo.at(z) > 0.01) { return true; }
+//         }
+//     }
+//     return false;
+// }
 
 void TrMgr::shiftUpIndices(const int i) {
 

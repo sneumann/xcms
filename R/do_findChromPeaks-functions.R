@@ -1,4 +1,5 @@
-## All low level (API) analysis functions for feature detection should go in here.
+## All low level (API) analysis functions for chromatographic peak detection
+## should go in here.
 #' @include c.R functions-binning.R cwTools.R
 
 ############################################################
@@ -13,10 +14,11 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##' @title Core API function for centWave feature detection
+##' @title Core API function for centWave peak detection
 ##'
-##' @description This function performs peak density and wavelet based feature
-##' detection for high resolution LC/MS data in centroid mode [Tautenhahn 2008].
+##' @description This function performs peak density and wavelet based
+##' chromatographic peak detection for high resolution LC/MS data in centroid
+##' mode [Tautenhahn 2008].
 ##'
 ##' @details This algorithm is most suitable for high resolution
 ##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
@@ -30,7 +32,7 @@
 ##' @note The \emph{centWave} was designed to work on centroided mode, thus it
 ##' is expected that such data is presented to the function.
 ##'
-##' This function exposes core feature detection functionality of
+##' This function exposes core chromatographic peak detection functionality of
 ##' the \emph{centWave} method. While this function can be called directly,
 ##' users will generally call the corresponding method for the data object
 ##' instead.
@@ -43,25 +45,26 @@
 ##' spectra/scans of the data representing the retention time of each scan.
 ##' @param valsPerSpect Numeric vector with the number of values for each
 ##' spectrum.
-##' @inheritParams featureDetection-centWave
+##' @inheritParams findChromPeaks-centWave
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @references
 ##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 ##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 ##' 2008, 9:504
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
 ##' \code{sd} being the standard deviation of local chromatographic noise.}
 ##' \item{egauss}{RMSE of Gaussian fit.}
@@ -73,7 +76,7 @@
 ##' \item{h}{Gaussian parameter h.}
 ##' \item{f}{Region number of the m/z ROI where the peak was localized.}
 ##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scale}{Scale on which the peak was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
@@ -88,7 +91,7 @@
 ##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 ##' xr <- xcmsRaw(fs, profstep = 0)
 ##'
-##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
 ##' mzVals <- xr@env$mz
 ##' intVals <- xr@env$intensity
 ##' ## Define the values per spectrum:
@@ -97,10 +100,10 @@
 ##' ## Calling the function. We're using a large value for noise to speed up
 ##' ## the call in the example performance - in a real use case we would either
 ##' ## set the value to a reasonable value or use the default value.
-##' res <- do_detectFeatures_centWave(mz = mzVals, int = intVals,
+##' res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
 ##' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
 ##' head(res)
-do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
+do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
                                        peakwidth = c(20, 50),
                                        snthresh = 10,
@@ -114,14 +117,27 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                                        roiList = list(),
                                        firstBaselineCheck = TRUE,
                                        roiScales = NULL) {
-    .centWave_orig(mz = mz, int = int, scantime = scantime,
-                  valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
-                  snthresh = snthresh, prefilter = prefilter,
-                  mzCenterFun = mzCenterFun, integrate = integrate,
-                  mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
-                  verboseColumns = verboseColumns, roiList = roiList,
-                  firstBaselineCheck = firstBaselineCheck,
-                  roiScales = roiScales)
+    if (getOption("originalCentWave", default = TRUE)) {
+        ## message("DEBUG: using original centWave.")
+        .centWave_orig(mz = mz, int = int, scantime = scantime,
+                       valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
+                       snthresh = snthresh, prefilter = prefilter,
+                       mzCenterFun = mzCenterFun, integrate = integrate,
+                       mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                       verboseColumns = verboseColumns, roiList = roiList,
+                       firstBaselineCheck = firstBaselineCheck,
+                       roiScales = roiScales)
+    } else {
+        ## message("DEBUG: using modified centWave.")
+        .centWave_new(mz = mz, int = int, scantime = scantime,
+                      valsPerSpect = valsPerSpect, ppm = ppm, peakwidth = peakwidth,
+                      snthresh = snthresh, prefilter = prefilter,
+                      mzCenterFun = mzCenterFun, integrate = integrate,
+                      mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                      verboseColumns = verboseColumns, roiList = roiList,
+                      firstBaselineCheck = firstBaselineCheck,
+                      roiScales = roiScales)
+    }
 }
 ############################################################
 ## ORIGINAL code from xcms_1.49.7
@@ -293,7 +309,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 
     ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
     ## lp <- -1
-    message("Detecting features in ", length(roiList),
+    message("Detecting chromatographic peaks in ", length(roiList),
             " regions of interest ...", appendLF = FALSE)
 
     for (f in  1:lf) {
@@ -450,7 +466,7 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
                             mzmean <- do.call(mzCenterFun,
                                               list(mz = mz.value,
                                                    intensity = mz.int))
-
+                            
                             ## Compute dppm only if needed
                             dppm <- NA
                             if (verboseColumns) {
@@ -625,11 +641,532 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
         message(" FAIL: none found!")
         return(nopeaks)
     }
-
     p <- do.call(rbind, peaklist)
     if (!verboseColumns)
         p <- p[, basenames, drop = FALSE]
 
+    uorder <- order(p[, "into"], decreasing = TRUE)
+    pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
+    uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
+    pr <- p[uindex, , drop = FALSE]
+    message(" OK: ", nrow(pr), " found.")
+
+    return(pr)
+}
+## This version fixes issue #135, i.e. that the peak signal is integrated based
+## on the mzrange of the ROI and not of the actually reported peak.
+## Issue #136.
+##
+## What's different to the original version?
+##
+## 1) The mz range of the peaks is calculated only using mz values with a
+##    measured intensity. This avoids mz ranges from 0 to max mz of the peak,
+##    with the mz=0 corresponding actually to scans in which no intensity was
+##    measured. Search for "@MOD1" to jump to the respective code.
+## 
+## 2) The intensities for the peak are reloaded with the refined mz range during
+##    the postprocessing. Search for "@MOD2" to jump to the respective code.
+##
+## What I don't like:
+## o Might be better if the getEIC and getMZ C functions returned NA instead of 0
+##   if nothing was measured.
+## o The joinOverlappingPeaks is still calculated using the variable "d" which
+##   contains all intensities from the ROI - might actually not be too bad
+##   though.
+.centWave_new <- function(mz, int, scantime, valsPerSpect,
+                          ppm = 25, peakwidth = c(20,50), snthresh = 10,
+                          prefilter = c(3,100), mzCenterFun = "wMean",
+                          integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
+                          noise = 0, ## noise.local=TRUE,
+                          sleep = 0, verboseColumns = FALSE, roiList = list(),
+                          firstBaselineCheck = TRUE, roiScales = NULL) {
+    ## TODO @jo Ensure in upstream method that data is in centroided mode!
+    ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
+    ## Input argument checking.
+    if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
+        stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
+             " are required!")
+    if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
+        | length(mz) != sum(valsPerSpect))
+        stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
+             " have to match. Also, 'length(mz)' should be equal to",
+             " 'sum(valsPerSpect)'.")
+    scanindex <- valueCount2ScanIndex(valsPerSpect) ## Get index vector for C calls
+    if (!is.double(mz))
+        mz <- as.double(mz)
+    if (!is.double(int))
+        int <- as.double(int)
+    ## Fix the mzCenterFun
+    mzCenterFun <- paste("mzCenter",
+                         gsub(mzCenterFun, pattern = "mzCenter.",
+                              replacement = "", fixed = TRUE), sep=".")
+    if (!exists(mzCenterFun, mode="function"))
+        stop("Function '", mzCenterFun, "' not defined !")
+
+    if (!is.logical(firstBaselineCheck))
+      stop("Parameter 'firstBaselineCheck' should be logical!")
+    if (length(firstBaselineCheck) != 1)
+        stop("Parameter 'firstBaselineCheck' should be a single logical !")
+    if (length(roiScales) > 0)
+        if (length(roiScales) != length(roiList) | !is.numeric(roiScales))
+            stop("If provided, parameter 'roiScales' has to be a numeric with",
+                 " length equal to the length of 'roiList'!")
+
+    basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax",
+                   "into", "intb", "maxo", "sn")
+    verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
+                      "scpos", "scmin", "scmax", "lmin", "lmax")
+
+    ## Peak width: seconds to scales
+    scalerange <- round((peakwidth / mean(diff(scantime))) / 2)
+
+    if (length(z <- which(scalerange == 0)))
+        scalerange <- scalerange[-z]
+    if (length(scalerange) < 1) {
+        warning("No scales? Please check peak width!")
+        if (verboseColumns) {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
+                                            length(verbosenames))
+            colnames(nopeaks) <- c(basenames, verbosenames)
+        } else {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
+            colnames(nopeaks) <- c(basenames)
+        }
+        return(invisible(nopeaks))
+    }
+
+    if (length(scalerange) > 1)
+        scales <- seq(from = scalerange[1], to = scalerange[2], by = 2)
+    else
+        scales <- scalerange
+
+    minPeakWidth <-  scales[1]
+    noiserange <- c(minPeakWidth * 3, max(scales) * 3)
+    maxGaussOverlap <- 0.5
+    minPtsAboveBaseLine <- max(4, minPeakWidth - 2)
+    minCentroids <- minPtsAboveBaseLine
+    scRangeTol <-  maxDescOutlier <- floor(minPeakWidth / 2)
+    scanrange <- c(1, length(scantime))
+
+    ## If no ROIs are supplied then search for them.
+    if (length(roiList) == 0) {
+        message("Detecting mass traces at ", ppm, " ppm ... ", appendLF = FALSE)
+        ## flush.console();
+        ## We're including the findmzROI code in this function to reduce
+        ## the need to copy objects etc.
+        ## We could also sort the data by m/z anyway; wouldn't need that
+        ## much time. Once we're using classes from MSnbase we can be
+        ## sure that values are correctly sorted.
+        withRestarts(
+            tryCatch({
+                tmp <- capture.output(
+                roiList <- .Call("findmzROI",
+                                 mz, int, scanindex,
+                                 as.double(c(0.0, 0.0)),
+                                 as.integer(scanrange),
+                                 as.integer(length(scantime)),
+                                 as.double(ppm * 1e-6),
+                                 as.integer(minCentroids),
+                                 as.integer(prefilter),
+                                 as.integer(noise),
+                                 PACKAGE ='xcms' )
+                )
+            },
+            error = function(e){
+                if (grepl("m/z sort assumption violated !", e$message)) {
+                    invokeRestart("fixSort")
+                } else {
+                    simpleError(e)
+                }
+            }),
+            fixSort = function() {
+                ## Force ordering of values within spectrum by mz:
+                ##  o split values into a list -> mz per spectrum, intensity per
+                ##    spectrum.
+                ##  o define the ordering.
+                ##  o re-order the mz and intensity and unlist again.
+                ## Note: the Rle split is faster than the "conventional" factor split.
+                splitF <- Rle(1:length(valsPerSpect), valsPerSpect)
+                mzl <- as.list(S4Vectors::split(mz, f = splitF))
+                oidx <- lapply(mzl, order)
+                mz <<- unlist(mapply(mzl, oidx, FUN = function(y, z) {
+                    return(y[z])
+                }, SIMPLIFY = FALSE, USE.NAMES = FALSE), use.names = FALSE)
+                int <<- unlist(mapply(as.list(split(int, f = splitF)), oidx,
+                                      FUN=function(y, z) {
+                                          return(y[z])
+                                      }, SIMPLIFY = FALSE, USE.NAMES = FALSE),
+                               use.names = FALSE)
+                rm(mzl)
+                rm(splitF)
+                tmp <- capture.output(
+                roiList <<- .Call("findmzROI",
+                                  mz, int, scanindex,
+                                  as.double(c(0.0, 0.0)),
+                                  as.integer(scanrange),
+                                  as.integer(length(scantime)),
+                                  as.double(ppm * 1e-6),
+                                  as.integer(minCentroids),
+                                  as.integer(prefilter),
+                                  as.integer(noise),
+                                  PACKAGE ='xcms' )
+                )
+            }
+        )
+        message("OK")
+        if (length(roiList) == 0) {
+            warning("No ROIs found! \n")
+            if (verboseColumns) {
+                nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
+                                                length(verbosenames))
+                colnames(nopeaks) <- c(basenames, verbosenames)
+            } else {
+                nopeaks <- matrix(nrow = 0, ncol = length(basenames))
+                colnames(nopeaks) <- c(basenames)
+            }
+            return(invisible(nopeaks))
+        }
+    }
+
+    ## Second stage: process the ROIs
+    peaklist <- list()
+    Nscantime <- length(scantime)
+    lf <- length(roiList)
+
+    ## cat('\n Detecting chromatographic peaks ... \n % finished: ')
+    ## lp <- -1
+    message("Detecting chromatographic peaks in ", length(roiList),
+            " regions of interest ...", appendLF = FALSE)
+
+    for (f in  1:lf) {
+
+        ## cat("\nProcess roi ", f, "\n")
+        feat <- roiList[[f]]
+        N <- feat$scmax - feat$scmin + 1
+        peaks <- peakinfo <- NULL
+        mzrange <- c(feat$mzmin, feat$mzmax)
+        mzrange_ROI <- mzrange
+        sccenter <- feat$scmin[1] + floor(N/2) - 1
+        scrange <- c(feat$scmin, feat$scmax)
+        ## scrange + noiserange, used for baseline detection and wavelet analysis
+        sr <- c(max(scanrange[1], scrange[1] - max(noiserange)),
+                min(scanrange[2], scrange[2] + max(noiserange)))
+        eic <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
+                     as.integer(sr), as.integer(length(scanindex)),
+                     PACKAGE = "xcms")
+        d <- eic$intensity
+        td <- sr[1]:sr[2]
+        scan.range <- c(sr[1], sr[2])
+        ## original mzROI range
+        idxs <- which(eic$scan %in% seq(scrange[1], scrange[2]))
+        mzROI.EIC <- list(scan=eic$scan[idxs], intensity=eic$intensity[idxs])
+        omz <- .Call("getMZ", mz, int, scanindex, as.double(mzrange),
+                     as.integer(scrange), as.integer(length(scantime)),
+                     PACKAGE = 'xcms')
+        if (all(omz == 0)) {
+            warning("centWave: no peaks found in ROI.")
+            next
+        }
+        od  <- mzROI.EIC$intensity
+        otd <- mzROI.EIC$scan
+        if (all(od == 0)) {
+            warning("centWave: no peaks found in ROI.")
+            next
+        }
+        ## scrange + scRangeTol, used for gauss fitting and continuous
+        ## data above 1st baseline detection
+        ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)],
+                                                         scrange[2] + scRangeTol)
+        fd <- d[match(ftd, td)]
+
+        ## 1st type of baseline: statistic approach
+        if (N >= 10*minPeakWidth) {
+            ## in case of very long mass trace use full scan range
+            ## for baseline detection
+            noised <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
+                            as.integer(scanrange), as.integer(length(scanindex)),
+                            PACKAGE="xcms")$intensity
+        } else {
+            noised <- d
+        }
+        ## 90% trimmed mean as first baseline guess
+        noise <- estimateChromNoise(noised, trim = 0.05,
+                                    minPts = 3 * minPeakWidth)
+        ## any continuous data above 1st baseline ?
+        if (firstBaselineCheck &
+            !continuousPtsAboveThreshold(fd, threshold = noise,
+                                         num = minPtsAboveBaseLine))
+            next
+        ## 2nd baseline estimate using not-peak-range
+        lnoise <- getLocalNoiseEstimate(d, td, ftd, noiserange, Nscantime,
+                                        threshold = noise,
+                                        num = minPtsAboveBaseLine)
+        ## Final baseline & Noise estimate
+        baseline <- max(1, min(lnoise[1], noise))
+        sdnoise <- max(1, lnoise[2])
+        sdthr <-  sdnoise * snthresh
+        ## is there any data above S/N * threshold ?
+        if (!(any(fd - baseline >= sdthr)))
+            next
+        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh')
+        if (!(!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)))
+            next
+        if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
+            wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs) - 1, ] * 0.99
+        localMax <- MSW.getLocalMaximumCWT(wCoefs)
+        rL <- MSW.getRidge(localMax)
+        wpeaks <- sapply(rL,
+                         function(x) {
+                             w <- min(1:length(x),ncol(wCoefs))
+                             any(wCoefs[x,w]- baseline >= sdthr)
+                         })
+        if (any(wpeaks)) {
+            wpeaksidx <- which(wpeaks)
+            ## check each peak in ridgeList
+            for (p in 1:length(wpeaksidx)) {
+                opp <- rL[[wpeaksidx[p]]]
+                pp <- unique(opp)
+                if (length(pp) >= 1) {
+                    dv <- td[pp] %in% ftd
+                    if (any(dv)) { ## peaks in orig. data range
+                        ## Final S/N check
+                        if (any(d[pp[dv]]- baseline >= sdthr)) {
+                            ## if(!is.null(roiScales)) {
+                            ## allow roiScales to be a numeric of length 0
+                            if(length(roiScales) > 0) {
+                                ## use given scale
+                                best.scale.nr <- which(scales == roiScales[[f]])
+                                if(best.scale.nr > length(opp))
+                                    best.scale.nr <- length(opp)
+                            } else {
+                                ## try to decide which scale describes the peak best
+                                inti <- numeric(length(opp))
+                                irange <- rep(ceiling(scales[1]/2), length(opp))
+                                for (k in 1:length(opp)) {
+                                    kpos <- opp[k]
+                                    r1 <- ifelse(kpos - irange[k] > 1,
+                                                 kpos-irange[k], 1)
+                                    r2 <- ifelse(kpos + irange[k] < length(d),
+                                                 kpos + irange[k], length(d))
+                                    inti[k] <- sum(d[r1:r2])
+                                }
+                                maxpi <- which.max(inti)
+                                if (length(maxpi) > 1) {
+                                    m <- wCoefs[opp[maxpi], maxpi]
+                                    bestcol <- which(m == max(m),
+                                                     arr.ind = TRUE)[2]
+                                    best.scale.nr <- maxpi[bestcol]
+                                } else  best.scale.nr <- maxpi
+                            }
+
+                            best.scale <-  scales[best.scale.nr]
+                            best.scale.pos <- opp[best.scale.nr]
+
+                            pprange <- min(pp):max(pp)
+                            ## maxint <- max(d[pprange])
+                            lwpos <- max(1,best.scale.pos - best.scale)
+                            rwpos <- min(best.scale.pos + best.scale, length(td))
+                            p1 <- match(td[lwpos], otd)[1]
+                            p2 <- match(td[rwpos], otd)
+                            p2 <- p2[length(p2)]
+                            ## cat("p1: ", p1, " p2: ", p2, "\n")
+                            if (is.na(p1)) p1 <- 1
+                            if (is.na(p2)) p2 <- N
+                            mz.value <- omz[p1:p2]
+                            ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
+                            ##     "\n")
+                            mz.int <- od[p1:p2]
+                            maxint <- max(mz.int)
+                            ## @MOD1: Remove mz values for which no intensity was
+                            ## measured. Would be better if getEIC returned NA
+                            ## if nothing was measured.
+                            mzorig <- mz.value
+                            mz.value <- mz.value[mz.int > 0]
+                            mz.int <- mz.int[mz.int > 0]
+                            ## Call next to avoid reporting peaks without mz
+                            ## values (issue #165).
+                            if (length(mz.value) == 0)
+                                next
+                            ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
+                            ##     "\n")
+
+                            ## re-calculate m/z value for peak range
+                            ## cat("mzrange refined: [",
+                            ##     paste0(mzrange, collapse = ", "), "]")
+                            ## hm, shouldn't we get rid of the mz = 0 here?
+                            mzrange <- range(mz.value)
+                            ## cat(" -> [",
+                            ##     paste0(mzrange, collapse = ", "), "]\n")
+                            mzmean <- do.call(mzCenterFun,
+                                              list(mz = mz.value,
+                                                   intensity = mz.int))
+
+                            ## Compute dppm only if needed
+                            dppm <- NA
+                            if (verboseColumns) {
+                                if (length(mz.value) >= (minCentroids + 1)) {
+                                    dppm <- round(min(running(abs(diff(mz.value)) /
+                                                              (mzrange[2] *  1e-6),
+                                                              fun = max,
+                                                              width = minCentroids)))
+                                } else {
+                                    dppm <- round((mzrange[2] - mzrange[1]) /
+                                                  (mzrange[2] * 1e-6))
+                                }
+                            }
+                            peaks <- rbind(peaks,
+                                           c(mzmean,mzrange, ## mz
+                                             NA, NA, NA,     ## rt, rtmin, rtmax,
+                                             NA,             ## intensity (sum)
+                                             NA,             ## intensity (-bl)
+                                             maxint,         ## max intensity
+                                             round((maxint - baseline) / sdnoise),  ##  S/N Ratio
+                                             NA,             ## Gaussian RMSE
+                                             NA,NA,NA,       ## Gaussian Parameters
+                                             f,              ## ROI Position
+                                             dppm,           ## max. difference between the [minCentroids] peaks in ppm
+                                             best.scale,     ## Scale
+                                             td[best.scale.pos],
+                                             td[lwpos],
+                                             td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
+                                             NA, NA))                    ## Peak limits (scan nr)
+                            peakinfo <- rbind(peakinfo,
+                                              c(best.scale, best.scale.nr,
+                                                best.scale.pos, lwpos, rwpos))
+                            ## Peak positions guessed from the wavelet's
+                        }
+                    }
+                }
+            }  ##for
+        } ## if
+
+        ##  postprocessing
+        if (!is.null(peaks)) {
+            colnames(peaks) <- c(basenames, verbosenames)
+            colnames(peakinfo) <- c("scale", "scaleNr", "scpos",
+                                    "scmin", "scmax")
+            for (p in 1:dim(peaks)[1]) {
+                ## @MOD2
+                ## Fix for issue #135: reload the EIC data if the
+                ## mzrange differs from that of the ROI, but only if the mz
+                ## range of the peak is different from the one of the ROI.
+                mzr <- peaks[p, c("mzmin", "mzmax")]
+                if (any(mzr != mzrange_ROI)) {
+                    eic <- .Call("getEIC", mz, int, scanindex,
+                                 as.double(mzr), as.integer(sr),
+                                 as.integer(length(scanindex)),
+                                 PACKAGE = "xcms")
+                    current_ints <- eic$intensity
+                    ## Force re-loading also of a potential additional peak in
+                    ## the same ROI.
+                    mzrange_ROI <- c(0, 0)
+                } else {
+                    current_ints <- d
+                }
+                ## find minima, assign rt and intensity values
+                if (integrate == 1) {
+                    lm <- descendMin(wCoefs[, peakinfo[p,"scaleNr"]],
+                                     istart = peakinfo[p,"scpos"])
+                    gap <- all(current_ints[lm[1]:lm[2]] == 0) ## looks like we got stuck in a gap right in the middle of the peak
+                    if ((lm[1] == lm[2]) || gap )## fall-back
+                        lm <- descendMinTol(current_ints,
+                                            startpos = c(peakinfo[p, "scmin"],
+                                                         peakinfo[p, "scmax"]),
+                                            maxDescOutlier)
+                } else {
+                    lm <- descendMinTol(current_ints,
+                                        startpos = c(peakinfo[p, "scmin"],
+                                                     peakinfo[p, "scmax"]),
+                                        maxDescOutlier)
+                }
+                ## narrow down peak rt boundaries by skipping zeros
+                pd <- current_ints[lm[1]:lm[2]]
+                np <- length(pd)
+                lm.l <-  findEqualGreaterUnsorted(pd, 1)
+                lm.l <- max(1, lm.l - 1)
+                lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
+                lm.r <- max(1, lm.r - 1)
+                lm <- lm + c(lm.l - 1, -(lm.r - 1) )
+
+                peakrange <- td[lm]
+                peaks[p, "rtmin"] <- scantime[peakrange[1]]
+                peaks[p, "rtmax"] <- scantime[peakrange[2]]
+                peaks[p, "maxo"] <- max(current_ints[lm[1]:lm[2]])
+                pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
+                    (peakrange[2] - peakrange[1])
+                if (is.na(pwid))
+                    pwid <- 1
+                peaks[p, "into"] <- pwid * sum(current_ints[lm[1]:lm[2]])
+                db <-  current_ints[lm[1]:lm[2]] - baseline
+                peaks[p, "intb"] <- pwid * sum(db[db>0])
+                peaks[p, "lmin"] <- lm[1]
+                peaks[p, "lmax"] <- lm[2]
+                ## cat("[", paste0(peaks[p, c("rtmin", "rtmax")], collapse = ", "),
+                ##     "] into ", peaks[p, "into"], "\n")
+
+                if (fitgauss) {
+                    ## perform gaussian fits, use wavelets for inital parameters
+                    md <- max(current_ints[lm[1]:lm[2]])
+                    d1 <- current_ints[lm[1]:lm[2]] / md ## normalize data for gaussian error calc.
+                    pgauss <- fitGauss(td[lm[1]:lm[2]], current_ints[lm[1]:lm[2]],
+                                       pgauss = list(mu = peaks[p, "scpos"],
+                                                     sigma = peaks[p, "scmax"] -
+                                                         peaks[p, "scmin"],
+                                                     h = peaks[p, "maxo"]))
+                    rtime <- peaks[p, "scpos"]
+                    if (!any(is.na(pgauss)) && all(pgauss > 0)) {
+                        gtime <- td[match(round(pgauss$mu), td)]
+                        if (!is.na(gtime)) {
+                            rtime <- gtime
+                            peaks[p, "mu"] <- pgauss$mu
+                            peaks[p, "sigma"] <- pgauss$sigma
+                            peaks[p, "h"] <- pgauss$h
+                            peaks[p,"egauss"] <- sqrt((1 / length(td[lm[1]:lm[2]])) *
+                                                      sum(((d1-gauss(td[lm[1]:lm[2]],
+                                                                     pgauss$h / md,
+                                                                     pgauss$mu,
+                                                                     pgauss$sigma))^2)))
+                        }
+                    }
+                    peaks[p, "rt"] <- scantime[rtime]
+                    ## avoid fitting side effects
+                    if (peaks[p, "rt"] < peaks[p, "rtmin"])
+                        peaks[p, "rt"] <- scantime[peaks[p, "scpos"]]
+                } else
+                    peaks[p, "rt"] <- scantime[peaks[p, "scpos"]]
+            }
+            ## Use d here instead of current_ints
+            peaks <- joinOverlappingPeaks(td, d, otd, omz, od,
+                                          scantime, scan.range, peaks,
+                                          maxGaussOverlap,
+                                          mzCenterFun = mzCenterFun)
+        }
+        if (!is.null(peaks)) {
+            peaklist[[length(peaklist) + 1]] <- peaks
+        }
+    } ## f
+
+    if (length(peaklist) == 0) {
+        warning("No peaks found!")
+
+        if (verboseColumns) {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames) +
+                                            length(verbosenames))
+            colnames(nopeaks) <- c(basenames, verbosenames)
+        } else {
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames))
+            colnames(nopeaks) <- c(basenames)
+        }
+        message(" FAIL: none found!")
+        return(nopeaks)
+    }
+
+    ## cat("length peaklist: ", length(peaklist), "\n")
+    p <- do.call(rbind, peaklist)
+    if (!verboseColumns)
+        p <- p[, basenames, drop = FALSE]
+    return(p)
+    
     uorder <- order(p[, "into"], decreasing = TRUE)
     pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
@@ -645,21 +1182,21 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
-##' @title Core API function for massifquant feature detection
+##' @title Core API function for massifquant peak detection
 ##'
-##' @description Massifquant is a Kalman filter (KF)-based feature
-##' detection for XC-MS data in centroid mode. The identified features
+##' @description Massifquant is a Kalman filter (KF)-based chromatographic peak
+##' detection for XC-MS data in centroid mode. The identified peaks
 ##' can be further refined with the \emph{centWave} method (see
-##' \code{\link{do_detectFeatures_centWave}} for details on centWave)
+##' \code{\link{do_findChromPeaks_centWave}} for details on centWave)
 ##' by specifying \code{withWave = TRUE}.
 ##'
 ##' @details This algorithm's performance has been tested rigorously
 ##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
-##' Simultaneous kalman filters identify features and calculate their
+##' Simultaneous kalman filters identify peaks and calculate their
 ##' area under the curve. The default parameters are set to operate on
 ##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
 ##' simple exploratory data analysis to find out where to set a minimum
-##' intensity, and identify how many scans an average feature spans. The
+##' intensity, and identify how many scans an average peak spans. The
 ##' \code{consecMissedLimit} parameter has yielded good performance on
 ##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
 ##' to be at (\code{1}). This may change as the algorithm has yet to be
@@ -669,25 +1206,26 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' The \code{ppm} and \code{checkBack} parameters have shown less influence
 ##' than the other parameters and exist to give users flexibility and
 ##' better accuracy.
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
-##' @inheritParams featureDetection-massifquant
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams findChromPeaks-massifquant
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the features across
+##' \item{mz}{Intensity weighted mean of m/z values of the peaks across
 ##' scans.}
-##' \item{mzmin}{Minumum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mzmin}{Minumum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' }
 ##' If \code{withWave} is set to \code{TRUE}, the result is the same as
-##' returned by the \code{\link{do_detectFeatures_centWave}} method.
-##' @family core feature detection functions
+##' returned by the \code{\link{do_findChromPeaks_centWave}} method.
+##' @family core peak detection functions
 ##' @seealso \code{\link{massifquant}} for the standard user interface method.
 ##' @references
 ##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
@@ -708,11 +1246,11 @@ do_detectFeatures_centWave <- function(mz, int, scantime, valsPerSpect,
 ##' ## Define the values per spectrum:
 ##' valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
 ##'
-##' ## Perform the feature detection using massifquant
-##' res <- do_detectFeatures_massifquant(mz = mzVals, int = intVals,
+##' ## Perform the peak detection using massifquant
+##' res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
 ##' scantime = xraw@scantime, valsPerSpect = valsPerSpect)
 ##' head(res)
-do_detectFeatures_massifquant <- function(mz,
+do_findChromPeaks_massifquant <- function(mz,
                                           int,
                                           scantime,
                                           valsPerSpect,
@@ -770,7 +1308,7 @@ do_detectFeatures_massifquant <- function(mz,
                                         ppm = ppm)
     message("OK")
     if (withWave) {
-        featlist <- do_detectFeatures_centWave(mz = mz, int = int,
+        featlist <- do_findChromPeaks_centWave(mz = mz, int = int,
                                                scantime = scantime,
                                                valsPerSpect = valsPerSpect,
                                                ppm = ppm, peakwidth = peakwidth,
@@ -795,7 +1333,7 @@ do_detectFeatures_massifquant <- function(mz,
             return(nopeaks)
         }
 
-        ## Get the max intensity for each feature.
+        ## Get the max intensity for each peak.
         maxo <- lapply(massifquantROIs, function(z) {
             raw <- .rawMat(mz = mz, int = int, scantime = scantime,
                            valsPerSpect = valsPerSpect,
@@ -858,18 +1396,18 @@ do_detectFeatures_massifquant <- function(mz,
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
 ##
-##' @title Core API function for matchedFilter feature detection
+##' @title Core API function for matchedFilter peak detection
 ##'
-##' @description This function identifies features in the chromatographic
+##' @description This function identifies peaks in the chromatographic
 ##' time domain as described in [Smith 2006]. The intensity values are
 ##' binned by cutting The LC/MS data into slices (bins) of a mass unit
 ##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is
-##' selected. The feature detection is then performed in each bin by
+##' selected. The peak detection is then performed in each bin by
 ##' extending it based on the \code{steps} parameter to generate slices
 ##' comprising bins \code{current_bin - steps +1} to \code{current_bin + steps - 1}.
 ##' Each of these slices is then filtered with matched filtration using
-##' a second-derative Gaussian as the model feature/peak shape. After filtration
-##' features are detected using a signal-to-ration cut-off. For more details
+##' a second-derative Gaussian as the model peak shape. After filtration
+##' peaks are detected using a signal-to-ration cut-off. For more details
 ##' and illustrations see [Smith 2006].
 ##'
 ##' @details The intensities are binned by the provided m/z values within each
@@ -881,30 +1419,31 @@ do_detectFeatures_massifquant <- function(mz,
 ##' \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
 ##'
 ##' @note
-##' This function exposes core feature detection functionality of
+##' This function exposes core peak detection functionality of
 ##' the \emph{matchedFilter} method. While this function can be called directly,
 ##' users will generally call the corresponding method for the data object
 ##' instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
 ##'
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
 ##' @inheritParams imputeLinInterpol
-##' @inheritParams featureDetection-matchedFilter
+##' @inheritParams findChromPeaks-matchedFilter
 ##'
-##' @return A matrix, each row representing an identified feature, with columns:
+##' @return A matrix, each row representing an identified chromatographic peak,
+##' with columns:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
 ##' \item{intf}{Integrated intensity of the filtered peak.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{maxf}{Maximum intensity of the filtered peak.}
-##' \item{i}{Rank of feature in merged EIC (\code{<= max}).}
-##' \item{sn}{Signal to noise ratio of the feature}
+##' \item{i}{Rank of peak in merged EIC (\code{<= max}).}
+##' \item{sn}{Signal to noise ratio of the peak}
 ##' }
 ##' @references
 ##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
@@ -912,7 +1451,7 @@ do_detectFeatures_massifquant <- function(mz,
 ##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 ##' \emph{Anal. Chem.} 2006, 78:779-787.
 ##' @author Colin A Smith, Johannes Rainer
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @seealso \code{\link{binYonX}} for a binning function,
 ##' \code{\link{imputeLinInterpol}} for the interpolation of missing values.
 ##' \code{\link{matchedFilter}} for the standard user interface method.
@@ -922,16 +1461,16 @@ do_detectFeatures_massifquant <- function(mz,
 ##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
 ##' xr <- xcmsRaw(fs)
 ##'
-##' ## Extracting the data from the xcmsRaw for do_detectFeatures_centWave
+##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
 ##' mzVals <- xr@env$mz
 ##' intVals <- xr@env$intensity
 ##' ## Define the values per spectrum:
 ##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
 ##'
-##' res <- do_detectFeatures_matchedFilter(mz = mzVals, int = intVals,
+##' res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
 ##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
 ##' head(res)
-do_detectFeatures_matchedFilter <- function(mz,
+do_findChromPeaks_matchedFilter <- function(mz,
                                             int,
                                             scantime,
                                             valsPerSpect,
@@ -1129,389 +1668,6 @@ do_detectFeatures_matchedFilter <- function(mz,
     return(rmat)
 }
 
-## ############################################################
-## ## Same as do_detectFeatures_matchedFilter except:
-## ##
-## ## o Using the binYtoX and imputeLinInterpol instead of the
-## ##   profBin* methods.
-## ## THIS IS MATTER OF REMOVAL
-## .matchedFilter_binYonX_iter <- function(mz,
-##                                         int,
-##                                         scantime,
-##                                         valsPerSpect,
-##                                         binSize = 0.1,
-##                                         impute = "none",
-##                                         baseValue,
-##                                         distance,
-##                                         fwhm = 30,
-##                                         sigma = fwhm/2.3548,
-##                                         max = 5,
-##                                         snthresh = 10,
-##                                         steps = 2,
-##                                         mzdiff = 0.8 - binSize * steps,
-##                                         index = FALSE
-##                                         ){
-
-##     ## Input argument checking.
-##     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
-##         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
-##              " are required!")
-##     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
-##         | length(mz) != sum(valsPerSpect))
-##         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-##              " have to match. Also, 'length(mz)' should be equal to",
-##              " 'sum(valsPerSpect)'.")
-##     ## Get the profile/binning function: allowed: bin, lin, linbase and intlin
-##     impute <- match.arg(impute, c("none", "lin", "linbase", "intlin"))
-##     if (impute == "intlin")
-##         stop("Not yet implemented!")
-##     toIdx <- cumsum(valsPerSpect)
-##     fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
-
-##     ## Create EIC buffer
-##     mrange <- range(mz)
-##     mass <- seq(floor(mrange[1]/binSize)*binSize,
-##                 ceiling(mrange[2]/binSize)*binSize, by = binSize)
-##     bufsize <- min(100, length(mass))
-
-##     ## Calculate the breaks; we will re-use these in all calls.
-##     ## Calculate breaks and "correct" binSize; using seq ensures we're closer
-##     ## to the xcms profBin* results.
-##     binFromX <- min(mass)
-##     binToX <- max(mass)
-##     bin_size <- (binToX - binFromX) / (length(mass) - 1)
-##     brks <- seq(binFromX - bin_size/2, binToX + bin_size/2, by = bin_size)
-
-##     ## Problem with sequential binning is that we don't want to have the condition
-##     ## <= last_break in each iteration since this would cause some values being
-##     ## considered for multiple bins. Thus we add an additional last bin, for which
-##     ## we however want to get rid of later.
-##     binRes <- binYonX(mz, int,
-##                       breaks = brks[1:(bufsize+2)],
-##                       fromIdx = fromIdx,
-##                       toIdx = toIdx,
-##                       baseValue = ifelse(impute == "none", yes = 0, no = NA),
-##                       sortedX = TRUE,
-##                       returnIndex = TRUE
-##                       )
-##     if (length(toIdx) == 1)
-##         binRes <- list(binRes)
-##     ## Remove the last bin value unless bufsize + 2 is equal to the length of brks
-##     if (length(brks) > (bufsize + 2)) {
-##         binRes <- lapply(binRes, function(z) {
-##             len <- length(z$x)
-##             return(list(x = z$x[-len], y = z$y[-len], index = z$index[-len]))
-##         })
-##     }
-##     bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
-##     bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
-##     if (missing(baseValue))
-##         baseValue <- numeric()
-##     if (length(baseValue) == 0)
-##         baseValue <- min(int, na.rm = TRUE) / 2
-##     if (missing(distance))
-##         distance <- numeric()
-##     if (length(distance) == 0)
-##         distance <- floor(0.075 / bin_size)
-##     binVals <- lapply(binRes, function(z) {
-##         return(imputeLinInterpol(z$y, method = impute,
-##                                  noInterpolAtEnds = TRUE,
-##                                  distance = distance,
-##                                  baseValue = baseValue))
-##     })
-##     buf <- do.call(cbind, binVals)
-
-##     bufidx <- integer(length(mass))
-##     idxrange <- c(1, bufsize)
-##     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
-##     lookahead <- steps-1
-##     lookbehind <- 1
-
-##     N <- nextn(length(scantime))
-##     xrange <- range(scantime)
-##     x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
-
-##     filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
-##     filt <- filt/sqrt(sum(filt^2))
-##     filt <- fft(filt, inverse = TRUE)/length(filt)
-
-##     cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
-##                 "maxo", "maxf", "i", "sn")
-##     rmat <- matrix(nrow = 2048, ncol = length(cnames))
-##     num <- 0
-
-##     for (i in seq(length = length(mass)-steps+1)) {
-##         ## Update EIC buffer if necessary
-##         if (bufidx[i+lookahead] == 0) {
-##             bufidx[idxrange[1]:idxrange[2]] <- 0
-##             idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind,
-##                                                       length(mass)))
-##             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-##             ## Avoid the problem reported above for the sequential buffering:
-##             ## add an additional bin for which we remove the value afterwards.
-##             additionalBin <- 0
-##             if ((idxrange[2] + 1) < length(brks)) {
-##                 additionalBin <- 1
-##             }
-##             ## Re-fill buffer.
-##             binRes <- binYonX(mz, int,
-##                               breaks = brks[idxrange[1]:(idxrange[2] + 1 +
-##                                                          additionalBin)],
-##                               fromIdx = fromIdx,
-##                               toIdx = toIdx,
-##                               baseValue = ifelse(impute == "none", yes = 0,
-##                                                  no = NA),
-##                               sortedX = TRUE,
-##                               returnIndex = TRUE
-##                               )
-##             if (length(toIdx) == 1)
-##                 binRes <- list(binRes)
-##             if (additionalBin == 1) {
-##                 binRes <- lapply(binRes, function(z) {
-##                     len <- length(z$x)
-##                     return(list(x = z$x[-len], y = z$y[-len],
-##                                 index = z$index[-len]))
-##                 })
-##             }
-##             bufMax <- do.call(cbind, lapply(binRes, function(z) return(z$index)))
-##             binVals <- lapply(binRes, function(z) {
-##                 return(imputeLinInterpol(z$y, method = impute,
-##                                          noInterpolAtEnds = TRUE,
-##                                          distance = distance,
-##                                          baseValue = baseValue))
-##             })
-##             buf <- do.call(cbind, binVals)
-##         }
-##         ymat <- buf[bufidx[i:(i+steps-1)],,drop=FALSE]
-##         ysums <- colMax(ymat)
-##         yfilt <- filtfft(ysums, filt)
-##         gmax <- max(yfilt)
-##         for (j in seq(length = max)) {
-##             maxy <- which.max(yfilt)
-##             noise <- mean(ysums[ysums > 0])
-##             ##noise <- mean(yfilt[yfilt >= 0])
-##             sn <- yfilt[maxy]/noise
-##             if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
-##                 peakrange <- descendZero(yfilt, maxy)
-##                 intmat <- ymat[, peakrange[1]:peakrange[2], drop = FALSE]
-##                 mzmat <- matrix(mz[bufMax[bufidx[i:(i+steps-1)],
-##                                           peakrange[1]:peakrange[2]]],
-##                                 nrow = steps)
-##                 which.intMax <- which.colMax(intmat)
-##                 mzmat <- mzmat[which.intMax]
-##                 if (all(is.na(mzmat))) {
-##                     yfilt[peakrange[1]:peakrange[2]] <- 0
-##                     next
-##                 }
-##                 mzrange <- range(mzmat, na.rm = TRUE)
-##                 massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
-##                 ## This case (the only non-na m/z had intensity 0) was reported
-##                 ## by Gregory Alan Barding "binlin processing"
-##                 if(any(is.na(massmean))) {
-##                     massmean <- mean(mzmat, na.rm = TRUE)
-##                 }
-
-##                 pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
-##                     (peakrange[2] - peakrange[1])
-##                 into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
-##                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
-##                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
-##                 maxf <- yfilt[maxy]
-##                 yfilt[peakrange[1]:peakrange[2]] <- 0
-##                 num <- num + 1
-##                 ## Double the size of the output matrix if it's full
-##                 if (num > nrow(rmat)) {
-##                     nrmat <- matrix(nrow = 2*nrow(rmat), ncol = ncol(rmat))
-##                     nrmat[seq(length = nrow(rmat)),] = rmat
-##                     rmat <- nrmat
-##                 }
-##                 rmat[num,] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
-##                                 into, intf, maxo, maxf, j, sn)
-##             } else
-##                 break
-##         }
-##     }
-##     colnames(rmat) <- cnames
-##     rmat <- rmat[seq(length = num),]
-##     max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/binSize)
-##     if (index)
-##         mzdiff <- mzdiff/binSize
-##     else {
-##         rmat[,"rt"] <- scantime[rmat[,"rt"]]
-##         rmat[,"rtmin"] <- scantime[rmat[,"rtmin"]]
-##         rmat[,"rtmax"] <- scantime[rmat[,"rtmax"]]
-##     }
-##     ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
-##     uorder <- order(rmat[,"into"], decreasing=TRUE)
-##     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
-##                                 uorder, mzdiff)
-##     rmat <- rmat[uindex,,drop=FALSE]
-##     return(rmat)
-## }
-
-
-## ############################################################
-## ## The code of this function is basically the same than of the original
-## ## findPeaks.matchedFilter method in xcms with the following differences:
-## ##  o Create the full 'profile matrix' (i.e. the m/z binned matrix) once
-## ##    instead of repeatedly creating a "buffer" of 100 m/z values.
-## ##  o Append the identified peaks to a list instead of generating a matrix
-## ##    with a fixed set of rows which is doubled in its size each time more
-## ##    peaks are identified than there are rows in the matrix.
-## .matchedFilter_no_iter <- function(mz,
-##                                    int,
-##                                    scantime,
-##                                    valsPerSpect,
-##                                    binSize = 0.1,
-##                                    impute = "none",
-##                                    baseValue,
-##                                    distance,
-##                                    fwhm = 30,
-##                                    sigma = fwhm/2.3548,
-##                                    max = 5,
-##                                    snthresh = 10,
-##                                    steps = 2,
-##                                    mzdiff = 0.8 - binSize * steps,
-##                                    index = FALSE
-##                                    ){
-##     ## Map arguments to findPeaks.matchedFilter arguments.
-##     step <- binSize
-##     profMeths <- c("profBinM", "profBinLinM", "profBinLinBaseM", "profIntLinM")
-##     names(profMeths) <- c("none", "lin", "linbase", "intlin")
-##     impute <- match.arg(impute, names(profMeths))
-##     profFun <- profMeths[impute]
-
-##     ## Input argument checking.
-##     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
-##         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
-##              " are required!")
-##     if (length(mz) != length(int) | length(valsPerSpect) != length(scantime)
-##         | length(mz) != sum(valsPerSpect))
-##         stop("Lengths of 'mz', 'int' and of 'scantime','valsPerSpect'",
-##              " have to match. Also, 'length(mz)' should be equal to",
-##              " 'sum(valsPerSpect)'.")
-##     ## Calculate a the "scanindex" from the number of values per spectrum:
-##     scanindex <- valueCount2ScanIndex(valsPerSpect)
-
-##     ## Create the full profile matrix.
-##     mrange <- range(mz)
-##     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
-##     ## Calculate the /real/ bin size (as in xcms.c code).
-##     bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
-##     ## bufsize <- min(100, length(mass))
-##     bufsize <- length(mass)
-##     ## Define profparam:
-##     profp <- list()
-##     if (missing(baseValue))
-##         baseValue <- numeric()
-##     if (length(baseValue) != 0)
-##         profp$baselevel <- baseValue
-##     if (missing(distance))
-##         distance <- numeric()
-##     if (length(distance) != 0)
-##         profp$basespace <- distance * bin_size
-##     ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
-##     buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
-##                                         mass[bufsize], TRUE, profp))
-
-##     ## The full matrix, nrow is the total number of (binned) m/z values.
-##     bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
-##                           TRUE, profp)
-##     ## bufidx <- integer(length(mass))
-##     ## idxrange <- c(1, bufsize)
-##     ## bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
-##     bufidx <- 1L:length(mass)
-##     lookahead <- steps-1
-##     lookbehind <- 1
-
-##     N <- nextn(length(scantime))
-##     xrange <- range(scantime)
-##     x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
-
-##     filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
-##     filt <- filt/sqrt(sum(filt^2))
-##     filt <- fft(filt, inverse = TRUE)/length(filt)
-
-##     cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
-##                 "maxo", "maxf", "i", "sn")
-##     num <- 0
-
-##     ResList <- list()
-
-##     ## Can not do much here, lapply/apply won't work because of the 'steps' parameter.
-##     ## That's looping through the masses, i.e. rows of the profile matrix.
-##     for (i in seq(length = (length(mass)-steps+1))) {
-
-##         ymat <- buf[bufidx[i:(i+steps-1)], , drop = FALSE]
-##         ysums <- colMax(ymat)
-##         yfilt <- filtfft(ysums, filt)
-##         gmax <- max(yfilt)
-##         for (j in seq(length = max)) {
-##             maxy <- which.max(yfilt)
-##             noise <- mean(ysums[ysums > 0])
-##             ##noise <- mean(yfilt[yfilt >= 0])
-##             sn <- yfilt[maxy]/noise
-##             if (yfilt[maxy] > 0 && yfilt[maxy] > snthresh*noise && ysums[maxy] > 0) {
-##                 peakrange <- descendZero(yfilt, maxy)
-##                 intmat <- ymat[, peakrange[1]:peakrange[2], drop = FALSE]
-##                 mzmat <- matrix(mz[bufMax[bufidx[i:(i+steps-1)],
-##                                           peakrange[1]:peakrange[2]]],
-##                                 nrow = steps)
-##                 which.intMax <- which.colMax(intmat)
-##                 mzmat <- mzmat[which.intMax]
-##                 if (all(is.na(mzmat))) {
-##                     yfilt[peakrange[1]:peakrange[2]] <- 0
-##                     next
-##                 }
-##                 mzrange <- range(mzmat, na.rm = TRUE)
-##                 massmean <- weighted.mean(mzmat, intmat[which.intMax], na.rm = TRUE)
-##                 ## This case (the only non-na m/z had intensity 0) was reported
-##                 ## by Gregory Alan Barding "binlin processing"
-##                 if(any(is.na(massmean))) {
-##                     massmean <- mean(mzmat, na.rm = TRUE)
-##                 }
-
-##                 pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
-##                     (peakrange[2] - peakrange[1])
-##                 into <- pwid*sum(ysums[peakrange[1]:peakrange[2]])
-##                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
-##                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
-##                 maxf <- yfilt[maxy]
-##                 yfilt[peakrange[1]:peakrange[2]] <- 0
-##                 num <- num + 1
-##                 ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy, peakrange,
-##                                     into, intf, maxo, maxf, j, sn)
-##             } else
-##                 break
-##         }
-##     }
-##     if (length(ResList) == 0) {
-##         rmat <- matrix(nrow = 0, ncol = length(cnames))
-##         colnames(rmat) <- cnames
-##         return(rmat)
-##     }
-##     rmat <- do.call(rbind, ResList)
-##     if (is.null(dim(rmat))) {
-##         rmat <- matrix(rmat, nrow = 1)
-##     }
-##     colnames(rmat) <- cnames
-##     max <- max-1 + max*(steps-1) + max*ceiling(mzdiff/step)
-##     if (index)
-##         mzdiff <- mzdiff/step
-##     else {
-##         rmat[, "rt"] <- scantime[rmat[, "rt"]]
-##         rmat[, "rtmin"] <- scantime[rmat[, "rtmin"]]
-##         rmat[, "rtmax"] <- scantime[rmat[, "rtmax"]]
-##     }
-##     ## Select for each unique mzmin, mzmax, rtmin, rtmax the largest peak and report that.
-##     uorder <- order(rmat[, "into"], decreasing = TRUE)
-##     uindex <- rectUnique(rmat[, c("mzmin", "mzmax", "rtmin", "rtmax"),
-##                               drop = FALSE],
-##                          uorder, mzdiff)
-##     rmat <- rmat[uindex,,drop = FALSE]
-##     return(rmat)
-## }
-
 ############################################################
 ## The code of this function is basically the same than of the original
 ## findPeaks.matchedFilter method in xcms with the following differences:
@@ -1708,9 +1864,9 @@ do_detectFeatures_matchedFilter <- function(mz,
 ## MSW
 ##
 ##' @title Core API function for single-spectrum non-chromatography MS data
-##' feature detection
+##' peak detection
 ##'
-##' @description This function performs feature detection in mass spectrometry
+##' @description This function performs peak detection in mass spectrometry
 ##' direct injection spectrum using a wavelet based algorithm.
 ##'
 ##' @details This is a wrapper around the peak picker in Bioconductor's
@@ -1719,33 +1875,33 @@ do_detectFeatures_matchedFilter <- function(mz,
 ##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
 ##' \emph{xcmsDirect} vignette for more information.
 ##'
-##' @inheritParams do_detectFeatures_centWave
-##' @inheritParams featureDetection-centWave
+##' @inheritParams do_findChromPeaks_centWave
+##' @inheritParams findChromPeaks-centWave
 ##' @param ... Additional parameters to be passed to the
 ##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
 ##'
 ##' @return
-##' A matrix, each row representing an identified feature, with columns:
+##' A matrix, each row representing an identified peak, with columns:
 ##' \describe{
-##' \item{mz}{m/z value of the feature at the centroid position.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
+##' \item{mz}{m/z value of the peak at the centroid position.}
+##' \item{mzmin}{Minimum m/z of the peak.}
+##' \item{mzmax}{Maximum m/z of the peak.}
 ##' \item{rt}{Always \code{-1}.}
 ##' \item{rtmin}{Always \code{-1}.}
 ##' \item{rtmax}{Always \code{-1}.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{intf}{Always \code{NA}.}
-##' \item{maxf}{Maximum MSW-filter response of the feature.}
+##' \item{maxf}{Maximum MSW-filter response of the peak.}
 ##' \item{sn}{Signal to noise ratio.}
 ##' }
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @seealso ##' \code{\link{MSW}} for the standard user interface
 ##' method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
 ##' \code{MassSpecWavelet} package.
 ##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
-do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
+do_findPeaks_MSW <- function(mz, int, snthresh = 3,
                                   verboseColumns = FALSE, ...) {
     ## Input argument checking.
     if (missing(int))
@@ -1964,16 +2120,20 @@ do_detectFeatures_MSW <- function(mz, int, snthresh = 3,
 
 ############################################################
 ## MS1
+## This one might be too cumbersome to do it for plain vectors. It would be ideal
+## for MSnExp objects though.
 ##
-do_detectFeatures_MS1 <- function() {
-}
+## do_findChromPeaks_MS1 <- function(mz, int, scantime, valsPerSpect) {
+##     ## Checks: do I have
+## }
+
 
 ## ## Original code: TODO REMOVE ME once method is validated.
 ## do_predictIsotopeROIs <- function(object,
 ##                                   xcmsPeaks, ppm=25,
 ##                                   maxcharge=3, maxiso=5, mzIntervalExtension=TRUE) {
 ##   if(nrow(xcmsPeaks) == 0){
-##     warning("Warning: There are no features (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
+##     warning("Warning: There are no peaks (parameter >xcmsPeaks<) for the prediction of isotope ROIs !\n")
 ##     return(list())
 ##   }
 ##   if(class(xcmsPeaks) != "xcmsPeaks")
@@ -2032,7 +2192,7 @@ do_detectFeatures_MS1 <- function() {
 ## }
 
 ## Tuned from the original code.
-##' @param features. \code{matrix} or \code{data.frame} with features for which
+##' @param peaks. \code{matrix} or \code{data.frame} with peaks for which
 ##' isotopes should be predicted. Required columns are \code{"mz"},
 ##' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
 ##' \code{"intb"} and \code{"scale"}.
@@ -2041,18 +2201,18 @@ do_detectFeatures_MS1 <- function() {
 ##' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
 ##' \code{"intensity"} (always -1) and \code{"scale"}.
 ##' @noRd
-do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
+do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
                                mzIntervalExtension = TRUE) {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    if (is.null(dim(features.)))
-        stop("'features.' has to be a matrix or data.frame!")
-    if (!all(req_cols %in% colnames(features.))) {
-        not_there <- req_cols[!(req_cols %in% colnames(features.))]
-        stop("'features.' lacks required columns ",
+    if (is.null(dim(peaks.)))
+        stop("'peaks.' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(peaks.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(peaks.))]
+        stop("'peaks.' lacks required columns ",
              paste0("'", not_there, "'", collapse = ","), "!")
     }
-    if (is.data.frame(features.))
-        features. <- as.matrix(features.)
+    if (is.data.frame(peaks.))
+        peaks. <- as.matrix(peaks.)
 
     isotopeDistance <- 1.0033548378
     charges <- 1:maxCharge
@@ -2060,8 +2220,8 @@ do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
 
     isotopePopulationMz <- unique(as.numeric(matrix(isos, ncol = 1) %*%
                                              (isotopeDistance / charges)))
-    ## split the features into a list.
-    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+    ## split the peaks into a list.
+    roiL <- split(peaks.[, req_cols, drop = FALSE], f = 1:nrow(peaks.))
 
     newRois <- lapply(roiL, function(z) {
         if (mzIntervalExtension)
@@ -2081,22 +2241,22 @@ do_define_isotopes <- function(features., maxCharge = 3, maxIso = 5,
     return(do.call(rbind, newRois))
 }
 
-##' param @features. see do_define_isotopes
+##' param @peaks. see do_define_isotopes
 ##' @param polarity character(1) defining the polarity, either \code{"positive"}
 ##' or \code{"negative"}.
 ##' @return see do_define_isotopes.
 ##' @noRd
-do_define_adducts <- function(features., polarity = "positive") {
+do_define_adducts <- function(peaks., polarity = "positive") {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    if (is.null(dim(features.)))
-        stop("'features' has to be a matrix or data.frame!")
-    if (!all(req_cols %in% colnames(features.))) {
-        not_there <- req_cols[!(req_cols %in% colnames(features.))]
-        stop("'features' lacks required columns ",
+    if (is.null(dim(peaks.)))
+        stop("'peaks.' has to be a matrix or data.frame!")
+    if (!all(req_cols %in% colnames(peaks.))) {
+        not_there <- req_cols[!(req_cols %in% colnames(peaks.))]
+        stop("'peaks.' lacks required columns ",
              paste0("'", not_there, "'", collapse = ","), "!")
     }
-    if (is.data.frame(features.))
-        features. <- as.matrix(features.)
+    if (is.data.frame(peaks.))
+        peaks. <- as.matrix(peaks.)
     ## considered adduct distances
     ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc
     ## Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion
@@ -2235,7 +2395,7 @@ do_define_adducts <- function(features., polarity = "positive") {
     )
 
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
-    roiL <- split(features.[, req_cols, drop = FALSE], f = 1:nrow(features.))
+    roiL <- split(peaks.[, req_cols, drop = FALSE], f = 1:nrow(peaks.))
 
     newRois <- lapply(roiL, function(z) {
         mzDiff <- unlist(lapply(adductPopulationMz, function(x) {
@@ -2295,44 +2455,44 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 }
 
 ############################################################
-## do_detectFeatyres_centWaveWithPredIsoROIs
+## do_findChromPeaks_centWaveWithPredIsoROIs
 ## 1) Run a centWave.
-## 2) Predict isotope ROIs for the identified features.
+## 2) Predict isotope ROIs for the identified peaks.
 ## 3) centWave on the predicted isotope ROIs.
-## 4) combine both lists of identified features removing overlapping ones by
-##    keeping the feature with the largest signal intensity.
-##' @title Core API function for two-step centWave feature detection with feature isotopes
+## 4) combine both lists of identified peaks removing overlapping ones by
+##    keeping the peak with the largest signal intensity.
+##' @title Core API function for two-step centWave peak detection with isotopes
 ##'
-##' @description The \code{do_detectFeatures_centWaveWithPredIsoROIs} performs a
-##' two-step centWave based feature detection: features are identified using
-##' centWave followed by a prediction of the location of the identified features'
-##' isotopes in the mz-retention time space. These locations are fed as
+##' @description The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
+##' two-step centWave based peak detection: chromatographic peaks are identified
+##' using centWave followed by a prediction of the location of the identified
+##' peaks' isotopes in the mz-retention time space. These locations are fed as
 ##' \emph{regions of interest} (ROIs) to a subsequent centWave run. All non
-##' overlapping features from these two feature detection runs are reported as
-##' the final list of identified features.
+##' overlapping peaks from these two peak detection runs are reported as
+##' the final list of identified peaks.
 ##'
 ##' @details For more details on the centWave algorithm see
 ##' \code{\link{centWave}}.
 ##'
-##' @inheritParams featureDetection-centWave
-##' @inheritParams featureDetection-centWaveWithPredIsoROIs
-##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams findChromPeaks-centWaveWithPredIsoROIs
+##' @inheritParams do_findChromPeaks_centWave
 ##'
-##' @family core feature detection functions
+##' @family core peak detection functions
 ##' @return
-##' A matrix, each row representing an identified feature. All non-overlapping
-##' features identified in both centWave runs are reported.
+##' A matrix, each row representing an identified chromatographic peak. All
+##' non-overlapping peaks identified in both centWave runs are reported.
 ##' The matrix columns are:
 ##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the feature across scans.}
-##' \item{mzmin}{Minimum m/z of the feature.}
-##' \item{mzmax}{Maximum m/z of the feature.}
-##' \item{rt}{Retention time of the feature's midpoint.}
-##' \item{rtmin}{Minimum retention time of the feature.}
-##' \item{rtmax}{Maximum retention time of the feature.}
-##' \item{into}{Integrated (original) intensity of the feature.}
-##' \item{intb}{Per-feature baseline corrected integrated feature intensity.}
-##' \item{maxo}{Maximum intensity of the feature.}
+##' \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
+##' \item{mzmin}{Minimum m/z of the peaks.}
+##' \item{mzmax}{Maximum m/z of the peaks.}
+##' \item{rt}{Retention time of the peak's midpoint.}
+##' \item{rtmin}{Minimum retention time of the peak.}
+##' \item{rtmax}{Maximum retention time of the peak.}
+##' \item{into}{Integrated (original) intensity of the peak.}
+##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+##' \item{maxo}{Maximum intensity of the peak.}
 ##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
 ##' \code{sd} being the standard deviation of local chromatographic noise.}
 ##' \item{egauss}{RMSE of Gaussian fit.}
@@ -2344,14 +2504,14 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 ##' \item{h}{Gaussian parameter h.}
 ##' \item{f}{Region number of the m/z ROI where the peak was localized.}
 ##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-##' \item{scale}{Scale on which the feature was localized.}
+##' \item{scale}{Scale on which the peak was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 ##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 ##' }
-##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
+##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
 ##' @author Hendrik Treutler, Johannes Rainer
-do_detectFeatures_centWaveWithPredIsoROIs <-
+do_findChromPeaks_centWaveWithPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 10, prefilter = c(3, 100), mzCenterFun = "wMean",
              integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
@@ -2360,11 +2520,11 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
         ## Input argument checking: most of it will be done in
-        ## do_detectFeatures_centWave
+        ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
         ## 1) First centWave
-        feats_1 <- do_detectFeatures_centWave(mz = mz, int = int,
+        feats_1 <- do_findChromPeaks_centWave(mz = mz, int = int,
                                               scantime = scantime,
                                               valsPerSpect = valsPerSpect,
                                               ppm = ppm,
@@ -2379,7 +2539,7 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
                                               roiScales = roiScales)
-        return(do_detectFeatures_addPredIsoROIs(mz = mz, int = int,
+        return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
                                                 ppm = ppm,
@@ -2392,63 +2552,63 @@ do_detectFeatures_centWaveWithPredIsoROIs <-
                                                 fitgauss = fitgauss,
                                                 noise = noise,
                                                 verboseColumns = verboseColumns,
-                                                features. = feats_1,
+                                                peaks. = feats_1,
                                                 maxCharge = maxCharge,
                                                 maxIso = maxIso,
                                                 mzIntervalExtension = mzIntervalExtension,
                                                 polarity = polarity))
     }
-##' @description The \code{do_detectFeatures_centWaveAddPredIsoROIs} performs
-##' centWave based feature detection based in regions of interest (ROIs)
-##' representing predicted isotopes for the features submitted with argument
-##' \code{features.}. The function returns a matrix with the identified features
-##' consisting of all input features and features representing predicted isotopes
+##' @description The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
+##' centWave based peak detection based in regions of interest (ROIs)
+##' representing predicted isotopes for the peaks submitted with argument
+##' \code{peaks.}. The function returns a matrix with the identified peaks
+##' consisting of all input peaks and peaks representing predicted isotopes
 ##' of these (if found by the centWave algorithm).
 ##'
-##' @param features. A matrix or \code{xcmsPeaks} object such as one returned by
-##' a call to \code{link{do_detectFeatures_centWave}} or
+##' @param peaks. A matrix or \code{xcmsPeaks} object such as one returned by
+##' a call to \code{link{do_findChromPeaks_centWave}} or
 ##' \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
-##' with the features for which isotopes should be predicted and used for an
-##' additional feature detectoin using the centWave method. Required columns are:
+##' with the peaks for which isotopes should be predicted and used for an
+##' additional peak detectoin using the centWave method. Required columns are:
 ##' \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
 ##' \code{"scale"} and \code{"into"}.
 ##'
-##' @param snthresh For \code{do_detectFeatures_addPredIsoROIs}:
+##' @param snthresh For \code{do_findChromPeaks_addPredIsoROIs}:
 ##' numeric(1) defining the signal to noise threshold for the centWave algorithm.
-##' For \code{do_detectFeatures_centWaveWithPredIsoROIs}: numeric(1) defining the
+##' For \code{do_findChromPeaks_centWaveWithPredIsoROIs}: numeric(1) defining the
 ##' signal to noise threshold for the initial (first) centWave run.
 ##'
-##' @inheritParams featureDetection-centWave
-##' @inheritParams do_detectFeatures_centWave
+##' @inheritParams findChromPeaks-centWave
+##' @inheritParams do_findChromPeaks_centWave
 ##'
-##' @rdname do_detectFeatures_centWaveWithPredIsoROIs
-do_detectFeatures_addPredIsoROIs <-
+##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
+do_findChromPeaks_addPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",
              integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-             verboseColumns = FALSE, features. = NULL,
+             verboseColumns = FALSE, peaks. = NULL,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
         ## Input argument checking: most of it will be done in
-        ## do_detectFeatures_centWave
+        ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
         ## These variables might at some point be added as function args.
         addNewIsotopeROIs <- TRUE
         addNewAdductROIs <- FALSE
         ## 2) predict isotope and/or adduct ROIs
-        f_mod <- features.
+        f_mod <- peaks.
         ## Extend the mzmin and mzmax if needed.
-        tittle <- features.[, "mz"] * (ppm / 2) / 1E6
-        expand_mz <- (features.[, "mzmax"] - features.[, "mzmin"]) < (tittle * 2)
+        tittle <- peaks.[, "mz"] * (ppm / 2) / 1E6
+        expand_mz <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) < (tittle * 2)
         if (any(expand_mz)) {
-            f_mod[expand_mz, "mzmin"] <- features.[expand_mz, "mz"] -
+            f_mod[expand_mz, "mzmin"] <- peaks.[expand_mz, "mz"] -
                 tittle[expand_mz]
-            f_mod[expand_mz, "mzmax"] <- features.[expand_mz, "mz"] + tittle[expand_mz]
+            f_mod[expand_mz, "mzmax"] <- peaks.[expand_mz, "mz"] + tittle[expand_mz]
         }
         ## Add predicted ROIs
         if (addNewIsotopeROIs) {
-            iso_ROIs <- do_define_isotopes(features. = f_mod,
+            iso_ROIs <- do_define_isotopes(peaks. = f_mod,
                                            maxCharge = maxCharge,
                                            maxIso = maxIso,
                                            mzIntervalExtension = mzIntervalExtension)
@@ -2458,7 +2618,7 @@ do_detectFeatures_addPredIsoROIs <-
                                     "length", "intensity", "scale")
         }
         if (addNewAdductROIs) {
-            add_ROIs <- do_define_adducts(features. = f_mod, polarity = polarity)
+            add_ROIs <- do_define_adducts(peaks. = f_mod, polarity = polarity)
         } else {
             add_ROIs <- matrix(nrow = 0, ncol = 8)
             colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
@@ -2467,7 +2627,7 @@ do_detectFeatures_addPredIsoROIs <-
         newROIs <- rbind(iso_ROIs, add_ROIs)
         rm(f_mod)
         if (nrow(newROIs) == 0)
-            return(features.)
+            return(peaks.)
         ## Remove ROIs that are out of mz range:
         mz_range <- range(mz)
         newROIs <- newROIs[newROIs[, "mzmin"] >= mz_range[1] &
@@ -2485,14 +2645,14 @@ do_detectFeatures_addPredIsoROIs <-
         newROIs <- newROIs[keep_me, , drop = FALSE]
 
         if (nrow(newROIs) == 0) {
-            warning("No isotope or adduct ROIs for the identified features with a ",
+            warning("No isotope or adduct ROIs for the identified peaks with a ",
                     "valid signal found!")
-            return(features.)
+            return(peaks.)
         }
-
+        
         ## 3) centWave using the identified ROIs.
         roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
-        feats_2 <- do_detectFeatures_centWave(mz = mz, int = int,
+        feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
                                               scantime = scantime,
                                               valsPerSpect = valsPerSpect,
                                               ppm = ppm, peakwidth = peakwidth,
@@ -2513,42 +2673,44 @@ do_detectFeatures_addPredIsoROIs <-
                                                 "rtmin", "rtmax")]))
             if (any(any_na))
                 feats_2 <- feats_2[!any_na, , drop = FALSE]
+            no_mz_width <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0
+            no_rt_width <- (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
             ## remove empty area
-            no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
-                (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
+            ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            no_area <- no_mz_width || no_rt_width
             if (any(no_area))
                 feats_2 <- feats_2[!no_area, , drop = FALSE]
         }
-
         ## 4) Check and remove ROIs overlapping with peaks.
         if (nrow(feats_2) > 0) {
             ## Comparing each ROI with each peak; slightly modified from the original
             ## code in which we prevent calling apply followed by two lapply.
             removeROIs <- rep(FALSE, nrow(feats_2))
-            removeFeats <- rep(FALSE, nrow(features.))
+            removeFeats <- rep(FALSE, nrow(peaks.))
             overlapProportionThreshold <- 0.01
             for (i in 1:nrow(feats_2)) {
-                ## Compare ROI i with all features (peaks) and check if its
+                ## Compare ROI i with all peaks (peaks) and check if its
                 ## overlapping
                 ## mz
                 roiMzCenter <- (feats_2[i, "mzmin"] + feats_2[i, "mzmax"]) / 2
-                peakMzCenter <- (features.[, "mzmin"] + features.[, "mzmax"]) / 2
+                peakMzCenter <- (peaks.[, "mzmin"] + peaks.[, "mzmax"]) / 2
                 roiMzRadius <- (feats_2[i, "mzmax"] - feats_2[i, "mzmin"]) / 2
-                peakMzRadius <- (features.[, "mzmax"] - features.[, "mzmin"]) / 2
+                peakMzRadius <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) / 2
                 overlappingMz <- abs(peakMzCenter - roiMzCenter) <=
                     (roiMzRadius + peakMzRadius)
                 ## rt
                 roiRtCenter <- (feats_2[i, "rtmin"] + feats_2[i, "rtmax"]) / 2
-                peakRtCenter <- (features.[, "rtmin"] + features.[, "rtmax"]) / 2
+                peakRtCenter <- (peaks.[, "rtmin"] + peaks.[, "rtmax"]) / 2
                 roiRtRadius <- (feats_2[i, "rtmax"] - feats_2[i, "rtmin"]) / 2
-                peakRtRadius <- (features.[, "rtmax"] - features.[, "rtmin"]) / 2
+                peakRtRadius <- (peaks.[, "rtmax"] - peaks.[, "rtmin"]) / 2
                 overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
                     (roiRtRadius + peakRtRadius)
                 is_overlapping <- overlappingMz & overlappingRt
                 ## Now determine whether we remove the ROI or the peak, depending
                 ## on the raw signal intensity.
                 if (any(is_overlapping)) {
-                    if (any(features.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                    if (any(peaks.[is_overlapping, "into"] > feats_2[i, "into"])) {
                         removeROIs[i] <- TRUE
                     } else {
                         removeFeats[is_overlapping] <- TRUE
@@ -2556,13 +2718,173 @@ do_detectFeatures_addPredIsoROIs <-
                 }
             }
             feats_2 <- feats_2[!removeROIs, , drop = FALSE]
-            features. <- features.[!removeFeats, , drop = FALSE]
+            peaks. <- peaks.[!removeFeats, , drop = FALSE]
         }
         if (!verboseColumns)
-            features. <- features.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
-                                        "rtmax", "into", "intb", "maxo", "sn")]
+            peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                  "rtmax", "into", "intb", "maxo", "sn")]
         if (nrow(feats_2) == 0)
-            return(features.)
+            return(peaks.)
         else
-            return(rbind(features., feats_2))
+            return(rbind(peaks., feats_2))
+}
+
+do_findChromPeaks_addPredIsoROIs_mod <-
+    function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
+             snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",
+             integrate = 1, mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+             verboseColumns = FALSE, peaks. = NULL,
+             maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
+             polarity = "unknown") {
+        ## Input argument checking: most of it will be done in
+        ## do_findChromPeaks_centWave
+        polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
+
+        ## These variables might at some point be added as function args.
+        addNewIsotopeROIs <- TRUE
+        addNewAdductROIs <- FALSE
+        ## 2) predict isotope and/or adduct ROIs
+        f_mod <- peaks.
+        ## Extend the mzmin and mzmax if needed.
+        tittle <- peaks.[, "mz"] * (ppm / 2) / 1E6
+        expand_mz <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) < (tittle * 2)
+        if (any(expand_mz)) {
+            f_mod[expand_mz, "mzmin"] <- peaks.[expand_mz, "mz"] -
+                tittle[expand_mz]
+            f_mod[expand_mz, "mzmax"] <- peaks.[expand_mz, "mz"] + tittle[expand_mz]
+        }
+        ## Add predicted ROIs
+        if (addNewIsotopeROIs) {
+            iso_ROIs <- do_define_isotopes(peaks. = f_mod,
+                                           maxCharge = maxCharge,
+                                           maxIso = maxIso,
+                                           mzIntervalExtension = mzIntervalExtension)
+        } else {
+            iso_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        if (addNewAdductROIs) {
+            add_ROIs <- do_define_adducts(peaks. = f_mod, polarity = polarity)
+        } else {
+            add_ROIs <- matrix(nrow = 0, ncol = 8)
+            colnames(iso_ROIs) <- c("mz", "mzmin", "mzmax", "scmin", "scmax",
+                                    "length", "intensity", "scale")
+        }
+        newROIs <- rbind(iso_ROIs, add_ROIs)
+        rm(f_mod)
+        if (nrow(newROIs) == 0)
+            return(peaks.)
+        ## Remove ROIs that are out of mz range:
+        mz_range <- range(mz)
+        newROIs <- newROIs[newROIs[, "mzmin"] >= mz_range[1] &
+                           newROIs[, "mzmax"] <= mz_range[2], , drop = FALSE]
+        ## Remove ROIs with too low signal:
+        keep_me <- logical(nrow(newROIs))
+        scanindex <- as.integer(valueCount2ScanIndex(valsPerSpect))
+        for (i in 1:nrow(newROIs)) {
+            vals <- .Call("getEIC", mz, int, scanindex,
+                          as.double(newROIs[i, c("mzmin", "mzmax")]),
+                          as.integer(newROIs[i, c("scmin", "scmax")]),
+                          as.integer(length(scantime)), PACKAGE ='xcms' )
+            keep_me[i] <- sum(vals$intensity, na.rm = TRUE) >= 10
+        }
+        newROIs <- newROIs[keep_me, , drop = FALSE]
+
+        if (nrow(newROIs) == 0) {
+            warning("No isotope or adduct ROIs for the identified peaks with a ",
+                    "valid signal found!")
+            return(peaks.)
+        }
+        cat("No. of input peaks: ", nrow(peaks.), "\n")
+        
+        ## 3) centWave using the identified ROIs.
+        roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
+        cat("Identified iso ROIs: ", length(roiL), "\n")
+        feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
+                                              scantime = scantime,
+                                              valsPerSpect = valsPerSpect,
+                                              ppm = ppm, peakwidth = peakwidth,
+                                              snthresh = snthresh,
+                                              prefilter = prefilter,
+                                              mzCenterFun = mzCenterFun,
+                                              integrate = integrate,
+                                              mzdiff = mzdiff, fitgauss = fitgauss,
+                                              noise = noise,
+                                              verboseColumns = verboseColumns,
+                                              roiList = roiL,
+                                              firstBaselineCheck = FALSE,
+                                              roiScales = newROIs[, "scale"])
+        cat("No. of chrom. peaks found in ROIs: ", nrow(feats_2), "\n")
+        ## Clean up of the results:
+        if (nrow(feats_2) > 0) {
+            ## remove NaNs
+            any_na <- is.na(rowSums(feats_2[, c("mz", "mzmin", "mzmax", "rt",
+                                                "rtmin", "rtmax")]))
+            if (any(any_na))
+                feats_2 <- feats_2[!any_na, , drop = FALSE]
+            no_mz_width <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0
+            no_rt_width <- (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+
+            cat("No. of peaks with NA values: ", sum(any_na), "\n")
+            cat("No. of peaks without mz width: ", sum(no_mz_width), "\n")
+            cat("No. of peaks without rt width: ", sum(no_rt_width), "\n")
+            ## remove empty area
+            ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
+            ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
+            ## no_area <- no_mz_width || no_rt_width
+            no_area <- no_mz_width
+            if (any(no_area))
+                feats_2 <- feats_2[!no_area, , drop = FALSE]
+        }
+        cat("After removing NAs or empty are peaks: ", nrow(feats_2), "\n")
+        ## 4) Check and remove ROIs overlapping with peaks.
+        if (nrow(feats_2) > 0) {
+            ## Comparing each ROI with each peak; slightly modified from the original
+            ## code in which we prevent calling apply followed by two lapply.
+            removeROIs <- rep(FALSE, nrow(feats_2))
+            removeFeats <- rep(FALSE, nrow(peaks.))
+            overlapProportionThreshold <- 0.01
+            for (i in 1:nrow(feats_2)) {
+                ## Compare ROI i with all peaks (peaks) and check if its
+                ## overlapping
+                ## mz
+                roiMzCenter <- (feats_2[i, "mzmin"] + feats_2[i, "mzmax"]) / 2
+                peakMzCenter <- (peaks.[, "mzmin"] + peaks.[, "mzmax"]) / 2
+                roiMzRadius <- (feats_2[i, "mzmax"] - feats_2[i, "mzmin"]) / 2
+                peakMzRadius <- (peaks.[, "mzmax"] - peaks.[, "mzmin"]) / 2
+                overlappingMz <- abs(peakMzCenter - roiMzCenter) <=
+                    (roiMzRadius + peakMzRadius)
+                ## rt
+                roiRtCenter <- (feats_2[i, "rtmin"] + feats_2[i, "rtmax"]) / 2
+                peakRtCenter <- (peaks.[, "rtmin"] + peaks.[, "rtmax"]) / 2
+                roiRtRadius <- (feats_2[i, "rtmax"] - feats_2[i, "rtmin"]) / 2
+                peakRtRadius <- (peaks.[, "rtmax"] - peaks.[, "rtmin"]) / 2
+                overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
+                    (roiRtRadius + peakRtRadius)
+                is_overlapping <- overlappingMz & overlappingRt
+                ## Now determine whether we remove the ROI or the peak, depending
+                ## on the raw signal intensity.
+                if (any(is_overlapping)) {
+                    if (any(peaks.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                        removeROIs[i] <- TRUE
+                    } else {
+                        removeFeats[is_overlapping] <- TRUE
+                    }
+                }
+            }
+            feats_2 <- feats_2[!removeROIs, , drop = FALSE]
+            peaks. <- peaks.[!removeFeats, , drop = FALSE]
+        }
+        cat("After removing overlapping peaks: ", nrow(feats_2), "\n")
+        cat("After removing overlapping peaks (peaks.): ", nrow(peaks.), "\n")
+        if (!verboseColumns)
+            peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
+                                  "rtmax", "into", "intb", "maxo", "sn")]
+        ## For now just return the new ones.
+        return(feats_2)
+        if (nrow(feats_2) == 0)
+            return(peaks.)
+        else
+            return(rbind(peaks., feats_2))
 }

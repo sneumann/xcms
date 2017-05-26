@@ -47,7 +47,7 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     if (min(scanrange) < 1 | max(scanrange) > length(object@scantime)) {
         scanrange[1] <- max(1, scanrange[1])
         scanrange[2] <- min(length(object@scantime), scanrange[2])
-        message("Provided scanrange was adjusted to ", scanrange)
+        message("Provided scanrange was adjusted to ", scanrange[1]," - ", scanrange[2])
     }
     if (!is.null(rawdata$acquisitionNum)) {
         ## defined only for mzData and mzXML
@@ -539,106 +539,196 @@ remakeTIC<-function(object){
 }
 
 ############################################################
-## .createProfileMatrix
-##' @title Create the profile matrix
-##'
-##' @description This function creates a \emph{profile} matrix, i.e. a rt times
-##' m/z matrix of aggregated intensity values with values aggregated within bins
-##' along the m/z dimension.
-##'
-##' @details This is somewhat the successor function for the deprecated
-##' \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
-##' \code{profBinLinBaseM} and \code{profIntLin}).
-##'
-##' @param mz Numeric representing the m/z values across all scans/spectra.
-##' @param int Numeric representing the intensity values across all
-##' scans/spectra.
-##' @param valsPerSpect Numeric representing the number of measurements for each
-##' scan/spectrum.
-##' @param method A character string specifying the profile matrix generation
-##' method. Allowed are \code{"bin"}, \code{"binlin"},
-##' \code{"binlinbase"} and \code{"intlin"}.
-##' @param step Numeric specifying the size of the m/z bins.
-##' @param baselevel Numeric specifying the base value.
-##' @param basespace Numeric.
-##' @param mzrange. numeric(2) optionally specifying the mz value range
-##' for binning. This is to adopt the old profStepPad<- method used for obiwarp
-##' retention time correction that did the binning from whole-number limits.
-##' @noRd
-.createProfileMatrix <- function(mz, int, valsPerSpect,
-                                 method, step = 0.1, baselevel = NULL,
-                                 basespace = NULL,
-                                 mzrange. = NULL) {
-    profMeths <- c("bin", "binlin", "binlinbase", "intlin")
-    names(profMeths) <- c("none", "lin", "linbase", "intlin")
-    method <- match.arg(method, profMeths)
-    impute <- names(profMeths)[profMeths == method]
+## getPeaks
+#' @description Replacement function for the original getPeaks method/function
+#'     that does no longer use the deprecated \code{profFun} functions. This
+#'     function uses the \code{binYonX} and \code{imputeLinInterpol} to perform
+#'     the binning (and missing value imputation).
+#'
+#' @param object An \code{xcmsRaw} object.
+#'
+#' @param peakrange \code{matrix} with 4 required columns \code{"mzmin"},
+#'     \code{"mzmax"}, \code{"rtmin"} and \code{"rtmax"}.
+#'
+#' @param step \code{numeric(1)} defining the bin size for the profile matrix
+#'     generation.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.getPeaks_new <- function(object, peakrange, step = 0.1) {
+    ## Here we're avoiding the profFun call.
+    if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
+        peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
+    stime <- object@scantime
 
-    if (length(mzrange.) != 2) {
-        mrange <- range(mz)
-        mzrange. <- c(floor(mrange[1] / step) * step,
-                      ceiling(mrange[2] / step) * step)
-    }
-    mass <- seq(mzrange.[1], mzrange.[2], by = step)
-    mlength <- length(mass)
-    ## Calculate the "real" bin size; old xcms code oddity that that's different
-    ## from step.
-    bin_size <- (mass[mlength] - mass[1]) / (mlength - 1)
-    ## for profIntLinM we have to use the old code.
-    if (impute == "intlin") {
-        profFun <- "profIntLinM"
-        profp <- list()
-        scanindex <- valueCount2ScanIndex(valsPerSpect)
-        buf <- do.call(profFun, args = list(mz, int,
-                                            scanindex, mlength,
-                                            mass[1], mass[mlength],
-                                            TRUE))
-    } else {
-        ## Binning the data.
-        toIdx <- cumsum(valsPerSpect)
-        fromIdx <- c(1L, toIdx[-length(toIdx)] + 1L)
-        shiftBy <- TRUE
-        binFromX <- min(mass)
-        binToX <- max(mass)
-        brks <- breaks_on_nBins(fromX = binFromX, toX = binToX,
-                                nBins = mlength, shiftByHalfBinSize = TRUE)
-        binRes <- binYonX(mz, int,
-                          breaks = brks,
-                          fromIdx = fromIdx,
-                          toIdx = toIdx,
-                          baseValue = ifelse(impute == "none", yes = 0, no = NA),
-                          sortedX = TRUE,
-                          returnIndex = FALSE
-                          )
-        if (length(toIdx) == 1)
-            binRes <- list(binRes)
-        ## Missing value imputation.
-        if (impute == "linbase") {
-            ## need arguments distance and baseValue.
-            if (length(basespace) > 0) {
-                if (!is.numeric(basespace))
-                    stop("'basespace' has to be numeric!")
-                distance <- floor(basespace[1] / bin_size)
-            } else {
-                distance <- floor(0.075 / bin_size)
-            }
-            if (length(baselevel) > 0) {
-                if (!is.numeric(baselevel))
-                    stop("'baselevel' has to be numeric!")
-                baseValue <- baselevel
-            } else {
-                baseValue <- min(int, na.rm = TRUE) / 2
-            }
-        } else {
-            distance <- 0
-            baseValue <- 0
+    pi <- profinfo(object)
+    method <- pi$method
+    if (missing(step))
+        step <- pi$step
+    if (step == 0)
+        step <- 0.1
+    baselevel <- pi$baselevel
+    basespace <- pi$basespace
+    vps <- diff(c(object@scanindex, length(object@env$mz)))
+    
+    cat("method: ", method, "\n")
+    cat("step: ", step, "\n")
+    ## Create the profile matrix:
+    pMat <- .createProfileMatrix(mz = object@env$mz, int = object@env$intensity,
+                                 valsPerSpect = vps,
+                                 method = method,
+                                 step = step,
+                                 baselevel = baselevel,
+                                 basespace = basespace,
+                                 returnBreaks = TRUE,
+                                 baseValue = 0,
+                                 mzrange. = NULL)
+    brks <- pMat$breaks
+    pMat <- pMat$profMat  ## rows are masses, cols are retention times/scans.
+    bin_size <- diff(brks[1:2])
+    bin_half <- bin_size / 2
+    ## Calculate the mean mass per bin using the breaks used for the binning.
+    ## Note: these define the real mass breaks as they have been used for the
+    ## binning. Simply using seq(floor...) as in the original code is wrong
+    ## because the mass bins are calculated wrongly. The bin size is != step,
+    ## bin size is marginally smaller and, for larger mz the correct mass
+    ## bin will be wrongly identified.
+    mass <- brks[-length(brks)] + bin_half ## midpoint for the breaks
+    mass_range <- range(mass)
+
+    ## Prepare the result matrix.
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "maxo")
+    rmat <- matrix(nrow = nrow(peakrange), ncol = length(cnames))
+    colnames(rmat) <- cnames
+
+    for (i in order(peakrange[, 1])) {
+        imz <- findRange(mass, c(peakrange[i, 1] - bin_half,
+                                 peakrange[i, 2] + bin_half), TRUE)
+        iret <- findRange(stime, peakrange[i, 3:4], TRUE)
+        idx_imz <- imz[1]:imz[2]
+        idx_iret <- iret[1]:iret[2]
+        ## Extract the intensity matrix for the mz-rt range: rows are mz, cols
+        ## rt values.
+        ymat <- pMat[idx_imz, idx_iret, drop = FALSE]
+        ## Define the maximum intensity, is one value per mz.
+        ymax <- colMax(ymat)
+        iymax <- which.max(ymax)
+
+        ## The width in rt.
+        pwid <- diff(stime[iret])/diff(iret)
+
+        ## Calculate sum across rt. For each mz we get one value.
+        rosm <- rowSums(ymat)
+        limz <- length(idx_imz)
+        if (length(rosm) != limz) { ## that happens for some reason
+            warning("weighted.mean  : x and w must have the same length \n")
+            rosm <- rep(1, limz)  ## fallback to mean
         }
-        binVals <- lapply(binRes, function(z) {
-            return(imputeLinInterpol(z$y, method = impute, distance = distance,
-                                     noInterpolAtEnds = TRUE,
-                                     baseValue = baseValue))
-        })
-        buf <- do.call(cbind, binVals)
+        ## mean mz:
+        rmat[i, 1] <- weighted.mean(mass[idx_imz], rosm) ## mz; its not the
+        ## position of the largest intensity!
+        if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()
+            ## results in NA (not NaN) for zero weights
+            rmat[i, 1] <- mean(peakrange[i, 1:2])
+
+        rmat[i, 2:3] <- peakrange[i, 1:2]            ## mzmin, mzmax
+        rmat[i, 4] <- stime[idx_iret][iymax] ## rt
+        rmat[i, 5:6] <- peakrange[i, 3:4]            ## rtmin, rtmax
+
+        if (peakrange[i, 3] <  stime[1] ||
+            peakrange[i, 4] > stime[length(stime)] ||
+            is.nan(pwid)) {
+            warning("getPeaks: Peak  m/z:", peakrange[i, 1], "-",
+                    peakrange[i, 2], ",  RT:", peakrange[i, 3], "-",
+                    peakrange[i, 4], "is out of retention time range for ",
+                    "this sample (", object@filepath,
+                    "), using zero intensity value.\n")
+            rmat[i, 7:8] <- 0
+        } else {
+            rmat[i, 7] <- pwid * sum(ymax)  ## into
+            rmat[i, 8] <- ymax[iymax]       ## maxo
+        }
     }
-    buf
+    invisible(rmat)
+}
+
+#' @description Original getPeaks function. This should be removed at some point
+#'     as it uses deprecated API.
+#' @noRd
+.getPeaks_orig <- function(object, peakrange, step = 0.1) {
+    profFun <- match.profFun(object)
+    if (all(c("mzmin","mzmax","rtmin","rtmax") %in% colnames(peakrange)))
+        peakrange <- peakrange[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE]
+    stime <- object@scantime
+
+### Create EIC buffer
+    ## This is NOT calculated for the full file.
+    mrange <- range(peakrange[,1:2])
+    ## These mass bins are slightly different from the ones that are used
+    ## by the binning function, since within the binning function the step/bin
+    ## size is recalculated!
+    mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
+    bufsize <- min(100, length(mass))
+    buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
+                   bufsize, mass[1], mass[bufsize], TRUE, object@profparam)
+    bufidx <- integer(length(mass))
+    idxrange <- c(1, bufsize)
+    bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
+
+    cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "maxo")
+    rmat <- matrix(nrow = nrow(peakrange), ncol = length(cnames))
+    colnames(rmat) <- cnames
+
+    for (i in order(peakrange[,1])) {
+        imz <- findRange(mass, c(peakrange[i,1]-.5*step, peakrange[i,2]+.5*step), TRUE)
+        iret <- findRange(stime, peakrange[i,3:4], TRUE)
+
+### Update EIC buffer if necessary
+        if (bufidx[imz[2]] == 0) {
+            bufidx[idxrange[1]:idxrange[2]] <- 0
+            idxrange <- c(max(1, imz[1]), min(bufsize+imz[1]-1, length(mass)))
+            bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
+            buf <- profFun(object@env$mz, object@env$intensity, object@scanindex,
+                           diff(idxrange)+1, mass[idxrange[1]], mass[idxrange[2]],
+                           TRUE, object@profparam)
+        }
+        ## Extract the intensity matrix for the mz-rt range: rows are mz, cols
+        ## rt values.
+        ymat <- buf[bufidx[imz[1]:imz[2]],iret[1]:iret[2],drop=FALSE]
+        ## Define the maximum intensity, is one value per mz.
+        ymax <- colMax(ymat)
+        iymax <- which.max(ymax)
+
+        ## The width in rt.
+        pwid <- diff(stime[iret])/diff(iret)
+
+        ## Calculate sum across rt. For each mz we get one value.
+        rosm <- rowSums(ymat)
+        limz <- length(imz[1]:imz[2])
+        if (length(rosm) != limz) { ## that happens for some reason
+            warning("weighted.mean  : x and w must have the same length \n")
+            rosm <- rep(1, limz)  ## fallback to mean
+        }
+        ## mean mz:
+        rmat[i,1] <- weighted.mean(mass[imz[1]:imz[2]], rosm) ## mz; its not the
+        ## position of the largest intensity!
+        if (is.nan(rmat[i,1]) || is.na(rmat[i,1])) ##  R2.11 :  weighted.mean()  results in NA (not NaN) for zero weights
+            rmat[i,1] <- mean(peakrange[i,1:2])
+
+        rmat[i,2:3] <- peakrange[i,1:2]            ## mzmin, mzmax
+        rmat[i,4] <- stime[iret[1]:iret[2]][iymax] ## rt
+        rmat[i,5:6] <- peakrange[i,3:4]            ## rtmin, rtmax
+
+        if (peakrange[i,3] <  stime[1] || peakrange[i,4] > stime[length(stime)] || is.nan(pwid)) {
+            warning("getPeaks: Peak  m/z:",peakrange[i,1],"-",peakrange[i,2], ",  RT:",peakrange[i,3],"-",peakrange[i,4],
+                    "is out of retention time range for this sample (",object@filepath,"), using zero intensity value.\n")
+            rmat[i,7:8] <- 0
+        } else {
+            rmat[i,7] <- pwid*sum(ymax)  ## into
+            rmat[i,8] <- ymax[iymax]     ## maxo
+        }
+    }
+    invisible(rmat)
+
 }

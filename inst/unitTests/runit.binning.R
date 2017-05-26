@@ -607,44 +607,51 @@ test_breaks <- function() {
     ## Test generation of breaks for binning.
     ## o nBins
     res <- breaks_on_nBins(1, 10, 4)
-    checkIdentical(res, seq(1, 10, length.out = 5))
+    checkEquals(res, seq(1, 10, length.out = 5))
     res <- breaks_on_nBins(2, 8, 20)
-    checkIdentical(res, seq(2, 8, length.out = 21))
+    checkEquals(res, seq(2, 8, length.out = 21))
     ##
     brksR <- seq(200, 600, length.out = 2002)
     brks <- breaks_on_nBins(200, 600, nBins = 2001)
-    checkIdentical(brks, brksR)
+    checkEquals(brks, brksR)
     ## Simulate shift by half bin size
     brksR <- seq((200 - 0.1), (600 + 0.1), length.out = 2002)
     brks <- breaks_on_nBins(200, 600, nBins = 2001,
                             shiftByHalfBinSize = TRUE)
-    checkIdentical(brks, brksR)
+    checkEquals(brks, brksR)
 
     ## o binSize
     res <- breaks_on_binSize(1, 10, 0.13)
     resR <- seq(1, 10, by = 0.13)
-    checkIdentical(res[-length(res)], resR[-length(resR)])
-    checkIdentical(res[length(res)], 10)
+    checkEquals(res[-length(res)], resR[-length(resR)])
+    checkEquals(res[length(res)], 10)
     ##   Will create one bin more.
     res <- breaks_on_binSize(1, 10, 0.51)
     resR <- seq(1, 10, by = 0.51)
-    checkIdentical(res[-length(res)], resR)
-    checkIdentical(res[length(res)], 10)
+    checkEquals(res[-length(res)], resR)
+    checkEquals(res[length(res)], 10)
     ##
     brksR <- seq(200, 600, by = 0.2)
     brks <- breaks_on_binSize(200, 600, binSize = 0.2)
-    checkIdentical(brks, brksR)
+    checkEquals(brks, brksR)
     ## Simulate shift by half bin size
     brksR <- seq((200 - 0.1), (600 + 0.1), by = 0.2)
     brks <- breaks_on_binSize((200 - 0.1), (600 + 0.1),
                               binSize = 0.2)
-    checkIdentical(brks, brksR)
+    checkEquals(brks, brksR)
     ##
+    ## Ultimate fix for issue #118 
     brksR <- seq((200 - 0.1), (600), by = 0.2)
     brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
-    checkTrue(length(brks) > length(brksR))
-    checkIdentical(brks[-length(brks)], brksR)
-    checkIdentical(brks[length(brks)], 600)
+    ## Compare them up to the last value, since in R that will be 600-01, while
+    ## breaks_on_binSize will ensure that the upper limit (600) is still within
+    ## the breaks
+    cmn <- 1:(length(brksR) - 1)
+    checkEquals(brks[cmn], brksR[cmn])
+    ## Now, that below breaks on a windows build machine (issue #127)
+    ## checkTrue(length(brks) > length(brksR))
+    ## checkEquals(brks[-length(brks)], brksR)
+    checkEquals(brks[length(brks)], 600)
 }
 
 ############################################################

@@ -2,7 +2,7 @@
 if(require("RUnit", quietly=TRUE)) {
 
     ## --- Setup ---
-
+    
     pkg <- "xcms" # <-- Change to package name!
     if(Sys.getenv("RCMDCHECK") == "FALSE") {
         ## Path to unit tests for standalone running under Makefile (not R CMD check)
@@ -22,25 +22,36 @@ if(require("RUnit", quietly=TRUE)) {
     attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
-    ## faahko_grouped <- group(faahko)
-    ## faahko_grouped_filled <- fillPeaks(faahko_grouped)
-    ## faahko_processed <- fillPeaks(group(retcor(faahko_grouped)))
-
     ## Disable parallel processing for the unit tests
     library(BiocParallel)
     register(SerialParam())
-
+    
     ## Create some objects we can re-use in different tests:
     ## Needed in runit.XCMSnExp.R
     faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
+    
     ## An xcmsRaw for the first file:
     faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                            profstep = 0)
     faahko_od <- readMSData2(faahko_3_files)
 
+    ## Feature alignment on those:
+    faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
+                                                                  snthresh = 40))
+    faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
+                         method = "centWave", noise = 10000, snthresh = 40)
+    ## faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 5000))
+    ## faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
+    ##                      method = "centWave", noise = 5000)
+    ## Doing also the retention time correction etc
+    od_x <- faahko_od
+    xod_x <- faahko_xod
+    xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+    xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
+    xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+    
     ## microtofq
     library(msdata)
     microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
@@ -48,6 +59,19 @@ if(require("RUnit", quietly=TRUE)) {
     microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
     microtofq_od <- readMSData2(microtofq_fs)
 
+    ## Direct injection data:
+    fticrf <- list.files(system.file("fticr", package = "msdata"),
+                         recursive = TRUE, full.names = TRUE)
+    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+    fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
+                                                peakThr = 80000, ampTh = 0.005,
+                                                SNR.method = "data.mean",
+                                                winSize.noise = 500))
+    fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
+                        SNR.method='data.mean' , winSize.noise=500,
+                        peakThr=80000,  amp.Th=0.005)
+    
+    ## microtofq_xod <- findChromPeaks(microtofq_od, param = MSWParam())
     ## If desired, load the name space to allow testing of private functions
     ## if (is.element(pkg, loadedNamespaces()))
     ##     attach(loadNamespace(pkg), name=paste("namespace", pkg, sep=":"), pos=3)

@@ -5,8 +5,8 @@
 \alias{[,XCMSnExp,logicalOrNumeric,missing,missing-method}
 \alias{bin,XCMSnExp-method}
 \alias{clean,XCMSnExp-method}
-\alias{filterAcquisitionNum,XCMSnExp-method}
 \alias{filterMsLevel,XCMSnExp-method}
+\alias{filterAcquisitionNum,XCMSnExp-method}
 \alias{normalize,XCMSnExp-method}
 \alias{pickPeaks,XCMSnExp-method}
 \alias{removePeaks,XCMSnExp-method}
@@ -44,7 +44,7 @@ which spectra the data set should be reduced.}
 
 \item{drop}{For \code{[}: not supported.}
 
-\item{object}{An \code{\link{XCMSnExp}} object.}
+\item{object}{An \code{\link{XCMSnExp}} or \code{OnDiskMSnExp} object.}
 
 \item{binSize}{\code{numeric(1)} defining the size of a bin (in Dalton).}
 
@@ -71,8 +71,8 @@ object by file.}
 normalization method. See \code{\link[MSnbase]{normalize}} for details.
 For \code{pickPeaks}: \code{character(1)} defining the method. See
 \code{\link[MSnbase]{pickPeaks}} for options. For \code{smooth}:
-\code{character(1)} defining the method. See \code{\link[MSnbase]{smooth}}
-for options and details.}
+\code{character(1)} defining the method. See
+\code{\link[MSnbase]{smooth}} for options and details.}
 
 \item{...}{Optional additional arguments.}
 
@@ -94,55 +94,58 @@ For all methods: a \code{XCMSnExp} object.
 }
 \description{
 The methods listed on this page are \code{\link{XCMSnExp}}
-methods inherited from its parent, the \code{\link[MSnbase]{OnDiskMSnExp}}
-class from the \code{MSnbase} package, that alter the raw data or are related
-to data subsetting. Thus calling any of these methods causes all \code{xcms}
-pre-processing results to be removed from the \code{\link{XCMSnExp}} object
-to ensure its data integrity.
+    methods inherited from its parent, the
+    \code{\link[MSnbase]{OnDiskMSnExp}} class from the \code{MSnbase}
+    package, that alter the raw data or are related to data subsetting. Thus
+    calling any of these methods causes all \code{xcms} pre-processing
+    results to be removed from the \code{\link{XCMSnExp}} object to ensure
+    its data integrity.
 
-The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
-spectra. For more details and examples see the documentation for
-\code{\link[MSnbase]{OnDiskMSnExp}}.
+    The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
+    spectra. For more details and examples see the documentation for
+    \code{\link[MSnbase]{OnDiskMSnExp}}.
 
-The \code{bin} method allows to \emph{bin} spectra. See
-\code{\link[MSnbase]{bin}} documentation for more details and examples.
+\code{bin}: allows to \emph{bin} spectra. See
+    \code{\link[MSnbase]{bin}} documentation for more details and examples.
 
-The \code{clean} method removes unused \code{0} intensity data
-points. See \code{\link[MSnbase]{clean}} documentation for details and
-examples.
+\code{clean}: removes unused \code{0} intensity data
+    points. See \code{\link[MSnbase]{clean}} documentation for details and
+    examples.
 
-The \code{filterMsLevel} reduces the \code{\link{XCMSnExp}}
-object to spectra of the specified MS level(s). See
-\code{\link[MSnbase]{filterMsLevel}} documentation for details and examples.
+\code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
+    object to spectra of the specified MS level(s). See
+    \code{\link[MSnbase]{filterMsLevel}} documentation for details and
+    examples.
 
-The \code{filterAcquisitionNum} method filters the
-\code{\link{XCMSnExp}} object keeping only spectra with the provided
-acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
-details and examples.
+\code{filterAcquisitionNum}: filters the
+    \code{\link{XCMSnExp}} object keeping only spectra with the provided
+    acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
+    details and examples.
 
-The \code{normalize} method performs basic normalization of spectra
-intensities. See \code{\link[MSnbase]{normalize}} documentation for details
-and examples.
+The \code{normalize} method performs basic normalization of
+    spectra intensities. See \code{\link[MSnbase]{normalize}} documentation
+    for details and examples.
 
 The \code{pickPeaks} method performs peak picking. See
-\code{\link[MSnbase]{pickPeaks}} documentation for details and examples.
+    \code{\link[MSnbase]{pickPeaks}} documentation for details and examples.
 
-The \code{removePeaks} method removes peaks (intensities) lower than a
-threshold. Note that these peaks are not features! See \code{\link[MSnbase]{removePeaks}} documentation for details and examples.
+The \code{removePeaks} method removes mass peaks (intensities)
+    lower than a threshold. Note that these peaks refer to \emph{mass}
+    peaks, which are different to the chromatographic peaks detected and
+    analyzed in a metabolomics experiment! See
+    \code{\link[MSnbase]{removePeaks}} documentation for details and
+    examples.
 
-The \code{smooth} method smooths spectra. See \code{\link[MSnbase]{smooth}}
-documentation for details and examples.
+The \code{smooth} method smooths spectra. See
+    \code{\link[MSnbase]{smooth}} documentation for details and examples.
+}
+\seealso{
+\code{\link{XCMSnExp-filter}} for methods to filter and subset
+    \code{XCMSnExp} objects.
+    \code{\link{XCMSnExp}} for base class documentation.
+    \code{\link[MSnbase]{OnDiskMSnExp}} for the documentation of the
+    parent class.
 }
 \author{
 Johannes Rainer
 }
-\seealso{
-\code{\link{XCMSnExp-filter}} for methods to filter and subset
-\code{XCMSnExp} objects.
-
-\code{\link{XCMSnExp}} for base class documentation.
-
-\code{\link[MSnbase]{OnDiskMSnExp}} for the documentation of the
-parent class.
-}
-

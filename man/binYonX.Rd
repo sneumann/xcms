@@ -182,10 +182,9 @@ binYonX(X, nBins = 5L, fromIdx = fIdx, toIdx = tIdx)
 binYonX(X, nBins = 5L, fromIdx = fIdx, toIdx = tIdx, binFromX = 4, binToX = 28)
 ## The same bins are thus used for each sub-set.
 }
-\author{
-Johannes Rainer
-}
 \seealso{
 \code{\link{imputeLinInterpol}}
 }
-
+\author{
+Johannes Rainer
+}
