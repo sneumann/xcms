@@ -1,5 +1,5 @@
-CHANGES IN VERSION 2.99.0
---------------------------
+CHANGES IN VERSION 2.99.1
+-------------------------
 
 NEW FEATURES:
 - extractMsData to extract raw MS data as a data.frame (issue #120).
@@ -7,10 +7,12 @@ NEW FEATURES:
 BUG FIXES:
 - issue #175: an error is now thrown if no peak group was identified for peak
   group retention time correction.
-  
+- issue #178: scanrange was collapsed when the adjusted range was reported
+  (pull request by Jan Stanstrup).
+
 
 CHANGES IN VERSION 2.99.0
---------------------------
+-------------------------
 
 NEW FEATURES:
 - plotChromatogram and highlightChromPeaks functions.
