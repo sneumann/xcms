@@ -453,7 +453,13 @@ setMethod("retcor", "xcmsSet", function(object, method=getOption("BioC")$xcms$re
                                         ...) {
     ## Backward compatibility for old "methods"
     if (method == "linear" || method == "loess") {
-        return(invisible(do.call(retcor.peakgroups, alist(object, smooth=method, ...))))
+        args <- list(...)
+        if (any(names(args) == "smooth"))
+            warning("Provided argument 'smooth' will be replaced with the ",
+                    "value of 'method', i.e. with ", method)
+        args$smooth <- method
+        ## Overwriting eventually provided smooth parameter.
+        return(invisible(do.call(retcor.peakgroups, c(list(object), args))))
     }
 
     method <- match.arg(method, getOption("BioC")$xcms$retcor.methods)

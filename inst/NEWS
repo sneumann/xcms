@@ -9,6 +9,8 @@ BUG FIXES:
   group retention time correction.
 - issue #178: scanrange was collapsed when the adjusted range was reported
   (pull request by Jan Stanstrup).
+- issue #180: error when both parameters method and smooth are provided in the
+  retcor method.
 
 
 CHANGES IN VERSION 2.99.0
