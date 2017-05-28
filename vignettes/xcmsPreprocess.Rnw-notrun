@@ -53,6 +53,9 @@ corresponding to each step are also given.}
 library(multtest)
 library(xcms)
 library(faahKO)
+## Disable default parallel processing since on some platforms it might
+## cause delays.
+register(SerialParam())
 @
 
 \section{Raw Data File Preparation}

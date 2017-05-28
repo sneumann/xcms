@@ -106,6 +106,9 @@ do_adjustRtime_peakGroups <-
     } else
         rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
                                      missingSample, extraPeaks)
+    ## Fix for issue #175
+    if (length(rt) == 0)
+        stop("No peak groups found in the data for the provided settings")
     ## ## Check if we have peak groups with almost the same retention time. If yes
     ## ## select the best matching peaks among these.
     ## rtmeds <- rowMedians(rt, na.rm = TRUE)
@@ -477,5 +480,9 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     ## retention time that is calculated over ALL peaks within the peak
     ## group, not only to one peak selected for each sample (for multi
     ## peak per sample assignments).
-    rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
+    ## Fix for issue #175
+    if (is(rt, "matrix")) {
+        rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
+    }
+    rt
 }

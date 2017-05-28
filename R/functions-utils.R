@@ -4,16 +4,21 @@
 ############################################################
 ## valueCount2ScanIndex
 ##
-## @description Simple helper function that converts the number of values
-## per scan/spectrum to an integer vector that can be passed to the base
-## xcms functions/downstream C functions.
-##
-## @title Create index vector for internal C calls
-## @param valCount Numeric vector representing the number of values per
-## spectrum.
-## @return An integer vector with the index (0-based) in the mz or intensity
-## vectors indicating the start of a spectrum.
-## @author Johannes Rainer
+#' @title Create index vector for internal C calls
+#' 
+#' @description Simple helper function that converts the number of values
+#'     per scan/spectrum to an integer vector that can be passed to the base
+#'     xcms functions/downstream C functions.
+#'
+#' @param valCount Numeric vector representing the number of values per
+#'     spectrum.
+#' 
+#' @return An integer vector with the index (0-based) in the mz or intensity
+#'     vectors indicating the start of a spectrum.
+#' 
+#' @author Johannes Rainer
+#'
+#' @noRd
 valueCount2ScanIndex <- function(valCount){
     ## Convert into 0 based.
     valCount <- cumsum(valCount)
@@ -27,24 +32,27 @@ valueCount2ScanIndex <- function(valCount){
 ## code instead of the new implementations.
 ## This sets options.
 ##
-##' @title Enable usage of old xcms code
-##'
-##' @description This function allows to enable the usage of old, partially
-##' deprecated code from xcms by setting a corresponding global option. See
-##' details for functions affected.
-##'
-##' @note Usage of old code is strongly dicouraged. This function is thought
-##' to be used mainly in the transition phase from xcms to xcms version 3.
-##' @details The functions/methods that will be affected by this are:
-##' \itemize{
-##' \item \code{\link{do_findChromPeaks_matchedFilter}}
-##' }
-##' @param x logical(1) to specify whether or not original
-##' old code should be used in corresponding functions. If not provided the
-##' function simply returns the value of the global option.
-##' @return logical(1) indicating whether old code is being
-##' used.
-##' @author Johannes Rainer
+#' @title Enable usage of old xcms code
+#'
+#' @description This function allows to enable the usage of old, partially
+#'     deprecated code from xcms by setting a corresponding global option. See
+#'     details for functions affected.
+#'
+#' @note Usage of old code is strongly dicouraged. This function is thought
+#'     to be used mainly in the transition phase from xcms to xcms version 3.
+#' 
+#' @details The functions/methods that will be affected by this are:
+#'     \itemize{
+#'     \item \code{\link{do_findChromPeaks_matchedFilter}}
+#'     }
+#' 
+#' @param x logical(1) to specify whether or not original
+#'     old code should be used in corresponding functions. If not provided the
+#'     function simply returns the value of the global option.
+#' 
+#' @return logical(1) indicating whether old code is being used.
+#' 
+#' @author Johannes Rainer
 useOriginalCode <- function(x) {
     if (missing(x)) {
         res <- options()$BioC$xcms$useOriginalCode
@@ -69,13 +77,19 @@ useOriginalCode <- function(x) {
 ##     matchedFilter = ".matchedFilter_orig"
 ## )
 
-##' @title Copy the content from an environment to another one
-##' This function copies the content of an environment into another one.
-##' @param env environment from which to copy.
-##' @param inheritLocks logical(1) whether the locking status should be copied
-##' too
-##' @return an env.
-##' @noRd
+#' @title Copy the content from an environment to another one
+#' 
+#' @description This function copies the content of an environment into another
+#'     one.
+#' 
+#' @param env environment from which to copy.
+#' 
+#' @param inheritLocks logical(1) whether the locking status should be copied
+#'     too.
+#' 
+#' @return an env.
+#' 
+#' @noRd
 .copy_env <- function(env, inheritLocks = FALSE) {
     new_e <- new.env(parent = emptyenv())
     eNames <- ls(env, all.names = TRUE)
@@ -101,48 +115,48 @@ useOriginalCode <- function(x) {
 
 ############################################################
 ## .createProfileMatrix
-##' @title Create the profile matrix
-##'
-##' @description This function creates a \emph{profile} matrix, i.e. a rt times
-##'     m/z matrix of aggregated intensity values with values aggregated within
-##'     bins along the m/z dimension.
-##'
-##' @details This is somewhat the successor function for the deprecated
-##'     \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
-##'     \code{profBinLinBaseM} and \code{profIntLin}).
-##'
-##' @param mz Numeric representing the m/z values across all scans/spectra.
-##'
-##' @param int Numeric representing the intensity values across all
-##'     scans/spectra.
-##'
-##' @param valsPerSpect Numeric representing the number of measurements for each
-##'     scan/spectrum.
-##'
-##' @param method A character string specifying the profile matrix generation
-##'     method. Allowed are \code{"bin"}, \code{"binlin"},
-##'     \code{"binlinbase"} and \code{"intlin"}.
-##'
-##' @param step Numeric specifying the size of the m/z bins.
-##'
-##' @param baselevel Numeric specifying the base value.
-##'
-##' @param basespace Numeric.
-##'
-##' @param mzrange. numeric(2) optionally specifying the mz value range
-##'     for binning. This is to adopt the old profStepPad<- method used for
-##'     obiwarp retention time correction that did the binning from
-##'     whole-number limits.
-##'
-##' @param returnBreaks logical(1): hack to return the breaks of the bins.
-##'     Setting this to TRUE causes the function to return a \code{list} with
-##'     elements \code{"$profMat"} and \code{"breaks"}.
-##'
-##' @param baseValue numeric(1) defining the value to be returned if no signal
-##'     was found in the corresponding bin. Defaults to 0 for backward
-##'     compatibility.
-##'
-##' @noRd
+#' @title Create the profile matrix
+#'
+#' @description This function creates a \emph{profile} matrix, i.e. a rt times
+#'     m/z matrix of aggregated intensity values with values aggregated within
+#'     bins along the m/z dimension.
+#'
+#' @details This is somewhat the successor function for the deprecated
+#'     \code{profBin} methods (\code{profBinM}, \code{profBinLinM},
+#'     \code{profBinLinBaseM} and \code{profIntLin}).
+#'
+#' @param mz Numeric representing the m/z values across all scans/spectra.
+#'
+#' @param int Numeric representing the intensity values across all
+#'     scans/spectra.
+#'
+#' @param valsPerSpect Numeric representing the number of measurements for each
+#'     scan/spectrum.
+#'
+#' @param method A character string specifying the profile matrix generation
+#'     method. Allowed are \code{"bin"}, \code{"binlin"},
+#'     \code{"binlinbase"} and \code{"intlin"}.
+#'
+#' @param step Numeric specifying the size of the m/z bins.
+#'
+#' @param baselevel Numeric specifying the base value.
+#'
+#' @param basespace Numeric.
+#'
+#' @param mzrange. numeric(2) optionally specifying the mz value range
+#'     for binning. This is to adopt the old profStepPad<- method used for
+#'     obiwarp retention time correction that did the binning from
+#'     whole-number limits.
+#'
+#' @param returnBreaks logical(1): hack to return the breaks of the bins.
+#'     Setting this to TRUE causes the function to return a \code{list} with
+#'     elements \code{"$profMat"} and \code{"breaks"}.
+#'
+#' @param baseValue numeric(1) defining the value to be returned if no signal
+#'     was found in the corresponding bin. Defaults to 0 for backward
+#'     compatibility.
+#'
+#' @noRd
 .createProfileMatrix <- function(mz, int, valsPerSpect,
                                  method, step = 0.1, baselevel = NULL,
                                  basespace = NULL,
@@ -235,4 +249,78 @@ useOriginalCode <- function(x) {
 #' @noRd
 .featureIDs <- function(x) {
     sprintf(paste0("FT%0", ceiling(log10(x + 1L)), "d"), 1:x)
+}
+
+#' @description Expands stretches of TRUE values in \code{x} by one on both
+#'     sides.
+#'
+#' @note The return value for a \code{NA} is always \code{FALSE}.
+#' 
+#' @param x \code{logical} vector.
+#'
+#' @author Johannes Rainer
+#' 
+#' @noRd
+.grow_trues <- function(x) {
+    previous <- NA
+    x_new <- rep_len(FALSE, length(x))
+    for (i in 1:length(x)) {
+        if (is.na(x[i])) {
+            previous <- NA
+            next
+        }
+        ## If current element is TRUE
+        if (x[i]) {
+            x_new[i] <- TRUE
+            ## if last element was FALSE, set last element to TRUE
+            if (!is.na(previous) && !previous)
+                x_new[i - 1] <- TRUE
+        } else {
+            ## if previous element was TRUE, set current to TRUE.
+            if (!is.na(previous) && previous)
+                x_new[i] <- TRUE
+        }
+        previous <- x[i]
+    }
+    x_new
+}
+
+#' @title Weighted mean around maximum
+#'
+#' @describe Calculate a weighted mean of the values around the value with the
+#'     largest weight. \code{x} could e.g. be mz values and \code{w} the
+#'     corresponding intensity values.
+#'
+#' @param x \code{numeric} vector from which the weighted mean should be
+#'     calculated.
+#'
+#' @param w \code{numeric} of same length than \code{x} with the weights.
+#'
+#' @param i \code{integer(1)} defining the number of data points left and right
+#'     of the index with the largest weight that should be considered for the
+#'     weighted mean calculation.
+#'
+#' @return The weighted mean value.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mz <- c(124.0796, 124.0812, 124.0828, 124.0843, 124.0859, 124.0875,
+#'     124.0890, 124.0906, 124.0922, 124.0938, 124.0953, 124.0969)
+#' ints <- c(10193.8, 28438.0, 56987.6, 85107.6, 102531.6, 104262.6,
+#'     89528.8, 61741.2, 33485.8, 14146.6, 5192.2, 1630.2)
+#'
+#' plot(mz, ints)
+#'
+#' ## What would be found by the max:
+#' abline(v = mz[which.max(ints)], col = "grey")
+#' ## What does the weighted mean around apex return:
+#' abline(v = weightedMeanAroundApex(mz, ints, i = 2), col = "blue")
+weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
+    max_idx <- which.max(w)
+    seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
+    weighted.mean(x[seq_idx], w[seq_idx])
 }

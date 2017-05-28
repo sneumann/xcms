@@ -42,6 +42,9 @@ if(require("RUnit", quietly=TRUE)) {
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                          method = "centWave", noise = 10000, snthresh = 40)
+    ## faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 5000))
+    ## faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
+    ##                      method = "centWave", noise = 5000)
     ## Doing also the retention time correction etc
     od_x <- faahko_od
     xod_x <- faahko_xod

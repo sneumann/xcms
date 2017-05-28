@@ -10,7 +10,7 @@ importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
 importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
                   "phenoData<-", "pData", "rowMedians")
 
-importFrom("graphics", "plot", "image", "boxplot")
+importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
 importFrom("plyr", "rbind.fill")
@@ -206,7 +206,10 @@ export(
     "do_adjustRtime_peakGroups",
     "processHistoryTypes",
     "adjustRtimePeakGroups",
-    "plotAdjustedRtime"
+    "plotAdjustedRtime",
+    "plotChromatogram",
+    "highlightChromPeaks",
+    "plotChromPeakDensity"
 )
 
 ## New analysis methods
@@ -429,5 +432,6 @@ exportMethods("hasChromPeaks",
               "productMz",
               "fillChromPeaks",
               "as.data.frame",
-              "dropFilledChromPeaks"
+              "dropFilledChromPeaks",
+              "extractMsData"
               )

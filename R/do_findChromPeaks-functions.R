@@ -466,7 +466,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             mzmean <- do.call(mzCenterFun,
                                               list(mz = mz.value,
                                                    intensity = mz.int))
-
+                            
                             ## Compute dppm only if needed
                             dppm <- NA
                             if (verboseColumns) {
@@ -980,8 +980,13 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             ## @MOD1: Remove mz values for which no intensity was
                             ## measured. Would be better if getEIC returned NA
                             ## if nothing was measured.
+                            mzorig <- mz.value
                             mz.value <- mz.value[mz.int > 0]
                             mz.int <- mz.int[mz.int > 0]
+                            ## Call next to avoid reporting peaks without mz
+                            ## values (issue #165).
+                            if (length(mz.value) == 0)
+                                next
                             ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
                             ##     "\n")
 
