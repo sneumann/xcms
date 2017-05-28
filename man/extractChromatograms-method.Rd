@@ -8,38 +8,66 @@
 \title{Extracting chromatograms}
 \usage{
 \S4method{extractChromatograms}{OnDiskMSnExp}(object, rt, mz,
-  aggregationFun = "sum")
+  aggregationFun = "sum", missing = NA_real_)
 
 \S4method{extractChromatograms}{XCMSnExp}(object, rt, mz,
-  adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum")
+  adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum",
+  missing = NA_real_)
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
 \code{\link{XCMSnExp}} object from which the chromatograms should be
 extracted.}
 
-\item{rt}{\code{numeric(2)} defining the lower and upper boundary for the
-retention time range. If not specified, the full retention time range of
-the original data will be used. It is also possible to submit a
-\code{numeric(1)} in which case \code{range} is called on it to
-transform it to a \code{numeric(2)}.}
+\item{rt}{\code{numeric(2)} or two-column \code{matrix} defining the lower
+and upper boundary for the retention time range(s). If not specified,
+the full retention time range of the original data will be used.
+It is also possible to submit a \code{numeric(1)} in which case
+\code{range} is called on it to transform it to a \code{numeric(2)}.}
 
-\item{mz}{\code{numeric(2)} defining the lower and upper mz value for the
-MS data slice. If not specified, the chromatograms will be calculated on
-the full mz range. It is also possible to submit a \code{numeric(1)} in
-which case \code{range} is called on it to transform it to a
-\code{numeric(2)}.}
+\item{mz}{\code{numeric(2)} or two-column \code{matrix} defining the lower
+and upper mz value for the MS data slice(s). If not specified, the
+chromatograms will be calculated on the full mz range.
+It is also possible to submit a \code{numeric(1)} in which case
+\code{range} is called on it to transform it to a \code{numeric(2)}.}
 
 \item{aggregationFun}{\code{character} specifying the function to be used to
 aggregate intensity values across the mz value range for the same
 retention time. Allowed values are \code{"sum"}, \code{"max"},
 \code{"mean"} and \code{"min"}.}
 
+\item{missing}{\code{numeric(1)} allowing to specify the intensity value to
+be used if for a given retention time no signal was measured within the
+mz range of the corresponding scan. Defaults to \code{NA_real_} (see also
+Details and Notes sections below). Use \code{missing = 0} to resemble the
+behaviour of the \code{getEIC} from the \code{old} user interface.}
+
 \item{adjustedRtime}{For \code{extractChromatograms,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
 in the resulting \code{\link{Chromatogram}} object. Adjusted retention
 times are used by default if available.}
+}
+\value{
+If a single \code{rt} and \code{mz} range was specified,
+    \code{extractChromatograms} returns a \code{list} of
+    \code{\link{Chromatogram}} classes each element being the chromatogram
+    for one of the samples for the specified range.
+    If multiple \code{rt} and \code{mz} ranges were provided (i.e. by passing
+    a multi-row \code{matrix} to parameters \code{rt} or \code{mz}), the
+    function returns a \code{list} of \code{list}s. The outer list
+    representing results for the various ranges, the inner the result across
+    files. In other words, \code{result[[1]]} returns a \code{list} with
+    \code{Chromatogram} classes length equal to the number of files, each
+    element representing the \code{Chromatogram} for the first rt/mz range
+    for one file.
+    An empty \code{list} is returned if no MS1 data is present in
+    \code{object} or if not a single spectrum is available for any of the
+    provided retention time ranges in \code{rt}. An empty \code{Chromatogram}
+    object is returned at the correponding position in the result \code{list}
+    if for the specific file no scan/spectrum was measured in the provided
+    rt window. In all other cases, a \code{Chromatogram} with length equal
+    to the number of scans/spectra in the provided rt range is returned.
 }
 \description{
 \code{extractChromatograms}: the method allows to extract
@@ -48,17 +76,26 @@ times are used by default if available.}
 }
 \details{
 Arguments \code{rt} and \code{mz} allow to specify the MS
-    data slice from which the chromatogram should be extracted. The
-    parameter \code{aggregationSum} allows to specify the function to be
+    data slice from which the chromatogram should be extracted.
+    The parameter \code{aggregationSum} allows to specify the function to be
     used to aggregate the intensities across the mz range for the same
     retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
     to calculate the \emph{total ion chromatogram} (TIC),
     \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
+    The length of the extracted \code{Chromatogram} object, i.e. the number
+    of available data points, corresponds to the number of scans/spectra
+    measured in the specified retention time range. If in a specific scan
+    (for a give retention time) no signal was measured in the specified mz
+    range, a \code{NA_real_} is reported as intensity for the retention time
+    (see Notes for more information). This can be changed using the
+    \code{missing} parameter.
 }
 \note{
 \code{Chromatogram} objects extracted with \code{extractChromatogram}
-    contain \code{NA_real_} values if, for a given retention time, no valid
-    measurement was available for the provided mz range.
+    contain \code{NA_real_} values if, for a given retention time, no 
+    signal was measured in the specified mz range. If no spectrum/scan is
+    present in the defined retention time window a \code{Chromatogram} object
+    of length 0 is returned.
 
     For \code{\link{XCMSnExp}} objects, if adjusted retention times are
     available, the \code{extractChromatograms} method will by default report
@@ -85,11 +122,30 @@ plot(rtime(chrs[[2]]), intensity(chrs[[2]]), type = "l", xlab = "rtime",
 for(i in c(1, 3)) {
   points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l", col = "00000080")
 }
+
+## Plot the chromatogram using plotChromatogram
+plotChromatogram(chrs)
+
+## Extract chromatograms for multiple ranges.
+mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
+chrs <- extractChromatograms(od, mz = mzr, rt = rtr)
+
+## Plot the extracted chromatograms
+par(mfrow = c(1, 2))
+plotChromatogram(chrs[[1]])
+plotChromatogram(chrs[[2]])
 }
 \seealso{
 \code{\link{XCMSnExp}} for the data object.
     \code{\link{Chromatogram}} for the object representing chromatographic
     data.
+
+    \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
+    \code{list} of such objects.
+
+    \code{\link{extractMsData}} for a method to extract the MS data as
+    \code{data.frame}.
 }
 \author{
 Johannes Rainer

@@ -109,7 +109,7 @@ processHistoryTypes()
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
 \S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE, rt = numeric(),
-  mz = numeric(), ppm = 10, type = "any")
+  mz = numeric(), ppm = 0, type = "any")
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
@@ -545,12 +545,20 @@ head(peaks(xs))
 \code{\linkS4class{xcmsSet}} for the old implementation.
     \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
     and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+
     \code{\link{findChromPeaks}} for available peak detection methods
     returning a \code{XCMSnExp} object as a result.
+
     \code{\link{groupChromPeaks}} for available peak grouping
     methods and \code{\link{featureDefinitions}} for the method to extract
     the feature definitions representing the peak grouping results.
     \code{\link{adjustRtime}} for retention time adjustment methods.
+
+    \code{\link{extractChromatograms}} to extract MS data as
+    \code{\link{Chromatogram}} objects.
+
+    \code{\link{extractMsData}} for the method to extract MS data as
+    \code{data.frame}s.
 
 \code{\link{fillChromPeaks}} for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.
