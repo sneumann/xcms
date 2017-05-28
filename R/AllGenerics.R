@@ -81,7 +81,8 @@ setGeneric("extraPeaks<-", function(object, value)
     standardGeneric("extraPeaks<-"))
 setGeneric("extractChromatograms", function(object, ...)
     standardGeneric("extractChromatograms"))
-
+setGeneric("extractMsData", function(object, ...)
+    standardGeneric("extractMsData"))
 
 ## F
 setGeneric("factorDiag", function(object) standardGeneric("factorDiag"))

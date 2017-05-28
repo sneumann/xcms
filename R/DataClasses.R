@@ -614,10 +614,11 @@ setClass("CentWaveParam",
                      msg <- c(msg, paste0("'roiList' does not provide ",
                                           "all required fields!"))
              }
-             if (length(object@roiList) > 0 &
-                 length(object@roiList) != length(object@roiScales))
-                 msg <- c(msg, paste0("'roiScales' has to have the same",
-                                      " length than 'roiList'."))
+             if (length(object@roiScales) > 0) {   
+                 if (length(object@roiList) != length(object@roiScales))
+                     msg <- c(msg, paste0("'roiScales' has to have the same",
+                                          " length than 'roiList'."))
+             }
              if (length(msg))
                  msg
              else
@@ -1377,7 +1378,9 @@ NULL
 #' @seealso The \code{\link{do_groupChromPeaks_density}} core
 #'     API function and \code{\link{group.density}} for the old user interface.
 #' 
-#' @seealso \code{\link{featureDefinitions}} and
+#' @seealso \code{\link{plotChromPeakDensity}} to plot peak densities and
+#'     evaluate different algorithm settings.
+#'     \code{\link{featureDefinitions}} and
 #'     \code{\link{featureValues,XCMSnExp-method}} for methods to access the
 #'     features (i.e. the peak grouping results).
 #'
@@ -2243,13 +2246,21 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
 #'     \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
 #'     and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+#'
 #'     \code{\link{findChromPeaks}} for available peak detection methods
 #'     returning a \code{XCMSnExp} object as a result.
+#' 
 #'     \code{\link{groupChromPeaks}} for available peak grouping
 #'     methods and \code{\link{featureDefinitions}} for the method to extract
 #'     the feature definitions representing the peak grouping results.
 #'     \code{\link{adjustRtime}} for retention time adjustment methods.
 #'
+#'     \code{\link{extractChromatograms}} to extract MS data as
+#'     \code{\link{Chromatogram}} objects.
+#' 
+#'     \code{\link{extractMsData}} for the method to extract MS data as
+#'     \code{data.frame}s.
+#' 
 #' @rdname XCMSnExp-class
 #'
 #' @examples
@@ -2415,6 +2426,8 @@ setClass("XCMSnExp",
 #' @seealso \code{\link{extractChromatograms}} for the method to extract
 #'     \code{Chromatogram} objects from \code{\link{XCMSnExp}} or
 #'     \code{\link[MSnbase]{OnDiskMSnExp}} objects.
+#'
+#'     \code{\link{plotChromatogram}} to plot \code{Chromatogram} objects.
 setClass("Chromatogram",
          slots = c(
              rtime = "numeric",
@@ -2430,8 +2443,8 @@ setClass("Chromatogram",
          prototype = prototype(
              rtime = numeric(),
              intensity = numeric(),
-             mz = c(0, 0),
-             filterMz = c(0, 0),
+             mz = c(NA_real_, NA_real_),
+             filterMz = c(NA_real_, NA_real_),
              precursorMz = c(NA_real_, NA_real_),
              productMz = c(NA_real_, NA_real_),
              fromFile = integer(),

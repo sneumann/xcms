@@ -1,3 +1,46 @@
+CHANGES IN VERSION 2.99.1
+-------------------------
+
+NEW FEATURES:
+- extractMsData to extract raw MS data as a data.frame (issue #120).
+
+BUG FIXES:
+- issue #175: an error is now thrown if no peak group was identified for peak
+  group retention time correction.
+- issue #178: scanrange was collapsed when the adjusted range was reported
+  (pull request by Jan Stanstrup).
+- issue #180: error when both parameters method and smooth are provided in the
+  retcor method.
+
+
+CHANGES IN VERSION 2.99.0
+-------------------------
+
+NEW FEATURES:
+- plotChromatogram and highlightChromPeaks functions.
+- plotChromPeakDensity function.
+- clean method for Chromatogram classes.
+
+USER VISIBLE CHANGES:
+- Change default for ppm parameter in chromPeaks method to 0.
+- extractChromatograms supports extraction of multiple rt and mz ranges.
+- New parameter missing for extractChromatograms allowing to specify the
+  intensity value to be used for rts for which no signal is available within
+  the mz range.
+- extractChromatograms returns Chromatograms of length equal to the number of
+  scans within the specified rt range, even if no signals are measured
+  (intensity values are NA).
+
+
+CHANGES IN VERSION 1.53.1
+--------------------------
+
+BUG FIXES:
+- Increase parameter n for the density call in the peak density correspondence
+  method. This enables to separate neighboring peaks using small n (issue #161).
+  Thanks to Jan Stanstrup.
+
+
 CHANGES IN VERSION 1.51.11
 --------------------------
 

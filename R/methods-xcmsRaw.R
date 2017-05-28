@@ -2302,17 +2302,35 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
     ob@tic<-object@tic
     ob@profparam<-list()
 
-    arr<-array(dim=c(2,max(diff(ob@scanindex)), length(ob@scanindex)))
+    ## Array [x, y, z] with
+    ## - x: mz and intensity
+    ## - y: spectrum (1: max measurements within one of the spectra)
+    ## - z: scans (1: number of spectra)
+    arr <- array(dim = c(2, max(diff(ob@scanindex)), length(ob@scanindex)))
     if(lockMass[1] == 1){
         lockMass<-lockMass[3:length(lockMass)]
     }
-    lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
-    if((lockMass[nrow(lockMass),2]+2) > length(ob@scanindex)){
-        lockMass<-lockMass[1:(nrow(lockMass)-1),]
-    }
 
+    ## Remove the last lock mass if it is too close by the end
+    if ((lockMass[length(lockMass)] + 2) > length(ob@scanindex))
+        lockMass <- lockMass[1:(length(lockMass) - 1)]
+    
+    ## If the number of lockMass values is not even splitting them into a
+    ## two-column matrix is not OK (causes also the first lockMass spectrum to
+    ## be overwritten twice. That's to get rid of the warning in issue #173.
+    if (length(lockMass) %% 2)
+        lockMass <- c(lockMass, -99)
+    lockMass<-matrix(lockMass, ncol=2, byrow=TRUE)
+    ## if((lockMass[nrow(lockMass),2]+2) > length(ob@scanindex)){
+    ##     lockMass<-lockMass[1:(nrow(lockMass)-1),]
+    ## }
+
+    ## We're looping from 1 to length - 1, thus we have to fill in the last
+    ## scan later.
     for(i in 1:(length(ob@scanindex)-1)){
-        if(any(i == lockMass[,1])){
+        if(any(i == lockMass[, 1])){
+            ## Place mz and intensity values from the previous scan into the
+            ## array and fill the rest with NA.
             arr[1,,i] <-c(object@env$mz[(object@scanindex[(i-1)]+1):object@scanindex[i]],
                           rep(NA, (max(diff(object@scanindex))-
                                    length((object@scanindex[(i-1)]+1):object@scanindex[i])) ))
@@ -2321,7 +2339,8 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
                           rep(NA, (max(diff(object@scanindex)) -
                                    length((object@scanindex[(i-1)]+1):object@scanindex[i])) ))
 
-        } else if(any(i == lockMass[,2])){
+        } else if(any(i == lockMass[, 2])){
+            ## Place mz and intensity values from the next scan into the array.
             arr[1,,i] <-c(object@env$mz[(object@scanindex[i+1]+1):object@scanindex[(i+2)]],
                           rep(NA, (max(diff(object@scanindex)) -
                                    length((object@scanindex[i+1]+1):object@scanindex[(i+2)])) ))
@@ -2331,6 +2350,7 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
                                    length((object@scanindex[i+1]+1):object@scanindex[(i+2)])) ))
 
         } else{
+            ## Just fill with the actual values.
             arr[1,,i] <-c(object@env$mz[(object@scanindex[i]+1):object@scanindex[i+1]],
                           rep(NA, (max(diff(object@scanindex))-
                                    length((object@scanindex[i]+1):object@scanindex[i+1])) ))
@@ -2352,6 +2372,12 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
             ob@scanindex[i]<-as.integer(length(na.omit(arr[1,,(i-1)]))+ob@scanindex[(i-1)])
         }
     }
+    ## Fix for #173: fill also values for the last scan.
+    last_i <- length(ob@scanindex)
+    fetch_idx <- (object@scanindex[last_i] + 1):length(object@env$mz)
+    put_idx <- 1:length(fetch_idx)
+    arr[1, put_idx, length(ob@scanindex)] <- object@env$mz[fetch_idx]
+    arr[2, put_idx, length(ob@scanindex)] <- object@env$intensity[fetch_idx]
 
     NAidx<-is.na(arr[1,,])
     ob@env$mz<-as.numeric(arr[1,,][!NAidx])

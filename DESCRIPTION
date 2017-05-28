@@ -1,6 +1,6 @@
 Package: xcms
-Version: 1.53.0
-Date: 2017-04-16
+Version: 2.99.1
+Date: 2017-05-10
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -67,7 +67,6 @@ Collate:
     'functions-OnDiskMSnExp.R'
     'functions-ProcessHistory.R'
     'functions-XCMSnExp.R'
-    'functions-normalization.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'
