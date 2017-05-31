@@ -75,7 +75,7 @@
 ##' \item{sigma}{Gaussian parameter sigma.}
 ##' \item{h}{Gaussian parameter h.}
 ##' \item{f}{Region number of the m/z ROI where the peak was localized.}
-##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
+##' \item{dppm}{m/z deviation of mass trace across scans in ppm.}
 ##' \item{scale}{Scale on which the peak was localized.}
 ##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
 ##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
