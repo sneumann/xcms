@@ -14,95 +14,106 @@
 ## Conclusion:
 ## o speed improvement can only come from internal methods called withihn.
 ##
-##' @title Core API function for centWave peak detection
-##'
-##' @description This function performs peak density and wavelet based
-##' chromatographic peak detection for high resolution LC/MS data in centroid
-##' mode [Tautenhahn 2008].
-##'
-##' @details This algorithm is most suitable for high resolution
-##' LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
-##' method identifies \emph{regions of interest} (ROIs) representing mass traces
-##' that are characterized as regions with less than \code{ppm} m/z deviation in
-##' consecutive scans in the LC/MS map. These ROIs are then subsequently
-##' analyzed using continuous wavelet transform (CWT) to locate chromatographic
-##' peaks on different scales. The first analysis step is skipped, if regions
-##' of interest are passed with the \code{roiList} parameter.
-##'
-##' @note The \emph{centWave} was designed to work on centroided mode, thus it
-##' is expected that such data is presented to the function.
-##'
-##' This function exposes core chromatographic peak detection functionality of
-##' the \emph{centWave} method. While this function can be called directly,
-##' users will generally call the corresponding method for the data object
-##' instead.
-##'
-##' @param mz Numeric vector with the individual m/z values from all scans/
-##' spectra of one file/sample.
-##' @param int Numeric vector with the individual intensity values from all
-##' scans/spectra of one file/sample.
-##' @param scantime Numeric vector of length equal to the number of
-##' spectra/scans of the data representing the retention time of each scan.
-##' @param valsPerSpect Numeric vector with the number of values for each
-##' spectrum.
-##' @inheritParams findChromPeaks-centWave
-##'
-##' @family core peak detection functions
-##' @references
-##' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
-##' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
-##' 2008, 9:504
-##' @return
-##' A matrix, each row representing an identified chromatographic peak,
-##' with columns:
-##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
-##' \item{mzmin}{Minimum m/z of the peak.}
-##' \item{mzmax}{Maximum m/z of the peak.}
-##' \item{rt}{Retention time of the peak's midpoint.}
-##' \item{rtmin}{Minimum retention time of the peak.}
-##' \item{rtmax}{Maximum retention time of the peak.}
-##' \item{into}{Integrated (original) intensity of the peak.}
-##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
-##' \item{maxo}{Maximum intensity of the peak.}
-##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-##' \code{sd} being the standard deviation of local chromatographic noise.}
-##' \item{egauss}{RMSE of Gaussian fit.}
-##' }
-##' Additional columns for \code{verboseColumns = TRUE}:
-##' \describe{
-##' \item{mu}{Gaussian parameter mu.}
-##' \item{sigma}{Gaussian parameter sigma.}
-##' \item{h}{Gaussian parameter h.}
-##' \item{f}{Region number of the m/z ROI where the peak was localized.}
-##' \item{dppm}{m/z deviation of mass trace across scans in ppm.}
-##' \item{scale}{Scale on which the peak was localized.}
-##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
-##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-##' }
-##' @author Ralf Tautenhahn, Johannes Rainer
-##'
-##' @seealso \code{\link{centWave}} for the standard user interface method.
-##'
-##' @examples
-##' ## Load the test file
-##' library(faahKO)
-##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-##' xr <- xcmsRaw(fs, profstep = 0)
-##'
-##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-##' mzVals <- xr@env$mz
-##' intVals <- xr@env$intensity
-##' ## Define the values per spectrum:
-##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-##'
-##' ## Calling the function. We're using a large value for noise to speed up
-##' ## the call in the example performance - in a real use case we would either
-##' ## set the value to a reasonable value or use the default value.
-##' res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
-##' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
-##' head(res)
+#' @title Core API function for centWave peak detection
+#'
+#' @description This function performs peak density and wavelet based
+#'     chromatographic peak detection for high resolution LC/MS data in centroid
+#'     mode [Tautenhahn 2008].
+#'
+#' @details This algorithm is most suitable for high resolution
+#'     LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase
+#'     the method identifies \emph{regions of interest} (ROIs) representing
+#'     mass traces that are characterized as regions with less than \code{ppm}
+#'     m/z deviation in consecutive scans in the LC/MS map. These ROIs are then
+#'     subsequently analyzed using continuous wavelet transform (CWT) to locate
+#'     chromatographic peaks on different scales. The first analysis step is
+#'     skipped, if regions of interest are passed with the \code{roiList}
+#'     parameter.
+#'
+#' @note The \emph{centWave} was designed to work on centroided mode, thus it
+#'     is expected that such data is presented to the function.
+#'
+#'     This function exposes core chromatographic peak detection functionality
+#'     of the \emph{centWave} method. While this function can be called
+#'     directly, users will generally call the corresponding method for the
+#'     data object instead.
+#'
+#' @param mz Numeric vector with the individual m/z values from all scans/
+#'     spectra of one file/sample.
+#' 
+#' @param int Numeric vector with the individual intensity values from all
+#'     scans/spectra of one file/sample.
+#' 
+#' @param scantime Numeric vector of length equal to the number of
+#'     spectra/scans of the data representing the retention time of each scan.
+#' 
+#' @param valsPerSpect Numeric vector with the number of values for each
+#'     spectrum.
+#' 
+#' @inheritParams findChromPeaks-centWave
+#'
+#' @family core peak detection functions
+#'
+#' @references
+#' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
+#'     sensitive feature detection for high resolution LC/MS"
+#'     \emph{BMC Bioinformatics} 2008, 9:504
+#'
+#' @return
+#'     A matrix, each row representing an identified chromatographic peak,
+#'     with columns:
+#'     \describe{
+#' 
+#'     \item{mz}{Intensity weighted mean of m/z values of the peak across
+#'     scans.}
+#'     \item{mzmin}{Minimum m/z of the peak.}
+#'     \item{mzmax}{Maximum m/z of the peak.}
+#'     \item{rt}{Retention time of the peak's midpoint.}
+#'     \item{rtmin}{Minimum retention time of the peak.}
+#'     \item{rtmax}{Maximum retention time of the peak.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+#'     \code{sd} being the standard deviation of local chromatographic noise.}
+#'     \item{egauss}{RMSE of Gaussian fit.}
+#'     }
+#'     Additional columns for \code{verboseColumns = TRUE}:
+#'     \describe{
+#' 
+#'     \item{mu}{Gaussian parameter mu.}
+#'     \item{sigma}{Gaussian parameter sigma.}
+#'     \item{h}{Gaussian parameter h.}
+#'     \item{f}{Region number of the m/z ROI where the peak was localized.}
+#'     \item{dppm}{m/z deviation of mass trace across scans in ppm.}
+#'     \item{scale}{Scale on which the peak was localized.}
+#'     \item{scpos}{Peak position found by wavelet analysis (scan number).}
+#'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+#'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+#'     }
+#' 
+#' @author Ralf Tautenhahn, Johannes Rainer
+#'
+#' @seealso \code{\link{centWave}} for the standard user interface method.
+#'
+#' @examples
+#' ## Load the test file
+#' library(faahKO)
+#' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+#' xr <- xcmsRaw(fs, profstep = 0)
+#'
+#' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
+#' mzVals <- xr@env$mz
+#' intVals <- xr@env$intensity
+#' ## Define the values per spectrum:
+#' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+#'
+#' ## Calling the function. We're using a large value for noise to speed up
+#' ## the call in the example performance - in a real use case we would either
+#' ## set the value to a reasonable value or use the default value.
+#' res <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
+#' scantime = xr@scantime, valsPerSpect = valsPerSpect, noise = 10000)
+#' head(res)
 do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        ppm = 25,
                                        peakwidth = c(20, 50),
@@ -1182,74 +1193,84 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 ############################################################
 ## massifquant
 ##
-##' @title Core API function for massifquant peak detection
-##'
-##' @description Massifquant is a Kalman filter (KF)-based chromatographic peak
-##' detection for XC-MS data in centroid mode. The identified peaks
-##' can be further refined with the \emph{centWave} method (see
-##' \code{\link{do_findChromPeaks_centWave}} for details on centWave)
-##' by specifying \code{withWave = TRUE}.
-##'
-##' @details This algorithm's performance has been tested rigorously
-##' on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
-##' Simultaneous kalman filters identify peaks and calculate their
-##' area under the curve. The default parameters are set to operate on
-##' a complex LC-MS Orbitrap sample. Users will find it useful to do some
-##' simple exploratory data analysis to find out where to set a minimum
-##' intensity, and identify how many scans an average peak spans. The
-##' \code{consecMissedLimit} parameter has yielded good performance on
-##' Orbitrap data when set to (\code{2}) and on TOF data it was found best
-##' to be at (\code{1}). This may change as the algorithm has yet to be
-##' tested on many samples. The \code{criticalValue} parameter is perhaps
-##' most dificult to dial in appropriately and visual inspection of peak
-##' identification is the best suggested tool for quick optimization.
-##' The \code{ppm} and \code{checkBack} parameters have shown less influence
-##' than the other parameters and exist to give users flexibility and
-##' better accuracy.
-##' @inheritParams do_findChromPeaks_centWave
-##' @inheritParams findChromPeaks-centWave
-##' @inheritParams findChromPeaks-massifquant
-##' @return
-##' A matrix, each row representing an identified chromatographic peak,
-##' with columns:
-##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the peaks across
-##' scans.}
-##' \item{mzmin}{Minumum m/z of the peak.}
-##' \item{mzmax}{Maximum m/z of the peak.}
-##' \item{rtmin}{Minimum retention time of the peak.}
-##' \item{rtmax}{Maximum retention time of the peak.}
-##' \item{rt}{Retention time of the peak's midpoint.}
-##' \item{into}{Integrated (original) intensity of the peak.}
-##' \item{maxo}{Maximum intensity of the peak.}
-##' }
-##' If \code{withWave} is set to \code{TRUE}, the result is the same as
-##' returned by the \code{\link{do_findChromPeaks_centWave}} method.
-##' @family core peak detection functions
-##' @seealso \code{\link{massifquant}} for the standard user interface method.
-##' @references
-##' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
-##' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
-##' detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
-##' @author Christopher Conley
-##' @examples
-##' library(faahKO)
-##' library(xcms)
-##' cdfpath <- system.file("cdf", package = "faahKO")
-##' cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-##'
-##' ## Read the first file
-##' xraw <- xcmsRaw(cdffiles[1])
-##' ## Extract the required data
-##' mzVals <- xraw@env$mz
-##' intVals <- xraw@env$intensity
-##' ## Define the values per spectrum:
-##' valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
-##'
-##' ## Perform the peak detection using massifquant
-##' res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
-##' scantime = xraw@scantime, valsPerSpect = valsPerSpect)
-##' head(res)
+#' @title Core API function for massifquant peak detection
+#'
+#' @description Massifquant is a Kalman filter (KF)-based chromatographic peak
+#'     detection for XC-MS data in centroid mode. The identified peaks
+#'     can be further refined with the \emph{centWave} method (see
+#'     \code{\link{do_findChromPeaks_centWave}} for details on centWave)
+#'     by specifying \code{withWave = TRUE}.
+#'
+#' @details This algorithm's performance has been tested rigorously
+#'     on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+#'     Simultaneous kalman filters identify peaks and calculate their
+#'     area under the curve. The default parameters are set to operate on
+#'     a complex LC-MS Orbitrap sample. Users will find it useful to do some
+#'     simple exploratory data analysis to find out where to set a minimum
+#'     intensity, and identify how many scans an average peak spans. The
+#'     \code{consecMissedLimit} parameter has yielded good performance on
+#'     Orbitrap data when set to (\code{2}) and on TOF data it was found best
+#'     to be at (\code{1}). This may change as the algorithm has yet to be
+#'     tested on many samples. The \code{criticalValue} parameter is perhaps
+#'     most dificult to dial in appropriately and visual inspection of peak
+#'     identification is the best suggested tool for quick optimization.
+#'     The \code{ppm} and \code{checkBack} parameters have shown less influence
+#'     than the other parameters and exist to give users flexibility and
+#'     better accuracy.
+#' 
+#' @inheritParams do_findChromPeaks_centWave
+#'
+#' @inheritParams findChromPeaks-centWave
+#'
+#' @inheritParams findChromPeaks-massifquant
+#'
+#' @return
+#' A matrix, each row representing an identified chromatographic peak,
+#'     with columns:
+#'     \describe{
+#'     \item{mz}{Intensity weighted mean of m/z values of the peaks across
+#'     scans.}
+#'     \item{mzmin}{Minumum m/z of the peak.}
+#'     \item{mzmax}{Maximum m/z of the peak.}
+#'     \item{rtmin}{Minimum retention time of the peak.}
+#'     \item{rtmax}{Maximum retention time of the peak.}
+#'     \item{rt}{Retention time of the peak's midpoint.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     }
+#' 
+#'     If \code{withWave} is set to \code{TRUE}, the result is the same as
+#'     returned by the \code{\link{do_findChromPeaks_centWave}} method.
+#' 
+#' @family core peak detection functions
+#' 
+#' @seealso \code{\link{massifquant}} for the standard user interface method.
+#'
+#' @references
+#' Conley CJ, Smith R, Torgrip RJ, Taylor RM, Tautenhahn R and Prince JT
+#' "Massifquant: open-source Kalman filter-based XC-MS isotope trace feature
+#' detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
+#'
+#' @author Christopher Conley
+#'
+#' @examples
+#' library(faahKO)
+#' library(xcms)
+#' cdfpath <- system.file("cdf", package = "faahKO")
+#' cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+#'
+#' ## Read the first file
+#' xraw <- xcmsRaw(cdffiles[1])
+#' ## Extract the required data
+#' mzVals <- xraw@env$mz
+#' intVals <- xraw@env$intensity
+#' ## Define the values per spectrum:
+#' valsPerSpect <- diff(c(xraw@scanindex, length(mzVals)))
+#'
+#' ## Perform the peak detection using massifquant
+#' res <- do_findChromPeaks_massifquant(mz = mzVals, int = intVals,
+#' scantime = xraw@scantime, valsPerSpect = valsPerSpect)
+#' head(res)
 do_findChromPeaks_massifquant <- function(mz,
                                           int,
                                           scantime,
@@ -1396,80 +1417,89 @@ do_findChromPeaks_massifquant <- function(mz,
 ## impute: none (=bin), binlin, binlinbase, intlin
 ## baseValue default: min(int)/2 (smallest value in the whole data set).
 ##
-##' @title Core API function for matchedFilter peak detection
-##'
-##' @description This function identifies peaks in the chromatographic
-##' time domain as described in [Smith 2006]. The intensity values are
-##' binned by cutting The LC/MS data into slices (bins) of a mass unit
-##' (\code{binSize} m/z) wide. Within each bin the maximal intensity is
-##' selected. The peak detection is then performed in each bin by
-##' extending it based on the \code{steps} parameter to generate slices
-##' comprising bins \code{current_bin - steps +1} to \code{current_bin + steps - 1}.
-##' Each of these slices is then filtered with matched filtration using
-##' a second-derative Gaussian as the model peak shape. After filtration
-##' peaks are detected using a signal-to-ration cut-off. For more details
-##' and illustrations see [Smith 2006].
-##'
-##' @details The intensities are binned by the provided m/z values within each
-##' spectrum (scan). Binning is performed such that the bins are centered around
-##' the m/z values (i.e. the first bin includes all m/z values between
-##' \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
-##'
-##' For more details on binning and missing value imputation see
-##' \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
-##'
-##' @note
-##' This function exposes core peak detection functionality of
-##' the \emph{matchedFilter} method. While this function can be called directly,
-##' users will generally call the corresponding method for the data object
-##' instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
-##'
-##' @inheritParams do_findChromPeaks_centWave
-##' @inheritParams findChromPeaks-centWave
-##' @inheritParams imputeLinInterpol
-##' @inheritParams findChromPeaks-matchedFilter
-##'
-##' @return A matrix, each row representing an identified chromatographic peak,
-##' with columns:
-##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
-##' \item{mzmin}{Minimum m/z of the peak.}
-##' \item{mzmax}{Maximum m/z of the peak.}
-##' \item{rt}{Retention time of the peak's midpoint.}
-##' \item{rtmin}{Minimum retention time of the peak.}
-##' \item{rtmax}{Maximum retention time of the peak.}
-##' \item{into}{Integrated (original) intensity of the peak.}
-##' \item{intf}{Integrated intensity of the filtered peak.}
-##' \item{maxo}{Maximum intensity of the peak.}
-##' \item{maxf}{Maximum intensity of the filtered peak.}
-##' \item{i}{Rank of peak in merged EIC (\code{<= max}).}
-##' \item{sn}{Signal to noise ratio of the peak}
-##' }
-##' @references
-##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-##' \emph{Anal. Chem.} 2006, 78:779-787.
-##' @author Colin A Smith, Johannes Rainer
-##' @family core peak detection functions
-##' @seealso \code{\link{binYonX}} for a binning function,
-##' \code{\link{imputeLinInterpol}} for the interpolation of missing values.
-##' \code{\link{matchedFilter}} for the standard user interface method.
-##' @examples
-##' ## Load the test file
-##' library(faahKO)
-##' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
-##' xr <- xcmsRaw(fs)
-##'
-##' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
-##' mzVals <- xr@env$mz
-##' intVals <- xr@env$intensity
-##' ## Define the values per spectrum:
-##' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-##'
-##' res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
-##' scantime = xr@scantime, valsPerSpect = valsPerSpect)
-##' head(res)
+#' @title Core API function for matchedFilter peak detection
+#'
+#' @description This function identifies peaks in the chromatographic
+#'     time domain as described in [Smith 2006]. The intensity values are
+#'     binned by cutting The LC/MS data into slices (bins) of a mass unit
+#'     (\code{binSize} m/z) wide. Within each bin the maximal intensity is
+#'     selected. The peak detection is then performed in each bin by
+#'     extending it based on the \code{steps} parameter to generate slices
+#'     comprising bins \code{current_bin - steps +1} to
+#'     \code{current_bin + steps - 1}.
+#'     Each of these slices is then filtered with matched filtration using
+#'     a second-derative Gaussian as the model peak shape. After filtration
+#'     peaks are detected using a signal-to-ration cut-off. For more details
+#'     and illustrations see [Smith 2006].
+#'
+#' @details The intensities are binned by the provided m/z values within each
+#'     spectrum (scan). Binning is performed such that the bins are centered
+#'     around the m/z values (i.e. the first bin includes all m/z values between
+#'     \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+#'
+#'     For more details on binning and missing value imputation see
+#'     \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+#'
+#' @note This function exposes core peak detection functionality of
+#'     the \emph{matchedFilter} method. While this function can be called
+#'     directly, users will generally call the corresponding method for the
+#'     data object instead (e.g. the \code{link{findPeaks.matchedFilter}}
+#'     method).
+#'
+#' @inheritParams do_findChromPeaks_centWave
+#' 
+#' @inheritParams findChromPeaks-centWave
+#' 
+#' @inheritParams imputeLinInterpol
+#' 
+#' @inheritParams findChromPeaks-matchedFilter
+#'
+#' @return A matrix, each row representing an identified chromatographic peak,
+#'     with columns:
+#'     \describe{
+#'     \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+#'     \item{mzmin}{Minimum m/z of the peak.}
+#'     \item{mzmax}{Maximum m/z of the peak.}
+#'     \item{rt}{Retention time of the peak's midpoint.}
+#'     \item{rtmin}{Minimum retention time of the peak.}
+#'     \item{rtmax}{Maximum retention time of the peak.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{intf}{Integrated intensity of the filtered peak.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     \item{maxf}{Maximum intensity of the filtered peak.}
+#'     \item{i}{Rank of peak in merged EIC (\code{<= max}).}
+#'     \item{sn}{Signal to noise ratio of the peak}
+#'     }
+#' 
+#' @references
+#' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+#' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+#' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+#' \emph{Anal. Chem.} 2006, 78:779-787.
+#'
+#' @author Colin A Smith, Johannes Rainer
+#'
+#' @family core peak detection functions
+#'
+#' @seealso \code{\link{binYonX}} for a binning function,
+#'     \code{\link{imputeLinInterpol}} for the interpolation of missing values.
+#'     \code{\link{matchedFilter}} for the standard user interface method.
+#' 
+#' @examples
+#' ## Load the test file
+#' library(faahKO)
+#' fs <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
+#' xr <- xcmsRaw(fs)
+#'
+#' ## Extracting the data from the xcmsRaw for do_findChromPeaks_centWave
+#' mzVals <- xr@env$mz
+#' intVals <- xr@env$intensity
+#' ## Define the values per spectrum:
+#' valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
+#'
+#' res <- do_findChromPeaks_matchedFilter(mz = mzVals, int = intVals,
+#' scantime = xr@scantime, valsPerSpect = valsPerSpect)
+#' head(res)
 do_findChromPeaks_matchedFilter <- function(mz,
                                             int,
                                             scantime,
@@ -1863,44 +1893,47 @@ do_findChromPeaks_matchedFilter <- function(mz,
 ############################################################
 ## MSW
 ##
-##' @title Core API function for single-spectrum non-chromatography MS data
-##' peak detection
-##'
-##' @description This function performs peak detection in mass spectrometry
-##' direct injection spectrum using a wavelet based algorithm.
-##'
-##' @details This is a wrapper around the peak picker in Bioconductor's
-##' \code{MassSpecWavelet} package calling
-##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-##' \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
-##' \emph{xcmsDirect} vignette for more information.
-##'
-##' @inheritParams do_findChromPeaks_centWave
-##' @inheritParams findChromPeaks-centWave
-##' @param ... Additional parameters to be passed to the
-##' \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
-##'
-##' @return
-##' A matrix, each row representing an identified peak, with columns:
-##' \describe{
-##' \item{mz}{m/z value of the peak at the centroid position.}
-##' \item{mzmin}{Minimum m/z of the peak.}
-##' \item{mzmax}{Maximum m/z of the peak.}
-##' \item{rt}{Always \code{-1}.}
-##' \item{rtmin}{Always \code{-1}.}
-##' \item{rtmax}{Always \code{-1}.}
-##' \item{into}{Integrated (original) intensity of the peak.}
-##' \item{maxo}{Maximum intensity of the peak.}
-##' \item{intf}{Always \code{NA}.}
-##' \item{maxf}{Maximum MSW-filter response of the peak.}
-##' \item{sn}{Signal to noise ratio.}
-##' }
-##'
-##' @family core peak detection functions
-##' @seealso ##' \code{\link{MSW}} for the standard user interface
-##' method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
-##' \code{MassSpecWavelet} package.
-##' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
+#' @title Core API function for single-spectrum non-chromatography MS data
+#'     peak detection
+#'
+#' @description This function performs peak detection in mass spectrometry
+#'     direct injection spectrum using a wavelet based algorithm.
+#'
+#' @details This is a wrapper around the peak picker in Bioconductor's
+#'     \code{MassSpecWavelet} package calling
+#'     \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+#'     \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+#'     \emph{xcmsDirect} vignette for more information.
+#'
+#' @inheritParams do_findChromPeaks_centWave
+#' 
+#' @inheritParams findChromPeaks-centWave
+#'
+#' @param ... Additional parameters to be passed to the
+#'     \code{\link[MassSpecWavelet]{peakDetectionCWT}} function.
+#'
+#' @return A matrix, each row representing an identified peak, with columns:
+#'     \describe{
+#'     \item{mz}{m/z value of the peak at the centroid position.}
+#'     \item{mzmin}{Minimum m/z of the peak.}
+#'     \item{mzmax}{Maximum m/z of the peak.}
+#'     \item{rt}{Always \code{-1}.}
+#'     \item{rtmin}{Always \code{-1}.}
+#'     \item{rtmax}{Always \code{-1}.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     \item{intf}{Always \code{NA}.}
+#'     \item{maxf}{Maximum MSW-filter response of the peak.}
+#'     \item{sn}{Signal to noise ratio.}
+#'     }
+#'
+#' @family core peak detection functions
+#'
+#' @seealso \code{\link{MSW}} for the standard user interface
+#'     method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+#'     \code{MassSpecWavelet} package.
+#' 
+#' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_findPeaks_MSW <- function(mz, int, snthresh = 3,
                                   verboseColumns = FALSE, ...) {
     ## Input argument checking.
@@ -2192,15 +2225,15 @@ do_findPeaks_MSW <- function(mz, int, snthresh = 3,
 ## }
 
 ## Tuned from the original code.
-##' @param peaks. \code{matrix} or \code{data.frame} with peaks for which
-##' isotopes should be predicted. Required columns are \code{"mz"},
-##' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
-##' \code{"intb"} and \code{"scale"}.
-##'
-##' @return a \code{matrix} with columns \code{"mz"}, \code{"mzmin"},
-##' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
-##' \code{"intensity"} (always -1) and \code{"scale"}.
-##' @noRd
+#' @param peaks. \code{matrix} or \code{data.frame} with peaks for which
+#' isotopes should be predicted. Required columns are \code{"mz"},
+#' \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
+#' \code{"intb"} and \code{"scale"}.
+#'
+#' @return a \code{matrix} with columns \code{"mz"}, \code{"mzmin"},
+#' \code{"mzmax"}, \code{"scmin"}, \code{"scmax"}, \code{"length"} (always -1),
+#' \code{"intensity"} (always -1) and \code{"scale"}.
+#' @noRd
 do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
                                mzIntervalExtension = TRUE) {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
@@ -2241,11 +2274,14 @@ do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
     return(do.call(rbind, newRois))
 }
 
-##' param @peaks. see do_define_isotopes
-##' @param polarity character(1) defining the polarity, either \code{"positive"}
-##' or \code{"negative"}.
-##' @return see do_define_isotopes.
-##' @noRd
+#' @param peaks. see do_define_isotopes
+#' 
+#' @param polarity character(1) defining the polarity, either \code{"positive"}
+#'     or \code{"negative"}.
+#' 
+#' @return see do_define_isotopes.
+#'
+#' @noRd
 do_define_adducts <- function(peaks., polarity = "positive") {
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
     if (is.null(dim(peaks.)))
@@ -2461,56 +2497,60 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 ## 3) centWave on the predicted isotope ROIs.
 ## 4) combine both lists of identified peaks removing overlapping ones by
 ##    keeping the peak with the largest signal intensity.
-##' @title Core API function for two-step centWave peak detection with isotopes
-##'
-##' @description The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
-##' two-step centWave based peak detection: chromatographic peaks are identified
-##' using centWave followed by a prediction of the location of the identified
-##' peaks' isotopes in the mz-retention time space. These locations are fed as
-##' \emph{regions of interest} (ROIs) to a subsequent centWave run. All non
-##' overlapping peaks from these two peak detection runs are reported as
-##' the final list of identified peaks.
-##'
-##' @details For more details on the centWave algorithm see
-##' \code{\link{centWave}}.
-##'
-##' @inheritParams findChromPeaks-centWave
-##' @inheritParams findChromPeaks-centWaveWithPredIsoROIs
-##' @inheritParams do_findChromPeaks_centWave
-##'
-##' @family core peak detection functions
-##' @return
-##' A matrix, each row representing an identified chromatographic peak. All
-##' non-overlapping peaks identified in both centWave runs are reported.
-##' The matrix columns are:
-##' \describe{
-##' \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
-##' \item{mzmin}{Minimum m/z of the peaks.}
-##' \item{mzmax}{Maximum m/z of the peaks.}
-##' \item{rt}{Retention time of the peak's midpoint.}
-##' \item{rtmin}{Minimum retention time of the peak.}
-##' \item{rtmax}{Maximum retention time of the peak.}
-##' \item{into}{Integrated (original) intensity of the peak.}
-##' \item{intb}{Per-peak baseline corrected integrated peak intensity.}
-##' \item{maxo}{Maximum intensity of the peak.}
-##' \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-##' \code{sd} being the standard deviation of local chromatographic noise.}
-##' \item{egauss}{RMSE of Gaussian fit.}
-##' }
-##' Additional columns for \code{verboseColumns = TRUE}:
-##' \describe{
-##' \item{mu}{Gaussian parameter mu.}
-##' \item{sigma}{Gaussian parameter sigma.}
-##' \item{h}{Gaussian parameter h.}
-##' \item{f}{Region number of the m/z ROI where the peak was localized.}
-##' \item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-##' \item{scale}{Scale on which the peak was localized.}
-##' \item{scpos}{Peak position found by wavelet analysis (scan number).}
-##' \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-##' \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-##' }
-##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
-##' @author Hendrik Treutler, Johannes Rainer
+#' @title Core API function for two-step centWave peak detection with isotopes
+#'
+#' @description The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
+#'     two-step centWave based peak detection: chromatographic peaks are
+#'     identified using centWave followed by a prediction of the location of
+#'     the identified peaks' isotopes in the mz-retention time space. These
+#'     locations are fed as \emph{regions of interest} (ROIs) to a subsequent
+#'     centWave run. All non overlapping peaks from these two peak detection
+#'     runs are reported as the final list of identified peaks.
+#'
+#' @details For more details on the centWave algorithm see
+#'     \code{\link{centWave}}.
+#'
+#' @inheritParams findChromPeaks-centWave
+#' 
+#' @inheritParams findChromPeaks-centWaveWithPredIsoROIs
+#' 
+#' @inheritParams do_findChromPeaks_centWave
+#'
+#' @family core peak detection functions
+#' 
+#' @return A matrix, each row representing an identified chromatographic peak.
+#'     All non-overlapping peaks identified in both centWave runs are reported.
+#'     The matrix columns are:
+#'     \describe{
+#'     \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
+#'     \item{mzmin}{Minimum m/z of the peaks.}
+#'     \item{mzmax}{Maximum m/z of the peaks.}
+#'     \item{rt}{Retention time of the peak's midpoint.}
+#'     \item{rtmin}{Minimum retention time of the peak.}
+#'     \item{rtmax}{Maximum retention time of the peak.}
+#'     \item{into}{Integrated (original) intensity of the peak.}
+#'     \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+#'     \item{maxo}{Maximum intensity of the peak.}
+#'     \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+#'     \code{sd} being the standard deviation of local chromatographic noise.}
+#'     \item{egauss}{RMSE of Gaussian fit.}
+#'     }
+#'     Additional columns for \code{verboseColumns = TRUE}:
+#'     \describe{
+#'     \item{mu}{Gaussian parameter mu.}
+#'     \item{sigma}{Gaussian parameter sigma.}
+#'     \item{h}{Gaussian parameter h.}
+#'     \item{f}{Region number of the m/z ROI where the peak was localized.}
+#'     \item{dppm}{m/z deviation of mass trace across scans in ppm.}
+#'     \item{scale}{Scale on which the peak was localized.}
+#'     \item{scpos}{Peak position found by wavelet analysis (scan number).}
+#'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+#'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+#'     }
+#' 
+#' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
+#'
+#' @author Hendrik Treutler, Johannes Rainer
 do_findChromPeaks_centWaveWithPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 10, prefilter = c(3, 100), mzCenterFun = "wMean",
@@ -2558,30 +2598,32 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
                                                 mzIntervalExtension = mzIntervalExtension,
                                                 polarity = polarity))
     }
-##' @description The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
-##' centWave based peak detection based in regions of interest (ROIs)
-##' representing predicted isotopes for the peaks submitted with argument
-##' \code{peaks.}. The function returns a matrix with the identified peaks
-##' consisting of all input peaks and peaks representing predicted isotopes
-##' of these (if found by the centWave algorithm).
-##'
-##' @param peaks. A matrix or \code{xcmsPeaks} object such as one returned by
-##' a call to \code{link{do_findChromPeaks_centWave}} or
-##' \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
-##' with the peaks for which isotopes should be predicted and used for an
-##' additional peak detectoin using the centWave method. Required columns are:
-##' \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
-##' \code{"scale"} and \code{"into"}.
-##'
-##' @param snthresh For \code{do_findChromPeaks_addPredIsoROIs}:
-##' numeric(1) defining the signal to noise threshold for the centWave algorithm.
-##' For \code{do_findChromPeaks_centWaveWithPredIsoROIs}: numeric(1) defining the
-##' signal to noise threshold for the initial (first) centWave run.
-##'
-##' @inheritParams findChromPeaks-centWave
-##' @inheritParams do_findChromPeaks_centWave
-##'
-##' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
+#' @description The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
+#'     centWave based peak detection based in regions of interest (ROIs)
+#'     representing predicted isotopes for the peaks submitted with argument
+#'     \code{peaks.}. The function returns a matrix with the identified peaks
+#'     consisting of all input peaks and peaks representing predicted isotopes
+#'     of these (if found by the centWave algorithm).
+#'
+#' @param peaks. A matrix or \code{xcmsPeaks} object such as one returned by
+#'     a call to \code{link{do_findChromPeaks_centWave}} or
+#'     \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
+#'     with the peaks for which isotopes should be predicted and used for an
+#'     additional peak detectoin using the centWave method. Required columns
+#'     are: \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"},
+#'     \code{"scmax"}, \code{"scale"} and \code{"into"}.
+#'
+#' @param snthresh For \code{do_findChromPeaks_addPredIsoROIs}:
+#'     numeric(1) defining the signal to noise threshold for the centWave
+#'     algorithm. For \code{do_findChromPeaks_centWaveWithPredIsoROIs}:
+#'     numeric(1) defining the signal to noise threshold for the initial
+#'     (first) centWave run.
+#'
+#' @inheritParams findChromPeaks-centWave
+#' 
+#' @inheritParams do_findChromPeaks_centWave
+#'
+#' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
 do_findChromPeaks_addPredIsoROIs <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
              snthresh = 6.25, prefilter = c(3, 100), mzCenterFun = "wMean",

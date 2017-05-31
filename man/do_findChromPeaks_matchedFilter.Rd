@@ -65,49 +65,51 @@ returned instead of values for m/z and retention times.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
-with columns:
-\describe{
-\item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
-\item{mzmin}{Minimum m/z of the peak.}
-\item{mzmax}{Maximum m/z of the peak.}
-\item{rt}{Retention time of the peak's midpoint.}
-\item{rtmin}{Minimum retention time of the peak.}
-\item{rtmax}{Maximum retention time of the peak.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{intf}{Integrated intensity of the filtered peak.}
-\item{maxo}{Maximum intensity of the peak.}
-\item{maxf}{Maximum intensity of the filtered peak.}
-\item{i}{Rank of peak in merged EIC (\code{<= max}).}
-\item{sn}{Signal to noise ratio of the peak}
-}
+    with columns:
+    \describe{
+    \item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
+    \item{mzmin}{Minimum m/z of the peak.}
+    \item{mzmax}{Maximum m/z of the peak.}
+    \item{rt}{Retention time of the peak's midpoint.}
+    \item{rtmin}{Minimum retention time of the peak.}
+    \item{rtmax}{Maximum retention time of the peak.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{intf}{Integrated intensity of the filtered peak.}
+    \item{maxo}{Maximum intensity of the peak.}
+    \item{maxf}{Maximum intensity of the filtered peak.}
+    \item{i}{Rank of peak in merged EIC (\code{<= max}).}
+    \item{sn}{Signal to noise ratio of the peak}
+    }
 }
 \description{
 This function identifies peaks in the chromatographic
-time domain as described in [Smith 2006]. The intensity values are
-binned by cutting The LC/MS data into slices (bins) of a mass unit
-(\code{binSize} m/z) wide. Within each bin the maximal intensity is
-selected. The peak detection is then performed in each bin by
-extending it based on the \code{steps} parameter to generate slices
-comprising bins \code{current_bin - steps +1} to \code{current_bin + steps - 1}.
-Each of these slices is then filtered with matched filtration using
-a second-derative Gaussian as the model peak shape. After filtration
-peaks are detected using a signal-to-ration cut-off. For more details
-and illustrations see [Smith 2006].
+    time domain as described in [Smith 2006]. The intensity values are
+    binned by cutting The LC/MS data into slices (bins) of a mass unit
+    (\code{binSize} m/z) wide. Within each bin the maximal intensity is
+    selected. The peak detection is then performed in each bin by
+    extending it based on the \code{steps} parameter to generate slices
+    comprising bins \code{current_bin - steps +1} to
+    \code{current_bin + steps - 1}.
+    Each of these slices is then filtered with matched filtration using
+    a second-derative Gaussian as the model peak shape. After filtration
+    peaks are detected using a signal-to-ration cut-off. For more details
+    and illustrations see [Smith 2006].
 }
 \details{
 The intensities are binned by the provided m/z values within each
-spectrum (scan). Binning is performed such that the bins are centered around
-the m/z values (i.e. the first bin includes all m/z values between
-\code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
+    spectrum (scan). Binning is performed such that the bins are centered
+    around the m/z values (i.e. the first bin includes all m/z values between
+    \code{min(mz) - bin_size/2} and \code{min(mz) + bin_size/2}).
 
-For more details on binning and missing value imputation see
-\code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
+    For more details on binning and missing value imputation see
+    \code{\link{binYonX}} and \code{\link{imputeLinInterpol}} methods.
 }
 \note{
 This function exposes core peak detection functionality of
-the \emph{matchedFilter} method. While this function can be called directly,
-users will generally call the corresponding method for the data object
-instead (e.g. the \code{link{findPeaks.matchedFilter}} method).
+    the \emph{matchedFilter} method. While this function can be called
+    directly, users will generally call the corresponding method for the
+    data object instead (e.g. the \code{link{findPeaks.matchedFilter}}
+    method).
 }
 \examples{
 ## Load the test file
@@ -133,8 +135,8 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 }
 \seealso{
 \code{\link{binYonX}} for a binning function,
-\code{\link{imputeLinInterpol}} for the interpolation of missing values.
-\code{\link{matchedFilter}} for the standard user interface method.
+    \code{\link{imputeLinInterpol}} for the interpolation of missing values.
+    \code{\link{matchedFilter}} for the standard user interface method.
 
 Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
   \code{\link{do_findChromPeaks_centWave}},
