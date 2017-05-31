@@ -59,7 +59,17 @@ setMethod("findChromPeaks",
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## Check if the data is centroided
-              if (!isCentroided(object[[1]]))
+              centroided <- isCentroided(object[[1]])
+              ## issue #181: if there are too few mass peaks the function
+              ## returns NA.
+              if (is.na(centroided)) {
+                  ## check all spectra in the file - takes longer.
+                  centroided <- isCentroided(object)
+                  if (length(which(centroided)) > 0 &
+                      length(which(!centroided)) == 0)
+                      centroided <- TRUE
+              }
+              if (!centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               ## (1) split the object per file.
@@ -627,7 +637,17 @@ setMethod("findChromPeaks",
               ## Restrict to MS1 data.
               object <- filterMsLevel(object, msLevel. = 1)
               ## Check if the data is centroided
-              if (!isCentroided(object[[1]]))
+              centroided <- isCentroided(object[[1]])
+              ## issue #181: if there are too few mass peaks the function
+              ## returns NA.
+              if (is.na(centroided)) {
+                  ## check all spectra in the file - takes longer.
+                  centroided <- isCentroided(object)
+                  if (length(which(centroided)) > 0 &
+                      length(which(!centroided)) == 0)
+                      centroided <- TRUE
+              }
+              if (!centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
               ## (1) split the object per file.

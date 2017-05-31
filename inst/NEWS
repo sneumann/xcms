@@ -1,3 +1,12 @@
+CHANGES IN VERSION 2.99.2
+-------------------------
+
+BUG FIXES:
+- issue #181: problem when isCentroided,Spectrum method returns NA because of
+  too few peaks in a spectrum. Fixed by checking in such cases all spectra in
+  the file.
+
+
 CHANGES IN VERSION 2.99.1
 -------------------------
 
