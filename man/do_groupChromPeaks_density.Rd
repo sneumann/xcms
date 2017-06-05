@@ -6,7 +6,7 @@
 grouping}
 \usage{
 do_groupChromPeaks_density(peaks, sampleGroups, bw = 30, minFraction = 0.5,
-  minSamples = 1, binSize = 0.25, maxFeatures = 50)
+  minSamples = 1, binSize = 0.25, maxFeatures = 50, sleep = 0)
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
@@ -36,6 +36,9 @@ in mz dimension.}
 
 \item{maxFeatures}{\code{numeric(1)} with the maximum number of peak groups
 to be identified in a single mz slice.}
+
+\item{sleep}{\code{numeric(1)} defining the time to \emph{sleep} between
+iterations and plot the result from the current iteration.}
 }
 \value{
 A \code{list} with elements \code{"featureDefinitions"} and

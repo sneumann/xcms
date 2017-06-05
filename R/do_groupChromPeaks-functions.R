@@ -26,6 +26,9 @@
 ##'
 ##' @inheritParams groupChromPeaks-density
 ##'
+##' @param sleep \code{numeric(1)} defining the time to \emph{sleep} between
+##'     iterations and plot the result from the current iteration.
+##'
 ##' @return A \code{list} with elements \code{"featureDefinitions"} and
 ##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
 ##' representing a (mz-rt) feature (i.e. a peak group) with columns:
@@ -71,7 +74,8 @@
 ##' head(res$peakIndex)
 do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                        bw = 30, minFraction = 0.5, minSamples = 1,
-                                       binSize = 0.25, maxFeatures = 50) {
+                                       binSize = 0.25, maxFeatures = 50,
+                                       sleep = 0) {
     if (missing(sampleGroups))
         stop("Parameter 'sampleGroups' is missing! This should be a vector of ",
              "length equal to the number of samples specifying the group ",
@@ -82,6 +86,8 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
         stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
+    if (sleep > 0)
+        .reqCols <- c(.reqCols, "into")
     if (!all(.reqCols %in% colnames(peaks)))
         stop("Required columns ",
              paste0("'", .reqCols[!.reqCols %in% colnames(peaks)],"'",
@@ -163,6 +169,23 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
             groupmat[num, 7] <- length(gidx)
             groupmat[num, 7 + seq(along = gcount)] <- gcount
             groupindex[[num]] <- sort(peakOrder[(startIdx:endIdx)[gidx]])
+        }
+        if (sleep > 0) {
+            ## Plot the density
+            plot(den, main = paste(round(min(curMat[,"mz"]), 2), "-",
+                                   round(max(curMat[,"mz"]), 2)))
+            ## Highlight peaks per sample group.
+            for (j in 1:nSampleGroups) {
+                ## Which peaks belong to this sample group.
+                cur_group_samples <- which(sampleGroups == sampleGroupNames[j])
+                idx <- curMat[, "sample"] %in% cur_group_samples
+                points(curMat[idx, "rt"], curMat[idx, "into"] /
+                                          max(curMat[, "into"]) * maxden,
+                       col = j, pch=20)
+            }
+            for (j in seq(length = snum))
+                abline(v = groupmat[num - snum + j, 5:6], lty = "dashed", col = j)
+            Sys.sleep(sleep)
         }
     }
     message("OK")
