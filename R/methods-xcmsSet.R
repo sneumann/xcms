@@ -350,7 +350,8 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
                                     minFraction = minfrac,
                                     minSamples = minsamp,
                                     binSize = mzwid,
-                                    maxFeatures = max)
+                                    maxFeatures = max,
+                                    sleep = sleep)
     
     groups(object) <- res$featureDefinitions
     groupidx(object) <- res$peakIndex

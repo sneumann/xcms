@@ -112,45 +112,46 @@ centWave algorithm, which includes wavelet estimation.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
-with columns:
-\describe{
-\item{mz}{Intensity weighted mean of m/z values of the peaks across
-scans.}
-\item{mzmin}{Minumum m/z of the peak.}
-\item{mzmax}{Maximum m/z of the peak.}
-\item{rtmin}{Minimum retention time of the peak.}
-\item{rtmax}{Maximum retention time of the peak.}
-\item{rt}{Retention time of the peak's midpoint.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{maxo}{Maximum intensity of the peak.}
-}
-If \code{withWave} is set to \code{TRUE}, the result is the same as
-returned by the \code{\link{do_findChromPeaks_centWave}} method.
+    with columns:
+    \describe{
+    \item{mz}{Intensity weighted mean of m/z values of the peaks across
+    scans.}
+    \item{mzmin}{Minumum m/z of the peak.}
+    \item{mzmax}{Maximum m/z of the peak.}
+    \item{rtmin}{Minimum retention time of the peak.}
+    \item{rtmax}{Maximum retention time of the peak.}
+    \item{rt}{Retention time of the peak's midpoint.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{maxo}{Maximum intensity of the peak.}
+    }
+
+    If \code{withWave} is set to \code{TRUE}, the result is the same as
+    returned by the \code{\link{do_findChromPeaks_centWave}} method.
 }
 \description{
 Massifquant is a Kalman filter (KF)-based chromatographic peak
-detection for XC-MS data in centroid mode. The identified peaks
-can be further refined with the \emph{centWave} method (see
-\code{\link{do_findChromPeaks_centWave}} for details on centWave)
-by specifying \code{withWave = TRUE}.
+    detection for XC-MS data in centroid mode. The identified peaks
+    can be further refined with the \emph{centWave} method (see
+    \code{\link{do_findChromPeaks_centWave}} for details on centWave)
+    by specifying \code{withWave = TRUE}.
 }
 \details{
 This algorithm's performance has been tested rigorously
-on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
-Simultaneous kalman filters identify peaks and calculate their
-area under the curve. The default parameters are set to operate on
-a complex LC-MS Orbitrap sample. Users will find it useful to do some
-simple exploratory data analysis to find out where to set a minimum
-intensity, and identify how many scans an average peak spans. The
-\code{consecMissedLimit} parameter has yielded good performance on
-Orbitrap data when set to (\code{2}) and on TOF data it was found best
-to be at (\code{1}). This may change as the algorithm has yet to be
-tested on many samples. The \code{criticalValue} parameter is perhaps
-most dificult to dial in appropriately and visual inspection of peak
-identification is the best suggested tool for quick optimization.
-The \code{ppm} and \code{checkBack} parameters have shown less influence
-than the other parameters and exist to give users flexibility and
-better accuracy.
+    on high resolution LC/{OrbiTrap, TOF}-MS data in centroid mode.
+    Simultaneous kalman filters identify peaks and calculate their
+    area under the curve. The default parameters are set to operate on
+    a complex LC-MS Orbitrap sample. Users will find it useful to do some
+    simple exploratory data analysis to find out where to set a minimum
+    intensity, and identify how many scans an average peak spans. The
+    \code{consecMissedLimit} parameter has yielded good performance on
+    Orbitrap data when set to (\code{2}) and on TOF data it was found best
+    to be at (\code{1}). This may change as the algorithm has yet to be
+    tested on many samples. The \code{criticalValue} parameter is perhaps
+    most dificult to dial in appropriately and visual inspection of peak
+    identification is the best suggested tool for quick optimization.
+    The \code{ppm} and \code{checkBack} parameters have shown less influence
+    than the other parameters and exist to give users flexibility and
+    better accuracy.
 }
 \examples{
 library(faahKO)
