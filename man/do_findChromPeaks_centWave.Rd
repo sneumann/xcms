@@ -86,57 +86,61 @@ should be used for the centWave-wavelets.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
-with columns:
-\describe{
-\item{mz}{Intensity weighted mean of m/z values of the peak across scans.}
-\item{mzmin}{Minimum m/z of the peak.}
-\item{mzmax}{Maximum m/z of the peak.}
-\item{rt}{Retention time of the peak's midpoint.}
-\item{rtmin}{Minimum retention time of the peak.}
-\item{rtmax}{Maximum retention time of the peak.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{intb}{Per-peak baseline corrected integrated peak intensity.}
-\item{maxo}{Maximum intensity of the peak.}
-\item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-\code{sd} being the standard deviation of local chromatographic noise.}
-\item{egauss}{RMSE of Gaussian fit.}
-}
-Additional columns for \code{verboseColumns = TRUE}:
-\describe{
-\item{mu}{Gaussian parameter mu.}
-\item{sigma}{Gaussian parameter sigma.}
-\item{h}{Gaussian parameter h.}
-\item{f}{Region number of the m/z ROI where the peak was localized.}
-\item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-\item{scale}{Scale on which the peak was localized.}
-\item{scpos}{Peak position found by wavelet analysis (scan number).}
-\item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-\item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-}
+    with columns:
+    \describe{
+
+    \item{mz}{Intensity weighted mean of m/z values of the peak across
+    scans.}
+    \item{mzmin}{Minimum m/z of the peak.}
+    \item{mzmax}{Maximum m/z of the peak.}
+    \item{rt}{Retention time of the peak's midpoint.}
+    \item{rtmin}{Minimum retention time of the peak.}
+    \item{rtmax}{Maximum retention time of the peak.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+    \item{maxo}{Maximum intensity of the peak.}
+    \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+    \code{sd} being the standard deviation of local chromatographic noise.}
+    \item{egauss}{RMSE of Gaussian fit.}
+    }
+    Additional columns for \code{verboseColumns = TRUE}:
+    \describe{
+
+    \item{mu}{Gaussian parameter mu.}
+    \item{sigma}{Gaussian parameter sigma.}
+    \item{h}{Gaussian parameter h.}
+    \item{f}{Region number of the m/z ROI where the peak was localized.}
+    \item{dppm}{m/z deviation of mass trace across scans in ppm.}
+    \item{scale}{Scale on which the peak was localized.}
+    \item{scpos}{Peak position found by wavelet analysis (scan number).}
+    \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+    \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+    }
 }
 \description{
 This function performs peak density and wavelet based
-chromatographic peak detection for high resolution LC/MS data in centroid
-mode [Tautenhahn 2008].
+    chromatographic peak detection for high resolution LC/MS data in centroid
+    mode [Tautenhahn 2008].
 }
 \details{
 This algorithm is most suitable for high resolution
-LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase the
-method identifies \emph{regions of interest} (ROIs) representing mass traces
-that are characterized as regions with less than \code{ppm} m/z deviation in
-consecutive scans in the LC/MS map. These ROIs are then subsequently
-analyzed using continuous wavelet transform (CWT) to locate chromatographic
-peaks on different scales. The first analysis step is skipped, if regions
-of interest are passed with the \code{roiList} parameter.
+    LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase
+    the method identifies \emph{regions of interest} (ROIs) representing
+    mass traces that are characterized as regions with less than \code{ppm}
+    m/z deviation in consecutive scans in the LC/MS map. These ROIs are then
+    subsequently analyzed using continuous wavelet transform (CWT) to locate
+    chromatographic peaks on different scales. The first analysis step is
+    skipped, if regions of interest are passed with the \code{roiList}
+    parameter.
 }
 \note{
 The \emph{centWave} was designed to work on centroided mode, thus it
-is expected that such data is presented to the function.
+    is expected that such data is presented to the function.
 
-This function exposes core chromatographic peak detection functionality of
-the \emph{centWave} method. While this function can be called directly,
-users will generally call the corresponding method for the data object
-instead.
+    This function exposes core chromatographic peak detection functionality
+    of the \emph{centWave} method. While this function can be called
+    directly, users will generally call the corresponding method for the
+    data object instead.
 }
 \examples{
 ## Load the test file
@@ -159,8 +163,8 @@ head(res)
 }
 \references{
 Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
-sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
-2008, 9:504
+    sensitive feature detection for high resolution LC/MS"
+    \emph{BMC Bioinformatics} 2008, 9:504
 }
 \seealso{
 \code{\link{centWave}} for the standard user interface method.

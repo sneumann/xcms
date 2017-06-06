@@ -42,9 +42,10 @@ peak width in chromatographic space. Given as a range (min, max)
 in seconds.}
 
 \item{snthresh}{For \code{do_findChromPeaks_addPredIsoROIs}:
-numeric(1) defining the signal to noise threshold for the centWave algorithm.
-For \code{do_findChromPeaks_centWaveWithPredIsoROIs}: numeric(1) defining the
-signal to noise threshold for the initial (first) centWave run.}
+numeric(1) defining the signal to noise threshold for the centWave
+algorithm. For \code{do_findChromPeaks_centWaveWithPredIsoROIs}:
+numeric(1) defining the signal to noise threshold for the initial
+(first) centWave run.}
 
 \item{prefilter}{\code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 step for the first analysis step (ROI detection). Mass traces are only
@@ -119,60 +120,60 @@ Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 a call to \code{link{do_findChromPeaks_centWave}} or
 \code{link{findPeaks.centWave}} (both with \code{verboseColumns = TRUE})
 with the peaks for which isotopes should be predicted and used for an
-additional peak detectoin using the centWave method. Required columns are:
-\code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"}, \code{"scmax"},
-\code{"scale"} and \code{"into"}.}
+additional peak detectoin using the centWave method. Required columns
+are: \code{"mz"}, \code{"mzmin"}, \code{"mzmax"}, \code{"scmin"},
+\code{"scmax"}, \code{"scale"} and \code{"into"}.}
 }
 \value{
-A matrix, each row representing an identified chromatographic peak. All
-non-overlapping peaks identified in both centWave runs are reported.
-The matrix columns are:
-\describe{
-\item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
-\item{mzmin}{Minimum m/z of the peaks.}
-\item{mzmax}{Maximum m/z of the peaks.}
-\item{rt}{Retention time of the peak's midpoint.}
-\item{rtmin}{Minimum retention time of the peak.}
-\item{rtmax}{Maximum retention time of the peak.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{intb}{Per-peak baseline corrected integrated peak intensity.}
-\item{maxo}{Maximum intensity of the peak.}
-\item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
-\code{sd} being the standard deviation of local chromatographic noise.}
-\item{egauss}{RMSE of Gaussian fit.}
-}
-Additional columns for \code{verboseColumns = TRUE}:
-\describe{
-\item{mu}{Gaussian parameter mu.}
-\item{sigma}{Gaussian parameter sigma.}
-\item{h}{Gaussian parameter h.}
-\item{f}{Region number of the m/z ROI where the peak was localized.}
-\item{dppm}{m/z deviation of mass trace across scanns in ppk.}
-\item{scale}{Scale on which the peak was localized.}
-\item{scpos}{Peak position found by wavelet analysis (scan number).}
-\item{scmin}{Left peak limit found by wavelet analysis (scan number).}
-\item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
-}
+A matrix, each row representing an identified chromatographic peak.
+    All non-overlapping peaks identified in both centWave runs are reported.
+    The matrix columns are:
+    \describe{
+    \item{mz}{Intensity weighted mean of m/z values of the peaks across scans.}
+    \item{mzmin}{Minimum m/z of the peaks.}
+    \item{mzmax}{Maximum m/z of the peaks.}
+    \item{rt}{Retention time of the peak's midpoint.}
+    \item{rtmin}{Minimum retention time of the peak.}
+    \item{rtmax}{Maximum retention time of the peak.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{intb}{Per-peak baseline corrected integrated peak intensity.}
+    \item{maxo}{Maximum intensity of the peak.}
+    \item{sn}{Signal to noise ratio, defined as \code{(maxo - baseline)/sd},
+    \code{sd} being the standard deviation of local chromatographic noise.}
+    \item{egauss}{RMSE of Gaussian fit.}
+    }
+    Additional columns for \code{verboseColumns = TRUE}:
+    \describe{
+    \item{mu}{Gaussian parameter mu.}
+    \item{sigma}{Gaussian parameter sigma.}
+    \item{h}{Gaussian parameter h.}
+    \item{f}{Region number of the m/z ROI where the peak was localized.}
+    \item{dppm}{m/z deviation of mass trace across scans in ppm.}
+    \item{scale}{Scale on which the peak was localized.}
+    \item{scpos}{Peak position found by wavelet analysis (scan number).}
+    \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
+    \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
+    }
 }
 \description{
 The \code{do_findChromPeaks_centWaveWithPredIsoROIs} performs a
-two-step centWave based peak detection: chromatographic peaks are identified
-using centWave followed by a prediction of the location of the identified
-peaks' isotopes in the mz-retention time space. These locations are fed as
-\emph{regions of interest} (ROIs) to a subsequent centWave run. All non
-overlapping peaks from these two peak detection runs are reported as
-the final list of identified peaks.
+    two-step centWave based peak detection: chromatographic peaks are
+    identified using centWave followed by a prediction of the location of
+    the identified peaks' isotopes in the mz-retention time space. These
+    locations are fed as \emph{regions of interest} (ROIs) to a subsequent
+    centWave run. All non overlapping peaks from these two peak detection
+    runs are reported as the final list of identified peaks.
 
 The \code{do_findChromPeaks_centWaveAddPredIsoROIs} performs
-centWave based peak detection based in regions of interest (ROIs)
-representing predicted isotopes for the peaks submitted with argument
-\code{peaks.}. The function returns a matrix with the identified peaks
-consisting of all input peaks and peaks representing predicted isotopes
-of these (if found by the centWave algorithm).
+    centWave based peak detection based in regions of interest (ROIs)
+    representing predicted isotopes for the peaks submitted with argument
+    \code{peaks.}. The function returns a matrix with the identified peaks
+    consisting of all input peaks and peaks representing predicted isotopes
+    of these (if found by the centWave algorithm).
 }
 \details{
 For more details on the centWave algorithm see
-\code{\link{centWave}}.
+    \code{\link{centWave}}.
 }
 \seealso{
 Other core peak detection functions: \code{\link{do_findChromPeaks_centWave}},

@@ -287,8 +287,8 @@ useOriginalCode <- function(x) {
 
 #' @title Weighted mean around maximum
 #'
-#' @describe Calculate a weighted mean of the values around the value with the
-#'     largest weight. \code{x} could e.g. be mz values and \code{w} the
+#' @description Calculate a weighted mean of the values around the value with
+#'     the largest weight. \code{x} could e.g. be mz values and \code{w} the
 #'     corresponding intensity values.
 #'
 #' @param x \code{numeric} vector from which the weighted mean should be

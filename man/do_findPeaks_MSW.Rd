@@ -3,7 +3,7 @@
 \name{do_findPeaks_MSW}
 \alias{do_findPeaks_MSW}
 \title{Core API function for single-spectrum non-chromatography MS data
-peak detection}
+    peak detection}
 \usage{
 do_findPeaks_MSW(mz, int, snthresh = 3, verboseColumns = FALSE, ...)
 }
@@ -24,35 +24,35 @@ columns should be returned.}
 }
 \value{
 A matrix, each row representing an identified peak, with columns:
-\describe{
-\item{mz}{m/z value of the peak at the centroid position.}
-\item{mzmin}{Minimum m/z of the peak.}
-\item{mzmax}{Maximum m/z of the peak.}
-\item{rt}{Always \code{-1}.}
-\item{rtmin}{Always \code{-1}.}
-\item{rtmax}{Always \code{-1}.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{maxo}{Maximum intensity of the peak.}
-\item{intf}{Always \code{NA}.}
-\item{maxf}{Maximum MSW-filter response of the peak.}
-\item{sn}{Signal to noise ratio.}
-}
+    \describe{
+    \item{mz}{m/z value of the peak at the centroid position.}
+    \item{mzmin}{Minimum m/z of the peak.}
+    \item{mzmax}{Maximum m/z of the peak.}
+    \item{rt}{Always \code{-1}.}
+    \item{rtmin}{Always \code{-1}.}
+    \item{rtmax}{Always \code{-1}.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{maxo}{Maximum intensity of the peak.}
+    \item{intf}{Always \code{NA}.}
+    \item{maxf}{Maximum MSW-filter response of the peak.}
+    \item{sn}{Signal to noise ratio.}
+    }
 }
 \description{
 This function performs peak detection in mass spectrometry
-direct injection spectrum using a wavelet based algorithm.
+    direct injection spectrum using a wavelet based algorithm.
 }
 \details{
 This is a wrapper around the peak picker in Bioconductor's
-\code{MassSpecWavelet} package calling
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
-\emph{xcmsDirect} vignette for more information.
+    \code{MassSpecWavelet} package calling
+    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+    \emph{xcmsDirect} vignette for more information.
 }
 \seealso{
-##' \code{\link{MSW}} for the standard user interface
-method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
-\code{MassSpecWavelet} package.
+\code{\link{MSW}} for the standard user interface
+    method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+    \code{MassSpecWavelet} package.
 
 Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
   \code{\link{do_findChromPeaks_centWave}},
