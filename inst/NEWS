@@ -5,6 +5,8 @@ BUG FIXES:
 - issue #181: problem when isCentroided,Spectrum method returns NA because of
   too few peaks in a spectrum. Fixed by checking in such cases all spectra in
   the file.
+- issue #184: add parameter sleep to do_groupChromPeaks_density function to be
+  backwards compatible with the old group.density code.
 
 
 CHANGES IN VERSION 2.99.1
