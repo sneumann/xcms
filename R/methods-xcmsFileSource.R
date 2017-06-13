@@ -16,4 +16,3 @@ setMethod("fileName", "xcmsFileSource", function(object, ...) {
 setMethod("loadRaw", "xcmsFileSource", function(object, includeMSn = FALSE) {
     return(readRawData(fileName(object), includeMSn = includeMSn))
 })
-
