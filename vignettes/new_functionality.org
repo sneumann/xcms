@@ -42,7 +42,7 @@ in the =xcms= package introduced during the update to version /3/.
 #+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   library(xcms)
   library(RColorBrewer)
-  register(SerialParam())
+  register(bpstart(MulticoreParam()))
 #+END_SRC
 
 ** Modernized user interface
@@ -1357,6 +1357,149 @@ Check on one of our own files.
 A simple approach would be to walk along the mz and evaluate whether, for a
 certain mz (bin?) the signal is higher than a threshold in 70% of the spectra,
 i.e. that the % of values is larger than a percentage.
+
+
+** TODO Reduce R CMD check time:
+
+- xcms 2.99.3, MSnbase 2.3.4, mzR 2.11.3: 18m34.630s
+- xcms 2.99.3, MSnbase 2.3.4, mzR 2.9.12: 20m41.440s
+
+After tuning xcms:
+- xcms 2.99.3, MSnbase 2.3.4, mzR 2.11.3: 14m30.454s
+
+After enabling parallel processing for the unit tests:
+- xcms 2.99.3, MSnbase 2.3.4, mzR 2.11.3: user 21m46.385s
+
+After enabling parallel processing (registering multicoreparam) for the unit 
+tests:
+- xcms 2.99.3, MSnbase 2.3.4, mzR 2.11.3: user 15m53.039s.
+
+tests with long runtime:
++ [ ] testPresentAbsentSumAfterFillPeaks: 13.241
++ [X] test_extractChromatograms (runit.Chromatogram.R): 23.800: Can not reduce
+  this.
++ [X] test_obiwarp (runit.do_adjustRtime.R): 17.594: Can not reduce this.
++ [ ] test_findChromPeaks_centWaveWithPredIsoROIs
+  (runit.do_findChromPeaks_centWave_isotopes.R): 13.623
++ [X] test_do_groupChromPeaks_nearest (runit.do_groupChromPeaks.R): 25.193: OK.
++ [X] test_fillChromPeaks_matchedFilter (runit.fillChromPeaks.R): 16.843: Can
+  not reduce.
++ [X] test.fillPeaks_old_vs_new (runit.fillPeaks.R): 37.924: dontrun
++ [X] test.fillPeaksColumns (runit.fillPeaks.R): 33.552: OK.
++ [X] testFillPeaksPar (runit.fillPeaks.R): 24.752: dontrun
++ [X] test_getEICxset (runit.getEIC.R): 27.144: might be faster.
++ [X] test.getEICretcor (runit.getEIC.R): 17.018: nope.
++ [X] test.issue7 (runit.getEIC.R): 66.020: dontrun
++ [X] test.getXcmsRaw (runit.getXcmsRaw.R): 26.558: might be faster.
++ [X] testMultiFactorDiffreport (runit.phenoData.R): 13.067: nothing to do.
+
+
+
+
+** DONE mzR/MSnbase timings
+   CLOSED: [2017-06-14 Wed 11:02]
+
+   - State "DONE"       from "TODO"       [2017-06-14 Wed 11:02]
+#+BEGIN_SRC R
+  library(MSnbase)
+  library(msdata)
+  fl <- proteomics(full.names = TRUE)[3]
+
+
+  ## MSnbase: 2.3.4
+  ## mzR: 2.11.2
+  of <- mzR::openMSfile(fl, backend = "pwiz")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.953   0.036   0.986 
+  mzR::close(of)
+
+  of <- mzR::openMSfile(fl, backend = "Ramp")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.449   0.011   0.460 
+  mzR::close(of)
+
+  system.time(tmp <- readMSData2(fl))
+  ##  user  system elapsed 
+  ## 1.515   0.089   1.596 
+
+  ###########################################
+  ## MSnbase: 2.3.4
+  ## mzR: 2.11.3
+  of <- mzR::openMSfile(fl, backend = "pwiz")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.974   0.039   1.009 
+  mzR::close(of)
+
+  of <- mzR::openMSfile(fl, backend = "Ramp")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.422   0.010   0.433 
+  mzR::close(of)
+
+  system.time(tmp <- readMSData2(fl))
+  ##  user  system elapsed 
+  ## 1.509   0.093   1.594 
+
+  fl <- "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_14.mzML"
+  of <- mzR::openMSfile(fl, backend = "pwiz")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.138   0.042   0.180 
+  mzR::close(of)
+
+  of <- mzR::openMSfile(fl, backend = "Ramp")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.067   0.023   0.089 
+  mzR::close(of)
+
+  system.time(tmp <- readMSData2(fl))
+  ##  user  system elapsed 
+  ## 0.708   0.105   0.814 
+
+  ## tmp: 1720 spectra.
+
+  ############################################
+  ## MSnbase: 2.3.4
+  ## mzR: 2.11.3, without reading the ion injection time
+  of <- mzR::openMSfile(fl, backend = "pwiz")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.969   0.040   1.007 
+  mzR::close(of)
+
+  of <- mzR::openMSfile(fl, backend = "Ramp")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.449   0.011   0.460 
+  mzR::close(of)
+
+  system.time(tmp <- readMSData2(fl))
+  ##  user  system elapsed 
+  ## 1.556   0.089   1.638 
+
+  fl <- "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_14.mzML"
+  of <- mzR::openMSfile(fl, backend = "pwiz")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.138   0.064   0.214 
+  mzR::close(of)
+
+  of <- mzR::openMSfile(fl, backend = "Ramp")
+  system.time(hdr <- header(of))
+  ##  user  system elapsed 
+  ## 0.065   0.022   0.088 
+  mzR::close(of)
+
+  system.time(tmp <- readMSData2(fl))
+  ##  user  system elapsed 
+  ## 0.709   0.110   0.833 
+
+  ## tmp: 1720 spectra.
+#+END_SRC
 
 
 * References

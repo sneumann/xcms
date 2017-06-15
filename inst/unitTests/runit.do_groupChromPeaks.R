@@ -349,7 +349,8 @@ test_groupPeaks_MzClustParam <- function() {
 ##
 
 test_do_groupChromPeaks_nearest <- function() {
-    xs <- faahko    
+    ## xs <- faahko
+    xs <- faahko_xs
     features <- peaks(xs)
     sampleGroups <- sampclass(xs)
     mzVsRtBalance <- 10

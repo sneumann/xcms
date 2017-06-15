@@ -38,6 +38,8 @@ QTOF, ion trap or orbitrap mass spectrometers.
 <<LibraryPreload>>=
 library(xcms)
 library(msdata)
+
+register(bpstart(MulticoreParam()))
 @
 
 \section{Raw Data File Preparation}
