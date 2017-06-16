@@ -111,3 +111,4 @@ if(require("RUnit", quietly=TRUE)) {
 } else {
     warning("cannot run unit tests -- package RUnit is not available")
 }
+
