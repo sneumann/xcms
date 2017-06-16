@@ -1146,6 +1146,77 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
     }
 }
 
+#' @title Add definition of chromatographic peaks to an extracted chromatogram
+#'     plot
+#' 
+#' @description The \code{highlightChromPeaks} function adds chromatographic
+#'     peak definitions to an existing plot, such as one created by the
+#'     \code{plotChromatograms} function.
+#'
+#' @param x For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
+#'     detected peaks.
+#'
+#' @param rt For \code{highlightChromPeaks}: \code{numeric(2)} with the
+#'     retention time range from which peaks should be extracted and plotted.
+#' 
+#' @param mz \code{numeric(2)} with the mz range from which the peaks should
+#'     be extracted and plotted.
+#'
+#' @param border colors to be used to color the border of the rectangles. Has to
+#'     be equal to the number of samples in \code{x}.
+#' 
+#' @param lwd \code{numeric(1)} defining the width of the line/border.
+#'
+#' @param col For \code{highlightChromPeaks}: color to be used to fill the
+#'     rectangle.
+#'
+#' @param type the plotting type. See \code{\link[graphics]{plot}} for more
+#'     details.
+#'     For \code{highlightChromPeaks}: \code{character(1)} defining how the peak
+#'     should be highlighted: \code{type = "rect"} draws a rectangle
+#'     representing the peak definition, \code{type = "point"} indicates a
+#'     chromatographic peak with a single point at the position of the peak's
+#'     \code{"rt"} and \code{"maxo"}.
+#'
+#' @param ... additional parameters to the \code{\link{matplot}} or \code{plot}
+#'     function.
+#' 
+#' @author Johannes Rainer
+highlightChromPeaks <- function(x, rt, mz,
+                                border = rep("00000040", length(fileNames(x))),
+                                lwd = 1, col = NA, type = c("rect", "point"),
+                                ...) {
+    type <- match.arg(type)
+    if (missing(rt))
+        rt <- c(-Inf, Inf)
+    if (missing(mz))
+        mz <- c(-Inf, Inf)
+    if (!is(x, "XCMSnExp"))
+        stop("'x' has to be a XCMSnExp object")
+    if (!hasChromPeaks(x))
+        stop("'x' does not contain any detected peaks")
+    pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0)
+    if (length(col) != length(fileNames(x)))
+        col <- rep(col[1], length(fileNames(x)))
+    if (length(border) != length(fileNames(x)))
+        border <- rep(border[1], length(fileNames(x)))
+    if (length(pks)) {
+        if (type == "rect")
+            rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+                 ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
+                 border = border[pks[, "sample"]], lwd = lwd,
+                 col = col[pks[, "sample"]])
+        if (type == "point") {
+            if (any(is.na(col)))
+                col <- border
+            ## Draw a star at the position defined by the "rt" column
+            points(x = pks[, "rt"], y = pks[, "maxo"],
+                   col = col[pks[, "sample"]], ...)
+        }
+    }
+}
+
+
 ## Plot the chromatographic peaks for a file in a two dimensional plot.
 ## plotChromPeakImage...
 ## @description Plots the

@@ -1,69 +1,4 @@
 ## Unit tests related to the Chromatogram class.
-library(xcms)
-library(RUnit)
-
-test_Chromatogram_class <- function() {
-    ch <- new("Chromatogram")
-    ch@mz <- 3
-    checkException(validObject(ch))
-    ch@mz <- c(1, 3)
-    ch@precursorMz <- 4
-    checkException(validObject(ch))
-    ch@precursorMz <- c(4, 4)
-    ch@productMz <- 5
-    checkException(validObject(ch))
-    ##
-    int <- rnorm(100, mean = 200, sd = 2)
-    rt <- rnorm(100, mean = 300, sd = 3)
-    ## check exceptions:
-    checkException(xcms:::Chromatogram(intensity = int))
-    chr <- Chromatogram()
-    chr@rtime <- rt
-    chr@intensity <- int
-    checkException(validObject(chr))
-    ## issue #145: values are ordered based on rtime
-    chr <- Chromatogram(intensity = int, rtime = rt)
-    checkEquals(rtime(chr), sort(rt))
-    checkEquals(intensity(chr), int[order(rt)])
-    rt <- sort(rt)
-    ch <- xcms:::Chromatogram(intensity = int, rtime = rt)
-    checkEquals(rtime(ch), rt)
-    checkEquals(intensity(ch), int)
-    checkException(xcms:::Chromatogram(aggregationFun = "other"))
-    ch@aggregationFun <- "max"
-    checkTrue(validObject(ch))
-    checkEquals(aggregationFun(ch), "max")
-    ch@aggregationFun <- "sum"
-    checkTrue(validObject(ch))
-    checkEquals(aggregationFun(ch), "sum")
-    ch@aggregationFun <- "mean"
-    checkTrue(validObject(ch))
-    checkEquals(aggregationFun(ch), "mean")
-    ch@aggregationFun <- "min"
-    checkTrue(validObject(ch))
-    checkEquals(aggregationFun(ch), "min")
-    ch@fromFile <- 3L
-    checkTrue(validObject(ch))
-    checkEquals(fromFile(ch), 3L)
-    checkEquals(length(ch), length(rt))
-    ## as.data.frame
-    df <- as.data.frame(ch)
-    checkEquals(df, data.frame(rtime = rt, intensity = int))
-    ch <- xcms:::Chromatogram(mz = c(1, 3))
-    checkEquals(ch@mz, c(1, 3))
-    checkEquals(mz(ch), c(1, 3))
-    checkEquals(mz(ch, filter = TRUE), c(NA_real_, NA_real_))
-    ch <- xcms:::Chromatogram(filterMz = c(1, 3))
-    checkEquals(ch@filterMz, c(1, 3))
-    checkEquals(mz(ch, filter = TRUE), c(1, 3))
-    checkEquals(mz(ch, filter = FALSE), c(NA_real_, NA_real_))
-    ch <- xcms:::Chromatogram(precursorMz = 123)
-    checkEquals(ch@precursorMz, c(123, 123))
-    checkEquals(precursorMz(ch), c(123, 123))
-    ch <- xcms:::Chromatogram(productMz = 123)
-    checkEquals(ch@productMz, c(123, 123))
-    checkEquals(productMz(ch), c(123, 123))
-}
 
 test_filterRt_Chromatogram <- function() {
     int <- rnorm(100, mean = 200, sd = 2)
@@ -313,38 +248,38 @@ test_clean_chromatogram <- function() {
     checkEquals(rtime(chr_clnd), c(3, 7, 8, 9))
 }
 
-dontrun_test_with_MRM <- function() {
-    ## Test how we could read the data.
-    ## chromatogramsInfo
-    library(msdata)
-    fls <- proteomics(full.names = TRUE)
+## dontrun_test_with_MRM <- function() {
+##     ## Test how we could read the data.
+##     ## chromatogramsInfo
+##     library(msdata)
+##     fls <- proteomics(full.names = TRUE)
 
-    library(mzR)
-    msf <- mzR::openMSfile(fls[2], "pwiz")
-    chrs <- chromatograms(msf)
-    chrsI <- chromatogram(msf)
-    ## The same essentially.
-    nChrom(msf)
-    length(chrs)
-    nrow(chrs[[1]])
-    mzR::close(msf)
-    ## 
-    msf <- mzR::openMSfile(fls[1], "pwiz")
-    chrs <- chromatograms(msf)
-    chrs <- chromatograms(msf)
-    nChrom(msf)
-    length(chrs)
-    nrow(chrs[[1]])
+##     library(mzR)
+##     msf <- mzR::openMSfile(fls[2], "pwiz")
+##     chrs <- chromatograms(msf)
+##     chrsI <- chromatogram(msf)
+##     ## The same essentially.
+##     nChrom(msf)
+##     length(chrs)
+##     nrow(chrs[[1]])
+##     mzR::close(msf)
+##     ## 
+##     msf <- mzR::openMSfile(fls[1], "pwiz")
+##     chrs <- chromatograms(msf)
+##     chrs <- chromatograms(msf)
+##     nChrom(msf)
+##     length(chrs)
+##     nrow(chrs[[1]])
 
-    ## Now, we've got the following info: cvParam
-    ## accession="MS:1000235" name="total ion current chromatogram" value=""
-    ## Check http://proteowizard.sourceforge.net/dox/namespacepwiz_1_1msdata.html
-    ## Potentially interesting:
-    ## o ChromatogramIdentity nope, no header info.
-    ## OK, have to look for chromatogram with index="1", then within <precursor>
-    ## for cvParam accession="MS:1000827" and its value -> Q1 or precursorMz
-    ## then within <product> for cvParam accession="MS:1000827" and its value
-    ## -> Q3.
+##     ## Now, we've got the following info: cvParam
+##     ## accession="MS:1000235" name="total ion current chromatogram" value=""
+##     ## Check http://proteowizard.sourceforge.net/dox/namespacepwiz_1_1msdata.html
+##     ## Potentially interesting:
+##     ## o ChromatogramIdentity nope, no header info.
+##     ## OK, have to look for chromatogram with index="1", then within <precursor>
+##     ## for cvParam accession="MS:1000827" and its value -> Q1 or precursorMz
+##     ## then within <product> for cvParam accession="MS:1000827" and its value
+##     ## -> Q3.
 
-    ## https://sourceforge.net/p/proteowizard/mailman/message/27571266/
-}
+##     ## https://sourceforge.net/p/proteowizard/mailman/message/27571266/
+## }
