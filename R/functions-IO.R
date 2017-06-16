@@ -6,15 +6,15 @@
 ## isCdfFile
 ##
 ## Just guessing whether the file is a CDF file based on its ending.
-isCdfFile <- function(x) {
-    fileEnds <- c("cdf", "nc")
-    ## check for endings and and ending followed by a . (e.g. cdf.gz)
-    patts <- paste0("\\.", fileEnds, "($|\\.)")
-    res <- sapply(patts, function(z) {
-        grep(z, x, ignore.case = TRUE)
-    })
-    any(unlist(res))
-}
+## isCdfFile <- function(x) {
+##     fileEnds <- c("cdf", "nc")
+##     ## check for endings and and ending followed by a . (e.g. cdf.gz)
+##     patts <- paste0("\\.", fileEnds, "($|\\.)")
+##     res <- sapply(patts, function(z) {
+##         grep(z, x, ignore.case = TRUE)
+##     })
+##     any(unlist(res))
+## }
 
 ############################################################
 ## isMzMLFile
@@ -34,16 +34,63 @@ isMzMLFile <- function(x) {
 ## isRampFile
 ##
 ## Files that have to be read using the Ramp backend.
-isRampFile <- function(x) {
-    fileEnds <- c("mzxml", "mzdata")
-    ## check for endings and and ending followed by a . (e.g. mzML.gz)
-    patts <- paste0("\\.", fileEnds, "($|\\.)")
-    res <- sapply(patts, function(z) {
-        grep(z, x, ignore.case = TRUE)
-    })
-    any(unlist(res))
+## isRampFile <- function(x) {
+##     fileEnds <- c("mzxml", "mzdata")
+##     ## check for endings and and ending followed by a . (e.g. mzML.gz)
+##     patts <- paste0("\\.", fileEnds, "($|\\.)")
+##     res <- sapply(patts, function(z) {
+##         grep(z, x, ignore.case = TRUE)
+##     })
+##     any(unlist(res))
+## }
+
+#' Guess the correct mzR backend from the file name (ending)
+#'
+#' @noRd
+.mzRBackendFromFilename <- function(x = character()) {
+    if (length(x) != 1)
+        stop("parameter 'x' has to be of length 1")
+    if (grepl("\\.mzml($|\\.)|\\.mzxml($|\\.)", x, ignore.case = TRUE)) {
+        return("pwiz")
+    } else if (grepl("\\.mzdata($|\\.)", x, ignore.case = TRUE)) {
+        return("Ramp")
+    } else if (grepl("\\.cdf($|\\.)|\\.nc($|\\.)", x, ignore.case = TRUE)) {
+        return("netCDF")
+    } else {
+        return(NA)
+    }
 }
 
+#' Return the mzR backend based on the provided file type.
+#'
+#' @noRd
+.mzRBackendFromFiletype <- function(x = character()) {
+    x <- match.arg(tolower(x), c("mzml", "mzxml", "cdf", "netcdf", "mzdata"))
+    if (x == "netcdf")
+        x <- "cdf"
+    .mzRBackendFromFilename(paste0("dummy.", x))
+}
+
+#' Return the mzR backend based on the file content of the file. This uses code
+#' from @sneumann, issue #188
+#' 
+#' @noRd
+.mzRBackendFromFilecontent <- function(x = character()) {
+    if (length(x) != 1)
+        stop("parameter 'x' has to be of length 1")
+    ## check mzML:
+    suppressWarnings(
+        first_lines <- readLines(x, n = 4)
+    )
+    if (any(grepl("<mzML", first_lines)) | any(grepl("<mzXML", first_lines)))
+        return("pwiz")
+    ## mzData
+    if (any(grepl("<mzData", first_lines)))
+        return("Ramp")
+    ## check netCDF:
+    if (substr(readBin(x, character(), n = 1), 1, 3) == "CDF")
+        return("netCDF")
+}
 
 ############################################################
 ## readRawData
@@ -60,22 +107,28 @@ isRampFile <- function(x) {
 ##' file are returned. This is to be consistent with the code before
 ##' xcms version 1.51.1 (see issue #67
 ##' https://github.com/sneumann/xcms/issues/67).
+##'
+##' @param backend \code{character} allowing to manually specify the mzR
+##'     backend.
+##' 
 ##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
+##' 
 ##' @noRd
-readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE) {
+readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
+                        backend = character()) {
     ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
-    backend <- NA
-    if (isCdfFile(x))
-        backend <- "netCDF"
-    if (isRampFile(x))
-        backend <- "Ramp"
-    if (isMzMLFile(x)) {
-        backend <- "pwiz"
-        header_cols <- c(header_cols, "polarity")
+    if (length(backend) == 0) {
+        backend <- .mzRBackendFromFilename(x)
+    }
+    ## Go for file content (issue #188)
+    if (is.na(backend)) {
+        backend <- .mzRBackendFromFilecontent(x)
     }
     if (is.na(backend))
-        stop("Unsupported file type.")
+        stop("File type of file ", x, " can not be determined.")
+    if (isMzMLFile(x))
+        header_cols <- c(header_cols, "polarity")
     msd <- mzR::openMSfile(x, backend = backend)
     on.exit(if(!is.null(msd)) mzR::close(msd))
     ## That's due to issue https://github.com/lgatto/MSnbase/issues/151
