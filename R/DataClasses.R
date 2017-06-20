@@ -2255,8 +2255,8 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     the feature definitions representing the peak grouping results.
 #'     \code{\link{adjustRtime}} for retention time adjustment methods.
 #'
-#'     \code{\link{extractChromatograms}} to extract MS data as
-#'     \code{\link{Chromatogram}} objects.
+#'     \code{\link[MSnbase]{chromatogram}} to extract MS data as
+#'     \code{\link[MSnbase]{Chromatogram}} objects.
 #' 
 #'     \code{\link{extractMsData}} for the method to extract MS data as
 #'     \code{data.frame}s.

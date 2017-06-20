@@ -332,3 +332,24 @@ xcmsClusterApply <- function(cl, x, fun, msgfun=NULL, ...) {
     }
 
 }
+
+setMethod("extractChromatograms",
+          signature(object = "OnDiskMSnExp"),
+          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_) {
+              .Deprecated(msg = paste0("Use of 'extractChromatograms' is ",
+                                       "deprecated, please use 'chromatogram' ",
+                                       "instead."))
+              chromatogram(object, rt = rt, mz = mz,
+                           aggregationFun = aggregationFun, missing = missing)
+          })
+
+setMethod("extractChromatograms",
+          signature(object = "XCMSnExp"),
+          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_) {
+              .Deprecated(msg = paste0("Use of 'extractChromatograms' is ",
+                                       "deprecated, please use 'chromatogram' ",
+                                       "instead."))
+              chromatogram(object, rt = rt, mz = mz,
+                           aggregationFun = aggregationFun, missing = missing)              
+          })
+

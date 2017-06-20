@@ -838,25 +838,6 @@ setMethod("adjustRtime",
               return(res)
           })
 
-#' @rdname extractChromatograms-method
-setMethod("extractChromatograms",
-          signature(object = "OnDiskMSnExp"),
-          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_) {
-              if (!missing(rt)) {
-                  if (is.null(ncol(rt)))
-                      rt <- matrix(range(rt), ncol = 2, nrow = 1)
-              }
-              if (!missing(mz)) {
-                  if (is.null(ncol(mz)))
-                      mz <- matrix(range(mz), ncol = 2, nrow = 1)
-              }
-              ## return(.extractChromatogram(x = object, rt = rt, mz = mz,
-              ##                             aggregationFun = aggregationFun))
-              .extractMultipleChromatograms(object, rt = rt, mz = mz,
-                                            aggregationFun = aggregationFun,
-                                            missingValue = missing)
-          })
-
 #' @rdname extractMsData-method
 setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
           function(object, rt, mz) {

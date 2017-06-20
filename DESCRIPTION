@@ -73,7 +73,6 @@ Collate:
     'functions-xcmsSet.R'
     'init.R'
     'matchpeaks.R'
-    'methods-Chromatogram.R'
     'methods-IO.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'

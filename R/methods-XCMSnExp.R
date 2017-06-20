@@ -1819,13 +1819,15 @@ setMethod("featureValues",
 ## })
 
 
-#' @aliases extractChromatograms
+#' @aliases chromatogram
 #' 
 #' @title Extracting chromatograms
 #'
-#' @description \code{extractChromatograms}: the method allows to extract
+#' @description \code{chromatogram}: the method allows to extract
 #'     chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
-#'     \code{\link{XCMSnExp}} objects.
+#'     \code{\link{XCMSnExp}} objects. See also the
+#'     \code{\link[MSnbase]{chromatogram}}implementation for
+#'     \code{\link[MSnbase]{OnDiskMSnExp}} in the MSnbase package.
 #'
 #' @details Arguments \code{rt} and \code{mz} allow to specify the MS
 #'     data slice from which the chromatogram should be extracted.
@@ -1834,22 +1836,23 @@ setMethod("featureValues",
 #'     retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
 #'     to calculate the \emph{total ion chromatogram} (TIC),
 #'     \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
-#'     The length of the extracted \code{Chromatogram} object, i.e. the number
-#'     of available data points, corresponds to the number of scans/spectra
-#'     measured in the specified retention time range. If in a specific scan
-#'     (for a give retention time) no signal was measured in the specified mz
-#'     range, a \code{NA_real_} is reported as intensity for the retention time
-#'     (see Notes for more information). This can be changed using the
-#'     \code{missing} parameter. 
+#'     The length of the extracted \code{\link[MSnbase]{Chromatogram}} object,
+#'     i.e. the number of available data points, corresponds to the number of
+#'     scans/spectra measured in the specified retention time range. If in a
+#'     specific scan (for a give retention time) no signal was measured in the
+#'     specified mz range, a \code{NA_real_} is reported as intensity for the
+#'     retention time (see Notes for more information). This can be changed
+#'     using the \code{missing} parameter. 
 #'
-#' @note \code{Chromatogram} objects extracted with \code{extractChromatogram}
+#' @note \code{\link[MSnbase]{Chromatogram}} objects extracted with
+#'     \code{chromatogram}
 #'     contain \code{NA_real_} values if, for a given retention time, no 
 #'     signal was measured in the specified mz range. If no spectrum/scan is
 #'     present in the defined retention time window a \code{Chromatogram} object
 #'     of length 0 is returned.
 #'
 #'     For \code{\link{XCMSnExp}} objects, if adjusted retention times are
-#'     available, the \code{extractChromatograms} method will by default report
+#'     available, the \code{chromatogram} method will by default report
 #'     and use these (for the subsetting based on the provided parameter
 #'     \code{rt}). This can be overwritten with the parameter
 #'     \code{adjustedRtime}.
@@ -1870,11 +1873,11 @@ setMethod("featureValues",
 #'     It is also possible to submit a \code{numeric(1)} in which case
 #'     \code{range} is called on it to transform it to a \code{numeric(2)}.
 #'
-#' @param adjustedRtime For \code{extractChromatograms,XCMSnExp}: whether the
+#' @param adjustedRtime For \code{chromatogram,XCMSnExp}: whether the
 #'     adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 #'     (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-#'     in the resulting \code{\link{Chromatogram}} object. Adjusted retention
-#'     times are used by default if available.
+#'     in the resulting \code{\link[MSnbase]{Chromatogram}} object. Adjusted
+#'     retention times are used by default if available.
 #'
 #' @param aggregationFun \code{character} specifying the function to be used to
 #'     aggregate intensity values across the mz value range for the same
@@ -1888,9 +1891,9 @@ setMethod("featureValues",
 #'     behaviour of the \code{getEIC} from the \code{old} user interface.
 #'
 #' @return If a single \code{rt} and \code{mz} range was specified,
-#'     \code{extractChromatograms} returns a \code{list} of
-#'     \code{\link{Chromatogram}} classes each element being the chromatogram
-#'     for one of the samples for the specified range.
+#'     \code{chromatogram} returns a \code{list} of
+#'     \code{\link[MSnbase]{Chromatogram}} classes each element being the
+#'     chromatogram for one of the samples for the specified range.
 #'     If multiple \code{rt} and \code{mz} ranges were provided (i.e. by passing
 #'     a multi-row \code{matrix} to parameters \code{rt} or \code{mz}), the
 #'     function returns a \code{list} of \code{list}s. The outer list
@@ -1910,8 +1913,8 @@ setMethod("featureValues",
 #' @author Johannes Rainer
 #'
 #' @seealso \code{\link{XCMSnExp}} for the data object.
-#'     \code{\link{Chromatogram}} for the object representing chromatographic
-#'     data.
+#'     \code{\link[MSnbase]{Chromatogram}} for the object representing
+#'     chromatographic data.
 #'
 #'     \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
 #'     \code{list} of such objects.
@@ -1921,7 +1924,7 @@ setMethod("featureValues",
 #'
 #' @export
 #' 
-#' @rdname extractChromatograms-method
+#' @rdname chromatogram-method
 #'
 #' @examples
 #' ## Read some files from the faahKO package.
@@ -1934,7 +1937,7 @@ setMethod("featureValues",
 #' od <- readMSData2(faahko_3_files)
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
-#' chrs <- extractChromatograms(od, rt = c(2700, 2900), mz = 335)
+#' chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
 #'
 #' ## plot the data
 #' plot(rtime(chrs[[2]]), intensity(chrs[[2]]), type = "l", xlab = "rtime",
@@ -1949,13 +1952,13 @@ setMethod("featureValues",
 #' ## Extract chromatograms for multiple ranges.
 #' mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 #' rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
-#' chrs <- extractChromatograms(od, mz = mzr, rt = rtr)
+#' chrs <- chromatogram(od, mz = mzr, rt = rtr)
 #'
 #' ## Plot the extracted chromatograms
 #' par(mfrow = c(1, 2))
 #' plotChromatogram(chrs[[1]])
 #' plotChromatogram(chrs[[2]])
-setMethod("extractChromatograms",
+setMethod("chromatogram",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
                    aggregationFun = "sum", missing = NA_real_) {
@@ -1967,12 +1970,9 @@ setMethod("extractChromatograms",
                   ## Replace the original rtime with adjusted ones...
                   object@featureData$retentionTime <- adj_rt
               }
-              extractChromatograms(object, rt = rt, mz = mz,
-                                   aggregationFun = aggregationFun,
-                                   missing = missing)
-              ## .extractChromatogram(x = object, rt = rt, mz = mz,
-              ##                             aggregationFun = aggregationFun,
-              ##                             adjusted = adjustedRtime)
+              chromatogram(object, rt = rt, mz = mz,
+                           aggregationFun = aggregationFun,
+                           missing = missing)
           })
 
 #' @rdname XCMSnExp-class

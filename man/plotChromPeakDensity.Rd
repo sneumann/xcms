@@ -71,8 +71,9 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 ## Reading 2 of the KO samples
 raw_data <- readMSData2(fls[1:2])
 
-## Perform the peak detection using the centWave method.
-res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 1000))
+## Perform the peak detection using the centWave method (settings are tuned
+## to speed up example execution)
+res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000))
 
 ## Align the samples using obiwarp
 res <- adjustRtime(res, param = ObiwarpParam())

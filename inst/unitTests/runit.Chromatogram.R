@@ -1,26 +1,5 @@
 ## Unit tests related to the Chromatogram class.
 
-test_filterRt_Chromatogram <- function() {
-    int <- rnorm(100, mean = 200, sd = 2)
-    rt <- rnorm(100, mean = 300, sd = 3)
-    chr <- Chromatogram(intensity = int, rtime = sort(rt))
-
-    chr_2 <- filterRt(chr, rt = c(200, 300))
-    checkTrue(all(rtime(chr_2) >= 200))
-    checkTrue(all(rtime(chr_2) <= 300))
-    ints <- intensity(chr_2)
-    checkEquals(ints, intensity(chr)[rtime(chr) >= 200 & rtime(chr) <= 300])
-
-    ## No rt
-    checkEquals(chr, filterRt(chr))
-
-    ## Outside range
-    chr_2 <- filterRt(chr, rt = c(400, 500))
-    checkTrue(length(chr_2) == 0)
-    checkEquals(intensity(chr_2), numeric())
-    checkEquals(rtime(chr_2), numeric())
-}
-
 test_extractChromatograms <- function() {
     ## OnDiskMSnExp
     ## TIC
@@ -222,30 +201,6 @@ test_extractChromatograms <- function() {
     checkTrue(length(chrs) == 3)
     ## All values in the 2nd Chromosome object have to be NA.
     checkTrue(all(unlist(lapply(chrs[[2]], function(z) is.na(intensity(z))))))
-}
-
-test_clean_chromatogram <- function() {
-    chr <- Chromatogram(
-        rtime = 1:12,
-        intensity = c(0, 0, 20, 0, 0, 0, 123, 124343, 3432, 0, 0, 0))
-    chr_clnd <- clean(chr)
-    checkEquals(rtime(chr_clnd), c(2, 3, 4, 6, 7, 8, 9,10))
-
-    chr_clnd <- clean(chr, all = TRUE)
-    checkTrue(length(chr_clnd) == 4)
-    checkEquals(rtime(chr_clnd), c(3, 7, 8, 9))
-
-    ## With NA
-    chr <- Chromatogram(
-        rtime = 1:12,
-        intensity = c(0, NA, 20, 0, 0, 0, 123, 124343, 3432, 0, 0, 0))
-    chr_clnd <- clean(chr)
-    checkEquals(rtime(chr_clnd), c(3, 4, 6, 7, 8, 9, 10))
-    chr <- Chromatogram(
-        rtime = 1:12,
-        intensity = c(NA, NA, 20, NA, NA, NA, 123, 124343, 3432, NA, NA, NA))
-    chr_clnd <- clean(chr)
-    checkEquals(rtime(chr_clnd), c(3, 7, 8, 9))
 }
 
 ## dontrun_test_with_MRM <- function() {

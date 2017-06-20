@@ -2,19 +2,15 @@
 % Please edit documentation in R/functions-Chromatogram.R
 \name{plotChromatogram}
 \alias{plotChromatogram}
-\alias{highlightChromPeaks}
 \title{Plot Chromatogram objects}
 \usage{
 plotChromatogram(x, rt, col = "#00000060", lty = 1, type = "l",
   xlab = "retention time", ylab = "intensity", main = NULL, ...)
-
-highlightChromPeaks(x, rt, mz, border = rep("00000040", length(fileNames(x))),
-  lwd = 1, col = NA, type = c("rect", "point"), ...)
 }
 \arguments{
 \item{x}{For \code{plotChromatogram}: \code{list} of
-\code{\link{Chromatogram}} objects. Such as extracted from an
-\code{\link{XCMSnExp}} object by the \code{\link{extractChromatograms}}
+\code{\link[MSnbase]{Chromatogram}} objects. Such as extracted from an
+\code{\link{XCMSnExp}} object by the \code{\link{chromatogram}}
 method.
 For \code{highlightChromPeaks}: \code{XCMSnExp} object with the detected
 peaks.}
@@ -53,24 +49,12 @@ be used as the title.}
 
 \item{...}{additional parameters to the \code{\link{matplot}} or \code{plot}
 function.}
-
-\item{mz}{\code{numeric(2)} with the mz range from which the peaks should
-be extracted and plotted.}
-
-\item{border}{colors to be used to color the border of the rectangles. Has to
-be equal to the number of samples in \code{x}.}
-
-\item{lwd}{\code{numeric(1)} defining the width of the line/border.}
 }
 \description{
 \code{plotChromatogram} creates a chromatogram plot for a
-    single \code{Chromatogram} object or a \code{list} of
-    \code{\link{Chromatogram}} objects (one line for each
-    \code{\link{Chromatogram}}/sample).
-
-The \code{highlightChromPeaks} function adds chromatographic
-    peak definitions to an existing plot, such as one created by the
-    \code{plotChromatograms} function.
+    single \code{\link[MSnbase]{Chromatogram}} object or a \code{list} of
+    \code{\link[MSnbase]{Chromatogram}} objects (one line for each
+    \code{\link[MSnbase]{Chromatogram}}/sample).
 }
 \details{
 The \code{plotChromatogram} function allows to efficiently plot
@@ -91,7 +75,7 @@ od <- findChromPeaks(od, param = CentWaveParam(snthresh = 20, noise = 10000))
 
 rtr <- c(2600, 2750)
 mzr <- c(344, 344)
-chrs <- extractChromatograms(od, rt = rtr, mz = mzr)
+chrs <- chromatogram(od, rt = rtr, mz = mzr)
 
 ## Plot a single chromatogram
 plotChromatogram(chrs[[1]])
@@ -106,9 +90,9 @@ highlightChromPeaks(od, rt = rtr, mz = mzr,
 
 }
 \seealso{
-\code{\link{extractChromatograms}} for how to extract a list of
-    \code{\link{Chromatogram}} objects from an \code{\link{XCMSnExp}}
-    objects.
+\code{\link{chromatogram}} for how to extract a list of
+    \code{\link[MSnbase]{Chromatogram}} objects from an
+    \code{\link{XCMSnExp}} objects.
 }
 \author{
 Johannes Rainer

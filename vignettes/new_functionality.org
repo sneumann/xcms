@@ -1319,6 +1319,14 @@ https://en.wikipedia.org/wiki/Mass_chromatogram#Selected-ion_monitoring_chromato
 http://proteowizard.sourceforge.net/dox/structpwiz_1_1msdata_1_1_chromatogram.html
 https://sourceforge.net/p/proteowizard/mailman/message/27571266/
 
+*** Move =Chromatogram= to MSnbase
+
++ [X] Add =Chromatogram= to MSnbase.
++ [ ] Remove =Chromatogram= from xcms.
++ [ ] Move functions and methods to MSnbase.
++ [ ] Fix xcms to import all required stuff from MSnbase.
+
+
 ** TODO Implement a =findBackgroundIons= method
 
 Check on one of our own files.

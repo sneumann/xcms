@@ -1022,7 +1022,7 @@ test_MsFeatureData_class_accessors <- function() {
 
 
 ## Test extraction of chromatograms.
-test_extractChromatograms <- function() {
+test_chromatogram <- function() {
     ## Have: od_x: OnDiskMSNnExp
     ## xod_x: XCMSnExp, with detected chromPeaks.
     ## xod_xg: with feature groups.
@@ -1034,7 +1034,7 @@ test_extractChromatograms <- function() {
     ## BPC - CDF don't habe a BPC.
     rtr <- c(2600, 2700)
     tmp_obj <- filterFile(xod_x, file = c(1, 2))
-    res <- xcms:::extractChromatograms(tmp_obj, aggregationFun = "max", rt = rtr)
+    res <- chromatogram(tmp_obj, aggregationFun = "max", rt = rtr)
     checkTrue(all(rtime(res[[1]]) >= rtr[1]))
     checkTrue(all(rtime(res[[1]]) <= rtr[2]))
     checkTrue(all(rtime(res[[2]]) >= rtr[1]))
@@ -1046,11 +1046,11 @@ test_extractChromatograms <- function() {
     ## Check names
     checkEquals(names(rtime(res[[1]])), names(intensity(res[[1]])))
     ## Assure we get the same with an OnDiskMSnExp and grouped XCMSnExp
-    res_2 <- xcms:::extractChromatograms(filterFile(od_x, file = c(1, 2)),
-                                         aggregationFun = "max", rt = rtr)
+    res_2 <- chromatogram(filterFile(od_x, file = c(1, 2)),
+                          aggregationFun = "max", rt = rtr)
     checkEquals(res, res_2)
-    res_3 <- xcms:::extractChromatograms(filterFile(xod_xg, file = c(1, 2)),
-                                         aggregationFun = "max", rt = rtr)
+    res_3 <- chromatogram(filterFile(xod_xg, file = c(1, 2)),
+                          aggregationFun = "max", rt = rtr)
     checkEquals(res, res_3)
     
     ## XCMSnExp: with mzrange and rtrange:
@@ -1059,7 +1059,7 @@ test_extractChromatograms <- function() {
     featureDefinitions(tmp)
     tmp <- filterRt(xod_xg, rt = rtr)
     featureDefinitions(tmp)
-    res_2 <- xcms:::extractChromatograms(xod_xg, rt = rtr, mz = mzr)
+    res_2 <- chromatogram(xod_xg, rt = rtr, mz = mzr)
     ##
 
     ## XCMSnExp with adjusted rtime

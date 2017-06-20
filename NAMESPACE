@@ -2,7 +2,7 @@ useDynLib(xcms)
 
 importFrom("utils", "capture.output")
 import("methods")
-importFrom("ProtGenerics", "peaks")
+importFrom("ProtGenerics", "peaks", "chromatogram")
 importFrom("BiocGenerics", "updateObject", "fileName")
 ## import("Biobase")
 importFrom("Biobase", "AnnotatedDataFrame")
@@ -44,15 +44,17 @@ importFrom("RANN", "nn2")
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 ## MSnbase:
-importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp")
+importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
+                  "Chromatograms")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
-                  "spectrapply", "peaksCount", "precursorMz")
-importFrom("MSnbase", "as.data.frame.Spectrum")
+                  "spectrapply", "peaksCount", "precursorMz", "productMz",
+                  "aggregationFun", "chromatogram")
+importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
 
 export(
     "etg",
@@ -388,7 +390,6 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 
 ## New Classes
 exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
-              "Chromatogram",
               "XProcessHistory"
               )
 ## New methods for these classes
@@ -431,7 +432,7 @@ exportMethods("hasChromPeaks",
               "precursorMz",
               "productMz",
               "fillChromPeaks",
-              "as.data.frame",
               "dropFilledChromPeaks",
-              "extractMsData"
+              "extractMsData",
+              "chromatogram"
               )
