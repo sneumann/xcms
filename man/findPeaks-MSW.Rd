@@ -57,7 +57,7 @@ MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2, 30,
   peakThr = NULL, tuneIn = FALSE, ...)
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MSWParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp")
+  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
 
 \S4method{show}{MSWParam}(object)
 
@@ -143,23 +143,26 @@ estimation of the detected peaks.}
 \code{MassSpecWavelet} package.}
 
 \item{object}{For \code{findChromPeaks}: an
-\code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
-experiment-relevant data.
+    \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+    other experiment-relevant data.
 
-For all other methods: a parameter object.}
+    For all other methods: a parameter object.}
 
 \item{param}{An \code{MSWParam} object containing all settings for
 the algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
 should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If parallel
-processing is enables, peak detection is performed in parallel on several
-of the input samples.}
+See documentation of the \code{BiocParallel} for more details. If
+parallel processing is enabled, peak detection is performed in parallel
+on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{value}{The value for the slot.}
 }
@@ -169,11 +172,11 @@ class instance with all of the settings specified for peak detection by
 the \emph{MSW} method.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-\code{\link{XCMSnExp}} object with the results of the peak detection.
-If \code{return.type = "list"} a list of length equal to the number of
-samples with matrices specifying the identified peaks.
-If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-with the results of the detection.
+    \code{\link{XCMSnExp}} object with the results of the peak detection.
+    If \code{return.type = "list"} a list of length equal to the number of
+    samples with matrices specifying the identified peaks.
+    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+    with the results of the detection.
 }
 \description{
 Perform peak detection in mass spectrometry
@@ -184,12 +187,13 @@ The \code{MSWParam} class allows to specify all
     created with the \code{MSWParam} constructor.
 
 The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
-method performs peak detection in single-spectrum non-chromatography MS
-data using functionality from the \code{MassSpecWavelet} package on all
-samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-\code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
-data and load the spectra data (mz and intensity values) on the fly from the
-original files applying also all eventual data manipulations.
+    method performs peak detection in single-spectrum non-chromatography MS
+    data using functionality from the \code{MassSpecWavelet} package on all
+    samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
+    \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+    specific data and load the spectra data (mz and intensity values) on the
+    fly from the original files applying also all eventual data
+    manipulations.
 
 \code{snthresh},\code{snthresh<-}: getter and setter for the
     \code{snthresh} slot of the object.
@@ -236,9 +240,10 @@ This is a wrapper for the peak picker in Bioconductor's
     \emph{xcmsDirect} vignette for more information.
 
 Parallel processing (one process per sample) is supported and can
-be configured either by the \code{BPPARAM} parameter or by globally defining
-the parallel processing mode using the \code{\link[BiocParallel]{register}}
-method from the \code{BiocParallel} package.
+    be configured either by the \code{BPPARAM} parameter or by globally
+    defining the parallel processing mode using the
+    \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+    package.
 }
 \section{Slots}{
 
@@ -282,7 +287,7 @@ The \code{\link{do_findPeaks_MSW}} core API function
     and \code{\link{findPeaks.MSW}} for the old user interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the peak detection.
+    the peak detection.
 
 Other peak detection methods: \code{\link{chromatographic-peak-detection}},
   \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},

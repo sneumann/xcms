@@ -45,7 +45,7 @@ in the =xcms= package introduced during the update to version /3/.
   register(bpstart(MulticoreParam()))
 #+END_SRC
 
-** Modernized user interface
+** COMMENT Modernized user interface
 
 The modernization of the user interface comprises new classes for data
 representation and new data analysis methods. In addition, the core logic for
@@ -110,7 +110,7 @@ files from the =faahKO= package using the =readMSData2= from the =MSnbase= packa
   library(xcms)
   ## Load 6 of the CDF files from the faahKO
   cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
-                   full.names = TRUE)[c(1:3, 7:9)]
+		   full.names = TRUE)[c(1:3, 7:9)]
 
   ## Define the sample grouping.
   s_groups <- rep("KO", length(cdf_files))
@@ -118,7 +118,7 @@ files from the =faahKO= package using the =readMSData2= from the =MSnbase= packa
   ## Define a data.frame that will be used as phenodata
   pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
 					replacement = "", fixed = TRUE),
-                      sample_group = s_groups, stringsAsFactors = FALSE)
+		      sample_group = s_groups, stringsAsFactors = FALSE)
 
   ## Read the data.
   raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
@@ -138,44 +138,49 @@ consistent.
   ## Subset the full raw data by file and plot the data.
   tmp <- filterFile(raw_data, file = 1)
   plot(x = rtime(tmp), y = tic(tmp), xlab = "retention time", ylab = "TIC",
-       col = paste0(sample_colors[pData(tmp)$sample_group], 80), type = "l")
+       col = paste0(sample_colors[tmp$sample_group], 80), type = "l")
   for (i in 2:length(fileNames(raw_data))) {
       tmp <- filterFile(raw_data, file = i)
       points(rtime(tmp), tic(tmp), type = "l",
-             col = paste0(sample_colors[pData(tmp)$sample_group], 80))
+	     col = paste0(sample_colors[tmp$sample_group], 80))
   }
   legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
 #+END_SRC
 
-Alternatively we can use the =extractChromatograms= method that extracts
+Alternatively we can use the =chromatogram= method that extracts
 chromatograms from the object. In the example below we extract the /base peak
 chromatogram/ (BPC) by setting =aggregationFun= to ="max"= and not specifying an =rt=
-or =mz= range to extract only a data subset. In contrast to the =tic= and =bpi=
+or =mz= range hence extracting the full data. In contrast to the =tic= and =bpi=
 methods, this function reads the data from the raw files. It takes thus more
 time to create the plot, but it is based on the actual raw data that is used for
 the later analysis - the =tic= and =bpi= methods access only the information that is
 stored in the raw data files by the MS detector during the data acquisition.
 
+The =chromatogram= method returns a =Chromatograms= object which is an extension to
+the base =matrix= class allowing to arrange multiple =Chromatogram= objects in a
+two-dimensional grid. Columns in the =Chromatograms= object represent samples,
+rows m/z x rt ranges.
+
 #+NAME: faahKO-bpi
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
   ## Get the base peak chromatograms. This reads data from the files.
-  bpis <- extractChromatograms(raw_data, aggregationFun = "max")
+  bpis <- chromatogram(raw_data, aggregationFun = "max")
   ## Plot the list of Chromatogram objects.
-  plotChromatogram(bpis, col = paste0(sample_colors[pData(raw_data)$sample_group], 80))
+  plot(bpis, col = paste0(sample_colors[raw_data$sample_group], 80))
 
 #+END_SRC
 
-While the =plotChromatogram= function if very convenient (and fast), it would also
-not be too difficult to create the plot manually:
+While the =plot= method if very convenient (and fast), it would also not be too
+difficult to create the plot manually:
 
 #+NAME: faahKO-bbpi-manual
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
-  plot(3, 3, pch = NA, xlim = range(unlist(lapply(bpis, rtime))),
-       ylim = range(unlist(lapply(bpis, intensity))), main = "BPC",
+  plot(3, 3, pch = NA, xlim = range(unlist(lapply(bpis[1, ], rtime))),
+       ylim = range(unlist(lapply(bpis[1, ], intensity))), main = "BPC",
        xlab = "rtime", ylab = "intensity")
-  for (i in 1:length(bpis)) {
-      points(rtime(bpis[[i]]), intensity(bpis[[i]]), type = "l",
-             col = paste0(sample_colors[pData(raw_data)$sample_group[i]], 80))
+  for (i in 1:ncol(bpis)) {
+      points(rtime(bpis[1, i]), intensity(bpis[1, i]), type = "l",
+	     col = paste0(sample_colors[raw_data$sample_group[i]], 80))
   }
 #+END_SRC
 
@@ -192,7 +197,7 @@ experiment's spectra to the originating files.
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
   ## Get the total ion current by file
   tc <- split(tic(raw_data), f = fromFile(raw_data))
-  boxplot(tc, col = paste0(sample_colors[pData(raw_data)$sample_group], 80),
+  boxplot(tc, col = paste0(sample_colors[raw_data$sample_group], 80),
           ylab = "intensity", main = "Total ion current")
 #+END_SRC
 
@@ -224,7 +229,7 @@ plot the signal distribution of the identified peaks per sample.
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
   ints <- split(chromPeaks(xod)[, "into"], f = chromPeaks(xod)[, "sample"])
   ints <- lapply(ints, log2)
-  boxplot(ints, varwidth = TRUE, col = sample_colors[pData(xod)$sample_group],
+  boxplot(ints, varwidth = TRUE, col = sample_colors[xod$sample_group],
           ylab = expression(log[2]~intensity), main = "Peak intensities")
 #+END_SRC
 
@@ -239,10 +244,10 @@ seconds. In addition we extract also the full chromatogram for the specified mz
 range (i.e. the full rt range) and identify all chromatographic peaks in that
 region by passing the same =mz= and =rt= parameters to the =chromPeaks= method.
 
-If two-column matrices are passed to the =extractChromatograms= method with
-parameters =rt= and =mz=, the function returns a =list=, each element being a =list= of
-=Chromatogram= objects representing the chromatogram for the respective
-ranges.
+If two-column matrices are passed to the =chromatogram= method with parameters =rt=
+and =mz=, the function returns a =Chromatograms= object with each column containing
+the data from one sample/file and each row the =Chromatogram= objects for the
+respective ranges.
 
 #+NAME: faahKO-chromPeaks-extractChroms
 #+BEGIN_SRC R :ravel warning = FALSE
@@ -256,7 +261,7 @@ ranges.
   rtr <- rbind(c(-Inf, Inf), rtr)
   mzr <- rbind(mzr, mzr)
 
-  chrs <- extractChromatograms(xod, rt = rtr, mz = mzr)
+  chrs <- chromatogram(xod, rt = rtr, mz = mzr)
 
   ## In addition we get all peaks detected in the same region
   pks <- chromPeaks(xod, rt = rtr, mz = mzr)
@@ -269,20 +274,19 @@ the identified peaks.
 #+NAME: faahKO-extracted-chrom-with-peaks
 #+BEGIN_SRC R :ravel message = FALSE, fig.cap = "Extracted ion chromatogram for one of the identified peaks. Left: full retention time range, right: rt range of the peak. Each line represents the signal measured in one sample. The rectangles indicate the margins of the identified chromatographic peak in the respective sample.", fig.align = "center", fig.width = 12, fig.height = 6
   ## Plot the full rt range:
-  plotChromatogram(chrs[[1]],
-                   col = paste0(sample_colors[pData(xod)$sample_group], 80))
+  par(mfrow = c(2, 1))
+  plot(chrs[1, , drop = FALSE], col = paste0(sample_colors[xod$sample_group], 80))
   ## And now for the peak range.
-  plotChromatogram(chrs[[2]],
-                   col = paste0(sample_colors[pData(xod)$sample_group], 80))
+  plot(chrs[2, , drop = FALSE], col = paste0(sample_colors[xod$sample_group], 80))
   ## Highlight also the identified chromatographic peaks.
   highlightChromPeaks(xod, rt = rtr[2, ], mzr[2, ],
-                      border = paste0(sample_colors[pData(xod)$sample_group], 40))
+		      border = paste0(sample_colors[xod$sample_group], 40))
 #+END_SRC
 
-Note that the =extractChromatograms= does return an =NA= value if in a certain scan
-(i.e. for a specific retention time) no signal was measured in the respective mz
-range. This is reflected by the lines not being drawn as continuous lines in the
-plot above.
+Note that =Chromatogram= objects extracted by the =chromatogram= method contain an
+=NA= value if in a certain scan (i.e. for a specific retention time) no signal was
+measured in the respective mz range. This is reflected by the lines not being
+drawn as continuous lines in the plot above.
 
 Next we align the samples using the /obiwarp/ method \cite{Prince:2006jj}. This
 method does not require, in contrast to other alignment/retention time
@@ -307,13 +311,12 @@ times per sample using the =plotAdjustedRtime= function.
 #+NAME: faahKO-bpi-obiwarp
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8
   ## Get the base peak chromatograms. This reads data from the files.
-  bpis <- extractChromatograms(xod, aggregationFun = "max")
+  bpis <- chromatogram(xod, aggregationFun = "max")
 
   par(mfrow = c(2, 1), mar = c(4.5, 4.2, 1, 0.5))
-  plotChromatogram(bpis,
-                   col = paste0(sample_colors[pData(xod)$sample_group[i]], 80))
+  plot(bpis, col = paste0(sample_colors[xod$sample_group], 80))
   ## Plot also the difference of adjusted to raw retention time.
-  plotAdjustedRtime(xod, col = paste0(sample_colors[pData(xod)$sample_group], 80))
+  plotAdjustedRtime(xod, col = paste0(sample_colors[xod$sample_group], 80))
 #+END_SRC
 
 Too large differences between adjusted and raw retention times could indicate
@@ -331,8 +334,8 @@ assessment.
   ## get the values grouped by sample we have to split this vector by file/sample
   diffRt <- split(diffRt, fromFile(xod))
 
-  boxplot(diffRt, col = sample_colors[pData(xod)$sample_group],
-          main = "Obiwarp alignment results", ylab = "adjusted - raw rt")
+  boxplot(diffRt, col = sample_colors[xod$sample_group],
+	  main = "Obiwarp alignment results", ylab = "adjusted - raw rt")
 #+END_SRC
 
 The 3rd sample was used as /center/ sample against which all other samples were
@@ -351,16 +354,14 @@ of the alignment.
   rtr[2] <- rtr[2] + 60
   mzr <- chromPeaks(xod)[68, c("mzmin", "mzmax")]
 
-  chrs <- extractChromatograms(xod, rt = rtr, mz = mzr)
-  chrs_raw <- extractChromatograms(raw_data, rt = rtr, mz = mzr)
+  chrs <- chromatogram(xod, rt = rtr, mz = mzr)
+  chrs_raw <- chromatogram(raw_data, rt = rtr, mz = mzr)
 
   par(mfrow = c(2, 1))
-  plotChromatogram(chrs_raw,
-                   col = paste0(sample_colors[pData(xod)$sample_group], 80))
-  plotChromatogram(chrs,
-                   col = paste0(sample_colors[pData(xod)$sample_group], 80))
+  plot(chrs_raw, col = paste0(sample_colors[xod$sample_group], 80))
+  plot(chrs, col = paste0(sample_colors[xod$sample_group], 80))
   highlightChromPeaks(xod, rt = rtr, mzr,
-                      border = paste0(sample_colors[pData(xod)$sample_group], 40))
+		      border = paste0(sample_colors[xod$sample_group], 40))
 #+END_SRC
 
 After alignment, the peaks are nicely overlapping.
@@ -373,8 +374,8 @@ a mz-rt /feature/.
 #+NAME: faahKO-groupPeakDensity
 #+BEGIN_SRC R :ravel message = FALSE
   ## Define the PeakDensityParam
-  pdp <- PeakDensityParam(sampleGroups = pData(xod)$sample_group,
-                          maxFeatures = 300, minFraction = 0.66)
+  pdp <- PeakDensityParam(sampleGroups = xod$sample_group,
+			  maxFeatures = 300, minFraction = 0.66)
   xod <- groupChromPeaks(xod, param = pdp)
 #+END_SRC
 
@@ -557,14 +558,15 @@ the raw data on which the preprocessing was performed.
 
 *** =Chromatogram=
 
-The =Chromatogram= class allows a data representation that is orthogonal to the
-=Spectrum= class defined in =MSnbase=. The =Chromatogram= class stores retention time
-and intensity duplets and is designed to accommodate most use cases, from total
-ion chromatogram, base peak chromatogram to extracted ion chromatogram and
-SRM/MRM ion traces.
+The =Chromatogram= class (available in the =MSnbase= package since version 2.3.8)
+allows a data representation that is orthogonal to the =Spectrum= class (also
+defined in =MSnbase=). The =Chromatogram= class stores retention time and intensity
+duplets and is designed to accommodate most use cases, from total ion
+chromatogram, base peak chromatogram to extracted ion chromatogram and SRM/MRM
+ion traces.
 
-=Chromatogram= objects can be extracted from =XCMSnExp= objects using the
-=extractChromatograms= method.
+=Chromatogram= objects can be extracted from =XCMSnExp= (and =MSnExp= and
+=OnDiskMSnExp=) objects using the =chromatogram= method.
 
 Note that this class is still considered developmental and might thus undergo
 some changes in the future.

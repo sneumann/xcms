@@ -58,7 +58,7 @@ MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
   checkBack = 0, withWave = FALSE)
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp")
+  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
 
 \S4method{show}{MassifquantParam}(object)
 
@@ -212,23 +212,26 @@ with Massifquant are subsequently filtered with the second step of the
 centWave algorithm, which includes wavelet estimation.}
 
 \item{object}{For \code{findChromPeaks}: an
-\code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all other
-experiment-relevant data.
+    \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+    other experiment-relevant data.
 
-For all other methods: a parameter object.}
+    For all other methods: a parameter object.}
 
 \item{param}{An \code{MassifquantParam} object containing all settings for
 the massifquant algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
 should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
-See documentation of the \code{BiocParallel} for more details. If parallel
-processing is enables, peak detection is performed in parallel on several
-of the input samples.}
+See documentation of the \code{BiocParallel} for more details. If
+parallel processing is enabled, peak detection is performed in parallel
+on several of the input samples.}
 
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{value}{The value for the slot.}
 
@@ -240,11 +243,11 @@ class instance with all of the settings specified for chromatographic peak
 detection by the \emph{massifquant} method.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
-\code{\link{XCMSnExp}} object with the results of the peak detection.
-If \code{return.type = "list"} a list of length equal to the number of
-samples with matrices specifying the identified peaks.
-If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
-with the results of the peak detection.
+    \code{\link{XCMSnExp}} object with the results of the peak detection.
+    If \code{return.type = "list"} a list of length equal to the number of
+    samples with matrices specifying the identified peaks.
+    If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
+    with the results of the peak detection.
 }
 \description{
 Massifquant is a Kalman filter (KF)-based chromatographic peak
@@ -259,11 +262,13 @@ The \code{MassifquantParam} class allows to specify all
     should be created with the \code{MassifquantParam} constructor.
 
 The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
-method performs chromatographic peak detection using the \emph{massifquant}
-algorithm on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-\code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment specific
-data and load the spectra data (mz and intensity values) on the fly from the
-original files applying also all eventual data manipulations.
+    method performs chromatographic peak detection using the
+    \emph{massifquant} algorithm on all samples from an
+    \code{\link[MSnbase]{OnDiskMSnExp}} object.
+    \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+    specific data and load the spectra data (mz and intensity values) on the
+    fly from the original files applying also all eventual data
+    manipulations.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
     slot of the object.
@@ -329,9 +334,10 @@ This algorithm's performance has been tested rigorously
     better accuracy.
 
 Parallel processing (one process per sample) is supported and can
-be configured either by the \code{BPPARAM} parameter or by globally defining
-the parallel processing mode using the \code{\link[BiocParallel]{register}}
-method from the \code{BiocParallel} package.
+    be configured either by the \code{BPPARAM} parameter or by globally
+    defining the parallel processing mode using the
+    \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+    package.
 }
 \section{Slots}{
 
@@ -380,7 +386,7 @@ The \code{\link{do_findChromPeaks_massifquant}} core API function
     and \code{\link{findPeaks.massifquant}} for the old user interface.
 
 \code{\link{XCMSnExp}} for the object containing the results of
-the peak detection.
+    the peak detection.
 
 Other peak detection methods: \code{\link{chromatographic-peak-detection}},
   \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},

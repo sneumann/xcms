@@ -3,6 +3,8 @@ CHANGES IN VERSION 2.99.4
 
 USER VISIBLE CHANGES:
 - Move Chromatogram class and functionality to the MSnbase package
+- Add argument msLevel to the findChromPeaks method to allow (chromatographic)
+  peak detection also on MS level > 1.
 
 
 CHANGES IN VERSION 2.99.3

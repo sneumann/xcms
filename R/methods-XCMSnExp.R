@@ -1826,7 +1826,7 @@ setMethod("featureValues",
 #' @description \code{chromatogram}: the method allows to extract
 #'     chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
 #'     \code{\link{XCMSnExp}} objects. See also the
-#'     \code{\link[MSnbase]{chromatogram}}implementation for
+#'     \code{\link[MSnbase]{chromatogram}} implementation for
 #'     \code{\link[MSnbase]{OnDiskMSnExp}} in the MSnbase package.
 #'
 #' @details Arguments \code{rt} and \code{mz} allow to specify the MS
@@ -1890,25 +1890,11 @@ setMethod("featureValues",
 #'     Details and Notes sections below). Use \code{missing = 0} to resemble the
 #'     behaviour of the \code{getEIC} from the \code{old} user interface.
 #'
-#' @return If a single \code{rt} and \code{mz} range was specified,
-#'     \code{chromatogram} returns a \code{list} of
-#'     \code{\link[MSnbase]{Chromatogram}} classes each element being the
-#'     chromatogram for one of the samples for the specified range.
-#'     If multiple \code{rt} and \code{mz} ranges were provided (i.e. by passing
-#'     a multi-row \code{matrix} to parameters \code{rt} or \code{mz}), the
-#'     function returns a \code{list} of \code{list}s. The outer list
-#'     representing results for the various ranges, the inner the result across
-#'     files. In other words, \code{result[[1]]} returns a \code{list} with
-#'     \code{Chromatogram} classes length equal to the number of files, each
-#'     element representing the \code{Chromatogram} for the first rt/mz range
-#'     for one file.
-#'     An empty \code{list} is returned if no MS1 data is present in
-#'     \code{object} or if not a single spectrum is available for any of the
-#'     provided retention time ranges in \code{rt}. An empty \code{Chromatogram}
-#'     object is returned at the correponding position in the result \code{list}
-#'     if for the specific file no scan/spectrum was measured in the provided
-#'     rt window. In all other cases, a \code{Chromatogram} with length equal
-#'     to the number of scans/spectra in the provided rt range is returned.
+#' @return \code{chromatogram} returns a \code{\link{Chromatograms}} object with
+#'     the number of columns corresponding to the number of files in
+#'     \code{object} and number of rows the number of specified ranges (i.e.
+#'     number of rows of matrices provided with arguments \code{mz} and/or
+#'     \code{rt}).
 #' 
 #' @author Johannes Rainer
 #'
@@ -1916,8 +1902,11 @@ setMethod("featureValues",
 #'     \code{\link[MSnbase]{Chromatogram}} for the object representing
 #'     chromatographic data.
 #'
-#'     \code{\link{plotChromatogram}} to plot a \code{Chromatogram} or
-#'     \code{list} of such objects.
+#'     \code{\link[MSnbase]{Chromatograms}} for the object allowing to arrange
+#'     multiple \code{Chromatogram} objects.
+#'
+#'     \code{\link[MSnbase]{plot}} to plot a \code{Chromatogram} or
+#'     \code{Chromatograms} objects.
 #'
 #'     \code{\link{extractMsData}} for a method to extract the MS data as
 #'     \code{data.frame}.
@@ -1939,25 +1928,34 @@ setMethod("featureValues",
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
 #'
-#' ## plot the data
-#' plot(rtime(chrs[[2]]), intensity(chrs[[2]]), type = "l", xlab = "rtime",
+#' chrs
+#' 
+#' ## Plot the chromatogram 
+#' plot(rtime(chrs[1, 2]), intensity(chrs[1, 2]), type = "l", xlab = "rtime",
 #'      ylab = "intensity", col = "000080")
 #' for(i in c(1, 3)) {
-#'   points(rtime(chrs[[i]]), intensity(chrs[[i]]), type = "l", col = "00000080")
+#'   points(rtime(chrs[1, i]), intensity(chrs[1, i]), type = "l",
+#'   col = "00000080")
 #' }
 #'
-#' ## Plot the chromatogram using plotChromatogram
-#' plotChromatogram(chrs)
+#' ## Plot the chromatogram using the dedicated plot method.
+#' plot(chrs)
 #'
 #' ## Extract chromatograms for multiple ranges.
 #' mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 #' rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
 #' chrs <- chromatogram(od, mz = mzr, rt = rtr)
 #'
+#' chrs
+#' 
 #' ## Plot the extracted chromatograms
-#' par(mfrow = c(1, 2))
-#' plotChromatogram(chrs[[1]])
-#' plotChromatogram(chrs[[2]])
+#' plot(chrs)
+#'
+#' ## Get access to all chromatograms for the second mz/rt range
+#' chrs[1, ]
+#'
+#' ## Plot just that one
+#' plot(chrs[1, , drop = FALSE])
 setMethod("chromatogram",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),

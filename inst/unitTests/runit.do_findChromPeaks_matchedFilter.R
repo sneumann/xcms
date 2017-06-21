@@ -55,6 +55,8 @@ test_findChromPeaks_matchedFilter <- function() {
     res_o <- findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+
+    checkException(findChromPeaks(onDisk, param = mfp, msLevel = 2))
     ## inMem
     ## inMem <- readMSData(mzf, msLevel. = 1)
     ## res_i <- findChromPeaks(inMem, param = mfp, return.type = "xcmsSet")

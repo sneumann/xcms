@@ -60,6 +60,7 @@ test_findChromPeaks_massifquant <- function() {
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
 
+    checkException(findChromPeaks(onDisk, param = mqp, msLevel = 2))
     ## Full data
     ## onDisk <- readMSData2(mzf)
     ## res <- findChromPeaks(onDisk, param = mqp)

@@ -357,18 +357,18 @@ dontrun_exhaustive_original_new_centWave_comparison <- function() {
         rtr <- common_pks[i, c("rtmin", "rtmax")]
         rtr[1] <- rtr[1] - 2
         rtr[2] <- rtr[2] + 2
-        chr_cmn <- extractChromatograms(raw, rt = rtr,
-                                        mz = common_pks[i, c("mzmin", "mzmax")])
+        chr_cmn <- chromatogram(raw, rt = rtr,
+                                mz = common_pks[i, c("mzmin", "mzmax")])
         rtr <- unique_pks[i, c("rtmin", "rtmax")]
         rtr[1] <- rtr[1] - 2
         rtr[2] <- rtr[2] + 2
-        chr_unq <- extractChromatograms(raw, rt = rtr,
-                                        mz = unique_pks[i, c("mzmin", "mzmax")])
+        chr_unq <- chromatogram(raw, rt = rtr,
+                                mz = unique_pks[i, c("mzmin", "mzmax")])
         par(mfrow = c(1, 2))
-        plot(rtime(chr_cmn[[1]]), intensity(chr_cmn[[1]]), main = "common peak",
+        plot(rtime(chr_cmn[[1]]), intensity(chr_cmn[1, 1]), main = "common peak",
              type = "l")
         abline(v = common_pks[i, c("rtmin", "rtmax")], col = "grey")
-        plot(rtime(chr_unq[[1]]), intensity(chr_unq[[1]]), main = "unique peak",
+        plot(rtime(chr_unq[[1]]), intensity(chr_unq[1, 1]), main = "unique peak",
              type = "l")
         abline(v = unique_pks[i, c("rtmin", "rtmax")], col = "grey")
     }
@@ -523,6 +523,7 @@ test_findChromPeaks_centWave <- function() {
     res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
+    checkException(findChromPeaks(onDisk, param = cwp, msLevel = 2))
     ## ## MSnExp
     ## inMem <- readMSData(f[1], msLevel. = 1)
     ## suppressWarnings(

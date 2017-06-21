@@ -14,7 +14,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.3.7)
+    MSnbase (>= 2.3.8)
 Imports:
     mzR (>= 1.1.6),
     BiocGenerics,
@@ -61,7 +61,6 @@ Collate:
     'functions-Params.R'
     'do_groupChromPeaks-functions.R'
     'fastMatch.R'
-    'functions-Chromatogram.R'
     'functions-utils.R'
     'functions-IO.R'
     'functions-OnDiskMSnExp.R'

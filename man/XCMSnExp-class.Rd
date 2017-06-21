@@ -241,9 +241,9 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
-\code{matrix} (or matrices if \code{fileIndex} was not specified or if
-\code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
-help and information about the profile matrix.
+    \code{matrix} (or matrices if \code{fileIndex} was not specified or if
+    \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for
+    general help and information about the profile matrix.
 
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
     vector with the adjusted retention for each spectrum of all files/samples
@@ -341,11 +341,11 @@ process histories. These can be passed with argument \code{type} to the
 \code{processHistory} method to extract specific process step(s).
 
 \code{profMat}: creates a \emph{profile matrix}, which
-is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
-m (columns) the retention time of the corresponding scans. Each cell contains
-the maximum intensity measured for the specific scan and m/z values. See
-\code{\link{profMat}} for more details and description of the various binning
-methods.
+    is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
+    and m (columns) the retention time of the corresponding scans. Each cell
+    contains the maximum intensity measured for the specific scan and m/z
+    values. See \code{\link{profMat}} for more details and description of
+    the various binning methods.
 
 \code{hasAdjustedRtime}: whether the object provides adjusted
     retention times.

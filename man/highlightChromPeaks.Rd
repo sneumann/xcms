@@ -40,7 +40,32 @@ function.}
 \description{
 The \code{highlightChromPeaks} function adds chromatographic
     peak definitions to an existing plot, such as one created by the
-    \code{plotChromatograms} function.
+    \code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
+    \code{\link[MSnbase]{Chromatograms}} object.
+}
+\examples{
+
+## Read some files from the faahKO package.
+library(xcms)
+library(faahKO)
+faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+
+od <- readMSData2(faahko_3_files)
+
+## Peak detection using 'matchedFilter' and default settings.
+xod <- findChromPeaks(od, param = MatchedFilterParam())
+
+## Extract the ion chromatogram for one chromatographic peak in the data.
+chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
+
+plot(chrs)
+
+## Extract chromatographic peaks for the mz/rt range (if any).
+chromPeaks(xod, rt = c(2700, 2900), mz = 335)
+
+## Highlight the chromatographic peaks in the area
+highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335)
 }
 \author{
 Johannes Rainer

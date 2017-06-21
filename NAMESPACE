@@ -53,7 +53,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "productMz",
-                  "aggregationFun", "chromatogram")
+                  "aggregationFun", "chromatogram", "plot", "fData", "fData<-")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
 
 export(
@@ -204,7 +204,6 @@ export(
     "do_groupChromPeaks_density",
     "do_groupPeaks_mzClust",
     "do_groupChromPeaks_nearest",
-    "Chromatogram",
     "do_adjustRtime_peakGroups",
     "processHistoryTypes",
     "adjustRtimePeakGroups",
