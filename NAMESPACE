@@ -52,9 +52,10 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "clean", "featureNames", "filterAcquisitionNum", "filterMz",
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
-                  "spectrapply", "peaksCount", "precursorMz", "productMz",
-                  "aggregationFun", "chromatogram", "plot", "fData", "fData<-")
-importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
+                  "spectrapply", "peaksCount", "precursorMz", "chromatogram",
+                  "plot", "fData", "fData<-")
+importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms",
+           "aggregationFun", "productMz")
 
 export(
     "etg",
@@ -426,10 +427,7 @@ exportMethods("hasChromPeaks",
               "rtime",
               "mz",
               "intensity",
-              "aggregationFun",
               "extractChromatograms",
-              "precursorMz",
-              "productMz",
               "fillChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",
