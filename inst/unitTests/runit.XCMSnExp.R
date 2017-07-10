@@ -216,11 +216,16 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(rtime(xod2, adjusted = TRUE), adjustedRtime(xod2))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
-    tmp <- unlist(adjustedRtime(xod2, bySample = TRUE))
-    tmp_diff <- tmp - rtime(xod2)
-    tmp_diff_2 <- adjustedRtime(xod2, bySample = FALSE) - rtime(xod2)
-    checkTrue(max(tmp_diff) > max(tmp_diff_2))
-    checkEquals(names(adjustedRtime(xod2)), names(rtime(xod2)))
+    ## From MSnbase version >= 2.3.9 values are ordered first by file then by
+    ## spectrum.
+    if (grepl("^F", names(rtime(xod2)[1]))) {
+        rts_by_sample <- adjustedRtime(xod2, bySample = TRUE)
+        rts <- adjustedRtime(xod2)
+        checkEquals(unname(rts_by_sample[[2]]),
+                    unname(rts[grep(names(rts), pattern = "F2")]))
+        checkEquals(unname(unlist(rts_by_sample)),
+                    unname(rts))
+    }
     ## Wrong assignments.
     checkException(adjustedRtime(xod2) <- xs_2@rt$corrected[1:2])
     ## bracket subset

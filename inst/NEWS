@@ -6,6 +6,9 @@ USER VISIBLE CHANGES:
 - Add argument msLevel to the findChromPeaks method to allow (chromatographic)
   peak detection also on MS level > 1.
 
+BUG FIXES:
+- Polarity information was not read from mzXML files (issue #192).
+
 
 CHANGES IN VERSION 2.99.3
 -------------------------
