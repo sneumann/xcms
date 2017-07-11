@@ -45,7 +45,7 @@ in the =xcms= package introduced during the update to version /3/.
   register(bpstart(MulticoreParam()))
 #+END_SRC
 
-** COMMENT Modernized user interface
+** Modernized user interface
 
 The modernization of the user interface comprises new classes for data
 representation and new data analysis methods. In addition, the core logic for
@@ -124,6 +124,38 @@ files from the =faahKO= package using the =readMSData2= from the =MSnbase= packa
   raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
 #+END_SRC
 
+The =OnDiskMSnExp= organizes the MS data by spectrum and provides th methods
+=intensity=, =mz= and =rtime= to access the raw data from the files (the measured
+intensity values, the corresponding m/z and retention time values). In addition,
+the =spectra= method could be used to return all data encapsulated in =Spectrum=
+classes. Below we extract the retention time values from the object.
+
+#+BEGIN_SRC R :ravel message = FALSE
+  head(rtime(raw_data))
+
+  class(rtime(raw_data))
+#+END_SRC
+
+All data is returned as one-dimensional vectors (a numeric vector for =rtime= and
+a =list= of numeric vectors for =mz= and =intensity=, each containing the values from
+one spectrum), even if the experiment consists of multiple files/samples. The
+=fromFile= returns a numeric vector that provides the mapping of the values to the
+originating file. Below we use the =fromFile= indices to organize the =mz= values by
+file.
+
+#+BEGIN_SRC R :ravel message = FALSE
+  mzs <- mz(raw_data)
+
+  class(mzs)
+  length(mzs)
+
+  ## Split the list by file
+  mzs_by_file <- split(mzs, f = fromFile(raw_data))
+
+  length(mzs_by_file)
+#+END_SRC
+
+
 We next plot the total ion chromatogram (TIC) for all files within the
 experiment. Note that we are iteratively sub-setting the full data per file
 using the =filterFile= method, which, for =OnDiskMSnExp= objects, is an efficient
@@ -165,7 +197,7 @@ rows m/z x rt ranges.
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
   ## Get the base peak chromatograms. This reads data from the files.
   bpis <- chromatogram(raw_data, aggregationFun = "max")
-  ## Plot the list of Chromatogram objects.
+  ## Plot all chromatograms.
   plot(bpis, col = paste0(sample_colors[raw_data$sample_group], 80))
 
 #+END_SRC
@@ -183,7 +215,6 @@ difficult to create the plot manually:
 	     col = paste0(sample_colors[raw_data$sample_group[i]], 80))
   }
 #+END_SRC
-
 
 Note that we could restrict the analysis to a certain retention time range by
 first sub-setting =raw_data= with the =filterRt= method.
@@ -233,6 +264,16 @@ plot the signal distribution of the identified peaks per sample.
           ylab = expression(log[2]~intensity), main = "Peak intensities")
 #+END_SRC
 
+The =plotChromPeaks= function can be used to get a global overview of the
+identified chromatographic peaks of one file. It highlights the identified peaks
+in the full mz/rt plane.
+
+#+NAME: faahKO-peak-image
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peak image for one file."
+  plotChromPeaks(xod, file = 3)
+#+END_SRC
+
+
 After peak detection it might be advisable to evaluate whether the peak
 detection identified e.g. compounds known to be present in the
 sample. Facilitating access to the raw data has thus been one of the major aims
@@ -269,7 +310,7 @@ respective ranges.
 #+END_SRC 
 
 Next we plot the extracted chromatogram for the data and highlight in addition
-the identified peaks.
+the identified peaks using the =highlightChromPeaks= function.
 
 #+NAME: faahKO-extracted-chrom-with-peaks
 #+BEGIN_SRC R :ravel message = FALSE, fig.cap = "Extracted ion chromatogram for one of the identified peaks. Left: full retention time range, right: rt range of the peak. Each line represents the signal measured in one sample. The rectangles indicate the margins of the identified chromatographic peak in the respective sample.", fig.align = "center", fig.width = 12, fig.height = 6
@@ -367,8 +408,8 @@ of the alignment.
 After alignment, the peaks are nicely overlapping.
 
 Next we group identified chromatographic peaks across samples. We use the /peak
-density/ method \cite{Smith:2006ic} specifying that a chromatographic peak have
-to be present in at least 1/3 of the samples within each group to be combined to
+density/ method \cite{Smith:2006ic} specifying that a chromatographic peak has
+to be present in at least 2/3 of the samples within each group to be combined to
 a mz-rt /feature/.
 
 #+NAME: faahKO-groupPeakDensity
@@ -388,6 +429,35 @@ belonging to the feature.
 #+BEGIN_SRC R :ravel message = FALSE
   head(featureDefinitions(xod))
 #+END_SRC
+
+The =plotChromPeakDensity= method allows to inspect the result of the peak
+grouping on e.g. a known compound/peak.
+
+#+NAME: faahKO-plot-peak-density
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8
+  ## Extract the full chromatogram for the mz of 279
+  chrs <- chromatogram(xod, mz = 279)
+  ## Plot the chromatogram objects
+  par(mfrow = c(2, 1), mar = c(2.5, 4, 1, 1))
+  plot(chrs, col = paste0(sample_colors[xod$sample_group], 80))
+  ## Hightlight the chromatographic peaks identified in this mz slice
+  highlightChromPeaks(xod, mz = 279,
+		      border = paste0(sample_colors[xod$sample_group], 60))
+  ## Plot the peak density distribution for the given mz slice providing also the
+  ## parameter class used for the peak grouping.
+  plotChromPeakDensity(xod, mz = 279, pch = 16, param = pdp,
+		       col = paste0(sample_colors[xod$sample_group], 80))
+#+END_SRC
+
+The upper panel of the plot above shows the extracted chromatogram for an mz
+value of 279 with the identified chromatographic peaks indicated with
+rectangles. The lower panel shows the location of identified chromatographic
+peaks per sample along the retention time axis (points) and the chromatographic
+peak density as black solid line. The grey rectangle indicates which peaks have
+been grouped and assigned to the corresponding feature. This type of
+visualization can be very helpful to tune the parameters of the peak grouping
+for example to evaluate whether closely located peaks known to come from
+different compounds were successfully separated.
 
 To extract /values/ for the features, the =featureValues= method can be used. This
 method returns a matrix with rows being the features and column the samples. The
@@ -469,7 +539,7 @@ across samples.
 #+BEGIN_SRC R :ravel message = FALSE
   ## Define the parameter for the correspondence
   pdparam <- PeakDensityParam(sampleGroups = pData(xod)$sample_group,
-                              minFraction = 0.7, maxFeatures = 100)
+			      minFraction = 0.7, maxFeatures = 100)
   xod <- groupChromPeaks(xod, param = pdparam)
 #+END_SRC
 
@@ -1295,8 +1365,10 @@ RT correction.
   analyte over replicate samples \cite{Smith:2014di}.
 
 
-** TODO Implement the =Chromatogram= class
+** DONE Implement the =Chromatogram= class
+   CLOSED: [2017-07-10 Mon 15:12]
 
+   - State "DONE"       from "TODO"       [2017-07-10 Mon 15:12]
 Now, to accommodate all possibilities:
 https://en.wikipedia.org/wiki/Triple_quadrupole_mass_spectrometer
 Triple Q-TOF measurements:
@@ -1369,8 +1441,10 @@ certain mz (bin?) the signal is higher than a threshold in 70% of the spectra,
 i.e. that the % of values is larger than a percentage.
 
 
-** TODO Reduce R CMD check time:
+** DONE Reduce R CMD check time:
+   CLOSED: [2017-07-10 Mon 15:12]
 
+   - State "DONE"       from "TODO"       [2017-07-10 Mon 15:12]
 - xcms 2.99.3, MSnbase 2.3.4, mzR 2.11.3: 18m34.630s
 - xcms 2.99.3, MSnbase 2.3.4, mzR 2.9.12: 20m41.440s
 
@@ -1511,5 +1585,77 @@ tests with long runtime:
   ## tmp: 1720 spectra.
 #+END_SRC
 
+
+** TODO Re-add plotting functions
+
+There was some request to re-add the plotting functionality to back to =xcms=.
+I would however like to create such plots not *during*, but *after* the
+analysis. One first example would be the results from the grouping, i.e. the
+=group.density= method.
+
++ =groupDensity=: loop through the features and create a plot for each one. The
+  function could be called something like =plotGroupingResult=.
+  - loop through each feature.
+  - plot all peaks in the mz range of all peaks in the group (+/- something) and
+    highlight the peaks belonging to the group.
+  #+BEGIN_SRC R
+    pks <- chromPeaks(xod)
+    pks <- pks[pks[, "sample"] == 1, ]
+    ## plot the rectangular data.
+    xod_file <- filterFile(xod, file = 1, keepAdjustedRtime = TRUE)
+    mzr <- range(mz(xod_file))
+    rtr <- range(rtime(xod_file))
+    plot(3, 3, pch = NA, xlim = rtr, ylim = mzr, xlab = "rentention time",
+	 ylab = "mz", main = basename(fileNames(xod_file)))
+    rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"], ybottom = pks[, "mzmin"],
+	 ytop = pks[, "mzmax"], border = "#00000060")
+
+    ## peak density along retention time axis.
+    dens <- density(pks[, "rt"])
+    plot(dens)
+    hst <- hist(pks[, "rt"], breaks = 64)
+    plot(hst$mids, hst$counts, type = "S")
+    plot(hst)
+    addi <- diff(hst$mids)[1] / 2
+    points(hst$mids + addi, hst$counts, type = "S", col = "red")
+
+    ## Plot of all peaks along retention time axis.
+    hst <- lapply(split(chromPeaks(xod)[, "rt"],
+			f = chromPeaks(xod)[, "sample"]),
+		  hist, breaks = 64)
+    max_count <- max(unlist(lapply(hst, function(z) max(z$counts))))
+    ## Initialize plot:
+    plot(3, 3, pch = NA, xlab = "retention time", ylab = "peak count",
+	 xlim = range(rtime(xod)), ylim = c(0, max_count))
+    addi <- diff(hst[[1]]$mids)[1] / 2
+    lapply(hst, function(z) points(z$mids + addi, z$counts, col = "#00000060",
+				   type = "S"))
+  #+END_SRC
+
++ Plot identified chromatographic peaks. Identified and failed peaks could be
+  simply plotted manually. One needs to know however where to look.
+  - =plot,Chromatogram=.
+  - =highlightChromPeaks=.
+  - Eventually it might be nice to create a plot from above, plotting the mz vs
+    rt of one file and highlighting the identified peaks: =plotChromPeaks=.
++ Plot retention time adjustment results.
+  - =plotAdjustedRtime= should do the trick.
++ Plot grouping results:
+  - =plot,Chromatogram=.
+  - =highlightChromPeaks=.
+  - =plotChromPeakDensity=.
+
+** TODO Implement the =calibrate= method in the new user interface
+
+First thing is to understand what the method does.
+See /methods-xcmsSet.R/ for the =calibrate= method. See /matchpeaks.R/ for the
+=matchpeaks= and =estimate= functions.
+Input: =xcmsSet= object and list of numeric vectors representing the m/z values of
+the calibrants. Apparently, the calibrants have to be close to real peaks,
+otherwise they will not be adjusted/matched correctly.
+For each sample:
+- get the peaks of that sample, i.e. the =@peaks= matrix.
+- call the =matchpeaks= function on the peaks matrix and the calibrants (which is
+  supposed to be a numeric vector of mz values.
 
 * References

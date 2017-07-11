@@ -387,6 +387,12 @@ setClass("XProcessHistory",
 #' @seealso \code{\link{findPeaks}} for the \emph{old} peak detection
 #'     methods.
 #' 
+#'     \code{\link{plotChromPeaks}} to plot identified chromatographic peaks
+#'     for one file.
+#'
+#'     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
+#'     peaks in an extracted ion chromatogram plot.
+#' 
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -1657,7 +1663,7 @@ NULL
 #' p
 #'
 #' ##############################
-#' ## Chromatographi peak detection and grouping.
+#' ## Chromatographic peak detection and grouping.
 #' ##
 #' ## Below we perform first a chromatographic peak detection (using the
 #' ## matchedFilter method) on some of the test files from the faahKO package

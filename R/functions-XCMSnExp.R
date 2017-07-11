@@ -1118,7 +1118,8 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
         ## Plot the peaks as points.
         plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
              col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
-             main = paste0(format(mz, digits = 7), collapse = " - "), ...)
+             main = paste0(format(mz, digits = 7), collapse = " - "), ylim = yl,
+             ...)
         axis(side = 2, at = ypos, labels = 1:nsamples)
         points(x = dens$x, y = dens$y, type = "l")
         ## Estimate what would be combined to a feature
@@ -1244,7 +1245,104 @@ highlightChromPeaks <- function(x, rt, mz,
 
 ## Plot the chromatographic peaks for a file in a two dimensional plot.
 ## plotChromPeakImage...
-## @description Plots the
+#' @title Plot identified chromatographic peaks from one file in the rt-mz plane
+#' 
+#' @description \code{plotChromPeakImage} plots the identified chromatographic
+#'     peaks from one file into the plane spanned by the retention time and mz
+#'     dimension (x-axis representing the retention time and y-axis mz).
+#'     Each chromatographic peak is plotted as a rectangle representing its
+#'     width in rt and mz dimension.
+#'
+#'     This plot is supposed to provide some initial overview of the
+#'     chromatographic peak detection results.
+#'
+#' @details The width and line type of the rectangles indicating the detected
+#'     chromatographic peaks can be specified using the \code{par} function,
+#'     i.e. with \code{par(lwd = 3)} and \code{par(lty = 2)}, respectively.
+#' 
+#' @param x an \code{\link{XCMSnExp}} object.
+#'
+#' @param file \code{numeric(1)} specifying the index of the file within
+#'     \code{x} for which the plot should be created. Defaults to \code{1}.
+#' 
+#' @param xlim \code{numeric(2)} specifying the x-axis limits (retention time
+#'     dimension). Defaults to \code{NULL} in which case the full retention
+#'     time range of the file is used.
+#'
+#' @param ylim \code{numeric(2)} specifying the y-axis limits (mz dimension).
+#'     Defaults to \code{NULL} in which case the full mz range of the file is
+#'     used.
+#'
+#' @param add \code{logical(1)} whether the plot should be added or created as
+#'     a new plot.
+#'
+#' @param border The color for the rectangles' border.
+#'
+#' @param col The color to be used to fill the rectangles.
+#'
+#' @param xlab \code{character(1)} defining the x-axis label.
+#'
+#' @param ylab \code{character(1)} defining the y-axis label.
+#'
+#' @param main \code{character(1)} defining the plot title. By default (i.e.
+#'     \code{main = NULL} the name of the file will be used as title.
+#'
+#' @param ... Additional arguments passed to the \code{plot} function. Ignored
+#'     if \code{add = TRUE}.
+#' 
+#' @author Johannes Rainer
+#'
+#' @seealso \code{\link{highlightChromPeaks}} for the function to highlight
+#'     detected chromatographic peaks in extracted ion chromatogram plots.
+#' 
+#' @examples
+#'
+#' ## Perform peak detection on one file from the faahKO package.
+#' library(xcms)
+#' library(faahKO)
+#' faahko_file <- system.file('cdf/KO/ko16.CDF', package = "faahKO")
+#' 
+#' od <- readMSData2(faahko_file)
+#'
+#' ## Peak detection using 'matchedFilter' and default settings.
+#' xod <- findChromPeaks(od, param = MatchedFilterParam())
+#'
+#' ## Show all detected chromatographic peaks
+#' plotChromPeaks(xod)
+#'
+#' ## Restrict the plot to a mz-rt slice
+#' plotChromPeaks(xod, xlim = c(3500, 3600), ylim = c(400, 600))
+plotChromPeaks <- function(x, file = 1, xlim = NULL, ylim = NULL,
+                               add = FALSE, border = "#00000060", col = NA,
+                               xlab = "retention time", ylab = "mz",
+                               main = NULL, ...) {
+    if (!is(x, "XCMSnExp"))
+        stop("'x' is supposed to be an 'XCMSnExp' object, but I got a ",
+             class(x))
+    suppressMessages(
+        x_file <- filterFile(x, file = file[1], keepAdjustedRtime = TRUE)
+    )
+    if (is.null(xlim))
+        xlim <- range(rtime(x_file))
+    if (is.null(ylim))
+        ylim <- range(mz(x_file))
+    if (is.null(main))
+        main <- basename(fileNames(x_file))
+    ## Get the peaks from the file, restricting to the current limits (might
+    ## speed up things).
+    pks <- chromPeaks(x_file, mz = ylim, rt = xlim)
+    ## Initialize plot
+    if (!add)
+        plot(3, 3, pch = NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab,
+             main = main, ...)
+    if (nrow(pks))
+        rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+             ybottom = pks[, "mzmin"], ytop = pks[, "mzmax"], col = col,
+             border = border)
+}
+
+## plotChromPeakImage: y samples, x retention time, cells number of detected
+## peaks.
 
 ## Find mz ranges with multiple peaks per sample.
 ## Use the density distribution for that? with a bandwidth = 0.001, check

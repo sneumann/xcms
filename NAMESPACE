@@ -210,7 +210,8 @@ export(
     "plotAdjustedRtime",
     "plotChromatogram",
     "highlightChromPeaks",
-    "plotChromPeakDensity"
+    "plotChromPeakDensity",
+    "plotChromPeaks"
 )
 
 ## New analysis methods

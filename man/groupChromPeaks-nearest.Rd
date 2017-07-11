@@ -147,7 +147,7 @@ p <- NearestPeaksParam(kNN = 3)
 p
 
 ##############################
-## Chromatographi peak detection and grouping.
+## Chromatographic peak detection and grouping.
 ##
 ## Below we perform first a chromatographic peak detection (using the
 ## matchedFilter method) on some of the test files from the faahKO package
