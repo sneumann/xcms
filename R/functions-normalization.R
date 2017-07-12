@@ -187,11 +187,12 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
         fitOnSubset <- which(fitOnSubset)
     if (!all(fitOnSubset %in% 1:ncol(y)))
         stop("'fitOnSubset' should contain indices between 1 and 'ncol(y)'")
-    if (!is.null(data))
-        data <- data[fitOnSubset, , drop = FALSE]
+    data_fit <- data
+    if (!is.null(data_fit))
+        data_fit <- data_fit[fitOnSubset, , drop = FALSE]
     ## First fitting the model.
     message("Fitting the model to the features ... ", appendLF = FALSE)
-    lms <- xcms:::fitModel(formula = model, data = data,
+    lms <- xcms:::fitModel(formula = model, data = data_fit,
                            y = y[, fitOnSubset, drop = FALSE],
                            minVals = minVals, method = method)
     message("OK")
@@ -208,10 +209,11 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
         z + mean(z, na.rm = TRUE) - preds
     }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
     res <- do.call(rbind, res)
-    rm(y)
     message("OK")
-    message("Did not correct ", sum(lengths(lms) == 0), " rows because of too ",
-            "few data points.")
+    message("Did not correct ", sum(lengths(lms) == 0), " of the ", nrow(y),
+            " rows because of too few data points to fit the model.")
+    colnames(res) <- colnames(y)
+    rm(y)
     ## Check if we have to shift values...
     if (any(res < 1, na.rm = TRUE)) {
         if (shiftNegative == "none") {
