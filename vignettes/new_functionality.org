@@ -264,12 +264,24 @@ plot the signal distribution of the identified peaks per sample.
           ylab = expression(log[2]~intensity), main = "Peak intensities")
 #+END_SRC
 
+To get a global overview of the peak detection results we can use the
+=plotChromPeakImage= function that plots the number of identified peaks for each
+sample along the retention time axis as an image plot. This would allow for
+example to spot samples in which much fewer peaks were identified. Below we
+create the image counting the number of detected peaks within bins of 20 seconds
+along the retention time axis.
+
+#+NAME: faahKO-peak-image
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peak image."
+  plotChromPeakImage(xod, binSize = 20)
+#+END_SRC
+
 The =plotChromPeaks= function can be used to get a global overview of the
 identified chromatographic peaks of one file. It highlights the identified peaks
 in the full mz/rt plane.
 
-#+NAME: faahKO-peak-image
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peak image for one file."
+#+NAME: faahKO-peak-plot
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peaks for one file."
   plotChromPeaks(xod, file = 3)
 #+END_SRC
 

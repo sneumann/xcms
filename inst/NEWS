@@ -4,6 +4,8 @@ CHANGES IN VERSION 2.99.4
 NEW FEATURES:
 - Add plotChromPeaks function to plot the definition (rt and mz range) of
   detected chromatographic peaks of one file into the mz-rt plane. 
+- Add plotChromPeakImage function to plot the number of detected peaks along
+  the retention time axis per file as an image plot.
 
 USER VISIBLE CHANGES:
 - Move Chromatogram class and functionality to the MSnbase package

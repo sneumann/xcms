@@ -211,7 +211,8 @@ export(
     "plotChromatogram",
     "highlightChromPeaks",
     "plotChromPeakDensity",
-    "plotChromPeaks"
+    "plotChromPeaks",
+    "plotChromPeakImage"    
 )
 
 ## New analysis methods

@@ -2,42 +2,65 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{plotChromPeaks}
 \alias{plotChromPeaks}
-\title{Plot identified chromatographic peaks from one file in the rt-mz plane}
+\alias{plotChromPeakImage}
+\title{General visualizations of peak detection results}
 \usage{
 plotChromPeaks(x, file = 1, xlim = NULL, ylim = NULL, add = FALSE,
   border = "#00000060", col = NA, xlab = "retention time", ylab = "mz",
   main = NULL, ...)
+
+plotChromPeakImage(x, binSize = 30, xlim = NULL, log = FALSE,
+  xlab = "retention time", yaxt = par("yaxt"),
+  main = "Chromatographic peak counts", ...)
 }
 \arguments{
-\item{x}{an \code{\link{XCMSnExp}} object.}
+\item{x}{\code{\link{XCMSnExp}} object.}
 
-\item{file}{\code{numeric(1)} specifying the index of the file within
-\code{x} for which the plot should be created. Defaults to \code{1}.}
+\item{file}{For \code{plotChromPeaks}: \code{numeric(1)} specifying the
+index of the file within \code{x} for which the plot should be created.
+Defaults to \code{1}.}
 
 \item{xlim}{\code{numeric(2)} specifying the x-axis limits (retention time
 dimension). Defaults to \code{NULL} in which case the full retention
 time range of the file is used.}
 
-\item{ylim}{\code{numeric(2)} specifying the y-axis limits (mz dimension).
-Defaults to \code{NULL} in which case the full mz range of the file is
-used.}
+\item{ylim}{For \code{plotChromPeaks}: \code{numeric(2)} specifying the
+y-axis limits (mz dimension). Defaults to \code{NULL} in which case the
+full mz range of the file is used.}
 
-\item{add}{\code{logical(1)} whether the plot should be added or created as
-a new plot.}
+\item{add}{For \code{plotChromPeaks}: \code{logical(1)} whether the plot
+should be added or created as a new plot.}
 
-\item{border}{The color for the rectangles' border.}
+\item{border}{For \code{plotChromPeaks}: the color for the rectangles'
+border.}
 
-\item{col}{The color to be used to fill the rectangles.}
+\item{col}{For \code{plotChromPeaks}: the color to be used to fill the
+rectangles.}
 
 \item{xlab}{\code{character(1)} defining the x-axis label.}
 
-\item{ylab}{\code{character(1)} defining the y-axis label.}
+\item{ylab}{For \code{plotChromPeaks}: \code{character(1)} defining the
+y-axis label.}
 
 \item{main}{\code{character(1)} defining the plot title. By default (i.e.
 \code{main = NULL} the name of the file will be used as title.}
 
-\item{...}{Additional arguments passed to the \code{plot} function. Ignored
-if \code{add = TRUE}.}
+\item{...}{Additional arguments passed to the \code{plot} (for
+\code{plotChromPeaks}) and \code{image} (for
+\code{plotChromPeakImage}) functions. Ignored if \code{add = TRUE}.}
+
+\item{binSize}{For \code{plotChromPeakImage}: \code{numeric(1)} defining the
+size of the bins along the x-axis (retention time). Defaults to
+\code{binSize = 30}, peaks within each 30 seconds will thus counted and
+plotted.}
+
+\item{log}{For \code{plotChromPeakImage}: \code{logical(1)} whether the peak
+counts should be log2 transformed before plotting.}
+
+\item{yaxt}{For \code{plotChromPeakImage}: \code{character(1)} defining
+whether y-axis labels should be added. To disable the y-axis use
+\code{yaxt = "n"}. For any other value of \code{yaxt} the axis will be
+drawn. See \code{par} help page for more details.}
 }
 \description{
 \code{plotChromPeakImage} plots the identified chromatographic
@@ -48,29 +71,40 @@ if \code{add = TRUE}.}
 
     This plot is supposed to provide some initial overview of the
     chromatographic peak detection results.
+
+\code{plotChromPeakImage} plots the number of detected peaks for
+    each sample along the retention time axis as an \emph{image} plot, i.e.
+    with the number of peaks detected in each bin along the retention time
+    represented with the color of the respective cell.
 }
 \details{
 The width and line type of the rectangles indicating the detected
-    chromatographic peaks can be specified using the \code{par} function,
-    i.e. with \code{par(lwd = 3)} and \code{par(lty = 2)}, respectively.
+    chromatographic peaks for the \code{plotChromPeaks} function can be
+    specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
+    and \code{par(lty = 2)}, respectively.
 }
 \examples{
 
-## Perform peak detection on one file from the faahKO package.
+## Perform peak detection on two files from the faahKO package.
 library(xcms)
 library(faahKO)
-faahko_file <- system.file('cdf/KO/ko16.CDF', package = "faahKO")
+faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+                 system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
 od <- readMSData2(faahko_file)
 
 ## Peak detection using 'matchedFilter' and default settings.
 xod <- findChromPeaks(od, param = MatchedFilterParam())
 
-## Show all detected chromatographic peaks
+## plotChromPeakImage: plot an image for the identified peaks per file
+plotChromPeakImage(xod)
+
+## Show all detected chromatographic peaks from the first file
 plotChromPeaks(xod)
 
-## Restrict the plot to a mz-rt slice
-plotChromPeaks(xod, xlim = c(3500, 3600), ylim = c(400, 600))
+## Plot all detected peaks from the second file and restrict the plot to a
+## mz-rt slice
+plotChromPeaks(xod, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
 }
 \seealso{
 \code{\link{highlightChromPeaks}} for the function to highlight

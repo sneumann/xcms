@@ -24,3 +24,15 @@ test_plotChromPeaks <- function() {
     ## plot(chrs)
     ## highlightChromPeaks(xod_x, mz = mzr)
 }
+
+test_plotChromPeakImage <- function() {
+    xcms:::plotChromPeakImage(xod_x, binSize = 30, log = FALSE)
+    ## Check that it works if no peaks were found in one sample.
+    tmp <- xod_x
+    pks <- chromPeaks(tmp)
+    pks <- pks[pks[, "sample"] != 1, ]
+    chromPeaks(tmp) <- pks
+    plotChromPeakImage(tmp, binSize = 30, log = FALSE)
+    plotChromPeakImage(tmp, binSize = 20, log = FALSE)
+    plotChromPeakImage(tmp, binSize = 10, log = FALSE, col = topo.colors(64))
+}

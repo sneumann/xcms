@@ -242,11 +242,22 @@ boxplot(ints, varwidth = TRUE, col = sample_colors[xod$sample_group],
         ylab = expression(log[2]~intensity), main = "Peak intensities") 
 ```
 
+To get a global overview of the peak detection results we can use the
+`plotChromPeakImage` function that plots the number of identified peaks for each
+sample along the retention time axis as an image plot. This would allow for
+example to spot samples in which much fewer peaks were identified. Below we
+create the image counting the number of detected peaks within bins of 20 seconds
+along the retention time axis.
+
+```{r  faahKO-peak-image, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peak image." }
+plotChromPeakImage(xod, binSize = 20) 
+```
+
 The `plotChromPeaks` function can be used to get a global overview of the
 identified chromatographic peaks of one file. It highlights the identified peaks
 in the full mz/rt plane.
 
-```{r  faahKO-peak-image, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peak image for one file." }
+```{r  faahKO-peak-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Chromatographic peaks for one file." }
 plotChromPeaks(xod, file = 3) 
 ```
 
