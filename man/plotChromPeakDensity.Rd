@@ -73,7 +73,7 @@ raw_data <- readMSData2(fls[1:2])
 
 ## Perform the peak detection using the centWave method (settings are tuned
 ## to speed up example execution)
-res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000))
+res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000, snthresh = 40))
 
 ## Align the samples using obiwarp
 res <- adjustRtime(res, param = ObiwarpParam())

@@ -731,8 +731,9 @@ NULL
 #'
 #' @examples
 #'
-#' ## Create a MatchedFilterParam object
-#' mfp <- MatchedFilterParam(binSize = 0.5)
+#' ## Create a MatchedFilterParam object. Note that we use a unnecessarily large
+#' ## binSize parameter to reduce the run-time of the example.
+#' mfp <- MatchedFilterParam(binSize = 5)
 #' ## Change snthresh parameter
 #' snthresh(mfp) <- 15
 #' mfp
@@ -744,7 +745,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls)
+#' raw_data <- readMSData2(fls[1:2])
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"

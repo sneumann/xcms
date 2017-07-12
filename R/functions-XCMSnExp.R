@@ -1057,7 +1057,7 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #'
 #' ## Perform the peak detection using the centWave method (settings are tuned
 #' ## to speed up example execution)
-#' res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000))
+#' res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000, snthresh = 40))
 #'
 #' ## Align the samples using obiwarp
 #' res <- adjustRtime(res, param = ObiwarpParam())
