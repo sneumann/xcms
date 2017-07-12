@@ -199,6 +199,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     message("Applying models to adjust values ... ", appendLF = FALSE)
     if (is.null(rownames(y)))
         rownames(y) <- seq_len(nrow(y))
+    y_cn <- colnames(y)
     y <- split.data.frame(y, f = rownames(y))
     res <- mapply(y, lms, FUN = function(z, lmod, data.) {
         z <- as.numeric(z)
@@ -212,7 +213,6 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     message("OK")
     message("Did not correct ", sum(lengths(lms) == 0), " of the ", nrow(y),
             " rows because of too few data points to fit the model.")
-    colnames(res) <- colnames(y)
     rm(y)
     ## Check if we have to shift values...
     if (any(res < 1, na.rm = TRUE)) {
@@ -245,5 +245,6 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
             res <- res + shiftVal
         }
     }
+    colnames(res) <- y_cn
     return(list(y = res, fit = lms))
 }

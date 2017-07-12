@@ -42,7 +42,11 @@ are needed for further processing.
 library(xcms)
 library(MassSpecWavelet)
 
-register(bpstart(MulticoreParam()))
+if (.Platform$OS.type == "unix")
+    prm <- MulticoreParam(2)
+else prm <- SnowParam(2)
+register(bpstart(prm))
+
 @
 
 This documentation uses raw mzdata files from \Rpackage{msdata} as example data

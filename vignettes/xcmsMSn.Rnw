@@ -39,7 +39,10 @@ QTOF, ion trap or orbitrap mass spectrometers.
 library(xcms)
 library(msdata)
 
-register(bpstart(MulticoreParam()))
+if (.Platform$OS.type == "unix")
+    prm <- MulticoreParam(2)
+else prm <- SnowParam(2)
+register(bpstart(prm))
 @
 
 \section{Raw Data File Preparation}

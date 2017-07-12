@@ -2278,7 +2278,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## Now we perform a chromatographic peak detection on this data set using the
 #' ## matched filter method. We are tuning the settings such that it performs
 #' ## faster.
-#' mfp <- MatchedFilterParam(binSize = 4)
+#' mfp <- MatchedFilterParam(binSize = 6)
 #' xod <- findChromPeaks(od, param = mfp)
 #'
 #' ## The results from the peak detection are now stored in the XCMSnExp
@@ -2308,12 +2308,15 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## spectra method which returns Spectrum objects containing all raw data.
 #' ## Note that all these methods read the information from the original input
 #' ## files and subsequently apply eventual data processing steps to them.
-#' head(mz(xod, bySample = TRUE))
+#' mzs <- mz(xod, bySample = TRUE)
+#' length(mzs)
+#' lengths(mzs)
 #'
-#' ## Reading all data
-#' spctr <- spectra(xod)
+#' ## The full data could also be read using the spectra data, which returns
+#' ## a list of Spectrum object containing the mz, intensity and rt values.
+#' ## spctr <- spectra(xod)
 #' ## To get all spectra of the first file we can split them by file
-#' head(split(spctr, fromFile(xod))[[1]])
+#' ## head(split(spctr, fromFile(xod))[[1]])
 #'
 #' ############
 #' ## Filtering
