@@ -23,9 +23,11 @@ if(require("RUnit", quietly=TRUE)) {
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
     library(BiocParallel)
-    if (.Platform$OS.type == "unix")
+    if (.Platform$OS.type == "unix") {
         prm <- MulticoreParam()
-    else prm <- SnowParam()
+    } else {
+        prm <- SnowParam()
+    }
     register(bpstart(prm))
     
     ## Create some objects we can re-use in different tests:

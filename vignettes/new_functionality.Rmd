@@ -31,11 +31,11 @@ in the `xcms` package introduced during the update to version *3*.
 library(xcms)
 library(RColorBrewer)
 ## Use socket based parallel processing on Windows systems
-if (.Platform$OS.type == "unix")
+if (.Platform$OS.type == "unix") {
     register(bpstart(MulticoreParam(2)))
-else
+} else {
     register(bpstart(SnowParam(2)))
- 
+} 
 ```
 
 

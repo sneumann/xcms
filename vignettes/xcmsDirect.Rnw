@@ -42,9 +42,11 @@ are needed for further processing.
 library(xcms)
 library(MassSpecWavelet)
 
-if (.Platform$OS.type == "unix")
+if (.Platform$OS.type == "unix") {
     prm <- MulticoreParam(2)
-else prm <- SnowParam(2)
+} else {
+    prm <- SnowParam(2)
+}
 register(bpstart(prm))
 
 @
