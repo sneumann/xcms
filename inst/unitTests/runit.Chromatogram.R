@@ -154,7 +154,7 @@ test_extractChromatograms <- function() {
     chrs <- chromatogram(od_x, rt = c(2600, 2700), mz = 12000)
     rts <- split(rtime(od_x), f = fromFile(od_x))
     rts <- lapply(rts, function(z) z[z >= 2600 & z <= 2700])
-    checkEquals(unname(lengths(chrs[1, ])), unname(lengths(rts)))
+    checkEquals(unname(lengths(chrs[1, , drop = TRUE])), unname(lengths(rts)))
     ## All have to be NA.
     checkTrue(all(unlist(lapply(chrs[1, ], function(z) is.na(intensity(z))))))
 

@@ -1195,8 +1195,9 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
 #'
 #' od <- readMSData2(faahko_3_files)
 #'
-#' ## Peak detection using 'matchedFilter' and default settings.
-#' xod <- findChromPeaks(od, param = MatchedFilterParam())
+#' ## Peak detection using the 'matchedFilter' method. Note that we are using a
+#' ## larger binSize to reduce the runtime of the example.
+#' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
 #' 
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
@@ -1311,8 +1312,9 @@ highlightChromPeaks <- function(x, rt, mz,
 #' 
 #' od <- readMSData2(faahko_file)
 #'
-#' ## Peak detection using 'matchedFilter' and default settings.
-#' xod <- findChromPeaks(od, param = MatchedFilterParam())
+#' ## Peak detection using the 'matchedFilter' method. Note that we are using a
+#' ## larger binSize to reduce the runtime of the example.
+#' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
 #'
 #' ## plotChromPeakImage: plot an image for the identified peaks per file
 #' plotChromPeakImage(xod)

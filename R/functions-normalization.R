@@ -211,7 +211,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
     res <- do.call(rbind, res)
     message("OK")
-    message("Did not correct ", sum(lengths(lms) == 0), " of the ", nrow(y),
+    message("Did not correct ", sum(lengths(lms) == 0), " of the ", length(y),
             " rows because of too few data points to fit the model.")
     rm(y)
     ## Check if we have to shift values...

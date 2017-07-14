@@ -93,8 +93,9 @@ faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 
 od <- readMSData2(faahko_file)
 
-## Peak detection using 'matchedFilter' and default settings.
-xod <- findChromPeaks(od, param = MatchedFilterParam())
+## Peak detection using the 'matchedFilter' method. Note that we are using a
+## larger binSize to reduce the runtime of the example.
+xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
 
 ## plotChromPeakImage: plot an image for the identified peaks per file
 plotChromPeakImage(xod)
