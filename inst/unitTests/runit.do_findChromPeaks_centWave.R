@@ -481,12 +481,13 @@ test_do_findChromPeaks_centWave <- function() {
                                        valsPerSpect,
                                        snthresh = 200,
                                        noise = 4000)
+    ## Eventually disable the sleep option to improve speed!
     res2 <- do_findChromPeaks_centWave(mz = mzVals,
                                        int = intVals,
                                        scantime = xr@scantime,
                                        valsPerSpect,
                                        snthresh = 500,
-                                       noise = 4000)
+                                       noise = 4000, sleep = 0.01)
     checkTrue(nrow(res1) > nrow(res2))
 
     ## Check scanrange on findPeaks.centWave.

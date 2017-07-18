@@ -8,7 +8,7 @@ do_findChromPeaks_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
   peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
   mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
   fitgauss = FALSE, noise = 0, verboseColumns = FALSE, roiList = list(),
-  firstBaselineCheck = TRUE, roiScales = NULL)
+  firstBaselineCheck = TRUE, roiScales = NULL, sleep = 0)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -83,6 +83,12 @@ data within regions of interest is checked to be above the first baseline.}
 \item{roiScales}{Optional numeric vector with length equal to \code{roiList}
 defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
+
+\item{sleep}{\code{numeric(1)} defining the number of seconds to wait between
+iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
+generated visualizing the identified chromatographic peak. Note: this
+argument is for backward compatibility only and will be removed in
+future.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,
