@@ -18,14 +18,14 @@ error itself should be returned.}
 }
 \value{
 A list of error messages (if \code{message. = TRUE}) or errors or an
-empty list if no errors are present.
+    empty list if no errors are present.
 }
 \description{
 If peak detection is performed with \code{\link{findPeaks}}
-setting argument \code{stopOnError = FALSE} eventual errors during the
-process do not cause to stop the processing but are recorded inside of the
-resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed
-with the \code{showError} method.
+    setting argument \code{stopOnError = FALSE} eventual errors during the
+    process do not cause to stop the processing but are recorded inside of
+    the resulting \code{\linkS4class{xcmsSet}} object. These errors can be
+    accessed with the \code{showError} method.
 }
 \author{
 Johannes Rainer

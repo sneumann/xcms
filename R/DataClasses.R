@@ -387,6 +387,12 @@ setClass("XProcessHistory",
 #' @seealso \code{\link{findPeaks}} for the \emph{old} peak detection
 #'     methods.
 #' 
+#'     \code{\link{plotChromPeaks}} to plot identified chromatographic peaks
+#'     for one file.
+#'
+#'     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
+#'     peaks in an extracted ion chromatogram plot.
+#' 
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -725,8 +731,9 @@ NULL
 #'
 #' @examples
 #'
-#' ## Create a MatchedFilterParam object
-#' mfp <- MatchedFilterParam(binSize = 0.5)
+#' ## Create a MatchedFilterParam object. Note that we use a unnecessarily large
+#' ## binSize parameter to reduce the run-time of the example.
+#' mfp <- MatchedFilterParam(binSize = 5)
 #' ## Change snthresh parameter
 #' snthresh(mfp) <- 15
 #' mfp
@@ -738,7 +745,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls)
+#' raw_data <- readMSData2(fls[1:2])
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"
@@ -1657,7 +1664,7 @@ NULL
 #' p
 #'
 #' ##############################
-#' ## Chromatographi peak detection and grouping.
+#' ## Chromatographic peak detection and grouping.
 #' ##
 #' ## Below we perform first a chromatographic peak detection (using the
 #' ## matchedFilter method) on some of the test files from the faahKO package
@@ -2255,8 +2262,8 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     the feature definitions representing the peak grouping results.
 #'     \code{\link{adjustRtime}} for retention time adjustment methods.
 #'
-#'     \code{\link{extractChromatograms}} to extract MS data as
-#'     \code{\link{Chromatogram}} objects.
+#'     \code{\link[MSnbase]{chromatogram}} to extract MS data as
+#'     \code{\link[MSnbase]{Chromatogram}} objects.
 #' 
 #'     \code{\link{extractMsData}} for the method to extract MS data as
 #'     \code{data.frame}s.
@@ -2272,7 +2279,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## Now we perform a chromatographic peak detection on this data set using the
 #' ## matched filter method. We are tuning the settings such that it performs
 #' ## faster.
-#' mfp <- MatchedFilterParam(binSize = 4)
+#' mfp <- MatchedFilterParam(binSize = 6)
 #' xod <- findChromPeaks(od, param = mfp)
 #'
 #' ## The results from the peak detection are now stored in the XCMSnExp
@@ -2302,12 +2309,15 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## spectra method which returns Spectrum objects containing all raw data.
 #' ## Note that all these methods read the information from the original input
 #' ## files and subsequently apply eventual data processing steps to them.
-#' head(mz(xod, bySample = TRUE))
+#' mzs <- mz(xod, bySample = TRUE)
+#' length(mzs)
+#' lengths(mzs)
 #'
-#' ## Reading all data
-#' spctr <- spectra(xod)
+#' ## The full data could also be read using the spectra data, which returns
+#' ## a list of Spectrum object containing the mz, intensity and rt values.
+#' ## spctr <- spectra(xod)
 #' ## To get all spectra of the first file we can split them by file
-#' head(split(spctr, fromFile(xod))[[1]])
+#' ## head(split(spctr, fromFile(xod))[[1]])
 #'
 #' ############
 #' ## Filtering
@@ -2395,61 +2405,3 @@ setClass("XCMSnExp",
          }
 )
 
-#' @title Representation of chromatographic MS data
-#'
-#' @description The \code{Chromatogram} class is designed to store
-#'     chromatographic MS data, i.e. pairs of retention time and intensity
-#'     values. Instances of the class can be created with the
-#'     \code{Chromatogram} constructor function but in most cases the dedicated
-#'     methods for \code{\link{OnDiskMSnExp}} and \code{\link{XCMSnExp}}
-#'     objects extracting chromatograms should be used instead (i.e. the
-#'     \code{\link{extractChromatograms}}).
-#'
-#' @details The \code{mz}, \code{filterMz}, \code{precursorMz} and
-#'     \code{productMz} are stored as a \code{numeric(2)} representing a range
-#'     even if the chromatogram was generated for only a single ion (i.e. a
-#'     single mz value). Using ranges for \code{mz} values allow this class to
-#'     be used also for e.g. total ion chromatograms or base peak chromatograms.
-#'
-#'     The slots \code{precursorMz} and \code{productMz} allow to represent SRM
-#'     (single reaction monitoring) and MRM (multiple SRM) chromatograms. As
-#'     example, a \code{Chromatogram} for a SRM transition 273 -> 153 will have
-#'     a \code{@precursorMz = c(273, 273)} and a
-#'     \code{@productMz = c(153, 153)}.
-#' 
-#' @rdname Chromatogram-class
-#' 
-#' @export
-#' 
-#' @author Johannes Rainer
-#'
-#' @seealso \code{\link{extractChromatograms}} for the method to extract
-#'     \code{Chromatogram} objects from \code{\link{XCMSnExp}} or
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects.
-#'
-#'     \code{\link{plotChromatogram}} to plot \code{Chromatogram} objects.
-setClass("Chromatogram",
-         slots = c(
-             rtime = "numeric",
-             intensity = "numeric",
-             mz = "numeric",
-             filterMz = "numeric",
-             precursorMz = "numeric", ## Or call that Q1mz?
-             productMz = "numeric",   ## Or call that Q3mz?
-             fromFile = "integer",
-             aggregationFun = "character"
-         ),
-         contains = "Versioned",
-         prototype = prototype(
-             rtime = numeric(),
-             intensity = numeric(),
-             mz = c(NA_real_, NA_real_),
-             filterMz = c(NA_real_, NA_real_),
-             precursorMz = c(NA_real_, NA_real_),
-             productMz = c(NA_real_, NA_real_),
-             fromFile = integer(),
-             aggregationFun = character()
-         ),
-         validity = function(object)
-             validChromatogram(object)
-         )

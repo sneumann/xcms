@@ -22,9 +22,13 @@ if(require("RUnit", quietly=TRUE)) {
     attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
                                         function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
-    ## Disable parallel processing for the unit tests
     library(BiocParallel)
-    register(SerialParam())
+    if (.Platform$OS.type == "unix") {
+        prm <- MulticoreParam()
+    } else {
+        prm <- SnowParam()
+    }
+    register(bpstart(prm))
     
     ## Create some objects we can re-use in different tests:
     ## Needed in runit.XCMSnExp.R
@@ -42,6 +46,7 @@ if(require("RUnit", quietly=TRUE)) {
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
                          method = "centWave", noise = 10000, snthresh = 40)
+
     ## faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 5000))
     ## faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
     ##                      method = "centWave", noise = 5000)
@@ -51,6 +56,10 @@ if(require("RUnit", quietly=TRUE)) {
     xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
     xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
     xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+
+    faahko_grouped_filled <- fillPeaks(group(faahko))
+    faahko_grouped_retcor_filled <- fillPeaks(group(retcor(group(
+        updateObject(faahko)))))
     
     ## microtofq
     library(msdata)

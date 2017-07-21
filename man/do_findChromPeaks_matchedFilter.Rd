@@ -7,7 +7,7 @@
 do_findChromPeaks_matchedFilter(mz, int, scantime, valsPerSpect,
   binSize = 0.1, impute = "none", baseValue, distance, fwhm = 30,
   sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2, mzdiff = 0.8
-  - binSize * steps, index = FALSE)
+  - binSize * steps, index = FALSE, sleep = 0)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -62,6 +62,12 @@ allow overlap.}
 
 \item{index}{\code{logical(1)} specifying whether indicies should be
 returned instead of values for m/z and retention times.}
+
+\item{sleep}{\code{numeric(1)} defining the number of seconds to wait between
+iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
+generated visualizing the identified chromatographic peak. Note: this
+argument is for backward compatibility only and will be removed in
+future.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,

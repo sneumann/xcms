@@ -27,6 +27,7 @@ test_findChromPeaks_MSW <- function() {
     sp1 <- od[[1]]
     res_1 <- do_findPeaks_MSW(mz = mz(sp1), int = intensity(sp1))
     mp <- MSWParam()
+    checkException(findChromPeaks(od1, param = mp, msLevel = 2))
     res_2 <- findChromPeaks(od1, param = mp)
     checkEquals(res_1, chromPeaks(res_2)[, colnames(res_1), drop = FALSE])
     ## Changing settings.

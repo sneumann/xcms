@@ -11,7 +11,8 @@
 \arguments{
 \item{x}{The \code{\linkS4class{xcmsRaw}} object that should be sub-setted.}
 
-\item{i}{Integer or logical vector specifying the scans/spectra to which \code{x} should be sub-setted.}
+\item{i}{Integer or logical vector specifying the scans/spectra to which
+\code{x} should be sub-setted.}
 
 \item{j}{Not supported.}
 
@@ -22,16 +23,16 @@ The sub-setted \code{\linkS4class{xcmsRaw}} object.
 }
 \description{
 Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
-returned \code{\linkS4class{xcmsRaw}} object contains values for all scans
-specified with argument \code{i}. Note that the \code{scanrange} slot of the
-returned \code{xcmsRaw} will be \code{c(1, length(object@scantime))} and
-hence not \code{range(i)}.
+    returned \code{\linkS4class{xcmsRaw}} object contains values for all
+    scans specified with argument \code{i}. Note that the \code{scanrange}
+    slot of the returned \code{xcmsRaw} will be
+    \code{c(1, length(object@scantime))} and hence not \code{range(i)}.
 }
 \details{
 Only subsetting by scan index in increasing order or by a logical
-vector are supported. If not ordered, argument \code{i} is sorted
-automatically. Indices which are larger than the total number of scans
-are discarded.
+    vector are supported. If not ordered, argument \code{i} is sorted
+    automatically. Indices which are larger than the total number of scans
+    are discarded.
 }
 \examples{
 ## Load a test file

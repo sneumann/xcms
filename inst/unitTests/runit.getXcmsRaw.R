@@ -1,9 +1,10 @@
 ## just plain function that reads the raw data...
 test.getXcmsRaw <- function(){
 
-    xsetRaw <- updateObject(faahko)
-    xset <- fillPeaks(group(retcor(group(xsetRaw))))
-
+    ## xsetRaw <- updateObject(faahko)
+    ## xset <- fillPeaks(group(retcor(group(xsetRaw))))
+    xset <- faahko_grouped_retcor_filled
+    
     ## get the first as raw data file.
     xr <- getXcmsRaw(xset, sampleidx = 1)
     ## apply the rt correction

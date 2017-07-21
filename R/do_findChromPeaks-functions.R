@@ -49,6 +49,12 @@
 #' 
 #' @param valsPerSpect Numeric vector with the number of values for each
 #'     spectrum.
+#'
+#' @param sleep \code{numeric(1)} defining the number of seconds to wait between
+#'     iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
+#'     generated visualizing the identified chromatographic peak. Note: this
+#'     argument is for backward compatibility only and will be removed in
+#'     future.
 #' 
 #' @inheritParams findChromPeaks-centWave
 #'
@@ -127,7 +133,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        verboseColumns = FALSE,
                                        roiList = list(),
                                        firstBaselineCheck = TRUE,
-                                       roiScales = NULL) {
+                                       roiScales = NULL,
+                                       sleep = 0) {
     if (getOption("originalCentWave", default = TRUE)) {
         ## message("DEBUG: using original centWave.")
         .centWave_orig(mz = mz, int = int, scantime = scantime,
@@ -137,7 +144,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
-                       roiScales = roiScales)
+                       roiScales = roiScales, sleep = sleep)
     } else {
         ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
@@ -147,7 +154,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                       mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                       verboseColumns = verboseColumns, roiList = roiList,
                       firstBaselineCheck = firstBaselineCheck,
-                      roiScales = roiScales)
+                      roiScales = roiScales, sleep = sleep)
     }
 }
 ############################################################
@@ -597,41 +604,61 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                           mzCenterFun = mzCenterFun)
         }
 
-        ## if ((sleep >0) && (!is.null(peaks))) {
-        ##     tdp <- scantime[td]; trange <- range(tdp)
-        ##     egauss <- paste(round(peaks[,"egauss"],3),collapse=", ")
-        ##     cdppm <- paste(peaks[,"dppm"],collapse=", ")
-        ##     csn <- paste(peaks[,"sn"],collapse=", ")
-        ##     par(bg = "white")
-        ##     l <- layout(matrix(c(1,2,3),nrow=3,ncol=1,byrow=T),heights=c(.5,.75,2));
-        ##     par(mar= c(2, 4, 4, 2) + 0.1)
-        ##     plotRaw(object,mzrange=mzrange,rtrange=trange,log=TRUE,title='')
-        ##     title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
-        ##     par(mar= c(1, 4, 1, 2) + 0.1)
-        ##     image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
-        ##     par(mar= c(4, 4, 1, 2) + 0.1)
-        ##     plot(tdp,d,ylab='Intensity',xlab='Scan Time');lines(tdp,d,lty=2)
-        ##     lines(scantime[otd],od,lty=2,col='blue') ## original mzbox range
-        ##     abline(h=baseline,col='green')
-        ##     bwh <- length(sr[1]:sr[2]) - length(baseline)
-        ##     if (odd(bwh)) {bwh1 <-  floor(bwh/2); bwh2 <- bwh1+1} else {bwh1<-bwh2<-bwh/2}
-        ##     if  (any(!is.na(peaks[,"scpos"])))
-        ##     {   ## plot centers and width found through wavelet analysis
-        ##         abline(v=scantime[na.omit(peaks[(peaks[,"scpos"] >0),"scpos"])],col='red')
-        ##     }
-        ##     abline(v=na.omit(c(peaks[,"rtmin"],peaks[,"rtmax"])),col='green',lwd=1)
-        ##     if (fitgauss) {
-        ##         tdx <- seq(min(td),max(td),length.out=200)
-        ##         tdxp <- seq(trange[1],trange[2],length.out=200)
-        ##         fitted.peaks <- which(!is.na(peaks[,"mu"]))
-        ##         for (p in fitted.peaks)
-        ##         {   ## plot gaussian fits
-        ##             yg<-gauss(tdx,peaks[p,"h"],peaks[p,"mu"],peaks[p,"sigma"])
-        ##             lines(tdxp,yg,col='blue')
-        ##         }
-        ##     }
-        ##     Sys.sleep(sleep)
-        ## }
+        ## BEGIN - plotting/sleep
+        if ((sleep >0) && (!is.null(peaks))) {
+            tdp <- scantime[td]; trange <- range(tdp)
+            egauss <- paste(round(peaks[,"egauss"],3),collapse=", ")
+            cdppm <- paste(peaks[,"dppm"],collapse=", ")
+            csn <- paste(peaks[,"sn"],collapse=", ")
+            par(bg = "white")
+            l <- layout(matrix(c(1,2,3),nrow=3,ncol=1,byrow=T),heights=c(.5,.75,2));
+            par(mar= c(2, 4, 4, 2) + 0.1)
+            ## plotRaw(object,mzrange=mzrange,rtrange=trange,log=TRUE,title='')
+            ## Do plotRaw manually.
+            raw_mat <- .rawMat(mz = mz, int = int, scantime = scantime,
+                               valsPerSpect = valsPerSpect, mzrange = mzrange,
+                               rtrange = rtrange, log = TRUE)
+            if (nrow(raw_mat) > 0) {
+                y <- raw_mat[, "intensity"]
+                ylim <- range(y)
+                y <- y / ylim[2]
+                colorlut <- terrain.colors(16)
+                col <- colorlut[y * 15 + 1]
+                plot(raw_mat[, "time"], raw_mat[, "mz"], pch = 20, cex = .5,
+                     main = "", xlab = "Seconds", ylab = "m/z", col = col,
+                     xlim = trange)
+            } else {
+                plot(c(NA, NA), main = "", xlab = "Seconds", ylab = "m/z",
+                     xlim = trange, ylim = mzrange)
+            }
+            ## done
+            title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
+            par(mar= c(1, 4, 1, 2) + 0.1)
+            image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
+            par(mar= c(4, 4, 1, 2) + 0.1)
+            plot(tdp,d,ylab='Intensity',xlab='Scan Time');lines(tdp,d,lty=2)
+            lines(scantime[otd],od,lty=2,col='blue') ## original mzbox range
+            abline(h=baseline,col='green')
+            bwh <- length(sr[1]:sr[2]) - length(baseline)
+            if (odd(bwh)) {bwh1 <-  floor(bwh/2); bwh2 <- bwh1+1} else {bwh1<-bwh2<-bwh/2}
+            if  (any(!is.na(peaks[,"scpos"])))
+            {   ## plot centers and width found through wavelet analysis
+                abline(v=scantime[na.omit(peaks[(peaks[,"scpos"] >0),"scpos"])],col='red')
+            }
+            abline(v=na.omit(c(peaks[,"rtmin"],peaks[,"rtmax"])),col='green',lwd=1)
+            if (fitgauss) {
+                tdx <- seq(min(td),max(td),length.out=200)
+                tdxp <- seq(trange[1],trange[2],length.out=200)
+                fitted.peaks <- which(!is.na(peaks[,"mu"]))
+                for (p in fitted.peaks)
+                {   ## plot gaussian fits
+                    yg<-gauss(tdx,peaks[p,"h"],peaks[p,"mu"],peaks[p,"sigma"])
+                    lines(tdxp,yg,col='blue')
+                }
+            }
+            Sys.sleep(sleep)
+        }
+        ## -- END plotting/sleep
 
         if (!is.null(peaks)) {
             peaklist[[length(peaklist) + 1]] <- peaks
@@ -691,6 +718,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                           noise = 0, ## noise.local=TRUE,
                           sleep = 0, verboseColumns = FALSE, roiList = list(),
                           firstBaselineCheck = TRUE, roiScales = NULL) {
+    if (sleep)
+        warning("Parameter 'sleep' is defunct")
     ## TODO @jo Ensure in upstream method that data is in centroided mode!
     ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
     ## Input argument checking.
@@ -1514,7 +1543,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                             snthresh = 10,
                                             steps = 2,
                                             mzdiff = 0.8 - binSize * steps,
-                                            index = FALSE
+                                            index = FALSE,
+                                            sleep = 0
                                             ){
     ## Use original code
     if (useOriginalCode()) {
@@ -1523,12 +1553,13 @@ do_findChromPeaks_matchedFilter <- function(mz,
         return(.matchedFilter_orig(mz, int, scantime, valsPerSpect,
                                    binSize, impute, baseValue, distance,
                                    fwhm, sigma, max, snthresh,
-                                   steps, mzdiff, index))
+                                   steps, mzdiff, index, sleep = sleep))
     } else {
         return(.matchedFilter_binYonX_no_iter(mz, int, scantime, valsPerSpect,
                                               binSize, impute, baseValue,
                                               distance, fwhm, sigma, max,
-                                              snthresh, steps, mzdiff, index
+                                              snthresh, steps, mzdiff, index,
+                                              sleep = sleep
                                               ))
     }
 }
@@ -1546,7 +1577,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                 snthresh = 10,
                                 steps = 2,
                                 mzdiff = 0.8 - binSize * steps,
-                                index = FALSE
+                                index = FALSE,
+                                sleep = 0
                                 ){
     .Deprecated(msg = paste0("Use of the original code with iterative binning",
                              " is discouraged!"))
@@ -1665,6 +1697,21 @@ do_findChromPeaks_matchedFilter <- function(mz,
                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
                 maxf <- yfilt[maxy]
+
+                ## -- begin sleep/plot
+                if (sleep > 0) {
+                    plot(scantime, yfilt, type = "l",
+                         main = paste(mass[i], "-", mass[i+1]),
+                         ylim = c(-gmax/3, gmax))
+                    points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],],
+                           type = "l", col = "red")
+                    points(scantime, colSums(ymat), type = "l", col = "blue",
+                           lty = "dashed")
+                    abline(h = snthresh*noise, col = "red")
+                    Sys.sleep(sleep)
+                }
+                ## -- end sleep plot
+                
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ## Double the size of the output matrix if it's full
@@ -1721,7 +1768,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                            snthresh = 10,
                                            steps = 2,
                                            mzdiff = 0.8 - binSize * steps,
-                                           index = FALSE
+                                           index = FALSE,
+                                           sleep = 0
                                            ){
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -1853,6 +1901,21 @@ do_findChromPeaks_matchedFilter <- function(mz,
                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
                 maxf <- yfilt[maxy]
+
+                ## begin sleep/plot
+                if (sleep > 0) {
+                    plot(scantime, yfilt, type = "l",
+                         main = paste(mass[i], "-", mass[i+1]),
+                         ylim=c(-gmax/3, gmax))
+                    points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],],
+                           type = "l", col = "red")
+                    points(scantime, colSums(ymat), type = "l", col = "blue",
+                           lty = "dashed")
+                    abline(h = snthresh*noise, col = "red")
+                    Sys.sleep(sleep)
+                }
+                ## end sleep/plot
+                
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy,
