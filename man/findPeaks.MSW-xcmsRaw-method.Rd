@@ -25,36 +25,36 @@ should be returned.}
 }
 \value{
 A matrix, each row representing an intentified peak, with columns:
-\describe{
-\item{mz}{m/z value of the peak at the centroid position.}
-\item{mzmin}{Minimum m/z of the peak.}
-\item{mzmax}{Maximum m/z of the peak.}
-\item{rt}{Always \code{-1}.}
-\item{rtmin}{Always \code{-1}.}
-\item{rtmax}{Always \code{-1}.}
-\item{into}{Integrated (original) intensity of the peak.}
-\item{maxo}{Maximum intensity of the peak.}
-\item{intf}{Always \code{NA}.}
-\item{maxf}{Maximum MSW-filter response of the peak.}
-\item{sn}{Signal to noise ratio.}
-}
+    \describe{
+    \item{mz}{m/z value of the peak at the centroid position.}
+    \item{mzmin}{Minimum m/z of the peak.}
+    \item{mzmax}{Maximum m/z of the peak.}
+    \item{rt}{Always \code{-1}.}
+    \item{rtmin}{Always \code{-1}.}
+    \item{rtmax}{Always \code{-1}.}
+    \item{into}{Integrated (original) intensity of the peak.}
+    \item{maxo}{Maximum intensity of the peak.}
+    \item{intf}{Always \code{NA}.}
+    \item{maxf}{Maximum MSW-filter response of the peak.}
+    \item{sn}{Signal to noise ratio.}
+    }
 }
 \description{
 This method performs peak detection in mass spectrometry
-direct injection spectrum using a wavelet based algorithm.
+    direct injection spectrum using a wavelet based algorithm.
 }
 \details{
 This is a wrapper around the peak picker in Bioconductor's
-\code{MassSpecWavelet} package calling
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-\code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+    \code{MassSpecWavelet} package calling
+    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
+    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
 }
 \seealso{
 \code{\link{MSW}} for the new user interface,
-\code{\link{do_findPeaks_MSW}} for the downstream analysis
-function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
-\code{MassSpecWavelet} for details on the algorithm and additionally supported
-parameters.
+    \code{\link{do_findPeaks_MSW}} for the downstream analysis
+    function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+    \code{MassSpecWavelet} for details on the algorithm and additionally
+    supported parameters.
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

@@ -238,9 +238,10 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 \item{f}{For \code{integrate}: a \code{MassifquantParam} object.}
 }
 \value{
-The \code{MassifquantParam} function returns a \code{MassifquantParam}
-class instance with all of the settings specified for chromatographic peak
-detection by the \emph{massifquant} method.
+The \code{MassifquantParam} function returns a
+    \code{MassifquantParam} class instance with all of the settings
+    specified for chromatographic peak detection by the \emph{massifquant}
+    method.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
     \code{\link{XCMSnExp}} object with the results of the peak detection.

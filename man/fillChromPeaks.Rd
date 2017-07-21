@@ -75,7 +75,7 @@ chromatographic peaks.}
 }
 \value{
 The \code{FillChromPeaksParam} function returns a
-\code{FillChromPeaksParam} object.
+    \code{FillChromPeaksParam} object.
 
 A \code{\link{XCMSnExp}} object with previously missing
     chromatographic peaks for features filled into its \code{chromPeaks}

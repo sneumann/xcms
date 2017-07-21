@@ -166,19 +166,21 @@ section for more information.}
 \item{step}{numeric(1) representing the m/z bin size.}
 
 \item{baselevel}{numeric(1) representing the base value to which
-empty elements (i.e. m/z bins without a measured intensity) should be set.
-Only considered if \code{method = "binlinbase"}. See \code{baseValue}
-parameter of \code{\link{imputeLinInterpol}} for more details.}
+empty elements (i.e. m/z bins without a measured intensity) should be
+set. Only considered if \code{method = "binlinbase"}. See
+\code{baseValue} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{basespace}{numeric(1) representing the m/z length after
-which the signal will drop to the base level. Linear interpolation will be
-used between consecutive data points falling within \code{2 * basespace} to
-each other. Only considered if \code{method = "binlinbase"}. If not
-specified, it defaults to \code{0.075}. Internally this parameter is
-translated into the \code{distance} parameter of the
-\code{\link{imputeLinInterpol}} function by
-\code{distance = floor(basespace / step)}. See \code{distance} parameter
-of \code{\link{imputeLinInterpol}} for more details.}
+which the signal will drop to the base level. Linear interpolation will
+be used between consecutive data points falling within
+\code{2 * basespace} to each other. Only considered if
+\code{method = "binlinbase"}. If not specified, it defaults to
+\code{0.075}. Internally this parameter is translated into the
+\code{distance} parameter of the \code{\link{imputeLinInterpol}}
+function by \code{distance = floor(basespace / step)}. See
+\code{distance} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}

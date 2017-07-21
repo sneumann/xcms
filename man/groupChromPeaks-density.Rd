@@ -99,8 +99,8 @@ the peak grouping algorithm.}
 }
 \value{
 The \code{PeakDensityParam} function returns a
-\code{PeakDensityParam} class instance with all of the settings
-specified for chromatographic peak alignment based on peak densities.
+    \code{PeakDensityParam} class instance with all of the settings
+    specified for chromatographic peak alignment based on peak densities.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
     results of the correspondence analysis. The definition of the resulting

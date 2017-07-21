@@ -168,9 +168,9 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 }
 \value{
 The \code{CentWavePredIsoParam} function returns a
-\code{CentWavePredIsoParam} class instance with all of the settings
-specified for the two-step centWave-based peak detection considering also
-isotopes.
+    \code{CentWavePredIsoParam} class instance with all of the settings
+    specified for the two-step centWave-based peak detection considering also
+    isotopes.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
     \code{\link{XCMSnExp}} object with the results of the peak detection.

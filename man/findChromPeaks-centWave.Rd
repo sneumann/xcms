@@ -214,8 +214,8 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 }
 \value{
 The \code{CentWaveParam} function returns a \code{CentWaveParam}
-class instance with all of the settings specified for chromatographic peak
-detection by the centWave method.
+    class instance with all of the settings specified for chromatographic
+    peak detection by the centWave method.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
     \code{\link{XCMSnExp}} object with the results of the peak detection.

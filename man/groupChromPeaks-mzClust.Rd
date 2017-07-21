@@ -81,8 +81,8 @@ the peak grouping algorithm.}
 }
 \value{
 The \code{MzClustParam} function returns a
-\code{MzClustParam} class instance with all of the settings
-specified for high resolution single spectra peak alignment.
+    \code{MzClustParam} class instance with all of the settings
+    specified for high resolution single spectra peak alignment.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
     results of the peak grouping step (i.e. the features). These can be

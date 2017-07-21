@@ -130,9 +130,9 @@ used in computing the SNR.}
 of the peak in 2-D CWT coefficient matrix.}
 
 \item{peakThr}{numeric(1) with the minimum absolute intensity
-(above baseline) of peaks to be picked. If provided, the smoothing function
-\code{\link[MassSpecWavelet]{sav.gol}} function is called to estimate the
-local intensity.}
+(above baseline) of peaks to be picked. If provided, the smoothing
+function \code{\link[MassSpecWavelet]{sav.gol}} function is called to
+estimate the local intensity.}
 
 \item{tuneIn}{logical(1) whther to tune in the parameter
 estimation of the detected peaks.}
@@ -168,8 +168,8 @@ detection should be performed. Defaults to \code{msLevel = 1}.}
 }
 \value{
 The \code{MSWParam} function returns a \code{MSWParam}
-class instance with all of the settings specified for peak detection by
-the \emph{MSW} method.
+    class instance with all of the settings specified for peak detection by
+    the \emph{MSW} method.
 
 For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
     \code{\link{XCMSnExp}} object with the results of the peak detection.
