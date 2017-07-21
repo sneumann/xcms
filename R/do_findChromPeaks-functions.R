@@ -1543,7 +1543,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                             snthresh = 10,
                                             steps = 2,
                                             mzdiff = 0.8 - binSize * steps,
-                                            index = FALSE
+                                            index = FALSE,
+                                            sleep = 0
                                             ){
     ## Use original code
     if (useOriginalCode()) {
@@ -1552,12 +1553,13 @@ do_findChromPeaks_matchedFilter <- function(mz,
         return(.matchedFilter_orig(mz, int, scantime, valsPerSpect,
                                    binSize, impute, baseValue, distance,
                                    fwhm, sigma, max, snthresh,
-                                   steps, mzdiff, index))
+                                   steps, mzdiff, index, sleep = sleep))
     } else {
         return(.matchedFilter_binYonX_no_iter(mz, int, scantime, valsPerSpect,
                                               binSize, impute, baseValue,
                                               distance, fwhm, sigma, max,
-                                              snthresh, steps, mzdiff, index
+                                              snthresh, steps, mzdiff, index,
+                                              sleep = sleep
                                               ))
     }
 }
@@ -1575,7 +1577,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                 snthresh = 10,
                                 steps = 2,
                                 mzdiff = 0.8 - binSize * steps,
-                                index = FALSE
+                                index = FALSE,
+                                sleep = 0
                                 ){
     .Deprecated(msg = paste0("Use of the original code with iterative binning",
                              " is discouraged!"))
@@ -1694,6 +1697,21 @@ do_findChromPeaks_matchedFilter <- function(mz,
                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
                 maxf <- yfilt[maxy]
+
+                ## -- begin sleep/plot
+                if (sleep > 0) {
+                    plot(scantime, yfilt, type = "l",
+                         main = paste(mass[i], "-", mass[i+1]),
+                         ylim = c(-gmax/3, gmax))
+                    points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],],
+                           type = "l", col = "red")
+                    points(scantime, colSums(ymat), type = "l", col = "blue",
+                           lty = "dashed")
+                    abline(h = snthresh*noise, col = "red")
+                    Sys.sleep(sleep)
+                }
+                ## -- end sleep plot
+                
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ## Double the size of the output matrix if it's full
@@ -1750,7 +1768,8 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                            snthresh = 10,
                                            steps = 2,
                                            mzdiff = 0.8 - binSize * steps,
-                                           index = FALSE
+                                           index = FALSE,
+                                           sleep = 0
                                            ){
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -1882,6 +1901,21 @@ do_findChromPeaks_matchedFilter <- function(mz,
                 intf <- pwid*sum(yfilt[peakrange[1]:peakrange[2]])
                 maxo <- max(ysums[peakrange[1]:peakrange[2]])
                 maxf <- yfilt[maxy]
+
+                ## begin sleep/plot
+                if (sleep > 0) {
+                    plot(scantime, yfilt, type = "l",
+                         main = paste(mass[i], "-", mass[i+1]),
+                         ylim=c(-gmax/3, gmax))
+                    points(cbind(scantime, yfilt)[peakrange[1]:peakrange[2],],
+                           type = "l", col = "red")
+                    points(scantime, colSums(ymat), type = "l", col = "blue",
+                           lty = "dashed")
+                    abline(h = snthresh*noise, col = "red")
+                    Sys.sleep(sleep)
+                }
+                ## end sleep/plot
+                
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy,

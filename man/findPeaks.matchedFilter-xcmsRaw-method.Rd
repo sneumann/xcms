@@ -42,8 +42,8 @@ in m/z for peaks with overlapping retention times}
 \item{index}{\code{logical(1)} specifying whether indicies should be
 returned instead of values for m/z and retention times.}
 
-\item{sleep}{(DEFUNCT). This parameter is no longer functional, as it would cause
-problems in parallel processing mode.}
+\item{sleep}{(DEPRECATED). The use of this parameter is highly discouraged,
+as it could cause problems in parallel processing mode.}
 
 \item{scanrange}{Numeric vector defining the range of scans to which the original
 \code{object} should be sub-setted before peak detection.}

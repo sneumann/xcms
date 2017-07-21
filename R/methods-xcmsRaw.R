@@ -320,8 +320,8 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 ##' @inheritParams findChromPeaks-matchedFilter
 ##' @param step numeric(1) specifying the width of the bins/slices in m/z
 ##' dimension.
-##' @param sleep (DEFUNCT). This parameter is no longer functional, as it would cause
-##' problems in parallel processing mode.
+##' @param sleep (DEPRECATED). The use of this parameter is highly discouraged,
+##'     as it could cause problems in parallel processing mode.
 ##' @param scanrange Numeric vector defining the range of scans to which the original
 ##' \code{object} should be sub-setted before peak detection.
 ##' @author Colin A. Smith
@@ -447,7 +447,8 @@ setMethod("findPeaks.matchedFilter", "xcmsRaw",
                                                      snthresh = snthresh,
                                                      steps = steps,
                                                      mzdiff = mzdiff,
-                                                     index = index
+                                                     index = index,
+                                                     sleep = sleep
                                                      )
               invisible(new("xcmsPeaks", res))
 })
