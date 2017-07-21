@@ -251,39 +251,39 @@ useOriginalCode <- function(x) {
     sprintf(paste0("FT%0", ceiling(log10(x + 1L)), "d"), 1:x)
 }
 
-#' @description Expands stretches of TRUE values in \code{x} by one on both
-#'     sides.
-#'
-#' @note The return value for a \code{NA} is always \code{FALSE}.
-#' 
-#' @param x \code{logical} vector.
-#'
-#' @author Johannes Rainer
-#' 
-#' @noRd
-.grow_trues <- function(x) {
-    previous <- NA
-    x_new <- rep_len(FALSE, length(x))
-    for (i in 1:length(x)) {
-        if (is.na(x[i])) {
-            previous <- NA
-            next
-        }
-        ## If current element is TRUE
-        if (x[i]) {
-            x_new[i] <- TRUE
-            ## if last element was FALSE, set last element to TRUE
-            if (!is.na(previous) && !previous)
-                x_new[i - 1] <- TRUE
-        } else {
-            ## if previous element was TRUE, set current to TRUE.
-            if (!is.na(previous) && previous)
-                x_new[i] <- TRUE
-        }
-        previous <- x[i]
-    }
-    x_new
-}
+## #' @description Expands stretches of TRUE values in \code{x} by one on both
+## #'     sides.
+## #'
+## #' @note The return value for a \code{NA} is always \code{FALSE}.
+## #' 
+## #' @param x \code{logical} vector.
+## #'
+## #' @author Johannes Rainer
+## #' 
+## #' @noRd
+## .grow_trues <- function(x) {
+##     previous <- NA
+##     x_new <- rep_len(FALSE, length(x))
+##     for (i in 1:length(x)) {
+##         if (is.na(x[i])) {
+##             previous <- NA
+##             next
+##         }
+##         ## If current element is TRUE
+##         if (x[i]) {
+##             x_new[i] <- TRUE
+##             ## if last element was FALSE, set last element to TRUE
+##             if (!is.na(previous) && !previous)
+##                 x_new[i - 1] <- TRUE
+##         } else {
+##             ## if previous element was TRUE, set current to TRUE.
+##             if (!is.na(previous) && previous)
+##                 x_new[i] <- TRUE
+##         }
+##         previous <- x[i]
+##     }
+##     x_new
+## }
 
 #' @title Weighted mean around maximum
 #'

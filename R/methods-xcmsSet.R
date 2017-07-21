@@ -55,13 +55,19 @@ setMethod("show", "xcmsSet", function(object) {
 
 
 #' @description This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
-#' object to the latest definition.
+#'     object to the latest definition.
+#' 
 #' @title Update an \code{\linkS4class{xcmsSet}} object
+#' 
 #' @param object The \code{\linkS4class{xcmsSet}} object to update.
+#' 
 #' @param ... Optional additional arguments. Currently ignored.
+#' 
 #' @param verbose Currently ignored.
+#' 
 #' @return An updated \code{\linkS4class{xcmsSet}} containing all data from
 #' the input object.
+#' 
 #' @author Johannes Rainer
 setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     ## Create a new empty xcmsSet and start filling it with the slot
@@ -2064,22 +2070,27 @@ setMethod("specDist", signature(object="xcmsSet"),
 
 ############################################################
 ## showError
-##' @title Extract processing errors
-##' @aliases showError
-##'
-##' @description If peak detection is performed with \code{\link{findPeaks}}
-##' setting argument \code{stopOnError = FALSE} eventual errors during the
-##' process do not cause to stop the processing but are recorded inside of the
-##' resulting \code{\linkS4class{xcmsSet}} object. These errors can be accessed
-##' with the \code{showError} method.
-##'
-##' @param object An \code{\linkS4class{xcmsSet}} object.
-##' @param message. Logical indicating whether only the error message, or the
-##' error itself should be returned.
-##' @param ... Additional arguments.
-##' @return A list of error messages (if \code{message. = TRUE}) or errors or an
-##' empty list if no errors are present.
-##' @author Johannes Rainer
+#' @title Extract processing errors
+#' 
+#' @aliases showError
+#'
+#' @description If peak detection is performed with \code{\link{findPeaks}}
+#'     setting argument \code{stopOnError = FALSE} eventual errors during the
+#'     process do not cause to stop the processing but are recorded inside of
+#'     the resulting \code{\linkS4class{xcmsSet}} object. These errors can be
+#'     accessed with the \code{showError} method.
+#'
+#' @param object An \code{\linkS4class{xcmsSet}} object.
+#' 
+#' @param message. Logical indicating whether only the error message, or the
+#'     error itself should be returned.
+#' 
+#' @param ... Additional arguments.
+#'
+#' @return A list of error messages (if \code{message. = TRUE}) or errors or an
+#'     empty list if no errors are present.
+#' 
+#' @author Johannes Rainer
 setMethod("showError", signature(object = "xcmsSet"),
           function(object, message. = TRUE, ...) {
               errs <- .getProcessErrors(object, ...)

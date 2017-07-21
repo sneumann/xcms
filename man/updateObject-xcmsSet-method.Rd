@@ -20,7 +20,7 @@ the input object.
 }
 \description{
 This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
-object to the latest definition.
+    object to the latest definition.
 }
 \author{
 Johannes Rainer

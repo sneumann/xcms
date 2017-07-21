@@ -155,8 +155,8 @@ the alignment method.}
 }
 \value{
 The \code{ObiwarpParam} function returns a
-\code{ObiwarpParam} class instance with all of the settings
-specified for obiwarp retention time adjustment and alignment.
+    \code{ObiwarpParam} class instance with all of the settings
+    specified for obiwarp retention time adjustment and alignment.
 
 For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
     \code{\link{XCMSnExp}} object with the results of the retention time

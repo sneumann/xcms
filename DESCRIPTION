@@ -1,6 +1,6 @@
 Package: xcms
-Version: 2.99.3
-Date: 2017-06-13
+Version: 2.99.5
+Date: 2017-07-14
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -14,7 +14,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.1.10)
+    MSnbase (>= 2.3.8)
 Imports:
     mzR (>= 1.1.6),
     BiocGenerics,
@@ -61,19 +61,18 @@ Collate:
     'functions-Params.R'
     'do_groupChromPeaks-functions.R'
     'fastMatch.R'
-    'functions-Chromatogram.R'
     'functions-utils.R'
     'functions-IO.R'
     'functions-OnDiskMSnExp.R'
     'functions-ProcessHistory.R'
     'functions-XCMSnExp.R'
+    'functions-normalization.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'
     'functions-xcmsSet.R'
     'init.R'
     'matchpeaks.R'
-    'methods-Chromatogram.R'
     'methods-IO.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'

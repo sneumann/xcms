@@ -216,11 +216,16 @@ test_XCMSnExp_class_accessors <- function() {
     checkEquals(rtime(xod2, adjusted = TRUE), adjustedRtime(xod2))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
-    tmp <- unlist(adjustedRtime(xod2, bySample = TRUE))
-    tmp_diff <- tmp - rtime(xod2)
-    tmp_diff_2 <- adjustedRtime(xod2, bySample = FALSE) - rtime(xod2)
-    checkTrue(max(tmp_diff) > max(tmp_diff_2))
-    checkEquals(names(adjustedRtime(xod2)), names(rtime(xod2)))
+    ## From MSnbase version >= 2.3.9 values are ordered first by file then by
+    ## spectrum.
+    if (grepl("^F", names(rtime(xod2)[1]))) {
+        rts_by_sample <- adjustedRtime(xod2, bySample = TRUE)
+        rts <- adjustedRtime(xod2)
+        checkEquals(unname(rts_by_sample[[2]]),
+                    unname(rts[grep(names(rts), pattern = "F2")]))
+        checkEquals(unname(unlist(rts_by_sample)),
+                    unname(rts))
+    }
     ## Wrong assignments.
     checkException(adjustedRtime(xod2) <- xs_2@rt$corrected[1:2])
     ## bracket subset
@@ -1022,7 +1027,7 @@ test_MsFeatureData_class_accessors <- function() {
 
 
 ## Test extraction of chromatograms.
-test_extractChromatograms <- function() {
+test_chromatogram <- function() {
     ## Have: od_x: OnDiskMSNnExp
     ## xod_x: XCMSnExp, with detected chromPeaks.
     ## xod_xg: with feature groups.
@@ -1034,23 +1039,23 @@ test_extractChromatograms <- function() {
     ## BPC - CDF don't habe a BPC.
     rtr <- c(2600, 2700)
     tmp_obj <- filterFile(xod_x, file = c(1, 2))
-    res <- xcms:::extractChromatograms(tmp_obj, aggregationFun = "max", rt = rtr)
-    checkTrue(all(rtime(res[[1]]) >= rtr[1]))
-    checkTrue(all(rtime(res[[1]]) <= rtr[2]))
-    checkTrue(all(rtime(res[[2]]) >= rtr[1]))
-    checkTrue(all(rtime(res[[2]]) <= rtr[2]))
+    res <- chromatogram(tmp_obj, aggregationFun = "max", rt = rtr)
+    checkTrue(all(rtime(res[1, 1]) >= rtr[1]))
+    checkTrue(all(rtime(res[1, 1]) <= rtr[2]))
+    checkTrue(all(rtime(res[1, 2]) >= rtr[1]))
+    checkTrue(all(rtime(res[1, 2]) <= rtr[2]))
     tmp <- filterRt(filterFile(xod_x, file = 2), rt = rtr)
-    checkEquals(rtime(tmp), rtime(res[[2]]))
+    checkEquals(rtime(tmp), rtime(res[1, 2]))
     ints <- spectrapply(tmp, function(z) return(max(intensity(z))))
-    checkEquals(unlist(ints), intensity(res[[2]]))
+    checkEquals(unlist(ints), intensity(res[1, 2]))
     ## Check names
-    checkEquals(names(rtime(res[[1]])), names(intensity(res[[1]])))
+    checkEquals(names(rtime(res[1, 1])), names(intensity(res[1, 1])))
     ## Assure we get the same with an OnDiskMSnExp and grouped XCMSnExp
-    res_2 <- xcms:::extractChromatograms(filterFile(od_x, file = c(1, 2)),
-                                         aggregationFun = "max", rt = rtr)
+    res_2 <- chromatogram(filterFile(od_x, file = c(1, 2)),
+                          aggregationFun = "max", rt = rtr)
     checkEquals(res, res_2)
-    res_3 <- xcms:::extractChromatograms(filterFile(xod_xg, file = c(1, 2)),
-                                         aggregationFun = "max", rt = rtr)
+    res_3 <- chromatogram(filterFile(xod_xg, file = c(1, 2)),
+                          aggregationFun = "max", rt = rtr)
     checkEquals(res, res_3)
     
     ## XCMSnExp: with mzrange and rtrange:
@@ -1059,10 +1064,11 @@ test_extractChromatograms <- function() {
     featureDefinitions(tmp)
     tmp <- filterRt(xod_xg, rt = rtr)
     featureDefinitions(tmp)
-    res_2 <- xcms:::extractChromatograms(xod_xg, rt = rtr, mz = mzr)
+    res_2 <- chromatogram(xod_xg, rt = rtr, mz = mzr)
     ##
 
     ## XCMSnExp with adjusted rtime
+    ## SEE runit.Chromatogram.R
 }
 
 test_signal_integration <- function() {
@@ -1071,9 +1077,9 @@ test_signal_integration <- function() {
     tmp <- xod_xgrg
     rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
     mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
-    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
-    pkInt <- sum(intensity(chr[[1]]) *
-                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    chr <- chromatogram(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[1, 1]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[1, 1]) - 1)))
     checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
 
     tmp <- filterFile(xod_xgrg, file = 2)
@@ -1083,7 +1089,7 @@ test_signal_integration <- function() {
     for (i in idxs) {
         rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
         mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
-        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        chr <- chromatogram(tmp, rt = rtr, mz = mzr)[1, 1]
         ints <- intensity(chr)
         pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
         ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")
@@ -1096,9 +1102,9 @@ test_signal_integration <- function() {
     tmp <- findChromPeaks(filterFile(od_x, 2), param = MatchedFilterParam())
     rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
     mzr <- chromPeaks(tmp)[1, c("mzmin", "mzmax")]
-    chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)
-    pkInt <- sum(intensity(chr[[1]]) *
-                 ((rtr[2] - rtr[1]) / (length(chr[[1]]) - 1)))
+    chr <- chromatogram(tmp, rt = rtr, mz = mzr)
+    pkInt <- sum(intensity(chr[1, 1]) *
+                 ((rtr[2] - rtr[1]) / (length(chr[1, 1]) - 1)))
     chromPeaks(tmp)[1, "into"]
     checkEquals(pkInt, unname(chromPeaks(tmp)[1, "into"]))
     idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
@@ -1106,7 +1112,7 @@ test_signal_integration <- function() {
     for (i in idxs) {
         rtr <- chromPeaks(tmp)[i, c("rtmin", "rtmax")]
         mzr <- chromPeaks(tmp)[i, c("mzmin", "mzmax")]
-        chr <- extractChromatograms(tmp, rt = rtr, mz = mzr)[[1]]
+        chr <- chromatogram(tmp, rt = rtr, mz = mzr)[1, 1]
         ints <- intensity(chr)
         pkI <- sum(ints, na.rm = TRUE) * ((rtr[2] - rtr[1]) / (length(ints) - 1))
         ## cat(" ", chromPeaks(tmp)[i, "into"], " - ", pkI, "\n")

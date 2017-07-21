@@ -86,6 +86,7 @@ test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
 
+    checkException(findChromPeaks(onDisk, param = cwp, msLevel = 2))
     ## ## MSnExp
     ## inMem <- readMSData(fs[1], msLevel. = 1)
     ## res_2 <- findChromPeaks(inMem, param = cwp, return.type = "list")

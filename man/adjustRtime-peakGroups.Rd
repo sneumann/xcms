@@ -117,9 +117,9 @@ the retention time correction method..}
 }
 \value{
 The \code{PeakGroupsParam} function returns a
-\code{PeakGroupsParam} class instance with all of the settings
-specified for retention time adjustment based on \emph{house keeping}
-features/peak groups.
+    \code{PeakGroupsParam} class instance with all of the settings
+    specified for retention time adjustment based on \emph{house keeping}
+    features/peak groups.
 
 For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
     features, columns samples, of retention times. The features are ordered

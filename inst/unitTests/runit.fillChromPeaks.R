@@ -16,8 +16,8 @@ test_fillChromPeaks <- function() {
     for (i in idxs) {
         cfp <- fp[i, , drop = FALSE]
         tmp <- filterFile(xod_xg, file = cfp[1, "sample"])
-        chr <- extractChromatograms(tmp, rt = cfp[1, c("rtmin", "rtmax")],
-                                    mz = cfp[1, c("mzmin", "mzmax")])[[1]]
+        chr <- chromatogram(tmp, rt = cfp[1, c("rtmin", "rtmax")],
+                            mz = cfp[1, c("mzmin", "mzmax")])[1, 1]
         into <- sum(intensity(chr), na.rm = TRUE) *
             (cfp[1, "rtmax"] - cfp[1, "rtmin"]) / (length(chr) - 1)
         checkEquals(unname(into), unname(cfp[1, "into"]))
@@ -29,8 +29,8 @@ test_fillChromPeaks <- function() {
         rtr <- c(min(pks[, "rtmin"]), max(pks[, "rtmax"]))
         rtr[1] <- rtr[1] - 10
         rtr[2] <- rtr[2] + 10
-        chrs <- extractChromatograms(res, rt = rtr, mz = c(min(pks[, "mzmin"]),
-                                                           max(pks[, "mzmax"])))
+        chrs <- chromatogram(res, rt = rtr, mz = c(min(pks[, "mzmin"]),
+                                                   max(pks[, "mzmax"])))[1, ]
         plot(3, 3, pch = NA, xlim = range(lapply(chrs, rtime), na.rm = TRUE),
              ylim = range(lapply(chrs, intensity), na.rm = TRUE), xlab = "rt",
              ylab = "int")
@@ -72,7 +72,7 @@ test_fillChromPeaks <- function() {
                            c("rtmin", "rtmax", "mzmin", "mzmax")]
     ## Get the intensities for the first one.
     pkArea <- apply(tmp, median, MARGIN = 2)
-    chr <- extractChromatograms(res, rt = pkArea[1:2], mz = pkArea[3:4])
+    chr <- chromatogram(res, rt = pkArea[1:2], mz = pkArea[3:4])[1, ]
     checkTrue(all(unlist(lapply(chr, function(z) is.na(intensity(z))))))
     ## Get also the spectra:
     spctr <- spectra(filterRt(filterFile(xod_xg, file = 1), rt = pkArea[1:2]))

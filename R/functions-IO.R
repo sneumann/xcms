@@ -127,7 +127,7 @@ readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
     }
     if (is.na(backend))
         stop("File type of file ", x, " can not be determined.")
-    if (isMzMLFile(x))
+    if (isMzMLFile(x) | backend == "pwiz")
         header_cols <- c(header_cols, "polarity")
     msd <- mzR::openMSfile(x, backend = backend)
     on.exit(if(!is.null(msd)) mzR::close(msd))

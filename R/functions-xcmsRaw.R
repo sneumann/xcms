@@ -55,8 +55,8 @@ xcmsRaw <- function(filename, profstep = 1, profmethod = "bin",
     }
     if (!is.null(rawdata$polarity)) {
         object@polarity <- factor(rawdata$polarity,
-                                  levels=c(0,1,-1),
-                                  labels=c("negative", "positive", "unknown"))
+                                  levels = c(0, 1, -1),
+                                  labels = c("negative", "positive", "unknown"))
     }
     ##
     ## After the MS1 data, take care of MSn
