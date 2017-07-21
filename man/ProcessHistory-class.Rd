@@ -39,19 +39,19 @@
 }
 \value{
 For \code{processParam}: a parameter object extending the
-\code{Param} class.
+    \code{Param} class.
 
 The \code{processType} method returns a character string with the
-processing step type.
+    processing step type.
 
 The \code{processDate} method returns a character string with the
-time stamp of the processing step start.
+    time stamp of the processing step start.
 
 The \code{processInfo} method returns a character string with
-optional additional informations.
+    optional additional informations.
 
 The \code{fileIndex} method returns a integer vector with the index
-of the files/samples on which the processing step was applied.
+    of the files/samples on which the processing step was applied.
 }
 \description{
 Objects of the type \code{ProcessHistory} allow to keep track
@@ -65,19 +65,19 @@ The \code{XProcessHistory} extends the \code{ProcessHistory} by
     class of the processing step.
 
 Get or set the parameter class from an \code{XProcessHistory}
-object.
+    object.
 
 The \code{processType} method returns a character specifying the
-processing step \emph{type}.
+    processing step \emph{type}.
 
 The \code{processDate} extracts the start date of the processing
-step.
+    step.
 
 The \code{processInfo} extracts optional additional information
-on the processing step.
+    on the processing step.
 
 The \code{fileIndex} extracts the indices of the files on which
-the processing step was applied.
+    the processing step was applied.
 }
 \section{Slots}{
 

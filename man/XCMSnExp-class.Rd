@@ -166,19 +166,21 @@ section for more information.}
 \item{step}{numeric(1) representing the m/z bin size.}
 
 \item{baselevel}{numeric(1) representing the base value to which
-empty elements (i.e. m/z bins without a measured intensity) should be set.
-Only considered if \code{method = "binlinbase"}. See \code{baseValue}
-parameter of \code{\link{imputeLinInterpol}} for more details.}
+empty elements (i.e. m/z bins without a measured intensity) should be
+set. Only considered if \code{method = "binlinbase"}. See
+\code{baseValue} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{basespace}{numeric(1) representing the m/z length after
-which the signal will drop to the base level. Linear interpolation will be
-used between consecutive data points falling within \code{2 * basespace} to
-each other. Only considered if \code{method = "binlinbase"}. If not
-specified, it defaults to \code{0.075}. Internally this parameter is
-translated into the \code{distance} parameter of the
-\code{\link{imputeLinInterpol}} function by
-\code{distance = floor(basespace / step)}. See \code{distance} parameter
-of \code{\link{imputeLinInterpol}} for more details.}
+which the signal will drop to the base level. Linear interpolation will
+be used between consecutive data points falling within
+\code{2 * basespace} to each other. Only considered if
+\code{method = "binlinbase"}. If not specified, it defaults to
+\code{0.075}. Internally this parameter is translated into the
+\code{distance} parameter of the \code{\link{imputeLinInterpol}}
+function by \code{distance = floor(basespace / step)}. See
+\code{distance} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}
@@ -241,9 +243,9 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
-\code{matrix} (or matrices if \code{fileIndex} was not specified or if
-\code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for general
-help and information about the profile matrix.
+    \code{matrix} (or matrices if \code{fileIndex} was not specified or if
+    \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for
+    general help and information about the profile matrix.
 
 For \code{adjustedRtime}: if \code{bySample = FALSE} a \code{numeric}
     vector with the adjusted retention for each spectrum of all files/samples
@@ -341,11 +343,11 @@ process histories. These can be passed with argument \code{type} to the
 \code{processHistory} method to extract specific process step(s).
 
 \code{profMat}: creates a \emph{profile matrix}, which
-is a n x m matrix, n (rows) representing equally spaced m/z values (bins) and
-m (columns) the retention time of the corresponding scans. Each cell contains
-the maximum intensity measured for the specific scan and m/z values. See
-\code{\link{profMat}} for more details and description of the various binning
-methods.
+    is a n x m matrix, n (rows) representing equally spaced m/z values (bins)
+    and m (columns) the retention time of the corresponding scans. Each cell
+    contains the maximum intensity measured for the specific scan and m/z
+    values. See \code{\link{profMat}} for more details and description of
+    the various binning methods.
 
 \code{hasAdjustedRtime}: whether the object provides adjusted
     retention times.
@@ -481,7 +483,7 @@ od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 ## Now we perform a chromatographic peak detection on this data set using the
 ## matched filter method. We are tuning the settings such that it performs
 ## faster.
-mfp <- MatchedFilterParam(binSize = 4)
+mfp <- MatchedFilterParam(binSize = 6)
 xod <- findChromPeaks(od, param = mfp)
 
 ## The results from the peak detection are now stored in the XCMSnExp
@@ -511,12 +513,15 @@ head(rtime(xod))
 ## spectra method which returns Spectrum objects containing all raw data.
 ## Note that all these methods read the information from the original input
 ## files and subsequently apply eventual data processing steps to them.
-head(mz(xod, bySample = TRUE))
+mzs <- mz(xod, bySample = TRUE)
+length(mzs)
+lengths(mzs)
 
-## Reading all data
-spctr <- spectra(xod)
+## The full data could also be read using the spectra data, which returns
+## a list of Spectrum object containing the mz, intensity and rt values.
+## spctr <- spectra(xod)
 ## To get all spectra of the first file we can split them by file
-head(split(spctr, fromFile(xod))[[1]])
+## head(split(spctr, fromFile(xod))[[1]])
 
 ############
 ## Filtering
@@ -554,8 +559,8 @@ head(peaks(xs))
     the feature definitions representing the peak grouping results.
     \code{\link{adjustRtime}} for retention time adjustment methods.
 
-    \code{\link{extractChromatograms}} to extract MS data as
-    \code{\link{Chromatogram}} objects.
+    \code{\link[MSnbase]{chromatogram}} to extract MS data as
+    \code{\link[MSnbase]{Chromatogram}} objects.
 
     \code{\link{extractMsData}} for the method to extract MS data as
     \code{data.frame}s.

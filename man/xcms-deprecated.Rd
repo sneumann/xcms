@@ -1,5 +1,9 @@
 \name{xcms-deprecated}
 \alias{xcms-deprecated}
+\alias{extractChromatograms}
+\alias{extractChromatograms,OnDiskMSnExp-method}
+\alias{extractChromatograms,XCMSnExp-method}
+\alias{plotChromatogram}
 \title{Deprecated functions in package \sQuote{xcms}}
 
 \description{
@@ -18,7 +22,14 @@
     \item{\code{profBin}, \code{profBinM}, \code{profBinLin},
       \code{profBinLinM}, \code{profBinLinBase}, \code{profBinLinBaseM}
       have been deprecated and \code{\link{binYonX}}} in combination
-      with \code{\link{imputeLinInterpol}} should be used instead.
+    with \code{\link{imputeLinInterpol}} should be used instead.
+
+    \item{\code{extractChromatograms}}: replaced by \code{\link{chromatogram}}.
+
+    \item{\code{plotChromatogram}}: replaced by \code{plot} method for
+    \code{\link[MSnbase]{Chromatogram}} or
+    \code{\link[MSnbase]{Chromatograms}} objects.
+
   }
 }
 

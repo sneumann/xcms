@@ -21,62 +21,67 @@ section for more information.}
 \item{step}{numeric(1) representing the m/z bin size.}
 
 \item{baselevel}{numeric(1) representing the base value to which
-empty elements (i.e. m/z bins without a measured intensity) should be set.
-Only considered if \code{method = "binlinbase"}. See \code{baseValue}
-parameter of \code{\link{imputeLinInterpol}} for more details.}
+empty elements (i.e. m/z bins without a measured intensity) should be
+set. Only considered if \code{method = "binlinbase"}. See
+\code{baseValue} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{basespace}{numeric(1) representing the m/z length after
-which the signal will drop to the base level. Linear interpolation will be
-used between consecutive data points falling within \code{2 * basespace} to
-each other. Only considered if \code{method = "binlinbase"}. If not
-specified, it defaults to \code{0.075}. Internally this parameter is
-translated into the \code{distance} parameter of the
-\code{\link{imputeLinInterpol}} function by
-\code{distance = floor(basespace / step)}. See \code{distance} parameter
-of \code{\link{imputeLinInterpol}} for more details.}
+which the signal will drop to the base level. Linear interpolation will
+be used between consecutive data points falling within
+\code{2 * basespace} to each other. Only considered if
+\code{method = "binlinbase"}. If not specified, it defaults to
+\code{0.075}. Internally this parameter is translated into the
+\code{distance} parameter of the \code{\link{imputeLinInterpol}}
+function by \code{distance = floor(basespace / step)}. See
+\code{distance} parameter of \code{\link{imputeLinInterpol}} for more
+details.}
 
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}
 }
 \value{
 \code{profMat} returns the profile matrix (rows representing scans,
-columns equally spaced m/z values).
+    columns equally spaced m/z values).
 }
 \description{
 The \emph{profile} matrix is an n x m matrix, n (rows)
-representing equally spaced m/z values (bins) and m (columns) the
-retention time of the corresponding scans. Each cell contains the maximum
-intensity measured for the specific scan and m/z values falling within the
-m/z bin.
+    representing equally spaced m/z values (bins) and m (columns) the
+    retention time of the corresponding scans. Each cell contains the maximum
+    intensity measured for the specific scan and m/z values falling within
+    the m/z bin.
 
-The \code{profMat} method creates a new profile matrix or returns the
-profile matrix within the object's \code{@env} slot, if available. Settings
-for the profile matrix generation, such as \code{step} (the bin size),
-\code{method} or additional settings are extracted from the respective slots
-of the \code{\linkS4class{xcmsRaw}} object. Alternatively it is possible to
-specify all of the settings as additional parameters.
+    The \code{profMat} method creates a new profile matrix or returns the
+    profile matrix within the object's \code{@env} slot, if available.
+    Settings for the profile matrix generation, such as \code{step} (the bin
+    size), \code{method} or additional settings are extracted from the
+    respective slots of the \code{\linkS4class{xcmsRaw}} object.
+    Alternatively it is possible to specify all of the settings as
+    additional parameters.
 }
 \details{
 Profile matrix generation methods:
-\describe{
-\item{bin}{The default profile matrix generation method that does a simple
-binning, i.e. aggregating of intensity values falling within an m/z bin.}
-\item{binlin}{Binning followed by linear interpolation to impute missing
-values. The value for m/z bins without a measured intensity are inferred by
-a linear interpolation between neighboring bins with a measured intensity.}
-\item{binlinbase}{Binning followed by a linear interpolation to impute
-values for empty elements (m/z bins) within a user-definable proximity to
-non-empty elements while stetting the element's value to the
-\code{baselevel} otherwise. See \code{impute = "linbase"} parameter of
-\code{\link{imputeLinInterpol}} for more details.}
-\item{intlin}{Set the elements' values to the integral of the linearly
-interpolated data from plus to minus half the step size.}
-}
+    \describe{
+    \item{bin}{The default profile matrix generation method that does a
+    simple binning, i.e. aggregating of intensity values falling within an
+    m/z bin.}
+    \item{binlin}{Binning followed by linear interpolation to impute missing
+    values. The value for m/z bins without a measured intensity are inferred
+    by a linear interpolation between neighboring bins with a measured
+    intensity.}
+    \item{binlinbase}{Binning followed by a linear interpolation to impute
+    values for empty elements (m/z bins) within a user-definable proximity to
+    non-empty elements while stetting the element's value to the
+    \code{baselevel} otherwise. See \code{impute = "linbase"} parameter of
+    \code{\link{imputeLinInterpol}} for more details.}
+    \item{intlin}{Set the elements' values to the integral of the linearly
+    interpolated data from plus to minus half the step size.}
+    }
 }
 \note{
 From \code{xcms} version 1.51.1 on only the \code{profMat} method
-should be used to extract the profile matrix instead of the previously
-default way to access it directly \emph{via} \code{object@env$profile}.
+    should be used to extract the profile matrix instead of the previously
+    default way to access it directly \emph{via} \code{object@env$profile}.
 }
 \examples{
 file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
@@ -97,10 +102,10 @@ all.equal(profmat, profmat_2)
 }
 \seealso{
 \code{\linkS4class{xcmsRaw}}, \code{\link{binYonX}} and
-\code{\link{imputeLinInterpol}} for the employed binning and
-missing value imputation methods, respectively.
-\code{\link{profMat,XCMSnExp-method}} for the method on \code{\link{XCMSnExp}}
-objects.
+    \code{\link{imputeLinInterpol}} for the employed binning and
+    missing value imputation methods, respectively.
+    \code{\link{profMat,XCMSnExp-method}} for the method on
+    \code{\link{XCMSnExp}} objects.
 }
 \author{
 Johannes Rainer

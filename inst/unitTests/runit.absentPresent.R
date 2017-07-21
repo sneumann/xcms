@@ -42,7 +42,8 @@ testPresentAbsentSum <- function() {
 ## Same as above, with fillPeaks()
 ##
 testPresentAbsentSumAfterFillPeaks <- function() {
-    xsg <- fillPeaks(group(faahko))
+    ## xsg <- fillPeaks(group(faahko))
+    xsg <- faahko_grouped_filled
     ## xsg <- faahko_grouped_filled
 
     a <- length(which(absent(xsg, class="WT", minfrac=0)))

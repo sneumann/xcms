@@ -100,8 +100,10 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 ## Read the files
 od <- readMSData2(fs)
 
-## Perform peak detection on them using default matched filter settings.
-mfp <- MatchedFilterParam()
+## Perform peak detection on them using the matched filter algorithm. Note
+## that we use a large value for binSize to reduce the runtime of the
+## example code.
+mfp <- MatchedFilterParam(binSize = 5)
 xod <- findChromPeaks(od, param = mfp)
 
 ## Subset the dataset to the first and third file.

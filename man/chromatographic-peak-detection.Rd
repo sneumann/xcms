@@ -33,6 +33,12 @@ The \code{findChromPeaks} methods perform the chromatographic
 \code{\link{findPeaks}} for the \emph{old} peak detection
     methods.
 
+    \code{\link{plotChromPeaks}} to plot identified chromatographic peaks
+    for one file.
+
+    \code{\link{highlightChromPeaks}} to highlight identified chromatographic
+    peaks in an extracted ion chromatogram plot.
+
 Other peak detection methods: \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
   \code{\link{findChromPeaks-centWave}},
   \code{\link{findChromPeaks-massifquant}},

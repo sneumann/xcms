@@ -82,8 +82,8 @@ the peak grouping algorithm.}
 }
 \value{
 The \code{NearestPeaksParam} function returns a
-\code{NearestPeaksParam} class instance with all of the settings
-specified for peak alignment based on peak proximity.
+    \code{NearestPeaksParam} class instance with all of the settings
+    specified for peak alignment based on peak proximity.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
     results of the peak grouping/correspondence step (i.e. the mz-rt
@@ -147,7 +147,7 @@ p <- NearestPeaksParam(kNN = 3)
 p
 
 ##############################
-## Chromatographi peak detection and grouping.
+## Chromatographic peak detection and grouping.
 ##
 ## Below we perform first a chromatographic peak detection (using the
 ## matchedFilter method) on some of the test files from the faahKO package
