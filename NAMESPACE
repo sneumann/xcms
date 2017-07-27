@@ -69,7 +69,8 @@ export(
     "xcmsRaw",
     "xcmsSet",
     "xcmsFragments",
-    "xcmsPapply"
+    "xcmsPapply",
+    "phenoDataFromPaths"
 )
 
 S3method(plot, xcmsEIC)
