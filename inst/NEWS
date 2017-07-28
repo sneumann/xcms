@@ -7,6 +7,10 @@ USER VISIBLE CHANGES:
 BUG FIXES:
 - issue #196: removed the unnecessary requirement for same-dimension profile
   matrices in adjustRtime,XCMSnExp,ObiwarpParam.
+- issue #194: fixes in retcor.obiwarp: 1) subset raw data if scanrange != NULL.
+  2) if the mz range of the two files to be aligned differ, expand them
+  correctly. Depending on the profStep and the mz values/ranges the matrices
+  were not expanded correctly.
 
 
 CHANGES IN VERSION 2.99.5

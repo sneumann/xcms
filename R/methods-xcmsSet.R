@@ -836,42 +836,72 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     idx <- which(seq(1,N) != center)
     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0)
 
-	## added t automatically find the correct scan range from the xcmsSet object
-	if(length(obj1@scantime) != length(object@rt$raw[[center]])){
+    ## Scanrange checking: fix for issue #194
+    ## Check if we've got the scanrange slot.
+    scanrange <- NULL
+    if (.hasSlot(object, "scanrange")) {
+        if (length(object@scanrange) == 2)
+            scanrange <- object@scanrange
+    } else {
+        if(length(obj1@scantime) != length(object@rt$raw[[center]])){
             ## This is in case the xcmsSet was read using a scanrange, i.e. if
-            ## the data was read in with defining a scan range, then we would have a
-            ## mismatch here. This code essentially ensures that the retention time
-            ## of the raw object would match the retention time present in the xcmsSet.
-            ## This was before the days in which @scanrange was added as a slot to
-            ## xcmsSet.
-		##figure out the scan time range
-		scantime.start	<-object@rt$raw[[center]][1]
-		scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
-
-		scanrange.start	<-which.min(abs(obj1@scantime - scantime.start))
-		scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
-		scanrange<-c(scanrange.start, scanrange.end)
-		obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin", profstep=0, scanrange=scanrange)
-	} else{
-		scanrange<-NULL
-	}
-
+            ## the data was read in with defining a scan range, then we would
+            ## have a mismatch here. This code essentially ensures that the
+            ## retention time of the raw object would match the retention time
+            ## present in the xcmsSet.
+            ## This was before the days in which @scanrange was added as a slot
+            ## to xcmsSet.
+            ##figure out the scan time range
+            scantime.start <- object@rt$raw[[center]][1]
+            scantime.end <- object@rt$raw[[center]][length(object@rt$raw[[center]])]
+            scanrange.start <- which.min(abs(obj1@scantime - scantime.start))
+            scanrange.end <- which.min(abs(obj1@scantime - scantime.end))
+            scanrange <- c(scanrange.start, scanrange.end)
+        }
+    }
+    ## Subset the object if scanrange not NULL
+    if (!is.null(scanrange))
+        obj1 <- obj1[scanrange[1]:scanrange[2]]
+    
+    ## ## added t automatically find the correct scan range from the xcmsSet object
+    ## if(length(obj1@scantime) != length(object@rt$raw[[center]])){
+    ##     ## This is in case the xcmsSet was read using a scanrange, i.e. if
+    ##     ## the data was read in with defining a scan range, then we would have a
+    ##     ## mismatch here. This code essentially ensures that the retention time
+    ##     ## of the raw object would match the retention time present in the xcmsSet.
+    ##     ## This was before the days in which @scanrange was added as a slot to
+    ##     ## xcmsSet.
+    ##     ##figure out the scan time range
+    ##     scantime.start	<-object@rt$raw[[center]][1]
+    ##     scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
+        
+    ##     scanrange.start	<-which.min(abs(obj1@scantime - scantime.start))
+    ##     scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
+    ##     scanrange<-c(scanrange.start, scanrange.end)
+    ##     obj1 <- xcmsRaw(object@filepaths[center], profmethod="bin",
+    ##                     profstep=0, scanrange=scanrange)
+    ## } else{
+    ##     scanrange<-NULL
+    ## }
+    
     for (si in 1:length(idx)) {
         s <- idx[si]
         cat(samples[s], " ")
-
+        
         ##
         ## Might be better to just get the profile matrix from the center object
         ## outside of the for loop and then modifying a internal variable within
         ## the loop - avoids creation of two profile matrices in each iteration.
-        profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it might have been modified during previous iteration
-		if(is.null(scanrange)){
-			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
-		} else{
-			obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0, scanrange=scanrange)
-		}
+        profStepPad(obj1) <- profStep ## (re-)generate profile matrix, since it
+        ## might have been modified during previous iteration
+        if(is.null(scanrange)){
+            obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0)
+        } else{
+            obj2 <- xcmsRaw(object@filepaths[s], profmethod="bin", profstep=0,
+                            scanrange = scanrange)
+        }
         profStepPad(obj2) <- profStep ## generate profile matrix
-
+        
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
         mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
 
@@ -931,23 +961,38 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         ## Now ensure that the nrow of the profile matrix matches.
         ## Add empty rows at the beginning
         if(mzmin < obj1@mzrange[1]) {
-            seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep))-1
-            x <- matrix(0, seqlen,dim(obj1@env$profile)[2])
+            ## The profile matrices should not get larger than mz!
+            max_missing_rows <- mzval - nrow(obj1@env$profile)
+            low_mz <- seq(mzmin, obj1@mzrange[1], profStep)
+            ## keep all mz bins that are smaller than mzrange, but ensure that
+            ## we're not adding more rows than needed.
+            seqlen <- min(sum(low_mz < obj1@mzrange[1]), max_missing_rows)
+            ## seqlen <- length(seq(mzmin, obj1@mzrange[1], profStep)) - 1
+            x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
             obj1@env$profile <- rbind(x, obj1@env$profile)
         }
         ## Add emtpy rows at the end.
         if(mzmax > obj1@mzrange[2]){
-            seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep))-1
+            max_missing_rows <- mzval - nrow(obj1@env$profile)
+            high_mz <- seq(obj1@mzrange[2], mzmax, profStep)
+            seqlen <- min(sum(high_mz > obj1@mzrange[2]), max_missing_rows)
+            ## seqlen <- length(seq(obj1@mzrange[2], mzmax, profStep)) - 1
             x <- matrix(0, seqlen, dim(obj1@env$profile)[2])
             obj1@env$profile <- rbind(obj1@env$profile, x)
         }
         if(mzmin < obj2@mzrange[1]){
-            seqlen <- length(seq(mzmin, obj2@mzrange[1], profStep))-1
+            max_missing_rows <- mzval - nrow(obj2@env$profile)
+            low_mz <- seq(mzmin, obj2@mzrange[1], profStep)
+            seqlen <- min(sum(low_mz < obj2@mzrange[1]), max_missing_rows)
+            ## seqlen <- length(seq(mzmin, obj2@mzrange[1], profStep))-1
             x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
             obj2@env$profile <- rbind(x, obj2@env$profile)
         }
         if(mzmax > obj2@mzrange[2]){
-            seqlen <- length(seq(obj2@mzrange[2], mzmax, profStep))-1
+            max_missing_rows <- mzval - nrow(obj2@env$profile)
+            high_mz <-  seq(obj2@mzrange[2], mzmax, profStep)
+            seqlen <- min(sum(high_mz > obj2@mzrange[2]), max_missing_rows)
+            ## seqlen <- length(seq(obj2@mzrange[2], mzmax, profStep)) - 1
             x <- matrix(0, seqlen, dim(obj2@env$profile)[2])
             obj2@env$profile <- rbind(obj2@env$profile, x)
         }
@@ -956,7 +1001,10 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         intensity1 <- obj1@env$profile
         intensity2 <- obj2@env$profile
 
-        if ((mzval * valscantime1 != length(intensity1)) ||  (mzval * valscantime2 != length(intensity2)))
+        ## Final check to ensure that our expansion of profile matrix rows was
+        ## correct.
+        if ((mzval * valscantime1 != length(intensity1)) ||
+            (mzval * valscantime2 != length(intensity2)))
             stop("Dimensions of profile matrices do not match !\n")
 
         ## Would it be possible to supply non-binned data too???
