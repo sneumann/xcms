@@ -302,8 +302,10 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         mzvals <- length(mzs)
         cntrVals <- length(cntrPr$profMat)
         curVals <- length(curP$profMat)
-        if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals
-            | cntrVals != curVals)
+        if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals)
+            ## Here the question is if we REALLY need to have the same numbers
+            ## of values in both. This caused the problems in issue #196
+            ## | cntrVals != curVals)
             stop("Dimensions of profile matrices of files ",
                  basename(fileNames(cntr)), " and ", basename(fileNames(z)),
                  " do not match!")
