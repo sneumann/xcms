@@ -38,7 +38,7 @@ Lots of Preprocessing has to be done before the data is ready for aligning.
 First of all \Rpackage{xcms} and \Rpackage{MassSpecWavelet}
 are needed for further processing.
 
-<<LoadLib>>=
+<<LoadLib, results = hide>>=
 library(xcms)
 library(MassSpecWavelet)
 
@@ -59,14 +59,14 @@ package and extract the datafiles.
 library(msdata)
 mzdatapath <- system.file("fticr", package = "msdata")
 mzdatafiles <- list.files(mzdatapath, recursive = TRUE, full.names = TRUE)
-cat("Starting xcmsDirect.Rnw")
+
 @
 
 The \Rmethod{xcmsSet}-Constructor parses the given files and applies
 peakpicking using the MassSpecWavelet algorithm, leading to a \Robject{xcmsSet}
 object with 2 sampleclasses, ham4 and ham5, and 5 samples, respectively.
 
-<<ProcessData>>=
+<<ProcessData, results = hide>>=
 data.mean <- "data.mean"
 xs <- xcmsSet(
         method="MSW",
@@ -82,7 +82,7 @@ xs <- xcmsSet(
 \section{Calibration}
 \Rmethod{calibrate} can be used to correct the m/z values in a \Robject{xcmsSet}. It needs a xcmsSet and a list of m/z value which should be found in the object. To show this on a example a sample of ham4 is created and discalibrated a bit after getting some m/z:
 
-<<CreateExample>>=
+<<CreateExample, results = hide>>=
 
 xs4 <- xcmsSet(
 		method = "MSW",
@@ -100,7 +100,7 @@ xs4@peaks[,"mz"] <- xs4@peaks[,"mz"] + 0.00001*runif(1,0,0.4)*xs4@peaks[,"mz"] +
 
 The \Robject{xcmsSet} now can be calibrated again with the m/z from the masslist. The plot shows the reference masses with the distances to the found ones and the regression-line.
 
-<<Calibrate include = FALSE, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
+<<Calibrate, results = hide, fig = TRUE, eps = FALSE, width = 5, height = 4>>=
 xs4c <- calibrate(xs4,
 		calibrants=masslist,
 		method="edgeshift",
@@ -124,7 +124,7 @@ Now we can align \Robject{xs} with \Rmethod{mzClust}. The result is a clone of
 \Robject{xs} enhanced by the result of \Rmethod{mzClust}. For a description of
 the arguments \Rmethod{mzClust} takes, see helppage of the function.
 
-<<MzClust>>=
+<<MzClust, results = hide>>=
 xsg <- group(xs, method="mzClust")
 xsg
 @
@@ -146,11 +146,14 @@ serious problems in code, which is based on e.g.
 \Rmethod{groupval}. \Rmethod{groupval} sets missing peaks to NA. The solution
 is \Rmethod{fillPeaks}. It changes all NA values to random noise based on the raw
 data file.
-<<FillPeaks>>=
+<<FillPeaks, results = hide>>=
 groupval(xsg)[1,]
 xsgf <- fillPeaks(xsg, method="MSW")
-groupval(xsgf, "medret", "into")[1:10,]
 @
+
+<<>>=
+groupval(xsgf, "medret", "into")[1:10,]
+@ 
 
 The results are suited for instance for heatmaps, etc.
 
