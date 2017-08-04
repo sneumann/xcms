@@ -993,55 +993,60 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #' 
 #' @description Plot the density of chromatographic peaks along the retention
 #'     time axis and indicate which peaks would be grouped into the same feature
-#'     based using the \emph{peak density} correspondence method. Settings for
-#'     the \emph{peak density} method can be passed with an
-#'     \code{\link{PeakDensityParam}} object to parameter \code{param}.
+#'     based using the *peak density* correspondence method. Settings for
+#'     the *peak density* method can be passed with an
+#'     [PeakDensityParam] object to parameter `param`.
 #'
-#' @details The \code{plotChromPeakDensity} function allows to evaluate
-#'     different settings for the \emph{peak density} on an mz slice of
+#' @details The `plotChromPeakDensity` function allows to evaluate
+#'     different settings for the *peak density* on an mz slice of
 #'     interest (e.g. containing chromatographic peaks corresponding to a known
 #'     metabolite).
 #'     The plot shows the individual peaks that were detected within the
-#'     specified \code{mz} slice at their retention time (x-axis) and sample in
+#'     specified `mz` slice at their retention time (x-axis) and sample in
 #'     which they were detected (y-axis). The density function is plotted as a
-#'     black line. Parameters for the \code{density} function are taken from the
-#'     \code{param} object. Grey rectangles indicate which chromatographic peaks
-#'     would be grouped into a feature by the \emph{peak density} correspondence
-#'     method. Parameters for the algorithm are also taken from \code{param}.
-#'     See \code{\link{groupChromPeaks-density}} for more information about the
+#'     black line. Parameters for the `density` function are taken from the
+#'     `param` object. Grey rectangles indicate which chromatographic peaks
+#'     would be grouped into a feature by the `peak density` correspondence
+#'     method. Parameters for the algorithm are also taken from `param`.
+#'     See [groupChromPeaks-density()] for more information about the
 #'     algorithm and its supported settings.
 #'
-#' @param object A \code{\link{XCMSnExp}} object with identified
+#' @param object A [XCMSnExp] object with identified
 #'     chromatographic peaks.
 #' 
-#' @param mz \code{numeric(2)} defining an mz range for which the peak density
+#' @param mz `numeric(2)` defining an mz range for which the peak density
 #'     should be plotted.
 #'
-#' @param rt \code{numeric(2)} defining an optional rt range for which the
+#' @param rt `numeric(2)` defining an optional rt range for which the
 #'     peak density should be plotted. Defaults to the absolute retention time
-#'     range of \code{object}.
+#'     range of `object`.
 #' 
-#' @param param \code{\link{PeakDensityParam}} from which parameters for the
-#'     \emph{peak density} correspondence algorithm can be extracted.
+#' @param param [PeakDensityParam] from which parameters for the
+#'     *peak density* correspondence algorithm can be extracted.
 #' 
 #' @param col Color to be used for the individual samples. Length has to be 1
-#'     or equal to the number of samples in \code{object}.
+#'     or equal to the number of samples in `object`.
 #'
-#' @param xlab \code{character(1)} with the label for the x-axis.
+#' @param xlab `character(1)` with the label for the x-axis.
 #'
-#' @param ylab \code{character(1)} with the label for the y-axis.
+#' @param ylab `character(1)` with the label for the y-axis.
 #'
-#' @param xlim \code{numeric(2)} representing the limits for the x-axis.
-#'     Defaults to the range of the \code{rt} parameter.
+#' @param xlim `numeric(2)` representing the limits for the x-axis.
+#'     Defaults to the range of the `rt` parameter.
+#'
+#' @param main `character(1)` defining the title of the plot. By default
+#'     (for `main = NULL`) the mz-range is used.
 #' 
-#' @param ... Additional parameters to be passed to the \code{plot} function.
+#' @param ... Additional parameters to be passed to the `plot` function.
 #'
 #' @return The function is called for its side effect, i.e. to create a plot.
 #' 
 #' @author Johannes Rainer
 #'
-#' @seealso \code{\link{groupChromPeaks-density}} for details on the
-#'     \emph{peak density} correspondence method and supported settings.
+#' @seealso [groupChromPeaks-density()] for details on the
+#'     *peak density* correspondence method and supported settings.
+#'
+#' @md
 #' 
 #' @examples
 #'
@@ -1078,7 +1083,8 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #'     param = PeakDensityParam(minFraction = 1))
 plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
                                  col = "#00000080", xlab = "retention time",
-                                 ylab = "sample", xlim = range(rt), ...) {
+                                 ylab = "sample", xlim = range(rt),
+                                 main = NULL, ...) {
     if (missing(object))
         stop("Required parameter 'object' is missing")
     if (!is(object, "XCMSnExp"))
@@ -1115,10 +1121,12 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
                         n = densN)
         yl <- c(0, max(dens$y))
         ypos <- seq(from = 0, to = yl[2], length.out = nsamples)
+        if (is.null(main))
+            main <- paste0(format(mz, digits = 7), collapse = " - ")
         ## Plot the peaks as points.
         plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
              col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
-             main = paste0(format(mz, digits = 7), collapse = " - "), ylim = yl,
+             main = main, ylim = yl,
              ...)
         axis(side = 2, at = ypos, labels = 1:nsamples)
         points(x = dens$x, y = dens$y, type = "l")
