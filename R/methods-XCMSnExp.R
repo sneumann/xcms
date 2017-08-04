@@ -158,6 +158,8 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #'
 #' @description \code{featureDefinitions}, \code{featureDefinitions<-}: extract
 #'     or set the correspondence results, i.e. the mz-rt features (peak groups).
+#'     Similar to the \code{chromPeaks} it is possible to extract features for
+#'     specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
 #'
 #' @return For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
 #'     information, each row corresponding to one mz-rt feature (grouped peaks
@@ -171,8 +173,35 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #'     returns \code{NULL} if no feature definitions are present.
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "XCMSnExp", function(object) {
-    return(featureDefinitions(object@msFeatureData))
+setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
+                                                     rt = numeric(), ppm = 0,
+                                                     type = "any") {
+    feat_def <- featureDefinitions(object@msFeatureData)
+    type <- match.arg(type, c("any", "within"))
+    ## Select features within rt range.
+    if (length(rt)) {
+        rt <- range(rt)
+        if (type == "within")
+            keep <- which(feat_def$rtmin >= rt[1] & feat_def$rtmax <= rt[2])
+        else
+            keep <- which(feat_def$rtmax >= rt[1] & feat_def$rtmin <= rt[2])
+        feat_def <- feat_def[keep, , drop = FALSE]
+    }
+    ## Select peaks within mz range, considering also ppm
+    if (length(mz) && nrow(feat_def)) {
+        mz <- range(mz)
+        ## Increase mz by ppm.
+        if (is.finite(mz[1]))
+            mz[1] <- mz[1] - mz[1] * ppm / 1e6
+        if (is.finite(mz[2]))
+            mz[2] <- mz[2] + mz[2] * ppm / 1e6
+        if (type == "within")
+            keep <- which(feat_def$mzmin >= mz[1] & feat_def$mzmax <= mz[2])
+        else
+            keep <- which(feat_def$mzmax >= mz[1] & feat_def$mzmin <= mz[2])
+        feat_def <- feat_def[keep, , drop = FALSE]
+    }
+    feat_def
 })
 #' @aliases featureDefinitions<-
 #'

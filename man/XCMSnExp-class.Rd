@@ -104,7 +104,8 @@ processHistoryTypes()
 
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
-\S4method{featureDefinitions}{XCMSnExp}(object)
+\S4method{featureDefinitions}{XCMSnExp}(object, mz = numeric(),
+  rt = numeric(), ppm = 0, type = "any")
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
@@ -194,11 +195,11 @@ specifying the index of the files/samples for which the
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
 
-\item{rt}{optional \code{numeric(2)} defining the retention time range for
-which chromatographic peaks should be returned.}
-
 \item{mz}{optional \code{numeric(2)} defining the mz range for which
 chromatographic peaks should be returned.}
+
+\item{rt}{optional \code{numeric(2)} defining the retention time range for
+which chromatographic peaks should be returned.}
 
 \item{ppm}{optional \code{numeric(1)} specifying the ppm by which the
 \code{mz} range should be extended. For a value of \code{ppm = 10}, all
@@ -369,6 +370,8 @@ process histories. These can be passed with argument \code{type} to the
 
 \code{featureDefinitions}, \code{featureDefinitions<-}: extract
     or set the correspondence results, i.e. the mz-rt features (peak groups).
+    Similar to the \code{chromPeaks} it is possible to extract features for
+    specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
 
 \code{chromPeaks}, \code{chromPeaks<-}: extract or set
     the matrix containing the information on identified chromatographic
