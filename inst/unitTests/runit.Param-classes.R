@@ -802,8 +802,6 @@ test_GenericParam <- function() {
 }
 
 test_FillChromPeaksParam <- function() {
-    library(xcms)
-    library(RUnit)
     ## Check getter/setter methods:
     p <- new("FillChromPeaksParam", expandMz = 0.8)
     checkEquals(expandMz(p), 0.8)
@@ -831,4 +829,27 @@ test_FillChromPeaksParam <- function() {
     checkEquals(ppm(p), 7)
     checkException(ppm(p) <- c(2, 2))
     checkException(ppm(p) <- -2)
+}
+
+
+test_CalibrantMassParam <- function() {
+
+    p <- new("CalibrantMassParam")
+    checkTrue(validObject(p))
+    p@method <- "other"
+    checkException(validObject(p))
+    mzs <- rnorm(200, mean = 500)
+    p <- new("CalibrantMassParam")
+    p@mz <- list(mzs)
+    checkException(validObject(p))
+    
+    ## Constructor.
+    p <- xcms:::CalibrantMassParam(mz = mzs, mzabs = 3, mzppm = 9,
+                                   neighbors = 4, method = "shift")
+    checkEquals(xcms:::.mz(p)[[1]], sort(mzs))
+    checkEquals(xcms:::.mzabs(p), 3)
+    checkEquals(xcms:::.mzppm(p), 9)
+    checkEquals(xcms:::.neighbors(p), 4L)
+    checkEquals(xcms:::.method(p), "shift")
+    
 }

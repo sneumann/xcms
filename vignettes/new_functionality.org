@@ -1675,4 +1675,33 @@ For each sample:
 - call the =matchpeaks= function on the peaks matrix and the calibrants (which is
   supposed to be a numeric vector of mz values.
 
+Global concept: calibration is done on the peaks. Questions:
++ Is there a global calibration value for a file we could store into the
+  =XCMSnExp= object? If yes we could even apply the calibration to the individual
+  mz values of a file. Actually, yes, the calibration results could be stored on
+  a per-file basis in the =XCMSnExp=. Problem is we can not apply one global
+  calibration to all files. So adding this to the processing queue seems to be a
+  no-go.
+
++ We can add a function to the =processingQueue= that applies different
+  adjustments depending on the =fileIdx=. Be aware! All subsetting/filtering
+  approaches do have to update the file index in the =processingQueue=.
+
+*NOTE*: to enable calibration of =mz= values of a =Spectrum=:
++ Implement a =CalibrationResult= object with slots:
+  - method
+  - minMz
+  - maxMz
+  - fileIdx
+  - slope
+  - intercept
++ Enable adding a =list= of these objects into =MsFeatureData=.
++ Add methods to drop/delete such objects from =MsFeatureData=.
++ =dropChromPeaks= should also drop the =list=.
++ Add function to subset the =list= in the =MsFeatureData=.
++ On subsetting: do also subset the =list=.
++ Implement a =dropCalibration= method that does restore the original mz values.
+
+
+
 * References

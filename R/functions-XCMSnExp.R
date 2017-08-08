@@ -1481,6 +1481,18 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
     }
 }
 
+#' @rdname calibrate-calibrant-mass
+#'
+#' @description The `isCalibrated` function returns `TRUE` if chromatographic
+#'     peaks of the [XCMSnExp] object `x` were calibrated and `FALSE` otherwise.
+#' 
+#' @md
+isCalibrated <- function(object) {
+    if (length(processHistory(object, type = .PROCSTEP.CALIBRATION)))
+        TRUE
+    else
+        FALSE
+}
 
 ## Find mz ranges with multiple peaks per sample.
 ## Use the density distribution for that? with a bandwidth = 0.001, check

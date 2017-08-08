@@ -1,8 +1,16 @@
 CHANGES IN VERSION 2.99.6
 -------------------------
 
+NEW FEATURES:
+- calibrate,XCMSnExp method that allows to calibrate chromatographic peaks.
+
 USER VISIBLE CHANGES:
 - Export phenoDataFromPaths function (issue $195).
+- Add arguments mz and rt to featureDefinitions method allowing to extract
+  features within the specified ranges.
+- Increase n for the density function call in group density-based correspondence
+  by 2.
+
 
 BUG FIXES:
 - issue #196: removed the unnecessary requirement for same-dimension profile
@@ -11,6 +19,7 @@ BUG FIXES:
   2) if the mz range of the two files to be aligned differ, expand them
   correctly. Depending on the profStep and the mz values/ranges the matrices
   were not expanded correctly.
+- Potential problems in the plotChromPeakDensity function.
 
 
 CHANGES IN VERSION 2.99.5

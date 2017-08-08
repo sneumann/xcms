@@ -241,41 +241,47 @@ setReplaceMethod("profinfo", "xcmsSet", function(object, value) {
 
 ############################################################
 ## calibrate
-setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
-                                           mzabs=0.0001, mzppm=5,
-                                           neighbours=3, plotres=FALSE) {
+setMethod("calibrate", "xcmsSet", function(object, calibrants,
+                                           method = "linear",
+                                           mzabs = 0.0001, mzppm = 5,
+                                           neighbours = 3, plotres = FALSE) {
 
     nsamp = length(unique(object@peaks[,"sample"]))
-    if (!sum(method == c("shift","linear","edgeshift")))
-        stop("unknown calibration method!")
+    match.arg(method, c("shift", "linear", "edgeshift"))
 
     if (is.list(calibrants))
         if (length(calibrants) != nsamp)
             stop("Error: Number of masslists differs with number of samples")
 
-    for (s in 1:nsamp){
-        peaklist = object@peaks[which(object@peaks[,"sample"]==s),]
+    ## Loop over samples, estimate calibration and apply it.
+    for (s in 1:nsamp) {
+        peaklist = object@peaks[which(object@peaks[,"sample"] == s), ]
         if (is.list(calibrants)) {
             masslist <- calibrants[s]
-        }else{
+        } else {
             masslist <- calibrants
         }
+        ## Check that peaks are ordered by mz value (issue #200)
+        if (is.unsorted(peaklist[, "mz"]))
+            warning("Peaks in sample ", s, " are not sorted by mz value")
 
-        masses <- matchpeaks(peaklist,masslist,mzabs,mzppm,neighbours)
-        if (length(masses)==0){
+        masses <- matchpeaks(peaklist, masslist, mzabs, mzppm, neighbours)
+        if (length(masses) == 0) {
             warning("No masses close enough!\n")
             next
         }
 
-        if (nrow(masses)==1 & method!="shift") {
-            cat("Warning: only one peak found, fallback to shift.")
-            method="shift"
+        if (nrow(masses) == 1 & method != "shift") {
+            warning("Sample ", s, ": only one peak found, falling back to ",
+                    "method = 'shift'")
+            method = "shift"
         }
 
-        params <-  estimate (masses, method)
-        mzu <- peaklist[,"mz"]
-        mposs <- masses[,"pos"]
-        mdiffs <- masses[,"dif"]
+        ## Estimate the adjustment.
+        params <-  estimate(masses, method)
+        mzu <- peaklist[, "mz"]
+        mposs <- masses[, "pos"]
+        mdiffs <- masses[, "dif"]
         a <- params[1]
         b <- params[2]
 
@@ -284,23 +290,32 @@ setMethod("calibrate", "xcmsSet", function(object,calibrants,method="linear",
         if (method != "edgeshift"){
             mzu <- mzu - (a * mzu + b)
         } else {
-            mzu[c(1:(min(mposs)-1))] <- mzu[c(1:(min(mposs)-1))] - (a * mzu[min(mposs)] + b)
+            ## Different adjustment for peaks below the smallest and peaks above
+            ## the largest mz
+            mzu[c(1:(min(mposs) - 1))] <- mzu[c(1:(min(mposs) - 1))] -
+                (a * mzu[min(mposs)] + b)
             mzu[c((min(mposs)):(max(mposs)))] <-
-                mzu[c((min(mposs)):(max(mposs)))] - (a * mzu[c((min(mposs)):(max(mposs)))] + b)
+                mzu[c((min(mposs)):(max(mposs)))] -
+                (a * mzu[c((min(mposs)):(max(mposs)))] + b)
             mzu[c((max(mposs)+1):length(mzu))] <-
                 mzu[c((max(mposs)+1):length(mzu))] - (a * mzu[max(mposs)] + b)
         }
 
         peaklist[,"mz"] <- mzu
-        object@peaks[which(object@peaks[,"sample"]==s),] <- peaklist
+        object@peaks[which(object@peaks[,"sample"] == s), ] <- peaklist
     }
 
     if (plotres) {
         plot(mzu[mposs],mdiffs, xlim=c(min(mzu),max(mzu)))
-        if (method!="edgeshift") {abline(b,a)}else{
-            lines(c(min(mzu),mzu[min(mposs)]),c(a * mzu[min(mposs)] + b,a * mzu[min(mposs)] + b))
-            lines(c(mzu[min(mposs)],mzu[max(mposs)]),c(a * mzu[min(mposs)] + b,a * mzu[max(mposs)] + b))
-            lines(c(mzu[max(mposs)],max(mzu)),c(a * mzu[max(mposs)] + b,a * mzu[max(mposs)] + b))
+        if (method!="edgeshift") {
+            abline(b,a)
+        } else {
+            lines(c(min(mzu), mzu[min(mposs)]),
+                  c(a * mzu[min(mposs)] + b,a * mzu[min(mposs)] + b))
+            lines(c(mzu[min(mposs)], mzu[max(mposs)]),
+                  c(a * mzu[min(mposs)] + b,a * mzu[max(mposs)] + b))
+            lines(c(mzu[max(mposs)], max(mzu)),
+                  c(a * mzu[max(mposs)] + b,a * mzu[max(mposs)] + b))
         }
     }
 

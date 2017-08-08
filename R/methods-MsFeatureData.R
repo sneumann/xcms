@@ -26,38 +26,35 @@ setMethod("show", "MsFeatureData", function(object) {
 ## adjustedRtime: getter and setter for the adjustedRtime list.
 
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
-    return(!is.null(object$adjustedRtime))
-    ## return(any(ls(object) == "adjustedRtime"))
+    !is.null(object$adjustedRtime)
 })
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("hasFeatures", "MsFeatureData", function(object) {
-    return(!is.null(object$featureDefinitions))
-    ## return(any(ls(object) == "featureDefinitions"))
+    !is.null(object$featureDefinitions)
 })
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("hasChromPeaks", "MsFeatureData", function(object) {
-    return(!is.null(object$chromPeaks))
-    ## return(any(ls(object) == "chromPeaks"))
+    !is.null(object$chromPeaks)
 })
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("adjustedRtime", "MsFeatureData", function(object) {
     if (hasAdjustedRtime(object))
         return(object$adjustedRtime)
     warning("No adjusted retention times available.")
     return(NULL)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setReplaceMethod("adjustedRtime", "MsFeatureData", function(object, value) {
     object$adjustedRtime <- value
     if (validObject(object))
         return(object)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
     if (hasAdjustedRtime(object)) {
         rm(list = "adjustedRtime", envir = object)
@@ -65,40 +62,40 @@ setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
     return(object)
 })
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("featureDefinitions", "MsFeatureData", function(object) {
     if (hasFeatures(object))
         return(object$featureDefinitions)
     warning("No aligned feature information available.")
     return(NULL)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) {
     object$featureDefinitions <- value
     if (validObject(object))
         return(object)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("dropFeatureDefinitions", "MsFeatureData", function(object) {
     if (hasFeatures(object))
         rm(list = "featureDefinitions", envir = object)
     return(object)
 })
 
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("chromPeaks", "MsFeatureData", function(object) {
     if (hasChromPeaks(object))
         return(object$chromPeaks)
     warning("No chromatographic peaks available.")
     return(NULL)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setReplaceMethod("chromPeaks", "MsFeatureData", function(object, value) {
     object$chromPeaks <- value
     if (validObject(object))
         return(object)
 })
-##' @rdname XCMSnExp-class
+#' @rdname XCMSnExp-class
 setMethod("dropChromPeaks", "MsFeatureData", function(object) {
     if (hasChromPeaks(object))
         rm(list = "chromPeaks", envir = object)
