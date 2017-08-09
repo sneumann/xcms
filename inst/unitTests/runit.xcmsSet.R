@@ -39,3 +39,11 @@ test.xcmsSetParallel <- function() {
     checkTrue (nrow((peaks(xset1)@.Data)) == nrow((peaks(xset2)@.Data)))
 
 }
+
+test.phenoDataFromPaths <- function() {
+    base_dir <- system.file("cdf", package = "faahKO")
+    cdf_files <- list.files(base_dir, recursive = TRUE, full.names = TRUE)
+    pd <- phenoDataFromPaths(cdf_files)
+    checkTrue(colnames(pd) == "class")
+    checkEquals(levels(pd$class), c("KO", "WT"))
+}

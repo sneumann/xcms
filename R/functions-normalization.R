@@ -192,9 +192,9 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
         data_fit <- data_fit[fitOnSubset, , drop = FALSE]
     ## First fitting the model.
     message("Fitting the model to the features ... ", appendLF = FALSE)
-    lms <- xcms:::fitModel(formula = model, data = data_fit,
-                           y = y[, fitOnSubset, drop = FALSE],
-                           minVals = minVals, method = method)
+    lms <- fitModel(formula = model, data = data_fit,
+                    y = y[, fitOnSubset, drop = FALSE],
+                    minVals = minVals, method = method)
     message("OK")
     message("Applying models to adjust values ... ", appendLF = FALSE)
     if (is.null(rownames(y)))

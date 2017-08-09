@@ -4,12 +4,12 @@
 \alias{plotChromPeakDensity}
 \title{Plot chromatographic peak density along the retention time axis}
 \usage{
-plotChromPeakDensity(object, mz, rt, param = PeakDensityParam(),
+plotChromPeakDensity(object, mz, rt, param, simulate = TRUE,
   col = "#00000080", xlab = "retention time", ylab = "sample",
-  xlim = range(rt), ...)
+  xlim = range(rt), main = NULL, ...)
 }
 \arguments{
-\item{object}{A \code{\link{XCMSnExp}} object with identified
+\item{object}{A \link{XCMSnExp} object with identified
 chromatographic peaks.}
 
 \item{mz}{\code{numeric(2)} defining an mz range for which the peak density
@@ -19,8 +19,16 @@ should be plotted.}
 peak density should be plotted. Defaults to the absolute retention time
 range of \code{object}.}
 
-\item{param}{\code{\link{PeakDensityParam}} from which parameters for the
-\emph{peak density} correspondence algorithm can be extracted.}
+\item{param}{\link{PeakDensityParam} from which parameters for the
+\emph{peak density} correspondence algorithm can be extracted. If not provided
+and if \code{object} contains feature definitions with the correspondence/
+peak grouping being performed by the \emph{peak density} method, the
+corresponding parameter class stored in \code{object} is used.}
+
+\item{simulate}{\code{logical(1)} defining whether correspondence should be
+simulated within the specified m/z / rt region or (with
+\code{simulate = FALSE}) whether the results from an already performed
+correspondence should be shown.}
 
 \item{col}{Color to be used for the individual samples. Length has to be 1
 or equal to the number of samples in \code{object}.}
@@ -32,32 +40,40 @@ or equal to the number of samples in \code{object}.}
 \item{xlim}{\code{numeric(2)} representing the limits for the x-axis.
 Defaults to the range of the \code{rt} parameter.}
 
-\item{...}{Additional parameters to be passed to the \code{plot} function.}
+\item{main}{\code{character(1)} defining the title of the plot. By default
+(for \code{main = NULL}) the mz-range is used.}
+
+\item{...}{Additional parameters to be passed to the \code{plot} function. Data
+point specific parameters such as \code{bg} or \code{pch} have to be of length 1
+or equal to the number of samples.}
 }
 \value{
 The function is called for its side effect, i.e. to create a plot.
 }
 \description{
 Plot the density of chromatographic peaks along the retention
-    time axis and indicate which peaks would be grouped into the same feature
-    based using the \emph{peak density} correspondence method. Settings for
-    the \emph{peak density} method can be passed with an
-    \code{\link{PeakDensityParam}} object to parameter \code{param}.
+time axis and indicate which peaks would be (or were) grouped into the
+same feature based using the \emph{peak density} correspondence method.
+Settings for the \emph{peak density} method can be passed with an
+\link{PeakDensityParam} object to parameter \code{param}. If the \code{object} contains
+correspondence results and the correspondence was performed with the
+\emph{peak groups} method, the results from that correspondence can be
+visualized setting \code{simulate = FALSE}.
 }
 \details{
 The \code{plotChromPeakDensity} function allows to evaluate
-    different settings for the \emph{peak density} on an mz slice of
-    interest (e.g. containing chromatographic peaks corresponding to a known
-    metabolite).
-    The plot shows the individual peaks that were detected within the
-    specified \code{mz} slice at their retention time (x-axis) and sample in
-    which they were detected (y-axis). The density function is plotted as a
-    black line. Parameters for the \code{density} function are taken from the
-    \code{param} object. Grey rectangles indicate which chromatographic peaks
-    would be grouped into a feature by the \emph{peak density} correspondence
-    method. Parameters for the algorithm are also taken from \code{param}.
-    See \code{\link{groupChromPeaks-density}} for more information about the
-    algorithm and its supported settings.
+different settings for the \emph{peak density} on an mz slice of
+interest (e.g. containing chromatographic peaks corresponding to a known
+metabolite).
+The plot shows the individual peaks that were detected within the
+specified \code{mz} slice at their retention time (x-axis) and sample in
+which they were detected (y-axis). The density function is plotted as a
+black line. Parameters for the \code{density} function are taken from the
+\code{param} object. Grey rectangles indicate which chromatographic peaks
+would be grouped into a feature by the \code{peak density} correspondence
+method. Parameters for the algorithm are also taken from \code{param}.
+See \code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for more information about the
+algorithm and its supported settings.
 }
 \examples{
 
@@ -94,8 +110,8 @@ plotChromPeakDensity(res, mz = mzr, pch = 16,
     param = PeakDensityParam(minFraction = 1))
 }
 \seealso{
-\code{\link{groupChromPeaks-density}} for details on the
-    \emph{peak density} correspondence method and supported settings.
+\code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for details on the
+\emph{peak density} correspondence method and supported settings.
 }
 \author{
 Johannes Rainer

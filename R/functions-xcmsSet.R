@@ -365,6 +365,25 @@ split.xcmsSet <- function(x, f, drop = TRUE, ...) {
 ############################################################
 ## phenoDataFromPaths
 ## derive experimental design from set of file paths
+#' @title Derive experimental design from file paths
+#'
+#' @description The `phenoDataFromPaths` function builds a `data.frame`
+#'     representing the experimental design from the folder structure in which
+#'     the files of the experiment are located.
+#'
+#' @note This function is used by the *old* `xcmsSet` function to guess
+#'     the experimental design (i.e. group assignment of the files) from the
+#'     folders in which the files of the experiment can be found.
+#' 
+#' @param paths `character` representing the file names (including the full
+#'     path) of the experiment's files.
+#'
+#' @md
+#'
+#' @examples
+#' ## List the files available in the faahKO package
+#' base_dir <- system.file("cdf", package = "faahKO")
+#' cdf_files <- list.files(base_dir, recursive = TRUE, full.names = TRUE)
 phenoDataFromPaths <- function(paths) {
     ## create factors from filesystem hierarchy
     sclass <- gsub("^\\.$", "sample", dirname(paths))
