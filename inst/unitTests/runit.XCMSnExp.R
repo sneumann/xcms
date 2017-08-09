@@ -193,6 +193,33 @@ test_XCMSnExp_class_accessors <- function() {
     checkTrue(hasChromPeaks(xod))
     checkTrue(hasFeatures(xod))
     checkEquals(featureDefinitions(xod), fd)
+    ## featureDefinitions with mz and/or rt range:
+    feat_def <- featureDefinitions(xod_xg)
+    ## Within
+    mzr <- c(300, 330)
+    keep_mz <- feat_def$mzmin > mzr[1] & feat_def$mzmax < mzr[2]
+    checkEquals(featureDefinitions(xod_xg, mz = mzr, type = "within"),
+                feat_def[keep_mz, ])
+    rtr <- c(3000, 3800)
+    keep_rt <- feat_def$rtmin > rtr[1] & feat_def$rtmax < rtr[2]
+    checkEquals(featureDefinitions(xod_xg, rt = rtr, type = "within"),
+                feat_def[keep_rt, ])
+    checkEquals(featureDefinitions(xod_xg, rt = rtr, mz = mzr, type = "within"),
+                feat_def[keep_rt & keep_mz, ])
+    ## Any
+    mzr <- range(featureDefinitions(xod_xg)[2, "mzmed"])
+    keep_mz <- feat_def$mzmax >= mzr[1] & feat_def$mzmin <= mzr[2]
+    checkEquals(featureDefinitions(xod_xg, mz = mzr, type = "any"),
+                feat_def[keep_mz, , drop = FALSE])
+    rtr <- range(3420.006)
+    keep_rt <- feat_def$rtmax >= rtr[1] & feat_def$rtmin <= rtr[2]
+    checkTrue(nrow(featureDefinitions(xod_xg, rt = rtr, type = "within")) !=
+              nrow(featureDefinitions(xod_xg, rt = rtr, type = "any")))
+    checkEquals(featureDefinitions(xod_xg, rt = rtr, type = "any"),
+                feat_def[keep_rt, , drop = FALSE])
+    checkEquals(featureDefinitions(xod_xg, rt = rtr, mz = mzr, type = "any"),
+                feat_def[keep_rt & keep_mz, , drop = FALSE])
+    
     ## adjustedRtime
     checkTrue(!hasAdjustedRtime(xod))
     xod2 <- xod
