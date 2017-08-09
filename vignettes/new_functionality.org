@@ -1687,6 +1687,9 @@ Global concept: calibration is done on the peaks. Questions:
   adjustments depending on the =fileIdx=. Be aware! All subsetting/filtering
   approaches do have to update the file index in the =processingQueue=.
 
+*Idea*: don't need the result class below - should be enough to add the
+calibration function (inclusive parameters) to the =processingQueue= of the =MSnExp= object!
+
 *NOTE*: to enable calibration of =mz= values of a =Spectrum=:
 + Implement a =CalibrationResult= object with slots:
   - method

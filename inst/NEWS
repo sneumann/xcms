@@ -10,6 +10,8 @@ USER VISIBLE CHANGES:
   features within the specified ranges.
 - Increase n for the density function call in group density-based correspondence
   by 2.
+- Replace xcmsDirect.Rnw with rmarkdown-based vignette using the new user
+  interface.
 
 
 BUG FIXES:

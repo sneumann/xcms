@@ -1116,7 +1116,7 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
     if (missing(param)) {
         ## Use the internal parameter - if available.
         if (hasFeatures(object)) {
-            ph <- processHistory(object, type = xcms:::.PROCSTEP.PEAK.GROUPING)
+            ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
             param <- processParam(ph[[length(ph)]])
         } else {
             param = PeakDensityParam()
@@ -1189,7 +1189,7 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
             snum <- 0
             while(dens_y[max_y <- which.max(dens_y)] > dens_max / 20 &&
                   snum < maxFeatures(param)) {
-                      feat_range <- xcms:::descendMin(dens_y, max_y)
+                      feat_range <- descendMin(dens_y, max_y)
                       dens_y[feat_range[1]:feat_range[2]] <- 0
                       feat_idx <- which(pks[, "rt"] >= dens$x[feat_range[1]] &
                                         pks[, "rt"] <= dens$x[feat_range[2]])
