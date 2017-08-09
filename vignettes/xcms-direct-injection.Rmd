@@ -12,10 +12,14 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteKeywords{Mass Spectrometry, MS, Metabolomics, Bioinformatics}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,msdata,MassSpecWavelet}
+  %\VignetteDepends{xcms,msdata,MassSpecWavelet,BiocStyle}
 ---
 
 # Introduction
+
+```{r echo = FALSE, results = "hide", message = FALSE}
+library(BiocStyle)
+```
 
 This document describes how to use `r Biocpkg("xcms")` for the analysis of
 direct injection mass spec data, including peak detection, calibration and
