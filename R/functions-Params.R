@@ -301,3 +301,34 @@ FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0) {
     return(new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
                ppm = ppm))
 }
+
+
+#' @return The `CalibrantMassParam` function returns an instance of
+#'     the `CalibrantMassParam` class with all settings and properties set.
+#'
+#' @md
+#' 
+#' @rdname calibrate-calibrant-mass
+CalibrantMassParam <- function(mz = list(), mzabs = 0.0001, mzppm = 5,
+                               neighbors = 3, method = "linear") {
+    if (!is.list(mz))
+        mz <- list(mz)
+    mz <- lapply(mz, sort)
+    new("CalibrantMassParam", mz = mz, mzabs = mzabs, mzppm = mzppm,
+        neighbors = as.integer(neighbors), method = method)
+}
+
+.mzabs <- function(x)
+    x@mzabs
+
+.mzppm <- function(x)
+    x@mzppm
+
+.neighbors <- function(x)
+    x@neighbors
+
+.method <- function(x)
+    x@method
+
+.mz <- function(x)
+    x@mz

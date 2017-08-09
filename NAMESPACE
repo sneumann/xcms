@@ -69,7 +69,8 @@ export(
     "xcmsRaw",
     "xcmsSet",
     "xcmsFragments",
-    "xcmsPapply"
+    "xcmsPapply",
+    "phenoDataFromPaths"
 )
 
 S3method(plot, xcmsEIC)
@@ -212,7 +213,8 @@ export(
     "highlightChromPeaks",
     "plotChromPeakDensity",
     "plotChromPeaks",
-    "plotChromPeakImage"    
+    "plotChromPeakImage",
+    "isCalibrated"
 )
 
 ## New analysis methods
@@ -236,7 +238,8 @@ exportClasses(
     "PeakGroupsParam",
     "ObiwarpParam",
     "GenericParam",
-    "FillChromPeaksParam"
+    "FillChromPeaksParam",
+    "CalibrantMassParam"
 )
 ## Param methods
 exportMethods(
@@ -386,7 +389,7 @@ exportMethods(
 export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
        "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
        "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam", "GenericParam",
-       "FillChromPeaksParam")
+       "FillChromPeaksParam", "CalibrantMassParam")
 ## Param class methods.
 
 ## New Classes

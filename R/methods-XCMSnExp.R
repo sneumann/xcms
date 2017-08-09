@@ -158,6 +158,8 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #'
 #' @description \code{featureDefinitions}, \code{featureDefinitions<-}: extract
 #'     or set the correspondence results, i.e. the mz-rt features (peak groups).
+#'     Similar to the \code{chromPeaks} it is possible to extract features for
+#'     specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
 #'
 #' @return For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
 #'     information, each row corresponding to one mz-rt feature (grouped peaks
@@ -171,8 +173,35 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #'     returns \code{NULL} if no feature definitions are present.
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "XCMSnExp", function(object) {
-    return(featureDefinitions(object@msFeatureData))
+setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
+                                                     rt = numeric(), ppm = 0,
+                                                     type = "any") {
+    feat_def <- featureDefinitions(object@msFeatureData)
+    type <- match.arg(type, c("any", "within"))
+    ## Select features within rt range.
+    if (length(rt)) {
+        rt <- range(rt)
+        if (type == "within")
+            keep <- which(feat_def$rtmin >= rt[1] & feat_def$rtmax <= rt[2])
+        else
+            keep <- which(feat_def$rtmax >= rt[1] & feat_def$rtmin <= rt[2])
+        feat_def <- feat_def[keep, , drop = FALSE]
+    }
+    ## Select peaks within mz range, considering also ppm
+    if (length(mz) && nrow(feat_def)) {
+        mz <- range(mz)
+        ## Increase mz by ppm.
+        if (is.finite(mz[1]))
+            mz[1] <- mz[1] - mz[1] * ppm / 1e6
+        if (is.finite(mz[2]))
+            mz[2] <- mz[2] + mz[2] * ppm / 1e6
+        if (type == "within")
+            keep <- which(feat_def$mzmin >= mz[1] & feat_def$mzmax <= mz[2])
+        else
+            keep <- which(feat_def$mzmax >= mz[1] & feat_def$mzmin <= mz[2])
+        feat_def <- feat_def[keep, , drop = FALSE]
+    }
+    feat_def
 })
 #' @aliases featureDefinitions<-
 #'
@@ -535,10 +564,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object) {
         object <- dropProcessHistories(object, type = .PROCSTEP.RTIME.CORRECTION)
         object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING)
         object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
-        ## idx_fd <- which(unlist(lapply(processHistory(object), processType)) ==
-        ##                 .PROCSTEP.PEAK.DETECTION)
-        ## if (length(idx_fd) > 0)
-        ##     object@.processHistory <- object@.processHistory[-idx_fd]
+        object <- dropProcessHistories(object, type = .PROCSTEP.CALIBRATION)
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropChromPeaks(newFd)
@@ -2410,3 +2436,88 @@ setMethod("extractMsData", "XCMSnExp",
               object <- as(object, "OnDiskMSnExp")
               extractMsData(object, rt = rt, mz = mz)
           })
+
+
+#' @rdname calibrate-calibrant-mass
+#'
+#' @param object An [XCMSnExp] object.
+#' 
+#' @param param The `CalibrantMassParam` object with the calibration settings.
+#' 
+#' @return The `calibrate` method returns an [XCMSnExp] object with the
+#'     chromatographic peaks being calibrated. Note that **only** the detected
+#'     peaks are calibrated, but not the individual mz values in each spectrum.
+#' 
+#' @md
+setMethod("calibrate", "XCMSnExp", function(object, param) {
+    if (missing(param)) {
+        stop("Argument 'param' is missing")
+    } else {
+        if (!is(param, "CalibrantMassParam"))
+            stop("The calibrate method for 'XCMSnExp' objects requires a ",
+                 "'CalibrantMassParam' object to be passed with argument ",
+                 "'param'")
+    }
+    if (isCalibrated(object))
+        stop("'object' is already calibrated! Recurrent calibrations are not ",
+             "supported")
+    mzs <- .mz(param)
+    n_samps <- length(fileNames(object))
+    if (length(mzs) == 1)
+        mzs <- replicate(mzs[[1]], n = n_samps, simplify = FALSE)
+    if (length(mzs) != n_samps)
+        stop("Number of calibrant mz vectors differs from the number of samples")
+    startDate <- date()
+    ## Dropping grouping results.
+    object <- dropFeatureDefinitions(object)
+    pks <- chromPeaks(object)
+    adj_models <- vector("list", length = n_samps)
+    method <- .method(param)
+    for (i in 1:n_samps) {
+        ## This could also be done with indices...
+        pk_mz <- pks[pks[, "sample"] == i, c("mz", "into")]
+        order_mz <- order(pk_mz[, 1])
+        close_pks <- .matchpeaks2(pk_mz[order_mz, ], mzs[[i]],
+                                  mzabs = .mzabs(param), mzppm = .mzppm(param),
+                                  neighbours = .neighbors(param))
+        if (nrow(close_pks) == 0) {
+            warning("Sample ", i, ": can not calibrate as no peaks are close to",
+                    "provided mz values")
+            next
+        } else {
+            if (nrow(close_pks) == 1 & method != "shift") {
+                warning("Sample ", i, ": only a single peak found, falling ",
+                        "back to method = 'shift'")
+                method <- "shift"
+            }
+        }
+        
+        prms <- estimate(close_pks, method)
+        adj_models[[i]] <- prms
+        a <- prms[1]                    # slope
+        b <- prms[2]                    # intercept
+        mz_ <- pk_mz[order_mz, 1]
+        mz_min <- mz_[min(close_pks[, "pos"])]
+        mz_max <- mz_[max(close_pks[, "pos"])]
+        pk_mz[order_mz, "mz"] <- .calibrate_mz(mz_, method = method,
+                                               minMz = mz_min, maxMz = mz_max,
+                                               slope = a, intercept = b)
+        pks[pks[, "sample"] == i, "mz"] <- pk_mz[, "mz"]
+    }
+
+    ## Set the new peak definitions. Careful to not drop additional stuff here.
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    chromPeaks(newFd) <- pks
+    lockEnvironment(newFd, bindings = TRUE)
+    object@msFeatureData <- newFd
+    ## Add param to processHistory
+    xph <- XProcessHistory(param = param, date. = startDate,
+                           type. = .PROCSTEP.CALIBRATION,
+                           fileIndex = 1:n_samps)
+    object <- addProcessHistory(object, xph)
+    if (validObject(object))
+        object
+})
+
+

@@ -120,7 +120,8 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
 
     densFrom <- rtRange[1] - 3 * bw
     densTo <- rtRange[2] + 3 * bw
-    densN <- max(512, 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
+    ## Increase the number of sampling points for the density distribution.
+    densN <- max(512, 2 * 2^(ceiling(log2(diff(rtRange) / (bw / 2)))))
     endIdx <- 0
     num <- 0
     gcount <- integer(nSampleGroups)

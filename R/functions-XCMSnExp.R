@@ -992,56 +992,74 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #' @title Plot chromatographic peak density along the retention time axis
 #' 
 #' @description Plot the density of chromatographic peaks along the retention
-#'     time axis and indicate which peaks would be grouped into the same feature
-#'     based using the \emph{peak density} correspondence method. Settings for
-#'     the \emph{peak density} method can be passed with an
-#'     \code{\link{PeakDensityParam}} object to parameter \code{param}.
+#'     time axis and indicate which peaks would be (or were) grouped into the
+#'     same feature based using the *peak density* correspondence method.
+#'     Settings for the *peak density* method can be passed with an
+#'     [PeakDensityParam] object to parameter `param`. If the `object` contains
+#'     correspondence results and the correspondence was performed with the
+#'     *peak groups* method, the results from that correspondence can be
+#'     visualized setting `simulate = FALSE`.
 #'
-#' @details The \code{plotChromPeakDensity} function allows to evaluate
-#'     different settings for the \emph{peak density} on an mz slice of
+#' @details The `plotChromPeakDensity` function allows to evaluate
+#'     different settings for the *peak density* on an mz slice of
 #'     interest (e.g. containing chromatographic peaks corresponding to a known
 #'     metabolite).
 #'     The plot shows the individual peaks that were detected within the
-#'     specified \code{mz} slice at their retention time (x-axis) and sample in
+#'     specified `mz` slice at their retention time (x-axis) and sample in
 #'     which they were detected (y-axis). The density function is plotted as a
-#'     black line. Parameters for the \code{density} function are taken from the
-#'     \code{param} object. Grey rectangles indicate which chromatographic peaks
-#'     would be grouped into a feature by the \emph{peak density} correspondence
-#'     method. Parameters for the algorithm are also taken from \code{param}.
-#'     See \code{\link{groupChromPeaks-density}} for more information about the
+#'     black line. Parameters for the `density` function are taken from the
+#'     `param` object. Grey rectangles indicate which chromatographic peaks
+#'     would be grouped into a feature by the `peak density` correspondence
+#'     method. Parameters for the algorithm are also taken from `param`.
+#'     See [groupChromPeaks-density()] for more information about the
 #'     algorithm and its supported settings.
 #'
-#' @param object A \code{\link{XCMSnExp}} object with identified
+#' @param object A [XCMSnExp] object with identified
 #'     chromatographic peaks.
 #' 
-#' @param mz \code{numeric(2)} defining an mz range for which the peak density
+#' @param mz `numeric(2)` defining an mz range for which the peak density
 #'     should be plotted.
 #'
-#' @param rt \code{numeric(2)} defining an optional rt range for which the
+#' @param rt `numeric(2)` defining an optional rt range for which the
 #'     peak density should be plotted. Defaults to the absolute retention time
-#'     range of \code{object}.
+#'     range of `object`.
 #' 
-#' @param param \code{\link{PeakDensityParam}} from which parameters for the
-#'     \emph{peak density} correspondence algorithm can be extracted.
+#' @param param [PeakDensityParam] from which parameters for the
+#'     *peak density* correspondence algorithm can be extracted. If not provided
+#'     and if `object` contains feature definitions with the correspondence/
+#'     peak grouping being performed by the *peak density* method, the
+#'     corresponding parameter class stored in `object` is used.
+#'
+#' @param simulate `logical(1)` defining whether correspondence should be
+#'     simulated within the specified m/z / rt region or (with
+#'     `simulate = FALSE`) whether the results from an already performed
+#'     correspondence should be shown.
 #' 
 #' @param col Color to be used for the individual samples. Length has to be 1
-#'     or equal to the number of samples in \code{object}.
+#'     or equal to the number of samples in `object`.
 #'
-#' @param xlab \code{character(1)} with the label for the x-axis.
+#' @param xlab `character(1)` with the label for the x-axis.
 #'
-#' @param ylab \code{character(1)} with the label for the y-axis.
+#' @param ylab `character(1)` with the label for the y-axis.
 #'
-#' @param xlim \code{numeric(2)} representing the limits for the x-axis.
-#'     Defaults to the range of the \code{rt} parameter.
+#' @param xlim `numeric(2)` representing the limits for the x-axis.
+#'     Defaults to the range of the `rt` parameter.
+#'
+#' @param main `character(1)` defining the title of the plot. By default
+#'     (for `main = NULL`) the mz-range is used.
 #' 
-#' @param ... Additional parameters to be passed to the \code{plot} function.
+#' @param ... Additional parameters to be passed to the `plot` function. Data
+#'     point specific parameters such as `bg` or `pch` have to be of length 1
+#'     or equal to the number of samples.
 #'
 #' @return The function is called for its side effect, i.e. to create a plot.
 #' 
 #' @author Johannes Rainer
 #'
-#' @seealso \code{\link{groupChromPeaks-density}} for details on the
-#'     \emph{peak density} correspondence method and supported settings.
+#' @seealso [groupChromPeaks-density()] for details on the
+#'     *peak density* correspondence method and supported settings.
+#'
+#' @md
 #' 
 #' @examples
 #'
@@ -1076,9 +1094,10 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #' ## Require the chromatographic peak to be present in all samples of a group
 #' plotChromPeakDensity(res, mz = mzr, pch = 16,
 #'     param = PeakDensityParam(minFraction = 1))
-plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
+plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                  col = "#00000080", xlab = "retention time",
-                                 ylab = "sample", xlim = range(rt), ...) {
+                                 ylab = "sample", xlim = range(rt),
+                                 main = NULL, ...) {
     if (missing(object))
         stop("Required parameter 'object' is missing")
     if (!is(object, "XCMSnExp"))
@@ -1089,6 +1108,22 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
         mz <- c(-Inf, Inf)
     if (missing(rt))
         rt <- range(rtime(object))
+    if (!simulate & !hasFeatures(object)) {
+        warning("Falling back to 'simulate = TRUE' because no correspondence ",
+                "results are present")
+        simulate <- TRUE
+    }
+    if (missing(param)) {
+        ## Use the internal parameter - if available.
+        if (hasFeatures(object)) {
+            ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
+            param <- processParam(ph[[length(ph)]])
+        } else {
+            param = PeakDensityParam()
+        }
+    }
+    if (!is(param, "PeakDensityParam"))
+        stop("'param' has to be a 'PeakDensityParam'")
     mz <- range(mz)
     rt <- range(rt)
     ## Get all the data we require.
@@ -1099,8 +1134,13 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
     if (nrow(pks)) {
         ## Extract parameters from the param object
         bw = bw(param)
+        ## Ensure the density is calculated exactly as it would in the real
+        ## case.
+        full_rt_range <- range(chromPeaks(object)[, "rt"])
+        dens_from <- full_rt_range[1] - 3 * bw
+        dens_to <- full_rt_range[2] + 3 * bw
         ## That's Jan Stanstrup's fix (issue #161).
-        densN <- max(512, 2^(ceiling(log2(diff(rt) / (bw / 2)))))
+        densN <- max(512, 2 * 2^(ceiling(log2(diff(full_rt_range) / (bw / 2)))))
         sample_groups <- sampleGroups(param)
         if (length(sample_groups) == 0)
             sample_groups <- rep(1, nsamples)
@@ -1109,38 +1149,66 @@ plotChromPeakDensity <- function(object, mz, rt, param = PeakDensityParam(),
                  "class has to have the same length than there are samples ",
                  "in 'object'")
         sample_groups_table <- table(sample_groups)
-        dens_from <- rt[1] - 3 * bw
-        dens_to <- rt[2] + 3 * bw
         dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to,
                         n = densN)
         yl <- c(0, max(dens$y))
-        ypos <- seq(from = 0, to = yl[2], length.out = nsamples)
+        ypos <- seq(from = yl[1], to = yl[2], length.out = nsamples)
+        if (is.null(main))
+            main <- paste0(format(mz, digits = 7), collapse = " - ")
         ## Plot the peaks as points.
-        plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
-             col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
-             main = paste0(format(mz, digits = 7), collapse = " - "), ylim = yl,
-             ...)
+        ## Fix assignment of point types for each sample.
+        dots <- list(...)
+        if (any(names(dots) == "bg")) {
+            bg <- dots$bg
+            if (length(bg) != nsamples)
+                bg <- rep_len(bg[1], nsamples)
+            dots$bg <- bg[pks[, "sample"]]
+        }
+        if (any(names(dots) == "pch")) {
+            pch <- dots$pch
+            if (length(pch) != nsamples)
+                pch <- rep_len(pch[1], nsamples)
+            dots$pch <- pch[pks[, "sample"]]
+        }
+        do.call("plot", args = c(list(x = pks[, "rt"],
+                                      y = ypos[pks[, "sample"]], xlim = xlim, 
+                                      col = col[pks[, "sample"]], xlab = xlab,
+                                      yaxt = "n", ylab = ylab,
+                                      main = main, ylim = yl), dots))
+        ## plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
+        ##      col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
+        ##      main = main, ylim = yl,
+        ##      ...)
         axis(side = 2, at = ypos, labels = 1:nsamples)
         points(x = dens$x, y = dens$y, type = "l")
         ## Estimate what would be combined to a feature
         ## Code is taken from do_groupChromPeaks_density
         dens_max <- max(dens$y)
         dens_y <- dens$y
-        snum <- 0
-        while(dens_y[max_y <- which.max(dens_y)] > dens_max / 20 &&
-              snum < maxFeatures(param)) {
-                  feat_range <- xcms:::descendMin(dens_y, max_y)
-                  dens_y[feat_range[1]:feat_range[2]] <- 0
-                  feat_idx <- which(pks[, "rt"] >= dens$x[feat_range[1]] &
-                                    pks[, "rt"] <= dens$x[feat_range[2]])
-                  tt <- table(sample_groups[pks[feat_idx, "sample"]])
-                  if (!any(tt / sample_groups_table[names(tt)] >=
-                           minFraction(param) & tt >= minSamples(param)))
-                      next
-                  rect(xleft = min(pks[feat_idx, "rt"]), ybottom = 0,
-                       xright = max(pks[feat_idx, "rt"]), ytop = yl[2],
-                       border = "#00000040", col = "#00000020")
-              }
+        if (simulate) {
+            snum <- 0
+            while(dens_y[max_y <- which.max(dens_y)] > dens_max / 20 &&
+                  snum < maxFeatures(param)) {
+                      feat_range <- descendMin(dens_y, max_y)
+                      dens_y[feat_range[1]:feat_range[2]] <- 0
+                      feat_idx <- which(pks[, "rt"] >= dens$x[feat_range[1]] &
+                                        pks[, "rt"] <= dens$x[feat_range[2]])
+                      tt <- table(sample_groups[pks[feat_idx, "sample"]])
+                      if (!any(tt / sample_groups_table[names(tt)] >=
+                               minFraction(param) & tt >= minSamples(param)))
+                          next
+                      rect(xleft = min(pks[feat_idx, "rt"]), ybottom = yl[1],
+                           xright = max(pks[feat_idx, "rt"]), ytop = yl[2],
+                           border = "#00000040", col = "#00000020")
+                  }
+        } else {
+            ## Plot all features in the region.
+            fts <- featureDefinitions(object, mz = mz, rt = rt)
+            rect(xleft = fts$rtmin, xright = fts$rtmax,
+                 ybottom = rep(yl[1], nrow(fts)), ytop = rep(yl[2], nrow(fts)),
+                 border = "#00000040", col = "#00000020")
+            abline(v = fts$rtmed, col = "#00000040", lty = 2)
+        }
     } else {
         plot(3, 3, pch = NA, xlim = rt, xlab = xlab,
              main = paste0(format(mz, digits = 7), collapse = " - "))
@@ -1413,6 +1481,18 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
     }
 }
 
+#' @rdname calibrate-calibrant-mass
+#'
+#' @description The `isCalibrated` function returns `TRUE` if chromatographic
+#'     peaks of the [XCMSnExp] object `x` were calibrated and `FALSE` otherwise.
+#' 
+#' @md
+isCalibrated <- function(object) {
+    if (length(processHistory(object, type = .PROCSTEP.CALIBRATION)))
+        TRUE
+    else
+        FALSE
+}
 
 ## Find mz ranges with multiple peaks per sample.
 ## Use the density distribution for that? with a bandwidth = 0.001, check
