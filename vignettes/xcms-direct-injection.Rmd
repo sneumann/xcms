@@ -65,8 +65,9 @@ grp[grep(basename(mzdata_files), pattern = "^HAM005")] <- "ham5"
 pd <- data.frame(filename = basename(mzdata_files), sample_group = grp)
 
 ## Load the data.
-ham_raw <- readMSData2(files = mzdata_files,
-                       pdata = new("NAnnotatedDataFrame", pd))
+ham_raw <- readMSData(files = mzdata_files,
+                      pdata = new("NAnnotatedDataFrame", pd),
+                      mode = "onDisk")
 ```
 
 The data files are from *direct injection* mass spectrometry experiments,

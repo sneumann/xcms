@@ -108,7 +108,7 @@ addition, validation of the parameters can be performed within the parameter
 object and hence is no longer required in the analysis function.
 
 The example below illustrates the new user interface. First we load the raw data
-files from the =faahKO= package using the =readMSData2= from the =MSnbase= package.
+files from the =faahKO= package using the =readMSData= from the =MSnbase= package.
 
 #+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   ## Reading the raw data using the MSnbase package
@@ -126,7 +126,9 @@ files from the =faahKO= package using the =readMSData2= from the =MSnbase= packa
 		      sample_group = s_groups, stringsAsFactors = FALSE)
 
   ## Read the data.
-  raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno))
+  raw_data <- readMSData(cdf_files, 
+                         pdata = new("NAnnotatedDataFrame", pheno), 
+                         mode = "onDisk")
 #+END_SRC
 
 The =OnDiskMSnExp= organizes the MS data by spectrum and provides th methods
@@ -1425,7 +1427,8 @@ Check on one of our own files.
 #+BEGIN_SRC R
   library(xcms)
 
-  rd <- readMSData2("/Volumes/Ext64/data/2016/2016-11/NoSN/250516_QC_NORM_3_POS_3.mzML")
+  rd <- readMSData("/Volumes/Ext64/data/2016/2016-11/NoSN/250516_QC_NORM_3_POS_3.mzML", 
+                   mode = "onDisk")
 
   ## Evaluate the mz-rt matrix - can we spot already something there?
   sps <- spectra(rd)
@@ -1521,7 +1524,7 @@ tests with long runtime:
   ## 0.449   0.011   0.460 
   mzR::close(of)
 
-  system.time(tmp <- readMSData2(fl))
+  system.time(tmp <- readMSData(fl, mode = "onDisk"))
   ##  user  system elapsed 
   ## 1.515   0.089   1.596 
 
@@ -1540,7 +1543,7 @@ tests with long runtime:
   ## 0.422   0.010   0.433 
   mzR::close(of)
 
-  system.time(tmp <- readMSData2(fl))
+  system.time(tmp <- readMSData(fl, mode = "onDisk"))
   ##  user  system elapsed 
   ## 1.509   0.093   1.594 
 
@@ -1557,7 +1560,7 @@ tests with long runtime:
   ## 0.067   0.023   0.089 
   mzR::close(of)
 
-  system.time(tmp <- readMSData2(fl))
+  system.time(tmp <- readMSData(fl, mode = "onDisk"))
   ##  user  system elapsed 
   ## 0.708   0.105   0.814 
 
@@ -1578,7 +1581,7 @@ tests with long runtime:
   ## 0.449   0.011   0.460 
   mzR::close(of)
 
-  system.time(tmp <- readMSData2(fl))
+  system.time(tmp <- readMSData(fl, mode = "onDisk"))
   ##  user  system elapsed 
   ## 1.556   0.089   1.638 
 
@@ -1595,7 +1598,7 @@ tests with long runtime:
   ## 0.065   0.022   0.088 
   mzR::close(of)
 
-  system.time(tmp <- readMSData2(fl))
+  system.time(tmp <- readMSData(fl, mode = "onDisk"))
   ##  user  system elapsed 
   ## 0.709   0.110   0.833 
 

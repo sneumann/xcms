@@ -1260,7 +1260,7 @@ dontrun_getEIC_alternatives <- function() {
     fls <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
              system.file('cdf/KO/ko16.CDF', package = "faahKO"),
              system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-    od <- readMSData2(fls)
+    od <- readMSData(fls, mode = "inDisk")
     cwp <- CentWaveParam(noise = 10000, snthresh = 40)
     od_x <- findChromPeaks(od, param = cwp)
 

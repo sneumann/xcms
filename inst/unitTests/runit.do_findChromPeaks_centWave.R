@@ -18,7 +18,7 @@ onDisk <- filterFile(faahko_od, file = 1)
 test_findChromPeaks_centWave_peakIntensity <- function() {
     ## Reproduce with msdata files:
     fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     options(originalCentWave = TRUE)
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
     ## ## Use the getPeakInt2 which uses the rawMat function.
@@ -91,7 +91,7 @@ test_findChromPeaks_centWave_peakIntensity <- function() {
 dontrun_exhaustive_original_new_centWave_comparison <- function() {
     ## faahKO test files.
     fl <- system.file("cdf/ko15.CDF", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     ## Default settings
     cwp <- CentWaveParam()
     options(originalCentWave = TRUE)
@@ -125,7 +125,7 @@ dontrun_exhaustive_original_new_centWave_comparison <- function() {
     
     ## msdata test files.
     fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     cwp <- CentWaveParam(ppm = 10, peakwidth = c(1, 10))
     options(originalCentWave = TRUE)
     orig <- findChromPeaks(raw, param = cwp)
@@ -195,7 +195,7 @@ dontrun_exhaustive_original_new_centWave_comparison <- function() {
     
     ## Other file
     fl <- system.file("microtofq/MM8.mzML", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     cwp <- CentWaveParam(ppm = 30, peakwidth = c(1, 10))
     options(originalCentWave = TRUE)
     orig <- findChromPeaks(raw, param = cwp)
@@ -243,7 +243,7 @@ dontrun_exhaustive_original_new_centWave_comparison <- function() {
     
     ## own files.
     fl <- "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_12.mzML"
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     ## Default settings
     cwp <- CentWaveParam()
     options(originalCentWave = TRUE)
@@ -519,7 +519,7 @@ test_findChromPeaks_centWave <- function() {
                   noise = 100000)
     checkEquals(xs@peaks[, colnames(res_x)], res_x)
     ## OnDiskMSnExp
-    ## onDisk <- readMSData2(fs[1], msLevel. = 1)
+    ## onDisk <- readMSData(fs[1], msLevel. = 1, mode = "onDisk")
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
     res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     checkEquals(res[[1]], peaks(xs)@.Data)
@@ -560,7 +560,7 @@ dontrun_test_benchmark_centWaves <- function() {
     snthresh <- 40
 
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh)
-    ## onDisk <- readMSData2(f[1], msLevel. = 1)
+    ## onDisk <- readMSData(f[1], msLevel. = 1, mode = "onDisk")
     register(SerialParam())
     system.time(
         tmp <- findChromPeaks(onDisk, param = cwp)
@@ -601,7 +601,7 @@ dontrun_test_benchmark_centWaves <- function() {
     snthresh <- 40
 
     cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh)
-    ## onDisk <- readMSData2(f[1], msLevel. = 1)
+    ## onDisk <- readMSData(f[1], msLevel. = 1, mode = "onDisk")
     register(SerialParam())
     system.time(
         tmp <- findChromPeaks(onDisk, param = cwp)

@@ -358,7 +358,7 @@ dontrun_exhaustive_fillChromPeaks_matchedFilter <- function() {
     fls <- c("/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_15.mzML",
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_19.mzML",
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_11.mzML")
-    raw <- readMSData2(fls)
+    raw <- readMSData(fls, mode = "onDisk")
     pks <- findChromPeaks(raw, param = MatchedFilterParam(binSize = 0.05))
     pks <- groupChromPeaks(pks, param = PeakDensityParam())
     tmp_fld <- fillChromPeaks(pks)
@@ -402,7 +402,7 @@ dontrun_exhaustive_fillChromPeaks_MSW <- function() {
     library(msdata)
     fticrf <- list.files(system.file("fticr", package = "msdata"),
                          recursive = TRUE, full.names = TRUE)
-    fticr <- readMSData2(fticrf, msLevel. = 1)
+    fticr <- readMSData(fticrf, msLevel. = 1, mode = "onDisk")
     p <- MSWParam(scales = c(1, 7), ampTh = 0.005,
                   SNR.method = "data.mean", winSize.noise = 500)
     fticr <- findChromPeaks(fticr, param = p)
@@ -507,7 +507,7 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
     fls <- c("/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_15.mzML",
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_19.mzML",
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_11.mzML")
-    raw <- readMSData2(fls)
+    raw <- readMSData(fls, mode = "onDisk")
     pks <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(0.8, 20),
                                                      ppm = 40))
     pks_noRt <- groupChromPeaks(pks, param = PeakDensityParam(minFraction = 0.6))
@@ -668,7 +668,7 @@ dontrun_getPeakInt_validity <- function() {
 
     ## own file centWave peaks
     fl <- "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_19.mzML"
-    raw_x <- readMSData2(fl)
+    raw_x <- readMSData(fl, mode = "onDisk")
     ## Default centWave - completely off.
     tmp <- findChromPeaks(raw_x, param = CentWaveParam(verboseColumns = TRUE))
     pkInt3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
@@ -687,7 +687,7 @@ dontrun_getPeakInt_validity <- function() {
     
     ## Reproduce with msdata files:
     fl <- system.file("microtofq/MM14.mzML", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(1, 20)))
     pkInt3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
     checkEquals(pkInt3, chromPeaks(tmp)[, "into"])

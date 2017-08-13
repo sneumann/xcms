@@ -366,13 +366,13 @@ snthresh(mqp) <- 30
 mqp
 
 ## Perform the peak detection using massifquant on the files from the
-## faahKO package. Files are read using the readMSData2 from the MSnbase
+## faahKO package. Files are read using the readMSData from the MSnbase
 ## package
 library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData2(fls[1:2])
+raw_data <- readMSData(fls[1:2], mode = "onDisk")
 ## Perform the peak detection using the settings defined above.
 res <- findChromPeaks(raw_data, param = mqp)
 head(chromPeaks(res))

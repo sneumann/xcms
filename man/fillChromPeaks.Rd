@@ -145,13 +145,13 @@ The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
 \examples{
 
 ## Perform the peak detection using centWave on some of the files from the
-## faahKO package. Files are read using the readMSData2 from the MSnbase
+## faahKO package. Files are read using the readMSData from the MSnbase
 ## package
 library(faahKO)
 library(xcms)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData2(fls[1:2])
+raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
 ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 ## speed up the execution of the example - in a real use case the default

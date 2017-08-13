@@ -949,7 +949,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #' ## Read the files
-#' od <- readMSData2(fs)
+#' od <- readMSData(fs, mode = "onDisk")
 #'
 #' ## Perform peak detection on them using the matched filter algorithm. Note
 #' ## that we use a large value for binSize to reduce the runtime of the
@@ -1951,7 +1951,7 @@ setMethod("featureValues",
 #'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' od <- readMSData2(faahko_3_files)
+#' od <- readMSData(faahko_3_files, mode = "onDisk")
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
@@ -2112,13 +2112,13 @@ setMethod("findChromPeaks",
 #' @examples
 #' 
 #' ## Perform the peak detection using centWave on some of the files from the
-#' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+#' ## faahKO package. Files are read using the readMSData from the MSnbase
 #' ## package
 #' library(faahKO)
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
@@ -2412,7 +2412,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Read the full MS data for a defined mz-rt region.
 #' res <- extractMsData(raw_data, mz = c(300, 320), rt = c(2700, 2900))

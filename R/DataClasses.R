@@ -524,13 +524,13 @@ NULL
 #' cwp
 #'
 #' ## Perform the peak detection using centWave on some of the files from the
-#' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+#' ## faahKO package. Files are read using the readMSData from the MSnbase
 #' ## package
 #' library(faahKO)
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = cwp)
@@ -741,13 +741,13 @@ NULL
 #' mfp
 #'
 #' ## Perform the peak detection using matchecFilter on the files from the
-#' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+#' ## faahKO package. Files are read using the readMSData from the MSnbase
 #' ## package
 #' library(faahKO)
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #' ## Perform the chromatographic peak detection using the settings defined
 #' ## above. Note that we are also disabling parallel processing in this
 #' ## example by registering a "SerialParam"
@@ -952,13 +952,13 @@ NULL
 #' mqp
 #'
 #' ## Perform the peak detection using massifquant on the files from the
-#' ## faahKO package. Files are read using the readMSData2 from the MSnbase
+#' ## faahKO package. Files are read using the readMSData from the MSnbase
 #' ## package
 #' library(faahKO)
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #' ## Perform the peak detection using the settings defined above.
 #' res <- findChromPeaks(raw_data, param = mqp)
 #' head(chromPeaks(res))
@@ -1115,7 +1115,7 @@ NULL
 #' library(msdata)
 #' fticrf <- list.files(system.file("fticr", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+#' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1436,7 +1436,7 @@ NULL
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the chromatographic peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -1551,7 +1551,7 @@ NULL
 #' library(msdata)
 #' fticrf <- list.files(system.file("fticr", package = "msdata"),
 #'                     recursive = TRUE, full.names = TRUE)
-#' fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+#' fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 #'
 #' ## Perform the MSW peak detection on these:
 #' p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
@@ -1677,7 +1677,7 @@ NULL
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -1862,7 +1862,7 @@ NULL
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -2047,7 +2047,7 @@ NULL
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform retention time correction on the OnDiskMSnExp:
 #' res <- adjustRtime(raw_data, param = ObiwarpParam())
@@ -2276,8 +2276,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' ## Loading the data from 2 files of the faahKO package.
 #' library(faahKO)
-#' od <- readMSData2(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'                     system.file("cdf/KO/ko16.CDF", package = "faahKO")))
+#' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'                    system.file("cdf/KO/ko16.CDF", package = "faahKO")),
+#'                  mode = "onDisk")
 #' ## Now we perform a chromatographic peak detection on this data set using the
 #' ## matched filter method. We are tuning the settings such that it performs
 #' ## faster.
