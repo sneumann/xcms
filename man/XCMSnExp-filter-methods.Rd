@@ -98,7 +98,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko16.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 ## Read the files
-od <- readMSData2(fs)
+od <- readMSData(fs, mode = "onDisk")
 
 ## Perform peak detection on them using the matched filter algorithm. Note
 ## that we use a large value for binSize to reduce the runtime of the

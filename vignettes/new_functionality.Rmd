@@ -93,7 +93,7 @@ addition, validation of the parameters can be performed within the parameter
 object and hence is no longer required in the analysis function.
 
 The example below illustrates the new user interface. First we load the raw data
-files from the `faahKO` package using the `readMSData2` from the `MSnbase` package.
+files from the `faahKO` package using the `readMSData` from the `MSnbase` package.
 
 ```{r  message = FALSE, warning = FALSE }
 ## Reading the raw data using the MSnbase package
@@ -111,7 +111,8 @@ pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
 		    sample_group = s_groups, stringsAsFactors = FALSE)
 
 ## Read the data.
-raw_data <- readMSData2(cdf_files, pdata = new("NAnnotatedDataFrame", pheno)) 
+raw_data <- readMSData(cdf_files, pdata = new("NAnnotatedDataFrame", pheno),
+                       mode = "onDisk") 
 ```
 
 The `OnDiskMSnExp` organizes the MS data by spectrum and provides th methods

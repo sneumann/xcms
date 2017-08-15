@@ -50,7 +50,7 @@ test_findChromPeaks_matchedFilter <- function() {
     res <- xcmsSet(fs[1], method = "matchedFilter", profmethod = "binlin",
                    step = binSize(mfp))
     ## onDisk
-    ## onDisk <- readMSData2(fs[1])
+    ## onDisk <- readMSData(fs[1], mode = "onDisk")
     onDisk <- filterFile(faahko_od, file = 1)
     res_o <- findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
@@ -65,7 +65,7 @@ test_findChromPeaks_matchedFilter <- function() {
 
     ## xs <- xcmsSet(fs, , method = "matchedFilter", profmethod = "binlin",
     ##               step = binSize(mfp))
-    ## onDisk <- readMSData2(fs)
+    ## onDisk <- readMSData(fs, mode = "onDisk")
     ## res <- findChromPeaks(onDisk, param = mfp)
     ## checkTrue(hasChromPeaks(res))
     ## checkTrue(!hasAdjustedRtime(res))
@@ -79,7 +79,7 @@ dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
     library(microbenchmark)
     library(MSnbase)
     mfp <- MatchedFilterParam(binSize = 0.2, impute = "lin")
-    onDisk <- readMSData2(mzf)
+    onDisk <- readMSData(mzf, mode = "onDisk")
     inMem <- readMSData(mzf, msLevel. = 1)
     microbenchmark(xcmsSet(mzf, method = "matchedFilter", profmethod = "binlin",
                            step = binSize(mfp)),
@@ -87,7 +87,7 @@ dontrun_benchmark_detecfFeatures_matchedFilter <- function() {
                    findChromPeaks(inMem, param = mfp, return.type = "xcmsSet"),
                    times = 3)
     ## netCDF.
-    onDisk <- readMSData2(fs)
+    onDisk <- readMSData(fs, mode = "onDisk")
     inMem <- readMSData(fs, msLevel. = 1)
     microbenchmark(xcmsSet(fs, method = "matchedFilter", profmethod = "binlin",
                            step = binSize(mfp)),

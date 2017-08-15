@@ -92,7 +92,7 @@ package and build a /phenodata/ data frame describing the experiment.
 #+END_SRC
 
 Subsequently we load the raw data as an =OnDiskMSnExp= object using the
-=readMSData2= method from the =MSnbase= package. While the =MSnbase= package was
+=readMSData= method from the =MSnbase= package. While the =MSnbase= package was
 originally developed for proteomics data processing, many of its functionality,
 including raw data import and data representation, can be shared and reused in
 metabolomics data analysis.

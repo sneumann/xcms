@@ -85,6 +85,9 @@ using this.
 \item \code{edgeshift}: performs same adjustment as \code{linear} for peaks that are
 within the mz range of the calibrants and shift outside of it.
 }
+
+For more information, details and examples refer to the
+\emph{xcms-direct-injection} vignette.
 }
 \note{
 \code{CalibrantMassParam} classes don't have exported getter or setter

@@ -85,7 +85,7 @@ fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 
 ## Reading 2 of the KO samples
-raw_data <- readMSData2(fls[1:2])
+raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
 ## Perform the peak detection using the centWave method (settings are tuned
 ## to speed up example execution)

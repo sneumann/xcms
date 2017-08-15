@@ -273,7 +273,7 @@ mp
 library(msdata)
 fticrf <- list.files(system.file("fticr", package = "msdata"),
                     recursive = TRUE, full.names = TRUE)
-fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 
 ## Perform the MSW peak detection on these:
 p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,

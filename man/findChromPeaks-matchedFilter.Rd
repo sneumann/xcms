@@ -285,13 +285,13 @@ snthresh(mfp) <- 15
 mfp
 
 ## Perform the peak detection using matchecFilter on the files from the
-## faahKO package. Files are read using the readMSData2 from the MSnbase
+## faahKO package. Files are read using the readMSData from the MSnbase
 ## package
 library(faahKO)
 library(MSnbase)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData2(fls[1:2])
+raw_data <- readMSData(fls[1:2], mode = "onDisk")
 ## Perform the chromatographic peak detection using the settings defined
 ## above. Note that we are also disabling parallel processing in this
 ## example by registering a "SerialParam"
