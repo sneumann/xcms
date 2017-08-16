@@ -306,7 +306,7 @@ dontrun_do_adjustRtime_peakgroups_implementation <- function() {
                       system.file('cdf/WT/wt16.CDF', package = "faahKO"),
                       system.file('cdf/WT/wt18.CDF', package = "faahKO"))
 
-    od <- readMSData2(faahko_files)
+    od <- readMSData(faahko_files, mode = "onDisk")
 
     xod <- findChromPeaks(od, param = CentWaveParam(noise = 100,
                                                     snthresh = 20))
@@ -446,7 +446,7 @@ exhaustive_test <- function() {
                       system.file('cdf/WT/wt18.CDF', package = "faahKO"))
     library(RUnit)
     library(xcms)
-    ob <- readMSData2(faahko_files)
+    ob <- readMSData(faahko_files, mode = "onDisk")
     xs <- xcmsSet(faahko_files, profparam = list(step = 0), method = "centWave",
                   noise = 10000, snthresh = 40)
     prm <- ObiwarpParam(binSize = 1, centerSample = 2)
@@ -511,7 +511,7 @@ exhaustive_test <- function() {
         system.time(
             xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm), center = 11)
         )
-        od <- readMSData2(fls)
+        od <- readMSData(fls, mode = "onDisk")
         ## ???? dimension of profile matrix does not match???
         ## z <- filterFile(od, file = 1)
         ## cntr <- filterFile(od, file = centerSample(prm))
