@@ -43,7 +43,7 @@ library(faahKO)
 library(xcms)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
-raw_data <- readMSData2(fls[1:2])
+raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
 ## Read the full MS data for a defined mz-rt region.
 res <- extractMsData(raw_data, mz = c(300, 320), rt = c(2700, 2900))

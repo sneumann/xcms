@@ -96,7 +96,7 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-od <- readMSData2(faahko_3_files)
+od <- readMSData(faahko_3_files, mode = "onDisk")
 
 ## Extract the ion chromatogram for one chromatographic peak in the data.
 chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)

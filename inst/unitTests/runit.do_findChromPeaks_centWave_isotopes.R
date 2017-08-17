@@ -37,7 +37,7 @@ test_do_findChromPeaks_centWaveWithPredIsoROIs <- function() {
 ## Check the influence of the modified centWave on the isotope centWave
 dontrun_test_original_new_centWave_isotopes <- function() {
     fl <- system.file("cdf/ko15.CDF", package = "msdata")
-    raw <- readMSData2(fl)
+    raw <- readMSData(fl, mode = "onDisk")
     ## Default settings
     cwp <- CentWaveParam(verboseColumns = TRUE)
     options(originalCentWave = TRUE)
@@ -80,7 +80,7 @@ test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
                   snthreshIsoROIs = snthIso)
     checkEquals(xs@peaks[, colnames(res_x)], res_x)
     ## OnDiskMSnExp
-    onDisk <- readMSData2(fs[1], msLevel. = 1)
+    onDisk <- readMSData(fs[1], msLevel. = 1, mode = "onDisk")
     cwp <- CentWavePredIsoParam(snthresh = snth, noise = ns,
                                 snthreshIsoROIs = snthIso)
     res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
@@ -109,7 +109,7 @@ test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
     ## xs <- xcmsSet(fs, profparam = list(profstep = 0), snthresh = snth,
     ##               method = "centWaveWithPredictedIsotopeROIs", noise = ns,
     ##               snthreshIsoROIs = snthIso)
-    ## onDisk <- readMSData2(fs, msLevel. = 1)
+    ## onDisk <- readMSData(fs, msLevel. = 1, mode = "onDisk")
     ## res <- findChromPeaks(onDisk, param = cwp)
     ## checkEquals(features(res), peaks(xs)@.Data)
 }

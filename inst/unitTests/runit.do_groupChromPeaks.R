@@ -239,7 +239,7 @@ dontrun_groupChromPeaks_density_implementation <- function() {
 
 ## ## old
 ## ## new
-## fticr_od <- readMSData2(fticrf[1:2], msLevel. = 1)
+## fticr_od <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
 ## p <- MSWParam(scales = c(1, 7), peakThr = 80000, ampTh = 0.005,
 ##               SNR.method = "data.mean", winSize.noise = 500)
 ## fticr_xod <- findChromPeaks(fticr_od, param = p)
@@ -274,7 +274,7 @@ dontrun_test_groupPeaks_mzClust_compare <- function() {
     xsg <- group(xs, method="mzClust")
 
     ## new
-    od <- readMSData2(mzdatafiles, msLevel. = 1)
+    od <- readMSData(mzdatafiles, msLevel. = 1, mode = "onDisk")
     p <- MSWParam(scales = c(1, 7), ampTh = 0.005, peakThr = 80000,
                   SNR.method = 'data.mean', winSize.noise = 500)
     xod <- findChromPeaks(od, param = p)

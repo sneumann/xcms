@@ -20,7 +20,7 @@ test_do_findPeaks_MSW <- function() {
 
 test_findChromPeaks_MSW <- function() {
     ## library(MSnbase)
-    ## od <- readMSData2(mzf)
+    ## od <- readMSData(mzf, mode = "onDisk")
     od <- microtofq_od
     ## Restrict to first spectrum
     od1 <- od[1]

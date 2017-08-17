@@ -39,7 +39,7 @@ if(require("RUnit", quietly=TRUE)) {
     ## An xcmsRaw for the first file:
     faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                            profstep = 0)
-    faahko_od <- readMSData2(faahko_3_files)
+    faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
 
     ## Feature alignment on those:
     faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
@@ -66,12 +66,12 @@ if(require("RUnit", quietly=TRUE)) {
     microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
                       system.file("microtofq/MM8.mzML", package = "msdata"))
     microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)
-    microtofq_od <- readMSData2(microtofq_fs)
+    microtofq_od <- readMSData(microtofq_fs, mode = "onDisk")
 
     ## Direct injection data:
     fticrf <- list.files(system.file("fticr", package = "msdata"),
                          recursive = TRUE, full.names = TRUE)
-    fticr <- readMSData2(fticrf[1:2], msLevel. = 1)
+    fticr <- readMSData(fticrf[1:2], msLevel. = 1, mode = "onDisk")
     fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
                                                 peakThr = 80000, ampTh = 0.005,
                                                 SNR.method = "data.mean",

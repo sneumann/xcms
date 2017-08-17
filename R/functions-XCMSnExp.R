@@ -889,7 +889,7 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the matchedFilter method.
 #' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
@@ -1071,7 +1071,7 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #'            full.names = TRUE)
 #' 
 #' ## Reading 2 of the KO samples
-#' raw_data <- readMSData2(fls[1:2])
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform the peak detection using the centWave method (settings are tuned
 #' ## to speed up example execution)
@@ -1261,7 +1261,7 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #' faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' od <- readMSData2(faahko_3_files)
+#' od <- readMSData(faahko_3_files, mode = "onDisk")
 #'
 #' ## Peak detection using the 'matchedFilter' method. Note that we are using a
 #' ## larger binSize to reduce the runtime of the example.
@@ -1378,7 +1378,7 @@ highlightChromPeaks <- function(x, rt, mz,
 #' faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'                  system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #' 
-#' od <- readMSData2(faahko_file)
+#' od <- readMSData(faahko_file, mode = "onDisk")
 #'
 #' ## Peak detection using the 'matchedFilter' method. Note that we are using a
 #' ## larger binSize to reduce the runtime of the example.

@@ -51,7 +51,7 @@ library(faahKO)
 faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-od <- readMSData2(faahko_3_files)
+od <- readMSData(faahko_3_files, mode = "onDisk")
 
 ## Peak detection using the 'matchedFilter' method. Note that we are using a
 ## larger binSize to reduce the runtime of the example.

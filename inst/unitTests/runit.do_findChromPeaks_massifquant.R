@@ -55,14 +55,14 @@ test_findChromPeaks_massifquant <- function() {
     mqp <- MassifquantParam(ppm = 20, criticalValue = 1.2)
     res <- xcmsSet(mzf[1], method = "massifquant", ppm = 20, criticalValue = 1.2)
     ## onDisk
-    onDisk <- readMSData2(mzf[1])
+    onDisk <- readMSData(mzf[1], mode = "onDisk")
     res_o <- findChromPeaks(onDisk, param = mqp, return.type = "xcmsSet")
     checkEquals(peaks(res_o), peaks(res))
     checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
 
     checkException(findChromPeaks(onDisk, param = mqp, msLevel = 2))
     ## Full data
-    ## onDisk <- readMSData2(mzf)
+    ## onDisk <- readMSData(mzf, mode = "onDisk")
     ## res <- findChromPeaks(onDisk, param = mqp)
     ## xs <- xcmsSet(mzf, method = "massifquant", ppm = 20, criticalValue = 1.2)
     ## checkTrue(hasChromPeaks(res))
