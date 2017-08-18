@@ -10,6 +10,7 @@ r_packages:
   - iterators
 bioc_packages: 
   - xcms 
+  - Rgraphviz
 apt_packages:
   - texlive-latex-extra
   - texlive-fonts-extra
