@@ -211,8 +211,10 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
     res <- do.call(rbind, res)
     message("OK")
-    message("Did not correct ", sum(lengths(lms) == 0), " of the ", length(y),
-            " rows because of too few data points to fit the model.")
+    if (sum(lengths(lms) == 0))
+        message("Did not correct ", sum(lengths(lms) == 0), " of the ",
+                length(y), " rows because of too few data points to fit the ",
+                "model.")
     rm(y)
     ## Check if we have to shift values...
     if (any(res < 1, na.rm = TRUE)) {
@@ -241,7 +243,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
         if (shiftNegative == "globalMin") {
             ## Shifting ALL rows by the smallest value in the matrix.
             shiftVal <- abs(min(res, na.rm = TRUE)) + 1
-            message("Shifting all values by ", shiftVal)
+            message("Shifting all values by ", format(shiftVal, digits = 3))
             res <- res + shiftVal
         }
     }
