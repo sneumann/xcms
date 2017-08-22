@@ -207,7 +207,9 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
             return(z)
         rownames(data.) <- NULL
         preds <- predict(lmod, newdata = data.frame(y = z, data.))
-        z + mean(z, na.rm = TRUE) - preds
+        ## Ensure that we shift by the mean of the values used to estimate the
+        ## model!
+        z + mean(z[fitOnSubset], na.rm = TRUE) - preds
     }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
     res <- do.call(rbind, res)
     message("OK")
@@ -225,7 +227,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
             ## Shift selected rows by their row min + 1
             ## Include here also < 1 so that values potentially in log scale
             ## between 0 and 1 are adjusted as well.
-            mins <- apply(res, MARGIN = 1, function(z) min(z, na.rm = TRUE))
+            mins <- apply(res, MARGIN = 1, min, na.rm = TRUE)
             idx <- which(mins < 1)
             res[idx, ] <- res[idx, ] + abs(mins[idx]) + 1
             message("Shifting ", length(idx), " of the ", nrow(res), " rows ",
