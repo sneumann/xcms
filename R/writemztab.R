@@ -161,7 +161,7 @@ mzTabAddSML <- function(mztab, xset, value) {
     result[,"SML_ID"] <- seq(1,nrow(v))
     result[,"SMF_ID_REFS"] <- SMF_ID_REFS 
     result[,"retention_time"] <- g[,"rtmed"]
-    result[,"exp_mass_to_charge"] <- g[,"mzmed"]
+    result[,"exp_mass_to_charge"] <- g[,"mzmed"] 
     result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
     
     mztab <- mzTabAddValues(mztab, "SMH", "SML", result)
@@ -172,31 +172,15 @@ mzTabAddSMF <- function(mztab, xset, value) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
     
-    idHeaders <- c("identifier", "description", "chemical_formula",
-                   "smiles", "inchi_key", "database", "database_version")
-
-    searchHeaders1 <- c("search_engine", "best_search_engine_score")
-   
-    searchHeaders2 <- paste("search_engine_score_ms_run[", runs, "]", sep="")
-    
-    searchHeaders3 <- c("reliability", "modifications")
+    idHeaders <- c("SMF_ID", "SME_ID_REF_Ambiguity_code")
 
     featureHeaders <- c("charge", "adduct_ion", "exp_mass_to_charge",
-                        "calc_mass_to_charge", "calc_neutral_mass", "retention_time",
-                        "retention_time_window", "uri", "spectra_ref")
+                        "retention_time", "retention_time_start", "retention_time_end")
 
-    abundanceAssayHeaders <- paste("smallmolecule_abundance_assay[", runs, "]", sep="")
+    abundanceAssayHeaders <- paste("quant_assay[", runs, "]", sep="")
     
-    
-    abundanceVariableHeaders <- unlist(lapply(variables, FUN=function(v) c(paste("smallmolecule_abundance_study_variable[", v,"]", sep=""),
-                                  paste("smallmolecule_abundance_stddev_study_variable[", v,"]", sep=""),
-                                  paste("smallmolecule_abundance_std_error_study_variable[", v,"]", sep=""))))
-
-    optHeaders <- "opt_global_cv_isotopic_mass_trace"
-
     headers <- c(idHeaders,
-                 searchHeaders1, searchHeaders2, searchHeaders3,
-                 featureHeaders, abundanceAssayHeaders, abundanceVariableHeaders, optHeaders)
+                 featureHeaders, abundanceAssayHeaders)
 
     g <- groups(xset)
     
@@ -211,11 +195,14 @@ mzTabAddSMF <- function(mztab, xset, value) {
     #names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
     
     
+    result[,"SMF_ID"] <- seq(1,nrow(v))
     result[,"retention_time"] <- g[,"rtmed"]
+    result[,"retention_time_start"] <- g[,"rtmin"]
+    result[,"retention_time_end"] <- g[,"rtmax"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"]
-    result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
+    result[, grepl("quant_assay", colnames(result))] <- v
     
-    mztab <- mzTabAddValues(mztab, "SEH", "SME", result)    
+    mztab <- mzTabAddValues(mztab, "SEH", "SMF", result)    
 }
 
 
@@ -248,7 +235,7 @@ if (TRUE) {
                        value=value)
 #    mzt <- mzTabAddSME(mzt, xs, value="into") # Old 
     mzt <- mzTabAddSML(mzt, xs, value="into") # needs to be done
-#    mzt <- mzTabAddSMF(mzt, xs, value="into") # needs to be done
+    mzt <- mzTabAddSMF(mzt, xs, value="into") # needs to be done
     ##mzt
     
     writeMzTab(mzt, "faahKO.mzTab")
