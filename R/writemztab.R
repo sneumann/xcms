@@ -126,7 +126,49 @@ mzTabAddValues <- function(mztab, headers, section, values) {
     mztab <- rbind.ragged(mztab, v)
 }
 
-mzTabAddSME <- function(mztab, xset, value) {
+mzTabAddSML <- function(mztab, xset, value) {
+    runs <- seq(along=sampnames(xset))
+    variables <- seq(along=levels(sampclass(xset)))
+    
+    idHeaders <- c("SML_ID", "SMF_ID_REFS", "database_identifier", "chemical_formula",
+                   "theoretical_neutral_mass", "exp_mass_to_charge",
+                   "retention_time", "adduct_ions", "reliability", "uri",
+                   "best_search_engine", "best_smallmolecule_id_confidence_measure[1_n]")
+                   
+    abundanceAssayHeaders <- paste("smallmolecule_abundance_assay[", runs, "]", sep="")    
+    
+    abundanceVariableHeaders <- unlist(lapply(variables, FUN=function(v) {
+        c(paste("smallmolecule_abundance_study_variable[", v,"]", sep=""),
+          paste("smallmolecule_abundance_coeffvar_study_variable[", v,"]", sep=""))
+    }))
+
+    headers <- c(idHeaders,
+                 abundanceAssayHeaders, abundanceVariableHeaders)
+
+    g <- groups(xset)
+    SMF_ID_REFS <- sapply(xs@groupidx, function(x) paste(x, collapse="|"))
+    v <- groupval(xset, value=value)
+    
+    result <-  as.data.frame(matrix(character(0), ncol=length(headers), nrow=nrow(g)))
+    colnames(result) <- headers
+
+    # Calculate median/mean per study variable
+    #variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
+    #                         paste(paste("assay[",x,"]", sep=""), collapse=",")))
+    #names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
+    
+    
+    result[,"SML_ID"] <- seq(1,nrow(v))
+    result[,"SMF_ID_REFS"] <- SMF_ID_REFS 
+    result[,"retention_time"] <- g[,"rtmed"]
+    result[,"exp_mass_to_charge"] <- g[,"mzmed"]
+    result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
+    
+    mztab <- mzTabAddValues(mztab, "SMH", "SML", result)
+    
+}
+
+mzTabAddSMF <- function(mztab, xset, value) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
     
@@ -157,6 +199,7 @@ mzTabAddSME <- function(mztab, xset, value) {
                  featureHeaders, abundanceAssayHeaders, abundanceVariableHeaders, optHeaders)
 
     g <- groups(xset)
+    
     v <- groupval(xset, value=value)
     
     result <-  as.data.frame(matrix(character(0), ncol=length(headers), nrow=nrow(g)))
@@ -172,9 +215,9 @@ mzTabAddSME <- function(mztab, xset, value) {
     result[,"exp_mass_to_charge"] <- g[,"mzmed"]
     result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
     
-    mztab <- mzTabAddValues(mztab, "SEH", "SME", result)
-    
+    mztab <- mzTabAddValues(mztab, "SEH", "SME", result)    
 }
+
 
 writeMzTab <- function(object, filename) {
     write.table(object, file=filename,
@@ -187,7 +230,7 @@ writeMzTab <- function(object, filename) {
 ## Example for faahKO
 ##
 
-if (FALSE) {
+if (TRUE) {
     library(Rcpp) ## for rbind.fill
     library(plyr) ## for rbind.fill
     library(faahKO)
@@ -196,15 +239,15 @@ if (FALSE) {
         xs <- group(faahko)
     }
 
-    value <- "into"
-    names(value) <- "[,,centWave into,]"
+    value <- c("into"="[,,centWave into,]")
+
     mzt <- data.frame(character(0))
     mzt <- mzTabHeader(mzt,
                        version="1.0.90", description="faahKO",
                        xset=xs,
                        value=value)
-    mzt <- mzTabAddSME(mzt, xs, value="into") # Old 
-#    mzt <- mzTabAddSML(mzt, xs, value="into") # needs to be done
+#    mzt <- mzTabAddSME(mzt, xs, value="into") # Old 
+    mzt <- mzTabAddSML(mzt, xs, value="into") # needs to be done
 #    mzt <- mzTabAddSMF(mzt, xs, value="into") # needs to be done
     ##mzt
     
