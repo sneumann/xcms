@@ -8,7 +8,7 @@
 \usage{
 \S4method{chromatogram}{XCMSnExp}(object, rt, mz,
   adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum",
-  missing = NA_real_)
+  missing = NA_real_, msLevel = 1L)
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
@@ -43,6 +43,9 @@ be used if for a given retention time no signal was measured within the
 mz range of the corresponding scan. Defaults to \code{NA_real_} (see also
 Details and Notes sections below). Use \code{missing = 0} to resemble the
 behaviour of the \code{getEIC} from the \code{old} user interface.}
+
+\item{msLevel}{\code{integer} specifying the MS level from which the
+chromatogram should be extracted. Defaults to \code{msLevel = 1L}.}
 }
 \value{
 \code{chromatogram} returns a \code{\link{Chromatograms}} object with

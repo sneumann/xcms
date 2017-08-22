@@ -1918,6 +1918,9 @@ setMethod("featureValues",
 #'     Details and Notes sections below). Use \code{missing = 0} to resemble the
 #'     behaviour of the \code{getEIC} from the \code{old} user interface.
 #'
+#' @param msLevel \code{integer} specifying the MS level from which the
+#'     chromatogram should be extracted. Defaults to \code{msLevel = 1L}.
+#' 
 #' @return \code{chromatogram} returns a \code{\link{Chromatograms}} object with
 #'     the number of columns corresponding to the number of files in
 #'     \code{object} and number of rows the number of specified ranges (i.e.
@@ -1987,7 +1990,8 @@ setMethod("featureValues",
 setMethod("chromatogram",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
-                   aggregationFun = "sum", missing = NA_real_) {
+                   aggregationFun = "sum", missing = NA_real_,
+                   msLevel = 1L) {
               ## Coerce to OnDiskMSnExp.
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
@@ -1998,7 +2002,7 @@ setMethod("chromatogram",
               }
               chromatogram(object, rt = rt, mz = mz,
                            aggregationFun = aggregationFun,
-                           missing = missing)
+                           missing = missing, msLevel = msLevel)
           })
 
 #' @rdname XCMSnExp-class

@@ -1,6 +1,9 @@
 CHANGES IN VERSION 2.99.7
 -------------------------
 
+USER VISIBLE CHANGES:
+- Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
+
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
 - Merge with BioC git after transition
