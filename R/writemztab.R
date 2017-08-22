@@ -17,22 +17,23 @@ rbind.ragged <- function(x, y) {
     rbind.fill(x,y)
 }
 
-cvTerm <- function(CV, accession, name, value) {
+cvTerm <- function(CV, accession, name, value="") {
     paste("[", paste(CV, accession, name, value, sep=", "), "]", sep="")    
 }
 #cvTerm("MS", "MS:1000443", "Mass Analyzer Type", "Orbitrap")
 
 mzFileType <- function(paths) {
     result <- character(length(paths))
-
+    result <- "Unknown"
+    
     idx <- grepl("([Cc][Dd][Ff]$)|([Nn][Cc]$)", paths)
-    result[idx] <- "netCDF"
+    result[idx] <- cvTerm("EDAM", "format:3650", "netCDF")
 
     idx <- grepl("([Mm][Zz])?[Xx][Mm][Ll]$", paths)
-    result[idx] <- "mzXML"
+    result[idx] <- cvTerm("EDAM", "format:3654", "mzXML")
 
     idx <- grepl("[Mm][Zz][Dd][Aa][Tt][Aa]$", paths)
-    result[idx] <- "mzData"
+    result[idx] <- cvTerm("MS", "MS:1000564","PSI mzData format")
 
     idx <- grepl("[Mm][Zz][Mm][Ll]$", paths)
     result[idx] <- cvTerm("MS", "MS:1000584", "Proteomics Standards Inititative mzML file format", "mzML file")
@@ -45,7 +46,15 @@ mzFileType <- function(paths) {
 ## cbind(paths, mzFileType(paths))
 
 
-mzTabHeader <- function(mztab, version, mode, type, description, xset) {
+mzTabHeader <- function(mztab, version,
+                        id="The ID of the mzTab file.",
+                        title="The file’s human readable title.",
+                        description="The file’s human readable description.",
+                        sample_processing=c("extraction", "derivatisation"),
+                        software=c("[MS, MS:1002205, ProteoWizard msconvert, 4711 ]",
+                                   "[MS, MS:1001582, XCMS, 2.99.6 ]"),
+                        xset,
+                        value) {
     runs <- filepaths(xset)
     names(runs) <- paste("ms_run[", 1:length(runs), "]-location", sep="")
 
@@ -55,14 +64,18 @@ mzTabHeader <- function(mztab, version, mode, type, description, xset) {
     
     sampleDesc <- sampnames(xset)
     names(sampleDesc) <- paste("sample[", 1:length(runs), "]-description", sep="")    
+    
     filetypes <- mzFileType(runs)
-    names(runs) <- paste("ms_run[", 1:length(filetypes), "]-format", sep="")
+    names(filetypes) <- paste("ms_run[", 1:length(filetypes), "]-format", sep="")
 
-    assays <- paste("ms_run[", seq(along=runs), "]", sep="")
-    names(assays) <- paste("assay[", seq(along=runs), "]-ms_run_ref", sep="")
+    msruns <- paste("ms_run[", seq(along=runs), "]", sep="")
+    names(msruns) <- paste("assay[", seq(along=runs), "]-ms_run_ref", sep="")
+
+    assays <- sampnames(xset)
+    names(assays) <- paste("assay[", seq(along=runs), "]", sep="")
 
     variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
-                                    paste(paste("assay[",x,"]", sep=""), collapse=",")))
+                                    paste(paste("assay[",x,"]", sep=""), collapse="|")))
     names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
     
     variableDescriptions <- unique(as.character(sampclass(xset)))
@@ -71,17 +84,30 @@ mzTabHeader <- function(mztab, version, mode, type, description, xset) {
     mztab <- rbind.ragged(mztab, mzTabAddComment("Meta data section"))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD",
                                                   c("mzTab-version"=version,
-                                                    "mzTab-mode"=mode,
-                                                    "mzTab-type"=type,
+                                                    "mzTab-ID"=id,
+                                                    "mzTab-title"=title,
                                                     "description"=description)))
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", runs))
+
+    names(sample_processing) <- paste("sample_processing[", seq(along=sample_processing), "]", sep="")
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", sample_processing))
+
+    names(software) <- paste("software[", seq(along=software), "]", sep="")
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", software))
+
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", c(quantification_method=names(value))))
+
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", assays))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
 
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", samples))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", sampleDesc))
     
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", assays))
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", runs))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", msruns))
+    
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", filetypes))    
+
 }
 
 mzTabAddComment <- function(comments) {
@@ -100,7 +126,7 @@ mzTabAddValues <- function(mztab, headers, section, values) {
     mztab <- rbind.ragged(mztab, v)
 }
 
-mzTabAddSME <- function(mztab, xset) {
+mzTabAddSME <- function(mztab, xset, value) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
     
@@ -131,7 +157,7 @@ mzTabAddSME <- function(mztab, xset) {
                  featureHeaders, abundanceAssayHeaders, abundanceVariableHeaders, optHeaders)
 
     g <- groups(xset)
-    v <- groupval(xset, value="into")
+    v <- groupval(xset, value=value)
     
     result <-  as.data.frame(matrix(character(0), ncol=length(headers), nrow=nrow(g)))
     colnames(result) <- headers
@@ -170,15 +196,19 @@ if (FALSE) {
         xs <- group(faahko)
     }
 
+    value <- "into"
+    names(value) <- "[,,centWave into,]"
     mzt <- data.frame(character(0))
-    mzt <- xcms:::mzTabHeader(mzt,
-                       version="1.1.0", mode="Complete", type="Quantification",
-                       description="faahKO",
-                       xset=xs)
-    mzt <- xcms:::mzTabAddSME(mzt, xs)
+    mzt <- mzTabHeader(mzt,
+                       version="1.0.90", description="faahKO",
+                       xset=xs,
+                       value=value)
+    mzt <- mzTabAddSME(mzt, xs, value="into") # Old 
+#    mzt <- mzTabAddSML(mzt, xs, value="into") # needs to be done
+#    mzt <- mzTabAddSMF(mzt, xs, value="into") # needs to be done
     ##mzt
     
-    xcms:::writeMzTab(mzt, "faahKO.mzTab")
+    writeMzTab(mzt, "faahKO.mzTab")
 }
 
 #############################
