@@ -7,6 +7,8 @@ USER VISIBLE CHANGES:
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
 - Merge with BioC git after transition
+- Fix #191: Excessive memory use in fillPeaks.
+
 
 CHANGES IN VERSION 2.99.6
 -------------------------

@@ -6,7 +6,7 @@
 \usage{
 binYonX(x, y, breaks, nBins, binSize, binFromX, binToX, fromIdx = 1L,
   toIdx = length(x), method = "max", baseValue, sortedX = !is.unsorted(x),
-  shiftByHalfBinSize = FALSE, returnIndex = FALSE)
+  shiftByHalfBinSize = FALSE, returnIndex = FALSE, returnX = TRUE)
 }
 \arguments{
 \item{x}{Numeric vector to be used for binning.}
@@ -26,8 +26,8 @@ lower and upper values for each bin. See examples below.}
 the range of x-values to be used for binning.
 This will affect only the calculation of the breaks for the bins
 (i.e. if \code{nBins} or \code{binSize} is provided).
-If not provided the minimal value in the sub-set \code{fromIdx}-\code{toIdx}
-in input vector \code{x} will be used.}
+If not provided the minimal value in the sub-set
+\code{fromIdx}-\code{toIdx} in input vector \code{x} will be used.}
 
 \item{binToX}{Same as \code{binFromX}, but defining the maximum x-value to be
 used for binning.}
@@ -40,85 +40,94 @@ in x to be used for binning.}
 
 \item{method}{A character string specifying the method that should be used to
 aggregate values in \code{y}. Allowed are \code{"max"}, \code{"min"},
-\code{"sum"} and \code{"mean"} to identify the maximal or minimal value or
-to sum all values within a bin or calculate their mean value.}
+\code{"sum"} and \code{"mean"} to identify the maximal or minimal value
+or to sum all values within a bin or calculate their mean value.}
 
-\item{baseValue}{The base value for empty bins (i.e. bins into which either no
-values in \code{x} did fall, or to which only \code{NA} values in \code{y}
-were assigned). By default (i.e. if not specified), \code{NA} is assigned
-to such bins.}
+\item{baseValue}{The base value for empty bins (i.e. bins into which either
+no values in \code{x} did fall, or to which only \code{NA} values in
+\code{y} were assigned). By default (i.e. if not specified), \code{NA}
+is assigned to such bins.}
 
 \item{sortedX}{Whether \code{x} is sorted.}
 
 \item{shiftByHalfBinSize}{Logical specifying whether the bins should be
-shifted by half the bin size to the left. Thus, the first bin will have its
-center at \code{fromX} and its lower and upper boundary are
- \code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
+shifted by half the bin size to the left. Thus, the first bin will have
+its center at \code{fromX} and its lower and upper boundary are
+\code{fromX - binSize/2} and \code{fromX + binSize/2}. This argument is
 ignored if \code{breaks} are provided.}
 
 \item{returnIndex}{Logical indicating whether the index of the max (if
 \code{method = "max"}) or min (if \code{method = "min"}) value within
-each bin in input vector \code{x} should also be reported. For methods other
-than \code{"max"} or \code{"min"} this argument is ignored.}
+each bin in input vector \code{x} should also be reported. For methods
+other than \code{"max"} or \code{"min"} this argument is ignored.}
+
+\item{returnX}{\code{logical} allowing to avoid returning \code{$x}, i.e. the
+mid-points of the bins. \code{returnX = FALSE} might be useful in cases
+where \code{breaks} are pre-defined as it considerably reduces the memory
+demand.}
 }
 \value{
 Returns a list of length 2, the first element (named \code{"x"})
-contains the bin mid-points, the second element (named \code{"y"}) the
-aggregated values from input vector \code{y} within each bin. For
-\code{returnIndex = TRUE} the list contains an additional element \code{"index"} with
-the index of the max or min (depending on whether \code{method = "max"} or
-\code{method = "min"}) value within each bin in input vector \code{x}.
+    contains the bin mid-points, the second element (named \code{"y"}) the
+    aggregated values from input vector \code{y} within each bin. For
+    \code{returnIndex = TRUE} the list contains an additional element
+    \code{"index"} with the index of the max or min (depending on whether
+    \code{method = "max"} or \code{method = "min"}) value within each bin in
+    input vector \code{x}.
 }
 \description{
 This functions takes two same-sized numeric vectors \code{x}
-and \code{y}, bins/cuts \code{x} into bins (either a pre-defined number
-of equal-sized bins or bins of a pre-defined size) and aggregates values
-in \code{y} corresponding to \code{x} values falling within each bin. By
-default (i.e. \code{method = "max"}) the maximal \code{y} value for the
-corresponding \code{x} values is identified. \code{x} is expected to be
-incrementally sorted and, if not, it will be internally sorted (in which
-case also \code{y} will be ordered according to the order of \code{x}).
+    and \code{y}, bins/cuts \code{x} into bins (either a pre-defined number
+    of equal-sized bins or bins of a pre-defined size) and aggregates values
+    in \code{y} corresponding to \code{x} values falling within each bin. By
+    default (i.e. \code{method = "max"}) the maximal \code{y} value for the
+    corresponding \code{x} values is identified. \code{x} is expected to be
+    incrementally sorted and, if not, it will be internally sorted (in which
+    case also \code{y} will be ordered according to the order of \code{x}).
 }
 \details{
 The breaks defining the boundary of each bin can be either passed
-directly to the function with the argument \code{breaks}, or are calculated
-on the data based on arguments \code{nBins} or \code{binSize} along with
-\code{fromIdx}, \code{toIdx} and optionally \code{binFromX} and \code{binToX}.
-Arguments \code{fromIdx} and \code{toIdx} allow to specify subset(s) of the
-input vector \code{x} on which bins should be calculated. The default the full
- \code{x} vector is considered. Also, if not specified otherwise with arguments
- \code{binFromX} and \code{binToX }, the range of the bins within each of the
-sub-sets will be from \code{x[fromIdx]} to \code{x[toIdx]}. Arguments
- \code{binFromX} and \code{binToX} allow to overwrite this by manually
-defining the a range on which the breaks should be calculated. See examples
-below for more details.
+    directly to the function with the argument \code{breaks}, or are
+    calculated on the data based on arguments \code{nBins} or \code{binSize}
+    along with \code{fromIdx}, \code{toIdx} and optionally \code{binFromX}
+    and \code{binToX}.
+    Arguments \code{fromIdx} and \code{toIdx} allow to specify subset(s) of
+    the input vector \code{x} on which bins should be calculated. The
+    default the full \code{x} vector is considered. Also, if not specified
+    otherwise with arguments \code{binFromX} and \code{binToX }, the range
+    of the bins within each of the sub-sets will be from \code{x[fromIdx]}
+    to \code{x[toIdx]}. Arguments \code{binFromX} and \code{binToX} allow to
+    overwrite this by manually defining the a range on which the breaks
+    should be calculated. See examples below for more details.
 
-Calculation of breaks: for \code{nBins} the breaks correspond to
-\code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
-For \code{binSize} the breaks correspond to
-\code{seq(min(x[fromIdx]), max(x[toIdx]), by = binSize)} with the exception
-that the last break value is forced to be equal to \code{max(x[toIdx])}. This
-ensures that all values from the specified range are covered by the breaks
-defining the bins. The last bin could however in some instances be slightly
-larger than \code{binSize}. See \code{\link{breaks_on_binSize}} and
-\code{\link{breaks_on_nBins}} for more details.
+    Calculation of breaks: for \code{nBins} the breaks correspond to
+    \code{seq(min(x[fromIdx])), max(x[fromIdx], length.out = (nBins + 1))}.
+    For \code{binSize} the breaks correspond to
+    \code{seq(min(x[fromIdx]), max(x[toIdx]), by = binSize)} with the
+    exception that the last break value is forced to be equal to
+    \code{max(x[toIdx])}. This ensures that all values from the specified
+    range are covered by the breaks defining the bins. The last bin could
+    however in some instances be slightly larger than \code{binSize}. See
+    \code{\link{breaks_on_binSize}} and \code{\link{breaks_on_nBins}} for
+    more details.
 }
 \note{
 The function ensures that all values within the range used to define
-the breaks are considered in the binning (and assigned to a bin). This
-means that for all bins except the last one values in \code{x} have to be
-\code{>= xlower} and \code{< xupper} (with \code{xlower}
-and \code{xupper} being the lower and upper boundary, respectively). For the
-last bin the condition is \code{x >= xlower & x <= xupper}.
-Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of values
-that is used for binning is expanded by \code{binSize} (i.e. the lower boundary
-will be \code{fromX - binSize/2}, the upper \code{toX + binSize/2}). Setting
-this argument to \code{TRUE} resembles the binning that is/was used in
-\code{profBin} function from \code{xcms} < 1.51.
+    the breaks are considered in the binning (and assigned to a bin). This
+    means that for all bins except the last one values in \code{x} have to be
+    \code{>= xlower} and \code{< xupper} (with \code{xlower}
+    and \code{xupper} being the lower and upper boundary, respectively). For
+    the last bin the condition is \code{x >= xlower & x <= xupper}.
+    Note also that if \code{shiftByHalfBinSize} is \code{TRUE} the range of
+    values that is used for binning is expanded by \code{binSize} (i.e. the
+    lower boundary will be \code{fromX - binSize/2}, the upper
+    \code{toX + binSize/2}). Setting this argument to \code{TRUE} resembles
+    the binning that is/was used in \code{profBin} function from
+    \code{xcms} < 1.51.
 
-\code{NA} handling: by default the function ignores \code{NA} values in
-\code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA} values are
-allowed in \code{x}.
+    \code{NA} handling: by default the function ignores \code{NA} values in
+    \code{y} (thus inherently assumes \code{na.rm = TRUE}). No \code{NA}
+    values are allowed in \code{x}.
 }
 \examples{
 ########

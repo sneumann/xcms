@@ -40,13 +40,23 @@
  * getIndex: 0 or 1, whether an index should be returned or not.
  * The function returns a list with the first element (x) being the bin
  * midpoints and the second element (y) the max y-value within each bin.
+ *
+ * Notes: we have the following memory demanding allocVectors:
+ * 1) ans, REAL, the return value $y. Required.
+ * 2) index, INTEGER, only optional and only required if getIndex is 1.
+ * 3) brks, REAL, created if no breaks is pre-defined.
+ * 4) bin_mids, REAL, the return value $x... always required?
+ *
+ * Updates: to reduce excessive memory demand (issue #191) we're:
+ * a) creating the index vector ONLY if getIndex is 1.
+ * b) allow the user to specify that no $x will be created/returned.
  */
 SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
 	     SEXP fromX, SEXP toX, SEXP fromIdx, SEXP toIdx,
 	     SEXP shiftByHalfBinSize, SEXP method, SEXP baseValue,
-	     SEXP getIndex) {
+	     SEXP getIndex, SEXP getX) {
   SEXP ans, brks, bin_mids, ans_list, names, index;
-  int n_bin, from_idx, to_idx, the_method,
+  int n_bin, from_idx, to_idx, the_method, get_x,
     shift_by_half_bin_size, count_protect, have_index, *p_index, get_index;
   double from_x, to_x, bin_size, *p_ans, *p_brks, base_value;
 
@@ -54,6 +64,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   count_protect = 0;  // To count the PROTECT calls.
   have_index = 0;     // If an index with the min and max value is returned too.
   get_index = asInteger(getIndex);  // Whether we want the index to be returned at all.
+  get_x = asInteger(getX);
   from_idx = asInteger(fromIdx);
   to_idx = asInteger(toIdx);
   the_method = asInteger(method);
@@ -123,12 +134,18 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
   }
   switch (the_method) {
   case 2:
-    PROTECT(index = allocVector(INTSXP, n_bin));
+    if (get_index) {
+      PROTECT(index = allocVector(INTSXP, n_bin));
+      p_index = INTEGER(index);
+      _bin_y_on_x_with_breaks_min_idx(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				      from_idx, to_idx, p_index);
+      have_index = 1;
+    } else {
+      PROTECT(index = allocVector(INTSXP, 1));
+      _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				  from_idx, to_idx);
+    }
     count_protect++;
-    p_index = INTEGER(index);
-    _bin_y_on_x_with_breaks_min(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-				from_idx, to_idx, p_index);
-    have_index = 1;
     break;
   case 3:
     PROTECT(index = allocVector(INTSXP, 1));
@@ -143,12 +160,18 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
 				 from_idx, to_idx);
     break;
   default:
-    PROTECT(index = allocVector(INTSXP, n_bin));
+    if (get_index) {
+      PROTECT(index = allocVector(INTSXP, n_bin));
+      p_index = INTEGER(index);
+      _bin_y_on_x_with_breaks_max_idx(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				      from_idx, to_idx, p_index);
+      have_index = 1;
+    } else {
+      PROTECT(index = allocVector(INTSXP, 1));
+      _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
+				  from_idx, to_idx);
+    }
     count_protect++;
-    p_index = INTEGER(index);
-    _bin_y_on_x_with_breaks_max(REAL(x), REAL(y), p_brks, p_ans, n_bin,
-				from_idx, to_idx, p_index);
-    have_index = 1;
   }
 
   /* Replace NAs with the "default" value. */
@@ -156,35 +179,35 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     _fill_missing_with_value(p_ans, base_value, n_bin);
   }
 
-  /* Overwriting have_index if get_index == 0. */
-  if (get_index == 0)
-    have_index = 0;
-
-  /* Calculate bin mid-points */
-  PROTECT(bin_mids = allocVector(REALSXP, n_bin));
-  count_protect++;
-  _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
+  int current_idx = 0;
   /* Now create the result list. */
-  PROTECT(ans_list = allocVector(VECSXP, (2 + have_index)));
+  PROTECT(ans_list = allocVector(VECSXP, (1 + get_x + have_index)));
   count_protect++;
-  SET_VECTOR_ELT(ans_list, 0, bin_mids);
-  SET_VECTOR_ELT(ans_list, 1, ans);
   /* Setting names */
-  PROTECT(names = allocVector(STRSXP, (2 + have_index)));
+  PROTECT(names = allocVector(STRSXP, (1+ get_x + have_index)));
   count_protect++;
-  SET_STRING_ELT(names, 0, mkChar("x"));
-  SET_STRING_ELT(names, 1, mkChar("y"));
+  if (get_x) {
+    /* Calculate bin mid-points */
+    PROTECT(bin_mids = allocVector(REALSXP, n_bin));
+    count_protect++;
+    _bin_midPoint(p_brks, REAL(bin_mids), n_bin);
+    SET_VECTOR_ELT(ans_list, current_idx, bin_mids);
+    SET_STRING_ELT(names, current_idx, mkChar("x"));
+    current_idx++;
+  }
+  SET_VECTOR_ELT(ans_list, current_idx, ans);
+  SET_STRING_ELT(names, current_idx, mkChar("y"));
+  current_idx++;
   /* For max and min we can also return the index of the min/max for each bin. */
   if (have_index) {
-    SET_STRING_ELT(names, 2, mkChar("index"));
-    SET_VECTOR_ELT(ans_list, 2, index);
+    SET_STRING_ELT(names, current_idx, mkChar("index"));
+    SET_VECTOR_ELT(ans_list, current_idx, index);
   }
   setAttrib(ans_list, R_NamesSymbol, names);
-
+  
   UNPROTECT(count_protect);
   return ans_list;
 }
-
 
 /*
  * Performs binning on sub-sets of x and y vectors. Subsets are defined with
@@ -197,7 +220,7 @@ SEXP binYonX(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
 SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
 		   SEXP fromX, SEXP toX, SEXP subsetFromIdx, SEXP subsetToIdx,
 		   SEXP shiftByHalfBinSize, SEXP method,
-		   SEXP baseValue, SEXP getIndex) {
+		   SEXP baseValue, SEXP getIndex, SEXP getX) {
   SEXP res, from_idx, to_idx, current_res;
   int n_subsets, *p_subset_from_idx, *p_subset_to_idx;
   if (LENGTH(subsetFromIdx) != LENGTH(subsetToIdx)) {
@@ -217,8 +240,8 @@ SEXP binYonX_multi(SEXP x, SEXP y, SEXP breaks, SEXP nBins, SEXP binSize,
     PROTECT(from_idx = ScalarInteger(p_subset_from_idx[i]));
     PROTECT(to_idx = ScalarInteger(p_subset_to_idx[i]));
     PROTECT(current_res = binYonX(x, y, breaks, nBins, binSize, fromX, toX,
-				  from_idx, to_idx, shiftByHalfBinSize,
-				  method, baseValue, getIndex));
+    				  from_idx, to_idx, shiftByHalfBinSize,
+    				  method, baseValue, getIndex, getX));
     SET_VECTOR_ELT(res, i, current_res);
     UNPROTECT(3);
   }
@@ -367,9 +390,10 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  * NA handling: skips any NAs in y.
  * *index keeps track of the index of the max value within each bin in x.
  */
-static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
-					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx, int *index) {
+static void _bin_y_on_x_with_breaks_max_idx(double *x, double *y, double *brks,
+					    double *ans, int n_bin, int x_start_idx,
+					    int x_end_idx, int *index)
+{
   int x_current_idx, last_bin_idx;
   double x_current_value;
   last_bin_idx = n_bin - 1;
@@ -411,9 +435,95 @@ static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
   return;
 }
 
+static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
+					double *ans, int n_bin, int x_start_idx,
+					int x_end_idx)
+{
+  int x_current_idx, last_bin_idx;
+  double x_current_value;
+  last_bin_idx = n_bin - 1;
+  x_current_idx = x_start_idx;
+
+  // o Loop through the bins/brks
+  for (int i = 0; i < n_bin; i++) {
+    // loop through the x values; assumes x sorted increasingly
+    while (x_current_idx <= x_end_idx) {
+      x_current_value = x[x_current_idx];
+      if (x_current_value >= brks[i]) {
+	/* OK, now check if the value is smaller the upper border
+	 * OR if we're in the last bin, whether the value matches the upper border.
+	 */
+	if ((x_current_value < brks[i + 1]) || (x_current_value == brks[i + 1] &&
+					       i == last_bin_idx)) {
+	  /* Check if the corresponding y value is larger than the one we have and
+	   * replace if so.
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
+	   */
+	  if (!ISNA(y[x_current_idx])) {
+	    if (ISNA(ans[i]) || (y[x_current_idx] > ans[i])) {
+	      ans[i] = y[x_current_idx];
+	    }
+	  }
+	} else {
+	  /* Break without incrementing the x_current_idx, thus the same value will
+	   * be evaluated for the next bin i.
+	   */
+	  break;
+	}
+      }
+      x_current_idx++;
+    }
+  }
+  return;
+}
+
 static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx, int *index) {
+					int x_end_idx)
+{
+  int x_current_idx, last_bin_idx;
+  double x_current_value;
+  last_bin_idx = n_bin - 1;
+  x_current_idx = x_start_idx;
+
+  // o Loop through the bins/brks
+  for (int i = 0; i < n_bin; i++) {
+    // loop through the x values; assumes x sorted increasingly
+    while (x_current_idx <= x_end_idx) {
+      x_current_value = x[x_current_idx];
+      if (x_current_value >= brks[i]) {
+	/* OK, now check if the value is smaller the upper border
+	 * OR if we're in the last bin, whether the value matches the upper border.
+	 */
+	if ((x_current_value < brks[i + 1]) || (x_current_value == brks[i + 1] &&
+					       i == last_bin_idx)) {
+	  /*
+	   * NA handling: is the current y value is NA, ignore it (na.rm = TRUE),
+	   * if the current bin value is NA, replace it automatically.
+	   */
+	  if (!ISNA(y[x_current_idx])) {
+	    if (ISNA(ans[i]) || (y[x_current_idx] < ans[i])) {
+	      ans[i] = y[x_current_idx];
+	    }
+	  }
+	} else {
+	  /* Break without incrementing the x_current_idx, thus the same value will
+	   * be evaluated for the next bin i.
+	   */
+	  break;
+	}
+      }
+      x_current_idx++;
+    }
+  }
+  return;
+}
+
+static void _bin_y_on_x_with_breaks_min_idx(double *x, double *y, double *brks,
+					    double *ans, int n_bin, int x_start_idx,
+					    int x_end_idx, int *index)
+{
   int x_current_idx, last_bin_idx;
   double x_current_value;
   last_bin_idx = n_bin - 1;

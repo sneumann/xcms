@@ -205,7 +205,8 @@ useOriginalCode <- function(x) {
                           baseValue = ifelse(impute == "none", yes = baseValue,
                                              no = NA),
                           sortedX = TRUE,
-                          returnIndex = FALSE
+                          returnIndex = FALSE,
+                          returnX = FALSE
                           )
         if (length(toIdx) == 1)
             binRes <- list(binRes)
@@ -230,12 +231,17 @@ useOriginalCode <- function(x) {
             distance <- 0
             baseValue <- 0
         }
-        binVals <- lapply(binRes, function(z) {
-            return(imputeLinInterpol(z$y, method = impute, distance = distance,
-                                     noInterpolAtEnds = TRUE,
-                                     baseValue = baseValue))
-        })
-        buf <- do.call(cbind, binVals)
+        if (method == "none") {
+            ## binVals <- lapply(binRes, function(z) z$y)
+            binVals <- binRes
+        } else {
+            binVals <- lapply(binRes, function(z) {
+                imputeLinInterpol(z$y, method = impute, distance = distance,
+                                  noInterpolAtEnds = TRUE,
+                                  baseValue = baseValue)
+            })
+        }
+        buf <- base::do.call(cbind, binVals)
     }
     if (returnBreaks)
         buf <- list(profMat = buf, breaks = brks)

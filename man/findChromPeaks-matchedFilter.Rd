@@ -117,9 +117,9 @@ interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
 is only considered for \code{method = "linbase"} and corresponds to the
 \code{profBinLinBase}'s \code{baselevel} argument.}
 
-\item{distance}{For \code{method = "linbase"}: number of non-empty neighboring
-element of an empty element that should be considered for linear interpolation. See
-details section for more information.}
+\item{distance}{For \code{method = "linbase"}: number of non-empty
+neighboring element of an empty element that should be considered for
+linear interpolation. See details section for more information.}
 
 \item{fwhm}{\code{numeric(1)} specifying the full width at half maximum
 of matched filtration gaussian model peak. Only used to calculate the

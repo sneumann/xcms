@@ -16,53 +16,56 @@ is only considered for \code{method = "linbase"} and corresponds to the
 
 \item{method}{One of \code{"none"}, \code{"lin"} or \code{"linbase"}.}
 
-\item{distance}{For \code{method = "linbase"}: number of non-empty neighboring
-element of an empty element that should be considered for linear interpolation. See
-details section for more information.}
+\item{distance}{For \code{method = "linbase"}: number of non-empty
+neighboring element of an empty element that should be considered for
+linear interpolation. See details section for more information.}
 
-\item{noInterpolAtEnds}{For \code{method = "lin"}: Logical indicating whether linear
-interpolation should also be performed at the ends of the data vector (i.e.
-if missing values are present at the beginning or the end of the vector).}
+\item{noInterpolAtEnds}{For \code{method = "lin"}: Logical indicating
+whether linear interpolation should also be performed at the ends of the
+data vector (i.e. if missing values are present at the beginning or the
+end of the vector).}
 }
 \value{
 A numeric vector with empty values imputed based on the selected
-\code{method}.
+    \code{method}.
 }
 \description{
 This function provides missing value imputation based on linear
-interpolation and resembles some of the functionality of the
-\code{profBinLin} and \code{profBinLinBase} functions deprecated from
-version 1.51 on.
+    interpolation and resembles some of the functionality of the
+    \code{profBinLin} and \code{profBinLinBase} functions deprecated from
+    version 1.51 on.
 }
 \details{
 Values for NAs in input vector \code{x} can be imputed using methods
-\code{"lin"} and \code{"linbase"}:
+    \code{"lin"} and \code{"linbase"}:
 
-\code{impute = "lin"} uses simple linear imputation to derive a value for an
-empty element in input vector \code{x} from its neighboring non-empty elements.
-This method is equivalent to the linear interpolation in the
-\code{profBinLin} method. Whether interpolation is performed if missing
-values are present at the beginning and end of \code{x} can be set with argument
-\code{noInterpolAtEnds}. By default interpolation is also performed at the ends
-interpolating from \code{0} at the beginning and towards \code{0} at the end. For
-\code{noInterpolAtEnds = TRUE} no interpolation is performed at both ends replacing
-the missing values at the beginning and/or the end of \code{x} with \code{0}.
+    \code{impute = "lin"} uses simple linear imputation to derive a value
+    for an empty element in input vector \code{x} from its neighboring
+    non-empty elements. This method is equivalent to the linear
+    interpolation in the \code{profBinLin} method. Whether interpolation is
+    performed if missing values are present at the beginning and end of
+    \code{x} can be set with argument \code{noInterpolAtEnds}. By default
+    interpolation is also performed at the ends interpolating from \code{0}
+    at the beginning and towards \code{0} at the end. For
+    \code{noInterpolAtEnds = TRUE} no interpolation is performed at both
+    ends replacing the missing values at the beginning and/or the end of
+    \code{x} with \code{0}.
 
-\code{impute = "linbase"} uses linear interpolation to impute values for empty
-elements within a user-definable proximity to non-empty elements and setting the
-element's value to the \code{baseValue} otherwise. The default for the
- \code{baseValue} is half of the smallest value in \code{x}
-(\code{NA}s being removed). Whether linear interpolation based imputation is
-performed for a missing value depends on the \code{distance} argument.
-Interpolation is only performed if one of the next \code{distance} closest
-neighbors to the current empty element has a value other than \code{NA}.
-No interpolation takes place for \code{distance = 0}, while \code{distance = 1}
-means that the value for an empty element is interpolated from directly
-adjacent non-empty elements while, if the next neighbors of the current
-empty element are also \code{NA}, it's vale is set to \code{baseValue}.
-This corresponds to the linear interpolation performed by the
-\code{profBinLinBase} method.
-For more details see examples below.
+    \code{impute = "linbase"} uses linear interpolation to impute values for
+    empty elements within a user-definable proximity to non-empty elements
+    and setting the element's value to the \code{baseValue} otherwise. The
+    default for the \code{baseValue} is half of the smallest value in
+    \code{x} (\code{NA}s being removed). Whether linear interpolation based
+    imputation is performed for a missing value depends on the
+    \code{distance} argument. Interpolation is only performed if one of the
+    next \code{distance} closest neighbors to the current empty element has
+    a value other than \code{NA}. No interpolation takes place for
+    \code{distance = 0}, while \code{distance = 1} means that the value for
+    an empty element is interpolated from directly adjacent non-empty
+    elements while, if the next neighbors of the current empty element are
+    also \code{NA}, it's vale is set to \code{baseValue}.
+    This corresponds to the linear interpolation performed by the
+    \code{profBinLinBase} method. For more details see examples below.
 }
 \examples{
 #######

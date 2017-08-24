@@ -46,11 +46,17 @@ void _breaks_on_binSize(double from_val, double to_val, int n_bin,
  */
 static void _bin_y_on_x_with_breaks_max(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx, int *index);
+					int x_end_idx);
+static void _bin_y_on_x_with_breaks_max_idx(double *x, double *y, double *brks,
+					    double *ans, int n_bin, int x_start_idx,
+					    int x_end_idx, int *index);
 
 static void _bin_y_on_x_with_breaks_min(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
-					int x_end_idx, int *index);
+					int x_end_idx);
+static void _bin_y_on_x_with_breaks_min_idx(double *x, double *y, double *brks,
+					    double *ans, int n_bin, int x_start_idx,
+					    int x_end_idx, int *index);
 
 static void _bin_y_on_x_with_breaks_sum(double *x, double *y, double *brks,
 					double *ans, int n_bin, int x_start_idx,
