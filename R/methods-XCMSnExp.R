@@ -1103,7 +1103,8 @@ setMethod("filterMz", "XCMSnExp", function(object, mz, msLevel., ...) {
 #'     the method will by default filter the object by adjusted retention times.
 #'     The argument \code{adjusted} allows to specify manually whether filtering
 #'     should be performed by raw or adjusted retention times. Filtering by
-#'     retention time does not drop any preprocessing results.
+#'     retention time does not drop any preprocessing results nor does it remove
+#'     or change alignment results (i.e. adjusted retention times).
 #'     The method returns an empty object if no spectrum or feature is within
 #'     the specified retention time range.
 #'
