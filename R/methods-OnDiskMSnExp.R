@@ -62,7 +62,10 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## Restrict to MS1 data.
+              ## Restrict to MS X data.
+              if (length(msLevel) > 1)
+                  stop("Currently only peak detection in a single MS level is ",
+                       "supported")
               object <- filterMsLevel(object, msLevel. = msLevel)
               if (length(object) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
@@ -98,11 +101,13 @@ setMethod("findChromPeaks",
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
                                          type. = .PROCSTEP.PEAK.DETECTION,
-                                         fileIndex = 1:length(fileNames(object)))
+                                         fileIndex = 1:length(fileNames(object)),
+                                         msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
                   object@.processHistory <- list(xph)
-                  if (hasAdjustedRtime(object) | hasFeatures(object))
-                      object@msFeatureData <- new("MsFeatureData")
+                  ## Support keeping adjusted retention times (issue #210)
+                  ## if (hasAdjustedRtime(object) | hasFeatures(object))
+                  ##     object@msFeatureData <- new("MsFeatureData")
                   pks <- do.call(rbind, res$peaks)
                   if (length(pks) > 0)
                       chromPeaks(object) <- cbind(pks, is_filled = 0)

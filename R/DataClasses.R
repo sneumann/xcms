@@ -2242,6 +2242,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     and containing the results from a chromatographic peak detection (element
 #'     \code{"chromPeaks"}), peak grouping (element \code{"featureDefinitions"})
 #'     and retention time correction (element \code{"adjustedRtime"}) steps.
+#'     This object should not be manipulated directly.
 #'
 #' @param object For \code{adjustedRtime}, \code{featureDefinitions},
 #'     \code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and

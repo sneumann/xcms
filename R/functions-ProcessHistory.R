@@ -3,8 +3,8 @@
 #' @include DataClasses.R
 
 #' @description \code{processHistoryTypes} returns the available \emph{types} of
-#' process histories. These can be passed with argument \code{type} to the
-#' \code{processHistory} method to extract specific process step(s).
+#'     process histories. These can be passed with argument \code{type} to the
+#'     \code{processHistory} method to extract specific process step(s).
 #'
 #' @rdname XCMSnExp-class
 processHistoryTypes <- function() {
@@ -52,11 +52,12 @@ updateFileIndex <- function(x, old = integer(), new = integer()) {
 
 ############################################################
 ## XProcessHistory
-XProcessHistory <- function(param = NULL, ...) {
+XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
     obj <- ProcessHistory(...)
     obj <- as(obj, "XProcessHistory")
     obj@param <- param
-    classVersion(obj)["XProcessHistory"] <- "0.0.1"
+    obj@msLevel <- as.integer(msLevel)
+    classVersion(obj)["XProcessHistory"] <- "0.0.2"
     OK <- validObject(obj)
     if (is.character(OK))
         stop(OK)

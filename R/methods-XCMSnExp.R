@@ -10,6 +10,8 @@ setMethod("initialize", "XCMSnExp", function(.Object, ...) {
     return(.Object)
 })
 
+#' @aliases show,MsFeatureData-method
+#' 
 #' @rdname XCMSnExp-class
 setMethod("show", "XCMSnExp", function(object) {
     callNextMethod()
@@ -53,37 +55,37 @@ setMethod("show", "XCMSnExp", function(object) {
     }
 })
 
-#' @aliases hasAdjustedRtime
+#' @aliases hasAdjustedRtime hasAdjustedRtime,MsFeatureData-method
 #'
 #' @description \code{hasAdjustedRtime}: whether the object provides adjusted
 #'     retention times.
 #'
 #' @rdname XCMSnExp-class
 setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
-    return(hasAdjustedRtime(object@msFeatureData))
+    hasAdjustedRtime(object@msFeatureData)
 })
 
-#' @aliases hasFeatures
+#' @aliases hasFeatures hasFeatures,MsFeatureData-method
 #'
 #' @description \code{hasFeatures}: whether the object contains correspondence
 #'     results (i.e. features).
 #'
 #' @rdname XCMSnExp-class
 setMethod("hasFeatures", "XCMSnExp", function(object) {
-    return(hasFeatures(object@msFeatureData))
+    hasFeatures(object@msFeatureData)
 })
 
-#' @aliases hasChromPeaks
+#' @aliases hasChromPeaks hasChromPeaks,MsFeatureData-method
 #'
 #' @description \code{hasChromPeaks}: whether the object contains peak
 #'     detection results.
 #'
 #' @rdname XCMSnExp-class
 setMethod("hasChromPeaks", "XCMSnExp", function(object) {
-    return(hasChromPeaks(object@msFeatureData))
+    hasChromPeaks(object@msFeatureData)
 })
 
-#' @aliases adjustedRtime
+#' @aliases adjustedRtime adjustedRtime,MsFeatureData-method
 #'
 #' @description \code{adjustedRtime},\code{adjustedRtime<-}:
 #'     extract/set adjusted retention times. \code{adjustedRtime<-} should not
@@ -117,7 +119,7 @@ setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
     }
     return(res)
 })
-#' @aliases adjustedRtime<-
+#' @aliases adjustedRtime<- adjustedRtime<-,MsFeatureData-method
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
@@ -154,7 +156,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
         return(object)
 })
 
-#' @aliases featureDefinitions
+#' @aliases featureDefinitions featureDefinitions,MsFeatureData-method
 #'
 #' @description \code{featureDefinitions}, \code{featureDefinitions<-}: extract
 #'     or set the correspondence results, i.e. the mz-rt features (peak groups).
@@ -203,7 +205,7 @@ setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
     }
     feat_def
 })
-#' @aliases featureDefinitions<-
+#' @aliases featureDefinitions<- featureDefinitions<-,MsFeatureData-method
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
@@ -222,7 +224,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
     }
 })
 
-#' @aliases chromPeaks
+#' @aliases chromPeaks chromPeaks,MsFeatureData-method
 #'
 #' @description \code{chromPeaks}, \code{chromPeaks<-}: extract or set
 #'     the matrix containing the information on identified chromatographic
@@ -325,7 +327,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     } else
         pks
 })
-#' @aliases chromPeaks<-
+#' @aliases chromPeaks<- chromPeaks<-,MsFeatureData-method
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
@@ -547,19 +549,21 @@ setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
         return(object)
 })
 
-#' @aliases dropChromPeaks
+#' @aliases dropChromPeaks dropChromPeaks,MsFeatureData-method
 #'
 #' @description \code{dropChromPeaks}: drops any identified chromatographic
 #'     peaks and returns the object without that information. Note that for
-#'     \code{XCMSnExp} objects the method drops all results from a
-#'     correspondence (peak grouping) or alignment (retention time adjustment)
-#'     too. For \code{XCMSnExp} objects the method drops also any related
-#'     process history steps.
+#'     \code{XCMSnExp} objects the method drops by default also results from a
+#'     correspondence (peak grouping) analysis. Adjusted retention times are
+#'     removed if the alignment has been performed \emph{after} peak detection.
+#'     This can be overruled with \code{keepAdjustedRtime = TRUE}.
 #'
 #' @rdname XCMSnExp-class
 setMethod("dropChromPeaks", "XCMSnExp", function(object,
                                                  keepAdjustedRtime = FALSE) {
     if (hasChromPeaks(object)) {
+        phTypes <- unlist(lapply(processHistory(object), function(z)
+            processType(z)))
         object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.DETECTION)
         ## Make sure we delete all related process history steps
         object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING)
@@ -568,14 +572,18 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
         newFd <- new("MsFeatureData")
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropChromPeaks(newFd)
-        ## Dropping other results from the environment (not the object).
-        if (hasAdjustedRtime(newFd) & !keepAdjustedRtime) {
-            object <- dropProcessHistories(object,
-                                           type = .PROCSTEP.RTIME.CORRECTION)
-            newFd <- dropAdjustedRtime(newFd)
-        }
         if (hasFeatures(newFd))
             newFd <- dropFeatureDefinitions(newFd)
+        ## Drop adjusted retention times if performed AFTER peak detection.
+        if (hasAdjustedRtime(newFd) & !keepAdjustedRtime) {
+            idx_rt_adj <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
+            idx_pk_det <- which(phTypes == .PROCSTEP.PEAK.DETECTION)
+            if (idx_rt_adj > idx_pk_det) {
+                object <- dropProcessHistories(object,
+                                               type = .PROCSTEP.RTIME.CORRECTION)
+                newFd <- dropAdjustedRtime(newFd)
+            }
+        }
         lockEnvironment(newFd, bindings = TRUE)
         object@msFeatureData <- newFd
     }
@@ -583,18 +591,18 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
         return(object)
 })
 
-#' @aliases dropFeatureDefinitions
+#' @aliases dropFeatureDefinitions dropFeatureDefinitions,MsFeatureData-method
 #'
 #' @description \code{dropFeatureDefinitions}: drops the results from a
 #'     correspondence (peak grouping) analysis, i.e. the definition of the mz-rt
 #'     features and returns the object without that information. Note that for
-#'     \code{XCMSnExp} objects the method will also drop retention time
-#'     adjustment results, if these were performed after the last peak grouping
-#'     (i.e. which base on the results from the peak grouping that are going to
-#'     be removed).
-#'     For \code{XCMSnExp} objects also all related process history steps are
-#'     removed. Also eventually filled in peaks (by \code{\link{fillChromPeaks}}
-#'     ) will be removed too.
+#'     \code{XCMSnExp} objects the method will also by default drop retention
+#'     time adjustment results, if these were performed after the last peak
+#'     grouping (i.e. which base on the results from the peak grouping that are
+#'     going to be removed). All related process history steps are
+#'     removed too as well as eventually filled in peaks
+#'     (by \code{\link{fillChromPeaks}}). The parameter \code{keepAdjustedRtime}
+#'     can be used to avoid removal of adjusted retention times.
 #'
 #' @param keepAdjustedRtime For \code{dropFeatureDefinitions,XCMSnExp}:
 #'     \code{logical(1)} defining whether eventually present retention time
@@ -660,17 +668,16 @@ setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
         return(object)
 })
 
-#' @aliases dropAdjustedRtime
+#' @aliases dropAdjustedRtime dropAdjustedRtime,MsFeatureData-method
 #'
 #' @description \code{dropAdjustedRtime}: drops any retention time
 #'     adjustment information and returns the object without adjusted retention
-#'     time. For \code{XCMSnExp} object this also reverts the retention times
+#'     time. For \code{XCMSnExp} objects, this also reverts the retention times
 #'     reported for the chromatographic peaks in the peak matrix to the
 #'     original, raw, ones (after chromatographic peak detection). Note that
 #'     for \code{XCMSnExp} objects the method drops also all peak grouping
 #'     results if these were performed \emph{after} the retention time
-#'     adjustment. For \code{XCMSnExp} objects the method drops also any
-#'     related process history steps.
+#'     adjustment. All related process history steps are removed too.
 #'
 #' @rdname XCMSnExp-class
 setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
@@ -2051,6 +2058,13 @@ setMethod("chromatogram",
           })
 
 #' @rdname XCMSnExp-class
+#'
+#' @description \code{findChromPeaks} performs chromatographic peak detection
+#'     on the provided \code{XCMSnExp} objects. For more details see the method
+#'     for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
+#'     method for \code{XCMSnExp} objects remove previously identified
+#'     chromatographic peaks and aligned features. Previously adjusted retention
+#'     times are kept.
 #' 
 #' @param param A \code{\link{CentWaveParam}}, \code{\link{MatchedFilterParam}},
 #'     \code{\link{MassifquantParam}}, \code{\link{MSWParam}} or
@@ -2060,18 +2074,24 @@ setMethod("chromatogram",
 #' @inheritParams findChromPeaks-centWave
 setMethod("findChromPeaks",
           signature(object = "XCMSnExp", param = "ANY"),
-          function(object, param, BPPARAM = bpparam(), return.type = "XCMSnExp") {
-              ## Remove all previous results.
-              if (hasFeatures(object))
-                  object <- dropFeatureDefinitions(object)
-              if (hasAdjustedRtime(object))
-                  object <- dropAdjustedRtime(object)
-              if (hasChromPeaks(object))
-                  object <- dropChromPeaks(object)
-              suppressMessages(
-                  object <- callNextMethod()
-              )
-              object@.processHistory <- list()
+          function(object, param, BPPARAM = bpparam(),
+                   return.type = "XCMSnExp", msLevel = 1L) {
+              ## Remove previous correspondence results.
+              if (hasFeatures(object)) {
+                  message("Removed present feature definitions.")
+                  object <- dropFeatureDefinitions(
+                      object,
+                      keepAdjustedRtime = hasAdjustedRtime(object))
+              }
+              ## Remove previous chromatographic peaks.
+              if (hasChromPeaks(object)) {
+                  message("Removed previously identified chromatographic peaks.")
+                  object <- dropChromPeaks(
+                      object,
+                      keepAdjustedRtime = hasAdjustedRtime(object))
+              }
+              object <- callNextMethod()
+              ## object@.processHistory <- list()
               return(object)
 })
 

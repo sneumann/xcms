@@ -369,6 +369,14 @@ test_XCMSnExp_droppers <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
     checkEquals(rtime(res), rtime(od_x))
+    res <- dropChromPeaks(xod_xgrg, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    checkEquals(rtime(res), rtime(xod_xgr))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     
     ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history

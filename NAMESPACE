@@ -393,7 +393,7 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
+exportClasses("XCMSnExp", "ProcessHistory",
               "XProcessHistory"
               )
 ## New methods for these classes
