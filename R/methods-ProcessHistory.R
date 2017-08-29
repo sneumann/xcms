@@ -26,12 +26,14 @@ setMethod("show", "XProcessHistory", function(object) {
     if (length(object@param))
         pcLabel <- class(object@param)
     cat(" Parameter class:", pcLabel, "\n")
+    if (!is.na(msLevel(object)))
+        cat(" MS level(s)", paste(msLevel(object), sep = " "), "\n")
 })
 
 #' @aliases processParam
 #'
-#' @description Get or set the parameter class from an \code{XProcessHistory}
-#'     object.
+#' @description \code{processParam}, \code{processParam<-}: get or set the
+#'     parameter class from an \code{XProcessHistory} object.
 #'
 #' @param object A \code{ProcessHistory} or \code{XProcessHistory} object.
 #'
@@ -54,6 +56,16 @@ setReplaceMethod("processParam", "XProcessHistory", function(object, value) {
     if (validObject(object))
         return(object)
 })
+#' @description \code{msLevel}: returns the MS level on which a certain analysis
+#'     has been performed, or \code{NA} if not defined.
+#' 
+#' @rdname ProcessHistory-class
+setMethod("msLevel", "XProcessHistory", function(object) {
+    if (.hasSlot(object, "msLevel"))
+        return(object@msLevel)
+    NA_integer_
+})
+
 
 ## Methods:
 #' @aliases processType

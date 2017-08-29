@@ -332,24 +332,32 @@ setClass("GenericParam",
 #' @slot param (Param): an object of type \code{Param} (e.g.
 #'     \code{\link{CentWaveParam}}) specifying the settings of the processing
 #'     step.
+#'
+#' @slot msLevel: \code{integer} definining the MS level(s) on which the
+#'     analysis was performed.
 #' 
 #' @rdname ProcessHistory-class
 setClass("XProcessHistory",
          slots = c(
-             param = "ParamOrNULL"
+             param = "ParamOrNULL",
+             msLevel = "integer"
          ),
          contains = "ProcessHistory",
          prototype = prototype(
-             param = NULL
+             param = NULL,
+             msLevel = NA_integer_
          ),
          validity = function(object) {
              msg <- character()
              if (length(object@param) > 0)
-                 if(!is(object@param, "Param"))
+                 if (!is(object@param, "Param"))
                      msg <- c(msg,
                               paste0("Only objects from type 'Param' ",
                                      "allowed in slot '@param'! I got ",
                                      class(object@param)))
+             if (!is.na(msLevel(object)))
+                 if (msLevel(object) < 0)
+                     msg <- c(msg, "msLevel has to be a positive integer")
              if (length(msg)) msg
              else TRUE
          })
@@ -2187,6 +2195,8 @@ setClass("FillChromPeaksParam",
 #'     across samples and a \code{list} with the adjusted retention times per
 #'     sample.
 #'
+#' @noRd
+#' 
 #' @rdname XCMSnExp-class
 setClass("MsFeatureData", contains = c("environment", "Versioned"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
