@@ -41,7 +41,6 @@ if(require("RUnit", quietly=TRUE)) {
                            profstep = 0)
     faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
 
-    ## Feature alignment on those:
     faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
                                                                   snthresh = 40))
     faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
@@ -57,6 +56,8 @@ if(require("RUnit", quietly=TRUE)) {
     xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
     xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
 
+    xod_r <- adjustRtime(as(od_x, "XCMSnExp"), param = ObiwarpParam())
+    
     faahko_grouped_filled <- fillPeaks(group(faahko))
     faahko_grouped_retcor_filled <- fillPeaks(group(retcor(group(
         updateObject(faahko)))))

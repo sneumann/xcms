@@ -71,7 +71,9 @@ setMethod("findChromPeaks",
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
               ## Check if the data is centroided
-              centroided <- isCentroided(object[[1]])
+              suppressWarnings(
+                  centroided <- isCentroided(object[[1]])
+              )
               ## issue #181: if there are too few mass peaks the function
               ## returns NA.
               if (is.na(centroided)) {
@@ -84,13 +86,17 @@ setMethod("findChromPeaks",
               if (!centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
-              ## (1) split the object per file.
+              ## (1) split the object per file. Ensure we keep adjusted
+              ##     retention times (issue #213).
+              args <- list(X = 1:length(fileNames(object)), FUN = filterFile,
+                           object = object)
+              if (hasAdjustedRtime(object))
+                  args$keepAdjustedRtime <- TRUE
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(lapply(1:length(fileNames(object)),
-                                     filterFile, object = object),
-                              FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "centWave", param = param,
-                              BPPARAM = BPPARAM)
+              resList <- bplapply(do.call("lapply", args),
+                                  FUN = findChromPeaks_OnDiskMSnExp,
+                                  method = "centWave",
+                                  param = param, BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -104,7 +110,7 @@ setMethod("findChromPeaks",
                                          fileIndex = 1:length(fileNames(object)),
                                          msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
-                  object@.processHistory <- list(xph)
+                  object@.processHistory <- c(processHistory(object), list(xph))
                   ## Support keeping adjusted retention times (issue #210)
                   ## if (hasAdjustedRtime(object) | hasFeatures(object))
                   ##     object@msFeatureData <- new("MsFeatureData")
@@ -235,18 +241,26 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## Restrict to MS x data.
+              ## Restrict to MS X data.
+              if (length(msLevel) > 1)
+                  stop("Currently only peak detection in a single MS level is ",
+                       "supported")
               object <- filterMsLevel(object, msLevel. = msLevel)
               if (length(object) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
-              ## (1) split the object per file.
+              ## (1) split the object per file. Ensure we keep adjusted
+              ##     retention times (issue #213).
+              args <- list(X = 1:length(fileNames(object)), FUN = filterFile,
+                           object = object)
+              if (hasAdjustedRtime(object))
+                  args$keepAdjustedRtime <- TRUE
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(lapply(1:length(fileNames(object)),
-                                     filterFile, object = object),
-                              FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "matchedFilter", param = param,
-                              BPPARAM = BPPARAM)
+              resList <- bplapply(do.call("lapply", args),
+                                  FUN = findChromPeaks_OnDiskMSnExp,
+                                  method = "matchedFilter",
+                                  param = param,
+                                  BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -257,9 +271,10 @@ setMethod("findChromPeaks",
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
                                          type. = .PROCSTEP.PEAK.DETECTION,
-                                         fileIndex = 1:length(fileNames(object)))
+                                         fileIndex = 1:length(fileNames(object)),
+                                         msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
-                  object@.processHistory <- list(xph)
+                  object@.processHistory <- c(processHistory(object), list(xph))
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
                   pks <- do.call(rbind, res$peaks)
@@ -380,18 +395,25 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## Restrict to MS x data.
+              ## Restrict to MS X data.
+              if (length(msLevel) > 1)
+                  stop("Currently only peak detection in a single MS level is ",
+                       "supported")
               object <- filterMsLevel(object, msLevel. = msLevel)
               if (length(object) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
-              ## (1) split the object per file.
+              ## (1) split the object per file. Ensure we keep adjusted
+              ##     retention times (issue #213).
+              args <- list(X = 1:length(fileNames(object)), FUN = filterFile,
+                           object = object)
+              if (hasAdjustedRtime(object))
+                  args$keepAdjustedRtime <- TRUE
               ## (2) use bplapply to do the peaks detection.
-              resList <- bplapply(lapply(1:length(fileNames(object)),
-                                     filterFile, object = object),
-                              FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "massifquant", param = param,
-                              BPPARAM = BPPARAM)
+              resList <- bplapply(do.call("lapply", args),
+                                  FUN = findChromPeaks_OnDiskMSnExp,
+                                  method = "massifquant", param = param,
+                                  BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -402,9 +424,10 @@ setMethod("findChromPeaks",
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
                                          type. = .PROCSTEP.PEAK.DETECTION,
-                                         fileIndex = 1:length(fileNames(object)))
+                                         fileIndex = 1:length(fileNames(object)),
+                                         msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
-                  object@.processHistory <- list(xph)
+                  object@.processHistory <- c(processHistory(object), list(xph))
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
                   pks <- do.call(rbind, res$peaks)
@@ -527,7 +550,10 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## Restrict to MS x data.
+              ## Restrict to MS X data.
+              if (length(msLevel) > 1)
+                  stop("Currently only peak detection in a single MS level is ",
+                       "supported")
               object <- filterMsLevel(object, msLevel. = msLevel)
               if (length(object) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
@@ -538,13 +564,17 @@ setMethod("findChromPeaks",
                   stop("The MSW method can only be applied to single spectrum,",
                        " non-chromatogrphic, files (i.e. with a single ",
                        "retention time).")
-              ## (1) split the object per file.
+              ## (1) split the object per file. Ensure we keep adjusted
+              ##     retention times (issue #213).
+              args <- list(X = 1:length(fileNames(object)), FUN = filterFile,
+                           object = object)
+              if (hasAdjustedRtime(object))
+                  args$keepAdjustedRtime <- TRUE
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(lapply(1:length(fileNames(object)),
-                                     filterFile, object = object),
-                              FUN = findPeaks_MSW_OnDiskMSnExp,
-                              method = "MSW", param = param,
-                              BPPARAM = BPPARAM)
+              resList <- bplapply(do.call("lapply", args),
+                                  FUN = findPeaks_MSW_OnDiskMSnExp,
+                                  method = "MSW", param = param,
+                                  BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -555,9 +585,10 @@ setMethod("findChromPeaks",
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
                                          type. = .PROCSTEP.PEAK.DETECTION,
-                                         fileIndex = 1:length(fileNames(object)))
+                                         fileIndex = 1:length(fileNames(object)),
+                                         msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
-                  object@.processHistory <- list(xph)
+                  object@.processHistory <- c(processHistory(object), list(xph))
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
                   pks <- do.call(rbind, res$peaks)
@@ -671,13 +702,18 @@ setMethod("findChromPeaks",
               return.type <- match.arg(return.type, c("XCMSnExp", "list",
                                                       "xcmsSet"))
               startDate <- date()
-              ## Restrict to MS x data.
+              ## Restrict to MS X data.
+              if (length(msLevel) > 1)
+                  stop("Currently only peak detection in a single MS level is ",
+                       "supported")
               object <- filterMsLevel(object, msLevel. = msLevel)
               if (length(object) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
               ## Check if the data is centroided
-              centroided <- isCentroided(object[[1]])
+              suppressWarnings(
+                  centroided <- isCentroided(object[[1]])
+              )
               ## issue #181: if there are too few mass peaks the function
               ## returns NA.
               if (is.na(centroided)) {
@@ -690,13 +726,17 @@ setMethod("findChromPeaks",
               if (!centroided)
                   warning("Your data appears to be not centroided! CentWave",
                           " works best on data in centroid mode.")
-              ## (1) split the object per file.
+              ## (1) split the object per file. Ensure we keep adjusted
+              ##     retention times (issue #213).
+              args <- list(X = 1:length(fileNames(object)), FUN = filterFile,
+                           object = object)
+              if (hasAdjustedRtime(object))
+                  args$keepAdjustedRtime <- TRUE
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(lapply(1:length(fileNames(object)),
-                                     filterFile, object = object),
-                              FUN = findChromPeaks_OnDiskMSnExp,
-                              method = "centWaveWithPredIsoROIs", param = param,
-                              BPPARAM = BPPARAM)
+              resList <- bplapply(do.call("lapply", args),
+                                  FUN = findChromPeaks_OnDiskMSnExp,
+                                  method = "centWaveWithPredIsoROIs",
+                                  param = param, BPPARAM = BPPARAM)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
@@ -707,9 +747,10 @@ setMethod("findChromPeaks",
                   ## since we're calling the method once on all.
                   xph <- XProcessHistory(param = param, date. = startDate,
                                          type. = .PROCSTEP.PEAK.DETECTION,
-                                         fileIndex = 1:length(fileNames(object)))
+                                         fileIndex = 1:length(fileNames(object)),
+                                         msLevel = msLevel)
                   object <- as(object, "XCMSnExp")
-                  object@.processHistory <- list(xph)
+                  object@.processHistory <- c(processHistory(object), list(xph))
                   if (hasAdjustedRtime(object) | hasFeatures(object))
                       object@msFeatureData <- new("MsFeatureData")
                   pks <- do.call(rbind, res$peaks)
@@ -883,3 +924,8 @@ setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
           function(object, rt, mz) {
               .extractMsData(object, rt = rt, mz = mz)
           })
+
+setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
+          function(object)
+              FALSE
+          )

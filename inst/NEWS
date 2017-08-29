@@ -2,6 +2,11 @@ CHANGES IN VERSION 2.99.7
 -------------------------
 
 USER VISIBLE CHANGES:
+- Chromatographic peak detection uses adjusted retention times on an aligned
+  XCMSnExp object (issue #213, #208).
+- New parameter msLevel for processHistory,XCMSnExp.
+- New parameter keepAdjustedRtime for filterMsLevel,XCMSnExp, dropChromPeaks,
+  XCMSnExp and dropFeatureDefinitions,XCMSnExp.
 - Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
 
 BUG FIXES:

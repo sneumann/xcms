@@ -2218,11 +2218,14 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     (a \code{DataFrame}) and \code{"adjustedRtime"} (a \code{list} of
 #'     numeric vectors). Note that these should not be accessed directly but
 #'     rather \emph{via} their accessor methods.
+#' 
 #'     Along with the results, the object contains the processing history that
-#'     allow to track each processing step along with the used settings. The
-#'     object also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}}
-#'     object hence allowing easy access to the full data on which the peak
-#'     detection was performed.
+#'     allows to track each processing step along with the used settings. This
+#'     can be extracted with the \code{\link{processHistory}} method.
+#'
+#'     The \code{XCMSnExp} object directly extends the
+#'     \code{\link[MSnbase]{OnDiskMSnExp}} object and provides thus an easy
+#'     access to the full raw data at any stage of an analysis.
 #'
 #'     Objects from this class should not be created directly, they are
 #'     returned as result from the \code{\link{findChromPeaks}} method.

@@ -24,13 +24,13 @@
 
 \item{msLevel.}{For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
 defining the MS level(s) to which operations should be applied or to
-which the object should be subsetted.}
+which the object should be subsetted. See \code{\link[MSnbase]{filterMz}}
+for more details}
 
 \item{keepAdjustedRtime}{For \code{filterFile}, \code{filterMsLevel}:
-\code{logical(1)} defining
-whether the adjusted retention times should be kept, even if features are
-being removed (and the retention time correction being potentially
-performed on these features).}
+\code{logical(1)} defining whether the adjusted retention times should be
+kept, even if features are being removed (and the retention time
+correction being potentially performed on these features).}
 
 \item{file}{For \code{filterFile}: \code{integer} defining the file index
 within the object to subset the object by file or \code{character}
@@ -72,10 +72,9 @@ The methods listed on this page allow to filter and subset
     \code{filterFile}: allows to reduce the
     \code{\link{XCMSnExp}} to data from only certain files. Identified
     chromatographic peaks for these files are retained while all eventually
-    present features (peak grouping information) are dropped. By default also
-    adjusted retention times are removed. This can be overwritten by setting
-    \code{keepAdjustedRtime = TRUE}, but users should use this option with
-    caution.
+    present features (peak grouping information) are dropped. By default 
+    also adjusted retention times are removed (if present). This can be
+    overwritten by setting \code{keepAdjustedRtime = TRUE}.
 
 \code{filterMz}: filters the data set based on the
     provided mz value range. All chromatographic peaks and features (grouped

@@ -46,7 +46,7 @@ which spectra the data set should be reduced.}
 \item{binSize}{\code{numeric(1)} defining the size of a bin (in Dalton).}
 
 \item{msLevel.}{For \code{bin}, \code{clean}, \code{filterMsLevel},
-\code{removePeaks}:  \code{numeric(1)} defining the MS level(s)
+\code{removePeaks}: \code{numeric(1)} defining the MS level(s)
 to which operations should be applied or to which the object should be
 subsetted.}
 
@@ -99,7 +99,11 @@ The methods listed on this page are \code{\link{XCMSnExp}}
     its data integrity.
 
     The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
-    spectra. For more details and examples see the documentation for
+    spectra. Be aware that the \code{[} method remove all preprocessing
+    results! For subsetting operations that keep preprocessing results please
+    use \code{\link{filterRt}}, \code{\link{filterMz}},
+    \code{\link{filterMsLevel}} and \code{\link{filterFile}}.
+    For more details and examples see the documentation for
     \code{\link[MSnbase]{OnDiskMSnExp}}.
 
 \code{bin}: allows to \emph{bin} spectra. See

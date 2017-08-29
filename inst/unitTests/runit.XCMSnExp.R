@@ -267,6 +267,52 @@ test_XCMSnExp_findChromPeaks <- function() {
     tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
                                                        snthresh = 40))
     checkEquals(chromPeaks(tmp), chromPeaks(xod_x))
+    ## Check that it works also on adjusted retention times:
+    tmp <- findChromPeaks(xod_r, param = CentWaveParam(noise = 10000,
+                                                       snthresh = 40))
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(
+        length(processHistory(tmp, type = xcms:::.PROCSTEP.RTIME.CORRECTION)),1)
+    checkTrue(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
+              ncol(chromPeaks(tmp)))
+    tmp_sub <- filterFile(xod_r, file = 1, keepAdjustedRtime = TRUE)
+    checkEquals(unname(rtime(tmp_sub, adjusted = TRUE)),
+                rtime(xod_r, bySample = TRUE, adjusted = TRUE)[[1]])
+    spctr <- spectra(tmp_sub)
+    mz_values <- lapply(spctr, mz)
+    int_values <- unlist(lapply(spctr, intensity))
+    res_2 <- do_findChromPeaks_centWave(mz = unlist(mz_values),
+                                        int = int_values,
+                                        scantime = rtime(tmp_sub,
+                                                         adjusted = TRUE),
+                                        valsPerSpect = lengths(mz_values),
+                                        noise = 10000, snthresh = 40)
+    pks <- chromPeaks(tmp)
+    pks <- pks[pks[, "sample"] == 1, colnames(res_2)]
+    checkEquals(res_2, pks)
+    ## Second try:
+    tmp <- findChromPeaks(xod_xgrg, param = CentWaveParam(noise = 10000,
+                                                          snthresh = 40))
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(
+        length(processHistory(tmp, type = xcms:::.PROCSTEP.RTIME.CORRECTION)),1)
+    checkTrue(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
+              ncol(chromPeaks(tmp)))
+    tmp_sub <- filterFile(xod_xgrg, file = 3, keepAdjustedRtime = TRUE)
+    checkEquals(unname(rtime(tmp_sub, adjusted = TRUE)),
+                unname(rtime(xod_xgrg, bySample = TRUE, adjusted = TRUE)[[3]]))
+    spctr <- spectra(tmp_sub)
+    mz_values <- lapply(spctr, mz)
+    int_values <- unlist(lapply(spctr, intensity))
+    res_2 <- do_findChromPeaks_centWave(mz = unlist(mz_values),
+                                        int = int_values,
+                                        scantime = rtime(tmp_sub,
+                                                         adjusted = TRUE),
+                                        valsPerSpect = lengths(mz_values),
+                                        noise = 10000, snthresh = 40)
+    pks <- chromPeaks(tmp)
+    pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
+    checkEquals(res_2, pks)
 }
 
 
@@ -289,7 +335,6 @@ test_XCMSnExp_processHistory <- function() {
 }
 
 test_XCMSnExp_droppers <- function() {
-    ## LLLLLL
     ## How are the drop functions expected to work?
     .checkCreationOfEmptyObject()
     type_feat_det <- xcms:::.PROCSTEP.PEAK.DETECTION
@@ -647,9 +692,10 @@ test_XCMSnExp_filterFile <- function() {
     checkEquals(adjustedRtime(res), adjustedRtime(xod_xgr, bySample = TRUE)[[2]])
     checkTrue(hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkTrue(length(processHistory(res)) == 2)
+    checkTrue(length(processHistory(res)) == 3)
     checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
-    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
+    checkEquals(processType(processHistory(res)[[2]]), "Peak grouping")
+    checkEquals(processType(processHistory(res)[[3]]), "Retention time correction")
     ## Do filterFile on xod_xgrg
     res <- filterFile(xod_xgrg, file = c(1, 3))
     checkTrue(hasChromPeaks(res))
@@ -678,9 +724,10 @@ test_XCMSnExp_filterFile <- function() {
                 adjustedRtime(xod_xgr, bySample = TRUE)[c(1, 3)])
     checkTrue(hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkTrue(length(processHistory(res)) == 2)
+    checkTrue(length(processHistory(res)) == 3)
     checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
-    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
+    checkEquals(processType(processHistory(res)[[2]]), "Peak grouping")
+    checkEquals(processType(processHistory(res)[[3]]), "Retention time correction")
 }
 
 test_XCMSnExp_filterMz <- function() {
@@ -1274,6 +1321,21 @@ test_extractMsData <- function() {
     ## res <- extractMsData(od_x, mz = c(0, 3))
     ## checkEquals(length(res), 3)
     ## checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
+}
+
+test_processHistory <- function() {
+    type_peak_det <- xcms:::.PROCSTEP.PEAK.DETECTION
+    type_align <- xcms:::.PROCSTEP.RTIME.CORRECTION
+    type_corr <- xcms:::.PROCSTEP.PEAK.GROUPING
+    checkTrue(length(processHistory(xod_x, type = type_corr)) == 0)
+    ph <- processHistory(xod_x, type = type_peak_det)
+    checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
+
+    ph <- processHistory(xod_xgrg)
+    checkTrue(length(ph) == 4)
+    ph <- processHistory(xod_xgrg, msLevel = 1L)
+    checkTrue(length(ph) == 1)
+    checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
 }
 
 ############################################################

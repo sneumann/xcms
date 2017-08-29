@@ -12,6 +12,7 @@
 \alias{hasAdjustedRtime,XCMSnExp-method}
 \alias{hasAdjustedRtime}
 \alias{hasAdjustedRtime,MsFeatureData-method}
+\alias{hasAdjustedRtime,OnDiskMSnExp-method}
 \alias{hasFeatures,XCMSnExp-method}
 \alias{hasFeatures}
 \alias{hasFeatures,MsFeatureData-method}
@@ -54,7 +55,7 @@
 \alias{XCMSnExp-class}
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
-\alias{findChromPeaks,XCMSnExp,ANY-method}
+\alias{findChromPeaks,XCMSnExp,Param-method}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \title{Data container storing xcms preprocessing results}
@@ -97,7 +98,7 @@ processHistoryTypes()
 \S4method{spectra}{XCMSnExp}(object, bySample = FALSE,
   adjusted = hasAdjustedRtime(object), BPPARAM = bpparam())
 
-\S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
+\S4method{processHistory}{XCMSnExp}(object, fileIndex, type, msLevel)
 
 \S4method{dropChromPeaks}{XCMSnExp}(object, keepAdjustedRtime = FALSE)
 
@@ -109,7 +110,7 @@ processHistoryTypes()
 \S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
   baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
 
-\S4method{findChromPeaks}{XCMSnExp,ANY}(object, param, BPPARAM = bpparam(),
+\S4method{findChromPeaks}{XCMSnExp,Param}(object, param, BPPARAM = bpparam(),
   return.type = "XCMSnExp", msLevel = 1L)
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
@@ -193,6 +194,9 @@ retention times reported in the files) should be returned.}
 \item{BPPARAM}{Parameter class for parallel processing. See
 \code{\link[BiocParallel]{bpparam}}.}
 
+\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
+detection should be performed. Defaults to \code{msLevel = 1}.}
+
 \item{keepAdjustedRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
 \code{logical(1)} defining whether eventually present retention time
 adjustment should not be dropped. By default dropping feature definitions
@@ -213,9 +217,6 @@ chromatographic peak detection algorithm.}
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
-
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
@@ -294,11 +295,14 @@ The \code{XCMSnExp} object is designed to contain all results
     (a \code{DataFrame}) and \code{"adjustedRtime"} (a \code{list} of
     numeric vectors). Note that these should not be accessed directly but
     rather \emph{via} their accessor methods.
+
     Along with the results, the object contains the processing history that
-    allow to track each processing step along with the used settings. The
-    object also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}}
-    object hence allowing easy access to the full data on which the peak
-    detection was performed.
+    allows to track each processing step along with the used settings. This
+    can be extracted with the \code{\link{processHistory}} method.
+
+    The \code{XCMSnExp} object directly extends the
+    \code{\link[MSnbase]{OnDiskMSnExp}} object and provides thus an easy
+    access to the full raw data at any stage of an analysis.
 
     Objects from this class should not be created directly, they are
     returned as result from the \code{\link{findChromPeaks}} method.
@@ -330,8 +334,8 @@ The \code{XCMSnExp} object is designed to contain all results
     extract/set adjusted retention times. \code{adjustedRtime<-} should not
     be called manually, it is called internally by the
     \code{\link{adjustRtime}} methods. For \code{XCMSnExp} objects,
-    \code{adjustedRtime<-} does also apply the retention time adjustment to
-    the chromatographic peaks in the object. The \code{bySample} parameter
+    \code{adjustedRtime<-} does also apply retention time adjustments to
+    eventually present chromatographic peaks. The \code{bySample} parameter
     allows to specify whether the adjusted retention time should be grouped
     by sample (file).
 
@@ -390,9 +394,9 @@ The \code{XCMSnExp} object is designed to contain all results
     \code{\link{ProcessHistory}} objects (or objects inheriting from this
     base class) representing the individual processing steps that have been
     performed, eventually along with their settings (\code{Param} parameter
-    class). Optional arguments \code{fileIndex} and \code{type} allow to
-    restrict to process steps of a certain type or performed on a certain
-    file.
+    class). Optional arguments \code{fileIndex}, \code{type} and
+    \code{msLevel} allow to restrict to process steps of a certain type or
+    performed on a certain file or MS level.
 
 \code{dropChromPeaks}: drops any identified chromatographic
     peaks and returns the object without that information. Note that for
@@ -424,9 +428,11 @@ The \code{XCMSnExp} object is designed to contain all results
 \code{findChromPeaks} performs chromatographic peak detection
     on the provided \code{XCMSnExp} objects. For more details see the method
     for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-    method for \code{XCMSnExp} objects remove previously identified
-    chromatographic peaks and aligned features. Previously adjusted retention
-    times are kept.
+    method for \code{XCMSnExp} objects removes previously identified
+    chromatographic peaks and aligned features. Previous alignment (retention
+    time adjustment) results are kept, i.e. chromatographic peak detection
+    is performed using adjusted retention times if the data was first
+    aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
 
 \code{dropFilledChromPeaks}: drops any filled-in chromatographic
     peaks (filled in by the \code{\link{fillChromPeaks}} method) and all
