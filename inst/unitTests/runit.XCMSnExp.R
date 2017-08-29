@@ -289,6 +289,7 @@ test_XCMSnExp_processHistory <- function() {
 }
 
 test_XCMSnExp_droppers <- function() {
+    ## LLLLLL
     ## How are the drop functions expected to work?
     .checkCreationOfEmptyObject()
     type_feat_det <- xcms:::.PROCSTEP.PEAK.DETECTION
@@ -351,6 +352,14 @@ test_XCMSnExp_droppers <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
     checkEquals(rtime(res), rtime(od_x))
+    res <- dropChromPeaks(xod_xgr, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    checkEquals(rtime(res), rtime(xod_xgr))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     ##
     res <- dropChromPeaks(xod_xgrg)
     checkTrue(!hasChromPeaks(res))
@@ -483,11 +492,19 @@ test_XCMSnExp_inherited_methods <- function() {
     suppressWarnings(
         tmp_2 <- filterMsLevel(xod_x)
     )
-    checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasChromPeaks(tmp_2))
-    tmp_1@processingData <- new("MSnProcess")
-    tmp_2@processingData <- new("MSnProcess")
-    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    checkEquals(tmp_2, xod_x)
+    suppressWarnings(
+        checkEquals(length(filterMsLevel(xod_x, msLevel = 2)), 0)
+    )
+    ## If we've got adjusted retention times, keep them.
+    suppressWarnings(tmp_1 <- filterMsLevel(xod_xgr, msLevel = 1))
+    checkTrue(hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp_1), rtime(xod_xgr)) # adjusted rt present
+    suppressWarnings(
+        tmp_1 <- filterMsLevel(xod_xgrg, msLevel = 1, keepAdjustedRtime = FALSE)
+    )
+    checkTrue(!hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp_1), rtime(xod_xgr, adjusted = FALSE))
     ## normalize
     tmp_1 <- normalize(od_fa)
     suppressWarnings(

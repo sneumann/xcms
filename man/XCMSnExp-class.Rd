@@ -127,9 +127,9 @@ processHistoryTypes()
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type)
 
-\S4method{dropChromPeaks}{XCMSnExp}(object)
+\S4method{dropChromPeaks}{XCMSnExp}(object, keepAdjustedRtime = FALSE)
 
-\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjRtime = FALSE,
+\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjustedRtime = FALSE,
   dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
@@ -221,7 +221,7 @@ retention times reported in the files) should be returned.}
 \item{BPPARAM}{Parameter class for parallel processing. See
 \code{\link[BiocParallel]{bpparam}}.}
 
-\item{keepAdjRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
+\item{keepAdjustedRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
 \code{logical(1)} defining whether eventually present retention time
 adjustment should not be dropped. By default dropping feature definitions
 drops retention time adjustment results too.}

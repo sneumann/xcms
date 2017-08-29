@@ -5,7 +5,6 @@
 \alias{[,XCMSnExp,logicalOrNumeric,missing,missing-method}
 \alias{bin,XCMSnExp-method}
 \alias{clean,XCMSnExp-method}
-\alias{filterMsLevel,XCMSnExp-method}
 \alias{filterAcquisitionNum,XCMSnExp-method}
 \alias{normalize,XCMSnExp-method}
 \alias{pickPeaks,XCMSnExp-method}
@@ -18,8 +17,6 @@
 \S4method{bin}{XCMSnExp}(object, binSize = 1L, msLevel.)
 
 \S4method{clean}{XCMSnExp}(object, all = FALSE, verbose = FALSE, msLevel.)
-
-\S4method{filterMsLevel}{XCMSnExp}(object, msLevel.)
 
 \S4method{filterAcquisitionNum}{XCMSnExp}(object, n, file)
 
@@ -63,7 +60,7 @@ displayed.}
 acquisition numbers of the spectra to which the data set should be
 sub-setted.}
 
-\item{file}{For \code{filterAcquisitionNum}:
+\item{file}{For \code{filterAcquisitionNum}: 
 \code{integer} defining the file index within the object to subset the
 object by file.}
 
@@ -110,11 +107,6 @@ The methods listed on this page are \code{\link{XCMSnExp}}
 
 \code{clean}: removes unused \code{0} intensity data
     points. See \code{\link[MSnbase]{clean}} documentation for details and
-    examples.
-
-\code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
-    object to spectra of the specified MS level(s). See
-    \code{\link[MSnbase]{filterMsLevel}} documentation for details and
     examples.
 
 \code{filterAcquisitionNum}: filters the
