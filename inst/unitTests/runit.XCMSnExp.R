@@ -1262,10 +1262,27 @@ test_adjustRtimePeakGroups <- function() {
     ## No NAs allowed across samples:
     isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
     checkTrue(all(isNa == 0))
-    pkGrp <- xcms:::adjustRtimePeakGroups(xod_xg,
-                                          param = PeakGroupsParam(minFraction = 0.5))
+    pkGrp <- xcms:::adjustRtimePeakGroups(
+                        xod_xg, param = PeakGroupsParam(minFraction = 0.5))
     isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
     checkTrue(max(isNa) == 1)
+
+    ## Test adjustRtime adjusting also MS level > 1.
+    ## Artificially changing the MS level of some spectra.
+    xod_mod <- xod_xg
+    ## Select the spectra for MS level 2:
+    idx_ms2 <- c(300:500, 300:500 + 1277, 300:500 + 2554)
+    xod_mod@featureData$msLevel[idx_ms2] <- 2
+    xod_mod_adj <- adjustRtime(xod_mod,
+                               param = PeakGroupsParam(span = 0.4))
+    ## rtime of the MS level 2 spectra are expected to be adjusted too
+    checkEquals(rtime(xod_xgr), rtime(xod_mod_adj))
+    checkTrue(all(rtime(xod_mod)[idx_ms2] != rtime(xod_mod_adj)[idx_ms2]))
+}
+
+test_MS1_MS2_data <- function() {
+    ## That's to test stuff for issues #208 and related.
+    ## Set every other spectra in the original files to MS2.
 }
 
 test_extractMsData <- function() {
@@ -1334,7 +1351,7 @@ test_processHistory <- function() {
     ph <- processHistory(xod_xgrg)
     checkTrue(length(ph) == 4)
     ph <- processHistory(xod_xgrg, msLevel = 1L)
-    checkTrue(length(ph) == 1)
+    checkTrue(length(ph) == 2)
     checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
 }
 

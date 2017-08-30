@@ -1657,12 +1657,18 @@ setMethod("groupChromPeaks",
 #'
 #' @description \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
 #'     performs retention time correction based on the alignment of peak groups
-#'     (features) found in all/most samples.
+#'     (features) found in all/most samples. The correction function identified
+#'     on these peak groups is applied to the retention time of all spectra in
+#'     the object, i.e. retention times of all spectra, also MS level > 1 are
+#'     adjusted.
 #'
-#' @note This method requires that a correspondence has been performed on the
-#'     data (see \code{\link{groupChromPeaks}}). Calling \code{adjustRtime} on
-#'     an \code{XCMSnExp} object will cause all peak grouping (correspondence)
-#'     results and any previous retention time adjustments to be dropped.
+#' @note This method requires that a correspondence analysis has been performed
+#'     on the data, i.e. that grouped chromatographic peaks/features are present
+#'     (see \code{\link{groupChromPeaks}} for details).
+#'
+#'     Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause all
+#'     peak grouping (correspondence) results and any previous retention time
+#'     adjustments to be dropped.
 #'     In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
 #'     re-adjusts adjusted retention times to ensure them being in the same
 #'     order than the raw (original) retention times.
@@ -1692,8 +1698,10 @@ setMethod("groupChromPeaks",
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "PeakGroupsParam"),
           function(object, param) {
-              if (hasAdjustedRtime(object))
+              if (hasAdjustedRtime(object)) {
+                  message("Removing previous alignment results")
                   object <- dropAdjustedRtime(object)
+              }
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
@@ -1733,10 +1741,13 @@ setMethod("adjustRtime",
               if (length(ph)) {
                   object <- addProcessHistory(object, ph[[length(ph)]])
               }
-              ## Add the process history step.
+              ## Add the process history step, get the msLevel from the peak
+              ## detection step.
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.RTIME.CORRECTION,
-                                     fileIndex = 1:length(fileNames(object)))
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel(ph[[length(ph)]]))
               object <- addProcessHistory(object, xph)
               if (validObject(object))
                   object
