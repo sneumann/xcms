@@ -984,10 +984,6 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                       col = col[pks[, "sample"]], xlab = xlab,
                                       yaxt = "n", ylab = ylab,
                                       main = main, ylim = yl), dots))
-        ## plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
-        ##      col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
-        ##      main = main, ylim = yl,
-        ##      ...)
         axis(side = 2, at = ypos, labels = 1:nsamples)
         points(x = dens$x, y = dens$y, type = "l")
         ## Estimate what would be combined to a feature
@@ -1091,6 +1087,7 @@ highlightChromPeaks <- function(x, rt, mz,
                                 lwd = 1, col = NA, type = c("rect", "point"),
                                 ...) {
     type <- match.arg(type)
+    n_samples <- length(fileNames(x))
     if (missing(rt))
         rt <- c(-Inf, Inf)
     if (missing(mz))
@@ -1100,10 +1097,10 @@ highlightChromPeaks <- function(x, rt, mz,
     if (!hasChromPeaks(x))
         stop("'x' does not contain any detected peaks")
     pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0)
-    if (length(col) != length(fileNames(x)))
-        col <- rep(col[1], length(fileNames(x)))
-    if (length(border) != length(fileNames(x)))
-        border <- rep(border[1], length(fileNames(x)))
+    if (length(col) != n_samples)
+        col <- rep(col[1], n_samples)
+    if (length(border) != n_samples)
+        border <- rep(border[1], n_samples)
     if (length(pks)) {
         if (type == "rect")
             rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
@@ -1111,9 +1108,26 @@ highlightChromPeaks <- function(x, rt, mz,
                  border = border[pks[, "sample"]], lwd = lwd,
                  col = col[pks[, "sample"]])
         if (type == "point") {
+            ## Fix assignment of point types for each sample.
+            dots <- list(...)
+            if (any(names(dots) == "bg")) {
+                bg <- dots$bg
+                if (length(bg) != n_samples)
+                    bg <- rep_len(bg[1], n_samples)
+                dots$bg <- bg[pks[, "sample"]]
+            }
+            if (any(names(dots) == "pch")) {
+                pch <- dots$pch
+                if (length(pch) != n_samples)
+                    pch <- rep_len(pch[1], n_samples)
+                dots$pch <- pch[pks[, "sample"]]
+            }
             if (any(is.na(col)))
                 col <- border
-            ## Draw a star at the position defined by the "rt" column
+            ## Draw a point at the position defined by the "rt" column
+            do.call("plot", args = c(
+                                list(x = pks[, "rt"], y = pks[, "maxo"],
+                                     col = col[pks[, "sample"]]), dots))
             points(x = pks[, "rt"], y = pks[, "maxo"],
                    col = col[pks[, "sample"]], ...)
         }

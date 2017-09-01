@@ -1281,7 +1281,7 @@ test_adjustRtimePeakGroups <- function() {
 }
 
 test_MS1_MS2_data <- function() {
-    ## That's to test stuff for issues #208 and related.
+    ## That's to test stuff for issues #208 and related (also issue #214).
     ## Set every other spectra in the original files to MS2.
 }
 
