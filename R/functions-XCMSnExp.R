@@ -1125,11 +1125,8 @@ highlightChromPeaks <- function(x, rt, mz,
             if (any(is.na(col)))
                 col <- border
             ## Draw a point at the position defined by the "rt" column
-            do.call("plot", args = c(
-                                list(x = pks[, "rt"], y = pks[, "maxo"],
-                                     col = col[pks[, "sample"]]), dots))
-            points(x = pks[, "rt"], y = pks[, "maxo"],
-                   col = col[pks[, "sample"]], ...)
+            do.call("points", args = c(list(x = pks[, "rt"], y = pks[, "maxo"],
+                                            col = col[pks[, "sample"]]), dots))
         }
     }
 }
