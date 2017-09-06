@@ -162,6 +162,7 @@ mzTabAddSML <- function(mztab, xset, value) {
     result[,"SMF_ID_REFS"] <- SMF_ID_REFS 
     result[,"retention_time"] <- g[,"rtmed"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"] 
+    result[,"reliability"] <- 4 ## "unknown compound"
     result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
     
     mztab <- mzTabAddValues(mztab, "SMH", "SML", result)
