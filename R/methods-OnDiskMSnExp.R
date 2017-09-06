@@ -909,14 +909,57 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
 #' @rdname adjustRtime-obiwarp
 setMethod("adjustRtime",
           signature(object = "OnDiskMSnExp", param = "ObiwarpParam"),
-          function(object, param) {
-              res <- .obiwarp(object, param = param)
+          function(object, param, msLevel = 1L) {
+              ## Filter for MS level, perform adjustment and if the object
+              ## contains spectra from other MS levels too, adjust all raw
+              ## rts based on the difference between adjusted and raw rts.
+              object_sub <- filterMsLevel(object, msLevel = msLevel)
+              if (length(object_sub) == 0)
+                  stop("No spectra of MS level ", msLevel, " present")
+              res <- xcms:::.obiwarp(object_sub, param = param)
+              ## Adjust the retention time for spectra of all MS levels, if
+              ## if there are some other than msLevel (issue #214).
+              if (length(unique(msLevel(object))) !=
+                  length(unique(msLevel(object_sub)))) {
+                  message("Apply retention time correction performed on MS",
+                          msLevel, " to spectra from all MS levels")
+                  ## I need raw and adjusted rt for the adjusted spectra
+                  ## and the raw rt of all.
+                  rtime_all <- split(rtime(object), fromFile(object))
+                  rtime_sub <- split(rtime(object_sub), fromFile(object_sub))
+                  ## For loop is faster than lapply. No sense to do parallel
+                  for (i in 1:length(rtime_all)) {
+                      n_vals <- length(rtime_sub[[i]])
+                      idx_below <- which(rtime_all[[i]] < rtime_sub[[i]][1])
+                      if (length(idx_below))
+                          vals_below <- rtime_all[[i]][idx_below]
+                      idx_above <- which(rtime_all[[i]] >
+                                         rtime_sub[[i]][n_vals])
+                      if (length(idx_above))
+                          vals_above <- rtime_all[[i]][idx_above]
+                      ## Adjust the retention time. Note: this should be
+                      ## OK even if values are not sorted.
+                      adj_fun <- approxfun(x = rtime_sub[[i]], y = res[[i]])
+                      rtime_all[[i]] <- adj_fun(rtime_all[[i]])
+                      ## Adjust rtime < smallest adjusted rtime.
+                      if (length(idx_below)) {
+                          rtime_all[[i]][idx_below] <- vals_below +
+                              res[[i]][1] - rtime_sub[[i]][1]
+                      }
+                          ## Adjust rtime > largest adjusted rtime
+                      if (length(idx_above)) {
+                          rtime_all[[i]][idx_above] <- vals_above +
+                              res[[i]][n_vals] - rtime_sub[[i]][n_vals]
+                      }
+                  }
+                  res <- rtime_all
+              }
               res <- unlist(res, use.names = FALSE)
               sNames <- unlist(split(featureNames(object), fromFile(object)),
                                use.names = FALSE)
               names(res) <- sNames
               res <- res[featureNames(object)]
-              return(res)
+              res
           })
 
 #' @rdname extractMsData-method

@@ -33,7 +33,7 @@ importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
 importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
-           "runmed", "sd", "stepfun", "weighted.mean", "density")
+           "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")

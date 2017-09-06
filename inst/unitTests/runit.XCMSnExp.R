@@ -276,7 +276,7 @@ test_XCMSnExp_findChromPeaks <- function() {
     checkTrue(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
               ncol(chromPeaks(tmp)))
     tmp_sub <- filterFile(xod_r, file = 1, keepAdjustedRtime = TRUE)
-    checkEquals(unname(rtime(tmp_sub, adjusted = TRUE)),
+    checkEquals(rtime(tmp_sub, adjusted = TRUE),
                 rtime(xod_r, bySample = TRUE, adjusted = TRUE)[[1]])
     spctr <- spectra(tmp_sub)
     mz_values <- lapply(spctr, mz)
@@ -1283,6 +1283,107 @@ test_adjustRtimePeakGroups <- function() {
 test_MS1_MS2_data <- function() {
     ## That's to test stuff for issues #208 and related (also issue #214).
     ## Set every other spectra in the original files to MS2.
+
+    ## OnDiskMSnExp: od_x
+    od_mod <- od_x
+    fDat <- fData(od_mod)
+    idx_1 <- which(fDat$fileIdx == 1)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 1)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 2)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 2)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 3)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 3)))))
+    fDat[idx_1, "msLevel"] <- 2
+    fData(od_mod) <- fDat
+
+    res <- adjustRtime(od_mod, param = ObiwarpParam())
+    res_2 <- adjustRtime(filterMsLevel(od_mod, msLevel = 1),
+                         param = ObiwarpParam())
+    ## Expect:
+    ## - adjusted rtime of any other spectrum is identical to the
+    ##   ones performed on the data sub set.
+    checkEquals(res[msLevel(od_mod) == 1], res_2)
+    ## - difference between raw and adjusted rtime at the end and beginning are
+    ##   constant.
+    res_by_file <- split(res, fromFile(od_mod))
+    raw_by_file <- split(rtime(od_mod), fromFile(od_mod))
+    checkTrue(raw_by_file[[1]][1] != res_by_file[[1]][1])
+    checkTrue(raw_by_file[[2]][1] != res_by_file[[2]][1])
+    checkTrue(raw_by_file[[3]][1] != res_by_file[[3]][1])
+    diffs <- tail(res_by_file[[1]]) - tail(raw_by_file[[1]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))    
+    ## - adjusted rtime of the MS level 2 are in interpolated between rts of
+    ##   MS level 2.
+    ## rtime for 3 should be interpolated between 2 and 4:
+    adj_fun <- approxfun(x = raw_by_file[[1]][c(2, 4)],
+                         y = res_by_file[[1]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[1]][3]), unname(res_by_file[[1]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[2]][c(2, 4)],
+                         y = res_by_file[[2]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[2]][3]), unname(res_by_file[[2]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[3]][c(2, 4)],
+                         y = res_by_file[[3]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[3]][3]), unname(res_by_file[[3]][3]))
+
+    ## XCMSnExp: xod_x, repeat the stuff above
+    xod_mod <- xod_x
+    fDat <- fData(xod_mod)
+    idx_1 <- which(fDat$fileIdx == 1)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 1)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 2)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 2)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 3)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 3)))))
+    fDat[idx_1, "msLevel"] <- 2
+    fData(xod_mod) <- fDat
+
+    res <- adjustRtime(xod_mod, param = ObiwarpParam())
+    suppressWarnings(res_2 <- adjustRtime(filterMsLevel(xod_mod, msLevel = 1),
+                                          param = ObiwarpParam()))
+    ## Expect:
+    ## - adjusted rtime of any other spectrum is identical to the
+    ##   ones performed on the data sub set.
+    checkEquals(rtime(res, adjusted = TRUE)[msLevel(res) == 1],
+                rtime(res_2, adjusted = TRUE))
+    ## - difference between raw and adjusted rtime at the end and beginning are
+    ##   constant.
+    res_by_file <- rtime(res, bySample = TRUE)
+    raw_by_file <- rtime(xod_mod, bySample = TRUE)
+    checkTrue(raw_by_file[[1]][1] != res_by_file[[1]][1])
+    checkTrue(raw_by_file[[2]][1] != res_by_file[[2]][1])
+    checkTrue(raw_by_file[[3]][1] != res_by_file[[3]][1])
+    diffs <- tail(res_by_file[[1]]) - tail(raw_by_file[[1]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))    
+    ## - adjusted rtime of the MS level 2 are in interpolated between rts of
+    ##   MS level 2.
+    ## rtime for 3 should be interpolated between 2 and 4:
+    adj_fun <- approxfun(x = raw_by_file[[1]][c(2, 4)],
+                         y = res_by_file[[1]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[1]][3]), unname(res_by_file[[1]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[2]][c(2, 4)],
+                         y = res_by_file[[2]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[2]][3]), unname(res_by_file[[2]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[3]][c(2, 4)],
+                         y = res_by_file[[3]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[3]][3]), unname(res_by_file[[3]][3]))
 }
 
 test_extractMsData <- function() {

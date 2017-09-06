@@ -8,6 +8,8 @@ USER VISIBLE CHANGES:
 - New parameter keepAdjustedRtime for filterMsLevel,XCMSnExp, dropChromPeaks,
   XCMSnExp and dropFeatureDefinitions,XCMSnExp.
 - Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
+- Obiwarp alignment is now performed on one MS level and adjustment is applied
+  to all MS levels (issue #214).
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.

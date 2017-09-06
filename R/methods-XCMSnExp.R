@@ -1760,7 +1760,12 @@ setMethod("adjustRtime",
 #'     performs retention time correction/alignment based on the total mz-rt
 #'     data using the \emph{obiwarp} method.
 #'
-#' @note Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
+#' @note Alignment using obiwarp is performed on the retention time of spectra
+#'     of on MS level. Retention times for spectra of other MS levels are
+#'     subsequently adjusted based on the adjustment function defined on the
+#'     retention times of the spectra of MS level \code{msLevel}.
+#' 
+#'     Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 #'     all peak grouping (correspondence) results and any previous retention
 #'     time adjustment results to be dropped.
 #'
@@ -1771,6 +1776,9 @@ setMethod("adjustRtime",
 #' @param param A \code{ObiwarpParam} object containing all settings for
 #'     the alignment method.
 #'
+#' @param msLevel \code{integer} defining the MS level on which the retention
+#'     time should be performed.
+#' 
 #' @return For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
 #'     \code{\link{XCMSnExp}} object with the results of the retention time
 #'     adjustment step. These can be accessed with the
@@ -1795,26 +1803,29 @@ setMethod("adjustRtime",
 #' @rdname adjustRtime-obiwarp
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "ObiwarpParam"),
-          function(object, param) {
+          function(object, param, msLevel = 1L) {
               ## Drop adjusted retention times if there are some.
               if (hasAdjustedRtime(object))
                   object <- dropAdjustedRtime(object)
               ## We don't require any detected or aligned peaks.
               startDate <- date()
-              res <- .obiwarp(as(object, "OnDiskMSnExp"), param = param)
+              res <- adjustRtime(as(object, "OnDiskMSnExp"), param = param,
+                                 msLevel = msLevel)
+              ## res <- .obiwarp(as(object, "OnDiskMSnExp"), param = param)
               ## Dropping the feature groups.
               object <- dropFeatureDefinitions(object)
               ## Add the results. adjustedRtime<- should also fix the retention
-              ## times for the peaks! Want to keep also the lates alignment
+              ## times for the peaks! Want to keep also the latest alignment
               ## information
-              adjustedRtime(object) <- res
+              adjustedRtime(object) <- unname(split(res, fromFile(object)))
               ## Add the process history step.
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.RTIME.CORRECTION,
-                                     fileIndex = 1:length(fileNames(object)))
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
               object <- addProcessHistory(object, xph)
               if (validObject(object))
-                  return(object)
+                  object
           })
 
 ## profMat for XCMSnExp
@@ -2143,7 +2154,6 @@ setMethod("findChromPeaks",
           signature(object = "XCMSnExp", param = "Param"),
           function(object, param, BPPARAM = bpparam(),
                    return.type = "XCMSnExp", msLevel = 1L) {
-              cat("CALLING on XCMSnExp\n")
               ## Remove previous correspondence results.
               if (hasFeatures(object)) {
                   message("Removed feature definitions.")
