@@ -2049,6 +2049,10 @@ setMethod("featureValues",
 #' @param msLevel \code{integer} specifying the MS level from which the
 #'     chromatogram should be extracted. Defaults to \code{msLevel = 1L}.
 #' 
+#' @param BPPARAM Parallelisation backend to be used, which will
+#'     depend on the architecture. Default is
+#'     \code{BiocParallel::bparam()}.
+#'
 #' @return \code{chromatogram} returns a \code{\link{Chromatograms}} object with
 #'     the number of columns corresponding to the number of files in
 #'     \code{object} and number of rows the number of specified ranges (i.e.
@@ -2119,7 +2123,7 @@ setMethod("chromatogram",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
                    aggregationFun = "sum", missing = NA_real_,
-                   msLevel = 1L) {
+                   msLevel = 1L, BPPARAM = bpparam()) {
               ## Coerce to OnDiskMSnExp.
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
@@ -2130,7 +2134,8 @@ setMethod("chromatogram",
               }
               chromatogram(object, rt = rt, mz = mz,
                            aggregationFun = aggregationFun,
-                           missing = missing, msLevel = msLevel)
+                           missing = missing, msLevel = msLevel,
+                           BPPARAM = BPPARAM)
           })
 
 #' @rdname XCMSnExp-class

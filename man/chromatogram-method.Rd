@@ -8,7 +8,7 @@
 \usage{
 \S4method{chromatogram}{XCMSnExp}(object, rt, mz,
   adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum",
-  missing = NA_real_, msLevel = 1L)
+  missing = NA_real_, msLevel = 1L, BPPARAM = bpparam())
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
@@ -46,6 +46,10 @@ behaviour of the \code{getEIC} from the \code{old} user interface.}
 
 \item{msLevel}{\code{integer} specifying the MS level from which the
 chromatogram should be extracted. Defaults to \code{msLevel = 1L}.}
+
+\item{BPPARAM}{Parallelisation backend to be used, which will
+depend on the architecture. Default is
+\code{BiocParallel::bparam()}.}
 }
 \value{
 \code{chromatogram} returns a \code{\link{Chromatograms}} object with
