@@ -1,3 +1,8 @@
+test_plotMsData <- function() {
+    msd <- extractMsData(faahko_od, mz = c(334.9, 335.1), rt = c(2700, 2900))
+    plotMsData(msd[[1]])
+}
+
 ## library(xcms)
 ## library(RUnit)
 ## Test the .grow_trues

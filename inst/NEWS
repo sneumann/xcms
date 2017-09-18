@@ -10,11 +10,15 @@ USER VISIBLE CHANGES:
 - Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
 - Obiwarp alignment is now performed on one MS level and adjustment is applied
   to all MS levels (issue #214).
+- Add function plotMsData to plot intensity against retention time and m/z
+  against retention time for a MS slice in one sample.
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
 - Merge with BioC git after transition
 - Fix #191: Excessive memory use in fillPeaks.
+- Fix #220: peaks matrix is missing column "sample" if no peaks were found in
+  the first sample.
 
 
 CHANGES IN VERSION 2.99.6

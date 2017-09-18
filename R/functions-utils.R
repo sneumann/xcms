@@ -330,3 +330,72 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
     seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
     weighted.mean(x[seq_idx], w[seq_idx])
 }
+
+
+
+#' @title Create a plot that combines a XIC and a mz/rt 2D plot for one sample
+#'
+#' @description The `plotMsData` creates a plot that combines an extracted ion
+#'     chromatogram on top (rt against intensity) and a plot of rt against m/z
+#'     values at the bottom.
+#' 
+#' @param x `data.frame` such as returned by the [extractMsData()] function.
+#'     Only a single `data.frame` is supported.
+#'
+#' @param main `character(1)` specifying the title.
+#'
+#' @param cex `numeric(1)` defining the size of points. Passed directly to the
+#'     `plot` function.
+#' 
+#' @param mfrow `numeric(2)` defining the plot layout. This will be passed
+#'     directly to `par(mfrow = mfrow)`. See `par` for more information. Setting
+#'     `mfrow = NULL` avoids calling `par(mfrow = mfrow)` hence allowing to
+#'     pre-define the plot layout.
+#'
+#' @param grid.color a color definition for the grid line (or `NA` to skip
+#'     creating them).
+#'
+#' @seealso [extractMsData()] for the method to extract the data to plot.
+#' @author Johannes Rainer
+#' 
+#' @md
+#'
+#' @examples
+#'
+#' ## Read two files from the faahKO package
+#' library(faahKO)
+#' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
+#'     recursive = TRUE)[1:2]
+#' raw_data <- readMSData(cdfs, mode = "onDisk")
+#' ## Extract the MS data from a slice of data
+#' msd <- extractMsData(raw_data, mz = c(334.9, 335.1), rt = c(2700, 2900))
+#'
+#' ## Plot the data for the first file
+#' plotMsData(msd[[1]])
+#'
+#' ## To plot the data for both files:
+#' layout(mat = matrix(1:4, ncol = 2))
+#' plotMsData(msd[[1]], mfrow = NULL)
+#' plotMsData(msd[[2]], mfrow = NULL)
+plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
+                       grid.color = "lightgrey") {    
+    cols <- level.colors(x$i, at = do.breaks(range(x$i), nint = 256),
+                         col.regions =
+                             colorRampPalette(rev(brewer.pal(9, "YlGnBu"))))
+    if (length(mfrow) == 2)
+        par(mfrow = mfrow)
+    par(mar = c(0, 4, 2, 1))
+    x_split <- split(x, f = x$rt)
+    ints <- lapply(x_split, function(z) sum(z$i))
+    plot(as.numeric(names(ints)), ints, main = main, xlab = "", xaxt = "n",
+         ylab = "", las = 2, pch = 21, bg = cols, col = "grey", cex = cex)
+    mtext(side = 4, line = 0, "intensity", cex = par("cex.lab"))
+    grid(col = grid.color)
+    par(mar = c(3.5, 4, 0, 1))
+    plot(x$rt, x$mz, main = "", pch = 21, bg = cols, col = "grey",
+         xlab = "", ylab = "", yaxt = "n", cex = cex)
+    axis(side = 2, las = 2)
+    grid(col = grid.color)
+    mtext(side = 1, line = 2.5, "retention time", cex = par("cex.lab"))
+    mtext(side = 4, line = 0, "mz", cex = par("cex.lab"))
+}

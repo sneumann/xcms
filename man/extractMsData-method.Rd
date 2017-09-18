@@ -58,6 +58,7 @@ head(res[[1]])
 }
 \seealso{
 \code{\link{XCMSnExp}} for the data object.
+    \code{\link{plotMsData}} to plot the data for a single file.
 }
 \author{
 Johannes Rainer

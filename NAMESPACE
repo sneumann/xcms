@@ -12,7 +12,8 @@ importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
 
 importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
-importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
+importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
+           "level.colors", "do.breaks")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
@@ -214,7 +215,8 @@ export(
     "plotChromPeakDensity",
     "plotChromPeaks",
     "plotChromPeakImage",
-    "isCalibrated"
+    "isCalibrated",
+    "plotMsData"
 )
 
 ## New analysis methods

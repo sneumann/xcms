@@ -2556,6 +2556,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #'     in a file a \code{data.frame} with 0 rows is returned for that file.
 #'
 #' @seealso \code{\link{XCMSnExp}} for the data object.
+#'     \code{\link{plotMsData}} to plot the data for a single file.
 #'
 #' @rdname extractMsData-method
 #'
