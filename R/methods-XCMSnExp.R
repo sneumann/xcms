@@ -2132,10 +2132,10 @@ setMethod("chromatogram",
                   ## Replace the original rtime with adjusted ones...
                   object@featureData$retentionTime <- adj_rt
               }
-              chromatogram(object, rt = rt, mz = mz,
-                           aggregationFun = aggregationFun,
-                           missing = missing, msLevel = msLevel,
-                           BPPARAM = BPPARAM)
+              MSnbase::chromatogram(object, rt = rt, mz = mz,
+                                    aggregationFun = aggregationFun,
+                                    missing = missing, msLevel = msLevel,
+                                    BPPARAM = BPPARAM)
           })
 
 #' @rdname XCMSnExp-class

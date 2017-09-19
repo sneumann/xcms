@@ -19,6 +19,8 @@ BUG FIXES:
 - Fix #191: Excessive memory use in fillPeaks.
 - Fix #220: peaks matrix is missing column "sample" if no peaks were found in
   the first sample.
+- Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
+  single MS level despite peak detection is performed on a single level.
 
 
 CHANGES IN VERSION 2.99.6
