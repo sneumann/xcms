@@ -7,9 +7,9 @@
 \alias{extractMsData}
 \title{Extract a \code{data.frame} containing MS data}
 \usage{
-\S4method{extractMsData}{OnDiskMSnExp}(object, rt, mz)
+\S4method{extractMsData}{OnDiskMSnExp}(object, rt, mz, msLevel = 1L)
 
-\S4method{extractMsData}{XCMSnExp}(object, rt, mz,
+\S4method{extractMsData}{XCMSnExp}(object, rt, mz, msLevel = 1L,
   adjustedRtime = hasAdjustedRtime(object))
 }
 \arguments{
@@ -19,6 +19,10 @@
 data should be extracted.}
 
 \item{mz}{\code{numeric(2)} with the mz range.}
+
+\item{msLevel}{\code{integer} defining the MS level(s) to which the data
+should be sub-setted prior to extraction; defaults to
+\code{msLevel = 1L}.}
 
 \item{adjustedRtime}{(for \code{extractMsData,XCMSnExp}): \code{logical(1)}
 specifying if adjusted or raw retention times should be reported.

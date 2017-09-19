@@ -2121,9 +2121,10 @@ setMethod("featureValues",
 #' plot(chrs[1, , drop = FALSE])
 setMethod("chromatogram",
           signature(object = "XCMSnExp"),
-          function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object),
+          function(object, rt, mz,
                    aggregationFun = "sum", missing = NA_real_,
-                   msLevel = 1L, BPPARAM = bpparam()) {
+                   msLevel = 1L, BPPARAM = bpparam(),
+                   adjustedRtime = hasAdjustedRtime(object)) {
               ## Coerce to OnDiskMSnExp.
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
@@ -2549,6 +2550,10 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #'
 #' @param mz \code{numeric(2)} with the mz range.
 #'
+#' @param msLevel \code{integer} defining the MS level(s) to which the data
+#'     should be sub-setted prior to extraction; defaults to
+#'     \code{msLevel = 1L}.
+#' 
 #' @param adjustedRtime (for \code{extractMsData,XCMSnExp}): \code{logical(1)}
 #'     specifying if adjusted or raw retention times should be reported.
 #'     Defaults to adjusted retention times, if these are present in
@@ -2586,7 +2591,8 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #'
 #' head(res[[1]])
 setMethod("extractMsData", "XCMSnExp",
-          function(object, rt, mz, adjustedRtime = hasAdjustedRtime(object)){
+          function(object, rt, mz, msLevel = 1L,
+                   adjustedRtime = hasAdjustedRtime(object)){
               ## Now, this method takes the adjusted rts, casts the object to
               ## an OnDiskMSnExp, eventually replaces the rtime in the
               ## featureData with the adjusted retention times (depending on
@@ -2595,7 +2601,7 @@ setMethod("extractMsData", "XCMSnExp",
                   fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
               }
               object <- as(object, "OnDiskMSnExp")
-              extractMsData(object, rt = rt, mz = mz)
+              extractMsData(object, rt = rt, mz = mz, msLevel = msLevel)
           })
 
 

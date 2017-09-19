@@ -12,6 +12,7 @@ USER VISIBLE CHANGES:
   to all MS levels (issue #214).
 - Add function plotMsData to plot intensity against retention time and m/z
   against retention time for a MS slice in one sample.
+- Add argument msLevel = 1L to extractMsData method (issue #223).
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.

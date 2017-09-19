@@ -136,13 +136,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #'
 #' @param mz \code{numeric(2)} with the mz range.
 #'
+#' @param msLevel \code{integer} defining the MS level(s) to which the data
+#'     should be restricted prior to data extraction.
+#' 
 #' @param return A \code{list} with length equal to the number of files and
 #'     each element being a \code{data.frame} with the extracted values.
 #'
 #' @noRd
 #' 
 #' @author Johannes Rainer
-.extractMsData <- function(x, rt, mz) {
+.extractMsData <- function(x, rt, mz, msLevel = 1L) {
     if (!missing(rt)) {
         rt <- range(rt, na.rm = TRUE)
         if (length(rt) != 2)
@@ -154,8 +157,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             stop("'mz' has to be a numeric of length 2!")
         fmzr <- mz
     } else fmzr <- c(0, 0)
-    ## Subset the object based on rt and mz range.
-    subs <- filterMz(filterRt(x, rt = rt), mz = mz)
+    ## Subset the object based on MS level rt and mz range.
+    subs <- filterMz(filterRt(filterMsLevel(x, msLevel = msLevel), rt = rt),
+                     mz = mz)
     if (length(subs) == 0) {
         ## Return a list with empty data.frames
         empty_df <- data.frame(rt = numeric(), mz = numeric(), i = integer())

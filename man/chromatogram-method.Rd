@@ -6,9 +6,9 @@
 \alias{chromatogram}
 \title{Extracting chromatograms}
 \usage{
-\S4method{chromatogram}{XCMSnExp}(object, rt, mz,
-  adjustedRtime = hasAdjustedRtime(object), aggregationFun = "sum",
-  missing = NA_real_, msLevel = 1L, BPPARAM = bpparam())
+\S4method{chromatogram}{XCMSnExp}(object, rt, mz, aggregationFun = "sum",
+  missing = NA_real_, msLevel = 1L, BPPARAM = bpparam(),
+  adjustedRtime = hasAdjustedRtime(object))
 }
 \arguments{
 \item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
@@ -27,12 +27,6 @@ chromatograms will be calculated on the full mz range.
 It is also possible to submit a \code{numeric(1)} in which case
 \code{range} is called on it to transform it to a \code{numeric(2)}.}
 
-\item{adjustedRtime}{For \code{chromatogram,XCMSnExp}: whether the
-adjusted (\code{adjustedRtime = TRUE}) or raw retention times
-(\code{adjustedRtime = FALSE}) should be used for filtering and returned
-in the resulting \code{\link[MSnbase]{Chromatogram}} object. Adjusted
-retention times are used by default if available.}
-
 \item{aggregationFun}{\code{character} specifying the function to be used to
 aggregate intensity values across the mz value range for the same
 retention time. Allowed values are \code{"sum"}, \code{"max"},
@@ -50,6 +44,12 @@ chromatogram should be extracted. Defaults to \code{msLevel = 1L}.}
 \item{BPPARAM}{Parallelisation backend to be used, which will
 depend on the architecture. Default is
 \code{BiocParallel::bparam()}.}
+
+\item{adjustedRtime}{For \code{chromatogram,XCMSnExp}: whether the
+adjusted (\code{adjustedRtime = TRUE}) or raw retention times
+(\code{adjustedRtime = FALSE}) should be used for filtering and returned
+in the resulting \code{\link[MSnbase]{Chromatogram}} object. Adjusted
+retention times are used by default if available.}
 }
 \value{
 \code{chromatogram} returns a \code{\link{Chromatograms}} object with

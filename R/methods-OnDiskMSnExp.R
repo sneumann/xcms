@@ -966,8 +966,8 @@ setMethod("adjustRtime",
 
 #' @rdname extractMsData-method
 setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
-          function(object, rt, mz) {
-              .extractMsData(object, rt = rt, mz = mz)
+          function(object, rt, mz, msLevel = 1L) {
+              .extractMsData(object, rt = rt, mz = mz, msLevel = msLevel)
           })
 
 setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
