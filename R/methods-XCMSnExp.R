@@ -987,6 +987,13 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     allow arbitrary ordering of the files or re-ordering of the files within
 #'     the object.
 #'
+#'     Note also that most of the filtering methods, and also the subsetting
+#'     operations \code{[} drop all or selected preprocessing results. To
+#'     consolidate the alignment results, i.e. ensure that adjusted retention
+#'     times are always preserved, use the \code{\link{applyAdjustedRtime}}
+#'     function on the object that contains the alignment results. This replaces
+#'     the raw retention times with the adjusted ones.
+#'
 #' @param object A \code{\link{XCMSnExp}} object.
 #'
 #' @param file For \code{filterFile}: \code{integer} defining the file index

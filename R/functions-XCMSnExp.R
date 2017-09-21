@@ -1318,6 +1318,83 @@ isCalibrated <- function(object) {
         FALSE
 }
 
+#' @title Replace raw with adjusted retention times
+#'
+#' @description Replaces the raw retention times with the adjusted retention
+#'     time or returns the object unchanged if none are present.
+#'
+#' @details Adjusted retention times are stored *in parallel* to the adjusted
+#'     retention times in the `XCMSnExp`. The `applyAdjustedRtime` replaces the
+#'     raw retention times (stored in the *feature data* (`fData` `data.frame`))
+#'     with the adjusted retention times.
+#'
+#' @note Replacing the raw retention times with adjusted retention times
+#'     disables the possibility to restore raw retention times using the
+#'     [dropAdjustedRtime()] method. This function does **not** remove the
+#'     retention time processing step with the settings of the alignment from
+#'     the [processHistory()] of the `object` to ensure that the processing
+#'     history is preserved.
+#'
+#' @param object An [XCMSnExp] object.
+#' 
+#' @md
+#'
+#' @return A `XCMSnExp` with the raw retention times being replaced with the
+#'     adjusted retention time.
+#' 
+#' @author Johannes Rainer
+#'
+#' @seealso [adjustRtime()] for the function to perform the alignment (retention
+#'     time correction).
+#' 
+#'     [adjustedRtime()] for the method to extract adjusted retention times from
+#'     an [XCMSnExp] object.
+#' 
+#'     [dropAdjustedRtime] for the method to delete alignment results and to
+#'     restore the raw retention times.
+#' 
+#' @examples
+#' ## Load test data
+#' files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#'
+#' od <- readMSData(files, mode = "onDisk")
+#'
+#' ## Apply obiwarp retention time adjustment. We have to convert the
+#' ## OnDiskMSnExp first to an XCMSnExp
+#' xod <- as(od, "XCMSnExp")
+#' xod <- adjustRtime(xod, param = ObiwarpParam())
+#'
+#' hasAdjustedRtime(xod)
+#'
+#' ## Replace raw retention times with adjusted retention times.
+#' xod <- applyAdjustedRtime(xod)
+#'
+#' ## No adjusted retention times present
+#' hasAdjustedRtime(xod)
+#'
+#' ## Raw retention times have been replaced with adjusted retention times
+#' plot(split(rtime(od), fromFile(od))[[1]] -
+#'     split(rtime(xod), fromFile(xod))[[1]], type = "l")
+#'
+#' ## And the process history still contains the settings for the alignment
+#' processHistory(xod)
+applyAdjustedRtime <- function(object) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object")
+    if (!hasAdjustedRtime(object))
+        return(object)
+    ## Replace retention times.
+    fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+    ## Copy the data
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    newFd <- dropAdjustedRtime(newFd)
+    object@msFeatureData <- newFd
+    object
+}
+
 ## Find mz ranges with multiple peaks per sample.
 ## Use the density distribution for that? with a bandwidth = 0.001, check
 ## density method for that...

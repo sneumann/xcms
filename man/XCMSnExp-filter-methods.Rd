@@ -102,6 +102,13 @@ The \code{filterFile} method removes also process history steps not
     the \code{fileIndex} attribute accordingly. Also, the method does not
     allow arbitrary ordering of the files or re-ordering of the files within
     the object.
+
+    Note also that most of the filtering methods, and also the subsetting
+    operations \code{[} drop all or selected preprocessing results. To
+    consolidate the alignment results, i.e. ensure that adjusted retention
+    times are always preserved, use the \code{\link{applyAdjustedRtime}}
+    function on the object that contains the alignment results. This replaces
+    the raw retention times with the adjusted ones.
 }
 \examples{
 

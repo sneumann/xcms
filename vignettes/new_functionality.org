@@ -15,7 +15,7 @@ author: "Johannes Rainer"
 graphics: yes
 package: xcms
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{New and modified functionality in xcms}
@@ -43,11 +43,12 @@ in the =xcms= package introduced during the update to version /3/.
   library(xcms)
   library(RColorBrewer)
   ## Use socket based parallel processing on Windows systems
-  if (.Platform$OS.type == "unix") {
-      register(bpstart(MulticoreParam(2)))
-  } else {
-      register(bpstart(SnowParam(2)))
-  }
+  ## if (.Platform$OS.type == "unix") {
+  ##     register(bpstart(MulticoreParam(2)))
+  ## } else {
+  ##     register(bpstart(SnowParam(2)))
+  ## }
+  register(SerialParam())
 #+END_SRC
 
 ** Modernized user interface
@@ -107,156 +108,8 @@ possibility to recall all settings of the performed analyses at any stage. In
 addition, validation of the parameters can be performed within the parameter
 object and hence is no longer required in the analysis function.
 
-The example below illustrates the new user interface. First we load the raw data
-files from the =faahKO= package using the =readMSData= from the =MSnbase= package.
-
-#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
-  ## Reading the raw data using the MSnbase package
-  library(xcms)
-  ## Load 6 of the CDF files from the faahKO
-  cdf_files <- dir(system.file("cdf", package = "faahKO"), recursive = TRUE,
-		   full.names = TRUE)[c(1:3, 7:9)]
-
-  ## Define the sample grouping.
-  s_groups <- rep("KO", length(cdf_files))
-  s_groups[grep(cdf_files, pattern = "WT")] <- "WT"
-  ## Define a data.frame that will be used as phenodata
-  pheno <- data.frame(sample_name = sub(basename(cdf_files), pattern = ".CDF",
-					replacement = "", fixed = TRUE),
-		      sample_group = s_groups, stringsAsFactors = FALSE)
-
-  ## Read the data.
-  raw_data <- readMSData(cdf_files, 
-                         pdata = new("NAnnotatedDataFrame", pheno), 
-                         mode = "onDisk")
-#+END_SRC
-
-The =OnDiskMSnExp= organizes the MS data by spectrum and provides th methods
-=intensity=, =mz= and =rtime= to access the raw data from the files (the measured
-intensity values, the corresponding m/z and retention time values). In addition,
-the =spectra= method could be used to return all data encapsulated in =Spectrum=
-classes. Below we extract the retention time values from the object.
-
-#+BEGIN_SRC R :ravel message = FALSE
-  head(rtime(raw_data))
-
-  class(rtime(raw_data))
-#+END_SRC
-
-All data is returned as one-dimensional vectors (a numeric vector for =rtime= and
-a =list= of numeric vectors for =mz= and =intensity=, each containing the values from
-one spectrum), even if the experiment consists of multiple files/samples. The
-=fromFile= returns a numeric vector that provides the mapping of the values to the
-originating file. Below we use the =fromFile= indices to organize the =mz= values by
-file.
-
-#+BEGIN_SRC R :ravel message = FALSE
-  mzs <- mz(raw_data)
-
-  class(mzs)
-  length(mzs)
-
-  ## Split the list by file
-  mzs_by_file <- split(mzs, f = fromFile(raw_data))
-
-  length(mzs_by_file)
-#+END_SRC
 
 
-We next plot the total ion chromatogram (TIC) for all files within the
-experiment. Note that we are iteratively sub-setting the full data per file
-using the =filterFile= method, which, for =OnDiskMSnExp= objects, is an efficient
-way to subset the data while ensuring that all data, including metadata, stays
-consistent.
-
-#+NAME: faahKO-tic
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = 'center', fig.width = 8, fig.height = 4
-  library(RColorBrewer)
-  sample_colors <- brewer.pal(3, "Set1")[1:2]
-  names(sample_colors) <- c("KO", "WT")
-  ## Subset the full raw data by file and plot the data.
-  tmp <- filterFile(raw_data, file = 1)
-  plot(x = rtime(tmp), y = tic(tmp), xlab = "retention time", ylab = "TIC",
-       col = paste0(sample_colors[tmp$sample_group], 80), type = "l")
-  for (i in 2:length(fileNames(raw_data))) {
-      tmp <- filterFile(raw_data, file = i)
-      points(rtime(tmp), tic(tmp), type = "l",
-	     col = paste0(sample_colors[tmp$sample_group], 80))
-  }
-  legend("topleft", col = sample_colors, legend = names(sample_colors), lty = 1)
-#+END_SRC
-
-Alternatively we can use the =chromatogram= method that extracts
-chromatograms from the object. In the example below we extract the /base peak
-chromatogram/ (BPC) by setting =aggregationFun= to ="max"= and not specifying an =rt=
-or =mz= range hence extracting the full data. In contrast to the =tic= and =bpi=
-methods, this function reads the data from the raw files. It takes thus more
-time to create the plot, but it is based on the actual raw data that is used for
-the later analysis - the =tic= and =bpi= methods access only the information that is
-stored in the raw data files by the MS detector during the data acquisition.
-
-The =chromatogram= method returns a =Chromatograms= object which is an extension to
-the base =matrix= class allowing to arrange multiple =Chromatogram= objects in a
-two-dimensional grid. Columns in the =Chromatograms= object represent samples,
-rows m/z x rt ranges.
-
-#+NAME: faahKO-bpi
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
-  ## Get the base peak chromatograms. This reads data from the files.
-  bpis <- chromatogram(raw_data, aggregationFun = "max")
-  ## Plot all chromatograms.
-  plot(bpis, col = paste0(sample_colors[raw_data$sample_group], 80))
-
-#+END_SRC
-
-While the =plot= method if very convenient (and fast), it would also not be too
-difficult to create the plot manually:
-
-#+NAME: faahKO-bbpi-manual
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
-  plot(3, 3, pch = NA, xlim = range(unlist(lapply(bpis[1, ], rtime))),
-       ylim = range(unlist(lapply(bpis[1, ], intensity))), main = "BPC",
-       xlab = "rtime", ylab = "intensity")
-  for (i in 1:ncol(bpis)) {
-      points(rtime(bpis[1, i]), intensity(bpis[1, i]), type = "l",
-	     col = paste0(sample_colors[raw_data$sample_group[i]], 80))
-  }
-#+END_SRC
-
-Note that we could restrict the analysis to a certain retention time range by
-first sub-setting =raw_data= with the =filterRt= method.
-
-In addition we can plot the distribution of the total ion counts per file. In
-contrast to sub-setting the object we split the numeric vector returned by the
-=tic= by file using the =fromFile= method that provides the mapping of the
-experiment's spectra to the originating files.
-
-#+NAME: faahKO-tic-boxplot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
-  ## Get the total ion current by file
-  tc <- split(tic(raw_data), f = fromFile(raw_data))
-  boxplot(tc, col = paste0(sample_colors[raw_data$sample_group], 80),
-          ylab = "intensity", main = "Total ion current")
-#+END_SRC
-
-The =tic= (and for mzML files) the =bpi= methods are very fast, even for large data
-sets, as these information are stored in the header of the raw files avoiding
-the need to read the raw data from each file. Also, we could subset the whole
-object using the filter functions =filterFile=, =filterRt= or =filterMz= to
-e.g. remove problematic samples or restrict the retention time range in which we
-want to perform the chromatographic peak detection.
-
-Next we perform the chromatographic peak detection using the /centWave/ algorithm
-\cite{Tautenhahn:2008fx}. In the example below we use most of the standard
-parameters, but the settings should be adjusted to each experiment individually
-based on e.g. the expected width of the chromatographic peaks etc.
-
-#+NAME: faahKO-centWave
-#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
-  ## Defining the settings for the centWave peak detection.
-  cwp <- CentWaveParam(snthresh = 20, noise = 1000)
-  xod <- findChromPeaks(raw_data, param = cwp)
-#+END_SRC
 
 The identified peaks can be accessed with the =chromPeaks= parameter which returns
 a =matrix=, each line representing an identified peak. Column ="sample"= specifies
@@ -620,7 +473,6 @@ potential confusions:
 + *Alignment*: =adjustRtime= instead of =retcor= for retention time correction. The
   word /cor/ in /retcor/ might be easily misinterpreted as /correlation/ instead of
   correction.
-
 
 ** New data classes
 

@@ -13,6 +13,9 @@ USER VISIBLE CHANGES:
 - Add function plotMsData to plot intensity against retention time and m/z
   against retention time for a MS slice in one sample.
 - Add argument msLevel = 1L to extractMsData method (issue #223).
+- New applyAdjustedRtime function to consolidate the alignment results, i.e.
+  replace the raw retention times in the XCMSnExp with the adjusted retention
+  times.
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
