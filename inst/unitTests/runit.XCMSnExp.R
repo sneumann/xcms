@@ -125,6 +125,15 @@ test_XCMSnExp_spectra <- function() {
                   unlist(lapply(res, rtime))) < length(rtime(tmp)) / 4)
     res3 <- spectra(tmp2, adjusted = FALSE)
     checkEquals(res, res3)    
+    ## adjusted rt
+    tmp <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    checkTrue(is.character(all.equal(rtime(tmp, adjusted = FALSE),
+                                     adjustedRtime(tmp))))
+    res <- spectra(tmp)
+    checkEquals(rtime(tmp), unlist(lapply(res, rtime)))
+    res <- unlist(spectrapply(tmp, FUN = function(x) {rtime(x)}))
+    checkEquals(res, adjustedRtime(tmp))
 }
 
 test_XCMSnExp_class_accessors <- function() {
@@ -1421,11 +1430,24 @@ test_extractMsData <- function() {
     
     ## XCMSnExp, xod_xgr
     ## with adjusted retention times
-    res <- extractMsData(filterFile(xod_xgr, 1:2), rt = rtr, mz = mzr)
+    tmp <- filterFile(xod_xgr, 1:2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    res <- extractMsData(tmp, rt = rtr, mz = mzr)
+    mzs <- mz(tmp)
+    rts <- rtime(tmp, bySample = TRUE, adjusted = TRUE)
     checkTrue(all(res[[1]][, "rt"] >= rtr[1] & res[[1]][, "rt"] <= rtr[2]))
     checkTrue(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
     checkTrue(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
     checkTrue(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
+    tmp_rts <- rts[[1]]
+    tmp_rts <- tmp_rts[tmp_rts >= rtr[1] & tmp_rts <= rtr[2]]
+    res_rts <- res[[1]][, 1]
+    checkEquals(unique(res_rts), unname(tmp_rts))
+    tmp_rts <- rts[[2]]
+    tmp_rts <- tmp_rts[tmp_rts >= rtr[1] & tmp_rts <= rtr[2]]
+    res_rts <- res[[2]][, 1]
+    checkEquals(unique(res_rts), unname(tmp_rts))
+    
     ## without adjusted retention times
     res_2 <- extractMsData(filterFile(xod_xgr, 1:2), adjustedRtime = FALSE,
                            rt = rtr, mz = mzr)
@@ -1446,6 +1468,28 @@ test_extractMsData <- function() {
     ## res <- extractMsData(od_x, mz = c(0, 3))
     ## checkEquals(length(res), 3)
     ## checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
+}
+
+test_spectrapply_spectra <- function() {
+    ## With adjusted retention time
+    tmp <- filterFile(xod_r, file = 3, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    checkTrue(is.character(all.equal(rtime(tmp, adjusted = FALSE),
+                                     rtime(tmp, adjusted = TRUE))))
+    sps <- spectra(tmp)
+    checkEquals(unlist(lapply(sps, rtime)), rtime(tmp, adjusted = TRUE))
+    checkEquals(unlist(spectrapply(tmp, FUN = function(x) rtime(x))),
+                rtime(tmp, adjusted = TRUE))
+    sps_2 <- spectra(tmp, adjusted = FALSE)
+    checkEquals(unlist(lapply(sps_2, rtime)), rtime(tmp, adjusted = FALSE))
+    ## without adjusted retention time
+    tmp <- filterFile(xod_x, file = 3)
+    checkTrue(!hasAdjustedRtime(tmp))
+    sps <- spectra(tmp)
+    checkEquals(unlist(lapply(sps, rtime)), rtime(tmp))
+    checkEquals(unlist(lapply(sps, mz)), unlist(mz(tmp)))
+    checkEquals(unlist(spectrapply(tmp, FUN = function(x) rtime(x))),
+                rtime(tmp))
 }
 
 test_processHistory <- function() {

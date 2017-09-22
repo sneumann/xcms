@@ -58,6 +58,7 @@
 \alias{findChromPeaks,XCMSnExp,Param-method}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
+\alias{spectrapply,XCMSnExp-method}
 \title{Data container storing xcms preprocessing results}
 \usage{
 processHistoryTypes()
@@ -114,6 +115,9 @@ processHistoryTypes()
   return.type = "XCMSnExp", msLevel = 1L)
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
+
+\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL, BPPARAM = bpparam(),
+  ...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -217,6 +221,9 @@ chromatographic peak detection algorithm.}
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{FUN}{For \code{spectrapply}: a function that should be applied to each
+spectrum in the object.}
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
@@ -437,6 +444,11 @@ The \code{XCMSnExp} object is designed to contain all results
 \code{dropFilledChromPeaks}: drops any filled-in chromatographic
     peaks (filled in by the \code{\link{fillChromPeaks}} method) and all
     related process history steps.
+
+description \code{spectrapply} applies the provided function to each
+    \code{Spectrum} in the object and returns its
+    results. If no function is specified the function simply returns the
+    \code{list} of \code{Spectrum} objects.
 }
 \section{Slots}{
 

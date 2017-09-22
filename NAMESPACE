@@ -439,5 +439,6 @@ exportMethods("hasChromPeaks",
               "fillChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",
-              "chromatogram"
+              "chromatogram",
+              "spectrapply"
               )

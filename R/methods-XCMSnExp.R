@@ -459,15 +459,10 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
 setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
                                           adjusted = hasAdjustedRtime(object),
                                           BPPARAM = bpparam()) {
+    if (adjusted & hasAdjustedRtime(object))
+        fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+    else object <- as(object, "OnDiskMSnExp")
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
-    ## replace the rtime of these with the adjusted ones - if present.
-    if (adjusted & hasAdjustedRtime(object)) {
-        rts <- adjustedRtime(object)
-        res <- mapply(FUN = function(a, b) {
-            a@rt <- b
-            return(a)
-        }, a = res, b = rts)
-    }
     if (bySample) {
         tmp <- split(res, fromFile(object))
         ## That's to ensure that we're always returning something for all files.
@@ -2709,3 +2704,19 @@ setMethod("calibrate", "XCMSnExp", function(object, param) {
 })
 
 
+#' description \code{spectrapply} applies the provided function to each
+#'     \code{Spectrum} in the object and returns its
+#'     results. If no function is specified the function simply returns the
+#'     \code{list} of \code{Spectrum} objects.
+#'
+#' @param FUN For \code{spectrapply}: a function that should be applied to each
+#'     spectrum in the object.
+#' 
+#' @rdname XCMSnExp-class
+setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
+                                              BPPARAM = bpparam(), ...) {
+    ## replace raw with adjusted retention times!
+    if (hasAdjustedRtime(object))
+        fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+    callNextMethod()
+})

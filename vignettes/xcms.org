@@ -404,8 +404,32 @@ retention time range.
 
 #+NAME: subset-filterRt
 #+BEGIN_SRC R :ravel message = FALSE
+  subs <- filterRt(xdata, rt = c(3000, 3500))
 
+  range(rtime(subs))
 #+END_SRC
+
+Filtering by retention time does not change/affect adjusted retention times
+(also, if adjusted retention times are present, the filtering is performed *on*
+the adjusted retention times).
+
+#+NAME: subset-filterRt-2
+#+BEGIN_SRC R :ravel message = FALSE
+  hasAdjustedRtime(subs)
+#+END_SRC
+
+Also, we have all identified chromatographic peaks within the specified
+retention time range:
+
+#+NAME: subset-filterRt-3
+#+BEGIN_SRC R :ravel message = FALSE
+  hasChromPeaks(subs)
+
+  range(chromPeaks(subs)[, "rt"])
+#+END_SRC
+
+
++ Use [ subsetting too.
 
 ** Parallel processing
 
