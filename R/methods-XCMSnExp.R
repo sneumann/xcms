@@ -742,6 +742,60 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 })
 
 
+#' @description The \code{[} method allows to subset a \code{\link{XCMSnExp}}
+#'     object by spectra. Be aware that the \code{[} method removes all
+#'     preprocessing results, except adjusted retention times if
+#'     \code{keepAdjustedRtime = TRUE} is passed to the method.
+#'
+#' @param x For \code{[}: an \code{\link{XCMSnExp}} object.
+#'
+#' @param i For \code{[}: \code{numeric} or \code{logical} vector specifying to
+#'     which spectra the data set should be reduced.
+#'
+#' @param j For \code{[}: not supported.
+#'
+#' @param drop For \code{[}: not supported.
+#'
+#' @rdname XCMSnExp-filter-methods
+setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
+    if (!missing(j))
+        stop("subsetting by columns ('j') not supported")
+    if (missing(i))
+        return(x)
+    else if (!(is.numeric(i) | is.logical(i)))
+        stop("'i' has to be either numeric or logical")
+    ## Check if we have keepAdjustedRtime as an additional parameter
+    ## in ...
+    keepAdjustedRtime <- list(...)$ke
+    if (is.null(keepAdjustedRtime))
+        keepAdjustedRtime <- FALSE
+    if (hasFeatures(x) | hasChromPeaks(x)) {
+        suppressMessages(
+            x <- dropFeatureDefinitions(x, keepAdjustedRtime =
+                                               keepAdjustedRtime))
+        suppressMessages(
+            x <- dropChromPeaks(x, keepAdjustedRtime =
+                                       keepAdjustedRtime))
+        warning("Removed preprocessing results")
+    }
+    if (hasAdjustedRtime(x)) {
+        if (keepAdjustedRtime) {
+            ## Subset the adjusted rtime
+            new_adj <- rtime(x, adjusted = TRUE)[i]
+            newFd <- new("MsFeatureData")
+            newFd@.xData <- .copy_env(x@msFeatureData)        
+            adjustedRtime(newFd) <-
+                unname(split(new_adj, f = fromFile(x)[i]))
+            lockEnvironment(newFd, bindings = TRUE)
+            x@msFeatureData <- newFd
+        } else {
+            suppressMessages(x <- dropAdjustedRtime(x))
+        }
+    }
+    callNextMethod()
+})
+
+
 #' @title XCMSnExp data manipulation methods inherited from MSnbase
 #'
 #' @description The methods listed on this page are \code{\link{XCMSnExp}}
@@ -752,22 +806,21 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 #'     results to be removed from the \code{\link{XCMSnExp}} object to ensure
 #'     its data integrity.
 #'
-#'     The \code{[} method allows to subset a \code{\link{XCMSnExp}} object by
-#'     spectra. Be aware that the \code{[} method remove all preprocessing
-#'     results! For subsetting operations that keep preprocessing results please
-#'     use \code{\link{filterRt}}, \code{\link{filterMz}},
-#'     \code{\link{filterMsLevel}} and \code{\link{filterFile}}.
-#'     For more details and examples see the documentation for
-#'     \code{\link[MSnbase]{OnDiskMSnExp}}.
+#'     \code{bin}: allows to \emph{bin} spectra. See
+#'     \code{\link[MSnbase]{bin}} documentation for more details and examples.
 #'
-#' @param x For \code{[}: an \code{\link{XCMSnExp}} object.
+#' @param x \code{\link{XCMSnExp}} or \code{\link[MSnbase]{OnDiskMSnExp}}
+#'     object.
+#' 
+#' @param object \code{\link{XCMSnExp}} or \code{\link[MSnbase]{OnDiskMSnExp}}
+#'     object.
 #'
-#' @param i For \code{[}: \code{numeric} or \code{logical} vector specifying to
-#'     which spectra the data set should be reduced.
+#' @param binSize \code{numeric(1)} defining the size of a bin (in Dalton).
 #'
-#' @param j For \code{[}: not supported.
-#'
-#' @param drop For \code{[}: not supported.
+#' @param msLevel. For \code{bin}, \code{clean}, \code{filterMsLevel},
+#'     \code{removePeaks}: \code{numeric(1)} defining the MS level(s)
+#'     to which operations should be applied or to which the object should be
+#'     subsetted.
 #'
 #' @return For all methods: a \code{XCMSnExp} object.
 #'
@@ -780,55 +833,6 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 #'     parent class.
 #'
 #' @author Johannes Rainer
-setMethod("[", signature(x = "XCMSnExp", i = "logicalOrNumeric", j = "missing",
-                         drop = "missing"),
-          function(x, i, j, drop) {
-              ## Want to support subsetting of the peaks!
-              ## This means that we will also have to adjust the process
-              ## history accordingly.
-              if (hasAdjustedRtime(x) | hasFeatures(x) |
-                  hasChromPeaks(x)) {
-                  ## x@.processHistory <- list()
-                  ## x@msFeatureData <- new("MsFeatureData")
-                  suppressMessages(
-                      x <- dropAdjustedRtime(x)
-                  )
-                  suppressMessages(
-                      x <- dropFeatureDefinitions(x)
-                  )
-                  suppressMessages(
-                      x <- dropChromPeaks(x)
-                  )
-                  warning("Removed preprocessing results")
-              }
-              callNextMethod()
-          })
-
-## setMethod("splitByFile", c("XCMSnExp", "factor"), function(x, f) {
-##     if (length(f) != length(fileNames(x)))
-##         stop("length of 'f' has to match the length of samples/files in 'object'.")
-##     idxs <- lapply(levels(f), function(z) which(f == z))
-##     ## Now I can run a filterFile on these.
-##     res <- lapply(idxs, function(z) {
-##         return(filterFile(x, file = z))
-##     })
-##     names(res) <- levels(f)
-##     return(res)
-## })
-
-#' @description \code{bin}: allows to \emph{bin} spectra. See
-#'     \code{\link[MSnbase]{bin}} documentation for more details and examples.
-#'
-#' @param object An \code{\link{XCMSnExp}} or \code{OnDiskMSnExp} object.
-#'
-#' @param binSize \code{numeric(1)} defining the size of a bin (in Dalton).
-#'
-#' @param msLevel. For \code{bin}, \code{clean}, \code{filterMsLevel},
-#'     \code{removePeaks}: \code{numeric(1)} defining the MS level(s)
-#'     to which operations should be applied or to which the object should be
-#'     subsetted.
-#'
-#' @rdname XCMSnExp-inherited-methods
 setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
     if (hasAdjustedRtime(object) | hasFeatures(object) |
         hasChromPeaks(object)) {
@@ -981,6 +985,16 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     also adjusted retention times are removed (if present). This can be
 #'     overwritten by setting \code{keepAdjustedRtime = TRUE}.
 #'
+#' @details All subsetting methods try to ensure that the returned data is
+#'     consistent. Correspondence results for example are removed if the data
+#'     set is sub-setted by file, since the correspondence results are dependent
+#'     on the files on which correspondence was performed. Thus, some filter
+#'     and sub-setting methods drop some of the preprocessing results. An
+#'     exception are the adjusted retention times: most subsetting methods
+#'     support the argument \code{keepAdjustedRtime} (even the \code{[} method)
+#'     that forces the adjusted retention times to be retained even if the
+#'     default would be to drop them.
+#' 
 #' @note The \code{filterFile} method removes also process history steps not
 #'     related to the files to which the object should be sub-setted and updates
 #'     the \code{fileIndex} attribute accordingly. Also, the method does not
@@ -1001,10 +1015,10 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     specifying the file names to sub set. The indices are expected to be
 #'     increasingly ordered, if not they are ordered internally.
 #'
-#' @param keepAdjustedRtime For \code{filterFile}, \code{filterMsLevel}:
-#'     \code{logical(1)} defining whether the adjusted retention times should be
-#'     kept, even if features are being removed (and the retention time
-#'     correction being potentially performed on these features).
+#' @param keepAdjustedRtime For \code{filterFile}, \code{filterMsLevel},
+#'     \code{[}: \code{logical(1)} defining whether the adjusted retention
+#'     times should be kept, even if e.g. features are being removed (and the
+#'     retention time correction was performed on these features).
 #' 
 #' @return All methods return an \code{\link{XCMSnExp}} object.
 #'

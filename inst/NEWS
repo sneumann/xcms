@@ -16,6 +16,8 @@ USER VISIBLE CHANGES:
 - New applyAdjustedRtime function to consolidate the alignment results, i.e.
   replace the raw retention times in the XCMSnExp with the adjusted retention
   times.
+- [,XCMSnExp method gains argument keepAdjustedRtime to allow keeping adjuted
+  retention times in the sub-setting.
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.

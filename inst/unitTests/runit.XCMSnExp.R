@@ -131,7 +131,7 @@ test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
     ## Filling with data...
     xod <- as(od_fa, "XCMSnExp")
-    ## peaks
+    ## peaks 
     checkTrue(!hasChromPeaks(xod))
     chromPeaks(xod) <- xs_2@peaks
     checkTrue(hasChromPeaks(xod))
@@ -222,37 +222,24 @@ test_XCMSnExp_class_accessors <- function() {
     
     ## adjustedRtime
     checkTrue(!hasAdjustedRtime(xod))
-    xod2 <- xod
-    adjustedRtime(xod2) <- xs_2@rt$corrected
-    checkTrue(hasAdjustedRtime(xod2))
-    checkTrue(hasChromPeaks(xod2))
-    checkTrue(hasFeatures(xod2))
-    checkEquals(adjustedRtime(xod2, bySample = TRUE), xs_2@rt$corrected)
-    ## The chromatographic peaks should be different to the unadjusted ones.
-    tmp <- chromPeaks(xod)[, "rt"] == chromPeaks(xod2)[, "rt"]
-    ## Most of the rts should be different
-    checkTrue(sum(tmp) < length(tmp)/4)
-    tmp <- chromPeaks(xod)[, "rtmin"] == chromPeaks(xod2)[, "rtmin"]
-    checkTrue(sum(tmp) < length(tmp)/4)
-    tmp <- chromPeaks(xod)[, "rtmax"] == chromPeaks(xod2)[, "rtmax"]
-    checkTrue(sum(tmp) < length(tmp)/4)
-    ## rtime should now also return adjusted retention times
-    checkEquals(rtime(xod2), adjustedRtime(xod2))
-    checkEquals(rtime(xod2, adjusted = FALSE), rtime(as(xod2, "OnDiskMSnExp")))
-    checkEquals(rtime(xod2, adjusted = FALSE), rtime(xod))
-    checkEquals(rtime(xod2, adjusted = TRUE), adjustedRtime(xod2))
+    checkTrue(hasAdjustedRtime(xod_r))
+    suppressWarnings(checkEquals(adjustedRtime(xod), NULL))
+    checkEquals(rtime(xod_r, adjusted = FALSE), rtime(xod))
+    checkEquals(rtime(xod_r), adjustedRtime(xod_r))
+    checkTrue(is.character(all.equal(rtime(xod_r), rtime(xod_r, adjusted = FALSE))))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
     ## From MSnbase version >= 2.3.9 values are ordered first by file then by
     ## spectrum.
-    if (grepl("^F", names(rtime(xod2)[1]))) {
-        rts_by_sample <- adjustedRtime(xod2, bySample = TRUE)
-        rts <- adjustedRtime(xod2)
+    if (grepl("^F", names(rtime(xod_r)[1]))) {
+        rts_by_sample <- adjustedRtime(xod_r, bySample = TRUE)
+        rts <- adjustedRtime(xod_r)
         checkEquals(unname(rts_by_sample[[2]]),
                     unname(rts[grep(names(rts), pattern = "F2")]))
         checkEquals(unname(unlist(rts_by_sample)),
                     unname(rts))
     }
+    xod2 <- xod_r
     ## Wrong assignments.
     checkException(adjustedRtime(xod2) <- xs_2@rt$corrected[1:2])
     ## bracket subset
@@ -509,6 +496,26 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    checkException(xod_r[1, 1])
+    idxs <- c(1432, 1621, 2492, 3001, 3013)
+    tmp <- xod_r[idxs]
+    checkTrue(length(tmp) == length(idxs))
+    checkEquals(mz(xod_r)[idxs], mz(tmp))
+    checkTrue(hasAdjustedRtime(xod_r) != hasAdjustedRtime(tmp))
+    ## keeping adjusted retention times:
+    tmp <- xod_r[idxs, keepAdjustedRtime = TRUE]
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(rtime(xod_r)[idxs], rtime(tmp))
+    ## Same with object containing also peaks and features
+    tmp <- xod_xgrg[idxs]
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkTrue(!hasChromPeaks(tmp))
+    checkTrue(!hasFeatures(tmp))
+    tmp <- xod_xgrg[idxs, keepAdjusted = TRUE]
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(rtime(xod_xgrg)[idxs], rtime(tmp))
+    checkTrue(length(processHistory(tmp)) == 1)
+    
     ## bin
     tmp_1 <- bin(od_fa)
     suppressWarnings(

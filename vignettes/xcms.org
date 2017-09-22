@@ -344,7 +344,75 @@ Finally we plot also the distribution of peak intensity per sample.
 
 * Further details and notes
 
-+ See /new_functionality/ vignette.
+For a detailed description of the new data objects and changes/improvements
+compared to the original user interface see the /new_functionality/ vignette.
+
+** Subsetting and filtering
+
+=XCMSnEx= objects can be subsetted/filtered using the =[= method, or one of the many
+=filter*= methods. All these methods try however to ensure that the data in the
+returned object is consistent. This means for example that if the object is
+subsetted by selecting specific spectra (by using the =[= method) all identified
+chromatographic peaks are removed. Correspondence results (i.e. identified
+features) are removed if the object is subsetted to contain only data from
+selected files (using the =filterFile= method). This is because the correspondence
+results depend on the files on which the analysis was performed - running a
+correspondence on a subset of the files would lead to different results.
+
+As an exception, it is possible to force keeping adjusted retention times in the
+subsetted object setting the =keepAdjustedRtime= argument to =TRUE= in any of the
+subsetting methods.
+
+Below we subset our results object the data for the files 2 and 4.
+
+#+NAME: subset-filterFile
+#+BEGIN_SRC R :ravel message = FALSE
+  subs <- filterFile(xdata, file = c(2, 4))
+
+  ## Do we have identified chromatographic peaks?
+  hasChromPeaks(subs)
+#+END_SRC
+
+Peak detection is performed separately on each file, thus the subsetted object
+contains all identified chromatographic peaks from the two files. However, we
+used a retention time adjustment (alignment) that was based on available
+features. All features have however been removed and also the adjusted retention
+times (since the alignment based on features that were identified on
+chromatographic peaks on all files).
+
+#+NAME: subset-filterFile-2
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Do we still have features?
+  hasFeatures(subs)
+
+  ## Do we still have adjusted retention times?
+  hasAdjustedRtime(subs)
+#+END_SRC
+
+We can however use the =keepAdjustedRtime= argument to force keeping the adjusted
+retention times.
+
+#+NAME: subset-filterFile-3
+#+BEGIN_SRC R :ravel message = FALSE
+  subs <- filterFile(xdata, keepAdjustedRtime = TRUE)
+
+  hasAdjustedRtime(subs)
+#+END_SRC
+
+The =filterRt= method can be used to subset the object to spectra within a certain
+retention time range.
+
+#+NAME: subset-filterRt
+#+BEGIN_SRC R :ravel message = FALSE
+
+#+END_SRC
+
+** Parallel processing
+
+Most methods in =xcms= support parallel processing. Parallel processing is handled
+and configured by the =BiocParallel= Bioconductor package and can be globally
+defined for a R session.
+
 + Parallel processing set up.
 
 * Details on chromatographic peak detection methods
