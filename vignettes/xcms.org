@@ -457,11 +457,14 @@ strongly advised to adapt the parameters for each data set.
 
 Note also that we could use the =adjustedRtimePeakGroups= method on the object
 before alignment to evaluate on which features (peak groups) the alignment would
-be performed.
+be performed. This can be useful to test different settings for the peak groups
+algorithm. Also, it is possible to manually select or define certain peak groups
+(i.e. their retention times per sample) and provide this matrix to the
+=PeakGroupsParam= class with the =peakGroupsMatrix= argument.
 
-We plot again the difference between raw and adjusted retention times
+Below plot the difference between raw and adjusted retention times
 using the =plotAdjustedRtime= function, which, if the /peak groups/ method is used
-for alignment, also highlights the peak groups used to adjust the data.
+for alignment, also highlights the peak groups used in the adjustment.
 
 #+NAME: alignment-peak-groups-plot
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Peak groups aligned data."
@@ -493,49 +496,210 @@ correspondence in =xcms= is =groupChromPeaks=. We will use the /peak density/ me
 chromatographic peaks depending on the density of peaks along the retention time
 axis within small slices along the mz dimension. To illustrate this we plot
 below the chromatogram for an mz slice with multiple chromatographic peaks
-within each sample.
+within each sample. We use below a value of 0.4 for the =minFraction= parameter
+hence only chromatographic peaks present in at least 40% of the samples per
+sample group are grouped into a feature. The sample group assignment is
+specified with the =sampleGroups= argument.
 
 #+NAME: correspondence-example-slice
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis). The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles."
   ## Define the mz slice.
   mzr <- c(305.05, 305.15)
 
   ## Extract and plot the chromatograms
   chr_mzr <- chromatogram(xdata, mz = mzr, rt = c(2500, 4000))
-  par(mfrow = c(2, 1), mar = c(1, 4, 1, 0.5))
+  par(mfrow = c(3, 1), mar = c(1, 4, 1, 0.5))
   cols <- group_colors[chr_mzr$sample_group]
   plot(chr_mzr, col = cols, xaxt = "n", xlab = "")
   ## Highlight the detected peaks in that region.
   highlightChromPeaks(xdata, mz = mzr, col = cols, type = "point", pch = 16)
   ## Define the parameters for the peak density method
-  pdp <- PeakDensityParam(bw = 30)
+  pdp <- PeakDensityParam(sampleGroups = xdata$sample_group, minFraction = 0.4,
+			  bw = 30)
   par(mar = c(4, 4, 1, 0.5))
+  plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp, pch = 16,
+		       xlim = c(2500, 4000))
+  ## Use a different bw
+  pdp <- PeakDensityParam(sampleGroups = xdata$sample_group, minFraction = 0.4,
+			  bw = 20)
   plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp, pch = 16,
 		       xlim = c(2500, 4000))
 #+END_SRC
 
 The upper panel in the plot above shows the extracted ion chromatogram for each
-sample with the detected peaks highlighted. The lower plot plots the retention
+sample with the detected peaks highlighted. The middle and lower plot shows the retention
 time for each detected peak within the different samples. The black solid line
 represents the density distribution of detected peaks along the retention
 times. Peaks combined into /features/ (peak groups) are indicated with grey
-rectangles. This grouping depends on the parameters for the density function and
+rectangles. Different values for the =bw= parameter of the =PeakDensityParam= were
+used: =bw = 30= in the middle and =bw = 20= in the lower panel. With the default
+value for the parameter =bw= the two neighboring chromatographic peaks would be
+grouped into the same feature, while with a =bw= of 20 they would be grouped into
+separate features.
+This grouping depends on the parameters for the density function and
 other parameters passed to the algorithm with the =PeakDensityParam=.
 
-With the default settings (=bw = 30=) the two neighboring/overlapping peaks at a
-retention time of about 3000 seconds are combined into a single
-feature. Lowering this parameter to e.g. 10 would separate the features. 
+#+NAME: correspondence
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Perform the correspondence
+  pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+			  minFraction = 0.4, bw = 20)
+  xdata <- groupChromPeaks(xdata, param = pdp)
 
+#+END_SRC
 
-* Further details and notes
+The results from the correspondence can be extracted using the
+=featureDefinitions= method, that returns a =DataFrame= with the definition of the
+features (i.e. the mz and rt ranges and, in column =peakidx=, the index of the
+chromatographic peaks in the =chromPeaks= matrix for each feature). 
+
+#+NAME: correspondence-featureDefs
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Extract the feature definitions
+  featureDefinitions(xdata)
+
+#+END_SRC
+
+The =featureValues= method returns a =matrix= with rows being features and columns
+samples. The content of this matrix can be defined using the =value=
+argument. Setting =value = "into"= returns a matrix with the integrated signal of
+the peaks corresponding to a feature in a sample. Any column name of the
+=chromPeaks= matrix can be passed to the argument =value=. Below we extract the
+integrated peak intensity per feature/sample.
+
+#+NAME: correspondence-feature-values
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Extract the into column for each feature.
+  head(featureValues(xdata, value = "into"))
+
+#+END_SRC
+
+This feature matrix contains =NA= for samples in which no chromatographic peak was
+detected in the feature's m/z-rt region. While in many cases there might indeed
+be no peak signal in the respective region, it might also be that there is
+signal, but the peak detection algorithm failed to detect a chromatographic
+peak. =xcms= provides the =fillChromPeaks= method to /fill in/ intensity data for such
+missing values from the original files. The /filled in/ peaks are added to the
+=chromPeaks= matrix and are flagged with an =1= in the ="is_filled"= column. Below we
+perform such a filling-in of missing peaks.
+
+#+NAME: fill-chrom-peaks
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Filling missing peaks using default settings. Alternatively we could
+  ## pass a FillChromPeaksParam object to the method.
+  xdata <- fillChromPeaks(xdata)
+
+  head(featureValues(xdata))
+
+#+END_SRC
+
+For features without detected peaks in a sample, the method extracts all
+intensities in the mz-rt region of the feature, integrates the signal and adds a
+/filled-in/ peak to the =chromPeaks= matrix. No peak is added if no signal is
+measured/available for the mz-rt region of the feature. For these, even after
+filling in missing peak data, a =NA= is reported in the =featureValues= matrix.
+
+Below we compare the number of missing values before and after filling in
+missing values. We can use the parameter =filled= of the =featureValues= method to
+define whether or not filled-in peak values should be returned too.
+
+#+NAME: fill-chrom-peaks-compare
+#+BEGIN_SRC R :results silent :ravel message = FALSE
+  ## Missing values before filling in peaks
+  apply(featureValues(xdata, filled = FALSE), MARGIN = 2,
+	FUN = function(z) sum(is.na(z)))
+
+  ## Missing values after filling in peaks
+  apply(featureValues(xdata), MARGIN = 2,
+	FUN = function(z) sum(is.na(z)))
+
+#+END_SRC
+
+At last we perform a principal component analysis to evaluate the grouping of
+the samples in this experiment. Note that we did not perform any data
+normalization hence the grouping might (and will) also be influenced by
+technical biases.
+
+#+NAME: final-pca
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "PCA for the faahKO data set, un-normalized intensities."
+  ## Extract the features and log2 transform them
+  ft_ints <- log2(featureValues(xdata, value = "into"))
+
+  ## Perform the PCA omitting all features with an NA in any of the samples.
+  ## Also, the intensities are mean centered.
+  pc <- prcomp(t(na.omit(ft_ints)), center = TRUE)
+
+  ## Plot the PCA
+  cols <- group_colors[xdata$sample_group]
+  pcSummary <- summary(pc)
+  plot(pc$x[, 1], pc$x[,2], pch = 21, main = "", 
+       xlab = paste0("PC1: ", format(pcSummary$importance[2, 1] * 100, digits = 3),
+		     " % variance"),
+       ylab = paste0("PC2: ", format(pcSummary$importance[2, 2] * 100, digits = 3),
+		     " % variance"), col = "darkgrey",
+       bg = cols, cex = 2)
+  grid()
+  text(pc$x[, 1], pc$x[,2], labels = xdata$sample_name, col = "darkgrey", pos = 3)
+
+#+END_SRC
+
+We can see the expected separation between the KO and WT samples on PC2. On PC1
+samples separate based on their ID, samples with an ID <= 18 from samples with
+an ID > 18. This separation might be caused by a technical bias
+(e.g. measurements performed on different days/weeks) or due to biological
+properties of the mice analyzed (sex, age, litter mates etc).
+
+* Further data processing and analysis
+
+Normalizing features' signal intensities is required, but at present not (yet)
+supported in =xcms= (some methods might be added in near future). Also, for the
+identification of e.g. features with significant different
+intensities/abundances it is suggested to use functionality provided in other R
+packages, such as Bioconductor's excellent =limma= package.
+
+* Additional details and notes
 
 For a detailed description of the new data objects and changes/improvements
 compared to the original user interface see the /new_functionality/ vignette.
 
+** Evaluating the process history
+
+=XCMSnExp= objects allow to capture all performed pre-processing steps along with
+the used parameter class within the =@processHistory= slot. Storing also the
+parameter class ensures the highest possible degree of analysis documentation
+and in future might enable to /replay/ analyses or parts of it.  The list of all
+performed preprocessings can be extracted using the =processHistory= method.
+
+#+NAME: processhistory
+#+BEGIN_SRC R :ravel message = FALSE
+  processHistory(xdata)
+#+END_SRC
+
+It is also possible to extract specific processing steps by specifying its
+type. Available /types/ can be listed with the =processHistoryTypes= function. Below
+we extract the parameter class for the alignment/retention time adjustment step.
+
+#+NAME: processhistory-select
+#+BEGIN_SRC R :ravel message = FALSE
+  ph <- processHistory(xdata, type = "Retention time correction")
+
+  ph
+#+END_SRC
+
+And we can also extract the parameter class used in this preprocessing step.
+
+#+NAME: processhistory-param
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Access the parameter
+  processParam(ph[[1]])
+
+#+END_SRC
+
+
 ** Subsetting and filtering
 
 =XCMSnEx= objects can be subsetted/filtered using the =[= method, or one of the many
-=filter*= methods. All these methods try however to ensure that the data in the
+=filter*= methods. All these methods aim to ensure that the data in the
 returned object is consistent. This means for example that if the object is
 subsetted by selecting specific spectra (by using the =[= method) all identified
 chromatographic peaks are removed. Correspondence results (i.e. identified
@@ -613,16 +777,77 @@ retention time range:
   range(chromPeaks(subs)[, "rt"])
 #+END_SRC
 
+The most natural way to subset any object in R is with =[=. Using =[= on an =XCMSnExp=
+object subsets it keeping only the selected spectra. The index =i= used in =[= has
+thus to be an integer between 1 and the total number of spectra (across all
+files). Below we subset =xdata= using both =[= and =filterFile= to keep all spectra
+from one file.
+
+#+NAME: subset-bracket
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
+  ## Extract all data from the 3rd file.
+  one_file <- filterFile(xdata, file = 3)
+
+  one_file_2 <- xdata[fromFile(xdata) == 3]
+
+  ## Is the content the same?
+  all.equal(spectra(one_file), spectra(one_file_2))
+#+END_SRC
+
+While the spectra-content is the same in both objects, =one_file= contains also
+the identified chromatographic peaks while =one_file_2= does not. Thus, in most
+situations subsetting using one of the filter functions is preferred over the
+use of =[=.
+
+Note however that also =[= does support the =keepAdjustedRtime= argument. Below we
+subset the object to spectra 20:30.
+
+#+NAME: subset-bracket-keepAdjustedRtime
+#+BEGIN_SRC R :ravel message = FALSE, warnings = FALSE
+  subs <- xdata[20:30, keepAdjustedRtime = TRUE]
+#+END_SRC
+
+As with =MSnExp= and =OnDiskMSnExp= objects, =[[= can be used to extract a single
+spectrum object from an =XCMSnExp= object.
+
+#+NAME: subset-double-bracket
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Extract a single spectrum
+  xdata[[14]]
+#+END_SRC
+
 
 + Use [ subsetting too.
++ Use [[
++ TODO: implement split
 
 ** Parallel processing
 
 Most methods in =xcms= support parallel processing. Parallel processing is handled
 and configured by the =BiocParallel= Bioconductor package and can be globally
-defined for a R session.
+defined for an R session.
 
-+ Parallel processing set up.
+Unix-based systems (Linux, macOS) support =multicore=-based parallel
+processing. To configure it globally we =register= the parameter class. Note also
+that =bpstart= is used below to initialize the parallel processes.
+
+#+NAME: multicore
+#+BEGIN_SRC R :ravel message = FALSE
+  register(bpstart(MulticoreParam(2)))
+#+END_SRC
+
+Windows supports only socket-based parallel processing:
+
+#+NAME: snow
+#+BEGIN_SRC R :ravel message = FALSE
+  register(bpstart(SnowParam(2)))
+#+END_SRC
+
+Note that =multicore=-based parallel processing might be buggy or failing on
+macOS. If so, the =DoparParam= could be used instead (requiring the =foreach=
+package).
+
+For other options and details see the vignettes from the =BiocParallel= package.
 
 * Details on chromatographic peak detection methods
 

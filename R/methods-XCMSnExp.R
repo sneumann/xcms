@@ -2720,3 +2720,20 @@ setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
         fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
     callNextMethod()
 })
+
+setMethod("split", "XCMSnExp", function(x, f,
+                                        keepAdjustedRtime = hasAdjustedRtime(x),
+                                        drop = FALSE, ...) {
+    if (drop)
+        stop("'drop = TRUE' is not supported")
+    if (missing(f))
+        stop("required argument 'f' is missing")
+    cat("split,XCMSnExp: keepAdjustedRtime =", keepAdjustedRtime, ", drop =",
+        drop, "\n")
+    ## Use [ to subset...
+    if (length(f) != length(x))
+        stop("length of 'f' has to match the length of 'x'")
+    ## Convert f into a factor.
+    f <- factor(f)
+    lapply(levels(f), function(z) {x[f == z]})
+})
