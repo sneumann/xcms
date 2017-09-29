@@ -1,4 +1,4 @@
-CHANGES IN VERSION 2.99.7
+CHANGES IN VERSION 2.99.8
 -------------------------
 
 USER VISIBLE CHANGES:
@@ -24,13 +24,19 @@ USER VISIBLE CHANGES:
   the XCMSnExp contains adjusted retention times.
 
 BUG FIXES:
-- Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
-- Merge with BioC git after transition
 - Fix #191: Excessive memory use in fillPeaks.
 - Fix #220: peaks matrix is missing column "sample" if no peaks were found in
   the first sample.
 - Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
   single MS level despite peak detection is performed on a single level.
+
+
+CHANGES IN VERSION 2.99.7
+-------------------------
+
+BUG FIXES:
+- Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
+- Merge with BioC git after transition
 
 
 CHANGES IN VERSION 2.99.6
