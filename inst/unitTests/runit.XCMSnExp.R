@@ -525,6 +525,17 @@ test_XCMSnExp_inherited_methods <- function() {
     checkEquals(rtime(xod_xgrg)[idxs], rtime(tmp))
     checkTrue(length(processHistory(tmp)) == 1)
     
+    ## [[
+    spct <- xod_x[[13]]
+    checkTrue(is(spct, "Spectrum1"))
+    checkEquals(rtime(spct), unname(rtime(xod_x)[13]))
+    checkEquals(mz(spct), mz(xod_x)[[13]])
+    ## Have to ensure that, if x has adjusted retention times, that these are
+    ## reported in the Spectrum.
+    spct <- xod_r[[13]]
+    checkEquals(rtime(spct), unname(rtime(xod_r, adjusted = TRUE)[13]))
+    checkTrue(rtime(spct) != rtime(xod_r, adjusted = FALSE)[13])
+    
     ## bin
     tmp_1 <- bin(od_fa)
     suppressWarnings(
@@ -1506,6 +1517,34 @@ test_processHistory <- function() {
     checkTrue(length(ph) == 2)
     checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
 }
+
+test_split <- function() {
+    xod <- as(od_x, "XCMSnExp")
+    tmp <- split(xod_xgr, f = fromFile(xod_xgr))
+    ## Split by file.
+    checkEquals(spectra(tmp[[1]]), spectra(filterFile(xod, file = 1)))
+    checkEquals(spectra(tmp[[3]]), spectra(filterFile(xod, file = 3)))
+    ## Split by acquisitionNum.
+    tmp <- filterRt(xod_xgr, rt = c(2500, 2700))
+    checkTrue(hasChromPeaks(tmp))
+    checkTrue(hasAdjustedRtime(tmp))
+    tmp_2 <- split(tmp, f = acquisitionNum(tmp))
+    checkTrue(all(acquisitionNum(tmp_2[[1]]) == acquisitionNum(tmp)[1]))
+    checkTrue(all(acquisitionNum(tmp_2[[14]]) == acquisitionNum(tmp)[14]))
+    ## with keepAdjustedRtime
+    tmp <- split(xod_xgr, f = fromFile(xod_xgr), keepAdjustedRtime = TRUE)
+    tmp_1 <- filterFile(xod_xgr, file = 1, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp[[1]]), rtime(tmp_1))
+    tmp_2 <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_2))
+    checkEquals(rtime(tmp[[2]]), rtime(tmp_2))
+    tmp_3 <- filterFile(xod_xgr, file = 3, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_3))
+    checkEquals(rtime(tmp[[3]]), rtime(tmp_3))
+    checkTrue(!all(rtime(tmp[[3]]) == rtime(tmp[[3]], adjusted = FALSE)))
+}
+
 
 ############################################################
 ## Test getEIC alternatives.

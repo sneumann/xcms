@@ -3,14 +3,18 @@
 \docType{methods}
 \name{[,XCMSnExp,ANY,ANY,ANY-method}
 \alias{[,XCMSnExp,ANY,ANY,ANY-method}
+\alias{[[,OnDiskMSnExp,ANY,ANY-method}
 \alias{filterMsLevel,XCMSnExp-method}
 \alias{filterFile,XCMSnExp-method}
 \alias{XCMSnExp-filter}
 \alias{filterMz,XCMSnExp-method}
 \alias{filterRt,XCMSnExp-method}
+\alias{split,XCMSnExp,ANY-method}
 \title{XCMSnExp filtering and subsetting}
 \usage{
 \S4method{[}{XCMSnExp,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[[}{OnDiskMSnExp,ANY,ANY}(x, i, j, drop = FALSE)
 
 \S4method{filterMsLevel}{XCMSnExp}(object, msLevel.,
   keepAdjustedRtime = hasAdjustedRtime(object))
@@ -21,18 +25,21 @@
 
 \S4method{filterRt}{XCMSnExp}(object, rt, msLevel.,
   adjusted = hasAdjustedRtime(object))
+
+\S4method{split}{XCMSnExp,ANY}(x, f, drop = FALSE, ...)
 }
 \arguments{
-\item{x}{For \code{[}: an \code{\link{XCMSnExp}} object.}
+\item{x}{For \code{[} and \code{[[}: an \code{\link{XCMSnExp}} object.}
 
 \item{i}{For \code{[}: \code{numeric} or \code{logical} vector specifying to
-which spectra the data set should be reduced.}
+which spectra the data set should be reduced.
+For \code{[[}: a single integer or character.}
 
-\item{j}{For \code{[}: not supported.}
+\item{j}{For \code{[} and \code{[[}: not supported.}
 
 \item{...}{Optional additional arguments.}
 
-\item{drop}{For \code{[}: not supported.}
+\item{drop}{For \code{[} and \code{[[}: not supported.}
 
 \item{object}{A \code{\link{XCMSnExp}} object.}
 
@@ -42,9 +49,9 @@ which the object should be subsetted. See \code{\link[MSnbase]{filterMz}}
 for more details}
 
 \item{keepAdjustedRtime}{For \code{filterFile}, \code{filterMsLevel},
-\code{[}: \code{logical(1)} defining whether the adjusted retention
-times should be kept, even if e.g. features are being removed (and the
-retention time correction was performed on these features).}
+\code{[} \code{split}: \code{logical(1)} defining whether the adjusted
+retention times should be kept, even if e.g. features are being removed
+(and the retention time correction was performed on these features).}
 
 \item{file}{For \code{filterFile}: \code{integer} defining the file index
 within the object to subset the object by file or \code{character}
@@ -62,6 +69,10 @@ object should be filtered by original (\code{adjusted = FALSE}) or
 adjusted retention times (\code{adjusted = TRUE}).
 For \code{spectra}: whether the retention times in the individual
 \code{Spectrum} objects should be the adjusted or raw retention times.}
+
+\item{f}{For \code{split} a vector of length equal to the length of x
+defining how \code{x} will be splitted. It is converted internally to
+a \code{factor}.}
 }
 \value{
 All methods return an \code{\link{XCMSnExp}} object.
@@ -71,6 +82,10 @@ The \code{[} method allows to subset a \code{\link{XCMSnExp}}
     object by spectra. Be aware that the \code{[} method removes all
     preprocessing results, except adjusted retention times if
     \code{keepAdjustedRtime = TRUE} is passed to the method.
+
+\code{[[} extracts a single \code{\link[MSnbase]{Spectrum}}
+    object from an \code{XCMSnExp}. The reported retention time is the
+    adjusted retention time if alignment has been performed on \code{x}.
 
 \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
     object to spectra of the specified MS level(s). See
@@ -112,6 +127,12 @@ The methods listed on this page allow to filter and subset
     or change alignment results (i.e. adjusted retention times).
     The method returns an empty object if no spectrum or feature is within
     the specified retention time range.
+
+\code{split} splits an \code{XCMSnExp} object into a \code{list}
+    of \code{XCMSnExp} objects based on the provided parameter \code{f}.
+    Note that by default all pre-processing results are removed by the
+    splitting, except adjusted retention times, if the optional argument
+    \code{keepAdjustedRtime = TRUE} is provided.
 }
 \details{
 All subsetting methods try to ensure that the returned data is
@@ -184,6 +205,20 @@ range(chromPeaks(xod_sub)[, "rt"])
 
 nrow(chromPeaks(xod))
 nrow(chromPeaks(xod_sub))
+
+## Extract a single Spectrum
+xod[[4]]
+
+## Subsetting using [ removes all preprocessing results - using
+## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.
+xod_sub <- xod[fromFile(xod) == 1]
+xod_sub
+
+## Using split does also remove preprocessing results, but it supports the
+## optional parameter keepAdjustedRtime.
+## Split the object into a list of XCMSnExp objects, one per file
+xod_list <- split(xod, f = fromFile(xod))
+xod_list
 }
 \seealso{
 \code{\link{XCMSnExp}} for base class documentation.

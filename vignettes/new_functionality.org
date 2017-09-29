@@ -42,12 +42,6 @@ in the =xcms= package introduced during the update to version /3/.
 #+BEGIN_SRC R :ravel message = FALSE, warning = FALSE
   library(xcms)
   library(RColorBrewer)
-  ## Use socket based parallel processing on Windows systems
-  ## if (.Platform$OS.type == "unix") {
-  ##     register(bpstart(MulticoreParam(2)))
-  ## } else {
-  ##     register(bpstart(SnowParam(2)))
-  ## }
   register(SerialParam())
 #+END_SRC
 

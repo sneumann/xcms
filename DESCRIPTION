@@ -34,7 +34,8 @@ Suggests:
     ncdf4,
     rgl,
     microbenchmark,
-    RUnit
+    RUnit,
+    pander
 Enhances: Rgraphviz, Rmpi, XML
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,

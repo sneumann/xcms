@@ -23,7 +23,7 @@ vignette: >
   %\VignetteDepends{xcms,RColorBrewer,faahKO,pander}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
-bibliography: xcms.bib
+bibliography: references.bib
 csl: biomed-central.csl
 references:
 - id: dummy
@@ -325,8 +325,8 @@ appropriate and correctly identified the expected peaks.
 #+NAME: peak-detection-highlight-chrom-peaks-plot
 #+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample."
   plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
-  highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group], lty = 3,
-		      rt = rtr, mz = mzr)
+  highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group],
+		      lty = 3, rt = rtr, mz = mzr)
 #+END_SRC
 
 Note that we can also specifically extract identified chromatographic peaks for
@@ -336,8 +336,8 @@ the =mz= and =rt= arguments in the =chromPeaks= method.
 #+NAME: peak-detection-chrom-peak-table-selected
 #+BEGIN_SRC R :ravel message = FALSE, results = "asis"
   pander(chromPeaks(xdata, mz = mzr, rt = rtr),
-	 caption = paste("Identified chromatographic peaks in a selected m/z and",
-			 " retention time range."))
+	 caption = paste("Identified chromatographic peaks in a selected ",
+			 "m/z and retention time range."))
 #+END_SRC
 
 Finally we plot also the distribution of peak intensity per sample. This allows
@@ -633,13 +633,14 @@ technical biases.
   cols <- group_colors[xdata$sample_group]
   pcSummary <- summary(pc)
   plot(pc$x[, 1], pc$x[,2], pch = 21, main = "", 
-       xlab = paste0("PC1: ", format(pcSummary$importance[2, 1] * 100, digits = 3),
-		     " % variance"),
-       ylab = paste0("PC2: ", format(pcSummary$importance[2, 2] * 100, digits = 3),
-		     " % variance"), col = "darkgrey",
-       bg = cols, cex = 2)
+       xlab = paste0("PC1: ", format(pcSummary$importance[2, 1] * 100,
+				     digits = 3), " % variance"),
+       ylab = paste0("PC2: ", format(pcSummary$importance[2, 2] * 100,
+				     digits = 3), " % variance"),
+       col = "darkgrey", bg = cols, cex = 2)
   grid()
-  text(pc$x[, 1], pc$x[,2], labels = xdata$sample_name, col = "darkgrey", pos = 3)
+  text(pc$x[, 1], pc$x[,2], labels = xdata$sample_name, col = "darkgrey",
+       pos = 3, cex = 2)
 
 #+END_SRC
 
@@ -694,7 +695,6 @@ And we can also extract the parameter class used in this preprocessing step.
   processParam(ph[[1]])
 
 #+END_SRC
-
 
 ** Subsetting and filtering
 
@@ -799,16 +799,34 @@ the identified chromatographic peaks while =one_file_2= does not. Thus, in most
 situations subsetting using one of the filter functions is preferred over the
 use of =[=.
 
+#+NAME: subset-bracket-peaks
+#+BEGIN_SRC R :ravel message = FALSE
+  ## Subsetting with filterFile preserves chromatographic peaks
+  head(chromPeaks(one_file))
+
+  ## Subsetting with [ not
+  head(chromPeaks(one_file_2))
+#+END_SRC
+
 Note however that also =[= does support the =keepAdjustedRtime= argument. Below we
 subset the object to spectra 20:30.
 
 #+NAME: subset-bracket-keepAdjustedRtime
 #+BEGIN_SRC R :ravel message = FALSE, warnings = FALSE
   subs <- xdata[20:30, keepAdjustedRtime = TRUE]
+
+  hasAdjustedRtime(subs)
+
+  ## Access adjusted retention times:
+  rtime(subs)
+
+  ## Access raw retention times:
+  rtime(subs, adjusted = FALSE)
 #+END_SRC
 
 As with =MSnExp= and =OnDiskMSnExp= objects, =[[= can be used to extract a single
-spectrum object from an =XCMSnExp= object.
+spectrum object from an =XCMSnExp= object. The retention time of the spectrum
+corresponds to the adjusted retention time if present.
 
 #+NAME: subset-double-bracket
 #+BEGIN_SRC R :ravel message = FALSE
@@ -816,10 +834,31 @@ spectrum object from an =XCMSnExp= object.
   xdata[[14]]
 #+END_SRC
 
+At last we can also use the =split= method that allows to split an =XCMSnExp= based
+on a provided factor =f=. Below we split =xdata= per file. Using =keepAdjustedRtime
+= TRUE= ensures that adjusted retention times are not removed.
 
-+ Use [ subsetting too.
-+ Use [[
-+ TODO: implement split
+#+NAME: subset-split
+#+BEGIN_SRC R :ravel message = FALSE
+  x_list <- split(xdata, f = fromFile(xdata), keepAdjustedRtime = TRUE)
+
+  lengths(x_list)
+
+  lapply(x_list, hasAdjustedRtime)
+#+END_SRC
+
+Note however that there is also a dedicated =splitByFile= method instead for that
+operation, that internally uses =filterFile= and hence does e.g. not remove
+identified chromatographic peaks. The method does not yet support the
+=keepAdjustedRtime= parameter and thus removes by default adjusted retention
+times.
+
+#+NAME: subset-split-by-file
+#+BEGIN_SRC R :ravel message = FALSE
+  xdata_by_file <- splitByFile(xdata, f = factor(1:length(fileNames(xdata))))
+
+  lapply(xdata_by_file, hasChromPeaks)
+#+END_SRC
 
 ** Parallel processing
 
@@ -849,7 +888,7 @@ package).
 
 For other options and details see the vignettes from the =BiocParallel= package.
 
-* Details on chromatographic peak detection methods
+* Details on chromatographic peak detection methods                :noexport:
 
 ** /matchedFilter/
 
@@ -857,6 +896,8 @@ The /matched filter/ method was originally described in
 
 ** /centWave/
 
+
+* References
 * TODOs                                                            :noexport:
 
 ** TODO General data import and data exploration section.

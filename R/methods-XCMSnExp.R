@@ -742,14 +742,15 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
 #'     preprocessing results, except adjusted retention times if
 #'     \code{keepAdjustedRtime = TRUE} is passed to the method.
 #'
-#' @param x For \code{[}: an \code{\link{XCMSnExp}} object.
+#' @param x For \code{[} and \code{[[}: an \code{\link{XCMSnExp}} object.
 #'
 #' @param i For \code{[}: \code{numeric} or \code{logical} vector specifying to
 #'     which spectra the data set should be reduced.
+#'     For \code{[[}: a single integer or character.
 #'
-#' @param j For \code{[}: not supported.
+#' @param j For \code{[} and \code{[[}: not supported.
 #'
-#' @param drop For \code{[}: not supported.
+#' @param drop For \code{[} and \code{[[}: not supported.
 #'
 #' @rdname XCMSnExp-filter-methods
 setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
@@ -790,6 +791,19 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
     callNextMethod()
 })
 
+#' @description \code{[[} extracts a single \code{\link[MSnbase]{Spectrum}}
+#'     object from an \code{XCMSnExp}. The reported retention time is the
+#'     adjusted retention time if alignment has been performed on \code{x}.
+#' 
+#' @rdname XCMSnExp-filter-methods
+setMethod("[[", "OnDiskMSnExp",
+          function(x, i, j, drop = FALSE) {
+              ## If it has adjusted retention times, replace raw ones.
+              if (hasAdjustedRtime(x))
+                  x@featureData$retentionTime <- rtime(x, adjusted = TRUE)
+              x <- as(x, "OnDiskMSnExp")
+              callNextMethod()
+          })
 
 #' @title XCMSnExp data manipulation methods inherited from MSnbase
 #'
@@ -1011,9 +1025,9 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     increasingly ordered, if not they are ordered internally.
 #'
 #' @param keepAdjustedRtime For \code{filterFile}, \code{filterMsLevel},
-#'     \code{[}: \code{logical(1)} defining whether the adjusted retention
-#'     times should be kept, even if e.g. features are being removed (and the
-#'     retention time correction was performed on these features).
+#'     \code{[} \code{split}: \code{logical(1)} defining whether the adjusted
+#'     retention times should be kept, even if e.g. features are being removed
+#'     (and the retention time correction was performed on these features).
 #' 
 #' @return All methods return an \code{\link{XCMSnExp}} object.
 #'
@@ -1069,6 +1083,20 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'
 #' nrow(chromPeaks(xod))
 #' nrow(chromPeaks(xod_sub))
+#'
+#' ## Extract a single Spectrum
+#' xod[[4]]
+#'
+#' ## Subsetting using [ removes all preprocessing results - using
+#' ## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.
+#' xod_sub <- xod[fromFile(xod) == 1]
+#' xod_sub
+#'
+#' ## Using split does also remove preprocessing results, but it supports the
+#' ## optional parameter keepAdjustedRtime.
+#' ## Split the object into a list of XCMSnExp objects, one per file
+#' xod_list <- split(xod, f = fromFile(xod))
+#' xod_list
 setMethod("filterFile", "XCMSnExp", function(object, file,
                                              keepAdjustedRtime = FALSE) {
     if (missing(file)) return(object)
@@ -2721,19 +2749,36 @@ setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
     callNextMethod()
 })
 
+#' @description \code{split} splits an \code{XCMSnExp} object into a \code{list}
+#'     of \code{XCMSnExp} objects based on the provided parameter \code{f}.
+#'     Note that by default all pre-processing results are removed by the
+#'     splitting, except adjusted retention times, if the optional argument
+#'     \code{keepAdjustedRtime = TRUE} is provided.
+#'
+#' @param f For \code{split} a vector of length equal to the length of x
+#'     defining how \code{x} will be splitted. It is converted internally to
+#'     a \code{factor}.
+#' 
+#' @rdname XCMSnExp-filter-methods
 setMethod("split", "XCMSnExp", function(x, f,
-                                        keepAdjustedRtime = hasAdjustedRtime(x),
                                         drop = FALSE, ...) {
     if (drop)
         stop("'drop = TRUE' is not supported")
     if (missing(f))
         stop("required argument 'f' is missing")
-    cat("split,XCMSnExp: keepAdjustedRtime =", keepAdjustedRtime, ", drop =",
-        drop, "\n")
-    ## Use [ to subset...
     if (length(f) != length(x))
         stop("length of 'f' has to match the length of 'x'")
-    ## Convert f into a factor.
-    f <- factor(f)
-    lapply(levels(f), function(z) {x[f == z]})
+    keepAdjustedRtime <- list(...)$ke
+    if (is.null(keepAdjustedRtime))
+        keepAdjustedRtime <- FALSE
+    if (!is.factor(f))
+        f <- factor(f)
+    res <- lapply(levels(f), function(z) {
+        suppressWarnings(
+            x[f == z, keepAdjustedRtime = keepAdjustedRtime]
+        )
+    })
+    names(res) <- levels(f)
+    res
 })
+

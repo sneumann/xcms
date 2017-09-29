@@ -95,6 +95,8 @@ exportClasses(
 exportMethods(
     "[",
     "$",
+    "[[",
+    "split",
     "absent",
     "AutoLockMass",
     "calibrate",
