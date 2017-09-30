@@ -124,7 +124,7 @@ plotTree(xfrag,xcmsFragmentPeakID=6)
 @
 
 \begin{figure}
-\includegraphics[width=0.49\textwidth]{xcmsMSn-TreePlot}
+\includegraphics[width=0.49\textwidth]{xcmsMSn-TreePlot.pdf}
 \begin{minipage}[b]{0.49\linewidth}
 <<TextTree, echo=FALSE>>=
 plotTree(xfrag,xcmsFragmentPeakID=6, textOnly=TRUE)
