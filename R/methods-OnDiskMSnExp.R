@@ -948,7 +948,7 @@ setMethod("adjustRtime",
                           rtime_all[[i]][idx_below] <- vals_below +
                               res[[i]][1] - rtime_sub[[i]][1]
                       }
-                          ## Adjust rtime > largest adjusted rtime
+                      ## Adjust rtime > largest adjusted rtime
                       if (length(idx_above)) {
                           rtime_all[[i]][idx_above] <- vals_above +
                               res[[i]][n_vals] - rtime_sub[[i]][n_vals]
