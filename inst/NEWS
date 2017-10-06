@@ -1,4 +1,4 @@
-CHANGES IN VERSION 2.99.8
+CHANGES IN VERSION 2.99.9
 -------------------------
 
 USER VISIBLE CHANGES:
@@ -29,6 +29,13 @@ BUG FIXES:
   the first sample.
 - Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
   single MS level despite peak detection is performed on a single level.
+
+
+CHANGES IN VERSION 2.99.8
+-------------------------
+
+BUG FIXES:
+- Replace xcmsMSn Rnw with Rmd vignette to fix Windows build errors.
 
 
 CHANGES IN VERSION 2.99.7
