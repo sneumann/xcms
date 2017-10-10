@@ -29,6 +29,8 @@ BUG FIXES:
   the first sample.
 - Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
   single MS level despite peak detection is performed on a single level.
+- Fix problem in plotMsData causing wrong colors to be used to label the data
+  points.
 
 
 CHANGES IN VERSION 2.99.8

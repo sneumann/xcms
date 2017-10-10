@@ -335,9 +335,9 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 
 #' @title Create a plot that combines a XIC and a mz/rt 2D plot for one sample
 #'
-#' @description The `plotMsData` creates a plot that combines an extracted ion
-#'     chromatogram on top (rt against intensity) and a plot of rt against m/z
-#'     values at the bottom.
+#' @description The `plotMsData` creates a plot that combines an (base peak )
+#'     extracted ion chromatogram on top (rt against intensity) and a plot of
+#'     rt against m/z values at the bottom.
 #' 
 #' @param x `data.frame` such as returned by the [extractMsData()] function.
 #'     Only a single `data.frame` is supported.
@@ -355,6 +355,10 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #' @param grid.color a color definition for the grid line (or `NA` to skip
 #'     creating them).
 #'
+#' @param colramp a *color ramp palette* to be used to color the data points
+#'     based on their intensity. See argument `col.regions` in
+#'     [lattice::level.colors] documentation.
+#' 
 #' @seealso [extractMsData()] for the method to extract the data to plot.
 #' @author Johannes Rainer
 #' 
@@ -378,20 +382,22 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #' plotMsData(msd[[1]], mfrow = NULL)
 #' plotMsData(msd[[2]], mfrow = NULL)
 plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
-                       grid.color = "lightgrey") {    
-    cols <- level.colors(x$i, at = do.breaks(range(x$i), nint = 256),
-                         col.regions =
-                             colorRampPalette(rev(brewer.pal(9, "YlGnBu"))))
+                       grid.color = "lightgrey",
+                       colramp = colorRampPalette(
+                           rev(brewer.pal(9, "YlGnBu")))) {
     if (length(mfrow) == 2)
         par(mfrow = mfrow)
     par(mar = c(0, 4, 2, 1))
-    x_split <- split(x, f = x$rt)
-    ints <- lapply(x_split, function(z) sum(z$i))
+    x_split <- split(x$i, f = x$rt)
+    ints <- unlist(lapply(x_split, function(z) max(z)))
+    brks <- do.breaks(range(x$i), nint = 256)
+    cols <- level.colors(ints, at = brks, col.regions = colramp)
     plot(as.numeric(names(ints)), ints, main = main, xlab = "", xaxt = "n",
          ylab = "", las = 2, pch = 21, bg = cols, col = "grey", cex = cex)
     mtext(side = 4, line = 0, "intensity", cex = par("cex.lab"))
     grid(col = grid.color)
     par(mar = c(3.5, 4, 0, 1))
+    cols <- level.colors(x$i, at = brks, col.regions = colramp)
     plot(x$rt, x$mz, main = "", pch = 21, bg = cols, col = "grey",
          xlab = "", ylab = "", yaxt = "n", cex = cex)
     axis(side = 2, las = 2)

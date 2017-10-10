@@ -5,7 +5,8 @@
 \title{Create a plot that combines a XIC and a mz/rt 2D plot for one sample}
 \usage{
 plotMsData(x, main = "", cex = 1, mfrow = c(2, 1),
-  grid.color = "lightgrey")
+  grid.color = "lightgrey", colramp = colorRampPalette(rev(brewer.pal(9,
+  "YlGnBu"))))
 }
 \arguments{
 \item{x}{\code{data.frame} such as returned by the \code{\link[=extractMsData]{extractMsData()}} function.
@@ -23,6 +24,10 @@ pre-define the plot layout.}
 
 \item{grid.color}{a color definition for the grid line (or \code{NA} to skip
 creating them).}
+
+\item{colramp}{a \emph{color ramp palette} to be used to color the data points
+based on their intensity. See argument \code{col.regions} in
+\link[lattice:level.colors]{lattice::level.colors} documentation.}
 }
 \description{
 The \code{plotMsData} creates a plot that combines an extracted ion
