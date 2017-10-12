@@ -407,11 +407,16 @@ As noted above the *peak groups* method requires peak groups (features) present 
 most samples to perform the alignment. We thus have to perform a first
 correspondence run to identify such peaks (details about the algorithm used are
 presented in the next section). We use here again default settings, but it is
-strongly advised to adapt the parameters for each data set.
+strongly advised to adapt the parameters for each data set. The definition of
+the sample groups (i.e. assignment of individual samples to the sample groups in
+the experiment) is mandatory for the `PeakDensityParam`. If there are no sample
+groups in the experiment `sampleGroups` should be set to a single value for each
+file (e.g. `rep(1, length(fileNames(xdata))`).
 
 ```{r  alignment-peak-groups, message = FALSE }
 ## Correspondence: group peaks across samples.
-pdp <- PeakDensityParam(sampleGroups = xdata$sample_group, minFraction = 0.8)
+pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+			minFraction = 0.8)
 xdata <- groupChromPeaks(xdata, param = pdp)
 
 ## Now the retention time correction.
@@ -479,30 +484,30 @@ plot(chr_mzr, col = cols, xaxt = "n", xlab = "")
 ## Highlight the detected peaks in that region.
 highlightChromPeaks(xdata, mz = mzr, col = cols, type = "point", pch = 16)
 ## Define the parameters for the peak density method
-pdp <- PeakDensityParam(sampleGroups = xdata$sample_group, minFraction = 0.4,
-			bw = 30)
+pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+			minFraction = 0.4, bw = 30)
 par(mar = c(4, 4, 1, 0.5))
-plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp, pch = 16,
-		     xlim = c(2500, 4000))
+plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
+		     pch = 16, xlim = c(2500, 4000))
 ## Use a different bw
-pdp <- PeakDensityParam(sampleGroups = xdata$sample_group, minFraction = 0.4,
-			bw = 20)
-plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp, pch = 16,
-		     xlim = c(2500, 4000)) 
+pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+			minFraction = 0.4, bw = 20)
+plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
+		     pch = 16, xlim = c(2500, 4000)) 
 ```
 
 The upper panel in the plot above shows the extracted ion chromatogram for each
-sample with the detected peaks highlighted. The middle and lower plot shows the retention
-time for each detected peak within the different samples. The black solid line
-represents the density distribution of detected peaks along the retention
-times. Peaks combined into *features* (peak groups) are indicated with grey
-rectangles. Different values for the `bw` parameter of the `PeakDensityParam` were
-used: `bw = 30` in the middle and `bw = 20` in the lower panel. With the default
-value for the parameter `bw` the two neighboring chromatographic peaks would be
-grouped into the same feature, while with a `bw` of 20 they would be grouped into
-separate features.
-This grouping depends on the parameters for the density function and
-other parameters passed to the algorithm with the `PeakDensityParam`.
+sample with the detected peaks highlighted. The middle and lower plot shows the
+retention time for each detected peak within the different samples. The black
+solid line represents the density distribution of detected peaks along the
+retention times. Peaks combined into *features* (peak groups) are indicated with
+grey rectangles. Different values for the `bw` parameter of the `PeakDensityParam`
+were used: `bw = 30` in the middle and `bw = 20` in the lower panel. With the
+default value for the parameter `bw` the two neighboring chromatographic peaks
+would be grouped into the same feature, while with a `bw` of 20 they would be
+grouped into separate features.  This grouping depends on the parameters for the
+density function and other parameters passed to the algorithm with the
+`PeakDensityParam`.
 
 ```{r  correspondence, message = FALSE }
 ## Perform the correspondence
@@ -584,8 +589,8 @@ technical biases.
 ## Extract the features and log2 transform them
 ft_ints <- log2(featureValues(xdata, value = "into"))
 
-## Perform the PCA omitting all features with an NA in any of the samples.
-## Also, the intensities are mean centered.
+## Perform the PCA omitting all features with an NA in any of the
+## samples. Also, the intensities are mean centered.
 pc <- prcomp(t(na.omit(ft_ints)), center = TRUE)
 
 ## Plot the PCA

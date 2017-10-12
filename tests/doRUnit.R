@@ -52,9 +52,13 @@ if(require("RUnit", quietly=TRUE)) {
     ## Doing also the retention time correction etc
     od_x <- faahko_od
     xod_x <- faahko_xod
-    xod_xg <- groupChromPeaks(xod_x, param = PeakDensityParam())
+    xod_xg <- groupChromPeaks(
+        xod_x, param = PeakDensityParam(
+                   sampleGroups = rep(1, length(fileNames(xod_x)))))
     xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
-    xod_xgrg <- groupChromPeaks(xod_xgr, param = PeakDensityParam())
+    xod_xgrg <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(
+                     sampleGroups = rep(1, length(fileNames(xod_x)))))
 
     xod_r <- adjustRtime(as(od_x, "XCMSnExp"), param = ObiwarpParam())
     

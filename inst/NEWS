@@ -22,6 +22,7 @@ USER VISIBLE CHANGES:
   retention times (if present).
 - [[,XCMSnExp method returns a Spectrum object with adjusted retention time, if
   the XCMSnExp contains adjusted retention times.
+- Argument 'sampleGroups' is mandatory for 'PeakDensityParam' (issue #228).
 
 BUG FIXES:
 - Fix #191: Excessive memory use in fillPeaks.

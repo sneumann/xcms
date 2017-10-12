@@ -98,16 +98,18 @@ res <- adjustRtime(res, param = ObiwarpParam())
 ## different peak density correspondence settings.
 mzr <- c(305.05, 305.15)
 
-plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(), pch = 16)
+plotChromPeakDensity(res, mz = mzr, pch = 16,
+    param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
 
 ## Use a larger bandwidth
-plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60),
-    pch = 16)
+plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60,
+    sampleGroups = rep(1, length(fileNames(res)))), pch = 16)
 ## Neighboring peaks are now fused into one.
 
 ## Require the chromatographic peak to be present in all samples of a group
 plotChromPeakDensity(res, mz = mzr, pch = 16,
-    param = PeakDensityParam(minFraction = 1))
+    param = PeakDensityParam(minFraction = 1,
+    sampleGroups = rep(1, length(fileNames(res)))))
 }
 \seealso{
 \code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for details on the

@@ -1037,7 +1037,9 @@ test_as_XCMSnExp_xcmsSet <- function() {
     ## res <- fillPeaks(res)
 
     ## Add groups.
-    od_2 <- groupChromPeaks(od_x, param = PeakDensityParam())
+    od_2 <- groupChromPeaks(
+        od_x,
+        param = PeakDensityParam(sampleGroups =rep(1, length(fileNames(od_x)))))
     checkEquals(unname(featureDefinitions(od_2)$peakidx), groupidx(res))
 
     ## rt correction

@@ -897,16 +897,18 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #' ## different peak density correspondence settings.
 #' mzr <- c(305.05, 305.15)
 #'
-#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(), pch = 16)
+#' plotChromPeakDensity(res, mz = mzr, pch = 16,
+#'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
 #'
 #' ## Use a larger bandwidth
-#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60),
-#'     pch = 16)
+#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60,
+#'     sampleGroups = rep(1, length(fileNames(res)))), pch = 16)
 #' ## Neighboring peaks are now fused into one.
 #'
 #' ## Require the chromatographic peak to be present in all samples of a group
 #' plotChromPeakDensity(res, mz = mzr, pch = 16,
-#'     param = PeakDensityParam(minFraction = 1))
+#'     param = PeakDensityParam(minFraction = 1,
+#'     sampleGroups = rep(1, length(fileNames(res)))))
 plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                  col = "#00000080", xlab = "retention time",
                                  ylab = "sample", xlim = range(rt),
@@ -932,7 +934,8 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
             ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
             param <- processParam(ph[[length(ph)]])
         } else {
-            param = PeakDensityParam()
+            param = PeakDensityParam(
+                sampleGroups = rep(1, length(fileNames(object))))
         }
     }
     if (!is(param, "PeakDensityParam"))

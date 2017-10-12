@@ -30,9 +30,9 @@ based on their intensity. See argument \code{col.regions} in
 \link[lattice:level.colors]{lattice::level.colors} documentation.}
 }
 \description{
-The \code{plotMsData} creates a plot that combines an extracted ion
-chromatogram on top (rt against intensity) and a plot of rt against m/z
-values at the bottom.
+The \code{plotMsData} creates a plot that combines an (base peak )
+extracted ion chromatogram on top (rt against intensity) and a plot of
+rt against m/z values at the bottom.
 }
 \examples{
 

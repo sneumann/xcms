@@ -160,8 +160,9 @@ cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
 
 res <- findChromPeaks(raw_data, param = cwp)
 
-## Perform the correspondence.
-res <- groupChromPeaks(res, param = PeakDensityParam())
+## Perform the correspondence. We assign all samples to the same group.
+res <- groupChromPeaks(res,
+    param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
 
 ## For how many features do we lack an integrated peak signal?
 sum(is.na(featureValues(res)))

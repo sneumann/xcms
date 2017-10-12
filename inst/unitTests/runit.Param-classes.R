@@ -488,23 +488,27 @@ test_PeakDensityParam <- function() {
     checkEquals(sampleGroups(p), 1:4)
     p <- PeakDensityParam(sampleGroups = c("a", "a", "b"))
     checkEquals(sampleGroups(p), c("a", "a", "b"))
-
+    checkException(sampleGroups(p) <- NULL)
+    checkException(sampleGroups(p) <- c(2, 2, NA))
+    checkException(PeakDensityParam())
+    checkException(PeakDensityParam(sampleGroups = c(1, 1, NA)))
+    
     p <- new("PeakDensityParam", bw = 3)
     checkEquals(bw(p), 3)
     bw(p) <- 20
     checkEquals(bw(p), 20)
-    p <- PeakDensityParam(bw = 33)
+    p <- PeakDensityParam(bw = 33, sampleGroups = "a")
     checkEquals(bw(p), 33)
-    checkException(PeakDensityParam(bw = -4))
+    checkException(PeakDensityParam(bw = -4, sampleGroups = 1))
 
     ## minFraction
     p <- new("PeakDensityParam", minFraction = 0.7)
     checkEquals(minFraction(p), 0.7)
     minFraction(p) <- 0.2
     checkEquals(minFraction(p), 0.2)
-    p <- PeakDensityParam(minFraction = 0.4)
+    p <- PeakDensityParam(minFraction = 0.4, sampleGroups = 3)
     checkEquals(minFraction(p), 0.4)
-    checkException(PeakDensityParam(minFraction = -4))
+    checkException(PeakDensityParam(minFraction = -4, sampleGroups = 3))
     checkException(minFraction(p) <- c(0.3, 0.2, 0.4))
     checkException(minFraction(p) <- 2)
 
@@ -513,27 +517,27 @@ test_PeakDensityParam <- function() {
     checkEquals(minSamples(p), 3)
     minSamples(p) <- 20
     checkEquals(minSamples(p), 20)
-    p <- PeakDensityParam(minSamples = 33)
+    p <- PeakDensityParam(minSamples = 33, sampleGroups = rep(3, 100))
     checkEquals(minSamples(p), 33)
-    checkException(PeakDensityParam(minSamples = -4))
+    checkException(PeakDensityParam(minSamples = -4, sampleGroups = 4))
 
     ## binSize
     p <- new("PeakDensityParam", binSize = 3)
     checkEquals(binSize(p), 3)
     binSize(p) <- 20
     checkEquals(binSize(p), 20)
-    p <- PeakDensityParam(binSize = 0.3)
+    p <- PeakDensityParam(binSize = 0.3, sampleGroups = 4)
     checkEquals(binSize(p), 0.3)
-    checkException(PeakDensityParam(binSize = -4))
+    checkException(PeakDensityParam(binSize = -4, sampleGroups = 4))
 
     ## maxFeatures
     p <- new("PeakDensityParam", maxFeatures = 3)
     checkEquals(maxFeatures(p), 3)
     maxFeatures(p) <- 20
     checkEquals(maxFeatures(p), 20)
-    p <- PeakDensityParam(maxFeatures = 33)
+    p <- PeakDensityParam(maxFeatures = 33, sampleGroups = 4)
     checkEquals(maxFeatures(p), 33)
-    checkException(PeakDensityParam(maxFeatures = -4))
+    checkException(PeakDensityParam(maxFeatures = -4, sampleGroups = 3))
 }
 
 test_MzClustParam <- function() {
