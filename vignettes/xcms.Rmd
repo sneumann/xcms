@@ -1,6 +1,5 @@
 ---
 title: "LCMS data preprocessing and analysis with xcms"
-graphics: yes
 package: xcms
 output:
   BiocStyle::html_document:
@@ -21,6 +20,10 @@ references:
   - family: noname
     given: noname
 ---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+BiocStyle::markdown() 
+```
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer<br />
@@ -824,13 +827,13 @@ Unix-based systems (Linux, macOS) support `multicore`-based parallel
 processing. To configure it globally we `register` the parameter class. Note also
 that `bpstart` is used below to initialize the parallel processes.
 
-```{r  multicore, message = FALSE }
+```{r  multicore, message = FALSE, eval = FALSE }
 register(bpstart(MulticoreParam(2))) 
 ```
 
 Windows supports only socket-based parallel processing:
 
-```{r  snow, message = FALSE }
+```{r  snow, message = FALSE, eval = FALSE }
 register(bpstart(SnowParam(2))) 
 ```
 

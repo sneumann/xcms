@@ -1,7 +1,7 @@
 ---
 title: "New and modified functionality in xcms"
-author: "Johannes Rainer"
-graphics: yes
+author:
+- name: Johannes Rainer
 package: xcms
 output:
   BiocStyle::html_document:
@@ -20,6 +20,10 @@ references:
   - family: noname
     given: noname
 ---
+
+```{r  biocstyle, echo = FALSE, results = "asis" }
+BiocStyle::markdown() 
+```
 
 
 # New functionality in `xcms`

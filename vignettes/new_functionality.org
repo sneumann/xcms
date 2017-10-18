@@ -5,14 +5,14 @@
 #+KEYWORDS:
 #+LANGUAGE:  en
 #+OPTIONS: ^:{} toc:nil
-#+PROPERTY: exports code
-#+PROPERTY: session *R*
+#+PROPERTY: header-args :exports code
+#+PROPERTY: header-args :session *R*
 
 #+BEGIN_EXPORT html
 ---
 title: "New and modified functionality in xcms"
-author: "Johannes Rainer"
-graphics: yes
+author:
+- name: Johannes Rainer
 package: xcms
 output:
   BiocStyle::html_document:
@@ -33,6 +33,11 @@ references:
 ---
 
 #+END_EXPORT
+
+#+NAME: biocstyle
+#+BEGIN_SRC R :ravel echo = FALSE, results = "asis"
+  BiocStyle::markdown()
+#+END_SRC
 
 * New functionality in =xcms=
 
