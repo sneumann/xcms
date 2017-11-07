@@ -400,9 +400,8 @@ test_obiwarp <- function() {
     res_2 <- adjustRtime(od, param = prm)
     res_3 <- adjustRtime(xod, param = prm)
     checkEquals(adjustedRtime(res_3), res_2)
-    checkEquals(adjustedRtime(res_3, bySample = TRUE), res)
-    checkEquals(adjustedRtime(res_3, bySample = TRUE),
-                unname(split(unname(res_2), fromFile(od))))
+    checkEquals(lapply(adjustedRtime(res_3, bySample = TRUE), unname), res)
+    checkEquals(adjustedRtime(res_3), res_2)
     ## Check if peaks were corrected correctly
     checkTrue(sum(chromPeaks(res_3)[, "rt"] == chromPeaks(xod)) <
               nrow(chromPeaks(res_3)) / 2)

@@ -205,7 +205,8 @@ useOriginalCode <- function(x) {
                           baseValue = ifelse(impute == "none", yes = baseValue,
                                              no = NA),
                           sortedX = TRUE,
-                          returnIndex = FALSE
+                          returnIndex = FALSE,
+                          returnX = FALSE
                           )
         if (length(toIdx) == 1)
             binRes <- list(binRes)
@@ -230,12 +231,17 @@ useOriginalCode <- function(x) {
             distance <- 0
             baseValue <- 0
         }
-        binVals <- lapply(binRes, function(z) {
-            return(imputeLinInterpol(z$y, method = impute, distance = distance,
-                                     noInterpolAtEnds = TRUE,
-                                     baseValue = baseValue))
-        })
-        buf <- do.call(cbind, binVals)
+        if (method == "none") {
+            ## binVals <- lapply(binRes, function(z) z$y)
+            binVals <- binRes
+        } else {
+            binVals <- lapply(binRes, function(z) {
+                imputeLinInterpol(z$y, method = impute, distance = distance,
+                                  noInterpolAtEnds = TRUE,
+                                  baseValue = baseValue)
+            })
+        }
+        buf <- base::do.call(cbind, binVals)
     }
     if (returnBreaks)
         buf <- list(profMat = buf, breaks = brks)
@@ -323,4 +329,79 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
     max_idx <- which.max(w)
     seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
     weighted.mean(x[seq_idx], w[seq_idx])
+}
+
+
+
+#' @title Create a plot that combines a XIC and a mz/rt 2D plot for one sample
+#'
+#' @description The `plotMsData` creates a plot that combines an (base peak )
+#'     extracted ion chromatogram on top (rt against intensity) and a plot of
+#'     rt against m/z values at the bottom.
+#' 
+#' @param x `data.frame` such as returned by the [extractMsData()] function.
+#'     Only a single `data.frame` is supported.
+#'
+#' @param main `character(1)` specifying the title.
+#'
+#' @param cex `numeric(1)` defining the size of points. Passed directly to the
+#'     `plot` function.
+#' 
+#' @param mfrow `numeric(2)` defining the plot layout. This will be passed
+#'     directly to `par(mfrow = mfrow)`. See `par` for more information. Setting
+#'     `mfrow = NULL` avoids calling `par(mfrow = mfrow)` hence allowing to
+#'     pre-define the plot layout.
+#'
+#' @param grid.color a color definition for the grid line (or `NA` to skip
+#'     creating them).
+#'
+#' @param colramp a *color ramp palette* to be used to color the data points
+#'     based on their intensity. See argument `col.regions` in
+#'     [lattice::level.colors] documentation.
+#' 
+#' @seealso [extractMsData()] for the method to extract the data to plot.
+#' @author Johannes Rainer
+#' 
+#' @md
+#'
+#' @examples
+#'
+#' ## Read two files from the faahKO package
+#' library(faahKO)
+#' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
+#'     recursive = TRUE)[1:2]
+#' raw_data <- readMSData(cdfs, mode = "onDisk")
+#' ## Extract the MS data from a slice of data
+#' msd <- extractMsData(raw_data, mz = c(334.9, 335.1), rt = c(2700, 2900))
+#'
+#' ## Plot the data for the first file
+#' plotMsData(msd[[1]])
+#'
+#' ## To plot the data for both files:
+#' layout(mat = matrix(1:4, ncol = 2))
+#' plotMsData(msd[[1]], mfrow = NULL)
+#' plotMsData(msd[[2]], mfrow = NULL)
+plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
+                       grid.color = "lightgrey",
+                       colramp = colorRampPalette(
+                           rev(brewer.pal(9, "YlGnBu")))) {
+    if (length(mfrow) == 2)
+        par(mfrow = mfrow)
+    par(mar = c(0, 4, 2, 1))
+    x_split <- split(x$i, f = x$rt)
+    ints <- unlist(lapply(x_split, function(z) max(z)))
+    brks <- do.breaks(range(x$i), nint = 256)
+    cols <- level.colors(ints, at = brks, col.regions = colramp)
+    plot(as.numeric(names(ints)), ints, main = main, xlab = "", xaxt = "n",
+         ylab = "", las = 2, pch = 21, bg = cols, col = "grey", cex = cex)
+    mtext(side = 4, line = 0, "intensity", cex = par("cex.lab"))
+    grid(col = grid.color)
+    par(mar = c(3.5, 4, 0, 1))
+    cols <- level.colors(x$i, at = brks, col.regions = colramp)
+    plot(x$rt, x$mz, main = "", pch = 21, bg = cols, col = "grey",
+         xlab = "", ylab = "", yaxt = "n", cex = cex)
+    axis(side = 2, las = 2)
+    grid(col = grid.color)
+    mtext(side = 1, line = 2.5, "retention time", cex = par("cex.lab"))
+    mtext(side = 4, line = 0, "mz", cex = par("cex.lab"))
 }

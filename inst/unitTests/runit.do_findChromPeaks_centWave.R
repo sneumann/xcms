@@ -13,6 +13,19 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xr <- deepCopy(faahko_xr_1)
 onDisk <- filterFile(faahko_od, file = 1)
 
+## Run peak detection in MS1 and ensure that the resulting object contains
+## still all MS levels.
+test_findChromPeaks_multiple_MS <- function() {
+    msn_file <- system.file(package = "msdata", 
+                            "proteomics/MS3TMT10_01022016_32917-33481.mzML.gz")
+    msn_file <- system.file(
+        package = "msdata",
+        "proteomics/TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz")
+    msn_data <- readMSData(msn_file, mode = "onDisk")
+    msn_xdata <- findChromPeaks(msn_data, param = CentWaveParam())
+    checkEquals(msLevel(msn_data), msLevel(msn_xdata))
+}
+
 ## Ensure that the reported peak integrated signal corresponds to the correct
 ## data. This is to ensure that issue #135 was fixed correctly.
 test_findChromPeaks_centWave_peakIntensity <- function() {

@@ -332,24 +332,32 @@ setClass("GenericParam",
 #' @slot param (Param): an object of type \code{Param} (e.g.
 #'     \code{\link{CentWaveParam}}) specifying the settings of the processing
 #'     step.
+#'
+#' @slot msLevel: \code{integer} definining the MS level(s) on which the
+#'     analysis was performed.
 #' 
 #' @rdname ProcessHistory-class
 setClass("XProcessHistory",
          slots = c(
-             param = "ParamOrNULL"
+             param = "ParamOrNULL",
+             msLevel = "integer"
          ),
          contains = "ProcessHistory",
          prototype = prototype(
-             param = NULL
+             param = NULL,
+             msLevel = NA_integer_
          ),
          validity = function(object) {
              msg <- character()
              if (length(object@param) > 0)
-                 if(!is(object@param, "Param"))
+                 if (!is(object@param, "Param"))
                      msg <- c(msg,
                               paste0("Only objects from type 'Param' ",
                                      "allowed in slot '@param'! I got ",
                                      class(object@param)))
+             if (!is.na(msLevel(object)))
+                 if (msLevel(object) < 0)
+                     msg <- c(msg, "msLevel has to be a positive integer")
              if (length(msg)) msg
              else TRUE
          })
@@ -1362,7 +1370,10 @@ NULL
 #'
 #' @param sampleGroups A vector of the same length than samples defining the
 #'     sample group assignments (i.e. which samples belong to which sample
-#'     group).
+#'     group). This parameter is mandatory for the \code{PeakDensityParam}
+#'     and has to be provided also if there is no sample grouping in the
+#'     experiment (in which case all samples should be assigned to the
+#'     same group).
 #'
 #' @param bw \code{numeric(1)} defining the bandwidth (standard deviation ot the
 #'     smoothing kernel) to be used. This argument is passed to the
@@ -1419,7 +1430,7 @@ NULL
 #' @examples
 #'
 #' ## Create a PeakDensityParam object
-#' p <- PeakDensityParam(binSize = 0.05)
+#' p <- PeakDensityParam(binSize = 0.05, sampleGroups = c(1, 1, 2, 2))
 #' ## Change hte minSamples slot
 #' minSamples(p) <- 3
 #' p
@@ -1446,15 +1457,16 @@ NULL
 #' ## The number of peaks identified per sample:
 #' table(chromPeaks(res)[, "sample"])
 #'
-#' ## Performing the chromatographic peak grouping
-#' fdp <- PeakDensityParam()
+#' ## Performing the chromatographic peak grouping. Assigning all samples to
+#' ## the same sample group.
+#' fdp <- PeakDensityParam(sampleGroups = rep(1, length(fileNames(res))))
 #' res <- groupChromPeaks(res, fdp)
 #'
 #' ## The definition of the features (peak groups):
 #' featureDefinitions(res)
 #'
-#' ## Using the featureValues method to extract a matrix with the intensities of
-#' ## the features per sample.
+#' ## Using the featureValues method to extract a matrix with the
+#' ## intensities of the features per sample.
 #' head(featureValues(res, value = "into"))
 #' 
 #' ## The process history:
@@ -2187,6 +2199,8 @@ setClass("FillChromPeaksParam",
 #'     across samples and a \code{list} with the adjusted retention times per
 #'     sample.
 #'
+#' @noRd
+#' 
 #' @rdname XCMSnExp-class
 setClass("MsFeatureData", contains = c("environment", "Versioned"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
@@ -2208,11 +2222,14 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     (a \code{DataFrame}) and \code{"adjustedRtime"} (a \code{list} of
 #'     numeric vectors). Note that these should not be accessed directly but
 #'     rather \emph{via} their accessor methods.
+#' 
 #'     Along with the results, the object contains the processing history that
-#'     allow to track each processing step along with the used settings. The
-#'     object also directly extends the \code{\link[MSnbase]{OnDiskMSnExp}}
-#'     object hence allowing easy access to the full data on which the peak
-#'     detection was performed.
+#'     allows to track each processing step along with the used settings. This
+#'     can be extracted with the \code{\link{processHistory}} method.
+#'
+#'     The \code{XCMSnExp} object directly extends the
+#'     \code{\link[MSnbase]{OnDiskMSnExp}} object and provides thus an easy
+#'     access to the full raw data at any stage of an analysis.
 #'
 #'     Objects from this class should not be created directly, they are
 #'     returned as result from the \code{\link{findChromPeaks}} method.
@@ -2232,6 +2249,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     and containing the results from a chromatographic peak detection (element
 #'     \code{"chromPeaks"}), peak grouping (element \code{"featureDefinitions"})
 #'     and retention time correction (element \code{"adjustedRtime"}) steps.
+#'     This object should not be manipulated directly.
 #'
 #' @param object For \code{adjustedRtime}, \code{featureDefinitions},
 #'     \code{chromPeaks}, \code{hasAdjustedRtime}, \code{hasFeatures} and
@@ -2382,7 +2400,7 @@ setClass("XCMSnExp",
              }
              ## 3) Check that the length of the adjustedRtime matches!
              if (any(ls(object@msFeatureData) == "adjustedRtime")) {
-                 rt <- rtime(object, bySample = TRUE)
+                 rt <- rtime(object, bySample = TRUE, adjusted = FALSE)
                  if (length(rt) != length(object@msFeatureData$adjustedRtime)) {
                      msg <- c(msg, paste0("The number of numeric vectors",
                                           " in the 'adjustedRtime' element",

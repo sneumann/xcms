@@ -1,9 +1,60 @@
+CHANGES IN VERSION 2.99.10
+-------------------------
+
+BUG FIXES:
+- Fix #230: Failing vignettes on Windows.
+
+
+CHANGES IN VERSION 2.99.9
+-------------------------
+
+USER VISIBLE CHANGES:
+- Chromatographic peak detection uses adjusted retention times on an aligned
+  XCMSnExp object (issue #213, #208).
+- New parameter msLevel for processHistory,XCMSnExp.
+- New parameter keepAdjustedRtime for filterMsLevel,XCMSnExp, dropChromPeaks,
+  XCMSnExp and dropFeatureDefinitions,XCMSnExp.
+- Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
+- Obiwarp alignment is now performed on one MS level and adjustment is applied
+  to all MS levels (issue #214).
+- Add function plotMsData to plot intensity against retention time and m/z
+  against retention time for a MS slice in one sample.
+- Add argument msLevel = 1L to extractMsData method (issue #223).
+- New applyAdjustedRtime function to consolidate the alignment results, i.e.
+  replace the raw retention times in the XCMSnExp with the adjusted retention
+  times.
+- [,XCMSnExp method gains argument keepAdjustedRtime to allow keeping adjusted
+  retention times in the sub-setting.
+- Implement spectrapply,XCMSnExp to ensure returned results use adjusted
+  retention times (if present).
+- [[,XCMSnExp method returns a Spectrum object with adjusted retention time, if
+  the XCMSnExp contains adjusted retention times.
+- Argument 'sampleGroups' is mandatory for 'PeakDensityParam' (issue #228).
+
+BUG FIXES:
+- Fix #191: Excessive memory use in fillPeaks.
+- Fix #220: peaks matrix is missing column "sample" if no peaks were found in
+  the first sample.
+- Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
+  single MS level despite peak detection is performed on a single level.
+- Fix problem in plotMsData causing wrong colors to be used to label the data
+  points.
+
+
+CHANGES IN VERSION 2.99.8
+-------------------------
+
+BUG FIXES:
+- Replace xcmsMSn Rnw with Rmd vignette to fix Windows build errors.
+
+
 CHANGES IN VERSION 2.99.7
 -------------------------
 
 BUG FIXES:
 - Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
 - Merge with BioC git after transition
+
 
 CHANGES IN VERSION 2.99.6
 -------------------------

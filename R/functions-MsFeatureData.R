@@ -1,10 +1,12 @@
 ## Functions for MsFeatureData classes.
 #' @include DataClasses.R
 
-##' Validates a 'chromPeaks' matrix or data.frame and ensures that it contains all
-##' required columns and that all columns are of numeric data type.
-##' @return \code{TRUE} or a \code{character} with the error message.
-##' @noRd
+#' Validates a 'chromPeaks' matrix or data.frame and ensures that it contains all
+#' required columns and that all columns are of numeric data type.
+#' 
+#' @return \code{TRUE} or a \code{character} with the error message.
+#' 
+#' @noRd
 .validChromPeaksMatrix <- function(x) {
     msg <- character()
     if (length(x)) {
@@ -28,12 +30,15 @@
 }
 
 
-##' @description Performs a validation check of all elements within the object:
-##' 1) Allowed are: chromPeaks (matrix), featureDefinitions (DataFrame) and
-##'    adjustedRtime (list).
-##' @author Johannes Rainer
-##' @return \code{TRUE} if object is valid, or a message with the error message.
-##' @noRd
+#' @description Performs a validation check of all elements within the object:
+#' 1) Allowed are: chromPeaks (matrix), featureDefinitions (DataFrame) and
+#'    adjustedRtime (list).
+#' 
+#' @author Johannes Rainer
+#' 
+#' @return \code{TRUE} if object is valid, or a message with the error message.
+#' 
+#' @noRd
 validateMsFeatureData <- function(x) {
     msg <- character()
     ks <- ls(x)
@@ -124,16 +129,19 @@ validateMsFeatureData <- function(x) {
     return(msg)
 }
 
-##' @description Filter chromPeaks and sync them with with the present
-##' filterGroups, i.e. update their peakidx column or remove them.
-##'
-##' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
-##' @param idx \code{numeric} with the indices of the chromatographic peaks to
-##' keep.
-##'
-##' @return A \code{MsFeatureData}.
-##' @author Johannes Rainer
-##' @noRd
+#' @description Filter chromPeaks and sync them with with the present
+#'     filterGroups, i.e. update their peakidx column or remove them.
+#'
+#' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
+#' 
+#' @param idx \code{numeric} with the indices of the chromatographic peaks to
+#'     keep.
+#'
+#' @return A \code{MsFeatureData}.
+#' 
+#' @author Johannes Rainer
+#' 
+#' @noRd
 .filterChromPeaks <- function(x, idx) {
     if (missing(idx))
         return(x)

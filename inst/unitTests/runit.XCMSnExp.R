@@ -125,13 +125,22 @@ test_XCMSnExp_spectra <- function() {
                   unlist(lapply(res, rtime))) < length(rtime(tmp)) / 4)
     res3 <- spectra(tmp2, adjusted = FALSE)
     checkEquals(res, res3)    
+    ## adjusted rt
+    tmp <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    checkTrue(is.character(all.equal(rtime(tmp, adjusted = FALSE),
+                                     adjustedRtime(tmp))))
+    res <- spectra(tmp)
+    checkEquals(rtime(tmp), unlist(lapply(res, rtime)))
+    res <- unlist(spectrapply(tmp, FUN = function(x) {rtime(x)}))
+    checkEquals(res, adjustedRtime(tmp))
 }
 
 test_XCMSnExp_class_accessors <- function() {
     .checkCreationOfEmptyObject()
     ## Filling with data...
     xod <- as(od_fa, "XCMSnExp")
-    ## peaks
+    ## peaks 
     checkTrue(!hasChromPeaks(xod))
     chromPeaks(xod) <- xs_2@peaks
     checkTrue(hasChromPeaks(xod))
@@ -222,37 +231,24 @@ test_XCMSnExp_class_accessors <- function() {
     
     ## adjustedRtime
     checkTrue(!hasAdjustedRtime(xod))
-    xod2 <- xod
-    adjustedRtime(xod2) <- xs_2@rt$corrected
-    checkTrue(hasAdjustedRtime(xod2))
-    checkTrue(hasChromPeaks(xod2))
-    checkTrue(hasFeatures(xod2))
-    checkEquals(adjustedRtime(xod2, bySample = TRUE), xs_2@rt$corrected)
-    ## The chromatographic peaks should be different to the unadjusted ones.
-    tmp <- chromPeaks(xod)[, "rt"] == chromPeaks(xod2)[, "rt"]
-    ## Most of the rts should be different
-    checkTrue(sum(tmp) < length(tmp)/4)
-    tmp <- chromPeaks(xod)[, "rtmin"] == chromPeaks(xod2)[, "rtmin"]
-    checkTrue(sum(tmp) < length(tmp)/4)
-    tmp <- chromPeaks(xod)[, "rtmax"] == chromPeaks(xod2)[, "rtmax"]
-    checkTrue(sum(tmp) < length(tmp)/4)
-    ## rtime should now also return adjusted retention times
-    checkEquals(rtime(xod2), adjustedRtime(xod2))
-    checkEquals(rtime(xod2, adjusted = FALSE), rtime(as(xod2, "OnDiskMSnExp")))
-    checkEquals(rtime(xod2, adjusted = FALSE), rtime(xod))
-    checkEquals(rtime(xod2, adjusted = TRUE), adjustedRtime(xod2))
+    checkTrue(hasAdjustedRtime(xod_r))
+    suppressWarnings(checkEquals(adjustedRtime(xod), NULL))
+    checkEquals(rtime(xod_r, adjusted = FALSE), rtime(xod))
+    checkEquals(rtime(xod_r), adjustedRtime(xod_r))
+    checkTrue(is.character(all.equal(rtime(xod_r), rtime(xod_r, adjusted = FALSE))))
     ## Indirect test that the ordering of the adjusted retention times matches
     ## ordering of rtime.
     ## From MSnbase version >= 2.3.9 values are ordered first by file then by
     ## spectrum.
-    if (grepl("^F", names(rtime(xod2)[1]))) {
-        rts_by_sample <- adjustedRtime(xod2, bySample = TRUE)
-        rts <- adjustedRtime(xod2)
+    if (grepl("^F", names(rtime(xod_r)[1]))) {
+        rts_by_sample <- adjustedRtime(xod_r, bySample = TRUE)
+        rts <- adjustedRtime(xod_r)
         checkEquals(unname(rts_by_sample[[2]]),
                     unname(rts[grep(names(rts), pattern = "F2")]))
         checkEquals(unname(unlist(rts_by_sample)),
                     unname(rts))
     }
+    xod2 <- xod_r
     ## Wrong assignments.
     checkException(adjustedRtime(xod2) <- xs_2@rt$corrected[1:2])
     ## bracket subset
@@ -267,6 +263,52 @@ test_XCMSnExp_findChromPeaks <- function() {
     tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
                                                        snthresh = 40))
     checkEquals(chromPeaks(tmp), chromPeaks(xod_x))
+    ## Check that it works also on adjusted retention times:
+    tmp <- findChromPeaks(xod_r, param = CentWaveParam(noise = 10000,
+                                                       snthresh = 40))
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(
+        length(processHistory(tmp, type = xcms:::.PROCSTEP.RTIME.CORRECTION)),1)
+    checkTrue(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
+              ncol(chromPeaks(tmp)))
+    tmp_sub <- filterFile(xod_r, file = 1, keepAdjustedRtime = TRUE)
+    checkEquals(rtime(tmp_sub, adjusted = TRUE),
+                rtime(xod_r, bySample = TRUE, adjusted = TRUE)[[1]])
+    spctr <- spectra(tmp_sub)
+    mz_values <- lapply(spctr, mz)
+    int_values <- unlist(lapply(spctr, intensity))
+    res_2 <- do_findChromPeaks_centWave(mz = unlist(mz_values),
+                                        int = int_values,
+                                        scantime = rtime(tmp_sub,
+                                                         adjusted = TRUE),
+                                        valsPerSpect = lengths(mz_values),
+                                        noise = 10000, snthresh = 40)
+    pks <- chromPeaks(tmp)
+    pks <- pks[pks[, "sample"] == 1, colnames(res_2)]
+    checkEquals(res_2, pks)
+    ## Second try:
+    tmp <- findChromPeaks(xod_xgrg, param = CentWaveParam(noise = 10000,
+                                                          snthresh = 40))
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(
+        length(processHistory(tmp, type = xcms:::.PROCSTEP.RTIME.CORRECTION)),1)
+    checkTrue(sum(chromPeaks(tmp)[, "rt"] != chromPeaks(xod_x)[, "rt"]) >
+              ncol(chromPeaks(tmp)))
+    tmp_sub <- filterFile(xod_xgrg, file = 3, keepAdjustedRtime = TRUE)
+    checkEquals(unname(rtime(tmp_sub, adjusted = TRUE)),
+                unname(rtime(xod_xgrg, bySample = TRUE, adjusted = TRUE)[[3]]))
+    spctr <- spectra(tmp_sub)
+    mz_values <- lapply(spctr, mz)
+    int_values <- unlist(lapply(spctr, intensity))
+    res_2 <- do_findChromPeaks_centWave(mz = unlist(mz_values),
+                                        int = int_values,
+                                        scantime = rtime(tmp_sub,
+                                                         adjusted = TRUE),
+                                        valsPerSpect = lengths(mz_values),
+                                        noise = 10000, snthresh = 40)
+    pks <- chromPeaks(tmp)
+    pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
+    checkEquals(res_2, pks)
 }
 
 
@@ -351,6 +393,14 @@ test_XCMSnExp_droppers <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
     checkEquals(rtime(res), rtime(od_x))
+    res <- dropChromPeaks(xod_xgr, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    checkEquals(rtime(res), rtime(xod_xgr))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     ##
     res <- dropChromPeaks(xod_xgrg)
     checkTrue(!hasChromPeaks(res))
@@ -360,6 +410,14 @@ test_XCMSnExp_droppers <- function() {
     checkTrue(!hasAdjustedRtime(res))
     checkTrue(length(processHistory(res, type = type_rt_adj)) == 0)
     checkEquals(rtime(res), rtime(od_x))
+    res <- dropChromPeaks(xod_xgrg, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(res))
+    checkTrue(length(processHistory(res, type = type_rt_adj)) == 1)
+    checkEquals(rtime(res), rtime(xod_xgr))
+    checkTrue(!hasChromPeaks(res))
+    checkTrue(length(processHistory(res, type = type_feat_det)) == 0)
+    checkTrue(!hasFeatures(res))
+    checkTrue(length(processHistory(res, type = type_feat_algn)) == 0)
     
     ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history
@@ -447,6 +505,37 @@ test_XCMSnExp_inherited_methods <- function() {
     tmp_1@processingData <- new("MSnProcess")
     tmp_2@processingData <- new("MSnProcess")
     checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    checkException(xod_r[1, 1])
+    idxs <- c(1432, 1621, 2492, 3001, 3013)
+    tmp <- xod_r[idxs]
+    checkTrue(length(tmp) == length(idxs))
+    checkEquals(mz(xod_r)[idxs], mz(tmp))
+    checkTrue(hasAdjustedRtime(xod_r) != hasAdjustedRtime(tmp))
+    ## keeping adjusted retention times:
+    tmp <- xod_r[idxs, keepAdjustedRtime = TRUE]
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(rtime(xod_r)[idxs], rtime(tmp))
+    ## Same with object containing also peaks and features
+    tmp <- xod_xgrg[idxs]
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkTrue(!hasChromPeaks(tmp))
+    checkTrue(!hasFeatures(tmp))
+    tmp <- xod_xgrg[idxs, keepAdjusted = TRUE]
+    checkTrue(hasAdjustedRtime(tmp))
+    checkEquals(rtime(xod_xgrg)[idxs], rtime(tmp))
+    checkTrue(length(processHistory(tmp)) == 1)
+    
+    ## [[
+    spct <- xod_x[[13]]
+    checkTrue(is(spct, "Spectrum1"))
+    checkEquals(rtime(spct), unname(rtime(xod_x)[13]))
+    checkEquals(mz(spct), mz(xod_x)[[13]])
+    ## Have to ensure that, if x has adjusted retention times, that these are
+    ## reported in the Spectrum.
+    spct <- xod_r[[13]]
+    checkEquals(rtime(spct), unname(rtime(xod_r, adjusted = TRUE)[13]))
+    checkTrue(rtime(spct) != rtime(xod_r, adjusted = FALSE)[13])
+    
     ## bin
     tmp_1 <- bin(od_fa)
     suppressWarnings(
@@ -483,11 +572,19 @@ test_XCMSnExp_inherited_methods <- function() {
     suppressWarnings(
         tmp_2 <- filterMsLevel(xod_x)
     )
-    checkTrue(length(processHistory(tmp_2)) == 0)
-    checkTrue(!hasChromPeaks(tmp_2))
-    tmp_1@processingData <- new("MSnProcess")
-    tmp_2@processingData <- new("MSnProcess")
-    checkEquals(tmp_1, as(tmp_2, "OnDiskMSnExp"))
+    checkEquals(tmp_2, xod_x)
+    suppressWarnings(
+        checkEquals(length(filterMsLevel(xod_x, msLevel = 2)), 0)
+    )
+    ## If we've got adjusted retention times, keep them.
+    suppressWarnings(tmp_1 <- filterMsLevel(xod_xgr, msLevel = 1))
+    checkTrue(hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp_1), rtime(xod_xgr)) # adjusted rt present
+    suppressWarnings(
+        tmp_1 <- filterMsLevel(xod_xgrg, msLevel = 1, keepAdjustedRtime = FALSE)
+    )
+    checkTrue(!hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp_1), rtime(xod_xgr, adjusted = FALSE))
     ## normalize
     tmp_1 <- normalize(od_fa)
     suppressWarnings(
@@ -622,9 +719,10 @@ test_XCMSnExp_filterFile <- function() {
     checkEquals(adjustedRtime(res), adjustedRtime(xod_xgr, bySample = TRUE)[[2]])
     checkTrue(hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkTrue(length(processHistory(res)) == 2)
+    checkTrue(length(processHistory(res)) == 3)
     checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
-    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
+    checkEquals(processType(processHistory(res)[[2]]), "Peak grouping")
+    checkEquals(processType(processHistory(res)[[3]]), "Retention time correction")
     ## Do filterFile on xod_xgrg
     res <- filterFile(xod_xgrg, file = c(1, 3))
     checkTrue(hasChromPeaks(res))
@@ -653,9 +751,10 @@ test_XCMSnExp_filterFile <- function() {
                 adjustedRtime(xod_xgr, bySample = TRUE)[c(1, 3)])
     checkTrue(hasAdjustedRtime(res))
     checkTrue(!hasFeatures(res))
-    checkTrue(length(processHistory(res)) == 2)
+    checkTrue(length(processHistory(res)) == 3)
     checkEquals(processType(processHistory(res)[[1]]), "Peak detection")
-    checkEquals(processType(processHistory(res)[[2]]), "Retention time correction")
+    checkEquals(processType(processHistory(res)[[2]]), "Peak grouping")
+    checkEquals(processType(processHistory(res)[[3]]), "Retention time correction")
 }
 
 test_XCMSnExp_filterMz <- function() {
@@ -938,7 +1037,9 @@ test_as_XCMSnExp_xcmsSet <- function() {
     ## res <- fillPeaks(res)
 
     ## Add groups.
-    od_2 <- groupChromPeaks(od_x, param = PeakDensityParam())
+    od_2 <- groupChromPeaks(
+        od_x,
+        param = PeakDensityParam(sampleGroups =rep(1, length(fileNames(od_x)))))
     checkEquals(unname(featureDefinitions(od_2)$peakidx), groupidx(res))
 
     ## rt correction
@@ -1190,10 +1291,128 @@ test_adjustRtimePeakGroups <- function() {
     ## No NAs allowed across samples:
     isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
     checkTrue(all(isNa == 0))
-    pkGrp <- xcms:::adjustRtimePeakGroups(xod_xg,
-                                          param = PeakGroupsParam(minFraction = 0.5))
+    pkGrp <- xcms:::adjustRtimePeakGroups(
+                        xod_xg, param = PeakGroupsParam(minFraction = 0.5))
     isNa <- apply(pkGrp, MARGIN = 1, function(z) sum(is.na(z)))
     checkTrue(max(isNa) == 1)
+
+    ## Test adjustRtime adjusting also MS level > 1.
+    ## Artificially changing the MS level of some spectra.
+    xod_mod <- xod_xg
+    ## Select the spectra for MS level 2:
+    idx_ms2 <- c(300:500, 300:500 + 1277, 300:500 + 2554)
+    xod_mod@featureData$msLevel[idx_ms2] <- 2
+    xod_mod_adj <- adjustRtime(xod_mod,
+                               param = PeakGroupsParam(span = 0.4))
+    ## rtime of the MS level 2 spectra are expected to be adjusted too
+    checkEquals(rtime(xod_xgr), rtime(xod_mod_adj))
+    checkTrue(all(rtime(xod_mod)[idx_ms2] != rtime(xod_mod_adj)[idx_ms2]))
+}
+
+test_MS1_MS2_data <- function() {
+    ## That's to test stuff for issues #208 and related (also issue #214).
+    ## Set every other spectra in the original files to MS2.
+
+    ## OnDiskMSnExp: od_x
+    od_mod <- od_x
+    fDat <- fData(od_mod)
+    idx_1 <- which(fDat$fileIdx == 1)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 1)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 2)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 2)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 3)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 3)))))
+    fDat[idx_1, "msLevel"] <- 2
+    fData(od_mod) <- fDat
+
+    res <- adjustRtime(od_mod, param = ObiwarpParam())
+    res_2 <- adjustRtime(filterMsLevel(od_mod, msLevel = 1),
+                         param = ObiwarpParam())
+    ## Expect:
+    ## - adjusted rtime of any other spectrum is identical to the
+    ##   ones performed on the data sub set.
+    checkEquals(res[msLevel(od_mod) == 1], res_2)
+    ## - difference between raw and adjusted rtime at the end and beginning are
+    ##   constant.
+    res_by_file <- split(res, fromFile(od_mod))
+    raw_by_file <- split(rtime(od_mod), fromFile(od_mod))
+    checkTrue(raw_by_file[[1]][1] != res_by_file[[1]][1])
+    checkTrue(raw_by_file[[2]][1] != res_by_file[[2]][1])
+    checkTrue(raw_by_file[[3]][1] != res_by_file[[3]][1])
+    diffs <- tail(res_by_file[[1]]) - tail(raw_by_file[[1]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))    
+    ## - adjusted rtime of the MS level 2 are in interpolated between rts of
+    ##   MS level 2.
+    ## rtime for 3 should be interpolated between 2 and 4:
+    adj_fun <- approxfun(x = raw_by_file[[1]][c(2, 4)],
+                         y = res_by_file[[1]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[1]][3]), unname(res_by_file[[1]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[2]][c(2, 4)],
+                         y = res_by_file[[2]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[2]][3]), unname(res_by_file[[2]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[3]][c(2, 4)],
+                         y = res_by_file[[3]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[3]][3]), unname(res_by_file[[3]][3]))
+
+    ## XCMSnExp: xod_x, repeat the stuff above
+    xod_mod <- xod_x
+    fDat <- fData(xod_mod)
+    idx_1 <- which(fDat$fileIdx == 1)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 1)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 2)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 2)))))
+    fDat[idx_1, "msLevel"] <- 2
+    idx_1 <- which(fDat$fileIdx == 3)
+    idx_1 <- idx_1[rep(c(TRUE, FALSE), length.out = length(idx_1))]
+    idx_1 <- sort(unique(c(idx_1, tail(which(fDat$fileIdx == 3)))))
+    fDat[idx_1, "msLevel"] <- 2
+    fData(xod_mod) <- fDat
+
+    res <- adjustRtime(xod_mod, param = ObiwarpParam())
+    suppressWarnings(res_2 <- adjustRtime(filterMsLevel(xod_mod, msLevel = 1),
+                                          param = ObiwarpParam()))
+    ## Expect:
+    ## - adjusted rtime of any other spectrum is identical to the
+    ##   ones performed on the data sub set.
+    checkEquals(rtime(res, adjusted = TRUE)[msLevel(res) == 1],
+                rtime(res_2, adjusted = TRUE))
+    ## - difference between raw and adjusted rtime at the end and beginning are
+    ##   constant.
+    res_by_file <- rtime(res, bySample = TRUE)
+    raw_by_file <- rtime(xod_mod, bySample = TRUE)
+    checkTrue(raw_by_file[[1]][1] != res_by_file[[1]][1])
+    checkTrue(raw_by_file[[2]][1] != res_by_file[[2]][1])
+    checkTrue(raw_by_file[[3]][1] != res_by_file[[3]][1])
+    diffs <- tail(res_by_file[[1]]) - tail(raw_by_file[[1]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))
+    diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
+    checkEquals(unname(diff(diffs)), rep(0, 5))    
+    ## - adjusted rtime of the MS level 2 are in interpolated between rts of
+    ##   MS level 2.
+    ## rtime for 3 should be interpolated between 2 and 4:
+    adj_fun <- approxfun(x = raw_by_file[[1]][c(2, 4)],
+                         y = res_by_file[[1]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[1]][3]), unname(res_by_file[[1]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[2]][c(2, 4)],
+                         y = res_by_file[[2]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[2]][3]), unname(res_by_file[[2]][3]))
+    adj_fun <- approxfun(x = raw_by_file[[3]][c(2, 4)],
+                         y = res_by_file[[3]][c(2, 4)])
+    checkEquals(adj_fun(raw_by_file[[3]][3]), unname(res_by_file[[3]][3]))
 }
 
 test_extractMsData <- function() {
@@ -1224,11 +1443,24 @@ test_extractMsData <- function() {
     
     ## XCMSnExp, xod_xgr
     ## with adjusted retention times
-    res <- extractMsData(filterFile(xod_xgr, 1:2), rt = rtr, mz = mzr)
+    tmp <- filterFile(xod_xgr, 1:2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    res <- extractMsData(tmp, rt = rtr, mz = mzr)
+    mzs <- mz(tmp)
+    rts <- rtime(tmp, bySample = TRUE, adjusted = TRUE)
     checkTrue(all(res[[1]][, "rt"] >= rtr[1] & res[[1]][, "rt"] <= rtr[2]))
     checkTrue(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
     checkTrue(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
     checkTrue(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
+    tmp_rts <- rts[[1]]
+    tmp_rts <- tmp_rts[tmp_rts >= rtr[1] & tmp_rts <= rtr[2]]
+    res_rts <- res[[1]][, 1]
+    checkEquals(unique(res_rts), unname(tmp_rts))
+    tmp_rts <- rts[[2]]
+    tmp_rts <- tmp_rts[tmp_rts >= rtr[1] & tmp_rts <= rtr[2]]
+    res_rts <- res[[2]][, 1]
+    checkEquals(unique(res_rts), unname(tmp_rts))
+    
     ## without adjusted retention times
     res_2 <- extractMsData(filterFile(xod_xgr, 1:2), adjustedRtime = FALSE,
                            rt = rtr, mz = mzr)
@@ -1250,6 +1482,71 @@ test_extractMsData <- function() {
     ## checkEquals(length(res), 3)
     ## checkTrue(all(unlist(lapply(res, FUN = nrow)) == 0))
 }
+
+test_spectrapply_spectra <- function() {
+    ## With adjusted retention time
+    tmp <- filterFile(xod_r, file = 3, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp))
+    checkTrue(is.character(all.equal(rtime(tmp, adjusted = FALSE),
+                                     rtime(tmp, adjusted = TRUE))))
+    sps <- spectra(tmp)
+    checkEquals(unlist(lapply(sps, rtime)), rtime(tmp, adjusted = TRUE))
+    checkEquals(unlist(spectrapply(tmp, FUN = function(x) rtime(x))),
+                rtime(tmp, adjusted = TRUE))
+    sps_2 <- spectra(tmp, adjusted = FALSE)
+    checkEquals(unlist(lapply(sps_2, rtime)), rtime(tmp, adjusted = FALSE))
+    ## without adjusted retention time
+    tmp <- filterFile(xod_x, file = 3)
+    checkTrue(!hasAdjustedRtime(tmp))
+    sps <- spectra(tmp)
+    checkEquals(unlist(lapply(sps, rtime)), rtime(tmp))
+    checkEquals(unlist(lapply(sps, mz)), unlist(mz(tmp)))
+    checkEquals(unlist(spectrapply(tmp, FUN = function(x) rtime(x))),
+                rtime(tmp))
+}
+
+test_processHistory <- function() {
+    type_peak_det <- xcms:::.PROCSTEP.PEAK.DETECTION
+    type_align <- xcms:::.PROCSTEP.RTIME.CORRECTION
+    type_corr <- xcms:::.PROCSTEP.PEAK.GROUPING
+    checkTrue(length(processHistory(xod_x, type = type_corr)) == 0)
+    ph <- processHistory(xod_x, type = type_peak_det)
+    checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
+
+    ph <- processHistory(xod_xgrg)
+    checkTrue(length(ph) == 4)
+    ph <- processHistory(xod_xgrg, msLevel = 1L)
+    checkTrue(length(ph) == 2)
+    checkEquals(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
+}
+
+test_split <- function() {
+    xod <- as(od_x, "XCMSnExp")
+    tmp <- split(xod_xgr, f = fromFile(xod_xgr))
+    ## Split by file.
+    checkEquals(spectra(tmp[[1]]), spectra(filterFile(xod, file = 1)))
+    checkEquals(spectra(tmp[[3]]), spectra(filterFile(xod, file = 3)))
+    ## Split by acquisitionNum.
+    tmp <- filterRt(xod_xgr, rt = c(2500, 2700))
+    checkTrue(hasChromPeaks(tmp))
+    checkTrue(hasAdjustedRtime(tmp))
+    tmp_2 <- split(tmp, f = acquisitionNum(tmp))
+    checkTrue(all(acquisitionNum(tmp_2[[1]]) == acquisitionNum(tmp)[1]))
+    checkTrue(all(acquisitionNum(tmp_2[[14]]) == acquisitionNum(tmp)[14]))
+    ## with keepAdjustedRtime
+    tmp <- split(xod_xgr, f = fromFile(xod_xgr), keepAdjustedRtime = TRUE)
+    tmp_1 <- filterFile(xod_xgr, file = 1, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_1))
+    checkEquals(rtime(tmp[[1]]), rtime(tmp_1))
+    tmp_2 <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_2))
+    checkEquals(rtime(tmp[[2]]), rtime(tmp_2))
+    tmp_3 <- filterFile(xod_xgr, file = 3, keepAdjustedRtime = TRUE)
+    checkTrue(hasAdjustedRtime(tmp_3))
+    checkEquals(rtime(tmp[[3]]), rtime(tmp_3))
+    checkTrue(!all(rtime(tmp[[3]]) == rtime(tmp[[3]], adjusted = FALSE)))
+}
+
 
 ############################################################
 ## Test getEIC alternatives.

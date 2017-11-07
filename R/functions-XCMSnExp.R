@@ -136,13 +136,16 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #'
 #' @param mz \code{numeric(2)} with the mz range.
 #'
+#' @param msLevel \code{integer} defining the MS level(s) to which the data
+#'     should be restricted prior to data extraction.
+#' 
 #' @param return A \code{list} with length equal to the number of files and
 #'     each element being a \code{data.frame} with the extracted values.
 #'
 #' @noRd
 #' 
 #' @author Johannes Rainer
-.extractMsData <- function(x, rt, mz) {
+.extractMsData <- function(x, rt, mz, msLevel = 1L) {
     if (!missing(rt)) {
         rt <- range(rt, na.rm = TRUE)
         if (length(rt) != 2)
@@ -154,8 +157,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
             stop("'mz' has to be a numeric of length 2!")
         fmzr <- mz
     } else fmzr <- c(0, 0)
-    ## Subset the object based on rt and mz range.
-    subs <- filterMz(filterRt(x, rt = rt), mz = mz)
+    ## Subset the object based on MS level rt and mz range.
+    subs <- filterMz(filterRt(filterMsLevel(x, msLevel = msLevel), rt = rt),
+                     mz = mz)
     if (length(subs) == 0) {
         ## Return a list with empty data.frames
         empty_df <- data.frame(rt = numeric(), mz = numeric(), i = integer())
@@ -181,197 +185,6 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     res[fromF] <- L
     return(res)
 }
-
-
-## #' @description This function extracts chromatograms efficiently for multiple
-## #'     rt and mz ranges by loading the data per file only once and performing
-## #'     the mz subsetting on the already loaded Spectrum1 classes.
-## #'
-## #' @note Ensure that x is an OnDiskMSnExp and not an e.g. XCMSnExp object.
-## #'     Subsetting etc an XCMSnExp might take longer.
-## #' 
-## #' @param rt \code{matrix} with two columns and number of rows corresponding to
-## #'     the number of ranges to extract.
-## #'
-## #' @param mz \code{matrix} with two columns and number of rows corresponding to
-## #'     the number of ranges to extract. nrow of rt and mz have to match.
-## #'
-## #' @param x OnDiskMSnExp object from which to extract the chromatograms.
-## #'
-## #' @param return.type either \code{"list"} or \code{"matrix"} to return the
-## #'     result as a list or as a matrix.
-## #'
-## #' @param missingValue value to be used as intensity if no signal was measured
-## #'     for a given rt.
-## #' 
-## #' @return A \code{list} or \code{matrix} with the \code{Chromatogram} objects.
-## #'     If no data was present for the specified \code{rtrange} and
-## #'     \code{mzrange} the function returns a \code{list} of length \code{0}.
-## #'     The \code{list} is arranged first by ranges and then by files, such that
-## #'     \code{result[[1]]} returns a \code{list} of \code{Chromatogram} objects
-## #'     for the same rt/mz range.
-## #'     For \code{return.type = "matrix"} a \code{matrix} is returned with rows
-## #'     corresponding to ranges and columns to files/samples. \code{result[, 1]}
-## #'     will thus return a \code{list} of \code{Chromatogram} objects for the
-## #'     first sample/file, while \code{result[1, ]} returns a \code{list} of
-## #'     \code{Chromatogram} objects for the same rt/mz range for all files.
-## #'
-## #' @author Johannes Rainer
-## #'
-## #' @noRd
-## .extractMultipleChromatograms <- function(x, rt, mz, aggregationFun = "sum",
-##                                           BPPARAM = bpparam(),
-##                                           return.type = c("list", "matrix"),
-##                                           missingValue = NA_real_) {
-##     return.type <- match.arg(return.type)
-##     missingValue <- as.numeric(missingValue)
-##     if (!any(.SUPPORTED_AGG_FUN_CHROM == aggregationFun))
-##         stop("'aggregationFun' should be one of ",
-##              paste0("'", .SUPPORTED_AGG_FUN_CHROM, "'", collapse = ", "))
-##     ## Ensure we're working on MS1 only!
-##     x <- filterMsLevel(x, 1)
-##     if (length(x) == 0)
-##         return(list())
-##     nranges <- 1
-##     if (missing(rt))
-##         rt <- matrix(c(-Inf, Inf), nrow = 1)
-##     if (missing(mz))
-##         mz <- matrix(c(-Inf, Inf), nrow = 1)
-##     if (!missing(rt)) {
-##         if (ncol(rt) != 2)
-##             stop("'rt' has to be a matrix with two columns")
-##         ## Replicate if nrow rt is 1 to match nrow of mz.
-##         if (nrow(rt) == 1)
-##             rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
-##     }
-##     if (!missing(mz)) {
-##         if (ncol(mz) != 2)
-##             stop("'mz' has to be a matrix with two coliumns")
-##         if (nrow(mz) == 1)
-##             mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
-##     }
-##     if (nrow(rt) != nrow(mz))
-##         stop("dimensions of 'rt' and 'mz' have to match")
-##     ## Identify indices of all spectra that are within the rt ranges.
-##     rtimes <- rtime(x)
-
-##     ## 1) Subset x keeping all spectra that fall into any of the provided rt
-##     ##    ranges.
-##     keep_idx <- unlist(apply(rt, MARGIN = 1, function(z)
-##         which(rtimes >= z[1] & rtimes <= z[2])), use.names = FALSE)
-##     keep_idx <- sort(unique(as.integer(keep_idx)))
-##     if (length(keep_idx) == 0)
-##         return(list())
-##     subs <- x[keep_idx]
-
-##     ## 2) Call the final subsetting on each file separately.
-##     subs_by_file <- splitByFile(subs, f = factor(seq_along(fileNames(subs))))
-##     suppressWarnings(
-##         res <- bpmapply(
-##             subs_by_file,
-##             seq_along(fileNames(subs)),
-##             FUN = function(cur_sample, cur_file, rtm, mzm, aggFun) {
-##                 ## Load all spectra for that file. applies also any proc steps
-##                 sps <- spectra(cur_sample)
-##                 rts <- rtime(cur_sample)
-##                 cur_res <- vector("list", nrow(rtm))
-##                 ## Loop through rt and mz.
-##                 for (i in 1:nrow(rtm)) {
-##                     ## - Select all spectra within that range and call a
-##                     ##   function on them that does first filterMz and then
-##                     ##   aggregate the values per spectrum.
-##                     in_rt <- rts >= rtm[i, 1] & rts <= rtm[i, 2]
-##                     ## Return an empty Chromatogram if there is no spectrum/scan
-##                     ## within the retention time range.
-##                     if (!any(in_rt)) {
-##                         cur_res[[i]] <- Chromatogram(
-##                             filterMz = mzm[i, ],
-##                             fromFile = as.integer(cur_file),
-##                             aggregationFun = aggFun)
-##                         next
-##                     }
-##                     cur_sps <- lapply(
-##                         sps[in_rt],
-##                         function(spct, filter_mz, aggFun) {
-##                             spct <- filterMz(spct, filter_mz)
-##                             ## Now aggregate the values.
-##                             if (!spct@peaksCount)
-##                                 return(c(NA_real_, NA_real_, missingValue))
-##                             return(c(range(spct@mz, na.rm = TRUE, finite = TRUE),
-##                                      do.call(
-##                                          aggFun,
-##                                          list(spct@intensity, na.rm = TRUE))))
-##                         }, filter_mz = mzm[i, ], aggFun = aggFun)
-##                     ## Now build the Chromatogram class.
-##                     allVals <- unlist(cur_sps, use.names = FALSE)
-##                     idx <- seq(3, length(allVals), by = 3)
-##                     ## Or should we drop the names completely?
-##                     ints <- allVals[idx]
-##                     names(ints) <- names(cur_sps)
-##                     ## Don't return a Chromatogram object if no values.
-##                     if (!all(is.na(ints))) {
-##                         cur_res[[i]] <- Chromatogram(
-##                             rtime = rts[in_rt],
-##                             intensity = ints,
-##                             mz = range(allVals[-idx], na.rm = TRUE,
-##                                        finite = TRUE),
-##                             filterMz = mzm[i, ],
-##                             fromFile = as.integer(cur_file),
-##                             aggregationFun = aggFun)
-##                     } else {
-##                         ## If no measurement if non-NA, still report the NAs and
-##                         ## use the filter mz as mz.
-##                         cur_res[[i]] <- Chromatogram(
-##                             rtime = rts[in_rt],
-##                             intensity = ints,
-##                             mz = mzm[i, ],
-##                             filterMz = mzm[i, ],
-##                             fromFile = as.integer(cur_file),
-##                             aggregationFun = aggFun)
-##                     }
-##                 }
-##                 cur_res
-##             }, MoreArgs = list(rtm = rt, mzm = mz, aggFun = aggregationFun),
-##             BPPARAM = BPPARAM, SIMPLIFY = FALSE)
-##     )
-##     ## Ensure that the lists have the same length than there are samples!
-##     fns <- fileNames(x)
-##     fromF <- base::match(fileNames(subs), fns)
-
-##     ## If we've got some files in which we don't have any signal in any range,
-##     ## fill it with empty Chromatograms. This ensures that the result has
-##     ## ALWAYS the same length than there are samples.
-##     if (length(res) != length(fns)) {
-##         res_all_files <- vector(mode = "list", length = length(fns))
-##         res_all_files[fromF] <- res
-##         empties <- which(lengths(res_all_files) == 0)
-##         ## fill these
-##         for (i in 1:length(empties)) {
-##             empty_list <- vector(mode = "list", length = nrow(rt))
-##             for(j in 1:nrow(rt)) {
-##                 empty_list[j] <- Chromatogram(filterMz = mz[i, ],
-##                                               fromFile = as.integer(i),
-##                                               aggregationFun = aggregationFun)
-##             }
-##             res_all_files[[empties[i]]] <- empty_list
-##         }
-##         res <- res_all_files
-##     }
-##     ## Now I need to re-arrange the result.
-##     if (return.type == "list") {
-##         ## Got [[file]][[range]], but want to have [[range]][[file]]
-##         final_res <- vector("list", nrow(rt))
-##         for (i in 1:nrow(rt)) {
-##             final_res[[i]] <- lapply(res, FUN = `[[`, i)
-##         }
-##         if (nrow(rt) == 1)
-##             final_res <- final_res[[1]]
-##     }
-##     if (return.type == "matrix") {
-##         final_res <- do.call(cbind, res)
-##     }
-##     final_res
-## }
 
 
 ## #' @description Integrates the intensities for chromatograpic peak(s). This is
@@ -1084,16 +897,18 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #' ## different peak density correspondence settings.
 #' mzr <- c(305.05, 305.15)
 #'
-#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(), pch = 16)
+#' plotChromPeakDensity(res, mz = mzr, pch = 16,
+#'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
 #'
 #' ## Use a larger bandwidth
-#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60),
-#'     pch = 16)
+#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60,
+#'     sampleGroups = rep(1, length(fileNames(res)))), pch = 16)
 #' ## Neighboring peaks are now fused into one.
 #'
 #' ## Require the chromatographic peak to be present in all samples of a group
 #' plotChromPeakDensity(res, mz = mzr, pch = 16,
-#'     param = PeakDensityParam(minFraction = 1))
+#'     param = PeakDensityParam(minFraction = 1,
+#'     sampleGroups = rep(1, length(fileNames(res)))))
 plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                  col = "#00000080", xlab = "retention time",
                                  ylab = "sample", xlim = range(rt),
@@ -1119,7 +934,8 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
             ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
             param <- processParam(ph[[length(ph)]])
         } else {
-            param = PeakDensityParam()
+            param = PeakDensityParam(
+                sampleGroups = rep(1, length(fileNames(object))))
         }
     }
     if (!is(param, "PeakDensityParam"))
@@ -1175,10 +991,6 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                       col = col[pks[, "sample"]], xlab = xlab,
                                       yaxt = "n", ylab = ylab,
                                       main = main, ylim = yl), dots))
-        ## plot(x = pks[, "rt"], y = ypos[pks[, "sample"]], xlim = xlim, 
-        ##      col = col[pks[, "sample"]], xlab = xlab, yaxt = "n", ylab = ylab,
-        ##      main = main, ylim = yl,
-        ##      ...)
         axis(side = 2, at = ypos, labels = 1:nsamples)
         points(x = dens$x, y = dens$y, type = "l")
         ## Estimate what would be combined to a feature
@@ -1282,6 +1094,7 @@ highlightChromPeaks <- function(x, rt, mz,
                                 lwd = 1, col = NA, type = c("rect", "point"),
                                 ...) {
     type <- match.arg(type)
+    n_samples <- length(fileNames(x))
     if (missing(rt))
         rt <- c(-Inf, Inf)
     if (missing(mz))
@@ -1291,10 +1104,10 @@ highlightChromPeaks <- function(x, rt, mz,
     if (!hasChromPeaks(x))
         stop("'x' does not contain any detected peaks")
     pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0)
-    if (length(col) != length(fileNames(x)))
-        col <- rep(col[1], length(fileNames(x)))
-    if (length(border) != length(fileNames(x)))
-        border <- rep(border[1], length(fileNames(x)))
+    if (length(col) != n_samples)
+        col <- rep(col[1], n_samples)
+    if (length(border) != n_samples)
+        border <- rep(border[1], n_samples)
     if (length(pks)) {
         if (type == "rect")
             rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
@@ -1302,11 +1115,25 @@ highlightChromPeaks <- function(x, rt, mz,
                  border = border[pks[, "sample"]], lwd = lwd,
                  col = col[pks[, "sample"]])
         if (type == "point") {
+            ## Fix assignment of point types for each sample.
+            dots <- list(...)
+            if (any(names(dots) == "bg")) {
+                bg <- dots$bg
+                if (length(bg) != n_samples)
+                    bg <- rep_len(bg[1], n_samples)
+                dots$bg <- bg[pks[, "sample"]]
+            }
+            if (any(names(dots) == "pch")) {
+                pch <- dots$pch
+                if (length(pch) != n_samples)
+                    pch <- rep_len(pch[1], n_samples)
+                dots$pch <- pch[pks[, "sample"]]
+            }
             if (any(is.na(col)))
                 col <- border
-            ## Draw a star at the position defined by the "rt" column
-            points(x = pks[, "rt"], y = pks[, "maxo"],
-                   col = col[pks[, "sample"]], ...)
+            ## Draw a point at the position defined by the "rt" column
+            do.call("points", args = c(list(x = pks[, "rt"], y = pks[, "maxo"],
+                                            col = col[pks[, "sample"]]), dots))
         }
     }
 }
@@ -1492,6 +1319,83 @@ isCalibrated <- function(object) {
         TRUE
     else
         FALSE
+}
+
+#' @title Replace raw with adjusted retention times
+#'
+#' @description Replaces the raw retention times with the adjusted retention
+#'     time or returns the object unchanged if none are present.
+#'
+#' @details Adjusted retention times are stored *in parallel* to the adjusted
+#'     retention times in the `XCMSnExp`. The `applyAdjustedRtime` replaces the
+#'     raw retention times (stored in the *feature data* (`fData` `data.frame`))
+#'     with the adjusted retention times.
+#'
+#' @note Replacing the raw retention times with adjusted retention times
+#'     disables the possibility to restore raw retention times using the
+#'     [dropAdjustedRtime()] method. This function does **not** remove the
+#'     retention time processing step with the settings of the alignment from
+#'     the [processHistory()] of the `object` to ensure that the processing
+#'     history is preserved.
+#'
+#' @param object An [XCMSnExp] object.
+#' 
+#' @md
+#'
+#' @return A `XCMSnExp` with the raw retention times being replaced with the
+#'     adjusted retention time.
+#' 
+#' @author Johannes Rainer
+#'
+#' @seealso [adjustRtime()] for the function to perform the alignment (retention
+#'     time correction).
+#' 
+#'     [adjustedRtime()] for the method to extract adjusted retention times from
+#'     an [XCMSnExp] object.
+#' 
+#'     [dropAdjustedRtime] for the method to delete alignment results and to
+#'     restore the raw retention times.
+#' 
+#' @examples
+#' ## Load test data
+#' files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#'
+#' od <- readMSData(files, mode = "onDisk")
+#'
+#' ## Apply obiwarp retention time adjustment. We have to convert the
+#' ## OnDiskMSnExp first to an XCMSnExp
+#' xod <- as(od, "XCMSnExp")
+#' xod <- adjustRtime(xod, param = ObiwarpParam())
+#'
+#' hasAdjustedRtime(xod)
+#'
+#' ## Replace raw retention times with adjusted retention times.
+#' xod <- applyAdjustedRtime(xod)
+#'
+#' ## No adjusted retention times present
+#' hasAdjustedRtime(xod)
+#'
+#' ## Raw retention times have been replaced with adjusted retention times
+#' plot(split(rtime(od), fromFile(od))[[1]] -
+#'     split(rtime(xod), fromFile(xod))[[1]], type = "l")
+#'
+#' ## And the process history still contains the settings for the alignment
+#' processHistory(xod)
+applyAdjustedRtime <- function(object) {
+    if (!is(object, "XCMSnExp"))
+        stop("'object' has to be an 'XCMSnExp' object")
+    if (!hasAdjustedRtime(object))
+        return(object)
+    ## Replace retention times.
+    fData(object)$retentionTime <- rtime(object, adjusted = TRUE)
+    ## Copy the data
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    newFd <- dropAdjustedRtime(newFd)
+    object@msFeatureData <- newFd
+    object
 }
 
 ## Find mz ranges with multiple peaks per sample.

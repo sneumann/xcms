@@ -17,7 +17,10 @@ the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
-group).}
+group). This parameter is mandatory for the \code{PeakDensityParam}
+and has to be provided also if there is no sample grouping in the
+experiment (in which case all samples should be assigned to the
+same group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the

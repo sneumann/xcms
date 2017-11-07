@@ -10,9 +10,11 @@ importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
 importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
                   "phenoData<-", "pData", "rowMedians")
 
-importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis")
+importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis",
+           "grid", "mtext")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
-importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot")
+importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
+           "level.colors", "do.breaks")
 importFrom("plyr", "rbind.fill")
 import("RColorBrewer")
 import("BiocParallel")
@@ -33,7 +35,7 @@ importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
 importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
-           "runmed", "sd", "stepfun", "weighted.mean", "density")
+           "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")
@@ -93,6 +95,8 @@ exportClasses(
 exportMethods(
     "[",
     "$",
+    "[[",
+    "split",
     "absent",
     "AutoLockMass",
     "calibrate",
@@ -214,7 +218,9 @@ export(
     "plotChromPeakDensity",
     "plotChromPeaks",
     "plotChromPeakImage",
-    "isCalibrated"
+    "isCalibrated",
+    "plotMsData",
+    "applyAdjustedRtime"
 )
 
 ## New analysis methods
@@ -393,7 +399,7 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "MsFeatureData", "ProcessHistory",
+exportClasses("XCMSnExp", "ProcessHistory",
               "XProcessHistory"
               )
 ## New methods for these classes
@@ -435,5 +441,6 @@ exportMethods("hasChromPeaks",
               "fillChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",
-              "chromatogram"
+              "chromatogram",
+              "spectrapply"
               )

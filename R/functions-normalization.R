@@ -207,12 +207,16 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
             return(z)
         rownames(data.) <- NULL
         preds <- predict(lmod, newdata = data.frame(y = z, data.))
-        z + mean(z, na.rm = TRUE) - preds
+        ## Ensure that we shift by the mean of the values used to estimate the
+        ## model!
+        z + mean(z[fitOnSubset], na.rm = TRUE) - preds
     }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
     res <- do.call(rbind, res)
     message("OK")
-    message("Did not correct ", sum(lengths(lms) == 0), " of the ", length(y),
-            " rows because of too few data points to fit the model.")
+    if (sum(lengths(lms) == 0))
+        message("Did not correct ", sum(lengths(lms) == 0), " of the ",
+                length(y), " rows because of too few data points to fit the ",
+                "model.")
     rm(y)
     ## Check if we have to shift values...
     if (any(res < 1, na.rm = TRUE)) {
@@ -223,7 +227,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
             ## Shift selected rows by their row min + 1
             ## Include here also < 1 so that values potentially in log scale
             ## between 0 and 1 are adjusted as well.
-            mins <- apply(res, MARGIN = 1, function(z) min(z, na.rm = TRUE))
+            mins <- apply(res, MARGIN = 1, min, na.rm = TRUE)
             idx <- which(mins < 1)
             res[idx, ] <- res[idx, ] + abs(mins[idx]) + 1
             message("Shifting ", length(idx), " of the ", nrow(res), " rows ",
@@ -241,7 +245,7 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
         if (shiftNegative == "globalMin") {
             ## Shifting ALL rows by the smallest value in the matrix.
             shiftVal <- abs(min(res, na.rm = TRUE)) + 1
-            message("Shifting all values by ", shiftVal)
+            message("Shifting all values by ", format(shiftVal, digits = 3))
             res <- res + shiftVal
         }
     }

@@ -226,7 +226,8 @@ test_fillChromPeaks_MSW <- function() {
 
 test_fillChromPeaks_matchedFilter <- function() {
     tmp <- findChromPeaks(faahko_od, param = MatchedFilterParam())
-    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+    sg <- rep(1, length(fileNames(tmp)))
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam(sampleGroups = sg))
 
     tmp_filled <- fillChromPeaks(tmp)
     checkTrue(sum(is.na(featureValues(tmp_filled))) <
@@ -282,7 +283,8 @@ dontrun_exhaustive_fillChromPeaks_matchedFilter <- function() {
     ## Different step sizes.
     prm <- MatchedFilterParam(binSize = 0.6)
     tmp <- findChromPeaks(faahko_od, param = prm)
-    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+    sg <- rep(1, length(fileNames(tmp)))
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam(sampleGroups = sg))
     tmp_fld <- fillChromPeaks(tmp)
     checkTrue(sum(is.na(featureValues(tmp_fld))) <
               sum(is.na(featureValues(tmp))))
@@ -321,7 +323,7 @@ dontrun_exhaustive_fillChromPeaks_matchedFilter <- function() {
     ## Imputation.
     prm <- MatchedFilterParam(binSize = 0.2, impute = "lin")
     tmp <- findChromPeaks(faahko_od, param = prm)
-    tmp <- groupChromPeaks(tmp, param = PeakDensityParam())
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam(sampleGroups = sg))
     tmp_fld <- fillChromPeaks(tmp)
     checkTrue(sum(is.na(featureValues(tmp_fld))) <
               sum(is.na(featureValues(tmp))))
@@ -360,7 +362,8 @@ dontrun_exhaustive_fillChromPeaks_matchedFilter <- function() {
              "/Users/jo/data/2016/2016-11/NoSN/190516_POOL_N_POS_11.mzML")
     raw <- readMSData(fls, mode = "onDisk")
     pks <- findChromPeaks(raw, param = MatchedFilterParam(binSize = 0.05))
-    pks <- groupChromPeaks(pks, param = PeakDensityParam())
+    sg <- rep(1, length(fileNames(raw)))
+    pks <- groupChromPeaks(pks, param = PeakDensityParam(sampleGroups = sg))
     tmp_fld <- fillChromPeaks(pks)
     nas <- is.na(featureValues(pks)[, 1]) | is.na(featureValues(pks)[, 2])
     checkTrue(cor(featureValues(pks, value = "into")[!nas, 1],
@@ -510,7 +513,9 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
     raw <- readMSData(fls, mode = "onDisk")
     pks <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(0.8, 20),
                                                      ppm = 40))
-    pks_noRt <- groupChromPeaks(pks, param = PeakDensityParam(minFraction = 0.6))
+    sg <- rep(1, length(fileNames(raw)))
+    pks_noRt <- groupChromPeaks(pks, param = PeakDensityParam(minFraction = 0.6,
+                                                              sampleGroups = sg))
     filled <- fillChromPeaks(pks_noRt)
     fp <- chromPeaks(filled)
     fp <- fp[fp[, "is_filled"] == 1, ]
@@ -568,7 +573,9 @@ dontrun_exhaustive_fillChromPeaks_test <- function() {
     
     ## With adjusted retention times.
     pks <- adjustRtime(pks, param = ObiwarpParam())
-    pks <- groupChromPeaks(pks, param = PeakDensityParam(minFraction = 0.6))
+    sg <- rep(1, length(fileNames(pks)))
+    pks <- groupChromPeaks(pks, param = PeakDensityParam(minFraction = 0.6,
+                                                         sampleGroups = sg))
     filled <- fillChromPeaks(pks)
     ##
     fp <- chromPeaks(filled)

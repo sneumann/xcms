@@ -5,7 +5,7 @@ author:
 - name: Johannes Rainer
 package: xcms
 output:
-  BiocStyle::html_document2:
+  BiocStyle::html_document:
     toc_float: true
 vignette: >
   %\VignetteIndexEntry{Grouping FTICR-MS data with xcms}
@@ -14,6 +14,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{xcms,msdata,MassSpecWavelet,BiocStyle}
 ---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
 
 # Introduction
 
@@ -33,19 +37,14 @@ identified in the chromatographic (time) dimension, in direct injection mass
 spec data sets peaks are identified in the m/z dimension. `r Biocpkg("xcms")`
 uses functionality from the `MassSpecWavelet` package to identify such peaks.
 
-Below we load the required packages and set the parallel processing up
-(depending on the operating system).
+Below we load the required packages. We disable parallel processing. To enable
+and customize parallel processing please see the `BiocParallel` vignette.
 
 ```{r load-libs, message = FALSE, results = "hide"}
 library(xcms)
 library(MassSpecWavelet)
 
-if (.Platform$OS.type == "unix") {
-    prm <- MulticoreParam(2)
-} else {
-    prm <- SnowParam(2)
-}
-register(bpstart(prm))
+register(SerialParam())
 
 
 ```

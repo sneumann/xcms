@@ -15,6 +15,10 @@ vignette: >
   %\VignetteDepends{xcms,msdata,BiocStyle}
 ---
 
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
 # Introduction
 
 ```{r echo = FALSE, results = "hide", message = FALSE}

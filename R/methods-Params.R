@@ -1104,7 +1104,9 @@ setMethod("show", "PeakDensityParam", function(object) {
 #' @aliases sampleGroups
 #' 
 #' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object.
+#'     for the \code{sampleGroups} slot of the object. Its length should match
+#'     the number of samples in the experiment and it should not contain
+#'     \code{NA}s.
 #' 
 #' @rdname groupChromPeaks-density
 setMethod("sampleGroups", "PeakDensityParam", function(object){
@@ -1115,6 +1117,9 @@ setMethod("sampleGroups", "PeakDensityParam", function(object){
 #' 
 #' @rdname groupChromPeaks-density
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
+    if (length(value) == 0 | any(is.na(value)))
+        stop("'sampleGroups' should not contain any NAs and its length has ",
+             "to be >= 1")
     object@sampleGroups <- value
     if (validObject(object))
         return(object)

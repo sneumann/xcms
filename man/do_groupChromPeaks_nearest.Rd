@@ -17,7 +17,10 @@ the index of the sample in which the peak was found.}
 
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
-group).}
+group). This parameter is mandatory for the \code{PeakDensityParam}
+and has to be provided also if there is no sample grouping in the
+experiment (in which case all samples should be assigned to the
+same group).}
 
 \item{mzVsRtBalance}{\code{numeric(1)} representing the factor by which mz
 values are multiplied before calculating the (euclician) distance between

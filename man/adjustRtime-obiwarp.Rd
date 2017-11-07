@@ -54,7 +54,7 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
   factorDiag = 2, factorGap = 1, localAlignment = FALSE,
   initPenalty = 0)
 
-\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param)
+\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 
 \S4method{show}{ObiwarpParam}(object)
 
@@ -98,7 +98,7 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 
 \S4method{initPenalty}{ObiwarpParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param)
+\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
@@ -150,6 +150,9 @@ alignment (for local alignment only).}
 
 \item{param}{A \code{ObiwarpParam} object containing all settings for
 the alignment method.}
+
+\item{msLevel}{\code{integer} defining the MS level on which the retention
+time should be performed.}
 
 \item{value}{The value for the slot.}
 }
@@ -232,7 +235,12 @@ These methods and classes are part of the updated and modernized
     \code{\link{retcor}} methods. All of the settings to the alignment
     algorithm can be passed with a \code{ObiwarpParam} object.
 
-Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
+Alignment using obiwarp is performed on the retention time of spectra
+    of on MS level. Retention times for spectra of other MS levels are
+    subsequently adjusted based on the adjustment function defined on the
+    retention times of the spectra of MS level \code{msLevel}.
+
+    Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
     all peak grouping (correspondence) results and any previous retention
     time adjustment results to be dropped.
 }

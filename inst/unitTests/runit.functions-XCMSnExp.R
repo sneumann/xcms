@@ -26,7 +26,7 @@ test_plotChromPeaks <- function() {
 }
 
 test_plotChromPeakImage <- function() {
-    xcms:::plotChromPeakImage(xod_x, binSize = 30, log = FALSE)
+    plotChromPeakImage(xod_x, binSize = 30, log = FALSE)
     ## Check that it works if no peaks were found in one sample.
     tmp <- xod_x
     pks <- chromPeaks(tmp)
@@ -35,4 +35,18 @@ test_plotChromPeakImage <- function() {
     plotChromPeakImage(tmp, binSize = 30, log = FALSE)
     plotChromPeakImage(tmp, binSize = 20, log = FALSE)
     plotChromPeakImage(tmp, binSize = 10, log = FALSE, col = topo.colors(64))
+}
+
+test_applyAdjustedRtime <- function() {
+    checkException(applyAdjustedRtime(faahko_od))
+    checkEquals(applyAdjustedRtime(faahko_xod), faahko_xod)
+    ## Now really replacing the stuff.
+    tmp <- applyAdjustedRtime(xod_r)
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkEquals(rtime(tmp), adjustedRtime(xod_r))
+    checkTrue(length(processHistory(tmp)) == 1)
+    tmp <- applyAdjustedRtime(xod_xgrg)
+    checkTrue(!hasAdjustedRtime(tmp))
+    checkEquals(rtime(tmp), adjustedRtime(xod_xgr))
+    checkEquals(tmp, dropAdjustedRtime(tmp))
 }

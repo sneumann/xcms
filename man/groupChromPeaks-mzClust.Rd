@@ -52,7 +52,10 @@ MzClustParam(sampleGroups = numeric(), ppm = 20, absMz = 0,
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
-group).}
+group). This parameter is mandatory for the \code{PeakDensityParam}
+and has to be provided also if there is no sample grouping in the
+experiment (in which case all samples should be assigned to the
+same group).}
 
 \item{ppm}{\code{numeric(1)} representing the relative mz error for the
 clustering/grouping (in parts per million).}

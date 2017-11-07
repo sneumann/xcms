@@ -45,9 +45,12 @@ findPeaksPar <- function(arg) {
     scanT <- xRaw@scantime
     rm(xRaw)
     gc()
+    peaks <- cbind(peaks, sample = rep.int(myID, nrow(peaks)))
+    ## Ensure that last column is named "sample" even if we didn't find
+    ## anything (issue #220)
+    colnames(peaks)[ncol(peaks)] <- "sample"
     list(scantime = scanT,
-         peaks = cbind(peaks,
-                       sample = rep.int(myID, nrow(peaks))),
+         peaks = peaks,
          date = procDate)
 }
 

@@ -2,16 +2,19 @@
 #' @include do_findChromPeaks-functions.R DataClasses.R
 
 
-##' @param x an OnDiskMSnExp representing the whole experiment.
-##' @param method The (chromatographic) peak detection method to be used. Can be
-##' "centWave" etc.
-##' @param param A class extending Param containing all parameters for the
-##' peak detection method.
-##'
-##' @return a list of length 2, \code{peaks} containing a matrix with the
-##' identified peaks and \code{date} the time stamp when the peak detection
-##' was started.
-##' @noRd
+#' @param x an OnDiskMSnExp representing the whole experiment.
+#' 
+#' @param method The (chromatographic) peak detection method to be used. Can be
+#'     "centWave" etc.
+#' 
+#' @param param A class extending Param containing all parameters for the
+#'     peak detection method.
+#'
+#' @return a list of length 2, \code{peaks} containing a matrix with the
+#'     identified peaks and \code{date} the time stamp when the peak detection
+#'     was started.
+#' 
+#' @noRd
 findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
                                         param) {
     if (missing(param))
@@ -26,20 +29,26 @@ findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
 }
 
 
-##' Run the peak detection on a list of Spectrum1 objects from the same
-##' file
-##'
-##' @param x A list of Spectrum1 objects of a sample.
-##' @param method The peak detection method to be used. Can be "centWave" etc.
-##' @param param A class extending Param containing all parameters for the
-##' peak detection method.
-##' @param rt Numeric with the retention times for the spectra. If not provided
-##' it is extracted from the spectra.
-##' @return a list of length 2, \code{peaks} containing a matrix with the
-##' identified peaks and \code{date} the time stamp when the peak detection
-##' was started.
-##' @author Johannes Rainer
-##' @noRd
+#' Run the peak detection on a list of Spectrum1 objects from the same
+#' file
+#'
+#' @param x A list of Spectrum1 objects of a sample.
+#' 
+#' @param method The peak detection method to be used. Can be "centWave" etc.
+#'
+#' @param param A class extending Param containing all parameters for the
+#'     peak detection method.
+#' 
+#' @param rt Numeric with the retention times for the spectra. If not provided
+#'     it is extracted from the spectra.
+#' 
+#' @return a list of length 2, \code{peaks} containing a matrix with the
+#'     identified peaks and \code{date} the time stamp when the peak detection
+#'     was started.
+#' 
+#' @author Johannes Rainer
+#'
+#' @noRd
 findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     method <- match.arg(method, c("centWave", "massifquant", "matchedFilter",
                                   "MSW", "centWaveWithPredIsoROIs"))
@@ -103,16 +112,18 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 
 
 ############################################################
-##' @description Fill some settings and data from an OnDiskMSnExp or pSet into an
-##' xcmsSet:
-##' o fileNames
-##' o phenoData
-##' o rt
-##' o mslevel
-##' o scanrange: this should enable to subset the raw data again by scan index
-##' (which should be equivalent to acquisitionNum/scanIndex)
-##' @param pset The pSet from which data should be extracted
-##' @noRd
+#' @description Fill some settings and data from an OnDiskMSnExp or pSet into an
+#' xcmsSet:
+#' o fileNames
+#' o phenoData
+#' o rt
+#' o mslevel
+#' o scanrange: this should enable to subset the raw data again by scan index
+#' (which should be equivalent to acquisitionNum/scanIndex)
+#' 
+#' @param pset The pSet from which data should be extracted
+#'
+#' @noRd
 .pSet2xcmsSet <- function(pset) {
     object <- new("xcmsSet")
     filepaths(object) <- fileNames(pset)
@@ -131,17 +142,23 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     return(object)
 }
 
-##' @description Processes the result list returned by an lapply/bplapply to
-##' findChromPeaks_Spectrum_list or findChromPeaks_OnDiskMSnExp and returns a
-##' list with two elements: \code{$peaks} the peaks matrix of identified
-##' peaks and \code{$procHist} a list of ProcessHistory objects (empty if
-##' \code{getProcHist = FALSE}).
-##' @param x See description above.
-##' @param getProcHist Wheter ProcessHistory objects should be returned too.
-##' @param fnames The file names.
-##' @return See description above.
-##' @author Johannes Rainer
-##' @noRd
+#' @description Processes the result list returned by an lapply/bplapply to
+#'     findChromPeaks_Spectrum_list or findChromPeaks_OnDiskMSnExp and returns a
+#'     list with two elements: \code{$peaks} the peaks matrix of identified
+#'     peaks and \code{$procHist} a list of ProcessHistory objects (empty if
+#'     \code{getProcHist = FALSE}).
+#' 
+#' @param x See description above.
+#'
+#' @param getProcHist Wheter ProcessHistory objects should be returned too.
+#'
+#' @param fnames The file names.
+#'
+#' @return See description above.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
 .processResultList <- function(x, getProcHist = TRUE, fnames) {
     nSamps <- length(x)
     pks <- vector("list", nSamps)
@@ -170,13 +187,23 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 }
 
 
-##' Calculate adjusted retention times by aligning each sample against a center
-##' sample.
-##' @param object An \code{OnDiskMSnExp}.
-##' @param param An \code{ObiwarpParam}.
-##' @return The function returns a \code{list} of adjusted retention times
-##' grouped by file.
-##' @noRd
+#' Calculate adjusted retention times by aligning each sample against a center
+#' sample.
+#'
+#' @note Adjustment should be performed only on spectra from the same MS level!
+#'     It's up to the calling function to ensure that.
+#' 
+#' @param object An \code{OnDiskMSnExp}.
+#'
+#' @param param An \code{ObiwarpParam}.
+#'
+#' @param msLevel \code{integer} defining the MS level on which the adjustment
+#'     should be performed.
+#' 
+#' @return The function returns a \code{list} of adjusted retention times
+#'     grouped by file.
+#' 
+#' @noRd
 .obiwarp <- function(object, param) {
     if (missing(object))
         stop("'object' is mandatory!")
@@ -184,7 +211,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         param <- ObiwarpParam()    
     nSamples <- length(fileNames(object))
     if (nSamples <= 1)
-        stop("Can not perform a retention time correction on less than to files.")
+        stop("Can not perform a retention time correction on less than to",
+             " files.")
     
     ## centerSample
     if (length(centerSample(param))) {

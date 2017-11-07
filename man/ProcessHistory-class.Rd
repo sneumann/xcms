@@ -10,6 +10,7 @@
 \alias{show,XProcessHistory-method}
 \alias{processParam,XProcessHistory-method}
 \alias{processParam}
+\alias{msLevel,XProcessHistory-method}
 \alias{processType,ProcessHistory-method}
 \alias{processType}
 \alias{processDate,ProcessHistory-method}
@@ -25,6 +26,8 @@
 \S4method{show}{XProcessHistory}(object)
 
 \S4method{processParam}{XProcessHistory}(object)
+
+\S4method{msLevel}{XProcessHistory}(object)
 
 \S4method{processType}{ProcessHistory}(object)
 
@@ -64,8 +67,11 @@ The \code{XProcessHistory} extends the \code{ProcessHistory} by
     adding a slot \code{param} that allows to store the actual parameter
     class of the processing step.
 
-Get or set the parameter class from an \code{XProcessHistory}
-    object.
+\code{processParam}, \code{processParam<-}: get or set the
+    parameter class from an \code{XProcessHistory} object.
+
+\code{msLevel}: returns the MS level on which a certain analysis
+    has been performed, or \code{NA} if not defined.
 
 The \code{processType} method returns a character specifying the
     processing step \emph{type}.
@@ -98,6 +104,9 @@ samples of the object the processing was performed.}
 \item{\code{param}}{(Param): an object of type \code{Param} (e.g.
 \code{\link{CentWaveParam}}) specifying the settings of the processing
 step.}
+
+\item{\code{msLevel:}}{\code{integer} definining the MS level(s) on which the
+analysis was performed.}
 }}
 
 \author{

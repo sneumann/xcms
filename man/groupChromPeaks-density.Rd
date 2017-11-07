@@ -66,7 +66,10 @@ PeakDensityParam(sampleGroups = numeric(), bw = 30, minFraction = 0.5,
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
 sample group assignments (i.e. which samples belong to which sample
-group).}
+group). This parameter is mandatory for the \code{PeakDensityParam}
+and has to be provided also if there is no sample grouping in the
+experiment (in which case all samples should be assigned to the
+same group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
@@ -101,6 +104,9 @@ the peak grouping algorithm.}
 The \code{PeakDensityParam} function returns a
     \code{PeakDensityParam} class instance with all of the settings
     specified for chromatographic peak alignment based on peak densities.
+    Note that argument `sampleGroups` is mandatory and should represent
+    either the sample grouping in the experiment. It's length has to match
+    the number of sample in the experiments.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
     results of the correspondence analysis. The definition of the resulting
@@ -120,7 +126,9 @@ The \code{PeakDensityParam} class allows to specify all
     constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-    for the \code{sampleGroups} slot of the object.
+    for the \code{sampleGroups} slot of the object. Its length should match
+    the number of samples in the experiment and it should not contain
+    \code{NA}s.
 
 \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
     of the object.
@@ -163,7 +171,7 @@ Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 \examples{
 
 ## Create a PeakDensityParam object
-p <- PeakDensityParam(binSize = 0.05)
+p <- PeakDensityParam(binSize = 0.05, sampleGroups = c(1, 1, 2, 2))
 ## Change hte minSamples slot
 minSamples(p) <- 3
 p
@@ -190,15 +198,16 @@ head(chromPeaks(res))
 ## The number of peaks identified per sample:
 table(chromPeaks(res)[, "sample"])
 
-## Performing the chromatographic peak grouping
-fdp <- PeakDensityParam()
+## Performing the chromatographic peak grouping. Assigning all samples to
+## the same sample group.
+fdp <- PeakDensityParam(sampleGroups = rep(1, length(fileNames(res))))
 res <- groupChromPeaks(res, fdp)
 
 ## The definition of the features (peak groups):
 featureDefinitions(res)
 
-## Using the featureValues method to extract a matrix with the intensities of
-## the features per sample.
+## Using the featureValues method to extract a matrix with the
+## intensities of the features per sample.
 head(featureValues(res, value = "into"))
 
 ## The process history:
