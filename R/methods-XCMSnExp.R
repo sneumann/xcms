@@ -1451,7 +1451,8 @@ setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE
 #'
 #' @rdname XCMSnExp-inherited-methods
 setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
-                                                       "MovingAverage"),
+                                                       "MovingAverage",
+                                                       "MovingWeightedAverage"),
                                          halfWindowSize = 2L, verbose = FALSE,
                                          ...) {
     if (hasAdjustedRtime(x) | hasFeatures(x) |
