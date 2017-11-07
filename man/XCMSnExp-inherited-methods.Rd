@@ -31,7 +31,7 @@
 \S4method{removePeaks}{XCMSnExp}(object, t = "min", verbose = FALSE,
   msLevel.)
 
-\S4method{smooth}{XCMSnExp}(x, method = c("SavitzkyGolay", "MovingAverage"),
+\S4method{smooth}{XCMSnExp}(x, method = c("SavitzkyGolay", "MovingAverage","MovingWeightedAverage"),
   halfWindowSize = 2L, verbose = FALSE, ...)
 }
 \arguments{
