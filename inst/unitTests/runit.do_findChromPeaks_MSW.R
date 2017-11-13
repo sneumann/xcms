@@ -18,6 +18,11 @@ test_do_findPeaks_MSW <- function() {
     checkTrue(nrow(feats2) > nrow(feats1))
 }
 
+test_findPeaks.MSW <- function() {
+    ## We do expect an error if we have multiple spectra (issue #237)
+    checkException(findPeaks.MSW(faahko_xr_1))
+}
+
 test_findChromPeaks_MSW <- function() {
     ## library(MSnbase)
     ## od <- readMSData(mzf, mode = "onDisk")

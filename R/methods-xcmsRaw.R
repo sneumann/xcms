@@ -676,6 +676,10 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 setMethod("findPeaks.MSW", "xcmsRaw",
           function(object, snthresh=3, verbose.columns = FALSE, ...) {
+              if (length(object@scantime) > 1)
+                  stop("MSW works only on single spectrum, direct injection",
+                       " MS data, but 'object' has ", length(object@scantime),
+                       " spectra")
               res <- do_findPeaks_MSW(mz = object@env$mz,
                                       int = object@env$intensity,
                                       snthresh = snthresh,
