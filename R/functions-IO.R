@@ -3,96 +3,6 @@
 #' @include functions-utils.R
 
 ############################################################
-## isCdfFile
-##
-## Just guessing whether the file is a CDF file based on its ending.
-## isCdfFile <- function(x) {
-##     fileEnds <- c("cdf", "nc")
-##     ## check for endings and and ending followed by a . (e.g. cdf.gz)
-##     patts <- paste0("\\.", fileEnds, "($|\\.)")
-##     res <- sapply(patts, function(z) {
-##         grep(z, x, ignore.case = TRUE)
-##     })
-##     any(unlist(res))
-## }
-
-############################################################
-## isMzMLFile
-##
-## Just guessing whether the file is a mzML file based on its ending.
-isMzMLFile <- function(x) {
-    fileEnds <- c("mzml")
-    ## check for endings and and ending followed by a . (e.g. mzML.gz)
-    patts <- paste0("\\.", fileEnds, "($|\\.)")
-    res <- sapply(patts, function(z) {
-        grep(z, x, ignore.case = TRUE)
-    })
-    any(unlist(res))
-}
-
-############################################################
-## isRampFile
-##
-## Files that have to be read using the Ramp backend.
-## isRampFile <- function(x) {
-##     fileEnds <- c("mzxml", "mzdata")
-##     ## check for endings and and ending followed by a . (e.g. mzML.gz)
-##     patts <- paste0("\\.", fileEnds, "($|\\.)")
-##     res <- sapply(patts, function(z) {
-##         grep(z, x, ignore.case = TRUE)
-##     })
-##     any(unlist(res))
-## }
-
-#' Guess the correct mzR backend from the file name (ending)
-#'
-#' @noRd
-.mzRBackendFromFilename <- function(x = character()) {
-    if (length(x) != 1)
-        stop("parameter 'x' has to be of length 1")
-    if (grepl("\\.mzml($|\\.)|\\.mzxml($|\\.)", x, ignore.case = TRUE)) {
-        return("pwiz")
-    } else if (grepl("\\.mzdata($|\\.)", x, ignore.case = TRUE)) {
-        return("Ramp")
-    } else if (grepl("\\.cdf($|\\.)|\\.nc($|\\.)", x, ignore.case = TRUE)) {
-        return("netCDF")
-    } else {
-        return(NA)
-    }
-}
-
-#' Return the mzR backend based on the provided file type.
-#'
-#' @noRd
-.mzRBackendFromFiletype <- function(x = character()) {
-    x <- match.arg(tolower(x), c("mzml", "mzxml", "cdf", "netcdf", "mzdata"))
-    if (x == "netcdf")
-        x <- "cdf"
-    .mzRBackendFromFilename(paste0("dummy.", x))
-}
-
-#' Return the mzR backend based on the file content of the file. This uses code
-#' from @sneumann, issue #188
-#' 
-#' @noRd
-.mzRBackendFromFilecontent <- function(x = character()) {
-    if (length(x) != 1)
-        stop("parameter 'x' has to be of length 1")
-    ## check mzML:
-    suppressWarnings(
-        first_lines <- readLines(x, n = 4)
-    )
-    if (any(grepl("<mzML", first_lines)) | any(grepl("<mzXML", first_lines)))
-        return("pwiz")
-    ## mzData
-    if (any(grepl("<mzData", first_lines)))
-        return("Ramp")
-    ## check netCDF:
-    if (substr(readBin(x, character(), n = 1), 1, 3) == "CDF")
-        return("netCDF")
-}
-
-############################################################
 ## readRawData
 ##
 ##' Function to read the raw data from an cdf, mzml file. Might eventually
@@ -109,32 +19,24 @@ isMzMLFile <- function(x) {
 ##' https://github.com/sneumann/xcms/issues/67).
 ##'
 ##' @param backend \code{character} allowing to manually specify the mzR
-##'     backend.
+##'     backend. If \code{NULL}, it uses the automatic backend determination
+##'     from mzR.
 ##' 
 ##' @return A \code{list} with rt, tic, scanindex, mz and intensity.
 ##' 
 ##' @noRd
 readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
-                        backend = character()) {
+                        backend = NULL) {
     ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
-    if (length(backend) == 0) {
-        backend <- .mzRBackendFromFilename(x)
-    }
-    ## Go for file content (issue #188)
-    if (is.na(backend)) {
-        backend <- .mzRBackendFromFilecontent(x)
-    }
-    if (is.na(backend))
-        stop("File type of file ", x, " can not be determined.")
-    if (isMzMLFile(x) | backend == "pwiz")
-        header_cols <- c(header_cols, "polarity")
     msd <- mzR::openMSfile(x, backend = backend)
     on.exit(if(!is.null(msd)) mzR::close(msd))
     ## That's due to issue https://github.com/lgatto/MSnbase/issues/151
     on.exit(rm(msd), add = TRUE)
     on.exit(gc(), add = TRUE)
     hdr <- mzR::header(msd)
+    if (any(colnames(hdr) == "polarity"))
+        header_cols <- c(header_cols, "polarity")
     idx_ms1 <- which(hdr$msLevel == 1)
     ## Drop empty spectra; see https://github.com/sneumann/xcms/issues/67
     if (dropEmptyScans & length(idx_ms1) > 0) {
@@ -170,37 +72,33 @@ readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
                         polarity = numeric())
     }
     if (includeMSn) {
-        if (backend == "netCDF") {
-            warning("Reading of MSn spectra for NetCDF not supported.")
+        ## Read MSn data
+        idx_ms2 <- which(hdr$msLevel > 1)
+        ## Drop empty spectra; see https://github.com/sneumann/xcms/issues/67
+        if (dropEmptyScans & length(idx_ms2) > 0) {
+            idx_ms2 <- idx_ms2[hdr[idx_ms2, "peaksCount"] > 0]
+        }
+        if (length(idx_ms2) > 0) {
+            hdr_ms2 <- hdr[idx_ms2, , drop = FALSE]
+            pks <- mzR::peaks(msd, idx_ms2)
+            if (is(pks, "matrix"))
+                pks <- list(pks)
+            valsPerSpect <- lengths(pks) / 2
+            pks <- do.call(rbind, pks)
+            resList$MSn <- list(rt = hdr_ms2$retentionTime,
+                                acquisitionNum = hdr_ms2$acquisitionNum,
+                                precursorNum = hdr_ms2$precursorScanNum,
+                                precursorMZ = hdr_ms2$precursorMZ,
+                                precursorIntensity = hdr_ms2$precursorIntensity,
+                                peaksCount = hdr_ms2$peaksCount,
+                                msLevel = hdr_ms2$msLevel,
+                                precursorCharge = hdr_ms2$precursorCharge,
+                                scanindex = valueCount2ScanIndex(valsPerSpect),
+                                collisionEnergy = hdr_ms2$collisionEnergy,
+                                mz = pks[, 1],
+                                intensity = pks[, 2])
         } else {
-            ## Read MSn data
-            idx_ms2 <- which(hdr$msLevel > 1)
-            ## Drop empty spectra; see https://github.com/sneumann/xcms/issues/67
-            if (dropEmptyScans & length(idx_ms2) > 0) {
-                idx_ms2 <- idx_ms2[hdr[idx_ms2, "peaksCount"] > 0]
-            }
-            if (length(idx_ms2) > 0) {
-                hdr_ms2 <- hdr[idx_ms2, , drop = FALSE]
-                pks <- mzR::peaks(msd, idx_ms2)
-                if (is(pks, "matrix"))
-                    pks <- list(pks)
-                valsPerSpect <- lengths(pks) / 2
-                pks <- do.call(rbind, pks)
-                resList$MSn <- list(rt = hdr_ms2$retentionTime,
-                                    acquisitionNum = hdr_ms2$acquisitionNum,
-                                    precursorNum = hdr_ms2$precursorScanNum,
-                                    precursorMZ = hdr_ms2$precursorMZ,
-                                    precursorIntensity = hdr_ms2$precursorIntensity,
-                                    peaksCount = hdr_ms2$peaksCount,
-                                    msLevel = hdr_ms2$msLevel,
-                                    precursorCharge = hdr_ms2$precursorCharge,
-                                    scanindex = valueCount2ScanIndex(valsPerSpect),
-                                    collisionEnergy = hdr_ms2$collisionEnergy,
-                                    mz = pks[, 1],
-                                    intensity = pks[, 2])
-            } else {
-                warning("MSn spectra requested but none present in the file.")
-            }
+            warning("MSn spectra requested but none present in the file.")
         }
     }
     mzR::close(msd)

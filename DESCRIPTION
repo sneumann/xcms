@@ -1,6 +1,6 @@
 Package: xcms
 Version: 3.1.1
-Date: 2017-11-13
+Date: 2017-11-28
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -16,7 +16,7 @@ Depends:
     BiocParallel (>= 1.8.0),
     MSnbase (>= 2.3.11)
 Imports:
-    mzR (>= 1.1.6),
+    mzR (>= 2.13.1),
     BiocGenerics,
     ProtGenerics,
     lattice,
@@ -80,8 +80,6 @@ Collate:
     'methods-Params.R'
     'methods-ProcessHistory.R'
     'methods-XCMSnExp.R'
-    'methods-netCdfSource.R'
-    'methods-rampSource.R'
     'methods-xcmsEIC.R'
     'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'

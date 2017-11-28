@@ -1,6 +1,10 @@
 CHANGES IN VERSION 3.1.1
 -------------------------
 
+UPDATED FEATURES
+- Reading raw files using xcmsSet or xcmsRaw uses now the automatic file type
+  detection feature from mzR.
+
 BUG FIXES:
 - Fix #237: findPeaks.MSW was not throwing an error if applied to multi-spectrum
   MS file.

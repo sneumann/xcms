@@ -56,14 +56,14 @@ test_evaluate_xcmsSource <- function() {
     library(msdata)
     mz_file <- system.file("microtofq/MM8.mzML", package = "msdata")
     src <- xcms:::xcmsSource(mz_file)
-    checkTrue(is(src, "pwizSource"))
+    checkTrue(is(src, "xcmsFileSource"))
     tmp <- loadRaw(src)
     checkEquals(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
                               "mz", "intensity", "polarity"))
 
     cdf_file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
     src <- xcms:::xcmsSource(cdf_file)
-    checkTrue(is(src, "netCdfSource"))
+    checkTrue(is(src, "xcmsFileSource"))
     tmp <- loadRaw(src)
     checkEquals(names(tmp), c("rt", "acquisitionNum", "tic", "scanindex",
                               "mz", "intensity", "polarity"))
