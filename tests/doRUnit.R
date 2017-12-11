@@ -103,16 +103,16 @@ if(require("RUnit", quietly=TRUE)) {
     ## Default report name
     pathReport <- file.path(path, "report")
 
-    ## Report to stdout and text files
+    ## Report to stdout; disable text files
     cat("------------------- UNIT TEST SUMMARY ---------------------\n\n")
     printTextProtocol(tests, showDetails=FALSE)
-    printTextProtocol(tests, showDetails=FALSE,
-                      fileName=paste(pathReport, "Summary.txt", sep=""))
-    printTextProtocol(tests, showDetails=TRUE,
-                      fileName=paste(pathReport, ".txt", sep=""))
+    ## printTextProtocol(tests, showDetails=FALSE,
+    ##                   fileName=paste(pathReport, "Summary.txt", sep=""))
+    ## printTextProtocol(tests, showDetails=TRUE,
+    ##                   fileName=paste(pathReport, ".txt", sep=""))
 
-    ## Report to HTML file
-    printHTMLProtocol(tests, fileName=paste(pathReport, ".html", sep=""))
+    ## ## Report to HTML file
+    ## printHTMLProtocol(tests, fileName=paste(pathReport, ".html", sep=""))
 
     ## Return stop() to cause R CMD check stop in case of
     ##  - failures i.e. FALSE to unit tests or
