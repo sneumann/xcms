@@ -73,7 +73,7 @@ fitModel <- function(formula, data, y, minVals = 4,
     data <- data[, vars[-1], drop = FALSE]
     if (is.null(rownames(y)))
         rownames(y) <- 1:nrow(y)
-    y <- split.data.frame(y, f = rownames(y))
+    y <- split.data.frame(y, f = factor(rownames(y), levels = rownames(y)))
     ## Determine fetures we skip because of too few data points.
     do_em <- which(unlist(lapply(y, function(z) sum(!is.na(z)) >= minVals)))
     res <- vector("list", length(y))
@@ -164,7 +164,7 @@ fitModel <- function(formula, data, y, minVals = 4,
 #'     matrix by them smallest negative intensity). See details for more
 #'     information.
 #' 
-#' @return A \code{list} with two elements: \code{"x"} with the adjusted input
+#' @return A \code{list} with two elements: \code{"y"} with the adjusted input
 #'     matrix \code{y} and \code{"fit"} with the fitted models. The latter can
 #'     be used for quality control purposes or to e.g. identify the most
 #'     adjusted rows.
@@ -178,77 +178,68 @@ fitModel <- function(formula, data, y, minVals = 4,
 #' \emph{Metabolomics} 2016; 12:88.
 #' @noRd
 adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
-                                 fitOnSubset = 1:ncol(y), minVals = 4,
-                                 method = "lm",
-                                 shiftNegative = c("none", "min","globalMin")) {
+				 fitOnSubset = 1:ncol(y), minVals = 4,
+				 method = "lm",
+				 shiftNegative = c("none", "min","globalMin")) {
     shiftNegative <- match.arg(shiftNegative)
     ## Input argument checking...
     if (is.logical(fitOnSubset))
-        fitOnSubset <- which(fitOnSubset)
+	fitOnSubset <- which(fitOnSubset)
     if (!all(fitOnSubset %in% 1:ncol(y)))
-        stop("'fitOnSubset' should contain indices between 1 and 'ncol(y)'")
+	stop("'fitOnSubset' should contain indices between 1 and 'ncol(y)'")
     data_fit <- data
     if (!is.null(data_fit))
-        data_fit <- data_fit[fitOnSubset, , drop = FALSE]
+	data_fit <- data_fit[fitOnSubset, , drop = FALSE]
     ## First fitting the model.
     message("Fitting the model to the features ... ", appendLF = FALSE)
     lms <- fitModel(formula = model, data = data_fit,
-                    y = y[, fitOnSubset, drop = FALSE],
-                    minVals = minVals, method = method)
+		    y = y[, fitOnSubset, drop = FALSE],
+		    minVals = minVals, method = method)
     message("OK")
     message("Applying models to adjust values ... ", appendLF = FALSE)
-    if (is.null(rownames(y)))
-        rownames(y) <- seq_len(nrow(y))
-    y_cn <- colnames(y)
-    y <- split.data.frame(y, f = rownames(y))
-    res <- mapply(y, lms, FUN = function(z, lmod, data.) {
-        z <- as.numeric(z)
-        if (length(lmod) == 0)
-            return(z)
-        rownames(data.) <- NULL
-        preds <- predict(lmod, newdata = data.frame(y = z, data.))
-        ## Ensure that we shift by the mean of the values used to estimate the
-        ## model!
-        z + mean(z[fitOnSubset], na.rm = TRUE) - preds
-    }, MoreArgs = list(data. = data), SIMPLIFY = FALSE)
-    res <- do.call(rbind, res)
+    y_new <- y
+    for (i in which(lengths(lms) > 0)) {
+	preds <- predict(lms[[i]], newdata = cbind(y = y[i, ], data))
+	## Ensure that we shift by the mean of the values used to estimate the
+	## model!
+	y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
+    }
     message("OK")
     if (sum(lengths(lms) == 0))
-        message("Did not correct ", sum(lengths(lms) == 0), " of the ",
-                length(y), " rows because of too few data points to fit the ",
-                "model.")
+	message("Did not correct ", sum(lengths(lms) == 0), " of the ",
+		length(y), " rows because of too few data points to fit the ",
+		"model.")
     rm(y)
     ## Check if we have to shift values...
-    if (any(res < 1, na.rm = TRUE)) {
-        if (shiftNegative == "none") {
-            message("Note: some adjusted values are < 1.")
-        }
-        if (shiftNegative == "min") {
-            ## Shift selected rows by their row min + 1
-            ## Include here also < 1 so that values potentially in log scale
-            ## between 0 and 1 are adjusted as well.
-            mins <- apply(res, MARGIN = 1, min, na.rm = TRUE)
-            idx <- which(mins < 1)
-            res[idx, ] <- res[idx, ] + abs(mins[idx]) + 1
-            message("Shifting ", length(idx), " of the ", nrow(res), " rows ",
-                    "to avoid negative values.")
-        }
-        ## if (shiftNegative == "log") {
-        ##     ## Shift selected rows by the difference.
-        ##     mins <- apply(res, MARGIN = 1, function(z) min(z, na.rm = TRUE))
-        ##     idx <- which(mins < 1)
-        ##     ## res[idx, ] <- res[idx, ] + 1
-        ##     res[idx, ] <- res[idx, ] + (1 - mins)
-        ##     message("Shifting ", length(idx), " of the ", nrow(res),
-        ##             " rows to avoid values between 0 and 1.")
-        ## }
-        if (shiftNegative == "globalMin") {
-            ## Shifting ALL rows by the smallest value in the matrix.
-            shiftVal <- abs(min(res, na.rm = TRUE)) + 1
-            message("Shifting all values by ", format(shiftVal, digits = 3))
-            res <- res + shiftVal
-        }
+    if (any(y_new < 1, na.rm = TRUE)) {
+	if (shiftNegative == "none") {
+	    message("Note: some adjusted values are < 1.")
+	}
+	if (shiftNegative == "min") {
+	    ## Shift selected rows by their row min + 1
+	    ## Include here also < 1 so that values potentially in log scale
+	    ## between 0 and 1 are adjusted as well.
+	    mins <- apply(y_new, MARGIN = 1, min, na.rm = TRUE)
+	    idx <- which(mins < 1)
+	    y_new[idx, ] <- y_new[idx, ] + abs(mins[idx]) + 1
+	    message("Shifting ", length(idx), " of the ", nrow(y_new), " rows ",
+		    "to avoid negative values.")
+	}
+	## if (shiftNegative == "log") {
+	##     ## Shift selected rows by the difference.
+	##     mins <- apply(res, MARGIN = 1, function(z) min(z, na.rm = TRUE))
+	##     idx <- which(mins < 1)
+	##     ## res[idx, ] <- res[idx, ] + 1
+	##     res[idx, ] <- res[idx, ] + (1 - mins)
+	##     message("Shifting ", length(idx), " of the ", nrow(res),
+	##             " rows to avoid values between 0 and 1.")
+	## }
+	if (shiftNegative == "globalMin") {
+	    ## Shifting ALL rows by the smallest value in the matrix.
+	    shiftVal <- abs(min(y_new, na.rm = TRUE)) + 1
+	    message("Shifting all values by ", format(shiftVal, digits = 3))
+	    y_new <- y_new + shiftVal
+	}
     }
-    colnames(res) <- y_cn
-    return(list(y = res, fit = lms))
+    return(list(y = y_new, fit = lms))
 }
