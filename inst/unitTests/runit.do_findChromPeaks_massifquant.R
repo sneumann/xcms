@@ -51,14 +51,14 @@ test_do_findChromPeaks_massifquant <- function() {
 ## Evaluate the peak detection method using massifquant on MSnExp and
 ## OnDiskMSnExp objects.
 test_findChromPeaks_massifquant <- function() {
-    library(MSnbase)
     mqp <- MassifquantParam(ppm = 20, criticalValue = 1.2)
     res <- xcmsSet(mzf[1], method = "massifquant", ppm = 20, criticalValue = 1.2)
     ## onDisk
     onDisk <- readMSData(mzf[1], mode = "onDisk")
     res_o <- findChromPeaks(onDisk, param = mqp, return.type = "xcmsSet")
-    checkEquals(peaks(res_o), peaks(res))
-    checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+    checkEquals(peaks(res_o)[, colnames(peaks(res))], peaks(res))
+    checkEquals(unname(res_o@rt$raw[[1]]), unname(res@rt$raw[[1]]),
+                checkNames = FALSE)
 
     checkException(findChromPeaks(onDisk, param = mqp, msLevel = 2))
     ## Full data

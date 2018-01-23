@@ -45,7 +45,6 @@ test_do_findChromPeaks_matchedFilter <- function() {
 ## OnDiskMSnExp objects. For now we can't read CDF files, so we have to restrict
 ## to provided mzML files.
 test_findChromPeaks_matchedFilter <- function() {
-    library(MSnbase)
     mfp <- MatchedFilterParam(binSize = 20, impute = "lin")
     res <- xcmsSet(fs[1], method = "matchedFilter", profmethod = "binlin",
                    step = binSize(mfp))
@@ -53,8 +52,9 @@ test_findChromPeaks_matchedFilter <- function() {
     ## onDisk <- readMSData(fs[1], mode = "onDisk")
     onDisk <- filterFile(faahko_od, file = 1)
     res_o <- findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet")
-    checkEquals(peaks(res_o), peaks(res))
-    checkEquals(res_o@rt$raw, res@rt$raw, checkNames = FALSE)
+    checkEquals(peaks(res_o)[, colnames(peaks(res))], peaks(res))
+    checkEquals(unname(res_o@rt$raw[[1]]), unname(res@rt$raw[[1]]),
+                checkNames = FALSE)
 
     checkException(findChromPeaks(onDisk, param = mfp, msLevel = 2))
     ## inMem

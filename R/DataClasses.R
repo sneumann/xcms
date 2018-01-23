@@ -2235,7 +2235,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     returned as result from the \code{\link{findChromPeaks}} method.
 #'
 #'     \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
-#'     objects using the \code{as} method.
+#'     objects using the \code{as} method (see examples below). All
+#'     preprocessing results will be passed along to the resulting
+#'     \code{xcmsSet} object.
 #'
 #' @note The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
 #'     equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the

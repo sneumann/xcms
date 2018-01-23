@@ -315,7 +315,9 @@ The \code{XCMSnExp} object is designed to contain all results
     returned as result from the \code{\link{findChromPeaks}} method.
 
     \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
-    objects using the \code{as} method.
+    objects using the \code{as} method (see examples below). All
+    preprocessing results will be passed along to the resulting
+    \code{xcmsSet} object.
 
 \code{processHistoryTypes} returns the available \emph{types} of
     process histories. These can be passed with argument \code{type} to the

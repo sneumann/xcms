@@ -94,7 +94,7 @@ test_findChromPeaks_centWaveWithPredIsoROIs <- function() {
 
     ## returning an xcmsSet
     res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
-    checkEquals(peaks(res), peaks(xs))
+    checkEquals(peaks(res)[, colnames(peaks(xs))], peaks(xs))
     ## res <- findChromPeaks(inMem, param = cwp, return.type = "xcmsSet")
     ## checkEquals(peaks(res), peaks(xs))
 

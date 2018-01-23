@@ -51,7 +51,13 @@ register(SerialParam())
 This documents describes data import, exploration, preprocessing and analysis of
 LCMS experiments with `xcms` version >= 3. The examples and basic workflow was
 adapted from the original *LC/MS Preprocessing and Analysis with xcms* vignette
-from Colin A. Smith.
+from Colin A. Smith. 
+
+The new user interface and methods use the `XCMSnExp` object (instead of the *old*
+`xcmsSet` object) as a container for the pre-processing results. To support
+packages and pipelines relying on the `xcmsSet` object, it is however possible to
+convert an `XCMSnExp` into a `xcmsSet` object using the `as` method (i.e. `xset <-
+as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
 
 
 # Data import
@@ -624,7 +630,10 @@ Normalizing features' signal intensities is required, but at present not (yet)
 supported in `xcms` (some methods might be added in near future). Also, for the
 identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
-packages, such as Bioconductor's excellent `limma` package.
+packages, such as Bioconductor's excellent `limma` package. To enable support also
+for other packages that rely on the *old* `xcmsSet` result object, it is possible to
+coerce the new `XCMSnExp` object to an `xcmsSet` object using `xset <- as(x,
+"xcmsSet")`, with `x` being an `XCMSnExp` object.
 
 
 # Additional details and notes
