@@ -5,6 +5,7 @@
 ## Validation through Validator by Nils Hoffmann
 ## https://github.com/nilshoffmann/jmzTab-m/
 ## java -jar mzTabCLI.jar -check inFile=/path/to/your/file.mztab -level Warn
+## java -jar /home/sneumann/src/jmzTab-m/cli/target/mzTabCLI.jar -check inFile=faahKO.mzTab -level Warn
 ##
 ## link sample - assay:
 ##
@@ -54,17 +55,17 @@ mzTabHeader <- function(mztab, version,
                         id="The ID of the mzTab file.",
                         title="The file’s human readable title.",
                         description="The file’s human readable description.",
-                        sample_processing=c("extraction", "derivatisation"),
+                        sample_processing=c("[,,extraction,]", "[,,derivatisation,]"),
                         software=c("[MS, MS:1002205, ProteoWizard msconvert, 4711 ]",
                                    "[MS, MS:1001582, XCMS, 2.99.6 ]"),
                         xset,
                         value) {
-    runs <- filepaths(xset)
+    runs <- paste("file:", filepaths(xset), sep="/")
     names(runs) <- paste("ms_run[", 1:length(runs), "]-location", sep="")
 
 
-    samples <- paste("sample[", 1:length(runs), "]", sep="")
-    names(samples) <- paste("assay[", 1:length(runs), "]-sample_ref", sep="")
+    samples <- paste("ms_run[", 1:length(runs), "]", sep="")
+    names(samples) <- paste("assay[", 1:length(runs), "]-ms_run_ref", sep="")
     
     sampleDesc <- sampnames(xset)
     names(sampleDesc) <- paste("sample[", 1:length(runs), "]-description", sep="")    
@@ -75,8 +76,8 @@ mzTabHeader <- function(mztab, version,
     msruns <- paste("ms_run[", seq(along=runs), "]", sep="")
     names(msruns) <- paste("assay[", seq(along=runs), "]-ms_run_ref", sep="")
 
-    assays <- sampnames(xset)
-    names(assays) <- paste("assay[", seq(along=runs), "]", sep="")
+    ms_runs <- sampnames(xset)
+    names(ms_runs) <- paste("ms_run[", seq(along=runs), "]", sep="")
 
     variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
                                     paste(paste("assay[",x,"]", sep=""), collapse="|")))
@@ -89,7 +90,7 @@ mzTabHeader <- function(mztab, version,
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD",
                                                   c("mzTab-version"=version,
                                                     "mzTab-ID"=id,
-                                                    "mzTab-title"=title,
+                                                    "title"=title,
                                                     "description"=description)))
 
     names(sample_processing) <- paste("sample_processing[", seq(along=sample_processing), "]", sep="")
@@ -98,11 +99,11 @@ mzTabHeader <- function(mztab, version,
     names(software) <- paste("software[", seq(along=software), "]", sep="")
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", software))
 
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", c(quantification_method=names(value))))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", value))
 
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", assays))
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", ms_runs))
+#    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
+#    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
 
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", samples))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", sampleDesc))
@@ -214,7 +215,7 @@ mzTabAddSMF <- function(mztab, xset, value) {
 writeMzTab <- function(object, filename) {
     write.table(object, file=filename,
                 row.names=FALSE, col.names=FALSE,
-                quote=TRUE, sep="\t", na="\"\"")
+                quote=FALSE, sep="\t", na="")
 
 }
 
@@ -231,16 +232,15 @@ if (TRUE) {
         xs <- group(faahko)
     }
 
-    value <- c("into"="[,,centWave into,]")
+    value <- c("quantification_method"="[,,centWave into,]")
 
     mzt <- data.frame(character(0))
     mzt <- mzTabHeader(mzt,
-                       version="1.0.90", description="faahKO",
+                       version="1.0.99", description="faahKO",
                        xset=xs,
                        value=value)
-#    mzt <- mzTabAddSME(mzt, xs, value="into") # Old 
-    mzt <- mzTabAddSML(mzt, xs, value="into") # needs to be done
-    mzt <- mzTabAddSMF(mzt, xs, value="into") # needs to be done
+#    mzt <- mzTabAddSML(mzt, xs, value=value) # needs to be done
+#    mzt <- mzTabAddSMF(mzt, xs, value=value) # needs to be done
     ##mzt
     
     writeMzTab(mzt, "faahKO.mzTab")
