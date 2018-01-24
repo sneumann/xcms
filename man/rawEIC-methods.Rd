@@ -4,7 +4,10 @@
 \alias{rawEIC,xcmsRaw-method}
 \title{Get extracted ion chromatograms for specified m/z range}
 \description{
-    Generate extracted ion chromatogram for m/z values of interest. The raw data is used in contrast to  \code{\link{getEIC}} which uses data from the profile matrix.
+    Generate extracted ion chromatogram for m/z values of interest. The
+    raw data is used in contrast to  \code{\link{getEIC}} which uses
+    data from the profile matrix (i.e. values binned along the M/Z
+    dimension).
 }
 \section{Methods}{
 \describe{

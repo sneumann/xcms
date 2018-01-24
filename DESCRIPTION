@@ -1,23 +1,100 @@
 Package: xcms
-Version: 1.49.1
-Date: 2016-05-15
+Version: 3.1.1
+Date: 2017-11-28
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
-        Ralf Tautenhahn <rtautenh@gmail.com>,
-        Steffen Neumann <sneumann@ipb-halle.de>,
-	Paul Benton <hpbenton@scripps.edu>,
-	Christopher Conley <cjconley@ucdavis.edu>,
-	Johannes Rainer <Johannes.Rainer@eurac.edu>
+    Ralf Tautenhahn <rtautenh@gmail.com>,
+    Steffen Neumann <sneumann@ipb-halle.de>,
+    Paul Benton <hpbenton@scripps.edu>,
+    Christopher Conley <cjconley@ucdavis.edu>,
+    Johannes Rainer <Johannes.Rainer@eurac.edu>
 Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
-Depends: R (>= 2.14.0), methods, mzR (>= 1.1.6), BiocGenerics, ProtGenerics, Biobase
-Imports: lattice, RColorBrewer, plyr
-Suggests: faahKO, msdata, ncdf4, multtest, rgl, MassSpecWavelet (>= 1.5.2), RANN, RUnit, parallel
+Depends:
+    R (>= 2.14.0),
+    methods,
+    Biobase,
+    BiocParallel (>= 1.8.0),
+    MSnbase (>= 2.3.11)
+Imports:
+    mzR (>= 2.13.1),
+    BiocGenerics,
+    ProtGenerics,
+    lattice,
+    RColorBrewer,
+    plyr,
+    RANN,
+    multtest,
+    MassSpecWavelet (>= 1.5.2),
+    S4Vectors
+Suggests:
+    BiocStyle,
+    knitr (>= 1.1.0),
+    faahKO,
+    msdata,
+    ncdf4,
+    rgl,
+    microbenchmark,
+    RUnit,
+    pander
 Enhances: Rgraphviz, Rmpi, XML
-Description: Framework for processing and visualization of
-        chromatographically separated and single-spectra mass spectral data. Imports from
-        AIA/ANDI NetCDF, mzXML, mzData and mzML files. Preprocesses data for
-        high-throughput, untargeted analyte profiling.
+Description: Framework for processing and visualization of chromatographically
+    separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
+    mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
+    analyte profiling.
 License: GPL (>= 2) + file LICENSE
 URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
+VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
+RoxygenNote: 6.0.1
+Collate: 
+    'AllGenerics.R'
+    'DataClasses.R'
+    'Deprecated.R'
+    'MPI.R'
+    'c.R'
+    'cwTools.R'
+    'databases.R'
+    'functions-MsFeatureData.R'
+    'do_adjustRtime-functions.R'
+    'functions-binning.R'
+    'do_findChromPeaks-functions.R'
+    'functions-Params.R'
+    'do_groupChromPeaks-functions.R'
+    'fastMatch.R'
+    'functions-utils.R'
+    'functions-IO.R'
+    'functions-OnDiskMSnExp.R'
+    'functions-ProcessHistory.R'
+    'functions-XCMSnExp.R'
+    'functions-normalization.R'
+    'functions-xcmsEIC.R'
+    'functions-xcmsFragments.R'
+    'functions-xcmsRaw.R'
+    'functions-xcmsSet.R'
+    'init.R'
+    'matchpeaks.R'
+    'methods-IO.R'
+    'methods-MsFeatureData.R'
+    'methods-OnDiskMSnExp.R'
+    'methods-Params.R'
+    'methods-ProcessHistory.R'
+    'methods-XCMSnExp.R'
+    'methods-xcmsEIC.R'
+    'methods-xcmsFileSource.R'
+    'methods-xcmsFragments.R'
+    'methods-xcmsPeaks.R'
+    'methods-xcmsRaw.R'
+    'methods-xcmsSet.R'
+    'models.R'
+    'msn2xcmsRaw.R'
+    'mzClust.R'
+    'netCDF.R'
+    'plotQC.R'
+    'ramp.R'
+    'specDist.R'
+    'write.mzquantML.R'
+    'writemzdata.R'
+    'writemztab.R'
+    'xcmsSource.R'
+    'zzz.R'

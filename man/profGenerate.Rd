@@ -11,8 +11,8 @@
 \alias{profMaxIdxM}
 \title{Generation of profile data}
 \description{
-  Generates profile data in a given range from an indexed pair of
-  vectors.
+  Generates profile (binned) data in a given range from an indexed pair
+  of vectors.
 }
 \usage{
 profBin(x, y, num, xstart = min(x), xend = max(x), param = list())
@@ -66,6 +66,13 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   The \code{MaxIdx} functions work similarly to the \code{Bin}
   functions execpt that the return the integer index of which x,y
   pair would be placed in a particular cell.
+}
+\note{
+  There are some issues with the \code{profBinLin} method, see
+  \url{https://github.com/sneumann/xcms/issues/46} and
+  \url{https://github.com/sneumann/xcms/issues/49}. Thus it is suggested
+  to use the functions \code{\link{binYonX}} in combination with
+  \code{\link{imputeLinInterpol}} instead.
 }
 \value{
   For \code{prof*}, a numeric vector of length \code{num}.

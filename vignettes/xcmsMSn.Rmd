@@ -1,0 +1,109 @@
+---
+title: "Processing Tandem-MS and MSn data with xcms"
+author: 
+- name: S. Neumann
+- name: K. Kutzera
+package: xcms
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{Processing Tandem-MS and MSn data with xcms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteKeywords{Mass Spectrometry, MS, Metabolomics, Bioinformatics}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,msdata,BiocStyle}
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+# Introduction
+
+```{r echo = FALSE, results = "hide", message = FALSE}
+library(BiocStyle)
+```
+
+This document describes how to use `xcms` for processing of Tandem-MS and MS$^{n}$
+data from e.g. triple-quad, QTOF, ion trap or orbitrap mass spectrometers. This
+uses still the *old* user interface.
+
+```{r load-libs, message = FALSE}
+library(xcms)
+library(msdata)
+
+## Disable parallel processing
+register(SerialParam())
+```
+
+# Raw data file preparation
+
+The `xcms` package reads full-scan LC/MS data and associated Tandem-MS and MS$^{n}$
+spectra from mzData and mzXML files (CDF does not support MS$^{n}$).
+
+For the purposes of demonstration, we will use a some sample files included in
+the `msdata` package. The (truncated) raw data files are contained in the *data*
+directory.  To access the mzData files, we first locate the *data* directory in
+the `msdata` package.
+
+```{r raw-files}
+mzdatapath <- system.file("iontrap", package = "msdata")
+list.files(mzdatapath, recursive = TRUE)
+```
+
+# Accessing, combining and visualising MSn spectra
+
+The MS$^{n}$ spectra are read into xcms just like plain LC-MS files.  Inclusion of
+the additional scans has to be explicitely enabled. The xcmsRaw summary shows
+the additional content:
+
+```{r}
+library(xcms)
+mzdatafiles <- list.files(mzdatapath, pattern = "extracted.mzData",
+                          recursive = TRUE, full.names = TRUE)
+xraw <- xcmsRaw(mzdatafiles[1], includeMSn=TRUE)
+xraw
+
+```
+
+There is also a new peak picker, which actually returns all parent ions as
+annotated in the mzData / mzXML files. A warning will be issued if this is not
+present, either because of a poor converter or if `xraw` is read from a CDF
+file:
+
+```{r}
+peaks <- findPeaks(xraw, method="MS1")
+```
+
+By giving larger windows, subsets of spectra can be returned, and these can be
+combined to obtain so called compound spectra containing e.g. MS$^{2}$ to
+MS$^{5}$.
+
+# xcmsFragments
+
+A xcmsFragments-Object contains a Table with informations about all Peaks from
+MS1 to MS$^{n}$ of one Experiment, including mz-value, retentiontime, MSlevel, and
+parentpeak. The data can be used for visualization or (later) computing
+alignments between different Experiments. The object is created as empty and can
+be filled with `collect()`. This method requires a peaktable or a xcmsSet for
+the MS1peaks and the original xcmsRaw for the msn-Data.
+
+```{r}
+xs <- xcmsSet(mzdatafiles, method = "MS1")
+xfrag <- xcmsFragments(xs)
+xfrag
+
+```
+
+plotTree prints out a simplyfied tree of the peaks in a `xcmsFragments`. The
+user can define borders for the retentionTime and for the MassRange, he can also
+print the tree for a single MS1-Peak. PlotTree uses the package `RgraphViz` and
+plots the tree text-based if requested or if the package cannot be found.
+
+Below we simply print the textual representation of the fragment tree.
+
+```{r}
+plotTree(xfrag, xcmsFragmentPeakID = 6, textOnly = TRUE)
+```
+

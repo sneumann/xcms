@@ -12,7 +12,8 @@
   \code{
     findPeaks.centWave(object, ppm=25, peakwidth=c(20,50), snthresh=10,
     prefilter=c(3,100), mzCenterFun="wMean", integrate=1, mzdiff=-0.001, fitgauss=FALSE,
-    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list())
+    scanrange= numeric(), noise=0, sleep=0, verbose.columns=FALSE, ROI.list=list()),
+    firstBaselineCheck=TRUE, roiScales=NULL
   }
 }
 }}
@@ -58,6 +59,12 @@
     \code{mzmax} maximum m/z,
     \code{length} number of scans,
     \code{intensity} summed intensity.
+  }
+  \item{firstBaselineCheck}{
+    logical, if TRUE continuous data within ROI is checked to be above 1st baseline
+  }
+  \item{roiScales}{
+    numeric, optional vector of scales for each ROI in \code{ROI.list} to be used for the centWave-wavelets
   }
 }
 \value{
@@ -118,6 +125,7 @@
   BMC Bioinformatics 2008, 9:504
 }
 \seealso{
+  \code{\link{centWave}} for the new user interface.
   \code{\link{findPeaks-methods}}
   \code{\link{xcmsRaw-class}}
 }

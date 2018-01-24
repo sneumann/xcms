@@ -27,6 +27,13 @@
   end points of the other detected peaks.
 
 }
+\note{
+  In contrast to the \code{\link{fillPeaks.chrom}} method the maximum
+  intensity reported in column \code{"maxo"} is not the maximum
+  intensity measured in the expected peak area (defined by columns
+  \code{"mzmin"} and \code{"mzmax"}), but the largest intensity of mz
+  value(s) closest to the \code{"mzmed"} of the feature.
+}
 \value{
   A \code{xcmsSet} objects with filled in peak groups.
 }

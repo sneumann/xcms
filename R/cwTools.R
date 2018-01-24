@@ -366,8 +366,7 @@ running <- function (X, Y = NULL, fun = mean, width = min(length(X), 20),
                            ...)
         else Xvar <- lapply(run.elements, funct, what = X, fun = fun,
                             ...)
-    }
-    else {
+    } else {
         funct <- function(which, XX, YY, fun, ...) fun(XX[which],
                                                        YY[which], ...)
         if (simplify)
@@ -412,18 +411,29 @@ gauss <- function(x, h, mu, sigma){
     h*exp(-(x-mu)^2/(2*sigma^2))
 }
 
-fitGauss <- function(td,d,pgauss=NA) {
+fitGauss <- function(td, d, pgauss = NA) {
     if (length(d) < 3) return(rep(NA,3))
     if (!any(is.na(pgauss))) { mu <- pgauss$mu; sigma <- pgauss$sigma;h <- pgauss$h }
     fit <- try(nls(d ~ SSgauss(td,mu,sigma,h)), silent = TRUE)
     if (class(fit) == "try-error")
-        fit <- try(nls(d ~ SSgauss(td,mu,sigma,h),algo='port'), silent = TRUE)
-    if (class(fit) == "try-error")  return(rep(NA,3))
+        fit <- try(nls(d ~ SSgauss(td, mu, sigma, h), algorithm = 'port'),
+                   silent = TRUE)
+    if (class(fit) == "try-error")  return(rep(NA, 3))
 
     as.data.frame(t(fit$m$getPars()))
 }
 
-joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGaussOverlap=0.5,mzCenterFun) {
+## ' @param
+## ' @param d numeric vector with intensities of centroids within the peak.
+## ' @param otd
+## ' @param omz
+## ' @param od
+## ' @param scantime
+## ' @param scan.range
+## ' @param peaks
+## ' @noRd
+joinOverlappingPeaks <- function(td, d, otd, omz, od, scantime, scan.range,
+                                 peaks, maxGaussOverlap=0.5, mzCenterFun) {
 
     gausspeaksidx <- which(!is.na(peaks[,"mu"]))
     Ngp <- length(gausspeaksidx)
@@ -437,7 +447,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
         notgausspeaks <- peaks[-gausspeaksidx,,drop=FALSE]
 
     if (Ngp > 1) {
-        comb <- which(upper.tri(matrix(0,Ngp,Ngp)),arr=TRUE)
+        comb <- which(upper.tri(matrix(0,Ngp,Ngp)), arr.ind = TRUE)
         overlap <- rep(FALSE,dim(comb)[1])
         for (k in 1:dim(comb)[1]) {
             p1 <- comb[k,1]; p2 <- comb[k,2]
@@ -469,7 +479,7 @@ joinOverlappingPeaks <- function(td,d,otd,omz,od,scantime,scan.range,peaks,maxGa
             lcc <- length(cc)
             ins <- rep(FALSE,lcc)
             if (lcc > 1) {
-                jcomb <- which(upper.tri(matrix(0,lcc,lcc)),arr=TRUE)
+                jcomb <- which(upper.tri(matrix(0,lcc,lcc)),arr.ind = TRUE)
                 for (j in 1:dim(jcomb)[1]) {
                     j1 <- jcomb[j,1]; j2 <- jcomb[j,2]
                     if (any(cc[[j1]] %in% cc[[j2]]))
@@ -607,13 +617,21 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
     cc <- -( 2 * s1^2 * s2^2 * (log(h1) - log(h2)) + (s1^2 * mu2^2) - (s2^2 * mu1^2) )
     b <- ((2 * s1^2 *mu2) - (2 * s2^2 * mu1))
     D <- b^2 - (a*cc)
-    if (a==0) {S1 <- -cc/b; S2 <- NA
-           } else if ((D < 0) || ((b^2 - (4*a*cc)) < 0)) {S1 <- S2 <- NA
-                                                      } else {
-                                                          S1 <- (-b + sqrt(b^2 - (4*a*cc))) / (2*a)
-                                                          S2 <- (-b - sqrt(b^2 - (4*a*cc))) / (2*a)
-                                                          if (S2 < S1) {tmp<-S1; S1<-S2; S2<-tmp}
-                                                      }
+    if (a==0) {
+        S1 <- -cc/b
+        S2 <- NA
+    } else if ((D < 0) || ((b^2 - (4*a*cc)) < 0)) {
+        S1 <- S2 <- NA
+    } else {
+        S1 <- (-b + sqrt(b^2 - (4*a*cc))) / (2*a)
+        S2 <- (-b - sqrt(b^2 - (4*a*cc))) / (2*a)
+        if (S2 < S1)
+        {
+            tmp <- S1
+            S1 <- S2
+            S2 <- tmp
+        }
+    }
     if (!is.na(S1)) if (S1 < xlim[1] || S1 > xlim[2]) S1 <- NA
     if (!is.na(S2)) if (S2 < xlim[1] || S2 > xlim[2]) S2 <- NA
 
@@ -624,13 +642,29 @@ gaussCoverage <- function(xlim,h1,mu1,s1,h2,mu2,s2) {
         x0 <- seq(xlim[1],S1,by=by)
         xo <- seq(S1,S2,by=by)
         x1 <- seq(S2,xlim[2],by=by)
-        if (gauss(x0[cent(x0)],h1,mu1,s1) < gauss(x0[cent(x0)],h2,mu2,s2)) ov1 <- sum(gauss(x0,h1,mu1,s1))                    else ov1 <- sum(gauss(x0,h2,mu2,s2))
-        if (gauss(xo[cent(xo)],h1,mu1,s1) < gauss(xo[cent(xo)],h2,mu2,s2)) ov <- sum(gauss(xo,h1,mu1,s1))                    else ov <- sum(gauss(xo,h2,mu2,s2))
-        if (gauss(x1[cent(x1)],h1,mu1,s1) < gauss(x1[cent(x1)],h2,mu2,s2)) ov2 <- sum(gauss(x1,h1,mu1,s1))                    else ov2 <- sum(gauss(x1,h2,mu2,s2))
+        if (gauss(x0[cent(x0)],h1,mu1,s1) < gauss(x0[cent(x0)],h2,mu2,s2)) {
+            ov1 <- sum(gauss(x0,h1,mu1,s1))
+        } else {
+            ov1 <- sum(gauss(x0,h2,mu2,s2))
+        }
+        if (gauss(xo[cent(xo)],h1,mu1,s1) < gauss(xo[cent(xo)],h2,mu2,s2)) {
+            ov <- sum(gauss(xo,h1,mu1,s1))
+        } else {
+            ov <- sum(gauss(xo,h2,mu2,s2))
+        }
+        if (gauss(x1[cent(x1)],h1,mu1,s1) < gauss(x1[cent(x1)],h2,mu2,s2)) {
+            ov2 <- sum(gauss(x1,h1,mu1,s1))
+        } else {
+            ov2 <- sum(gauss(x1,h2,mu2,s2))
+        }
         overlap <- ov1 + ov + ov2
     } else
         if (is.na(S1) && is.na(S2)) { ## no overlap -> intergrate smaller function
-            if (gauss(x[cent(x)],h1,mu1,s1) < gauss(x[cent(x)],h2,mu2,s2)) overlap <- sum(gauss(x,h1,mu1,s1))                    else overlap <- sum(gauss(x,h2,mu2,s2))
+            if (gauss(x[cent(x)],h1,mu1,s1) < gauss(x[cent(x)],h2,mu2,s2)) {
+                overlap <- sum(gauss(x,h1,mu1,s1))
+            } else {
+                overlap <- sum(gauss(x,h2,mu2,s2))
+            }
         } else
             if (!is.na(S1) || !is.na(S2)) {
                 if (is.na(S1)) S0 <- S2 else S0 <- S1

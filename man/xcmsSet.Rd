@@ -10,33 +10,47 @@
 xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
         profmethod = "bin", profparam = list(),
         polarity = NULL, lockMassFreq=FALSE,
-		mslevel=NULL, nSlaves=0, progressCallback=NULL,
-                scanrange = NULL, ...)
+	mslevel=NULL, nSlaves=0, progressCallback=NULL,
+        scanrange = NULL, BPPARAM = bpparam(),
+        stopOnError = TRUE, ...)
 }
 \arguments{
   \item{files}{path names of the NetCDF/mzXML files to read}
   \item{snames}{sample names. By default the file name without extension
-  is used.}
+    is used.}
   \item{sclass}{sample classes.}
-    \item{phenoData}{\code{data.frame} or \code{AnnotatedDataFrame}
-      defining the sample names and classes and other sample related
-      properties. If not provided, the argument \code{sclass} or the
-      subdirectories in which the samples are stored will be
-      used to specify sample grouping.}
-  \item{profmethod}{method to use for profile generation.}
+  \item{phenoData}{\code{data.frame} or \code{AnnotatedDataFrame}
+    defining the sample names and classes and other sample related
+    properties. If not provided, the argument \code{sclass} or the
+    subdirectories in which the samples are stored will be
+    used to specify sample grouping.}
+  \item{profmethod}{Method to use for profile generation. Supported
+    values are \code{"bin"}, \code{"binlin"}, \code{"binlinbase"} and
+    \code{"intlin"} (for methods \code{\link{profBin}},
+    \code{\link{profBinLin}}, \code{\link{profBinLinBase}} and
+    \code{\link{profIntLin}}, respectively). See help on
+    \code{\link{profBin}} for a complete list of available methods and
+    their supported parameters.}
   \item{profparam}{parameters to use for profile generation.}
   \item{polarity}{filter raw data for positive/negative scans}
 	\item{lockMassFreq}{Performs correction for Waters LockMass function}
     \item{mslevel}{perform peak picking on data of given mslevel}
-    \item{nSlaves}{number of slaves/cores to be used for parallel peak detection.
-		   MPI is used if installed, otherwise the snow package
-		   is employed for multicore support. If none of the two
-		   packages is available it uses the parallel package
-		   for parallel processing on multiple CPUs of the
-		   current machine.
-		 }
+    \item{nSlaves}{\emph{DEPRECATED}, use \code{BPPARAM} argument
+      instead.}
   \item{progressCallback}{function to be called, when progressInfo changes (useful for GUIs)}
   \item{scanrange}{scan range to read}
+  \item{BPPARAM}{a \code{BiocParallel} parameter object to control how
+    and if parallel processing should be performed. Such objects can be
+    created by the \code{\link[BiocParallel]{SerialParam}},
+    \code{\link[BiocParallel]{MulticoreParam}} or
+    \code{\link[BiocParallel]{SnowParam}} functions.
+  }
+  \item{stopOnError}{Logical specifying whether the feature detection
+    call should stop on the first encountered error (the default), or
+    whether feature detection is performed in all files regardless
+    eventual failures for individual files in which case all errors are
+    reported as \code{warnings}.
+  }
   \item{\dots}{
     further arguments to the \code{findPeaks} method of the
     \code{xcmsRaw} class
@@ -60,7 +74,8 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   The step size (in m/z) to use for profile generation can be submitted
   either using the \code{profparam} argument
   (e.g. \code{profparam=list(step=0.1)}) or by submitting
-  \code{step=0.1}.
+  \code{step=0.1}. By specifying a value of \code{0} the profile matrix
+  generation can be skipped.
 
   The feature/peak detection algorithm can be specified with the
   \code{method} argument which defaults to the \code{"matchFilter"}
@@ -86,6 +101,7 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \code{\link{findPeaks}},
   \code{\link{profStep}},
   \code{\link{profMethod}},
+  \code{\link{profBin}},
   \code{\link{xcmsPapply}}
 }
 \keyword{file}

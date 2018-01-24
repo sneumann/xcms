@@ -11,7 +11,7 @@ profMaxIdx <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = integer(num),
-       DUP = FALSE, PACKAGE = "xcms")$out
+       PACKAGE = "xcms")$out
 }
 
 profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
@@ -32,12 +32,21 @@ profMaxIdxM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        ## sometimes, the return value is not perfectly zeroes (NA's in FFC)
        ##out = integerMatrix(num, length(zidx)),
        out = matrix(as.integer(0), num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
+############################################################
+## profBin
+##
+## Just some notes to bettern understand what this friend here is doing:
+## o x: object@env$mz, i.e. the values on which we want to bin.
+## o y: object@env$intensity, i.e. the values that we want to bin.
+## o num: number of bins we want.
+## o xstart: minimal value in x from which we start.
+## o xend: minimal value in x to which we go.
 profBin <- function(x, y, num, xstart = min(x), xend = max(x),
                     param = list()) {
-
+    .Deprecated(new = "binYonX")
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBin",
@@ -48,12 +57,30 @@ profBin <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = double(num),
-       DUP = FALSE, PACKAGE = "xcms")$out
+       PACKAGE = "xcms")$out
 }
 
+## profBin_test <- function(x, y, num, xstart = min(x), xend = max(x),
+##                          param = list(), the_dx) {
+
+##     if (!is.double(x)) x <- as.double(x)
+##     if (!is.double(y)) y <- as.double(y)
+##     .C("ProfBin_test",
+##        x,
+##        y,
+##        as.integer(length(x)),
+##        as.double(xstart),
+##        as.double(xend),
+##        as.integer(num),
+##        out = double(num),
+##        the_dx = double(1),
+##        PACKAGE = "xcms")$the_dx
+## }
+
+## o zidx: start position of each new segment (e.g. spectrum).
 profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                      NAOK = FALSE, param = list()) {
-
+    .Deprecated(new = "binYonX")
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinM",
@@ -66,12 +93,14 @@ profBinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = doubleMatrix(num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
 profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
                        param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLin' is deprecated! Use 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLin",
@@ -82,12 +111,14 @@ profBinLin <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = double(num),
-       DUP = FALSE, PACKAGE = "xcms")$out
+       PACKAGE = "xcms")$out
 }
 
 profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                         NAOK = FALSE, param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinM' is deprecated! Use 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (!is.double(x)) x <- as.double(x)
     if (!is.double(y)) y <- as.double(y)
     .C("ProfBinLinM",
@@ -100,12 +131,15 @@ profBinLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = doubleMatrix(num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
 profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
                            param = list()) {
-
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinBase' is deprecated! Use",
+                             " 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
     if (is.null(param$baselevel))
         baselevel <- min(y)/2
     else
@@ -127,11 +161,15 @@ profBinLinBase <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = double(num),
-       DUP = FALSE, PACKAGE = "xcms")$out
+       PACKAGE = "xcms")$out
 }
 
 profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
                             NAOK = FALSE, param = list()) {
+    .Deprecated(new = "binYonX",
+                msg = paste0("Use of 'profBinLinBaseM' is deprecated! Use",
+                             " 'binYonX'",
+                             " with 'imputeLinInterpol' instead."))
 
     if (is.null(param$baselevel))
         baselevel <- min(y)/2
@@ -156,7 +194,7 @@ profBinLinBaseM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = doubleMatrix(num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
 profIntLin <- function(x, y, num, xstart = min(x), xend = max(x),
@@ -172,7 +210,7 @@ profIntLin <- function(x, y, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = double(num),
-       DUP = FALSE, PACKAGE = "xcms")$out
+       PACKAGE = "xcms")$out
 }
 
 profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
@@ -190,7 +228,7 @@ profIntLinM <- function(x, y, zidx, num, xstart = min(x), xend = max(x),
        as.double(xend),
        as.integer(num),
        out = doubleMatrix(num, length(zidx)),
-       NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")$out
+       NAOK = NAOK, PACKAGE = "xcms")$out
 }
 
 medianFilter <- function(x, mrad, nrad) {
@@ -208,7 +246,7 @@ medianFilter <- function(x, mrad, nrad) {
            as.integer(mrad),
            as.integer(nrad),
            out = doubleMatrix(dimx[1], dimx[2]),
-           DUP = FALSE, PACKAGE = "xcms")$out
+           PACKAGE = "xcms")$out
     }
 }
 
@@ -221,7 +259,7 @@ descendZero <- function(y, istart = which.max(y)) {
               as.integer(istart-1),
               ilower = integer(1),
               iupper = integer(1),
-              DUP = FALSE, PACKAGE = "xcms")[4:5]) + 1
+              PACKAGE = "xcms")[4:5]) + 1
 }
 
 descendValue <- function(y, value, istart = which.max(y)) {
@@ -234,7 +272,7 @@ descendValue <- function(y, value, istart = which.max(y)) {
               as.double(value),
               ilower = integer(1),
               iupper = integer(1),
-              DUP = FALSE, PACKAGE = "xcms")[5:6]) + 1
+              PACKAGE = "xcms")[5:6]) + 1
 }
 
 descendMin <- function(y, istart = which.max(y)) {
@@ -246,7 +284,7 @@ descendMin <- function(y, istart = which.max(y)) {
               as.integer(istart-1),
               ilower = integer(1),
               iupper = integer(1),
-              DUP = FALSE, PACKAGE = "xcms")[4:5]) + 1
+              PACKAGE = "xcms")[4:5]) + 1
 }
 
 findEqualGreaterM <- function(x, values) {
@@ -259,7 +297,7 @@ findEqualGreaterM <- function(x, values) {
        values,
        length(values),
        index = integer(length(values)),
-       DUP = FALSE, PACKAGE = "xcms")$index + 1
+       PACKAGE = "xcms")$index + 1
 }
 
 findEqualGreater <- function(x, value) {
@@ -270,7 +308,7 @@ findEqualGreater <- function(x, value) {
        length(x),
        as.double(value),
        index = integer(1),
-       DUP = FALSE, PACKAGE = "xcms")$index + 1
+       PACKAGE = "xcms")$index + 1
 }
 
 findEqualLess <- function(x, value) {
@@ -281,7 +319,7 @@ findEqualLess <- function(x, value) {
        length(x),
        as.double(value),
        index = integer(1),
-       DUP = FALSE, PACKAGE = "xcms")$index + 1
+       PACKAGE = "xcms")$index + 1
 }
 
 findRange <- function(x, values, NAOK = FALSE) {
@@ -292,13 +330,13 @@ findRange <- function(x, values, NAOK = FALSE) {
                 length(x),
                 as.double(values[1]),
                 integer(1),
-                NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")[[4]]
+                NAOK = NAOK, PACKAGE = "xcms")[[4]]
     end <- .C("FindEqualLess",
               x,
               length(x),
               as.double(values[2]),
               integer(1),
-              NAOK = NAOK, DUP = FALSE, PACKAGE = "xcms")[[4]]
+              NAOK = NAOK, PACKAGE = "xcms")[[4]]
     c(start, end) + 1
 }
 
@@ -318,7 +356,7 @@ colMax <- function (x, na.rm = FALSE, dims = 1) {
             as.integer(n),
             as.integer(prod(dn)),
             double(prod(dn)),
-            DUP = FALSE, PACKAGE = "xcms")[[4]]
+            PACKAGE = "xcms")[[4]]
     if (length(dn) > 1) {
         dim(z) <- dn
         dimnames(z) <- dimnames(x)[-(1:dims)]
@@ -343,7 +381,7 @@ rowMax <- function (x, na.rm = FALSE, dims = 1) {
             as.integer(prod(dn)),
             as.integer(p),
             double(prod(dn)),
-            DUP = FALSE, PACKAGE = "xcms")[[4]]
+            PACKAGE = "xcms")[[4]]
     if (length(dn) > 1) {
         dim(z) <- dn
         dimnames(z) <- dimnames(x)[1:dims]
@@ -368,7 +406,7 @@ which.colMax <- function (x, na.rm = FALSE, dims = 1) {
             as.integer(n),
             as.integer(prod(dn)),
             integer(prod(dn)),
-            DUP = FALSE, PACKAGE = "xcms")[[4]]
+            PACKAGE = "xcms")[[4]]
     if (length(dn) > 1) {
         dim(z) <- dn
         dimnames(z) <- dimnames(x)[-(1:dims)]
@@ -393,7 +431,7 @@ which.rowMax <- function (x, na.rm = FALSE, dims = 1) {
             as.integer(prod(dn)),
             as.integer(p),
             integer(prod(dn)),
-            DUP = FALSE, PACKAGE = "xcms")[[4]]
+            PACKAGE = "xcms")[[4]]
     if (length(dn) > 1) {
         dim(z) <- dn
         dimnames(z) <- dimnames(x)[1:dims]
@@ -422,7 +460,7 @@ rectUnique <- function(m, order = seq(length = nrow(m)), xdiff = 0, ydiff = 0) {
        as.double(xdiff),
        as.double(ydiff),
        logical(nrow(m)),
-       DUP = FALSE, PACKAGE = "xcms")[[7]]
+       PACKAGE = "xcms")[[7]]
 }
 
 doubleMatrix <- function(nrow = 0, ncol = 0) {
@@ -458,7 +496,7 @@ continuousPtsAboveThreshold <- function(y, threshold, num, istart = 1) {
            threshold = as.double(threshold),
            num = as.integer(num),
            n = integer(1),
-           DUP = FALSE, PACKAGE = "xcms")$n > 0) TRUE else FALSE
+           PACKAGE = "xcms")$n > 0) TRUE else FALSE
 }
 
 continuousPtsAboveThresholdIdx <- function(y, threshold, num, istart = 1) {
@@ -470,7 +508,7 @@ continuousPtsAboveThresholdIdx <- function(y, threshold, num, istart = 1) {
                   threshold = as.double(threshold),
                   num = as.integer(num),
                   n = integer(length(y)),
-                  DUP = FALSE, PACKAGE = "xcms")$n)
+                  PACKAGE = "xcms")$n)
 }
 
 findEqualGreaterUnsorted <- function(x, value) {
@@ -481,5 +519,8 @@ findEqualGreaterUnsorted <- function(x, value) {
        length(x),
        as.double(value),
        index = integer(1),
-       DUP = FALSE, PACKAGE = "xcms")$index + 1
+       PACKAGE = "xcms")$index + 1
 }
+
+.profFunctions <- list(intlin = "profIntLinM", binlin = "profBinLinM",
+                       binlinbase = "profBinLinBaseM", bin = "profBinM")

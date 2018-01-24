@@ -1,48 +1,450 @@
+CHANGES IN VERSION 3.1.1
+-------------------------
+
+UPDATED FEATURES
+- Reading raw files using xcmsSet or xcmsRaw uses now the automatic file type
+  detection feature from mzR.
+
+BUG FIXES:
+- Fix #237: findPeaks.MSW was not throwing an error if applied to multi-spectrum
+  MS file.
+
+
+CHANGES IN VERSION 2.99.10
+-------------------------
+
+BUG FIXES:
+- Fix #230: Failing vignettes on Windows.
+
+
+CHANGES IN VERSION 2.99.9
+-------------------------
+
+USER VISIBLE CHANGES:
+- Chromatographic peak detection uses adjusted retention times on an aligned
+  XCMSnExp object (issue #213, #208).
+- New parameter msLevel for processHistory,XCMSnExp.
+- New parameter keepAdjustedRtime for filterMsLevel,XCMSnExp, dropChromPeaks,
+  XCMSnExp and dropFeatureDefinitions,XCMSnExp.
+- Add parameter msLevel to chromatogram,XCMSnExp method (issue #205).
+- Obiwarp alignment is now performed on one MS level and adjustment is applied
+  to all MS levels (issue #214).
+- Add function plotMsData to plot intensity against retention time and m/z
+  against retention time for a MS slice in one sample.
+- Add argument msLevel = 1L to extractMsData method (issue #223).
+- New applyAdjustedRtime function to consolidate the alignment results, i.e.
+  replace the raw retention times in the XCMSnExp with the adjusted retention
+  times.
+- [,XCMSnExp method gains argument keepAdjustedRtime to allow keeping adjusted
+  retention times in the sub-setting.
+- Implement spectrapply,XCMSnExp to ensure returned results use adjusted
+  retention times (if present).
+- [[,XCMSnExp method returns a Spectrum object with adjusted retention time, if
+  the XCMSnExp contains adjusted retention times.
+- Argument 'sampleGroups' is mandatory for 'PeakDensityParam' (issue #228).
+
+BUG FIXES:
+- Fix #191: Excessive memory use in fillPeaks.
+- Fix #220: peaks matrix is missing column "sample" if no peaks were found in
+  the first sample.
+- Fix #222: findChromPeaks does not return an XCMSnExp object filtered to a
+  single MS level despite peak detection is performed on a single level.
+- Fix problem in plotMsData causing wrong colors to be used to label the data
+  points.
+
+
+CHANGES IN VERSION 2.99.8
+-------------------------
+
+BUG FIXES:
+- Replace xcmsMSn Rnw with Rmd vignette to fix Windows build errors.
+
+
+CHANGES IN VERSION 2.99.7
+-------------------------
+
+BUG FIXES:
+- Fix #201: Warnings: 'readMSData2' is deprecated, thanks to L. Gatto.
+- Merge with BioC git after transition
+
+
+CHANGES IN VERSION 2.99.6
+-------------------------
+
+NEW FEATURES:
+- calibrate,XCMSnExp method that allows to calibrate chromatographic peaks.
+
+USER VISIBLE CHANGES:
+- Export phenoDataFromPaths function (issue $195).
+- Add arguments mz and rt to featureDefinitions method allowing to extract
+  features within the specified ranges.
+- Increase n for the density function call in group density-based correspondence
+  by 2.
+- Replace xcmsDirect.Rnw with rmarkdown-based vignette using the new user
+  interface.
+
+
+BUG FIXES:
+- issue #196: removed the unnecessary requirement for same-dimension profile
+  matrices in adjustRtime,XCMSnExp,ObiwarpParam.
+- issue #194: fixes in retcor.obiwarp: 1) subset raw data if scanrange != NULL.
+  2) if the mz range of the two files to be aligned differ, expand them
+  correctly. Depending on the profStep and the mz values/ranges the matrices
+  were not expanded correctly.
+- Potential problems in the plotChromPeakDensity function.
+
+
+CHANGES IN VERSION 2.99.5
+-------------------------
+
+USER VISIBLE CHANGES:
+- Re-enable sleep parameter in findPeaks.centWave and findPeaks.matchedFilter.
+
+
+CHANGES IN VERSION 2.99.4
+-------------------------
+
+NEW FEATURES:
+- Add plotChromPeaks function to plot the definition (rt and mz range) of
+  detected chromatographic peaks of one file into the mz-rt plane. 
+- Add plotChromPeakImage function to plot the number of detected peaks along
+  the retention time axis per file as an image plot.
+
+USER VISIBLE CHANGES:
+- Move Chromatogram class and functionality to the MSnbase package
+- Add argument msLevel to the findChromPeaks method to allow (chromatographic)
+  peak detection also on MS level > 1.
+
+BUG FIXES:
+- Polarity information was not read from mzXML files (issue #192).
+
+
+CHANGES IN VERSION 2.99.3
+-------------------------
+
+BUG FIXES:
+- issue #188: determine file type from file content if file ending not known.
+
+
+CHANGES IN VERSION 2.99.2
+-------------------------
+
+BUG FIXES:
+- issue #181: problem when isCentroided,Spectrum method returns NA because of
+  too few peaks in a spectrum. Fixed by checking in such cases all spectra in
+  the file.
+- issue #184: add parameter sleep to do_groupChromPeaks_density function to be
+  backwards compatible with the old group.density code.
+
+
+CHANGES IN VERSION 2.99.1
+-------------------------
+
+NEW FEATURES:
+- extractMsData to extract raw MS data as a data.frame (issue #120).
+
+BUG FIXES:
+- issue #175: an error is now thrown if no peak group was identified for peak
+  group retention time correction.
+- issue #178: scanrange was collapsed when the adjusted range was reported
+  (pull request by Jan Stanstrup).
+- issue #180: error when both parameters method and smooth are provided in the
+  retcor method.
+
+
+CHANGES IN VERSION 2.99.0
+-------------------------
+
+NEW FEATURES:
+- plotChromatogram and highlightChromPeaks functions.
+- plotChromPeakDensity function.
+- clean method for Chromatogram classes.
+
+USER VISIBLE CHANGES:
+- Change default for ppm parameter in chromPeaks method to 0.
+- extractChromatograms supports extraction of multiple rt and mz ranges.
+- New parameter missing for extractChromatograms allowing to specify the
+  intensity value to be used for rts for which no signal is available within
+  the mz range.
+- extractChromatograms returns Chromatograms of length equal to the number of
+  scans within the specified rt range, even if no signals are measured
+  (intensity values are NA).
+
+
+CHANGES IN VERSION 1.53.1
+--------------------------
+
+BUG FIXES:
+- Increase parameter n for the density call in the peak density correspondence
+  method. This enables to separate neighboring peaks using small n (issue #161).
+  Thanks to Jan Stanstrup.
+
+
+CHANGES IN VERSION 1.51.11
+--------------------------
+
+NEW FEATURES:
+- Parameter "filled" for featureValues (issue #157).
+- Parameters "rt" and "mz" in chromPeaks method allowing to extract
+  chromatographic peaks from the specified ranges (issue #156).
+
+BUG FIXES:
+- Fixed possible memory problem in obiwarp (issue #159).
+- Update getPeaks to use non-deprecated API (issue #163).
+
+
+CHANGES IN VERSION 1.51.10
+--------------------------
+
+NEW FEATURES:
+- filterRt for Chromatogram class (issue #142).
+- adjustRtimePeakGroups function (issue #147).
+- adjustRtime,XCMSnExp,PeakGroupsParam and do_adjustRtime_peakGroups support
+  use of pre-defined matrix to perform alignment (issue #153).
+- plotAdjustedRtime to visualize alignment results (issue #141).
+
+USER VISIBLE CHANGES:
+- featureDefinitions and featureValues return DataFrame and matrix with rownames
+  corresponding to arbitrary feature IDs (issue #148).
+- New peakGroupsMatrix slot for PeakGroupsParam class (issue #153).
+
+BUG FIXES:
+- Issue #146: ensure adjusted retention times returned by the peakGroups method
+  to be in the same order than the raw retention times.
+
+
+CHANGES IN VERSION 1.51.9
+-------------------------
+
+NEW FEATURES:
+- fillChromPeaks, dropFilledChromPeaks methods and FillChromPeaksParam class.
+- featureValues method.
+
+USER VISIBLE CHANGES:
+- Extended new_functionality vignette.
+- Change default backend for reading mzML files to pwiz.
+
+BUG FIXES:
+- Issue #135: fix peak signal integration for centWave.
+- Issue #139: problem with expand.mz and expand.rt in fillPeaks.chrom.
+- Issue #137: Error in findChromPeaks if no peaks are found.
+
+
+CHANGES IN VERSION 1.51.8
+-------------------------
+
+NEW FEATURES:
+- Add Chromatogram class and extractChromatograms method.
+
+BUG FIXES:
+- Issue #118: failing unit test on Windows build machine.
+- Issue #133: error with c() and xcmsSet without peaks.
+- Issue #134: xcmsSet constructor endless loop.
+
+
+CHANGES IN VERSION 1.51.7
+-------------------------
+
+USER VISIBLE CHANGES:
+- Major renaming of methods and classes to follow the naming convention:
+  - chromatographic peak (chromPeak): the peaks identified in rt dimension.
+  - feature: mz-rt feature, being the grouped chromatographic peaks within and
+    across samples.
+
+BUG FIXES:
+- Issue #127: failing unit test on Windows build machine.
+
+
+CHANGES IN VERSION 1.51.6
+-------------------------
+
+NEW FEATURES:
+- groupFeatures and adjustRtime methods for XCMSnExp objects.
+- New Param classes for groupFeatures and adjustRtime analysis methods: FeatureDensityParam,
+  MzClustParam, NearestFeaturesParam, FeatureGroupsParam and ObiwarpParam.
+
+BUG FIXES:
+- Issue #124 (filterRt,XCMSnExp returned empty object).
+
+
+CHANGES IN VERSION 1.51.5
+-------------------------
+
+NEW FEATURES:
+- MsFeatureData and XCMSnExp objects.
+- features, features<-, adjustedRtime, adjustedRtime<-, featureGroups,
+  featureGroups<-, hasAlignedFeatures, hasAdjustedRtime and hasDetectedFeatures
+  methods.
+- dropFeatures, dropFeatureGroups and dropAdjustedRtime methods.
+- filterMz, filterRt, filterFile etc implemented.
+- mz, intensity and rtime methods for XCMSnExp allowing to return values grouped
+  by sample.
+
+BUG FIXES:
+- Issue #99 (rtrange outside of retention time range in getEIC,xcmsSet).
+- Issue #101 (xcmsRaw function returns NULL if mslevel = 1 is specified).
+- Issue #102 (centWave returns empty matrix if scales not OK). Thanks to J. Stanstrup.
+- Issue #91 (warning instead of error if no peaks in ROI). Thanks to J. Stanstrup.
+
+
+CHANGES IN VERSION 1.51.4
+-------------------------
+
+BUG FIXES:
+- added deepCopy to avoid corrupting the original object, thanks to J. Stanstrup, closes #93
+
+CHANGES IN VERSION 1.51.3
+-------------------------
+
+NEW FEATURES:
+- binYonX binning function.
+- imputeLinInterpol function providing linear interpolation of missing values.
+- breaks_on_binSize and breaks_on_nBins functions to calculate breaks defining
+  bins.
+- New vignette "new_functionality.Rmd" describing new and modified functionality
+  in xcms.
+- Add do_detectFeatures_matchedFilter function.
+- Add do_detectFeatures_centWave function.
+- Add do_detectFeatures_centWaveWithPredIsoROIs function and unit test.
+- Implement a new data import function.
+- Add do_detectFeatures_MSW function and unit test.
+- Argument stopOnError in xcmsSet function that allows to perform feature
+  detection on all files without stopping on errors.
+- Method showError for xcmsSet objects that list all errors during feature
+  detection (if stopOnError = FALSE in the xcmsSet function).
+- [ method to subset xcmsRaw objects by scans.
+- profMat method to extract/create the profile matrix from/for an xcmsRaw.
+- Add new detectFeatures methods for MSnExp and OnDiskMSnExp objects from the
+  MSnbase package.
+- Add new CentWaveParam, MatchedFilterParam, MassifquantParam, MSWParam and
+  CentWavePredIsoParam parameter class to perform method dispatch in the
+  detectFeatures method.
+- retcor.obiwarp uses the new binning methods for profile matrix generation.
+- scanrange,xcmsRaw reports always a scanrange of 1 and length(object@scantime).
+- scanrange,xcmsSet reports the scanrange eventually specified by the user in
+  the xcmsSet function.
+- Fixed bug in rawMat (issue #58).
+- Fix issue #60: findPeaks.massifquant always returns a xcmsPeaks object.
+
+
+CHANGES IN VERSION 1.51.2
+-------------------------
+
+USER VISIBLE CHANGES:
+- As suggested by Jan Stanstrup, do not error if a centWave ROI
+  contains no data, closes #90
+
+CHANGES IN VERSION 1.51.1
+-------------------------
+
+BUG FIXES:
+- Fix incorrrect indexing getEIC function reported by Will Edmands, closes #92
+
+CHANGES IN VERSION 1.49.7
+-------------------------
+
+BUG FIXES:
+- Fix documentation warnings.
+
+
+CHANGES IN VERSION 1.49.6
+-------------------------
+
+USER VISIBLE CHANGES:
+- Peak Picking function findPeaks.centWaveWithPredictedIsotopeROIs() and findPeaks.addPredictedIsotopeFeatures(),
+  which allow more sensitive detection of isotope features.
+
+CHANGES IN VERSION 1.49.5
+-------------------------
+
+USER VISIBLE CHANGES:
+- Some documentation updates.
+- Preparation for a new binning function
+
+
+CHANGES IN VERSION 1.49.4
+-------------------------
+
+BUG FIXES:
+- Fix getXcmsRaw that would prevent retention time correction to be applied
+  (issue #44 reported by Aleksandr).
+
+
+CHANGES IN VERSION 1.49.3
+-------------------------
+
+NEW FEATURE:
+- updateObject method for xcmsSet.
+
+USER VISIBLE CHANGES:
+- xcms uses now BiocParallel for parallel processing. All other parallel
+  processing functions have been deprecated.
+
+BUG FIXES:
+- Added missing package imports.
+- Fix bug in fillPeaksChromPar referencing a non-existing variables i and
+  object.
+- Fix bug in group.nearest: variable scoreList was mis-spelled (coreList).
+- Remove all DUP = FALSE from the .C calls as they are ignored anyways.
+
+OTHER CHANGES
+- Re-organization of class, function and method definitions in R-files.
+- Use roxygen2 to manage the DESCRIPTION's collate field.
+
+
+CHANGES IN VERSION 1.49.2
+-------------------------
+
+NEW FEATURE:
+
+- Initial support for exporint mzTab format. Since Changes are
+  still to be expected, xcms:::writeMzTab() is not yet exported.
+
 CHANGES IN VERSION 1.49.1
 -------------------------
 
 NEW FEATURE:
 
-+ The raw CDF/mzXML/mzData/mzML is assumed to have scans sorted by m/z.
-  Instead of throwing an "m/z sort assumption violated !" error, 
-  the data is re-read and on-demand sorted by m/z. 
+- The raw CDF/mzXML/mzData/mzML is assumed to have scans sorted by m/z.
+  Instead of throwing an "m/z sort assumption violated !" error,
+  the data is re-read and on-demand sorted by m/z.
 
 CHANGES IN VERSION 1.47.3
 -------------------------
-+ Disable parallel processing in unit tests causing a timeout 
+- Disable parallel processing in unit tests causing a timeout
   on BioC build machines
 
 CHANGES IN VERSION 1.47.2
 -------------------------
 
 BUG FIXES
-+ Fix problem in getEIC on xcmsSet objects reported by Alan Smith in issue #7 and
+- Fix problem in getEIC on xcmsSet objects reported by Alan Smith in issue #7 and
   add a RUnit test case to test for this (test.issue7 in runit.getEIC.R).
-+ Changed some unnecessary warnings into messages.
+- Changed some unnecessary warnings into messages.
 
 
 CHANGES IN VERSION 1.47.2
 -------------------------
 
 USER VISIBLE CHANGES:
-+ Disabled parallel processing in unit tests
+- Disabled parallel processing in unit tests
 * migrate dependencies from ncdf -> ncdf4
 
 CHANGES IN VERSION 1.45.7
 -------------------------
 
 USER VISIBLE CHANGES:
-+ Disabled Rmpi support and usage on Windows
+- Disabled Rmpi support and usage on Windows
 
 
 CHANGES IN VERSION 1.45.6
 -------------------------
 
 NEW FEATURE:
-+ J. Rainer implemented a [ method that allows to subset an xcmsSet.
+- J. Rainer implemented a [ method that allows to subset an xcmsSet.
 
 BUG FIXES:
-+ Fixed a problem in split.xcmsSet that did not split the phenoData properly.
+- Fixed a problem in split.xcmsSet that did not split the phenoData properly.
   Added some details to the documentation of xcmsSet-class.
 
 
@@ -50,15 +452,15 @@ CHANGES IN VERSION 1.45.5
 -------------------------
 
 USER VISIBLE CHANGES:
-+ The sampclass method for xcmsSet will now return the content of the
+- The sampclass method for xcmsSet will now return the content of the
   column "class" from the data.frame in the phenoData slot, or if not
   present, the interaction of all factors (columns) of that data.frame.
-+ The sampclass<- method replaces the content of the "class" column in
+- The sampclass<- method replaces the content of the "class" column in
   the phenoData data.frame. If a data.frame is submitted, the interaction
   of its columns is calculated and stored into the "class" column.
 
 BUG FIXES:
-+ Fixed a bug that resulted in a cryptic error message
+- Fixed a bug that resulted in a cryptic error message
   when no input files are available to the xcmsSet function.
 
 
@@ -66,7 +468,7 @@ CHANGES IN VERSION 1.45.4
 -------------------------
 
 BUG FIXES:
-+ Fixed a bug in the levelplot method for xcmsSet.
+- Fixed a bug in the levelplot method for xcmsSet.
 
 
 CHANGES IN VERSION 1.45.3
@@ -74,19 +476,19 @@ CHANGES IN VERSION 1.45.3
 
 NEW FEATURE:
 
-+ xcmsSet now allows phenoData to be an AnnotatedDataFrame.
-+ new slots for xcmsRaw:
+- xcmsSet now allows phenoData to be an AnnotatedDataFrame.
+- new slots for xcmsRaw:
   - mslevel: store the mslevel parameter submitted to xcmsRaw.
   - scanrange: store the scanrange parameter submitted to xcmsRaw.
-+ new slots for xcmsSet:
+- new slots for xcmsSet:
   - mslevel: stores the mslevel argument from the xcmsSet method.
   - scanrange: to keep track of the scanrange argument of the xcmsSet method.
-+ new methods for xcmsRaw:
+- new methods for xcmsRaw:
   - levelplot: similar to the image method, plots m/z vs RT with color coded intensities.
   - mslevel: returns the value for the .mslevel slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
   - profinfo: same functionality as the profinfo method for xcmsSet.
   - scanrange: returns the value for the scanrange slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
-+ new methods for xcmsSet:
+- new methods for xcmsSet:
   - getXcmsRaw: returns a xcmsRaw object for one or more files in the xcmsSet, eventually applying retention time correction etc.
   - levelplot: similar to the image method, plots m/z vs RT with color coded intensities. Allows in addition to highlight identified peaks.
   - mslevel: returns the value for the mslevel slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
@@ -95,15 +497,15 @@ NEW FEATURE:
   - scanrange: returns the value for the scanrange slot. For downstream compatibility, this method returns NULL if the object does not have the same named slot.
 
 USER VISIBLE CHANGES:
-+ show method for xcmsSet updated to display also informations about the mslevel and scanrange.
-+ Elaborated some documentation entries.
-+ rtrange and mzrange for xcmsRaw method plotEIC use by default the full RT and m/z range.
-+ Added arguments "lty" and "add" to plotEIC method for xcmsRaw.
-+ getEIC without specifying mzrange returns the ion chromatogram for the full m/z range (i.e. the base peak chromatogram).
+- show method for xcmsSet updated to display also informations about the mslevel and scanrange.
+- Elaborated some documentation entries.
+- rtrange and mzrange for xcmsRaw method plotEIC use by default the full RT and m/z range.
+- Added arguments "lty" and "add" to plotEIC method for xcmsRaw.
+- getEIC without specifying mzrange returns the ion chromatogram for the full m/z range (i.e. the base peak chromatogram).
 
 BUG FIXES:
-+ Checking if phenoData is a data.frame or AnnotatedDataFrame and throw an error otherwise.
-+ xcmsSet getEIC method for water Lock mass corrected files for a subset of files did not evaluate whether the specified files were corrected.
+- Checking if phenoData is a data.frame or AnnotatedDataFrame and throw an error otherwise.
+- xcmsSet getEIC method for water Lock mass corrected files for a subset of files did not evaluate whether the specified files were corrected.
 
 CHANGES IN VERSION 1.45.2
 -------------------------

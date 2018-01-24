@@ -30,7 +30,8 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
         SEXP ppm, SEXP criticalVal, SEXP segs, SEXP scanBack) {
 
     //the return data structure and its elemental components
-    SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vstcenter,vscmin,vscmax,vintensity,vintenmax, vlength;
+    //jo SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vstcenter,vscmin,vscmax,vintensity,vintenmax, vlength;
+    SEXP peaklist,entrylist,list_names,vmz,vmzmin,vmzmax,vscmin,vscmax,vintensity,vlength;
     int scanrangeTo, scanrangeFrom;
     int firstScan = 1;
 
@@ -73,7 +74,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     //begin feature finding
     //Rprintf("scanrangeTo: %d\n", scanrangeTo);
     double progCount = 0;
-    double maxScanNums = double(scanrangeTo);
+    //jo double maxScanNums = double(scanrangeTo);
     double progThresh = 10;
     for (int k = scanrangeTo - 1; k >= scanrangeFrom; k--) {
 
@@ -119,7 +120,7 @@ extern "C" SEXP massifquant(SEXP mz, SEXP intensity, SEXP scanindex,
     for (int i=0;i<busybody.getPicCounts();i++) {
 
         std::vector<double> featInfo = busybody.iterOverFeatures(i, pscantime);
-	int scanLength = int(featInfo.at(5) - featInfo.at(4) + 1);
+	//jo int scanLength = int(featInfo.at(5) - featInfo.at(4) + 1);
 
         PROTECT(entrylist = allocVector(VECSXP, N_NAMES));
 
