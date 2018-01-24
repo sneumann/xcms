@@ -45,6 +45,11 @@
 fitModel <- function(formula, data, y, minVals = 4,
                      method = c("lm", "lmrob"), BPPARAM = bpparam()) {
     method <- match.arg(method, c("lm", "lmrob"))
+    if (method == "lmrob") {
+        if (!require("robustbase", character.only = TRUE, quietly = TRUE))
+            stop("Required package 'robustbase' is not installed. Please ",
+                 "install if you want to use method 'lmrob'.")
+    }
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
@@ -105,7 +110,7 @@ fitModel <- function(formula, data, y, minVals = 4,
             if (lmeth == "lmrob") {
                 set.seed(123)
                 return(lmrob(formula., data = data., model = FALSE,
-                                         setting = sttngs))
+                                         control = sttngs))
             }
             if (lmeth == "rlm")
                 stop("Not yet implemented")
@@ -199,10 +204,17 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     message("Applying models to adjust values ... ", appendLF = FALSE)
     y_new <- y
     for (i in which(lengths(lms) > 0)) {
-	preds <- predict(lms[[i]], newdata = cbind(y = y[i, ], data))
+        ## Catch problems predicting the value, if e.g. explanatory variables
+        ## have additional factor levels in newdata
+	preds <- tryCatch(predict(lms[[i]], newdata = cbind(y = y[i, ], data)),
+                          error = function(e) {
+                              warning("Failed to adjust value for ",
+                                      names(lms)[i], call. = FALSE)
+                          })
 	## Ensure that we shift by the mean of the values used to estimate the
 	## model!
-	y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
+        if (is.numeric(preds))
+            y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
     }
     message("OK")
     if (sum(lengths(lms) == 0))
