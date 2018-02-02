@@ -59,6 +59,7 @@
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}
+\alias{c.XCMSnExp}
 \title{Data container storing xcms preprocessing results}
 \usage{
 processHistoryTypes()
@@ -118,6 +119,8 @@ processHistoryTypes()
 
 \S4method{spectrapply}{XCMSnExp}(object, FUN = NULL, BPPARAM = bpparam(),
   ...)
+
+\method{c}{XCMSnExp}(...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -451,6 +454,10 @@ description \code{spectrapply} applies the provided function to each
     \code{Spectrum} in the object and returns its
     results. If no function is specified the function simply returns the
     \code{list} of \code{Spectrum} objects.
+
+\code{XCMSnExp} objects can be combined with the \code{c} function. This
+combines identified chromatographic peaks and the objects' pheno data but
+discards alignment results or feature definitions.
 }
 \section{Slots}{
 

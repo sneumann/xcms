@@ -79,6 +79,7 @@ S3method(plot, xcmsEIC)
 
 S3method(split, xcmsSet)
 S3method(c, xcmsSet)
+S3method(c, XCMSnExp)
 
 S3method(split, xcmsRaw)
 

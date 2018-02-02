@@ -2783,3 +2783,14 @@ setMethod("split", "XCMSnExp", function(x, f,
     res
 })
 
+
+#' @rdname XCMSnExp-class
+#'
+#' @description
+#'
+#' \code{XCMSnExp} objects can be combined with the \code{c} function. This
+#' combines identified chromatographic peaks and the objects' pheno data but
+#' discards alignment results or feature definitions.
+c.XCMSnExp <- function(...) {
+    .concatenate_XCMSnExp(...)
+}
