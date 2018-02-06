@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.0.0
-Date: 2017-10-18
+Version: 3.0.1
+Date: 2018-02-06
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
