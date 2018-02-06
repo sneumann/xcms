@@ -9,6 +9,7 @@ NEW FEATURES
 BUG FIXES:
 - Fix #237: findPeaks.MSW was not throwing an error if applied to multi-spectrum
   MS file.
+- Fix #249: quantile call in adjustRtime PeakGroups without na.rm = TRUE.
 
 
 CHANGES IN VERSION 2.99.10
