@@ -2794,3 +2794,60 @@ setMethod("split", "XCMSnExp", function(x, f,
 c.XCMSnExp <- function(...) {
     .concatenate_XCMSnExp(...)
 }
+
+#' @title Generate unique group (feature) names based on mass and retention time
+#'
+#' @description
+#'
+#' `groupnames` generates names for the identified features from the
+#' correspondence analysis based in their mass and retention time. This
+#' generates feature names that are equivalent to the group names of the *old*
+#' user interface (aka xcms1).
+#'
+#' @param object `XCMSnExp` object containing correspondence results.
+#'
+#' @param mzdec `integer(1)` with the number of decimal places to use for m/z (
+#'     defaults to `0`).
+#'
+#' @param rtdec `integer(1)` with the number of decimal places to use for the
+#'     retention time (defaults to `0`).
+#'
+#' @param template `character` with existing group names whose format should
+#'     be emulated.
+#'
+#' @return `character` with unique names for each feature in `object`. The
+#'     format is `M(m/z)T(time in seconds)`.
+#'
+#' @seealso [XCMSnExp].
+#'
+#' @md
+#' 
+#' @rdname groupnames-XCMSnExp
+setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
+                                             template = NULL) {
+    if (!hasFeatures(object))
+        stop("No feature data present! Use 'groupChromPeaks' first")
+    if (!missing(template)) {
+        tempsplit <- strsplit(template[1], "[T_]")
+        tempsplit <- strsplit(unlist(tempsplit), "\\.")
+        if (length(tempsplit[[1]]) > 1)
+            mzdec <- nchar(tempsplit[[1]][2])
+        else
+            mzdec <- 0
+        if (length(tempsplit[[2]]) > 1)
+            rtdec <- nchar(tempsplit[[2]][2])
+        else
+            rtdec <- 0
+    }
+    mzfmt <- paste0("%.", mzdec, "f")
+    rtfmt <- paste0("%.", rtdec, "f")
+    gnames <- paste0("M", sprintf(mzfmt, featureDefinitions(object)$mzmed),
+                     "T", sprintf(rtfmt, featureDefinitions(object)$rtmed))
+    if (any(dup <- duplicated(gnames)))
+        for (dupname in unique(gnames[dup])) {
+            dupidx <- which(gnames == dupname)
+            gnames[dupidx] <- paste(gnames[dupidx], seq(along = dupidx),
+                                    sep = "_")
+        }
+    gnames
+})

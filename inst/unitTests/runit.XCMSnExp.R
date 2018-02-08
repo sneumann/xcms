@@ -1547,6 +1547,10 @@ test_split <- function() {
     checkTrue(!all(rtime(tmp[[3]]) == rtime(tmp[[3]], adjusted = FALSE)))
 }
 
+test_groupnames_XCMSnExp <- function() {
+    gn <- groupnames(xod_xgrg)
+    checkException(groupnames(xod_x))
+}
 
 ############################################################
 ## Test getEIC alternatives.

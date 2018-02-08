@@ -5,6 +5,7 @@ NEW FEATURES
 - Reading raw files using xcmsSet or xcmsRaw uses now the automatic file type
   detection feature from mzR.
 - c function to concatenate XCMSnExp objects.
+- groupnames method for XCMSnExp objects (issue #250).
 
 BUG FIXES:
 - Fix #237: findPeaks.MSW was not throwing an error if applied to multi-spectrum
