@@ -4,8 +4,8 @@
 ##
 ## Validation through Validator by Nils Hoffmann
 ## https://github.com/nilshoffmann/jmzTab-m/
-## java -jar mzTabCLI.jar -check inFile=/path/to/your/file.mztab -level Warn
-## java -jar /home/sneumann/src/jmzTab-m/cli/target/mzTabCLI.jar -check inFile=faahKO.mzTab -level Warn
+##
+## java -jar  /home/sneumann/src/jmzTab-m/cli/target/jmztabm-cli-1.0.0-SNAPSHOT.jar -check inFile=faahKO.mzTab -level Warn
 ##
 ## link sample - assay:
 ##
@@ -80,7 +80,7 @@ mzTabHeader <- function(mztab, version,
     names(ms_runs) <- paste("ms_run[", seq(along=runs), "]", sep="")
 
     variableAssays <- unlist(tapply(seq(along=sampclass(xset)), sampclass(xset), function(x)
-                                    paste(paste("assay[",x,"]", sep=""), collapse="|")))
+                                    paste(paste("assay[",x,"]", sep=""), collapse=", ")))
     names(variableAssays) <- paste("study_variable[", seq(along=variableAssays), "]-assay_refs", sep="")
     
     variableDescriptions <- unique(as.character(sampclass(xset)))
@@ -99,18 +99,19 @@ mzTabHeader <- function(mztab, version,
     names(software) <- paste("software[", seq(along=software), "]", sep="")
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", software))
 
-    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", value))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", value)) # XXXvalue
 
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", ms_runs))
-#    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
-#    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
-
+ 
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", samples))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", sampleDesc))
     
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", runs))
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", msruns))
-    
+
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableDescriptions))
+    mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", variableAssays))
+
     mztab <- rbind.ragged(mztab, mzTabAddTagValue("MTD", filetypes))    
 
 }
@@ -134,17 +135,24 @@ mzTabAddValues <- function(mztab, headers, section, values) {
 mzTabAddSML <- function(mztab, xset, value) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
-    
-    idHeaders <- c("SML_ID", "SMF_ID_REFS", "database_identifier", "chemical_formula",
+
+    idHeaders <- c("SML_ID", "SMF_ID_REFS",
+                   "database_identifier", "chemical_formula", "smiles", "inchi", "chemical_name", "uri",
                    "theoretical_neutral_mass", "exp_mass_to_charge",
-                   "retention_time", "adduct_ions", "reliability", "uri",
-                   "best_search_engine", "best_smallmolecule_id_confidence_measure[1_n]")
+                   "retention_time", "adduct_ions", "reliability", "best_id_confidence_measure", "best_id_confidence_value")
+
+#, "abundance_assay[1]", "abundance_assay[2]", "abundance_assay[3]", "abundance_assay[4]", "abundance_assay[5]", "abundance_assay[6]#", "abundance_study_variable[1]", "coeffvar_study_variable[1]", "abundance_study_variable[2]", "coeffvar_study_variable[2]"
+    
+    ## idHeaders <- c("SML_ID", "SMF_ID_REFS", "database_identifier", "chemical_formula",
+    ##                "theoretical_neutral_mass", "exp_mass_to_charge",
+    ##                "retention_time", "adduct_ions", "reliability", "uri",
+    ##                "best_search_engine", "best_smallmolecule_id_confidence_measure[1_n]")
                    
-    abundanceAssayHeaders <- paste("smallmolecule_abundance_assay[", runs, "]", sep="")    
+    abundanceAssayHeaders <- paste("abundance_assay[", runs, "]", sep="")    
     
     abundanceVariableHeaders <- unlist(lapply(variables, FUN=function(v) {
-        c(paste("smallmolecule_abundance_study_variable[", v,"]", sep=""),
-          paste("smallmolecule_abundance_coeffvar_study_variable[", v,"]", sep=""))
+        c(paste("abundance_study_variable[", v,"]", sep=""),
+          paste("abundance_coeffvar_study_variable[", v,"]", sep=""))
     }))
 
     headers <- c(idHeaders,
@@ -152,7 +160,7 @@ mzTabAddSML <- function(mztab, xset, value) {
 
     g <- groups(xset)
     SMF_ID_REFS <- sapply(xs@groupidx, function(x) paste(x, collapse="|"))
-    v <- groupval(xset, value=value)
+    v <- groupval(xset, value="into") ## STN: Hardcoded, needs fixing
     
     result <-  as.data.frame(matrix(character(0), ncol=length(headers), nrow=nrow(g)))
     colnames(result) <- headers
@@ -164,11 +172,16 @@ mzTabAddSML <- function(mztab, xset, value) {
     
     
     result[,"SML_ID"] <- seq(1,nrow(v))
-    result[,"SMF_ID_REFS"] <- SMF_ID_REFS 
+    result[,"SMF_ID_REFS"] <- "" ##SMF_ID_REFS 
     result[,"retention_time"] <- g[,"rtmed"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"] 
     result[,"reliability"] <- 4 ## "unknown compound"
-    result[, grepl("smallmolecule_abundance_assay", colnames(result))] <- v
+    result[, grepl("abundance_assay", colnames(result))] <- v
+
+    result[, length(headers)-1] <- 1
+    result[, length(headers)-2] <- 2
+    result[, length(headers)-3] <- 3
+    result[, length(headers)-4] <- 4
     
     mztab <- mzTabAddValues(mztab, "SMH", "SML", result)
     
@@ -215,7 +228,7 @@ mzTabAddSMF <- function(mztab, xset, value) {
 writeMzTab <- function(object, filename) {
     write.table(object, file=filename,
                 row.names=FALSE, col.names=FALSE,
-                quote=FALSE, sep="\t", na="")
+                quote=FALSE, sep="\t", na="null")
 
 }
 
@@ -232,14 +245,17 @@ if (TRUE) {
         xs <- group(faahko)
     }
 
-    value <- c("quantification_method"="[,,centWave into,]")
+    values <- c("quantification_method"="[MS,MS:1002019,label-free raw feature quantitation,]",
+                "small_molecule-quantification_unit"="[PRIDE, PRIDE:0000395, Ratio, ]",
+                "small_molecule-identification_reliability"="[PRIDE, PRIDE:0000395, Ratio, ]" ## DUMMY!
+                )
 
     mzt <- data.frame(character(0))
     mzt <- mzTabHeader(mzt,
                        version="1.0.99", description="faahKO",
                        xset=xs,
-                       value=value)
-#    mzt <- mzTabAddSML(mzt, xs, value=value) # needs to be done
+                       value=values)
+    mzt <- mzTabAddSML(mzt, xs, value=value) # needs to be done
 #    mzt <- mzTabAddSMF(mzt, xs, value=value) # needs to be done
     ##mzt
     
