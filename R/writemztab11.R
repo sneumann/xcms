@@ -172,11 +172,12 @@ mzTabAddSML <- function(mztab, xset, value) {
     
     
     result[,"SML_ID"] <- seq(1,nrow(v))
-    result[,"SMF_ID_REFS"] <- "" ##SMF_ID_REFS 
+    result[,"SMF_ID_REFS"] <- SMF_ID_REFS 
     result[,"retention_time"] <- g[,"rtmed"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"] 
     result[,"reliability"] <- 4 ## "unknown compound"
     result[, grepl("abundance_assay", colnames(result))] <- v
+
 
     result[, length(headers)-1] <- 1
     result[, length(headers)-2] <- 2
@@ -225,8 +226,11 @@ mzTabAddSMF <- function(mztab, xset, value) {
 }
 
 
-writeMzTab <- function(object, filename) {
-    write.table(object, file=filename,
+writeMzTab <- function(mtd, sml, filename) {
+    write.table(mtd, file=filename,
+                row.names=FALSE, col.names=FALSE,
+                quote=FALSE, sep="\t", na="")
+    write.table(sml, file=filename, append=TRUE,
                 row.names=FALSE, col.names=FALSE,
                 quote=FALSE, sep="\t", na="null")
 
@@ -250,16 +254,18 @@ if (TRUE) {
                 "small_molecule-identification_reliability"="[PRIDE, PRIDE:0000395, Ratio, ]" ## DUMMY!
                 )
 
-    mzt <- data.frame(character(0))
-    mzt <- mzTabHeader(mzt,
+    mztmtd <- data.frame(character(0))
+    mztmtd <- mzTabHeader(mztmtd,
                        version="1.0.99", description="faahKO",
                        xset=xs,
                        value=values)
-    mzt <- mzTabAddSML(mzt, xs, value=value) # needs to be done
+
+    mztsml <- data.frame(character(0))
+    mztsml <- mzTabAddSML(mztsml, xs, value=value) # needs to be done
 #    mzt <- mzTabAddSMF(mzt, xs, value=value) # needs to be done
     ##mzt
     
-    writeMzTab(mzt, "faahKO.mzTab")
+    writeMzTab(mztmtd, mztsml, "faahKO.mzTab")
 }
 
 #############################
