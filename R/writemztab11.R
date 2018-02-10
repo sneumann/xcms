@@ -27,6 +27,9 @@ cvTerm <- function(CV, accession, name, value="") {
 }
 #cvTerm("MS", "MS:1000443", "Mass Analyzer Type", "Orbitrap")
 
+## Similar to rowSum
+rowSd <- function(x, na.rm) apply(x, 1, sd, na.rm=na.rm)    
+
 mzFileType <- function(paths) {
     result <- character(length(paths))
     result <- "Unknown"
@@ -178,12 +181,15 @@ mzTabAddSML <- function(mztab, xset, value) {
     result[,"reliability"] <- 4 ## "unknown compound"
     result[, grepl("abundance_assay", colnames(result))] <- v
 
-
-    result[, length(headers)-1] <- 1
-    result[, length(headers)-2] <- 2
-    result[, length(headers)-3] <- 3
-    result[, length(headers)-4] <- 4
     
+    cl <- sampclass(xset)    
+    means <- sapply(unique(cl), function(g) rowMeans(v[,cl==g,drop=FALSE], na.rm=TRUE))
+    sds <- sapply(unique(cl), function(g) rowSd(v[,cl==g,drop=FALSE], na.rm=TRUE))
+    coeffs <- means / sds
+
+    result[, grepl("abundance_study_variable", colnames(result))] <- means
+    result[, grepl("abundance_coeffvar_study_variable", colnames(result))] <- coeffs
+        
     mztab <- mzTabAddValues(mztab, "SMH", "SML", result)
     
 }
