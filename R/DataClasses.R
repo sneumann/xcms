@@ -447,7 +447,7 @@ NULL
 #'     robust, but less exact.
 #' 
 #' @param mzdiff \code{numeric(1)} representing the minimum difference in m/z
-#'     dimension for peaks with overlapping retention times; can be negatove to
+#'     dimension for peaks with overlapping retention times; can be negative to
 #'     allow overlap.
 #' 
 #' @param fitgauss \code{logical(1)} whether or not a Gaussian should be fitted
