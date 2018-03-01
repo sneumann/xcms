@@ -796,7 +796,7 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
 #'     adjusted retention time if alignment has been performed on \code{x}.
 #' 
 #' @rdname XCMSnExp-filter-methods
-setMethod("[[", "OnDiskMSnExp",
+setMethod("[[", "XCMSnExp",
           function(x, i, j, drop = FALSE) {
               ## If it has adjusted retention times, replace raw ones.
               if (hasAdjustedRtime(x))
