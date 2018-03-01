@@ -74,7 +74,10 @@ setMethod("findChromPeaks",
                        "peak detection")
               ## Check if the data is centroided
               suppressWarnings(
-                  centroided <- isCentroided(object_mslevel[[1]])
+                  ## On Windows [[ can lead to the full data being loaded.
+                  centroided <- isCentroided(
+                      spectra(filterAcquisitionNum(
+                          object_mslevel, acquisitionNum(object_mslevel)[1]))[[1]])
               )
               ## issue #181: if there are too few mass peaks the function
               ## returns NA.
