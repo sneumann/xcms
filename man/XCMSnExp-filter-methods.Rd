@@ -3,7 +3,7 @@
 \docType{methods}
 \name{[,XCMSnExp,ANY,ANY,ANY-method}
 \alias{[,XCMSnExp,ANY,ANY,ANY-method}
-\alias{[[,OnDiskMSnExp,ANY,ANY-method}
+\alias{[[,XCMSnExp,ANY,ANY-method}
 \alias{filterMsLevel,XCMSnExp-method}
 \alias{filterFile,XCMSnExp-method}
 \alias{XCMSnExp-filter}
@@ -14,7 +14,7 @@
 \usage{
 \S4method{[}{XCMSnExp,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
-\S4method{[[}{OnDiskMSnExp,ANY,ANY}(x, i, j, drop = FALSE)
+\S4method{[[}{XCMSnExp,ANY,ANY}(x, i, j, drop = FALSE)
 
 \S4method{filterMsLevel}{XCMSnExp}(object, msLevel.,
   keepAdjustedRtime = hasAdjustedRtime(object))
