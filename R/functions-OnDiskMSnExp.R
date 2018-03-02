@@ -65,6 +65,7 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     mzs <- lapply(x, mz)
     vals_per_spect <- lengths(mzs, FALSE)
     procDat <- date()
+    cat("after chromPeaks: ", pryr::mem_used(), "\n")
     res <- do.call(method, args = c(list(mz = unlist(mzs,
                                                      use.names = FALSE),
                                          int = unlist(lapply(x, intensity),
@@ -77,6 +78,8 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     rm(x)
     rm(rt)
     gc()
+    mem <- pryr::mem_used()
+    cat("after chromPeaks: ", mem, "\n")
     return(list(peaks = res, date = procDat))
 }
 

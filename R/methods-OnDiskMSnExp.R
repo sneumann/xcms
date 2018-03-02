@@ -68,16 +68,17 @@ setMethod("findChromPeaks",
                        "supported")
               ## Restrict to MS level for peak detection, but keep the orignal
               ## object.
-              object_mslevel <- filterMsLevel(object, msLevel. = msLevel)
+              object_mslevel <- filterMsLevel(
+                  selectFeatureData(object,
+                                    fcol = requiredFvarLabels(class(object))),
+                  msLevel. = msLevel)
               if (length(object_mslevel) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
               ## Check if the data is centroided
               suppressWarnings(
                   ## On Windows [[ can lead to the full data being loaded.
-                  centroided <- isCentroided(
-                      spectra(filterAcquisitionNum(
-                          object_mslevel, acquisitionNum(object_mslevel)[1]))[[1]])
+                  centroided <- isCentroided(object_mslevel)
               )
               ## issue #181: if there are too few mass peaks the function
               ## returns NA.
@@ -97,6 +98,7 @@ setMethod("findChromPeaks",
                            FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
                   args$keepAdjustedRtime <- TRUE
+              cat("memory prior peak detection: ", pryr::mem_used(), "\n")
               ## (2) use bplapply to do the peak detection.
               resList <- bplapply(do.call("lapply", args),
                                   FUN = findChromPeaks_OnDiskMSnExp,
@@ -106,6 +108,7 @@ setMethod("findChromPeaks",
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
                                         fnames = fileNames(object_mslevel))
+              cat("memory after peak detection: ", pryr::mem_used(), "\n")
               if (return.type == "XCMSnExp") {
                   ## Creating one XProcessHistory for all; eventually change
                   ## that later, but for now seems reasonable to have it in one,
