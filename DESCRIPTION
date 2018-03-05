@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.1.1
-Date: 2018-02-15
+Version: 3.1.2
+Date: 2018-03-05
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -36,7 +36,10 @@ Suggests:
     microbenchmark,
     RUnit,
     pander
-Enhances: Rgraphviz, Rmpi, XML
+Enhances: Rgraphviz,
+    Rmpi,
+    XML,
+    robustbase
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
     mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
