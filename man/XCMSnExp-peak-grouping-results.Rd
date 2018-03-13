@@ -38,25 +38,25 @@ is returned in the matrix for the respective peak. See
 }
 \value{
 For \code{featureValues}: a \code{matrix} with
-    feature values, columns representing samples, rows features. The order
-    of the features matches the order found in the
-    \code{featureDefinitions(object)} \code{DataFrame}. The rownames of the
-    \code{matrix} are the same than those of the \code{featureDefinitions}
-    \code{DataFrame}. \code{NA} is reported for features without
-    corresponding chromatographic peak in the respective sample(s).
+feature values, columns representing samples, rows features. The order
+of the features matches the order found in the
+\code{featureDefinitions(object)} \code{DataFrame}. The rownames of the
+\code{matrix} are the same than those of the \code{featureDefinitions}
+\code{DataFrame}. \code{NA} is reported for features without
+corresponding chromatographic peak in the respective sample(s).
 }
 \description{
 \code{featureValues,XCMSnExp} : extract a \code{matrix} for
-    feature values with rows representing features and columns samples.
-    Parameter \code{value} allows to define which column from the
-    \code{\link{chromPeaks}} matrix should be returned. Multiple
-    chromatographic peaks from the same sample can be assigned to a feature.
-    Parameter \code{method} allows to specify the method to be used in such
-    cases to chose from which of the peaks the value should be returned.
+feature values with rows representing features and columns samples.
+Parameter \code{value} allows to define which column from the
+\code{\link{chromPeaks}} matrix should be returned. Multiple
+chromatographic peaks from the same sample can be assigned to a feature.
+Parameter \code{method} allows to specify the method to be used in such
+cases to chose from which of the peaks the value should be returned.
 }
 \note{
 This method is equivalent to the \code{\link{groupval}} for
-    \code{xcmsSet} objects.
+\code{xcmsSet} objects.
 }
 \seealso{
 \code{\link{XCMSnExp}} for information on the data object.

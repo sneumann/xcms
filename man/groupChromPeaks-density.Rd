@@ -109,9 +109,9 @@ The \code{PeakDensityParam} function returns a
     the number of sample in the experiments.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-    results of the correspondence analysis. The definition of the resulting
-    mz-rt features can be accessed with the \code{\link{featureDefinitions}}
-    method.
+results of the correspondence analysis. The definition of the resulting
+mz-rt features can be accessed with the \code{\link{featureDefinitions}}
+method.
 }
 \description{
 This method performs performs correspondence (chromatographic
@@ -146,10 +146,10 @@ The \code{PeakDensityParam} class allows to specify all
     the \code{maxFeatures} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
-    performs correspondence (peak grouping within and across samples) within
-    in mz dimension overlapping slices of MS data based on the density
-    distribution of the identified chromatographic peaks in the slice along
-    the time axis.
+performs correspondence (peak grouping within and across samples) within
+in mz dimension overlapping slices of MS data based on the density
+distribution of the identified chromatographic peaks in the slice along
+the time axis.
 }
 \section{Slots}{
 
@@ -166,7 +166,7 @@ These methods and classes are part of the updated and modernized
     can be passed with a \code{PeakDensityParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-    all eventually present previous correspondence results to be dropped.
+all eventually present previous correspondence results to be dropped.
 }
 \examples{
 

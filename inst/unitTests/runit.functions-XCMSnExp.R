@@ -100,3 +100,27 @@ test_concatenate_XCMSnExp <- function() {
     checkEquals(fData(res), fData(res2))
     checkEquals(chromPeaks(res), chromPeaks(res2))
 }
+
+test_filterFeatureDefinitions <- function() {
+    tmp <- xod_xgrg
+
+    checkException(filterFeatureDefinitions("a"))
+    checkException(filterFeatureDefinitions(xod_xgr, 1:3))
+    checkException(filterFeatureDefinitions(tmp, c("FT01", "other")))
+    checkException(filterFeatureDefinitions(tmp, 1:4000))
+    checkException(filterFeatureDefinitions(tmp, features = c(1, 3.4)))
+
+    tmp <- filterFeatureDefinitions(tmp, features = 11:30)
+    checkEquals(nrow(featureDefinitions(tmp)), 20)
+    checkEquals(rownames(featureDefinitions(tmp)), paste0("FT", 11:30))
+
+    ## Check if we have the correct process history
+    ph <- processHistory(tmp)[[length(processHistory(tmp))]]
+    checkTrue(is(processParam(ph), "GenericParam"))
+    checkTrue(processParam(ph)@fun == "filterFeatureDefinitions")
+
+    tmp <- dropFeatureDefinitions(tmp)
+    checkTrue(length(processHistory(tmp)) == 3)
+    ph <- processHistory(tmp)[[length(processHistory(tmp))]]
+    checkTrue(!is(processParam(ph), "GenericParam"))
+}

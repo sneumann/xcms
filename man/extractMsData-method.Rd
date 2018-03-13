@@ -31,15 +31,15 @@ Defaults to adjusted retention times, if these are present in
 }
 \value{
 A \code{list} of length equal to the number of samples/files in
-    \code{object}. Each element being a \code{data.frame} with columns
-    \code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
-    intensity tuples of a file. If no data is available for the mz-rt range
-    in a file a \code{data.frame} with 0 rows is returned for that file.
+\code{object}. Each element being a \code{data.frame} with columns
+\code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
+intensity tuples of a file. If no data is available for the mz-rt range
+in a file a \code{data.frame} with 0 rows is returned for that file.
 }
 \description{
 Extract a \code{data.frame} of retention time, mz and intensity
-    values from each file/sample in the provided rt-mz range (or for the full
-    data range if \code{rt} and \code{mz} are not defined).
+values from each file/sample in the provided rt-mz range (or for the full
+data range if \code{rt} and \code{mz} are not defined).
 }
 \examples{
 ## Read some files from the test data package.

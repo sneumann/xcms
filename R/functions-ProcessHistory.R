@@ -64,3 +64,69 @@ XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
     return(obj)
 }
 
+#' Create a simple generic process history object for a function call.
+#'
+#' @param fun `character` specifying the function name.
+#'
+#' @param args `list` with arguments to the function.
+#'
+#' @param date the date/time when the function was called.
+#'
+#' @param fileIndex `integer` with the indices of the files on which the
+#'     function was called. Usually `1:length(fileNames(xs))`.
+#'
+#' @md
+#' 
+#' @noRd
+GenericProcessHistory <- function(fun, args = list(), msLevel = NA_integer_,
+                                  date. = date(), fileIndex. = NA_integer_) {
+    gp <- new("GenericParam", fun = fun, args = args)
+    xcms:::XProcessHistory(param = gp, msLevel = msLevel,
+                           date. = date., fileIndex. = fileIndex.)
+}
+
+#' Remove a generic process history step based on the name of the function.
+#'
+#' @param x `list` of process history object (such as returned by
+#'     `processHistory(xs)`).
+#'
+#' @param fun `character` with the (exact) name of the function.
+#'
+#' @return `list` of process history objects.
+#'
+#' @md
+#'
+#' @noRd
+dropGenericProcessHistoryList <- function(x, fun) {
+    got_it <- unlist(lapply(x, function(z) {
+        if (is(z, "XProcessHistory")) {
+            prm <- processParam(z)
+            if (is(prm, "GenericParam"))
+                prm@fun == fun
+            else FALSE
+        } else FALSE
+    }))
+    if (any(got_it))
+        x <- x[!got_it]
+    x
+}
+
+dropProcessHistoriesList <- function(x, type, num = -1) {
+    if (!missing(type)) {
+        toRem <- unlist(lapply(x, function(z) {
+            return(processType(z) %in% type)
+        }))
+        if (any(toRem)) {
+            if (num < 0) {
+                x <- x[!toRem]
+            } else {
+                idx <- which(toRem)
+                idx <- tail(idx, n = num)
+                if (length(idx))
+                x <- x[-idx]
+            }
+        }
+    }
+    return(x)
+}
+

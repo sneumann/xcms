@@ -100,3 +100,16 @@ test_XProcessHistory_class <- function() {
     checkTrue(is(ph@param, "CentWaveParam"))
     checkTrue(is(processParam(ph), "CentWaveParam"))
 }
+
+test_GenericProcessHistory <- function() {
+    xs <- list()
+    xs <- c(xs, xcms:::GenericProcessHistory(fun = "mean"))
+    xs <- c(xs, xcms:::GenericProcessHistory(fun = "median"))
+    xs <- c(xs, xcms:::GenericProcessHistory(fun = "mean"))
+    checkTrue(length(xs) == 3)
+    checkEquals(unlist(lapply(xs, function(z) processParam(z)@fun)),
+                c("mean", "median", "mean"))
+    xs <- xcms:::dropGenericProcessHistoryList(xs, fun = "mean")
+    checkTrue(length(xs) == 1)
+    checkEquals(processParam(xs[[1]])@fun, "median")
+}

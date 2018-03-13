@@ -1,7 +1,9 @@
 #' @include DataClasses.R functions-utils.R
 
-#' @description Takes a XCMSnExp and drops ProcessHistory steps from the
-#'     @.processHistory slot matching the provided type.
+#' @description
+#'
+#' Takes a XCMSnExp and drops ProcessHistory steps from the
+#' `@.processHistory` slot matching the provided type.
 #'
 #' @param num which should be dropped? If \code{-1} all matching will be dropped,
 #'     otherwise just the most recent num.
@@ -15,23 +17,12 @@ dropProcessHistories <- function(x, type, num = -1) {
     return(x)
 }
 
-dropProcessHistoriesList <- function(x, type, num = -1) {
-    if (!missing(type)) {
-        toRem <- unlist(lapply(x, function(z) {
-            return(processType(z) %in% type)
-        }))
-        if (any(toRem)) {
-            if (num < 0) {
-                x <- x[!toRem]
-            } else {
-                idx <- which(toRem)
-                idx <- tail(idx, n = num)
-                if (length(idx))
-                x <- x[-idx]
-            }
-        }
-    }
-    return(x)
+#' Drop a generic processing history step based on the provided function name
+#'
+#' @noRd
+dropGenericProcessHistory <- function(x, fun) {
+    x@.processHistory <- dropGenericProcessHistoryList(processHistory(x), fun)
+    x
 }
 
 #' Convert an XCMSnExp to an xcmsSet.
@@ -120,14 +111,18 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
         return(xs)
 }
 
-#' @description Extract a \code{data.frame} of retention time, mz and intensity
-#'     values from each file/sample in the provided rt-mz range.
+#' @description
 #'
-#' @note Ideally, \code{x} should be an \code{OnDiskMSnExp} object as subsetting
-#'     of a \code{XCMSnExp} object is more costly (removing of preprocessing
-#'     results, restoring data etc). If retention times reported in the
-#'     featureData are replaced by adjusted retention times, these are set
-#'     in the Spectrum objects as retention time.
+#' Extract a \code{data.frame} of retention time, mz and intensity
+#' values from each file/sample in the provided rt-mz range.
+#'
+#' @note
+#'
+#' Ideally, \code{x} should be an \code{OnDiskMSnExp} object as subsetting
+#' of a \code{XCMSnExp} object is more costly (removing of preprocessing
+#' results, restoring data etc). If retention times reported in the
+#' featureData are replaced by adjusted retention times, these are set
+#' in the Spectrum objects as retention time.
 #'
 #' @param x An \code{OnDiskMSnExp} object.
 #'
@@ -139,8 +134,10 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' @param msLevel \code{integer} defining the MS level(s) to which the data
 #'     should be restricted prior to data extraction.
 #' 
-#' @param return A \code{list} with length equal to the number of files and
-#'     each element being a \code{data.frame} with the extracted values.
+#' @return
+#'
+#' A \code{list} with length equal to the number of files and
+#' each element being a \code{data.frame} with the extracted values.
 #'
 #' @noRd
 #' 
@@ -291,8 +288,10 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 ## }
 
 
-#' @description Integrates the intensities for chromatograpic peak(s). This is
-#'     supposed to be called by the fillChromPeaks method.
+#' @description
+#'
+#' Integrates the intensities for chromatograpic peak(s). This is
+#' supposed to be called by the fillChromPeaks method.
 #'
 #' @note This reads the full data first and does the subsetting later in R.
 #' 
@@ -309,10 +308,12 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
 #' 
 #' @param cn \code{character} with the names of the result matrix.
 #' 
-#' @return A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
-#'     \code{"into"} and \code{"maxo"} with the by intensity weighted mean of
-#'     mz, rt or the maximal intensity in the area, the integrated signal in
-#'     the area and the maximal signal in the area.
+#' @return
+#'
+#' A \code{matrix} with at least columns \code{"mz"}, \code{"rt"},
+#' \code{"into"} and \code{"maxo"} with the by intensity weighted mean of
+#' mz, rt or the maximal intensity in the area, the integrated signal in
+#' the area and the maximal signal in the area.
 #'
 #' @noRd
 .getChromPeakData <- function(object, peakArea, sample_idx,
@@ -377,10 +378,14 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     return(res)
 }
 
-#' Same as getChromPeakData, just without retention time.
-#' @note The mz and maxo are however estimated differently than for the
+#' @description Same as getChromPeakData, just without retention time.
+#' 
+#' @note
+#'
+#' The mz and maxo are however estimated differently than for the
 #' getChromPeakData: mz is the mz closest to the median mz of the feature and
 #' maxo its intensity.
+#'
 #' @noRd
 .getMSWPeakData <- function(object, peakArea, sample_idx,
                               cn = c("mz", "rt", "into", "maxo", "sample")) {
@@ -601,7 +606,9 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     FALSE
 }
 
-#' @description Simple helper function to extract the peakidx column from the
+#' @description
+#'
+#' Simple helper function to extract the peakidx column from the
 #' featureDefinitions DataFrame. The function ensures that the names of the
 #' returned list correspond to the rownames of the DataFrame
 #' 
@@ -614,16 +621,22 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     idxs
 }
 
-#' @description \code{adjustRtimePeakGroups} returns the features (peak groups)
-#'     which would, depending on the provided \code{\link{PeakGroupsParam}}, be
-#'     selected for alignment/retention time correction.
+#' @description
 #'
-#' @note \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
-#'     sample alignment, but after a correspondence (peak grouping).
+#' \code{adjustRtimePeakGroups} returns the features (peak groups)
+#' which would, depending on the provided \code{\link{PeakGroupsParam}}, be
+#' selected for alignment/retention time correction.
 #'
-#' @return For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
-#'     features, columns samples, of retention times. The features are ordered
-#'     by the median retention time across columns.
+#' @note
+#'
+#' \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
+#' sample alignment, but after a correspondence (peak grouping).
+#'
+#' @return
+#'
+#' For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
+#' features, columns samples, of retention times. The features are ordered
+#' by the median retention time across columns.
 #'
 #' @rdname adjustRtime-peakGroups
 adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
@@ -648,11 +661,13 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
 
 #' @title Visualization of alignment results
 #' 
-#' @description Plot the difference between the adjusted and the raw retention
-#'     time (y-axis) for each file along the (adjusted or raw) retention time
-#'     (x-axis). If alignment was performed using the
-#'     \code{\link{adjustRtime-peakGroups}} method, also the features (peak
-#'     groups) used for the alignment are shown.
+#' @description
+#'
+#' Plot the difference between the adjusted and the raw retention
+#' time (y-axis) for each file along the (adjusted or raw) retention time
+#' (x-axis). If alignment was performed using the
+#' \code{\link{adjustRtime-peakGroups}} method, also the features (peak
+#' groups) used for the alignment are shown.
 #'
 #' @param object A \code{\link{XCMSnExp}} object with the alignment results.
 #'
@@ -804,28 +819,32 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 
 #' @title Plot chromatographic peak density along the retention time axis
 #' 
-#' @description Plot the density of chromatographic peaks along the retention
-#'     time axis and indicate which peaks would be (or were) grouped into the
-#'     same feature based using the *peak density* correspondence method.
-#'     Settings for the *peak density* method can be passed with an
-#'     [PeakDensityParam] object to parameter `param`. If the `object` contains
-#'     correspondence results and the correspondence was performed with the
-#'     *peak groups* method, the results from that correspondence can be
-#'     visualized setting `simulate = FALSE`.
+#' @description
 #'
-#' @details The `plotChromPeakDensity` function allows to evaluate
-#'     different settings for the *peak density* on an mz slice of
-#'     interest (e.g. containing chromatographic peaks corresponding to a known
-#'     metabolite).
-#'     The plot shows the individual peaks that were detected within the
-#'     specified `mz` slice at their retention time (x-axis) and sample in
-#'     which they were detected (y-axis). The density function is plotted as a
-#'     black line. Parameters for the `density` function are taken from the
-#'     `param` object. Grey rectangles indicate which chromatographic peaks
-#'     would be grouped into a feature by the `peak density` correspondence
-#'     method. Parameters for the algorithm are also taken from `param`.
-#'     See [groupChromPeaks-density()] for more information about the
-#'     algorithm and its supported settings.
+#' Plot the density of chromatographic peaks along the retention
+#' time axis and indicate which peaks would be (or were) grouped into the
+#' same feature based using the *peak density* correspondence method.
+#' Settings for the *peak density* method can be passed with an
+#' [PeakDensityParam] object to parameter `param`. If the `object` contains
+#' correspondence results and the correspondence was performed with the
+#' *peak groups* method, the results from that correspondence can be
+#' visualized setting `simulate = FALSE`.
+#'
+#' @details
+#'
+#' The `plotChromPeakDensity` function allows to evaluate
+#' different settings for the *peak density* on an mz slice of
+#' interest (e.g. containing chromatographic peaks corresponding to a known
+#' metabolite).
+#' The plot shows the individual peaks that were detected within the
+#' specified `mz` slice at their retention time (x-axis) and sample in
+#' which they were detected (y-axis). The density function is plotted as a
+#' black line. Parameters for the `density` function are taken from the
+#' `param` object. Grey rectangles indicate which chromatographic peaks
+#' would be grouped into a feature by the `peak density` correspondence
+#' method. Parameters for the algorithm are also taken from `param`.
+#' See [groupChromPeaks-density()] for more information about the
+#' algorithm and its supported settings.
 #'
 #' @param object A [XCMSnExp] object with identified
 #'     chromatographic peaks.
@@ -1030,10 +1049,12 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #' @title Add definition of chromatographic peaks to an extracted chromatogram
 #'     plot
 #' 
-#' @description The \code{highlightChromPeaks} function adds chromatographic
-#'     peak definitions to an existing plot, such as one created by the
-#'     \code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
-#'     \code{\link[MSnbase]{Chromatograms}} object.
+#' @description
+#'
+#' The \code{highlightChromPeaks} function adds chromatographic
+#' peak definitions to an existing plot, such as one created by the
+#' \code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
+#' \code{\link[MSnbase]{Chromatograms}} object.
 #'
 #' @param x For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
 #'     detected peaks.
@@ -1139,23 +1160,25 @@ highlightChromPeaks <- function(x, rt, mz,
 }
 
 
-## Plot the chromatographic peaks for a file in a two dimensional plot.
-## plotChromPeakImage...
 #' @title General visualizations of peak detection results
 #' 
-#' @description \code{plotChromPeakImage} plots the identified chromatographic
-#'     peaks from one file into the plane spanned by the retention time and mz
-#'     dimension (x-axis representing the retention time and y-axis mz).
-#'     Each chromatographic peak is plotted as a rectangle representing its
-#'     width in rt and mz dimension.
+#' @description
 #'
-#'     This plot is supposed to provide some initial overview of the
-#'     chromatographic peak detection results.
+#' \code{plotChromPeakImage} plots the identified chromatographic
+#' peaks from one file into the plane spanned by the retention time and mz
+#' dimension (x-axis representing the retention time and y-axis mz).
+#' Each chromatographic peak is plotted as a rectangle representing its
+#' width in rt and mz dimension.
 #'
-#' @details The width and line type of the rectangles indicating the detected
-#'     chromatographic peaks for the \code{plotChromPeaks} function can be
-#'     specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
-#'     and \code{par(lty = 2)}, respectively.
+#' This plot is supposed to provide some initial overview of the
+#' chromatographic peak detection results.
+#'
+#' @details
+#'
+#' The width and line type of the rectangles indicating the detected
+#' chromatographic peaks for the \code{plotChromPeaks} function can be
+#' specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
+#' and \code{par(lty = 2)}, respectively.
 #' 
 #' @param x \code{\link{XCMSnExp}} object.
 #'
@@ -1249,10 +1272,12 @@ plotChromPeaks <- function(x, file = 1, xlim = NULL, ylim = NULL,
              border = border)
 }
 
-#' @description \code{plotChromPeakImage} plots the number of detected peaks for
-#'     each sample along the retention time axis as an \emph{image} plot, i.e.
-#'     with the number of peaks detected in each bin along the retention time
-#'     represented with the color of the respective cell.
+#' @description
+#'
+#' \code{plotChromPeakImage} plots the number of detected peaks for
+#' each sample along the retention time axis as an \emph{image} plot, i.e.
+#' with the number of peaks detected in each bin along the retention time
+#' represented with the color of the respective cell.
 #'
 #' @param binSize For \code{plotChromPeakImage}: \code{numeric(1)} defining the
 #'     size of the bins along the x-axis (retention time). Defaults to
@@ -1310,8 +1335,10 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
 
 #' @rdname calibrate-calibrant-mass
 #'
-#' @description The `isCalibrated` function returns `TRUE` if chromatographic
-#'     peaks of the [XCMSnExp] object `x` were calibrated and `FALSE` otherwise.
+#' @description
+#'
+#' The `isCalibrated` function returns `TRUE` if chromatographic
+#' peaks of the [XCMSnExp] object `x` were calibrated and `FALSE` otherwise.
 #' 
 #' @md
 isCalibrated <- function(object) {
@@ -1323,27 +1350,35 @@ isCalibrated <- function(object) {
 
 #' @title Replace raw with adjusted retention times
 #'
-#' @description Replaces the raw retention times with the adjusted retention
-#'     time or returns the object unchanged if none are present.
+#' @description
 #'
-#' @details Adjusted retention times are stored *in parallel* to the adjusted
-#'     retention times in the `XCMSnExp`. The `applyAdjustedRtime` replaces the
-#'     raw retention times (stored in the *feature data* (`fData` `data.frame`))
-#'     with the adjusted retention times.
+#' Replaces the raw retention times with the adjusted retention
+#' time or returns the object unchanged if none are present.
 #'
-#' @note Replacing the raw retention times with adjusted retention times
-#'     disables the possibility to restore raw retention times using the
-#'     [dropAdjustedRtime()] method. This function does **not** remove the
-#'     retention time processing step with the settings of the alignment from
-#'     the [processHistory()] of the `object` to ensure that the processing
-#'     history is preserved.
+#' @details
+#'
+#' Adjusted retention times are stored *in parallel* to the adjusted
+#' retention times in the `XCMSnExp`. The `applyAdjustedRtime` replaces the
+#' raw retention times (stored in the *feature data* (`fData` `data.frame`))
+#' with the adjusted retention times.
+#'
+#' @note
+#'
+#' Replacing the raw retention times with adjusted retention times
+#' disables the possibility to restore raw retention times using the
+#' [dropAdjustedRtime()] method. This function does **not** remove the
+#' retention time processing step with the settings of the alignment from
+#' the [processHistory()] of the `object` to ensure that the processing
+#' history is preserved.
 #'
 #' @param object An [XCMSnExp] object.
 #' 
 #' @md
 #'
-#' @return A `XCMSnExp` with the raw retention times being replaced with the
-#'     adjusted retention time.
+#' @return
+#'
+#' A `XCMSnExp` with the raw retention times being replaced with the
+#' adjusted retention time.
 #' 
 #' @author Johannes Rainer
 #'
@@ -1518,4 +1553,56 @@ applyAdjustedRtime <- function(object) {
         spectraProcessingQueue = new_procQ)
     if (validObject(res))
         res
+}
+
+#' @description
+#'
+#' \code{filterFeatureDefinitions} allows to subset the feature definitions of
+#' an \code{XCMSnExp} object. Which feature definitions should be kept can be
+#' specified with the \code{features} argument that can be a \code{logical},
+#' \code{integer} or \code{character} vector. The function returns the
+#' \code{XCMSnExp} with the reduced \code{featureDefinitions} data frame.
+#'
+#' @param features For \code{filterFeatureDefinitions}: either a \code{integer}
+#'     specifying the indices of the features (rows) to keep, a \code{logical}
+#'     with a length matching the number of rows of \code{featureDefinitions}
+#'     or a \code{character} with the feature (row) names.
+#' 
+#' @rdname XCMSnExp-filter-methods
+filterFeatureDefinitions <- function(x, features) {
+    if (!is(x, "XCMSnExp"))
+        stop("'x' is expected to be an 'XCMSnExp' object")
+    if (missing(features))
+        return(x)
+    if (!hasFeatures(x))
+        stop("No feature definitions present! Run 'groupChromPeaks' first.")
+    fts <- featureDefinitions(x)
+    ## features input parameter checking:
+    if (is.logical(features))
+        features <- which(features)
+    if (is.character(features))
+        features <- match(features, rownames(fts))
+    if (is.numeric(features)) {
+        if (any(is.na(features)))
+            stop("no 'NA' in 'features' allowed!")
+        if (!all(features %in% 1:nrow(fts)))
+            stop("specified 'features' out of range")
+    } else {
+        stop("'features' has to be either a 'integer' with the indices of the ",
+             "features, a 'logical' or a 'character' matching rownames of the ",
+             "'featureDefinitions' data frame.")
+    }
+    ## Actual sub-setting...
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(x@msFeatureData)
+    featureDefinitions(newFd) <- fts[features, , drop = FALSE]
+    lockEnvironment(newFd, bindings = TRUE)
+    x@msFeatureData <- newFd
+    ## Add a generic filtering process history.
+    x <- addProcessHistory(x, GenericProcessHistory(
+                                  fun = "filterFeatureDefinitions",
+                                  args = list(features = features),
+                                  fileIndex. = 1:length(fileNames(x))))
+    if (validObject(x))
+        x
 }

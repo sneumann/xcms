@@ -89,9 +89,9 @@ The \code{NearestPeaksParam} function returns a
     specified for peak alignment based on peak proximity.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-    results of the peak grouping/correspondence step (i.e. the mz-rt
-    features). These can be accessed with the
-    \code{\link{featureDefinitions}} method.
+results of the peak grouping/correspondence step (i.e. the mz-rt
+features). These can be accessed with the
+\code{\link{featureDefinitions}} method.
 }
 \description{
 This method is inspired by the grouping algorithm of mzMine
@@ -123,8 +123,8 @@ The \code{NearestPeaksParam} class allows to specify all
     \code{kNN} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
-    performs peak grouping based on the proximity between chromatographic
-    peaks from different samples in the mz-rt range.
+performs peak grouping based on the proximity between chromatographic
+peaks from different samples in the mz-rt range.
 }
 \section{Slots}{
 
@@ -141,7 +141,7 @@ These methods and classes are part of the updated and modernized
     can be passed with a \code{NearestPeaksParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-    all eventually present previous alignment results to be dropped.
+all eventually present previous alignment results to be dropped.
 }
 \examples{
 

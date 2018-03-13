@@ -221,7 +221,8 @@ export(
     "plotChromPeakImage",
     "isCalibrated",
     "plotMsData",
-    "applyAdjustedRtime"
+    "applyAdjustedRtime",
+    "filterFeatureDefinitions"
 )
 
 ## New analysis methods

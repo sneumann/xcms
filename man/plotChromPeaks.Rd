@@ -64,24 +64,24 @@ drawn. See \code{par} help page for more details.}
 }
 \description{
 \code{plotChromPeakImage} plots the identified chromatographic
-    peaks from one file into the plane spanned by the retention time and mz
-    dimension (x-axis representing the retention time and y-axis mz).
-    Each chromatographic peak is plotted as a rectangle representing its
-    width in rt and mz dimension.
+peaks from one file into the plane spanned by the retention time and mz
+dimension (x-axis representing the retention time and y-axis mz).
+Each chromatographic peak is plotted as a rectangle representing its
+width in rt and mz dimension.
 
-    This plot is supposed to provide some initial overview of the
-    chromatographic peak detection results.
+This plot is supposed to provide some initial overview of the
+chromatographic peak detection results.
 
 \code{plotChromPeakImage} plots the number of detected peaks for
-    each sample along the retention time axis as an \emph{image} plot, i.e.
-    with the number of peaks detected in each bin along the retention time
-    represented with the color of the respective cell.
+each sample along the retention time axis as an \emph{image} plot, i.e.
+with the number of peaks detected in each bin along the retention time
+represented with the color of the respective cell.
 }
 \details{
 The width and line type of the rectangles indicating the detected
-    chromatographic peaks for the \code{plotChromPeaks} function can be
-    specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
-    and \code{par(lty = 2)}, respectively.
+chromatographic peaks for the \code{plotChromPeaks} function can be
+specified using the \code{par} function, i.e. with \code{par(lwd = 3)}
+and \code{par(lty = 2)}, respectively.
 }
 \examples{
 

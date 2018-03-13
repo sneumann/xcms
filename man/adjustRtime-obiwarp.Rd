@@ -162,17 +162,17 @@ The \code{ObiwarpParam} function returns a
     specified for obiwarp retention time adjustment and alignment.
 
 For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
-    \code{\link{XCMSnExp}} object with the results of the retention time
-    adjustment step. These can be accessed with the
-    \code{\link{adjustedRtime}} method. Retention time correction does also
-    adjust the retention time of the identified chromatographic peaks
-    (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention time
-    correction drops all previous peak grouping results from the result
-    object.
+\code{\link{XCMSnExp}} object with the results of the retention time
+adjustment step. These can be accessed with the
+\code{\link{adjustedRtime}} method. Retention time correction does also
+adjust the retention time of the identified chromatographic peaks
+(accessed \emph{via} \code{\link{chromPeaks}}. Note that retention time
+correction drops all previous peak grouping results from the result
+object.
 
-    For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with
-    the adjusted retention times per spectra (in the same order than
-    \code{rtime}).
+For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with
+the adjusted retention times per spectra (in the same order than
+\code{rtime}).
 }
 \description{
 This method performs retention time adjustment using the
@@ -218,8 +218,8 @@ The \code{ObiwarpParam} class allows to specify all
     for the \code{initPenalty} slot of the object.
 
 \code{adjustRtime,XCMSnExp,ObiwarpParam}:
-    performs retention time correction/alignment based on the total mz-rt
-    data using the \emph{obiwarp} method.
+performs retention time correction/alignment based on the total mz-rt
+data using the \emph{obiwarp} method.
 }
 \section{Slots}{
 
@@ -236,13 +236,13 @@ These methods and classes are part of the updated and modernized
     algorithm can be passed with a \code{ObiwarpParam} object.
 
 Alignment using obiwarp is performed on the retention time of spectra
-    of on MS level. Retention times for spectra of other MS levels are
-    subsequently adjusted based on the adjustment function defined on the
-    retention times of the spectra of MS level \code{msLevel}.
+of on MS level. Retention times for spectra of other MS levels are
+subsequently adjusted based on the adjustment function defined on the
+retention times of the spectra of MS level \code{msLevel}.
 
-    Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
-    all peak grouping (correspondence) results and any previous retention
-    time adjustment results to be dropped.
+Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
+all peak grouping (correspondence) results and any previous retention
+time adjustment results to be dropped.
 }
 \examples{
 library(faahKO)

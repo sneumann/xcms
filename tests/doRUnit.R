@@ -19,8 +19,9 @@ if(require("RUnit", quietly=TRUE)) {
     library(package=pkg, character.only=TRUE)
     library(package="faahKO", character.only=TRUE)
 
-    attr(faahko, "filepaths") <- sapply(as.list(basename(attr(faahko, "filepaths"))),
-                                        function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
+    attr(faahko, "filepaths") <- sapply(
+        as.list(basename(attr(faahko, "filepaths"))),
+        function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else  "WT" ,x, package = "faahKO"))
 
     library(BiocParallel)
     if (.Platform$OS.type == "unix") {
