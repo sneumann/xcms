@@ -175,7 +175,7 @@ dropGenericProcessHistory <- function(x, fun) {
     fromF <- base::match(fileNames(subs), fns)
 
     ## Now I want to rbind the spectrum data frames per file
-    L <- split(dfs, f = fromFile(subs))
+    L <- splitdfs, f = fromFile(subs))
     L <- lapply(L, do.call, what = rbind)
     ## Put them into a vector same length that we have files.
     res <- vector(mode = "list", length = length(fns))
@@ -1606,3 +1606,4 @@ filterFeatureDefinitions <- function(x, features) {
     if (validObject(x))
         x
 }
+
