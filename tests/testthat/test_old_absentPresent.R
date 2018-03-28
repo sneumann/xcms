@@ -32,7 +32,7 @@ test_that("present absent sum works", {
 ##
 ## Same as above, with fillPeaks()
 ##
-testPresentAbsentSumAfterFillPeaks <- function() {
+test_that("PresentAbsentSumAfterFillPeaks works", {
     xsg <- faahko_grouped_filled
     ## xsg <- faahko_grouped_filled
     a <- length(which(absent(xsg, class="WT", minfrac=0)))

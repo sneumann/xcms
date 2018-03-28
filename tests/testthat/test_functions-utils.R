@@ -42,3 +42,8 @@ test_that(".createProfileMatrix works", {
                                  method = "intlin", step = 2)
     expect_equal(dim(pm), dim(pm_4))
 })
+
+test_that("plotMsData works", {
+    msd <- extractMsData(faahko_od, mz = c(334.9, 335.1), rt = c(2700, 2900))
+    plotMsData(msd[[1]])
+})

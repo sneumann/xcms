@@ -23,7 +23,6 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                        profstep = 0)
 faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
-
 faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
                                                               snthresh = 40))
 faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
@@ -36,7 +35,6 @@ pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xod_xg <- groupChromPeaks(xod_x, param = pdp)
 xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
 xod_xgrg <- groupChromPeaks(xod_xgr, param = pdp)
-
 xod_r <- adjustRtime(as(od_x, "XCMSnExp"), param = ObiwarpParam())
 
 faahko_grouped_filled <- fillPeaks(group(faahko))
@@ -59,5 +57,12 @@ fticr_xod <- findChromPeaks(fticr, MSWParam(scales = c(1, 7),
 fticr_xs <- xcmsSet(method="MSW", files=fticrf[1:2], scales=c(1,7),
                     SNR.method='data.mean' , winSize.noise=500,
                     peakThr=80000,  amp.Th=0.005)
+
+fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko18.CDF', package = "faahKO"),
+        system.file('cdf/KO/ko19.CDF', package = "faahKO"))
+xs_1 <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
+                noise = 10000, snthresh = 50)
 
 test_check("xcms")

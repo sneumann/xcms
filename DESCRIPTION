@@ -34,7 +34,7 @@ Suggests:
     ncdf4,
     rgl,
     microbenchmark,
-    RUnit,
+    testthat,
     pander
 Enhances: Rgraphviz,
     Rmpi,
@@ -90,7 +90,6 @@ Collate:
     'methods-xcmsRaw.R'
     'methods-xcmsSet.R'
     'models.R'
-    'msn2xcmsRaw.R'
     'mzClust.R'
     'netCDF.R'
     'plotQC.R'
