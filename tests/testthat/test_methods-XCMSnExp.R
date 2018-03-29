@@ -1562,7 +1562,10 @@ test_that("featureValues,XCMSnExp works", {
 test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     od_x <- faahko_xod
     xs <- faahko_xs
-
+    ## Check error if no features were found. issue #273
+    pdp <- PeakDensityParam(sampleGroups = xs$class, minSamples = 30)
+    expect_error(groupChromPeaks(od_x, param = pdp), "Unable to group any chromatographic peaks.")
+    
     fdp <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = fdp)
     xs <- group(xs, method = "density")

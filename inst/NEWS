@@ -4,6 +4,10 @@ CHANGES IN VERSION 3.1.2
 NEW FEATURES
 - Add filterFeatureDefinitions function.
 
+BUG FIXES:
+- Fix #273: better error message in case not a single feature could be defined
+  by groupChromPeaks.
+
 
 CHANGES IN VERSION 3.1.1
 -------------------------

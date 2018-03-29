@@ -571,7 +571,6 @@ density function and other parameters passed to the algorithm with the
   pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
 			  minFraction = 0.4, bw = 20)
   xdata <- groupChromPeaks(xdata, param = pdp)
-
 #+END_SRC
 
 The results from the correspondence can be extracted using the

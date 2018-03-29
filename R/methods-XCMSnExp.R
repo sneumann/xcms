@@ -1567,6 +1567,9 @@ setMethod("groupChromPeaks",
               object <- addProcessHistory(object, xph)              
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
+              if (nrow(df) == 0)
+                  stop("Unable to group any chromatographic peaks. You might ",
+                       "have to adapt your settings.")
               df$peakidx <- res$peakIndex
               if (nrow(df) > 0)
                   rownames(df) <- .featureIDs(nrow(df))
@@ -1648,6 +1651,9 @@ setMethod("groupChromPeaks",
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
+              if (nrow(df) == 0)
+                  stop("Unable to group any chromatographic peaks. You might ",
+                       "have to adapt your settings.")
               if (nrow(df) > 0)
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
@@ -1725,6 +1731,9 @@ setMethod("groupChromPeaks",
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
+              if (nrow(df) == 0)
+                  stop("Unable to group any chromatographic peaks. You might ",
+                       "have to adapt your settings.")
               if (nrow(df) > 0)
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
