@@ -597,6 +597,8 @@ setMethod("adjustRtime",
 #' @rdname extractMsData-method
 setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
           function(object, rt, mz, msLevel = 1L) {
+              .Deprecated(msg = paste0("Use of 'extractMsData' is deprecated.",
+                                       " Please use 'as(x, \"data.frame\")'"))
               .extractMsData(object, rt = rt, mz = mz, msLevel = msLevel)
           })
 

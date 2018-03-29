@@ -2176,8 +2176,8 @@ setMethod("featureValues",
 #'     \code{\link[MSnbase]{plot}} to plot a \code{Chromatogram} or
 #'     \code{Chromatograms} objects.
 #'
-#'     \code{\link{extractMsData}} for a method to extract the MS data as
-#'     \code{data.frame}.
+#'     \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for a method to
+#'     extract the MS data as \code{data.frame}.
 #'
 #' @export
 #' 
@@ -2655,66 +2655,81 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 
 #' @aliases extractMsData
 #'
-#' @title Extract a \code{data.frame} containing MS data
+#' @title DEPRECATED: Extract a `data.frame` containing MS data
 #' 
 #' @description
 #'
-#' Extract a \code{data.frame} of retention time, mz and intensity
+#' **UPDATE**: the `extractMsData` and `plotMsData` functions are deprecated
+#' and `as(x, "data.frame")` and `plot(x, type = "XIC")` (`x` being an
+#' `OnDiskMSnExp` or `XCMSnExp` object) should be used instead. See examples
+#' below. Be aware that filtering the raw object might however drop the
+#' adjusted retention times. In such cases it is advisable to use the
+#' [applyAdjustedRtime()] function prior to filtering.
+#'
+#' 
+#' Extract a `data.frame` of retention time, mz and intensity
 #' values from each file/sample in the provided rt-mz range (or for the full
-#' data range if \code{rt} and \code{mz} are not defined).
+#' data range if `rt` and `mz` are not defined).
 #'
-#' @param object A \code{XCMSnExp} or \code{OnDiskMSnExp} object.
+#' @param object A `XCMSnExp` or `OnDiskMSnExp` object.
 #'
-#' @param rt \code{numeric(2)} with the retention time range from which the
+#' @param rt `numeric(2)` with the retention time range from which the
 #'     data should be extracted.
 #'
-#' @param mz \code{numeric(2)} with the mz range.
+#' @param mz `numeric(2)` with the mz range.
 #'
-#' @param msLevel \code{integer} defining the MS level(s) to which the data
+#' @param msLevel `integer` defining the MS level(s) to which the data
 #'     should be sub-setted prior to extraction; defaults to
-#'     \code{msLevel = 1L}.
+#'     `msLevel = 1L`.
 #' 
-#' @param adjustedRtime (for \code{extractMsData,XCMSnExp}): \code{logical(1)}
+#' @param adjustedRtime (for `extractMsData,XCMSnExp`): `logical(1)`
 #'     specifying if adjusted or raw retention times should be reported.
 #'     Defaults to adjusted retention times, if these are present in
-#'     \code{object}.
+#'     `object`.
 #'
 #' @return
 #'
-#' A \code{list} of length equal to the number of samples/files in
-#' \code{object}. Each element being a \code{data.frame} with columns
-#' \code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
+#' A `list` of length equal to the number of samples/files in
+#' `object`. Each element being a `data.frame` with columns
+#' `"rt"`, `"mz"` and `"i"` with the retention time, mz and
 #' intensity tuples of a file. If no data is available for the mz-rt range
-#' in a file a \code{data.frame} with 0 rows is returned for that file.
+#' in a file a `data.frame` with 0 rows is returned for that file.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the data object.
-#'     \code{\link{plotMsData}} to plot the data for a single file.
+#' @seealso `XCMSnExp` for the data object.
 #'
 #' @rdname extractMsData-method
 #'
 #' @author Johannes Rainer
 #'
+#' @md
+#' 
 #' @examples
 #' ## Read some files from the test data package.
 #' library(faahKO)
 #' library(xcms)
+#' library(magrittr)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
+#' ## Extract the full data as a data.frame
+#' ms_all <- as(raw_data, "data.frame")
+#' head(ms_all)
+#' nrow(ms_all)
+#'
 #' ## Read the full MS data for a defined mz-rt region.
-#' res <- extractMsData(raw_data, mz = c(300, 320), rt = c(2700, 2900))
+#' res <- raw_data %>%
+#'     filterRt(rt = c(2700, 2900)) %>%
+#'     filterMz(mz = c(300, 320)) %>%
+#'     as("data.frame")
 #'
-#' ## We've got one data.frame per file
-#' length(res)
-#'
-#' ## With number of rows:
-#' nrow(res[[1]])
-#'
-#' head(res[[1]])
+#' head(res)
+#' nrow(res)
 setMethod("extractMsData", "XCMSnExp",
           function(object, rt, mz, msLevel = 1L,
                    adjustedRtime = hasAdjustedRtime(object)){
+              .Deprecated(msg = paste0("Use of 'extractMsData' is deprecated.",
+                                       " Please use 'as(x, \"data.frame\")'"))
               ## Now, this method takes the adjusted rts, casts the object to
               ## an OnDiskMSnExp, eventually replaces the rtime in the
               ## featureData with the adjusted retention times (depending on

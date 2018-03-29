@@ -567,8 +567,8 @@ head(peaks(xs))
     \code{\link[MSnbase]{chromatogram}} to extract MS data as
     \code{\link[MSnbase]{Chromatogram}} objects.
 
-    \code{\link{extractMsData}} for the method to extract MS data as
-    \code{data.frame}s.
+    \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for the method to
+    extract MS data as \code{data.frame}s.
 
 \code{\link{fillChromPeaks}} for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.

@@ -148,8 +148,8 @@ plot(chrs[1, , drop = FALSE])
     \code{\link[MSnbase]{plot}} to plot a \code{Chromatogram} or
     \code{Chromatograms} objects.
 
-    \code{\link{extractMsData}} for a method to extract the MS data as
-    \code{data.frame}.
+    \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for a method to
+    extract the MS data as \code{data.frame}.
 }
 \author{
 Johannes Rainer
