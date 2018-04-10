@@ -200,7 +200,8 @@ create an extracted ion chromatogram (EIC) for a selected peak.
 Note that =chromatogram= reads the raw data from each file to calculate the
 chromatogram. The =bpi= and =tic= methods on the other hand do not read any data
 from the raw files but use the respective information that was provided in the
-header definition of the input files.
+header definition of the input files (which might be different from the actual
+data).
 
 Below we create boxplots representing the distribution of total ion currents per
 file. Such plots can be very useful to spot problematic or failing MS runs.
