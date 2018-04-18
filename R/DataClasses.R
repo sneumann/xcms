@@ -447,7 +447,7 @@ NULL
 #'     robust, but less exact.
 #' 
 #' @param mzdiff \code{numeric(1)} representing the minimum difference in m/z
-#'     dimension for peaks with overlapping retention times; can be negatove to
+#'     dimension for peaks with overlapping retention times; can be negative to
 #'     allow overlap.
 #' 
 #' @param fitgauss \code{logical(1)} whether or not a Gaussian should be fitted
@@ -2287,8 +2287,8 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     \code{\link[MSnbase]{chromatogram}} to extract MS data as
 #'     \code{\link[MSnbase]{Chromatogram}} objects.
 #' 
-#'     \code{\link{extractMsData}} for the method to extract MS data as
-#'     \code{data.frame}s.
+#'     \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for the method to
+#'     extract MS data as \code{data.frame}s.
 #' 
 #' @rdname XCMSnExp-class
 #'

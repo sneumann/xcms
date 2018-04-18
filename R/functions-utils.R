@@ -333,11 +333,16 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 
 
 
-#' @title Create a plot that combines a XIC and a mz/rt 2D plot for one sample
+#' @title DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample
 #'
-#' @description The `plotMsData` creates a plot that combines an (base peak )
-#'     extracted ion chromatogram on top (rt against intensity) and a plot of
-#'     rt against m/z values at the bottom.
+#' @description
+#'
+#' **UPDATE**: please use `plot(x, type = "XIC")` from the `MSnbase` package
+#' instead. See examples below.
+#' 
+#' The `plotMsData` creates a plot that combines an (base peak )
+#' extracted ion chromatogram on top (rt against intensity) and a plot of
+#' rt against m/z values at the bottom.
 #' 
 #' @param x `data.frame` such as returned by the [extractMsData()] function.
 #'     Only a single `data.frame` is supported.
@@ -359,7 +364,6 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'     based on their intensity. See argument `col.regions` in
 #'     [lattice::level.colors] documentation.
 #' 
-#' @seealso [extractMsData()] for the method to extract the data to plot.
 #' @author Johannes Rainer
 #' 
 #' @md
@@ -368,23 +372,22 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' ## Read two files from the faahKO package
 #' library(faahKO)
+#' library(magrittr)
 #' cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
 #'     recursive = TRUE)[1:2]
 #' raw_data <- readMSData(cdfs, mode = "onDisk")
-#' ## Extract the MS data from a slice of data
-#' msd <- extractMsData(raw_data, mz = c(334.9, 335.1), rt = c(2700, 2900))
 #'
-#' ## Plot the data for the first file
-#' plotMsData(msd[[1]])
-#'
-#' ## To plot the data for both files:
-#' layout(mat = matrix(1:4, ncol = 2))
-#' plotMsData(msd[[1]], mfrow = NULL)
-#' plotMsData(msd[[2]], mfrow = NULL)
+#' ## Subset the object to a rt and mz range and plot the data.
+#' raw_data %>%
+#'     filterRt(rt = c(2700, 2900)) %>%
+#'     filterMz(mz = c(334.9, 335.1)) %>%
+#'     plot(type = "XIC")
 plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
                        grid.color = "lightgrey",
                        colramp = colorRampPalette(
                            rev(brewer.pal(9, "YlGnBu")))) {
+    .Deprecated(msg = paste0("'plotMsData' is deprecated. Please use ",
+                             "'plot(x, type = \"XIC\") instead."))
     if (length(mfrow) == 2)
         par(mfrow = mfrow)
     par(mar = c(0, 4, 2, 1))

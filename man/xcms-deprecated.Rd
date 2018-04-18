@@ -30,6 +30,9 @@
     \code{\link[MSnbase]{Chromatogram}} or
     \code{\link[MSnbase]{Chromatograms}} objects.
 
+    \item{\code{extractMsData}}: replaced by \code{as(x, "data.frame")}.
+
+    \item{\code{plotMsData}}: replaced by \code{plot(x, type = "XIC")}.
   }
 }
 

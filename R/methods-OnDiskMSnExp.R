@@ -352,7 +352,7 @@ setMethod("findChromPeaks",
                        "peak detection")
 
               rts <- split(rtime(object_mslevel), f = fromFile(object_mslevel))
-              if (any(lengths(rts)) > 1)
+              if (any(lengths(rts) > 1))
                   stop("The MSW method can only be applied to single spectrum,",
                        " non-chromatographic, files (i.e. with a single ",
                        "retention time).")
@@ -597,6 +597,8 @@ setMethod("adjustRtime",
 #' @rdname extractMsData-method
 setMethod("extractMsData", signature(object = "OnDiskMSnExp"),
           function(object, rt, mz, msLevel = 1L) {
+              .Deprecated(msg = paste0("Use of 'extractMsData' is deprecated.",
+                                       " Please use 'as(x, \"data.frame\")'"))
               .extractMsData(object, rt = rt, mz = mz, msLevel = msLevel)
           })
 

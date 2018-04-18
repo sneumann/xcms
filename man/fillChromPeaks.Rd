@@ -78,8 +78,8 @@ The \code{FillChromPeaksParam} function returns a
     \code{FillChromPeaksParam} object.
 
 A \code{\link{XCMSnExp}} object with previously missing
-    chromatographic peaks for features filled into its \code{chromPeaks}
-    matrix.
+chromatographic peaks for features filled into its \code{chromPeaks}
+matrix.
 }
 \description{
 The \code{FillChromPeaksParam} object encapsules all settings for
@@ -95,34 +95,34 @@ the signal integration for missing peaks.
     for the \code{ppm} slot of the object.
 
 Integrate signal in the mz-rt area of a feature (chromatographic
-    peak group) for samples in which no chromatographic peak for this
-    feature was identified and add it to the \code{chromPeaks}. Such peaks
-    will have a value of \code{1} in the \code{"is_filled"} column of the
-    \code{\link{chromPeaks}} matrix of the object.
+peak group) for samples in which no chromatographic peak for this
+feature was identified and add it to the \code{chromPeaks}. Such peaks
+will have a value of \code{1} in the \code{"is_filled"} column of the
+\code{\link{chromPeaks}} matrix of the object.
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across
-    samples) there will always be features (peak groups) that do not include
-    peaks from every sample. The \code{fillChromPeaks} method defines
-    intensity values for such features in the missing samples by integrating
-    the signal in the mz-rt region of the feature. The mz-rt area is defined
-    by the median mz and rt start and end points of the other detected
-    chromatographic peaks for a given feature.
+samples) there will always be features (peak groups) that do not include
+peaks from every sample. The \code{fillChromPeaks} method defines
+intensity values for such features in the missing samples by integrating
+the signal in the mz-rt region of the feature. The mz-rt area is defined
+by the median mz and rt start and end points of the other detected
+chromatographic peaks for a given feature.
 
-    Adjusted retention times will be used if available.
+Adjusted retention times will be used if available.
 
-    Based on the peak finding algorithm that was used to identify the
-    (chromatographic) peaks different internal functions are employed to
-    guarantee that the integrated peak signal matches as much as possible
-    the peak signal integration used during the peak detection. For peaks
-    identified with the \code{\link{matchedFilter}} method, signal
-    integration is performed on the \emph{profile matrix} generated with
-    the same settings used also during peak finding (using the same
-    \code{bin} size for example). For direct injection data and peaks
-    identified with the \code{\link{MSW}} algorithm signal is integrated
-    only along the mz dimension. For all other methods the complete (raw)
-    signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
-    \code{"rtmin"} and \code{"rtmax"} is used.
+Based on the peak finding algorithm that was used to identify the
+(chromatographic) peaks different internal functions are employed to
+guarantee that the integrated peak signal matches as much as possible
+the peak signal integration used during the peak detection. For peaks
+identified with the \code{\link{matchedFilter}} method, signal
+integration is performed on the \emph{profile matrix} generated with
+the same settings used also during peak finding (using the same
+\code{bin} size for example). For direct injection data and peaks
+identified with the \code{\link{MSW}} algorithm signal is integrated
+only along the mz dimension. For all other methods the complete (raw)
+signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
+\code{"rtmin"} and \code{"rtmax"} is used.
 }
 \section{Slots}{
 
@@ -132,15 +132,15 @@ After correspondence (i.e. grouping of chromatographic peaks across
 
 \note{
 The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
-    \code{"rtmax"} for the filled peaks represents the actual MS area from
-    which the signal was integrated.
-    Note that no peak is filled in if no signal was present in a file/sample
-    in the respective mz-rt area. These samples will still show a \code{NA}
-    in the matrix returned by the \code{\link{featureValues}} method. This
-    is in contrast to the \code{\link{fillPeaks.chrom}} method that returned
-    an \code{"into"} and \code{"maxo"} of \code{0} for such peak areas.
-    Growing the mz-rt area using the \code{expandMz} and \code{expandRt}
-    might help to reduce the number of missing peak signals after filling.
+\code{"rtmax"} for the filled peaks represents the actual MS area from
+which the signal was integrated.
+Note that no peak is filled in if no signal was present in a file/sample
+in the respective mz-rt area. These samples will still show a \code{NA}
+in the matrix returned by the \code{\link{featureValues}} method. This
+is in contrast to the \code{\link{fillPeaks.chrom}} method that returned
+an \code{"into"} and \code{"maxo"} of \code{0} for such peak areas.
+Growing the mz-rt area using the \code{expandMz} and \code{expandRt}
+might help to reduce the number of missing peak signals after filling.
 }
 \examples{
 

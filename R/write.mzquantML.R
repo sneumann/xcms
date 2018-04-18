@@ -12,7 +12,7 @@ setMethod("write.mzQuantML", "xcmsSet", function(object, filename) {
 })
 
 verify.mzQuantML <- function(filename,
-                             xsdfilename=system.file('unitTests/mzQuantML_1_0_0.xsd', package = "xcms")) {
+                             xsdfilename=system.file('xsd/mzQuantML_1_0_0.xsd', package = "xcms")) {
     xsd = xmlTreeParse(xsdfilename, isSchema =TRUE, useInternal = TRUE)
     doc = xmlInternalTreeParse(filename)
     xmlSchemaValidate(xsd, doc)

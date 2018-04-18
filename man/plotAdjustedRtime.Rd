@@ -45,10 +45,10 @@ function.}
 }
 \description{
 Plot the difference between the adjusted and the raw retention
-    time (y-axis) for each file along the (adjusted or raw) retention time
-    (x-axis). If alignment was performed using the
-    \code{\link{adjustRtime-peakGroups}} method, also the features (peak
-    groups) used for the alignment are shown.
+time (y-axis) for each file along the (adjusted or raw) retention time
+(x-axis). If alignment was performed using the
+\code{\link{adjustRtime-peakGroups}} method, also the features (peak
+groups) used for the alignment are shown.
 }
 \examples{
 ## Below we perform first a peak detection (using the matchedFilter

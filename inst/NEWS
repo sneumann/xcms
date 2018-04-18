@@ -1,13 +1,37 @@
+CHANGES IN VERSION 3.1.3
+-------------------------
+
+BUG FIXES:
+- Fix misplaced parenthesis in the check for multiple spectra in
+  findChromPeaks,OnDiskMSnExp,MSWParam. Thanks to @RonanDaly (PR #276).
+- Update link to correct metlin page in diffreport result (issue #204).
+
+
+CHANGES IN VERSION 3.1.2
+-------------------------
+
+NEW FEATURES
+- Add filterFeatureDefinitions function.
+
+BUG FIXES:
+- Fix #273: better error message in case not a single feature could be defined
+  by groupChromPeaks.
+
+
 CHANGES IN VERSION 3.1.1
 -------------------------
 
-UPDATED FEATURES
+NEW FEATURES
 - Reading raw files using xcmsSet or xcmsRaw uses now the automatic file type
   detection feature from mzR.
+- c function to concatenate XCMSnExp objects.
+- groupnames method for XCMSnExp objects (issue #250).
 
 BUG FIXES:
 - Fix #237: findPeaks.MSW was not throwing an error if applied to multi-spectrum
   MS file.
+- Fix #249: quantile call in adjustRtime PeakGroups without na.rm = TRUE.
+- Fix #259
 
 
 CHANGES IN VERSION 2.99.10

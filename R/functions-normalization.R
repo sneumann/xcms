@@ -45,6 +45,11 @@
 fitModel <- function(formula, data, y, minVals = 4,
                      method = c("lm", "lmrob"), BPPARAM = bpparam()) {
     method <- match.arg(method, c("lm", "lmrob"))
+    if (method == "lmrob") {
+        if (!requireNamespace("robustbase", quietly = TRUE))
+            stop("Required package 'robustbase' is not installed. Please ",
+                 "install if you want to use method 'lmrob'.")
+    }
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
@@ -82,7 +87,7 @@ fitModel <- function(formula, data, y, minVals = 4,
     if (method == "lmrob") {
         ## Force use of the KS2014 settings in lmrob and increase the
         ## scale-finding iterations to avoid some of the warnings.
-        sttngs <- lmrob.control("KS2014")
+        sttngs <- robustbase::lmrob.control("KS2014")
         sttngs$maxit.scale <- 10000
         sttngs$k.max <- 10000
         sttngs$refine.tol <- 1e-7
@@ -104,8 +109,8 @@ fitModel <- function(formula, data, y, minVals = 4,
                 return(lm(formula., data = data., model = FALSE))
             if (lmeth == "lmrob") {
                 set.seed(123)
-                return(lmrob(formula., data = data., model = FALSE,
-                                         setting = sttngs))
+                return(robustbase::lmrob(formula., data = data., model = FALSE,
+                                         control = sttngs))
             }
             if (lmeth == "rlm")
                 stop("Not yet implemented")
@@ -199,10 +204,17 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
     message("Applying models to adjust values ... ", appendLF = FALSE)
     y_new <- y
     for (i in which(lengths(lms) > 0)) {
-	preds <- predict(lms[[i]], newdata = cbind(y = y[i, ], data))
+        ## Catch problems predicting the value, if e.g. explanatory variables
+        ## have additional factor levels in newdata
+	preds <- tryCatch(predict(lms[[i]], newdata = cbind(y = y[i, ], data)),
+                          error = function(e) {
+                              warning("Failed to adjust value for ",
+                                      names(lms)[i], call. = FALSE)
+                          })
 	## Ensure that we shift by the mean of the values used to estimate the
 	## model!
-	y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
+        if (is.numeric(preds))
+            y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
     }
     message("OK")
     if (sum(lengths(lms) == 0))

@@ -39,9 +39,9 @@ function.}
 }
 \description{
 The \code{highlightChromPeaks} function adds chromatographic
-    peak definitions to an existing plot, such as one created by the
-    \code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
-    \code{\link[MSnbase]{Chromatograms}} object.
+peak definitions to an existing plot, such as one created by the
+\code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
+\code{\link[MSnbase]{Chromatograms}} object.
 }
 \examples{
 

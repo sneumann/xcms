@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.1.1
-Date: 2017-11-28
+Version: 3.1.3
+Date: 2018-04-18
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -14,7 +14,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.3.11)
+    MSnbase (>= 2.5.10)
 Imports:
     mzR (>= 2.13.1),
     BiocGenerics,
@@ -34,9 +34,14 @@ Suggests:
     ncdf4,
     rgl,
     microbenchmark,
-    RUnit,
-    pander
-Enhances: Rgraphviz, Rmpi, XML
+    testthat,
+    pander,
+    magrittr
+Enhances:
+    Rgraphviz,
+    Rmpi,
+    XML,
+    robustbase
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
     mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
@@ -87,7 +92,6 @@ Collate:
     'methods-xcmsRaw.R'
     'methods-xcmsSet.R'
     'models.R'
-    'msn2xcmsRaw.R'
     'mzClust.R'
     'netCDF.R'
     'plotQC.R'

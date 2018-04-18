@@ -88,8 +88,8 @@ The \code{MzClustParam} function returns a
     specified for high resolution single spectra peak alignment.
 
 For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-    results of the peak grouping step (i.e. the features). These can be
-    accessed with the \code{\link{featureDefinitions}} method.
+results of the peak grouping step (i.e. the features). These can be
+accessed with the \code{\link{featureDefinitions}} method.
 }
 \description{
 This method performs high resolution correspondence for single
@@ -115,8 +115,8 @@ The \code{MzClustParam} class allows to specify all
     \code{minSamples} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,MzClustParam}:
-    performs high resolution peak grouping for single spectrum
-    metabolomics data.
+performs high resolution peak grouping for single spectrum
+metabolomics data.
 }
 \section{Slots}{
 

@@ -19,7 +19,7 @@ vignette: >
   %\VignetteIndexEntry{LCMS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -96,6 +96,7 @@ package and build a /phenodata/ data frame describing the experimental setup.
   library(faahKO)
   library(RColorBrewer)
   library(pander)
+  library(magrittr)
 
   ## Get the full path to the CDF files
   cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
@@ -111,7 +112,8 @@ Subsequently we load the raw data as an =OnDiskMSnExp= object using the
 =readMSData= method from the =MSnbase= package. While the =MSnbase= package was
 originally developed for proteomics data processing, many of its functionality,
 including raw data import and data representation, can be shared and reused in
-metabolomics data analysis.
+metabolomics data analysis. Also, =MSnbase= can be used to /centroid/ profile-mode
+MS data (see the corresponding vignette in the =MSnbase= package).
 
 #+NAME: load-with-msnbase
 #+BEGIN_SRC R :ravel message = FALSE
@@ -166,7 +168,7 @@ hence create the BPC from the raw data. To create a total ion chromatogram we
 could set =aggregationFun= to =sum=.
 
 #+NAME: data-inspection-bpc
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6
   ## Get the base peak chromatograms. This reads data from the files.
   bpis <- chromatogram(raw_data, aggregationFun = "max")
   ## Define colors for the two groups
@@ -198,7 +200,8 @@ create an extracted ion chromatogram (EIC) for a selected peak.
 Note that =chromatogram= reads the raw data from each file to calculate the
 chromatogram. The =bpi= and =tic= methods on the other hand do not read any data
 from the raw files but use the respective information that was provided in the
-header definition of the input files.
+header definition of the input files (which might be different from the actual
+data).
 
 Below we create boxplots representing the distribution of total ion currents per
 file. Such plots can be very useful to spot problematic or failing MS runs.
@@ -245,13 +248,17 @@ be set to accommodate the expected widths of peak in the data set. We set it to
 =20,80= for the present example data set.
 
 For the =ppm= parameter we extract the full MS data (intensity, retention time and
-m/z values) corresponding to the above peak.
+m/z values) corresponding to the above peak. To this end we first filter the raw
+object by retention time, then by m/z and finally plot the object with =type =
+"XIC"= to produce the plot below. We use the /pipe/ (=%>%=) command better
+illustrate the corresponding workflow.
 
 #+NAME: peak-detection-plot-ms-data
-#+BEGIN_SRC R :ravel message = FALSE, fig.aligh = "center", fig.width = 7, fig.height = 7, fig.cap = "Visualization of the raw MS data for one peak. Upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity."
-  ## Extract the MS data for the region.
-  msd_raw <- extractMsData(raw_data, mz = mzr, rt = rtr)
-  plotMsData(msd_raw[[1]])
+#+BEGIN_SRC R :ravel message = FALSE, warning = FALSE, fig.aligh = "center", fig.width = 14, fig.height = 14, fig.cap = "Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity."
+  raw_data %>%
+      filterRt(rt = rtr) %>%
+      filterMz(mz = mzr) %>%
+      plot(type = "XIC")
 #+END_SRC
 
 In the present data there is actually no variation in the m/z values. Usually
@@ -313,7 +320,7 @@ m/z - retention time space for one file using the =plotChromPeaks= function. Bel
 we plot the chromatographic peaks for the 3rd sample.
 
 #+NAME: peak-detection-chrom-peaks-plot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 5, fig.height = 5, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample."
   plotChromPeaks(xdata, file = 3)
 #+END_SRC
 
@@ -323,7 +330,7 @@ time periods along the MS run in which a higher number of peaks was identified
 and evaluate whether this is consistent across files.
 
 #+NAME: peak-detection-chrom-peak-image
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5, fig.cap = "Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file."
   plotChromPeakImage(xdata)
 #+END_SRC
 
@@ -333,7 +340,7 @@ peaks or internal standards helps to ensure that peak detection settings were
 appropriate and correctly identified the expected peaks.
 
 #+NAME: peak-detection-highlight-chrom-peaks-plot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 7, fig.height = 5, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample."
   plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
   highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group],
 		      lty = 3, rt = rtr, mz = mzr)
@@ -355,7 +362,7 @@ to investigate whether systematic differences in peak signals between samples
 are present.
 
 #+NAME: peak-detection-chrom-peak-intensity-boxplot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 5, fig.cap = "Peak intensity distribution per sample."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak intensity distribution per sample."
   ## Extract a list of per-sample peak intensities (in log2 scale)
   ints <- split(log2(chromPeaks(xdata)[, "into"]),
 		f = chromPeaks(xdata)[, "sample"])
@@ -413,7 +420,7 @@ addition we plot the differences of the adjusted- to the raw retention times per
 sample using the =plotAdjustedRtime= function.
 
 #+NAME: alignment-obiwarp-plot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)."
   ## Get the base peak chromatograms.
   bpis_adj <- chromatogram(xdata, aggregationFun = "max")
   par(mfrow = c(2, 1), mar = c(4.5, 4.2, 1, 0.5))
@@ -431,7 +438,7 @@ peaks present in most/all samples). Ideally, these hook peaks should span most
 part of the retention time range. Below we first restore the raw retention times
 (also of the identified peaks) using the =dropAdjustedRtime= methods. Note that a
 =drop*= method is available for each preprocessing step allowing to remove the
-respective results from the =XCMSnExp= object.b
+respective results from the =XCMSnExp= object.
 
 #+NAME: alignment-drop
 #+BEGIN_SRC R :ravel message = FALSE
@@ -444,6 +451,11 @@ respective results from the =XCMSnExp= object.b
   ## Does the object have adjusted retention times?
   hasAdjustedRtime(xdata)
 #+END_SRC
+
+*Note*: =XCMSnExp= objects hold the raw along with the adjusted retention times and
+subsetting will in most cases drop the adjusted retention times. Sometimes it
+might thus be useful to *replace* the raw retention times with the adjusted
+retention times. This can be done with the =applyAdjustedRtime=.
 
 As noted above the /peak groups/ method requires peak groups (features) present in
 most samples to perform the alignment. We thus have to perform a first
@@ -482,7 +494,7 @@ using the =plotAdjustedRtime= function, which, if the /peak groups/ method is us
 for alignment, also highlights the peak groups used in the adjustment.
 
 #+NAME: alignment-peak-groups-plot
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Peak groups aligned data."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak groups aligned data."
   ## Plot the difference of adjusted to raw retention time.
   plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group],
 		    peakGroupsCol = "grey", peakGroupsPch = 1)
@@ -491,7 +503,7 @@ for alignment, also highlights the peak groups used in the adjustment.
 At last we evaluate the impact of the alignment on the test peak.
 
 #+NAME: alignment-peak-groups-example-peak
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Example extracted ion chromatogram before (top) and after alignment (bottom)."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example extracted ion chromatogram before (top) and after alignment (bottom)."
   par(mfrow = c(2, 1))
   ## Plot the raw data
   plot(chr_raw, col = group_colors[chr_raw$sample_group])
@@ -517,7 +529,7 @@ sample group are grouped into a feature. The sample group assignment is
 specified with the =sampleGroups= argument.
 
 #+NAME: correspondence-example-slice
-#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles."
+#+BEGIN_SRC R :ravel message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles."
   ## Define the mz slice.
   mzr <- c(305.05, 305.15)
 
@@ -560,7 +572,6 @@ density function and other parameters passed to the algorithm with the
   pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
 			  minFraction = 0.4, bw = 20)
   xdata <- groupChromPeaks(xdata, param = pdp)
-
 #+END_SRC
 
 The results from the correspondence can be extracted using the

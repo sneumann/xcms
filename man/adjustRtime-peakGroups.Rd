@@ -122,16 +122,16 @@ The \code{PeakGroupsParam} function returns a
     features/peak groups.
 
 For \code{adjustRtimePeakGroups}: a \code{matrix}, rows being
-    features, columns samples, of retention times. The features are ordered
-    by the median retention time across columns.
+features, columns samples, of retention times. The features are ordered
+by the median retention time across columns.
 
 For \code{adjustRtime}: a \code{\link{XCMSnExp}} object with the
-    results of the retention time adjustment step. These can be accessed
-    with the \code{\link{adjustedRtime}} method. Retention time correction
-    does also adjust the retention time of the identified chromatographic
-    peaks (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention
-    time correction drops all previous alignment results from the result
-    object.
+results of the retention time adjustment step. These can be accessed
+with the \code{\link{adjustedRtime}} method. Retention time correction
+does also adjust the retention time of the identified chromatographic
+peaks (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention
+time correction drops all previous alignment results from the result
+object.
 }
 \description{
 This method performs retention time adjustment based on the
@@ -149,8 +149,8 @@ The \code{PeakGroupsParam} class allows to specify all
     Instances should be created with the \code{PeakGroupsParam} constructor.
 
 \code{adjustRtimePeakGroups} returns the features (peak groups)
-    which would, depending on the provided \code{\link{PeakGroupsParam}}, be
-    selected for alignment/retention time correction.
+which would, depending on the provided \code{\link{PeakGroupsParam}}, be
+selected for alignment/retention time correction.
 
 \code{minFraction},\code{minFraction<-}: getter and setter
     for the \code{minFraction} slot of the object.
@@ -171,11 +171,11 @@ The \code{PeakGroupsParam} class allows to specify all
     setter for the \code{peakGroupsMatrix} slot of the object.
 
 \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
-    performs retention time correction based on the alignment of peak groups
-    (features) found in all/most samples. The correction function identified
-    on these peak groups is applied to the retention time of all spectra in
-    the object, i.e. retention times of all spectra, also MS level > 1 are
-    adjusted.
+performs retention time correction based on the alignment of peak groups
+(features) found in all/most samples. The correction function identified
+on these peak groups is applied to the retention time of all spectra in
+the object, i.e. retention times of all spectra, also MS level > 1 are
+adjusted.
 }
 \section{Slots}{
 
@@ -198,18 +198,18 @@ These methods and classes are part of the updated and modernized
     to access the process history).
 
 \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
-    sample alignment, but after a correspondence (peak grouping).
+sample alignment, but after a correspondence (peak grouping).
 
 This method requires that a correspondence analysis has been performed
-    on the data, i.e. that grouped chromatographic peaks/features are present
-    (see \code{\link{groupChromPeaks}} for details).
+on the data, i.e. that grouped chromatographic peaks/features are present
+(see \code{\link{groupChromPeaks}} for details).
 
-    Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause all
-    peak grouping (correspondence) results and any previous retention time
-    adjustments to be dropped.
-    In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
-    re-adjusts adjusted retention times to ensure them being in the same
-    order than the raw (original) retention times.
+Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause all
+peak grouping (correspondence) results and any previous retention time
+adjustments to be dropped.
+In some instances, the \code{adjustRtime,XCMSnExp,PeakGroupsParam}
+re-adjusts adjusted retention times to ensure them being in the same
+order than the raw (original) retention times.
 }
 \examples{
 ##############################

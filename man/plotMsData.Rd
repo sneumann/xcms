@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions-utils.R
 \name{plotMsData}
 \alias{plotMsData}
-\title{Create a plot that combines a XIC and a mz/rt 2D plot for one sample}
+\title{DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample}
 \usage{
 plotMsData(x, main = "", cex = 1, mfrow = c(2, 1),
   grid.color = "lightgrey", colramp = colorRampPalette(rev(brewer.pal(9,
@@ -30,6 +30,9 @@ based on their intensity. See argument \code{col.regions} in
 \link[lattice:level.colors]{lattice::level.colors} documentation.}
 }
 \description{
+\strong{UPDATE}: please use \code{plot(x, type = "XIC")} from the \code{MSnbase} package
+instead. See examples below.
+
 The \code{plotMsData} creates a plot that combines an (base peak )
 extracted ion chromatogram on top (rt against intensity) and a plot of
 rt against m/z values at the bottom.
@@ -38,22 +41,16 @@ rt against m/z values at the bottom.
 
 ## Read two files from the faahKO package
 library(faahKO)
+library(magrittr)
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
     recursive = TRUE)[1:2]
 raw_data <- readMSData(cdfs, mode = "onDisk")
-## Extract the MS data from a slice of data
-msd <- extractMsData(raw_data, mz = c(334.9, 335.1), rt = c(2700, 2900))
 
-## Plot the data for the first file
-plotMsData(msd[[1]])
-
-## To plot the data for both files:
-layout(mat = matrix(1:4, ncol = 2))
-plotMsData(msd[[1]], mfrow = NULL)
-plotMsData(msd[[2]], mfrow = NULL)
-}
-\seealso{
-\code{\link[=extractMsData]{extractMsData()}} for the method to extract the data to plot.
+## Subset the object to a rt and mz range and plot the data.
+raw_data \%>\%
+    filterRt(rt = c(2700, 2900)) \%>\%
+    filterMz(mz = c(334.9, 335.1)) \%>\%
+    plot(type = "XIC")
 }
 \author{
 Johannes Rainer

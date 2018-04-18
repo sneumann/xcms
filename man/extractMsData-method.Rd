@@ -5,7 +5,7 @@
 \alias{extractMsData,OnDiskMSnExp-method}
 \alias{extractMsData,XCMSnExp-method}
 \alias{extractMsData}
-\title{Extract a \code{data.frame} containing MS data}
+\title{DEPRECATED: Extract a \code{data.frame} containing MS data}
 \usage{
 \S4method{extractMsData}{OnDiskMSnExp}(object, rt, mz, msLevel = 1L)
 
@@ -31,38 +31,48 @@ Defaults to adjusted retention times, if these are present in
 }
 \value{
 A \code{list} of length equal to the number of samples/files in
-    \code{object}. Each element being a \code{data.frame} with columns
-    \code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
-    intensity tuples of a file. If no data is available for the mz-rt range
-    in a file a \code{data.frame} with 0 rows is returned for that file.
+\code{object}. Each element being a \code{data.frame} with columns
+\code{"rt"}, \code{"mz"} and \code{"i"} with the retention time, mz and
+intensity tuples of a file. If no data is available for the mz-rt range
+in a file a \code{data.frame} with 0 rows is returned for that file.
 }
 \description{
+\strong{UPDATE}: the \code{extractMsData} and \code{plotMsData} functions are deprecated
+and \code{as(x, "data.frame")} and \code{plot(x, type = "XIC")} (\code{x} being an
+\code{OnDiskMSnExp} or \code{XCMSnExp} object) should be used instead. See examples
+below. Be aware that filtering the raw object might however drop the
+adjusted retention times. In such cases it is advisable to use the
+\code{\link[=applyAdjustedRtime]{applyAdjustedRtime()}} function prior to filtering.
+
 Extract a \code{data.frame} of retention time, mz and intensity
-    values from each file/sample in the provided rt-mz range (or for the full
-    data range if \code{rt} and \code{mz} are not defined).
+values from each file/sample in the provided rt-mz range (or for the full
+data range if \code{rt} and \code{mz} are not defined).
 }
 \examples{
 ## Read some files from the test data package.
 library(faahKO)
 library(xcms)
+library(magrittr)
 fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
            full.names = TRUE)
 raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
+## Extract the full data as a data.frame
+ms_all <- as(raw_data, "data.frame")
+head(ms_all)
+nrow(ms_all)
+
 ## Read the full MS data for a defined mz-rt region.
-res <- extractMsData(raw_data, mz = c(300, 320), rt = c(2700, 2900))
+res <- raw_data \%>\%
+    filterRt(rt = c(2700, 2900)) \%>\%
+    filterMz(mz = c(300, 320)) \%>\%
+    as("data.frame")
 
-## We've got one data.frame per file
-length(res)
-
-## With number of rows:
-nrow(res[[1]])
-
-head(res[[1]])
+head(res)
+nrow(res)
 }
 \seealso{
-\code{\link{XCMSnExp}} for the data object.
-    \code{\link{plotMsData}} to plot the data for a single file.
+\code{XCMSnExp} for the data object.
 }
 \author{
 Johannes Rainer
