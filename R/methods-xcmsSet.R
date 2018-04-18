@@ -1605,9 +1605,10 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
         neutralmass <- groupmat[,"mzmed"] + ifelse(metlin < 0, 1, -1)
         metlin <- abs(metlin)
         digits <- ceiling(-log10(metlin))+1
-        metlinurl <- paste("http://metlin.scripps.edu/metabo_list.php?mass_min=",
-                           round(neutralmass - metlin, digits), "&mass_max=",
-                           round(neutralmass + metlin, digits), sep="")
+        metlinurl <-
+            paste("http://metlin.scripps.edu/simple_search_result.php?mass_min=",
+                  round(neutralmass - metlin, digits), "&mass_max=",
+                  round(neutralmass + metlin, digits), sep="")
         values <- cbind(metlin = metlinurl, values)
     }
     twosamp <- cbind(name = groupnames(object), stat, groupmat, values)
