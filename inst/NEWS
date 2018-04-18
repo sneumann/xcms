@@ -1,3 +1,11 @@
+CHANGES IN VERSION 3.1.3
+-------------------------
+
+BUG FIXES:
+- Fix misplaced parenthesis in the check for multiple spectra in
+  findChromPeaks,OnDiskMSnExp,MSWParam. Thanks to @RonanDaly (PR #276).
+
+
 CHANGES IN VERSION 3.1.2
 -------------------------
 
