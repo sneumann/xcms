@@ -352,7 +352,7 @@ setMethod("findChromPeaks",
                        "peak detection")
 
               rts <- split(rtime(object_mslevel), f = fromFile(object_mslevel))
-              if (any(lengths(rts)) > 1)
+              if (any(lengths(rts) > 1))
                   stop("The MSW method can only be applied to single spectrum,",
                        " non-chromatographic, files (i.e. with a single ",
                        "retention time).")
