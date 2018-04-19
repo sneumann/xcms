@@ -30,7 +30,7 @@
   \item{expand.rt}{Expansion factor for the rentention time range used
     for integration.}
   \item{BPPARAM}{allows to define a specific parallel processing setup
-  for the current task (see \code{\link[BiocParallel]{bpparam}} from the
+  for the current task (see \code{\link{bpparam}} from the
   \code{BiocParallel} package help more information). The default uses
   the globally defined parallel setup.}
 }

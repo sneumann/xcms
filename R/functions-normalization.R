@@ -7,7 +7,7 @@
 #'     data.
 #'
 #' @details For \code{method = "lmrob"} robust regression is performed using
-#'     the \code{\link[robustbase]{lmrob}} function with settings
+#'     the \code{\link{lmrob}} function with settings
 #'     \code{settings = "KS2014"} and \code{method = "SMDB"}.
 #'     The function will perform by default parallel fitting of the models
 #'     based on the global parallel processing settings.
@@ -32,7 +32,7 @@
 #' @param method \code{character} defining the method/function to be used for
 #'     model fitting. Allowed values are \code{"lm"} for least squares
 #'     regression and \code{"lmrob"} for robust regression using the
-#'     \code{\link[robustbase]{lmrob}} function.
+#'     \code{\link{lmrob}} function.
 #'
 #' @param BPPARAM optional parameter specifying parallel processing settings.
 #'

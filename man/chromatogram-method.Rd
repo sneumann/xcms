@@ -11,7 +11,7 @@
   adjustedRtime = hasAdjustedRtime(object))
 }
 \arguments{
-\item{object}{Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
+\item{object}{Either a \code{\link{OnDiskMSnExp}} or
 \code{\link{XCMSnExp}} object from which the chromatograms should be
 extracted.}
 
@@ -48,7 +48,7 @@ depend on the architecture. Default is
 \item{adjustedRtime}{For \code{chromatogram,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-in the resulting \code{\link[MSnbase]{Chromatogram}} object. Adjusted
+in the resulting \code{\link{Chromatogram}} object. Adjusted
 retention times are used by default if available.}
 }
 \value{
@@ -60,10 +60,10 @@ number of rows of matrices provided with arguments \code{mz} and/or
 }
 \description{
 \code{chromatogram}: the method allows to extract
-chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
+chromatograms from \code{\link{OnDiskMSnExp}} and
 \code{\link{XCMSnExp}} objects. See also the
-\code{\link[MSnbase]{chromatogram}} implementation for
-\code{\link[MSnbase]{OnDiskMSnExp}} in the MSnbase package.
+\code{\link{chromatogram}} implementation for
+\code{\link{OnDiskMSnExp}} in the \code{MSnbase} package.
 }
 \details{
 Arguments \code{rt} and \code{mz} allow to specify the MS
@@ -73,7 +73,7 @@ used to aggregate the intensities across the mz range for the same
 retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
 to calculate the \emph{total ion chromatogram} (TIC),
 \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
-The length of the extracted \code{\link[MSnbase]{Chromatogram}} object,
+The length of the extracted \code{\link{Chromatogram}} object,
 i.e. the number of available data points, corresponds to the number of
 scans/spectra measured in the specified retention time range. If in a
 specific scan (for a give retention time) no signal was measured in the
@@ -82,7 +82,7 @@ retention time (see Notes for more information). This can be changed
 using the \code{missing} parameter.
 }
 \note{
-\code{\link[MSnbase]{Chromatogram}} objects extracted with
+\code{\link{Chromatogram}} objects extracted with
 \code{chromatogram}
 contain \code{NA_real_} values if, for a given retention time, no 
 signal was measured in the specified mz range. If no spectrum/scan is
@@ -139,17 +139,17 @@ plot(chrs[1, , drop = FALSE])
 }
 \seealso{
 \code{\link{XCMSnExp}} for the data object.
-    \code{\link[MSnbase]{Chromatogram}} for the object representing
+    \code{\link{Chromatogram}} for the object representing
     chromatographic data.
 
-    \code{\link[MSnbase]{Chromatograms}} for the object allowing to arrange
+    \code{\link{Chromatograms}} for the object allowing to arrange
     multiple \code{Chromatogram} objects.
 
-    \code{\link[MSnbase]{plot}} to plot a \code{Chromatogram} or
+    \code{\link{plot}} to plot a \code{Chromatogram} or
     \code{Chromatograms} objects.
 
-    \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for a method to
-    extract the MS data as \code{data.frame}.
+    \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
+    for a method to extract the MS data as \code{data.frame}.
 }
 \author{
 Johannes Rainer

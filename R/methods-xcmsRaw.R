@@ -638,8 +638,8 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #'
 #' @details This is a wrapper around the peak picker in Bioconductor's
 #'     \code{MassSpecWavelet} package calling
-#'     \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-#'     \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+#'     \code{\link{peakDetectionCWT}} and
+#'     \code{\link{tuneInPeakInfo}} functions.
 #'
 #' @inheritParams findPeaks-MSW
 #' 
@@ -669,7 +669,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #' 
 #' @seealso \code{\link{MSW}} for the new user interface,
 #'     \code{\link{do_findPeaks_MSW}} for the downstream analysis
-#'     function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+#'     function or \code{\link{peakDetectionCWT}} from the
 #'     \code{MassSpecWavelet} for details on the algorithm and additionally
 #'     supported parameters.
 #'

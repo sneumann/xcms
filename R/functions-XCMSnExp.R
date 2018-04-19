@@ -1053,8 +1053,8 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #'
 #' The \code{highlightChromPeaks} function adds chromatographic
 #' peak definitions to an existing plot, such as one created by the
-#' \code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
-#' \code{\link[MSnbase]{Chromatograms}} object.
+#' \code{plot} method on a \code{\link{Chromatogram}} or
+#' \code{\link{Chromatograms}} object.
 #'
 #' @param x For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
 #'     detected peaks.
@@ -1073,8 +1073,8 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #' @param col For \code{highlightChromPeaks}: color to be used to fill the
 #'     rectangle.
 #'
-#' @param type the plotting type. See \code{\link[graphics]{plot}} for more
-#'     details.
+#' @param type the plotting type. See \code{\link{plot}} in base grapics for
+#'     more details.
 #'     For \code{highlightChromPeaks}: \code{character(1)} defining how the peak
 #'     should be highlighted: \code{type = "rect"} draws a rectangle
 #'     representing the peak definition, \code{type = "point"} indicates a

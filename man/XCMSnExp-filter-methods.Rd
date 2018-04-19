@@ -53,7 +53,7 @@ For \code{[[}: a single integer or character.}
 
 \item{msLevel.}{For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
 defining the MS level(s) to which operations should be applied or to
-which the object should be subsetted. See \code{\link[MSnbase]{filterMz}}
+which the object should be subsetted. See \code{\link{filterMz}}
 for more details}
 
 \item{keepAdjustedRtime}{For \code{filterFile}, \code{filterMsLevel},
@@ -97,13 +97,13 @@ object by spectra. Be aware that the \code{[} method removes all
 preprocessing results, except adjusted retention times if
 \code{keepAdjustedRtime = TRUE} is passed to the method.
 
-\code{[[} extracts a single \code{\link[MSnbase]{Spectrum}}
+\code{[[} extracts a single \code{\link{Spectrum}}
 object from an \code{XCMSnExp}. The reported retention time is the
 adjusted retention time if alignment has been performed on \code{x}.
 
 \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
 object to spectra of the specified MS level(s). See
-\code{\link[MSnbase]{filterMsLevel}} documentation for details and
+\code{\link{filterMsLevel}} documentation for details and
 examples. Presently, if \code{msLevel.} is provided, the function
 removes identified chromatographic peaks and correspondence results
 while keeping adjusted retention times by default (if present). The
@@ -111,7 +111,7 @@ latter can be changed setting \code{keepAdjustedRtime = FALSE}.
 
 The methods listed on this page allow to filter and subset
 \code{\link{XCMSnExp}} objects. Most of them are inherited from the
-\code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
+\code{\link{OnDiskMSnExp}} object and have been adapted for
 \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
 results.
 

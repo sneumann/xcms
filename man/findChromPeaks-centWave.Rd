@@ -187,7 +187,7 @@ defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
 \item{object}{For \code{findChromPeaks}: an
-    \code{\link[MSnbase]{OnDiskMSnExp}}  object containing the MS- and all
+    \code{\link{OnDiskMSnExp}}  object containing the MS- and all
     other experiment-relevant data.
 
     For all other methods: a parameter object.}
@@ -196,7 +196,7 @@ should be used for the centWave-wavelets.}
 centWave algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
+should be performed. It defaults to \code{\link{bpparam}}.
 See documentation of the \code{BiocParallel} for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
@@ -235,8 +235,8 @@ The \code{CentWaveParam} class allows to specify all settings
 
 The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
     performs chromatographic peak detection using the \emph{centWave}
-    algorithm on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}}
-    object. \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all
+    algorithm on all samples from an \code{\link{OnDiskMSnExp}}
+    object. \code{\link{OnDiskMSnExp}} objects encapsule all
     experiment specific data and load the spectra data (mz and intensity
     values) on the fly from the original files applying also all eventual
     data manipulations.
@@ -294,7 +294,7 @@ The centWave algorithm is most suitable for high resolution
 Parallel processing (one process per sample) is supported and can
     be configured either by the \code{BPPARAM} parameter or by globally
     defining the parallel processing mode using the
-    \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+    \code{\link{register}} method from the \code{BiocParallel}
     package.
 }
 \section{Slots}{
@@ -309,7 +309,7 @@ the version from the class. Slots values should exclusively be accessed
 These methods and classes are part of the updated and modernized
     \code{xcms} user interface which will eventually replace the
     \code{\link{findPeaks}} methods. It supports peak detection on
-    \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+    \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
     objects (both defined in the \code{MSnbase} package). All of the settings
     to the centWave algorithm can be passed with a \code{CentWaveParam}
     object.

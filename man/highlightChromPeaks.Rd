@@ -26,8 +26,8 @@ be equal to the number of samples in \code{x}.}
 \item{col}{For \code{highlightChromPeaks}: color to be used to fill the
 rectangle.}
 
-\item{type}{the plotting type. See \code{\link[graphics]{plot}} for more
-details.
+\item{type}{the plotting type. See \code{\link{plot}} in base grapics for
+more details.
 For \code{highlightChromPeaks}: \code{character(1)} defining how the peak
 should be highlighted: \code{type = "rect"} draws a rectangle
 representing the peak definition, \code{type = "point"} indicates a
@@ -40,8 +40,8 @@ function.}
 \description{
 The \code{highlightChromPeaks} function adds chromatographic
 peak definitions to an existing plot, such as one created by the
-\code{plot} method on a \code{\link[MSnbase]{Chromatogram}} or
-\code{\link[MSnbase]{Chromatograms}} object.
+\code{plot} method on a \code{\link{Chromatogram}} or
+\code{\link{Chromatograms}} object.
 }
 \examples{
 

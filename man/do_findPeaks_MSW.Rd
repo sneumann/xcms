@@ -20,7 +20,7 @@ scans/spectra of one file/sample.}
 columns should be returned.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link[MassSpecWavelet]{peakDetectionCWT}} function.}
+\code{\link{peakDetectionCWT}} function.}
 }
 \value{
 A matrix, each row representing an identified peak, with columns:
@@ -45,13 +45,13 @@ This function performs peak detection in mass spectrometry
 \details{
 This is a wrapper around the peak picker in Bioconductor's
     \code{MassSpecWavelet} package calling
-    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+    \code{\link{peakDetectionCWT}} and
+    \code{\link{tuneInPeakInfo}} functions. See the
     \emph{xcmsDirect} vignette for more information.
 }
 \seealso{
 \code{\link{MSW}} for the standard user interface
-    method. \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+    method. \code{\link{peakDetectionCWT}} from the
     \code{MassSpecWavelet} package.
 
 Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},

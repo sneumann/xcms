@@ -10,8 +10,8 @@
 #'
 #' @description The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
 #'     performs chromatographic peak detection using the \emph{centWave}
-#'     algorithm on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}}
-#'     object. \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all
+#'     algorithm on all samples from an \code{\link{OnDiskMSnExp}}
+#'     object. \code{\link{OnDiskMSnExp}} objects encapsule all
 #'     experiment specific data and load the spectra data (mz and intensity
 #'     values) on the fly from the original files applying also all eventual
 #'     data manipulations.
@@ -19,11 +19,11 @@
 #' @details Parallel processing (one process per sample) is supported and can
 #'     be configured either by the \code{BPPARAM} parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+#'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
 #'
 #' @param object For \code{findChromPeaks}: an
-#'     \code{\link[MSnbase]{OnDiskMSnExp}}  object containing the MS- and all
+#'     \code{\link{OnDiskMSnExp}}  object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
@@ -32,7 +32,7 @@
 #'     centWave algorithm.
 #'
 #' @param BPPARAM A parameter class specifying if and how parallel processing
-#'     should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
+#'     should be performed. It defaults to \code{\link{bpparam}}.
 #'     See documentation of the \code{BiocParallel} for more details. If
 #'     parallel processing is enabled, peak detection is performed in parallel
 #'     on several of the input samples.
@@ -118,8 +118,8 @@ setMethod("findChromPeaks",
 #'
 #' @description The \code{findChromPeaks,OnDiskMSnExp,MatchedFilterParam}
 #'     method performs peak detection using the \emph{matchedFilter} algorithm
-#'     on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+#'     on all samples from an \code{\link{OnDiskMSnExp}} object.
+#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
@@ -127,11 +127,11 @@ setMethod("findChromPeaks",
 #' @details Parallel processing (one process per sample) is supported and can
 #'     be configured either by the \code{BPPARAM} parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+#'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
 #' 
 #' @param object For \code{findChromPeaks}: an
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
@@ -220,8 +220,8 @@ setMethod("findChromPeaks",
 #' @description The \code{findChromPeaks,OnDiskMSnExp,MassifquantParam}
 #'     method performs chromatographic peak detection using the
 #'     \emph{massifquant} algorithm on all samples from an
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} object.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+#'     \code{\link{OnDiskMSnExp}} object.
+#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
@@ -229,11 +229,11 @@ setMethod("findChromPeaks",
 #' @details Parallel processing (one process per sample) is supported and can
 #'     be configured either by the \code{BPPARAM} parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+#'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
 #'
 #' @param object For \code{findChromPeaks}: an
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
@@ -301,8 +301,8 @@ setMethod("findChromPeaks",
 #' @description The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
 #'     method performs peak detection in single-spectrum non-chromatography MS
 #'     data using functionality from the \code{MassSpecWavelet} package on all
-#'     samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+#'     samples from an \code{\link{OnDiskMSnExp}} object.
+#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
@@ -310,11 +310,11 @@ setMethod("findChromPeaks",
 #' @details Parallel processing (one process per sample) is supported and can
 #'     be configured either by the \code{BPPARAM} parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+#'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
 #'
 #' @param object For \code{findChromPeaks}: an
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+#'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
 #'     other experiment-relevant data.
 #'
 #'     For all other methods: a parameter object.
@@ -385,8 +385,8 @@ setMethod("findChromPeaks",
 #'
 #' @description The \code{findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam}
 #'     method performs a two-step centWave-based chromatographic peak detection
-#'     on all samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+#'     on all samples from an \code{\link{OnDiskMSnExp}} object.
+#'     \code{\link{OnDiskMSnExp}} objects encapsule all experiment
 #'     specific data and load the spectra data (mz and intensity values) on the
 #'     fly from the original files applying also all eventual data
 #'     manipulations.
@@ -394,7 +394,7 @@ setMethod("findChromPeaks",
 #' @details Parallel processing (one process per sample) is supported and can
 #'     be configured either by the \code{BPPARAM} parameter or by globally
 #'     defining the parallel processing mode using the
-#'     \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+#'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
 #'
 #' @param param An \code{CentWavePredIsoParam} object with the settings for the

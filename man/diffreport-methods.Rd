@@ -70,7 +70,7 @@
     Number of decimal places of title m/z values in the eic plot.
   }
   \item{...}{
-    optional arguments to be passed to \code{\link[multtest]{mt.teststat}}
+    optional arguments to be passed to \code{\link{mt.teststat}}
   }
 }
 \details{
@@ -141,8 +141,8 @@
 }
 \seealso{
   \code{\link{xcmsSet-class}},
-  \code{\link[multtest]{mt.teststat}},
-  \code{\link[grDevices]{palette}}
+  \code{\link{mt.teststat}},
+  \code{\link{palette}}
 }
 \keyword{methods}
 \keyword{file}

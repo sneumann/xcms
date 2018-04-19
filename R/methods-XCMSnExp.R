@@ -470,7 +470,7 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
 #' @description
 #'
 #' \code{spectra}: extracts the
-#' \code{\link[MSnbase]{Spectrum}} objects containing all data from
+#' \code{\link{Spectrum}} objects containing all data from
 #' \code{object}. The values are extracted from the original data files and
 #' eventual processing steps are applied \emph{on the fly}. By setting
 #' \code{bySample = TRUE}, the spectra are returned grouped by sample/file.
@@ -479,12 +479,12 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
 #' overwritten by setting \code{adjusted = FALSE}).
 #'
 #' @param BPPARAM Parameter class for parallel processing. See
-#'     \code{\link[BiocParallel]{bpparam}}.
+#'     \code{\link{bpparam}}.
 #' 
 #' @return
 #'
 #' For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
-#' \code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the
+#' \code{\link{Spectrum}} objects. If \code{bySample = TRUE} the
 #' result is grouped by sample, i.e. as a \code{list} of \code{lists}, each
 #' element in the \emph{outer} \code{list} being the \code{list} of spectra
 #' of the specific file.
@@ -846,7 +846,7 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
 
 #' @description
 #'
-#' \code{[[} extracts a single \code{\link[MSnbase]{Spectrum}}
+#' \code{[[} extracts a single \code{\link{Spectrum}}
 #' object from an \code{XCMSnExp}. The reported retention time is the
 #' adjusted retention time if alignment has been performed on \code{x}.
 #' 
@@ -866,19 +866,20 @@ setMethod("[[", "XCMSnExp",
 #'
 #' The methods listed on this page are \code{\link{XCMSnExp}}
 #' methods inherited from its parent, the
-#' \code{\link[MSnbase]{OnDiskMSnExp}} class from the \code{MSnbase}
+#' \code{\link{OnDiskMSnExp}} class from the \code{MSnbase}
 #' package, that alter the raw data or are related to data subsetting. Thus
 #' calling any of these methods causes all \code{xcms} pre-processing
 #' results to be removed from the \code{\link{XCMSnExp}} object to ensure
 #' its data integrity.
 #'
 #' \code{bin}: allows to \emph{bin} spectra. See
-#' \code{\link[MSnbase]{bin}} documentation for more details and examples.
+#' \code{\link{bin}} documentation in the \code{MSnbase} package for more
+#' details and examples.
 #'
-#' @param x \code{\link{XCMSnExp}} or \code{\link[MSnbase]{OnDiskMSnExp}}
+#' @param x \code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
 #'     object.
 #' 
-#' @param object \code{\link{XCMSnExp}} or \code{\link[MSnbase]{OnDiskMSnExp}}
+#' @param object \code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
 #'     object.
 #'
 #' @param binSize \code{numeric(1)} defining the size of a bin (in Dalton).
@@ -895,7 +896,7 @@ setMethod("[[", "XCMSnExp",
 #' @seealso \code{\link{XCMSnExp-filter}} for methods to filter and subset
 #'     \code{XCMSnExp} objects.
 #'     \code{\link{XCMSnExp}} for base class documentation.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} for the documentation of the
+#'     \code{\link{OnDiskMSnExp}} for the documentation of the
 #'     parent class.
 #'
 #' @author Johannes Rainer
@@ -915,8 +916,8 @@ setMethod("bin", "XCMSnExp", function(object, binSize = 1L, msLevel.) {
 #' @description
 #'
 #' \code{clean}: removes unused \code{0} intensity data
-#' points. See \code{\link[MSnbase]{clean}} documentation for details and
-#' examples.
+#' points. See \code{\link{clean}} documentation in the \code{MSnbase} package
+#' for details and examples.
 #'
 #' @param all For \code{clean}: \code{logical(1)}, if \code{TRUE} all zeros are
 #'     removed.
@@ -943,7 +944,7 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
 #'
 #' \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
 #' object to spectra of the specified MS level(s). See
-#' \code{\link[MSnbase]{filterMsLevel}} documentation for details and
+#' \code{\link{filterMsLevel}} documentation for details and
 #' examples. Presently, if \code{msLevel.} is provided, the function
 #' removes identified chromatographic peaks and correspondence results
 #' while keeping adjusted retention times by default (if present). The
@@ -1013,7 +1014,7 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
 
 #' @description \code{filterAcquisitionNum}: filters the
 #' \code{\link{XCMSnExp}} object keeping only spectra with the provided
-#' acquisition numbers. See \code{\link[MSnbase]{filterAcquisitionNum}} for
+#' acquisition numbers. See \code{\link{filterAcquisitionNum}} for
 #' details and examples.
 #'
 #' @param n For \code{filterAcquisitionNum}: \code{integer} defining the
@@ -1046,7 +1047,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'
 #' The methods listed on this page allow to filter and subset
 #' \code{\link{XCMSnExp}} objects. Most of them are inherited from the
-#' \code{\link[MSnbase]{OnDiskMSnExp}} object and have been adapted for
+#' \code{\link{OnDiskMSnExp}} object and have been adapted for
 #' \code{\link{XCMSnExp}} to enable subsetting also on the preprocessing
 #' results.
 #'
@@ -1241,7 +1242,7 @@ setMethod("filterFile", "XCMSnExp", function(object, file,
 #'
 #' @param msLevel. For \code{filterMz}, \code{filterRt}, \code{numeric(1)}
 #'     defining the MS level(s) to which operations should be applied or to
-#'     which the object should be subsetted. See \code{\link[MSnbase]{filterMz}}
+#'     which the object should be subsetted. See \code{\link{filterMz}}
 #'     for more details
 #'
 #' @param ... Optional additional arguments.
@@ -1381,15 +1382,17 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
 #' @description
 #'
 #' The \code{normalize} method performs basic normalization of
-#' spectra intensities. See \code{\link[MSnbase]{normalize}} documentation
-#' for details and examples.
+#' spectra intensities. See \code{\link{normalize}} documentation
+#' in the \code{MSnbase} package for details and examples.
 #'
 #' @param method For \code{normalize}: \code{character(1)} specifying the
-#'     normalization method. See \code{\link[MSnbase]{normalize}} for details.
+#'     normalization method. See \code{\link{normalize}} in the \code{MSnbase}
+#'     package for details.
 #'     For \code{pickPeaks}: \code{character(1)} defining the method. See
-#'     \code{\link[MSnbase]{pickPeaks}} for options. For \code{smooth}:
+#'     \code{\link{pickPeaks}} for options. For \code{smooth}:
 #'     \code{character(1)} defining the method. See
-#'     \code{\link[MSnbase]{smooth}} for options and details.
+#'     \code{\link{smooth}} in the \code{MSnbase} package for options and
+#'     details.
 #'
 #' @rdname XCMSnExp-inherited-methods
 setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
@@ -1409,15 +1412,15 @@ setMethod("normalize", "XCMSnExp", function(object, method = c("max", "sum"),
 #' @description
 #'
 #' The \code{pickPeaks} method performs peak picking. See
-#' \code{\link[MSnbase]{pickPeaks}} documentation for details and examples.
+#' \code{\link{pickPeaks}} documentation for details and examples.
 #'
 #' @param halfWindowSize For \code{pickPeaks} and \code{smooth}:
 #'     \code{integer(1)} defining the window size for the peak picking. See
-#'     \code{\link[MSnbase]{pickPeaks}} and \code{\link[MSnbase]{smooth}} for
-#'     details and options.
+#'     \code{\link{pickPeaks}} and \code{\link{smooth}} in the \code{MSnbase}
+#'     package for details and options.
 #'
 #' @param SNR For \code{pickPeaks}: \code{numeric(1)} defining the signal to
-#'     noise ratio to be considered. See \code{\link[MSnbase]{pickPeaks}}
+#'     noise ratio to be considered. See \code{\link{pickPeaks}}
 #'     documentation for details.
 #'
 #' @param ... Optional additional arguments.
@@ -1444,12 +1447,12 @@ setMethod("pickPeaks", "XCMSnExp", function(object, halfWindowSize = 3L,
 #' lower than a threshold. Note that these peaks refer to \emph{mass}
 #' peaks, which are different to the chromatographic peaks detected and
 #' analyzed in a metabolomics experiment! See
-#' \code{\link[MSnbase]{removePeaks}} documentation for details and
+#' \code{\link{removePeaks}} documentation for details and
 #' examples.
 #'
 #' @param t For \code{removePeaks}: either a \code{numeric(1)} or \code{"min"}
 #'     defining the threshold (method) to be used. See
-#'     \code{\link[MSnbase]{removePeaks}} for details.
+#'     \code{\link{removePeaks}} for details.
 #'
 #' @rdname XCMSnExp-inherited-methods
 setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE,
@@ -1469,7 +1472,8 @@ setMethod("removePeaks", "XCMSnExp", function(object, t = "min", verbose = FALSE
 #' @description
 #'
 #' The \code{smooth} method smooths spectra. See
-#' \code{\link[MSnbase]{smooth}} documentation for details and examples.
+#' \code{\link{smooth}} documentation in \code{MSnbase} for details and
+#' examples.
 #'
 #' @rdname XCMSnExp-inherited-methods
 setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
@@ -2088,10 +2092,10 @@ setMethod("featureValues",
 #' @description
 #'
 #' \code{chromatogram}: the method allows to extract
-#' chromatograms from \code{\link[MSnbase]{OnDiskMSnExp}} and
+#' chromatograms from \code{\link{OnDiskMSnExp}} and
 #' \code{\link{XCMSnExp}} objects. See also the
-#' \code{\link[MSnbase]{chromatogram}} implementation for
-#' \code{\link[MSnbase]{OnDiskMSnExp}} in the MSnbase package.
+#' \code{\link{chromatogram}} implementation for
+#' \code{\link{OnDiskMSnExp}} in the \code{MSnbase} package.
 #'
 #' @details
 #'
@@ -2102,7 +2106,7 @@ setMethod("featureValues",
 #' retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
 #' to calculate the \emph{total ion chromatogram} (TIC),
 #' \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
-#' The length of the extracted \code{\link[MSnbase]{Chromatogram}} object,
+#' The length of the extracted \code{\link{Chromatogram}} object,
 #' i.e. the number of available data points, corresponds to the number of
 #' scans/spectra measured in the specified retention time range. If in a
 #' specific scan (for a give retention time) no signal was measured in the
@@ -2112,7 +2116,7 @@ setMethod("featureValues",
 #'
 #' @note
 #'
-#' \code{\link[MSnbase]{Chromatogram}} objects extracted with
+#' \code{\link{Chromatogram}} objects extracted with
 #' \code{chromatogram}
 #' contain \code{NA_real_} values if, for a given retention time, no 
 #' signal was measured in the specified mz range. If no spectrum/scan is
@@ -2125,7 +2129,7 @@ setMethod("featureValues",
 #' \code{rt}). This can be overwritten with the parameter
 #' \code{adjustedRtime}.
 #' 
-#' @param object Either a \code{\link[MSnbase]{OnDiskMSnExp}} or
+#' @param object Either a \code{\link{OnDiskMSnExp}} or
 #'     \code{\link{XCMSnExp}} object from which the chromatograms should be
 #'     extracted.
 #'
@@ -2144,7 +2148,7 @@ setMethod("featureValues",
 #' @param adjustedRtime For \code{chromatogram,XCMSnExp}: whether the
 #'     adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 #'     (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-#'     in the resulting \code{\link[MSnbase]{Chromatogram}} object. Adjusted
+#'     in the resulting \code{\link{Chromatogram}} object. Adjusted
 #'     retention times are used by default if available.
 #'
 #' @param aggregationFun \code{character} specifying the function to be used to
@@ -2176,17 +2180,17 @@ setMethod("featureValues",
 #' @author Johannes Rainer
 #'
 #' @seealso \code{\link{XCMSnExp}} for the data object.
-#'     \code{\link[MSnbase]{Chromatogram}} for the object representing
+#'     \code{\link{Chromatogram}} for the object representing
 #'     chromatographic data.
 #'
-#'     \code{\link[MSnbase]{Chromatograms}} for the object allowing to arrange
+#'     \code{\link{Chromatograms}} for the object allowing to arrange
 #'     multiple \code{Chromatogram} objects.
 #'
-#'     \code{\link[MSnbase]{plot}} to plot a \code{Chromatogram} or
+#'     \code{\link{plot}} to plot a \code{Chromatogram} or
 #'     \code{Chromatograms} objects.
 #'
-#'     \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for a method to
-#'     extract the MS data as \code{data.frame}.
+#'     \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
+#'     for a method to extract the MS data as \code{data.frame}.
 #'
 #' @export
 #' 
