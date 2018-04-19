@@ -41,9 +41,9 @@ xcmsSet(files = NULL, snames = NULL, sclass = NULL, phenoData = NULL,
   \item{scanrange}{scan range to read}
   \item{BPPARAM}{a \code{BiocParallel} parameter object to control how
     and if parallel processing should be performed. Such objects can be
-    created by the \code{\link[BiocParallel]{SerialParam}},
-    \code{\link[BiocParallel]{MulticoreParam}} or
-    \code{\link[BiocParallel]{SnowParam}} functions.
+    created by the \code{\link{SerialParam}},
+    \code{\link{MulticoreParam}} or
+    \code{\link{SnowParam}} functions.
   }
   \item{stopOnError}{Logical specifying whether the feature detection
     call should stop on the first encountered error (the default), or

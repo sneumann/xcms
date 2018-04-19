@@ -19,8 +19,8 @@ detection should be performed.}
 should be returned.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
-\code{\link[MassSpecWavelet]{sav.gol}} functions from the
+\code{\link{identifyMajorPeaks}} and
+\code{\link{sav.gol}} functions from the
 \code{MassSpecWavelet} package.}
 }
 \value{
@@ -46,13 +46,13 @@ This method performs peak detection in mass spectrometry
 \details{
 This is a wrapper around the peak picker in Bioconductor's
     \code{MassSpecWavelet} package calling
-    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions.
+    \code{\link{peakDetectionCWT}} and
+    \code{\link{tuneInPeakInfo}} functions.
 }
 \seealso{
 \code{\link{MSW}} for the new user interface,
     \code{\link{do_findPeaks_MSW}} for the downstream analysis
-    function or \code{\link[MassSpecWavelet]{peakDetectionCWT}} from the
+    function or \code{\link{peakDetectionCWT}} from the
     \code{MassSpecWavelet} for details on the algorithm and additionally
     supported parameters.
 }

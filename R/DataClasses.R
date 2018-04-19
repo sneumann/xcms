@@ -490,7 +490,7 @@ NULL
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports peak detection on
-#'     \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+#'     \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
 #'     objects (both defined in the \code{MSnbase} package). All of the settings
 #'     to the centWave algorithm can be passed with a \code{CentWaveParam}
 #'     object.
@@ -702,8 +702,8 @@ setClass("CentWaveParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link[MSnbase]{MSnExp}} and
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects (both defined in the
+#'     detection on \code{\link{MSnExp}} and
+#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
 #'     \code{MSnbase} package). All of the settings to the matchedFilter
 #'     algorithm can be passed with a \code{MatchedFilterParam} object.
 #'
@@ -917,8 +917,8 @@ setClass("MatchedFilterParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link[MSnbase]{MSnExp}} and
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects (both defined in the
+#'     detection on \code{\link{MSnExp}} and
+#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
 #'     \code{MSnbase} package). All of the settings to the massifquant and
 #'     centWave algorithm can be passed with a \code{MassifquantParam} object.
 #'
@@ -1077,14 +1077,14 @@ setClass("MassifquantParam",
 #'
 #' @details This is a wrapper for the peak picker in Bioconductor's
 #'     \code{MassSpecWavelet} package calling
-#'     \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-#'     \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+#'     \code{\link{peakDetectionCWT}} and
+#'     \code{\link{tuneInPeakInfo}} functions. See the
 #'     \emph{xcmsDirect} vignette for more information.
 #'
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports peak detection on
-#'     \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+#'     \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
 #'     objects (both defined in the \code{MSnbase} package). All of the settings
 #'     to the algorithm can be passed with a \code{MSWParam} object.
 #'
@@ -1233,8 +1233,8 @@ setClass("MSWParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link[MSnbase]{MSnExp}} and
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} objects (both defined in the
+#'     detection on \code{\link{MSnExp}} and
+#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
 #'     \code{MSnbase} package). All of the settings to the algorithm can be
 #'     passed with a \code{CentWavePredIsoParam} object.
 #'
@@ -2228,7 +2228,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     can be extracted with the \code{\link{processHistory}} method.
 #'
 #'     The \code{XCMSnExp} object directly extends the
-#'     \code{\link[MSnbase]{OnDiskMSnExp}} object and provides thus an easy
+#'     \code{\link{OnDiskMSnExp}} object and provides thus an easy
 #'     access to the full raw data at any stage of an analysis.
 #'
 #'     Objects from this class should not be created directly, they are
@@ -2273,8 +2273,8 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' @author Johannes Rainer
 #'
 #' @seealso \code{\linkS4class{xcmsSet}} for the old implementation.
-#'     \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
-#'     and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+#'     \code{\link{OnDiskMSnExp}}, \code{\link{MSnExp}}
+#'     and \code{\link{pSet}} for a complete list of inherited methods.
 #'
 #'     \code{\link{findChromPeaks}} for available peak detection methods
 #'     returning a \code{XCMSnExp} object as a result.
@@ -2284,11 +2284,11 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     the feature definitions representing the peak grouping results.
 #'     \code{\link{adjustRtime}} for retention time adjustment methods.
 #'
-#'     \code{\link[MSnbase]{chromatogram}} to extract MS data as
-#'     \code{\link[MSnbase]{Chromatogram}} objects.
+#'     \code{\link{chromatogram}} to extract MS data as
+#'     \code{\link{Chromatogram}} objects.
 #' 
-#'     \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for the method to
-#'     extract MS data as \code{data.frame}s.
+#'     \code{\link{as}} (\code{as(x, "data.frame")}) in the \code{MSnbase}
+#'     package for the method to extract MS data as \code{data.frame}s.
 #' 
 #' @rdname XCMSnExp-class
 #'

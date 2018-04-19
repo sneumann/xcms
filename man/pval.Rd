@@ -18,7 +18,7 @@ pval(X, classlabel, teststat)
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \seealso{
-  \code{\link[multtest]{mt.teststat}}
+  \code{\link{mt.teststat}}
 }
 \keyword{univar}
 \keyword{internal}

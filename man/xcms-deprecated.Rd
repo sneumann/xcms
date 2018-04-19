@@ -17,7 +17,7 @@
 
   \itemize{
     \item{\code{xcmsPapply}: this function is no longer available and the use
-      of \code{\link[BiocParallel]{bplapply}} is suggested.}
+      of \code{\link{bplapply}} is suggested.}
 
     \item{\code{profBin}, \code{profBinM}, \code{profBinLin},
       \code{profBinLinM}, \code{profBinLinBase}, \code{profBinLinBaseM}
@@ -27,8 +27,8 @@
     \item{\code{extractChromatograms}}: replaced by \code{\link{chromatogram}}.
 
     \item{\code{plotChromatogram}}: replaced by \code{plot} method for
-    \code{\link[MSnbase]{Chromatogram}} or
-    \code{\link[MSnbase]{Chromatograms}} objects.
+    \code{\link{Chromatogram}} or
+    \code{\link{Chromatograms}} objects.
 
     \item{\code{extractMsData}}: replaced by \code{as(x, "data.frame")}.
 

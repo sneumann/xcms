@@ -28,6 +28,7 @@ Imports:
     S4Vectors
 Suggests:
     BiocStyle,
+    caTools,
     knitr (>= 1.1.0),
     faahKO,
     msdata,

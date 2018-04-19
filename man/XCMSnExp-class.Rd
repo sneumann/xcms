@@ -199,7 +199,7 @@ completely within the range(s) are returned.}
 retention times reported in the files) should be returned.}
 
 \item{BPPARAM}{Parameter class for parallel processing. See
-\code{\link[BiocParallel]{bpparam}}.}
+\code{\link{bpparam}}.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level on which the peak
 detection should be performed. Defaults to \code{msLevel = 1}.}
@@ -287,7 +287,7 @@ the intensity values (numeric vectors) of each scan. If
 sample.
 
 For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
-\code{\link[MSnbase]{Spectrum}} objects. If \code{bySample = TRUE} the
+\code{\link{Spectrum}} objects. If \code{bySample = TRUE} the
 result is grouped by sample, i.e. as a \code{list} of \code{lists}, each
 element in the \emph{outer} \code{list} being the \code{list} of spectra
 of the specific file.
@@ -311,7 +311,7 @@ The \code{XCMSnExp} object is designed to contain all results
     can be extracted with the \code{\link{processHistory}} method.
 
     The \code{XCMSnExp} object directly extends the
-    \code{\link[MSnbase]{OnDiskMSnExp}} object and provides thus an easy
+    \code{\link{OnDiskMSnExp}} object and provides thus an easy
     access to the full raw data at any stage of an analysis.
 
     Objects from this class should not be created directly, they are
@@ -394,7 +394,7 @@ possible to switch from the default grouping of intensity values by
 spectrum/scan to a grouping by sample/file.
 
 \code{spectra}: extracts the
-\code{\link[MSnbase]{Spectrum}} objects containing all data from
+\code{\link{Spectrum}} objects containing all data from
 \code{object}. The values are extracted from the original data files and
 eventual processing steps are applied \emph{on the fly}. By setting
 \code{bySample = TRUE}, the spectra are returned grouped by sample/file.
@@ -553,8 +553,8 @@ head(peaks(xs))
 }
 \seealso{
 \code{\linkS4class{xcmsSet}} for the old implementation.
-    \code{\link[MSnbase]{OnDiskMSnExp}}, \code{\link[MSnbase]{MSnExp}}
-    and \code{\link[MSnbase]{pSet}} for a complete list of inherited methods.
+    \code{\link{OnDiskMSnExp}}, \code{\link{MSnExp}}
+    and \code{\link{pSet}} for a complete list of inherited methods.
 
     \code{\link{findChromPeaks}} for available peak detection methods
     returning a \code{XCMSnExp} object as a result.
@@ -564,11 +564,11 @@ head(peaks(xs))
     the feature definitions representing the peak grouping results.
     \code{\link{adjustRtime}} for retention time adjustment methods.
 
-    \code{\link[MSnbase]{chromatogram}} to extract MS data as
-    \code{\link[MSnbase]{Chromatogram}} objects.
+    \code{\link{chromatogram}} to extract MS data as
+    \code{\link{Chromatogram}} objects.
 
-    \code{\link[MSnbase]{as}} (\code{as(x, "data.frame")}) for the method to
-    extract MS data as \code{data.frame}s.
+    \code{\link{as}} (\code{as(x, "data.frame")}) in the \code{MSnbase}
+    package for the method to extract MS data as \code{data.frame}s.
 
 \code{\link{fillChromPeaks}} for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.

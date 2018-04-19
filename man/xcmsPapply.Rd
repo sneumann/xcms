@@ -2,7 +2,7 @@
 \alias{xcmsPapply}
 \title{\emph{Deprecated}: xcmsPapply }
 \description{
-  This function is deprecated, use \code{\link[BiocParallel]{bplapply}}
+  This function is deprecated, use \code{\link{bplapply}}
   instead.
 
   An apply-like function which uses Rmpi to distribute

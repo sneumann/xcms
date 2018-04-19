@@ -131,19 +131,19 @@ of the peak in 2-D CWT coefficient matrix.}
 
 \item{peakThr}{numeric(1) with the minimum absolute intensity
 (above baseline) of peaks to be picked. If provided, the smoothing
-function \code{\link[MassSpecWavelet]{sav.gol}} function is called to
-estimate the local intensity.}
+function \code{\link{sav.gol}} function (in the \code{MassSpecWavelet})
+package is called to estimate the local intensity.}
 
 \item{tuneIn}{logical(1) whther to tune in the parameter
 estimation of the detected peaks.}
 
 \item{...}{Additional parameters to be passed to the
-\code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
-\code{\link[MassSpecWavelet]{sav.gol}} functions from the
+\code{\link{identifyMajorPeaks}} and
+\code{\link{sav.gol}} functions from the
 \code{MassSpecWavelet} package.}
 
 \item{object}{For \code{findChromPeaks}: an
-    \code{\link[MSnbase]{OnDiskMSnExp}} object containing the MS- and all
+    \code{\link{OnDiskMSnExp}} object containing the MS- and all
     other experiment-relevant data.
 
     For all other methods: a parameter object.}
@@ -152,7 +152,7 @@ estimation of the detected peaks.}
 the algorithm.}
 
 \item{BPPARAM}{A parameter class specifying if and how parallel processing
-should be performed. It defaults to \code{\link[BiocParallel]{bpparam}}.
+should be performed. It defaults to \code{\link{bpparam}}.
 See documentation of the \code{BiocParallel} for more details. If
 parallel processing is enabled, peak detection is performed in parallel
 on several of the input samples.}
@@ -189,8 +189,8 @@ The \code{MSWParam} class allows to specify all
 The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
     method performs peak detection in single-spectrum non-chromatography MS
     data using functionality from the \code{MassSpecWavelet} package on all
-    samples from an \code{\link[MSnbase]{OnDiskMSnExp}} object.
-    \code{\link[MSnbase]{OnDiskMSnExp}} objects encapsule all experiment
+    samples from an \code{\link{OnDiskMSnExp}} object.
+    \code{\link{OnDiskMSnExp}} objects encapsule all experiment
     specific data and load the spectra data (mz and intensity values) on the
     fly from the original files applying also all eventual data
     manipulations.
@@ -228,21 +228,21 @@ The \code{findChromPeaks,OnDiskMSnExp,MSWParam}
 \code{addParams},\code{addParams<-}: getter and setter for the
     \code{addParams} slot of the object. This slot stores optional additional
     parameters to be passed to the
-    \code{\link[MassSpecWavelet]{identifyMajorPeaks}} and
-    \code{\link[MassSpecWavelet]{sav.gol}} functions from the
+    \code{\link{identifyMajorPeaks}} and
+    \code{\link{sav.gol}} functions from the
     \code{MassSpecWavelet} package.
 }
 \details{
 This is a wrapper for the peak picker in Bioconductor's
     \code{MassSpecWavelet} package calling
-    \code{\link[MassSpecWavelet]{peakDetectionCWT}} and
-    \code{\link[MassSpecWavelet]{tuneInPeakInfo}} functions. See the
+    \code{\link{peakDetectionCWT}} and
+    \code{\link{tuneInPeakInfo}} functions. See the
     \emph{xcmsDirect} vignette for more information.
 
 Parallel processing (one process per sample) is supported and can
     be configured either by the \code{BPPARAM} parameter or by globally
     defining the parallel processing mode using the
-    \code{\link[BiocParallel]{register}} method from the \code{BiocParallel}
+    \code{\link{register}} method from the \code{BiocParallel}
     package.
 }
 \section{Slots}{
@@ -257,7 +257,7 @@ setter methods listed above.}
 These methods and classes are part of the updated and modernized
     \code{xcms} user interface which will eventually replace the
     \code{\link{findPeaks}} methods. It supports peak detection on
-    \code{\link[MSnbase]{MSnExp}} and \code{\link[MSnbase]{OnDiskMSnExp}}
+    \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
     objects (both defined in the \code{MSnbase} package). All of the settings
     to the algorithm can be passed with a \code{MSWParam} object.
 }
