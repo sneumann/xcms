@@ -5,7 +5,7 @@
 ## Validation through Validator by Nils Hoffmann
 ## https://github.com/nilshoffmann/jmzTab-m/
 ##
-## java -jar  /home/sneumann/src/jmzTab-m/cli/target/jmztabm-cli-1.0.0-SNAPSHOT.jar -check inFile=faahKO.mzTab -level Warn
+## java -jar /home/sneumann/src/jmzTab-m/cli/target/jmztabm-cli-0.9.0-SNAPSHOT.jar -check inFile=faahKO.mzTab -level Warn
 ##
 ## link sample - assay:
 ##
@@ -198,12 +198,12 @@ mzTabAddSMF <- function(mztab, xset, value) {
     runs <- seq(along=sampnames(xset))
     variables <- seq(along=levels(sampclass(xset)))
     
-    idHeaders <- c("SMF_ID", "SME_ID_REF_Ambiguity_code")
+    idHeaders <- c("SMF_ID", "SME_ID_REFS", "SME_ID_REF_Ambiguity_code")
 
-    featureHeaders <- c("charge", "adduct_ion", "exp_mass_to_charge",
+    featureHeaders <- c("charge", "adduct_ion", "isotopomer", "exp_mass_to_charge",
                         "retention_time", "retention_time_start", "retention_time_end")
 
-    abundanceAssayHeaders <- paste("quant_assay[", runs, "]", sep="")
+    abundanceAssayHeaders <- paste("abundance_assay[", runs, "]", sep="")
     
     headers <- c(idHeaders,
                  featureHeaders, abundanceAssayHeaders)
@@ -228,15 +228,18 @@ mzTabAddSMF <- function(mztab, xset, value) {
     result[,"exp_mass_to_charge"] <- g[,"mzmed"]
     result[, grepl("quant_assay", colnames(result))] <- v
     
-    mztab <- mzTabAddValues(mztab, "SEH", "SMF", result)    
+    mztab <- mzTabAddValues(mztab, "SFH", "SMF", result)    
 }
 
 
-writeMzTab <- function(mtd, sml, filename) {
+writeMzTab <- function(mtd, sml, smf, filename) {
     write.table(mtd, file=filename,
                 row.names=FALSE, col.names=FALSE,
                 quote=FALSE, sep="\t", na="")
     write.table(sml, file=filename, append=TRUE,
+                row.names=FALSE, col.names=FALSE,
+                quote=FALSE, sep="\t", na="null")
+    write.table(smf, file=filename, append=TRUE,
                 row.names=FALSE, col.names=FALSE,
                 quote=FALSE, sep="\t", na="null")
 
@@ -246,7 +249,7 @@ writeMzTab <- function(mtd, sml, filename) {
 ## Example for faahKO
 ##
 
-if (TRUE) {
+if (FALSE) {
     library(Rcpp) ## for rbind.fill
     library(plyr) ## for rbind.fill
     library(faahKO)
@@ -257,6 +260,7 @@ if (TRUE) {
 
     values <- c("quantification_method"="[MS,MS:1002019,label-free raw feature quantitation,]",
                 "small_molecule-quantification_unit"="[PRIDE, PRIDE:0000395, Ratio, ]",
+                "small_molecule_feature-quantification_unit"="[PRIDE, PRIDE:0000395, Ratio, ]",
                 "small_molecule-identification_reliability"="[PRIDE, PRIDE:0000395, Ratio, ]" ## DUMMY!
                 )
 
@@ -267,11 +271,12 @@ if (TRUE) {
                        value=values)
 
     mztsml <- data.frame(character(0))
-    mztsml <- mzTabAddSML(mztsml, xs, value=value) # needs to be done
-#    mzt <- mzTabAddSMF(mzt, xs, value=value) # needs to be done
-    ##mzt
-    
-    writeMzTab(mztmtd, mztsml, "faahKO.mzTab")
+    mztsml <- mzTabAddSML(mztsml, xs, value=value)
+
+    mztsmf <- data.frame(character(0))
+    mztsmf <- mzTabAddSMF(mztsmf, xs, value="into") # needs to be done
+
+    writeMzTab(mztmtd, mztsml, mztsmf, file="faahKO.mzTab")
 }
 
 #############################

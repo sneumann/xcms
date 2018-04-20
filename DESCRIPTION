@@ -100,6 +100,6 @@ Collate:
     'specDist.R'
     'write.mzquantML.R'
     'writemzdata.R'
-    'writemztab.R'
+    'writemztab11.R'
     'xcmsSource.R'
     'zzz.R'
