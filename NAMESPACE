@@ -222,7 +222,8 @@ export(
     "isCalibrated",
     "plotMsData",
     "applyAdjustedRtime",
-    "filterFeatureDefinitions"
+    "filterFeatureDefinitions",
+    "peaksWithMatchedFilter"
 )
 
 ## New analysis methods

@@ -136,3 +136,24 @@ test_that("do_findChromPeaks_matchedFilter works", {
                                             binSize = 20)
     expect_true(nrow(res1) > nrow(res2))
 })
+
+test_that("peaksWithMatchedFilter is working", {
+    od <- filterFile(faahko_od, file = 1)
+    od_mf <- findChromPeaks(od, param = MatchedFilterParam())
+
+    chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
+    pks <- peaksWithMatchedFilter(intensity(chr), rtime(chr))
+    pks_mf <- chromPeaks(od_mf, mz = c(272.1, 272.3))
+    expect_equal(pks[, "rt"], pks_mf[, "rt"])
+    expect_equal(pks[, "rtmin"], pks_mf[, "rtmin"])
+    expect_equal(pks[, "rtmax"], pks_mf[, "rtmax"])
+    expect_equal(pks[, "intf"], pks_mf[, "intf"])
+    expect_equal(pks[, "into"], pks_mf[, "into"])
+    expect_equal(pks[, "maxf"], pks_mf[, "maxf"])
+    expect_equal(pks[, "maxo"], pks_mf[, "maxo"])
+    ## Errors and empty data.
+    expect_error(peaksWithMatchedFilter())
+    expect_error(peaksWithMatchedFilter(int = rnorm(10)))
+    expect_error(peaksWithMatchedFilter(int = rnorm(10)), rt = 1:4)
+    expect_true(nrow(peaksWithMatchedFilter(rep(NA, 10), rt = 1:10)) == 0)
+})

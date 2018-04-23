@@ -1,3 +1,11 @@
+CHANGES IN VERSION 3.1.4
+-------------------------
+
+NEW FEATURES
+- Add peaksWithMatchedFilter to perform peak detection in chromatographic
+  (MRM/SRM) data (issues # 277 and #278).
+
+
 CHANGES IN VERSION 3.1.3
 -------------------------
 

@@ -1865,7 +1865,6 @@ do_findChromPeaks_matchedFilter <- function(mz,
     ## Can not do much here, lapply/apply won't work because of the 'steps' parameter.
     ## That's looping through the masses, i.e. rows of the profile matrix.
     for (i in seq(length = length(mass)-steps+1)) {
-
         ymat <- buf[bufidx[i:(i+steps-1)], , drop = FALSE]
         ysums <- colMax(ymat)
         yfilt <- filtfft(ysums, filt)
@@ -2992,4 +2991,128 @@ do_findChromPeaks_addPredIsoROIs_mod <-
             return(peaks.)
         else
             return(rbind(peaks., feats_2))
+}
+
+#' @title Identify peaks in chromatographic data
+#'
+#' @description
+#'
+#' The function performs peak detection using the [matchedFilter] algorithm
+#' on chromatographic data (i.e. with only intensities and retention time).
+#'
+#' @param int `numeric` with intensity values.
+#'
+#' @param rt `numeric` with the retention time for the intensities. Length has
+#'     to be equal to `length(int)`.
+#'
+#' @param fwhm `numeric(1)` specifying the full width at half maximum
+#'     of matched filtration gaussian model peak. Only used to calculate the
+#'     actual sigma, see below.
+#'
+#' @param sigma `numeric(1)` specifying the standard deviation (width)
+#'     of the matched filtration model peak.
+#'
+#' @param max `numeric(1)` with the maximal number of peaks that are expected/
+#'     will bbe detected in the data
+#'
+#' @param snthresh `numeric(1)` defining the signal to noise cut-off to be used
+#'     in the peak detection step.
+#' 
+#' @family peak detection functions for chromatographic data
+#'
+#' @seealso [matchedFilter] for a detailed description of the peak detection
+#'     method.
+#'
+#' @author Johannes Rainer
+#'
+#' @return
+#' A matrix, each row representing an identified chromatographic peak, with
+#' columns:
+#' - `"rt"`: retention time of the peak's midpoint (time of the maximum signal).
+#' - `"rtmin"`: minimum retention time of the peak.
+#' - `"rtmax"`: maximum retention time of the peak.
+#' - `"into"`: integrated (original) intensity of the peak.
+#' - `"intf"`: integrated intensity of the filtered peak.
+#' - `"maxo"`: maximum (original) intensity of the peak.
+#' - `"maxf"`" maximum intensity of the filtered peak.
+#' - `"sn"`: signal to noise ratio of the peak.
+#'
+#' @md
+#'
+#' @examples
+#'
+#' ## Read one file from the faahKO package
+#' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'     mode = "onDisk")
+#'
+#' ## Extract chromatographic data for a small m/z range
+#' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
+#'
+#' pks <- peaksWithMatchedFilter(intensity(chr), rtime(chr))
+#' pks
+#'
+#' ## Plotting the data
+#' plot(rtime(chr), intensity(chr), type = "h")
+#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"], ybottom = c(0, 0),
+#'     ytop = pks[, "maxo"], border = "red")
+peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
+                                   max = 20, snthresh = 10) {
+    if (missing(int) | missing(rt))
+        stop("Arguments 'int' and 'rt' are required")
+    if (length(int) != length(rt))
+        stop("'int' and 'rt' must have the same length")
+
+    ## Replace NAs with 0 - that's how the original code handled it.
+    nas <- is.na(int)
+    int[nas] <- 0
+    
+    n_vals <- length(int)
+    N <- nextn(n_vals)
+    rtrange <- range(rt)
+    x <- c(0:(N / 2), -(ceiling(N / 2 - 1)):-1) *
+        (rtrange[2] - rtrange[1]) / (n_vals - 1)
+    filt <- -attr(eval(deriv3(~ 1 / (sigma * sqrt(2 * pi)) *
+                                  exp(-x^2 / (2 * sigma^2)), "x")),
+                  "hessian")
+    filt <- filt / sqrt(sum(filt^2))
+    filt <- fft(filt, inverse = TRUE) / length(filt)
+
+    cnames <- c("rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf", "sn")
+    num <- 0
+    ResList <- list()
+    int_filt <- xcms:::filtfft(int, filt)
+    glob_max <- max(int_filt)
+    for (j in seq(length = max)) {
+        max_idx <- which.max(int_filt)
+        noise <- mean(int[int > 0])
+        ##noise <- mean(yfilt[yfilt >= 0])
+        sn <- int_filt[max_idx] / noise
+        if (int_filt[max_idx] > 0 && int_filt[max_idx] > snthresh * noise &&
+            int[max_idx] > 0) {
+            peak_range <- xcms:::descendZero(int_filt, max_idx)
+            peak_range_idx <- peak_range[1]:peak_range[2]
+            ## Define into and intf, i.e. the integrated signal.
+            peak_width <- diff(rt[peak_range]) / diff(peak_range)
+            into <- peak_width * sum(int[peak_range_idx])
+            intf <- peak_width * sum(int_filt[peak_range_idx])
+            num <- num + 1
+            ResList[[num]] <- c(rt[max_idx], rt[peak_range], into, intf,
+                                max(int[peak_range_idx]), int_filt[max_idx], sn)
+            ## "remove" current peak from the data
+            int_filt[peak_range_idx] <- 0
+        } else
+            break
+    }
+    if (length(ResList)) {
+        res <- do.call(rbind, ResList)
+        colnames(res) <- cnames
+    } else {
+        warning("No peaks found with current settings")
+        res <- matrix(nrow = 0, ncol = length(cnames),
+                      dimnames = list(character(), cnames))
+    }
+    res
+}
+
+peaksWithCentWave <- function() {
 }
