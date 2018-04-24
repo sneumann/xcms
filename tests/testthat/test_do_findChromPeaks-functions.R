@@ -157,3 +157,24 @@ test_that("peaksWithMatchedFilter is working", {
     expect_error(peaksWithMatchedFilter(int = rnorm(10)), rt = 1:4)
     expect_true(nrow(peaksWithMatchedFilter(rep(NA, 10), rt = 1:10)) == 0)
 })
+
+test_that(".getRtROI works", {
+    od <- filterFile(faahko_od, file = 1)
+    expect_error(.getRtROI())
+    expect_error(.getRtROI(1:3))
+    expect_error(.getRtROI(1:3, 1:5))
+    chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
+
+    int <- intensity(chr)
+    int[is.na(int)] <- 0
+    rt <- rtime(chr)
+    res <- .getRtROI(int, rt)
+    expect_true(is.matrix(res))
+    expect_true(ncol(res) == 2)
+    res_2 <- .getRtROI(int, rt, noise = 400)
+    expect_true(nrow(res) > nrow(res_2))
+    res_3 <- .getRtROI(int, rt, noise = 400, prefilter = c(4, 500))
+    expect_true(nrow(res_2) > nrow(res_3))
+    res_4 <- .getRtROI(int, rt, noise = 400, prefilter = c(100, 500))
+    expect_true(nrow(res_4) == 0)
+})
