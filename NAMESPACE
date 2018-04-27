@@ -223,7 +223,8 @@ export(
     "plotMsData",
     "applyAdjustedRtime",
     "filterFeatureDefinitions",
-    "peaksWithMatchedFilter"
+    "peaksWithMatchedFilter",
+    "peaksWithCentWave"
 )
 
 ## New analysis methods

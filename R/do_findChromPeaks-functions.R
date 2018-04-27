@@ -190,7 +190,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         stop("Function '", mzCenterFun, "' not defined !")
 
     if (!is.logical(firstBaselineCheck))
-      stop("Parameter 'firstBaselineCheck' should be logical!")
+        stop("Parameter 'firstBaselineCheck' should be logical!")
     if (length(firstBaselineCheck) != 1)
         stop("Parameter 'firstBaselineCheck' should be a single logical !")
     if (length(roiScales) > 0)
@@ -251,16 +251,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         withRestarts(
             tryCatch({
                 tmp <- capture.output(
-                roiList <- .Call("findmzROI",
-                                 mz, int, scanindex,
-                                 as.double(c(0.0, 0.0)),
-                                 as.integer(scanrange),
-                                 as.integer(length(scantime)),
-                                 as.double(ppm * 1e-6),
-                                 as.integer(minCentroids),
-                                 as.integer(prefilter),
-                                 as.integer(noise),
-                                 PACKAGE ='xcms' )
+                    roiList <- .Call("findmzROI",
+                                     mz, int, scanindex,
+                                     as.double(c(0.0, 0.0)),
+                                     as.integer(scanrange),
+                                     as.integer(length(scantime)),
+                                     as.double(ppm * 1e-6),
+                                     as.integer(minCentroids),
+                                     as.integer(prefilter),
+                                     as.integer(noise),
+                                     PACKAGE ='xcms' )
                 )
             },
             error = function(e){
@@ -291,16 +291,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 rm(mzl)
                 rm(splitF)
                 tmp <- capture.output(
-                roiList <<- .Call("findmzROI",
-                                  mz, int, scanindex,
-                                  as.double(c(0.0, 0.0)),
-                                  as.integer(scanrange),
-                                  as.integer(length(scantime)),
-                                  as.double(ppm * 1e-6),
-                                  as.integer(minCentroids),
-                                  as.integer(prefilter),
-                                  as.integer(noise),
-                                  PACKAGE ='xcms' )
+                    roiList <<- .Call("findmzROI",
+                                      mz, int, scanindex,
+                                      as.double(c(0.0, 0.0)),
+                                      as.integer(scanrange),
+                                      as.integer(length(scantime)),
+                                      as.double(ppm * 1e-6),
+                                      as.integer(minCentroids),
+                                      as.integer(prefilter),
+                                      as.integer(noise),
+                                      PACKAGE ='xcms' )
                 )
             }
         )
@@ -744,7 +744,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         stop("Function '", mzCenterFun, "' not defined !")
 
     if (!is.logical(firstBaselineCheck))
-      stop("Parameter 'firstBaselineCheck' should be logical!")
+        stop("Parameter 'firstBaselineCheck' should be logical!")
     if (length(firstBaselineCheck) != 1)
         stop("Parameter 'firstBaselineCheck' should be a single logical !")
     if (length(roiScales) > 0)
@@ -800,16 +800,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         withRestarts(
             tryCatch({
                 tmp <- capture.output(
-                roiList <- .Call("findmzROI",
-                                 mz, int, scanindex,
-                                 as.double(c(0.0, 0.0)),
-                                 as.integer(scanrange),
-                                 as.integer(length(scantime)),
-                                 as.double(ppm * 1e-6),
-                                 as.integer(minCentroids),
-                                 as.integer(prefilter),
-                                 as.integer(noise),
-                                 PACKAGE ='xcms' )
+                    roiList <- .Call("findmzROI",
+                                     mz, int, scanindex,
+                                     as.double(c(0.0, 0.0)),
+                                     as.integer(scanrange),
+                                     as.integer(length(scantime)),
+                                     as.double(ppm * 1e-6),
+                                     as.integer(minCentroids),
+                                     as.integer(prefilter),
+                                     as.integer(noise),
+                                     PACKAGE ='xcms' )
                 )
             },
             error = function(e){
@@ -840,16 +840,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 rm(mzl)
                 rm(splitF)
                 tmp <- capture.output(
-                roiList <<- .Call("findmzROI",
-                                  mz, int, scanindex,
-                                  as.double(c(0.0, 0.0)),
-                                  as.integer(scanrange),
-                                  as.integer(length(scantime)),
-                                  as.double(ppm * 1e-6),
-                                  as.integer(minCentroids),
-                                  as.integer(prefilter),
-                                  as.integer(noise),
-                                  PACKAGE ='xcms' )
+                    roiList <<- .Call("findmzROI",
+                                      mz, int, scanindex,
+                                      as.double(c(0.0, 0.0)),
+                                      as.integer(scanrange),
+                                      as.integer(length(scantime)),
+                                      as.double(ppm * 1e-6),
+                                      as.integer(minCentroids),
+                                      as.integer(prefilter),
+                                      as.integer(noise),
+                                      PACKAGE ='xcms' )
                 )
             }
         )
@@ -1397,9 +1397,9 @@ do_findChromPeaks_massifquant <- function(mz,
         colnames(p) <- basenames
         p <- cbind(p, maxo = unlist(maxo))
 
-        #calculate median index
+                                        #calculate median index
         p[, "rt"] <- as.integer(p[, "rtmin"] + ( (p[, "rt"] + 1) / 2 ) - 1)
-        #convert from index into actual time
+                                        #convert from index into actual time
         p[, "rtmin"] <- scantime[p[, "rtmin"]]
         p[, "rtmax"] <- scantime[p[, "rtmax"]]
         p[, "rt"] <- scantime[p[, "rt"]]
@@ -1740,7 +1740,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
     ## and report that.
     uorder <- order(rmat[,"into"], decreasing=TRUE)
     uindex <- rectUnique(rmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
-                                uorder, mzdiff)
+                         uorder, mzdiff)
     rmat <- rmat[uindex,,drop=FALSE]
     return(rmat)
 }
@@ -1997,7 +1997,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #' 
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_findPeaks_MSW <- function(mz, int, snthresh = 3,
-                                  verboseColumns = FALSE, ...) {
+                             verboseColumns = FALSE, ...) {
     ## Input argument checking.
     if (missing(int))
         stop("Argument 'int' is missing!")
@@ -2086,7 +2086,7 @@ do_findPeaks_MSW <- function(mz, int, snthresh = 3,
 
     maxIntos <- function(into, inpos, scale){
         scale=floor(scale)
-              max(into[(inpos-scale):(inpos+scale)])
+        max(into[(inpos-scale):(inpos+scale)])
     }
 
     betterPeakInfo <- tuneInPeakInfo(int,
@@ -2155,7 +2155,7 @@ do_findPeaks_MSW <- function(mz, int, snthresh = 3,
 
     maxIntos <- function(into, inpos, scale){
         scale=floor(scale)
-              max(into[(inpos-scale):(inpos+scale)])
+        max(into[(inpos-scale):(inpos+scale)])
     }
 
     betterPeakInfo <- tuneInPeakInfo(int,
@@ -2487,10 +2487,10 @@ do_define_adducts <- function(peaks., polarity = "positive") {
                ))
            },
            "unknown"={
-             warning("Unknown polarity! No adduct ROIs have been added.")
+               warning("Unknown polarity! No adduct ROIs have been added.")
            },
            stop("Unknown polarity (", polarity, ")!")
-    )
+           )
 
     req_cols <- c("mz", "mzmin", "mzmax", "scmin", "scmax", "scale")
     roiL <- split(peaks.[, req_cols, drop = FALSE], f = 1:nrow(peaks.))
@@ -2542,12 +2542,12 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
     if (!is.double(scantime))
         scantime <- as.double(scantime)
     tmp <- capture.output(
-    res <- .Call("massifquant", mz, int, scanindex, scantime,
-                 as.double(mzrange), as.integer(scanrange),
-                 as.integer(length(scantime)), as.double(minIntensity),
-                 as.integer(minCentroids), as.double(consecMissedLim),
-                 as.double(ppm), as.double(criticalVal), as.integer(segs),
-                 as.integer(scanBack), PACKAGE ='xcms' )
+        res <- .Call("massifquant", mz, int, scanindex, scantime,
+                     as.double(mzrange), as.integer(scanrange),
+                     as.integer(length(scantime)), as.double(minIntensity),
+                     as.integer(minCentroids), as.double(consecMissedLim),
+                     as.double(ppm), as.double(criticalVal), as.integer(segs),
+                     as.integer(scanBack), PACKAGE ='xcms' )
     )
     res
 }
@@ -2831,7 +2831,7 @@ do_findChromPeaks_addPredIsoROIs <-
             return(peaks.)
         else
             return(rbind(peaks., feats_2))
-}
+    }
 
 do_findChromPeaks_addPredIsoROIs_mod <-
     function(mz, int, scantime, valsPerSpect, ppm = 25, peakwidth = c(20, 50),
@@ -2991,9 +2991,9 @@ do_findChromPeaks_addPredIsoROIs_mod <-
             return(peaks.)
         else
             return(rbind(peaks., feats_2))
-}
+    }
 
-#' @title Identify peaks in chromatographic data
+#' @title Identify peaks in chromatographic data using matchedFilter
 #'
 #' @description
 #'
@@ -3026,8 +3026,10 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #' @author Johannes Rainer
 #'
 #' @return
+#' 
 #' A matrix, each row representing an identified chromatographic peak, with
 #' columns:
+#' 
 #' - `"rt"`: retention time of the peak's midpoint (time of the maximum signal).
 #' - `"rtmin"`: minimum retention time of the peak.
 #' - `"rtmax"`: maximum retention time of the peak.
@@ -3080,7 +3082,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
     cnames <- c("rt", "rtmin", "rtmax", "into", "intf", "maxo", "maxf", "sn")
     num <- 0
     ResList <- list()
-    int_filt <- xcms:::filtfft(int, filt)
+    int_filt <- filtfft(int, filt)
     glob_max <- max(int_filt)
     for (j in seq(length = max)) {
         max_idx <- which.max(int_filt)
@@ -3089,7 +3091,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
         sn <- int_filt[max_idx] / noise
         if (int_filt[max_idx] > 0 && int_filt[max_idx] > snthresh * noise &&
             int[max_idx] > 0) {
-            peak_range <- xcms:::descendZero(int_filt, max_idx)
+            peak_range <- descendZero(int_filt, max_idx)
             peak_range_idx <- peak_range[1]:peak_range[2]
             ## Define into and intf, i.e. the integrated signal.
             peak_width <- diff(rt[peak_range]) / diff(peak_range)
@@ -3114,81 +3116,213 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
     res
 }
 
-## snthresh
+#' @title Identify peaks in chromatographic data using centWave
+#'
+#' @description
+#' 
+#' `peaksWithCentWave` identifies (chromatographic) peaks in purely
+#' chromatographic data, i.e. based on intensity and retention time values
+#' without m/z values.
+#'
+#' @details
+#'
+#' The method uses the same algorithm for the peak detection than [centWave],
+#' employs however a different approach to identify the initial regions in
+#' which the peak detection is performed (i.e. the *regions of interest* ROI).
+#' The method first identifies all local maxima in the chromatographic data and
+#' defines the corresponding positions +/- `peakwidth[2]` as the ROIs. Noise
+#' estimation bases also on these ROIs and can thus be different from [centWave]
+#' resulting in different signal to noise ratios.
+#' 
+#' @param int `numeric` with intensity values.
+#'
+#' @param rt `numeric` with the retention time for the intensities. Length has
+#'     to be equal to `length(int)`.
+#'
+#' @param peakwidth `numeric(2)` with the lower and upper bound of the
+#'     expected peak width.
+#'
+#' @param snthresh `numeric(1)` defining the signal to noise ratio cutoff.
+#'     Peaks with a signal to noise ratio < `snthresh` are omitted.
+#' 
+#' @param prefilter `numeric(2)` (`c(k, I)`): only regions of interest with at
+#'     least `k` centroids with signal `>= I` are returned in the first
+#'     step.
+#'
+#' @param integrate `numeric(1)`, integration method. For `integrate = 1` peak
+#'     limits are found through descending on the mexican hat filtered data,
+#'     for `integrate = 2` the descend is done on the real data. The latter
+#'     method is more accurate but prone to noise, while the former is more
+#'     robust, but less exact.
+#'
+#' @param fitgauss `logical(1)` whether or not a Gaussian should be fitted
+#'     to each peak.
+#' 
+#' @param noise `numeric(1)` defining the minimum required intensity for
+#'     centroids to be considered in the first analysis step (definition of
+#'     the *regions of interest*).
+#'
+#' @param verboseColumns `logical(1)`: whether additional peak meta data
+#'     columns should be returned.
+#'
+#' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
+#'     regions of interest is checked to be above the first baseline.
+#' 
+#' @family peak detection functions for chromatographic data
+#'
+#' @seealso [centWave] for a detailed description of the peak detection
+#'     method.
+#'
+#' @author Johannes Rainer
+#'
+#' @return
+#' 
+#' A matrix, each row representing an identified chromatographic peak, with
+#' columns:
+#' 
+#' - `"rt"`: retention time of the peak's midpoint (time of the maximum signal).
+#' - `"rtmin"`: minimum retention time of the peak.
+#' - `"rtmax"`: maximum retention time of the peak.
+#' - `"into"`: integrated (original) intensity of the peak.
+#' - `"intb"`: per-peak baseline corrected integrated peak intensity.
+#' - `"maxo"`: maximum (original) intensity of the peak.
+#' - `"sn"`: signal to noise ratio of the peak defined as
+#'   `(maxo - baseline)/sd` with `sd` being the standard defiatio of the local
+#'   chromatographic noise.
+#'
+#' Additional columns for `verboseColumns = TRUE`:
+#' 
+#' - `"mu"`: gaussian parameter mu.
+#' - `"sigma"`: gaussian parameter sigma.
+#' - `"h"`: gaussian parameter h.
+#' - `"f"`: region number of the m/z ROI where the peak was localized.
+#' - `"dppm"`: m/z deviation of mass trace across scans in ppm (always `NA`).
+#' - `"scale"`: scale on which the peak was localized.
+#' - `"scpos"`: peak position found by wavelet analysis (index in `int`).
+#' - `"scmin"`: left peak limit found by wavelet analysis (index in `int`).
+#' - `"scmax"`: right peak limit found by wavelet analysis (index in `int`).
+#'
+#' @md
+#'
+#' @examples
+#'
+#' ## Reading a file
+#' library(xcms)
+#' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'     mode = "onDisk")
+#'
+#' ## Extract chromatographic data for a small m/z range
+#' mzr <- c(272.1, 272.2)
+#' chr <- chromatogram(od, mz = mzr)[1, 1]
+#'
+#' int <- intensity(chr)
+#' rt <- rtime(chr)
+#'
+#' ## Plot the region
+#' plot(chr, type = "h")
+#' 
+#' ## Identify peaks in the chromatographic data
+#' pks <- peaksWithCentWave(intensity(chr), rtime(chr))
+#' pks
+#'
+#' ## Highlight the peaks
+#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+#'     ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#ff000040",
+#'     border = "#00000040")
 peaksWithCentWave <- function(int, rt,
-                              ppm = 25,
-                              peakwidth = c(20,50),
+                              peakwidth = c(20, 50),
                               snthresh = 10,
-                              prefilter = c(3,100),
-                              mzCenterFun = "wMean",
+                              prefilter = c(3, 100),
                               integrate = 1,
-                              mzdiff = -0.001,
                               fitgauss = FALSE,
                               noise = 0, ## noise.local=TRUE,
                               verboseColumns = FALSE,
                               firstBaselineCheck = TRUE
                               ) {
-
+    if (length(peakwidth) != 2)
+        stop("'peakwidth' has to be a numeric of length 2")
     ## Avoid NAs
     int[is.na(int)] <- 0
-    ## Need to identify potential peaks (aka ROI)
-    ## use the method for MS peak detection?
-    ## use something like: identify peaks that are larger than snthreshold?
-    ## Identify the "peaks" and use the peakwidth parameter to define the ROI.
+    rois <- .getRtROI(int, rt, peakwidth = peakwidth, noise = noise,
+                      prefilter = prefilter)
     
-    
-        feat <- roiList[[f]]
-        N <- feat$scmax - feat$scmin + 1
-        peaks <- peakinfo <- NULL
-        mzrange <- c(feat$mzmin, feat$mzmax)
-        sccenter <- feat$scmin[1] + floor(N/2) - 1
-        scrange <- c(feat$scmin, feat$scmax)
+    basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
+                   "intb", "maxo", "sn")
+    verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
+                      "scpos", "scmin", "scmax", "lmin", "lmax")
+    peaks_names <- c(basenames, verbosenames)
+    peaks_ncols <- length(peaks_names)
+    peakinfo_names <- c("scale", "scaleNr", "scpos", "scmin", "scmax")
+
+    ## Peak width: seconds to scales
+    scalerange <- round((peakwidth / mean(diff(rt))) / 2)
+
+    if (length(z <- which(scalerange == 0)))
+        scalerange <- scalerange[-z]
+    if (length(scalerange) < 1) {
+        warning("No scales? Please check peak width!")
+        if (verboseColumns)
+            basenames <- c(basenames, verbosenames)
+        return(invisible(matrix(nrow = 0, ncol = length(basenames),
+                                dimnames = list(character(), basenames))))
+    }
+    if (length(scalerange) > 1)
+        scales <- seq(from = scalerange[1], to = scalerange[2], by = 2)
+    else
+        scales <- scalerange
+
+    minPeakWidth <-  scales[1]
+    noiserange <- c(minPeakWidth * 3, max(scales) * 3)
+    maxGaussOverlap <- 0.5
+    minPtsAboveBaseLine <- max(4, minPeakWidth - 2)
+    minCentroids <- minPtsAboveBaseLine
+    scRangeTol <-  maxDescOutlier <- floor(minPeakWidth / 2)
+    scanrange <- c(1, length(rt))
+    Nscantime <- length(int)
+    ## mzdiff <- -0.001
+    mzdiff <- 0
+
+    peaklist <- NULL
+
+    for (i in seq_len(nrow(rois))) {
+        scmin <- rois[i, "scmin"]
+        scmax <- rois[i, "scmax"]
+        
+        N <- scmax - scmin + 1
+        peaks <- matrix(ncol = peaks_ncols, nrow = 0, dimnames = list(character(), peaks_names))
+        peakinfo <- matrix(ncol = 5, nrow = 0, dimnames = list(character(), peakinfo_names))
+        ## Could also return the "correct one..."
+        sccenter <- scmin + floor(N/2) - 1
+        ## sccenter <- rois[i, "sccent"]
+        scrange <- c(scmin, scmax)
+
         ## scrange + noiserange, used for baseline detection and wavelet analysis
         sr <- c(max(scanrange[1], scrange[1] - max(noiserange)),
                 min(scanrange[2], scrange[2] + max(noiserange)))
-        eic <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
-                     as.integer(sr), as.integer(length(scanindex)),
-                     PACKAGE = "xcms")
-        ## eic <- rawEIC(object,mzrange=mzrange,scanrange=sr)
-        d <- eic$intensity
+        ## Intensities for baseline detection and wavelet analysis
         td <- sr[1]:sr[2]
+        d <- int[td]
         scan.range <- c(sr[1], sr[2])
-        ## original mzROI range
-        idxs <- which(eic$scan %in% seq(scrange[1], scrange[2]))
-        mzROI.EIC <- list(scan=eic$scan[idxs], intensity=eic$intensity[idxs])
-        ## mzROI.EIC <- rawEIC(object,mzrange=mzrange,scanrange=scrange)
-        omz <- .Call("getMZ", mz, int, scanindex, as.double(mzrange),
-                     as.integer(scrange), as.integer(length(scantime)),
-                     PACKAGE = 'xcms')
-        ## omz <- rawMZ(object,mzrange=mzrange,scanrange=scrange)
-        if (all(omz == 0)) {
-            warning("centWave: no peaks found in ROI.")
-            next
-        }
-        od  <- mzROI.EIC$intensity
-        otd <- mzROI.EIC$scan
+        ## the ROI
+        otd <- scmin:scmax
+        od <- int[otd]
         if (all(od == 0)) {
             warning("centWave: no peaks found in ROI.")
             next
         }
-
         ## scrange + scRangeTol, used for gauss fitting and continuous
         ## data above 1st baseline detection
-        ftd <- max(td[1], scrange[1] - scRangeTol) : min(td[length(td)],
-                                                         scrange[2] + scRangeTol)
-        fd <- d[match(ftd, td)]
+        ftd <- max(td[1], scrange[1] - scRangeTol):min(td[length(td)],
+                                                       scrange[2] + scRangeTol)
+        fd <- int[ftd]
 
         ## 1st type of baseline: statistic approach
-        if (N >= 10*minPeakWidth) {
-            ## in case of very long mass trace use full scan range
-            ## for baseline detection
-            noised <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
-                            as.integer(scanrange), as.integer(length(scanindex)),
-                            PACKAGE="xcms")$intensity
-            ## noised <- rawEIC(object,mzrange=mzrange,scanrange=scanrange)$intensity
-        } else {
+        ## in case of very long mass trace use full scan range
+        ## for baseline detection
+        if (N >= 10 * minPeakWidth)
+            noised <- int
+        else
             noised <- d
-        }
         ## 90% trimmed mean as first baseline guess
         noise <- estimateChromNoise(noised, trim = 0.05,
                                     minPts = 3 * minPeakWidth)
@@ -3209,7 +3343,7 @@ peaksWithCentWave <- function(int, rt,
         if (!(any(fd - baseline >= sdthr)))
             next
         wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh')
-        if (!(!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)))
+        if (!(!is.null(dim(wCoefs)) && any((wCoefs - baseline) >= sdthr)))
             next
         if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
             wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs) - 1, ] * 0.99
@@ -3217,8 +3351,8 @@ peaksWithCentWave <- function(int, rt,
         rL <- MSW.getRidge(localMax)
         wpeaks <- sapply(rL,
                          function(x) {
-                             w <- min(1:length(x),ncol(wCoefs))
-                             any(wCoefs[x,w]- baseline >= sdthr)
+                             w <- min(1:length(x), ncol(wCoefs))
+                             any((wCoefs[x,w] - baseline) >= sdthr)
                          })
         if (any(wpeaks)) {
             wpeaksidx <- which(wpeaks)
@@ -3230,237 +3364,173 @@ peaksWithCentWave <- function(int, rt,
                     dv <- td[pp] %in% ftd
                     if (any(dv)) { ## peaks in orig. data range
                         ## Final S/N check
-                        if (any(d[pp[dv]]- baseline >= sdthr)) {
-                            ## if(!is.null(roiScales)) {
-                            ## allow roiScales to be a numeric of length 0
-                            if(length(roiScales) > 0) {
-                                ## use given scale
-                                best.scale.nr <- which(scales == roiScales[[f]])
-                                if(best.scale.nr > length(opp))
-                                    best.scale.nr <- length(opp)
-                            } else {
-                                ## try to decide which scale describes the peak best
-                                inti <- numeric(length(opp))
-                                irange <- rep(ceiling(scales[1]/2), length(opp))
-                                for (k in 1:length(opp)) {
-                                    kpos <- opp[k]
-                                    r1 <- ifelse(kpos - irange[k] > 1,
-                                                 kpos-irange[k], 1)
-                                    r2 <- ifelse(kpos + irange[k] < length(d),
-                                                 kpos + irange[k], length(d))
-                                    inti[k] <- sum(d[r1:r2])
-                                }
-                                maxpi <- which.max(inti)
-                                if (length(maxpi) > 1) {
-                                    m <- wCoefs[opp[maxpi], maxpi]
-                                    bestcol <- which(m == max(m),
-                                                     arr.ind = TRUE)[2]
-                                    best.scale.nr <- maxpi[bestcol]
-                                } else  best.scale.nr <- maxpi
+                        if (any(d[pp[dv]] - baseline >= sdthr)) {
+                            ## ## allow roiScales to be a numeric of length 0
+                            ## if(length(roiScales) > 0) {
+                            ##     ## use given scale
+                            ##     best.scale.nr <- which(scales == roiScales[[f]])
+                            ##     if(best.scale.nr > length(opp))
+                            ##         best.scale.nr <- length(opp)
+                            ## } else {
+                            ## try to decide which scale describes the peak best
+                            inti <- numeric(length(opp))
+                            irange <- rep(ceiling(scales[1]/2), length(opp))
+                            for (k in 1:length(opp)) {
+                                kpos <- opp[k]
+                                r1 <- ifelse(kpos - irange[k] > 1,
+                                             kpos - irange[k], 1)
+                                r2 <- ifelse(kpos + irange[k] < length(d),
+                                             kpos + irange[k], length(d))
+                                inti[k] <- sum(d[r1:r2])
                             }
+                            maxpi <- which.max(inti)
+                            if (length(maxpi) > 1) {
+                                m <- wCoefs[opp[maxpi], maxpi]
+                                bestcol <- which(m == max(m),
+                                                 arr.ind = TRUE)[2]
+                                best.scale.nr <- maxpi[bestcol]
+                            } else best.scale.nr <- maxpi
 
                             best.scale <-  scales[best.scale.nr]
                             best.scale.pos <- opp[best.scale.nr]
 
                             pprange <- min(pp):max(pp)
-                            ## maxint <- max(d[pprange])
-                            lwpos <- max(1,best.scale.pos - best.scale)
+                            lwpos <- max(1, best.scale.pos - best.scale)
                             rwpos <- min(best.scale.pos + best.scale, length(td))
                             p1 <- match(td[lwpos], otd)[1]
                             p2 <- match(td[rwpos], otd)
                             p2 <- p2[length(p2)]
                             if (is.na(p1)) p1 <- 1
                             if (is.na(p2)) p2 <- N
-                            mz.value <- omz[p1:p2]
-                            mz.int <- od[p1:p2]
-                            maxint <- max(mz.int)
-
-                            ## re-calculate m/z value for peak range
-                            mzrange <- range(mz.value)
-                            mzmean <- do.call(mzCenterFun,
-                                              list(mz = mz.value,
-                                                   intensity = mz.int))
+                            maxint <- max(od[p1:p2])
                             
-                            ## Compute dppm only if needed
-                            dppm <- NA
-                            if (verboseColumns) {
-                                if (length(mz.value) >= (minCentroids + 1)) {
-                                    dppm <- round(min(running(abs(diff(mz.value)) /
-                                                              (mzrange[2] *  1e-6),
-                                                              fun = max,
-                                                              width = minCentroids)))
-                                } else {
-                                    dppm <- round((mzrange[2] - mzrange[1]) /
-                                                  (mzrange[2] * 1e-6))
-                                }
-                            }
-                            peaks <- rbind(peaks,
-                                           c(mzmean,mzrange, ## mz
-                                             NA, NA, NA,     ## rt, rtmin, rtmax,
-                                             NA,             ## intensity (sum)
-                                             NA,             ## intensity (-bl)
-                                             maxint,         ## max intensity
-                                             round((maxint - baseline) / sdnoise),  ##  S/N Ratio
-                                             NA,             ## Gaussian RMSE
-                                             NA,NA,NA,       ## Gaussian Parameters
-                                             f,              ## ROI Position
-                                             dppm,           ## max. difference between the [minCentroids] peaks in ppm
-                                             best.scale,     ## Scale
-                                             td[best.scale.pos],
-                                             td[lwpos],
-                                             td[rwpos],  ## Peak positions guessed from the wavelet's (scan nr)
-                                             NA, NA))                    ## Peak limits (scan nr)
-                            peakinfo <- rbind(peakinfo,
-                                              c(best.scale, best.scale.nr,
-                                                best.scale.pos, lwpos, rwpos))
+                            peaks <- rbind(
+                                peaks,
+                                c(1, 1, 1,    # mz, mzmin, mzmax,
+                                  NA, NA, NA, # rt, rtmin, rtmax,
+                                  NA,         # intensity (sum)
+                                  NA,         # intensity (-bl)
+                                  maxint,     # max intensity
+                                  round((maxint - baseline) / sdnoise), # S/N Ratio
+                                  NA,       # Gaussian RMSE
+                                  NA,NA,NA, # Gaussian Parameters
+                                  i,        # ROI Position
+                                  NA, # max. difference between the [minCentroids] peaks in ppm
+                                  best.scale, # Scale
+                                  td[best.scale.pos],
+                                  td[lwpos],
+                                  td[rwpos], # Peak positions guessed from the wavelet's (scan nr)
+                                  NA, NA))   # Peak limits (scan nr)
+                            peakinfo <- rbind(
+                                peakinfo,
+                                c(best.scale, best.scale.nr,
+                                  best.scale.pos, lwpos, rwpos))
                             ## Peak positions guessed from the wavelet's
                         }
                     }
                 }
-            }  ##for
-        } ## if
+            }                           # for (p in 1:length(wpeaksidx))
+        }                               # if (any(wpeaks))
 
         ##  postprocessing
-        if (!is.null(peaks)) {
-            colnames(peaks) <- c(basenames, verbosenames)
-            colnames(peakinfo) <- c("scale", "scaleNr", "scpos",
-                                    "scmin", "scmax")
-            for (p in 1:dim(peaks)[1]) {
-                ## find minima, assign rt and intensity values
-                if (integrate == 1) {
-                    lm <- descendMin(wCoefs[, peakinfo[p,"scaleNr"]],
-                                     istart = peakinfo[p,"scpos"])
-                    gap <- all(d[lm[1]:lm[2]] == 0) ## looks like we got stuck in a gap right in the middle of the peak
-                    if ((lm[1] == lm[2]) || gap )## fall-back
-                        lm <- descendMinTol(d,
-                                            startpos = c(peakinfo[p, "scmin"],
-                                                         peakinfo[p, "scmax"]),
-                                            maxDescOutlier)
-                } else {
+        for (p in seq_len(nrow(peaks))) {
+            ## find minima, assign rt and intensity values
+            if (integrate == 1) {
+                lm <- descendMin(wCoefs[, peakinfo[p, "scaleNr"]],
+                                 istart = peakinfo[p, "scpos"])
+                gap <- all(d[lm[1]:lm[2]] == 0) # looks like we got stuck in a gap right in the middle of the peak
+                if ((lm[1] == lm[2]) || gap )   # fall-back
                     lm <- descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
                                                         peakinfo[p, "scmax"]),
                                         maxDescOutlier)
-                }
-                ## narrow down peak rt boundaries by skipping zeros
-                pd <- d[lm[1]:lm[2]]
-                np <- length(pd)
-                lm.l <-  findEqualGreaterUnsorted(pd, 1)
-                lm.l <- max(1, lm.l - 1)
-                lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
-                lm.r <- max(1, lm.r - 1)
-                lm <- lm + c(lm.l - 1, -(lm.r - 1) )
-
-                peakrange <- td[lm]
-                peaks[p, "rtmin"] <- scantime[peakrange[1]]
-                peaks[p, "rtmax"] <- scantime[peakrange[2]]
-                peaks[p, "maxo"] <- max(d[lm[1]:lm[2]])
-                pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
-                    (peakrange[2] - peakrange[1])
-                if (is.na(pwid))
-                    pwid <- 1
-                peaks[p, "into"] <- pwid * sum(d[lm[1]:lm[2]])
-                db <-  d[lm[1]:lm[2]] - baseline
-                peaks[p, "intb"] <- pwid * sum(db[db>0])
-                peaks[p, "lmin"] <- lm[1]
-                peaks[p, "lmax"] <- lm[2]
-
-                if (fitgauss) {
-                    ## perform gaussian fits, use wavelets for inital parameters
-                    md <- max(d[lm[1]:lm[2]])
-                    d1 <- d[lm[1]:lm[2]] / md ## normalize data for gaussian error calc.
-                    pgauss <- fitGauss(td[lm[1]:lm[2]], d[lm[1]:lm[2]],
-                                       pgauss = list(mu = peaks[p, "scpos"],
-                                                     sigma = peaks[p, "scmax"] -
-                                                         peaks[p, "scmin"],
-                                                     h = peaks[p, "maxo"]))
-                    rtime <- peaks[p, "scpos"]
-                    if (!any(is.na(pgauss)) && all(pgauss > 0)) {
-                        gtime <- td[match(round(pgauss$mu), td)]
-                        if (!is.na(gtime)) {
-                            rtime <- gtime
-                            peaks[p, "mu"] <- pgauss$mu
-                            peaks[p, "sigma"] <- pgauss$sigma
-                            peaks[p, "h"] <- pgauss$h
-                            peaks[p,"egauss"] <- sqrt((1 / length(td[lm[1]:lm[2]])) *
-                                                      sum(((d1-gauss(td[lm[1]:lm[2]],
-                                                                     pgauss$h / md,
-                                                                     pgauss$mu,
-                                                                     pgauss$sigma))^2)))
-                        }
-                    }
-                    peaks[p, "rt"] <- scantime[rtime]
-                    ## avoid fitting side effects
-                    if (peaks[p, "rt"] < peaks[p, "rtmin"])
-                        peaks[p, "rt"] <- scantime[peaks[p, "scpos"]]
-                } else
-                    peaks[p, "rt"] <- scantime[peaks[p, "scpos"]]
-            }
-            peaks <- joinOverlappingPeaks(td, d, otd, omz, od, scantime,
-                                          scan.range, peaks, maxGaussOverlap,
-                                          mzCenterFun = mzCenterFun)
-        }
-
-        ## BEGIN - plotting/sleep
-        if ((sleep >0) && (!is.null(peaks))) {
-            tdp <- scantime[td]; trange <- range(tdp)
-            egauss <- paste(round(peaks[,"egauss"],3),collapse=", ")
-            cdppm <- paste(peaks[,"dppm"],collapse=", ")
-            csn <- paste(peaks[,"sn"],collapse=", ")
-            par(bg = "white")
-            l <- layout(matrix(c(1,2,3),nrow=3,ncol=1,byrow=T),heights=c(.5,.75,2));
-            par(mar= c(2, 4, 4, 2) + 0.1)
-            ## plotRaw(object,mzrange=mzrange,rtrange=trange,log=TRUE,title='')
-            ## Do plotRaw manually.
-            raw_mat <- .rawMat(mz = mz, int = int, scantime = scantime,
-                               valsPerSpect = valsPerSpect, mzrange = mzrange,
-                               rtrange = rtrange, log = TRUE)
-            if (nrow(raw_mat) > 0) {
-                y <- raw_mat[, "intensity"]
-                ylim <- range(y)
-                y <- y / ylim[2]
-                colorlut <- terrain.colors(16)
-                col <- colorlut[y * 15 + 1]
-                plot(raw_mat[, "time"], raw_mat[, "mz"], pch = 20, cex = .5,
-                     main = "", xlab = "Seconds", ylab = "m/z", col = col,
-                     xlim = trange)
             } else {
-                plot(c(NA, NA), main = "", xlab = "Seconds", ylab = "m/z",
-                     xlim = trange, ylim = mzrange)
+                lm <- descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
+                                                    peakinfo[p, "scmax"]),
+                                    maxDescOutlier)
             }
-            ## done
-            title(main=paste(f,': ', round(mzrange[1],4),' - ',round(mzrange[2],4),' m/z , dppm=',cdppm,', EGauss=',egauss ,',  S/N =',csn,sep=''))
-            par(mar= c(1, 4, 1, 2) + 0.1)
-            image(y=scales[1:(dim(wCoefs)[2])],z=wCoefs,col=terrain.colors(256),xaxt='n',ylab='CWT coeff.')
-            par(mar= c(4, 4, 1, 2) + 0.1)
-            plot(tdp,d,ylab='Intensity',xlab='Scan Time');lines(tdp,d,lty=2)
-            lines(scantime[otd],od,lty=2,col='blue') ## original mzbox range
-            abline(h=baseline,col='green')
-            bwh <- length(sr[1]:sr[2]) - length(baseline)
-            if (odd(bwh)) {bwh1 <-  floor(bwh/2); bwh2 <- bwh1+1} else {bwh1<-bwh2<-bwh/2}
-            if  (any(!is.na(peaks[,"scpos"])))
-            {   ## plot centers and width found through wavelet analysis
-                abline(v=scantime[na.omit(peaks[(peaks[,"scpos"] >0),"scpos"])],col='red')
-            }
-            abline(v=na.omit(c(peaks[,"rtmin"],peaks[,"rtmax"])),col='green',lwd=1)
+            ## narrow down peak rt boundaries by skipping zeros
+            lm_range <- lm[1]:lm[2]
+            pd <- d[lm_range]
+            np <- length(pd)
+            lm.l <- findEqualGreaterUnsorted(pd, 1)
+            lm.l <- max(1, lm.l - 1)
+            lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
+            lm.r <- max(1, lm.r - 1)
+            lm <- lm + c(lm.l - 1, -(lm.r - 1) )
+            
+            peakrange <- td[lm]
+            peaks[p, "rtmin"] <- rt[peakrange[1]]
+            peaks[p, "rtmax"] <- rt[peakrange[2]]
+            peaks[p, "maxo"] <- max(pd)
+            pwid <- (rt[peakrange[2]] - rt[peakrange[1]]) /
+                (peakrange[2] - peakrange[1])
+            if (is.na(pwid))
+                pwid <- 1
+            peaks[p, "into"] <- pwid * sum(pd)
+            db <- pd - baseline
+            peaks[p, "intb"] <- pwid * sum(db[db>0])
+            peaks[p, "lmin"] <- lm[1]
+            peaks[p, "lmax"] <- lm[2]
+            
             if (fitgauss) {
-                tdx <- seq(min(td),max(td),length.out=200)
-                tdxp <- seq(trange[1],trange[2],length.out=200)
-                fitted.peaks <- which(!is.na(peaks[,"mu"]))
-                for (p in fitted.peaks)
-                {   ## plot gaussian fits
-                    yg<-gauss(tdx,peaks[p,"h"],peaks[p,"mu"],peaks[p,"sigma"])
-                    lines(tdxp,yg,col='blue')
+                ## perform gaussian fits, use wavelets for inital parameters
+                td_lm <- td[lm_range]
+                md <- max(pd)
+                d1 <- pd / md ## normalize data for gaussian error calc.
+                pgauss <- fitGauss(td_lm, pd,
+                                   pgauss = list(mu = peaks[p, "scpos"],
+                                                 sigma = peaks[p, "scmax"] -
+                                                     peaks[p, "scmin"],
+                                                 h = peaks[p, "maxo"]))
+                rtime <- peaks[p, "scpos"]
+                if (!any(is.na(pgauss)) && all(pgauss > 0)) {
+                    gtime <- td[match(round(pgauss$mu), td)]
+                    if (!is.na(gtime)) {
+                        rtime <- gtime
+                        peaks[p, "mu"] <- pgauss$mu
+                        peaks[p, "sigma"] <- pgauss$sigma
+                        peaks[p, "h"] <- pgauss$h
+                        peaks[p,"egauss"] <- sqrt(
+                        (1 / length(td_lm)) *
+                        sum(((d1 - gauss(td_lm, pgauss$h / md,
+                                         pgauss$mu, pgauss$sigma))^2)))
+                    }
                 }
-            }
-            Sys.sleep(sleep)
-        }
-        ## -- END plotting/sleep
-
-        if (!is.null(peaks)) {
+                peaks[p, "rt"] <- rt[rtime]
+                ## avoid fitting side effects
+                if (peaks[p, "rt"] < peaks[p, "rtmin"])
+                    peaks[p, "rt"] <- rt[peaks[p, "scpos"]]
+            } else
+                peaks[p, "rt"] <- rt[peaks[p, "scpos"]]
+        }   # end for (p in seq_len(nrow(peaks)))
+        peaks <- joinOverlappingPeaks(td, d, otd, rep(1:length(otd)), od, rt,
+                                      scan.range, peaks, maxGaussOverlap,
+                                      mzCenterFun = mzCenter.wMean)
+        
+        if (!is.null(peaks))
             peaklist[[length(peaklist) + 1]] <- peaks
-        }
+    }                                   # end of for (i in seq_len(nrow(rois)))
+    
+    if (length(peaklist) == 0) {
+        warning("No peaks found!")
+        if (verboseColumns)
+            nopeaks <- matrix(nrow = 0, ncol = peans_ncols,
+                              dimnames = list(character(), peaks_names))
+        else
+            nopeaks <- matrix(nrow = 0, ncol = length(basenames),
+                              dimnames = list(character(), basenames))
+        return(nopeaks)
+    }
+    p <- do.call(rbind, peaklist)
+    if (!verboseColumns)
+        p <- p[, basenames, drop = FALSE]
 
+    uorder <- order(p[, "into"], decreasing = TRUE)
+    pm <- p[, c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE]
+    uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) # allow adjacent peaks
+    p[uindex, -(1:3), drop = FALSE]
 }
+
 
 #' @description
 #'
@@ -3484,8 +3554,9 @@ peaksWithCentWave <- function(int, rt,
 #' @param noise `numeric(1)` defining the minimum required intensity for
 #'     centroids to be considered in the first analysis step.
 #'
-#' @return `matrix` with two columns `"scmin"` and `"scmax"` with the index of
-#'     (lower and upper) defining the region of interest.
+#' @return `matrix` with two columns `"scmin"`, `"scmax"` and `"sccent"` with
+#'     the index of (lower and upper) bound defining the region of interest and
+#'     the position of the center.
 #' 
 #' @md
 #'
@@ -3514,7 +3585,7 @@ peaksWithCentWave <- function(int, rt,
     ## rt to halfWindowSize:
     rt_step <- mean(diff(rt), na.rm = TRUE)
     up_bound <- ceiling(peakwidth[2] / rt_step)
-        pk_idx <- which(MALDIquant:::.localMaxima(int, floor(peakwidth[1] /
+    pk_idx <- which(MALDIquant:::.localMaxima(int, floor(peakwidth[1] /
                                                          rt_step)))
     ## First filter: int > noise
     pk_idx <- pk_idx[int[pk_idx] >= noise]
@@ -3533,7 +3604,7 @@ peaksWithCentWave <- function(int, rt,
                  k = prefilter[1], I = prefilter[2],
                  USE.NAMES = FALSE)
     if (any(ok))
-        cbind(scmin = scmin[ok], scmax = scmax[ok])
+        cbind(scmin = scmin[ok], scmax = scmax[ok], sccent = pk_idx[ok])
     else
-        matrix(ncol = 2, nrow = 0)
+        matrix(ncol = 3, nrow = 0)
 }

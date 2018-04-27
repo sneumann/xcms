@@ -170,11 +170,36 @@ test_that(".getRtROI works", {
     rt <- rtime(chr)
     res <- .getRtROI(int, rt)
     expect_true(is.matrix(res))
-    expect_true(ncol(res) == 2)
+    expect_true(ncol(res) == 3)
     res_2 <- .getRtROI(int, rt, noise = 400)
     expect_true(nrow(res) > nrow(res_2))
     res_3 <- .getRtROI(int, rt, noise = 400, prefilter = c(4, 500))
     expect_true(nrow(res_2) > nrow(res_3))
     res_4 <- .getRtROI(int, rt, noise = 400, prefilter = c(100, 500))
     expect_true(nrow(res_4) == 0)
+})
+
+test_that("peaksWithCentWave works", {
+    od <- filterFile(faahko_od, file = 1)
+    mzr <- c(272.1, 272.2)
+
+    od_cw <- findChromPeaks(filterMz(od, mz = c(270, 300)),
+                            param = CentWaveParam())
+
+    chr <- chromatogram(od, mz = mzr)[1, 1]
+    pks <- peaksWithCentWave(intensity(chr), rtime(chr))
+    pks_cw <- chromPeaks(od_cw, mz = mzr)
+    expect_equal(pks[2, "rt"], pks_cw[, "rt"])
+    expect_equal(pks[2, "rtmin"], pks_cw[, "rtmin"])
+    expect_equal(pks[2, "rtmax"], pks_cw[, "rtmax"])
+    expect_equal(pks[2, "into"], pks_cw[, "into"])
+
+    cwp <- CentWaveParam(fitgauss = TRUE)
+    pks <- peaksWithCentWave(intensity(chr), rtime(chr), fitgauss = TRUE)
+
+    ## Check errors
+    expect_error(peaksWithCentWave())
+    expect_error(peaksWithCentWave(int = 1:3, rt = 1:5))
+    expect_warning(res <- peaksWithCentWave(int = rep(NA, 20), rt = 1:20))
+    expect_true(nrow(res) == 0)
 })

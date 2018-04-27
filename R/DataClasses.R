@@ -497,8 +497,13 @@ NULL
 #'
 #' @family peak detection methods
 #' 
-#' @seealso The \code{\link{do_findChromPeaks_centWave}} core API function and
-#'     \code{\link{findPeaks.centWave}} for the old user interface.
+#' @seealso
+#'
+#' The \code{\link{do_findChromPeaks_centWave}} core API function and
+#' \code{\link{findPeaks.centWave}} for the old user interface.
+#'
+#' \code{\link{peaksWithCentWave}} for functions to perform centWave peak
+#' detection in purely chromatographic data.
 #'
 #' @references
 #' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
@@ -713,9 +718,14 @@ setClass("CentWaveParam",
 #'
 #' @family peak detection methods
 #' 
-#' @seealso The \code{\link{do_findChromPeaks_matchedFilter}} core API function
-#'     and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+#' @seealso
 #'
+#' The \code{\link{do_findChromPeaks_matchedFilter}} core API function
+#' and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+#'
+#' \code{\link{peaksWithMatchedFilter}} for functions to perform matchedFilter
+#' peak detection in purely chromatographic data.
+#' 
 #' @references
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite

@@ -4,6 +4,8 @@ CHANGES IN VERSION 3.1.4
 NEW FEATURES
 - Add peaksWithMatchedFilter to perform peak detection in chromatographic
   (MRM/SRM) data (issues # 277 and #278).
+- Add peaksWithCentWave to perform centWave peak detection in chromatographic
+  (MRM/SRM) data (issue #279).
 
 
 CHANGES IN VERSION 3.1.3
