@@ -2438,6 +2438,44 @@ setClass("XCMSnExp",
          }
 )
 
+.CPEAKS_CHROMPEAKS_REQ_NAMES <- c("row", "col", "rt", "rtmin", "rtmax", "into",
+                                  "maxo", "sn")
+setClass("CPeaks",
+         slots = c(
+             .processHistory = "list",
+             chromPeaks = "matrix"
+         ),
+         prototype = prototype(
+             .processHistory = list(),
+             chromPeaks = matrix(nrow = 0,
+                                 ncol = length(.CPEAKS_CHROMPEAKS_REQ_NAMES),
+                                 dimnames = list(character(),
+                                                 .CPEAKS_CHROMPEAKS_REQ_NAMES))
+         ),
+         contains = c("Chromatograms"),
+         validity = function(object) {
+             ## TODO @jo
+             ## 1) chromPeaks has to have the required columns.
+             ## 2) if processHistory not empty -> has to extend ProcessHistory
+             ## 3) if nrow(chromPeaks) > 0 row and column have to match the
+             ##    dimension of object
+             msg <- character()
+             ## if (length(object@.processHistory) > 0) {
+             ##     isOK <- unlist(lapply(object@.processHistory, function(z) {
+             ##         return(inherits(z, "ProcessHistory"))
+             ##     }))
+             ##     if (!all(isOK))
+             ##         msg <- c(msg, paste0("Only 'ProcessHistory' ",
+             ##                              "objects are allowed in slot ",
+             ##                              ".processHistory!"))
+             ## }
+             if (length(msg))
+                 msg
+             else TRUE
+         }
+)
+
+
 #' @aliases mz,CalibrantMassParam
 #'
 #' @title Calibrant mass based calibration of chromatgraphic peaks

@@ -6,7 +6,7 @@
 \usage{
 peaksWithCentWave(int, rt, peakwidth = c(20, 50), snthresh = 10,
   prefilter = c(3, 100), integrate = 1, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, firstBaselineCheck = TRUE)
+  verboseColumns = FALSE, firstBaselineCheck = TRUE, ...)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -42,6 +42,8 @@ columns should be returned.}
 
 \item{firstBaselineCheck}{\code{logical(1)}. If \code{TRUE} continuous data within
 regions of interest is checked to be above the first baseline.}
+
+\item{...}{currently ignored.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak, with

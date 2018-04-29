@@ -3017,6 +3017,8 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #'
 #' @param snthresh `numeric(1)` defining the signal to noise cut-off to be used
 #'     in the peak detection step.
+#'
+#' @param ... currently ignored.
 #' 
 #' @family peak detection functions for chromatographic data
 #'
@@ -3058,7 +3060,7 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"], ybottom = c(0, 0),
 #'     ytop = pks[, "maxo"], border = "red")
 peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
-                                   max = 20, snthresh = 10) {
+                                   max = 20, snthresh = 10, ...) {
     if (missing(int) | missing(rt))
         stop("Arguments 'int' and 'rt' are required")
     if (length(int) != length(rt))
@@ -3167,6 +3169,8 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
 #'     regions of interest is checked to be above the first baseline.
+#'
+#' @param ... currently ignored.
 #' 
 #' @family peak detection functions for chromatographic data
 #'
@@ -3237,7 +3241,8 @@ peaksWithCentWave <- function(int, rt,
                               fitgauss = FALSE,
                               noise = 0, ## noise.local=TRUE,
                               verboseColumns = FALSE,
-                              firstBaselineCheck = TRUE
+                              firstBaselineCheck = TRUE,
+                              ...
                               ) {
     if (length(peakwidth) != 2)
         stop("'peakwidth' has to be a numeric of length 2")

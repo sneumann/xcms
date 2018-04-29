@@ -5,7 +5,7 @@
 \title{Identify peaks in chromatographic data using matchedFilter}
 \usage{
 peaksWithMatchedFilter(int, rt, fwhm = 30, sigma = fwhm/2.3548, max = 20,
-  snthresh = 10)
+  snthresh = 10, ...)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -25,6 +25,8 @@ will bbe detected in the data}
 
 \item{snthresh}{\code{numeric(1)} defining the signal to noise cut-off to be used
 in the peak detection step.}
+
+\item{...}{currently ignored.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak, with
