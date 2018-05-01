@@ -307,7 +307,10 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 }
 \seealso{
 The \code{\link{do_findChromPeaks_matchedFilter}} core API function
-    and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+and \code{\link{findPeaks.matchedFilter}} for the old user interface.
+
+\code{\link{peaksWithMatchedFilter}} for functions to perform matchedFilter
+peak detection in purely chromatographic data.
 
 \code{\link{XCMSnExp}} for the object containing the results of
     the chromatographic peak detection.

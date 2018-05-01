@@ -344,7 +344,10 @@ sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 }
 \seealso{
 The \code{\link{do_findChromPeaks_centWave}} core API function and
-    \code{\link{findPeaks.centWave}} for the old user interface.
+\code{\link{findPeaks.centWave}} for the old user interface.
+
+\code{\link{peaksWithCentWave}} for functions to perform centWave peak
+detection in purely chromatographic data.
 
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
