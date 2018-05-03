@@ -13,6 +13,8 @@
 \item{param}{a \link{MatchedFilterParam} object specifying the settings for the
 peak detection. See \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for the description of
 arguments used for peak detection.}
+
+\item{...}{currently ignored.}
 }
 \value{
 If called on a \code{Chromatogram} object, the method returns a \code{matrix} with

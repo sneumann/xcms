@@ -17,6 +17,8 @@
 #' @param param a [CentWaveParam] object specifying the settings for the
 #'     peak detection. See [peaksWithCentWave()] for the description of
 #'     arguments used for peak detection.
+#'
+#' @param ... currently ignored.
 #' 
 #' @return
 #'
@@ -84,6 +86,8 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' @param param a [MatchedFilterParam] object specifying the settings for the
 #'     peak detection. See [peaksWithMatchedFilter()] for the description of
 #'     arguments used for peak detection.
+#'
+#' @param ... currently ignored.
 #' 
 #' @return
 #'

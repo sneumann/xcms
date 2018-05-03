@@ -13,6 +13,8 @@
 \item{param}{a \link{CentWaveParam} object specifying the settings for the
 peak detection. See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for the description of
 arguments used for peak detection.}
+
+\item{...}{currently ignored.}
 }
 \value{
 If called on a \code{Chromatogram} object, the method returns a \code{matrix} with

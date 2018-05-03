@@ -408,3 +408,66 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
     mtext(side = 1, line = 2.5, "retention time", cex = par("cex.lab"))
     mtext(side = 4, line = 0, "mz", cex = par("cex.lab"))
 }
+
+#' @title Calculate relative log abundances
+#' 
+#' `rla` calculates the relative log abundances (RLA, see reference) on a
+#' `numeric` vector.
+#'
+#' @details The RLA is defines as the (log) abundance of an analyte relative
+#'     to the median across all abundances of the same group.
+#' 
+#' @param x `numeric` (for `rla`) or `matrix` (for `rowRla`) with the
+#'     abundances (in natural scale) on which the RLA should be calculated.
+#'
+#' @param group `factor`, `numeric` or `character` with the same length
+#'     than `x` that groups values in `x`. If omitted all values are considered
+#'     to be from the same group.
+#'
+#' @param log.transform `logical(1)` whether `x` should be log2 transformed.
+#'     Set to `log.transform = FALSE` if `x` is already in log scale.
+#' 
+#' @return `numeric` of the same length than `x` (for `rla`) or `matrix` with
+#'     the same dimensions than `x` (for `rowRla`).
+#'
+#' @rdname rla
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @references
+#'
+#' De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
+#' McConville M, Speed TP. Normalizing and integrating metabolomics data.
+#' *Anal Chem* 2012 Dec 18;84(24):10768-76.
+#' 
+#' @examples
+#'
+#' x <- c(3, 4, 5, 1, 2, 3, 7, 8, 9)
+#'
+#' grp <- c(1, 1, 1, 2, 2, 2, 3, 3, 3)
+#'
+#' rla(x, grp)
+rla <- function(x, group, log.transform = TRUE) {
+    if (missing(group))
+        group <- rep_len(1, length(x))
+    if (length(x) != length(group))
+        stop("length of 'x' has to match length of 'group'")
+    if (!is.factor(group))
+	group <- factor(group, levels = unique(group))
+    ## Calculate group medians.
+    if (log.transform)
+        log_x <- log2(x)
+    grp_meds <- unlist(lapply(split(log_x, group), median, na.rm = TRUE))
+    log_x - grp_meds[group]
+}
+
+#' `rowRla` calculates row-wise RLAs.
+#'
+#' @rdname rla
+#'
+#' @md
+rowRla <- function(x, group, log.transform = TRUE) {
+    t(apply(x, MARGIN = 1, rla, group = group, log.transform = log.transform))
+}

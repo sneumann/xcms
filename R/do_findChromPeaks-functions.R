@@ -3580,7 +3580,8 @@ peaksWithCentWave <- function(int, rt,
 #' int[is.na(int)] <- 0
 #' rt <- rtime(chr)
 #' .getRtROI(int, rt)
-.getRtROI <- function(int, rt, peakwidth = c(20, 50), noise = 0, prefilter = c(3, 100)) {
+.getRtROI <- function(int, rt, peakwidth = c(20, 50), noise = 0,
+                      prefilter = c(3, 100)) {
     peakwidth <- range(peakwidth)
     if (length(prefilter) != 2)
         stop("'prefilter' has to be a 'numeric' of length 2")

@@ -94,8 +94,10 @@ method is more accurate but prone to noise, while the former is more
 robust, but less exact.}
 
 \item{mzdiff}{\code{numeric(1)} representing the minimum difference in m/z
-dimension for peaks with overlapping retention times; can be negative to
-allow overlap.}
+dimension required for peaks with overlapping retention times; can be
+negative to allow overlap. During peak post-processing, peaks
+defined to be overlapping are reduced to the one peak with the largest
+signal.}
 
 \item{fitgauss}{\code{logical(1)} whether or not a Gaussian should be fitted
 to each peak.}

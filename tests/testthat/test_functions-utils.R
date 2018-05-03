@@ -47,3 +47,24 @@ test_that("plotMsData works", {
     msd <- extractMsData(faahko_od, mz = c(334.9, 335.1), rt = c(2700, 2900))
     plotMsData(msd[[1]])
 })
+
+test_that("rla, rowRla work", {
+    x <- c(3, 4, 5, 1, 2, 3, 7, 8, 9)
+    grp <- c(1, 1, 1, 2, 2, 2, 3, 3, 3)
+    res <- rla(x, grp)
+    expect_equal(unname(res[1]), log2(3) - median(log2(c(3, 4, 5))))
+    expect_equal(unname(res[2]), log2(4) - median(log2(c(3, 4, 5))))
+    expect_equal(unname(res[3]), log2(5) - median(log2(c(3, 4, 5))))
+    expect_equal(unname(res[4]), log2(1) - median(log2(c(1, 2, 3))))
+    expect_equal(unname(res[5]), log2(2) - median(log2(c(1, 2, 3))))
+    expect_equal(unname(res[6]), log2(3) - median(log2(c(1, 2, 3))))
+
+    idx <- c(1, 5, 3, 8, 9, 2, 6, 4, 7)
+    res_2 <- rla(x[idx], grp[idx])
+    expect_identical(res_2, res[idx])
+
+    mat <- rbind(x, x, x, x)
+
+    res_mat <- rowRla(mat, grp)
+    expect_equal(res_mat[2, ], res)
+})

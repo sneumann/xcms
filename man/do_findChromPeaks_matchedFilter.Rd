@@ -57,8 +57,10 @@ be joined to the slice in which filtration and peak detection will be
 performed).}
 
 \item{mzdiff}{\code{numeric(1)} representing the minimum difference in m/z
-dimension for peaks with overlapping retention times; can be negative to
-allow overlap.}
+dimension required for peaks with overlapping retention times; can be
+negative to allow overlap. During peak post-processing, peaks
+defined to be overlapping are reduced to the one peak with the largest
+signal.}
 
 \item{index}{\code{logical(1)} specifying whether indicies should be
 returned instead of values for m/z and retention times.}

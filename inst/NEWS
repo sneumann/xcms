@@ -1,9 +1,9 @@
-CHANGES IN VERSION 3.1.4
+CHANGES IN VERSION 3.3.1
 -------------------------
 
-NEW FEATURES
+- Add functions rla and rowRla to calculate RLA (relative log abundances).
 - Add peaksWithMatchedFilter to perform peak detection in chromatographic
-  (MRM/SRM) data (issues # 277 and #278).
+  (MRM/SRM) data (issues #277 and #278).
 - Add peaksWithCentWave to perform centWave peak detection in chromatographic
   (MRM/SRM) data (issue #279).
 - Add findChromPeaks,Chromatogram methods for CentWaveParam and
