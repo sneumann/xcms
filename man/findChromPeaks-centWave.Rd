@@ -284,14 +284,19 @@ The \code{detectChromPeaks,OnDiskMSnExp,CentWaveParam} method
 }
 \details{
 The centWave algorithm is most suitable for high resolution
-    LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase
-    the method identifies \emph{regions of interest} (ROIs) representing
-    mass traces that are characterized as regions with less than \code{ppm}
-    m/z deviation in consecutive scans in the LC/MS map. These ROIs are
-    then subsequently analyzed using continuous wavelet transform (CWT)
-    to locate chromatographic peaks on different scales. The first analysis
-    step is skipped, if regions of interest are passed \emph{via} the
-    \code{param} parameter.
+LC/\{TOF,OrbiTrap,FTICR\}-MS data in centroid mode. In the first phase
+the method identifies \emph{regions of interest} (ROIs) representing
+mass traces that are characterized as regions with less than \code{ppm}
+m/z deviation in consecutive scans in the LC/MS map. In detail, starting
+with a single m/z, a ROI is extended if a m/z can be found in the next scan
+(spectrum) for which the difference to the mean m/z of the ROI is smaller
+than the user defined \code{ppm} of the m/z. The mean m/z of the ROI is then
+updated considering also the newly included m/z value.
+
+These ROIs are then, after some cleanup, analyzed using continuous wavelet
+transform (CWT) to locate chromatographic peaks on different scales.
+The first analysis step is skipped, if regions of interest are passed
+\emph{via} the \code{param} parameter.
 
 Parallel processing (one process per sample) is supported and can
     be configured either by the \code{BPPARAM} parameter or by globally

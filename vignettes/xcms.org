@@ -263,9 +263,16 @@ illustrate the corresponding workflow.
 
 In the present data there is actually no variation in the m/z values. Usually
 one would see the m/z values (lower panel) scatter around the /real/ m/z value of
-the compound. It is suggested to inspect the ranges of m/z values for many
-compounds (either internal standards or compounds known to be present in the
-sample) and define the =ppm= parameter for /centWave/ according to these.
+the compound. The first step of the /centWave/ algorithm defines so called regions
+of interest (ROI) based on the difference of m/z values from consecutive
+scans. In detail, m/z values from consecutive scans are included into a ROI if
+the difference between the m/z and the mean m/z of the ROI is smaller than the
+user defined =ppm= parameter. A reasonable choice for the =ppm= could thus be the
+maximal m/z difference of data points from neighboring scans/spectra that are
+part of the chromatographic peak. It is suggested to inspect the ranges of m/z
+values for many compounds (either internal standards or compounds known to be
+present in the sample) and define the =ppm= parameter for /centWave/ according to
+these.
 
 Below we perform the chromatographic peak detection using the =findChromPeaks=
 method. The submitted /parameter/ object defines which algorithm will be used and

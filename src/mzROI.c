@@ -174,24 +174,34 @@ int half,mid;
   return(first);
 }
 
-struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct scanBuf * scanbuf, const int scan, const int LastScan, struct mzROIStruct *mzval, struct mzLengthStruct *mzLength, struct pickOptionsStruct *pickOptions)
+// Passes the m/z of an input spectrum (fMass) and checks if that m/z is
+// close enough to an existing mzROI to enable inclusion (depending on the
+// user defined ppm: difference mean m/z of ROI to fMass <= ppm * fMass / 1e6)
+// otherwise a new mzROI is defined for fMass.
+struct mzROIStruct * insertpeak(const double fMass, const double fInten,
+				struct scanBuf * scanbuf, const int scan,
+				const int LastScan, struct mzROIStruct *mzval,
+				struct mzLengthStruct *mzLength,
+				struct pickOptionsStruct *pickOptions)
 {
-  int i,wasfound=FALSE;
-  double ddev = (pickOptions->dev *  fMass);
+  int i,wasfound = FALSE;
+  double ddev = (pickOptions->dev * fMass);
   int lpos = lower_bound( fMass - ddev,mzval,0,mzLength->mzval);
   int hpos = upper_bound( fMass + ddev,mzval,lpos,mzLength->mzval - lpos);
-
+  
   if (lpos >  mzLength->mzval-1)
       lpos = mzLength->mzval -1;
   if (hpos >  mzLength->mzval-1)
       hpos = mzLength->mzval -1 ;
 
-  for (i=lpos; i <= hpos; i++)
+  // loop through mz ROIs for which the m/z could be close to fMass
+  for (i = lpos; i <= hpos; i++)
   {
-    double ddiff = fabs(mzval[i].mz -  fMass);
+    // check difference between fMass and the mz of the current ROI
+    double ddiff = fabs(mzval[i].mz - fMass);
 
     if (ddiff <= ddev)
-    { // match -> extend this ROI
+    { // match (smaller than defined ppm) -> extend this ROI
           if ( (i > hpos) || (i<lpos) ) error("! scan: %d \n",scan);
           wasfound = TRUE;
           //recursive m/z mean update
@@ -207,59 +217,59 @@ struct mzROIStruct * insertpeak(const double fMass, const double fInten, struct 
               mzval[i].kI++;
     }
   } // for
-
-   // if not found
-   if (wasfound == FALSE) {  // no, create new ROI for mz
-
-      lpos=-1;hpos=-1;
-      int doInsert=FALSE;
-      if ((scan < LastScan) && (scanbuf->nextScanLength > 0)) {// check next scan
-        int lpos = lowerBound( fMass - ddev,scanbuf->nextScan,0,scanbuf->nextScanLength);
-        int hpos = upperBound( fMass + ddev,scanbuf->nextScan,lpos,scanbuf->nextScanLength - lpos);
-        if (lpos < scanbuf->nextScanLength) {
+  
+  // if not found
+  if (wasfound == FALSE) {  // no, create new ROI for mz
+    
+    lpos=-1;hpos=-1;
+    int doInsert=FALSE;
+    if ((scan < LastScan) && (scanbuf->nextScanLength > 0)) {// check next scan
+      int lpos = lowerBound( fMass - ddev,scanbuf->nextScan,0,scanbuf->nextScanLength);
+      int hpos = upperBound( fMass + ddev,scanbuf->nextScan,lpos,scanbuf->nextScanLength - lpos);
+      if (lpos < scanbuf->nextScanLength) {
           for (i=lpos; i <= hpos; i++) //
-          {
-            ddev = (pickOptions->dev *  scanbuf->nextScan[i]);
-            double ddiff = fabs(fMass - scanbuf->nextScan[i]);
-
-            if (ddiff <= ddev)
-            {
-              doInsert=TRUE;
-              break;
-            }
-          }
-        }
-      } else
-      doInsert=TRUE;
-
-      if (doInsert == TRUE) {
-        // get pos. for insert
-        int i = lower_bound(fMass,mzval,0,mzLength->mzval);
-        // check buffer size
-        mzval=checkmzvalBufSize(mzval, mzLength->mzval + 1, mzLength);
-        // elements to move
-        int n = mzLength->mzval - i;
-        // insert element
-        if (n>0)
-            memmove(mzval + i +1, mzval + i, n*sizeof(struct mzROIStruct));
-
-        mzval[i].mz = fMass;
-        mzval[i].mzmin = fMass;
-        mzval[i].mzmax = fMass;
-        mzval[i].intensity = fInten;
-        mzval[i].scmin = scan;
-        mzval[i].scmax = scan;
-        mzval[i].length = 1;
-        if (fInten >= pickOptions->minimumInt)
-            mzval[i].kI = 1; else
-            mzval[i].kI = 0;
-        mzval[i].deleteMe = FALSE;
-
-        mzLength->mzval++;
+	    {
+	      ddev = (pickOptions->dev *  scanbuf->nextScan[i]);
+	      double ddiff = fabs(fMass - scanbuf->nextScan[i]);
+	      
+	      if (ddiff <= ddev)
+		{
+		  doInsert=TRUE;
+		  break;
+		}
+	    }
       }
-   }
-
-   return(mzval);
+    } else
+      doInsert=TRUE;
+    
+    if (doInsert == TRUE) {
+      // get pos. for insert
+      int i = lower_bound(fMass,mzval,0,mzLength->mzval);
+      // check buffer size
+      mzval=checkmzvalBufSize(mzval, mzLength->mzval + 1, mzLength);
+      // elements to move
+      int n = mzLength->mzval - i;
+      // insert element
+      if (n>0)
+	memmove(mzval + i +1, mzval + i, n*sizeof(struct mzROIStruct));
+      
+      mzval[i].mz = fMass;
+      mzval[i].mzmin = fMass;
+      mzval[i].mzmax = fMass;
+      mzval[i].intensity = fInten;
+      mzval[i].scmin = scan;
+      mzval[i].scmax = scan;
+      mzval[i].length = 1;
+      if (fInten >= pickOptions->minimumInt)
+	mzval[i].kI = 1; else
+	mzval[i].kI = 0;
+      mzval[i].deleteMe = FALSE;
+      
+      mzLength->mzval++;
+    }
+  }
+  
+  return(mzval);
 }
 
 struct mzROIStruct * cleanup(const int ctScan, struct mzROIStruct *mzROI, struct mzROIStruct *mzval, struct mzLengthStruct *mzLength, int *scerr, struct pickOptionsStruct *pickOptions){
@@ -535,7 +545,9 @@ SEXP getMZ(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange
   return(res);
 }
 
-SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries, SEXP prefilter, SEXP noise) {
+SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange,
+	       SEXP scanrange, SEXP lastscan, SEXP dev, SEXP minEntries,
+	       SEXP prefilter, SEXP noise) {
   //jo double *pmz, *pintensity, mzrangeFrom,mzrangeTo;
   double *pmz, *pintensity;
   int i,*pscanindex, scanrangeFrom, scanrangeTo, ctScan, nmz, lastScan, inoise;
@@ -585,6 +597,7 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
     SET_STRING_ELT(list_names, i,  mkChar(names[i]));
 
   Rprintf(" %% finished: ");
+  // loop through scans/spectra
   for (ctScan=scanrangeFrom;ctScan<=scanrangeTo;ctScan++)
   {
      perc = (int) (ctScan* 100)/scanrangeTo;
@@ -606,7 +619,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
       double fMass,lastMass=-1;
       double fInten;
 
-        for (p=0;p < scanbuf->thisScanLength;p++)
+      // loop through m/z values of the current scan.
+      for (p=0;p < scanbuf->thisScanLength;p++)
         {
           fMass  = scanbuf->thisScan[p].mz;
           fInten = scanbuf->thisScan[p].intensity;
@@ -616,7 +630,8 @@ SEXP findmzROI(SEXP mz, SEXP intensity, SEXP scanindex, SEXP mzrange, SEXP scanr
           lastMass = fMass;
 
           if (fInten > inoise)
-            mzval=insertpeak(fMass, fInten, scanbuf, ctScan, scanrangeTo, mzval, &mzLength, &pickOptions);
+            mzval = insertpeak(fMass, fInten, scanbuf, ctScan, scanrangeTo,
+			       mzval, &mzLength, &pickOptions);
 
         }
     }
