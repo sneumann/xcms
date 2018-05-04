@@ -249,10 +249,14 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' sample (\code{bySample = TRUE}). The \code{chromPeaks<-} method for
 #' \code{XCMSnExp} objects removes also all correspondence (peak grouping)
 #' and retention time correction (alignment) results. The optional
-#' arguments \code{rt}, \code{mz} and \code{ppm} allow to extract only
-#' chromatographic peaks overlapping (if \code{type = "any"}) or completely
-#' within (if \code{type = "within"}) the defined retention time and mz
-#' ranges.
+#' arguments \code{rt}, \code{mz}, \code{ppm} and \code{type} allow to extract
+#' only chromatographic peaks overlapping the defined retention time and/or
+#' m/z ranges. Argument \code{type} allows to define how \emph{overlapping} is
+#' determined: for \code{type == "any"} (the default), all peaks that are even
+#' partially overlapping the region are returned, for \code{type == "within"}
+#' the full peak has to be within the region and for
+#' \code{type == "apex_within"} the peak's apex position (highest signal of the
+#' peak) has to be within the region.
 #' See description of the return value for details on the returned matrix.
 #' Users usually don't have to use the \code{chromPeaks<-} method directly
 #' as detected chromatographic peaks are added to the object by the
@@ -296,16 +300,20 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' @rdname XCMSnExp-class
 setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                                              rt = numeric(), mz = numeric(),
-                                             ppm = 0, type = "any") {
+                                             ppm = 0,
+                                             type = c("any", "within",
+                                                      "apex_within")) {
     pks <- chromPeaks(object@msFeatureData)
-    type <- match.arg(type, c("any", "within"))
+    type <- match.arg(type)
     ## Select peaks within rt range.
     if (length(rt)) {
         rt <- range(rt)
+        if (type == "any")
+            keep <- which(pks[, "rtmax"] >= rt[1] & pks[, "rtmin"] <= rt[2])
         if (type == "within")
             keep <- which(pks[, "rtmin"] >= rt[1] & pks[, "rtmax"] <= rt[2])
-        else
-            keep <- which(pks[, "rtmax"] >= rt[1] & pks[, "rtmin"] <= rt[2])
+        if (type == "apex_within")
+            keep <- which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2])
         pks <- pks[keep, , drop = FALSE]
     }
     ## Select peaks within mz range, considering also ppm
@@ -316,10 +324,12 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
             mz[1] <- mz[1] - mz[1] * ppm / 1e6
         if (is.finite(mz[2]))
             mz[2] <- mz[2] + mz[2] * ppm / 1e6
+        if (type == "any")
+            keep <- which(pks[, "mzmax"] >= mz[1] & pks[, "mzmin"] <= mz[2])
         if (type == "within")
             keep <- which(pks[, "mzmin"] >= mz[1] & pks[, "mzmax"] <= mz[2])
-        else
-            keep <- which(pks[, "mzmax"] >= mz[1] & pks[, "mzmin"] <= mz[2])
+        if (type == "apex_within")
+            keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
         pks <- pks[keep, , drop = FALSE]
     }
     if (bySample) {
@@ -528,9 +538,10 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 #'     type. Use the \code{processHistoryTypes} to list all supported values.
 #'     For \code{chromPeaks}: \code{character} specifying which peaks to return
 #'     if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-#'     chromatographic peaks that \emph{overlap} the range defined by the
-#'     \code{mz} or by the \code{rt}. For \code{type = "within"} only peaks
-#'     completely within the range(s) are returned.
+#'     chromatographic peaks partially overlapping the range defined by 
+#'     \code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
+#'     only peaks completely within the region and \code{type = "apex_within"}
+#'     peaks for which the peak's apex is within the region.
 #' 
 #' @return
 #'

@@ -85,7 +85,7 @@ processHistoryTypes()
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
 \S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE, rt = numeric(),
-  mz = numeric(), ppm = 0, type = "any")
+  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
@@ -191,9 +191,10 @@ returned.}
 type. Use the \code{processHistoryTypes} to list all supported values.
 For \code{chromPeaks}: \code{character} specifying which peaks to return
 if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-chromatographic peaks that \emph{overlap} the range defined by the
-\code{mz} or by the \code{rt}. For \code{type = "within"} only peaks
-completely within the range(s) are returned.}
+chromatographic peaks partially overlapping the range defined by 
+\code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
+only peaks completely within the region and \code{type = "apex_within"}
+peaks for which the peak's apex is within the region.}
 
 \item{adjusted}{logical(1) whether adjusted or raw (i.e. the original
 retention times reported in the files) should be returned.}
@@ -363,10 +364,14 @@ be returned ungrouped (default \code{bySample = FALSE}) or grouped by
 sample (\code{bySample = TRUE}). The \code{chromPeaks<-} method for
 \code{XCMSnExp} objects removes also all correspondence (peak grouping)
 and retention time correction (alignment) results. The optional
-arguments \code{rt}, \code{mz} and \code{ppm} allow to extract only
-chromatographic peaks overlapping (if \code{type = "any"}) or completely
-within (if \code{type = "within"}) the defined retention time and mz
-ranges.
+arguments \code{rt}, \code{mz}, \code{ppm} and \code{type} allow to extract
+only chromatographic peaks overlapping the defined retention time and/or
+m/z ranges. Argument \code{type} allows to define how \emph{overlapping} is
+determined: for \code{type == "any"} (the default), all peaks that are even
+partially overlapping the region are returned, for \code{type == "within"}
+the full peak has to be within the region and for
+\code{type == "apex_within"} the peak's apex position (highest signal of the
+peak) has to be within the region.
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the \code{chromPeaks<-} method directly
 as detected chromatographic peaks are added to the object by the
