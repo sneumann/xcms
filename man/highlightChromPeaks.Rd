@@ -6,7 +6,8 @@
     plot}
 \usage{
 highlightChromPeaks(x, rt, mz, border = rep("00000040", length(fileNames(x))),
-  lwd = 1, col = NA, type = c("rect", "point"), ...)
+  lwd = 1, col = NA, type = c("rect", "point"), whichPeaks = c("any",
+  "within", "apex_within"), ...)
 }
 \arguments{
 \item{x}{For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
@@ -33,6 +34,15 @@ should be highlighted: \code{type = "rect"} draws a rectangle
 representing the peak definition, \code{type = "point"} indicates a
 chromatographic peak with a single point at the position of the peak's
 \code{"rt"} and \code{"maxo"}.}
+
+\item{whichPeaks}{\code{character(1)} specifying how peaks are called to be
+located within the region defined by \code{mz} and \code{rt}. Can be
+one of \code{"any"}, \code{"within"}, and \code{"apex_within"} for all
+peaks that are even partially overlapping the region, peaks that are
+completely within the region, and peaks for which the apex is within
+the region. This parameter is passed to the \code{type} argument of the
+\code{\link{chromPeaks}} function. See related documentation for more
+information and examples.}
 
 \item{...}{additional parameters to the \code{\link{matplot}} or \code{plot}
 function.}

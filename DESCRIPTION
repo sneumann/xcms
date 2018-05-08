@@ -37,7 +37,8 @@ Suggests:
     microbenchmark,
     testthat,
     pander,
-    magrittr
+    magrittr,
+    MALDIquant
 Enhances:
     Rgraphviz,
     Rmpi,

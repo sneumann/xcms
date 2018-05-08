@@ -6,7 +6,8 @@
 \usage{
 plotChromPeakDensity(object, mz, rt, param, simulate = TRUE,
   col = "#00000080", xlab = "retention time", ylab = "sample",
-  xlim = range(rt), main = NULL, ...)
+  xlim = range(rt), main = NULL, type = c("any", "within", "apex_within"),
+  ...)
 }
 \arguments{
 \item{object}{A \link{XCMSnExp} object with identified
@@ -42,6 +43,14 @@ Defaults to the range of the \code{rt} parameter.}
 
 \item{main}{\code{character(1)} defining the title of the plot. By default
 (for \code{main = NULL}) the mz-range is used.}
+
+\item{type}{\code{character(1)} specifying how peaks are called to be located
+within the region defined by \code{mz} and \code{rt}. Can be one of \code{"any"},
+\code{"within"}, and \code{"apex_within"} for all peaks that are even partially
+overlapping the region, peaks that are completely within the region, and
+peaks for which the apex is within the region. This parameter is passed
+to the \link{chromPeaks} function. See related documentation for more
+information and examples.}
 
 \item{...}{Additional parameters to be passed to the \code{plot} function. Data
 point specific parameters such as \code{bg} or \code{pch} have to be of length 1

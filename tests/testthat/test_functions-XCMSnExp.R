@@ -54,6 +54,8 @@ test_that("plotChromPeakDensity works", {
     
     plotChromPeakDensity(xod_x, mz = c(0, 1))
     plotChromPeakDensity(xod_x, mz = c(300, 310), pch = 16, xlim = c(2500, 4000))
+
+    expect_error(plotChromPeakDensity(xod_x, mz = c(0, 1), type = "dunno"))
 })
 
 test_that("plotChromPeaks works", {

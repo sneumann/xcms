@@ -1,6 +1,9 @@
 CHANGES IN VERSION 3.3.1
 -------------------------
 
+- Parameter 'type' added to plotChromPeakDensity and 'whichPeaks' to
+  highlightChromPeaks. Both parameters are passed to the 'type' argument
+  of chromPeaks.
 - Parameter 'type' in chromPeaks gets additional option "apex_within" to return
   chromatographic peaks that have their apex within the defined rt and/or m/z
   range.

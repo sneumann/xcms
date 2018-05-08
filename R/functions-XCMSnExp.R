@@ -879,6 +879,14 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 #'
 #' @param main `character(1)` defining the title of the plot. By default
 #'     (for `main = NULL`) the mz-range is used.
+#'
+#' @param type `character(1)` specifying how peaks are called to be located
+#'     within the region defined by `mz` and `rt`. Can be one of `"any"`,
+#'     `"within"`, and `"apex_within"` for all peaks that are even partially
+#'     overlapping the region, peaks that are completely within the region, and
+#'     peaks for which the apex is within the region. This parameter is passed
+#'     to the [chromPeaks] function. See related documentation for more
+#'     information and examples.
 #' 
 #' @param ... Additional parameters to be passed to the `plot` function. Data
 #'     point specific parameters such as `bg` or `pch` have to be of length 1
@@ -931,7 +939,9 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
 plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                                  col = "#00000080", xlab = "retention time",
                                  ylab = "sample", xlim = range(rt),
-                                 main = NULL, ...) {
+                                 main = NULL, type = c("any", "within",
+                                                       "apex_within"), ...) {
+    type <- match.arg(type)
     if (missing(object))
         stop("Required parameter 'object' is missing")
     if (!is(object, "XCMSnExp"))
@@ -965,7 +975,7 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
     nsamples <- length(fileNames(object))
     if (length(col) != nsamples)
         col <- rep_len(col[1], nsamples)
-    pks <- chromPeaks(object, mz = mz, rt = rt)
+    pks <- chromPeaks(object, mz = mz, rt = rt, type = type)
     if (nrow(pks)) {
         ## Extract parameters from the param object
         bw = bw(param)
@@ -1081,6 +1091,15 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #'     chromatographic peak with a single point at the position of the peak's
 #'     \code{"rt"} and \code{"maxo"}.
 #'
+#' @param whichPeaks \code{character(1)} specifying how peaks are called to be
+#'     located within the region defined by \code{mz} and \code{rt}. Can be
+#'     one of \code{"any"}, \code{"within"}, and \code{"apex_within"} for all
+#'     peaks that are even partially overlapping the region, peaks that are
+#'     completely within the region, and peaks for which the apex is within
+#'     the region. This parameter is passed to the \code{type} argument of the
+#'     \code{\link{chromPeaks}} function. See related documentation for more
+#'     information and examples.
+#' 
 #' @param ... additional parameters to the \code{\link{matplot}} or \code{plot}
 #'     function.
 #' 
@@ -1113,8 +1132,10 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 highlightChromPeaks <- function(x, rt, mz,
                                 border = rep("00000040", length(fileNames(x))),
                                 lwd = 1, col = NA, type = c("rect", "point"),
+                                whichPeaks = c("any", "within", "apex_within"),
                                 ...) {
     type <- match.arg(type)
+    whichPeaks <- match.arg(whichPeaks)
     n_samples <- length(fileNames(x))
     if (missing(rt))
         rt <- c(-Inf, Inf)
@@ -1124,7 +1145,7 @@ highlightChromPeaks <- function(x, rt, mz,
         stop("'x' has to be a XCMSnExp object")
     if (!hasChromPeaks(x))
         stop("'x' does not contain any detected peaks")
-    pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0)
+    pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0, type = whichPeaks)
     if (length(col) != n_samples)
         col <- rep(col[1], n_samples)
     if (length(border) != n_samples)
