@@ -325,8 +325,7 @@ dropGenericProcessHistory <- function(x, fun) {
     res <- matrix(ncol = ncols, nrow = nrow(peakArea))
     colnames(res) <- cn
     res[, "sample"] <- sample_idx
-    res[, c("mzmin", "mzmax")] <-
-        peakArea[, c("mzmin", "mzmax")]
+    res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
     message("Requesting ", nrow(res), " missing peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
@@ -338,7 +337,7 @@ dropGenericProcessHistory <- function(x, fun) {
     mzs <- unlist(mzs, use.names = FALSE)
     rtim <- rtime(object)
     rtim_range <- range(rtim)
-    for (i in 1:nrow(res)) {
+    for (i in seq_len(nrow(res))) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
         ## Ensure that the rt region is within the rtrange of the data.
         rtr[1] <- max(rtr[1], rtim_range[1])
@@ -1553,3 +1552,87 @@ filterFeatureDefinitions <- function(x, features) {
         x
 }
 
+#' @title Simple feature summaries
+#'
+#' @description
+#' 
+#' Simple function to calculate feature summaries. These include counts and
+#' percentages of samples in which a chromatographic peak is present for each
+#' feature and counts and percentages of samples in which more than one
+#' chromatographic peak was annotated to the feature. For
+#' `perSampleCounts = TRUE` also the individual chromatographic peak counts per
+#' sample are returned.
+#'
+#' @param x `XCMSnExp` object with correspondence results.
+#'
+#' @param group `numeric`, `logical`, `character` or `factor` with the same
+#'     length than `x` has samples to aggregate counts by the groups defined
+#'     in `group`.
+#'
+#' @param perSampleCounts `logical(1)` whether feature wise individual peak
+#'     counts per sample should be returned too.
+#'
+#' @return
+#'
+#' `matrix` with one row per feature and columns:
+#'
+#' - `"count"`: the total number of samples in which a peak was found.
+#' - `"perc"`: the percentage of samples in which a peak was found.
+#' - `"multi_count"`: the total number of samples in which more than one peak
+#'   was assigned to the feature.
+#' - `"multi_perc"`: the percentage of those samples in which a peak was found,
+#'   that have also multiple peaks annotated to the feature. Example: for a
+#'   feature, at least one peak was detected in 50 samples. In 5 of them 2 peaks
+#'   were assigned to the feature. `"multi_perc"` is in this case 10%.
+#' - The same 4 columns are repeated for each unique element (level) in `group`
+#'   if `group` was provided.
+#'
+#' If `perSampleCounts = TRUE` also one column for each sample is returned
+#' with the peak counts per sample.
+#'
+#' @author Johannes Rainer
+featureSummary <- function(x, group, perSampleCounts = FALSE) {
+    if (!is(x, "XCMSnExp"))
+        stop("'x' is expected to be an 'XCMSnExp' object")
+    if (!hasFeatures(x))
+        stop("No feature definitions found in 'x'. Please perform first a ",
+             "correspondence analysis with the 'groupChromPeaks' function.")
+    if (!missing(group)) {
+        if (length(group) != length(fileNames(x)))
+            stop("length of 'group' does not match the number of ",
+                 "samples in 'x'")
+    }
+    ## First determine the number of peaks per sample
+    smpls <- seq_along(fileNames(x))
+    pks_per_sample <- lapply(featureDefinitions(x)$peakidx, function(z)
+        as.numeric(table(factor(chromPeaks(x)[z, "sample"],
+                                levels = smpls))))
+    pks_per_sample <- do.call(rbind, pks_per_sample)
+    rownames(pks_per_sample) <- rownames(featureDefinitions(x))
+    sum_fun <- function(z) {
+        cnt <- sum(z > 0)
+        cnt_multi <- sum(z > 1)
+        c(count = cnt,
+          perc = cnt * 100 / length(z),
+          multi_count = cnt_multi,
+          multi_perc = cnt_multi * 100 / cnt
+          )
+    }
+    fts_sum <- t(apply(pks_per_sample, MARGIN = 1, sum_fun))
+    if (!missing(group)) {
+        per_group <- lapply(unique(group), function(grp) {
+            idx <- which(group == grp)
+            res <- t(apply(pks_per_sample[, idx, drop = FALSE],
+                           MARGIN = 1, sum_fun))
+            colnames(res) <- paste0(grp, "_", colnames(res))
+            res
+        })
+        fts_sum <- cbind(fts_sum, do.call(cbind, per_group))
+    }
+    if (perSampleCounts) {
+        colnames(pks_per_sample) <- basename(fileNames(x))
+        fts_sum <- cbind(fts_sum, pks_per_sample)
+    }
+    fts_sum[is.na(fts_sum)] <- 0
+    fts_sum
+}

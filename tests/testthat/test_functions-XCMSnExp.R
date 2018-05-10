@@ -132,3 +132,24 @@ test_that("filterFeatureDefinitions works", {
     ph <- processHistory(tmp)[[length(processHistory(tmp))]]
     expect_true(!is(processParam(ph), "GenericParam"))
 })
+
+test_that("featureSummary works", {
+    expect_error(featureSummary(1:3))
+    expect_error(featureSummary(xod_xgrg, group = 1:5))
+    expect_error(featureSummary(xod_xgr))
+
+    res <- featureSummary(xod_xgrg)
+    expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc"))
+    expect_equal(rownames(res), rownames(featureDefinitions(xod_xgrg)))
+
+    res <- featureSummary(xod_xgrg, group = c(2, 1, 1))
+    expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
+                                  "2_count", "2_perc", "2_multi_count",
+                                  "2_multi_perc", "1_count", "1_perc",
+                                  "1_multi_count", "1_multi_perc"))
+    expect_equal(rownames(res), rownames(featureDefinitions(xod_xgrg)))
+
+    res <- featureSummary(xod_xgrg, perSampleCounts = TRUE)
+    expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
+                                  basename(fileNames(xod_xgrg))))
+})

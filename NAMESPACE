@@ -226,7 +226,8 @@ export(
     "peaksWithMatchedFilter",
     "peaksWithCentWave",
     "rla",
-    "rowRla"
+    "rowRla",
+    "featureSummary"
 )
 
 ## New analysis methods

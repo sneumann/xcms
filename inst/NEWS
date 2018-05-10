@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.1
 -------------------------
 
+- New featureSummary function to calculate basic feature summaries (number of
+  samples in which peaks were found etc).
 - Parameter 'type' added to plotChromPeakDensity and 'whichPeaks' to
   highlightChromPeaks. Both parameters are passed to the 'type' argument
   of chromPeaks.

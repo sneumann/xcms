@@ -174,6 +174,8 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' or set the correspondence results, i.e. the mz-rt features (peak groups).
 #' Similar to the \code{chromPeaks} it is possible to extract features for
 #' specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
+#' See also \code{\link{featureSummary}} for a function to calculate simple
+#' feature summaries.
 #'
 #' @return
 #'

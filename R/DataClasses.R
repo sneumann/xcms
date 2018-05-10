@@ -2308,7 +2308,8 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' 
 #'     \code{\link{as}} (\code{as(x, "data.frame")}) in the \code{MSnbase}
 #'     package for the method to extract MS data as \code{data.frame}s.
-#' 
+#'
+#'     \code{\link{featureSummary}} to calculate basic feature summaries.
 #' @rdname XCMSnExp-class
 #'
 #' @examples
