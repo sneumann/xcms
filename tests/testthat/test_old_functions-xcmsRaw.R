@@ -117,6 +117,27 @@ test_that("rawMat,xcmsRaw works", {
     rtimes <- rep(scnt[scnrange[1]:scnrange[2]],
                   valsPerSpect[scnrange[1]:scnrange[2]])
     expect_identical(res_scnr[, "time"], rtimes)
+
+    ## Test .rawMat directly. This is to evaluate potential problems in
+    ## .getChromPeakData/fillChromPeaks. We're calling .rawMat ONLY based
+    ## on rtrange and mzrange. scanrange can/could cause a problem being
+    ## -Inf, Inf.
+    mz <- xraw@env$mz
+    int <- xraw@env$intensity
+    rt <- xraw@scantime
+    valsPerSpect <- diff(c(xraw@scanindex, length(xraw@env$mz)))
+    ## rtrange outside range of rt
+    res <- xcms:::.rawMat(mz, int, rt, valsPerSpect, rtrange = c(12, 30))
+    expect_true(is.matrix(res))
+    expect_true(nrow(res) == 0)
+    ## rtrange partially outside
+    res <- xcms:::.rawMat(mz, int, rt, valsPerSpect, rtrange = c(12, 2502))
+    expect_true(is.matrix(res))
+    expect_true(nrow(res) > 0)
+    ## mzrange outside range of mz
+    res <- xcms:::.rawMat(mz, int, rt, valsPerSpect, mzrange = c(20, 30))
+    expect_true(is.matrix(res))
+    expect_true(nrow(res) == 0)
 })
 
 test_that("xcmsRaw with scanrange works", {

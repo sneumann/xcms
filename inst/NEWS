@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.1
 -------------------------
 
+- Fix for issue #267: error in fillChromPeaks when the retention time of the
+  peaks are outside of the retention time range of certain files.
 - New featureSummary function to calculate basic feature summaries (number of
   samples in which peaks were found etc).
 - Parameter 'type' added to plotChromPeakDensity and 'whichPeaks' to

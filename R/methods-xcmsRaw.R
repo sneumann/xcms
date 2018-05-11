@@ -825,6 +825,12 @@ setMethod("rawMat", "xcmsRaw", function(object,
                     log = FALSE) {
     if (length(rtrange) >= 2) {
         rtrange <- range(rtrange)
+        ## Fix for issue #267. rtrange outside scanrange causes scanrange
+        ## being c(Inf, -Inf)
+        if (rtrange[2] < scantime[1] | rtrange[1] > scantime[length(scantime)])
+            return(matrix(
+                dimnames = list(character(), c("time", "mz", "intensity")),
+                nrow = 0, ncol = 3))
         scanrange <- range(which((scantime >= rtrange[1]) &
                                  (scantime <= rtrange[2])))
     }
