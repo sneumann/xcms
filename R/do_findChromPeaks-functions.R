@@ -3526,7 +3526,7 @@ peaksWithCentWave <- function(int, rt,
     if (length(peaklist) == 0) {
         warning("No peaks found!")
         if (verboseColumns)
-            nopeaks <- matrix(nrow = 0, ncol = peans_ncols,
+            nopeaks <- matrix(nrow = 0, ncol = peaks_ncols,
                               dimnames = list(character(), peaks_names))
         else
             nopeaks <- matrix(nrow = 0, ncol = length(basenames),
