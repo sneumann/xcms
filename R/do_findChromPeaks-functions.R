@@ -537,16 +537,16 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
             colnames(peakinfo) <- c("scale", "scaleNr", "scpos",
                                     "scmin", "scmax")
             for (p in 1:dim(peaks)[1]) {
-                ## find minima, assign rt and intensity values
+                ## find minima (peak boundaries), assign rt and intensity values
                 if (integrate == 1) {
-                    lm <- descendMin(wCoefs[, peakinfo[p,"scaleNr"]],
-                                     istart = peakinfo[p,"scpos"])
-                    gap <- all(d[lm[1]:lm[2]] == 0) ## looks like we got stuck in a gap right in the middle of the peak
-                    if ((lm[1] == lm[2]) || gap )## fall-back
-                        lm <- descendMinTol(d,
-                                            startpos = c(peakinfo[p, "scmin"],
-                                                         peakinfo[p, "scmax"]),
-                                            maxDescOutlier)
+                    lm <- descendMin(wCoefs[, peakinfo[p, "scaleNr"]],
+                                     istart = peakinfo[p, "scpos"])
+                    gap <- all(d[lm[1]:lm[2]] == 0) # looks like we got stuck in a gap right in the middle of the peak
+                    if ((lm[1] == lm[2]) || gap)   # fall-back
+                        lm <- descendMinTol(
+                            d, startpos = c(peakinfo[p, "scmin"],
+                                            peakinfo[p, "scmax"]),
+                            maxDescOutlier)
                 } else {
                     lm <- descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
                                                         peakinfo[p, "scmax"]),
@@ -555,7 +555,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 ## narrow down peak rt boundaries by skipping zeros
                 pd <- d[lm[1]:lm[2]]
                 np <- length(pd)
-                lm.l <-  findEqualGreaterUnsorted(pd, 1)
+                lm.l <- findEqualGreaterUnsorted(pd, 1)
                 lm.l <- max(1, lm.l - 1)
                 lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
                 lm.r <- max(1, lm.r - 1)

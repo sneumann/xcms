@@ -16,7 +16,7 @@ test_that("findChromPeaks,Chromatogram,MatchedFilterParam works", {
                     colnames(res)))
 })
 
-test_that("findChromPeaks,Chromatogram,MatchedFilterParam works", {
+test_that("findChromPeaks,Chromatogram,CentWaveParam works", {
     od <- filterFile(faahko_od, file = 1)
     mzr <- c(272.1, 272.2)
 
