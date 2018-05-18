@@ -339,6 +339,11 @@ dropGenericProcessHistory <- function(x, fun) {
     rtim_range <- range(rtim)
     for (i in seq_len(nrow(res))) {
         rtr <- peakArea[i, c("rtmin", "rtmax")]
+        ## If the rt range is completely out; additional fix for #267
+        if (rtr[2] < rtim_range[1] | rtr[1] > rtim_range[2]) {
+            res[i, ] <- rep(NA_real_, ncols)
+            next
+        }
         ## Ensure that the rt region is within the rtrange of the data.
         rtr[1] <- max(rtr[1], rtim_range[1])
         rtr[2] <- min(rtr[2], rtim_range[2])
@@ -346,7 +351,7 @@ dropGenericProcessHistory <- function(x, fun) {
                        valsPerSpect = valsPerSpect, rtrange = rtr,
                        mzrange = peakArea[i, c("mzmin", "mzmax")])
         if (length(mtx)) {
-            if (!all(is.na(mtx[, 3]))) {
+            if (any(!is.na(mtx[, 3]))) {
                 ## How to calculate the area: (1)sum of all intensities / (2)by
                 ## the number of data points (REAL ones, considering also NAs)
                 ## and multiplied with the (3)rt width.

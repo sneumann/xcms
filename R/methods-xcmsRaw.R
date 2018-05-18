@@ -827,12 +827,12 @@ setMethod("rawMat", "xcmsRaw", function(object,
         rtrange <- range(rtrange)
         ## Fix for issue #267. rtrange outside scanrange causes scanrange
         ## being c(Inf, -Inf)
-        if (rtrange[2] < scantime[1] | rtrange[1] > scantime[length(scantime)])
+        scns <- which((scantime >= rtrange[1]) & (scantime <= rtrange[2]))
+        if (!length(scns))
             return(matrix(
-                dimnames = list(character(), c("time", "mz", "intensity")),
-                nrow = 0, ncol = 3))
-        scanrange <- range(which((scantime >= rtrange[1]) &
-                                 (scantime <= rtrange[2])))
+                nrow = 0, ncol = 3,
+                dimnames = list(character(), c("time", "mz", "intensity"))))
+        scanrange <- range(scns)
     }
     if (length(scanrange) < 2)
         scanrange <- c(1, length(valsPerSpect))
