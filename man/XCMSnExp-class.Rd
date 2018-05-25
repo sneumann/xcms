@@ -80,7 +80,7 @@ processHistoryTypes()
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
 \S4method{featureDefinitions}{XCMSnExp}(object, mz = numeric(),
-  rt = numeric(), ppm = 0, type = "any")
+  rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
@@ -298,30 +298,25 @@ For \code{processHistory}: a \code{list} of
 individual data processing steps that have been performed.
 }
 \description{
-The \code{XCMSnExp} object is designed to contain all results
-    from metabolomics data preprocessing (chromatographic peak detection,
-    peak grouping (correspondence) and retention time correction). The
-    corresponding elements in the \code{msFeatureData} slot are
-    \code{"chromPeaks"} (a \code{matrix}), \code{"featureDefinitions"}
-    (a \code{DataFrame}) and \code{"adjustedRtime"} (a \code{list} of
-    numeric vectors). Note that these should not be accessed directly but
-    rather \emph{via} their accessor methods.
+The \code{XCMSnExp} object is a container for the results of a G/LC-MS
+data preprocessing that comprises chromatographic peak detection, alignment
+and correspondence. These results can be accessed with the \code{chromPeaks},
+\code{adjustedRtime} and \code{featureDefinitions} functions; see below
+(after the Usage, Arguments, Value and Slots sections) for more details). 
+Along with the results, the object contains the processing history that
+allows to track each processing step along with the used settings. This
+can be extracted with the \code{\link{processHistory}} method.
+\code{XCMSnExp} objects, by directly extending the
+\code{\link{OnDiskMSnExp}} object from the \code{MSnbase} package, inherit
+all of its functionality and allows thus an easy access to the full raw
+data at any stage of an analysis.
+To support interaction with packages requiring the \emph{old} objects,
+\code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
+objects using the \code{as} method (see examples below). All
+preprocessing results will be passed along to the resulting
+\code{xcmsSet} object.
 
-    Along with the results, the object contains the processing history that
-    allows to track each processing step along with the used settings. This
-    can be extracted with the \code{\link{processHistory}} method.
-
-    The \code{XCMSnExp} object directly extends the
-    \code{\link{OnDiskMSnExp}} object and provides thus an easy
-    access to the full raw data at any stage of an analysis.
-
-    Objects from this class should not be created directly, they are
-    returned as result from the \code{\link{findChromPeaks}} method.
-
-    \code{XCMSnExp} objects can be coerced into \code{\linkS4class{xcmsSet}}
-    objects using the \code{as} method (see examples below). All
-    preprocessing results will be passed along to the resulting
-    \code{xcmsSet} object.
+General functions for \code{XCMSnExp} objects are:
 
 \code{processHistoryTypes} returns the available \emph{types} of
     process histories. These can be passed with argument \code{type} to the
@@ -355,7 +350,10 @@ by sample (file).
 \code{featureDefinitions}, \code{featureDefinitions<-}: extract
 or set the correspondence results, i.e. the mz-rt features (peak groups).
 Similar to the \code{chromPeaks} it is possible to extract features for
-specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
+specified m/z and/or rt ranges. The function supports also the parameter
+\code{type} that allows to specify which features to be returned if any
+of \code{rt} or \code{mz} is specified. For details see help of
+\code{chromPeaks}.
 See also \code{\link{featureSummary}} for a function to calculate simple
 feature summaries.
 
@@ -485,6 +483,98 @@ The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
     \code{"featureDefinitions"} contains information from the \code{@groups}
     and \code{@groupidx} slots from an \code{xcmsSet} object.
 }
+\section{Chromatographic peak data}{
+
+
+Chromatographic peak data is added to an \code{XCMSnExp} object by the
+\code{\link{findChromPeaks}} function. Functions to access chromatographic
+peak data are:
+
+\itemize{
+\item \code{hasChromPeaks} whether chromatographic peak data is available,
+see below for help of the function.
+
+\item \code{chromPeaks} access chromatographic peaks (see below for help).
+
+\item \code{dropChromPeaks} remove chromatographic peaks (see below for
+help).
+
+\item \code{dropFilledChromPeaks} remove filled-in peaks (see below for
+help).
+
+\item \code{\link{fillChromPeaks}} fill-in missing peaks (see respective
+help page).
+
+\item \code{\link{plotChromPeaks}} plot identified peaks for a file (see
+respective help page).
+
+\item \code{\link{plotChromPeakImage}} plot distribution of peaks along the
+retention time axis (see respective help page).
+
+\item \code{\link{highlightChromPeaks}} add chromatographic peaks to an
+existing plot of a \code{\link{Chromatogram}} (see respective help page).
+
+}
+}
+
+\section{Adjusted retention times}{
+
+
+Adjusted retention times are stored in an \code{XCMSnExp} object besides the
+original, raw, retention times, allowing to switch between raw and adjusted
+times. It is also possible to replace the raw retention times with the
+adjusted ones with the \code{\link{applyAdjustedRtime}}. The adjusted
+retention times are added to an \code{XCMSnExp} by the
+\code{\link{adjustRtime}} function. All functions related to the access of
+ adjusted retention times are:
+
+\itemize{
+
+\item \code{hasAdjustedRtime} whether adjusted retention times are available
+(see below for help).
+
+\item \code{dropAdjustedRtime} remove adjusted retention times (see below
+for help).
+
+\item \code{\link{applyAdjustedRtime}} replace the raw retention times with
+the adjusted ones (see respective help page).
+
+\item \code{\link{plotAdjustedRtime}} plot differences between adjusted and
+raw retention times (see respective help page).
+
+}
+}
+
+\section{Correspondence results, features}{
+
+
+The correspondence analysis (\code{\link{groupChromPeaks}}) adds the feature
+definitions to an \code{XCMSnExp} object. All functions related to these are
+listed below:
+
+\itemize{
+
+\item \code{hasFeatures} whether correspondence results are available (see
+below for help).
+
+\item \code{featureDefinitions} access the definitions of the features (see
+below for help).
+
+\item \code{dropFeatureDefinitions} remove correspondence results (see below
+for help).
+
+\item \code{\link{featureValues}} access values for features (see respective
+help page).
+
+\item \code{\link{featureSummary}} perform a simple summary of the defined
+features (see respective help page).
+
+\item \code{link{overlappingFeatures}} identify features that are
+overlapping or close in the m/z - rt space (see respective help page).
+
+}
+}
+
 \examples{
 
 ## Loading the data from 2 files of the faahKO package.

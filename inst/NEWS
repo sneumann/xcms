@@ -1,6 +1,9 @@
 CHANGES IN VERSION 3.3.1
 -------------------------
 
+- Add overlappingFeatures function to identify overlapping or close features.
+- Add support for type = "apex_within" for featureDefinitions.
+- Fix a bug in fillChromPeaks that would return the integrated signal being Inf.
 - Fix for issue #267: error in fillChromPeaks when the retention time of the
   peaks are outside of the retention time range of certain files.
 - New featureSummary function to calculate basic feature summaries (number of

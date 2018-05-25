@@ -68,3 +68,97 @@ test_that("rla, rowRla work", {
     res_mat <- rowRla(mat, grp)
     expect_equal(res_mat[2, ], res)
 })
+
+test_that(".rect_overlap works", {
+    xl <- c(1, 3, 1.5, 4, 4, 5.5, 7, 6)
+    xr <- c(2, 4, 3.5, 5, 5, 6.5, 8, 7.5)
+    yb <- c(1, 2, 3.5, 4.5, 7, 8, 9.5, 10.5)
+    yt <- c(3, 4, 5, 6, 9, 10, 11, 12)
+    names(xl) <- c("a", "b", "c", "d", "e", "f", "g", "h")
+
+    ## plot(3, 3, pch = NA, xlim = range(c(xl, xr)), ylim = range(c(yb, yt)),
+    ##      xlab = "x", ylab = "y")
+    ## rect(xleft = xl, xright = xr, ybottom = yb, ytop = yt)
+    ## text(x = rowMeans(cbind(xl, xr)), y = rowMeans(cbind(yb, yt)),
+    ##      labels = names(xl))
+    res <- .rect_overlap(xl, xr, yb, yt)
+    ## Expecting that b and c as well as g and h are overlapping
+    expect_equal(res, list(c(2, 3), c(7, 8)))
+
+    ## Expand them
+    xl_2 <- xl - 1
+    xr_2 <- xr + 1
+    yb_2 <- yb
+    yt_2 <- yt
+    plot(3, 3, pch = NA, xlim = range(c(xl_2, xr_2)),
+         ylim = range(c(yb_2, yt_2)), xlab = "x", ylab = "y")
+    rect(xleft = xl_2, xright = xr_2, ybottom = yb_2, ytop = yt_2)
+    text(x = rowMeans(cbind(xl_2, xr_2)), y = rowMeans(cbind(yb_2, yt_2)),
+         labels = names(xl_2))
+    res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
+    expect_equal(res, list(c(1:4), 5:8))
+
+    idx <- sample(1:length(xl_2), length(xl_2))
+    xl_2 <- xl[idx]
+    xr_2 <- xr[idx]
+    yb_2 <- yb[idx]
+    yt_2 <- yt[idx]
+    plot(3, 3, pch = NA, xlim = range(c(xl_2, xr_2)),
+         ylim = range(c(yb_2, yt_2)), xlab = "x", ylab = "y")
+    rect(xleft = xl_2, xright = xr_2, ybottom = yb_2, ytop = yt_2)
+    text(x = rowMeans(cbind(xl_2, xr_2)), y = rowMeans(cbind(yb_2, yt_2)),
+         labels = names(xl_2))
+    res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
+    expect_equal(length(res), 2)
+    expect_true(all(lengths(res) %in% c(2, 2)))
+    expect_true((all(names(xl_2)[res[[1]]] %in% c("c", "b")) |
+                 (all(names(xl_2)[res[[2]]] %in% c("c", "b")))))
+    expect_true((all(names(xl_2)[res[[1]]] %in% c("g", "h")) |
+                 (all(names(xl_2)[res[[2]]] %in% c("g", "h")))))
+
+
+    ## Expand them
+    xl_2 <- xl - 0.4
+    xr_2 <- xr + 0.4
+    yb_2 <- yb
+    yt_2 <- yt
+    plot(3, 3, pch = NA, xlim = range(c(xl_2, xr_2)),
+         ylim = range(c(yb_2, yt_2)), xlab = "x", ylab = "y")
+    rect(xleft = xl_2, xright = xr_2, ybottom = yb_2, ytop = yt_2)
+    text(x = rowMeans(cbind(xl_2, xr_2)), y = rowMeans(cbind(yb_2, yt_2)),
+         labels = names(xl_2))
+    res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
+    expect_equal(res, list(c(2:4), 5:8))
+
+    ## Expand them
+    xl_2 <- xl - 0.1
+    xr_2 <- xr + 0.1
+    yb_2 <- yb - 0.3
+    yt_2 <- yt + 0.3
+    plot(3, 3, pch = NA, xlim = range(c(xl_2, xr_2)),
+         ylim = range(c(yb_2, yt_2)), xlab = "x", ylab = "y")
+    rect(xleft = xl_2, xright = xr_2, ybottom = yb_2, ytop = yt_2)
+    text(x = rowMeans(cbind(xl_2, xr_2)), y = rowMeans(cbind(yb_2, yt_2)),
+         labels = names(xl_2))
+    res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
+    expect_equal(res, list(c(1:4), 6:8))
+    
+    idx <- sample(1:length(xl_2), length(xl_2))
+    xl_2 <- xl_2[idx]
+    xr_2 <- xr_2[idx]
+    yb_2 <- yb_2[idx]
+    yt_2 <- yt_2[idx]
+    plot(3, 3, pch = NA, xlim = range(c(xl_2, xr_2)),
+         ylim = range(c(yb_2, yt_2)), xlab = "x", ylab = "y")
+    rect(xleft = xl_2, xright = xr_2, ybottom = yb_2, ytop = yt_2)
+    text(x = rowMeans(cbind(xl_2, xr_2)), y = rowMeans(cbind(yb_2, yt_2)),
+         labels = names(xl_2))
+    res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
+    expect_equal(length(res), 2)
+    expect_true(all(lengths(res) %in% c(3, 4)))
+    expect_true((all(names(xl_2)[res[[1]]] %in% c("a", "b", "c", "d")) |
+                 (all(names(xl_2)[res[[2]]] %in% c("a", "b", "c", "d")))))
+    expect_true((all(names(xl_2)[res[[1]]] %in% c("f", "g", "h")) |
+                 (all(names(xl_2)[res[[2]]] %in% c("f", "g", "h")))))
+
+})

@@ -1054,11 +1054,14 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
                   }
         } else {
             ## Plot all features in the region.
-            fts <- featureDefinitions(object, mz = mz, rt = rt)
-            rect(xleft = fts$rtmin, xright = fts$rtmax,
-                 ybottom = rep(yl[1], nrow(fts)), ytop = rep(yl[2], nrow(fts)),
-                 border = "#00000040", col = "#00000020")
-            abline(v = fts$rtmed, col = "#00000040", lty = 2)
+            fts <- featureDefinitions(object, mz = mz, rt = rt, type = type)
+            if (nrow(fts)) {
+                rect(xleft = fts$rtmin, xright = fts$rtmax,
+                     ybottom = rep(yl[1], nrow(fts)),
+                     ytop = rep(yl[2], nrow(fts)),
+                     border = "#00000040", col = "#00000020")
+                abline(v = fts$rtmed, col = "#00000040", lty = 2)
+            }
         }
     } else {
         plot(3, 3, pch = NA, xlim = rt, xlab = xlab,
@@ -1195,7 +1198,7 @@ highlightChromPeaks <- function(x, rt, mz,
 #' 
 #' @description
 #'
-#' \code{plotChromPeakImage} plots the identified chromatographic
+#' \code{plotChromPeaks} plots the identified chromatographic
 #' peaks from one file into the plane spanned by the retention time and mz
 #' dimension (x-axis representing the retention time and y-axis mz).
 #' Each chromatographic peak is plotted as a rectangle representing its
@@ -1646,4 +1649,79 @@ featureSummary <- function(x, group, perSampleCounts = FALSE) {
     }
     fts_sum[is.na(fts_sum)] <- 0
     fts_sum
+}
+
+#' @title Identify overlapping features
+#'
+#' @description
+#'
+#' `overlappingFeatures` identifies features that are overlapping or close in
+#' the m/z - rt space.
+#'
+#' @param x `XCMSnExp` with the features.
+#' 
+#' @param expandMz `numeric(1)` with the value to expand each feature (on each
+#'     side) in m/z dimension before identifying overlapping features.
+#'     The resulting `"mzmin"` for the feature is thus `mzmin - expandMz` and
+#'     the `"mzmax"` `mzmax + expandMz`.
+#'
+#' @param expandRt `numeric(1)` with the value to expand each feature (on each
+#'     side) in retention time dimension before identifying overlapping
+#'     features. The resulting `"rtmin"` for the
+#'     feature is thus `rtmin - expandRt` and the `"rtmax"` `rtmax + expandRt`.
+#'
+#' @param ppm `numeric(1)` to grow the m/z width of the feature by a relative
+#'     value: `mzmin - mzmin * ppm / 2e6`, `mzmax + mzmax * ppm / 2e6`. Each
+#'     feature is thus expanded in m/z dimension by ppm/2 on each side before
+#'     identifying overlapping features.
+#' 
+#' @return `list` with indices of features (in [featureDefinitions()]) that
+#'     are overlapping.
+#'
+#' @md
+#' 
+#' @author Johannes Rainer
+#'
+#' @examples
+#' ## Load 2 test files.
+#' data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'                      system.file("cdf/KO/ko16.CDF", package = "faahKO")),
+#'                    mode = "onDisk")
+#'
+#' ## Perform peak detection; parameters set to reduce processing speed
+#' data <- findChromPeaks(data, CentWaveParam(noise = 10000, snthresh = 40))
+#'
+#' ## Correspondence analysis
+#' data <- groupChromPeaks(data, param = PeakDensityParam(sampleGroups = c(1, 1)))
+#'
+#' ## Identify overlapping features
+#' overlappingFeatures(data)
+#'
+#' ## Identify features that are separated on retention time by less than
+#' ## 2 minutes
+#' overlappingFeatures(data, expandRt = 60)
+overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
+    if (!is(x, "XCMSnExp"))
+        stop("'x' is expected to be an 'XCMSnExp' object")
+    if (!hasFeatures(x))
+        stop("No feature definitions found in 'x'. Please perform first a ",
+             "correspondence analysis with the 'groupChromPeaks' function.")
+    xl <- featureDefinitions(x)$rtmin
+    xr <- featureDefinitions(x)$rtmax
+    yb <- featureDefinitions(x)$mzmin
+    yt <- featureDefinitions(x)$mzmax
+    ## Expand them?
+    if (expandMz != 0) {
+        yb <- yb - expandMz
+        yt <- yt + expandMz
+    }
+    if (ppm != 0) {
+        yb <- yb - yb * ppm / 2e6
+        yt <- yt + yt * ppm / 2e6
+    }
+    if (expandRt != 0) {
+        xl <- xl - expandRt
+        xr <- xr + expandRt
+    }
+    .rect_overlap(xleft = xl, xright = xr, ybottom = yb, ytop = yt)
 }

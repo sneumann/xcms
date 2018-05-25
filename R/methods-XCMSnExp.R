@@ -173,10 +173,13 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' \code{featureDefinitions}, \code{featureDefinitions<-}: extract
 #' or set the correspondence results, i.e. the mz-rt features (peak groups).
 #' Similar to the \code{chromPeaks} it is possible to extract features for
-#' specified m/z and/or rt ranges (see \code{chromPeaks} for more details).
+#' specified m/z and/or rt ranges. The function supports also the parameter
+#' \code{type} that allows to specify which features to be returned if any
+#' of \code{rt} or \code{mz} is specified. For details see help of
+#' \code{chromPeaks}.
 #' See also \code{\link{featureSummary}} for a function to calculate simple
 #' feature summaries.
-#'
+#' 
 #' @return
 #'
 #' For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
@@ -193,16 +196,19 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' @rdname XCMSnExp-class
 setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
                                                      rt = numeric(), ppm = 0,
-                                                     type = "any") {
+                                                     type = c("any", "within",
+                                                              "apex_within")) {
     feat_def <- featureDefinitions(object@msFeatureData)
-    type <- match.arg(type, c("any", "within"))
+    type <- match.arg(type)
     ## Select features within rt range.
-    if (length(rt)) {
+    if (length(rt) && nrow(feat_def)) {
         rt <- range(rt)
+        if (type == "any")
+            keep <- which(feat_def$rtmin <= rt[2] & feat_def$rtmax >= rt[1])
         if (type == "within")
             keep <- which(feat_def$rtmin >= rt[1] & feat_def$rtmax <= rt[2])
-        else
-            keep <- which(feat_def$rtmax >= rt[1] & feat_def$rtmin <= rt[2])
+        if (type == "apex_within")
+            keep <- which(feat_def$rtmed >= rt[1] & feat_def$rtmed <= rt[2])
         feat_def <- feat_def[keep, , drop = FALSE]
     }
     ## Select peaks within mz range, considering also ppm
@@ -213,10 +219,12 @@ setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
             mz[1] <- mz[1] - mz[1] * ppm / 1e6
         if (is.finite(mz[2]))
             mz[2] <- mz[2] + mz[2] * ppm / 1e6
+        if (type == "any")
+            keep <- which(feat_def$mzmin <= mz[2] & feat_def$mzmax >= mz[1])
         if (type == "within")
             keep <- which(feat_def$mzmin >= mz[1] & feat_def$mzmax <= mz[2])
-        else
-            keep <- which(feat_def$mzmax >= mz[1] & feat_def$mzmin <= mz[2])
+        if (type == "apex_within")
+            keep <- which(feat_def$mzmed >= mz[1] & feat_def$mzmed <= mz[2])
         feat_def <- feat_def[keep, , drop = FALSE]
     }
     feat_def
@@ -311,7 +319,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     if (length(rt)) {
         rt <- range(rt)
         if (type == "any")
-            keep <- which(pks[, "rtmax"] >= rt[1] & pks[, "rtmin"] <= rt[2])
+            keep <- which(pks[, "rtmin"] <= rt[2] & pks[, "rtmax"] >= rt[1])
         if (type == "within")
             keep <- which(pks[, "rtmin"] >= rt[1] & pks[, "rtmax"] <= rt[2])
         if (type == "apex_within")
@@ -327,7 +335,7 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
         if (is.finite(mz[2]))
             mz[2] <- mz[2] + mz[2] * ppm / 1e6
         if (type == "any")
-            keep <- which(pks[, "mzmax"] >= mz[1] & pks[, "mzmin"] <= mz[2])
+            keep <- which(pks[, "mzmin"] <= mz[2] & pks[, "mzmax"] >= mz[1])
         if (type == "within")
             keep <- which(pks[, "mzmin"] >= mz[1] & pks[, "mzmax"] <= mz[2])
         if (type == "apex_within")

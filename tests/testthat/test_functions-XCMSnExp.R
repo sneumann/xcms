@@ -153,3 +153,14 @@ test_that("featureSummary works", {
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   basename(fileNames(xod_xgrg))))
 })
+
+test_that("overlappingFeatures works", {
+    ## Errors
+    expect_error(overlappingFeatures())
+    expect_error(overlappingFeatures(4))
+    expect_error(overlappingFeatures(xod_x))
+
+    expect_true(length(overlappingFeatures(xod_xg)) == 0)
+    res <- overlappingFeatures(xod_xg, expandRt = 60)
+    expect_equal(res, list(c(5, 6), c(31, 32)))
+})

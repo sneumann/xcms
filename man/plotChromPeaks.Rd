@@ -63,7 +63,7 @@ whether y-axis labels should be added. To disable the y-axis use
 drawn. See \code{par} help page for more details.}
 }
 \description{
-\code{plotChromPeakImage} plots the identified chromatographic
+\code{plotChromPeaks} plots the identified chromatographic
 peaks from one file into the plane spanned by the retention time and mz
 dimension (x-axis representing the retention time and y-axis mz).
 Each chromatographic peak is plotted as a rectangle representing its

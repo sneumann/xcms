@@ -471,3 +471,67 @@ rla <- function(x, group, log.transform = TRUE) {
 rowRla <- function(x, group, log.transform = TRUE) {
     t(apply(x, MARGIN = 1, rla, group = group, log.transform = log.transform))
 }
+
+#' @title Identify rectangles overlapping in a two-dimensional space
+#'
+#' @description
+#'
+#' `.rect_overlap` identifies rectangles overlapping in a two dimensional
+#' space.
+#'
+#' @return `list` with indices of overlapping elements.
+#'
+#' @noRd
+#'
+#' @author Johannes Rainer
+.rect_overlap <- function(xleft, xright, ybottom, ytop) {
+    if (missing(xleft) | missing(xright) | missing(ybottom) | missing(ytop))
+        stop("'xleft', 'xright', 'ybottom' and 'ytop' are required parameters")
+    if (length(unique(c(length(xleft), length(xright), length(ybottom),
+                        length(ytop)))) != 1)
+        stop("'xleft', 'xright', 'ybottom' and 'ytop' have to have the same",
+             " length")    
+    .overlap <- function(x1, x2, xs1, xs2) {
+        x1 <= xs2 & x2 >= xs1
+    }
+    nr <- length(xleft)
+    ovlap <- vector("list", nr)
+    ## Calculate overlap of any element with any other. Need only to compare
+    ## element i with i:length.
+    for (i in seq_len(nr)) {
+        other_idx <- i:nr
+        do_ovlap <- .overlap(xleft[i], xright[i],
+                             xleft[other_idx], xright[other_idx]) &
+            .overlap(ybottom[i], ytop[i],
+                     ybottom[other_idx], ytop[other_idx])
+        ovlap[[i]] <- other_idx[do_ovlap]
+    }
+    ovlap <- ovlap[lengths(ovlap) > 1]
+    ovlap_merged <- list()
+    ovlap_remain <- ovlap
+    ## Combine grouped features if the have features in common
+    while (length(ovlap_remain)) {
+        current <- ovlap_remain[[1]]
+        ovlap_remain <- ovlap_remain[-1]
+        if (length(ovlap_remain) > 0) {
+            ## Check if we have any overlap with any other merged group
+            also_here <- vapply(ovlap_remain, function(z) any(z %in% current),
+                                logical(1), USE.NAMES = FALSE)
+            ## Join them with current.
+            current <- sort(unique(c(current, unlist(ovlap_remain[also_here]))))
+            ovlap_remain <- ovlap_remain[!also_here]
+        }
+        ## Check if current is in any of the already joined ones, if so, merge
+        also_here <- which(vapply(ovlap_merged, function(z) any(z %in% current),
+                                  logical(1), USE.NAMES = FALSE))
+        if (length(also_here)) {
+            ovlap_merged[[also_here[1]]] <-
+                sort(unique(c(unlist(ovlap_merged[[also_here]]), current)))
+            ## In case also remove all others - shouldn't really happen...
+            if (length(also_here) > 1)
+                ovlap_merged <- ovlap_merged[-also_here[-1]]
+        } else
+            ovlap_merged[[length(ovlap_merged) + 1]] <- current
+    }
+    ovlap_merged
+}
