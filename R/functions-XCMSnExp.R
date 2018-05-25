@@ -1720,8 +1720,11 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
         yt <- yt + yt * ppm / 2e6
     }
     if (expandRt != 0) {
+        rng <- range(rtime(x))
         xl <- xl - expandRt
+        xl[xl < rng[1]] <- rng[1]
         xr <- xr + expandRt
+        xr[xr < rng[2]] <- rng[2]
     }
     .rect_overlap(xleft = xl, xright = xr, ybottom = yb, ytop = yt)
 }

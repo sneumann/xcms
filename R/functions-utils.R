@@ -526,7 +526,7 @@ rowRla <- function(x, group, log.transform = TRUE) {
                                   logical(1), USE.NAMES = FALSE))
         if (length(also_here)) {
             ovlap_merged[[also_here[1]]] <-
-                sort(unique(c(unlist(ovlap_merged[[also_here]]), current)))
+                sort(unique(c(unlist(ovlap_merged[also_here]), current)))
             ## In case also remove all others - shouldn't really happen...
             if (length(also_here) > 1)
                 ovlap_merged <- ovlap_merged[-also_here[-1]]
