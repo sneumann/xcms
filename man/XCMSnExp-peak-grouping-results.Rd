@@ -6,8 +6,8 @@
 \alias{featureValues}
 \title{Accessing mz-rt feature data values}
 \usage{
-\S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint"),
-  value = "index", intensity = "into", filled = TRUE)
+\S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint",
+  "sum"), value = "index", intensity = "into", filled = TRUE)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object providing the feature
@@ -18,7 +18,9 @@ multi-peak mappings within the same sample, i.e. to define the
 \emph{representative} peak for a feature in samples where more than
 one peak was assigned to the feature. If \code{"medret"}: select the
 peak closest to the median retention time of the feature.
-If \code{"maxint"}: select the peak yielding the largest signal.}
+If \code{"maxint"}: select the peak yielding the largest signal. If
+\code{"sum"}: sum the values (only if \code{value} is \code{"into"} or
+\code{"maxo"}.}
 
 \item{value}{\code{character} specifying the name of the column in
 \code{chromPeaks(object)} that should be returned or \code{"index"} (the

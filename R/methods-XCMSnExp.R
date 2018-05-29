@@ -1999,7 +1999,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \emph{representative} peak for a feature in samples where more than
 #'     one peak was assigned to the feature. If \code{"medret"}: select the
 #'     peak closest to the median retention time of the feature.
-#'     If \code{"maxint"}: select the peak yielding the largest signal.
+#'     If \code{"maxint"}: select the peak yielding the largest signal. If
+#'     \code{"sum"}: sum the values (only if \code{value} is \code{"into"} or
+#'     \code{"maxo"}.
 #'
 #' @param value \code{character} specifying the name of the column in
 #'     \code{chromPeaks(object)} that should be returned or \code{"index"} (the
@@ -2040,8 +2042,8 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' @rdname XCMSnExp-peak-grouping-results
 setMethod("featureValues",
           signature(object = "XCMSnExp"),
-          function(object, method = c("medret", "maxint"), value = "index",
-                   intensity = "into", filled = TRUE) {
+          function(object, method = c("medret", "maxint", "sum"),
+                   value = "index", intensity = "into", filled = TRUE) {
               ## Input argument checkings
               if (!hasFeatures(object))
                   stop("No peak groups present! Use 'groupChromPeaks' first.")
@@ -2049,6 +2051,9 @@ setMethod("featureValues",
                   stop("No detected chromatographic peaks present! Use ",
                        "'findChromPeaks' first.")
               method <- match.arg(method)
+              if (method == "sum" & !(value %in% c("into", "maxo")))
+                  stop("method 'sum' is only allowed if value is set to 'into'",
+                       " or 'maxo'")
               fNames <- basename(fileNames(object))
               nSamples <- seq_along(fNames)
               ## Copy all of the objects to avoid costly S4 method calls -
@@ -2067,31 +2072,44 @@ setMethod("featureValues",
               
               vals <- matrix(nrow = length(ftIdx), ncol = length(nSamples))
               
-              ## Get the indices for the elements.
-              if (method == "medret") {
-                  medret <- grps$rtmed
+              if (method == "sum") {
                   for (i in seq_along(ftIdx)) {
-                      gidx <- ftIdx[[i]][base::order(base::abs(fts[ftIdx[[i]],
-                                                                   idx_rt] -
-                                                               medret[i]))]
-                      vals[i, ] <- gidx[base::match(nSamples, fts[gidx,
-                                                                  idx_samp])]
+                      cur_pks <- fts[ftIdx[[i]], c(value, "sample")]
+                      int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
+                      vals[i, as.numeric(names(int_sum))] <-
+                          unlist(lapply(int_sum, base::sum), use.names = FALSE)
                   }
               } else {
-                  for (i in seq_along(ftIdx)) {
-                      gidx <- ftIdx[[i]][base::order(fts[ftIdx[[i]], idx_int],
-                                                     decreasing = TRUE)]
-                      vals[i, ] <- gidx[base::match(nSamples, fts[gidx, idx_samp])]
+                  ## Selecting only a single one.
+                  ## Get the indices for the elements.
+                  if (method == "medret") {
+                      medret <- grps$rtmed
+                      for (i in seq_along(ftIdx)) {
+                          gidx <- ftIdx[[i]][
+                              base::order(base::abs(fts[ftIdx[[i]],
+                                                        idx_rt] - medret[i]))]
+                          vals[i, ] <- gidx[
+                              base::match(nSamples, fts[gidx, idx_samp])]
+                      }
+                  }
+                  if (method == "maxint") {
+                      for (i in seq_along(ftIdx)) {
+                          gidx <- ftIdx[[i]][
+                              base::order(fts[ftIdx[[i]], idx_int],
+                                          decreasing = TRUE)]
+                          vals[i, ] <- gidx[base::match(nSamples,
+                                                        fts[gidx, idx_samp])]
+                      }
+                  }
+                  if (value != "index") {
+                      if (!any(colnames(fts) == value))
+                          stop("Column '", value, "' not present in the ",
+                               "chromatographic peaks matrix!")
+                      vals <- fts[vals, value]
+                      dim(vals) <- c(length(ftIdx), length(nSamples))
                   }
               }
               
-              if (value != "index") {
-                  if (!any(colnames(fts) == value))
-                      stop("Column '", value,
-                           "' not present in the chromatographic peaks matrix!")
-                  vals <- fts[vals, value]
-                  dim(vals) <- c(length(ftIdx), length(nSamples))
-              }
               colnames(vals) <- fNames
               rownames(vals) <- rownames(grps)
               vals

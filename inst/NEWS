@@ -3,6 +3,8 @@ CHANGES IN VERSION 3.3.2
 
 - Add parameters fixedMz and fixedRt to FillChromPeaksParam that allow to
   increase the features' m/z and rt widths by a constant factor.
+- Add option "sum" to featureValues' method parameter allowing to sum the
+  intensities of peaks that are assigned to the same feature in a file/sample.
 
 
 CHANGES IN VERSION 3.3.1

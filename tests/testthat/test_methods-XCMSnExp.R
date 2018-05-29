@@ -1092,6 +1092,32 @@ test_that("featureValues,XCMSnExp works", {
     rownames(gvs) <- NULL
     colnames(gvs) <- NULL
     expect_equal(fvs, gvs)
+
+    fsum <- featureSummary(xod_xg)
+    fv <- featureValues(xod_xg, method = "maxint", value = "into")
+    ## For feature 3 we have 2 peaks in sample 3
+    idx <- unlist(featureDefinitions(xod_xg)[3, "peakidx"])
+    pks <- chromPeaks(xod_xg)[idx, ]
+    expect_equal(max(pks[pks[, "sample"] == 3, "into"]), fv[3, 3])
+    ## For feature 37 we have 2 peaks per sample
+    idx <- unlist(featureDefinitions(xod_xg)[37, "peakidx"])
+    pks <- chromPeaks(xod_xg)[idx, ]
+    expect_equal(max(pks[pks[, "sample"] == 1, "into"]), fv[37, 1])
+    expect_equal(max(pks[pks[, "sample"] == 2, "into"]), fv[37, 2])
+    expect_equal(max(pks[pks[, "sample"] == 3, "into"]), fv[37, 3])
+
+    ## method sum
+    fv <- featureValues(xod_xg, method = "sum", value = "into")
+    ## For feature 3 we have 2 peaks in sample 3
+    idx <- unlist(featureDefinitions(xod_xg)[3, "peakidx"])
+    pks <- chromPeaks(xod_xg)[idx, ]
+    expect_equal(sum(pks[pks[, "sample"] == 3, "into"]), fv[3, 3])
+    ## For feature 37 we have 2 peaks per sample
+    idx <- unlist(featureDefinitions(xod_xg)[37, "peakidx"])
+    pks <- chromPeaks(xod_xg)[idx, ]
+    expect_equal(sum(pks[pks[, "sample"] == 1, "into"]), fv[37, 1])
+    expect_equal(sum(pks[pks[, "sample"] == 2, "into"]), fv[37, 2])
+    expect_equal(sum(pks[pks[, "sample"] == 3, "into"]), fv[37, 3])
 })
 
 test_that("peakIndex,XCMSnExp works", {
