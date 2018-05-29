@@ -33,6 +33,7 @@ of the original software's functionality, =xcms3= aims at:
    algorithm.
 
 Discussions and suggestions are welcome:
-https://github.com/sneumann/xcms/issues (/xcms3/ tag).
+https://github.com/sneumann/xcms/issues 
 
-For more information see also the [[file:vignettes/new_functionality.Rmd]] file.
+For more information see also the [[file:vignettes/new_functionality.Rmd]] file, for
+usage and description the [[file:vignettes/xcms.Rmd]] vignette.
