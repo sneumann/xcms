@@ -228,7 +228,9 @@ export(
     "rla",
     "rowRla",
     "featureSummary",
-    "overlappingFeatures"
+    "overlappingFeatures",
+    "fixedMz",
+    "fixedRt"
 )
 
 ## New analysis methods

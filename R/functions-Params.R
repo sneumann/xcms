@@ -303,11 +303,17 @@ ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
 #'     \code{FillChromPeaksParam} object.
 #' 
 #' @rdname fillChromPeaks
-FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0) {
-    return(new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
-               ppm = ppm))
+FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0,
+                                fixedMz = 0, fixedRt = 0) {
+    new("FillChromPeaksParam", expandMz = expandMz, expandRt = expandRt,
+        ppm = ppm, fixedMz = fixedMz, fixedRt = fixedRt)
 }
 
+#' @rdname fillChromPeaks
+fixedRt <- function(object) object@fixedRt
+
+#' @rdname fillChromPeaks
+fixedMz <- function(object) object@fixedMz
 
 #' @return The `CalibrantMassParam` function returns an instance of
 #'     the `CalibrantMassParam` class with all settings and properties set.

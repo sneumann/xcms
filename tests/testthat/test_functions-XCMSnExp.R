@@ -148,7 +148,11 @@ test_that("featureSummary works", {
                                   "2_multi_perc", "1_count", "1_perc",
                                   "1_multi_count", "1_multi_perc"))
     expect_equal(rownames(res), rownames(featureDefinitions(xod_xgrg)))
-
+    ## Sum of individual has to match overall numbers.
+    expect_equal(res[, "count"], rowSums(res[, c("1_count", "2_count")]))
+    expect_equal(res[, "multi_count"],
+                 rowSums(res[, c("1_multi_count", "2_multi_count")]))
+    
     res <- featureSummary(xod_xgrg, perSampleCounts = TRUE)
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   basename(fileNames(xod_xgrg))))

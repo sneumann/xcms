@@ -2178,18 +2178,22 @@ setClass("ObiwarpParam",
 #' @description The \code{FillChromPeaksParam} object encapsules all settings for
 #' the signal integration for missing peaks.
 #' 
-#' @slot .__classVersion__,expandMz,expandRt,ppm See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
+#' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
 #' 
 #' @rdname fillChromPeaks
 setClass("FillChromPeaksParam",
          slots = c(expandMz = "numeric",
                    expandRt = "numeric",
-                   ppm = "numeric"),
+                   ppm = "numeric",
+                   fixedMz = "numeric",
+                   fixedRt = "numeric"),
          contains = "Param",
          prototype = prototype(
              expandMz = 0,
              expandRt = 0,
-             ppm = 0
+             ppm = 0,
+             fixedMz = 0,
+             fixedRt = 0
          ),
          validity = function(object) {
              msg <- character()
@@ -2200,6 +2204,10 @@ setClass("FillChromPeaksParam",
              if (length(object@ppm) > 1 | any(object@ppm < 0))
                  msg <- c(msg, paste0("'ppm' has to be a positive",
                                       " numeric of length 1!"))
+             if (length(object@fixedMz) > 1)
+                 msg <- c(msg, "'fixedMz' has to be a numeric of length 1")
+             if (length(object@fixedRt) > 1)
+                 msg <- c(msg, "'fixedRt' has to be a numeric of length 1")             
              if (length(msg))
                  msg
              else TRUE

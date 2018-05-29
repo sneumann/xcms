@@ -5,6 +5,8 @@
 \name{FillChromPeaksParam-class}
 \alias{FillChromPeaksParam-class}
 \alias{FillChromPeaksParam}
+\alias{fixedRt}
+\alias{fixedMz}
 \alias{show,FillChromPeaksParam-method}
 \alias{expandMz,FillChromPeaksParam-method}
 \alias{expandMz}
@@ -21,7 +23,12 @@
 \alias{fillChromPeaks,XCMSnExp,missing-method}
 \title{Integrate areas of missing peaks}
 \usage{
-FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0)
+FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0, fixedMz = 0,
+  fixedRt = 0)
+
+fixedRt(object)
+
+fixedMz(object)
 
 \S4method{show}{FillChromPeaksParam}(object)
 
@@ -63,6 +70,18 @@ and \code{mzmax} by
 \code{mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}.
 This is applied before eventually expanding the mz width using the
 \code{expandMz} parameter.}
+
+\item{fixedMz}{\code{numeric(1)} defining a constant factor by which the
+m/z width of each feature is to be expanded. The m/z width is expanded
+on both sides by \code{fixedMz} (i.e. \code{fixedMz} is subtracted
+from the lower m/z and added to the upper m/z). This expansion is
+applied \emph{after} \code{expandMz} and \code{ppm}.}
+
+\item{fixedRt}{\code{numeric(1)} defining a constant factor by which the
+retention time width of each factor is to be expanded. The rt width is
+expanded on both sides by \code{fixedRt} (i.e. \code{fixedRt} is
+subtracted from the lower rt and added to the upper rt). This
+expansion is applied \emph{after} \code{expandRt}.}
 
 \item{object}{\code{XCMSnExp} object with identified and grouped
 chromatographic peaks.}
@@ -107,7 +126,10 @@ peaks from every sample. The \code{fillChromPeaks} method defines
 intensity values for such features in the missing samples by integrating
 the signal in the mz-rt region of the feature. The mz-rt area is defined
 by the median mz and rt start and end points of the other detected
-chromatographic peaks for a given feature.
+chromatographic peaks for a given feature. Various parameters allow to
+increase this area, either by a constant value (\code{fixedMz} and
+\code{fixedRt}) or by a feature-relative amount (\code{expandMz} and
+\code{expandRt}).
 
 Adjusted retention times will be used if available.
 
@@ -127,7 +149,7 @@ signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,expandMz,expandRt,ppm}}{See corresponding parameter above. \code{.__classVersion__} stores the version of the class.}
+\item{\code{.__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt}}{See corresponding parameter above. \code{.__classVersion__} stores the version of the class.}
 }}
 
 \note{

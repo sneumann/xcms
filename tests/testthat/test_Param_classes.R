@@ -822,6 +822,22 @@ test_that("FillChromPeaksParam works", {
     expect_equal(ppm(p), 7)
     expect_error(ppm(p) <- c(2, 2))
     expect_error(ppm(p) <- -2)
+
+    p <- new("FillChromPeaksParam", fixedMz = 8)
+    expect_equal(fixedMz(p), 8)
+    p@fixedMz <- 3
+    expect_equal(fixedMz(p), 3)
+    p <- FillChromPeaksParam(fixedMz = 4)
+    expect_equal(fixedMz(p), 4)
+    expect_error(FillChromPeaksParam(fixedMz = c(2, 2)))
+
+    p <- new("FillChromPeaksParam", fixedRt = 8)
+    expect_equal(fixedRt(p), 8)
+    p@fixedRt <- 3
+    expect_equal(fixedRt(p), 3)
+    p <- FillChromPeaksParam(fixedRt = 4)
+    expect_equal(fixedRt(p), 4)
+    expect_error(FillChromPeaksParam(fixedRt = c(2, 2)))
 })
 
 test_that("CalibrantMassParam works", {

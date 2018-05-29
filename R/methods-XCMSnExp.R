@@ -2348,7 +2348,10 @@ setMethod("findChromPeaks",
 #' intensity values for such features in the missing samples by integrating
 #' the signal in the mz-rt region of the feature. The mz-rt area is defined
 #' by the median mz and rt start and end points of the other detected
-#' chromatographic peaks for a given feature.
+#' chromatographic peaks for a given feature. Various parameters allow to
+#' increase this area, either by a constant value (\code{fixedMz} and
+#' \code{fixedRt}) or by a feature-relative amount (\code{expandMz} and
+#' \code{expandRt}).
 #' 
 #' Adjusted retention times will be used if available.
 #'
@@ -2403,6 +2406,18 @@ setMethod("findChromPeaks",
 #'     This is applied before eventually expanding the mz width using the
 #'     \code{expandMz} parameter.
 #'
+#' @param fixedMz \code{numeric(1)} defining a constant factor by which the
+#'     m/z width of each feature is to be expanded. The m/z width is expanded
+#'     on both sides by \code{fixedMz} (i.e. \code{fixedMz} is subtracted
+#'     from the lower m/z and added to the upper m/z). This expansion is
+#'     applied \emph{after} \code{expandMz} and \code{ppm}.
+#'
+#' @param fixedRt \code{numeric(1)} defining a constant factor by which the
+#'     retention time width of each factor is to be expanded. The rt width is
+#'     expanded on both sides by \code{fixedRt} (i.e. \code{fixedRt} is
+#'     subtracted from the lower rt and added to the upper rt). This
+#'     expansion is applied \emph{after} \code{expandRt}.
+#' 
 #' @param BPPARAM Parallel processing settings.
 #' 
 #' @return
@@ -2490,6 +2505,8 @@ setMethod("fillChromPeaks",
               startDate <- date()
               expandMz <- expandMz(param)
               expandRt <- expandRt(param)
+              fixedMz <- fixedMz(param)
+              fixedRt <- fixedRt(param)
               ppm <- ppm(param)
               ## Define or extend the peak area from which the signal should be
               ## extracted.
@@ -2527,6 +2544,14 @@ setMethod("fillChromPeaks",
                               diffMz <- (pa[4] - pa[3]) * expandMz / 2
                               pa[3] <- pa[3] - diffMz
                               pa[4] <- pa[4] + diffMz
+                          }
+                          if (fixedMz != 0) {
+                              pa[3] <- pa[3] - fixedMz
+                              pa[4] <- pa[4] + fixedMz
+                          }
+                          if (fixedRt != 0) {
+                              pa[1] <- pa[1] - fixedRt
+                              pa[2] <- pa[2] + fixedRt
                           }
                           return(pa)
                       }
