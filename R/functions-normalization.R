@@ -1,48 +1,134 @@
 #' @include DataClasses.R functions-utils.R
 
-
-#' @title Fit linear model row-wise to a matrix or data.frame
+#' @title Fit linear model(s) to data
+#'
+#' @description
+#'
+#' `fitModel` fits a single linear model to the data which can be passed as a
+#' `numeric` vector or a `matrix`.
+#'
+#' `rowFitModel` fits row-wise linear models to the `matrix` submitted with
+#' argument `y`.
 #' 
-#' @description Simple function to fit linear models row-wise to the provided
-#'     data.
+#' @details
 #'
-#' @details For \code{method = "lmrob"} robust regression is performed using
-#'     the \code{\link{lmrob}} function with settings
-#'     \code{settings = "KS2014"} and \code{method = "SMDB"}.
-#'     The function will perform by default parallel fitting of the models
-#'     based on the global parallel processing settings.
+#' For `method = "lmrob"`, `fitModel` and `rowFitModel` perform robust
+#' regression using the [lmrob()] function with `settings = "KS2014"` and
+#' `method = "SMDB"`.
+#'
+#' `rowFitModel` performs by default parallel fitting of the models
+#' based on the global parallel processing settings.
 #' 
-#' @note Between batch correction in the form of \code{y ~ idx * batch} is
-#'     currently problematic, because we don't yet check if there are too few
-#'     values within each batch.
+#' @note
 #'
-#' @param formula \code{formula} representing the model.
+#' Between batch correction in the form of `y ~ idx * batch` is currently
+#' problematic, because we don't yet check if there are too few values within
+#' each batch.
 #'
-#' @param data \code{data.frame} containing the data to be fitted (e.g. the
-#'     \code{pData} of an \code{\link{XCMSnExp}} object.
+#' @param formula `formula` representing the model that should be fitted.
 #'
-#' @param y \code{matrix} or \code{data.frame} with the response variable. The
-#'     model is fit to each row of this matrix (which can be e.g. the
-#'     \code{\link{featureValues}} matrix).
+#' @param data `data.frame` containing the explanatory variables in `formula`.
 #'
-#' @param minVals \code{integer(1)} defining the minimum number of values to be
-#'     used for the fitting. Model fitting is skipped for rows in \code{y} with
-#'     less than \code{minVals} non-NA values.
+#' @param y `numeric` or `matrix` representing the response variable y in
+#'     `formula`. This can be e.g the matrix of feature abundances returned by
+#'     [featureValues()].
 #'
-#' @param method \code{character} defining the method/function to be used for
-#'     model fitting. Allowed values are \code{"lm"} for least squares
-#'     regression and \code{"lmrob"} for robust regression using the
-#'     \code{\link{lmrob}} function.
+#' @param minVals `integer(1)` defining the minimum number of values to be
+#'     used for the fitting. Model fitting is skipped for rows in `y` with
+#'     less than `minVals` non-NA values.
+#'
+#' @param method `character` defining the method/function to be used for
+#'     model fitting. Allowed values are `"lm"` for least squares
+#'     regression and `"lmrob"` for robust regression using the
+#'     [lmrob()] function.
 #'
 #' @param BPPARAM optional parameter specifying parallel processing settings.
 #'
-#' @return A \code{list} with the fitted linear models or \code{NULL} for rows
-#'     with too few data points.
+#' @return `fitModel` returns the fitted linear model. `rowFitModel` a `list`
+#'     of linear models, one for each row in `y`, or `NULL` for rows with too
+#'     few data points.
+#'
+#' @author Johannes Rainer
 #'
 #' @noRd
+#'
+#' @md
+#'
+#' @seealso [applyModelAdjustment()] for a function to perform linear model
+#'     based abundance adjustment.
 #' 
-#' @author Johannes Rainer
-fitModel <- function(formula, data, y, minVals = 4,
+#' @rdname model-fitting
+#'
+#' @examples
+#'
+#' ## Fitting a simple model to a data vector.
+#' y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1)
+#' inj_idx <- 1:length(y)
+#' dta <- data.frame(inj_idx = inj_idx)
+#'
+#' plot(inj_idx, y)
+#' res <- fitModel(y ~ inj_idx, data = dta, y = y)
+#' abline(res)
+fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control) {
+    method <- match.arg(method, c("lm", "lmrob"))
+    if (method == "lmrob" & missing(control)) {
+        ## Force use of the KS2014 settings in lmrob and increase the
+        ## scale-finding iterations to avoid some of the warnings.
+        control <- robustbase::lmrob.control("KS2014")
+        control$maxit.scale <- 10000
+        control$k.max <- 10000
+        control$refine.tol <- 1e-7
+    }
+    if (missing(formula) || !is(formula, "formula"))
+        stop("'formula' has to be submitted and should be a formula!")
+    if (missing(data) || !is(data, "data.frame"))
+        stop("'data' has to be submitted and should be a 'data.frame'!")
+    if (missing(y))
+        stop("'y' is missing with no default.")
+    if (is.matrix(y)) {
+        nc <- nrow(y)
+        y <- as.numeric(y)
+        data <- data[rep(1:nrow(data), each = nc), , drop = FALSE]
+    }
+    if (length(y) != nrow(data))
+        stop("length of 'y' has to match the number of rows of 'data'")
+    ## Check that 'data' contains the variables we're looking for.
+    vars <- all.vars(formula)
+    if (vars[1] != "y")
+        stop("'formula' should start with 'y ~'")
+    if (!all(vars[-1] %in% colnames(data)))
+        stop("All of the variables from 'formula' have to be present in 'data'")
+    ## data shouldn't contain a column y.
+    if (any(colnames(data) == "y"))
+        stop("'data' should not contain a column named 'y'")
+    ## TODO: need to check what happens if we're also performing between
+    ## batch correction and we have too few samples per batch! 
+    ## ## Removing all missing values - could eventually skip that.
+    ## z <- as.numeric(z)
+    ## not_na <- !is.na(z)
+    ## data. <- droplevels(data.frame(y = z[not_na],
+    ##                                data.[not_na, , drop = FALSE]))
+    data$y <- y
+    res <- NULL
+    if (method == "lm")
+        res <- lm(formula, data = data, model = FALSE)
+    if (method == "lmrob") {
+        set.seed(123)
+        res <- robustbase::lmrob(formula, data = data, model = FALSE,
+                                 control = control)
+    }
+    ## if (lmeth == "rlm")
+    ##     stop("Not yet implemented")
+    ## ##     return(MASS::rlm(formula., data = data.))
+    res
+}
+
+#' @noRd
+#'
+#' @md
+#' 
+#' @rdname model-fitting
+rowFitModel <- function(formula, data, y, minVals = 4,
                      method = c("lm", "lmrob"), BPPARAM = bpparam()) {
     method <- match.arg(method, c("lm", "lmrob"))
     if (method == "lmrob") {
@@ -53,7 +139,7 @@ fitModel <- function(formula, data, y, minVals = 4,
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
-        stop("'data' has to be a 'data.frame'!")
+        stop("'data' has to be submitted and should be a 'data.frame'!")
     if (missing(y))
         stop("'y' is missing with no default.")
     if (ncol(y) != nrow(data))
@@ -68,12 +154,6 @@ fitModel <- function(formula, data, y, minVals = 4,
     if (any(colnames(data) == "y"))
         stop("'data' should not contain a column named 'y'")
     ## Done with checking.
-    force(y)
-    force(data)
-    force(formula)
-    force(minVals)
-    force(method)
-    force(BPPARAM)
     ## Subset data to contain only explanatory variables
     data <- data[, vars[-1], drop = FALSE]
     if (is.null(rownames(y)))
@@ -92,102 +172,219 @@ fitModel <- function(formula, data, y, minVals = 4,
         sttngs$k.max <- 10000
         sttngs$refine.tol <- 1e-7
     }
-    if (length(do_em)) {
+    if (length(do_em))
         ## fit the model
-        res[do_em] <- bplapply(y[do_em], FUN = function(z, formula., data.,
-                                                        minVals., lmeth,
-                                                        sttngs) {
-            ## TODO: need to check what happens if we're also performing between
-            ## batch correction and we have too few samples per batch! 
-            ## ## Removing all missing values - could eventually skip that.
-            ## z <- as.numeric(z)
-            ## not_na <- !is.na(z)
-            ## data. <- droplevels(data.frame(y = z[not_na],
-            ##                                data.[not_na, , drop = FALSE]))
-            data. <- data.frame(y = as.numeric(z), data.)
-            if (lmeth == "lm")
-                return(lm(formula., data = data., model = FALSE))
-            if (lmeth == "lmrob") {
-                set.seed(123)
-                return(robustbase::lmrob(formula., data = data., model = FALSE,
-                                         control = sttngs))
-            }
-            if (lmeth == "rlm")
-                stop("Not yet implemented")
-            ##     return(MASS::rlm(formula., data = data.))
-        }, formula. = formula, data. = data, minVals. = minVals, lmeth = method,
-        sttngs = sttngs, BPPARAM = BPPARAM)
-    }
+        res[do_em] <- bplapply(y[do_em], fitModel, formula = formula,
+                               data = data, method = method, control = sttngs,
+                               BPPARAM = BPPARAM)
     res
 }
 
-## Define a simple function that does the adjustment for us.
-#' @title Adjust the injection order-dependent signal drift using linear models
+
+#' Adjust a single data vector based on the provided model.
 #'
-#' @description \code{adjustDriftWithModel} first fits the specified model to
-#'     each individual row in \code{y} and subsequently adjusts \code{y} based
-#'     on these fitted models. This enables a signal drift and batch correction
-#'     as described in [Wehrens 2016].
+#' @noRd
+.adjust_with_linear_model <- function(y, data, model) {
+    y_new <- y
+    if (length(y) != nrow(data))
+        stop("length of 'y' has to match the number of rows of 'data'")
+    ## Catch problems predicting the value, if e.g. explanatory variables
+    ## have additional factor levels in newdata
+    preds <- tryCatch(predict(model, newdata = cbind(y = y, data)),
+                      error = function(e) {
+                          warning("Failed to adjust value", call. = FALSE)
+                      })
+    ## Adjust the drift and add add the mean of the values on which the fit
+    ## was performed.
+    ## This is in accordance with the code from Wehrens et al 2016:
+    ## https://github.com/rwehrens/BatchCorrMetabolomics
+    ## I personally would add mean(y) instead to ensure that the mean before
+    ## and after normalization is the same.
+    if (is.numeric(preds))
+        y_new <- y - preds + mean(model$fitted.values + model$residuals)
+        ## y_new <- y - preds + mean(y)
+    y_new
+}
+
+
+#' @title Model-based abundance adjustment
 #'
-#' @details For some rows/features values can become negative after adjustment.
-#'     To avoid this, a constant can be added to the adjusted intensities of
-#'     such features. Parameter \code{shiftNegative} allows to specify how this
-#'     constant is to be determined. For \code{shiftNegative = "min"}, if one
-#'     of the adjusted values of a row is \code{< 1}, the minimum intensity (+1)
-#'     is added to each intensity. Shifting values for rows that do not only
-#'     have negative values, but values \code{< 1}, ensures that adjusted values
-#'     are larger 1 (which might be important if \code{y} is in log2 scale. 
-#'     This shifting is done on a per-feature basis. Alternatively, the
-#'     \code{globalMin} \emph{globally} shifts the complete matrix by the
-#'     minimum value (if it is negative).
+#' @description
+#' 
+#' The functions listed here allow to perform linear model-based adjustment of
+#' feature abundances similar to [Wehrens 2018]. This comprises simple
+#' between-batch differences, injection index dependent signal drift
+#' adjustment and combinations thereof.
+#' Fitting of linear models is performed with the [fitModel()] or
+#' [rowFitModel()] functions.
 #'
-#' @note Rows with fewer than \code{minValues} data points that can be used
-#'     for the model fit are returned un-adjusted.
+#' `applyModelAdjustment` adjusts the data in `y` based on the linear
+#' model(s) provided with `lmod` (estimated e.g. using [rowFitModel()]). The
+#' function performs row-wise adjustment, if `y` is a `matrix`. If `lmod` is
+#' a single linear model, each row in `y` is then adjusted with the same model.
+#' To adjust each row with its own model, pass a `list` of linear models to
+#' `lmod` with length equal to the number of rows in `y`. The list can have
+#' also `NULL` elements for rows that should/could not be adjusted.
 #'
-#' @param x \code{numeric} \code{matrix} or \code{data.frame} with the values
-#'     that should be corrected.
+#' `adjustWithModel` adjusts the provided values based on the linear model
+#' specified with `formula`. This function is a convenience function that
+#' calls first [rowFitModel()] to estimate the effects to adjust (e.g. on a
+#' subset of samples/columns in `y`) and subsequently adjusts the data
+#' using the [applyModelAdjustment()].
 #'
-#' @param data \code{data.frame} with additional variables to the model.
+#' @details
 #'
-#' @param fitOnSubset \code{numeric} or \code{logical} optionally specifying a
-#'     subset of columns in \code{y} that should be used for the model fitting.
-#'     Can be e.g. the index of quality control sample columns in \code{y} if
-#'     the model should be fit exclusively on those while adjusting all columns
-#'     of \code{y}.
+#' For some rows/features values can become negative after adjustment.
+#' To avoid this, a constant can be added to the adjusted intensities of
+#' such features. Parameter `shiftNegative` allows to specify how this
+#' constant is to be determined. For `shiftNegative = "min"`, if one
+#' of the adjusted values of a row is `< 0`, the minimum intensity
+#' is added to each intensity. This shifting is done on a per-feature basis.
+#' Alternatively, the `globalMin` *globally* shifts the complete
+#' matrix by the minimum value (if it is negative).
+#' 
+#' @note
 #'
-#' @param minValues \code{numeric(1)} defining the minimum number of data points
-#'     required to perform the model fitting.
+#' Rows in `y` with less than `minValues` non-NA values are returned unadjusted
+#' by the `adjustWithModel` function.
 #'
-#' @param method \code{character} specifying the model fitting function that
-#'     should be used (\code{"lm", \code{"rlm"} or \code{"lmrob"}}.
+#' @param y For `applyModelAdjustment`: `numeric` or `matrix` with values that
+#'     should be adjusted. For `adjustWithModel`: a `matrix` with values to be
+#'     adjusted.
 #'
-#' @param shiftNegative \code{character} specifying the method to be used to
+#' @param data `data.frame` with the same explanatory variables as used by the
+#'     model fitting.
+#' 
+#' @param lmod `list` of linear model fits such as returned by
+#'     [rowFitModel()]. Can also be a single linear model, in which case
+#'     the data is adjusted with the same global model. See details for more
+#'     information.
+#'
+#' @param shiftNegative `character` specifying the method to be used to
 #'     avoid adjusted values to become negative. Allowed values are
-#'     \code{"none"} (no shift), \code{"min"} (shift intensities of rows with
-#'     at least one negative value by adding this value +1 to all intensities)
-#'     and \code{"globalMin"} (shifts the complete
+#'     `"none"` (no shift, default), `"min"` (shift intensities of rows with
+#'     at least one negative value by adding this value to all intensities for
+#'     that row) and `"globalMin"` (shifts the complete
 #'     matrix by them smallest negative intensity). See details for more
 #'     information.
+#'
+#' @param fitOnSubset For `adjustWithModel`: `numeric` or `logical` optionally
+#'     specifying a subset of columns in `y` that should be used for the model
+#'     fitting. Can be e.g. the index of quality control sample columns in `y`
+#'     if the model should be fit exclusively on those while adjusting all
+#'     values in `y`.
+#'
+#' @param minValues `numeric(1)` defining the minimum number of data points
+#'     required to perform the model fitting.
+#'
+#' @inheritParams model-fitting
+#'
+#' @return
+#'
+#' `applyModelAdjustment` returns, depending on the input `y`, a `numeric` or a
+#' `matrix` with the adjusted values.
+#' `adjustWithModel` returns a `matrix`, same dimension than `y` with the
+#' adjusted values.
 #' 
-#' @return A \code{list} with two elements: \code{"y"} with the adjusted input
-#'     matrix \code{y} and \code{"fit"} with the fitted models. The latter can
-#'     be used for quality control purposes or to e.g. identify the most
-#'     adjusted rows.
+#' @noRd
 #'
 #' @author Johannes Rainer
 #'
+#' @md
+#' 
+#' @rdname model-based-adjustment
+#'
 #' @references
+#' 
 #' Wehrens R, Hageman JA, van Eeuwijk F, Kooke R, Flood PJ, Wijnker E,
 #' Keurentjes JJ, Lommen A, van Eekelen HD, Hall RD Mumm R and de Vos RC.
 #' Improved batch correction in untargeted MS-based metabolomics.
 #' \emph{Metabolomics} 2016; 12:88.
-#' @noRd
-adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
-				 fitOnSubset = 1:ncol(y), minVals = 4,
-				 method = "lm",
-				 shiftNegative = c("none", "min","globalMin")) {
+#'
+#' @examples
+#'
+#' ## Adjusting values using a model that includes injection index and
+#' ## batch:
+#' y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1, 8.1, 8.9, 9.3)
+#' dta <- data.frame(inj_idx = 1:length(y),
+#'     batch = c(rep("a", 8), rep("b", 8)))
+#' plot(dta$inj_idx, y, col = ifelse(dta$batch == "a", "red", "blue"))
+#'
+#' ## Adjusting the data with a model that assumes similar injection index
+#' ## dependency, but different absolute abundances between the batches.
+#' mdl <- fitModel(y ~ inj_idx + batch, y = y, data = dta)
+#'
+#' ## Adjusting the data.
+#' res <- applyModelAdjustment(y, data = dta, lmod = mdl)
+#' points(dta$inj_idx, res, col = ifelse(dta$batch == "a", "red", "blue"),
+#'     pch = 16)
+applyModelAdjustment <- function(y, data, lmod,
+                            shiftNegative = c("none", "min","globalMin")) {
     shiftNegative <- match.arg(shiftNegative)
+    if (is(lmod, "lm") | is(lmod, "lmrob"))
+        lmod <- list(lmod)
+    if (!is.matrix(y))
+        y <- matrix(y, nrow = 1)
+    if (length(lmod) != nrow(y))
+        lmod <- rep(lmod[1], nrow(y))
+    y_new <- y
+    for (i in which(lengths(lmod) > 0)) {
+        y_new[i, ] <- .adjust_with_linear_model(y = y[i, ], data,
+                                                model = lmod[[i]])
+    }
+    ## Check if we have to shift values...
+    if (any(y_new < 0, na.rm = TRUE)) {
+	if (shiftNegative == "none") {
+	    message("Note: some adjusted values are < 0.")
+	}
+	if (shiftNegative == "min") {
+	    ## Shift selected rows by their row min
+	    mins <- apply(y_new, MARGIN = 1, min, na.rm = TRUE)
+	    idx <- which(mins < 1)
+	    y_new[idx, ] <- y_new[idx, ] + abs(mins[idx]) + 1e-6
+	    message("Shifting ", length(idx), " of the ", nrow(y_new), " rows ",
+		    "to avoid negative values.")
+	}
+	if (shiftNegative == "globalMin") {
+	    ## Shifting ALL rows by the smallest value in the matrix.
+	    shiftVal <- abs(min(y_new, na.rm = TRUE))
+	    message("Shifting all values by ", format(shiftVal, digits = 3))
+	    y_new <- y_new + shiftVal + 1e-6
+	}
+    }
+    if (nrow(y_new) == 1)
+        y_new[1, ]
+    else y_new
+}
+
+#' @noRd
+#'
+#' @param imputeEnds `logical(1)` whether the first and last measurement used
+#'     for for the model fitting in each row should be replaced by the closest
+#'     non-missing value if it is `NA`. See details for more information.
+#'
+#' The `imputeEnds` parameter in `adjustWithModel` allows to perform a more
+#' conservative model fit by replacing `NA`s at the first and last value in
+#' a row that is used for fitting (i.e. `y[x, fitOnSubset][1]` and
+#' `y[x, fitOnSubset][ncol(y)]` for any row `x`) with the closest non-missing
+#' value in that row. Be aware that this assumes the values to be ordered by
+#' injection index and makes only sense if the model specified in `formula`
+#' is defined to adjust an injection order-dependent signal drift.
+#' `imputeEnds = TRUE` avoids thus exxagerated adjustments at the beginning and
+#' end of a injection series, if there are no valid measurements available
+#' at the ends for model fitting.
+#' 
+#' @md
+#' 
+#' @rdname model-based-adjustment
+adjustWithModel <- function(y, data = NULL, model = y ~ injection_idx,
+                            fitOnSubset = 1:ncol(y), minVals = 4,
+                            method = "lm",
+                            shiftNegative = c("none", "min","globalMin")) {
     ## Input argument checking...
+    if (!is.matrix(y))
+        stop("'y' is supposed to be a matrix")
+    shiftNegative <- match.arg(shiftNegative)
     if (is.logical(fitOnSubset))
 	fitOnSubset <- which(fitOnSubset)
     if (!all(fitOnSubset %in% 1:ncol(y)))
@@ -197,61 +394,71 @@ adjustDriftWithModel <- function(y, data = NULL, model = y ~ injection_idx,
 	data_fit <- data_fit[fitOnSubset, , drop = FALSE]
     ## First fitting the model.
     message("Fitting the model to the features ... ", appendLF = FALSE)
-    lms <- fitModel(formula = model, data = data_fit,
-		    y = y[, fitOnSubset, drop = FALSE],
-		    minVals = minVals, method = method)
+    y_fit <- y[, fitOnSubset, drop = FALSE]
+    lms <- rowFitModel(formula = model, data = data_fit,
+                       y = y[, fitOnSubset, drop = FALSE],
+                       minVals = minVals, method = method)
     message("OK")
     message("Applying models to adjust values ... ", appendLF = FALSE)
-    y_new <- y
-    for (i in which(lengths(lms) > 0)) {
-        ## Catch problems predicting the value, if e.g. explanatory variables
-        ## have additional factor levels in newdata
-	preds <- tryCatch(predict(lms[[i]], newdata = cbind(y = y[i, ], data)),
-                          error = function(e) {
-                              warning("Failed to adjust value for ",
-                                      names(lms)[i], call. = FALSE)
-                          })
-	## Ensure that we shift by the mean of the values used to estimate the
-	## model!
-        if (is.numeric(preds))
-            y_new[i, ] <- y[i, ] + mean(y[i, fitOnSubset], na.rm = TRUE) - preds
-    }
+    y_new <- applyModelAdjustment(y = y, data = data, lmod = lms,
+                                  shiftNegative = shiftNegative)
     message("OK")
     if (sum(lengths(lms) == 0))
 	message("Did not correct ", sum(lengths(lms) == 0), " of the ",
 		length(y), " rows because of too few data points to fit the ",
 		"model.")
-    rm(y)
-    ## Check if we have to shift values...
-    if (any(y_new < 1, na.rm = TRUE)) {
-	if (shiftNegative == "none") {
-	    message("Note: some adjusted values are < 1.")
-	}
-	if (shiftNegative == "min") {
-	    ## Shift selected rows by their row min + 1
-	    ## Include here also < 1 so that values potentially in log scale
-	    ## between 0 and 1 are adjusted as well.
-	    mins <- apply(y_new, MARGIN = 1, min, na.rm = TRUE)
-	    idx <- which(mins < 1)
-	    y_new[idx, ] <- y_new[idx, ] + abs(mins[idx]) + 1
-	    message("Shifting ", length(idx), " of the ", nrow(y_new), " rows ",
-		    "to avoid negative values.")
-	}
-	## if (shiftNegative == "log") {
-	##     ## Shift selected rows by the difference.
-	##     mins <- apply(res, MARGIN = 1, function(z) min(z, na.rm = TRUE))
-	##     idx <- which(mins < 1)
-	##     ## res[idx, ] <- res[idx, ] + 1
-	##     res[idx, ] <- res[idx, ] + (1 - mins)
-	##     message("Shifting ", length(idx), " of the ", nrow(res),
-	##             " rows to avoid values between 0 and 1.")
-	## }
-	if (shiftNegative == "globalMin") {
-	    ## Shifting ALL rows by the smallest value in the matrix.
-	    shiftVal <- abs(min(y_new, na.rm = TRUE)) + 1
-	    message("Shifting all values by ", format(shiftVal, digits = 3))
-	    y_new <- y_new + shiftVal
-	}
+    y_new
+}
+
+#' Replace `NA`s at the beginning and end of an injection series in each batch
+#' with the closest non-NA value. This aims to avoid exagerated fits estimating
+#' the signal dependent drift.
+#'
+#' This function could be useful if some of the features adjusted with
+#' [adjustWithModel()] show exagerated adjustment slopes.
+#' 
+#' @md
+#'
+#' @noRd
+#' 
+#' @examples
+#' x <- c(NA, 3, 4, 6, 4, 2, NA, 3, NA, 4, 5, 6, NA)
+#' injIndex <- c(1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6)
+#' batch <- c(rep("b", 7), rep("a", 6))
+#'
+#' replaceNaOnEnds(x, injIndex, batch = batch)
+replaceNaOnEnds <- function(x, injIndex, batch, minValues = 4) {
+    if (is.null(dim(x))) {
+        if (sum(!is.na(x)) < 4)
+            return(x)
+        if (missing(injIndex))
+            injIndex <- seq_along(x)
+        if (missing(batch))
+            batch <- rep("a", length(x))
+        lx <- length(x)
+        if (length(injIndex) != lx | length(batch) != lx)
+            stop("length of 'injIndex' and 'batch' should match length of 'x'")
+        for (btch in unique(batch)) {
+            cur_btch <- batch == btch
+            idx <- order(injIndex[cur_btch])
+            nona <- !is.na(x[cur_btch][idx])
+            if (!nona[1]) {
+                ## Replace first if NA
+                x[cur_btch][idx][1] <- x[cur_btch][idx][min(which(nona))]
+            }
+            if (!nona[length(nona)]) {
+                ## Replace last
+                x[cur_btch][idx][length(idx)] <- x[cur_btch][idx][max(which(nona))]
+            }
+        }
+        x
+    } else {
+        ## Process matrix.
+        if (missing(injIndex))
+            injIndex <- seq_len(ncol(x))
+        if (missing(batch))
+            batch <- rep("a", ncol(x))
+        t(apply(x, MARGIN = 1, FUN = replaceNaOnEnds, 
+                injIndex = injIndex, batch = batch, minValues = minValues))
     }
-    return(list(y = y_new, fit = lms))
 }
