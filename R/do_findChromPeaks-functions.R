@@ -3515,7 +3515,7 @@ peaksWithCentWave <- function(int, rt,
             } else
                 peaks[p, "rt"] <- rt[peaks[p, "scpos"]]
         }   # end for (p in seq_len(nrow(peaks)))
-        peaks <- joinOverlappingPeaks(td, d, otd, rep(1:length(otd)), od, rt,
+        peaks <- joinOverlappingPeaks(td, d, otd, rep(1, length(otd)), od, rt,
                                       scan.range, peaks, maxGaussOverlap,
                                       mzCenterFun = mzCenter.wMean)
         
