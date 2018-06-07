@@ -299,7 +299,7 @@ profEIC <- function(object, mzrange, rtrange = NULL, step = 0.1) {
                                                  yes = 0, no = NA),
                               shiftByHalfBinSize = TRUE,
                               sortedX = TRUE)
-            if (length(toIdx) == 1)
+            if (length(binRes) == 1)
                 binRes <- list(binRes)
             bin_size <- binRes[[1]]$x[2] - binRes[[1]]$x[1]
             if (is.null(basespace)) {
