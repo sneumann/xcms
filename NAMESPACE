@@ -16,6 +16,7 @@ importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
            "level.colors", "do.breaks")
 importFrom("plyr", "rbind.fill")
+importFrom("robustbase", "lmrob", "lmrob.control")
 import("RColorBrewer")
 import("BiocParallel")
 

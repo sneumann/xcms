@@ -162,7 +162,8 @@ defined to be overlapping are reduced to the one peak with the largest
 signal.}
 
 \item{fitgauss}{\code{logical(1)} whether or not a Gaussian should be fitted
-to each peak.}
+to each peak. This affects mostly the retention time position of the
+peak.}
 
 \item{noise}{\code{numeric(1)} allowing to set a minimum intensity required
 for centroids to be considered in the first analysis step (centroids with

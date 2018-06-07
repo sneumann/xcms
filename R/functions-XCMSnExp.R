@@ -1573,9 +1573,10 @@ filterFeatureDefinitions <- function(x, features) {
 #' Simple function to calculate feature summaries. These include counts and
 #' percentages of samples in which a chromatographic peak is present for each
 #' feature and counts and percentages of samples in which more than one
-#' chromatographic peak was annotated to the feature. For
-#' `perSampleCounts = TRUE` also the individual chromatographic peak counts per
-#' sample are returned.
+#' chromatographic peak was annotated to the feature. Also relative standard
+#' deviations (RSD) are calculated for the integrated peak areas per feature
+#' across samples. For `perSampleCounts = TRUE` also the individual
+#' chromatographic peak counts per sample are returned.
 #'
 #' @param x `XCMSnExp` object with correspondence results.
 #'
@@ -1586,6 +1587,9 @@ filterFeatureDefinitions <- function(x, features) {
 #' @param perSampleCounts `logical(1)` whether feature wise individual peak
 #'     counts per sample should be returned too.
 #'
+#' @param method `character` passed to the [featureValues()] function. See
+#'     respective help page for more information.
+#' 
 #' @return
 #'
 #' `matrix` with one row per feature and columns:
@@ -1598,6 +1602,8 @@ filterFeatureDefinitions <- function(x, features) {
 #'   that have also multiple peaks annotated to the feature. Example: for a
 #'   feature, at least one peak was detected in 50 samples. In 5 of them 2 peaks
 #'   were assigned to the feature. `"multi_perc"` is in this case 10%.
+#' - `"rsd"`: relative standard deviation (coefficient of variation) of the
+#'   integrated peak area of the feature's peaks.
 #' - The same 4 columns are repeated for each unique element (level) in `group`
 #'   if `group` was provided.
 #'
@@ -1605,7 +1611,8 @@ filterFeatureDefinitions <- function(x, features) {
 #' with the peak counts per sample.
 #'
 #' @author Johannes Rainer
-featureSummary <- function(x, group, perSampleCounts = FALSE) {
+featureSummary <- function(x, group, perSampleCounts = FALSE,
+                           method = "maxint") {
     if (!is(x, "XCMSnExp"))
         stop("'x' is expected to be an 'XCMSnExp' object")
     if (!hasFeatures(x))
@@ -1626,18 +1633,26 @@ featureSummary <- function(x, group, perSampleCounts = FALSE) {
     sum_fun <- function(z) {
         cnt <- sum(z > 0)
         cnt_multi <- sum(z > 1)
-        c(count = cnt,
-          perc = cnt * 100 / length(z),
-          multi_count = cnt_multi,
-          multi_perc = cnt_multi * 100 / cnt
-          )
+        sm <- c(count = cnt,
+                 perc = cnt * 100 / length(z),
+                 multi_count = cnt_multi,
+                 multi_perc = cnt_multi * 100 / cnt
+                 )
+        sm[is.na(sm)] <- 0
+        sm
     }
     fts_sum <- t(apply(pks_per_sample, MARGIN = 1, sum_fun))
+    ## Calculate RSD
+    rsd <- function(z) {sd(z, na.rm = TRUE) / abs(mean(z, na.rm = TRUE))}
+    fvals <- featureValues(x, value = "into", method = method)
+    fts_sum <- cbind(fts_sum, rsd = apply(fvals, MARGIN = 1, rsd))
     if (!missing(group)) {
         per_group <- lapply(unique(group), function(grp) {
             idx <- which(group == grp)
-            res <- t(apply(pks_per_sample[, idx, drop = FALSE],
-                           MARGIN = 1, sum_fun))
+            res <- cbind(t(apply(pks_per_sample[, idx, drop = FALSE],
+                                 MARGIN = 1, sum_fun)),
+                         rsd = apply(fvals[, idx, drop = FALSE], MARGIN = 1,
+                                     rsd))
             colnames(res) <- paste0(grp, "_", colnames(res))
             res
         })
@@ -1647,7 +1662,6 @@ featureSummary <- function(x, group, perSampleCounts = FALSE) {
         colnames(pks_per_sample) <- basename(fileNames(x))
         fts_sum <- cbind(fts_sum, pks_per_sample)
     }
-    fts_sum[is.na(fts_sum)] <- 0
     fts_sum
 }
 

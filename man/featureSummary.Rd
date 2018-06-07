@@ -4,7 +4,7 @@
 \alias{featureSummary}
 \title{Simple feature summaries}
 \usage{
-featureSummary(x, group, perSampleCounts = FALSE)
+featureSummary(x, group, perSampleCounts = FALSE, method = "maxint")
 }
 \arguments{
 \item{x}{`XCMSnExp` object with correspondence results.}
@@ -15,6 +15,9 @@ in `group`.}
 
 \item{perSampleCounts}{`logical(1)` whether feature wise individual peak
 counts per sample should be returned too.}
+
+\item{method}{`character` passed to the [featureValues()] function. See
+respective help page for more information.}
 }
 \value{
 `matrix` with one row per feature and columns:
@@ -27,6 +30,8 @@ counts per sample should be returned too.}
   that have also multiple peaks annotated to the feature. Example: for a
   feature, at least one peak was detected in 50 samples. In 5 of them 2 peaks
   were assigned to the feature. `"multi_perc"` is in this case 10%.
+- `"rsd"`: relative standard deviation (coefficient of variation) of the
+  integrated peak area of the feature's peaks.
 - The same 4 columns are repeated for each unique element (level) in `group`
   if `group` was provided.
 
@@ -37,9 +42,10 @@ with the peak counts per sample.
 Simple function to calculate feature summaries. These include counts and
 percentages of samples in which a chromatographic peak is present for each
 feature and counts and percentages of samples in which more than one
-chromatographic peak was annotated to the feature. For
-`perSampleCounts = TRUE` also the individual chromatographic peak counts per
-sample are returned.
+chromatographic peak was annotated to the feature. Also relative standard
+deviations (RSD) are calculated for the integrated peak areas per feature
+across samples. For `perSampleCounts = TRUE` also the individual
+chromatographic peak counts per sample are returned.
 }
 \author{
 Johannes Rainer

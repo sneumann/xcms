@@ -21,9 +21,11 @@
 #' 
 #' @note
 #'
-#' Between batch correction in the form of `y ~ idx * batch` is currently
-#' problematic, because we don't yet check if there are too few values within
-#' each batch.
+#' Be aware that fits can be unstable if they are based on only few
+#' measurements. While `minVals` allows to set a lower threshold for the
+#' number of non-NA values in `y` there is no check whether e.g. enough
+#' values are available per batch for a model in the form `y ~ idx * batch`.
+#' The user is advised to flag or exclude such cases before or after fitting.
 #'
 #' @param formula `formula` representing the model that should be fitted.
 #'
@@ -34,8 +36,8 @@
 #'     [featureValues()].
 #'
 #' @param minVals `integer(1)` defining the minimum number of values to be
-#'     used for the fitting. Model fitting is skipped for rows in `y` with
-#'     less than `minVals` non-NA values.
+#'     used for the fitting. Model fitting is skipped if less than `minVals`
+#'     non missing values are available in `y`, in which case `NA` is returned.
 #'
 #' @param method `character` defining the method/function to be used for
 #'     model fitting. Allowed values are `"lm"` for least squares
@@ -45,8 +47,8 @@
 #' @param BPPARAM optional parameter specifying parallel processing settings.
 #'
 #' @return `fitModel` returns the fitted linear model. `rowFitModel` a `list`
-#'     of linear models, one for each row in `y`, or `NULL` for rows with too
-#'     few data points.
+#'     of linear models, one for each row in `y`, or `NA` for rows with too
+#'     few data points or for which the fitting failed.
 #'
 #' @author Johannes Rainer
 #'
@@ -69,7 +71,8 @@
 #' plot(inj_idx, y)
 #' res <- fitModel(y ~ inj_idx, data = dta, y = y)
 #' abline(res)
-fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control) {
+fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
+                     minVals = 4, weights = rep(1, length(y))) {
     method <- match.arg(method, c("lm", "lmrob"))
     if (method == "lmrob" & missing(control)) {
         ## Force use of the KS2014 settings in lmrob and increase the
@@ -101,25 +104,45 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control) {
     ## data shouldn't contain a column y.
     if (any(colnames(data) == "y"))
         stop("'data' should not contain a column named 'y'")
-    ## TODO: need to check what happens if we're also performing between
-    ## batch correction and we have too few samples per batch! 
-    ## ## Removing all missing values - could eventually skip that.
-    ## z <- as.numeric(z)
-    ## not_na <- !is.na(z)
-    ## data. <- droplevels(data.frame(y = z[not_na],
-    ##                                data.[not_na, , drop = FALSE]))
+    if (length(weights) != length(y))
+        stop("'weights' has to have the same length than 'y'")
+    force(weights)
     data$y <- y
-    res <- NULL
-    if (method == "lm")
-        res <- lm(formula, data = data, model = FALSE)
-    if (method == "lmrob") {
-        set.seed(123)
-        res <- robustbase::lmrob(formula, data = data, model = FALSE,
-                                 control = control)
+    ## Check valid measurements:
+    nona <- !is.na(data$y)
+    res <- NA
+    if (sum(nona) >= minVals) {
+        if (method == "lm")
+            res <- tryCatch(
+                ## Note: have to use do.call, otherwise the weights parameter
+                ## is not found.
+                do.call("lm", args = list(formula = formula, data = data,
+                        weights = weights, model = FALSE)),
+                ## lm(formula = formula, data = data, weights = weights.,
+                ##    model = FALSE),
+                error = function(e) {
+                    paste0("Failed to fit model: ", e)
+                })
+        if (method == "lmrob") {
+            set.seed(123)
+            res <- tryCatch(
+                do.call("lmrob", args = list(formula = formula, data = data,
+                                             model = FALSE, control = control,
+                                             weights = weights)),
+                ## robustbase::lmrob(formula = formula, data = data, model = FALSE,
+                ##                   control = control, w = weights),
+                error = function(e) {
+                    paste0("Failed to fit model: ", e)
+                })
+            ## if (lmeth == "rlm")
+            ##     stop("Not yet implemented")
+            ## ##     return(MASS::rlm(formula., data = data.))
+        }
+        if (is.character(res)) {
+            warning(res, call. = FALSE)
+            res <- NA
+        }
     }
-    ## if (lmeth == "rlm")
-    ##     stop("Not yet implemented")
-    ## ##     return(MASS::rlm(formula., data = data.))
     res
 }
 
@@ -129,13 +152,9 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control) {
 #' 
 #' @rdname model-fitting
 rowFitModel <- function(formula, data, y, minVals = 4,
-                     method = c("lm", "lmrob"), BPPARAM = bpparam()) {
+                        method = c("lm", "lmrob"), BPPARAM = bpparam(),
+                        weights) {
     method <- match.arg(method, c("lm", "lmrob"))
-    if (method == "lmrob") {
-        if (!requireNamespace("robustbase", quietly = TRUE))
-            stop("Required package 'robustbase' is not installed. Please ",
-                 "install if you want to use method 'lmrob'.")
-    }
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
@@ -153,16 +172,17 @@ rowFitModel <- function(formula, data, y, minVals = 4,
     ## data shouldn't contain a column y.
     if (any(colnames(data) == "y"))
         stop("'data' should not contain a column named 'y'")
+    if (!missing(weights) && is.matrix(weights)) {
+        if (nrow(weights) != nrow(y))
+            stop("If 'weights' is a 'matrix' its number of rows have to match",
+                 " the number of rows of 'y'")
+    } else weights <- rep(1, ncol(y))
     ## Done with checking.
     ## Subset data to contain only explanatory variables
     data <- data[, vars[-1], drop = FALSE]
     if (is.null(rownames(y)))
         rownames(y) <- 1:nrow(y)
     y <- split.data.frame(y, f = factor(rownames(y), levels = rownames(y)))
-    ## Determine fetures we skip because of too few data points.
-    do_em <- which(unlist(lapply(y, function(z) sum(!is.na(z)) >= minVals)))
-    res <- vector("list", length(y))
-    names(res) <- names(y)
     sttngs <- list()
     if (method == "lmrob") {
         ## Force use of the KS2014 settings in lmrob and increase the
@@ -172,12 +192,17 @@ rowFitModel <- function(formula, data, y, minVals = 4,
         sttngs$k.max <- 10000
         sttngs$refine.tol <- 1e-7
     }
-    if (length(do_em))
-        ## fit the model
-        res[do_em] <- bplapply(y[do_em], fitModel, formula = formula,
-                               data = data, method = method, control = sttngs,
-                               BPPARAM = BPPARAM)
-    res
+    if (is.matrix(weights))
+        bpmapply(FUN = fitModel, y,
+                 split.data.frame(weights, f = 1:nrow(weights)),
+                 MoreArgs = list(formula = formula, minVals = minVals,
+                                 data = data, method = method,
+                                 control = sttngs, weights = weights),
+                 BPPARAM = BPPARAM)
+    else 
+        bplapply(y, fitModel, formula = formula, minVals = minVals,
+                 data = data, method = method, control = sttngs,
+                 weights = weights, BPPARAM = BPPARAM)
 }
 
 
@@ -190,9 +215,9 @@ rowFitModel <- function(formula, data, y, minVals = 4,
         stop("length of 'y' has to match the number of rows of 'data'")
     ## Catch problems predicting the value, if e.g. explanatory variables
     ## have additional factor levels in newdata
-    preds <- tryCatch(predict(model, newdata = cbind(y = y, data)),
+    preds <- tryCatch(predict(model, newdata = data.frame(y = y, data)),
                       error = function(e) {
-                          warning("Failed to adjust value", call. = FALSE)
+                          warning("Failed to adjust value: ", e, call. = FALSE)
                       })
     ## Adjust the drift and add add the mean of the values on which the fit
     ## was performed.
@@ -246,7 +271,10 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #' @note
 #'
 #' Rows in `y` with less than `minValues` non-NA values are returned unadjusted
-#' by the `adjustWithModel` function.
+#' by the `adjustWithModel` function. The function evaluates however only if
+#' there are **in total** at least `minValues` available, but not e.g. within
+#' a batch for models of the form `y ~ idx * batch`. The user is advised to
+#' check and identify such cases.
 #'
 #' @param y For `applyModelAdjustment`: `numeric` or `matrix` with values that
 #'     should be adjusted. For `adjustWithModel`: a `matrix` with values to be
@@ -318,6 +346,53 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #' res <- applyModelAdjustment(y, data = dta, lmod = mdl)
 #' points(dta$inj_idx, res, col = ifelse(dta$batch == "a", "red", "blue"),
 #'     pch = 16)
+#'
+#' ## Adjusting the data with a batch-only model.
+#' ## We fit a model that adjusts only differences between the batches but
+#' ## not any injection index dependent effects.
+#' plot(dta$inj_idx, y, col = ifelse(dta$batch == "a", "red", "blue"))
+#'
+#' mdl <- xcms:::fitModel(y ~ batch, y = y, data = dta)
+#' res <- xcms:::applyModelAdjustment(y, data = dta, lmod = mdl)
+#' points(dta$inj_idx, res, col = ifelse(dta$batch == "a", "red", "blue"),
+#'     pch = 16)
+#'
+#' ## This did not adjust the signal drift in the data, but removed differences
+#' ## between the two batches:
+#' ## before normalization
+#' mean(y[dta$batch == "a"])
+#' mean(y[dta$batch == "b"])
+#'
+#' ## after normalization
+#' mean(res[dta$batch == "a"])
+#' mean(res[dta$batch == "b"])
+#' 
+#' 
+#' ## Adjusting a model that assumes different slopes in each batch.
+#' y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 4.1, 4.3, 5.1, 5.2, 5.8, 6.3, 6.1)
+#' dta <- data.frame(inj_idx = 1:length(y),
+#'     batch = c(rep("a", 8), rep("b", 8)))
+#' plot(dta$inj_idx, y, col = ifelse(dta$batch == "a", "red", "blue"))
+#'
+#' ## Fit a model assuming a batch-independent drift as before
+#' mdl_1 <- xcms:::fitModel(y ~ inj_idx + batch, y = y, data = dta)
+#' res_1 <- xcms:::applyModelAdjustment(y, data = dta, lmod = mdl_1)
+#' points(dta$inj_idx, res_1, col = ifelse(dta$batch == "a", "red", "blue"),
+#'     pch = 0)
+#'
+#' ## And now adjust with a batch-dependent signal drift
+#' mdl_2 <- xcms:::fitModel(y ~ inj_idx * batch, y = y, data = dta)
+#'
+#' ## The fitted models for each batch are:
+#' abline(mdl_2$coefficients[1], mdl_2$coefficients[2], col = "red")
+#' abline(sum(mdl_2$coefficients[c(1, 3)]), sum(mdl_2$coefficients[c(2, 4)]),
+#'     col = "blue")
+#'
+#' ## Adjusting the values with the model
+#' res_2 <- xcms:::applyModelAdjustment(y, data = dta, lmod = mdl_2)
+#' points(dta$inj_idx, res_2, col = ifelse(dta$batch == "a", "red", "blue"),
+#'     pch = 16)
+#'
 applyModelAdjustment <- function(y, data, lmod,
                             shiftNegative = c("none", "min","globalMin")) {
     shiftNegative <- match.arg(shiftNegative)

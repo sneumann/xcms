@@ -1,6 +1,6 @@
 Package: xcms
 Version: 3.3.2
-Date: 2018-05-29
+Date: 2018-06-07
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -25,7 +25,8 @@ Imports:
     RANN,
     multtest,
     MassSpecWavelet (>= 1.5.2),
-    S4Vectors
+    S4Vectors,
+    robustbase
 Suggests:
     BiocStyle,
     caTools,
@@ -42,8 +43,7 @@ Suggests:
 Enhances:
     Rgraphviz,
     Rmpi,
-    XML,
-    robustbase
+    XML
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
     mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
