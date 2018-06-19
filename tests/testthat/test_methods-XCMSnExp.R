@@ -1957,3 +1957,20 @@ test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
                     featureValues(tmp_fld_2, value = "into")[, 2],
                     use = "complete.obs") > 0.97)
 })
+
+test_that("writeMSData,XCMSnExp works", {
+    ## Writing plain MS data to mzML
+    tmp_path <- tempdir()
+    nfls <- paste0(tmp_path, "/",
+                   sub(".CDF$", ".mzML", basename(fileNames(xod_x))))
+    writeMSData(xod_x, file = nfls)
+    data_in <- readMSData(nfls, mode = "onDisk")
+    expect_equal(rtime(data_in), rtime(xod_x))
+    
+    ## Write adjusted retention times
+    nfls <- paste0(tmp_path, "/",
+                   sub(".CDF$", "_2.mzML", basename(fileNames(xod_xgr))))
+    writeMSData(xod_xgr, file = nfls)
+    data_in <- readMSData(nfls, mode = "onDisk")
+    expect_equal(rtime(data_in), rtime(xod_xgr))
+})

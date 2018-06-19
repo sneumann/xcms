@@ -3284,7 +3284,7 @@ peaksWithCentWave <- function(int, rt,
         scales <- scalerange
 
     minPeakWidth <-  scales[1]
-    noiserange <- c(minPeakWidth * 3, max(scales) * 3)
+    noiserange <- c(ceiling(minPeakWidth) * 3, max(scales) * 3)
     maxGaussOverlap <- 0.5
     minPtsAboveBaseLine <- max(4, minPeakWidth - 2)
     minCentroids <- minPtsAboveBaseLine
@@ -3350,7 +3350,7 @@ peaksWithCentWave <- function(int, rt,
         ## Final baseline & Noise estimate
         baseline <- max(1, min(lnoise[1], noise))
         sdnoise <- max(1, lnoise[2])
-        sdthr <-  sdnoise * snthresh
+        sdthr <- sdnoise * snthresh
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next

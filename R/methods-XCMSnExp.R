@@ -3028,3 +3028,54 @@ setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
         }
     gnames
 })
+
+#' @title Export MS data to mzML/mzXML files
+#'
+#' @description
+#'
+#' `writeMSData` exports mass spectrometry data in mzML or mzXML format.
+#' If adjusted retention times are present, these are used as retention time of
+#' the exported spectra.
+#'
+#' @param object [XCMSnExp] object with the mass spectrometry data.
+#'
+#' @param file `character` with the file name(s). The length of this parameter
+#'     has to match the number of files/samples of `object`.
+#'
+#' @param outformat `character(1)` defining the format of the output files (
+#'     either `"mzml"` or `"mzxml"`).
+#'
+#' @param copy `logical(1)` if metadata (data processing, software used,
+#'     original file names etc) should be copied from the original files.
+#'
+#' @param software_processing optionally provide specific data processing steps.
+#'     See documentation of the `software_processing` parameter of
+#'     [mzR::writeMSData()].
+#'
+#' @param ... Additional parameters to pass down to the [writeMSData()]
+#'     function in the `MSnbase` package, such as `outformat` to specify the
+#'     output format (`"mzml"` or `"mzxml"`) or `copy` to specify whether
+#'     general information from the original MS data files (such as data
+#'     processing, software etc) should be copied to the new files.
+#' 
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @seealso [writeMSData()] function in the `MSnbase` package.
+setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
+          function(object, file, outformat = c("mzml", "mzxml"),
+                   copy = FALSE, software_processing = NULL, ...) {
+              if (hasAdjustedRtime(object)) {
+                  object <- applyAdjustedRtime(object)
+                  ## Define the software processing.
+                  software_processing <- c(
+                      software_processing,
+                      list(c("xcms", paste(packageVersion("xcms"),
+                                           collapse = "."),
+                             "MS:1001582", "MS:1000745")))
+              }
+              callNextMethod(object = object, file = file,
+                             outformat = outformat, copy = copy,
+                             software_processing = software_processing, ...)
+          })

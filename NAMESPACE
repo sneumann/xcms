@@ -2,7 +2,7 @@ useDynLib(xcms)
 
 importFrom("utils", "capture.output")
 import("methods")
-importFrom("ProtGenerics", "peaks", "chromatogram")
+importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData")
 importFrom("BiocGenerics", "updateObject", "fileName")
 ## import("Biobase")
 importFrom("Biobase", "AnnotatedDataFrame")
@@ -56,7 +56,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
-                  "plot", "fData", "fData<-")
+                  "plot", "fData", "fData<-", "writeMSData")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
 
 export(
@@ -453,5 +453,6 @@ exportMethods("hasChromPeaks",
               "dropFilledChromPeaks",
               "extractMsData",
               "chromatogram",
-              "spectrapply"
+              "spectrapply",
+	      "writeMSData"
               )

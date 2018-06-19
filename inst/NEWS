@@ -1,6 +1,13 @@
 CHANGES IN VERSION 3.3.2
 -------------------------
 
+- Add writeMSData method for XCMSnExp allowing to write mzML/mzXML files with
+  adjusted retention times (issue #294).
+- Fix profEIC call for single-scan-peak (pull request #287 from @trljcl).
+- Fix centWave avoiding that the same peak is reported multiple times if
+  fitgauss = TRUE is used (issue #284).
+- featureSummary reports also RSD (relative standard deviations) of features
+  across samples (issue #286).
 - Add parameters fixedMz and fixedRt to FillChromPeaksParam that allow to
   increase the features' m/z and rt widths by a constant factor.
 - Add option "sum" to featureValues' method parameter allowing to sum the
