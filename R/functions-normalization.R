@@ -12,6 +12,12 @@
 #' 
 #' @details
 #'
+#' `fitModel` and `rowFitModel` are convenience functions on the standard R
+#' [lm()] or [lmrob()] functions for model fitting that allow to check in
+#' addition that enough a minimum required number of data points are available
+#' for fitting. In addition, `rowFitModel` performs parallel row-wise model
+#' fitting.
+#' 
 #' For `method = "lmrob"`, `fitModel` and `rowFitModel` perform robust
 #' regression using the [lmrob()] function with `settings = "KS2014"` and
 #' `method = "SMDB"`.
@@ -26,6 +32,10 @@
 #' number of non-NA values in `y` there is no check whether e.g. enough
 #' values are available per batch for a model in the form `y ~ idx * batch`.
 #' The user is advised to flag or exclude such cases before or after fitting.
+#' 
+#' Also, fits of the type `y ~ inj_idx` can result in exagerated signal drift
+#' estimates if only few valid measurements in only a small range along
+#' inj_idx are present.
 #'
 #' @param formula `formula` representing the model that should be fitted.
 #'
@@ -44,6 +54,12 @@
 #'     regression and `"lmrob"` for robust regression using the
 #'     [lmrob()] function.
 #'
+#' @param weights `numeric` or, for `rowFitModel`, `matrix` defining weights
+#'     for the individual data points in the model fitting (see help for
+#'     [lm()] for more details). If `weights` is a `numeric`, `rowFitModel`
+#'     uses the same weights on each row of `y`. To apply specific weights
+#'     to each row, a `matrix` (same dimensions than `y`) should be submitted.
+#' 
 #' @param BPPARAM optional parameter specifying parallel processing settings.
 #'
 #' @return `fitModel` returns the fitted linear model. `rowFitModel` a `list`
@@ -58,7 +74,7 @@
 #'
 #' @seealso [applyModelAdjustment()] for a function to perform linear model
 #'     based abundance adjustment.
-#' 
+#'
 #' @rdname model-fitting
 #'
 #' @examples
@@ -69,8 +85,29 @@
 #' dta <- data.frame(inj_idx = inj_idx)
 #'
 #' plot(inj_idx, y)
-#' res <- fitModel(y ~ inj_idx, data = dta, y = y)
+#' res <- xcms:::fitModel(y ~ inj_idx, data = dta, y = y)
 #' abline(res)
+#'
+#' ## Using weights to fit the model.
+#' wghts <- c(rep(0.1, 8), rep(1, 5))
+#' res <- xcms:::fitModel(y ~ inj_idx, data = dta, y = y, weights = wghts)
+#' abline(res, col = "red")
+#'
+#'
+#' ## Perform row-wise model fitting.
+#' ymat <- rbind(y, y + 1, y + 2, y + 4, y + 3, y)
+#' res <- xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat)
+#' res
+#' 
+#' par(mfrow = c(2, 2))
+#' plot(dta$inj_idx, ymat[1, ])
+#' abline(res[[1]])
+#' plot(dta$inj_idx, ymat[2, ])
+#' abline(res[[2]])
+#' plot(dta$inj_idx, ymat[3, ])
+#' abline(res[[3]])
+#' plot(dta$inj_idx, ymat[4, ])
+#' abline(res[[4]])
 fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
                      minVals = 4, weights = rep(1, length(y))) {
     method <- match.arg(method, c("lm", "lmrob"))
@@ -106,12 +143,13 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
         stop("'data' should not contain a column named 'y'")
     if (length(weights) != length(y))
         stop("'weights' has to have the same length than 'y'")
-    force(weights)
+    weights <- as.numeric(weights)
     data$y <- y
     ## Check valid measurements:
     nona <- !is.na(data$y)
     res <- NA
     if (sum(nona) >= minVals) {
+        ## Only perform fitting if we have enough values.
         if (method == "lm")
             res <- tryCatch(
                 ## Note: have to use do.call, otherwise the weights parameter
@@ -152,15 +190,15 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
 #' 
 #' @rdname model-fitting
 rowFitModel <- function(formula, data, y, minVals = 4,
-                        method = c("lm", "lmrob"), BPPARAM = bpparam(),
-                        weights) {
+                        method = c("lm", "lmrob"), weights,
+                        BPPARAM = bpparam()) {
     method <- match.arg(method, c("lm", "lmrob"))
+    if (!is.matrix(y))
+        stop("'y' is expected to be a matrix")
     if (missing(formula) || !is(formula, "formula"))
         stop("'formula' has to be submitted and should be a formula!")
     if (missing(data) || !is(data, "data.frame"))
         stop("'data' has to be submitted and should be a 'data.frame'!")
-    if (missing(y))
-        stop("'y' is missing with no default.")
     if (ncol(y) != nrow(data))
         stop("ncol(y) has to match nrow(data)!")
     ## Check that 'data' contains the variables we're looking for.
@@ -172,17 +210,23 @@ rowFitModel <- function(formula, data, y, minVals = 4,
     ## data shouldn't contain a column y.
     if (any(colnames(data) == "y"))
         stop("'data' should not contain a column named 'y'")
-    if (!missing(weights) && is.matrix(weights)) {
+    if (missing(weights))
+        weights <- rep(1, ncol(y))
+    if (is.matrix(weights)) {
         if (nrow(weights) != nrow(y))
-            stop("If 'weights' is a 'matrix' its number of rows have to match",
+            stop("If 'weights' is a 'matrix' its number of rows has to match",
                  " the number of rows of 'y'")
-    } else weights <- rep(1, ncol(y))
+    } else {
+        if (length(weights) != ncol(y))
+            stop("length of 'weights' has to match the number of columns of 'y'")
+    }
     ## Done with checking.
     ## Subset data to contain only explanatory variables
     data <- data[, vars[-1], drop = FALSE]
-    if (is.null(rownames(y)))
-        rownames(y) <- 1:nrow(y)
-    y <- split.data.frame(y, f = factor(rownames(y), levels = rownames(y)))
+    rn <- rownames(y)
+    ## y <- split.data.frame(y, f = seq_len(nrow(y)))
+    y <- split(y, f = rep(seq_len(nrow(y)), ncol(y)))
+    names(y) <- rn
     sttngs <- list()
     if (method == "lmrob") {
         ## Force use of the KS2014 settings in lmrob and increase the
@@ -193,12 +237,14 @@ rowFitModel <- function(formula, data, y, minVals = 4,
         sttngs$refine.tol <- 1e-7
     }
     if (is.matrix(weights))
-        bpmapply(FUN = fitModel, y,
-                 split.data.frame(weights, f = 1:nrow(weights)),
-                 MoreArgs = list(formula = formula, minVals = minVals,
-                                 data = data, method = method,
-                                 control = sttngs, weights = weights),
-                 BPPARAM = BPPARAM)
+        bpmapply(FUN = function(a, b, formula., minVals., data., method.,
+                                control.) {
+            fitModel(y = a, weights = b, formula = formula., minVals = minVals.,
+                     data = data., method = method., control = control.)
+        }, y, split.data.frame(weights, f = seq_len(nrow(weights))),
+        MoreArgs = list(formula. = formula, minVals. = minVals, data. = data,
+                        method. = method, control. = sttngs),
+        SIMPLIFY = FALSE, BPPARAM = BPPARAM)
     else 
         bplapply(y, fitModel, formula = formula, minVals = minVals,
                  data = data, method = method, control = sttngs,
@@ -237,7 +283,7 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #' @description
 #' 
 #' The functions listed here allow to perform linear model-based adjustment of
-#' feature abundances similar to [Wehrens 2018]. This comprises simple
+#' feature abundances similar to [Wehrens 2016]. This comprises simple
 #' between-batch differences, injection index dependent signal drift
 #' adjustment and combinations thereof.
 #' Fitting of linear models is performed with the [fitModel()] or
@@ -490,7 +536,8 @@ adjustWithModel <- function(y, data = NULL, model = y ~ injection_idx,
 #' the signal dependent drift.
 #'
 #' This function could be useful if some of the features adjusted with
-#' [adjustWithModel()] show exagerated adjustment slopes.
+#' [adjustWithModel()] show exagerated adjustment slopes due to few data points
+#' that span only a limited range of injection indices.
 #' 
 #' @md
 #'

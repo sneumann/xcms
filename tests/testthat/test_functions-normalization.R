@@ -54,7 +54,7 @@ test_that("model adjustment with batch works", {
     ## mean(y_2, na.rm = TRUE)
 })
 
-test_that("fitModel works on matrix and vector", {
+test_that("fitModel, rowFitModel works on matrix and vector", {
     y <- c(2, 3, 2.7, 3.5, 3.8, 4.6, 5.9, 8, 4, 5.1, 5.6, 6.8, 7.1)
     inj_idx <- 1:length(y)
     dta <- data.frame(inj_idx = inj_idx)
@@ -80,11 +80,12 @@ test_that("fitModel works on matrix and vector", {
     expect_true(all(rres$coefficients != rres2$coefficients))
     
     ymat <- matrix(rep(y, 5), nrow = 5, byrow = TRUE)
-    res_3 <- fitModel(y ~ inj_idx, data = dta, y = ymat)
+    res_3 <- xcms:::fitModel(y ~ inj_idx, data = dta, y = ymat)
     expect_equal(res_3$coefficients, res$coefficients)
 
+    ## rowFitModel
     ymat[2, ] <- ymat[2, ] + 3
-    res <- rowFitModel(y ~ inj_idx, data = dta, y = ymat)
+    res <- xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat)
     expect_true(length(res) == nrow(ymat))
     expect_equal(res[[1]]$coefficients, res_3$coefficients)
     slps <- vapply(res, function(z) z$coefficients[2], numeric(1))
@@ -95,9 +96,32 @@ test_that("fitModel works on matrix and vector", {
     expect_equal(unname(slps[1]), unname(slps[5]))
     expect_equal(unname(ints[1]) + 3, unname(ints[2]))
 
-    ## y being a matrix, weights a vector.LLLLLLL
-
+    ## y being a matrix, weights a vector.
+    wght <- abs(rnorm(length(y)))
+    res <- xcms:::fitModel(y ~ inj_idx, data = dta, y = y, weights = wght)
+    res_mat <- xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat,
+                                  weights = wght)
+    expect_equal(res$coefficients, res_mat[[1]]$coefficients)
+    expect_equal(res$coefficients, res_mat[[3]]$coefficients)
+    expect_equal(res$coefficients, res_mat[[4]]$coefficients)
+    expect_equal(res$coefficients, res_mat[[5]]$coefficients)
+    
     ## y being a matrix, weights a matrix.
+    wght <- rbind(wght, abs(rnorm(length(y))), abs(rnorm(length(y))),
+                  wght, abs(rnorm(length(y))))
+    res_mat <- xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat,
+                                  weights = wght)
+    expect_equal(res_mat[[1]]$coefficients, res$coefficients)
+    expect_equal(res_mat[[4]]$coefficients, res$coefficients)
+    expect_true(all(res_mat[[2]]$coefficients != res$coefficients))
+    expect_true(all(res_mat[[3]]$coefficients != res$coefficients))
+    expect_true(all(res_mat[[5]]$coefficients != res$coefficients))
+    
+    ## Errors for weights.
+    expect_error(xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat,
+                                    weights = 1:3))
+    expect_error(xcms:::rowFitModel(y ~ inj_idx, data = dta, y = ymat,
+                                    weights = wght[1:3, ]))
 })
 
 test_that("applyModelAdjustment works", {
