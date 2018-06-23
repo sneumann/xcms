@@ -458,9 +458,9 @@ rla <- function(x, group, log.transform = TRUE) {
 	group <- factor(group, levels = unique(group))
     ## Calculate group medians.
     if (log.transform)
-        log_x <- log2(x)
-    grp_meds <- unlist(lapply(split(log_x, group), median, na.rm = TRUE))
-    log_x - grp_meds[group]
+        x <- log2(x)
+    grp_meds <- unlist(lapply(split(x, group), median, na.rm = TRUE))
+    x - grp_meds[group]
 }
 
 #' `rowRla` calculates row-wise RLAs.

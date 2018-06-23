@@ -294,8 +294,8 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #' function performs row-wise adjustment, if `y` is a `matrix`. If `lmod` is
 #' a single linear model, each row in `y` is then adjusted with the same model.
 #' To adjust each row with its own model, pass a `list` of linear models to
-#' `lmod` with length equal to the number of rows in `y`. The list can have
-#' also `NULL` elements for rows that should/could not be adjusted.
+#' `lmod` with length equal to the number of rows in `y`. The list can contain
+#' also `NULL` elements (or `NA`) for rows that should/could not be adjusted.
 #'
 #' `adjustWithModel` adjusts the provided values based on the linear model
 #' specified with `formula`. This function is a convenience function that
@@ -305,14 +305,22 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #'
 #' @details
 #'
+#' Handling of negative abundances after adjustment:
+#' 
 #' For some rows/features values can become negative after adjustment.
-#' To avoid this, a constant can be added to the adjusted intensities of
-#' such features. Parameter `shiftNegative` allows to specify how this
-#' constant is to be determined. For `shiftNegative = "min"`, if one
-#' of the adjusted values of a row is `< 0`, the minimum intensity
-#' is added to each intensity. This shifting is done on a per-feature basis.
-#' Alternatively, the `globalMin` *globally* shifts the complete
-#' matrix by the minimum value (if it is negative).
+#' Such cases can be handled by different approaches. These either **shift**
+#' the full row of abundances by a constant value or **replace** the negative
+#' values keeping all positive ones as they are. Names of approaches for the
+#' latter case start with `"replace"`. Available methods that can be specified
+#' with the `shiftNegative` parameter are:
+#'
+#' - `"none"` (default): don't apply any modification.
+#' - `"min"`: the minimum intensity for this feature/row is added to all
+#'   abundances.
+#' - `"globalMin"`: the minimum intensity of the whole data matrix is added to
+#'   each row in the matrix.
+#' - `"replaceHalfMin"`: replace negative values by half of the smallest
+#'   non-negative value for that row/feature.
 #' 
 #' @note
 #'
@@ -336,11 +344,12 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #'
 #' @param shiftNegative `character` specifying the method to be used to
 #'     avoid adjusted values to become negative. Allowed values are
-#'     `"none"` (no shift, default), `"min"` (shift intensities of rows with
-#'     at least one negative value by adding this value to all intensities for
-#'     that row) and `"globalMin"` (shifts the complete
-#'     matrix by them smallest negative intensity). See details for more
-#'     information.
+#'     `"none"` (no shift, default), `"replaceHalfMin"` (replace negative
+#'     values by half the smallest non-negative value for that row), `"min"`
+#'     (shift intensities of rows with at least one negative value by adding
+#'     this value to all intensities for that row) and `"globalMin"` (shifts
+#'     the complete matrix by them smallest negative intensity). See details
+#'     for more information.
 #'
 #' @param fitOnSubset For `adjustWithModel`: `numeric` or `logical` optionally
 #'     specifying a subset of columns in `y` that should be used for the model
@@ -440,7 +449,8 @@ rowFitModel <- function(formula, data, y, minVals = 4,
 #'     pch = 16)
 #'
 applyModelAdjustment <- function(y, data, lmod,
-                            shiftNegative = c("none", "min","globalMin")) {
+                                 shiftNegative = c("none", "replaceHalfMin",
+                                                   "min","globalMin")) {
     shiftNegative <- match.arg(shiftNegative)
     if (is(lmod, "lm") | is(lmod, "lmrob"))
         lmod <- list(lmod)
@@ -449,7 +459,9 @@ applyModelAdjustment <- function(y, data, lmod,
     if (length(lmod) != nrow(y))
         lmod <- rep(lmod[1], nrow(y))
     y_new <- y
-    for (i in which(lengths(lmod) > 0)) {
+    ## Larger than 1 for linear model fits. `NA` is length 1, `NULL` 0,
+    ## lm or lmrob is lengths > 1
+    for (i in which(lengths(lmod) > 1)) {
         y_new[i, ] <- .adjust_with_linear_model(y = y[i, ], data,
                                                 model = lmod[[i]])
     }
@@ -472,6 +484,17 @@ applyModelAdjustment <- function(y, data, lmod,
 	    message("Shifting all values by ", format(shiftVal, digits = 3))
 	    y_new <- y_new + shiftVal + 1e-6
 	}
+        if (shiftNegative == "replaceHalfMin") {
+            isneg <- which(apply(y_new, MARGIN = 1, function(z) any(z < 0)))
+            for (i_neg in isneg) {
+                el_isneg <- which(y_new[i_neg, ] < 0)
+                min_noneg <- min(y_new[i_neg, -el_isneg], na.rm = TRUE)
+                if (length(min_noneg) && is.finite(min_noneg))
+                    y_new[i_neg, el_isneg] <- min_noneg / 2
+            }
+            message("Replaced some negative values in ", length(isneg),
+                    " rows.")
+        }
     }
     if (nrow(y_new) == 1)
         y_new[1, ]
@@ -501,7 +524,8 @@ applyModelAdjustment <- function(y, data, lmod,
 adjustWithModel <- function(y, data = NULL, model = y ~ injection_idx,
                             fitOnSubset = 1:ncol(y), minVals = 4,
                             method = "lm",
-                            shiftNegative = c("none", "min","globalMin")) {
+                            shiftNegative = c("none", "replaceHalfMin",
+                                              "min","globalMin")) {
     ## Input argument checking...
     if (!is.matrix(y))
         stop("'y' is supposed to be a matrix")
