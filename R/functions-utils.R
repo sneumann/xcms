@@ -535,3 +535,30 @@ rowRla <- function(x, group, log.transform = TRUE) {
     }
     ovlap_merged
 }
+
+## #' @examples
+## #' x1_high <- c(0.000012323)
+## #' x1_low <- c(0.0000034302)
+## #' x2_high <- c(0.000012322)
+## #' x2_low <- c(0.0000034301)
+## .overlap <- function(x1_low, x1_high, x2_low, x2_high, res = 1e12) {
+##     library(IRanges)
+##     x1 <- IRanges(round(x1_low * res), round(x1_high * res))
+##     x2 <- IRanges(round(x2_low * res), round(x2_high * res))
+## }
+
+
+## Use IRanges for this...
+## 1) find overlaps in one dimension.
+## 2) find overlaps in second dimension.
+## Given:
+## MS1 peaks with m/z range, rt range.
+## MS2 peaks with rt.
+## finding the MS2 spectra related to a single mass peak in a MS1 spectrum:
+## one MS2 is associated to a single MS1:
+## MS2: precursor is the MS1 spectrum ID, target m/z (lower and upper bound),
+##      selected m/z, peak intensity.
+## So, for a peak:
+## - select spectra for the rt range of the peak.
+## - get all MS2 spectra for these spectra.
+## - select those MS2 that have an selected ion m/z within m/z range.

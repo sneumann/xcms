@@ -1555,8 +1555,6 @@ do_findChromPeaks_matchedFilter <- function(mz,
                                             ){
     ## Use original code
     if (useOriginalCode()) {
-        ## warning("Old xcms code was used; be aware that this code",
-        ##         " may contain bugs.")
         return(.matchedFilter_orig(mz, int, scantime, valsPerSpect,
                                    binSize, impute, baseValue, distance,
                                    fwhm, sigma, max, snthresh,
@@ -1595,6 +1593,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
     names(profMeths) <- c("none", "lin", "linbase", "intlin")
     impute <- match.arg(impute, names(profMeths))
     profFun <- profMeths[impute]
+    profFun <- match.fun(profFun)
 
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
@@ -1607,14 +1606,14 @@ do_findChromPeaks_matchedFilter <- function(mz,
              " 'sum(valsPerSpect)'.")
     ## Calculate a the "scanindex" from the number of values per spectrum:
     scanindex <- valueCount2ScanIndex(valsPerSpect)
-
     ## Create EIC buffer
     mrange <- range(mz)
     ## Create a numeric vector of masses; these will be the mid-points of the bins.
     mass <- seq(floor(mrange[1]/step)*step, ceiling(mrange[2]/step)*step, by = step)
     ## Calculate the /real/ bin size (as in xcms.c code).
     bin_size <- (max(mass) - min(mass)) / (length(mass) - 1)
-    bufsize <- min(100, length(mass))
+    bufsize_base <- 100
+    bufsize <- min(bufsize_base, length(mass))
     ## Define profparam:
     profp <- list()
     if (missing(baseValue))
@@ -1631,8 +1630,10 @@ do_findChromPeaks_matchedFilter <- function(mz,
         distance <- floor(0.075 / bin_size)
     }
     ## This returns a matrix, ncol equals the number of spectra, nrow the bufsize.
-    buf <- do.call(profFun, args = list(mz, int, scanindex, bufsize, mass[1],
-                                        mass[bufsize], TRUE, profp))
+    ## ? named args?
+    buf <- profFun(x = mz, y = int, zidx = scanindex, num = bufsize,
+                   xstart = mass[1], xend = mass[bufsize], NAOK = TRUE,
+                   param = profp)
     bufMax <- profMaxIdxM(mz, int, scanindex, bufsize, mass[1], mass[bufsize],
                           TRUE, profp)
     bufidx <- integer(length(mass))
@@ -1640,7 +1641,6 @@ do_findChromPeaks_matchedFilter <- function(mz,
     bufidx[idxrange[1]:idxrange[2]] <- 1:bufsize
     lookahead <- steps-1
     lookbehind <- 1  ## always 1?
-
     N <- nextn(length(scantime))
     xrange <- range(scantime)
     x <- c(0:(N/2), -(ceiling(N/2-1)):-1)*(xrange[2]-xrange[1])/(length(scantime)-1)
@@ -1648,12 +1648,10 @@ do_findChromPeaks_matchedFilter <- function(mz,
     filt <- -attr(eval(deriv3(~ 1/(sigma*sqrt(2*pi))*exp(-x^2/(2*sigma^2)), "x")), "hessian")
     filt <- filt/sqrt(sum(filt^2))
     filt <- fft(filt, inverse = TRUE)/length(filt)
-
     cnames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into", "intf",
                 "maxo", "maxf", "i", "sn")
     rmat <- matrix(nrow = 2048, ncol = length(cnames))
     num <- 0
-
     for (i in seq(length = (length(mass)-steps+1))) {
         ## Update EIC buffer if necessary
         if (bufidx[i+lookahead] == 0) {
@@ -1661,9 +1659,10 @@ do_findChromPeaks_matchedFilter <- function(mz,
             idxrange <- c(max(1, i - lookbehind), min(bufsize+i-1-lookbehind,
                                                       length(mass)))
             bufidx[idxrange[1]:idxrange[2]] <- 1:(diff(idxrange)+1)
-            buf <- do.call(profFun, args = list(mz, int, scanindex, diff(idxrange)+1,
-                                                mass[idxrange[1]], mass[idxrange[2]],
-                                                TRUE, profp))
+            buf <- profFun(x = mz, y = int, zidx = scanindex,
+                           num = diff(idxrange) + 1, xstart = mass[idxrange[1]],
+                           xend = mass[idxrange[2]], NAOK = TRUE,
+                           param = profp)
             bufMax <- profMaxIdxM(mz, int, scanindex, diff(idxrange)+1,
                                   mass[idxrange[1]],
                                   mass[idxrange[2]], TRUE, profp)
