@@ -1508,6 +1508,7 @@ applyAdjustedRtime <- function(object) {
             })
     }
     pks <- do.call(rbind, pks)
+    rownames(pks) <- NULL
     new_x@.processHistory <- unlist(procH)
     chromPeaks(new_x) <- pks
     if (validObject(new_x))

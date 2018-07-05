@@ -55,12 +55,15 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     cp2 <- chromPeaks(tmp2)[id_2 %in% id_1, ]
     cn <- colnames(cp2)
     cn <- cn[!(cn %in% c("intb", "into", "rtmin", "rtmax"))]
-    expect_equal(cp2[, cn], chromPeaks(tmp)[, cn])
+    pks <- chromPeaks(tmp)
+    rownames(pks) <- NULL
+    rownames(cp2) <- NULL
+    expect_equal(cp2[, cn], pks[, cn])
     ## Are the values related?
-    plot(cp2[, "into"], chromPeaks(tmp)[, "into"])   ## Very similar
-    plot(cp2[, "intb"], chromPeaks(tmp)[, "intb"])   ## Very similar
-    plot(cp2[, "rtmin"], chromPeaks(tmp)[, "rtmin"])   ## Very similar
-    plot(cp2[, "rtmax"], chromPeaks(tmp)[, "rtmax"])   ## Very similar
+    plot(cp2[, "into"], pks[, "into"])   ## Very similar
+    plot(cp2[, "intb"], pks[, "intb"])   ## Very similar
+    plot(cp2[, "rtmin"], pks[, "rtmin"])   ## Very similar
+    plot(cp2[, "rtmax"], pks[, "rtmax"])   ## Very similar
     ## Use the getPeakInt3 which uses the getEIC C function.
     ## pkI2_2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
     ## pkI3_2 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
@@ -86,7 +89,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     tmp2 <- findChromPeaks(filterFile(faahko_od, file = 3),
                            CentWaveParam(noise = 10000, snthresh = 40))
     ## Even the identified peaks are identical!
-    expect_equal(chromPeaks(tmp), chromPeaks(tmp2))
+    expect_equal(unname(chromPeaks(tmp)), unname(chromPeaks(tmp2)))
     ## Use the getPeakInt2 which uses the rawMat function.
     ## pkI2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
     ## ## Use the getPeakInt3 which uses the getEIC C function.
@@ -120,7 +123,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
 
     ## returning an xcmsSet
     res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
-    expect_equal(peaks(res)[, colnames(peaks(xs))], peaks(xs))
+    pks <- peaks(res)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xs))], peaks(xs))
     expect_true(is(res, "xcmsSet"))
 
     ## Return type XCMSnExp
@@ -128,7 +133,14 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
     expect_true(hasChromPeaks(res))
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
-    expect_equal(peaks(xs)@.Data, chromPeaks(res)[, -ncol(chromPeaks(res))])
+    pks <- chromPeaks(res)
+    rownames(pks) <- NULL
+    expect_equal(peaks(xs)@.Data, pks[, -ncol(chromPeaks(res))])
+
+    ## check that rownames are set
+    expect_true(!is.null(rownames(chromPeaks(res))))
+    expect_true(length(grep("CP", rownames(chromPeaks(res)))) ==
+                nrow(chromPeaks(res)))
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
@@ -155,7 +167,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
 
     ## returning an xcmsSet
     res <- findChromPeaks(onDisk, param = cwp, return.type = "xcmsSet")
-    expect_equal(peaks(res)[, colnames(peaks(xs))], peaks(xs))
+    pks <- peaks(res)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xs))], peaks(xs))
     expect_true(is(res, "xcmsSet"))
 
     ## Return an XCMSnExp
@@ -163,7 +177,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWavePredIsoParam works", {
     expect_true(hasChromPeaks(res))
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
-    expect_equal(peaks(xs)@.Data, chromPeaks(res)[, colnames(peaks(xs)@.Data)])
+    pks <- chromPeaks(res)
+    rownames(pks) <- NULL
+    expect_equal(peaks(xs)@.Data, pks[, colnames(peaks(xs)@.Data)])
 })
 
 test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
@@ -174,7 +190,8 @@ test_that("findChromPeaks,OnDiskMSnExp,MassifquantParam works", {
     ## onDisk
     onDisk <- readMSData(mzf[1], mode = "onDisk")
     res_o <- findChromPeaks(onDisk, param = mqp, return.type = "xcmsSet")
-    expect_equal(peaks(res_o)[, colnames(peaks(res))], peaks(res))
+    expect_equal(unname(peaks(res_o)[, colnames(peaks(res))]),
+                 unname(peaks(res)))
     expect_equal(unname(res_o@rt$raw[[1]]), unname(res@rt$raw[[1]]))
 
     expect_error(findChromPeaks(onDisk, param = mqp, msLevel = 2))
@@ -189,7 +206,8 @@ test_that("findChromPeaks,OnDiskMSnExp,MatchedFilterParam works", {
     ## onDisk <- readMSData(fs[1], mode = "onDisk")
     onDisk <- filterFile(faahko_od, file = 1)
     res_o <- findChromPeaks(onDisk, param = mfp, return.type = "xcmsSet")
-    expect_equal(peaks(res_o)[, colnames(peaks(res))], peaks(res))
+    expect_equal(unname(peaks(res_o)[, colnames(peaks(res))]),
+                 unname(peaks(res)))
     expect_equal(unname(res_o@rt$raw[[1]]), unname(res@rt$raw[[1]]))
 
     expect_error(findChromPeaks(onDisk, param = mfp, msLevel = 2))

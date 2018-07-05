@@ -92,7 +92,9 @@ test_that("XCMSnExp accessors work", {
     expect_true(length(tmp) == length(fileNames(xod)))
     tmp <- do.call(rbind, tmp)
     rownames(tmp) <- NULL
-    expect_equal(tmp, chromPeaks(xod))
+    pks <- chromPeaks(xod)
+    rownames(pks) <- NULL
+    expect_equal(tmp, pks)
     ## chromPeaks with rt
     all_pks <- chromPeaks(xod_x)
     pks <- chromPeaks(xod_x, rt = c(2000, 2600), type = "within")
@@ -232,6 +234,7 @@ test_that("findChromPeaks,XCMSnExp works", {
                                         valsPerSpect = lengths(mz_values),
                                         noise = 10000, snthresh = 40)
     pks <- chromPeaks(tmp)
+    rownames(pks) <- NULL
     pks <- pks[pks[, "sample"] == 1, colnames(res_2)]
     expect_equal(res_2, pks)
     ## Second try:
@@ -255,6 +258,7 @@ test_that("findChromPeaks,XCMSnExp works", {
                                         valsPerSpect = lengths(mz_values),
                                         noise = 10000, snthresh = 40)
     pks <- chromPeaks(tmp)
+    rownames(pks) <- NULL
     pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
     expect_equal(res_2, pks)
 })
@@ -1428,7 +1432,7 @@ test_that("calibrate,XCMSnExp works", {
     expect_warning(res <- calibrate(tmp, prm))
     diffs <- chromPeaks(res)[, "mz"] - chromPeaks(tmp)[, "mz"]
     min_diff <- min(abs(chromPeaks(tmp)[, "mz"] - mzs_lin[1]))
-    expect_equal(diffs, rep(min_diff, length(diffs)))
+    expect_equal(unname(diffs), rep(min_diff, length(diffs)))
 
     ## Check errors.
     expect_error(calibrate(tmp, 4))
@@ -1442,7 +1446,9 @@ test_that("adjustRtime,peakGroups works", {
     xsg <- group(xs)
     xodg <- groupChromPeaks(xod,
                             param = PeakDensityParam(sampleGroups = xs$class))
-    expect_equal(peaks(xsg), chromPeaks(xodg)[, colnames(peaks(xsg))])
+    pks <- chromPeaks(xodg)
+    rownames(pks) <- NULL
+    expect_equal(peaks(xsg), pks[, colnames(peaks(xsg))])
     expect_equal(xsg@groupidx, featureDefinitions(xodg)$peakidx)
     expect_true(length(processHistory(xodg,
                                       type = .PROCSTEP.PEAK.DETECTION)) == 1)
@@ -1470,7 +1476,9 @@ test_that("adjustRtime,peakGroups works", {
     expect_true(sum(chromPeaks(xod)[, "rtmin"] != chromPeaks(xodr)[, "rtmin"]) > 200)
     expect_true(sum(chromPeaks(xod)[, "rtmax"] != chromPeaks(xodr)[, "rtmax"]) > 200)
     ## between xcmsSet and XCMSnExp
-    expect_equal(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
+    pks <- chromPeaks(xodr)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
     ## To compare the adjusted retention time we have to extract it by sample!
     ## Otherwise the ordering will not be the same, as rtime is ordered by
     ## retention time, but @rt$raw by sample.
@@ -1509,7 +1517,9 @@ test_that("adjustRtime,peakGroups works", {
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1))
-    expect_equal(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
+    pks <- chromPeaks(xodr)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
     expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                  unlist(xsr@rt$corrected, use.names = FALSE))
 
@@ -1518,7 +1528,9 @@ test_that("adjustRtime,peakGroups works", {
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1,
                                                       smooth = "linear"))
-    expect_equal(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
+    pks <- chromPeaks(xodr)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
     expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                  unlist(xsr@rt$corrected, use.names = FALSE))
 
@@ -1527,7 +1539,9 @@ test_that("adjustRtime,peakGroups works", {
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1,
                                                       family = "symmetric"))
-    expect_equal(chromPeaks(xodr)[, colnames(peaks(xsr))], peaks(xsr))
+    pks <- chromPeaks(xodr)
+    rownames(pks) <- NULL
+    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
     expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
                  unlist(xsr@rt$corrected, use.names = FALSE))
     ## Dropping results.
@@ -1544,7 +1558,9 @@ test_that("findChromPeaks,MSWParam works", {
     mp <- MSWParam()
     expect_error(findChromPeaks(od1, param = mp, msLevel = 2))
     res_2 <- findChromPeaks(od1, param = mp)
-    expect_equal(res_1, chromPeaks(res_2)[, colnames(res_1), drop = FALSE])
+    pks <- chromPeaks(res_2)
+    rownames(pks) <- NULL
+    expect_equal(res_1, pks[, colnames(res_1), drop = FALSE])
     ## Changing settings.
     snthresh(mp) <- 1
     nearbyPeak(mp) <- FALSE
@@ -1571,7 +1587,9 @@ test_that("findChromPeaks,MSWParam works", {
     res_4 <- findChromPeaks(od1, param = mp, return.type = "list")
     expect_equal(res_3, res_4[[1]][, colnames(res_3)])
     ## Compare old vs new:
-    expect_equal(chromPeaks(fticr_xod)[, -ncol(chromPeaks(fticr_xod))],
+    pks <- chromPeaks(fticr_xod)
+    rownames(pks) <- NULL
+    expect_equal(pks[, -ncol(chromPeaks(fticr_xod))],
                  peaks(fticr_xs))
 })
 
@@ -1749,14 +1767,14 @@ test_that("fillChromPeaks,XCMSnExp works", {
         expect_true(cor(fnd_pks[, "rt"], fld_pks[, "rt"]) > 0.99)
         ## mz
         expect_true(cor(fnd_pks[, "mz"], fld_pks[, "mz"]) > 0.99)
-        expect_equal(fnd_pks[, "mz"], fld_pks[, "mz"])
+        expect_equal(unname(fnd_pks[, "mz"]), unname(fld_pks[, "mz"]))
         ## into
         expect_true(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
-        expect_equal(fnd_pks[, "into"], fld_pks[, "into"])
+        expect_equal(unname(fnd_pks[, "into"]), unname(fld_pks[, "into"]))
         ## expect_equal(fnd_pks[, "into"], fld_pks[, "into"])    
         ## maxo
-        expect_equal(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
-        expect_equal(fnd_pks[, "maxo"], fld_pks[, "maxo"])
+        expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
+        expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
     }
     
     ## Check for the NAs if there is really no signal
@@ -1901,8 +1919,8 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
                               cn = colnames(chromPeaks(fticr_xodg)))
     curP <- chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ]
     curP <- curP[order(curP[, "mz"]), ]
-    expect_equal(allPks[, "mz"], curP[, "mz"])
-    expect_equal(allPks[, "maxo"], curP[, "maxo"])
+    expect_equal(unname(allPks[, "mz"]), unname(curP[, "mz"]))
+    expect_equal(unname(allPks[, "maxo"]), unname(curP[, "maxo"]))
     expect_true(cor(allPks[, "into"], curP[, "into"]) > 0.99) ## Not exactly the
     ## same but highly similar.
 })
@@ -1940,9 +1958,9 @@ test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
         diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
         expect_true(max(diffs) < 1e-4)
         ## into
-        expect_equal(fnd_pks[, "into"], fld_pks[, "into"])    
+        expect_equal(unname(fnd_pks[, "into"]), unname(fld_pks[, "into"]))    
         ## maxo
-        expect_equal(fnd_pks[, "maxo"], fld_pks[, "maxo"])    
+        expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
     }
 
     ## modify fillChromPeaks settings.

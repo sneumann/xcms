@@ -48,6 +48,14 @@ test_that("plotMsData works", {
     plotMsData(msd[[1]])
 })
 
+test_that(".featureIDs works", {
+    res <- .featureIDs(200)
+    expect_equal(length(res), 200)
+    expect_true(length(unique(res)) == 200)
+    res <- .featureIDs(221495, prefix = "CP")
+    expect_true(length(unique(res)) == 221495)
+})
+
 test_that("rla, rowRla work", {
     x <- c(3, 4, 5, 1, 2, 3, 7, 8, 9)
     grp <- c(1, 1, 1, 2, 2, 2, 3, 3, 3)

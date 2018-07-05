@@ -249,12 +249,14 @@ useOriginalCode <- function(x) {
 }
 
 #' @description This function creates arbitrary IDs for features.
+#'
+#' @param prefix character(1) with the prefix to be added to the ID.
 #' 
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
 #' @noRd
-.featureIDs <- function(x) {
-    sprintf(paste0("FT%0", ceiling(log10(x + 1L)), "d"), 1:x)
+.featureIDs <- function(x, prefix = "FT") {
+    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"), 1:x)
 }
 
 ## #' @description Expands stretches of TRUE values in \code{x} by one on both

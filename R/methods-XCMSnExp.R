@@ -254,7 +254,9 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #'
 #' \code{chromPeaks}, \code{chromPeaks<-}: extract or set
 #' the matrix containing the information on identified chromatographic
-#' peaks. Parameter \code{bySample} allows to specify whether peaks should
+#' peaks. Rownames of the matrix represent unique IDs of the respective peaks
+#' within the experiment.
+#' Parameter \code{bySample} allows to specify whether peaks should
 #' be returned ungrouped (default \code{bySample = FALSE}) or grouped by
 #' sample (\code{bySample = TRUE}). The \code{chromPeaks<-} method for
 #' \code{XCMSnExp} objects removes also all correspondence (peak grouping)
@@ -285,7 +287,8 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' 
 #' @return
 #'
-#' For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix}
+#' For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
+#' being a chromatographic peak, rownames representing unique IDs of the peaks)
 #' with at least the following columns:
 #' \code{"mz"} (intensity-weighted mean of mz values of the peak across
 #' scans/retention times),
@@ -376,6 +379,9 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     )
     ## Ensure that we remove ALL related process history steps
     newFd@.xData <- .copy_env(object@msFeatureData)
+    ## Set rownames if not present
+    if (is.null(rownames(value)))
+        rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd

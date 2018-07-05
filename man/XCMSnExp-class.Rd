@@ -252,7 +252,8 @@ chromatographic peaks (rows) in the matrix returned by the
 \code{chromPeaks} method that belong to that feature group. The method
 returns \code{NULL} if no feature definitions are present.
 
-For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix}
+For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
+being a chromatographic peak, rownames representing unique IDs of the peaks)
 with at least the following columns:
 \code{"mz"} (intensity-weighted mean of mz values of the peak across
 scans/retention times),
@@ -359,7 +360,9 @@ feature summaries.
 
 \code{chromPeaks}, \code{chromPeaks<-}: extract or set
 the matrix containing the information on identified chromatographic
-peaks. Parameter \code{bySample} allows to specify whether peaks should
+peaks. Rownames of the matrix represent unique IDs of the respective peaks
+within the experiment.
+Parameter \code{bySample} allows to specify whether peaks should
 be returned ungrouped (default \code{bySample = FALSE}) or grouped by
 sample (\code{bySample = TRUE}). The \code{chromPeaks<-} method for
 \code{XCMSnExp} objects removes also all correspondence (peak grouping)

@@ -144,6 +144,7 @@ test_that("peaksWithMatchedFilter is working", {
     chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
     pks <- peaksWithMatchedFilter(intensity(chr), rtime(chr))
     pks_mf <- chromPeaks(od_mf, mz = c(272.1, 272.3))
+    rownames(pks_mf) <- NULL
     expect_equal(pks[, "rt"], pks_mf[, "rt"])
     expect_equal(pks[, "rtmin"], pks_mf[, "rtmin"])
     expect_equal(pks[, "rtmax"], pks_mf[, "rtmax"])
@@ -189,6 +190,7 @@ test_that("peaksWithCentWave works", {
     chr <- chromatogram(od, mz = mzr)[1, 1]
     pks <- peaksWithCentWave(intensity(chr), rtime(chr))
     pks_cw <- chromPeaks(od_cw, mz = mzr)
+    rownames(pks_cw) <- NULL
     expect_equal(pks[2, "rt"], pks_cw[, "rt"])
     expect_equal(pks[2, "rtmin"], pks_cw[, "rtmin"])
     expect_equal(pks[2, "rtmax"], pks_cw[, "rtmax"])
