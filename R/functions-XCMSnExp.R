@@ -1743,3 +1743,65 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
     }
     .rect_overlap(xleft = xl, xright = xr, ybottom = yb, ytop = yt)
 }
+
+
+#' @title Export data for use in MetaboAnalyst
+#'
+#' @description
+#'
+#' Export the feature table for further analysis in the MetaboAnalyst
+#' software (or the `MetaboAnalystR` R package.
+#'
+#' @param x [XCMSnExp] object with identified chromatographic peaks grouped
+#'     across samples.
+#'
+#' @param file `character(1)` defining the file name. If not specified, the
+#'     `matrix` with the content is returned.
+#'
+#' @param label either `character(1)` specifying the phenodata column in `x`
+#'     defining the sample grouping or a vector with the same length than
+#'     samples in `x` defining the group assignment of the samples.
+#'
+#' @param value `character(1)` specifying the value to be returned for each
+#'     feature. See [featureValues()] for more details.
+#'
+#' @param ... additional parameters to be passed to the [featureValues()]
+#'     function.
+#'
+#' @return If `file` is not specified, the function returns the `matrix` in
+#'     the format supported by MetaboAnalyst.
+#' 
+#' @export
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+exportMetaboAnalyst <- function(x, file = NULL, label,
+                                value = "into", ...) {
+    if (!is(x, "XCMSnExp"))
+        stop("'x' is supposed to be an XCMSnExp object")
+    fv <- featureValues(x, value = value, ...)
+    if (missing(label))
+        stop("Please provide the group assignment of the samples with the ",
+             "'label' parameter")
+    if (length(label) == 1) {
+        if (any(colnames(pData(x)) == label))
+            label <- as.character(pData(x)[, label])
+        else
+            stop("No pheno data column \"", label, "\" found. If length ",
+                 "'label' is 1 it is expected to specify the column in ",
+                 "the object's phenodata data.frame containing the",
+                 " group assignment.")
+    }
+    if (length(label) != ncol(fv))
+        stop("Length of 'label' has to match the number of samples (",
+             ncol(fv), ").")
+    fv <- rbind(Sample = colnames(fv),
+                Label = label,
+                fv)
+    if (!is.null(file))
+        write.table(fv, file = file, dec = ".", sep = ",", qmethod = "double",
+                    col.names = FALSE, row.names = TRUE)
+    else
+        fv
+}

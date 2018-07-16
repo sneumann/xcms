@@ -578,7 +578,7 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1){
     }
 
     if(any(table(labels)<3))
-        stop(paste("The classes", paste(names(which(table(labels)<8)), collapse=", "), "have less than 3 samples"))
+        stop(paste("The classes", paste(names(which(table(labels)<3)), collapse=", "), "have less than 3 samples"))
 
     p <- rbind(Sample=sampnames(object),
                Label=labels,

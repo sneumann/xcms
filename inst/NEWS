@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Add exportMetaboAnalyst function to export the feature matrix in MetaboAnalyst
+  format.
 - Add parameter missing to featureValues allowing to specify how to handle/
   report missing values.
 - The chromPeaks matrix has now rownames to uniquely identify chromatographic

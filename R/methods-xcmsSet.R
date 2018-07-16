@@ -1532,11 +1532,15 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
 
 ############################################################
 ## diffreport
-setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
+setMethod("diffreport", "xcmsSet", function(object,
+                                            class1 = levels(sampclass(object))[1],
                                             class2 = levels(sampclass(object))[2],
-                                            filebase = character(), eicmax = 0, eicwidth = 200,
-                                            sortpval = TRUE, classeic = c(class1,class2),
-                                            value = c("into","maxo","intb"), metlin = FALSE,
+                                            filebase = character(),
+                                            eicmax = 0, eicwidth = 200,
+                                            sortpval = TRUE,
+                                            classeic = c(class1,class2),
+                                            value = c("into","maxo","intb"),
+                                            metlin = FALSE,
                                             h = 480, w = 640, mzdec=2, ...) {
 
     if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
@@ -1568,10 +1572,11 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
         stop("Intersecting Classes")
 
     ## Check against missing Values
-    if (any(is.na(values[,c(c1,c2)]))) {
-        stop("NA values in xcmsSet. Use fillPeaks()")
-    }
-
+    if (any(is.na(values[, c(c1, c2)])))
+        warning("`NA` values in xcmsSet. Use fillPeaks() on the object to fill",
+                "-in missing peak values. Note however that this will also ",
+                "insert intensities of 0 for peaks that can not be filled in.")
+    
     mean1 <- rowMeans(values[,c1,drop=FALSE], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2,drop=FALSE], na.rm = TRUE)
 

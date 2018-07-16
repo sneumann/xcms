@@ -185,3 +185,26 @@ test_that("overlappingFeatures works", {
     res <- overlappingFeatures(xod_xg, expandRt = 60)
     expect_equal(res, list(c(5, 6), c(31, 32)))
 })
+
+test_that("exportMetaboAnalyst works", {
+    expect_error(exportMetaboAnalyst(xod_x))
+    expect_error(exportMetaboAnalyst(4))
+    expect_error(exportMetaboAnalyst(xod_xg))
+    expect_error(exportMetaboAnalyst(xod_xg, label = "group"))
+    expect_error(exportMetaboAnalyst(xod_xg, label = c("a", "a")))
+    res <- exportMetaboAnalyst(xod_xg, label = c("a", "a", "a"))
+
+    expect_true(is.matrix(res))
+    expect_equal(unname(res[1, ]), sampleNames(xod_x))
+    expect_equal(unname(res[2, ]), c("a", "a", "a"))
+    tmp <- xod_xg
+    tmp$group <- c("a", "a", "a")
+    res2 <- exportMetaboAnalyst(tmp, label = "group")
+    expect_equal(res, res2)
+
+    fl <- tempfile()
+    exportMetaboAnalyst(tmp, file = fl, label = "group")
+    res3 <- read.table(fl, sep = ",", row.names = 1, as.is = TRUE)
+    colnames(res3) <- colnames(res)
+    expect_equal(as.matrix(res3), res)
+})
