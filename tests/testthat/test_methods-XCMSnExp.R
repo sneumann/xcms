@@ -1122,6 +1122,21 @@ test_that("featureValues,XCMSnExp works", {
     expect_equal(sum(pks[pks[, "sample"] == 1, "into"]), fv[37, 1])
     expect_equal(sum(pks[pks[, "sample"] == 2, "into"]), fv[37, 2])
     expect_equal(sum(pks[pks[, "sample"] == 3, "into"]), fv[37, 3])
+
+    ## missing
+    na_num <- sum(is.na(featureValues(od_x, value = "into")))
+    res <- featureValues(od_x, value = "into", missing = 123)
+    expect_equal(sum(res == 123), na_num)
+    res <- featureValues(od_x, value = "into", missing = "rowmin_half")
+    res_na <- featureValues(od_x, value = "into")
+    is_na <- is.na(rowMeans(res_na))
+    for (i in which(is_na)) {
+        are_na <- is.na(res_na[i, ])
+        expect_true(all(res[i, are_na] == min(res_na[i, ], na.rm = TRUE) / 2))
+    }
+    ## Check errors
+    expect_error(featureValues(od_x, value = "into", missing = "b"))
+    expect_error(featureValues(od_x, value = "into", missing = TRUE))
 })
 
 test_that("peakIndex,XCMSnExp works", {

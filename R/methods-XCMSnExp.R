@@ -1995,7 +1995,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' @note
 #'
 #' This method is equivalent to the \code{\link{groupval}} for
-#' \code{xcmsSet} objects.
+#' \code{xcmsSet} objects. Note that \code{missing = 0} should be used to
+#' get the same behaviour as \code{groupval}, i.e. report missing values as 0
+#' after a call to \code{fillPeaks}.
 #' 
 #' @param object A \code{\link{XCMSnExp}} object providing the feature
 #'     definitions.
@@ -2023,7 +2025,12 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' @param filled \code{logical(1)} specifying whether values for filled-in
 #'     peaks should be returned or not. If \code{filled = FALSE}, an \code{NA}
 #'     is returned in the matrix for the respective peak. See
-#'     \code{\link{fillChromPeaks}} for details on peak filling. 
+#'     \code{\link{fillChromPeaks}} for details on peak filling.
+#'
+#' @param missing how missing values should be reported. Allowed values are
+#'     \code{NA} (the default), a \code{numeric} or
+#'     \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
+#'     half of the row's minimal (non-missing) value.
 #' 
 #' @return
 #'
@@ -2049,7 +2056,8 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 setMethod("featureValues",
           signature(object = "XCMSnExp"),
           function(object, method = c("medret", "maxint", "sum"),
-                   value = "index", intensity = "into", filled = TRUE) {
+                   value = "index", intensity = "into", filled = TRUE,
+                   missing = NA) {
               ## Input argument checkings
               if (!hasFeatures(object))
                   stop("No peak groups present! Use 'groupChromPeaks' first.")
@@ -2060,6 +2068,15 @@ setMethod("featureValues",
               if (method == "sum" & !(value %in% c("into", "maxo")))
                   stop("method 'sum' is only allowed if value is set to 'into'",
                        " or 'maxo'")
+              if (is.character(missing)) {
+                  if (!(missing %in% c("rowmin_half")))
+                      stop("if 'missing' is not 'NA' or a numeric it should",
+                           " be one of: \"rowmin_half\".")
+              } else {
+                  if (!is.numeric(missing) & !is.na(missing))
+                      stop("'missing' should be either 'NA', a numeric or one",
+                           " of: \"rowmin_half\".")
+              }
               fNames <- basename(fileNames(object))
               nSamples <- seq_along(fNames)
               ## Copy all of the objects to avoid costly S4 method calls -
@@ -2113,6 +2130,19 @@ setMethod("featureValues",
                                "chromatographic peaks matrix!")
                       vals <- fts[vals, value]
                       dim(vals) <- c(length(ftIdx), length(nSamples))
+                  }
+              }
+
+              if (value != "index") {
+                  if (is.numeric(missing)) {
+                      vals[is.na(vals)] <- missing
+                  }
+                  if (!is.na(missing) & missing == "rowmin_half") {
+                      for (i in seq_len(nrow(vals))) {
+                          nas <- is.na(vals[i, ])
+                          if (any(nas))
+                              vals[i, nas] <- min(vals[i, ], na.rm = TRUE) / 2
+                      }
                   }
               }
               

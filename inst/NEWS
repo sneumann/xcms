@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Add parameter missing to featureValues allowing to specify how to handle/
+  report missing values.
 - The chromPeaks matrix has now rownames to uniquely identify chromatographic
   peaks in an experiment. Chromatographic peak IDs start with "CP" followed by
   a number.

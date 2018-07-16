@@ -7,7 +7,8 @@
 \title{Accessing mz-rt feature data values}
 \usage{
 \S4method{featureValues}{XCMSnExp}(object, method = c("medret", "maxint",
-  "sum"), value = "index", intensity = "into", filled = TRUE)
+  "sum"), value = "index", intensity = "into", filled = TRUE,
+  missing = NA)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object providing the feature
@@ -37,6 +38,11 @@ peak that should be used for the conflict resolution if
 peaks should be returned or not. If \code{filled = FALSE}, an \code{NA}
 is returned in the matrix for the respective peak. See
 \code{\link{fillChromPeaks}} for details on peak filling.}
+
+\item{missing}{how missing values should be reported. Allowed values are
+\code{NA} (the default), a \code{numeric} or
+\code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
+half of the row's minimal (non-missing) value.}
 }
 \value{
 For \code{featureValues}: a \code{matrix} with
@@ -58,7 +64,9 @@ cases to chose from which of the peaks the value should be returned.
 }
 \note{
 This method is equivalent to the \code{\link{groupval}} for
-\code{xcmsSet} objects.
+\code{xcmsSet} objects. Note that \code{missing = 0} should be used to
+get the same behaviour as \code{groupval}, i.e. report missing values as 0
+after a call to \code{fillPeaks}.
 }
 \seealso{
 \code{\link{XCMSnExp}} for information on the data object.
