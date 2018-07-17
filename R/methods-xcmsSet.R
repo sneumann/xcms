@@ -1541,7 +1541,8 @@ setMethod("diffreport", "xcmsSet", function(object,
                                             classeic = c(class1,class2),
                                             value = c("into","maxo","intb"),
                                             metlin = FALSE,
-                                            h = 480, w = 640, mzdec=2, ...) {
+                                            h = 480, w = 640, mzdec=2,
+                                            missing = numeric(), ...) {
 
     if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
         stop("No group information. Use group().")
@@ -1571,6 +1572,13 @@ setMethod("diffreport", "xcmsSet", function(object,
     if (length(intersect(c1, c2)) > 0)
         stop("Intersecting Classes")
 
+    ## Optionally replace NA values with the value provided with missing
+    if (length(missing)) {
+        if (is.numeric(missing))
+            values[, c(c1, c2)][is.na(values[, c(c1, c2)])] <- missing[1]
+        else
+            stop("'missing' should be numeric")
+    }
     ## Check against missing Values
     if (any(is.na(values[, c(c1, c2)])))
         warning("`NA` values in xcmsSet. Use fillPeaks() on the object to fill",

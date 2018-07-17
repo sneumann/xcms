@@ -11,6 +11,11 @@ test_that("diffreport etc works", {
     sampclass(f) <- rep(1:4,3)
     d <- diffreport(f)
     d$anova
+
+    expect_warning(diffreport(g))
+    diffreport(g, missing = 3)
+
+    expect_error(diffreport(f, missing = "b"))
 })
 
 test_that("findPeaks.MSW works", {

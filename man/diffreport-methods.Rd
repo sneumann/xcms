@@ -16,7 +16,8 @@
                    filebase = character(), eicmax = 0, eicwidth = 200,
                    sortpval = TRUE, classeic = c(class1,class2),
                    value=c("into","maxo","intb"), metlin = FALSE,
-				   h=480,w=640, mzdec=2, ...)}
+				   h=480,w=640, mzdec=2, missing =
+				   numeric(), ...)}
 }
 }}
 \arguments{
@@ -68,6 +69,13 @@
   }
   \item{mzdec}{
     Number of decimal places of title m/z values in the eic plot.
+  }
+  \item{missing}{
+    \code{numeric(1)} defining an optional value for missing
+    values. \code{missing = 0} would e.g. replace all \code{NA} values
+    in the feature matrix with \code{0}. Note that also a call to 
+    \code{\link{fillPeaks}} results in a feature matrix in which
+    \code{NA} values are replaced by \code{0}. 
   }
   \item{...}{
     optional arguments to be passed to \code{\link{mt.teststat}}
