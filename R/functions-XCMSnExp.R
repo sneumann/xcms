@@ -1797,7 +1797,7 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
         stop("Length of 'label' has to match the number of samples (",
              ncol(fv), ").")
     fv <- rbind(Sample = colnames(fv),
-                Label = label,
+                Label = as.character(label),
                 fv)
     if (!is.null(file))
         write.table(fv, file = file, dec = ".", sep = ",", qmethod = "double",
