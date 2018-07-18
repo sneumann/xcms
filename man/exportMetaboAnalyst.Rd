@@ -4,7 +4,7 @@
 \alias{exportMetaboAnalyst}
 \title{Export data for use in MetaboAnalyst}
 \usage{
-exportMetaboAnalyst(x, file = NULL, label, value = "into", ...)
+exportMetaboAnalyst(x, file = NULL, label, value = "into", dec = ".", ...)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks grouped
@@ -19,6 +19,8 @@ samples in \code{x} defining the group assignment of the samples.}
 
 \item{value}{\code{character(1)} specifying the value to be returned for each
 feature. See \code{\link[=featureValues]{featureValues()}} for more details.}
+
+\item{dec}{\code{character(1)} defining the decimal point character.}
 
 \item{...}{additional parameters to be passed to the \code{\link[=featureValues]{featureValues()}}
 function.}

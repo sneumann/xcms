@@ -1765,6 +1765,8 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #' @param value `character(1)` specifying the value to be returned for each
 #'     feature. See [featureValues()] for more details.
 #'
+#' @param dec `character(1)` defining the decimal point character.
+#' 
 #' @param ... additional parameters to be passed to the [featureValues()]
 #'     function.
 #'
@@ -1777,7 +1779,7 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #'
 #' @md
 exportMetaboAnalyst <- function(x, file = NULL, label,
-                                value = "into", ...) {
+                                value = "into", dec = ".", ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an XCMSnExp object")
     fv <- featureValues(x, value = value, ...)
@@ -1800,8 +1802,8 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
                 Label = as.character(label),
                 fv)
     if (!is.null(file))
-        write.table(fv, file = file, dec = ".", sep = ",", qmethod = "double",
-                    col.names = FALSE, row.names = TRUE)
+        write.table(fv, file = file, dec = dec, sep = ",",
+                    qmethod = "double", col.names = FALSE, row.names = TRUE)
     else
         fv
 }
