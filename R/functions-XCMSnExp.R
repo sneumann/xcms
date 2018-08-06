@@ -1765,7 +1765,9 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #' @param value `character(1)` specifying the value to be returned for each
 #'     feature. See [featureValues()] for more details.
 #'
-#' @param dec `character(1)` defining the decimal point character.
+#' @param digits `integer(1)` defining the number of significant digits to be
+#'     used for numeric. The default `NULL` uses `getOption("digits")`. See
+#'     [format()] for more information.
 #' 
 #' @param ... additional parameters to be passed to the [featureValues()]
 #'     function.
@@ -1779,10 +1781,13 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #'
 #' @md
 exportMetaboAnalyst <- function(x, file = NULL, label,
-                                value = "into", dec = ".", ...) {
+                                value = "into", digits = NULL, ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an XCMSnExp object")
     fv <- featureValues(x, value = value, ...)
+    nas <- is.na(fv)
+    fv <- format(fv, trim = TRUE, digits = digits)
+    fv[nas] <- NA
     if (missing(label))
         stop("Please provide the group assignment of the samples with the ",
              "'label' parameter")
@@ -1802,7 +1807,7 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
                 Label = as.character(label),
                 fv)
     if (!is.null(file))
-        write.table(fv, file = file, dec = dec, sep = ",",
+        write.table(fv, file = file, sep = ",",
                     qmethod = "double", col.names = FALSE, row.names = TRUE)
     else
         fv
