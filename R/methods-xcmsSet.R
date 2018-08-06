@@ -1574,9 +1574,10 @@ setMethod("diffreport", "xcmsSet", function(object,
 
     ## Optionally replace NA values with the value provided with missing
     if (length(missing)) {
-        if (is.numeric(missing))
-            values[, c(c1, c2)][is.na(values[, c(c1, c2)])] <- missing[1]
-        else
+        if (is.numeric(missing)) {
+            ## handles NA, Inf and -Inf
+            values[, c(c1, c2)][!is.finite(values[, c(c1, c2)])] <- missing[1]
+        } else
             stop("'missing' should be numeric")
     }
     ## Check against missing Values
@@ -1595,6 +1596,8 @@ setMethod("diffreport", "xcmsSet", function(object,
     fold[!is.na(fold) & fold < 1] <- 1/fold[!is.na(fold) & fold < 1]
 
     testval <- values[,c(c1,c2)]
+    ## Replace eventual infinite values with NA (CAMERA issue #33)
+    testval[is.infinite(testval)] <- NA
     testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
 
     if (min(length(c1), length(c2)) >= 2) {
