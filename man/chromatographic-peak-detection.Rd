@@ -48,3 +48,4 @@ Other peak detection methods: \code{\link{findChromPeaks-centWaveWithPredIsoROIs
 \author{
 Johannes Rainer
 }
+\concept{peak detection methods}

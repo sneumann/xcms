@@ -75,12 +75,18 @@
     ## sortMeth <- "auto"
     ## if (as.numeric(R.Version()$major) >= 3 & as.numeric(R.Version()$minor) >= 3)
     ##     sortMeth <- "radix"
-    xcms.opt <- list(findPeaks.method=findPeaks.method, findPeaks.methods=findPeaks.methods,
-                     group.method=group.method, group.methods=group.methods,
-                     retcor.method=retcor.method, retcor.methods=retcor.methods,
-                     fillPeaks.method=fillPeaks.method, fillPeaks.methods=fillPeaks.methods,
-                     specDist.methods=specDist.methods, getEIC.method=getEIC.method,
-                     useOriginalCode = FALSE)
+    xcms.opt <- list(findPeaks.method = findPeaks.method,
+                     findPeaks.methods = findPeaks.methods,
+                     group.method = group.method,
+                     group.methods = group.methods,
+                     retcor.method = retcor.method,
+                     retcor.methods = retcor.methods,
+                     fillPeaks.method = fillPeaks.method,
+                     fillPeaks.methods = fillPeaks.methods,
+                     specDist.methods = specDist.methods,
+                     getEIC.method = getEIC.method)
+    ## No longer setting the useOriginalCode parameter as it might overwrite
+    ## system wide setgings (e.g. if specified in .Rprofile
 
     class(xcms.opt) <- "BioCPkg"
 

@@ -52,7 +52,6 @@
 \alias{dropAdjustedRtime,XCMSnExp-method}
 \alias{dropAdjustedRtime}
 \alias{dropAdjustedRtime,MsFeatureData-method}
-\alias{XCMSnExp-class}
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
@@ -65,7 +64,8 @@
 processHistoryTypes()
 
 \S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
+  ...)
 
 \S4method{show}{XCMSnExp}(object)
 
@@ -84,8 +84,9 @@ processHistoryTypes()
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
-\S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE, rt = numeric(),
-  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+\S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE,
+  rt = numeric(), mz = numeric(), ppm = 0, type = c("any",
+  "within", "apex_within"))
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
@@ -104,21 +105,22 @@ processHistoryTypes()
 
 \S4method{dropChromPeaks}{XCMSnExp}(object, keepAdjustedRtime = FALSE)
 
-\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjustedRtime = FALSE,
-  dropLastN = -1)
+\S4method{dropFeatureDefinitions}{XCMSnExp}(object,
+  keepAdjustedRtime = FALSE, dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
 
 \S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex, ...)
+  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
+  ...)
 
-\S4method{findChromPeaks}{XCMSnExp,Param}(object, param, BPPARAM = bpparam(),
-  return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{XCMSnExp,Param}(object, param,
+  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
 
-\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL, BPPARAM = bpparam(),
-  ...)
+\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL,
+  BPPARAM = bpparam(), ...)
 
 \method{c}{XCMSnExp}(...)
 }

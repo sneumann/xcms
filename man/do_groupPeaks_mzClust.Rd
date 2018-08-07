@@ -67,3 +67,4 @@ Vol. 2, No. 2, 75-83 (2006)
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},
   \code{\link{do_groupChromPeaks_nearest}}
 }
+\concept{core peak grouping algorithms}

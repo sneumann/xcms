@@ -23,8 +23,8 @@
 \alias{fillChromPeaks,XCMSnExp,missing-method}
 \title{Integrate areas of missing peaks}
 \usage{
-FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0, fixedMz = 0,
-  fixedRt = 0)
+FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0,
+  fixedMz = 0, fixedRt = 0)
 
 fixedRt(object)
 

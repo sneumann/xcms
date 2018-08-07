@@ -4,8 +4,8 @@
 \alias{peaksWithMatchedFilter}
 \title{Identify peaks in chromatographic data using matchedFilter}
 \usage{
-peaksWithMatchedFilter(int, rt, fwhm = 30, sigma = fwhm/2.3548, max = 20,
-  snthresh = 10, ...)
+peaksWithMatchedFilter(int, rt, fwhm = 30, sigma = fwhm/2.3548,
+  max = 20, snthresh = 10, ...)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -72,3 +72,4 @@ Other peak detection functions for chromatographic data: \code{\link{peaksWithCe
 \author{
 Johannes Rainer
 }
+\concept{peak detection functions for chromatographic data}

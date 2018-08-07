@@ -191,3 +191,4 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
 \author{
 Christopher Conley
 }
+\concept{core peak detection functions}

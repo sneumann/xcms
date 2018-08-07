@@ -13,7 +13,8 @@
 \usage{
 \S4method{bin}{XCMSnExp}(object, binSize = 1L, msLevel.)
 
-\S4method{clean}{XCMSnExp}(object, all = FALSE, verbose = FALSE, msLevel.)
+\S4method{clean}{XCMSnExp}(object, all = FALSE, verbose = FALSE,
+  msLevel.)
 
 \S4method{filterAcquisitionNum}{XCMSnExp}(object, n, file)
 
@@ -25,8 +26,8 @@
 \S4method{removePeaks}{XCMSnExp}(object, t = "min", verbose = FALSE,
   msLevel.)
 
-\S4method{smooth}{XCMSnExp}(x, method = c("SavitzkyGolay", "MovingAverage"),
-  halfWindowSize = 2L, verbose = FALSE, ...)
+\S4method{smooth}{XCMSnExp}(x, method = c("SavitzkyGolay",
+  "MovingAverage"), halfWindowSize = 2L, verbose = FALSE, ...)
 }
 \arguments{
 \item{object}{\code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}

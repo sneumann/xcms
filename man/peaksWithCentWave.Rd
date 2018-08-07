@@ -5,8 +5,8 @@
 \title{Identify peaks in chromatographic data using centWave}
 \usage{
 peaksWithCentWave(int, rt, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), integrate = 1, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, firstBaselineCheck = TRUE, ...)
+  prefilter = c(3, 100), integrate = 1, fitgauss = FALSE,
+  noise = 0, verboseColumns = FALSE, firstBaselineCheck = TRUE, ...)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -122,3 +122,4 @@ Other peak detection functions for chromatographic data: \code{\link{peaksWithMa
 \author{
 Johannes Rainer
 }
+\concept{peak detection functions for chromatographic data}

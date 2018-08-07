@@ -45,3 +45,4 @@ Other functions to define bins: \code{\link{breaks_on_binSize}}
 \author{
 Johannes Rainer
 }
+\concept{functions to define bins}

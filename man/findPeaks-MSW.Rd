@@ -51,8 +51,8 @@
 \alias{addParams<-}
 \title{Single-spectrum non-chromatography MS data peak detection}
 \usage{
-MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2, 30,
-  2), seq(32, 64, 4)), nearbyPeak = TRUE, peakScaleRange = 5,
+MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2,
+  30, 2), seq(32, 64, 4)), nearbyPeak = TRUE, peakScaleRange = 5,
   ampTh = 0.01, minNoiseLevel = ampTh/snthresh, ridgeLength = 24,
   peakThr = NULL, tuneIn = FALSE, ...)
 
@@ -298,3 +298,4 @@ Other peak detection methods: \code{\link{chromatographic-peak-detection}},
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
+\concept{peak detection methods}

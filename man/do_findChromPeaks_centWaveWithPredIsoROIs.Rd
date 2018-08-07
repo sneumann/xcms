@@ -6,19 +6,19 @@
 \title{Core API function for two-step centWave peak detection with isotopes}
 \usage{
 do_findChromPeaks_centWaveWithPredIsoROIs(mz, int, scantime, valsPerSpect,
-  ppm = 25, peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE, roiList = list(),
-  firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
-  maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-  polarity = "unknown")
+  ppm = 25, peakwidth = c(20, 50), snthresh = 10, prefilter = c(3,
+  100), mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
+  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
+  roiList = list(), firstBaselineCheck = TRUE, roiScales = NULL,
+  snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
+  mzIntervalExtension = TRUE, polarity = "unknown")
 
-do_findChromPeaks_addPredIsoROIs(mz, int, scantime, valsPerSpect, ppm = 25,
-  peakwidth = c(20, 50), snthresh = 6.25, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE, peaks. = NULL,
-  maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-  polarity = "unknown")
+do_findChromPeaks_addPredIsoROIs(mz, int, scantime, valsPerSpect,
+  ppm = 25, peakwidth = c(20, 50), snthresh = 6.25,
+  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1,
+  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+  verboseColumns = FALSE, peaks. = NULL, maxCharge = 3, maxIso = 5,
+  mzIntervalExtension = TRUE, polarity = "unknown")
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -187,3 +187,4 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWave}},
 \author{
 Hendrik Treutler, Johannes Rainer
 }
+\concept{core peak detection functions}

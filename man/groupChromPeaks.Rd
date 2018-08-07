@@ -40,3 +40,4 @@ Other peak grouping methods: \code{\link{groupChromPeaks-density}},
 \author{
 Johannes Rainer
 }
+\concept{peak grouping methods}

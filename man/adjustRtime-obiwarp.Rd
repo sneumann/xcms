@@ -54,7 +54,8 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
   factorDiag = 2, factorGap = 1, localAlignment = FALSE,
   initPenalty = 0)
 
-\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
+\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param,
+  msLevel = 1L)
 
 \S4method{show}{ObiwarpParam}(object)
 
@@ -98,7 +99,8 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 
 \S4method{initPenalty}{ObiwarpParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
+\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param,
+  msLevel = 1L)
 }
 \arguments{
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
@@ -304,3 +306,4 @@ Other retention time correction methods: \code{\link{adjustRtime-peakGroups}},
 \author{
 Colin Smith, Johannes Rainer
 }
+\concept{retention time correction methods}

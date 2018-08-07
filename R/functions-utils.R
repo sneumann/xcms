@@ -34,40 +34,57 @@ valueCount2ScanIndex <- function(valCount){
 ##
 #' @title Enable usage of old xcms code
 #'
-#' @description This function allows to enable the usage of old, partially
-#'     deprecated code from xcms by setting a corresponding global option. See
-#'     details for functions affected.
+#' @description
 #'
-#' @note Usage of old code is strongly dicouraged. This function is thought
-#'     to be used mainly in the transition phase from xcms to xcms version 3.
+#' This function allows to enable the usage of old, partially deprecated
+#' code from xcms by setting a corresponding global option. See details
+#' for functions affected.
+#'
+#' @note
+#'
+#' For parallel processing using the SOCKS method (e.g. by [SnowParam()] on
+#' Windows computers) this option might not be passed to the individual R
+#' processes performing the calculations. In such cases it is suggested to
+#' specify the option manually and system-wide by adding the line
+#' `options(XCMSuseOriginalCode = TRUE)` in a file called *.Rprofile* in the
+#' folder in which new R processes are started (usually the user's
+#' home directory; to ensure that the option is correctly read add a new line
+#' to the file too). See also [Startup] from the base R documentation on how to
+#' specify system-wide options for R.
 #' 
-#' @details The functions/methods that will be affected by this are:
-#'     \itemize{
-#'     \item \code{\link{do_findChromPeaks_matchedFilter}}
-#'     }
+#' Usage of old code is strongly dicouraged. This function is thought
+#' to be used mainly in the transition phase from xcms to xcms version 3.
 #' 
-#' @param x logical(1) to specify whether or not original
+#' @details
+#'
+#' The functions/methods that are affected by this option are:
+#' 
+#' - [do_findChromPeaks_matchedFilter]: use the original
+#'   code that iteratively creates a subset of the binned (profile)
+#'   matrix. This is helpful for computers with limited memory or
+#'   matchedFilter settings with a very small bin size.
+#' - [getPeaks]
+#' 
+#' @param x `logical(1)` to specify whether or not original
 #'     old code should be used in corresponding functions. If not provided the
 #'     function simply returns the value of the global option.
 #' 
-#' @return logical(1) indicating whether old code is being used.
+#' @return `logical(1)` indicating whether old code is being used.
+#'
+#' @md
 #' 
 #' @author Johannes Rainer
 useOriginalCode <- function(x) {
     if (missing(x)) {
-        res <- options()$BioC$xcms$useOriginalCode
+        res <- options()$XCMSuseOriginalCode
         if (is.null(res))
             return(FALSE)
         return(res)
     }
     if (!is.logical(x))
         stop("'x' has to be logical.")
-    b_opts <- getOption("BioC")
-    x_opts <- b_opts$xcms
-    x_opts$useOriginalCode <- x[1]
-    b_opts$xcms <-  x_opts
-    options(BioC = b_opts)
-    return(options()$BioC$xcms$useOriginalCode)
+    options(XCMSuseOriginalCode = x[1])
+    return(options()$XCMSuseOriginalCode)
 }
 
 ## .getOriginalFunction <- function(x) {

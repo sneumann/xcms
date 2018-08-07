@@ -1,6 +1,7 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Fixes for issues #291, #296.
 - Add parameter 'missing' to diffreport allowing to replace NA with arbitrary
   numbers.
 - Add exportMetaboAnalyst function to export the feature matrix in MetaboAnalyst

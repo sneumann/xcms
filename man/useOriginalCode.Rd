@@ -7,27 +7,41 @@
 useOriginalCode(x)
 }
 \arguments{
-\item{x}{logical(1) to specify whether or not original
+\item{x}{\code{logical(1)} to specify whether or not original
 old code should be used in corresponding functions. If not provided the
 function simply returns the value of the global option.}
 }
 \value{
-logical(1) indicating whether old code is being used.
+\code{logical(1)} indicating whether old code is being used.
 }
 \description{
-This function allows to enable the usage of old, partially
-    deprecated code from xcms by setting a corresponding global option. See
-    details for functions affected.
+This function allows to enable the usage of old, partially deprecated
+code from xcms by setting a corresponding global option. See details
+for functions affected.
 }
 \details{
-The functions/methods that will be affected by this are:
-    \itemize{
-    \item \code{\link{do_findChromPeaks_matchedFilter}}
-    }
+The functions/methods that are affected by this option are:
+\itemize{
+\item \link{do_findChromPeaks_matchedFilter}: use the original
+code that iteratively creates a subset of the binned (profile)
+matrix. This is helpful for computers with limited memory or
+matchedFilter settings with a very small bin size.
+\item \link{getPeaks}
+}
 }
 \note{
+For parallel processing using the SOCKS method (e.g. by \code{\link[=SnowParam]{SnowParam()}} on
+Windows computers) this option might not be passed to the individual R
+processes performing the calculations. In such cases it is suggested to
+specify the option manually and system-wide by adding the line
+\code{options(XCMSuseOriginalCode = TRUE)} in a file called \emph{.Rprofile} in the
+folder in which new R processes are started (usually the user's
+home directory; to ensure that the option is correctly read add a new line
+to the file too). See also \link{Startup} from the base R documentation on how to
+specify system-wide options for R.
+
 Usage of old code is strongly dicouraged. This function is thought
-    to be used mainly in the transition phase from xcms to xcms version 3.
+to be used mainly in the transition phase from xcms to xcms version 3.
 }
 \author{
 Johannes Rainer

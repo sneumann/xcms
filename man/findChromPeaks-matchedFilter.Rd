@@ -49,10 +49,10 @@
 \alias{index<-}
 \title{Peak detection in the chromatographic time domain}
 \usage{
-MatchedFilterParam(binSize = 0.1, impute = "none", baseValue = numeric(),
-  distance = numeric(), fwhm = 30, sigma = fwhm/2.3548, max = 5,
-  snthresh = 10, steps = 2, mzdiff = 0.8 - binSize * steps,
-  index = FALSE)
+MatchedFilterParam(binSize = 0.1, impute = "none",
+  baseValue = numeric(), distance = numeric(), fwhm = 30,
+  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
+  mzdiff = 0.8 - binSize * steps, index = FALSE)
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
@@ -324,3 +324,4 @@ Other peak detection methods: \code{\link{chromatographic-peak-detection}},
 \author{
 Colin A Smith, Johannes Rainer
 }
+\concept{peak detection methods}

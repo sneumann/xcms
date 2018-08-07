@@ -7,8 +7,9 @@
 do_findChromPeaks_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
   peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
   mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE, roiList = list(),
-  firstBaselineCheck = TRUE, roiScales = NULL, sleep = 0)
+  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
+  roiList = list(), firstBaselineCheck = TRUE, roiScales = NULL,
+  sleep = 0)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -191,3 +192,4 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
 \author{
 Ralf Tautenhahn, Johannes Rainer
 }
+\concept{core peak detection functions}

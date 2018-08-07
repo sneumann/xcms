@@ -5,8 +5,9 @@
 \alias{writeMSData,XCMSnExp,character-method}
 \title{Export MS data to mzML/mzXML files}
 \usage{
-\S4method{writeMSData}{XCMSnExp,character}(object, file, outformat = c("mzml",
-  "mzxml"), copy = FALSE, software_processing = NULL, ...)
+\S4method{writeMSData}{XCMSnExp,character}(object, file,
+  outformat = c("mzml", "mzxml"), copy = FALSE,
+  software_processing = NULL, ...)
 }
 \arguments{
 \item{object}{\link{XCMSnExp} object with the mass spectrometry data.}

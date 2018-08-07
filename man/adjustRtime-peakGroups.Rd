@@ -35,8 +35,8 @@
 groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
-  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow = 0,
-  ncol = 0))
+  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
+  0, ncol = 0))
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -296,3 +296,4 @@ Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
 \author{
 Colin Smith, Johannes Rainer
 }
+\concept{retention time correction methods}

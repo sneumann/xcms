@@ -10,8 +10,8 @@
 \alias{calibrate,XCMSnExp-method}
 \title{Calibrant mass based calibration of chromatgraphic peaks}
 \usage{
-CalibrantMassParam(mz = list(), mzabs = 1e-04, mzppm = 5, neighbors = 3,
-  method = "linear")
+CalibrantMassParam(mz = list(), mzabs = 1e-04, mzppm = 5,
+  neighbors = 3, method = "linear")
 
 isCalibrated(object)
 

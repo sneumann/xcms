@@ -5,8 +5,8 @@
 \title{DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample}
 \usage{
 plotMsData(x, main = "", cex = 1, mfrow = c(2, 1),
-  grid.color = "lightgrey", colramp = colorRampPalette(rev(brewer.pal(9,
-  "YlGnBu"))))
+  grid.color = "lightgrey",
+  colramp = colorRampPalette(rev(brewer.pal(9, "YlGnBu"))))
 }
 \arguments{
 \item{x}{\code{data.frame} such as returned by the \code{\link[=extractMsData]{extractMsData()}} function.

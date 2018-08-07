@@ -6,8 +6,8 @@
 \usage{
 plotChromPeakDensity(object, mz, rt, param, simulate = TRUE,
   col = "#00000080", xlab = "retention time", ylab = "sample",
-  xlim = range(rt), main = NULL, type = c("any", "within", "apex_within"),
-  ...)
+  xlim = range(rt), main = NULL, type = c("any", "within",
+  "apex_within"), ...)
 }
 \arguments{
 \item{object}{A \link{XCMSnExp} object with identified

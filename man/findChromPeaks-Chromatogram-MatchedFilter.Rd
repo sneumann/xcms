@@ -5,7 +5,8 @@
 \alias{findChromPeaks,Chromatogram,MatchedFilterParam-method}
 \title{matchedFilter-based peak detection in purely chromatographic data}
 \usage{
-\S4method{findChromPeaks}{Chromatogram,MatchedFilterParam}(object, param, ...)
+\S4method{findChromPeaks}{Chromatogram,MatchedFilterParam}(object, param,
+  ...)
 }
 \arguments{
 \item{object}{a \link{Chromatogram} or \link{Chromatograms} object.}

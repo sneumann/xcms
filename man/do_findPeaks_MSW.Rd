@@ -62,3 +62,4 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer
 }
+\concept{core peak detection functions}

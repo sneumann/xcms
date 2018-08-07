@@ -5,8 +5,9 @@
 \title{Core API function for peak density based chromatographic peak
 grouping}
 \usage{
-do_groupChromPeaks_density(peaks, sampleGroups, bw = 30, minFraction = 0.5,
-  minSamples = 1, binSize = 0.25, maxFeatures = 50, sleep = 0)
+do_groupChromPeaks_density(peaks, sampleGroups, bw = 30,
+  minFraction = 0.5, minSamples = 1, binSize = 0.25,
+  maxFeatures = 50, sleep = 0)
 }
 \arguments{
 \item{peaks}{A \code{matrix} or \code{data.frame} with the mz values and
@@ -108,3 +109,4 @@ Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_nearest}},
 \author{
 Colin Smith, Johannes Rainer
 }
+\concept{core peak grouping algorithms}

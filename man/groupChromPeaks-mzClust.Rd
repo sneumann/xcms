@@ -179,3 +179,4 @@ Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-nearest}},
   \code{\link{groupChromPeaks}}
 }
+\concept{peak grouping methods}

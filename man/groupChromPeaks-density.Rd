@@ -32,8 +32,9 @@
 \alias{groupChromPeaks,XCMSnExp,PeakDensityParam-method}
 \title{Peak grouping based on time dimension peak densities}
 \usage{
-PeakDensityParam(sampleGroups = numeric(), bw = 30, minFraction = 0.5,
-  minSamples = 1, binSize = 0.25, maxFeatures = 50)
+PeakDensityParam(sampleGroups = numeric(), bw = 30,
+  minFraction = 0.5, minSamples = 1, binSize = 0.25,
+  maxFeatures = 50)
 
 \S4method{show}{PeakDensityParam}(object)
 
@@ -239,3 +240,4 @@ Other peak grouping methods: \code{\link{groupChromPeaks-mzClust}},
 \author{
 Colin Smith, Johannes Rainer
 }
+\concept{peak grouping methods}

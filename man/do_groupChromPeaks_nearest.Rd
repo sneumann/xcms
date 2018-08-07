@@ -64,3 +64,4 @@ data. \emph{Bioinformatics} 2006, 22:634-636.
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},
   \code{\link{do_groupPeaks_mzClust}}
 }
+\concept{core peak grouping algorithms}

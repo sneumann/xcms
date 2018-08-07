@@ -6,9 +6,9 @@
 \usage{
 plotAdjustedRtime(object, col = "#00000080", lty = 1, type = "l",
   adjustedRtime = TRUE, xlab = ifelse(adjustedRtime, yes =
-  expression(rt[adj]), no = expression(rt[raw])), ylab = expression(rt[adj] -
-  rt[raw]), peakGroupsCol = "#00000060", peakGroupsPch = 16,
-  peakGroupsLty = 3, ...)
+  expression(rt[adj]), no = expression(rt[raw])),
+  ylab = expression(rt[adj] - rt[raw]), peakGroupsCol = "#00000060",
+  peakGroupsPch = 16, peakGroupsLty = 3, ...)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object with the alignment results.}

@@ -32,8 +32,9 @@
 \usage{
 CentWavePredIsoParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
   prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  roiList = list(), firstBaselineCheck = TRUE, roiScales = numeric(),
+  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+  verboseColumns = FALSE, roiList = list(),
+  firstBaselineCheck = TRUE, roiScales = numeric(),
   snthreshIsoROIs = 6.25, maxCharge = 3, maxIso = 5,
   mzIntervalExtension = TRUE, polarity = "unknown")
 
@@ -274,3 +275,4 @@ Other peak detection methods: \code{\link{chromatographic-peak-detection}},
 \author{
 Hendrik Treutler, Johannes Rainer
 }
+\concept{peak detection methods}

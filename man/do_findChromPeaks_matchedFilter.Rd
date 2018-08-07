@@ -6,8 +6,8 @@
 \usage{
 do_findChromPeaks_matchedFilter(mz, int, scantime, valsPerSpect,
   binSize = 0.1, impute = "none", baseValue, distance, fwhm = 30,
-  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2, mzdiff = 0.8
-  - binSize * steps, index = FALSE, sleep = 0)
+  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
+  mzdiff = 0.8 - binSize * steps, index = FALSE, sleep = 0)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -154,3 +154,4 @@ Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithP
 \author{
 Colin A Smith, Johannes Rainer
 }
+\concept{core peak detection functions}

@@ -53,9 +53,10 @@
 \usage{
 MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
   prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  criticalValue = 1.125, consecMissedLimit = 2, unions = 1,
-  checkBack = 0, withWave = FALSE)
+  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
+  verboseColumns = FALSE, criticalValue = 1.125,
+  consecMissedLimit = 2, unions = 1, checkBack = 0,
+  withWave = FALSE)
 
 \S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(object, param,
   BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
@@ -401,3 +402,4 @@ Other peak detection methods: \code{\link{chromatographic-peak-detection}},
 \author{
 Christopher Conley, Johannes Rainer
 }
+\concept{peak detection methods}

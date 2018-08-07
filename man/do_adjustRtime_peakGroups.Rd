@@ -7,8 +7,8 @@ found in most samples}
 \usage{
 do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
   extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
-  family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol = 0,
-  nrow = 0))
+  family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol =
+  0, nrow = 0))
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified
@@ -90,3 +90,4 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 \author{
 Colin Smith, Johannes Rainer
 }
+\concept{core retention time correction algorithms}

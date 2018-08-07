@@ -30,3 +30,4 @@ Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
 \author{
 Johannes Rainer
 }
+\concept{retention time correction methods}
