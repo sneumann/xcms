@@ -552,34 +552,31 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                                         peakinfo[p, "scmax"]),
                                         maxDescOutlier)
                 }
-                ## narrow down peak rt boundaries by skipping zeros
-                pd <- d[lm[1]:lm[2]]
-                np <- length(pd)
-                lm.l <- findEqualGreaterUnsorted(pd, 1)
-                lm.l <- max(1, lm.l - 1)
-                lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
-                lm.r <- max(1, lm.r - 1)
-                lm <- lm + c(lm.l - 1, -(lm.r - 1) )
-
+                ## Narrow peak rt boundaries by removing values below threshold
+                lm <- .narrow_rt_boundaries(lm, d)
+                lm_seq <- lm[1]:lm[2]
+                pd <- d[lm_seq]
+                
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
                 peaks[p, "rtmax"] <- scantime[peakrange[2]]
-                peaks[p, "maxo"] <- max(d[lm[1]:lm[2]])
+                peaks[p, "maxo"] <- max(pd)
                 pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
                     (peakrange[2] - peakrange[1])
                 if (is.na(pwid))
                     pwid <- 1
-                peaks[p, "into"] <- pwid * sum(d[lm[1]:lm[2]])
-                db <-  d[lm[1]:lm[2]] - baseline
-                peaks[p, "intb"] <- pwid * sum(db[db>0])
+                peaks[p, "into"] <- pwid * sum(pd)
+                db <- pd - baseline
+                peaks[p, "intb"] <- pwid * sum(db[db > 0])
                 peaks[p, "lmin"] <- lm[1]
                 peaks[p, "lmax"] <- lm[2]
 
                 if (fitgauss) {
                     ## perform gaussian fits, use wavelets for inital parameters
-                    md <- max(d[lm[1]:lm[2]])
-                    d1 <- d[lm[1]:lm[2]] / md ## normalize data for gaussian error calc.
-                    pgauss <- fitGauss(td[lm[1]:lm[2]], d[lm[1]:lm[2]],
+                    td_lm <- td[lm_seq]
+                    md <- max(pd)
+                    d1 <- pd / md ## normalize data for gaussian error calc.
+                    pgauss <- fitGauss(td_lm, pd,
                                        pgauss = list(mu = peaks[p, "scpos"],
                                                      sigma = peaks[p, "scmax"] -
                                                          peaks[p, "scmin"],
@@ -592,11 +589,10 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             peaks[p, "mu"] <- pgauss$mu
                             peaks[p, "sigma"] <- pgauss$sigma
                             peaks[p, "h"] <- pgauss$h
-                            peaks[p,"egauss"] <- sqrt((1 / length(td[lm[1]:lm[2]])) *
-                                                      sum(((d1-gauss(td[lm[1]:lm[2]],
-                                                                     pgauss$h / md,
-                                                                     pgauss$mu,
-                                                                     pgauss$sigma))^2)))
+                            peaks[p,"egauss"] <- sqrt(
+                            (1 / length(td_lm)) *
+                            sum(((d1 - gauss(td_lm, pgauss$h / md,
+                                             pgauss$mu, pgauss$sigma))^2)))
                         }
                     }
                     peaks[p, "rt"] <- scantime[rtime]
@@ -927,7 +923,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         fd <- d[match(ftd, td)]
 
         ## 1st type of baseline: statistic approach
-        if (N >= 10*minPeakWidth) {
+        if (N >= 10 * minPeakWidth) {
             ## in case of very long mass trace use full scan range
             ## for baseline detection
             noised <- .Call("getEIC", mz, int, scanindex, as.double(mzrange),
@@ -1126,36 +1122,31 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                                      peakinfo[p, "scmax"]),
                                         maxDescOutlier)
                 }
-                ## narrow down peak rt boundaries by skipping zeros
-                pd <- current_ints[lm[1]:lm[2]]
-                np <- length(pd)
-                lm.l <-  findEqualGreaterUnsorted(pd, 1)
-                lm.l <- max(1, lm.l - 1)
-                lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
-                lm.r <- max(1, lm.r - 1)
-                lm <- lm + c(lm.l - 1, -(lm.r - 1) )
-
+                ## Narrow peak rt boundaries by removing values below cut-off
+                lm <- .narrow_rt_boundaries(lm, d)
+                lm_seq <- lm[1]:lm[2]
+                pd <- current_ints[lm_seq]
+                
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
                 peaks[p, "rtmax"] <- scantime[peakrange[2]]
-                peaks[p, "maxo"] <- max(current_ints[lm[1]:lm[2]])
+                peaks[p, "maxo"] <- max(pd)
                 pwid <- (scantime[peakrange[2]] - scantime[peakrange[1]]) /
                     (peakrange[2] - peakrange[1])
                 if (is.na(pwid))
                     pwid <- 1
-                peaks[p, "into"] <- pwid * sum(current_ints[lm[1]:lm[2]])
-                db <-  current_ints[lm[1]:lm[2]] - baseline
-                peaks[p, "intb"] <- pwid * sum(db[db>0])
+                peaks[p, "into"] <- pwid * sum(pd)
+                db <- pd - baseline
+                peaks[p, "intb"] <- pwid * sum(db[db > 0])
                 peaks[p, "lmin"] <- lm[1]
                 peaks[p, "lmax"] <- lm[2]
-                ## cat("[", paste0(peaks[p, c("rtmin", "rtmax")], collapse = ", "),
-                ##     "] into ", peaks[p, "into"], "\n")
 
                 if (fitgauss) {
                     ## perform gaussian fits, use wavelets for inital parameters
-                    md <- max(current_ints[lm[1]:lm[2]])
-                    d1 <- current_ints[lm[1]:lm[2]] / md ## normalize data for gaussian error calc.
-                    pgauss <- fitGauss(td[lm[1]:lm[2]], current_ints[lm[1]:lm[2]],
+                    td_lm <- td[lm_seq]
+                    md <- max(pd)
+                    d1 <- pd / md ## normalize data for gaussian error calc.
+                    pgauss <- fitGauss(td_lm, pd,
                                        pgauss = list(mu = peaks[p, "scpos"],
                                                      sigma = peaks[p, "scmax"] -
                                                          peaks[p, "scmin"],
@@ -1168,11 +1159,10 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             peaks[p, "mu"] <- pgauss$mu
                             peaks[p, "sigma"] <- pgauss$sigma
                             peaks[p, "h"] <- pgauss$h
-                            peaks[p,"egauss"] <- sqrt((1 / length(td[lm[1]:lm[2]])) *
-                                                      sum(((d1-gauss(td[lm[1]:lm[2]],
-                                                                     pgauss$h / md,
-                                                                     pgauss$mu,
-                                                                     pgauss$sigma))^2)))
+                            peaks[p,"egauss"] <- sqrt(
+                            (1 / length(td_lm)) *
+                            sum(((d1 - gauss(td_lm, pgauss$h / md,
+                                             pgauss$mu, pgauss$sigma))^2)))
                         }
                     }
                     peaks[p, "rt"] <- scantime[rtime]
@@ -3300,8 +3290,10 @@ peaksWithCentWave <- function(int, rt,
         scmax <- rois[i, "scmax"]
         
         N <- scmax - scmin + 1
-        peaks <- matrix(ncol = peaks_ncols, nrow = 0, dimnames = list(character(), peaks_names))
-        peakinfo <- matrix(ncol = 5, nrow = 0, dimnames = list(character(), peakinfo_names))
+        peaks <- matrix(ncol = peaks_ncols, nrow = 0,
+                        dimnames = list(character(), peaks_names))
+        peakinfo <- matrix(ncol = 5, nrow = 0,
+                           dimnames = list(character(), peakinfo_names))
         ## Could also return the "correct one..."
         sccenter <- scmin + floor(N/2) - 1
         ## sccenter <- rois[i, "sccent"]
@@ -3330,12 +3322,13 @@ peaksWithCentWave <- function(int, rt,
         ## 1st type of baseline: statistic approach
         ## in case of very long mass trace use full scan range
         ## for baseline detection
-        if (N >= 10 * minPeakWidth)
+        if (N >= 10 * minPeakWidth) {
             noised <- int
-        else
+        } else {
             noised <- d
+        }
         ## 90% trimmed mean as first baseline guess
-        noise <- estimateChromNoise(noised, trim = 0.05,
+        noise <- xcms:::estimateChromNoise(noised, trim = 0.05,
                                     minPts = 3 * minPeakWidth)
         ## any continuous data above 1st baseline ?
         if (firstBaselineCheck &
@@ -3343,7 +3336,7 @@ peaksWithCentWave <- function(int, rt,
                                          num = minPtsAboveBaseLine))
             next
         ## 2nd baseline estimate using not-peak-range
-        lnoise <- getLocalNoiseEstimate(d, td, ftd, noiserange, Nscantime,
+        lnoise <- xcms:::getLocalNoiseEstimate(d, td, ftd, noiserange, Nscantime,
                                         threshold = noise,
                                         num = minPtsAboveBaseLine)
         ## Final baseline & Noise estimate
@@ -3353,13 +3346,13 @@ peaksWithCentWave <- function(int, rt,
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next
-        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh')
+        wCoefs <- xcms:::MSW.cwt(d, scales = scales, wavelet = 'mexh')
         if (!(!is.null(dim(wCoefs)) && any((wCoefs - baseline) >= sdthr)))
             next
         if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
             wCoefs[nrow(wCoefs),] <- wCoefs[nrow(wCoefs) - 1, ] * 0.99
-        localMax <- MSW.getLocalMaximumCWT(wCoefs)
-        rL <- MSW.getRidge(localMax)
+        localMax <- xcms:::MSW.getLocalMaximumCWT(wCoefs)
+        rL <- xcms:::MSW.getRidge(localMax)
         wpeaks <- sapply(rL,
                          function(x) {
                              w <- min(1:length(x), ncol(wCoefs))
@@ -3370,7 +3363,7 @@ peaksWithCentWave <- function(int, rt,
             ## check each peak in ridgeList
             for (p in 1:length(wpeaksidx)) {
                 opp <- rL[[wpeaksidx[p]]]
-                pp <- unique(opp)
+                pp <- unique(opp)   ## NOTE: this is not ordered!
                 if (length(pp) >= 1) {
                     dv <- td[pp] %in% ftd
                     if (any(dv)) { ## peaks in orig. data range
@@ -3400,9 +3393,11 @@ peaksWithCentWave <- function(int, rt,
                                 bestcol <- which(m == max(m),
                                                  arr.ind = TRUE)[2]
                                 best.scale.nr <- maxpi[bestcol]
-                            } else best.scale.nr <- maxpi
+                            } else {
+                                best.scale.nr <- maxpi
+                            }
 
-                            best.scale <-  scales[best.scale.nr]
+                            best.scale <- scales[best.scale.nr]
                             best.scale.pos <- opp[best.scale.nr]
 
                             pprange <- min(pp):max(pp)
@@ -3447,28 +3442,23 @@ peaksWithCentWave <- function(int, rt,
         for (p in seq_len(nrow(peaks))) {
             ## find minima, assign rt and intensity values
             if (integrate == 1) {
-                lm <- descendMin(wCoefs[, peakinfo[p, "scaleNr"]],
+                lm <- xcms:::descendMin(wCoefs[, peakinfo[p, "scaleNr"]],
                                  istart = peakinfo[p, "scpos"])
                 gap <- all(d[lm[1]:lm[2]] == 0) # looks like we got stuck in a gap right in the middle of the peak
                 if ((lm[1] == lm[2]) || gap )   # fall-back
-                    lm <- descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
+                    lm <- xcms:::descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
                                                         peakinfo[p, "scmax"]),
                                         maxDescOutlier)
             } else {
-                lm <- descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
+                lm <- xcms:::descendMinTol(d, startpos = c(peakinfo[p, "scmin"],
                                                     peakinfo[p, "scmax"]),
                                     maxDescOutlier)
             }
-            ## narrow down peak rt boundaries by skipping zeros
+            ## Narrow down peak rt boundaries by removing values below cut-off
+            lm <- .narrow_rt_boundaries(lm, d)
             lm_range <- lm[1]:lm[2]
             pd <- d[lm_range]
-            np <- length(pd)
-            lm.l <- findEqualGreaterUnsorted(pd, 1)
-            lm.l <- max(1, lm.l - 1)
-            lm.r <- findEqualGreaterUnsorted(rev(pd), 1)
-            lm.r <- max(1, lm.r - 1)
-            lm <- lm + c(lm.l - 1, -(lm.r - 1) )
-            
+
             peakrange <- td[lm]
             peaks[p, "rtmin"] <- rt[peakrange[1]]
             peaks[p, "rtmax"] <- rt[peakrange[2]]
@@ -3511,8 +3501,9 @@ peaksWithCentWave <- function(int, rt,
                 ## avoid fitting side effects
                 if (peaks[p, "rt"] < peaks[p, "rtmin"])
                     peaks[p, "rt"] <- rt[peaks[p, "scpos"]]
-            } else
+            } else {
                 peaks[p, "rt"] <- rt[peaks[p, "scpos"]]
+            }
         }   # end for (p in seq_len(nrow(peaks)))
         peaks <- joinOverlappingPeaks(td, d, otd, rep(1, length(otd)), od, rt,
                                       scan.range, peaks, maxGaussOverlap,
@@ -3539,7 +3530,7 @@ peaksWithCentWave <- function(int, rt,
     uorder <- order(p[, "into"], decreasing = TRUE)
     pm <- p[, c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE]
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) # allow adjacent peaks
-    p[uindex, -(1:3), drop = FALSE]
+    unique(p[uindex, -(1:3), drop = FALSE])
 }
 
 
@@ -3620,3 +3611,35 @@ peaksWithCentWave <- function(int, rt,
     else
         matrix(ncol = 3, nrow = 0)
 }
+
+
+#' @description
+#'
+#' Simple helper function to narrow the identified chromatographic peak
+#' boundaries excluding values that are below a certain threshold. This was
+#' introduced to fix issue #300. Note: to be consistent with the original
+#' code we *grow* the region on each side after subsetting.
+#'
+#' @param lm `integer(2)` with the lower and upper peak boundary.
+#'
+#' @param d `numeric` with the intensities (for baseline detection and wavelet
+#'     analysis).
+#'
+#' @param thresh `numeric(1)` defining the threshold below which values are
+#'     considered *zero*.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.narrow_rt_boundaries <- function(lm, d, thresh = 1) {
+    lm_seq <- lm[1]:lm[2]
+    above_thresh <- d[lm_seq] >= thresh
+    if (any(above_thresh)) {
+        ## Expand by one on each side to be consistent with old code.
+        above_thresh <- above_thresh | c(above_thresh[-1], FALSE) |
+            c(FALSE, above_thresh[-length(above_thresh)])
+        lm <- range(lm_seq[above_thresh], na.rm = TRUE)
+    }
+    lm
+}
+

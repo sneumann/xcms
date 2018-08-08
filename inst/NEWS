@@ -1,6 +1,7 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Fix issue #300 avoiding chromatographic peaks with rtmin > rtmax.
 - Fixes for issues #291, #296.
 - Add parameter 'missing' to diffreport allowing to replace NA with arbitrary
   numbers.

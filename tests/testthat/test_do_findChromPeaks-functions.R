@@ -205,3 +205,36 @@ test_that("peaksWithCentWave works", {
     expect_warning(res <- peaksWithCentWave(int = rep(NA, 20), rt = 1:20))
     expect_true(nrow(res) == 0)
 })
+
+test_that(".narrow_rt_boundaries works", {
+    d <- c(0, 0, 1, 2, 1, 3, 4, 6, 4, 3, 2, 0, 1, 0, 2, 0)
+    
+    ## Full range
+    lm <- c(1, length(d))
+    res <- .narrow_rt_boundaries(lm, d)
+    expect_equal(res, c(2, 16))
+    res <- .narrow_rt_boundaries(lm, d, thresh = 2)
+    expect_equal(res, c(3, 16))
+    res <- .narrow_rt_boundaries(lm, d, thresh = 3)
+    expect_equal(res, c(5, 11))
+    
+    ## Subset (reflecting the real situation).
+    lm <- c(3, 9)
+    res <- .narrow_rt_boundaries(lm, d)
+    expect_equal(res, c(3, 9))
+    res <- .narrow_rt_boundaries(lm, d, thresh = 2)
+    expect_equal(res, c(3, 9))
+    res <- .narrow_rt_boundaries(lm, d, thresh = 3)
+    expect_equal(res, c(5, 9))
+    
+    lm <- c(3, 13)
+    res <- .narrow_rt_boundaries(lm, d)
+    expect_equal(res, c(3, 13))
+    res <- .narrow_rt_boundaries(lm, d, thresh = 3)
+    expect_equal(res, c(5, 11))
+    
+    ## That's the fix for issue #300
+    expect_equal(.narrow_rt_boundaries(lm, d, thresh = 100), lm)
+    expect_equal(.narrow_rt_boundaries(c(1, length(d)), d, thresh = 100),
+                 c(1, length(d)))
+})
