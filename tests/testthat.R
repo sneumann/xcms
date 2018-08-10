@@ -8,9 +8,9 @@ attr(faahko, "filepaths") <- sapply(
     function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else "WT",
                             x, package = "faahKO"))
 if (.Platform$OS.type == "unix") {
-    prm <- MulticoreParam()
+    prm <- MulticoreParam(2)
 } else {
-    prm <- SnowParam()
+    prm <- SnowParam(2)
 }
 register(bpstart(prm))
 
