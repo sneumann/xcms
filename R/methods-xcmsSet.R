@@ -1415,10 +1415,18 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         if (missing(groupidx))
             stop("No m/z range or groups specified")
         if (any(is.na(groupval(object, value = "mz"))))
-            stop('Please use fillPeaks() to fill up NA values !')
-        mzmin <- -rowMax(-groupval(object, value = "mzmin"))
-        mzmax <- rowMax(groupval(object, value = "mzmax"))
+            warning(
+                "`NA` values in xcmsSet. Use fillPeaks() on the object to fill",
+                "-in missing peak values. Note however that this will also ",
+                "insert intensities of 0 for peaks that can not be filled in.")
+        mzmin <- apply(groupval(object, value = "mzmin"), 1, min, na.rm = TRUE)
+        mzmax <- apply(groupval(object, value = "mzmax"), 1, max, na.rm = TRUE)
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
+        ## if (any(is.na(groupval(object, value = "mz"))))
+        ##     stop('Please use fillPeaks() to fill up NA values !')
+        ## mzmin <- -rowMax(-groupval(object, value = "mzmin"))
+        ## mzmax <- rowMax(groupval(object, value = "mzmax"))
+        ## mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
     } else if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
     else if (is.null(dim(mzrange)))
@@ -1477,7 +1485,7 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         ## getXcmsRaw takes care of rt correction, susetting to scanrage and other
         ## stuff.
         lcraw <- getXcmsRaw(object, sampleidx = sampidx[i], rt=rt)
-        currenteic <- getEIC(lcraw, mzrange, rtrange, step = prof$step)
+        currenteic <- xcms::getEIC(lcraw, mzrange, rtrange, step = prof$step)
         eic[[i]] <- currenteic@eic[[1]]
         rm(lcraw)
         gc()
@@ -1548,6 +1556,8 @@ setMethod("diffreport", "xcmsSet", function(object,
         stop("No group information. Use group().")
     }
 
+    if (!is.numeric(w) || !is.numeric(h))
+        stop("'h' and 'w' have to be numeric")
     ## require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
@@ -1654,11 +1664,14 @@ setMethod("diffreport", "xcmsSet", function(object,
                 dir.create(boxdir)
                 if (capabilities("png")){
                     xcmsBoxPlot(values[seq(length = eicmax),],
-                                sampclass(object), dirpath=boxdir, pic="png",  width=w, height=h)
-                    png(file.path(eicdir, "%003d.png"), width = w, height = h)
+                                sampclass(object), dirpath=boxdir, pic="png",
+                                width=w, height=h)
+                    png(file.path(eicdir, "%003d.png"), width = w, height = h,
+                        units = "px")
                 } else {
                     xcmsBoxPlot(values[seq(length = eicmax),],
-                                sampclass(object), dirpath=boxdir, pic="pdf", width=w, height=h)
+                                sampclass(object), dirpath=boxdir, pic="pdf",
+                                width=w, height=h)
                     pdf(file.path(eicdir, "%003d.pdf"), width = w/72,
                         height = h/72, onefile = FALSE)
                 }

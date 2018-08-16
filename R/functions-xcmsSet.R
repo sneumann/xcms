@@ -593,9 +593,10 @@ plotSpecWindow <- function(xs, gidxs, borderwidth=1){
 ############################################################
 ## xcmsBoxPlot
 xcmsBoxPlot<-function(values, className, dirpath, pic, width=640, height=480){
-
+    
     if (pic == "png"){
-        png(file.path(dirpath, "%003d.png"), width, height)
+        png(filename = file.path(dirpath, "%003d.png"), width = width,
+            height = height, units = "px")
     } else{
         pdf(file.path(dirpath, "%003d.pdf"), width = width/72, height = height/72, onefile = FALSE)
     }
