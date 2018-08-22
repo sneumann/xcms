@@ -155,9 +155,7 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
                 ## Note: have to use do.call, otherwise the weights parameter
                 ## is not found.
                 do.call("lm", args = list(formula = formula, data = data,
-                        weights = weights, model = FALSE)),
-                ## lm(formula = formula, data = data, weights = weights.,
-                ##    model = FALSE),
+                        weights = weights, model = TRUE)),
                 error = function(e) {
                     paste0("Failed to fit model: ", e)
                 })
@@ -165,7 +163,7 @@ fitModel <- function(formula, data, y, method = c("lm", "lmrob"), control,
             set.seed(123)
             res <- tryCatch(
                 do.call("lmrob", args = list(formula = formula, data = data,
-                                             model = FALSE, control = control,
+                                             model = TRUE, control = control,
                                              weights = weights)),
                 ## robustbase::lmrob(formula = formula, data = data, model = FALSE,
                 ##                   control = control, w = weights),
