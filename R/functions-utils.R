@@ -108,13 +108,14 @@ useOriginalCode <- function(x) {
 #' 
 #' @noRd
 .copy_env <- function(env, inheritLocks = FALSE) {
-    new_e <- new.env(parent = emptyenv())
-    eNames <- ls(env, all.names = TRUE)
-    if (length(eNames) > 0) {
-        for (eN in eNames) {
-            new_e[[eN]] <- env[[eN]]
-        }
-    }
+    ## new_e <- new.env(parent = emptyenv())
+    ## eNames <- ls(env, all.names = TRUE)
+    ## if (length(eNames) > 0) {
+    ##     for (eN in eNames) {
+    ##         new_e[[eN]] <- env[[eN]]
+    ##     }
+    ## }
+    new_e <- as.environment(as.list(env, all.names = TRUE))
     if (inheritLocks) {
         if (environmentIsLocked(env))
             lockEnvironment(new_e)

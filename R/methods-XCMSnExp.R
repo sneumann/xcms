@@ -2562,6 +2562,8 @@ setMethod("fillChromPeaks",
               fixedMz <- fixedMz(param)
               fixedRt <- fixedRt(param)
               ppm <- ppm(param)
+              message("Defining peak areas for filling-in .",
+                      appendLF = FALSE)
               ## Define or extend the peak area from which the signal should be
               ## extracted.
               ## Original code: use the median of the min/max rt and mz per peak.
@@ -2610,17 +2612,19 @@ setMethod("fillChromPeaks",
                           return(pa)
                       }
                   ))
+              message(".", appendLF = FALSE)
               colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
               ## Add mzmed column - needed for MSW peak filling.
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                               mzmed = as.numeric(fdef$mzmed))
-              
               pkGrpVal <- featureValues(object)
+              message(".", appendLF = FALSE)
               ## Check if there is anything to fill...
               if (!any(is.na(rowSums(pkGrpVal)))) {
                   message("No missing peaks present.")
                   return(object)
               }
+              message(".", appendLF = FALSE)
               ## Split the object by file and define the peaks for which
               objectL <- vector("list", length(fileNames(object)))
               pkAreaL <- objectL
@@ -2633,7 +2637,7 @@ setMethod("fillChromPeaks",
                   ## found in a sample.
                   pkAreaL[[i]] <- pkArea[is.na(pkGrpVal[, i]), , drop = FALSE]
               }
-    
+              message(" OK\nStart integrating peak areas from original files")
               ## Get to know what algorithm was used for the peak detection.
               ## Special cases are MSWParam (no retention time) and
               ## MatchedFilterParam (integrate from profile matrix).
