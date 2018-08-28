@@ -1415,9 +1415,12 @@ setMethod("getEIC", "xcmsSet", function(object, mzrange, rtrange = 200,
         if (missing(groupidx))
             stop("No m/z range or groups specified")
         if (any(is.na(groupval(object, value = "mz"))))
-            stop('Please use fillPeaks() to fill up NA values !')
-        mzmin <- -rowMax(-groupval(object, value = "mzmin"))
-        mzmax <- rowMax(groupval(object, value = "mzmax"))
+            warning(
+                "`NA` values in xcmsSet. Use fillPeaks() on the object to fill",
+                "-in missing peak values. Note however that this will also ",
+                "insert intensities of 0 for peaks that can not be filled in.")
+        mzmin <- apply(groupval(object, value = "mzmin"), 1, min, na.rm = TRUE)
+        mzmax <- apply(groupval(object, value = "mzmax"), 1, max, na.rm = TRUE)
         mzrange <- matrix(c(mzmin[grpidx], mzmax[grpidx]), ncol = 2)
     } else if (all(c("mzmin","mzmax") %in% colnames(mzrange)))
         mzrange <- mzrange[,c("mzmin", "mzmax"),drop=FALSE]
@@ -1532,17 +1535,24 @@ setMethod("peakTable", "xcmsSet", function(object, filebase = character(), ...) 
 
 ############################################################
 ## diffreport
-setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(object))[1],
+setMethod("diffreport", "xcmsSet", function(object,
+                                            class1 = levels(sampclass(object))[1],
                                             class2 = levels(sampclass(object))[2],
-                                            filebase = character(), eicmax = 0, eicwidth = 200,
-                                            sortpval = TRUE, classeic = c(class1,class2),
-                                            value = c("into","maxo","intb"), metlin = FALSE,
-                                            h = 480, w = 640, mzdec=2, ...) {
+                                            filebase = character(), eicmax = 0,
+                                            eicwidth = 200,
+                                            sortpval = TRUE,
+                                            classeic = c(class1,class2),
+                                            value = c("into","maxo","intb"),
+                                            metlin = FALSE,
+                                            h = 480, w = 640, mzdec=2,
+                                            missing = numeric(), ...) {
 
     if ( nrow(object@groups)<1 || length(object@groupidx) <1) {
         stop("No group information. Use group().")
     }
 
+    if (!is.numeric(w) || !is.numeric(h))
+        stop("'h' and 'w' have to be numeric")
     ## require(multtest) || stop("Couldn't load multtest")
 
     value <- match.arg(value)
@@ -1567,10 +1577,19 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     if (length(intersect(c1, c2)) > 0)
         stop("Intersecting Classes")
 
-    ## Check against missing Values
-    if (any(is.na(values[,c(c1,c2)]))) {
-        stop("NA values in xcmsSet. Use fillPeaks()")
+    ## Optionally replace NA values with the value provided with missing
+    if (length(missing)) {
+        if (is.numeric(missing)) {
+            ## handles NA, Inf and -Inf
+            values[, c(c1, c2)][!is.finite(values[, c(c1, c2)])] <- missing[1]
+        } else
+            stop("'missing' should be numeric")
     }
+    ## Check against missing Values
+    if (any(is.na(values[, c(c1, c2)])))
+        warning("`NA` values in xcmsSet. Use fillPeaks() on the object to fill",
+                "-in missing peak values. Note however that this will also ",
+                "insert intensities of 0 for peaks that can not be filled in.")
 
     mean1 <- rowMeans(values[,c1,drop=FALSE], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2,drop=FALSE], na.rm = TRUE)
@@ -1582,6 +1601,8 @@ setMethod("diffreport", "xcmsSet", function(object, class1 = levels(sampclass(ob
     fold[!is.na(fold) & fold < 1] <- 1/fold[!is.na(fold) & fold < 1]
 
     testval <- values[,c(c1,c2)]
+    ## Replace eventual infinite values with NA (CAMERA issue #33)
+    testval[is.infinite(testval)] <- NA
     testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
 
     if (min(length(c1), length(c2)) >= 2) {
