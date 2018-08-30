@@ -519,22 +519,24 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
                                                             bmzrange.,
                                                             breturnBreaks) {
         require(xcms, quietly = TRUE)
-        ## Note: this is way faster than spectrapply with
-        ## as.data.frame!
         sps <- spectra(z, BPPARAM = SerialParam())
         mzs <- lapply(sps, mz)
+        ## Fix for issue #301: got spectra with m/z being NA.
+        if (any(is.na(unlist(mzs)))) {
+            sps <- lapply(sps, clean, all = TRUE)
+            mzs <- lapply(sps, mz)
+        }
         vps <- lengths(mzs, use.names = FALSE)
-        return(.createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
-                                    int = unlist(lapply(sps, intensity),
-                                                 use.names = FALSE),
-                                    valsPerSpect = vps,
-                                    method = bmethod,
-                                    step = bstep,
-                                    baselevel = bbaselevel,
-                                    basespace = bbasespace,
-                                    mzrange. = bmzrange.,
-                                    returnBreaks = breturnBreaks)
-               )
+        .createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
+                             int = unlist(lapply(sps, intensity),
+                                          use.names = FALSE),
+                             valsPerSpect = vps,
+                             method = bmethod,
+                             step = bstep,
+                             baselevel = bbaselevel,
+                             basespace = bbasespace,
+                             mzrange. = bmzrange.,
+                             returnBreaks = breturnBreaks)
     }, bmethod = method, bstep = step, bbaselevel = baselevel,
     bbasespace = basespace, bmzrange. = mzrange., breturnBreaks = returnBreaks)
     return(res)
@@ -550,7 +552,7 @@ setMethod("adjustRtime",
               object_sub <- filterMsLevel(object, msLevel = msLevel)
               if (length(object_sub) == 0)
                   stop("No spectra of MS level ", msLevel, " present")
-              res <- xcms:::.obiwarp(object_sub, param = param)
+              res <- .obiwarp(object_sub, param = param)
               ## Adjust the retention time for spectra of all MS levels, if
               ## if there are some other than msLevel (issue #214).
               if (length(unique(msLevel(object))) !=

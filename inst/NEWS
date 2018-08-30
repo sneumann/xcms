@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Fix additional problem mentioned in issue #301 with obiwarp retention time
+  correction if some spectra have m/z values of `NA`.
 - Fix issue #300 avoiding chromatographic peaks with rtmin > rtmax.
 - Fixes for issues #291, #296.
 - Add parameter 'missing' to diffreport allowing to replace NA with arbitrary

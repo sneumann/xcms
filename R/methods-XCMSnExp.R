@@ -1972,9 +1972,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
     ## We want to coerce that as OnDiskMSnExp so we don't slow down in the
     ## filterFile, that would, if rt adjustments are present, revert the whole
     ## thing.
-    return(profMat(as(object, "OnDiskMSnExp"), method = method, step = step,
-                   baselevel = baselevel, basespace = basespace,
-                   mzrange. = mzrange., fileIndex = fileIndex, ...))
+    profMat(as(object, "OnDiskMSnExp"), method = method, step = step,
+            baselevel = baselevel, basespace = basespace,
+            mzrange. = mzrange., fileIndex = fileIndex, ...)
 })
 
 
