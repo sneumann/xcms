@@ -441,7 +441,7 @@ setMethod("findChromPeaks",
                   if (length(which(centroided)) > 0 &
                       length(which(!centroided)) == 0)
                       centroided <- TRUE
-                  else <- FALSE
+                  else centroided <- FALSE
               }
               if (!centroided)
                   warning("Your data appears to be not centroided! CentWave",
