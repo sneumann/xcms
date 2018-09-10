@@ -27,7 +27,8 @@ If \code{"maxint"}: select the peak yielding the largest signal. If
 \code{chromPeaks(object)} that should be returned or \code{"index"} (the
 default) to return the index of the peak in the
 \code{chromPeaks(object)} matrix corresponding to the
-\emph{representative} peak for the feature in the respective sample.}
+\emph{representative} peak for the feature in the respective sample.
+To return the integrated peak area use \code{value = "into"}.}
 
 \item{intensity}{\code{character} specifying the name of the column in the
 \code{chromPeaks(objects)} matrix containing the intensity value of the

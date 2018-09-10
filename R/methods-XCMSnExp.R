@@ -2016,6 +2016,7 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     default) to return the index of the peak in the
 #'     \code{chromPeaks(object)} matrix corresponding to the
 #'     \emph{representative} peak for the feature in the respective sample.
+#'     To return the integrated peak area use \code{value = "into"}.
 #'
 #' @param intensity \code{character} specifying the name of the column in the
 #'     \code{chromPeaks(objects)} matrix containing the intensity value of the
