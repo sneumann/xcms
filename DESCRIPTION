@@ -74,6 +74,7 @@ Collate:
     'functions-OnDiskMSnExp.R'
     'functions-ProcessHistory.R'
     'functions-XCMSnExp.R'
+    'functions-imputation.R'
     'functions-normalization.R'
     'functions-xcmsEIC.R'
     'functions-xcmsFragments.R'

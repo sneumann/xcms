@@ -36,7 +36,8 @@ importFrom("grDevices", "col2rgb", "colorRampPalette", "dev.cur",
 importFrom("stats", "aov", "approx", "convolve", "cor", "deriv3",
            "dist", "fft", "fitted", "lm", "loess", "lsfit", "median",
            "na.omit", "nextn", "nls", "predict", "pt", "quantile",
-           "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun")
+           "runmed", "sd", "stepfun", "weighted.mean", "density", "approxfun",
+	   "rnorm")
 importFrom("utils", "flush.console", "head", "object.size",
            "packageVersion", "read.csv", "tail", "write.csv",
            "write.table")
@@ -232,7 +233,9 @@ export(
     "overlappingFeatures",
     "fixedMz",
     "fixedRt",
-    "exportMetaboAnalyst"
+    "exportMetaboAnalyst",
+    "imputeRowMin",
+    "imputeRowMinRand"
 )
 
 ## New analysis methods
