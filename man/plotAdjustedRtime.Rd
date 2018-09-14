@@ -8,7 +8,7 @@ plotAdjustedRtime(object, col = "#00000080", lty = 1, type = "l",
   adjustedRtime = TRUE, xlab = ifelse(adjustedRtime, yes =
   expression(rt[adj]), no = expression(rt[raw])),
   ylab = expression(rt[adj] - rt[raw]), peakGroupsCol = "#00000060",
-  peakGroupsPch = 16, peakGroupsLty = 3, ...)
+  peakGroupsPch = 16, peakGroupsLty = 3, ylim, ...)
 }
 \arguments{
 \item{object}{A \code{\link{XCMSnExp}} object with the alignment results.}
@@ -39,6 +39,9 @@ groups (only used if alignment was performed using the
 \item{peakGroupsLty}{line type (\code{lty}) to be used to connect points for
 each peak groups (only used if alignment was performed using the
 \code{\link{adjustRtime-peakGroups}} method.}
+
+\item{ylim}{optional \code{numeric(2)} with the upper and lower limits on
+the y-axis.}
 
 \item{...}{Additional arguments to be passed down to the \code{plot}
 function.}

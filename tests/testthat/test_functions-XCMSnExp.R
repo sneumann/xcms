@@ -39,7 +39,7 @@ test_that("adjustRtimePeakGroups works", {
 })
 
 test_that("plotAdjustedRtime works", {
-    plotAdjustedRtime(xod_xgr)
+    plotAdjustedRtime(xod_xgr, ylim = c(-20, 40))
     plotAdjustedRtime(xod_xgrg)
     expect_warning(plotAdjustedRtime(xod_x))
     expect_warning(plotAdjustedRtime(xod_xg))

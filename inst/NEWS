@@ -1,6 +1,7 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Add argument ylim to plotAdjustedRtime (issue #314).
 - Add imputeRowMin and imputeRowMinRand, two simple missing value imputation
   helper functions.
 - Fix additional problem mentioned in issue #301 with obiwarp retention time
