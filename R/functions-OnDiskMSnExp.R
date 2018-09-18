@@ -22,10 +22,10 @@ findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
     ## pass the spectra to the _Spectrum_list function
     ## Since we're calling this function already with bplapply ensure that
     ## the spectra call is not firing its own parallel processing!
-    return(findChromPeaks_Spectrum_list(x = spectra(object,
-                                                    BPPARAM = SerialParam()),
-                                        method = method,
-                                        param = param, rt = rtime(object)))
+    findChromPeaks_Spectrum_list(x = spectra(object,
+                                             BPPARAM = SerialParam()),
+                                 method = method,
+                                 param = param, rt = rtime(object))
 }
 
 
@@ -65,19 +65,18 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     mzs <- lapply(x, mz)
     vals_per_spect <- lengths(mzs, FALSE)
     procDat <- date()
-    res <- do.call(method, args = c(list(mz = unlist(mzs,
-                                                     use.names = FALSE),
-                                         int = unlist(lapply(x, intensity),
-                                                      use.names = FALSE),
-                                         valsPerSpect = vals_per_spect,
-                                         scantime = rt),
-                                    as(param, "list")))
+    res <- do.call(
+        method, args = c(list(mz = unlist(mzs, use.names = FALSE),
+                              int = unlist(lapply(x, intensity),
+                                           use.names = FALSE),
+                              valsPerSpect = vals_per_spect,
+                              scantime = rt), as(param, "list")))
     ## Ensure that we call the garbage collector to eventually clean unused stuff
     rm(mzs)
     rm(x)
     rm(rt)
     gc()
-    return(list(peaks = res, date = procDat))
+    list(peaks = res, date = procDat)
 }
 
 ## That's a special case since we don't expect to have rt available for this.
@@ -86,10 +85,8 @@ findPeaks_MSW_OnDiskMSnExp <- function(object, method = "MSW",
     if (missing(param))
         stop("'param' has to be specified!")
     ## pass the spectra to the _Spectrum_list function
-    return(findPeaks_MSW_Spectrum_list(x = spectra(object,
-                                                   BPPARAM = SerialParam()),
-                                       method = method,
-                                       param = param))
+    findPeaks_MSW_Spectrum_list(x = spectra(object, BPPARAM = SerialParam()),
+                                method = method, param = param)
 }
 findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     method <- match.arg(method, c("MSW"))
@@ -98,14 +95,11 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         stop("'param' has to be specified!")
     mzs <- lapply(x, mz)
     procDat <- date()
-    return(list(peaks = do.call(method,
-                                args = c(list(mz = unlist(mzs,
-                                                          use.names = FALSE),
-                                              int = unlist(lapply(x, intensity),
-                                                           use.names = FALSE)
-                                              ),
-                                         as(param, "list"))),
-                date = procDat))
+    list(peaks = do.call(
+             method, args = c(list(mz = unlist(mzs, use.names = FALSE),
+                                   int = unlist(lapply(x, intensity),
+                                                use.names = FALSE)),
+                              as(param, "list"))), date = procDat)
 }
 
 
@@ -139,7 +133,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     ## represent the index of the spectrum within the file, while acquisitionNum
     ## might be different e.g. if the mzML was subsetted.
     scanrange(object) <- range(scanIndex(pset))
-    return(object)
+    object
 }
 
 #' @description Processes the result list returned by an lapply/bplapply to
@@ -183,7 +177,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                 fileIndex. = i
             )
     }
-    return(list(peaks = pks, procHist = phList))
+    list(peaks = pks, procHist = phList)
 }
 
 
