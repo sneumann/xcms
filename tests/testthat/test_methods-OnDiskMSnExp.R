@@ -11,6 +11,11 @@ test_that("profMat,OnDiskMSnExp works", {
     res_2 <- profMat(xcmsRaw(faahko_3_files[2], profstep = 0), step = 2,
                      method = "binlin")
     expect_equal(res_2, res[[1]])
+
+    ## Simulating issue #312
+    od_1 <- filterFile(microtofq_od, 1)
+    od_1_clnd <- clean(removePeaks(od_1, t = 1800))
+    res_clnd <- profMat(od_1_clnd)
 })
 
 test_that(

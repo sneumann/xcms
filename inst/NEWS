@@ -1,6 +1,7 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Fix profMat to handle also data files with empty spectra (issue #312).
 - Add argument ylim to plotAdjustedRtime (issue #314).
 - Add imputeRowMin and imputeRowMinRand, two simple missing value imputation
   helper functions.

@@ -526,6 +526,10 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
             sps <- lapply(sps, clean, all = TRUE)
             mzs <- lapply(sps, mz)
         }
+        ## Fix for issue #312: remove empty spectra
+        pk_count <- lengths(mzs)
+        mzs <- mzs[pk_count > 0]
+        sps <- sps[pk_count > 0]
         vps <- lengths(mzs, use.names = FALSE)
         .createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
                              int = unlist(lapply(sps, intensity),
