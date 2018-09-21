@@ -2,10 +2,10 @@ test_that("imputeRowMin works", {
     mat <- cbind(c(4, 2, 4, NA, NA), c(NA, NA, NA, NA, NA), c(4, NA, 6, 3, 9),
                  c(6, 3, NA, 6, NA))
     mat_imp <- imputeRowMin(mat)
-    expect_equal(mat_imp[, 2], c(4, 2, 4, 3, 9))
+    expect_equal(mat_imp[, 2], c(2, 1, 2, 1.5, 4.5))
 
     mat_imp <- imputeRowMin(mat[, -3])
-    expect_equal(mat_imp[, 2], c(4, 2, 4, 6, NA))
+    expect_equal(mat_imp[, 2], c(2, 1, 2, 3, NA))
 })
 
 test_that("imputeRowMinRand works", {
@@ -15,7 +15,7 @@ test_that("imputeRowMinRand works", {
     mat_imp <- imputeRowMinRand(mat)
     rmin <- apply(mat, 1, min, na.rm = TRUE)
     rmin_imp <- apply(mat_imp, 1, min, na.rm = TRUE)
-    expect_true(all(rmin_imp < rmin / 4))
+    expect_true(all(rmin_imp < rmin))
     
     mat_imp <- imputeRowMinRand(mat[, -3])
     expect_true(all(is.na(mat_imp[5, ])))
