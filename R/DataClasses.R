@@ -2544,6 +2544,11 @@ setClass("XCMSnExp",
 
 .CPEAKS_CHROMPEAKS_REQ_NAMES <- c("row", "col", "rt", "rtmin", "rtmax", "into",
                                   "maxo", "sn")
+## Info: (issue #281)
+## Store peaks per chromatogram in a matrix with the same dimension than
+## Chromatograms. This makes subetting etc much easier. chromPeaks,CPeaks
+## could then return a matrix in the format as chromPeaks,XCMSnExp does,
+## and a chromPeaksMatrix would return the matrix with the same dimensions.
 setClass("CPeaks",
          slots = c(
              .processHistory = "list",
@@ -2552,9 +2557,7 @@ setClass("CPeaks",
          prototype = prototype(
              .processHistory = list(),
              chromPeaks = matrix(nrow = 0,
-                                 ncol = length(.CPEAKS_CHROMPEAKS_REQ_NAMES),
-                                 dimnames = list(character(),
-                                                 .CPEAKS_CHROMPEAKS_REQ_NAMES))
+                                 ncol = 0)
          ),
          contains = c("Chromatograms"),
          validity = function(object) {

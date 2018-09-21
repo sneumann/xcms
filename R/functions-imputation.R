@@ -35,7 +35,7 @@
 #'
 #' ## Replace with 1/8 of the row mimimum
 #' head(imputeRowMin(mat, min_fraction = 1/8))
-imputeRowMin <- function(x, min_fraction = 1) {
+imputeRowMin <- function(x, min_fraction = 1/2) {
     for (i in 1:nrow(x)) {
         nas <- is.na(x[i, ])
         if (all(nas))
@@ -105,7 +105,7 @@ imputeRowMin <- function(x, min_fraction = 1) {
 #'
 #' head(mat)
 #' head(mat_imp)
-imputeRowMinRand <- function(x, min_fraction = 1/8,
+imputeRowMinRand <- function(x, min_fraction = 1/2,
                              sd_fraction = 1, abs = TRUE) {
     row_means <- rowMeans(x, na.rm = TRUE)
     row_sds <- apply(x, MARGIN = 1, sd, na.rm = TRUE)
