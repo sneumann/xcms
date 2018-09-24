@@ -2542,14 +2542,56 @@ setClass("XCMSnExp",
          }
 )
 
-.CPEAKS_CHROMPEAKS_REQ_NAMES <- c("row", "col", "rt", "rtmin", "rtmax", "into",
-                                  "maxo", "sn")
+.CPEAKS_CHROMPEAKS_REQ_NAMES <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
+
 ## Info: (issue #281)
-## Store peaks per chromatogram in a matrix with the same dimension than
-## Chromatograms. This makes subetting etc much easier. chromPeaks,CPeaks
-## could then return a matrix in the format as chromPeaks,XCMSnExp does,
-## and a chromPeaksMatrix would return the matrix with the same dimensions.
-setClass("CPeaks",
+#' @title Data container for chromatographic data along with detected peaks
+#'
+#' @description
+#'
+#' The `XChromatograms` class contains chromatographic data along with
+#' identified peaks. The object inherits all functionality from the
+#' [Chromatograms] object defined in the `MSnbase` package.
+#'
+#' Object from the class can be created with the `XChromatograms` function
+#' that takes arguments `data`, `phenoData`, `featureData` and `chromPeaks`.
+#'
+#' @param data For `XChromatograms`: a `list` of [Chromatogram] objects.
+#'
+#' @param phenoData For `XChromatograms`: either a `data.frame`,
+#'     [AnnotatedDataFrame] or [NAnnotatedDataFrame] describing the
+#'     phenotypical information of the samples.
+#'
+#' @param featureData For `XChromatograms`: either a `data.frame` or
+#'     [AnnotatedDataFrame] with additional information for each row of
+#'     chromatograms.
+#'
+#' @param chromPeaks For `XChromatograms`: a `list` of `matrix` objects with
+#'     required columns `"rt"`, `"rtmin"`, `"rtmax"`, `"into"`, `"maxo"` and
+#'     `"sn"` providing the peak definition and data. Length has to match the
+#'     length of `data`.
+#'
+#' @param ... For `XChromatograms`: optional parameters to be passed on to the
+#'     `matrix` function (such as `ncol` or `nrow` to define the numbber of
+#'     rows and colums of the resulting `XChromatograms` object.
+#'
+#' @return
+#'
+#' For `XChromatograms`: a `XChromatograms` object.
+#' 
+#' @author Johannes Rainer
+#'
+#' @md
+#' 
+#' @rdname xchromatograms-class
+#'
+#' @examples
+#'
+#' ## Create some Chromatogram objects
+#' c1 <- Chromatogram(rtime = c(1, 2, 3, 4), intensity = c(5, 3, 5, 7))
+#' c2 <- Chromatogram(rtime = c(1, 2, 3, 4), intensity = c(7, 9, 0, 4))
+#'
+setClass("XChromatograms",
          slots = c(
              .processHistory = "list",
              chromPeaks = "matrix"
@@ -2561,21 +2603,30 @@ setClass("CPeaks",
          ),
          contains = c("Chromatograms"),
          validity = function(object) {
-             ## TODO @jo
-             ## 1) chromPeaks has to have the required columns.
-             ## 2) if processHistory not empty -> has to extend ProcessHistory
-             ## 3) if nrow(chromPeaks) > 0 row and column have to match the
-             ##    dimension of object
              msg <- character()
-             ## if (length(object@.processHistory) > 0) {
-             ##     isOK <- unlist(lapply(object@.processHistory, function(z) {
-             ##         return(inherits(z, "ProcessHistory"))
-             ##     }))
-             ##     if (!all(isOK))
-             ##         msg <- c(msg, paste0("Only 'ProcessHistory' ",
-             ##                              "objects are allowed in slot ",
-             ##                              ".processHistory!"))
-             ## }
+             if (nrow(object@chromPeaks) > 0) {
+                 if (any(dim(object@chromPeaks) != dim(object)))
+                     msg <- c(msg, paste0("Dimensions of slot 'chromPeaks' ",
+                                          "and 'object' have to match"))
+             }
+             not_ok <- vapply(object@chromPeaks, function(z) {
+                 !(all(.CPEAKS_CHROMPEAKS_REQ_NAMES %in% colnames(z)))
+             }, logical(1))
+             if (any(not_ok))
+                 msg <- c(msg,
+                          paste0("All elements in '@chromPeaks' have to ",
+                                 "have column names ",
+                                 paste(.CPEAKS_CHROMPEAKS_REQ_NAMES,
+                                       collapse = ", ")))
+             if (length(object@.processHistory) > 0) {
+                 is_ok <- vapply(object@.processHistory, function(z) {
+                     inherits(z, "ProcessHistory")
+                 }, logical(1))
+                 if (!all(is_ok))
+                     msg <- c(msg, paste0("Only 'ProcessHistory' ",
+                                          "objects are allowed in slot ",
+                                          ".processHistory!"))
+             }
              if (length(msg))
                  msg
              else TRUE
