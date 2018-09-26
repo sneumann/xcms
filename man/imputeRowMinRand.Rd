@@ -4,7 +4,7 @@
 \alias{imputeRowMinRand}
 \title{Impute missing values with random numbers based on the row minimum}
 \usage{
-imputeRowMinRand(x, min_fraction = 1/8, sd_fraction = 1, abs = TRUE)
+imputeRowMinRand(x, min_fraction = 1/2, sd_fraction = 1, abs = TRUE)
 }
 \arguments{
 \item{x}{\code{matrix} with abundances, rows being features/metabolites and

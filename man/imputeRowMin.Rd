@@ -4,7 +4,7 @@
 \alias{imputeRowMin}
 \title{Replace missing values with a proportion of the row minimum}
 \usage{
-imputeRowMin(x, min_fraction = 1)
+imputeRowMin(x, min_fraction = 1/2)
 }
 \arguments{
 \item{x}{\code{matrix} with abundances, rows being features/metabolites and
