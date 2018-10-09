@@ -2711,7 +2711,13 @@ setMethod("fillChromPeaks",
                   fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
                   (which(res[, "group_idx"] == i) + incr))
               }
-              
+              ## Define IDs for the new peaks
+              maxId <- max(as.numeric(sub("^CP", "",
+                                          rownames(chromPeaks(object)))))
+              toId <- maxId + nrow(res)
+              rownames(res) <- sprintf(
+                  paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
+                  (maxId + 1L):toId)
               chromPeaks(newFd) <- rbind(chromPeaks(object), res[, -ncol(res)])
               featureDefinitions(newFd) <- fdef
               lockEnvironment(newFd, bindings = TRUE)
