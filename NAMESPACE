@@ -235,7 +235,9 @@ export(
     "fixedRt",
     "exportMetaboAnalyst",
     "imputeRowMin",
-    "imputeRowMinRand"
+    "imputeRowMinRand",
+    "chromPeakSpectra",
+    "featureSpectra"
 )
 
 ## New analysis methods

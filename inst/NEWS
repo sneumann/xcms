@@ -1,6 +1,8 @@
 CHANGES IN VERSION 3.3.3
 -------------------------
 
+- Add chromPeakSpectra and featureSpectra functions to extract MS2 spectra
+  for chromatographic peaks and features, respectively (issue #321).
 - Fix profMat to handle also data files with empty spectra (issue #312).
 - Add argument ylim to plotAdjustedRtime (issue #314).
 - Add imputeRowMin and imputeRowMinRand, two simple missing value imputation
