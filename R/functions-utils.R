@@ -556,6 +556,51 @@ rowRla <- function(x, group, log.transform = TRUE) {
     ovlap_merged
 }
 
+#' Simple helper to insert column(s) in a matrix.
+#'
+#' @param x `matrix`
+#'
+#' @param pos `integer()` with positions (columns) where a column should be
+#'     inserted in `x`.
+#'
+#' @param val `vector` or `list` with the elements to insert.
+#'
+#' @return `matrix`
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mat <- matrix(1:100, ncol = 5)
+#'
+#' ## Insert a column at position 3, containing a single value.
+#' .insertColumn(mat, pos = 3, 5)
+#'
+#' ## Insert columns at positions 2 and 4 containing the same sequence of
+#' ## values
+#' .insertColumn(mat, c(2, 4), list(101:120))
+.insertColumn <- function(x, pos = integer(), val = NULL) {
+    if (length(pos)) {
+        if (length(val) == 1)
+            val <- rep(val, length(pos))
+        if (length(val) != length(pos))
+            stop("length of 'pos' and 'val' have to match")
+    }
+    for (i in seq_along(pos)) {
+        if (pos[i] == 1) {
+            x <- cbind(val[[i]], x)
+        } else {
+            if (pos[i] == ncol(x))
+                x <- cbind(x, val[[i]])
+            else
+                x <- cbind(x[, 1:(pos[i]-1)], val[[i]], x[, pos[i]:ncol(x)])
+        }
+    }
+    x
+}
+
 ## #' @examples
 ## #' x1_high <- c(0.000012323)
 ## #' x1_low <- c(0.0000034302)

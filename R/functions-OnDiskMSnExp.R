@@ -269,7 +269,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                                 scantime2[length(scantime2)])))
         ## If the drift is larger than the threshold, cut the matrix up to the
         ## max allowed difference.
-        if(rtmaxdiff > (5 * mstdiff)){
+        if (rtmaxdiff > (5 * mstdiff)) {
             rtmax <- min(scantime1[length(scantime1)],
                          scantime2[length(scantime2)])
             scantime1 <- scantime1[scantime1 <= rtmax]
@@ -277,14 +277,33 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         }
         valscantime1 <- length(scantime1)
         valscantime2 <- length(scantime2)
-        ## Finally, restrict the profile matrix to columns 1:valscantime
-        if (ncol(cntrPr$profMat) > valscantime1) {
-            cntrPr$profMat <- cntrPr$profMat[, -c((valscantime1 + 1):
-                                                  ncol(cntrPr$profMat))]
+        ## Ensure we have the same number of scans.
+        if (valscantime1 != valscantime2) {
+            min_number <- min(valscantime1, valscantime2)
+            diffs <- abs(range(scantime1) - range(scantime2))
+            ## Cut at the start or at the end, depending on where we have the
+            ## larger difference
+            if (diffs[2] > diffs[1]) {
+                scantime1 <- scantime1[1:min_number]
+                scantime2 <- scantime2[1:min_number]
+            } else {
+                scantime1 <- rev(rev(scantime1)[1:min_number])
+                scantime2 <- rev(rev(scantime2)[1:min_number])
+            }
+            valscantime1 <- length(scantime1)
+            valscantime2 <- length(scantime2)
         }
-        if(ncol(curP$profMat) > valscantime2) {
-            curP$profMat <- curP$profMat[, -c((valscantime2 + 1):
-                                              ncol(curP$profMat))]
+        ## Finally, restrict the profile matrix to the restricted data
+        if (ncol(cntrPr$profMat) != valscantime1) {
+            ## Find out whether we were cutting at the start or end.
+            start_idx <- which(scantime1[1] == rtime(cntr))
+            end_idx <- which(scantime1[length(scantime1)] == rtime(cntr))
+            cntrPr$profMat <- cntrPr$profMat[, start_idx:end_idx]
+        }
+        if(ncol(curP$profMat) != valscantime2) {
+            start_idx <- which(scantime2[1] == rtime(z))
+            end_idx <- which(scantime2[length(scantime2)] == rtime(z))
+            curP$profMat <- curP$profMat[, start_idx:end_idx]
         }
         ## ---------------------------------
         ## 2) Now match the breaks/mz range.
@@ -325,9 +344,6 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         cntrVals <- length(cntrPr$profMat)
         curVals <- length(curP$profMat)
         if ((mzvals * valscantime1) != cntrVals | (mzvals * valscantime2) != curVals)
-            ## Here the question is if we REALLY need to have the same numbers
-            ## of values in both. This caused the problems in issue #196
-            ## | cntrVals != curVals)
             stop("Dimensions of profile matrices of files ",
                  basename(fileNames(cntr)), " and ", basename(fileNames(z)),
                  " do not match!")
@@ -338,16 +354,19 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                        gapInit(parms), gapExtend(parms), factorDiag(parms),
                        factorGap(parms), as.numeric(localAlignment(parms)),
                        initPenalty(parms))
-        if (length(rtime(z)) > valscantime2) {
-            ## Adding the raw retention times if we were unable to align all of
-            ## them.
-            rtadj <- c(rtadj, rtime(z)[(valscantime2 + 1):length(rtime(z))])
-            warning(basename(fileNames(z)), " :could only align up to a ",
-                    "retention time of ", rtime(z)[valscantime2], " seconds. ",
-                    "After that raw retention times are reported.")
+        if (length(rtime(z)) != valscantime2) {
+            nrt <- length(rtime(z))
+            adj_starts_at <- which(rtime(z) == scantime2[1])
+            adj_ends_at <- which(rtime(z) == scantime2[length(scantime2)])
+            if (adj_ends_at < nrt)
+                rtadj <- c(rtadj, rtadj[length(rtadj)] +
+                                  cumsum(diff(rtime(z)[adj_ends_at:nrt])))
+            if (adj_starts_at > 1)
+                rtadj <- c(rtadj[1] +
+                           rev(cumsum(diff(rtime(z)[adj_starts_at:1]))), rtadj)
         }
         message("OK")
-        return(rtadj)
+        return(unname(rtadj))
         ## Related to issue #122: try to resemble the rounding done in the
         ## recor.obiwarp method.
         ## return(round(rtadj, 2))
@@ -359,7 +378,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     idxs <- 1:nSamples
     idxs <- idxs[idxs != centerSample(param)]
     adjRt[idxs] <- res
-    return(adjRt)
+    adjRt
 }
 
 .concatenate_OnDiskMSnExp <- function(...) {

@@ -170,3 +170,26 @@ test_that(".rect_overlap works", {
                  (all(names(xl_2)[res[[2]]] %in% c("f", "g", "h")))))
 
 })
+
+test_that(".insertColumn works", {
+    mat <- matrix(1:100, ncol = 5)
+    expect_equal(.insertColumn(mat), mat)
+
+    expect_error(.insertColumn(mat, 3))
+    expect_error(.insertColumn(mat, 3, 3:4))
+
+    res <- .insertColumn(mat, 3, 5)
+    expect_true(all(res[, 3] == 5))
+    expect_equal(res[, -3], mat)
+
+    res <- .insertColumn(mat, c(2, 4), 6)
+    expect_true(ncol(res) == ncol(mat) + 2)
+    expect_equal(mat, res[, -c(2, 4)])
+    expect_true(all(res[, 2] == 6))
+    expect_true(all(res[, 4] == 6))
+
+    res <- .insertColumn(mat, c(2, 4), list(101:120))
+    expect_true(ncol(res) == ncol(mat) + 2)
+    expect_equal(res[, 2], 101:120)
+    expect_equal(res[, 4], 101:120)
+})

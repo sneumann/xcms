@@ -522,28 +522,38 @@ setMethod("profMat", signature(object = "OnDiskMSnExp"), function(object,
         sps <- spectra(z, BPPARAM = SerialParam())
         mzs <- lapply(sps, mz)
         ## Fix for issue #301: got spectra with m/z being NA.
-        if (any(is.na(unlist(mzs)))) {
+        if (any(is.na(unlist(mzs, use.names = FALSE)))) {
             sps <- lapply(sps, clean, all = TRUE)
             mzs <- lapply(sps, mz)
         }
-        ## Fix for issue #312: remove empty spectra
+        ## Fix for issue #312: remove empty spectra, that we are however adding
+        ## later so that the ncol(profMat) == length(rtime(object))
         pk_count <- lengths(mzs)
-        mzs <- mzs[pk_count > 0]
-        sps <- sps[pk_count > 0]
+        empty_spectra <- which(pk_count == 0)
+        if (length(empty_spectra)) {
+            mzs <- mzs[-empty_spectra]
+            sps <- sps[-empty_spectra]
+        }
         vps <- lengths(mzs, use.names = FALSE)
-        .createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
-                             int = unlist(lapply(sps, intensity),
-                                          use.names = FALSE),
-                             valsPerSpect = vps,
-                             method = bmethod,
-                             step = bstep,
-                             baselevel = bbaselevel,
-                             basespace = bbasespace,
-                             mzrange. = bmzrange.,
-                             returnBreaks = breturnBreaks)
+        res <- .createProfileMatrix(mz = unlist(mzs, use.names = FALSE),
+                                    int = unlist(lapply(sps, intensity),
+                                                 use.names = FALSE),
+                                    valsPerSpect = vps,
+                                    method = bmethod,
+                                    step = bstep,
+                                    baselevel = bbaselevel,
+                                    basespace = bbasespace,
+                                    mzrange. = bmzrange.,
+                                    returnBreaks = breturnBreaks)
+        if (length(empty_spectra))
+            if (returnBreaks)
+                res$profMat <- .insertColumn(res$profMat, empty_spectra, 0)
+            else
+                res <- .insertColumn(res, empty_spectra, 0)
+        res
     }, bmethod = method, bstep = step, bbaselevel = baselevel,
     bbasespace = basespace, bmzrange. = mzrange., breturnBreaks = returnBreaks)
-    return(res)
+    res
 })
 
 #' @rdname adjustRtime-obiwarp
