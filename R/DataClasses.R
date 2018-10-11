@@ -2404,6 +2404,14 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     package for the method to extract MS data as \code{data.frame}s.
 #'
 #'     \code{\link{featureSummary}} to calculate basic feature summaries.
+#'
+#'     \code{\link{chromPeakSpectra}} to extract MS2 spectra with the m/z of
+#'     the precursor ion within the m/z range of a peak and a retention time
+#'     within its retention time range.
+#'
+#'     \code{\link{featureSpectra}} to extract MS2 spectra associated with
+#'     identified features.
+#' 
 #' @rdname XCMSnExp-class
 #'
 #' @examples

@@ -674,6 +674,13 @@ head(peaks(xs))
 
     \code{\link{featureSummary}} to calculate basic feature summaries.
 
+    \code{\link{chromPeakSpectra}} to extract MS2 spectra with the m/z of
+    the precursor ion within the m/z range of a peak and a retention time
+    within its retention time range.
+
+    \code{\link{featureSpectra}} to extract MS2 spectra associated with
+    identified features.
+
 \code{\link{fillChromPeaks}} for the method to fill-in eventually
     missing chromatographic peaks for a feature in some samples.
 }
