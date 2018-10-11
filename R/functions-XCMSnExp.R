@@ -1916,11 +1916,11 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
 #' 
 #' @description
 #'
-#' Extract (MS2) spectra from an `XCMSnExp` object that represent ions within
+#' Extract (MS2) spectra from an [XCMSnExp] object that represent ions within
 #' the rt and m/z range defined by each chromatographic peak (in the same file
 #' /sample in which the peak was detected).
 #'
-#' @param x `XCMSnExp` object with identified chromatographic peaks.
+#' @param x [XCMSnExp] object with identified chromatographic peaks.
 #'
 #' @param msLevel `integer(1)` defining whether MS1 or MS2 spectra should be
 #'     returned. Currently only `msLevel = 2` is supported.
@@ -1946,16 +1946,32 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
 #' @param skipFilled `logical(1)` whether no spectra for filled-in peaks should
 #'     be reported.
 #'
-#' @return `list` of `list`s that are either of length 0 or contain
-#'     `Spectrum2` object(s) within the m/z-rt range. The length of the list
-#'     matches the number of peaks.
+#' @param return.type `character(1)` defining whether the result should be a
+#'     [Spectra] object or a simple `list`. See below for more
+#'     information.
+#' 
+#' @return
+#'
+#' What object is returned depends on the value of `return.type`:
+#' 
+#' - For `return.type = "Spectra"`: a [Spectra] object with elements being
+#'   [Spectrum-class] objects. The result objects contains all spectra that
+#'   for all peaks. Metadata column `"peak_id"` provides the ID of the
+#'   respective peak (i.e. its rowname in [chromPeaks]).
+#' - If `return.type = "list"`: `list` of `list`s that are either of length
+#'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
+#'   length of the list matches the number of peaks.
 #' 
 #' @author Johannes Rainer
+#'
+#' @md
 chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                              ppm = 0, method = c("all", "closest_rt",
                                                  "closest_mz", "signal"),
-                             skipFilled = FALSE) {
+                             skipFilled = FALSE,
+                             return.type = c("Spectra", "list")) {
     method <- match.arg(method)
+    return.type <- match.arg(return.type)
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an 'XCMSnExp' object.")
     if (!hasChromPeaks(x))
@@ -1973,6 +1989,14 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
     res <- ms2_spectra_for_peaks(x, expandRt = expandRt, expandMz = expandMz,
                                  ppm = ppm, method = method,
                                  skipFilled = skipFilled)
+    if (return.type == "Spectra") {
+        pids <- rep(names(res), lengths(res))
+        res <- res[lengths(res) > 0]
+        if (length(res)) {
+            res <- Spectra(unlist(res),
+                           elementMetadata = DataFrame(peak_id = pids))
+        } else res <- Spectra()
+    }
     res
 }
 
@@ -1995,8 +2019,8 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' 
 #' @description
 #'
-#' Return MS2 spectra for all chromatographic peaks associated with the features
-#' in `x`.
+#' Return (MS2) spectra for all chromatographic peaks associated with the
+#' features in `x` (defined by [featureDefinitions()]).
 #'
 #' @details
 #'
@@ -2006,7 +2030,7 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #'
 #' The optional parameter `method` allows to ensure that for each
 #' chromatographic peak in one sample only one MS2 spectrum is returned.
-#' See [chromPeakSpectra] for more details.
+#' See [chromPeakSpectra()] for more details.
 #' 
 #' @param x [XCMSnExp] object with feature defitions available.
 #'
@@ -2015,20 +2039,30 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' @param ... additional arguments to be passed along to [chromPeakSpectra()],
 #'     such as `method`.
 #' 
-#' @return A `list`, same length than there are
-#'     features in `x`, each element being a `list` of [Spectrum2-class]
-#'     objects with the MS2 spectra that potentially represent ions measured
-#'     by each chromatographic peak associated with the feature, or `NULL`
-#'     if none present.
+#' @return
+#'
+#' What object is returned depends on the value of `return.type`:
+#' 
+#' - For `return.type = "Spectra"` (the default): a [Spectra] object with data
+#'   only for features for which a [Spectrum2-class] was found. The
+#'   ID of the feature and of the chromatographic peak to which the
+#'   spectrum is associated are provided with the `"feature_id"` and
+#'   `"peak_id"` metadata columns.
+#' - For `return.type = "list"`: a `list, same length than there are
+#'   features in `x`, each element being a `list` of [Spectrum2-class]
+#'   objects with the MS2 spectra that potentially represent ions measured
+#'   by each chromatographic peak associated with the feature, or `NULL`
+#'   if none present.
 #' 
 #' @author Johannes Rainer
 #'
 #' @md
 featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
-                           ppm = 0, skipFilled = FALSE, ...) {
+                           ppm = 0, skipFilled = FALSE,
+                           return.type = c("Spectra", "list"), ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an 'XCMSnExp' object.")
-    ## return.type <- match.arg(return.type)
+    return.type <- match.arg(return.type)
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run 'groupChromPeaks' ",
              "first.")
@@ -2043,26 +2077,14 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
     }
     res <- ms2_spectra_for_features(x, expandRt = expandRt, expandMz = expandMz,
                                     ppm = ppm, skipFilled = skipFilled, ...)
-    ## The help for return.type:
-#'     For `return.type = "SpectrumList"`: a [SpectrumList] object with data
-#'     only for features for which a [Spectrum2-class] was found. The
-#'     ID of the feature, the chromatographic peak and the file in which the
-#'     spectrum was measured are provided with the `"featureId"`, `"peakId"`
-#'     and `"fromFile"` metadata columns.
-    
-
-    ## if (return.type == "SpectrumList") {
-    ##     res <- res[lengths(res) > 0]
-    ##     mdata <- do.call(rbind, lapply(res, function(z) {
-    ##         data.frame(fromFile = vapply(z, fromFile, integer(1)),
-    ##                    peakId = vapply(strsplit(names(z), split = ".",
-    ##                                             fixed = TRUE),
-    ##                                    `[`, character(1), 1),
-    ##                    stringsAsFactors = FALSE)
-    ##     }))
-    ##     mdata <- cbind(featureId = rep(names(res), lengths(res)), mdata)
-    ##     rownames(mdata) <- NULL
-    ##     res <- SpectrumList(unlist(res), elementMetadata = DataFrame(mdata))
-    ## }
+    if (return.type == "Spectra") {
+        fids <- rep(names(res), lengths(res))
+        res <- Spectra(
+            unlist(res[lengths(res) > 0]),
+            elementMetadata = DataFrame(
+                feature_id = fids,
+                peak_id = vapply(strsplit(names(res), ".", TRUE),
+                                 `[`, character(1), 2)))
+    } else res <- Spectra()
     res
 }

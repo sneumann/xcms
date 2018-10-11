@@ -222,7 +222,9 @@ test_that("featureSpectra works", {
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
     expect_error(ms2_spectra_for_features(xod_x, method = "other"))
     expect_error(res <- featureSpectra(xod_x))
-    expect_warning(res <- featureSpectra(xod_xg))
+    expect_warning(res <- featureSpectra(xod_xg, return.type = "list"))
     expect_true(length(res) == nrow(featureDefinitions(xod_xg)))
     expect_equal(names(res), rownames(featureDefinitions(xod_xg)))
+
+    res <- featureSpectra(xod_xg, return.type = "Spectra")
 })

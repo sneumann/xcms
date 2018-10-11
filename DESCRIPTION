@@ -14,7 +14,8 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.5.10)
+    MSnbase (>= 2.5.10),
+    S4Vectors
 Imports:
     mzR (>= 2.13.1),
     BiocGenerics,
@@ -25,7 +26,6 @@ Imports:
     RANN,
     multtest,
     MassSpecWavelet (>= 1.5.2),
-    S4Vectors,
     robustbase
 Suggests:
     BiocStyle,
@@ -59,6 +59,8 @@ Collate:
     'DataClasses.R'
     'Deprecated.R'
     'MPI.R'
+    'Spectra.R'
+    'Spectra-methods.R'
     'c.R'
     'cwTools.R'
     'databases.R'

@@ -24,6 +24,9 @@ import("BiocParallel")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame")
 importMethodsFrom("S4Vectors", "as.matrix")
+importClassesFrom("S4Vectors", "SimpleList")
+importFrom("S4Vectors", "SimpleList")
+importMethodsFrom("S4Vectors", "lapply", "[", "mcols")
 
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
@@ -237,7 +240,8 @@ export(
     "imputeRowMin",
     "imputeRowMinRand",
     "chromPeakSpectra",
-    "featureSpectra"
+    "featureSpectra",
+    "Spectra"
 )
 
 ## New analysis methods
@@ -416,8 +420,10 @@ export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "ProcessHistory",
-              "XProcessHistory"
+exportClasses("XCMSnExp",
+	      "ProcessHistory",
+              "XProcessHistory",
+	      "Spectra"
               )
 ## New methods for these classes
 exportMethods("hasChromPeaks",
