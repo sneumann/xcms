@@ -283,6 +283,51 @@ setMethod("isCentroided", "Spectra", function(object) {
     vapply(object, isCentroided, logical(1))
 })
 
+#' @rdname Spectra
+#'
+#' @description
+#'
+#' `writeMgfData` exports a `Spectra` object to a file in MGF format. All
+#' metadata columns present in `mcols` are exported as additional fields with
+#' the capitalized column names used as field names (see examples below).
+#'
+#' @param con For `writeMgfData`: `character(1)` defining the file name of
+#'     the MGF file.
+#'
+#' @param COM For `writeMgfData`: optional `character(1)` providing a comment
+#'     to be added to the file.
+#'
+#' @param TITLE For `writeMgfData`: optional `character(1)` defining the title
+#'     for the MGF file.
+#'
+#' @md
+#' 
+#' @examples
+#'
+#' ## Export the spectrum list to a MGF file. Values in metadata columns are
+#' ## exported as additional field for each spectrum.
+#' tmpf <- tempfile()
+#' writeMgfData(spl, tmpf)
+#' 
+#' ## Evaluate the written output. The ID of each spectrum (defined in the
+#' ## "id" metadata column) is exported as field "ID".
+#' readLines(tmpf)
+#'
+#' ## Set mcols to NULL to avoid export of additional data fields.
+#' mcols(spl) <- NULL
+#' file.remove(tmpf)
+#'
+#' writeMgfData(spl, tmpf)
+#' readLines(tmpf)
+setMethod("writeMgfData", "Spectra", function(object, con = "spectra.mgf",
+                                              COM = NULL, TITLE = NULL) {
+    if (file.exists(con))
+        stop("file ", con, " does already exist.")
+    MSnbase:::writeMgfDataFile(as.list(object), con = con, COM = COM,
+                               TITLE = TITLE, addFields = mcols(object))
+})
+
+
 ## Still to implement:
 ## clean, all = FALSE
 ## removePeaks, t

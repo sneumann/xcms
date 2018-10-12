@@ -25,6 +25,7 @@
 \alias{isEmpty,Spectra-method}
 \alias{centroided,Spectra-method}
 \alias{isCentroided,Spectra-method}
+\alias{writeMgfData,Spectra-method}
 \title{List of Spectrum objects along with annotations}
 \usage{
 Spectra(..., elementMetadata = NULL)
@@ -68,19 +69,32 @@ Spectra(..., elementMetadata = NULL)
 \S4method{centroided}{Spectra}(object)
 
 \S4method{isCentroided}{Spectra}(object)
+
+\S4method{writeMgfData}{Spectra}(object, con = "spectra.mgf",
+  COM = NULL, TITLE = NULL)
 }
 \arguments{
-\item{...}{For \code{Spectra}: \linkS4class{Spectrum} object(s) or a \code{list} of \linkS4class{Spectrum}
-objects.}
+\item{...}{For \code{Spectra}: \linkS4class{Spectrum} object(s) or a \code{list} of
+\linkS4class{Spectrum} objects.}
 
-\item{elementMetadata}{\link{DataFrame} with optional information that should
-be added as metadata information (\code{mcols}) to the object. The number
-of rows has to match the number of \linkS4class{Spectrum} objects, each row is
-expected to represent additional metadata information for one spectrum.}
+\item{elementMetadata}{For \code{Spectra}: \link{DataFrame} with optional information
+that should be added as metadata information (\code{mcols}) to the object.
+The number of rows has to match the number of \linkS4class{Spectrum} objects,
+each row is expected to represent additional metadata information for
+one spectrum.}
 
-\item{object}{a \code{Spectra} object.}
+\item{object}{For all functions: a \code{Spectra} object.}
 
-\item{x}{a \code{Spectra} object.}
+\item{x}{For all functions: a \code{Spectra} object.}
+
+\item{con}{For \code{writeMgfData}: \code{character(1)} defining the file name of
+the MGF file.}
+
+\item{COM}{For \code{writeMgfData}: optional \code{character(1)} providing a comment
+to be added to the file.}
+
+\item{TITLE}{For \code{writeMgfData}: optional \code{character(1)} defining the title
+for the MGF file.}
 }
 \description{
 \code{Spectra} objects allow to collect one or more \linkS4class{Spectrum} object(s)
@@ -90,6 +104,10 @@ the possibility to add arbitrary annotations to each individual
 
 Functions to access the individual spectra's attributes are available
 (listed below).
+
+\code{writeMgfData} exports a \code{Spectra} object to a file in MGF format. All
+metadata columns present in \code{mcols} are exported as additional fields with
+the capitalized column names used as field names (see examples below).
 }
 \details{
 \code{Spectra} inherits all methods from the \link{SimpleList} class of the
@@ -227,6 +245,22 @@ centroided(spl)
 ## Do the spectra contain centroided data? Whether spectra are centroided
 ## is estimated from the peak data.
 isCentroided(spl)
+
+## Export the spectrum list to a MGF file. Values in metadata columns are
+## exported as additional field for each spectrum.
+tmpf <- tempfile()
+writeMgfData(spl, tmpf)
+
+## Evaluate the written output. The ID of each spectrum (defined in the
+## "id" metadata column) is exported as field "ID".
+readLines(tmpf)
+
+## Set mcols to NULL to avoid export of additional data fields.
+mcols(spl) <- NULL
+file.remove(tmpf)
+
+writeMgfData(spl, tmpf)
+readLines(tmpf)
 }
 \author{
 Johannes Rainer

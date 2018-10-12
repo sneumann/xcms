@@ -144,3 +144,30 @@ test_that("smoothed, isEmpty, centroided and isCentroided work", {
     expect_true(is.logical(isCentroided(spl_)))
     expect_equal(isCentroided(spl_), c(NA, NA, NA))
 })
+
+test_that("writeMgfData,Spectra works", {
+    tmpf <- tempfile()
+
+    writeMgfData(spl_, tmpf)
+    res <- readLines(tmpf)
+    ## No additional fields.
+    expect_equal(res[7], "1 4")
+    expect_equal(res[17], "1 5")
+    expect_equal(res[27], "1 6")
+
+    expect_error(writeMgfData(spl_, tmpf))
+
+    spl <- spl_
+    mcols(spl) <- DataFrame(index = 1:3, some_id = c("sp_1", "sp_2", "sp_3"))
+    file.remove(tmpf)
+
+    writeMgfData(spl, tmpf)
+    res_2 <- readLines(tmpf)
+    expect_equal(res_2[7], "INDEX=1")
+    expect_equal(res_2[8], "SOME_ID=sp_1")
+    expect_equal(res_2[19], "INDEX=2")
+    expect_equal(res_2[20], "SOME_ID=sp_2")
+    expect_equal(res_2[31], "INDEX=3")
+    expect_equal(res_2[32], "SOME_ID=sp_3")
+    expect_equal(res[-1], res_2[-c(1, 7, 8, 19, 20, 31, 32)])
+})

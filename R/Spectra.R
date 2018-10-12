@@ -20,9 +20,9 @@
 #' `S4Vectors` package. This includes `lapply` and other data manipulation
 #' and subsetting operations.
 #'
-#' @param object a `Spectra` object.
+#' @param object For all functions: a `Spectra` object.
 #'
-#' @param x a `Spectra` object.
+#' @param x For all functions: a `Spectra` object.
 #' 
 #' @md
 #'
@@ -50,13 +50,14 @@ setValidity("Spectra", function(object) {
 #' where `...` can either be a single [Spectrum-class] object or a `list` of
 #' `Spectrum` objects ([Spectrum1-class] and/or [Spectrum2-class]).
 #'
-#' @param ... For `Spectra`: [Spectrum-class] object(s) or a `list` of [Spectrum-class]
-#'     objects.
+#' @param ... For `Spectra`: [Spectrum-class] object(s) or a `list` of
+#'     [Spectrum-class] objects.
 #'
-#' @param elementMetadata [DataFrame] with optional information that should
-#'     be added as metadata information (`mcols`) to the object. The number
-#'     of rows has to match the number of [Spectrum-class] objects, each row is
-#'     expected to represent additional metadata information for one spectrum.
+#' @param elementMetadata For `Spectra`: [DataFrame] with optional information
+#'     that should be added as metadata information (`mcols`) to the object.
+#'     The number of rows has to match the number of [Spectrum-class] objects,
+#'     each row is expected to represent additional metadata information for
+#'     one spectrum.
 #'
 #' @author Johannes Rainer
 #'

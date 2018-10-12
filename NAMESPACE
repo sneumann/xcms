@@ -60,7 +60,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "filterRt", "normalize", "pickPeaks", "removePeaks",
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
-                  "plot", "fData", "fData<-", "writeMSData")
+                  "plot", "fData", "fData<-", "writeMSData", "writeMgfData")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
 
 export(
@@ -466,5 +466,6 @@ exportMethods("hasChromPeaks",
               "extractMsData",
               "chromatogram",
               "spectrapply",
-	      "writeMSData"
+	      "writeMSData",
+	      "writeMgfData"
               )
