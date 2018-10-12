@@ -1880,7 +1880,7 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
     ## We are faster getting all MS2 spectra once at the starat.
     sps <- spectra(x)
     res <- vector(mode = "list", nrow(pks))
-    for (i in 1:nrow(pks)) {
+    for (i in seq_len(nrow(pks))) {
         if (use_subset && (!i %in% subset))
             next
         if (skipFilled && pks[i, "is_filled"] == 1)
