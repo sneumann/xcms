@@ -6,42 +6,52 @@
 \usage{
 chromPeakSpectra(x, msLevel = 2L, expandRt = 0, expandMz = 0,
   ppm = 0, method = c("all", "closest_rt", "closest_mz", "signal"),
-  skipFilled = FALSE)
+  skipFilled = FALSE, return.type = c("Spectra", "list"))
 }
 \arguments{
-\item{x}{`XCMSnExp` object with identified chromatographic peaks.}
+\item{x}{\link{XCMSnExp} object with identified chromatographic peaks.}
 
-\item{msLevel}{`integer(1)` defining whether MS1 or MS2 spectra should be
-returned. Currently only `msLevel = 2` is supported.}
+\item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
+returned. Currently only \code{msLevel = 2} is supported.}
 
-\item{expandRt}{`numeric(1)` to expand the retention time range of each
+\item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
 
-\item{expandMz}{`numeric(1)` to expand the m/z range of each peak by a
+\item{expandMz}{\code{numeric(1)} to expand the m/z range of each peak by a
 constant value on each side.}
 
-\item{ppm}{`numeric(1)` to expand the m/z range of each peak (on each side)
+\item{ppm}{\code{numeric(1)} to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.}
 
-\item{method}{`character(1)` specifying which MS2 spectra should be included.
-Defaults to `"all"` in which all MS2 spectra within the rt and m/z range
-of a chromatographic peak are returned. `"closest_rt"` returns the one
+\item{method}{\code{character(1)} specifying which MS2 spectra should be included.
+Defaults to \code{"all"} in which all MS2 spectra within the rt and m/z range
+of a chromatographic peak are returned. \code{"closest_rt"} returns the one
 MS2 spectrum with the retention time closest to the chromatographic
-peak's apex rt. `"closest_mz"` returns the MS2 spectrum with the
-precursor m/z closest to the chromatographic peak's m/z. `"signal"`
+peak's apex rt. \code{"closest_mz"} returns the MS2 spectrum with the
+precursor m/z closest to the chromatographic peak's m/z. \code{"signal"}
 returns the MS2 spectrum which total signal is closest to the
-chromatographic peak's maximal signal (`"maxo"`).}
+chromatographic peak's maximal signal (\code{"maxo"}).}
 
-\item{skipFilled}{`logical(1)` whether no spectra for filled-in peaks should
+\item{skipFilled}{\code{logical(1)} whether no spectra for filled-in peaks should
 be reported.}
+
+\item{return.type}{\code{character(1)} defining whether the result should be a
+\link{Spectra} object or a simple \code{list}. See below for more information.}
 }
 \value{
-`list` of `list`s that are either of length 0 or contain
-    `Spectrum2` object(s) within the m/z-rt range. The length of the list
-    matches the number of peaks.
+Which object is returned depends on the value of \code{return.type}:
+\itemize{
+\item For \code{return.type = "Spectra"}: a \link{Spectra} object with elements being
+\linkS4class{Spectrum} objects. The result objects contains all spectra that
+for all peaks. Metadata column \code{"peak_id"} provides the ID of the
+respective peak (i.e. its rowname in \link{chromPeaks}).
+\item If \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
+0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
+length of the list matches the number of peaks.
+}
 }
 \description{
-Extract (MS2) spectra from an `XCMSnExp` object that represent ions within
+Extract (MS2) spectra from an \link{XCMSnExp} object that represent ions within
 the rt and m/z range defined by each chromatographic peak (in the same file
 /sample in which the peak was detected).
 }

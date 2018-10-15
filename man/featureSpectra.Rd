@@ -5,48 +5,56 @@
 \title{Extract (MS2) spectra associated with features}
 \usage{
 featureSpectra(x, msLevel = 2, expandRt = 0, expandMz = 0, ppm = 0,
-  skipFilled = FALSE, ...)
+  skipFilled = FALSE, return.type = c("Spectra", "list"), ...)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with feature defitions available.}
 
-\item{msLevel}{`integer(1)` defining whether MS1 or MS2 spectra should be
-returned. Currently only `msLevel = 2` is supported.}
+\item{msLevel}{\code{integer(1)} defining whether MS1 or MS2 spectra should be
+returned. Currently only \code{msLevel = 2} is supported.}
 
-\item{expandRt}{`numeric(1)` to expand the retention time range of each
+\item{expandRt}{\code{numeric(1)} to expand the retention time range of each
 peak by a constant value on each side.}
 
-\item{expandMz}{`numeric(1)` to expand the m/z range of each peak by a
+\item{expandMz}{\code{numeric(1)} to expand the m/z range of each peak by a
 constant value on each side.}
 
-\item{ppm}{`numeric(1)` to expand the m/z range of each peak (on each side)
+\item{ppm}{\code{numeric(1)} to expand the m/z range of each peak (on each side)
 by a value dependent on the peak's m/z.}
 
-\item{skipFilled}{`logical(1)` whether no spectra for filled-in peaks should
+\item{skipFilled}{\code{logical(1)} whether no spectra for filled-in peaks should
 be reported.}
+
+\item{return.type}{\code{character(1)} defining whether the result should be a
+\link{Spectra} object or a simple \code{list}. See below for more information.}
 
 \item{...}{additional arguments to be passed along to \code{\link[=chromPeakSpectra]{chromPeakSpectra()}},
 such as \code{method}.}
 }
 \value{
-A \code{list}, same length than there are
-features in \code{x}, each element being a \code{list} of \linkS4class{Spectrum2}
-objects with the MS2 spectra that potentially represent ions measured
-by each chromatographic peak associated with the feature, or \code{NULL}
-if none present.
+Which object is returned depends on the value of \code{return.type}:
+\itemize{
+\item For \code{return.type = "Spectra"} (the default): a \link{Spectra} object with data
+only for features for which a \linkS4class{Spectrum2} was found. The
+ID of the feature and of the chromatographic peak to which the
+spectrum is associated are provided with the \code{"feature_id"} and
+\code{"peak_id"} metadata columns.
+\item For \code{return.type = "list"}: a \code{list, same length than there are features in }x\code{, each element being a }list\code{of [Spectrum2-class] objects with the MS2 spectra that potentially represent ions measured by each chromatographic peak associated with the feature, or}NULL`
+if none are present.
+}
 }
 \description{
-Return MS2 spectra for all chromatographic peaks associated with the features
-in \code{x}.
+Return (MS2) spectra for all chromatographic peaks associated with the
+features in \code{x} (defined by \code{\link[=featureDefinitions]{featureDefinitions()}}).
 }
 \details{
 The function identifies all MS2 spectra with their precursor m/z within the
-m/z range as well as their retention time within the rt range of each
-chromatographic peak associated with the feature.
+m/z range of a chromatographic peak of a feature and their retention time
+within the rt range of the same peak.
 
 The optional parameter \code{method} allows to ensure that for each
 chromatographic peak in one sample only one MS2 spectrum is returned.
-See \link{chromPeakSpectra} for more details.
+See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} for more details.
 }
 \author{
 Johannes Rainer

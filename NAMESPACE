@@ -49,7 +49,7 @@ importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
 ## MSnbase:
 importClassesFrom("MSnbase", "MSnExp", "pSet", "OnDiskMSnExp", "Chromatogram",
-                  "Chromatograms")
+                  "Chromatograms", "Spectra")
 importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile",
                   "filterFile", "filterMsLevel", "msLevel", "scanIndex",
                   "spectra", "impute", "isCentroided", "polarity", "[", "bin",
@@ -58,7 +58,8 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData")
-importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram", "Chromatograms")
+importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
+    "Chromatograms", "Spectra")
 
 export(
     "etg",
