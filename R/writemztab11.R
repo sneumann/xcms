@@ -54,7 +54,7 @@ mzFileType <- function(paths) {
 ## cbind(paths, mzFileType(paths))
 
 
-mzTabHeader <- function(mztab, version,
+mzTabHeader <- function(version,
                         id="The ID of the mzTab file.",
                         title="The file’s human readable title.",
                         description="The file’s human readable description.",
@@ -63,6 +63,10 @@ mzTabHeader <- function(mztab, version,
                                    "[MS, MS:1001582, XCMS, 2.99.6 ]"),
                         xset,
                         value) {
+
+    ## Empty mzTab to start with
+    mztab <- data.frame(character(0))
+    
     runs <- paste("file:", filepaths(xset), sep="/")
     names(runs) <- paste("ms_run[", 1:length(runs), "]-location", sep="")
 
@@ -226,23 +230,17 @@ mzTabAddSMF <- function(mztab, xset, value) {
     result[,"retention_time_start"] <- g[,"rtmin"]
     result[,"retention_time_end"] <- g[,"rtmax"]
     result[,"exp_mass_to_charge"] <- g[,"mzmed"]
-    result[, grepl("quant_assay", colnames(result))] <- v
+#Alt ?!    result[, grepl("quant_assay", colnames(result))] <- v
+    result[, grepl("abundance_assay", colnames(result))] <- v
     
     mztab <- mzTabAddValues(mztab, "SFH", "SMF", result)    
 }
 
 
-writeMzTab <- function(mtd, sml, smf, filename) {
-    write.table(mtd, file=filename,
+writeMzTab <- function(mztab, filename) {
+    write.table(mztab, file=filename,
                 row.names=FALSE, col.names=FALSE,
                 quote=FALSE, sep="\t", na="")
-    write.table(sml, file=filename, append=TRUE,
-                row.names=FALSE, col.names=FALSE,
-                quote=FALSE, sep="\t", na="null")
-    write.table(smf, file=filename, append=TRUE,
-                row.names=FALSE, col.names=FALSE,
-                quote=FALSE, sep="\t", na="null")
-
 }
 
 ########################
@@ -250,8 +248,10 @@ writeMzTab <- function(mtd, sml, smf, filename) {
 ##
 
 if (FALSE) {
-    library(Rcpp) ## for rbind.fill
-    library(plyr) ## for rbind.fill
+#    library(Rcpp) ## for rbind.fill
+#    library(plyr) ## for rbind.fill
+
+    library(xcms)
     library(faahKO)
 
     if(! exists("xs")) {
@@ -263,20 +263,17 @@ if (FALSE) {
                 "small_molecule_feature-quantification_unit"="[PRIDE, PRIDE:0000395, Ratio, ]",
                 "small_molecule-identification_reliability"="[PRIDE, PRIDE:0000395, Ratio, ]" ## DUMMY!
                 )
+    value="into"
+    
+    mztab <- mzTabHeader(version="2.0.0", description="faahKO",
+                          xset=xs,
+                          value=values)
 
-    mztmtd <- data.frame(character(0))
-    mztmtd <- mzTabHeader(mztmtd,
-                       version="1.0.99", description="faahKO",
-                       xset=xs,
-                       value=values)
+    mztab <- mzTabAddSML(mztab, xs, value=value)
 
-    mztsml <- data.frame(character(0))
-    mztsml <- mzTabAddSML(mztsml, xs, value=value)
+    mztab <- mzTabAddSMF(mztab, xs, value=value) # needs to be done
 
-    mztsmf <- data.frame(character(0))
-    mztsmf <- mzTabAddSMF(mztsmf, xs, value="into") # needs to be done
-
-    writeMzTab(mztmtd, mztsml, mztsmf, file="faahKO.mzTab")
+    writeMzTab(mztab, file="faahKO.mzTab")
 }
 
 #############################

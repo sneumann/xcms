@@ -1,6 +1,6 @@
 \name{writeMzTab}
 \alias{writeMzTab}
-\title{Save a grouped xcmsSet object in mzTab-1.1 format file}
+\title{Save a grouped xcmsSet object in mzTab-M 2.0 format file}
 \description{
   Write the grouped xcmsSet to an mzTab file.
 }
@@ -36,7 +36,7 @@
 
     mzt <- data.frame(character(0))
     mzt <- xcms:::mzTabHeader(mzt,
-                       version="1.1.0", mode="Complete", type="Quantification",
+                       version="2.0.0", 
                        description="faahKO",
                        xset=xs)
     mzt <- xcms:::mzTabAddSME(mzt, xs)
