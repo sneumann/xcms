@@ -238,7 +238,9 @@ export(
     "imputeRowMin",
     "imputeRowMinRand",
     "chromPeakSpectra",
-    "featureSpectra"
+    "featureSpectra",
+    "featureChromatograms",
+    "hasFilledChromPeaks"
 )
 
 ## New analysis methods

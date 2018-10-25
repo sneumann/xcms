@@ -4,7 +4,8 @@
 \alias{featureSummary}
 \title{Simple feature summaries}
 \usage{
-featureSummary(x, group, perSampleCounts = FALSE, method = "maxint")
+featureSummary(x, group, perSampleCounts = FALSE, method = "maxint",
+  skipFilled = TRUE)
 }
 \arguments{
 \item{x}{`XCMSnExp` object with correspondence results.}
@@ -18,6 +19,9 @@ counts per sample should be returned too.}
 
 \item{method}{`character` passed to the [featureValues()] function. See
 respective help page for more information.}
+
+\item{skipFilled}{`logical(1)` whether filled-in peaks should be excluded
+(default) or included in the summary calculation.}
 }
 \value{
 `matrix` with one row per feature and columns:

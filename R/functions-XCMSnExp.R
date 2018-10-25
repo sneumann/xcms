@@ -1595,6 +1595,9 @@ filterFeatureDefinitions <- function(x, features) {
 #'
 #' @param method `character` passed to the [featureValues()] function. See
 #'     respective help page for more information.
+#'
+#' @param skipFilled `logical(1)` whether filled-in peaks should be excluded
+#'     (default) or included in the summary calculation.
 #' 
 #' @return
 #'
@@ -1618,7 +1621,7 @@ filterFeatureDefinitions <- function(x, features) {
 #'
 #' @author Johannes Rainer
 featureSummary <- function(x, group, perSampleCounts = FALSE,
-                           method = "maxint") {
+                           method = "maxint", skipFilled = TRUE) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is expected to be an 'XCMSnExp' object")
     if (!hasFeatures(x))
@@ -1629,6 +1632,8 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
             stop("length of 'group' does not match the number of ",
                  "samples in 'x'")
     }
+    if (skipFilled && .hasFilledPeaks(x))
+        x <- dropFilledChromPeaks(x)
     ## First determine the number of peaks per sample
     smpls <- seq_along(fileNames(x))
     pks_per_sample <- lapply(featureDefinitions(x)$peakidx, function(z)
@@ -2090,4 +2095,102 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
                                                         peak_id = pids))
     }
     res
+}
+
+#' @title Extract ion chromatograms for each feature
+#'
+#' @description
+#'
+#' Extract ion chromatograms for each feature in an [XCMSnExp-class] object.
+#'
+#' @param x `XCMSnExp` object with grouped chromatographic peaks.
+#' 
+#' @param expandRt `numeric(1)` to expand the retention time range for each
+#'     chromatographic peak by a constant value on each side.
+#'
+#' @param aggregationFun `character(1)` specifying the name that should be
+#'     used to aggregate intensity values across the m/z value range for
+#'     the same retention time. The default `"sum"` returns a base peak
+#'     chromatogram.
+#'
+#' @param features `integer`, `character` or `logical` defining a subset of
+#'     features for which chromatograms should be returned. Can be the index
+#'     of the features in `featureDefinitions`, feature IDs (row names of
+#'     `featureDefinitions`) or a logical vector.
+#' 
+#' @param ... optional arguments to be passed along to the [chromatogram()]
+#'     function.
+#'
+#' @return [Chromatograms] object.
+#' 
+#' @md
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' library(xcms)
+#' library(faahKO)
+#' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
+#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#'
+#' ## Do a simple and fast preprocessing of the test data
+#' od <- readMSData(faahko_3_files, mode = "onDisk")
+#' od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
+#'     noise = 1000))
+#' od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
+#' od <- groupChromPeaks(od,
+#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
+#'
+#' ## Extract ion chromatograms for each feature
+#' chrs <- featureChromatograms(od)
+#'
+#' ## Plot the XIC for the first feature using different colors for each file
+#' par(mfrow = c(1, 2))
+#' plot(chrs[1, ], col = c("red", "green", "blue"))
+featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
+                                 features, ...) {
+    if (!hasFeatures(x))
+        stop("No feature definitions present. Please run first 'groupChromPeaks'")
+    if (!missing(features)) {
+        if (is.logical(features)) {
+            if (length(features) != nrow(featureDefinitions(x)))
+                stop("If 'features' is a logical vector, its length has to ",
+                     "be equal to the number of features.")
+            features <- which(features)
+        }
+        if (is.character(features)) {
+            features <- match(features, rownames(featureDefinitions(x)))
+            if (any(is.na(features)))
+                stop("Some of the feature IDs specified with 'features' ",
+                     "can not be found.")
+        }
+        features <- as.integer(features)
+        if (any(features < 1) || any(features > nrow(featureDefinitions(x))))
+            stop("'features' are out of range")
+    } else features <- seq_len(nrow(featureDefinitions(x)))
+    if (!length(features))
+        return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
+    pks <- chromPeaks(x)
+    mat <- do.call(rbind, lapply(featureDefinitions(x)$peakidx[features],
+                                 function(z) {
+                                     pks_current <- pks[z, , drop = FALSE]
+                                     c(range(pks_current[, c("rtmin", "rtmax")]),
+                                       range(pks_current[, c("mzmin", "mzmax")]))
+    }))
+    mat[, 1] <- mat[, 1] - expandRt
+    mat[, 2] <- mat[, 2] + expandRt
+    colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
+    chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
+                 aggregationFun = aggregationFun, ...)
+}
+
+#' @description
+#'
+#' \code{hasFilledChromPeaks}: whether filled-in peaks are present or not.
+#' 
+#' @rdname XCMSnExp-class
+hasFilledChromPeaks <- function(object) {
+    .hasFilledPeaks(object)
 }

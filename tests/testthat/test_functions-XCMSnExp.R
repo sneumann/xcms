@@ -236,3 +236,32 @@ test_that("featureSpectra works", {
     expect_warning(res <- featureSpectra(xod_xg, msLevel = 1L))
     expect_true(length(res) == 0)
 })
+
+test_that("featureChromatograms works", {
+    expect_error(featureChromatograms(xod_x))
+    chrs <- featureChromatograms(xod_xgrg)
+    expect_equal(nrow(chrs), nrow(featureDefinitions(xod_xgrg)))
+    expect_equal(ncol(chrs), length(fileNames(xod_xgrg)))
+    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2)
+    rts <- do.call(rbind, lapply(chrs, function(z) range(rtime(z))))
+    rts_ext <- do.call(rbind, lapply(chrs_ext, function(z) range(rtime(z))))
+    expect_true(all(rts[, 1] > rts_ext[, 1]))
+    expect_true(all(rts[, 2] < rts_ext[, 2]))
+
+    res_2 <- featureChromatograms(xod_xgrg, features = c(1, 5))
+    expect_equal(chrs[1, ], res_2[1, ])
+    expect_equal(chrs[5, 1], res_2[2, 1])
+    expect_equal(chrs[5, 2], res_2[2, 2])
+    expect_equal(chrs[5, 3], res_2[2, 3])
+
+    res_3 <- featureChromatograms(xod_xgrg, features = c("FT01", "FT05"))
+    expect_equal(res_2, res_3)
+
+    res <- featureChromatograms(xod_xgrg, features = character())
+    expect_true(nrow(res) == 0)
+    expect_error(featureChromatograms(xod_xgrg,
+                                      features = c(TRUE, FALSE, FALSE)))
+    expect_error(featureChromatograms(xod_xgrg, features = c(100000, 1000002)))
+    expect_error(featureChromatograms(xod_xgrg, features = c("a", "FT02")))
+})
+

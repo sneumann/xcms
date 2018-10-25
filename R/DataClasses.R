@@ -2405,6 +2405,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #'     \code{\link{featureSummary}} to calculate basic feature summaries.
 #'
+#'     \code{\link{featureChromatograms}} to extract chromatograms for each
+#'     feature.
+#' 
 #'     \code{\link{chromPeakSpectra}} to extract MS2 spectra with the m/z of
 #'     the precursor ion within the m/z range of a peak and a retention time
 #'     within its retention time range.

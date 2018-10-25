@@ -255,11 +255,11 @@ these.
 Below we perform the chromatographic peak detection using the `findChromPeaks`
 method. The submitted *parameter* object defines which algorithm will be used and
 allows to define the settings for this algorithm. Note that we set the argument
-`noise` to `1000` to slightly speed up the analysis by considering only signals with
-a value larger than 1000 in the peak detection step.
+`noise` to `5000` to reduce the run time of this vignette. With this setting we
+consider only signals with a value larger than 5000 in the peak detection step.
 
 ```{r  peak-detection-centwave, message = FALSE, results = "hide" }
-cwp <- CentWaveParam(peakwidth = c(30, 80), noise = 1000)
+cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000)
 xdata <- findChromPeaks(raw_data, param = cwp) 
 ```
 
@@ -556,11 +556,13 @@ featureDefinitions(xdata)
 ```
 
 The `featureValues` method returns a `matrix` with rows being features and columns
-samples. The content of this matrix can be defined using the `value`
-argument. Setting `value = "into"` returns a matrix with the integrated signal of
-the peaks corresponding to a feature in a sample. Any column name of the
-`chromPeaks` matrix can be passed to the argument `value`. Below we extract the
-integrated peak intensity per feature/sample.
+samples. The content of this matrix can be defined using the `value` argument. The
+default is `value = "index"` which simply returns the index of the peak (in the
+`chromPeaks` matrix) assigned to a feature in a sample. Setting `value = "into"`
+returns a matrix with the integrated signal of the peaks corresponding to a
+feature in a sample. Any column name of the `chromPeaks` matrix can be passed to
+the argument `value`. Below we extract the integrated peak intensity per
+feature/sample.
 
 ```{r  correspondence-feature-values, message = FALSE }
 ## Extract the into column for each feature.
@@ -592,6 +594,17 @@ intensities in the mz-rt region of the feature, integrates the signal and adds a
 measured/available for the mz-rt region of the feature. For these, even after
 filling in missing peak data, a `NA` is reported in the `featureValues` matrix.
 
+It should be mentioned that `fillChromPeaks` uses columns `"rtmin"`, `"rtmax"`,
+`"mzmin"` and `"mzmax"` from the `featureDefinitions` table to define the region from
+which the signal should be integrated to generate the filled-in peak
+signal. These values correspond however to the positions of the peak apex not
+the peak boundaries of all chromatographic peaks assigned to a feature. It might
+be advisable to increase this area in retention time dimension by a constant
+value appropriate to the average peak width in the experiment. Such a value can
+be specified with `fixedRt` of the `FillChromPeaksParam`. If the average peak width
+in the experiment is 20 seconds, specifying `fixedRt = 10` ensures that the area
+from which peaks are integrated is at least 20 seconds wide.
+
 Below we compare the number of missing values before and after filling in
 missing values. We can use the parameter `filled` of the `featureValues` method to
 define whether or not filled-in peak values should be returned too.
@@ -605,6 +618,39 @@ apply(featureValues(xdata, filled = FALSE), MARGIN = 2,
 apply(featureValues(xdata), MARGIN = 2,
       FUN = function(z) sum(is.na(z)))
  
+```
+
+Next we use the `featureSummary` function to get a general per-feature summary
+that includes the number of samples in which a peak was found or the number of
+samples in which more than one peak was assigned to the feature. Specifying also
+sample groups breaks down these summary statistics for each individual sample
+group.
+
+```{r  featureSummary, message = FALSE }
+head(featureSummary(xdata, group = xdata$sample_group)) 
+```
+
+The performance of peak detection, alignment and correspondence should always be
+evaluated by inspecting extracted ion chromatograms e.g. of known compounds,
+internal standards or identified features in general. The `featureChromatograms`
+function allows to extract chromatograms for each feature present in
+`featureDefinitions`. The returned `Chromatograms` object contains an ion
+chromatogram for each feature (each row containing the data for one feature) and
+sample (each column representing containing data for one sample). Below we
+extract the chromatograms for the first 4 features.
+
+```{r  featureChromatograms, message = FALSE }
+feature_chroms <- featureChromatograms(xdata, features = 1:4)
+
+feature_chroms 
+```
+
+And plot the extracted ion chromatograms for feature number 3 and 4.
+
+```{r  feature-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Extracted ion chromatograms for feature 3 and 4." }
+par(mfrow = c(1, 2))
+plot(feature_chroms[3, ], col = group_colors[feature_chroms$sample_group])
+plot(feature_chroms[4, ], col = group_colors[feature_chroms$sample_group]) 
 ```
 
 At last we perform a principal component analysis to evaluate the grouping of
