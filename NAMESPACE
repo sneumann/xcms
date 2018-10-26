@@ -11,7 +11,7 @@ importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
                   "phenoData<-", "pData", "rowMedians")
 
 importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis",
-           "grid", "mtext")
+           "grid", "mtext", "polygon")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
            "level.colors", "do.breaks")

@@ -213,7 +213,7 @@ and the linear imputation approach that was defined in the `profBinLinBase`
 method. The latter performs linear interpolation only considering a certain
 neighborhood of missing values otherwise replacing the `NA` with a base value.
 
-```{r  binning-imputation-example, message = FALSE, fig.width = 10, fig.height = 7, fig.cap = 'Binning and missing value imputation results. Black points represent the input values, red the results from the binning and blue and green the results from the imputation (with method lin and linbase, respectively).' }
+```{r binning-imputation-example, fig = TRUE, message = FALSE, fig.width = 10, fig.height = 7, fig.cap = 'Binning and missing value imputation results. Black points represent the input values, red the results from the binning and blue and green the results from the imputation (with method lin and linbase, respectively).' }
 ## Plot the actual data values.
 plot(X, Y, pch = 16, ylim = c(0, max(Y)))
 ## Visualizing the bins
@@ -339,7 +339,7 @@ from the `profBinLin` method. The bin values for the first and 4th bin are clear
 wrong. The green colored points and lines represent the results from the `binYonX`
 and `imputeLinInterpol` functions (showing the correct binning and interpolation).
 
-```{r  profBinLin-problems, message = FALSE, fig.align = 'center', fig.width=10, fig.height = 7, fig.cap = "Illustration of the two bugs in profBinLin. The input values are represented by black points, grey vertical lines indicate the bins. The results from binning and interpolation with profBinLin are shown in blue and those from binYonX in combination with imputeLinInterpol in green." }
+```{r profBinLin-problems, fig = TRUE, message = FALSE, fig.align = 'center', fig.width=10, fig.height = 7, fig.cap = "Illustration of the two bugs in profBinLin. The input values are represented by black points, grey vertical lines indicate the bins. The results from binning and interpolation with profBinLin are shown in blue and those from binYonX in combination with imputeLinInterpol in green."}
 plot(x = X, y = Y, pch = 16, ylim = c(0, max(Y, na.rm = TRUE)),
      xlim = c(0, 12))
 ## Plot the breaks

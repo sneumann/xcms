@@ -136,7 +136,7 @@ first_file_calibrated <- calibrate(first_file, param = prm)
 To evaluate the calibration we plot below the difference between the adjusted
 and raw m/z values (y-axis) against the raw m/z values.
 
-```{r calibration-result, fig = TRUE, fig.align = "center"}
+```{r calibrationresult, fig = TRUE, fig.width = 6, fig.height = 5, fig.align = "center"}
 diffs <- chromPeaks(first_file_calibrated)[, "mz"] -
     chromPeaks(first_file)[, "mz"]
 
@@ -183,7 +183,7 @@ subsequently use the `filterMz` function to sub-set the full data set to the
 signal associated with the feature's peaks. On that object we can then call the
 `mz` and `intensity` functions to extract the data.
 
-```{r feature-FT01, fig = TRUE, fig.width = 6, fig.height = 4, fig.align = "center"}
+```{r feature1, fig = TRUE, fig.width = 6, fig.height = 4, fig.align = "center"}
 ## Get the peaks belonging to the first feature
 pks <- chromPeaks(ham_prep)[featureDefinitions(ham_prep)$peakidx[[1]], ]
 
