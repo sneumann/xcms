@@ -1093,13 +1093,14 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #' @param mz \code{numeric(2)} with the mz range from which the peaks should
 #'     be extracted and plotted.
 #'
-#' @param border colors to be used to color the border of the rectangles. Has to
-#'     be equal to the number of samples in \code{x}.
+#' @param border colors to be used to color the border of the rectangles/peaks.
+#'     Has to be equal to the number of samples in \code{x}.
 #' 
 #' @param lwd \code{numeric(1)} defining the width of the line/border.
 #'
 #' @param col For \code{highlightChromPeaks}: color to be used to fill the
-#'     rectangle.
+#'     rectangle (if \code{type = "rect"}) or the peak
+#'     (for \code{type = "polygon"}).
 #'
 #' @param type the plotting type. See \code{\link{plot}} in base grapics for
 #'     more details.
@@ -1107,7 +1108,10 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #'     should be highlighted: \code{type = "rect"} draws a rectangle
 #'     representing the peak definition, \code{type = "point"} indicates a
 #'     chromatographic peak with a single point at the position of the peak's
-#'     \code{"rt"} and \code{"maxo"}.
+#'     \code{"rt"} and \code{"maxo"} and \code{type = "polygon"} will highlight
+#'     the peak shape. For \code{type = "polygon"} the color of the border and
+#'     area can be defined with parameters \code{"border"} and \code{"col"},
+#'     respectively.
 #'
 #' @param whichPeaks \code{character(1)} specifying how peaks are called to be
 #'     located within the region defined by \code{mz} and \code{rt}. Can be
@@ -1146,10 +1150,16 @@ plotChromPeakDensity <- function(object, mz, rt, param, simulate = TRUE,
 #' chromPeaks(xod, rt = c(2700, 2900), mz = 335)
 #' 
 #' ## Highlight the chromatographic peaks in the area
+#' ## Show the peak definition with a rectangle
 #' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335)
+#'
+#' ## Color the actual peak
+#' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335,
+#'     col = c("#ff000020", "#00ff0020"), type = "polygon")
 highlightChromPeaks <- function(x, rt, mz,
                                 border = rep("00000040", length(fileNames(x))),
-                                lwd = 1, col = NA, type = c("rect", "point"),
+                                lwd = 1, col = NA,
+                                type = c("rect", "point", "polygon"),
                                 whichPeaks = c("any", "within", "apex_within"),
                                 ...) {
     type <- match.arg(type)
@@ -1169,32 +1179,52 @@ highlightChromPeaks <- function(x, rt, mz,
     if (length(border) != n_samples)
         border <- rep(border[1], n_samples)
     if (length(pks)) {
-        if (type == "rect")
-            rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-                 ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
-                 border = border[pks[, "sample"]], lwd = lwd,
-                 col = col[pks[, "sample"]])
-        if (type == "point") {
-            ## Fix assignment of point types for each sample.
-            dots <- list(...)
-            if (any(names(dots) == "bg")) {
-                bg <- dots$bg
-                if (length(bg) != n_samples)
-                    bg <- rep_len(bg[1], n_samples)
-                dots$bg <- bg[pks[, "sample"]]
-            }
-            if (any(names(dots) == "pch")) {
-                pch <- dots$pch
-                if (length(pch) != n_samples)
-                    pch <- rep_len(pch[1], n_samples)
-                dots$pch <- pch[pks[, "sample"]]
-            }
-            if (any(is.na(col)))
-                col <- border
-            ## Draw a point at the position defined by the "rt" column
-            do.call("points", args = c(list(x = pks[, "rt"], y = pks[, "maxo"],
-                                            col = col[pks[, "sample"]]), dots))
-        }
+        switch(type,
+               rect = rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+                           ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
+                           border = border[pks[, "sample"]], lwd = lwd,
+                           col = col[pks[, "sample"]]),
+               point = {
+                   ## Fix assignment of point types for each sample.
+                   dots <- list(...)
+                   if (any(names(dots) == "bg")) {
+                       bg <- dots$bg
+                       if (length(bg) != n_samples)
+                           bg <- rep_len(bg[1], n_samples)
+                       dots$bg <- bg[pks[, "sample"]]
+                   }
+                   if (any(names(dots) == "pch")) {
+                       pch <- dots$pch
+                       if (length(pch) != n_samples)
+                           pch <- rep_len(pch[1], n_samples)
+                       dots$pch <- pch[pks[, "sample"]]
+                   }
+                   if (any(is.na(col)))
+                       col <- border
+                       ## Draw a point at the position defined by the "rt" column
+                       do.call("points",
+                               args = c(list(x = pks[, "rt"],
+                                             y = pks[, "maxo"],
+                                             col = col[pks[, "sample"]]), dots))
+               },
+               polygon = {
+                   if (nrow(pks)) {
+                       chrs <- chromatogram(x, rt = rt, mz = mz)
+                       pks <- pks[order(pks[, "maxo"], decreasing = TRUE), ,
+                                  drop = FALSE]
+                       for (j in seq_len(nrow(pks))) {
+                           i <- pks[j, "sample"]
+                           chr <- filterRt(chrs[1, i],
+                                           rt = pks[j, c("rtmin", "rtmax")])
+                           xs <- rtime(chr)
+                           xs <- c(xs, xs[length(xs)], xs[1])
+                           ys <- c(intensity(chr), 0, 0)
+                           nona <- !is.na(ys)
+                           polygon(xs[nona], ys[nona], border = border[i],
+                                   col = col[i])
+                       }
+                   }
+               })
     }
 }
 

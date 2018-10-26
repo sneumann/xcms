@@ -265,3 +265,13 @@ test_that("featureChromatograms works", {
     expect_error(featureChromatograms(xod_xgrg, features = c("a", "FT02")))
 })
 
+test_that("highlightChromPeaks works", {
+    mzr <- c(279, 279)
+    rtr <- c(2700, 2850)
+    chr <- chromatogram(xod_xgrg, mz = mzr, rt = rtr)
+    plot(chr)
+    pks <- chromPeaks(xod_xgrg, mz = mzr, rt = rtr, type = "apex_within")
+    highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr)
+    highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr, type = "polygon",
+                        col = c("#ff000020", "#00ff0020", "#0000ff20"))
+})

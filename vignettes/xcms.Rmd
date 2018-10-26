@@ -153,7 +153,7 @@ could set `aggregationFun` to `sum`.
 ## Get the base peak chromatograms. This reads data from the files.
 bpis <- chromatogram(raw_data, aggregationFun = "max")
 ## Define colors for the two groups
-group_colors <- brewer.pal(3, "Set1")[1:2]
+group_colors <- paste0(brewer.pal(3, "Set1")[1:2], "60")
 names(group_colors) <- c("KO", "WT")
 
 ## Plot all chromatograms.
@@ -322,7 +322,22 @@ appropriate and correctly identified the expected peaks.
 ```{r  peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
 plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
 highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group],
-		    lty = 3, rt = rtr, mz = mzr) 
+		    lty = 3, rt = rtr, mz = mzr, type = "rect") 
+```
+
+In the plot above the peak definitions are indicated with rectangles containing
+the full peak. In addition it is possible to represent the apex position of each
+peak with a single point (passing argument `type = "point"` to the function), or
+draw the actually identified peak by specifying `type = "polygon"`. Below we use
+this option to fill the peak area for each identified chromatographic peak in
+each sample. Whether individual peaks can be still identified in such a plot
+depends however on the number of samples from which peaks are drawn.
+
+```{r  peak-detection-highlight-chrom-peaks-plot-polygon, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." }
+plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
+highlightChromPeaks(xdata, col = group_colors[chr_raw$sample_group],
+		    lty = 3, rt = rtr, mz = mzr, border = NA,
+		    type = "polygon") 
 ```
 
 Note that we can also specifically extract identified chromatographic peaks for
