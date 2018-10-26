@@ -1828,7 +1828,11 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
 #' Return the index of all MS2 spectra that are within a given rt and m/z
 #' range.
 #'
-#' @param x `XCMSnExp` object.
+#' @param precursorMz_all `numeric` with the precursor m/z for all spectra of
+#'     an `XCMSnExp` (i.e. the result from `precursorMz(x)`).
+#'
+#' @param rt_all `numeric` with the retention time for all spectra of an
+#'     `XCMSnExp` object (i.e. the result from `rtime(x)`).
 #'
 #' @param rt `numeric(2)` with the retention time range in which spectra
 #'     should be identified.
@@ -1843,17 +1847,16 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
 #'
 #' @author Johannes Rainer
 #'
+#' @md
+#' 
 #' @noRd
-ms2_spectra_in_slice <- function(x, rt, mz, expandRt = 0, expandMz = 0,
-                                 ppm = 0) {
+spectra_in_slice <- function(precursorMz_all, rt_all, rt, mz,
+                                 expandRt = 0, expandMz = 0, ppm = 0) {
     rt <- range(rt) + c(-expandRt, expandRt)
-    mz_ppm <- mean(mz) * ppm / 1e6
+    mz_ppm <- (mz[1] + mz[2]) * ppm / 2e6
     mz <- range(mz) + c(-expandMz, expandMz) + c(-mz_ppm, mz_ppm)
-    pmz <- precursorMz(x)
-    rtm <- rtime(x)
-    which(msLevel(x) > 1 &
-          (pmz > mz[1] & pmz < mz[2]) &
-          (rtm > rt[1] & rtm < rt[2]))
+    which((precursorMz_all > mz[1] & precursorMz_all < mz[2]) &
+          (rt_all > rt[1] & rt_all < rt[2]))
 }
 
 #' For details see chromPeakSpectra
@@ -1878,22 +1881,22 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
         if (!(min(subset) >= 1 && max(subset) <= nrow(pks)))
             stop("If 'subset' is defined it has to be >= 1 and <= ",
                  nrow(pks), ".")
-        use_subset <- TRUE
-    }
+    } else subset <- seq_len(nrow(pks))
     x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
     fromF <- fromFile(x)
     ## We are faster getting all MS2 spectra once at the start.
     sps <- spectra(x)
+    pmz <- precursorMz(x)
+    rtm <- rtime(x)
     res <- vector(mode = "list", nrow(pks))
-    for (i in 1:nrow(pks)) {
-        if (use_subset && (!i %in% subset))
-            next
+    for (i in subset) {
         if (skipFilled && pks[i, "is_filled"] == 1)
             next
-        idx <- ms2_spectra_in_slice(x, rt = pks[i, c("rtmin", "rtmax")],
-                                    mz = pks[i, c("mzmin", "mzmax")],
-                                    expandRt = expandRt,
-                                    expandMz = expandMz, ppm = ppm)
+        idx <- spectra_in_slice(
+            precursorMz_all = pmz, rt_all = rtm,
+            rt = pks[i, c("rtmin", "rtmax")],
+            mz = pks[i, c("mzmin", "mzmax")],
+            expandRt = expandRt, expandMz = expandMz, ppm = ppm)
         idx <- idx[fromF[idx] == pks[i, "sample"]]
         if (length(idx)) {
             if (length(idx) > 1 & method != "all") {
@@ -2011,7 +2014,8 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
     sp_pks <- ms2_spectra_for_peaks(x, expandRt = expandRt,
                                     expandMz = expandMz, ppm = ppm,
                                     skipFilled = skipFilled,
-                                    subset = unique(unlist(idxs)), ...)
+                                    subset = unique(unlist(
+                                        idxs)), ...)
     res <- lapply(idxs, function(z) unlist(sp_pks[z]))
     names(res) <- rownames(featureDefinitions(x))
     res    

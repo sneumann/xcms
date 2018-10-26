@@ -2336,6 +2336,17 @@ do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
 #' 
 #' @param polarity character(1) defining the polarity, either \code{"positive"}
 #'     or \code{"negative"}.
+#'
+#' @note
+#'
+#' Reference for considered adduct distances:
+#' Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc Mass Spectrom
+#' 1999, 10, 1166-1173.
+#'
+#' Reference for contaminants:
+#' Interferences and comtaminants encountered in modern mass spectrometry
+#' Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA
+#' CHIMICA ACTA, 627 (1): 71-81)
 #' 
 #' @return see do_define_isotopes.
 #'
@@ -2351,16 +2362,6 @@ do_define_adducts <- function(peaks., polarity = "positive") {
     }
     if (is.data.frame(peaks.))
         peaks. <- as.matrix(peaks.)
-    ## considered adduct distances
-    ## reference: Huang N.; Siegel M.M.1; Kruppa G.H.; Laukien F.H.; J Am Soc
-    ## Mass Spectrom 1999, 10, 1166–1173; Automation of a Fourier transform ion
-    ## cyclotron resonance mass spectrometer for acquisition, analysis, and
-    ## e-mailing of high-resolution exact-mass electrospray ionization mass
-    ## spectral data
-    ## see also for contaminants: Interferences and contaminants encountered
-    ## in modern mass spectrometry (Bernd O. Keller, Jie Sui, Alex B. Young
-    ## and Randy M. Whittal, ANALYTICA CHIMICA ACTA, 627 (1): 71-81)
-
     mH  <-  1.0078250322
     mNa <- 22.98976928
     mK  <- 38.96370649
