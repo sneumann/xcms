@@ -1808,6 +1808,12 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #' @param digits `integer(1)` defining the number of significant digits to be
 #'     used for numeric. The default `NULL` uses `getOption("digits")`. See
 #'     [format()] for more information.
+#'
+#' @param groupnames `logical(1)` whether row names of the resulting matrix
+#'     should be the feature IDs (`groupnames = FALSE`; default) or IDs that
+#'     are composed of the m/z and retention time of the features (in the
+#'     format *M<m/z>T<rt>* (`groupnames = TRUE`). See help of the [groupnames]
+#'     function for details.
 #' 
 #' @param ... additional parameters to be passed to the [featureValues()]
 #'     function.
@@ -1821,7 +1827,8 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #'
 #' @md
 exportMetaboAnalyst <- function(x, file = NULL, label,
-                                value = "into", digits = NULL, ...) {
+                                value = "into", digits = NULL,
+                                groupnames = FALSE, ...) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is supposed to be an XCMSnExp object")
     fv <- featureValues(x, value = value, ...)
@@ -1831,6 +1838,8 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
     if (missing(label))
         stop("Please provide the group assignment of the samples with the ",
              "'label' parameter")
+    if (groupnames)
+        rownames(fv) <- groupnames(x)
     if (length(label) == 1) {
         if (any(colnames(pData(x)) == label))
             label <- as.character(pData(x)[, label])

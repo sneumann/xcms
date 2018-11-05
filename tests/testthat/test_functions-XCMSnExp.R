@@ -207,6 +207,10 @@ test_that("exportMetaboAnalyst works", {
     res3 <- read.table(fl, sep = ",", row.names = 1, as.is = TRUE)
     colnames(res3) <- colnames(res)
     expect_equal(as.matrix(res3), res)
+
+    res <- exportMetaboAnalyst(xod_xg, label = c("a", "a", "a"),
+                               groupnames = TRUE)
+    expect_equal(rownames(res), c("Sample", "Label", groupnames(xod_xg)))
 })
 
 test_that("chromPeakSpectra works", {

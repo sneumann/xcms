@@ -5,7 +5,7 @@
 \title{Export data for use in MetaboAnalyst}
 \usage{
 exportMetaboAnalyst(x, file = NULL, label, value = "into",
-  digits = NULL, ...)
+  digits = NULL, groupnames = FALSE, ...)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks grouped
@@ -24,6 +24,12 @@ feature. See \code{\link[=featureValues]{featureValues()}} for more details.}
 \item{digits}{\code{integer(1)} defining the number of significant digits to be
 used for numeric. The default \code{NULL} uses \code{getOption("digits")}. See
 \code{\link[=format]{format()}} for more information.}
+
+\item{groupnames}{\code{logical(1)} whether row names of the resulting matrix
+should be the feature IDs (\code{groupnames = FALSE}; default) or IDs that
+are composed of the m/z and retention time of the features (in the
+format \emph{M<m/z>T<rt>} (\code{groupnames = TRUE}). See help of the \link{groupnames}
+function for details.}
 
 \item{...}{additional parameters to be passed to the \code{\link[=featureValues]{featureValues()}}
 function.}

@@ -20,7 +20,9 @@ setMethod("show", "XCMSnExp", function(object) {
     if (hasChromPeaks(object)) {
         cat("Chromatographic peak detection:\n")
         ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
-        cat(" method:", .param2string(ph[[1]]@param), "\n")
+        if (length(ph))
+            cat(" method:", .param2string(ph[[1]]@param), "\n")
+        else cat(" unknown method.\n")
         cat(" ", nrow(chromPeaks(object)), " peaks identified in ",
             length(fileNames(object)), " samples.\n", sep = "")
         cat(" On average ",
@@ -30,12 +32,16 @@ setMethod("show", "XCMSnExp", function(object) {
     if (hasAdjustedRtime(object)) {
         cat("Alignment/retention time adjustment:\n")
         ph <- processHistory(object, type = .PROCSTEP.RTIME.CORRECTION)
-        cat(" method:", .param2string(ph[[1]]@param), "\n")
+        if (length(ph))
+            cat(" method:", .param2string(ph[[1]]@param), "\n")
+        else cat(" unknown method.\n")
     }
     if (hasFeatures(object)) {
         cat("Correspondence:\n")
         ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
-        cat(" method:", .param2string(ph[[1]]@param), "\n")
+        if (length(ph))
+            cat(" method:", .param2string(ph[[1]]@param), "\n")
+        else cat(" unknown method.\n")
         cat(" ", nrow(featureDefinitions(object)), " features identified.\n",
             sep = "")
         cat(" Median mz range of features: ",

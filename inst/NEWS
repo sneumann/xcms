@@ -1,3 +1,10 @@
+Changes in version 3.5.1
+
+- Add parameter groupval to exportMetaboAnalyst (issue #296).
+- Fix bug in show,XCMSnExp that would throw an error if no process history is
+  present.
+
+
 Changes in version 3.3.6
 
 - Add type = "polygon" to highlightChromPeaks allowing to fill the actual
