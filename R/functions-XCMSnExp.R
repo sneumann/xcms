@@ -327,7 +327,7 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, "sample"] <- sample_idx
     res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
-    message("Requesting ", nrow(res), " missing peaks from ",
+    message("Requesting ", nrow(res), " peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
@@ -410,7 +410,7 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, "rtmax"] <- -1
     res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
-    message("Requesting ", nrow(res), " missing peaks from ",
+    message("Requesting ", nrow(res), " peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
@@ -469,7 +469,7 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, "rtmax"] <- -1
     res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
-    message("Reguesting ", nrow(res), " missing peaks from ",
+    message("Reguesting ", nrow(res), " peaks from ",
              basename(fileNames(object)), " ... ", appendLF = FALSE)
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
@@ -514,7 +514,7 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, c("mzmin", "mzmax")] <-
         peakArea[, c("mzmin", "mzmax")]
     ## Load the data
-    message("Requesting ", nrow(res), " missing peaks from ",
+    message("Requesting ", nrow(res), " peaks from ",
             basename(fileNames(object)), " ... ", appendLF = FALSE)
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
