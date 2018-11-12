@@ -57,13 +57,13 @@ r_packages:
 script: 
   - | 
     R CMD build .
-    travis_wait 40 R CMD check --no-build-vignettes --no-vignettes xcms*tar.gz
+    travis_wait 60 R CMD check --no-build-vignettes --no-vignettes xcms*tar.gz
 
 after_failure:
   find *Rcheck -name '*.fail' -print -exec cat '{}' \;
   
 after_success:
-  - travis_wait 20 Rscript -e 'covr::codecov()'
+  - travis_wait 30 Rscript -e 'covr::codecov()'
 
 # # print timings (of examples) and sysinfo
 # after_script:
