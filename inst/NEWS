@@ -1,3 +1,8 @@
+Changes in version 3.4.1
+
+- Small fix in the xcms vignette (issue #327).
+
+
 Changes in version 3.3.6
 
 - Add type = "polygon" to highlightChromPeaks allowing to fill the actual
@@ -199,7 +204,7 @@ Changes in version 2.99.4
 
 NEW FEATURES:
 - Add plotChromPeaks function to plot the definition (rt and mz range) of
-  detected chromatographic peaks of one file into the mz-rt plane. 
+  detected chromatographic peaks of one file into the mz-rt plane.
 - Add plotChromPeakImage function to plot the number of detected peaks along
   the retention time axis per file as an image plot.
 
