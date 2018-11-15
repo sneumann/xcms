@@ -39,7 +39,8 @@ Suggests:
     testthat,
     pander,
     magrittr,
-    MALDIquant
+    MALDIquant,
+    pheatmap
 Enhances:
     Rgraphviz,
     Rmpi,
@@ -54,7 +55,7 @@ VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
 RoxygenNote: 6.1.0
-Collate: 
+Collate:
     'AllGenerics.R'
     'DataClasses.R'
     'Deprecated.R'

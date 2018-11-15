@@ -8,7 +8,7 @@ vignette: >
   %\VignetteIndexEntry{LCMS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -81,6 +81,7 @@ library(faahKO)
 library(RColorBrewer)
 library(pander)
 library(magrittr)
+library(pheatmap)
 
 ## Get the full path to the CDF files
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
@@ -185,13 +186,44 @@ data).
 Below we create boxplots representing the distribution of total ion currents per
 file. Such plots can be very useful to spot problematic or failing MS runs.
 
-```{r  data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
+```{r data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
 ## Get the total ion current by file
 tc <- split(tic(raw_data), f = fromFile(raw_data))
 boxplot(tc, col = group_colors[raw_data$sample_group],
         ylab = "intensity", main = "Total ion current")
 ```
 
+Also, we can cluster the samples based on similarity of their base peak
+chromatogram. This can also be helpful to spot potentially problematic samples
+in an experiment or generally get an initial overview of the sample grouping in
+the experiment. Since the retention times between samples are not exactly
+identical, we use the `bin` function to group intensities in fixed time ranges
+(bins) along the retention time axis. In the present example we use a bin size
+of 1 second, the default is 0.5 seconds. The clustering is performed using
+complete linkage hierarchical clustering on the pairwise correlations of the
+binned base peak chromatograms.
+
+```{r data-inspection-bpc-heatmap, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 6, fig.cap = "Grouping of samples based on similarity of their base peak chromatogram."}
+## Bin the BPC
+bpis_bin <- bin(bpis, binSize = 2)
+
+## Calculate correlation on the log2 transformed base peak intensities
+cormat <- cor(log2(do.call(cbind, lapply(bpis_bin, intensity))))
+colnames(cormat) <- rownames(cormat) <- raw_data$sample_name
+
+## Define which phenodata columns should be highlighted in the plot
+ann <- data.frame(group = raw_data$sample_group)
+rownames(ann) <- raw_data$sample_name
+
+## Perform the cluster analysis
+pheatmap(cormat, annotation = ann,
+         annotation_color = list(group = group_colors))
+```
+
+The samples cluster in a pairwise manner, the KO and WT samples for the sample
+index having the most similar BPC. In addition, 3 larger clusters are present
+grouping KO and WT samples 21 and 22 together as well as 18 and 19. KO and WT
+samples 15 and 16 separate from these two clusters.
 
 # Chromatographic peak detection
 
