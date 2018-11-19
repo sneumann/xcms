@@ -51,7 +51,7 @@ test_that("plotChromPeakDensity works", {
 
     ## Use the full range.
     plotChromPeakDensity(xod_x)
-    
+
     plotChromPeakDensity(xod_x, mz = c(0, 1))
     plotChromPeakDensity(xod_x, mz = c(300, 310), pch = 16, xlim = c(2500, 4000))
 
@@ -148,7 +148,7 @@ test_that("featureSummary works", {
                       sd(z, na.rm = TRUE) / mean(z, na.rm = TRUE)
                   })
     expect_equal(rsds, res[, "rsd"])
-    
+
     res <- featureSummary(xod_xgrg, group = c(2, 1, 1))
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   "rsd", "2_count", "2_perc", "2_multi_count",
@@ -168,7 +168,7 @@ test_that("featureSummary works", {
     expect_equal(rsds, res[, "1_rsd"])
     ## Columns except rsd are not allowed to have NAs
     expect_true(sum(is.na(res[, -grep(colnames(res), pattern = "rsd")])) == 0)
-    
+
     res <- featureSummary(xod_xgrg, perSampleCounts = TRUE)
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   "rsd",
@@ -278,4 +278,5 @@ test_that("highlightChromPeaks works", {
     highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr)
     highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr, type = "polygon",
                         col = c("#ff000020", "#00ff0020", "#0000ff20"))
+    expect_error(highlightChromPeaks(xod_xgrg, peakIds = c("a", "b")))
 })

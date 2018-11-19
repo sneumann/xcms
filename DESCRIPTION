@@ -54,7 +54,7 @@ URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
 VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: MassSpectrometry, Metabolomics
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Collate:
     'AllGenerics.R'
     'DataClasses.R'

@@ -1,5 +1,7 @@
 Changes in version 3.5.1
 
+- Add argument peakIds to highlightChromPeaks allowing to specify the IDs of
+  peaks to be highlighted.
 - Add example on clustering of base peak chromatograms to the vignette (issue
   #328).
 - Small fix in the vignette (issue #327).
