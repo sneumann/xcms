@@ -1186,7 +1186,7 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
     if (!is(x, "XCMSnExp"))
         stop("'x' has to be a XCMSnExp object")
     if (length(peakIds))
-        pks <- chromPeaks(x)[peakIds, ]
+        pks <- chromPeaks(x)[peakIds, , drop = FALSE]
     else pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0, type = whichPeaks)
     if (length(col) != n_samples)
         col <- rep(col[1], n_samples)
