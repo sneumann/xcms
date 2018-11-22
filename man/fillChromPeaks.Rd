@@ -202,7 +202,7 @@ sum(is.na(featureValues(res)))
 ## No.
 
 ## Get the process history step along with the parameters used to perform
-## The peak filling: 
+## The peak filling:
 ph <- processHistory(res, type = "Missing peak filling")[[1]]
 ph
 
@@ -213,7 +213,7 @@ ph@param
 res <- dropFilledChromPeaks(res)
 
 ## Perform the peak filling with modified settings: allow expansion of the
-## mz range by a specified ppm and expanding the mz range by mz width/2 
+## mz range by a specified ppm and expanding the mz range by mz width/2
 prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
 res <- fillChromPeaks(res, param = prm)
 

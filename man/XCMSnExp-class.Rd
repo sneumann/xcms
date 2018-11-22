@@ -196,7 +196,7 @@ returned.}
 type. Use the \code{processHistoryTypes} to list all supported values.
 For \code{chromPeaks}: \code{character} specifying which peaks to return
 if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-chromatographic peaks partially overlapping the range defined by 
+chromatographic peaks partially overlapping the range defined by
 \code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
@@ -264,7 +264,7 @@ with at least the following columns:
 scans/retention times),
 \code{"mzmin"} (minimal mz value),
 \code{"mzmax"} (maximal mz value),
-\code{"rt"} (retention time for the peak apex),
+\code{"rt"} (retention time of the peak apex),
 \code{"rtmin"} (minimal retention time),
 \code{"rtmax"} (maximal retention time),
 \code{"into"} (integrated, original, intensity of the peak),

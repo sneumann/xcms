@@ -6,11 +6,18 @@
 \alias{XChromatogram}
 \alias{XChromatogram-class}
 \alias{show,XChromatogram-method}
+\alias{chromPeaks,XChromatogram-method}
+\alias{chromPeaks<-,XChromatogram-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatogram(x, pks)
 
 \S4method{show}{XChromatogram}(object)
+
+\S4method{chromPeaks}{XChromatogram}(object, rt = numeric(),
+  type = c("any", "within", "apex_within"))
+
+\S4method{chromPeaks}{XChromatogram}(object) <- value
 }
 \arguments{
 \item{x}{An \code{XChromatogram} object.}
@@ -18,13 +25,44 @@ XChromatogram(x, pks)
 \item{pks}{\code{matrix} with required columns \code{"rt"}, \code{"rtmin"}, \code{"rtmax"},
 \code{"into"}, \code{"maxo"} and \code{"sn"}.}
 
-\item{object}{An \code{XChromatogram} obhect.}
+\item{object}{An \code{XChromatogram} object.}
+
+\item{rt}{For `chromPeaks`: `numeric(2)` defining the retention time range
+for which chromatographic peaks should be returned.}
+
+\item{type}{For `chromPeaks`: `character(1)` defining which peaks to return
+if `rt` is provided: `"any"` (default) return all peaks that are even
+partially overlapping with `rt`, `"within"` return peaks that are
+completely within `rt` and `"apex_within"` return peaks which apex
+is within `rt`.}
+
+\item{value}{For `chromPeaks<-`: a numeric `matrix` with required columns
+`"rt"`, `"rtmin"`, `"rtmax"`, `"into"` and `"maxo"`.}
+}
+\value{
+\code{XChromatogram} returns an \code{XChromatogram} object.
+
+For `chromPeaks`: a `matrix` with columns:
+- `"rt"`: the retention time of the peak apex.
+- `"rtmin"`: the lower peak boundary.
+- `"rtmax"`: the upper peak boundary.
+- `"into"`: the integrated peak signal (area of the peak).
+- `"maxo"`: the maximum intensity of the peak.
+
+## Extract the chromatographic peaks
+chromPeaks(xchr)
 }
 \description{
 The \code{XChromatogram} object allows to store chromatographic data (e.g.
 an extracted ion chromatogram) along with identified chromatographic peaks
 within that data. The object inherits all functions from the \code{\link[=Chromatogram]{Chromatogram()}}
 object in the \code{MSnbase} package.
+
+- `chromPeaks`, `chromPeaks<-`: extract or set the matrix with the
+  chromatographic peak definitions. Parameter `rt` allows to specify a
+  retention time range for which peaks should be returned along with
+  parameter `type` that defines how *overlapping* is defined (parameter
+  description for details).
 }
 \section{Creation of objects}{
 

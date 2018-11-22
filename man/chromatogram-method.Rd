@@ -84,7 +84,7 @@ using the \code{missing} parameter.
 \note{
 \code{\link{Chromatogram}} objects extracted with
 \code{chromatogram}
-contain \code{NA_real_} values if, for a given retention time, no 
+contain \code{NA_real_} values if, for a given retention time, no
 signal was measured in the specified mz range. If no spectrum/scan is
 present in the defined retention time window a \code{Chromatogram} object
 of length 0 is returned.
@@ -110,7 +110,7 @@ chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
 
 chrs
 
-## Plot the chromatogram 
+## Plot the chromatogram
 plot(rtime(chrs[1, 2]), intensity(chrs[1, 2]), type = "l", xlab = "rtime",
      ylab = "intensity", col = "000080")
 for(i in c(1, 3)) {
