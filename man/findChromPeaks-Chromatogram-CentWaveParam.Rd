@@ -17,9 +17,9 @@ arguments used for peak detection.}
 \item{...}{currently ignored.}
 }
 \value{
-If called on a \code{Chromatogram} object, the method returns a \code{matrix} with
-the identified peaks. See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for details on the matrix
-content.
+If called on a \code{Chromatogram} object, the method returns an \link{XChromatogram}
+object with the identified peaks. See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for details on
+the peak matrix content.
 }
 \description{
 \code{findChromPeaks} on a \link{Chromatogram} or \link{Chromatograms} object with a

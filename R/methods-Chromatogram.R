@@ -19,24 +19,24 @@
 #'     arguments used for peak detection.
 #'
 #' @param ... currently ignored.
-#' 
+#'
 #' @return
 #'
-#' If called on a `Chromatogram` object, the method returns a `matrix` with
-#' the identified peaks. See [peaksWithCentWave()] for details on the matrix
-#' content.
-#' 
+#' If called on a `Chromatogram` object, the method returns an [XChromatogram]
+#' object with the identified peaks. See [peaksWithCentWave()] for details on
+#' the peak matrix content.
+#'
 #' @seealso [peaksWithCentWave()] for the downstream function and [centWave]
 #'     for details on the method.
 #'
 #' @author Johannes Rainer
 #'
 #' @rdname findChromPeaks-Chromatogram-CentWaveParam
-#' 
+#'
 #' @md
 #'
 #' @examples
-#' 
+#'
 #' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'     mode = "onDisk")
 #'
@@ -63,10 +63,11 @@
 setMethod("findChromPeaks", signature(object = "Chromatogram",
                                       param = "CentWaveParam"),
           function(object, param, ...) {
-              do.call("peaksWithCentWave",
-                      args = c(list(int = intensity(object),
-                                    rt = rtime(object)),
-                               as(param, "list")))
+              res <- do.call("peaksWithCentWave",
+                             args = c(list(int = intensity(object),
+                                           rt = rtime(object)),
+                                      as(param, "list")))
+              XChromatogram(object, res)
           })
 
 #' @title matchedFilter-based peak detection in purely chromatographic data
@@ -88,24 +89,24 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #'     arguments used for peak detection.
 #'
 #' @param ... currently ignored.
-#' 
+#'
 #' @return
 #'
 #' If called on a `Chromatogram` object, the method returns a `matrix` with
 #' the identified peaks. See [peaksWithMatchedFilter()] for details on the
 #' matrix content.
-#' 
+#'
 #' @seealso [peaksWithMatchedFilter()] for the downstream function and
 #'     [matchedFilter] for details on the method.
 #'
 #' @author Johannes Rainer
 #'
 #' @rdname findChromPeaks-Chromatogram-MatchedFilter
-#' 
+#'
 #' @md
 #'
 #' @examples
-#' 
+#'
 #' od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 #'     mode = "onDisk")
 #'
@@ -132,8 +133,9 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 setMethod("findChromPeaks", signature(object = "Chromatogram",
                                       param = "MatchedFilterParam"),
           function(object, param, ...) {
-              do.call("peaksWithMatchedFilter",
-                      args = c(list(int = intensity(object),
-                                    rt = rtime(object)),
-                               as(param, "list")))
+              res <- do.call("peaksWithMatchedFilter",
+                             args = c(list(int = intensity(object),
+                                           rt = rtime(object)),
+                                      as(param, "list")))
+              XChromatogram(object, res)
           })
