@@ -200,7 +200,7 @@ setClass("xcmsPeaks", contains = "matrix")
 ############################################################
 ## ProcessHistory
 #' @aliases ProcessHistory
-#' 
+#'
 #' @title Tracking data processing
 #'
 #' @description Objects of the type \code{ProcessHistory} allow to keep track
@@ -271,7 +271,7 @@ setClass("Param",
 setClassUnion("ParamOrNULL", c("Param", "NULL"))
 
 #' @aliases GenericParam
-#' 
+#'
 #' @title Generic parameter class
 #'
 #' @description The \code{GenericParam} class allows to store generic parameter
@@ -286,14 +286,14 @@ setClassUnion("ParamOrNULL", c("Param", "NULL"))
 #'     of an \code{\link{XCMSnExp}} object.
 #'
 #' @slot fun \code{character} specifying the function name.
-#' 
+#'
 #' @slot args \code{list} (ideally named) with the arguments to the
 #'     function.
-#' 
+#'
 #' @slot .__classVersion__ the version of the class.
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @rdname GenericParam
 #'
 #' @examples
@@ -322,7 +322,7 @@ setClass("GenericParam",
          )
 
 #' @aliases XProcessHistory
-#' 
+#'
 #' @title Tracking data processing
 #'
 #' @description The \code{XProcessHistory} extends the \code{ProcessHistory} by
@@ -335,7 +335,7 @@ setClass("GenericParam",
 #'
 #' @slot msLevel: \code{integer} definining the MS level(s) on which the
 #'     analysis was performed.
-#' 
+#'
 #' @rdname ProcessHistory-class
 setClass("XProcessHistory",
          slots = c(
@@ -382,27 +382,27 @@ setClass("XProcessHistory",
 #'     \item{matchedFilter}{peak detection in chromatographic space. See
 #'     \code{\link{matchedFilter}} for more details.}
 #'
-#'     \item{massifquant}{peak detection using the Kalman filter-based 
+#'     \item{massifquant}{peak detection using the Kalman filter-based
 #'     method. See \code{\link{massifquant}} for more details.}
 #'
 #'     \item{MSW}{single-spectrum non-chromatography MS data peak detection.
 #'     See \code{\link{MSW}} for more details.}
 #'
 #'     }
-#' 
+#'
 #' @name chromatographic-peak-detection
-#' 
+#'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso \code{\link{findPeaks}} for the \emph{old} peak detection
 #'     methods.
-#' 
+#'
 #'     \code{\link{plotChromPeaks}} to plot identified chromatographic peaks
 #'     for one file.
 #'
 #'     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
 #'     peaks in an extracted ion chromatogram plot.
-#' 
+#'
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -419,18 +419,18 @@ NULL
 #' @param ppm \code{numeric(1)} defining the maximal tolerated m/z deviation in
 #'     consecutive scans in parts per million (ppm) for the initial ROI
 #'     definition.
-#' 
+#'
 #' @param peakwidth \code{numeric(2)} with the expected approximate
 #'     peak width in chromatographic space. Given as a range (min, max)
 #'     in seconds.
-#' 
+#'
 #' @param snthresh \code{numeric(1)} defining the signal to noise ratio cutoff.
 #'
 #' @param prefilter \code{numeric(2)}: \code{c(k, I)} specifying the prefilter
 #'     step for the first analysis step (ROI detection). Mass traces are only
 #'     retained if they contain at least \code{k} peaks with intensity
 #'     \code{>= I}.
-#' 
+#'
 #' @param mzCenterFun Name of the function to calculate the m/z center of the
 #'     chromatographic peak. Allowed are: \code{"wMean"}: intensity weighted
 #'     mean of the peak's m/z values, \code{"mean"}: mean of the peak's m/z
@@ -439,30 +439,30 @@ NULL
 #'     peak apex and the m/z values left and right of it and \code{"meanApex3"}:
 #'     mean of the m/z value of the peak apex and the m/z values left and right
 #'     of it.
-#' 
+#'
 #' @param integrate Integration method. For \code{integrate = 1} peak limits
 #'     are found through descent on the mexican hat filtered data, for
 #'     \code{integrate = 2} the descent is done on the real data. The latter
 #'     method is more accurate but prone to noise, while the former is more
 #'     robust, but less exact.
-#' 
+#'
 #' @param mzdiff \code{numeric(1)} representing the minimum difference in m/z
 #'     dimension required for peaks with overlapping retention times; can be
 #'     negative to allow overlap. During peak post-processing, peaks
 #'     defined to be overlapping are reduced to the one peak with the largest
 #'     signal.
-#' 
+#'
 #' @param fitgauss \code{logical(1)} whether or not a Gaussian should be fitted
 #'     to each peak. This affects mostly the retention time position of the
 #'     peak.
-#' 
+#'
 #' @param noise \code{numeric(1)} allowing to set a minimum intensity required
 #'     for centroids to be considered in the first analysis step (centroids with
 #'     intensity \code{< noise} are omitted from ROI detection).
-#' 
+#'
 #' @param verboseColumns \code{logical(1)} whether additional peak meta data
 #'     columns should be returned.
-#' 
+#'
 #' @param roiList An optional list of regions-of-interest (ROI) representing
 #'     detected mass traces. If ROIs are submitted the first analysis step is
 #'     omitted and chromatographic peak detection is performed on the submitted
@@ -472,10 +472,10 @@ NULL
 #'     (number of scans), \code{intensity} (summed intensity). Each ROI should
 #'     be represented by a \code{list} of elements or a single row
 #'     \code{data.frame}.
-#' 
+#'
 #' @param firstBaselineCheck \code{logical(1)}. If \code{TRUE} continuous
 #'     data within regions of interest is checked to be above the first baseline.
-#' 
+#'
 #' @param roiScales Optional numeric vector with length equal to \code{roiList}
 #'     defining the scale for each region of interest in \code{roiList} that
 #'     should be used for the centWave-wavelets.
@@ -506,7 +506,7 @@ NULL
 #'     object.
 #'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso
 #'
 #' The \code{\link{do_findChromPeaks_centWave}} core API function and
@@ -519,9 +519,9 @@ NULL
 #' Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 #' sensitive feature detection for high resolution LC/MS" \emph{BMC Bioinformatics}
 #' 2008, 9:504
-#' 
+#'
 #' @name findChromPeaks-centWave
-#' 
+#'
 #' @author Ralf Tautenhahn, Johannes Rainer
 NULL
 #> NULL
@@ -645,7 +645,7 @@ setClass("CentWaveParam",
                      msg <- c(msg, paste0("'roiList' does not provide ",
                                           "all required fields!"))
              }
-             if (length(object@roiScales) > 0) {   
+             if (length(object@roiScales) > 0) {
                  if (length(object@roiList) != length(object@roiScales))
                      msg <- c(msg, paste0("'roiScales' has to have the same",
                                           " length than 'roiList'."))
@@ -675,34 +675,34 @@ setClass("CentWaveParam",
 #'
 #' @param binSize \code{numeric(1)} specifying the width of the
 #'     bins/slices in m/z dimension.
-#' 
+#'
 #' @param impute Character string specifying the method to be used for missing
 #'     value imputation. Allowed values are \code{"none"} (no linear
 #'     interpolation), \code{"lin"} (linear interpolation), \code{"linbase"}
 #'     (linear interpolation within a certain bin-neighborhood) and
 #'     \code{"intlin"}. See \code{\link{imputeLinInterpol}} for more details.
-#' 
+#'
 #' @param fwhm \code{numeric(1)} specifying the full width at half maximum
 #'     of matched filtration gaussian model peak. Only used to calculate the
 #'     actual sigma, see below.
-#' 
+#'
 #' @param sigma \code{numeric(1)} specifying the standard deviation (width)
 #'     of the matched filtration model peak.
-#' 
+#'
 #' @param max \code{numeric(1)} representing the maximum number of peaks
 #'     that are expected/will be identified per slice.
-#' 
+#'
 #' @param snthresh \code{numeric(1)} defining the signal to noise cutoff
 #'     to be used in the chromatographic peak detection step.
-#' 
+#'
 #' @param steps \code{numeric(1)} defining the number of bins to be
 #'     merged before filtration (i.e. the number of neighboring bins that will
 #'     be joined to the slice in which filtration and peak detection will be
 #'     performed).
-#' 
+#'
 #' @param mzdiff \code{numeric(1)} defining the minimum difference
 #'     in m/z for peaks with overlapping retention times
-#' 
+#'
 #' @param index \code{logical(1)} specifying whether indicies should be
 #'     returned instead of values for m/z and retention times.
 #'
@@ -723,11 +723,11 @@ setClass("CentWaveParam",
 #'     algorithm can be passed with a \code{MatchedFilterParam} object.
 #'
 #' @inheritParams imputeLinInterpol
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
 #'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso
 #'
 #' The \code{\link{do_findChromPeaks_matchedFilter}} core API function
@@ -735,7 +735,7 @@ setClass("CentWaveParam",
 #'
 #' \code{\link{peaksWithMatchedFilter}} for functions to perform matchedFilter
 #' peak detection in purely chromatographic data.
-#' 
+#'
 #' @references
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -869,12 +869,12 @@ setClass("MatchedFilterParam",
 #'     For \code{withWave = TRUE} the second argument represents the maximum
 #'     peak length subject to being greater than the mininum peak length
 #'     (see also documentation of \code{\link{do_findChromPeaks_centWave}}).
-#' 
+#'
 #' @param prefilter \code{numeric(2)}. The first argument is only used
 #'     if (\code{withWave = TRUE}); see \code{\link{findChromPeaks-centWave}}
 #'     for details. The second argument specifies the minimum threshold for the
 #'     maximum intensity of a chromatographic peak that must be met.
-#' 
+#'
 #' @param criticalValue \code{numeric(1)}. Suggested values:
 #'     (\code{0.1-3.0}). This setting helps determine the the Kalman Filter
 #'     prediciton margin of error. A real centroid belonging to a bonafide
@@ -884,13 +884,13 @@ setClass("MatchedFilterParam",
 #'     reported by the Kalman Filter. If the peak in the XC-MS sample have
 #'     a small mass deviance in ppm error, a smaller critical value might be
 #'     better and vice versa.
-#' 
+#'
 #' @param consecMissedLimit \code{integer(1)} Suggested values: (\code{1,2,3}).
 #'     While a peak is in the proces of being detected by a Kalman Filter, the
 #'     Kalman Filter may not find a predicted centroid in every scan. After 1
 #'     or more consecutive failed predictions, this setting informs Massifquant
 #'     when to stop a Kalman Filter from following a candidate peak.
-#' 
+#'
 #' @param unions \code{integer(1)} set to \code{1} if apply t-test union on
 #'     segmentation; set to \code{0} if no t-test to be applied on
 #'     chromatographically continous peaks sharing same m/z range.
@@ -902,7 +902,7 @@ setClass("MatchedFilterParam",
 #'     program identifies segmented peaks and combines them (merges them)
 #'     into one with a two sample t-test. The potential danger of this option
 #'     is that some truly distinct peaks may be merged.
-#' 
+#'
 #' @param checkBack \code{integer(1)} set to \code{1} if turned on; set to
 #'     \code{0} if turned off. The convergence of a Kalman Filter to a peak's
 #'     precise m/z mapping is very fast, but sometimes it incorporates erroneous
@@ -912,7 +912,7 @@ setClass("MatchedFilterParam",
 #'     affect identification of a peak because it is a postprocessing measure;
 #'     it has not shown to be a extremely useful thus far and the default is set
 #'     to being turned off.
-#' 
+#'
 #' @param withWave \code{logical(1)} if \code{TRUE}, the peaks identified first
 #'     with Massifquant are subsequently filtered with the second step of the
 #'     centWave algorithm, which includes wavelet estimation.
@@ -945,7 +945,7 @@ setClass("MatchedFilterParam",
 #' @inheritParams findChromPeaks-centWave
 #'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso The \code{\link{do_findChromPeaks_massifquant}} core API function
 #'     and \code{\link{findPeaks.massifquant}} for the old user interface.
 #'
@@ -1111,7 +1111,7 @@ setClass("MassifquantParam",
 #' @inheritParams findChromPeaks-centWave
 #'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso The \code{\link{do_findPeaks_MSW}} core API function
 #'     and \code{\link{findPeaks.MSW}} for the old user interface.
 #'
@@ -1259,14 +1259,14 @@ setClass("MSWParam",
 #'     passed with a \code{CentWavePredIsoParam} object.
 #'
 #' @family peak detection methods
-#' 
+#'
 #' @seealso The \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}} core
 #'     API function and \code{\link{findPeaks.centWave}} for the old user
 #'     interface. \code{\link{CentWaveParam}} for the class the
 #'     \code{CentWavePredIsoParam} extends.
 #'
 #' @name findChromPeaks-centWaveWithPredIsoROIs
-#' 
+#'
 #' @author Hendrik Treutler, Johannes Rainer
 NULL
 #> NULL
@@ -1349,7 +1349,7 @@ setClass("CentWavePredIsoParam",
 #'
 #'     The implemented peak grouping methods are:
 #'     \describe{
-#' 
+#'
 #'     \item{density}{peak grouping based on time dimension peak densities.
 #'     See \code{\link{groupChromPeaks-density}} for more details.}
 #'
@@ -1360,17 +1360,17 @@ setClass("CentWavePredIsoParam",
 #'     \item{nearest}{chromatographic peak grouping based on their proximity in
 #'     the mz-rt space. See \code{\link{groupChromPeaks-nearest}} for more
 #'     details.}
-#' 
+#'
 #' }
 #' @name groupChromPeaks
-#' 
+#'
 #' @family peak grouping methods
-#' 
+#'
 #' @seealso \code{\link{group}} for the \emph{old} peak grouping methods.
 #'     \code{\link{featureDefinitions}} and
 #'     \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
 #'     grouping results.
-#' 
+#'
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -1412,12 +1412,12 @@ NULL
 #'
 #' @param maxFeatures \code{numeric(1)} with the maximum number of peak groups
 #'     to be identified in a single mz slice.
-#' 
+#'
 #' @family peak grouping methods
-#' 
+#'
 #' @seealso The \code{\link{do_groupChromPeaks_density}} core
 #'     API function and \code{\link{group.density}} for the old user interface.
-#' 
+#'
 #' @seealso \code{\link{plotChromPeakDensity}} to plot peak densities and
 #'     evaluate different algorithm settings.
 #'     \code{\link{featureDefinitions}} and
@@ -1425,7 +1425,7 @@ NULL
 #'     features (i.e. the peak grouping results).
 #'
 #' @name groupChromPeaks-density
-#' 
+#'
 #' @author Colin Smith, Johannes Rainer
 #'
 #' @references
@@ -1465,7 +1465,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' 
+#'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
@@ -1488,7 +1488,7 @@ NULL
 #' ## Using the featureValues method to extract a matrix with the
 #' ## intensities of the features per sample.
 #' head(featureValues(res, value = "into"))
-#' 
+#'
 #' ## The process history:
 #' processHistory(res)
 setClass("PeakDensityParam",
@@ -1546,12 +1546,12 @@ setClass("PeakDensityParam",
 #'
 #' @param ppm \code{numeric(1)} representing the relative mz error for the
 #'     clustering/grouping (in parts per million).
-#' 
+#'
 #' @param absMz \code{numeric(1)} representing the absolute mz error for the
 #'     clustering.
-#' 
+#'
 #' @family peak grouping methods
-#' 
+#'
 #' @seealso The \code{\link{do_groupPeaks_mzClust}} core API function and
 #'     \code{\link{group.mzClust}} for the old user interface.
 #'     \code{\link{featureDefinitions}} and
@@ -1664,9 +1664,9 @@ setClass("MzClustParam",
 #'
 #' @param kNN \code{numeric(1)} representing the number of nearest neighbors
 #'     to check.
-#' 
+#'
 #' @family peak grouping methods
-#' 
+#'
 #' @seealso The \code{\link{do_groupChromPeaks_nearest}} core
 #'     API function and \code{\link{group.nearest}} for the old user interface.
 #'     \code{\link{featureDefinitions}} and
@@ -1677,7 +1677,7 @@ setClass("MzClustParam",
 #'
 #' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 #' processing and visualization of mass spectrometry based molecular profile
-#' data. \emph{Bioinformatics} 2006, 22:634-636. 
+#' data. \emph{Bioinformatics} 2006, 22:634-636.
 NULL
 #> NULL
 
@@ -1707,7 +1707,7 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' 
+#'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
@@ -1784,13 +1784,13 @@ setClass("NearestPeaksParam",
 #'     \code{\link{adjustRtime-obiwarp}} for more details.}
 #'     }
 #' @name adjustRtime
-#' 
+#'
 #' @family retention time correction methods
-#' 
-#' @seealso \code{\link{retcor}} for the \emph{old} retention time correction 
+#'
+#' @seealso \code{\link{retcor}} for the \emph{old} retention time correction
 #'     methods.
 #'     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
-#' 
+#'
 #' @author Johannes Rainer
 NULL
 #> NULL
@@ -1825,7 +1825,7 @@ NULL
 #'     samples and retention times of individual spectra will be adjusted
 #'     based on this alignment. For \code{minFraction = 1} the peak group
 #'     has to contain peaks in all samples of the experiment.
-#' 
+#'
 #' @param extraPeaks \code{numeric(1)} defining the maximal number of
 #'     additional peaks for all samples to be assigned to a peak group (i.e.
 #'     feature) for retention time correction. For a data set with 6 samples,
@@ -1850,18 +1850,18 @@ NULL
 #'     the peak groups on which the alignment should be performed. Each column
 #'     represents a sample, each row a feature/peak group. Such a matrix is
 #'     for example returned by the \code{\link{adjustRtimePeakGroups}} method.
-#' 
+#'
 #' @family retention time correction methods
-#' 
+#'
 #' @seealso The \code{\link{do_adjustRtime_peakGroups}} core
 #'     API function and \code{\link{retcor.peakgroups}} for the old user
 #'     interface.
 #'     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
-#' 
+#'
 #' @name adjustRtime-peakGroups
 #'
 #' @author Colin Smith, Johannes Rainer
-#' 
+#'
 #' @references
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -1892,7 +1892,7 @@ NULL
 #' library(xcms)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' 
+#'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
@@ -2000,7 +2000,7 @@ setClass("PeakGroupsParam",
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{retcor}} methods. All of the settings to the alignment
 #'     algorithm can be passed with a \code{ObiwarpParam} object.
-#' 
+#'
 #' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
 #'     to be used for the \emph{profile matrix} generation. See \code{step}
 #'     parameter in \code{\link{profile-matrix}} documentation for more details.
@@ -2043,16 +2043,16 @@ setClass("PeakGroupsParam",
 #'
 #' @param initPenalty \code{numeric(1)} defining the penalty for initiating an
 #'     alignment (for local alignment only).
-#' 
+#'
 #' @family retention time correction methods
-#' 
+#'
 #' @seealso \code{\link{retcor.obiwarp}} for the old user interface.
 #'     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 #'
 #' @name adjustRtime-obiwarp
 #'
 #' @author Colin Smith, Johannes Rainer
-#' 
+#'
 #' @references
 #' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
 #' ESI-LC-MS Proteomics Data Sets by Ordered Bijective Interpolated Warping"
@@ -2077,13 +2077,13 @@ NULL
 #' library(MSnbase)
 #' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
 #'            full.names = TRUE)
-#' 
+#'
 #' ## Reading 2 of the KO samples
 #' raw_data <- readMSData(fls[1:2], mode = "onDisk")
 #'
 #' ## Perform retention time correction on the OnDiskMSnExp:
 #' res <- adjustRtime(raw_data, param = ObiwarpParam())
-#' 
+#'
 #' ## As a result we get a numeric vector with the adjusted retention times for
 #' ## all spectra.
 #' head(res)
@@ -2178,9 +2178,9 @@ setClass("ObiwarpParam",
 
 #' @description The \code{FillChromPeaksParam} object encapsules all settings for
 #' the signal integration for missing peaks.
-#' 
+#'
 #' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
-#' 
+#'
 #' @rdname fillChromPeaks
 setClass("FillChromPeaksParam",
          slots = c(expandMz = "numeric",
@@ -2208,7 +2208,7 @@ setClass("FillChromPeaksParam",
              if (length(object@fixedMz) > 1)
                  msg <- c(msg, "'fixedMz' has to be a numeric of length 1")
              if (length(object@fixedRt) > 1)
-                 msg <- c(msg, "'fixedRt' has to be a numeric of length 1")             
+                 msg <- c(msg, "'fixedRt' has to be a numeric of length 1")
              if (length(msg))
                  msg
              else TRUE
@@ -2228,7 +2228,7 @@ setClass("FillChromPeaksParam",
 #'     sample.
 #'
 #' @noRd
-#' 
+#'
 #' @rdname XCMSnExp-class
 setClass("MsFeatureData", contains = c("environment", "Versioned"),
          prototype = prototype(.xData = new.env(parent = emptyenv())))
@@ -2239,7 +2239,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
                      "peakidx")
 
 #' @aliases XCMSnExp
-#' 
+#'
 #' @title Data container storing xcms preprocessing results
 #'
 #' @description
@@ -2248,7 +2248,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' data preprocessing that comprises chromatographic peak detection, alignment
 #' and correspondence. These results can be accessed with the \code{chromPeaks},
 #' \code{adjustedRtime} and \code{featureDefinitions} functions; see below
-#' (after the Usage, Arguments, Value and Slots sections) for more details). 
+#' (after the Usage, Arguments, Value and Slots sections) for more details).
 #' Along with the results, the object contains the processing history that
 #' allows to track each processing step along with the used settings. This
 #' can be extracted with the \code{\link{processHistory}} method.
@@ -2263,7 +2263,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' \code{xcmsSet} object.
 #'
 #' General functions for \code{XCMSnExp} objects are:
-#' 
+#'
 #' @section Chromatographic peak data:
 #'
 #' Chromatographic peak data is added to an \code{XCMSnExp} object by the
@@ -2293,10 +2293,10 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' \item \code{\link{highlightChromPeaks}} add chromatographic peaks to an
 #' existing plot of a \code{\link{Chromatogram}} (see respective help page).
-#' 
+#'
 #' }
-#' 
-#' 
+#'
+#'
 #' @section Adjusted retention times:
 #'
 #' Adjusted retention times are stored in an \code{XCMSnExp} object besides the
@@ -2317,12 +2317,12 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' \item \code{\link{applyAdjustedRtime}} replace the raw retention times with
 #' the adjusted ones (see respective help page).
-#' 
+#'
 #' \item \code{\link{plotAdjustedRtime}} plot differences between adjusted and
 #' raw retention times (see respective help page).
-#' 
+#'
 #' }
-#' 
+#'
 #'
 #' @section Correspondence results, features:
 #'
@@ -2349,9 +2349,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' \item \code{link{overlappingFeatures}} identify features that are
 #' overlapping or close in the m/z - rt space (see respective help page).
-#' 
+#'
 #' }
-#' 
+#'
 #' @note The \code{"chromPeaks"} element in the \code{msFeatureData} slot is
 #'     equivalent to the \code{@peaks} slot of the \code{xcmsSet} object, the
 #'     \code{"featureDefinitions"} contains information from the \code{@groups}
@@ -2391,7 +2391,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #'     \code{\link{findChromPeaks}} for available peak detection methods
 #'     returning a \code{XCMSnExp} object as a result.
-#' 
+#'
 #'     \code{\link{groupChromPeaks}} for available peak grouping
 #'     methods and \code{\link{featureDefinitions}} for the method to extract
 #'     the feature definitions representing the peak grouping results.
@@ -2399,7 +2399,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #'     \code{\link{chromatogram}} to extract MS data as
 #'     \code{\link{Chromatogram}} objects.
-#' 
+#'
 #'     \code{\link{as}} (\code{as(x, "data.frame")}) in the \code{MSnbase}
 #'     package for the method to extract MS data as \code{data.frame}s.
 #'
@@ -2407,14 +2407,14 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #'     \code{\link{featureChromatograms}} to extract chromatograms for each
 #'     feature.
-#' 
+#'
 #'     \code{\link{chromPeakSpectra}} to extract MS2 spectra with the m/z of
 #'     the precursor ion within the m/z range of a peak and a retention time
 #'     within its retention time range.
 #'
 #'     \code{\link{featureSpectra}} to extract MS2 spectra associated with
 #'     identified features.
-#' 
+#'
 #' @rdname XCMSnExp-class
 #'
 #' @examples
@@ -2553,6 +2553,15 @@ setClass("XCMSnExp",
          }
 )
 
+
+## UPDATE:
+## Eventually better to store the peaks within each Chromatogram object. That
+## would be cleaner and would allow e.g. plotting of a single chromatogram
+## with peaks.
+## Proposal:
+## XChromatogram (Chromatogram): additional slot chromPeaks
+## XChromatograms (Chromatograms): contains XChromatogram objects (!).
+##     Additional slot .processHistory, similar to XCMSnExp.
 .CPEAKS_CHROMPEAKS_REQ_NAMES <- c("row", "col", "rt", "rtmin", "rtmax", "into",
                                   "maxo", "sn")
 ## Info: (issue #281)
@@ -2621,7 +2630,7 @@ setClass("CPeaks",
 #' @param method `character(1)` defining the method that should be used to
 #'     estimate the calibration function. Can be `"shift"`, `"linear"` (default)
 #'     or `"edgeshift"`.
-#' 
+#'
 #' @details The method does first identify peaks that are close to the provided
 #'     mz values and, given that there difference to the calibrants is smaller
 #'     than the user provided cut off (based on arguments `mzabs` and `mzppm`),
@@ -2630,7 +2639,7 @@ setClass("CPeaks",
 #'     or estimated by a linear model through all calibrants.
 #'     Peaks are considered close to a calibrant mz if the difference between
 #'     the calibrant and its mz is `<= mzabs + mz * mzppm /1e6`.
-#' 
+#'
 #' **Adjustment methods**: adjustment function/factor is estimated using
 #' the difference between calibrant and peak mz values only for peaks
 #' that are close enough to the calibrants. The availabel methods are:
@@ -2644,7 +2653,7 @@ setClass("CPeaks",
 #'
 #' For more information, details and examples refer to the
 #' *xcms-direct-injection* vignette.
-#' 
+#'
 #' @note `CalibrantMassParam` classes don't have exported getter or setter
 #'     methods.
 #'
@@ -2652,11 +2661,11 @@ setClass("CPeaks",
 #'     For `calibrate`: an [XCMSnExp] object with chromatographic peaks being
 #'     calibrated. **Be aware** that the actual raw mz values are not (yet)
 #'     calibrated, but **only** the identified chromatographic peaks.
-#' 
+#'
 #' @author Joachim Bargsten, Johannes Rainer
 #'
 #' @md
-#' 
+#'
 #' @rdname calibrate-calibrant-mass
 setClass("CalibrantMassParam",
          slots = c(

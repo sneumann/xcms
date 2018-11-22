@@ -1223,7 +1223,8 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
                },
                polygon = {
                    if (nrow(pks)) {
-                       chrs <- chromatogram(x, rt = rt, mz = mz)
+                       chrs <- chromatogram(
+                           x, rt = range(pks[, c("rtmin", "rtmax")]), mz = mz)
                        pks <- pks[order(pks[, "maxo"], decreasing = TRUE), ,
                                   drop = FALSE]
                        for (j in seq_len(nrow(pks))) {
@@ -1241,7 +1242,6 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
                })
     }
 }
-
 
 #' @title General visualizations of peak detection results
 #'
