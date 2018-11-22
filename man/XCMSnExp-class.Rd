@@ -308,7 +308,7 @@ The \code{XCMSnExp} object is a container for the results of a G/LC-MS
 data preprocessing that comprises chromatographic peak detection, alignment
 and correspondence. These results can be accessed with the \code{chromPeaks},
 \code{adjustedRtime} and \code{featureDefinitions} functions; see below
-(after the Usage, Arguments, Value and Slots sections) for more details). 
+(after the Usage, Arguments, Value and Slots sections) for more details).
 Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
 can be extracted with the \code{\link{processHistory}} method.

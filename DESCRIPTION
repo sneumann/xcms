@@ -57,6 +57,7 @@ biocViews: MassSpectrometry, Metabolomics
 RoxygenNote: 6.1.1
 Collate:
     'AllGenerics.R'
+    'functions-XChromatogram.R'
     'DataClasses.R'
     'Deprecated.R'
     'MPI.R'
@@ -90,6 +91,7 @@ Collate:
     'methods-Params.R'
     'methods-ProcessHistory.R'
     'methods-XCMSnExp.R'
+    'methods-XChromatogram.R'
     'methods-xcmsEIC.R'
     'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'

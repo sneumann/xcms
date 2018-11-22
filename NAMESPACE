@@ -412,16 +412,27 @@ exportMethods(
     "expandRt<-"
 )
 ## Param class functions
-export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
-       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam", "GenericParam",
-       "FillChromPeaksParam", "CalibrantMassParam")
+export("CentWaveParam",
+       "MatchedFilterParam",
+       "MassifquantParam",
+       "MSWParam",
+       "CentWavePredIsoParam",
+       "PeakDensityParam",
+       "MzClustParam",
+       "NearestPeaksParam",
+       "PeakGroupsParam",
+       "ObiwarpParam",
+       "GenericParam",
+       "FillChromPeaksParam",
+       "CalibrantMassParam",
+       "XChromatogram")
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "ProcessHistory",
-              "XProcessHistory"
-              )
+exportClasses("XCMSnExp",
+	      "ProcessHistory",
+	      "XProcessHistory",
+	      "XChromatogram")
 ## New methods for these classes
 exportMethods("hasChromPeaks",
               "hasFeatures",

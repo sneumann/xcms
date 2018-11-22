@@ -1,5 +1,6 @@
 Changes in version 3.5.1
 
+- Add XChromatogram object (issue #329).
 - Fix higlightChromPeaks with type = "polygon": peak filling represents now the
   full detected peak and is no longer cut by the provided rt.
 - Add argument peakIds to highlightChromPeaks allowing to specify the IDs of

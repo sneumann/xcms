@@ -12,7 +12,7 @@ test_that("findChromPeaks,Chromatogram,MatchedFilterParam works", {
     res_2 <- findChromPeaks(chr, mfp)
     expect_true(all(res_2[, "rtmin"] < res[, "rtmin"]))
     expect_true(all(res_2[, "rtmax"] > res[, "rtmax"]))
-    expect_true(all(xcms:::.CPEAKS_CHROMPEAKS_REQ_NAMES[-(1:2)] %in%
+    expect_true(all(xcms:::.CHROMPEAKS_REQ_NAMES[-(1:2)] %in%
                     colnames(res)))
 })
 
@@ -32,7 +32,7 @@ test_that("findChromPeaks,Chromatogram,CentWaveParam works", {
     cwp <- CentWaveParam(snthresh = 5)
     res_2 <- findChromPeaks(chr, cwp)
     expect_true(nrow(res_2) > nrow(res))
-    expect_true(all(xcms:::.CPEAKS_CHROMPEAKS_REQ_NAMES[-(1:2)] %in%
+    expect_true(all(xcms:::.CHROMPEAKS_REQ_NAMES[-(1:2)] %in%
                     colnames(res)))
     expect_equal(res[, "rtmin"], res_2[1:2, "rtmin"])
     expect_equal(res[, "rtmax"], res_2[1:2, "rtmax"])
@@ -40,4 +40,3 @@ test_that("findChromPeaks,Chromatogram,CentWaveParam works", {
     expect_equal(res[, "maxo"], res_2[1:2, "maxo"])
     expect_equal(res[, "into"], res_2[1:2, "into"])
 })
-

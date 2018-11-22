@@ -1,5 +1,5 @@
 ## All class definitions should go in here.
-#' @include AllGenerics.R
+#' @include AllGenerics.R functions-XChromatogram.R
 
 ############################################################
 ## Class unions
@@ -2553,54 +2553,14 @@ setClass("XCMSnExp",
          }
 )
 
-
-## UPDATE:
-## Eventually better to store the peaks within each Chromatogram object. That
-## would be cleaner and would allow e.g. plotting of a single chromatogram
-## with peaks.
-## Proposal:
-## XChromatogram (Chromatogram): additional slot chromPeaks
-## XChromatograms (Chromatograms): contains XChromatogram objects (!).
-##     Additional slot .processHistory, similar to XCMSnExp.
-.CPEAKS_CHROMPEAKS_REQ_NAMES <- c("row", "col", "rt", "rtmin", "rtmax", "into",
-                                  "maxo", "sn")
-## Info: (issue #281)
-## Store peaks per chromatogram in a matrix with the same dimension than
-## Chromatograms. This makes subetting etc much easier. chromPeaks,CPeaks
-## could then return a matrix in the format as chromPeaks,XCMSnExp does,
-## and a chromPeaksMatrix would return the matrix with the same dimensions.
-setClass("CPeaks",
-         slots = c(
-             .processHistory = "list",
-             chromPeaks = "matrix"
-         ),
-         prototype = prototype(
-             .processHistory = list(),
-             chromPeaks = matrix(nrow = 0,
-                                 ncol = 0)
-         ),
-         contains = c("Chromatograms"),
-         validity = function(object) {
-             ## TODO @jo
-             ## 1) chromPeaks has to have the required columns.
-             ## 2) if processHistory not empty -> has to extend ProcessHistory
-             ## 3) if nrow(chromPeaks) > 0 row and column have to match the
-             ##    dimension of object
-             msg <- character()
-             ## if (length(object@.processHistory) > 0) {
-             ##     isOK <- unlist(lapply(object@.processHistory, function(z) {
-             ##         return(inherits(z, "ProcessHistory"))
-             ##     }))
-             ##     if (!all(isOK))
-             ##         msg <- c(msg, paste0("Only 'ProcessHistory' ",
-             ##                              "objects are allowed in slot ",
-             ##                              ".processHistory!"))
-             ## }
-             if (length(msg))
-                 msg
-             else TRUE
-         }
-)
+.CHROMPEAKS_REQ_NAMES <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
+setClass("XChromatogram",
+         slots = c(chromPeaks = "matrix"),
+         prototype = matrix(nrow = 0, ncol = length(.CHROMPEAKS_REQ_NAMES),
+                            dimnames = list(character(),
+                                            .CHROMPEAKS_REQ_NAMES)),
+         contains = "Chromatogram",
+         validity = .validXChromatogram)
 
 
 #' @aliases mz,CalibrantMassParam
