@@ -1,36 +1,24 @@
-# language: r
-# r: bioc-devel
-# sudo: required
-# r_packages:
-#   - knitr
-#   - XML
-#   - plyr
-#   - doParallel
-#   - foreach
-#   - iterators
-# bioc_packages: 
-#   - xcms 
-#   - Rgraphviz
-# apt_packages:
-#   - texlive-latex-extra
-#   - texlive-fonts-extra
-#   - texlive-latex-recommended
-#   - libnetcdf-dev
-#   - netcdf-bin
-#   - libhdf5-dev
-
-# # Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
-# # Thanks to jimhester pointing this out!
-# before_install:
-#   - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
-
-
 language: r
 r: bioc-devel
-cache: packages
-sudo: false       # use container based build system
+cache:
+  packages: true
+sudo: required
 warnings_are_errors: true
 dist: trusty
+
+# unfortunately apt packages are not cached
+# we could use these build dependencies just in the "Build" stage and
+# install their runtime libraries counter parts in "Check" but that would make
+# the script more complicated and saves just a few seconds
+addons:
+  apt:
+    packages:
+      - libnetcdf-dev
+      - netcdf-bin # libnetcdf-dev doesn't contain nc-config in ubuntu 12.04 (in 16.04 [xerus] it is part of libnetcdf-dev)
+      - libhdf5-dev
+      - libgit2-dev # git2r
+      - texlive-latex-recommended
+      - texlive-fonts-extra
 
 # Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
 # this was causing mzR installation to fail
@@ -39,34 +27,48 @@ dist: trusty
 before_install:
   - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
 
-addons:
-  apt:
-    packages:
-      - libnetcdf-dev
-      - netcdf-bin # libnetcdf-dev doesn't contain nc-config in ubuntu 12.04 (in 16.04 it is part of libnetcdf-dev)
-      - libhdf5-dev
-      - texlive-latex-recommended
-      - texlive-fonts-extra
+jobs:
+  include:
+    - stage: "Build"
+      r_packages:
+        - covr
+        - testthat
+        - knitr
+        - roxygen2
+      before_install:
+        - mkdir -p ~/.R
+        - echo -e 'MAKEFLAGS = -j2' > ~/.R/Makevars
+        - echo 'options(Ncpus = 2)' > ~/.Rprofile
+        - echo 'options(repos = c(CRAN = "https://cran.rstudio.com"))' > ~/.Rprofile
+        - echo 'utils::chooseCRANmirror(ind = 1)' > ~/.Rprofile
+      script: true
+      name: "Build dependencies and cache"
+    - stage: "Check"
+      r_build_args: --no-build-vignettes --no-manual
+      r_check_args: --as-cran --no-build-vignettes --no-vignettes --no-manual --no-tests
+      before_script: rm -rf vignettes
+      install: skip
+      name: "examples"
+    - r_build_args: --no-build-vignettes --no-manual
+      r_check_args: --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples
+      install: skip
+      before_script: rm -rf vignettes
+      name: "tests"
+    - r_build_args:
+      r_check_args: --as-cran --no-build-vignettes --no-codoc --no-examples --no-tests
+      install: skip
+      name: "vignettes"
+    - stage: "CodeCov"
+      install: skip
+      script:
+        - travis_wait 20 Rscript -e 'covr::codecov()'
+      name: "codecov and pkgdown (on master)"
 
-r_packages:
-  - covr
+# In general the r-travis script automatically dump the logs after failure but
+# because of a bug in travis the output is often truncated. See
+# https://github.com/travis-ci/travis-ci/issues/6018
+after_failure: sleep 10
 
-# before_script:
-#   - echo "BiocParallel::register(BiocParallel::SerialParam())" > ~/.Rprofile
-  
-script: 
-  - | 
-    R CMD build .
-    travis_wait 60 R CMD check --no-build-vignettes --no-vignettes xcms*tar.gz
-
-after_failure:
-  find *Rcheck -name '*.fail' -print -exec cat '{}' \;
-  
-after_success:
-  - travis_wait 30 Rscript -e 'covr::codecov()'
-
-# # print timings (of examples) and sysinfo
-# after_script:
-#   - dump_logs_by_extension "timings"
-#   - dump_sysinfo
-
+notifications:
+  email:
+    on_failure: johannes.rainer@eurac.edu
