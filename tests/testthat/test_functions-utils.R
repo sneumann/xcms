@@ -150,7 +150,7 @@ test_that(".rect_overlap works", {
          labels = names(xl_2))
     res <- .rect_overlap(xl_2, xr_2, yb_2, yt_2)
     expect_equal(res, list(c(1:4), 6:8))
-    
+
     idx <- sample(1:length(xl_2), length(xl_2))
     xl_2 <- xl_2[idx]
     xr_2 <- xr_2[idx]
@@ -192,4 +192,13 @@ test_that(".insertColumn works", {
     expect_true(ncol(res) == ncol(mat) + 2)
     expect_equal(res[, 2], 101:120)
     expect_equal(res[, 4], 101:120)
+})
+
+test_that(".ppm_range works", {
+    res <- .ppm_range(100)
+    expect_equal(res[1], 100)
+    expect_equal(res[2], 100)
+    res <- .ppm_range(100, 100)
+    expect_equal(res[1], 100 - 5000 / 1e6)
+    expect_equal(res[2], 100 + 5000 / 1e6)
 })

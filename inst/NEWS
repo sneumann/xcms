@@ -1,5 +1,10 @@
 Changes in version 3.5.1
 
+- Add filterRt,XChromatogram, filterMz,XChromatogram.
+- Add plot,XChromatogram function supporting of highlighting/drawing identified
+  chromatographic peaks.
+- findChromPeaks,Chromatogram returns an XChromatogram object (issue #329).
+- Add chromPeaks,XChromatogram (issue #329).
 - Add XChromatogram object (issue #329).
 - Fix higlightChromPeaks with type = "polygon": peak filling represents now the
   full detected peak and is no longer cut by the provided rt.

@@ -26,6 +26,9 @@
 #' within that data. The object inherits all functions from the [Chromatogram()]
 #' object in the `MSnbase` package.
 #'
+#' All functions are described (grouped into topic-related sections) after the
+#' **Arguments** section.
+#'
 #' @section Creation of objects:
 #'
 #' Objects can be created with the contructor function `XChromatogram`.
@@ -39,7 +42,16 @@
 #'
 #' @return
 #'
-#' `XChromatogram` returns an `XChromatogram` object.
+#' For `chromPeaks`: a `matrix` with columns:
+#' - `"rt"`: the retention time of the peak apex.
+#' - `"rtmin"`: the lower peak boundary.
+#' - `"rtmax"`: the upper peak boundary.
+#' - `"into"`: the integrated peak signal (area of the peak).
+#' - `"maxo"`: the maximum intensity of the peak.
+#' Note that the matrix could contain also more columnds depending on the
+#' peak detection method.
+#'
+#' All other methods return an `XChromatogram` object.
 #'
 #' @md
 #'

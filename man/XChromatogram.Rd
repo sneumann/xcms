@@ -8,6 +8,9 @@
 \alias{show,XChromatogram-method}
 \alias{chromPeaks,XChromatogram-method}
 \alias{chromPeaks<-,XChromatogram-method}
+\alias{plot,XChromatogram,ANY-method}
+\alias{filterMz,XChromatogram-method}
+\alias{filterRt,XChromatogram-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatogram(x, pks)
@@ -15,9 +18,18 @@ XChromatogram(x, pks)
 \S4method{show}{XChromatogram}(object)
 
 \S4method{chromPeaks}{XChromatogram}(object, rt = numeric(),
-  type = c("any", "within", "apex_within"))
+  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
 
 \S4method{chromPeaks}{XChromatogram}(object) <- value
+
+\S4method{plot}{XChromatogram,ANY}(x, col = "#00000060", lty = 1,
+  type = "l", xlab = "retention time", ylab = "intensity",
+  main = NULL, peakType = c("polygon", "point", "rectangle", "none"),
+  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
+
+\S4method{filterMz}{XChromatogram}(object, mz, ...)
+
+\S4method{filterRt}{XChromatogram}(object, rt, ...)
 }
 \arguments{
 \item{x}{An \code{XChromatogram} object.}
@@ -27,30 +39,80 @@ XChromatogram(x, pks)
 
 \item{object}{An \code{XChromatogram} object.}
 
-\item{rt}{For `chromPeaks`: `numeric(2)` defining the retention time range
-for which chromatographic peaks should be returned.}
+\item{rt}{For \code{chromPeaks}: \code{numeric(2)} defining the retention time range
+for which chromatographic peaks should be returned.
+For \code{filterRt}: \code{numeric(2)} defining the retention time range to
+reduce \code{object} to.}
 
-\item{type}{For `chromPeaks`: `character(1)` defining which peaks to return
-if `rt` is provided: `"any"` (default) return all peaks that are even
-partially overlapping with `rt`, `"within"` return peaks that are
-completely within `rt` and `"apex_within"` return peaks which apex
-is within `rt`.}
+\item{mz}{For \code{chromPeaks}: \code{numeric(2)} defining the m/z range
+for which chromatographic peaks should be returned.
+For \code{filterMz}: \code{numeric(2)} defining the m/z range for which
+chromatographic peaks should be retained.}
 
-\item{value}{For `chromPeaks<-`: a numeric `matrix` with required columns
-`"rt"`, `"rtmin"`, `"rtmax"`, `"into"` and `"maxo"`.}
+\item{ppm}{For \code{chromPeaks}: \code{numeric(1)} defining a ppm to expand the
+provided m/z range}
+
+\item{type}{For \code{chromPeaks}: \code{character(1)} defining which peaks to return
+if \code{rt} is provided: \code{"any"} (default) return all peaks that are even
+partially overlapping with \code{rt}, \code{"within"} return peaks that are
+completely within \code{rt} and \code{"apex_within"} return peaks which apex
+is within \code{rt}.
+For \code{plot}: what type of plot should be used for the
+chromatogram (such as \code{"l"} for lines, \code{"p"} for points etc), see help
+of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.}
+
+\item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
+\code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
+
+\item{col}{For \code{plot}: the color to be used to draw the chromatogram.}
+
+\item{lty}{For \code{plot}: the line type.}
+
+\item{xlab}{For \code{plot}: the x axis label.}
+
+\item{ylab}{For \code{plot}: the y axis label.}
+
+\item{main}{For \code{plot}: an optional title for the plot.}
+
+\item{peakType}{For \code{plot}: \code{character(1)} defining how (and if) identified
+chromatographic peak within the chromatogram should be plotted. Options
+are \code{"polygon"} (default): draw the peak borders with the \code{peakCol} color
+and fill the peak area with the \code{peakBg} color, \code{"point"}: indicate the
+peak's apex with a point, \code{"rectangle"}: draw a rectangle around the
+identified peak and \code{"none"}: don't draw peaks.}
+
+\item{peakCol}{For \code{plot}: the foreground color for the peaks.
+For \code{peakType = "polygon"} and \code{peakType = "rectangle"} this is the
+color for the border. Use \code{NA} to not use a foreground color. This
+should either be a single color or a vector of colors with the same
+length than \code{chromPeaks(x)} has rows.}
+
+\item{peakBg}{For \code{plot}: the background color for the peaks. For
+\code{peakType = "polygon"} and \code{peakType = "rectangle"} the peak are or
+rectangle will be filled with this color. Use \code{NA} to skip. This should
+be either a single color or a vector of colors with the same length than
+\code{chromPeaks(x)} has rows.}
+
+\item{peakPch}{For \code{plot}: the point character to be used for
+\code{peakType = "point"}. See \code{\link[=plot]{plot()}} in the \code{graphics} package for more
+details.}
+
+\item{...}{For \code{plot}: additional parameters to passed to the \code{plot}
+function.}
 }
 \value{
-\code{XChromatogram} returns an \code{XChromatogram} object.
+For \code{chromPeaks}: a \code{matrix} with columns:
+\itemize{
+\item \code{"rt"}: the retention time of the peak apex.
+\item \code{"rtmin"}: the lower peak boundary.
+\item \code{"rtmax"}: the upper peak boundary.
+\item \code{"into"}: the integrated peak signal (area of the peak).
+\item \code{"maxo"}: the maximum intensity of the peak.
+Note that the matrix could contain also more columnds depending on the
+peak detection method.
+}
 
-For `chromPeaks`: a `matrix` with columns:
-- `"rt"`: the retention time of the peak apex.
-- `"rtmin"`: the lower peak boundary.
-- `"rtmax"`: the upper peak boundary.
-- `"into"`: the integrated peak signal (area of the peak).
-- `"maxo"`: the maximum intensity of the peak.
-
-## Extract the chromatographic peaks
-chromPeaks(xchr)
+All other methods return an \code{XChromatogram} object.
 }
 \description{
 The \code{XChromatogram} object allows to store chromatographic data (e.g.
@@ -58,16 +120,61 @@ an extracted ion chromatogram) along with identified chromatographic peaks
 within that data. The object inherits all functions from the \code{\link[=Chromatogram]{Chromatogram()}}
 object in the \code{MSnbase} package.
 
-- `chromPeaks`, `chromPeaks<-`: extract or set the matrix with the
-  chromatographic peak definitions. Parameter `rt` allows to specify a
-  retention time range for which peaks should be returned along with
-  parameter `type` that defines how *overlapping* is defined (parameter
-  description for details).
+All functions are described (grouped into topic-related sections) after the
+\strong{Arguments} section.
+}
+\note{
+Highlighting the peak area(s) in an \code{XChromatogram} object (\code{plot} with
+\code{peakType = "polygon"}) draws a polygon representing the shown chromatogram
+from the peak's minimal retention time to the maximal retention time. If the
+\code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with the
+\code{\link[=chromatogram]{chromatogram()}} function this might therefore not represent the actual
+identified peak area if the m/z range that was used to extract the
+chromatogram was larger than the peak's m/z.
 }
 \section{Creation of objects}{
 
 
 Objects can be created with the contructor function \code{XChromatogram}.
+}
+
+\section{Accessing data}{
+
+\itemize{
+\item \code{chromPeaks}, \code{chromPeaks<-}: extract or set the matrix with the
+chromatographic peak definitions. Parameter \code{rt} allows to specify a
+retention time range for which peaks should be returned along with
+parameter \code{type} that defines how \emph{overlapping} is defined (parameter
+description for details).
+}
+}
+
+\section{Plotting and visualizing}{
+
+\itemize{
+\item \code{plot} draws the chromatogram and highlights in addition any
+chromatographic peaks present in the \code{XChromatogram} (unless
+\code{peakType = "none"} was specified). To draw peaks in different colors
+a vector of color definitions with length equal to \code{nrow(chromPeaks(x))}
+has to be submitted  with \code{peakCol} and/or \code{peakBg} defining one color
+for each peak (in the order as peaks are in \code{chromPeaks(x))}. For base
+peak chromatograms or total ion chromatograms it might be better to set
+\code{peakType = "none"} to avoid generating busy plots.
+}
+}
+
+\section{Filtering and subsetting}{
+
+\itemize{
+\item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram}, if
+a column \code{"mz"} is present in the \code{chromPeaks} matrix. This would be the
+case if the \code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with
+the \code{\link[=chromatogram]{chromatogram()}} function. All chromatographic peaks with their m/z
+within the m/z range defined by \code{mz} will be retained.
+\item \code{filterRt} filters the chromatogram by the provided retention time range.
+All eventually present chromatographic peaks with their apex within the
+retention time range specified with \code{rt} will be retained.
+}
 }
 
 \examples{
@@ -85,6 +192,33 @@ pks[, "into"] <- 93
 
 xchr <- XChromatogram(chr, pks)
 xchr
+
+## Extract the chromatographic peaks
+chromPeaks(xchr)
+
+## Plotting of a single XChromatogram object
+## o Don't highlight chromatographic peaks
+plot(xchr, peakType = "none")
+
+## o Indicate peaks with a polygon
+plot(xchr)
+
+## Add a second peak to the data.
+pks <- rbind(chromPeaks(xchr), c(7, 7, 10, NA, 15, NA))
+chromPeaks(xchr) <- pks
+
+## Plot the peaks in different colors
+plot(xchr, peakCol = c("#ff000080", "#0000ff80"),
+    peakBg = c("#ff000020", "#0000ff20"))
+
+## Indicate the peaks as rectangles
+plot(xchr, peakCol = c("#ff000060", "#0000ff60"), peakBg = NA,
+    peakType = "rectangle")
+
+## Filter the XChromatogram by retention time
+xchr_sub <- filterRt(xchr, rt = c(4, 6))
+xchr_sub
+plot(xchr_sub)
 }
 \author{
 Johannes Rainer
