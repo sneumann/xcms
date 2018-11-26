@@ -5,9 +5,14 @@ setMethod("show", "XChromatogram", function(object) {
     callNextMethod()
     cat("Identified chromatographic peaks (", nrow(object@chromPeaks),"):\n",
         sep = "")
-    cat(" rt\trtmin\trtmax\tinto\tmaxo\tsn\n")
+    cat(" rt\trtmin\trtmax\tinto\tmaxo\tsn ")
+    nc <- ncol(object@chromPeaks)
+    if (nc > 6)
+        cat("(", nc - 6, " more column(s))", sep = "")
+    cat("\n")
     for (i in seq_len(nrow(object@chromPeaks)))
-        cat(" ", paste(object@chromPeaks[i, ], collapse = "\t"), "\n", sep = "")
+        cat(" ", paste(object@chromPeaks[i, .CHROMPEAKS_REQ_NAMES],
+                       collapse = "\t"), "\n", sep = "")
 })
 
 #' @rdname XChromatogram

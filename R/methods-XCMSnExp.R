@@ -2253,11 +2253,12 @@ setMethod("featureValues",
 #'
 #' @return
 #'
-#' \code{chromatogram} returns a \code{\link{Chromatograms}} object with
+#' \code{chromatogram} returns a \code{\link{XChromatograms}} object with
 #' the number of columns corresponding to the number of files in
 #' \code{object} and number of rows the number of specified ranges (i.e.
 #' number of rows of matrices provided with arguments \code{mz} and/or
-#' \code{rt}).
+#' \code{rt}). All chromatographic peaks with their apex position within the
+#' m/z and retention time range are also retained.
 #'
 #' @author Johannes Rainer
 #'
@@ -2265,10 +2266,10 @@ setMethod("featureValues",
 #'     \code{\link{Chromatogram}} for the object representing
 #'     chromatographic data.
 #'
-#'     \code{\link{Chromatograms}} for the object allowing to arrange
-#'     multiple \code{Chromatogram} objects.
+#'     \code{\link{XChromatograms}} for the object allowing to arrange
+#'     multiple \code{XChromatogram} objects.
 #'
-#'     \code{\link{plot}} to plot a \code{Chromatogram} or
+#'     \code{\link{plot}} to plot a \code{XChromatogram} or
 #'     \code{Chromatograms} objects.
 #'
 #'     \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
@@ -2288,26 +2289,26 @@ setMethod("featureValues",
 #'
 #' od <- readMSData(faahko_3_files, mode = "onDisk")
 #'
+#' ## Perform peak detection using default CentWave parameters
+#' xod <- findChromPeaks(od, param = CentWaveParam())
+#'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
-#' chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
+#' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
 #'
 #' chrs
 #'
 #' ## Plot the chromatogram
-#' plot(rtime(chrs[1, 2]), intensity(chrs[1, 2]), type = "l", xlab = "rtime",
-#'      ylab = "intensity", col = "000080")
-#' for(i in c(1, 3)) {
-#'   points(rtime(chrs[1, i]), intensity(chrs[1, i]), type = "l",
-#'   col = "00000080")
-#' }
-#'
-#' ## Plot the chromatogram using the dedicated plot method.
 #' plot(chrs)
 #'
 #' ## Extract chromatograms for multiple ranges.
 #' mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 #' rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
-#' chrs <- chromatogram(od, mz = mzr, rt = rtr)
+#' chrs <- chromatogram(xod, mz = mzr, rt = rtr)
+#'
+#' chrs <- chromatogram(xod, mz = mzr)
+#'
+#' rtr[1, 1] <- 2785
+#' chrs <- chromatogram(xod, mz = mzr, rt = rtr)
 #'
 #' chrs
 #'
@@ -2321,22 +2322,61 @@ setMethod("featureValues",
 #' plot(chrs[1, , drop = FALSE])
 setMethod("chromatogram",
           signature(object = "XCMSnExp"),
-          function(object, rt, mz,
-                   aggregationFun = "sum", missing = NA_real_,
+          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_,
                    msLevel = 1L, BPPARAM = bpparam(),
                    adjustedRtime = hasAdjustedRtime(object)) {
-              ## Coerce to OnDiskMSnExp.
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
-              object <- as(object, "OnDiskMSnExp")
+              object_od <- as(object, "OnDiskMSnExp")
               if (adjustedRtime) {
                   ## Replace the original rtime with adjusted ones...
-                  object@featureData$retentionTime <- adj_rt
+                  object_od@featureData$retentionTime <- adj_rt
               }
-              MSnbase::chromatogram(object, rt = rt, mz = mz,
-                                    aggregationFun = aggregationFun,
-                                    missing = missing, msLevel = msLevel,
-                                    BPPARAM = BPPARAM)
+              res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
+                                           aggregationFun = aggregationFun,
+                                           missing = missing, msLevel = msLevel,
+                                           BPPARAM = BPPARAM)
+              ## Process peaks
+              lvls <- 1:length(fileNames(object))
+              if (missing(rt))
+                  rt <- c(-Inf, Inf)
+              if (missing(mz))
+                  mz <- c(-Inf, Inf)
+              if (is.matrix(rt) | is.matrix(mz)) {
+                  ## Ensure rt and mz are aligned.
+                  if (!is.matrix(rt))
+                      rt <- matrix(rt, ncol = 2)
+                  if (!is.matrix(mz))
+                      mz <- matrix(mz, ncol = 2)
+                  if (nrow(rt) == 1)
+                      rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
+                  if (nrow(mz) == 1)
+                      mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
+                  pk_list <- vector("list", nrow(mz))
+                  for (i in 1:nrow(mz)) {
+                      pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
+                                        type = "apex_within")
+                      pk_list[[i]] <- split.data.frame(
+                          pks, factor(pks[, "sample"], levels = lvls))
+                  }
+                  pks <- do.call(rbind, pk_list)
+                  pks <- pks[1:length(pks)]
+              } else {
+                  pks <- chromPeaks(object, rt = rt, mz = mz,
+                                    type = "apex_within")
+                  pks <- split.data.frame(pks, factor(pks[, "sample"],
+                                                      levels = lvls))
+              }
+              res <- as(res, "XChromatograms")
+              res@.Data <- matrix(
+                  mapply(unlist(res), pks, FUN = function(chr, pk) {
+                      chromPeaks(chr) <- pk
+                      chr
+                  }), nrow = nrow(res), dimnames = dimnames(res))
+              res <- addProcessHistory(
+                  res, processHistory(
+                           object, type = .PROCSTEP.PEAK.DETECTION)[[1]])
+              if (validObject(res)) res
           })
 
 #' @rdname XCMSnExp-class

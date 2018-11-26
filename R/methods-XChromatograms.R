@@ -87,3 +87,11 @@ setMethod("filterRt", "XChromatograms", function(object, rt, ...) {
                            nrow = nrow(object), dimnames = dimnames(object))
     if (validObject(object)) object
 })
+
+setMethod("addProcessHistory", "XChromatograms", function(object, ph) {
+    if (!inherits(ph, "ProcessHistory"))
+        stop("Argument 'ph' has to be of type 'ProcessHistory' or a class ",
+             "extending it!")
+    object@.processHistory[[(length(object@.processHistory) + 1)]] <- ph
+    object
+})

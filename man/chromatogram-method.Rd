@@ -52,11 +52,12 @@ in the resulting \code{\link{Chromatogram}} object. Adjusted
 retention times are used by default if available.}
 }
 \value{
-\code{chromatogram} returns a \code{\link{Chromatograms}} object with
+\code{chromatogram} returns a \code{\link{XChromatograms}} object with
 the number of columns corresponding to the number of files in
 \code{object} and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments \code{mz} and/or
-\code{rt}).
+\code{rt}). All chromatographic peaks with their apex position within the
+m/z and retention time range are also retained.
 }
 \description{
 \code{chromatogram}: the method allows to extract
@@ -105,26 +106,26 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 
 od <- readMSData(faahko_3_files, mode = "onDisk")
 
+## Perform peak detection using default CentWave parameters
+xod <- findChromPeaks(od, param = CentWaveParam())
+
 ## Extract the ion chromatogram for one chromatographic peak in the data.
-chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
+chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
 
 chrs
 
 ## Plot the chromatogram
-plot(rtime(chrs[1, 2]), intensity(chrs[1, 2]), type = "l", xlab = "rtime",
-     ylab = "intensity", col = "000080")
-for(i in c(1, 3)) {
-  points(rtime(chrs[1, i]), intensity(chrs[1, i]), type = "l",
-  col = "00000080")
-}
-
-## Plot the chromatogram using the dedicated plot method.
 plot(chrs)
 
 ## Extract chromatograms for multiple ranges.
 mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
-chrs <- chromatogram(od, mz = mzr, rt = rtr)
+chrs <- chromatogram(xod, mz = mzr, rt = rtr)
+
+chrs <- chromatogram(xod, mz = mzr)
+
+rtr[1, 1] <- 2785
+chrs <- chromatogram(xod, mz = mzr, rt = rtr)
 
 chrs
 
@@ -142,10 +143,10 @@ plot(chrs[1, , drop = FALSE])
     \code{\link{Chromatogram}} for the object representing
     chromatographic data.
 
-    \code{\link{Chromatograms}} for the object allowing to arrange
-    multiple \code{Chromatogram} objects.
+    \code{\link{XChromatograms}} for the object allowing to arrange
+    multiple \code{XChromatogram} objects.
 
-    \code{\link{plot}} to plot a \code{Chromatogram} or
+    \code{\link{plot}} to plot a \code{XChromatogram} or
     \code{Chromatograms} objects.
 
     \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
