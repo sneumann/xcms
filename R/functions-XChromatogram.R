@@ -93,16 +93,7 @@
 #'
 #' @return
 #'
-#' For `chromPeaks`: a `matrix` with columns:
-#' - `"rt"`: the retention time of the peak apex.
-#' - `"rtmin"`: the lower peak boundary.
-#' - `"rtmax"`: the upper peak boundary.
-#' - `"into"`: the integrated peak signal (area of the peak).
-#' - `"maxo"`: the maximum intensity of the peak.
-#' Note that the matrix could contain also more columnds depending on the
-#' peak detection method.
-#'
-#' All other methods return an `XChromatogram` object.
+#' See help of the individual functions.
 #'
 #' @md
 #'

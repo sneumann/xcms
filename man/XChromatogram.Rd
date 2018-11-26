@@ -18,6 +18,9 @@
 \alias{hasChromPeaks,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
+\alias{chromPeaks,XChromatograms-method}
+\alias{filterMz,XChromatograms-method}
+\alias{filterRt,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -49,6 +52,13 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{show}{XChromatograms}(object)
 
 \S4method{hasChromPeaks}{XChromatograms}(object)
+
+\S4method{chromPeaks}{XChromatograms}(object, rt = numeric(),
+  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+
+\S4method{filterMz}{XChromatograms}(object, mz, ...)
+
+\S4method{filterRt}{XChromatograms}(object, rt, ...)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -132,6 +142,8 @@ of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.}
 \item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
 \code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
 
+\item{x}{For \code{plot}: an \code{XChromatogram} object.}
+
 \item{col}{For \code{plot}: the color to be used to draw the chromatogram.}
 
 \item{lty}{For \code{plot}: the line type.}
@@ -166,18 +178,7 @@ be either a single color or a vector of colors with the same length than
 details.}
 }
 \value{
-For \code{chromPeaks}: a \code{matrix} with columns:
-\itemize{
-\item \code{"rt"}: the retention time of the peak apex.
-\item \code{"rtmin"}: the lower peak boundary.
-\item \code{"rtmax"}: the upper peak boundary.
-\item \code{"into"}: the integrated peak signal (area of the peak).
-\item \code{"maxo"}: the maximum intensity of the peak.
-Note that the matrix could contain also more columnds depending on the
-peak detection method.
-}
-
-All other methods return an \code{XChromatogram} object.
+See help of the individual functions.
 }
 \description{
 The \code{XChromatogram} object allows to store chromatographic data (e.g.
@@ -218,7 +219,16 @@ Objects can be created with the contructor function \code{XChromatogram} and
 chromatographic peak definitions. Parameter \code{rt} allows to specify a
 retention time range for which peaks should be returned along with
 parameter \code{type} that defines how \emph{overlapping} is defined (parameter
-description for details).
+description for details). For \code{XChromatogram} objects the function returns
+a \code{matrix} with columns \code{"rt"} (retention time of the peak apex),
+\code{"rtmin"} (the lower peak boundary), \code{"rtmax"} (the upper peak boundary),
+\code{"into"} (the ingegrated peak signal/area of the peak), \code{"maxo"} (the
+maximum instensity of the peak and \code{"sn"} (the signal to noise ratio).
+Note that, depending on the peak detection algorithm, the matrix may
+contain additional columns.
+For \code{XChromatograms} objects the \code{matrix} contains also columns \code{"row"}
+and \code{"column"} specifying in which chromatogram of \code{object} the peak was
+identified.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
@@ -248,10 +258,12 @@ peak chromatograms or total ion chromatograms it might be better to set
 a column \code{"mz"} is present in the \code{chromPeaks} matrix. This would be the
 case if the \code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with
 the \code{\link[=chromatogram]{chromatogram()}} function. All chromatographic peaks with their m/z
-within the m/z range defined by \code{mz} will be retained.
-\item \code{filterRt} filters the chromatogram by the provided retention time range.
+within the m/z range defined by \code{mz} will be retained. The function
+returns a filtered \code{XChromatogram} object.
+\item \code{filterRt} filters chromatogram(s) by the provided retention time range.
 All eventually present chromatographic peaks with their apex within the
-retention time range specified with \code{rt} will be retained.
+retention time range specified with \code{rt} will be retained. The function
+returns a filtered \code{XChromatogram} object.
 }
 }
 
@@ -320,6 +332,9 @@ plot(xchr, peakCol = c("#ff000060", "#0000ff60"), peakBg = NA,
 xchr_sub <- filterRt(xchr, rt = c(4, 6))
 xchr_sub
 plot(xchr_sub)
+
+## Extract the chromatographic peaks
+chromPeaks(xchrs)
 }
 \author{
 Johannes Rainer

@@ -19,7 +19,16 @@ setMethod("show", "XChromatogram", function(object) {
 #'   chromatographic peak definitions. Parameter `rt` allows to specify a
 #'   retention time range for which peaks should be returned along with
 #'   parameter `type` that defines how *overlapping* is defined (parameter
-#'   description for details).
+#'   description for details). For `XChromatogram` objects the function returns
+#'   a `matrix` with columns `"rt"` (retention time of the peak apex),
+#'   `"rtmin"` (the lower peak boundary), `"rtmax"` (the upper peak boundary),
+#'   `"into"` (the ingegrated peak signal/area of the peak), `"maxo"` (the
+#'   maximum instensity of the peak and `"sn"` (the signal to noise ratio).
+#'   Note that, depending on the peak detection algorithm, the matrix may
+#'   contain additional columns.
+#'   For `XChromatograms` objects the `matrix` contains also columns `"row"`
+#'   and `"column"` specifying in which chromatogram of `object` the peak was
+#'   identified.
 #'
 #' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
 #'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
@@ -120,6 +129,8 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #' [chromatogram()] function this might therefore not represent the actual
 #' identified peak area if the m/z range that was used to extract the
 #' chromatogram was larger than the peak's m/z.
+#'
+#' @param x For `plot`: an `XChromatogram` object.
 #'
 #' @param col For `plot`: the color to be used to draw the chromatogram.
 #'
@@ -256,11 +267,13 @@ setMethod("plot", "XChromatogram", function(x, col = "#00000060", lty = 1,
 #'   a column `"mz"` is present in the `chromPeaks` matrix. This would be the
 #'   case if the `XChromatogram` was extracted from an [XCMSnExp()] object with
 #'   the [chromatogram()] function. All chromatographic peaks with their m/z
-#'   within the m/z range defined by `mz` will be retained.
+#'   within the m/z range defined by `mz` will be retained. The function
+#'   returns a filtered `XChromatogram` object.
 #'
-#' - `filterRt` filters the chromatogram by the provided retention time range.
+#' - `filterRt` filters chromatogram(s) by the provided retention time range.
 #'   All eventually present chromatographic peaks with their apex within the
-#'   retention time range specified with `rt` will be retained.
+#'   retention time range specified with `rt` will be retained. The function
+#'   returns a filtered `XChromatogram` object.
 #'
 #' @md
 setMethod("filterMz", "XChromatogram", function(object, mz, ...) {

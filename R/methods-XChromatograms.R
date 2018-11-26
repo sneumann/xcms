@@ -50,3 +50,40 @@ setMethod("hasChromPeaks", "XChromatograms", function(object) {
     matrix(vapply(object, hasChromPeaks, logical(1)), ncol = ncol(object),
            dimnames = dimnames(object))
 })
+
+#' @rdname XChromatogram
+#'
+#' @examples
+#'
+#' ## Extract the chromatographic peaks
+#' chromPeaks(xchrs)
+setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
+                                                   mz = numeric(), ppm = 0,
+                                                   type = c("any", "within",
+                                                            "apex_within")){
+    type <- match.arg(type)
+    res <- lapply(object, chromPeaks, rt = rt, mz = mz, ppm = ppm, type = type)
+    nrs <- vapply(res, nrow, integer(1))
+    row_idx <- rep(seq_len(nrow(object)), ncol(object))
+    col_idx <- rep(seq_len(ncol(object)), each = nrow(object))
+    res <- do.call(rbind, res)
+    cbind(res, row = rep(row_idx, nrs), column = rep(col_idx, nrs))
+})
+
+#' @rdname XChromatogram
+setMethod("filterMz", "XChromatograms", function(object, mz, ...) {
+    if (missing(mz) || length(object) == 0)
+        return(object)
+    object@.Data <- matrix(lapply(object, filterMz, mz = mz, ...),
+                           nrow = nrow(object), dimnames = dimnames(object))
+    if (validObject(object)) object
+})
+
+#' @rdname XChromatogram
+setMethod("filterRt", "XChromatograms", function(object, rt, ...) {
+    if (missing(rt) || length(object) == 0)
+        return(object)
+    object@.Data <- matrix(lapply(object, filterRt, rt = rt, ...),
+                           nrow = nrow(object), dimnames = dimnames(object))
+    if (validObject(object)) object
+})
