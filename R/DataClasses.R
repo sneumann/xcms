@@ -1,5 +1,5 @@
 ## All class definitions should go in here.
-#' @include AllGenerics.R functions-XChromatogram.R
+#' @include AllGenerics.R functions-XChromatogram.R functions-XChromatograms.R
 
 ############################################################
 ## Class unions
@@ -2556,12 +2556,18 @@ setClass("XCMSnExp",
 .CHROMPEAKS_REQ_NAMES <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
 setClass("XChromatogram",
          slots = c(chromPeaks = "matrix"),
-         prototype = matrix(nrow = 0, ncol = length(.CHROMPEAKS_REQ_NAMES),
-                            dimnames = list(character(),
-                                            .CHROMPEAKS_REQ_NAMES)),
+         prototype = prototype(
+             chromPeaks = matrix(nrow = 0, ncol = length(.CHROMPEAKS_REQ_NAMES),
+                                 dimnames = list(character(),
+                                                 .CHROMPEAKS_REQ_NAMES))),
          contains = "Chromatogram",
          validity = .validXChromatogram)
 
+setClass("XChromatograms",
+         slots = c(.processHistory = "list"),
+         prototype = prototype(.processHistory = list()),
+         contains = "Chromatograms",
+         validity = .validXChromatograms)
 
 #' @aliases mz,CalibrantMassParam
 #'

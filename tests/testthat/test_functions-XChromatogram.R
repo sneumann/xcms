@@ -7,7 +7,7 @@ test_that(".validXChromatogram works", {
     xc@chromPeaks <- mat
     expect_true(is.character(.validXChromatogram(xc)))
     mat <- matrix(ncol = 6, nrow = 2)
-    colnames(mat) <- xcms:::.CHROMPEAKS_REQ_NAMES
+    colnames(mat) <- .CHROMPEAKS_REQ_NAMES
     mat[, "rtmin"] <- c(3, 3)
     mat[, "rtmax"] <- c(3, 4)
     xc@chromPeaks <- mat
@@ -17,8 +17,7 @@ test_that(".validXChromatogram works", {
 })
 
 test_that("XChromatogram works", {
-    chr <- Chromatogram(rtime = 1:10, intensity = 1:10)
-    xc <- XChromatogram(chr)
+    xc <- XChromatogram(rtime = 1:10, intensity = 1:10)
     expect_true(nrow(xc@chromPeaks) == 0)
     expect_equal(rtime(xc), 1:10)
 
@@ -30,6 +29,6 @@ test_that("XChromatogram works", {
                   dimnames = list(character(), .CHROMPEAKS_REQ_NAMES))
     pks[, "rtmin"] <- c(2, 4)
     pks[, "rtmax"] <- c(3, 5)
-    xc <- XChromatogram(chr, pks)
+    xc <- XChromatogram(rtime = 1:10, intensity = 1:10, chromPeaks = pks)
     expect_equal(xc@chromPeaks[, "rtmin"], c(2, 4))
 })

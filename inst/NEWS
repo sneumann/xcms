@@ -1,5 +1,8 @@
 Changes in version 3.5.1
 
+- Add hasChromPeaks,XChromatograms method.
+- Add XChromatograms class with constructor function and coercing method.
+- Add hasChromPeaks,XChromatogram method.
 - Add filterRt,XChromatogram, filterMz,XChromatogram.
 - Add plot,XChromatogram function supporting of highlighting/drawing identified
   chromatographic peaks.

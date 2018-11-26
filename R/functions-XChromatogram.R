@@ -17,7 +17,7 @@
 
 #' @title Containers for chromatographic and peak detection data
 #'
-#' @aliases XChromatogram-class
+#' @aliases XChromatogram-class XChromatograms-class coerce,Chromatograms,XChromatograms-method
 #'
 #' @description
 #'
@@ -26,19 +26,70 @@
 #' within that data. The object inherits all functions from the [Chromatogram()]
 #' object in the `MSnbase` package.
 #'
+#' Multiple `XChromatogram` objects can be stored in a `XChromatograms` object.
+#' This class extends [Chromatograms()] from the `MSnbase` package and allows
+#' thus to arrange chromatograms in a matrix-like structure, columns
+#' representing samples and rows m/z-retention time ranges.
+#'
 #' All functions are described (grouped into topic-related sections) after the
 #' **Arguments** section.
 #'
 #' @section Creation of objects:
 #'
-#' Objects can be created with the contructor function `XChromatogram`.
+#' Objects can be created with the contructor function `XChromatogram` and
+#' `XChromatograms`, respectively. Also, they can be coerced from
+#' [Chromatogram] or [Chromatograms()] objects using
+#' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
 #'
-#' @param x An `XChromatogram` object.
+#' @param rtime For `XChromatogram`: `numeric` with the retention times
+#'     (length has to be equal to the length of `intensity`).
 #'
-#' @param pks `matrix` with required columns `"rt"`, `"rtmin"`, `"rtmax"`,
-#'     `"into"`, `"maxo"` and `"sn"`.
+#' @param intensity For `XChromatogram`: `numeric` with the intensity values
+#'     (length has to be equal to the length of `rtime`).
+#'
+#' @param mz For `XChromatogram`: `numeric(2)` representing the m/z value
+#'     range (min, max) on which the chromatogram was created. This is
+#'     supposed to contain the *real* range of m/z values in contrast
+#'     to the `filterMz` below.
+#'     For `chromPeaks`: `numeric(2)` defining the m/z range
+#'     for which chromatographic peaks should be returned.
+#'     For `filterMz`: `numeric(2)` defining the m/z range for which
+#'     chromatographic peaks should be retained.#'
+#'
+#' @param filterMz For `XChromatogram`: `numeric(2)` representing the m/z
+#'     value range (min, max) that was used to filter the original object
+#'     on m/z dimension. If not applicable use `filterMz = c(0, 0)`.
+#'
+#' @param precursorMz For `XChromatogram`: `numeric(2)` for SRM/MRM transitions.
+#'     Represents the mz of the precursor ion. See details for more information.
+#'
+#' @param productMz For `XChromatogram`: `numeric(2)` for SRM/MRM transitions.
+#'     Represents the mz of the product. See details for more information.
+#'
+#' @param fromFile For `XChromatogram`: `integer(1)` the index of the file
+#'     within the `OnDiskMSnExp` or `MSnExp` object from which the chromatogram
+#'     was extracted.
+#'
+#' @param aggregationFun For `XChromatogram`: `character(1)` specifying the
+#'     function that was used to aggregate intensity values for the same
+#'     retention time across the m/z range.
+#'
+#' @param msLevel For `XChromatogram`: `integer` with the MS level from which
+#'     the chromatogram was extracted.
+#'
+#' @param chromPeaks For `XChromatogram`: `matrix` with required columns
+#'     `"rt"`, `"rtmin"`, `"rtmax"`, `"into"`, `"maxo"` and `"sn"`.
+#'     For `XChromatograms`: `list`, same length than `data`, with the
+#'     chromatographic peaks for each chromatogram. Each element has to be
+#'     a `matrix`, the ordering has to match the order of the chromatograms
+#'     in `data`.
 #'
 #' @param object An `XChromatogram` object.
+#'
+#' @param ... For `plot`: additional parameters to passed to the `plot`
+#'     function.
+#'     For `XChromatograms`: additional parameters to be passed to the
+#'     [matrix] constructor, such as `nrow`, `ncol` and `byrow`.
 #'
 #' @return
 #'
@@ -62,8 +113,6 @@
 #' @examples
 #'
 #' ## Create a XChromatogram object
-#' chr <- Chromatogram(rtime = 1:10,
-#'     intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2))
 #' pks <- matrix(nrow = 1, ncol = 6)
 #' colnames(pks) <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
 #' pks[, "rtmin"] <- 2
@@ -72,19 +121,27 @@
 #' pks[, "maxo"] <- 19
 #' pks[, "into"] <- 93
 #'
-#' xchr <- XChromatogram(chr, pks)
+#' xchr <- XChromatogram(rtime = 1:10,
+#'     intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2),
+#'     chromPeaks = pks)
 #' xchr
-XChromatogram <- function(x, pks) {
-    if (missing(x))
-        x <- Chromatogram()
-    if (!is(x, "Chromatogram"))
-        stop("'x' has to be a 'Chromatogram' object")
-    if (missing(pks))
-        pks <- matrix(ncol = length(.CHROMPEAKS_REQ_NAMES), nrow = 0,
-                      dimnames = list(character(), .CHROMPEAKS_REQ_NAMES))
-    else if (!is.matrix(pks))
+XChromatogram <- function(rtime = numeric(), intensity = numeric(),
+                          mz = c(NA_real_, NA_real_),
+                          filterMz = c(NA_real_, NA_real_),
+                          precursorMz = c(NA_real_, NA_real_),
+                          productMz = c(NA_real_, NA_real_),
+                          fromFile = integer(), aggregationFun = character(),
+                          msLevel = 1L, chromPeaks) {
+    if (missing(chromPeaks))
+        chromPeaks <- matrix(ncol = length(.CHROMPEAKS_REQ_NAMES), nrow = 0,
+                             dimnames = list(character(),
+                                             .CHROMPEAKS_REQ_NAMES))
+    else if (!is.matrix(chromPeaks))
         stop("'x' has to be a 'matrix'")
-    x <- as(x, "XChromatogram")
-    x@chromPeaks <- pks
+    x <- as(Chromatogram(rtime = rtime, intensity = intensity, mz = mz,
+                         filterMz = filterMz, precursorMz = precursorMz,
+                         productMz = productMz, fromFile = fromFile,
+                         msLevel = msLevel), "XChromatogram")
+    x@chromPeaks <- chromPeaks
     if (validObject(x)) x
 }

@@ -1,7 +1,10 @@
 #' @rdname XChromatogram
+#'
+#' @md
 setMethod("show", "XChromatogram", function(object) {
     callNextMethod()
-    cat("Identified chromatographic peaks:\n")
+    cat("Identified chromatographic peaks (", nrow(object@chromPeaks),"):\n",
+        sep = "")
     cat(" rt\trtmin\trtmax\tinto\tmaxo\tsn\n")
     for (i in seq_len(nrow(object@chromPeaks)))
         cat(" ", paste(object@chromPeaks[i, ], collapse = "\t"), "\n", sep = "")
@@ -18,15 +21,16 @@ setMethod("show", "XChromatogram", function(object) {
 #'   parameter `type` that defines how *overlapping* is defined (parameter
 #'   description for details).
 #'
+#' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
+#'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
+#'   for `XChromatograms`: returns a `matrix`, same dimensions than `object`
+#'   with either `true` or `false` if chromatographic peaks are available in
+#'   the chromatogram at the respective position.
+#'
 #' @param rt For `chromPeaks`: `numeric(2)` defining the retention time range
 #'     for which chromatographic peaks should be returned.
 #'     For `filterRt`: `numeric(2)` defining the retention time range to
 #'     reduce `object` to.
-#'
-#' @param mz For `chromPeaks`: `numeric(2)` defining the m/z range
-#'     for which chromatographic peaks should be returned.
-#'     For `filterMz`: `numeric(2)` defining the m/z range for which
-#'     chromatographic peaks should be retained.
 #'
 #' @param ppm For `chromPeaks`: `numeric(1)` defining a ppm to expand the
 #'     provided m/z range
@@ -149,9 +153,6 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #' @param peakPch For `plot`: the point character to be used for
 #'     `peakType = "point"`. See [plot()] in the `graphics` package for more
 #'     details.
-#'
-#' @param ... For `plot`: additional parameters to passed to the `plot`
-#'     function.
 #'
 #' @md
 #'
@@ -296,4 +297,11 @@ setMethod("filterRt", "XChromatogram", function(object, rt, ...) {
         chromPeaks(object) <- pks
     }
     if (validObject(object)) object
+})
+
+#' @rdname XChromatogram
+#'
+#' @md
+setMethod("hasChromPeaks", "XChromatogram", function(object) {
+    as.logical(nrow(object@chromPeaks))
 })

@@ -40,22 +40,16 @@ od <- readMSData(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
 
 ## Identify peaks with default settings
-pks <- findChromPeaks(chr, MatchedFilterParam())
-pks
+xchr <- findChromPeaks(chr, MatchedFilterParam())
 
 ## Plot the identified peaks
-plot(chr, type = "h")
-rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#ff000020")
+plot(xchr)
 
 ## Modify the settings
 mfp <- MatchedFilterParam(fwhm = 60)
-pks <- findChromPeaks(chr, mfp)
-pks
+xchr <- findChromPeaks(chr, mfp)
 
-plot(chr, type = "h")
-rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#00ff0020")
+plot(xchr)
 }
 \seealso{
 \code{\link[=peaksWithMatchedFilter]{peaksWithMatchedFilter()}} for the downstream function and

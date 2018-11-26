@@ -44,22 +44,18 @@
 #' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
 #'
 #' ## Identify peaks with default settings
-#' pks <- findChromPeaks(chr, CentWaveParam())
-#' pks
+#' xchr <- findChromPeaks(chr, CentWaveParam())
+#' xchr
 #'
-#' ## Plot the identified peaks
-#' plot(chr, type = "h")
-#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-#'     ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#ff000020")
+#' ## Plot data and identified peaks.
+#' plot(xchr)
 #'
 #' ## Modify the settings
 #' cwp <- CentWaveParam(snthresh = 5, peakwidth = c(10, 60))
-#' pks <- findChromPeaks(chr, cwp)
-#' pks
+#' xchr <- findChromPeaks(chr, cwp)
+#' xchr
 #'
-#' plot(chr, type = "h")
-#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-#'     ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#00ff0020")
+#' plot(xchr)
 setMethod("findChromPeaks", signature(object = "Chromatogram",
                                       param = "CentWaveParam"),
           function(object, param, ...) {
@@ -67,7 +63,9 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
                              args = c(list(int = intensity(object),
                                            rt = rtime(object)),
                                       as(param, "list")))
-              XChromatogram(object, res)
+              object <- as(object, "XChromatogram")
+              chromPeaks(object) <- res
+              object
           })
 
 #' @title matchedFilter-based peak detection in purely chromatographic data
@@ -114,22 +112,16 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
 #' chr <- chromatogram(od, mz = c(272.1, 272.3))[1, 1]
 #'
 #' ## Identify peaks with default settings
-#' pks <- findChromPeaks(chr, MatchedFilterParam())
-#' pks
+#' xchr <- findChromPeaks(chr, MatchedFilterParam())
 #'
 #' ## Plot the identified peaks
-#' plot(chr, type = "h")
-#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-#'     ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#ff000020")
+#' plot(xchr)
 #'
 #' ## Modify the settings
 #' mfp <- MatchedFilterParam(fwhm = 60)
-#' pks <- findChromPeaks(chr, mfp)
-#' pks
+#' xchr <- findChromPeaks(chr, mfp)
 #'
-#' plot(chr, type = "h")
-#' rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-#'     ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"], col = "#00ff0020")
+#' plot(xchr)
 setMethod("findChromPeaks", signature(object = "Chromatogram",
                                       param = "MatchedFilterParam"),
           function(object, param, ...) {
@@ -137,5 +129,7 @@ setMethod("findChromPeaks", signature(object = "Chromatogram",
                              args = c(list(int = intensity(object),
                                            rt = rtime(object)),
                                       as(param, "list")))
-              XChromatogram(object, res)
+              object <- as(object, "XChromatogram")
+              chromPeaks(object) <- res
+              object
           })

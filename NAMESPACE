@@ -425,14 +425,17 @@ export("CentWaveParam",
        "GenericParam",
        "FillChromPeaksParam",
        "CalibrantMassParam",
-       "XChromatogram")
+       "XChromatogram",
+       "XChromatograms")
 ## Param class methods.
 
 ## New Classes
 exportClasses("XCMSnExp",
 	      "ProcessHistory",
 	      "XProcessHistory",
-	      "XChromatogram")
+	      "XChromatogram",
+              "XChromatograms")
+
 ## New methods for these classes
 exportMethods("hasChromPeaks",
               "hasFeatures",
