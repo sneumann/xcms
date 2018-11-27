@@ -349,27 +349,46 @@ plotChromPeakImage(xdata)
 Next we highlight the identified chromatographic peaks for the example peak from
 before. Evaluating such plots on a list of peaks corresponding to known peaks or
 internal standards helps to ensure that peak detection settings were appropriate
-and correctly identified the expected peaks.
+and correctly identified the expected peaks. We extract the ion chromatogram
+from the peak detection result object, which contains then also the identified
+chromatographic peaks for that ion that we can extract with the `chromPeaks`
+function.
 
-```{r peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
-plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
-highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group],
-                    lty = 3, rt = rtr, mz = mzr, type = "rect")
+```{r peak-detection-eic-example-peak, message = FALSE}
+chr_ex <- chromatogram(xdata, mz = mzr, rt = rtr)
+chromPeaks(chr_ex)
 ```
 
-In the plot above the peak definitions are indicated with rectangles containing
-the full peak. In addition it is possible to represent the apex position of each
-peak with a single point (passing argument`type = "point"` to the function), or
-draw the actually identified peak by specifying `type = "polygon"`. Below we use
-this option to fill the peak area for each identified chromatographic peak in
-each sample. Whether individual peaks can be still identified in such a plot
-depends however on the number of samples from which peaks are drawn.
+We can also plot the extracted ion chromatogram. Identified chromatographic
+peaks will be automatically highlighted in the plot. Below we highlight
+chromatographic peaks with a rectangle from the peak's minimal to maximal rt and
+from an intensity of 0 to the maximal signal of the peak. We use the `col`
+parameter to color the individual chromatogram lines. Colors can also be
+specified for the identified peaks, `peakCol` for the foreground/border color,
+`peakBg` for the background/fill color. One color has to be provided for each
+chromatographic peak listed by `chromPeaks`. Below we define a color to indicate
+the sample group from which the sample is and use the sample information in the
+peaks' `"sample"` column to assign the correct color to each chromatographic
+peak.
+
+```{r peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
+sample_colors <- group_colors[chr_ex$sample_group]
+plot(chr_ex, col = sample_colors, peakType = "rectangle",
+     peakCol = sample_colors[chromPeaks(chr_ex)[, "sample"]],
+     peakBg = NA)
+```
+
+Alternatively to the rectangle visualization above, it is possible to represent
+the apex position of each peak with a single point (passing argument
+`type = "point"` to the function), or draw the actually identified peak by
+specifying `type = "polygon"`. Below we use this option to fill the peak area
+for each identified chromatographic peak in each sample. Whether individual
+peaks can be still identified in such a plot depends however on the number of
+samples from which peaks are drawn.
 
 ```{r peak-detection-highlight-chrom-peaks-plot-polygon, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." }
-plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
-highlightChromPeaks(xdata, col = group_colors[chr_raw$sample_group],
-                    lty = 3, rt = rtr, mz = mzr, border = NA,
-                    type = "polygon")
+plot(chr_ex, col = group_colors[chr_raw$sample_group], lwd = 2,
+     peakBg = sample_colors[chromPeaks(chr_ex)[, "sample"]])
 ```
 
 Note that we can also specifically extract identified chromatographic peaks for
@@ -440,13 +459,15 @@ aligned data with `rtime(xdata, adjusted = FALSE)`.
 
 To evaluate the impact of the alignment we plot the BPC on the adjusted data. In
 addition we plot the differences of the adjusted- to the raw retention times per
-sample using the `plotAdjustedRtime` function.
+sample using the `plotAdjustedRtime` function. Note that we **don't** want to
+highlight any chromatographic peaks (because there would simply be too many) and
+set thus `peakType = "none"` in the `plot` call.
 
 ```{r alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
 ## Get the base peak chromatograms.
 bpis_adj <- chromatogram(xdata, aggregationFun = "max")
 par(mfrow = c(2, 1), mar = c(4.5, 4.2, 1, 0.5))
-plot(bpis_adj, col = group_colors[bpis_adj$sample_group])
+plot(bpis_adj, col = group_colors[bpis_adj$sample_group], peakType = "none")
 ## Plot also the difference of adjusted to raw retention time.
 plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group])
 ```
@@ -528,7 +549,7 @@ plot(chr_raw, col = group_colors[chr_raw$sample_group])
 
 ## Extract the chromatogram from the adjusted object
 chr_adj <- chromatogram(xdata, rt = rtr, mz = mzr)
-plot(chr_adj, col = group_colors[chr_raw$sample_group])
+plot(chr_adj, col = group_colors[chr_raw$sample_group], peakType = "none")
 ```
 
 
@@ -555,9 +576,8 @@ mzr <- c(305.05, 305.15)
 chr_mzr <- chromatogram(xdata, mz = mzr, rt = c(2500, 4000))
 par(mfrow = c(3, 1), mar = c(1, 4, 1, 0.5))
 cols <- group_colors[chr_mzr$sample_group]
-plot(chr_mzr, col = cols, xaxt = "n", xlab = "")
-## Highlight the detected peaks in that region.
-highlightChromPeaks(xdata, mz = mzr, col = cols, type = "point", pch = 16)
+plot(chr_mzr, col = cols, xaxt = "n", xlab = "",
+     peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]])
 ## Define the parameters for the peak density method
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
                         minFraction = 0.4, bw = 30)
@@ -689,10 +709,18 @@ feature_chroms <- featureChromatograms(xdata, features = 1:4)
 feature_chroms
 ```
 
-And plot the extracted ion chromatograms for feature number 3 and 4.
+And plot the extracted ion chromatograms. We again use the group color for each
+identified peak to fill the area.
 
-```{r feature-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Extracted ion chromatograms for feature 3 and 4." }
-par(mfrow = c(1, 2))
+```{r feature-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Extracted ion chromatograms for features 1 to 4." }
+plot(feature_chroms, col = sample_colors,
+     peakBg = sample_colors[chromPeaks(feature_chroms)[, "sample"]])
+
+third <- feature_chroms[3, ]
+plot(third)
+chromPeaks(third)
+
+
 plot(feature_chroms[3, ], col = group_colors[feature_chroms$sample_group])
 plot(feature_chroms[4, ], col = group_colors[feature_chroms$sample_group])
 ```

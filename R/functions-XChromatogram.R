@@ -136,3 +136,57 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
     x@chromPeaks <- chromPeaks
     if (validObject(x)) x
 }
+
+#' Internal function to plot/draw identified chromatographic peaks in a
+#' plot.
+#'
+#' @param x `XChromatogram` or an `XChromatograms` object.
+#'
+#' @param pks chromatographic peaks as returned by `chromPeaks(x)`.
+#'
+#' @noRd
+.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch, ...) {
+    switch(type,
+           point = {
+               points(pks[, "rt"], pks[, "maxo"], pch = pch, col = col,
+                      bg = bg, ...)
+           },
+           rectangle = {
+               rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
+                    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
+                    col = bg, border = col, ...)
+           },
+           polygon = {
+               ordr <- order(pks[, "maxo"], decreasing = TRUE)
+               pks <- pks[ordr, , drop = FALSE]
+               col <- col[ordr]
+               bg <- bg[ordr]
+               xs_all <- numeric()
+               ys_all <- numeric()
+               for (i in seq_len(nrow(pks))) {
+                   if (inherits(x, "XChromatograms")) {
+                       chr <- filterRt(x[pks[i, "row"], pks[i, "column"]],
+                                       rt = pks[i, c("rtmin", "rtmax")])
+                   } else
+                       chr <- filterRt(x, rt = pks[i, c("rtmin", "rtmax")])
+                   xs <- rtime(chr)
+                   if (!length(xs)) {
+                       next
+                       col <- col[-i]
+                       bg <- bg[-i]
+                   }
+                   xs <- c(xs[1], xs, xs[length(xs)])
+                   ys <- c(0, intensity(chr), 0)
+                   nona <- !is.na(ys)
+                   if (length(xs_all)) {
+                       xs_all <- c(xs_all, NA)
+                       ys_all <- c(ys_all, NA)
+                   }
+                   xs_all <- c(xs_all, xs[nona])
+                   ys_all <- c(ys_all, ys[nona])
+                   ## polygon(xs[nona], ys[nona], border = col[i], col = bg[i],
+                   ##         ...)
+               }
+               polygon(xs_all, ys_all, border = col, col = bg, ...)
+           })
+}

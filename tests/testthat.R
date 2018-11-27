@@ -37,10 +37,14 @@ xod_xgr <- adjustRtime(xod_xg, param = PeakGroupsParam(span = 0.4))
 xod_xgrg <- groupChromPeaks(xod_xgr, param = pdp)
 xod_r <- adjustRtime(as(od_x, "XCMSnExp"), param = ObiwarpParam())
 
+xod_chr <- findChromPeaks(filterMz(filterRt(od_x, rt = c(2500, 3500)),
+                                   mz = c(334.9, 344.1)),
+                          param = CentWaveParam())
+
 faahko_grouped_filled <- fillPeaks(group(faahko))
 faahko_grouped_retcor_filled <-
     fillPeaks(group(retcor(group(updateObject(faahko)))))
-    
+
 microtofq_fs <- c(system.file("microtofq/MM14.mzML", package = "msdata"),
                   system.file("microtofq/MM8.mzML", package = "msdata"))
 microtofq_xr <- xcmsRaw(microtofq_fs[1], profstep = 0)

@@ -117,25 +117,26 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #' @section Plotting and visualizing:
 #'
 #' - `plot` draws the chromatogram and highlights in addition any
-#'   chromatographic peaks present in the `XChromatogram` (unless
-#'   `peakType = "none"` was specified). To draw peaks in different colors
-#'   a vector of color definitions with length equal to `nrow(chromPeaks(x))`
-#'   has to be submitted  with `peakCol` and/or `peakBg` defining one color
-#'   for each peak (in the order as peaks are in `chromPeaks(x))`. For base
-#'   peak chromatograms or total ion chromatograms it might be better to set
-#'   `peakType = "none"` to avoid generating busy plots.
+#'   chromatographic peaks present in the `XChromatogram` or `XChromatograms`
+#'   (unless `peakType = "none"` was specified). To draw peaks in different
+#'   colors a vector of color definitions with length equal to
+#'   `nrow(chromPeaks(x))` has to be submitted  with `peakCol` and/or `peakBg`
+#'   defining one color for each peak (in the order as peaks are in
+#'   `chromPeaks(x))`. For base peak chromatograms or total ion chromatograms
+#'   it might be better to set `peakType = "none"` to avoid generating busy
+#'   plots.
 #'
 #' @note
 #'
-#' Highlighting the peak area(s) in an `XChromatogram` object (`plot` with
-#' `peakType = "polygon"`) draws a polygon representing the shown chromatogram
-#' from the peak's minimal retention time to the maximal retention time. If the
-#' `XChromatogram` was extracted from an [XCMSnExp()] object with the
-#' [chromatogram()] function this might therefore not represent the actual
-#' identified peak area if the m/z range that was used to extract the
-#' chromatogram was larger than the peak's m/z.
+#' Highlighting the peak area(s) in an `XChromatogram` or `XChromatograms`
+#' object (`plot` with `peakType = "polygon"`) draws a polygon representing
+#' the displayed chromatogram from the peak's minimal retention time to the
+#' maximal retention time. If the `XChromatograms` was extracted from an
+#' [XCMSnExp()] object with the [chromatogram()] function this might not
+#' represent the actual identified peak area if the m/z range that was
+#' used to extract the chromatogram was larger than the peak's m/z.
 #'
-#' @param x For `plot`: an `XChromatogram` object.
+#' @param x For `plot`: an `XChromatogram` or `XChromatograms` object.
 #'
 #' @param col For `plot`: the color to be used to draw the chromatogram.
 #'
@@ -221,48 +222,6 @@ setMethod("plot", "XChromatogram", function(x, col = "#00000060", lty = 1,
                                                  pch = peakPch, ...))
     }
 })
-
-.add_chromatogram_peaks <- function(x, pks, col, bg, type, pch, ...) {
-    switch(type,
-           point = {
-               points(pks[, "rt"], pks[, "maxo"], pch = pch, col = col,
-                      bg = bg, ...)
-           },
-           rectangle = {
-               rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
-                    ybottom = rep(0, nrow(pks)), ytop = pks[, "maxo"],
-                    col = bg, border = col, ...)
-           },
-           polygon = {
-               ordr <- order(pks[, "maxo"], decreasing = TRUE)
-               pks <- pks[ordr, , drop = FALSE]
-               col <- col[ordr]
-               bg <- bg[ordr]
-               xs_all <- numeric()
-               ys_all <- numeric()
-               for (i in seq_len(nrow(pks))) {
-                   chr <- filterRt(x, rt = pks[i, c("rtmin", "rtmax")])
-                   xs <- rtime(chr)
-                   if (!length(xs)) {
-                       next
-                       col <- col[-i]
-                       bg <- bg[-i]
-                   }
-                   xs <- c(xs[1], xs, xs[length(xs)])
-                   ys <- c(0, intensity(chr), 0)
-                   nona <- !is.na(ys)
-                   if (length(xs_all)) {
-                       xs_all <- c(xs_all, NA)
-                       ys_all <- c(ys_all, NA)
-                   }
-                   xs_all <- c(xs_all, xs[nona])
-                   ys_all <- c(ys_all, ys[nona])
-                   ## polygon(xs[nona], ys[nona], border = col[i], col = bg[i],
-                   ##         ...)
-               }
-               polygon(xs_all, ys_all, border = col, col = bg, ...)
-           })
-}
 
 #' @rdname XChromatogram
 #'

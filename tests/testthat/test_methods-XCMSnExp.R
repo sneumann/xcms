@@ -1027,16 +1027,9 @@ test_that("chromatogram,XCMSnExp works", {
     res_2 <- chromatogram(xod_xg, rt = rtr, mz = mzr)
     ##
 
-    faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-
-    od_l <- readMSData(faahko_3_files, mode = "onDisk")
-    xod_l <- findChromPeaks(od_l, param = CentWaveParam())
-
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
-    xchrs <- chromatogram(xod_l, mz = mzr, rt = rtr)
+    xchrs <- chromatogram(xod_chr, mz = mzr, rt = rtr)
     expect_equal(nrow(xchrs), 2)
     expect_equal(ncol(xchrs), 3)
     pks <- chromPeaks(xchrs)
@@ -1053,7 +1046,7 @@ test_that("chromatogram,XCMSnExp works", {
     expect_true(all(pks[pks[, "row"] == 2, "mz"] <= mzr[2, 2]))
 
     ## Full rt range
-    xchrs <- chromatogram(xod_l, mz = mzr)
+    xchrs <- chromatogram(xod_chr, mz = mzr)
     pks <- chromPeaks(xchrs)
     expect_true(all(pks[pks[, "row"] == 1, "mz"] >= mzr[1, 1]))
     expect_true(all(pks[pks[, "row"] == 1, "mz"] <= mzr[1, 2]))
@@ -1061,26 +1054,26 @@ test_that("chromatogram,XCMSnExp works", {
     expect_true(all(pks[pks[, "row"] == 2, "mz"] <= mzr[2, 2]))
 
     expect_equal(chromPeaks(xchrs[1, 1]),
-                 chromPeaks(filterFile(xod_l, 1), mz = mzr[1, ],
+                 chromPeaks(filterFile(xod_chr, 1), mz = mzr[1, ],
                             type = "apex_within"))
     a <- chromPeaks(xchrs[1, 2])
-    b <- chromPeaks(filterFile(xod_l, 2), mz = mzr[1, ], type = "apex_within")
+    b <- chromPeaks(filterFile(xod_chr, 2), mz = mzr[1, ], type = "apex_within")
     expect_equal(a[, -11], b[, -11])
     a <- chromPeaks(xchrs[1, 3])
-    b <- chromPeaks(filterFile(xod_l, 3), mz = mzr[1, ], type = "apex_within")
+    b <- chromPeaks(filterFile(xod_chr, 3), mz = mzr[1, ], type = "apex_within")
     expect_equal(a[, -11], b[, -11])
     a <- chromPeaks(xchrs[2, 1])
-    b <- chromPeaks(filterFile(xod_l, 1), mz = mzr[2, ], type = "apex_within")
+    b <- chromPeaks(filterFile(xod_chr, 1), mz = mzr[2, ], type = "apex_within")
     expect_equal(a[, -11], b[, -11])
     a <- chromPeaks(xchrs[2, 2])
-    b <- chromPeaks(filterFile(xod_l, 2), mz = mzr[2, ], type = "apex_within")
+    b <- chromPeaks(filterFile(xod_chr, 2), mz = mzr[2, ], type = "apex_within")
     expect_equal(a[, -11], b[, -11])
     a <- chromPeaks(xchrs[2, 3])
-    b <- chromPeaks(filterFile(xod_l, 3), mz = mzr[2, ], type = "apex_within")
+    b <- chromPeaks(filterFile(xod_chr, 3), mz = mzr[2, ], type = "apex_within")
     expect_equal(a[, -11], b[, -11])
 
     rtr[1, 1] <- 2785
-    xchrs <- chromatogram(xod_l, mz = mzr, rt = rtr)
+    xchrs <- chromatogram(xod_chr, mz = mzr, rt = rtr)
     expect_true(nrow(chromPeaks(xchrs[1, 1])) == 0)
 
     pks <- chromPeaks(xchrs)

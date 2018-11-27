@@ -21,6 +21,7 @@
 \alias{chromPeaks,XChromatograms-method}
 \alias{filterMz,XChromatograms-method}
 \alias{filterRt,XChromatograms-method}
+\alias{plot,XChromatograms,ANY-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -59,6 +60,11 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{filterMz}{XChromatograms}(object, mz, ...)
 
 \S4method{filterRt}{XChromatograms}(object, rt, ...)
+
+\S4method{plot}{XChromatograms,ANY}(x, col = "#00000060", lty = 1,
+  type = "l", xlab = "retention time", ylab = "intensity",
+  main = NULL, peakType = c("polygon", "point", "rectangle", "none"),
+  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -142,7 +148,7 @@ of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.}
 \item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
 \code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
 
-\item{x}{For \code{plot}: an \code{XChromatogram} object.}
+\item{x}{For \code{plot}: an \code{XChromatogram} or \code{XChromatograms} object.}
 
 \item{col}{For \code{plot}: the color to be used to draw the chromatogram.}
 
@@ -195,13 +201,13 @@ All functions are described (grouped into topic-related sections) after the
 \strong{Arguments} section.
 }
 \note{
-Highlighting the peak area(s) in an \code{XChromatogram} object (\code{plot} with
-\code{peakType = "polygon"}) draws a polygon representing the shown chromatogram
-from the peak's minimal retention time to the maximal retention time. If the
-\code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with the
-\code{\link[=chromatogram]{chromatogram()}} function this might therefore not represent the actual
-identified peak area if the m/z range that was used to extract the
-chromatogram was larger than the peak's m/z.
+Highlighting the peak area(s) in an \code{XChromatogram} or \code{XChromatograms}
+object (\code{plot} with \code{peakType = "polygon"}) draws a polygon representing
+the displayed chromatogram from the peak's minimal retention time to the
+maximal retention time. If the \code{XChromatograms} was extracted from an
+\code{\link[=XCMSnExp]{XCMSnExp()}} object with the \code{\link[=chromatogram]{chromatogram()}} function this might not
+represent the actual identified peak area if the m/z range that was
+used to extract the chromatogram was larger than the peak's m/z.
 }
 \section{Creation of objects}{
 
@@ -241,13 +247,14 @@ the chromatogram at the respective position.
 
 \itemize{
 \item \code{plot} draws the chromatogram and highlights in addition any
-chromatographic peaks present in the \code{XChromatogram} (unless
-\code{peakType = "none"} was specified). To draw peaks in different colors
-a vector of color definitions with length equal to \code{nrow(chromPeaks(x))}
-has to be submitted  with \code{peakCol} and/or \code{peakBg} defining one color
-for each peak (in the order as peaks are in \code{chromPeaks(x))}. For base
-peak chromatograms or total ion chromatograms it might be better to set
-\code{peakType = "none"} to avoid generating busy plots.
+chromatographic peaks present in the \code{XChromatogram} or \code{XChromatograms}
+(unless \code{peakType = "none"} was specified). To draw peaks in different
+colors a vector of color definitions with length equal to
+\code{nrow(chromPeaks(x))} has to be submitted  with \code{peakCol} and/or \code{peakBg}
+defining one color for each peak (in the order as peaks are in
+\code{chromPeaks(x))}. For base peak chromatograms or total ion chromatograms
+it might be better to set \code{peakType = "none"} to avoid generating busy
+plots.
 }
 }
 

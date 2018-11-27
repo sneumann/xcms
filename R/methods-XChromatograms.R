@@ -95,3 +95,42 @@ setMethod("addProcessHistory", "XChromatograms", function(object, ph) {
     object@.processHistory[[(length(object@.processHistory) + 1)]] <- ph
     object
 })
+
+#' @rdname XChromatogram
+setMethod("plot", "XChromatograms", function(x, col = "#00000060", lty = 1,
+                                             type = "l",
+                                             xlab = "retention time",
+                                             ylab = "intensity",
+                                             main = NULL,
+                                             peakType = c("polygon",
+                                                          "point",
+                                                          "rectangle",
+                                                          "none"),
+                                             peakCol = "#00000060",
+                                             peakBg = "#00000020",
+                                             peakPch = 1, ...) {
+    peakType <- match.arg(peakType)
+    nr <- nrow(x)
+    if (nr > 1)
+        par(mfrow = c(round(sqrt(nr)), ceiling(sqrt(nr))))
+    pks_all <- chromPeaks(x)
+    pks_nr <- nrow(pks_all)
+    if (length(peakCol) != pks_nr)
+        peakCol <- rep(peakCol[1], pks_nr)
+    if (length(peakBg) != pks_nr)
+        peakBg <- rep(peakBg[1], pks_nr)
+    if (length(peakPch) != pks_nr)
+        peakPch <- rep(peakPch[1], pks_nr)
+    for (i in seq_len(nr)) {
+        x_sub <- x[i, ]
+        plot(as(x_sub, "Chromatograms"), col = col, lty = lty, type = type,
+             xlab = xlab, ylab = ylab, main = main, ...)
+        idx <- which(pks_all[, "row"] == i)
+        if (length(idx) && peakType != "none") {
+            pks <- chromPeaks(x_sub)
+            .add_chromatogram_peaks(x_sub, pks, col = peakCol[idx],
+                                    bg = peakBg[idx], type = peakType,
+                                    pch = peakPch[idx], ...)
+        }
+    }
+})

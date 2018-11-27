@@ -32,3 +32,18 @@ test_that("XChromatogram works", {
     xc <- XChromatogram(rtime = 1:10, intensity = 1:10, chromPeaks = pks)
     expect_equal(xc@chromPeaks[, "rtmin"], c(2, 4))
 })
+
+test_that(".add_chromatogram_peaks works", {
+    xc <- XChromatogram(rtime = 1:10, intensity = c(2, 5, 12, 32, 38, 21, 13,
+                                                    5, 5, 9))
+    plot(xc)
+    pks <- matrix(c(5, 3, 7, NA, 38, NA), nrow = 1,
+                  dimnames = list(character(), c("rt", "rtmin", "rtmax",
+                                                 "into", "maxo", "sn")))
+    xcms:::.add_chromatogram_peaks(xc, pks, type = "point", pch = 16,
+                                   col = "red", bg = "black")
+    xcms:::.add_chromatogram_peaks(xc, pks, type = "rectangle", pch = 16,
+                                   col = "red", bg = NA)
+    xcms:::.add_chromatogram_peaks(xc, pks, type = "polygon", col = "#00ff0020",
+                                   bg = "#00ff0060")
+})

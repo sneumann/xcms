@@ -83,3 +83,47 @@ test_that("filterRt, filterMz for XChromatograms works", {
     expect_true(nrow(chromPeaks(res)) == 1)
     expect_equal(chromPeaks(res[1, 1]), pks3)
 })
+
+test_that("plot,XChromatogram works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
+
+    ## Full rt range.
+    xchr_rt <- chromatogram(xod_chr, mz = mzr)
+
+    cols_smple <- c("#ff000060", "#00ff0060", "#0000ff60")
+    plot(as(xchr_rt[1, ], "Chromatograms"), col = cols_smple)
+    ## Plotting the data is fine, just as above.
+    ## Then we have to loop over each chromatogram...
+    x <- xchr_rt[1, ]
+    pks <- chromPeaks(x)
+    .add_chromatogram_peaks(x, pks, type = "rectangle", bg = rep(NA, nrow(pks)),
+                            col = cols_smple[pks[, "sample"]])
+    .add_chromatogram_peaks(x, pks, type = "point", bg = rep(NA, nrow(pks)),
+                            col = cols_smple[pks[, "sample"]], pch = 15)
+    .add_chromatogram_peaks(x, pks, type = "polygon",
+                            bg = cols_smple[pks[, "sample"]],
+                            col = cols_smple[pks[, "sample"]])
+    x <- xchr_rt[2, ]
+    pks <- chromPeaks(x)
+    plot(as(x, "Chromatograms"), col = cols_smple, lwd = 2)
+    .add_chromatogram_peaks(x, pks, type = "rectangle", bg = rep(NA, nrow(pks)),
+                            col = cols_smple[pks[, "sample"]])
+    .add_chromatogram_peaks(x, pks, type = "point", bg = rep(NA, nrow(pks)),
+                            col = cols_smple[pks[, "sample"]], pch = 15)
+    .add_chromatogram_peaks(x, pks, type = "polygon",
+                            bg = cols_smple[pks[, "sample"]],
+                            col = cols_smple[pks[, "sample"]])
+
+    plot(xchr_rt, peakCol = cols_smple[chromPeaks(xchr_rt)[, "sample"]],
+         peakBg = cols_smple[chromPeaks(xchr_rt)[, "sample"]], xlab = "RT")
+    xsub <- xchr_rt[2, ]
+    ## Use one color per peak
+    library(RColorBrewer)
+    cls <- paste0(brewer.pal(nrow(chromPeaks(xsub)), "Dark2"), 40)
+    plot(xsub, peakBg = cls)
+
+    ## Narrow on rt.
+    xchr <- chromatogram(xod_chr, mz = mzr, rt = rtr)
+    plot(xchr)
+})
