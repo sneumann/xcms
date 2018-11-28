@@ -88,4 +88,26 @@ test_that("applyRtAdjustment works", {
                                       rtraw = xsa@rt$corrected,
                                       rtadj = xsa@rt$raw)
     expect_equal(pksRaw, peaks(xsg))
+
+    rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)[[1]]
+    rt_adj <- rtime(xod_xgr, bySample = TRUE)[[1]]
+
+    rt_new <- xcms:::.applyRtAdjustment(rt_raw, rt_raw, rt_adj)
+    expect_equal(unname(rt_new), unname(rt_adj))
+
+    rt_new2 <- .applyRtAdjustment(rt_raw, rt_raw[200:1000], rt_adj[200:1000])
+
+    ## Artificial examples.
+    a_raw <- c(1, 2, 3, 5, 6, 7, 8, 10, 12, 13, 14, 16)
+    a_adj <- a_raw + 2 # shift by 2
+    b <- .applyRtAdjustment(a_raw, a_raw, a_adj)
+    expect_equal(a_adj, b)
+    b_2 <- .applyRtAdjustment(a_raw, a_raw[4:8], a_adj[4:8])
+    expect_equal(b, b_2)
+
+    a_adj <- a_raw - 2
+    b <- .applyRtAdjustment(a_raw, a_raw, a_adj)
+    expect_equal(a_adj, b)
+    b_2 <- .applyRtAdjustment(a_raw, a_raw[4:8], a_adj[4:8])
+    expect_equal(b, b_2)
 })

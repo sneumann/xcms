@@ -11,27 +11,27 @@
 #'     described by fitting either a polynomial (\code{smooth = "loess"}) or
 #'     a linear (\code{smooth = "linear"}) model to the data points. The
 #'     models are subsequently used to adjust the retention time for each
-#'     spectrum in each sample. 
+#'     spectrum in each sample.
 #'
 #' @note The method ensures that returned adjusted retention times are
 #'     increasingly ordered, just as the raw retention times.
-#' 
+#'
 #' @details The alignment bases on the presence of compounds that can be found
 #'     in all/most samples of an experiment. The retention times of individual
-#'     spectra are then adjusted based on the alignment of the features 
+#'     spectra are then adjusted based on the alignment of the features
 #'     corresponding to these \emph{house keeping compounds}. The paraneters
 #'      \code{minFraction} and \code{extraPeaks} can be used to fine tune which
-#'     features should be used for the alignment (i.e. which features 
+#'     features should be used for the alignment (i.e. which features
 #'     most likely correspond to the above mentioned house keeping compounds).
 #'
 #' @inheritParams adjustRtime-peakGroups
-#' 
+#'
 #' @param peaks a \code{matrix} or \code{data.frame} with the identified
 #'     chromatographic peaks in the samples.
 #'
 #' @param peakIndex a \code{list} of indices that provides the grouping
 #'     information of the chromatographic peaks (across and within samples).
-#' 
+#'
 #' @param rtime a \code{list} of \code{numeric} vectors with the retention
 #'     times per file/sample.
 #'
@@ -41,7 +41,7 @@
 #'     this matrix will be determined depending on parameters
 #'     \code{minFraction} and \code{extraPeaks}. If provided,
 #'     \code{minFraction} and \code{extraPeaks} will be ignored.
-#' 
+#'
 #' @return A \code{list} with \code{numeric} vectors with the adjusted
 #'     retention times grouped by sample.
 #'
@@ -86,7 +86,7 @@ do_adjustRtime_peakGroups <-
              "times of the spectra per sample!")
     if (length(rtime) != max(peaks[, "sample"]))
         stop("The length of 'rtime' does not match with the total number of ",
-             "samples according to the 'peaks' matrix!")    
+             "samples according to the 'peaks' matrix!")
     nSamples <- length(rtime)
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
@@ -141,7 +141,7 @@ do_adjustRtime_peakGroups <-
     ##     sel_idx <- sort(c(spec_idx, sel_idx))
     ##     rt <- rt[sel_idx, , drop = FALSE]
     ## }
-    
+
     message("Performing retention time correction using ", nrow(rt),
             " peak groups.")
 
@@ -168,7 +168,7 @@ do_adjustRtime_peakGroups <-
     rtdevrange <- range(rtdev, na.rm = TRUE)
     warn.overcorrect <- FALSE
     warn.tweak.rt <- FALSE
-    
+
     for (i in 1:nSamples) {
         pts <- na.omit(data.frame(rt = rt[, i], rtdev = rtdev[, i]))
 
@@ -178,7 +178,7 @@ do_adjustRtime_peakGroups <-
         if (smooth == "loess") {
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                          degree = 1, family = family))
-            
+
             rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
             ## Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
@@ -198,7 +198,7 @@ do_adjustRtime_peakGroups <-
                 warn.tweak.rt <- TRUE  ## Warn that we had to tweak the rts.
                 rtadj <- rtime[[i]] - rtdevsmo[[i]]
                 rtadj_start <- rtadj[decidx[1]] ## start interpolating from here
-                ## Define the 
+                ## Define the
                 next_larger <- which(rtadj > rtadj[decidx[1]])
                 if (length(next_larger) == 0) {
                     ## Fix if there is no larger adjusted rt up to the end.
@@ -214,7 +214,7 @@ do_adjustRtime_peakGroups <-
                 rtdevsmo[[i]][adj_idxs] <- rtime[[i]][adj_idxs] -
                     (rtadj_start + (1:length(adj_idxs)) * incr)
             }
-            
+
             rtdevsmorange <- range(rtdevsmo[[i]])
             if (any(rtdevsmorange / rtdevrange > 2))
                 warn.overcorrect <- TRUE
@@ -269,7 +269,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     ## minFraction
     if (any(minFraction > 1) | any(minFraction < 0))
         stop("'minFraction' has to be between 0 and 1!")
-    
+
     ## Check peaks:
     OK <- .validChromPeaksMatrix(peaks)
     if (is.character(OK))
@@ -289,11 +289,11 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     if (length(rtime) != max(peaks[, "sample"]))
         stop("The length of 'rtime' does not match with the total number of ",
              "samples according to the 'peaks' matrix!")
-    
+
     nSamples <- length(rtime)
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
-   
+
     rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
                                  missingSample, extraPeaks)
 
@@ -329,7 +329,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
         if (smooth == "loess") {
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                          degree = 1, family = family))
-            
+
             rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
             ## Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
@@ -385,20 +385,35 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     return(rtime)
 }
 
-#' This function adjusts retentin times in the vector/matrix \code{x} given the
-#' provided \code{numeric} vectors \code{rtraw} and \code{rtadj}.
+#' This function adjusts retentin times in the vector/matrix `x` given the
+#' provided `numeric` vectors `rtraw` and `rtadj`.
 #'
-#' @details The function uses the \code{stepfun} to adjust \code{x} and adjusts
-#'     it given \code{rtraw} towards \code{rtadj}. Hence it is possible to
-#'     perform or to revert retention time correction in \code{x} depending
-#'     on what is provided with parameters \code{rtraw} and \code{rtadj}.
-#'     See examples for details.
-#' 
-#' @param x A numeric or matrix with retention time values that should be
+#' @note
+#'
+#' Values in `x` that are outside of the range of `rtraw` are linearly shifted
+#' by the difference of the first/last adjusted value.
+#'
+#' @details
+#'
+#' The function uses `stepfun` to adjust `x` given adjustment from `rtraw`
+#' to `rtadj`. It is possible to perform or to revert retention time
+#' correction in `x` depending on whether raw or adjusted retention times are
+#' provided with `rtraw` or `rtadj`, respectively.
+#' See examples for details.
+#'
+#' @param x A `numeric` or `matrix` with retention time values that should be
 #'     adjusted.
-#' 
+#'
+#' @param rtraw `numeric` with raw retention times.
+#'
+#' @param rtadj `numeric` with adjusted retention times.
+#'
 #' @noRd
-#' 
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
 #' @examples
 #'
 #' ## Perform retention time correction:
@@ -413,21 +428,29 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     ## re-order everything if rtraw is not sorted; issue #146
     if (is.unsorted(rtraw)) {
         idx <- order(rtraw)
-        adjFun <- stepfun(rtraw[idx][-1] - diff(rtraw[idx]) / 2, rtadj[idx])
-        ## if (!is.null(dim(x)))
-        ##     return(adjFun(x[idx, ]))
-        ## else 
-        ##     return(adjFun(x[idx]))
-    } else {
-        adjFun <- stepfun(rtraw[-1] - diff(rtraw) / 2, rtadj)
+        rtraw <- rtraw[idx]
+        rtadj <- rtadj[idx]
     }
-    adjFun(x)
+    adjFun <- stepfun(rtraw[-1] - diff(rtraw) / 2, rtadj)
+    res <- adjFun(x)
+    ## Fix margins.
+    idx_low <- which(x < rtraw[1])
+    if (length(idx_low)) {
+        first_adj <- idx_low[length(idx_low)] + 1
+        res[idx_low] <- x[idx_low] + res[first_adj] - x[first_adj]
+    }
+    idx_high <- which(x > rtraw[length(rtraw)])
+    if (length(idx_high)) {
+        last_adj <- idx_high[1] - 1
+        res[idx_high] <- x[idx_high] + res[last_adj] - x[last_adj]
+    }
+    res
 }
 
 #' Helper function to apply retention time adjustment to already identified
 #' peaks in the peaks matrix of an XCMSnExp (or peaks matrix of an
 #' xcmsSet).
-#' 
+#'
 #' @noRd
 .applyRtAdjToChromPeaks <- function(x, rtraw, rtadj) {
     if (!is.list(rtraw) | !is.list(rtadj))
