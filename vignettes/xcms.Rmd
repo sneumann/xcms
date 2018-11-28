@@ -283,12 +283,48 @@ m/z values for many compounds (either internal standards or compounds known to
 be present in the sample) and define the `ppm` parameter for *centWave*
 according to these.
 
-Below we perform the chromatographic peak detection using the `findChromPeaks`
-method. The submitted *parameter* object defines which algorithm will be used
-and allows to define the settings for this algorithm. Note that we set the
-argument `noise` to `5000` to reduce the run time of this vignette. With this
-setting we consider only signals with a value larger than 5000 in the peak
-detection step.
+Note that we can also perform the peak detection on the extracted ion
+chromatogram. This can help to evaluate different peak detection settings. Only
+be aware that peak detection on an extracted ion chromatogram will not consider
+the `ppm` parameter and that the estimation of the background signal is
+different to the peak detection on the full data set; values for the `snthresh`
+will hence have different consequences. Below we perform the peak detection with
+the `findChromPeaks` function on the extracted ion chromatogram. The submitted
+*parameter* object defines which algorithm will be used and allows to define the
+settings for this algorithm. We use the *centWave* algorithm with default
+settings, except for `snthresh`.
+
+```{r peak-detection-eic, message = FALSE}
+xchr <- findChromPeaks(chr_raw, param = CentWaveParam(snthresh = 2))
+```
+
+We can access the identified chromatographic peaks with the `chromPeaks`
+function.
+
+```{r peak-detection-eic-chromPeaks}
+head(chromPeaks(xchr))
+```
+
+Next we plot the identified chromatographic peaks in the extracted ion chromatogram. We use the `col`
+parameter to color the individual chromatogram lines. Colors can also be
+specified for the identified peaks, `peakCol` for the foreground/border color,
+`peakBg` for the background/fill color. One color has to be provided for each
+chromatographic peak listed by `chromPeaks`. Below we define a color to indicate
+the sample group from which the sample is and use the sample information in the
+peaks' `"sample"` column to assign the correct color to each chromatographic
+peak. More peak highlighting options are described further below.
+
+```{r peak-detection-eic-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. Peak area of identified chromatographic peaks are highlighted in the sample group color."}
+sample_colors <- group_colors[xchr$sample_group]
+plot(xchr, col = sample_colors,
+     peakBg = sample_colors[chromPeaks(xchr)[, "column"]])
+
+```
+
+Finally we perform the chromatographic peak detection on the full data set. Note
+that we set the argument `noise` to `5000` to reduce the run time of this
+vignette. With this setting we consider only signals with a value larger than
+5000 in the peak detection step.
 
 ```{r peak-detection-centwave, message = FALSE, results = "hide" }
 cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000)
@@ -362,14 +398,7 @@ chromPeaks(chr_ex)
 We can also plot the extracted ion chromatogram. Identified chromatographic
 peaks will be automatically highlighted in the plot. Below we highlight
 chromatographic peaks with a rectangle from the peak's minimal to maximal rt and
-from an intensity of 0 to the maximal signal of the peak. We use the `col`
-parameter to color the individual chromatogram lines. Colors can also be
-specified for the identified peaks, `peakCol` for the foreground/border color,
-`peakBg` for the background/fill color. One color has to be provided for each
-chromatographic peak listed by `chromPeaks`. Below we define a color to indicate
-the sample group from which the sample is and use the sample information in the
-peaks' `"sample"` column to assign the correct color to each chromatographic
-peak.
+from an intensity of 0 to the maximal signal of the peak.
 
 ```{r peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
 sample_colors <- group_colors[chr_ex$sample_group]
