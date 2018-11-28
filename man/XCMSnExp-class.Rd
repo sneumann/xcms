@@ -159,7 +159,7 @@ details.}
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}
 
-\item{fileIndex}{For \code{processHistory}: optional \code{numeric}
+\item{fileIndex}{For \code{processHistory}: optional \code{integer}
 specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
 
@@ -417,7 +417,7 @@ If the \code{XCMSnExp} object contains adjusted retention times, these
 are returned by default in the \code{Spectrum} objects (can be
 overwritten by setting \code{adjusted = FALSE}).
 
-\code{processHistory}: returns a \code{list} with
+\code{processHistory}: returns a \code{list} of
 \code{\link{ProcessHistory}} objects (or objects inheriting from this
 base class) representing the individual processing steps that have been
 performed, eventually along with their settings (\code{Param} parameter

@@ -20,6 +20,10 @@ setMethod("show", "XChromatogram", function(object) {
 #'
 #' @section Accessing data:
 #'
+#' See also help of [Chromatogram] in the `MSnbase` package for general
+#' information and data access. The methods listed here are specific for
+#' `XChromatogram` and `XChromatograms` objects.
+#'
 #' - `chromPeaks`, `chromPeaks<-`: extract or set the matrix with the
 #'   chromatographic peak definitions. Parameter `rt` allows to specify a
 #'   retention time range for which peaks should be returned along with
@@ -41,6 +45,10 @@ setMethod("show", "XChromatogram", function(object) {
 #'   with either `true` or `false` if chromatographic peaks are available in
 #'   the chromatogram at the respective position.
 #'
+#' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
+#'   the individual performed processing steps. Optional parameters `type` and
+#'   `fileIndex` allow to further specify which processing steps to return.
+#'
 #' @param rt For `chromPeaks`: `numeric(2)` defining the retention time range
 #'     for which chromatographic peaks should be returned.
 #'     For `filterRt`: `numeric(2)` defining the retention time range to
@@ -57,6 +65,8 @@ setMethod("show", "XChromatogram", function(object) {
 #'     For `plot`: what type of plot should be used for the
 #'     chromatogram (such as `"l"` for lines, `"p"` for points etc), see help
 #'     of [plot()] in the `graphics` package for more details.
+#'     For `processHistory`: restrict returned processing steps to specific
+#'     types. Use [processHistoryTypes()] to list all supported values.
 #'
 #' @param value For `chromPeaks<-`: a numeric `matrix` with required columns
 #'     `"rt"`, `"rtmin"`, `"rtmax"`, `"into"` and `"maxo"`.

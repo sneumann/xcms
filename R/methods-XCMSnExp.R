@@ -543,7 +543,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 #'
 #' @description
 #'
-#' \code{processHistory}: returns a \code{list} with
+#' \code{processHistory}: returns a \code{list} of
 #' \code{\link{ProcessHistory}} objects (or objects inheriting from this
 #' base class) representing the individual processing steps that have been
 #' performed, eventually along with their settings (\code{Param} parameter
@@ -551,7 +551,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 #' \code{msLevel} allow to restrict to process steps of a certain type or
 #' performed on a certain file or MS level.
 #'
-#' @param fileIndex For \code{processHistory}: optional \code{numeric}
+#' @param fileIndex For \code{processHistory}: optional \code{integer}
 #'     specifying the index of the files/samples for which the
 #'     \code{\link{ProcessHistory}} objects should be retrieved.
 #'
@@ -2373,9 +2373,7 @@ setMethod("chromatogram",
                       chromPeaks(chr) <- pk
                       chr
                   }), nrow = nrow(res), dimnames = dimnames(res))
-              res <- addProcessHistory(
-                  res, processHistory(
-                           object, type = .PROCSTEP.PEAK.DETECTION)[[1]])
+              res@.processHistory <- object@.processHistory
               if (validObject(res)) res
           })
 

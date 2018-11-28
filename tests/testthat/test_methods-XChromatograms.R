@@ -127,3 +127,17 @@ test_that("plot,XChromatogram works", {
     xchr <- chromatogram(xod_chr, mz = mzr, rt = rtr)
     plot(xchr)
 })
+
+test_that("processHistory,XChromatograms works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
+    res <- processHistory(xchrs)
+    expect_equal(length(res), 4)
+    res <- processHistory(xchrs, type = .PROCSTEP.PEAK.DETECTION)
+    expect_equal(length(res), 1)
+
+    xchrs2 <- findChromPeaks(xchrs, param = CentWaveParam())
+    expect_equal(length(processHistory(xchrs2)), 5)
+    expect_equal(length(processHistory(xchrs2,
+                                       type = .PROCSTEP.PEAK.DETECTION)), 2)
+})

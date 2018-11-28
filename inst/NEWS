@@ -1,6 +1,8 @@
 Changes in version 3.5.1
 
-- Add plot,XChromatograms method with automatic peak highlighting.
+- Add findChromPeaks,XChromatograms (issue #332).
+- Add processHistory,XChromatograms.
+- Add plot,XChromatograms method with automatic peak highlighting (issue #334).
 - Add hasChromPeaks,XChromatograms method.
 - Add XChromatograms class with constructor function and coercing method.
 - Add hasChromPeaks,XChromatogram method.

@@ -22,6 +22,7 @@
 \alias{filterMz,XChromatograms-method}
 \alias{filterRt,XChromatograms-method}
 \alias{plot,XChromatograms,ANY-method}
+\alias{processHistory,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -65,6 +66,8 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
   type = "l", xlab = "retention time", ylab = "intensity",
   main = NULL, peakType = c("polygon", "point", "rectangle", "none"),
   peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
+
+\S4method{processHistory}{XChromatograms}(object, fileIndex, type)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -143,7 +146,9 @@ completely within \code{rt} and \code{"apex_within"} return peaks which apex
 is within \code{rt}.
 For \code{plot}: what type of plot should be used for the
 chromatogram (such as \code{"l"} for lines, \code{"p"} for points etc), see help
-of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.}
+of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.
+For \code{processHistory}: restrict returned processing steps to specific
+types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all supported values.}
 
 \item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
 \code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
@@ -182,6 +187,10 @@ be either a single color or a vector of colors with the same length than
 \item{peakPch}{For \code{plot}: the point character to be used for
 \code{peakType = "point"}. See \code{\link[=plot]{plot()}} in the \code{graphics} package for more
 details.}
+
+\item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
+index of the files/samples for which the \link{ProcessHistory} objects should
+be returned.}
 }
 \value{
 See help of the individual functions.
@@ -220,6 +229,10 @@ Objects can be created with the contructor function \code{XChromatogram} and
 
 \section{Accessing data}{
 
+
+See also help of \link{Chromatogram} in the \code{MSnbase} package for general
+information and data access. The methods listed here are specific for
+\code{XChromatogram} and \code{XChromatograms} objects.
 \itemize{
 \item \code{chromPeaks}, \code{chromPeaks<-}: extract or set the matrix with the
 chromatographic peak definitions. Parameter \code{rt} allows to specify a
@@ -240,6 +253,9 @@ has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)}
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
 with either \code{true} or \code{false} if chromatographic peaks are available in
 the chromatogram at the respective position.
+\item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
+the individual performed processing steps. Optional parameters \code{type} and
+\code{fileIndex} allow to further specify which processing steps to return.
 }
 }
 
@@ -299,6 +315,45 @@ xchrs <- XChromatograms(dta, nrow = 1)
 
 hasChromPeaks(xchrs)
 
+## Load test files and extract chromatograms for a data slice
+od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+    system.file("cdf/KO/ko16.CDF", package = "faahKO"),
+    system.file("cdf/KO/ko18.CDF", package = "faahKO")),
+    mode = "onDisk")
+
+## Extract chromatograms for a m/z - retention time slice
+chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
+chrs
+
+## Perform peak detection using CentWave
+xchrs <- findChromPeaks(chrs, param = CentWaveParam())
+xchrs
+
+## Do we have chromatographic peaks?
+hasChromPeaks(xchrs)
+
+## Process history
+processHistory(xchrs)
+
+## The chromatographic peaks, columns "row" and "column" provide information
+## in which sample the peak was identified.
+chromPeaks(xchrs)
+
+## Spectifically extract chromatographic peaks for one sample/chromatogram
+chromPeaks(xchrs[1, 2])
+
+## Plot the results
+plot(xchrs)
+
+## Plot the results using a different color for each sample
+sample_colors <- c("#ff000040", "#00ff0040", "#0000ff40")
+cols <- sample_colors[chromPeaks(xchrs)[, "column"]]
+plot(xchrs, col = sample_colors, peakBg = cols)
+
+## Indicate the peaks with a rectangle
+plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
+    peakBg = NA)
+
 ## Create a XChromatogram object
 pks <- matrix(nrow = 1, ncol = 6)
 colnames(pks) <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
@@ -339,9 +394,6 @@ plot(xchr, peakCol = c("#ff000060", "#0000ff60"), peakBg = NA,
 xchr_sub <- filterRt(xchr, rt = c(4, 6))
 xchr_sub
 plot(xchr_sub)
-
-## Extract the chromatographic peaks
-chromPeaks(xchrs)
 }
 \author{
 Johannes Rainer

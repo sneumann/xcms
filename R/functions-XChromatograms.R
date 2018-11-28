@@ -52,6 +52,45 @@
 #' xchrs <- XChromatograms(dta, nrow = 1)
 #'
 #' hasChromPeaks(xchrs)
+#'
+#' ## Load test files and extract chromatograms for a data slice
+#' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
+#'     system.file("cdf/KO/ko16.CDF", package = "faahKO"),
+#'     system.file("cdf/KO/ko18.CDF", package = "faahKO")),
+#'     mode = "onDisk")
+#'
+#' ## Extract chromatograms for a m/z - retention time slice
+#' chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
+#' chrs
+#'
+#' ## Perform peak detection using CentWave
+#' xchrs <- findChromPeaks(chrs, param = CentWaveParam())
+#' xchrs
+#'
+#' ## Do we have chromatographic peaks?
+#' hasChromPeaks(xchrs)
+#'
+#' ## Process history
+#' processHistory(xchrs)
+#'
+#' ## The chromatographic peaks, columns "row" and "column" provide information
+#' ## in which sample the peak was identified.
+#' chromPeaks(xchrs)
+#'
+#' ## Spectifically extract chromatographic peaks for one sample/chromatogram
+#' chromPeaks(xchrs[1, 2])
+#'
+#' ## Plot the results
+#' plot(xchrs)
+#'
+#' ## Plot the results using a different color for each sample
+#' sample_colors <- c("#ff000040", "#00ff0040", "#0000ff40")
+#' cols <- sample_colors[chromPeaks(xchrs)[, "column"]]
+#' plot(xchrs, col = sample_colors, peakBg = cols)
+#'
+#' ## Indicate the peaks with a rectangle
+#' plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
+#'     peakBg = NA)
 XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
     if (missing(data))
         return(new("XChromatograms"))

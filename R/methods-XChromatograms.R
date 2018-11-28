@@ -53,10 +53,6 @@ setMethod("hasChromPeaks", "XChromatograms", function(object) {
 
 #' @rdname XChromatogram
 #'
-#' @examples
-#'
-#' ## Extract the chromatographic peaks
-#' chromPeaks(xchrs)
 setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
                                                    mz = numeric(), ppm = 0,
                                                    type = c("any", "within",
@@ -133,4 +129,32 @@ setMethod("plot", "XChromatograms", function(x, col = "#00000060", lty = 1,
                                     pch = peakPch[idx], ...)
         }
     }
+})
+
+#' @rdname XChromatogram
+#'
+#' @param fileIndex For `processHistory`: optional `integer` specifying the
+#'     index of the files/samples for which the [ProcessHistory] objects should
+#'     be returned.
+#'
+#' @md
+setMethod("processHistory", "XChromatograms", function(object, fileIndex,
+                                                       type) {
+    ph <- object@.processHistory
+    if (length(ph)) {
+        if (!missing(fileIndex)) {
+            if (!all(fileIndex %in% seq_len(ncol(object))))
+                stop("'fileIndex' has to be within 1 and the number of samples!")
+            gotIt <- vapply(ph, function(z) any(z@fileIndex %in% fileIndex),
+                            logical(1))
+            ph <- ph[gotIt]
+        }
+        if (!missing(type) && length(ph)) {
+            gotIt <- vapply(ph, function(z) any(type == processType(z)),
+                            logical(1))
+            ph <- ph[gotIt]
+        }
+        return(ph)
+    }
+    list()
 })
