@@ -686,6 +686,13 @@ test_that("PeakGroupsParam works", {
     expect_equal(subset(p), 4:6)
     p <- PeakGroupsParam(subset = 6:9)
     expect_equal(subset(p), 6:9)
+
+    p <- new("PeakGroupsParam", subsetAdjust = "average")
+    expect_equal(subsetAdjust(p), "average")
+    subsetAdjust(p) <- "previous"
+    expect_equal(subsetAdjust(p), "previous")
+    p <- PeakGroupsParam(subsetAdjust = "average")
+    expect_equal(subsetAdjust(p), "average")
 })
 
 test_that("ObiwarpParam works", {

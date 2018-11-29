@@ -456,12 +456,16 @@ different samples within an experiment.
 A plethora of alignment algorithms exist (see [@Smith:2013gr]), with some of
 them being implemented also in `xcms`. The method to perform the
 alignment/retention time correction in `xcms` is `adjustRtime` which uses
-different alignment algorithms depending on the provided parameter class. In the
-example below we use the *obiwarp* method [@Prince:2006jj] to align the
-samples. We use a`binSize = 0.6` which creates warping functions in mz bins of 0.6. Also here
-it is advisable to modify the settings for each experiment and evaluate if
-retention time correction did align internal controls or known compounds
-properly.
+different alignment algorithms depending on the provided parameter class.
+
+In the example below we use the *obiwarp* method [@Prince:2006jj] to align the
+samples. We use a `binSize = 0.6` which creates warping functions in mz bins of
+0.6. Also here it is advisable to modify the settings for each experiment and
+evaluate if retention time correction did align internal controls or known
+compounds properly.
+
+Also have a look a the *Alignment of experiments including blanks* further below
+for advanced options to align a data set based on a subset of samples.
 
 ```{r alignment-obiwarp, message = FALSE, results = "hide" }
 xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
@@ -805,6 +809,62 @@ possible to coerce the new `XCMSnExp` object to an `xcmsSet` object using
 
 For a detailed description of the new data objects and changes/improvements
 compared to the original user interface see the *new\_functionality* vignette.
+
+## Alignment of experiments including blanks
+
+Alignment of experiments that contain measurements in empty samples (*blanks*)
+can be difficult, because they will not contain the same compounds. This can
+also apply to heterogeneous experiments with different sample compositions. In
+such cases, retention time drifts can be estimated on a subset of samples
+(either all samples excluding blanks or QC samples injected at regular intervals
+during a measurement run) and these can then be used to adjust the full data
+set.
+
+In the example below we assume that samples 3, 7 and 11 are blanks. After
+initial peak grouping we perform thus below the alignment based on all other
+samples. To this end we pass the argument `subset` to the `PeakGroupsParam`
+object to define on which samples the alignment should be estimated. The *blank*
+samples with index 3, 7 and 11 will then adjusted based on the alignment result
+of the *closest* sample in `subset`, which will be sample 2, 6 and 10,
+respectively. Note that this type of alignment requires a correct ordering of
+the samples within the object (e.g. ordering by injection index). Note also that
+all parameters such as `minFraction` are then relative to the `subset`, not the
+full experiment!
+
+TODO: UPDATE HERE
+- previous adjust using previous subset sample. most instances the adjusted
+  retention times of the subset and non-subset sample are identical.
+- average: interpolated adjustment based on previous and next subset sample.
+
+```{r alignment-subset, message = FALSE, warning = FALSE}
+xdata <- dropAdjustedRtime(xdata)
+
+## Initial peak grouping.
+pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+                        minFraction = 0.8)
+xdata <- groupChromPeaks(xdata, param = pdp)
+
+## Now the retention time correction.
+pgp <- PeakGroupsParam(minFraction = 0.85,
+                       subset = c(1, 2, 4, 5, 6, 8, 9, 10, 12))
+
+## Get the peak groups that would be used for alignment.
+xdata <- adjustRtime(xdata, param = pgp)
+```
+
+The difference between raw and adjusted retention times are shown below. Blank
+samples (highlighted in red below) have the same differences than the subset
+sample based on which their retention times were adjusted (overlapping of dashed
+and solid lines below).
+
+```{r alignment-subset, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Alignment results. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+clrs <- rep("#00000040", 12)
+lty <- rep(2, 12)
+clrs[c(3, 7, 11)] <- "#ff000040"
+lty[c(3, 7, 11)] <- 1
+plotAdjustedRtime(xdata, col = clrs, lty = lty)
+```
+
 
 
 ## Evaluating the process history

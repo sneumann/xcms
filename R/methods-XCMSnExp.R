@@ -1872,7 +1872,8 @@ setMethod("adjustRtime",
                   span = span(param),
                   family = family(param),
                   peakGroupsMatrix = pkGrpMat,
-                  subset = subset(param)
+                  subset = subset(param),
+                  subsetAdjust = subsetAdjust(param)
               )
               ## Add the pkGrpMat that's being used to the param object.
               peakGroupsMatrix(param) <- pkGrpMat

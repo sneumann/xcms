@@ -359,6 +359,9 @@ setGeneric("stitch.xml", function(object, lockMass) standardGeneric("stitch.xml"
 setGeneric("stitch.netCDF", function(object, lockMass) standardGeneric("stitch.netCDF"))
 setGeneric("stitch.netCDF.new", function(object, lockMass) standardGeneric("stitch.netCDF.new"))
 setGeneric("subset<-", function(object, value) standardGeneric("subset<-"))
+setGeneric("subsetAdjust", function(object, ...) standardGeneric("subsetAdjust"))
+setGeneric("subsetAdjust<-", function(object, value) standardGeneric("subsetAdjust<-"))
+
 
 ## T
 setGeneric("tuneIn", function(object, ...) standardGeneric("tuneIn"))

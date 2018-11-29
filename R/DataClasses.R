@@ -1821,7 +1821,19 @@ NULL
 #' e.g. blanks, which are then in turn adjusted based on the closest real
 #' sample. Here it is up to the user to ensure that the samples within
 #' \code{object} are ordered correctly (e.g. by injection index).
-#' See section \emph{Alignment of experiments including blanks} in the
+#'
+#' How the non-subset samples are adjusted bases also on the parameter
+#' \code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
+#' sample is adjusted based on the closest previous subset sample which results
+#' in most cases with adjusted retention times of the non-subset sample being
+#' identical to the subset sample on which the adjustment bases. The second
+#' option is to use \code{subsetAdjust = "average"} in which case each non
+#' subset sample is adjusted based on the average retention time adjustment
+#' from the previous and following subset sample. For the average a weighted
+#' mean is used with weights being the inverse of the distance of the
+#' non-subset sample to the subset samples used for alignment.
+#'
+#' See also section \emph{Alignment of experiments including blanks} in the
 #' \emph{xcms} vignette for an example.
 #'
 #' @note
@@ -1878,6 +1890,11 @@ NULL
 #'     not part of the subset are adjusted based on the closest subset sample.
 #'     See description above for more details.
 #'
+#' @param subsetAdjust \code{character} specifying the method with which
+#'     non-subset samples should be adjusted. Supported options are
+#'     \code{"previous"} (default) and \code{"average"}. See description above
+#'     for more information.
+#'
 #' @family retention time correction methods
 #'
 #' @seealso The \code{\link{do_adjustRtime_peakGroups}} core
@@ -1902,7 +1919,7 @@ NULL
 #'     peak groups present in most samples.
 #'     Instances should be created with the \code{PeakGroupsParam} constructor.
 #'
-#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset See corresponding parameter above. \code{.__classVersion__} stores
+#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
 #' the version from the class. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
@@ -1978,7 +1995,8 @@ setClass("PeakGroupsParam",
                    span = "numeric",
                    family = "character",
                    peakGroupsMatrix = "matrix",
-                   subset = "integer"),
+                   subset = "integer",
+                   subsetAdjust = "character"),
          contains = "Param",
          prototype = prototype(
              minFraction = 0.9,
@@ -1987,7 +2005,8 @@ setClass("PeakGroupsParam",
              span = 0.2,
              family = "gaussian",
              peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
-             subset = integer()
+             subset = integer(),
+             subsetAdjust = "previous"
          ),
          validity = function(object) {
              msg <- character()

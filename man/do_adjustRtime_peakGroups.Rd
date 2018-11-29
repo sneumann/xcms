@@ -8,7 +8,8 @@ found in most samples}
 do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
   extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
   family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol =
-  0, nrow = 0), subset = integer())
+  0, nrow = 0), subset = integer(), subsetAdjust = c("previous",
+  "average"))
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified
@@ -62,6 +63,11 @@ this matrix will be determined depending on parameters
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
 See description above for more details.}
+
+\item{subsetAdjust}{\code{character} specifying the method with which
+non-subset samples should be adjusted. Supported options are
+\code{"previous"} (default) and \code{"average"}. See description above
+for more information.}
 }
 \value{
 A \code{list} with \code{numeric} vectors with the adjusted

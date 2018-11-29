@@ -34,13 +34,18 @@
 \alias{subset}
 \alias{subset<-,PeakGroupsParam-method}
 \alias{subset<-}
+\alias{subsetAdjust,PeakGroupsParam-method}
+\alias{subsetAdjust}
+\alias{subsetAdjust<-,PeakGroupsParam-method}
+\alias{subsetAdjust<-}
 \alias{adjustRtime,XCMSnExp,PeakGroupsParam-method}
 \title{Retention time correction based on alignment of house keeping peak
 groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
   span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
-  0, ncol = 0), subset = integer())
+  0, ncol = 0), subset = integer(), subsetAdjust = c("previous",
+  "average"))
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -73,6 +78,10 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam())
 \S4method{subset}{PeakGroupsParam}(x)
 
 \S4method{subset}{PeakGroupsParam}(object) <- value
+
+\S4method{subsetAdjust}{PeakGroupsParam}(object)
+
+\S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
 
 \S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param)
 }
@@ -117,6 +126,11 @@ for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
 experiment on which the alignment models should be estimated. Samples
 not part of the subset are adjusted based on the closest subset sample.
 See description above for more details.}
+
+\item{subsetAdjust}{\code{character} specifying the method with which
+non-subset samples should be adjusted. Supported options are
+\code{"previous"} (default) and \code{"average"}. See description above
+for more information.}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
     containing the results from a previous chromatographic peak detection
@@ -171,7 +185,19 @@ Alignment could thus be performed on only \emph{real} samples leaving out
 e.g. blanks, which are then in turn adjusted based on the closest real
 sample. Here it is up to the user to ensure that the samples within
 \code{object} are ordered correctly (e.g. by injection index).
-See section \emph{Alignment of experiments including blanks} in the
+
+How the non-subset samples are adjusted bases also on the parameter
+\code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
+sample is adjusted based on the closest previous subset sample which results
+in most cases with adjusted retention times of the non-subset sample being
+identical to the subset sample on which the adjustment bases. The second
+option is to use \code{subsetAdjust = "average"} in which case each non
+subset sample is adjusted based on the average retention time adjustment
+from the previous and following subset sample. For the average a weighted
+mean is used with weights being the inverse of the distance of the
+non-subset sample to the subset samples used for alignment.
+
+See also section \emph{Alignment of experiments including blanks} in the
 \emph{xcms} vignette for an example.
 
 The \code{PeakGroupsParam} class allows to specify all
@@ -204,6 +230,9 @@ selected for alignment/retention time correction.
 \code{subset},\code{subset<-}: getter and
     setter for the \code{subset} slot of the object.
 
+\code{subsetAdjust},\code{subsetAdjust<-}: getter and
+    setter for the \code{subsetAdjust} slot of the object.
+
 \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
 performs retention time correction based on the alignment of peak groups
 (features) found in all/most samples. The correction function identified
@@ -227,7 +256,7 @@ vignette.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}

@@ -1622,17 +1622,33 @@ test_that("adjustRtime,peakGroups works", {
     expect_equal(tmp, xod)
 
     ## With subset.
-    res_sub <- adjustRtime(xodg, param = PeakGroupsParam(subset = c(1, 3)))
+    res_sub <- adjustRtime(
+        xodg, param = PeakGroupsParam(subset = c(1, 3),
+                                      subsetAdjust = "previous"))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[1]] !=
                     rtime(xodg, bySample = TRUE)[[1]]))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[2]] !=
                     rtime(xodg, bySample = TRUE)[[2]]))
     expect_true(all(rtime(res_sub, bySample = TRUE)[[3]] !=
                     rtime(xodg, bySample = TRUE)[[3]]))
+    expect_equal(unname(rtime(res_sub, bySample = TRUE)[[1]]),
+                 unname(rtime(res_sub, bySample = TRUE)[[2]]))
     expect_equal(rtime(res_sub, bySample = TRUE)[[2]],
                  xcms:::.applyRtAdjustment(rtime(xodg, bySample = TRUE)[[2]],
                                            rtime(xodg, bySample = TRUE)[[1]],
                                            rtime(res_sub, bySample = TRUE)[[1]]))
+    res_sub <- adjustRtime(
+        xodg, param = PeakGroupsParam(subset = c(1, 3),
+                                      subsetAdjust = "average"))
+    expect_true(all(rtime(res_sub, bySample = TRUE)[[1]] !=
+                    rtime(xodg, bySample = TRUE)[[1]]))
+    expect_true(all(rtime(res_sub, bySample = TRUE)[[2]] !=
+                    rtime(xodg, bySample = TRUE)[[2]]))
+    expect_true(all(rtime(res_sub, bySample = TRUE)[[3]] !=
+                    rtime(xodg, bySample = TRUE)[[3]]))
+    expect_true(all(rtime(res_sub, bySample = TRUE)[[1]] !=
+                    rtime(res_sub, bySample = TRUE)[[2]]))
+    tmp <- adjustRtime(xodg, param = PeakGroupsParam())
 })
 
 test_that("findChromPeaks,MSWParam works", {

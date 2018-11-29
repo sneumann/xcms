@@ -70,8 +70,9 @@ do_adjustRtime_peakGroups <-
              smooth = c("loess", "linear"), span = 0.2,
              family = c("gaussian", "symmetric"),
              peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
-             subset = integer())
+             subset = integer(), subsetAdjust = c("previous", "average"))
 {
+    subsetAdjust <- match.arg(subsetAdjust)
     ## Check input.
     if (missing(peaks) | missing(peakIndex) | missing(rtime))
         stop("Arguments 'peaks', 'peakIndex' and 'rtime' are required!")
@@ -234,12 +235,8 @@ do_adjustRtime_peakGroups <-
         rtime_adj[[i_all]] <- rtime[[i_all]] - rtdevsmo[[i]]
     }
     ## Adjust the remaining samples.
-    no_subset <- seq_len(total_samples)[-subset]
-    for (i in no_subset) {
-        i_adj <- .get_closest_index(i, subset, method = "previous")
-        rtime_adj[[i]] <- .applyRtAdjustment(rtime[[i]], rtime[[i_adj]],
-                                         rtime_adj[[i_adj]])
-    }
+    rtime_adj <- adjustRtimeSubset(rtime, rtime_adj, subset = subset,
+                                   method = subsetAdjust)
     if (warn.overcorrect) {
         warning("Fitted retention time deviation curves exceed points by more",
                 " than 2x. This is dangerous and the algorithm is probably ",
@@ -447,6 +444,8 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
         last_adj <- idx_high[1] - 1
         res[idx_high] <- x[idx_high] + res[last_adj] - x[last_adj]
     }
+    if (is.null(dim(res)))
+        names(res) <- names(x)
     res
 }
 
@@ -546,4 +545,117 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
                dst <- abs(idx - x)
                idx[which.min(dst)]
            })
+}
+
+#' *align* two vectors with each other. If they have a different length they
+#' will be trimmed to have the same length starting from the end with the
+#' smaller average difference (between 5 datapoints).
+#'
+#' @param x `list` of two `numeric` vectors with potentially different length.
+#'
+#' @return `list` of two `numeric` vectors with equal length.
+#'
+#' @noRd
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' x <- list(a = 1:10, b = 3:10)
+#' .match_trim_vectors(x)
+#'
+#' x <- list(a = 1:10, b = 2:15)
+#' .match_trim_vectors(x)
+#'
+#' x <- list(a = 1:20, b = 1:5)
+#' .match_trim_vectors(x)
+.match_trim_vector_index <- function(x, n = 5) {
+    lens <- lengths(x)
+    min_len <- min(lens)
+    if (length(unique(lens)) == 1)
+        replicate(n = length(lens), seq_len(min_len))
+    hd <- vapply(x, function(z) mean(head(z, n = n)), numeric(1))
+    tl <- vapply(x, function(z) mean(tail(z, n = n)), numeric(1))
+    if (diff(range(hd)) <= diff(range(tl)))
+        replicate(n = length(x), 1:min_len, FALSE)
+    else
+        lapply(lens, function(z) (z - min_len + 1):z)
+}
+
+.match_trim_vectors <- function(x, n = 5, idxs) {
+    if (missing(idxs))
+        idxs <- .match_trim_vector_index(x, n = n)
+    mapply(x, idxs, FUN = function(z, idx) z[idx], SIMPLIFY = FALSE)
+}
+
+#' @title Adjust retention times based on alignment result from subset
+#'
+#' @description
+#'
+#' This function adjusts retention times based on the alignment results on a
+#' subset of samples from an experiment. Specifically, the samples **not** part
+#' of `subset` are adjusted based on the adjusted retention times of the
+#' *closest* `subset` samples:
+#'
+#' How the retention times will be adjusted depends on `method`:
+#' - `"previous"`: adjusted retention times will match the adjusted retention
+#'   times of the closest previous subset-sample.
+#' - `"average"`: adjusted retention times for a non-subset sample is calculated
+#'   based on the average retention times of the closest previous and following
+#'   subset-sample. The average is calculated based on an weighted average
+#'   with weights representing the distance of the non-subset sample to the
+#'   closest subset samples.
+#'
+#' @param rtraw `list` of raw retention times, one element/vector per sample.
+#'
+#' @param rtadj `list` of adjusted retention times, one element/vector per
+#'     sample. Has to have the same length than `rtraw`.
+#'
+#' @param subset `integer` with the indices of the `subset` on which the
+#'     alignment has been performed.
+#'
+#' @param method `character` specifying the method with which the non-subset
+#'     samples are adjusted: either `"previous"` or `"average"`. See details.
+#'
+#' @return `list` of adjusted retention times.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @md
+adjustRtimeSubset <- function(rtraw, rtadj, subset,
+                              method = c("previous", "average")) {
+    method <- match.arg(method)
+    if (length(rtraw) != length(rtadj))
+        stop("Lengths of 'rtraw' and 'rtadj' have to match.")
+    if (missing(subset))
+        subset <- seq_along(rtraw)
+    if (!all(subset %in% seq_along(rtraw)))
+        stop("'subset' is out of bounds.")
+    if (length(subset) == length(rtraw))
+        return(rtadj)
+    no_subset <- seq_len(length(rtraw))[-subset]
+    for (i in no_subset) {
+        if (method == "previous") {
+            i_adj <- xcms:::.get_closest_index(i, subset, method = "previous")
+            rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rtraw[[i_adj]],
+                                                 rtadj[[i_adj]])
+        }
+        if (method == "average") {
+            i_ref <- c(xcms:::.get_closest_index(i, subset, method = "previous"),
+                       xcms:::.get_closest_index(i, subset, method = "next"))
+            trim_idx <- .match_trim_vector_index(rtraw[i_ref])
+            rt_raw_ref <- do.call(
+                cbind, .match_trim_vectors(rtraw[i_ref], idxs = trim_idx))
+            rt_adj_ref <- do.call(
+                cbind, .match_trim_vectors(rtadj[i_ref], idxs = trim_idx))
+            wghts <- 1 / abs(i_ref - i) # weights depending on distance to i
+            rt_raw_ref <- apply(rt_raw_ref, 1, weighted.mean, w = wghts)
+            rt_adj_ref <- apply(rt_adj_ref, 1, weighted.mean, w = wghts)
+            rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rt_raw_ref,
+                                             rt_adj_ref)
+        }
+    }
+    rtadj
 }

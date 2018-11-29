@@ -411,7 +411,9 @@ exportMethods(
     "expandRt",
     "expandRt<-",
     "subset",
-    "subset<-"
+    "subset<-",
+    "subsetAdjust",
+    "subsetAdjust<-"
 )
 ## Param class functions
 export("CentWaveParam",

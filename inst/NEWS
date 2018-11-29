@@ -1,5 +1,7 @@
 Changes in version 3.5.1
 
+- Add parameter subsetAdjust to PeakGroupsParam allowing to switch between
+  different methods to adjust samples left out in the alignment process.
 - Alignment based on a sample subset for the peak groups method (issue #335):
   sample subset can be defined with the subset parameter, samples not included
   in the subset will be aligned based on the adjusted retention times of the

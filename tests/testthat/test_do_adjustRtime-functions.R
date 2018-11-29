@@ -171,3 +171,53 @@ test_that(".get_closest_index works", {
     expect_equal(.get_closest_index(8, c(1, 5, 9), method = "previous"), 5)
     expect_equal(.get_closest_index(8, c(1, 5, 9), method = "closest"), 9)
 })
+
+test_that(".match_trim_vectors and index works", {
+    res <- .match_trim_vectors(list(1:10, 3:10))
+    expect_equal(res, list(3:10, 3:10))
+    res <- .match_trim_vectors(list(3:10, 4:15))
+    expect_equal(res, list(3:10, 4:11))
+    res <- .match_trim_vectors(list(1:5, 1:20))
+    expect_equal(res, list(1:5, 1:5))
+    res <- .match_trim_vector_index(list(1:10, 3:10))
+    expect_equal(res, list(3:10, 1:8))
+    res <- .match_trim_vector_index(list(2:10, 2:8))
+    expect_equal(res, list(1:7, 1:7))
+})
+
+test_that("adjustRtimeSubset works", {
+    rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)
+    rt_adj <- rtime(xod_xgr, adjusted = TRUE, bySample = TRUE)
+
+    res <- adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "previous")
+    expect_equal(res[[1]], rt_adj[[1]])
+    expect_equal(res[[3]], rt_adj[[3]])
+    expect_true(all(res[[2]] != rt_adj[[2]]))
+    expect_equal(names(res[[2]]), names(rt_adj[[2]]))
+    expect_equal(unname(res[[2]]), unname(rt_adj[[1]]))
+
+    a <- res[[1]] - rt_raw[[1]]
+    b <- res[[2]] - rt_raw[[2]]
+    c <- res[[3]] - rt_raw[[3]]
+    plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
+         ylim = range(a, b, c))
+    points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
+    points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+
+    res <- adjustRtimeSubset(rt_raw, rt_adj, subset = c(1, 3),
+                             method = "average")
+    expect_equal(res[[1]], rt_adj[[1]])
+    expect_equal(res[[3]], rt_adj[[3]])
+    expect_true(all(res[[2]] != rt_adj[[2]]))
+    expect_true(all(res[[2]] != rt_adj[[1]]))
+    expect_true(all(res[[2]] != rt_adj[[3]]))
+
+    a <- res[[1]] - rt_raw[[1]]
+    b <- res[[2]] - rt_raw[[2]]
+    c <- res[[3]] - rt_raw[[3]]
+    plot(res[[1]], a, type = "l", col = "#ff000040", lty = 2,
+         ylim = range(a, b, c))
+    points(res[[2]], b, type = "l", col = "#00ff0060", lty = 1)
+    points(res[[3]], c, type = "l", col = "#0000ff40", lty = 2)
+})

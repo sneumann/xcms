@@ -277,11 +277,13 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                             family = "gaussian",
                             peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
-                            subset = integer()) {
-    return(new("PeakGroupsParam", minFraction = minFraction,
-               extraPeaks = extraPeaks, smooth = smooth, span = span,
-               family = family, peakGroupsMatrix = peakGroupsMatrix,
-               subset = as.integer(subset)))
+                            subset = integer(),
+                            subsetAdjust = c("previous", "average")) {
+    subsetAdjust <- match.arg(subsetAdjust)
+    new("PeakGroupsParam", minFraction = minFraction,
+        extraPeaks = extraPeaks, smooth = smooth, span = span,
+        family = family, peakGroupsMatrix = peakGroupsMatrix,
+        subset = as.integer(subset), subsetAdjust = subsetAdjust)
 }
 
 #' @return The \code{ObiwarpParam} function returns a

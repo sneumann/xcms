@@ -1536,6 +1536,22 @@ setReplaceMethod("subset", "PeakGroupsParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+#' @aliases subsetAdjust
+#'
+#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
+#'     setter for the \code{subsetAdjust} slot of the object.
+#'
+#' @rdname adjustRtime-peakGroups
+setMethod("subsetAdjust", "PeakGroupsParam", function(object){
+    return(object@subsetAdjust)})
+#' @aliases subsetAdjust<-
+#'
+#' @rdname adjustRtime-peakGroups
+setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
+    object@subsetAdjust <- value
+    if (validObject(object))
+        return(object)
+})
 
 
 ############################################################
