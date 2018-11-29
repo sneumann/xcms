@@ -4,7 +4,7 @@ test_that("getPeakGroupsRtMatrix works", {
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(xod_xg),
         peakIndex = .peakIndex(xod_xg),
-        nSamples = nSamples,
+        sampleIndex = seq_len(nSamples),
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)
     )
@@ -21,11 +21,38 @@ test_that("do_adjustRtime_peakGroups works", {
     misSamp <- 1
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
     minFr <- (length(sampnames(xs)) - misSamp) / length(sampnames(xs))
+    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                           peakIndex = xsg@groupidx,
+                                           rtime = xsg@rt$raw,
+                                           minFraction = minFr,
+                                           subset = "4"))
+    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                           peakIndex = xsg@groupidx,
+                                           rtime = xsg@rt$raw,
+                                           minFraction = minFr,
+                                           subset = 4L))
+    expect_error(do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                           peakIndex = xsg@groupidx,
+                                           rtime = xsg@rt$raw,
+                                           minFraction = minFr,
+                                           subset = c(1, 2, 5, 14)))
+
     res <- do_adjustRtime_peakGroups(peaks = peaks(xs),
                                      peakIndex = xsg@groupidx,
                                      rtime = xsg@rt$raw,
                                      minFraction = minFr)
+    res_orig <- xcms:::do_adjustRtime_peakGroups_orig(peaks = peaks(xs),
+                                     peakIndex = xsg@groupidx,
+                                     rtime = xsg@rt$raw,
+                                     minFraction = minFr)
+    expect_equal(res, res_orig)
     expect_equal(xsa@rt$corrected, res)
+    ## Use only a subset.
+    res_sub <- do_adjustRtime_peakGroups(peaks = peaks(xs),
+                                         peakIndex = xsg@groupidx,
+                                         rtime = xsg@rt$raw,
+                                         minFraction = minFr,
+                                         subset = c(1, 3, 5, 7, 9, 11))
     ## Change settings.
     misSamp <- 3
     xsa <- retcor(xsg, method = "peakgroups", missing = misSamp)
@@ -110,4 +137,37 @@ test_that("applyRtAdjustment works", {
     expect_equal(a_adj, b)
     b_2 <- .applyRtAdjustment(a_raw, a_raw[4:8], a_adj[4:8])
     expect_equal(b, b_2)
+})
+
+test_that(".get_closest_index works", {
+    expect_equal(.get_closest_index(2, c(1, 3, 5, 7)), 3)
+    expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "previous"), 1)
+    expect_equal(.get_closest_index(2, c(1, 3, 5, 7), method = "closest"), 1)
+    expect_equal(.get_closest_index(6, c(1, 3, 5)), 5)
+    expect_equal(.get_closest_index(6, c(1, 3, 5), method = "previous"), 5)
+    expect_equal(.get_closest_index(6, c(1, 3, 5), method = "closest"), 5)
+    expect_equal(.get_closest_index(10, c(1, 3, 5)), 5)
+    expect_equal(.get_closest_index(10, c(1, 3, 5), method = "previous"), 5)
+    expect_equal(.get_closest_index(10, c(1, 3, 5), method = "closest"), 5)
+    expect_equal(.get_closest_index(2, c(5, 7, 9)), 5)
+    expect_equal(.get_closest_index(2, c(5, 7, 9), method = "previous"), 5)
+    expect_equal(.get_closest_index(2, c(5, 7, 9), method = "closest"), 5)
+    expect_equal(.get_closest_index(2, c(1, 5, 9)), 5)
+    expect_equal(.get_closest_index(2, c(1, 5, 9), method = "previous"), 1)
+    expect_equal(.get_closest_index(2, c(1, 5, 9), method = "closest"), 1)
+    expect_equal(.get_closest_index(3, c(1, 5, 9)), 5)
+    expect_equal(.get_closest_index(3, c(1, 5, 9), method = "previous"), 1)
+    expect_equal(.get_closest_index(3, c(1, 5, 9), method = "closest"), 1)
+    expect_equal(.get_closest_index(4, c(1, 5, 9)), 5)
+    expect_equal(.get_closest_index(4, c(1, 5, 9), method = "previous"), 1)
+    expect_equal(.get_closest_index(4, c(1, 5, 9), method = "closest"), 5)
+    expect_equal(.get_closest_index(6, c(1, 5, 9)), 9)
+    expect_equal(.get_closest_index(6, c(1, 5, 9), method = "previous"), 5)
+    expect_equal(.get_closest_index(6, c(1, 5, 9), method = "closest"), 5)
+    expect_equal(.get_closest_index(7, c(1, 5, 9)), 9)
+    expect_equal(.get_closest_index(7, c(1, 5, 9), method = "previous"), 5)
+    expect_equal(.get_closest_index(7, c(1, 5, 9), method = "closest"), 5)
+    expect_equal(.get_closest_index(8, c(1, 5, 9)), 9)
+    expect_equal(.get_closest_index(8, c(1, 5, 9), method = "previous"), 5)
+    expect_equal(.get_closest_index(8, c(1, 5, 9), method = "closest"), 9)
 })

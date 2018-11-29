@@ -657,15 +657,18 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
     if (hasAdjustedRtime(object))
         warning("Alignment/retention time correction was already performed, ",
                 "returning a matrix with adjusted retention times.")
-    nSamples <- length(fileNames(object))
+    subs <- subset(param)
+    if (!length(subs))
+        subs <- seq_along(fileNames(object))
+    nSamples <- length(subs)
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object),
         peakIndex = .peakIndex(object),
-        nSamples = nSamples,
+        sampleIndex = subs,
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)
     )
-    colnames(pkGrp) <- basename(fileNames(object))
+    colnames(pkGrp) <- basename(fileNames(object))[subs]
     pkGrp
 }
 
@@ -808,6 +811,11 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
                 rawRt <- rtime(object, adjusted = FALSE, bySample = TRUE)
                 adjRt <- rtime(object, adjusted = TRUE, bySample = TRUE)
                 pkGroup <- peakGroupsMatrix(prm)
+                subs <- subset(prm)
+                if (!length(subs))
+                    subs <- 1:ncol(pkGroup)
+                rawRt <- rawRt[subs]
+                adjRt <- adjRt[subs]
                 ## Have to "adjust" these:
                 pkGroupAdj <- pkGroup
                 for (i in 1:ncol(pkGroup)) {

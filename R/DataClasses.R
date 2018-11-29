@@ -1799,32 +1799,54 @@ NULL
 #' @title Retention time correction based on alignment of house keeping peak
 #' groups
 #'
-#' @description This method performs retention time adjustment based on the
-#'     alignment of chromatographic peak groups present in all/most samples
-#'     (hence corresponding to house keeping compounds). First the retention
-#'     time deviation of these peak groups is described by fitting either a
-#'     polynomial (\code{smooth = "loess"}) or a linear (
-#'     \code{smooth = "linear"}) model to the data points. These models are
-#'     subsequently used to adjust the retention time of each spectrum in
-#'     each sample.
+#' @description
 #'
-#' @note These methods and classes are part of the updated and modernized
-#'     \code{xcms} user interface which will eventually replace the
-#'     \code{\link{group}} methods. All of the settings to the alignment
-#'     algorithm can be passed with a \code{PeakGroupsParam} object.
+#' This method performs retention time adjustment based on the
+#' alignment of chromatographic peak groups present in all/most samples
+#' (hence corresponding to house keeping compounds). First the retention
+#' time deviation of these peak groups is described by fitting either a
+#' polynomial (\code{smooth = "loess"}) or a linear (
+#' \code{smooth = "linear"}) model to the data points. These models are
+#' subsequently used to adjust the retention time of each spectrum in
+#' each sample.
 #'
-#'     The matrix with the (raw) retention times of the peak groups used
-#'     in the alignment is added to the \code{peakGroupsMatrix} slot of the
-#'     \code{PeakGroupsParam} object that is stored into the corresponding
-#'     \emph{process history step} (see \code{\link{processHistory}} for how
-#'     to access the process history).
+#' It is also possible to exclude certain samples within an experiment from
+#' the estimation of the alignment models. The parameter \code{subset}
+#' allows to define the indices of samples within \code{object} that should
+#' be aligned. Samples not part of this \code{subset} are left out in the
+#' estimation of the alignment models, but their retention times are
+#' subsequently adjusted based on the alignment results of the closest sample
+#' in \code{subset} (close in terms of position within the \code{object}).
+#' Alignment could thus be performed on only \emph{real} samples leaving out
+#' e.g. blanks, which are then in turn adjusted based on the closest real
+#' sample. Here it is up to the user to ensure that the samples within
+#' \code{object} are ordered correctly (e.g. by injection index).
+#' See section \emph{Alignment of experiments including blanks} in the
+#' \emph{xcms} vignette for an example.
+#'
+#' @note
+#'
+#' These methods and classes are part of the updated and modernized
+#' \code{xcms} user interface which will eventually replace the
+#' \code{\link{group}} methods. All of the settings to the alignment
+#' algorithm can be passed with a \code{PeakGroupsParam} object.
+#'
+#' The matrix with the (raw) retention times of the peak groups used
+#' in the alignment is added to the \code{peakGroupsMatrix} slot of the
+#' \code{PeakGroupsParam} object that is stored into the corresponding
+#' \emph{process history step} (see \code{\link{processHistory}} for how
+#' to access the process history).
 #'
 #' @param minFraction \code{numeric(1)} between 0 and 1 defining the minimum
 #'     required fraction of samples in which peaks for the peak group were
 #'     identified. Peak groups passing this criteria will aligned across
 #'     samples and retention times of individual spectra will be adjusted
 #'     based on this alignment. For \code{minFraction = 1} the peak group
-#'     has to contain peaks in all samples of the experiment.
+#'     has to contain peaks in all samples of the experiment. Note that if
+#'     \code{subset} is provided, the specified fraction is relative to the
+#'     defined subset of samples and not to the total number of samples within
+#'     the experiment (i.e. a peak has to be present in the specified
+#'     proportion of subset samples).
 #'
 #' @param extraPeaks \code{numeric(1)} defining the maximal number of
 #'     additional peaks for all samples to be assigned to a peak group (i.e.
@@ -1851,6 +1873,11 @@ NULL
 #'     represents a sample, each row a feature/peak group. Such a matrix is
 #'     for example returned by the \code{\link{adjustRtimePeakGroups}} method.
 #'
+#' @param subset \code{integer} with the indices of samples within the
+#'     experiment on which the alignment models should be estimated. Samples
+#'     not part of the subset are adjusted based on the closest subset sample.
+#'     See description above for more details.
+#'
 #' @family retention time correction methods
 #'
 #' @seealso The \code{\link{do_adjustRtime_peakGroups}} core
@@ -1875,7 +1902,7 @@ NULL
 #'     peak groups present in most samples.
 #'     Instances should be created with the \code{PeakGroupsParam} constructor.
 #'
-#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix See corresponding parameter above. \code{.__classVersion__} stores
+#' @slot .__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset See corresponding parameter above. \code{.__classVersion__} stores
 #' the version from the class. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
@@ -1950,7 +1977,8 @@ setClass("PeakGroupsParam",
                    smooth = "character",
                    span = "numeric",
                    family = "character",
-                   peakGroupsMatrix = "matrix"),
+                   peakGroupsMatrix = "matrix",
+                   subset = "integer"),
          contains = "Param",
          prototype = prototype(
              minFraction = 0.9,
@@ -1958,7 +1986,8 @@ setClass("PeakGroupsParam",
              smooth = "loess",
              span = 0.2,
              family = "gaussian",
-             peakGroupsMatrix = matrix(ncol = 0, nrow = 0)
+             peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
+             subset = integer()
          ),
          validity = function(object) {
              msg <- character()

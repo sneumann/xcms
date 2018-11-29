@@ -1,5 +1,9 @@
 Changes in version 3.5.1
 
+- Alignment based on a sample subset for the peak groups method (issue #335):
+  sample subset can be defined with the subset parameter, samples not included
+  in the subset will be aligned based on the adjusted retention times of the
+  closest sample in the subset.
 - Add findChromPeaks,XChromatograms (issue #332).
 - Add processHistory,XChromatograms.
 - Add plot,XChromatograms method with automatic peak highlighting (issue #334).

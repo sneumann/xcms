@@ -4,25 +4,36 @@
 #' @title Align spectrum retention times across samples using peak groups
 #' found in most samples
 #'
-#' @description The function performs retention time correction by assessing
-#'     the retention time deviation across all samples using peak groups
-#'     (features) containg chromatographic peaks present in most/all samples.
-#'     The retention time deviation for these features in each sample is
-#'     described by fitting either a polynomial (\code{smooth = "loess"}) or
-#'     a linear (\code{smooth = "linear"}) model to the data points. The
-#'     models are subsequently used to adjust the retention time for each
-#'     spectrum in each sample.
+#' @description
+#'
+#' The function performs retention time correction by assessing
+#' the retention time deviation across all samples using peak groups
+#' (features) containg chromatographic peaks present in most/all samples.
+#' The retention time deviation for these features in each sample is
+#' described by fitting either a polynomial (\code{smooth = "loess"}) or
+#' a linear (\code{smooth = "linear"}) model to the data points. The
+#' models are subsequently used to adjust the retention time for each
+#' spectrum in each sample.
 #'
 #' @note The method ensures that returned adjusted retention times are
 #'     increasingly ordered, just as the raw retention times.
 #'
-#' @details The alignment bases on the presence of compounds that can be found
-#'     in all/most samples of an experiment. The retention times of individual
-#'     spectra are then adjusted based on the alignment of the features
-#'     corresponding to these \emph{house keeping compounds}. The paraneters
-#'      \code{minFraction} and \code{extraPeaks} can be used to fine tune which
-#'     features should be used for the alignment (i.e. which features
-#'     most likely correspond to the above mentioned house keeping compounds).
+#' @details
+#'
+#' The alignment bases on the presence of compounds that can be found
+#' in all/most samples of an experiment. The retention times of individual
+#' spectra are then adjusted based on the alignment of the features
+#' corresponding to these \emph{house keeping compounds}. The paraneters
+#' \code{minFraction} and \code{extraPeaks} can be used to fine tune which
+#' features should be used for the alignment (i.e. which features
+#' most likely correspond to the above mentioned house keeping compounds).
+#'
+#' Parameter \code{subset} allows to define a subset of samples within the
+#' experiment that should be aligned. All samples not being part of the subset
+#' will be aligned based on the adjustment of the closest sample within the
+#' subset. This allows to e.g. exclude blank samples from the alignment process
+#' with their retention times being still adjusted based on the alignment
+#' results of the \emph{real} samples.
 #'
 #' @inheritParams adjustRtime-peakGroups
 #'
@@ -58,7 +69,8 @@ do_adjustRtime_peakGroups <-
     function(peaks, peakIndex, rtime, minFraction = 0.9, extraPeaks = 1,
              smooth = c("loess", "linear"), span = 0.2,
              family = c("gaussian", "symmetric"),
-             peakGroupsMatrix = matrix(ncol = 0, nrow = 0))
+             peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
+             subset = integer())
 {
     ## Check input.
     if (missing(peaks) | missing(peakIndex) | missing(rtime))
@@ -69,15 +81,14 @@ do_adjustRtime_peakGroups <-
     if (any(minFraction > 1) | any(minFraction < 0))
         stop("'minFraction' has to be between 0 and 1!")
     ## Check peaks:
-    OK <- .validChromPeaksMatrix(peaks)
+    OK <- xcms:::.validChromPeaksMatrix(peaks)
     if (is.character(OK))
         stop(OK)
     ## Check peakIndex:
     if (any(!(unique(unlist(peakIndex)) %in% seq_len(nrow(peaks)))))
         stop("Some indices listed in 'peakIndex' are outside of ",
              "1:nrow(peaks)!")
-    ## Check rtime: in line with the total number of samples we've got in
-    ## peaks?
+    ## Check rtime:
     if (!is.list(rtime))
         stop("'rtime' should be a list of numeric vectors with the retention ",
              "times of the spectra per sample!")
@@ -87,9 +98,22 @@ do_adjustRtime_peakGroups <-
     if (length(rtime) != max(peaks[, "sample"]))
         stop("The length of 'rtime' does not match with the total number of ",
              "samples according to the 'peaks' matrix!")
-    nSamples <- length(rtime)
+    total_samples <- length(rtime)
+    if (length(subset)) {
+        if (!is.numeric(subset))
+            stop("If provided, 'subset' is expected to be an integer")
+        if (!all(subset %in% seq_len(total_samples)))
+            stop("One or more indices in 'subset' are out of range.")
+        if (length(subset) < 2)
+            stop("Length of 'subset' too small: minimum required samples for ",
+                 "alignment is 2.")
+    } else subset <- seq_len(total_samples)
     ## Translate minFraction to number of allowed missing samples.
+    nSamples <- length(subset)
     missingSample <- nSamples - (nSamples * minFraction)
+    ## Remove peaks not present in "subset" from the peakIndex
+    peaks_in_subset <- which(peaks[, "sample"] %in% subset)
+    peakIndex <- lapply(peakIndex, function(z) z[z %in% peaks_in_subset])
     ## Check if we've got a valid peakGroupsMatrix
     ## o Same number of samples.
     ## o range of rt values is within the rtime.
@@ -104,44 +128,14 @@ do_adjustRtime_peakGroups <-
                  " the retention time range of the experiment!")
         rt <- peakGroupsMatrix
     } else
-        rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
+        rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, subset,
                                      missingSample, extraPeaks)
+    if (ncol(rt) != length(subset))
+        stop("Length of 'subset' and number of columns of the peak group ",
+             "matrix do not match.")
     ## Fix for issue #175
     if (length(rt) == 0)
         stop("No peak groups found in the data for the provided settings")
-    ## ## Check if we have peak groups with almost the same retention time. If yes
-    ## ## select the best matching peaks among these.
-    ## rtmeds <- rowMedians(rt, na.rm = TRUE)
-    ## sim_rt <- which(diff(rtmeds) < 1e-6)
-    ## if (length(sim_rt)) {
-    ##     pk_grps <- list()
-    ##     current_idxs <- NULL
-    ##     last_idx <- -1
-    ##     for (current_idx in sim_rt) {
-    ##         if ((current_idx - last_idx) > 1) {
-    ##             if (!is.null(current_idxs))
-    ##                 pk_grps <- c(pk_grps, list(current_idxs))
-    ##             current_idxs <- c(current_idx - 1, current_idx)
-    ##         } else {
-    ##             ## Just add the index.
-    ##             current_idxs <- c(current_idxs, current_idx)
-    ##         }
-    ##         last_idx <- current_idx
-    ##     }
-    ##     pk_grps <- c(pk_grps, list(current_idxs))
-    ##     ## Now, for each of these select one present in most samples.
-    ##     sel_idx <- unlist(lapply(pk_grps, function(z) {
-    ##         tmp <- rt[z, , drop = FALSE]
-    ##         z[which.max(apply(tmp, MARGIN = 1, function(zz) sum(!is.na(zz))))]
-    ##     }))
-    ##     ## Define the other peaks that we can keep as.is
-    ##     if (any(!(1:nrow(rt) %in% unique(unlist(pk_grps)))))
-    ##         spec_idx <- (1:nrow(rt))[-unique(unlist(pk_grps))]
-    ##     else spec_idx <- NULL
-    ##     sel_idx <- sort(c(spec_idx, sel_idx))
-    ##     rt <- rt[sel_idx, , drop = FALSE]
-    ## }
-
     message("Performing retention time correction using ", nrow(rt),
             " peak groups.")
 
@@ -169,7 +163,10 @@ do_adjustRtime_peakGroups <-
     warn.overcorrect <- FALSE
     warn.tweak.rt <- FALSE
 
-    for (i in 1:nSamples) {
+    rtime_adj <- rtime
+    ## Adjust samples in subset.
+    for (i in seq_along(subset)) {
+        i_all <- subset[i]              # Index of sample in whole dataset.
         pts <- na.omit(data.frame(rt = rt[, i], rtdev = rtdev[, i]))
 
         ## order the data.frame such that rt and rtdev are increasingly ordered.
@@ -179,24 +176,25 @@ do_adjustRtime_peakGroups <-
             lo <- suppressWarnings(loess(rtdev ~ rt, pts, span = span,
                                          degree = 1, family = family))
 
-            rtdevsmo[[i]] <- na.flatfill(predict(lo, data.frame(rt = rtime[[i]])))
+            rtdevsmo[[i]] <- xcms:::na.flatfill(
+                                        predict(lo, data.frame(rt = rtime[[i_all]])))
             ## Remove singularities from the loess function
             rtdevsmo[[i]][abs(rtdevsmo[[i]]) >
                           quantile(abs(rtdevsmo[[i]]), 0.9,
                                    na.rm = TRUE) * 2] <- NA
             if (length(naidx <- which(is.na(rtdevsmo[[i]]))))
                 rtdevsmo[[i]][naidx] <- suppressWarnings(
-                    approx(na.omit(data.frame(rtime[[i]], rtdevsmo[[i]])),
-                           xout = rtime[[i]][naidx], rule = 2)$y
+                    approx(na.omit(data.frame(rtime[[i_all]], rtdevsmo[[i]])),
+                           xout = rtime[[i_all]][naidx], rule = 2)$y
                 )
 
             ## Check if there are adjusted retention times that are not ordered
             ## increasingly. If there are, search for each first unordered rt
             ## the next rt that is larger and linearly interpolate the values
             ## in between (see issue #146 for an illustration).
-            while (length(decidx <- which(diff(rtime[[i]] - rtdevsmo[[i]]) < 0))) {
+            while (length(decidx <- which(diff(rtime[[i_all]] - rtdevsmo[[i]]) < 0))) {
                 warn.tweak.rt <- TRUE  ## Warn that we had to tweak the rts.
-                rtadj <- rtime[[i]] - rtdevsmo[[i]]
+                rtadj <- rtime[[i_all]] - rtdevsmo[[i]]
                 rtadj_start <- rtadj[decidx[1]] ## start interpolating from here
                 ## Define the
                 next_larger <- which(rtadj > rtadj[decidx[1]])
@@ -211,7 +209,7 @@ do_adjustRtime_peakGroups <-
                 ## linearly interpolate the values in between.
                 adj_idxs <- (decidx[1] + 1):(next_larger - 1)
                 incr <- (rtadj_end - rtadj_start) / length(adj_idxs)
-                rtdevsmo[[i]][adj_idxs] <- rtime[[i]][adj_idxs] -
+                rtdevsmo[[i]][adj_idxs] <- rtime[[i_all]][adj_idxs] -
                     (rtadj_start + (1:length(adj_idxs)) * incr)
             }
 
@@ -225,17 +223,23 @@ do_adjustRtime_peakGroups <-
             }
             ## Use lm instead?
             fit <- lsfit(pts$rt, pts$rtdev)
-            rtdevsmo[[i]] <- rtime[[i]] * fit$coef[2] + fit$coef[1]
+            rtdevsmo[[i]] <- rtime[[i_all]] * fit$coef[2] + fit$coef[1]
             ptsrange <- range(pts$rt)
-            minidx <- rtime[[i]] < ptsrange[1]
-            maxidx <- rtime[[i]] > ptsrange[2]
+            minidx <- rtime[[i_all]] < ptsrange[1]
+            maxidx <- rtime[[i_all]] > ptsrange[2]
             rtdevsmo[[i]][minidx] <- rtdevsmo[[i]][head(which(!minidx), n = 1)]
             rtdevsmo[[i]][maxidx] <- rtdevsmo[[i]][tail(which(!maxidx), n = 1)]
         }
         ## Finally applying the correction
-        rtime[[i]] <- rtime[[i]] - rtdevsmo[[i]]
+        rtime_adj[[i_all]] <- rtime[[i_all]] - rtdevsmo[[i]]
     }
-
+    ## Adjust the remaining samples.
+    no_subset <- seq_len(total_samples)[-subset]
+    for (i in no_subset) {
+        i_adj <- .get_closest_index(i, subset, method = "previous")
+        rtime_adj[[i]] <- .applyRtAdjustment(rtime[[i]], rtime[[i_adj]],
+                                         rtime_adj[[i_adj]])
+    }
     if (warn.overcorrect) {
         warning("Fitted retention time deviation curves exceed points by more",
                 " than 2x. This is dangerous and the algorithm is probably ",
@@ -252,8 +256,7 @@ do_adjustRtime_peakGroups <-
                 "Eventually consider to increase the value of the 'span' ",
                 "parameter.")
     }
-
-    return(rtime)
+    rtime_adj
 }
 ## That's the original code that fails to fix unsorted adjusted retention times
 ## (see issue #146).
@@ -294,7 +297,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
     ## Translate minFraction to number of allowed missing samples.
     missingSample <- nSamples - (nSamples * minFraction)
 
-    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, nSamples,
+    rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, seq_len(nSamples),
                                  missingSample, extraPeaks)
 
     message("Performing retention time correction using ", nrow(rt),
@@ -476,15 +479,16 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
 #'
 #' @details This function is called internally by the
 #'     do_adjustRtime_peakGroups function and the retcor.peakgroups method.
+#'
 #' @noRd
-.getPeakGroupsRtMatrix <- function(peaks, peakIndex, nSamples,
+.getPeakGroupsRtMatrix <- function(peaks, peakIndex, sampleIndex,
                                    missingSample, extraPeaks) {
     ## For each feature:
     ## o extract the retention time of the peak with the highest intensity.
     ## o skip peak groups if they are not assigned a peak in at least a
     ##   minimum number of samples OR if have too many peaks from the same
     ##   sample assigned to it.
-    seq_samp <- seq_len(nSamples)
+    nSamples <- length(sampleIndex)
     rt <- lapply(peakIndex, function(z) {
         cur_fts <- peaks[z, c("rt", "into", "sample"), drop = FALSE]
         ## Return NULL if we've got less samples that required or is the total
@@ -496,7 +500,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
             nrow(cur_fts) > (nsamp + extraPeaks))
             return(NULL)
         cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), ]
-        cur_fts[match(seq_samp, cur_fts[, 3]), 1]
+        cur_fts[match(sampleIndex, cur_fts[, 3]), 1]
     })
     rt <- do.call(rbind, rt)
     ## Order them by median retention time. NOTE: this is different from the
@@ -509,4 +513,37 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
         rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
     }
     rt
+}
+
+#' For a given index `x` return one from `idx` that is the *closest*, can be
+#' either simply the `"next"`, or the `"closet"` (smallest difference to `x`).
+#' For `"next"`: if there is no *next* index, it takes the previous.
+#'
+#' @noRd
+#'
+#' @author Johannes Rainer
+#'
+#' @examples
+#'
+#' .get_closest_index(3, c(2, 4, 6, 8))
+.get_closest_index <- function(x, idx, method = c("next", "previous",
+                                                  "closest")) {
+    method <- match.arg(method)
+    switch(method,
+           `next` = {
+               nxt <- idx > x
+               if (any(nxt))
+                   idx[nxt][1]
+               else idx[!nxt][sum(!nxt)]
+           },
+           `previous` = {
+               prv <- idx < x
+               if (any(prv))
+                   idx[prv][sum(prv)]
+               else idx[!prv][1]
+           },
+           closest = {
+               dst <- abs(idx - x)
+               idx[which.min(dst)]
+           })
 }

@@ -36,6 +36,10 @@ test_that("adjustRtimePeakGroups works", {
     ## rtime of the MS level 2 spectra are expected to be adjusted too
     expect_equal(rtime(xod_xgr), rtime(xod_mod_adj))
     expect_true(all(rtime(xod_mod)[idx_ms2] != rtime(xod_mod_adj)[idx_ms2]))
+
+    res <- adjustRtimePeakGroups(xod_xg,
+                                 param = PeakGroupsParam(subset = c(1, 3)))
+    expect_equal(colnames(res), basename(fileNames(xod_xg)[c(1, 3)]))
 })
 
 test_that("plotAdjustedRtime works", {

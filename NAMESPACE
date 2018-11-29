@@ -3,7 +3,7 @@ useDynLib(xcms)
 importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData")
-importFrom("BiocGenerics", "updateObject", "fileName")
+importFrom("BiocGenerics", "updateObject", "fileName", "subset")
 ## import("Biobase")
 importFrom("Biobase", "AnnotatedDataFrame")
 importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
@@ -409,7 +409,9 @@ exportMethods(
     "expandMz",
     "expandMz<-",
     "expandRt",
-    "expandRt<-"
+    "expandRt<-",
+    "subset",
+    "subset<-"
 )
 ## Param class functions
 export("CentWaveParam",

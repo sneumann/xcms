@@ -56,18 +56,18 @@ setMethod("show", "xcmsSet", function(object) {
 
 #' @description This method updates an \emph{old} \code{\linkS4class{xcmsSet}}
 #'     object to the latest definition.
-#' 
+#'
 #' @title Update an \code{\linkS4class{xcmsSet}} object
-#' 
+#'
 #' @param object The \code{\linkS4class{xcmsSet}} object to update.
-#' 
+#'
 #' @param ... Optional additional arguments. Currently ignored.
-#' 
+#'
 #' @param verbose Currently ignored.
-#' 
+#'
 #' @return An updated \code{\linkS4class{xcmsSet}} containing all data from
 #' the input object.
-#' 
+#'
 #' @author Johannes Rainer
 setMethod("updateObject", "xcmsSet", function(object, ..., verbose = FALSE) {
     ## Create a new empty xcmsSet and start filling it with the slot
@@ -373,7 +373,7 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
                                     binSize = mzwid,
                                     maxFeatures = max,
                                     sleep = sleep)
-    
+
     groups(object) <- res$featureDefinitions
     groupidx(object) <- res$peakIndex
     object
@@ -501,7 +501,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
                                                    family = c("gaussian", "symmetric"),
                                                    plottype = c("none", "deviation", "mdevden"),
                                                    col = NULL, ty = NULL) {
-    
+
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -550,10 +550,10 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
 
     if (plottype %in% c("deviation", "mdevden")) {
         ## Need also the 'rt' matrix:
-        rt <- .getPeakGroupsRtMatrix(peakmat, object@groupidx, n,
+        rt <- .getPeakGroupsRtMatrix(peakmat, object@groupidx, seq_len(n),
                                      missing, extra)
         rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
-        
+
         ## define the colors and line types and returns a list of
         ## mypal, col and ty. Uses the original code if no colors are
         ## submitted. Supports manually selected colors (e.g. in hex)
@@ -622,7 +622,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
                                     family = c("gaussian", "symmetric"),
                                     plottype = c("none", "deviation", "mdevden"),
                                     col = NULL, ty = NULL) {
-    
+
     peakmat <- peaks(object)
     groupmat <- groups(object)
     if (length(groupmat) == 0)
@@ -645,7 +645,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
         }
         object@rt <- list(raw = rtcor, corrected = rtcor)
     }
-    
+
     nsamp <- rowSums(groupmat[,match("npeaks", colnames(groupmat))+unique(classlabel),drop=FALSE])
 
     idx <- which(nsamp >= n-missing & groupmat[,"npeaks"] <= nsamp + extra)
@@ -659,7 +659,7 @@ setMethod("retcor.peakgroups", "xcmsSet", function(object, missing = 1, extra = 
     rt <- groupval(object, "maxint", "rt")[idx,, drop=FALSE]
     ## And now order them by median retention time: issue #110
     rt <- rt[order(rowMedians(rt, na.rm = TRUE)), , drop = FALSE]
-    
+
     cat("Retention Time Correction Groups:", nrow(rt), "\n")
     rtdev <- rt - apply(rt, 1, median, na.rm = TRUE)
 
@@ -877,7 +877,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     ## Subset the object if scanrange not NULL
     if (!is.null(scanrange))
         obj1 <- obj1[scanrange[1]:scanrange[2]]
-    
+
     ## ## added t automatically find the correct scan range from the xcmsSet object
     ## if(length(obj1@scantime) != length(object@rt$raw[[center]])){
     ##     ## This is in case the xcmsSet was read using a scanrange, i.e. if
@@ -889,7 +889,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     ##     ##figure out the scan time range
     ##     scantime.start	<-object@rt$raw[[center]][1]
     ##     scantime.end	<-object@rt$raw[[center]][length(object@rt$raw[[center]])]
-        
+
     ##     scanrange.start	<-which.min(abs(obj1@scantime - scantime.start))
     ##     scanrange.end	<-which.min(abs(obj1@scantime - scantime.end))
     ##     scanrange<-c(scanrange.start, scanrange.end)
@@ -898,11 +898,11 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
     ## } else{
     ##     scanrange<-NULL
     ## }
-    
+
     for (si in 1:length(idx)) {
         s <- idx[si]
         cat(samples[s], " ")
-        
+
         ##
         ## Might be better to just get the profile matrix from the center object
         ## outside of the for loop and then modifying a internal variable within
@@ -916,7 +916,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
                             scanrange = scanrange)
         }
         profStepPad(obj2) <- profStep ## generate profile matrix
-        
+
         mzmin <-  min(obj1@mzrange[1], obj2@mzrange[1])
         mzmax <-  max(obj1@mzrange[2], obj2@mzrange[2])
 
@@ -1043,7 +1043,7 @@ setMethod("retcor.obiwarp", "xcmsSet", function(object, plottype = c("none", "de
         ## Why are we rounding here, but NOT in the retcor.peakgroups?
         ## -> issue #122
         ## The point is we're using the un-rounded adjusted rt for the rt, BUT
-        ## use the rounded values for the adjustment of the peak rts.        
+        ## use the rounded values for the adjustment of the peak rts.
         rtdevsmo[[s]] <- round(rtcor[[s]]-object@rt$corrected[[s]],2)
 
         rm(obj2)
@@ -1595,7 +1595,7 @@ setMethod("diffreport", "xcmsSet", function(object,
         warning("`NA` values in xcmsSet. Use fillPeaks() on the object to fill",
                 "-in missing peak values. Note however that this will also ",
                 "insert intensities of 0 for peaks that can not be filled in.")
-    
+
     mean1 <- rowMeans(values[,c1,drop=FALSE], na.rm = TRUE)
     mean2 <- rowMeans(values[,c2,drop=FALSE], na.rm = TRUE)
 
@@ -2164,7 +2164,7 @@ setMethod("specDist", signature(object="xcmsSet"),
 ############################################################
 ## showError
 #' @title Extract processing errors
-#' 
+#'
 #' @aliases showError
 #'
 #' @description If peak detection is performed with \code{\link{findPeaks}}
@@ -2174,15 +2174,15 @@ setMethod("specDist", signature(object="xcmsSet"),
 #'     accessed with the \code{showError} method.
 #'
 #' @param object An \code{\linkS4class{xcmsSet}} object.
-#' 
+#'
 #' @param message. Logical indicating whether only the error message, or the
 #'     error itself should be returned.
-#' 
+#'
 #' @param ... Additional arguments.
 #'
 #' @return A list of error messages (if \code{message. = TRUE}) or errors or an
 #'     empty list if no errors are present.
-#' 
+#'
 #' @author Johannes Rainer
 setMethod("showError", signature(object = "xcmsSet"),
           function(object, message. = TRUE, ...) {

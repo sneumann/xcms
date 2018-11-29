@@ -1790,6 +1790,19 @@ setMethod("groupChromPeaks",
 #' the object, i.e. retention times of all spectra, also MS level > 1 are
 #' adjusted.
 #'
+#' Note that it is now also possible to perform the alignment on only a subset
+#' of samples within the experiment with subsequent adjustment of the retention
+#' times for samples not being part of the subset based on the closest adjusted
+#' sample within the subset (close in terms of index within the experiment;
+#' currently the subset-sample with the largest index smaller than the index of
+#' the to-be-adjusted-sample is used: if a blank has index 3, the sample which
+#' is part of the subset with the largest index < 3 is used).
+#' It is up to the user to ensure that the order of samples within
+#' \code{object} makes sense for such an approach (are e.g. ordered by
+#' injection index). For more details and examples see section
+#' \emph{Alignment of experiments including blanks} in the \emph{xcms}
+#' vignette.
+#'
 #' @note
 #'
 #' This method requires that a correspondence analysis has been performed
@@ -1858,7 +1871,8 @@ setMethod("adjustRtime",
                   smooth = smooth(param),
                   span = span(param),
                   family = family(param),
-                  peakGroupsMatrix = pkGrpMat
+                  peakGroupsMatrix = pkGrpMat,
+                  subset = subset(param)
               )
               ## Add the pkGrpMat that's being used to the param object.
               peakGroupsMatrix(param) <- pkGrpMat
