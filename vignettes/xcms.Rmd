@@ -813,28 +813,55 @@ compared to the original user interface see the *new\_functionality* vignette.
 ## Alignment of experiments including blanks
 
 Alignment of experiments that contain measurements in empty samples (*blanks*)
-can be difficult, because they will not contain the same compounds. This can
-also apply to heterogeneous experiments with different sample compositions. In
-such cases, retention time drifts can be estimated on a subset of samples
-(either all samples excluding blanks or QC samples injected at regular intervals
-during a measurement run) and these can then be used to adjust the full data
-set.
+can be difficult because these have a much different sample composition. This
+can also apply to heterogeneous experiments in general. In such cases, retention
+time drifts can be estimated on a subset of samples (either all samples
+excluding blanks or QC samples injected at regular intervals during a
+measurement run) and these alignment results can then be used to adjust the full
+data set. Parameters `subset` (of the `PeakGroupsParam` object) can be used to
+define the subset of samples on which the alignment of the full data set will be
+based (e.g. `subset` being the index all samples except blanks), and parameter
+`subsetAdjust` allows to specify the method by which the *left-out* samples will
+be adjusted. There are currently two options available:
 
-In the example below we assume that samples 3, 7 and 11 are blanks. After
-initial peak grouping we perform thus below the alignment based on all other
-samples. To this end we pass the argument `subset` to the `PeakGroupsParam`
-object to define on which samples the alignment should be estimated. The *blank*
-samples with index 3, 7 and 11 will then adjusted based on the alignment result
-of the *closest* sample in `subset`, which will be sample 2, 6 and 10,
-respectively. Note that this type of alignment requires a correct ordering of
-the samples within the object (e.g. ordering by injection index). Note also that
-all parameters such as `minFraction` are then relative to the `subset`, not the
-full experiment!
+- `subsetAdjust = "previous"`: adjust the retention times of a non-subset sample
+  (e.g. blank) based on the alignment results of the previous subset sample. If
+  samples are e.g. in the order *A1*, *A2*, *B1*, *A3*, *A4*, *B2* with *A*
+  representing study samples and *B* blanks, using `subset = c(1, 2, 4, 5)` and
+  `subsetAdjust = "previous"` would result in all *A* samples to be aligned with
+  each other and non-subset samples *B1* and *B2* being adjusted based on the
+  alignment result of subset samples *A2* and *A4*, respectively.
 
-TODO: UPDATE HERE
-- previous adjust using previous subset sample. most instances the adjusted
-  retention times of the subset and non-subset sample are identical.
-- average: interpolated adjustment based on previous and next subset sample.
+- `subsetAdjust = "average"`: adjust retention times of non-subset samples based
+  on an interpolation of the alignment results of the previous and subsequent
+  subset sample. In the example above, *B1* would be adjusted based on the
+  average of adjusted retention times between subset samples *A2* and
+  *A3*. Since there is no subset sample after non-subset sample *B2*, this
+  sample will be adjusted based on the alignment results of *A4* alone. Note
+  that a weighted average is used to calculate the adjusted retention time
+  averages, which uses the inverse of the difference of the index of the
+  non-subset sample to the subset samples as weights. Thus, if we have a
+  setup like *A1*, *B1*, *B2*, *A2* the adjusted retention times of *A1*
+  would get a larger weight than those of *A2* in the adjustment of
+  non-subset sample *B1* causing it's adjusted retention times to be closer
+  to those of *A1* than those of *A2*.
+
+Both cases require a meaningful/correct ordering of the samples within the
+object (e.g. ordering by injection index).
+
+The examples below aim to illustrate the effect of this alignment options. First
+we assume samples 3, 4, 7 and 11 in the *faahKO* data set to be blanks. We thus
+want to perform the alignment based on samples 1, 2, 5, 6, 8, 9, 10 and 12 and
+subsequently adjust the retention times of the left-out samples based on
+interpolation of the results from the neighboring *subset* samples. After
+initial peak grouping we perform below the alignment with the *peak groups*
+method passing the indices of the samples on which we want the alignment to be
+based with the `subset` argument and specify`subsetAdjust = "average"` to
+adjust the *blank* samples based on interpolation of the alignment results
+from neighboring subset samples.
+
+Note that for any subset-alignment all parameters such as `minFraction` are
+relative to the `subset`, not the full experiment!
 
 ```{r alignment-subset, message = FALSE, warning = FALSE}
 xdata <- dropAdjustedRtime(xdata)
@@ -844,27 +871,68 @@ pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
                         minFraction = 0.8)
 xdata <- groupChromPeaks(xdata, param = pdp)
 
-## Now the retention time correction.
+## Define subset-alignment options and perform the alignment
 pgp <- PeakGroupsParam(minFraction = 0.85,
-                       subset = c(1, 2, 4, 5, 6, 8, 9, 10, 12))
-
-## Get the peak groups that would be used for alignment.
+                       subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                       subsetAdjust = "average")
 xdata <- adjustRtime(xdata, param = pgp)
 ```
 
-The difference between raw and adjusted retention times are shown below. Blank
-samples (highlighted in red below) have the same differences than the subset
-sample based on which their retention times were adjusted (overlapping of dashed
-and solid lines below).
+To illustrate the alignment results we plot the results only for samples 2, 3,
+4 and 5 with 3 and 4 being *blank* samples and 2 and 5 the `subset` samples on
+which the other two were adjusted. This nicely shows how the interpolation of
+the `subsetAdjust = "average"` works: retention times of sample 3 are adjusted
+based on those from subset sample 2 and 5, giving however more weight to the
+closer subset sample 2 which results in the adjusted retention times being more
+similar to those of sample 2. Sample 3 on the other hand gets adjusted giving
+more weight to subset sample 5.
 
-```{r alignment-subset, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Alignment results. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
-clrs <- rep("#00000040", 12)
-lty <- rep(2, 12)
-clrs[c(3, 7, 11)] <- "#ff000040"
-lty[c(3, 7, 11)] <- 1
-plotAdjustedRtime(xdata, col = clrs, lty = lty)
+```{r alignment-subset-plot-1, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 5, fig.cap = "Alignment results for samples 2, 3, 4 and 5. Results for blank samples 3 and 4 are drawn in red and blue, black represents the results for the subset samples 2 and 5."}
+blank_colors <- paste0(brewer.pal(4, "Set1"), 80)
+clrs <- rep(NA, 12)
+clrs[2:5] <- c("#00000080", blank_colors[1:2], "#00000080")
+plotAdjustedRtime(xdata, col = clrs, lwd = 2, peakGroupsCol = NA)
 ```
 
+We also plot the full alignment results, drawing the `subset` samples as grey
+dashed lines and the blanks each with it's own color: red, blue, green and
+purple for sample 3, 4, 7 and 8, respectively.
+
+```{r alignment-subset-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+clrs <- rep("#00000040", 12)
+lty <- rep(2, 12)
+clrs[c(3, 4, 7, 11)] <- paste0(brewer.pal(4, "Set1"), 60)
+lty[c(3, 4, 7, 11)] <- 1
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
+
+Option `subsetAdjust = "previous"` adjusts the retention times of a non-subset
+sample based on a single subset sample (the previous), which results in most
+cases in the adjusted retention times of the non-subset sample being highly
+similar to those of the subset sample which was used for adjustment (shown by
+the overlapping solid and dashed lines in the lower panel of the plot below).
+
+```{r alignment-subset-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option previous. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+xdata <- dropAdjustedRtime(xdata)
+xdata <- groupChromPeaks(xdata, param = pdp)
+
+## Define subset-alignment options and perform the alignment
+pgp <- PeakGroupsParam(minFraction = 0.85,
+                       subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                       subsetAdjust = "previous")
+xdata <- adjustRtime(xdata, param = pgp)
+
+
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
 
 
 ## Evaluating the process history

@@ -240,16 +240,24 @@ on these peak groups is applied to the retention time of all spectra in
 the object, i.e. retention times of all spectra, also MS level > 1 are
 adjusted.
 
-Note that it is now also possible to perform the alignment on only a subset
-of samples within the experiment with subsequent adjustment of the retention
-times for samples not being part of the subset based on the closest adjusted
-sample within the subset (close in terms of index within the experiment;
-currently the subset-sample with the largest index smaller than the index of
-the to-be-adjusted-sample is used: if a blank has index 3, the sample which
-is part of the subset with the largest index < 3 is used).
-It is up to the user to ensure that the order of samples within
-\code{object} makes sense for such an approach (are e.g. ordered by
-injection index). For more details and examples see section
+Note that it is now also possible to perform the alignment on
+only a subset of samples within the experiment with a subsequent retention
+time adjustment for samples not being part of this subset. These
+\emph{non-subset} samples (e.g. blanks) are adjusted based on the alignment
+results of the closest subset sample (close in terms of index within the
+experiment). Currently there are two options options to adjust non-subset
+based on the alignment result of the previous subset sample (e.g. if a
+blank sample has index 3 in \code{object}, its retention times will be
+adjusted based on the alignment result from sample 2, assuming that this is
+part of \code{subset}). In most cases thhis will result in highly similar
+retention times for the non-subset and the subset sample used for its
+normalization. Option \code{subsetAdjust = "average"} will adjust non-subset
+samples based on an interpolation of the alignment results of the previous
+and next subset sample. The retention times will be adjusted by an weighted
+average of the adjusted retention times for these two subset samples with
+the weights representing the inverse distance (difference of indices) of
+the subset samples to the non-subset sample.
+For more details and examples see section
 \emph{Alignment of experiments including blanks} in the \emph{xcms}
 vignette.
 }

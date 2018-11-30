@@ -1649,6 +1649,13 @@ test_that("adjustRtime,peakGroups works", {
     expect_true(all(rtime(res_sub, bySample = TRUE)[[1]] !=
                     rtime(res_sub, bySample = TRUE)[[2]]))
     tmp <- adjustRtime(xodg, param = PeakGroupsParam())
+
+    ## With subsetAdjust = "average" and the left-out being at the end.
+    res_sub <- adjustRtime(
+        xodg, param = PeakGroupsParam(subset = 1:2, subsetAdjust = "average"))
+    res_2 <- adjustRtime(
+        xodg, param = PeakGroupsParam(subset = 1:2, subsetAdjust = "previous"))
+    expect_equal(rtime(res_sub), rtime(res_2))
 })
 
 test_that("findChromPeaks,MSWParam works", {
