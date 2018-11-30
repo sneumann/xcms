@@ -294,13 +294,17 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
 ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
-                         localAlignment = FALSE, initPenalty = 0) {
-    return(new("ObiwarpParam", binSize = binSize,
-               centerSample = as.integer(centerSample),
-               response = as.integer(response), distFun = distFun,
-               gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
-               factorGap = factorGap, localAlignment = localAlignment,
-               initPenalty = initPenalty))
+                         localAlignment = FALSE, initPenalty = 0,
+                         subset = integer(),
+                         subsetAdjust = c("average", "previous")) {
+    subsetAdjust <- match.arg(subsetAdjust)
+    new("ObiwarpParam", binSize = binSize,
+        centerSample = as.integer(centerSample),
+        response = as.integer(response), distFun = distFun,
+        gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
+        factorGap = factorGap, localAlignment = localAlignment,
+        initPenalty = initPenalty, subset = as.integer(subset),
+        subsetAdjust = subsetAdjust)
 }
 
 #' @return The \code{FillChromPeaksParam} function returns a

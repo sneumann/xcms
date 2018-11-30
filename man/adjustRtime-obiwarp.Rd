@@ -46,13 +46,18 @@
 \alias{initPenalty}
 \alias{initPenalty<-,ObiwarpParam-method}
 \alias{initPenalty<-}
+\alias{subset,ObiwarpParam-method}
+\alias{subset<-,ObiwarpParam-method}
+\alias{subsetAdjust,ObiwarpParam-method}
+\alias{subsetAdjust<-,ObiwarpParam-method}
 \alias{adjustRtime,XCMSnExp,ObiwarpParam-method}
 \title{Align retention times across samples using Obiwarp}
 \usage{
 ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
   distFun = "cor_opt", gapInit = numeric(), gapExtend = numeric(),
   factorDiag = 2, factorGap = 1, localAlignment = FALSE,
-  initPenalty = 0)
+  initPenalty = 0, subset = integer(), subsetAdjust = c("average",
+  "previous"))
 
 \S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param,
   msLevel = 1L)
@@ -98,6 +103,14 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 \S4method{initPenalty}{ObiwarpParam}(object)
 
 \S4method{initPenalty}{ObiwarpParam}(object) <- value
+
+\S4method{subset}{ObiwarpParam}(x)
+
+\S4method{subset}{ObiwarpParam}(object) <- value
+
+\S4method{subsetAdjust}{ObiwarpParam}(object)
+
+\S4method{subsetAdjust}{ObiwarpParam}(object) <- value
 
 \S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param,
   msLevel = 1L)
@@ -146,6 +159,16 @@ performed instead of the default global alignment.}
 \item{initPenalty}{\code{numeric(1)} defining the penalty for initiating an
 alignment (for local alignment only).}
 
+\item{subset}{\code{integer} with the indices of samples within the
+experiment on which the alignment models should be estimated. Samples
+not part of the subset are adjusted based on the closest subset sample.
+See description above for more details.}
+
+\item{subsetAdjust}{\code{character} specifying the method with which
+non-subset samples should be adjusted. Supported options are
+\code{"previous"} and \code{"average"} (default). See description above
+for more information.}
+
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 
     For all other methods: a \code{ObiwarpParam} object.}
@@ -157,6 +180,8 @@ the alignment method.}
 time should be performed.}
 
 \item{value}{The value for the slot.}
+
+\item{x}{a \code{PeakGroupsParam} object.}
 }
 \value{
 The \code{ObiwarpParam} function returns a
@@ -178,11 +203,37 @@ the adjusted retention times per spectra (in the same order than
 }
 \description{
 This method performs retention time adjustment using the
-    Obiwarp method [Prince 2006]. It is based on the code at
-    \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
-    samples by aligning each against a \emph{center} sample. The alignment is
-    performed directly on the \code{\link{profile-matrix}} and can hence be
-    performed independently of the peak detection or peak grouping.
+Obiwarp method [Prince 2006]. It is based on the code at
+\url{http://obi-warp.sourceforge.net} but supports alignment of multiple
+samples by aligning each against a \emph{center} sample. The alignment is
+performed directly on the \code{\link{profile-matrix}} and can hence be
+performed independently of the peak detection or peak grouping.
+
+It is also possible to exclude certain samples within an experiment from
+the estimation of the alignment models. The parameter \code{subset}
+allows to define the indices of samples within \code{object} that should
+be aligned. Samples not part of this \code{subset} are left out in the
+estimation of the alignment models, but their retention times are
+subsequently adjusted based on the alignment results of the closest sample
+in \code{subset} (close in terms of position within the \code{object}).
+Alignment could thus be performed on only \emph{real} samples leaving out
+e.g. blanks, which are then in turn adjusted based on the closest real
+sample. Here it is up to the user to ensure that the samples within
+\code{object} are ordered correctly (e.g. by injection index).
+
+How the non-subset samples are adjusted bases also on the parameter
+\code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
+sample is adjusted based on the closest previous subset sample which results
+in most cases with adjusted retention times of the non-subset sample being
+identical to the subset sample on which the adjustment bases. The second,
+default, option is to use \code{subsetAdjust = "average"} in which case
+each non subset sample is adjusted based on the average retention time
+adjustment from the previous and following subset sample. For the average
+a weighted mean is used with weights being the inverse of the distance of
+the non-subset sample to the subset samples used for alignment.
+
+See also section \emph{Alignment of experiments including blanks} in the
+\emph{xcms} vignette for an example.
 
 The \code{ObiwarpParam} class allows to specify all
     settings for the retention time adjustment based on the \emph{obiwarp}
@@ -219,6 +270,12 @@ The \code{ObiwarpParam} class allows to specify all
 \code{initPenalty},\code{initPenalty<-}: getter and setter
     for the \code{initPenalty} slot of the object.
 
+\code{subset},\code{subset<-}: getter and
+    setter for the \code{subset} slot of the object.
+
+\code{subsetAdjust},\code{subsetAdjust<-}: getter and
+    setter for the \code{subsetAdjust} slot of the object.
+
 \code{adjustRtime,XCMSnExp,ObiwarpParam}:
 performs retention time correction/alignment based on the total mz-rt
 data using the \emph{obiwarp} method.
@@ -226,16 +283,16 @@ data using the \emph{obiwarp} method.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{retcor}} methods. All of the settings to the alignment
-    algorithm can be passed with a \code{ObiwarpParam} object.
+\code{xcms} user interface which will eventually replace the
+\code{\link{retcor}} methods. All of the settings to the alignment
+algorithm can be passed with a \code{ObiwarpParam} object.
 
 Alignment using obiwarp is performed on the retention time of spectra
 of on MS level. Retention times for spectra of other MS levels are

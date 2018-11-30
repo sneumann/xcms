@@ -798,6 +798,20 @@ test_that("ObiwarpParam works", {
     expect_equal(initPenalty(p), 3.1)
     expect_error(factorGap(p) <- c(2, 2))
     expect_error(factorGap(p) <- -1)
+
+    p <- new("ObiwarpParam", subset = 1L)
+    expect_equal(subset(p), 1L)
+    subset(p) <- 1:6
+    expect_equal(subset(p), 1:6)
+    p <- ObiwarpParam(subset = 1:5)
+    expect_equal(subset(p), 1:5)
+
+    p <- new("ObiwarpParam", subsetAdjust = "previous")
+    expect_equal(subsetAdjust(p), "previous")
+    subsetAdjust(p) <- "average"
+    expect_equal(subsetAdjust(p), "average")
+    p <- ObiwarpParam(subsetAdjust = "previous")
+    expect_equal(subsetAdjust(p), "previous")
 })
 
 test_that("GenericParam works", {

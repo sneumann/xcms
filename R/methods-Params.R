@@ -1763,6 +1763,31 @@ setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
         return(object)
 })
 
+#' @description \code{subset},\code{subset<-}: getter and
+#'     setter for the \code{subset} slot of the object.
+#'
+#' @rdname adjustRtime-obiwarp
+setMethod("subset", "ObiwarpParam", function(x){
+    return(x@subset)})
+#' @rdname adjustRtime-obiwarp
+setReplaceMethod("subset", "ObiwarpParam", function(object, value) {
+    object@subset <- value
+    if (validObject(object))
+        return(object)
+})
+#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
+#'     setter for the \code{subsetAdjust} slot of the object.
+#'
+#' @rdname adjustRtime-obiwarp
+setMethod("subsetAdjust", "ObiwarpParam", function(object){
+    return(object@subsetAdjust)})
+#' @rdname adjustRtime-obiwarp
+setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
+    object@subsetAdjust <- value
+    if (validObject(object))
+        return(object)
+})
+
 ############################################################
 ## FillChromPeaksParam
 ###

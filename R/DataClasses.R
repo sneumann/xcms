@@ -2037,17 +2037,47 @@ setClass("PeakGroupsParam",
 
 #' @title Align retention times across samples using Obiwarp
 #'
-#' @description This method performs retention time adjustment using the
-#'     Obiwarp method [Prince 2006]. It is based on the code at
-#'     \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
-#'     samples by aligning each against a \emph{center} sample. The alignment is
-#'     performed directly on the \code{\link{profile-matrix}} and can hence be
-#'     performed independently of the peak detection or peak grouping.
+#' @description
 #'
-#' @note These methods and classes are part of the updated and modernized
-#'     \code{xcms} user interface which will eventually replace the
-#'     \code{\link{retcor}} methods. All of the settings to the alignment
-#'     algorithm can be passed with a \code{ObiwarpParam} object.
+#' This method performs retention time adjustment using the
+#' Obiwarp method [Prince 2006]. It is based on the code at
+#' \url{http://obi-warp.sourceforge.net} but supports alignment of multiple
+#' samples by aligning each against a \emph{center} sample. The alignment is
+#' performed directly on the \code{\link{profile-matrix}} and can hence be
+#' performed independently of the peak detection or peak grouping.
+#'
+#' It is also possible to exclude certain samples within an experiment from
+#' the estimation of the alignment models. The parameter \code{subset}
+#' allows to define the indices of samples within \code{object} that should
+#' be aligned. Samples not part of this \code{subset} are left out in the
+#' estimation of the alignment models, but their retention times are
+#' subsequently adjusted based on the alignment results of the closest sample
+#' in \code{subset} (close in terms of position within the \code{object}).
+#' Alignment could thus be performed on only \emph{real} samples leaving out
+#' e.g. blanks, which are then in turn adjusted based on the closest real
+#' sample. Here it is up to the user to ensure that the samples within
+#' \code{object} are ordered correctly (e.g. by injection index).
+#'
+#' How the non-subset samples are adjusted bases also on the parameter
+#' \code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
+#' sample is adjusted based on the closest previous subset sample which results
+#' in most cases with adjusted retention times of the non-subset sample being
+#' identical to the subset sample on which the adjustment bases. The second,
+#' default, option is to use \code{subsetAdjust = "average"} in which case
+#' each non subset sample is adjusted based on the average retention time
+#' adjustment from the previous and following subset sample. For the average
+#' a weighted mean is used with weights being the inverse of the distance of
+#' the non-subset sample to the subset samples used for alignment.
+#'
+#' See also section \emph{Alignment of experiments including blanks} in the
+#' \emph{xcms} vignette for an example.
+#'
+#' @note
+#'
+#' These methods and classes are part of the updated and modernized
+#' \code{xcms} user interface which will eventually replace the
+#' \code{\link{retcor}} methods. All of the settings to the alignment
+#' algorithm can be passed with a \code{ObiwarpParam} object.
 #'
 #' @param binSize \code{numeric(1)} defining the bin size (in mz dimension)
 #'     to be used for the \emph{profile matrix} generation. See \code{step}
@@ -2092,6 +2122,8 @@ setClass("PeakGroupsParam",
 #' @param initPenalty \code{numeric(1)} defining the penalty for initiating an
 #'     alignment (for local alignment only).
 #'
+#' @inheritParams adjustRtime-peakGroups
+#'
 #' @family retention time correction methods
 #'
 #' @seealso \code{\link{retcor.obiwarp}} for the old user interface.
@@ -2114,7 +2146,7 @@ NULL
 #'     method. Class Instances should be created using the
 #'     \code{ObiwarpParam} constructor.
 #'
-#' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty See corresponding parameter above. \code{.__classVersion__} stores
+#' @slot .__classVersion__,binSize,centerSample,response,distFun,gapInit,gapExtend,factorDiag,factorGap,localAlignment,initPenalty,subset,subsetAdjust See corresponding parameter above. \code{.__classVersion__} stores
 #' the version from the class. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
@@ -2167,7 +2199,9 @@ setClass("ObiwarpParam",
                    factorDiag = "numeric",
                    factorGap = "numeric",
                    localAlignment = "logical",
-                   initPenalty = "numeric"),
+                   initPenalty = "numeric",
+                   subset = "integer",
+                   subsetAdjust = "character"),
          contains = "Param",
          prototype = prototype(
              binSize = 1,
@@ -2179,7 +2213,9 @@ setClass("ObiwarpParam",
              factorDiag = 2,
              factorGap = 1,
              localAlignment = FALSE,
-             initPenalty = 0),
+             initPenalty = 0,
+             subset = integer(),
+             subsetAdjust = "average"),
          validity = function(object) {
              msg <- character()
              if (length(object@binSize) > 1 |
