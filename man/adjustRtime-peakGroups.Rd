@@ -44,8 +44,8 @@ groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
   span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
-  0, ncol = 0), subset = integer(), subsetAdjust = c("previous",
-  "average"))
+  0, ncol = 0), subset = integer(), subsetAdjust = c("average",
+  "previous"))
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -129,7 +129,7 @@ See description above for more details.}
 
 \item{subsetAdjust}{\code{character} specifying the method with which
 non-subset samples should be adjusted. Supported options are
-\code{"previous"} (default) and \code{"average"}. See description above
+\code{"previous"} and \code{"average"} (default). See description above
 for more information.}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
@@ -190,12 +190,12 @@ How the non-subset samples are adjusted bases also on the parameter
 \code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
 sample is adjusted based on the closest previous subset sample which results
 in most cases with adjusted retention times of the non-subset sample being
-identical to the subset sample on which the adjustment bases. The second
-option is to use \code{subsetAdjust = "average"} in which case each non
-subset sample is adjusted based on the average retention time adjustment
-from the previous and following subset sample. For the average a weighted
-mean is used with weights being the inverse of the distance of the
-non-subset sample to the subset samples used for alignment.
+identical to the subset sample on which the adjustment bases. The second,
+default, option is to use \code{subsetAdjust = "average"} in which case
+each non subset sample is adjusted based on the average retention time
+adjustment from the previous and following subset sample. For the average
+a weighted mean is used with weights being the inverse of the distance of
+the non-subset sample to the subset samples used for alignment.
 
 See also section \emph{Alignment of experiments including blanks} in the
 \emph{xcms} vignette for an example.

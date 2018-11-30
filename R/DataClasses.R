@@ -1826,12 +1826,12 @@ NULL
 #' \code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
 #' sample is adjusted based on the closest previous subset sample which results
 #' in most cases with adjusted retention times of the non-subset sample being
-#' identical to the subset sample on which the adjustment bases. The second
-#' option is to use \code{subsetAdjust = "average"} in which case each non
-#' subset sample is adjusted based on the average retention time adjustment
-#' from the previous and following subset sample. For the average a weighted
-#' mean is used with weights being the inverse of the distance of the
-#' non-subset sample to the subset samples used for alignment.
+#' identical to the subset sample on which the adjustment bases. The second,
+#' default, option is to use \code{subsetAdjust = "average"} in which case
+#' each non subset sample is adjusted based on the average retention time
+#' adjustment from the previous and following subset sample. For the average
+#' a weighted mean is used with weights being the inverse of the distance of
+#' the non-subset sample to the subset samples used for alignment.
 #'
 #' See also section \emph{Alignment of experiments including blanks} in the
 #' \emph{xcms} vignette for an example.
@@ -1892,7 +1892,7 @@ NULL
 #'
 #' @param subsetAdjust \code{character} specifying the method with which
 #'     non-subset samples should be adjusted. Supported options are
-#'     \code{"previous"} (default) and \code{"average"}. See description above
+#'     \code{"previous"} and \code{"average"} (default). See description above
 #'     for more information.
 #'
 #' @family retention time correction methods
@@ -2006,7 +2006,7 @@ setClass("PeakGroupsParam",
              family = "gaussian",
              peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
              subset = integer(),
-             subsetAdjust = "previous"
+             subsetAdjust = "average"
          ),
          validity = function(object) {
              msg <- character()

@@ -898,7 +898,7 @@ We also plot the full alignment results, drawing the `subset` samples as grey
 dashed lines and the blanks each with it's own color: red, blue, green and
 purple for sample 3, 4, 7 and 8, respectively.
 
-```{r alignment-subset-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+```{r alignment-subset-plot-2, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
 clrs <- rep("#00000040", 12)
 lty <- rep(2, 12)
 clrs[c(3, 4, 7, 11)] <- paste0(brewer.pal(4, "Set1"), 60)
@@ -916,7 +916,7 @@ cases in the adjusted retention times of the non-subset sample being highly
 similar to those of the subset sample which was used for adjustment (shown by
 the overlapping solid and dashed lines in the lower panel of the plot below).
 
-```{r alignment-subset-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option previous. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+```{r alignment-subset-plot-3, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option previous. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
 xdata <- dropAdjustedRtime(xdata)
 xdata <- groupChromPeaks(xdata, param = pdp)
 

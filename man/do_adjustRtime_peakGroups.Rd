@@ -8,8 +8,8 @@ found in most samples}
 do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
   extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
   family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol =
-  0, nrow = 0), subset = integer(), subsetAdjust = c("previous",
-  "average"))
+  0, nrow = 0), subset = integer(), subsetAdjust = c("average",
+  "previous"))
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified
@@ -66,7 +66,7 @@ See description above for more details.}
 
 \item{subsetAdjust}{\code{character} specifying the method with which
 non-subset samples should be adjusted. Supported options are
-\code{"previous"} (default) and \code{"average"}. See description above
+\code{"previous"} and \code{"average"} (default). See description above
 for more information.}
 }
 \value{

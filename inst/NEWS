@@ -1,5 +1,8 @@
 Changes in version 3.5.1
 
+- Add subset alignment option subsetAdjust = "average" to adjust left-out
+  samples (blanks or simply non-subset samples) based on an interpolation from
+  the results of the previous and subsequent subset sample.
 - Add parameter subsetAdjust to PeakGroupsParam allowing to switch between
   different methods to adjust samples left out in the alignment process.
 - Alignment based on a sample subset for the peak groups method (issue #335):

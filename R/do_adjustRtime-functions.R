@@ -70,7 +70,7 @@ do_adjustRtime_peakGroups <-
              smooth = c("loess", "linear"), span = 0.2,
              family = c("gaussian", "symmetric"),
              peakGroupsMatrix = matrix(ncol = 0, nrow = 0),
-             subset = integer(), subsetAdjust = c("previous", "average"))
+             subset = integer(), subsetAdjust = c("average", "previous"))
 {
     subsetAdjust <- match.arg(subsetAdjust)
     ## Check input.
@@ -625,7 +625,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
 #'
 #' @md
 adjustRtimeSubset <- function(rtraw, rtadj, subset,
-                              method = c("previous", "average")) {
+                              method = c("average", "previous")) {
     method <- match.arg(method)
     if (length(rtraw) != length(rtadj))
         stop("Lengths of 'rtraw' and 'rtadj' have to match.")

@@ -278,7 +278,7 @@ PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                             family = "gaussian",
                             peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
                             subset = integer(),
-                            subsetAdjust = c("previous", "average")) {
+                            subsetAdjust = c("average", "previous")) {
     subsetAdjust <- match.arg(subsetAdjust)
     new("PeakGroupsParam", minFraction = minFraction,
         extraPeaks = extraPeaks, smooth = smooth, span = span,
