@@ -11,10 +11,12 @@ test_that(".obiwarp works", {
     expect_equal(xs_2@rt$raw[[2]], xs_2@rt$corrected[[2]])
     expect_true(sum(xs_2@rt$raw[[1]] != xs_2@rt$corrected[[1]]) > 500)
     expect_true(sum(xs_2@rt$raw[[3]] != xs_2@rt$corrected[[3]]) > 500)
-    
+
+    raw_rt <- split(rtime(od), fromFile(od))
     ## And the OnDiskMSnExp implementation:
     res <- .obiwarp(od, param = prm)
     expect_equal(xs_2@rt$corrected, res)
+    expect_equal(res[[2]], unname(raw_rt[[2]]))
     res_2 <- adjustRtime(od, param = prm)
     res_3 <- adjustRtime(xod, param = prm)
     expect_equal(adjustedRtime(res_3), res_2)
@@ -27,18 +29,19 @@ test_that(".obiwarp works", {
     expect_true(hasAdjustedRtime(res_3))
     tmp <- dropAdjustedRtime(res_3)
     expect_equal(chromPeaks(tmp), chromPeaks(xod))
-    
+
     ## File issue on that! retcor.obiwarp does use round for the adjustment of
     ## the peak!
     ## -> issue #122
     ## expect_equal(chromPeaks(res_3), peaks(xs_2))
-    
+
     ## Manually specify center Sample
     centerSample(prm) <- 3
     xs_2 <- retcor.obiwarp(xs, profStep = binSize(prm), center = centerSample(prm))
     expect_equal(xs_2@rt$raw[[centerSample(prm)]],
                  xs_2@rt$corrected[[centerSample(prm)]])
     res <- .obiwarp(od, param = prm)
+    expect_equal(res[[3]], unname(raw_rt[[3]]))
     expect_equal(xs_2@rt$corrected, res)
     ## change some settings
     gapInit(prm) <- 3.1
@@ -49,6 +52,19 @@ test_that(".obiwarp works", {
                  xs_2@rt$corrected[[centerSample(prm)]])
     res <- .obiwarp(od, param = prm)
     expect_equal(xs_2@rt$corrected, res)
+
+    ## With subset.
+    prm <- ObiwarpParam(binSize = 1, subset = c(1, 3))
+    res <- xcms:::.obiwarp(od, param = prm)
+    expect_equal(res[[1]], unname(raw_rt[[1]]))
+    expect_true(all(res[[2]] != unname(raw_rt[[2]])))
+    expect_true(all(res[[3]] != unname(raw_rt[[3]])))
+
+    prm <- ObiwarpParam(binSize = 1, subset = c(2, 3))
+    res <- xcms:::.obiwarp(od, param = prm)
+    expect_equal(res[[2]], unname(raw_rt[[2]]))
+    expect_true(sum(res[[1]] == unname(raw_rt[[1]])) > 500)
+    expect_true(all(res[[3]] != unname(raw_rt[[3]])))
 })
 
 test_that(".concatenate_OnDiskMSnExp works", {
@@ -79,5 +95,3 @@ test_that(".concatenate_OnDiskMSnExp works", {
 
     expect_equal(.concatenate_OnDiskMSnExp(od1), od1)
 })
-
-

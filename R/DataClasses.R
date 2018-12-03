@@ -2085,7 +2085,9 @@ setClass("PeakGroupsParam",
 #'
 #' @param centerSample \code{integer(1)} defining the index of the center sample
 #'     in the experiment. It defaults to
-#'     \code{floor(median(1:length(fileNames(object))))}.
+#'     \code{floor(median(1:length(fileNames(object))))}. Note that if
+#'     \code{subset} is used, the index passed with \code{centerSample} is
+#'     within these subset samples.
 #'
 #' @param response \code{numeric(1)} defining the \emph{responsiveness} of
 #'     warping with \code{response = 0} giving linear warping on start and end

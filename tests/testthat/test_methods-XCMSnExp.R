@@ -2101,3 +2101,21 @@ test_that("writeMSData,XCMSnExp works", {
     data_in <- readMSData(nfls, mode = "onDisk")
     expect_equal(rtime(data_in), rtime(xod_xgr))
 })
+
+test_that("adjustRtime,XCMSnExp,Obiwarp works", {
+    prm <- ObiwarpParam(centerSample = 3, subset = c(1, 2))
+    expect_error(adjustRtime(xod_x, param = prm))
+    prm <- ObiwarpParam(centerSample = 2, subset = c(1, 2))
+    res <- adjustRtime(xod_x, param = prm)
+    plotAdjustedRtime(res, col = c("#ff000060", "#00ff0060", "#0000ff60"))
+    expect_equal(rtime(xod_x, bySample = TRUE)[[2]],
+                 rtime(xod_x, bySample = TRUE)[[2]])
+    expect_equal(rtime(xod_x, bySample = TRUE)[[3]],
+                 rtime(xod_x, bySample = TRUE)[[3]])
+
+    prm <- ObiwarpParam(centerSample = 1, subset = c(1, 3))
+    res <- adjustRtime(xod_x, param = prm)
+    plotAdjustedRtime(res, col = c("#ff000060", "#00ff0060", "#0000ff60"))
+    expect_equal(rtime(xod_x, bySample = TRUE)[[1]],
+                 rtime(xod_x, bySample = TRUE)[[1]])
+})

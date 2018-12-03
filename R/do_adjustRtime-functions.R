@@ -633,10 +633,14 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
         subset <- seq_along(rtraw)
     if (!all(subset %in% seq_along(rtraw)))
         stop("'subset' is out of bounds.")
-    if (length(subset) == length(rtraw))
-        return(rtadj)
+    ## if (length(subset) == length(rtraw)) {
+    ##     cat("return rtadj\n")
+    ##     return(rtadj)
+    ## }
     no_subset <- seq_len(length(rtraw))[-subset]
     for (i in no_subset) {
+        message("Aligning sample number ", i, " against subset ... ",
+                appendLF = FALSE)
         if (method == "previous") {
             i_adj <- xcms:::.get_closest_index(i, subset, method = "previous")
             rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rtraw[[i_adj]],
@@ -656,6 +660,7 @@ adjustRtimeSubset <- function(rtraw, rtadj, subset,
             rtadj[[i]] <- .applyRtAdjustment(rtraw[[i]], rt_raw_ref,
                                              rt_adj_ref)
         }
+        message("OK")
     }
     rtadj
 }
