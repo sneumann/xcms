@@ -818,11 +818,11 @@ can also apply to heterogeneous experiments in general. In such cases, retention
 time drifts can be estimated on a subset of samples (either all samples
 excluding blanks or QC samples injected at regular intervals during a
 measurement run) and these alignment results can then be used to adjust the full
-data set. Parameters `subset` (of the `PeakGroupsParam` object) can be used to
-define the subset of samples on which the alignment of the full data set will be
-based (e.g. `subset` being the index all samples except blanks), and parameter
-`subsetAdjust` allows to specify the method by which the *left-out* samples will
-be adjusted. There are currently two options available:
+data set. Parameters `subset` (of the `PeakGroupsParam` or `ObiwarpParam`
+object) can be used to define the subset of samples on which the alignment of
+the full data set will be based (e.g. `subset` being the index all samples
+except blanks), and parameter `subsetAdjust` allows to specify the method by
+which the *left-out* samples will be adjusted. There are currently two options available:
 
 - `subsetAdjust = "previous"`: adjust the retention times of a non-subset sample
   (e.g. blank) based on the alignment results of the previous subset sample. If
@@ -856,7 +856,7 @@ subsequently adjust the retention times of the left-out samples based on
 interpolation of the results from the neighboring *subset* samples. After
 initial peak grouping we perform below the alignment with the *peak groups*
 method passing the indices of the samples on which we want the alignment to be
-based with the `subset` argument and specify`subsetAdjust = "average"` to
+based with the `subset` argument and specify `subsetAdjust = "average"` to
 adjust the *blank* samples based on interpolation of the alignment results
 from neighboring subset samples.
 
@@ -927,6 +927,31 @@ pgp <- PeakGroupsParam(minFraction = 0.85,
 xdata <- adjustRtime(xdata, param = pgp)
 
 
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
+
+Also obiwarp alignment supports the same types of subset-alignment. In the
+example below we perform, as in the first example, a subset alignment with
+`subset = c(1, 2, 5, 6, 8, 9, 10, 12)` and `subsetAdjust = "average"`.
+
+```{r alignment-subset-obiwarp}
+xdata <- dropAdjustedRtime(xdata)
+prm <- ObiwarpParam(subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                    subsetAdjust = "average")
+xdata <- adjustRtime(xdata, param = prm)
+```
+
+We again plot the results.
+
+```{r alignment-subset-obiwarp-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+clrs <- rep("#00000040", 12)
+lty <- rep(2, 12)
+clrs[c(3, 4, 7, 11)] <- paste0(brewer.pal(4, "Set1"), 60)
+lty[c(3, 4, 7, 11)] <- 1
 par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
 plot(chromatogram(xdata, aggregationFun = "sum"),
      col = clrs, lty = lty, peakType = "none")
