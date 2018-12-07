@@ -1603,11 +1603,10 @@ setMethod("groupChromPeaks",
                                      fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, xph)
               ## Add the results.
-              df <- DataFrame(res$featureDefinitions)
+              df <- DataFrame(res)
               if (nrow(df) == 0)
                   stop("Unable to group any chromatographic peaks. You might ",
                        "have to adapt your settings.")
-              df$peakidx <- res$peakIndex
               if (nrow(df) > 0)
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df

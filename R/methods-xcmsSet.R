@@ -373,9 +373,8 @@ setMethod("group.density", "xcmsSet", function(object, bw = 30, minfrac = 0.5,
                                     binSize = mzwid,
                                     maxFeatures = max,
                                     sleep = sleep)
-
-    groups(object) <- res$featureDefinitions
-    groupidx(object) <- res$peakIndex
+    groups(object) <- as.matrix(res[, -match("peakidx", colnames(res))])
+    groupidx(object) <- res$peakidx
     object
 })
 

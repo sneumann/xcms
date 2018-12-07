@@ -2650,8 +2650,10 @@ setClass("XChromatogram",
          validity = .validXChromatogram)
 
 setClass("XChromatograms",
-         slots = c(.processHistory = "list"),
-         prototype = prototype(.processHistory = list()),
+         slots = c(.processHistory = "list",
+                   featureDefinitions = "DataFrame"),
+         prototype = prototype(.processHistory = list(),
+                               featureDefinitions = DataFrame()),
          contains = "Chromatograms",
          validity = .validXChromatograms)
 

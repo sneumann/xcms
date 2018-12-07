@@ -9,6 +9,10 @@
         inherits(z, "XChromatogram"), logical(1))))
         txt <- c(txt, paste0("'object' should only contain 'XChromatogram' ",
                              "objects"))
+    if (nrow(object@featureDefinitions)) {
+        ## Check that we have a column "row" and that in that column we have
+        ## indices from 1:nrow(object).
+    }
     if (length(txt)) txt
     else TRUE
 }

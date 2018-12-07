@@ -1,9 +1,10 @@
 test_that("do_groupChromPeaks_density works", {
     fts <- peaks(faahko)
-    res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
-    res_2 <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko),
+    grps <- sampclass(faahko)
+    res <- do_groupChromPeaks_density(fts, sampleGroups = grps)
+    res_2 <- do_groupChromPeaks_density(fts, sampleGroups = grps,
                                       minFraction = 0.9)
-    expect_true(nrow(res$featureDefinitions) > nrow(res_2$featureDefinitions))
+    expect_true(nrow(res) > nrow(res_2))
 })
 
 test_that("do_groupPeaks_mzClust works", {
@@ -34,4 +35,40 @@ test_that("do_groupChromPeaks_nearest works", {
     expect_true(nrow(res$featureDefinitions) < nrow(res_2$featureDefinitions))
     res_x <- group(xs, method = "nearest")
     expect_equal(res_x@groups, res$featureDefinitions)
+})
+
+test_that(".group_peaks_density works", {
+    x <- rbind(c(rt = 3.1, mz = 3, index = 1, sample = 1, into = 120),
+               c(rt = 3.2, mz = 3, index = 2, sample = 2, into = 130),
+               c(rt = 3.15, mz = 3, index = 3, sample = 3, into = 29),
+               c(rt = 5, mz = 3, index = 4, sample = 4, into = 32),
+               c(rt = 3, mz = 3, index = 5, sample = 5, into = 43),
+               c(rt = 6, mz = 3, index = 6, sample = 6, into = 35))
+    densFrom <- 1
+    densTo <- 100
+    densN <- 100
+    sampleGroups <- c("b", "a", "b", "a", "b", "a")
+    sampleGroupTable <- table(sampleGroups)
+    bw <- 2
+    maxFeatures <- 20
+    minFraction <- 0.8
+    minSamples <- 1
+    res <- .group_peaks_density(x, bw = bw, densFrom = densFrom,
+                                densTo = densTo, densN = densN,
+                                sampleGroups = sampleGroups,
+                                sampleGroupTable = sampleGroupTable,
+                                minFraction = minFraction,
+                                minSamples = minSamples,
+                                maxFeatures = maxFeatures, sleep = 0)
+    expect_true(nrow(res) == 1)
+    expect_equal(res$peakidx, list(1:6))
+    res <- .group_peaks_density(x, bw = bw, densFrom = densFrom,
+                                densTo = densTo, densN = densN,
+                                sampleGroups = sampleGroups,
+                                sampleGroupTable = sampleGroupTable,
+                                minFraction = minFraction,
+                                minSamples = 7,
+                                maxFeatures = maxFeatures, sleep = 0)
+    expect_true(nrow(res) == 0)
+    expect_true(is(res, "data.frame"))
 })
