@@ -52,23 +52,36 @@ setMethod("show", "XChromatogram", function(object) {
 #' - `dropFeatureDefinitions`: for `XChrmomatograms` objects only: delete any
 #'   correspondence analysis results (and related process history).
 #'
+#' - `featureDefinitions`: for `XChromatograms` objects only. Extract the
+#'   results from the correspondence analysis (performed with
+#'   `groupChromPeaks`). Returns a `DataFrame` with the properties of the
+#'   defined m/z-rt features: their m/z and retention time range. Columns
+#'   `peakidx` and `row` contain the index of the chromatographic peaks in the
+#'   `chromPeaks` matrix associated with the feature and the row in the
+#'   `XChromatograms` object in which the feature was defined. Similar to the
+#'   `chromPeaks` method it is possible to filter the returned feature matrix
+#'   with the `mz`, `rt` and `ppm` parameters.
+#'
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
 #'
-#' @param rt For `chromPeaks`: `numeric(2)` defining the retention time range
-#'     for which chromatographic peaks should be returned.
+#' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
+#'     the retention time range for which chromatographic peaks or features
+#'     should be returned.
 #'     For `filterRt`: `numeric(2)` defining the retention time range to
 #'     reduce `object` to.
 #'
-#' @param ppm For `chromPeaks`: `numeric(1)` defining a ppm to expand the
-#'     provided m/z range
+#' @param ppm For `chromPeaks` and `featureDefinitions`: `numeric(1)` defining
+#'     a ppm to expand the provided m/z range.
 #'
-#' @param type For `chromPeaks`: `character(1)` defining which peaks to return
-#'     if `rt` is provided: `"any"` (default) return all peaks that are even
+#' @param type For `chromPeaks` and `featureDefinitions`: `character(1)`
+#'     defining which peaks or features to return if `rt` or `mz` is provided:
+#'     `"any"` (default) return all peaks that are even
 #'     partially overlapping with `rt`, `"within"` return peaks that are
 #'     completely within `rt` and `"apex_within"` return peaks which apex
 #'     is within `rt`.
+#'
 #'     For `plot`: what type of plot should be used for the
 #'     chromatogram (such as `"l"` for lines, `"p"` for points etc), see help
 #'     of [plot()] in the `graphics` package for more details.

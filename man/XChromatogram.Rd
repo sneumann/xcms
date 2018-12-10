@@ -26,6 +26,7 @@
 \alias{hasFeatures,XChromatograms-method}
 \alias{dropFeatureDefinitions,XChromatograms-method}
 \alias{groupChromPeaks,XChromatograms,PeakDensityParam-method}
+\alias{featureDefinitions,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -77,6 +78,9 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{dropFeatureDefinitions}{XChromatograms}(object, ...)
 
 \S4method{groupChromPeaks}{XChromatograms,PeakDensityParam}(object, param)
+
+\S4method{featureDefinitions}{XChromatograms}(object, mz = numeric(),
+  rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -112,8 +116,8 @@ For \code{XChromatograms}: additional parameters to be passed to the
 range (min, max) on which the chromatogram was created. This is
 supposed to contain the \emph{real} range of m/z values in contrast
 to the \code{filterMz} below.
-For \code{chromPeaks}: \code{numeric(2)} defining the m/z range
-for which chromatographic peaks should be returned.
+For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining the
+m/z range for which chromatographic peaks or features should be returned.
 For \code{filterMz}: \code{numeric(2)} defining the m/z range for which
 chromatographic peaks should be retained.#'}
 
@@ -140,24 +144,26 @@ the chromatogram was extracted.}
 
 \item{object}{An \code{XChromatogram} or \code{XChromatograms} object.}
 
-\item{rt}{For \code{chromPeaks}: \code{numeric(2)} defining the retention time range
-for which chromatographic peaks should be returned.
+\item{rt}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(2)} defining
+the retention time range for which chromatographic peaks or features
+should be returned.
 For \code{filterRt}: \code{numeric(2)} defining the retention time range to
 reduce \code{object} to.}
 
-\item{ppm}{For \code{chromPeaks}: \code{numeric(1)} defining a ppm to expand the
-provided m/z range}
+\item{ppm}{For \code{chromPeaks} and \code{featureDefinitions}: \code{numeric(1)} defining
+a ppm to expand the provided m/z range.}
 
-\item{type}{For \code{chromPeaks}: \code{character(1)} defining which peaks to return
-if \code{rt} is provided: \code{"any"} (default) return all peaks that are even
+\item{type}{For \code{chromPeaks} and \code{featureDefinitions}: \code{character(1)}
+defining which peaks or features to return if \code{rt} or \code{mz} is provided:
+\code{"any"} (default) return all peaks that are even
 partially overlapping with \code{rt}, \code{"within"} return peaks that are
 completely within \code{rt} and \code{"apex_within"} return peaks which apex
-is within \code{rt}.
-For \code{plot}: what type of plot should be used for the
-chromatogram (such as \code{"l"} for lines, \code{"p"} for points etc), see help
-of \code{\link[=plot]{plot()}} in the \code{graphics} package for more details.
-For \code{processHistory}: restrict returned processing steps to specific
-types. Use \code{\link[=processHistoryTypes]{processHistoryTypes()}} to list all supported values.}
+is within \code{rt}.\preformatted{For `plot`: what type of plot should be used for the
+chromatogram (such as `"l"` for lines, `"p"` for points etc), see help
+of [plot()] in the `graphics` package for more details.
+For `processHistory`: restrict returned processing steps to specific
+types. Use [processHistoryTypes()] to list all supported values.
+}}
 
 \item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
 \code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
@@ -270,6 +276,15 @@ analysis has been performed and m/z-rt feature definitions are present.
 Returns a \code{logical(1)}.
 \item \code{dropFeatureDefinitions}: for \code{XChrmomatograms} objects only: delete any
 correspondence analysis results (and related process history).
+\item \code{featureDefinitions}: for \code{XChromatograms} objects only. Extract the
+results from the correspondence analysis (performed with
+\code{groupChromPeaks}). Returns a \code{DataFrame} with the properties of the
+defined m/z-rt features: their m/z and retention time range. Columns
+\code{peakidx} and \code{row} contain the index of the chromatographic peaks in the
+\code{chromPeaks} matrix associated with the feature and the row in the
+\code{XChromatograms} object in which the feature was defined. Similar to the
+\code{chromPeaks} method it is possible to filter the returned feature matrix
+with the \code{mz}, \code{rt} and \code{ppm} parameters.
 \item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
 the individual performed processing steps. Optional parameters \code{type} and
 \code{fileIndex} allow to further specify which processing steps to return.
@@ -314,9 +329,14 @@ Identified chromatographic peaks in an \code{XChromatograms} object can be group
 into \emph{features} with the \code{groupChromPeaks} function. Currently, such a
 correspondence analysis can be performed with the \emph{peak density} method
 (see \link{groupChromPeaks} for more details) specifying the algorithm settings
-with a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object. The correspondence analysis results are
-stored in the returned \code{XChromatograms} object and can be accessed with the
-\code{\link[=featureDefinitions]{featureDefinitions()}} method.
+with a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object. A correspondence analysis is performed
+separately for each row in the \code{XChromatograms} object grouping
+chromatographic peaks across samples (columns).
+
+The analysis results are stored in the returned \code{XChromatograms} object
+and can be accessed with the \code{featureDefinitions} method which returns a
+\code{DataFrame} with one row for each feature. Column \code{"row"} specifies in
+which row of the \code{XChromatograms} object the feature was identified.
 }
 
 \examples{
@@ -382,6 +402,17 @@ plot(xchrs, col = sample_colors, peakBg = cols)
 ## Indicate the peaks with a rectangle
 plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
     peakBg = NA)
+
+## Group chromatographic peaks across samples
+prm <- PeakDensityParam(sampleGroup = rep(1, 3))
+res <- groupChromPeaks(xchrs, param = prm)
+
+hasFeatures(res)
+featureDefinitions(res)
+
+## Delete the identified feature definitions
+res <- dropFeatureDefinitions(res)
+hasFeatures(res)
 
 ## Create a XChromatogram object
 pks <- matrix(nrow = 1, ncol = 6)

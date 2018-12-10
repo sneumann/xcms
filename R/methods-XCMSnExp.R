@@ -51,12 +51,12 @@ setMethod("show", "XCMSnExp", function(object) {
             format(median(featureDefinitions(object)[, "rtmax"] -
                           featureDefinitions(object)[, "rtmin"]), digits = 5),
             "\n", sep = "")
-        ## if (.hasFilledPeaks(object)) {
-        ##     totF <- chromPeaks(object)[, "is_filled"] == 1
-        ##     fp <- chromPeaks(object)[totF, , drop = FALSE]
-        ##     cat("", sum(totF), "filled peaks (on average",
-        ##         mean(table(fp[, "sample"])), "per sample).\n")
-        ## }
+        if (.hasFilledPeaks(object)) {
+            totF <- chromPeaks(object)[, "is_filled"] == 1
+            fp <- chromPeaks(object)[totF, , drop = FALSE]
+            cat("", sum(totF), "filled peaks (on average",
+                mean(table(fp[, "sample"])), "per sample).\n")
+        }
     }
 })
 

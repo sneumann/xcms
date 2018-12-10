@@ -57,14 +57,14 @@ setMethod("show", "XChromatograms", function(object) {
         if (length(ph))
             cat(" method:", .param2string(ph[[1]]@param), "\n")
         else cat(" unknown method.\n")
-        cat(" ", nrow(object@featureDefinitions), " features identified.\n",
+        cat(" ", nrow(object@featureDefinitions), " feature(s) identified.\n",
             sep = "")
-        if (.hasFilledPeaks(object)) {
-            totF <- chromPeaks(object)[, "is_filled"] == 1
-            fp <- chromPeaks(object)[totF, , drop = FALSE]
-            cat("", sum(totF), "filled peaks (on average",
-                mean(table(fp[, "sample"])), "per sample).\n")
-        }
+        ## if (.hasFilledPeaks(object)) {
+        ##     totF <- chromPeaks(object)[, "is_filled"] == 1
+        ##     fp <- chromPeaks(object)[totF, , drop = FALSE]
+        ##     cat("", sum(totF), "filled peaks (on average",
+        ##         mean(table(fp[, "sample"])), "per sample).\n")
+        ## }
     }
 })
 
@@ -75,7 +75,6 @@ setMethod("hasChromPeaks", "XChromatograms", function(object) {
 })
 
 #' @rdname XChromatogram
-#'
 setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
                                                    mz = numeric(), ppm = 0,
                                                    type = c("any", "within",
@@ -209,9 +208,14 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 #' into *features* with the `groupChromPeaks` function. Currently, such a
 #' correspondence analysis can be performed with the *peak density* method
 #' (see [groupChromPeaks] for more details) specifying the algorithm settings
-#' with a [PeakDensityParam()] object. The correspondence analysis results are
-#' stored in the returned `XChromatograms` object and can be accessed with the
-#' [featureDefinitions()] method.
+#' with a [PeakDensityParam()] object. A correspondence analysis is performed
+#' separately for each row in the `XChromatograms` object grouping
+#' chromatographic peaks across samples (columns).
+#'
+#' The analysis results are stored in the returned `XChromatograms` object
+#' and can be accessed with the `featureDefinitions` method which returns a
+#' `DataFrame` with one row for each feature. Column `"row"` specifies in
+#' which row of the `XChromatograms` object the feature was identified.
 #'
 #' @param param For `groupChromPeaks`: a [PeakDensityParam()] object with the
 #'     settings for the *peak density* correspondence analysis algorithm.
@@ -241,6 +245,10 @@ setMethod("groupChromPeaks",
               startDate <- date()
               cpks <- chromPeaks(object)
               cpks <- cbind(cpks, index = seq_len(nrow(cpks)))
+              if (!any(colnames(cpks) == "sample"))
+                  colnames(cpks)[colnames(cpks) == "column"] <- "sample"
+              if (!any(colnames(cpks) == "mz"))
+                  cpks <- cbind(cpks, mz = NA)
               nr <- nrow(object)
               res <- vector("list", nr)
               bw <- bw(param)
@@ -283,4 +291,47 @@ setMethod("groupChromPeaks",
               object@featureDefinitions <- res
               if (validObject(object))
                   return(object)
+          })
+
+#' @rdname XChromatogram
+setMethod("featureDefinitions", "XChromatograms",
+          function(object, mz = numeric(), rt = numeric(), ppm = 0,
+                   type = c("any", "within", "apex_within")) {
+              if (!hasFeatures(object))
+                  return(DataFrame())
+              feat_def <- object@featureDefinitions
+              type <- match.arg(type)
+              ## Select features within rt range.
+              if (length(rt) && nrow(feat_def)) {
+                  rt <- range(rt)
+                  keep <- switch(
+                      type,
+                      any = which(feat_def$rtmin <= rt[2] &
+                                  feat_def$rtmax >= rt[1]),
+                      within = which(feat_def$rtmin >= rt[1] &
+                                     feat_def$rtmax <= rt[2]),
+                      apex_within = which(feat_def$rtmed >= rt[1] &
+                                          feat_def$rtmed <= rt[2])
+                  )
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              if (length(mz) && nrow(feat_def)) {
+                  mz <- range(mz)
+                  ## Increase mz by ppm.
+                  if (is.finite(mz[1]))
+                      mz[1] <- mz[1] - mz[1] * ppm / 1e6
+                  if (is.finite(mz[2]))
+                      mz[2] <- mz[2] + mz[2] * ppm / 1e6
+                  keep <- switch(
+                      type,
+                      any = which(feat_def$mzmin <= mz[2] &
+                                  feat_def$mzmax >= mz[1]),
+                      within = which(feat_def$mzmin >= mz[1] &
+                                     feat_def$mzmax <= mz[2]),
+                      apex_within = which(feat_def$mzmed >= mz[1] &
+                                          feat_def$mzmed <= mz[2])
+                  )
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              feat_def
           })

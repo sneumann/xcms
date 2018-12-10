@@ -10,8 +10,9 @@
         txt <- c(txt, paste0("'object' should only contain 'XChromatogram' ",
                              "objects"))
     if (nrow(object@featureDefinitions)) {
-        ## Check that we have a column "row" and that in that column we have
-        ## indices from 1:nrow(object).
+        if (!all(object@featureDefinitions[, "row"] %in% seq_len(nrow(object))))
+            txt <- c(txt, paste0("Elements in column 'row' are outside of the",
+                                 " number of rows of 'object'"))
     }
     if (length(txt)) txt
     else TRUE
@@ -95,6 +96,17 @@
 #' ## Indicate the peaks with a rectangle
 #' plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
 #'     peakBg = NA)
+#'
+#' ## Group chromatographic peaks across samples
+#' prm <- PeakDensityParam(sampleGroup = rep(1, 3))
+#' res <- groupChromPeaks(xchrs, param = prm)
+#'
+#' hasFeatures(res)
+#' featureDefinitions(res)
+#'
+#' ## Delete the identified feature definitions
+#' res <- dropFeatureDefinitions(res)
+#' hasFeatures(res)
 XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
     if (missing(data))
         return(new("XChromatograms"))

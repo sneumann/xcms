@@ -159,6 +159,13 @@ test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
                            param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
     expect_true(length(processHistory(res)) == 5)
     expect_true(nrow(res@featureDefinitions) == 1)
+
+    ## The same on artificial data.
+    chrs <- as(xchrs, "Chromatograms")
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    res <- groupChromPeaks(chrs, param = prm)
+    expect_equal(nrow(res@featureDefinitions), 3)
 })
 
 test_that("dropFeatureDefinitions,XChromatograms works", {
@@ -173,4 +180,22 @@ test_that("dropFeatureDefinitions,XChromatograms works", {
     expect_false(hasFeatures(res))
     expect_true(length(res@.processHistory) == 4)
     expect_equal(res, xchrs)
+})
+
+test_that("featureDefinitions,XChromatograms works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
+    param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    res <- groupChromPeaks(xchrs, param = param)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(featureDefinitions(res)) == 1)
+
+    xchrs <- findChromPeaks(xchrs, param = CentWaveParam())
+    res <- groupChromPeaks(xchrs, param = param)
+    expect_true(nrow(featureDefinitions(res)) == 3)
+    fts <- featureDefinitions(res, rt = c(2500, 2800))
+    expect_equal(nrow(fts), 2)
+
+    res <- dropFeatureDefinitions(res)
+    expect_equal(nrow(featureDefinitions(res)), 0)
 })

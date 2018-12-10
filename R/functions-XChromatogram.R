@@ -51,8 +51,8 @@
 #'     range (min, max) on which the chromatogram was created. This is
 #'     supposed to contain the *real* range of m/z values in contrast
 #'     to the `filterMz` below.
-#'     For `chromPeaks`: `numeric(2)` defining the m/z range
-#'     for which chromatographic peaks should be returned.
+#'     For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining the
+#'     m/z range for which chromatographic peaks or features should be returned.
 #'     For `filterMz`: `numeric(2)` defining the m/z range for which
 #'     chromatographic peaks should be retained.#'
 #'
