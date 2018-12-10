@@ -1,77 +1,78 @@
 ## Correspondence functions.
 #' @include functions-Params.R
 
-##' @title Core API function for peak density based chromatographic peak
-##' grouping
-##'
-##' @description The \code{do_groupChromPeaks_density} function performs
-##' chromatographic peak grouping based on the density (distribution) of peaks,
-##' found in different samples, along the retention time axis in slices of
-##' overlapping mz ranges.
-##'
-##' @details For overlapping slices along the mz dimension, the function
-##' calculates the density distribution of identified peaks along the
-##' retention time axis and groups peaks from the same or different samples
-##' that are close to each other. See [Smith 2006] for more details.
-##'
-##' @note The default settings might not be appropriate for all LC/GC-MS setups,
-##' especially the \code{bw} and \code{binSize} parameter should be adjusted
-##' accordingly.
-##'
-##' @param peaks A \code{matrix} or \code{data.frame} with the mz values and
-##' retention times of the identified chromatographic peaks in all samples of an
-##' experiment. Required columns are \code{"mz"}, \code{"rt"} and
-##' \code{"sample"}. The latter should contain \code{numeric} values representing
-##' the index of the sample in which the peak was found.
-##'
-##' @inheritParams groupChromPeaks-density
-##'
-##' @param sleep \code{numeric(1)} defining the time to \emph{sleep} between
-##'     iterations and plot the result from the current iteration.
-##'
-##' @return A \code{list} with elements \code{"featureDefinitions"} and
-##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
-##' representing a (mz-rt) feature (i.e. a peak group) with columns:
-##' \describe{
-##' \item{"mzmed"}{median of the peaks' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
-##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
-##' \item{"rtmed"}{the median of the peaks' retention times.}
-##' \item{"rtmin"}{the smallest retention time of the peaks in the group.}
-##' \item{"rtmax"}{the largest retention time of the peaks in the group.}
-##' \item{"npeaks"}{the total number of peaks assigned to the feature.
-##' Note that this number can be larger than the total number of samples, since
-##' multiple peaks from the same sample could be assigned to a feature.}
-##' }
-##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
-##' feature in the \code{peaks} input matrix.
-##'
-##' @family core peak grouping algorithms
-##'
-##' @references
-##' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
-##' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
-##' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-##' \emph{Anal. Chem.} 2006, 78:779-787.
-##'
-##' @author Colin Smith, Johannes Rainer
-##'
-##' @examples
-##' ## Load the test data set
-##' library(faahKO)
-##' data(faahko)
-##'
-##' ## Extract the matrix with the identified peaks from the xcmsSet:
-##' fts <- peaks(faahko)
-##'
-##' ## Perform the peak grouping with default settings:
-##' res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
-##'
-##' ## The feature definitions:
-##' head(res$featureDefinitions)
-##'
-##' ## The assignment of peaks from the input matrix to the features
-##' head(res$peakIndex)
+#' @title Core API function for peak density based chromatographic peak
+#' grouping
+#'
+#' @description
+#'
+#' The `do_groupChromPeaks_density` function performs chromatographic peak
+#' grouping based on the density (distribution) of peaks, found in different
+#' samples, along the retention time axis in slices of overlapping mz ranges.
+#'
+#' @details For overlapping slices along the mz dimension, the function
+#' calculates the density distribution of identified peaks along the
+#' retention time axis and groups peaks from the same or different samples
+#' that are close to each other. See [Smith 2006] for more details.
+#'
+#' @note The default settings might not be appropriate for all LC/GC-MS setups,
+#' especially the `bw` and `binSize` parameter should be adjusted
+#' accordingly.
+#'
+#' @param peaks A `matrix` or `data.frame` with the mz values and
+#' retention times of the identified chromatographic peaks in all samples of an
+#' experiment. Required columns are `"mz"`, `"rt"` and
+#' `"sample"`. The latter should contain `numeric` values representing
+#' the index of the sample in which the peak was found.
+#'
+#' @inheritParams groupChromPeaks-density
+#'
+#' @param sleep `numeric(1)` defining the time to *sleep* between
+#'     iterations and plot the result from the current iteration.
+#'
+#' @return A `data.frame`, each row representing a (mz-rt) feature (i.e.
+#' a peak group) with columns:
+#' - `"mzmed"`: median of the peaks' apex mz values.
+#' - `"mzmin"`: smallest mz value of all peaks' apex within the feature.
+#' - `"mzmax"`:largest mz value of all peaks' apex within the feature.
+#' - `"rtmed"`: the median of the peaks' retention times.
+#' - `"rtmin"`: the smallest retention time of the peaks in the group.
+#' - `"rtmax"`: the largest retention time of the peaks in the group.
+#' - `"npeaks"`: the total number of peaks assigned to the feature.
+#' - `"peakidx"`: a `list` with the indices of all peaks in a feature in the
+#'   `peaks` input matrix.
+#'
+#' Note that this number can be larger than the total number of samples, since
+#' multiple peaks from the same sample could be assigned to a feature.}
+#'
+#' @family core peak grouping algorithms
+#'
+#' @references
+#' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
+#' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
+#' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
+#' Anal. Chem. 2006, 78:779-787.
+#'
+#' @author Colin Smith, Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#' ## Load the test data set
+#' library(faahKO)
+#' data(faahko)
+#'
+#' ## Extract the matrix with the identified peaks from the xcmsSet:
+#' fts <- peaks(faahko)
+#'
+#' ## Perform the peak grouping with default settings:
+#' res <- do_groupChromPeaks_density(fts, sampleGroups = sampclass(faahko))
+#'
+#' ## The feature definitions:
+#' head(res$featureDefinitions)
+#'
+#' ## The assignment of peaks from the input matrix to the features
+#' head(res$peakIndex)
 do_groupChromPeaks_density <- function(peaks, sampleGroups,
                                        bw = 30, minFraction = 0.5, minSamples = 1,
                                        binSize = 0.25, maxFeatures = 50,
@@ -103,10 +104,11 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
         stop("Sample indices in 'peaks' are larger than there are sample",
              " groups specified with 'sampleGroups'!")
 
-    peaks <- cbind(peaks[, .reqCols], index = seq_len(nrow(peaks)))
+    peaks <- cbind(peaks[, .reqCols, drop = FALSE],
+                   index = seq_len(nrow(peaks)))
 
     ## Order peaks matrix by mz
-    peaks <- peaks[order(peaks[, "mz"]), ]
+    peaks <- peaks[order(peaks[, "mz"]), , drop = FALSE]
     rownames(peaks) <- NULL
     rtRange <- range(peaks[, "rt"])
 
@@ -114,7 +116,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     ## value >= mass[i].
     mass <- seq(peaks[1, "mz"], peaks[nrow(peaks), "mz"] + binSize,
                 by = binSize / 2)
-    masspos <- findEqualGreaterM(peaks[,"mz"], mass)
+    masspos <- findEqualGreaterM(peaks[, "mz"], mass)
 
     densFrom <- rtRange[1] - 3 * bw
     densTo <- rtRange[2] + 3 * bw
@@ -294,38 +296,43 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
 ##                 peakIndex = groupindex[uindex]))
 ## }
 
-##' @title Core API function for peak grouping using mzClust
-##'
-##' @description The \code{do_groupPeaks_mzClust} function performs high
-##' resolution correspondence on single spectra samples.
-##'
-##' @inheritParams groupChromPeaks-density
-##' @inheritParams do_groupChromPeaks_density
-##' @inheritParams groupChromPeaks-mzClust
-##'
-##' @return A \code{list} with elements \code{"featureDefinitions"} and
-##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
-##' representing an (mz-rt) feature (i.e. peak group) with columns:
-##' \describe{
-##' \item{"mzmed"}{median of the peaks' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
-##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
-##' \item{"rtmed"}{always \code{-1}.}
-##' \item{"rtmin"}{always \code{-1}.}
-##' \item{"rtmax"}{always \code{-1}.}
-##' \item{"npeaks"}{the total number of peaks assigned to the feature.
-##' Note that this number can be larger than the total number of samples, since
-##' multiple peaks from the same sample could be assigned to a group.}
-##' }
-##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
-##' peak group in the \code{peaks} input matrix.
-##'
-##' @family core peak grouping algorithms
-##'
-##' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
-##' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
-##' development of a heuristic approach for metabolomics}.\cr Metabolomics,
-##' Vol. 2, No. 2, 75-83 (2006)
+#' @title Core API function for peak grouping using mzClust
+#'
+#' @description
+#'
+#' The `do_groupPeaks_mzClust` function performs high resolution
+#' correspondence on single spectra samples.
+#'
+#' @inheritParams groupChromPeaks-density
+#'
+#' @inheritParams do_groupChromPeaks_density
+#'
+#' @inheritParams groupChromPeaks-mzClust
+#'
+#' @return A `list` with elements `"featureDefinitions"` and
+#' `"peakIndex"`. `"featureDefinitions"` is a `matrix`, each row
+#' representing an (mz-rt) feature (i.e. peak group) with columns:
+#' - `"mzmed"`: median of the peaks' apex mz values.
+#' - `"mzmin"`: smallest mz value of all peaks' apex within the feature.
+#' - `"mzmax"`: largest mz value of all peaks' apex within the feature.
+#' - `"rtmed"`: always `-1`.
+#' - `"rtmin"`: always `-1`.
+#' - `"rtmax"`: always `-1`.
+#' - `"npeaks"`: the total number of peaks assigned to the feature. Note that
+#'   this number can be larger than the total number of samples, since
+#'   multiple peaks from the same sample could be assigned to a group.
+#'
+#' `"peakIndex"` is a `list` with the indices of all peaks in a peak group in
+#' the `peaks` input matrix.
+#'
+#' @md
+#'
+#' @family core peak grouping algorithms
+#'
+#' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
+#' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
+#' development of a heuristic approach for metabolomics}.\cr Metabolomics,
+#' Vol. 2, No. 2, 75-83 (2006)
 do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
                                   absMz = 0, minFraction = 0.5,
                                   minSamples = 1) {
@@ -377,37 +384,41 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
     return(list(featureDefinitions = grpmat, peakIndex = grps$idx))
 }
 
-##' @title Core API function for chromatic peak grouping using a nearest
-##' neighbor approach
-##'
-##' @description The \code{do_groupChromPeaks_nearest} function groups peaks
-##' across samples by creating a master peak list and assigning corresponding
-##' peaks from all samples to each peak group (i.e. feature). The method is
-##' inspired by the correspondence algorithm of mzMine [Katajamaa 2006].
-##'
-##' @inheritParams do_groupChromPeaks_density
-##' @inheritParams groupChromPeaks-nearest
-##'
-##' @return A \code{list} with elements \code{"featureDefinitions"} and
-##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
-##' representing an (mz-rt) feature (i.e. peak group) with columns:
-##' \describe{
-##' \item{"mzmed"}{median of the peaks' apex mz values.}
-##' \item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
-##' \item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
-##' \item{"rtmed"}{the median of the peaks' retention times.}
-##' \item{"rtmin"}{the smallest retention time of the peaks in the feature.}
-##' \item{"rtmax"}{the largest retention time of the peaks in the feature.}
-##' \item{"npeaks"}{the total number of peaks assigned to the feature.}
-##' }
-##' \code{"peakIndex"} is a \code{list} with the indices of all peaks in a
-##' feature in the \code{peaks} input matrix.
-##'
-##' @family core peak grouping algorithms
-##'
-##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
-##' processing and visualization of mass spectrometry based molecular profile
-##' data. \emph{Bioinformatics} 2006, 22:634-636.
+#' @title Core API function for chromatic peak grouping using a nearest
+#' neighbor approach
+#'
+#' @description
+#'
+#' The `do_groupChromPeaks_nearest` function groups peaks across samples by
+#' creating a master peak list and assigning corresponding peaks from all
+#' samples to each peak group (i.e. feature). The method is inspired by the
+#' correspondence algorithm of mzMine [Katajamaa 2006].
+#'
+#' @inheritParams do_groupChromPeaks_density
+#' @inheritParams groupChromPeaks-nearest
+#'
+#' @return A `list` with elements `"featureDefinitions"` and
+#' `"peakIndex"`. `"featureDefinitions"` is a `matrix`, each row
+#' representing an (mz-rt) feature (i.e. peak group) with columns:
+#'
+#' - `"mzmed"`: median of the peaks' apex mz values.
+#' - `"mzmin"`: smallest mz value of all peaks' apex within the feature.
+#' - `"mzmax"`:largest mz value of all peaks' apex within the feature.
+#' - `"rtmed"`: the median of the peaks' retention times.
+#' - `"rtmin"`: the smallest retention time of the peaks in the feature.
+#' - `"rtmax"`: the largest retention time of the peaks in the feature.
+#' - `"npeaks"`: the total number of peaks assigned to the feature.
+#'
+#' `"peakIndex"` is a `list` with the indices of all peaks in a feature in the
+#' `peaks` input matrix.
+#'
+#' @family core peak grouping algorithms
+#'
+#' @md
+#'
+#' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
+#' processing and visualization of mass spectrometry based molecular profile
+#' data. Bioinformatics 2006, 22:634-636.
 do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
                                        absMz = 0.2, absRt = 15, kNN = 10) {
     if (missing(sampleGroups))
@@ -587,7 +598,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
     res_idx <- list()
     while (deny[maxy <- which.max(deny)] > maxden / 20 && nrow(res_mat) <
            maxFeatures) {
-        grange <- xcms:::descendMin(deny, maxy)
+        grange <- descendMin(deny, maxy)
         deny[grange[1]:grange[2]] <- 0
         gidx <- which(x[,"rt"] >= den$x[grange[1]] &
                       x[,"rt"] <= den$x[grange[2]])

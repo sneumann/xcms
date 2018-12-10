@@ -74,7 +74,7 @@ same group).}
 
 \item{bw}{\code{numeric(1)} defining the bandwidth (standard deviation ot the
 smoothing kernel) to be used. This argument is passed to the
-\code{\link{density}} method.}
+[density() method.}
 
 \item{minFraction}{\code{numeric(1)} defining the minimum fraction of samples
 in at least one sample group in which the peaks have to be present to be
@@ -90,11 +90,10 @@ in mz dimension.}
 \item{maxFeatures}{\code{numeric(1)} with the maximum number of peak groups
 to be identified in a single mz slice.}
 
-\item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-    containing the results from a previous peak detection analysis (see
-    \code{\link{findChromPeaks}}).
-
-    For all other methods: a \code{PeakDensityParam} object.}
+\item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object
+containing the results from a previous peak detection analysis (see
+\code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For all other methods: a `PeakDensityParam` object.
+}}
 
 \item{value}{The value for the slot.}
 
@@ -103,48 +102,46 @@ the peak grouping algorithm.}
 }
 \value{
 The \code{PeakDensityParam} function returns a
-    \code{PeakDensityParam} class instance with all of the settings
-    specified for chromatographic peak alignment based on peak densities.
-    Note that argument `sampleGroups` is mandatory and should represent
-    either the sample grouping in the experiment. It's length has to match
-    the number of sample in the experiments.
+\code{PeakDensityParam} class instance with all of the settings
+specified for chromatographic peak alignment based on peak densities.
+Note that argument \code{sampleGroups} is mandatory and should represent
+either the sample grouping in the experiment. It's length has to match
+the number of sample in the experiments.
 
-For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
+For \code{groupChromPeaks}: a \link{XCMSnExp} object with the
 results of the correspondence analysis. The definition of the resulting
-mz-rt features can be accessed with the \code{\link{featureDefinitions}}
-method.
+mz-rt features can be accessed with the \code{\link[=featureDefinitions]{featureDefinitions()}} method
 }
 \description{
 This method performs performs correspondence (chromatographic
-    peak grouping) based on the density (distribution) of identified peaks
-    along the retention time axis within slices of overlapping mz ranges.
-    All peaks (from the same or from different samples) being close on the
-    retention time axis are grouped into a feature (\emph{peak group}).
+peak grouping) based on the density (distribution) of identified peaks
+along the retention time axis within slices of overlapping mz ranges.
+All peaks (from the same or from different samples) being close on the
+retention time axis are grouped into a feature (\emph{peak group}).
 
-The \code{PeakDensityParam} class allows to specify all
-    settings for the peak grouping based on peak densities along the time
-    dimension. Instances should be created with the \code{PeakDensityParam}
-    constructor.
+The \code{PeakDensityParam} class allows to specify all settings for the peak
+grouping based on peak densities along the time dimension. Instances should
+be created with the \code{\link[=PeakDensityParam]{PeakDensityParam()}} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-    for the \code{sampleGroups} slot of the object. Its length should match
-    the number of samples in the experiment and it should not contain
-    \code{NA}s.
+for the \code{sampleGroups} slot of the object. Its length should match
+the number of samples in the experiment and it should not contain
+\code{NA}s.
 
 \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
-    of the object.
+of the object.
 
 \code{minFraction},\code{minFraction<-}: getter and setter for
-    the \code{minFraction} slot of the object.
+the \code{minFraction} slot of the object.
 
 \code{minSamples},\code{minSamples<-}: getter and setter for the
-    \code{minSamples} slot of the object.
+\code{minSamples} slot of the object.
 
 \code{binSize},\code{binSize<-}: getter and setter for the
-    \code{binSize} slot of the object.
+\code{binSize} slot of the object.
 
 \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
-    the \code{maxFeatures} slot of the object.
+the \code{maxFeatures} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
 performs correspondence (peak grouping within and across samples) within
@@ -162,9 +159,8 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{group}} methods. All of the settings to the algorithm
-    can be passed with a \code{PeakDensityParam} object.
+\code{xcms} user interface. All of the settings to the algorithm
+can be passed with a \code{PeakDensityParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 all eventually present previous correspondence results to be dropped.
@@ -218,20 +214,22 @@ processHistory(res)
 Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-\emph{Anal. Chem.} 2006, 78:779-787.
+Anal. Chem. 2006, 78:779-787.
 }
 \seealso{
-The \code{\link{do_groupChromPeaks_density}} core
-    API function and \code{\link{group.density}} for the old user interface.
+The \code{\link[=do_groupChromPeaks_density]{do_groupChromPeaks_density()}} core API function and \code{\link[=group.density]{group.density()}}
+for the old user interface.
 
-\code{\link{plotChromPeakDensity}} to plot peak densities and
-    evaluate different algorithm settings.
-    \code{\link{featureDefinitions}} and
-    \code{\link{featureValues,XCMSnExp-method}} for methods to access the
-    features (i.e. the peak grouping results).
+\code{\link[=plotChromPeakDensity]{plotChromPeakDensity()}} to plot peak densities and evaluate different
+algorithm settings.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the correspondence.
+\code{\link[=featureDefinitions]{featureDefinitions()}} and \code{\link[=featureValues]{featureValues()}} for methods to access the
+features (i.e. the peak grouping results).
+
+\link{XCMSnExp} for the object containing the results of the correspondence.
+
+\code{\link[=plotChromPeakDensity]{plotChromPeakDensity()}} for plotting chromatographic peak density with the
+possibility to test different parameter settings.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-mzClust}},
   \code{\link{groupChromPeaks-nearest}},

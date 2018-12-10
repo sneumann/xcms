@@ -224,12 +224,14 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
 
-#' @return The \code{PeakDensityParam} function returns a
-#'     \code{PeakDensityParam} class instance with all of the settings
+#' @return The `PeakDensityParam` function returns a
+#'     `PeakDensityParam` class instance with all of the settings
 #'     specified for chromatographic peak alignment based on peak densities.
 #'     Note that argument `sampleGroups` is mandatory and should represent
 #'     either the sample grouping in the experiment. It's length has to match
 #'     the number of sample in the experiments.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
@@ -243,9 +245,13 @@ PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
         binSize = binSize, maxFeatures = maxFeatures)
 }
 
-#' @return The \code{MzClustParam} function returns a
-#'     \code{MzClustParam} class instance with all of the settings
-#'     specified for high resolution single spectra peak alignment.
+#' @return
+#'
+#' The `MzClustParam` function returns a `MzClustParam` class instance with
+#' all of the settings specified for high resolution single spectra peak
+#' alignment.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,

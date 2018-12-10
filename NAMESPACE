@@ -219,7 +219,6 @@ export(
     "plotAdjustedRtime",
     "plotChromatogram",
     "highlightChromPeaks",
-    "plotChromPeakDensity",
     "plotChromPeaks",
     "plotChromPeakImage",
     "isCalibrated",
@@ -481,5 +480,6 @@ exportMethods("hasChromPeaks",
               "extractMsData",
               "chromatogram",
               "spectrapply",
-	      "writeMSData"
+	      "writeMSData",
+              "plotChromPeakDensity"
               )

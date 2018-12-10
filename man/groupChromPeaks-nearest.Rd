@@ -72,11 +72,10 @@ two peaks.}
 \item{kNN}{\code{numeric(1)} representing the number of nearest neighbors
 to check.}
 
-\item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-    containing the results from a previous chromatographic peak detection
-    analysis (see \code{\link{findChromPeaks}}).
-
-    For all other methods: a \code{NearestPeaksParam} object.}
+\item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object containing the
+results from a previous chromatographic peak detection
+analysis (see \code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For all other methods: a `NearestPeaksParam` object.
+}}
 
 \item{value}{The value for the slot.}
 
@@ -88,39 +87,38 @@ The \code{NearestPeaksParam} function returns a
     \code{NearestPeaksParam} class instance with all of the settings
     specified for peak alignment based on peak proximity.
 
-For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-results of the peak grouping/correspondence step (i.e. the mz-rt
-features). These can be accessed with the
-\code{\link{featureDefinitions}} method.
+For \code{groupChromPeaks}: a \link{XCMSnExp} object with the results of the peak
+grouping/correspondence step (i.e. the mz-rt features). These can be
+accessed with the \code{\link[=featureDefinitions]{featureDefinitions()}} method.
 }
 \description{
 This method is inspired by the grouping algorithm of mzMine
-    [Katajamaa 2006] and performs correspondence based on proximity of peaks
-    in the space spanned by retention time and mz values.
-    The method creates first a \emph{master peak list} consisting of all
-    chromatographic peaks from the sample in which most peaks were
-    identified, and starting from that, calculates distances to peaks from
-    the sample with the next most number of peaks. If peaks are closer than
-    the defined threshold they are grouped together.
+\link{Katajamaa 2006} and performs correspondence based on proximity of peaks
+in the space spanned by retention time and mz values.
+The method creates first a \emph{master peak list} consisting of all
+chromatographic peaks from the sample in which most peaks were
+identified, and starting from that, calculates distances to peaks from
+the sample with the next most number of peaks. If peaks are closer than
+the defined threshold they are grouped together.
 
 The \code{NearestPeaksParam} class allows to specify all
-    settings for the peak grouping based on the \emph{nearest} algorithm.
-    Instances should be created with the \code{NearestPeaksParam} constructor.
+settings for the peak grouping based on the \emph{nearest} algorithm.
+Instances should be created with the \code{NearestPeaksParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-    for the \code{sampleGroups} slot of the object.
+for the \code{sampleGroups} slot of the object.
 
 \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
-    for the \code{mzVsRtBalance} slot of the object.
+for the \code{mzVsRtBalance} slot of the object.
 
 \code{absMz},\code{absMz<-}: getter and setter for the
-    \code{absMz} slot of the object.
+\code{absMz} slot of the object.
 
 \code{absRt},\code{absRt<-}: getter and setter for the
-    \code{absRt} slot of the object.
+\code{absRt} slot of the object.
 
 \code{kNN},\code{kNN<-}: getter and setter for the
-    \code{kNN} slot of the object.
+\code{kNN} slot of the object.
 
 \code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
 performs peak grouping based on the proximity between chromatographic
@@ -136,9 +134,8 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{group}} methods. All of the settings to the algorithm
-    can be passed with a \code{NearestPeaksParam} object.
+\code{xcms} user interface. All of the settings to the algorithm
+can be passed with a \code{NearestPeaksParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
 all eventually present previous alignment results to be dropped.
@@ -188,17 +185,16 @@ processHistory(res)
 \references{
 Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
-data. \emph{Bioinformatics} 2006, 22:634-636.
+data. Bioinformatics 2006, 22:634-636.
 }
 \seealso{
-The \code{\link{do_groupChromPeaks_nearest}} core
-    API function and \code{\link{group.nearest}} for the old user interface.
-    \code{\link{featureDefinitions}} and
-    \code{\link{featureValues,XCMSnExp-method}} for methods to access
-    peak grouping results (i.e. the features).
+The \code{\link[=do_groupChromPeaks_nearest]{do_groupChromPeaks_nearest()}} core API function.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the peak grouping.
+\code{\link[=featureDefinitions]{featureDefinitions()}} and \code{\link[=featureValues]{featureValues()}} for methods to access
+peak grouping results (i.e. the features).
+
+\link{XCMSnExp} for the object containing the results of
+the peak grouping.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-mzClust}},

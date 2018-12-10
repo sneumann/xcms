@@ -1377,54 +1377,59 @@ NULL
 
 #' @title Peak grouping based on time dimension peak densities
 #'
-#' @description This method performs performs correspondence (chromatographic
-#'     peak grouping) based on the density (distribution) of identified peaks
-#'     along the retention time axis within slices of overlapping mz ranges.
-#'     All peaks (from the same or from different samples) being close on the
-#'     retention time axis are grouped into a feature (\emph{peak group}).
+#' @description
+#'
+#' This method performs performs correspondence (chromatographic
+#' peak grouping) based on the density (distribution) of identified peaks
+#' along the retention time axis within slices of overlapping mz ranges.
+#' All peaks (from the same or from different samples) being close on the
+#' retention time axis are grouped into a feature (*peak group*).
 #'
 #' @note These methods and classes are part of the updated and modernized
-#'     \code{xcms} user interface which will eventually replace the
-#'     \code{\link{group}} methods. All of the settings to the algorithm
-#'     can be passed with a \code{PeakDensityParam} object.
+#'     `xcms` user interface. All of the settings to the algorithm
+#'     can be passed with a `PeakDensityParam` object.
 #'
 #' @param sampleGroups A vector of the same length than samples defining the
 #'     sample group assignments (i.e. which samples belong to which sample
-#'     group). This parameter is mandatory for the \code{PeakDensityParam}
+#'     group). This parameter is mandatory for the `PeakDensityParam`
 #'     and has to be provided also if there is no sample grouping in the
 #'     experiment (in which case all samples should be assigned to the
 #'     same group).
 #'
-#' @param bw \code{numeric(1)} defining the bandwidth (standard deviation ot the
+#' @param bw `numeric(1)` defining the bandwidth (standard deviation ot the
 #'     smoothing kernel) to be used. This argument is passed to the
-#'     \code{\link{density}} method.
+#'     [density() method.
 #'
-#' @param minFraction \code{numeric(1)} defining the minimum fraction of samples
+#' @param minFraction `numeric(1)` defining the minimum fraction of samples
 #'     in at least one sample group in which the peaks have to be present to be
 #'     considered as a peak group (feature).
 #'
-#' @param minSamples \code{numeric(1)} with the minimum number of samples in at
+#' @param minSamples `numeric(1)` with the minimum number of samples in at
 #'     least one sample group in which the peaks have to be detected to be
 #'     considered a peak group (feature).
 #'
-#' @param binSize \code{numeric(1)} defining the size of the overlapping slices
+#' @param binSize `numeric(1)` defining the size of the overlapping slices
 #'     in mz dimension.
 #'
-#' @param maxFeatures \code{numeric(1)} with the maximum number of peak groups
+#' @param maxFeatures `numeric(1)` with the maximum number of peak groups
 #'     to be identified in a single mz slice.
 #'
 #' @family peak grouping methods
 #'
-#' @seealso The \code{\link{do_groupChromPeaks_density}} core
-#'     API function and \code{\link{group.density}} for the old user interface.
+#' @seealso
 #'
-#' @seealso \code{\link{plotChromPeakDensity}} to plot peak densities and
-#'     evaluate different algorithm settings.
-#'     \code{\link{featureDefinitions}} and
-#'     \code{\link{featureValues,XCMSnExp-method}} for methods to access the
-#'     features (i.e. the peak grouping results).
+#' The [do_groupChromPeaks_density()] core API function and [group.density()]
+#' for the old user interface.
+#'
+#' [plotChromPeakDensity()] to plot peak densities and evaluate different
+#' algorithm settings.
+#'
+#' [featureDefinitions()] and [featureValues()] for methods to access the
+#' features (i.e. the peak grouping results).
 #'
 #' @name groupChromPeaks-density
+#'
+#' @md
 #'
 #' @author Colin Smith, Johannes Rainer
 #'
@@ -1432,20 +1437,23 @@ NULL
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
-#' \emph{Anal. Chem.} 2006, 78:779-787.
+#' Anal. Chem. 2006, 78:779-787.
 NULL
 #> NULL
 
-#' @description The \code{PeakDensityParam} class allows to specify all
-#'     settings for the peak grouping based on peak densities along the time
-#'     dimension. Instances should be created with the \code{PeakDensityParam}
-#'     constructor.
+#' @description
 #'
-#' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. \code{.__classVersion__} stores
+#' The `PeakDensityParam` class allows to specify all settings for the peak
+#' grouping based on peak densities along the time dimension. Instances should
+#' be created with the [PeakDensityParam()] constructor.
+#'
+#' @slot .__classVersion__,sampleGroups,bw,minFraction,minSamples,binSize,maxFeatures See corresponding parameter above. `.__classVersion__` stores
 #' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' *via* the corresponding getter and setter methods listed above.
 #'
 #' @rdname groupChromPeaks-density
+#'
+#' @md
 #'
 #' @examples
 #'
@@ -1534,46 +1542,56 @@ setClass("PeakDensityParam",
 ## Main group.mzClust documentation.
 #' @title High resolution peak grouping for single spectra samples
 #'
-#' @description This method performs high resolution correspondence for single
-#'     spectra samples.
+#' @description
+#'
+#' This method performs high resolution correspondence for single spectra
+#' samples.
 #'
 #' @note These methods and classes are part of the updated and modernized
-#'     \code{xcms} user interface which will eventually replace the
-#'     \code{\link{group}} methods. All of the settings to the algorithm
-#'     can be passed with a \code{MzClustParam} object.
+#'     `xcms` user interface which will eventually replace the
+#'     [group()] methods. All of the settings to the algorithm
+#'     can be passed with a [MzClustParam] object.
 #'
 #' @inheritParams groupChromPeaks-density
 #'
-#' @param ppm \code{numeric(1)} representing the relative mz error for the
+#' @param ppm `numeric(1)` representing the relative mz error for the
 #'     clustering/grouping (in parts per million).
 #'
-#' @param absMz \code{numeric(1)} representing the absolute mz error for the
+#' @param absMz `numeric(1)` representing the absolute mz error for the
 #'     clustering.
 #'
 #' @family peak grouping methods
 #'
-#' @seealso The \code{\link{do_groupPeaks_mzClust}} core API function and
-#'     \code{\link{group.mzClust}} for the old user interface.
-#'     \code{\link{featureDefinitions}} and
-#'     \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
-#'     grouping results (i.e. the features).
+#' @seealso
+#'
+#' The [do_groupPeaks_mzClust()] core API function and [group.mzClust()] for
+#' the old user interface.
+#'
+#' [featureDefinitions()] and [featureValues()] for methods to access peak
+#' grouping results (i.e. the features).
 #'
 #' @name groupChromPeaks-mzClust
 #'
+#' @md
+#'
 #' @references Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
-#' and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
-#' development of a heuristic approach for metabolomics}.\cr Metabolomics,
+#' and David F. Grant\cr Alignment of high resolution mass spectra:
+#' development of a heuristic approach for metabolomics.\cr Metabolomics,
 #' Vol. 2, No. 2, 75-83 (2006)
 NULL
 #> NULL
 
-#' @description The \code{MzClustParam} class allows to specify all
-#'     settings for the peak grouping based on the \emph{mzClust} algorithm.
-#'     Instances should be created with the \code{MzClustParam} constructor.
+#' @description
 #'
-#' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. \code{.__classVersion__} stores
+#' The `MzClustParam` class allows to specify all settings for the peak
+#' grouping based on the *mzClust* algorithm.
+#' Instances should be created with the `MzClustParam` constructor.
+#'
+#' @slot .__classVersion__,sampleGroups,ppm,absMz,minFraction,minSamples See corresponding parameter above. `.__classVersion__` stores
 #' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' *via* the corresponding getter and setter methods listed above.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 #'
@@ -1638,56 +1656,64 @@ setClass("MzClustParam",
 ## Main group.nearest documentation.
 #' @title Peak grouping based on proximity in the mz-rt space
 #'
-#' @description This method is inspired by the grouping algorithm of mzMine
-#'     [Katajamaa 2006] and performs correspondence based on proximity of peaks
-#'     in the space spanned by retention time and mz values.
-#'     The method creates first a \emph{master peak list} consisting of all
-#'     chromatographic peaks from the sample in which most peaks were
-#'     identified, and starting from that, calculates distances to peaks from
-#'     the sample with the next most number of peaks. If peaks are closer than
-#'     the defined threshold they are grouped together.
+#' @description
 #'
-#' @note These methods and classes are part of the updated and modernized
-#'     \code{xcms} user interface which will eventually replace the
-#'     \code{\link{group}} methods. All of the settings to the algorithm
-#'     can be passed with a \code{NearestPeaksParam} object.
+#' This method is inspired by the grouping algorithm of mzMine
+#' [Katajamaa 2006] and performs correspondence based on proximity of peaks
+#' in the space spanned by retention time and mz values.
+#' The method creates first a *master peak list* consisting of all
+#' chromatographic peaks from the sample in which most peaks were
+#' identified, and starting from that, calculates distances to peaks from
+#' the sample with the next most number of peaks. If peaks are closer than
+#' the defined threshold they are grouped together.
+#'
+#' @note
+#'
+#' These methods and classes are part of the updated and modernized
+#' `xcms` user interface. All of the settings to the algorithm
+#' can be passed with a `NearestPeaksParam` object.
 #'
 #' @inheritParams groupChromPeaks-density
 #'
-#' @param mzVsRtBalance \code{numeric(1)} representing the factor by which mz
+#' @param mzVsRtBalance `numeric(1)` representing the factor by which mz
 #'     values are multiplied before calculating the (euclician) distance between
 #'     two peaks.
 #'
-#' @param absMz \code{numeric(1)} maximum tolerated distance for mz values.
+#' @param absMz `numeric(1)` maximum tolerated distance for mz values.
 #'
-#' @param absRt \code{numeric(1)} maximum tolerated distance for rt values.
+#' @param absRt `numeric(1)` maximum tolerated distance for rt values.
 #'
-#' @param kNN \code{numeric(1)} representing the number of nearest neighbors
+#' @param kNN `numeric(1)` representing the number of nearest neighbors
 #'     to check.
 #'
 #' @family peak grouping methods
 #'
-#' @seealso The \code{\link{do_groupChromPeaks_nearest}} core
-#'     API function and \code{\link{group.nearest}} for the old user interface.
-#'     \code{\link{featureDefinitions}} and
-#'     \code{\link{featureValues,XCMSnExp-method}} for methods to access
-#'     peak grouping results (i.e. the features).
+#' @seealso
+#'
+#' The [do_groupChromPeaks_nearest()] core API function.
+#'
+#' [featureDefinitions()] and [featureValues()] for methods to access
+#' peak grouping results (i.e. the features).
 #'
 #' @name groupChromPeaks-nearest
 #'
+#' @md
+#'
 #' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 #' processing and visualization of mass spectrometry based molecular profile
-#' data. \emph{Bioinformatics} 2006, 22:634-636.
+#' data. Bioinformatics 2006, 22:634-636.
 NULL
 #> NULL
 
-#' @description The \code{NearestPeaksParam} class allows to specify all
-#'     settings for the peak grouping based on the \emph{nearest} algorithm.
-#'     Instances should be created with the \code{NearestPeaksParam} constructor.
+#' @description The `NearestPeaksParam` class allows to specify all
+#'     settings for the peak grouping based on the *nearest* algorithm.
+#'     Instances should be created with the `NearestPeaksParam` constructor.
 #'
-#' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. \code{.__classVersion__} stores
+#' @slot .__classVersion__,sampleGroups,mzVsRtBalance,absMz,absRt,kNN See corresponding parameter above. `.__classVersion__` stores
 #' the version from the class. Slots values should exclusively be accessed
-#' \emph{via} the corresponding getter and setter methods listed above.
+#' *via* the corresponding getter and setter methods listed above.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 #'

@@ -71,11 +71,10 @@ considered as a peak group (feature).}
 least one sample group in which the peaks have to be detected to be
 considered a peak group (feature).}
 
-\item{object}{For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-    containing the results from a previous chromatographic peak detection
-    analysis (see \code{\link{findChromPeaks}}).
-
-    For all other methods: a \code{MzClustParam} object.}
+\item{object}{For \code{groupChromPeaks}: an \link{XCMSnExp} object containing the
+results from a previous chromatographic peak detection analysis (see
+\code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For all other methods: a `MzClustParam` object.
+}}
 
 \item{value}{The value for the slot.}
 
@@ -83,40 +82,39 @@ considered a peak group (feature).}
 the peak grouping algorithm.}
 }
 \value{
-The \code{MzClustParam} function returns a
-    \code{MzClustParam} class instance with all of the settings
-    specified for high resolution single spectra peak alignment.
+The \code{MzClustParam} function returns a \code{MzClustParam} class instance with
+all of the settings specified for high resolution single spectra peak
+alignment.
 
-For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-results of the peak grouping step (i.e. the features). These can be
-accessed with the \code{\link{featureDefinitions}} method.
+For \code{groupChromPeaks}: a \link{XCMSnExp} object with the results of the peak
+grouping step (i.e. the features). These can be accessed with the
+\code{\link[=featureDefinitions]{featureDefinitions()}} method.
 }
 \description{
-This method performs high resolution correspondence for single
-    spectra samples.
+This method performs high resolution correspondence for single spectra
+samples.
 
-The \code{MzClustParam} class allows to specify all
-    settings for the peak grouping based on the \emph{mzClust} algorithm.
-    Instances should be created with the \code{MzClustParam} constructor.
+The \code{MzClustParam} class allows to specify all settings for the peak
+grouping based on the \emph{mzClust} algorithm.
+Instances should be created with the \code{MzClustParam} constructor.
 
 \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-    for the \code{sampleGroups} slot of the object.
+for the \code{sampleGroups} slot of the object.
 
 \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
-    slot of the object.
+slot of the object.
 
 \code{absMz},\code{absMz<-}: getter and setter for the
-    \code{absMz} slot of the object.
+\code{absMz} slot of the object.
 
 \code{minFraction},\code{minFraction<-}: getter and setter for
-    the \code{minFraction} slot of the object.
+the \code{minFraction} slot of the object.
 
 \code{minSamples},\code{minSamples<-}: getter and setter for the
-    \code{minSamples} slot of the object.
+\code{minSamples} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,MzClustParam}:
-performs high resolution peak grouping for single spectrum
-metabolomics data.
+\code{groupChromPeaks,XCMSnExp,MzClustParam}: performs high resolution peak
+grouping for single spectrum metabolomics data.
 }
 \section{Slots}{
 
@@ -128,12 +126,12 @@ the version from the class. Slots values should exclusively be accessed
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{group}} methods. All of the settings to the algorithm
-    can be passed with a \code{MzClustParam} object.
+\code{xcms} user interface which will eventually replace the
+\code{\link[=group]{group()}} methods. All of the settings to the algorithm
+can be passed with a \link{MzClustParam} object.
 
 Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-    all eventually present previous correspondence results to be dropped.
+all eventually present previous correspondence results to be dropped.
 }
 \examples{
 
@@ -161,19 +159,19 @@ featureDefinitions(fticr)
 }
 \references{
 Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill
-and David F. Grant\cr \emph{Alignment of high resolution mass spectra:
-development of a heuristic approach for metabolomics}.\cr Metabolomics,
+and David F. Grant\cr Alignment of high resolution mass spectra:
+development of a heuristic approach for metabolomics.\cr Metabolomics,
 Vol. 2, No. 2, 75-83 (2006)
 }
 \seealso{
-The \code{\link{do_groupPeaks_mzClust}} core API function and
-    \code{\link{group.mzClust}} for the old user interface.
-    \code{\link{featureDefinitions}} and
-    \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
-    grouping results (i.e. the features).
+The \code{\link[=do_groupPeaks_mzClust]{do_groupPeaks_mzClust()}} core API function and \code{\link[=group.mzClust]{group.mzClust()}} for
+the old user interface.
 
-\code{\link{XCMSnExp}} for the object containing the results of
-    the peak grouping.
+\code{\link[=featureDefinitions]{featureDefinitions()}} and \code{\link[=featureValues]{featureValues()}} for methods to access peak
+grouping results (i.e. the features).
+
+\link{XCMSnExp} for the object containing the results of
+the peak grouping.
 
 Other peak grouping methods: \code{\link{groupChromPeaks-density}},
   \code{\link{groupChromPeaks-nearest}},

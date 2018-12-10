@@ -1103,10 +1103,12 @@ setMethod("show", "PeakDensityParam", function(object) {
 
 #' @aliases sampleGroups
 #'
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object. Its length should match
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object. Its length should match
 #'     the number of samples in the experiment and it should not contain
-#'     \code{NA}s.
+#'     `NA`s.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("sampleGroups", "PeakDensityParam", function(object){
@@ -1114,6 +1116,8 @@ setMethod("sampleGroups", "PeakDensityParam", function(object){
 #' @aliases sampleGroups<-
 #'
 #' @param value The value for the slot.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
@@ -1127,8 +1131,10 @@ setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
 
 #' @aliases bw
 #'
-#' @description \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+#' @description `bw`,`bw<-`: getter and setter for the `bw` slot
 #'     of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("bw", "PeakDensityParam", function(object){
@@ -1144,8 +1150,10 @@ setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
 
 #' @aliases minFraction
 #'
-#' @description \code{minFraction},\code{minFraction<-}: getter and setter for
-#'     the \code{minFraction} slot of the object.
+#' @description `minFraction`,`minFraction<-`: getter and setter for
+#'     the `minFraction` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("minFraction", "PeakDensityParam", function(object){
@@ -1161,8 +1169,10 @@ setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
 
 #' @aliases minSamples
 #'
-#' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
-#'     \code{minSamples} slot of the object.
+#' @description `minSamples`,`minSamples<-`: getter and setter for the
+#'     `minSamples` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("minSamples", "PeakDensityParam", function(object){
@@ -1176,8 +1186,10 @@ setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{binSize},\code{binSize<-}: getter and setter for the
-#'     \code{binSize} slot of the object.
+#' @description `binSize`,`binSize<-`: getter and setter for the
+#'     `binSize` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("binSize", "PeakDensityParam", function(object){
@@ -1191,8 +1203,10 @@ setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
 
 #' @aliases maxFeatures
 #'
-#' @description \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
-#'     the \code{maxFeatures} slot of the object.
+#' @description `maxFeatures`,`maxFeatures<-`: getter and setter for
+#'     the `maxFeatures` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("maxFeatures", "PeakDensityParam", function(object){
@@ -1226,8 +1240,10 @@ setMethod("show", "MzClustParam", function(object) {
     cat(" minSamples:", minSamples(object), "\n")
 })
 
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object.
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("sampleGroups", "MzClustParam", function(object){
@@ -1241,8 +1257,10 @@ setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+#' @description `ppm`,`ppm<-`: getter and setter for the `ppm`
 #'     slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("ppm", "MzClustParam", function(object){
@@ -1256,8 +1274,10 @@ setReplaceMethod("ppm", "MzClustParam", function(object, value) {
 
 #' @aliases absMz
 #'
-#' @description \code{absMz},\code{absMz<-}: getter and setter for the
-#'     \code{absMz} slot of the object.
+#' @description `absMz`,`absMz<-`: getter and setter for the
+#'     `absMz` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("absMz", "MzClustParam", function(object){
@@ -1271,8 +1291,10 @@ setReplaceMethod("absMz", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{minFraction},\code{minFraction<-}: getter and setter for
-#'     the \code{minFraction} slot of the object.
+#' @description `minFraction`,`minFraction<-`: getter and setter for
+#'     the `minFraction` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("minFraction", "MzClustParam", function(object){
@@ -1284,8 +1306,10 @@ setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
-#'     \code{minSamples} slot of the object.
+#' @description `minSamples`,`minSamples<-`: getter and setter for the
+#'     `minSamples` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("minSamples", "MzClustParam", function(object){
@@ -1317,8 +1341,10 @@ setMethod("show", "NearestPeaksParam", function(object) {
     cat(" kNN:", object@kNN, "\n")
 })
 
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object.
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("sampleGroups", "NearestPeaksParam", function(object){
@@ -1334,8 +1360,10 @@ setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
 
 #' @aliases mzVsRtBalance
 #'
-#' @description \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
-#'     for the \code{mzVsRtBalance} slot of the object.
+#' @description `mzVsRtBalance`,`mzVsRtBalance<-`: getter and setter
+#'     for the `mzVsRtBalance` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("mzVsRtBalance", "NearestPeaksParam", function(object){
@@ -1349,8 +1377,10 @@ setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{absMz},\code{absMz<-}: getter and setter for the
-#'     \code{absMz} slot of the object.
+#' @description `absMz`,`absMz<-`: getter and setter for the
+#'     `absMz` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("absMz", "NearestPeaksParam", function(object){
@@ -1364,8 +1394,10 @@ setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
 
 #' @aliases absRt
 #'
-#' @description \code{absRt},\code{absRt<-}: getter and setter for the
-#'     \code{absRt} slot of the object.
+#' @description `absRt`,`absRt<-`: getter and setter for the
+#'     `absRt` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("absRt", "NearestPeaksParam", function(object){
@@ -1381,8 +1413,10 @@ setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
 
 #' @aliases kNN
 #'
-#' @description \code{kNN},\code{kNN<-}: getter and setter for the
-#'     \code{kNN} slot of the object.
+#' @description `kNN`,`kNN<-`: getter and setter for the
+#'     `kNN` slot of the object.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("kNN", "NearestPeaksParam", function(object){

@@ -39,23 +39,24 @@ considered a peak group (feature).}
 A \code{list} with elements \code{"featureDefinitions"} and
 \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
 representing an (mz-rt) feature (i.e. peak group) with columns:
-\describe{
-\item{"mzmed"}{median of the peaks' apex mz values.}
-\item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
-\item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
-\item{"rtmed"}{always \code{-1}.}
-\item{"rtmin"}{always \code{-1}.}
-\item{"rtmax"}{always \code{-1}.}
-\item{"npeaks"}{the total number of peaks assigned to the feature.
-Note that this number can be larger than the total number of samples, since
-multiple peaks from the same sample could be assigned to a group.}
+\itemize{
+\item \code{"mzmed"}: median of the peaks' apex mz values.
+\item \code{"mzmin"}: smallest mz value of all peaks' apex within the feature.
+\item \code{"mzmax"}: largest mz value of all peaks' apex within the feature.
+\item \code{"rtmed"}: always \code{-1}.
+\item \code{"rtmin"}: always \code{-1}.
+\item \code{"rtmax"}: always \code{-1}.
+\item \code{"npeaks"}: the total number of peaks assigned to the feature. Note that
+this number can be larger than the total number of samples, since
+multiple peaks from the same sample could be assigned to a group.
 }
-\code{"peakIndex"} is a \code{list} with the indices of all peaks in a
-peak group in the \code{peaks} input matrix.
+
+\code{"peakIndex"} is a \code{list} with the indices of all peaks in a peak group in
+the \code{peaks} input matrix.
 }
 \description{
-The \code{do_groupPeaks_mzClust} function performs high
-resolution correspondence on single spectra samples.
+The \code{do_groupPeaks_mzClust} function performs high resolution
+correspondence on single spectra samples.
 }
 \references{
 Saira A. Kazmi, Samiran Ghosh, Dong-Guk Shin, Dennis W. Hill

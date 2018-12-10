@@ -1537,7 +1537,7 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #'
 #' @description
 #'
-#' \code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
+#' `groupChromPeaks,XCMSnExp,PeakDensityParam`:
 #' performs correspondence (peak grouping within and across samples) within
 #' in mz dimension overlapping slices of MS data based on the density
 #' distribution of the identified chromatographic peaks in the slice along
@@ -1545,27 +1545,32 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #'
 #' @note
 #'
-#' Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
+#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
 #' all eventually present previous correspondence results to be dropped.
 #'
-#' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
+#' @param object For `groupChromPeaks`: an [XCMSnExp] object
 #'     containing the results from a previous peak detection analysis (see
-#'     \code{\link{findChromPeaks}}).
+#'     [findChromPeaks()]).
 #'
-#'     For all other methods: a \code{PeakDensityParam} object.
+#'     For all other methods: a `PeakDensityParam` object.
 #'
-#' @param param A \code{PeakDensityParam} object containing all settings for
+#' @param param A `PeakDensityParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
 #' @return
 #'
-#' For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
+#' For `groupChromPeaks`: a [XCMSnExp] object with the
 #' results of the correspondence analysis. The definition of the resulting
-#' mz-rt features can be accessed with the \code{\link{featureDefinitions}}
-#' method.
+#' mz-rt features can be accessed with the [featureDefinitions()] method
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
-#'     the correspondence.
+#' @seealso
+#'
+#' [XCMSnExp] for the object containing the results of the correspondence.
+#'
+#' [plotChromPeakDensity()] for plotting chromatographic peak density with the
+#' possibility to test different parameter settings.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-density
 setMethod("groupChromPeaks",
@@ -1619,30 +1624,31 @@ setMethod("groupChromPeaks",
 #'
 #' @description
 #'
-#' \code{groupChromPeaks,XCMSnExp,MzClustParam}:
-#' performs high resolution peak grouping for single spectrum
-#' metabolomics data.
+#' `groupChromPeaks,XCMSnExp,MzClustParam`: performs high resolution peak
+#' grouping for single spectrum metabolomics data.
 #'
-#' @note Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
+#' @note Calling `groupChromPeaks` on an `XCMSnExp` object will cause
 #'     all eventually present previous correspondence results to be dropped.
 #'
-#' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-#'     containing the results from a previous chromatographic peak detection
-#'     analysis (see \code{\link{findChromPeaks}}).
+#' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
+#'     results from a previous chromatographic peak detection analysis (see
+#'     [findChromPeaks()]).
 #'
-#'     For all other methods: a \code{MzClustParam} object.
+#'     For all other methods: a `MzClustParam` object.
 #'
-#' @param param A \code{MzClustParam} object containing all settings for
+#' @param param A `MzClustParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
 #' @return
 #'
-#' For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-#' results of the peak grouping step (i.e. the features). These can be
-#' accessed with the \code{\link{featureDefinitions}} method.
+#' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
+#' grouping step (i.e. the features). These can be accessed with the
+#' [featureDefinitions()] method.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp] for the object containing the results of
 #'     the peak grouping.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-mzClust
 setMethod("groupChromPeaks",
@@ -1702,33 +1708,34 @@ setMethod("groupChromPeaks",
 #'
 #' @description
 #'
-#' \code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
+#' `groupChromPeaks,XCMSnExp,NearestPeaksParam`:
 #' performs peak grouping based on the proximity between chromatographic
 #' peaks from different samples in the mz-rt range.
 #'
 #' @note
 #'
-#' Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
+#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
 #' all eventually present previous alignment results to be dropped.
 #'
-#' @param object For \code{groupChromPeaks}: an \code{\link{XCMSnExp}} object
-#'     containing the results from a previous chromatographic peak detection
-#'     analysis (see \code{\link{findChromPeaks}}).
+#' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
+#'     results from a previous chromatographic peak detection
+#'     analysis (see [findChromPeaks()]).
 #'
-#'     For all other methods: a \code{NearestPeaksParam} object.
+#'     For all other methods: a `NearestPeaksParam` object.
 #'
-#' @param param A \code{NearestPeaksParam} object containing all settings for
+#' @param param A `NearestPeaksParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
 #' @return
 #'
-#' For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
-#' results of the peak grouping/correspondence step (i.e. the mz-rt
-#' features). These can be accessed with the
-#' \code{\link{featureDefinitions}} method.
+#' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
+#' grouping/correspondence step (i.e. the mz-rt features). These can be
+#' accessed with the [featureDefinitions()] method.
 #'
-#' @seealso \code{\link{XCMSnExp}} for the object containing the results of
+#' @seealso [XCMSnExp] for the object containing the results of
 #'     the peak grouping.
+#'
+#' @md
 #'
 #' @rdname groupChromPeaks-nearest
 setMethod("groupChromPeaks",
@@ -3171,3 +3178,128 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
                              outformat = outformat, copy = copy,
                              software_processing = software_processing, ...)
           })
+
+#' @title Plot chromatographic peak density along the retention time axis
+#'
+#' @aliases plotChromPeakDensity
+#'
+#' @description
+#'
+#' Plot the density of chromatographic peaks along the retention
+#' time axis and indicate which peaks would be (or were) grouped into the
+#' same feature based using the *peak density* correspondence method.
+#' Settings for the *peak density* method can be passed with an
+#' [PeakDensityParam] object to parameter `param`. If the `object` contains
+#' correspondence results and the correspondence was performed with the
+#' *peak groups* method, the results from that correspondence can be
+#' visualized setting `simulate = FALSE`.
+#'
+#' @details
+#'
+#' The `plotChromPeakDensity` function allows to evaluate
+#' different settings for the *peak density* on an mz slice of
+#' interest (e.g. containing chromatographic peaks corresponding to a known
+#' metabolite).
+#' The plot shows the individual peaks that were detected within the
+#' specified `mz` slice at their retention time (x-axis) and sample in
+#' which they were detected (y-axis). The density function is plotted as a
+#' black line. Parameters for the `density` function are taken from the
+#' `param` object. Grey rectangles indicate which chromatographic peaks
+#' would be grouped into a feature by the `peak density` correspondence
+#' method. Parameters for the algorithm are also taken from `param`.
+#' See [groupChromPeaks-density()] for more information about the
+#' algorithm and its supported settings.
+#'
+#' @param object A [XCMSnExp] object with identified
+#'     chromatographic peaks.
+#'
+#' @param mz `numeric(2)` defining an mz range for which the peak density
+#'     should be plotted.
+#'
+#' @param rt `numeric(2)` defining an optional rt range for which the
+#'     peak density should be plotted. Defaults to the absolute retention time
+#'     range of `object`.
+#'
+#' @param param [PeakDensityParam] from which parameters for the
+#'     *peak density* correspondence algorithm can be extracted. If not provided
+#'     and if `object` contains feature definitions with the correspondence/
+#'     peak grouping being performed by the *peak density* method, the
+#'     corresponding parameter class stored in `object` is used.
+#'
+#' @param simulate `logical(1)` defining whether correspondence should be
+#'     simulated within the specified m/z / rt region or (with
+#'     `simulate = FALSE`) whether the results from an already performed
+#'     correspondence should be shown.
+#'
+#' @param col Color to be used for the individual samples. Length has to be 1
+#'     or equal to the number of samples in `object`.
+#'
+#' @param xlab `character(1)` with the label for the x-axis.
+#'
+#' @param ylab `character(1)` with the label for the y-axis.
+#'
+#' @param xlim `numeric(2)` representing the limits for the x-axis.
+#'     Defaults to the range of the `rt` parameter.
+#'
+#' @param main `character(1)` defining the title of the plot. By default
+#'     (for `main = NULL`) the mz-range is used.
+#'
+#' @param type `character(1)` specifying how peaks are called to be located
+#'     within the region defined by `mz` and `rt`. Can be one of `"any"`,
+#'     `"within"`, and `"apex_within"` for all peaks that are even partially
+#'     overlapping the region, peaks that are completely within the region, and
+#'     peaks for which the apex is within the region. This parameter is passed
+#'     to the [chromPeaks] function. See related documentation for more
+#'     information and examples.
+#'
+#' @param ... Additional parameters to be passed to the `plot` function. Data
+#'     point specific parameters such as `bg` or `pch` have to be of length 1
+#'     or equal to the number of samples.
+#'
+#' @return The function is called for its side effect, i.e. to create a plot.
+#'
+#' @author Johannes Rainer
+#'
+#' @seealso [groupChromPeaks-density()] for details on the
+#'     *peak density* correspondence method and supported settings.
+#'
+#' @md
+#'
+#' @rdname plotChromPeakDensity
+#'
+#' @examples
+#'
+#' ## Below we perform first a peak detection (using the centWave
+#' ## method) on some of the test files from the faahKO package.
+#' library(faahKO)
+#' library(xcms)
+#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
+#'            full.names = TRUE)
+#'
+#' ## Reading 2 of the KO samples
+#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
+#'
+#' ## Perform the peak detection using the centWave method (settings are tuned
+#' ## to speed up example execution)
+#' res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000, snthresh = 40))
+#'
+#' ## Align the samples using obiwarp
+#' res <- adjustRtime(res, param = ObiwarpParam())
+#'
+#' ## Plot the chromatographic peak density for a specific mz range to evaluate
+#' ## different peak density correspondence settings.
+#' mzr <- c(305.05, 305.15)
+#'
+#' plotChromPeakDensity(res, mz = mzr, pch = 16,
+#'     param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
+#'
+#' ## Use a larger bandwidth
+#' plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60,
+#'     sampleGroups = rep(1, length(fileNames(res)))), pch = 16)
+#' ## Neighboring peaks are now fused into one.
+#'
+#' ## Require the chromatographic peak to be present in all samples of a group
+#' plotChromPeakDensity(res, mz = mzr, pch = 16,
+#'     param = PeakDensityParam(minFraction = 1,
+#'     sampleGroups = rep(1, length(fileNames(res)))))
+setMethod("plotChromPeakDensity", "XCMSnExp", .plotChromPeakDensity)
