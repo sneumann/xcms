@@ -5,6 +5,7 @@
 \name{findChromPeaks,Chromatogram,CentWaveParam-method}
 \alias{findChromPeaks,Chromatogram,CentWaveParam-method}
 \alias{findChromPeaks,Chromatograms,CentWaveParam-method}
+\alias{findChromPeaks-Chromatogram-CentWaveParam}
 \alias{findChromPeaks,Chromatograms,MatchedFilterParam-method}
 \title{centWave-based peak detection in purely chromatographic data}
 \usage{

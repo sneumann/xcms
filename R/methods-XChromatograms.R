@@ -43,6 +43,29 @@ setMethod("show", "XChromatograms", function(object) {
     }
     cat("phenoData with", length(varLabels(object@phenoData)), "variables\n")
     cat("featureData with", length(fvarLabels(object)), "variables\n")
+    cat("- - - xcms preprocessing - - -\n")
+    if (any(hasChromPeaks(object))) {
+        cat("Chromatographic peak detection:\n")
+        ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+        if (length(ph))
+            cat(" method:", .param2string(ph[[1]]@param), "\n")
+        else cat(" unknown method.\n")
+    }
+    if (hasFeatures(object)) {
+        cat("Correspondence:\n")
+        ph <- processHistory(object, type = .PROCSTEP.PEAK.GROUPING)
+        if (length(ph))
+            cat(" method:", .param2string(ph[[1]]@param), "\n")
+        else cat(" unknown method.\n")
+        cat(" ", nrow(object@featureDefinitions), " features identified.\n",
+            sep = "")
+        if (.hasFilledPeaks(object)) {
+            totF <- chromPeaks(object)[, "is_filled"] == 1
+            fp <- chromPeaks(object)[totF, , drop = FALSE]
+            cat("", sum(totF), "filled peaks (on average",
+                mean(table(fp[, "sample"])), "per sample).\n")
+        }
+    }
 })
 
 #' @rdname XChromatogram
@@ -158,3 +181,106 @@ setMethod("processHistory", "XChromatograms", function(object, fileIndex,
     }
     list()
 })
+
+#' @rdname XChromatogram
+#'
+#' @md
+setMethod("hasFeatures", "XChromatograms", function(object, ...) {
+    nrow(object@featureDefinitions) > 0
+})
+
+#' @rdname XChromatogram
+#'
+#' @md
+setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
+    if (!hasFeatures(object))
+        return(object)
+    object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING, 1)
+    object@featureDefinitions <- DataFrame()
+    if (validObject(object))
+        object
+})
+
+#' @rdname XChromatogram
+#'
+#' @section Correspondence analysis:
+#'
+#' Identified chromatographic peaks in an `XChromatograms` object can be grouped
+#' into *features* with the `groupChromPeaks` function. Currently, such a
+#' correspondence analysis can be performed with the *peak density* method
+#' (see [groupChromPeaks] for more details) specifying the algorithm settings
+#' with a [PeakDensityParam()] object. The correspondence analysis results are
+#' stored in the returned `XChromatograms` object and can be accessed with the
+#' [featureDefinitions()] method.
+#'
+#' @param param For `groupChromPeaks`: a [PeakDensityParam()] object with the
+#'     settings for the *peak density* correspondence analysis algorithm.
+#'
+#' @md
+setMethod("groupChromPeaks",
+          signature(object = "XChromatograms", param = "PeakDensityParam"),
+          function(object, param) {
+              if (!any(hasChromPeaks(object)))
+                  stop("No chromatographic peak detection results in 'object'! ",
+                       "Please perform first a peak detection using the ",
+                       "'findChromPeaks' method.")
+              if (hasFeatures(object))
+                  object <- dropFeatureDefinitions(object)
+              ## Check if we've got any sample groups:
+              if (length(sampleGroups(param)) == 0) {
+                  sampleGroups(param) <- rep(1, ncol(object))
+                  message("Empty 'sampleGroups' in 'param', assuming all ",
+                          "samples to be in the same group.")
+              } else {
+                  ## Check that the sampleGroups are OK
+                  if (length(sampleGroups(param)) != ncol(object))
+                      stop("The 'sampleGroups' value in the provided 'param' ",
+                           "class does not match the number of available files/",
+                           "samples!")
+              }
+              startDate <- date()
+              cpks <- chromPeaks(object)
+              cpks <- cbind(cpks, index = seq_len(nrow(cpks)))
+              nr <- nrow(object)
+              res <- vector("list", nr)
+              bw <- bw(param)
+              sgrps <- sampleGroups(param)
+              sgrps_tbl <- table(sgrps)
+              minfr <- minFraction(param)
+              minsam <- minSamples(param)
+              maxf <- maxFeatures(param)
+              for (i in seq_len(nr)) {
+                  cur_pks <- cpks[cpks[, "row"] == i, , drop = FALSE]
+                  if (nrow(cur_pks) == 0)
+                      next
+                  rtr <- range(lapply(object[i, ], rtime), na.rm = TRUE)
+                  densFrom <- rtr[1] - 3 * bw
+                  densTo <- rtr[2] + 3 * bw
+                  densN <- max(512, 2 * 2^(ceiling(log2(diff(rtr) / (bw / 2)))))
+                  tmp <- .group_peaks_density(cur_pks, bw = bw,
+                                              densFrom = densFrom,
+                                              densTo = densTo,
+                                              densN = densN,
+                                              sampleGroups = sgrps,
+                                              sampleGroupTable = sgrps_tbl,
+                                              minFraction = minfr,
+                                              minSamples = minsam,
+                                              maxFeatures = maxf)
+                  tmp$row <- rep(i, nrow(tmp))
+                  res[[i]] <- tmp
+              }
+              res <- DataFrame(do.call(rbind, res))
+              xph <- XProcessHistory(param = param, date. = startDate,
+                                     type. = .PROCSTEP.PEAK.GROUPING,
+                                     fileIndex = 1:ncol(object))
+              object <- addProcessHistory(object, xph)
+              ## Add the results.
+              if (nrow(res) == 0)
+                  warning("Unable to group any chromatographic peaks. ",
+                          "You might have to adapt your settings.")
+              if (nrow(res) > 0)
+                  rownames(res) <- .featureIDs(nrow(res))
+              object@featureDefinitions <- res
+              if (validObject(object))
+                  return(object)
+          })

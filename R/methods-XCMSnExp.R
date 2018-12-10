@@ -15,7 +15,6 @@ setMethod("initialize", "XCMSnExp", function(.Object, ...) {
 #' @rdname XCMSnExp-class
 setMethod("show", "XCMSnExp", function(object) {
     callNextMethod()
-    ## And not XCMSnExp related stuff.
     cat("- - - xcms preprocessing - - -\n")
     if (hasChromPeaks(object)) {
         cat("Chromatographic peak detection:\n")
@@ -52,12 +51,12 @@ setMethod("show", "XCMSnExp", function(object) {
             format(median(featureDefinitions(object)[, "rtmax"] -
                           featureDefinitions(object)[, "rtmin"]), digits = 5),
             "\n", sep = "")
-        if (.hasFilledPeaks(object)) {
-            totF <- chromPeaks(object)[, "is_filled"] == 1
-            fp <- chromPeaks(object)[totF, , drop = FALSE]
-            cat("", sum(totF), "filled peaks (on average",
-                mean(table(fp[, "sample"])), "per sample).\n")
-        }
+        ## if (.hasFilledPeaks(object)) {
+        ##     totF <- chromPeaks(object)[, "is_filled"] == 1
+        ##     fp <- chromPeaks(object)[totF, , drop = FALSE]
+        ##     cat("", sum(totF), "filled peaks (on average",
+        ##         mean(table(fp[, "sample"])), "per sample).\n")
+        ## }
     }
 })
 

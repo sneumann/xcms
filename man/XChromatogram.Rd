@@ -23,6 +23,9 @@
 \alias{filterRt,XChromatograms-method}
 \alias{plot,XChromatograms,ANY-method}
 \alias{processHistory,XChromatograms-method}
+\alias{hasFeatures,XChromatograms-method}
+\alias{dropFeatureDefinitions,XChromatograms-method}
+\alias{groupChromPeaks,XChromatograms,PeakDensityParam-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -68,6 +71,12 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
   peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
 
 \S4method{processHistory}{XChromatograms}(object, fileIndex, type)
+
+\S4method{hasFeatures}{XChromatograms}(object, ...)
+
+\S4method{dropFeatureDefinitions}{XChromatograms}(object, ...)
+
+\S4method{groupChromPeaks}{XChromatograms,PeakDensityParam}(object, param)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -129,7 +138,7 @@ retention time across the m/z range.}
 \item{msLevel}{For \code{XChromatogram}: \code{integer} with the MS level from which
 the chromatogram was extracted.}
 
-\item{object}{An \code{XChromatogram} object.}
+\item{object}{An \code{XChromatogram} or \code{XChromatograms} object.}
 
 \item{rt}{For \code{chromPeaks}: \code{numeric(2)} defining the retention time range
 for which chromatographic peaks should be returned.
@@ -191,6 +200,9 @@ details.}
 \item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
 index of the files/samples for which the \link{ProcessHistory} objects should
 be returned.}
+
+\item{param}{For \code{groupChromPeaks}: a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the
+settings for the \emph{peak density} correspondence analysis algorithm.}
 }
 \value{
 See help of the individual functions.
@@ -253,6 +265,11 @@ has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)}
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
 with either \code{true} or \code{false} if chromatographic peaks are available in
 the chromatogram at the respective position.
+\item \code{hasFeatures}: for \code{XChromatograms} objects only: if correspondence
+analysis has been performed and m/z-rt feature definitions are present.
+Returns a \code{logical(1)}.
+\item \code{dropFeatureDefinitions}: for \code{XChrmomatograms} objects only: delete any
+correspondence analysis results (and related process history).
 \item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
 the individual performed processing steps. Optional parameters \code{type} and
 \code{fileIndex} allow to further specify which processing steps to return.
@@ -288,6 +305,18 @@ All eventually present chromatographic peaks with their apex within the
 retention time range specified with \code{rt} will be retained. The function
 returns a filtered \code{XChromatogram} object.
 }
+}
+
+\section{Correspondence analysis}{
+
+
+Identified chromatographic peaks in an \code{XChromatograms} object can be grouped
+into \emph{features} with the \code{groupChromPeaks} function. Currently, such a
+correspondence analysis can be performed with the \emph{peak density} method
+(see \link{groupChromPeaks} for more details) specifying the algorithm settings
+with a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object. The correspondence analysis results are
+stored in the returned \code{XChromatograms} object and can be accessed with the
+\code{\link[=featureDefinitions]{featureDefinitions()}} method.
 }
 
 \examples{
@@ -394,6 +423,10 @@ plot(xchr, peakCol = c("#ff000060", "#0000ff60"), peakBg = NA,
 xchr_sub <- filterRt(xchr, rt = c(4, 6))
 xchr_sub
 plot(xchr_sub)
+}
+\seealso{
+\link[=findChromPeaks-Chromatogram-CentWaveParam]{findChromPeaks-centWave} for peak
+detection on \code{\link[=Chromatograms]{Chromatograms()}} objects.
 }
 \author{
 Johannes Rainer

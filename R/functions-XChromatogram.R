@@ -84,7 +84,7 @@
 #'     a `matrix`, the ordering has to match the order of the chromatograms
 #'     in `data`.
 #'
-#' @param object An `XChromatogram` object.
+#' @param object An `XChromatogram` or `XChromatograms` object.
 #'
 #' @param ... For `plot`: additional parameters to passed to the `plot`
 #'     function.

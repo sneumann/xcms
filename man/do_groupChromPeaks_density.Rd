@@ -44,6 +44,24 @@ to be identified in a single mz slice.}
 \item{sleep}{\code{numeric(1)} defining the time to \emph{sleep} between
 iterations and plot the result from the current iteration.}
 }
+\value{
+A \code{data.frame}, each row representing a (mz-rt) feature (i.e. a peak group)
+with columns:
+\itemize{
+\item \code{"mzmed"}: median of the peaks' apex mz values.
+\item \code{"mzmin"}: smallest mz value of all peaks' apex within the feature.
+\item \code{"mzmax"}:largest mz value of all peaks' apex within the feature.
+\item \code{"rtmed"}: the median of the peaks' retention times.
+\item \code{"rtmin"}: the smallest retention time of the peaks in the group.
+\item \code{"rtmax"}: the largest retention time of the peaks in the group.
+\item \code{"npeaks"}: the total number of peaks assigned to the feature.
+\item \code{"peakidx"}: a \code{list} with the indices of all peaks in a feature in the
+\code{peaks} input matrix.
+}
+
+Note that this number can be larger than the total number of samples, since
+multiple peaks from the same sample could be assigned to a feature.
+}
 \description{
 The \code{do_groupChromPeaks_density} function performs chromatographic peak
 grouping based on the density (distribution) of peaks, found in different
@@ -53,7 +71,7 @@ samples, along the retention time axis in slices of overlapping mz ranges.
 For overlapping slices along the mz dimension, the function
 calculates the density distribution of identified peaks along the
 retention time axis and groups peaks from the same or different samples
-that are close to each other. See \link{Smith 2006} for more details.
+that are close to each other. See (Smith 2006) for more details.
 }
 \note{
 The default settings might not be appropriate for all LC/GC-MS setups,

@@ -141,3 +141,36 @@ test_that("processHistory,XChromatograms works", {
     expect_equal(length(processHistory(xchrs2,
                                        type = .PROCSTEP.PEAK.DETECTION)), 2)
 })
+
+test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
+    param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    res <- groupChromPeaks(xchrs, param = param)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(res@featureDefinitions) == 1)
+
+    param <- PeakDensityParam(sampleGroups = c(1, 2, 3))
+    res <- groupChromPeaks(xchrs, param = param)
+    expect_true(nrow(res@featureDefinitions) == 2)
+    expect_true(length(processHistory(res)) == 5)
+
+    res <- groupChromPeaks(res,
+                           param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
+    expect_true(length(processHistory(res)) == 5)
+    expect_true(nrow(res@featureDefinitions) == 1)
+})
+
+test_that("dropFeatureDefinitions,XChromatograms works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    xchrs <- chromatogram(xod_xgrg, mz = mzr, rt = c(2600, 3600))
+    param <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    res <- groupChromPeaks(xchrs, param = param)
+    expect_true(hasFeatures(res))
+    expect_true(nrow(res@featureDefinitions) == 1)
+    expect_true(length(res@.processHistory) == 5)
+    res <- dropFeatureDefinitions(res)
+    expect_false(hasFeatures(res))
+    expect_true(length(res@.processHistory) == 4)
+    expect_equal(res, xchrs)
+})

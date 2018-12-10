@@ -54,7 +54,7 @@ representing an (mz-rt) feature (i.e. peak group) with columns:
 The \code{do_groupChromPeaks_nearest} function groups peaks across samples by
 creating a master peak list and assigning corresponding peaks from all
 samples to each peak group (i.e. feature). The method is inspired by the
-correspondence algorithm of mzMine \link{Katajamaa 2006}.
+correspondence algorithm of mzMine (Katajamaa 2006).
 }
 \references{
 Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for

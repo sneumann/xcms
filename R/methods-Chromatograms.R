@@ -1,5 +1,7 @@
 #' @rdname findChromPeaks-Chromatogram-CentWaveParam
 #'
+#' @aliases findChromPeaks-Chromatogram-CentWaveParam
+#'
 #' @examples
 #'
 #' ## Perform peak detection on an Chromatograms object

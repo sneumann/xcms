@@ -1659,7 +1659,7 @@ setClass("MzClustParam",
 #' @description
 #'
 #' This method is inspired by the grouping algorithm of mzMine
-#' [Katajamaa 2006] and performs correspondence based on proximity of peaks
+#' (Katajamaa 2006) and performs correspondence based on proximity of peaks
 #' in the space spanned by retention time and mz values.
 #' The method creates first a *master peak list* consisting of all
 #' chromatographic peaks from the sample in which most peaks were

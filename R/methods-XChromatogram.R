@@ -45,6 +45,13 @@ setMethod("show", "XChromatogram", function(object) {
 #'   with either `true` or `false` if chromatographic peaks are available in
 #'   the chromatogram at the respective position.
 #'
+#' - `hasFeatures`: for `XChromatograms` objects only: if correspondence
+#'   analysis has been performed and m/z-rt feature definitions are present.
+#'   Returns a `logical(1)`.
+#'
+#' - `dropFeatureDefinitions`: for `XChrmomatograms` objects only: delete any
+#'   correspondence analysis results (and related process history).
+#'
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
@@ -72,6 +79,11 @@ setMethod("show", "XChromatogram", function(object) {
 #'     `"rt"`, `"rtmin"`, `"rtmax"`, `"into"` and `"maxo"`.
 #'
 #' @md
+#'
+#' @seealso
+#'
+#' [findChromPeaks-centWave][findChromPeaks-Chromatogram-CentWaveParam] for peak
+#' detection on [Chromatograms()] objects.
 #'
 #' @examples
 #'

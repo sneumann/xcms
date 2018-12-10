@@ -93,7 +93,7 @@ accessed with the \code{\link[=featureDefinitions]{featureDefinitions()}} method
 }
 \description{
 This method is inspired by the grouping algorithm of mzMine
-\link{Katajamaa 2006} and performs correspondence based on proximity of peaks
+(Katajamaa 2006) and performs correspondence based on proximity of peaks
 in the space spanned by retention time and mz values.
 The method creates first a \emph{master peak list} consisting of all
 chromatographic peaks from the sample in which most peaks were

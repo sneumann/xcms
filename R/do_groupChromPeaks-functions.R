@@ -13,7 +13,7 @@
 #' @details For overlapping slices along the mz dimension, the function
 #' calculates the density distribution of identified peaks along the
 #' retention time axis and groups peaks from the same or different samples
-#' that are close to each other. See [Smith 2006] for more details.
+#' that are close to each other. See (Smith 2006) for more details.
 #'
 #' @note The default settings might not be appropriate for all LC/GC-MS setups,
 #' especially the `bw` and `binSize` parameter should be adjusted
@@ -30,8 +30,11 @@
 #' @param sleep `numeric(1)` defining the time to *sleep* between
 #'     iterations and plot the result from the current iteration.
 #'
-#' @return A `data.frame`, each row representing a (mz-rt) feature (i.e.
-#' a peak group) with columns:
+#' @return
+#'
+#' A `data.frame`, each row representing a (mz-rt) feature (i.e. a peak group)
+#' with columns:
+#'
 #' - `"mzmed"`: median of the peaks' apex mz values.
 #' - `"mzmin"`: smallest mz value of all peaks' apex within the feature.
 #' - `"mzmax"`:largest mz value of all peaks' apex within the feature.
@@ -43,17 +46,18 @@
 #'   `peaks` input matrix.
 #'
 #' Note that this number can be larger than the total number of samples, since
-#' multiple peaks from the same sample could be assigned to a feature.}
-#'
-#' @family core peak grouping algorithms
+#' multiple peaks from the same sample could be assigned to a feature.
 #'
 #' @references
+#'
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #' Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #' Anal. Chem. 2006, 78:779-787.
 #'
 #' @author Colin Smith, Johannes Rainer
+#'
+#' @family core peak grouping algorithms
 #'
 #' @md
 #'
@@ -392,7 +396,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
 #' The `do_groupChromPeaks_nearest` function groups peaks across samples by
 #' creating a master peak list and assigning corresponding peaks from all
 #' samples to each peak group (i.e. feature). The method is inspired by the
-#' correspondence algorithm of mzMine [Katajamaa 2006].
+#' correspondence algorithm of mzMine (Katajamaa 2006).
 #'
 #' @inheritParams do_groupChromPeaks_density
 #' @inheritParams groupChromPeaks-nearest
