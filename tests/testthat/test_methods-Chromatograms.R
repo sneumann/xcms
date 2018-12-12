@@ -6,7 +6,7 @@ test_that("findChromPeaks,Chromatograms works", {
     expect_equal(intensity(res[1, 2]), intensity(chrs[1, 2]))
     expect_equal(intensity(res[2, 3]), intensity(chrs[2, 3]))
     expect_true(length(res@.processHistory) == 1)
-    expect_warning(res_2 <- findChromPeaks(chrs, param = CentWaveParam(sn = 50)))
+    res_2 <- findChromPeaks(chrs, param = CentWaveParam(sn = 50))
     expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(res_2)))
 
     ## MatchedFilter

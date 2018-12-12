@@ -18,6 +18,10 @@
 #'     peak detection. See [peaksWithCentWave()] for the description of
 #'     arguments used for peak detection.
 #'
+#' @param BPPARAM a parameter class specifying if and how parallel processing
+#'     should be performed (only for `XChromatograms` objects). It defaults to
+#'     `bpparam()`. See [bpparam()] for more information.
+#'
 #' @param ... currently ignored.
 #'
 #' @return

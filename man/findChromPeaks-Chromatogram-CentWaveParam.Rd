@@ -11,10 +11,11 @@
 \usage{
 \S4method{findChromPeaks}{Chromatogram,CentWaveParam}(object, param, ...)
 
-\S4method{findChromPeaks}{Chromatograms,CentWaveParam}(object, param, ...)
+\S4method{findChromPeaks}{Chromatograms,CentWaveParam}(object, param,
+  BPPARAM = bpparam(), ...)
 
 \S4method{findChromPeaks}{Chromatograms,MatchedFilterParam}(object, param,
-  ...)
+  BPPARAM = BPPARAM, ...)
 }
 \arguments{
 \item{object}{a \link{Chromatogram} or \link{Chromatograms} object.}
@@ -24,6 +25,10 @@ peak detection. See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for th
 arguments used for peak detection.}
 
 \item{...}{currently ignored.}
+
+\item{BPPARAM}{a parameter class specifying if and how parallel processing
+should be performed (only for \code{XChromatograms} objects). It defaults to
+\code{bpparam()}. See \code{\link[=bpparam]{bpparam()}} for more information.}
 }
 \value{
 If called on a \code{Chromatogram} object, the method returns an \link{XChromatogram}
