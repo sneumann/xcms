@@ -37,7 +37,7 @@ setMethod("show", "XChromatogram", function(object) {
 #'   contain additional columns.
 #'   For `XChromatograms` objects the `matrix` contains also columns `"row"`
 #'   and `"column"` specifying in which chromatogram of `object` the peak was
-#'   identified.
+#'   identified. Chromatographic peaks are ordered by row.
 #'
 #' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
 #'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
@@ -65,6 +65,15 @@ setMethod("show", "XChromatogram", function(object) {
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
+#'
+#' @param i For `[`: `integer` with the row indices to subset the
+#'     `XChromatograms` object.
+#'
+#' @param j For `[`: `integer` with the column indices to subset the
+#'     `XChromatograms` object.
+#'
+#' @param drop For `[`: `logical(1)` whether the dimensionality should be
+#'     dropped (if possible).
 #'
 #' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
 #'     the retention time range for which chromatographic peaks or features
@@ -261,6 +270,10 @@ setMethod("plot", "XChromatogram", function(x, col = "#00000060", lty = 1,
 #' @rdname XChromatogram
 #'
 #' @section Filtering and subsetting:
+#'
+#' - `[` allows to subset a `XChromatograms` object by row (`i`) and column
+#'    (`j`), with `i` and `j` being of type `integer`. The `featureDefinitions`
+#'   will also be subsetted accordingly and the `peakidx` column updated.
 #'
 #' - `filterMz` filters the chromatographic peaks within an `XChromatogram`, if
 #'   a column `"mz"` is present in the `chromPeaks` matrix. This would be the

@@ -27,6 +27,7 @@
 \alias{dropFeatureDefinitions,XChromatograms-method}
 \alias{groupChromPeaks,XChromatograms,PeakDensityParam-method}
 \alias{featureDefinitions,XChromatograms-method}
+\alias{[,XChromatograms,ANY,ANY,ANY-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -81,6 +82,8 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 
 \S4method{featureDefinitions}{XChromatograms}(object, mz = numeric(),
   rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+
+\S4method{[}{XChromatograms,ANY,ANY,ANY}(x, i, j, drop = FALSE)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -209,6 +212,15 @@ be returned.}
 
 \item{param}{For \code{groupChromPeaks}: a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the
 settings for the \emph{peak density} correspondence analysis algorithm.}
+
+\item{i}{For \code{[}: \code{integer} with the row indices to subset the
+\code{XChromatograms} object.}
+
+\item{j}{For \code{[}: \code{integer} with the column indices to subset the
+\code{XChromatograms} object.}
+
+\item{drop}{For \code{[}: \code{logical(1)} whether the dimensionality should be
+dropped (if possible).}
 }
 \value{
 See help of the individual functions.
@@ -265,7 +277,7 @@ Note that, depending on the peak detection algorithm, the matrix may
 contain additional columns.
 For \code{XChromatograms} objects the \code{matrix} contains also columns \code{"row"}
 and \code{"column"} specifying in which chromatogram of \code{object} the peak was
-identified.
+identified. Chromatographic peaks are ordered by row.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
@@ -309,6 +321,9 @@ plots.
 \section{Filtering and subsetting}{
 
 \itemize{
+\item \code{[} allows to subset a \code{XChromatograms} object by row (\code{i}) and column
+(\code{j}), with \code{i} and \code{j} being of type \code{integer}. The \code{featureDefinitions}
+will also be subsetted accordingly and the \code{peakidx} column updated.
 \item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram}, if
 a column \code{"mz"} is present in the \code{chromPeaks} matrix. This would be the
 case if the \code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with

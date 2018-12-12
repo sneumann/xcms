@@ -620,6 +620,27 @@ rowRla <- function(x, group, log.transform = TRUE) {
     x
 }
 
+## #' Define a unique identifier for each chromatographic peak within the chrom
+## #' peak matrix by concatenating as many columns as needed.
+## #'
+## #' @param x `chromPeaks` matrix (as returned by `chromPeaks`).
+## #'
+## #' @noRd
+## #'
+## #' @author Johannes Rainer
+## .chrom_peak_id <- function(x) {
+##     if (nrow(x)) {
+##         cns <- c("rt", "rtmin", "rtmax", "mz", "mzmin", "mzmax", "into", "maxo")
+##         cns <- cns[cns %in% colnames(x)]
+##         ids <- apply(x[, cns, drop = FALSE], 1, paste0, collapse = "-")
+##         if (length(ids) != length(unique(ids)))
+##             stop("Can not define unique identifiers based on columns: ",
+##                  paste0(cns, collapse = ", "))
+##         ids
+##     } else character()
+## }
+
+
 ## #' @examples
 ## #' x1_high <- c(0.000012323)
 ## #' x1_low <- c(0.0000034302)

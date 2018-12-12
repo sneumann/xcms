@@ -1,5 +1,9 @@
 Changes in version 3.5.1
 
+- Add correspondence analysis (peak grouping) for chromatographic data (for now
+  only with PeakDensity method; issue #336).
+- Add featureDefinitions slot to XChromatograms object and related accessor
+  methods.
 - Add subset alignment option subsetAdjust = "average" to adjust left-out
   samples (blanks or simply non-subset samples) based on an interpolation from
   the results of the previous and subsequent subset sample.

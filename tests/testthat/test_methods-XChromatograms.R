@@ -162,10 +162,10 @@ test_that("groupChromPeaks,XChromatograms,PeakDensityParam works", {
 
     ## The same on artificial data.
     chrs <- as(xchrs, "Chromatograms")
-    chrs <- findChromPeaks(chrs, param = CentWaveParam())
-    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
-    res <- groupChromPeaks(chrs, param = prm)
-    expect_equal(nrow(res@featureDefinitions), 3)
+    res <- findChromPeaks(chrs, param = CentWaveParam(snthresh = 1))
+    expect_equal(nrow(chromPeaks(res)), 31)
+    res <- groupChromPeaks(res, param = param)
+    expect_equal(nrow(featureDefinitions(res)), 8)
 })
 
 test_that("dropFeatureDefinitions,XChromatograms works", {
@@ -198,4 +198,122 @@ test_that("featureDefinitions,XChromatograms works", {
 
     res <- dropFeatureDefinitions(res)
     expect_equal(nrow(featureDefinitions(res)), 0)
+})
+
+test_that(".subset_chrom_peaks_xchromatograms works", {
+    ## Matrix is:    with elements
+    ## A B C D       2 1 3 1
+    ## E F G H       1 4 0 2
+    ## I J K L       3 2 1 3
+
+    testm <- data.frame(el = c("A", "A", "E", "I", "I", "I",
+                               "B", "F", "F", "F", "F", "J", "J",
+                               "C", "C", "C", "K",
+                               "D", "H", "H", "L", "L", "L"),
+                        row = c(1, 1, 2, 3, 3, 3,
+                                1, 2, 2, 2, 2, 3, 3,
+                                1, 1, 1, 3,
+                                1, 2, 2, 3, 3, 3),
+                        column = c(1, 1, 1, 1, 1, 1,
+                                   2, 2, 2, 2, 2, 2, 2,
+                                   3, 3, 3, 3,
+                                   4, 4, 4, 4, 4, 4),
+                        stringsAsFactors = FALSE)
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2:3, j = 2:4)
+    expect_equal(res$el,  c("F", "F", "F", "F", "H", "H",
+                            "J", "J", "K", "L", "L", "L"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2))
+    expect_equal(res$column, c(1, 1, 1, 1, 3, 3, 1, 1, 2, 3, 3, 3))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = c(3, 1), j = 2:4)
+    expect_equal(res$el, c("J", "J", "K", "L", "L", "L",
+                           "B", "C", "C", "C", "D"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2))
+    expect_equal(res$column, c(1, 1, 2, 3, 3, 3, 1, 2, 2, 2, 3))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2, j = c(3, 2))
+    expect_equal(res$el, c("F", "F", "F", "F"))
+    expect_equal(res$row, c(1, 1, 1, 1))
+    expect_equal(res$column, c(2, 2, 2, 2))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2, j = c(3, 2, 4))
+    expect_equal(res$el, c("F", "F", "F", "F", "H", "H"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1))
+    expect_equal(res$column, c(2, 2, 2, 2, 3, 3))
+
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- chromatogram(od_x, mz = mzr)
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+
+    pks <- chromPeaks(chrs)
+    rownames(pks) <- letters[1:nrow(pks)]
+    res <- .subset_chrom_peaks_xchromatograms(pks, j = c(3, 1, 2))
+    expect_equal(rownames(res), c("f", "g", "a", "b", "c", "d", "e",
+                                  "l", "m", "h", "i", "j", "k"))
+    res <- .subset_chrom_peaks_xchromatograms(pks, i = c(2, 1), j = c(2, 1, 3))
+    expect_equal(rownames(res), c("j", "k", "h", "i", "l", "m",
+                                  "e", "a", "b", "c", "d", "f", "g"))
+})
+
+test_that("[,XChromatograms works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- chromatogram(od_x, mz = mzr)
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+
+    pks <- chromPeaks(chrs)
+    fts <- featureDefinitions(chrs)
+
+    res <- chrs[2, 2]
+    expect_true(is(res, "XChromatogram"))
+    expect_equal(chromPeaks(res), pks[pks[, "row"] == 2 &
+                                      pks[, "column"] == 2,
+                                      colnames(chromPeaks(res))])
+
+    res <- chrs[2, 2:3]
+    expect_true(is(res, "XChromatograms"))
+    expect_true(ncol(res) == 2)
+    expect_equal(res[1, 1], chrs[2, 2])
+    expect_equal(res[1, 2], chrs[2, 3])
+    pks_tmp <- pks[pks[, "row"] == 2 & pks[, "column"] %in% 2:3, ]
+    pks_tmp <- pks_tmp[order(pks_tmp[, "column"], pks_tmp[, "row"]), ]
+    expect_equal(chromPeaks(res)[, 1:6], pks_tmp[, 1:6])
+    expect_equal(rownames(featureDefinitions(res)), c("FT3", "FT4"))
+    res_fts <- featureDefinitions(res)
+    expect_equal(res_fts$peakidx, list(c(1, 3), c(2, 4)))
+
+    res <- chrs[c(2, 1), 1]
+    expect_true(is(res, "XChromatograms"))
+    expect_true(ncol(res) == 1)
+    expect_true(nrow(res) == 2)
+    expect_equal(res[1, 1], chrs[2, 1])
+    expect_equal(res[2, 1], chrs[1, 1])
+    expect_equal(res$sampleNames, factor("ko15.CDF"))
+    expect_equal(fData(res), fData(chrs)[c(2, 1), ])
+    pks_tmp <- pks[pks[, "row"] %in% c(1, 2) & pks[, "column"] == 1, ]
+    pks_tmp <- pks_tmp[c(5, 6, 1, 2, 3, 4), ]
+    expect_equal(chromPeaks(res)[, 1:6], pks_tmp[, 1:6])
+    res_fts <- featureDefinitions(res)
+    expect_equal(rownames(res_fts), c("FT3", "FT4", "FT1", "FT2"))
+    expect_equal(res_fts$peakidx, list(c(1), c(2), c(3), c(6)))
+
+    res <- chrs[c(2, 1), c(1, 3)]
+    expect_true(is(res, "XChromatograms"))
+    expect_true(ncol(res) == 2)
+    expect_true(nrow(res) == 2)
+    expect_equal(res[1, 1], chrs[2, 1])
+    expect_equal(res[2, 1], chrs[1, 1])
+    expect_equal(res[1, 2], chrs[2, 3])
+    expect_equal(res[2, 2], chrs[1, 3])
+    expect_equal(res$sampleNames, factor(c("ko15.CDF", "ko18.CDF")))
+    expect_equal(fData(res), fData(chrs)[c(2, 1), ])
+    pks_tmp <- pks[c(8, 9, 12, 13, 1, 2, 3, 4, 6, 7), ]
+    expect_equal(chromPeaks(res)[, 1:6], pks_tmp[, 1:6])
+    res_fts <- featureDefinitions(res)
+    expect_equal(rownames(res_fts), c("FT3", "FT4", "FT1", "FT2"))
+    expect_equal(res_fts$peakidx, list(c(1, 3), c(2, 4), c(5, 9), c(8, 10)))
 })
