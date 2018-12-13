@@ -317,3 +317,48 @@ test_that("[,XChromatograms works", {
     expect_equal(rownames(res_fts), c("FT3", "FT4", "FT1", "FT2"))
     expect_equal(res_fts$peakidx, list(c(1, 3), c(2, 4), c(5, 9), c(8, 10)))
 })
+
+test_that("featureValues,XChromatograms works", {
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- chromatogram(od_x, mz = mzr)
+    chrs <- as(chrs, "XChromatograms")
+    expect_error(featureValues(chrs))
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    expect_error(featureValues(chrs))
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+
+    vls <- featureValues(chrs)
+    expect_equal(colnames(vls), colnames(chrs))
+    expect_equal(rownames(vls), rownames(featureDefinitions(chrs)))
+    exp_mat <- matrix(c(1, 5, 6,
+                        4, NA, 7,
+                        8, 10, 12,
+                        9, 11, 13), byrow = TRUE, ncol = 3,
+                      dimnames = list(rownames(featureDefinitions(chrs)),
+                                      colnames(chrs)))
+    expect_equal(exp_mat, vls)
+    ## into.
+    vls <- featureValues(chrs, value = "into")
+    vls_exp <- matrix(chromPeaks(chrs)[exp_mat, "into"], ncol = 3, byrow = FALSE,
+                      dimnames = dimnames(exp_mat))
+    expect_equal(vls, vls_exp)
+
+    vls <- featureValues(chrs, value = "into", missing = 13)
+    vls_exp[is.na(vls_exp)] <- 13
+    expect_equal(vls, vls_exp)
+
+    ## After subsetting/re-ordering.
+    chrs_sub <- chrs[2, c(3, 1, 2)]
+    vls_sub <- featureValues(chrs_sub, value = "into")
+    vls <- featureValues(chrs, value = "into")
+    expect_equal(colnames(vls_sub), colnames(chrs_sub))
+    expect_equal(rownames(vls_sub), rownames(featureDefinitions(chrs_sub)))
+    expect_equal(vls_sub, vls[3:4, c(3, 1, 2)])
+
+    chrs_sub <- chrs[c(2, 1), 2]
+    vls_sub <- featureValues(chrs_sub, value = "into")
+    expect_equal(colnames(vls_sub), colnames(chrs_sub))
+    expect_equal(rownames(vls_sub), rownames(featureDefinitions(chrs_sub)))
+    expect_equal(vls_sub, vls[c(3, 4, 1), 2, drop = FALSE])
+})

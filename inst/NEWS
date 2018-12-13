@@ -1,5 +1,6 @@
 Changes in version 3.5.1
 
+- Add featureValues method for XChromatograms objects (issue #336).
 - Add correspondence analysis (peak grouping) for chromatographic data (for now
   only with PeakDensity method; issue #336).
 - Add featureDefinitions slot to XChromatograms object and related accessor

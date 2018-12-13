@@ -62,6 +62,16 @@ setMethod("show", "XChromatogram", function(object) {
 #'   `chromPeaks` method it is possible to filter the returned feature matrix
 #'   with the `mz`, `rt` and `ppm` parameters.
 #'
+#' - `featureValues`: for `XChromatograms` objects only. Extract the abundance
+#'   estimates for the individuals features. Note that by default (with
+#'   parameter `value = "index"` a `matrix` of indices of the peaks in the
+#'   `chromPeaks` matrix associated to the feature is returned. To extract the
+#'   integrated peak area use `value = "into"`. The function returns a `matrix`
+#'   with one row per feature (in `featureDefinitions`) and each column being
+#'   a sample (i.e. column of `object`). For features without a peak associated
+#'   in a certain sample `NA` is returned. This can be changed with the
+#'   `missing` argument of the function.
+#'
 #' - `processHistory`: returns a `list` of [ProcessHistory] objects representing
 #'   the individual performed processing steps. Optional parameters `type` and
 #'   `fileIndex` allow to further specify which processing steps to return.
@@ -74,6 +84,19 @@ setMethod("show", "XChromatogram", function(object) {
 #'
 #' @param drop For `[`: `logical(1)` whether the dimensionality should be
 #'     dropped (if possible).
+#'
+#' @param method For `featureValues`: `character(1)` specifying the method to
+#'     resolve multi-peak mappings within the sample sample, i.e. to select
+#'     the *representative* peak for a feature for which more than one peak
+#'     was assigned in one sample. Options are `"medret"` (default): select the
+#'     peak closest to the median retention time of the feature, `"maxint"`:
+#'     select the peak with the largest signal and `"sum"`: sum the values
+#'     of all peaks (only if `value` is `"into"` or `"maxo"`).
+#'
+#' @param missing For `featureValues`: how missing values should be reported.
+#'     Allowed values are `NA` (default), a `numeric(1)` to replace `NA`s with
+#'     that value or `missing = "rowmin_half"` to replace `NA`s with half
+#'     of the row's minimal (non-missing) value.
 #'
 #' @param rt For `chromPeaks` and `featureDefinitions`: `numeric(2)` defining
 #'     the retention time range for which chromatographic peaks or features
@@ -99,6 +122,12 @@ setMethod("show", "XChromatogram", function(object) {
 #'
 #' @param value For `chromPeaks<-`: a numeric `matrix` with required columns
 #'     `"rt"`, `"rtmin"`, `"rtmax"`, `"into"` and `"maxo"`.
+#'
+#'     For `featureValues`: `character(1)` specifying the name of the column in
+#'     `chromPeaks(object)` that should be returned or `"index"` (default) to
+#'     return the index of the peak associated with the feature in each sample.
+#'     To return the integrated peak area instead of the index use
+#'     `value = "into"`.
 #'
 #' @md
 #'

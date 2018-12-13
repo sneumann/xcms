@@ -1155,6 +1155,19 @@ test_that("featureValues,XCMSnExp works", {
     colnames(gvs) <- NULL
     expect_equal(fvs, gvs)
 
+    ## Use the internal function
+    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+                           value = "into", method = "medret",
+                           intensity = "into",
+                           colnames = basename(fileNames(od_x)))
+    expect_equal(featureValues(od_x, value = "into"), res)
+    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+                           value = "into", method = "sum",
+                           intensity = "into",
+                           colnames = basename(fileNames(od_x)))
+    expect_equal(featureValues(od_x, value = "into", method = "sum"), res)
+
+
     fsum <- featureSummary(xod_xg)
     fv <- featureValues(xod_xg, method = "maxint", value = "into")
     ## For feature 3 we have 2 peaks in sample 3

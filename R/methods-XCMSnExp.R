@@ -2092,78 +2092,84 @@ setMethod("featureValues",
                            " of: \"rowmin_half\".")
               }
               fNames <- basename(fileNames(object))
-              nSamples <- seq_along(fNames)
-              ## Copy all of the objects to avoid costly S4 method calls -
-              ## improves speed at the cost of higher memory demand.
-              fts <- chromPeaks(object)
-
+              pks <- chromPeaks(object)
               ## issue #157: replace all values for filled-in peaks with NA
               if (!filled)
-                  fts[fts[, "is_filled"] == 1, ] <- NA
-              grps <- featureDefinitions(object)
-              ftIdx <- grps$peakidx
-              ## Match columns
-              idx_rt <- match("rt", colnames(fts))
-              idx_int <- match(intensity, colnames(fts))
-              idx_samp <- match("sample", colnames(fts))
-
-              vals <- matrix(nrow = length(ftIdx), ncol = length(nSamples))
-
-              if (method == "sum") {
-                  for (i in seq_along(ftIdx)) {
-                      cur_pks <- fts[ftIdx[[i]], c(value, "sample")]
-                      int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
-                      vals[i, as.numeric(names(int_sum))] <-
-                          unlist(lapply(int_sum, base::sum), use.names = FALSE)
-                  }
-              } else {
-                  ## Selecting only a single one.
-                  ## Get the indices for the elements.
-                  if (method == "medret") {
-                      medret <- grps$rtmed
-                      for (i in seq_along(ftIdx)) {
-                          gidx <- ftIdx[[i]][
-                              base::order(base::abs(fts[ftIdx[[i]],
-                                                        idx_rt] - medret[i]))]
-                          vals[i, ] <- gidx[
-                              base::match(nSamples, fts[gidx, idx_samp])]
-                      }
-                  }
-                  if (method == "maxint") {
-                      for (i in seq_along(ftIdx)) {
-                          gidx <- ftIdx[[i]][
-                              base::order(fts[ftIdx[[i]], idx_int],
-                                          decreasing = TRUE)]
-                          vals[i, ] <- gidx[base::match(nSamples,
-                                                        fts[gidx, idx_samp])]
-                      }
-                  }
-                  if (value != "index") {
-                      if (!any(colnames(fts) == value))
-                          stop("Column '", value, "' not present in the ",
-                               "chromatographic peaks matrix!")
-                      vals <- fts[vals, value]
-                      dim(vals) <- c(length(ftIdx), length(nSamples))
-                  }
-              }
-
-              if (value != "index") {
-                  if (is.numeric(missing)) {
-                      vals[is.na(vals)] <- missing
-                  }
-                  if (!is.na(missing) & missing == "rowmin_half") {
-                      for (i in seq_len(nrow(vals))) {
-                          nas <- is.na(vals[i, ])
-                          if (any(nas))
-                              vals[i, nas] <- min(vals[i, ], na.rm = TRUE) / 2
-                      }
-                  }
-              }
-
-              colnames(vals) <- fNames
-              rownames(vals) <- rownames(grps)
-              vals
+                  pks[pks[, "is_filled"] == 1, ] <- NA
+              .feature_values(pks = pks, fts = featureDefinitions(object),
+                              method = method, value = value,
+                              intensity = intensity, colnames = fNames,
+                              missing = missing)
 })
+
+#' Internal function to extract feature values based on featureDefinitions
+#' `fts` and chromPeaks `pks`.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.feature_values <- function(pks, fts, method, value = "index",
+                            intensity = "into", colnames,
+                            missing = NA) {
+    ftIdx <- fts$peakidx
+    ## Match columns
+    idx_rt <- match("rt", colnames(pks))
+    idx_int <- match(intensity, colnames(pks))
+    idx_samp <- match("sample", colnames(pks))
+    vals <- matrix(nrow = length(ftIdx), ncol = length(colnames))
+    nSamples <- seq_along(colnames)
+    if (method == "sum") {
+        for (i in seq_along(ftIdx)) {
+            cur_pks <- pks[ftIdx[[i]], c(value, "sample")]
+            int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
+            vals[i, as.numeric(names(int_sum))] <-
+                unlist(lapply(int_sum, base::sum), use.names = FALSE)
+        }
+    } else {
+        if (method == "medret") {
+            medret <- fts$rtmed
+            for (i in seq_along(ftIdx)) {
+                gidx <- ftIdx[[i]][
+                    base::order(base::abs(pks[ftIdx[[i]],
+                                              idx_rt] - medret[i]))]
+                vals[i, ] <- gidx[
+                    base::match(nSamples, pks[gidx, idx_samp])]
+            }
+        }
+        if (method == "maxint") {
+            for (i in seq_along(ftIdx)) {
+                gidx <- ftIdx[[i]][
+                    base::order(pks[ftIdx[[i]], idx_int],
+                                decreasing = TRUE)]
+                vals[i, ] <- gidx[base::match(nSamples,
+                                              pks[gidx, idx_samp])]
+            }
+        }
+        if (value != "index") {
+            if (!any(colnames(pks) == value))
+                stop("Column '", value, "' not present in the ",
+                     "chromatographic peaks matrix!")
+            vals <- pks[vals, value]
+            dim(vals) <- c(length(ftIdx), length(nSamples))
+        }
+    }
+    if (value != "index") {
+        if (is.numeric(missing)) {
+            vals[is.na(vals)] <- missing
+        }
+        if (!is.na(missing) & missing == "rowmin_half") {
+            for (i in seq_len(nrow(vals))) {
+                nas <- is.na(vals[i, ])
+                if (any(nas))
+                    vals[i, nas] <- min(vals[i, ], na.rm = TRUE) / 2
+            }
+        }
+    }
+    colnames(vals) <- colnames
+    rownames(vals) <- rownames(fts)
+    vals
+}
+
 ## #' @rdname XCMSnExp-peak-grouping-results
 ## setMethod("groupval",
 ##           signature(object = "XCMSnExp"),

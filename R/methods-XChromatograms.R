@@ -218,6 +218,11 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 #' `DataFrame` with one row for each feature. Column `"row"` specifies in
 #' which row of the `XChromatograms` object the feature was identified.
 #'
+#' Abundance estimates for each feature can be extracted with the
+#' `featureValues` function using parameter `value = "into"` to extract the
+#' integrated peak area for each feature. The result is a `matrix`, columns
+#' being samples and rows features.
+#'
 #' @param param For `groupChromPeaks`: a [PeakDensityParam()] object with the
 #'     settings for the *peak density* correspondence analysis algorithm.
 #'
@@ -396,3 +401,35 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         x[order(x[, "row"], x[, "column"]), , drop = FALSE]
     } else x
 }
+
+#' @rdname XChromatogram
+setMethod("featureValues", "XChromatograms",
+          function(object, method = c("medret", "maxint", "sum"),
+                   value = "index", intensity = "into", missing = NA, ...) {
+              if (!any(hasChromPeaks(object)))
+                  stop("No chromatographic peaks present! Please use ",
+                       "'findChromPeaks' first.")
+              if (!hasFeatures(object))
+                  stop("No features (grouped peaks) present! Please use ",
+                       "'groupChromPeaks' first.")
+              method = match.arg(method)
+              if (method == "sum" & !(value %in% c("into", "maxo")))
+                  stop("method 'sum' is only allowed if value is set to 'into'",
+                       " or 'maxo'")
+              if (is.character(missing)) {
+                  if (!(missing %in% c("rowmin_half")))
+                      stop("if 'missing' is not 'NA' or a numeric it should",
+                           " be one of: \"rowmin_half\".")
+              } else {
+                  if (!is.numeric(missing) & !is.na(missing))
+                      stop("'missing' should be either 'NA', a numeric or one",
+                           " of: \"rowmin_half\".")
+              }
+              cnames <- colnames(object)
+              pks <- chromPeaks(object)
+              pks <- cbind(pks, sample = pks[, "column"])
+              .feature_values(pks = pks, fts = featureDefinitions(object),
+                              method = method, value = value,
+                              intensity = intensity, colnames = cnames,
+                              missing = missing)
+})

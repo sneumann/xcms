@@ -47,6 +47,11 @@
 #' @param intensity For `XChromatogram`: `numeric` with the intensity values
 #'     (length has to be equal to the length of `rtime`).
 #'
+#'     For `featureValues`: `character(1)` specifying the name
+#'     of the column in `chromPeaks(object)` containing the intensity value
+#'     of the peak that should be used for the `method = "maxint"` conflict
+#'     resolution if.
+#'
 #' @param mz For `XChromatogram`: `numeric(2)` representing the m/z value
 #'     range (min, max) on which the chromatogram was created. This is
 #'     supposed to contain the *real* range of m/z values in contrast

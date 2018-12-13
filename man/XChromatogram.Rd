@@ -28,6 +28,7 @@
 \alias{groupChromPeaks,XChromatograms,PeakDensityParam-method}
 \alias{featureDefinitions,XChromatograms-method}
 \alias{[,XChromatograms,ANY,ANY,ANY-method}
+\alias{featureValues,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -84,6 +85,10 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
   rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
 
 \S4method{[}{XChromatograms,ANY,ANY,ANY}(x, i, j, drop = FALSE)
+
+\S4method{featureValues}{XChromatograms}(object, method = c("medret",
+  "maxint", "sum"), value = "index", intensity = "into",
+  missing = NA, ...)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -113,7 +118,11 @@ For \code{XChromatograms}: additional parameters to be passed to the
 (length has to be equal to the length of \code{intensity}).}
 
 \item{intensity}{For \code{XChromatogram}: \code{numeric} with the intensity values
-(length has to be equal to the length of \code{rtime}).}
+(length has to be equal to the length of \code{rtime}).\preformatted{For `featureValues`: `character(1)` specifying the name
+of the column in `chromPeaks(object)` containing the intensity value
+of the peak that should be used for the `method = "maxint"` conflict
+resolution if.
+}}
 
 \item{mz}{For \code{XChromatogram}: \code{numeric(2)} representing the m/z value
 range (min, max) on which the chromatogram was created. This is
@@ -169,7 +178,12 @@ types. Use [processHistoryTypes()] to list all supported values.
 }}
 
 \item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
-\code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.}
+\code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.\preformatted{For `featureValues`: `character(1)` specifying the name of the column in
+`chromPeaks(object)` that should be returned or `"index"` (default) to
+return the index of the peak associated with the feature in each sample.
+To return the integrated peak area instead of the index use
+`value = "into"`.
+}}
 
 \item{x}{For \code{plot}: an \code{XChromatogram} or \code{XChromatograms} object.}
 
@@ -221,6 +235,19 @@ settings for the \emph{peak density} correspondence analysis algorithm.}
 
 \item{drop}{For \code{[}: \code{logical(1)} whether the dimensionality should be
 dropped (if possible).}
+
+\item{method}{For \code{featureValues}: \code{character(1)} specifying the method to
+resolve multi-peak mappings within the sample sample, i.e. to select
+the \emph{representative} peak for a feature for which more than one peak
+was assigned in one sample. Options are \code{"medret"} (default): select the
+peak closest to the median retention time of the feature, \code{"maxint"}:
+select the peak with the largest signal and \code{"sum"}: sum the values
+of all peaks (only if \code{value} is \code{"into"} or \code{"maxo"}).}
+
+\item{missing}{For \code{featureValues}: how missing values should be reported.
+Allowed values are \code{NA} (default), a \code{numeric(1)} to replace \code{NA}s with
+that value or \code{missing = "rowmin_half"} to replace \code{NA}s with half
+of the row's minimal (non-missing) value.}
 }
 \value{
 See help of the individual functions.
@@ -297,6 +324,15 @@ defined m/z-rt features: their m/z and retention time range. Columns
 \code{XChromatograms} object in which the feature was defined. Similar to the
 \code{chromPeaks} method it is possible to filter the returned feature matrix
 with the \code{mz}, \code{rt} and \code{ppm} parameters.
+\item \code{featureValues}: for \code{XChromatograms} objects only. Extract the abundance
+estimates for the individuals features. Note that by default (with
+parameter \code{value = "index"} a \code{matrix} of indices of the peaks in the
+\code{chromPeaks} matrix associated to the feature is returned. To extract the
+integrated peak area use \code{value = "into"}. The function returns a \code{matrix}
+with one row per feature (in \code{featureDefinitions}) and each column being
+a sample (i.e. column of \code{object}). For features without a peak associated
+in a certain sample \code{NA} is returned. This can be changed with the
+\code{missing} argument of the function.
 \item \code{processHistory}: returns a \code{list} of \link{ProcessHistory} objects representing
 the individual performed processing steps. Optional parameters \code{type} and
 \code{fileIndex} allow to further specify which processing steps to return.
@@ -352,6 +388,11 @@ The analysis results are stored in the returned \code{XChromatograms} object
 and can be accessed with the \code{featureDefinitions} method which returns a
 \code{DataFrame} with one row for each feature. Column \code{"row"} specifies in
 which row of the \code{XChromatograms} object the feature was identified.
+
+Abundance estimates for each feature can be extracted with the
+\code{featureValues} function using parameter \code{value = "into"} to extract the
+integrated peak area for each feature. The result is a \code{matrix}, columns
+being samples and rows features.
 }
 
 \examples{
