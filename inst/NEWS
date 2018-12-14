@@ -1,5 +1,7 @@
 Changes in version 3.5.1
 
+- chromatogram,XCMSnExp extracts an XChromatogram containing also
+  chromatographic peaks and feature definitions.
 - Add featureValues method for XChromatograms objects (issue #336).
 - Add correspondence analysis (peak grouping) for chromatographic data (for now
   only with PeakDensity method; issue #336).

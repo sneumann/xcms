@@ -10,9 +10,13 @@
         txt <- c(txt, paste0("'object' should only contain 'XChromatogram' ",
                              "objects"))
     if (nrow(object@featureDefinitions)) {
-        if (!all(object@featureDefinitions[, "row"] %in% seq_len(nrow(object))))
+        if (!all(object@featureDefinitions$row %in% seq_len(nrow(object))))
             txt <- c(txt, paste0("Elements in column 'row' are outside of the",
                                  " number of rows of 'object'"))
+        if (!all(unlist(object@featureDefinitions$peakidx) %in%
+                 seq_len(nrow(chromPeaks(object)))))
+            txt <- c(txt, paste0("peakidx in feature data does not match ",
+                                 "the number of present chromatographic peaks"))
     }
     if (length(txt)) txt
     else TRUE
@@ -126,4 +130,57 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
                             featureData = featureData, ...)
     object <- as(object, "XChromatograms")
     if (validObject(object)) object
+}
+
+#' Subset the featureDefinitions `DataFrame` fts based on `pks` and `pks_sub`
+#' being the `chromPeaks` before and after filtering.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.subset_features_on_chrom_peaks <- function(fts, pks, pks_sub) {
+    if (nrow(fts)) {
+        if (!is.null(rownames(pks)) && !is.null(rownames(pks_sub))) {
+            ids_orig <- rownames(pks)
+            ids_sub <- rownames(pks_sub)
+        } else {
+            cns <- intersect(colnames(pks), colnames(pks_sub))
+            ids_orig <- apply(pks[, cns, drop = FALSE], 1, paste,
+                              collapse = "-")
+            if (length(ids_orig) != length(unique(ids_orig)))
+                stop("Can not uniquely identify chromatographic peaks.")
+            ids_sub <- apply(pks_sub[, cns, drop = FALSE], 1, paste,
+                             collapse = "-")
+        }
+        fts$peakidx <- lapply(fts$peakidx, function(z) {
+            newidx <- match(ids_orig[z], ids_sub)
+            newidx[!is.na(newidx)]
+        })
+        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
+    }
+    fts
+}
+
+#' Subset the chromPeaks matrix from an `XChromatograms` object. The
+#' `chromPeaks` matrix is generated dynamically from the `chromPeaks` matrices
+#' of each internal `XChromatogram` object, so there is not really a need to
+#' subset the `chromPeaks` from an `XChromatograms` - only that we need this
+#' to update the `"peakidx"` column of the `featureDefinitions`.
+#'
+#' Note: the chromPeaks matrix is extracted ordered by row.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.subset_chrom_peaks_xchromatograms <- function(x, i, j) {
+    if (missing(i) & missing(j))
+        return(x)
+    if (missing(i)) i <- seq_len(nrow(x))
+    if (missing(j)) j <- seq_len(ncol(x))
+    x <- x[x[, "row"] %in% i & x[, "column"] %in% j, , drop = FALSE]
+    if (nrow(x)) {
+        x[, "row"] <- match(x[, "row"], i)
+        x[, "column"] <- match(x[, "column"], j)
+        x[order(x[, "row"], x[, "column"]), , drop = FALSE]
+    } else x
 }

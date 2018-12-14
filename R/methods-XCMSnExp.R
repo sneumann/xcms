@@ -2271,7 +2271,8 @@ setMethod("featureValues",
 #' \code{object} and number of rows the number of specified ranges (i.e.
 #' number of rows of matrices provided with arguments \code{mz} and/or
 #' \code{rt}). All chromatographic peaks with their apex position within the
-#' m/z and retention time range are also retained.
+#' m/z and retention time range are also retained as well as all feature
+#' definitions for these peaks.
 #'
 #' @author Johannes Rainer
 #'
@@ -2387,6 +2388,16 @@ setMethod("chromatogram",
                       chr
                   }), nrow = nrow(res), dimnames = dimnames(res))
               res@.processHistory <- object@.processHistory
+              if (hasFeatures(object)) {
+                  pks_sub <- chromPeaks(res)
+                  fts <- .subset_features_on_chrom_peaks(
+                      featureDefinitions(object, mz = mz, rt = rt),
+                      chromPeaks(object), pks_sub)
+                  fts$row <- vapply(fts$peakidx, function(z) {
+                      as.integer(pks_sub[z, "row"][1])
+                  }, integer(1))
+                  res@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+              }
               if (validObject(res)) res
           })
 

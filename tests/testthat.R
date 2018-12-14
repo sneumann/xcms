@@ -30,6 +30,8 @@ faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
 faahko_xsg <- group(faahko_xs)
 ## Doing also the retention time correction etc
 od_x <- faahko_od
+mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+od_chrs <- chromatogram(od_x, mz = mzr)
 xod_x <- faahko_xod
 pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
 xod_xg <- groupChromPeaks(xod_x, param = pdp)
@@ -68,5 +70,8 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
 xs_1 <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
                 noise = 10000, snthresh = 50)
+
+
+
 
 test_check("xcms")

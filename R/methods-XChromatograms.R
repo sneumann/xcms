@@ -93,8 +93,18 @@ setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
 setMethod("filterMz", "XChromatograms", function(object, mz, ...) {
     if (missing(mz) || length(object) == 0)
         return(object)
+    pks_orig <- chromPeaks(object)
     object@.Data <- matrix(lapply(object, filterMz, mz = mz, ...),
                            nrow = nrow(object), dimnames = dimnames(object))
+    pks_sub <- chromPeaks(object)
+    if (hasFeatures(object)) {
+        fts <- .subset_features_on_chrom_peaks(
+            object@featureDefinitions, pks_orig, pks_sub)
+        fts$row <- vapply(fts$peakidx, function(z) {
+            as.integer(pks_sub[z, "row"][1])
+        }, integer(1))
+        object@featureDefinitions <- fts
+    }
     if (validObject(object)) object
 })
 
@@ -102,8 +112,18 @@ setMethod("filterMz", "XChromatograms", function(object, mz, ...) {
 setMethod("filterRt", "XChromatograms", function(object, rt, ...) {
     if (missing(rt) || length(object) == 0)
         return(object)
+    pks_orig <- chromPeaks(object)
     object@.Data <- matrix(lapply(object, filterRt, rt = rt, ...),
                            nrow = nrow(object), dimnames = dimnames(object))
+    pks_sub <- chromPeaks(object)
+    if (hasFeatures(object)) {
+        fts <- .subset_features_on_chrom_peaks(
+            object@featureDefinitions, pks_orig, pks_sub)
+        fts$row <- vapply(fts$peakidx, function(z) {
+            as.integer(pks_sub[z, "row"][1])
+        }, integer(1))
+        object@featureDefinitions <- fts
+    }
     if (validObject(object)) object
 })
 
@@ -375,32 +395,6 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
     if (validObject(x))
         x
 })
-
-#' Subset the chromPeaks matrix from an `XChromatograms` object. The
-#' `chromPeaks` matrix is generated dynamically from the `chromPeaks` matrices
-#' of each internal `XChromatogram` object, so there is not really a need to
-#' subset the `chromPeaks` from an `XChromatograms` - only that we need this
-#' to update the `"peakidx"` column of the `featureDefinitions`.
-#'
-#' Note: the chromPeaks matrix is extracted ordered by row.
-#'
-#' @author Johannes Rainer
-#'
-#' @noRd
-.subset_chrom_peaks_xchromatograms <- function(x, i, j) {
-    if (missing(i) & missing(j))
-        return(x)
-    if (missing(i)) i <- seq_len(nrow(x))
-    if (missing(j)) j <- seq_len(ncol(x))
-    x <- x[x[, "row"] %in% i & x[, "column"] %in% j, , drop = FALSE]
-    if (nrow(x)) {
-        ## x <- x[order(match(x[, "row"], i), match(x[, "column"], j)), ,
-        ##        drop = FALSE]
-        x[, "row"] <- match(x[, "row"], i)
-        x[, "column"] <- match(x[, "column"], j)
-        x[order(x[, "row"], x[, "column"]), , drop = FALSE]
-    } else x
-}
 
 #' @rdname XChromatogram
 setMethod("featureValues", "XChromatograms",

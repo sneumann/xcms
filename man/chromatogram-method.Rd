@@ -57,7 +57,8 @@ the number of columns corresponding to the number of files in
 \code{object} and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments \code{mz} and/or
 \code{rt}). All chromatographic peaks with their apex position within the
-m/z and retention time range are also retained.
+m/z and retention time range are also retained as well as all feature
+definitions for these peaks.
 }
 \description{
 \code{chromatogram}: the method allows to extract

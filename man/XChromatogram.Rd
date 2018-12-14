@@ -360,16 +360,19 @@ plots.
 \item \code{[} allows to subset a \code{XChromatograms} object by row (\code{i}) and column
 (\code{j}), with \code{i} and \code{j} being of type \code{integer}. The \code{featureDefinitions}
 will also be subsetted accordingly and the \code{peakidx} column updated.
-\item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram}, if
-a column \code{"mz"} is present in the \code{chromPeaks} matrix. This would be the
-case if the \code{XChromatogram} was extracted from an \code{\link[=XCMSnExp]{XCMSnExp()}} object with
-the \code{\link[=chromatogram]{chromatogram()}} function. All chromatographic peaks with their m/z
-within the m/z range defined by \code{mz} will be retained. The function
-returns a filtered \code{XChromatogram} object.
+\item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram} or
+\code{XChromatograms}, if a column \code{"mz"} is present in the \code{chromPeaks} matrix.
+This would be the case if the \code{XChromatogram} was extracted from an
+\code{\link[=XCMSnExp]{XCMSnExp()}} object with the \code{\link[=chromatogram]{chromatogram()}} function. All
+chromatographic peaks with their m/z within the m/z range defined by \code{mz}
+will be retained. Also feature definitions (if present) will be subset
+accordingly. The function returns a filtered \code{XChromatogram} or
+\code{XChromatograms} object.
 \item \code{filterRt} filters chromatogram(s) by the provided retention time range.
 All eventually present chromatographic peaks with their apex within the
-retention time range specified with \code{rt} will be retained. The function
-returns a filtered \code{XChromatogram} object.
+retention time range specified with \code{rt} will be retained. Also feature
+definitions, if present, will be filtered accordingly. The function
+returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 }
 }
 

@@ -59,3 +59,87 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
     expect_equal(unname(hasChromPeaks(xchrs2)[2, ]), c(FALSE, TRUE))
     expect_equal(chromPeaks(xchrs2[1, 2]), chromPeaks(xchr3))
 })
+
+test_that(".subset_chrom_peaks_xchromatograms works", {
+    ## Matrix is:    with elements
+    ## A B C D       2 1 3 1
+    ## E F G H       1 4 0 2
+    ## I J K L       3 2 1 3
+
+    testm <- data.frame(el = c("A", "A", "E", "I", "I", "I",
+                               "B", "F", "F", "F", "F", "J", "J",
+                               "C", "C", "C", "K",
+                               "D", "H", "H", "L", "L", "L"),
+                        row = c(1, 1, 2, 3, 3, 3,
+                                1, 2, 2, 2, 2, 3, 3,
+                                1, 1, 1, 3,
+                                1, 2, 2, 3, 3, 3),
+                        column = c(1, 1, 1, 1, 1, 1,
+                                   2, 2, 2, 2, 2, 2, 2,
+                                   3, 3, 3, 3,
+                                   4, 4, 4, 4, 4, 4),
+                        stringsAsFactors = FALSE)
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2:3, j = 2:4)
+    expect_equal(res$el,  c("F", "F", "F", "F", "H", "H",
+                            "J", "J", "K", "L", "L", "L"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2))
+    expect_equal(res$column, c(1, 1, 1, 1, 3, 3, 1, 1, 2, 3, 3, 3))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = c(3, 1), j = 2:4)
+    expect_equal(res$el, c("J", "J", "K", "L", "L", "L",
+                           "B", "C", "C", "C", "D"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2))
+    expect_equal(res$column, c(1, 1, 2, 3, 3, 3, 1, 2, 2, 2, 3))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2, j = c(3, 2))
+    expect_equal(res$el, c("F", "F", "F", "F"))
+    expect_equal(res$row, c(1, 1, 1, 1))
+    expect_equal(res$column, c(2, 2, 2, 2))
+
+    res <- .subset_chrom_peaks_xchromatograms(testm, i = 2, j = c(3, 2, 4))
+    expect_equal(res$el, c("F", "F", "F", "F", "H", "H"))
+    expect_equal(res$row, c(1, 1, 1, 1, 1, 1))
+    expect_equal(res$column, c(2, 2, 2, 2, 3, 3))
+
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    chrs <- chromatogram(od_x, mz = mzr)
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+
+    pks <- chromPeaks(chrs)
+    rownames(pks) <- letters[1:nrow(pks)]
+    res <- .subset_chrom_peaks_xchromatograms(pks, j = c(3, 1, 2))
+    expect_equal(rownames(res), c("f", "g", "a", "b", "c", "d", "e",
+                                  "l", "m", "h", "i", "j", "k"))
+    res <- .subset_chrom_peaks_xchromatograms(pks, i = c(2, 1), j = c(2, 1, 3))
+    expect_equal(rownames(res), c("j", "k", "h", "i", "l", "m",
+                                  "e", "a", "b", "c", "d", "f", "g"))
+})
+
+test_that(".subset_features_on_chrom_peaks works", {
+    chrs <- as(od_chrs, "XChromatograms")
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+
+    fts <- featureDefinitions(chrs)
+    pks <- chromPeaks(chrs)
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks)
+    expect_equal(fts, res)
+
+    pks_sub <- pks[1:2, ]
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
+    expect_equal(rownames(res), "FT1")
+    expect_equal(res$peakidx, list(1))
+
+    pks_sub <- pks[c(8, 10, 12), ]
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
+    expect_equal(rownames(res), "FT3")
+    expect_equal(res$peakidx, list(1:3))
+
+    pks_sub <- pks[2, , drop = FALSE]
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
+    expect_true(nrow(res) == 0)
+})

@@ -304,17 +304,20 @@ setMethod("plot", "XChromatogram", function(x, col = "#00000060", lty = 1,
 #'    (`j`), with `i` and `j` being of type `integer`. The `featureDefinitions`
 #'   will also be subsetted accordingly and the `peakidx` column updated.
 #'
-#' - `filterMz` filters the chromatographic peaks within an `XChromatogram`, if
-#'   a column `"mz"` is present in the `chromPeaks` matrix. This would be the
-#'   case if the `XChromatogram` was extracted from an [XCMSnExp()] object with
-#'   the [chromatogram()] function. All chromatographic peaks with their m/z
-#'   within the m/z range defined by `mz` will be retained. The function
-#'   returns a filtered `XChromatogram` object.
+#' - `filterMz` filters the chromatographic peaks within an `XChromatogram` or
+#'   `XChromatograms`, if a column `"mz"` is present in the `chromPeaks` matrix.
+#'   This would be the case if the `XChromatogram` was extracted from an
+#'   [XCMSnExp()] object with the [chromatogram()] function. All
+#'   chromatographic peaks with their m/z within the m/z range defined by `mz`
+#'   will be retained. Also feature definitions (if present) will be subset
+#'   accordingly. The function returns a filtered `XChromatogram` or
+#'   `XChromatograms` object.
 #'
 #' - `filterRt` filters chromatogram(s) by the provided retention time range.
 #'   All eventually present chromatographic peaks with their apex within the
-#'   retention time range specified with `rt` will be retained. The function
-#'   returns a filtered `XChromatogram` object.
+#'   retention time range specified with `rt` will be retained. Also feature
+#'   definitions, if present, will be filtered accordingly. The function
+#'   returns a filtered `XChromatogram` or `XChromatograms` object.
 #'
 #' @md
 setMethod("filterMz", "XChromatogram", function(object, mz, ...) {
