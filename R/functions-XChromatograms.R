@@ -72,6 +72,9 @@
 #' chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
 #' chrs
 #'
+#' ## --------------------------------------------------- ##
+#' ##       Chromatographic peak detection                ##
+#' ## --------------------------------------------------- ##
 #' ## Perform peak detection using CentWave
 #' xchrs <- findChromPeaks(chrs, param = CentWaveParam())
 #' xchrs
@@ -101,12 +104,26 @@
 #' plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
 #'     peakBg = NA)
 #'
+#' ## --------------------------------------------------- ##
+#' ##       Correspondence analysis                       ##
+#' ## --------------------------------------------------- ##
 #' ## Group chromatographic peaks across samples
 #' prm <- PeakDensityParam(sampleGroup = rep(1, 3))
 #' res <- groupChromPeaks(xchrs, param = prm)
 #'
 #' hasFeatures(res)
 #' featureDefinitions(res)
+#'
+#' ## Plot the correspondence results. Use simulate = FALSE to show the
+#' ## actual results. Grouped chromatographic peaks are indicated with
+#' ## grey shaded rectangles.
+#' plotChromPeakDensity(res, simulate = FALSE)
+#'
+#' ## Simulate a correspondence analysis based on different settings. Larger
+#' ## bw will increase the smoothing of the density estimate hence grouping
+#' ## chromatographic peaks that are more apart on the retention time axis.
+#' prm <- PeakDensityParam(sampleGroup = rep(1, 3), bw = 60)
+#' plotChromPeakDensity(res, param = prm)
 #'
 #' ## Delete the identified feature definitions
 #' res <- dropFeatureDefinitions(res)
@@ -183,4 +200,110 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
         x[, "column"] <- match(x[, "column"], j)
         x[order(x[, "row"], x[, "column"]), , drop = FALSE]
     } else x
+}
+
+#' Convenience function to plot a peak density given provided chromPeaks and
+#' a PeakDensityParam object.
+#'
+#' @param pks `matrix` with chromatographic peaks.
+#'
+#' @param param `PeakDensityParam`
+#'
+#' @param xlim optional definition of the x-axis limits.
+#'
+#' @param main optional title.
+#'
+#' @param xlab, ylab x- and y-axis labels.
+#'
+#' @param peakCol foreground color definition for peaks. Either 1 or length
+#'     equal to `ncol(pks`).
+#'
+#' @param peakBg background color definition for peaks.
+#'
+#' @param peakPch point character.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.plot_chrom_peak_density <- function(pks, fts, param, xlim = range(pks[, "rt"]),
+                                     main = NA, xlab = "retention time",
+                                     ylab = "sample", peakCol = "#00000060",
+                                     peakBg = "#00000020", peakPch = 1,
+                                     simulate = TRUE, col = "black", ...) {
+    pks_count <- nrow(pks)
+    if (pks_count) {
+        smpl_col <- which(colnames(pks) == "sample")
+        if (!length(smpl_col))
+            smpl_col <- which(colnames(pks) == "column")
+        if (length(peakCol) == 1)
+            peakCol <- rep(peakCol, pks_count)
+        if (length(peakBg) == 1)
+            peakBg <- rep(peakBg, pks_count)
+        if (length(peakPch) == 1)
+            peakPch <- rep(peakPch, pks_count)
+        if (length(peakCol) != pks_count) {
+            warning("Length of 'peakCol' does not match the number of peaks. ",
+                    "Using peakCol[1] for all.")
+            peakCol <- rep(peakCol[1], pks_count)
+        }
+        if (length(peakBg) != pks_count) {
+            warning("Length of 'peakBg' does not match the number of peaks. ",
+                    "Using peakBg[1] for all.")
+            peakBg <- rep(peakBg[1], pks_count)
+        }
+        if (length(peakPch) != pks_count) {
+            warning("Length of 'peakPch' does not match the number of peaks. ",
+                    "Using peakPch[1] for all.")
+            peakPch <- rep(peakPch[1], pks_count)
+        }
+        bw <- bw(param)
+        full_rt_range <- range(pks[, "rt"])
+        dens_from <- full_rt_range[1] - 3 * bw
+        dens_to <- full_rt_range[2] + 3 * bw
+        densN <- max(512, 2 * 2^(ceiling(log2(diff(full_rt_range) / (bw / 2)))))
+        sample_groups <- sampleGroups(param)
+        dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to,
+                        n = densN)
+        yl <- c(0, max(dens$y))
+        min_max_smple <- range(pks[, smpl_col])
+        ypos <- seq(from = yl[1], to = yl[2],
+                    length.out = diff(min_max_smple) + 1)
+        plot(pks[, "rt"], ypos[pks[, smpl_col]], xlim = xlim, ylim = yl,
+             main = main, yaxt = "n", ylab = ylab, xlab = xlab,
+             col = peakCol, bg = peakBg, pch = peakPch, ...)
+        points(x = dens$x, y = dens$y, type = "l", ...)
+        axis(side = 2, at = ypos, labels = seq(from = min_max_smple[1],
+                                               to = min_max_smple[2]))
+        sample_groups <- sampleGroups(param)
+        sample_groups_table <- table(sample_groups)
+        dens_max <- max(dens$y)
+        if (simulate) {
+            snum <- 0
+            while(dens$y[max_y <- which.max(dens$y)] > dens_max / 20 &&
+                  snum < maxFeatures(param)) {
+                      feat_range <- descendMin(dens$y, max_y)
+                      dens$y[feat_range[1]:feat_range[2]] <- 0
+                      feat_idx <- which(pks[, "rt"] >= dens$x[feat_range[1]] &
+                                        pks[, "rt"] <= dens$x[feat_range[2]])
+                      tt <- table(sample_groups[pks[feat_idx, smpl_col]])
+                      if (!any(tt / sample_groups_table[names(tt)] >=
+                               minFraction(param) & tt >= minSamples(param)))
+                          next
+                      rect(xleft = min(pks[feat_idx, "rt"]), ybottom = yl[1],
+                           xright = max(pks[feat_idx, "rt"]), ytop = yl[2],
+                           border = "#00000040", col = "#00000020")
+                  }
+        } else {
+            if (!missing(fts) && nrow(fts)) {
+                rect(xleft = fts$rtmin, xright = fts$rtmax,
+                     ybottom = rep(yl[1], nrow(fts)),
+                     ytop = rep(yl[2], nrow(fts)),
+                     border = "#00000040", col = "#00000020")
+                abline(v = fts$rtmed, col = "#00000040", lty = 2)
+            } else warning("No feature definitions present. Either use ",
+                           "'groupChromPeaks' first or set 'simulate = TRUE'")
+        }
+    } else {
+        plot(3, 3, pch = NA, xlim = xlim, main = main, xlab = xlab, ylab = ylab)
+    }
 }

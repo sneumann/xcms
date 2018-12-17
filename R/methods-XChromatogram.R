@@ -199,6 +199,9 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #'   it might be better to set `peakType = "none"` to avoid generating busy
 #'   plots.
 #'
+#' - `plotChromPeakDensity`: visualize *peak density*-based correspondence
+#'   analysis results. See section *Correspondence analysis* for more details.
+#'
 #' @note
 #'
 #' Highlighting the peak area(s) in an `XChromatogram` or `XChromatograms`
@@ -213,36 +216,47 @@ setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
 #'
 #' @param col For `plot`: the color to be used to draw the chromatogram.
 #'
-#' @param lty For `plot`: the line type.
+#' @param lty For `plot` and `plotChromPeakDensity`: the line type.
 #'
-#' @param xlab For `plot`: the x axis label.
+#' @param xlab For `plot` and `plotChromPeakDensity`: the x axis label.
 #'
 #' @param ylab For `plot`: the y axis label.
 #'
-#' @param main For `plot`: an optional title for the plot.
+#' @param main For `plot` and `plotChromPeakDensity`: an optional title for
+#'     the plot.
 #'
-#' @param peakType For `plot`: `character(1)` defining how (and if) identified
-#'     chromatographic peak within the chromatogram should be plotted. Options
+#' @param peakType For `plot` and `plotChromPeakDensity`:
+#'     `character(1)` defining how (and if) identified chromatographic peak
+#'     within the chromatogram should be plotted. Options
 #'     are `"polygon"` (default): draw the peak borders with the `peakCol` color
 #'     and fill the peak area with the `peakBg` color, `"point"`: indicate the
 #'     peak's apex with a point, `"rectangle"`: draw a rectangle around the
 #'     identified peak and `"none"`: don't draw peaks.
 #'
-#' @param peakCol For `plot`: the foreground color for the peaks.
-#'     For `peakType = "polygon"` and `peakType = "rectangle"` this is the
-#'     color for the border. Use `NA` to not use a foreground color. This
-#'     should either be a single color or a vector of colors with the same
-#'     length than `chromPeaks(x)` has rows.
+#' @param peakCol For `plot` and `plotChromPeakDensity`: the foreground color
+#'     for the peaks. For `peakType = "polygon"` and `peakType = "rectangle"`
+#'     this is the color for the border. Use `NA` to not use a foreground
+#'     color. This should either be a single color or a vector of colors with
+#'     the same length than `chromPeaks(x)` has rows.
 #'
-#' @param peakBg For `plot`: the background color for the peaks. For
-#'     `peakType = "polygon"` and `peakType = "rectangle"` the peak are or
-#'     rectangle will be filled with this color. Use `NA` to skip. This should
-#'     be either a single color or a vector of colors with the same length than
-#'     `chromPeaks(x)` has rows.
+#' @param peakBg For `plot` and `plotChromPeakDensity`: the background color
+#'     for the peaks. For `peakType = "polygon"` and `peakType = "rectangle"`
+#'     the peak are or rectangle will be filled with this color. Use `NA` to
+#'     skip. This should be either a single color or a vector of colors with
+#'     the same length than `chromPeaks(x)` has rows.
 #'
-#' @param peakPch For `plot`: the point character to be used for
-#'     `peakType = "point"`. See [plot()] in the `graphics` package for more
-#'     details.
+#' @param peakPch For `plot` and `plotChromPeakDensity`: the point character
+#'     to be used for `peakType = "point"`. See [plot()] in the `graphics`
+#'     package for more details.
+#'
+#' @param param For `groupChromPeaks` and `plotChromPeakDensity`: a
+#'     [PeakDensityParam()] object with the settings for the *peak density*
+#'     correspondence analysis algorithm.
+#'
+#' @param simulate For `plotChromPeakDensity`: `logical(1)` whether a
+#'     correspondence analysis should be *simulated* based on the available
+#'     data and the provided [PeakDensityParam()] `param` argument. See
+#'     section *Correspondence analysis* for details.
 #'
 #' @md
 #'

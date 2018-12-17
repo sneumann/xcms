@@ -29,6 +29,7 @@
 \alias{featureDefinitions,XChromatograms-method}
 \alias{[,XChromatograms,ANY,ANY,ANY-method}
 \alias{featureValues,XChromatograms-method}
+\alias{plotChromPeakDensity,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -89,6 +90,12 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{featureValues}{XChromatograms}(object, method = c("medret",
   "maxint", "sum"), value = "index", intensity = "into",
   missing = NA, ...)
+
+\S4method{plotChromPeakDensity}{XChromatograms}(object, param,
+  col = "#00000060", xlab = "retention time", main = NULL,
+  peakType = c("polygon", "point", "rectangle", "none"),
+  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1,
+  simulate = TRUE, ...)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -189,43 +196,46 @@ To return the integrated peak area instead of the index use
 
 \item{col}{For \code{plot}: the color to be used to draw the chromatogram.}
 
-\item{lty}{For \code{plot}: the line type.}
+\item{lty}{For \code{plot} and \code{plotChromPeakDensity}: the line type.}
 
-\item{xlab}{For \code{plot}: the x axis label.}
+\item{xlab}{For \code{plot} and \code{plotChromPeakDensity}: the x axis label.}
 
 \item{ylab}{For \code{plot}: the y axis label.}
 
-\item{main}{For \code{plot}: an optional title for the plot.}
+\item{main}{For \code{plot} and \code{plotChromPeakDensity}: an optional title for
+the plot.}
 
-\item{peakType}{For \code{plot}: \code{character(1)} defining how (and if) identified
-chromatographic peak within the chromatogram should be plotted. Options
+\item{peakType}{For \code{plot} and \code{plotChromPeakDensity}:
+\code{character(1)} defining how (and if) identified chromatographic peak
+within the chromatogram should be plotted. Options
 are \code{"polygon"} (default): draw the peak borders with the \code{peakCol} color
 and fill the peak area with the \code{peakBg} color, \code{"point"}: indicate the
 peak's apex with a point, \code{"rectangle"}: draw a rectangle around the
 identified peak and \code{"none"}: don't draw peaks.}
 
-\item{peakCol}{For \code{plot}: the foreground color for the peaks.
-For \code{peakType = "polygon"} and \code{peakType = "rectangle"} this is the
-color for the border. Use \code{NA} to not use a foreground color. This
-should either be a single color or a vector of colors with the same
-length than \code{chromPeaks(x)} has rows.}
+\item{peakCol}{For \code{plot} and \code{plotChromPeakDensity}: the foreground color
+for the peaks. For \code{peakType = "polygon"} and \code{peakType = "rectangle"}
+this is the color for the border. Use \code{NA} to not use a foreground
+color. This should either be a single color or a vector of colors with
+the same length than \code{chromPeaks(x)} has rows.}
 
-\item{peakBg}{For \code{plot}: the background color for the peaks. For
-\code{peakType = "polygon"} and \code{peakType = "rectangle"} the peak are or
-rectangle will be filled with this color. Use \code{NA} to skip. This should
-be either a single color or a vector of colors with the same length than
-\code{chromPeaks(x)} has rows.}
+\item{peakBg}{For \code{plot} and \code{plotChromPeakDensity}: the background color
+for the peaks. For \code{peakType = "polygon"} and \code{peakType = "rectangle"}
+the peak are or rectangle will be filled with this color. Use \code{NA} to
+skip. This should be either a single color or a vector of colors with
+the same length than \code{chromPeaks(x)} has rows.}
 
-\item{peakPch}{For \code{plot}: the point character to be used for
-\code{peakType = "point"}. See \code{\link[=plot]{plot()}} in the \code{graphics} package for more
-details.}
+\item{peakPch}{For \code{plot} and \code{plotChromPeakDensity}: the point character
+to be used for \code{peakType = "point"}. See \code{\link[=plot]{plot()}} in the \code{graphics}
+package for more details.}
 
 \item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
 index of the files/samples for which the \link{ProcessHistory} objects should
 be returned.}
 
-\item{param}{For \code{groupChromPeaks}: a \code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the
-settings for the \emph{peak density} correspondence analysis algorithm.}
+\item{param}{For \code{groupChromPeaks} and \code{plotChromPeakDensity}: a
+\code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the settings for the \emph{peak density}
+correspondence analysis algorithm.}
 
 \item{i}{For \code{[}: \code{integer} with the row indices to subset the
 \code{XChromatograms} object.}
@@ -248,6 +258,11 @@ of all peaks (only if \code{value} is \code{"into"} or \code{"maxo"}).}
 Allowed values are \code{NA} (default), a \code{numeric(1)} to replace \code{NA}s with
 that value or \code{missing = "rowmin_half"} to replace \code{NA}s with half
 of the row's minimal (non-missing) value.}
+
+\item{simulate}{For \code{plotChromPeakDensity}: \code{logical(1)} whether a
+correspondence analysis should be \emph{simulated} based on the available
+data and the provided \code{\link[=PeakDensityParam]{PeakDensityParam()}} \code{param} argument. See
+section \emph{Correspondence analysis} for details.}
 }
 \value{
 See help of the individual functions.
@@ -351,6 +366,8 @@ defining one color for each peak (in the order as peaks are in
 \code{chromPeaks(x))}. For base peak chromatograms or total ion chromatograms
 it might be better to set \code{peakType = "none"} to avoid generating busy
 plots.
+\item \code{plotChromPeakDensity}: visualize \emph{peak density}-based correspondence
+analysis results. See section \emph{Correspondence analysis} for more details.
 }
 }
 
@@ -376,6 +393,12 @@ returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 }
 }
 
+\section{Chromatographic peak detection}{
+
+
+See \link{findChromPeaks-Chromatogram-CentWaveParam} for information.
+}
+
 \section{Correspondence analysis}{
 
 
@@ -391,6 +414,23 @@ The analysis results are stored in the returned \code{XChromatograms} object
 and can be accessed with the \code{featureDefinitions} method which returns a
 \code{DataFrame} with one row for each feature. Column \code{"row"} specifies in
 which row of the \code{XChromatograms} object the feature was identified.
+
+The \code{plotChromPeakDensity} method can be used to visualize \emph{peak density}
+correspondence results, or to \emph{simulate} a peak density correspondence
+analysis on chromatographic data. The resulting plot consists of two panels,
+the upper panel showing the chromatographic data as well as the identified
+chromatographic peaks, the lower panel the distribution of peaks (the peak
+density) along the retention time axis. This plot shows each peak as a point
+with it's peak's retention time on the x-axis, and the sample in which it
+was found on the y-axis. The distribution of peaks along the retention time
+axis is visualized with a density estimate. Grouped chromatographic peaks
+are indicated with grey shaded rectangles. Parameter \code{simulate} allows to
+define whether the correspondence analysis should be simulated (
+\code{simulate=TRUE}, based on the available data and the provided
+\code{\link[=PeakDensityParam]{PeakDensityParam()}} parameter class) or not (\code{simulate=FALSE}). For the
+latter it is assumed that a correspondence analysis has been performed with
+the \emph{peak density} method on the \code{object}.
+See examples below.
 
 Abundance estimates for each feature can be extracted with the
 \code{featureValues} function using parameter \code{value = "into"} to extract the
@@ -433,6 +473,9 @@ od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
 chrs <- chromatogram(od, mz = 344, rt = c(2500, 3500))
 chrs
 
+## --------------------------------------------------- ##
+##       Chromatographic peak detection                ##
+## --------------------------------------------------- ##
 ## Perform peak detection using CentWave
 xchrs <- findChromPeaks(chrs, param = CentWaveParam())
 xchrs
@@ -462,12 +505,26 @@ plot(xchrs, col = sample_colors, peakBg = cols)
 plot(xchrs, col = sample_colors, peakCol = cols, peakType = "rectangle",
     peakBg = NA)
 
+## --------------------------------------------------- ##
+##       Correspondence analysis                       ##
+## --------------------------------------------------- ##
 ## Group chromatographic peaks across samples
 prm <- PeakDensityParam(sampleGroup = rep(1, 3))
 res <- groupChromPeaks(xchrs, param = prm)
 
 hasFeatures(res)
 featureDefinitions(res)
+
+## Plot the correspondence results. Use simulate = FALSE to show the
+## actual results. Grouped chromatographic peaks are indicated with
+## grey shaded rectangles.
+plotChromPeakDensity(res, simulate = FALSE)
+
+## Simulate a correspondence analysis based on different settings. Larger
+## bw will increase the smoothing of the density estimate hence grouping
+## chromatographic peaks that are more apart on the retention time axis.
+prm <- PeakDensityParam(sampleGroup = rep(1, 3), bw = 60)
+plotChromPeakDensity(res, param = prm)
 
 ## Delete the identified feature definitions
 res <- dropFeatureDefinitions(res)

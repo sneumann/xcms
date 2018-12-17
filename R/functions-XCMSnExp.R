@@ -845,6 +845,13 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
                                  ylab = "sample", xlim = range(rt),
                                  main = NULL, type = c("any", "within",
                                                        "apex_within"), ...) {
+    .Deprecated(
+        msg = paste0("Use of 'plotChromPeakDensity' on 'XCMSnExp' is",
+                     "discouraged. Please extract chromatographic ",
+                     "data first and call 'plotChromPeakDensity' ",
+                     "directly on the 'XChromatograms' object. See ",
+                     "?XChromatograms, section 'Correspondence ",
+                     "analysis' for more details."))
     type <- match.arg(type)
     if (missing(object))
         stop("Required parameter 'object' is missing")

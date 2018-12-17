@@ -50,6 +50,26 @@ updateFileIndex <- function(x, old = integer(), new = integer()) {
     return(x)
 }
 
+#' For subsetting samples/columns, ensure that both fileIndex and e.g.
+#' sampleClass are OK.
+#'
+#' @noRd
+.process_history_subset_samples <- function(x, j = integer()) {
+    x <- lapply(x, function(z) {
+        z@fileIndex <- seq_along(j)
+        if (is(z, "XProcessHistory")) {
+            prm <- z@param
+            if (is(prm, "PeakDensityParam") | is(prm, "MzClustParam") |
+                is (prm, "NearestPeaksParam")) {
+                prm@sampleGroups <- prm@sampleGroups[j]
+            }
+            z@param <- prm
+        }
+        z
+    })
+    x
+}
+
 ############################################################
 ## XProcessHistory
 XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
@@ -76,7 +96,7 @@ XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
 #'     function was called. Usually `1:length(fileNames(xs))`.
 #'
 #' @md
-#' 
+#'
 #' @noRd
 GenericProcessHistory <- function(fun, args = list(), msLevel = NA_integer_,
                                   date. = date(), fileIndex. = NA_integer_) {
@@ -129,4 +149,3 @@ dropProcessHistoriesList <- function(x, type, num = -1) {
     }
     return(x)
 }
-

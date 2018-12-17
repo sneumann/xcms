@@ -343,3 +343,24 @@ test_that("featureValues,XChromatograms works", {
     expect_equal(rownames(vls_sub), rownames(featureDefinitions(chrs_sub)))
     expect_equal(vls_sub, vls[c(3, 4, 1), 2, drop = FALSE])
 })
+
+test_that("plotChromPeakDensity,XChromatograms works", {
+    chrs <- as(od_chrs, "XChromatograms")
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    chrs <- groupChromPeaks(chrs, param = prm)
+    expect_error(plotChromPeakDensity(chrs))
+    frst <- chrs[1, ]
+    library(RColorBrewer)
+    plotChromPeakDensity(frst, peakBg = paste0(brewer.pal(7, "Set1"), 60),
+                         peakPch = 16, peakCol = paste0(brewer.pal(7, "Set1")))
+    plotChromPeakDensity(frst, peakBg = paste0(brewer.pal(7, "Set1"), 60),
+                         peakPch = 16, peakCol = paste0(brewer.pal(7, "Set1")),
+                         simulate = FALSE)
+    frst <- dropFeatureDefinitions(frst)
+    expect_error(plotChromPeakDensity(frst))
+    plotChromPeakDensity(frst, param = prm)
+    scnd <- chrs[2, ]
+    plotChromPeakDensity(scnd)
+    plotChromPeakDensity(scnd[, c(1, 3)])
+})

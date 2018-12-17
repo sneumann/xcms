@@ -223,6 +223,10 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 
 #' @rdname XChromatogram
 #'
+#' @section Chromatographic peak detection:
+#'
+#' See [findChromPeaks-Chromatogram-CentWaveParam] for information.
+#'
 #' @section Correspondence analysis:
 #'
 #' Identified chromatographic peaks in an `XChromatograms` object can be grouped
@@ -238,13 +242,27 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 #' `DataFrame` with one row for each feature. Column `"row"` specifies in
 #' which row of the `XChromatograms` object the feature was identified.
 #'
+#' The `plotChromPeakDensity` method can be used to visualize *peak density*
+#' correspondence results, or to *simulate* a peak density correspondence
+#' analysis on chromatographic data. The resulting plot consists of two panels,
+#' the upper panel showing the chromatographic data as well as the identified
+#' chromatographic peaks, the lower panel the distribution of peaks (the peak
+#' density) along the retention time axis. This plot shows each peak as a point
+#' with it's peak's retention time on the x-axis, and the sample in which it
+#' was found on the y-axis. The distribution of peaks along the retention time
+#' axis is visualized with a density estimate. Grouped chromatographic peaks
+#' are indicated with grey shaded rectangles. Parameter `simulate` allows to
+#' define whether the correspondence analysis should be simulated (
+#' `simulate=TRUE`, based on the available data and the provided
+#' [PeakDensityParam()] parameter class) or not (`simulate=FALSE`). For the
+#' latter it is assumed that a correspondence analysis has been performed with
+#' the *peak density* method on the `object`.
+#' See examples below.
+#'
 #' Abundance estimates for each feature can be extracted with the
 #' `featureValues` function using parameter `value = "into"` to extract the
 #' integrated peak area for each feature. The result is a `matrix`, columns
 #' being samples and rows features.
-#'
-#' @param param For `groupChromPeaks`: a [PeakDensityParam()] object with the
-#'     settings for the *peak density* correspondence analysis algorithm.
 #'
 #' @md
 setMethod("groupChromPeaks",
@@ -378,6 +396,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         return(x@.Data[i, j, drop = TRUE][[1]])
     cpeaks_orig <- chromPeaks(x)
     fts <- featureDefinitions(x)
+    ph <- x@.processHistory
     x <- callNextMethod()
     if (nrow(fts)) {
         rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
@@ -392,6 +411,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
         x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
     }
+    x@.processHistory <- .process_history_subset_samples(ph, j = j)
     if (validObject(x))
         x
 })
@@ -426,4 +446,58 @@ setMethod("featureValues", "XChromatograms",
                               method = method, value = value,
                               intensity = intensity, colnames = cnames,
                               missing = missing)
+})
+
+#' @rdname XChromatogram
+setMethod("plotChromPeakDensity", "XChromatograms",
+          function(object, param, col = "#00000060", xlab = "retention time",
+                   main = NULL, peakType = c("polygon", "point", "rectangle",
+                                             "none"), peakCol = "#00000060",
+                   peakBg = "#00000020", peakPch = 1, simulate = TRUE, ...) {
+              peakType <- match.arg(peakType)
+              if (!any(hasChromPeaks(object)))
+                  stop("No chromatographic peaks present. Please run ",
+                       "'findChromPeaks' first.", call. = FALSE)
+              if (nrow(object) > 1)
+                  stop("Currently only plotting of a single chromatogram in ",
+                       "multiple samples is supported. Please subset 'object' ",
+                       "to one row.", call. = FALSE)
+              if (missing(param)) {
+                  param <- NULL
+                  if (hasFeatures(object)) {
+                      ph <- processHistory(object,
+                                           type = xcms:::.PROCSTEP.PEAK.GROUPING)
+                      if (length(ph)) {
+                          ph <- ph[[length(ph)]]
+                          if (is(ph, "XProcessHistory") &&
+                              is(ph@param, "PeakDensityParam"))
+                              param <- ph@param
+                      }
+                  }
+              }
+              if (!length(param))
+                  stop("Object 'param' is missing", call. = FALSE)
+              fts <- NULL
+              if (!simulate && hasFeatures(object))
+                  fts <- featureDefinitions(object)
+              mr <- par("mar")
+              mr_1 <- mr[1]
+              mr_3 <- mr[3]
+              mr[1] <- 0
+              xl <- range(lapply(object, function(z) range(rtime(z))))
+              par(mfrow = c(2, 1), mar = mr)
+              plot(object, col = col, xlab = NA, xaxt = "n", main = main,
+                   peakType = peakType, peakCol = peakCol, peakBg = peakBg,
+                   peakPch = peakPch, xlim = xl, ...)
+              mr[1] <- mr_1
+              mr[3] <- 0
+              par(mar = mr)
+              .plot_chrom_peak_density(chromPeaks(object), fts = fts, col = col,
+                                       param = param, xlab = xlab, xlim = xl,
+                                       peakCol = peakCol, peakBg = peakBg,
+                                       peakPch = peakPch, simulate = simulate,
+                                       ...)
+              mr[1] <- mr_1
+              mr[3] <- mr_3
+              par(mar = mr)
 })

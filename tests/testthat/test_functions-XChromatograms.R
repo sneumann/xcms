@@ -143,3 +143,24 @@ test_that(".subset_features_on_chrom_peaks works", {
     res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
     expect_true(nrow(res) == 0)
 })
+
+test_that(".plot_chrom_peak_density works", {
+    chrs <- as(od_chrs, "XChromatograms")
+    chrs <- findChromPeaks(chrs, param = CentWaveParam())
+
+    pks_1 <- chromPeaks(chrs[1, ])
+    prm <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+    .plot_chrom_peak_density(pks_1, param = prm, lwd = 2)
+    expect_warning(.plot_chrom_peak_density(pks_1, param = prm,
+                                            peakCol = c(1, 2)))
+    ## An individual color for each point.
+    .plot_chrom_peak_density(pks_1, param = prm, peakCol = 1:nrow(pks_1),
+                             peakPch = 16)
+
+    chrs <- groupChromPeaks(chrs, param = prm)
+    pks_1 <- chromPeaks(chrs[1, ])
+    fts_1 <- featureDefinitions(chrs[1, ])
+    .plot_chrom_peak_density(pks_1, fts = fts_1, param = prm,
+                             peakCol = 1:nrow(pks_1), peakPch = 16,
+                             simulate = FALSE)
+})
