@@ -2054,7 +2054,15 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'
 #' @description
 #'
-#' Extract ion chromatograms for each feature in an [XCMSnExp-class] object.
+#' Extract ion chromatograms for features in an [XCMSnExp-class] object. The
+#' function returns for each feature its extracted ion chromatogram and all
+#' associated peaks with it.
+#'
+#' By default only chromatographic peaks associated with a feature are included
+#' for an extracted ion chromatogram. Setting `include = "all"` (instead of
+#' the default `include = "feature_only"`) will return all chromatographic peaks
+#' identified in the m/z - rt data slice of a feature (and eventually also other
+#' features within that region).
 #'
 #' @param x `XCMSnExp` object with grouped chromatographic peaks.
 #'
@@ -2071,10 +2079,14 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'     of the features in `featureDefinitions`, feature IDs (row names of
 #'     `featureDefinitions`) or a logical vector.
 #'
+#' @param include `character(1)` defining which chromatographic peaks and
+#'     feature definitions should be included in the returned
+#'     [XChromatograms()]. See description above for details.
+#'
 #' @param ... optional arguments to be passed along to the [chromatogram()]
 #'     function.
 #'
-#' @return [Chromatograms] object.
+#' @return [XChromatograms()] object.
 #'
 #' @md
 #'
@@ -2103,7 +2115,9 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' par(mfrow = c(1, 2))
 #' plot(chrs[1, ], col = c("red", "green", "blue"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
-                                 features, ...) {
+                                 features, include = c("feature_only", "all"),
+                                 ...) {
+    include <- match.arg(include)
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run first 'groupChromPeaks'")
     if (!missing(features)) {
@@ -2126,17 +2140,40 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
     if (!length(features))
         return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
     pks <- chromPeaks(x)
-    mat <- do.call(rbind, lapply(featureDefinitions(x)$peakidx[features],
-                                 function(z) {
-                                     pks_current <- pks[z, , drop = FALSE]
-                                     c(range(pks_current[, c("rtmin", "rtmax")]),
-                                       range(pks_current[, c("mzmin", "mzmax")]))
+    if (length(unique(rownames(pks))) != nrow(pks)) {
+        rownames(pks) <- .featureIDs(nrow(pks), "CP")
+        rownames(chromPeaks(x)) <- rownames(pks)
+    }
+
+    pk_idx <- featureDefinitions(x)$peakidx[features]
+    mat <- do.call(rbind, lapply(pk_idx, function(z) {
+        pks_current <- pks[z, , drop = FALSE]
+        c(range(pks_current[, c("rtmin", "rtmax")]),
+          range(pks_current[, c("mzmin", "mzmax")]))
     }))
     mat[, 1] <- mat[, 1] - expandRt
     mat[, 2] <- mat[, 2] + expandRt
     colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
-    chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
-                 aggregationFun = aggregationFun, ...)
+    chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
+                         aggregationFun = aggregationFun, ...)
+    if (include == "feature_only") {
+        pk_ids <- lapply(pk_idx, function(z) rownames(pks)[z])
+        fts_all <- featureDefinitions(chrs)
+        pks_all <- chromPeaks(chrs)
+        chrs@featureDefinitions <- fts_all[integer(), ]
+        for (i in 1:nrow(chrs)) {
+            for (j in 1:ncol(chrs)) {
+                cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
+                if (nrow(cur_pks))
+                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[
+                        rownames(cur_pks) %in% pk_ids[[i]], , drop = FALSE]
+            }
+        }
+        chrs@featureDefinitions <- .subset_features_on_chrom_peaks(
+            fts_all, pks_all, chromPeaks(chrs))
+    }
+    if (validObject(chrs))
+        chrs
 }
 
 #' @description

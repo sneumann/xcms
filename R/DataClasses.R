@@ -1366,10 +1366,16 @@ setClass("CentWavePredIsoParam",
 #'
 #' @family peak grouping methods
 #'
-#' @seealso \code{\link{group}} for the \emph{old} peak grouping methods.
-#'     \code{\link{featureDefinitions}} and
-#'     \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
-#'     grouping results.
+#' @seealso
+#'
+#' \code{\link{featureDefinitions}} and
+#' \code{\link{featureValues,XCMSnExp-method}} for methods to access peak
+#' grouping results.
+#'
+#' \code{\link{featureChromatograms}} to extract ion chromatograms for each
+#' feature.
+#'
+#' \code{\link{group}} for the \emph{old} peak grouping methods.
 #'
 #' @author Johannes Rainer
 NULL

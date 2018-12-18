@@ -1,5 +1,7 @@
 Changes in version 3.5.1
 
+- featureChromatograms extracts by default only chromatographic peaks associated
+  with a feature.
 - chromatogram,XCMSnExp extracts an XChromatogram containing also
   chromatographic peaks and feature definitions.
 - Add featureValues method for XChromatograms objects (issue #336).
