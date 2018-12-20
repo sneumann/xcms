@@ -47,13 +47,13 @@
 #'
 #' @param mz Numeric vector with the individual m/z values from all scans/
 #'     spectra of one file/sample.
-#' 
+#'
 #' @param int Numeric vector with the individual intensity values from all
 #'     scans/spectra of one file/sample.
-#' 
+#'
 #' @param scantime Numeric vector of length equal to the number of
 #'     spectra/scans of the data representing the retention time of each scan.
-#' 
+#'
 #' @param valsPerSpect Numeric vector with the number of values for each
 #'     spectrum.
 #'
@@ -62,7 +62,7 @@
 #'     generated visualizing the identified chromatographic peak. Note: this
 #'     argument is for backward compatibility only and will be removed in
 #'     future.
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
 #'
 #' @family core peak detection functions
@@ -76,7 +76,7 @@
 #'     A matrix, each row representing an identified chromatographic peak,
 #'     with columns:
 #'     \describe{
-#' 
+#'
 #'     \item{mz}{Intensity weighted mean of m/z values of the peak across
 #'     scans.}
 #'     \item{mzmin}{Minimum m/z of the peak.}
@@ -93,7 +93,7 @@
 #'     }
 #'     Additional columns for \code{verboseColumns = TRUE}:
 #'     \describe{
-#' 
+#'
 #'     \item{mu}{Gaussian parameter mu.}
 #'     \item{sigma}{Gaussian parameter sigma.}
 #'     \item{h}{Gaussian parameter h.}
@@ -104,7 +104,7 @@
 #'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 #'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 #'     }
-#' 
+#'
 #' @author Ralf Tautenhahn, Johannes Rainer
 #'
 #' @seealso \code{\link{centWave}} for the standard user interface method.
@@ -491,7 +491,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             mzmean <- do.call(mzCenterFun,
                                               list(mz = mz.value,
                                                    intensity = mz.int))
-                            
+
                             ## Compute dppm only if needed
                             dppm <- NA
                             if (verboseColumns) {
@@ -556,7 +556,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm <- .narrow_rt_boundaries(lm, d)
                 lm_seq <- lm[1]:lm[2]
                 pd <- d[lm_seq]
-                
+
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
                 peaks[p, "rtmax"] <- scantime[peakrange[2]]
@@ -704,7 +704,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 ##    measured intensity. This avoids mz ranges from 0 to max mz of the peak,
 ##    with the mz=0 corresponding actually to scans in which no intensity was
 ##    measured. Search for "@MOD1" to jump to the respective code.
-## 
+##
 ## 2) The intensities for the peak are reloaded with the refined mz range during
 ##    the postprocessing. Search for "@MOD2" to jump to the respective code.
 ##
@@ -1126,7 +1126,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                 lm <- .narrow_rt_boundaries(lm, d)
                 lm_seq <- lm[1]:lm[2]
                 pd <- current_ints[lm_seq]
-                
+
                 peakrange <- td[lm]
                 peaks[p, "rtmin"] <- scantime[peakrange[1]]
                 peaks[p, "rtmax"] <- scantime[peakrange[2]]
@@ -1203,7 +1203,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
     if (!verboseColumns)
         p <- p[, basenames, drop = FALSE]
     return(p)
-    
+
     uorder <- order(p[, "into"], decreasing = TRUE)
     pm <- as.matrix(p[,c("mzmin", "mzmax", "rtmin", "rtmax"), drop = FALSE])
     uindex <- rectUnique(pm, uorder, mzdiff, ydiff = -0.00001) ## allow adjacent peaks
@@ -1243,7 +1243,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 #'     The \code{ppm} and \code{checkBack} parameters have shown less influence
 #'     than the other parameters and exist to give users flexibility and
 #'     better accuracy.
-#' 
+#'
 #' @inheritParams do_findChromPeaks_centWave
 #'
 #' @inheritParams findChromPeaks-centWave
@@ -1264,12 +1264,12 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
 #'     \item{into}{Integrated (original) intensity of the peak.}
 #'     \item{maxo}{Maximum intensity of the peak.}
 #'     }
-#' 
+#'
 #'     If \code{withWave} is set to \code{TRUE}, the result is the same as
 #'     returned by the \code{\link{do_findChromPeaks_centWave}} method.
-#' 
+#'
 #' @family core peak detection functions
-#' 
+#'
 #' @seealso \code{\link{massifquant}} for the standard user interface method.
 #'
 #' @references
@@ -1473,11 +1473,11 @@ do_findChromPeaks_massifquant <- function(mz,
 #'     method).
 #'
 #' @inheritParams do_findChromPeaks_centWave
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
-#' 
+#'
 #' @inheritParams imputeLinInterpol
-#' 
+#'
 #' @inheritParams findChromPeaks-matchedFilter
 #'
 #' @return A matrix, each row representing an identified chromatographic peak,
@@ -1496,7 +1496,7 @@ do_findChromPeaks_massifquant <- function(mz,
 #'     \item{i}{Rank of peak in merged EIC (\code{<= max}).}
 #'     \item{sn}{Signal to noise ratio of the peak}
 #'     }
-#' 
+#'
 #' @references
 #' Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #' Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
@@ -1510,7 +1510,7 @@ do_findChromPeaks_massifquant <- function(mz,
 #' @seealso \code{\link{binYonX}} for a binning function,
 #'     \code{\link{imputeLinInterpol}} for the interpolation of missing values.
 #'     \code{\link{matchedFilter}} for the standard user interface method.
-#' 
+#'
 #' @examples
 #' ## Load the test file
 #' library(faahKO)
@@ -1707,7 +1707,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
                     Sys.sleep(sleep)
                 }
                 ## -- end sleep plot
-                
+
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ## Double the size of the output matrix if it's full
@@ -1778,7 +1778,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
              " 'sum(valsPerSpect)'.")
 
     ## Generate the 'profile' matrix, i.e. perform the binning:
-    mrange <- range(mz)
+    mrange <- range(mz[mz > 0])
     mass <- seq(floor(mrange[1] / binSize) * binSize,
                 ceiling(mrange[2] / binSize) * binSize,
                 by = binSize)
@@ -1910,7 +1910,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
                     Sys.sleep(sleep)
                 }
                 ## end sleep/plot
-                
+
                 yfilt[peakrange[1]:peakrange[2]] <- 0
                 num <- num + 1
                 ResList[[num]] <- c(massmean, mzrange[1], mzrange[2], maxy,
@@ -1964,7 +1964,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #'     \emph{xcmsDirect} vignette for more information.
 #'
 #' @inheritParams do_findChromPeaks_centWave
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
 #'
 #' @param ... Additional parameters to be passed to the
@@ -1990,7 +1990,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
 #' @seealso \code{\link{MSW}} for the standard user interface
 #'     method. \code{\link{peakDetectionCWT}} from the
 #'     \code{MassSpecWavelet} package.
-#' 
+#'
 #' @author Joachim Kutzera, Steffen Neumann, Johannes Rainer
 do_findPeaks_MSW <- function(mz, int, snthresh = 3,
                              verboseColumns = FALSE, ...) {
@@ -2333,7 +2333,7 @@ do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
 }
 
 #' @param peaks. see do_define_isotopes
-#' 
+#'
 #' @param polarity character(1) defining the polarity, either \code{"positive"}
 #'     or \code{"negative"}.
 #'
@@ -2347,7 +2347,7 @@ do_define_isotopes <- function(peaks., maxCharge = 3, maxIso = 5,
 #' Interferences and comtaminants encountered in modern mass spectrometry
 #' Bernd O. Keller, Jie Sui, Alex B. Young and Randy M. Whittal, ANALYTICA
 #' CHIMICA ACTA, 627 (1): 71-81)
-#' 
+#'
 #' @return see do_define_isotopes.
 #'
 #' @noRd
@@ -2570,13 +2570,13 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 #'     \code{\link{centWave}}.
 #'
 #' @inheritParams findChromPeaks-centWave
-#' 
+#'
 #' @inheritParams findChromPeaks-centWaveWithPredIsoROIs
-#' 
+#'
 #' @inheritParams do_findChromPeaks_centWave
 #'
 #' @family core peak detection functions
-#' 
+#'
 #' @return A matrix, each row representing an identified chromatographic peak.
 #'     All non-overlapping peaks identified in both centWave runs are reported.
 #'     The matrix columns are:
@@ -2606,7 +2606,7 @@ do_findKalmanROI <- function(mz, int, scantime, valsPerSpect,
 #'     \item{scmin}{Left peak limit found by wavelet analysis (scan number).}
 #'     \item{scmax}{Right peak limit found by wavelet analysis (scan numer).}
 #'     }
-#' 
+#'
 #' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
 #'
 #' @author Hendrik Treutler, Johannes Rainer
@@ -2679,7 +2679,7 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
 #'     (first) centWave run.
 #'
 #' @inheritParams findChromPeaks-centWave
-#' 
+#'
 #' @inheritParams do_findChromPeaks_centWave
 #'
 #' @rdname do_findChromPeaks_centWaveWithPredIsoROIs
@@ -2750,7 +2750,7 @@ do_findChromPeaks_addPredIsoROIs <-
                     "valid signal found!")
             return(peaks.)
         }
-        
+
         ## 3) centWave using the identified ROIs.
         roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
         feats_2 <- do_findChromPeaks_centWave(mz = mz, int = int,
@@ -2898,7 +2898,7 @@ do_findChromPeaks_addPredIsoROIs_mod <-
             return(peaks.)
         }
         cat("No. of input peaks: ", nrow(peaks.), "\n")
-        
+
         ## 3) centWave using the identified ROIs.
         roiL <- split(as.data.frame(newROIs), f = 1:nrow(newROIs))
         cat("Identified iso ROIs: ", length(roiL), "\n")
@@ -3016,7 +3016,7 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #'     in the peak detection step.
 #'
 #' @param ... currently ignored.
-#' 
+#'
 #' @family peak detection functions for chromatographic data
 #'
 #' @seealso [matchedFilter] for a detailed description of the peak detection
@@ -3025,10 +3025,10 @@ do_findChromPeaks_addPredIsoROIs_mod <-
 #' @author Johannes Rainer
 #'
 #' @return
-#' 
+#'
 #' A matrix, each row representing an identified chromatographic peak, with
 #' columns:
-#' 
+#'
 #' - `"rt"`: retention time of the peak's midpoint (time of the maximum signal).
 #' - `"rtmin"`: minimum retention time of the peak.
 #' - `"rtmax"`: maximum retention time of the peak.
@@ -3066,7 +3066,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
     ## Replace NAs with 0 - that's how the original code handled it.
     nas <- is.na(int)
     int[nas] <- 0
-    
+
     n_vals <- length(int)
     N <- nextn(n_vals)
     rtrange <- range(rt)
@@ -3118,7 +3118,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' @title Identify peaks in chromatographic data using centWave
 #'
 #' @description
-#' 
+#'
 #' `peaksWithCentWave` identifies (chromatographic) peaks in purely
 #' chromatographic data, i.e. based on intensity and retention time values
 #' without m/z values.
@@ -3132,7 +3132,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' defines the corresponding positions +/- `peakwidth[2]` as the ROIs. Noise
 #' estimation bases also on these ROIs and can thus be different from [centWave]
 #' resulting in different signal to noise ratios.
-#' 
+#'
 #' @param int `numeric` with intensity values.
 #'
 #' @param rt `numeric` with the retention time for the intensities. Length has
@@ -3143,7 +3143,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param snthresh `numeric(1)` defining the signal to noise ratio cutoff.
 #'     Peaks with a signal to noise ratio < `snthresh` are omitted.
-#' 
+#'
 #' @param prefilter `numeric(2)` (`c(k, I)`): only regions of interest with at
 #'     least `k` centroids with signal `>= I` are returned in the first
 #'     step.
@@ -3156,7 +3156,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param fitgauss `logical(1)` whether or not a Gaussian should be fitted
 #'     to each peak.
-#' 
+#'
 #' @param noise `numeric(1)` defining the minimum required intensity for
 #'     centroids to be considered in the first analysis step (definition of
 #'     the *regions of interest*).
@@ -3168,7 +3168,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'     regions of interest is checked to be above the first baseline.
 #'
 #' @param ... currently ignored.
-#' 
+#'
 #' @family peak detection functions for chromatographic data
 #'
 #' @seealso [centWave] for a detailed description of the peak detection
@@ -3177,10 +3177,10 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' @author Johannes Rainer
 #'
 #' @return
-#' 
+#'
 #' A matrix, each row representing an identified chromatographic peak, with
 #' columns:
-#' 
+#'
 #' - `"rt"`: retention time of the peak's midpoint (time of the maximum signal).
 #' - `"rtmin"`: minimum retention time of the peak.
 #' - `"rtmax"`: maximum retention time of the peak.
@@ -3192,7 +3192,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'   chromatographic noise.
 #'
 #' Additional columns for `verboseColumns = TRUE`:
-#' 
+#'
 #' - `"mu"`: gaussian parameter mu.
 #' - `"sigma"`: gaussian parameter sigma.
 #' - `"h"`: gaussian parameter h.
@@ -3221,7 +3221,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' ## Plot the region
 #' plot(chr, type = "h")
-#' 
+#'
 #' ## Identify peaks in the chromatographic data
 #' pks <- peaksWithCentWave(intensity(chr), rtime(chr))
 #' pks
@@ -3247,7 +3247,7 @@ peaksWithCentWave <- function(int, rt,
     int[is.na(int)] <- 0
     rois <- .getRtROI(int, rt, peakwidth = peakwidth, noise = noise,
                       prefilter = prefilter)
-    
+
     basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "into",
                    "intb", "maxo", "sn")
     verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
@@ -3289,7 +3289,7 @@ peaksWithCentWave <- function(int, rt,
     for (i in seq_len(nrow(rois))) {
         scmin <- rois[i, "scmin"]
         scmax <- rois[i, "scmax"]
-        
+
         N <- scmax - scmin + 1
         peaks <- matrix(ncol = peaks_ncols, nrow = 0,
                         dimnames = list(character(), peaks_names))
@@ -3410,7 +3410,7 @@ peaksWithCentWave <- function(int, rt,
                             if (is.na(p1)) p1 <- 1
                             if (is.na(p2)) p2 <- N
                             maxint <- max(od[p1:p2])
-                            
+
                             peaks <- rbind(
                                 peaks,
                                 c(1, 1, 1,    # mz, mzmin, mzmax,
@@ -3473,7 +3473,7 @@ peaksWithCentWave <- function(int, rt,
             peaks[p, "intb"] <- pwid * sum(db[db>0])
             peaks[p, "lmin"] <- lm[1]
             peaks[p, "lmax"] <- lm[2]
-            
+
             if (fitgauss) {
                 ## perform gaussian fits, use wavelets for inital parameters
                 td_lm <- td[lm_range]
@@ -3509,11 +3509,11 @@ peaksWithCentWave <- function(int, rt,
         peaks <- joinOverlappingPeaks(td, d, otd, rep(1, length(otd)), od, rt,
                                       scan.range, peaks, maxGaussOverlap,
                                       mzCenterFun = mzCenter.wMean)
-        
+
         if (!is.null(peaks))
             peaklist[[length(peaklist) + 1]] <- peaks
     }                                   # end of for (i in seq_len(nrow(rois)))
-    
+
     if (length(peaklist) == 0) {
         warning("No peaks found!")
         if (verboseColumns)
@@ -3550,7 +3550,7 @@ peaksWithCentWave <- function(int, rt,
 #'
 #' @param peakwidth `numeric(2)` with the lowe and upper bound for the expected
 #'     peak widths.
-#' 
+#'
 #' @param prefilter `numeric(2)` (`c(k, I)`): only regions of interest with at
 #'     least `k` centroids with signal `>= I` are returned.
 #'
@@ -3560,7 +3560,7 @@ peaksWithCentWave <- function(int, rt,
 #' @return `matrix` with two columns `"scmin"`, `"scmax"` and `"sccent"` with
 #'     the index of (lower and upper) bound defining the region of interest and
 #'     the position of the center.
-#' 
+#'
 #' @md
 #'
 #' @noRd
@@ -3643,4 +3643,3 @@ peaksWithCentWave <- function(int, rt,
     }
     lm
 }
-

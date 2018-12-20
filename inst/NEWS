@@ -1,3 +1,8 @@
+Changes in version 3.4.2
+
+- Fix issue #325: matchedFilter peak detection on data containing empty spectra.
+
+
 Changes in version 3.4.1
 
 - Small fix in the xcms vignette (issue #327).
