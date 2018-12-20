@@ -1,5 +1,6 @@
 Changes in version 3.5.1
 
+- Fix matchedFilter peak detection problems with empty spectra (issue #325).
 - featureChromatograms extracts by default only chromatographic peaks associated
   with a feature.
 - chromatogram,XCMSnExp extracts an XChromatogram containing also

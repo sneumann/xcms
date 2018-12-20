@@ -53,11 +53,20 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     method <- match.arg(method, c("centWave", "massifquant", "matchedFilter",
                                   "MSW", "centWaveWithPredIsoROIs"))
     method <- paste0("do_findChromPeaks_", method)
-    if (method == "MSW")
-        method <- paste0("do_findPeaks_", method)
+    if (method == "do_findChromPeaks_MSW")
+        method <- "do_findPeaks_MSW"
+    if (method == "do_findChromPeaks_matchedFilter") {
+        ## Issue #325: empty spectra is not supported
+        x <- lapply(x, function(z) {
+            if (!length(z@mz)) {
+                z@mz <- 0.0
+                z@intensity <- 0.0
+            }
+            z
+        })
+    }
     if (missing(param))
         stop("'param' has to be specified!")
-    ## Check if the spectra are orderd by rt.
     if (missing(rt))
         rt <- unlist(lapply(x, rtime), use.names = FALSE)
     if (is.unsorted(rt))

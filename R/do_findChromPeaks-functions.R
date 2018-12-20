@@ -1778,7 +1778,7 @@ do_findChromPeaks_matchedFilter <- function(mz,
              " 'sum(valsPerSpect)'.")
 
     ## Generate the 'profile' matrix, i.e. perform the binning:
-    mrange <- range(mz)
+    mrange <- range(mz[mz > 0])
     mass <- seq(floor(mrange[1] / binSize) * binSize,
                 ceiling(mrange[2] / binSize) * binSize,
                 by = binSize)

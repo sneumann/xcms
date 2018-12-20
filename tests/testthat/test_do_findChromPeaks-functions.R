@@ -135,6 +135,37 @@ test_that("do_findChromPeaks_matchedFilter works", {
                                             valsPerSpect,
                                             binSize = 20)
     expect_true(nrow(res1) > nrow(res2))
+
+    ## with empty spectra - simulating issue #325
+    od_sub <- filterMz(od_x, mz = c(334.9, 344.1))
+    sps <- spectra(filterFile(od_sub, 1))
+    ## Add an artificial peak at m/z 0 if spectrum is empty
+    sps <- lapply(sps, function(z) {
+        if (!length(z@mz)) {
+            z@mz <- 0.0
+            z@intensity <- 0.0
+        }
+        z
+    })
+    mzs <- lapply(sps, mz)
+    n_peaks <- lengths(mzs, FALSE)
+    mzs <- unlist(mzs, use.names = FALSE)
+    ints <- unlist(lapply(sps, intensity), use.names = FALSE)
+    rtms <- vapply(sps, rtime, numeric(1))
+    res3 <- do_findChromPeaks_matchedFilter(mz = mzs, int = ints,
+                                            scantime = rtms,
+                                            valsPerSpect = n_peaks)
+    full_data <- findChromPeaks(filterFile(od_x, 1),
+                                param = MatchedFilterParam())
+    pks_full <- chromPeaks(full_data, mz = c(335, 344))
+    rownames(pks_full) <- NULL
+    rownames(res3) <- NULL
+    expect_equal(res3, pks_full[, colnames(res3)])
+    res4 <- findChromPeaks(filterMz(filterFile(od_x, 1), mz = c(334.9, 344.1)),
+                           param = MatchedFilterParam())
+    res4 <- chromPeaks(res4)
+    rownames(res4) <- NULL
+    expect_equal(res4, pks_full)
 })
 
 test_that("peaksWithMatchedFilter is working", {
@@ -208,7 +239,7 @@ test_that("peaksWithCentWave works", {
 
 test_that(".narrow_rt_boundaries works", {
     d <- c(0, 0, 1, 2, 1, 3, 4, 6, 4, 3, 2, 0, 1, 0, 2, 0)
-    
+
     ## Full range
     lm <- c(1, length(d))
     res <- .narrow_rt_boundaries(lm, d)
@@ -217,7 +248,7 @@ test_that(".narrow_rt_boundaries works", {
     expect_equal(res, c(3, 16))
     res <- .narrow_rt_boundaries(lm, d, thresh = 3)
     expect_equal(res, c(5, 11))
-    
+
     ## Subset (reflecting the real situation).
     lm <- c(3, 9)
     res <- .narrow_rt_boundaries(lm, d)
@@ -226,13 +257,13 @@ test_that(".narrow_rt_boundaries works", {
     expect_equal(res, c(3, 9))
     res <- .narrow_rt_boundaries(lm, d, thresh = 3)
     expect_equal(res, c(5, 9))
-    
+
     lm <- c(3, 13)
     res <- .narrow_rt_boundaries(lm, d)
     expect_equal(res, c(3, 13))
     res <- .narrow_rt_boundaries(lm, d, thresh = 3)
     expect_equal(res, c(5, 11))
-    
+
     ## That's the fix for issue #300
     expect_equal(.narrow_rt_boundaries(lm, d, thresh = 100), lm)
     expect_equal(.narrow_rt_boundaries(c(1, length(d)), d, thresh = 100),
