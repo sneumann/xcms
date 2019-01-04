@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.4.1
+Version: 3.4.2
 Date: 2018-11-14
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
@@ -52,7 +52,7 @@ License: GPL (>= 2) + file LICENSE
 URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
 VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
-biocViews: MassSpectrometry, Metabolomics
+biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
 RoxygenNote: 6.1.0
 Collate: 
     'AllGenerics.R'
