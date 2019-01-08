@@ -161,8 +161,10 @@ setMethod("plot", "XChromatograms", function(x, col = "#00000060", lty = 1,
     if (length(peakPch) != pks_nr)
         peakPch <- rep(peakPch[1], pks_nr)
     for (i in seq_len(nr)) {
-        x_sub <- x[i, ]
-        plot(as(x_sub, "Chromatograms"), col = col, lty = lty, type = type,
+        x_sub <- x[i, , drop = FALSE]
+        plot(as(x_sub, ifelse(is(x_sub, "XChromatograms"),
+                              "Chromatograms", "Chromatogram")),
+             col = col, lty = lty, type = type,
              xlab = xlab, ylab = ylab, main = main, ...)
         idx <- which(pks_all[, "row"] == i)
         if (length(idx) && peakType != "none") {
