@@ -468,7 +468,7 @@ setMethod("plotChromPeakDensity", "XChromatograms",
                   param <- NULL
                   if (hasFeatures(object)) {
                       ph <- processHistory(object,
-                                           type = xcms:::.PROCSTEP.PEAK.GROUPING)
+                                           type = .PROCSTEP.PEAK.GROUPING)
                       if (length(ph)) {
                           ph <- ph[[length(ph)]]
                           if (is(ph, "XProcessHistory") &&
@@ -502,4 +502,22 @@ setMethod("plotChromPeakDensity", "XChromatograms",
               mr[1] <- mr_1
               mr[3] <- mr_3
               par(mar = mr)
+})
+
+#' @rdname XChromatogram
+setMethod("dropFilledChromPeaks", "XChromatograms", function(object) {
+    pks_orig <- chromPeaks(object)
+    object@.Data <- matrix(lapply(object, dropFilledChromPeaks),
+                           nrow = nrow(object), dimnames = dimnames(object))
+    pks_sub <- chromPeaks(object)
+    if (hasFeatures(object)) {
+        fts <- .subset_features_on_chrom_peaks(
+            object@featureDefinitions, pks_orig, pks_sub)
+        ## fts$row <- vapply(fts$peakidx, function(z) {
+        ##     as.integer(pks_sub[z, "row"][1])
+        ## }, integer(1))
+        object@featureDefinitions <- fts
+    }
+    object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
+    if (validObject(object)) object
 })

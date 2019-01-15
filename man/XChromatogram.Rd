@@ -16,6 +16,7 @@
 \alias{filterMz,XChromatogram-method}
 \alias{filterRt,XChromatogram-method}
 \alias{hasChromPeaks,XChromatogram-method}
+\alias{dropFilledChromPeaks,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{chromPeaks,XChromatograms-method}
@@ -30,6 +31,7 @@
 \alias{[,XChromatograms,ANY,ANY,ANY-method}
 \alias{featureValues,XChromatograms-method}
 \alias{plotChromPeakDensity,XChromatograms-method}
+\alias{dropFilledChromPeaks,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, ...)
@@ -57,6 +59,8 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{filterRt}{XChromatogram}(object, rt, ...)
 
 \S4method{hasChromPeaks}{XChromatogram}(object)
+
+\S4method{dropFilledChromPeaks}{XChromatogram}(object)
 
 \S4method{show}{XChromatograms}(object)
 
@@ -96,6 +100,8 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
   peakType = c("polygon", "point", "rectangle", "none"),
   peakCol = "#00000060", peakBg = "#00000020", peakPch = 1,
   simulate = TRUE, ...)
+
+\S4method{dropFilledChromPeaks}{XChromatograms}(object)
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -325,6 +331,9 @@ has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)}
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
 with either \code{true} or \code{false} if chromatographic peaks are available in
 the chromatogram at the respective position.
+\item \code{dropFilledChromPeaks}: removes filled-in chromatographic peaks. See
+\code{\link[=dropFilledChromPeaks]{dropFilledChromPeaks()}} help for \code{\link[=XCMSnExp]{XCMSnExp()}} objects for more
+information.
 \item \code{hasFeatures}: for \code{XChromatograms} objects only: if correspondence
 analysis has been performed and m/z-rt feature definitions are present.
 Returns a \code{logical(1)}.

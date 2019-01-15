@@ -1,5 +1,8 @@
 Changes in version 3.5.1
 
+- Add dropFilledChromPeaks methods for XChromatogram and XChromatograms objects.
+- Add parameter filled = FALSE to chromatogram and featureChromatograms
+  functions.
 - Fix matchedFilter peak detection problems with empty spectra (issue #325).
 - featureChromatograms extracts by default only chromatographic peaks associated
   with a feature.

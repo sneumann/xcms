@@ -5,7 +5,7 @@
 \title{Extract ion chromatograms for each feature}
 \usage{
 featureChromatograms(x, expandRt = 0, aggregationFun = "max", features,
-  include = c("feature_only", "all"), ...)
+  include = c("feature_only", "all"), filled = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{XCMSnExp} object with grouped chromatographic peaks.}
@@ -26,6 +26,10 @@ of the features in \code{featureDefinitions}, feature IDs (row names of
 \item{include}{\code{character(1)} defining which chromatographic peaks and
 feature definitions should be included in the returned
 \code{\link[=XChromatograms]{XChromatograms()}}. See description above for details.}
+
+\item{filled}{\code{logical(1)} whether filled-in peaks should be included in
+the result object. The default is \code{filled = FALSE}, i.e. only detected
+peaks are reported.}
 
 \item{...}{optional arguments to be passed along to the \code{\link[=chromatogram]{chromatogram()}}
 function.}

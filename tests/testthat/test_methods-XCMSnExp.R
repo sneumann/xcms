@@ -1079,6 +1079,47 @@ test_that("chromatogram,XCMSnExp works", {
     pks <- chromPeaks(xchrs)
     expect_true(!any(pks[, "row"] == 1 && pks[, "column"] == 1))
 
+    ## With filled-in data
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
+    ## group
+    xod_tmp <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                          minFraction = 0.25))
+    xod_tmpf <- fillChromPeaks(
+        xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    xchrs <- chromatogram(xod_tmp, mz = mzr[2:1, ], rt = rtr[2:1, ], filled = TRUE)
+    xchrsf <- chromatogram(xod_tmpf, mz = mzr[2:1, ], rt = rtr[2:1, ], filled = TRUE)
+    expect_equal(nrow(chromPeaks(xchrs)), 4)
+    expect_equal(unname(chromPeaks(xchrs)[, "sample"]), c(1, 2, 3, 2))
+    expect_equal(unname(chromPeaks(xchrs)[, "row"]), c(1, 1, 1, 2))
+    ## With filled-in peaks.
+    expect_equal(nrow(chromPeaks(xchrsf)), 6)
+    expect_equal(unname(chromPeaks(xchrsf)[, "sample"]), c(1, 2, 3, 1, 2, 3))
+    expect_equal(chromPeaks(xchrsf[2, 1])[, "is_filled"], 1)
+    expect_equal(chromPeaks(xchrsf[2, 2])[, "is_filled"], 0)
+    expect_equal(chromPeaks(xchrsf[2, 3])[, "is_filled"], 1)
+    expect_equal(chromPeaks(xchrsf[1, 2])[, "is_filled"], 0)
+    ## Check feature definitions.
+    fts <- featureDefinitions(xchrs)
+    ftsf <- featureDefinitions(xchrsf)
+    expect_equal(fts$peakidx, list(c(1, 2, 3), 4))
+    expect_equal(ftsf$peakidx, list(c(1, 2, 3), c(5, 4, 6)))
+    xchrsf2 <- chromatogram(xod_tmpf, mz = mzr[2:1, ], rt = rtr[2:1, ])
+    expect_equal(chromPeaks(xchrs), chromPeaks(xchrsf2))
+    expect_equal(featureDefinitions(xchrs), featureDefinitions(xchrsf2))
+
+    ## Test with single range.
+    xchrs <- chromatogram(xod_tmp, mz = mzr[1, ], rt = rtr[1, ], filled = TRUE)
+    xchrsf <- chromatogram(xod_tmpf, mz = mzr[1, ], rt = rtr[1, ], filled = TRUE)
+    expect_equal(nrow(chromPeaks(xchrs)), 1)
+    expect_equal(nrow(chromPeaks(xchrsf)), 3)
+    expect_equal(unname(chromPeaks(xchrsf)[, "is_filled"]), c(1, 0, 1))
+    expect_equal(featureDefinitions(xchrsf)$peakidx[[1]], c(2, 1, 3))
+    xchrsf2 <- chromatogram(xod_tmpf, mz = mzr[1, ], rt = rtr[1, ])
+    expect_equal(chromPeaks(xchrsf2), chromPeaks(xchrs))
+    expect_equal(featureDefinitions(xchrsf2), featureDefinitions(xchrs))
+
     ## XCMSnExp with adjusted rtime
     ## SEE runit.Chromatogram.R
 })
@@ -2131,4 +2172,14 @@ test_that("adjustRtime,XCMSnExp,Obiwarp works", {
     plotAdjustedRtime(res, col = c("#ff000060", "#00ff0060", "#0000ff60"))
     expect_equal(rtime(xod_x, bySample = TRUE)[[1]],
                  rtime(xod_x, bySample = TRUE)[[1]])
+})
+
+test_that("dropFilledChromPeaks,XCMSnExp works", {
+    xod_tmp <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                          minFraction = 0.25))
+    xod_tmpf <- fillChromPeaks(
+        xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    res <- dropFilledChromPeaks(xod_tmpf)
+    expect_equal(chromPeaks(res), chromPeaks(xod_xgr))
 })

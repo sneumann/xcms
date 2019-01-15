@@ -364,3 +364,31 @@ test_that("plotChromPeakDensity,XChromatograms works", {
     plotChromPeakDensity(scnd)
     plotChromPeakDensity(scnd[, c(1, 3)])
 })
+
+test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
+    ## With filled-in data
+    mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
+    rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
+    ## group
+    xod_tmp <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                          minFraction = 0.25))
+    xod_tmpf <- fillChromPeaks(
+        xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    xchr <- chromatogram(xod_tmpf, rt = rtr, mz = mzr)
+    ch <- dropFilledChromPeaks(xchr[1, 1])
+    expect_equal(ch, xchr[1, 1])
+    ch <- dropFilledChromPeaks(xchr[1, 2])
+    expect_equal(ch, xchr[1, 2])
+    res <- dropFilledChromPeaks(xchr)
+    expect_equal(res, xchr)
+
+    xchrf <- chromatogram(xod_tmpf, rt = rtr, mz = mzr, filled = TRUE)
+    ch <- dropFilledChromPeaks(xchr[1, 1])
+    expect_equal(ch, xchr[1, 1])
+    ch <- dropFilledChromPeaks(xchr[1, 2])
+    expect_equal(ch, xchrf[1, 2])
+    res <- dropFilledChromPeaks(xchrf)
+    expect_equal(chromPeaks(res), chromPeaks(xchr))
+    expect_equal(featureDefinitions(res), featureDefinitions(xchr))
+})

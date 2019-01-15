@@ -8,7 +8,7 @@
 \usage{
 \S4method{chromatogram}{XCMSnExp}(object, rt, mz, aggregationFun = "sum",
   missing = NA_real_, msLevel = 1L, BPPARAM = bpparam(),
-  adjustedRtime = hasAdjustedRtime(object))
+  adjustedRtime = hasAdjustedRtime(object), filled = FALSE)
 }
 \arguments{
 \item{object}{Either a \code{\link{OnDiskMSnExp}} or
@@ -50,6 +50,10 @@ adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
 in the resulting \code{\link{Chromatogram}} object. Adjusted
 retention times are used by default if available.}
+
+\item{filled}{\code{logical(1)} whether filled-in peaks should also be
+returned. Defaults to \code{filled = FALSE}, i.e. returns only detected
+chromatographic peaks in the result object.}
 }
 \value{
 \code{chromatogram} returns a \code{\link{XChromatograms}} object with

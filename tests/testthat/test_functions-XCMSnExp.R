@@ -278,6 +278,25 @@ test_that("featureChromatograms works", {
                                       features = c(TRUE, FALSE, FALSE)))
     expect_error(featureChromatograms(xod_xgrg, features = c(100000, 1000002)))
     expect_error(featureChromatograms(xod_xgrg, features = c("a", "FT02")))
+
+    ## Test with filled-in peaks.
+    xod_tmp <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                          minFraction = 0.25))
+    xod_tmpf <- fillChromPeaks(
+        xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    fts <- c("FT036", "FT042")
+    fchrs <- featureChromatograms(xod_tmp, features = fts, filled = TRUE)
+    fchrsf <- featureChromatograms(xod_tmpf, features = fts, filled = TRUE)
+    expect_equal(nrow(chromPeaks(fchrs)), 4)
+    expect_equal(nrow(chromPeaks(fchrsf)), 6)
+    expect_equal(unname(chromPeaks(fchrsf)[, "is_filled"]), c(1, 0, 1, 0, 0, 0))
+    expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
+    expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
+    fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)
+    expect_equal(chromPeaks(fchrsf2), chromPeaks(fchrs))
+    expect_equal(featureDefinitions(fchrsf2), featureDefinitions(fchrs))
+    expect_equal(featureValues(fchrsf2), featureValues(fchrs))
 })
 
 test_that("highlightChromPeaks works", {

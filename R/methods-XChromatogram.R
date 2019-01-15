@@ -45,6 +45,10 @@ setMethod("show", "XChromatogram", function(object) {
 #'   with either `true` or `false` if chromatographic peaks are available in
 #'   the chromatogram at the respective position.
 #'
+#' - `dropFilledChromPeaks`: removes filled-in chromatographic peaks. See
+#'   [dropFilledChromPeaks()] help for [XCMSnExp()] objects for more
+#'   information.
+#'
 #' - `hasFeatures`: for `XChromatograms` objects only: if correspondence
 #'   analysis has been performed and m/z-rt feature definitions are present.
 #'   Returns a `logical(1)`.
@@ -375,4 +379,17 @@ setMethod("filterRt", "XChromatogram", function(object, rt, ...) {
 #' @md
 setMethod("hasChromPeaks", "XChromatogram", function(object) {
     as.logical(nrow(object@chromPeaks))
+})
+
+#' @rdname XChromatogram
+#'
+#' @md
+setMethod("dropFilledChromPeaks", "XChromatogram", function(object) {
+    if (!.hasFilledPeaks(object))
+        return(object)
+    if (any(colnames(object@chromPeaks) == "is_filled")) {
+        not_fld <- object@chromPeaks[, "is_filled"] == 0
+        object@chromPeaks <- object@chromPeaks[not_fld, , drop = FALSE]
+    }
+    if (validObject(object)) object
 })

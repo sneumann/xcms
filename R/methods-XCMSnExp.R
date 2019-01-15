@@ -2270,6 +2270,10 @@ setMethod("featureValues",
 #'     depend on the architecture. Default is
 #'     \code{BiocParallel::bparam()}.
 #'
+#' @param filled \code{logical(1)} whether filled-in peaks should also be
+#'     returned. Defaults to \code{filled = FALSE}, i.e. returns only detected
+#'     chromatographic peaks in the result object.
+#'
 #' @return
 #'
 #' \code{chromatogram} returns a \code{\link{XChromatograms}} object with
@@ -2344,7 +2348,7 @@ setMethod("chromatogram",
           signature(object = "XCMSnExp"),
           function(object, rt, mz, aggregationFun = "sum", missing = NA_real_,
                    msLevel = 1L, BPPARAM = bpparam(),
-                   adjustedRtime = hasAdjustedRtime(object)) {
+                   adjustedRtime = hasAdjustedRtime(object), filled = FALSE) {
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
               object_od <- as(object, "OnDiskMSnExp")
@@ -2376,6 +2380,8 @@ setMethod("chromatogram",
                   for (i in 1:nrow(mz)) {
                       pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
                                         type = "apex_within")
+                      if (!filled)
+                          pks <- pks[pks[, "is_filled"] == 0, , drop = FALSE]
                       pk_list[[i]] <- split.data.frame(
                           pks, factor(pks[, "sample"], levels = lvls))
                   }
@@ -2384,6 +2390,8 @@ setMethod("chromatogram",
               } else {
                   pks <- chromPeaks(object, rt = rt, mz = mz,
                                     type = "apex_within")
+                  if (!filled)
+                      pks <- pks[pks[, "is_filled"] == 0, , drop = FALSE]
                   pks <- split.data.frame(pks, factor(pks[, "sample"],
                                                       levels = lvls))
               }
@@ -2836,12 +2844,11 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
     newFd@.xData <- .copy_env(object@msFeatureData)
     ## Update index in featureDefinitions
     fd <- featureDefinitions(newFd)
-    fd <- split(fd, 1:nrow(fd))
-    fdL <- lapply(fd, function(z) {
-        z$peakidx <- list(z$peakidx[[1]][z$peakidx[[1]] %in% keep_pks])
-        return(z)
-    })
-    featureDefinitions(newFd) <- do.call(rbind, fdL)
+    for (i in seq_len(nrow(fd))) {
+        idx <- fd$peakidx[[i]]
+        fd$peakidx[[i]] <- idx[idx %in% keep_pks]
+    }
+    featureDefinitions(newFd) <- fd
     ## Remove peaks
     chromPeaks(newFd) <- chromPeaks(newFd)[keep_pks, , drop = FALSE]
     ## newFd <- .filterChromPeaks(object@msFeatureData, idx = keep_pks)

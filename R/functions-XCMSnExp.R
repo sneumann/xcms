@@ -2083,6 +2083,10 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'     feature definitions should be included in the returned
 #'     [XChromatograms()]. See description above for details.
 #'
+#' @param filled `logical(1)` whether filled-in peaks should be included in
+#'     the result object. The default is `filled = FALSE`, i.e. only detected
+#'     peaks are reported.
+#'
 #' @param ... optional arguments to be passed along to the [chromatogram()]
 #'     function.
 #'
@@ -2116,7 +2120,7 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' plot(chrs[1, ], col = c("red", "green", "blue"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
                                  features, include = c("feature_only", "all"),
-                                 ...) {
+                                 filled = FALSE, ...) {
     include <- match.arg(include)
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run first 'groupChromPeaks'")
@@ -2144,7 +2148,6 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         rownames(pks) <- .featureIDs(nrow(pks), "CP")
         rownames(chromPeaks(x)) <- rownames(pks)
     }
-
     pk_idx <- featureDefinitions(x)$peakidx[features]
     mat <- do.call(rbind, lapply(pk_idx, function(z) {
         pks_current <- pks[z, , drop = FALSE]
@@ -2155,7 +2158,7 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
     mat[, 2] <- mat[, 2] + expandRt
     colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
     chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
-                         aggregationFun = aggregationFun, ...)
+                         aggregationFun = aggregationFun, filled = filled, ...)
     if (include == "feature_only") {
         pk_ids <- lapply(pk_idx, function(z) rownames(pks)[z])
         fts_all <- featureDefinitions(chrs)
