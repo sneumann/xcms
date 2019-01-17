@@ -381,6 +381,9 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
     ch <- dropFilledChromPeaks(xchr[1, 2])
     expect_equal(ch, xchr[1, 2])
     res <- dropFilledChromPeaks(xchr)
+    expect_true(length(res@.processHistory) < length(xchr@.processHistory))
+    res@.processHistory <- list()
+    xchr@.processHistory <- list()
     expect_equal(res, xchr)
 
     xchrf <- chromatogram(xod_tmpf, rt = rtr, mz = mzr, filled = TRUE)
@@ -389,6 +392,7 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
     ch <- dropFilledChromPeaks(xchr[1, 2])
     expect_equal(ch, xchrf[1, 2])
     res <- dropFilledChromPeaks(xchrf)
+    expect_true(length(res@.processHistory) < length(xchrf@.processHistory))
     expect_equal(chromPeaks(res), chromPeaks(xchr))
     expect_equal(featureDefinitions(res), featureDefinitions(xchr))
 })
