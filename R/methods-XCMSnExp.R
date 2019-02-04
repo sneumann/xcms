@@ -2793,9 +2793,16 @@ setMethod("fillChromPeaks",
                   fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
                   (which(res[, "group_idx"] == i) + incr))
               }
-              ## Define IDs for the new peaks
-              maxId <- max(as.numeric(sub("^CP", "",
-                                          rownames(chromPeaks(object)))))
+              ## Define IDs for the new peaks; include fix for issue #347
+              maxId <- suppressWarnings(
+                  max(as.numeric(sub("^CP", "",
+                                     rownames(chromPeaks(object))))))
+              if (maxId < 1) {
+                  maxId <- nrow(chromPeaks(object))
+                  rownames(chromPeaks(object)) <- sprintf(
+                      paste0("CP", "%0", ceiling(log10(maxId + 1L)), "d"),
+                      1:maxId)
+              }
               toId <- maxId + nrow(res)
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
