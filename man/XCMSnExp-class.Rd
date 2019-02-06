@@ -5,6 +5,7 @@
 \name{XCMSnExp-class}
 \alias{XCMSnExp-class}
 \alias{XCMSnExp}
+\alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
 \alias{hasFilledChromPeaks}
 \alias{profMat,OnDiskMSnExp-method}

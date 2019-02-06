@@ -2183,3 +2183,14 @@ test_that("dropFilledChromPeaks,XCMSnExp works", {
     res <- dropFilledChromPeaks(xod_tmpf)
     expect_equal(chromPeaks(res), chromPeaks(xod_xgr))
 })
+
+test_that("updateObject,XCMSnExp works", {
+    tmp <- faahko_xod
+    en <- new("MsFeatureData")
+    en@.xData <- xcms:::.copy_env(tmp@msFeatureData@.xData)
+    rownames(en$chromPeaks) <- NULL
+    tmp@msFeatureData <- en
+    expect_true(is.null(rownames(chromPeaks(tmp))))
+    tmp <- updateObject(tmp)
+    expect_true(!is.null(rownames(chromPeaks(tmp))))
+})

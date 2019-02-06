@@ -2356,7 +2356,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 .REQ_PEAKG_COLS <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                      "peakidx")
 
-#' @aliases XCMSnExp
+#' @aliases XCMSnExp updateObject,XCMSnExp-method
 #'
 #' @title Data container storing xcms preprocessing results
 #'

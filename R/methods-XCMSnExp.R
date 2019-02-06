@@ -651,7 +651,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
         if (hasAdjustedRtime(newFd) & !keepAdjustedRtime) {
             idx_rt_adj <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
             idx_pk_det <- which(phTypes == .PROCSTEP.PEAK.DETECTION)
-            if (idx_rt_adj > idx_pk_det) {
+            if (any(idx_rt_adj > idx_pk_det)) {
                 object <- dropProcessHistories(object,
                                                type = .PROCSTEP.RTIME.CORRECTION)
                 newFd <- dropAdjustedRtime(newFd)
@@ -2794,15 +2794,11 @@ setMethod("fillChromPeaks",
                   (which(res[, "group_idx"] == i) + incr))
               }
               ## Define IDs for the new peaks; include fix for issue #347
-              maxId <- suppressWarnings(
-                  max(as.numeric(sub("^CP", "",
-                                     rownames(chromPeaks(object))))))
-              if (maxId < 1) {
-                  maxId <- nrow(chromPeaks(object))
-                  rownames(chromPeaks(object)) <- sprintf(
-                      paste0("CP", "%0", ceiling(log10(maxId + 1L)), "d"),
-                      1:maxId)
-              }
+              maxId <- max(as.numeric(sub("^CP", "",
+                                          rownames(chromPeaks(object)))))
+              if (maxId < 1)
+                  stop("chromPeaks matrix lacks rownames; please update ",
+                       "'object' with the 'updateObject' function.")
               toId <- maxId + nrow(res)
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
@@ -3339,3 +3335,19 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #'     param = PeakDensityParam(minFraction = 1,
 #'     sampleGroups = rep(1, length(fileNames(res)))))
 setMethod("plotChromPeakDensity", "XCMSnExp", .plotChromPeakDensity)
+
+setMethod("updateObject", "XCMSnExp", function(object) {
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    if (hasChromPeaks(newFd)) {
+        if (is.null(rownames(chromPeaks(newFd))))
+            rownames(chromPeaks(newFd)) <-
+                .featureIDs(nrow(chromPeaks(newFd)), "CP")
+    }
+    lockEnvironment(newFd, bindings = TRUE)
+    object@msFeatureData <- newFd
+    if (!length(object@.processHistory))
+        object@.processHistory <- list()
+    validObject(object)
+    object
+})

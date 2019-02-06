@@ -1,5 +1,6 @@
 Changes in version 3.5.1
 
+- Add updateObject function for XCMSnExp objects (issue #347).
 - Add dropFilledChromPeaks methods for XChromatogram and XChromatograms objects.
 - Add parameter filled = FALSE to chromatogram and featureChromatograms
   functions.
