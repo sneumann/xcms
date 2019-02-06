@@ -21,7 +21,7 @@ The \code{findChromPeaks} methods perform the chromatographic
     \item{matchedFilter}{peak detection in chromatographic space. See
     \code{\link{matchedFilter}} for more details.}
 
-    \item{massifquant}{peak detection using the Kalman filter-based 
+    \item{massifquant}{peak detection using the Kalman filter-based
     method. See \code{\link{massifquant}} for more details.}
 
     \item{MSW}{single-spectrum non-chromatography MS data peak detection.

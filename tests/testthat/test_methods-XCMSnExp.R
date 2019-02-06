@@ -67,7 +67,7 @@ test_that("spectra,XCMSnExp works", {
     expect_true(sum(unlist(lapply(res2, rtime)) ==
                     unlist(lapply(res, rtime))) < length(rtime(tmp)) / 4)
     res3 <- spectra(tmp2, adjusted = FALSE)
-    expect_equal(res, res3)    
+    expect_equal(res, res3)
     ## adjusted rt
     tmp <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
     expect_true(hasAdjustedRtime(tmp))
@@ -82,7 +82,7 @@ test_that("spectra,XCMSnExp works", {
 test_that("XCMSnExp accessors work", {
     ## Filling with data...
     xod <- as(faahko_od, "XCMSnExp")
-    ## peaks 
+    ## peaks
     expect_true(!hasChromPeaks(xod))
     chromPeaks(xod) <- chromPeaks(xod_x)
     expect_true(hasChromPeaks(xod))
@@ -179,7 +179,7 @@ test_that("XCMSnExp accessors work", {
                  feat_def[keep_rt, , drop = FALSE])
     expect_equal(featureDefinitions(obj, rt = rtr, mz = mzr, type = "any"),
                  feat_def[keep_rt & keep_mz, , drop = FALSE])
-    
+
     ## adjustedRtime
     expect_true(!hasAdjustedRtime(xod))
     expect_true(hasAdjustedRtime(xod_r))
@@ -315,7 +315,7 @@ test_that("XCMSnExp droppers work", {
     expect_true(length(processHistory(xod_xgr, type = type_feat_algn)) == 1)
     expect_true(hasFeatures(xod_xgrg))
     expect_true(length(processHistory(xod_xgrg, type = type_feat_algn)) == 2)
-    
+
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropChromPeaks(xod_x)
     expect_true(!hasChromPeaks(res))
@@ -368,7 +368,7 @@ test_that("XCMSnExp droppers work", {
     expect_true(length(processHistory(res, type = type_feat_det)) == 0)
     expect_true(!hasFeatures(res))
     expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
-    
+
     ## 2) dropFeatureDefinitions:
     ##    a) drop the feature groups and the latest related process history
     ##    b) if retention time correction was performed AFTER the latest feature
@@ -465,7 +465,7 @@ test_that("XCMSnExp inherited methods work", {
     expect_true(hasAdjustedRtime(tmp))
     expect_equal(rtime(xod_xgrg)[idxs], rtime(tmp))
     expect_true(length(processHistory(tmp)) == 1)
-    
+
     ## [[
     spct <- xod_x[[13]]
     expect_true(is(spct, "Spectrum1"))
@@ -476,7 +476,7 @@ test_that("XCMSnExp inherited methods work", {
     spct <- xod_r[[13]]
     expect_equal(rtime(spct), unname(rtime(xod_r, adjusted = TRUE)[13]))
     expect_true(rtime(spct) != rtime(xod_r, adjusted = FALSE)[13])
-    
+
     ## bin
     tmp_1 <- bin(faahko_od)
     expect_warning(tmp_2 <- bin(xod_x))
@@ -757,7 +757,7 @@ test_that("filterMz,XCMSnExp works", {
     res <- filterMz(xod_xgrg, mz = mzr)
     expect_true(!hasFeatures(res))
     expect_true(hasChromPeaks(res))
-    expect_true(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))    
+    expect_true(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))
 })
 
 test_that("filterRt,XCMSnExp works", {
@@ -766,7 +766,7 @@ test_that("filterRt,XCMSnExp works", {
     ## Check if the object is OK:
     expect_equal(pData(res), pData(xod_x))
     spct <- spectra(res)
-    expect_true(length(spct) > 0)    
+    expect_true(length(spct) > 0)
     ## MsFeatureData has to be locked!
     expect_error(res@msFeatureData$bla <- 3)
     ## Retention time has to be within the range.
@@ -963,7 +963,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_equal(res@rt$corrected, res_2@rt$corrected)
     expect_equal(chromPeaks(od_3), peaks(res))
     expect_equal(peaks(res_2), peaks(res))
-    
+
     ## Test with different binning methods:
     ## o binlin
     mfp <- MatchedFilterParam(impute = "lin", binSize = 3)
@@ -1010,7 +1010,7 @@ test_that("chromatogram,XCMSnExp works", {
     res_3 <- chromatogram(filterFile(xod_xg, file = c(1, 2)),
                           aggregationFun = "max", rt = rtr)
     expect_equal(res, res_3)
-    
+
     ## XCMSnExp: with mzrange and rtrange:
     mzr <- c(120, 130)
     tmp <- filterMz(xod_xg, mz = mzr)
@@ -1051,7 +1051,7 @@ test_that("signal integration is correct", {
     }
     ## pkI2 <- .getPeakInt2(tmp, chromPeaks(tmp)[idxs, , drop = FALSE])
     ## expect_equal(unname(pkI2), unname(chromPeaks(tmp)[idxs, "into"]))
-    
+
     ## Now for matchedfilter.
     tmp <- findChromPeaks(filterFile(od_x, 2), param = MatchedFilterParam())
     rtr <- chromPeaks(tmp)[1, c("rtmin", "rtmax")]
@@ -1185,7 +1185,7 @@ test_that("MS1 MS2 data works on XCMSnExp", {
     diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
     expect_equal(unname(diff(diffs)), rep(0, 5))
     diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
-    expect_equal(unname(diff(diffs)), rep(0, 5))    
+    expect_equal(unname(diff(diffs)), rep(0, 5))
     ## - adjusted rtime of the MS level 2 are in interpolated between rts of
     ##   MS level 2.
     ## rtime for 3 should be interpolated between 2 and 4:
@@ -1236,7 +1236,7 @@ test_that("MS1 MS2 data works on XCMSnExp", {
     diffs <- tail(res_by_file[[2]]) - tail(raw_by_file[[2]])
     expect_equal(unname(diff(diffs)), rep(0, 5))
     diffs <- tail(res_by_file[[3]]) - tail(raw_by_file[[3]])
-    expect_equal(unname(diff(diffs)), rep(0, 5))    
+    expect_equal(unname(diff(diffs)), rep(0, 5))
     ## - adjusted rtime of the MS level 2 are in interpolated between rts of
     ##   MS level 2.
     ## rtime for 3 should be interpolated between 2 and 4:
@@ -1276,7 +1276,7 @@ test_that("extractMsData,XCMSnExp works", {
     expect_true(all(res[[2]][, "rt"] >= rtr[1] & res[[2]][, "rt"] <= rtr[2]))
     expect_true(all(res[[1]][, "mz"] >= mzr[1] & res[[1]][, "mz"] <= mzr[2]))
     expect_true(all(res[[2]][, "mz"] >= mzr[1] & res[[2]][, "mz"] <= mzr[2]))
-    
+
     ## XCMSnExp, xod_xgr
     ## with adjusted retention times
     tmp <- filterFile(xod_xgr, 1:2, keepAdjustedRtime = TRUE)
@@ -1296,7 +1296,7 @@ test_that("extractMsData,XCMSnExp works", {
     tmp_rts <- tmp_rts[tmp_rts >= rtr[1] & tmp_rts <= rtr[2]]
     res_rts <- res[[2]][, 1]
     expect_equal(unique(res_rts), unname(tmp_rts))
-    
+
     ## without adjusted retention times
     res_2 <- extractMsData(filterFile(xod_xgr, 1:2), adjustedRtime = FALSE,
                            rt = rtr, mz = mzr)
@@ -1391,7 +1391,7 @@ test_that("groupnames,XCMSnExp works", {
 test_that("calibrate,XCMSnExp works", {
     do_plot <- FALSE
     tmp <- filterFile(faahko_xod, file = 1)
-    
+
     ## Check shift calibration.
     mzs <- chromPeaks(tmp)[c(3, 6, 7, 13, 17, 32, 45)]
     mzs_shift <- mzs + 0.0001
@@ -1421,7 +1421,7 @@ test_that("calibrate,XCMSnExp works", {
 
     ## edgeshift
     prm <- CalibrantMassParam(mz = mzs_lin, method = "edgeshift",
-                              mzabs = max_dif)    
+                              mzabs = max_dif)
     res <- calibrate(tmp, prm)
     expect_true(isCalibrated(res))
     diffs <- chromPeaks(res)[, "mz"] - chromPeaks(tmp)[, "mz"]
@@ -1440,10 +1440,10 @@ test_that("calibrate,XCMSnExp works", {
     lin_mod <- lm(diffs[lin_idx] ~ X[lin_idx])
     expect_equal(unname(coefficients(lin_mod)[1]), 0.00005, tolerance = 1e-5)
     expect_equal(unname(coefficients(lin_mod)[2]), 0.000002, tolerance = 1e-5)
-    
+
     ## Test with a single mass, fall back to shift.
     prm <- CalibrantMassParam(mz = mzs_lin[1], method = "edgeshift",
-                              mzabs = max_dif)    
+                              mzabs = max_dif)
     expect_warning(res <- calibrate(tmp, prm))
     diffs <- chromPeaks(res)[, "mz"] - chromPeaks(tmp)[, "mz"]
     min_diff <- min(abs(chromPeaks(tmp)[, "mz"] - mzs_lin[1]))
@@ -1451,7 +1451,7 @@ test_that("calibrate,XCMSnExp works", {
 
     ## Check errors.
     expect_error(calibrate(tmp, 4))
-    expect_error(calibrate(tmp, CalibrantMassParam(mz = list(mzs, mzs))))    
+    expect_error(calibrate(tmp, CalibrantMassParam(mz = list(mzs, mzs))))
 })
 
 test_that("adjustRtime,peakGroups works", {
@@ -1527,7 +1527,7 @@ test_that("adjustRtime,peakGroups works", {
     expect_true(hasFeatures(xodrg))
     xsrg <- group(xsr)
     expect_equal(xsrg@groupidx, featureDefinitions(xodrg)$peakidx)
-    
+
     ## Mod settings:
     xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
@@ -1561,7 +1561,7 @@ test_that("adjustRtime,peakGroups works", {
                  unlist(xsr@rt$corrected, use.names = FALSE))
     ## Dropping results.
     tmp <- dropAdjustedRtime(xodr)
-    expect_equal(tmp, xod)    
+    expect_equal(tmp, xod)
 })
 
 test_that("findChromPeaks,MSWParam works", {
@@ -1611,7 +1611,7 @@ test_that("findChromPeaks,MSWParam works", {
 test_that("featureValues,XCMSnExp works", {
     od_x <- faahko_xod
     xs <- faahko_xs
-    
+
     p <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = p)
 
@@ -1622,7 +1622,7 @@ test_that("featureValues,XCMSnExp works", {
     expect_equal(unname(groupval(xs, method = "maxint", value = "into")),
                  unname(featureValues(od_x, method = "maxint", value = "into")))
     ## Checking errors
-    expect_error(featureValues(od_x, value = "bla"))    
+    expect_error(featureValues(od_x, value = "bla"))
 })
 
 test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
@@ -1631,7 +1631,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     ## Check error if no features were found. issue #273
     pdp <- PeakDensityParam(sampleGroups = xs$class, minSamples = 30)
     expect_error(groupChromPeaks(od_x, param = pdp), "Unable to group any chromatographic peaks.")
-    
+
     fdp <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = fdp)
     xs <- group(xs, method = "density")
@@ -1645,7 +1645,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     expect_equal(processParam(ph), fdp)
     expect_equal(rownames(featureDefinitions(od_x)),
                  .featureIDs(nrow(featureDefinitions(od_x))))
-    
+
     fdp2 <- PeakDensityParam(sampleGroups = xs$class, binSize = 2,
                              minFraction = 0.8)
     od_x <- groupChromPeaks(od_x, param = fdp2)
@@ -1689,7 +1689,7 @@ test_that("groupPeaks,XCMSnExp,MzClustParam works", {
     expect_true(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
                          type = .PROCSTEP.PEAK.GROUPING)[[1]]
-    expect_equal(processParam(ph), p2)    
+    expect_equal(processParam(ph), p2)
     expect_equal(rownames(featureDefinitions(fticr_xod2)),
                  .featureIDs(nrow(featureDefinitions(fticr_xod2))))
 })
@@ -1720,7 +1720,7 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
     expect_equal(xs@groups, fg)
     expect_true(length(processHistory(od_x)) == 2)
     ph <- processHistory(od_x, type = .PROCSTEP.PEAK.GROUPING)[[1]]
-    expect_equal(processParam(ph), fdp2)    
+    expect_equal(processParam(ph), fdp2)
     expect_equal(rownames(featureDefinitions(od_x)),
                  .featureIDs(nrow(featureDefinitions(od_x))))
 })
@@ -1735,7 +1735,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
     ## Check parameter filled in featureValues (issue #157)
     expect_equal(featureValues(res, filled = FALSE), featureValues(xod_xg))
-    
+
     ## Check if the signal corresponds to what we expect for some peaks.
     fp <- chromPeaks(res)
     fp <- fp[fp[, "is_filled"] == 1, ]
@@ -1786,12 +1786,12 @@ test_that("fillChromPeaks,XCMSnExp works", {
         ## into
         expect_true(cor(fnd_pks[, "into"], fld_pks[, "into"]) > 0.99)
         expect_equal(unname(fnd_pks[, "into"]), unname(fld_pks[, "into"]))
-        ## expect_equal(fnd_pks[, "into"], fld_pks[, "into"])    
+        ## expect_equal(fnd_pks[, "into"], fld_pks[, "into"])
         ## maxo
         expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
         expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
     }
-    
+
     ## Check for the NAs if there is really no signal
     gv <- featureValues(res)
     feat_i <- which(is.na(gv[, 1]))
@@ -1806,7 +1806,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     mzs <- unlist(lapply(spctr, mz))
     ## No spectra for the fiven mz:
     expect_equal(sum(mzs >= pkArea[3] & mzs <= pkArea[4]), 0)
-    
+
     ## Check increasing the expandRt and expandMz to see whether we get rid of
     ## the NA.
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandMz = 1))
@@ -1817,7 +1817,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     fp2 <- fp2[fp2[, "is_filled"] == 1, ]
     expect_equal(fp2[, "mzmax"] - fp2[, "mzmin"],
                  2 * (fp[, "mzmax"] - fp[, "mzmin"]))
-    
+
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandRt = 1))
     ## Check if the mzrange is now indeed broader for the integrated ones.
     fp <- chromPeaks(res)
@@ -1840,7 +1840,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     expect_true(!.hasFilledPeaks(res_rem))
     expect_true(!any(chromPeaks(res_rem)[, "is_filled"] == 1))
     expect_equal(res_rem, xod_x)
-    
+
     ## With adjusted rtime.
     res_2 <- fillChromPeaks(xod_xgrg)
     ## Check if the signal corresponds to what we expect for some peaks.
@@ -1889,7 +1889,7 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
     fticr_xodg <- groupChromPeaks(fticr_xod, param = p)
     expect_error(res <- fillChromPeaks(fticr_xod))
     res <- fillChromPeaks(fticr_xodg)
-    
+
     ## Got a signal for all of em.
     expect_true(!any(is.na(featureValues(res))))
     ## 1) Compare with what I get for xcmsSet.
@@ -1973,7 +1973,7 @@ test_that("fillChromPeaks,XCMSnExp with matchedFilter works", {
         diffs <- fnd_pks[, "mz"] - fld_pks[, "mz"]
         expect_true(max(diffs) < 1e-4)
         ## into
-        expect_equal(unname(fnd_pks[, "into"]), unname(fld_pks[, "into"]))    
+        expect_equal(unname(fnd_pks[, "into"]), unname(fld_pks[, "into"]))
         ## maxo
         expect_equal(unname(fnd_pks[, "maxo"]), unname(fld_pks[, "maxo"]))
     }
@@ -1999,11 +1999,22 @@ test_that("writeMSData,XCMSnExp works", {
     writeMSData(xod_x, file = nfls)
     data_in <- readMSData(nfls, mode = "onDisk")
     expect_equal(rtime(data_in), rtime(xod_x))
-    
+
     ## Write adjusted retention times
     nfls <- paste0(tmp_path, "/",
                    sub(".CDF$", "_2.mzML", basename(fileNames(xod_xgr))))
     writeMSData(xod_xgr, file = nfls)
     data_in <- readMSData(nfls, mode = "onDisk")
     expect_equal(rtime(data_in), rtime(xod_xgr))
+})
+
+test_that("updateObject,XCMSnExp works", {
+    tmp <- faahko_xod
+    en <- new("MsFeatureData")
+    en@.xData <- xcms:::.copy_env(tmp@msFeatureData@.xData)
+    rownames(en$chromPeaks) <- NULL
+    tmp@msFeatureData <- en
+    expect_true(is.null(rownames(chromPeaks(tmp))))
+    tmp <- updateObject(tmp)
+    expect_true(!is.null(rownames(chromPeaks(tmp))))
 })

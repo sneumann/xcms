@@ -50,7 +50,7 @@ displayed.}
 acquisition numbers of the spectra to which the data set should be
 sub-setted.}
 
-\item{file}{For \code{filterAcquisitionNum}: 
+\item{file}{For \code{filterAcquisitionNum}:
 \code{integer} defining the file index within the object to subset the
 object by file.}
 

@@ -11,7 +11,7 @@ setMethod("initialize", "XCMSnExp", function(.Object, ...) {
 })
 
 #' @aliases show,MsFeatureData-method
-#' 
+#'
 #' @rdname XCMSnExp-class
 setMethod("show", "XCMSnExp", function(object) {
     callNextMethod()
@@ -179,7 +179,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' \code{chromPeaks}.
 #' See also \code{\link{featureSummary}} for a function to calculate simple
 #' feature summaries.
-#' 
+#'
 #' @return
 #'
 #' For \code{featureDefinitions}: a \code{DataFrame} with peak grouping
@@ -284,7 +284,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #'     \code{mz} range should be extended. For a value of \code{ppm = 10}, all
 #'     peaks within \code{mz[1] - ppm / 1e6} and \code{mz[2] + ppm / 1e6} are
 #'     returned.
-#' 
+#'
 #' @return
 #'
 #' For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
@@ -404,7 +404,7 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
 #'
 #' @param adjusted logical(1) whether adjusted or raw (i.e. the original
 #'     retention times reported in the files) should be returned.
-#' 
+#'
 #' @return
 #'
 #' For \code{rtime}: if \code{bySample = FALSE} a numeric vector with
@@ -506,7 +506,7 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
 #'
 #' @param BPPARAM Parameter class for parallel processing. See
 #'     \code{\link{bpparam}}.
-#' 
+#'
 #' @return
 #'
 #' For \code{spectra}: if \code{bySample = FALSE} a \code{list} with
@@ -534,7 +534,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 })
 
 #' @aliases processHistory
-#' 
+#'
 #' @description
 #'
 #' \code{processHistory}: returns a \code{list} with
@@ -554,11 +554,11 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
 #'     type. Use the \code{processHistoryTypes} to list all supported values.
 #'     For \code{chromPeaks}: \code{character} specifying which peaks to return
 #'     if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-#'     chromatographic peaks partially overlapping the range defined by 
+#'     chromatographic peaks partially overlapping the range defined by
 #'     \code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
 #'     only peaks completely within the region and \code{type = "apex_within"}
 #'     peaks for which the peak's apex is within the region.
-#' 
+#'
 #' @return
 #'
 #' For \code{processHistory}: a \code{list} of
@@ -604,7 +604,7 @@ setMethod("processHistory", "XCMSnExp", function(object, fileIndex, type,
 #'
 #' The \code{addProcessHistory} method returns the input object with the
 #' provided \code{\link{ProcessHistory}} appended to the process history.
-#' 
+#'
 #' @noRd
 setMethod("addProcessHistory", "XCMSnExp", function(object, ph) {
     if (!inherits(ph, "ProcessHistory"))
@@ -662,7 +662,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
 #' @aliases dropFeatureDefinitions dropFeatureDefinitions,MsFeatureData-method
 #'
 #' @description
-#' 
+#'
 #' \code{dropFeatureDefinitions}: drops the results from a
 #' correspondence (peak grouping) analysis, i.e. the definition of the mz-rt
 #' features and returns the object without that information. Note that for
@@ -685,7 +685,7 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
 #'     chromatographic peaks removes all process history steps related to peak
 #'     grouping. Setting e.g. \code{dropLastN = 1} will only remove the most
 #'     recent peak grouping related process history step.
-#' 
+#'
 #' @rdname XCMSnExp-class
 setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
                                                          keepAdjustedRtime = FALSE,
@@ -769,7 +769,7 @@ setMethod("dropAdjustedRtime", "XCMSnExp", function(object) {
             idx_fal <- -1L
         ## Copy the content of the object
         newFd <- new("MsFeatureData")
-        newFd@.xData <- .copy_env(object@msFeatureData)        
+        newFd@.xData <- .copy_env(object@msFeatureData)
         ## Revert applied adjustments in peaks:
         if (hasChromPeaks(newFd)) {
             message("Reverting retention times of identified peaks to ",
@@ -859,7 +859,7 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
             ## Subset the adjusted rtime
             new_adj <- rtime(x, adjusted = TRUE)[i]
             newFd <- new("MsFeatureData")
-            newFd@.xData <- .copy_env(x@msFeatureData)        
+            newFd@.xData <- .copy_env(x@msFeatureData)
             adjustedRtime(newFd) <-
                 unname(split(new_adj, f = fromFile(x)[i]))
             lockEnvironment(newFd, bindings = TRUE)
@@ -876,7 +876,7 @@ setMethod("[", "XCMSnExp", function(x, i, j, ..., drop = TRUE) {
 #' \code{[[} extracts a single \code{\link{Spectrum}}
 #' object from an \code{XCMSnExp}. The reported retention time is the
 #' adjusted retention time if alignment has been performed on \code{x}.
-#' 
+#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("[[", "XCMSnExp",
           function(x, i, j, drop = FALSE) {
@@ -905,7 +905,7 @@ setMethod("[[", "XCMSnExp",
 #'
 #' @param x \code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
 #'     object.
-#' 
+#'
 #' @param object \code{\link{XCMSnExp}} or \code{\link{OnDiskMSnExp}}
 #'     object.
 #'
@@ -976,7 +976,7 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
 #' removes identified chromatographic peaks and correspondence results
 #' while keeping adjusted retention times by default (if present). The
 #' latter can be changed setting \code{keepAdjustedRtime = FALSE}.
-#' 
+#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
                                                 keepAdjustedRtime =
@@ -1048,7 +1048,7 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
 #'     acquisition numbers of the spectra to which the data set should be
 #'     sub-setted.
 #'
-#' @param file For \code{filterAcquisitionNum}: 
+#' @param file For \code{filterAcquisitionNum}:
 #'     \code{integer} defining the file index within the object to subset the
 #'     object by file.
 #'
@@ -1067,7 +1067,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 })
 
 #' @aliases XCMSnExp-filter
-#' 
+#'
 #' @title XCMSnExp filtering and subsetting
 #'
 #' @description
@@ -1081,7 +1081,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' \code{filterFile}: allows to reduce the
 #' \code{\link{XCMSnExp}} to data from only certain files. Identified
 #' chromatographic peaks for these files are retained while all eventually
-#' present features (peak grouping information) are dropped. By default 
+#' present features (peak grouping information) are dropped. By default
 #' also adjusted retention times are removed (if present). This can be
 #' overwritten by setting \code{keepAdjustedRtime = TRUE}.
 #'
@@ -1096,7 +1096,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' support the argument \code{keepAdjustedRtime} (even the \code{[} method)
 #' that forces the adjusted retention times to be retained even if the
 #' default would be to drop them.
-#' 
+#'
 #' @note
 #'
 #' The \code{filterFile} method removes also process history steps not
@@ -1123,7 +1123,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     \code{[} \code{split}: \code{logical(1)} defining whether the adjusted
 #'     retention times should be kept, even if e.g. features are being removed
 #'     (and the retention time correction was performed on these features).
-#' 
+#'
 #' @return All methods return an \code{\link{XCMSnExp}} object.
 #'
 #' @author Johannes Rainer
@@ -1131,7 +1131,7 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' @seealso \code{\link{XCMSnExp}} for base class documentation.
 #'
 #' @rdname XCMSnExp-filter-methods
-#' 
+#'
 #' @examples
 #'
 #' ## Load some of the files from the faahKO package.
@@ -1520,7 +1520,7 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 })
 
 #' @aliases setAs
-#' 
+#'
 #' @rdname XCMSnExp-class
 #'
 #' @name XCMSnExp-class
@@ -1547,7 +1547,7 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #'     \code{\link{findChromPeaks}}).
 #'
 #'     For all other methods: a \code{PeakDensityParam} object.
-#' 
+#'
 #' @param param A \code{PeakDensityParam} object containing all settings for
 #'     the peak grouping algorithm.
 #'
@@ -1557,10 +1557,10 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #' results of the correspondence analysis. The definition of the resulting
 #' mz-rt features can be accessed with the \code{\link{featureDefinitions}}
 #' method.
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the correspondence.
-#' 
+#'
 #' @rdname groupChromPeaks-density
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "PeakDensityParam"),
@@ -1595,7 +1595,7 @@ setMethod("groupChromPeaks",
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,
                                      fileIndex = 1:length(fileNames(object)))
-              object <- addProcessHistory(object, xph)              
+              object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               if (nrow(df) == 0)
@@ -1626,7 +1626,7 @@ setMethod("groupChromPeaks",
 #'     analysis (see \code{\link{findChromPeaks}}).
 #'
 #'     For all other methods: a \code{MzClustParam} object.
-#' 
+#'
 #' @param param A \code{MzClustParam} object containing all settings for
 #'     the peak grouping algorithm.
 #'
@@ -1635,10 +1635,10 @@ setMethod("groupChromPeaks",
 #' For \code{groupChromPeaks}: a \code{\link{XCMSnExp}} object with the
 #' results of the peak grouping step (i.e. the features). These can be
 #' accessed with the \code{\link{featureDefinitions}} method.
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the peak grouping.
-#' 
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "MzClustParam"),
@@ -1678,7 +1678,7 @@ setMethod("groupChromPeaks",
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,
                                      fileIndex = 1:length(fileNames(object)))
-              object <- addProcessHistory(object, xph)              
+              object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
               df$peakidx <- res$peakIndex
@@ -1711,7 +1711,7 @@ setMethod("groupChromPeaks",
 #'     analysis (see \code{\link{findChromPeaks}}).
 #'
 #'     For all other methods: a \code{NearestPeaksParam} object.
-#' 
+#'
 #' @param param A \code{NearestPeaksParam} object containing all settings for
 #'     the peak grouping algorithm.
 #'
@@ -1721,10 +1721,10 @@ setMethod("groupChromPeaks",
 #' results of the peak grouping/correspondence step (i.e. the mz-rt
 #' features). These can be accessed with the
 #' \code{\link{featureDefinitions}} method.
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the peak grouping.
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "NearestPeaksParam"),
@@ -1803,7 +1803,7 @@ setMethod("groupChromPeaks",
 #'     \code{\link{groupChromPeaks}}).
 #'
 #'     For all other methods: a \code{PeakGroupsParam} object.
-#' 
+#'
 #' @param param A \code{PeakGroupsParam} object containing all settings for
 #'     the retention time correction method..
 #'
@@ -1816,10 +1816,10 @@ setMethod("groupChromPeaks",
 #' peaks (accessed \emph{via} \code{\link{chromPeaks}}. Note that retention
 #' time correction drops all previous alignment results from the result
 #' object.
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the alignment.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "PeakGroupsParam"),
@@ -1894,7 +1894,7 @@ setMethod("adjustRtime",
 #' of on MS level. Retention times for spectra of other MS levels are
 #' subsequently adjusted based on the adjustment function defined on the
 #' retention times of the spectra of MS level \code{msLevel}.
-#' 
+#'
 #' Calling \code{adjustRtime} on an \code{XCMSnExp} object will cause
 #' all peak grouping (correspondence) results and any previous retention
 #' time adjustment results to be dropped.
@@ -1902,13 +1902,13 @@ setMethod("adjustRtime",
 #' @param object For \code{adjustRtime}: an \code{\link{XCMSnExp}} object.
 #'
 #'     For all other methods: a \code{ObiwarpParam} object.
-#' 
+#'
 #' @param param A \code{ObiwarpParam} object containing all settings for
 #'     the alignment method.
 #'
 #' @param msLevel \code{integer} defining the MS level on which the retention
 #'     time should be performed.
-#' 
+#'
 #' @return
 #'
 #' For \code{adjustRtime,XCMSnExp,ObiwarpParam}: a
@@ -1923,7 +1923,7 @@ setMethod("adjustRtime",
 #' For \code{adjustRtime,OnDiskMSnExp,ObiwarpParam}: a \code{numeric} with
 #' the adjusted retention times per spectra (in the same order than
 #' \code{rtime}).
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the alignment.
 #'
@@ -1931,7 +1931,7 @@ setMethod("adjustRtime",
 #' John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of
 #' ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 #' \emph{Anal. Chem.} 2006, 78 (17), 6140-6152.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "ObiwarpParam"),
@@ -1979,9 +1979,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 
 
 #' @aliases featureValues
-#' 
+#'
 #' @title Accessing mz-rt feature data values
-#' 
+#'
 #' @description
 #'
 #' \code{featureValues,XCMSnExp} : extract a \code{matrix} for
@@ -1998,10 +1998,10 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{xcmsSet} objects. Note that \code{missing = 0} should be used to
 #' get the same behaviour as \code{groupval}, i.e. report missing values as 0
 #' after a call to \code{fillPeaks}.
-#' 
+#'
 #' @param object A \code{\link{XCMSnExp}} object providing the feature
 #'     definitions.
-#' 
+#'
 #' @param method \code{character} specifying the method to resolve
 #'     multi-peak mappings within the same sample, i.e. to define the
 #'     \emph{representative} peak for a feature in samples where more than
@@ -2032,7 +2032,7 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \code{NA} (the default), a \code{numeric} or
 #'     \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
 #'     half of the row's minimal (non-missing) value.
-#' 
+#'
 #' @return
 #'
 #' For \code{featureValues}: a \code{matrix} with
@@ -2042,9 +2042,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{matrix} are the same than those of the \code{featureDefinitions}
 #' \code{DataFrame}. \code{NA} is reported for features without
 #' corresponding chromatographic peak in the respective sample(s).
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @seealso
 #' \code{\link{XCMSnExp}} for information on the data object.
 #' \code{\link{featureDefinitions}} to extract the \code{DataFrame} with the
@@ -2052,7 +2052,7 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{\link{hasFeatures}} to evaluate whether the
 #' \code{\link{XCMSnExp}} provides feature definitions.
 #' \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
-#' 
+#'
 #' @rdname XCMSnExp-peak-grouping-results
 setMethod("featureValues",
           signature(object = "XCMSnExp"),
@@ -2093,9 +2093,9 @@ setMethod("featureValues",
               idx_rt <- match("rt", colnames(fts))
               idx_int <- match(intensity, colnames(fts))
               idx_samp <- match("sample", colnames(fts))
-              
+
               vals <- matrix(nrow = length(ftIdx), ncol = length(nSamples))
-              
+
               if (method == "sum") {
                   for (i in seq_along(ftIdx)) {
                       cur_pks <- fts[ftIdx[[i]], c(value, "sample")]
@@ -2146,7 +2146,7 @@ setMethod("featureValues",
                       }
                   }
               }
-              
+
               colnames(vals) <- fNames
               rownames(vals) <- rownames(grps)
               vals
@@ -2162,7 +2162,7 @@ setMethod("featureValues",
 
 
 #' @aliases chromatogram
-#' 
+#'
 #' @title Extracting chromatograms
 #'
 #' @description
@@ -2188,13 +2188,13 @@ setMethod("featureValues",
 #' specific scan (for a give retention time) no signal was measured in the
 #' specified mz range, a \code{NA_real_} is reported as intensity for the
 #' retention time (see Notes for more information). This can be changed
-#' using the \code{missing} parameter. 
+#' using the \code{missing} parameter.
 #'
 #' @note
 #'
 #' \code{\link{Chromatogram}} objects extracted with
 #' \code{chromatogram}
-#' contain \code{NA_real_} values if, for a given retention time, no 
+#' contain \code{NA_real_} values if, for a given retention time, no
 #' signal was measured in the specified mz range. If no spectrum/scan is
 #' present in the defined retention time window a \code{Chromatogram} object
 #' of length 0 is returned.
@@ -2204,7 +2204,7 @@ setMethod("featureValues",
 #' and use these (for the subsetting based on the provided parameter
 #' \code{rt}). This can be overwritten with the parameter
 #' \code{adjustedRtime}.
-#' 
+#'
 #' @param object Either a \code{\link{OnDiskMSnExp}} or
 #'     \code{\link{XCMSnExp}} object from which the chromatograms should be
 #'     extracted.
@@ -2240,7 +2240,7 @@ setMethod("featureValues",
 #'
 #' @param msLevel \code{integer} specifying the MS level from which the
 #'     chromatogram should be extracted. Defaults to \code{msLevel = 1L}.
-#' 
+#'
 #' @param BPPARAM Parallelisation backend to be used, which will
 #'     depend on the architecture. Default is
 #'     \code{BiocParallel::bparam()}.
@@ -2252,7 +2252,7 @@ setMethod("featureValues",
 #' \code{object} and number of rows the number of specified ranges (i.e.
 #' number of rows of matrices provided with arguments \code{mz} and/or
 #' \code{rt}).
-#' 
+#'
 #' @author Johannes Rainer
 #'
 #' @seealso \code{\link{XCMSnExp}} for the data object.
@@ -2269,7 +2269,7 @@ setMethod("featureValues",
 #'     for a method to extract the MS data as \code{data.frame}.
 #'
 #' @export
-#' 
+#'
 #' @rdname chromatogram-method
 #'
 #' @examples
@@ -2286,8 +2286,8 @@ setMethod("featureValues",
 #' chrs <- chromatogram(od, rt = c(2700, 2900), mz = 335)
 #'
 #' chrs
-#' 
-#' ## Plot the chromatogram 
+#'
+#' ## Plot the chromatogram
 #' plot(rtime(chrs[1, 2]), intensity(chrs[1, 2]), type = "l", xlab = "rtime",
 #'      ylab = "intensity", col = "000080")
 #' for(i in c(1, 3)) {
@@ -2304,7 +2304,7 @@ setMethod("featureValues",
 #' chrs <- chromatogram(od, mz = mzr, rt = rtr)
 #'
 #' chrs
-#' 
+#'
 #' ## Plot the extracted chromatograms
 #' plot(chrs)
 #'
@@ -2344,13 +2344,13 @@ setMethod("chromatogram",
 #' chromatographic peaks and aligned features. Previous alignment (retention
 #' time adjustment) results are kept, i.e. chromatographic peak detection
 #' is performed using adjusted retention times if the data was first
-#' aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}). 
-#' 
+#' aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
+#'
 #' @param param A \code{\link{CentWaveParam}}, \code{\link{MatchedFilterParam}},
 #'     \code{\link{MassifquantParam}}, \code{\link{MSWParam}} or
 #'     \code{\link{CentWavePredIsoParam}} object with the settings for the
 #'     chromatographic peak detection algorithm.
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
 setMethod("findChromPeaks",
           signature(object = "XCMSnExp", param = "Param"),
@@ -2384,7 +2384,7 @@ setMethod("findChromPeaks",
 })
 
 #' @aliases fillChromPeaks
-#' 
+#'
 #' @title Integrate areas of missing peaks
 #'
 #' @description
@@ -2407,7 +2407,7 @@ setMethod("findChromPeaks",
 #' increase this area, either by a constant value (\code{fixedMz} and
 #' \code{fixedRt}) or by a feature-relative amount (\code{expandMz} and
 #' \code{expandRt}).
-#' 
+#'
 #' Adjusted retention times will be used if available.
 #'
 #' Based on the peak finding algorithm that was used to identify the
@@ -2421,8 +2421,8 @@ setMethod("findChromPeaks",
 #' identified with the \code{\link{MSW}} algorithm signal is integrated
 #' only along the mz dimension. For all other methods the complete (raw)
 #' signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
-#' \code{"rtmin"} and \code{"rtmax"} is used. 
-#' 
+#' \code{"rtmin"} and \code{"rtmax"} is used.
+#'
 #' @note
 #'
 #' The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
@@ -2440,7 +2440,7 @@ setMethod("findChromPeaks",
 #'     chromatographic peaks.
 #'
 #' @param param A \code{FillChromPeaksParam} object with all settings.
-#' 
+#'
 #' @param expandMz \code{numeric(1)} defining the value by which the mz width of
 #'     peaks should be expanded. Each peak is expanded in mz direction by
 #'     \code{expandMz *} their original mz width. A value of \code{0} means no
@@ -2472,9 +2472,9 @@ setMethod("findChromPeaks",
 #'     expanded on both sides by \code{fixedRt} (i.e. \code{fixedRt} is
 #'     subtracted from the lower rt and added to the upper rt). This
 #'     expansion is applied \emph{after} \code{expandRt}.
-#' 
+#'
 #' @param BPPARAM Parallel processing settings.
-#' 
+#'
 #' @return
 #'
 #' A \code{\link{XCMSnExp}} object with previously missing
@@ -2482,15 +2482,15 @@ setMethod("findChromPeaks",
 #' matrix.
 #'
 #' @rdname fillChromPeaks
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @seealso \code{\link{groupChromPeaks}} for methods to perform the
 #'     correspondence.
 #'     \code{\link{dropFilledChromPeaks}} for the method to remove filled in peaks.
 #'
 #' @examples
-#' 
+#'
 #' ## Perform the peak detection using centWave on some of the files from the
 #' ## faahKO package. Files are read using the readMSData from the MSnbase
 #' ## package
@@ -2504,7 +2504,7 @@ setMethod("findChromPeaks",
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
 #' cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
-#' 
+#'
 #' res <- findChromPeaks(raw_data, param = cwp)
 #'
 #' ## Perform the correspondence. We assign all samples to the same group.
@@ -2520,25 +2520,25 @@ setMethod("findChromPeaks",
 #' ## Get the peaks that have been filled in:
 #' fp <- chromPeaks(res)[chromPeaks(res)[, "is_filled"] == 1, ]
 #' head(fp)
-#' 
+#'
 #' ## Did we get a signal for all missing peaks?
 #' sum(is.na(featureValues(res)))
 #'
 #' ## No.
 #'
 #' ## Get the process history step along with the parameters used to perform
-#' ## The peak filling: 
+#' ## The peak filling:
 #' ph <- processHistory(res, type = "Missing peak filling")[[1]]
 #' ph
 #'
 #' ## The parameter class:
 #' ph@param
-#' 
+#'
 #' ## Drop the filled in peaks:
 #' res <- dropFilledChromPeaks(res)
 #'
 #' ## Perform the peak filling with modified settings: allow expansion of the
-#' ## mz range by a specified ppm and expanding the mz range by mz width/2 
+#' ## mz range by a specified ppm and expanding the mz range by mz width/2
 #' prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
 #' res <- fillChromPeaks(res, param = prm)
 #'
@@ -2556,7 +2556,7 @@ setMethod("fillChromPeaks",
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
-              
+
               startDate <- date()
               expandMz <- expandMz(param)
               expandRt <- expandRt(param)
@@ -2687,7 +2687,7 @@ setMethod("fillChromPeaks",
                                       mzCenterFun = mzCenterFun),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               }
-                            
+
               res <- do.call(rbind, res)
               if (any(colnames(res) == "is_filled"))
                   res[, "is_filled"] <- 1
@@ -2702,7 +2702,7 @@ setMethod("fillChromPeaks",
                           "peaks! Consider increasing 'expandMz' and 'expandRt'.")
                   return(object)
               }
-              
+
               ## Get the msFeatureData:
               newFd <- new("MsFeatureData")
               newFd@.xData <- .copy_env(object@msFeatureData)
@@ -2712,15 +2712,11 @@ setMethod("fillChromPeaks",
                   (which(res[, "group_idx"] == i) + incr))
               }
               ## Define IDs for the new peaks; include fix for issue #347
-              maxId <- suppressWarnings(
-                  max(as.numeric(sub("^CP", "",
-                                     rownames(chromPeaks(object))))))
-              if (maxId < 1) {
-                  maxId <- nrow(chromPeaks(object))
-                  rownames(chromPeaks(object)) <- sprintf(
-                      paste0("CP", "%0", ceiling(log10(maxId + 1L)), "d"),
-                      1:maxId)
-              }
+              maxId <- max(as.numeric(sub("^CP", "",
+                                          rownames(chromPeaks(object)))))
+              if (maxId < 1)
+                  stop("'chromPeaks' matrix has no rownames; please update the",
+                       " object with the 'updateObject' function.")
               toId <- maxId + nrow(res)
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
@@ -2758,7 +2754,7 @@ setMethod(
 #' related process history steps.
 #'
 #' @rdname XCMSnExp-class
-#' 
+#'
 #' @seealso \code{\link{fillChromPeaks}} for the method to fill-in eventually
 #'     missing chromatographic peaks for a feature in some samples.
 setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
@@ -2787,7 +2783,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' @aliases extractMsData
 #'
 #' @title DEPRECATED: Extract a `data.frame` containing MS data
-#' 
+#'
 #' @description
 #'
 #' **UPDATE**: the `extractMsData` and `plotMsData` functions are deprecated
@@ -2797,7 +2793,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' adjusted retention times. In such cases it is advisable to use the
 #' [applyAdjustedRtime()] function prior to filtering.
 #'
-#' 
+#'
 #' Extract a `data.frame` of retention time, mz and intensity
 #' values from each file/sample in the provided rt-mz range (or for the full
 #' data range if `rt` and `mz` are not defined).
@@ -2812,7 +2808,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' @param msLevel `integer` defining the MS level(s) to which the data
 #'     should be sub-setted prior to extraction; defaults to
 #'     `msLevel = 1L`.
-#' 
+#'
 #' @param adjustedRtime (for `extractMsData,XCMSnExp`): `logical(1)`
 #'     specifying if adjusted or raw retention times should be reported.
 #'     Defaults to adjusted retention times, if these are present in
@@ -2833,7 +2829,7 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #' @author Johannes Rainer
 #'
 #' @md
-#' 
+#'
 #' @examples
 #' ## Read some files from the test data package.
 #' library(faahKO)
@@ -2876,15 +2872,15 @@ setMethod("extractMsData", "XCMSnExp",
 #' @rdname calibrate-calibrant-mass
 #'
 #' @param object An [XCMSnExp] object.
-#' 
+#'
 #' @param param The `CalibrantMassParam` object with the calibration settings.
-#' 
+#'
 #' @return
 #'
 #' The `calibrate` method returns an [XCMSnExp] object with the
 #' chromatographic peaks being calibrated. Note that **only** the detected
 #' peaks are calibrated, but not the individual mz values in each spectrum.
-#' 
+#'
 #' @md
 setMethod("calibrate", "XCMSnExp", function(object, param) {
     if (missing(param)) {
@@ -2928,7 +2924,7 @@ setMethod("calibrate", "XCMSnExp", function(object, param) {
                 method <- "shift"
             }
         }
-        
+
         prms <- estimate(close_pks, method)
         adj_models[[i]] <- prms
         a <- prms[1]                    # slope
@@ -2967,7 +2963,7 @@ setMethod("calibrate", "XCMSnExp", function(object, param) {
 #'
 #' @param FUN For \code{spectrapply}: a function that should be applied to each
 #'     spectrum in the object.
-#' 
+#'
 #' @rdname XCMSnExp-class
 setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
                                               BPPARAM = bpparam(), ...) {
@@ -2988,7 +2984,7 @@ setMethod("spectrapply", "XCMSnExp", function(object, FUN = NULL,
 #' @param f For \code{split} a vector of length equal to the length of x
 #'     defining how \code{x} will be splitted. It is converted internally to
 #'     a \code{factor}.
-#' 
+#'
 #' @rdname XCMSnExp-filter-methods
 setMethod("split", "XCMSnExp", function(x, f,
                                         drop = FALSE, ...) {
@@ -3018,7 +3014,7 @@ setMethod("split", "XCMSnExp", function(x, f,
 #' \code{XCMSnExp} objects can be combined with the \code{c} function. This
 #' combines identified chromatographic peaks and the objects' pheno data but
 #' discards alignment results or feature definitions.
-#' 
+#'
 #' @rdname XCMSnExp-class
 c.XCMSnExp <- function(...) {
     .concatenate_XCMSnExp(...)
@@ -3052,7 +3048,7 @@ c.XCMSnExp <- function(...) {
 #' @seealso [XCMSnExp].
 #'
 #' @md
-#' 
+#'
 #' @rdname groupnames-XCMSnExp
 setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
                                              template = NULL) {
@@ -3111,7 +3107,7 @@ setMethod("groupnames", "XCMSnExp", function(object, mzdec = 0, rtdec = 0,
 #'     output format (`"mzml"` or `"mzxml"`) or `copy` to specify whether
 #'     general information from the original MS data files (such as data
 #'     processing, software etc) should be copied to the new files.
-#' 
+#'
 #' @author Johannes Rainer
 #'
 #' @md
@@ -3133,3 +3129,19 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
                              outformat = outformat, copy = copy,
                              software_processing = software_processing, ...)
           })
+
+setMethod("updateObject", "XCMSnExp", function(object) {
+    newFd <- new("MsFeatureData")
+    newFd@.xData <- .copy_env(object@msFeatureData)
+    if (hasChromPeaks(newFd)) {
+        if (is.null(rownames(chromPeaks(newFd))))
+            rownames(chromPeaks(newFd)) <-
+                .featureIDs(nrow(chromPeaks(newFd)), "CP")
+    }
+    lockEnvironment(newFd, bindings = TRUE)
+    object@msFeatureData <- newFd
+    if (!length(object@.processHistory))
+        object@.processHistory <- list()
+    validObject(object)
+    object
+})
