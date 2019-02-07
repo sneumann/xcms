@@ -1,3 +1,9 @@
+Changes in version 3.4.4
+
+- Fix issue #349: dropChromPeaks fails if no retention time adjustment process
+  history is present.
+
+
 Changes in version 3.4.2
 
 - Fix issue #325: matchedFilter peak detection on data containing empty spectra.

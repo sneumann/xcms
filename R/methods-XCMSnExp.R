@@ -646,9 +646,10 @@ setMethod("dropChromPeaks", "XCMSnExp", function(object,
         if (hasAdjustedRtime(newFd) & !keepAdjustedRtime) {
             idx_rt_adj <- which(phTypes == .PROCSTEP.RTIME.CORRECTION)
             idx_pk_det <- which(phTypes == .PROCSTEP.PEAK.DETECTION)
-            if (idx_rt_adj > idx_pk_det) {
-                object <- dropProcessHistories(object,
-                                               type = .PROCSTEP.RTIME.CORRECTION)
+            if (length(idx_rt_adj) && length(idx_pk_det) &&
+                max(idx_rt_adj) > max(idx_pk_det)) {
+                object <- dropProcessHistories(
+                    object, type = .PROCSTEP.RTIME.CORRECTION)
                 newFd <- dropAdjustedRtime(newFd)
             }
         }
@@ -1222,9 +1223,8 @@ setMethod("filterFile", "XCMSnExp", function(object, file,
     newFd <- new("MsFeatureData")
     newFd@.xData <- .copy_env(object@msFeatureData)
     ## Subset original data:
-    suppressWarnings(
-        object <- callNextMethod(object = object, file = file)
-    )
+    object <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
+                 "XCMSnExp")
     ## Subset the results per file:
     if (has_adj_rt) {
         adjustedRtime(newFd) <- adjustedRtime(newFd)[file]
