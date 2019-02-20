@@ -37,28 +37,29 @@ to check.}
 A \code{list} with elements \code{"featureDefinitions"} and
 \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
 representing an (mz-rt) feature (i.e. peak group) with columns:
-\describe{
-\item{"mzmed"}{median of the peaks' apex mz values.}
-\item{"mzmin"}{smallest mz value of all peaks' apex within the feature.}
-\item{"mzmax"}{largest mz value of all peaks' apex within the feature.}
-\item{"rtmed"}{the median of the peaks' retention times.}
-\item{"rtmin"}{the smallest retention time of the peaks in the feature.}
-\item{"rtmax"}{the largest retention time of the peaks in the feature.}
-\item{"npeaks"}{the total number of peaks assigned to the feature.}
+\itemize{
+\item \code{"mzmed"}: median of the peaks' apex mz values.
+\item \code{"mzmin"}: smallest mz value of all peaks' apex within the feature.
+\item \code{"mzmax"}:largest mz value of all peaks' apex within the feature.
+\item \code{"rtmed"}: the median of the peaks' retention times.
+\item \code{"rtmin"}: the smallest retention time of the peaks in the feature.
+\item \code{"rtmax"}: the largest retention time of the peaks in the feature.
+\item \code{"npeaks"}: the total number of peaks assigned to the feature.
 }
-\code{"peakIndex"} is a \code{list} with the indices of all peaks in a
-feature in the \code{peaks} input matrix.
+
+\code{"peakIndex"} is a \code{list} with the indices of all peaks in a feature in the
+\code{peaks} input matrix.
 }
 \description{
-The \code{do_groupChromPeaks_nearest} function groups peaks
-across samples by creating a master peak list and assigning corresponding
-peaks from all samples to each peak group (i.e. feature). The method is
-inspired by the correspondence algorithm of mzMine [Katajamaa 2006].
+The \code{do_groupChromPeaks_nearest} function groups peaks across samples by
+creating a master peak list and assigning corresponding peaks from all
+samples to each peak group (i.e. feature). The method is inspired by the
+correspondence algorithm of mzMine (Katajamaa 2006).
 }
 \references{
 Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 processing and visualization of mass spectrometry based molecular profile
-data. \emph{Bioinformatics} 2006, 22:634-636.
+data. Bioinformatics 2006, 22:634-636.
 }
 \seealso{
 Other core peak grouping algorithms: \code{\link{do_groupChromPeaks_density}},

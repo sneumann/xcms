@@ -1,4 +1,4 @@
-#+HTML: <p align = "center"><a href = "https://github.com/Bioconductor/BiocStickers/"><img src = "https://github.com/Bioconductor/BiocStickers/blob/master/xcms/xcms.png" height = "100"></a><a href = "https://travis-ci.org/sneumann/xcms"><img src = "https://travis-ci.org/sneumann/xcms.svg?branch=develop"></a></p>
+#+HTML: <p align = "center"><a href = "https://github.com/Bioconductor/BiocStickers/"><img src = "https://github.com/Bioconductor/BiocStickers/blob/master/xcms/xcms.png" height = "100"></a><a href = "https://travis-ci.org/sneumann/xcms"><img src = "https://travis-ci.org/sneumann/xcms.svg?branch=master"></a></p>
 
 
 * The =xcms3= package

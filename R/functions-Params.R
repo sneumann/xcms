@@ -7,9 +7,9 @@
 #'     appended to the returned list.
 #'
 #' @param x A Param class.
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @noRd
 .param2list <- function(x) {
     ## Get all slot names, skip those matching the provided pattern.
@@ -66,11 +66,11 @@
 ## GenericParam
 #' @return The \code{GenericParam} function returns a \code{GenericParam}
 #'     object.
-#' 
+#'
 #' @param fun \code{character} representing the name of the function.
-#' 
+#'
 #' @param args \code{list} (ideally named) with the arguments to the function.
-#' 
+#'
 #' @rdname GenericParam
 GenericParam <- function(fun = character(), args = list()) {
     return(new("GenericParam", fun = fun, args = args))
@@ -112,7 +112,7 @@ MatchedFilterParam <- function(binSize = 0.1, impute = "none",
 }
 #' Convert the impute method to the old-style method name (e.g. for profMat
 #'     calls)
-#' 
+#'
 #' @noRd
 .impute2method <- function(x) {
     if (impute(x) == "none")
@@ -224,13 +224,15 @@ CentWavePredIsoParam <- function(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
                mzIntervalExtension = mzIntervalExtension, polarity = polarity))
 }
 
-#' @return The \code{PeakDensityParam} function returns a
-#'     \code{PeakDensityParam} class instance with all of the settings
+#' @return The `PeakDensityParam` function returns a
+#'     `PeakDensityParam` class instance with all of the settings
 #'     specified for chromatographic peak alignment based on peak densities.
 #'     Note that argument `sampleGroups` is mandatory and should represent
 #'     either the sample grouping in the experiment. It's length has to match
 #'     the number of sample in the experiments.
-#' 
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
                                 minFraction = 0.5, minSamples = 1,
@@ -243,10 +245,14 @@ PeakDensityParam <- function(sampleGroups = numeric(), bw = 30,
         binSize = binSize, maxFeatures = maxFeatures)
 }
 
-#' @return The \code{MzClustParam} function returns a
-#'     \code{MzClustParam} class instance with all of the settings
-#'     specified for high resolution single spectra peak alignment.
-#' 
+#' @return
+#'
+#' The `MzClustParam` function returns a `MzClustParam` class instance with
+#' all of the settings specified for high resolution single spectra peak
+#' alignment.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
                                 minFraction = 0.5, minSamples = 1) {
@@ -258,7 +264,7 @@ MzClustParam <- function(sampleGroups = numeric(), ppm = 20, absMz = 0,
 #' @return The \code{NearestPeaksParam} function returns a
 #'     \code{NearestPeaksParam} class instance with all of the settings
 #'     specified for peak alignment based on peak proximity.
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
                               absMz = 0.2, absRt = 15, kNN = 10) {
@@ -271,37 +277,45 @@ NearestPeaksParam <- function(sampleGroups = numeric(), mzVsRtBalance = 10,
 #'     \code{PeakGroupsParam} class instance with all of the settings
 #'     specified for retention time adjustment based on \emph{house keeping}
 #'     features/peak groups.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 PeakGroupsParam <- function(minFraction = 0.9, extraPeaks = 1,
                                smooth = "loess", span = 0.2,
                             family = "gaussian",
-                            peakGroupsMatrix = matrix(nrow = 0, ncol = 0)) {
-    return(new("PeakGroupsParam", minFraction = minFraction,
-               extraPeaks = extraPeaks, smooth = smooth, span = span,
-               family = family, peakGroupsMatrix = peakGroupsMatrix))
+                            peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
+                            subset = integer(),
+                            subsetAdjust = c("average", "previous")) {
+    subsetAdjust <- match.arg(subsetAdjust)
+    new("PeakGroupsParam", minFraction = minFraction,
+        extraPeaks = extraPeaks, smooth = smooth, span = span,
+        family = family, peakGroupsMatrix = peakGroupsMatrix,
+        subset = as.integer(subset), subsetAdjust = subsetAdjust)
 }
 
 #' @return The \code{ObiwarpParam} function returns a
 #'     \code{ObiwarpParam} class instance with all of the settings
 #'     specified for obiwarp retention time adjustment and alignment.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 ObiwarpParam <- function(binSize = 1, centerSample = integer(), response = 1L,
                          distFun = "cor_opt", gapInit = numeric(),
                          gapExtend = numeric(), factorDiag = 2, factorGap = 1,
-                         localAlignment = FALSE, initPenalty = 0) {
-    return(new("ObiwarpParam", binSize = binSize,
-               centerSample = as.integer(centerSample),
-               response = as.integer(response), distFun = distFun,
-               gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
-               factorGap = factorGap, localAlignment = localAlignment,
-               initPenalty = initPenalty))
+                         localAlignment = FALSE, initPenalty = 0,
+                         subset = integer(),
+                         subsetAdjust = c("average", "previous")) {
+    subsetAdjust <- match.arg(subsetAdjust)
+    new("ObiwarpParam", binSize = binSize,
+        centerSample = as.integer(centerSample),
+        response = as.integer(response), distFun = distFun,
+        gapInit = gapInit, gapExtend = gapExtend, factorDiag = factorDiag,
+        factorGap = factorGap, localAlignment = localAlignment,
+        initPenalty = initPenalty, subset = as.integer(subset),
+        subsetAdjust = subsetAdjust)
 }
 
 #' @return The \code{FillChromPeaksParam} function returns a
 #'     \code{FillChromPeaksParam} object.
-#' 
+#'
 #' @rdname fillChromPeaks
 FillChromPeaksParam <- function(expandMz = 0, expandRt = 0, ppm = 0,
                                 fixedMz = 0, fixedRt = 0) {
@@ -319,7 +333,7 @@ fixedMz <- function(object) object@fixedMz
 #'     the `CalibrantMassParam` class with all settings and properties set.
 #'
 #' @md
-#' 
+#'
 #' @rdname calibrate-calibrant-mass
 CalibrantMassParam <- function(mz = list(), mzabs = 0.0001, mzppm = 5,
                                neighbors = 3, method = "linear") {

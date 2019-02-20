@@ -71,10 +71,16 @@ after a call to \code{fillPeaks}.
 }
 \seealso{
 \code{\link{XCMSnExp}} for information on the data object.
+
 \code{\link{featureDefinitions}} to extract the \code{DataFrame} with the
 feature definitions.
+
+\code{\link{featureChromatograms}} to extract ion chromatograms for each
+feature.
+
 \code{\link{hasFeatures}} to evaluate whether the
 \code{\link{XCMSnExp}} provides feature definitions.
+
 \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 }
 \author{

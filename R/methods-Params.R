@@ -24,7 +24,7 @@ setMethod("initialize", "GenericParam", function(.Object, ...) {
     callNextMethod(.Object, ...)
 })
 #' @param object \code{GenericParam} object.
-#' 
+#'
 #' @rdname GenericParam
 setMethod("show", "GenericParam", function(object) {
     cat("Object of class: ", class(object), "\n")
@@ -67,16 +67,16 @@ setMethod("show", "CentWaveParam", function(object) {
 })
 
 #' @aliases ppm
-#' 
+#'
 #' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 #'     slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("ppm", "CentWaveParam", function(object){ return(object@ppm)})
 #' @aliases ppm<-
-#' 
+#'
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
     object@ppm <- value
@@ -85,15 +85,15 @@ setReplaceMethod("ppm", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases peakwidth
-#' 
+#'
 #' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
 #'     \code{peakwidth} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("peakwidth", "CentWaveParam", function(object)
     return(object@peakwidth))
 #' @aliases peakwidth<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
     object@peakwidth <- value
@@ -102,15 +102,15 @@ setReplaceMethod("peakwidth", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases snthresh
-#' 
+#'
 #' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 #'     \code{snthresh} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("snthresh", "CentWaveParam", function(object)
     return(object@snthresh))
 #' @aliases snthresh<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
     object@snthresh <- value
@@ -119,15 +119,15 @@ setReplaceMethod("snthresh", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases prefilter
-#' 
+#'
 #' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
 #'     \code{prefilter} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("prefilter", "CentWaveParam", function(object)
     return(object@prefilter))
 #' @aliases prefilter<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
     object@prefilter <- value
@@ -136,15 +136,15 @@ setReplaceMethod("prefilter", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases mzCenterFun
-#' 
+#'
 #' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
 #'     \code{mzCenterFun} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("mzCenterFun", "CentWaveParam", function(object)
     return(object@mzCenterFun))
 #' @aliases mzCenterFun<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
     object@mzCenterFun <- value
@@ -154,14 +154,14 @@ setReplaceMethod("mzCenterFun", "CentWaveParam", function(object, value) {
 
 #' @description \code{integrate},\code{integrate<-}: getter and setter for the
 #'     \code{integrate} slot of the object.
-#' 
+#'
 #' @param f For \code{integrate}: a \code{CentWaveParam} object.
 #'
 #' @rdname findChromPeaks-centWave
 setMethod("integrate", signature(f = "CentWaveParam"), function(f)
     return(f@integrate))
 #' @aliases integrate<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
     object@integrate <- as.integer(value)
@@ -170,15 +170,15 @@ setReplaceMethod("integrate", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases mzdiff
-#' 
+#'
 #' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 #'     \code{mzdiff} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("mzdiff", "CentWaveParam", function(object)
     return(object@mzdiff))
 #' @aliases mzdiff<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
     object@mzdiff <- value
@@ -187,15 +187,15 @@ setReplaceMethod("mzdiff", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases fitgauss
-#' 
+#'
 #' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
 #'     \code{fitgauss} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("fitgauss", "CentWaveParam", function(object)
     return(object@fitgauss))
 #' @aliases fitgauss<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
     object@fitgauss <- value
@@ -204,15 +204,15 @@ setReplaceMethod("fitgauss", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases noise
-#' 
+#'
 #' @description \code{noise},\code{noise<-}: getter and setter for the
 #'     \code{noise} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("noise", "CentWaveParam", function(object)
     return(object@noise))
 #' @aliases noise<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("noise", "CentWaveParam", function(object, value) {
     object@noise <- value
@@ -221,15 +221,15 @@ setReplaceMethod("noise", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases verboseColumns
-#' 
+#'
 #' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
 #'     setter for the \code{verboseColumns} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("verboseColumns", "CentWaveParam", function(object)
     return(object@verboseColumns))
 #' @aliases verboseColumns<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
     object@verboseColumns <- value
@@ -238,15 +238,15 @@ setReplaceMethod("verboseColumns", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases roiList
-#' 
+#'
 #' @description \code{roiList},\code{roiList<-}: getter and setter for the
 #'     \code{roiList} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("roiList", "CentWaveParam", function(object)
     return(object@roiList))
 #' @aliases roiList<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
     object@roiList <- value
@@ -255,15 +255,15 @@ setReplaceMethod("roiList", "CentWaveParam", function(object, value) {
 })
 
 #' @aliases firstBaselineCheck
-#' 
+#'
 #' @description \code{fistBaselineCheck},\code{firstBaselineCheck<-}: getter
 #'     and setter for the \code{firstBaselineCheck} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("firstBaselineCheck", "CentWaveParam", function(object)
     return(object@firstBaselineCheck))
 #' @aliases firstBaselineCheck<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) {
     object@firstBaselineCheck <- value
@@ -272,15 +272,15 @@ setReplaceMethod("firstBaselineCheck", "CentWaveParam", function(object, value) 
 })
 
 #' @aliases roiScales
-#' 
+#'
 #' @description \code{roiScales},\code{roiScales<-}: getter and setter for the
 #'     \code{roiScales} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setMethod("roiScales", "CentWaveParam", function(object)
     return(object@roiScales))
 #' @aliases roiScales<-
-#' 
+#'
 #' @rdname findChromPeaks-centWave
 setReplaceMethod("roiScales", "CentWaveParam", function(object, value) {
     object@roiScales <- value
@@ -313,15 +313,15 @@ setMethod("show", "MatchedFilterParam", function(object) {
 })
 
 #' @aliases binSize
-#' 
+#'
 #' @description \code{binSize},\code{binSize<-}: getter and setter for the
 #'     \code{binSize} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("binSize", "MatchedFilterParam", function(object)
     return(object@binSize))
 #' @aliases binSize<-
-#' 
+#'
 #' @param value The value for the slot.
 #'
 #' @rdname findChromPeaks-matchedFilter
@@ -333,12 +333,12 @@ setReplaceMethod("binSize", "MatchedFilterParam", function(object, value) {
 
 #' @description \code{impute},\code{impute<-}: getter and setter for the
 #'     \code{impute} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("impute", "MatchedFilterParam", function(object)
     return(object@impute))
 #' @aliases impute<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
     object@impute <- value
@@ -350,12 +350,12 @@ setReplaceMethod("impute", "MatchedFilterParam", function(object, value) {
 #'
 #' @description \code{baseValue},\code{baseValue<-}: getter and setter for the
 #'     \code{baseValue} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("baseValue", "MatchedFilterParam", function(object)
     return(object@baseValue))
 #' @aliases baseValue<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
     object@baseValue <- value
@@ -364,15 +364,15 @@ setReplaceMethod("baseValue", "MatchedFilterParam", function(object, value) {
 })
 
 #' @aliases distance
-#' 
+#'
 #' @description \code{distance},\code{distance<-}: getter and setter for the
 #'     \code{distance} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("distance", "MatchedFilterParam", function(object)
     return(object@distance))
 #' @aliases distance<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
     object@distance <- value
@@ -381,15 +381,15 @@ setReplaceMethod("distance", "MatchedFilterParam", function(object, value) {
 })
 
 #' @aliases fwhm
-#' 
+#'
 #' @description \code{fwhm},\code{fwhm<-}: getter and setter for the
 #'     \code{fwhm} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("fwhm", "MatchedFilterParam", function(object)
     return(object@fwhm))
 #' @aliases fwhm<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
     object@fwhm <- value
@@ -398,15 +398,15 @@ setReplaceMethod("fwhm", "MatchedFilterParam", function(object, value) {
 })
 
 #' @aliases sigma
-#' 
+#'
 #' @description \code{sigma},\code{sigma<-}: getter and setter for the
 #'     \code{sigma} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("sigma", "MatchedFilterParam", function(object)
     return(object@sigma))
 #' @aliases sigma<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
     object@sigma <- value
@@ -416,14 +416,14 @@ setReplaceMethod("sigma", "MatchedFilterParam", function(object, value) {
 
 #' @description \code{max},\code{max<-}: getter and setter for the
 #'      \code{max} slot of the object.
-#' 
+#'
 #' @param x For \code{max}: a \code{MatchedFilterParam} object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("max", signature(x="MatchedFilterParam"),
           function(x) return(x@max))
 #' @aliases max<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
     object@max <- value
@@ -433,7 +433,7 @@ setReplaceMethod("max", "MatchedFilterParam", function(object, value) {
 
 #' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 #'     \code{snthresh} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("snthresh", "MatchedFilterParam", function(object)
     return(object@snthresh))
@@ -445,15 +445,15 @@ setReplaceMethod("snthresh", "MatchedFilterParam", function(object, value) {
 })
 
 #' @aliases steps
-#' 
+#'
 #' @description \code{steps},\code{steps<-}: getter and setter for the
 #'     \code{steps} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("steps", "MatchedFilterParam", function(object)
     return(object@steps))
 #' @aliases steps<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
     object@steps <- value
@@ -463,7 +463,7 @@ setReplaceMethod("steps", "MatchedFilterParam", function(object, value) {
 
 #' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 #'      \code{mzdiff} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("mzdiff", "MatchedFilterParam", function(object)
     return(object@mzdiff))
@@ -475,15 +475,15 @@ setReplaceMethod("mzdiff", "MatchedFilterParam", function(object, value) {
 })
 
 #' @aliases index
-#' 
+#'
 #' @description \code{index},\code{index<-}: getter and setter for the
 #'     \code{index} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setMethod("index", "MatchedFilterParam", function(object)
     return(object@index))
 #' @aliases index<-
-#' 
+#'
 #' @rdname findChromPeaks-matchedFilter
 setReplaceMethod("index", "MatchedFilterParam", function(object, value) {
     object@index <- value
@@ -522,11 +522,11 @@ setMethod("show", "MassifquantParam", function(object) {
 
 #' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
 #'     slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("ppm", "MassifquantParam", function(object){ return(object@ppm)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
     object@ppm <- value
@@ -536,7 +536,7 @@ setReplaceMethod("ppm", "MassifquantParam", function(object, value) {
 
 #' @description \code{peakwidth},\code{peakwidth<-}: getter and setter for the
 #'     \code{peakwidth} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("peakwidth", "MassifquantParam", function(object)
     return(object@peakwidth))
@@ -549,7 +549,7 @@ setReplaceMethod("peakwidth", "MassifquantParam", function(object, value) {
 
 #' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 #'     \code{snthresh} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("snthresh", "MassifquantParam", function(object)
     return(object@snthresh))
@@ -562,7 +562,7 @@ setReplaceMethod("snthresh", "MassifquantParam", function(object, value) {
 
 #' @description \code{prefilter},\code{prefilter<-}: getter and setter for the
 #'     \code{prefilter} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("prefilter", "MassifquantParam", function(object)
     return(object@prefilter))
@@ -575,7 +575,7 @@ setReplaceMethod("prefilter", "MassifquantParam", function(object, value) {
 
 #' @description \code{mzCenterFun},\code{mzCenterFun<-}: getter and setter for the
 #'     \code{mzCenterFun} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("mzCenterFun", "MassifquantParam", function(object)
     return(object@mzCenterFun))
@@ -588,7 +588,7 @@ setReplaceMethod("mzCenterFun", "MassifquantParam", function(object, value) {
 
 #' @description \code{integrate},\code{integrate<-}: getter and setter for the
 #'     \code{integrate} slot of the object.
-#' 
+#'
 #' @param f For \code{integrate}: a \code{MassifquantParam} object.
 #'
 #' @rdname findChromPeaks-massifquant
@@ -603,7 +603,7 @@ setReplaceMethod("integrate", "MassifquantParam", function(object, value) {
 
 #' @description \code{mzdiff},\code{mzdiff<-}: getter and setter for the
 #'     \code{mzdiff} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("mzdiff", "MassifquantParam", function(object)
     return(object@mzdiff))
@@ -616,7 +616,7 @@ setReplaceMethod("mzdiff", "MassifquantParam", function(object, value) {
 
 #' @description \code{fitgauss},\code{fitgauss<-}: getter and setter for the
 #'     \code{fitgauss} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("fitgauss", "MassifquantParam", function(object)
     return(object@fitgauss))
@@ -629,7 +629,7 @@ setReplaceMethod("fitgauss", "MassifquantParam", function(object, value) {
 
 #' @description \code{noise},\code{noise<-}: getter and setter for the
 #'     \code{noise} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("noise", "MassifquantParam", function(object)
     return(object@noise))
@@ -642,7 +642,7 @@ setReplaceMethod("noise", "MassifquantParam", function(object, value) {
 
 #' @description \code{verboseColumns},\code{verboseColumns<-}: getter and
 #'     setter for the \code{verboseColumns} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("verboseColumns", "MassifquantParam", function(object)
     return(object@verboseColumns))
@@ -654,15 +654,15 @@ setReplaceMethod("verboseColumns", "MassifquantParam", function(object, value) {
 })
 
 #' @aliases criticalValue
-#' 
+#'
 #' @description \code{criticalValue},\code{criticalValue<-}: getter and
 #'     setter for the \code{criticalValue} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("criticalValue", "MassifquantParam", function(object)
     return(object@criticalValue))
 #' @aliases criticalValue<-
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
     object@criticalValue <- value
@@ -671,15 +671,15 @@ setReplaceMethod("criticalValue", "MassifquantParam", function(object, value) {
 })
 
 #' @aliases consecMissedLimit
-#' 
+#'
 #' @description \code{consecMissedLimit},\code{consecMissedLimit<-}: getter and
 #'     setter for the \code{consecMissedLimit} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("consecMissedLimit", "MassifquantParam", function(object)
     return(object@consecMissedLimit))
 #' @aliases consecMissedLimit<-
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  function(object, value) {
@@ -689,15 +689,15 @@ setReplaceMethod("consecMissedLimit", "MassifquantParam",
                  })
 
 #' @aliases unions
-#' 
+#'
 #' @description \code{unions},\code{unions<-}: getter and
 #'     setter for the \code{unions} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("unions", "MassifquantParam", function(object)
     return(object@unions))
 #' @aliases unions<-
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("unions", "MassifquantParam", function(object, value) {
     object@unions <- as.integer(value)
@@ -706,15 +706,15 @@ setReplaceMethod("unions", "MassifquantParam", function(object, value) {
 })
 
 #' @aliases checkBack
-#' 
+#'
 #' @description \code{checkBack},\code{checkBack<-}: getter and
 #'     setter for the \code{checkBack} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("checkBack", "MassifquantParam", function(object)
     return(object@checkBack))
 #' @aliases checkBack<-
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
     object@checkBack <- as.integer(value)
@@ -723,15 +723,15 @@ setReplaceMethod("checkBack", "MassifquantParam", function(object, value) {
 })
 
 #' @aliases withWave
-#' 
+#'
 #' @description \code{withWave},\code{withWave<-}: getter and
 #'     setter for the \code{withWave} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setMethod("withWave", "MassifquantParam", function(object)
     return(object@withWave))
 #' @aliases withWave<-
-#' 
+#'
 #' @rdname findChromPeaks-massifquant
 setReplaceMethod("withWave", "MassifquantParam", function(object, value) {
     object@withWave <- value
@@ -773,11 +773,11 @@ setMethod("show", "MSWParam", function(object) {
 
 #' @description \code{snthresh},\code{snthresh<-}: getter and setter for the
 #'     \code{snthresh} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("snthresh", "MSWParam", function(object){ return(object@snthresh)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("snthresh", "MSWParam", function(object, value) {
     object@snthresh <- value
@@ -787,7 +787,7 @@ setReplaceMethod("snthresh", "MSWParam", function(object, value) {
 
 #' @description \code{verboseColumns},\code{verboseColumns<-}: getter and setter
 #'     for the \code{verboseColumns} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("verboseColumns", "MSWParam", function(object){
     return(object@verboseColumns)})
@@ -799,14 +799,14 @@ setReplaceMethod("verboseColumns", "MSWParam", function(object, value) {
 })
 
 #' @aliases scales
-#' 
+#'
 #' @description \code{scales},\code{scales<-}: getter and setter for the
 #'     \code{scales} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("scales", "MSWParam", function(object){ return(object@scales)})
 #' @aliases scales<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("scales", "MSWParam", function(object, value) {
     object@scales <- value
@@ -815,14 +815,14 @@ setReplaceMethod("scales", "MSWParam", function(object, value) {
 })
 
 #' @aliases nearbyPeak
-#' 
+#'
 #' @description \code{nearbyPeak},\code{nearbyPeak<-}: getter and setter for the
 #'     \code{nearbyPeak} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("nearbyPeak", "MSWParam", function(object){ return(object@nearbyPeak)})
 #' @aliases nearbyPeak<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
     object@nearbyPeak <- value
@@ -831,15 +831,15 @@ setReplaceMethod("nearbyPeak", "MSWParam", function(object, value) {
 })
 
 #' @aliases peakScaleRange
-#' 
+#'
 #' @description \code{peakScaleRange},\code{peakScaleRange<-}: getter and setter
 #'     for the \code{peakScaleRange} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("peakScaleRange", "MSWParam", function(object){
     return(object@peakScaleRange)})
 #' @aliases peakScaleRange<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
     object@peakScaleRange <- value
@@ -848,14 +848,14 @@ setReplaceMethod("peakScaleRange", "MSWParam", function(object, value) {
 })
 
 #' @aliases ampTh
-#' 
+#'
 #' @description \code{ampTh},\code{ampTh<-}: getter and setter for the
 #'     \code{ampTh} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("ampTh", "MSWParam", function(object){ return(object@ampTh)})
 #' @aliases ampTh<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("ampTh", "MSWParam", function(object, value) {
     object@ampTh <- value
@@ -864,15 +864,15 @@ setReplaceMethod("ampTh", "MSWParam", function(object, value) {
 })
 
 #' @aliases minNoiseLevel
-#' 
+#'
 #' @description \code{minNoiseLevel},\code{minNoiseLevel<-}: getter and setter
 #'     for the \code{minNoiseLevel} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("minNoiseLevel", "MSWParam", function(object){
     return(object@minNoiseLevel)})
 #' @aliases minNoiseLevel<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
     object@minNoiseLevel <- value
@@ -881,15 +881,15 @@ setReplaceMethod("minNoiseLevel", "MSWParam", function(object, value) {
 })
 
 #' @aliases ridgeLength
-#' 
+#'
 #' @description \code{ridgeLength},\code{ridgeLength<-}: getter and setter for
 #'     the \code{ridgeLength} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("ridgeLength", "MSWParam", function(object){
     return(object@ridgeLength)})
 #' @aliases ridgeLength<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
     object@ridgeLength <- value
@@ -898,14 +898,14 @@ setReplaceMethod("ridgeLength", "MSWParam", function(object, value) {
 })
 
 #' @aliases peakThr
-#' 
+#'
 #' @description \code{peakThr},\code{peakThr<-}: getter and setter for the
 #'     \code{peakThr} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("peakThr", "MSWParam", function(object){ return(object@peakThr)})
 #' @aliases peakThr<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("peakThr", "MSWParam", function(object, value) {
     object@peakThr <- value
@@ -914,14 +914,14 @@ setReplaceMethod("peakThr", "MSWParam", function(object, value) {
 })
 
 #' @aliases tuneIn
-#' 
+#'
 #' @description \code{tuneIn},\code{tuneIn<-}: getter and setter for the
 #'     \code{tuneIn} slot of the object.
-#' 
+#'
 #' @rdname findPeaks-MSW
 setMethod("tuneIn", "MSWParam", function(object){ return(object@tuneIn)})
 #' @aliases tuneIn<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
     object@tuneIn <- value
@@ -930,7 +930,7 @@ setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
 })
 
 #' @aliases addParams
-#' 
+#'
 #' @description \code{addParams},\code{addParams<-}: getter and setter for the
 #'     \code{addParams} slot of the object. This slot stores optional additional
 #'     parameters to be passed to the
@@ -941,7 +941,7 @@ setReplaceMethod("tuneIn", "MSWParam", function(object, value) {
 #' @rdname findPeaks-MSW
 setMethod("addParams", "MSWParam", function(object){ return(object@addParams)})
 #' @aliases addParams<-
-#' 
+#'
 #' @rdname findPeaks-MSW
 setReplaceMethod("addParams", "MSWParam", function(object, value) {
     object@addParams <- value
@@ -997,15 +997,15 @@ setMethod("show", "CentWavePredIsoParam", function(object) {
 })
 
 #' @aliases snthreshIsoROIs
-#' 
+#'
 #' @description \code{snthreshIsoROIs},\code{snthreshIsoROIs<-}: getter and
 #'     setter for the \code{snthreshIsoROIs} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object){
     return(object@snthreshIsoROIs)})
 #' @aliases snthreshIsoROIs<-
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, value) {
     object@snthreshIsoROIs <- value
@@ -1014,15 +1014,15 @@ setReplaceMethod("snthreshIsoROIs", "CentWavePredIsoParam", function(object, val
 })
 
 #' @aliases maxCharge
-#' 
+#'
 #' @description \code{maxCharge},\code{maxCharge<-}: getter and
 #'     setter for the \code{maxCharge} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("maxCharge", "CentWavePredIsoParam", function(object){
     return(object@maxCharge)})
 #' @aliases maxCharge<-
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
     object@maxCharge <- as.integer(value)
@@ -1031,15 +1031,15 @@ setReplaceMethod("maxCharge", "CentWavePredIsoParam", function(object, value) {
 })
 
 #' @aliases maxIso
-#' 
+#'
 #' @description \code{maxIso},\code{maxIso<-}: getter and
 #'     setter for the \code{maxIso} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("maxIso", "CentWavePredIsoParam", function(object){
     return(object@maxIso)})
 #' @aliases maxIso<-
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
     object@maxIso <- as.integer(value)
@@ -1048,15 +1048,15 @@ setReplaceMethod("maxIso", "CentWavePredIsoParam", function(object, value) {
 })
 
 #' @aliases mzIntervalExtension
-#' 
+#'
 #' @description \code{mzIntervalExtension},\code{mzIntervalExtension<-}: getter
 #'     and setter for the \code{mzIntervalExtension} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("mzIntervalExtension", "CentWavePredIsoParam", function(object){
     return(object@mzIntervalExtension)})
 #' @aliases mzIntervalExtension<-
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
                  function(object, value) {
@@ -1067,12 +1067,12 @@ setReplaceMethod("mzIntervalExtension", "CentWavePredIsoParam",
 
 #' @description \code{polarity},\code{polarity<-}: getter and
 #'     setter for the \code{polarity} slot of the object.
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setMethod("polarity", "CentWavePredIsoParam", function(object){
     return(object@polarity)})
 #' @aliases polarity<-
-#' 
+#'
 #' @rdname findChromPeaks-centWaveWithPredIsoROIs
 setReplaceMethod("polarity", "CentWavePredIsoParam", function(object, value) {
     object@polarity <- value
@@ -1102,19 +1102,23 @@ setMethod("show", "PeakDensityParam", function(object) {
 })
 
 #' @aliases sampleGroups
-#' 
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object. Its length should match
+#'
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object. Its length should match
 #'     the number of samples in the experiment and it should not contain
-#'     \code{NA}s.
-#' 
+#'     `NA`s.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("sampleGroups", "PeakDensityParam", function(object){
     return(object@sampleGroups)})
 #' @aliases sampleGroups<-
-#' 
+#'
 #' @param value The value for the slot.
-#' 
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
     if (length(value) == 0 | any(is.na(value)))
@@ -1126,15 +1130,17 @@ setReplaceMethod("sampleGroups", "PeakDensityParam", function(object, value) {
 })
 
 #' @aliases bw
-#' 
-#' @description \code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+#'
+#' @description `bw`,`bw<-`: getter and setter for the `bw` slot
 #'     of the object.
-#' 
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("bw", "PeakDensityParam", function(object){
     return(object@bw)})
 #' @aliases bw<-
-#' 
+#'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
     object@bw <- value
@@ -1143,15 +1149,17 @@ setReplaceMethod("bw", "PeakDensityParam", function(object, value) {
 })
 
 #' @aliases minFraction
-#' 
-#' @description \code{minFraction},\code{minFraction<-}: getter and setter for
-#'     the \code{minFraction} slot of the object.
-#' 
+#'
+#' @description `minFraction`,`minFraction<-`: getter and setter for
+#'     the `minFraction` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("minFraction", "PeakDensityParam", function(object){
     return(object@minFraction)})
 #' @aliases minFraction<-
-#' 
+#'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
     object@minFraction <- value
@@ -1160,15 +1168,17 @@ setReplaceMethod("minFraction", "PeakDensityParam", function(object, value) {
 })
 
 #' @aliases minSamples
-#' 
-#' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
-#'     \code{minSamples} slot of the object.
-#' 
+#'
+#' @description `minSamples`,`minSamples<-`: getter and setter for the
+#'     `minSamples` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("minSamples", "PeakDensityParam", function(object){
     return(object@minSamples)})
 #' @aliases minSamples<-
-#' 
+#'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
     object@minSamples <- value
@@ -1176,9 +1186,11 @@ setReplaceMethod("minSamples", "PeakDensityParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{binSize},\code{binSize<-}: getter and setter for the
-#'     \code{binSize} slot of the object.
-#' 
+#' @description `binSize`,`binSize<-`: getter and setter for the
+#'     `binSize` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("binSize", "PeakDensityParam", function(object){
     return(object@binSize)})
@@ -1190,15 +1202,17 @@ setReplaceMethod("binSize", "PeakDensityParam", function(object, value) {
 })
 
 #' @aliases maxFeatures
-#' 
-#' @description \code{maxFeatures},\code{maxFeatures<-}: getter and setter for
-#'     the \code{maxFeatures} slot of the object.
-#' 
+#'
+#' @description `maxFeatures`,`maxFeatures<-`: getter and setter for
+#'     the `maxFeatures` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-density
 setMethod("maxFeatures", "PeakDensityParam", function(object){
     return(object@maxFeatures)})
 #' @aliases maxFeatures<-
-#' 
+#'
 #' @rdname groupChromPeaks-density
 setReplaceMethod("maxFeatures", "PeakDensityParam", function(object, value) {
     object@maxFeatures <- value
@@ -1226,14 +1240,16 @@ setMethod("show", "MzClustParam", function(object) {
     cat(" minSamples:", minSamples(object), "\n")
 })
 
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object.
-#' 
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("sampleGroups", "MzClustParam", function(object){
     return(object@sampleGroups)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname groupChromPeaks-mzClust
 setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
     object@sampleGroups <- value
@@ -1241,9 +1257,11 @@ setReplaceMethod("sampleGroups", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{ppm},\code{ppm<-}: getter and setter for the \code{ppm}
+#' @description `ppm`,`ppm<-`: getter and setter for the `ppm`
 #'     slot of the object.
-#' 
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("ppm", "MzClustParam", function(object){
     return(object@ppm)})
@@ -1255,15 +1273,17 @@ setReplaceMethod("ppm", "MzClustParam", function(object, value) {
 })
 
 #' @aliases absMz
-#' 
-#' @description \code{absMz},\code{absMz<-}: getter and setter for the
-#'     \code{absMz} slot of the object.
-#' 
+#'
+#' @description `absMz`,`absMz<-`: getter and setter for the
+#'     `absMz` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("absMz", "MzClustParam", function(object){
     return(object@absMz)})
 #' @aliases absMz<-
-#' 
+#'
 #' @rdname groupChromPeaks-mzClust
 setReplaceMethod("absMz", "MzClustParam", function(object, value) {
     object@absMz <- value
@@ -1271,9 +1291,11 @@ setReplaceMethod("absMz", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{minFraction},\code{minFraction<-}: getter and setter for
-#'     the \code{minFraction} slot of the object.
-#' 
+#' @description `minFraction`,`minFraction<-`: getter and setter for
+#'     the `minFraction` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("minFraction", "MzClustParam", function(object){
     return(object@minFraction)})
@@ -1284,9 +1306,11 @@ setReplaceMethod("minFraction", "MzClustParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{minSamples},\code{minSamples<-}: getter and setter for the
-#'     \code{minSamples} slot of the object.
-#' 
+#' @description `minSamples`,`minSamples<-`: getter and setter for the
+#'     `minSamples` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-mzClust
 setMethod("minSamples", "MzClustParam", function(object){
     return(object@minSamples)})
@@ -1317,14 +1341,16 @@ setMethod("show", "NearestPeaksParam", function(object) {
     cat(" kNN:", object@kNN, "\n")
 })
 
-#' @description \code{sampleGroups},\code{sampleGroups<-}: getter and setter
-#'     for the \code{sampleGroups} slot of the object.
-#' 
+#' @description `sampleGroups`,`sampleGroups<-`: getter and setter
+#'     for the `sampleGroups` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("sampleGroups", "NearestPeaksParam", function(object){
     return(object@sampleGroups)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
     object@sampleGroups <- value
@@ -1333,15 +1359,17 @@ setReplaceMethod("sampleGroups", "NearestPeaksParam", function(object, value) {
 })
 
 #' @aliases mzVsRtBalance
-#' 
-#' @description \code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
-#'     for the \code{mzVsRtBalance} slot of the object.
-#' 
+#'
+#' @description `mzVsRtBalance`,`mzVsRtBalance<-`: getter and setter
+#'     for the `mzVsRtBalance` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("mzVsRtBalance", "NearestPeaksParam", function(object){
     return(object@mzVsRtBalance)})
 #' @aliases mzVsRtBalance<-
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
     object@mzVsRtBalance <- value
@@ -1349,9 +1377,11 @@ setReplaceMethod("mzVsRtBalance", "NearestPeaksParam", function(object, value) {
         return(object)
 })
 
-#' @description \code{absMz},\code{absMz<-}: getter and setter for the
-#'     \code{absMz} slot of the object.
-#' 
+#' @description `absMz`,`absMz<-`: getter and setter for the
+#'     `absMz` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("absMz", "NearestPeaksParam", function(object){
     return(object@absMz)})
@@ -1363,15 +1393,17 @@ setReplaceMethod("absMz", "NearestPeaksParam", function(object, value) {
 })
 
 #' @aliases absRt
-#' 
-#' @description \code{absRt},\code{absRt<-}: getter and setter for the
-#'     \code{absRt} slot of the object.
-#' 
+#'
+#' @description `absRt`,`absRt<-`: getter and setter for the
+#'     `absRt` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("absRt", "NearestPeaksParam", function(object){
     return(object@absRt)})
 #' @aliases absRt<-
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
     object@absRt <- value
@@ -1380,15 +1412,17 @@ setReplaceMethod("absRt", "NearestPeaksParam", function(object, value) {
 })
 
 #' @aliases kNN
-#' 
-#' @description \code{kNN},\code{kNN<-}: getter and setter for the
-#'     \code{kNN} slot of the object.
-#' 
+#'
+#' @description `kNN`,`kNN<-`: getter and setter for the
+#'     `kNN` slot of the object.
+#'
+#' @md
+#'
 #' @rdname groupChromPeaks-nearest
 setMethod("kNN", "NearestPeaksParam", function(object){
     return(object@kNN)})
 #' @aliases kNN<-
-#' 
+#'
 #' @rdname groupChromPeaks-nearest
 setReplaceMethod("kNN", "NearestPeaksParam", function(object, value) {
     object@kNN <- value
@@ -1413,6 +1447,7 @@ setMethod("show", "PeakGroupsParam", function(object) {
     cat(" smooth:", object@smooth, "\n")
     cat(" span:", object@span, "\n")
     cat(" family:", object@family, "\n")
+    cat(" subset:", object@subset, "\n")
     pgm <- peakGroupsMatrix(object)
     if (nrow(pgm))
         cat(" number of peak groups:", nrow(pgm), "\n")
@@ -1420,12 +1455,12 @@ setMethod("show", "PeakGroupsParam", function(object) {
 
 #' @description \code{minFraction},\code{minFraction<-}: getter and setter
 #'     for the \code{minFraction} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("minFraction", "PeakGroupsParam", function(object){
     return(object@minFraction)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
     object@minFraction <- value
@@ -1434,15 +1469,15 @@ setReplaceMethod("minFraction", "PeakGroupsParam", function(object, value) {
 })
 
 #' @aliases extraPeaks
-#' 
+#'
 #' @description \code{extraPeaks},\code{extraPeaks<-}: getter and setter
 #'     for the \code{extraPeaks} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("extraPeaks", "PeakGroupsParam", function(object){
     return(object@extraPeaks)})
 #' @aliases extraPeaks<-
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
     object@extraPeaks <- value
@@ -1451,17 +1486,17 @@ setReplaceMethod("extraPeaks", "PeakGroupsParam", function(object, value) {
 })
 
 #' @aliases smooth
-#' 
+#'
 #' @description \code{smooth},\code{smooth<-}: getter and setter
 #'     for the \code{smooth} slot of the object.
-#' 
+#'
 #' @param x a \code{PeakGroupsParam} object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("smooth", "PeakGroupsParam", function(x){
     return(x@smooth)})
 #' @aliases smooth<-
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
     object@smooth <- value
@@ -1470,15 +1505,15 @@ setReplaceMethod("smooth", "PeakGroupsParam", function(object, value) {
 })
 
 #' @aliases span
-#' 
+#'
 #' @description \code{span},\code{span<-}: getter and setter
 #'     for the \code{span} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("span", "PeakGroupsParam", function(object){
     return(object@span)})
 #' @aliases span<-
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
     object@span <- value
@@ -1487,15 +1522,15 @@ setReplaceMethod("span", "PeakGroupsParam", function(object, value) {
 })
 
 #' @aliases family
-#' 
+#'
 #' @description \code{family},\code{family<-}: getter and setter
 #'     for the \code{family} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("family", "PeakGroupsParam", function(object){
     return(object@family)})
 #' @aliases family<-
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
     object@family <- value
@@ -1504,18 +1539,50 @@ setReplaceMethod("family", "PeakGroupsParam", function(object, value) {
 })
 
 #' @aliases peakGroupsMatrix
-#' 
+#'
 #' @description \code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
 #'     setter for the \code{peakGroupsMatrix} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setMethod("peakGroupsMatrix", "PeakGroupsParam", function(object){
     return(object@peakGroupsMatrix)})
 #' @aliases peakGroupsMatrix<-
-#' 
+#'
 #' @rdname adjustRtime-peakGroups
 setReplaceMethod("peakGroupsMatrix", "PeakGroupsParam", function(object, value) {
     object@peakGroupsMatrix <- value
+    if (validObject(object))
+        return(object)
+})
+#' @aliases subset
+#'
+#' @description \code{subset},\code{subset<-}: getter and
+#'     setter for the \code{subset} slot of the object.
+#'
+#' @rdname adjustRtime-peakGroups
+setMethod("subset", "PeakGroupsParam", function(x){
+    return(x@subset)})
+#' @aliases subset<-
+#'
+#' @rdname adjustRtime-peakGroups
+setReplaceMethod("subset", "PeakGroupsParam", function(object, value) {
+    object@subset <- value
+    if (validObject(object))
+        return(object)
+})
+#' @aliases subsetAdjust
+#'
+#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
+#'     setter for the \code{subsetAdjust} slot of the object.
+#'
+#' @rdname adjustRtime-peakGroups
+setMethod("subsetAdjust", "PeakGroupsParam", function(object){
+    return(object@subsetAdjust)})
+#' @aliases subsetAdjust<-
+#'
+#' @rdname adjustRtime-peakGroups
+setReplaceMethod("subsetAdjust", "PeakGroupsParam", function(object, value) {
+    object@subsetAdjust <- value
     if (validObject(object))
         return(object)
 })
@@ -1546,12 +1613,12 @@ setMethod("show", "ObiwarpParam", function(object) {
 
 #' @description \code{binSize},\code{binSize<-}: getter and setter
 #'     for the \code{binSize} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("binSize", "ObiwarpParam", function(object){
     return(object@binSize)})
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
     object@binSize <- value
@@ -1560,15 +1627,15 @@ setReplaceMethod("binSize", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases centerSample
-#' 
+#'
 #' @description \code{centerSample},\code{centerSample<-}: getter and setter
 #'     for the \code{centerSample} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("centerSample", "ObiwarpParam", function(object){
     return(object@centerSample)})
 #' @aliases centerSample<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
     object@centerSample <- as.integer(value)
@@ -1577,15 +1644,15 @@ setReplaceMethod("centerSample", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases response
-#' 
+#'
 #' @description \code{response},\code{response<-}: getter and setter
 #'     for the \code{response} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("response", "ObiwarpParam", function(object){
     return(object@response)})
 #' @aliases response<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("response", "ObiwarpParam", function(object, value) {
     object@response <- as.integer(value)
@@ -1594,15 +1661,15 @@ setReplaceMethod("response", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases distFun
-#' 
+#'
 #' @description \code{distFun},\code{distFun<-}: getter and setter
 #'     for the \code{distFun} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("distFun", "ObiwarpParam", function(object){
     return(object@distFun)})
 #' @aliases distFun<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
     object@distFun <- value
@@ -1611,10 +1678,10 @@ setReplaceMethod("distFun", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases gapInit
-#' 
+#'
 #' @description \code{gapInit},\code{gapInit<-}: getter and setter
 #'     for the \code{gapInit} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("gapInit", "ObiwarpParam", function(object){
     if (length(object@gapInit) == 0) {
@@ -1627,7 +1694,7 @@ setMethod("gapInit", "ObiwarpParam", function(object){
     }
     return(object@gapInit)})
 #' @aliases gapInit<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
     object@gapInit <- value
@@ -1636,10 +1703,10 @@ setReplaceMethod("gapInit", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases gapExtend
-#' 
+#'
 #' @description \code{gapExtend},\code{gapExtend<-}: getter and setter
 #'     for the \code{gapExtend} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("gapExtend", "ObiwarpParam", function(object){
     if (length(object@gapExtend) == 0) {
@@ -1654,7 +1721,7 @@ setMethod("gapExtend", "ObiwarpParam", function(object){
     }
     return(object@gapExtend)})
 #' @aliases gapExtend<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
     object@gapExtend <- value
@@ -1663,15 +1730,15 @@ setReplaceMethod("gapExtend", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases factorDiag
-#' 
+#'
 #' @description \code{factorDiag},\code{factorDiag<-}: getter and setter
 #'      for the \code{factorDiag} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("factorDiag", "ObiwarpParam", function(object){
     return(object@factorDiag)})
 #' @aliases factorDiag<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
     object@factorDiag <- value
@@ -1680,15 +1747,15 @@ setReplaceMethod("factorDiag", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases factorGap
-#' 
+#'
 #' @description \code{factorGap},\code{factorGap<-}: getter and setter
 #'     for the \code{factorGap} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("factorGap", "ObiwarpParam", function(object){
     return(object@factorGap)})
 #' @aliases factorGap<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
     object@factorGap <- value
@@ -1697,15 +1764,15 @@ setReplaceMethod("factorGap", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases localAlignment
-#' 
+#'
 #' @description \code{localAlignment},\code{localAlignment<-}: getter and setter
 #'     for the \code{localAlignment} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("localAlignment", "ObiwarpParam", function(object){
     return(object@localAlignment)})
 #' @aliases localAlignment<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
     object@localAlignment <- value
@@ -1714,18 +1781,43 @@ setReplaceMethod("localAlignment", "ObiwarpParam", function(object, value) {
 })
 
 #' @aliases initPenalty
-#' 
+#'
 #' @description \code{initPenalty},\code{initPenalty<-}: getter and setter
 #'     for the \code{initPenalty} slot of the object.
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setMethod("initPenalty", "ObiwarpParam", function(object){
     return(object@initPenalty)})
 #' @aliases initPenalty<-
-#' 
+#'
 #' @rdname adjustRtime-obiwarp
 setReplaceMethod("initPenalty", "ObiwarpParam", function(object, value) {
     object@initPenalty <- value
+    if (validObject(object))
+        return(object)
+})
+
+#' @description \code{subset},\code{subset<-}: getter and
+#'     setter for the \code{subset} slot of the object.
+#'
+#' @rdname adjustRtime-obiwarp
+setMethod("subset", "ObiwarpParam", function(x){
+    return(x@subset)})
+#' @rdname adjustRtime-obiwarp
+setReplaceMethod("subset", "ObiwarpParam", function(object, value) {
+    object@subset <- value
+    if (validObject(object))
+        return(object)
+})
+#' @description \code{subsetAdjust},\code{subsetAdjust<-}: getter and
+#'     setter for the \code{subsetAdjust} slot of the object.
+#'
+#' @rdname adjustRtime-obiwarp
+setMethod("subsetAdjust", "ObiwarpParam", function(object){
+    return(object@subsetAdjust)})
+#' @rdname adjustRtime-obiwarp
+setReplaceMethod("subsetAdjust", "ObiwarpParam", function(object, value) {
+    object@subsetAdjust <- value
     if (validObject(object))
         return(object)
 })
@@ -1747,17 +1839,17 @@ setMethod("show", "FillChromPeaksParam", function(object) {
 })
 
 #' @aliases expandMz
-#' 
+#'
 #' @description \code{expandMz},\code{expandMz<-}: getter and setter
 #'     for the \code{expandMz} slot of the object.
 #'
 #' @param value The value for the slot.
-#' 
+#'
 #' @rdname fillChromPeaks
 setMethod("expandMz", "FillChromPeaksParam", function(object){
     return(object@expandMz)})
 #' @aliases expandMz<-
-#' 
+#'
 #' @rdname fillChromPeaks
 setReplaceMethod("expandMz", "FillChromPeaksParam", function(object, value) {
     object@expandMz <- value
@@ -1766,15 +1858,15 @@ setReplaceMethod("expandMz", "FillChromPeaksParam", function(object, value) {
 })
 
 #' @aliases expandRt
-#' 
+#'
 #' @description \code{expandRt},\code{expandRt<-}: getter and setter
 #'     for the \code{expandRt} slot of the object.
-#' 
+#'
 #' @rdname fillChromPeaks
 setMethod("expandRt", "FillChromPeaksParam", function(object){
     return(object@expandRt)})
 #' @aliases expandRt<-
-#' 
+#'
 #' @rdname fillChromPeaks
 setReplaceMethod("expandRt", "FillChromPeaksParam", function(object, value) {
     object@expandRt <- value
@@ -1784,7 +1876,7 @@ setReplaceMethod("expandRt", "FillChromPeaksParam", function(object, value) {
 
 #' @description \code{ppm},\code{ppm<-}: getter and setter
 #'     for the \code{ppm} slot of the object.
-#' 
+#'
 #' @rdname fillChromPeaks
 setMethod("ppm", "FillChromPeaksParam", function(object){
     return(object@ppm)})

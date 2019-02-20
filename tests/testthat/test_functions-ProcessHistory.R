@@ -53,3 +53,23 @@ test_that("GenericProcessHistory works", {
     expect_true(length(xs) == 1)
     expect_equal(processParam(xs[[1]])@fun, "median")
 })
+
+test_that(".process_history_subset_samples works", {
+    ph <- list(XProcessHistory(CentWaveParam()))
+    expect_equal(.process_history_subset_samples(ph), ph)
+    ph <- list(XProcessHistory(CentWaveParam(), fileIndex = 1:10))
+    res <- .process_history_subset_samples(ph, 1:4)
+    expect_equal(res[[1]]@fileIndex, 1:4)
+    expect_true(is(res[[1]]@param, "CentWaveParam"))
+    ph <- list(XProcessHistory(CentWaveParam(), fileIndex = 1:7),
+               XProcessHistory(PeakDensityParam(
+                          sampleGroups = c("a", "b", "a", "c", "c", "a", "b"))))
+    res <- .process_history_subset_samples(ph, c(2, 4, 1, 2))
+    expect_equal(res[[1]]@fileIndex, 1:4)
+    expect_equal(res[[2]]@fileIndex, 1:4)
+    expect_equal(res[[2]]@param@sampleGroups, c("b", "c", "a", "b"))
+    res <- .process_history_subset_samples(ph, 5)
+    expect_equal(res[[1]]@fileIndex, 1)
+    expect_equal(res[[2]]@fileIndex, 1)
+    expect_equal(res[[2]]@param@sampleGroups, c("c"))
+})

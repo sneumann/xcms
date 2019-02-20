@@ -5,17 +5,17 @@
 ## valueCount2ScanIndex
 ##
 #' @title Create index vector for internal C calls
-#' 
+#'
 #' @description Simple helper function that converts the number of values
 #'     per scan/spectrum to an integer vector that can be passed to the base
 #'     xcms functions/downstream C functions.
 #'
 #' @param valCount Numeric vector representing the number of values per
 #'     spectrum.
-#' 
+#'
 #' @return An integer vector with the index (0-based) in the mz or intensity
 #'     vectors indicating the start of a spectrum.
-#' 
+#'
 #' @author Johannes Rainer
 #'
 #' @noRd
@@ -51,28 +51,28 @@ valueCount2ScanIndex <- function(valCount){
 #' home directory; to ensure that the option is correctly read add a new line
 #' to the file too). See also [Startup] from the base R documentation on how to
 #' specify system-wide options for R.
-#' 
+#'
 #' Usage of old code is strongly dicouraged. This function is thought
 #' to be used mainly in the transition phase from xcms to xcms version 3.
-#' 
+#'
 #' @details
 #'
 #' The functions/methods that are affected by this option are:
-#' 
+#'
 #' - [do_findChromPeaks_matchedFilter]: use the original
 #'   code that iteratively creates a subset of the binned (profile)
 #'   matrix. This is helpful for computers with limited memory or
 #'   matchedFilter settings with a very small bin size.
 #' - [getPeaks]
-#' 
+#'
 #' @param x `logical(1)` to specify whether or not original
 #'     old code should be used in corresponding functions. If not provided the
 #'     function simply returns the value of the global option.
-#' 
+#'
 #' @return `logical(1)` indicating whether old code is being used.
 #'
 #' @md
-#' 
+#'
 #' @author Johannes Rainer
 useOriginalCode <- function(x) {
     if (missing(x)) {
@@ -95,17 +95,17 @@ useOriginalCode <- function(x) {
 ## )
 
 #' @title Copy the content from an environment to another one
-#' 
+#'
 #' @description This function copies the content of an environment into another
 #'     one.
-#' 
+#'
 #' @param env environment from which to copy.
-#' 
+#'
 #' @param inheritLocks logical(1) whether the locking status should be copied
 #'     too.
-#' 
+#'
 #' @return an env.
-#' 
+#'
 #' @noRd
 .copy_env <- function(env, inheritLocks = FALSE) {
     ## new_e <- new.env(parent = emptyenv())
@@ -186,7 +186,7 @@ useOriginalCode <- function(x) {
     method <- match.arg(method, profMeths)
     impute <- names(profMeths)[profMeths == method]
     brks <- NULL
-    
+
     if (length(mzrange.) != 2) {
         mrange <- range(mz, na.rm = TRUE)
         mzrange. <- c(floor(mrange[1] / step) * step,
@@ -269,7 +269,7 @@ useOriginalCode <- function(x) {
 #' @description This function creates arbitrary IDs for features.
 #'
 #' @param prefix character(1) with the prefix to be added to the ID.
-#' 
+#'
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
 #' @noRd
@@ -281,11 +281,11 @@ useOriginalCode <- function(x) {
 ## #'     sides.
 ## #'
 ## #' @note The return value for a \code{NA} is always \code{FALSE}.
-## #' 
+## #'
 ## #' @param x \code{logical} vector.
 ## #'
 ## #' @author Johannes Rainer
-## #' 
+## #'
 ## #' @noRd
 ## .grow_trues <- function(x) {
 ##     previous <- NA
@@ -359,11 +359,11 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' **UPDATE**: please use `plot(x, type = "XIC")` from the `MSnbase` package
 #' instead. See examples below.
-#' 
+#'
 #' The `plotMsData` creates a plot that combines an (base peak )
 #' extracted ion chromatogram on top (rt against intensity) and a plot of
 #' rt against m/z values at the bottom.
-#' 
+#'
 #' @param x `data.frame` such as returned by the [extractMsData()] function.
 #'     Only a single `data.frame` is supported.
 #'
@@ -371,7 +371,7 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #'
 #' @param cex `numeric(1)` defining the size of points. Passed directly to the
 #'     `plot` function.
-#' 
+#'
 #' @param mfrow `numeric(2)` defining the plot layout. This will be passed
 #'     directly to `par(mfrow = mfrow)`. See `par` for more information. Setting
 #'     `mfrow = NULL` avoids calling `par(mfrow = mfrow)` hence allowing to
@@ -383,9 +383,9 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
 #' @param colramp a *color ramp palette* to be used to color the data points
 #'     based on their intensity. See argument `col.regions` in
 #'     [lattice::level.colors] documentation.
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @md
 #'
 #' @examples
@@ -430,13 +430,13 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 }
 
 #' @title Calculate relative log abundances
-#' 
+#'
 #' `rla` calculates the relative log abundances (RLA, see reference) on a
 #' `numeric` vector.
 #'
 #' @details The RLA is defines as the (log) abundance of an analyte relative
 #'     to the median across all abundances of the same group.
-#' 
+#'
 #' @param x `numeric` (for `rla`) or `matrix` (for `rowRla`) with the
 #'     abundances (in natural scale) on which the RLA should be calculated.
 #'
@@ -446,7 +446,7 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 #'
 #' @param log.transform `logical(1)` whether `x` should be log2 transformed.
 #'     Set to `log.transform = FALSE` if `x` is already in log scale.
-#' 
+#'
 #' @return `numeric` of the same length than `x` (for `rla`) or `matrix` with
 #'     the same dimensions than `x` (for `rowRla`).
 #'
@@ -461,7 +461,7 @@ plotMsData <- function(x, main = "", cex = 1, mfrow = c(2, 1),
 #' De Livera AM, Dias DA, De Souza D, Rupasinghe T, Pyke J, Tull D, Roessner U,
 #' McConville M, Speed TP. Normalizing and integrating metabolomics data.
 #' *Anal Chem* 2012 Dec 18;84(24):10768-76.
-#' 
+#'
 #' @examples
 #'
 #' x <- c(3, 4, 5, 1, 2, 3, 7, 8, 9)
@@ -510,7 +510,7 @@ rowRla <- function(x, group, log.transform = TRUE) {
     if (length(unique(c(length(xleft), length(xright), length(ybottom),
                         length(ytop)))) != 1)
         stop("'xleft', 'xright', 'ybottom' and 'ytop' have to have the same",
-             " length")    
+             " length")
     .overlap <- function(x1, x2, xs1, xs2) {
         x1 <= xs2 & x2 >= xs1
     }
@@ -554,6 +554,25 @@ rowRla <- function(x, group, log.transform = TRUE) {
             ovlap_merged[[length(ovlap_merged) + 1]] <- current
     }
     ovlap_merged
+}
+
+#' Calculate a range of values adding a part per million to it. The minimum
+#' will be the minimum - ppm/2, the maximum the maximum + ppm/2
+#'
+#' @param x `numeric`
+#'
+#' @param ppm `numeric(1)`
+#'
+#' @return `numeric(2)` with the range +/- ppm
+#'
+#' @noRd
+#'
+#' @author Johannes Rainer
+.ppm_range <- function(x, ppm = 0) {
+    x <- range(x)
+    x[1] <- x[1] - x[1] * ppm / 2e6
+    x[2] <- x[2] + x[2] * ppm / 2e6
+    x
 }
 
 #' Simple helper to insert column(s) in a matrix.
@@ -600,6 +619,27 @@ rowRla <- function(x, group, log.transform = TRUE) {
     }
     x
 }
+
+## #' Define a unique identifier for each chromatographic peak within the chrom
+## #' peak matrix by concatenating as many columns as needed.
+## #'
+## #' @param x `chromPeaks` matrix (as returned by `chromPeaks`).
+## #'
+## #' @noRd
+## #'
+## #' @author Johannes Rainer
+## .chrom_peak_id <- function(x) {
+##     if (nrow(x)) {
+##         cns <- c("rt", "rtmin", "rtmax", "mz", "mzmin", "mzmax", "into", "maxo")
+##         cns <- cns[cns %in% colnames(x)]
+##         ids <- apply(x[, cns, drop = FALSE], 1, paste0, collapse = "-")
+##         if (length(ids) != length(unique(ids)))
+##             stop("Can not define unique identifiers based on columns: ",
+##                  paste0(cns, collapse = ", "))
+##         ids
+##     } else character()
+## }
+
 
 ## #' @examples
 ## #' x1_high <- c(0.000012323)

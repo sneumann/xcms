@@ -30,13 +30,22 @@
 \alias{peakGroupsMatrix}
 \alias{peakGroupsMatrix<-,PeakGroupsParam-method}
 \alias{peakGroupsMatrix<-}
+\alias{subset,PeakGroupsParam-method}
+\alias{subset}
+\alias{subset<-,PeakGroupsParam-method}
+\alias{subset<-}
+\alias{subsetAdjust,PeakGroupsParam-method}
+\alias{subsetAdjust}
+\alias{subsetAdjust<-,PeakGroupsParam-method}
+\alias{subsetAdjust<-}
 \alias{adjustRtime,XCMSnExp,PeakGroupsParam-method}
 \title{Retention time correction based on alignment of house keeping peak
 groups}
 \usage{
 PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
   span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
-  0, ncol = 0))
+  0, ncol = 0), subset = integer(), subsetAdjust = c("average",
+  "previous"))
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
@@ -66,6 +75,14 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
 \S4method{peakGroupsMatrix}{PeakGroupsParam}(object) <- value
 
+\S4method{subset}{PeakGroupsParam}(x)
+
+\S4method{subset}{PeakGroupsParam}(object) <- value
+
+\S4method{subsetAdjust}{PeakGroupsParam}(object)
+
+\S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
+
 \S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param)
 }
 \arguments{
@@ -74,7 +91,11 @@ required fraction of samples in which peaks for the peak group were
 identified. Peak groups passing this criteria will aligned across
 samples and retention times of individual spectra will be adjusted
 based on this alignment. For \code{minFraction = 1} the peak group
-has to contain peaks in all samples of the experiment.}
+has to contain peaks in all samples of the experiment. Note that if
+\code{subset} is provided, the specified fraction is relative to the
+defined subset of samples and not to the total number of samples within
+the experiment (i.e. a peak has to be present in the specified
+proportion of subset samples).}
 
 \item{extraPeaks}{\code{numeric(1)} defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
@@ -100,6 +121,16 @@ Allowed values are \code{"gaussian"} and \code{"symmetric"}.See
 the peak groups on which the alignment should be performed. Each column
 represents a sample, each row a feature/peak group. Such a matrix is
 for example returned by the \code{\link{adjustRtimePeakGroups}} method.}
+
+\item{subset}{\code{integer} with the indices of samples within the
+experiment on which the alignment models should be estimated. Samples
+not part of the subset are adjusted based on the closest subset sample.
+See description above for more details.}
+
+\item{subsetAdjust}{\code{character} specifying the method with which
+non-subset samples should be adjusted. Supported options are
+\code{"previous"} and \code{"average"} (default). See description above
+for more information.}
 
 \item{object}{For \code{adjustRtime}: an \code{\link{XCMSnExp}} object
     containing the results from a previous chromatographic peak detection
@@ -135,13 +166,39 @@ object.
 }
 \description{
 This method performs retention time adjustment based on the
-    alignment of chromatographic peak groups present in all/most samples
-    (hence corresponding to house keeping compounds). First the retention
-    time deviation of these peak groups is described by fitting either a
-    polynomial (\code{smooth = "loess"}) or a linear (
-    \code{smooth = "linear"}) model to the data points. These models are
-    subsequently used to adjust the retention time of each spectrum in
-    each sample.
+alignment of chromatographic peak groups present in all/most samples
+(hence corresponding to house keeping compounds). First the retention
+time deviation of these peak groups is described by fitting either a
+polynomial (\code{smooth = "loess"}) or a linear (
+\code{smooth = "linear"}) model to the data points. These models are
+subsequently used to adjust the retention time of each spectrum in
+each sample.
+
+It is also possible to exclude certain samples within an experiment from
+the estimation of the alignment models. The parameter \code{subset}
+allows to define the indices of samples within \code{object} that should
+be aligned. Samples not part of this \code{subset} are left out in the
+estimation of the alignment models, but their retention times are
+subsequently adjusted based on the alignment results of the closest sample
+in \code{subset} (close in terms of position within the \code{object}).
+Alignment could thus be performed on only \emph{real} samples leaving out
+e.g. blanks, which are then in turn adjusted based on the closest real
+sample. Here it is up to the user to ensure that the samples within
+\code{object} are ordered correctly (e.g. by injection index).
+
+How the non-subset samples are adjusted bases also on the parameter
+\code{subsetAdjust}: with \code{subsetAdjust = "previous"}, each non-subset
+sample is adjusted based on the closest previous subset sample which results
+in most cases with adjusted retention times of the non-subset sample being
+identical to the subset sample on which the adjustment bases. The second,
+default, option is to use \code{subsetAdjust = "average"} in which case
+each non subset sample is adjusted based on the average retention time
+adjustment from the previous and following subset sample. For the average
+a weighted mean is used with weights being the inverse of the distance of
+the non-subset sample to the subset samples used for alignment.
+
+See also section \emph{Alignment of experiments including blanks} in the
+\emph{xcms} vignette for an example.
 
 The \code{PeakGroupsParam} class allows to specify all
     settings for the retention time adjustment based on \emph{house keeping}
@@ -170,6 +227,12 @@ selected for alignment/retention time correction.
 \code{peakGroupsMatrix},\code{peakGroupsMatrix<-}: getter and
     setter for the \code{peakGroupsMatrix} slot of the object.
 
+\code{subset},\code{subset<-}: getter and
+    setter for the \code{subset} slot of the object.
+
+\code{subsetAdjust},\code{subsetAdjust<-}: getter and
+    setter for the \code{subsetAdjust} slot of the object.
+
 \code{adjustRtime,XCMSnExp,PeakGroupsParam}:
 performs retention time correction based on the alignment of peak groups
 (features) found in all/most samples. The correction function identified
@@ -180,22 +243,22 @@ adjusted.
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,minFraction,extraPeaks,smooth,span,family,peakGroupsMatrix,subset,subsetAdjust}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
 
 \note{
 These methods and classes are part of the updated and modernized
-    \code{xcms} user interface which will eventually replace the
-    \code{\link{group}} methods. All of the settings to the alignment
-    algorithm can be passed with a \code{PeakGroupsParam} object.
+\code{xcms} user interface which will eventually replace the
+\code{\link{group}} methods. All of the settings to the alignment
+algorithm can be passed with a \code{PeakGroupsParam} object.
 
-    The matrix with the (raw) retention times of the peak groups used
-    in the alignment is added to the \code{peakGroupsMatrix} slot of the
-    \code{PeakGroupsParam} object that is stored into the corresponding
-    \emph{process history step} (see \code{\link{processHistory}} for how
-    to access the process history).
+The matrix with the (raw) retention times of the peak groups used
+in the alignment is added to the \code{peakGroupsMatrix} slot of the
+\code{PeakGroupsParam} object that is stored into the corresponding
+\emph{process history step} (see \code{\link{processHistory}} for how
+to access the process history).
 
 \code{adjustRtimePeakGroups} is supposed to be called \emph{before} the
 sample alignment, but after a correspondence (peak grouping).

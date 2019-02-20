@@ -1,3 +1,53 @@
+Changes in version 3.5.1
+
+- Fix issue #349.
+- Add updateObject function for XCMSnExp objects (issue #347).
+- Add dropFilledChromPeaks methods for XChromatogram and XChromatograms objects.
+- Add parameter filled = FALSE to chromatogram and featureChromatograms
+  functions.
+- Fix matchedFilter peak detection problems with empty spectra (issue #325).
+- featureChromatograms extracts by default only chromatographic peaks associated
+  with a feature.
+- chromatogram,XCMSnExp extracts an XChromatogram containing also
+  chromatographic peaks and feature definitions.
+- Add featureValues method for XChromatograms objects (issue #336).
+- Add correspondence analysis (peak grouping) for chromatographic data (for now
+  only with PeakDensity method; issue #336).
+- Add featureDefinitions slot to XChromatograms object and related accessor
+  methods.
+- Add subset alignment option subsetAdjust = "average" to adjust left-out
+  samples (blanks or simply non-subset samples) based on an interpolation from
+  the results of the previous and subsequent subset sample.
+- Add parameter subsetAdjust to PeakGroupsParam allowing to switch between
+  different methods to adjust samples left out in the alignment process.
+- Alignment based on a sample subset for the peak groups method (issue #335):
+  sample subset can be defined with the subset parameter, samples not included
+  in the subset will be aligned based on the adjusted retention times of the
+  closest sample in the subset.
+- Add findChromPeaks,XChromatograms (issue #332).
+- Add processHistory,XChromatograms.
+- Add plot,XChromatograms method with automatic peak highlighting (issue #334).
+- Add hasChromPeaks,XChromatograms method.
+- Add XChromatograms class with constructor function and coercing method.
+- Add hasChromPeaks,XChromatogram method.
+- Add filterRt,XChromatogram, filterMz,XChromatogram.
+- Add plot,XChromatogram function supporting of highlighting/drawing identified
+  chromatographic peaks.
+- findChromPeaks,Chromatogram returns an XChromatogram object (issue #329).
+- Add chromPeaks,XChromatogram (issue #329).
+- Add XChromatogram object (issue #329).
+- Fix higlightChromPeaks with type = "polygon": peak filling represents now the
+  full detected peak and is no longer cut by the provided rt.
+- Add argument peakIds to highlightChromPeaks allowing to specify the IDs of
+  peaks to be highlighted.
+- Add example on clustering of base peak chromatograms to the vignette (issue
+  #328).
+- Small fix in the vignette (issue #327).
+- Add parameter groupval to exportMetaboAnalyst (issue #296).
+- Fix bug in show,XCMSnExp that would throw an error if no process history is
+  present.
+
+
 Changes in version 3.3.6
 
 - Add type = "polygon" to highlightChromPeaks allowing to fill the actual
@@ -199,7 +249,7 @@ Changes in version 2.99.4
 
 NEW FEATURES:
 - Add plotChromPeaks function to plot the definition (rt and mz range) of
-  detected chromatographic peaks of one file into the mz-rt plane. 
+  detected chromatographic peaks of one file into the mz-rt plane.
 - Add plotChromPeakImage function to plot the number of detected peaks along
   the retention time axis per file as an image plot.
 

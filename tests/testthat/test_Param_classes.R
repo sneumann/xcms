@@ -156,7 +156,7 @@ test_that("MatchedFilterParam works", {
     expect_error(index(p) <- 1:3)
 })
 
-test_that("MassifquantParam works", {    
+test_that("MassifquantParam works", {
     ## Check getter/setter methods:
     p <- new("MassifquantParam")
     ppm(p) <- 1
@@ -472,7 +472,7 @@ test_that("CentWavePredIsoParam works", {
     expect_equal(L$snthresh, 123)
 })
 
-test_that("PeakDensityParam works", {    
+test_that("PeakDensityParam works", {
     ## Check getter/setter methods:
     p <- new("PeakDensityParam", sampleGroups = c(1, 1, 1, 2, 2, 3, 4))
     expect_equal(sampleGroups(p), c(1, 1, 1, 2, 2, 3, 4))
@@ -484,7 +484,7 @@ test_that("PeakDensityParam works", {
     expect_error(sampleGroups(p) <- c(2, 2, NA))
     expect_error(PeakDensityParam())
     expect_error(PeakDensityParam(sampleGroups = c(1, 1, NA)))
-    
+
     p <- new("PeakDensityParam", bw = 3)
     expect_equal(bw(p), 3)
     bw(p) <- 20
@@ -556,7 +556,7 @@ test_that("MzClustParam works", {
     p <- MzClustParam(absMz = 33)
     expect_equal(absMz(p), 33)
     expect_error(MzClustParam(absMz = -4))
-    
+
     ## minFraction
     p <- new("MzClustParam", minFraction = 0.7)
     expect_equal(minFraction(p), 0.7)
@@ -613,7 +613,7 @@ test_that("NearestPeaksParam works", {
     expect_equal(absRt(p), 33)
     expect_error(NearestPeaksParam(absRt = -4))
     expect_error(NearestPeaksParam(absRt = 1:3))
-    
+
     p <- new("NearestPeaksParam", kNN = 3)
     expect_equal(kNN(p), 3)
     kNN(p) <- 20
@@ -635,7 +635,7 @@ test_that("PeakGroupsParam works", {
     expect_error(minFraction(p) <- c(2, 2))
     expect_error(minFraction(p) <- -1)
     expect_error(minFraction(p) <- 3)
-    
+
     p <- new("PeakGroupsParam", extraPeaks = 2)
     expect_equal(extraPeaks(p), 2)
     extraPeaks(p) <- 0.3
@@ -679,6 +679,20 @@ test_that("PeakGroupsParam works", {
     expect_equal(peakGroupsMatrix(p), mt + 2)
     p <- PeakGroupsParam(peakGroupsMatrix = mt)
     expect_equal(peakGroupsMatrix(p), mt)
+
+    p <- new("PeakGroupsParam", subset = 1:3)
+    expect_equal(subset(p), 1:3)
+    subset(p) <- 4:6
+    expect_equal(subset(p), 4:6)
+    p <- PeakGroupsParam(subset = 6:9)
+    expect_equal(subset(p), 6:9)
+
+    p <- new("PeakGroupsParam", subsetAdjust = "average")
+    expect_equal(subsetAdjust(p), "average")
+    subsetAdjust(p) <- "previous"
+    expect_equal(subsetAdjust(p), "previous")
+    p <- PeakGroupsParam(subsetAdjust = "average")
+    expect_equal(subsetAdjust(p), "average")
 })
 
 test_that("ObiwarpParam works", {
@@ -691,7 +705,7 @@ test_that("ObiwarpParam works", {
     expect_equal(binSize(p), 0.7)
     expect_error(binSize(p) <- c(2, 2))
     expect_error(binSize(p) <- -1)
-    
+
     p <- new("ObiwarpParam", centerSample = 2L)
     expect_equal(centerSample(p), 2L)
     centerSample(p) <- 1
@@ -784,6 +798,20 @@ test_that("ObiwarpParam works", {
     expect_equal(initPenalty(p), 3.1)
     expect_error(factorGap(p) <- c(2, 2))
     expect_error(factorGap(p) <- -1)
+
+    p <- new("ObiwarpParam", subset = 1L)
+    expect_equal(subset(p), 1L)
+    subset(p) <- 1:6
+    expect_equal(subset(p), 1:6)
+    p <- ObiwarpParam(subset = 1:5)
+    expect_equal(subset(p), 1:5)
+
+    p <- new("ObiwarpParam", subsetAdjust = "previous")
+    expect_equal(subsetAdjust(p), "previous")
+    subsetAdjust(p) <- "average"
+    expect_equal(subsetAdjust(p), "average")
+    p <- ObiwarpParam(subsetAdjust = "previous")
+    expect_equal(subsetAdjust(p), "previous")
 })
 
 test_that("GenericParam works", {
@@ -849,7 +877,7 @@ test_that("CalibrantMassParam works", {
     p <- new("CalibrantMassParam")
     p@mz <- list(mzs)
     expect_error(validObject(p))
-    
+
     ## Constructor.
     p <- CalibrantMassParam(mz = mzs, mzabs = 3, mzppm = 9,
                             neighbors = 4, method = "shift")

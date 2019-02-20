@@ -36,6 +36,10 @@ test_that("adjustRtimePeakGroups works", {
     ## rtime of the MS level 2 spectra are expected to be adjusted too
     expect_equal(rtime(xod_xgr), rtime(xod_mod_adj))
     expect_true(all(rtime(xod_mod)[idx_ms2] != rtime(xod_mod_adj)[idx_ms2]))
+
+    res <- adjustRtimePeakGroups(xod_xg,
+                                 param = PeakGroupsParam(subset = c(1, 3)))
+    expect_equal(colnames(res), basename(fileNames(xod_xg)[c(1, 3)]))
 })
 
 test_that("plotAdjustedRtime works", {
@@ -47,15 +51,22 @@ test_that("plotAdjustedRtime works", {
 
 test_that("plotChromPeakDensity works", {
     mzr <- c(305.05, 305.15)
+    .plotChromPeakDensity(xod_x, mz = mzr)
     plotChromPeakDensity(xod_x, mz = mzr)
 
     ## Use the full range.
+    .plotChromPeakDensity(xod_x)
     plotChromPeakDensity(xod_x)
-    
+
+    .plotChromPeakDensity(xod_x, mz = c(0, 1))
     plotChromPeakDensity(xod_x, mz = c(0, 1))
-    plotChromPeakDensity(xod_x, mz = c(300, 310), pch = 16, xlim = c(2500, 4000))
+    .plotChromPeakDensity(xod_x, mz = c(300, 310), pch = 16,
+                          xlim = c(2500, 4000))
+    plotChromPeakDensity(xod_x, mz = c(300, 310), pch = 16,
+                         xlim = c(2500, 4000))
 
     expect_error(plotChromPeakDensity(xod_x, mz = c(0, 1), type = "dunno"))
+    expect_error(.plotChromPeakDensity(xod_x, mz = c(0, 1), type = "dunno"))
 })
 
 test_that("plotChromPeaks works", {
@@ -148,7 +159,7 @@ test_that("featureSummary works", {
                       sd(z, na.rm = TRUE) / mean(z, na.rm = TRUE)
                   })
     expect_equal(rsds, res[, "rsd"])
-    
+
     res <- featureSummary(xod_xgrg, group = c(2, 1, 1))
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   "rsd", "2_count", "2_perc", "2_multi_count",
@@ -168,7 +179,7 @@ test_that("featureSummary works", {
     expect_equal(rsds, res[, "1_rsd"])
     ## Columns except rsd are not allowed to have NAs
     expect_true(sum(is.na(res[, -grep(colnames(res), pattern = "rsd")])) == 0)
-    
+
     res <- featureSummary(xod_xgrg, perSampleCounts = TRUE)
     expect_equal(colnames(res), c("count", "perc", "multi_count", "multi_perc",
                                   "rsd",
@@ -207,6 +218,10 @@ test_that("exportMetaboAnalyst works", {
     res3 <- read.table(fl, sep = ",", row.names = 1, as.is = TRUE)
     colnames(res3) <- colnames(res)
     expect_equal(as.matrix(res3), res)
+
+    res <- exportMetaboAnalyst(xod_xg, label = c("a", "a", "a"),
+                               groupnames = TRUE)
+    expect_equal(rownames(res), c("Sample", "Label", groupnames(xod_xg)))
 })
 
 test_that("chromPeakSpectra works", {
@@ -263,6 +278,25 @@ test_that("featureChromatograms works", {
                                       features = c(TRUE, FALSE, FALSE)))
     expect_error(featureChromatograms(xod_xgrg, features = c(100000, 1000002)))
     expect_error(featureChromatograms(xod_xgrg, features = c("a", "FT02")))
+
+    ## Test with filled-in peaks.
+    xod_tmp <- groupChromPeaks(
+        xod_xgr, param = PeakDensityParam(sampleGroups = rep(1, 3),
+                                          minFraction = 0.25))
+    xod_tmpf <- fillChromPeaks(
+        xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    fts <- c("FT036", "FT042")
+    fchrs <- featureChromatograms(xod_tmp, features = fts, filled = TRUE)
+    fchrsf <- featureChromatograms(xod_tmpf, features = fts, filled = TRUE)
+    expect_equal(nrow(chromPeaks(fchrs)), 4)
+    expect_equal(nrow(chromPeaks(fchrsf)), 6)
+    expect_equal(unname(chromPeaks(fchrsf)[, "is_filled"]), c(1, 0, 1, 0, 0, 0))
+    expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
+    expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
+    fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)
+    expect_equal(chromPeaks(fchrsf2), chromPeaks(fchrs))
+    expect_equal(featureDefinitions(fchrsf2), featureDefinitions(fchrs))
+    expect_equal(featureValues(fchrsf2), featureValues(fchrs))
 })
 
 test_that("highlightChromPeaks works", {
@@ -274,4 +308,5 @@ test_that("highlightChromPeaks works", {
     highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr)
     highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr, type = "polygon",
                         col = c("#ff000020", "#00ff0020", "#0000ff20"))
+    expect_error(highlightChromPeaks(xod_xgrg, peakIds = c("a", "b")))
 })

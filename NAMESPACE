@@ -3,7 +3,7 @@ useDynLib(xcms)
 importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData")
-importFrom("BiocGenerics", "updateObject", "fileName")
+importFrom("BiocGenerics", "updateObject", "fileName", "subset")
 ## import("Biobase")
 importFrom("Biobase", "AnnotatedDataFrame")
 importClassesFrom("Biobase", "AnnotatedDataFrame", "Versioned")
@@ -219,7 +219,6 @@ export(
     "plotAdjustedRtime",
     "plotChromatogram",
     "highlightChromPeaks",
-    "plotChromPeakDensity",
     "plotChromPeaks",
     "plotChromPeakImage",
     "isCalibrated",
@@ -409,19 +408,37 @@ exportMethods(
     "expandMz",
     "expandMz<-",
     "expandRt",
-    "expandRt<-"
+    "expandRt<-",
+    "subset",
+    "subset<-",
+    "subsetAdjust",
+    "subsetAdjust<-"
 )
 ## Param class functions
-export("CentWaveParam", "MatchedFilterParam", "MassifquantParam", "MSWParam",
-       "CentWavePredIsoParam", "PeakDensityParam", "MzClustParam",
-       "NearestPeaksParam", "PeakGroupsParam", "ObiwarpParam", "GenericParam",
-       "FillChromPeaksParam", "CalibrantMassParam")
+export("CentWaveParam",
+       "MatchedFilterParam",
+       "MassifquantParam",
+       "MSWParam",
+       "CentWavePredIsoParam",
+       "PeakDensityParam",
+       "MzClustParam",
+       "NearestPeaksParam",
+       "PeakGroupsParam",
+       "ObiwarpParam",
+       "GenericParam",
+       "FillChromPeaksParam",
+       "CalibrantMassParam",
+       "XChromatogram",
+       "XChromatograms")
 ## Param class methods.
 
 ## New Classes
-exportClasses("XCMSnExp", "ProcessHistory",
-              "XProcessHistory"
-              )
+exportClasses("XCMSnExp",
+	      "ProcessHistory",
+	      "XProcessHistory",
+	      "XChromatogram",
+              "XChromatograms")
+
 ## New methods for these classes
 exportMethods("hasChromPeaks",
               "hasFeatures",
@@ -463,5 +480,6 @@ exportMethods("hasChromPeaks",
               "extractMsData",
               "chromatogram",
               "spectrapply",
-	      "writeMSData"
+	      "writeMSData",
+              "plotChromPeakDensity"
               )

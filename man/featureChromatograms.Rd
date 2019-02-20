@@ -5,7 +5,7 @@
 \title{Extract ion chromatograms for each feature}
 \usage{
 featureChromatograms(x, expandRt = 0, aggregationFun = "max", features,
-  ...)
+  include = c("feature_only", "all"), filled = FALSE, ...)
 }
 \arguments{
 \item{x}{\code{XCMSnExp} object with grouped chromatographic peaks.}
@@ -23,14 +23,30 @@ features for which chromatograms should be returned. Can be the index
 of the features in \code{featureDefinitions}, feature IDs (row names of
 \code{featureDefinitions}) or a logical vector.}
 
+\item{include}{\code{character(1)} defining which chromatographic peaks and
+feature definitions should be included in the returned
+\code{\link[=XChromatograms]{XChromatograms()}}. See description above for details.}
+
+\item{filled}{\code{logical(1)} whether filled-in peaks should be included in
+the result object. The default is \code{filled = FALSE}, i.e. only detected
+peaks are reported.}
+
 \item{...}{optional arguments to be passed along to the \code{\link[=chromatogram]{chromatogram()}}
 function.}
 }
 \value{
-\link{Chromatograms} object.
+\code{\link[=XChromatograms]{XChromatograms()}} object.
 }
 \description{
-Extract ion chromatograms for each feature in an \linkS4class{XCMSnExp} object.
+Extract ion chromatograms for features in an \linkS4class{XCMSnExp} object. The
+function returns for each feature its extracted ion chromatogram and all
+associated peaks with it.
+
+By default only chromatographic peaks associated with a feature are included
+for an extracted ion chromatogram. Setting \code{include = "all"} (instead of
+the default \code{include = "feature_only"}) will return all chromatographic peaks
+identified in the m/z - rt data slice of a feature (and eventually also other
+features within that region).
 }
 \examples{
 

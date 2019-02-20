@@ -3,17 +3,17 @@
 
 
 #' @param x an OnDiskMSnExp representing the whole experiment.
-#' 
+#'
 #' @param method The (chromatographic) peak detection method to be used. Can be
 #'     "centWave" etc.
-#' 
+#'
 #' @param param A class extending Param containing all parameters for the
 #'     peak detection method.
 #'
 #' @return a list of length 2, \code{peaks} containing a matrix with the
 #'     identified peaks and \code{date} the time stamp when the peak detection
 #'     was started.
-#' 
+#'
 #' @noRd
 findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
                                         param) {
@@ -33,19 +33,19 @@ findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
 #' file
 #'
 #' @param x A list of Spectrum1 objects of a sample.
-#' 
+#'
 #' @param method The peak detection method to be used. Can be "centWave" etc.
 #'
 #' @param param A class extending Param containing all parameters for the
 #'     peak detection method.
-#' 
+#'
 #' @param rt Numeric with the retention times for the spectra. If not provided
 #'     it is extracted from the spectra.
-#' 
+#'
 #' @return a list of length 2, \code{peaks} containing a matrix with the
 #'     identified peaks and \code{date} the time stamp when the peak detection
 #'     was started.
-#' 
+#'
 #' @author Johannes Rainer
 #'
 #' @noRd
@@ -53,11 +53,20 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
     method <- match.arg(method, c("centWave", "massifquant", "matchedFilter",
                                   "MSW", "centWaveWithPredIsoROIs"))
     method <- paste0("do_findChromPeaks_", method)
-    if (method == "MSW")
-        method <- paste0("do_findPeaks_", method)
+    if (method == "do_findChromPeaks_MSW")
+        method <- "do_findPeaks_MSW"
+    if (method == "do_findChromPeaks_matchedFilter") {
+        ## Issue #325: empty spectra is not supported
+        x <- lapply(x, function(z) {
+            if (!length(z@mz)) {
+                z@mz <- 0.0
+                z@intensity <- 0.0
+            }
+            z
+        })
+    }
     if (missing(param))
         stop("'param' has to be specified!")
-    ## Check if the spectra are orderd by rt.
     if (missing(rt))
         rt <- unlist(lapply(x, rtime), use.names = FALSE)
     if (is.unsorted(rt))
@@ -114,7 +123,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #' o mslevel
 #' o scanrange: this should enable to subset the raw data again by scan index
 #' (which should be equivalent to acquisitionNum/scanIndex)
-#' 
+#'
 #' @param pset The pSet from which data should be extracted
 #'
 #' @noRd
@@ -141,7 +150,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #'     list with two elements: \code{$peaks} the peaks matrix of identified
 #'     peaks and \code{$procHist} a list of ProcessHistory objects (empty if
 #'     \code{getProcHist = FALSE}).
-#' 
+#'
 #' @param x See description above.
 #'
 #' @param getProcHist Wheter ProcessHistory objects should be returned too.
@@ -186,38 +195,43 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #'
 #' @note Adjustment should be performed only on spectra from the same MS level!
 #'     It's up to the calling function to ensure that.
-#' 
+#'
 #' @param object An \code{OnDiskMSnExp}.
 #'
 #' @param param An \code{ObiwarpParam}.
 #'
 #' @param msLevel \code{integer} defining the MS level on which the adjustment
 #'     should be performed.
-#' 
+#'
 #' @return The function returns a \code{list} of adjusted retention times
 #'     grouped by file.
-#' 
+#'
 #' @noRd
 .obiwarp <- function(object, param) {
     if (missing(object))
         stop("'object' is mandatory!")
     if (missing(param))
-        param <- ObiwarpParam()    
-    nSamples <- length(fileNames(object))
+        param <- ObiwarpParam()
+    subs <- subset(param)
+    if (!length(subs))
+        subs <- seq_along(fileNames(object))
+    total_samples <- length(fileNames(object))
+    nSamples <- length(subs)
     if (nSamples <= 1)
-        stop("Can not perform a retention time correction on less than to",
+        stop("Can not perform a retention time correction on less than two",
              " files.")
-    
+
     ## centerSample
     if (length(centerSample(param))) {
         if (!(centerSample(param) %in% 1:nSamples))
             stop("'centerSample' has to be a single integer between 1 and ",
                  nSamples, "!")
-    } else {
+    } else
         centerSample(param) <- floor(median(1:nSamples))
-    }
     message("Sample number ", centerSample(param), " used as center sample.")
 
+    rtraw <- split(rtime(object), fromFile(object))
+    object <- filterFile(object, file = subs)
     ## Get the profile matrix of the center sample:
     ## Using the (hidden) parameter returnBreaks to return also the breaks of
     ## the bins of the profile matrix. I can use them to align the matrices
@@ -225,7 +239,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     ## NOTE: it might be event better to just re-use the breaks from the center
     ## sample for the profile matrix generation of all following samples.
     suppressMessages(
-        profCtr <- profMat(object, method = "bin", step = binSize(param),
+        profCtr <- profMat(object, method = "bin",
+                           step = binSize(param),
                            fileIndex = centerSample(param),
                            returnBreaks = TRUE)[[1]]
     )
@@ -371,14 +386,11 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ## recor.obiwarp method.
         ## return(round(rtadj, 2))
     }, cntr = centerObject, cntrPr = profCtr, parms = param)
-    ## Add also the rtime of the center sample:
-    adjRt <- vector("list", nSamples)
-    adjRt[centerSample(param)] <- list(unname(rtime(centerObject)))
-    ## Add the result.
-    idxs <- 1:nSamples
-    idxs <- idxs[idxs != centerSample(param)]
-    adjRt[idxs] <- res
-    adjRt
+    ## Create result
+    adjRt <- vector("list", total_samples)
+    adjRt[subs[centerSample(param)]] <- list(unname(rtime(centerObject)))
+    adjRt[subs[-centerSample(param)]] <- res
+    adjustRtimeSubset(rtraw, adjRt, subset = subs, method = subsetAdjust(param))
 }
 
 .concatenate_OnDiskMSnExp <- function(...) {
@@ -435,7 +447,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                    ionSource = expdata$ionSource,
                    analyser = expdata$analyser,
                    detectorType = expdata$detectorType)
-    
+
     ## protocolData
     protodata <- lapply(x, function(z) z@protocolData)
     if (any(unlist(lapply(protodata, nrow)) > 0))

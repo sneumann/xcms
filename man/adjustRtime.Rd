@@ -20,7 +20,7 @@ The \code{adjustRtime} method(s) perform retention time
     }
 }
 \seealso{
-\code{\link{retcor}} for the \emph{old} retention time correction 
+\code{\link{retcor}} for the \emph{old} retention time correction
     methods.
     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 

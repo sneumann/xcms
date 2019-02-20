@@ -1,3 +1,4 @@
+.editorconfig
 local_data/*
 .git
 .travis.yml

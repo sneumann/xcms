@@ -8,7 +8,8 @@ found in most samples}
 do_adjustRtime_peakGroups(peaks, peakIndex, rtime, minFraction = 0.9,
   extraPeaks = 1, smooth = c("loess", "linear"), span = 0.2,
   family = c("gaussian", "symmetric"), peakGroupsMatrix = matrix(ncol =
-  0, nrow = 0))
+  0, nrow = 0), subset = integer(), subsetAdjust = c("average",
+  "previous"))
 }
 \arguments{
 \item{peaks}{a \code{matrix} or \code{data.frame} with the identified
@@ -25,7 +26,11 @@ required fraction of samples in which peaks for the peak group were
 identified. Peak groups passing this criteria will aligned across
 samples and retention times of individual spectra will be adjusted
 based on this alignment. For \code{minFraction = 1} the peak group
-has to contain peaks in all samples of the experiment.}
+has to contain peaks in all samples of the experiment. Note that if
+\code{subset} is provided, the specified fraction is relative to the
+defined subset of samples and not to the total number of samples within
+the experiment (i.e. a peak has to be present in the specified
+proportion of subset samples).}
 
 \item{extraPeaks}{\code{numeric(1)} defining the maximal number of
 additional peaks for all samples to be assigned to a peak group (i.e.
@@ -53,6 +58,16 @@ represents a sample, each row a feature/peak group. If not provided,
 this matrix will be determined depending on parameters
 \code{minFraction} and \code{extraPeaks}. If provided,
 \code{minFraction} and \code{extraPeaks} will be ignored.}
+
+\item{subset}{\code{integer} with the indices of samples within the
+experiment on which the alignment models should be estimated. Samples
+not part of the subset are adjusted based on the closest subset sample.
+See description above for more details.}
+
+\item{subsetAdjust}{\code{character} specifying the method with which
+non-subset samples should be adjusted. Supported options are
+\code{"previous"} and \code{"average"} (default). See description above
+for more information.}
 }
 \value{
 A \code{list} with \code{numeric} vectors with the adjusted
@@ -60,22 +75,29 @@ A \code{list} with \code{numeric} vectors with the adjusted
 }
 \description{
 The function performs retention time correction by assessing
-    the retention time deviation across all samples using peak groups
-    (features) containg chromatographic peaks present in most/all samples.
-    The retention time deviation for these features in each sample is
-    described by fitting either a polynomial (\code{smooth = "loess"}) or
-    a linear (\code{smooth = "linear"}) model to the data points. The
-    models are subsequently used to adjust the retention time for each
-    spectrum in each sample.
+the retention time deviation across all samples using peak groups
+(features) containg chromatographic peaks present in most/all samples.
+The retention time deviation for these features in each sample is
+described by fitting either a polynomial (\code{smooth = "loess"}) or
+a linear (\code{smooth = "linear"}) model to the data points. The
+models are subsequently used to adjust the retention time for each
+spectrum in each sample.
 }
 \details{
 The alignment bases on the presence of compounds that can be found
-    in all/most samples of an experiment. The retention times of individual
-    spectra are then adjusted based on the alignment of the features 
-    corresponding to these \emph{house keeping compounds}. The paraneters
-     \code{minFraction} and \code{extraPeaks} can be used to fine tune which
-    features should be used for the alignment (i.e. which features 
-    most likely correspond to the above mentioned house keeping compounds).
+in all/most samples of an experiment. The retention times of individual
+spectra are then adjusted based on the alignment of the features
+corresponding to these \emph{house keeping compounds}. The paraneters
+\code{minFraction} and \code{extraPeaks} can be used to fine tune which
+features should be used for the alignment (i.e. which features
+most likely correspond to the above mentioned house keeping compounds).
+
+Parameter \code{subset} allows to define a subset of samples within the
+experiment that should be aligned. All samples not being part of the subset
+will be aligned based on the adjustment of the closest sample within the
+subset. This allows to e.g. exclude blank samples from the alignment process
+with their retention times being still adjusted based on the alignment
+results of the \emph{real} samples.
 }
 \note{
 The method ensures that returned adjusted retention times are

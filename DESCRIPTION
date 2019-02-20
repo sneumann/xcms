@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.5.0
-Date: 2018-10-26
+Version: 3.5.1
+Date: 2019-02-06
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -14,7 +14,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.7.8)
+    MSnbase (>= 2.9.1)
 Imports:
     mzR (>= 2.13.1),
     BiocGenerics,
@@ -39,7 +39,8 @@ Suggests:
     testthat,
     pander,
     magrittr,
-    MALDIquant
+    MALDIquant,
+    pheatmap
 Enhances:
     Rgraphviz,
     Rmpi,
@@ -53,9 +54,11 @@ URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
 VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics
-RoxygenNote: 6.1.0
-Collate: 
+RoxygenNote: 6.1.1
+Collate:
     'AllGenerics.R'
+    'functions-XChromatograms.R'
+    'functions-XChromatogram.R'
     'DataClasses.R'
     'Deprecated.R'
     'MPI.R'
@@ -83,12 +86,15 @@ Collate:
     'init.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'
+    'methods-Chromatograms.R'
     'methods-IO.R'
     'methods-MsFeatureData.R'
     'methods-OnDiskMSnExp.R'
     'methods-Params.R'
     'methods-ProcessHistory.R'
     'methods-XCMSnExp.R'
+    'methods-XChromatogram.R'
+    'methods-XChromatograms.R'
     'methods-xcmsEIC.R'
     'methods-xcmsFileSource.R'
     'methods-xcmsFragments.R'

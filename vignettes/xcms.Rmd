@@ -8,7 +8,7 @@ vignette: >
   %\VignetteIndexEntry{LCMS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -21,8 +21,8 @@ references:
     given: noname
 ---
 
-```{r  biocstyle, echo = FALSE, results = "asis" }
-BiocStyle::markdown() 
+```{r biocstyle, echo = FALSE, results = "asis" }
+BiocStyle::markdown()
 ```
 
 **Package**: `r Biocpkg("xcms")`<br />
@@ -30,7 +30,7 @@ BiocStyle::markdown()
 **Modified**: `r file.info("xcms.Rmd")$mtime`<br />
 **Compiled**: `r date()`
 
-```{r  init, message = FALSE, echo = FALSE, results = "hide" }
+```{r init, message = FALSE, echo = FALSE, results = "hide" }
 ## Silently loading all packages
 library(BiocStyle)
 library(xcms)
@@ -42,7 +42,7 @@ library(pander)
 ## } else {
 ##     register(bpstart(SnowParam(2)))
 ## }
-register(SerialParam()) 
+register(SerialParam())
 ```
 
 
@@ -51,57 +51,58 @@ register(SerialParam())
 This documents describes data import, exploration, preprocessing and analysis of
 LCMS experiments with `xcms` version >= 3. The examples and basic workflow was
 adapted from the original *LC/MS Preprocessing and Analysis with xcms* vignette
-from Colin A. Smith. 
+from Colin A. Smith.
 
-The new user interface and methods use the `XCMSnExp` object (instead of the *old*
-`xcmsSet` object) as a container for the pre-processing results. To support
-packages and pipelines relying on the `xcmsSet` object, it is however possible to
-convert an `XCMSnExp` into a `xcmsSet` object using the `as` method (i.e. `xset <-
-as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
+The new user interface and methods use the `XCMSnExp` object (instead of the
+*old* `xcmsSet` object) as a container for the pre-processing results. To
+support packages and pipelines relying on the `xcmsSet` object, it is however
+possible to convert an `XCMSnExp` into a `xcmsSet` object using the `as` method
+(i.e.`xset <- as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
 
 
 # Data import
 
-`xcms` supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF, mzML/mzXML
-and mzData format. For the actual data import Bioconductor's SRC\_R[:exports
-both]{Biocpkg("mzR")} is used. For demonstration purpose we will analyze a
-subset of the data from [@Saghatelian04] in which the metabolic consequences
-of knocking out the fatty acid amide hydrolase (FAAH) gene in mice was
-investigated. The raw data files (in NetCDF format) are provided with the `faahKO`
-data package. The data set consists of samples from the spinal cords of 6
-knock-out and 6 wild-type mice. Each file contains data in centroid mode
+`xcms` supports analysis of LC/MS data from files in (AIA/ANDI) NetCDF,
+mzML/mzXML and mzData format. For the actual data import Bioconductor's
+`r Biocpkg("mzR")` is used. For demonstration purpose we will analyze a
+subset of the data from [@Saghatelian04] in which the metabolic consequences of
+knocking out the fatty acid amide hydrolase (FAAH) gene in mice was
+investigated. The raw data files (in NetCDF format) are provided with the
+`faahKO` data package. The data set consists of samples from the spinal cords of
+6 knock-out and 6 wild-type mice. Each file contains data in centroid mode
 acquired in positive ion mode form 200-600 m/z and 2500-4500 seconds.
 
 Below we load all required packages, locate the raw CDF files within the `faahKO`
 package and build a *phenodata* data frame describing the experimental setup.
 
-```{r  load-libs-pheno, message = FALSE }
+```{r load-libs-pheno, message = FALSE }
 library(xcms)
 library(faahKO)
 library(RColorBrewer)
 library(pander)
 library(magrittr)
+library(pheatmap)
 
 ## Get the full path to the CDF files
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
-	    recursive = TRUE)
+            recursive = TRUE)
 ## Create a phenodata data.frame
 pd <- data.frame(sample_name = sub(basename(cdfs), pattern = ".CDF",
-				   replacement = "", fixed = TRUE),
-		 sample_group = c(rep("KO", 6), rep("WT", 6)),
-		 stringsAsFactors = FALSE) 
+                                   replacement = "", fixed = TRUE),
+                 sample_group = c(rep("KO", 6), rep("WT", 6)),
+                 stringsAsFactors = FALSE)
 ```
 
 Subsequently we load the raw data as an `OnDiskMSnExp` object using the
 `readMSData` method from the `MSnbase` package. While the `MSnbase` package was
 originally developed for proteomics data processing, many of its functionality,
 including raw data import and data representation, can be shared and reused in
-metabolomics data analysis. Also, `MSnbase` can be used to *centroid* profile-mode
-MS data (see the corresponding vignette in the `MSnbase` package).
+metabolomics data analysis. Also, `MSnbase` can be used to *centroid*
+profile-mode MS data (see the corresponding vignette in the `MSnbase` package).
 
-```{r  load-with-msnbase, message = FALSE }
+```{r load-with-msnbase, message = FALSE }
 raw_data <- readMSData(files = cdfs, pdata = new("NAnnotatedDataFrame", pd),
-		       mode = "onDisk") 
+                       mode = "onDisk")
 ```
 
 The `OnDiskMSnExp` object contains general information about the number of
@@ -123,33 +124,33 @@ intensity values, the corresponding m/z and retention time values). In addition,
 the `spectra` method could be used to return all data encapsulated in `Spectrum`
 classes. Below we extract the retention time values from the object.
 
-```{r  data-inspection-rtime, message = FALSE }
-head(rtime(raw_data)) 
+```{r data-inspection-rtime, message = FALSE }
+head(rtime(raw_data))
 ```
 
-All data is returned as one-dimensional vectors (a numeric vector for `rtime` and
-a `list` of numeric vectors for `mz` and `intensity`, each containing the values from
-one spectrum), even if the experiment consists of multiple files/samples. The
-`fromFile` function returns a numeric vector that provides the mapping of the
-values to the originating file. Below we use the `fromFile` indices to organize
-the `mz` values by file.
+All data is returned as one-dimensional vectors (a numeric vector for `rtime`
+and a `list` of numeric vectors for `mz` and `intensity`, each containing the
+values from one spectrum), even if the experiment consists of multiple
+files/samples. The `fromFile` function returns a numeric vector that provides
+the mapping of the values to the originating file. Below we use the `fromFile`
+indices to organize the `mz` values by file.
 
-```{r  data-inspection-mz, message = FALSE }
+```{r data-inspection-mz, message = FALSE }
 mzs <- mz(raw_data)
 
 ## Split the list by file
 mzs_by_file <- split(mzs, f = fromFile(raw_data))
 
-length(mzs_by_file) 
+length(mzs_by_file)
 ```
 
 As a first evaluation of the data we plot below the base peak chromatogram (BPC)
 for each file in our experiment. We use the `chromatogram` method and set the
-`aggregationFun` to `"max"` to return for each spectrum the maximal intensity and
-hence create the BPC from the raw data. To create a total ion chromatogram we
-could set `aggregationFun` to `sum`.
+`aggregationFun` to `"max"` to return for each spectrum the maximal intensity
+and hence create the BPC from the raw data. To create a total ion chromatogram
+we could set `aggregationFun` to `sum`.
 
-```{r  data-inspection-bpc, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6 }
+```{r data-inspection-bpc, message = FALSE, fig.align = "center", fig.width = 12, fig.height = 6 }
 ## Get the base peak chromatograms. This reads data from the files.
 bpis <- chromatogram(raw_data, aggregationFun = "max")
 ## Define colors for the two groups
@@ -158,23 +159,22 @@ names(group_colors) <- c("KO", "WT")
 
 ## Plot all chromatograms.
 plot(bpis, col = group_colors[raw_data$sample_group])
- 
 ```
 
 The `chromatogram` method returned a `Chromatograms` object that organizes
-individual `Chromatogram` objects (which in fact contain the chromatographic data)
-in a two-dimensional array: columns represent samples and rows (optionally) m/z
-and/or retention time ranges. Below we extract the chromatogram of the first
-sample and access its retention time and intensity values.
+individual `Chromatogram` objects (which in fact contain the chromatographic
+data) in a two-dimensional array: columns represent samples and rows
+(optionally) m/z and/or retention time ranges. Below we extract the chromatogram
+of the first sample and access its retention time and intensity values.
 
-```{r  data-inspection-chromatogram, message = FALSE }
+```{r data-inspection-chromatogram, message = FALSE }
 bpi_1 <- bpis[1, 1]
 head(rtime(bpi_1))
-head(intensity(bpi_1)) 
+head(intensity(bpi_1))
 ```
 
-The `chromatogram` method supports also extraction of chromatographic data from a
-m/z-rt slice of the MS data. In the next section we will use this method to
+The `chromatogram` method supports also extraction of chromatographic data from
+a m/z-rt slice of the MS data. In the next section we will use this method to
 create an extracted ion chromatogram (EIC) for a selected peak.
 
 Note that `chromatogram` reads the raw data from each file to calculate the
@@ -186,18 +186,49 @@ data).
 Below we create boxplots representing the distribution of total ion currents per
 file. Such plots can be very useful to spot problematic or failing MS runs.
 
-```{r  data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
+```{r data-inspection-tic-boxplot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Distribution of total ion currents per file." }
 ## Get the total ion current by file
 tc <- split(tic(raw_data), f = fromFile(raw_data))
 boxplot(tc, col = group_colors[raw_data$sample_group],
-	ylab = "intensity", main = "Total ion current") 
+        ylab = "intensity", main = "Total ion current")
 ```
 
+Also, we can cluster the samples based on similarity of their base peak
+chromatogram. This can also be helpful to spot potentially problematic samples
+in an experiment or generally get an initial overview of the sample grouping in
+the experiment. Since the retention times between samples are not exactly
+identical, we use the `bin` function to group intensities in fixed time ranges
+(bins) along the retention time axis. In the present example we use a bin size
+of 1 second, the default is 0.5 seconds. The clustering is performed using
+complete linkage hierarchical clustering on the pairwise correlations of the
+binned base peak chromatograms.
+
+```{r data-inspection-bpc-heatmap, message = FALSE, fig.align = "center", fig.width = 7, fig.height = 6, fig.cap = "Grouping of samples based on similarity of their base peak chromatogram."}
+## Bin the BPC
+bpis_bin <- bin(bpis, binSize = 2)
+
+## Calculate correlation on the log2 transformed base peak intensities
+cormat <- cor(log2(do.call(cbind, lapply(bpis_bin, intensity))))
+colnames(cormat) <- rownames(cormat) <- raw_data$sample_name
+
+## Define which phenodata columns should be highlighted in the plot
+ann <- data.frame(group = raw_data$sample_group)
+rownames(ann) <- raw_data$sample_name
+
+## Perform the cluster analysis
+pheatmap(cormat, annotation = ann,
+         annotation_color = list(group = group_colors))
+```
+
+The samples cluster in a pairwise manner, the KO and WT samples for the sample
+index having the most similar BPC. In addition, 3 larger clusters are present
+grouping KO and WT samples 21 and 22 together as well as 18 and 19. KO and WT
+samples 15 and 16 separate from these two clusters.
 
 # Chromatographic peak detection
 
-Next we perform the chromatographic peak detection using the *centWave* algorithm
-[@Tautenhahn:2008fx]. Before running the peak detection it is however
+Next we perform the chromatographic peak detection using the *centWave*
+algorithm [@Tautenhahn:2008fx]. Before running the peak detection it is however
 strongly suggested to visually inspect e.g. the extracted ion chromatogram of
 internal standards or known compounds to evaluate and adapt the peak detection
 settings since the default settings will not be appropriate for most LCMS
@@ -205,72 +236,109 @@ experiments. The two most critical parameters for *centWave* are the `peakwidth`
 (expected range of chromatographic peak widths) and `ppm` (maximum expected
 deviation of m/z values of centroids corresponding to one chromatographic peak;
 this is usually much larger than the ppm specified by the manufacturer)
-parameters.
-To evaluate the typical chromatographic peak width we plot the EIC for one peak.
+parameters.  To evaluate the typical chromatographic peak width we plot the EIC
+for one peak.
 
-```{r  peak-detection-plot-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 5, fig.cap = "Extracted ion chromatogram for one peak." }
+```{r peak-detection-plot-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 5, fig.cap = "Extracted ion chromatogram for one peak." }
 ## Define the rt and m/z range of the peak area
 rtr <- c(2700, 2900)
 mzr <- c(334.9, 335.1)
 ## extract the chromatogram
 chr_raw <- chromatogram(raw_data, mz = mzr, rt = rtr)
-plot(chr_raw, col = group_colors[chr_raw$sample_group]) 
+plot(chr_raw, col = group_colors[chr_raw$sample_group])
 ```
 
-Note that `Chromatogram` objects extracted by the `chromatogram` method contain an
-`NA` value if in a certain scan (i.e. for a specific retention time) no signal was
-measured in the respective mz range. This is reflected by the lines not being
-drawn as continuous lines in the plot above.
+Note that `Chromatogram` objects extracted by the `chromatogram` method contain
+an `NA` value if in a certain scan (i.e. for a specific retention time) no
+signal was measured in the respective mz range. This is reflected by the lines
+not being drawn as continuous lines in the plot above.
 
 The peak above has a width of about 50 seconds. The `peakwidth` parameter should
 be set to accommodate the expected widths of peak in the data set. We set it to
 `20,80` for the present example data set.
 
-For the `ppm` parameter we extract the full MS data (intensity, retention time and
-m/z values) corresponding to the above peak. To this end we first filter the raw
-object by retention time, then by m/z and finally plot the object with `type =
+For the `ppm` parameter we extract the full MS data (intensity, retention time
+and m/z values) corresponding to the above peak. To this end we first filter the
+raw object by retention time, then by m/z and finally plot the object with`type =
 "XIC"` to produce the plot below. We use the *pipe* (`%>%`) command better
 illustrate the corresponding workflow.
 
-```{r  peak-detection-plot-ms-data, message = FALSE, warning = FALSE, fig.aligh = "center", fig.width = 14, fig.height = 14, fig.cap = "Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." }
+```{r peak-detection-plot-ms-data, message = FALSE, warning = FALSE, fig.aligh = "center", fig.width = 14, fig.height = 14, fig.cap = "Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." }
 raw_data %>%
     filterRt(rt = rtr) %>%
     filterMz(mz = mzr) %>%
-    plot(type = "XIC") 
+    plot(type = "XIC")
 ```
 
 In the present data there is actually no variation in the m/z values. Usually
-one would see the m/z values (lower panel) scatter around the *real* m/z value of
-the compound. The first step of the *centWave* algorithm defines so called regions
-of interest (ROI) based on the difference of m/z values from consecutive
+one would see the m/z values (lower panel) scatter around the *real* m/z value
+of the compound. The first step of the *centWave* algorithm defines so called
+regions of interest (ROI) based on the difference of m/z values from consecutive
 scans. In detail, m/z values from consecutive scans are included into a ROI if
 the difference between the m/z and the mean m/z of the ROI is smaller than the
-user defined `ppm` parameter. A reasonable choice for the `ppm` could thus be the
-maximal m/z difference of data points from neighboring scans/spectra that are
-part of the chromatographic peak. It is suggested to inspect the ranges of m/z
-values for many compounds (either internal standards or compounds known to be
-present in the sample) and define the `ppm` parameter for *centWave* according to
-these.
+user defined `ppm` parameter. A reasonable choice for the `ppm` could thus be
+the maximal m/z difference of data points from neighboring scans/spectra that
+are part of the chromatographic peak. It is suggested to inspect the ranges of
+m/z values for many compounds (either internal standards or compounds known to
+be present in the sample) and define the `ppm` parameter for *centWave*
+according to these.
 
-Below we perform the chromatographic peak detection using the `findChromPeaks`
-method. The submitted *parameter* object defines which algorithm will be used and
-allows to define the settings for this algorithm. Note that we set the argument
-`noise` to `5000` to reduce the run time of this vignette. With this setting we
-consider only signals with a value larger than 5000 in the peak detection step.
+Note that we can also perform the peak detection on the extracted ion
+chromatogram. This can help to evaluate different peak detection settings. Only
+be aware that peak detection on an extracted ion chromatogram will not consider
+the `ppm` parameter and that the estimation of the background signal is
+different to the peak detection on the full data set; values for the `snthresh`
+will hence have different consequences. Below we perform the peak detection with
+the `findChromPeaks` function on the extracted ion chromatogram. The submitted
+*parameter* object defines which algorithm will be used and allows to define the
+settings for this algorithm. We use the *centWave* algorithm with default
+settings, except for `snthresh`.
 
-```{r  peak-detection-centwave, message = FALSE, results = "hide" }
-cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000)
-xdata <- findChromPeaks(raw_data, param = cwp) 
+```{r peak-detection-eic, message = FALSE}
+xchr <- findChromPeaks(chr_raw, param = CentWaveParam(snthresh = 2))
 ```
 
-The results are returned as an `XCMSnExp` object which extends the `OnDiskMSnExp`
-object by storing also LC/GC-MS preprocessing results. This means also that all
-methods to sub-set and filter the data or to access the (raw) data are inherited
-from the `OnDiskMSnExp` object. The results from the chromatographic peak
-detection can be accessed with the `chromPeaks` method.
+We can access the identified chromatographic peaks with the `chromPeaks`
+function.
 
-```{r  peak-detection-chromPeaks, message = FALSE }
-head(chromPeaks(xdata)) 
+```{r peak-detection-eic-chromPeaks}
+head(chromPeaks(xchr))
+```
+
+Next we plot the identified chromatographic peaks in the extracted ion chromatogram. We use the `col`
+parameter to color the individual chromatogram lines. Colors can also be
+specified for the identified peaks, `peakCol` for the foreground/border color,
+`peakBg` for the background/fill color. One color has to be provided for each
+chromatographic peak listed by `chromPeaks`. Below we define a color to indicate
+the sample group from which the sample is and use the sample information in the
+peaks' `"sample"` column to assign the correct color to each chromatographic
+peak. More peak highlighting options are described further below.
+
+```{r peak-detection-eic-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. Peak area of identified chromatographic peaks are highlighted in the sample group color."}
+sample_colors <- group_colors[xchr$sample_group]
+plot(xchr, col = sample_colors,
+     peakBg = sample_colors[chromPeaks(xchr)[, "column"]])
+
+```
+
+Finally we perform the chromatographic peak detection on the full data set. Note
+that we set the argument `noise` to `5000` to reduce the run time of this
+vignette. With this setting we consider only signals with a value larger than
+5000 in the peak detection step.
+
+```{r peak-detection-centwave, message = FALSE, results = "hide" }
+cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000)
+xdata <- findChromPeaks(raw_data, param = cwp)
+```
+
+The results are returned as an `XCMSnExp` object which extends the
+`OnDiskMSnExp` object by storing also LC/GC-MS preprocessing results. This means
+also that all methods to sub-set and filter the data or to access the (raw) data
+are inherited from the `OnDiskMSnExp` object. The results from the
+chromatographic peak detection can be accessed with the `chromPeaks` method.
+
+```{r peak-detection-chromPeaks, message = FALSE }
+head(chromPeaks(xdata))
 ```
 
 The returned `matrix` provides the m/z and retention time range for each
@@ -281,28 +349,28 @@ identified.
 
 Below we use the data from this table to calculate some per-file summaries.
 
-```{r  peak-detection-peaks-per-sample, message = FALSE, results = "asis" }
+```{r peak-detection-peaks-per-sample, message = FALSE, results = "asis" }
 summary_fun <- function(z) {
     c(peak_count = nrow(z), rt = quantile(z[, "rtmax"] - z[, "rtmin"]))
 }
 T <- lapply(split.data.frame(chromPeaks(xdata),
-			     f = chromPeaks(xdata)[, "sample"]),
-	    FUN = summary_fun)
+                             f = chromPeaks(xdata)[, "sample"]),
+            FUN = summary_fun)
 T <- do.call(rbind, T)
 rownames(T) <- basename(fileNames(xdata))
 pandoc.table(T,
-	     caption = paste0("Summary statistics on identified chromatographic",
-			      " peaks. Shown are number of identified peaks per",
-			      " sample and widths/duration of chromatographic ",
-			      "peaks.")) 
+             caption = paste0("Summary statistics on identified chromatographic",
+                              " peaks. Shown are number of identified peaks per",
+                              " sample and widths/duration of chromatographic ",
+                              "peaks."))
 ```
 
 We can also plot the location of the identified chromatographic peaks in the
-m/z - retention time space for one file using the `plotChromPeaks` function. Below
-we plot the chromatographic peaks for the 3rd sample.
+m/z - retention time space for one file using the `plotChromPeaks`
+function. Below we plot the chromatographic peaks for the 3rd sample.
 
-```{r  peak-detection-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample." }
-plotChromPeaks(xdata, file = 3) 
+```{r peak-detection-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Identified chromatographic peaks in the m/z by retention time space for one sample." }
+plotChromPeaks(xdata, file = 3)
 ```
 
 To get a global overview of the peak detection we can plot the frequency of
@@ -310,57 +378,69 @@ identified peaks per file along the retention time axis. This allows to identify
 time periods along the MS run in which a higher number of peaks was identified
 and evaluate whether this is consistent across files.
 
-```{r  peak-detection-chrom-peak-image, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." }
-plotChromPeakImage(xdata) 
+```{r peak-detection-chrom-peak-image, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Frequency of identified chromatographic peaks along the retention time axis. The frequency is color coded with higher frequency being represented by yellow-white. Each line shows the peak frequency for one file." }
+plotChromPeakImage(xdata)
 ```
 
-Next we highlight the identified chromatographic peaks for the example peak
-from before. Evaluating such plots on a list of peaks corresponding to known
-peaks or internal standards helps to ensure that peak detection settings were
-appropriate and correctly identified the expected peaks.
+Next we highlight the identified chromatographic peaks for the example peak from
+before. Evaluating such plots on a list of peaks corresponding to known peaks or
+internal standards helps to ensure that peak detection settings were appropriate
+and correctly identified the expected peaks. We extract the ion chromatogram
+from the peak detection result object, which contains then also the identified
+chromatographic peaks for that ion that we can extract with the `chromPeaks`
+function.
 
-```{r  peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
-plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
-highlightChromPeaks(xdata, border = group_colors[chr_raw$sample_group],
-		    lty = 3, rt = rtr, mz = mzr, type = "rect") 
+```{r peak-detection-eic-example-peak, message = FALSE}
+chr_ex <- chromatogram(xdata, mz = mzr, rt = rtr)
+chromPeaks(chr_ex)
 ```
 
-In the plot above the peak definitions are indicated with rectangles containing
-the full peak. In addition it is possible to represent the apex position of each
-peak with a single point (passing argument `type = "point"` to the function), or
-draw the actually identified peak by specifying `type = "polygon"`. Below we use
-this option to fill the peak area for each identified chromatographic peak in
-each sample. Whether individual peaks can be still identified in such a plot
-depends however on the number of samples from which peaks are drawn.
+We can also plot the extracted ion chromatogram. Identified chromatographic
+peaks will be automatically highlighted in the plot. Below we highlight
+chromatographic peaks with a rectangle from the peak's minimal to maximal rt and
+from an intensity of 0 to the maximal signal of the peak.
 
-```{r  peak-detection-highlight-chrom-peaks-plot-polygon, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." }
-plot(chr_raw, col = group_colors[chr_raw$sample_group], lwd = 2)
-highlightChromPeaks(xdata, col = group_colors[chr_raw$sample_group],
-		    lty = 3, rt = rtr, mz = mzr, border = NA,
-		    type = "polygon") 
+```{r peak-detection-highlight-chrom-peaks-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The rectangles indicate the identified chromatographic peaks per sample." }
+sample_colors <- group_colors[chr_ex$sample_group]
+plot(chr_ex, col = sample_colors, peakType = "rectangle",
+     peakCol = sample_colors[chromPeaks(chr_ex)[, "sample"]],
+     peakBg = NA)
+```
+
+Alternatively to the rectangle visualization above, it is possible to represent
+the apex position of each peak with a single point (passing argument
+`type = "point"` to the function), or draw the actually identified peak by
+specifying `type = "polygon"`. Below we use this option to fill the peak area
+for each identified chromatographic peak in each sample. Whether individual
+peaks can be still identified in such a plot depends however on the number of
+samples from which peaks are drawn.
+
+```{r peak-detection-highlight-chrom-peaks-plot-polygon, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Signal for an example peak. Red and blue colors represent KO and wild type samples, respectively. The signal area of identified chromatographic peaks are filled with a color." }
+plot(chr_ex, col = group_colors[chr_raw$sample_group], lwd = 2,
+     peakBg = sample_colors[chromPeaks(chr_ex)[, "sample"]])
 ```
 
 Note that we can also specifically extract identified chromatographic peaks for
 a selected region by providing the respective m/z and retention time ranges with
 the `mz` and `rt` arguments in the `chromPeaks` method.
 
-```{r  peak-detection-chrom-peak-table-selected, message = FALSE, results = "asis" }
+```{r peak-detection-chrom-peak-table-selected, message = FALSE, results = "asis" }
 pander(chromPeaks(xdata, mz = mzr, rt = rtr),
        caption = paste("Identified chromatographic peaks in a selected ",
-		       "m/z and retention time range.")) 
+                       "m/z and retention time range."))
 ```
 
 Finally we plot also the distribution of peak intensity per sample. This allows
 to investigate whether systematic differences in peak signals between samples
 are present.
 
-```{r  peak-detection-chrom-peak-intensity-boxplot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak intensity distribution per sample." }
+```{r peak-detection-chrom-peak-intensity-boxplot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak intensity distribution per sample." }
 ## Extract a list of per-sample peak intensities (in log2 scale)
 ints <- split(log2(chromPeaks(xdata)[, "into"]),
-	      f = chromPeaks(xdata)[, "sample"])
+              f = chromPeaks(xdata)[, "sample"])
 boxplot(ints, varwidth = TRUE, col = group_colors[xdata$sample_group],
-	ylab = expression(log[2]~intensity), main = "Peak intensities")
-grid(nx = NA, ny = NULL) 
+        ylab = expression(log[2]~intensity), main = "Peak intensities")
+grid(nx = NA, ny = NULL)
 ```
 
 
@@ -375,32 +455,36 @@ different samples within an experiment.
 
 A plethora of alignment algorithms exist (see [@Smith:2013gr]), with some of
 them being implemented also in `xcms`. The method to perform the
-alignment/retention time correction in `xcms` is `adjustRtime` which uses different
-alignment algorithms depending on the provided parameter class. In the example
-below we use the *obiwarp* method [@Prince:2006jj] to align the samples. We
-use a `binSize = 0.6` which creates warping functions in mz bins of 0.6. Also here
-it is advisable to modify the settings for each experiment and evaluate if
-retention time correction did align internal controls or known compounds
-properly.
+alignment/retention time correction in `xcms` is `adjustRtime` which uses
+different alignment algorithms depending on the provided parameter class.
 
-```{r  alignment-obiwarp, message = FALSE, results = "hide" }
-xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6)) 
+In the example below we use the *obiwarp* method [@Prince:2006jj] to align the
+samples. We use a `binSize = 0.6` which creates warping functions in mz bins of
+0.6. Also here it is advisable to modify the settings for each experiment and
+evaluate if retention time correction did align internal controls or known
+compounds properly.
+
+Also have a look a the *Alignment of experiments including blanks* further below
+for advanced options to align a data set based on a subset of samples.
+
+```{r alignment-obiwarp, message = FALSE, results = "hide" }
+xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
 ```
 
 `adjustRtime`, besides calculating adjusted retention times for each spectrum,
 does also adjust the reported retention times of the identified chromatographic
 peaks.
 
-To extract the adjusted retention times we can use the `adjustedRtime` method, or
-simply the `rtime` method that, if present, returns by default adjusted retention
-times from an `XCMSnExp` object.
+To extract the adjusted retention times we can use the `adjustedRtime` method,
+or simply the `rtime` method that, if present, returns by default adjusted
+retention times from an `XCMSnExp` object.
 
-```{r  alignment-rtime, message = FALSE }
+```{r alignment-rtime, message = FALSE }
 ## Extract adjusted retention times
 head(adjustedRtime(xdata))
 
 ## Or simply use the rtime method
-head(rtime(xdata)) 
+head(rtime(xdata))
 ```
 
 *Raw* retention times can be extracted from an `XCMSnExp` containing
@@ -408,15 +492,17 @@ aligned data with `rtime(xdata, adjusted = FALSE)`.
 
 To evaluate the impact of the alignment we plot the BPC on the adjusted data. In
 addition we plot the differences of the adjusted- to the raw retention times per
-sample using the `plotAdjustedRtime` function.
+sample using the `plotAdjustedRtime` function. Note that we **don't** want to
+highlight any chromatographic peaks (because there would simply be too many) and
+set thus `peakType = "none"` in the `plot` call.
 
-```{r  alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
+```{r alignment-obiwarp-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp aligned data. Base peak chromatogram after alignment (top) and difference between adjusted and raw retention times along the retention time axis (bottom)." }
 ## Get the base peak chromatograms.
 bpis_adj <- chromatogram(xdata, aggregationFun = "max")
 par(mfrow = c(2, 1), mar = c(4.5, 4.2, 1, 0.5))
-plot(bpis_adj, col = group_colors[bpis_adj$sample_group])
+plot(bpis_adj, col = group_colors[bpis_adj$sample_group], peakType = "none")
 ## Plot also the difference of adjusted to raw retention time.
-plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group]) 
+plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group])
 ```
 
 Too large differences between adjusted and raw retention times could indicate
@@ -426,11 +512,11 @@ Alternatively we could use the *peak groups* alignment method that adjusts the
 retention time by aligning previously identified *hook peaks* (chromatographic
 peaks present in most/all samples). Ideally, these hook peaks should span most
 part of the retention time range. Below we first restore the raw retention times
-(also of the identified peaks) using the `dropAdjustedRtime` methods. Note that a
-`drop*` method is available for each preprocessing step allowing to remove the
+(also of the identified peaks) using the `dropAdjustedRtime` methods. Note that
+a `drop*` method is available for each preprocessing step allowing to remove the
 respective results from the `XCMSnExp` object.
 
-```{r  alignment-drop, message = FALSE }
+```{r alignment-drop, message = FALSE }
 ## Does the object have adjusted retention times?
 hasAdjustedRtime(xdata)
 
@@ -438,16 +524,17 @@ hasAdjustedRtime(xdata)
 xdata <- dropAdjustedRtime(xdata)
 
 ## Does the object have adjusted retention times?
-hasAdjustedRtime(xdata) 
+hasAdjustedRtime(xdata)
 ```
 
-**Note**: `XCMSnExp` objects hold the raw along with the adjusted retention times and
-subsetting will in most cases drop the adjusted retention times. Sometimes it
-might thus be useful to **replace** the raw retention times with the adjusted
-retention times. This can be done with the `applyAdjustedRtime`.
+**Note**: `XCMSnExp` objects hold the raw along with the adjusted retention
+times and subsetting will in most cases drop the adjusted retention
+times. Sometimes it might thus be useful to **replace** the raw retention times
+with the adjusted retention times. This can be done with the
+`applyAdjustedRtime`.
 
-As noted above the *peak groups* method requires peak groups (features) present in
-most samples to perform the alignment. We thus have to perform a first
+As noted above the *peak groups* method requires peak groups (features) present
+in most samples to perform the alignment. We thus have to perform a first
 correspondence run to identify such peaks (details about the algorithm used are
 presented in the next section). We use here again default settings, but it is
 strongly advised to adapt the parameters for each data set. The definition of
@@ -456,10 +543,10 @@ the experiment) is mandatory for the `PeakDensityParam`. If there are no sample
 groups in the experiment `sampleGroups` should be set to a single value for each
 file (e.g. `rep(1, length(fileNames(xdata))`).
 
-```{r  alignment-peak-groups, message = FALSE }
+```{r alignment-peak-groups, message = FALSE }
 ## Correspondence: group peaks across samples.
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-			minFraction = 0.8)
+                        minFraction = 0.8)
 xdata <- groupChromPeaks(xdata, param = pdp)
 
 ## Now the retention time correction.
@@ -467,7 +554,6 @@ pgp <- PeakGroupsParam(minFraction = 0.85)
 
 ## Get the peak groups that would be used for alignment.
 xdata <- adjustRtime(xdata, param = pgp)
- 
 ```
 
 Note also that we could use the `adjustedRtimePeakGroups` method on the object
@@ -477,26 +563,26 @@ algorithm. Also, it is possible to manually select or define certain peak groups
 (i.e. their retention times per sample) and provide this matrix to the
 `PeakGroupsParam` class with the `peakGroupsMatrix` argument.
 
-Below plot the difference between raw and adjusted retention times
-using the `plotAdjustedRtime` function, which, if the *peak groups* method is used
-for alignment, also highlights the peak groups used in the adjustment.
+Below plot the difference between raw and adjusted retention times using the
+`plotAdjustedRtime` function, which, if the *peak groups* method is used for
+alignment, also highlights the peak groups used in the adjustment.
 
-```{r  alignment-peak-groups-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak groups aligned data." }
+```{r alignment-peak-groups-plot, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 8, fig.cap = "Peak groups aligned data." }
 ## Plot the difference of adjusted to raw retention time.
 plotAdjustedRtime(xdata, col = group_colors[xdata$sample_group],
-		  peakGroupsCol = "grey", peakGroupsPch = 1) 
+                  peakGroupsCol = "grey", peakGroupsPch = 1)
 ```
 
 At last we evaluate the impact of the alignment on the test peak.
 
-```{r  alignment-peak-groups-example-peak, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example extracted ion chromatogram before (top) and after alignment (bottom)." }
+```{r alignment-peak-groups-example-peak, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example extracted ion chromatogram before (top) and after alignment (bottom)." }
 par(mfrow = c(2, 1))
 ## Plot the raw data
 plot(chr_raw, col = group_colors[chr_raw$sample_group])
 
 ## Extract the chromatogram from the adjusted object
 chr_adj <- chromatogram(xdata, rt = rtr, mz = mzr)
-plot(chr_adj, col = group_colors[chr_raw$sample_group]) 
+plot(chr_adj, col = group_colors[chr_raw$sample_group], peakType = "none")
 ```
 
 
@@ -505,8 +591,8 @@ plot(chr_adj, col = group_colors[chr_raw$sample_group])
 The final step in the metabolomics preprocessing is the correspondence that
 matches detected chromatographic peaks between samples (and depending on the
 settings, also within samples if they are adjacent). The method to perform the
-correspondence in `xcms` is `groupChromPeaks`. We will use the *peak density* method
-[@Smith:2006ic] to group chromatographic peaks. The algorithm combines
+correspondence in `xcms` is `groupChromPeaks`. We will use the *peak density*
+method [@Smith:2006ic] to group chromatographic peaks. The algorithm combines
 chromatographic peaks depending on the density of peaks along the retention time
 axis within small slices along the mz dimension. To illustrate this we plot
 below the chromatogram for an mz slice with multiple chromatographic peaks
@@ -515,7 +601,7 @@ hence only chromatographic peaks present in at least 40% of the samples per
 sample group are grouped into a feature. The sample group assignment is
 specified with the `sampleGroups` argument.
 
-```{r  correspondence-example-slice, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." }
+```{r correspondence-example-slice, message = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Example for peak density correspondence. Upper panel: chromatogram for an mz slice with multiple chromatographic peaks. Middle and lower panel: identified chromatographic peaks at their retention time (x-axis) and index within samples of the experiments (y-axis) for different values of the bw parameter. The black line represents the peak density estimate. Grouping of peaks (based on the provided settings) is indicated by grey rectangles." }
 ## Define the mz slice.
 mzr <- c(305.05, 305.15)
 
@@ -523,20 +609,19 @@ mzr <- c(305.05, 305.15)
 chr_mzr <- chromatogram(xdata, mz = mzr, rt = c(2500, 4000))
 par(mfrow = c(3, 1), mar = c(1, 4, 1, 0.5))
 cols <- group_colors[chr_mzr$sample_group]
-plot(chr_mzr, col = cols, xaxt = "n", xlab = "")
-## Highlight the detected peaks in that region.
-highlightChromPeaks(xdata, mz = mzr, col = cols, type = "point", pch = 16)
+plot(chr_mzr, col = cols, xaxt = "n", xlab = "",
+     peakBg = sample_colors[chromPeaks(chr_mzr)[, "sample"]])
 ## Define the parameters for the peak density method
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-			minFraction = 0.4, bw = 30)
+                        minFraction = 0.4, bw = 30)
 par(mar = c(4, 4, 1, 0.5))
 plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
-		     pch = 16, xlim = c(2500, 4000))
+                     pch = 16, xlim = c(2500, 4000))
 ## Use a different bw
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-			minFraction = 0.4, bw = 20)
+                        minFraction = 0.4, bw = 20)
 plotChromPeakDensity(xdata, mz = mzr, col = cols, param = pdp,
-		     pch = 16, xlim = c(2500, 4000)) 
+                     pch = 16, xlim = c(2500, 4000))
 ```
 
 The upper panel in the plot above shows the extracted ion chromatogram for each
@@ -544,63 +629,60 @@ sample with the detected peaks highlighted. The middle and lower plot shows the
 retention time for each detected peak within the different samples. The black
 solid line represents the density distribution of detected peaks along the
 retention times. Peaks combined into *features* (peak groups) are indicated with
-grey rectangles. Different values for the `bw` parameter of the `PeakDensityParam`
-were used: `bw = 30` in the middle and `bw = 20` in the lower panel. With the
-default value for the parameter `bw` the two neighboring chromatographic peaks
-would be grouped into the same feature, while with a `bw` of 20 they would be
-grouped into separate features.  This grouping depends on the parameters for the
-density function and other parameters passed to the algorithm with the
-`PeakDensityParam`.
+grey rectangles. Different values for the `bw` parameter of the
+`PeakDensityParam` were used:`bw = 30` in the middle and `bw = 20` in the lower
+panel. With the default value for the parameter `bw` the two neighboring
+chromatographic peaks would be grouped into the same feature, while with a `bw`
+of 20 they would be grouped into separate features.  This grouping depends on
+the parameters for the density function and other parameters passed to the
+algorithm with the `PeakDensityParam`.
 
-```{r  correspondence, message = FALSE }
+```{r correspondence, message = FALSE }
 ## Perform the correspondence
 pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
-			minFraction = 0.4, bw = 20)
-xdata <- groupChromPeaks(xdata, param = pdp) 
+                        minFraction = 0.4, bw = 20)
+xdata <- groupChromPeaks(xdata, param = pdp)
 ```
 
 The results from the correspondence can be extracted using the
-`featureDefinitions` method, that returns a `DataFrame` with the definition of the
-features (i.e. the mz and rt ranges and, in column `peakidx`, the index of the
-chromatographic peaks in the `chromPeaks` matrix for each feature). 
+`featureDefinitions` method, that returns a `DataFrame` with the definition of
+the features (i.e. the mz and rt ranges and, in column `peakidx`, the index of
+the chromatographic peaks in the `chromPeaks` matrix for each feature).
 
-```{r  correspondence-featureDefs, message = FALSE }
+```{r correspondence-featureDefs, message = FALSE }
 ## Extract the feature definitions
 featureDefinitions(xdata)
- 
 ```
 
-The `featureValues` method returns a `matrix` with rows being features and columns
-samples. The content of this matrix can be defined using the `value` argument. The
-default is `value = "index"` which simply returns the index of the peak (in the
-`chromPeaks` matrix) assigned to a feature in a sample. Setting `value = "into"`
-returns a matrix with the integrated signal of the peaks corresponding to a
-feature in a sample. Any column name of the `chromPeaks` matrix can be passed to
-the argument `value`. Below we extract the integrated peak intensity per
-feature/sample.
+The `featureValues` method returns a `matrix` with rows being features and
+columns samples. The content of this matrix can be defined using the `value`
+argument. The default is`value = "index"` which simply returns the index of the
+peak (in the `chromPeaks` matrix) assigned to a feature in a sample. Setting
+`value = "into"` returns a matrix with the integrated signal of the peaks
+corresponding to a feature in a sample. Any column name of the `chromPeaks`
+matrix can be passed to the argument `value`. Below we extract the integrated
+peak intensity per feature/sample.
 
-```{r  correspondence-feature-values, message = FALSE }
+```{r correspondence-feature-values, message = FALSE }
 ## Extract the into column for each feature.
 head(featureValues(xdata, value = "into"))
- 
 ```
 
-This feature matrix contains `NA` for samples in which no chromatographic peak was
-detected in the feature's m/z-rt region. While in many cases there might indeed
-be no peak signal in the respective region, it might also be that there is
-signal, but the peak detection algorithm failed to detect a chromatographic
-peak. `xcms` provides the `fillChromPeaks` method to *fill in* intensity data for such
-missing values from the original files. The *filled in* peaks are added to the
-`chromPeaks` matrix and are flagged with an `1` in the `"is_filled"` column. Below we
-perform such a filling-in of missing peaks.
+This feature matrix contains `NA` for samples in which no chromatographic peak
+was detected in the feature's m/z-rt region. While in many cases there might
+indeed be no peak signal in the respective region, it might also be that there
+is signal, but the peak detection algorithm failed to detect a chromatographic
+peak. `xcms` provides the `fillChromPeaks` method to *fill in* intensity data
+for such missing values from the original files. The *filled in* peaks are added
+to the `chromPeaks` matrix and are flagged with an `1` in the `"is_filled"`
+column. Below we perform such a filling-in of missing peaks.
 
-```{r  fill-chrom-peaks, message = FALSE }
+```{r fill-chrom-peaks, message = FALSE }
 ## Filling missing peaks using default settings. Alternatively we could
 ## pass a FillChromPeaksParam object to the method.
 xdata <- fillChromPeaks(xdata)
 
 head(featureValues(xdata))
- 
 ```
 
 For features without detected peaks in a sample, the method extracts all
@@ -610,19 +692,19 @@ measured/available for the mz-rt region of the feature. For these, even after
 filling in missing peak data, a `NA` is reported in the `featureValues` matrix.
 
 It should be mentioned that `fillChromPeaks` uses columns `"rtmin"`, `"rtmax"`,
-`"mzmin"` and `"mzmax"` from the `featureDefinitions` table to define the region from
-which the signal should be integrated to generate the filled-in peak
+`"mzmin"` and `"mzmax"` from the `featureDefinitions` table to define the region
+from which the signal should be integrated to generate the filled-in peak
 signal. These values correspond however to the positions of the peak apex not
 the peak boundaries of all chromatographic peaks assigned to a feature. It might
 be advisable to increase this area in retention time dimension by a constant
 value appropriate to the average peak width in the experiment. Such a value can
-be specified with `fixedRt` of the `FillChromPeaksParam`. If the average peak width
-in the experiment is 20 seconds, specifying `fixedRt = 10` ensures that the area
+be specified with `fixedRt` of the `FillChromPeaksParam`. If the average peak
+width in the experiment is 20 seconds, specifying`fixedRt = 10` ensures that the area
 from which peaks are integrated is at least 20 seconds wide.
 
 Below we compare the number of missing values before and after filling in
-missing values. We can use the parameter `filled` of the `featureValues` method to
-define whether or not filled-in peak values should be returned too.
+missing values. We can use the parameter `filled` of the `featureValues` method
+to define whether or not filled-in peak values should be returned too.
 
 ```{r  fill-chrom-peaks-compare, message = FALSE }
 ## Missing values before filling in peaks
@@ -632,7 +714,7 @@ apply(featureValues(xdata, filled = FALSE), MARGIN = 2,
 ## Missing values after filling in peaks
 apply(featureValues(xdata), MARGIN = 2,
       FUN = function(z) sum(is.na(z)))
- 
+
 ```
 
 Next we use the `featureSummary` function to get a general per-feature summary
@@ -641,8 +723,8 @@ samples in which more than one peak was assigned to the feature. Specifying also
 sample groups breaks down these summary statistics for each individual sample
 group.
 
-```{r  featureSummary, message = FALSE }
-head(featureSummary(xdata, group = xdata$sample_group)) 
+```{r featureSummary, message = FALSE }
+head(featureSummary(xdata, group = xdata$sample_group))
 ```
 
 The performance of peak detection, alignment and correspondence should always be
@@ -654,18 +736,26 @@ chromatogram for each feature (each row containing the data for one feature) and
 sample (each column representing containing data for one sample). Below we
 extract the chromatograms for the first 4 features.
 
-```{r  featureChromatograms, message = FALSE }
+```{r featureChromatograms, message = FALSE }
 feature_chroms <- featureChromatograms(xdata, features = 1:4)
 
-feature_chroms 
+feature_chroms
 ```
 
-And plot the extracted ion chromatograms for feature number 3 and 4.
+And plot the extracted ion chromatograms. We again use the group color for each
+identified peak to fill the area.
 
-```{r  feature-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 4, fig.cap = "Extracted ion chromatograms for feature 3 and 4." }
-par(mfrow = c(1, 2))
+```{r feature-eic, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "Extracted ion chromatograms for features 1 to 4." }
+plot(feature_chroms, col = sample_colors,
+     peakBg = sample_colors[chromPeaks(feature_chroms)[, "sample"]])
+
+third <- feature_chroms[3, ]
+plot(third)
+chromPeaks(third)
+
+
 plot(feature_chroms[3, ], col = group_colors[feature_chroms$sample_group])
-plot(feature_chroms[4, ], col = group_colors[feature_chroms$sample_group]) 
+plot(feature_chroms[4, ], col = group_colors[feature_chroms$sample_group])
 ```
 
 At last we perform a principal component analysis to evaluate the grouping of
@@ -673,7 +763,7 @@ the samples in this experiment. Note that we did not perform any data
 normalization hence the grouping might (and will) also be influenced by
 technical biases.
 
-```{r  final-pca, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "PCA for the faahKO data set, un-normalized intensities." }
+```{r final-pca, message = FALSE, fig.align = "center", fig.width = 8, fig.height = 8, fig.cap = "PCA for the faahKO data set, un-normalized intensities." }
 ## Extract the features and log2 transform them
 ft_ints <- log2(featureValues(xdata, value = "into"))
 
@@ -684,16 +774,16 @@ pc <- prcomp(t(na.omit(ft_ints)), center = TRUE)
 ## Plot the PCA
 cols <- group_colors[xdata$sample_group]
 pcSummary <- summary(pc)
-plot(pc$x[, 1], pc$x[,2], pch = 21, main = "", 
+plot(pc$x[, 1], pc$x[,2], pch = 21, main = "",
      xlab = paste0("PC1: ", format(pcSummary$importance[2, 1] * 100,
-				   digits = 3), " % variance"),
+                                   digits = 3), " % variance"),
      ylab = paste0("PC2: ", format(pcSummary$importance[2, 2] * 100,
-				   digits = 3), " % variance"),
+                                   digits = 3), " % variance"),
      col = "darkgrey", bg = cols, cex = 2)
 grid()
 text(pc$x[, 1], pc$x[,2], labels = xdata$sample_name, col = "darkgrey",
      pos = 3, cex = 2)
- 
+
 ```
 
 We can see the expected separation between the KO and WT samples on PC2. On PC1
@@ -709,10 +799,10 @@ Normalizing features' signal intensities is required, but at present not (yet)
 supported in `xcms` (some methods might be added in near future). Also, for the
 identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
-packages, such as Bioconductor's excellent `limma` package. To enable support also
-for other packages that rely on the *old* `xcmsSet` result object, it is possible to
-coerce the new `XCMSnExp` object to an `xcmsSet` object using `xset <- as(x,
-"xcmsSet")`, with `x` being an `XCMSnExp` object.
+packages, such as Bioconductor's excellent `limma` package. To enable support
+also for other packages that rely on the *old* `xcmsSet` result object, it is
+possible to coerce the new `XCMSnExp` object to an `xcmsSet` object using
+`xset <- as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
 
 
 # Additional details and notes
@@ -720,61 +810,213 @@ coerce the new `XCMSnExp` object to an `xcmsSet` object using `xset <- as(x,
 For a detailed description of the new data objects and changes/improvements
 compared to the original user interface see the *new\_functionality* vignette.
 
+## Alignment of experiments including blanks
+
+Alignment of experiments that contain measurements in empty samples (*blanks*)
+can be difficult because these have a much different sample composition. This
+can also apply to heterogeneous experiments in general. In such cases, retention
+time drifts can be estimated on a subset of samples (either all samples
+excluding blanks or QC samples injected at regular intervals during a
+measurement run) and these alignment results can then be used to adjust the full
+data set. Parameters `subset` (of the `PeakGroupsParam` or `ObiwarpParam`
+object) can be used to define the subset of samples on which the alignment of
+the full data set will be based (e.g. `subset` being the index all samples
+except blanks), and parameter `subsetAdjust` allows to specify the method by
+which the *left-out* samples will be adjusted. There are currently two options available:
+
+- `subsetAdjust = "previous"`: adjust the retention times of a non-subset sample
+  (e.g. blank) based on the alignment results of the previous subset sample. If
+  samples are e.g. in the order *A1*, *A2*, *B1*, *A3*, *A4*, *B2* with *A*
+  representing study samples and *B* blanks, using `subset = c(1, 2, 4, 5)` and
+  `subsetAdjust = "previous"` would result in all *A* samples to be aligned with
+  each other and non-subset samples *B1* and *B2* being adjusted based on the
+  alignment result of subset samples *A2* and *A4*, respectively.
+
+- `subsetAdjust = "average"`: adjust retention times of non-subset samples based
+  on an interpolation of the alignment results of the previous and subsequent
+  subset sample. In the example above, *B1* would be adjusted based on the
+  average of adjusted retention times between subset samples *A2* and
+  *A3*. Since there is no subset sample after non-subset sample *B2*, this
+  sample will be adjusted based on the alignment results of *A4* alone. Note
+  that a weighted average is used to calculate the adjusted retention time
+  averages, which uses the inverse of the difference of the index of the
+  non-subset sample to the subset samples as weights. Thus, if we have a
+  setup like *A1*, *B1*, *B2*, *A2* the adjusted retention times of *A1*
+  would get a larger weight than those of *A2* in the adjustment of
+  non-subset sample *B1* causing it's adjusted retention times to be closer
+  to those of *A1* than those of *A2*.
+
+Both cases require a meaningful/correct ordering of the samples within the
+object (e.g. ordering by injection index).
+
+The examples below aim to illustrate the effect of this alignment options. First
+we assume samples 3, 4, 7 and 11 in the *faahKO* data set to be blanks. We thus
+want to perform the alignment based on samples 1, 2, 5, 6, 8, 9, 10 and 12 and
+subsequently adjust the retention times of the left-out samples based on
+interpolation of the results from the neighboring *subset* samples. After
+initial peak grouping we perform below the alignment with the *peak groups*
+method passing the indices of the samples on which we want the alignment to be
+based with the `subset` argument and specify `subsetAdjust = "average"` to
+adjust the *blank* samples based on interpolation of the alignment results
+from neighboring subset samples.
+
+Note that for any subset-alignment all parameters such as `minFraction` are
+relative to the `subset`, not the full experiment!
+
+```{r alignment-subset, message = FALSE, warning = FALSE}
+xdata <- dropAdjustedRtime(xdata)
+
+## Initial peak grouping.
+pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
+                        minFraction = 0.8)
+xdata <- groupChromPeaks(xdata, param = pdp)
+
+## Define subset-alignment options and perform the alignment
+pgp <- PeakGroupsParam(minFraction = 0.85,
+                       subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                       subsetAdjust = "average")
+xdata <- adjustRtime(xdata, param = pgp)
+```
+
+To illustrate the alignment results we plot the results only for samples 2, 3,
+4 and 5 with 3 and 4 being *blank* samples and 2 and 5 the `subset` samples on
+which the other two were adjusted. This nicely shows how the interpolation of
+the `subsetAdjust = "average"` works: retention times of sample 3 are adjusted
+based on those from subset sample 2 and 5, giving however more weight to the
+closer subset sample 2 which results in the adjusted retention times being more
+similar to those of sample 2. Sample 3 on the other hand gets adjusted giving
+more weight to subset sample 5.
+
+```{r alignment-subset-plot-1, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 5, fig.cap = "Alignment results for samples 2, 3, 4 and 5. Results for blank samples 3 and 4 are drawn in red and blue, black represents the results for the subset samples 2 and 5."}
+blank_colors <- paste0(brewer.pal(4, "Set1"), 80)
+clrs <- rep(NA, 12)
+clrs[2:5] <- c("#00000080", blank_colors[1:2], "#00000080")
+plotAdjustedRtime(xdata, col = clrs, lwd = 2, peakGroupsCol = NA)
+```
+
+We also plot the full alignment results, drawing the `subset` samples as grey
+dashed lines and the blanks each with it's own color: red, blue, green and
+purple for sample 3, 4, 7 and 8, respectively.
+
+```{r alignment-subset-plot-2, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+clrs <- rep("#00000040", 12)
+lty <- rep(2, 12)
+clrs[c(3, 4, 7, 11)] <- paste0(brewer.pal(4, "Set1"), 60)
+lty[c(3, 4, 7, 11)] <- 1
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
+
+Option `subsetAdjust = "previous"` adjusts the retention times of a non-subset
+sample based on a single subset sample (the previous), which results in most
+cases in the adjusted retention times of the non-subset sample being highly
+similar to those of the subset sample which was used for adjustment (shown by
+the overlapping solid and dashed lines in the lower panel of the plot below).
+
+```{r alignment-subset-plot-3, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Subset-alignment results with option previous. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+xdata <- dropAdjustedRtime(xdata)
+xdata <- groupChromPeaks(xdata, param = pdp)
+
+## Define subset-alignment options and perform the alignment
+pgp <- PeakGroupsParam(minFraction = 0.85,
+                       subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                       subsetAdjust = "previous")
+xdata <- adjustRtime(xdata, param = pgp)
+
+
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
+
+Also obiwarp alignment supports the same types of subset-alignment. In the
+example below we perform, as in the first example, a subset alignment with
+`subset = c(1, 2, 5, 6, 8, 9, 10, 12)` and `subsetAdjust = "average"`.
+
+```{r alignment-subset-obiwarp}
+xdata <- dropAdjustedRtime(xdata)
+prm <- ObiwarpParam(subset = c(1, 2, 5, 6, 8, 9, 10, 12),
+                    subsetAdjust = "average")
+xdata <- adjustRtime(xdata, param = prm)
+```
+
+We again plot the results.
+
+```{r alignment-subset-obiwarp-plot, message = FALSE, warning = FALSE, fig.align = "center", fig.width = 10, fig.height = 10, fig.cap = "Obiwarp subset-alignment results with option average. Difference between adjusted and raw retention times along the retention time axis. Samples on which the alignment models were estimated are indicated by dashed light grey lines, samples adjusted based on alignment results from the closest subset-sample are shown as red solid lines." }
+clrs <- rep("#00000040", 12)
+lty <- rep(2, 12)
+clrs[c(3, 4, 7, 11)] <- paste0(brewer.pal(4, "Set1"), 60)
+lty[c(3, 4, 7, 11)] <- 1
+par(mfrow = c(2, 1), mar = c(4, 4.5, 1, 0.5))
+plot(chromatogram(xdata, aggregationFun = "sum"),
+     col = clrs, lty = lty, peakType = "none")
+plotAdjustedRtime(xdata, col = clrs, lty = lty, peakGroupsPch = 1,
+                  peakGroupsCol = "#00000020")
+```
+
 
 ## Evaluating the process history
 
-`XCMSnExp` objects allow to capture all performed pre-processing steps along with
-the used parameter class within the `@processHistory` slot. Storing also the
-parameter class ensures the highest possible degree of analysis documentation
-and in future might enable to *replay* analyses or parts of it.  The list of all
-performed preprocessings can be extracted using the `processHistory` method.
+`XCMSnExp` objects allow to capture all performed pre-processing steps along
+with the used parameter class within the `@processHistory` slot. Storing also
+the parameter class ensures the highest possible degree of analysis
+documentation and in future might enable to *replay* analyses or parts of it.
+The list of all performed preprocessings can be extracted using the
+`processHistory` method.
 
-```{r  processhistory, message = FALSE }
-processHistory(xdata) 
+```{r processhistory, message = FALSE }
+processHistory(xdata)
 ```
 
 It is also possible to extract specific processing steps by specifying its
-type. Available *types* can be listed with the `processHistoryTypes` function. Below
-we extract the parameter class for the alignment/retention time adjustment step.
+type. Available *types* can be listed with the `processHistoryTypes`
+function. Below we extract the parameter class for the alignment/retention time
+adjustment step.
 
-```{r  processhistory-select, message = FALSE }
+```{r processhistory-select, message = FALSE }
 ph <- processHistory(xdata, type = "Retention time correction")
 
-ph 
+ph
 ```
 
 And we can also extract the parameter class used in this preprocessing step.
 
-```{r  processhistory-param, message = FALSE }
+```{r processhistory-param, message = FALSE }
 ## Access the parameter
 processParam(ph[[1]])
- 
+
 ```
 
 
 ## Subsetting and filtering
 
-`XCMSnEx` objects can be subsetted/filtered using the `[` method, or one of the many
-`filter*` methods. All these methods aim to ensure that the data in the
+`XCMSnEx` objects can be subsetted/filtered using the `[` method, or one of the
+many `filter*` methods. All these methods aim to ensure that the data in the
 returned object is consistent. This means for example that if the object is
 subsetted by selecting specific spectra (by using the `[` method) all identified
 chromatographic peaks are removed. Correspondence results (i.e. identified
 features) are removed if the object is subsetted to contain only data from
-selected files (using the `filterFile` method). This is because the correspondence
-results depend on the files on which the analysis was performed - running a
-correspondence on a subset of the files would lead to different results.
+selected files (using the `filterFile` method). This is because the
+correspondence results depend on the files on which the analysis was performed -
+running a correspondence on a subset of the files would lead to different
+results.
 
 As an exception, it is possible to force keeping adjusted retention times in the
-subsetted object setting the `keepAdjustedRtime` argument to `TRUE` in any of the
-subsetting methods.
+subsetted object setting the `keepAdjustedRtime` argument to `TRUE` in any of
+the subsetting methods.
 
 Below we subset our results object the data for the files 2 and 4.
 
-```{r  subset-filterFile, message = FALSE }
+```{r subset-filterFile, message = FALSE }
 subs <- filterFile(xdata, file = c(2, 4))
 
 ## Do we have identified chromatographic peaks?
-hasChromPeaks(subs) 
+hasChromPeaks(subs)
 ```
 
 Peak detection is performed separately on each file, thus the subsetted object
@@ -784,63 +1026,63 @@ features. All features have however been removed and also the adjusted retention
 times (since the alignment based on features that were identified on
 chromatographic peaks on all files).
 
-```{r  subset-filterFile-2, message = FALSE }
+```{r subset-filterFile-2, message = FALSE }
 ## Do we still have features?
 hasFeatures(subs)
 
 ## Do we still have adjusted retention times?
-hasAdjustedRtime(subs) 
+hasAdjustedRtime(subs)
 ```
 
-We can however use the `keepAdjustedRtime` argument to force keeping the adjusted
-retention times.
+We can however use the `keepAdjustedRtime` argument to force keeping the
+adjusted retention times.
 
-```{r  subset-filterFile-3, message = FALSE }
+```{r subset-filterFile-3, message = FALSE }
 subs <- filterFile(xdata, keepAdjustedRtime = TRUE)
 
-hasAdjustedRtime(subs) 
+hasAdjustedRtime(subs)
 ```
 
-The `filterRt` method can be used to subset the object to spectra within a certain
-retention time range.
+The `filterRt` method can be used to subset the object to spectra within a
+certain retention time range.
 
-```{r  subset-filterRt, message = FALSE }
+```{r subset-filterRt, message = FALSE }
 subs <- filterRt(xdata, rt = c(3000, 3500))
 
-range(rtime(subs)) 
+range(rtime(subs))
 ```
 
 Filtering by retention time does not change/affect adjusted retention times
-(also, if adjusted retention times are present, the filtering is performed **on**
-the adjusted retention times).
+(also, if adjusted retention times are present, the filtering is performed
+**on** the adjusted retention times).
 
-```{r  subset-filterRt-2, message = FALSE }
-hasAdjustedRtime(subs) 
+```{r subset-filterRt-2, message = FALSE }
+hasAdjustedRtime(subs)
 ```
 
 Also, we have all identified chromatographic peaks within the specified
 retention time range:
 
-```{r  subset-filterRt-3, message = FALSE }
+```{r subset-filterRt-3, message = FALSE }
 hasChromPeaks(subs)
 
-range(chromPeaks(subs)[, "rt"]) 
+range(chromPeaks(subs)[, "rt"])
 ```
 
-The most natural way to subset any object in R is with `[`. Using `[` on an `XCMSnExp`
-object subsets it keeping only the selected spectra. The index `i` used in `[` has
-thus to be an integer between 1 and the total number of spectra (across all
-files). Below we subset `xdata` using both `[` and `filterFile` to keep all spectra
-from one file.
+The most natural way to subset any object in R is with `[`. Using `[` on an
+`XCMSnExp` object subsets it keeping only the selected spectra. The index `i`
+used in `[` has thus to be an integer between 1 and the total number of spectra
+(across all files). Below we subset `xdata` using both `[` and `filterFile` to
+keep all spectra from one file.
 
-```{r  subset-bracket, message = FALSE, warning = FALSE }
+```{r subset-bracket, message = FALSE, warning = FALSE }
 ## Extract all data from the 3rd file.
 one_file <- filterFile(xdata, file = 3)
 
 one_file_2 <- xdata[fromFile(xdata) == 3]
 
 ## Is the content the same?
-all.equal(spectra(one_file), spectra(one_file_2)) 
+all.equal(spectra(one_file), spectra(one_file_2))
 ```
 
 While the spectra-content is the same in both objects, `one_file` contains also
@@ -848,18 +1090,18 @@ the identified chromatographic peaks while `one_file_2` does not. Thus, in most
 situations subsetting using one of the filter functions is preferred over the
 use of `[`.
 
-```{r  subset-bracket-peaks, message = FALSE }
+```{r subset-bracket-peaks, message = FALSE }
 ## Subsetting with filterFile preserves chromatographic peaks
 head(chromPeaks(one_file))
 
 ## Subsetting with [ not
-head(chromPeaks(one_file_2)) 
+head(chromPeaks(one_file_2))
 ```
 
-Note however that also `[` does support the `keepAdjustedRtime` argument. Below we
-subset the object to spectra 20:30.
+Note however that also `[` does support the `keepAdjustedRtime` argument. Below
+we subset the object to spectra 20:30.
 
-```{r  subset-bracket-keepAdjustedRtime, message = FALSE, warnings = FALSE }
+```{r subset-bracket-keepAdjustedRtime, message = FALSE, warnings = FALSE }
 subs <- xdata[20:30, keepAdjustedRtime = TRUE]
 
 hasAdjustedRtime(subs)
@@ -868,69 +1110,69 @@ hasAdjustedRtime(subs)
 rtime(subs)
 
 ## Access raw retention times:
-rtime(subs, adjusted = FALSE) 
+rtime(subs, adjusted = FALSE)
 ```
 
-As with `MSnExp` and `OnDiskMSnExp` objects, `[[` can be used to extract a single
-spectrum object from an `XCMSnExp` object. The retention time of the spectrum
-corresponds to the adjusted retention time if present.
+As with `MSnExp` and `OnDiskMSnExp` objects, `[[` can be used to extract a
+single spectrum object from an `XCMSnExp` object. The retention time of the
+spectrum corresponds to the adjusted retention time if present.
 
-```{r  subset-double-bracket, message = FALSE }
+```{r subset-double-bracket, message = FALSE }
 ## Extract a single spectrum
-xdata[[14]] 
+xdata[[14]]
 ```
 
-At last we can also use the `split` method that allows to split an `XCMSnExp` based
-on a provided factor `f`. Below we split `xdata` per file. Using `keepAdjustedRtime
-= TRUE` ensures that adjusted retention times are not removed.
+At last we can also use the `split` method that allows to split an `XCMSnExp`
+based on a provided factor `f`. Below we split `xdata` per file. Using
+`keepAdjustedRtime = TRUE` ensures that adjusted retention times are not
+removed.
 
-```{r  subset-split, message = FALSE }
+```{r subset-split, message = FALSE }
 x_list <- split(xdata, f = fromFile(xdata), keepAdjustedRtime = TRUE)
 
 lengths(x_list)
 
-lapply(x_list, hasAdjustedRtime) 
+lapply(x_list, hasAdjustedRtime)
 ```
 
-Note however that there is also a dedicated `splitByFile` method instead for that
-operation, that internally uses `filterFile` and hence does e.g. not remove
+Note however that there is also a dedicated `splitByFile` method instead for
+that operation, that internally uses `filterFile` and hence does e.g. not remove
 identified chromatographic peaks. The method does not yet support the
 `keepAdjustedRtime` parameter and thus removes by default adjusted retention
 times.
 
-```{r  subset-split-by-file, message = FALSE }
+```{r subset-split-by-file, message = FALSE }
 xdata_by_file <- splitByFile(xdata, f = factor(1:length(fileNames(xdata))))
 
-lapply(xdata_by_file, hasChromPeaks) 
+lapply(xdata_by_file, hasChromPeaks)
 ```
 
 
 ## Parallel processing
 
-Most methods in `xcms` support parallel processing. Parallel processing is handled
-and configured by the `BiocParallel` Bioconductor package and can be globally
-defined for an R session.
+Most methods in `xcms` support parallel processing. Parallel processing is
+handled and configured by the `BiocParallel` Bioconductor package and can be
+globally defined for an R session.
 
 Unix-based systems (Linux, macOS) support `multicore`-based parallel
 processing. To configure it globally we `register` the parameter class. Note also
 that `bpstart` is used below to initialize the parallel processes.
 
-```{r  multicore, message = FALSE, eval = FALSE }
-register(bpstart(MulticoreParam(2))) 
+```{r multicore, message = FALSE, eval = FALSE }
+register(bpstart(MulticoreParam(2)))
 ```
 
 Windows supports only socket-based parallel processing:
 
-```{r  snow, message = FALSE, eval = FALSE }
-register(bpstart(SnowParam(2))) 
+```{r snow, message = FALSE, eval = FALSE }
+register(bpstart(SnowParam(2)))
 ```
 
 Note that `multicore`-based parallel processing might be buggy or failing on
-macOS. If so, the `DoparParam` could be used instead (requiring the `foreach`
+ macOS. If so, the `DoparParam` could be used instead (requiring the `foreach`
 package).
 
 For other options and details see the vignettes from the `BiocParallel` package.
 
 
 # References
-

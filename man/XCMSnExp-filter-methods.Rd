@@ -118,7 +118,7 @@ results.
 \code{filterFile}: allows to reduce the
 \code{\link{XCMSnExp}} to data from only certain files. Identified
 chromatographic peaks for these files are retained while all eventually
-present features (peak grouping information) are dropped. By default 
+present features (peak grouping information) are dropped. By default
 also adjusted retention times are removed (if present). This can be
 overwritten by setting \code{keepAdjustedRtime = TRUE}.
 

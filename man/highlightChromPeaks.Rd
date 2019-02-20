@@ -5,9 +5,10 @@
 \title{Add definition of chromatographic peaks to an extracted chromatogram
     plot}
 \usage{
-highlightChromPeaks(x, rt, mz, border = rep("00000040",
-  length(fileNames(x))), lwd = 1, col = NA, type = c("rect", "point",
-  "polygon"), whichPeaks = c("any", "within", "apex_within"), ...)
+highlightChromPeaks(x, rt, mz, peakIds = character(),
+  border = rep("00000040", length(fileNames(x))), lwd = 1, col = NA,
+  type = c("rect", "point", "polygon"), whichPeaks = c("any", "within",
+  "apex_within"), ...)
 }
 \arguments{
 \item{x}{For \code{highlightChromPeaks}: \code{XCMSnExp} object with the
@@ -18,6 +19,10 @@ retention time range from which peaks should be extracted and plotted.}
 
 \item{mz}{\code{numeric(2)} with the mz range from which the peaks should
 be extracted and plotted.}
+
+\item{peakIds}{\code{character} defining the IDs (i.e. rownames of the peak
+in the \code{chromPeaks} table) of the chromatographic peaks to be
+highlighted in a plot.}
 
 \item{border}{colors to be used to color the border of the rectangles/peaks.
 Has to be equal to the number of samples in \code{x}.}

@@ -5,6 +5,7 @@
 \name{XCMSnExp-class}
 \alias{XCMSnExp-class}
 \alias{XCMSnExp}
+\alias{updateObject,XCMSnExp-method}
 \alias{processHistoryTypes}
 \alias{hasFilledChromPeaks}
 \alias{profMat,OnDiskMSnExp-method}
@@ -159,7 +160,7 @@ details.}
 \item{mzrange.}{Optional numeric(2) manually specifying the mz value range to
 be used for binnind. If not provided, the whole mz value range is used.}
 
-\item{fileIndex}{For \code{processHistory}: optional \code{numeric}
+\item{fileIndex}{For \code{processHistory}: optional \code{integer}
 specifying the index of the files/samples for which the
 \code{\link{ProcessHistory}} objects should be retrieved.}
 
@@ -196,7 +197,7 @@ returned.}
 type. Use the \code{processHistoryTypes} to list all supported values.
 For \code{chromPeaks}: \code{character} specifying which peaks to return
 if \code{rt} or \code{mz} are defined. For \code{type = "any"} all
-chromatographic peaks partially overlapping the range defined by 
+chromatographic peaks partially overlapping the range defined by
 \code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
@@ -264,7 +265,7 @@ with at least the following columns:
 scans/retention times),
 \code{"mzmin"} (minimal mz value),
 \code{"mzmax"} (maximal mz value),
-\code{"rt"} (retention time for the peak apex),
+\code{"rt"} (retention time of the peak apex),
 \code{"rtmin"} (minimal retention time),
 \code{"rtmax"} (maximal retention time),
 \code{"into"} (integrated, original, intensity of the peak),
@@ -308,7 +309,7 @@ The \code{XCMSnExp} object is a container for the results of a G/LC-MS
 data preprocessing that comprises chromatographic peak detection, alignment
 and correspondence. These results can be accessed with the \code{chromPeaks},
 \code{adjustedRtime} and \code{featureDefinitions} functions; see below
-(after the Usage, Arguments, Value and Slots sections) for more details). 
+(after the Usage, Arguments, Value and Slots sections) for more details).
 Along with the results, the object contains the processing history that
 allows to track each processing step along with the used settings. This
 can be extracted with the \code{\link{processHistory}} method.
@@ -417,7 +418,7 @@ If the \code{XCMSnExp} object contains adjusted retention times, these
 are returned by default in the \code{Spectrum} objects (can be
 overwritten by setting \code{adjusted = FALSE}).
 
-\code{processHistory}: returns a \code{list} with
+\code{processHistory}: returns a \code{list} of
 \code{\link{ProcessHistory}} objects (or objects inheriting from this
 base class) representing the individual processing steps that have been
 performed, eventually along with their settings (\code{Param} parameter

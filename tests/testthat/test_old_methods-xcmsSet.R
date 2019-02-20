@@ -102,7 +102,7 @@ test_that("getEIC,xcmsSet works after retcor", {
 test_that("getXcmsRaw,xcmsSet works", {
 
     xset <- faahko_grouped_retcor_filled
-    
+
     ## get the first as raw data file.
     xr <- getXcmsRaw(xset, sampleidx = 1)
     ## apply the rt correction
@@ -170,8 +170,8 @@ test_that("getXcmsRaw,xcmsSet works, issue #44", {
 test_that("group,GroupDensity doesn't fail with OnePeak", {
     xs <- faahko
     p <- peaks(xs)
-    peaks(xs) <- p[1,,drop=FALSE]
-    g <- group(xs, minsamp=1, minfrac=0.001, method="density")
+    peaks(xs) <- p[1, , drop = FALSE]
+    g <- group(xs, minsamp = 1, minfrac = 0.001, method = "density")
 })
 
 test_that("group,xcmsSet Nearest works", {
