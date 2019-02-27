@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.5.1
-Date: 2019-02-06
+Version: 3.5.2
+Date: 2019-02-27
 Title: LC/MS and GC/MS Data Analysis
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
@@ -14,7 +14,7 @@ Depends:
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),
-    MSnbase (>= 2.9.1)
+    MSnbase (>= 2.9.3)
 Imports:
     mzR (>= 2.13.1),
     BiocGenerics,
