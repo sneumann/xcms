@@ -2556,7 +2556,6 @@ setMethod("fillChromPeaks",
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
-
               startDate <- date()
               expandMz <- expandMz(param)
               expandRt <- expandRt(param)
@@ -2629,11 +2628,29 @@ setMethod("fillChromPeaks",
               ## Split the object by file and define the peaks for which
               objectL <- vector("list", length(fileNames(object)))
               pkAreaL <- objectL
+              ## We need "only" a list of OnDiskMSnExp, one for each file but
+              ## instead of filtering by file we create small objects to keep
+              ## memory requirement to a minimum.
+              req_fcol <- requiredFvarLabels("OnDiskMSnExp")
+              min_fdata <- fData(object)[, req_fcol]
+              if (hasAdjustedRtime(object))
+                  min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {
-                  suppressMessages(
-                      objectL[[i]] <- filterFile(object, file = i,
-                                                 keepAdjustedRtime = TRUE)
-                  )
+                  fd <- min_fdata[min_fdata$fileIdx == i, ]
+                  fd$fileIdx <- 1
+                  objectL[[i]] <- new(
+                      "OnDiskMSnExp",
+                      processingData = new("MSnProcess",
+                                           files = fileNames(object)[i]),
+                      featureData = new("AnnotatedDataFrame", fd),
+                      phenoData = new("NAnnotatedDataFrame",
+                                      data.frame(sampleNames = "1")),
+                      experimentData = new("MIAPE",
+                                           instrumentManufacturer = "a",
+                                           instrumentModel = "a",
+                                           ionSource = "a",
+                                           analyser = "a",
+                                           detectorType = "a"))
                   ## Want to extract intensities only for peaks that were not
                   ## found in a sample.
                   pkAreaL[[i]] <- pkArea[is.na(pkGrpVal[, i]), , drop = FALSE]
@@ -2654,6 +2671,7 @@ setMethod("fillChromPeaks",
                           mzCenterFun <- prm@mzCenterFun
                   }
               }
+              cp_colnames <- colnames(chromPeaks(object))
               ## Now rename that to the correct function name in xcms.
               mzCenterFun <- paste("mzCenter",
                                    gsub(mzCenterFun, pattern = "mzCenter.",
@@ -2669,22 +2687,19 @@ setMethod("fillChromPeaks",
                   res <- bpmapply(FUN = .getMSWPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),
                                   MoreArgs = list(
-                                      cn = colnames(chromPeaks(object))),
+                                      cn = cp_colnames),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else if (findPeakMethod == "matchedFilter") {
                   res <- bpmapply(FUN = .getChromPeakData_matchedFilter,
                                   objectL, pkAreaL, as.list(1:length(objectL)),
-                                  MoreArgs = list(
-                                      cn = colnames(chromPeaks(object)),
-                                      param = prm
-                                  ),
+                                  MoreArgs = list(cn = cp_colnames,
+                                                  param = prm),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else {
                   res <- bpmapply(FUN = .getChromPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),
-                                  MoreArgs = list(
-                                      cn = colnames(chromPeaks(object)),
-                                      mzCenterFun = mzCenterFun),
+                                  MoreArgs = list(cn = cp_colnames,
+                                                  mzCenterFun = mzCenterFun),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               }
 
@@ -2715,8 +2730,8 @@ setMethod("fillChromPeaks",
               maxId <- max(as.numeric(sub("^CP", "",
                                           rownames(chromPeaks(object)))))
               if (maxId < 1)
-                  stop("'chromPeaks' matrix has no rownames; please update the",
-                       " object with the 'updateObject' function.")
+                  stop("chromPeaks matrix lacks rownames; please update ",
+                       "'object' with the 'updateObject' function.")
               toId <- maxId + nrow(res)
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
@@ -2731,7 +2746,7 @@ setMethod("fillChromPeaks",
                                     type. = .PROCSTEP.PEAK.FILLING,
                                     fileIndex = 1:length(fileNames(object)))
               object <- addProcessHistory(object, ph) ## this also validates object.
-              return(object)
+              object
           })
 
 #' @rdname fillChromPeaks
