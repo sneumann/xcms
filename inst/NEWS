@@ -2,6 +2,7 @@ Changes in version 3.4.4
 
 - Fix issue #349: dropChromPeaks fails if no retention time adjustment process
   history is present.
+- Fix issue #359.
 
 
 Changes in version 3.4.2

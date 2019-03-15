@@ -17,7 +17,7 @@
 ##' @note The default settings might not be appropriate for all LC/GC-MS setups,
 ##' especially the \code{bw} and \code{binSize} parameter should be adjusted
 ##' accordingly.
-##' 
+##'
 ##' @param peaks A \code{matrix} or \code{data.frame} with the mz values and
 ##' retention times of the identified chromatographic peaks in all samples of an
 ##' experiment. Required columns are \code{"mz"}, \code{"rt"} and
@@ -82,7 +82,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
@@ -102,7 +102,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
     if (max(peaks[, "sample"]) > length(sampleGroups))
         stop("Sample indices in 'peaks' are larger than there are sample",
              " groups specified with 'sampleGroups'!")
-    
+
     ## Order peaks matrix by mz
     peakOrder <- order(peaks[, "mz"])
     peaks <- peaks[peakOrder, .reqCols, drop = FALSE]
@@ -190,7 +190,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
         }
     }
     message("OK")
-    
+
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", sampleGroupNames)
 
@@ -223,7 +223,7 @@ do_groupChromPeaks_density_par <- function(peaks, sampleGroups,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
@@ -310,7 +310,7 @@ do_groupChromPeaks_density_par <- function(peaks, sampleGroups,
     ## Now we have to process that list of results.
     groupmat <- do.call(rbind, lapply(res, function(z) z[["grps"]]))
     groupidx <- unlist(lapply(res, function(z) z[["idx"]]), recursive = FALSE)
-    
+
     colnames(groupmat) <- c("mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax",
                             "npeaks", sampleGroupNames)
 
@@ -335,11 +335,11 @@ do_groupChromPeaks_density_par <- function(peaks, sampleGroups,
 ##'
 ##' @description The \code{do_groupPeaks_mzClust} function performs high
 ##' resolution correspondence on single spectra samples.
-##' 
+##'
 ##' @inheritParams groupChromPeaks-density
 ##' @inheritParams do_groupChromPeaks_density
 ##' @inheritParams groupChromPeaks-mzClust
-##' 
+##'
 ##' @return A \code{list} with elements \code{"featureDefinitions"} and
 ##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
 ##' representing an (mz-rt) feature (i.e. peak group) with columns:
@@ -372,7 +372,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "sample")
@@ -386,7 +386,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
     sampleGroupTable <- table(sampleGroups)
     nSampleGroups <- length(sampleGroupTable)
     ##sampleGroups <- as.numeric(sampleGroups)
-    
+
     ## Check that sample groups matches with sample column.
     if (max(peaks[, "sample"]) > length(sampleGroups))
         stop("Sample indices in 'peaks' are larger than there are sample",
@@ -411,7 +411,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
                     grpmat[, 4:ncol(grpmat), drop = FALSE])
     colnames(grpmat) <- c(cns[1:3], c("rtmed", "rtmin", "rtmax"),
                           cns[4:length(cns)])
-    return(list(featureDefinitions = grpmat, peakIndex = grps$idx))    
+    return(list(featureDefinitions = grpmat, peakIndex = grps$idx))
 }
 
 ##' @title Core API function for chromatic peak grouping using a nearest
@@ -421,10 +421,10 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
 ##' across samples by creating a master peak list and assigning corresponding
 ##' peaks from all samples to each peak group (i.e. feature). The method is
 ##' inspired by the correspondence algorithm of mzMine [Katajamaa 2006].
-##' 
+##'
 ##' @inheritParams do_groupChromPeaks_density
 ##' @inheritParams groupChromPeaks-nearest
-##' 
+##'
 ##' @return A \code{list} with elements \code{"featureDefinitions"} and
 ##' \code{"peakIndex"}. \code{"featureDefinitions"} is a \code{matrix}, each row
 ##' representing an (mz-rt) feature (i.e. peak group) with columns:
@@ -444,7 +444,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
 ##'
 ##' @references Katajamaa M, Miettinen J, Oresic M: MZmine: Toolbox for
 ##' processing and visualization of mass spectrometry based molecular profile
-##' data. \emph{Bioinformatics} 2006, 22:634-636. 
+##' data. \emph{Bioinformatics} 2006, 22:634-636.
 do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
                                        absMz = 0.2, absRt = 15, kNN = 10) {
     if (missing(sampleGroups))
@@ -453,7 +453,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
@@ -472,7 +472,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
     ## peaks == peakmat
 
     peaks <- peaks[, .reqCols, drop = FALSE]
-    
+
     parameters <- list(mzVsRTBalance = mzVsRtBalance, mzcheck = absMz,
                        rtcheck = absRt, knn = kNN)
 
@@ -514,7 +514,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
         )
         if (length(mplenv$peakIdxList$peakidx) == 0)
             message("Warning: No peaks in sample number ", sample)
-        
+
         ## this really doesn't take a long time not worth parallel version here.
         ## but make an apply loop now faster even with rearranging the data :D : PB
         scoreList <- sapply(mplenv$peakIdxList$peakidx,
@@ -553,7 +553,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
             }
         }
         notJoinedPeaks <- mplenv$peakIdxList[which(mplenv$peakIdxList$isJoinedPeak == FALSE), "peakidx"]
-        
+
         for (notJoinedPeak in notJoinedPeaks) {
             mplenv$mplist <- rbind(mplenv$mplist,
                                    matrix(0, 1, dim(mplenv$mplist)[2]))
@@ -593,6 +593,6 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
         ## groupmat[i, 7 + seq(along = gcount)] <- gcount
         groupindex[[i]] <- mplenv$mplist[i, (which(mplenv$mplist[i,]>0))]
     }
-    
-    return(list(featureDefinitions = groupmat, peakIndex = groupindex))    
+
+    return(list(featureDefinitions = groupmat, peakIndex = groupindex))
 }
