@@ -1,6 +1,7 @@
 Changes in version 3.5.2
 
 - Small changes in fillChromPeaks,XCMSnExp to reduce memory demand.
+- Fix issue #359.
 
 
 Changes in version 3.5.1

@@ -87,7 +87,7 @@ do_groupChromPeaks_density <- function(peaks, sampleGroups,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("'peaks' has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
@@ -346,7 +346,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "sample")
@@ -431,7 +431,7 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
              "assignment of the samples.")
     if (missing(peaks))
         stop("Parameter 'peaks' is missing!")
-    if (!is.matrix(peaks) | is.data.frame(peaks))
+    if (!(is.matrix(peaks) | is.data.frame(peaks)))
         stop("Peaks has to be a 'matrix' or a 'data.frame'!")
     ## Check that we've got all required columns
     .reqCols <- c("mz", "rt", "sample")
