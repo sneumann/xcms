@@ -1,7 +1,29 @@
 Package: xcms
 Version: 3.5.2
-Date: 2019-02-27
+Date: 2019-03-18
 Title: LC/MS and GC/MS Data Analysis
+Authors@R: c(
+	   person(given = "Colin", family = "Smith",
+	   email = "csmith@scripps.edu",
+	   role = "ctb"),
+	   person(given = "Ralf", family = "Tautenhahn",
+	   email = "rtautenh@gmail.com",
+	   role = "ctb"),
+	   person(given = "Steffen", family = "Neumann",
+	   email = "sneumann@ipb-falle.de",
+	   role = c("aut", "cre"),
+	   comment = c(ORCID = "0000-0002-7899-7192")),
+	   person(given = "Paul", family = "Benton",
+	   email = "hpbenton@scripps.edu",
+	   role = "ctb"),
+	   person(given = "Christopher", family = "Conley",
+	   email = "cjconley@ucdavis.edu",
+	   role = "ctb"),
+	   person(given = "Johannes", family = "Rainer",
+	   email = "johannes.rainer@eurac.edu",
+	   role = "ctb",
+	   comment = c(ORCID = "0000-0002-6977-7147"))
+	   )
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
     Steffen Neumann <sneumann@ipb-halle.de>,
