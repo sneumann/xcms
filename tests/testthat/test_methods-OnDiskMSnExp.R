@@ -21,7 +21,7 @@ test_that("profMat,OnDiskMSnExp works", {
 test_that(
     "findChromPeaks,OnDiskMSnExp,CentWaveParam works with multiple MS levels", {
         msn_file <- system.file(
-            package = "msdata", 
+            package = "msdata",
             "proteomics/MS3TMT10_01022016_32917-33481.mzML.gz")
         msn_file <- system.file(
             package = "msdata",
@@ -77,7 +77,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## expect_equal(unname(pkI3_2), unname(chromPeaks(tmp2)[, "into"]))
     ## expect_equal(pkI2_2, pkI3_2)
 
-    
+
     ## The same for one of the test files; this works even with the original
     ## centWave code
     options(originalCentWave = TRUE)
@@ -140,7 +140,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
     expect_true(!hasFeatures(res))
     pks <- chromPeaks(res)
     rownames(pks) <- NULL
-    expect_equal(peaks(xs)@.Data, pks[, -ncol(chromPeaks(res))])
+    expect_equal(peaks(xs)@.Data, pks[, !colnames(pks) %in% c("is_filled", "ms_level")])
 
     ## check that rownames are set
     expect_true(!is.null(rownames(chromPeaks(res))))

@@ -508,11 +508,11 @@ test_that("XCMSnExp inherited methods work", {
     expect_equal(tmp_2, xod_x)
     expect_equal(length(filterMsLevel(xod_x, msLevel = 2)), 0)
     ## If we've got adjusted retention times, keep them.
-    expect_warning(tmp_1 <- filterMsLevel(xod_xgr, msLevel = 1))
+    tmp_1 <- filterMsLevel(xod_xgr, msLevel = 1)
     expect_true(hasAdjustedRtime(tmp_1))
     expect_equal(rtime(tmp_1), rtime(xod_xgr)) # adjusted rt present
-    expect_warning(tmp_1 <- filterMsLevel(xod_xgrg, msLevel = 1,
-                                          keepAdjustedRtime = FALSE))
+    tmp_1 <- filterMsLevel(xod_xgrg, msLevel = 1,
+                           keepAdjustedRtime = FALSE)
     expect_true(!hasAdjustedRtime(tmp_1))
     expect_equal(rtime(tmp_1), rtime(xod_xgr, adjusted = FALSE))
     ## normalize
@@ -556,9 +556,9 @@ test_that("filterFile,XCMSnExp works", {
     expect_true(!hasAdjustedRtime(tmp))
     expect_true(!hasFeatures(tmp))
     expect_true(all(chromPeaks(tmp)[, "sample"] == 1))
-    expect_equal(chromPeaks(tmp)[, -(ncol(chromPeaks(tmp)) - 1)],
+    expect_equal(chromPeaks(tmp)[, colnames(chromPeaks(tmp)) != "sample"],
                  chromPeaks(xod_x)[chromPeaks(xod_x)[, "sample"] == 2,
-                                   -(ncol(chromPeaks(xod_x)) - 1)])
+                                   colnames(chromPeaks(xod_x)) != "sample"])
     expect_equal(fileIndex(processHistory(tmp)[[1]]), 1)
     ## check with other index.
     tmp <- filterFile(xod_x, file = c(1, 3))
@@ -568,8 +568,8 @@ test_that("filterFile,XCMSnExp works", {
     expect_true(all(chromPeaks(tmp)[, "sample"] %in% c(1, 2)))
     a <- chromPeaks(tmp)
     b <- chromPeaks(xod_x)
-    expect_equal(a[, -(ncol(a) - 1)],
-                 b[b[, "sample"] %in% c(1, 3), -(ncol(b) - 1)])
+    expect_equal(a[, colnames(a) != "sample"],
+                 b[b[, "sample"] %in% c(1, 3), colnames(b) != "sample"])
     expect_equal(fileIndex(processHistory(tmp)[[1]]), c(1, 2))
 
     ## Errors
@@ -610,16 +610,16 @@ test_that("filterFile,XCMSnExp works", {
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
     tmp <- chromPeaks(xod_xg)
-    expect_equal(chromPeaks(res)[, -(ncol(tmp) - 1)],
-                 tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
+    expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
+                 tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"])
     expect_equal(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     ## Do filterFile on xod_xgr
     ## Should remove adjusted rts and revert the original peak rts.
     res <- filterFile(xod_xgr, file = 2)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xg)
-    expect_equal(chromPeaks(res)[, -(ncol(tmp) - 1)],
-                 tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
+    expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
+                 tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"])
     expect_equal(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     expect_true(!hasAdjustedRtime(res))
     expect_true(!hasFeatures(res))
@@ -629,8 +629,8 @@ test_that("filterFile,XCMSnExp works", {
     res <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    expect_equal(chromPeaks(res)[, -(ncol(tmp) - 1)],
-                 tmp[tmp[, "sample"] == 2, -(ncol(tmp) - 1)])
+    expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
+                 tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     expect_true(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] == 2, "rt"]) <
@@ -647,8 +647,8 @@ test_that("filterFile,XCMSnExp works", {
     res <- filterFile(xod_xgrg, file = c(1, 3))
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_x)
-    expect_equal(chromPeaks(res)[, -(ncol(tmp) - 1)],
-                 tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
+    expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
+                 tmp[tmp[, "sample"] %in% c(1, 3), colnames(tmp) != "sample"])
     expect_equal(unname(rtime(res, bySample = TRUE)),
                  unname(rtime(xod_xg, bySample = TRUE)[c(1, 3)]))
     expect_true(!hasAdjustedRtime(res))
@@ -659,8 +659,8 @@ test_that("filterFile,XCMSnExp works", {
     res <- filterFile(xod_xgrg, file = c(1, 3), keepAdjustedRtime = TRUE)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
-    expect_equal(chromPeaks(res)[, -(ncol(tmp) - 1)],
-                 tmp[tmp[, "sample"] %in% c(1, 3), -(ncol(tmp) - 1)])
+    expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
+                 tmp[tmp[, "sample"] %in% c(1, 3), colnames(tmp) != "sample"])
     ## has to be different from the ones in xod_x
     tmp <- chromPeaks(xod_x)
     expect_true(sum(chromPeaks(res)[, "rt"] == tmp[tmp[, "sample"] %in% c(1, 3), "rt"]) <
@@ -1352,7 +1352,7 @@ test_that("processHistory,XCMSnExp works", {
     ph <- processHistory(xod_xgrg)
     expect_true(length(ph) == 4)
     ph <- processHistory(xod_xgrg, msLevel = 1L)
-    expect_true(length(ph) == 2)
+    expect_true(length(ph) == 4)
     expect_equal(as.character(class(processParam(ph[[1]]))), "CentWaveParam")
 })
 
@@ -1604,7 +1604,7 @@ test_that("findChromPeaks,MSWParam works", {
     ## Compare old vs new:
     pks <- chromPeaks(fticr_xod)
     rownames(pks) <- NULL
-    expect_equal(pks[, -ncol(chromPeaks(fticr_xod))],
+    expect_equal(pks[, colnames(peaks(fticr_xs))],
                  peaks(fticr_xs))
 })
 
@@ -2017,4 +2017,18 @@ test_that("updateObject,XCMSnExp works", {
     expect_true(is.null(rownames(chromPeaks(tmp))))
     tmp <- updateObject(tmp)
     expect_true(!is.null(rownames(chromPeaks(tmp))))
+})
+
+test_that("filterMsLevel works with MS>1", {
+    ms2_fl <- proteomics("TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz",
+                         full.names = TRUE)
+    ms2 <- readMSData(ms2_fl, mode = "onDisk")
+    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(), msLevel = 1))
+    res_1 <- filterMsLevel(res, msLevel = 1)
+    res_2 <- filterMsLevel(res, msLevel = 2)
+    expect_true(all(msLevel(res_1) == 1))
+    expect_true(all(msLevel(res_2) == 2))
+    expect_equal(chromPeaks(res_1), chromPeaks(res))
+    expect_equal(processHistory(res_1), processHistory(res))
+    expect_true(length(processHistory(res_2)) == 0)
 })

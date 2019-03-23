@@ -1,3 +1,8 @@
+Changes in version 3.4.5
+
+- filterMsLevel no longer drops chromatographic peaks and features (issue #263).
+
+
 Changes in version 3.4.4
 
 - Fix issue #349: dropChromPeaks fails if no retention time adjustment process

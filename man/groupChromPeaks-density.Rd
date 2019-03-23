@@ -62,7 +62,8 @@ PeakDensityParam(sampleGroups = numeric(), bw = 30,
 
 \S4method{maxFeatures}{PeakDensityParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param)
+\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param,
+  msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -100,6 +101,9 @@ to be identified in a single mz slice.}
 
 \item{param}{A \code{PeakDensityParam} object containing all settings for
 the peak grouping algorithm.}
+
+\item{msLevel}{`integer(1)` defining the MS level. Currently only MS level 1
+is supported.}
 }
 \value{
 The \code{PeakDensityParam} function returns a

@@ -45,9 +45,9 @@ fixedMz(object)
 \S4method{ppm}{FillChromPeaksParam}(object) <- value
 
 \S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param,
-  BPPARAM = bpparam())
+  msLevel = 1L, BPPARAM = bpparam())
 
-\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param,
+\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param, msLevel = 1L,
   BPPARAM = bpparam())
 }
 \arguments{
@@ -89,6 +89,9 @@ chromatographic peaks.}
 \item{value}{The value for the slot.}
 
 \item{param}{A \code{FillChromPeaksParam} object with all settings.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS
+level 1 is supported.}
 
 \item{BPPARAM}{Parallel processing settings.}
 }

@@ -43,7 +43,7 @@
 #'
 #' @param msLevel \code{integer(1)} defining the MS level on which the peak
 #'     detection should be performed. Defaults to \code{msLevel = 1}.
-#' 
+#'
 #' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
 #'     \code{\link{XCMSnExp}} object with the results of the peak detection.
 #'     If \code{return.type = "list"} a list of length equal to the number of
@@ -130,7 +130,7 @@ setMethod("findChromPeaks",
 #'     defining the parallel processing mode using the
 #'     \code{\link{register}} method from the \code{BiocParallel}
 #'     package.
-#' 
+#'
 #' @param object For \code{findChromPeaks}: an
 #'     \code{\link{OnDiskMSnExp}} object containing the MS- and all
 #'     other experiment-relevant data.
@@ -148,7 +148,7 @@ setMethod("findChromPeaks",
 #'     samples with matrices specifying the identified peaks.
 #'     If \code{return.type = "xcmsSet"} an \code{\linkS4class{xcmsSet}} object
 #'     with the results of the peak detection.
-#' 
+#'
 #' @seealso \code{\link{XCMSnExp}} for the object containing the results of
 #'     the chromatographic peak detection.
 #'
@@ -209,7 +209,7 @@ setMethod("findChromPeaks",
     ##     object@msFeatureData <- new("MsFeatureData")
     pks <- do.call(rbind, res$peaks)
     if (length(pks) > 0)
-        chromPeaks(object) <- cbind(pks, is_filled = 0)
+        chromPeaks(object) <- cbind(pks, is_filled = 0, ms_level = msLevel)
     if (validObject(object))
         object
 }
@@ -400,9 +400,9 @@ setMethod("findChromPeaks",
 #'
 #' @param param An \code{CentWavePredIsoParam} object with the settings for the
 #'     chromatographic peak detection algorithm.
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
-#' 
+#'
 #' @return For \code{findChromPeaks}: if \code{return.type = "XCMSnExp"} an
 #'     \code{\link{XCMSnExp}} object with the results of the peak detection.
 #'     If \code{return.type = "list"} a list of length equal to the number of
@@ -480,7 +480,7 @@ setMethod("findChromPeaks",
 #'     the various binning methods.
 #'
 #' @param ... Additional parameters.
-#' 
+#'
 #' @return For \code{profMat}: a \code{list} with a the profile matrix
 #'     \code{matrix} (or matrices if \code{fileIndex} was not specified or if
 #'     \code{length(fileIndex) > 1}). See \code{\link{profile-matrix}} for
