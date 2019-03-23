@@ -308,6 +308,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' \code{"is_filled"} defining whether the chromatographic peak was
 #' identified by the peak picking algorithm (\code{0}) or was added by the
 #' \code{fillChromPeaks} method (\code{1}).
+#' \code{"ms_level"} (MS level of the identified peaks).
 #' Depending on the employed peak detection algorithm and the
 #' \code{verboseColumns} parameter of it additional columns might be
 #' returned. For \code{bySample = TRUE} the chronatographic peaks are
@@ -976,12 +977,10 @@ setMethod("clean", "XCMSnExp", function(object, all = FALSE,
 #' @description
 #'
 #' \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
-#' object to spectra of the specified MS level(s). See
+#' object to spectra of the specified MS level(s). Chromatographic peaks
+#' and identified features are also subsetted to the respective MS level. See
 #' \code{\link{filterMsLevel}} documentation for details and
-#' examples. Presently, if \code{msLevel.} is provided, the function
-#' removes identified chromatographic peaks and correspondence results
-#' while keeping adjusted retention times by default (if present). The
-#' latter can be changed setting \code{keepAdjustedRtime = FALSE}.
+#' examples.
 #'
 #' @rdname XCMSnExp-filter-methods
 setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
@@ -998,13 +997,6 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
         res@processingData@processing <- c(res@processingData@processing, msg)
         return(res)
     }
-
-    ## In future we might want to keep also the chromatographic peaks of the
-    ## correct MS level.
-    if (hasChromPeaks(object))
-        warning("Identified chromatographic peaks removed")
-    if (hasFeatures(object))
-        warning("Feature definitions removed")
 
     ## Create a new empty MsFeatureData and just add adjusted retention times
     newMfd <- new("MsFeatureData")
@@ -1023,17 +1015,41 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
             }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
             SIMPLIFY = FALSE)
             adjustedRtime(newMfd) <- adj_rt
-            ph <- dropProcessHistoriesList(ph,
-                                           type = c(.PROCSTEP.PEAK.DETECTION,
-                                                    .PROCSTEP.PEAK.GROUPING,
-                                                    .PROCSTEP.PEAK.FILLING,
-                                                    .PROCSTEP.CALIBRATION))
+            ## ph <- dropProcessHistoriesList(ph,
+            ##                                type = c(.PROCSTEP.PEAK.DETECTION,
+            ##                                         .PROCSTEP.PEAK.GROUPING,
+            ##                                         .PROCSTEP.PEAK.FILLING,
+            ##                                         .PROCSTEP.CALIBRATION))
         } else {
             object <- dropAdjustedRtime(object)
             ph <- dropProcessHistoriesList(ph,
                                            type = .PROCSTEP.RTIME.CORRECTION)
         }
     }
+    ## Subset chrom peaks
+    if (hasChromPeaks(object)) {
+        if (any(chromPeaks(object)[, "ms_level"] == msLevel.))
+            chromPeaks(newMfd) <- chromPeaks(object)[
+                chromPeaks(object)[, "ms_level"] == msLevel., , drop = FALSE]
+    }
+    ## Subset features/update indices.
+    if (hasFeatures(object) && hasChromPeaks(newMfd)) {
+        if (length(chromPeaks(object)) != length(chromPeaks(newMfd)))
+            featureDefinitions(newMfd) <- .update_feature_definitions(
+                featureDefinitions(object), rownames(chromPeaks(object)),
+                rownames(chromPeaks(newMfd)))
+        else featureDefinitions(newMfd) <- featureDefinitions(object)
+    }
+    ## Subset processing history
+    keep_ph <- vapply(ph, function(z) {
+        if (inherits(z, "XProcessHistory")) {
+            is_ok <- any(z@msLevel == msLevel.)
+            if (is.na(is_ok) || is_ok) TRUE
+            else FALSE
+        } else TRUE
+    }, logical(1))
+    ph <- ph[keep_ph]
+    ## Subsetting the object.
     tmp <- as(object, "OnDiskMSnExp")[base::which(keep_logical)]
     object <- as(tmp, "XCMSnExp")
     ## Put the stuff back
@@ -1041,8 +1057,8 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
     lockEnvironment(newMfd, bindings = TRUE)
     object@msFeatureData <- newMfd
     object@.processHistory <- ph
-    if (validObject(object))
-        object
+    validObject(object)
+    object
 })
 
 #' @description \code{filterAcquisitionNum}: filters the
@@ -1556,6 +1572,9 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #' @param param A `PeakDensityParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
+#' @param msLevel `integer(1)` defining the MS level. Currently only MS level 1
+#'     is supported.
+#'
 #' @return
 #'
 #' For `groupChromPeaks`: a [XCMSnExp] object with the
@@ -1574,11 +1593,13 @@ setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 #' @rdname groupChromPeaks-density
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "PeakDensityParam"),
-          function(object, param) {
+          function(object, param, msLevel = 1L) {
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
                        "'findChromPeaks' method.")
+              if (any(msLevel != 1))
+                  stop("Currently only peak grouping on MS level 1 is supported")
               ## Get rid of any previous results.
               if (hasFeatures(object))
                   object <- dropFeatureDefinitions(object)
@@ -1604,7 +1625,8 @@ setMethod("groupChromPeaks",
                                                 maxFeatures = maxFeatures(param))
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,
-                                     fileIndex = 1:length(fileNames(object)))
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res)
@@ -1638,6 +1660,9 @@ setMethod("groupChromPeaks",
 #' @param param A `MzClustParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
+#' @param msLevel `integer(1)` defining the MS level. Currently only MS level
+#'     1 is supported.
+#'
 #' @return
 #'
 #' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
@@ -1652,11 +1677,13 @@ setMethod("groupChromPeaks",
 #' @rdname groupChromPeaks-mzClust
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "MzClustParam"),
-          function(object, param) {
+          function(object, param, msLevel = 1L) {
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
                        "'findChromPeak' method.")
+              if (any(msLevel != 1))
+                  stop("Currently peak grouping is only supported for MS level 1")
               ## I'm expecting a single spectrum per file!
               rtL <- split(rtime(object), f = fromFile(object))
               if (any(lengths(rtL) > 1))
@@ -1687,7 +1714,8 @@ setMethod("groupChromPeaks",
                                            minSamples = minSamples(param))
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,
-                                     fileIndex = 1:length(fileNames(object)))
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
@@ -1725,6 +1753,9 @@ setMethod("groupChromPeaks",
 #' @param param A `NearestPeaksParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
+#' @param msLevel `integer(1)` defining the MS level. Currently only MS level
+#'     1 is supported.
+#'
 #' @return
 #'
 #' For `groupChromPeaks`: a [XCMSnExp] object with the results of the peak
@@ -1739,11 +1770,13 @@ setMethod("groupChromPeaks",
 #' @rdname groupChromPeaks-nearest
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "NearestPeaksParam"),
-          function(object, param) {
+          function(object, param, msLevel = 1L) {
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
                        "'findChromPeaks' method.")
+              if (any(msLevel != 1))
+                  stop("Currently peak grouping is only supported for MS level 1")
               ## Get rid of any previous results.
               if (hasFeatures(object))
                   object <- dropFeatureDefinitions(object)
@@ -1768,7 +1801,8 @@ setMethod("groupChromPeaks",
                                                 kNN = kNN(param))
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.PEAK.GROUPING,
-                                     fileIndex = 1:length(fileNames(object)))
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
@@ -1818,6 +1852,9 @@ setMethod("groupChromPeaks",
 #' @param param A \code{PeakGroupsParam} object containing all settings for
 #'     the retention time correction method..
 #'
+#' @param msLevel \code{integer(1)} specifying the MS level. Currently only MS
+#'     level 1 is supported.
+#'
 #' @return
 #'
 #' For \code{adjustRtime}: a \code{\link{XCMSnExp}} object with the
@@ -1834,11 +1871,13 @@ setMethod("groupChromPeaks",
 #' @rdname adjustRtime-peakGroups
 setMethod("adjustRtime",
           signature(object = "XCMSnExp", param = "PeakGroupsParam"),
-          function(object, param) {
+          function(object, param, msLevel = 1L) {
               if (hasAdjustedRtime(object)) {
                   message("Removing previous alignment results")
                   object <- dropAdjustedRtime(object)
               }
+              if (any(msLevel != 1))
+                  stop("Alignment is currently only supported for MS level 1")
               if (!hasChromPeaks(object))
                   stop("No chromatographic peak detection results in 'object'! ",
                        "Please perform first a peak detection using the ",
@@ -1886,7 +1925,7 @@ setMethod("adjustRtime",
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.RTIME.CORRECTION,
                                      fileIndex = 1:length(fileNames(object)),
-                                     msLevel = msLevel(ph[[length(ph)]]))
+                                     msLevel = msLevel)
               object <- addProcessHistory(object, xph)
               if (validObject(object))
                   object
@@ -1952,6 +1991,8 @@ setMethod("adjustRtime",
               ## Drop adjusted retention times if there are some.
               if (hasAdjustedRtime(object))
                   object <- dropAdjustedRtime(object)
+              if (any(msLevel != 1))
+                  stop("Alignment is currently only supported for MS level 1")
               ## We don't require any detected or aligned peaks.
               startDate <- date()
               res <- adjustRtime(as(object, "OnDiskMSnExp"), param = param,
@@ -2555,6 +2596,9 @@ setMethod("findChromPeaks",
 #'     subtracted from the lower rt and added to the upper rt). This
 #'     expansion is applied \emph{after} \code{expandRt}.
 #'
+#' @param msLevel \code{integer(1)} defining the MS level. Currently only MS
+#'     level 1 is supported.
+#'
 #' @param BPPARAM Parallel processing settings.
 #'
 #' @return
@@ -2630,7 +2674,7 @@ setMethod("findChromPeaks",
 #' ## Still the same missing peaks.
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
-          function(object, param, BPPARAM = bpparam()) {
+          function(object, param, msLevel = 1, BPPARAM = bpparam()) {
               if (!hasFeatures(object))
                   stop("'object' does not provide feature definitions! Please ",
                        "run 'groupChromPeaks' first.")
@@ -2638,6 +2682,8 @@ setMethod("fillChromPeaks",
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
+              if (any(msLevel > 1))
+                  stop("Currently only peak filling from MS1 is supported.")
               startDate <- date()
               expandMz <- expandMz(param)
               expandRt <- expandRt(param)
@@ -2818,7 +2864,9 @@ setMethod("fillChromPeaks",
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
                   (maxId + 1L):toId)
-              chromPeaks(newFd) <- rbind(chromPeaks(object), res[, -ncol(res)])
+              res[, "ms_level"] <- msLevel
+              chromPeaks(newFd) <- rbind(chromPeaks(object),
+                                         res[, -ncol(res)])
               featureDefinitions(newFd) <- fdef
               lockEnvironment(newFd, bindings = TRUE)
               object@msFeatureData <- newFd
@@ -2826,7 +2874,8 @@ setMethod("fillChromPeaks",
               ph <- XProcessHistory(param = param,
                                     date. = startDate,
                                     type. = .PROCSTEP.PEAK.FILLING,
-                                    fileIndex = 1:length(fileNames(object)))
+                                    fileIndex = 1:length(fileNames(object)),
+                                    msLevel = msLevel)
               object <- addProcessHistory(object, ph) ## this also validates object.
               object
           })
@@ -2837,9 +2886,10 @@ setMethod(
     signature(object = "XCMSnExp", param = "missing"),
               function(object,
                        param,
-                       BPPARAM = bpparam()) {
+                       BPPARAM = bpparam(),
+                       msLevel = 1L) {
                   fillChromPeaks(object, param = FillChromPeaksParam(),
-                                 BPPARAM = BPPARAM)
+                                 BPPARAM = BPPARAM, msLevel = msLevel)
               })
 
 #' @aliases dropFilledChromPeaks

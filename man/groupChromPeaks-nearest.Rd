@@ -51,7 +51,8 @@ NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
 
 \S4method{kNN}{NearestPeaksParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param)
+\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param,
+  msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -81,6 +82,9 @@ analysis (see \code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For
 
 \item{param}{A \code{NearestPeaksParam} object containing all settings for
 the peak grouping algorithm.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level
+1 is supported.}
 }
 \value{
 The \code{NearestPeaksParam} function returns a

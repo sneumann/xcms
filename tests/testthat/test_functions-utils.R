@@ -203,6 +203,35 @@ test_that(".ppm_range works", {
     expect_equal(res[2], 100 + 5000 / 1e6)
 })
 
+test_that(".update_feature_definitions works", {
+    cps <- matrix(nrow = 22, ncol = 3)
+    rownames(cps) <- 1:22
+    fts <- DataFrame(a = letters[1:6])
+    pidx <- list(
+        c(1, 2, 3, 6, 9, 12),
+        c(5, 10, 22),
+        c(4, 9, 13, 14, 15, 16, 17),
+        c(11, 15, 18, 19),
+        c(17, 20, 21, 22),
+        c(5, 13, 17)
+    )
+    fts$peakidx <- pidx
+    cps_sub <- cps[c(4, 6, 17, 19), ]
+    res <- .update_feature_definitions(fts, rownames(cps), rownames(cps_sub))
+    expect_equal(res$a, c("a", "c", "d", "e", "f"))
+    expect_equal(res$peakidx[[1]], c(2))
+    expect_equal(res$peakidx[[2]], c(1, 3))
+    expect_equal(res$peakidx[[3]], c(4))
+    expect_equal(res$peakidx[[4]], c(3))
+    cps_sub <- cps[1:10, ]
+    res <- .update_feature_definitions(fts, rownames(cps), rownames(cps_sub))
+    expect_equal(res$a, c("a", "b", "c", "f"))
+    expect_equal(res$peakidx[[1]], c(1, 2, 3, 6, 9))
+    expect_equal(res$peakidx[[2]], c(5, 10))
+    expect_equal(res$peakidx[[3]], c(4, 9))
+    expect_equal(res$peakidx[[4]], 5)
+})
+
 ## test_that(".chrom_peak_id works", {
 ##     res <- .chrom_peak_id(matrix(nrow = 0, ncol = 5))
 ##     expect_equal(res, character())

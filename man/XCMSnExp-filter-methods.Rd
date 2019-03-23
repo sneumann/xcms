@@ -102,12 +102,10 @@ object from an \code{XCMSnExp}. The reported retention time is the
 adjusted retention time if alignment has been performed on \code{x}.
 
 \code{filterMsLevel}: reduces the \code{\link{XCMSnExp}}
-object to spectra of the specified MS level(s). See
+object to spectra of the specified MS level(s). Chromatographic peaks
+and identified features are also subsetted to the respective MS level. See
 \code{\link{filterMsLevel}} documentation for details and
-examples. Presently, if \code{msLevel.} is provided, the function
-removes identified chromatographic peaks and correspondence results
-while keeping adjusted retention times by default (if present). The
-latter can be changed setting \code{keepAdjustedRtime = FALSE}.
+examples.
 
 The methods listed on this page allow to filter and subset
 \code{\link{XCMSnExp}} objects. Most of them are inherited from the

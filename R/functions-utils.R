@@ -620,6 +620,34 @@ rowRla <- function(x, group, log.transform = TRUE) {
     x
 }
 
+#' helper to subset featureDefinitions based on provided chrom peak names and
+#' update the peakidx.
+#'
+#' @param x `DataFrame` with feature definitions (such as returned by
+#'     `featureDefinitions(object)`.
+#'
+#' @param original_names `character` with the original rownames (peak IDs) of
+#'     the `chromPeaks` matrix **before** subsetting.
+#'
+#' @param subset_names `character` with the rownames (peak IDs) of the
+#'     `chromPeaks` matrix **after** subsetting.
+#'
+#' @return updated feature definitions `DataFrame`.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @noRd
+.update_feature_definitions <- function(x, original_names, subset_names) {
+    x$peakidx <- lapply(x$peakidx, function(z) {
+        idx <- match(original_names[z], subset_names)
+        idx[!is.na(idx)]
+    })
+    x[lengths(x$peakidx) > 0, ]
+}
+
+
 ## #' Define a unique identifier for each chromatographic peak within the chrom
 ## #' peak matrix by concatenating as many columns as needed.
 ## #'

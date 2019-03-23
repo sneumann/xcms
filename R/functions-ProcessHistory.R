@@ -101,8 +101,8 @@ XProcessHistory <- function(param = NULL, msLevel = NA_integer_, ...) {
 GenericProcessHistory <- function(fun, args = list(), msLevel = NA_integer_,
                                   date. = date(), fileIndex. = NA_integer_) {
     gp <- new("GenericParam", fun = fun, args = args)
-    xcms:::XProcessHistory(param = gp, msLevel = msLevel,
-                           date. = date., fileIndex. = fileIndex.)
+    XProcessHistory(param = gp, msLevel = msLevel,
+                    date. = date., fileIndex. = fileIndex.)
 }
 
 #' Remove a generic process history step based on the name of the function.

@@ -83,7 +83,8 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam())
 
 \S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param)
+\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param,
+  msLevel = 1L)
 }
 \arguments{
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
@@ -145,6 +146,9 @@ the retention time correction method..}
 \item{value}{The value for the slot.}
 
 \item{x}{a \code{PeakGroupsParam} object.}
+
+\item{msLevel}{\code{integer(1)} specifying the MS level. Currently only MS
+level 1 is supported.}
 }
 \value{
 The \code{PeakGroupsParam} function returns a

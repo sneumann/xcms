@@ -59,7 +59,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
-    "Chromatograms", "Spectra")
+    "Chromatograms", "Spectra", "requiredFvarLabels")
 
 export(
     "etg",

@@ -3,6 +3,8 @@ Changes in version 3.5.2
 - Small changes in fillChromPeaks,XCMSnExp to reduce memory demand.
 - Fix issue #359.
 - Fix issue #360: rawEIC skipped last scan/spectrum if rtrange was provided.
+- filterMsLevel keeps now chromatographic peaks and feature definitions from the
+  specified MS levels (issue #362).
 
 
 Changes in version 3.5.1

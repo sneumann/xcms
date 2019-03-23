@@ -47,7 +47,8 @@ MzClustParam(sampleGroups = numeric(), ppm = 20, absMz = 0,
 
 \S4method{minSamples}{MzClustParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param)
+\S4method{groupChromPeaks}{XCMSnExp,MzClustParam}(object, param,
+  msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -80,6 +81,9 @@ results from a previous chromatographic peak detection analysis (see
 
 \item{param}{A \code{MzClustParam} object containing all settings for
 the peak grouping algorithm.}
+
+\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level
+1 is supported.}
 }
 \value{
 The \code{MzClustParam} function returns a \code{MzClustParam} class instance with
