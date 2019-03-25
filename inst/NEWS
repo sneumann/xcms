@@ -5,6 +5,7 @@ Changes in version 3.5.2
 - Fix issue #360: rawEIC skipped last scan/spectrum if rtrange was provided.
 - filterMsLevel keeps now chromatographic peaks and feature definitions from the
   specified MS levels (issue #362).
+- Fix bug in `xcmsRaw` that leads to a netCDF error message (issue #363).
 
 
 Changes in version 3.5.1
