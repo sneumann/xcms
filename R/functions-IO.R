@@ -30,7 +30,7 @@ readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
     ## def_backend <- "Ramp"  ## Eventually use pwiz...
     header_cols <- c("retentionTime", "acquisitionNum", "totIonCurrent")
     msd <- mzR::openMSfile(x, backend = backend)
-    on.exit(if(!is.null(msd)) mzR::close(msd))
+    on.exit(mzR::close(msd))
     ## That's due to issue https://github.com/lgatto/MSnbase/issues/151
     on.exit(rm(msd), add = TRUE)
     on.exit(gc(), add = TRUE)
@@ -101,8 +101,5 @@ readRawData <- function(x, includeMSn = FALSE, dropEmptyScans = TRUE,
             warning("MSn spectra requested but none present in the file.")
         }
     }
-    mzR::close(msd)
-    mzR <- NULL
-    gc()
     resList
 }

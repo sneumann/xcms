@@ -1,6 +1,7 @@
 Changes in version 3.4.5
 
 - filterMsLevel no longer drops chromatographic peaks and features (issue #263).
+- Fix bug in `xcmsRaw` that resulted in a netCDF error (issue #363).
 
 
 Changes in version 3.4.4
