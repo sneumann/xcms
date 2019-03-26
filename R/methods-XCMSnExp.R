@@ -351,6 +351,8 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
             keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
         pks <- pks[keep, , drop = FALSE]
     }
+    if (!any(colnames(pks) == "ms_level"))
+        pks <- cbind(pks, ms_level = 1L)
     if (bySample) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected peaks.
@@ -1015,11 +1017,6 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
             }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
             SIMPLIFY = FALSE)
             adjustedRtime(newMfd) <- adj_rt
-            ## ph <- dropProcessHistoriesList(ph,
-            ##                                type = c(.PROCSTEP.PEAK.DETECTION,
-            ##                                         .PROCSTEP.PEAK.GROUPING,
-            ##                                         .PROCSTEP.PEAK.FILLING,
-            ##                                         .PROCSTEP.CALIBRATION))
         } else {
             object <- dropAdjustedRtime(object)
             ph <- dropProcessHistoriesList(ph,
@@ -2700,15 +2697,16 @@ setMethod("fillChromPeaks",
               aggFunHigh <- median
               ## Note: we ensure in the downstream function that the rt range is
               ## within the rt range. For the mz range it doesn't matter.
+              tmp_pks <- chromPeaks(object)[, c("rtmin", "rtmax", "mzmin",
+                                                "mzmax")]
               pkArea <- do.call(
                   rbind,
                   lapply(
                       fdef$peakidx, function(z) {
-                          tmp <- chromPeaks(object)[z, c("rtmin", "rtmax",
-                                                         "mzmin", "mzmax"),
-                                                    drop = FALSE]
-                          pa <- c(aggFunLow(tmp[, 1]), aggFunHigh(tmp[, 2]),
-                                  aggFunLow(tmp[, 3]), aggFunHigh(tmp[, 4]))
+                          pa <- c(aggFunLow(tmp_pks[z, 1]),
+                                  aggFunHigh(tmp_pks[z, 2]),
+                                  aggFunLow(tmp_pks[z, 3]),
+                                  aggFunHigh(tmp_pks[z, 4]))
                           ## Check if we have to apply ppm replacement:
                           if (ppm != 0) {
                               mzmean <- mean(pa[3:4])
@@ -2737,9 +2735,10 @@ setMethod("fillChromPeaks",
                               pa[1] <- pa[1] - fixedRt
                               pa[2] <- pa[2] + fixedRt
                           }
-                          return(pa)
+                          pa
                       }
                   ))
+              rm(tmp_pks)
               message(".", appendLF = FALSE)
               colnames(pkArea) <- c("rtmin", "rtmax", "mzmin", "mzmax")
               ## Add mzmed column - needed for MSW peak filling.
