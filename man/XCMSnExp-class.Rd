@@ -89,8 +89,8 @@ hasFilledChromPeaks(object)
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
 \S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE,
-  rt = numeric(), mz = numeric(), ppm = 0, type = c("any",
-  "within", "apex_within"))
+  rt = numeric(), mz = numeric(), ppm = 0, msLevel = integer(),
+  type = c("any", "within", "apex_within"))
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
@@ -202,14 +202,14 @@ chromatographic peaks partially overlapping the range defined by
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
 
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
+
 \item{adjusted}{logical(1) whether adjusted or raw (i.e. the original
 retention times reported in the files) should be returned.}
 
 \item{BPPARAM}{Parameter class for parallel processing. See
 \code{\link{bpparam}}.}
-
-\item{msLevel}{\code{integer(1)} defining the MS level on which the peak
-detection should be performed. Defaults to \code{msLevel = 1}.}
 
 \item{keepAdjustedRtime}{For \code{dropFeatureDefinitions,XCMSnExp}:
 \code{logical(1)} defining whether eventually present retention time

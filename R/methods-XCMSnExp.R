@@ -290,6 +290,9 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #'     peaks within \code{mz[1] - ppm / 1e6} and \code{mz[2] + ppm / 1e6} are
 #'     returned.
 #'
+#' @param msLevel \code{integer} specifying the MS level(s) for which identified
+#'     chromatographic peaks should be returned.
+#'
 #' @return
 #'
 #' For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
@@ -319,7 +322,7 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' @rdname XCMSnExp-class
 setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                                              rt = numeric(), mz = numeric(),
-                                             ppm = 0,
+                                             ppm = 0, msLevel = integer(),
                                              type = c("any", "within",
                                                       "apex_within")) {
     pks <- chromPeaks(object@msFeatureData)
@@ -353,12 +356,14 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
     }
     if (!any(colnames(pks) == "ms_level"))
         pks <- cbind(pks, ms_level = 1L)
+    if (length(msLevel))
+        pks <- pks[pks[, "ms_level"] %in% msLevel, , drop = FALSE]
     if (bySample) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected peaks.
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
-        if (length(pks)) {
+        if (nrow(pks)) {
             tmp <- split.data.frame(pks,
                                     f = pks[, "sample"])
             res[as.numeric(names(tmp))] <- tmp

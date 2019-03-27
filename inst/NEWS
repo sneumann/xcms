@@ -6,6 +6,7 @@ Changes in version 3.5.2
 - filterMsLevel keeps now chromatographic peaks and feature definitions from the
   specified MS levels (issue #362).
 - Fix bug in `xcmsRaw` that leads to a netCDF error message (issue #363).
+- Add parameter msLevel to chromPeaks for XCMSnExp objects.
 
 
 Changes in version 3.5.1
