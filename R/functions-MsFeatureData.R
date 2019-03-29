@@ -3,9 +3,9 @@
 
 #' Validates a 'chromPeaks' matrix or data.frame and ensures that it contains all
 #' required columns and that all columns are of numeric data type.
-#' 
+#'
 #' @return \code{TRUE} or a \code{character} with the error message.
-#' 
+#'
 #' @noRd
 .validChromPeaksMatrix <- function(x) {
     msg <- character()
@@ -23,28 +23,51 @@
                         is.numeric)
         if (any(!typeOK))
             return(paste0("Values in column(s) ",
-                          paste0("'", names(typeOK)[!typeOK], "'", collapse = ", ")),
-                   " of the 'chromPeaks' matrix are not numeric!")
+                          paste0("'", names(typeOK)[!typeOK], "'",
+                                 collapse = ", "),
+                          " of the 'chromPeaks' matrix are not numeric!"))
     }
     return(TRUE)
 }
 
+.validChromPeakData <- function(x) {
+    msg <- character()
+    if (!inherits(x$chromPeakData, "DataFrame"))
+        return("'chromPeakData' is supposed to be a 'DataFrame'")
+    if (hasChromPeaks(x)) {
+        if (nrow(x$chromPeakData) != nrow(x$chromPeaks)) {
+            msg <- "number of rows of chromPeaks and chromPeakData does not match"
+        } else if (any(rownames(x$chromPeakData) != rownames(x$chromPeaks)))
+            msg <- "rownames differ between 'chromPeaks' and 'chromPeakData'"
+        req_cols <- c("ms_level")
+        if (!all(req_cols %in% colnames(x$chromPeakData)))
+            msg <- c(msg, paste0("one or more required columns (",
+                                 paste0(req_cols, collapse = ", "),
+                                 ") are missing"))
+        else {
+            if (!is.integer(x$chromPeakData$ms_level))
+                msg <- c(msg, paste0("column 'ms_level' should contain only ",
+                                     "integer values"))
+        }
+    } else msg <- "'chromPeakData' present but 'chromPeaks' is missing"
+    msg
+}
 
 #' @description Performs a validation check of all elements within the object:
 #' 1) Allowed are: chromPeaks (matrix), featureDefinitions (DataFrame) and
 #'    adjustedRtime (list).
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @return \code{TRUE} if object is valid, or a message with the error message.
-#' 
+#'
 #' @noRd
 validateMsFeatureData <- function(x) {
     msg <- character()
     ks <- ls(x)
     if (length(ks)) {
         validKeys <- ks %in% c("chromPeaks", "featureDefinitions",
-                               "adjustedRtime")
+                               "adjustedRtime", "chromPeakData")
         if (!all(validKeys)) {
             msg <- c(msg, paste0("Only elements named 'chromPeaks', ",
                                  "'featureDefinitions' and 'adjustedRtime' ",
@@ -57,6 +80,8 @@ validateMsFeatureData <- function(x) {
             if (is.character(OK))
                 msg <- c(msg, OK)
         }
+        if (.has_chrom_peak_data(x))
+            msg <- c(msg, .validChromPeakData(x))
         haveFGs <- any(ks == "featureDefinitions")
         if (haveFGs) {
             if (is(x$featureDefinitions, "DataFrame")) {
@@ -133,14 +158,14 @@ validateMsFeatureData <- function(x) {
 #'     filterGroups, i.e. update their peakidx column or remove them.
 #'
 #' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
-#' 
+#'
 #' @param idx \code{numeric} with the indices of the chromatographic peaks to
 #'     keep.
 #'
 #' @return A \code{MsFeatureData}.
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @noRd
 .filterChromPeaks <- function(x, idx) {
     if (missing(idx))
@@ -177,4 +202,12 @@ validateMsFeatureData <- function(x) {
 
     }
     return(new_e)
+}
+
+.has_chrom_peak_data <- function(x) {
+    any(ls(x) == "chromPeakData")
+}
+
+.chrom_peak_data <- function(x) {
+    x$chromPeakData
 }

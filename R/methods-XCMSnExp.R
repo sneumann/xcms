@@ -354,10 +354,8 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
             keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
         pks <- pks[keep, , drop = FALSE]
     }
-    if (!any(colnames(pks) == "ms_level"))
-        pks <- cbind(pks, ms_level = 1L)
     if (length(msLevel))
-        pks <- pks[pks[, "ms_level"] %in% msLevel, , drop = FALSE]
+        pks <- pks[chromPeakData(object)$ms_level %in% msLevel, , drop = FALSE]
     if (bySample) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected peaks.
@@ -396,11 +394,11 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     if (is.null(rownames(value)))
         rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
+    ## chromPeakData(newFd) <- DataFrame(rep(1L))LLLLLLL
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
-    if (validObject(object)) {
-        return(object)
-    }
+    validObject(object)
+    object
 })
 
 #' @description
@@ -3412,6 +3410,10 @@ setMethod("updateObject", "XCMSnExp", function(object) {
         if (is.null(rownames(chromPeaks(newFd))))
             rownames(chromPeaks(newFd)) <-
                 .featureIDs(nrow(chromPeaks(newFd)), "CP")
+        if (!.has_chrom_peak_data(newFd))
+            newFd$chromPeakData <- DataFrame(
+                ms_level = rep(1L, nrow(chromPeaks(newFd))),
+                row.names = rownames(chromPeaks(newFd)))
     }
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
@@ -3419,4 +3421,23 @@ setMethod("updateObject", "XCMSnExp", function(object) {
         object@.processHistory <- list()
     validObject(object)
     object
+})
+
+## chromPeakData: get the chromPeakData
+## how to keep chromPeaks and chromPeakData in sync???
+## chromPeaks<- REMOVES previous chromPeaks and initializes a new chromPeakData
+## chromPeakData,XCMSnExp<- updates/replaces chromPeakData.
+## dropChromPeaks,XCMSnExp drops also chromPeakData
+## adjustRtime,XCMSnExp needs to keep chromPeakData
+## dropAdjustedRtime,XCMSnExp needs to keep chromPeakData
+## dropFilledChromPeaks needs to keep chromPeakData
+## .filterChromPeaks needs to keep & subset chromPeakData too.
+## MsFeatureData
+## chromPeaks,MsFeatureData<-
+
+
+setMethod("chromPeakData", "XCMSnExp", function(object) {
+    chromPeakData(object@msFeatureData)
+})
+setReplaceMethod("chromPeakData", "XCMSnExp", function(object) {
 })

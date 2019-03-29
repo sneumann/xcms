@@ -2628,7 +2628,6 @@ setClass("XCMSnExp",
                                           "objects are allowed in slot ",
                                           ".processHistory!"))
              }
-             ## TODO @jo add checks:
              ## 1) call validMsFeatureData
              msg <- c(msg, validateMsFeatureData(object@msFeatureData))
              if (length(msg)) return(msg)
@@ -2642,6 +2641,9 @@ setClass("XCMSnExp",
                                           "peaks in the 'chromPeaks' ",
                                           "element of the msFeatureData ",
                                           "slot!"))
+                 if (!any(ls(object@msFeatureData) == "chromPeakData"))
+                     return(paste0("Missing 'chromPeakData'. Please update",
+                                   " the object with 'updateObject'"))
              }
              ## 3) Check that the length of the adjustedRtime matches!
              if (any(ls(object@msFeatureData) == "adjustedRtime")) {

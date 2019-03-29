@@ -12,7 +12,31 @@ test_that("MsFeatureData class validation works", {
     fd$chromPeaks <- fdm
     expect_true(!is.logical(xcms:::validateMsFeatureData(fd)))
     rm("chromPeaks", envir = fd)
+    ## chromPeaks
+    cp <- matrix(nrow = 3, ncol = length(xcms:::.REQ_PEAKS_COLS))
+    colnames(cp) <- xcms:::.REQ_PEAKS_COLS
+    expect_true(is.character(xcms:::.validChromPeaksMatrix(cp)))
+    cp[3] <- 3.4
+    expect_true(xcms:::.validChromPeaksMatrix(cp))
+    rownames(cp) <- letters[1:nrow(cp)]
+    chromPeaks(fd) <- cp
+    expect_true(validObject(fd))
     ## featureDefinitions
+    xcms:::chromPeakData(fd) <- 5
+    expect_error(validObject(fd), "is supposed to be a 'DataFrame'")
+    fdef <- DataFrame(ms_level = rep(1L, nrow(cp)), row.names = rownames(cp))
+    xcms:::chromPeakData(fd) <- fdef
+    expect_true(validObject(fd))
+    xcms:::chromPeakData(fd)$ms_level <- "a"
+    expect_error(validObject(fd), "column 'ms_level' should contain")
+    xcms:::chromPeakData(fd)$ms_level <- 1L
+    rownames(xcms:::chromPeakData(fd)) <- 1:nrow(cp)
+    expect_error(validObject(fd), "rownames differ")
+    rm("chromPeaks", envir = fd)
+    expect_error(validObject(fd), "'chromPeakData' present but 'chromPeaks'")
+    rm("chromPeakData", envir = fd)
+
+    ## Additional tests.
     fd$chromPeaks <- chromPeaks(xod_x)
     fd$featureDefinitions <- 4
     expect_true(!is.logical(xcms:::validateMsFeatureData(fd)))
@@ -65,4 +89,3 @@ test_that("MsFeatureData class_accessors work", {
     expect_true(hasAdjustedRtime(fd))
     expect_equal(adjustedRtime(fd), xod_xgrg@msFeatureData$adjustedRtime)
 })
-
