@@ -7,6 +7,8 @@ Changes in version 3.5.2
   specified MS levels (issue #362).
 - Fix bug in `xcmsRaw` that leads to a netCDF error message (issue #363).
 - Add parameter msLevel to chromPeaks for XCMSnExp objects.
+- Add chromPeakData to allow adding arbitrary annotation to chromatographic
+  peaks.
 
 
 Changes in version 3.5.1

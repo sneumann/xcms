@@ -319,8 +319,8 @@ test_that("XCMSnExp droppers work", {
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropChromPeaks(xod_x)
     expect_true(!hasChromPeaks(res))
-    expect_true(.has_chrom_peaks(xod_x@msFeatureData))
-    expect_false(.has_chrom_peaks(res@msFeatureData))
+    expect_true(.has_chrom_peak_data(xod_x@msFeatureData))
+    expect_false(.has_chrom_peak_data(res@msFeatureData))
     expect_true(length(processHistory(res, type = type_feat_det)) == 0)
     expect_true(!hasFeatures(res))
     expect_true(length(processHistory(res, type = type_feat_algn)) == 0)
@@ -751,15 +751,15 @@ test_that("filterMz,XCMSnExp works", {
     expect_true(all(featureDefinitions(res)[, "mzmax"] >= 300 &
                     featureDefinitions(res)[, "mzmax"] <= 400))
     ## With groups - no groups within this range
-    mzr <- c(120, 130)
+    mzr <- c(595, 600)
     res <- filterMz(xod_xg, mz = mzr)
     expect_true(!hasFeatures(res))
     expect_true(hasChromPeaks(res))
-    expect_true(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))
+    expect_true(all(chromPeaks(res)[, "mz"] >= 595 & chromPeaks(res)[, "mz"] <= 600))
     res <- filterMz(xod_xgrg, mz = mzr)
     expect_true(!hasFeatures(res))
     expect_true(hasChromPeaks(res))
-    expect_true(all(chromPeaks(res)[, "mz"] >= 120 & chromPeaks(res)[, "mz"] <= 130))
+    expect_true(all(chromPeaks(res)[, "mz"] >= 595 & chromPeaks(res)[, "mz"] <= 600))
 })
 
 test_that("filterRt,XCMSnExp works", {
@@ -2201,7 +2201,8 @@ test_that("filterMsLevel works with MS>1", {
     ms2_fl <- proteomics("TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz",
                          full.names = TRUE)
     ms2 <- readMSData(ms2_fl, mode = "onDisk")
-    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(), msLevel = 1))
+    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(),
+                                         msLevel = 1))
     res_1 <- filterMsLevel(res, msLevel = 1)
     res_2 <- filterMsLevel(res, msLevel = 2)
     expect_true(all(msLevel(res_1) == 1))
@@ -2209,4 +2210,45 @@ test_that("filterMsLevel works with MS>1", {
     expect_equal(chromPeaks(res_1), chromPeaks(res))
     expect_equal(processHistory(res_1), processHistory(res))
     expect_true(length(processHistory(res_2)) == 0)
+    expect_true(hasChromPeaks(res_1))
+    expect_false(hasChromPeaks(res_2))
+})
+
+test_that("chromPeakData,XCMSnExp works", {
+    tmp <- xod_x
+    expect_error(chromPeakData(tmp) <- 5, "'chromPeakData' is supposed")
+    chromPeakData(tmp)$other_column <- "b"
+    expect_true(all(chromPeakData(tmp)$other_column == "b"))
+
+    res <- filterRt(tmp, rt = c(2800, 3000))
+    expect_true(hasChromPeaks(res))
+    expect_true(validObject(res))
+    expect_true(all(chromPeakData(res)$other_column == "b"))
+    expect_true(any(colnames(chromPeakData(res)) == "other_column"))
+
+    res <- filterMz(tmp, mz = c(400, 500))
+    expect_true(hasChromPeaks(res))
+    expect_true(validObject(res))
+    expect_true(all(chromPeakData(res)$other_column == "b"))
+    expect_true(any(colnames(chromPeakData(res)) == "other_column"))
+
+    res <- filterMsLevel(tmp, msLevel = 2L)
+    expect_true(length(res) == 0)
+    expect_false(hasChromPeaks(res))
+    res <- filterMsLevel(tmp, msLevel = 1L)
+    expect_equal(chromPeaks(res), chromPeaks(tmp))
+    expect_equal(chromPeakData(res), chromPeakData(tmp))
+
+    res <- filterFile(tmp, 2)
+    expect_true(hasChromPeaks(res))
+    expect_true(validObject(res))
+    expect_true(all(chromPeakData(res)$other_column == "b"))
+    expect_true(any(colnames(chromPeakData(res)) == "other_column"))
+
+    tmp <- groupChromPeaks(tmp, param = PeakDensityParam(sampleGroups = rep(1, 3)))
+    res <- fillChromPeaks(tmp)
+    expect_true(hasChromPeaks(res))
+    expect_true(validObject(res))
+    expect_true(is.character(chromPeakData(res)$other_column))
+    expect_true(any(colnames(chromPeakData(res)) == "other_column"))
 })

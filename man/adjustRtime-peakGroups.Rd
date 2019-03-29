@@ -47,7 +47,7 @@ PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
   0, ncol = 0), subset = integer(), subsetAdjust = c("average",
   "previous"))
 
-adjustRtimePeakGroups(object, param = PeakGroupsParam())
+adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
 
 \S4method{show}{PeakGroupsParam}(object)
 
@@ -143,12 +143,12 @@ for more information.}
 \item{param}{A \code{PeakGroupsParam} object containing all settings for
 the retention time correction method..}
 
+\item{msLevel}{\code{integer(1)} specifying the MS level. Currently only MS
+level 1 is supported.}
+
 \item{value}{The value for the slot.}
 
 \item{x}{a \code{PeakGroupsParam} object.}
-
-\item{msLevel}{\code{integer(1)} specifying the MS level. Currently only MS
-level 1 is supported.}
 }
 \value{
 The \code{PeakGroupsParam} function returns a

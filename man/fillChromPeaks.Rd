@@ -45,7 +45,7 @@ fixedMz(object)
 \S4method{ppm}{FillChromPeaksParam}(object) <- value
 
 \S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param,
-  msLevel = 1, BPPARAM = bpparam())
+  msLevel = 1L, BPPARAM = bpparam())
 
 \S4method{fillChromPeaks}{XCMSnExp,missing}(object, param,
   BPPARAM = bpparam(), msLevel = 1L)

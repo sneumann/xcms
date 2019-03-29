@@ -36,9 +36,13 @@
 \alias{chromPeaks,XCMSnExp-method}
 \alias{chromPeaks}
 \alias{chromPeaks,MsFeatureData-method}
+\alias{chromPeakData,MsFeatureData-method}
+\alias{chromPeakData}
 \alias{chromPeaks<-,XCMSnExp-method}
 \alias{chromPeaks<-}
 \alias{chromPeaks<-,MsFeatureData-method}
+\alias{chromPeakData<-,MsFeatureData-method}
+\alias{chromPeakData<-}
 \alias{rtime,XCMSnExp-method}
 \alias{mz,XCMSnExp-method}
 \alias{intensity,XCMSnExp-method}
@@ -61,6 +65,8 @@
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}
 \alias{c.XCMSnExp}
+\alias{chromPeakData,XCMSnExp-method}
+\alias{chromPeakData<-,XCMSnExp-method}
 \title{Data container storing xcms preprocessing results}
 \usage{
 processHistoryTypes()
@@ -127,6 +133,10 @@ hasFilledChromPeaks(object)
   BPPARAM = bpparam(), ...)
 
 \method{c}{XCMSnExp}(...)
+
+\S4method{chromPeakData}{XCMSnExp}(object)
+
+\S4method{chromPeakData}{XCMSnExp}(object) <- value
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -387,7 +397,13 @@ peak) has to be within the region.
 See description of the return value for details on the returned matrix.
 Users usually don't have to use the \code{chromPeaks<-} method directly
 as detected chromatographic peaks are added to the object by the
-\code{\link{findChromPeaks}} method.
+\code{\link{findChromPeaks}} method. Also, \code{chromPeaks<-} will replace
+any existing \code{chromPeakData}.
+
+\code{chromPeakData} and \code{chromPeakData<-} allow to get or set arbitrary
+chromatographic peak annotations. These are returned or ar returned as a
+\code{DataFrame}. Note that the number of rows and the rownames of the
+\code{DataFrame} have to match those of \code{chromPeaks}.
 
 \code{rtime}: extracts the retention time for each
 scan. The \code{bySample} parameter allows to return the values grouped

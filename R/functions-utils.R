@@ -641,7 +641,7 @@ rowRla <- function(x, group, log.transform = TRUE) {
 #' @noRd
 .update_feature_definitions <- function(x, original_names, subset_names) {
     x$peakidx <- lapply(x$peakidx, function(z) {
-        idx <- match(original_names[z], subset_names)
+        idx <- base::match(original_names[z], subset_names)
         idx[!is.na(idx)]
     })
     x[lengths(x$peakidx) > 0, ]

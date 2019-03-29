@@ -84,7 +84,8 @@ test_that("MsFeatureData class_accessors work", {
     expect_true(hasFeatures(fd))
     expect_equal(featureDefinitions(fd), featureDefinitions(xod_xgrg))
     ## adjustedRtime
-    expect_error(adjustedRtime(fd) <- adjustedRtime(xod_xgrg))
+    adjustedRtime(fd) <- adjustedRtime(xod_xgrg)
+    expect_error(validObject(fd))
     adjustedRtime(fd) <- xod_xgrg@msFeatureData$adjustedRtime
     expect_true(hasAdjustedRtime(fd))
     expect_equal(adjustedRtime(fd), xod_xgrg@msFeatureData$adjustedRtime)

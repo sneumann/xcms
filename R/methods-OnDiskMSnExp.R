@@ -208,10 +208,12 @@ setMethod("findChromPeaks",
     ## if (hasAdjustedRtime(object) | hasFeatures(object))
     ##     object@msFeatureData <- new("MsFeatureData")
     pks <- do.call(rbind, res$peaks)
-    if (length(pks) > 0)
-        chromPeaks(object) <- cbind(pks, is_filled = 0, ms_level = msLevel)
-    if (validObject(object))
-        object
+    if (length(pks) > 0) {
+        chromPeaks(object) <- cbind(pks, is_filled = 0)
+        chromPeakData(object)$ms_level <- as.integer(msLevel)
+    }
+    validObject(object)
+    object
 }
 
 ## massifquant

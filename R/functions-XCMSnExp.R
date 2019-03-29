@@ -624,10 +624,15 @@ dropGenericProcessHistory <- function(x, fun) {
 #'
 #' @noRd
 .peakIndex <- function(object) {
-    if (!hasFeatures(object))
-        stop("No feature definitions present. Please run groupChromPeaks first.")
-    idxs <- featureDefinitions(object)$peakidx
-    names(idxs) <- rownames(featureDefinitions(object))
+    if (inherits(object, "DataFrame")) {
+        idxs <- object$peakidx
+        names(idxs) <- rownames(object)
+    } else {
+        if (!hasFeatures(object))
+            stop("No feature definitions present. Please run groupChromPeaks first.")
+        idxs <- featureDefinitions(object)$peakidx
+        names(idxs) <- rownames(featureDefinitions(object))
+    }
     idxs
 }
 
@@ -649,7 +654,8 @@ dropGenericProcessHistory <- function(x, fun) {
 #' by the median retention time across columns.
 #'
 #' @rdname adjustRtime-peakGroups
-adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
+adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
+                                  msLevel = 1L) {
     if (!is(object, "XCMSnExp"))
         stop("'object' has to be an 'XCMSnExp' object.")
     if (!hasFeatures(object))
@@ -662,8 +668,12 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam()) {
         subs <- seq_along(fileNames(object))
     nSamples <- length(subs)
     pkGrp <- .getPeakGroupsRtMatrix(
-        peaks = chromPeaks(object),
-        peakIndex = .peakIndex(object),
+        peaks = chromPeaks(object, msLevel = msLevel),
+        peakIndex = .peakIndex(
+            .update_feature_definitions(featureDefinitions(object),
+                                        rownames(chromPeaks(object)),
+                                        rownames(chromPeaks(object,
+                                                            msLevel = msLevel)))),
         sampleIndex = subs,
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)
@@ -886,7 +896,7 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
     nsamples <- length(fileNames(object))
     if (length(col) != nsamples)
         col <- rep_len(col[1], nsamples)
-    pks <- chromPeaks(object, mz = mz, rt = rt, type = type)
+    pks <- chromPeaks(object, mz = mz, rt = rt, type = type, msLevel = 1L)
     if (nrow(pks)) {
         ## Extract parameters from the param object
         bw = bw(param)
@@ -1063,6 +1073,7 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
                                 whichPeaks = c("any", "within", "apex_within"),
                                 ...) {
     type <- match.arg(type)
+    msLevel <- 1L
     whichPeaks <- match.arg(whichPeaks)
     n_samples <- length(fileNames(x))
     if (!hasChromPeaks(x))
@@ -1070,7 +1081,7 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
     if (length(peakIds)) {
         if (!missing(rt) | !missing(mz))
             warning("Ignoring 'rt' and 'mz' because peakIds were provided")
-        if (!all(peakIds %in% rownames(chromPeaks(x))))
+        if (!all(peakIds %in% rownames(chromPeaks(x, msLevel = msLevel))))
             stop("'peakIds' do not match rownames of 'chromPeaks(x)'")
         rt <- range(chromPeaks(x)[peakIds, c("rtmin", "rtmax")])
         mz <- range(chromPeaks(x)[peakIds, c("mzmin", "mzmax")])
@@ -1083,7 +1094,8 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
         stop("'x' has to be a XCMSnExp object")
     if (length(peakIds))
         pks <- chromPeaks(x)[peakIds, , drop = FALSE]
-    else pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0, type = whichPeaks)
+    else pks <- chromPeaks(x, rt = rt, mz = mz, ppm = 0, type = whichPeaks,
+                           msLevel = msLevel)
     if (length(col) != n_samples)
         col <- rep(col[1], n_samples)
     if (length(border) != n_samples)
@@ -1240,7 +1252,7 @@ plotChromPeaks <- function(x, file = 1, xlim = NULL, ylim = NULL,
         main <- basename(fileNames(x_file))
     ## Get the peaks from the file, restricting to the current limits (might
     ## speed up things).
-    pks <- chromPeaks(x_file, mz = ylim, rt = xlim)
+    pks <- chromPeaks(x_file, mz = ylim, rt = xlim, msLevel = 1L)
     ## Initialize plot
     if (!add)
         plot(3, 3, pch = NA, xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab,
@@ -1283,7 +1295,7 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
     brks <- seq(xlim[1], xlim[2], by = binSize)
     if (brks[length(brks)] < xlim[2])
         brks <- c(brks, brks[length(brks)] + binSize)
-    pks <- chromPeaks(x, rt = xlim)
+    pks <- chromPeaks(x, rt = xlim, msLevel = 1L)
     if (nrow(pks)) {
         rts <- split(pks[, "rt"], pks[, "sample"])
         cnts <- lapply(rts, function(z) {
@@ -1456,8 +1468,12 @@ applyAdjustedRtime <- function(object) {
     rownames(pks) <- NULL
     new_x@.processHistory <- unlist(procH)
     chromPeaks(new_x) <- pks
-    if (validObject(new_x))
-        new_x
+    rm(pks)
+    cpd <- do.call(rbind, lapply(x, chromPeakData))
+    rownames(cpd) <- rownames(chromPeaks(new_x))
+    chromPeakData(new_x) <- cpd
+    validObject(new_x)
+    new_x
 }
 
 #' @description

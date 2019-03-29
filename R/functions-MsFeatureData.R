@@ -186,6 +186,8 @@ validateMsFeatureData <- function(x) {
                 featureDefinitions(x), rownames(chromPeaks(x)),
                 rownames(chromPeaks(new_e)))
         else featureDefinitions(new_e) <- featureDefinitions(xs)
+        if (nrow(featureDefinitions(new_e)) == 0)
+            rm(list = "featureDefinitions", envir = new_e)
     }
     if (hasAdjustedRtime(x)) {
         if (is(x, "XCMSnExp"))
