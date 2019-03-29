@@ -245,12 +245,8 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
     featureDefinitions(newFd) <- value
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
-    if (validObject(object)) {
-        ## Lock the environment so that only accessor methods can change values.
-        ## lockEnvironment(newFd, bindings = TRUE)
-        ## object@msFeatureData <- newFd
-        return(object)
-    }
+    validObject(object))
+    object
 })
 
 #' @aliases chromPeaks chromPeaks,MsFeatureData-method
@@ -277,7 +273,8 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' See description of the return value for details on the returned matrix.
 #' Users usually don't have to use the \code{chromPeaks<-} method directly
 #' as detected chromatographic peaks are added to the object by the
-#' \code{\link{findChromPeaks}} method.
+#' \code{\link{findChromPeaks}} method. Also, \code{chromPeaks<-} will replace
+#' any existing \code{chromPeakData}.
 #'
 #' @param rt optional \code{numeric(2)} defining the retention time range for
 #'     which chromatographic peaks should be returned.
@@ -355,7 +352,8 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
         pks <- pks[keep, , drop = FALSE]
     }
     if (length(msLevel))
-        pks <- pks[chromPeakData(object)$ms_level %in% msLevel, , drop = FALSE]
+        pks <- pks[which(chromPeakData(object)$ms_level %in% msLevel), ,
+                   drop = FALSE]
     if (bySample) {
         ## Ensure we return something for each sample in case there is a sample
         ## without detected peaks.
@@ -394,7 +392,8 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     if (is.null(rownames(value)))
         rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
-    ## chromPeakData(newFd) <- DataFrame(rep(1L))LLLLLLL
+    chromPeakData(newFd) <- DataFrame(ms_level = rep(1L, nrow(value)),
+                                      row.names = rownames(value))
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
     validObject(object)
@@ -1003,17 +1002,11 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
         return(res)
     }
 
-    ## Create a new empty MsFeatureData and just add adjusted retention times
     newMfd <- new("MsFeatureData")
     ph <- processHistory(object)
-    ## 2) Subset adjusted retention time
-    ## if (hasAdjustedRtime(object) & length(keep_fts)) {
     if (hasAdjustedRtime(object)) {
         if (keepAdjustedRtime) {
             ## issue #210: keep adjusted retention times if wanted.
-            ## CAVE: we're still removing the chromatographic peaks at the
-            ## moment thus we might miss later the peaks and groups on which
-            ## alignment has been performed (for peak groups method).
             keep_by_file <- base::split(keep_logical, fromFile(object))
             adj_rt <- base::mapply(FUN = function(y, z) {
                 return(y[z])
@@ -1026,19 +1019,14 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
                                            type = .PROCSTEP.RTIME.CORRECTION)
         }
     }
-    ## Subset chrom peaks
     if (hasChromPeaks(object)) {
-        if (any(chromPeaks(object)[, "ms_level"] == msLevel.))
-            chromPeaks(newMfd) <- chromPeaks(object)[
-                chromPeaks(object)[, "ms_level"] == msLevel., , drop = FALSE]
-    }
-    ## Subset features/update indices.
-    if (hasFeatures(object) && hasChromPeaks(newMfd)) {
-        if (length(chromPeaks(object)) != length(chromPeaks(newMfd)))
-            featureDefinitions(newMfd) <- .update_feature_definitions(
-                featureDefinitions(object), rownames(chromPeaks(object)),
-                rownames(chromPeaks(newMfd)))
-        else featureDefinitions(newMfd) <- featureDefinitions(object)
+        newMfd2 <- .filterChromPeaks(
+            object@msFeatureData, which(chromPeakData(object)$ms_level %in%
+                                                             msLevel.))
+        chromPeaks(newMfd) <- chromPeaks(newMfd2)
+        chromPeakData(newMfd) <- chromPeakData(newMfd2)
+        if (hasFeatures(newMfd2))
+            featureDefinitions(newMfd) <- featureDefinitions(newMfd2)
     }
     ## Subset processing history
     keep_ph <- vapply(ph, function(z) {

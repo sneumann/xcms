@@ -319,6 +319,8 @@ test_that("XCMSnExp droppers work", {
     ## 1) dropDetectedFeatures: delete all process history steps and all data.
     res <- dropChromPeaks(xod_x)
     expect_true(!hasChromPeaks(res))
+    expect_true(.has_chrom_peaks(xod_x@msFeatureData))
+    expect_false(.has_chrom_peaks(res@msFeatureData))
     expect_true(length(processHistory(res, type = type_feat_det)) == 0)
     expect_true(!hasFeatures(res))
     expect_true(length(processHistory(res, type = type_feat_algn)) == 0)

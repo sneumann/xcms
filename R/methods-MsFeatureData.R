@@ -121,7 +121,9 @@ setReplaceMethod("chromPeaks", "MsFeatureData", function(object, value) {
 setMethod("dropChromPeaks", "MsFeatureData", function(object) {
     if (hasChromPeaks(object))
         rm(list = "chromPeaks", envir = object)
-    return(object)
+    if (.has_chrom_peak_data(object))
+        rm(list = "chromPeakData", envir = object)
+    object
 })
 
 setMethod("chromPeakData", "MsFeatureData", function(object) {

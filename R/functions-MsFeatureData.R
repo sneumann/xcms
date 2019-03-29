@@ -148,14 +148,11 @@ validateMsFeatureData <- function(x) {
             }
         }
     }
-    ## if (length(msg) == 0)
-    ##     return(TRUE)
-    ## else return(msg)
-    return(msg)
+    msg
 }
 
 #' @description Filter chromPeaks and sync them with with the present
-#'     filterGroups, i.e. update their peakidx column or remove them.
+#'     featureDefinitions, i.e. update their peakidx column or remove them.
 #'
 #' @param x A \code{MsFeatureData} or an \code{XCMSnExp} object.
 #'
@@ -172,36 +169,31 @@ validateMsFeatureData <- function(x) {
         return(x)
     if (!hasChromPeaks(x))
         return(x)
-    fts <- chromPeaks(x)
+    new_e <- new("MsFeatureData")
+    if (!length(idx))
+        return(new_e)
+    pks <- chromPeaks(x)
     idx <- sort(idx)
-    if (!all(idx %in% 1:nrow(fts)))
+    if (!all(idx %in% 1:nrow(pks)))
         stop("All indices in 'idx' have to be within 1 and nrow of the peak",
              " matrix.")
-    new_e <- new("MsFeatureData")
-    chromPeaks(new_e) <- fts[idx, , drop = FALSE]
+    chromPeaks(new_e) <- pks[idx, , drop = FALSE]
+    if (.has_chrom_peak_data(x))
+        chromPeakData(new_e) <- chromPeakData(x)[idx, , drop = FALSE]
     if (hasFeatures(x)) {
-        af <- featureDefinitions(x)
-        af <- split(af, 1:nrow(af))
-        afL <- lapply(af, function(z) {
-            if(all(z$peakidx[[1]] %in% idx)) {
-                z$peakidx <- list(match(z$peakidx[[1]], idx))
-                return(z)
-            } else {
-                return(NULL)
-            }
-        })
-        af <- do.call(rbind, afL)
-        if (length(af) > 0)
-            featureDefinitions(new_e) <- af
+        if (nrow(chromPeaks(new_e)) != nrow(chromPeaks(x)))
+            featureDefinitions(new_e) <- .update_feature_definitions(
+                featureDefinitions(x), rownames(chromPeaks(x)),
+                rownames(chromPeaks(new_e)))
+        else featureDefinitions(new_e) <- featureDefinitions(xs)
     }
     if (hasAdjustedRtime(x)) {
         if (is(x, "XCMSnExp"))
             adjustedRtime(new_e) <- adjustedRtime(x, bySample = TRUE)
         else
             adjustedRtime(new_e) <- adjustedRtime(x)
-
     }
-    return(new_e)
+    new_e
 }
 
 .has_chrom_peak_data <- function(x) {
