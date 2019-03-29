@@ -52,9 +52,10 @@ setMethod("show", "XCMSnExp", function(object) {
                           featureDefinitions(object)[, "rtmin"]), digits = 5),
             "\n", sep = "")
         if (.hasFilledPeaks(object)) {
-            totF <- chromPeaks(object)[, "is_filled"] == 1
-            fp <- chromPeaks(object)[totF, , drop = FALSE]
-            cat("", sum(totF), "filled peaks (on average",
+            fp <- chromPeaks(object)[chromPeakData(object)$is_filled, ,
+                                     drop = FALSE]
+            cat("", sum(chromPeakData(object)$is_filled),
+                "filled peaks (on average",
                 mean(table(fp[, "sample"])), "per sample).\n")
         }
     }
@@ -310,10 +311,6 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' \code{"into"} (integrated, original, intensity of the peak),
 #' \code{"maxo"} (maximum intentity of the peak),
 #' \code{"sample"} (sample index in which the peak was identified) and
-#' \code{"is_filled"} defining whether the chromatographic peak was
-#' identified by the peak picking algorithm (\code{0}) or was added by the
-#' \code{fillChromPeaks} method (\code{1}).
-#' \code{"ms_level"} (MS level of the identified peaks).
 #' Depending on the employed peak detection algorithm and the
 #' \code{verboseColumns} parameter of it additional columns might be
 #' returned. For \code{bySample = TRUE} the chronatographic peaks are
@@ -726,10 +723,11 @@ setMethod("dropFeatureDefinitions", "XCMSnExp", function(object,
         newFd@.xData <- .copy_env(object@msFeatureData)
         newFd <- dropFeatureDefinitions(newFd)
         if (.hasFilledPeaks(object)) {
-            keep <- base::which(chromPeaks(newFd)[, "is_filled"] == 0)
             ## Remove filled in peaks
-            chromPeaks(newFd) <- chromPeaks(newFd)[keep, , drop = FALSE]
-            chromPeakData(newFd) <- chromPeakData(newFd)[keep, , drop = FALSE]
+            chromPeaks(newFd) <- chromPeaks(
+                newFd)[!chromPeakData(newFd)$is_filled, , drop = FALSE]
+            chromPeakData(newFd) <- chromPeakData(
+                newFd)[!chromPeakData(newFd)$is_filled, , drop = FALSE]
             object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
         }
         lockEnvironment(newFd, bindings = TRUE)
@@ -2145,7 +2143,7 @@ setMethod("featureValues",
               pks <- chromPeaks(object)
               ## issue #157: replace all values for filled-in peaks with NA
               if (!filled)
-                  pks[pks[, "is_filled"] == 1, ] <- NA
+                  pks[chromPeakData(object)$is_filled, ] <- NA
               .feature_values(pks = pks, fts = featureDefinitions(object),
                               method = method, value = value,
                               intensity = intensity, colnames = fNames,
@@ -2424,7 +2422,7 @@ setMethod("chromatogram",
                       pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
                                         type = "apex_within")
                       if (!filled)
-                          pks <- pks[pks[, "is_filled"] == 0, , drop = FALSE]
+                          pks <- pks[!chromPeakData(object)$is_filled[match(rownames(pks), rownames(chromPeakData(object)))], , drop = TRUE]
                       pk_list[[i]] <- split.data.frame(
                           pks, factor(pks[, "sample"], levels = lvls))
                   }
@@ -2434,7 +2432,7 @@ setMethod("chromatogram",
                   pks <- chromPeaks(object, rt = rt, mz = mz,
                                     type = "apex_within")
                   if (!filled)
-                      pks <- pks[pks[, "is_filled"] == 0, , drop = FALSE]
+                      pks <- pks[!chromPeakData(object)$is_filled[match(rownames(pks), rownames(chromPeakData(object)))], , drop = TRUE]
                   pks <- split.data.frame(pks, factor(pks[, "sample"],
                                                       levels = lvls))
               }
@@ -2517,8 +2515,8 @@ setMethod("findChromPeaks",
 #' Integrate signal in the mz-rt area of a feature (chromatographic
 #' peak group) for samples in which no chromatographic peak for this
 #' feature was identified and add it to the \code{chromPeaks}. Such peaks
-#' will have a value of \code{1} in the \code{"is_filled"} column of the
-#' \code{\link{chromPeaks}} matrix of the object.
+#' will have a \code{TRUE} in the \code{chromPeakData} data frame containing
+#' peak annotations.
 #'
 #' @details
 #'
@@ -2646,7 +2644,7 @@ setMethod("findChromPeaks",
 #' res <- fillChromPeaks(res)
 #'
 #' ## Get the peaks that have been filled in:
-#' fp <- chromPeaks(res)[chromPeaks(res)[, "is_filled"] == 1, ]
+#' fp <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
 #' head(fp)
 #'
 #' ## Did we get a signal for all missing peaks?
@@ -2836,10 +2834,6 @@ setMethod("fillChromPeaks",
               }
 
               res <- do.call(rbind, res)
-              if (any(colnames(res) == "is_filled"))
-                  res[, "is_filled"] <- 1
-              else
-                  res <- cbind(res, is_filled = 1)
               ## cbind the group_idx column to track the feature/peak group.
               res <- cbind(res, group_idx = do.call(rbind, pkAreaL)[, "group_idx"])
               ## Remove those without a signal
@@ -2873,6 +2867,9 @@ setMethod("fillChromPeaks",
               cpd <- chromPeakData(newFd)[rep(1L, nrow(res)), , drop = FALSE]
               cpd[,] <- NA
               cpd$ms_level <- as.integer(msLevel)
+              cpd$is_filled <- TRUE
+              if (!any(colnames(chromPeakData(newFd)) == "is_filled"))
+                  chromPeakData(newFd)$is_filled <- FALSE
               chromPeakData(newFd) <- rbind(chromPeakData(newFd), cpd)
               rownames(chromPeakData(newFd)) <- rownames(chromPeaks(newFd))
               featureDefinitions(newFd) <- fdef
@@ -2915,23 +2912,8 @@ setMethod(
 setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
     if (!.hasFilledPeaks(object))
         return(object)
-    keep_pks <- which(chromPeaks(object)[, "is_filled"] == 0)
+    keep_pks <- which(!chromPeakData(object)$is_filled)
     object@msFeatureData <- .filterChromPeaks(object@msFeatureData, keep_pks)
-
-    ## newFd <- new("MsFeatureData")
-    ## newFd@.xData <- .copy_env(object@msFeatureData)
-    ## ## Update index in featureDefinitions
-    ## fd <- featureDefinitions(newFd)
-    ## for (i in seq_len(nrow(fd))) {
-    ##     idx <- fd$peakidx[[i]]
-    ##     fd$peakidx[[i]] <- idx[idx %in% keep_pks]
-    ## }
-    ## featureDefinitions(newFd) <- fd
-    ## ## Remove peaks
-    ## chromPeaks(newFd) <- chromPeaks(newFd)[keep_pks, , drop = FALSE]
-    ## chromPeakData(newFd) <- chromPeakData(newFd)[keep_pks, , drop = FALSE]
-    ## ## newFd <- .filterChromPeaks(object@msFeatureData, idx = keep_pks)
-    ## object@msFeatureData <- newFd
     object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
     if (validObject(object))
         return(object)
@@ -3419,10 +3401,18 @@ setMethod("updateObject", "XCMSnExp", function(object) {
         if (is.null(rownames(chromPeaks(newFd))))
             rownames(chromPeaks(newFd)) <-
                 .featureIDs(nrow(chromPeaks(newFd)), "CP")
-        if (!.has_chrom_peak_data(newFd))
+        if (!.has_chrom_peak_data(newFd)) {
             newFd$chromPeakData <- DataFrame(
                 ms_level = rep(1L, nrow(chromPeaks(newFd))),
                 row.names = rownames(chromPeaks(newFd)))
+            if (any(colnames(chromPeaks(newFd) == "is_filled"))) {
+                newFd$chromPeakData$is_filled <- as.logical(
+                    chromPeaks(newFd)[, "is_filled"])
+                chromPeaks(newFd) <- chromPeaks(
+                    newFd)[, colnames(newFd) != "is_filled"]
+            } else
+                newFd$chromPeakData$is_filled <- FALSE
+        }
     }
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd

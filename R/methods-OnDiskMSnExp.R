@@ -203,8 +203,9 @@ setMethod("findChromPeaks",
     ##     object@msFeatureData <- new("MsFeatureData")
     pks <- do.call(rbind, res$peaks)
     if (length(pks) > 0) {
-        chromPeaks(object) <- cbind(pks, is_filled = 0)
+        chromPeaks(object) <- pks
         chromPeakData(object)$ms_level <- as.integer(msLevel)
+        chromPeakData(object)$is_filled <- FALSE
     }
     validObject(object)
     object

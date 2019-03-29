@@ -39,7 +39,7 @@
             msg <- "number of rows of chromPeaks and chromPeakData does not match"
         } else if (any(rownames(x$chromPeakData) != rownames(x$chromPeaks)))
             msg <- "rownames differ between 'chromPeaks' and 'chromPeakData'"
-        req_cols <- c("ms_level")
+        req_cols <- c("ms_level", "is_filled")
         if (!all(req_cols %in% colnames(x$chromPeakData)))
             msg <- c(msg, paste0("one or more required columns (",
                                  paste0(req_cols, collapse = ", "),
