@@ -2932,8 +2932,8 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
     keep_pks <- which(!chromPeakData(object)$is_filled)
     object@msFeatureData <- .filterChromPeaks(object@msFeatureData, keep_pks)
     object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
-    if (validObject(object))
-        return(object)
+    validObject(object)
+    object
 })
 
 #' @aliases extractMsData
