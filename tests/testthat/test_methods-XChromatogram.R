@@ -2,7 +2,7 @@ test_that("show,XChromatogram works", {
     show(XChromatogram())
 })
 
-test_that("chromPeaks,chromPeaks<-,XChromatogram works", {
+test_that("chromPeaks and chromPeakData for XChromatogram work", {
     chr <- Chromatogram(rtime = 1:10,
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
@@ -16,6 +16,14 @@ test_that("chromPeaks,chromPeaks<-,XChromatogram works", {
     expect_error(chromPeaks(xchr) <- 4)
     chromPeaks(xchr) <- pks
     expect_equal(chromPeaks(xchr), pks)
+    expect_equal(nrow(chromPeakData(xchr)), nrow(pks))
+    expect_equal(chromPeakData(xchr)$is_filled, rep(FALSE, nrow(pks)))
+    expect_equal(chromPeakData(xchr)$ms_level, rep(1L, nrow(pks)))
+    chromPeakData(xchr)$id <- "a"
+    expect_equal(chromPeakData(xchr)$id, rep("a", nrow(pks)))
+    expect_error(chromPeakData(xchr) <- 4)
+    expect_error(chromPeakData(xchr) <- DataFrame())
+    expect_error(chromPeakData(xchr) <- DataFrame(id = letters[1:nrow(pks)]))
 
     expect_true(nrow(chromPeaks(xchr, rt = c(20, 30))) == 0)
     expect_equal(chromPeaks(xchr, rt = c(2, 7)), pks)
@@ -36,6 +44,13 @@ test_that("chromPeaks,chromPeaks<-,XChromatogram works", {
                  pks[1, , drop = FALSE])
     expect_equal(chromPeaks(xchr, mz = 331.89, ppm = 100), pks[2:3, ])
     expect_equal(chromPeaks(xchr, mz = 331.89, ppm = 10), pks[3, , drop = FALSE])
+
+    ## with msLevel
+    res <- chromPeaks(xchr, msLevel = 2L)
+    expect_true(nrow(res) == 0)
+    chromPeakData(xchr)$ms_level <- c(1L, 2L, 3L, 2L)
+    res <- chromPeaks(xchr, msLevel = 2L)
+    expect_equal(res, pks[c(2, 4), ])
 })
 
 test_that("plot,XChromatogram works", {

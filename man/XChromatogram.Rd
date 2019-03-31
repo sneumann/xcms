@@ -17,9 +17,12 @@
 \alias{filterRt,XChromatogram-method}
 \alias{hasChromPeaks,XChromatogram-method}
 \alias{dropFilledChromPeaks,XChromatogram-method}
+\alias{chromPeakData,XChromatogram-method}
+\alias{chromPeakData<-,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{chromPeaks,XChromatograms-method}
+\alias{chromPeakData,XChromatograms-method}
 \alias{filterMz,XChromatograms-method}
 \alias{filterRt,XChromatograms-method}
 \alias{plot,XChromatograms,ANY-method}
@@ -34,18 +37,20 @@
 \alias{dropFilledChromPeaks,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
-XChromatograms(data, phenoData, featureData, chromPeaks, ...)
+XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData,
+  ...)
 
 XChromatogram(rtime = numeric(), intensity = numeric(),
   mz = c(NA_real_, NA_real_), filterMz = c(NA_real_, NA_real_),
   precursorMz = c(NA_real_, NA_real_), productMz = c(NA_real_,
   NA_real_), fromFile = integer(), aggregationFun = character(),
-  msLevel = 1L, chromPeaks)
+  msLevel = 1L, chromPeaks, chromPeakData)
 
 \S4method{show}{XChromatogram}(object)
 
 \S4method{chromPeaks}{XChromatogram}(object, rt = numeric(),
-  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"),
+  msLevel)
 
 \S4method{chromPeaks}{XChromatogram}(object) <- value
 
@@ -62,12 +67,19 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 
 \S4method{dropFilledChromPeaks}{XChromatogram}(object)
 
+\S4method{chromPeakData}{XChromatogram}(object)
+
+\S4method{chromPeakData}{XChromatogram}(object) <- value
+
 \S4method{show}{XChromatograms}(object)
 
 \S4method{hasChromPeaks}{XChromatograms}(object)
 
 \S4method{chromPeaks}{XChromatograms}(object, rt = numeric(),
-  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"),
+  msLevel)
+
+\S4method{chromPeakData}{XChromatograms}(object)
 
 \S4method{filterMz}{XChromatograms}(object, mz, ...)
 
@@ -122,6 +134,10 @@ chromatographic peaks for each chromatogram. Each element has to be
 a \code{matrix}, the ordering has to match the order of the chromatograms
 in \code{data}.}
 
+\item{chromPeakData}{For \code{XChromatogram}: \code{DataFrame} with optional
+additional annotations for each chromatographic peak. The number of rows
+has to match the number of chromatographic peaks.}
+
 \item{...}{For \code{plot}: additional parameters to passed to the \code{plot}
 function.
 For \code{XChromatograms}: additional parameters to be passed to the
@@ -165,7 +181,9 @@ function that was used to aggregate intensity values for the same
 retention time across the m/z range.}
 
 \item{msLevel}{For \code{XChromatogram}: \code{integer} with the MS level from which
-the chromatogram was extracted.}
+the chromatogram was extracted.
+For \code{chromPeaks} and \code{chromPeakData}: extract chromatographic peaks of a
+certain MS level.}
 
 \item{object}{An \code{XChromatogram} or \code{XChromatograms} object.}
 
@@ -326,6 +344,8 @@ contain additional columns.
 For \code{XChromatograms} objects the \code{matrix} contains also columns \code{"row"}
 and \code{"column"} specifying in which chromatogram of \code{object} the peak was
 identified. Chromatographic peaks are ordered by row.
+\item \code{chromPeakData}, \code{chromPeakData<-}: extract or set the \code{\link[=DataFrame]{DataFrame()}} with
+optional chromatographic peak annotations.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
@@ -552,6 +572,14 @@ xchr <- XChromatogram(rtime = 1:10,
     intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2),
     chromPeaks = pks)
 xchr
+
+## Add arbitrary peak annotations
+df <- DataFrame(peak_id = c("a"))
+xchr <- XChromatogram(rtime = 1:10,
+    intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2),
+    chromPeaks = pks, chromPeakData = df)
+xchr
+chromPeakData(xchr)
 
 ## Extract the chromatographic peaks
 chromPeaks(xchr)

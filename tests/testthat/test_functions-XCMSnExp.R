@@ -290,7 +290,8 @@ test_that("featureChromatograms works", {
     fchrsf <- featureChromatograms(xod_tmpf, features = fts, filled = TRUE)
     expect_equal(nrow(chromPeaks(fchrs)), 4)
     expect_equal(nrow(chromPeaks(fchrsf)), 6)
-    expect_equal(unname(chromPeaks(fchrsf)[, "is_filled"]), c(1, 0, 1, 0, 0, 0))
+    expect_equal(chromPeakData(fchrsf)$is_filled, c(TRUE, FALSE, TRUE, FALSE,
+                                                    FALSE, FALSE))
     expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
     expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
     fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)

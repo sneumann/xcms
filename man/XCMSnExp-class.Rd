@@ -281,10 +281,6 @@ scans/retention times),
 \code{"into"} (integrated, original, intensity of the peak),
 \code{"maxo"} (maximum intentity of the peak),
 \code{"sample"} (sample index in which the peak was identified) and
-\code{"is_filled"} defining whether the chromatographic peak was
-identified by the peak picking algorithm (\code{0}) or was added by the
-\code{fillChromPeaks} method (\code{1}).
-\code{"ms_level"} (MS level of the identified peaks).
 Depending on the employed peak detection algorithm and the
 \code{verboseColumns} parameter of it additional columns might be
 returned. For \code{bySample = TRUE} the chronatographic peaks are

@@ -1,12 +1,12 @@
-test_that("chromPeaks,XChromatograms works", {
+test_that("chromPeaks, chromPeakData for XChromatograms work", {
     pks1 <- matrix(c(3, 2, 4, 339.2, 343, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     chr1 <- XChromatogram(
         rtime = 1:8, intensity = c(3, 24.2, 343, 32, 3.3, 5, 2, 9),
         chromPeaks = pks1)
     chr2 <- XChromatogram(rtime = 1:4, intensity = c(45, 3, 34, 2))
     pks3 <- matrix(c(3, 2, 4, 145, 54, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     chr3 <- XChromatogram(
         rtime = 1:7, intensity = c(12, 34, 54, 34, 23, 2, NA),
         chromPeaks = pks3)
@@ -14,7 +14,7 @@ test_that("chromPeaks,XChromatograms works", {
     chr5 <- XChromatogram(rtime = 1:6, intensity = c(3, 4, 6, 7, 2, 4))
     pks6 <- matrix(c(2, 2, 3, 108, 65, NA, 3, 5, 7, 123, 4, NA),
                    nrow = 2, byrow = TRUE,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     chr6 <- XChromatogram(
         rtime = 2:5, intensity = c(3, 65, 43, 12),
         chromPeaks = pks6)
@@ -26,6 +26,10 @@ test_that("chromPeaks,XChromatograms works", {
     expect_equal(res[3:4, 1:6, drop = FALSE], pks6)
     expect_equal(res[, "row"], c(1, 1, 2, 2))
     expect_equal(res[, "column"], c(1, 2, 3, 3))
+    resd <- chromPeakData(xchrs)
+    expect_equal(resd$row, c(1, 1, 2, 2))
+    expect_equal(resd$column, c(1, 2, 3, 3))
+    expect_equal(colnames(resd), c("ms_level", "is_filled", "row", "column"))
 
     xchrs <- XChromatograms(list(chr4, chr5, chr2))
     res <- chromPeaks(xchrs)
@@ -38,6 +42,8 @@ test_that("chromPeaks,XChromatograms works", {
     expect_equal(res[, 1:6, drop = FALSE], pks1)
     expect_equal(unname(res[, "row"]), c(4))
     expect_equal(unname(res[, "column"]), c(1))
+    resd <- chromPeakData(xchrs)
+    expect_equal(resd$column, 1)
 
     xchrs <- XChromatograms(list(chr2, chr4, chr5, chr1), ncol = 2)
     res <- chromPeaks(xchrs)
@@ -50,7 +56,7 @@ test_that("filterRt, filterMz for XChromatograms works", {
     chr1 <- XChromatogram()
     chr2 <- XChromatogram(rtime = 1:4, intensity = c(45, 3, 34, 2))
     pks3 <- matrix(c(3, 2, 4, 145, 54, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     chr3 <- XChromatogram(
         rtime = 1:7, intensity = c(12, 34, 54, 34, 23, 2, NA),
         chromPeaks = pks3)
@@ -106,18 +112,25 @@ test_that("filterRt, filterMz for XChromatograms works", {
     ## Filter on mz for a chrs extracted from a real object.
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- chromatogram(xod_xgrg, mz = mzr)
+    expect_equal(chromPeakData(chrs)$ms_level, rep(1L, 4))
+    expect_equal(chromPeakData(chrs)$is_filled, rep(FALSE, 4))
+    expect_equal(chromPeakData(chrs)$row, c(1, 2, 2, 2))
+    expect_equal(chromPeakData(chrs)$column, c(2, 1, 2, 3))
 
     res <- filterMz(chrs, mz = 335)
     expect_equal(nrow(featureDefinitions(res)), 0)
     expect_equal(nrow(chromPeaks(res)), 1)
+    expect_equal(nrow(chromPeakData(res)), 1)
 
     res <- filterMz(chrs, mz = 344)
     expect_equal(nrow(featureDefinitions(res)), 1)
     expect_equal(nrow(chromPeaks(res)), 3)
+    expect_equal(nrow(chromPeakData(res)), 3)
 
     res <- filterMz(chrs, mz = 444)
     expect_equal(nrow(featureDefinitions(res)), 0)
     expect_equal(nrow(chromPeaks(res)), 0)
+    expect_equal(nrow(chromPeakData(res)), 0)
 })
 
 test_that("plot,XChromatogram works", {
@@ -375,7 +388,9 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
                                           minFraction = 0.25))
     xod_tmpf <- fillChromPeaks(
         xod_tmp, param = FillChromPeaksParam(fixedRt = 30))
+    expect_true(.hasFilledPeaks(xod_tmpf))
     xchr <- chromatogram(xod_tmpf, rt = rtr, mz = mzr)
+    expect_false(.hasFilledPeaks(xchr))
     ch <- dropFilledChromPeaks(xchr[1, 1])
     expect_equal(ch, xchr[1, 1])
     ch <- dropFilledChromPeaks(xchr[1, 2])
@@ -387,11 +402,18 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
     expect_equal(res, xchr)
 
     xchrf <- chromatogram(xod_tmpf, rt = rtr, mz = mzr, filled = TRUE)
+    expect_true(.hasFilledPeaks(xchrf))
+    expect_equal(nrow(chromPeaks(xchrf)), 6)
+    expect_equal(chromPeakData(xchrf)$is_filled, c(TRUE, FALSE, TRUE,
+                                                   FALSE, FALSE, FALSE))
     ch <- dropFilledChromPeaks(xchr[1, 1])
     expect_equal(ch, xchr[1, 1])
     ch <- dropFilledChromPeaks(xchr[1, 2])
     expect_equal(ch, xchrf[1, 2])
     res <- dropFilledChromPeaks(xchrf)
+    expect_false(.hasFilledPeaks(res))
+    expect_equal(nrow(chromPeaks(res)), 4)
+    expect_equal(chromPeakData(res)$is_filled, c(FALSE, FALSE, FALSE, FALSE))
     expect_true(length(res@.processHistory) < length(xchrf@.processHistory))
     expect_equal(chromPeaks(res), chromPeaks(xchr))
     expect_equal(featureDefinitions(res), featureDefinitions(xchr))

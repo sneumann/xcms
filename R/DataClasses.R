@@ -2674,12 +2674,17 @@ setClass("XCMSnExp",
 )
 
 .CHROMPEAKS_REQ_NAMES <- c("rt", "rtmin", "rtmax", "into", "maxo", "sn")
+.CHROMPEAKDATA_REQ_NAMES <- c("ms_level", "is_filled")
 setClass("XChromatogram",
-         slots = c(chromPeaks = "matrix"),
+         slots = c(chromPeaks = "matrix",
+                   chromPeakData = "DataFrame"),
          prototype = prototype(
              chromPeaks = matrix(nrow = 0, ncol = length(.CHROMPEAKS_REQ_NAMES),
                                  dimnames = list(character(),
-                                                 .CHROMPEAKS_REQ_NAMES))),
+                                                 .CHROMPEAKS_REQ_NAMES)),
+             chromPeakData = DataFrame(ms_level = integer(),
+                                       is_filled = logical())
+         ),
          contains = "Chromatogram",
          validity = .validXChromatogram)
 

@@ -2419,28 +2419,43 @@ setMethod("chromatogram",
                   if (nrow(mz) == 1)
                       mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
                   pk_list <- vector("list", nrow(mz))
+                  pkd_list <- vector("list", nrow(mz))
                   for (i in 1:nrow(mz)) {
                       pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
                                         type = "apex_within")
-                      if (!filled)
-                          pks <- pks[!chromPeakData(object)$is_filled[match(rownames(pks), rownames(chromPeakData(object)))], , drop = TRUE]
-                      pk_list[[i]] <- split.data.frame(
-                          pks, factor(pks[, "sample"], levels = lvls))
+                      pkd <- chromPeakData(object)
+                      pkd <- pkd[match(rownames(pks), rownames(pkd)), ,
+                                 drop = FALSE]
+                      if (!filled) {
+                          pks <- pks[!pkd$is_filled, , drop = FALSE]
+                          pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+                      }
+                      smpls <- factor(pks[, "sample"], levels = lvls)
+                      pk_list[[i]] <- split.data.frame(pks, smpls)
+                      pkd_list[[i]] <- split.data.frame(pkd, smpls)
                   }
                   pks <- do.call(rbind, pk_list)
-                  pks <- pks[1:length(pks)]
+                  pks <- pks[seq_along(pks)]
+                  pkd <- do.call(rbind, pkd_list)
+                  pkd <- pkd[seq_along(pkd)]
               } else {
                   pks <- chromPeaks(object, rt = rt, mz = mz,
                                     type = "apex_within")
-                  if (!filled)
-                      pks <- pks[!chromPeakData(object)$is_filled[match(rownames(pks), rownames(chromPeakData(object)))], , drop = TRUE]
-                  pks <- split.data.frame(pks, factor(pks[, "sample"],
-                                                      levels = lvls))
+                  pkd <- chromPeakData(object)
+                  pkd <- pkd[match(rownames(pks), rownames(pkd)), , drop = FALSE]
+                  if (!filled) {
+                      pks <- pks[!pkd$is_filled, , drop = FALSE]
+                      pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+                  }
+                  smpls <- factor(pks[, "sample"], levels = lvls)
+                  pks <- split.data.frame(pks, smpls)
+                  pkd <- split.data.frame(pkd, smpls)
               }
               res <- as(res, "XChromatograms")
               res@.Data <- matrix(
-                  mapply(unlist(res), pks, FUN = function(chr, pk) {
-                      chromPeaks(chr) <- pk
+                  mapply(unlist(res), pks, pkd, FUN = function(chr, pk, pd) {
+                      chr@chromPeaks <- pk
+                      chr@chromPeakData <- pd
                       chr
                   }), nrow = nrow(res), dimnames = dimnames(res))
               res@.processHistory <- object@.processHistory
@@ -2454,7 +2469,8 @@ setMethod("chromatogram",
                   }, integer(1))
                   res@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
               }
-              if (validObject(res)) res
+              validObject(res)
+              res
           })
 
 #' @rdname XCMSnExp-class
@@ -3406,11 +3422,11 @@ setMethod("updateObject", "XCMSnExp", function(object) {
             newFd$chromPeakData <- DataFrame(
                 ms_level = rep(1L, nrow(chromPeaks(newFd))),
                 row.names = rownames(chromPeaks(newFd)))
-            if (any(colnames(chromPeaks(newFd) == "is_filled"))) {
+            if (any(colnames(chromPeaks(newFd)) == "is_filled")) {
                 newFd$chromPeakData$is_filled <- as.logical(
                     chromPeaks(newFd)[, "is_filled"])
-                chromPeaks(newFd) <- chromPeaks(
-                    newFd)[, colnames(newFd) != "is_filled"]
+                newFd$chromPeaks <-
+                    newFd$chromPeaks[, colnames(newFd$chromPeaks) != "is_filled"]
             } else
                 newFd$chromPeakData$is_filled <- FALSE
         }
@@ -3422,19 +3438,6 @@ setMethod("updateObject", "XCMSnExp", function(object) {
     validObject(object)
     object
 })
-
-## chromPeakData: get the chromPeakData
-## how to keep chromPeaks and chromPeakData in sync???
-## chromPeaks<- REMOVES previous chromPeaks and initializes a new chromPeakData
-## chromPeakData,XCMSnExp<- updates/replaces chromPeakData.
-## dropChromPeaks,XCMSnExp drops also chromPeakData
-## adjustRtime,XCMSnExp needs to keep chromPeakData
-## dropAdjustedRtime,XCMSnExp needs to keep chromPeakData
-## dropFilledChromPeaks needs to keep chromPeakData
-## .filterChromPeaks needs to keep & subset chromPeakData too.
-## MsFeatureData
-## chromPeaks,MsFeatureData<-
-
 
 #' @rdname XCMSnExp-class
 setMethod("chromPeakData", "XCMSnExp", function(object) {

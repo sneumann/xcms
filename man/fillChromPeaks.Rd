@@ -119,8 +119,8 @@ the signal integration for missing peaks.
 Integrate signal in the mz-rt area of a feature (chromatographic
 peak group) for samples in which no chromatographic peak for this
 feature was identified and add it to the \code{chromPeaks}. Such peaks
-will have a value of \code{1} in the \code{"is_filled"} column of the
-\code{\link{chromPeaks}} matrix of the object.
+will have a \code{TRUE} in the \code{chromPeakData} data frame containing
+peak annotations.
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across
@@ -196,7 +196,7 @@ sum(is.na(featureValues(res)))
 res <- fillChromPeaks(res)
 
 ## Get the peaks that have been filled in:
-fp <- chromPeaks(res)[chromPeaks(res)[, "is_filled"] == 1, ]
+fp <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
 head(fp)
 
 ## Did we get a signal for all missing peaks?
