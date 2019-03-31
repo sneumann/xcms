@@ -395,6 +395,7 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
         rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
     chromPeakData(newFd) <- DataFrame(ms_level = rep(1L, nrow(value)),
+                                      is_filled = rep(FALSE, nrow(value)),
                                       row.names = rownames(value))
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd

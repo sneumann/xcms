@@ -305,6 +305,15 @@ function.
 head(chromPeaks(xchr))
 ```
 
+Parallel to the `chromPeaks` matrix there is also a data frame `chromPeakData`
+that allows to add arbitrary annotations to each chromatographic peak. Below we
+extract this data frame that by default contains only the MS level in which the
+peak was identified.
+
+```{r peak-detection-chromPeakData}
+chromPeakData(xchr)
+```
+
 Next we plot the identified chromatographic peaks in the extracted ion chromatogram. We use the `col`
 parameter to color the individual chromatogram lines. Colors can also be
 specified for the identified peaks, `peakCol` for the foreground/border color,
@@ -339,6 +348,13 @@ chromatographic peak detection can be accessed with the `chromPeaks` method.
 
 ```{r peak-detection-chromPeaks, message = FALSE }
 head(chromPeaks(xdata))
+```
+
+Again, we can use the `chromPeakData` function to extract the data frame with
+peak annotations.
+
+```{r peak-detection-chromPeakData}
+chromPeakData(xdata)
 ```
 
 The returned `matrix` provides the m/z and retention time range for each
@@ -674,8 +690,10 @@ indeed be no peak signal in the respective region, it might also be that there
 is signal, but the peak detection algorithm failed to detect a chromatographic
 peak. `xcms` provides the `fillChromPeaks` method to *fill in* intensity data
 for such missing values from the original files. The *filled in* peaks are added
-to the `chromPeaks` matrix and are flagged with an `1` in the `"is_filled"`
-column. Below we perform such a filling-in of missing peaks.
+to the `chromPeaks` matrix and get a `TRUE` value in the `"is_filled"` column of
+the `chromPeakData` data frame. Below we perform such a filling-in of missing
+peaks.
+
 
 ```{r fill-chrom-peaks, message = FALSE }
 ## Filling missing peaks using default settings. Alternatively we could

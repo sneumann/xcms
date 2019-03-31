@@ -96,8 +96,8 @@ dropGenericProcessHistory <- function(x, fun) {
     ## and if this is used at all.
 
     ## @filled ... not yet.
-    if (any(chromPeaks(from)[, "is_filled"] == 1)) {
-        fld <- which(chromPeaks(from)[, "is_filled"] == 1)
+    if (any(chromPeakData(from)$is_filled)) {
+        fld <- which(chromPeakData(from)$is_filled)
         xs@filled <- as.integer(fld)
     }
     ## @dataCorrection (numeric) ? in xcmsSet function, if lockMassFreq.
@@ -610,10 +610,7 @@ dropGenericProcessHistory <- function(x, fun) {
 
 
 .hasFilledPeaks <- function(object) {
-    if (hasChromPeaks(object))
-        if (any(colnames(chromPeaks(object)) == "is_filled"))
-            return(any(chromPeaks(object)[, "is_filled"] == 1))
-    FALSE
+    (hasChromPeaks(object) && any(chromPeakData(object)$is_filled))
 }
 
 #' @description
@@ -1855,7 +1852,7 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
     rtm <- rtime(x)
     res <- vector(mode = "list", nrow(pks))
     for (i in subset) {
-        if (skipFilled && pks[i, "is_filled"] == 1)
+        if (skipFilled && chromPeakData(x)$is_filled[i])
             next
         idx <- spectra_in_slice(
             precursorMz_all = pmz, rt_all = rtm,

@@ -1877,9 +1877,9 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
 
 test_that("fillChromPeaks,XCMSnExp works", {
     ## No adjusted retention times
-    expect_true(!.hasFilledPeaks(xod_xg))
+    expect_true(!xcms:::.hasFilledPeaks(xod_xg))
     res <- fillChromPeaks(xod_xg)
-    expect_true(.hasFilledPeaks(res))
+    expect_true(xcms:::.hasFilledPeaks(res))
     ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
@@ -1888,7 +1888,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
 
     ## Check if the signal corresponds to what we expect for some peaks.
     fp <- chromPeaks(res)
-    fp <- fp[fp[, "is_filled"] == 1, ]
+    fp <- fp[chromPeakData(res)$is_filled, ]
     idxs <- sample(1:nrow(fp), 5)
     for (i in idxs) {
         cfp <- fp[i, , drop = FALSE]
@@ -1962,18 +1962,18 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandMz = 1))
     ## Check if the mzrange is now indeed broader for the integrated ones.
     fp <- chromPeaks(res)
-    fp <- fp[fp[, "is_filled"] == 1, ]
+    fp <- fp[chromPeakData(res)$is_filled, ]
     fp2 <- chromPeaks(res_2)
-    fp2 <- fp2[fp2[, "is_filled"] == 1, ]
+    fp2 <- fp2[chromPeakData(res)$is_filled, ]
     expect_equal(fp2[, "mzmax"] - fp2[, "mzmin"],
                  2 * (fp[, "mzmax"] - fp[, "mzmin"]))
 
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandRt = 1))
     ## Check if the mzrange is now indeed broader for the integrated ones.
     fp <- chromPeaks(res)
-    fp <- fp[fp[, "is_filled"] == 1, ]
+    fp <- fp[chromPeakData(res)$is_filled, ]
     fp2 <- chromPeaks(res_2)
-    fp2 <- fp2[fp2[, "is_filled"] == 1, ]
+    fp2 <- fp2[chromPeakData(res)$is_filled, ]
     expect_equal(fp2[, "rtmax"] - fp2[, "rtmin"],
                  2 * (fp[, "rtmax"] - fp[, "rtmin"]))
     ## Check using ppm
@@ -1988,17 +1988,17 @@ test_that("fillChromPeaks,XCMSnExp works", {
     ## Drop feature definitions from res -> also filled peaks should be dropped.
     res_rem <- dropFeatureDefinitions(res)
     expect_true(!.hasFilledPeaks(res_rem))
-    expect_true(!any(chromPeaks(res_rem)[, "is_filled"] == 1))
+    expect_true(!any(chromPeakData(res_rem)$is_filled))
     expect_equal(res_rem, xod_x)
 
     ## With adjusted rtime.
     res_2 <- fillChromPeaks(xod_xgrg)
     ## Check if the signal corresponds to what we expect for some peaks.
     fp <- chromPeaks(res_2)
-    fp <- fp[fp[, "is_filled"] == 1, ]
+    fp <- fp[chromPeakData(res_2)$is_filled, ]
     ## These have to be different from before!
     fp_raw <- chromPeaks(res)
-    fp_raw <- fp_raw[fp_raw[, "is_filled"] == 1, ]
+    fp_raw <- fp_raw[chromPeakData(res), ]
     expect_true(all(fp_raw[, "rt"] != fp[, "rt"]))
     expect_true(all(fp_raw[, "rtmin"] != fp[, "rtmin"]))
     expect_true(all(fp_raw[, "rtmax"] != fp[, "rtmax"]))
