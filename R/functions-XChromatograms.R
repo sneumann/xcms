@@ -128,7 +128,8 @@
 #' ## Delete the identified feature definitions
 #' res <- dropFeatureDefinitions(res)
 #' hasFeatures(res)
-XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
+XChromatograms <- function(data, phenoData, featureData, chromPeaks,
+                           chromPeakData, ...) {
     if (missing(data))
         return(new("XChromatograms"))
     if (!missing(chromPeaks)) {
@@ -141,6 +142,17 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks, ...) {
             if (is.matrix(pks) && length(pks))
                 chromPeaks(z) <- pks
             z
+        })
+    }
+    if (!missing(chromPeakData)) {
+        if (missing(chromPeaks))
+            stop("If 'chromPeakData' is provided, also 'chromPeaks' is required")
+        if (!is.list(chromPeakData) || length(chromPeakData) != length(data))
+            stop("If provided, 'chromPeakData' has to be a list same length ",
+                 "than 'data'.")
+        data <- mapply(data, chromPeakData, FUN = function(z, pkd) {
+            if (length(pkd))
+                chromPeakData(z) <- pkd
         })
     }
     object <- Chromatograms(data = data, phenoData = phenoData,

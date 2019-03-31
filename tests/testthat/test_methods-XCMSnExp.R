@@ -1098,10 +1098,12 @@ test_that("chromatogram,XCMSnExp works", {
     ## With filled-in peaks.
     expect_equal(nrow(chromPeaks(xchrsf)), 6)
     expect_equal(unname(chromPeaks(xchrsf)[, "sample"]), c(1, 2, 3, 1, 2, 3))
-    expect_equal(chromPeaks(xchrsf[2, 1])[, "is_filled"], 1)
-    expect_equal(chromPeaks(xchrsf[2, 2])[, "is_filled"], 0)
-    expect_equal(chromPeaks(xchrsf[2, 3])[, "is_filled"], 1)
-    expect_equal(chromPeaks(xchrsf[1, 2])[, "is_filled"], 0)
+    expect_equal(chromPeakData(xchrsf)$is_filled, c(FALSE, FALSE, FALSE, TRUE,
+                                                    FALSE, TRUE))
+    expect_true(chromPeakData(xchrsf[2, 1])$is_filled)
+    expect_false(chromPeakData(xchrsf[2, 2])$is_filled, 0)
+    expect_true(chromPeakData(xchrsf[2, 3])$is_filled)
+    expect_false(chromPeakData(xchrsf[1, 2])$is_filled)
     ## Check feature definitions.
     fts <- featureDefinitions(xchrs)
     ftsf <- featureDefinitions(xchrsf)
@@ -1116,7 +1118,7 @@ test_that("chromatogram,XCMSnExp works", {
     xchrsf <- chromatogram(xod_tmpf, mz = mzr[1, ], rt = rtr[1, ], filled = TRUE)
     expect_equal(nrow(chromPeaks(xchrs)), 1)
     expect_equal(nrow(chromPeaks(xchrsf)), 3)
-    expect_equal(unname(chromPeaks(xchrsf)[, "is_filled"]), c(1, 0, 1))
+    expect_equal(chromPeakData(xchrsf)$is_filled, c(TRUE, FALSE, TRUE))
     expect_equal(featureDefinitions(xchrsf)$peakidx[[1]], c(2, 1, 3))
     xchrsf2 <- chromatogram(xod_tmpf, mz = mzr[1, ], rt = rtr[1, ])
     expect_equal(chromPeaks(xchrsf2), chromPeaks(xchrs))
@@ -1998,7 +2000,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     fp <- fp[chromPeakData(res_2)$is_filled, ]
     ## These have to be different from before!
     fp_raw <- chromPeaks(res)
-    fp_raw <- fp_raw[chromPeakData(res), ]
+    fp_raw <- fp_raw[chromPeakData(res)$is_filled, ]
     expect_true(all(fp_raw[, "rt"] != fp[, "rt"]))
     expect_true(all(fp_raw[, "rtmin"] != fp[, "rtmin"]))
     expect_true(all(fp_raw[, "rtmax"] != fp[, "rtmax"]))

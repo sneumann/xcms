@@ -10,6 +10,26 @@
         if (!is.null(colnames(object@chromPeaks)) &&
             any(object@chromPeaks[, "rtmax"] < object@chromPeaks[, "rtmin"]))
             txt <- c(txt, "rtmax has to be larger than rtmin")
+        if (nrow(object@chromPeaks) != nrow(object@chromPeakData))
+            txt <- c(txt, paste0("number of rows of 'chromPeaks' and ",
+                                 "'chromPeakData' have to match"))
+        else if (!is.null(rownames(object@chromPeaks))) {
+            if (rownames(object@chromPeaks) != rownames(object@chromPeakData))
+                txt <- c(txt, paste0("rownames of 'chromPeaks' and ",
+                                     "'chromPeakData' have to match"))
+        }
+        if (!all(.CHROMPEAKDATA_REQ_NAMES %in% colnames(object@chromPeakData)))
+            txt <- c(txt, paste0("'chromPeakData' does not have all required",
+                                 " columns: ", paste0(.CHROMPEAKDATA_REQ_NAMES,
+                                                      collapse = ",")))
+        else {
+            if (!is.integer(object@chromPeakData$ms_level))
+                txt <- c(txt, paste0("column \"ms_level\" should only ",
+                                     "contain integer values"))
+            if (!is.logical(object@chromPeakData$is_filled))
+                txt <- c(txt, paste0("column \"is_filled\" should only ",
+                                     "contain logical values"))
+        }
     }
     if (length(txt)) txt
     else TRUE
@@ -81,6 +101,8 @@
 #'
 #' @param msLevel For `XChromatogram`: `integer` with the MS level from which
 #'     the chromatogram was extracted.
+#'     For `chromPeaks` and `chromPeakData`: extract chromatographic peaks of a
+#'     certain MS level.
 #'
 #' @param chromPeaks For `XChromatogram`: `matrix` with required columns
 #'     `"rt"`, `"rtmin"`, `"rtmax"`, `"into"`, `"maxo"` and `"sn"`.
@@ -88,6 +110,10 @@
 #'     chromatographic peaks for each chromatogram. Each element has to be
 #'     a `matrix`, the ordering has to match the order of the chromatograms
 #'     in `data`.
+#'
+#' @param chromPeakData For `XChromatogram`: `DataFrame` with optional
+#'     additional annotations for each chromatographic peak. The number of rows
+#'     has to match the number of chromatographic peaks.
 #'
 #' @param object An `XChromatogram` or `XChromatograms` object.
 #'
@@ -121,25 +147,45 @@
 #'     intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2),
 #'     chromPeaks = pks)
 #' xchr
+#'
+#' ## Add arbitrary peak annotations
+#' df <- DataFrame(peak_id = c("a"))
+#' xchr <- XChromatogram(rtime = 1:10,
+#'     intensity = c(4, 8, 14, 19, 18, 12, 9, 8, 5, 2),
+#'     chromPeaks = pks, chromPeakData = df)
+#' xchr
+#' chromPeakData(xchr)
 XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                           mz = c(NA_real_, NA_real_),
                           filterMz = c(NA_real_, NA_real_),
                           precursorMz = c(NA_real_, NA_real_),
                           productMz = c(NA_real_, NA_real_),
                           fromFile = integer(), aggregationFun = character(),
-                          msLevel = 1L, chromPeaks) {
+                          msLevel = 1L, chromPeaks, chromPeakData) {
     if (missing(chromPeaks))
         chromPeaks <- matrix(ncol = length(.CHROMPEAKS_REQ_NAMES), nrow = 0,
                              dimnames = list(character(),
                                              .CHROMPEAKS_REQ_NAMES))
     else if (!is.matrix(chromPeaks))
         stop("'x' has to be a 'matrix'")
+    if (missing(chromPeakData))
+        chromPeakData <- DataFrame(ms_level = rep(1L, nrow(chromPeaks)),
+                                   is_filled = rep(FALSE, nrow(chromPeaks)),
+                                   row.names = rownames(chromPeaks))
+    else {
+        if (!any(colnames(chromPeakData) == "ms_level"))
+            chromPeakData$ms_level <- 1L
+        if (!any(colnames(chromPeakData) == "is_filled"))
+            chromPeakData$is_filled <- FALSE
+    }
     x <- as(Chromatogram(rtime = rtime, intensity = intensity, mz = mz,
                          filterMz = filterMz, precursorMz = precursorMz,
                          productMz = productMz, fromFile = fromFile,
                          msLevel = msLevel), "XChromatogram")
     x@chromPeaks <- chromPeaks
-    if (validObject(x)) x
+    x@chromPeakData <- chromPeakData
+    validObject(x)
+    x
 }
 
 #' Internal function to plot/draw identified chromatographic peaks in a

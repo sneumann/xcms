@@ -78,14 +78,28 @@ setMethod("hasChromPeaks", "XChromatograms", function(object) {
 setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
                                                    mz = numeric(), ppm = 0,
                                                    type = c("any", "within",
-                                                            "apex_within")){
+                                                            "apex_within"),
+                                                   msLevel) {
     type <- match.arg(type)
-    res <- lapply(object, chromPeaks, rt = rt, mz = mz, ppm = ppm, type = type)
+    res <- lapply(object, chromPeaks, rt = rt, mz = mz, ppm = ppm, type = type,
+                  msLevel = msLevel)
     nrs <- vapply(res, nrow, integer(1))
     row_idx <- rep(seq_len(nrow(object)), ncol(object))
     col_idx <- rep(seq_len(ncol(object)), each = nrow(object))
     res <- do.call(rbind, res)
     res <- cbind(res, row = rep(row_idx, nrs), column = rep(col_idx, nrs))
+    res[order(res[, "row"]), , drop = FALSE]
+})
+
+#' @rdname XChromatogram
+setMethod("chromPeakData", "XChromatograms", function(object) {
+    res <- lapply(object, chromPeakData)
+    nrs <- vapply(res, nrow, integer(1))
+    row_idx <- rep(seq_len(nrow(object)), ncol(object))
+    col_idx <- rep(seq_len(ncol(object)), each = nrow(object))
+    res <- do.call(rbind, res)
+    res$row <- rep(row_idx, nrs)
+    res$column <- rep(col_idx, nrs)
     res[order(res[, "row"]), , drop = FALSE]
 })
 

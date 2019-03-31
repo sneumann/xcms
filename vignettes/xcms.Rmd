@@ -310,7 +310,7 @@ that allows to add arbitrary annotations to each chromatographic peak. Below we
 extract this data frame that by default contains only the MS level in which the
 peak was identified.
 
-```{r peak-detection-chromPeakData}
+```{r peak-detection-chromatogram-chromPeakData}
 chromPeakData(xchr)
 ```
 

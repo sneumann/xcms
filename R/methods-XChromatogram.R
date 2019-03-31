@@ -39,6 +39,9 @@ setMethod("show", "XChromatogram", function(object) {
 #'   and `"column"` specifying in which chromatogram of `object` the peak was
 #'   identified. Chromatographic peaks are ordered by row.
 #'
+#' - `chromPeakData`, `chromPeakData<-`: extract or set the [DataFrame()] with
+#'   optional chromatographic peak annotations.
+#'
 #' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
 #'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
 #'   for `XChromatograms`: returns a `matrix`, same dimensions than `object`
@@ -147,9 +150,12 @@ setMethod("show", "XChromatogram", function(object) {
 setMethod("chromPeaks", "XChromatogram", function(object, rt = numeric(),
                                                   mz = numeric(), ppm = 0,
                                                   type = c("any", "within",
-                                                           "apex_within")) {
+                                                           "apex_within"),
+                                                  msLevel) {
     type <- match.arg(type)
     pks <- object@chromPeaks
+    if (!missing(msLevel))
+        pks <- pks[chromPeakData(object)$ms_level %in% msLevel, , drop = FALSE]
     if (length(rt) && nrow(pks)) {
         rt <- range(rt)
         pks <- switch(type,
@@ -180,13 +186,16 @@ setMethod("chromPeaks", "XChromatogram", function(object, rt = numeric(),
     pks
 })
 
-
 #' @rdname XChromatogram
 setReplaceMethod("chromPeaks", "XChromatogram", function(object, value) {
     if (!is.matrix(value))
         stop("'value' should be a numeric matrix")
     object@chromPeaks <- value
-    if (validObject(object)) object
+    object@chromPeakData <- DataFrame(ms_level = rep(1L, nrow(value)),
+                                      is_filled = rep(FALSE, nrow(value)),
+                                      row.names = rownames(value))
+    validObject(object)
+    object
 })
 
 #' @rdname XChromatogram
@@ -344,11 +353,12 @@ setMethod("filterMz", "XChromatogram", function(object, mz, ...) {
     pks <- chromPeaks(object)
     if (nrow(pks) && any(colnames(pks) == "mz")) {
         mz <- range(mz)
-        pks <- pks[which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2]), ,
-                   drop = FALSE]
-        chromPeaks(object) <- pks
+        keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
+        object@chromPeaks <- pks[keep, , drop = FALSE]
+        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        validObject(object)
     }
-    if (validObject(object)) object
+    object
 })
 
 #' @rdname XChromatogram
@@ -367,11 +377,12 @@ setMethod("filterRt", "XChromatogram", function(object, rt, ...) {
     object <- callNextMethod()
     if (nrow(pks)) {
         rt <- range(rt)
-        pks <- pks[which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2]), ,
-                   drop = FALSE]
-        chromPeaks(object) <- pks
+        keep <- which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2])
+        object@chromPeaks <- pks[keep, , drop = FALSE]
+        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        validObject(object)
     }
-    if (validObject(object)) object
+    object
 })
 
 #' @rdname XChromatogram
@@ -387,9 +398,20 @@ setMethod("hasChromPeaks", "XChromatogram", function(object) {
 setMethod("dropFilledChromPeaks", "XChromatogram", function(object) {
     if (!.hasFilledPeaks(object))
         return(object)
-    if (any(colnames(object@chromPeaks) == "is_filled")) {
-        not_fld <- object@chromPeaks[, "is_filled"] == 0
-        object@chromPeaks <- object@chromPeaks[not_fld, , drop = FALSE]
-    }
-    if (validObject(object)) object
+    not_fld <- which(!object@chromPeakData$is_filled)
+    object@chromPeaks <- object@chromPeaks[not_fld, , drop = FALSE]
+    object@chromPeakData <- object@chromPeakData[not_fld, , drop = FALSE]
+    validObject(object)
+    object
+})
+
+#' @rdname XChromatogram
+setMethod("chromPeakData", "XChromatogram", function(object) {
+    object@chromPeakData
+})
+#' @rdname XChromatogram
+setReplaceMethod("chromPeakData", "XChromatogram", function(object, value) {
+    object@chromPeakData <- value
+    validObject(object)
+    object
 })

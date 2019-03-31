@@ -39,7 +39,7 @@
             msg <- "number of rows of chromPeaks and chromPeakData does not match"
         } else if (any(rownames(x$chromPeakData) != rownames(x$chromPeaks)))
             msg <- "rownames differ between 'chromPeaks' and 'chromPeakData'"
-        req_cols <- c("ms_level", "is_filled")
+        req_cols <- .CHROMPEAKDATA_REQ_NAMES
         if (!all(req_cols %in% colnames(x$chromPeakData)))
             msg <- c(msg, paste0("one or more required columns (",
                                  paste0(req_cols, collapse = ", "),
@@ -48,6 +48,9 @@
             if (!is.integer(x$chromPeakData$ms_level))
                 msg <- c(msg, paste0("column 'ms_level' should contain only ",
                                      "integer values"))
+            if (!is.logical(x$chromPeakData$is_filled))
+                msg <- c(msg, paste0("column 'is_filled' should contain only ",
+                                     "logical values"))
         }
     } else msg <- "'chromPeakData' present but 'chromPeaks' is missing"
     msg
