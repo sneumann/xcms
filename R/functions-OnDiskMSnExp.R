@@ -17,15 +17,15 @@
 #' @noRd
 findChromPeaks_OnDiskMSnExp <- function(object, method = "centWave",
                                         param) {
+    require("xcms", quietly = TRUE, character.only = TRUE)
     if (missing(param))
         stop("'param' has to be specified!")
     ## pass the spectra to the _Spectrum_list function
     ## Since we're calling this function already with bplapply ensure that
     ## the spectra call is not firing its own parallel processing!
-    findChromPeaks_Spectrum_list(x = spectra(object,
-                                             BPPARAM = SerialParam()),
-                                 method = method,
-                                 param = param, rt = rtime(object))
+    findChromPeaks_Spectrum_list(x = spectra(object, BPPARAM = SerialParam()),
+                                 method = method, param = param,
+                                 rt = rtime(object))
 }
 
 
@@ -91,6 +91,7 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
 ## That's a special case since we don't expect to have rt available for this.
 findPeaks_MSW_OnDiskMSnExp <- function(object, method = "MSW",
                                             param) {
+    require("xcms", quietly = TRUE, character.only = TRUE)
     if (missing(param))
         stop("'param' has to be specified!")
     ## pass the spectra to the _Spectrum_list function
