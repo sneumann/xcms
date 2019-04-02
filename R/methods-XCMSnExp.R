@@ -2068,11 +2068,10 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \code{"maxo"}.
 #'
 #' @param value \code{character} specifying the name of the column in
-#'     \code{chromPeaks(object)} that should be returned or \code{"index"} (the
-#'     default) to return the index of the peak in the
-#'     \code{chromPeaks(object)} matrix corresponding to the
-#'     \emph{representative} peak for the feature in the respective sample.
-#'     To return the integrated peak area use \code{value = "into"}.
+#'     \code{chromPeaks(object)} that should be returned. Defaults to
+#'     \code{"into"} in which case the integrated peak area is returned. To
+#'     get the index of the peak in the \code{chromPeaks(object)} matrix use
+#'     \code{"index"}.
 #'
 #' @param intensity \code{character} specifying the name of the column in the
 #'     \code{chromPeaks(objects)} matrix containing the intensity value of the
@@ -2119,7 +2118,7 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 setMethod("featureValues",
           signature(object = "XCMSnExp"),
           function(object, method = c("medret", "maxint", "sum"),
-                   value = "index", intensity = "into", filled = TRUE,
+                   value = "into", intensity = "into", filled = TRUE,
                    missing = NA) {
               ## Input argument checkings
               if (!hasFeatures(object))
@@ -2157,7 +2156,7 @@ setMethod("featureValues",
 #' @author Johannes Rainer
 #'
 #' @noRd
-.feature_values <- function(pks, fts, method, value = "index",
+.feature_values <- function(pks, fts, method, value = "into",
                             intensity = "into", colnames,
                             missing = NA) {
     ftIdx <- fts$peakidx

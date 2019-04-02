@@ -9,6 +9,8 @@ Changes in version 3.5.2
 - Add parameter msLevel to chromPeaks for XCMSnExp objects.
 - Add chromPeakData to allow adding arbitrary annotation to chromatographic
   peaks.
+- Change default of parameter value in featureValues from value = "index" to
+  value = "into".
 
 
 Changes in version 3.5.1
