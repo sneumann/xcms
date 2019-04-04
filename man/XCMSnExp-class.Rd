@@ -96,7 +96,7 @@ hasFilledChromPeaks(object)
 
 \S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE,
   rt = numeric(), mz = numeric(), ppm = 0, msLevel = integer(),
-  type = c("any", "within", "apex_within"))
+  type = c("any", "within", "apex_within"), isFilledColumn = FALSE)
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
@@ -215,6 +215,11 @@ peaks for which the peak's apex is within the region.}
 \item{msLevel}{\code{integer} specifying the MS level(s) for which identified
 chromatographic peaks should be returned.}
 
+\item{isFilledColumn}{\code{logical(1)} whether a column \code{"is_filled"}
+is included in the returned \code{"matrix"} providing the information
+if a peak was filled in. Alternatively, this information would be
+provided by the \code{chromPeakData} data frame.}
+
 \item{adjusted}{logical(1) whether adjusted or raw (i.e. the original
 retention times reported in the files) should be returned.}
 
@@ -282,8 +287,10 @@ scans/retention times),
 \code{"maxo"} (maximum intentity of the peak),
 \code{"sample"} (sample index in which the peak was identified) and
 Depending on the employed peak detection algorithm and the
-\code{verboseColumns} parameter of it additional columns might be
-returned. For \code{bySample = TRUE} the chronatographic peaks are
+\code{verboseColumns} parameter of it, additional columns might be
+returned. If parameter \code{isFilledColumn} was set to \code{TRUE} a column
+named \code{"is_filled"} is also returned.
+For \code{bySample = TRUE} the chromatographic peaks are
 returned as a \code{list} of matrices, each containing the
 chromatographic peaks of a specific sample. For samples in which no
 peaks were detected a matrix with 0 rows is returned.

@@ -310,4 +310,11 @@ test_that("highlightChromPeaks works", {
     highlightChromPeaks(xod_xgrg, mz = mzr, rt = rtr, type = "polygon",
                         col = c("#ff000020", "#00ff0020", "#0000ff20"))
     expect_error(highlightChromPeaks(xod_xgrg, peakIds = c("a", "b")))
+
+    highlightChromPeaks(xod_xgrg, mz = mzr, rt = c(rtr[1] - 20, rtr[2] + 20),
+                        type  = "rect", col = c("#00000040"))
+    plot(chr)
+    highlightChromPeaks(xod_xgrg, mz = mzr, rt = c(rtr[1] - 30, rtr[2] + 20),
+                        type = "polygon",
+                        col = c("#ff000020", "#00ff0020", "#0000ff20"))
 })
