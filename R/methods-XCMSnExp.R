@@ -296,6 +296,11 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' @param msLevel \code{integer} specifying the MS level(s) for which identified
 #'     chromatographic peaks should be returned.
 #'
+#' @param isFilledColumn \code{logical(1)} whether a column \code{"is_filled"}
+#'     is included in the returned \code{"matrix"} providing the information
+#'     if a peak was filled in. Alternatively, this information would be
+#'     provided by the \code{chromPeakData} data frame.
+#'
 #' @return
 #'
 #' For \code{chromPeaks}: if \code{bySample = FALSE} a \code{matrix} (each row
@@ -312,8 +317,10 @@ setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
 #' \code{"maxo"} (maximum intentity of the peak),
 #' \code{"sample"} (sample index in which the peak was identified) and
 #' Depending on the employed peak detection algorithm and the
-#' \code{verboseColumns} parameter of it additional columns might be
-#' returned. For \code{bySample = TRUE} the chronatographic peaks are
+#' \code{verboseColumns} parameter of it, additional columns might be
+#' returned. If parameter \code{isFilledColumn} was set to \code{TRUE} a column
+#' named \code{"is_filled"} is also returned.
+#' For \code{bySample = TRUE} the chromatographic peaks are
 #' returned as a \code{list} of matrices, each containing the
 #' chromatographic peaks of a specific sample. For samples in which no
 #' peaks were detected a matrix with 0 rows is returned.
@@ -323,9 +330,12 @@ setMethod("chromPeaks", "XCMSnExp", function(object, bySample = FALSE,
                                              rt = numeric(), mz = numeric(),
                                              ppm = 0, msLevel = integer(),
                                              type = c("any", "within",
-                                                      "apex_within")) {
+                                                      "apex_within"),
+                                             isFilledColumn = FALSE) {
     type <- match.arg(type)
     pks <- chromPeaks(object@msFeatureData)
+    if (isFilledColumn)
+        pks <- cbind(pks, is_filled = as.numeric(chromPeakData(object)$is_filled))
     if (length(msLevel))
         pks <- pks[which(chromPeakData(object)$ms_level %in% msLevel), ,
                    drop = FALSE]

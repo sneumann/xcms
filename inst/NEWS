@@ -9,6 +9,8 @@ Changes in version 3.5.2
 - Add parameter msLevel to chromPeaks for XCMSnExp objects.
 - Add chromPeakData to allow adding arbitrary annotation to chromatographic
   peaks.
+- Add parameter isFilledColumn to chromPeaks allowing the old behaviour to
+  include the is_filled column in the chromatographic peak matrix.
 
 
 Changes in version 3.5.1

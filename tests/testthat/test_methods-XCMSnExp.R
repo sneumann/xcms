@@ -95,6 +95,11 @@ test_that("XCMSnExp accessors work", {
     pks <- chromPeaks(xod)
     rownames(pks) <- NULL
     expect_equal(tmp, pks)
+    ## chromPeaks with isFilledColumn
+    expect_true(all(colnames(pks) != "is_filled"))
+    pks <- chromPeaks(xod_x, isFilledColumn = TRUE)
+    expect_true(any(colnames(pks) == "is_filled"))
+    expect_true(all(pks[, "is_filled"] == 0))
     ## chromPeaks with rt
     all_pks <- chromPeaks(xod_x)
     pks <- chromPeaks(xod_x, rt = c(2000, 2600), type = "within")
