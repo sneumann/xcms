@@ -11,6 +11,8 @@ Changes in version 3.5.2
   peaks.
 - Change default of parameter value in featureValues from value = "index" to
   value = "into".
+- Add parameter isFilledColumn to chromPeaks allowing the old behaviour to
+  include the is_filled column in the chromatographic peak matrix.
 
 
 Changes in version 3.5.1

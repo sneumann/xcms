@@ -647,6 +647,37 @@ rowRla <- function(x, group, log.transform = TRUE) {
     x[lengths(x$peakidx) > 0, ]
 }
 
+#' @description
+#'
+#' Combine `matrix` or `data.frame`s adding eventually missing columns filling
+#' them with `NA`s.
+#'
+#' @param x `matrix` or `data.frame`.
+#'
+#' @param y `matrix` or `data.frame`.
+#'
+#' @md
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.rbind_fill <- function(x, y) {
+    cnx <- colnames(x)
+    cny <- colnames(y)
+    cn <- union(cnx, cny)
+    mis_col <- setdiff(cn, colnames(x))
+    for (mc in mis_col) {
+        x <- cbind(x, tmp = as(NA, class(y[, mc])))
+    }
+    colnames(x) <- c(cnx, mis_col)
+    mis_col <- setdiff(cn, colnames(y))
+    for (mc in mis_col) {
+        y <- cbind(y, tmp = as(NA, class(x[, mc])))
+    }
+    colnames(y) <- c(cny, mis_col)
+    rbind(x, y[, colnames(x)])
+}
+
 
 ## #' Define a unique identifier for each chromatographic peak within the chrom
 ## #' peak matrix by concatenating as many columns as needed.
