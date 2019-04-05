@@ -2054,7 +2054,8 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
     tmp_x <- group(tmp_x, method = "mzClust")
     tmp_x <- fillPeaks(tmp_x, method = "MSW")
     ## Compare
-    expect_equal(unname(groupval(tmp_x)), unname(featureValues(res)))
+    expect_equal(unname(groupval(tmp_x)),
+                 unname(featureValues(res, value = "index")))
     expect_equal(unname(groupval(tmp_x, value = "maxo")),
                  unname(featureValues(res, value = "maxo")))
     expect_equal(unname(groupval(tmp_x, value = "into")),
