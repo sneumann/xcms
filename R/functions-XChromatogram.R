@@ -14,7 +14,8 @@
             txt <- c(txt, paste0("number of rows of 'chromPeaks' and ",
                                  "'chromPeakData' have to match"))
         else if (!is.null(rownames(object@chromPeaks))) {
-            if (rownames(object@chromPeaks) != rownames(object@chromPeakData))
+            if (any(rownames(object@chromPeaks) !=
+                    rownames(object@chromPeakData)))
                 txt <- c(txt, paste0("rownames of 'chromPeaks' and ",
                                      "'chromPeakData' have to match"))
         }
