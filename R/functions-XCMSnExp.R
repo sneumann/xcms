@@ -2180,9 +2180,13 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         for (i in 1:nrow(chrs)) {
             for (j in 1:ncol(chrs)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
-                if (nrow(cur_pks))
-                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[
-                        rownames(cur_pks) %in% pk_ids[[i]], , drop = FALSE]
+                if (nrow(cur_pks)) {
+                    keep <- rownames(cur_pks) %in% pk_ids[[i]]
+                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[keep, ,
+                                                                drop = FALSE]
+                    chrs@.Data[i, j][[1]]@chromPeakData <-
+                        chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
+                }
             }
         }
         chrs@featureDefinitions <- .subset_features_on_chrom_peaks(

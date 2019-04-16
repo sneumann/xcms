@@ -2404,6 +2404,11 @@ setMethod("chromatogram",
               if (adjustedRtime)
                   adj_rt <- rtime(object, adjusted = TRUE)
               object_od <- as(object, "OnDiskMSnExp")
+              object_od <- selectFeatureData(
+                  object_od, fcol = c("fileIdx", "spIdx", "seqNum",
+                                      "acquisitionNum", "msLevel",
+                                      "polarity", "retentionTime",
+                                      "precursorScanNum"))
               if (adjustedRtime) {
                   object_od@featureData$retentionTime <- adj_rt
               }
@@ -2432,9 +2437,7 @@ setMethod("chromatogram",
                   for (i in 1:nrow(mz)) {
                       pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
                                         type = "apex_within")
-                      pkd <- chromPeakData(object)
-                      pkd <- pkd[match(rownames(pks), rownames(pkd)), ,
-                                 drop = FALSE]
+                      pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
                       if (!filled) {
                           pks <- pks[!pkd$is_filled, , drop = FALSE]
                           pkd <- pkd[!pkd$is_filled, , drop = FALSE]
@@ -2451,7 +2454,8 @@ setMethod("chromatogram",
                   pks <- chromPeaks(object, rt = rt, mz = mz,
                                     type = "apex_within")
                   pkd <- chromPeakData(object)
-                  pkd <- pkd[match(rownames(pks), rownames(pkd)), , drop = FALSE]
+                  pkd <- pkd[match(rownames(pks), rownames(pkd)), ,
+                             drop = FALSE]
                   if (!filled) {
                       pks <- pks[!pkd$is_filled, , drop = FALSE]
                       pkd <- pkd[!pkd$is_filled, , drop = FALSE]

@@ -1,3 +1,14 @@
+Changes in version 3.5.4
+
+- Fix problem in featureChromatograms with include = "feature_only" that could
+  return a non-valid object.
+
+
+Changes in version 3.5.3
+
+- Fix unit tests.
+
+
 Changes in version 3.5.2
 
 - Small changes in fillChromPeaks,XCMSnExp to reduce memory demand.

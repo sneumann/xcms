@@ -9,6 +9,7 @@
         inherits(z, "XChromatogram"), logical(1))))
         txt <- c(txt, paste0("'object' should only contain 'XChromatogram' ",
                              "objects"))
+    else lapply(object, validObject)
     if (nrow(object@featureDefinitions)) {
         if (!all(object@featureDefinitions$row %in% seq_len(nrow(object))))
             txt <- c(txt, paste0("Elements in column 'row' are outside of the",
