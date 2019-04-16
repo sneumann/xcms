@@ -202,6 +202,8 @@ validateMsFeatureData <- function(x) {
 }
 
 .has_chrom_peak_data <- function(x) {
+    if (is(x, "XCMSnExp"))
+        x <- x@msFeatureData
     any(ls(x) == "chromPeakData")
 }
 

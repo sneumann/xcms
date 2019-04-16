@@ -1611,6 +1611,8 @@ setMethod("groupChromPeaks",
                            "class does not match the number of available files/",
                            "samples!")
               }
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_density(
                   chromPeaks(object, msLevel = msLevel),
@@ -1706,6 +1708,8 @@ setMethod("groupChromPeaks",
                            "class does not match the number of available files/",
                            "samples!")
               }
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               res <- do_groupPeaks_mzClust(chromPeaks(object, msLevel = msLevel),
                                            sampleGroups = sampleGroups(param),
@@ -1797,6 +1801,8 @@ setMethod("groupChromPeaks",
                            "class does not match the number of available files/",
                            "samples!")
               }
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_nearest(
                   chromPeaks(object, msLevel = msLevel),
@@ -1896,6 +1902,8 @@ setMethod("adjustRtime",
                   stop("No feature definitions found in 'object'! Please ",
                        "perform first a peak grouping using the ",
                        "'groupChromPeak' method.")
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               ## If param does contain a peakGroupsMatrix extract that one,
               ## otherwise generate it.
@@ -2005,7 +2013,8 @@ setMethod("adjustRtime",
                   object <- dropAdjustedRtime(object)
               if (any(msLevel != 1))
                   stop("Alignment is currently only supported for MS level 1")
-              ## We don't require any detected or aligned peaks.
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               res <- adjustRtime(as(object, "OnDiskMSnExp"), param = param,
                                  msLevel = msLevel)
@@ -2714,6 +2723,8 @@ setMethod("fillChromPeaks",
                           " peaks.")
               if (any(msLevel > 1))
                   stop("Currently only peak filling from MS1 is supported.")
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
               startDate <- date()
               expandMz <- expandMz(param)
               expandRt <- expandRt(param)

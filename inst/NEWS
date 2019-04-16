@@ -2,6 +2,7 @@ Changes in version 3.5.4
 
 - Fix problem in featureChromatograms with include = "feature_only" that could
   return a non-valid object.
+- Ensure that XCMSnExp objects are updated if necessary in all analysis methods.
 
 
 Changes in version 3.5.3
