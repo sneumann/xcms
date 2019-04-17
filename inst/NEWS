@@ -1,5 +1,11 @@
 Changes in version 3.5.4
 
+- Add dirname and dirname<- methods for OnDiskMSnExp to change the path to the
+  raw data files.
+
+
+Changes in version 3.5.4
+
 - Fix problem in featureChromatograms with include = "feature_only" that could
   return a non-valid object.
 - Ensure that XCMSnExp objects are updated if necessary in all analysis methods.
