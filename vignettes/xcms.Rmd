@@ -621,16 +621,16 @@ be adjusted. There are currently two options available:
   sample based on the alignment results of the previous subset sample (e.g. a
   QC sample). If samples are e.g. in the order *A1*, *B1*, *B2*, *A2*, *B3*,
   *B4* with *A* representing QC samples and *B* study samples, using
-  `subset = c(1, 4, 7)` and `subsetAdjust = "previous"` would result in all *A*
-  samples to be aligned with each other and non-subset samples *B1*, *B2* being
-  adjusted based on the alignment result of subset samples *A1* and *B3*, *B4*
-  on those of *A2*.
+  `subset = c(1, 4)` and `subsetAdjust = "previous"` would result in all *A*
+  samples to be aligned with each other and non-subset samples *B1* and *B2*
+  being adjusted based on the alignment result of subset samples *A1* and *B3*
+  and *B4* on those of *A2*.
 
 - `subsetAdjust = "average"`: adjust retention times of non-subset samples based
   on an interpolation of the alignment results of the previous and subsequent
   subset sample. In the example above, *B1* would be adjusted based on the
   average of adjusted retention times between subset (QC) samples *A1* and
-  *A2*. Since there is no subset sample after non-subset samples *B2* and *B4*
+  *A2*. Since there is no subset sample after non-subset samples *B3* and *B4*
   these will be adjusted based on the alignment results of *A2* alone. Note
   that a weighted average is used to calculate the adjusted retention time
   averages, which uses the inverse of the difference of the index of the
@@ -638,7 +638,7 @@ be adjusted. There are currently two options available:
   setup like *A1*, *B1*, *B2*, *A2* the adjusted retention times of *A1*
   would get a larger weight than those of *A2* in the adjustment of
   non-subset sample *B1* causing it's adjusted retention times to be closer
-  to those of *A1* than to *A2*.
+  to those of *A1* than to *A2*. See below for examples.
 
 Both cases require a meaningful/correct ordering of the samples within the
 object (e.g. ordering by injection index).
