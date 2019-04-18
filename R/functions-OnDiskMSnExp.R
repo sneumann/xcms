@@ -471,6 +471,10 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 
 #' @title Change the file path of an `OnDiskMSnExp` object
 #'
+#' @aliases dirname dirname,OnDiskMSnExp-method
+#'
+#' @name dirname
+#'
 #' @description
 #'
 #' `dirname` allows to get and set the path to the directory containing the
@@ -487,6 +491,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 setMethod("dirname", "OnDiskMSnExp", function(path) {
     dirname(fileNames(path))
 })
+#' @rdname dirname
 setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
     flnms <- fileNames(path)
     if (length(value) == 1)

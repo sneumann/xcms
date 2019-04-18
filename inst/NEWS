@@ -1,7 +1,10 @@
-Changes in version 3.5.4
+Changes in version 3.5.5
 
 - Add dirname and dirname<- methods for OnDiskMSnExp to change the path to the
   raw data files.
+- Add section "Subset-based alignment" to the xcms vignette to describe the
+  alignment possibility to perform alignments based on a subset of samples
+  (e.g. QC samples).
 
 
 Changes in version 3.5.4
