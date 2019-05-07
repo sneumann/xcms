@@ -3,3 +3,5 @@ local_data
 .git
 .travis.yml
 .org
+^.*\.Rproj$
+^\.Rproj\.user$
