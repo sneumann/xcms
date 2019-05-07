@@ -2230,12 +2230,13 @@ hasFilledChromPeaks <- function(object) {
     cpd <- do.call(rbind, lapply(x, function(z) {
         if (nrow(chromPeakData(z))) {
             ret <- chromPeakData(z)
+            target_mz <- isolationWindowTargetMz(z)[1]
             ret$isolationWindow <- fData(z)$isolationWindow[1]
-            ret$isolationWindowTargetMZ <- isolationWindowTargetMz(z)[1]
-            ret$isolationWindowLowerOffset <-
-                fData(z)$isolationWindowLowerOffset[1]
-            ret$isolationWindowUpperOffset <-
-                fData(z)$isolationWindowUpperOffset[1]
+            ret$isolationWindowTargetMZ <- target_mz
+            ret$isolationWindowLowerMz <-
+                target_mz - fData(z)$isolationWindowLowerOffset[1]
+            ret$isolationWindowUpperMz <-
+                target_mz + fData(z)$isolationWindowUpperOffset[1]
             ret
         }
     }))

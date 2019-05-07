@@ -357,8 +357,8 @@ test_that(".swath_collect_chrom_peaks works", {
 
         expect_equal(colnames(chromPeakData(res_2)),
                      c("ms_level", "is_filled", "isolationWindowTargetMZ",
-                       "isolationWindowLowerOffset",
-                       "isolationWindowUpperOffset"))
+                       "isolationWindowLowerMz",
+                       "isolationWindowUpperMz"))
     }
 })
 
