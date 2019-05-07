@@ -1,5 +1,5 @@
 .editorconfig
-local_data/*
+local_data
 .git
 .travis.yml
 .org

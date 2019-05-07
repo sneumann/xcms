@@ -119,7 +119,8 @@ setMethod("filterMz", "XChromatograms", function(object, mz, ...) {
         }, integer(1))
         object@featureDefinitions <- fts
     }
-    if (validObject(object)) object
+    validObject(object)
+    object
 })
 
 #' @rdname XChromatogram
@@ -138,7 +139,8 @@ setMethod("filterRt", "XChromatograms", function(object, rt, ...) {
         }, integer(1))
         object@featureDefinitions <- fts
     }
-    if (validObject(object)) object
+    validObject(object)
+    object
 })
 
 setMethod("addProcessHistory", "XChromatograms", function(object, ph) {
@@ -233,8 +235,8 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
         return(object)
     object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.GROUPING, 1)
     object@featureDefinitions <- DataFrame()
-    if (validObject(object))
-        object
+    validObject(object)
+    object
 })
 
 #' @rdname XChromatogram
@@ -349,8 +351,8 @@ setMethod("groupChromPeaks",
               if (nrow(res) > 0)
                   rownames(res) <- .featureIDs(nrow(res))
               object@featureDefinitions <- res
-              if (validObject(object))
-                  return(object)
+              validObject(object)
+              object
           })
 
 #' @rdname XChromatogram
@@ -413,7 +415,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
     cpeaks_orig <- chromPeaks(x)
     fts <- featureDefinitions(x)
     ph <- x@.processHistory
-    x <- callNextMethod()
+    x <- callNextMethod(x = x, i = i, j = j, drop = drop)
     if (nrow(fts)) {
         rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
         cpks <- .subset_chrom_peaks_xchromatograms(cpeaks_orig, i = i, j = j)
@@ -428,8 +430,8 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
         x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
     }
     x@.processHistory <- .process_history_subset_samples(ph, j = j)
-    if (validObject(x))
-        x
+    validObject(x)
+    x
 })
 
 #' @rdname XChromatogram
@@ -533,5 +535,6 @@ setMethod("dropFilledChromPeaks", "XChromatograms", function(object) {
         object@featureDefinitions <- fts
     }
     object <- dropProcessHistories(object, type = .PROCSTEP.PEAK.FILLING)
-    if (validObject(object)) object
+    validObject(object)
+    object
 })

@@ -2180,9 +2180,13 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         for (i in 1:nrow(chrs)) {
             for (j in 1:ncol(chrs)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
-                if (nrow(cur_pks))
-                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[
-                        rownames(cur_pks) %in% pk_ids[[i]], , drop = FALSE]
+                if (nrow(cur_pks)) {
+                    keep <- rownames(cur_pks) %in% pk_ids[[i]]
+                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[keep, ,
+                                                                drop = FALSE]
+                    chrs@.Data[i, j][[1]]@chromPeakData <-
+                        chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
+                }
             }
         }
         chrs@featureDefinitions <- .subset_features_on_chrom_peaks(
@@ -2200,3 +2204,141 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
 hasFilledChromPeaks <- function(object) {
     .hasFilledPeaks(object)
 }
+
+#' Process the results from a peak detection in SWATH pockets.
+#'
+#' @param x `list` of `XCMSnExp` objects.
+#'
+#' @param msf `MsFeatureData` of the original object
+#'
+#' @param fileNames `character` with the file names of the original object. This
+#'     is required to ensure that column `"sample"` in the chrom peaks matrix
+#'     contains the correct indices.
+#'
+#' @return `MsFeatureData` with the `chromPeaks` and `chromPeakData` updated.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.swath_collect_chrom_peaks <- function(x, msf, fileNames) {
+    pks <- do.call(rbind, lapply(x, function(z) {
+        cpks <- chromPeaks(z)
+        if (nrow(cpks))
+            cpks[, "sample"] <- match(fileNames(z)[cpks[, "sample"]], fileNames)
+        cpks
+    }))
+    cpd <- do.call(rbind, lapply(x, function(z) {
+        if (nrow(chromPeakData(z))) {
+            ret <- chromPeakData(z)
+            ret$isolationWindow <- fData(z)$isolationWindow[1]
+            ret$isolationWindowTargetMZ <- isolationWindowTargetMz(z)[1]
+            ret$isolationWindowLowerOffset <-
+                fData(z)$isolationWindowLowerOffset[1]
+            ret$isolationWindowUpperOffset <-
+                fData(z)$isolationWindowUpperOffset[1]
+            ret
+        }
+    }))
+    if (hasChromPeaks(msf)) {
+        idx_start <- max(nrow(chromPeaks(msf)),
+                         as.numeric(sub("CP", "", rownames(chromPeaks(msf)))))
+        rownames(pks) <- rownames(cpd) <- .featureIDs(nrow(pks),
+                                                      from = idx_start + 1,
+                                                      prefix = "CP")
+        chromPeaks(msf) <- .rbind_fill(chromPeaks(msf), pks)
+        chromPeakData(msf) <- .rbind_fill(chromPeakData(msf), cpd)
+    } else {
+        rownames(pks) <- rownames(cpd) <- .featureIDs(nrow(pks), prefix = "CP")
+        chromPeaks(msf) <- pks
+        chromPeakData(msf) <- cpd
+    }
+    msf
+}
+
+#' @title Data independent analysis (DIA): peak detection in isolation windows
+#'
+#' @description
+#'
+#' The `findChromPeaksIsolationWindow` function allows to perform a
+#' chromatographic peak detection in MS level > 1 spectra of certain isolation
+#' windows (e.g. SWATH pockets). The function performs a peak detection,
+#' separately for all spectra belonging to the same isolation window and adds
+#' them to the [chromPeaks()] matrix of the result object, information about
+#' the isolation window they were detected in is added to [chromPeakData()].
+#' Note that peak detection with this method does not remove previously
+#' identified chromatographic peaks (e.g. on MS1 level using the
+#' [findChromPeaks()] function but adds newly identified peaks to the existing
+#' [chromPeaks()] matrix.
+#'
+#' Isolation windows can be defined with the `isolationWindow` parameter, that
+#' by default uses the definition of [isolationWindowTargetMz()], i.e.
+#' chromatographic peak detection is performed for all spectra with the same
+#' isolation window target m/z (seprarately for each file). The parameter
+#' `param` allows to define and configure the peak detection algorithm (see
+#' [findChromPeaks()] for more information).
+#'
+#' @param object `OnDiskMSnExp` or `XCMSnExp` object with the DIA data.
+#'
+#' @param param Peak detection parameter object, such as a
+#'     [CentWaveParam-class] object defining and configuring the chromographic
+#'     peak detection algorithm.
+#'     See also [findChromPeaks()] for more details.
+#'
+#' @param msLevel `integer(1)` specifying the MS level in which the peak
+#'     detection should be performed. By default `msLevel = 2L`.
+#'
+#' @param isolationWindow `factor` or similar defining the isolation windows in
+#'     which the peak detection should be performed with length equal to the
+#'     number of spectra in `object`.
+#'
+#' @param ... currently not used.
+#'
+#' @return
+#'
+#' An `XCMSnExp` object with the chromatographic peaks identified in spectra of
+#' each isolation window from each file added to the `chromPeaks` matrix.
+#' Isolation window definition for each identified peak are stored as additional
+#' columns in [chromPeakData()].
+#'
+#' @author Johannes Rainer, Michael Witting
+#'
+#' @md
+findChromPeaksIsolationWindow <-
+    function(object, param, msLevel = 2L,
+             isolationWindow = isolationWindowTargetMz(object), ...) {
+        startDate <- date()
+        if (!is.factor(isolationWindow))
+            isolationWindow <- factor(isolationWindow)
+        if (length(isolationWindow) != length(object))
+            stop("length of 'isolationWindow' has to match length of 'object'")
+        if (all(is.na(isolationWindow)))
+            stop("all isolation windows in 'isolationWindow' are NA")
+        if (!inherits(object, "OnDiskMSnExp"))
+            stop("'object' should be an 'OnDiskMSnExp' or 'XCMSnExp' object")
+        fData(object)$isolationWindow <- isolationWindow
+        obj_sub <- selectFeatureData(as(object, "OnDiskMSnExp"),
+                                     fcol = c(MSnbase:::.MSnExpReqFvarLabels,
+                                              "centroided",
+                                              "isolationWindow",
+                                              "isolationWindowTargetMZ",
+                                              "isolationWindowLowerOffset",
+                                              "isolationWindowUpperOffset"))
+        if (inherits(object, "XCMSnExp"))
+            fData(obj_sub)$retentionTime <- rtime(object)
+        res <- lapply(split(obj_sub, f = isolationWindow),
+                      FUN = findChromPeaks, param = param, msLevel = msLevel)
+        if (!inherits(object, "XCMSnExp"))
+            object <- as(object, "XCMSnExp")
+        msf <- new("MsFeatureData")
+        msf@.xData <- .copy_env(object@msFeatureData)
+        msf <- .swath_collect_chrom_peaks(res, msf, fileNames(object))
+        lockEnvironment(msf, bindings = TRUE)
+        object@msFeatureData <- msf
+        xph <- XProcessHistory(param = param, date. = startDate,
+                               type. = .PROCSTEP.PEAK.DETECTION,
+                           fileIndex = 1:length(fileNames(object)),
+                           msLevel = msLevel)
+        object@.processHistory <- c(processHistory(object), list(xph))
+        validObject(object)
+        object
+    }

@@ -273,8 +273,9 @@ useOriginalCode <- function(x) {
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
 #' @noRd
-.featureIDs <- function(x, prefix = "FT") {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"), 1:x)
+.featureIDs <- function(x, prefix = "FT", from = 1L) {
+    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"),
+            seq(from = from, length.out = x))
 }
 
 ## #' @description Expands stretches of TRUE values in \code{x} by one on both
@@ -645,6 +646,43 @@ rowRla <- function(x, group, log.transform = TRUE) {
         idx[!is.na(idx)]
     })
     x[lengths(x$peakidx) > 0, ]
+}
+
+#' @description
+#'
+#' Combine `matrix` or `data.frame`s adding eventually missing columns filling
+#' them with `NA`s.
+#'
+#' @param x `matrix` or `data.frame`.
+#'
+#' @param y `matrix` or `data.frame`.
+#'
+#' @md
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.rbind_fill <- function(x, y) {
+    cnx <- colnames(x)
+    cny <- colnames(y)
+    cn <- union(cnx, cny)
+    mis_col <- setdiff(cn, colnames(x))
+    for (mc in mis_col) {
+        if (is.factor(y[, mc]))
+            x <- cbind(x, tmp = as.factor(NA))
+        else
+            x <- cbind(x, tmp = as(NA, class(y[, mc])))
+    }
+    colnames(x) <- c(cnx, mis_col)
+    mis_col <- setdiff(cn, colnames(y))
+    for (mc in mis_col) {
+        if (is.factor(x[, mc]))
+            y <- cbind(y, tmp = as.factor(NA))
+        else
+            y <- cbind(y, tmp = as(NA, class(x[, mc])))
+    }
+    colnames(y) <- c(cny, mis_col)
+    rbind(x, y[, colnames(x)])
 }
 
 

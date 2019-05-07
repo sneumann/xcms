@@ -468,3 +468,41 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     if (validObject(res))
         res
 }
+
+#' @title Change the file path of an `OnDiskMSnExp` object
+#'
+#' @aliases dirname dirname,OnDiskMSnExp-method
+#'
+#' @name dirname
+#'
+#' @description
+#'
+#' `dirname` allows to get and set the path to the directory containing the
+#' source files of the [OnDiskMSnExp-class] (or [XCMSnExp-class]) object.
+#'
+#' @param path [OnDiskMSnExp-class].
+#'
+#' @param value `character` of length 1 or length equal to the number of files
+#'     defining the new path to the files.
+#'
+#' @md
+#'
+#' @author Johannes Rainer
+setMethod("dirname", "OnDiskMSnExp", function(path) {
+    dirname(fileNames(path))
+})
+#' @rdname dirname
+setReplaceMethod("dirname", "OnDiskMSnExp", function(path, value) {
+    flnms <- fileNames(path)
+    if (length(value) == 1)
+        value <- rep(value, length(flnms))
+    new_flnms <- normalizePath(paste0(value, .Platform$file.sep,
+                                      basename(flnms)))
+    do_exist <- file.exists(new_flnms)
+    if (any(!do_exist))
+        stop("The following files do not exist: ",
+             paste(new_flnms[!do_exist], ", "))
+    path@processingData@files <- new_flnms
+    validObject(path)
+    path
+})

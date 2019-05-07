@@ -65,13 +65,16 @@ setMethod("findChromPeaks",
               ## Restrict to MS X data.
               if (length(msLevel) > 1)
                   stop("Currently only peak detection in a single MS level is ",
-                       "supported")
+                       "supported", call. = FALSE)
               ## Restrict to MS level for peak detection, but keep the orignal
               ## object.
-              object_mslevel <- filterMsLevel(object, msLevel. = msLevel)
+              object_mslevel <- filterMsLevel(
+                  selectFeatureData(object,
+                                    fcol = c(MSnbase:::.MSnExpReqFvarLabels,
+                                             "centroided")), msLevel. = msLevel)
               if (length(object_mslevel) == 0)
                   stop("No MS level ", msLevel, " spectra present to perform ",
-                       "peak detection")
+                       "peak detection", call. = FALSE)
               ## Check if the data is centroided
               centroided <- all(centroided(object_mslevel))
               if (is.na(centroided)) {
@@ -85,24 +88,26 @@ setMethod("findChromPeaks",
                           " works best on data in centroid mode.")
               ## (1) split the object per file. Ensure we keep adjusted
               ##     retention times (issue #213).
-              args <- list(X = 1:length(fileNames(object_mslevel)),
-                           FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
-                  args$keepAdjustedRtime <- TRUE
+                  fData(object_mslevel)$retentionTime <-
+                                          adjustedRtime(object_mslevel)
+              object_mslevel <- lapply(1:length(fileNames(object_mslevel)),
+                                       FUN = filterFile,
+                                       object = object_mslevel)
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(do.call("lapply", args),
+              resList <- bplapply(object_mslevel,
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "centWave",
                                   param = param, BPPARAM = BPPARAM)
+              rm(object_mslevel)
               ## (3) collect the results.
               res <- .processResultList(resList,
                                         getProcHist = return.type == "xcmsSet",
-                                        fnames = fileNames(object_mslevel))
+                                        fnames = fileNames(object))
 
               if (return.type == "list")
                   return(res$peaks)
-              object <- .peaks_to_result(res, object, startDate, param, msLevel,
-                                         object_mslevel)
+              object <- .peaks_to_result(res, object, startDate, param, msLevel)
               if (return.type == "xcmsSet")
                   as(object, "xcmsSet")
               else object
@@ -180,8 +185,7 @@ setMethod("findChromPeaks",
                                         fnames = fileNames(object_mslevel))
               if (return.type == "list")
                   return(res$peaks)
-              object <- .peaks_to_result(res, object, startDate, param, msLevel,
-                                         object_mslevel)
+              object <- .peaks_to_result(res, object, startDate, param, msLevel)
               if (return.type == "xcmsSet")
                   as(object, "xcmsSet")
               else object
@@ -191,11 +195,10 @@ setMethod("findChromPeaks",
 #' result object.
 #'
 #' @noRd
-.peaks_to_result <- function(res, object, startDate, param, msLevel,
-                             object_mslevel) {
+.peaks_to_result <- function(res, object, startDate, param, msLevel) {
     xph <- XProcessHistory(param = param, date. = startDate,
                            type. = .PROCSTEP.PEAK.DETECTION,
-                           fileIndex = 1:length(fileNames(object_mslevel)),
+                           fileIndex = 1:length(fileNames(object)),
                            msLevel = msLevel)
     object <- as(object, "XCMSnExp")
     object@.processHistory <- c(processHistory(object), list(xph))
@@ -284,8 +287,7 @@ setMethod("findChromPeaks",
                                         fnames = fileNames(object_mslevel))
               if (return.type == "list")
                   return(res$peaks)
-              object <- .peaks_to_result(res, object, startDate, param, msLevel,
-                                         object_mslevel)
+              object <- .peaks_to_result(res, object, startDate, param, msLevel)
               if (return.type == "xcmsSet")
                   as(object, "xcmsSet")
               else object
@@ -371,8 +373,7 @@ setMethod("findChromPeaks",
                                         fnames = fileNames(object_mslevel))
               if (return.type == "list")
                   return(res$peaks)
-              object <- .peaks_to_result(res, object, startDate, param, msLevel,
-                                         object_mslevel)
+              object <- .peaks_to_result(res, object, startDate, param, msLevel)
               if (return.type == "xcmsSet")
                   as(object, "xcmsSet")
               else object
@@ -461,8 +462,7 @@ setMethod("findChromPeaks",
 
               if (return.type == "list")
                   return(res$peaks)
-              object <- .peaks_to_result(res, object, startDate, param, msLevel,
-                                         object_mslevel)
+              object <- .peaks_to_result(res, object, startDate, param, msLevel)
               if (return.type == "xcmsSet")
                   as(object, "xcmsSet")
               else object
@@ -621,3 +621,26 @@ setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
           function(object)
               FALSE
           )
+
+#' @title Extract isolation window target m/z definition
+#'
+#' @aliases isolationWindowTargetMz
+#'
+#' @description
+#'
+#' `isolationWindowTargetMz` extracts the isolation window target m/z definition
+#' for each spectrum in `object`.
+#'
+#' @param object [OnDiskMSnExp-class] object.
+#'
+#' @return a `numeric` of length equal to the number of spectra in `object` with
+#'     the isolation window target m/z or `NA` if not specified/available.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+setMethod("isolationWindowTargetMz", "OnDiskMSnExp", function(object) {
+    if ("isolationWindowTargetMZ" %in% colnames(fData(object)))
+        return(fData(object)$isolationWindowTargetMZ)
+    rep(NA_real_, length(object))
+})
