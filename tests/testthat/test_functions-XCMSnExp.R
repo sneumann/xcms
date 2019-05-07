@@ -318,3 +318,86 @@ test_that("highlightChromPeaks works", {
                         type = "polygon",
                         col = c("#ff000020", "#00ff0020", "#0000ff20"))
 })
+
+test_that(".swath_collect_chrom_peaks works", {
+    ## This should be added to the msdata package!
+    fl <- "/Users/jo/Projects/git/michaelwitting/metabolomics2018/data/PestMix1_SWATH.mzML"
+    if (file.exists(fl)) {
+        obj <- as(readMSData(fl, mode = "onDisk"), "XCMSnExp")
+        msf <- new("MsFeatureData")
+        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+        cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                             peakwidth = c(3, 30))
+        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                    findChromPeaks, msLevel = 2L, param = cwp)
+
+        res <- xcms:::.swath_collect_chrom_peaks(x, msf, fileNames(obj))
+
+        x_mod <- x
+        chromPeaks(x_mod[[2]]) <- chromPeaks(x_mod[[2]])[integer(), ]
+        msf <- new("MsFeatureData")
+        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+        res_mod <- xcms:::.swath_collect_chrom_peaks(x_mod, msf, fileNames(obj))
+
+        a <- chromPeaks(res_mod)
+        b <- chromPeaks(res)[chromPeakData(res)$isolationWindowTargetMZ != 208.95, ]
+        expect_equal(unname(a), unname(b))
+
+        obj <- findChromPeaks(obj, param = cwp)
+        msf <- new("MsFeatureData")
+        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                    findChromPeaks, msLevel = 2L, param = cwp)
+        res_2 <- xcms:::.swath_collect_chrom_peaks(x, msf, fileNames(obj))
+        expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
+        expect_equal(chromPeaks(obj),
+                     chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ])
+        expect_equal(nrow(chromPeaks(res_2)),
+                     nrow(chromPeaks(obj)) + nrow(chromPeaks(res)))
+
+        expect_equal(colnames(chromPeakData(res_2)),
+                     c("ms_level", "is_filled", "isolationWindowTargetMZ",
+                       "isolationWindowLowerOffset",
+                       "isolationWindowUpperOffset"))
+    }
+})
+
+test_that("findChromPeaksIsolationWindow works", {
+    ## This should be added to the msdata package!
+    fl <- "/Users/jo/Projects/git/michaelwitting/metabolomics2018/data/PestMix1_SWATH.mzML"
+    if (file.exists(fl)) {
+        ## OnDiskMSnExp
+        obj <- readMSData(fl, mode = "onDisk")
+        cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                             peakwidth = c(3, 30))
+        res <- findChromPeaksIsolationWindow(obj, param = cwp)
+        expect_true(is(res, "XCMSnExp"))
+        expect_equal(length(processHistory(res)), 1)
+        expect_true(all(c("isolationWindow", "isolationWindowTargetMZ") %in%
+                        colnames(chromPeakData(res))))
+        expect_true(all(chromPeakData(res)$ms_level == 2L))
+
+        ## Add to existing peaks
+        obj <- findChromPeaks(obj, param = cwp)
+        res_2 <- findChromPeaksIsolationWindow(obj, param = cwp)
+        expect_equal(chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ],
+                     chromPeaks(obj))
+        expect_true(length(processHistory(res_2)) == 2)
+
+    }
+    ## no isolation window/add isolation window
+    expect_error(findChromPeaksIsolationWindow(od_x), "are NA")
+    tmp <- od_x
+    cwp <- CentWaveParam(noise = 10000, snthresh = 40)
+    fData(tmp)$my_win <- 1
+    res_3 <- findChromPeaksIsolationWindow(
+        tmp, param = cwp, isolationWindow = fData(tmp)$my_win, msLevel = 1L)
+    expect_equal(chromPeaks(xod_x), chromPeaks(res_3))
+    expect_true(all(chromPeakData(res_3)$isolationWindow == 1))
+
+    res_4 <- findChromPeaksIsolationWindow(
+        xod_x, param = cwp, isolationWindow = rep(1, length(xod_x)),
+        msLevel = 1L)
+    expect_equal(chromPeaks(res_4)[1:nrow(chromPeaks(xod_x)), ],
+                 chromPeaks(xod_x))
+})

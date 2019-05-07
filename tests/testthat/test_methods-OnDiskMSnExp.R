@@ -217,3 +217,14 @@ test_that("findChromPeaks,OnDiskMSnExp,MatchedFilterParam works", {
 
     expect_error(findChromPeaks(onDisk, param = mfp, msLevel = 2))
 })
+
+test_that("isolationWindowTargetMz,OnDiskMSnExp works", {
+    res <- isolationWindowTargetMz(xod_x)
+    expect_true(all(is.na(res)))
+    expect_true(length(res) == length(xod_x))
+
+    f <- proteomics(full.names = TRUE)[5]
+    tmt <- readMSData(f, mode = "onDisk")
+    res <- isolationWindowTargetMz(tmt)
+    expect_true(!all(is.na(res)))
+})

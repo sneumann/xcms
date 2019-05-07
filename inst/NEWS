@@ -1,3 +1,9 @@
+Changes in version 3.7.1
+
+- Add findChromPeaksIsolationWindow to enable chromatographic peak detection
+  in isolation windows.
+
+
 Changes in version 3.5.5
 
 - Add dirname and dirname<- methods for OnDiskMSnExp to change the path to the

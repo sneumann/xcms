@@ -188,6 +188,8 @@ setGeneric("integrate<-", function(object, value) standardGeneric("integrate<-")
 setGeneric("initPenalty", function(object) standardGeneric("initPenalty"))
 setGeneric("initPenalty<-", function(object, value) standardGeneric("initPenalty<-"))
 setGeneric("isCentroided", function(object, ...) standardGeneric("isCentroided"))
+setGeneric("isolationWindowTargetMz", function(object, ...)
+    standardGeneric("isolationWindowTargetMz"))
 
 ## K
 setGeneric("kNN", function(object, ...) standardGeneric("kNN"))

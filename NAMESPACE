@@ -194,7 +194,8 @@ exportMethods(
     "write.mzdata",
     "write.mzQuantML",
     "xcmsSource",
-    "loadRaw"
+    "loadRaw",
+    "isolationWindowTargetMz"
 )
 
 ## New functions
@@ -240,7 +241,8 @@ export(
     "chromPeakSpectra",
     "featureSpectra",
     "featureChromatograms",
-    "hasFilledChromPeaks"
+    "hasFilledChromPeaks",
+    "findChromPeaksIsolationWindow"
 )
 
 ## New analysis methods
