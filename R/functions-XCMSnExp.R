@@ -2223,7 +2223,7 @@ hasFilledChromPeaks <- function(object) {
 .swath_collect_chrom_peaks <- function(x, msf, fileNames) {
     pks <- do.call(rbind, lapply(x, function(z) {
         cpks <- chromPeaks(z)
-        if (nrow(cpks))
+        if (!is.null(cpks) && nrow(cpks))
             cpks[, "sample"] <- match(fileNames(z)[cpks[, "sample"]], fileNames)
         cpks
     }))
