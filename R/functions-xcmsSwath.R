@@ -5,7 +5,7 @@
   y_aligned <- approx(rtime(y), intensity(y), rtime(x))
   
   # deal with NA
-  # TODO NA to 0
+  y_aligned[is.na()] <- 0
   
   # correct rtime and int in chromatogram object
   y@rtime <- y_aligned$x
