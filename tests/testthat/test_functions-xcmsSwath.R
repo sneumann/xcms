@@ -1,34 +1,39 @@
-test_that("chromatogram correlation works", {
-  
-  # create
-  rtime1 <- seq(5,25, step = 1)
-  intensity1 <- dnorm(rtime1, mean=14, sd=1.0)*200
-  
-  rtime2 <- seq(5.5, 25.5, step = 1)
-  intensity2 <- dnorm(rtime2, mean=14, sd=1.0)*500
-  
-  ## bogus chromatograms
-  ms1chrom <- new("Chromatogram",
-                  rtime = rtime1,
-                  intensity = intensity1)
-  
-  ms2chrom <- new("Chromatogram",
-                  rtime = rtime2,
-                  intensity = intensity2)
-  
-  # check that retention times are the same
-  expect_equal(rtime(.align_chromatogram(ms1chrom, ms2chrom)), rtime(ms1chrom))
-  
-  # check that correlation with NA values fails
-  expect_equal(.correlate_chromatogram(ms1chrom, ms2chrom, use = "everything"), NA)
-  
-  # check correlation value is correct (Pearson, standard setting)
-  expect_equal(.correlate_chromatogram(ms1chrom, ms2chrom), 0.9956445)
-  
-  # check correlation value is correct (Kendall)
-  expect_equal(.correlate_chromatogram(ms1chrom, ms2chrom, method = "kendall"), 0.997264)
-  
-  # check correlation value is correct (Spearman)
-  expect_equal(.correlate_chromatogram(ms1chrom, ms2chrom, method = "spearman"), 0.999622)
-  
+
+test_that(".correlate_chromatogram works", {
+    set.seed(112)
+    ## create
+    rtime1 <- seq(5,25, by = 1)
+    intensity1 <- dnorm(rtime1, mean=14, sd=1.0)*200
+
+    rtime2 <- seq(5.1, 25.1, by = 1)
+    intensity2 <- dnorm(rtime2, mean=14, sd=1.0)*500
+
+    ## bogus chromatograms
+    ch1 <- new("Chromatogram",
+               rtime = rtime1,
+               intensity = intensity1)
+
+    ch2 <- new("Chromatogram",
+               rtime = rtime2,
+               intensity = intensity2)
+
+    ## check that correlation with NA values fails
+    expect_equal(xcms:::.correlate_chromatogram(ch1, ch2),
+                 cor(intensity1, intensity2))
+    expect_equal(xcms:::.correlate_chromatogram(ch1, ch2),
+                 xcms:::.correlate_chromatogram(ch2, ch1))
+
+    expect_equal(
+        xcms:::.correlate_chromatogram(ch1, ch2, interpolate = TRUE),
+        xcms:::.correlate_chromatogram(ch2, ch1, interpolate = TRUE),
+        tolerance = 0.0001
+    )
+
+    ch2 <- filterRt(ch2, rt = c(5.1, 23))
+    res <- xcms:::.correlate_chromatogram(ch1, ch2)
+    expect_equal(res, cor(intensity(ch2), intensity(ch1)[1:length(ch2)]))
+
+    res <- xcms:::.correlate_chromatogram(ch1, ch2, interpolate = TRUE,
+                                          use = "everything")
+    expect_equal(res, NA_real_)
 })
