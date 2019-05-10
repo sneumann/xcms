@@ -184,7 +184,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 2, diffRt = 4,
     if (!length(idx) | !length(od_object))
         return(Spectra(
             new("Spectrum2", fromFile = fromFile),
-            elementMetadata = DataFrame(ms2_peak_id = SimpleList(NA_character_))))
+            elementMetadata = DataFrame(ms2_peak_id = SimpleList(character()))))
     ## extract ion chromatograms for all chromatographic peaks
     pks <- chromPeaks(object)[idx, , drop = FALSE]
     rts_1 <- c(x["rtmin"] - expandRt, x["rtmax"] + expandRt)
@@ -205,6 +205,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 2, diffRt = 4,
     } else {
         Spectra(
             new("Spectrum2", fromFile = fromFile),
-            elementMetadata = DataFrame(ms2_peak_id = SimpleList(NA_character_)))
+            elementMetadata = DataFrame(ms2_peak_id = SimpleList(character())))
     }
 }

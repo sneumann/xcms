@@ -2425,6 +2425,8 @@ setMethod("chromatogram",
                                            aggregationFun = aggregationFun,
                                            missing = missing, msLevel = msLevel,
                                            BPPARAM = BPPARAM)
+              if (!hasChromPeaks(object))
+                  return(res)
               ## Process peaks
               lvls <- 1:length(fileNames(object))
               if (missing(rt))
