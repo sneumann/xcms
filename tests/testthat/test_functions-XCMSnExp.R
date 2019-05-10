@@ -51,7 +51,7 @@ test_that("plotAdjustedRtime works", {
 
 test_that("plotChromPeakDensity works", {
     mzr <- c(305.05, 305.15)
-    xcms:::.plotChromPeakDensity(xod_x, mz = mzr)
+    .plotChromPeakDensity(xod_x, mz = mzr)
     plotChromPeakDensity(xod_x, mz = mzr)
 
     ## Use the full range.
@@ -149,7 +149,7 @@ test_that("featureSummary works", {
     expect_error(featureSummary(xod_xgrg, group = 1:5))
     expect_error(featureSummary(xod_xgr))
 
-    res <- xcms:::featureSummary(xod_xgrg)
+    res <- featureSummary(xod_xgrg)
     expect_equal(colnames(res), c("count", "perc", "multi_count",
                                   "multi_perc", "rsd"))
     expect_equal(rownames(res), rownames(featureDefinitions(xod_xgrg)))
@@ -325,19 +325,18 @@ test_that(".swath_collect_chrom_peaks works", {
     if (file.exists(fl)) {
         obj <- as(readMSData(fl, mode = "onDisk"), "XCMSnExp")
         msf <- new("MsFeatureData")
-        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+        msf@.xData <- .copy_env(obj@msFeatureData)
         cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                              peakwidth = c(3, 30))
         x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
                     findChromPeaks, msLevel = 2L, param = cwp)
-
-        res <- xcms:::.swath_collect_chrom_peaks(x, msf, fileNames(obj))
+        res <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
 
         x_mod <- x
         chromPeaks(x_mod[[2]]) <- chromPeaks(x_mod[[2]])[integer(), ]
         msf <- new("MsFeatureData")
-        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
-        res_mod <- xcms:::.swath_collect_chrom_peaks(x_mod, msf, fileNames(obj))
+        msf@.xData <- .copy_env(obj@msFeatureData)
+        res_mod <- .swath_collect_chrom_peaks(x_mod, msf, fileNames(obj))
 
         a <- chromPeaks(res_mod)
         b <- chromPeaks(res)[chromPeakData(res)$isolationWindowTargetMZ != 208.95, ]
@@ -345,10 +344,10 @@ test_that(".swath_collect_chrom_peaks works", {
 
         obj <- findChromPeaks(obj, param = cwp)
         msf <- new("MsFeatureData")
-        msf@.xData <- xcms:::.copy_env(obj@msFeatureData)
+        msf@.xData <- .copy_env(obj@msFeatureData)
         x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
                     findChromPeaks, msLevel = 2L, param = cwp)
-        res_2 <- xcms:::.swath_collect_chrom_peaks(x, msf, fileNames(obj))
+        res_2 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
         expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
         expect_equal(chromPeaks(obj),
                      chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ])
@@ -359,6 +358,42 @@ test_that(".swath_collect_chrom_peaks works", {
                      c("ms_level", "is_filled", "isolationWindowTargetMZ",
                        "isolationWindowLowerMz",
                        "isolationWindowUpperMz"))
+
+        expect_true(hasChromPeaks(obj))
+        msf <- new("MsFeatureData")
+        msf@.xData <- .copy_env(obj@msFeatureData)
+        cwp <- CentWaveParam(snthresh = 200, noise = 1000, ppm = 10,
+                             peakwidth = c(3, 30))
+        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                    findChromPeaks, msLevel = 2L, param = cwp)
+        res_3 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+        ## First two isolation windows do not have any peaks.
+        target_mz <- unique(isolationWindowTargetMz(obj))
+        target_mz <- target_mz[!is.na(target_mz)]
+
+        expect_equal(
+            sort(intersect(res$chromPeakData$isolationWindowTargetMZ, target_mz)),
+            sort(target_mz))
+        expect_equal(
+            sort(intersect(res_3$chromPeakData$isolationWindowTargetMZ, target_mz)),
+            sort(target_mz)[-1])
+        expect_equal(chromPeaks(obj),
+                     chromPeaks(res_3)[1:nrow(chromPeaks(obj)), ])
+
+        obj <- dropChromPeaks(obj)
+        expect_false(hasChromPeaks(obj))
+        msf <- new("MsFeatureData")
+        msf@.xData <- .copy_env(obj@msFeatureData)
+        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                    findChromPeaks, msLevel = 2L, param = cwp)
+        res_4 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+
+        ## No chromPeaks found:
+        cwp <- CentWaveParam(snthresh = 10000, noise = 1e6)
+        x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
+                    findChromPeaks, msLevel = 2L, param = cwp)
+        res_5 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
+        expect_equal(res_5, msf)
     }
 })
 

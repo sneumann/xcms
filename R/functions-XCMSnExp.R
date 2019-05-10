@@ -2222,13 +2222,13 @@ hasFilledChromPeaks <- function(object) {
 #' @noRd
 .swath_collect_chrom_peaks <- function(x, msf, fileNames) {
     pks <- do.call(rbind, lapply(x, function(z) {
-        cpks <- chromPeaks(z)
+        suppressWarnings(cpks <- chromPeaks(z))
         if (!is.null(cpks) && nrow(cpks))
             cpks[, "sample"] <- match(fileNames(z)[cpks[, "sample"]], fileNames)
         cpks
     }))
     cpd <- do.call(rbind, lapply(x, function(z) {
-        if (nrow(chromPeakData(z))) {
+        if (hasChromPeaks(z) && nrow(chromPeakData(z))) {
             ret <- chromPeakData(z)
             target_mz <- isolationWindowTargetMz(z)[1]
             ret$isolationWindow <- fData(z)$isolationWindow[1]
@@ -2238,8 +2238,10 @@ hasFilledChromPeaks <- function(object) {
             ret$isolationWindowUpperMz <-
                 target_mz + fData(z)$isolationWindowUpperOffset[1]
             ret
-        }
+        } else DataFrame()
     }))
+    if (!nrow(cpd))
+        return(msf)
     if (hasChromPeaks(msf)) {
         idx_start <- max(nrow(chromPeaks(msf)),
                          as.numeric(sub("CP", "", rownames(chromPeaks(msf)))))

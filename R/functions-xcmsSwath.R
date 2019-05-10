@@ -163,6 +163,10 @@ reconstructChromPeakSpectra <- function(object, expandRt = 2, diffRt = 4,
 #' @return [Spectra] object with the reconstructed MS2 spectrum. The spectrum
 #'     is empty if no MS2 chromatographic peak with a good enough correlation
 #'     was found for the MS1 chromatographic peak.
+#'
+#' @author Johannes Rainer, Micheal Witting
+#'
+#' @noRd
 .reconstruct_ms2_for_chrom_peak <- function(x, object, fromFile = 1L,
                                             expandRt = 2, diffRt = 5,
                                             minCor = 0.8) {
