@@ -67,14 +67,30 @@
     x
 }
 
-#' @title Align two chromatograms
+.align_chromatogram <- function(x, y, method = c("matchRtime", "approx"),
+                                na.value = NA, ...) {
+    method <- match.arg(method)
+    switch(method,
+           matchRtime = .align_chromatogram_match_rtime(
+               x, y, na.value = na.value, ...),
+           approx = .align_chromatogram_approx(x, y, na.value = na.value, ...))
+}
+
+#' @title Aligning chromatographic data
+#'
+#' @aliases align
+#'
+#' @rdname align-Chromatogram
 #'
 #' @description
 #'
 #' Align chromatogram `x` against chromatogram `y`. The resulting chromatogram
 #' has the same length (number of data points) than `y` and the same retention
 #' times thus allowing to perform any pair-wise comparisons between the
-#' chromatograms. Parameter `method` allows to specify which alignment method
+#' chromatograms. If `x` is a [Chromatograms()] object, each `Chromatogram` in
+#' it is aligned against `y`.
+#'
+#' Parameter `method` allows to specify which alignment method
 #' should be used. Currently there are the following options:
 #'
 #' - `method = "matchRtime"` (the default): match data points in the first
@@ -90,23 +106,19 @@
 #'   measured in the same measurement run (e.g. MS1 and corresponding MS2
 #'   chromatograms from SWATH experiments).
 #'
-#' @param x `Chromatogram` that should be aligned against `y`.
+#' @param x [Chromatogram()] or [Chromatograms()] to be aligned against `y`.
 #'
-#' @param y `Chromatogram` to which `x` should be aligned to.
+#' @param y [Chromatogram()] to which `x` should be aligned to.
 #'
 #' @param method `character(1)`
-#'
-#' @param na.value optional value with which `NA` intensities in the resulting
-#'     `Chromatogram` should be replaced with.
 #'
 #' @param ... additional parameters to be passed along to the alignment
 #'     functions.
 #'
-#' @return `Chromatogram` representing `x` aligned against `y`.
+#' @return `Chromatogram` (or `Chromatograms`) representing `x` aligned
+#'     against `y`.
 #'
 #' @author Johannes Rainer, Michael Witting
-#'
-#' @noRd
 #'
 #' @md
 #'
@@ -121,28 +133,31 @@
 #' points(rtime(chr2), intensity(chr2), col = "blue", type = "l")
 #'
 #' ## Align chr2 to chr1 without interpolation
-#' res <- .align_chromatogram(chr2, chr1)
+#' res <- align(chr2, chr1)
 #' rtime(res)
 #' intensity(res)
 #' points(rtime(res), intensity(res), col = "#00ff0080", type = "l")
 #'
 #' ## Align chr2 to chr1 with interpolation
-#' res <- .align_chromatogram(chr2, chr1, method = "approx")
+#' res <- align(chr2, chr1, method = "approx")
 #' points(rtime(res), intensity(res), col = "#ff000080", type = "l")
 #'
 #' legend("topright", col = c("black", "blue", "#00ff0080", "#ff000080"), lty = 1,
 #'     legend = c("chr1", "chr2", "chr2 matchRtime", "chr2 approx"))
 #'
-.align_chromatogram <- function(x, y, method = c("matchRtime", "approx"),
-                                na.value = NA, ...) {
-    method <- match.arg(method)
-    switch(method,
-           matchRtime = .align_chromatogram_match_rtime(
-               x, y, na.value = na.value, ...),
-           approx = .align_chromatogram_approx(x, y, na.value = na.value, ...))
-}
-
-
+setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
+          function(x, y, method = c("matchRtime", "approx"), ...) {
+              .align_chromatogram(x = x, y = y, method = method, ...)
+          })
+#' @rdname align-Chromatogram
+setMethod("align", signature = c(x = "Chromatograms", y = "Chromatogram"),
+          function(x, y, method = c("matchRtime", "approx"), ...) {
+              x@.Data <- matrix(lapply(x@.Data, .align_chromatogram, y = y,
+                                       method = method, ...),
+                                nrow = nrow(x), dimnames = dimnames(x))
+              validObject(x)
+              x
+          })
 
 #' @title Correlate chromatograms
 #'
@@ -151,14 +166,7 @@
 #' Correlate intensities of two chromatograms with each other. If the two
 #' `Chromatogram` objects have different retention times they are first
 #' *aligned* to match data points in the first to data points in the second
-#' chromatogram.
-#'
-#' @details
-#'
-#' Chromatograms will almost never have the same retention times which makes
-#' correlation of their intensities a non-trivial task. The default is to
-#'
-#' Alternatively, with `interpolate = TRUE` the
+#' chromatogram. See [align()] for more details.
 #'
 #' @param x [Chromatogram()] object.
 #'
@@ -170,12 +178,11 @@
 #' @param method `character(1)` passed to the `cor` function. See [cor()] for
 #'     details.
 #'
-#' @param interpolate `logical(1)` defining whether interpolation should take
-#'     place during *alignment* of the chromatograms. See details for more
-#'     information.
+#' @param align `character(1)` defining the alignment method to be used. See
+#'     [align()] for details. The value of this parameter is passed to the
+#'     `method` parameter of `align`.
 #'
-#' @param ... optional parameters passed along to the `.align_chromatogram`
-#'     function.
+#' @param ... optional parameters passed along to the `align` method.
 #'
 #' @return `numeric(1)` with the correlation coefficient.
 #'
@@ -189,6 +196,6 @@
                                     ...) {
     align <- match.arg(align)
     if(length(x) != length(y) || !all(rtime(x) %in% rtime(y)))
-        x <- .align_chromatogram(x, y, interpolate = interpolate, ...)
+        x <- .align_chromatogram(x, y, method = align, ...)
     cor(intensity(x), intensity(y), use = use, method = method)
 }
