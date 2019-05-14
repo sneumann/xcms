@@ -1,3 +1,8 @@
+Changes in version 3.6.1
+
+- Fix issue in chromPeakSpectra with method = "signal".
+
+
 Changes in version 3.5.5
 
 - Add dirname and dirname<- methods for OnDiskMSnExp to change the path to the

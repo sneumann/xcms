@@ -1844,6 +1844,7 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
             stop("If 'subset' is defined it has to be >= 1 and <= ",
                  nrow(pks), ".")
     } else subset <- seq_len(nrow(pks))
+    is_filled <- chromPeakData(x)$is_filled
     x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
     fromF <- fromFile(x)
     ## We are faster getting all MS2 spectra once at the start.
@@ -1852,7 +1853,7 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
     rtm <- rtime(x)
     res <- vector(mode = "list", nrow(pks))
     for (i in subset) {
-        if (skipFilled && chromPeakData(x)$is_filled[i])
+        if (skipFilled && is_filled[i])
             next
         idx <- spectra_in_slice(
             precursorMz_all = pmz, rt_all = rtm,
@@ -1867,8 +1868,8 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
                 if (method == "closest_mz")
                     idx <- idx[order(abs(precursorMz(x)[idx] - pks[i, "mz"]))][1]
                 if (method == "signal") {
-                    sps <- spectra(x[idx])
-                    ints <- vapply(sps, function(z) sum(intensity(z)),
+                    sps_sub <- sps[idx]
+                    ints <- vapply(sps_sub, function(z) sum(intensity(z)),
                                    numeric(1))
                     idx <- idx[order(abs(ints - pks[i, "maxo"]))][1]
                 }
