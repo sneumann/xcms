@@ -1844,6 +1844,59 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
             stop("If 'subset' is defined it has to be >= 1 and <= ",
                  nrow(pks), ".")
     } else subset <- seq_len(nrow(pks))
+    is_filled <- chromPeakData(x)$is_filled
+    x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
+    fromF <- fromFile(x)
+    ## We are faster getting all MS2 spectra once at the start.
+    sps <- spectra(x)
+    pmz <- precursorMz(x)
+    rtm <- rtime(x)
+    res <- vector(mode = "list", nrow(pks))
+    for (i in subset) {
+        if (skipFilled && is_filled[i])
+            next
+        idx <- spectra_in_slice(
+            precursorMz_all = pmz, rt_all = rtm,
+            rt = pks[i, c("rtmin", "rtmax")],
+            mz = pks[i, c("mzmin", "mzmax")],
+            expandRt = expandRt, expandMz = expandMz, ppm = ppm)
+        idx <- idx[fromF[idx] == pks[i, "sample"]]
+        if (length(idx)) {
+            if (length(idx) > 1 & method != "all") {
+                if (method == "closest_rt")
+                    idx <- idx[order(abs(rtime(x)[idx] - pks[i, "rt"]))][1]
+                if (method == "closest_mz")
+                    idx <- idx[order(abs(precursorMz(x)[idx] - pks[i, "mz"]))][1]
+                if (method == "signal") {
+                    sps_sub <- sps[idx]
+                    ints <- vapply(sps_sub, function(z) sum(intensity(z)),
+                                   numeric(1))
+                    idx <- idx[order(abs(ints - pks[i, "maxo"]))][1]
+                }
+            }
+            res[[i]] <- sps[idx]
+        }
+    }
+    names(res) <- rownames(pks)
+    res
+}
+
+ms2_spectra_for_peaks2 <- function(x, expandRt = 0, expandMz = 0,
+                                  ppm = 0, method = c("all",
+                                                      "closest_rt",
+                                                      "closest_mz",
+                                                      "signal"),
+                                  skipFilled = FALSE, subset = NULL) {
+    method <- match.arg(method)
+    if (hasAdjustedRtime(x))
+        x <- applyAdjustedRtime(x)
+    pks <- chromPeaks(x)
+    use_subset <- FALSE
+    if (length(subset)) {
+        if (!(min(subset) >= 1 && max(subset) <= nrow(pks)))
+            stop("If 'subset' is defined it has to be >= 1 and <= ",
+                 nrow(pks), ".")
+    } else subset <- seq_len(nrow(pks))
     x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
     fromF <- fromFile(x)
     ## We are faster getting all MS2 spectra once at the start.

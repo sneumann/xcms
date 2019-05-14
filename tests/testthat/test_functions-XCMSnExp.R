@@ -236,6 +236,18 @@ test_that("chromPeakSpectra works", {
     expect_true(length(res) == 0)
     expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L))
     expect_true(length(res) == 0)
+    ## manual tests...
+    if (FALSE) {
+        fls <- dir("~/tmp/delete/xcms_gnps_2/MSV000080502/", pattern = ".mzML$",
+                   full.names = TRUE)
+        dta <- readMSData(fls, mode = "onDisk")
+        cwp <- CentWaveParam(snthresh = 3, noise = 5000, peakwidth = c(5, 30),
+                             ppm = 10)
+        dta <- findChromPeaks(dta, param = cwp)
+        res <- xcms:::ms2_spectra_for_peaks(dta, expandRt = 0, expandMz = 0,
+                                            ppm = 0, method = "all",
+                                            skipFilled = FALSE)
+    }
 })
 
 test_that("featureSpectra works", {
