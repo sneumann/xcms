@@ -1785,88 +1785,203 @@ exportMetaboAnalyst <- function(x, file = NULL, label,
         fv
 }
 
+## #' @description
+## #'
+## #' Return the index of all MS2 spectra that are within a given rt and m/z
+## #' range.
+## #'
+## #' @param precursorMz_all `numeric` with the precursor m/z for all spectra of
+## #'     an `XCMSnExp` (i.e. the result from `precursorMz(x)`).
+## #'
+## #' @param rt_all `numeric` with the retention time for all spectra of an
+## #'     `XCMSnExp` object (i.e. the result from `rtime(x)`).
+## #'
+## #' @param rt `numeric(2)` with the retention time range in which spectra
+## #'     should be identified.
+## #'
+## #' @param mz `numeric(2)` with the m/z range in which the MS2 spectra's
+## #'     precursor should be.
+## #'
+## #' @return `integer` with the indices of the spectra in `x` that are within
+## #'     the range, or `integer()` if none is within the range.
+## #'
+## #' @author Johannes Rainer
+## #'
+## #' @md
+## #'
+## #' @noRd
+## spectra_in_slice <- function(precursorMz_all, rt_all, rt, mz,
+##                                  expandRt = 0, expandMz = 0, ppm = 0) {
+##     rt <- range(rt) + c(-expandRt, expandRt)
+##     mz_ppm <- (mz[1] + mz[2]) * ppm / 2e6
+##     mz <- range(mz) + c(-expandMz, expandMz) + c(-mz_ppm, mz_ppm)
+##     which((precursorMz_all >= mz[1] & precursorMz_all <= mz[2]) &
+##           (rt_all >= rt[1] & rt_all <= rt[2]))
+## }
+
+## #' For details see chromPeakSpectra
+## #'
+## #' @param subset optional `integer` that allows to specify chromatographic
+## #'     peaks for which spectra should be identified. If provided it has to be
+## #'     an integer > 1 and smaller `nrow(chromPeaks(x))`
+## #'
+## #' @noRd
+## ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
+##                                   ppm = 0, method = c("all",
+##                                                       "closest_rt",
+##                                                       "closest_mz",
+##                                                       "signal"),
+##                                   skipFilled = FALSE, subset = NULL) {
+##     method <- match.arg(method)
+##     if (hasAdjustedRtime(x))
+##         x <- applyAdjustedRtime(x)
+##     pks <- chromPeaks(x)
+##     if (length(subset)) {
+##         if (!(min(subset) >= 1 && max(subset) <= nrow(pks)))
+##             stop("If 'subset' is defined it has to be >= 1 and <= ",
+##                  nrow(pks), ".")
+##     } else subset <- seq_len(nrow(pks))
+##     is_filled <- chromPeakData(x)$is_filled
+##     x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
+##     fromF <- fromFile(x)
+##     ## We are faster getting all MS2 spectra once at the start.
+##     sps <- spectra(x)
+##     pmz <- precursorMz(x)
+##     rtm <- rtime(x)
+##     res <- vector(mode = "list", nrow(pks))
+##     for (i in subset) {
+##         if (skipFilled && is_filled[i])
+##             next
+##         idx <- spectra_in_slice(
+##             precursorMz_all = pmz, rt_all = rtm,
+##             rt = pks[i, c("rtmin", "rtmax")],
+##             mz = pks[i, c("mzmin", "mzmax")],
+##             expandRt = expandRt, expandMz = expandMz, ppm = ppm)
+##         idx <- idx[fromF[idx] == pks[i, "sample"]]
+##         if (length(idx)) {
+##             if (length(idx) > 1 & method != "all") {
+##                 if (method == "closest_rt")
+##                     idx <- idx[order(abs(rtime(x)[idx] - pks[i, "rt"]))][1]
+##                 if (method == "closest_mz")
+##                     idx <- idx[order(abs(precursorMz(x)[idx] - pks[i, "mz"]))][1]
+##                 if (method == "signal") {
+##                     sps_sub <- sps[idx]
+##                     ints <- vapply(sps_sub, function(z) sum(intensity(z)),
+##                                    numeric(1))
+##                     idx <- idx[order(abs(ints - pks[i, "maxo"]))][1]
+##                 }
+##             }
+##             res[[i]] <- sps[idx]
+##         }
+##     }
+##     names(res) <- rownames(pks)
+##     res
+## }
+
 #' @description
 #'
-#' Return the index of all MS2 spectra that are within a given rt and m/z
-#' range.
-#'
-#' @param precursorMz_all `numeric` with the precursor m/z for all spectra of
-#'     an `XCMSnExp` (i.e. the result from `precursorMz(x)`).
-#'
-#' @param rt_all `numeric` with the retention time for all spectra of an
-#'     `XCMSnExp` object (i.e. the result from `rtime(x)`).
-#'
-#' @param rt `numeric(2)` with the retention time range in which spectra
-#'     should be identified.
-#'
-#' @param mz `numeric(2)` with the m/z range in which the MS2 spectra's
-#'     precursor should be.
-#'
-#' @param expandRt `numeric(1)` to expand the retention time range.
-#'
-#' @return `integer` with the indices of the spectra in `x` that are within
-#'     the range, or `integer()` if none is within the range.
+#' Identifies for all peaks of an `XCMSnExp` object MS2 spectra and returns
+#' them. Identification is performed separately (but parallel) for each file.
 #'
 #' @author Johannes Rainer
 #'
-#' @md
-#'
 #' @noRd
-spectra_in_slice <- function(precursorMz_all, rt_all, rt, mz,
-                                 expandRt = 0, expandMz = 0, ppm = 0) {
-    rt <- range(rt) + c(-expandRt, expandRt)
-    mz_ppm <- (mz[1] + mz[2]) * ppm / 2e6
-    mz <- range(mz) + c(-expandMz, expandMz) + c(-mz_ppm, mz_ppm)
-    which((precursorMz_all > mz[1] & precursorMz_all < mz[2]) &
-          (rt_all > rt[1] & rt_all < rt[2]))
-}
-
-#' For details see chromPeakSpectra
-#'
-#' @param subset optional `integer` that allows to specify chromatographic
-#'     peaks for which spectra should be identified. If provided it has to be
-#'     an integer > 1 and smaller `nrow(chromPeaks(x))`
-#'
-#' @noRd
-ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
+ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
                                   ppm = 0, method = c("all",
                                                       "closest_rt",
                                                       "closest_mz",
                                                       "signal"),
-                                  skipFilled = FALSE, subset = NULL) {
+                                  skipFilled = FALSE, subset = NULL,
+                                  BPPARAM = bpparam()) {
     method <- match.arg(method)
     if (hasAdjustedRtime(x))
         x <- applyAdjustedRtime(x)
     pks <- chromPeaks(x)
-    use_subset <- FALSE
+    if (ppm != 0)
+        ppm <- pks[, "mz"] * ppm / 1e6
+    if (expandMz != 0 || length(ppm) > 1) {
+        pks[, "mzmin"] <- pks[, "mzmin"] - expandMz - ppm
+        pks[, "mzmax"] <- pks[, "mzmax"] + expandMz + ppm
+    }
+    if (expandRt != 0) {
+        pks[, "rtmin"] <- pks[, "rtmin"] - expandRt
+        pks[, "rtmax"] <- pks[, "rtmax"] + expandRt
+    }
     if (length(subset)) {
         if (!(min(subset) >= 1 && max(subset) <= nrow(pks)))
             stop("If 'subset' is defined it has to be >= 1 and <= ",
                  nrow(pks), ".")
-    } else subset <- seq_len(nrow(pks))
-    is_filled <- chromPeakData(x)$is_filled
+        not_subset <- rep(TRUE, nrow(pks))
+        not_subset[subset] <- FALSE
+        pks[not_subset, "mz"] <- NA
+        rm(not_subset)
+    }
+    if (skipFilled && any(chromPeakData(x)$is_filled))
+        pks[chromPeakData(x)$is_filled] <- NA
     x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
-    fromF <- fromFile(x)
-    ## We are faster getting all MS2 spectra once at the start.
+    ## Split data per file
+    file_factor <- factor(pks[, "sample"])
+    peak_ids <- rownames(pks)
+    pks <- split.data.frame(pks, f = file_factor)
+    x <- lapply(as.integer(levels(file_factor)), filterFile, object = x)
+    res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
+                    MoreArgs = list(method = method), SIMPLIFY = FALSE,
+                    USE.NAMES = FALSE, BPPARAM = BPPARAM)
+    res <- unsplit(res, file_factor)
+    names(res) <- peak_ids
+    res
+}
+
+#' @description
+#'
+#' Identify for all chromatographic peaks of a single file MS2 spectra with
+#' an precursor m/z within the peak's m/z and retention time within the peak's
+#' retention time width and return them.
+#'
+#' @note
+#'
+#' If needed, the m/z and rt width of the peaks should be increased previously.
+#' No MS2 spectra are identified for peaks with an `"mz"` of `NA`, thus, to
+#' skip identification for some (e.g. filled-in) peaks their value in the
+#' `"mz"` column of `pks` should be set to `NA` before passing the parameter
+#' to the function.
+#'
+#' @param x `OnDiskMSnExp` with (only) MS2 spectra of a single file.
+#'
+#' @param pks `matrix` with chromatographic peaks of a single file.
+#'
+#' @param method `character` defining the method to optionally select a single
+#'     MS2 spectrum for the peak.
+#'
+#' @return `list` with length equal to the number of rows of `pks` with
+#'     `Spectrum2` objects
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
+                                                               "closest_rt",
+                                                               "closest_mz",
+                                                               "signal")) {
+    if (nrow(pks) == 0)
+        return(list())
+    method <- match.arg(method)
+    fromFile <- as.integer(pks[1, "sample"])
     sps <- spectra(x)
     pmz <- precursorMz(x)
     rtm <- rtime(x)
     res <- vector(mode = "list", nrow(pks))
-    for (i in subset) {
-        if (skipFilled && is_filled[i])
+    for (i in 1:nrow(pks)) {
+        if (is.na(pks[i, "mz"]))
             next
-        idx <- spectra_in_slice(
-            precursorMz_all = pmz, rt_all = rtm,
-            rt = pks[i, c("rtmin", "rtmax")],
-            mz = pks[i, c("mzmin", "mzmax")],
-            expandRt = expandRt, expandMz = expandMz, ppm = ppm)
-        idx <- idx[fromF[idx] == pks[i, "sample"]]
+        idx <- which(pmz >= pks[i, "mzmin"] & pmz <= pks[i, "mzmax"] &
+                     rtm >= pks[i, "rtmin"] & rtm <= pks[i, "rtmax"])
         if (length(idx)) {
             if (length(idx) > 1 & method != "all") {
                 if (method == "closest_rt")
-                    idx <- idx[order(abs(rtime(x)[idx] - pks[i, "rt"]))][1]
+                    idx <- idx[order(abs(rtm[idx] - pks[i, "rt"]))][1]
                 if (method == "closest_mz")
-                    idx <- idx[order(abs(precursorMz(x)[idx] - pks[i, "mz"]))][1]
+                    idx <- idx[order(abs(pmz[idx] - pks[i, "mz"]))][1]
                 if (method == "signal") {
                     sps_sub <- sps[idx]
                     ints <- vapply(sps_sub, function(z) sum(intensity(z)),
@@ -1874,7 +1989,10 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
                     idx <- idx[order(abs(ints - pks[i, "maxo"]))][1]
                 }
             }
-            res[[i]] <- sps[idx]
+            res[[i]] <- lapply(sps[idx], function(z) {
+                z@fromFile = fromFile
+                z
+            })
         }
     }
     names(res) <- rownames(pks)
@@ -1886,8 +2004,12 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
 #' @description
 #'
 #' Extract (MS2) spectra from an [XCMSnExp] object that represent ions within
-#' the rt and m/z range defined by each chromatographic peak (in the same file
-#' /sample in which the peak was detected).
+#' the rt and m/z range of each chromatographic peak (in the same file
+#' /sample in which the peak was detected). All MS2 spectra are returned for
+#' chromatographic peak `i` for which the precursor m/z is
+#' `>= chromPeaks(x)[i, "mzmin"]` and `<= chromPeaks(x)[i, "mzmax"]` and the
+#' retention time is `>= chromPeaks(x)[i, "rtmin"]` and
+#' `<= chromPeaks(x)[i, "rtmax"]`.
 #'
 #' @param x [XCMSnExp] object with identified chromatographic peaks.
 #'
@@ -1923,9 +2045,9 @@ ms2_spectra_for_peaks <- function(x, expandRt = 0, expandMz = 0,
 #' Which object is returned depends on the value of `return.type`:
 #'
 #' - For `return.type = "Spectra"`: a [Spectra] object with elements being
-#'   [Spectrum-class] objects. The result objects contains all spectra that
+#'   [Spectrum-class] objects. The result objects contains all spectra
 #'   for all peaks. Metadata column `"peak_id"` provides the ID of the
-#'   respective peak (i.e. its rowname in [chromPeaks]).
+#'   respective peak (i.e. its rowname in [chromPeaks()]).
 #' - If `return.type = "list"`: `list` of `list`s that are either of length
 #'   0 or contain [Spectrum2-class] object(s) within the m/z-rt range. The
 #'   length of the list matches the number of peaks.
@@ -1953,10 +2075,10 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
         if (msLevel == 2 & !any(msLevel(x) == 2))
             warning("No MS2 spectra available in 'x'.")
     } else {
-        res <- ms2_spectra_for_peaks(x, expandRt = expandRt,
-                                     expandMz = expandMz,
-                                     ppm = ppm, method = method,
-                                     skipFilled = skipFilled)
+        res <- ms2_spectra_for_all_peaks(x, expandRt = expandRt,
+                                         expandMz = expandMz,
+                                         ppm = ppm, method = method,
+                                         skipFilled = skipFilled)
     }
     if (return.type == "Spectra") {
         pids <- rep(names(res), lengths(res))
@@ -1974,11 +2096,10 @@ chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
 ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
                                       skipFilled = FALSE, ...) {
     idxs <- featureDefinitions(x)$peakidx
-    sp_pks <- ms2_spectra_for_peaks(x, expandRt = expandRt,
-                                    expandMz = expandMz, ppm = ppm,
-                                    skipFilled = skipFilled,
-                                    subset = unique(unlist(
-                                        idxs)), ...)
+    sp_pks <- ms2_spectra_for_all_peaks(x, expandRt = expandRt,
+                                        expandMz = expandMz, ppm = ppm,
+                                        skipFilled = skipFilled,
+                                        subset = unique(unlist(idxs)), ...)
     res <- lapply(idxs, function(z) unlist(sp_pks[z]))
     names(res) <- rownames(featureDefinitions(x))
     res
@@ -1994,8 +2115,9 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #' @details
 #'
 #' The function identifies all MS2 spectra with their precursor m/z within the
-#' m/z range of a chromatographic peak of a feature and their retention time
-#' within the rt range of the same peak.
+#' m/z range of a chromatographic peak (i.e. `>=` mzmin and `<=` mzmax) of a
+#' feature and their retention time within the rt range of the same peak
+#' (`>=` rtmin and `<=` rtmax).
 #'
 #' The optional parameter `method` allows to ensure that for each
 #' chromatographic peak in one sample only one MS2 spectrum is returned.

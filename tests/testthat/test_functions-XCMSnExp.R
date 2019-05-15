@@ -226,7 +226,7 @@ test_that("exportMetaboAnalyst works", {
 
 test_that("chromPeakSpectra works", {
     ## For now we don't have MS1/MS2 data, so we have to stick to errors etc.
-    expect_error(ms2_spectra_for_peaks(xod_x, method = "other"))
+    expect_error(ms2_spectra_for_all_peaks(xod_x, method = "other"))
     expect_error(res <- chromPeakSpectra(od_x))
     expect_warning(res <- chromPeakSpectra(xod_x, return.type = "list"))
     expect_true(length(res) == nrow(chromPeaks(xod_x)))
@@ -236,6 +236,55 @@ test_that("chromPeakSpectra works", {
     expect_true(length(res) == 0)
     expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L))
     expect_true(length(res) == 0)
+    ## manual tests...
+    if (Sys.info()["nodename"] == "macbookjo.local") {
+        fls <- dir("~/tmp/delete/xcms_gnps_2/MSV000080502/", pattern = ".mzML$",
+                   full.names = TRUE)
+        register(bpstart(MulticoreParam(3)))
+        dta <- readMSData(fls, mode = "onDisk")
+        cwp <- CentWaveParam(snthresh = 3, noise = 5000, peakwidth = c(5, 30),
+                             ppm = 10)
+        dta <- findChromPeaks(dta, param = cwp)
+
+        ## ms2_spectra_for_peaks_from_file
+        x <- filterFile(dta, 5L)
+        pks <- chromPeaks(x)
+        pks[, "sample"] <- 5
+        x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
+        res_all <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
+        expect_equal(length(res_all), nrow(pks))
+        expect_equal(names(res_all), rownames(pks))
+        expect_true(any(lengths(res_all) > 1))
+        tmp <- unlist(res_all)
+        expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
+
+        res_sub <- xcms:::ms2_spectra_for_peaks_from_file(x, pks, method = "closest_rt")
+        expect_true(all(lengths(res_sub) <= 1))
+        pks[, "mz"] <- NA
+        res_na <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
+        expect_true(all(lengths(res_na) == 0))
+
+        ## ms2_spectra_for_all_peaks
+        res_all <- xcms:::ms2_spectra_for_all_peaks(dta)
+        expect_equal(rownames(chromPeaks(dta)), names(res_all))
+        ## remove chromPeaks from one file
+        tmp <- dta
+        chromPeaks(tmp) <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] != 3, ]
+        res_tmp <- xcms:::ms2_spectra_for_all_peaks(tmp)
+        expect_equal(rownames(chromPeaks(tmp)), names(res_tmp))
+        expect_equal(res_all[names(res_tmp)], res_tmp)
+        set.seed(123)
+        chromPeakData(tmp)$is_filled[sample(1:length(res_tmp), 400)] <- TRUE
+        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp)
+        expect_equal(res_tmp, res_tmp2)
+        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp, skipFilled = TRUE)
+        expect_true(all(lengths(res_tmp2[chromPeakData(tmp)$is_filled]) == 0))
+
+        ## With subset.
+        subs <- sample(1:nrow(chromPeaks(dta)), 5000)
+        res_subs <- xcms:::ms2_spectra_for_all_peaks(dta, subset = subs)
+        expect_true(all(lengths(res_subs[-subs]) == 0))
+    }
 })
 
 test_that("featureSpectra works", {
