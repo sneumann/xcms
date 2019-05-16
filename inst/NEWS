@@ -3,6 +3,10 @@ Changes in version 3.7.1
 - Add align method for Chromatogram objects.
 - Add findChromPeaksIsolationWindow to enable chromatographic peak detection
   in isolation windows.
+- Fix issue in chromPeakSpectra with method = "signal".
+- chromPeakSpectra and featureSpectra return now MS2 spectra with an precursor
+  m/z >= mzmin, <= mzmax and retention time >= rtmin, <= rtmax.
+- Improve performance of chromPeakSpectra and featureSpectra.
 
 
 Changes in version 3.5.5

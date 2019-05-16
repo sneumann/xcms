@@ -24,8 +24,8 @@ addons:
 # this was causing mzR installation to fail
 # see https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=17189
 # workaround stolen from https://github.com/hadley/devtools/blob/1ce84b04568ff7846c3da754f28e7e22a23c8737/.travis.yml#L23-L26
-before_install:
-  - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
+# before_install:
+#   - if [[ "$TRAVIS_R_VERSION_STRING" = 'bioc-devel' ]]; then mkdir ~/.R && echo 'CXX1X=g++ -std=c++0x -g -O2 -fPIC' > ~/.R/Makevars; fi
 
 jobs:
   include:
@@ -62,7 +62,9 @@ jobs:
       install: skip
       script:
         - travis_wait 20 Rscript -e 'covr::codecov()'
-      name: "codecov and pkgdown (on master)"
+      name: "codecov"
+      on:
+        branch: master
 
 # In general the r-travis script automatically dump the logs after failure but
 # because of a bug in travis the output is often truncated. See
