@@ -42,9 +42,9 @@ be reported.}
 Which object is returned depends on the value of \code{return.type}:
 \itemize{
 \item For \code{return.type = "Spectra"}: a \link{Spectra} object with elements being
-\linkS4class{Spectrum} objects. The result objects contains all spectra that
+\linkS4class{Spectrum} objects. The result objects contains all spectra
 for all peaks. Metadata column \code{"peak_id"} provides the ID of the
-respective peak (i.e. its rowname in \link{chromPeaks}).
+respective peak (i.e. its rowname in \code{\link[=chromPeaks]{chromPeaks()}}).
 \item If \code{return.type = "list"}: \code{list} of \code{list}s that are either of length
 0 or contain \linkS4class{Spectrum2} object(s) within the m/z-rt range. The
 length of the list matches the number of peaks.
@@ -52,8 +52,12 @@ length of the list matches the number of peaks.
 }
 \description{
 Extract (MS2) spectra from an \link{XCMSnExp} object that represent ions within
-the rt and m/z range defined by each chromatographic peak (in the same file
-/sample in which the peak was detected).
+the rt and m/z range of each chromatographic peak (in the same file
+/sample in which the peak was detected). All MS2 spectra are returned for
+chromatographic peak \code{i} for which the precursor m/z is
+\code{>= chromPeaks(x)[i, "mzmin"]} and \code{<= chromPeaks(x)[i, "mzmax"]} and the
+retention time is \code{>= chromPeaks(x)[i, "rtmin"]} and
+\code{<= chromPeaks(x)[i, "rtmax"]}.
 }
 \author{
 Johannes Rainer

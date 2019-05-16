@@ -49,8 +49,9 @@ features in \code{x} (defined by \code{\link[=featureDefinitions]{featureDefinit
 }
 \details{
 The function identifies all MS2 spectra with their precursor m/z within the
-m/z range of a chromatographic peak of a feature and their retention time
-within the rt range of the same peak.
+m/z range of a chromatographic peak (i.e. \code{>=} mzmin and \code{<=} mzmax) of a
+feature and their retention time within the rt range of the same peak
+(\code{>=} rtmin and \code{<=} rtmax).
 
 The optional parameter \code{method} allows to ensure that for each
 chromatographic peak in one sample only one MS2 spectrum is returned.
