@@ -40,7 +40,7 @@ Depends:
 Imports:
     mzR (>= 2.13.3),
     BiocGenerics,
-    ProtGenerics,
+    ProtGenerics (>= 1.17.2),
     lattice,
     RColorBrewer,
     plyr,
