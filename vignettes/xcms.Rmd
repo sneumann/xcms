@@ -207,7 +207,7 @@ binned base peak chromatograms.
 bpis_bin <- bin(bpis, binSize = 2)
 
 ## Calculate correlation on the log2 transformed base peak intensities
-cormat <- cor(log2(do.call(cbind, lapply(bpis_bin, intensity))))
+cormat <- cor(dplyr::bind_cols(lapply(bpis_bin, intensity)))
 colnames(cormat) <- rownames(cormat) <- raw_data$sample_name
 
 ## Define which phenodata columns should be highlighted in the plot
