@@ -4,9 +4,9 @@
 \alias{plotAdjustedRtime}
 \title{Visualization of alignment results}
 \usage{
-plotAdjustedRtime(object, col = "#00000080", lty = 1, type = "l",
-  adjustedRtime = TRUE, xlab = ifelse(adjustedRtime, yes =
-  expression(rt[adj]), no = expression(rt[raw])),
+plotAdjustedRtime(object, col = "#00000080", lty = 1, lwd = 1,
+  type = "l", adjustedRtime = TRUE, xlab = ifelse(adjustedRtime, yes
+  = expression(rt[adj]), no = expression(rt[raw])),
   ylab = expression(rt[adj] - rt[raw]), peakGroupsCol = "#00000060",
   peakGroupsPch = 16, peakGroupsLty = 3, ylim, ...)
 }
@@ -17,6 +17,8 @@ plotAdjustedRtime(object, col = "#00000080", lty = 1, type = "l",
 samples.}
 
 \item{lty}{line type to be used for the lines of the individual samples.}
+
+\item{lwd}{line width to be used for the lines of the individual samples.}
 
 \item{type}{plot type to be used. See help on the \code{par} function for
 supported values.}

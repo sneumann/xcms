@@ -694,6 +694,8 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' @param col colors to be used for the lines corresponding to the individual
 #'     samples.
 #'
+#' @param lwd line width to be used for the lines of the individual samples.
+#'
 #' @param lty line type to be used for the lines of the individual samples.
 #'
 #' @param type plot type to be used. See help on the \code{par} function for
@@ -763,8 +765,8 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' grid()
 #' plotAdjustedRtime(res)
 #' grid()
-plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
-                              adjustedRtime = TRUE,
+plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
+                              type = "l", adjustedRtime = TRUE,
                               xlab = ifelse(adjustedRtime,
                                             yes = expression(rt[adj]),
                                             no = expression(rt[raw])),
@@ -785,6 +787,8 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
         col <- rep(col, length(diffRt))
     if (length(lty) == 1)
         lty <- rep(lty, length(diffRt))
+    if (length(lwd) == 1)
+        lwd <- rep(lwd, length(diffRt))
     if (length(col) != length(diffRt)) {
         warning("length of 'col' does not match the number of samples! Will ",
                 "use 'col[1]' for all samples.")
@@ -795,6 +799,11 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
                 "use 'lty[1]' for all samples.")
         lty <- rep(lty[1], length(diffRt))
     }
+    if (length(lwd) != length(lwd)) {
+        warning("length of 'lwd' does not match the number of samples! Will ",
+                "use 'lwd[1]' for all samples.")
+        lwd <- rep(lwd[1], length(diffRt))
+    }
     ## Initialize plot.
     if (missing(ylim))
         ylim <- range(diffRt, na.rm = TRUE)
@@ -803,7 +812,7 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, type = "l",
     ## Plot all.
     for (i in 1:length(diffRt))
         points(x = xRt[[i]], y = diffRt[[i]], col = col[i], lty = lty[i],
-               type = type)
+               type = type, lwd = lwd[i])
     ## If alignment was performed using the peak groups method highlight also
     ## those in the plot.
     ph <- processHistory(object, type = .PROCSTEP.RTIME.CORRECTION)

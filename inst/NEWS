@@ -1,5 +1,6 @@
 Changes in version 3.7.1
 
+- Add parameter lwd to plotAdjustedRtime.
 - Add align method for Chromatogram objects.
 - Add findChromPeaksIsolationWindow to enable chromatographic peak detection
   in isolation windows.
