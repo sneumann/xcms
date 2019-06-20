@@ -1,6 +1,5 @@
 Package: xcms
-Version: 3.7.1
-Date: 2019-05-14
+Version: 3.7.2
 Title: LC/MS and GC/MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin", family = "Smith",
@@ -58,7 +57,7 @@ Suggests:
     caTools,
     knitr (>= 1.1.0),
     faahKO,
-    msdata,
+    msdata (>= 0.25.1),
     ncdf4,
     rgl,
     microbenchmark,

@@ -8,7 +8,7 @@ vignette: >
   %\VignetteIndexEntry{SWATH data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
+  %\VignetteDepends{xcms,msdata,BiocStyle}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -42,10 +42,31 @@ register(SerialParam())
 
 This document showcases the analysis of a small SWATH experiment.
 
-Metabolite identification is an important step in non-targeted metabolomics and requires different steps. One involves the use of tandem mass spectrometry to generate fragmentation spectra of detected metabolites, which are then compared to fragmentation spectra of known metabolites. Different approches exist for the generation of these fragmentation spectra, whereas the most used is data dependent acquisition (DDA) also known as the top-n method. In this method the top N most intense m/z values from a MS1 scan are selected for fragmentation in the next N scans before the cycle starts again. This method allows to generate clean MS2 fragmentation spectra on the fly during acquistion without the need for further experiments, but suffers from poor coverage of the detected metabolites (Only top N are fragmented).
-Data independent approaches (DIA) like Bruker bbCID, Agilent AllIons or Waters MSe don't use such a preselection, but rather fragment all detected molecules at once. They are using alternating schemes with scan of low and high collision energy to collect MS1 and MS2 data. Using this approach, there is no problem in coverage, but the relation between the precursor and fragment masses is lost leading to chimeric spectra.
-Sequential Window Acquisition of all Theoretical Mass Spectra (or SWATH) combines both approaches through a middle-way approach. There is no precursor selection and acquisition is independent of acquired data, but rather than isolating all precusors at once defined windows are used and scanned. By this the overlap of fragment spectra is reduced while still a high coverage is obtained.
-The data files used in this vignette are reversed-phase LC-MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF operated in SWATH acquisition mode. For comparison a DDA file is included.
+Metabolite identification is an important step in non-targeted metabolomics and
+requires different steps. One involves the use of tandem mass spectrometry to
+generate fragmentation spectra of detected metabolites, which are then compared
+to fragmentation spectra of known metabolites. Different approches exist for the
+generation of these fragmentation spectra, whereas the most used is data
+dependent acquisition (DDA) also known as the top-n method. In this method the
+top N most intense m/z values from a MS1 scan are selected for fragmentation in
+the next N scans before the cycle starts again. This method allows to generate
+clean MS2 fragmentation spectra on the fly during acquistion without the need
+for further experiments, but suffers from poor coverage of the detected
+metabolites (Only top N are fragmented).
+
+Data independent approaches (DIA) like Bruker bbCID, Agilent AllIons or Waters
+MSe don't use such a preselection, but rather fragment all detected molecules at
+once. They are using alternating schemes with scan of low and high collision
+energy to collect MS1 and MS2 data. Using this approach, there is no problem in
+coverage, but the relation between the precursor and fragment masses is lost
+leading to chimeric spectra. Sequential Window Acquisition of all Theoretical
+Mass Spectra (or SWATH) combines both approaches through a middle-way
+approach. There is no precursor selection and acquisition is independent of
+acquired data, but rather than isolating all precusors at once defined windows
+are used and scanned. This reduces the overlap of fragment spectra while still
+keeping a high coverage. The data files used in this vignette are reversed-phase
+LC-MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF
+operated in SWATH acquisition mode. For comparison a DDA file is included.
 
 # Data import
 
@@ -56,33 +77,37 @@ recorded MS1 and MS2 spectra. Below we read the example file.
 ```{r load-swath data, message = FALSE}
 library(xcms)
 
-#' That should go into the msdata package.
-swath_file <- system.file("extdata",
+swath_file <- system.file("TripleTOF-SWATH",
                           "PestMix1_SWATH.mzML",
-                          package = "xcms")
+                          package = "msdata")
 
 swath_data <- readMSData(swath_file, mode = "onDisk")
 
 ```
 
-First we can inspect the raw data and get information on the number of MS1 and MS2 scans, as well as the used isolation windows. The number of MS level 1 and MS level 2 spectra is listed below.
+First we can inspect the raw data and get information on the number of MS1 and
+MS2 scans, as well as the used isolation windows. The number of MS level 1 and
+MS level 2 spectra is listed below.
 
 ```{r table-mslevel}
 table(msLevel(swath_data))
 ```
 
 The isolation window definitions (SWATH pockets) were extracted from the mzML
-files and are stored in the object's `fData` `data.frame`. Below we inspect the
-respective information for the first spectra. The actual lower and upper
-isolation window m/z can be extracted with the `isolationWindowLowerMz` and
-`isolationWindowUpperMz`.
+files and are stored in the object's `fData` (providing additional annotations
+for each individual spectrum). Below we inspect the respective information for
+the first spectra. The actual lower and upper isolation window m/z can be
+extracted with the `isolationWindowLowerMz` and `isolationWindowUpperMz`.
 
 ```{r fdata-isolationwindow}
+head(fData(swath_data)[, c("isolationWindowTargetMZ",
+                           "isolationWindowLowerOffset",
+                           "isolationWindowUpperOffset",
+                           "msLevel", "retentionTime")])
+
 head(isolationWindowLowerMz(swath_data))
 head(isolationWindowUpperMz(swath_data))
 
-head(fData(swath_data)[, c("isolationWindowTargetMZ", "isolationWindowLowerOffset",
-                     "isolationWindowUpperOffset", "msLevel", "retentionTime")])
 ```
 
 For the present data set we can use the *isolation window target m/z* to
@@ -101,7 +126,7 @@ can be done with the `findChromPeaks` method. Below we define the settings for a
 
 ```{r find-chrom-peaks-ms1, message = FALSE}
 cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10, peakwidth = c(3, 30))
-swth <- findChromPeaks(swath_data, param = cwp)
+swath_data <- findChromPeaks(swath_data, param = cwp)
 
 ```
 
@@ -156,7 +181,7 @@ res <- xcms:::reconstructChromPeakSpectra(swath_data)
 
 # Example:
 
-```{r}
+```{r, eval = FALSE}
 # Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
 eic <- chromatogram(xrms_ms1, aggregationFun = "max", mz = c(382.96, 382.98), rt = c(430,450))
 plot(eic)
@@ -164,13 +189,13 @@ plot(eic)
 
 get peak of fluopicolide
 
-```{r}
+```{r, eval = FALSE}
 # add here on the chrom peak
 ```
 
 Example spectrum (from Metlin)
 
-```{r}
+```{r, eval = FALSE}
 #example spectrum (taken from Metlin MID 72270, ESI-Q-ToF)
 librarySpectrum <- new("Spectrum2",
                        precursorMz = 382.9727,
@@ -181,7 +206,7 @@ librarySpectrum <- new("Spectrum2",
 
 Matchin of spectra
 
-```{r}
+```{r, eval = FALSE}
 # make mirror plot of two spectra
 plot(ms2spectrumMSnbase, librarySpectrum, xlim = c(50,400))
 # calculate dot product

@@ -5,7 +5,7 @@ output:
   BiocStyle::html_document:
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{SWATH data analysis with xcms}
+  %\VignetteIndexEntry{SWATH data analysis with xcms (Tomato)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
@@ -27,7 +27,7 @@ BiocStyle::markdown()
 
 **Package**: `r Biocpkg("xcms")`<br />
 **Authors**: Johannes Rainer, Michael Witting<br />
-**Modified**: `r file.info("swath.Rmd")$mtime`<br />
+**Modified**: `r file.info("swath_tomato.Rmd")$mtime`<br />
 **Compiled**: `r date()`
 
 ```{r init, message = FALSE, echo = FALSE, results = "hide" }
