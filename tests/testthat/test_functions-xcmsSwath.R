@@ -1,10 +1,3 @@
-fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
-swth <- readMSData(fl, mode = "onDisk")
-cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
-                     peakwidth = c(3, 20))
-swth <- findChromPeaks(swth, param = cwp)
-swth <- findChromPeaksIsolationWindow(swth, param = cwp)
-
 test_that(".which_mz_in_range works", {
     mz <- 3.4
     lowerMz <- c(1, 3, 8, 12)
@@ -33,8 +26,8 @@ test_that(".which_chrom_peak_diff_rt works", {
 
 test_that(".reconstruct_ms2_for_chrom_peak works", {
     ## Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
-    pk <- chromPeaks(swth, mz = 382.972706, ppm = 10)
-    res <- .reconstruct_ms2_for_chrom_peak(pk, swth, fromFile = 7L,
+    pk <- chromPeaks(pest_swth, mz = 382.972706, ppm = 10)
+    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 0.8)
     expect_true(is(res, "Spectra"))
@@ -43,7 +36,7 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
     expect_true(all(mcols(res)$ms2_peak_cor[[1]] > 0.8))
     expect_equal(length(intensity(res[[1]])), 14)
 
-    res <- .reconstruct_ms2_for_chrom_peak(pk, swth, fromFile = 7L,
+    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 1)
     expect_true(is(res, "Spectra"))
@@ -52,16 +45,16 @@ test_that(".reconstruct_ms2_for_chrom_peak works", {
     expect_true(all(isEmpty(res)))
 
     ## Some random other peak.
-    pk <- chromPeaks(swth, msLevel = 1)[1, ]
-    res <- .reconstruct_ms2_for_chrom_peak(pk, swth)
+    pk <- chromPeaks(pest_swth, msLevel = 1)[1, ]
+    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth)
     expect_equal(length(intensity(res[[1]])), 0)
     expect_true(is(mcols(res)$ms2_peak_id, "CharacterList"))
     expect_true(is(mcols(res)$ms2_peak_cor, "NumericList"))
     expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 0)
     expect_equal(length(mcols(res)$ms2_peak_cor[[1]]), 0)
 
-    pk <- chromPeaks(swth, msLevel = 1)[3, ]
-    res <- .reconstruct_ms2_for_chrom_peak(pk, swth)
+    pk <- chromPeaks(pest_swth, msLevel = 1)[3, ]
+    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth)
     expect_equal(length(intensity(res[[1]])), 8)
     expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 8)
     expect_equal(length(mcols(res)$ms2_peak_cor[[1]]), 8)
@@ -76,33 +69,13 @@ test_that(".reconstruct_ms2_for_peaks_file works", {
     expect_identical(rownames(chromPeaks(filterFile(xod_x, 1))),
                      mcols(res)$peak_id)
 
-    res <- xcms:::.reconstruct_ms2_for_peaks_file(swth, fromFile = 2L)
+    res <- xcms:::.reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
     expect_true(isEmpty(res)[1])
     expect_true(length(intensity(res[[3]])) == 8)
     expect_true(all(fromFile(res) == 2L))
 
-    res_3 <- xcms:::.reconstruct_ms2_for_peaks_file(swth, fromFile = 2L,
+    res_3 <- xcms:::.reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,
                                                     peakId = "CP03")
     expect_identical(intensity(res_3), intensity(res[3]))
     expect_identical(mcols(res_3)$ms2_peak_id[[1]], mcols(res)$ms2_peak_id[[3]])
-})
-
-test_that("reconstructChromPeakSpectra works", {
-    res <- reconstructChromPeakSpectra(
-        swth, peakId = rownames(chromPeaks(swth))[1:6])
-    expect_true(length(res) == 6)
-    expect_true(length(intensity(res[[3]])) == 8)
-
-    ## errors
-    expect_error(reconstructChromPeakSpectra(od_x), "object with")
-
-    ## peakId
-    res_3 <- reconstructChromPeakSpectra(swth, peakId = c("CP03"))
-    expect_identical(intensity(res_3), intensity(res[3]))
-
-    expect_warning(res <- reconstructChromPeakSpectra(
-                       swth, peakId = c("CP03", "other")))
-    expect_identical(res_3, res)
-    expect_error(reconstructChromPeakSpectra(swth, peakId = c("a", "b")),
-                 "None of the provided")
 })

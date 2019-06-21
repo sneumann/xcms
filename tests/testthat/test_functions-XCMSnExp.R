@@ -236,8 +236,36 @@ test_that("chromPeakSpectra works", {
     expect_true(length(res) == 0)
     expect_warning(res <- chromPeakSpectra(xod_x, msLevel = 1L))
     expect_true(length(res) == 0)
+
+    dta <- pest_dda
+
+    ## ms2_spectra_for_peaks_from_file
+    pks <- chromPeaks(dta)
+    pks[, "sample"] <- 5
+    res_all <- ms2_spectra_for_peaks_from_file(dta, pks)
+    expect_equal(length(res_all), nrow(pks))
+    expect_equal(names(res_all), rownames(pks))
+    expect_true(any(lengths(res_all) > 1))
+    tmp <- unlist(res_all)
+    expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
+
+    res_sub <- ms2_spectra_for_peaks_from_file(dta, pks, method = "closest_rt")
+    expect_true(all(lengths(res_sub) <= 1))
+    pks[, "mz"] <- NA
+    res_na <- xcms:::ms2_spectra_for_peaks_from_file(dta, pks)
+    expect_true(all(lengths(res_na) == 0))
+
+    ## ms2_spectra_for_all_peaks
+    res_all <- ms2_spectra_for_all_peaks(dta)
+    expect_equal(rownames(chromPeaks(dta)), names(res_all))
+
+    ## With subset.
+    subs <- sample(1:nrow(chromPeaks(dta)), 20)
+    res_subs <- ms2_spectra_for_all_peaks(dta, subset = subs)
+    expect_true(all(lengths(res_subs[-subs]) == 0))
+
     ## manual tests...
-    if (Sys.info()["nodename"] == "macbookjo.local") {
+    if (FALSE) {
         fls <- dir("~/tmp/delete/xcms_gnps_2/MSV000080502/", pattern = ".mzML$",
                    full.names = TRUE)
         register(bpstart(MulticoreParam(3)))
@@ -486,4 +514,22 @@ test_that("findChromPeaksIsolationWindow works", {
                  chromPeaks(xod_x))
 })
 
-## test for reconstructChromPeakSpectra is in file test_functions_xcmsSwath.R
+test_that("reconstructChromPeakSpectra works", {
+    res <- reconstructChromPeakSpectra(
+        pest_swth, peakId = rownames(chromPeaks(pest_swth))[1:6])
+    expect_true(length(res) == 6)
+    expect_true(length(intensity(res[[3]])) == 7)
+
+    ## errors
+    expect_error(reconstructChromPeakSpectra(od_x), "object with")
+
+    ## peakId
+    res_3 <- reconstructChromPeakSpectra(pest_swth, peakId = c("CP03"))
+    expect_identical(intensity(res_3), intensity(res[3]))
+
+    expect_warning(res <- reconstructChromPeakSpectra(
+                       pest_swth, peakId = c("CP03", "other")))
+    expect_identical(res_3, res)
+    expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
+                 "None of the provided")
+})
