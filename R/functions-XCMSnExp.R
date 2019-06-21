@@ -2456,7 +2456,7 @@ findChromPeaksIsolationWindow <-
 #'
 #' @seealso [findChromPeaksIsolationWindow()] for the function to perform MS2
 #'     peak detection in DIA isolation windows and for examples.
-reconstructChromPeakSpectra <- function(object, expandRt = 2, diffRt = 4,
+reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                                         minCor = 0.8, intensity = "maxo",
                                         peakId = rownames(
                                             chromPeaks(object, msLevel = 1L)),

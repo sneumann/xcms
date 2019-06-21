@@ -40,8 +40,6 @@ register(SerialParam())
 
 # Introduction
 
-This document showcases the analysis of a small SWATH experiment.
-
 Metabolite identification is an important step in non-targeted metabolomics and
 requires different steps. One involves the use of tandem mass spectrometry to
 generate fragmentation spectra of detected metabolites, which are then compared
@@ -64,7 +62,10 @@ Mass Spectra (or SWATH) combines both approaches through a middle-way
 approach. There is no precursor selection and acquisition is independent of
 acquired data, but rather than isolating all precusors at once defined windows
 are used and scanned. This reduces the overlap of fragment spectra while still
-keeping a high coverage. The data files used in this vignette are reversed-phase
+keeping a high coverage.
+
+This document showcases the analysis of a small SWATH experiment using
+`r Biocpkg("xcms")`. The data files used are reversed-phase
 LC-MS runs from the Agilent Pesticide mix obtained from a Sciex 6600 Triple ToF
 operated in SWATH acquisition mode. For comparison a DDA file is included.
 
@@ -120,9 +121,9 @@ table(isolationWindowTargetMz(swath_data))
 
 # Chromatographic peak detection in MS1 and MS2 data
 
-Next we perform the chromatographic peak detection in the MS level 1 data. This
-can be done with the `findChromPeaks` method. Below we define the settings for a
-*centWave*-based peak detection and perform the analysis.
+Next we perform the chromatographic peak detection in the MS level 1 data with
+the `findChromPeaks` method. Below we define the settings for a *centWave*-based
+peak detection and perform the analysis.
 
 ```{r find-chrom-peaks-ms1, message = FALSE}
 cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10, peakwidth = c(3, 30))
@@ -131,22 +132,20 @@ swath_data <- findChromPeaks(swath_data, param = cwp)
 ```
 
 Next we perform a chromatographic peak detection in the MS level 2 data of each
-isolation windows. We use the `findChromPeaksIsolationWindow` function employing
+isolation window. We use the `findChromPeaksIsolationWindow` function employing
 the same peak detection algorithm and settings. The `isolationWindow` parameter
-allows to specify which MS2 spectra belong to which isolation window. We use the
-default value for this parameter which uses isolation windows defined by
-`isolationWindowTargetMz`, it is however also possible to manually define the
+allows to specify which MS2 spectra belong to which isolation window. While the
+default value for this parameter uses isolation windows defined by
+`isolationWindowTargetMz`, it would also be possible to manually define the
 isolation windows, e.g. if the corresponding information is not available in the
-input mzML files. Chromatographic peaks identified in each isolation window are
-then added to the already identified chromatographic peaks and can be identified
-by the column `"isolationWindow"` in `chromPeakData`.
+input mzML files.
 
 ```{r find-chrom-peaks-ms2, message = FALSE}
 cwp <- CentWaveParam(snthresh = 3, noise = 10, ppm = 10, peakwidth = c(3, 30))
 swath_data <- findChromPeaksIsolationWindow(swath_data, param = cwp)
 ```
 
-Peaks identified within isolation windows have been added to the `chromPeaks`
+Peaks detected within isolation windows have been added to the `chromPeaks`
 matrix. They can be identified by the value of the `"isolationWindow"` column in
 the corresponding row of the `chromPeakData` peak annotations:
 
@@ -154,8 +153,7 @@ the corresponding row of the `chromPeakData` peak annotations:
 chromPeakData(swath_data)
 ```
 
-The number of chromatographic peaks within each isolation window are can be
-determined with the following call:
+Below we count the number of chromatographic peaks within each isolation window.
 
 ```{r}
 table(chromPeakData(swath_data)$isolationWindow)
@@ -163,54 +161,80 @@ table(chromPeakData(swath_data)$isolationWindow)
 
 # Reconstruction of MS2 spectra
 
-- For each MS1 chromatographic peak:
-- find MS2 chromatographic peaks in the isolation window containing the m/z of
-  the ion (the MS1 chromatographic peak) that have ~ the same retention time
-  than the MS1 chromatographic peak. The accepted difference can be defined with
-  the `diffRt` parameter.
-- Extract and correlate the chromatograms of all matching MS2 chromatographic
-  peaks to the extracted ion chromatogram of the MS1 chromatographic peak.
-- Generate (reconstruct) the MS2 spectrum based on all MS2 chromatographic peaks
-  for which the correlation to the MS1 extracted ion chromatogram is higher than
-  `minCor`.
-- Similar to the `chromPeakSpectra` the function returns a `Spectra` object.
+Identifying the signal of the fragment ions for the precursor measured by each
+MS1 chromatographic peak is a non-trivial task. The MS2 spectrum of the fragment
+ion for each MS1 chromatographic peak has to be reconstructed from the available
+MS2 signal (i.e. the chromatographic peaks identified in MS level 2). For SWATH
+data, fragment ion signal should be present in the isolation window that
+contains the m/z of the precursor ion and the chromatographic peak shape of the
+MS2 chromatographic peaks of fragment ions of a specific precursor should have a
+similar retention time and peak shape than the precursor's MS1 chromatographic
+peak.
 
-```{r}
-res <- xcms:::reconstructChromPeakSpectra(swath_data)
+After detection of MS1 and MS2 chromatographic peaks has been performed, we can
+reconstruct the MS2 spectra using the `reconstructChromPeakSpectra`
+function. This function tries to reconstruct an MS2 spectrum for each MS1
+chromatographic peak based on the following approach:
+
+- Identify MS2 chromatographic peaks in the isolation window containing the m/z of
+  the ion (the MS1 chromatographic peak) that have approximately the same
+  retention time than the MS1 chromatographic peak (the accepted rt shift can be
+  defined with the `diffRt` parameter).
+- Correlate the peak shapes of the candidate MS2 chromatographic peaks with the
+  shape of the MS1 peak retaining only MS2 chromatographic peaks for which the
+  correlation is larger than a threshold (`minCor`).
+- Reconstruct the MS2 spectrum using the m/z of all above selected MS2
+  chromatographic peaks and their intensity; each MS2 chromatographic peak
+  selected for an MS1 peak will thus represent one **mass peak** in the
+  reconstructed spectrum.
+
+Below we reconstruct MS2 spectra for our example data.
+
+```{r reconstruct-ms2, message = FALSE}
+ms2_sps <- reconstructChromPeakSpectra(swath_data, minCor = 0.9)
+ms2_sps
 ```
 
-# Example:
+As a result we got a `Spectra` object of length equal to the number of MS1 peaks
+in our data. Not for all MS1 signal a MS2 spectrum could be reconstructed
+(elements with `peaksCount` equal to 0). For reconstructed spectra additional
+annotations are available such as the IDs of the MS2 chromatographic peaks from
+which the spectrum was reconstructed (`"ms2_peak_id"`) as well as the
+correlation coefficient of their chromatographic peak shape with the precursor's
+shape (`"ms2_peak_cor"`). Metadata column `"peak_id"` represents the identified
+of the MS1 chromatographic peak.
 
-```{r, eval = FALSE}
-# Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
-eic <- chromatogram(xrms_ms1, aggregationFun = "max", mz = c(382.96, 382.98), rt = c(430,450))
-plot(eic)
+As an example we evaluate the reconstructed MS2 spectrum of Fluopicolide (exact
+mass 381.965430576 and m/z of [M+H]+ adduct 382.972706). We first identify the
+MS1 chromatographic peak for the [M+H]+ adduct and use its peak ID to extract
+the reconstructed MS2 spectrum.
+
+```{r fluo-reconstructed}
+chromPeaks(swath_data, mz = 382.972706, ppm = 10)
+fluopicolide_ms2 <- ms2_sps[mcols(ms2_sps)$peak_id == "CP39"]
 ```
 
-get peak of fluopicolide
+As a reference for Fluopicolide we create below an MS2 spectrum with data from
+Metlin (MID 72270, ESI-Q-ToF).
 
-```{r, eval = FALSE}
-# add here on the chrom peak
+```{r fluo-metlin}
+metlin_ms2 <- new("Spectrum2", precursorMz = 382.9727,
+                  mz = c(193.9949, 172.9555, 144.9603, 108.9841, 74.0161),
+                  intensity = c(3, 100, 36, 10, 5),
+                  centroided = TRUE)
 ```
 
-Example spectrum (from Metlin)
+We next compare the two spectra with each other.
 
-```{r, eval = FALSE}
-#example spectrum (taken from Metlin MID 72270, ESI-Q-ToF)
-librarySpectrum <- new("Spectrum2",
-                       precursorMz = 382.9727,
-                       mz = c(193.9949, 172.9555, 144.9603, 108.9841, 74.0161),
-                       intensity = c(3, 100, 36, 10, 5),
-                       centroided = TRUE)
+```{r fluo-mirrorplot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Fluopicolide on top with the MS2 spectrum from Metlin (bottom)."}
+plot(fluopicolide_ms2[[1]], metlin_ms2)
 ```
 
-Matchin of spectra
+And calculate their similarity based on the dot product.
 
-```{r, eval = FALSE}
-# make mirror plot of two spectra
-plot(ms2spectrumMSnbase, librarySpectrum, xlim = c(50,400))
-# calculate dot product
-compareSpectra(ms2spectrumMSnbase, librarySpectrum, binSize = 0.05, fun = "dotproduct")
+```{r fluo-dotproduct}
+compareSpectra(fluopicolide_ms2[[1]], metlin_ms2, binSize = 0.05,
+               fun = "dotproduct")
 ```
 
 

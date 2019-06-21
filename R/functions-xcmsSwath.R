@@ -160,7 +160,8 @@
     pks <- pks[which(cors >= minCor), , drop = FALSE]
     if (nrow(pks)) {
         sp <- new("Spectrum2", fromFile = fromFile, centroided = TRUE,
-                  mz = pks[, "mz"], intensity = pks[, column])
+                  mz = pks[, "mz"], intensity = pks[, column],
+                  precursorMz = x["mz"])
         df <- DataFrame(matrix(ncol = 0, nrow = 1))
         df$ms2_peak_id <- CharacterList(rownames(pks), compress = FALSE)
         df$ms2_peak_cor <- NumericList(cors[cors >= minCor], compress = FALSE)

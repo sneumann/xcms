@@ -4,7 +4,7 @@
 \alias{reconstructChromPeakSpectra}
 \title{Data independent acquisition (DIA): reconstruct MS2 spectra}
 \usage{
-reconstructChromPeakSpectra(object, expandRt = 2, diffRt = 4,
+reconstructChromPeakSpectra(object, expandRt = 1, diffRt = 2,
   minCor = 0.8, intensity = "maxo",
   peakId = rownames(chromPeaks(object, msLevel = 1L)),
   BPPARAM = bpparam())
