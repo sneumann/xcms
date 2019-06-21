@@ -51,7 +51,8 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
-    robustbase
+    robustbase,
+    IRanges
 Suggests:
     BiocStyle,
     caTools,

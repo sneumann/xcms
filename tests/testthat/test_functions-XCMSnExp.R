@@ -485,3 +485,5 @@ test_that("findChromPeaksIsolationWindow works", {
     expect_equal(chromPeaks(res_4)[1:nrow(chromPeaks(xod_x)), ],
                  chromPeaks(xod_x))
 })
+
+## test for reconstructChromPeakSpectra is in file test_functions_xcmsSwath.R

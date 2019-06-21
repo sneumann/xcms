@@ -733,8 +733,6 @@ rowRla <- function(x, group, log.transform = TRUE) {
     }, integer(1))
 }
 
-
-
 ## #' Define a unique identifier for each chromatographic peak within the chrom
 ## #' peak matrix by concatenating as many columns as needed.
 ## #'

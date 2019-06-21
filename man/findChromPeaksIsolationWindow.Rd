@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions-XCMSnExp.R
 \name{findChromPeaksIsolationWindow}
 \alias{findChromPeaksIsolationWindow}
-\title{Data independent analysis (DIA): peak detection in isolation windows}
+\title{Data independent acquisition (DIA): peak detection in isolation windows}
 \usage{
 findChromPeaksIsolationWindow(object, param, msLevel = 2L,
   isolationWindow = isolationWindowTargetMz(object), ...)
@@ -48,6 +48,10 @@ chromatographic peak detection is performed for all spectra with the same
 isolation window target m/z (seprarately for each file). The parameter
 \code{param} allows to define and configure the peak detection algorithm (see
 \code{\link[=findChromPeaks]{findChromPeaks()}} for more information).
+}
+\seealso{
+\code{\link[=reconstructChromPeakSpectra]{reconstructChromPeakSpectra()}} for the function to reconstruct
+MS2 spectra for each MS1 chromatographic peak.
 }
 \author{
 Johannes Rainer, Michael Witting
