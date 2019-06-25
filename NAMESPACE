@@ -495,5 +495,6 @@ exportMethods("hasChromPeaks",
               "spectrapply",
 	      "writeMSData",
               "plotChromPeakDensity",
-              "align"
+              "align",
+              "correlate"
               )

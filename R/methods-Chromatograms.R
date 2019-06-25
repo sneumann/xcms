@@ -58,3 +58,13 @@ setMethod("findChromPeaks", signature(object = "Chromatograms",
                                 fileIndex = seq_len(ncol(object))))
     if (validObject(object)) object
 }
+
+#' @rdname align-Chromatogram
+setMethod("align", signature = c(x = "Chromatograms", y = "Chromatogram"),
+          function(x, y, method = c("matchRtime", "approx"), ...) {
+              x@.Data <- matrix(lapply(x@.Data, .align_chromatogram, y = y,
+                                       method = method, ...),
+                                nrow = nrow(x), dimnames = dimnames(x))
+              validObject(x)
+              x
+          })

@@ -126,7 +126,8 @@ the `findChromPeaks` method. Below we define the settings for a *centWave*-based
 peak detection and perform the analysis.
 
 ```{r find-chrom-peaks-ms1, message = FALSE}
-cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10, peakwidth = c(3, 30))
+cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                     peakwidth = c(3, 30))
 swath_data <- findChromPeaks(swath_data, param = cwp)
 
 ```
@@ -141,7 +142,8 @@ isolation windows, e.g. if the corresponding information is not available in the
 input mzML files.
 
 ```{r find-chrom-peaks-ms2, message = FALSE}
-cwp <- CentWaveParam(snthresh = 3, noise = 10, ppm = 10, peakwidth = c(3, 30))
+cwp <- CentWaveParam(snthresh = 3, noise = 10, ppm = 10,
+                     peakwidth = c(3, 30))
 swath_data <- findChromPeaksIsolationWindow(swath_data, param = cwp)
 ```
 
@@ -188,7 +190,94 @@ chromatographic peak based on the following approach:
   selected for an MS1 peak will thus represent one **mass peak** in the
   reconstructed spectrum.
 
-Below we reconstruct MS2 spectra for our example data.
+To illustrate this process we perform the individual steps on the example of
+Fluopicolide (exact mass 381.965430576 and m/z of [M+H]+ adduct 382.972706). As
+a first step we extract the chromatographic peak for this ion.
+
+```{r fluo-extract-peak}
+fluo_mz <- 382.972706
+fluo_ms1_peak <- chromPeaks(swath_data, mz = fluo_mz, ppm = 10)
+fluo_ms1_peak
+```
+
+Next we identify all MS2 chromatographic peaks that were identified in the
+isolation window containing the m/z of Fluopicolide. The information on the
+isolation window in which a chromatographic peak was identified is available in
+the `chromPeakData` (which contains arbitrary additional annotations to each
+individual chromatographic peak).
+
+```{r fluo-identify-ms2}
+keep <- chromPeakData(swath_data)$isolationWindowLowerMz < fluo_mz &
+        chromPeakData(swath_data)$isolationWindowUpperMz > fluo_mz
+```
+
+We also require the retention time of the MS2 chromatographic peaks to be
+similar to the retention time of the MS1 peak and extract the corresponding peak information.
+
+```{r fluo-check-rt}
+keep <- keep & chromPeaks(swath_data)[, "rtmin"] < fluo_ms1_peak[, "rt"] &
+    chromPeaks(swath_data)[, "rtmax"] > fluo_ms1_peak[, "rt"]
+
+fluo_ms2_peak <- chromPeaks(swath_data)[which(keep), ]
+```
+
+In total `r sum(keep, na.rm = TRUE)` MS2 chromatographic peaks match all the
+above condition. Next we extract their corresponding ion chromatograms, as well
+as the ion chromatogram of the MS1 peak. Note that we extend the retention time
+range by 1 seconds on both sides. In addition we have to filter the object
+first by isolation window, keeping only spectra that were measured in that
+specific window and to specify to extract the chromatographic data from MS2
+spectra (with `msLevel = 2L`).
+
+```{r fluo-eic-extract, warning = FALSE}
+rtr <- fluo_ms1_peak[, c("rtmin", "rtmax")]
+rtr[1] <- rtr[1] - 1
+rtr[2] <- rtr[2] + 1
+mzr <- fluo_ms1_peak[, c("mzmin", "mzmax")]
+fluo_ms1_chr <- chromatogram(swath_data, rt = rtr, mz = mzr)
+
+rtr <- fluo_ms2_peak[, c("rtmin", "rtmax")]
+rtr[, 1] <- rtr[, 1] - 1
+rtr[, 2] <- rtr[, 2] + 1
+mzr <- fluo_ms2_peak[, c("mzmin", "mzmax")]
+fluo_ms2_chr <- chromatogram(filterIsolationWindow(swath_data, mz = fluo_mz),
+                             rt = rtr, mz = mzr, msLevel = 2L)
+```
+
+We can now plot the extracted ion chromatogram of the MS1 and the extracted MS2
+data.
+
+```{r fluo-eic-plot, fig.width = 10, fig.height = 5, fig.cap = "Extracted ion chromatograms for Fluopicolide from MS1 (blue) and potentially related signal in MS2 (grey)."}
+plot(rtime(fluo_ms1_chr[1, 1]), intensity(fluo_ms1_chr[1, 1]),
+     xlab = "retention time [s]", ylab = "intensity", pch = 16,
+     ylim = c(0, 5000), col = "blue", type = "b", lwd = 2)
+#' Add data from all MS2 peaks
+tmp <- lapply(fluo_ms2_chr@.Data, function(z) points(rtime(z), intensity(z),
+                                                     col = "#00000080",
+                                                     type = "b", pch = 16))
+
+```
+
+Next we can calculate correlations between the peak shapes of each MS2
+chromatogram with the MS1 peak. We perform the correlation below for one of the
+MS2 chromatographic peaks. Note that the retention times will be different for
+the MS2 and MS1 chromatographic data and before performing the correlation
+analysis the data points between the two chromatograms have to be matched
+(aligned) which is performed by the `correlate` function automatically. See the
+help for the `align` method for more information on alignment options.
+
+```{r fluo-cor}
+correlate(fluo_ms2_chr[1, 1], fluo_ms1_chr[1, 1], align = "approx")
+```
+
+After identifying the MS2 chromatographic peaks with shapes of enough high
+similarity to the MS1 chromatographic peaks, an MS2 spectrum could be
+*reconstructed* based on the m/z and intensities of the MS2 chromatographic
+peaks.
+
+The `reconstructChromPeakSpectra` function performs the above analysis for each
+individual MS1 chromatographic peak in a SWATH data set. Below we use this
+function to reconstruct MS2 spectra for our example data.
 
 ```{r reconstruct-ms2, message = FALSE}
 ms2_sps <- reconstructChromPeakSpectra(swath_data, minCor = 0.9)
@@ -204,14 +293,10 @@ correlation coefficient of their chromatographic peak shape with the precursor's
 shape (`"ms2_peak_cor"`). Metadata column `"peak_id"` represents the identified
 of the MS1 chromatographic peak.
 
-As an example we evaluate the reconstructed MS2 spectrum of Fluopicolide (exact
-mass 381.965430576 and m/z of [M+H]+ adduct 382.972706). We first identify the
-MS1 chromatographic peak for the [M+H]+ adduct and use its peak ID to extract
-the reconstructed MS2 spectrum.
+We can now identify the reconstructed MS2 spectrum for Fluopicolide:
 
 ```{r fluo-reconstructed}
-chromPeaks(swath_data, mz = 382.972706, ppm = 10)
-fluopicolide_ms2 <- ms2_sps[mcols(ms2_sps)$peak_id == "CP39"]
+fluo_ms2 <- ms2_sps[mcols(ms2_sps)$peak_id == rownames(fluo_ms1_peak)]
 ```
 
 As a reference for Fluopicolide we create below an MS2 spectrum with data from
@@ -235,6 +320,30 @@ And calculate their similarity based on the dot product.
 ```{r fluo-dotproduct}
 compareSpectra(fluopicolide_ms2[[1]], metlin_ms2, binSize = 0.05,
                fun = "dotproduct")
+```
+
+```{r}
+dda_file <- system.file("TripleTOF-SWATH",
+                        "PestMix1_DDA.mzML",
+                        package = "msdata")
+
+dda_data <- readMSData(dda_file, mode = "onDisk")
+dda_data <- findChromPeaks(dda_data, param = cwp)
+
+dda_sps <- chromPeakSpectra(dda_data, method = "all")
+
+chromPeaks(dda_data, mz = fluopicolide_mz, ppm = 10)
+
+dda_sps <- dda_sps[mcols(dda_sps)$peak_id == "CP065"]
+
+tmp <- combineSpectra(dda_sps, minProp = 0.8,
+                      method = "consensusSpectrum", ppm = 5)
+
+plot(fluopicolide_ms2[[1]], tmp[[1]])
+plot(fluopicolide_ms2[[1]], metlin_ms2)
+plot(tmp[[1]], metlin_ms2)
+plot(dda_sps[[3]], fluopicolide_ms2[[1]])
+plot(dda_sps[[1]], fluopicolide_ms2[[1]])
 ```
 
 
