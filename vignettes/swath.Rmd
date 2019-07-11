@@ -312,17 +312,18 @@ metlin_ms2 <- new("Spectrum2", precursorMz = 382.9727,
 We next compare the two spectra with each other.
 
 ```{r fluo-mirrorplot, fig.cap = "Mirror plot comparing the reconstructed MS2 spectrum for Fluopicolide on top with the MS2 spectrum from Metlin (bottom)."}
-plot(fluopicolide_ms2[[1]], metlin_ms2)
+plot(fluo_ms2[[1]], metlin_ms2)
 ```
 
 And calculate their similarity based on the dot product.
 
 ```{r fluo-dotproduct}
-compareSpectra(fluopicolide_ms2[[1]], metlin_ms2, binSize = 0.05,
+compareSpectra(fluo_ms2[[1]], metlin_ms2, binSize = 0.05,
                fun = "dotproduct")
 ```
 
-```{r}
+```{r dda, eval = FALSE, echo = FALSE}
+## That chunk contains code to compare the SWATH with the DDA results.
 dda_file <- system.file("TripleTOF-SWATH",
                         "PestMix1_DDA.mzML",
                         package = "msdata")
@@ -339,11 +340,11 @@ dda_sps <- dda_sps[mcols(dda_sps)$peak_id == "CP065"]
 tmp <- combineSpectra(dda_sps, minProp = 0.8,
                       method = "consensusSpectrum", ppm = 5)
 
-plot(fluopicolide_ms2[[1]], tmp[[1]])
-plot(fluopicolide_ms2[[1]], metlin_ms2)
+plot(fluo_ms2[[1]], tmp[[1]])
+plot(fluo_ms2[[1]], metlin_ms2)
 plot(tmp[[1]], metlin_ms2)
-plot(dda_sps[[3]], fluopicolide_ms2[[1]])
-plot(dda_sps[[1]], fluopicolide_ms2[[1]])
+plot(dda_sps[[3]], fluo_ms2[[1]])
+plot(dda_sps[[1]], fluo_ms2[[1]])
 ```
 
 
