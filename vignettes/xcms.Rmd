@@ -573,7 +573,7 @@ pgp <- PeakGroupsParam(minFraction = 0.85)
 xdata <- adjustRtime(xdata, param = pgp)
 ```
 
-Note also that we could use the `adjustedRtimePeakGroups` method on the object
+Note also that we could use the `adjustRtimePeakGroups` method on the object
 before alignment to evaluate on which features (peak groups) the alignment would
 be performed. This can be useful to test different settings for the peak groups
 algorithm. Also, it is possible to manually select or define certain peak groups
