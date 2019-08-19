@@ -318,10 +318,9 @@ the version from the class. Slots values should exclusively be accessed
 These methods and classes are part of the updated and modernized
     \code{xcms} user interface which will eventually replace the
     \code{\link{findPeaks}} methods. It supports peak detection on
-    \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
-    objects (both defined in the \code{MSnbase} package). All of the settings
-    to the centWave algorithm can be passed with a \code{CentWaveParam}
-    object.
+    \code{\link{OnDiskMSnExp}} objects (defined in the \code{MSnbase}
+    package). All of the settings to the centWave algorithm can be passed
+    with a \code{CentWaveParam} object.
 }
 \examples{
 

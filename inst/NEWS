@@ -1,3 +1,9 @@
+Changes in version 3.7.2
+
+- Fix documentation (issue #401).
+- Add support for SWATH data analysis.
+
+
 Changes in version 3.7.1
 
 - Add correlate method for Chromatogram objects.
