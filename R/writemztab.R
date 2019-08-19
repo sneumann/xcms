@@ -222,7 +222,7 @@ writeMzTab <- function(object, filename) {
 ## Example for faahKO
 ##
 
-if (TRUE) {
+if (FALSE) {
     library(Rcpp) ## for rbind.fill
     library(plyr) ## for rbind.fill
     library(faahKO)
