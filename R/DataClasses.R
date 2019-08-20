@@ -500,10 +500,9 @@ NULL
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports peak detection on
-#'     \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
-#'     objects (both defined in the \code{MSnbase} package). All of the settings
-#'     to the centWave algorithm can be passed with a \code{CentWaveParam}
-#'     object.
+#'     \code{\link{OnDiskMSnExp}} objects (defined in the \code{MSnbase}
+#'     package). All of the settings to the centWave algorithm can be passed
+#'     with a \code{CentWaveParam} object.
 #'
 #' @family peak detection methods
 #'
@@ -717,8 +716,8 @@ setClass("CentWaveParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link{MSnExp}} and
-#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
+#'     detection on
+#'     \code{\link{OnDiskMSnExp}} objects (defined in the
 #'     \code{MSnbase} package). All of the settings to the matchedFilter
 #'     algorithm can be passed with a \code{MatchedFilterParam} object.
 #'
@@ -937,8 +936,8 @@ setClass("MatchedFilterParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link{MSnExp}} and
-#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
+#'     detection on
+#'     \code{\link{OnDiskMSnExp}} objects (defined in the
 #'     \code{MSnbase} package). All of the settings to the massifquant and
 #'     centWave algorithm can be passed with a \code{MassifquantParam} object.
 #'
@@ -1104,8 +1103,8 @@ setClass("MassifquantParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports peak detection on
-#'     \code{\link{MSnExp}} and \code{\link{OnDiskMSnExp}}
-#'     objects (both defined in the \code{MSnbase} package). All of the settings
+#'     \code{\link{OnDiskMSnExp}}
+#'     objects (defined in the \code{MSnbase} package). All of the settings
 #'     to the algorithm can be passed with a \code{MSWParam} object.
 #'
 #' @inheritParams findChromPeaks-centWave
@@ -1253,8 +1252,8 @@ setClass("MSWParam",
 #' @note These methods and classes are part of the updated and modernized
 #'     \code{xcms} user interface which will eventually replace the
 #'     \code{\link{findPeaks}} methods. It supports chromatographic peak
-#'     detection on \code{\link{MSnExp}} and
-#'     \code{\link{OnDiskMSnExp}} objects (both defined in the
+#'     detection on
+#'     \code{\link{OnDiskMSnExp}} objects (defined in the
 #'     \code{MSnbase} package). All of the settings to the algorithm can be
 #'     passed with a \code{CentWavePredIsoParam} object.
 #'

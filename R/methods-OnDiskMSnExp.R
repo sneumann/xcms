@@ -621,3 +621,26 @@ setMethod("hasAdjustedRtime", signature(object = "OnDiskMSnExp"),
           function(object)
               FALSE
           )
+
+#' @title Extract isolation window target m/z definition
+#'
+#' @aliases isolationWindowTargetMz
+#'
+#' @description
+#'
+#' `isolationWindowTargetMz` extracts the isolation window target m/z definition
+#' for each spectrum in `object`.
+#'
+#' @param object [OnDiskMSnExp-class] object.
+#'
+#' @return a `numeric` of length equal to the number of spectra in `object` with
+#'     the isolation window target m/z or `NA` if not specified/available.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+setMethod("isolationWindowTargetMz", "OnDiskMSnExp", function(object) {
+    if ("isolationWindowTargetMZ" %in% colnames(fData(object)))
+        return(fData(object)$isolationWindowTargetMZ)
+    rep(NA_real_, length(object))
+})

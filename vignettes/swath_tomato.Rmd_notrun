@@ -1,0 +1,67 @@
+---
+title: "SWATH data analysis with xcms (Tomato)"
+package: xcms
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{SWATH data analysis with xcms (Tomato)}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
+  %\VignettePackage{xcms}
+  %\VignetteKeywords{mass spectrometry, metabolomics}
+bibliography: references.bib
+csl: biomed-central.csl
+references:
+- id: dummy
+  title: no title
+  author:
+  - family: noname
+    given: noname
+---
+
+```{r biocstyle, echo = FALSE, results = "asis" }
+BiocStyle::markdown()
+```
+
+**Package**: `r Biocpkg("xcms")`<br />
+**Authors**: Johannes Rainer, Michael Witting<br />
+**Modified**: `r file.info("swath_tomato.Rmd")$mtime`<br />
+**Compiled**: `r date()`
+
+```{r init, message = FALSE, echo = FALSE, results = "hide" }
+## Silently loading all packages
+library(BiocStyle)
+library(xcms)
+library(pander)
+register(SerialParam())
+```
+
+
+```{r metabolites}
+library(Risa)
+ISAmtbls297 <- readISAtab(find.package("mtbls297"))
+assay <- ISAmtbls297@assay.tabs[[1]]
+msfiles <- paste(find.package("mtbls297"), "mzML",
+                 assay@assay.file$"Derived Spectral Data File",
+                 sep="/")
+
+tomato <- readMSData(msfiles, mode = "onDisk")
+
+table(msLevel(tomato))
+head(isolationWindowLowerMz(tomato))
+head(isolationWindowUpperMz(tomato))
+
+head(fData(tomato)[, c("isolationWindowTargetMZ", "isolationWindowLowerOffset",
+                       "isolationWindowUpperOffset", "msLevel", "retentionTime")])
+
+cwp <- CentWaveParam(ppm = 25, peakwidth = c(10, 20), snthresh = 10,
+                     prefilter = c(3, 100))
+tomato <- findChromPeaks(tomato, cwp)
+tomato <- findChromPeaksIsolationWindow(tomato, cwp)
+
+chromPeakData(tomato)
+table(chromPeakData(tomato)$isolationWindow)
+
+```

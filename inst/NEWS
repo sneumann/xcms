@@ -1,5 +1,16 @@
+Changes in version 3.7.2
+
+- Fix documentation (issue #401).
+- Add support for SWATH data analysis.
+
+
 Changes in version 3.7.1
 
+- Add correlate method for Chromatogram objects.
+- Add parameter lwd to plotAdjustedRtime.
+- Add align method for Chromatogram objects.
+- Add findChromPeaksIsolationWindow to enable chromatographic peak detection
+  in isolation windows.
 - Fix issue in chromPeakSpectra with method = "signal".
 - chromPeakSpectra and featureSpectra return now MS2 spectra with an precursor
   m/z >= mzmin, <= mzmax and retention time >= rtmin, <= rtmax.

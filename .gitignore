@@ -18,4 +18,6 @@ src/pwiz/
 readme.org
 local_data/
 .Rproj.user
-.xcms.Rproj
+
+.Rhistory
+xcms.Rproj

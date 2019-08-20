@@ -71,7 +71,16 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 xs_1 <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
                 noise = 10000, snthresh = 50)
 
+## Pesticide data
+fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
+pest_swth <- readMSData(fl, mode = "onDisk")
+cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
+                     peakwidth = c(3, 20))
+pest_swth <- findChromPeaks(pest_swth, param = cwp)
+pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp)
 
-
+fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
+pest_dda <- readMSData(fl, mode = "onDisk")
+pest_dda <- findChromPeaks(pest_dda, param = cwp)
 
 test_check("xcms")

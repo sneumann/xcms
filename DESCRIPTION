@@ -1,6 +1,5 @@
 Package: xcms
-Version: 3.7.1
-Date: 2019-05-14
+Version: 3.7.2
 Title: LC/MS and GC/MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin", family = "Smith",
@@ -10,7 +9,7 @@ Authors@R: c(
 	   email = "rtautenh@gmail.com",
 	   role = "ctb"),
 	   person(given = "Steffen", family = "Neumann",
-	   email = "sneumann@ipb-falle.de",
+	   email = "sneumann@ipb-halle.de",
 	   role = c("aut", "cre"),
 	   comment = c(ORCID = "0000-0002-7899-7192")),
 	   person(given = "Paul", family = "Benton",
@@ -22,14 +21,18 @@ Authors@R: c(
 	   person(given = "Johannes", family = "Rainer",
 	   email = "johannes.rainer@eurac.edu",
 	   role = "ctb",
-	   comment = c(ORCID = "0000-0002-6977-7147"))
+	   comment = c(ORCID = "0000-0002-6977-7147")),
+	   person(given = "Michael", family = "Witting",
+	   email = "michael.witting@helmholtz-muenchen.de",
+	   role = "ctb")
 	   )
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
     Steffen Neumann <sneumann@ipb-halle.de>,
     Paul Benton <hpbenton@scripps.edu>,
     Christopher Conley <cjconley@ucdavis.edu>,
-    Johannes Rainer <Johannes.Rainer@eurac.edu>
+    Johannes Rainer <Johannes.Rainer@eurac.edu>,
+    Michael Witting <michael.witting@helmholtz-muenchen.de>
 Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
 Depends:
     R (>= 2.14.0),
@@ -48,13 +51,14 @@ Imports:
     multtest,
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
-    robustbase
+    robustbase,
+    IRanges
 Suggests:
     BiocStyle,
     caTools,
     knitr (>= 1.1.0),
     faahKO,
-    msdata,
+    msdata (>= 0.25.1),
     ncdf4,
     rgl,
     microbenchmark,
@@ -94,6 +98,7 @@ Collate:
     'functions-Params.R'
     'do_groupChromPeaks-functions.R'
     'fastMatch.R'
+    'functions-Chromatogram.R'
     'functions-utils.R'
     'functions-IO.R'
     'functions-OnDiskMSnExp.R'
@@ -105,6 +110,7 @@ Collate:
     'functions-xcmsFragments.R'
     'functions-xcmsRaw.R'
     'functions-xcmsSet.R'
+    'functions-xcmsSwath.R'
     'init.R'
     'matchpeaks.R'
     'methods-Chromatogram.R'

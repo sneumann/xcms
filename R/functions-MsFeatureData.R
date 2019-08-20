@@ -188,7 +188,7 @@ validateMsFeatureData <- function(x) {
             featureDefinitions(new_e) <- .update_feature_definitions(
                 featureDefinitions(x), rownames(chromPeaks(x)),
                 rownames(chromPeaks(new_e)))
-        else featureDefinitions(new_e) <- featureDefinitions(xs)
+        else featureDefinitions(new_e) <- featureDefinitions(x)
         if (nrow(featureDefinitions(new_e)) == 0)
             rm(list = "featureDefinitions", envir = new_e)
     }

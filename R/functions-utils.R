@@ -273,8 +273,9 @@ useOriginalCode <- function(x) {
 #' @param x integer(1) with the number of IDs that should be generated.
 #'
 #' @noRd
-.featureIDs <- function(x, prefix = "FT") {
-    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"), 1:x)
+.featureIDs <- function(x, prefix = "FT", from = 1L) {
+    sprintf(paste0(prefix, "%0", ceiling(log10(x + 1L)), "d"),
+            seq(from = from, length.out = x))
 }
 
 ## #' @description Expands stretches of TRUE values in \code{x} by one on both
@@ -667,17 +668,70 @@ rowRla <- function(x, group, log.transform = TRUE) {
     cn <- union(cnx, cny)
     mis_col <- setdiff(cn, colnames(x))
     for (mc in mis_col) {
-        x <- cbind(x, tmp = as(NA, class(y[, mc])))
+        if (is.factor(y[, mc]))
+            x <- cbind(x, tmp = as.factor(NA))
+        else
+            x <- cbind(x, tmp = as(NA, class(y[, mc])))
     }
     colnames(x) <- c(cnx, mis_col)
     mis_col <- setdiff(cn, colnames(y))
     for (mc in mis_col) {
-        y <- cbind(y, tmp = as(NA, class(x[, mc])))
+        if (is.factor(x[, mc]))
+            y <- cbind(y, tmp = as.factor(NA))
+        else
+            y <- cbind(y, tmp = as(NA, class(x[, mc])))
     }
     colnames(y) <- c(cny, mis_col)
     rbind(x, y[, colnames(x)])
 }
 
+#' @title Match closest values between vectors
+#'
+#' @description
+#'
+#' Match values in `x` to their closests counterpart in `y` if their difference
+#' is smaller than `maxDiff`. which is by defaul `min(mean(diff(x)), mean(diff(y)))`.
+#'
+#' @param x `numeric` of values to find closest matches in `y`.
+#'
+#' @param y `numeric` of values to match against.
+#'
+#' @return `integer` with the indices in `y` where `x` matches. An `NA` is
+#'     reported if for a value in `x` no value in `y` with a difference smaller
+#'     than `maxDiff` can be found.
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' a <- 1:10
+#' b <- c(3.1, 3.2, 4.3, 7.8)
+#'
+#' .match_closest(b, a)
+#'
+#' a <- c(1, 4, 7, 10)
+#' b <- c(2.2, 2.3, 2.4, 2.5)
+#' .match_closest(a, b)
+#'
+#' a <- c(1, 2.11, 3, 4, 5)
+#' .match_closest(a, b)
+#'
+#' a <- c(1, 1.5, 2, 2.5, 3, 3.5, 4)
+#' b <- c(1.7, 2.3, 3)
+#' .match_closest(a, b)
+#'
+#' .match_closest(b, a)
+.match_closest <- function(x, y, maxDiff = min(mean(diff(x)), mean(diff(y)))) {
+    vapply(x, function(a) {
+        diffs <- abs(y - a)
+        idx <- intersect(which(diffs <= maxDiff), which.min(diffs))
+        if (length(idx))
+            idx
+        else NA_integer_
+    }, integer(1))
+}
 
 ## #' Define a unique identifier for each chromatographic peak within the chrom
 ## #' peak matrix by concatenating as many columns as needed.

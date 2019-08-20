@@ -272,3 +272,21 @@ test_that(".rbind_fill works", {
     expect_equal(res$a, c(1:4, NA, NA, NA, NA))
     expect_equal(res$b, rep(c(FALSE, TRUE), each = 4))
 })
+
+test_that(".match_closest works", {
+    a <- 1:10
+    b <- c(3, 6, 8)
+    res <- .match_closest(b, a)
+    expect_equal(res, c(3, 6, 8))
+    res <- .match_closest(a, b, maxDiff = 0)
+    expect_equal(res, match(a, b))
+    res <- .match_closest(a, b)
+    expect_equal(res, c(NA, 1, 1, 1, 2, 2, 2, 3, 3, NA))
+
+    a <- c(1, 1.5, 2, 2.5, 3, 3.5, 4)
+    b <- c(1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.91)
+    res <- .match_closest(b, a)
+    expect_equal(res, c(NA, 2, 2, 2, NA, NA, 3))
+    res <- .match_closest(a, b)
+    expect_equal(res, c(NA, 3, 7, NA, NA, NA, NA))
+})
