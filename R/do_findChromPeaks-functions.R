@@ -173,8 +173,6 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                            noise = 0, ## noise.local=TRUE,
                            sleep = 0, verboseColumns = FALSE, roiList = list(),
                            firstBaselineCheck = TRUE, roiScales = NULL) {
-    ## TODO @jo Ensure in upstream method that data is in centroided mode!
-    ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
@@ -723,8 +721,6 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                           firstBaselineCheck = TRUE, roiScales = NULL) {
     if (sleep)
         warning("Parameter 'sleep' is defunct")
-    ## TODO @jo Ensure in upstream method that data is in centroided mode!
-    ## TODO @jo Ensure the upstream method did eventual sub-setting on scanrange
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",

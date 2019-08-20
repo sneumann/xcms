@@ -571,7 +571,7 @@ remakeTIC<-function(object){
     baselevel <- pi$baselevel
     basespace <- pi$basespace
     vps <- diff(c(object@scanindex, length(object@env$mz)))
-    
+
     cat("method: ", method, "\n")
     cat("step: ", step, "\n")
     ## Create the profile matrix:
@@ -737,7 +737,7 @@ msn2xcmsRaw <- function(xmsn) {
     x <- deepCopy(xmsn)
 
     x@tic <- x@msnAcquisitionNum
-                                        
+
     x@scantime <- x@msnRt          # Fake time in secs
     x@acquisitionNum <- x@msnAcquisitionNum
     x@scanindex <- x@msnScanindex
@@ -746,4 +746,3 @@ msn2xcmsRaw <- function(xmsn) {
     x@env$intensity <- x@env$msnIntensity
     invisible(x)
 }
-
