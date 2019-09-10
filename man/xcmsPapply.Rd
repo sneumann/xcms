@@ -43,19 +43,12 @@
   \code{xcmsPapply} is a modified version of the papply function from package papply 0.2 (Duane Currie).
   Parts of the slave function were wrapped in try() to make it failsafe and progress output was added.
 
-  Make sure \code{Rmpi} was installed properly by executing the example below.
-  \code{Rmpi} was tested with
-  \itemize{
-  \item OpenMPI : Unix, \url{http://www.open-mpi.org/}, don't forget to export \code{MPI_ROOT} before installing Rmpi e.g. \code{export MPI_ROOT=/usr/lib/openmpi}
-  \item DeinoMPI : Windows, \url{http://mpi.deino.net/}, also see \url{http://www.stats.uwo.ca/faculty/yu/Rmpi/}
-  }
 }
 
 \value{
   A list of return values from papply\_action.  Each value corresponds to
   the element of arg\_sets used as a parameter to papply\_action
 }
-\references{ \url{http://ace.acadiau.ca/math/ACMMaC/software/papply/} }
 \author{ Duane Currie <duane.currie@acadiau.ca>, modified by Ralf Tautenhahn <rtautenh@ipb-halle.de>. }
 \note{ Does not support distributing recursive calls in parallel.  If
   papply is used inside papply\_action, it will call a non-parallel

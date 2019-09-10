@@ -2,7 +2,7 @@ Package: xcms
 Version: 3.7.2
 Title: LC/MS and GC/MS Data Analysis
 Authors@R: c(
-	   person(given = "Colin", family = "Smith",
+	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",
 	   role = "ctb"),
 	   person(given = "Ralf", family = "Tautenhahn",
@@ -76,7 +76,7 @@ Description: Framework for processing and visualization of chromatographically
     mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
     analyte profiling.
 License: GPL (>= 2) + file LICENSE
-URL: http://metlin.scripps.edu/download/ and https://github.com/sneumann/xcms
+URL: https://github.com/sneumann/xcms
 VignetteBuilder: knitr
 BugReports: https://github.com/sneumann/xcms/issues/new
 biocViews: ImmunoOncology, MassSpectrometry, Metabolomics

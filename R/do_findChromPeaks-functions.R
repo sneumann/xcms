@@ -2775,7 +2775,7 @@ do_findChromPeaks_addPredIsoROIs <-
             ## remove empty area
             ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
             ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
-            no_area <- no_mz_width || no_rt_width
+            no_area <- no_mz_width | no_rt_width
             if (any(no_area))
                 feats_2 <- feats_2[!no_area, , drop = FALSE]
         }
