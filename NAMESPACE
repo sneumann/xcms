@@ -1,4 +1,4 @@
-useDynLib(xcms)
+useDynLib(xcms, .registration = TRUE)
 
 importFrom("utils", "capture.output")
 import("methods")
