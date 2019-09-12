@@ -216,15 +216,8 @@
 	}
   }
 }
-\references{
-  A parallel effort in metabolite profiling data sharing:
-  \url{http://metlin.scripps.edu/}
-}
 \author{Colin A. Smith, \email{csmith@scripps.edu},
   Johannes Rainer \email{johannes.rainer@eurac.edu}}
-\note{
-  No notes yet.
-}
 \seealso{
   \code{\link{xcmsRaw}}, \code{\link{subset-xcmsRaw}} for subsetting by spectra.
 }

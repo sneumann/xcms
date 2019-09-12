@@ -3,7 +3,7 @@ r: bioc-devel
 cache:
   packages: true
 sudo: required
-warnings_are_errors: true
+warnings_are_errors: false
 dist: trusty
 
 # unfortunately apt packages are not cached
@@ -49,9 +49,10 @@ jobs:
       before_script: rm -rf vignettes
       install: skip
       name: "examples"
-    - r_build_args: --no-build-vignettes --no-manual
-      r_check_args: --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples
-      install: skip
+    - install: skip
+      script:
+        - travis_wait 10 R CMD build --no-build-vignettes --no-manual .
+        - travis_wait 40 R CMD check --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples xcms*tar.gz
       before_script: rm -rf vignettes
       name: "tests"
     - r_build_args:
@@ -61,7 +62,8 @@ jobs:
     - stage: "CodeCov"
       install: skip
       script:
-        - travis_wait 20 Rscript -e 'covr::codecov()'
+        - R CMD INSTALL .
+        - travis_wait 40 Rscript -e 'covr::codecov()'
       name: "codecov"
       on:
         branch: master

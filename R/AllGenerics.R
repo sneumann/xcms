@@ -177,6 +177,8 @@ setGeneric("hasFeatures", function(object, ...)
     standardGeneric("hasFeatures"))
 setGeneric("hasChromPeaks", function(object, ...)
     standardGeneric("hasChromPeaks"))
+setGeneric("hasFilledChromPeaks", function(object, ...)
+    standardGeneric("hasFilledChromPeaks"))
 
 
 ## I

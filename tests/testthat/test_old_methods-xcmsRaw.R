@@ -85,7 +85,7 @@ test_that("findPeaks.addPredictedIsotopeFeatures,xcmsRaw works", {
     expect_equal(p1, p1_2)
     p2_2 <- findPeaks.addPredictedIsotopeFeatures(
         object = xr, xcmsPeaks = p1_2, noise = 10000)
-    options(originalCentWave = TRUE)    
+    options(originalCentWave = TRUE)
 })
 
 test_that("findPeaks,xcmsRaw massifquant works", {

@@ -16,15 +16,20 @@
 }
 \usage{
 profBin(x, y, num, xstart = min(x), xend = max(x), param = list())
-profBinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profBinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE,
+         param = list())
 profBinLin(x, y, num, xstart = min(x), xend = max(x), param = list())
-profBinLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profBinLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE,
+            param = list())
 profBinLinBase(x, y, num, xstart = min(x), xend = max(x), param = list())
-profBinLinBaseM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profBinLinBaseM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE,
+                param = list())
 profIntLin(x, y, num, xstart = min(x), xend = max(x), param = list())
-profIntLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profIntLinM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE,
+            param = list())
 profMaxIdx(x, y, num, xstart = min(x), xend = max(x), param = list())
-profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param = list())
+profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE,
+            param = list())
 }
 \arguments{
   \item{x}{numeric vector of value positions}
@@ -84,17 +89,17 @@ profMaxIdxM(x, y, zidx, num, xstart = min(x), xend = max(x), NAOK = FALSE, param
   is double.
 }
 \examples{
-	\dontrun{
-		library(faahKO)
-		cdfpath <- system.file("cdf", package = "faahKO")
-		cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
-		xraw <- xcmsRaw(cdffiles[1])
+\dontrun{
+    library(faahKO)
+    cdfpath <- system.file("cdf", package = "faahKO")
+    cdffiles <- list.files(cdfpath, recursive = TRUE, full.names = TRUE)
+    xraw <- xcmsRaw(cdffiles[1])
 
-		image(xraw) ## not how with intLin the intensity's blur
-		profMethod(xraw) <- "bin"
-		image(xraw) ## now with 'bin' there is no blurring good for centroid data
-		##try binlinbase for profile data
-	}
+    image(xraw) ## not how with intLin the intensity's blur
+    profMethod(xraw) <- "bin"
+    image(xraw) ## now with 'bin' there is no blurring good for centroid data
+    ##try binlinbase for profile data
+}
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
 \keyword{manip}

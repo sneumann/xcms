@@ -50,30 +50,21 @@ test_that("do_findChromPeaks_centWave works", {
 })
 
 test_that("do_findChromPeaks_centWaveWithPredIsoROIs works", {
-    xr <- deepCopy(faahko_xr_1)
-    mzVals <- xr@env$mz
-    intVals <- xr@env$intensity
+    mzVals <- faahko_xr_1@env$mz
+    intVals <- faahko_xr_1@env$intensity
     ## initial centWave:
-    valsPerSpect <- diff(c(xr@scanindex, length(mzVals)))
-    feats_1 <- do_findChromPeaks_centWave(mz = mzVals, int = intVals,
-                                          scantime = xr@scantime,
-                                          valsPerSpect = valsPerSpect,
-                                          noise = 1500, verboseColumns = TRUE)
-    feats_2 <- do_findChromPeaks_addPredIsoROIs(mz = mzVals,
-                                                int = intVals,
-                                                scantime = xr@scantime,
-                                                valsPerSpect = valsPerSpect,
-                                                noise = 1500,
-                                                peaks. = feats_1)
-    all_f <- do_findChromPeaks_centWaveWithPredIsoROIs(mz = mzVals,
-                                                       int = intVals,
-                                                       scantime = xr@scantime,
-                                                       valsPerSpect = valsPerSpect,
-                                                       noise = 1500)
-    ## Comparisons.
+    valsPerSpect <- diff(c(faahko_xr_1@scanindex, length(mzVals)))
+    feats_1 <- do_findChromPeaks_centWave(
+        mz = mzVals, int = intVals, scantime = faahko_xr_1@scantime,
+        valsPerSpect = valsPerSpect, noise = 1500, verboseColumns = TRUE)
+    feats_2 <- do_findChromPeaks_addPredIsoROIs(
+        mz = mzVals, int = intVals, scantime = faahko_xr_1@scantime,
+        valsPerSpect = valsPerSpect, noise = 1500, peaks. = feats_1)
+    expect_true(nrow(feats_1) < nrow(feats_2))
+    all_f <- do_findChromPeaks_centWaveWithPredIsoROIs(
+        mz = mzVals, int = intVals, scantime = faahko_xr_1@scantime,
+        valsPerSpect = valsPerSpect, noise = 1500)
     expect_equal(all_f, feats_2)
-    ## old_all <- xcms:::.centWaveWithPredictedIsotopeROIs(xr, noise = 1500)
-    ## checkEquals(all_f, old_all@.Data)
 })
 
 test_that("do_findChromPeaks_massifquant works", {

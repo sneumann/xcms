@@ -39,15 +39,16 @@ findneutral(object, find, ppmE=25, print=TRUE)
 \code{\link{findMZ}},
 }
 \examples{
-	\dontrun{
-	library(msdata)
-	mzdatapath <- system.file("iontrap", package = "msdata")
-	mzdatafiles<-list.files(mzdatapath, pattern = "extracted.mzData", recursive = TRUE, full.names = TRUE)
-	xs <- xcmsSet(mzdatafiles, method = "MS1")
-	##takes only one file from the file set
-	xfrag <- xcmsFragments(xs)
-	found<-findneutral(xfrag, 58.1455, 50)
-	}
+\dontrun{
+    library(msdata)
+    mzdatapath <- system.file("iontrap", package = "msdata")
+    mzdatafiles<-list.files(mzdatapath, pattern = "extracted.mzData",
+                            recursive = TRUE, full.names = TRUE)
+    xs <- xcmsSet(mzdatafiles, method = "MS1")
+    ##takes only one file from the file set
+    xfrag <- xcmsFragments(xs)
+    found<-findneutral(xfrag, 58.1455, 50)
+}
 
 }
 \author{H. Paul Benton, \email{hpbenton@scripps.edu}}

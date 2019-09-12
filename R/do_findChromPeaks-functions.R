@@ -2772,19 +2772,18 @@ do_findChromPeaks_addPredIsoROIs <-
                 feats_2 <- feats_2[!any_na, , drop = FALSE]
             no_mz_width <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0
             no_rt_width <- (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
-            ## remove empty area
-            ## no_area <- (feats_2[, "mzmax"] - feats_2[, "mzmin"]) == 0 ||
-            ##     (feats_2[, "rtmax"] - feats_2[, "rtmin"]) == 0
-            no_area <- no_mz_width || no_rt_width
+            no_area <- no_mz_width | no_rt_width
             if (any(no_area))
                 feats_2 <- feats_2[!no_area, , drop = FALSE]
         }
         ## 4) Check and remove ROIs overlapping with peaks.
         if (nrow(feats_2) > 0) {
-            ## Comparing each ROI with each peak; slightly modified from the original
-            ## code in which we prevent calling apply followed by two lapply.
+            ## Comparing each ROI with each peak; slightly modified from the
+            ## original code in which we prevent calling apply followed by
+            ## two lapply.
+            ## Update: we're no longer removing original peaks, as they are
+            ## themselfs overlapping, thus we would remove too many.
             removeROIs <- rep(FALSE, nrow(feats_2))
-            removeFeats <- rep(FALSE, nrow(peaks.))
             overlapProportionThreshold <- 0.01
             for (i in 1:nrow(feats_2)) {
                 ## Compare ROI i with all peaks (peaks) and check if its
@@ -2804,26 +2803,23 @@ do_findChromPeaks_addPredIsoROIs <-
                 overlappingRt <- abs(peakRtCenter - roiRtCenter) <=
                     (roiRtRadius + peakRtRadius)
                 is_overlapping <- overlappingMz & overlappingRt
-                ## Now determine whether we remove the ROI or the peak, depending
-                ## on the raw signal intensity.
+                ## Now determine whether we remove the ROI or the peak,
+                ## depending on the raw signal intensity.
                 if (any(is_overlapping)) {
-                    if (any(peaks.[is_overlapping, "into"] > feats_2[i, "into"])) {
+                    if (any(peaks.[is_overlapping, "into"] >
+                            feats_2[i, "into"]))
                         removeROIs[i] <- TRUE
-                    } else {
-                        removeFeats[is_overlapping] <- TRUE
-                    }
                 }
             }
             feats_2 <- feats_2[!removeROIs, , drop = FALSE]
-            peaks. <- peaks.[!removeFeats, , drop = FALSE]
         }
         if (!verboseColumns)
             peaks. <- peaks.[ , c("mz", "mzmin", "mzmax", "rt", "rtmin",
                                   "rtmax", "into", "intb", "maxo", "sn")]
-        if (nrow(feats_2) == 0)
-            return(peaks.)
+        if (nrow(feats_2))
+            rbind(peaks., feats_2)
         else
-            return(rbind(peaks., feats_2))
+            peaks.
     }
 
 do_findChromPeaks_addPredIsoROIs_mod <-

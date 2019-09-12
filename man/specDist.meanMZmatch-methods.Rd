@@ -32,7 +32,8 @@ were found) the return-value is NA.
 	\item{matchrate}{the weight for value two}
 }
 \usage{
-specDist.meanMZmatch(peakTable1, peakTable2, matchdist=1, matchrate=1, mzabs=0.001, mzppm=10, symmetric=TRUE)
+specDist.meanMZmatch(peakTable1, peakTable2, matchdist=1, matchrate=1,
+                     mzabs=0.001, mzppm=10, symmetric=TRUE)
 }
 \author{Joachim Kutzera, \email{jkutzer@ipb-halle.de}}
 \keyword{methods}

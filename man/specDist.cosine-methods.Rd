@@ -3,16 +3,17 @@
 \alias{specDist.cosine}
 \alias{specDist.cosine,matrix,matrix-method}
 \title{a Distance function based on matching peaks}
-\description{This method calculates the distance of two sets of peaks using the cosine-distance.}
+\description{This method calculates the distance of two sets of peaks
+  using the cosine-distance.}
 \section{Methods}{
 \describe{
-\item{peakTable1 = "matrix", peakTable2 = "matrix"}{
-  \code{
-    specDist.cosine(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
-                 mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
-                 symmetric = FALSE)
+  \item{peakTable1 = "matrix", peakTable2 = "matrix"}{
+    \code{
+      specDist.cosine(peakTable1, peakTable2, mzabs = 0.001, mzppm = 10,
+      mzExp = 0.6, intExp = 3, nPdiff = 2, nPmin = 8,
+      symmetric = FALSE)
     }
-}
+  }
 }}
 \details{
 The result is the cosine-distance of the product from weighted factors
@@ -35,7 +36,8 @@ peaks were found) the return-value is NA.
 	\item{nPmin}{the minimum absolute sum of peaks from both praktables}
 }
 \usage{
-specDist.cosine(peakTable1, peakTable2, mzabs=0.001, mzppm=10, mzExp=0.6, intExp=3, nPdiff=2, nPmin=8, symmetric=FALSE)
+specDist.cosine(peakTable1, peakTable2, mzabs=0.001, mzppm=10, mzExp=0.6,
+                intExp=3, nPdiff=2, nPmin=8, symmetric=FALSE)
 }
 \author{Joachim Kutzera, \email{jkutzer@ipb-halle.de}}
 \keyword{methods}

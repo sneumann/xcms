@@ -312,27 +312,27 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 #' @title Peak detection in the chromatographic time domain
 #'
 #' @aliases findPeaks.matchedFilter
-#' 
+#'
 #' @description Find peaks in the chromatographic time domain of the
 #'     profile matrix. For more details see
 #'     \code{\link{do_findChromPeaks_matchedFilter}}.
-#' 
+#'
 #' @param object The \code{\linkS4class{xcmsRaw}} object on which peak detection
 #'     should be performed.
-#' 
+#'
 #' @inheritParams findChromPeaks-matchedFilter
-#' 
+#'
 #' @param step numeric(1) specifying the width of the bins/slices in m/z
 #'     dimension.
-#' 
+#'
 #' @param sleep (DEPRECATED). The use of this parameter is highly discouraged,
 #'     as it could cause problems in parallel processing mode.
-#' 
+#'
 #' @param scanrange Numeric vector defining the range of scans to which the
 #'     original \code{object} should be sub-setted before peak detection.
-#' 
+#'
 #' @author Colin A. Smith
-#' 
+#'
 #' @return A matrix, each row representing an intentified chromatographic peak,
 #'     with columns:
 #'     \describe{
@@ -350,14 +350,14 @@ setMethod("findPeaks.matchedFilter_orig", "xcmsRaw",
 #'     \item{i}{Rank of peak in merged EIC (\code{<= max}).}
 #'     \item{sn}{Signal to noise ratio of the peak.}
 #'     }
-#' 
+#'
 #' @references
 #'     Colin A. Smith, Elizabeth J. Want, Grace O'Maille, Ruben Abagyan and
 #'     Gary Siuzdak. "XCMS: Processing Mass Spectrometry Data for Metabolite
 #'     Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
 #'     \emph{Anal. Chem.} 2006, 78:779-787.
 #'     @family Old peak detection methods
-#' 
+#'
 #' @seealso \code{\link{matchedFilter}} for the new user interface.
 #'     \code{\linkS4class{xcmsRaw}},
 #'     \code{\link{do_findChromPeaks_matchedFilter}} for the core function
@@ -585,8 +585,8 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
                               xcmsPeaks, snthresh = 6.25, maxcharge = 3,
                               maxiso = 5, mzIntervalExtension = TRUE) {
               if (!isCentroided(object))
-                  warning("It looks like this file is in profile mode. centWave",
-                          " can process only centroid mode data !\n")
+                  warning("It looks like this file is in profile mode. ",
+                          "centWave works best for centroided data")
 
               ## Sub-set the xcmsRaw based on scanrange
               if (length(scanrange) < 2) {
@@ -601,28 +601,20 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
               }
               object <- object[scanrange[1]:scanrange[2]]
               if(class(xcmsPeaks) != "xcmsPeaks")
-                  stop("Pparameter >xcmsPeaks< is not of class 'xcmsPeaks'!\n")
+                  stop("Parameter 'xcmsPeaks' is not of class 'xcmsPeaks'")
 
               vps <- diff(c(object@scanindex, length(object@env$mz)))
-              res <- do_findChromPeaks_addPredIsoROIs(mz = object@env$mz,
-                                                      int = object@env$intensity,
-                                                      scantime = object@scantime,
-                                                      valsPerSpect = vps,
-                                                      ppm = ppm,
-                                                      peakwidth = peakwidth,
-                                                      snthresh = snthresh,
-                                                      prefilter = prefilter,
-                                                      mzCenterFun = mzCenterFun,
-                                                      integrate = integrate,
-                                                      mzdiff = mzdiff,
-                                                      fitgauss = fitgauss,
-                                                      noise = noise,
-                                                      verboseColumns = verbose.columns,
-                                                      peaks. = xcmsPeaks@.Data,
-                                                      maxCharge = maxcharge,
-                                                      maxIso = maxiso,
-                                                      mzIntervalExtension = mzIntervalExtension
-                                                      )
+              res <- do_findChromPeaks_addPredIsoROIs(
+                  mz = object@env$mz, int = object@env$intensity,
+                  scantime = object@scantime, valsPerSpect = vps,
+                  ppm = ppm, peakwidth = peakwidth,
+                  snthresh = snthresh, prefilter = prefilter,
+                  mzCenterFun = mzCenterFun, integrate = integrate,
+                  mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
+                  verboseColumns = verbose.columns, peaks. = xcmsPeaks@.Data,
+                  maxCharge = maxcharge, maxIso = maxiso,
+                  mzIntervalExtension = mzIntervalExtension
+              )
               invisible(new("xcmsPeaks", res))
           })
 
@@ -630,7 +622,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 ############################################################
 ## findPeaks.MSW
 #' @title Peak detection for single-spectrum non-chromatography MS data
-#' 
+#'
 #' @aliases findPeaks.MSW
 #'
 #' @description This method performs peak detection in mass spectrometry
@@ -642,12 +634,12 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #'     \code{\link{tuneInPeakInfo}} functions.
 #'
 #' @inheritParams findPeaks-MSW
-#' 
+#'
 #' @inheritParams findChromPeaks-centWave
-#' 
+#'
 #' @param object The \code{\linkS4class{xcmsRaw}} object on which peak
 #'     detection should be performed.
-#' 
+#'
 #' @param verbose.columns Logical whether additional peak meta data columns
 #'     should be returned.
 #'
@@ -666,7 +658,7 @@ setMethod("findPeaks.addPredictedIsotopeFeatures",
 #'     \item{maxf}{Maximum MSW-filter response of the peak.}
 #'     \item{sn}{Signal to noise ratio.}
 #'     }
-#' 
+#'
 #' @seealso \code{\link{MSW}} for the new user interface,
 #'     \code{\link{do_findPeaks_MSW}} for the downstream analysis
 #'     function or \code{\link{peakDetectionCWT}} from the
@@ -1932,7 +1924,7 @@ setMethod("stitch.xml", "xcmsRaw", function(object, lockMass) {
     ## Remove the last lock mass if it is too close by the end
     if ((lockMass[length(lockMass)] + 2) > length(ob@scanindex))
         lockMass <- lockMass[1:(length(lockMass) - 1)]
-    
+
     ## If the number of lockMass values is not even splitting them into a
     ## two-column matrix is not OK (causes also the first lockMass spectrum to
     ## be overwritten twice. That's to get rid of the warning in issue #173.
@@ -2136,7 +2128,7 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 ## [
 ## Subset by scan.
 #' @title Subset an xcmsRaw object by scans
-#' 
+#'
 #' @aliases subset-xcmsRaw
 #'
 #' @description Subset an \code{\linkS4class{xcmsRaw}} object by scans. The
@@ -2149,22 +2141,22 @@ setMethod("stitch.netCDF.new", "xcmsRaw", function(object, lockMass) {
 #'     vector are supported. If not ordered, argument \code{i} is sorted
 #'     automatically. Indices which are larger than the total number of scans
 #'     are discarded.
-#' 
+#'
 #' @param x The \code{\linkS4class{xcmsRaw}} object that should be sub-setted.
-#' 
+#'
 #' @param i Integer or logical vector specifying the scans/spectra to which
 #'     \code{x} should be sub-setted.
-#' 
+#'
 #' @param j Not supported.
-#' 
+#'
 #' @param drop Not supported.
-#' 
+#'
 #' @return The sub-setted \code{\linkS4class{xcmsRaw}} object.
-#' 
+#'
 #' @author Johannes Rainer
-#' 
+#'
 #' @seealso \code{\link{split.xcmsRaw}}
-#' 
+#'
 #' @examples
 #' ## Load a test file
 #' file <- system.file('cdf/KO/ko15.CDF', package = "faahKO")
@@ -2337,7 +2329,7 @@ setMethod("[", signature(x = "xcmsRaw",
 #' all.equal(profmat, profmat_2)
 #'
 #' @rdname profMat-xcmsSet
-#' 
+#'
 #' @name profMat-xcmsSet
 setMethod("profMat", signature(object = "xcmsRaw"), function(object, method,
                                                              step,

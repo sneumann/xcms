@@ -608,9 +608,8 @@ dropGenericProcessHistory <- function(x, fun) {
     return(res)
 }
 
-
 .hasFilledPeaks <- function(object) {
-    (hasChromPeaks(object) && any(chromPeakData(object)$is_filled))
+    hasChromPeaks(object) & any(chromPeakData(object)$is_filled, na.rm = TRUE)
 }
 
 #' @description
@@ -1971,6 +1970,20 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #' @author Johannes Rainer
 #'
 #' @md
+#'
+#' @examples
+#'
+#' ## Read a file with DDA LC-MS/MS data
+#' fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+#' dda <- readMSData(fl, mode = "onDisk")
+#'
+#' ## Perform MS1 peak detection
+#' dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15)))
+#' ms2_sps <- chromPeakSpectra(dda)
+#' ms2_sps
+#'
+#' ## Metadata column `peak_id` contains the ID of the chromatographic peak
+#' ## of the MS2 spectrum
 chromPeakSpectra <- function(x, msLevel = 2L, expandRt = 0, expandMz = 0,
                              ppm = 0, method = c("all", "closest_rt",
                                                  "closest_mz", "signal"),

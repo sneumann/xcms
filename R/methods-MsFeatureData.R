@@ -7,7 +7,7 @@ setMethod("initialize", "MsFeatureData", function(.Object, ...) {
 })
 
 setValidity("MsFeatureData", function(object) {
-    return(validateMsFeatureData(object))
+    validateMsFeatureData(object)
 })
 
 #' @noRd

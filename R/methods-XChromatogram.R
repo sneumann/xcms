@@ -45,7 +45,14 @@ setMethod("show", "XChromatogram", function(object) {
 #' - `hasChromPeaks`: infer whether a `XChromatogram` (or `XChromatograms`)
 #'   has chromatographic peaks. For `XChromatogram`: returns a `logical(1)`,
 #'   for `XChromatograms`: returns a `matrix`, same dimensions than `object`
-#'   with either `true` or `false` if chromatographic peaks are available in
+#'   with either `TRUE` or `FALSE` if chromatographic peaks are available in
+#'   the chromatogram at the respective position.
+#'
+#' - `hasFilledChromPeaks`: whether a `XChromatogram` (or a `XChromatogram` in
+#'   a `XChromatograms`) has filled-in chromatographic peaks.
+#'   For `XChromatogram`: returns a `logical(1)`,
+#'   for `XChromatograms`: returns a `matrix`, same dimensions than `object`
+#'   with either `TRUE` or `FALSE` if chromatographic peaks are available in
 #'   the chromatogram at the respective position.
 #'
 #' - `dropFilledChromPeaks`: removes filled-in chromatographic peaks. See

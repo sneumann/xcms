@@ -75,6 +75,12 @@ setMethod("hasChromPeaks", "XChromatograms", function(object) {
 })
 
 #' @rdname XChromatogram
+setMethod("hasFilledChromPeaks", "XChromatograms", function(object) {
+    matrix(vapply(object, .hasFilledPeaks, logical(1)), ncol = ncol(object),
+           dimnames = dimnames(object))
+})
+
+#' @rdname XChromatogram
 setMethod("chromPeaks", "XChromatograms", function(object, rt = numeric(),
                                                    mz = numeric(), ppm = 0,
                                                    type = c("any", "within",
