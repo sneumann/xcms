@@ -59,6 +59,20 @@ chromatographic peak \code{i} for which the precursor m/z is
 retention time is \code{>= chromPeaks(x)[i, "rtmin"]} and
 \code{<= chromPeaks(x)[i, "rtmax"]}.
 }
+\examples{
+
+## Read a file with DDA LC-MS/MS data
+fl <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML", package = "msdata")
+dda <- readMSData(fl, mode = "onDisk")
+
+## Perform MS1 peak detection
+dda <- findChromPeaks(dda, CentWaveParam(peakwidth = c(5, 15)))
+ms2_sps <- chromPeakSpectra(dda)
+ms2_sps
+
+## Metadata column `peak_id` contains the ID of the chromatographic peak
+## of the MS2 spectrum
+}
 \author{
 Johannes Rainer
 }
