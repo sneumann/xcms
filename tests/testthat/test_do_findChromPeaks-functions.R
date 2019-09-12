@@ -60,6 +60,7 @@ test_that("do_findChromPeaks_centWaveWithPredIsoROIs works", {
     feats_2 <- do_findChromPeaks_addPredIsoROIs(
         mz = mzVals, int = intVals, scantime = faahko_xr_1@scantime,
         valsPerSpect = valsPerSpect, noise = 1500, peaks. = feats_1)
+    expect_true(nrow(feats_1) < nrow(feats_2))
     all_f <- do_findChromPeaks_centWaveWithPredIsoROIs(
         mz = mzVals, int = intVals, scantime = faahko_xr_1@scantime,
         valsPerSpect = valsPerSpect, noise = 1500)
