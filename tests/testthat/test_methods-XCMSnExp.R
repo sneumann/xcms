@@ -1084,7 +1084,7 @@ test_that("chromatogram,XCMSnExp works", {
     expect_true(nrow(chromPeaks(xchrs[1, 1])) == 0)
 
     pks <- chromPeaks(xchrs)
-    expect_true(!any(pks[, "row"] == 1 && pks[, "column"] == 1))
+    expect_true(!any(pks[, "row"] == 1 & pks[, "column"] == 1))
 
     ## With filled-in data
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
@@ -1129,8 +1129,6 @@ test_that("chromatogram,XCMSnExp works", {
     expect_equal(chromPeaks(xchrsf2), chromPeaks(xchrs))
     expect_equal(featureDefinitions(xchrsf2), featureDefinitions(xchrs))
 
-    ## XCMSnExp with adjusted rtime
-    ## SEE runit.Chromatogram.R
 })
 
 test_that("signal integration is correct", {
@@ -1885,8 +1883,10 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
 test_that("fillChromPeaks,XCMSnExp works", {
     ## No adjusted retention times
     expect_true(!xcms:::.hasFilledPeaks(xod_xg))
+    expect_false(hasFilledChromPeaks(xod_xg))
     res <- fillChromPeaks(xod_xg)
     expect_true(xcms:::.hasFilledPeaks(res))
+    expect_true(hasFilledChromPeaks(res))
     ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())

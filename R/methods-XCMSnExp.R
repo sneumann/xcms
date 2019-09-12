@@ -97,6 +97,19 @@ setMethod("hasChromPeaks", "XCMSnExp", function(object) {
     hasChromPeaks(object@msFeatureData)
 })
 
+#' @aliases hasFilledChromPeaks
+#'
+#' @description
+#'
+#' \code{hasFilledChromPeaks}: whether the object contains any filled-in
+#' chromatographic peaks.
+#'
+#' @rdname XCMSnExp-class
+setMethod("hasFilledChromPeaks", "XCMSnExp", function(object) {
+    .hasFilledPeaks(object)
+})
+
+
 #' @aliases adjustedRtime adjustedRtime,MsFeatureData-method
 #'
 #' @description

@@ -452,6 +452,7 @@ exportClasses("XCMSnExp",
 
 ## New methods for these classes
 exportMethods("hasChromPeaks",
+              "hasFilledChromPeaks",
               "hasFeatures",
               "hasAdjustedRtime",
               "adjustedRtime",

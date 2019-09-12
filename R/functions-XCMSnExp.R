@@ -608,9 +608,8 @@ dropGenericProcessHistory <- function(x, fun) {
     return(res)
 }
 
-
 .hasFilledPeaks <- function(object) {
-    (hasChromPeaks(object) && any(chromPeakData(object)$is_filled))
+    hasChromPeaks(object) & any(chromPeakData(object)$is_filled, na.rm = TRUE)
 }
 
 #' @description

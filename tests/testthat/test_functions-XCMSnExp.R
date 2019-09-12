@@ -397,8 +397,7 @@ test_that("highlightChromPeaks works", {
 })
 
 test_that(".swath_collect_chrom_peaks works", {
-    ## This should be added to the msdata package!
-    fl <- "/Users/jo/Projects/git/michaelwitting/metabolomics2018/data/PestMix1_SWATH.mzML"
+    fl <- system.file("TripleTOF-SWATH/PestMix1_SWATH.mzML", package = "msdata")
     if (file.exists(fl)) {
         obj <- as(readMSData(fl, mode = "onDisk"), "XCMSnExp")
         msf <- new("MsFeatureData")
@@ -475,8 +474,7 @@ test_that(".swath_collect_chrom_peaks works", {
 })
 
 test_that("findChromPeaksIsolationWindow works", {
-    ## This should be added to the msdata package!
-    fl <- "/Users/jo/Projects/git/michaelwitting/metabolomics2018/data/PestMix1_SWATH.mzML"
+    fl <- system.file("TripleTOF-SWATH/PestMix1_SWATH.mzML", package = "msdata")
     if (file.exists(fl)) {
         ## OnDiskMSnExp
         obj <- readMSData(fl, mode = "onDisk")
