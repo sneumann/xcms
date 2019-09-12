@@ -43,14 +43,7 @@
     }
   }
 }
-\references{
-  A parallel effort in metabolite profiling data sharing:
-  \url{http://metlin.scripps.edu/}
-}
 \author{S. Neumann, J. Kutzera}
-\note{
-  No notes yet.
-}
 \seealso{
   \code{\link{xcmsRaw}}
 }

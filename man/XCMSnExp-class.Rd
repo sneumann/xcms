@@ -21,6 +21,7 @@
 \alias{hasChromPeaks,XCMSnExp-method}
 \alias{hasChromPeaks}
 \alias{hasChromPeaks,MsFeatureData-method}
+\alias{hasFilledChromPeaks,XCMSnExp-method}
 \alias{adjustedRtime,XCMSnExp-method}
 \alias{adjustedRtime}
 \alias{adjustedRtime,MsFeatureData-method}
@@ -84,6 +85,8 @@ hasFilledChromPeaks(object)
 \S4method{hasFeatures}{XCMSnExp}(object)
 
 \S4method{hasChromPeaks}{XCMSnExp}(object)
+
+\S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
 \S4method{adjustedRtime}{XCMSnExp}(object, bySample = FALSE)
 
@@ -360,6 +363,9 @@ results (i.e. features).
 
 \code{hasChromPeaks}: whether the object contains peak
 detection results.
+
+\code{hasFilledChromPeaks}: whether the object contains any filled-in
+chromatographic peaks.
 
 \code{adjustedRtime},\code{adjustedRtime<-}:
 extract/set adjusted retention times. \code{adjustedRtime<-} should not

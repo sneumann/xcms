@@ -286,14 +286,7 @@
   slot (e.g. use \code{xset$name} on a \code{xcmsSet} object called
   \dQuote{xset} to extract the values from a column named \dQuote{name} in the \code{phenoData} slot).
 }
-\references{
-  A parallel effort in metabolite profiling data sharing:
-  \url{http://metlin.scripps.edu/}
-}
 \author{Colin A. Smith, \email{csmith@scripps.edu}, Johannes Rainer \email{johannes.rainer@eurac.edu}}
-\note{
-  No notes yet.
-}
 \seealso{
   \code{\link{xcmsSet}}
 }

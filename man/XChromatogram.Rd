@@ -21,6 +21,7 @@
 \alias{chromPeakData<-,XChromatogram-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
+\alias{hasFilledChromPeaks,XChromatograms-method}
 \alias{chromPeaks,XChromatograms-method}
 \alias{chromPeakData,XChromatograms-method}
 \alias{filterMz,XChromatograms-method}
@@ -74,6 +75,8 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 \S4method{show}{XChromatograms}(object)
 
 \S4method{hasChromPeaks}{XChromatograms}(object)
+
+\S4method{hasFilledChromPeaks}{XChromatograms}(object)
 
 \S4method{chromPeaks}{XChromatograms}(object, rt = numeric(),
   mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"),
@@ -349,7 +352,13 @@ optional chromatographic peak annotations.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
 for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
-with either \code{true} or \code{false} if chromatographic peaks are available in
+with either \code{TRUE} or \code{FALSE} if chromatographic peaks are available in
+the chromatogram at the respective position.
+\item \code{hasFilledChromPeaks}: whether a \code{XChromatogram} (or a \code{XChromatogram} in
+a \code{XChromatograms}) has filled-in chromatographic peaks.
+For \code{XChromatogram}: returns a \code{logical(1)},
+for \code{XChromatograms}: returns a \code{matrix}, same dimensions than \code{object}
+with either \code{TRUE} or \code{FALSE} if chromatographic peaks are available in
 the chromatogram at the respective position.
 \item \code{dropFilledChromPeaks}: removes filled-in chromatographic peaks. See
 \code{\link[=dropFilledChromPeaks]{dropFilledChromPeaks()}} help for \code{\link[=XCMSnExp]{XCMSnExp()}} objects for more
