@@ -49,9 +49,9 @@ jobs:
       before_script: rm -rf vignettes
       install: skip
       name: "examples"
-    - r_build_args: --no-build-vignettes --no-manual
-      install: skip
+    - install: skip
       script:
+        - travis_wait 10 R CMD build --no-build-vignettes --no-manual .
         - travis_wait 40 R CMD check --as-cran --no-build-vignettes --no-vignettes --no-manual --no-codoc --no-examples xcms*tar.gz
       before_script: rm -rf vignettes
       name: "tests"
