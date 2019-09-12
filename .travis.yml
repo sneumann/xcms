@@ -62,7 +62,8 @@ jobs:
     - stage: "CodeCov"
       install: skip
       script:
-        - travis_wait 20 Rscript -e 'covr::codecov()'
+        - R CMD INSTALL .
+        - travis_wait 40 Rscript -e 'covr::codecov()'
       name: "codecov"
       on:
         branch: master

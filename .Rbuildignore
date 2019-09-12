@@ -5,3 +5,4 @@ local_data
 .org
 ^.*\.Rproj$
 ^\.Rproj\.user$
+README.md
