@@ -236,7 +236,7 @@ test_that(".getRtROI works", {
     # One of which passes stringent prefilter check
     tall_peak_rois <- .getRtROI(model_triple_peak, triple_peak_scans, 
                                 prefilter = c(9, 1500))
-    expect_true(nrow(skipped_peak_rois)==1)
+    expect_true(nrow(tall_peak_rois)==1)
 })
 
 test_that("peaksWithCentWave works", {
