@@ -3592,7 +3592,7 @@ peaksWithCentWave <- function(int, rt,
     scmin <- sapply(pk_idx - up_bound, max, y = 1)
     scmax <- sapply(pk_idx + up_bound, min, y = int_len)
     ## Second filter: at least k values larger I
-    roi_idxs <- mapply(scmin, scmax, FUN = seq, SIMPLIFY = F)
+    roi_idxs <- mapply(scmin, scmax, FUN = seq, SIMPLIFY = FALSE)
     ok <- vapply(roi_idxs,
                  FUN = function(x, k, I) {
                      sum(int[x] >= I) >= k
