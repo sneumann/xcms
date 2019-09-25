@@ -200,6 +200,43 @@ test_that(".getRtROI works", {
     expect_true(nrow(res_2) > nrow(res_3))
     res_4 <- .getRtROI(int, rt, noise = 400, prefilter = c(100, 500))
     expect_true(nrow(res_4) == 0)
+    
+    # Generate a nice-looking peak 
+    # Values from table(cut(rnorm(20000), breaks = 40))
+    model_peak <- c(3, 4, 4, 9, 26, 31, 65, 123, 196, 260, 404, 523, 743, 893, 
+                    1188, 1329, 1505, 1540, 1705, 1592, 1535, 1371, 1255, 929, 790, 
+                    652, 438, 336, 223, 138, 78, 50, 25, 15, 11, 6, 3, 0, 1, 1)
+    model_single_peak <- c(numeric(80), model_peak, numeric(80))
+    single_peak_scans <- seq_along(model_single_peak)+200
+    single_peak_rois <- .getRtROI(model_single_peak, single_peak_scans)
+    expect_true(is.matrix(single_peak_rois))
+    expect_true(nrow(single_peak_rois)==1)
+    
+    model_triple_peak <- c(numeric(20), model_peak, numeric(100),
+                           model_peak/5, numeric(100),
+                           rev(model_peak)*2, numeric(20))
+    triple_peak_scans <- seq_along(model_triple_peak)+200
+    # Get ROIs for a chromatogram with 3 good peaks
+    triple_peak_rois <- .getRtROI(model_triple_peak, triple_peak_scans)
+    expect_true(nrow(triple_peak_rois)==3)
+    
+    # Get ROIs for a chromatogram with three peaks
+    # One of which doesn't pass prefilter check
+    skipped_peak_rois <- .getRtROI(model_triple_peak, triple_peak_scans, 
+                                   prefilter = c(3, 500))
+    expect_true(nrow(skipped_peak_rois)==2)
+    
+    # Get ROIs for a chromatogram with three peaks
+    # None of which pass stringent prefilter check
+    skipped_peak_rois <- .getRtROI(model_triple_peak, triple_peak_scans, 
+                                   prefilter = c(3, 5000))
+    expect_true(nrow(skipped_peak_rois)==0)
+    
+    # Get ROIs for a chromatogram with three peaks
+    # One of which passes stringent prefilter check
+    tall_peak_rois <- .getRtROI(model_triple_peak, triple_peak_scans, 
+                                prefilter = c(9, 1500))
+    expect_true(nrow(tall_peak_rois)==1)
 })
 
 test_that("peaksWithCentWave works", {
