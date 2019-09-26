@@ -2379,7 +2379,9 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' preprocessing results will be passed along to the resulting
 #' \code{xcmsSet} object.
 #'
-#' General functions for \code{XCMSnExp} objects are:
+#' General functions for \code{XCMSnExp} objects are (see further below for
+#' specific function to handle chromatographic peak data, alignment and
+#' correspondence results):
 #'
 #' @section Chromatographic peak data:
 #'
@@ -2499,6 +2501,7 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'     For \code{chromPeaks<-}: a \code{matrix} with information on
 #'     detected peaks. See return value for the \code{chromPeaks} method for the
 #'     expected format.
+#'
 #'
 #' @author Johannes Rainer
 #'

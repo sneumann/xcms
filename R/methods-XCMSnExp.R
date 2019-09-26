@@ -3492,3 +3492,28 @@ setReplaceMethod("chromPeakData", "XCMSnExp", function(object, value) {
     validObject(object)
     object
 })
+
+#' @description
+#'
+#' \code{plot} plots the spectrum data (see \code{\link{plot}} for
+#' \code{\link{MSnExp}} objects in the \code{MSnbase} package for more details.
+#' For \code{type = "XIC"}, identified chromatographic peaks will be indicated
+#' as rectangles with border color \code{peakCol}.
+#'
+#' @param x For \code{plot}: \code{XCMSnExp} object.
+#'
+#' @param y For \code{plot}: not used.
+#'
+#' @param peakCol For \code{plot}: the color that should be used to indicate
+#'     identified chromatographic peaks (only in combination with
+#'     \code{type = "XIC"} and if chromatographic peaks are present).
+#'
+#' @rdname XCMSnExp-class
+setMethod("plot", c("XCMSnExp", "missing"),
+          function(x, y, type = c("spectra", "XIC"),
+                   peakCol = "#ff000060", ...) {
+              type <- match.arg(type)
+              if (type == "spectra" || !hasChromPeaks(x))
+                  callNextMethod(x = x, type = type, ...)
+              else .plot_XIC(x, peakCol = peakCol, ...)
+          })

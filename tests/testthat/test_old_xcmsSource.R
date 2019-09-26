@@ -42,5 +42,6 @@ test_that("xcmsSource works", {
     mzR:::rampClose(rid)
     rm(rid)
     rawdata$polarity <- tmp$polarity
+    rawdata$MSn$precursorNum <- tmp$MSn$precursorNum
     expect_equal(rawdata, tmp)
 })

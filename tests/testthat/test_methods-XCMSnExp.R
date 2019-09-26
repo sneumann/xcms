@@ -2260,3 +2260,14 @@ test_that("chromPeakData,XCMSnExp works", {
     expect_true(is.character(chromPeakData(res)$other_column))
     expect_true(any(colnames(chromPeakData(res)) == "other_column"))
 })
+
+test_that("plot,XCMSnExp works", {
+    mzr <- c(301.9, 302.1)
+    rtr <- c(2500, 2650)
+    tmp <- filterMz(filterRt(xod_x, rtr), mzr)
+    centroided(tmp) <- TRUE
+
+    plot(tmp[1:3], type = "spectra")
+
+    plot(tmp, type = "XIC")
+})

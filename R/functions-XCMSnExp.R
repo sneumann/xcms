@@ -2512,3 +2512,54 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         minCor = minCor, col = intensity, pkId = peakId, BPPARAM = BPPARAM)
     do.call(c, sps)
 }
+
+#' This function *overwrites* the `MSnbase` .plot_XIC function by adding also
+#' a rectangle with the identified chromatographic peak.
+#'
+#' @param x `XCMSnExp` object with identifie chromatographic peaks.
+#'
+#' @param peakCol color for the border of the rectangle.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @noRd
+.plot_XIC <- function(x, peakCol = "#00000060", ...) {
+    peakCol <- peakCol[1]
+    x <- filterMsLevel(x, 1L)
+    if (!length(x))
+        stop("No MS1 data available")
+    pks <- chromPeaks(x)
+    fls <- basename(fileNames(x))
+    suppressWarnings(x <- as(x, "data.frame"))
+    x <- split(x, x$file)
+    ## Check if we are greedy and plot a too large area
+    if (any(unlist(lapply(x, nrow)) > 20000))
+        warning("The MS area to be plotted seems rather large. It is suggested",
+                " to restrict the data first using 'filterRt' and 'filterMz'. ",
+                "See also ?chromatogram and ?Chromatogram for more efficient ",
+                "functions to plot a total ion chromatogram or base peak ",
+                "chromatogram.",
+                immediate = TRUE, call = FALSE)
+    ## Define the layout.
+    dots <- list(...)
+    if (any(names(dots) == "layout")) {
+        if (!is.null(dots$layout))
+            layout(layout)
+        dots$layout <- NULL
+    } else
+        layout(MSnbase:::.vertical_sub_layout(length(x)))
+    for (i in seq_along(x)) {
+        do.call(MSnbase:::.plotXIC,
+                c(list(x = x[[i]], main = fls[i], layout = NULL), dots))
+        pks_current <- pks[pks[, "sample"] == i, , drop = FALSE]
+        if (length(pks_current) && nrow(pks_current)) {
+            do.call(rect, c(list(xleft = pks_current[, "rtmin"],
+                                 ybottom = pks_current[, "mzmin"],
+                                 xright = pks_current[, "rtmax"],
+                                 ytop = pks_current[, "mzmax"],
+                                 border = peakCol), dots))
+        }
+    }
+}

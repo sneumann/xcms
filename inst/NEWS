@@ -1,3 +1,9 @@
+Changes in version 3.7.3
+
+- plot type = "XIC" on an XCMSnExp object will draw rectangles indicating the
+  identified chromatographic peaks.
+
+
 Changes in version 3.7.2
 
 - Fix documentation (issue #401).

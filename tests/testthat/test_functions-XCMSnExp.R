@@ -531,3 +531,16 @@ test_that("reconstructChromPeakSpectra works", {
     expect_error(reconstructChromPeakSpectra(pest_swth, peakId = c("a", "b")),
                  "None of the provided")
 })
+
+test_that(".plot_XIC works", {
+    mzr <- c(453, 453.5)
+    rtr <- c(2400, 2700)
+
+    tmp <- filterMz(filterRt(xod_x, rtr), mzr)
+    .plot_XIC(tmp)
+
+    mzr <- c(301.9, 302.1)
+    rtr <- c(2500, 2650)
+    tmp <- filterMz(filterRt(xod_x, rtr), mzr)
+    .plot_XIC(tmp, peakCol = "#ff0000", lwd = 10)
+})
