@@ -68,6 +68,7 @@
 \alias{c.XCMSnExp}
 \alias{chromPeakData,XCMSnExp-method}
 \alias{chromPeakData<-,XCMSnExp-method}
+\alias{plot,XCMSnExp,missing-method}
 \title{Data container storing xcms preprocessing results}
 \usage{
 processHistoryTypes()
@@ -140,6 +141,9 @@ hasFilledChromPeaks(object)
 \S4method{chromPeakData}{XCMSnExp}(object)
 
 \S4method{chromPeakData}{XCMSnExp}(object) <- value
+
+\S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"),
+  peakCol = "#ff000060", ...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},
@@ -252,6 +256,14 @@ return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
+
+\item{x}{For \code{plot}: \code{XCMSnExp} object.}
+
+\item{y}{For \code{plot}: not used.}
+
+\item{peakCol}{For \code{plot}: the color that should be used to indicate
+identified chromatographic peaks (only in combination with
+\code{type = "XIC"} and if chromatographic peaks are present).}
 }
 \value{
 For \code{profMat}: a \code{list} with a the profile matrix
@@ -340,7 +352,9 @@ objects using the \code{as} method (see examples below). All
 preprocessing results will be passed along to the resulting
 \code{xcmsSet} object.
 
-General functions for \code{XCMSnExp} objects are:
+General functions for \code{XCMSnExp} objects are (see further below for
+specific function to handle chromatographic peak data, alignment and
+correspondence results):
 
 \code{processHistoryTypes} returns the available \emph{types} of
     process histories. These can be passed with argument \code{type} to the
@@ -500,6 +514,11 @@ results. If no function is specified the function simply returns the
 \code{XCMSnExp} objects can be combined with the \code{c} function. This
 combines identified chromatographic peaks and the objects' pheno data but
 discards alignment results or feature definitions.
+
+\code{plot} plots the spectrum data (see \code{\link{plot}} for
+\code{\link{MSnExp}} objects in the \code{MSnbase} package for more details.
+For \code{type = "XIC"}, identified chromatographic peaks will be indicated
+as rectangles with border color \code{peakCol}.
 }
 \section{Slots}{
 

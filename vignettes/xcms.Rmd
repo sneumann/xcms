@@ -258,9 +258,10 @@ be set to accommodate the expected widths of peak in the data set. We set it to
 
 For the `ppm` parameter we extract the full MS data (intensity, retention time
 and m/z values) corresponding to the above peak. To this end we first filter the
-raw object by retention time, then by m/z and finally plot the object with`type =
-"XIC"` to produce the plot below. We use the *pipe* (`%>%`) command better
-illustrate the corresponding workflow.
+raw object by retention time, then by m/z and finally plot the object with `type
+= "XIC"` to produce the plot below. We use the *pipe* (`%>%`) command better
+illustrate the corresponding workflow. Note also that in this type of plot
+identified chromatographic peaks would be indicated by default if present.
 
 ```{r peak-detection-plot-ms-data, message = FALSE, warning = FALSE, fig.aligh = "center", fig.width = 14, fig.height = 14, fig.cap = "Visualization of the raw MS data for one peak. For each plot: upper panel: chromatogram plotting the intensity values against the retention time, lower panel m/z against retention time plot. The individual data points are colored according to the intensity." }
 raw_data %>%
