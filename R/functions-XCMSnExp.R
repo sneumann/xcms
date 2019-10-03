@@ -1926,6 +1926,8 @@ ms2_spectra_for_peaks_from_file <- function(x, pks, method = c("all",
 #' retention time is `>= chromPeaks(x)[i, "rtmin"]` and
 #' `<= chromPeaks(x)[i, "rtmax"]`.
 #'
+#' See also the *LC-MS/MS data analysis* vignette for more details and examples.
+#'
 #' @param x [XCMSnExp] object with identified chromatographic peaks.
 #'
 #' @param msLevel `integer(1)` defining whether MS1 or MS2 spectra should be
@@ -2050,7 +2052,8 @@ ms2_spectra_for_features <- function(x, expandRt = 0, expandMz = 0, ppm = 0,
 #'
 #' The optional parameter `method` allows to ensure that for each
 #' chromatographic peak in one sample only one MS2 spectrum is returned.
-#' See [chromPeakSpectra()] for more details.
+#' See [chromPeakSpectra()] or the *LC-MS/MS analysis* vignette for more
+#' details.
 #'
 #' @param x [XCMSnExp] object with feature defitions available.
 #'
@@ -2406,7 +2409,8 @@ findChromPeaksIsolationWindow <-
 #' @description
 #'
 #' Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-#' data independent acquisition (DIA) data (such as SWATH).
+#' data independent acquisition (DIA) data (such as SWATH). See the
+#' *LC-MS/MS analysis* vignette for more details and examples.
 #'
 #' @details
 #'

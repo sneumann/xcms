@@ -55,7 +55,8 @@ feature and their retention time within the rt range of the same peak
 
 The optional parameter \code{method} allows to ensure that for each
 chromatographic peak in one sample only one MS2 spectrum is returned.
-See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} for more details.
+See \code{\link[=chromPeakSpectra]{chromPeakSpectra()}} or the \emph{LC-MS/MS analysis} vignette for more
+details.
 }
 \author{
 Johannes Rainer
