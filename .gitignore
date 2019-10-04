@@ -21,3 +21,6 @@ local_data/
 
 .Rhistory
 xcms.Rproj
+
+Rplots.pdf
+.DS_Store

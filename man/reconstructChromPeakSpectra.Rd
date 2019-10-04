@@ -49,7 +49,8 @@ MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 }
 \description{
 Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
-data independent acquisition (DIA) data (such as SWATH).
+data independent acquisition (DIA) data (such as SWATH). See the
+\emph{LC-MS/MS analysis} vignette for more details and examples.
 }
 \details{
 In detail, the function performs for each MS1 chromatographic peak:

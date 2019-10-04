@@ -6,3 +6,5 @@ local_data
 ^.*\.Rproj$
 ^\.Rproj\.user$
 README.md
+Rplots.pdf
+.DS_Store

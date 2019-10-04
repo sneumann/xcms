@@ -58,6 +58,8 @@ chromatographic peak \code{i} for which the precursor m/z is
 \code{>= chromPeaks(x)[i, "mzmin"]} and \code{<= chromPeaks(x)[i, "mzmax"]} and the
 retention time is \code{>= chromPeaks(x)[i, "rtmin"]} and
 \code{<= chromPeaks(x)[i, "rtmax"]}.
+
+See also the \emph{LC-MS/MS data analysis} vignette for more details and examples.
 }
 \examples{
 
