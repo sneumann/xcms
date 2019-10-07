@@ -366,7 +366,7 @@ do_groupPeaks_mzClust <- function(peaks, sampleGroups, ppm = 20,
         stop("Sample indices in 'peaks' are larger than there are sample",
              " groups specified with 'sampleGroups'!")
 
-    ##peaks <- peaks[, .reqCols, drop = FALSE]
+    peaks <- .fix_mz_clust_peaks(peaks)
     grps <- mzClustGeneric(peaks[, .reqCols, drop = FALSE],
                            sampclass = sampleGroups,
                            mzppm = ppm,
@@ -645,4 +645,35 @@ do_groupChromPeaks_nearest <- function(peaks, sampleGroups, mzVsRtBalance = 10,
     res <- as.data.frame(res_mat)
     res$peakidx <- res_idx
     res
+}
+
+#' @description
+#'
+#' Check the input peaks table eventually replacing `NA` values in column `"mz"`
+#' with the mean of columns `"mzmin"` and `"mzmax"` (if present).
+#' This fixes issue #416.
+#'
+#' @param x peaks `matrix`.
+#'
+#' @return peaks `matrix`
+#'
+#' @noRd
+#'
+#' @md
+.fix_mz_clust_peaks <- function(x) {
+    ## Issue #416: fix for peaks with an m/z of NA.
+    nas <- is.na(x[, "mz"])
+    if (any(nas)) {
+        ## if we have mzmin and mzmax use mean of them.
+        if (all(c("mzmin", "mzmax") %in% colnames(x)) &&
+            !any(is.na(x[nas, c("mzmin", "mzmax")]))) {
+            warning("Got ", sum(nas), " peaks with missing values in column ",
+                    "'mz'. Replaced them with the mean of values in columns ",
+                    "'mzmin' and 'mzmax' values.")
+            x[nas, "mz"] <- rowMeans(x[nas, c("mzmin", "mzmax")])
+        } else {
+            stop("Got ", sum(nas), " peaks with missing values in column 'mz'.")
+        }
+    }
+    x
 }

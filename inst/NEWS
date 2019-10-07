@@ -1,3 +1,8 @@
+Changes in version 3.6.2
+
+- Fix issue #416.
+
+
 Changes in version 3.6.1
 
 - Fix issue in chromPeakSpectra with method = "signal".

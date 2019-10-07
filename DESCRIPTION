@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.6.1
-Date: 2019-05-14
+Version: 3.6.2
+Date: 2019-10-07
 Title: LC/MS and GC/MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin", family = "Smith",
