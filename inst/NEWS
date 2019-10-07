@@ -1,5 +1,11 @@
 Changes in version 3.7.3
 
+- mzClust correspondence analysis: check and fix missing values in column mz of
+  the peaks matrix (issue #416).
+
+
+Changes in version 3.7.3
+
 - plot type = "XIC" on an XCMSnExp object will draw rectangles indicating the
   identified chromatographic peaks.
 - Add a vignette describing LC-MS/MS data analysis with xcms.

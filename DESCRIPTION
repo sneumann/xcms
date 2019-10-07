@@ -1,6 +1,6 @@
 Package: xcms
-Version: 3.7.3
-Title: LC/MS and GC/MS Data Analysis
+Version: 3.7.4
+Title: LC-MS and GC-MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
 	   email = "csmith@scripps.edu",

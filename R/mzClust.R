@@ -26,9 +26,10 @@ mzClustGeneric <- function(p,sampclass=NULL,
         bin <- pord[pos]
         pos <- pos+1
         basepeak <- p[bin[1],1]
-        error_range <- c(basepeak, basepeak*error_window+basepeak+2*mzabs)
-        while(pos < numpeaks && p[pord[pos],1] <= error_range[2]) {
-            bin <- c(bin,pord[pos])
+        error_range <- c(basepeak,
+                         basepeak * error_window + basepeak + 2 * mzabs)
+        while(pos < numpeaks && p[pord[pos], 1] <= error_range[2]) {
+            bin <- c(bin, pord[pos])
             pos <- pos + 1
         }
 
@@ -74,8 +75,8 @@ mzClustGeneric <- function(p,sampclass=NULL,
         lst <- list(stat=groupvec,members=grp_members)
         lst
     }
-    ppm_error <- mzppm/1000000
-    error_window <- 2*ppm_error
+    ppm_error <- mzppm / 1000000
+    error_window <- 2 * ppm_error
 
     ## numeric version of classlabel
     if(is.null(sampclass)) {
