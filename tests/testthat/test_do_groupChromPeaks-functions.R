@@ -19,6 +19,14 @@ test_that("do_groupPeaks_mzClust works", {
     res_x <- group(fticr_xs, method = "mzClust")
     expect_equal(res_x@groups, res$featureDefinitions)
     expect_equal(res_x@groupidx, res$peakIndex)
+
+    ## Issue 416
+    nas <- sample(1:nrow(fts), 10)
+    fts[nas, "mz"] <- NA
+    expect_warning(res <- .fix_mz_clust_peaks(fts), "Replaced them with the")
+    expect_false(any(is.na(res[, "mz"])))
+    fts <- fts[, !(colnames(fts) %in% c("mzmin", "mzmax"))]
+    expect_error(res <- .fix_mz_clust_peaks(fts), "peaks with missing")
 })
 
 test_that("do_groupChromPeaks_nearest works", {
