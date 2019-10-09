@@ -1,6 +1,8 @@
 Changes in version 3.6.2
 
 - Fix issue #416.
+- Fix a problem in filterMsLevel that caused an error if feature definitions were
+  present.
 
 
 Changes in version 3.6.1
