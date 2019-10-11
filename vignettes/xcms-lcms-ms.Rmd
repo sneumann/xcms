@@ -36,6 +36,7 @@ library(BiocStyle)
 library(xcms)
 library(pander)
 register(SerialParam())
+
 ```
 
 # Introduction
@@ -80,6 +81,11 @@ library(xcms)
 dda_file <- system.file("TripleTOF-SWATH/PestMix1_DDA.mzML",
                         package = "msdata")
 dda_data <- readMSData(dda_file, mode = "onDisk")
+```
+
+```{r subset-dda, echo = FALSE, message = FALSE, eval = TRUE}
+#' Silently sub-setting the object to speed-up analysis
+dda_data <- filterRt(dda_data, rt = c(200, 600))
 ```
 
 The variable `dda_data` contains now all MS1 and MS2 spectra from the specified
@@ -236,6 +242,10 @@ swath_file <- system.file("TripleTOF-SWATH",
                           package = "msdata")
 
 swath_data <- readMSData(swath_file, mode = "onDisk")
+```
+
+```{r echo = FALSE, message = FALSE, eval = TRUE}
+swath_data <- filterRt(swath_data, rt = c(200, 600))
 ```
 
 Below we determine the number of MS level 1 and 2 spectra in the present data

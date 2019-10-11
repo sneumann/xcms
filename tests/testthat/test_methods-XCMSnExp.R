@@ -2153,23 +2153,25 @@ test_that("writeMSData,XCMSnExp works", {
     ## Writing plain MS data to mzML
     tmp_path <- tempdir()
     nfls <- paste0(tmp_path, "/",
-                   sub(".CDF$", ".mzML", basename(fileNames(xod_x))))
-    writeMSData(xod_x, file = nfls)
+                   sub(".CDF$", "_1.mzML", basename(fileNames(xod_x))))
+    tmp <- filterRt(xod_x, rt = c(2500, 2700))
+    writeMSData(tmp, file = nfls)
     data_in <- readMSData(nfls, mode = "onDisk")
-    expect_equal(rtime(data_in), rtime(xod_x))
+    expect_equal(unname(rtime(data_in)), unname(rtime(tmp)))
 
     ## Write adjusted retention times
     nfls <- paste0(tmp_path, "/",
                    sub(".CDF$", "_2.mzML", basename(fileNames(xod_xgr))))
-    writeMSData(xod_xgr, file = nfls)
+    tmp <- filterRt(xod_xgr, rt = c(2500, 2700))
+    writeMSData(tmp, file = nfls)
     data_in <- readMSData(nfls, mode = "onDisk")
-    expect_equal(rtime(data_in), rtime(xod_xgr))
+    expect_equal(unname(rtime(data_in)), unname(rtime(tmp)))
 })
 
 test_that("adjustRtime,XCMSnExp,Obiwarp works", {
-    prm <- ObiwarpParam(centerSample = 3, subset = c(1, 2))
+    prm <- ObiwarpParam(centerSample = 3, subset = c(1, 2), binSize = 10)
     expect_error(adjustRtime(xod_x, param = prm))
-    prm <- ObiwarpParam(centerSample = 2, subset = c(1, 2))
+    prm <- ObiwarpParam(centerSample = 2, subset = c(1, 2), binSize = 10)
     res <- adjustRtime(xod_x, param = prm)
     plotAdjustedRtime(res, col = c("#ff000060", "#00ff0060", "#0000ff60"))
     expect_equal(rtime(xod_x, bySample = TRUE)[[2]],
@@ -2177,7 +2179,7 @@ test_that("adjustRtime,XCMSnExp,Obiwarp works", {
     expect_equal(rtime(xod_x, bySample = TRUE)[[3]],
                  rtime(xod_x, bySample = TRUE)[[3]])
 
-    prm <- ObiwarpParam(centerSample = 1, subset = c(1, 3))
+    prm <- ObiwarpParam(centerSample = 1, subset = c(1, 3), binSize = 10)
     res <- adjustRtime(xod_x, param = prm)
     plotAdjustedRtime(res, col = c("#ff000060", "#00ff0060", "#0000ff60"))
     expect_equal(rtime(xod_x, bySample = TRUE)[[1]],
