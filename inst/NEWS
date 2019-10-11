@@ -1,4 +1,9 @@
-Changes in version 3.7.3
+Changes in version 3.7.5
+
+- Remove xcmsMSn vignette (based on old xcms).
+
+
+Changes in version 3.7.4
 
 - mzClust correspondence analysis: check and fix missing values in column mz of
   the peaks matrix (issue #416).
