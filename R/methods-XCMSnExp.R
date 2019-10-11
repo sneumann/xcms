@@ -2387,6 +2387,9 @@ setMethod("featureValues",
 #'
 #' od <- readMSData(faahko_3_files, mode = "onDisk")
 #'
+#' ## Subset to speed up processing
+#' od <- filterRt(od, rt = c(2500, 3000))
+#'
 #' ## Perform peak detection using default CentWave parameters
 #' xod <- findChromPeaks(od, param = CentWaveParam())
 #'

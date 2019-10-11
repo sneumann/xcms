@@ -56,8 +56,8 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-## Do a simple and fast preprocessing of the test data
-od <- readMSData(faahko_3_files, mode = "onDisk")
+## Do a simple and fast preprocessing on a subset of the test data
+od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
 od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
     noise = 1000))
 od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))

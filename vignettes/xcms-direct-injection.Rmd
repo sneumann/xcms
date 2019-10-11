@@ -1,6 +1,6 @@
 ---
 title: "Grouping FTICR-MS data with xcms"
-author: 
+author:
 - name: Joachim Bargsten
 - name: Johannes Rainer
 package: xcms
@@ -37,15 +37,14 @@ identified in the chromatographic (time) dimension, in direct injection mass
 spec data sets peaks are identified in the m/z dimension. `r Biocpkg("xcms")`
 uses functionality from the `MassSpecWavelet` package to identify such peaks.
 
-Below we load the required packages. We disable parallel processing. To enable
-and customize parallel processing please see the `BiocParallel` vignette.
+Below we load the required packages. For information on the parallel processing
+setup please see the `BiocParallel` vignette.
 
 ```{r load-libs, message = FALSE, results = "hide"}
 library(xcms)
 library(MassSpecWavelet)
 
 register(SerialParam())
-
 
 ```
 
@@ -239,4 +238,3 @@ head(featureValues(ham_prep, value = "into"))
 Further analysis, i.e. detection of features/metabolites with significantly
 different abundances, or PCA analyses can be performed on the feature matrix
 using functionality from other R packages, such as `r Biocpkg("limma")`.
-

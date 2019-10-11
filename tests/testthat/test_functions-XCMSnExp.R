@@ -477,7 +477,7 @@ test_that("findChromPeaksIsolationWindow works", {
     fl <- system.file("TripleTOF-SWATH/PestMix1_SWATH.mzML", package = "msdata")
     if (file.exists(fl)) {
         ## OnDiskMSnExp
-        obj <- readMSData(fl, mode = "onDisk")
+        obj <- filterRt(readMSData(fl, mode = "onDisk"), rt = c(0, 300))
         cwp <- CentWaveParam(snthresh = 5, noise = 100, ppm = 10,
                              peakwidth = c(3, 30))
         res <- findChromPeaksIsolationWindow(obj, param = cwp)
@@ -493,7 +493,6 @@ test_that("findChromPeaksIsolationWindow works", {
         expect_equal(chromPeaks(res_2)[1:nrow(chromPeaks(obj)), ],
                      chromPeaks(obj))
         expect_true(length(processHistory(res_2)) == 2)
-
     }
     ## no isolation window/add isolation window
     expect_error(findChromPeaksIsolationWindow(od_x), "are NA")

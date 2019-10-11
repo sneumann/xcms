@@ -1,3 +1,7 @@
+## unit tests | vignettes | elapsed | testthat | vignettes
+## serial     | serial    | 25m     | 10m30    | 3m59
+## 3CPU       | 3CPU      | 22m     | 9m7      | 3m32
+
 library(testthat)
 library(xcms)
 library(faahKO)
@@ -8,11 +12,12 @@ attr(faahko, "filepaths") <- sapply(
     function(x) system.file("cdf", if (length(grep("ko",x)) > 0) "KO" else "WT",
                             x, package = "faahKO"))
 if (.Platform$OS.type == "unix") {
-    prm <- MulticoreParam(2)
+    prm <- MulticoreParam(3)
 } else {
-    prm <- SnowParam(2)
+    prm <- SnowParam(3)
 }
 register(bpstart(prm))
+## register(SerialParam())
 
 ## Create some objects we can re-use in different tests:
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),

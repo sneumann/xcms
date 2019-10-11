@@ -1,42 +1,45 @@
 test_that("extractChromatograms is deprecated", {
-    expect_warning(chrs <- extractChromatograms(filterFile(od_x, file = 2)))
+    expect_warning(chrs <- extractChromatograms(
+                       filterRt(filterFile(od_x, file = 2), c(2500, 2600))))
     expect_warning(plotChromatogram(chrs))
 })
 
 test_that("chromatogram works", {
     ## OnDiskMSnExp
     ## TIC
-    chrs <- chromatogram(filterFile(od_x, file = 2))
+    od_tmp <- filterFile(filterRt(od_x, c(2500, 3000)), file = 2)
+    chrs <- chromatogram(od_tmp)
     plot(chrs)
-    spctr <- spectra(filterFile(od_x, file = 2))
+    spctr <- spectra(od_tmp)
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
     expect_equal(rtime(chrs[1, 1]), unlist(lapply(spctr, rtime)))
     ## BPC
-    chrs <- chromatogram(filterFile(od_x, file = 2),
-                         aggregationFun = "max")
+    chrs <- chromatogram(od_tmp, aggregationFun = "max")
     ints <- unlist(lapply(spctr, function(z)
         return(max(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
     expect_equal(rtime(chrs[1, 1]), unlist(lapply(spctr, rtime)))
     ## XCMSnExp
-    xod_x <- faahko_xod
-    chrs <- chromatogram(filterFile(xod_x, file = 2))
+    xod_x <- filterFile(filterRt(faahko_xod, c(2500, 3000)), file = 2)
+    chrs <- chromatogram(xod_x)
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
     expect_equal(rtime(chrs[1, 1]), unlist(lapply(spctr, rtime)))
     ## BPC
-    chrs <- chromatogram(filterFile(xod_x, file = 2),
-                         aggregationFun = "max")
+    chrs <- chromatogram(xod_x, aggregationFun = "max")
     ints <- unlist(lapply(spctr, function(z)
-        return(max(intensity(z)))))    
+        return(max(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
     expect_equal(rtime(chrs[1, 1]), unlist(lapply(spctr, rtime)))
     ## with adjusted retention times.
     chrs <- chromatogram(filterFile(xod_xgr, file = 2),
                          adjustedRtime = FALSE, aggregationFun = "max")
+    spctr <- spectra(filterFile(xod_xgr, file = 2))
+    ints <- unlist(lapply(spctr, function(z)
+        return(max(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)
     expect_equal(rtime(chrs[1, 1]), unlist(lapply(spctr, rtime)))
     chrs <- chromatogram(filterFile(xod_xgr, file = 2,
@@ -53,12 +56,12 @@ test_that("chromatogram works", {
     expect_equal(rtime(chrs_adj[1, 1]), rtime(xod_xgr, bySample = TRUE)[[1]])
     expect_equal(rtime(chrs_adj[1, 2]), rtime(xod_xgr, bySample = TRUE)[[2]])
     expect_equal(rtime(chrs_adj[1, 3]), rtime(xod_xgr, bySample = TRUE)[[3]])
-    
+
     ## Now subsetting for mz:
-    tmp <- filterFile(od_x, file = 2)
+    tmp <- filterRt(filterFile(od_x, file = 2), c(2500, 3000))
     chrs <- chromatogram(tmp, mz = c(300, 400))
     expect_equal(mz(chrs[1, 1], filter = TRUE), c(300, 400))
-    expect_warning(spctr <- spectra(filterMz(tmp, mz = c(300, 400))))
+    spctr <- spectra(filterMz(tmp, mz = c(300, 400)))
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     ints2 <- intensity(chrs[1, 1])
@@ -69,13 +72,16 @@ test_that("chromatogram works", {
     chrs <- chromatogram(filterFile(xod_xgr, file = 2,
                                     keepAdjustedRtime = TRUE),
                          mz = c(300, 400))
+    expect_warning(spctr <- spectra(
+                       filterMz(filterFile(xod_xgr, file = 2),
+                                mz = c(300, 400))))
     ints <- unlist(lapply(spctr, function(z)
         return(sum(intensity(z)))))
     ints2 <- intensity(chrs[1, 1])
     ints2[is.na(ints2)] <- 0
     expect_equal(ints2, ints)
     expect_equal(rtime(chrs[1, 1]), rtime(xod_xgr, bySample = TRUE)[[2]])
-    
+
     ## Now subsetting for rt:
     chrs <- chromatogram(od_x, rt = c(2700, 2900))
     expect_true(all(rtime(chrs[1, 1]) >= 2700 & rtime(chrs[1, 1]) <= 2900))
@@ -108,7 +114,7 @@ test_that("chromatogram works", {
     expect_equal(intensity(chrs2[1, 1]), intsL[[1]])
     expect_equal(intensity(chrs2[1, 2]), intsL[[2]])
     expect_equal(intensity(chrs2[1, 3]), intsL[[3]])
-    
+
     ## Now subsetting for rt and mz:
     chrs <- chromatogram(od_x, rt = c(2700, 2900), mz = 335)
     expect_true(all(rtime(chrs[1, 1]) >= 2700 & rtime(chrs[1, 1]) <= 2900))
@@ -142,7 +148,7 @@ test_that("chromatogram works", {
     expect_equal(rtime(chrs[1, 1]), rtime(tmp, bySample = TRUE)[[1]])
     expect_equal(rtime(chrs[1, 2]), rtime(tmp, bySample = TRUE)[[2]])
     expect_equal(rtime(chrs[1, 3]), rtime(tmp, bySample = TRUE)[[3]])
-    
+
     ## What if we're completely off?
     chrs <- chromatogram(od_x, rt = c(5000, 5500))
     expect_true(nrow(chrs) == 0)
@@ -160,7 +166,7 @@ test_that("chromatogram works", {
     rtr <- matrix(c(2700, 2900, 2600, 2800), ncol = 2, byrow = TRUE)
     mzr <- matrix(c(355, 355, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- chromatogram(od_x, rt = rtr, mz = mzr)
-    
+
     expect_true(all(rtime(chrs[1, 1]) >= 2700 & rtime(chrs[1, 1]) <= 2900))
     expect_true(all(rtime(chrs[1, 2]) >= 2700 & rtime(chrs[1, 2]) <= 2900))
     expect_true(all(rtime(chrs[1, 3]) >= 2700 & rtime(chrs[1, 3]) <= 2900))
@@ -198,7 +204,7 @@ test_that("chromatogram works", {
     chrs <- chromatogram(od_x, rt = rtr, mz = mzr)
     expect_true(nrow(chrs) == 3)
     expect_true(all(lengths(chrs[2, ]) == 0))
-    
+
     rtr <- matrix(c(2700, 2900, 2700, 2900, 2600, 2800), ncol = 2, byrow = TRUE)
     mzr <- matrix(c(355, 355, 100000, 100000, 344, 344), ncol = 2, byrow = TRUE)
     chrs <- chromatogram(od_x, rt = rtr, mz = mzr)
