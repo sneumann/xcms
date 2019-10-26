@@ -2200,7 +2200,7 @@ setMethod("featureValues",
     nSamples <- seq_along(colnames)
     if (method == "sum") {
         for (i in seq_along(ftIdx)) {
-            cur_pks <- pks[ftIdx[[i]], c(value, "sample")]
+            cur_pks <- pks[ftIdx[[i]], c(value, "sample"), drop=FALSE]
             int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
             vals[i, as.numeric(names(int_sum))] <-
                 unlist(lapply(int_sum, base::sum), use.names = FALSE)
