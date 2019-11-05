@@ -39,6 +39,9 @@ The \code{findChromPeaks} methods perform the chromatographic
     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
     peaks in an extracted ion chromatogram plot.
 
+    \code{\link{refineChromPeaks}} for methods to refine or clean identified
+    chromatographic peaks.
+
 Other peak detection methods: \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
   \code{\link{findChromPeaks-centWave}},
   \code{\link{findChromPeaks-massifquant}},

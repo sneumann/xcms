@@ -887,3 +887,15 @@ test_that("CalibrantMassParam works", {
     expect_equal(.neighbors(p), 4L)
     expect_equal(.method(p), "shift")
 })
+
+test_that("CleanPeaksParam works", {
+    p <- new("CleanPeaksParam")
+    expect_true(validObject(p))
+    p@maxPeakwidth <- c(1, 4)
+    expect_error(validObject(p), "positive number")
+    p <- CleanPeaksParam(13.2)
+    show(p)
+    expect_true(validObject(p))
+    expect_equal(p@maxPeakwidth, 13.2)
+    expect_error(CleanPeaksParam(-1), "positive number")
+})

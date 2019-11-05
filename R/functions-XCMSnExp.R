@@ -2567,3 +2567,17 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         }
     }
 }
+
+## refineChromPeaks with options:
+## calls dropFeatures!
+## - CleanPeaksParam: maxPeakwidth
+## - JoinNeighborPeaksParam:
+##   - overlapping m/z
+##   - difference between rtmax and rtmin < rtdiff
+##   for newly created peaks, add corresponding info to chromPeakData.
+## m/z carnitine: 165.1313, retention time 59.
+## microtofq <- findChromPeaks(microtofq_od,
+##                             param = CentWaveParam(peakwidth = c(2, 6)))
+
+## Helper function to identify peaks overlapping on m/z with close retention
+## times.

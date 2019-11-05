@@ -1,7 +1,3 @@
-## unit tests | vignettes | elapsed | testthat | vignettes
-## serial     | serial    | 25m     | 10m30    | 3m59
-## 3CPU       | 3CPU      | 22m     | 9m7      | 3m32
-
 library(testthat)
 library(xcms)
 library(faahKO)
@@ -87,5 +83,10 @@ pest_swth <- findChromPeaksIsolationWindow(pest_swth, param = cwp)
 fl <- system.file("TripleTOF-SWATH", "PestMix1_DDA.mzML", package = "msdata")
 pest_dda <- readMSData(fl, mode = "onDisk")
 pest_dda <- findChromPeaks(pest_dda, param = cwp)
+
+## Sciex test data.
+## fl <- dir(system.file("sciex", package = "msdata"), full.names = TRUE)
+## sciex_data <- readMSData(fl, mode = "onDisk")
+## sciex_data <- pickPeaks(sciex_data)
 
 test_check("xcms")

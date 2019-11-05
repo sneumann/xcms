@@ -3520,3 +3520,87 @@ setMethod("plot", c("XCMSnExp", "missing"),
                   callNextMethod(x = x, type = type, ...)
               else .plot_XIC(x, peakCol = peakCol, ...)
           })
+
+#' @title Remove chromatographic peaks with too large rt width
+#'
+#' @aliases refineChromPeaks CleanPeaksParam-class show,CleanPeaksParam-method
+#'
+#' @description
+#'
+#' Remove chromatographic peaks with a retention time range larger than the
+#' provided maximal acceptable width (`maxPeakwidth`).
+#'
+#' @note
+#'
+#' `refineChromPeaks` methods will always remove feature definitions, because
+#' a call to this method can change or remove identified chromatographic peaks,
+#' which may be part of features.
+#'
+#' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
+#'     allowed peak width (in retention times).
+#'
+#' @param msLevel `integer` defining for which MS level(s) the chromatographic
+#'     peaks should be cleaned.
+#'
+#' @param object [XCMSnExp] object with identified chromatographic peaks.
+#'
+#' @param param `CleanPeaksParam` object defining the settings for the method.
+#'
+#' @return `XCMSnExp` object with chromatographic peaks exceeding the specified
+#'     maximal retention time width being removed.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @family chromatographic peak refinement methods
+#'
+#' @rdname refineChromPeaks-clean
+#'
+#' @examples
+#'
+#' ## Perform chromatographic peak detection on a test file.
+#' fl <- system.file("microtofq/MM14.mzML", package = "msdata")
+#' data <- readMSData(fl, mode = "onDisk")
+#'
+#' data <- findChromPeaks(data, param = CentWaveParam(peakwidth = c(2, 8)))
+#'
+#' ## Distribution of chromatographic peak widths
+#' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+#'
+#' ## Remove all chromatographic peaks with a width larger 5 seconds
+#' data <- refineChromPeaks(data, param = CleanPeaksParam(5))
+#'
+#' quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
+setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
+          function(object, param = CleanPeaksParam(),
+                   msLevel = 1L) {
+              if (!hasChromPeaks(object))
+                  stop("No chromatographic peaks present in 'object'. Please ",
+                       "run 'findChromPeaks' first.")
+              if (hasFeatures(object)) {
+                  message("Removing feature definitions.")
+                  object <- dropFeatureDefinitions(object)
+              }
+              rtwidths <- chromPeaks(object)[, "rtmax"] -
+                  chromPeaks(object)[, "rtmin"]
+              sel_ms <- chromPeakData(object)$ms_level %in% msLevel
+              sel_rt <- rtwidths < param@maxPeakwidth & sel_ms
+              keep <- which(sel_rt | !sel_ms)
+              message("Removed ", nrow(chromPeaks(object)) - length(keep),
+                      " of ", nrow(chromPeaks(object)),
+                      " chromatographic peaks.")
+              msf <- new("MsFeatureData")
+              msf@.xData <- .copy_env(object@msFeatureData)
+              chromPeaks(msf) <- chromPeaks(object)[keep, , drop = FALSE]
+              chromPeakData(msf) <- chromPeakData(object)[keep, , drop = FALSE]
+              object@msFeatureData <- msf
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+              xph <- XProcessHistory(param = param, date. = date(),
+                                     type. = .PROCSTEP.PEAK.REFINEMENT,
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
+              object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })

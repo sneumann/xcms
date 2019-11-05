@@ -358,3 +358,10 @@ CalibrantMassParam <- function(mz = list(), mzabs = 0.0001, mzppm = 5,
 
 .mz <- function(x)
     x@mz
+
+#' @rdname refineChromPeaks-clean
+#'
+#' @md
+CleanPeaksParam <- function(maxPeakwidth = 10) {
+    new("CleanPeaksParam", maxPeakwidth = as.numeric(maxPeakwidth))
+}

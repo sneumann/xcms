@@ -273,7 +273,8 @@ exportClasses(
     "ObiwarpParam",
     "GenericParam",
     "FillChromPeaksParam",
-    "CalibrantMassParam"
+    "CalibrantMassParam",
+    "CleanPeaksParam"
 )
 ## Param methods
 exportMethods(
@@ -440,7 +441,8 @@ export("CentWaveParam",
        "FillChromPeaksParam",
        "CalibrantMassParam",
        "XChromatogram",
-       "XChromatograms")
+       "XChromatograms",
+       "CleanPeaksParam")
 ## Param class methods.
 
 ## New Classes
@@ -498,5 +500,6 @@ exportMethods("hasChromPeaks",
               "plotChromPeakDensity",
               "align",
               "correlate",
-              "plot"
+              "plot",
+              "refineChromPeaks"
               )

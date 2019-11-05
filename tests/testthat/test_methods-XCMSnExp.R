@@ -2273,3 +2273,24 @@ test_that("plot,XCMSnExp works", {
 
     plot(tmp, type = "XIC")
 })
+
+test_that("refineChromPeaks,CleanPeaksParam works", {
+    rtw <- chromPeaks(xod_x)[, "rtmax"] - chromPeaks(xod_x)[, "rtmin"]
+    res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20))
+    rtw2 <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
+    expect_true(all(rtw2 < 20))
+    res <- refineChromPeaks(xod_x, param = CleanPeaksParam(1))
+    expect_true(nrow(chromPeaks(res)) == 0)
+    expect_true(is(processHistory(res)[[2]]@param, "CleanPeaksParam"))
+
+    res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20),
+                            msLevel = 2L)
+    expect_equal(chromPeaks(res), chromPeaks(xod_x))
+
+    res <- refineChromPeaks(xod_xgr, param = CleanPeaksParam(20))
+    expect_true(hasAdjustedRtime(res))
+
+    res <- refineChromPeaks(xod_xgrg, param = CleanPeaksParam(20))
+    expect_true(hasFeatures(xod_xgrg))
+    expect_false(hasFeatures(res))
+})

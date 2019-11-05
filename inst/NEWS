@@ -1,3 +1,9 @@
+Changes in version 3.9.1
+
+- Add refineChromPeaks method and CleanPeaksParam class to allow removal of
+  chromatographic peaks exceeding a user-definable maximal peak width.
+
+
 Changes in version 3.7.5
 
 - Remove xcmsMSn vignette (based on old xcms).

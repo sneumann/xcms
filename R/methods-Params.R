@@ -1886,3 +1886,9 @@ setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+setMethod("show", "CleanPeaksParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" maxPeakwidth:", object@maxPeakwidth, "\n")
+})
