@@ -543,3 +543,26 @@ test_that(".plot_XIC works", {
     tmp <- filterMz(filterRt(xod_x, rtr), mzr)
     .plot_XIC(tmp, peakCol = "#ff0000", lwd = 10)
 })
+
+test_that(".group_overlapping_peaks works", {
+    mzmin <- c(123.3, 123.35, 123.5, 341, 342.1, 343.2, 564, 564.3)
+    mzmax <- c(123.4, 123.5, 124, 342, 343, 344, 564.1, 566)
+    pks <- cbind(mzmin, mzmax)
+    rownames(pks) <- letters[1:nrow(pks)]
+
+    res <- .group_overlapping_peaks(pks)
+    expect_true(is.list(res))
+    expect_true(all(lengths(res) > 0))
+    expect_equal(res[[1]], c("a", "b", "c"))
+
+    res <- .group_overlapping_peaks(pks, expand = 0.05)
+    expect_true(length(res) == 5)
+    expect_equal(res[[1]], c("a", "b", "c"))
+    expect_equal(res[[2]], c("d", "e"))
+
+    res <- .group_overlapping_peaks(pks, expand = 0.1)
+    expect_true(length(res) == 3)
+    expect_equal(res[[1]], c("a", "b", "c"))
+    expect_equal(res[[2]], c("d", "e", "f"))
+    expect_equal(res[[3]], c("g", "h"))
+})

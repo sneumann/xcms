@@ -2579,5 +2579,71 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 ## microtofq <- findChromPeaks(microtofq_od,
 ##                             param = CentWaveParam(peakwidth = c(2, 6)))
 
-## Helper function to identify peaks overlapping on m/z with close retention
-## times.
+#' @title Group chromatographic peaks based on m/z or retention time
+#'
+#' @description
+#'
+#' Group chromatographic peaks if they are overlapping on m/z (independently
+#' of their retention time) or *vice versa*.
+#'
+#' @param x `matrix` with columns `"mzmin"` and `"mzmax"` or `"rtmin"` and
+#'     `"rtmax"`.
+#'
+#' @param min_col
+#'
+#' @param max_col `character(1)` with the name of the column with the upper
+#'     range (e.g. `"mzmax"` or `"rtmax"`).
+#'
+#' @param min_col `character(1)` with the name of the column with the lower
+#'     range (e.g. `"mzmin"` or `"rtmin"`).
+#'
+#' @param expand `numeric(1)` defining a constant value by which each e.g. m/z
+#'     range is supposed to be expanded. Note that the mz range will be expanded
+#'     by `expandMz` in both dimensions (i.e. `"mzmin"` - `expandMz` and
+#'     `"mzmax"` + `expandMz`.
+#'
+#' @param ppm `numeric(1)` defining an m/z relative value by which the m/z range
+#'     should be expanded.
+#'
+#' @note
+#'
+#' `x` is supposed to be a `chromPeaks` matrix of a single file, otherwise we're
+#' grouping chromatographic peaks across samples.
+#'
+#' Note also that **each** peak gets expanded by `expandMz`, thus
+#' peaks differing by `2 * expandMz` will be overlapping. As an example: m/z max
+#' of one peak is 12.2, m/z min of another one is 12.4, if `expandMz = 0.1` is
+#' used the m/z max of the first peak will be 12.3 and the m/z min of the second
+#' one 12.3, thus both are considered *overlapping*.
+#'
+#' @author Johannes Rainer
+#'
+#' @return `list` with rownames (chromatographic peak IDs) of peak groups.
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mat <- cbind(rtmin = c(10, 13, 16, 18), rtmax = c(12, 15, 17, 20),
+#'     mzmin = c(2, 3, 4, 7), mzmax = c(2.5, 3.5, 4.2, 7.6))
+#' rownames(mat) <- c("a", "b", "c", "d")
+#' .group_overlapping_peaks(mat)
+#'
+#' .group_overlapping_peaks(mat, expand = 1)
+#'
+#' .group_overlapping_peaks(mat, expand = 0.25)
+.group_overlapping_peaks <- function(x, min_col = "mzmin", max_col = "mzmax",
+                                     expand = 0, ppm = 0) {
+    x[, min_col] <- x[, min_col] - expand - x[, min_col] * ppm / 1e6
+    x[, max_col] <- x[, max_col] + expand + x[, max_col] * ppm / 1e6
+    reduced_ranges <- .reduce(x[, min_col], x[, max_col])
+    res <- vector("list", nrow(reduced_ranges))
+    tolerance <- sqrt(.Machine$double.eps)
+    for (i in seq_along(res)) {
+        res[[i]] <- rownames(x)[
+            x[, min_col] >= reduced_ranges[i, 1] - tolerance &
+            x[, max_col] <= reduced_ranges[i, 2] + tolerance
+        ]
+    }
+    res
+}

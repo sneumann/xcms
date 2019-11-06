@@ -733,6 +733,60 @@ rowRla <- function(x, group, log.transform = TRUE) {
     }, integer(1))
 }
 
+#' @description
+#'
+#' Similar to the `IRanges::reduce` method, this function *joins* overlapping
+#' ranges (e.g. m/z ranges or retention time ranges) to create unique and
+#' disjoined (i.e. not overlapping) ranges.
+#'
+#' @param start `numeric` with start positions.
+#'
+#' @param end `numeric` with end positions.
+#'
+#' @return `matrix` with two columns containing the start and end values for
+#'     the disjoined ranges. Note that the ranges are increasingly ordered.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mzmin <- c(2, 3, 4, 7)
+#' mzmax <- c(2.5, 3.5, 4.2, 7.6)
+#' .reduce(mzmin, mzmax)
+#' .reduce(mzmin - 0.1, mzmax + 0.1)
+#' .reduce(mzmin - 0.5, mzmax + 0.5)
+.reduce <- function(start, end) {
+    if (!length(start))
+        return(matrix(ncol = 2, nrow = 0,
+                      dimnames = list(NULL, c("start", "end"))))
+    if (length(start) == 1) {
+        return(cbind(start, end))
+    }
+    idx <- order(start, end)
+    start <- start[idx]
+    end <- end[idx]
+    new_start <- new_end <- numeric(length(start))
+    current_slice <- 1
+    new_start[current_slice] <- start[1]
+    new_end[current_slice] <- end[1]
+    for (i in 2:length(start)) {
+        if (start[i] <= new_end[current_slice] &&
+            end[i] >= new_end[current_slice])
+            new_end[current_slice] <- end[i]
+        else {
+            current_slice <- current_slice + 1
+            new_start[current_slice] <- start[i]
+            new_end[current_slice] <- end[i]
+        }
+    }
+    idx <- 1:current_slice
+    cbind(start = new_start[idx], end = new_end[idx])
+}
+
 ## #' Define a unique identifier for each chromatographic peak within the chrom
 ## #' peak matrix by concatenating as many columns as needed.
 ## #'

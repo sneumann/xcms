@@ -2686,6 +2686,21 @@ do_findChromPeaks_addPredIsoROIs <-
              verboseColumns = FALSE, peaks. = NULL,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
+        ## cat("Settings:\n")
+        ## cat("ppm:", ppm, "\n")
+        ## cat("peakwidth:", peakwidth, "\n")
+        ## cat("snthresh:", snthresh, "\n")
+        ## cat("prefilter:", prefilter, "\n")
+        ## cat("mzCenterFun:", mzCenterFun, "\n")
+        ## cat("integrate:", integrate, "\n")
+        ## cat("mzdiff:", mzdiff, "\n")
+        ## cat("fitgauss:", fitgauss, "\n")
+        ## cat("noise:", noise, "\n")
+        ## cat("verboseColumns:", verboseColumns, "\n")
+        ## cat("maxCharge:", maxCharge, "\n")
+        ## cat("maxIso:", maxIso, "\n")
+        ## cat("mzIntervalExtension:", mzIntervalExtension, "\n")
+        ## cat("polarity:", polarity, "\n")
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))

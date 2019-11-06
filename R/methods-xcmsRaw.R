@@ -569,10 +569,10 @@ setMethod("findPeaks.centWaveWithPredictedIsotopeROIs", "xcmsRaw",
                                                                firstBaselineCheck = firstBaselineCheck,
                                                                roiScales = roiScales,
                                                                snthreshIsoROIs = snthreshIsoROIs,
-                                                      maxCharge = maxcharge,
-                                                      maxIso = maxiso,
-                                                      mzIntervalExtension = mzIntervalExtension
-                                                      )
+                                                               maxCharge = maxcharge,
+                                                               maxIso = maxiso,
+                                                               mzIntervalExtension = mzIntervalExtension
+                                                               )
               invisible(new("xcmsPeaks", res))
           })
 
