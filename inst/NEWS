@@ -1,3 +1,8 @@
+Changes in version 3.8.1
+
+- Show warning if peak detection is performed on an object with empty spectra.
+
+
 Changes in version 3.7.5
 
 - Remove xcmsMSn vignette (based on old xcms).
