@@ -2648,19 +2648,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     res
 }
 
-## x <- chromPeaks(xod_x)
-## x <- x[x[, "sample"] == 2, ]
-## mz_groups <- xcms:::.group_overlapping_peaks(x, ppm = 40)
-## mz_groups <- mz_groups[lengths(mz_groups) > 1]
-
-## mzg <- mz_groups[[1]]
-## x_sub <- x[mzg, , drop = FALSE]
-
-## chr <- chromatogram(filterFile(xod_x, 2), mz = x_sub[1, c("mzmin", "mzmax")])
-## rt_groups <- xcms:::.group_overlapping_peaks(x_sub, expand = 2)
-## rt_groups <- rt_groups[lengths(rt_groups) > 1]
-
-## x <- filterFile(xod_x, 2)
 #' @description
 #'
 #' Identify chromatographic peaks overlapping in m/z dimension and being close
@@ -2699,102 +2686,83 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #'     by which the m/z range of each chromatographic peak should be expanded
 #'     to check for overlapping peaks.
 #'
+#' @param minProp `numeric(1)` between `0` and `1` representing the proporion
+#'     of intensity to be required for peaks to be joined. See description for
+#'     more details. The default (`minProp = 0.75`) means that peaks are only
+#'     joined if the signal half way between then is larger 75% of the smallest
+#'     of the two peak's `"maxo"` (maximal intensity at peak apex).
+#'
+#' @return peaks `matrix` containing newly merged peaks and original peaks if
+#'     they could not be merged. The merged peaks will have a row name of `NA`.
 #'
 #' @author Johannes Rainer
 #'
 #' @md
 #'
 #' @noRd
-.combine_nearby_peaks <- function(x, sample_index, expandRt = 2,
-                                  expandMz = 0, ppm = 10) {
+#'
+#' @examples
+#'
+#' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'     mode = "onDisk")
+#' xd <- findChromPeaks(xd, param = CentWaveParam())
+#'
+#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 453.2)
+#' plot(xchr)
+#'
+#' res <- .merge_neighboring_peaks(xd, expandRt = 2)
+#'
+#' res_sub <- res[res[, "mz"] >= 453.1 & res[, "mz"] <= 453.3, ]
+#' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
+#'     border = "red")
+.merge_neighboring_peaks <- function(x, expandRt = 2, expandMz = 0, ppm = 10,
+                                  minProp = 0.75) {
     if (hasAdjustedRtime(x))
         x <- applyAdjustedRtime(x)
+    if (length(expandRt) != 1 | length(expandMz) != 1 | length(ppm) != 1 |
+        length(minProp) != 1)
+        stop("'expandRt', 'expandMz', 'ppm' and 'minProp' have to be numeric",
+             " of length 1")
     pks <- chromPeaks(x)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    template_peak <- pks[1, , drop = FALSE]
-    rownames(template_peak) <- NULL
-    template_peak[ , ] <- NA_real_
     pkd <- chromPeakData(x)
     if (any(pkd$ms_level != 1))
         stop("Currently only MS level 1 peaks are supported.")
     x <- dropChromPeaks(x)
-    mz_groups <- xcms:::.group_overlapping_peaks(
-                            pks, expand = expandMz, ppm = ppm)
+    mz_groups <- xcms:::.group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
-    for (mz_group in mz_groups) {
+    res_list <- vector("list", length(mz_groups))
+    for (i in seq_along(mz_groups)) {
+        cat(i, "mz group length:", length(mz_groups[[i]]), "\n")
         rt_groups <- xcms:::.group_overlapping_peaks(
-                                pks[mz_group, , drop = FALSE],
-                                expand = expandRt, min_col = "rtmin",
-                                max_col = "rtmax"
-                            )
+            pks[mz_groups[[i]], , drop = FALSE],
+            expand = expandRt, min_col = "rtmin",
+            max_col = "rtmax"
+        )
         rt_groups <- rt_groups[lengths(rt_groups) > 1]
-        for (rt_group in rt_groups) {
-            ## get pks subset
+        res_list_sub <- vector("list", length(rt_groups))
+        for (j in seq_along(rt_groups)) {
+            rt_group <- rt_groups[[j]]
+            cat("rt group length:", length(rt_group), "\n")
             pks_sub <- pks[rt_group, ]
-            ## order the pks by retention time.
-            pks_sub <- pks_sub[order(pks_sub[, "rtmin"]), ]
-            ## extract the ion chromatogram.
             chr <- chromatogram(x, mz = c(min(pks_sub[, "mzmin"]),
                                           max(pks_sub[, "mzmax"])),
                                 rt = c(min(pks_sub[, "rtmin"]),
                                        max(pks_sub[, "rtmax"])),
                                 aggregationFun = "sum")[1, 1]
-            ## check if intensity at borders is above a certain percentage.
-            ## integrate the peak
-            ## add it to the list of peaks... but how - concatenate?
+            res <- .chrom_merge_neighboring_peaks(chr, pks = pks_sub,
+                                                  diffRt = 2 * expandRt,
+                                                  minProp = minProp)
+            drop_peaks[rt_group[!rt_group %in% rownames(res)]] <- TRUE
+            res_list_sub[[j]] <- res
         }
+        if (length(res_list_sub))
+            res_list[[i]] <- do.call(rbind, res_list_sub)
     }
-    ## return only the new peaks and IDs of chromatographic peaks.
-}
-
-## Function that takes a Chromatogram and rtmin, rtmax and returns rtmin, rtmax
-## of eventually joined peaks.
-#' @description
-#'
-#' Peak detection sometimes fails to identify a chromatographic peak correctly,
-#' especially for broad peaks and if the peak shape is irregular (mostly for
-#' HILIC data). In such cases several smaller peaks are reported. This function
-#' tries to combine such peaks again if the signal at their boundaries is not
-#' below a certain percentage of the peak's maximal signal. The *correct* peak
-#' boundaries are reported.
-#'
-#' @param x `Chromatogram` object with the extracted ion chromatogram containing
-#'     the signal for the `pks`.
-#'
-#' @param pks `matrix` representing a peaks matrix. Columns `"rtmin"`,
-#'     `"rtmax"` and `"maxo"` are required. It is supposed that these peaks are
-#'     close enough on retention time to potentially represent signal from the
-#'     same compound.
-#'
-#' @return peaks `matrix` containing newly merged peaks and original peaks if
-#'     they could not be merged.
-#'
-#' @author Johannes Rainer
-#'
-#' @md
-#'
-#' @noRd
-.merge_neighboring_peaks <- function(x, pks, signalProp = 0.75, diffRt = 0) {
-    if (nrow(pks) < 2)
-        return(pks[, c("rtmin", "rtmax"), drop = FALSE])
-    ## Alternative: just define rtmin and rtmax of peaks. Have to check
-    ## which of them matches exactly with the input ones.
-    rtmin_new <- rtmax_new <- numeric(nrow(pks))
-    current_peak <- 1 # point always to the current *new* peak.
-    rtmin_new[current_peak] <- pks[1, "rtmin"]
-    rtmax_new[current_peak] <- pks[1, "rtmax"]
-    for (i in 2:nrow(pks)) {
-        ## Check if difference between peaks is below diffRt.
-        ## Get signal in between the two peaks.
-        rtmid <- (pks[i, "rtmax"] + pks[i - 1, "rtmin"]) / 2
-        ## if the signal is > signalProp min maxo of neighboring peaks, join
-    }
-    ## Check which of the new rts are matching with existing peaks - skip these
-    ## For all remaining: do the peak integration with the new boundaries.
-    ## Want to report those that where not joined and the new boundaries for the
-    ## joined ones. The new ones can be discriminated from the original ones
-    ## because they don't have rownames.
+    pks_new <- do.call(rbind, res_list)
+    pks <- pks[!drop_peaks, , drop = FALSE]
+    rbind(pks, pks_new[is.na(rownames(pks_new)), , drop = FALSE])
 }

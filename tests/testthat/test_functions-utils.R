@@ -319,4 +319,16 @@ test_that(".reduce works", {
     expect_true(nrow(res) == 1)
     expect_equal(res[1, 1], c(start = 4))
     expect_equal(res[1, 2], c(end = 5))
+
+    a <- c(3, 4, 8)
+    b <- c(7, 5, 10)
+    res <- xcms:::.reduce(a, b)
+    expect_equal(res[, 1], c(3, 8))
+    expect_equal(res[, 2], c(7, 10))
+
+    a <- c(3, 4, 6)
+    b <- c(7, 5, 10)
+    res <- xcms:::.reduce(a, b)
+    expect_equal(unname(res[, 1]), 3)
+    expect_equal(unname(res[, 2]), 10)
 })

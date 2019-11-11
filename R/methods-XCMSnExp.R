@@ -3604,3 +3604,11 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
               validObject(object)
               object
           })
+
+## setMethod refineChromPeaks:
+## check if it has chromPeaks, remove features.
+## split the object by file.
+## call .merge_neighboring_peaks for each file
+## update sample index
+## join peaks updating/subsetting also the chromPeakData.
+## add process history

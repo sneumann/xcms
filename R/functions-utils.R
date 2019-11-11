@@ -774,10 +774,10 @@ rowRla <- function(x, group, log.transform = TRUE) {
     new_start[current_slice] <- start[1]
     new_end[current_slice] <- end[1]
     for (i in 2:length(start)) {
-        if (start[i] <= new_end[current_slice] &&
-            end[i] >= new_end[current_slice])
-            new_end[current_slice] <- end[i]
-        else {
+        if (start[i] <= new_end[current_slice]) {
+            if (end[i] > new_end[current_slice])
+                new_end[current_slice] <- end[i]
+        } else {
             current_slice <- current_slice + 1
             new_start[current_slice] <- start[i]
             new_end[current_slice] <- end[i]

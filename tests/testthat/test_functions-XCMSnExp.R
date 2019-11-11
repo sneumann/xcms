@@ -566,3 +566,22 @@ test_that(".group_overlapping_peaks works", {
     expect_equal(res[[2]], c("d", "e", "f"))
     expect_equal(res[[3]], c("g", "h"))
 })
+
+test_that(".combine_nearby_peaks works", {
+    x <- xod_x
+
+    ## DELETE
+    x <- chromPeaks(xod_x)
+    x <- x[x[, "sample"] == 2, ]
+    mz_groups <- xcms:::.group_overlapping_peaks(x, ppm = 40)
+    mz_groups <- mz_groups[lengths(mz_groups) > 1]
+
+    mzg <- mz_groups[[1]]
+    x_sub <- x[mzg, , drop = FALSE]
+
+    chr <- chromatogram(filterFile(xod_x, 2), mz = x_sub[1, c("mzmin", "mzmax")])
+    rt_groups <- xcms:::.group_overlapping_peaks(x_sub, expand = 2)
+    rt_groups <- rt_groups[lengths(rt_groups) > 1]
+
+    x <- filterFile(xod_x, 2)
+})

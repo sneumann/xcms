@@ -130,3 +130,44 @@ test_that(".correlate_chromatogram works", {
                                           use = "everything")
     expect_equal(res, NA_real_)
 })
+
+test_that(".merge_neighboring_peaks works", {
+    ints <- c(0.5, 1, 1, 3, 6, 9, 12, 13, 11, 6, 5, 3, 1, 1, 1.5, 1, 4, 6,
+              8, 9, 8, 6, 3, 2, 1.3, 1, 0.7, 0.5, 1, 1, 1, 0.5, 3, 5, 8,
+              12, 10, 9, 6, 3, 2, 1, 1, 1)
+    rts <- 1:length(ints)
+    chr <- Chromatogram(rts, ints)
+    cwp <- CentWaveParam(snthresh = 0, prefilter = c(1, 1), peakwidth = c(1, 4))
+    xchr <- findChromPeaks(chr, param = cwp)
+    res <- xcms:::.merge_neighboring_peaks(chr, chromPeaks(xchr))
+    rownames(res) <- NULL
+    expect_equal(res, chromPeaks(xchr))
+    res <- xcms:::.merge_neighboring_peaks(chr, chromPeaks(xchr), diffRt = 5)
+    rownames(res) <- NULL
+    expect_equal(res, chromPeaks(xchr))
+
+    ints <- c(0.5, 1, 1, 3, 6, 9, 12, 13, 11, 7, 6, 5.5, 5.2, 5, 5.2, 5.4,
+              5.7, 6, 8, 9, 8, 6, 3, 2, 1.3, 1, 0.7, 0.5, 1, 1, 1, 0.5, 3,
+              5, 8, 12, 10, 9, 6, 3, 2, 1, 1, 1)
+    rts <- 1:length(ints) + rnorm(length(ints), sd = 0.05)
+    chr <- Chromatogram(rts, ints)
+    xchr <- findChromPeaks(chr, param = cwp)
+    pks <- chromPeaks(xchr)
+    res <- xcms:::.merge_neighboring_peaks(chr, pks, diffRt = 5, minProp = 0.5)
+    expect_true(nrow(res) == 2)
+    expect_equal(rownames(res), c(NA_character_, "3"))
+    expect_equal(res[1, "rtmin"], unname(pks[1, "rtmin"]))
+    expect_equal(res[1, "rtmax"], unname(pks[2, "rtmax"]))
+    res <- xcms:::.merge_neighboring_peaks(chr, pks, diffRt = 10, minProp = 0.01)
+    expect_true(nrow(res) == 1)
+    expect_equal(res[1, "rtmin"], unname(pks[1, "rtmin"]))
+    expect_equal(res[1, "rtmax"], unname(pks[3, "rtmax"]))
+    ## Check "into" calculation.
+    pks <- rbind(pks[-c(1, 2), ],
+                 c(18, pks[2, "rtmin"], pks[2, "rtmin"] + 4, NA_real_,
+                   NA_real_, 3, 3),
+                 c(20, pks[2, "rtmax"] - 5, pks[2, "rtmax"], NA_real_,
+                   NA_real_, 9, 8))
+    res <- xcms:::.merge_neighboring_peaks(chr, pks, diffRt = 5, minProp = 0.75)
+    expect_equal(unname(res[1, "into"]), unname(chromPeaks(xchr)[2, "into"]))
+})
