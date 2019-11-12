@@ -567,21 +567,40 @@ test_that(".group_overlapping_peaks works", {
     expect_equal(res[[3]], c("g", "h"))
 })
 
-test_that(".combine_nearby_peaks works", {
-    x <- xod_x
+test_that(".merge_neighboring_peaks works", {
+    xod_x1 <- filterFile(xod_x, 1L)
+    res <- .merge_neighboring_peaks(xod_x1, expandRt = 4)
+    expect_true(is.matrix(res))
+    expect_true(nrow(res) < nrow(chromPeaks(xod_x1)))
 
-    ## DELETE
-    x <- chromPeaks(xod_x)
-    x <- x[x[, "sample"] == 2, ]
-    mz_groups <- xcms:::.group_overlapping_peaks(x, ppm = 40)
+    mz_groups <- .group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
 
-    mzg <- mz_groups[[1]]
-    x_sub <- x[mzg, , drop = FALSE]
+    ## mz of 305.1: nice example of a split peak.
+    tmp <- chromPeaks(xod_x1)[mz_groups[[1]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    chr <- chromatogram(xod_x1, mz = mzr)
+    ## plot(chr)
+    res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    expect_true(nrow(res_mzr) == 2)
+    expect_true(nrow(res_mzr) < nrow(chromPeaks(xod_x1, mz = mzr)))
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
 
-    chr <- chromatogram(filterFile(xod_x, 2), mz = x_sub[1, c("mzmin", "mzmax")])
-    rt_groups <- xcms:::.group_overlapping_peaks(x_sub, expand = 2)
-    rt_groups <- rt_groups[lengths(rt_groups) > 1]
+    ## ## mz of 462.2: strange one that fails.
+    ## tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
+    ## mzr <- range(tmp[, c("mzmin", "mzmax")])
+    ## chr <- chromatogram(xod_x1, mz = mzr)
+    ## plot(chr)
+    ## res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
 
-    x <- filterFile(xod_x, 2)
+    ## mz of 496.2: two peaks that DON'T get merged (and that's OK).
+    tmp <- chromPeaks(xod_x1)[mz_groups[[5]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    chr <- chromatogram(xod_x1, mz = mzr)
+    res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    ## plot(chr)
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    expect_true(nrow(res_mzr) == 2)
+    expect_true(nrow(res_mzr) == nrow(chromPeaks(xod_x1, mz = mzr)))
 })

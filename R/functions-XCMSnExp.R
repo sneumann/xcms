@@ -2707,12 +2707,21 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #'     mode = "onDisk")
 #' xd <- findChromPeaks(xd, param = CentWaveParam())
 #'
-#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 453.2)
+#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 305.1)
 #' plot(xchr)
 #'
-#' res <- .merge_neighboring_peaks(xd, expandRt = 2)
+#' res <- xcms:::.merge_neighboring_peaks(xd, expandRt = 4)
 #'
-#' res_sub <- res[res[, "mz"] >= 453.1 & res[, "mz"] <= 453.3, ]
+#' res_sub <- res[res[, "mz"] >= 305.05 & res[, "mz"] <= 305.15, ]
+#' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
+#'     border = "red")
+#'
+#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 496.2)
+#' plot(xchr)
+#'
+#' res <- xcms:::.merge_neighboring_peaks(xd, expandRt = 4)
+#'
+#' res_sub <- res[res[, "mz"] >= 496.15 & res[, "mz"] <= 496.25, ]
 #' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
 #'     border = "red")
 .merge_neighboring_peaks <- function(x, expandRt = 2, expandMz = 0, ppm = 10,
@@ -2726,18 +2735,16 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     pks <- chromPeaks(x)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    pkd <- chromPeakData(x)
-    if (any(pkd$ms_level != 1))
+    if (any(chromPeakData(x)$ms_level != 1))
         stop("Currently only MS level 1 peaks are supported.")
     x <- dropChromPeaks(x)
-    mz_groups <- xcms:::.group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
+    mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
     res_list <- vector("list", length(mz_groups))
     for (i in seq_along(mz_groups)) {
-        cat(i, "mz group length:", length(mz_groups[[i]]), "\n")
-        rt_groups <- xcms:::.group_overlapping_peaks(
+        rt_groups <- .group_overlapping_peaks(
             pks[mz_groups[[i]], , drop = FALSE],
             expand = expandRt, min_col = "rtmin",
             max_col = "rtmax"
@@ -2746,7 +2753,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         res_list_sub <- vector("list", length(rt_groups))
         for (j in seq_along(rt_groups)) {
             rt_group <- rt_groups[[j]]
-            cat("rt group length:", length(rt_group), "\n")
             pks_sub <- pks[rt_group, ]
             chr <- chromatogram(x, mz = c(min(pks_sub[, "mzmin"]),
                                           max(pks_sub[, "mzmax"])),

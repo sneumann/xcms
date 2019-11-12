@@ -182,8 +182,8 @@
     cns <- colnames(pks)
     if (!any(cns == "mz"))
         pks <- cbind(pks, mz = NA_real_, mzmin = NA_real_, mzmax = NA_real_)
-    rtmin_new <- rtmax_new <- mz_new <- sn_new <- maxo_new <- rt_new <-
-        numeric(nrow(pks))
+    ## rtmin_new <- rtmax_new <- mz_new <- sn_new <- maxo_new <- rt_new <-
+    ##     numeric(nrow(pks))
     if (is.null(rownames(pks)))
         rownames(pks) <- seq_len(nrow(pks))
     pks_new <- pks
@@ -197,7 +197,6 @@
                                             "maxo", "sn", "sample"))
     for (i in 2:nrow(pks)) {
         if ((pks[i, "rtmin"] - pks_new[current_peak, "rtmax"]) < diffRt) {
-            ## consider for merging, based on the intensity in the middle...
             rt_mid <- (pks[i, "rtmin"] + pks_new[current_peak, "rtmax"]) / 2
             int_mid <- intensity(x)[which.min(abs(rtime(x) - rt_mid))]
             if (int_mid > min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) *
