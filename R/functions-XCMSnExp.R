@@ -2568,17 +2568,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     }
 }
 
-## refineChromPeaks with options:
-## calls dropFeatures!
-## - CleanPeaksParam: maxPeakwidth
-## - JoinNeighborPeaksParam:
-##   - overlapping m/z
-##   - difference between rtmax and rtmin < rtdiff
-##   for newly created peaks, add corresponding info to chromPeakData.
-## m/z carnitine: 165.1313, retention time 59.
-## microtofq <- findChromPeaks(microtofq_od,
-##                             param = CentWaveParam(peakwidth = c(2, 6)))
-
 #' @title Group chromatographic peaks based on m/z or retention time
 #'
 #' @description
@@ -2692,8 +2681,11 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #'     joined if the signal half way between then is larger 75% of the smallest
 #'     of the two peak's `"maxo"` (maximal intensity at peak apex).
 #'
-#' @return peaks `matrix` containing newly merged peaks and original peaks if
-#'     they could not be merged. The merged peaks will have a row name of `NA`.
+#' @return `list` with element `"chromPeaks"`, that contains the peaks `matrix`
+#'     containing newly merged peaks and original peaks if they could not be
+#'     merged and `"chromPeakData"` that represents the `DataFrame` with the
+#'     corresponding metadata information. The merged peaks will have a row
+#'     name of `NA`.
 #'
 #' @author Johannes Rainer
 #'
@@ -2728,11 +2720,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                                   minProp = 0.75) {
     if (hasAdjustedRtime(x))
         x <- applyAdjustedRtime(x)
-    if (length(expandRt) != 1 | length(expandMz) != 1 | length(ppm) != 1 |
-        length(minProp) != 1)
-        stop("'expandRt', 'expandMz', 'ppm' and 'minProp' have to be numeric",
-             " of length 1")
     pks <- chromPeaks(x)
+    pkd <- chromPeakData(x)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
     if (any(chromPeakData(x)$ms_level != 1))
@@ -2743,6 +2732,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
     res_list <- vector("list", length(mz_groups))
+    pkd_list <- vector("list", length(mz_groups)) # need to keep the peakdata
     for (i in seq_along(mz_groups)) {
         rt_groups <- .group_overlapping_peaks(
             pks[mz_groups[[i]], , drop = FALSE],
@@ -2750,25 +2740,34 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
             max_col = "rtmax"
         )
         rt_groups <- rt_groups[lengths(rt_groups) > 1]
-        res_list_sub <- vector("list", length(rt_groups))
+        res_list_sub <- pkd_list_sub <- vector("list", length(rt_groups))
         for (j in seq_along(rt_groups)) {
             rt_group <- rt_groups[[j]]
             pks_sub <- pks[rt_group, ]
+            pkd_sub <- pkd[rt_group, ]
             chr <- chromatogram(x, mz = c(min(pks_sub[, "mzmin"]),
                                           max(pks_sub[, "mzmax"])),
                                 rt = c(min(pks_sub[, "rtmin"]),
                                        max(pks_sub[, "rtmax"])),
                                 aggregationFun = "sum")[1, 1]
-            res <- .chrom_merge_neighboring_peaks(chr, pks = pks_sub,
+            ## That below should return peaks and peak data.
+            res <- .chrom_merge_neighboring_peaks(chr, pks = pks_sub, pkd,
                                                   diffRt = 2 * expandRt,
                                                   minProp = minProp)
-            drop_peaks[rt_group[!rt_group %in% rownames(res)]] <- TRUE
-            res_list_sub[[j]] <- res
+            drop_peaks[rt_group[!rt_group %in% rownames(res$chromPeaks)]] <- TRUE
+            res_list_sub[[j]] <- res$chromPeaks
+            pkd_list_sub[[j]] <- res$chromPeakData
         }
-        if (length(res_list_sub))
+        if (length(res_list_sub)) {
             res_list[[i]] <- do.call(rbind, res_list_sub)
+            pkd_list[[i]] <- do.call(rbind, pkd_list_sub)
+        }
     }
     pks_new <- do.call(rbind, res_list)
+    pkd_new <- do.call(rbind, pkd_list)
     pks <- pks[!drop_peaks, , drop = FALSE]
-    rbind(pks, pks_new[is.na(rownames(pks_new)), , drop = FALSE])
+    pkd <- pkd[!drop_peaks, , drop = FALSE]
+    idx_new <- is.na(rownames(pks_new))
+    list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
+         chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
 }

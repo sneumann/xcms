@@ -2831,5 +2831,36 @@ setClass("CleanPeaksParam",
              if (length(msg))
                  msg
              else TRUE
-         }
-         )
+         })
+
+setClass("MergeNeighboringPeaksParam",
+         slots = c(expandRt = "numeric",
+                   expandMz = "numeric",
+                   ppm = "numeric",
+                   minProp = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             expandRt = 2.0,
+             expandMz = 0.0,
+             ppm = 10.0,
+             minProp = 0.75),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@expandRt) > 1 || !is.finite(object@expandRt))
+                 msg <- c(msg, paste0("'expandRt' has to be a (defined) ",
+                                      "numeric of length 1"))
+             if (length(object@expandMz) > 1 || !is.finite(object@expandMz))
+                 msg <- c(msg, paste0("'expandMz' has to be a (defined) ",
+                                      "numeric of length 1"))
+             if (length(object@ppm) > 1 || !is.finite(object@ppm) ||
+                 object@ppm < 0)
+                 msg <- c(msg, paste0("'ppm' has to be a positive numeric ",
+                                      "of length 1"))
+             if (length(object@minProp) > 1 || !is.finite(object@minProp) ||
+                 object@minProp < 0)
+                 msg <- c(msg, paste0("'minProp' has to be a positive ",
+                                      "number of length 1"))
+             if (length(msg))
+                 msg
+             else TRUE
+         })

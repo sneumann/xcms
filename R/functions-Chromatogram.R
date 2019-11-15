@@ -135,9 +135,10 @@
 #' intensity at half way between the two peaks is larger than `minProp` times
 #' the smaller maximal peak intensity of both peaks, they are joined. The joined
 #' peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from the peak with
-#' the largest signal (`"maxo"`). The `"rtmin"`, `"rtmax"` are updated and
-#' `"into"` is recalculated based on all the signal between `"rtmin"` and
-#' `"rtmax"` of the new merged peak.
+#' the largest signal (`"maxo"`) as well as its row in the *chrom peak data*
+#' `pkd`. The `"rtmin"`, `"rtmax"` are updated and `"into"` is recalculated
+#' based on all the signal between `"rtmin"` and `"rtmax"` of the new merged
+#' peak.
 #'
 #' @param x `Chromatogram` object with the extracted ion chromatogram containing
 #'     the signal for the `pks`.
@@ -147,6 +148,9 @@
 #'     close enough on retention time to potentially represent signal from the
 #'     same compound.
 #'
+#' @param pkd `DataFrame` representing the peak data (as returned by the
+#'     [chromPeakData()] function.
+#'
 #' @param minProp `numeric(1)` representing the proportion of intensity to
 #'     be required for peaks to be joined. See description for more details.
 #'
@@ -154,8 +158,11 @@
 #'     `"rtmax"` and `"rtmin"` of consecutive peaks to be considered for
 #'     merging.
 #'
-#' @return peaks `matrix` containing newly merged peaks and original peaks if
-#'     they could not be merged. The merged peaks will have a row name of `NA`.
+#' @return `list` with element `"chromPeaks"`, that contains the peaks `matrix`
+#'     containing newly merged peaks and original peaks if they could not be
+#'     merged and `"chromPeakData"` that represents the `DataFrame` with the
+#'     corresponding metadata information. The merged peaks will have a row
+#'     name of `NA`.
 #'
 #' @author Johannes Rainer
 #'
@@ -171,21 +178,23 @@
 #' xchr <- findChromPeaks(chr, param = CentWaveParam(snthresh = 0))
 #' plot(xchr)
 #'
-#' res <- .chrom_merge_neighboring_peaks(chr[[1]], chromPeaks(xchr), diffRt = 2)
+#' res <- .chrom_merge_neighboring_peaks(chr[[1]], chromPeaks(xchr[[1]]),
+#'     chromPeakData(xchr[[1]]), diffRt = 2)
 #' res
 #' rect(res[, "rtmin"], 0, res[, "rtmax"], res[, "maxo"], border = "red")
-.chrom_merge_neighboring_peaks <- function(x, pks, minProp = 0.75, diffRt = 0) {
+.chrom_merge_neighboring_peaks <- function(x, pks, pkd, minProp = 0.75,
+                                           diffRt = 0) {
     if (nrow(pks) < 2)
-        return(pks)
+        return(list(chromPeaks = pks, chromPeakData = pkd))
     x <- clean(x, all = TRUE)
-    pks <- pks[order(pks[, "rtmin"]), , drop = FALSE]
+    idx <- order(pks[, "rtmin"])
+    pks <- pks[idx, , drop = FALSE]
+    pkd <- pkd[idx, , drop = FALSE]
     cns <- colnames(pks)
     if (!any(cns == "mz"))
         pks <- cbind(pks, mz = NA_real_, mzmin = NA_real_, mzmax = NA_real_)
-    ## rtmin_new <- rtmax_new <- mz_new <- sn_new <- maxo_new <- rt_new <-
-    ##     numeric(nrow(pks))
     if (is.null(rownames(pks)))
-        rownames(pks) <- seq_len(nrow(pks))
+        rownames(pks) <- rownames(pkd) <- seq_len(nrow(pks))
     pks_new <- pks
     pks_new[ , ] <- NA_real_
     rownames(pks_new) <- rep(NA_character_, nrow(pks))
@@ -216,19 +225,25 @@
                                      rtime(x) <= pks_new[current_peak, "rtmax"]],
                         na.rm = TRUE) *
                     peak_width
-                if (pks[i, "maxo"] > pks_new[current_peak, "maxo"])
+                if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
+                    pkd[current_peak, ] <- pkd[i, ] # replace peak data with new
+                }
             } else {
                 current_peak <- current_peak + 1
                 pks_new[current_peak, ] <- pks[i, ]
                 rownames(pks_new)[current_peak] <- rownames(pks)[i]
+                pkd[current_peak, ] <- pkd[i, ]
             }
         } else {
             current_peak <- current_peak + 1
             pks_new[current_peak, ] <- pks[i, ]
             rownames(pks_new)[current_peak] <- rownames(pks)[i]
+            pkd[current_peak, ] <- pkd[i, ]
         }
     }
-    pks_new[!is.na(pks_new[, "rt"]), cns, drop = FALSE]
+    keep <- !is.na(pks_new[, "rt"])
+    list(chromPeaks = pks_new[keep, cns, drop = FALSE],
+         chromPeakData = pkd[keep, , drop = FALSE])
 }

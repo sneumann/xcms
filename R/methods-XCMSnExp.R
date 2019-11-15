@@ -3575,13 +3575,16 @@ setMethod("plot", c("XCMSnExp", "missing"),
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
           function(object, param = CleanPeaksParam(),
                    msLevel = 1L) {
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peaks present in 'object'. Please ",
-                       "run 'findChromPeaks' first.")
+              if (!hasChromPeaks(object)) {
+                  warning("No chromatographic peaks present in 'object'. Please ",
+                          "run 'findChromPeaks' first.")
+                  return(object)
+              }
               if (hasFeatures(object)) {
                   message("Removing feature definitions.")
                   object <- dropFeatureDefinitions(object)
               }
+              validObject(param)
               rtwidths <- chromPeaks(object)[, "rtmax"] -
                   chromPeaks(object)[, "rtmin"]
               sel_ms <- chromPeakData(object)$ms_level %in% msLevel
@@ -3605,10 +3608,167 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
               object
           })
 
-## setMethod refineChromPeaks:
-## check if it has chromPeaks, remove features.
-## split the object by file.
-## call .merge_neighboring_peaks for each file
-## update sample index
-## join peaks updating/subsetting also the chromPeakData.
-## add process history
+#' @title Merge neighboring and overlapping chromatographic peaks
+#'
+#' @aliases MergeNeighboringPeaksParam-class show,MergeNeighboringPeaksParam-method
+#'
+#' @description
+#'
+#' Peak detection sometimes fails to identify a chromatographic peak correctly,
+#' especially for broad peaks and if the peak shape is irregular (mostly for
+#' HILIC data). In such cases several smaller peaks are reported. This function
+#' tries to combine such peaks again if they are overlappoing on m/z dimension
+#' and  considering their distance in retention time dimension and the measured
+#' intensity between them.
+#'
+#' Chromatographic peaks are first expanded in m/z and retention time dimension
+#' by `expandMz` and `expandRt` and subsequently grouped into candidates for
+#' merging if they are (after expansion) overlapping in both m/z and rt (within
+#' the same sample). Peaks are merged if the intensity at the position at half
+#' way between them (i.e. at half the distance between `"rtmax"` of the first
+#' and `"rtmin"` of the second peak) is larger than a certain proportion
+#' (`minProp`) of the smaller maximal intensity (`"maxo"`) of both peaks.
+#' The joined peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from
+#' the peak with the largest signal (`"maxo"`) as well as its row in the
+#' metadata data frame of the peak (`chromPeakData`). The `"rtmin"`, `"rtmax"`
+#' of the merged peaks are updated and `"into"` is recalculated based on all
+#' the signal between `"rtmin"` and `"rtmax"` of the new merged peak.
+#'
+#' @note
+#'
+#' Note that **each** peak gets expanded by `expandMz` and `expandRt`, thus
+#' peaks differing by `2 * expandMz` (or `expandRt`) will be identified as
+#' *overlapping*. As an example: m/z max of one peak is 12.2, m/z min of
+#' another one is 12.4, if `expandMz = 0.1` the m/z max of the first peak
+#' will be 12.3 and the m/z min of the second one 12.3, thus both are
+#' considered overlapping.
+#'
+#' `refineChromPeaks` methods will always remove feature definitions, because
+#' a call to this method can change or remove identified chromatographic peaks,
+#' which may be part of features.
+#'
+#' @param expandRt `numeric(1)` defining by how many seconds the retention time
+#'     window is expanded on both sides to check for overlapping peaks.
+#'
+#' @param expandMz `numeric(1)` constant value by which the m/z range of each
+#'     chromatographic peak is expanded (on both sides!) to check for
+#'     overlapping peaks.
+#'
+#' @param ppm `numeric(1)` defining a m/z relative value (in parts per million)
+#'     by which the m/z range of each chromatographic peak is expanded
+#'     to check for overlapping peaks.
+#'
+#' @param minProp `numeric(1)` between `0` and `1` representing the proporion
+#'     of intensity to be required for peaks to be joined. See description for
+#'     more details. The default (`minProp = 0.75`) means that peaks are only
+#'     joined if the signal half way between then is larger 75% of the smallest
+#'     of the two peak's `"maxo"` (maximal intensity at peak apex).
+#'
+#' @param msLevel `integer` defining for which MS level(s) the chromatographic
+#'     peaks should be merged.
+#'
+#' @param object [XCMSnExp] object with identified chromatographic peaks.
+#'
+#' @param param `MergeNeighboringPeaksParam` object defining the settings for
+#'     the method.
+#'
+#' @param BPPARAM parameter object to set up parallel processing. Uses the
+#'     default parallel processing setup returned by `bpparam()`. See
+#'     [bpparam()] for details and examples.
+#'
+#' @return `XCMSnExp` object with chromatographic peaks matching the defined
+#'     conditions being merged.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @family chromatographic peak refinement methods
+#'
+#' @rdname refineChromPeaks-merge
+#'
+#' @examples
+#'
+#' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'     mode = "onDisk")
+#' xd <- findChromPeaks(xd, param = CentWaveParam(noise = 5000))
+#'
+#' ## Example of a split peak that will be merged
+#' mzr <- 305.1 + c(-0.01, 0.01)
+#' chr <- chromatogram(xd, mz = mzr)
+#' plot(chr)
+#'
+#' ## Combine the peaks
+#' res <- refineChromPeaks(xd, param = MergeNeighboringPeaksParam(expandRt = 4))
+#' chr_res <- chromatogram(res, mz = mzr)
+#' plot(chr_res)
+#'
+#' ## Example of a peak that was not merged, because the signal between them
+#' ## is lower than the cut-off minProp
+#' mzr <- 496.2 + c(-0.01, 0.01)
+#' chr <- chromatogram(xd, mz = mzr)
+#' plot(chr)
+#' chr_res <- chromatogram(res, mz = mzr)
+#' plot(chr_res)
+setMethod("refineChromPeaks", c(object = "XCMSnExp",
+                                param = "MergeNeighboringPeaksParam"),
+          function(object, param = MergeNeighboringPeaksParam(),
+                   msLevel = 1L, BPPARAM = bpparam()) {
+              if (!hasChromPeaks(object)) {
+                  warning("No chromatographic peaks present in 'object'. ",
+                          "Please run 'findChromPeaks' first.")
+                  return(object)
+              }
+              validObject(param)
+              if (hasFeatures(object)) {
+                  message("Removing feature definitions.")
+                  object <- dropFeatureDefinitions(object)
+              }
+              peak_count <- nrow(chromPeaks(object))
+              idxs <- seq_along(fileNames(object))
+              object_list <- lapply(idxs, FUN = filterFile,
+                                    object = filterMsLevel(object, msLevel),
+                                    keepAdjustedRtime = TRUE)
+              res <- bpmapply(idxs, object_list, FUN = function(i, obj, param) {
+                  pks <- .merge_neighboring_peaks(
+                      obj, expandRt = param@expandRt,
+                      expandMz = param@expandMz, ppm = param@ppm,
+                      minProp = param@minProp)
+                  pks$chromPeaks[, "sample"] <- i
+                  pks
+              }, MoreArgs = list(param), BPPARAM = BPPARAM, SIMPLIFY = FALSE,
+              USE.NAMES = FALSE)
+              pks <- do.call(rbind, lapply(res, "[[", 1))
+              pkd <- do.call(rbind, lapply(res, "[[", 2))
+              ## Add also peaks for other MS levels!
+              other_msl <- !chromPeakData(object)$ms_level %in% msLevel
+              if (any(other_msl)) {
+                  pks <- rbind(pks, chromPeaks(object)[other_msl, , drop = FALSE])
+                  pkd <- rbind(pkd, chromPeakData(object)[other_msl, ])
+              }
+              which_new <- is.na(rownames(pks))
+              pkd$merged <- which_new
+              max_id <- max(as.numeric(sub("CP", "", rownames(pks))),
+                            na.rm = TRUE)
+              if (!is.finite(max_id))
+                  max_id <- 0
+              rownames(pks)[which_new] <- .featureIDs(sum(which_new),
+                                                      prefix = "CP",
+                                                      from = max_id + 1)
+              rownames(pkd) <- rownames(pks)
+              message("Merging reduced ", peak_count, " chromPeaks to ",
+                      nrow(pks), ".")
+              msf <- new("MsFeatureData")
+              msf@.xData <- .copy_env(object@msFeatureData)
+              chromPeaks(msf) <- pks
+              chromPeakData(msf) <- pkd
+              object@msFeatureData <- msf
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+              xph <- XProcessHistory(param = param, date. = date(),
+                                     type. = .PROCSTEP.PEAK.REFINEMENT,
+                                     fileIndex = 1:length(fileNames(object)),
+                                     msLevel = msLevel)
+              object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })

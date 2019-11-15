@@ -274,7 +274,8 @@ exportClasses(
     "GenericParam",
     "FillChromPeaksParam",
     "CalibrantMassParam",
-    "CleanPeaksParam"
+    "CleanPeaksParam",
+    "MergeNeighboringPeaksParam"
 )
 ## Param methods
 exportMethods(
@@ -442,7 +443,8 @@ export("CentWaveParam",
        "CalibrantMassParam",
        "XChromatogram",
        "XChromatograms",
-       "CleanPeaksParam")
+       "CleanPeaksParam",
+       "MergeNeighboringPeaksParam")
 ## Param class methods.
 
 ## New Classes

@@ -365,3 +365,13 @@ CalibrantMassParam <- function(mz = list(), mzabs = 0.0001, mzppm = 5,
 CleanPeaksParam <- function(maxPeakwidth = 10) {
     new("CleanPeaksParam", maxPeakwidth = as.numeric(maxPeakwidth))
 }
+
+#' @rdname refineChromPeaks-merge
+#'
+#' @md
+MergeNeighboringPeaksParam <- function(expandRt = 2, expandMz = 0, ppm = 10,
+                                       minProp = 0.75) {
+    new("MergeNeighboringPeaksParam", expandRt = as.numeric(expandRt),
+        expandMz = as.numeric(expandMz), ppm = as.numeric(ppm),
+        minProp = as.numeric(minProp))
+}

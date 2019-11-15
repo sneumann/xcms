@@ -570,8 +570,11 @@ test_that(".group_overlapping_peaks works", {
 test_that(".merge_neighboring_peaks works", {
     xod_x1 <- filterFile(xod_x, 1L)
     res <- .merge_neighboring_peaks(xod_x1, expandRt = 4)
-    expect_true(is.matrix(res))
-    expect_true(nrow(res) < nrow(chromPeaks(xod_x1)))
+    expect_true(is.list(res))
+    expect_true(is.matrix(res$chromPeaks))
+    expect_true(is(res$chromPeakData, "DataFrame"))
+    expect_true(nrow(res$chromPeakData) == nrow(res$chromPeaks))
+    expect_true(nrow(res$chromPeaks) < nrow(chromPeaks(xod_x1)))
 
     mz_groups <- .group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
@@ -581,9 +584,10 @@ test_that(".merge_neighboring_peaks works", {
     mzr <- range(tmp[, c("mzmin", "mzmax")])
     chr <- chromatogram(xod_x1, mz = mzr)
     ## plot(chr)
-    res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
-    expect_true(nrow(res_mzr) == 2)
-    expect_true(nrow(res_mzr) < nrow(chromPeaks(xod_x1, mz = mzr)))
+    pks <- res$chromPeaks
+    pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
+    expect_true(nrow(pks) == 2)
+    expect_true(nrow(pks) < nrow(chromPeaks(xod_x1, mz = mzr)))
     ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
 
     ## ## mz of 462.2: strange one that fails.
@@ -597,10 +601,13 @@ test_that(".merge_neighboring_peaks works", {
     ## mz of 496.2: two peaks that DON'T get merged (and that's OK).
     tmp <- chromPeaks(xod_x1)[mz_groups[[5]], ]
     mzr <- range(tmp[, c("mzmin", "mzmax")])
+    mzr <- mzr + c(-0.01, 0.01)
     chr <- chromatogram(xod_x1, mz = mzr)
-    res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    pks <- res$chromPeaks
+    pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
     ## plot(chr)
     ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
-    expect_true(nrow(res_mzr) == 2)
-    expect_true(nrow(res_mzr) == nrow(chromPeaks(xod_x1, mz = mzr)))
+    expect_true(nrow(pks) == 2)
+    expect_true(nrow(pks) == nrow(chromPeaks(xod_x1, mz = mzr)))
+    expect_equal(rownames(pks), rownames(chromPeaks(chr)))
 })

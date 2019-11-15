@@ -54,6 +54,9 @@ data <- refineChromPeaks(data, param = CleanPeaksParam(5))
 
 quantile(chromPeaks(data)[, "rtmax"] - chromPeaks(data)[, "rtmin"])
 }
+\seealso{
+Other chromatographic peak refinement methods: \code{\link{MergeNeighboringPeaksParam}}
+}
 \author{
 Johannes Rainer
 }

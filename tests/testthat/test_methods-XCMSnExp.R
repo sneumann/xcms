@@ -2294,3 +2294,22 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     expect_true(hasFeatures(xod_xgrg))
     expect_false(hasFeatures(res))
 })
+
+test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
+    prm <- MergeNeighboringPeaksParam(expandRt = 4)
+    res <- refineChromPeaks(xod_xgr, param = prm)
+    expect_true(hasAdjustedRtime(res))
+    expect_equal(rtime(xod_xgr), rtime(res))
+    pks_old <- chromPeaks(res)[!chromPeakData(res)$merged, ]
+    expect_equal(chromPeaks(xod_xgr)[rownames(pks_old), ], pks_old)
+    expect_equal(rownames(chromPeaks(res)), rownames(chromPeakData(res)))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(xod_xgr)))
+
+    expect_warning(res <- refineChromPeaks(as(od_x, "XCMSnExp"), param = prm),
+                   "Please run")
+
+    prm <- MergeNeighboringPeaksParam(expandRt = 10, ppm = 50)
+    res <- refineChromPeaks(pest_swth, param = prm)
+    expect_equal(chromPeaks(res), chromPeaks(pest_swth))
+    expect_true(all(chromPeakData(res)$merged == FALSE))
+})

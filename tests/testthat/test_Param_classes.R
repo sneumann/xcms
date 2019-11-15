@@ -899,3 +899,38 @@ test_that("CleanPeaksParam works", {
     expect_equal(p@maxPeakwidth, 13.2)
     expect_error(CleanPeaksParam(-1), "positive number")
 })
+
+test_that("MergeNeighboringPeaksParam works", {
+    p <- new("MergeNeighboringPeaksParam")
+    expect_true(validObject(p))
+    p@expandRt <- c(1, 4)
+    expect_error(validObject(p), "numeric of length 1")
+    p@expandRt <- NA_real_
+    expect_error(validObject(p), "numeric of length 1")
+    p@expandMz <- c(1, 4)
+    p@expandRt <- 1.3
+    expect_error(validObject(p), "numeric of length 1")
+    p@expandMz <- NA_real_
+    expect_error(validObject(p), "numeric of length 1")
+    p@expandMz <- 3.2
+    p@ppm <- c(1, 3)
+    expect_error(validObject(p), "numeric of length 1")
+    p@ppm <- NA_real_
+    expect_error(validObject(p), "numeric of length 1")
+    p@ppm <- 10.0
+    p@minProp <- c(32.4, 14.5, 13.45)
+    expect_error(validObject(p), "number of length 1")
+    p@minProp <- NA_real_
+    expect_error(validObject(p), "number of length 1")
+    p@minProp <- 1.4
+    expect_true(validObject(p))
+    p <- MergeNeighboringPeaksParam(expandMz = 0.1, expandRt = 5,
+                                    ppm = 20, minProp = 0.9)
+    show(p)
+    expect_true(validObject(p))
+    expect_equal(p@expandMz, 0.1)
+    expect_equal(p@expandRt, 5)
+    expect_equal(p@ppm, 20)
+    expect_equal(p@minProp, 0.9)
+    expect_error(MergeNeighboringPeaksParam(c(1, 3)), "numeric of length 1")
+})
