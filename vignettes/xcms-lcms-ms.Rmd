@@ -157,7 +157,7 @@ spectrum using the `combineSpectra` method employing the `consensusSpectrum`
 function to determine which peaks to keep in the resulting spectrum.
 
 ```{r dda-ms2-consensus}
-ex_spectrum <- combineSpectra(ex_spectra, method = consensusSpectrum, msd = 0,
+ex_spectrum <- combineSpectra(ex_spectra, method = consensusSpectrum, mzd = 0,
                               ppm = 20, minProp = 0.8, weighted = FALSE,
                               intensityFun = median, mzFun = median)
 ex_spectrum

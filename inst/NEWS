@@ -1,6 +1,7 @@
 Changes in version 3.8.1
 
 - Show warning if peak detection is performed on an object with empty spectra.
+- Fix misspelling of parameter `mzd` in LC-MS/MS vignette.
 
 
 Changes in version 3.7.5
