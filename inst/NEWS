@@ -1,3 +1,8 @@
+Changes in version 3.9.1
+
+- Fix misspelling of parameter `mzd` in LC-MS/MS processing vignette.
+
+
 Changes in version 3.7.5
 
 - Remove xcmsMSn vignette (based on old xcms).
