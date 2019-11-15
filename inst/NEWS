@@ -6,6 +6,7 @@ Changes in version 3.9.1
 - Add MergeNeighboringPeaksParam for refineChromPeaks to allow merging of
   chromatographic peaks close in m/z and retention time with a signal between
   them higher than a certain threshold (issue #414).
+- Fix misspelled parameter `mzd` in LC-MS/MS vignette.
 
 
 Changes in version 3.7.5
