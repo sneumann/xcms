@@ -543,3 +543,71 @@ test_that(".plot_XIC works", {
     tmp <- filterMz(filterRt(xod_x, rtr), mzr)
     .plot_XIC(tmp, peakCol = "#ff0000", lwd = 10)
 })
+
+test_that(".group_overlapping_peaks works", {
+    mzmin <- c(123.3, 123.35, 123.5, 341, 342.1, 343.2, 564, 564.3)
+    mzmax <- c(123.4, 123.5, 124, 342, 343, 344, 564.1, 566)
+    pks <- cbind(mzmin, mzmax)
+    rownames(pks) <- letters[1:nrow(pks)]
+
+    res <- .group_overlapping_peaks(pks)
+    expect_true(is.list(res))
+    expect_true(all(lengths(res) > 0))
+    expect_equal(res[[1]], c("a", "b", "c"))
+
+    res <- .group_overlapping_peaks(pks, expand = 0.05)
+    expect_true(length(res) == 5)
+    expect_equal(res[[1]], c("a", "b", "c"))
+    expect_equal(res[[2]], c("d", "e"))
+
+    res <- .group_overlapping_peaks(pks, expand = 0.1)
+    expect_true(length(res) == 3)
+    expect_equal(res[[1]], c("a", "b", "c"))
+    expect_equal(res[[2]], c("d", "e", "f"))
+    expect_equal(res[[3]], c("g", "h"))
+})
+
+test_that(".merge_neighboring_peaks works", {
+    xod_x1 <- filterFile(xod_x, 1L)
+    res <- .merge_neighboring_peaks(xod_x1, expandRt = 4)
+    expect_true(is.list(res))
+    expect_true(is.matrix(res$chromPeaks))
+    expect_true(is(res$chromPeakData, "DataFrame"))
+    expect_true(nrow(res$chromPeakData) == nrow(res$chromPeaks))
+    expect_true(nrow(res$chromPeaks) < nrow(chromPeaks(xod_x1)))
+
+    mz_groups <- .group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
+    mz_groups <- mz_groups[lengths(mz_groups) > 1]
+
+    ## mz of 305.1: nice example of a split peak.
+    tmp <- chromPeaks(xod_x1)[mz_groups[[1]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    chr <- chromatogram(xod_x1, mz = mzr)
+    ## plot(chr)
+    pks <- res$chromPeaks
+    pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
+    expect_true(nrow(pks) == 2)
+    expect_true(nrow(pks) < nrow(chromPeaks(xod_x1, mz = mzr)))
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+
+    ## ## mz of 462.2: strange one that fails.
+    ## tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
+    ## mzr <- range(tmp[, c("mzmin", "mzmax")])
+    ## chr <- chromatogram(xod_x1, mz = mzr)
+    ## plot(chr)
+    ## res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+
+    ## mz of 496.2: two peaks that DON'T get merged (and that's OK).
+    tmp <- chromPeaks(xod_x1)[mz_groups[[5]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    mzr <- mzr + c(-0.01, 0.01)
+    chr <- chromatogram(xod_x1, mz = mzr)
+    pks <- res$chromPeaks
+    pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
+    ## plot(chr)
+    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    expect_true(nrow(pks) == 2)
+    expect_true(nrow(pks) == nrow(chromPeaks(xod_x1, mz = mzr)))
+    expect_equal(rownames(pks), rownames(chromPeaks(chr)))
+})

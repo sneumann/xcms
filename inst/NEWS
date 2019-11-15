@@ -1,6 +1,11 @@
 Changes in version 3.9.1
 
-- Fix misspelling of parameter `mzd` in LC-MS/MS processing vignette.
+- Show warning in findChromPeaks if empty spectra are detected.
+- Add refineChromPeaks method and CleanPeaksParam class to allow removal of
+  chromatographic peaks exceeding a user-definable maximal peak width.
+- Add MergeNeighboringPeaksParam for refineChromPeaks to allow merging of
+  chromatographic peaks close in m/z and retention time with a signal between
+  them higher than a certain threshold (issue #414).
 
 
 Changes in version 3.7.5

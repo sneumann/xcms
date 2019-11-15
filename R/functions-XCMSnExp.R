@@ -2567,3 +2567,207 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         }
     }
 }
+
+#' @title Group chromatographic peaks based on m/z or retention time
+#'
+#' @description
+#'
+#' Group chromatographic peaks if they are overlapping on m/z (independently
+#' of their retention time) or *vice versa*.
+#'
+#' @param x `matrix` with columns `"mzmin"` and `"mzmax"` or `"rtmin"` and
+#'     `"rtmax"`.
+#'
+#' @param min_col
+#'
+#' @param max_col `character(1)` with the name of the column with the upper
+#'     range (e.g. `"mzmax"` or `"rtmax"`).
+#'
+#' @param min_col `character(1)` with the name of the column with the lower
+#'     range (e.g. `"mzmin"` or `"rtmin"`).
+#'
+#' @param expand `numeric(1)` defining a constant value by which each e.g. m/z
+#'     range is supposed to be expanded. Note that the mz range will be expanded
+#'     by `expandMz` in both dimensions (i.e. `"mzmin"` - `expandMz` and
+#'     `"mzmax"` + `expandMz`.
+#'
+#' @param ppm `numeric(1)` defining an m/z relative value by which the m/z range
+#'     should be expanded.
+#'
+#' @note
+#'
+#' `x` is supposed to be a `chromPeaks` matrix of a single file, otherwise we're
+#' grouping chromatographic peaks across samples.
+#'
+#' Note also that **each** peak gets expanded by `expandMz`, thus
+#' peaks differing by `2 * expand` will be overlapping. As an example: m/z max
+#' of one peak is 12.2, m/z min of another one is 12.4, if `expand = 0.1` is
+#' used the m/z max of the first peak will be 12.3 and the m/z min of the second
+#' one 12.3, thus both are considered *overlapping*.
+#'
+#' @author Johannes Rainer
+#'
+#' @return `list` with rownames (chromatographic peak IDs) of peak groups.
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' mat <- cbind(rtmin = c(10, 13, 16, 18), rtmax = c(12, 15, 17, 20),
+#'     mzmin = c(2, 3, 4, 7), mzmax = c(2.5, 3.5, 4.2, 7.6))
+#' rownames(mat) <- c("a", "b", "c", "d")
+#' .group_overlapping_peaks(mat)
+#'
+#' .group_overlapping_peaks(mat, expand = 1)
+#'
+#' .group_overlapping_peaks(mat, expand = 0.25)
+.group_overlapping_peaks <- function(x, min_col = "mzmin", max_col = "mzmax",
+                                     expand = 0, ppm = 0) {
+    x[, min_col] <- x[, min_col] - expand - x[, min_col] * ppm / 1e6
+    x[, max_col] <- x[, max_col] + expand + x[, max_col] * ppm / 1e6
+    reduced_ranges <- .reduce(x[, min_col], x[, max_col])
+    res <- vector("list", nrow(reduced_ranges))
+    tolerance <- sqrt(.Machine$double.eps)
+    for (i in seq_along(res)) {
+        res[[i]] <- rownames(x)[
+            x[, min_col] >= reduced_ranges[i, 1] - tolerance &
+            x[, max_col] <= reduced_ranges[i, 2] + tolerance
+        ]
+    }
+    res
+}
+
+#' @description
+#'
+#' Identify chromatographic peaks overlapping in m/z dimension and being close
+#' on retention time to combine them if they fulfill the additional criteria:
+#' intensity at `"rtmax"` for the first chromatographic peak is
+#' `> prop * "maxo"` (`"maxo"` being the maximal intensity of the first peak)
+#' **and** intensity at `"rtmin"` for the second chromatographic peak is
+#' `> prop * "maxo"` of the second peak.
+#'
+#' @details
+#'
+#' The function first identifies chromatographic peaks within the same sample
+#' that are overlapping on their m/z range. The m/z range can be expanded with
+#' parameter `expandMz` or `ppm`. Note that both the upper and lower m/z is
+#' expanded by these resulting in m/z ranges that are of size *original m/z
+#' range* `+ 2 * expandMz`.
+#'
+#' All peaks are first ordered by theyr `"mzmin"` and subsequently expanded by
+#' `expandMz` and `ppm`. Peaks are grouped if their expanded m/z ranges
+#' (`"mzmin" - expandMz - ppm("mzmin")` to `"mzmax + expandMz + ppm("mzmax")`)
+#' and rt ranges (`"rtmin" - expandRt` to `"rtmax" + expandRt`) are overlapping.
+#'
+#' @param x `XCMSnExp` object with chromatographic peaks of a **single** file.
+#'
+#' @param sample_index `integer(1)` representing the index of the sample in the
+#'     original object. To be used in column `"sample"` of the new peaks.
+#'
+#' @param expandRt `numeric(1)` defining by how many seconds the retention time
+#'     window is expanded on both sides to check for overlapping peaks.
+#'
+#' @param expandMz `numeric(1)` constant value by which the m/z range of each
+#'     chromatographic peak should be expanded (on both sides!) to check for
+#'     overlapping peaks.
+#'
+#' @param ppm `numeric(1)` defining a m/z relative value (in parts per million)
+#'     by which the m/z range of each chromatographic peak should be expanded
+#'     to check for overlapping peaks.
+#'
+#' @param minProp `numeric(1)` between `0` and `1` representing the proporion
+#'     of intensity to be required for peaks to be joined. See description for
+#'     more details. The default (`minProp = 0.75`) means that peaks are only
+#'     joined if the signal half way between then is larger 75% of the smallest
+#'     of the two peak's `"maxo"` (maximal intensity at peak apex).
+#'
+#' @return `list` with element `"chromPeaks"`, that contains the peaks `matrix`
+#'     containing newly merged peaks and original peaks if they could not be
+#'     merged and `"chromPeakData"` that represents the `DataFrame` with the
+#'     corresponding metadata information. The merged peaks will have a row
+#'     name of `NA`.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'     mode = "onDisk")
+#' xd <- findChromPeaks(xd, param = CentWaveParam())
+#'
+#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 305.1)
+#' plot(xchr)
+#'
+#' res <- xcms:::.merge_neighboring_peaks(xd, expandRt = 4)
+#'
+#' res_sub <- res[res[, "mz"] >= 305.05 & res[, "mz"] <= 305.15, ]
+#' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
+#'     border = "red")
+#'
+#' xchr <- chromatogram(xd, mz = c(-0.5, 0.5) + 496.2)
+#' plot(xchr)
+#'
+#' res <- xcms:::.merge_neighboring_peaks(xd, expandRt = 4)
+#'
+#' res_sub <- res[res[, "mz"] >= 496.15 & res[, "mz"] <= 496.25, ]
+#' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
+#'     border = "red")
+.merge_neighboring_peaks <- function(x, expandRt = 2, expandMz = 0, ppm = 10,
+                                  minProp = 0.75) {
+    if (hasAdjustedRtime(x))
+        x <- applyAdjustedRtime(x)
+    pks <- chromPeaks(x)
+    pkd <- chromPeakData(x)
+    if (is.null(rownames(pks)))
+        stop("Chromatographic peak IDs are required.")
+    if (any(chromPeakData(x)$ms_level != 1))
+        stop("Currently only MS level 1 peaks are supported.")
+    x <- dropChromPeaks(x)
+    mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
+    mz_groups <- mz_groups[lengths(mz_groups) > 1]
+    drop_peaks <- rep(FALSE, nrow(pks))
+    names(drop_peaks) <- rownames(pks)
+    res_list <- vector("list", length(mz_groups))
+    pkd_list <- vector("list", length(mz_groups)) # need to keep the peakdata
+    for (i in seq_along(mz_groups)) {
+        rt_groups <- .group_overlapping_peaks(
+            pks[mz_groups[[i]], , drop = FALSE],
+            expand = expandRt, min_col = "rtmin",
+            max_col = "rtmax"
+        )
+        rt_groups <- rt_groups[lengths(rt_groups) > 1]
+        res_list_sub <- pkd_list_sub <- vector("list", length(rt_groups))
+        for (j in seq_along(rt_groups)) {
+            rt_group <- rt_groups[[j]]
+            pks_sub <- pks[rt_group, ]
+            pkd_sub <- pkd[rt_group, ]
+            chr <- chromatogram(x, mz = c(min(pks_sub[, "mzmin"]),
+                                          max(pks_sub[, "mzmax"])),
+                                rt = c(min(pks_sub[, "rtmin"]),
+                                       max(pks_sub[, "rtmax"])),
+                                aggregationFun = "sum")[1, 1]
+            ## That below should return peaks and peak data.
+            res <- .chrom_merge_neighboring_peaks(chr, pks = pks_sub, pkd,
+                                                  diffRt = 2 * expandRt,
+                                                  minProp = minProp)
+            drop_peaks[rt_group[!rt_group %in% rownames(res$chromPeaks)]] <- TRUE
+            res_list_sub[[j]] <- res$chromPeaks
+            pkd_list_sub[[j]] <- res$chromPeakData
+        }
+        if (length(res_list_sub)) {
+            res_list[[i]] <- do.call(rbind, res_list_sub)
+            pkd_list[[i]] <- do.call(rbind, pkd_list_sub)
+        }
+    }
+    pks_new <- do.call(rbind, res_list)
+    pkd_new <- do.call(rbind, pkd_list)
+    pks <- pks[!drop_peaks, , drop = FALSE]
+    pkd <- pkd[!drop_peaks, , drop = FALSE]
+    idx_new <- is.na(rownames(pks_new))
+    list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
+         chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
+}

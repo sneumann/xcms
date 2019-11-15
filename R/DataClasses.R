@@ -184,6 +184,7 @@ setClass("xcmsPeaks", contains = "matrix")
 ## Processing history type statics
 .PROCSTEP.UNKNOWN <- "Unknown"
 .PROCSTEP.PEAK.DETECTION <- "Peak detection"
+.PROCSTEP.PEAK.REFINEMENT <- "Peak refinement"
 .PROCSTEP.PEAK.GROUPING <- "Peak grouping"
 .PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEP.PEAK.FILLING <- "Missing peak filling"
@@ -191,6 +192,7 @@ setClass("xcmsPeaks", contains = "matrix")
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
     .PROCSTEP.PEAK.DETECTION,
+    .PROCSTEP.PEAK.REFINEMENT,
     .PROCSTEP.PEAK.GROUPING,
     .PROCSTEP.RTIME.CORRECTION,
     .PROCSTEP.PEAK.FILLING,
@@ -402,6 +404,9 @@ setClass("XProcessHistory",
 #'
 #'     \code{\link{highlightChromPeaks}} to highlight identified chromatographic
 #'     peaks in an extracted ion chromatogram plot.
+#'
+#'     \code{\link{refineChromPeaks}} for methods to refine or clean identified
+#'     chromatographic peaks.
 #'
 #' @author Johannes Rainer
 NULL
@@ -2811,4 +2816,51 @@ setClass("CalibrantMassParam",
                  msg
              else
                  TRUE
+         })
+
+setClass("CleanPeaksParam",
+         slots = c(maxPeakwidth = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             maxPeakwidth = 10),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@maxPeakwidth) > 1 || object@maxPeakwidth < 0)
+                 msg <- c(msg, paste0("'maxPeakwidth' has to be a positive ",
+                                      "number of length 1"))
+             if (length(msg))
+                 msg
+             else TRUE
+         })
+
+setClass("MergeNeighboringPeaksParam",
+         slots = c(expandRt = "numeric",
+                   expandMz = "numeric",
+                   ppm = "numeric",
+                   minProp = "numeric"),
+         contains = "Param",
+         prototype = prototype(
+             expandRt = 2.0,
+             expandMz = 0.0,
+             ppm = 10.0,
+             minProp = 0.75),
+         validity = function(object) {
+             msg <- character()
+             if (length(object@expandRt) > 1 || !is.finite(object@expandRt))
+                 msg <- c(msg, paste0("'expandRt' has to be a (defined) ",
+                                      "numeric of length 1"))
+             if (length(object@expandMz) > 1 || !is.finite(object@expandMz))
+                 msg <- c(msg, paste0("'expandMz' has to be a (defined) ",
+                                      "numeric of length 1"))
+             if (length(object@ppm) > 1 || !is.finite(object@ppm) ||
+                 object@ppm < 0)
+                 msg <- c(msg, paste0("'ppm' has to be a positive numeric ",
+                                      "of length 1"))
+             if (length(object@minProp) > 1 || !is.finite(object@minProp) ||
+                 object@minProp < 0)
+                 msg <- c(msg, paste0("'minProp' has to be a positive ",
+                                      "number of length 1"))
+             if (length(msg))
+                 msg
+             else TRUE
          })

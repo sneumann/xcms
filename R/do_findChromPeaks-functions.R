@@ -2686,8 +2686,6 @@ do_findChromPeaks_addPredIsoROIs <-
              verboseColumns = FALSE, peaks. = NULL,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
              polarity = "unknown") {
-        ## Input argument checking: most of it will be done in
-        ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
 
         ## These variables might at some point be added as function args.

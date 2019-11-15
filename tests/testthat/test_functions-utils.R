@@ -290,3 +290,45 @@ test_that(".match_closest works", {
     res <- .match_closest(a, b)
     expect_equal(res, c(NA, 3, 7, NA, NA, NA, NA))
 })
+
+test_that(".reduce works", {
+    a <- c(1.23, 1.431, 2.43, 5.44, 6)
+    b <- c(1.33, 2.43, 5, 6, 7)
+    res <- .reduce(a, b)
+    expect_true(nrow(res) == 3)
+    expect_equal(res[, 1], c(1.23, 1.431, 5.44))
+    expect_equal(res[, 2], c(1.33, 5, 7))
+
+    idx <- sample(1:length(a))
+    res_2 <- .reduce(a[idx], b[idx])
+    expect_identical(res, res_2)
+
+    res <- .reduce(a[1], b[1])
+    expect_equal(res, cbind(start = a[1], end = b[1]))
+
+    res <- .reduce(numeric(), numeric())
+    expect_equal(nrow(res), 0)
+
+    res <- .reduce(a - 0.1, b + 0.1)
+    expect_equal(res[, 1], c(1.13, 5.34))
+    expect_equal(res[, 2], c(5.1, 7.1))
+
+    a <- c(4, 4)
+    b <- c(5, 5)
+    res <- .reduce(a, b)
+    expect_true(nrow(res) == 1)
+    expect_equal(res[1, 1], c(start = 4))
+    expect_equal(res[1, 2], c(end = 5))
+
+    a <- c(3, 4, 8)
+    b <- c(7, 5, 10)
+    res <- xcms:::.reduce(a, b)
+    expect_equal(res[, 1], c(3, 8))
+    expect_equal(res[, 2], c(7, 10))
+
+    a <- c(3, 4, 6)
+    b <- c(7, 5, 10)
+    res <- xcms:::.reduce(a, b)
+    expect_equal(unname(res[, 1]), 3)
+    expect_equal(unname(res[, 2]), 10)
+})

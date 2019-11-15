@@ -73,6 +73,9 @@ findChromPeaks_Spectrum_list <- function(x, method = "centWave", param, rt) {
         stop("Spectra are not ordered by retention time!")
     mzs <- lapply(x, mz)
     vals_per_spect <- lengths(mzs, FALSE)
+    if (any(vals_per_spect == 0))
+        warning("Found empty spectra. Please run 'filterEmptySpectra' first.",
+                call. = FALSE)
     procDat <- date()
     res <- do.call(
         method, args = c(list(mz = unlist(mzs, use.names = FALSE),

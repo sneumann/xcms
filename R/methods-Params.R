@@ -1886,3 +1886,18 @@ setReplaceMethod("ppm", "FillChromPeaksParam", function(object, value) {
     if (validObject(object))
         return(object)
 })
+
+setMethod("show", "CleanPeaksParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" maxPeakwidth:", object@maxPeakwidth, "\n")
+})
+
+setMethod("show", "MergeNeighboringPeaksParam", function(object) {
+    cat("Object of class: ", class(object), "\n")
+    cat("Parameters:\n")
+    cat(" expandRt:", object@expandRt, "\n")
+    cat(" expandMz:", object@expandMz, "\n")
+    cat(" ppm:", object@ppm, "\n")
+    cat(" minProp:", object@minProp, "\n")
+})

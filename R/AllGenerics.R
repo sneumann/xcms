@@ -306,6 +306,8 @@ setGeneric("progressInfoUpdate", function(object) standardGeneric("progressInfoU
 setGeneric("rawEIC", function(object, ...) standardGeneric("rawEIC"))
 setGeneric("rawMat", function(object, ...) standardGeneric("rawMat"))
 setGeneric("rawMZ", function(object, ...) standardGeneric("rawMZ"))
+setGeneric("refineChromPeaks", function(object, param, ...)
+    standardGeneric("refineChromPeaks"))
 setGeneric("response", function(object) standardGeneric("response"))
 setGeneric("response<-", function(object, value) standardGeneric("response<-"))
 setGeneric("retcor", function(object, ...) standardGeneric("retcor"))
