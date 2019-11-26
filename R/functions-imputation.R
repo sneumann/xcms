@@ -53,13 +53,13 @@ imputeRowMin <- function(x, min_fraction = 1/2) {
 #' @description
 #'
 #' Replace missing values with random numbers.  
-#' When using the method **mean_sd**, random numbers will be generated 
+#' When using the `method = "mean_sd"`, random numbers will be generated 
 #' from a normal distribution based
 #' on (a fraction of) the row min and a standard deviation estimated from the
 #' linear relationship between row standard deviation and mean of the full data
 #' set. Parameter `sd_fraction` allows to further reduce the estimated
 #' standard deviation.
-#' When using the method **from_to**, random numbers between 2 specific values
+#' When using the method `method = "from_to"`, random numbers between 2 specific values
 #' will be generated.  
 #'
 #' @details
@@ -81,7 +81,8 @@ imputeRowMin <- function(x, min_fraction = 1/2) {
 #'
 #' @inheritParams imputeRowMin
 #' 
-#' @param method Imputation method.
+#' @param method method `character(1)` defining the imputation method. 
+#' See description for details. Defaults to `method = "mean_sd"`.
 #' 
 #' @param min_fraction `numeric(1)` with the fraction of the row minimum that 
 #' should be used to replace `NA` values in that row in case that `mean_sd` 
