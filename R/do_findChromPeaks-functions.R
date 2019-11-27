@@ -209,7 +209,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
     ##}
 
     basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax",
-                   "into", "intb", "maxo", "sn")
+                   "into", "intb", "maxo", "mzo", "mzoscan", "sn")
     verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
                       "scpos", "scmin", "scmax", "lmin", "lmax")
 
@@ -483,6 +483,9 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                             mz.value <- omz[p1:p2]
                             mz.int <- od[p1:p2]
                             maxint <- max(mz.int)
+							int.max <- which.max(mz.int) ### :) 
+                            mzo <- mz.value[int.max] ## :)
+	                        mzoscan <- otd[p1:p2][int.max] ## :)
 
                             ## re-calculate m/z value for peak range
                             mzrange <- range(mz.value)
@@ -509,6 +512,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                              NA,             ## intensity (sum)
                                              NA,             ## intensity (-bl)
                                              maxint,         ## max intensity
+											 mzo, mzoscan,	 ## HPB: mzo :)
                                              round((maxint - baseline) / sdnoise),  ##  S/N Ratio
                                              NA,             ## Gaussian RMSE
                                              NA,NA,NA,       ## Gaussian Parameters
@@ -752,7 +756,7 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                  " length equal to the length of 'roiList'!")
 
     basenames <- c("mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax",
-                   "into", "intb", "maxo", "sn")
+                   "into", "intb", "maxo", "mzo", "mzoscan", "sn")
     verbosenames <- c("egauss", "mu", "sigma", "h", "f", "dppm", "scale",
                       "scpos", "scmin", "scmax", "lmin", "lmax")
 
@@ -1028,7 +1032,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                 next
                             ## cat("mz.value: ", paste0(mz.value, collapse = ", "),
                             ##     "\n")
-
+                            mzo <- mzorig[int.max] ## :)
+	                        mzoscan <- otd[p1:p2][int.max] ## :)
                             ## re-calculate m/z value for peak range
                             ## cat("mzrange refined: [",
                             ##     paste0(mzrange, collapse = ", "), "]")
