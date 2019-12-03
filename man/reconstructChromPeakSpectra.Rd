@@ -4,10 +4,15 @@
 \alias{reconstructChromPeakSpectra}
 \title{Data independent acquisition (DIA): reconstruct MS2 spectra}
 \usage{
-reconstructChromPeakSpectra(object, expandRt = 1, diffRt = 2,
-  minCor = 0.8, intensity = "maxo",
+reconstructChromPeakSpectra(
+  object,
+  expandRt = 1,
+  diffRt = 2,
+  minCor = 0.8,
+  intensity = "maxo",
   peakId = rownames(chromPeaks(object, msLevel = 1L)),
-  BPPARAM = bpparam())
+  BPPARAM = bpparam()
+)
 }
 \arguments{
 \item{object}{\code{XCMSnExp} with identified chromatographic peaks.}
@@ -61,7 +66,7 @@ approximately the same retention time than the MS1 peak (accepted rt shift
 can be specified with the \code{diffRt} parameter).
 \item Correlate the peak shapes of the candidate MS2 chromatographic peaks with
 the peak shape of the MS1 peak retaining only MS2 chromatographic peaks
-for which the correlation is \code{> minCor}.
+for which the correlation is \verb{> minCor}.
 \item Reconstruct the MS2 spectrum using the m/z of all above selected MS2
 chromatographic peaks and their intensity (either \code{"maxo"} or \code{"into"}).
 Each MS2 chromatographic peak selected for an MS1 peak will thus represent

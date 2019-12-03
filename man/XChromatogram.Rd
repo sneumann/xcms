@@ -2,7 +2,6 @@
 % Please edit documentation in R/functions-XChromatograms.R,
 %   R/functions-XChromatogram.R, R/methods-XChromatogram.R,
 %   R/methods-XChromatograms.R
-\docType{methods}
 \name{XChromatograms}
 \alias{XChromatograms}
 \alias{XChromatogram}
@@ -38,27 +37,49 @@
 \alias{dropFilledChromPeaks,XChromatograms-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
-XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData,
-  ...)
+XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
 
-XChromatogram(rtime = numeric(), intensity = numeric(),
-  mz = c(NA_real_, NA_real_), filterMz = c(NA_real_, NA_real_),
-  precursorMz = c(NA_real_, NA_real_), productMz = c(NA_real_,
-  NA_real_), fromFile = integer(), aggregationFun = character(),
-  msLevel = 1L, chromPeaks, chromPeakData)
+XChromatogram(
+  rtime = numeric(),
+  intensity = numeric(),
+  mz = c(NA_real_, NA_real_),
+  filterMz = c(NA_real_, NA_real_),
+  precursorMz = c(NA_real_, NA_real_),
+  productMz = c(NA_real_, NA_real_),
+  fromFile = integer(),
+  aggregationFun = character(),
+  msLevel = 1L,
+  chromPeaks,
+  chromPeakData
+)
 
 \S4method{show}{XChromatogram}(object)
 
-\S4method{chromPeaks}{XChromatogram}(object, rt = numeric(),
-  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"),
-  msLevel)
+\S4method{chromPeaks}{XChromatogram}(
+  object,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within"),
+  msLevel
+)
 
 \S4method{chromPeaks}{XChromatogram}(object) <- value
 
-\S4method{plot}{XChromatogram,ANY}(x, col = "#00000060", lty = 1,
-  type = "l", xlab = "retention time", ylab = "intensity",
-  main = NULL, peakType = c("polygon", "point", "rectangle", "none"),
-  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
+\S4method{plot}{XChromatogram,ANY}(
+  x,
+  col = "#00000060",
+  lty = 1,
+  type = "l",
+  xlab = "retention time",
+  ylab = "intensity",
+  main = NULL,
+  peakType = c("polygon", "point", "rectangle", "none"),
+  peakCol = "#00000060",
+  peakBg = "#00000020",
+  peakPch = 1,
+  ...
+)
 
 \S4method{filterMz}{XChromatogram}(object, mz, ...)
 
@@ -78,9 +99,14 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 
 \S4method{hasFilledChromPeaks}{XChromatograms}(object)
 
-\S4method{chromPeaks}{XChromatograms}(object, rt = numeric(),
-  mz = numeric(), ppm = 0, type = c("any", "within", "apex_within"),
-  msLevel)
+\S4method{chromPeaks}{XChromatograms}(
+  object,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within"),
+  msLevel
+)
 
 \S4method{chromPeakData}{XChromatograms}(object)
 
@@ -88,10 +114,20 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 
 \S4method{filterRt}{XChromatograms}(object, rt, ...)
 
-\S4method{plot}{XChromatograms,ANY}(x, col = "#00000060", lty = 1,
-  type = "l", xlab = "retention time", ylab = "intensity",
-  main = NULL, peakType = c("polygon", "point", "rectangle", "none"),
-  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1, ...)
+\S4method{plot}{XChromatograms,ANY}(
+  x,
+  col = "#00000060",
+  lty = 1,
+  type = "l",
+  xlab = "retention time",
+  ylab = "intensity",
+  main = NULL,
+  peakType = c("polygon", "point", "rectangle", "none"),
+  peakCol = "#00000060",
+  peakBg = "#00000020",
+  peakPch = 1,
+  ...
+)
 
 \S4method{processHistory}{XChromatograms}(object, fileIndex, type)
 
@@ -101,20 +137,38 @@ XChromatogram(rtime = numeric(), intensity = numeric(),
 
 \S4method{groupChromPeaks}{XChromatograms,PeakDensityParam}(object, param)
 
-\S4method{featureDefinitions}{XChromatograms}(object, mz = numeric(),
-  rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+\S4method{featureDefinitions}{XChromatograms}(
+  object,
+  mz = numeric(),
+  rt = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within")
+)
 
 \S4method{[}{XChromatograms,ANY,ANY,ANY}(x, i, j, drop = FALSE)
 
-\S4method{featureValues}{XChromatograms}(object, method = c("medret",
-  "maxint", "sum"), value = "index", intensity = "into",
-  missing = NA, ...)
+\S4method{featureValues}{XChromatograms}(
+  object,
+  method = c("medret", "maxint", "sum"),
+  value = "index",
+  intensity = "into",
+  missing = NA,
+  ...
+)
 
-\S4method{plotChromPeakDensity}{XChromatograms}(object, param,
-  col = "#00000060", xlab = "retention time", main = NULL,
+\S4method{plotChromPeakDensity}{XChromatograms}(
+  object,
+  param,
+  col = "#00000060",
+  xlab = "retention time",
+  main = NULL,
   peakType = c("polygon", "point", "rectangle", "none"),
-  peakCol = "#00000060", peakBg = "#00000020", peakPch = 1,
-  simulate = TRUE, ...)
+  peakCol = "#00000060",
+  peakBg = "#00000020",
+  peakPch = 1,
+  simulate = TRUE,
+  ...
+)
 
 \S4method{dropFilledChromPeaks}{XChromatograms}(object)
 }
@@ -211,7 +265,7 @@ For `processHistory`: restrict returned processing steps to specific
 types. Use [processHistoryTypes()] to list all supported values.
 }}
 
-\item{value}{For \code{chromPeaks<-}: a numeric \code{matrix} with required columns
+\item{value}{For \verb{chromPeaks<-}: a numeric \code{matrix} with required columns
 \code{"rt"}, \code{"rtmin"}, \code{"rtmax"}, \code{"into"} and \code{"maxo"}.\preformatted{For `featureValues`: `character(1)` specifying the name of the column in
 `chromPeaks(object)` that should be returned or `"index"` (default) to
 return the index of the peak associated with the feature in each sample.
@@ -333,7 +387,7 @@ See also help of \link{Chromatogram} in the \code{MSnbase} package for general
 information and data access. The methods listed here are specific for
 \code{XChromatogram} and \code{XChromatograms} objects.
 \itemize{
-\item \code{chromPeaks}, \code{chromPeaks<-}: extract or set the matrix with the
+\item \code{chromPeaks}, \verb{chromPeaks<-}: extract or set the matrix with the
 chromatographic peak definitions. Parameter \code{rt} allows to specify a
 retention time range for which peaks should be returned along with
 parameter \code{type} that defines how \emph{overlapping} is defined (parameter
@@ -347,7 +401,7 @@ contain additional columns.
 For \code{XChromatograms} objects the \code{matrix} contains also columns \code{"row"}
 and \code{"column"} specifying in which chromatogram of \code{object} the peak was
 identified. Chromatographic peaks are ordered by row.
-\item \code{chromPeakData}, \code{chromPeakData<-}: extract or set the \code{\link[=DataFrame]{DataFrame()}} with
+\item \code{chromPeakData}, \verb{chromPeakData<-}: extract or set the \code{\link[=DataFrame]{DataFrame()}} with
 optional chromatographic peak annotations.
 \item \code{hasChromPeaks}: infer whether a \code{XChromatogram} (or \code{XChromatograms})
 has chromatographic peaks. For \code{XChromatogram}: returns a \code{logical(1)},
@@ -401,7 +455,7 @@ chromatographic peaks present in the \code{XChromatogram} or \code{XChromatogram
 colors a vector of color definitions with length equal to
 \code{nrow(chromPeaks(x))} has to be submitted  with \code{peakCol} and/or \code{peakBg}
 defining one color for each peak (in the order as peaks are in
-\code{chromPeaks(x))}. For base peak chromatograms or total ion chromatograms
+\verb{chromPeaks(x))}. For base peak chromatograms or total ion chromatograms
 it might be better to set \code{peakType = "none"} to avoid generating busy
 plots.
 \item \code{plotChromPeakDensity}: visualize \emph{peak density}-based correspondence

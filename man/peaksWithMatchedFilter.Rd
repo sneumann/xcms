@@ -4,8 +4,15 @@
 \alias{peaksWithMatchedFilter}
 \title{Identify peaks in chromatographic data using matchedFilter}
 \usage{
-peaksWithMatchedFilter(int, rt, fwhm = 30, sigma = fwhm/2.3548,
-  max = 20, snthresh = 10, ...)
+peaksWithMatchedFilter(
+  int,
+  rt,
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 20,
+  snthresh = 10,
+  ...
+)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -67,7 +74,8 @@ rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"], ybottom = c(0, 0),
 \link{matchedFilter} for a detailed description of the peak detection
 method.
 
-Other peak detection functions for chromatographic data: \code{\link{peaksWithCentWave}}
+Other peak detection functions for chromatographic data: 
+\code{\link{peaksWithCentWave}()}
 }
 \author{
 Johannes Rainer

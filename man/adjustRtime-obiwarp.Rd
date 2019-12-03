@@ -53,14 +53,22 @@
 \alias{adjustRtime,XCMSnExp,ObiwarpParam-method}
 \title{Align retention times across samples using Obiwarp}
 \usage{
-ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
-  distFun = "cor_opt", gapInit = numeric(), gapExtend = numeric(),
-  factorDiag = 2, factorGap = 1, localAlignment = FALSE,
-  initPenalty = 0, subset = integer(), subsetAdjust = c("average",
-  "previous"))
+ObiwarpParam(
+  binSize = 1,
+  centerSample = integer(),
+  response = 1L,
+  distFun = "cor_opt",
+  gapInit = numeric(),
+  gapExtend = numeric(),
+  factorDiag = 2,
+  factorGap = 1,
+  localAlignment = FALSE,
+  initPenalty = 0,
+  subset = integer(),
+  subsetAdjust = c("average", "previous")
+)
 
-\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param,
-  msLevel = 1L)
+\S4method{adjustRtime}{OnDiskMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 
 \S4method{show}{ObiwarpParam}(object)
 
@@ -112,8 +120,7 @@ ObiwarpParam(binSize = 1, centerSample = integer(), response = 1L,
 
 \S4method{subsetAdjust}{ObiwarpParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param,
-  msLevel = 1L)
+\S4method{adjustRtime}{XCMSnExp,ObiwarpParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{binSize}{\code{numeric(1)} defining the bin size (in mz dimension)
@@ -359,8 +366,9 @@ ESI-LC-MS Proteomic Data Sets by Ordered Bijective Interpolated Warping"
 \code{\link{XCMSnExp}} for the object containing the results of
     the alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime-peakGroups}},
-  \code{\link{adjustRtime}}
+Other retention time correction methods: 
+\code{\link{adjustRtime-peakGroups}},
+\code{\link{adjustRtime}()}
 }
 \author{
 Colin Smith, Johannes Rainer

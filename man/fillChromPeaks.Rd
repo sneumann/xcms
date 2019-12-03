@@ -23,8 +23,13 @@
 \alias{fillChromPeaks,XCMSnExp,missing-method}
 \title{Integrate areas of missing peaks}
 \usage{
-FillChromPeaksParam(expandMz = 0, expandRt = 0, ppm = 0,
-  fixedMz = 0, fixedRt = 0)
+FillChromPeaksParam(
+  expandMz = 0,
+  expandRt = 0,
+  ppm = 0,
+  fixedMz = 0,
+  fixedRt = 0
+)
 
 fixedRt(object)
 
@@ -44,11 +49,9 @@ fixedMz(object)
 
 \S4method{ppm}{FillChromPeaksParam}(object) <- value
 
-\S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param,
-  msLevel = 1L, BPPARAM = bpparam())
+\S4method{fillChromPeaks}{XCMSnExp,FillChromPeaksParam}(object, param, msLevel = 1L, BPPARAM = bpparam())
 
-\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param,
-  BPPARAM = bpparam(), msLevel = 1L)
+\S4method{fillChromPeaks}{XCMSnExp,missing}(object, param, BPPARAM = bpparam(), msLevel = 1L)
 }
 \arguments{
 \item{expandMz}{\code{numeric(1)} defining the value by which the mz width of

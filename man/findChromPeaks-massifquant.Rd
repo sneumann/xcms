@@ -51,15 +51,31 @@
 \alias{withWave<-}
 \title{Chromatographic peak detection using the massifquant method}
 \usage{
-MassifquantParam(ppm = 25, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), mzCenterFun = "wMean", integrate = 1L,
-  mzdiff = -0.001, fitgauss = FALSE, noise = 0,
-  verboseColumns = FALSE, criticalValue = 1.125,
-  consecMissedLimit = 2, unions = 1, checkBack = 0,
-  withWave = FALSE)
+MassifquantParam(
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1L,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  criticalValue = 1.125,
+  consecMissedLimit = 2,
+  unions = 1,
+  checkBack = 0,
+  withWave = FALSE
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{OnDiskMSnExp,MassifquantParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L
+)
 
 \S4method{show}{MassifquantParam}(object)
 
@@ -393,11 +409,12 @@ The \code{\link{do_findChromPeaks_massifquant}} core API function
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-matchedFilter}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-matchedFilter}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Christopher Conley, Johannes Rainer

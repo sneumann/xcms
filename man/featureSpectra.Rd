@@ -4,8 +4,16 @@
 \alias{featureSpectra}
 \title{Extract (MS2) spectra associated with features}
 \usage{
-featureSpectra(x, msLevel = 2, expandRt = 0, expandMz = 0, ppm = 0,
-  skipFilled = FALSE, return.type = c("Spectra", "list"), ...)
+featureSpectra(
+  x,
+  msLevel = 2,
+  expandRt = 0,
+  expandMz = 0,
+  ppm = 0,
+  skipFilled = FALSE,
+  return.type = c("Spectra", "list"),
+  ...
+)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with feature defitions available.}
@@ -39,7 +47,7 @@ only for features for which a \linkS4class{Spectrum2} was found. The
 ID of the feature and of the chromatographic peak to which the
 spectrum is associated are provided with the \code{"feature_id"} and
 \code{"peak_id"} metadata columns.
-\item For \code{return.type = "list"}: a \code{list, same length than there are features in }x\code{, each element being a }list\code{of [Spectrum2-class] objects with the MS2 spectra that potentially represent ions measured by each chromatographic peak associated with the feature, or}NULL`
+\item For \code{return.type = "list"}: a \verb{list, same length than there are features in }x\verb{, each element being a }list\verb{of [Spectrum2-class] objects with the MS2 spectra that potentially represent ions measured by each chromatographic peak associated with the feature, or}NULL`
 if none are present.
 }
 }

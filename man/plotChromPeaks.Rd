@@ -5,13 +5,30 @@
 \alias{plotChromPeakImage}
 \title{General visualizations of peak detection results}
 \usage{
-plotChromPeaks(x, file = 1, xlim = NULL, ylim = NULL, add = FALSE,
-  border = "#00000060", col = NA, xlab = "retention time",
-  ylab = "mz", main = NULL, ...)
+plotChromPeaks(
+  x,
+  file = 1,
+  xlim = NULL,
+  ylim = NULL,
+  add = FALSE,
+  border = "#00000060",
+  col = NA,
+  xlab = "retention time",
+  ylab = "mz",
+  main = NULL,
+  ...
+)
 
-plotChromPeakImage(x, binSize = 30, xlim = NULL, log = FALSE,
-  xlab = "retention time", yaxt = par("yaxt"),
-  main = "Chromatographic peak counts", ...)
+plotChromPeakImage(
+  x,
+  binSize = 30,
+  xlim = NULL,
+  log = FALSE,
+  xlab = "retention time",
+  yaxt = par("yaxt"),
+  main = "Chromatographic peak counts",
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{XCMSnExp}} object.}

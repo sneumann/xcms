@@ -49,13 +49,27 @@
 \alias{index<-}
 \title{Peak detection in the chromatographic time domain}
 \usage{
-MatchedFilterParam(binSize = 0.1, impute = "none",
-  baseValue = numeric(), distance = numeric(), fwhm = 30,
-  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
-  mzdiff = 0.8 - binSize * steps, index = FALSE)
+MatchedFilterParam(
+  binSize = 0.1,
+  impute = "none",
+  baseValue = numeric(),
+  distance = numeric(),
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 5,
+  snthresh = 10,
+  steps = 2,
+  mzdiff = 0.8 - binSize * steps,
+  index = FALSE
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{OnDiskMSnExp,MatchedFilterParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L
+)
 
 \S4method{show}{MatchedFilterParam}(object)
 
@@ -315,11 +329,12 @@ peak detection in purely chromatographic data.
 \code{\link{XCMSnExp}} for the object containing the results of
     the chromatographic peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-massifquant}},
-  \code{\link{findPeaks-MSW}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-massifquant}},
+\code{\link{findPeaks-MSW}}
 }
 \author{
 Colin A Smith, Johannes Rainer

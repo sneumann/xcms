@@ -4,10 +4,24 @@
 \alias{do_findChromPeaks_matchedFilter}
 \title{Core API function for matchedFilter peak detection}
 \usage{
-do_findChromPeaks_matchedFilter(mz, int, scantime, valsPerSpect,
-  binSize = 0.1, impute = "none", baseValue, distance, fwhm = 30,
-  sigma = fwhm/2.3548, max = 5, snthresh = 10, steps = 2,
-  mzdiff = 0.8 - binSize * steps, index = FALSE, sleep = 0)
+do_findChromPeaks_matchedFilter(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  binSize = 0.1,
+  impute = "none",
+  baseValue,
+  distance,
+  fwhm = 30,
+  sigma = fwhm/2.3548,
+  max = 5,
+  snthresh = 10,
+  steps = 2,
+  mzdiff = 0.8 - binSize * steps,
+  index = FALSE,
+  sleep = 0
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -146,10 +160,11 @@ Profiling Using Nonlinear Peak Alignment, Matching, and Identification"
     \code{\link{imputeLinInterpol}} for the interpolation of missing values.
     \code{\link{matchedFilter}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_centWave}},
-  \code{\link{do_findChromPeaks_massifquant}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_massifquant}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Colin A Smith, Johannes Rainer

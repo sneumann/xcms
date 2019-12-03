@@ -4,12 +4,27 @@
 \alias{do_findChromPeaks_massifquant}
 \title{Core API function for massifquant peak detection}
 \usage{
-do_findChromPeaks_massifquant(mz, int, scantime, valsPerSpect, ppm = 10,
-  peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  criticalValue = 1.125, consecMissedLimit = 2, unions = 1,
-  checkBack = 0, withWave = FALSE)
+do_findChromPeaks_massifquant(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 10,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  criticalValue = 1.125,
+  consecMissedLimit = 2,
+  unions = 1,
+  checkBack = 0,
+  withWave = FALSE
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -183,10 +198,11 @@ detection" \emph{Bioinformatics} 2014, 30(18):2636-43.
 \seealso{
 \code{\link{massifquant}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_centWave}},
-  \code{\link{do_findChromPeaks_matchedFilter}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_centWave}()},
+\code{\link{do_findChromPeaks_matchedFilter}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Christopher Conley

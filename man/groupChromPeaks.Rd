@@ -37,9 +37,10 @@ feature.
 
 \code{\link{group}} for the \emph{old} peak grouping methods.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-density}},
-  \code{\link{groupChromPeaks-mzClust}},
-  \code{\link{groupChromPeaks-nearest}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-density}},
+\code{\link{groupChromPeaks-mzClust}},
+\code{\link{groupChromPeaks-nearest}}
 }
 \author{
 Johannes Rainer

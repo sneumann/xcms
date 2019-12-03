@@ -1,5 +1,6 @@
 Changes in version 3.9.1
 
+- Add method *from_to* to missing value imputation method `imputeRowMinRand`.
 - Show warning in findChromPeaks if empty spectra are detected.
 - Add refineChromPeaks method and CleanPeaksParam class to allow removal of
   chromatographic peaks exceeding a user-definable maximal peak width.

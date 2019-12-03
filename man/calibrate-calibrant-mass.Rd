@@ -10,8 +10,13 @@
 \alias{calibrate,XCMSnExp-method}
 \title{Calibrant mass based calibration of chromatgraphic peaks}
 \usage{
-CalibrantMassParam(mz = list(), mzabs = 1e-04, mzppm = 5,
-  neighbors = 3, method = "linear")
+CalibrantMassParam(
+  mz = list(),
+  mzabs = 1e-04,
+  mzppm = 5,
+  neighbors = 3,
+  method = "linear"
+)
 
 isCalibrated(object)
 
@@ -71,7 +76,7 @@ their mz values are replaced with the provided mz values. The mz values
 of all other peaks are either globally shifted (for \code{method = "shift"}
 or estimated by a linear model through all calibrants.
 Peaks are considered close to a calibrant mz if the difference between
-the calibrant and its mz is \code{<= mzabs + mz * mzppm /1e6}.
+the calibrant and its mz is \verb{<= mzabs + mz * mzppm /1e6}.
 
 \strong{Adjustment methods}: adjustment function/factor is estimated using
 the difference between calibrant and peak mz values only for peaks

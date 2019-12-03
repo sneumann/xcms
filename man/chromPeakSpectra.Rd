@@ -4,9 +4,16 @@
 \alias{chromPeakSpectra}
 \title{Extract (MS2) spectra associated with chromatographic peaks}
 \usage{
-chromPeakSpectra(x, msLevel = 2L, expandRt = 0, expandMz = 0,
-  ppm = 0, method = c("all", "closest_rt", "closest_mz", "signal"),
-  skipFilled = FALSE, return.type = c("Spectra", "list"))
+chromPeakSpectra(
+  x,
+  msLevel = 2L,
+  expandRt = 0,
+  expandMz = 0,
+  ppm = 0,
+  method = c("all", "closest_rt", "closest_mz", "signal"),
+  skipFilled = FALSE,
+  return.type = c("Spectra", "list")
+)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks.}
@@ -55,9 +62,9 @@ Extract (MS2) spectra from an \link{XCMSnExp} object that represent ions within
 the rt and m/z range of each chromatographic peak (in the same file
 /sample in which the peak was detected). All MS2 spectra are returned for
 chromatographic peak \code{i} for which the precursor m/z is
-\code{>= chromPeaks(x)[i, "mzmin"]} and \code{<= chromPeaks(x)[i, "mzmax"]} and the
-retention time is \code{>= chromPeaks(x)[i, "rtmin"]} and
-\code{<= chromPeaks(x)[i, "rtmax"]}.
+\verb{>= chromPeaks(x)[i, "mzmin"]} and \verb{<= chromPeaks(x)[i, "mzmax"]} and the
+retention time is \verb{>= chromPeaks(x)[i, "rtmin"]} and
+\verb{<= chromPeaks(x)[i, "rtmax"]}.
 
 See also the \emph{LC-MS/MS data analysis} vignette for more details and examples.
 }

@@ -26,8 +26,13 @@
 \alias{groupChromPeaks,XCMSnExp,NearestPeaksParam-method}
 \title{Peak grouping based on proximity in the mz-rt space}
 \usage{
-NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
-  absMz = 0.2, absRt = 15, kNN = 10)
+NearestPeaksParam(
+  sampleGroups = numeric(),
+  mzVsRtBalance = 10,
+  absMz = 0.2,
+  absRt = 15,
+  kNN = 10
+)
 
 \S4method{show}{NearestPeaksParam}(object)
 
@@ -51,8 +56,7 @@ NearestPeaksParam(sampleGroups = numeric(), mzVsRtBalance = 10,
 
 \S4method{kNN}{NearestPeaksParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param,
-  msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -109,22 +113,22 @@ The \code{NearestPeaksParam} class allows to specify all
 settings for the peak grouping based on the \emph{nearest} algorithm.
 Instances should be created with the \code{NearestPeaksParam} constructor.
 
-\code{sampleGroups},\code{sampleGroups<-}: getter and setter
+\code{sampleGroups},\verb{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object.
 
-\code{mzVsRtBalance},\code{mzVsRtBalance<-}: getter and setter
+\code{mzVsRtBalance},\verb{mzVsRtBalance<-}: getter and setter
 for the \code{mzVsRtBalance} slot of the object.
 
-\code{absMz},\code{absMz<-}: getter and setter for the
+\code{absMz},\verb{absMz<-}: getter and setter for the
 \code{absMz} slot of the object.
 
-\code{absRt},\code{absRt<-}: getter and setter for the
+\code{absRt},\verb{absRt<-}: getter and setter for the
 \code{absRt} slot of the object.
 
-\code{kNN},\code{kNN<-}: getter and setter for the
+\code{kNN},\verb{kNN<-}: getter and setter for the
 \code{kNN} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
+\verb{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
 performs peak grouping based on the proximity between chromatographic
 peaks from different samples in the mz-rt range.
 }
@@ -200,8 +204,9 @@ peak grouping results (i.e. the features).
 \link{XCMSnExp} for the object containing the results of
 the peak grouping.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-density}},
-  \code{\link{groupChromPeaks-mzClust}},
-  \code{\link{groupChromPeaks}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-density}},
+\code{\link{groupChromPeaks-mzClust}},
+\code{\link{groupChromPeaks}()}
 }
 \concept{peak grouping methods}

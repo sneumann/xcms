@@ -42,10 +42,16 @@
 \title{Retention time correction based on alignment of house keeping peak
 groups}
 \usage{
-PeakGroupsParam(minFraction = 0.9, extraPeaks = 1, smooth = "loess",
-  span = 0.2, family = "gaussian", peakGroupsMatrix = matrix(nrow =
-  0, ncol = 0), subset = integer(), subsetAdjust = c("average",
-  "previous"))
+PeakGroupsParam(
+  minFraction = 0.9,
+  extraPeaks = 1,
+  smooth = "loess",
+  span = 0.2,
+  family = "gaussian",
+  peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
+  subset = integer(),
+  subsetAdjust = c("average", "previous")
+)
 
 adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
 
@@ -83,8 +89,7 @@ adjustRtimePeakGroups(object, param = PeakGroupsParam(), msLevel = 1L)
 
 \S4method{subsetAdjust}{PeakGroupsParam}(object) <- value
 
-\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param,
-  msLevel = 1L)
+\S4method{adjustRtime}{XCMSnExp,PeakGroupsParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{minFraction}{\code{numeric(1)} between 0 and 1 defining the minimum
@@ -357,8 +362,9 @@ The \code{\link{do_adjustRtime_peakGroups}} core
 \code{\link{XCMSnExp}} for the object containing the results of
     the alignment.
 
-Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
-  \code{\link{adjustRtime}}
+Other retention time correction methods: 
+\code{\link{adjustRtime-obiwarp}},
+\code{\link{adjustRtime}()}
 }
 \author{
 Colin Smith, Johannes Rainer

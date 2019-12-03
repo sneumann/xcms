@@ -4,9 +4,19 @@
 \alias{peaksWithCentWave}
 \title{Identify peaks in chromatographic data using centWave}
 \usage{
-peaksWithCentWave(int, rt, peakwidth = c(20, 50), snthresh = 10,
-  prefilter = c(3, 100), integrate = 1, fitgauss = FALSE,
-  noise = 0, verboseColumns = FALSE, firstBaselineCheck = TRUE, ...)
+peaksWithCentWave(
+  int,
+  rt,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  integrate = 1,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  firstBaselineCheck = TRUE,
+  ...
+)
 }
 \arguments{
 \item{int}{\code{numeric} with intensity values.}
@@ -21,7 +31,7 @@ expected peak width.}
 Peaks with a signal to noise ratio < \code{snthresh} are omitted.}
 
 \item{prefilter}{\code{numeric(2)} (\code{c(k, I)}): only regions of interest with at
-least \code{k} centroids with signal \code{>= I} are returned in the first
+least \code{k} centroids with signal \verb{>= I} are returned in the first
 step.}
 
 \item{integrate}{\code{numeric(1)}, integration method. For \code{integrate = 1} peak
@@ -117,7 +127,8 @@ rect(xleft = pks[, "rtmin"], xright = pks[, "rtmax"],
 \link{centWave} for a detailed description of the peak detection
 method.
 
-Other peak detection functions for chromatographic data: \code{\link{peaksWithMatchedFilter}}
+Other peak detection functions for chromatographic data: 
+\code{\link{peaksWithMatchedFilter}()}
 }
 \author{
 Johannes Rainer

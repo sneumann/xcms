@@ -24,8 +24,9 @@ The \code{adjustRtime} method(s) perform retention time
     methods.
     \code{\link{plotAdjustedRtime}} for visualization of alignment results.
 
-Other retention time correction methods: \code{\link{adjustRtime-obiwarp}},
-  \code{\link{adjustRtime-peakGroups}}
+Other retention time correction methods: 
+\code{\link{adjustRtime-obiwarp}},
+\code{\link{adjustRtime-peakGroups}}
 }
 \author{
 Johannes Rainer
