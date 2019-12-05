@@ -69,7 +69,10 @@ merging if they are (after expansion) overlapping in both m/z and rt (within
 the same sample). Peaks are merged if the intensity at the position at half
 way between them (i.e. at half the distance between \code{"rtmax"} of the first
 and \code{"rtmin"} of the second peak) is larger than a certain proportion
-(\code{minProp}) of the smaller maximal intensity (\code{"maxo"}) of both peaks.
+(\code{minProp}) of the smaller maximal intensity (\code{"maxo"}) of both peaks. In
+cases in which this calculated mid point is \strong{not} located between the
+apexes of the two peaks (e.g. if the peaks are largely overlapping) the
+signal intensity at half way between the apexes is used instead.
 The joined peaks get the \code{"mz"}, \code{"rt"}, \code{"sn"} and \code{"maxo"} values from
 the peak with the largest signal (\code{"maxo"}) as well as its row in the
 metadata data frame of the peak (\code{chromPeakData}). The \code{"rtmin"}, \code{"rtmax"}
@@ -87,6 +90,15 @@ considered overlapping.
 \code{refineChromPeaks} methods will always remove feature definitions, because
 a call to this method can change or remove identified chromatographic peaks,
 which may be part of features.
+
+Merging of chromatographic peaks is performed along the retention time axis,
+i.e. candidate peaks are first ordered by their \code{"rtmin"} value. The signal
+at half way between the first and the second candidate peak is then compared
+to the smalles \code{"maxo"} of both and the two peaks are then merged the signal
+between the peaks is larger \code{minProp}. If so, the peaks are merged updating
+its \code{"into"}, \code{"maxo"} and retention time boundaries. For merging any
+additional peak in a candidate peak list the \code{"maxo"} of that peak and the
+newly merged peak are considered.
 }
 \examples{
 
@@ -117,6 +129,6 @@ Other chromatographic peak refinement methods:
 \code{\link{CleanPeaksParam}}
 }
 \author{
-Johannes Rainer
+Johannes Rainer, Mar Garcia-Aloy
 }
 \concept{chromatographic peak refinement methods}

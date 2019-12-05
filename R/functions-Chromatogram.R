@@ -140,6 +140,11 @@
 #' based on all the signal between `"rtmin"` and `"rtmax"` of the new merged
 #' peak.
 #'
+#' Note that the `"maxo"` of the merged peak is updated (the maximum of the two
+#' merged peaks is used) and used in any further merging. If for example two
+#' peaks were merged, the maxo of these merged peak is used in the evaluation
+#' of any additional peak that should be merged.
+#'
 #' @param x `Chromatogram` object with the extracted ion chromatogram containing
 #'     the signal for the `pks`.
 #'
@@ -200,13 +205,22 @@
     rownames(pks_new) <- rep(NA_character_, nrow(pks))
     pks_new[1, ] <- pks[1, ]
     rownames(pks_new)[1] <- rownames(pks)[1]
-    current_peak <- 1 # point always to the current *new* peak.
+    current_peak <- 1 # point always to the current *new* (merged) peak.
     drop_cols <- !(colnames(pks_new) %in% c("mz", "mzmin", "mzmax", "rt",
                                             "rtmin", "rtmax", "into",
                                             "maxo", "sn", "sample"))
     for (i in 2:nrow(pks)) {
         if ((pks[i, "rtmin"] - pks_new[current_peak, "rtmax"]) < diffRt) {
+            ## skip if second peak contained within first
+            if (pks[i, "rtmin"] >= pks_new[current_peak, "rtmin"] &
+                pks[i, "rtmax"] <= pks_new[current_peak, "rtmax"])
+                next
             rt_mid <- (pks[i, "rtmin"] + pks_new[current_peak, "rtmax"]) / 2
+            ## If rt_mid is NOT between the peaks, take the midpoint between
+            ## the apexes instead.
+            apexes <- range(c(pks[i, "rt"], pks[current_peak, "rt"]))
+            if (rt_mid < apexes[1] || rt_mid > apexes[2])
+                rt_mid <- sum(apexes) / 2
             int_mid <- intensity(x)[which.min(abs(rtime(x) - rt_mid))]
             if (int_mid > min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) *
                 minProp) {
@@ -223,8 +237,7 @@
                 pks_new[current_peak, "into"] <-
                     sum(intensity(x)[rtime(x) >= pks_new[current_peak, "rtmin"] &
                                      rtime(x) <= pks_new[current_peak, "rtmax"]],
-                        na.rm = TRUE) *
-                    peak_width
+                        na.rm = TRUE) * peak_width
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
