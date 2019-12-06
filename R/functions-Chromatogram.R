@@ -189,7 +189,7 @@
 #' rect(res[, "rtmin"], 0, res[, "rtmax"], res[, "maxo"], border = "red")
 .chrom_merge_neighboring_peaks <- function(x, pks, pkd, minProp = 0.75,
                                            diffRt = 0) {
-    if (nrow(pks) < 2)
+    if (nrow(pks) < 2 || all(is.na(intensity(x))))
         return(list(chromPeaks = pks, chromPeakData = pkd))
     x <- clean(x, all = TRUE)
     idx <- order(pks[, "rtmin"])

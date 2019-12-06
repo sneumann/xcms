@@ -2731,8 +2731,12 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
-    res_list <- vector("list", length(mz_groups))
-    pkd_list <- vector("list", length(mz_groups)) # need to keep the peakdata
+    message("Evaluating ", length(mz_groups), " peaks in file ",
+            basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
+    ## Defining merge candidates
+    pk_groups <- list()
+    chr_def_mat <- list()
+    current_group <- 1
     for (i in seq_along(mz_groups)) {
         rt_groups <- .group_overlapping_peaks(
             pks[mz_groups[[i]], , drop = FALSE],
@@ -2740,34 +2744,37 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
             max_col = "rtmax"
         )
         rt_groups <- rt_groups[lengths(rt_groups) > 1]
-        res_list_sub <- pkd_list_sub <- vector("list", length(rt_groups))
         for (j in seq_along(rt_groups)) {
             rt_group <- rt_groups[[j]]
+            pk_groups[[current_group]] <- rt_group
             pks_sub <- pks[rt_group, ]
-            pkd_sub <- pkd[rt_group, ]
-            chr <- chromatogram(x, mz = c(min(pks_sub[, "mzmin"]),
-                                          max(pks_sub[, "mzmax"])),
-                                rt = c(min(pks_sub[, "rtmin"]),
-                                       max(pks_sub[, "rtmax"])),
-                                aggregationFun = "sum")[1, 1]
-            ## That below should return peaks and peak data.
-            res <- .chrom_merge_neighboring_peaks(chr, pks = pks_sub, pkd,
-                                                  diffRt = 2 * expandRt,
-                                                  minProp = minProp)
-            drop_peaks[rt_group[!rt_group %in% rownames(res$chromPeaks)]] <- TRUE
-            res_list_sub[[j]] <- res$chromPeaks
-            pkd_list_sub[[j]] <- res$chromPeakData
+            chr_def_mat[[current_group]] <-
+                c(range(pks_sub[, c("mzmin", "mzmax")]),
+                  range(pks_sub[, c("rtmin", "rtmax")]))
+            current_group <- current_group + 1
         }
-        if (length(res_list_sub)) {
-            res_list[[i]] <- do.call(rbind, res_list_sub)
-            pkd_list[[i]] <- do.call(rbind, pkd_list_sub)
-        }
+    }
+    chr_def_mat <- do.call(rbind, chr_def_mat)
+    chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
+                         rt = chr_def_mat[, c(3, 4)])
+    ## Now proceed to process them.
+    res_list <- pkd_list <- vector("list", length(pk_groups))
+    for (i in seq_along(pk_groups)) {
+        pk_group <- pk_groups[[i]]
+        res <- .chrom_merge_neighboring_peaks(
+            chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
+            pkd[pk_group, , drop = FALSE], diffRt = 2 * expandRt,
+            minProp = minProp)
+        drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
+        res_list[[i]] <- res$chromPeaks
+        pkd_list[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, res_list)
     pkd_new <- do.call(rbind, pkd_list)
     pks <- pks[!drop_peaks, , drop = FALSE]
     pkd <- pkd[!drop_peaks, , drop = FALSE]
     idx_new <- is.na(rownames(pks_new))
+    message("OK")
     list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
          chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
 }
