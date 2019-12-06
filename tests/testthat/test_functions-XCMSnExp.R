@@ -576,7 +576,7 @@ test_that(".merge_neighboring_peaks works", {
     expect_true(nrow(res$chromPeakData) == nrow(res$chromPeaks))
     expect_true(nrow(res$chromPeaks) < nrow(chromPeaks(xod_x1)))
 
-    mz_groups <- .group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
+    mz_groups <- xcms:::.group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
 
     ## mz of 305.1: nice example of a split peak.
@@ -588,15 +588,17 @@ test_that(".merge_neighboring_peaks works", {
     pks <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], ]
     expect_true(nrow(pks) == 2)
     expect_true(nrow(pks) < nrow(chromPeaks(xod_x1, mz = mzr)))
-    ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    ## rect(pks[, "rtmin"], 0, pks[, "rtmax"], pks[, "maxo"], border = "red")
 
-    ## ## mz of 462.2: strange one that fails.
-    ## tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
-    ## mzr <- range(tmp[, c("mzmin", "mzmax")])
-    ## chr <- chromatogram(xod_x1, mz = mzr)
+    ## mz of 462.2:
+    tmp <- chromPeaks(xod_x1)[mz_groups[[4]], ]
+    mzr <- range(tmp[, c("mzmin", "mzmax")])
+    chr <- chromatogram(xod_x1, mz = mzr)
     ## plot(chr)
-    ## res_mzr <- res[res[, "mzmin"] >= mzr[1] & res[, "mzmax"] <= mzr[2], ]
+    pks <- res$chromPeaks
+    res_mzr <- pks[pks[, "mzmin"] >= mzr[1] & pks[, "mzmax"] <= mzr[2], , drop = FALSE]
     ## rect(res_mzr[, "rtmin"], 0, res_mzr[, "rtmax"], res_mzr[, "maxo"], border = "red")
+    expect_true(nrow(res_mzr) == 1)
 
     ## mz of 496.2: two peaks that DON'T get merged (and that's OK).
     tmp <- chromPeaks(xod_x1)[mz_groups[[5]], ]
