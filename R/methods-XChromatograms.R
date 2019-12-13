@@ -520,6 +520,7 @@ setMethod("plotChromPeakDensity", "XChromatograms",
                                        param = param, xlab = xlab, xlim = xl,
                                        peakCol = peakCol, peakBg = peakBg,
                                        peakPch = peakPch, simulate = simulate,
+                                       ylim = c(1, ncol(object)),
                                        ...)
               mr[1] <- mr_1
               mr[3] <- mr_3

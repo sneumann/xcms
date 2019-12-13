@@ -242,7 +242,8 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                                      main = NA, xlab = "retention time",
                                      ylab = "sample", peakCol = "#00000060",
                                      peakBg = "#00000020", peakPch = 1,
-                                     simulate = TRUE, col = "black", ...) {
+                                     simulate = TRUE, col = "black", 
+                                     ylim = range(pks[, "column"]), ...) {
     pks_count <- nrow(pks)
     if (pks_count) {
         smpl_col <- which(colnames(pks) == "sample")
@@ -278,7 +279,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
         dens <- density(pks[, "rt"], bw = bw, from = dens_from, to = dens_to,
                         n = densN)
         yl <- c(0, max(dens$y))
-        min_max_smple <- range(pks[, smpl_col])
+        min_max_smple <- ylim
         ypos <- seq(from = yl[1], to = yl[2],
                     length.out = diff(min_max_smple) + 1)
         plot(pks[, "rt"], ypos[pks[, smpl_col]], xlim = xlim, ylim = yl,
