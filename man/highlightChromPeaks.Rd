@@ -5,10 +5,18 @@
 \title{Add definition of chromatographic peaks to an extracted chromatogram
     plot}
 \usage{
-highlightChromPeaks(x, rt, mz, peakIds = character(),
-  border = rep("00000040", length(fileNames(x))), lwd = 1, col = NA,
-  type = c("rect", "point", "polygon"), whichPeaks = c("any", "within",
-  "apex_within"), ...)
+highlightChromPeaks(
+  x,
+  rt,
+  mz,
+  peakIds = character(),
+  border = rep("00000040", length(fileNames(x))),
+  lwd = 1,
+  col = NA,
+  type = c("rect", "point", "polygon"),
+  whichPeaks = c("any", "within", "apex_within"),
+  ...
+)
 }
 \arguments{
 \item{x}{For \code{highlightChromPeaks}: \code{XCMSnExp} object with the

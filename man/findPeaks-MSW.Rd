@@ -51,13 +51,27 @@
 \alias{addParams<-}
 \title{Single-spectrum non-chromatography MS data peak detection}
 \usage{
-MSWParam(snthresh = 3, verboseColumns = FALSE, scales = c(1, seq(2,
-  30, 2), seq(32, 64, 4)), nearbyPeak = TRUE, peakScaleRange = 5,
-  ampTh = 0.01, minNoiseLevel = ampTh/snthresh, ridgeLength = 24,
-  peakThr = NULL, tuneIn = FALSE, ...)
+MSWParam(
+  snthresh = 3,
+  verboseColumns = FALSE,
+  scales = c(1, seq(2, 30, 2), seq(32, 64, 4)),
+  nearbyPeak = TRUE,
+  peakScaleRange = 5,
+  ampTh = 0.01,
+  minNoiseLevel = ampTh/snthresh,
+  ridgeLength = 24,
+  peakThr = NULL,
+  tuneIn = FALSE,
+  ...
+)
 
-\S4method{findChromPeaks}{OnDiskMSnExp,MSWParam}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{OnDiskMSnExp,MSWParam}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L
+)
 
 \S4method{show}{MSWParam}(object)
 
@@ -289,11 +303,12 @@ The \code{\link{do_findPeaks_MSW}} core API function
 \code{\link{XCMSnExp}} for the object containing the results of
     the peak detection.
 
-Other peak detection methods: \code{\link{chromatographic-peak-detection}},
-  \code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
-  \code{\link{findChromPeaks-centWave}},
-  \code{\link{findChromPeaks-massifquant}},
-  \code{\link{findChromPeaks-matchedFilter}}
+Other peak detection methods: 
+\code{\link{chromatographic-peak-detection}},
+\code{\link{findChromPeaks-centWaveWithPredIsoROIs}},
+\code{\link{findChromPeaks-centWave}},
+\code{\link{findChromPeaks-massifquant}},
+\code{\link{findChromPeaks-matchedFilter}}
 }
 \author{
 Joachim Kutzera, Steffen Neumann, Johannes Rainer

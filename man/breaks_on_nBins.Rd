@@ -40,7 +40,8 @@ breaks_on_nBins(3, 20, nBins = 20, shiftByHalfBinSize = TRUE)
 \seealso{
 \code{\link{binYonX}} for a binning function.
 
-Other functions to define bins: \code{\link{breaks_on_binSize}}
+Other functions to define bins: 
+\code{\link{breaks_on_binSize}()}
 }
 \author{
 Johannes Rainer

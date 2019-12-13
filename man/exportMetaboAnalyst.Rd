@@ -4,8 +4,15 @@
 \alias{exportMetaboAnalyst}
 \title{Export data for use in MetaboAnalyst}
 \usage{
-exportMetaboAnalyst(x, file = NULL, label, value = "into",
-  digits = NULL, groupnames = FALSE, ...)
+exportMetaboAnalyst(
+  x,
+  file = NULL,
+  label,
+  value = "into",
+  digits = NULL,
+  groupnames = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{\link{XCMSnExp} object with identified chromatographic peaks grouped

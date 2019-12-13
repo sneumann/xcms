@@ -4,12 +4,26 @@
 \alias{do_findChromPeaks_centWave}
 \title{Core API function for centWave peak detection}
 \usage{
-do_findChromPeaks_centWave(mz, int, scantime, valsPerSpect, ppm = 25,
-  peakwidth = c(20, 50), snthresh = 10, prefilter = c(3, 100),
-  mzCenterFun = "wMean", integrate = 1, mzdiff = -0.001,
-  fitgauss = FALSE, noise = 0, verboseColumns = FALSE,
-  roiList = list(), firstBaselineCheck = TRUE, roiScales = NULL,
-  sleep = 0)
+do_findChromPeaks_centWave(
+  mz,
+  int,
+  scantime,
+  valsPerSpect,
+  ppm = 25,
+  peakwidth = c(20, 50),
+  snthresh = 10,
+  prefilter = c(3, 100),
+  mzCenterFun = "wMean",
+  integrate = 1,
+  mzdiff = -0.001,
+  fitgauss = FALSE,
+  noise = 0,
+  verboseColumns = FALSE,
+  roiList = list(),
+  firstBaselineCheck = TRUE,
+  roiScales = NULL,
+  sleep = 0
+)
 }
 \arguments{
 \item{mz}{Numeric vector with the individual m/z values from all scans/
@@ -184,10 +198,11 @@ Ralf Tautenhahn, Christoph B\"{o}ttcher, and Steffen Neumann "Highly
 \seealso{
 \code{\link{centWave}} for the standard user interface method.
 
-Other core peak detection functions: \code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}},
-  \code{\link{do_findChromPeaks_massifquant}},
-  \code{\link{do_findChromPeaks_matchedFilter}},
-  \code{\link{do_findPeaks_MSW}}
+Other core peak detection functions: 
+\code{\link{do_findChromPeaks_centWaveWithPredIsoROIs}()},
+\code{\link{do_findChromPeaks_massifquant}()},
+\code{\link{do_findChromPeaks_matchedFilter}()},
+\code{\link{do_findPeaks_MSW}()}
 }
 \author{
 Ralf Tautenhahn, Johannes Rainer

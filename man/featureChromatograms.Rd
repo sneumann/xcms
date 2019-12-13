@@ -4,8 +4,15 @@
 \alias{featureChromatograms}
 \title{Extract ion chromatograms for each feature}
 \usage{
-featureChromatograms(x, expandRt = 0, aggregationFun = "max", features,
-  include = c("feature_only", "all"), filled = FALSE, ...)
+featureChromatograms(
+  x,
+  expandRt = 0,
+  aggregationFun = "max",
+  features,
+  include = c("feature_only", "all"),
+  filled = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{XCMSnExp} object with grouped chromatographic peaks.}

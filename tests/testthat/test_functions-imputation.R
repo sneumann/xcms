@@ -16,7 +16,15 @@ test_that("imputeRowMinRand works", {
     rmin <- apply(mat, 1, min, na.rm = TRUE)
     rmin_imp <- apply(mat_imp, 1, min, na.rm = TRUE)
     expect_true(all(rmin_imp < rmin))
-    
+
+    mat_2 <- imputeRowMinRand(mat, method = "from_to")
+    expect_true(all(!is.na(mat_2)))
+    rmin_imp2 <- apply(mat_2, 1, min, na.rm = TRUE)
+    expect_true(all(rmin_imp2 < rmin))
+    expect_true(all(rmin_imp2 < rmin / 2))
+    expect_true(all(rmin_imp2 > rmin / 1000))
+    expect_true(all(rmin_imp != rmin_imp2))
+
     mat_imp <- imputeRowMinRand(mat[, -3])
     expect_true(all(is.na(mat_imp[5, ])))
 })

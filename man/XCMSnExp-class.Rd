@@ -75,9 +75,16 @@ processHistoryTypes()
 
 hasFilledChromPeaks(object)
 
-\S4method{profMat}{OnDiskMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
-  ...)
+\S4method{profMat}{OnDiskMSnExp}(
+  object,
+  method = "bin",
+  step = 0.1,
+  baselevel = NULL,
+  basespace = NULL,
+  mzrange. = NULL,
+  fileIndex,
+  ...
+)
 
 \S4method{show}{XCMSnExp}(object)
 
@@ -93,48 +100,72 @@ hasFilledChromPeaks(object)
 
 \S4method{adjustedRtime}{XCMSnExp}(object) <- value
 
-\S4method{featureDefinitions}{XCMSnExp}(object, mz = numeric(),
-  rt = numeric(), ppm = 0, type = c("any", "within", "apex_within"))
+\S4method{featureDefinitions}{XCMSnExp}(
+  object,
+  mz = numeric(),
+  rt = numeric(),
+  ppm = 0,
+  type = c("any", "within", "apex_within")
+)
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
 
-\S4method{chromPeaks}{XCMSnExp}(object, bySample = FALSE,
-  rt = numeric(), mz = numeric(), ppm = 0, msLevel = integer(),
-  type = c("any", "within", "apex_within"), isFilledColumn = FALSE)
+\S4method{chromPeaks}{XCMSnExp}(
+  object,
+  bySample = FALSE,
+  rt = numeric(),
+  mz = numeric(),
+  ppm = 0,
+  msLevel = integer(),
+  type = c("any", "within", "apex_within"),
+  isFilledColumn = FALSE
+)
 
 \S4method{chromPeaks}{XCMSnExp}(object) <- value
 
-\S4method{rtime}{XCMSnExp}(object, bySample = FALSE,
-  adjusted = hasAdjustedRtime(object))
+\S4method{rtime}{XCMSnExp}(object, bySample = FALSE, adjusted = hasAdjustedRtime(object))
 
 \S4method{mz}{XCMSnExp}(object, bySample = FALSE, BPPARAM = bpparam())
 
-\S4method{intensity}{XCMSnExp}(object, bySample = FALSE,
-  BPPARAM = bpparam())
+\S4method{intensity}{XCMSnExp}(object, bySample = FALSE, BPPARAM = bpparam())
 
-\S4method{spectra}{XCMSnExp}(object, bySample = FALSE,
-  adjusted = hasAdjustedRtime(object), BPPARAM = bpparam())
+\S4method{spectra}{XCMSnExp}(
+  object,
+  bySample = FALSE,
+  adjusted = hasAdjustedRtime(object),
+  BPPARAM = bpparam()
+)
 
 \S4method{processHistory}{XCMSnExp}(object, fileIndex, type, msLevel)
 
 \S4method{dropChromPeaks}{XCMSnExp}(object, keepAdjustedRtime = FALSE)
 
-\S4method{dropFeatureDefinitions}{XCMSnExp}(object,
-  keepAdjustedRtime = FALSE, dropLastN = -1)
+\S4method{dropFeatureDefinitions}{XCMSnExp}(object, keepAdjustedRtime = FALSE, dropLastN = -1)
 
 \S4method{dropAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{profMat}{XCMSnExp}(object, method = "bin", step = 0.1,
-  baselevel = NULL, basespace = NULL, mzrange. = NULL, fileIndex,
-  ...)
+\S4method{profMat}{XCMSnExp}(
+  object,
+  method = "bin",
+  step = 0.1,
+  baselevel = NULL,
+  basespace = NULL,
+  mzrange. = NULL,
+  fileIndex,
+  ...
+)
 
-\S4method{findChromPeaks}{XCMSnExp,Param}(object, param,
-  BPPARAM = bpparam(), return.type = "XCMSnExp", msLevel = 1L)
+\S4method{findChromPeaks}{XCMSnExp,Param}(
+  object,
+  param,
+  BPPARAM = bpparam(),
+  return.type = "XCMSnExp",
+  msLevel = 1L
+)
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
 
-\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL,
-  BPPARAM = bpparam(), ...)
+\S4method{spectrapply}{XCMSnExp}(object, FUN = NULL, BPPARAM = bpparam(), ...)
 
 \method{c}{XCMSnExp}(...)
 
@@ -142,8 +173,7 @@ hasFilledChromPeaks(object)
 
 \S4method{chromPeakData}{XCMSnExp}(object) <- value
 
-\S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"),
-  peakCol = "#ff000060", ...)
+\S4method{plot}{XCMSnExp,missing}(x, y, type = c("spectra", "XIC"), peakCol = "#ff000060", ...)
 }
 \arguments{
 \item{object}{For \code{adjustedRtime}, \code{featureDefinitions},

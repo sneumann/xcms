@@ -3627,7 +3627,10 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #' the same sample). Peaks are merged if the intensity at the position at half
 #' way between them (i.e. at half the distance between `"rtmax"` of the first
 #' and `"rtmin"` of the second peak) is larger than a certain proportion
-#' (`minProp`) of the smaller maximal intensity (`"maxo"`) of both peaks.
+#' (`minProp`) of the smaller maximal intensity (`"maxo"`) of both peaks. In
+#' cases in which this calculated mid point is **not** located between the
+#' apexes of the two peaks (e.g. if the peaks are largely overlapping) the
+#' signal intensity at half way between the apexes is used instead.
 #' The joined peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from
 #' the peak with the largest signal (`"maxo"`) as well as its row in the
 #' metadata data frame of the peak (`chromPeakData`). The `"rtmin"`, `"rtmax"`
@@ -3646,6 +3649,15 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #' `refineChromPeaks` methods will always remove feature definitions, because
 #' a call to this method can change or remove identified chromatographic peaks,
 #' which may be part of features.
+#'
+#' Merging of chromatographic peaks is performed along the retention time axis,
+#' i.e. candidate peaks are first ordered by their `"rtmin"` value. The signal
+#' at half way between the first and the second candidate peak is then compared
+#' to the smalles `"maxo"` of both and the two peaks are then merged the signal
+#' between the peaks is larger `minProp`. If so, the peaks are merged updating
+#' its `"into"`, `"maxo"` and retention time boundaries. For merging any
+#' additional peak in a candidate peak list the `"maxo"` of that peak and the
+#' newly merged peak are considered.
 #'
 #' @param expandRt `numeric(1)` defining by how many seconds the retention time
 #'     window is expanded on both sides to check for overlapping peaks.
@@ -3679,7 +3691,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #' @return `XCMSnExp` object with chromatographic peaks matching the defined
 #'     conditions being merged.
 #'
-#' @author Johannes Rainer
+#' @author Johannes Rainer, Mar Garcia-Aloy
 #'
 #' @md
 #'

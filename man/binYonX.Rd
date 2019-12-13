@@ -4,10 +4,23 @@
 \alias{binYonX}
 \title{Aggregate values in y for bins defined on x}
 \usage{
-binYonX(x, y, breaks, nBins, binSize, binFromX, binToX, fromIdx = 1L,
-  toIdx = length(x), method = "max", baseValue,
-  sortedX = !is.unsorted(x), shiftByHalfBinSize = FALSE,
-  returnIndex = FALSE, returnX = TRUE)
+binYonX(
+  x,
+  y,
+  breaks,
+  nBins,
+  binSize,
+  binFromX,
+  binToX,
+  fromIdx = 1L,
+  toIdx = length(x),
+  method = "max",
+  baseValue,
+  sortedX = !is.unsorted(x),
+  shiftByHalfBinSize = FALSE,
+  returnIndex = FALSE,
+  returnX = TRUE
+)
 }
 \arguments{
 \item{x}{Numeric vector to be used for binning.}

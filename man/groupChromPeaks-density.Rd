@@ -32,9 +32,14 @@
 \alias{groupChromPeaks,XCMSnExp,PeakDensityParam-method}
 \title{Peak grouping based on time dimension peak densities}
 \usage{
-PeakDensityParam(sampleGroups = numeric(), bw = 30,
-  minFraction = 0.5, minSamples = 1, binSize = 0.25,
-  maxFeatures = 50)
+PeakDensityParam(
+  sampleGroups = numeric(),
+  bw = 30,
+  minFraction = 0.5,
+  minSamples = 1,
+  binSize = 0.25,
+  maxFeatures = 50
+)
 
 \S4method{show}{PeakDensityParam}(object)
 
@@ -62,8 +67,7 @@ PeakDensityParam(sampleGroups = numeric(), bw = 30,
 
 \S4method{maxFeatures}{PeakDensityParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param,
-  msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param, msLevel = 1L)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -127,27 +131,27 @@ The \code{PeakDensityParam} class allows to specify all settings for the peak
 grouping based on peak densities along the time dimension. Instances should
 be created with the \code{\link[=PeakDensityParam]{PeakDensityParam()}} constructor.
 
-\code{sampleGroups},\code{sampleGroups<-}: getter and setter
+\code{sampleGroups},\verb{sampleGroups<-}: getter and setter
 for the \code{sampleGroups} slot of the object. Its length should match
 the number of samples in the experiment and it should not contain
 \code{NA}s.
 
-\code{bw},\code{bw<-}: getter and setter for the \code{bw} slot
+\code{bw},\verb{bw<-}: getter and setter for the \code{bw} slot
 of the object.
 
-\code{minFraction},\code{minFraction<-}: getter and setter for
+\code{minFraction},\verb{minFraction<-}: getter and setter for
 the \code{minFraction} slot of the object.
 
-\code{minSamples},\code{minSamples<-}: getter and setter for the
+\code{minSamples},\verb{minSamples<-}: getter and setter for the
 \code{minSamples} slot of the object.
 
-\code{binSize},\code{binSize<-}: getter and setter for the
+\code{binSize},\verb{binSize<-}: getter and setter for the
 \code{binSize} slot of the object.
 
-\code{maxFeatures},\code{maxFeatures<-}: getter and setter for
+\code{maxFeatures},\verb{maxFeatures<-}: getter and setter for
 the \code{maxFeatures} slot of the object.
 
-\code{groupChromPeaks,XCMSnExp,PeakDensityParam}:
+\verb{groupChromPeaks,XCMSnExp,PeakDensityParam}:
 performs correspondence (peak grouping within and across samples) within
 in mz dimension overlapping slices of MS data based on the density
 distribution of the identified chromatographic peaks in the slice along
@@ -235,9 +239,10 @@ features (i.e. the peak grouping results).
 \code{\link[=plotChromPeakDensity]{plotChromPeakDensity()}} for plotting chromatographic peak density with the
 possibility to test different parameter settings.
 
-Other peak grouping methods: \code{\link{groupChromPeaks-mzClust}},
-  \code{\link{groupChromPeaks-nearest}},
-  \code{\link{groupChromPeaks}}
+Other peak grouping methods: 
+\code{\link{groupChromPeaks-mzClust}},
+\code{\link{groupChromPeaks-nearest}},
+\code{\link{groupChromPeaks}()}
 }
 \author{
 Colin Smith, Johannes Rainer

@@ -37,7 +37,8 @@ head(imputeRowMin(mat, min_fraction = 1/8))
 \seealso{
 \code{imputeLCMD} package for more left censored imputation functions.
 
-Other imputation functions: \code{\link{imputeRowMinRand}}
+Other imputation functions: 
+\code{\link{imputeRowMinRand}()}
 }
 \author{
 Johannes Rainer
