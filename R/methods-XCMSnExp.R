@@ -2628,7 +2628,7 @@ setMethod("findChromPeaks",
 #'     the peak resulting in peakswith twice their original size in mz
 #'     direction (expansion by half mz width to both sides).
 #'
-#' @param expandRt \code{numeric(1)}, same as \code{expandRt} but for the
+#' @param expandRt \code{numeric(1)}, same as \code{expandMz} but for the
 #'     retention time width.
 #'
 #' @param ppm \code{numeric(1)} optionally specifying a \emph{ppm} by which the
