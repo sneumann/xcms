@@ -61,7 +61,7 @@ expansion, a value of \code{1} grows each peak by 1 * the mz width of
 the peak resulting in peakswith twice their original size in mz
 direction (expansion by half mz width to both sides).}
 
-\item{expandRt}{\code{numeric(1)}, same as \code{expandRt} but for the
+\item{expandRt}{\code{numeric(1)}, same as \code{expandMz} but for the
 retention time width.}
 
 \item{ppm}{\code{numeric(1)} optionally specifying a \emph{ppm} by which the
