@@ -228,9 +228,11 @@
                 pks_new[current_peak, drop_cols] <- NA_real_
                 if (pks[i, "rtmax"] > pks_new[current_peak, "rtmax"])
                     pks_new[current_peak, "rtmax"] <- pks[i, "rtmax"]
-                if (pks[i, "mzmin"] < pks_new[current_peak, "mzmin"]
+                if (!is.na(pks[i, "mzmin"]) &&
+                    pks[i, "mzmin"] < pks_new[current_peak, "mzmin"])
                     pks_new[current_peak, "mzmin"] <- pks[i, "mzmin"]
-                if (pks[i, "mzmax"] > pks_new[current_peak, "mzmax"]
+                if (!is.na(pks[i, "mzmax"]) &&
+                    pks[i, "mzmax"] > pks_new[current_peak, "mzmax"])
                     pks_new[current_peak, "mzmax"] <- pks[i, "mzmax"]
                 idx_min <- which.min(
                     abs(rtime(x) - pks_new[current_peak, "rtmin"]))
