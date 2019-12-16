@@ -136,9 +136,9 @@
 #' the smaller maximal peak intensity of both peaks, they are joined. The joined
 #' peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from the peak with
 #' the largest signal (`"maxo"`) as well as its row in the *chrom peak data*
-#' `pkd`. The `"rtmin"`, `"rtmax"` are updated and `"into"` is recalculated
-#' based on all the signal between `"rtmin"` and `"rtmax"` of the new merged
-#' peak.
+#' `pkd`. The `"rtmin"`, `"rtmax"`, `"mzmin"` and `"mzmax"` are updated and
+#' `"into"` is recalculated based on all the signal between `"rtmin"` and
+#' `"rtmax"` of the new merged peak.
 #'
 #' Note that the `"maxo"` of the merged peak is updated (the maximum of the two
 #' merged peaks is used) and used in any further merging. If for example two
@@ -228,6 +228,10 @@
                 pks_new[current_peak, drop_cols] <- NA_real_
                 if (pks[i, "rtmax"] > pks_new[current_peak, "rtmax"])
                     pks_new[current_peak, "rtmax"] <- pks[i, "rtmax"]
+                if (pks[i, "mzmin"] < pks_new[current_peak, "mzmin"]
+                    pks_new[current_peak, "mzmin"] <- pks[i, "mzmin"]
+                if (pks[i, "mzmax"] > pks_new[current_peak, "mzmax"]
+                    pks_new[current_peak, "mzmax"] <- pks[i, "mzmax"]
                 idx_min <- which.min(
                     abs(rtime(x) - pks_new[current_peak, "rtmin"]))
                 idx_max <- which.min(
