@@ -2659,6 +2659,11 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #' (`"mzmin" - expandMz - ppm("mzmin")` to `"mzmax + expandMz + ppm("mzmax")`)
 #' and rt ranges (`"rtmin" - expandRt` to `"rtmax" + expandRt`) are overlapping.
 #'
+#' For overlapping peak-candidates a chromatogram is extracted, with the
+#' m/z range being the range of the individual chromatographic peak's m/z range
+#' expanded by `expandMz` and `ppm` (on both sides). This is to avoid data
+#' points in between peaks being `NA`.
+#'
 #' @param x `XCMSnExp` object with chromatographic peaks of a **single** file.
 #'
 #' @param sample_index `integer(1)` representing the index of the sample in the
@@ -2687,7 +2692,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #'     corresponding metadata information. The merged peaks will have a row
 #'     name of `NA`.
 #'
-#' @author Johannes Rainer
+#' @author Johannes Rainer, Mar Garcia-Aloy
 #'
 #' @md
 #'
@@ -2748,8 +2753,14 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
             rt_group <- rt_groups[[j]]
             pk_groups[[current_group]] <- rt_group
             pks_sub <- pks[rt_group, ]
+            mzr_sub <- range(pks_sub[, c("mzmin", "mzmax")])
+            ## Expand the mz range in a similar fashion than used for checking
+            ## if chrom peaks are overlapping. This fixes an issue with very
+            ## low intensities in between two peaks, that tend to have shifted
+            ## m/z value (because their intensities are so low).
+            mzr_sub <- mzr_sub + c(-1, 1) * mzr_sub * ppm * 1e-6 + expandMz
             chr_def_mat[[current_group]] <-
-                c(range(pks_sub[, c("mzmin", "mzmax")]),
+                c(mzr_sub,
                   range(pks_sub[, c("rtmin", "rtmax")]))
             current_group <- current_group + 1
         }

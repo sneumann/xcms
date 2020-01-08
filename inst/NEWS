@@ -1,3 +1,16 @@
+Changes in version 3.9.2
+
+- Fine-tune MergeNeighboringPeaks peak refinement method: the average of the
+  3 data points between candidate peaks is used to evaluate whether the peaks
+  should be merged making the approach more robust against outliers. In
+  addition, an ion chromatogram for candidate peaks is extracted with an m/z
+  range expanded depending on the expandMz and ppm setting ensuring that low
+  intensity data points between candidate peaks are not missed out (because
+  their m/z might be slightly shifted on ToF instruments). The mzmin and mzmax
+  of the merged peak represents also the minimum and maximum m/z of all data
+  points in that extracted ion chromatogram.
+
+
 Changes in version 3.9.1
 
 - Fix problem of not shown/plotted peak positions in plotChromPeakSpectra

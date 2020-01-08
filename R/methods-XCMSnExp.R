@@ -3616,26 +3616,32 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #'
 #' Peak detection sometimes fails to identify a chromatographic peak correctly,
 #' especially for broad peaks and if the peak shape is irregular (mostly for
-#' HILIC data). In such cases several smaller peaks are reported. This function
-#' tries to combine such peaks again if they are overlappoing on m/z dimension
-#' and  considering their distance in retention time dimension and the measured
-#' intensity between them.
+#' HILIC data). In such cases several smaller peaks are reported. Also, peak
+#' detection can result in partially or completely overlapping peaks. To reduce
+#' such peak detection artifacts, this function merges chromatographic peaks
+#' which are overlapping or close in rt and m/z dimension considering also the
+#' measured signal intensities in the region between them.
 #'
 #' Chromatographic peaks are first expanded in m/z and retention time dimension
-#' by `expandMz` and `expandRt` and subsequently grouped into candidates for
-#' merging if they are (after expansion) overlapping in both m/z and rt (within
-#' the same sample). Peaks are merged if the intensity at the position at half
-#' way between them (i.e. at half the distance between `"rtmax"` of the first
-#' and `"rtmin"` of the second peak) is larger than a certain proportion
-#' (`minProp`) of the smaller maximal intensity (`"maxo"`) of both peaks. In
-#' cases in which this calculated mid point is **not** located between the
-#' apexes of the two peaks (e.g. if the peaks are largely overlapping) the
-#' signal intensity at half way between the apexes is used instead.
+#' (based on parameters `expandMz`, `ppm` and `expandRt`) and subsequently
+#' grouped into sets of merge candidates if they are (after expansion)
+#' overlapping in both m/z and rt (within the same sample).
+#' Candidate peaks are merged if the average intensity of the 3 data
+#' points in the middle position between them (i.e. at half the distance between
+#' `"rtmax"` of the first and `"rtmin"` of the second peak) is larger than a
+#' certain proportion (`minProp`) of the smaller maximal intensity (`"maxo"`)
+#' of both peaks. In cases in which this calculated mid point is **not**
+#' located between the apexes of the two peaks (e.g. if the peaks are largely
+#' overlapping) the average signal intensity at half way between the apexes is
+#' used instead. Candidate peaks are not joined if all 3 data points between
+#' them have `NA` intensities.
 #' The joined peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from
 #' the peak with the largest signal (`"maxo"`) as well as its row in the
 #' metadata data frame of the peak (`chromPeakData`). The `"rtmin"`, `"rtmax"`
 #' of the merged peaks are updated and `"into"` is recalculated based on all
-#' the signal between `"rtmin"` and `"rtmax"` of the new merged peak.
+#' the signal between `"rtmin"` and `"rtmax"` of the new merged peak. See
+#' details for information on the `"mzmin"` and `"mzmax"` values of the merged
+#' peak.
 #'
 #' @note
 #'
@@ -3651,13 +3657,27 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #' which may be part of features.
 #'
 #' Merging of chromatographic peaks is performed along the retention time axis,
-#' i.e. candidate peaks are first ordered by their `"rtmin"` value. The signal
-#' at half way between the first and the second candidate peak is then compared
-#' to the smalles `"maxo"` of both and the two peaks are then merged the signal
-#' between the peaks is larger `minProp`. If so, the peaks are merged updating
-#' its `"into"`, `"maxo"` and retention time boundaries. For merging any
+#' i.e. candidate peaks are first ordered by their `"rtmin"` value. The signals
+#' at half way between the first and the second candidate peak are then compared
+#' to the smallest `"maxo"` of both and the two peaks are then merged if the
+#' average signal between the peaks is larger `minProp`. For merging any
 #' additional peak in a candidate peak list the `"maxo"` of that peak and the
 #' newly merged peak are considered.
+#'
+#' @details
+#'
+#' For each set of candidate peaks an ion chromatogram is
+#' extracted using the range of retention times and m/z values of these peaks.
+#' The m/z range for the extracted ion chromatogram is expanded by `expandMz`
+#' and `ppm` (on both sides) to reduce the possibility of missing signal
+#' intensities between candidate peaks (variance of measured m/z values for
+#' lower intensities is larger than for higher intensities and thus data points
+#' not being part of identified chromatographic peaks tend to have m/z values
+#' outside of the m/z range of the candidate peaks - especially for ToF
+#' instruments). This also ensures that all data points from the same ion are
+#' considered for the peak integration of merged peaks. The smallest and largest
+#' m/z value of all data points used in the peak integration of the merged peak
+#' are used as the merged peak's m/z range (i.e. columns `"mzmin"` and `"mzmax"`).
 #'
 #' @param expandRt `numeric(1)` defining by how many seconds the retention time
 #'     window is expanded on both sides to check for overlapping peaks.

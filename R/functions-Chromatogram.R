@@ -129,16 +129,20 @@
 #'
 #' In detail, the function evaluates if the peaks are close enough, i.e. checks
 #' if the difference between the `"rtmax"` and `"rtmin"` of consecutive peaks
-#' is smaller than `diffRt`. If so, the intensity at half way between them
-#' is extracted. If this intensity is larger than `minProp` of the smaller
-#' `"maxo"` value of both, the peaks are merged. In other words, if the
-#' intensity at half way between the two peaks is larger than `minProp` times
-#' the smaller maximal peak intensity of both peaks, they are joined. The joined
-#' peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from the peak with
-#' the largest signal (`"maxo"`) as well as its row in the *chrom peak data*
-#' `pkd`. The `"rtmin"`, `"rtmax"`, `"mzmin"` and `"mzmax"` are updated and
+#' is smaller than `diffRt`. If so, the average intensity of the 3 data points
+#' at half way between them is calculated. If this average is larger than
+#' `minProp` of the smaller `"maxo"` value of both, the peaks are merged.
+#' In other words, if the (average) intensity between the two peaks is larger
+#' than `minProp` times the smaller maximal peak intensity of both peaks, they
+#' are joined. Note that peaks are **not** joined if all 3 data points in the
+#' middle between the peaks are `NA`.
+#' The joined peaks get the `"mz"`, `"rt"`, `"sn"` and `"maxo"` values from
+#' the peak with the largest signal (`"maxo"`) as well as its row in the
+#' *chrom peak data* `pkd`. The `"rtmin"`, `"rtmax"` are updated and
 #' `"into"` is recalculated based on all the signal between `"rtmin"` and
-#' `"rtmax"` of the new merged peak.
+#' `"rtmax"` of the new merged peak. The smallest and largest m/z value of all
+#' data points within the provided extracted ion chromatogram is used as
+#' `"mzmin"` and `"mzmax`" of the merged peak.
 #'
 #' Note that the `"maxo"` of the merged peak is updated (the maximum of the two
 #' merged peaks is used) and used in any further merging. If for example two
@@ -191,7 +195,7 @@
                                            diffRt = 0) {
     if (nrow(pks) < 2 || all(is.na(intensity(x))))
         return(list(chromPeaks = pks, chromPeakData = pkd))
-    x <- clean(x, all = TRUE)
+    ## x <- clean(x, all = TRUE)
     idx <- order(pks[, "rtmin"])
     pks <- pks[idx, , drop = FALSE]
     pkd <- pkd[idx, , drop = FALSE]
@@ -221,25 +225,29 @@
             apexes <- range(c(pks[i, "rt"], pks[current_peak, "rt"]))
             if (rt_mid < apexes[1] || rt_mid > apexes[2])
                 rt_mid <- sum(apexes) / 2
-            int_mid <- intensity(x)[which.min(abs(rtime(x) - rt_mid))]
-            if (int_mid > min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) *
-                minProp) {
+            ## Calculate the mean of the 3 data points closest to rt_mid. Skip
+            ## if all of them are `NA`.
+            mid_vals <- intensity(x)[order(abs(rtime(x) - rt_mid))[1:3]]
+            if (!all(is.na(mid_vals)) &&
+                mean(mid_vals, na.rm = TRUE) >
+                min(pks_new[current_peak, "maxo"], pks[i, "maxo"]) * minProp) {
                 rownames(pks_new)[current_peak] <- NA_character_
                 pks_new[current_peak, drop_cols] <- NA_real_
                 if (pks[i, "rtmax"] > pks_new[current_peak, "rtmax"])
                     pks_new[current_peak, "rtmax"] <- pks[i, "rtmax"]
-                if (!is.na(pks[i, "mzmin"]) &&
-                    pks[i, "mzmin"] < pks_new[current_peak, "mzmin"])
-                    pks_new[current_peak, "mzmin"] <- pks[i, "mzmin"]
-                if (!is.na(pks[i, "mzmax"]) &&
-                    pks[i, "mzmax"] > pks_new[current_peak, "mzmax"])
-                    pks_new[current_peak, "mzmax"] <- pks[i, "mzmax"]
+                if (!is.na(pks[i, "mzmin"])) {
+                    ## Use the mzmin and mzmax of the actual EIC - since we are
+                    ## also integrating the intensities from there.
+                    pks_new[current_peak, c("mzmin", "mzmax")] <-
+                        mz(x, filter = FALSE)
+                }
                 idx_min <- which.min(
                     abs(rtime(x) - pks_new[current_peak, "rtmin"]))
                 idx_max <- which.min(
                     abs(rtime(x) - pks_new[current_peak, "rtmax"]))
                 peak_width <- (pks_new[current_peak, "rtmax"] -
                                pks_new[current_peak, "rtmin"]) / (idx_max - idx_min)
+                ## Calculate into as done in centWave.
                 pks_new[current_peak, "into"] <-
                     sum(intensity(x)[rtime(x) >= pks_new[current_peak, "rtmin"] &
                                      rtime(x) <= pks_new[current_peak, "rtmax"]],
