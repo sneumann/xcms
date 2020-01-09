@@ -8,7 +8,7 @@ vignette: >
   %\VignetteIndexEntry{LCMS data preprocessing and analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap}
+  %\VignetteDepends{xcms,RColorBrewer,faahKO,pander,magrittr,BiocStyle,pheatmap,SummarizedExperiment}
   %\VignettePackage{xcms}
   %\VignetteKeywords{mass spectrometry, metabolomics}
 bibliography: references.bib
@@ -82,6 +82,7 @@ library(RColorBrewer)
 library(pander)
 library(magrittr)
 library(pheatmap)
+library(SummarizedExperiment)
 
 ## Get the full path to the CDF files
 cdfs <- dir(system.file("cdf", package = "faahKO"), full.names = TRUE,
@@ -381,11 +382,12 @@ T <- lapply(split.data.frame(
     FUN = summary_fun)
 T <- do.call(rbind, T)
 rownames(T) <- basename(fileNames(xdata))
-pandoc.table(T,
-             caption = paste0("Summary statistics on identified chromatographic",
-                              " peaks. Shown are number of identified peaks per",
-                              " sample and widths/duration of chromatographic ",
-                              "peaks."))
+pandoc.table(
+    T,
+    caption = paste0("Summary statistics on identified chromatographic",
+                     " peaks. Shown are number of identified peaks per",
+                     " sample and widths/duration of chromatographic ",
+                     "peaks."))
 ```
 
 We can also plot the location of the identified chromatographic peaks in the
@@ -795,10 +797,49 @@ pdp <- PeakDensityParam(sampleGroups = xdata$sample_group,
 xdata <- groupChromPeaks(xdata, param = pdp)
 ```
 
-The results from the correspondence can be extracted using the
-`featureDefinitions` method, that returns a `DataFrame` with the definition of
-the features (i.e. the mz and rt ranges and, in column `peakidx`, the index of
-the chromatographic peaks in the `chromPeaks` matrix for each feature).
+Results from the xcms-based preprocessing can be summarized into a
+`SummarizedExperiment` object from the `r Biocpkg("SummarizedExperiment")`
+package with the `quantify` method. This object will contain the feature
+abundances as the *assay matrix*, the feature definition (their m/z, retention
+time and other metadata) as `rowData` (i.e. row annotations) and the
+sample/phenotype information as `colData` (i.e. column annotations). All the
+processing history will be put into the object's `metadata`. This object can
+then be used for any further (`xcms`-independent) processing and analysis.
+
+Below we use `quantify` to generate the result object for the present
+analysis. The parameters `value` and any other additional parameters are passed
+along to the `featureValues` method that is used internally to create the
+feature abundance matrix.
+
+```{r quantify}
+res <- quantify(xdata, value = "into")
+```
+
+Sample annotations can be accessed with the `colData` method.
+
+```{r quantify-colData}
+colData(res)
+```
+
+Feature annotations with `rowData`:
+
+```{r quantify-rowData}
+rowData(res)
+```
+
+The feature abundances can be accessed with the `assay` method. Note also that a
+`SummarizedExperiment` supports multiple such assay matrices.
+
+```{r}
+head(assay(res))
+```
+
+In addition it is possible to extract the results from the correspondence
+analysis individually using the `featureDefinitions` and `featureValues`
+methods, that former returning a `DataFrame` with the definition of the features
+(i.e. the mz and rt ranges and, in column `peakidx`, the index of the
+chromatographic peaks in the `chromPeaks` matrix for each feature), the latter
+the feature abundances.
 
 ```{r correspondence-featureDefs, message = FALSE }
 ## Extract the feature definitions
@@ -949,13 +990,16 @@ properties of the mice analyzed (sex, age, litter mates etc).
 # Further data processing and analysis
 
 Normalizing features' signal intensities is required, but at present not (yet)
-supported in `xcms` (some methods might be added in near future). Also, for the
+supported in `xcms` (some methods might be added in near future). It is advised
+to use the `SummarizedExperiment` returned by the `quantify` method for any
+further data processing, as this type of object stores feature definitions,
+sample annotations as well as feature abundances in the same object. For the
 identification of e.g. features with significant different
 intensities/abundances it is suggested to use functionality provided in other R
 packages, such as Bioconductor's excellent `limma` package. To enable support
 also for other packages that rely on the *old* `xcmsSet` result object, it is
-possible to coerce the new `XCMSnExp` object to an `xcmsSet` object using
-`xset <- as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
+possible to coerce the new `XCMSnExp` object to an `xcmsSet` object using `xset
+<- as(x, "xcmsSet")`, with `x` being an `XCMSnExp` object.
 
 
 # Additional details and notes

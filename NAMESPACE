@@ -30,6 +30,8 @@ importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList")
 importMethodsFrom("S4Vectors", "as.matrix", "mcols", "mcols<-")
 
+importFrom("SummarizedExperiment", "SummarizedExperiment")
+
 ## Additional imports proposed by R CMD check:
 importFrom("graphics", "abline", "barplot", "close.screen", "hist",
            "identify", "layout", "legend", "lines", "par", "plot.new",
@@ -63,7 +65,7 @@ importMethodsFrom("MSnbase", "intensity", "mz", "rtime", "fileNames", "fromFile"
                   "removeReporters", "smooth", "trimMz", "splitByFile", "[[",
                   "spectrapply", "peaksCount", "precursorMz", "chromatogram",
                   "plot", "fData", "fData<-", "writeMSData",
-                  "filterIsolationWindow")
+                  "filterIsolationWindow", "quantify")
 importFrom("MSnbase", "as.data.frame.Spectrum", "Chromatogram",
     "Chromatograms", "Spectra", "requiredFvarLabels", "selectFeatureData")
 
@@ -200,7 +202,8 @@ exportMethods(
     "write.mzQuantML",
     "xcmsSource",
     "loadRaw",
-    "isolationWindowTargetMz"
+    "isolationWindowTargetMz",
+    "quantify"
 )
 
 ## New functions

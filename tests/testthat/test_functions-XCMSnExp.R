@@ -613,3 +613,18 @@ test_that(".merge_neighboring_peaks works", {
     expect_true(nrow(pks) == nrow(chromPeaks(xod_x1, mz = mzr)))
     expect_equal(rownames(pks), rownames(chromPeaks(chr)))
 })
+
+test_that(".XCMSnExp2SummarizedExperiment works", {
+    expect_error(.XCMSnExp2SummarizedExperiment(xod_x), "No correspondence")
+
+    res <- .XCMSnExp2SummarizedExperiment(xod_xgrg)
+    expect_equal(SummarizedExperiment::assay(res), featureValues(xod_xgrg))
+
+    res <- .XCMSnExp2SummarizedExperiment(xod_xgrg, value = "maxo")
+    expect_equal(SummarizedExperiment::assay(res),
+                 featureValues(xod_xgrg, value = "maxo"))
+
+    res <- quantify(xod_xgrg, value = "intb")
+    expect_equal(SummarizedExperiment::assay(res),
+                 featureValues(xod_xgrg, value = "intb"))
+})

@@ -2471,9 +2471,12 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' \item \code{\link{featureSummary}} perform a simple summary of the defined
 #' features (see respective help page).
 #'
-#' \item \code{link{overlappingFeatures}} identify features that are
+#' \item \code{\link{overlappingFeatures}} identify features that are
 #' overlapping or close in the m/z - rt space (see respective help page).
 #'
+#' \item \code{\link{quantify}} extract feature intensities and put them, along
+#' with feature definitions and phenodata information, into a
+#' \code{\link{SummarizedExperiment}}. See help page for details.
 #' }
 #'
 #' @note The \code{"chromPeaks"} element in the \code{msFeatureData} slot is

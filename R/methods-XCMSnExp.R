@@ -1556,6 +1556,10 @@ setMethod("smooth", "XCMSnExp", function(x, method = c("SavitzkyGolay",
 #' @name XCMSnExp-class
 setAs(from = "XCMSnExp", to = "xcmsSet", def = .XCMSnExp2xcmsSet)
 
+#' @rdname XCMSnExp-peak-grouping-results
+setMethod("quantify", "XCMSnExp", function(object, ...) {
+    .XCMSnExp2SummarizedExperiment(object, ...)
+})
 
 #' @title Peak grouping/correspondence based on time dimension peak densities
 #'
@@ -2080,6 +2084,15 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' Parameter \code{method} allows to specify the method to be used in such
 #' cases to chose from which of the peaks the value should be returned.
 #'
+#' \code{quantify,XCMSnExp}: return the preprocessing results as an
+#' \code{\link{SummarizedExperiment}} object containing the feature abundances
+#' as assay matrix, the feature definitions (returned by
+#' \code{\link{featureDefinitions}}) as \code{rowData} and the phenotype
+#' information as \code{colData}. This is an ideal container for further
+#' processing of the data. Internally, the \code{\link{featureValues}} method
+#' is used to extract the feature abundances, parameters for that method can
+#' be passed to \code{quantify} with \code{...}.
+#'
 #' @note
 #'
 #' This method is equivalent to the \code{\link{groupval}} for
@@ -2120,6 +2133,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
 #'     half of the row's minimal (non-missing) value.
 #'
+#' @param ... For \code{quantify}: additional parameters to be passed on to the
+#'     \code{\link{featureValues}} method.
+#'
 #' @return
 #'
 #' For \code{featureValues}: a \code{matrix} with
@@ -2129,6 +2145,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{matrix} are the same than those of the \code{featureDefinitions}
 #' \code{DataFrame}. \code{NA} is reported for features without
 #' corresponding chromatographic peak in the respective sample(s).
+#'
+#' For \code{quantify}: a \code{\link{SummarizedExperiment}} representing
+#' the preprocessing results.
 #'
 #' @author Johannes Rainer
 #'

@@ -52,7 +52,8 @@ Imports:
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
     robustbase,
-    IRanges
+    IRanges,
+    SummarizedExperiment
 Suggests:
     BiocStyle,
     caTools,

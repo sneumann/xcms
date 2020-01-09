@@ -111,6 +111,16 @@ dropGenericProcessHistory <- function(x, fun) {
         return(xs)
 }
 
+.XCMSnExp2SummarizedExperiment <- function(x, ...) {
+    if (!hasFeatures(x))
+        stop("No correspondence analysis results present. Please run ",
+             "groupChromPeaks first.")
+    SummarizedExperiment(assays = list(raw = featureValues(x, ...)),
+                         rowData = featureDefinitions(x),
+                         colData = pData(x),
+                         metadata = processHistory(x))
+}
+
 #' @description
 #'
 #' Extract a \code{data.frame} of retention time, mz and intensity
@@ -1721,7 +1731,7 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #' @description
 #'
 #' Export the feature table for further analysis in the MetaboAnalyst
-#' software (or the `MetaboAnalystR` R package.
+#' software (or the `MetaboAnalystR` R package).
 #'
 #' @param x [XCMSnExp] object with identified chromatographic peaks grouped
 #'     across samples.
@@ -1743,7 +1753,7 @@ overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
 #' @param groupnames `logical(1)` whether row names of the resulting matrix
 #'     should be the feature IDs (`groupnames = FALSE`; default) or IDs that
 #'     are composed of the m/z and retention time of the features (in the
-#'     format *M<m/z>T<rt>* (`groupnames = TRUE`). See help of the [groupnames]
+#'     format `M<m/z>T<rt>` (`groupnames = TRUE`). See help of the [groupnames]
 #'     function for details.
 #'
 #' @param ... additional parameters to be passed to the [featureValues()]

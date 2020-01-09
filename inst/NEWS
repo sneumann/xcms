@@ -1,5 +1,7 @@
 Changes in version 3.9.2
 
+- Add quantify,XCMSnExp object to quantify an XCMSnExp into a
+  SummarizedExperiment.
 - Fine-tune MergeNeighboringPeaks peak refinement method: the average of the
   3 data points between candidate peaks is used to evaluate whether the peaks
   should be merged making the approach more robust against outliers. In

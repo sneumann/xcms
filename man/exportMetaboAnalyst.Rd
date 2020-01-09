@@ -35,7 +35,7 @@ used for numeric. The default \code{NULL} uses \code{getOption("digits")}. See
 \item{groupnames}{\code{logical(1)} whether row names of the resulting matrix
 should be the feature IDs (\code{groupnames = FALSE}; default) or IDs that
 are composed of the m/z and retention time of the features (in the
-format \emph{M<m/z>T<rt>} (\code{groupnames = TRUE}). See help of the \link{groupnames}
+format \verb{M<m/z>T<rt>} (\code{groupnames = TRUE}). See help of the \link{groupnames}
 function for details.}
 
 \item{...}{additional parameters to be passed to the \code{\link[=featureValues]{featureValues()}}
@@ -47,7 +47,7 @@ the format supported by MetaboAnalyst.
 }
 \description{
 Export the feature table for further analysis in the MetaboAnalyst
-software (or the \code{MetaboAnalystR} R package.
+software (or the \code{MetaboAnalystR} R package).
 }
 \author{
 Johannes Rainer
