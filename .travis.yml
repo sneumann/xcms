@@ -35,6 +35,7 @@ jobs:
         - testthat
         - knitr
         - roxygen2
+        - magick
       before_install:
         - mkdir -p ~/.R
         - echo -e 'MAKEFLAGS = -j2' > ~/.R/Makevars
