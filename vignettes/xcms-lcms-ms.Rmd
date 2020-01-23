@@ -4,6 +4,8 @@ package: xcms
 output:
   BiocStyle::html_document:
     toc_float: true
+    includes:
+      in_header: xcms-lcms-ms.bioschemas.html
 vignette: >
   %\VignetteIndexEntry{LC-MS/MS data analysis with xcms}
   %\VignetteEngine{knitr::rmarkdown}
