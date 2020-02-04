@@ -3556,7 +3556,7 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #' which may be part of features.
 #'
 #' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
-#'     allowed peak width (in retention times).
+#'     allowed peak width (in retention time).
 #'
 #' @param msLevel `integer` defining for which MS level(s) the chromatographic
 #'     peaks should be cleaned.

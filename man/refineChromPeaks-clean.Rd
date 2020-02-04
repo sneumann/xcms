@@ -14,7 +14,7 @@ CleanPeaksParam(maxPeakwidth = 10)
 }
 \arguments{
 \item{maxPeakwidth}{for \code{CleanPeaksParam}: \code{numeric(1)} defining the maximal
-allowed peak width (in retention times).}
+allowed peak width (in retention time).}
 
 \item{object}{\link{XCMSnExp} object with identified chromatographic peaks.}
 

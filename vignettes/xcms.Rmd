@@ -372,6 +372,57 @@ for each detected peak.
 chromPeakData(xdata)
 ```
 
+Peak detection will not always work perfectly leading to peak detection
+artifacts, such as overlapping peaks or artificially split peaks. The
+`refineChromPeaks` function allows to *refine* peak detection results by either
+or removing identified peaks exceeding a maximal allower rt width or by merging
+artificially split chromatographic peaks. For the former a `CleanPeaksParam`
+parameter object can be submitted to the function while the latter can be
+configured with the `MergeNeighboringPeaksParam` object. Below we post-process
+the peak detection results merging peaks overlapping in a 4 second window per
+file if the signal between in between them is lower than 75% of the smaller
+peak's maximal intensity. See the `MergeNeighboringPeaksParam` help page for a
+detailed description of the settings and the approach.
+
+```{r peak-postprocessing, message = FALSE}
+mpp <- MergeNeighboringPeaksParam(expandRt = 4)
+xdata_pp <- refineChromPeaks(xdata, mpp)
+```
+
+An example for a merged peak is given below.
+
+```{r peak-postprocessing-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
+mzr_1 <- 305.1 + c(-0.01, 0.01)
+chr_1 <- chromatogram(filterFile(xdata, 1), mz = mzr_1)
+chr_2 <- chromatogram(filterFile(xdata_pp, 1), mz = mzr_1)
+par(mfrow = c(1, 2))
+plot(chr_1)
+plot(chr_2)
+```
+
+For the first trace in the chromatogram above centWave detected 3 peaks (1 for
+the full area and two smaller ones, see left panel in the plot above). The peak
+refinement with `MergeNeighboringPeaksParam` reduced them to a single peak
+(right panel in the figure above). Note that this refinement does not merge
+neighboring peaks for which the signal in between them is lower than a certain
+proportion (see figure below).
+
+```{r peak-postprocessing-not-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
+mzr_1 <- 496.2 + c(-0.01, 0.01)
+chr_1 <- chromatogram(filterFile(xdata, 1), mz = mzr_1)
+chr_2 <- chromatogram(filterFile(xdata_pp, 1), mz = mzr_1)
+par(mfrow = c(1, 2))
+plot(chr_1)
+plot(chr_2)
+```
+
+Before proceeding we replace the `xdata` object with the results from the peak
+refinement.
+
+```{r}
+xdata <- xdata_pp
+```
+
 Below we use the data from the `chromPeaks` matrix to calculate some per-file
 summaries.
 
