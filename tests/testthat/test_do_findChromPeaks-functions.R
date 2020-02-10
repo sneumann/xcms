@@ -257,6 +257,14 @@ test_that("peaksWithCentWave works", {
 
     cwp <- CentWaveParam(fitgauss = TRUE)
     pks <- peaksWithCentWave(intensity(chr), rtime(chr), fitgauss = TRUE)
+    
+    #Testing for Github issue #445 after introducing new CWP method
+    skinny_peak <- round((c(numeric(20), dnorm(seq(-3, 3, length.out = 20)), 
+                     numeric(20))*100 +runif(60))*10000)
+    skinny_peak_rt <- seq_along(skinny_peak)+100
+    pks <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, snthresh = 0)
+    expect_true(nrow(pks==1))
+    
 
     ## Check errors
     expect_error(peaksWithCentWave())
