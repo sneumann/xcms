@@ -272,11 +272,10 @@ test_that("peaksWithCentWave works", {
                              snthresh = 0, peakwidth = c(20, 50))
     expect_true(nrow(pks)==1)
     
+    # Reducing minimum peakwidth shouldn't affect peak detection
     pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
-                                            snthresh = 0, peakwidth = c(10, 50))
+                                            snthresh = 0, peakwidth = c(2, 50))
     expect_true(nrow(pks_widerpeakwidth)==1)
-    # Maximum peakwidth shouldn't affect peak detection
-    expect_true(all.equal(pks[,"intb"], pks_widerpeakwidth[,"intb"]))
 
     ## Check errors
     expect_error(peaksWithCentWave())
