@@ -22,7 +22,9 @@ MSW.cwt <- function (ms, scales = 1, wavelet = "mexh")
         stop("Unsupported wavelet!")
     }
     oldLen <- length(ms)
-    ms <- MSW.extendNBase(ms, nLevel = NULL, base = 2)
+    newLen <- 2^(ceiling(log2(max(scales)*12)))
+    ms <- MSW.extendLength(x = ms, addLength = (newLen-length(ms)), 
+                           method = "open")
     len <- length(ms)
     nbscales <- length(scales)
     wCoefs <- NULL
