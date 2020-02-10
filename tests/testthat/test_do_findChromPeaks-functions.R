@@ -275,7 +275,26 @@ test_that("peaksWithCentWave works", {
     # Reducing minimum peakwidth shouldn't affect peak detection
     pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
                                             snthresh = 0, peakwidth = c(2, 50))
-    expect_true(nrow(pks_widerpeakwidth)==1)
+    expect_true(nrow(pks)==nrow(pks_widerpeakwidth))
+
+    # Test a wider peak
+    # Values from round((dnorm(seq(-3, 3, length.out = 60))*100+runif(60))*10000)
+    wider_peak <- c(5000, 12043, 15344, 12748, 20730, 20781, 24673, 36956, 44600, 
+                    48596, 57698, 76937, 89422, 106482, 122977, 143989, 157769, 181563, 
+                    206296, 226309, 251067, 283592, 307523, 324212, 341520, 368568, 
+                    375716, 388428, 401694, 408352, 399415, 403964, 394144, 382952, 
+                    368333, 341668, 330255, 301146, 276234, 254643, 231601, 211038, 
+                    184239, 155817, 140996, 123284, 100121, 90280, 77303, 58708, 
+                    52817, 44003, 36068, 24637, 20688, 14162, 14836, 16603, 8341, 
+                    8307)
+    wider_peak_rt <- seq_along(wider_peak)+100
+    pks <- peaksWithCentWave(wider_peak, rt=wider_peak_rt, 
+                             snthresh = 0, peakwidth = c(20, 80))
+    expect_true(nrow(pks)==1)
+    pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
+                                            snthresh = 0, peakwidth = c(2, 80))
+    expect_true(nrow(pks)==nrow(pks_widerpeakwidth))
+    
 
     ## Check errors
     expect_error(peaksWithCentWave())
