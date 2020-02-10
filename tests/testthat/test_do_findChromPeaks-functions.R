@@ -268,8 +268,15 @@ test_that("peaksWithCentWave works", {
                      11511, 10836, 8046, 601, 889, 5917, 2690, 5381, 9901, 8494, 3349, 
                      8283, 3410, 5935, 3332, 7041, 3284, 7478, 76, 3739, 2158, 5507)
     skinny_peak_rt <- seq_along(skinny_peak)+100
-    pks <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, snthresh = 0)
-    expect_true(nrow(pks==1))    
+    pks <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
+                             snthresh = 0, peakwidth = c(20, 50))
+    expect_true(nrow(pks)==1)
+    
+    pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
+                                            snthresh = 0, peakwidth = c(10, 50))
+    expect_true(nrow(pks_widerpeakwidth)==1)
+    # Maximum peakwidth shouldn't affect peak detection
+    expect_true(all.equal(pks[,"intb"], pks_widerpeakwidth[,"intb"]))
 
     ## Check errors
     expect_error(peaksWithCentWave())
