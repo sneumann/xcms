@@ -22,6 +22,10 @@ MSW.cwt <- function (ms, scales = 1, wavelet = "mexh")
         stop("Unsupported wavelet!")
     }
     oldLen <- length(ms)
+    # The new length is determined by the scales argument, so a larger peakwidth
+    # will ensure more scales are run, but may slow it down. See 
+    # https://github.com/sneumann/xcms/issues/445 for more information about
+    # a change from using extendNBase to extendLength.
     newLen <- 2^(ceiling(log2(max(scales)*12)))
     ms <- MSW.extendLength(x = ms, addLength = (newLen-length(ms)), 
                            method = "open")
@@ -55,6 +59,9 @@ MSW.cwt <- function (ms, scales = 1, wavelet = "mexh")
     wCoefs
 }
 
+# This function is no longer used by MSW.cwt(): see above note about the 
+# switch from extendNBase to calling extendLength directly.
+# Possibly now unecessary?
 MSW.extendNBase <- function(x, nLevel=1, base=2, ...)
 { ## from package MassSpecWavelet
     if (!is.matrix(x)) x <- matrix(x, ncol=1)
