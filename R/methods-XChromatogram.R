@@ -422,3 +422,13 @@ setReplaceMethod("chromPeakData", "XChromatogram", function(object, value) {
     validObject(object)
     object
 })
+
+#' @rdname XChromatogram
+setMethod("refineChromPeaks", c(object = "XChromatogram",
+                                param = "MergeNeighboringPeaksParam"),
+          function(object, param = MergeNeighboringPeaksParam()) {
+              object <- .xchrom_merge_neighboring_peaks(
+                  object, minProp = param@minProp, diffRt = 2 * param@expandRt)
+              validObject(object)
+              object
+          })

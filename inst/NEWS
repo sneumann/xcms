@@ -1,5 +1,6 @@
 Changes in version 3.9.2
 
+- Add refineChromPeaks for XChromatogram and XChromatograms objects.
 - Add groupOverlaps function to group arbitrary ranges.
 - Add quantify,XCMSnExp object to quantify an XCMSnExp into a
   SummarizedExperiment.

@@ -251,6 +251,12 @@ setMethod("dropFeatureDefinitions", "XChromatograms", function(object, ...) {
 #'
 #' See [findChromPeaks-Chromatogram-CentWaveParam] for information.
 #'
+#' After chromatographic peak detection it is also possible to *refine*
+#' identified chromatographic peaks with the `refineChromPeaks` method (e.g. to
+#' reduce peak detection artifacts). Currently, only peak refinement using the
+#' *merge neighboring peaks* method is available (see
+#' [MergeNeighboringPeaksParam()] for a detailed description of the approach.
+#'
 #' @section Correspondence analysis:
 #'
 #' Identified chromatographic peaks in an `XChromatograms` object can be grouped
@@ -545,3 +551,21 @@ setMethod("dropFilledChromPeaks", "XChromatograms", function(object) {
     validObject(object)
     object
 })
+
+#' @rdname XChromatogram
+setMethod("refineChromPeaks", c(object = "XChromatograms",
+                                param = "MergeNeighboringPeaksParam"),
+          function(object, param = MergeNeighboringPeaksParam()) {
+              object@.Data <- matrix(
+                  lapply(object, .xchrom_merge_neighboring_peaks,
+                         diffRt = 2 * param@expandRt,
+                         minProp = param@minProp),
+                  ncol = ncol(object), nrow = nrow(object),
+                  dimnames = dimnames(object))
+              xph <- XProcessHistory(param = param, date. = date(),
+                                     type. = .PROCSTEP.PEAK.REFINEMENT,
+                                     fileIndex = 1:ncol(object))
+              object <- addProcessHistory(object, xph)
+              validObject(object)
+              object
+          })

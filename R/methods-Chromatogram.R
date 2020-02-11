@@ -12,6 +12,10 @@
 #' See [peaksWithCentWave()] for the arguments used for peak detection
 #' on purely chromatographic data.
 #'
+#' After chromatographic peak detection, identified peaks can also be *refined*
+#' with the [refineChromPeaks()] method, which can help to reduce peak
+#' detection artifacts.
+#'
 #' @param object a [Chromatogram] or [Chromatograms] object.
 #'
 #' @param param a [CentWaveParam] object specifying the settings for the

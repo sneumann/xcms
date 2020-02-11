@@ -416,6 +416,18 @@ plot(chr_1)
 plot(chr_2)
 ```
 
+Note also that it is possible to perform the peak refinement on extracted ion
+chromatograms. This could e.g. be used to fine-tune the settings for the
+parameter. To illustrate this we perform below a peak refinement on the
+extracted ion chromatogram `chr_1` reducing the `minProp` parameter to force
+joining the two peaks.
+
+```{r peak-postprocessing-chr, fig..width = 5, fig.height = 5}
+res <- refineChromPeaks(chr_1, MergeNeighboringPeaksParam(minProp = 0.05))
+chromPeaks(res)
+plot(res)
+```
+
 Before proceeding we replace the `xdata` object with the results from the peak
 refinement.
 

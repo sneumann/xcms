@@ -67,3 +67,17 @@ test_that(".add_chromatogram_peaks works", {
     .add_chromatogram_peaks(xc, pks, type = "polygon", col = "#00ff0020",
                                    bg = "#00ff0060")
 })
+
+test_that(".xchrom_merge_neighboring_peaks and refineChromPeaks works", {
+    tmp <- filterFile(xod_x, 1)
+    mzr <- 305.1 + c(-0.01, 0.01)
+    chr <- chromatogram(tmp, mz = mzr)
+    res <- .xchrom_merge_neighboring_peaks(chr[1, 1], diffRt = 6)
+    expect_true(nrow(chromPeaks(res)) == 2)
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+
+    res_2 <- refineChromPeaks(chr[1, 1],
+                              param = MergeNeighboringPeaksParam(expandRt = 3))
+    expect_true(validObject(res_2))
+    expect_equal(res, res_2)
+})

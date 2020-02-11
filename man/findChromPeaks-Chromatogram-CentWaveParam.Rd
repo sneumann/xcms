@@ -40,6 +40,10 @@ and \link{CentWaveParam} for details on the parameter class.
 Note that not all settings from the \code{CentWaveParam} will be used.
 See \code{\link[=peaksWithCentWave]{peaksWithCentWave()}} for the arguments used for peak detection
 on purely chromatographic data.
+
+After chromatographic peak detection, identified peaks can also be \emph{refined}
+with the \code{\link[=refineChromPeaks]{refineChromPeaks()}} method, which can help to reduce peak
+detection artifacts.
 }
 \examples{
 

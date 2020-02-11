@@ -423,3 +423,34 @@ test_that("dropFilledChromPeaks,XChromatogram and XChromatograms work", {
     expect_equal(chromPeaks(res), chromPeaks(xchr))
     expect_equal(featureDefinitions(res), featureDefinitions(xchr))
 })
+
+test_that("refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam works", {
+    mzr <- 305.1 + c(-0.01, 0.01)
+    chr <- chromatogram(filterFile(xod_x, 1), mz = mzr)
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam())
+    expect_equal(chromPeaks(res), chromPeaks(chr))
+    expect_true(length(processHistory(res)) > length(processHistory(chr)))
+
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 3))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(chr)))
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+
+    ## With multiple files:
+    chr <- chromatogram(xod_x, mz = mzr)
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 5,
+                                                            minProp = 0))
+    expect_true(sum(chromPeakData(res)$merged) == 2)
+    expect_true(validObject(res))
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(expandRt = 5))
+    expect_true(sum(chromPeakData(res)$merged) == 1)
+    expect_true(validObject(res))
+
+    ## Doing peak detection from scratch
+    mzr <- 462.2 + c(-0.04, 0.04)
+    chr <- chromatogram(od_x, mz = mzr)
+    chr <- findChromPeaks(chr, CentWaveParam())
+    res <- refineChromPeaks(chr, MergeNeighboringPeaksParam(minProp = 0.5,
+                                                            expandRt = 20))
+    expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(chr)))
+    expect_true(sum(chromPeakData(res)$merged) == 3)
+})
