@@ -328,7 +328,8 @@ dropGenericProcessHistory <- function(x, fun) {
 #' @noRd
 .getChromPeakData <- function(object, peakArea, sample_idx,
                               mzCenterFun = "weighted.mean",
-                              cn = c("mz", "rt", "into", "maxo", "sample")) {
+                              cn = c("mz", "rt", "into", "maxo", "sample"),
+                              msLevel = 1L) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     ncols <- length(cn)
@@ -338,11 +339,18 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
     message("Requesting ", nrow(res), " peaks from ",
-             basename(fileNames(object)), " ... ", appendLF = FALSE)
+            basename(fileNames(object)), " ... ", appendLF = FALSE)
+    object <- filterRt(
+        object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
+    object <- filterMsLevel(object, msLevel)
+    if (!length(object)) {
+        message("FAIL: no MS1 data available.")
+        return(res)
+    }
     spctr <- spectra(object, BPPARAM = SerialParam())
-    mzs <- lapply(spctr, mz)
+    mzs <- lapply(spctr, function(z) z@mz)
     valsPerSpect <- lengths(mzs)
-    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    ints <- unlist(lapply(spctr, function(z) z@intensity), use.names = FALSE)
     rm(spctr)
     mzs <- unlist(mzs, use.names = FALSE)
     mzs_range <- range(mzs)
@@ -395,7 +403,7 @@ dropGenericProcessHistory <- function(x, fun) {
         }
     }
     message("got ", sum(!is.na(res[, "into"])), ".")
-    return(res)
+    res
 }
 
 #' @description Same as getChromPeakData, just without retention time.
@@ -514,7 +522,7 @@ dropGenericProcessHistory <- function(x, fun) {
                                             mzCenterFun = "weighted.mean",
                                             param = MatchedFilterParam(),
                                             cn = c("mz", "rt", "into", "maxo",
-                                                   "sample")) {
+                                                   "sample"), msLevel = 1L) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     ncols <- length(cn)
@@ -526,6 +534,13 @@ dropGenericProcessHistory <- function(x, fun) {
     ## Load the data
     message("Requesting ", nrow(res), " peaks from ",
             basename(fileNames(object)), " ... ", appendLF = FALSE)
+    object <- filterRt(
+        object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
+    object <- filterMsLevel(object, msLevel)
+    if (!length(object)) {
+        message("FAIL: no MS1 data available.")
+        return(res)
+    }
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     vps <- lengths(mzs)

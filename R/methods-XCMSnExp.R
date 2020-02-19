@@ -2841,6 +2841,7 @@ setMethod("fillChromPeaks",
               ## memory requirement to a minimum.
               req_fcol <- requiredFvarLabels("OnDiskMSnExp")
               min_fdata <- fData(object)[, req_fcol]
+              rt_range <- range(pkArea[, c("rtmin", "rtmax")])
               if (hasAdjustedRtime(object))
                   min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {

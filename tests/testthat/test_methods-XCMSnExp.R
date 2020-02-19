@@ -1887,7 +1887,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res <- fillChromPeaks(xod_xg)
     expect_true(xcms:::.hasFilledPeaks(res))
     expect_true(hasFilledChromPeaks(res))
-    ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
+    ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
     ## Check parameter filled in featureValues (issue #157)
@@ -1931,7 +1931,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
         fnd_pks <- chromPeaks(xod_xg)[chromPeaks(xod_xg)[, "sample"] == i, ]
         prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
         ## Extract the data for these using the internal function.
-        fld_pks <- .getChromPeakData(filterFile(xod_xg, i),
+        fld_pks <- xcms:::.getChromPeakData(filterFile(xod_xg, i),
                                      peakArea = fnd_pks,
                                      sample_idx = i,
                                      cn = colnames(fnd_pks))
@@ -1975,8 +1975,18 @@ test_that("fillChromPeaks,XCMSnExp works", {
     expect_equal(fp2[, "mzmax"] - fp2[, "mzmin"],
                  2 * (fp[, "mzmax"] - fp[, "mzmin"]))
 
+    res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(fixedRt = 1))
+    ## Check if the rtrange is now indeed broader for the integrated ones.
+    fp <- chromPeaks(res)
+    fp <- fp[chromPeakData(res)$is_filled, ]
+    fp2 <- chromPeaks(res_2)
+    fp2 <- fp2[chromPeakData(res)$is_filled, ]
+    expect_equal(fp[, "rt"], fp2[, "rt"])
+    expect_equal(fp[, "rtmin"] - 1, fp2[, "rtmin"])
+    expect_equal(fp[, "rtmax"] + 1, fp2[, "rtmax"])
+
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandRt = 1))
-    ## Check if the mzrange is now indeed broader for the integrated ones.
+    ## Check if the rtrange is now indeed broader for the integrated ones.
     fp <- chromPeaks(res)
     fp <- fp[chromPeakData(res)$is_filled, ]
     fp2 <- chromPeaks(res_2)
@@ -2039,6 +2049,17 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res_rem <- dropFilledChromPeaks(res_2)
     expect_true(!.hasFilledPeaks(res_rem))
     expect_equal(res_rem, xod_xgrg)
+})
+
+test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {
+    tmp <- xod_xgrg
+    fData(tmp)[fromFile(tmp) == 2, "msLevel"] <- 2L
+    res <- fillChromPeaks(tmp, FillChromPeaksParam(fixedRt = 2))
+    expect_true(!any(chromPeakData(res)$is_filled[chromPeaks(res)[, "sample"] == 2]))
+    res_2 <- fillChromPeaks(xod_xgrg, FillChromPeaksParam(fixedRt = 2))
+    expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
+    expect_equal(chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ],
+                 chromPeaks(res_2)[chromPeaks(res_2)[, "sample"] == 1, ])
 })
 
 test_that("fillChromPeaks,XCMSnExp with MSW works", {
