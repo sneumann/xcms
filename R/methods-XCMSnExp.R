@@ -2538,9 +2538,12 @@ setMethod("chromatogram",
 #'
 #' \code{findChromPeaks} performs chromatographic peak detection
 #' on the provided \code{XCMSnExp} objects. For more details see the method
-#' for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-#' method for \code{XCMSnExp} objects removes previously identified
-#' chromatographic peaks and aligned features. Previous alignment (retention
+#' for \code{\linkS4class{XCMSnExp}}.
+#' Note that by default (with parameter \code{add = FALSE}) previous peak
+#' detection results are removed. Use \code{add = TRUE} to perform a second
+#' round of peak detection and add the newly identified peaks to the previous
+#' peak detection results. Correspondence results (features) are always removed
+#' prior to peak detection. Previous alignment (retention
 #' time adjustment) results are kept, i.e. chromatographic peak detection
 #' is performed using adjusted retention times if the data was first
 #' aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
@@ -2550,11 +2553,16 @@ setMethod("chromatogram",
 #'     \code{\link{CentWavePredIsoParam}} object with the settings for the
 #'     chromatographic peak detection algorithm.
 #'
+#' @param add For \code{findChromPeaks}: if newly identified chromatographic
+#'     peaks should be added to the peak matrix with the already identified
+#'     chromatographic peaks. By default (\code{add = FALSE}) previous
+#'     peak detection results will be removed.
+#'
 #' @inheritParams findChromPeaks-centWave
 setMethod("findChromPeaks",
           signature(object = "XCMSnExp", param = "Param"),
           function(object, param, BPPARAM = bpparam(),
-                   return.type = "XCMSnExp", msLevel = 1L) {
+                   return.type = "XCMSnExp", msLevel = 1L, add = FALSE) {
               ## Remove previous correspondence results.
               if (hasFeatures(object)) {
                   message("Removed feature definitions.")
@@ -2563,11 +2571,16 @@ setMethod("findChromPeaks",
                       keepAdjustedRtime = hasAdjustedRtime(object))
               }
               ## Remove previous chromatographic peaks.
-              if (hasChromPeaks(object)) {
+              has_peaks <- hasChromPeaks(object)
+              if (has_peaks & !add) {
                   message("Removed previously identified chromatographic peaks.")
                   object <- dropChromPeaks(
                       object,
                       keepAdjustedRtime = hasAdjustedRtime(object))
+              }
+              if (add && has_peaks) {
+                  old_cp <- chromPeaks(object)
+                  old_cpd <- chromPeakData(object)
               }
               meth <- selectMethod("findChromPeaks",
                                    signature = c(object = "OnDiskMSnExp",
@@ -2577,6 +2590,15 @@ setMethod("findChromPeaks",
                                                   BPPARAM = BPPARAM,
                                                   return.type = return.type,
                                                   msLevel = msLevel))
+              if (add && has_peaks) {
+                  old_cp <- rbindFill(old_cp, chromPeaks(object))
+                  old_cpd <- rbindFill(old_cpd, chromPeakData(object))
+                  old_hist <- object@.processHistory
+                  chromPeaks(object) <- old_cp
+                  rownames(old_cpd) <- rownames(chromPeaks(object))
+                  chromPeakData(object) <- old_cpd
+                  object@.processHistory <- old_hist
+              }
               ## object@.processHistory <- list()
               validObject(object)
               object

@@ -160,7 +160,8 @@ hasFilledChromPeaks(object)
   param,
   BPPARAM = bpparam(),
   return.type = "XCMSnExp",
-  msLevel = 1L
+  msLevel = 1L,
+  add = FALSE
 )
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
@@ -283,6 +284,11 @@ chromatographic peak detection algorithm.}
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{add}{For \code{findChromPeaks}: if newly identified chromatographic
+peaks should be added to the peak matrix with the already identified
+chromatographic peaks. By default (\code{add = FALSE}) previous
+peak detection results will be removed.}
 
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
@@ -525,9 +531,12 @@ adjustment. All related process history steps are removed too.
 
 \code{findChromPeaks} performs chromatographic peak detection
 on the provided \code{XCMSnExp} objects. For more details see the method
-for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-method for \code{XCMSnExp} objects removes previously identified
-chromatographic peaks and aligned features. Previous alignment (retention
+for \code{\linkS4class{XCMSnExp}}.
+Note that by default (with parameter \code{add = FALSE}) previous peak
+detection results are removed. Use \code{add = TRUE} to perform a second
+round of peak detection and add the newly identified peaks to the previous
+peak detection results. Correspondence results (features) are always removed
+prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
 aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).

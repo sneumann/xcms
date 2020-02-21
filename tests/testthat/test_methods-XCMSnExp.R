@@ -266,6 +266,16 @@ test_that("findChromPeaks,XCMSnExp works", {
     rownames(pks) <- NULL
     pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
     expect_equal(res_2, pks)
+
+    ## Adding peak detection results
+    res <- findChromPeaks(
+        xod_x, param = CentWaveParam(noise = 8000, snthresh = 40,
+                                     verboseColumns = TRUE), add = TRUE)
+    expect_true(length(processHistory(res)) ==
+                (length(processHistory(xod_x)) + 1))
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(xod_x)))
+    expect_true(ncol(chromPeaks(res)) > ncol(chromPeaks(xod_x)))
+    expect_true(length(unique(rownames(chromPeaks(res)))) == nrow(chromPeaks(res)))
 })
 
 test_that("processHistory,XCMSnExp works", {

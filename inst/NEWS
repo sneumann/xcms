@@ -1,5 +1,7 @@
 Changes in version 3.9.2
 
+- findChromPeaks: add parameter `add` to allow several rounds of peak detections
+  on the same object.
 - Small performance enhancement in fillChromPeaks.
 - Better support for MS > 1 data in fillChromPeaks: skip MS level 2 spectra for
   filling in.

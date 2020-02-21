@@ -350,8 +350,12 @@ xdata <- findChromPeaks(raw_data, param = cwp)
 The results are returned as an `XCMSnExp` object which extends the
 `OnDiskMSnExp` object by storing also LC/GC-MS preprocessing results. This means
 also that all methods to sub-set and filter the data or to access the (raw) data
-are inherited from the `OnDiskMSnExp` object and can thus be re-used. The
-results from the chromatographic peak detection can be accessed with the
+are inherited from the `OnDiskMSnExp` object and can thus be re-used. Note also
+that it is possible to perform additional rounds of peak detection (e.g. on MS
+level > 1 data) on the `xdata` object by calling `findChromPeaks` with the
+parameter `add = TRUE`.
+
+The results from the chromatographic peak detection can be accessed with the
 `chromPeaks` method.
 
 ```{r peak-detection-chromPeaks, message = FALSE }
