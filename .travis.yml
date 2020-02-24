@@ -19,6 +19,7 @@ addons:
       - texlive-latex-recommended
       - texlive-fonts-extra
       - libmagick++-dev
+      - libmesa-dev
 
 # Set CXX1X for R-devel, as R-devel does not detect CXX1X support for gcc 4.6.3,
 # this was causing mzR installation to fail
