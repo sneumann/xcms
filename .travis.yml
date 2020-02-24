@@ -36,6 +36,7 @@ jobs:
         - knitr
         - roxygen2
         - magick
+        - S4Vectors
       before_install:
         - mkdir -p ~/.R
         - echo -e 'MAKEFLAGS = -j2' > ~/.R/Makevars
