@@ -109,11 +109,14 @@ test_that(".concatenate_XCMSnExp works", {
     od2 <- readMSData(faahko_3_files[2], mode = "onDisk")
     od3 <- readMSData(faahko_3_files[3], mode = "onDisk")
     xod1 <- findChromPeaks(od1, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
+                                                      snthresh = 40,
+                                                      prefilter = c(3, 10000)))
     xod2 <- findChromPeaks(od2, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
+                                                      snthresh = 40,
+                                                      prefilter = c(3, 10000)))
     xod3 <- findChromPeaks(od3, param = CentWaveParam(noise = 10000,
-                                                      snthresh = 40))
+                                                      snthresh = 40,
+                                                      prefilter = c(3, 10000)))
     res <- .concatenate_XCMSnExp(xod1, xod2, xod3)
     expect_equal(pData(res), pData(faahko_xod))
     expect_equal(fData(res), fData(faahko_xod))
@@ -331,20 +334,26 @@ test_that("featureSpectra works", {
 
 test_that("featureChromatograms works", {
     expect_error(featureChromatograms(xod_x))
-    chrs <- featureChromatograms(xod_xgrg)
-    expect_equal(nrow(chrs), nrow(featureDefinitions(xod_xgrg)))
-    expect_equal(ncol(chrs), length(fileNames(xod_xgrg)))
-    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2)
+
+    fts <- rownames(featureDefinitions(xod_xgrg))
+    chrs <- featureChromatograms(xod_xgrg, features = fts[c(1, 2, 1)])
+    expect_equal(featureDefinitions(chrs)$row, 1:3)
+    expect_equal(featureValues(chrs),
+                 featureValues(xod_xgrg)[fts[c(1, 2, 1)], ])
+    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                     features = fts[c(1, 2, 1)])
     rts <- do.call(rbind, lapply(chrs, function(z) range(rtime(z))))
     rts_ext <- do.call(rbind, lapply(chrs_ext, function(z) range(rtime(z))))
     expect_true(all(rts[, 1] > rts_ext[, 1]))
     expect_true(all(rts[, 2] < rts_ext[, 2]))
 
     res_2 <- featureChromatograms(xod_xgrg, features = c(1, 5))
-    expect_equal(chrs[1, ], res_2[1, ])
-    expect_equal(chrs[5, 1], res_2[2, 1])
-    expect_equal(chrs[5, 2], res_2[2, 2])
-    expect_equal(chrs[5, 3], res_2[2, 3])
+    expect_equal(featureDefinitions(res_2)$row, 1:nrow(res_2))
+    res_1 <- featureChromatograms(xod_xgrg, features = fts[c(1, 5)])
+    expect_equal(res_1[1, ], res_2[1, ])
+    expect_equal(res_1[2, 1], res_2[2, 1])
+    expect_equal(res_1[2, 2], res_2[2, 2])
+    expect_equal(res_1[2, 3], res_2[2, 3])
 
     res_3 <- featureChromatograms(xod_xgrg, features = c("FT01", "FT05"))
     expect_equal(res_2, res_3)
@@ -370,7 +379,7 @@ test_that("featureChromatograms works", {
     expect_equal(chromPeakData(fchrsf)$is_filled, c(TRUE, FALSE, TRUE, FALSE,
                                                     FALSE, FALSE))
     expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
-    expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
+    expect_equal(featureDefinitions(fchrsf)$peakidx, list(1:3, 4:6))
     fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)
     expect_equal(chromPeaks(fchrsf2), chromPeaks(fchrs))
     expect_equal(featureDefinitions(fchrsf2), featureDefinitions(fchrs))
@@ -465,7 +474,8 @@ test_that(".swath_collect_chrom_peaks works", {
         res_4 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
 
         ## No chromPeaks found:
-        cwp <- CentWaveParam(snthresh = 10000, noise = 1e6)
+        cwp <- CentWaveParam(snthresh = 10000, noise = 1e6,
+                             prefilter = c(4, 10000))
         x <- lapply(split(obj, f = isolationWindowTargetMz(obj)),
                     findChromPeaks, msLevel = 2L, param = cwp)
         res_5 <- .swath_collect_chrom_peaks(x, msf, fileNames(obj))
@@ -497,7 +507,7 @@ test_that("findChromPeaksIsolationWindow works", {
     ## no isolation window/add isolation window
     expect_error(findChromPeaksIsolationWindow(od_x), "are NA")
     tmp <- od_x
-    cwp <- CentWaveParam(noise = 10000, snthresh = 40)
+    cwp <- CentWaveParam(noise = 10000, snthresh = 40, prefilter = c(3, 10000))
     fData(tmp)$my_win <- 1
     res_3 <- findChromPeaksIsolationWindow(
         tmp, param = cwp, isolationWindow = fData(tmp)$my_win, msLevel = 1L)

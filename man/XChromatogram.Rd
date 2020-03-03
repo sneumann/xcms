@@ -154,7 +154,7 @@ XChromatogram(
 \S4method{featureValues}{XChromatograms}(
   object,
   method = c("medret", "maxint", "sum"),
-  value = "index",
+  value = "into",
   intensity = "into",
   missing = NA,
   ...

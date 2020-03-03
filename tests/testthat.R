@@ -24,10 +24,12 @@ faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 faahko_xr_1 <- xcmsRaw(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
                        profstep = 0)
 faahko_od <- readMSData(faahko_3_files, mode = "onDisk")
-faahko_xod <- findChromPeaks(faahko_od, param = CentWaveParam(noise = 10000,
-                                                              snthresh = 40))
+faahko_xod <- findChromPeaks(
+    faahko_od, param = CentWaveParam(noise = 10000, snthresh = 40,
+                                     prefilter = c(3, 10000)))
 faahko_xs <- xcmsSet(faahko_3_files, profparam = list(step = 0),
-                     method = "centWave", noise = 10000, snthresh = 40)
+                     method = "centWave", noise = 10000, snthresh = 40,
+                     prefilter = c(3, 10000))
 faahko_xsg <- group(faahko_xs)
 ## Doing also the retention time correction etc
 od_x <- faahko_od

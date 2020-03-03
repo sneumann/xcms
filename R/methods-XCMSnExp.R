@@ -2518,20 +2518,6 @@ setMethod("chromatogram",
                   }), nrow = nrow(res), dimnames = dimnames(res))
               res@.processHistory <- object@.processHistory
               if (hasFeatures(object)) {
-                  ## ## Could be faster if we extract features specifically
-                  ## ## for each row.
-                  ## fdev <- featureDefinitions(object, mz = mz, rt = rt)
-                  ## if (nrow(fdev)) {
-                  ##     pks_sub <- chromPeaks(res)
-                  ##     ## Loop through each EIC "row" to ensure all features in
-                  ##     ## that EIC are retained.
-                  ##     fts <- lapply(seq_len(nrow(res)), function(r) {
-                  ##         fdev$row <- r
-                  ##         .subset_features_on_chrom_peaks(
-                  ##             fdev, chromPeaks(object), pks_sub)
-                  ##     })
-                  ##     res@featureDefinitions <- do.call(rbind, fts)
-                  ## }
                   pks_sub <- chromPeaks(res)
                   ## Loop through each EIC "row" to ensure all features in
                   ## that EIC are retained.

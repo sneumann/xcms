@@ -442,17 +442,6 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
             }
         }
         x@featureDefinitions <- do.call(rbind, fts)
-        ## rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
-        ## cpks <- .subset_chrom_peaks_xchromatograms(cpeaks_orig, i = i, j = j)
-        ## idxs <- as.integer(rownames(cpks))
-        ## fts <- fts[fts$row %in% i, , drop = FALSE]
-        ## fts$row <- match(fts$row, i)
-        ## fts$peakidx <- lapply(fts$peakidx, function(z) {
-        ##     newidx <- match(z, idxs)
-        ##     newidx[!is.na(newidx)]
-        ## })
-        ## fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
-        ## x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
     }
     x@.processHistory <- .process_history_subset_samples(ph, j = j)
     validObject(x)

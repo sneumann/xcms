@@ -112,17 +112,16 @@ and use these (for the subsetting based on the provided parameter
 ## Read some files from the faahKO package.
 library(xcms)
 library(faahKO)
-faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+faahko_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+                  system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-od <- readMSData(faahko_3_files, mode = "onDisk")
+od <- readMSData(faahko_files, mode = "onDisk")
 
 ## Subset to speed up processing
 od <- filterRt(od, rt = c(2500, 3000))
 
 ## Perform peak detection using default CentWave parameters
-xod <- findChromPeaks(od, param = CentWaveParam())
+xod <- findChromPeaks(od, param = CentWaveParam(prefilter = c(3, 20000)))
 
 ## Extract the ion chromatogram for one chromatographic peak in the data.
 chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)

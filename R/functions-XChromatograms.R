@@ -192,28 +192,6 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
     }
     fts
 }
-.subset_features_on_chrom_peaks_old <- function(fts, pks, pks_sub) {
-    if (nrow(fts)) {
-        if (!is.null(rownames(pks)) && !is.null(rownames(pks_sub))) {
-            ids_orig <- rownames(pks)
-            ids_sub <- rownames(pks_sub)
-        } else {
-            cns <- intersect(colnames(pks), colnames(pks_sub))
-            ids_orig <- apply(pks[, cns, drop = FALSE], 1, paste,
-                              collapse = "-")
-            if (length(ids_orig) != length(unique(ids_orig)))
-                stop("Can not uniquely identify chromatographic peaks.")
-            ids_sub <- apply(pks_sub[, cns, drop = FALSE], 1, paste,
-                             collapse = "-")
-        }
-        fts$peakidx <- lapply(fts$peakidx, function(z) {
-            newidx <- match(ids_orig[z], ids_sub)
-            newidx[!is.na(newidx)]
-        })
-        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
-    }
-    fts
-}
 
 #' Subset the chromPeaks matrix from an `XChromatograms` object. The
 #' `chromPeaks` matrix is generated dynamically from the `chromPeaks` matrices

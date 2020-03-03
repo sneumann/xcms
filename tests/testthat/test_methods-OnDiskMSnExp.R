@@ -27,7 +27,8 @@ test_that(
             package = "msdata",
             "proteomics/TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz")
         msn_data <- readMSData(msn_file, mode = "onDisk")
-        msn_xdata <- findChromPeaks(pickPeaks(msn_data), param = CentWaveParam())
+        msn_xdata <- findChromPeaks(pickPeaks(msn_data),
+                                    param = CentWaveParam(prefilter = c(3, 5000)))
         expect_equal(msLevel(msn_data), msLevel(msn_xdata))
     })
 
@@ -36,7 +37,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     fl <- system.file("microtofq/MM14.mzML", package = "msdata")
     raw <- readMSData(fl, mode = "onDisk")
     options(originalCentWave = TRUE)
-    tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
+    tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),
+                                                     prefilter = c(3, 500)))
     ## ## Use the getPeakInt2 which uses the rawMat function.
     ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
     ## ## Use the getPeakInt3 which uses the getEIC C function.
@@ -48,7 +50,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## expect_equal(pkI2, pkI3)
     ## Try with new implementation.
     options(originalCentWave = FALSE)
-    tmp2 <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10)))
+    tmp2 <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),
+                                                      prefilter = c(3, 500)))
     ## Find different number of peaks:
     expect_true(nrow(chromPeaks(tmp2)) != nrow(chromPeaks(tmp)))
     ## Are the peaks similar?
@@ -92,7 +95,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## New modified centWave.
     options(originalCentWave = FALSE)
     tmp2 <- findChromPeaks(filterFile(faahko_od, file = 3),
-                           CentWaveParam(noise = 10000, snthresh = 40))
+                           CentWaveParam(noise = 10000, snthresh = 40,
+                                         prefilter = c(3, 10000)))
     ## Even the identified peaks are identical!
     expect_equal(unname(chromPeaks(tmp)), unname(chromPeaks(tmp2)))
     ## Use the getPeakInt2 which uses the rawMat function.
@@ -120,7 +124,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam works", {
     expect_equal(xs@peaks[, colnames(res_x)], res_x)
     ## OnDiskMSnExp
     ## onDisk <- readMSData(fs[1], msLevel. = 1, mode = "onDisk")
-    cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000)
+    cwp <- CentWaveParam(ppm = ppm, snthresh = snthresh, noise = 100000,
+                         prefilter = c(3, 10000))
     res <- findChromPeaks(onDisk, param = cwp, return.type = "list")
     expect_equal(res[[1]], peaks(xs)@.Data)
 

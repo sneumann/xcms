@@ -123,7 +123,8 @@ newly merged peak are considered.
 
 xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
     mode = "onDisk")
-xd <- findChromPeaks(xd, param = CentWaveParam(noise = 5000))
+xd <- findChromPeaks(xd, param = CentWaveParam(prefilter = c(5, 10000),
+    noise = 5000))
 
 ## Example of a split peak that will be merged
 mzr <- 305.1 + c(-0.01, 0.01)
