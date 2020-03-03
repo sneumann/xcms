@@ -175,6 +175,30 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
             ids_sub <- rownames(pks_sub)
         } else {
             cns <- intersect(colnames(pks), colnames(pks_sub))
+            cns <- cns[!(cns %in% c("row", "column"))]
+            ids_orig <- apply(pks[, cns, drop = FALSE], 1, paste,
+                              collapse = "-")
+            ## if (length(ids_orig) != length(unique(ids_orig)))
+            ##     stop("Can not uniquely identify chromatographic peaks.")
+            ids_sub <- apply(pks_sub[, cns, drop = FALSE], 1, paste,
+                             collapse = "-")
+        }
+        for (i in seq_len(nrow(fts))) {
+            fts$peakidx[[i]] <- unname(
+                which(ids_sub %in% ids_orig[fts$peakidx[[i]]] &
+                      pks_sub[, "row"] == fts$row[i]))
+        }
+        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
+    }
+    fts
+}
+.subset_features_on_chrom_peaks_old <- function(fts, pks, pks_sub) {
+    if (nrow(fts)) {
+        if (!is.null(rownames(pks)) && !is.null(rownames(pks_sub))) {
+            ids_orig <- rownames(pks)
+            ids_sub <- rownames(pks_sub)
+        } else {
+            cns <- intersect(colnames(pks), colnames(pks_sub))
             ids_orig <- apply(pks[, cns, drop = FALSE], 1, paste,
                               collapse = "-")
             if (length(ids_orig) != length(unique(ids_orig)))
@@ -242,7 +266,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                                      main = NA, xlab = "retention time",
                                      ylab = "sample", peakCol = "#00000060",
                                      peakBg = "#00000020", peakPch = 1,
-                                     simulate = TRUE, col = "black", 
+                                     simulate = TRUE, col = "black",
                                      ylim = range(pks[, "column"]), ...) {
     pks_count <- nrow(pks)
     if (pks_count) {

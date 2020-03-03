@@ -2400,17 +2400,16 @@ setMethod("featureValues",
 #' ## Read some files from the faahKO package.
 #' library(xcms)
 #' library(faahKO)
-#' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' faahko_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'                   system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' od <- readMSData(faahko_3_files, mode = "onDisk")
+#' od <- readMSData(faahko_files, mode = "onDisk")
 #'
 #' ## Subset to speed up processing
 #' od <- filterRt(od, rt = c(2500, 3000))
 #'
 #' ## Perform peak detection using default CentWave parameters
-#' xod <- findChromPeaks(od, param = CentWaveParam())
+#' xod <- findChromPeaks(od, param = CentWaveParam(prefilter = c(3, 20000)))
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
@@ -2519,14 +2518,33 @@ setMethod("chromatogram",
                   }), nrow = nrow(res), dimnames = dimnames(res))
               res@.processHistory <- object@.processHistory
               if (hasFeatures(object)) {
+                  ## ## Could be faster if we extract features specifically
+                  ## ## for each row.
+                  ## fdev <- featureDefinitions(object, mz = mz, rt = rt)
+                  ## if (nrow(fdev)) {
+                  ##     pks_sub <- chromPeaks(res)
+                  ##     ## Loop through each EIC "row" to ensure all features in
+                  ##     ## that EIC are retained.
+                  ##     fts <- lapply(seq_len(nrow(res)), function(r) {
+                  ##         fdev$row <- r
+                  ##         .subset_features_on_chrom_peaks(
+                  ##             fdev, chromPeaks(object), pks_sub)
+                  ##     })
+                  ##     res@featureDefinitions <- do.call(rbind, fts)
+                  ## }
                   pks_sub <- chromPeaks(res)
-                  fts <- .subset_features_on_chrom_peaks(
-                      featureDefinitions(object, mz = mz, rt = rt),
-                      chromPeaks(object), pks_sub)
-                  fts$row <- vapply(fts$peakidx, function(z) {
-                      as.integer(pks_sub[z, "row"][1])
-                  }, integer(1))
-                  res@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+                  ## Loop through each EIC "row" to ensure all features in
+                  ## that EIC are retained.
+                  fts <- lapply(seq_len(nrow(res)), function(r) {
+                      fdev <- featureDefinitions(object, mz = mz(res)[r, ],
+                                                 rt = rt)
+                      if (nrow(fdev)) {
+                          fdev$row <- r
+                          .subset_features_on_chrom_peaks(
+                              fdev, chromPeaks(object), pks_sub)
+                      } else DataFrame()
+                  })
+                  res@featureDefinitions <- do.call(rbind, fts)
               }
               validObject(res)
               res
@@ -2727,7 +2745,8 @@ setMethod("findChromPeaks",
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
-#' cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
+#' cwp <- CentWaveParam(ppm = 20, prefilter = c(3, 10000),
+#'     noise = 10000, snthresh = 40)
 #'
 #' res <- findChromPeaks(raw_data, param = cwp)
 #'
@@ -3765,7 +3784,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #'
 #' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'     mode = "onDisk")
-#' xd <- findChromPeaks(xd, param = CentWaveParam(noise = 5000))
+#' xd <- findChromPeaks(xd, param = CentWaveParam(prefilter = c(5, 10000),
+#'     noise = 5000))
 #'
 #' ## Example of a split peak that will be merged
 #' mzr <- 305.1 + c(-0.01, 0.01)

@@ -425,21 +425,34 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
     if (length(i) == 1 && length(j) == 1)
         return(x@.Data[i, j, drop = TRUE][[1]])
     cpeaks_orig <- chromPeaks(x)
-    fts <- featureDefinitions(x)
+    fts_orig <- featureDefinitions(x)
     ph <- x@.processHistory
     x <- callNextMethod(x = x, i = i, j = j, drop = drop)
-    if (nrow(fts)) {
-        rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
-        cpks <- .subset_chrom_peaks_xchromatograms(cpeaks_orig, i = i, j = j)
-        idxs <- as.integer(rownames(cpks))
-        fts <- fts[fts$row %in% i, , drop = FALSE]
-        fts$row <- match(fts$row, i)
-        fts$peakidx <- lapply(fts$peakidx, function(z) {
-            newidx <- match(z, idxs)
-            newidx[!is.na(newidx)]
-        })
-        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
-        x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+    if (nrow(fts_orig)) {
+        cpeaks_sub <- chromPeaks(x)
+        ## re-order and duplicate fts based on i.
+        fts <- vector("list", length(i))
+        for (el in seq_along(i)) {
+            fts_row <- fts_orig[fts_orig$row == i[el], , drop = FALSE]
+            if (nrow(fts_row)) {
+                fts_row$row <- el
+                fts_row <- .subset_features_on_chrom_peaks(
+                    fts_row, cpeaks_orig, cpeaks_sub)
+                fts[[el]] <- fts_row
+            }
+        }
+        x@featureDefinitions <- do.call(rbind, fts)
+        ## rownames(cpeaks_orig) <- as.character(seq_len(nrow(cpeaks_orig)))
+        ## cpks <- .subset_chrom_peaks_xchromatograms(cpeaks_orig, i = i, j = j)
+        ## idxs <- as.integer(rownames(cpks))
+        ## fts <- fts[fts$row %in% i, , drop = FALSE]
+        ## fts$row <- match(fts$row, i)
+        ## fts$peakidx <- lapply(fts$peakidx, function(z) {
+        ##     newidx <- match(z, idxs)
+        ##     newidx[!is.na(newidx)]
+        ## })
+        ## fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
+        ## x@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
     }
     x@.processHistory <- .process_history_subset_samples(ph, j = j)
     validObject(x)
@@ -449,7 +462,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
 #' @rdname XChromatogram
 setMethod("featureValues", "XChromatograms",
           function(object, method = c("medret", "maxint", "sum"),
-                   value = "index", intensity = "into", missing = NA, ...) {
+                   value = "into", intensity = "into", missing = NA, ...) {
               if (!any(hasChromPeaks(object)))
                   stop("No chromatographic peaks present! Please use ",
                        "'findChromPeaks' first.")
@@ -471,7 +484,10 @@ setMethod("featureValues", "XChromatograms",
               }
               cnames <- colnames(object)
               pks <- chromPeaks(object)
-              pks <- cbind(pks, sample = pks[, "column"])
+              if (any(colnames(pks) == "sample"))
+                  pks[, "sample"] <- pks[, "column"]
+              else
+                  pks <- cbind(pks, sample = pks[, "column"])
               .feature_values(pks = pks, fts = featureDefinitions(object),
                               method = method, value = value,
                               intensity = intensity, colnames = cnames,

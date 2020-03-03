@@ -1,5 +1,7 @@
 Changes in version 3.9.2
 
+- Fix featureChromatograms and chromatograms on a XCMSnExp object with features:
+  features can be duplicated across rows (EICs).
 - findChromPeaks: add parameter `add` to allow several rounds of peak detections
   on the same object.
 - Small performance enhancement in fillChromPeaks.
