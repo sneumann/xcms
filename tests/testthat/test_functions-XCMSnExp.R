@@ -331,20 +331,26 @@ test_that("featureSpectra works", {
 
 test_that("featureChromatograms works", {
     expect_error(featureChromatograms(xod_x))
-    chrs <- featureChromatograms(xod_xgrg)
-    expect_equal(nrow(chrs), nrow(featureDefinitions(xod_xgrg)))
-    expect_equal(ncol(chrs), length(fileNames(xod_xgrg)))
-    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2)
+
+    fts <- rownames(featureDefinitions(xod_xgrg))
+    chrs <- featureChromatograms(xod_xgrg, features = fts[c(1, 2, 1)])
+    expect_equal(featureDefinitions(chrs)$row, 1:3)
+    expect_equal(featureValues(chrs, value = "into"),
+                 featureValues(xod_xgrg)[fts[c(1, 2, 1)], ])
+    chrs_ext <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                     features = fts[c(1, 2, 1)])
     rts <- do.call(rbind, lapply(chrs, function(z) range(rtime(z))))
     rts_ext <- do.call(rbind, lapply(chrs_ext, function(z) range(rtime(z))))
     expect_true(all(rts[, 1] > rts_ext[, 1]))
     expect_true(all(rts[, 2] < rts_ext[, 2]))
 
     res_2 <- featureChromatograms(xod_xgrg, features = c(1, 5))
-    expect_equal(chrs[1, ], res_2[1, ])
-    expect_equal(chrs[5, 1], res_2[2, 1])
-    expect_equal(chrs[5, 2], res_2[2, 2])
-    expect_equal(chrs[5, 3], res_2[2, 3])
+    expect_equal(featureDefinitions(res_2)$row, 1:nrow(res_2))
+    res_1 <- featureChromatograms(xod_xgrg, features = fts[c(1, 5)])
+    expect_equal(res_1[1, ], res_2[1, ])
+    expect_equal(res_1[2, 1], res_2[2, 1])
+    expect_equal(res_1[2, 2], res_2[2, 2])
+    expect_equal(res_1[2, 3], res_2[2, 3])
 
     res_3 <- featureChromatograms(xod_xgrg, features = c("FT01", "FT05"))
     expect_equal(res_2, res_3)
@@ -370,7 +376,7 @@ test_that("featureChromatograms works", {
     expect_equal(chromPeakData(fchrsf)$is_filled, c(TRUE, FALSE, TRUE, FALSE,
                                                     FALSE, FALSE))
     expect_equal(featureDefinitions(fchrs)$peakidx, list(1, c(2, 3, 4)))
-    expect_equal(featureDefinitions(fchrsf)$peakidx, list(c(2, 1, 3), 4:6))
+    expect_equal(featureDefinitions(fchrsf)$peakidx, list(1:3, 4:6))
     fchrsf2 <- featureChromatograms(xod_tmpf, features = fts, filled = FALSE)
     expect_equal(chromPeaks(fchrsf2), chromPeaks(fchrs))
     expect_equal(featureDefinitions(fchrsf2), featureDefinitions(fchrs))

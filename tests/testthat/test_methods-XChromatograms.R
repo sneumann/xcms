@@ -312,6 +312,41 @@ test_that("[,XChromatograms works", {
     res_fts <- featureDefinitions(res)
     expect_equal(rownames(res_fts), c("FT3", "FT4", "FT1", "FT2"))
     expect_equal(res_fts$peakidx, list(c(1, 3), c(2, 4), c(5, 9), c(8, 10)))
+
+    ## Data from an XCMSnExp.
+    mzm <- rbind(305.1 + c(-0.01, 0.01), 496.2 + c(-0.01, 0.01))
+    xchr <- chromatogram(xod_xgrg, mz = mzm)
+    pks <- chromPeaks(xchr)
+    fts <- featureDefinitions(xchr)
+    res <- xchr[2:1, ]
+    pks_sub <- chromPeaks(res)
+    fts_sub <- featureDefinitions(res)
+    expect_equal(pks_sub[pks_sub[, "row"] == 1, "into"],
+                 pks[pks[, "row"] == 2, "into"])
+    expect_equal(pks_sub[fts_sub$peakidx[[1]], "into"],
+                 pks[fts$peakidx[[4]], "into"])
+
+    mzm <- rbind(mzm, mzm[1, ])
+    xchr <- chromatogram(xod_xgrg, mz = mzm)
+    pks_2 <- chromPeaks(xchr)
+    expect_equal(pks_2[pks_2[, "row"] == 3, "into"],
+                 pks_2[pks_2[, "row"] == 1, "into"])
+    expect_error(xchr[c(2, 1, 1, 2), ], "rownames of object")
+
+    res <- xchr[3:2, ]
+    pks_2 <- chromPeaks(res)
+    fts_2 <- featureDefinitions(res)
+    expect_equal(pks_2, pks)
+    expect_equal(fts_2, fts)
+
+    res <- xchr[3:2, 2]
+    expect_equal(chromPeaks(res)[, "into"],
+                 pks[pks[, "row"] == 2 & pks[, "column"] == 2, "into"])
+    expect_equal(featureDefinitions(res)[, "rtmed"],
+                 fts[fts$row == 2, "rtmed"])
+
+    expect_equal(unname(featureValues(res, value = "into")[, 1]),
+                 unname(chromPeaks(res)[, "into"]))
 })
 
 test_that("featureValues,XChromatograms works", {

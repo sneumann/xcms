@@ -1,3 +1,11 @@
+Changes in version 3.8.2
+
+- Fix issue with chromatogram,XCMSnExp and featureChromatograms as well as
+  [,XChromatograms that dropped duplicated feature definitions for multi-row
+  XChromatograms objects (i.e. objects containing multiple EICs with feature
+  definitions).
+
+
 Changes in version 3.8.1
 
 - Show warning if peak detection is performed on an object with empty spectra.

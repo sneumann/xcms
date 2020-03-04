@@ -2228,24 +2228,41 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
     chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
                          aggregationFun = aggregationFun, filled = filled, ...)
     if (include == "feature_only") {
-        pk_ids <- lapply(pk_idx, function(z) rownames(pks)[z])
+        ## Loop over rows/features:
+        ## subset to peaks of a feature.
         fts_all <- featureDefinitions(chrs)
         pks_all <- chromPeaks(chrs)
         chrs@featureDefinitions <- fts_all[integer(), ]
-        for (i in 1:nrow(chrs)) {
-            for (j in 1:ncol(chrs)) {
+        nr <- nrow(chrs)
+        nc <- ncol(chrs)
+        ft_defs <- vector("list", nr)
+        ft_ids <- rownames(featureDefinitions(x))[features]
+        ## Keep only a single feature per row
+        ## Keep only peaks for the features of interest.
+        for (i in seq_len(nr)) {
+            ft_def <- fts_all[fts_all$row == i & rownames(fts_all) == ft_ids[i],
+                            , drop = FALSE]
+            ft_defs[[i]] <- ft_def
+            pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
+            for (j in seq_len(nc)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
                 if (nrow(cur_pks)) {
-                    keep <- rownames(cur_pks) %in% pk_ids[[i]]
-                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[keep, ,
-                                                                drop = FALSE]
+                    keep <- rownames(cur_pks) %in% pk_ids
+                    chrs@.Data[i, j][[1]]@chromPeaks <-
+                        cur_pks[keep, , drop = FALSE]
                     chrs@.Data[i, j][[1]]@chromPeakData <-
                         chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
                 }
             }
         }
-        chrs@featureDefinitions <- .subset_features_on_chrom_peaks(
-            fts_all, pks_all, chromPeaks(chrs))
+        pks_sub <- chromPeaks(chrs)
+        ## Update the index/mapping between features and peaks (in a loop to
+        ## support duplicated features).
+        fts <- lapply(seq_len(nr), function(r) {
+            .subset_features_on_chrom_peaks(
+                ft_defs[[r]], pks_all, pks_sub)
+        })
+        chrs@featureDefinitions <- do.call(rbind, fts)
     }
     if (validObject(chrs))
         chrs

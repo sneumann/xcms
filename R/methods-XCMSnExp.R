@@ -2501,13 +2501,18 @@ setMethod("chromatogram",
               res@.processHistory <- object@.processHistory
               if (hasFeatures(object)) {
                   pks_sub <- chromPeaks(res)
-                  fts <- .subset_features_on_chrom_peaks(
-                      featureDefinitions(object, mz = mz, rt = rt),
-                      chromPeaks(object), pks_sub)
-                  fts$row <- vapply(fts$peakidx, function(z) {
-                      as.integer(pks_sub[z, "row"][1])
-                  }, integer(1))
-                  res@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+                  ## Loop through each EIC "row" to ensure all features in
+                  ## that EIC are retained.
+                  fts <- lapply(seq_len(nrow(res)), function(r) {
+                      fdev <- featureDefinitions(object, mz = mz(res)[r, ],
+                                                 rt = rt)
+                      if (nrow(fdev)) {
+                          fdev$row <- r
+                          .subset_features_on_chrom_peaks(
+                              fdev, chromPeaks(object), pks_sub)
+                      } else DataFrame()
+                  })
+                  res@featureDefinitions <- do.call(rbind, fts)
               }
               validObject(res)
               res

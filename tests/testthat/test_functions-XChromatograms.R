@@ -142,6 +142,17 @@ test_that(".subset_features_on_chrom_peaks works", {
     pks_sub <- pks[2, , drop = FALSE]
     res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
     expect_true(nrow(res) == 0)
+
+    pks_sub <- rbind(pks, pks[pks[, "row"] == 1, ])
+    pks_sub[(nrow(pks)+1):nrow(pks_sub), "row"] <- 3
+    fts <- rbind(fts, fts[fts$row == 1, ])
+    fts$row[5:6] <- 3
+    res <- .subset_features_on_chrom_peaks(fts, pks, pks_sub)
+    expect_true(nrow(res) == 6)
+    expect_equal(pks_sub[res$peakidx[[1]], "into"],
+                 pks_sub[res$peakidx[[5]], "into"])
+    expect_equal(pks_sub[res$peakidx[[2]], "into"],
+                 pks_sub[res$peakidx[[6]], "into"])
 })
 
 test_that(".plot_chrom_peak_density works", {
