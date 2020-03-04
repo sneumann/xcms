@@ -18,6 +18,7 @@
 \alias{dropFilledChromPeaks,XChromatogram-method}
 \alias{chromPeakData,XChromatogram-method}
 \alias{chromPeakData<-,XChromatogram-method}
+\alias{refineChromPeaks,XChromatogram,MergeNeighboringPeaksParam-method}
 \alias{show,XChromatograms-method}
 \alias{hasChromPeaks,XChromatograms-method}
 \alias{hasFilledChromPeaks,XChromatograms-method}
@@ -35,6 +36,7 @@
 \alias{featureValues,XChromatograms-method}
 \alias{plotChromPeakDensity,XChromatograms-method}
 \alias{dropFilledChromPeaks,XChromatograms-method}
+\alias{refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam-method}
 \title{Containers for chromatographic and peak detection data}
 \usage{
 XChromatograms(data, phenoData, featureData, chromPeaks, chromPeakData, ...)
@@ -93,6 +95,8 @@ XChromatogram(
 
 \S4method{chromPeakData}{XChromatogram}(object) <- value
 
+\S4method{refineChromPeaks}{XChromatogram,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
+
 \S4method{show}{XChromatograms}(object)
 
 \S4method{hasChromPeaks}{XChromatograms}(object)
@@ -150,7 +154,7 @@ XChromatogram(
 \S4method{featureValues}{XChromatograms}(
   object,
   method = c("medret", "maxint", "sum"),
-  value = "index",
+  value = "into",
   intensity = "into",
   missing = NA,
   ...
@@ -171,6 +175,8 @@ XChromatogram(
 )
 
 \S4method{dropFilledChromPeaks}{XChromatograms}(object)
+
+\S4method{refineChromPeaks}{XChromatograms,MergeNeighboringPeaksParam}(object, param = MergeNeighboringPeaksParam())
 }
 \arguments{
 \item{data}{For \code{XChromatograms}: \code{list} of \code{Chromatogram} or
@@ -310,13 +316,13 @@ the same length than \code{chromPeaks(x)} has rows.}
 to be used for \code{peakType = "point"}. See \code{\link[=plot]{plot()}} in the \code{graphics}
 package for more details.}
 
-\item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
-index of the files/samples for which the \link{ProcessHistory} objects should
-be returned.}
-
 \item{param}{For \code{groupChromPeaks} and \code{plotChromPeakDensity}: a
 \code{\link[=PeakDensityParam]{PeakDensityParam()}} object with the settings for the \emph{peak density}
 correspondence analysis algorithm.}
+
+\item{fileIndex}{For \code{processHistory}: optional \code{integer} specifying the
+index of the files/samples for which the \link{ProcessHistory} objects should
+be returned.}
 
 \item{i}{For \code{[}: \code{integer} with the row indices to subset the
 \code{XChromatograms} object.}
@@ -489,6 +495,12 @@ returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 
 
 See \link{findChromPeaks-Chromatogram-CentWaveParam} for information.
+
+After chromatographic peak detection it is also possible to \emph{refine}
+identified chromatographic peaks with the \code{refineChromPeaks} method (e.g. to
+reduce peak detection artifacts). Currently, only peak refinement using the
+\emph{merge neighboring peaks} method is available (see
+\code{\link[=MergeNeighboringPeaksParam]{MergeNeighboringPeaksParam()}} for a detailed description of the approach.
 }
 
 \section{Correspondence analysis}{

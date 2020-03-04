@@ -39,7 +39,8 @@ data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
                    mode = "onDisk")
 
 ## Perform peak detection; parameters set to reduce processing speed
-data <- findChromPeaks(data, CentWaveParam(noise = 10000, snthresh = 40))
+data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
+    noise = 10000, snthresh = 40))
 
 ## Correspondence analysis
 data <- groupChromPeaks(data, param = PeakDensityParam(sampleGroups = c(1, 1)))

@@ -2400,17 +2400,16 @@ setMethod("featureValues",
 #' ## Read some files from the faahKO package.
 #' library(xcms)
 #' library(faahKO)
-#' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' faahko_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
+#'                   system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' od <- readMSData(faahko_3_files, mode = "onDisk")
+#' od <- readMSData(faahko_files, mode = "onDisk")
 #'
 #' ## Subset to speed up processing
 #' od <- filterRt(od, rt = c(2500, 3000))
 #'
 #' ## Perform peak detection using default CentWave parameters
-#' xod <- findChromPeaks(od, param = CentWaveParam())
+#' xod <- findChromPeaks(od, param = CentWaveParam(prefilter = c(3, 20000)))
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
@@ -2520,13 +2519,18 @@ setMethod("chromatogram",
               res@.processHistory <- object@.processHistory
               if (hasFeatures(object)) {
                   pks_sub <- chromPeaks(res)
-                  fts <- .subset_features_on_chrom_peaks(
-                      featureDefinitions(object, mz = mz, rt = rt),
-                      chromPeaks(object), pks_sub)
-                  fts$row <- vapply(fts$peakidx, function(z) {
-                      as.integer(pks_sub[z, "row"][1])
-                  }, integer(1))
-                  res@featureDefinitions <- fts[order(fts$row), , drop = FALSE]
+                  ## Loop through each EIC "row" to ensure all features in
+                  ## that EIC are retained.
+                  fts <- lapply(seq_len(nrow(res)), function(r) {
+                      fdev <- featureDefinitions(object, mz = mz(res)[r, ],
+                                                 rt = rt)
+                      if (nrow(fdev)) {
+                          fdev$row <- r
+                          .subset_features_on_chrom_peaks(
+                              fdev, chromPeaks(object), pks_sub)
+                      } else DataFrame()
+                  })
+                  res@featureDefinitions <- do.call(rbind, fts)
               }
               validObject(res)
               res
@@ -2538,9 +2542,12 @@ setMethod("chromatogram",
 #'
 #' \code{findChromPeaks} performs chromatographic peak detection
 #' on the provided \code{XCMSnExp} objects. For more details see the method
-#' for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-#' method for \code{XCMSnExp} objects removes previously identified
-#' chromatographic peaks and aligned features. Previous alignment (retention
+#' for \code{\linkS4class{XCMSnExp}}.
+#' Note that by default (with parameter \code{add = FALSE}) previous peak
+#' detection results are removed. Use \code{add = TRUE} to perform a second
+#' round of peak detection and add the newly identified peaks to the previous
+#' peak detection results. Correspondence results (features) are always removed
+#' prior to peak detection. Previous alignment (retention
 #' time adjustment) results are kept, i.e. chromatographic peak detection
 #' is performed using adjusted retention times if the data was first
 #' aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).
@@ -2550,11 +2557,16 @@ setMethod("chromatogram",
 #'     \code{\link{CentWavePredIsoParam}} object with the settings for the
 #'     chromatographic peak detection algorithm.
 #'
+#' @param add For \code{findChromPeaks}: if newly identified chromatographic
+#'     peaks should be added to the peak matrix with the already identified
+#'     chromatographic peaks. By default (\code{add = FALSE}) previous
+#'     peak detection results will be removed.
+#'
 #' @inheritParams findChromPeaks-centWave
 setMethod("findChromPeaks",
           signature(object = "XCMSnExp", param = "Param"),
           function(object, param, BPPARAM = bpparam(),
-                   return.type = "XCMSnExp", msLevel = 1L) {
+                   return.type = "XCMSnExp", msLevel = 1L, add = FALSE) {
               ## Remove previous correspondence results.
               if (hasFeatures(object)) {
                   message("Removed feature definitions.")
@@ -2563,11 +2575,16 @@ setMethod("findChromPeaks",
                       keepAdjustedRtime = hasAdjustedRtime(object))
               }
               ## Remove previous chromatographic peaks.
-              if (hasChromPeaks(object)) {
+              has_peaks <- hasChromPeaks(object)
+              if (has_peaks & !add) {
                   message("Removed previously identified chromatographic peaks.")
                   object <- dropChromPeaks(
                       object,
                       keepAdjustedRtime = hasAdjustedRtime(object))
+              }
+              if (add && has_peaks) {
+                  old_cp <- chromPeaks(object)
+                  old_cpd <- chromPeakData(object)
               }
               meth <- selectMethod("findChromPeaks",
                                    signature = c(object = "OnDiskMSnExp",
@@ -2577,6 +2594,15 @@ setMethod("findChromPeaks",
                                                   BPPARAM = BPPARAM,
                                                   return.type = return.type,
                                                   msLevel = msLevel))
+              if (add && has_peaks) {
+                  old_cp <- rbindFill(old_cp, chromPeaks(object))
+                  old_cpd <- rbindFill(old_cpd, chromPeakData(object))
+                  old_hist <- object@.processHistory
+                  chromPeaks(object) <- old_cp
+                  rownames(old_cpd) <- rownames(chromPeaks(object))
+                  chromPeakData(object) <- old_cpd
+                  object@.processHistory <- old_hist
+              }
               ## object@.processHistory <- list()
               validObject(object)
               object
@@ -2705,7 +2731,8 @@ setMethod("findChromPeaks",
 #' ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 #' ## speed up the execution of the example - in a real use case the default
 #' ## value should be used, or it should be set to a reasonable value.
-#' cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
+#' cwp <- CentWaveParam(ppm = 20, prefilter = c(3, 10000),
+#'     noise = 10000, snthresh = 40)
 #'
 #' res <- findChromPeaks(raw_data, param = cwp)
 #'
@@ -2841,6 +2868,7 @@ setMethod("fillChromPeaks",
               ## memory requirement to a minimum.
               req_fcol <- requiredFvarLabels("OnDiskMSnExp")
               min_fdata <- fData(object)[, req_fcol]
+              rt_range <- range(pkArea[, c("rtmin", "rtmax")])
               if (hasAdjustedRtime(object))
                   min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {
@@ -3556,7 +3584,7 @@ setMethod("plot", c("XCMSnExp", "missing"),
 #' which may be part of features.
 #'
 #' @param maxPeakwidth for `CleanPeaksParam`: `numeric(1)` defining the maximal
-#'     allowed peak width (in retention times).
+#'     allowed peak width (in retention time).
 #'
 #' @param msLevel `integer` defining for which MS level(s) the chromatographic
 #'     peaks should be cleaned.
@@ -3742,7 +3770,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #'
 #' xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
 #'     mode = "onDisk")
-#' xd <- findChromPeaks(xd, param = CentWaveParam(noise = 5000))
+#' xd <- findChromPeaks(xd, param = CentWaveParam(prefilter = c(5, 10000),
+#'     noise = 5000))
 #'
 #' ## Example of a split peak that will be merged
 #' mzr <- 305.1 + c(-0.01, 0.01)

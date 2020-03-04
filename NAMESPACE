@@ -25,6 +25,8 @@ importFrom("robustbase", "lmrob", "lmrob.control")
 import("RColorBrewer")
 import("BiocParallel")
 
+importFrom("MsCoreUtils", "rbindFill")
+
 ## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
 importFrom("S4Vectors", "split", "Rle", "DataFrame", "SimpleList")
@@ -251,7 +253,8 @@ export(
     "featureChromatograms",
     "hasFilledChromPeaks",
     "findChromPeaksIsolationWindow",
-    "reconstructChromPeakSpectra"
+    "reconstructChromPeakSpectra",
+    "groupOverlaps"
 )
 
 ## New analysis methods

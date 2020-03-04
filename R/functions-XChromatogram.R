@@ -242,3 +242,24 @@ XChromatogram <- function(rtime = numeric(), intensity = numeric(),
                polygon(xs_all, ys_all, border = col, col = bg, ...)
            })
 }
+
+.xchrom_merge_neighboring_peaks <- function(x, minProp = 0.75, diffRt = 0) {
+    if (nrow(x@chromPeaks)) {
+        res <- .chrom_merge_neighboring_peaks(
+            x, x@chromPeaks, x@chromPeakData,
+            minProp = minProp, diffRt = diffRt)
+        x@chromPeaks <- res$chromPeaks
+        x@chromPeakData <- res$chromPeakData
+        if (is.null(rownames(x@chromPeaks)))
+            are_new <- rep(TRUE, nrow(x@chromPeaks))
+        else
+            are_new <- is.na(rownames(x@chromPeaks))
+        if (any(are_new)) {
+            rownames(x@chromPeaks)[are_new] <- .featureIDs(sum(are_new),
+                                                           prefix = "CPM")
+            rownames(x@chromPeakData) <- rownames(x@chromPeaks)
+        }
+        x@chromPeakData$merged <- are_new
+    }
+    x
+}

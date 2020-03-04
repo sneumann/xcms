@@ -338,20 +338,25 @@ plot(xchr, col = sample_colors,
 ```
 
 Finally we perform the chromatographic peak detection on the full data set. Note
-that we set the argument `noise` to `5000` to reduce the run time of this
-vignette. With this setting we consider only signals with a value larger than
-5000 in the peak detection step.
+that we set the argument `prefilter` to `c(3, 5000)` and `noise` to `5000` to
+reduce the run time of this vignette. With this setting we consider only signals
+with a value larger than 5000 in the peak detection step.
 
 ```{r peak-detection-centwave, message = FALSE, results = "hide" }
-cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000)
+cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
+                     prefilter = c(3, 5000))
 xdata <- findChromPeaks(raw_data, param = cwp)
 ```
 
 The results are returned as an `XCMSnExp` object which extends the
 `OnDiskMSnExp` object by storing also LC/GC-MS preprocessing results. This means
 also that all methods to sub-set and filter the data or to access the (raw) data
-are inherited from the `OnDiskMSnExp` object and can thus be re-used. The
-results from the chromatographic peak detection can be accessed with the
+are inherited from the `OnDiskMSnExp` object and can thus be re-used. Note also
+that it is possible to perform additional rounds of peak detection (e.g. on MS
+level > 1 data) on the `xdata` object by calling `findChromPeaks` with the
+parameter `add = TRUE`.
+
+The results from the chromatographic peak detection can be accessed with the
 `chromPeaks` method.
 
 ```{r peak-detection-chromPeaks, message = FALSE }
@@ -370,6 +375,69 @@ for each detected peak.
 
 ```{r peak-detection-chromPeakData}
 chromPeakData(xdata)
+```
+
+Peak detection will not always work perfectly leading to peak detection
+artifacts, such as overlapping peaks or artificially split peaks. The
+`refineChromPeaks` function allows to *refine* peak detection results by either
+or removing identified peaks exceeding a maximal allower rt width or by merging
+artificially split chromatographic peaks. For the former a `CleanPeaksParam`
+parameter object can be submitted to the function while the latter can be
+configured with the `MergeNeighboringPeaksParam` object. Below we post-process
+the peak detection results merging peaks overlapping in a 4 second window per
+file if the signal between in between them is lower than 75% of the smaller
+peak's maximal intensity. See the `MergeNeighboringPeaksParam` help page for a
+detailed description of the settings and the approach.
+
+```{r peak-postprocessing, message = FALSE}
+mpp <- MergeNeighboringPeaksParam(expandRt = 4)
+xdata_pp <- refineChromPeaks(xdata, mpp)
+```
+
+An example for a merged peak is given below.
+
+```{r peak-postprocessing-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The splitted peak was merged into one."}
+mzr_1 <- 305.1 + c(-0.01, 0.01)
+chr_1 <- chromatogram(filterFile(xdata, 1), mz = mzr_1)
+chr_2 <- chromatogram(filterFile(xdata_pp, 1), mz = mzr_1)
+par(mfrow = c(1, 2))
+plot(chr_1)
+plot(chr_2)
+```
+
+For the first trace in the chromatogram above centWave detected 3 peaks (1 for
+the full area and two smaller ones, see left panel in the plot above). The peak
+refinement with `MergeNeighboringPeaksParam` reduced them to a single peak
+(right panel in the figure above). Note that this refinement does not merge
+neighboring peaks for which the signal in between them is lower than a certain
+proportion (see figure below).
+
+```{r peak-postprocessing-not-merged, fig.widht = 10, fig.height = 5, fig.cap = "Result from the peak refinement step. Left: data before processing, right: after refinement. The peaks were not merged."}
+mzr_1 <- 496.2 + c(-0.01, 0.01)
+chr_1 <- chromatogram(filterFile(xdata, 1), mz = mzr_1)
+chr_2 <- chromatogram(filterFile(xdata_pp, 1), mz = mzr_1)
+par(mfrow = c(1, 2))
+plot(chr_1)
+plot(chr_2)
+```
+
+Note also that it is possible to perform the peak refinement on extracted ion
+chromatograms. This could e.g. be used to fine-tune the settings for the
+parameter. To illustrate this we perform below a peak refinement on the
+extracted ion chromatogram `chr_1` reducing the `minProp` parameter to force
+joining the two peaks.
+
+```{r peak-postprocessing-chr, fig..width = 5, fig.height = 5}
+res <- refineChromPeaks(chr_1, MergeNeighboringPeaksParam(minProp = 0.05))
+chromPeaks(res)
+plot(res)
+```
+
+Before proceeding we replace the `xdata` object with the results from the peak
+refinement.
+
+```{r}
+xdata <- xdata_pp
 ```
 
 Below we use the data from the `chromPeaks` matrix to calculate some per-file

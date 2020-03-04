@@ -131,12 +131,12 @@ do_adjustRtime_peakGroups <-
     } else
         rt <- .getPeakGroupsRtMatrix(peaks, peakIndex, subset,
                                      missingSample, extraPeaks)
-    if (ncol(rt) != length(subset))
-        stop("Length of 'subset' and number of columns of the peak group ",
-             "matrix do not match.")
     ## Fix for issue #175
     if (length(rt) == 0)
         stop("No peak groups found in the data for the provided settings")
+    if (ncol(rt) != length(subset))
+        stop("Length of 'subset' and number of columns of the peak group ",
+             "matrix do not match.")
     message("Performing retention time correction using ", nrow(rt),
             " peak groups.")
 
@@ -498,7 +498,7 @@ do_adjustRtime_peakGroups_orig <- function(peaks, peakIndex, rtime,
         if (nsamp < (nSamples - missingSample) |
             nrow(cur_fts) > (nsamp + extraPeaks))
             return(NULL)
-        cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), ]
+        cur_fts[] <- cur_fts[order(cur_fts[, 2], decreasing = TRUE), , drop = FALSE]
         cur_fts[match(sampleIndex, cur_fts[, 3]), 1]
     })
     rt <- do.call(rbind, rt)

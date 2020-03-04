@@ -60,23 +60,26 @@ features within that region).
 library(xcms)
 library(faahKO)
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
 ## Do a simple and fast preprocessing on a subset of the test data
 od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
 od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-    noise = 1000))
+    noise = 1000, prefilter = c(3, 10000)))
 od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
 od <- groupChromPeaks(od,
-    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
+    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 2)))
 
-## Extract ion chromatograms for each feature
-chrs <- featureChromatograms(od)
+## Get the feature definitions
+featureDefinitions(od)
+
+## Extract ion chromatograms for the first 3 features. Parameter
+## `features` can be either the feature IDs or feature indices.
+chrs <- featureChromatograms(od, features = 1:3)
 
 ## Plot the XIC for the first feature using different colors for each file
 par(mfrow = c(1, 2))
-plot(chrs[1, ], col = c("red", "green", "blue"))
+plot(chrs[1, ], col = c("red", "green"))
 }
 \author{
 Johannes Rainer

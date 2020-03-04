@@ -216,11 +216,13 @@ test_that("XCMSnExp accessors work", {
 test_that("findChromPeaks,XCMSnExp works", {
     ## Call findChromPeaks on an XCMSnExp
     tmp <- findChromPeaks(xod_x, param = CentWaveParam(noise = 10000,
-                                                       snthresh = 40))
+                                                       snthresh = 40,
+                                                       prefilter = c(3, 10000)))
     expect_equal(chromPeaks(tmp), chromPeaks(xod_x))
     ## Check that it works also on adjusted retention times:
     tmp <- findChromPeaks(xod_r, param = CentWaveParam(noise = 10000,
-                                                       snthresh = 40))
+                                                       snthresh = 40,
+                                                       prefilter = c(3, 10000)))
     expect_true(hasAdjustedRtime(tmp))
     expect_equal(
         length(processHistory(tmp, type = .PROCSTEP.RTIME.CORRECTION)),1)
@@ -243,8 +245,9 @@ test_that("findChromPeaks,XCMSnExp works", {
     pks <- pks[pks[, "sample"] == 1, colnames(res_2)]
     expect_equal(res_2, pks)
     ## Second try:
-    tmp <- findChromPeaks(xod_xgrg, param = CentWaveParam(noise = 10000,
-                                                          snthresh = 40))
+    tmp <- findChromPeaks(
+        xod_xgrg, param = CentWaveParam(noise = 10000, snthresh = 40,
+                                        prefilter = c(3, 10000)))
     expect_true(hasAdjustedRtime(tmp))
     expect_equal(
         length(processHistory(tmp, type = .PROCSTEP.RTIME.CORRECTION)),1)
@@ -266,6 +269,17 @@ test_that("findChromPeaks,XCMSnExp works", {
     rownames(pks) <- NULL
     pks <- pks[pks[, "sample"] == 3, colnames(res_2)]
     expect_equal(res_2, pks)
+
+    ## Adding peak detection results
+    res <- findChromPeaks(
+        xod_x, param = CentWaveParam(noise = 8000, snthresh = 40,
+                                     prefilter = c(3, 8000),
+                                     verboseColumns = TRUE), add = TRUE)
+    expect_true(length(processHistory(res)) ==
+                (length(processHistory(xod_x)) + 1))
+    expect_true(nrow(chromPeaks(res)) > nrow(chromPeaks(xod_x)))
+    expect_true(ncol(chromPeaks(res)) > ncol(chromPeaks(xod_x)))
+    expect_true(length(unique(rownames(chromPeaks(res)))) == nrow(chromPeaks(res)))
 })
 
 test_that("processHistory,XCMSnExp works", {
@@ -1031,7 +1045,10 @@ test_that("chromatogram,XCMSnExp works", {
     expect_true(is.null(fts))
     tmp <- filterRt(xod_xg, rt = rtr)
     featureDefinitions(tmp)
+    ## no features in mz range
     res_2 <- chromatogram(xod_xg, rt = rtr, mz = mzr)
+    expect_true(nrow(chromPeaks(res_2)) == 0)
+    expect_true(nrow(featureDefinitions(res_2)) == 0)
     ##
 
     mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
@@ -1113,7 +1130,7 @@ test_that("chromatogram,XCMSnExp works", {
     fts <- featureDefinitions(xchrs)
     ftsf <- featureDefinitions(xchrsf)
     expect_equal(fts$peakidx, list(c(1, 2, 3), 4))
-    expect_equal(ftsf$peakidx, list(c(1, 2, 3), c(5, 4, 6)))
+    expect_equal(ftsf$peakidx, list(c(1, 2, 3), c(4, 5, 6)))
     xchrsf2 <- chromatogram(xod_tmpf, mz = mzr[2:1, ], rt = rtr[2:1, ])
     expect_equal(chromPeaks(xchrs), chromPeaks(xchrsf2))
     expect_equal(featureDefinitions(xchrs), featureDefinitions(xchrsf2))
@@ -1124,11 +1141,25 @@ test_that("chromatogram,XCMSnExp works", {
     expect_equal(nrow(chromPeaks(xchrs)), 1)
     expect_equal(nrow(chromPeaks(xchrsf)), 3)
     expect_equal(chromPeakData(xchrsf)$is_filled, c(TRUE, FALSE, TRUE))
-    expect_equal(featureDefinitions(xchrsf)$peakidx[[1]], c(2, 1, 3))
+    expect_equal(unname(featureDefinitions(xchrsf)$peakidx[[1]]), c(1, 2, 3))
     xchrsf2 <- chromatogram(xod_tmpf, mz = mzr[1, ], rt = rtr[1, ])
     expect_equal(chromPeaks(xchrsf2), chromPeaks(xchrs))
     expect_equal(featureDefinitions(xchrsf2), featureDefinitions(xchrs))
 
+    ##
+    mzm <- rbind(305.1 + c(-0.01, 0.01), 496.2 + c(-0.01, 0.01))
+    xchr <- chromatogram(xod_xgrg, mz = mzm)
+    expect_equal(featureDefinitions(xchr)$row, c(1L, 1L, 1L, 2L, 2L))
+
+    ## duplicated ranges.
+    mzm <- rbind(mzm, mzm[1, ])
+    xchr_2 <- chromatogram(xod_xgrg, mz = mzm)
+    expect_equal(featureDefinitions(xchr_2)$row, c(1L, 1L, 1L, 2L, 2L, 3L, 3L, 3L))
+    cpks <- chromPeaks(xchr_2)
+    expect_equal(cpks[cpks[, "row"] == 1, "into"], cpks[cpks[, "row"] == 3, "into"])
+    fts <- featureDefinitions(xchr_2)
+    expect_true(all(fts$peakidx[[1]] != fts$peakidx[[6]]))
+    expect_equal(cpks[fts$peakidx[[1]], "into"], cpks[fts$peakidx[[6]], "into"])
 })
 
 test_that("signal integration is correct", {
@@ -1887,7 +1918,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res <- fillChromPeaks(xod_xg)
     expect_true(xcms:::.hasFilledPeaks(res))
     expect_true(hasFilledChromPeaks(res))
-    ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
+    ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
     ## Check parameter filled in featureValues (issue #157)
@@ -1931,7 +1962,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
         fnd_pks <- chromPeaks(xod_xg)[chromPeaks(xod_xg)[, "sample"] == i, ]
         prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
         ## Extract the data for these using the internal function.
-        fld_pks <- .getChromPeakData(filterFile(xod_xg, i),
+        fld_pks <- xcms:::.getChromPeakData(filterFile(xod_xg, i),
                                      peakArea = fnd_pks,
                                      sample_idx = i,
                                      cn = colnames(fnd_pks))
@@ -1975,8 +2006,18 @@ test_that("fillChromPeaks,XCMSnExp works", {
     expect_equal(fp2[, "mzmax"] - fp2[, "mzmin"],
                  2 * (fp[, "mzmax"] - fp[, "mzmin"]))
 
+    res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(fixedRt = 1))
+    ## Check if the rtrange is now indeed broader for the integrated ones.
+    fp <- chromPeaks(res)
+    fp <- fp[chromPeakData(res)$is_filled, ]
+    fp2 <- chromPeaks(res_2)
+    fp2 <- fp2[chromPeakData(res)$is_filled, ]
+    expect_equal(fp[, "rt"], fp2[, "rt"])
+    expect_equal(fp[, "rtmin"] - 1, fp2[, "rtmin"])
+    expect_equal(fp[, "rtmax"] + 1, fp2[, "rtmax"])
+
     res_2 <- fillChromPeaks(xod_xg, param = FillChromPeaksParam(expandRt = 1))
-    ## Check if the mzrange is now indeed broader for the integrated ones.
+    ## Check if the rtrange is now indeed broader for the integrated ones.
     fp <- chromPeaks(res)
     fp <- fp[chromPeakData(res)$is_filled, ]
     fp2 <- chromPeaks(res_2)
@@ -2039,6 +2080,17 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res_rem <- dropFilledChromPeaks(res_2)
     expect_true(!.hasFilledPeaks(res_rem))
     expect_equal(res_rem, xod_xgrg)
+})
+
+test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {
+    tmp <- xod_xgrg
+    fData(tmp)[fromFile(tmp) == 2, "msLevel"] <- 2L
+    res <- fillChromPeaks(tmp, FillChromPeaksParam(fixedRt = 2))
+    expect_true(!any(chromPeakData(res)$is_filled[chromPeaks(res)[, "sample"] == 2]))
+    res_2 <- fillChromPeaks(xod_xgrg, FillChromPeaksParam(fixedRt = 2))
+    expect_true(nrow(chromPeaks(res_2)) > nrow(chromPeaks(res)))
+    expect_equal(chromPeaks(res)[chromPeaks(res)[, "sample"] == 1, ],
+                 chromPeaks(res_2)[chromPeaks(res_2)[, "sample"] == 1, ])
 })
 
 test_that("fillChromPeaks,XCMSnExp with MSW works", {
@@ -2211,7 +2263,8 @@ test_that("filterMsLevel works with MS>1", {
     ms2_fl <- proteomics("TMT_Erwinia_1uLSike_Top10HCD_isol2_45stepped_60min_01.mzML.gz",
                          full.names = TRUE)
     ms2 <- readMSData(ms2_fl, mode = "onDisk")
-    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(),
+    expect_warning(res <- findChromPeaks(ms2, param = CentWaveParam(
+                                                  prefilter = c(3, 10000)),
                                          msLevel = 1))
     res_1 <- filterMsLevel(res, msLevel = 1)
     res_2 <- filterMsLevel(res, msLevel = 2)

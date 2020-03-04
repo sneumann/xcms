@@ -201,7 +201,7 @@ setMethod("findChromPeaks",
                            fileIndex = 1:length(fileNames(object)),
                            msLevel = msLevel)
     object <- as(object, "XCMSnExp")
-    object@.processHistory <- c(processHistory(object), list(xph))
+    phist <- object@.processHistory
     ## if (hasAdjustedRtime(object) | hasFeatures(object))
     ##     object@msFeatureData <- new("MsFeatureData")
     pks <- do.call(rbind, res$peaks)
@@ -210,6 +210,7 @@ setMethod("findChromPeaks",
         chromPeakData(object)$ms_level <- as.integer(msLevel)
         chromPeakData(object)$is_filled <- FALSE
     }
+    object@.processHistory <- c(phist, list(xph))
     validObject(object)
     object
 }
