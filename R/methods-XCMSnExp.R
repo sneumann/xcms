@@ -81,8 +81,8 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 #' results (i.e. features).
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "XCMSnExp", function(object) {
-    hasFeatures(object@msFeatureData)
+setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
+    hasFeatures(object@msFeatureData, msLevel = msLevel)
 })
 
 #' @aliases hasChromPeaks hasChromPeaks,MsFeatureData-method
@@ -213,41 +213,48 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' returns \code{NULL} if no feature definitions are present.
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
-                                                     rt = numeric(), ppm = 0,
-                                                     type = c("any", "within",
-                                                              "apex_within")) {
-    feat_def <- featureDefinitions(object@msFeatureData)
-    type <- match.arg(type)
-    ## Select features within rt range.
-    if (length(rt) && nrow(feat_def)) {
-        rt <- range(rt)
-        if (type == "any")
-            keep <- which(feat_def$rtmin <= rt[2] & feat_def$rtmax >= rt[1])
-        if (type == "within")
-            keep <- which(feat_def$rtmin >= rt[1] & feat_def$rtmax <= rt[2])
-        if (type == "apex_within")
-            keep <- which(feat_def$rtmed >= rt[1] & feat_def$rtmed <= rt[2])
-        feat_def <- feat_def[keep, , drop = FALSE]
-    }
-    ## Select peaks within mz range, considering also ppm
-    if (length(mz) && nrow(feat_def)) {
-        mz <- range(mz)
-        ## Increase mz by ppm.
-        if (is.finite(mz[1]))
-            mz[1] <- mz[1] - mz[1] * ppm / 1e6
-        if (is.finite(mz[2]))
-            mz[2] <- mz[2] + mz[2] * ppm / 1e6
-        if (type == "any")
-            keep <- which(feat_def$mzmin <= mz[2] & feat_def$mzmax >= mz[1])
-        if (type == "within")
-            keep <- which(feat_def$mzmin >= mz[1] & feat_def$mzmax <= mz[2])
-        if (type == "apex_within")
-            keep <- which(feat_def$mzmed >= mz[1] & feat_def$mzmed <= mz[2])
-        feat_def <- feat_def[keep, , drop = FALSE]
-    }
-    feat_def
-})
+setMethod("featureDefinitions", "XCMSnExp",
+          function(object, mz = numeric(), rt = numeric(), ppm = 0,
+                   type = c("any", "within", "apex_within"),
+                   msLevel = 1:20) {
+              feat_def <- featureDefinitions(object@msFeatureData,
+                                             msLevel = msLevel)
+              type <- match.arg(type)
+              ## Select features within rt range.
+              if (length(rt) && nrow(feat_def)) {
+                  rt <- range(rt)
+                  if (type == "any")
+                      keep <- which(feat_def$rtmin <= rt[2] &
+                                    feat_def$rtmax >= rt[1])
+                  if (type == "within")
+                      keep <- which(feat_def$rtmin >= rt[1] &
+                                    feat_def$rtmax <= rt[2])
+                  if (type == "apex_within")
+                      keep <- which(feat_def$rtmed >= rt[1] &
+                                    feat_def$rtmed <= rt[2])
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              ## Select peaks within mz range, considering also ppm
+              if (length(mz) && nrow(feat_def)) {
+                  mz <- range(mz)
+                  ## Increase mz by ppm.
+                  if (is.finite(mz[1]))
+                      mz[1] <- mz[1] - mz[1] * ppm / 1e6
+                  if (is.finite(mz[2]))
+                      mz[2] <- mz[2] + mz[2] * ppm / 1e6
+                  if (type == "any")
+                      keep <- which(feat_def$mzmin <= mz[2] &
+                                    feat_def$mzmax >= mz[1])
+                  if (type == "within")
+                      keep <- which(feat_def$mzmin >= mz[1] &
+                                    feat_def$mzmax <= mz[2])
+                  if (type == "apex_within")
+                      keep <- which(feat_def$mzmed >= mz[1] &
+                                    feat_def$mzmed <= mz[2])
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              feat_def
+          })
 #' @aliases featureDefinitions<- featureDefinitions<-,MsFeatureData-method
 #'
 #' @rdname XCMSnExp-class

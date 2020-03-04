@@ -67,7 +67,7 @@ PeakDensityParam(
 
 \S4method{maxFeatures}{PeakDensityParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param, msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,PeakDensityParam}(object, param, msLevel = 1L, add = FALSE)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -105,8 +105,13 @@ containing the results from a previous peak detection analysis (see
 \item{param}{A \code{PeakDensityParam} object containing all settings for
 the peak grouping algorithm.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level 1
-is supported.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which the correspondence
+should be performed. It is required that chromatographic peaks of the
+respective MS level are present.}
+
+\item{add}{\code{logical(1)} (default \code{add = FALSE}) allowing to perform an
+additional round of correspondence (e.g. on a different MS level) and
+add features to the already present feature definitions.}
 }
 \value{
 The \code{PeakDensityParam} function returns a

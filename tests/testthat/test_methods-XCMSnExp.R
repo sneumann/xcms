@@ -150,7 +150,13 @@ test_that("XCMSnExp accessors work", {
     featureDefinitions(xod) <- fd
     expect_true(hasChromPeaks(xod))
     expect_true(hasFeatures(xod))
+    expect_true(hasFeatures(xod, msLevel = 2L))
     expect_equal(featureDefinitions(xod), fd)
+    expect_true(nrow(featureDefinitions(xod, msLevel = 2L)) > 0)
+    fd$ms_level <- 1L
+    featureDefinitions(xod) <- fd
+    expect_true(nrow(featureDefinitions(xod, msLevel = 2L)) == 0)
+    expect_false(hasFeatures(xod, msLevel = 2L))
     ## featureDefinitions with mz and/or rt range:
     obj <- xod_xgrg
     feat_def <- featureDefinitions(obj)
@@ -2289,6 +2295,7 @@ test_that("filterMsLevel works with MS>1", {
     expect_equal(processHistory(res_1), processHistory(res))
     expect_true(length(processHistory(res_2)) == 0)
     expect_true(hasChromPeaks(res_1))
+    expect_false(hasChromPeaks(res_1, msLevel = 2L))
     expect_false(hasChromPeaks(res_2))
 })
 
