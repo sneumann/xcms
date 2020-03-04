@@ -439,7 +439,7 @@ setMethod("[", "XChromatograms", function(x, i, j, drop = FALSE) {
                 fts_row <- .subset_features_on_chrom_peaks(
                     fts_row, cpeaks_orig, cpeaks_sub)
                 fts[[el]] <- fts_row
-            }
+            } else fts[[el]] <- DataFrame()
         }
         x@featureDefinitions <- do.call(rbind, fts)
     }
