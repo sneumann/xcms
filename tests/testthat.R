@@ -72,7 +72,7 @@ fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
         system.file('cdf/KO/ko18.CDF', package = "faahKO"),
         system.file('cdf/KO/ko19.CDF', package = "faahKO"))
 xs_1 <- xcmsSet(fs, profparam = list(step = 0), method = "centWave",
-                noise = 10000, snthresh = 50)
+                noise = 10000, snthresh = 50, prefilter = c(3, 10000))
 
 ## Pesticide data
 fl <- system.file("TripleTOF-SWATH", "PestMix1_SWATH.mzML", package = "msdata")
