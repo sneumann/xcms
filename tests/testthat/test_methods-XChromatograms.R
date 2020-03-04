@@ -288,7 +288,7 @@ test_that("[,XChromatograms works", {
     expect_true(nrow(res) == 2)
     expect_equal(res[1, 1], chrs[2, 1])
     expect_equal(res[2, 1], chrs[1, 1])
-    expect_equal(res$sampleNames, factor("ko15.CDF"))
+    expect_equal(as.character(res$sampleNames), "ko15.CDF")
     expect_equal(fData(res), fData(chrs)[c(2, 1), ])
     pks_tmp <- pks[pks[, "row"] %in% c(1, 2) & pks[, "column"] == 1, ]
     pks_tmp <- pks_tmp[c(5, 6, 1, 2, 3, 4), ]
@@ -305,7 +305,7 @@ test_that("[,XChromatograms works", {
     expect_equal(res[2, 1], chrs[1, 1])
     expect_equal(res[1, 2], chrs[2, 3])
     expect_equal(res[2, 2], chrs[1, 3])
-    expect_equal(res$sampleNames, factor(c("ko15.CDF", "ko18.CDF")))
+    expect_equal(as.character(res$sampleNames), c("ko15.CDF", "ko18.CDF"))
     expect_equal(fData(res), fData(chrs)[c(2, 1), ])
     pks_tmp <- pks[c(8, 9, 12, 13, 1, 2, 3, 4, 6, 7), ]
     expect_equal(chromPeaks(res)[, 1:6], pks_tmp[, 1:6])
