@@ -278,40 +278,6 @@ useOriginalCode <- function(x) {
             seq(from = from, length.out = x))
 }
 
-## #' @description Expands stretches of TRUE values in \code{x} by one on both
-## #'     sides.
-## #'
-## #' @note The return value for a \code{NA} is always \code{FALSE}.
-## #'
-## #' @param x \code{logical} vector.
-## #'
-## #' @author Johannes Rainer
-## #'
-## #' @noRd
-## .grow_trues <- function(x) {
-##     previous <- NA
-##     x_new <- rep_len(FALSE, length(x))
-##     for (i in 1:length(x)) {
-##         if (is.na(x[i])) {
-##             previous <- NA
-##             next
-##         }
-##         ## If current element is TRUE
-##         if (x[i]) {
-##             x_new[i] <- TRUE
-##             ## if last element was FALSE, set last element to TRUE
-##             if (!is.na(previous) && !previous)
-##                 x_new[i - 1] <- TRUE
-##         } else {
-##             ## if previous element was TRUE, set current to TRUE.
-##             if (!is.na(previous) && previous)
-##                 x_new[i] <- TRUE
-##         }
-##         previous <- x[i]
-##     }
-##     x_new
-## }
-
 #' @title Weighted mean around maximum
 #'
 #' @description Calculate a weighted mean of the values around the value with
@@ -351,8 +317,6 @@ weightedMeanAroundApex <- function(x, w = rep(1, length(x)), i = 1) {
     seq_idx <- max(1, max_idx - i):min(length(x), max_idx + i)
     weighted.mean(x[seq_idx], w[seq_idx])
 }
-
-
 
 #' @title DEPRECATED: Create a plot that combines a XIC and a mz/rt 2D plot for one sample
 #'

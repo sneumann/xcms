@@ -34,7 +34,7 @@
     msg <- character()
     if (!inherits(x$chromPeakData, "DataFrame"))
         return("'chromPeakData' is supposed to be a 'DataFrame'")
-    if (hasChromPeaks(x)) {
+    if (hasChromPeaks(x, msLevel = 1:20)) {
         if (nrow(x$chromPeakData) != nrow(x$chromPeaks)) {
             msg <- "number of rows of chromPeaks and chromPeakData does not match"
         } else if (any(rownames(x$chromPeakData) != rownames(x$chromPeaks)))

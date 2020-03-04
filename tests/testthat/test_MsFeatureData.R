@@ -80,6 +80,7 @@ test_that("MsFeatureData class_accessors work", {
     ## chromPeaks
     chromPeaks(fd) <- chromPeaks(xod_xgrg)
     expect_true(hasChromPeaks(fd))
+    expect_false(hasChromPeaks(fd, msLevel = 2L))
     expect_equal(chromPeaks(fd), chromPeaks(xod_xgrg))
     ## featureDefinitions
     featureDefinitions(fd) <- featureDefinitions(xod_xgrg)

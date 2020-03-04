@@ -1816,7 +1816,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     xs <- faahko_xs
     ## Check error if no features were found. issue #273
     pdp <- PeakDensityParam(sampleGroups = xs$class, minSamples = 30)
-    expect_error(groupChromPeaks(od_x, param = pdp), "Unable to group any chromatographic peaks.")
+    expect_warning(groupChromPeaks(od_x, param = pdp), "Unable to group any chromatographic peaks.")
 
     fdp <- PeakDensityParam(sampleGroups = xs$class)
     od_x <- groupChromPeaks(od_x, param = fdp)
@@ -1846,6 +1846,21 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     expect_equal(processParam(ph), fdp2)
     expect_equal(rownames(featureDefinitions(od_x)),
                  .featureIDs(nrow(featureDefinitions(od_x))))
+
+    pdp <- PeakDensityParam(sampleGroups = xs$class)
+    res <- groupChromPeaks(od_x, param = pdp)
+    res_2 <- groupChromPeaks(res, param = pdp)
+    expect_equal(featureDefinitions(res), featureDefinitions(res_2))
+    res_2 <- groupChromPeaks(res, param = pdp, add = TRUE)
+    expect_true(nrow(featureDefinitions(res_2)) ==
+                2 * nrow(featureDefinitions(res)))
+    nr <- nrow(featureDefinitions(res))
+    expect_equal(featureDefinitions(res),
+                 featureDefinitions(res_2)[1:nr, ])
+    expect_equal(featureDefinitions(res)$mzmed,
+                 featureDefinitions(res_2)$mzmed[(nr + 1):(2 * nr)])
+    expect_equal(featureDefinitions(res)$peakidx,
+                 featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
 })
 
 test_that("groupPeaks,XCMSnExp,MzClustParam works", {

@@ -691,10 +691,9 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object, msLevel = msLevel),
         peakIndex = .peakIndex(
-            .update_feature_definitions(featureDefinitions(object),
-                                        rownames(chromPeaks(object)),
-                                        rownames(chromPeaks(object,
-                                                            msLevel = msLevel)))),
+            .update_feature_definitions(
+                featureDefinitions(object), rownames(chromPeaks(object)),
+                rownames(chromPeaks(object, msLevel = msLevel)))),
         sampleIndex = subs,
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)

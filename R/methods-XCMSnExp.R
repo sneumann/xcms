@@ -93,8 +93,8 @@ setMethod("hasFeatures", "XCMSnExp", function(object) {
 #' detection results.
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "XCMSnExp", function(object) {
-    hasChromPeaks(object@msFeatureData)
+setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = 1:20) {
+    hasChromPeaks(object@msFeatureData, msLevel = msLevel)
 })
 
 #' @aliases hasFilledChromPeaks
@@ -1585,8 +1585,13 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' @param param A `PeakDensityParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
-#' @param msLevel `integer(1)` defining the MS level. Currently only MS level 1
-#'     is supported.
+#' @param msLevel `integer(1)` defining the MS level on which the correspondence
+#'     should be performed. It is required that chromatographic peaks of the
+#'     respective MS level are present.
+#'
+#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
+#'     additional round of correspondence (e.g. on a different MS level) and
+#'     add features to the already present feature definitions.
 #'
 #' @return
 #'
@@ -1606,15 +1611,16 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' @rdname groupChromPeaks-density
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "PeakDensityParam"),
-          function(object, param, msLevel = 1L) {
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'! ",
-                       "Please perform first a peak detection using the ",
-                       "'findChromPeaks' method.")
-              if (any(msLevel != 1))
-                  stop("Currently only peak grouping on MS level 1 is supported")
-              ## Get rid of any previous results.
-              if (hasFeatures(object))
+          function(object, param, msLevel = 1L, add = FALSE) {
+              if (length(msLevel) != 1)
+                  stop("Can only perform the correspondence analysis on one MS",
+                       " level at a time. Please repeat for other MS levels ",
+                       "with parameter `add = TRUE`.")
+              if (!hasChromPeaks(object, msLevel))
+                  stop("No chromatographic peak for MS level ", msLevel,
+                       " present. Please perform first a peak detection ",
+                       "using the 'findChromPeaks' method.", call. = FALSE)
+              if (hasFeatures(object) && !add)
                   object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
@@ -1626,9 +1632,12 @@ setMethod("groupChromPeaks",
                   if (length(sampleGroups(param)) != length(fileNames(object)))
                       stop("The 'sampleGroups' value in the provided 'param' ",
                            "class does not match the number of available files/",
-                           "samples!")
+                           "samples!", call. = FALSE)
               }
-              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+              if (hasChromPeaks(object) && !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
+              if (hasFeatures(object) &&
+                  !any(colnames(featureDefinitions(object)) == "ms_level"))
                   object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_density(
@@ -1646,14 +1655,22 @@ setMethod("groupChromPeaks",
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res)
-              if (nrow(df) == 0)
-                  stop("Unable to group any chromatographic peaks. You might ",
-                       "have to adapt your settings.")
+              if (!nrow(df)) {
+                  warning("Unable to group any chromatographic peaks. ",
+                          "You might have to adapt your settings.")
+                  return(object)
+              }
+              df$ms_level <- as.integer(msLevel)
               if (!all(chromPeakData(object)$ms_level %in% msLevel))
                   df <- .update_feature_definitions(
                       df, rownames(chromPeaks(object, msLevel = msLevel)),
                       rownames(chromPeaks(object)))
-              if (nrow(df) > 0)
+              if (hasFeatures(object)) {
+                  startFrom <- max(as.integer(
+                      sub("FT", "", rownames(featureDefinitions(object))))) + 1
+                  rownames(df) <- .featureIDs(nrow(df), from = startFrom)
+                  df <- rbind(featureDefinitions(object), df)
+              } else
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               validObject(object)
@@ -3519,6 +3536,9 @@ setMethod("updateObject", "XCMSnExp", function(object) {
             } else
                 newFd$chromPeakData$is_filled <- FALSE
         }
+        if (hasFeatures(newFd) &&
+            !any(colnames(featureDefinitions(newFd)) == "ms_level"))
+            newFd$featureDefinitions$ms_level <- 1L
     }
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd

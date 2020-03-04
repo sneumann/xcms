@@ -44,8 +44,10 @@ setMethod("hasFeatures", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "MsFeatureData", function(object) {
-    !is.null(object$chromPeaks)
+setMethod("hasChromPeaks", "MsFeatureData", function(object, msLevel = 1:20) {
+    !is.null(object$chromPeaks) &&
+        (!any(colnames(object$chromPeakData) == "ms_level") |
+         any(object$chromPeakData$ms_level %in% msLevel))
 })
 
 #' @noRd

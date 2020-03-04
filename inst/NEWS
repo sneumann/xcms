@@ -1,3 +1,10 @@
+Changes in version 3.9.3
+
+- Added support to perform correspondence analysis on MS level > 1 and add the
+  respective results to already present feature definitions.
+- hasChromPeaks gains parameter msLevel.
+
+
 Changes in version 3.9.2
 
 - Fix featureChromatograms and chromatograms on a XCMSnExp object with features:
