@@ -75,10 +75,11 @@ test_that("MsFeatureData class_accessors work", {
     expect_true(!hasAdjustedRtime(fd))
     expect_true(!hasFeatures(fd))
     expect_warning(expect_equal(chromPeaks(fd), NULL))
-    expect_warning(expect_equal(featureDefinitions(fd), NULL))
+    expect_warning(expect_equal(featureDefinitions(fd), DataFrame()))
     expect_warning(expect_equal(adjustedRtime(fd), NULL))
     ## chromPeaks
     chromPeaks(fd) <- chromPeaks(xod_xgrg)
+    chromPeakData(fd) <- chromPeakData(xod_xgrg)
     expect_true(hasChromPeaks(fd))
     expect_false(hasChromPeaks(fd, msLevel = 2L))
     expect_equal(chromPeaks(fd), chromPeaks(xod_xgrg))
@@ -87,7 +88,7 @@ test_that("MsFeatureData class_accessors work", {
     expect_true(hasFeatures(fd))
     expect_equal(featureDefinitions(fd), featureDefinitions(xod_xgrg))
     expect_false(hasFeatures(fd, msLevel = 2L))
-    expect_true(nrow(featureDefinitions(fd)) == 0)
+    expect_true(nrow(featureDefinitions(fd, msLevel = 2L)) == 0)
     ## adjustedRtime
     adjustedRtime(fd) <- adjustedRtime(xod_xgrg)
     expect_error(validObject(fd))

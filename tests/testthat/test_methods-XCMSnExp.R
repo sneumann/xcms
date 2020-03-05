@@ -1048,7 +1048,7 @@ test_that("chromatogram,XCMSnExp works", {
     mzr <- c(120, 130)
     tmp <- filterMz(xod_xg, mz = mzr)
     expect_warning(fts <- featureDefinitions(tmp))
-    expect_true(is.null(fts))
+    expect_true(nrow(fts) == 0)
     tmp <- filterRt(xod_xg, rt = rtr)
     featureDefinitions(tmp)
     ## no features in mz range
@@ -1829,7 +1829,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     xs <- group(xs, method = "density")
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
     rownames(fg) <- NULL
     expect_equal(xs@groups, fg)
     expect_true(length(processHistory(od_x)) == 2)
@@ -1844,7 +1844,7 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
     rownames(fg) <- NULL
     expect_equal(xs@groups, fg)
     expect_true(length(processHistory(od_x)) == 2)
@@ -1867,6 +1867,10 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
                  featureDefinitions(res_2)$mzmed[(nr + 1):(2 * nr)])
     expect_equal(featureDefinitions(res)$peakidx,
                  featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
+
+    expect_error(groupChromPeaks(od_x, param = pdp, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(od_x, param = pdp, msLevel = 1:4),
+                 "one MS level at a time")
 })
 
 test_that("groupPeaks,XCMSnExp,MzClustParam works", {
@@ -1909,7 +1913,7 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
     xs <- group(xs, method = "nearest")
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
     rownames(fg) <- NULL
     expect_equal(xs@groups, fg)
     expect_true(length(processHistory(od_x)) == 2)
@@ -1922,7 +1926,7 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
     xs <- group(xs, method = "nearest", kNN = 3)
     expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
     fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
+    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
     rownames(fg) <- NULL
     expect_equal(xs@groups, fg)
     expect_true(length(processHistory(od_x)) == 2)
@@ -1930,6 +1934,21 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
     expect_equal(processParam(ph), fdp2)
     expect_equal(rownames(featureDefinitions(od_x)),
                  .featureIDs(nrow(featureDefinitions(od_x))))
+
+    expect_error(groupChromPeaks(od_x, param = p, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(od_x, param = p, msLevel = 1:3), " at a time")
+    res <- groupChromPeaks(od_x, param = p)
+    res_2 <- groupChromPeaks(res, param = p)
+    expect_equal(featureDefinitions(res), featureDefinitions(res_2))
+    res_2 <- groupChromPeaks(res, param = p, add = TRUE)
+    expect_true(nrow(featureDefinitions(res_2)) ==
+                2 * nrow(featureDefinitions(res)))
+    nr <- nrow(featureDefinitions(res))
+    expect_equal(featureDefinitions(res), featureDefinitions(res)[1:nr, ])
+    expect_equal(featureDefinitions(res)$peakidx,
+                 featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
+    expect_equal(featureDefinitions(res)$mzmed,
+                 featureDefinitions(res_2)$mzmed[(nr + 1):(2 * nr)])
 })
 
 test_that("fillChromPeaks,XCMSnExp works", {
@@ -2355,7 +2374,7 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     rtw2 <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
     expect_true(all(rtw2 < 20))
     res <- refineChromPeaks(xod_x, param = CleanPeaksParam(1))
-    expect_true(nrow(chromPeaks(res)) == 0)
+    expect_warning(expect_true(length(chromPeaks(res)) == 0))
     expect_true(is(processHistory(res)[[2]]@param, "CleanPeaksParam"))
 
     res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20),

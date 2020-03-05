@@ -421,7 +421,7 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     ## Ensure that we remove ALL related process history steps
     newFd@.xData <- .copy_env(object@msFeatureData)
     ## Set rownames if not present
-    if (is.null(rownames(value)))
+    if (is.null(rownames(value)) && nrow(value))
         rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
     chromPeakData(newFd) <- DataFrame(ms_level = rep(1L, nrow(value)),
@@ -1578,10 +1578,13 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' distribution of the identified chromatographic peaks in the slice along
 #' the time axis.
 #'
-#' @note
-#'
-#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
-#' all eventually present previous correspondence results to be dropped.
+#' The correspondence analysis can be performed on chromatographic peaks of
+#' any MS level (if present and if chromatographic peak detection has been
+#' performed for that MS level) defining features combining these peaks. The
+#' MS level can be selected with the parameter `msLevel`. By default, calling
+#' `groupChromPeaks` will remove any previous correspondence results. This can
+#' be disabled with `add = TRUE`, which will add newly defined features to
+#' already present feature definitions.
 #'
 #' @param object For `groupChromPeaks`: an [XCMSnExp] object
 #'     containing the results from a previous peak detection analysis (see
@@ -1592,9 +1595,9 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' @param param A `PeakDensityParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
-#' @param msLevel `integer(1)` defining the MS level on which the correspondence
-#'     should be performed. It is required that chromatographic peaks of the
-#'     respective MS level are present.
+#' @param msLevel `integer(1)` (default `msLevel = 1L`) defining the MS level
+#'     on which the correspondence should be performed. It is required that
+#'     chromatographic peaks of the respective MS level are present.
 #'
 #' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
 #'     additional round of correspondence (e.g. on a different MS level) and
@@ -1789,10 +1792,13 @@ setMethod("groupChromPeaks",
 #' performs peak grouping based on the proximity between chromatographic
 #' peaks from different samples in the mz-rt range.
 #'
-#' @note
-#'
-#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
-#' all eventually present previous alignment results to be dropped.
+#' The correspondence analysis can be performed on chromatographic peaks of
+#' any MS level (if present and if chromatographic peak detection has been
+#' performed for that MS level) defining features combining these peaks. The
+#' MS level can be selected with the parameter `msLevel`. By default, calling
+#' `groupChromPeaks` will remove any previous correspondence results. This can
+#' be disabled with `add = TRUE`, which will add newly defined features to
+#' already present feature definitions.
 #'
 #' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
 #'     results from a previous chromatographic peak detection
@@ -1800,8 +1806,13 @@ setMethod("groupChromPeaks",
 #'
 #'     For all other methods: a `NearestPeaksParam` object.
 #'
-#' @param param A `NearestPeaksParam` object containing all settings for
-#'     the peak grouping algorithm.
+#' @param msLevel `integer(1)` defining the MS level on which the correspondence
+#'     should be performed. It is required that chromatographic peaks of the
+#'     respective MS level are present.
+#'
+#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
+#'     additional round of correspondence (e.g. on a different MS level) and
+#'     add features to the already present feature definitions.
 #'
 #' @param msLevel `integer(1)` defining the MS level. Currently only MS level
 #'     1 is supported.
@@ -1820,15 +1831,16 @@ setMethod("groupChromPeaks",
 #' @rdname groupChromPeaks-nearest
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "NearestPeaksParam"),
-          function(object, param, msLevel = 1L) {
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'! ",
-                       "Please perform first a peak detection using the ",
-                       "'findChromPeaks' method.")
-              if (any(msLevel != 1))
-                  stop("Currently peak grouping is only supported for MS level 1")
-              ## Get rid of any previous results.
-              if (hasFeatures(object))
+          function(object, param, msLevel = 1L, add = FALSE) {
+              if (length(msLevel) != 1)
+                  stop("Can only perform the correspondence analysis on one MS",
+                       " level at a time. Please repeat for other MS levels ",
+                       "with parameter `add = TRUE`.")
+              if (!hasChromPeaks(object, msLevel))
+                  stop("No chromatographic peak for MS level ", msLevel,
+                       " present. Please perform first a peak detection ",
+                       "using the 'findChromPeaks' method.", call. = FALSE)
+              if (hasFeatures(object) && !add)
                   object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
@@ -1843,6 +1855,9 @@ setMethod("groupChromPeaks",
                            "samples!")
               }
               if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
+              if (hasFeatures(object) &&
+                  !any(colnames(featureDefinitions(object)) == "ms_level"))
                   object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_nearest(
@@ -1859,15 +1874,23 @@ setMethod("groupChromPeaks",
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
+              if (!nrow(df)) {
+                  warning("Unable to group any chromatographic peaks. ",
+                          "You might have to adapt your settings.")
+                  return(object)
+              }
               df$peakidx <- res$peakIndex
-              if (nrow(df) == 0)
-                  stop("Unable to group any chromatographic peaks. You might ",
-                       "have to adapt your settings.")
+              df$ms_level <- as.integer(msLevel)
               if (!all(chromPeakData(object)$ms_level %in% msLevel))
                   df <- .update_feature_definitions(
                       df, rownames(chromPeaks(object, msLevel = msLevel)),
                       rownames(chromPeaks(object)))
-              if (nrow(df) > 0)
+              if (hasFeatures(object)) {
+                  startFrom <- max(as.integer(
+                      sub("FT", "", rownames(featureDefinitions(object))))) + 1
+                  rownames(df) <- .featureIDs(nrow(df), from = startFrom)
+                  df <- rbind(featureDefinitions(object), df)
+              } else
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               validObject(object)
