@@ -2377,8 +2377,8 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     expect_warning(expect_true(length(chromPeaks(res)) == 0))
     expect_true(is(processHistory(res)[[2]]@param, "CleanPeaksParam"))
 
-    res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20),
-                            msLevel = 2L)
+    expect_warning(res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20),
+                                           msLevel = 2L))
     expect_equal(chromPeaks(res), chromPeaks(xod_x))
 
     res <- refineChromPeaks(xod_xgr, param = CleanPeaksParam(20))
@@ -2387,6 +2387,27 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     res <- refineChromPeaks(xod_xgrg, param = CleanPeaksParam(20))
     expect_true(hasFeatures(xod_xgrg))
     expect_false(hasFeatures(res))
+
+    ## Fake MS level > 1
+    tmp <- xod_x
+    fd <- new("MsFeatureData")
+    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    chromPeakData(fd)$ms_level <- 2L
+    lockEnvironment(fd, bindings = TRUE)
+    tmp@msFeatureData <- fd
+    expect_true(hasChromPeaks(tmp, msLevel = 2L))
+    tmp <- findChromPeaks(tmp, add = TRUE,
+                          param = CentWaveParam(prefilter = c(5, 10000),
+                                                noise = 10000, sn = 40))
+    expect_true(hasChromPeaks(tmp, msLevel = 1L))
+    res <- refineChromPeaks(tmp, msLevel = 1L, param = CleanPeaksParam(20))
+    expect_equal(chromPeaks(tmp, msLevel = 2L), chromPeaks(res, msLevel = 2L))
+    expect_true(nrow(chromPeaks(tmp, msLevel = 1L)) >
+                nrow(chromPeaks(res, msLevel = 1L)))
+    res_2 <- refineChromPeaks(res, msLevel = 2L, param = CleanPeaksParam(20))
+    expect_equal(chromPeaks(res, msLevel = 1L), chromPeaks(res_2, msLevel = 1L))
+    expect_true(nrow(chromPeaks(res, msLevel = 2L)) >
+                nrow(chromPeaks(res_2, msLevel = 2L)))
 })
 
 test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
@@ -2406,4 +2427,21 @@ test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
     res <- refineChromPeaks(pest_swth, param = prm)
     expect_equal(chromPeaks(res), chromPeaks(pest_swth))
     expect_true(all(chromPeakData(res)$merged == FALSE))
+
+    ## With fake MS level 2 data.
+    tmp <- xod_x
+    fd <- new("MsFeatureData")
+    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    chromPeakData(fd)$ms_level <- 2L
+    lockEnvironment(fd, bindings = TRUE)
+    tmp@msFeatureData <- fd
+    expect_true(hasChromPeaks(tmp, msLevel = 2L))
+    tmp <- findChromPeaks(tmp, add = TRUE,
+                          param = CentWaveParam(prefilter = c(5, 10000),
+                                                noise = 10000, sn = 40))
+    prm <- MergeNeighboringPeaksParam(expandRt = 4)
+    res <- refineChromPeaks(tmp, param = prm, msLevel = 1L)
+    expect_true(nrow(chromPeaks(res, msLevel = 1L)) <
+                nrow(chromPeaks(tmp, msLevel = 1L)))
+    expect_equal(chromPeaks(res, msLevel = 2L), chromPeaks(tmp, msLevel = 2L))
 })

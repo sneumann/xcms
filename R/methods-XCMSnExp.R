@@ -3672,9 +3672,9 @@ setMethod("plot", c("XCMSnExp", "missing"),
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
           function(object, param = CleanPeaksParam(),
                    msLevel = 1L) {
-              if (!hasChromPeaks(object)) {
-                  warning("No chromatographic peaks present in 'object'. Please ",
-                          "run 'findChromPeaks' first.")
+              if (!hasChromPeaks(object, msLevel = msLevel)) {
+                  warning("No chromatographic peaks present in for MS level ",
+                          msLevel, ". Please run 'findChromPeaks' first.")
                   return(object)
               }
               if (hasFeatures(object)) {
@@ -3844,17 +3844,17 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                                 param = "MergeNeighboringPeaksParam"),
           function(object, param = MergeNeighboringPeaksParam(),
                    msLevel = 1L, BPPARAM = bpparam()) {
-              if (!hasChromPeaks(object)) {
-                  warning("No chromatographic peaks present in 'object'. ",
-                          "Please run 'findChromPeaks' first.")
+              if (!hasChromPeaks(object, msLevel = msLevel)) {
+                  warning("No chromatographic peaks present in for MS level ",
+                          msLevel, ". Please run 'findChromPeaks' first.")
                   return(object)
               }
-              validObject(param)
               if (hasFeatures(object)) {
                   message("Removing feature definitions.")
                   object <- dropFeatureDefinitions(object)
               }
-              peak_count <- nrow(chromPeaks(object))
+              validObject(param)
+              peak_count <- nrow(chromPeaks(object, msLevel = msLevel))
               idxs <- seq_along(fileNames(object))
               object_list <- lapply(idxs, FUN = filterFile,
                                     object = filterMsLevel(object, msLevel),
@@ -3871,7 +3871,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               pks <- do.call(rbind, lapply(res, "[[", 1))
               pkd <- do.call(rbind, lapply(res, "[[", 2))
               ## Add also peaks for other MS levels!
-              other_msl <- !chromPeakData(object)$ms_level %in% msLevel
+              other_msl <- !(chromPeakData(object)$ms_level %in% msLevel)
               if (any(other_msl)) {
                   pks <- rbind(pks, chromPeaks(object)[other_msl, , drop = FALSE])
                   pkd <- rbind(pkd, chromPeakData(object)[other_msl, ])
@@ -3883,7 +3883,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               if (!is.finite(max_id))
                   max_id <- 0
               rownames(pks)[which_new] <- .featureIDs(sum(which_new),
-                                                      prefix = "CP",
+                                                      prefix = "CPM",
                                                       from = max_id + 1)
               rownames(pkd) <- rownames(pks)
               message("Merging reduced ", peak_count, " chromPeaks to ",
