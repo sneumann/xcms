@@ -53,8 +53,7 @@ Imports:
     S4Vectors,
     robustbase,
     IRanges,
-    SummarizedExperiment,
-    MsCoreUtils
+    SummarizedExperiment
 Suggests:
     BiocStyle,
     caTools,
@@ -73,8 +72,6 @@ Enhances:
     Rgraphviz,
     Rmpi,
     XML
-Remotes:
-    RforMassSpectrometry/MsCoreUtils
 Description: Framework for processing and visualization of chromatographically
     separated and single-spectra mass spectral data. Imports from AIA/ANDI NetCDF,
     mzXML, mzData and mzML files. Preprocesses data for high-throughput, untargeted
@@ -138,6 +135,7 @@ Collate:
     'netCDF.R'
     'plotQC.R'
     'ramp.R'
+    'remove-MsCoreUtils-function.R'
     'specDist.R'
     'write.mzquantML.R'
     'writemzdata.R'
