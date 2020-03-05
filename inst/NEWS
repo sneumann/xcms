@@ -1,8 +1,12 @@
 Changes in version 3.9.3
 
+- featureValues gains parameter msLevel to extract feature values for features
+  of all, or from a specific MS level.
+- refineChromPeaks supports different MS levels.
 - Added support to perform correspondence analysis on MS level > 1 and add the
   respective results to already present feature definitions.
-- hasChromPeaks gains parameter msLevel.
+- hasChromPeaks and hasFeatures gain parameter msLevel to check for presence of
+  chromatographic peaks or features from a specific MS level.
 
 
 Changes in version 3.9.2

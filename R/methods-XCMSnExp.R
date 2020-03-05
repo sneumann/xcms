@@ -2130,6 +2130,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' chromatographic peaks from the same sample can be assigned to a feature.
 #' Parameter \code{method} allows to specify the method to be used in such
 #' cases to chose from which of the peaks the value should be returned.
+#' Parameter `msLevel` allows to choose a specific MS level for which feature
+#' values should be returned (given that features have been defined for that MS
+#' level).
 #'
 #' \code{quantify,XCMSnExp}: return the preprocessing results as an
 #' \code{\link{SummarizedExperiment}} object containing the feature abundances
@@ -2180,6 +2183,10 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
 #'     half of the row's minimal (non-missing) value.
 #'
+#' @param msLevel for `featureValues`: `integer` defining the MS level(s) for
+#'     which feature values should be returned. By default, values for features
+#'     defined for all MS levels are returned.
+#'
 #' @param ... For \code{quantify}: additional parameters to be passed on to the
 #'     \code{\link{featureValues}} method.
 #'
@@ -2213,39 +2220,39 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 #'
 #' @rdname XCMSnExp-peak-grouping-results
-setMethod("featureValues",
-          signature(object = "XCMSnExp"),
-          function(object, method = c("medret", "maxint", "sum"),
-                   value = "into", intensity = "into", filled = TRUE,
-                   missing = NA) {
-              ## Input argument checkings
-              if (!hasFeatures(object))
-                  stop("No peak groups present! Use 'groupChromPeaks' first.")
-              if (!hasChromPeaks(object))
-                  stop("No detected chromatographic peaks present! Use ",
-                       "'findChromPeaks' first.")
-              method <- match.arg(method)
-              if (method == "sum" & !(value %in% c("into", "maxo")))
-                  stop("method 'sum' is only allowed if value is set to 'into'",
-                       " or 'maxo'")
-              if (is.character(missing)) {
-                  if (!(missing %in% c("rowmin_half")))
-                      stop("if 'missing' is not 'NA' or a numeric it should",
-                           " be one of: \"rowmin_half\".")
-              } else {
-                  if (!is.numeric(missing) & !is.na(missing))
-                      stop("'missing' should be either 'NA', a numeric or one",
-                           " of: \"rowmin_half\".")
-              }
-              fNames <- basename(fileNames(object))
-              pks <- chromPeaks(object)
-              ## issue #157: replace all values for filled-in peaks with NA
-              if (!filled)
-                  pks[chromPeakData(object)$is_filled, ] <- NA
-              .feature_values(pks = pks, fts = featureDefinitions(object),
-                              method = method, value = value,
-                              intensity = intensity, colnames = fNames,
-                              missing = missing)
+setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
+                                                                   "maxint",
+                                                                   "sum"),
+                                                value = "into",
+                                                intensity = "into",
+                                                filled = TRUE, missing = NA,
+                                                msLevel = 1:20) {
+    ## Input argument checkings
+    if (!hasFeatures(object, msLevel = msLevel))
+        stop("No feature definitions for MS level(s) ", msLevel,
+             " present. Call 'groupChromPeaks' first.")
+    method <- match.arg(method)
+    if (method == "sum" & !(value %in% c("into", "maxo")))
+        stop("method 'sum' is only allowed if value is set to 'into'",
+             " or 'maxo'")
+    if (is.character(missing)) {
+        if (!(missing %in% c("rowmin_half")))
+            stop("if 'missing' is not 'NA' or a numeric it should",
+                 " be one of: \"rowmin_half\".")
+    } else {
+        if (!is.numeric(missing) & !is.na(missing))
+            stop("'missing' should be either 'NA', a numeric or one",
+                 " of: \"rowmin_half\".")
+    }
+    fNames <- basename(fileNames(object))
+    pks <- chromPeaks(object)
+    ## issue #157: replace all values for filled-in peaks with NA
+    if (!filled)
+        pks[chromPeakData(object)$is_filled, ] <- NA
+    .feature_values(
+        pks = pks, fts = featureDefinitions(object, msLevel = msLevel),
+        method = method, value = value, intensity = intensity,
+        colnames = fNames, missing = missing)
 })
 
 #' Internal function to extract feature values based on featureDefinitions
@@ -2825,15 +2832,15 @@ setMethod("findChromPeaks",
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
           function(object, param, msLevel = 1L, BPPARAM = bpparam()) {
-              if (!hasFeatures(object))
-                  stop("'object' does not provide feature definitions! Please ",
-                       "run 'groupChromPeaks' first.")
-              ## Don't do that if we have already filled peaks?
+              if (length(msLevel) != 1) {
+                  stop("Can only perform peak filling for one MS level at a time")
+              }
+              if (!hasFeatures(object, msLevel = msLevel))
+                  stop("No feature definitions for MS level ", msLevel,
+                       "present. Please run 'groupChromPeaks' first.")
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
-              if (any(msLevel > 1))
-                  stop("Currently only peak filling from MS1 is supported.")
               if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
                   object <- updateObject(object)
               startDate <- date()
@@ -2847,7 +2854,7 @@ setMethod("fillChromPeaks",
               ## Define or extend the peak area from which the signal should be
               ## extracted.
               ## Original code: use the median of the min/max rt and mz per peak.
-              fdef <- featureDefinitions(object)
+              fdef <- featureDefinitions(object, msLevel = msLevel)
               aggFunLow <- median
               aggFunHigh <- median
               ## Note: we ensure in the downstream function that the rt range is
@@ -2899,6 +2906,7 @@ setMethod("fillChromPeaks",
               ## Add mzmed column - needed for MSW peak filling.
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                               mzmed = as.numeric(fdef$mzmed))
+              ## LLLL continue here!
               pkGrpVal <- featureValues(object)
               message(".", appendLF = FALSE)
               ## Check if there is anything to fill...

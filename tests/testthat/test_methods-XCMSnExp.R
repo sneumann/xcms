@@ -1293,6 +1293,39 @@ test_that("featureValues,XCMSnExp works", {
     ## Check errors
     expect_error(featureValues(od_x, value = "into", missing = "b"))
     expect_error(featureValues(od_x, value = "into", missing = TRUE))
+
+    ## feature values with MS level > 1
+    expect_error(featureValues(xod_xg, msLevel = 2), "no feature definitions")
+    ## Fake feature definitions for MS level 2
+    cwp <- CentWaveParam(noise = 10000, snthresh = 40,
+                         prefilter = c(3, 10000))
+    tmp <- xod_xg
+    fd <- new("MsFeatureData")
+    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    chromPeakData(fd)$ms_level <- 2L
+    fd$featureDefinitions$ms_level <- 2L
+    lockEnvironment(fd, bindings = TRUE)
+    tmp@msFeatureData <- fd
+    expect_true(hasChromPeaks(tmp, msLevel = 2L))
+    expect_true(hasFeatures(tmp, msLevel = 2L))
+    expect_equal(featureValues(tmp, msLevel = 2L), featureValues(xod_xg))
+
+    tmp <- findChromPeaks(tmp, add = TRUE, param = cwp)
+    expect_equal(unname(chromPeaks(tmp, msLevel = 1L)[, "into"]),
+                 unname(chromPeaks(tmp, msLevel = 2L)[, "into"]))
+    ## correspondence
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    tmp <- groupChromPeaks(tmp, param = pdp, msLevel = 1L)
+    tmp <- groupChromPeaks(tmp, param = pdp, msLevel = 2L, add = TRUE)
+    expect_true(hasFeatures(tmp, msLevel = 1L))
+    expect_true(hasFeatures(tmp, msLevel = 2L))
+
+    all <- featureValues(tmp)
+    ms1 <- featureValues(tmp, msLevel = 1L)
+    ms2 <- featureValues(tmp, msLevel = 2L)
+    expect_equal(all, rbind(ms1, ms2))
+    rownames(ms1) <- rownames(ms2) <- NULL
+    expect_equal(ms1, ms2)
 })
 
 test_that("peakIndex,XCMSnExp works", {
@@ -1800,7 +1833,7 @@ test_that("findChromPeaks,MSWParam works", {
                  peaks(fticr_xs))
 })
 
-test_that("featureValues,XCMSnExp works", {
+test_that("featureValues,XCMSnExp works as with groupval", {
     od_x <- faahko_xod
     xs <- faahko_xs
 
