@@ -1241,12 +1241,12 @@ test_that("featureValues,XCMSnExp works", {
     expect_equal(fvs, gvs)
 
     ## Use the internal function
-    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+    res <- xcms:::.feature_values(chromPeaks(od_x), featureDefinitions(od_x),
                            value = "into", method = "medret",
                            intensity = "into",
                            colnames = basename(fileNames(od_x)))
     expect_equal(featureValues(od_x, value = "into"), res)
-    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+    res <- xcms:::.feature_values(chromPeaks(od_x), featureDefinitions(od_x),
                            value = "into", method = "sum",
                            intensity = "into",
                            colnames = basename(fileNames(od_x)))
@@ -1295,7 +1295,7 @@ test_that("featureValues,XCMSnExp works", {
     expect_error(featureValues(od_x, value = "into", missing = TRUE))
 
     ## feature values with MS level > 1
-    expect_error(featureValues(xod_xg, msLevel = 2), "no feature definitions")
+    expect_error(featureValues(xod_xg, msLevel = 2), "No feature definitions")
     ## Fake feature definitions for MS level 2
     cwp <- CentWaveParam(noise = 10000, snthresh = 40,
                          prefilter = c(3, 10000))
@@ -2153,6 +2153,13 @@ test_that("fillChromPeaks,XCMSnExp works", {
     res_rem <- dropFilledChromPeaks(res_2)
     expect_true(!.hasFilledPeaks(res_rem))
     expect_equal(res_rem, xod_xgrg)
+
+    expect_error(fillChromPeaks(xod_xgrg, msLevel = 1:2,
+                                param = FillChromPeaksParam()),
+                 "for one MS level at a time")
+    expect_error(fillChromPeaks(xod_xgrg, param = FillChromPeaksParam(),
+                                msLevel = 2L),
+                 "No feature definitions")
 })
 
 test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {

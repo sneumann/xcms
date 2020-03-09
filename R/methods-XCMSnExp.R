@@ -2671,8 +2671,8 @@ setMethod("findChromPeaks",
 #' Integrate signal in the mz-rt area of a feature (chromatographic
 #' peak group) for samples in which no chromatographic peak for this
 #' feature was identified and add it to the \code{chromPeaks}. Such peaks
-#' will have a \code{TRUE} in the \code{chromPeakData} data frame containing
-#' peak annotations.
+#' will have a \code{TRUE} in column \code{"is_filled"} in the
+#' \code{chromPeakData} data frame containing peak annotations.
 #'
 #' @details
 #'
@@ -2752,8 +2752,11 @@ setMethod("findChromPeaks",
 #'     subtracted from the lower rt and added to the upper rt). This
 #'     expansion is applied \emph{after} \code{expandRt}.
 #'
-#' @param msLevel \code{integer(1)} defining the MS level. Currently only MS
-#'     level 1 is supported.
+#' @param msLevel \code{integer(1)} defining the MS level on which peak filling
+#'     should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+#'     on one MS level at a time is supported, to fill in peaks for MS level 1
+#'     and 2 run first using \code{msLevel = 1} and then (on the returned
+#'     result object) again with \code{msLevel = 2}.
 #'
 #' @param BPPARAM Parallel processing settings.
 #'
@@ -2832,12 +2835,11 @@ setMethod("findChromPeaks",
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
           function(object, param, msLevel = 1L, BPPARAM = bpparam()) {
-              if (length(msLevel) != 1) {
+              if (length(msLevel) != 1)
                   stop("Can only perform peak filling for one MS level at a time")
-              }
               if (!hasFeatures(object, msLevel = msLevel))
                   stop("No feature definitions for MS level ", msLevel,
-                       "present. Please run 'groupChromPeaks' first.")
+                       " present. Please run 'groupChromPeaks' first.")
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
@@ -2906,8 +2908,7 @@ setMethod("fillChromPeaks",
               ## Add mzmed column - needed for MSW peak filling.
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                               mzmed = as.numeric(fdef$mzmed))
-              ## LLLL continue here!
-              pkGrpVal <- featureValues(object)
+              pkGrpVal <- featureValues(object, msLevel = msLevel)
               message(".", appendLF = FALSE)
               ## Check if there is anything to fill...
               if (!any(is.na(rowSums(pkGrpVal)))) {
@@ -2984,13 +2985,15 @@ setMethod("fillChromPeaks",
                   res <- bpmapply(FUN = .getChromPeakData_matchedFilter,
                                   objectL, pkAreaL, as.list(1:length(objectL)),
                                   MoreArgs = list(cn = cp_colnames,
-                                                  param = prm),
+                                                  param = prm,
+                                                  msLevel = msLevel),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else {
                   res <- bpmapply(FUN = .getChromPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),
                                   MoreArgs = list(cn = cp_colnames,
-                                                  mzCenterFun = mzCenterFun),
+                                                  mzCenterFun = mzCenterFun,
+                                                  msLevel = msLevel),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               }
 
@@ -3013,9 +3016,18 @@ setMethod("fillChromPeaks",
                   fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
                   (which(res[, "group_idx"] == i) + incr))
               }
+              ## Combine feature data with those from other MS levels
+              fdef <- rbind(
+                  fdef, featureDefinitions(object)[
+                           featureDefinitions(object)$ms_level != msLevel, ,
+                           drop = FALSE])
+              if (!any(colnames(fdef) == "ms_level"))
+                  fdef$ms_level <- 1L
+              else
+                  fdef <- fdef[order(fdef$ms_level), ]
               ## Define IDs for the new peaks; include fix for issue #347
-              maxId <- max(as.numeric(sub("^CP", "",
-                                          rownames(chromPeaks(object)))))
+              maxId <- max(as.numeric(
+                  sub("M", "", sub("^CP", "", rownames(chromPeaks(object))))))
               if (maxId < 1)
                   stop("chromPeaks matrix lacks rownames; please update ",
                        "'object' with the 'updateObject' function.")
@@ -3862,7 +3874,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                   object <- dropFeatureDefinitions(object)
               }
               validObject(param)
-              peak_count <- nrow(chromPeaks(object, msLevel = msLevel))
+              peak_count <- nrow(chromPeaks(object))
               idxs <- seq_along(fileNames(object))
               object_list <- lapply(idxs, FUN = filterFile,
                                     object = filterMsLevel(object, msLevel),

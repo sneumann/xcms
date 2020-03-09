@@ -344,7 +344,7 @@ dropGenericProcessHistory <- function(x, fun) {
         object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
     object <- filterMsLevel(object, msLevel)
     if (!length(object)) {
-        message("FAIL: no MS1 data available.")
+        message("FAIL: no MS level ", msLevel, " data available.")
         return(res)
     }
     spctr <- spectra(object, BPPARAM = SerialParam())
@@ -538,7 +538,7 @@ dropGenericProcessHistory <- function(x, fun) {
         object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
     object <- filterMsLevel(object, msLevel)
     if (!length(object)) {
-        message("FAIL: no MS1 data available.")
+        message("FAIL: no MS level ", msLevel, " data available.")
         return(res)
     }
     spctr <- spectra(object, BPPARAM = SerialParam())
@@ -2774,8 +2774,9 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     pkd <- chromPeakData(x)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    if (any(chromPeakData(x)$ms_level != 1))
-        stop("Currently only MS level 1 peaks are supported.")
+    ms_level <- unique(chromPeakData(x)$ms_level)
+    if (length(ms_level) != 1)
+        stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
     x <- dropChromPeaks(x)
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
@@ -2812,7 +2813,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     }
     chr_def_mat <- do.call(rbind, chr_def_mat)
     chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
-                         rt = chr_def_mat[, c(3, 4)])
+                         rt = chr_def_mat[, c(3, 4)],
+                         msLevel = ms_level)
     ## Now proceed to process them.
     res_list <- pkd_list <- vector("list", length(pk_groups))
     for (i in seq_along(pk_groups)) {

@@ -1,5 +1,6 @@
 Changes in version 3.9.3
 
+- Add support for peak filling from MS level > 1 to fillChromPeaks.
 - featureValues gains parameter msLevel to extract feature values for features
   of all, or from a specific MS level.
 - refineChromPeaks supports different MS levels.
