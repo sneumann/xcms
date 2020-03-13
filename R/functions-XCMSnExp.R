@@ -2149,13 +2149,20 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'
 #' Extract ion chromatograms for features in an [XCMSnExp-class] object. The
 #' function returns for each feature its extracted ion chromatogram and all
-#' associated peaks with it.
+#' associated peaks with it. The chromatogram is extracted from the m/z - rt
+#' region including all chromatographic peaks of that features (i.e. based on
+#' the ranges of `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"` of all
+#' chromatographic peaks of the feature).
 #'
 #' By default only chromatographic peaks associated with a feature are included
-#' for an extracted ion chromatogram. Setting `include = "all"` (instead of
-#' the default `include = "feature_only"`) will return all chromatographic peaks
-#' identified in the m/z - rt data slice of a feature (and eventually also other
-#' features within that region).
+#' for an extracted ion chromatogram (parameter `include = "feature_only"`). By
+#' setting `include = "apex_within"` all chromatographic peaks (and eventually
+#' the feature which they are part of - if feature definitions are present)
+#' that have their apex position within the m/z - rt range from which the
+#' chromatogram is extracted are returned too.
+#' With `include = "any"` or `include = "all"` all chromatographic peaks (and
+#' eventually the feature in which they are present) overlapping the m/z and rt
+#' range will be returned.
 #'
 #' @param x `XCMSnExp` object with grouped chromatographic peaks.
 #'
@@ -2172,9 +2179,10 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'     of the features in `featureDefinitions`, feature IDs (row names of
 #'     `featureDefinitions`) or a logical vector.
 #'
-#' @param include `character(1)` defining which chromatographic peaks and
-#'     feature definitions should be included in the returned
-#'     [XChromatograms()]. See description above for details.
+#' @param include `character(1)` defining which chromatographic peaks (and
+#'     related feature definitions) should be included in the returned
+#'     [XChromatograms()]. Defaults to `"feature_only"`; See description above
+#'     for options and details.
 #'
 #' @param filled `logical(1)` whether filled-in peaks should be included in
 #'     the result object. The default is `filled = FALSE`, i.e. only detected
@@ -2215,7 +2223,9 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' par(mfrow = c(1, 2))
 #' plot(chrs[1, ], col = c("red", "green"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
-                                 features, include = c("feature_only", "all"),
+                                 features,
+                                 include = c("feature_only", "apex_within",
+                                             "any", "all"),
                                  filled = FALSE, ...) {
     include <- match.arg(include)
     if (!hasFeatures(x))
@@ -2245,16 +2255,22 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         rownames(chromPeaks(x)) <- rownames(pks)
     }
     pk_idx <- featureDefinitions(x)$peakidx[features]
+    rt_cols <- c("rtmin", "rtmax")
+    mz_cols <- c("mzmin", "mzmax")
     mat <- do.call(rbind, lapply(pk_idx, function(z) {
         pks_current <- pks[z, , drop = FALSE]
-        c(range(pks_current[, c("rtmin", "rtmax")]),
-          range(pks_current[, c("mzmin", "mzmax")]))
+        c(range(pks_current[, rt_cols]),
+          range(pks_current[, mz_cols]))
     }))
+    include_peaks <- "apex_within"
+    if (include %in% c("any", "all"))
+        include_peaks <- "any"
     mat[, 1] <- mat[, 1] - expandRt
     mat[, 2] <- mat[, 2] + expandRt
     colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
     chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
-                         aggregationFun = aggregationFun, filled = filled, ...)
+                         aggregationFun = aggregationFun, filled = filled,
+                         include = include_peaks, ...)
     if (include == "feature_only") {
         ## Loop over rows/features:
         ## subset to peaks of a feature.

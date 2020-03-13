@@ -14,56 +14,59 @@
   msLevel = 1L,
   BPPARAM = bpparam(),
   adjustedRtime = hasAdjustedRtime(object),
-  filled = FALSE
+  filled = FALSE,
+  include = c("apex_within", "any", "none")
 )
 }
 \arguments{
-\item{object}{Either a \code{\link{OnDiskMSnExp}} or
-\code{\link{XCMSnExp}} object from which the chromatograms should be
-extracted.}
+\item{object}{Either a \link{OnDiskMSnExp} or \link{XCMSnExp} object from which the
+chromatograms should be extracted.}
 
 \item{rt}{\code{numeric(2)} or two-column \code{matrix} defining the lower
 and upper boundary for the retention time range(s). If not specified,
-the full retention time range of the original data will be used.
-It is also possible to submit a \code{numeric(1)} in which case
-\code{range} is called on it to transform it to a \code{numeric(2)}.}
+the full retention time range of the original data will be used.}
 
 \item{mz}{\code{numeric(2)} or two-column \code{matrix} defining the lower
 and upper mz value for the MS data slice(s). If not specified, the
-chromatograms will be calculated on the full mz range.
-It is also possible to submit a \code{numeric(1)} in which case
-\code{range} is called on it to transform it to a \code{numeric(2)}.}
+chromatograms will be calculated on the full mz range.}
 
-\item{aggregationFun}{\code{character} specifying the function to be used to
+\item{aggregationFun}{\code{character(1)} specifying the function to be used to
 aggregate intensity values across the mz value range for the same
-retention time. Allowed values are \code{"sum"}, \code{"max"},
+retention time. Allowed values are \code{"sum"} (the default), \code{"max"},
 \code{"mean"} and \code{"min"}.}
 
 \item{missing}{\code{numeric(1)} allowing to specify the intensity value to
 be used if for a given retention time no signal was measured within the
 mz range of the corresponding scan. Defaults to \code{NA_real_} (see also
 Details and Notes sections below). Use \code{missing = 0} to resemble the
-behaviour of the \code{getEIC} from the \code{old} user interface.}
+behaviour of the \code{getEIC} from the \emph{old} user interface.}
 
-\item{msLevel}{\code{integer} specifying the MS level from which the
+\item{msLevel}{\code{integer(1)} specifying the MS level from which the
 chromatogram should be extracted. Defaults to \code{msLevel = 1L}.}
 
 \item{BPPARAM}{Parallelisation backend to be used, which will
 depend on the architecture. Default is
 \code{BiocParallel::bparam()}.}
 
-\item{adjustedRtime}{For \code{chromatogram,XCMSnExp}: whether the
+\item{adjustedRtime}{For \verb{chromatogram,XCMSnExp}: whether the
 adjusted (\code{adjustedRtime = TRUE}) or raw retention times
 (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-in the resulting \code{\link{Chromatogram}} object. Adjusted
+in the resulting \link{Chromatograms} object. Adjusted
 retention times are used by default if available.}
 
 \item{filled}{\code{logical(1)} whether filled-in peaks should also be
 returned. Defaults to \code{filled = FALSE}, i.e. returns only detected
 chromatographic peaks in the result object.}
+
+\item{include}{\code{character(1)} defining which chromatographic peaks should be
+returned. Supported are \code{include = "apex_within"} (the default) which
+returns chromatographic peaks that have their apex within the \code{mz} \code{rt}
+range, \code{include = "any"} to return all chromatographic peaks which
+m/z and rt ranges overlap the \code{mz} and \code{rt} or \code{include = "none"} to
+not include any chromatographic peaks.}
 }
 \value{
-\code{chromatogram} returns a \code{\link{XChromatograms}} object with
+\code{chromatogram} returns a \link{XChromatograms} object with
 the number of columns corresponding to the number of files in
 \code{object} and number of rows the number of specified ranges (i.e.
 number of rows of matrices provided with arguments \code{mz} and/or
@@ -72,41 +75,33 @@ m/z and retention time range are also retained as well as all feature
 definitions for these peaks.
 }
 \description{
-\code{chromatogram}: the method allows to extract
-chromatograms from \code{\link{OnDiskMSnExp}} and
-\code{\link{XCMSnExp}} objects. See also the
-\code{\link{chromatogram}} implementation for
-\code{\link{OnDiskMSnExp}} in the \code{MSnbase} package.
+\code{chromatogram}: extract chromatographic data (such as an extracted ion
+chromatogram, a base peak chromatogram or total ion chromatogram) from
+an \link{OnDiskMSnExp} or \link{XCMSnExp} objects. See also the help page of the
+\code{chromatogram} function in the \code{MSnbase} package.
 }
 \details{
-Arguments \code{rt} and \code{mz} allow to specify the MS
-data slice from which the chromatogram should be extracted.
+Arguments \code{rt} and \code{mz} allow to specify the MS data slice (i.e. the m/z
+range and retention time window) from which the chromatogram should be
+extracted. These parameters can be either a \code{numeric} of length 2 with the
+lower and upper limit, or a \code{matrix} with two columns with the lower and
+upper limits to extract multiple EICs at once.
 The parameter \code{aggregationSum} allows to specify the function to be
-used to aggregate the intensities across the mz range for the same
+used to aggregate the intensities across the m/z range for the same
 retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
-to calculate the \emph{total ion chromatogram} (TIC),
-\code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
-The length of the extracted \code{\link{Chromatogram}} object,
-i.e. the number of available data points, corresponds to the number of
-scans/spectra measured in the specified retention time range. If in a
-specific scan (for a give retention time) no signal was measured in the
-specified mz range, a \code{NA_real_} is reported as intensity for the
-retention time (see Notes for more information). This can be changed
-using the \code{missing} parameter.
+to calculate the \strong{total ion chromatogram} (TIC),
+\code{aggregationFun = "max"} the \strong{base peak chromatogram} (BPC).
+
+If for a given retention time no intensity is measured in that spectrum a
+\code{NA} intensity value is returned by default. This can be changed with the
+parameter \code{missing}, setting \code{missing = 0} would result in a \code{0} intensity
+being returned in these cases.
 }
 \note{
-\code{\link{Chromatogram}} objects extracted with
-\code{chromatogram}
-contain \code{NA_real_} values if, for a given retention time, no
-signal was measured in the specified mz range. If no spectrum/scan is
-present in the defined retention time window a \code{Chromatogram} object
-of length 0 is returned.
-
-For \code{\link{XCMSnExp}} objects, if adjusted retention times are
+For \link{XCMSnExp} objects, if adjusted retention times are
 available, the \code{chromatogram} method will by default report
 and use these (for the subsetting based on the provided parameter
-\code{rt}). This can be overwritten with the parameter
-\code{adjustedRtime}.
+\code{rt}). This can be changed by setting \code{adjustedRtime = FALSE}.
 }
 \examples{
 ## Read some files from the faahKO package.
@@ -153,18 +148,15 @@ chrs[1, ]
 plot(chrs[1, , drop = FALSE])
 }
 \seealso{
-\code{\link{XCMSnExp}} for the data object.
-    \code{\link{Chromatogram}} for the object representing
-    chromatographic data.
+\link{XCMSnExp} for the data object.
+\link{Chromatogram} for the object representing chromatographic data.\preformatted{[XChromatograms] for the object allowing to arrange
+multiple [XChromatogram] objects.
 
-    \code{\link{XChromatograms}} for the object allowing to arrange
-    multiple \code{XChromatogram} objects.
+[plot] to plot a [XChromatogram] or [Chromatograms] objects.
 
-    \code{\link{plot}} to plot a \code{XChromatogram} or
-    \code{Chromatograms} objects.
-
-    \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
-    for a method to extract the MS data as \code{data.frame}.
+`as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
+the MS data as `data.frame`.
+}
 }
 \author{
 Johannes Rainer
