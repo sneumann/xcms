@@ -1,5 +1,7 @@
 Changes in version 3.9.3
 
+- Move multtest from Imports to Suggests to avoid duplicated method definition
+  for plot (issue #459).
 - Add support for peak filling from MS level > 1 to fillChromPeaks.
 - featureValues gains parameter msLevel to extract feature values for features
   of all, or from a specific MS level.

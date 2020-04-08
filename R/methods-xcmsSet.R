@@ -1557,7 +1557,9 @@ setMethod("diffreport", "xcmsSet", function(object,
 
     if (!is.numeric(w) || !is.numeric(h))
         stop("'h' and 'w' have to be numeric")
-    ## require(multtest) || stop("Couldn't load multtest")
+    if (!requireNamespace("multtest", quietly = TRUE))
+        stop("The use of 'diffreport' requires package 'multtest'. Please ",
+             "install with 'Biobase::install(\"multtest\")'")
 
     value <- match.arg(value)
     groupmat <- groups(object)
@@ -1610,7 +1612,7 @@ setMethod("diffreport", "xcmsSet", function(object,
     testclab <- c(rep(0,length(c1)),rep(1,length(c2)))
 
     if (min(length(c1), length(c2)) >= 2) {
-        tstat <- mt.teststat(testval, testclab, ...)
+        tstat <- multtest::mt.teststat(testval, testclab, ...)
         pvalue <- pval(testval, testclab, tstat)
     } else {
         message("Too few samples per class, skipping t-test.")

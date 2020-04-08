@@ -48,7 +48,6 @@ Imports:
     RColorBrewer,
     plyr,
     RANN,
-    multtest,
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
     robustbase,
@@ -66,6 +65,7 @@ Suggests:
     testthat,
     pander,
     magrittr,
+    multtest,
     MALDIquant,
     pheatmap
 Enhances:
