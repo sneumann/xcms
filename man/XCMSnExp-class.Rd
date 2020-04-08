@@ -90,9 +90,9 @@ hasFilledChromPeaks(object)
 
 \S4method{hasAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{hasFeatures}{XCMSnExp}(object)
+\S4method{hasFeatures}{XCMSnExp}(object, msLevel = 1:20)
 
-\S4method{hasChromPeaks}{XCMSnExp}(object)
+\S4method{hasChromPeaks}{XCMSnExp}(object, msLevel = 1:20)
 
 \S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
@@ -105,7 +105,8 @@ hasFilledChromPeaks(object)
   mz = numeric(),
   rt = numeric(),
   ppm = 0,
-  type = c("any", "within", "apex_within")
+  type = c("any", "within", "apex_within"),
+  msLevel = 1:20
 )
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
@@ -214,6 +215,9 @@ specifying the index of the files/samples for which the
 
 \item{...}{Additional parameters.}
 
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
+
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
 
@@ -249,9 +253,6 @@ chromatographic peaks partially overlapping the range defined by
 \code{mz} and/or \code{rt} are returned, \code{type = "within"} returns
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
-
-\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
-chromatographic peaks should be returned.}
 
 \item{isFilledColumn}{\code{logical(1)} whether a column \code{"is_filled"}
 is included in the returned \code{"matrix"} providing the information

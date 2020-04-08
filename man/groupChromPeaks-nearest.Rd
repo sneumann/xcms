@@ -56,7 +56,7 @@ NearestPeaksParam(
 
 \S4method{kNN}{NearestPeaksParam}(object) <- value
 
-\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param, msLevel = 1L)
+\S4method{groupChromPeaks}{XCMSnExp,NearestPeaksParam}(object, param, msLevel = 1L, add = FALSE)
 }
 \arguments{
 \item{sampleGroups}{A vector of the same length than samples defining the
@@ -84,11 +84,15 @@ analysis (see \code{\link[=findChromPeaks]{findChromPeaks()}}).\preformatted{For
 
 \item{value}{The value for the slot.}
 
-\item{param}{A \code{NearestPeaksParam} object containing all settings for
+\item{param}{A \code{PeakDensityParam} object containing all settings for
 the peak grouping algorithm.}
 
 \item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS level
 1 is supported.}
+
+\item{add}{\code{logical(1)} (default \code{add = FALSE}) allowing to perform an
+additional round of correspondence (e.g. on a different MS level) and
+add features to the already present feature definitions.}
 }
 \value{
 The \code{NearestPeaksParam} function returns a
@@ -131,6 +135,14 @@ for the \code{mzVsRtBalance} slot of the object.
 \verb{groupChromPeaks,XCMSnExp,NearestPeaksParam}:
 performs peak grouping based on the proximity between chromatographic
 peaks from different samples in the mz-rt range.
+
+The correspondence analysis can be performed on chromatographic peaks of
+any MS level (if present and if chromatographic peak detection has been
+performed for that MS level) defining features combining these peaks. The
+MS level can be selected with the parameter \code{msLevel}. By default, calling
+\code{groupChromPeaks} will remove any previous correspondence results. This can
+be disabled with \code{add = TRUE}, which will add newly defined features to
+already present feature definitions.
 }
 \section{Slots}{
 
@@ -144,9 +156,6 @@ the version from the class. Slots values should exclusively be accessed
 These methods and classes are part of the updated and modernized
 \code{xcms} user interface. All of the settings to the algorithm
 can be passed with a \code{NearestPeaksParam} object.
-
-Calling \code{groupChromPeaks} on an \code{XCMSnExp} object will cause
-all eventually present previous alignment results to be dropped.
 }
 \examples{
 

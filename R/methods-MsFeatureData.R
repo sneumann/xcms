@@ -37,15 +37,19 @@ setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "MsFeatureData", function(object) {
-    !is.null(object$featureDefinitions)
+setMethod("hasFeatures", "MsFeatureData", function(object, msLevel = 1:20) {
+    !is.null(object$featureDefinitions) &&
+        (!any(colnames(object$featureDefinitions) == "ms_level") |
+         any(object$featureDefinitions$ms_level %in% msLevel))
 })
 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "MsFeatureData", function(object) {
-    !is.null(object$chromPeaks)
+setMethod("hasChromPeaks", "MsFeatureData", function(object, msLevel = 1:20) {
+    !is.null(object$chromPeaks) &&
+        (!any(colnames(object$chromPeakData) == "ms_level") |
+         any(object$chromPeakData$ms_level %in% msLevel))
 })
 
 #' @noRd
@@ -77,11 +81,17 @@ setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "MsFeatureData", function(object) {
-    if (hasFeatures(object))
-        return(object$featureDefinitions)
-    warning("No aligned feature information available.")
-    return(NULL)
+setMethod("featureDefinitions", "MsFeatureData", function(object,
+                                                          msLevel = 1:20) {
+    if (hasFeatures(object)) {
+        if (any(colnames(object$featureDefinitions) == "ms_level"))
+            object$featureDefinitions[object$featureDefinitions$ms_level %in%
+                                      msLevel, ]
+        else object$featureDefinitions
+    } else {
+        warning("No aligned feature information available.", call. = FALSE)
+        DataFrame()
+    }
 })
 #' @noRd
 #'

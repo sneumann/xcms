@@ -81,8 +81,8 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 #' results (i.e. features).
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "XCMSnExp", function(object) {
-    hasFeatures(object@msFeatureData)
+setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
+    hasFeatures(object@msFeatureData, msLevel = msLevel)
 })
 
 #' @aliases hasChromPeaks hasChromPeaks,MsFeatureData-method
@@ -93,8 +93,8 @@ setMethod("hasFeatures", "XCMSnExp", function(object) {
 #' detection results.
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "XCMSnExp", function(object) {
-    hasChromPeaks(object@msFeatureData)
+setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = 1:20) {
+    hasChromPeaks(object@msFeatureData, msLevel = msLevel)
 })
 
 #' @aliases hasFilledChromPeaks
@@ -213,41 +213,48 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 #' returns \code{NULL} if no feature definitions are present.
 #'
 #' @rdname XCMSnExp-class
-setMethod("featureDefinitions", "XCMSnExp", function(object, mz = numeric(),
-                                                     rt = numeric(), ppm = 0,
-                                                     type = c("any", "within",
-                                                              "apex_within")) {
-    feat_def <- featureDefinitions(object@msFeatureData)
-    type <- match.arg(type)
-    ## Select features within rt range.
-    if (length(rt) && nrow(feat_def)) {
-        rt <- range(rt)
-        if (type == "any")
-            keep <- which(feat_def$rtmin <= rt[2] & feat_def$rtmax >= rt[1])
-        if (type == "within")
-            keep <- which(feat_def$rtmin >= rt[1] & feat_def$rtmax <= rt[2])
-        if (type == "apex_within")
-            keep <- which(feat_def$rtmed >= rt[1] & feat_def$rtmed <= rt[2])
-        feat_def <- feat_def[keep, , drop = FALSE]
-    }
-    ## Select peaks within mz range, considering also ppm
-    if (length(mz) && nrow(feat_def)) {
-        mz <- range(mz)
-        ## Increase mz by ppm.
-        if (is.finite(mz[1]))
-            mz[1] <- mz[1] - mz[1] * ppm / 1e6
-        if (is.finite(mz[2]))
-            mz[2] <- mz[2] + mz[2] * ppm / 1e6
-        if (type == "any")
-            keep <- which(feat_def$mzmin <= mz[2] & feat_def$mzmax >= mz[1])
-        if (type == "within")
-            keep <- which(feat_def$mzmin >= mz[1] & feat_def$mzmax <= mz[2])
-        if (type == "apex_within")
-            keep <- which(feat_def$mzmed >= mz[1] & feat_def$mzmed <= mz[2])
-        feat_def <- feat_def[keep, , drop = FALSE]
-    }
-    feat_def
-})
+setMethod("featureDefinitions", "XCMSnExp",
+          function(object, mz = numeric(), rt = numeric(), ppm = 0,
+                   type = c("any", "within", "apex_within"),
+                   msLevel = 1:20) {
+              feat_def <- featureDefinitions(object@msFeatureData,
+                                             msLevel = msLevel)
+              type <- match.arg(type)
+              ## Select features within rt range.
+              if (length(rt) && nrow(feat_def)) {
+                  rt <- range(rt)
+                  if (type == "any")
+                      keep <- which(feat_def$rtmin <= rt[2] &
+                                    feat_def$rtmax >= rt[1])
+                  if (type == "within")
+                      keep <- which(feat_def$rtmin >= rt[1] &
+                                    feat_def$rtmax <= rt[2])
+                  if (type == "apex_within")
+                      keep <- which(feat_def$rtmed >= rt[1] &
+                                    feat_def$rtmed <= rt[2])
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              ## Select peaks within mz range, considering also ppm
+              if (length(mz) && nrow(feat_def)) {
+                  mz <- range(mz)
+                  ## Increase mz by ppm.
+                  if (is.finite(mz[1]))
+                      mz[1] <- mz[1] - mz[1] * ppm / 1e6
+                  if (is.finite(mz[2]))
+                      mz[2] <- mz[2] + mz[2] * ppm / 1e6
+                  if (type == "any")
+                      keep <- which(feat_def$mzmin <= mz[2] &
+                                    feat_def$mzmax >= mz[1])
+                  if (type == "within")
+                      keep <- which(feat_def$mzmin >= mz[1] &
+                                    feat_def$mzmax <= mz[2])
+                  if (type == "apex_within")
+                      keep <- which(feat_def$mzmed >= mz[1] &
+                                    feat_def$mzmed <= mz[2])
+                  feat_def <- feat_def[keep, , drop = FALSE]
+              }
+              feat_def
+          })
 #' @aliases featureDefinitions<- featureDefinitions<-,MsFeatureData-method
 #'
 #' @rdname XCMSnExp-class
@@ -414,7 +421,7 @@ setReplaceMethod("chromPeaks", "XCMSnExp", function(object, value) {
     ## Ensure that we remove ALL related process history steps
     newFd@.xData <- .copy_env(object@msFeatureData)
     ## Set rownames if not present
-    if (is.null(rownames(value)))
+    if (is.null(rownames(value)) && nrow(value))
         rownames(value) <- .featureIDs(nrow(value), prefix = "CP")
     chromPeaks(newFd) <- value
     chromPeakData(newFd) <- DataFrame(ms_level = rep(1L, nrow(value)),
@@ -1571,10 +1578,13 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' distribution of the identified chromatographic peaks in the slice along
 #' the time axis.
 #'
-#' @note
-#'
-#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
-#' all eventually present previous correspondence results to be dropped.
+#' The correspondence analysis can be performed on chromatographic peaks of
+#' any MS level (if present and if chromatographic peak detection has been
+#' performed for that MS level) defining features combining these peaks. The
+#' MS level can be selected with the parameter `msLevel`. By default, calling
+#' `groupChromPeaks` will remove any previous correspondence results. This can
+#' be disabled with `add = TRUE`, which will add newly defined features to
+#' already present feature definitions.
 #'
 #' @param object For `groupChromPeaks`: an [XCMSnExp] object
 #'     containing the results from a previous peak detection analysis (see
@@ -1585,8 +1595,13 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' @param param A `PeakDensityParam` object containing all settings for
 #'     the peak grouping algorithm.
 #'
-#' @param msLevel `integer(1)` defining the MS level. Currently only MS level 1
-#'     is supported.
+#' @param msLevel `integer(1)` (default `msLevel = 1L`) defining the MS level
+#'     on which the correspondence should be performed. It is required that
+#'     chromatographic peaks of the respective MS level are present.
+#'
+#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
+#'     additional round of correspondence (e.g. on a different MS level) and
+#'     add features to the already present feature definitions.
 #'
 #' @return
 #'
@@ -1606,15 +1621,16 @@ setMethod("quantify", "XCMSnExp", function(object, ...) {
 #' @rdname groupChromPeaks-density
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "PeakDensityParam"),
-          function(object, param, msLevel = 1L) {
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'! ",
-                       "Please perform first a peak detection using the ",
-                       "'findChromPeaks' method.")
-              if (any(msLevel != 1))
-                  stop("Currently only peak grouping on MS level 1 is supported")
-              ## Get rid of any previous results.
-              if (hasFeatures(object))
+          function(object, param, msLevel = 1L, add = FALSE) {
+              if (length(msLevel) != 1)
+                  stop("Can only perform the correspondence analysis on one MS",
+                       " level at a time. Please repeat for other MS levels ",
+                       "with parameter `add = TRUE`.")
+              if (!hasChromPeaks(object, msLevel))
+                  stop("No chromatographic peak for MS level ", msLevel,
+                       " present. Please perform first a peak detection ",
+                       "using the 'findChromPeaks' method.", call. = FALSE)
+              if (hasFeatures(object) && !add)
                   object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
@@ -1626,9 +1642,12 @@ setMethod("groupChromPeaks",
                   if (length(sampleGroups(param)) != length(fileNames(object)))
                       stop("The 'sampleGroups' value in the provided 'param' ",
                            "class does not match the number of available files/",
-                           "samples!")
+                           "samples!", call. = FALSE)
               }
-              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+              if (hasChromPeaks(object) && !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
+              if (hasFeatures(object) &&
+                  !any(colnames(featureDefinitions(object)) == "ms_level"))
                   object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_density(
@@ -1646,14 +1665,22 @@ setMethod("groupChromPeaks",
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res)
-              if (nrow(df) == 0)
-                  stop("Unable to group any chromatographic peaks. You might ",
-                       "have to adapt your settings.")
+              if (!nrow(df)) {
+                  warning("Unable to group any chromatographic peaks. ",
+                          "You might have to adapt your settings.")
+                  return(object)
+              }
+              df$ms_level <- as.integer(msLevel)
               if (!all(chromPeakData(object)$ms_level %in% msLevel))
                   df <- .update_feature_definitions(
                       df, rownames(chromPeaks(object, msLevel = msLevel)),
                       rownames(chromPeaks(object)))
-              if (nrow(df) > 0)
+              if (hasFeatures(object)) {
+                  startFrom <- max(as.integer(
+                      sub("FT", "", rownames(featureDefinitions(object))))) + 1
+                  rownames(df) <- .featureIDs(nrow(df), from = startFrom)
+                  df <- rbind(featureDefinitions(object), df)
+              } else
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               validObject(object)
@@ -1765,10 +1792,13 @@ setMethod("groupChromPeaks",
 #' performs peak grouping based on the proximity between chromatographic
 #' peaks from different samples in the mz-rt range.
 #'
-#' @note
-#'
-#' Calling `groupChromPeaks` on an `XCMSnExp` object will cause
-#' all eventually present previous alignment results to be dropped.
+#' The correspondence analysis can be performed on chromatographic peaks of
+#' any MS level (if present and if chromatographic peak detection has been
+#' performed for that MS level) defining features combining these peaks. The
+#' MS level can be selected with the parameter `msLevel`. By default, calling
+#' `groupChromPeaks` will remove any previous correspondence results. This can
+#' be disabled with `add = TRUE`, which will add newly defined features to
+#' already present feature definitions.
 #'
 #' @param object For `groupChromPeaks`: an [XCMSnExp] object containing the
 #'     results from a previous chromatographic peak detection
@@ -1776,8 +1806,13 @@ setMethod("groupChromPeaks",
 #'
 #'     For all other methods: a `NearestPeaksParam` object.
 #'
-#' @param param A `NearestPeaksParam` object containing all settings for
-#'     the peak grouping algorithm.
+#' @param msLevel `integer(1)` defining the MS level on which the correspondence
+#'     should be performed. It is required that chromatographic peaks of the
+#'     respective MS level are present.
+#'
+#' @param add `logical(1)` (default `add = FALSE`) allowing to perform an
+#'     additional round of correspondence (e.g. on a different MS level) and
+#'     add features to the already present feature definitions.
 #'
 #' @param msLevel `integer(1)` defining the MS level. Currently only MS level
 #'     1 is supported.
@@ -1796,15 +1831,16 @@ setMethod("groupChromPeaks",
 #' @rdname groupChromPeaks-nearest
 setMethod("groupChromPeaks",
           signature(object = "XCMSnExp", param = "NearestPeaksParam"),
-          function(object, param, msLevel = 1L) {
-              if (!hasChromPeaks(object))
-                  stop("No chromatographic peak detection results in 'object'! ",
-                       "Please perform first a peak detection using the ",
-                       "'findChromPeaks' method.")
-              if (any(msLevel != 1))
-                  stop("Currently peak grouping is only supported for MS level 1")
-              ## Get rid of any previous results.
-              if (hasFeatures(object))
+          function(object, param, msLevel = 1L, add = FALSE) {
+              if (length(msLevel) != 1)
+                  stop("Can only perform the correspondence analysis on one MS",
+                       " level at a time. Please repeat for other MS levels ",
+                       "with parameter `add = TRUE`.")
+              if (!hasChromPeaks(object, msLevel))
+                  stop("No chromatographic peak for MS level ", msLevel,
+                       " present. Please perform first a peak detection ",
+                       "using the 'findChromPeaks' method.", call. = FALSE)
+              if (hasFeatures(object) && !add)
                   object <- dropFeatureDefinitions(object)
               ## Check if we've got any sample groups:
               if (length(sampleGroups(param)) == 0) {
@@ -1819,6 +1855,9 @@ setMethod("groupChromPeaks",
                            "samples!")
               }
               if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
+              if (hasFeatures(object) &&
+                  !any(colnames(featureDefinitions(object)) == "ms_level"))
                   object <- updateObject(object)
               startDate <- date()
               res <- do_groupChromPeaks_nearest(
@@ -1835,15 +1874,23 @@ setMethod("groupChromPeaks",
               object <- addProcessHistory(object, xph)
               ## Add the results.
               df <- DataFrame(res$featureDefinitions)
+              if (!nrow(df)) {
+                  warning("Unable to group any chromatographic peaks. ",
+                          "You might have to adapt your settings.")
+                  return(object)
+              }
               df$peakidx <- res$peakIndex
-              if (nrow(df) == 0)
-                  stop("Unable to group any chromatographic peaks. You might ",
-                       "have to adapt your settings.")
+              df$ms_level <- as.integer(msLevel)
               if (!all(chromPeakData(object)$ms_level %in% msLevel))
                   df <- .update_feature_definitions(
                       df, rownames(chromPeaks(object, msLevel = msLevel)),
                       rownames(chromPeaks(object)))
-              if (nrow(df) > 0)
+              if (hasFeatures(object)) {
+                  startFrom <- max(as.integer(
+                      sub("FT", "", rownames(featureDefinitions(object))))) + 1
+                  rownames(df) <- .featureIDs(nrow(df), from = startFrom)
+                  df <- rbind(featureDefinitions(object), df)
+              } else
                   rownames(df) <- .featureIDs(nrow(df))
               featureDefinitions(object) <- df
               validObject(object)
@@ -2083,6 +2130,9 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' chromatographic peaks from the same sample can be assigned to a feature.
 #' Parameter \code{method} allows to specify the method to be used in such
 #' cases to chose from which of the peaks the value should be returned.
+#' Parameter `msLevel` allows to choose a specific MS level for which feature
+#' values should be returned (given that features have been defined for that MS
+#' level).
 #'
 #' \code{quantify,XCMSnExp}: return the preprocessing results as an
 #' \code{\link{SummarizedExperiment}} object containing the feature abundances
@@ -2133,6 +2183,10 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #'     \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
 #'     half of the row's minimal (non-missing) value.
 #'
+#' @param msLevel for `featureValues`: `integer` defining the MS level(s) for
+#'     which feature values should be returned. By default, values for features
+#'     defined for all MS levels are returned.
+#'
 #' @param ... For \code{quantify}: additional parameters to be passed on to the
 #'     \code{\link{featureValues}} method.
 #'
@@ -2166,39 +2220,39 @@ setMethod("profMat", signature(object = "XCMSnExp"), function(object,
 #' \code{\link{groupval}} for the equivalent method on \code{xcmsSet} objects.
 #'
 #' @rdname XCMSnExp-peak-grouping-results
-setMethod("featureValues",
-          signature(object = "XCMSnExp"),
-          function(object, method = c("medret", "maxint", "sum"),
-                   value = "into", intensity = "into", filled = TRUE,
-                   missing = NA) {
-              ## Input argument checkings
-              if (!hasFeatures(object))
-                  stop("No peak groups present! Use 'groupChromPeaks' first.")
-              if (!hasChromPeaks(object))
-                  stop("No detected chromatographic peaks present! Use ",
-                       "'findChromPeaks' first.")
-              method <- match.arg(method)
-              if (method == "sum" & !(value %in% c("into", "maxo")))
-                  stop("method 'sum' is only allowed if value is set to 'into'",
-                       " or 'maxo'")
-              if (is.character(missing)) {
-                  if (!(missing %in% c("rowmin_half")))
-                      stop("if 'missing' is not 'NA' or a numeric it should",
-                           " be one of: \"rowmin_half\".")
-              } else {
-                  if (!is.numeric(missing) & !is.na(missing))
-                      stop("'missing' should be either 'NA', a numeric or one",
-                           " of: \"rowmin_half\".")
-              }
-              fNames <- basename(fileNames(object))
-              pks <- chromPeaks(object)
-              ## issue #157: replace all values for filled-in peaks with NA
-              if (!filled)
-                  pks[chromPeakData(object)$is_filled, ] <- NA
-              .feature_values(pks = pks, fts = featureDefinitions(object),
-                              method = method, value = value,
-                              intensity = intensity, colnames = fNames,
-                              missing = missing)
+setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
+                                                                   "maxint",
+                                                                   "sum"),
+                                                value = "into",
+                                                intensity = "into",
+                                                filled = TRUE, missing = NA,
+                                                msLevel = 1:20) {
+    ## Input argument checkings
+    if (!hasFeatures(object, msLevel = msLevel))
+        stop("No feature definitions for MS level(s) ", msLevel,
+             " present. Call 'groupChromPeaks' first.")
+    method <- match.arg(method)
+    if (method == "sum" & !(value %in% c("into", "maxo")))
+        stop("method 'sum' is only allowed if value is set to 'into'",
+             " or 'maxo'")
+    if (is.character(missing)) {
+        if (!(missing %in% c("rowmin_half")))
+            stop("if 'missing' is not 'NA' or a numeric it should",
+                 " be one of: \"rowmin_half\".")
+    } else {
+        if (!is.numeric(missing) & !is.na(missing))
+            stop("'missing' should be either 'NA', a numeric or one",
+                 " of: \"rowmin_half\".")
+    }
+    fNames <- basename(fileNames(object))
+    pks <- chromPeaks(object)
+    ## issue #157: replace all values for filled-in peaks with NA
+    if (!filled)
+        pks[chromPeakData(object)$is_filled, ] <- NA
+    .feature_values(
+        pks = pks, fts = featureDefinitions(object, msLevel = msLevel),
+        method = method, value = value, intensity = intensity,
+        colnames = fNames, missing = missing)
 })
 
 #' Internal function to extract feature values based on featureDefinitions
@@ -2285,114 +2339,108 @@ setMethod("featureValues",
 #'
 #' @description
 #'
-#' \code{chromatogram}: the method allows to extract
-#' chromatograms from \code{\link{OnDiskMSnExp}} and
-#' \code{\link{XCMSnExp}} objects. See also the
-#' \code{\link{chromatogram}} implementation for
-#' \code{\link{OnDiskMSnExp}} in the \code{MSnbase} package.
+#' `chromatogram`: extract chromatographic data (such as an extracted ion
+#' chromatogram, a base peak chromatogram or total ion chromatogram) from
+#' an [OnDiskMSnExp] or [XCMSnExp] objects. See also the help page of the
+#' `chromatogram` function in the `MSnbase` package.
 #'
 #' @details
 #'
-#' Arguments \code{rt} and \code{mz} allow to specify the MS
-#' data slice from which the chromatogram should be extracted.
-#' The parameter \code{aggregationSum} allows to specify the function to be
-#' used to aggregate the intensities across the mz range for the same
-#' retention time. Setting \code{aggregationFun = "sum"} would e.g. allow
-#' to calculate the \emph{total ion chromatogram} (TIC),
-#' \code{aggregationFun = "max"} the \emph{base peak chromatogram} (BPC).
-#' The length of the extracted \code{\link{Chromatogram}} object,
-#' i.e. the number of available data points, corresponds to the number of
-#' scans/spectra measured in the specified retention time range. If in a
-#' specific scan (for a give retention time) no signal was measured in the
-#' specified mz range, a \code{NA_real_} is reported as intensity for the
-#' retention time (see Notes for more information). This can be changed
-#' using the \code{missing} parameter.
+#' Arguments `rt` and `mz` allow to specify the MS data slice (i.e. the m/z
+#' range and retention time window) from which the chromatogram should be
+#' extracted. These parameters can be either a `numeric` of length 2 with the
+#' lower and upper limit, or a `matrix` with two columns with the lower and
+#' upper limits to extract multiple EICs at once.
+#' The parameter `aggregationSum` allows to specify the function to be
+#' used to aggregate the intensities across the m/z range for the same
+#' retention time. Setting `aggregationFun = "sum"` would e.g. allow
+#' to calculate the **total ion chromatogram** (TIC),
+#' `aggregationFun = "max"` the **base peak chromatogram** (BPC).
+#'
+#' If for a given retention time no intensity is measured in that spectrum a
+#' `NA` intensity value is returned by default. This can be changed with the
+#' parameter `missing`, setting `missing = 0` would result in a `0` intensity
+#' being returned in these cases.
 #'
 #' @note
 #'
-#' \code{\link{Chromatogram}} objects extracted with
-#' \code{chromatogram}
-#' contain \code{NA_real_} values if, for a given retention time, no
-#' signal was measured in the specified mz range. If no spectrum/scan is
-#' present in the defined retention time window a \code{Chromatogram} object
-#' of length 0 is returned.
-#'
-#' For \code{\link{XCMSnExp}} objects, if adjusted retention times are
-#' available, the \code{chromatogram} method will by default report
+#' For [XCMSnExp] objects, if adjusted retention times are
+#' available, the `chromatogram` method will by default report
 #' and use these (for the subsetting based on the provided parameter
-#' \code{rt}). This can be overwritten with the parameter
-#' \code{adjustedRtime}.
+#' `rt`). This can be changed by setting `adjustedRtime = FALSE`.
 #'
-#' @param object Either a \code{\link{OnDiskMSnExp}} or
-#'     \code{\link{XCMSnExp}} object from which the chromatograms should be
-#'     extracted.
+#' @param object Either a [OnDiskMSnExp] or [XCMSnExp] object from which the
+#'     chromatograms should be extracted.
 #'
-#' @param rt \code{numeric(2)} or two-column \code{matrix} defining the lower
+#' @param rt `numeric(2)` or two-column `matrix` defining the lower
 #'     and upper boundary for the retention time range(s). If not specified,
 #'     the full retention time range of the original data will be used.
-#'     It is also possible to submit a \code{numeric(1)} in which case
-#'     \code{range} is called on it to transform it to a \code{numeric(2)}.
 #'
-#' @param mz \code{numeric(2)} or two-column \code{matrix} defining the lower
+#' @param mz `numeric(2)` or two-column `matrix` defining the lower
 #'     and upper mz value for the MS data slice(s). If not specified, the
 #'     chromatograms will be calculated on the full mz range.
-#'     It is also possible to submit a \code{numeric(1)} in which case
-#'     \code{range} is called on it to transform it to a \code{numeric(2)}.
 #'
-#' @param adjustedRtime For \code{chromatogram,XCMSnExp}: whether the
-#'     adjusted (\code{adjustedRtime = TRUE}) or raw retention times
-#'     (\code{adjustedRtime = FALSE}) should be used for filtering and returned
-#'     in the resulting \code{\link{Chromatogram}} object. Adjusted
+#' @param adjustedRtime For `chromatogram,XCMSnExp`: whether the
+#'     adjusted (`adjustedRtime = TRUE`) or raw retention times
+#'     (`adjustedRtime = FALSE`) should be used for filtering and returned
+#'     in the resulting [Chromatograms] object. Adjusted
 #'     retention times are used by default if available.
 #'
-#' @param aggregationFun \code{character} specifying the function to be used to
+#' @param aggregationFun `character(1)` specifying the function to be used to
 #'     aggregate intensity values across the mz value range for the same
-#'     retention time. Allowed values are \code{"sum"}, \code{"max"},
-#'     \code{"mean"} and \code{"min"}.
+#'     retention time. Allowed values are `"sum"` (the default), `"max"`,
+#'     `"mean"` and `"min"`.
 #'
-#' @param missing \code{numeric(1)} allowing to specify the intensity value to
+#' @param missing `numeric(1)` allowing to specify the intensity value to
 #'     be used if for a given retention time no signal was measured within the
-#'     mz range of the corresponding scan. Defaults to \code{NA_real_} (see also
-#'     Details and Notes sections below). Use \code{missing = 0} to resemble the
-#'     behaviour of the \code{getEIC} from the \code{old} user interface.
+#'     mz range of the corresponding scan. Defaults to `NA_real_` (see also
+#'     Details and Notes sections below). Use `missing = 0` to resemble the
+#'     behaviour of the `getEIC` from the *old* user interface.
 #'
-#' @param msLevel \code{integer} specifying the MS level from which the
-#'     chromatogram should be extracted. Defaults to \code{msLevel = 1L}.
+#' @param msLevel `integer(1)` specifying the MS level from which the
+#'     chromatogram should be extracted. Defaults to `msLevel = 1L`.
 #'
 #' @param BPPARAM Parallelisation backend to be used, which will
 #'     depend on the architecture. Default is
-#'     \code{BiocParallel::bparam()}.
+#'     `BiocParallel::bparam()`.
 #'
-#' @param filled \code{logical(1)} whether filled-in peaks should also be
-#'     returned. Defaults to \code{filled = FALSE}, i.e. returns only detected
+#' @param filled `logical(1)` whether filled-in peaks should also be
+#'     returned. Defaults to `filled = FALSE`, i.e. returns only detected
 #'     chromatographic peaks in the result object.
+#'
+#' @param include `character(1)` defining which chromatographic peaks should be
+#'     returned. Supported are `include = "apex_within"` (the default) which
+#'     returns chromatographic peaks that have their apex within the `mz` `rt`
+#'     range, `include = "any"` to return all chromatographic peaks which
+#'     m/z and rt ranges overlap the `mz` and `rt` or `include = "none"` to
+#'     not include any chromatographic peaks.
 #'
 #' @return
 #'
-#' \code{chromatogram} returns a \code{\link{XChromatograms}} object with
+#' `chromatogram` returns a [XChromatograms] object with
 #' the number of columns corresponding to the number of files in
-#' \code{object} and number of rows the number of specified ranges (i.e.
-#' number of rows of matrices provided with arguments \code{mz} and/or
-#' \code{rt}). All chromatographic peaks with their apex position within the
+#' `object` and number of rows the number of specified ranges (i.e.
+#' number of rows of matrices provided with arguments `mz` and/or
+#' `rt`). All chromatographic peaks with their apex position within the
 #' m/z and retention time range are also retained as well as all feature
 #' definitions for these peaks.
 #'
 #' @author Johannes Rainer
 #'
-#' @seealso \code{\link{XCMSnExp}} for the data object.
-#'     \code{\link{Chromatogram}} for the object representing
-#'     chromatographic data.
+#' @seealso [XCMSnExp] for the data object.
+#'     [Chromatogram] for the object representing chromatographic data.
 #'
-#'     \code{\link{XChromatograms}} for the object allowing to arrange
-#'     multiple \code{XChromatogram} objects.
+#'     [XChromatograms] for the object allowing to arrange
+#'     multiple [XChromatogram] objects.
 #'
-#'     \code{\link{plot}} to plot a \code{XChromatogram} or
-#'     \code{Chromatograms} objects.
+#'     [plot] to plot a [XChromatogram] or [Chromatograms] objects.
 #'
-#'     \code{\link{as}} (\code{as(x, "data.frame")}) in \code{MSnbase}
-#'     for a method to extract the MS data as \code{data.frame}.
+#'     `as` (`as(x, "data.frame")`) in `MSnbase` for a method to extract
+#'     the MS data as `data.frame`.
 #'
 #' @export
+#'
+#' @md
 #'
 #' @rdname chromatogram-method
 #'
@@ -2439,102 +2487,105 @@ setMethod("featureValues",
 #'
 #' ## Plot just that one
 #' plot(chrs[1, , drop = FALSE])
-setMethod("chromatogram",
-          signature(object = "XCMSnExp"),
-          function(object, rt, mz, aggregationFun = "sum", missing = NA_real_,
-                   msLevel = 1L, BPPARAM = bpparam(),
-                   adjustedRtime = hasAdjustedRtime(object), filled = FALSE) {
-              if (adjustedRtime)
-                  adj_rt <- rtime(object, adjusted = TRUE)
-              object_od <- as(object, "OnDiskMSnExp")
-              object_od <- selectFeatureData(
-                  object_od, fcol = c("fileIdx", "spIdx", "seqNum",
-                                      "acquisitionNum", "msLevel",
-                                      "polarity", "retentionTime",
-                                      "precursorScanNum"))
-              if (adjustedRtime) {
-                  object_od@featureData$retentionTime <- adj_rt
-              }
-              res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
-                                           aggregationFun = aggregationFun,
-                                           missing = missing, msLevel = msLevel,
-                                           BPPARAM = BPPARAM)
-              if (!hasChromPeaks(object))
-                  return(res)
-              ## Process peaks
-              lvls <- 1:length(fileNames(object))
-              if (missing(rt))
-                  rt <- c(-Inf, Inf)
-              if (missing(mz))
-                  mz <- c(-Inf, Inf)
-              if (is.matrix(rt) | is.matrix(mz)) {
-                  ## Ensure rt and mz are aligned.
-                  if (!is.matrix(rt))
-                      rt <- matrix(rt, ncol = 2)
-                  if (!is.matrix(mz))
-                      mz <- matrix(mz, ncol = 2)
-                  if (nrow(rt) == 1)
-                      rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
-                  if (nrow(mz) == 1)
-                      mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
-                  pk_list <- vector("list", nrow(mz))
-                  pkd_list <- vector("list", nrow(mz))
-                  for (i in 1:nrow(mz)) {
-                      pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
-                                        type = "apex_within")
-                      pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
-                      if (!filled) {
-                          pks <- pks[!pkd$is_filled, , drop = FALSE]
-                          pkd <- pkd[!pkd$is_filled, , drop = FALSE]
-                      }
-                      smpls <- factor(pks[, "sample"], levels = lvls)
-                      pk_list[[i]] <- split.data.frame(pks, smpls)
-                      pkd_list[[i]] <- split.data.frame(pkd, smpls)
-                  }
-                  pks <- do.call(rbind, pk_list)
-                  pks <- pks[seq_along(pks)]
-                  pkd <- do.call(rbind, pkd_list)
-                  pkd <- pkd[seq_along(pkd)]
-              } else {
-                  pks <- chromPeaks(object, rt = rt, mz = mz,
-                                    type = "apex_within")
-                  pkd <- chromPeakData(object)
-                  pkd <- pkd[match(rownames(pks), rownames(pkd)), ,
-                             drop = FALSE]
-                  if (!filled) {
-                      pks <- pks[!pkd$is_filled, , drop = FALSE]
-                      pkd <- pkd[!pkd$is_filled, , drop = FALSE]
-                  }
-                  smpls <- factor(pks[, "sample"], levels = lvls)
-                  pks <- split.data.frame(pks, smpls)
-                  pkd <- split.data.frame(pkd, smpls)
-              }
-              res <- as(res, "XChromatograms")
-              res@.Data <- matrix(
-                  mapply(unlist(res), pks, pkd, FUN = function(chr, pk, pd) {
-                      chr@chromPeaks <- pk
-                      chr@chromPeakData <- pd
-                      chr
-                  }), nrow = nrow(res), dimnames = dimnames(res))
-              res@.processHistory <- object@.processHistory
-              if (hasFeatures(object)) {
-                  pks_sub <- chromPeaks(res)
-                  ## Loop through each EIC "row" to ensure all features in
-                  ## that EIC are retained.
-                  fts <- lapply(seq_len(nrow(res)), function(r) {
-                      fdev <- featureDefinitions(object, mz = mz(res)[r, ],
-                                                 rt = rt)
-                      if (nrow(fdev)) {
-                          fdev$row <- r
-                          .subset_features_on_chrom_peaks(
-                              fdev, chromPeaks(object), pks_sub)
-                      } else DataFrame()
-                  })
-                  res@featureDefinitions <- do.call(rbind, fts)
-              }
-              validObject(res)
-              res
-          })
+setMethod("chromatogram", "XCMSnExp", function(object, rt, mz,
+                                               aggregationFun = "sum",
+                                               missing = NA_real_,
+                                               msLevel = 1L,
+                                               BPPARAM = bpparam(),
+                                               adjustedRtime = hasAdjustedRtime(object),
+                                               filled = FALSE,
+                                               include = c("apex_within",
+                                                           "any", "none")) {
+    include <- match.arg(include)
+    if (adjustedRtime)
+        adj_rt <- rtime(object, adjusted = TRUE)
+    object_od <- as(object, "OnDiskMSnExp")
+    object_od <- selectFeatureData(
+        object_od, fcol = c("fileIdx", "spIdx", "seqNum",
+                            "acquisitionNum", "msLevel",
+                            "polarity", "retentionTime",
+                            "precursorScanNum"))
+    if (adjustedRtime) {
+        object_od@featureData$retentionTime <- adj_rt
+    }
+    res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
+                                 aggregationFun = aggregationFun,
+                                 missing = missing, msLevel = msLevel,
+                                 BPPARAM = BPPARAM)
+    if (!hasChromPeaks(object) | include == "none")
+        return(res)
+    ## Process peaks
+    lvls <- 1:length(fileNames(object))
+    if (missing(rt))
+        rt <- c(-Inf, Inf)
+    if (missing(mz))
+        mz <- c(-Inf, Inf)
+    if (is.matrix(rt) | is.matrix(mz)) {
+        ## Ensure rt and mz are aligned.
+        if (!is.matrix(rt))
+            rt <- matrix(rt, ncol = 2)
+        if (!is.matrix(mz))
+            mz <- matrix(mz, ncol = 2)
+        if (nrow(rt) == 1)
+            rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
+        if (nrow(mz) == 1)
+            mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
+        pk_list <- vector("list", nrow(mz))
+        pkd_list <- vector("list", nrow(mz))
+        for (i in 1:nrow(mz)) {
+            pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
+                              type = include)
+            pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
+            if (!filled) {
+                pks <- pks[!pkd$is_filled, , drop = FALSE]
+                pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+            }
+            smpls <- factor(pks[, "sample"], levels = lvls)
+            pk_list[[i]] <- split.data.frame(pks, smpls)
+            pkd_list[[i]] <- split.data.frame(pkd, smpls)
+        }
+        pks <- do.call(rbind, pk_list)
+        pks <- pks[seq_along(pks)]
+        pkd <- do.call(rbind, pkd_list)
+        pkd <- pkd[seq_along(pkd)]
+    } else {
+        pks <- chromPeaks(object, rt = rt, mz = mz,
+                          type = include)
+        pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
+        if (!filled) {
+            pks <- pks[!pkd$is_filled, , drop = FALSE]
+            pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+        }
+        smpls <- factor(pks[, "sample"], levels = lvls)
+        pks <- split.data.frame(pks, smpls)
+        pkd <- split.data.frame(pkd, smpls)
+    }
+    res <- as(res, "XChromatograms")
+    res@.Data <- matrix(
+        mapply(unlist(res), pks, pkd, FUN = function(chr, pk, pd) {
+            chr@chromPeaks <- pk
+            chr@chromPeakData <- pd
+            chr
+        }), nrow = nrow(res), dimnames = dimnames(res))
+    res@.processHistory <- object@.processHistory
+    if (hasFeatures(object)) {
+        pks_sub <- chromPeaks(res)
+        ## Loop through each EIC "row" to ensure all features in
+        ## that EIC are retained.
+        fts <- lapply(seq_len(nrow(res)), function(r) {
+            fdev <- featureDefinitions(object, mz = mz(res)[r, ],
+                                       rt = rt)
+            if (nrow(fdev)) {
+                fdev$row <- r
+                .subset_features_on_chrom_peaks(
+                    fdev, chromPeaks(object), pks_sub)
+            } else DataFrame()
+        })
+        res@featureDefinitions <- do.call(rbind, fts)
+    }
+    validObject(res)
+    res
+})
 
 #' @rdname XCMSnExp-class
 #'
@@ -2617,8 +2668,8 @@ setMethod("findChromPeaks",
 #' Integrate signal in the mz-rt area of a feature (chromatographic
 #' peak group) for samples in which no chromatographic peak for this
 #' feature was identified and add it to the \code{chromPeaks}. Such peaks
-#' will have a \code{TRUE} in the \code{chromPeakData} data frame containing
-#' peak annotations.
+#' will have a \code{TRUE} in column \code{"is_filled"} in the
+#' \code{chromPeakData} data frame containing peak annotations.
 #'
 #' @details
 #'
@@ -2698,8 +2749,11 @@ setMethod("findChromPeaks",
 #'     subtracted from the lower rt and added to the upper rt). This
 #'     expansion is applied \emph{after} \code{expandRt}.
 #'
-#' @param msLevel \code{integer(1)} defining the MS level. Currently only MS
-#'     level 1 is supported.
+#' @param msLevel \code{integer(1)} defining the MS level on which peak filling
+#'     should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+#'     on one MS level at a time is supported, to fill in peaks for MS level 1
+#'     and 2 run first using \code{msLevel = 1} and then (on the returned
+#'     result object) again with \code{msLevel = 2}.
 #'
 #' @param BPPARAM Parallel processing settings.
 #'
@@ -2778,15 +2832,14 @@ setMethod("findChromPeaks",
 setMethod("fillChromPeaks",
           signature(object = "XCMSnExp", param = "FillChromPeaksParam"),
           function(object, param, msLevel = 1L, BPPARAM = bpparam()) {
-              if (!hasFeatures(object))
-                  stop("'object' does not provide feature definitions! Please ",
-                       "run 'groupChromPeaks' first.")
-              ## Don't do that if we have already filled peaks?
+              if (length(msLevel) != 1)
+                  stop("Can only perform peak filling for one MS level at a time")
+              if (!hasFeatures(object, msLevel = msLevel))
+                  stop("No feature definitions for MS level ", msLevel,
+                       " present. Please run 'groupChromPeaks' first.")
               if (.hasFilledPeaks(object))
                   message("Filled peaks already present, adding still missing",
                           " peaks.")
-              if (any(msLevel > 1))
-                  stop("Currently only peak filling from MS1 is supported.")
               if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
                   object <- updateObject(object)
               startDate <- date()
@@ -2800,7 +2853,7 @@ setMethod("fillChromPeaks",
               ## Define or extend the peak area from which the signal should be
               ## extracted.
               ## Original code: use the median of the min/max rt and mz per peak.
-              fdef <- featureDefinitions(object)
+              fdef <- featureDefinitions(object, msLevel = msLevel)
               aggFunLow <- median
               aggFunHigh <- median
               ## Note: we ensure in the downstream function that the rt range is
@@ -2852,7 +2905,7 @@ setMethod("fillChromPeaks",
               ## Add mzmed column - needed for MSW peak filling.
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                               mzmed = as.numeric(fdef$mzmed))
-              pkGrpVal <- featureValues(object)
+              pkGrpVal <- featureValues(object, msLevel = msLevel)
               message(".", appendLF = FALSE)
               ## Check if there is anything to fill...
               if (!any(is.na(rowSums(pkGrpVal)))) {
@@ -2929,13 +2982,15 @@ setMethod("fillChromPeaks",
                   res <- bpmapply(FUN = .getChromPeakData_matchedFilter,
                                   objectL, pkAreaL, as.list(1:length(objectL)),
                                   MoreArgs = list(cn = cp_colnames,
-                                                  param = prm),
+                                                  param = prm,
+                                                  msLevel = msLevel),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               } else {
                   res <- bpmapply(FUN = .getChromPeakData, objectL,
                                   pkAreaL, as.list(1:length(objectL)),
                                   MoreArgs = list(cn = cp_colnames,
-                                                  mzCenterFun = mzCenterFun),
+                                                  mzCenterFun = mzCenterFun,
+                                                  msLevel = msLevel),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               }
 
@@ -2958,9 +3013,18 @@ setMethod("fillChromPeaks",
                   fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
                   (which(res[, "group_idx"] == i) + incr))
               }
+              ## Combine feature data with those from other MS levels
+              fdef <- rbind(
+                  fdef, featureDefinitions(object)[
+                           featureDefinitions(object)$ms_level != msLevel, ,
+                           drop = FALSE])
+              if (!any(colnames(fdef) == "ms_level"))
+                  fdef$ms_level <- 1L
+              else
+                  fdef <- fdef[order(fdef$ms_level), ]
               ## Define IDs for the new peaks; include fix for issue #347
-              maxId <- max(as.numeric(sub("^CP", "",
-                                          rownames(chromPeaks(object)))))
+              maxId <- max(as.numeric(
+                  sub("M", "", sub("^CP", "", rownames(chromPeaks(object))))))
               if (maxId < 1)
                   stop("chromPeaks matrix lacks rownames; please update ",
                        "'object' with the 'updateObject' function.")
@@ -3519,6 +3583,9 @@ setMethod("updateObject", "XCMSnExp", function(object) {
             } else
                 newFd$chromPeakData$is_filled <- FALSE
         }
+        if (hasFeatures(newFd) &&
+            !any(colnames(featureDefinitions(newFd)) == "ms_level"))
+            newFd$featureDefinitions$ms_level <- 1L
     }
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd
@@ -3622,9 +3689,9 @@ setMethod("plot", c("XCMSnExp", "missing"),
 setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
           function(object, param = CleanPeaksParam(),
                    msLevel = 1L) {
-              if (!hasChromPeaks(object)) {
-                  warning("No chromatographic peaks present in 'object'. Please ",
-                          "run 'findChromPeaks' first.")
+              if (!hasChromPeaks(object, msLevel = msLevel)) {
+                  warning("No chromatographic peaks present in for MS level ",
+                          msLevel, ". Please run 'findChromPeaks' first.")
                   return(object)
               }
               if (hasFeatures(object)) {
@@ -3794,16 +3861,16 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
                                 param = "MergeNeighboringPeaksParam"),
           function(object, param = MergeNeighboringPeaksParam(),
                    msLevel = 1L, BPPARAM = bpparam()) {
-              if (!hasChromPeaks(object)) {
-                  warning("No chromatographic peaks present in 'object'. ",
-                          "Please run 'findChromPeaks' first.")
+              if (!hasChromPeaks(object, msLevel = msLevel)) {
+                  warning("No chromatographic peaks present in for MS level ",
+                          msLevel, ". Please run 'findChromPeaks' first.")
                   return(object)
               }
-              validObject(param)
               if (hasFeatures(object)) {
                   message("Removing feature definitions.")
                   object <- dropFeatureDefinitions(object)
               }
+              validObject(param)
               peak_count <- nrow(chromPeaks(object))
               idxs <- seq_along(fileNames(object))
               object_list <- lapply(idxs, FUN = filterFile,
@@ -3821,7 +3888,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               pks <- do.call(rbind, lapply(res, "[[", 1))
               pkd <- do.call(rbind, lapply(res, "[[", 2))
               ## Add also peaks for other MS levels!
-              other_msl <- !chromPeakData(object)$ms_level %in% msLevel
+              other_msl <- !(chromPeakData(object)$ms_level %in% msLevel)
               if (any(other_msl)) {
                   pks <- rbind(pks, chromPeaks(object)[other_msl, , drop = FALSE])
                   pkd <- rbind(pkd, chromPeakData(object)[other_msl, ])
@@ -3833,7 +3900,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               if (!is.finite(max_id))
                   max_id <- 0
               rownames(pks)[which_new] <- .featureIDs(sum(which_new),
-                                                      prefix = "CP",
+                                                      prefix = "CPM",
                                                       from = max_id + 1)
               rownames(pkd) <- rownames(pks)
               message("Merging reduced ", peak_count, " chromPeaks to ",

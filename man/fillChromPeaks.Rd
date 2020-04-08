@@ -93,8 +93,11 @@ chromatographic peaks.}
 
 \item{param}{A \code{FillChromPeaksParam} object with all settings.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS
-level 1 is supported.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which peak filling
+should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+on one MS level at a time is supported, to fill in peaks for MS level 1
+and 2 run first using \code{msLevel = 1} and then (on the returned
+result object) again with \code{msLevel = 2}.}
 
 \item{BPPARAM}{Parallel processing settings.}
 }
@@ -122,8 +125,8 @@ the signal integration for missing peaks.
 Integrate signal in the mz-rt area of a feature (chromatographic
 peak group) for samples in which no chromatographic peak for this
 feature was identified and add it to the \code{chromPeaks}. Such peaks
-will have a \code{TRUE} in the \code{chromPeakData} data frame containing
-peak annotations.
+will have a \code{TRUE} in column \code{"is_filled"} in the
+\code{chromPeakData} data frame containing peak annotations.
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across

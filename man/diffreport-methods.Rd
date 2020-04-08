@@ -73,12 +73,13 @@
   \item{missing}{
     \code{numeric(1)} defining an optional value for missing
     values. \code{missing = 0} would e.g. replace all \code{NA} values
-    in the feature matrix with \code{0}. Note that also a call to 
+    in the feature matrix with \code{0}. Note that also a call to
     \code{\link{fillPeaks}} results in a feature matrix in which
-    \code{NA} values are replaced by \code{0}. 
+    \code{NA} values are replaced by \code{0}.
   }
   \item{...}{
-    optional arguments to be passed to \code{\link{mt.teststat}}
+    optional arguments to be passed to \code{mt.teststat} from the
+    \code{multtest} package.
   }
 }
 \details{
@@ -149,7 +150,6 @@
 }
 \seealso{
   \code{\link{xcmsSet-class}},
-  \code{\link{mt.teststat}},
   \code{\link{palette}}
 }
 \keyword{methods}

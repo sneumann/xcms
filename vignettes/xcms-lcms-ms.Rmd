@@ -502,6 +502,39 @@ plot(fenamiphos_swath_spectrum[[1]], fenamiphos[[2]],
      tolerance = 50e-6, main = "against Metlin")
 ```
 
+If we wanted to get the EICs for the MS2 chromatographic peaks used to generate
+this MS2 spectrum we can use the IDs of these peaks which are provided with
+`$ms2_peak_id` of the result spectrum.
+
+```{r}
+pk_ids <- mcols(fenamiphos_swath_spectrum)$ms2_peak_id[[1]]
+pk_ids
+```
+
+With these peak IDs available we can extract their retention time window and m/z
+ranges from the `chromPeaks` matrix and use the `chromatogram` function to
+extract their EIC. Note however that for SWATH data we have MS2 signal from
+different isolation windows. Thus we have to first filter the `swath_data`
+object by the isolation window containing the precursor m/z with the
+`filterIsolationWindow` to subset the data to MS2 spectra related to the ion of
+interest. In addition, we have to use `msLevel = 2L` in the `chromatogram` call
+because `chromatogram` extracts by default only data from MS1 spectra.
+
+```{r}
+rt_range <- chromPeaks(swath_data)[pk_ids, c("rtmin", "rtmax")]
+rt_range[, 1] <- rt_range[, 1] - 1
+rt_range[, 2] <- rt_range[, 2] + 1
+mz_range <- chromPeaks(swath_data)[pk_ids, c("mzmin", "mzmax")]
+
+pmz <- precursorMz(fenamiphos_swath_spectrum)[1]
+swath_data_iwindow <- filterIsolationWindow(swath_data, mz = pmz)
+ms2_eics <- chromatogram(swath_data_iwindow, rt = rt_range,
+                         mz = mz_range, msLevel = 2L)
+```
+
+Each row of this `ms2_eics` contains now the EIC of one of the MS2
+chromatographic peaks.
+
 As a second example we analyze the signal from an [M+H]+ ion with an m/z of
 376.0381 (which would match
 [Prochloraz](https://en.wikipedia.org/wiki/Prochloraz)). We first identify the
