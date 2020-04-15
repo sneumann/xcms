@@ -15,6 +15,7 @@ peaksWithCentWave(
   noise = 0,
   verboseColumns = FALSE,
   firstBaselineCheck = TRUE,
+  extendLengthMSW = FALSE,
   ...
 )
 }

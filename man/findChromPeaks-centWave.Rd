@@ -75,7 +75,8 @@ CentWaveParam(
   verboseColumns = FALSE,
   roiList = list(),
   firstBaselineCheck = TRUE,
-  roiScales = numeric()
+  roiScales = numeric(),
+  extendLengthMSW = FALSE
 )
 
 \S4method{findChromPeaks}{OnDiskMSnExp,CentWaveParam}(
@@ -205,6 +206,12 @@ data within regions of interest is checked to be above the first baseline.}
 defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
+\item{extendLengthMSW}{Option to force centWave to use all scales when 
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to 
+\code{convolve} rather than the default "reflect" method. See 
+https://github.com/sneumann/xcms/issues/445 for more information.}
+
 \item{object}{For \code{findChromPeaks}: an
     \code{\link{OnDiskMSnExp}}  object containing the MS- and all
     other experiment-relevant data.
@@ -324,7 +331,7 @@ Parallel processing (one process per sample) is supported and can
 \section{Slots}{
 
 \describe{
-\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales}}{See corresponding parameter above. \code{.__classVersion__} stores
+\item{\code{.__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW}}{See corresponding parameter above. \code{.__classVersion__} stores
 the version from the class. Slots values should exclusively be accessed
 \emph{via} the corresponding getter and setter methods listed above.}
 }}
