@@ -1,4 +1,4 @@
-MSW.cwt <- function (ms, scales = 1, wavelet = "mexh")
+MSW.cwt <- function (ms, scales = 1, wavelet = "mexh", extendLengthMSW = FALSE)
 { ## modified from package MassSpecWavelet
     if (wavelet == "mexh") {
         psi_xval <- seq(-6, 6, length = 256)
@@ -22,13 +22,20 @@ MSW.cwt <- function (ms, scales = 1, wavelet = "mexh")
         stop("Unsupported wavelet!")
     }
     oldLen <- length(ms)
+    # IF extendLengthMSW is TRUE:
     # The new length is determined by the scales argument, so a larger peakwidth
     # will ensure more scales are run, but may slow it down. See 
     # https://github.com/sneumann/xcms/issues/445 for more information about
     # a change from using extendNBase to extendLength.
-    newLen <- 2^(ceiling(log2(max(scales)*12)))
-    ms <- MSW.extendLength(x = ms, addLength = (newLen-length(ms)), 
-                           method = "open")
+    if(extendLengthMSW){
+        newLen <- 2^(ceiling(log2(max(scales)*12)))
+        ms <- MSW.extendLength(x = ms, addLength = (newLen-length(ms)), 
+                               method = "open")
+    } else {
+        ms <- MSW.extendNBase(ms, nLevel = NULL, base = 2)
+    }
+    
+    
     len <- length(ms)
     nbscales <- length(scales)
     wCoefs <- NULL
