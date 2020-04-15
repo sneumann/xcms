@@ -54,6 +54,9 @@ columns should be returned.}
 \item{firstBaselineCheck}{\code{logical(1)}. If \code{TRUE} continuous data within
 regions of interest is checked to be above the first baseline.}
 
+\item{extendLengthMSW}{\code{logical(1)}. If \code{TRUE} the "open" method of EIC
+extension is used, rather than the default "reflect" method.}
+
 \item{...}{currently ignored.}
 }
 \value{
@@ -67,7 +70,7 @@ columns:
 \item \code{"intb"}: per-peak baseline corrected integrated peak intensity.
 \item \code{"maxo"}: maximum (original) intensity of the peak.
 \item \code{"sn"}: signal to noise ratio of the peak defined as
-\code{(maxo - baseline)/sd} with \code{sd} being the standard defiatio of the local
+\code{(maxo - baseline)/sd} with \code{sd} being the standard deviation of the local
 chromatographic noise.
 }
 

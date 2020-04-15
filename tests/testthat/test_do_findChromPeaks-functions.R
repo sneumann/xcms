@@ -272,12 +272,14 @@ test_that("peaksWithCentWave works", {
                      8283, 3410, 5935, 3332, 7041, 3284, 7478, 76, 3739, 2158, 5507)
     skinny_peak_rt <- seq_along(skinny_peak)+100
     pks <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
-                             snthresh = 0, peakwidth = c(20, 50))
+                             snthresh = 0, peakwidth = c(20, 50), 
+                             extendLengthMSW = TRUE)
     expect_true(nrow(pks)==1)
     
     # Reducing minimum peakwidth shouldn't affect peak detection
     pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
-                                            snthresh = 0, peakwidth = c(2, 50))
+                                            snthresh = 0, peakwidth = c(2, 50),
+                                            extendLengthMSW = TRUE)
     expect_true(nrow(pks)==nrow(pks_widerpeakwidth))
 
     # Test a wider peak
@@ -292,10 +294,12 @@ test_that("peaksWithCentWave works", {
                     8307)
     wider_peak_rt <- seq_along(wider_peak)+100
     pks <- peaksWithCentWave(wider_peak, rt=wider_peak_rt, 
-                             snthresh = 0, peakwidth = c(20, 80))
+                             snthresh = 0, peakwidth = c(20, 80), 
+                             extendLengthMSW = TRUE)
     expect_true(nrow(pks)==1)
     pks_widerpeakwidth <- peaksWithCentWave(skinny_peak, rt=skinny_peak_rt, 
-                                            snthresh = 0, peakwidth = c(2, 80))
+                                            snthresh = 0, peakwidth = c(2, 80),
+                                            extendLengthMSW = TRUE)
     expect_true(nrow(pks)==nrow(pks_widerpeakwidth))
     
 

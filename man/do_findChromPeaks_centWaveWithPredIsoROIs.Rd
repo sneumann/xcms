@@ -27,7 +27,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs(
   maxCharge = 3,
   maxIso = 5,
   mzIntervalExtension = TRUE,
-  polarity = "unknown"
+  polarity = "unknown",
+  extendLengthMSW = FALSE
 )
 
 do_findChromPeaks_addPredIsoROIs(
@@ -150,6 +151,12 @@ intensity peaks.}
 \item{polarity}{\code{character(1)} specifying the polarity of the data.
 Currently not used, but has to be \code{"positive"}, \code{"negative"} or
 \code{"unknown"} if provided.}
+
+\item{extendLengthMSW}{Option to force centWave to use all scales when 
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to 
+\code{convolve} rather than the default "reflect" method. See 
+https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{peaks.}{A matrix or \code{xcmsPeaks} object such as one returned by
 a call to \code{link{do_findChromPeaks_centWave}} or

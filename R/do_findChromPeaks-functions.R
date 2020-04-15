@@ -2617,7 +2617,7 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
              verboseColumns = FALSE, roiList = list(),
              firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-             polarity = "unknown") {
+             polarity = "unknown", extendLengthMSW = FALSE) {
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
@@ -2637,7 +2637,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
                                               verboseColumns = TRUE,
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
-                                              roiScales = roiScales)
+                                              roiScales = roiScales,
+                                              extendLengthMSW = extendLengthMSW)
         return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
@@ -3160,6 +3161,9 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
 #'     regions of interest is checked to be above the first baseline.
+#'     
+#' @param extendLengthMSW `logical(1)`. If `TRUE` the "open" method of EIC
+#'     extension is used, rather than the default "reflect" method.
 #'
 #' @param ... currently ignored.
 #'
@@ -3182,7 +3186,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' - `"intb"`: per-peak baseline corrected integrated peak intensity.
 #' - `"maxo"`: maximum (original) intensity of the peak.
 #' - `"sn"`: signal to noise ratio of the peak defined as
-#'   `(maxo - baseline)/sd` with `sd` being the standard defiatio of the local
+#'   `(maxo - baseline)/sd` with `sd` being the standard deviation of the local
 #'   chromatographic noise.
 #'
 #' Additional columns for `verboseColumns = TRUE`:
