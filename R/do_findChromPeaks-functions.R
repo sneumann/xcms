@@ -152,7 +152,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
-                       roiScales = roiScales, sleep = sleep)
+                       roiScales = roiScales, sleep = sleep,
+                       extendLengthMSW = extendLengthMSW)
     } else {
         ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
