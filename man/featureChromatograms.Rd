@@ -9,7 +9,7 @@ featureChromatograms(
   expandRt = 0,
   aggregationFun = "max",
   features,
-  include = c("feature_only", "all"),
+  include = c("feature_only", "apex_within", "any", "all"),
   filled = FALSE,
   ...
 )
@@ -30,9 +30,10 @@ features for which chromatograms should be returned. Can be the index
 of the features in \code{featureDefinitions}, feature IDs (row names of
 \code{featureDefinitions}) or a logical vector.}
 
-\item{include}{\code{character(1)} defining which chromatographic peaks and
-feature definitions should be included in the returned
-\code{\link[=XChromatograms]{XChromatograms()}}. See description above for details.}
+\item{include}{\code{character(1)} defining which chromatographic peaks (and
+related feature definitions) should be included in the returned
+\code{\link[=XChromatograms]{XChromatograms()}}. Defaults to \code{"feature_only"}; See description above
+for options and details.}
 
 \item{filled}{\code{logical(1)} whether filled-in peaks should be included in
 the result object. The default is \code{filled = FALSE}, i.e. only detected
@@ -47,36 +48,46 @@ function.}
 \description{
 Extract ion chromatograms for features in an \linkS4class{XCMSnExp} object. The
 function returns for each feature its extracted ion chromatogram and all
-associated peaks with it.
+associated peaks with it. The chromatogram is extracted from the m/z - rt
+region including all chromatographic peaks of that features (i.e. based on
+the ranges of \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"}, \code{"rtmax"} of all
+chromatographic peaks of the feature).
 
 By default only chromatographic peaks associated with a feature are included
-for an extracted ion chromatogram. Setting \code{include = "all"} (instead of
-the default \code{include = "feature_only"}) will return all chromatographic peaks
-identified in the m/z - rt data slice of a feature (and eventually also other
-features within that region).
+for an extracted ion chromatogram (parameter \code{include = "feature_only"}). By
+setting \code{include = "apex_within"} all chromatographic peaks (and eventually
+the feature which they are part of - if feature definitions are present)
+that have their apex position within the m/z - rt range from which the
+chromatogram is extracted are returned too.
+With \code{include = "any"} or \code{include = "all"} all chromatographic peaks (and
+eventually the feature in which they are present) overlapping the m/z and rt
+range will be returned.
 }
 \examples{
 
 library(xcms)
 library(faahKO)
 faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
 ## Do a simple and fast preprocessing on a subset of the test data
 od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
 od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-    noise = 1000))
+    noise = 1000, prefilter = c(3, 10000)))
 od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
 od <- groupChromPeaks(od,
-    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
+    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 2)))
 
-## Extract ion chromatograms for each feature
-chrs <- featureChromatograms(od)
+## Get the feature definitions
+featureDefinitions(od)
+
+## Extract ion chromatograms for the first 3 features. Parameter
+## `features` can be either the feature IDs or feature indices.
+chrs <- featureChromatograms(od, features = 1:3)
 
 ## Plot the XIC for the first feature using different colors for each file
 par(mfrow = c(1, 2))
-plot(chrs[1, ], col = c("red", "green", "blue"))
+plot(chrs[1, ], col = c("red", "green"))
 }
 \author{
 Johannes Rainer

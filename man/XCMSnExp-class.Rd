@@ -90,9 +90,9 @@ hasFilledChromPeaks(object)
 
 \S4method{hasAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{hasFeatures}{XCMSnExp}(object)
+\S4method{hasFeatures}{XCMSnExp}(object, msLevel = 1:20)
 
-\S4method{hasChromPeaks}{XCMSnExp}(object)
+\S4method{hasChromPeaks}{XCMSnExp}(object, msLevel = 1:20)
 
 \S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
@@ -105,7 +105,8 @@ hasFilledChromPeaks(object)
   mz = numeric(),
   rt = numeric(),
   ppm = 0,
-  type = c("any", "within", "apex_within")
+  type = c("any", "within", "apex_within"),
+  msLevel = 1:20
 )
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value
@@ -160,7 +161,8 @@ hasFilledChromPeaks(object)
   param,
   BPPARAM = bpparam(),
   return.type = "XCMSnExp",
-  msLevel = 1L
+  msLevel = 1L,
+  add = FALSE
 )
 
 \S4method{dropFilledChromPeaks}{XCMSnExp}(object)
@@ -213,6 +215,9 @@ specifying the index of the files/samples for which the
 
 \item{...}{Additional parameters.}
 
+\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
+chromatographic peaks should be returned.}
+
 \item{bySample}{logical(1) specifying whether results should be grouped by
 sample.}
 
@@ -249,9 +254,6 @@ chromatographic peaks partially overlapping the range defined by
 only peaks completely within the region and \code{type = "apex_within"}
 peaks for which the peak's apex is within the region.}
 
-\item{msLevel}{\code{integer} specifying the MS level(s) for which identified
-chromatographic peaks should be returned.}
-
 \item{isFilledColumn}{\code{logical(1)} whether a column \code{"is_filled"}
 is included in the returned \code{"matrix"} providing the information
 if a peak was filled in. Alternatively, this information would be
@@ -283,6 +285,11 @@ chromatographic peak detection algorithm.}
 \item{return.type}{Character specifying what type of object the method should
 return. Can be either \code{"XCMSnExp"} (default), \code{"list"} or
 \code{"xcmsSet"}.}
+
+\item{add}{For \code{findChromPeaks}: if newly identified chromatographic
+peaks should be added to the peak matrix with the already identified
+chromatographic peaks. By default (\code{add = FALSE}) previous
+peak detection results will be removed.}
 
 \item{FUN}{For \code{spectrapply}: a function that should be applied to each
 spectrum in the object.}
@@ -525,9 +532,12 @@ adjustment. All related process history steps are removed too.
 
 \code{findChromPeaks} performs chromatographic peak detection
 on the provided \code{XCMSnExp} objects. For more details see the method
-for \code{\linkS4class{XCMSnExp}}. Note that the \code{findChromPeaks}
-method for \code{XCMSnExp} objects removes previously identified
-chromatographic peaks and aligned features. Previous alignment (retention
+for \code{\linkS4class{XCMSnExp}}.
+Note that by default (with parameter \code{add = FALSE}) previous peak
+detection results are removed. Use \code{add = TRUE} to perform a second
+round of peak detection and add the newly identified peaks to the previous
+peak detection results. Correspondence results (features) are always removed
+prior to peak detection. Previous alignment (retention
 time adjustment) results are kept, i.e. chromatographic peak detection
 is performed using adjusted retention times if the data was first
 aligned using e.g. obiwarp (\code{\link{adjustRtime-obiwarp}}).

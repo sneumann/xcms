@@ -14,7 +14,8 @@
   value = "into",
   intensity = "into",
   filled = TRUE,
-  missing = NA
+  missing = NA,
+  msLevel = 1:20
 )
 }
 \arguments{
@@ -53,6 +54,10 @@ is returned in the matrix for the respective peak. See
 \code{NA} (the default), a \code{numeric} or
 \code{missing = "rowmin_half"}. The latter replaces any \code{NA} with
 half of the row's minimal (non-missing) value.}
+
+\item{msLevel}{for `featureValues`: `integer` defining the MS level(s) for
+which feature values should be returned. By default, values for features
+defined for all MS levels are returned.}
 }
 \value{
 For \code{featureValues}: a \code{matrix} with
@@ -74,6 +79,9 @@ Parameter \code{value} allows to define which column from the
 chromatographic peaks from the same sample can be assigned to a feature.
 Parameter \code{method} allows to specify the method to be used in such
 cases to chose from which of the peaks the value should be returned.
+Parameter `msLevel` allows to choose a specific MS level for which feature
+values should be returned (given that features have been defined for that MS
+level).
 
 \code{quantify,XCMSnExp}: return the preprocessing results as an
 \code{\link{SummarizedExperiment}} object containing the feature abundances

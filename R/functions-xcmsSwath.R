@@ -155,7 +155,18 @@
     mzs_2 <- pks[, c("mzmin", "mzmax")]
     chr_1 <- chromatogram(as(object, "OnDiskMSnExp"), mz = mzs_1, rt = rts_1)
     chr_2 <- chromatogram(od_object, mz = mzs_2, rt = rts_2, msLevel = 2L)
-    cors <- vapply(chr_2@.Data, .correlate_chromatogram, y = chr_1[1, 1],
+    ## Filter for chromatograms that are empty or have too few data points
+    chr_2 <- chr_2[vapply(chr_2, function(z) sum(!is.na(z@intensity)),
+                          integer(1)) > 2, ]
+    if (is(chr_2, "Chromatogram"))
+        chr_2 <- Chromatograms(list(chr_2))
+    if (!length(chr_2))
+        return(Spectra(
+            new("Spectrum2", fromFile = fromFile),
+            elementMetadata = DataFrame(
+                ms2_peak_id = CharacterList(character()),
+                ms2_peak_cor = NumericList(numeric()))))
+    cors <- vapply(chr_2@.Data, xcms:::.correlate_chromatogram, y = chr_1[1, 1],
                    numeric(1), align = "approx")
     pks <- pks[which(cors >= minCor), , drop = FALSE]
     if (nrow(pks)) {

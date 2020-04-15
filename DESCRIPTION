@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.9.2
+Version: 3.9.3
 Title: LC-MS and GC-MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
@@ -51,7 +51,6 @@ Imports:
     RColorBrewer,
     plyr,
     RANN,
-    multtest,
     MassSpecWavelet (>= 1.5.2),
     S4Vectors,
     robustbase,
@@ -69,6 +68,7 @@ Suggests:
     testthat,
     pander,
     magrittr,
+    multtest,
     MALDIquant,
     pheatmap
 Enhances:
@@ -138,6 +138,7 @@ Collate:
     'netCDF.R'
     'plotQC.R'
     'ramp.R'
+    'remove-MsCoreUtils-function.R'
     'specDist.R'
     'write.mzquantML.R'
     'writemzdata.R'

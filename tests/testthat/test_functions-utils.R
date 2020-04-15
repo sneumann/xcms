@@ -332,3 +332,14 @@ test_that(".reduce works", {
     expect_equal(unname(res[, 1]), 3)
     expect_equal(unname(res[, 2]), 10)
 })
+
+test_that("groupOverlaps works", {
+    x <- c(12.2, 13, 5)
+    y <- c(16, 15, 6)
+    res <- groupOverlaps(x, y)
+    expect_true(is.list(res))
+    expect_equal(length(res), 2)
+    expect_equal(res, list(3, 1:2))
+
+    expect_error(groupOverlaps(x, 1:2), "lengths differ")
+})

@@ -17,7 +17,7 @@ test_that(".getPeaks_xxx functions works", {
     pks_n <- .getPeaks_new(faahko_xr_1, peakrange = pks_range, step = 0.3)
     expect_equal(pks_o, pks_n)
     expect_true(sum(pks_o[, "into"] != pks_tmp[, "into"]) > 0)
-    
+
     ## Change profile generation settings.
     tmp <- deepCopy(faahko_xr_1)
     tmp@profmethod <- "binlin"
@@ -29,7 +29,7 @@ test_that(".getPeaks_xxx functions works", {
     expect_true(cor(pks_o[, "into"], pks_n[, "into"]) > 0.999)
     expect_true(sum(pks_o[, "into"] != pks_tmp[, "into"]) > 0)
     pks_tmp <- pks_o
-    
+
     ## Change profile generation settings.
     tmp@profmethod <- "binlinbase"
     expect_warning(pks_o <- .getPeaks_orig(tmp, peakrange = pks_range,
@@ -70,7 +70,7 @@ test_that("phenoDataFromPaths and others don't fail", {
     ##xcms::phenoData(xs) <- pd
     ## https://stat.ethz.ch/pipermail/r-devel/2008-April/049184.html
     xs <- xcms::`phenoData<-`(xs, pd)
-    
+
     xsg <- group(xs)
 
     pd <- phenoDataFromPaths(files)

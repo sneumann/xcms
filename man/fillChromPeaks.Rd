@@ -93,8 +93,11 @@ chromatographic peaks.}
 
 \item{param}{A \code{FillChromPeaksParam} object with all settings.}
 
-\item{msLevel}{\code{integer(1)} defining the MS level. Currently only MS
-level 1 is supported.}
+\item{msLevel}{\code{integer(1)} defining the MS level on which peak filling
+should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+on one MS level at a time is supported, to fill in peaks for MS level 1
+and 2 run first using \code{msLevel = 1} and then (on the returned
+result object) again with \code{msLevel = 2}.}
 
 \item{BPPARAM}{Parallel processing settings.}
 }
@@ -122,8 +125,8 @@ the signal integration for missing peaks.
 Integrate signal in the mz-rt area of a feature (chromatographic
 peak group) for samples in which no chromatographic peak for this
 feature was identified and add it to the \code{chromPeaks}. Such peaks
-will have a \code{TRUE} in the \code{chromPeakData} data frame containing
-peak annotations.
+will have a \code{TRUE} in column \code{"is_filled"} in the
+\code{chromPeakData} data frame containing peak annotations.
 }
 \details{
 After correspondence (i.e. grouping of chromatographic peaks across
@@ -184,7 +187,8 @@ raw_data <- readMSData(fls[1:2], mode = "onDisk")
 ## Create a CentWaveParam object. Note that the noise is set to 10000 to
 ## speed up the execution of the example - in a real use case the default
 ## value should be used, or it should be set to a reasonable value.
-cwp <- CentWaveParam(ppm = 20, noise = 10000, snthresh = 40)
+cwp <- CentWaveParam(ppm = 20, prefilter = c(3, 10000),
+    noise = 10000, snthresh = 40)
 
 res <- findChromPeaks(raw_data, param = cwp)
 

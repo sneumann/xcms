@@ -1,5 +1,28 @@
+Changes in version 3.9.3
+
+- Move multtest from Imports to Suggests to avoid duplicated method definition
+  for plot (issue #459).
+- Add support for peak filling from MS level > 1 to fillChromPeaks.
+- featureValues gains parameter msLevel to extract feature values for features
+  of all, or from a specific MS level.
+- refineChromPeaks supports different MS levels.
+- Added support to perform correspondence analysis on MS level > 1 and add the
+  respective results to already present feature definitions.
+- hasChromPeaks and hasFeatures gain parameter msLevel to check for presence of
+  chromatographic peaks or features from a specific MS level.
+
+
 Changes in version 3.9.2
 
+- Fix featureChromatograms and chromatograms on a XCMSnExp object with features:
+  features can be duplicated across rows (EICs).
+- findChromPeaks: add parameter `add` to allow several rounds of peak detections
+  on the same object.
+- Small performance enhancement in fillChromPeaks.
+- Better support for MS > 1 data in fillChromPeaks: skip MS level 2 spectra for
+  filling in.
+- Add refineChromPeaks for XChromatogram and XChromatograms objects.
+- Add groupOverlaps function to group arbitrary ranges.
 - Add quantify,XCMSnExp object to quantify an XCMSnExp into a
   SummarizedExperiment.
 - Fine-tune MergeNeighboringPeaks peak refinement method: the average of the

@@ -328,7 +328,8 @@ dropGenericProcessHistory <- function(x, fun) {
 #' @noRd
 .getChromPeakData <- function(object, peakArea, sample_idx,
                               mzCenterFun = "weighted.mean",
-                              cn = c("mz", "rt", "into", "maxo", "sample")) {
+                              cn = c("mz", "rt", "into", "maxo", "sample"),
+                              msLevel = 1L) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     ncols <- length(cn)
@@ -338,11 +339,18 @@ dropGenericProcessHistory <- function(x, fun) {
     res[, c("mzmin", "mzmax")] <- peakArea[, c("mzmin", "mzmax")]
     ## Load the data
     message("Requesting ", nrow(res), " peaks from ",
-             basename(fileNames(object)), " ... ", appendLF = FALSE)
+            basename(fileNames(object)), " ... ", appendLF = FALSE)
+    object <- filterRt(
+        object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
+    object <- filterMsLevel(object, msLevel)
+    if (!length(object)) {
+        message("FAIL: no MS level ", msLevel, " data available.")
+        return(res)
+    }
     spctr <- spectra(object, BPPARAM = SerialParam())
-    mzs <- lapply(spctr, mz)
+    mzs <- lapply(spctr, function(z) z@mz)
     valsPerSpect <- lengths(mzs)
-    ints <- unlist(lapply(spctr, intensity), use.names = FALSE)
+    ints <- unlist(lapply(spctr, function(z) z@intensity), use.names = FALSE)
     rm(spctr)
     mzs <- unlist(mzs, use.names = FALSE)
     mzs_range <- range(mzs)
@@ -395,7 +403,7 @@ dropGenericProcessHistory <- function(x, fun) {
         }
     }
     message("got ", sum(!is.na(res[, "into"])), ".")
-    return(res)
+    res
 }
 
 #' @description Same as getChromPeakData, just without retention time.
@@ -514,7 +522,7 @@ dropGenericProcessHistory <- function(x, fun) {
                                             mzCenterFun = "weighted.mean",
                                             param = MatchedFilterParam(),
                                             cn = c("mz", "rt", "into", "maxo",
-                                                   "sample")) {
+                                                   "sample"), msLevel = 1L) {
     if (length(fileNames(object)) != 1)
         stop("'object' should be an XCMSnExp for a single file!")
     ncols <- length(cn)
@@ -526,6 +534,13 @@ dropGenericProcessHistory <- function(x, fun) {
     ## Load the data
     message("Requesting ", nrow(res), " peaks from ",
             basename(fileNames(object)), " ... ", appendLF = FALSE)
+    object <- filterRt(
+        object, rt = range(peakArea[, c("rtmin", "rtmax")]) + c(-2, 2))
+    object <- filterMsLevel(object, msLevel)
+    if (!length(object)) {
+        message("FAIL: no MS level ", msLevel, " data available.")
+        return(res)
+    }
     spctr <- spectra(object, BPPARAM = SerialParam())
     mzs <- lapply(spctr, mz)
     vps <- lengths(mzs)
@@ -676,10 +691,9 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
     pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(object, msLevel = msLevel),
         peakIndex = .peakIndex(
-            .update_feature_definitions(featureDefinitions(object),
-                                        rownames(chromPeaks(object)),
-                                        rownames(chromPeaks(object,
-                                                            msLevel = msLevel)))),
+            .update_feature_definitions(
+                featureDefinitions(object), rownames(chromPeaks(object)),
+                rownames(chromPeaks(object, msLevel = msLevel)))),
         sampleIndex = subs,
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)
@@ -1685,7 +1699,8 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #'                    mode = "onDisk")
 #'
 #' ## Perform peak detection; parameters set to reduce processing speed
-#' data <- findChromPeaks(data, CentWaveParam(noise = 10000, snthresh = 40))
+#' data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
+#'     noise = 10000, snthresh = 40))
 #'
 #' ## Correspondence analysis
 #' data <- groupChromPeaks(data, param = PeakDensityParam(sampleGroups = c(1, 1)))
@@ -2134,13 +2149,20 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'
 #' Extract ion chromatograms for features in an [XCMSnExp-class] object. The
 #' function returns for each feature its extracted ion chromatogram and all
-#' associated peaks with it.
+#' associated peaks with it. The chromatogram is extracted from the m/z - rt
+#' region including all chromatographic peaks of that features (i.e. based on
+#' the ranges of `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"` of all
+#' chromatographic peaks of the feature).
 #'
 #' By default only chromatographic peaks associated with a feature are included
-#' for an extracted ion chromatogram. Setting `include = "all"` (instead of
-#' the default `include = "feature_only"`) will return all chromatographic peaks
-#' identified in the m/z - rt data slice of a feature (and eventually also other
-#' features within that region).
+#' for an extracted ion chromatogram (parameter `include = "feature_only"`). By
+#' setting `include = "apex_within"` all chromatographic peaks (and eventually
+#' the feature which they are part of - if feature definitions are present)
+#' that have their apex position within the m/z - rt range from which the
+#' chromatogram is extracted are returned too.
+#' With `include = "any"` or `include = "all"` all chromatographic peaks (and
+#' eventually the feature in which they are present) overlapping the m/z and rt
+#' range will be returned.
 #'
 #' @param x `XCMSnExp` object with grouped chromatographic peaks.
 #'
@@ -2157,9 +2179,10 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'     of the features in `featureDefinitions`, feature IDs (row names of
 #'     `featureDefinitions`) or a logical vector.
 #'
-#' @param include `character(1)` defining which chromatographic peaks and
-#'     feature definitions should be included in the returned
-#'     [XChromatograms()]. See description above for details.
+#' @param include `character(1)` defining which chromatographic peaks (and
+#'     related feature definitions) should be included in the returned
+#'     [XChromatograms()]. Defaults to `"feature_only"`; See description above
+#'     for options and details.
 #'
 #' @param filled `logical(1)` whether filled-in peaks should be included in
 #'     the result object. The default is `filled = FALSE`, i.e. only detected
@@ -2179,25 +2202,30 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' library(xcms)
 #' library(faahKO)
 #' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
 #'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
 #' ## Do a simple and fast preprocessing on a subset of the test data
 #' od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
 #' od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-#'     noise = 1000))
+#'     noise = 1000, prefilter = c(3, 10000)))
 #' od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
 #' od <- groupChromPeaks(od,
-#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
+#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 2)))
 #'
-#' ## Extract ion chromatograms for each feature
-#' chrs <- featureChromatograms(od)
+#' ## Get the feature definitions
+#' featureDefinitions(od)
+#'
+#' ## Extract ion chromatograms for the first 3 features. Parameter
+#' ## `features` can be either the feature IDs or feature indices.
+#' chrs <- featureChromatograms(od, features = 1:3)
 #'
 #' ## Plot the XIC for the first feature using different colors for each file
 #' par(mfrow = c(1, 2))
-#' plot(chrs[1, ], col = c("red", "green", "blue"))
+#' plot(chrs[1, ], col = c("red", "green"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
-                                 features, include = c("feature_only", "all"),
+                                 features,
+                                 include = c("feature_only", "apex_within",
+                                             "any", "all"),
                                  filled = FALSE, ...) {
     include <- match.arg(include)
     if (!hasFeatures(x))
@@ -2227,35 +2255,58 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         rownames(chromPeaks(x)) <- rownames(pks)
     }
     pk_idx <- featureDefinitions(x)$peakidx[features]
+    rt_cols <- c("rtmin", "rtmax")
+    mz_cols <- c("mzmin", "mzmax")
     mat <- do.call(rbind, lapply(pk_idx, function(z) {
         pks_current <- pks[z, , drop = FALSE]
-        c(range(pks_current[, c("rtmin", "rtmax")]),
-          range(pks_current[, c("mzmin", "mzmax")]))
+        c(range(pks_current[, rt_cols]),
+          range(pks_current[, mz_cols]))
     }))
+    include_peaks <- "apex_within"
+    if (include %in% c("any", "all"))
+        include_peaks <- "any"
     mat[, 1] <- mat[, 1] - expandRt
     mat[, 2] <- mat[, 2] + expandRt
     colnames(mat) <- c("rtmin", "rtmax", "mzmin", "mzmax")
     chrs <- chromatogram(x, rt = mat[, 1:2], mz = mat[, 3:4],
-                         aggregationFun = aggregationFun, filled = filled, ...)
+                         aggregationFun = aggregationFun, filled = filled,
+                         include = include_peaks, ...)
     if (include == "feature_only") {
-        pk_ids <- lapply(pk_idx, function(z) rownames(pks)[z])
+        ## Loop over rows/features:
+        ## subset to peaks of a feature.
         fts_all <- featureDefinitions(chrs)
         pks_all <- chromPeaks(chrs)
         chrs@featureDefinitions <- fts_all[integer(), ]
-        for (i in 1:nrow(chrs)) {
-            for (j in 1:ncol(chrs)) {
+        nr <- nrow(chrs)
+        nc <- ncol(chrs)
+        ft_defs <- vector("list", nr)
+        ft_ids <- rownames(featureDefinitions(x))[features]
+        ## Keep only a single feature per row
+        ## Keep only peaks for the features of interest.
+        for (i in seq_len(nr)) {
+            ft_def <- fts_all[fts_all$row == i & rownames(fts_all) == ft_ids[i],
+                            , drop = FALSE]
+            ft_defs[[i]] <- ft_def
+            pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
+            for (j in seq_len(nc)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
                 if (nrow(cur_pks)) {
-                    keep <- rownames(cur_pks) %in% pk_ids[[i]]
-                    chrs@.Data[i, j][[1]]@chromPeaks <- cur_pks[keep, ,
-                                                                drop = FALSE]
+                    keep <- rownames(cur_pks) %in% pk_ids
+                    chrs@.Data[i, j][[1]]@chromPeaks <-
+                        cur_pks[keep, , drop = FALSE]
                     chrs@.Data[i, j][[1]]@chromPeakData <-
                         chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
                 }
             }
         }
-        chrs@featureDefinitions <- .subset_features_on_chrom_peaks(
-            fts_all, pks_all, chromPeaks(chrs))
+        pks_sub <- chromPeaks(chrs)
+        ## Update the index/mapping between features and peaks (in a loop to
+        ## support duplicated features).
+        fts <- lapply(seq_len(nr), function(r) {
+            .subset_features_on_chrom_peaks(
+                ft_defs[[r]], pks_all, pks_sub)
+        })
+        chrs@featureDefinitions <- do.call(rbind, fts)
     }
     if (validObject(chrs))
         chrs
@@ -2739,8 +2790,9 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     pkd <- chromPeakData(x)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    if (any(chromPeakData(x)$ms_level != 1))
-        stop("Currently only MS level 1 peaks are supported.")
+    ms_level <- unique(chromPeakData(x)$ms_level)
+    if (length(ms_level) != 1)
+        stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
     x <- dropChromPeaks(x)
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
@@ -2777,7 +2829,8 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     }
     chr_def_mat <- do.call(rbind, chr_def_mat)
     chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
-                         rt = chr_def_mat[, c(3, 4)])
+                         rt = chr_def_mat[, c(3, 4)],
+                         msLevel = ms_level)
     ## Now proceed to process them.
     res_list <- pkd_list <- vector("list", length(pk_groups))
     for (i in seq_along(pk_groups)) {

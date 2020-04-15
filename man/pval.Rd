@@ -17,8 +17,5 @@ pval(X, classlabel, teststat)
   A numeric vector of p-values.
 }
 \author{Colin A. Smith, \email{csmith@scripps.edu}}
-\seealso{
-  \code{\link{mt.teststat}}
-}
 \keyword{univar}
 \keyword{internal}

@@ -15,7 +15,7 @@ importMethodsFrom("Biobase", "classVersion", "classVersion<-", "phenoData",
 importFrom("IRanges", "CharacterList", "NumericList")
 importClassesFrom("IRanges", "CharacterList", "NumericList")
 
-importFrom("graphics", "plot", "image", "boxplot", "matplot", "rect", "axis",
+importFrom("graphics", "image", "boxplot", "matplot", "rect", "axis",
            "grid", "mtext", "polygon")
 importFrom("mzR", "peaks", "close", "openMSfile", "header")
 importFrom("lattice", "levelplot", "panel.rect", "panel.levelplot",
@@ -24,6 +24,7 @@ importFrom("plyr", "rbind.fill")
 importFrom("robustbase", "lmrob", "lmrob.control")
 import("RColorBrewer")
 import("BiocParallel")
+## importMethodsFrom("stats4", "plot")
 
 ## import("S4Vectors")
 importClassesFrom("S4Vectors", "Rle", "DataFrame")
@@ -50,7 +51,7 @@ importFrom("utils", "flush.console", "head", "object.size",
            "write.table")
 
 ## New imports from packages moved from Suggests to Imports:
-importFrom("multtest", "mt.teststat")
+## importFrom("multtest", "mt.teststat")
 importFrom("RANN", "nn2")
 importFrom("MassSpecWavelet", "peakDetectionCWT", "tuneInPeakInfo")
 
@@ -251,7 +252,8 @@ export(
     "featureChromatograms",
     "hasFilledChromPeaks",
     "findChromPeaksIsolationWindow",
-    "reconstructChromPeakSpectra"
+    "reconstructChromPeakSpectra",
+    "groupOverlaps"
 )
 
 ## New analysis methods
