@@ -3,6 +3,7 @@ Changes in version 3.9.4
 - Fix issue in centWave which skips peak detection depending on minimum
   peakwidth (issue #445): add parameter `extendLengthMSW` in `CentWaveParam`.
   Thanks to William Kumler for contributing the fix.
+- Tentatively reduce memory requirements in `fillChromPeaks`.
 
 
 Changes in version 3.9.3
