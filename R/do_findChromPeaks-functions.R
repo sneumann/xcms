@@ -141,7 +141,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                                        roiList = list(),
                                        firstBaselineCheck = TRUE,
                                        roiScales = NULL,
-                                       sleep = 0) {
+                                       sleep = 0,
+                                       extendLengthMSW = FALSE) {
     if (getOption("originalCentWave", default = TRUE)) {
         ## message("DEBUG: using original centWave.")
         .centWave_orig(mz = mz, int = int, scantime = scantime,
@@ -151,7 +152,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                        mzdiff = mzdiff, fitgauss = fitgauss, noise = noise,
                        verboseColumns = verboseColumns, roiList = roiList,
                        firstBaselineCheck = firstBaselineCheck,
-                       roiScales = roiScales, sleep = sleep)
+                       roiScales = roiScales, sleep = sleep,
+                       extendLengthMSW = extendLengthMSW)
     } else {
         ## message("DEBUG: using modified centWave.")
         .centWave_new(mz = mz, int = int, scantime = scantime,
@@ -172,7 +174,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
                            integrate = 1, mzdiff = -0.001, fitgauss = FALSE,
                            noise = 0, ## noise.local=TRUE,
                            sleep = 0, verboseColumns = FALSE, roiList = list(),
-                           firstBaselineCheck = TRUE, roiScales = NULL) {
+                           firstBaselineCheck = TRUE, roiScales = NULL,
+                           extendLengthMSW = FALSE) {
     ## Input argument checking.
     if (missing(mz) | missing(int) | missing(scantime) | missing(valsPerSpect))
         stop("Arguments 'mz', 'int', 'scantime' and 'valsPerSpect'",
@@ -417,7 +420,8 @@ do_findChromPeaks_centWave <- function(mz, int, scantime, valsPerSpect,
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next
-        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh')
+        wCoefs <- MSW.cwt(d, scales = scales, wavelet = 'mexh', 
+                          extendLengthMSW = extendLengthMSW)
         if (!(!is.null(dim(wCoefs)) && any(wCoefs- baseline >= sdthr)))
             next
         if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise
@@ -2613,7 +2617,7 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
              verboseColumns = FALSE, roiList = list(),
              firstBaselineCheck = TRUE, roiScales = NULL, snthreshIsoROIs = 6.25,
              maxCharge = 3, maxIso = 5, mzIntervalExtension = TRUE,
-             polarity = "unknown") {
+             polarity = "unknown", extendLengthMSW = FALSE) {
         ## Input argument checking: most of it will be done in
         ## do_findChromPeaks_centWave
         polarity <- match.arg(polarity, c("positive", "negative", "unknown"))
@@ -2633,7 +2637,8 @@ do_findChromPeaks_centWaveWithPredIsoROIs <-
                                               verboseColumns = TRUE,
                                               roiList = roiList,
                                               firstBaselineCheck = firstBaselineCheck,
-                                              roiScales = roiScales)
+                                              roiScales = roiScales,
+                                              extendLengthMSW = extendLengthMSW)
         return(do_findChromPeaks_addPredIsoROIs(mz = mz, int = int,
                                                 scantime = scantime,
                                                 valsPerSpect = valsPerSpect,
@@ -3156,6 +3161,9 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #'
 #' @param firstBaselineCheck `logical(1)`. If `TRUE` continuous data within
 #'     regions of interest is checked to be above the first baseline.
+#'     
+#' @param extendLengthMSW `logical(1)`. If `TRUE` the "open" method of EIC
+#'     extension is used, rather than the default "reflect" method.
 #'
 #' @param ... currently ignored.
 #'
@@ -3178,7 +3186,7 @@ peaksWithMatchedFilter <- function(int, rt, fwhm = 30, sigma = fwhm / 2.3548,
 #' - `"intb"`: per-peak baseline corrected integrated peak intensity.
 #' - `"maxo"`: maximum (original) intensity of the peak.
 #' - `"sn"`: signal to noise ratio of the peak defined as
-#'   `(maxo - baseline)/sd` with `sd` being the standard defiatio of the local
+#'   `(maxo - baseline)/sd` with `sd` being the standard deviation of the local
 #'   chromatographic noise.
 #'
 #' Additional columns for `verboseColumns = TRUE`:
@@ -3229,6 +3237,7 @@ peaksWithCentWave <- function(int, rt,
                               noise = 0, ## noise.local=TRUE,
                               verboseColumns = FALSE,
                               firstBaselineCheck = TRUE,
+                              extendLengthMSW = FALSE,
                               ...
                               ) {
     if (length(peakwidth) != 2)
@@ -3338,7 +3347,8 @@ peaksWithCentWave <- function(int, rt,
         ## is there any data above S/N * threshold ?
         if (!(any(fd - baseline >= sdthr)))
             next
-        wCoefs <- xcms:::MSW.cwt(d, scales = scales, wavelet = 'mexh')
+        wCoefs <- xcms:::MSW.cwt(d, scales = scales, wavelet = 'mexh', 
+                                 extendLengthMSW = extendLengthMSW)
         if (!(!is.null(dim(wCoefs)) && any((wCoefs - baseline) >= sdthr)))
             next
         if (td[length(td)] == Nscantime) ## workaround, localMax fails otherwise

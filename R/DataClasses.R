@@ -484,6 +484,12 @@ NULL
 #' @param roiScales Optional numeric vector with length equal to \code{roiList}
 #'     defining the scale for each region of interest in \code{roiList} that
 #'     should be used for the centWave-wavelets.
+#'     
+#' @param extendLengthMSW Option to force centWave to use all scales when 
+#' running centWave rather than truncating with the EIC length. Uses the "open"
+#' method to extend the EIC to a integer base-2 length prior to being passed to 
+#' \code{convolve} rather than the default "reflect" method. See 
+#' https://github.com/sneumann/xcms/issues/445 for more information.
 #'
 #' @details
 #'
@@ -534,7 +540,7 @@ NULL
 #'     for a chromatographic peak detection using the centWave method. Instances
 #'     should be created with the \code{CentWaveParam} constructor.
 #'
-#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales See corresponding parameter above. \code{.__classVersion__} stores
+#' @slot .__classVersion__,ppm,peakwidth,snthresh,prefilter,mzCenterFun,integrate,mzdiff,fitgauss,noise,verboseColumns,roiList,firstBaselineCheck,roiScales,extendLengthMSW See corresponding parameter above. \code{.__classVersion__} stores
 #' the version from the class. Slots values should exclusively be accessed
 #' \emph{via} the corresponding getter and setter methods listed above.
 #'
@@ -576,7 +582,8 @@ setClass("CentWaveParam",
              verboseColumns = "logical",
              roiList = "list",
              firstBaselineCheck = "logical",
-             roiScales = "numeric"
+             roiScales = "numeric",
+             extendLengthMSW = "logical"
          ),
          contains = c("Param"),
          prototype = prototype(
@@ -592,7 +599,8 @@ setClass("CentWaveParam",
              verboseColumns = FALSE,
              roiList = list(),
              firstBaselineCheck = TRUE,
-             roiScales = numeric()
+             roiScales = numeric(),
+             extendLengthMSW = FALSE
          ),
          validity = function(object) {
              msg <- character()

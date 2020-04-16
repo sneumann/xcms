@@ -22,7 +22,8 @@ do_findChromPeaks_centWave(
   roiList = list(),
   firstBaselineCheck = TRUE,
   roiScales = NULL,
-  sleep = 0
+  sleep = 0,
+  extendLengthMSW = FALSE
 )
 }
 \arguments{
@@ -107,6 +108,12 @@ iterations. Defaults to \code{sleep = 0}. If \code{> 0} a plot is
 generated visualizing the identified chromatographic peak. Note: this
 argument is for backward compatibility only and will be removed in
 future.}
+
+\item{extendLengthMSW}{Option to force centWave to use all scales when 
+running centWave rather than truncating with the EIC length. Uses the "open"
+method to extend the EIC to a integer base-2 length prior to being passed to 
+\code{convolve} rather than the default "reflect" method. See 
+https://github.com/sneumann/xcms/issues/445 for more information.}
 }
 \value{
 A matrix, each row representing an identified chromatographic peak,

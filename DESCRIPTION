@@ -24,7 +24,10 @@ Authors@R: c(
 	   comment = c(ORCID = "0000-0002-6977-7147")),
 	   person(given = "Michael", family = "Witting",
 	   email = "michael.witting@helmholtz-muenchen.de",
-	   role = "ctb")
+	   role = "ctb"),
+	   person(given = "William", family = "Kumler",
+	   email = "wkumler@uw.edu", role = "ctb",
+	   comment = c(ORCID = "0000-0002-5022-8009"))
 	   )
 Author: Colin A. Smith <csmith@scripps.edu>,
     Ralf Tautenhahn <rtautenh@gmail.com>,
