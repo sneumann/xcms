@@ -2905,7 +2905,8 @@ setMethod("fillChromPeaks",
               ## Add mzmed column - needed for MSW peak filling.
               pkArea <- cbind(group_idx = 1:nrow(pkArea), pkArea,
                               mzmed = as.numeric(fdef$mzmed))
-              pkGrpVal <- featureValues(object, msLevel = msLevel)
+              pkGrpVal <- featureValues(object, value = "index",
+                                        msLevel = msLevel)
               message(".", appendLF = FALSE)
               ## Check if there is anything to fill...
               if (!any(is.na(rowSums(pkGrpVal)))) {
@@ -2944,6 +2945,9 @@ setMethod("fillChromPeaks",
                   ## found in a sample.
                   pkAreaL[[i]] <- pkArea[is.na(pkGrpVal[, i]), , drop = FALSE]
               }
+              rm(pkGrpVal)
+              rm(pkArea)
+              rm(min_fdata)
               message(" OK\nStart integrating peak areas from original files")
               ## Get to know what algorithm was used for the peak detection.
               ## Special cases are MSWParam (no retention time) and
@@ -2993,6 +2997,7 @@ setMethod("fillChromPeaks",
                                                   msLevel = msLevel),
                                   BPPARAM = BPPARAM, SIMPLIFY = FALSE)
               }
+              rm(objectL)
 
               res <- do.call(rbind, res)
               ## cbind the group_idx column to track the feature/peak group.
@@ -3004,19 +3009,23 @@ setMethod("fillChromPeaks",
                           "peaks! Consider increasing 'expandMz' and 'expandRt'.")
                   return(object)
               }
+              ## Intermediate cleanup of objects.
+              rm(pkAreaL)
+              gc()
 
               ## Get the msFeatureData:
               newFd <- new("MsFeatureData")
               newFd@.xData <- .copy_env(object@msFeatureData)
-              incr <- nrow(chromPeaks(object))
+              object@msFeatureData <- new("MsFeatureData")
+              incr <- nrow(chromPeaks(newFd))
               for (i in unique(res[, "group_idx"])) {
                   fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
                   (which(res[, "group_idx"] == i) + incr))
               }
               ## Combine feature data with those from other MS levels
               fdef <- rbind(
-                  fdef, featureDefinitions(object)[
-                           featureDefinitions(object)$ms_level != msLevel, ,
+                  fdef, featureDefinitions(newFd)[
+                           featureDefinitions(newFd)$ms_level != msLevel, ,
                            drop = FALSE])
               if (!any(colnames(fdef) == "ms_level"))
                   fdef$ms_level <- 1L
@@ -3024,7 +3033,7 @@ setMethod("fillChromPeaks",
                   fdef <- fdef[order(fdef$ms_level), ]
               ## Define IDs for the new peaks; include fix for issue #347
               maxId <- max(as.numeric(
-                  sub("M", "", sub("^CP", "", rownames(chromPeaks(object))))))
+                  sub("M", "", sub("^CP", "", rownames(chromPeaks(newFd))))))
               if (maxId < 1)
                   stop("chromPeaks matrix lacks rownames; please update ",
                        "'object' with the 'updateObject' function.")
@@ -3032,7 +3041,7 @@ setMethod("fillChromPeaks",
               rownames(res) <- sprintf(
                   paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
                   (maxId + 1L):toId)
-              chromPeaks(newFd) <- rbind(chromPeaks(object),
+              chromPeaks(newFd) <- rbind(chromPeaks(newFd),
                                          res[, -ncol(res)])
               cpd <- chromPeakData(newFd)[rep(1L, nrow(res)), , drop = FALSE]
               cpd[,] <- NA
