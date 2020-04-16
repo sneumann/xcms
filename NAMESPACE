@@ -3,7 +3,7 @@ useDynLib(xcms)
 importFrom("utils", "capture.output")
 import("methods")
 importMethodsFrom("ProtGenerics", "peaks", "chromatogram", "writeMSData",
-    "polarity<-", "isCentroided", "peaks<-", "isolationWindowTargetMz")
+    "polarity<-", "centroided", "isCentroided", "peaks<-", "isolationWindowTargetMz")
 importFrom("BiocGenerics", "updateObject", "fileName", "subset",
     "dirname", "dirname<-")
 ## import("Biobase")
