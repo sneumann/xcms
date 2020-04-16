@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.9.3
+Version: 3.9.4
 Title: LC-MS and GC-MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
