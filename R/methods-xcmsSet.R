@@ -5,16 +5,19 @@
 ## show
 setMethod("show", "xcmsSet", function(object) {
     cat("An \"xcmsSet\" object with", nrow(object@phenoData), "samples\n\n")
-    cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
-                              collapse = "-"),
-        " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
-                            collapse = "-"),
-        " minutes)\n", sep = "")
-    cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
-                             collapse = "-"), "m/z\n")
-    cat("Peaks:", nrow(object@peaks), "(about",
-        round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
-    cat("Peak Groups:", nrow(object@groups), "\n")
+    if (nrow(object@peaks)) {
+        cat("Time range: ", paste(round(range(object@peaks[,"rt"]), 1),
+                                  collapse = "-"),
+            " seconds (", paste(round(range(object@peaks[,"rt"])/60, 1),
+                                collapse = "-"),
+            " minutes)\n", sep = "")
+        cat("Mass range:", paste(round(range(object@peaks[,"mz"], na.rm = TRUE), 4),
+                                 collapse = "-"), "m/z\n")
+        cat("Peaks:", nrow(object@peaks), "(about",
+            round(nrow(object@peaks)/nrow(object@phenoData)), "per sample)\n")
+        cat("Peak Groups:", nrow(object@groups), "\n")
+    } else
+        cat("Peaks: 0\n")
     cat("Sample classes:", paste(levels(sampclass(object)), collapse = ", "), "\n\n")
 
     ## Processing info.
@@ -1968,11 +1971,25 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
     x <- updateObject(x)
     ## don't allow i, but allow j to be: numeric or logical. If
     ## it's a character vector <- has to fit to sampnames(x)
-    if(!missing(i))
+    if (!missing(i))
         stop("Subsetting to rows is not supported!")
-    if(missing(j)) {
+    if (missing(j)) {
         j <- 1:length(sampnames(x))
     } else {
+        if (is.character(j)) {
+            ## check if these match to the sampnames.
+            matches <- match(j, sampnames(x))
+            if(length(matches)!=length(j))
+                stop("All provided sample names have to match the",
+                     " sample names in the xcmsSet!")
+            j <- matches
+        }
+        if (is.logical(j)) {
+            if (length(j) != length(sampnames(x)))
+                stop("If j is a logical its length has to match",
+                     " the number of samples in the xcmsSet!")
+            j <- which(j)
+        }
         if (!length(j)) {
             tmp <- new("xcmsSet")
             cn <- c("rtmin", "rtmax", "rt", "mzmin", "mzmax", "mz",
@@ -1982,24 +1999,10 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
             return(tmp)
         }
     }
-    if(class(j)=="character"){
-        ## check if these match to the sampnames.
-        matches <- match(j, sampnames(x))
-        if(length(matches)!=length(j))
-            stop("All provided sample names have to match the",
-                 " sample names in the xcmsSet!")
-        j <- matches
-    }
-    if(class(j)=="logical"){
-        if(length(j) != length(sampnames(x)))
-            stop("If j is a logical its length has to match",
-                 " the number of samples in the xcmsSet!")
-        j <- which(j)
-    }
-    if(class(j)=="numeric")
+    if (class(j) == "numeric")
         j <- as.integer(j)
-    if(class(j)!="integer")
-        stop("j has to be a numeric vector specifying the",
+    if(!is.integer(j))
+        stop("j has to be an integer vector specifying the",
              " index of the samples for which the data has to be extracted")
     ## check if j is within the range of 1:length(sampnames)
     if(any(!j %in% (1:length(sampnames(x)))))
