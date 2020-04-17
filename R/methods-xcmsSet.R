@@ -1970,8 +1970,18 @@ setMethod("[", "xcmsSet", function(x, i, j, ..., drop = FALSE) {
     ## it's a character vector <- has to fit to sampnames(x)
     if(!missing(i))
         stop("Subsetting to rows is not supported!")
-    if(missing(j))
+    if(missing(j)) {
         j <- 1:length(sampnames(x))
+    } else {
+        if (!length(j)) {
+            tmp <- new("xcmsSet")
+            cn <- c("rtmin", "rtmax", "rt", "mzmin", "mzmax", "mz",
+                    "into", "maxo", "sample")
+            pks <- matrix(ncol = length(cn), nrow = 0, dimnames = list(c(), cn))
+            tmp@peaks <- pks
+            return(tmp)
+        }
+    }
     if(class(j)=="character"){
         ## check if these match to the sampnames.
         matches <- match(j, sampnames(x))

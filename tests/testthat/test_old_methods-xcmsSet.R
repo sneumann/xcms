@@ -275,6 +275,10 @@ test_that("[,xcmsSet works", {
         }
     }
 
+    res <- faahko[, integer()]
+    expect_true(is(res, "xcmsSet"))
+    expect_true(nrow(res@peaks) == 0)
+
     xset <- faahko
     idx <- 8
     xsub <- xset[, idx]
