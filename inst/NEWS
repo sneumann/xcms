@@ -4,7 +4,7 @@ Changes in version 3.9.4
   peakwidth (issue #445): add parameter `extendLengthMSW` in `CentWaveParam`.
   Thanks to William Kumler for contributing the fix.
 - Tentatively reduce memory requirements in `fillChromPeaks`.
-
+- Fix issue #467 for fillPeaks() of an xcmsSet converted from an XCMSnSet
 
 Changes in version 3.9.3
 
