@@ -255,7 +255,7 @@ test_that("chromPeakSpectra works", {
     res_sub <- ms2_spectra_for_peaks_from_file(dta, pks, method = "closest_rt")
     expect_true(all(lengths(res_sub) <= 1))
     pks[, "mz"] <- NA
-    res_na <- xcms:::ms2_spectra_for_peaks_from_file(dta, pks)
+    res_na <- ms2_spectra_for_peaks_from_file(dta, pks)
     expect_true(all(lengths(res_na) == 0))
 
     ## ms2_spectra_for_all_peaks
@@ -282,38 +282,38 @@ test_that("chromPeakSpectra works", {
         pks <- chromPeaks(x)
         pks[, "sample"] <- 5
         x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
-        res_all <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
+        res_all <- ms2_spectra_for_peaks_from_file(x, pks)
         expect_equal(length(res_all), nrow(pks))
         expect_equal(names(res_all), rownames(pks))
         expect_true(any(lengths(res_all) > 1))
         tmp <- unlist(res_all)
         expect_true(all(vapply(tmp, fromFile, integer(1)) == 5L))
 
-        res_sub <- xcms:::ms2_spectra_for_peaks_from_file(x, pks, method = "closest_rt")
+        res_sub <- ms2_spectra_for_peaks_from_file(x, pks, method = "closest_rt")
         expect_true(all(lengths(res_sub) <= 1))
         pks[, "mz"] <- NA
-        res_na <- xcms:::ms2_spectra_for_peaks_from_file(x, pks)
+        res_na <- ms2_spectra_for_peaks_from_file(x, pks)
         expect_true(all(lengths(res_na) == 0))
 
         ## ms2_spectra_for_all_peaks
-        res_all <- xcms:::ms2_spectra_for_all_peaks(dta)
+        res_all <- ms2_spectra_for_all_peaks(dta)
         expect_equal(rownames(chromPeaks(dta)), names(res_all))
         ## remove chromPeaks from one file
         tmp <- dta
         chromPeaks(tmp) <- chromPeaks(tmp)[chromPeaks(tmp)[, "sample"] != 3, ]
-        res_tmp <- xcms:::ms2_spectra_for_all_peaks(tmp)
+        res_tmp <- ms2_spectra_for_all_peaks(tmp)
         expect_equal(rownames(chromPeaks(tmp)), names(res_tmp))
         expect_equal(res_all[names(res_tmp)], res_tmp)
         set.seed(123)
         chromPeakData(tmp)$is_filled[sample(1:length(res_tmp), 400)] <- TRUE
-        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp)
+        res_tmp2 <- ms2_spectra_for_all_peaks(tmp)
         expect_equal(res_tmp, res_tmp2)
-        res_tmp2 <- xcms:::ms2_spectra_for_all_peaks(tmp, skipFilled = TRUE)
+        res_tmp2 <- ms2_spectra_for_all_peaks(tmp, skipFilled = TRUE)
         expect_true(all(lengths(res_tmp2[chromPeakData(tmp)$is_filled]) == 0))
 
         ## With subset.
         subs <- sample(1:nrow(chromPeaks(dta)), 5000)
-        res_subs <- xcms:::ms2_spectra_for_all_peaks(dta, subset = subs)
+        res_subs <- ms2_spectra_for_all_peaks(dta, subset = subs)
         expect_true(all(lengths(res_subs[-subs]) == 0))
     }
 })
@@ -585,7 +585,7 @@ test_that(".merge_neighboring_peaks works", {
     expect_true(nrow(res$chromPeakData) == nrow(res$chromPeaks))
     expect_true(nrow(res$chromPeaks) < nrow(chromPeaks(xod_x1)))
 
-    mz_groups <- xcms:::.group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
+    mz_groups <- .group_overlapping_peaks(chromPeaks(xod_x1), ppm = 10)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
 
     ## mz of 305.1: nice example of a split peak.

@@ -326,12 +326,12 @@ test_that("MSWParam works", {
 
     ## Check the .param2list method:
     p <- new("MSWParam", addParams = list(z = "z", bla = 1:4))
-    L <- xcms:::.param2list(p)
+    L <- .param2list(p)
     expect_equal(L$z, "z")
     expect_equal(L$bla, 1:4)
     expect_equal(L$snthresh, 3)
     p <- new("MSWParam")
-    L <- xcms:::.param2list(p)
+    L <- .param2list(p)
     expect_true(!any(names(L) == "addParams"))
     expect_equal(L$snthresh, 3)
 })
@@ -468,7 +468,7 @@ test_that("CentWavePredIsoParam works", {
 
     ## Check the .param2list method:
     p <- new("CentWavePredIsoParam", snthresh = 123)
-    L <- xcms:::.param2list(p)
+    L <- .param2list(p)
     expect_equal(L$snthresh, 123)
 })
 

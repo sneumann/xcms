@@ -1,8 +1,9 @@
 test_that(".createProfileMatrix works", {
-    xr <- deepCopy(faahko_xr_1)
-    mz <- xr@env$mz
-    int <- xr@env$intensity
-    numPerSc <- diff(c(xr@scanindex, length(xr@env$mz)))
+    xr <- filterFile(faahko_od, 1)
+    mz <- mz(xr)
+    int <- unlist(intensity(xr), use.names = FALSE)
+    numPerSc <- lengths(mz)
+    mz <- unlist(mz, use.names = FALSE)
     ## Testing all properties.
     ## o bin
     pm <- .createProfileMatrix(mz = mz, int = int,
@@ -322,13 +323,13 @@ test_that(".reduce works", {
 
     a <- c(3, 4, 8)
     b <- c(7, 5, 10)
-    res <- xcms:::.reduce(a, b)
+    res <- .reduce(a, b)
     expect_equal(res[, 1], c(3, 8))
     expect_equal(res[, 2], c(7, 10))
 
     a <- c(3, 4, 6)
     b <- c(7, 5, 10)
-    res <- xcms:::.reduce(a, b)
+    res <- .reduce(a, b)
     expect_equal(unname(res[, 1]), 3)
     expect_equal(unname(res[, 2]), 10)
 })

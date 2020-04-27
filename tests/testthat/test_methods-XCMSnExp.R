@@ -10,10 +10,6 @@ test_that("XCMSnExp, XCMSnExp works", {
     expect_equal(rts_4, rts_3[[2]])
     rts_4 <- rtime(filterFile(faahko_od, file = 3))
     expect_equal(rts_4, rts_3[[3]])
-    ## Compare with the values we get from an xcmsSet:
-    rtx <- faahko_xs@rt$raw
-    expect_equal(unlist(rtx, use.names = FALSE),
-                 unlist(rtime(faahko_xod, bySample = TRUE), use.names = FALSE))
 })
 
 test_that("mz,XCMSnExp works", {
@@ -144,9 +140,8 @@ test_that("XCMSnExp accessors work", {
     expect_error(chromPeaks(xod) <- pks)
     ## featureDefinitions
     expect_true(!hasFeatures(xod))
-    library(S4Vectors)
-    fd <- DataFrame(faahko_xsg@groups)
-    fd$peakidx <- faahko_xsg@groupidx
+    fd <- featureDefinitions(xod_xg)
+    fd$ms_level <- 2L
     featureDefinitions(xod) <- fd
     expect_true(hasChromPeaks(xod))
     expect_true(hasFeatures(xod))
@@ -1228,25 +1223,18 @@ test_that("signal integration is correct", {
 })
 
 test_that("featureValues,XCMSnExp works", {
-    fdp <- PeakDensityParam(sampleGroups = faahko_xs$class)
-    od_x <- groupChromPeaks(xod_x, param = fdp)
-    xs <- group(faahko_xs, method = "density")
+    fdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    od_x <- groupChromPeaks(faahko_xod, param = fdp)
     fvs <- featureValues(od_x, value = "into")
     expect_equal(rownames(fvs), rownames(featureDefinitions(od_x)))
-    rownames(fvs) <- NULL
-    colnames(fvs) <- NULL
-    gvs <- groupval(xs, value = "into")
-    rownames(gvs) <- NULL
-    colnames(gvs) <- NULL
-    expect_equal(fvs, gvs)
 
     ## Use the internal function
-    res <- xcms:::.feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
                            value = "into", method = "medret",
                            intensity = "into",
                            colnames = basename(fileNames(od_x)))
     expect_equal(featureValues(od_x, value = "into"), res)
-    res <- xcms:::.feature_values(chromPeaks(od_x), featureDefinitions(od_x),
+    res <- .feature_values(chromPeaks(od_x), featureDefinitions(od_x),
                            value = "into", method = "sum",
                            intensity = "into",
                            colnames = basename(fileNames(od_x)))
@@ -1301,7 +1289,7 @@ test_that("featureValues,XCMSnExp works", {
                          prefilter = c(3, 10000))
     tmp <- xod_xg
     fd <- new("MsFeatureData")
-    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    fd@.xData <- .copy_env(tmp@msFeatureData)
     chromPeakData(fd)$ms_level <- 2L
     fd$featureDefinitions$ms_level <- 2L
     lockEnvironment(fd, bindings = TRUE)
@@ -1645,22 +1633,13 @@ test_that("calibrate,XCMSnExp works", {
 
 test_that("adjustRtime,peakGroups works", {
     xod <- faahko_xod
-    xs <- faahko_xs
-    ## Group these
-    xsg <- group(xs)
     xodg <- groupChromPeaks(xod,
-                            param = PeakDensityParam(sampleGroups = xs$class))
+                            param = PeakDensityParam(sampleGroups = rep(1, 3)))
     pks <- chromPeaks(xodg)
-    rownames(pks) <- NULL
-    expect_equal(peaks(xsg), pks[, colnames(peaks(xsg))])
-    expect_equal(xsg@groupidx, featureDefinitions(xodg)$peakidx)
     expect_true(length(processHistory(xodg,
                                       type = .PROCSTEP.PEAK.DETECTION)) == 1)
     expect_true(length(processHistory(xodg,
                                       type = .PROCSTEP.PEAK.GROUPING)) == 1)
-    ## Now do the retention time correction
-    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 0.3)
-    ## minFr <- (length(fileNames(xod)) - 1) / length(fileNames(xod))
     p <- PeakGroupsParam(minFraction = 1, span = 0.3)
     xodr <- adjustRtime(xodg, param = p)
     ## Check that we've got process histories.
@@ -1679,18 +1658,6 @@ test_that("adjustRtime,peakGroups works", {
     expect_true(sum(chromPeaks(xod)[, "rt"] != chromPeaks(xodr)[, "rt"]) > 200)
     expect_true(sum(chromPeaks(xod)[, "rtmin"] != chromPeaks(xodr)[, "rtmin"]) > 200)
     expect_true(sum(chromPeaks(xod)[, "rtmax"] != chromPeaks(xodr)[, "rtmax"]) > 200)
-    ## between xcmsSet and XCMSnExp
-    pks <- chromPeaks(xodr)
-    rownames(pks) <- NULL
-    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
-    ## To compare the adjusted retention time we have to extract it by sample!
-    ## Otherwise the ordering will not be the same, as rtime is ordered by
-    ## retention time, but @rt$raw by sample.
-    expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
-                 unlist(xsr@rt$corrected, use.names = FALSE))
-    ## Just to ensure - are the raw rt the same?
-    expect_equal(unlist(rtime(xod, bySample = TRUE), use.names = FALSE),
-                 unlist(xs@rt$raw, use.names = FALSE))
     ## Check that we get the same by supplying the peakGroupsMatrix.
     pgm <- adjustRtimePeakGroups(xodg, param = p)
     p_2 <- p
@@ -1709,45 +1676,21 @@ test_that("adjustRtime,peakGroups works", {
         p_2)
     ## Doing an additional grouping
     xodrg <- groupChromPeaks(xodr, param = PeakDensityParam(sampleGroups =
-                                                                xs$class))
+                                                                rep(1, 3)))
     expect_true(length(processHistory(xodrg,
                                       type = .PROCSTEP.PEAK.GROUPING)) == 2)
     expect_true(hasAdjustedRtime(xodrg))
     expect_true(hasFeatures(xodrg))
-    xsrg <- group(xsr)
-    expect_equal(xsrg@groupidx, featureDefinitions(xodrg)$peakidx)
 
     ## Mod settings:
-    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1)
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1))
-    pks <- chromPeaks(xodr)
-    rownames(pks) <- NULL
-    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
-    expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
-                 unlist(xsr@rt$corrected, use.names = FALSE))
-
-    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
-                  smooth = "linear")
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1,
                                                       smooth = "linear"))
-    pks <- chromPeaks(xodr)
-    rownames(pks) <- NULL
-    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
-    expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
-                 unlist(xsr@rt$corrected, use.names = FALSE))
-
-    xsr <- retcor(xsg, method = "peakgroups", missing = 0, span = 1,
-                  family = "symmetric")
     xodr <- adjustRtime(xodg, param = PeakGroupsParam(minFraction = 1,
                                                       span = 1,
                                                       family = "symmetric"))
-    pks <- chromPeaks(xodr)
-    rownames(pks) <- NULL
-    expect_equal(pks[, colnames(peaks(xsr))], peaks(xsr))
-    expect_equal(unlist(adjustedRtime(xodr, bySample = TRUE), use.names = FALSE),
-                 unlist(xsr@rt$corrected, use.names = FALSE))
     ## Dropping results.
     tmp <- dropAdjustedRtime(xodr)
     expect_equal(tmp, xod)
@@ -1765,7 +1708,7 @@ test_that("adjustRtime,peakGroups works", {
     expect_equal(unname(rtime(res_sub, bySample = TRUE)[[1]]),
                  unname(rtime(res_sub, bySample = TRUE)[[2]]))
     expect_equal(rtime(res_sub, bySample = TRUE)[[2]],
-                 xcms:::.applyRtAdjustment(rtime(xodg, bySample = TRUE)[[2]],
+                 .applyRtAdjustment(rtime(xodg, bySample = TRUE)[[2]],
                                            rtime(xodg, bySample = TRUE)[[1]],
                                            rtime(res_sub, bySample = TRUE)[[1]]))
     res_sub <- adjustRtime(
@@ -1829,65 +1772,44 @@ test_that("findChromPeaks,MSWParam works", {
     ## Compare old vs new:
     pks <- chromPeaks(fticr_xod)
     rownames(pks) <- NULL
-    expect_equal(pks[, colnames(peaks(fticr_xs))],
-                 peaks(fticr_xs))
 })
 
 test_that("featureValues,XCMSnExp works as with groupval", {
-    od_x <- faahko_xod
-    xs <- faahko_xs
+    fval <- featureValues(xod_xg)
+    expect_true(nrow(fval) == nrow(featureDefinitions(xod_xg)))
+    expect_true(ncol(fval) == length(fileNames(xod_xg)))
+    expect_true(is.numeric(fval))
 
-    p <- PeakDensityParam(sampleGroups = xs$class)
-    od_x <- groupChromPeaks(od_x, param = p)
-
-    xs <- group(xs, method = "density")
-
-    expect_equal(unname(groupval(xs, value = "into")),
-                 unname(featureValues(od_x, value = "into")))
-    expect_equal(unname(groupval(xs, method = "maxint", value = "into")),
-                 unname(featureValues(od_x, method = "maxint", value = "into")))
+    fval <- featureValues(xod_xg, value = "index")
     ## Checking errors
     expect_error(featureValues(od_x, value = "bla"))
 })
 
 test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
-    od_x <- faahko_xod
-    xs <- faahko_xs
     ## Check error if no features were found. issue #273
-    pdp <- PeakDensityParam(sampleGroups = xs$class, minSamples = 30)
-    expect_warning(groupChromPeaks(od_x, param = pdp), "Unable to group any chromatographic peaks.")
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3), minSamples = 30)
+    expect_warning(groupChromPeaks(faahko_xod, param = pdp), "Unable to group any chromatographic peaks.")
 
-    fdp <- PeakDensityParam(sampleGroups = xs$class)
-    od_x <- groupChromPeaks(od_x, param = fdp)
-    xs <- group(xs, method = "density")
-    expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
-    fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
-    rownames(fg) <- NULL
-    expect_equal(xs@groups, fg)
-    expect_true(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = .PROCSTEP.PEAK.GROUPING)[[1]]
+    fdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    res <- groupChromPeaks(faahko_xod, param = fdp)
+    expect_true(hasFeatures(res))
+    expect_true(length(processHistory(res)) == 2)
+    ph <- processHistory(res, type = .PROCSTEP.PEAK.GROUPING)[[1]]
     expect_equal(processParam(ph), fdp)
-    expect_equal(rownames(featureDefinitions(od_x)),
-                 .featureIDs(nrow(featureDefinitions(od_x))))
+    expect_equal(rownames(featureDefinitions(res)),
+                 .featureIDs(nrow(featureDefinitions(res))))
 
-    fdp2 <- PeakDensityParam(sampleGroups = xs$class, binSize = 2,
+    fdp2 <- PeakDensityParam(sampleGroups = rep(1, 3), binSize = 2,
                              minFraction = 0.8)
-    od_x <- groupChromPeaks(od_x, param = fdp2)
-    xs <- group(xs, method = "density", minfrac = 0.8, mzwid = 2)
-    expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
-    fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
-    rownames(fg) <- NULL
-    expect_equal(xs@groups, fg)
-    expect_true(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = .PROCSTEP.PEAK.GROUPING)[[1]]
+    res_2 <- groupChromPeaks(faahko_xod, param = fdp2)
+    expect_true(length(processHistory(res_2)) == 2)
+    ph <- processHistory(res_2, type = .PROCSTEP.PEAK.GROUPING)[[1]]
     expect_equal(processParam(ph), fdp2)
-    expect_equal(rownames(featureDefinitions(od_x)),
-                 .featureIDs(nrow(featureDefinitions(od_x))))
+    expect_equal(rownames(featureDefinitions(res_2)),
+                 .featureIDs(nrow(featureDefinitions(res_2))))
 
-    pdp <- PeakDensityParam(sampleGroups = xs$class)
-    res <- groupChromPeaks(od_x, param = pdp)
+    pdp <- PeakDensityParam(sampleGroups = rep(1, 3))
+    res <- groupChromPeaks(faahko_xod, param = pdp)
     res_2 <- groupChromPeaks(res, param = pdp)
     expect_equal(featureDefinitions(res), featureDefinitions(res_2))
     res_2 <- groupChromPeaks(res, param = pdp, add = TRUE)
@@ -1901,35 +1823,24 @@ test_that("groupChromPeaks,XCMSnExp,PeakDensityParam works", {
     expect_equal(featureDefinitions(res)$peakidx,
                  featureDefinitions(res_2)$peakidx[(nr + 1):(2 * nr)])
 
-    expect_error(groupChromPeaks(od_x, param = pdp, msLevel = 2), "MS level 2")
-    expect_error(groupChromPeaks(od_x, param = pdp, msLevel = 1:4),
+    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(faahko_xod, param = pdp, msLevel = 1:4),
                  "one MS level at a time")
 })
 
 test_that("groupPeaks,XCMSnExp,MzClustParam works", {
-    p <- MzClustParam(sampleGroups = sampclass(fticr_xs))
+    p <- MzClustParam(sampleGroups = rep(1, length(fileNames(fticr_xod))))
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p)
-    fticr_xs2 <- group(fticr_xs, method = "mzClust")
-    expect_equal(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
-    fg <- featureDefinitions(fticr_xod2)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
-    rownames(fg) <- NULL
-    expect_equal(fticr_xs2@groups, fg)
+    expect_true(hasFeatures(fticr_xod2))
     expect_true(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
                          type = .PROCSTEP.PEAK.GROUPING)[[1]]
     expect_equal(processParam(ph), p)
     expect_equal(rownames(featureDefinitions(fticr_xod2)),
                  .featureIDs(nrow(featureDefinitions(fticr_xod2))))
-    p2 <- MzClustParam(sampleGroups = fticr_xs$class, absMz = 1,
-                       minFraction = 0.8)
+    p2 <- MzClustParam(sampleGroups = rep(1, length(fileNames(fticr_xod))),
+                       absMz = 1, minFraction = 0.8)
     fticr_xod2 <- groupChromPeaks(fticr_xod, param = p2)
-    fticr_xs2 <- group(fticr_xs, method = "mzClust", minfrac = 0.8, mzabs = 1)
-    expect_equal(fticr_xs2@groupidx, featureDefinitions(fticr_xod2)$peakidx)
-    fg <- featureDefinitions(fticr_xod2)
-    fg <- S4Vectors::as.matrix(fg[, -ncol(fg)])
-    rownames(fg) <- NULL
-    expect_equal(fticr_xs2@groups, fg)
     expect_true(length(processHistory(fticr_xod2)) == 2)
     ph <- processHistory(fticr_xod2,
                          type = .PROCSTEP.PEAK.GROUPING)[[1]]
@@ -1939,38 +1850,25 @@ test_that("groupPeaks,XCMSnExp,MzClustParam works", {
 })
 
 test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
-    od_x <- faahko_xod
-    xs <- faahko_xs
-    p <- NearestPeaksParam(sampleGroups = xs$class)
-    od_x <- groupChromPeaks(od_x, param = p)
-    xs <- group(xs, method = "nearest")
-    expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
-    fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
-    rownames(fg) <- NULL
-    expect_equal(xs@groups, fg)
-    expect_true(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = .PROCSTEP.PEAK.GROUPING)[[1]]
+    p <- NearestPeaksParam(sampleGroups = rep(1, 3))
+    res <- groupChromPeaks(faahko_xod, param = p)
+    expect_true(hasFeatures(res))
+    expect_true(length(processHistory(res)) == 2)
+    ph <- processHistory(res, type = .PROCSTEP.PEAK.GROUPING)[[1]]
     expect_equal(processParam(ph), p)
-    expect_equal(rownames(featureDefinitions(od_x)),
-                 .featureIDs(nrow(featureDefinitions(od_x))))
-    fdp2 <- NearestPeaksParam(sampleGroups = xs$class, kNN = 3)
-    od_x <- groupChromPeaks(od_x, param = fdp2)
-    xs <- group(xs, method = "nearest", kNN = 3)
-    expect_equal(xs@groupidx, featureDefinitions(od_x)$peakidx)
-    fg <- featureDefinitions(od_x)
-    fg <- S4Vectors::as.matrix(fg[, !(colnames(fg) %in% c("peakidx", "ms_level"))])
-    rownames(fg) <- NULL
-    expect_equal(xs@groups, fg)
-    expect_true(length(processHistory(od_x)) == 2)
-    ph <- processHistory(od_x, type = .PROCSTEP.PEAK.GROUPING)[[1]]
+    expect_equal(rownames(featureDefinitions(res)),
+                 .featureIDs(nrow(featureDefinitions(res))))
+    fdp2 <- NearestPeaksParam(sampleGroups = rep(1, 3), kNN = 3)
+    res <- groupChromPeaks(faahko_xod, param = fdp2)
+    expect_true(length(processHistory(res)) == 2)
+    ph <- processHistory(res, type = .PROCSTEP.PEAK.GROUPING)[[1]]
     expect_equal(processParam(ph), fdp2)
-    expect_equal(rownames(featureDefinitions(od_x)),
-                 .featureIDs(nrow(featureDefinitions(od_x))))
+    expect_equal(rownames(featureDefinitions(res)),
+                 .featureIDs(nrow(featureDefinitions(res))))
 
-    expect_error(groupChromPeaks(od_x, param = p, msLevel = 2), "MS level 2")
-    expect_error(groupChromPeaks(od_x, param = p, msLevel = 1:3), " at a time")
-    res <- groupChromPeaks(od_x, param = p)
+    expect_error(groupChromPeaks(faahko_xod, param = p, msLevel = 2), "MS level 2")
+    expect_error(groupChromPeaks(faahko_xod, param = p, msLevel = 1:3), " at a time")
+    res <- groupChromPeaks(faahko_xod, param = p)
     res_2 <- groupChromPeaks(res, param = p)
     expect_equal(featureDefinitions(res), featureDefinitions(res_2))
     res_2 <- groupChromPeaks(res, param = p, add = TRUE)
@@ -1986,12 +1884,12 @@ test_that("groupChromPeaks,XCMSnExp,NearestPeaksParam works", {
 
 test_that("fillChromPeaks,XCMSnExp works", {
     ## No adjusted retention times
-    expect_true(!xcms:::.hasFilledPeaks(xod_xg))
+    expect_true(!.hasFilledPeaks(xod_xg))
     expect_false(hasFilledChromPeaks(xod_xg))
     res <- fillChromPeaks(xod_xg)
-    expect_true(xcms:::.hasFilledPeaks(res))
+    expect_true(.hasFilledPeaks(res))
     expect_true(hasFilledChromPeaks(res))
-    ph <- processHistory(res, type = xcms:::.PROCSTEP.PEAK.FILLING)
+    ph <- processHistory(res, type = .PROCSTEP.PEAK.FILLING)
     expect_true(length(ph) == 1)
     expect_equal(ph[[1]]@param, FillChromPeaksParam())
     ## Check parameter filled in featureValues (issue #157)
@@ -2035,7 +1933,7 @@ test_that("fillChromPeaks,XCMSnExp works", {
         fnd_pks <- chromPeaks(xod_xg)[chromPeaks(xod_xg)[, "sample"] == i, ]
         prm <- processHistory(tmp, type ="Peak detection")[[1]]@param
         ## Extract the data for these using the internal function.
-        fld_pks <- xcms:::.getChromPeakData(filterFile(xod_xg, i),
+        fld_pks <- .getChromPeakData(filterFile(xod_xg, i),
                                      peakArea = fnd_pks,
                                      sample_idx = i,
                                      cn = colnames(fnd_pks))
@@ -2181,23 +2079,6 @@ test_that("fillChromPeaks,XCMSnExp with MSW works", {
 
     ## Got a signal for all of em.
     expect_true(!any(is.na(featureValues(res))))
-    ## 1) Compare with what I get for xcmsSet.
-    tmp_x <- fticr_xs
-    tmp_x <- group(tmp_x, method = "mzClust")
-    tmp_x <- fillPeaks(tmp_x, method = "MSW")
-    ## Compare
-    expect_equal(unname(groupval(tmp_x)),
-                 unname(featureValues(res, value = "index")))
-    expect_equal(unname(groupval(tmp_x, value = "maxo")),
-                 unname(featureValues(res, value = "maxo")))
-    expect_equal(unname(groupval(tmp_x, value = "into")),
-                 unname(featureValues(res, value = "into")))
-    expect_equal(unname(groupval(tmp_x, value = "mz")),
-                 unname(featureValues(res, value = "mz")))
-    expect_equal(unname(groupval(tmp_x, value = "mzmin")),
-                 unname(featureValues(res, value = "mzmin")))
-    expect_equal(unname(groupval(tmp_x, value = "mzmax")),
-                 unname(featureValues(res, value = "mzmax")))
     ## OK
     ## 2) Check if the fillChromPeaks returns same/similar data than the
     ##    findChromPeaks does:
@@ -2331,7 +2212,7 @@ test_that("dropFilledChromPeaks,XCMSnExp works", {
 test_that("updateObject,XCMSnExp works", {
     tmp <- faahko_xod
     en <- new("MsFeatureData")
-    en@.xData <- xcms:::.copy_env(tmp@msFeatureData@.xData)
+    en@.xData <- .copy_env(tmp@msFeatureData@.xData)
     rownames(en$chromPeaks) <- NULL
     tmp@msFeatureData <- en
     expect_true(is.null(rownames(chromPeaks(tmp))))
@@ -2431,7 +2312,7 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     ## Fake MS level > 1
     tmp <- xod_x
     fd <- new("MsFeatureData")
-    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    fd@.xData <- .copy_env(tmp@msFeatureData)
     chromPeakData(fd)$ms_level <- 2L
     lockEnvironment(fd, bindings = TRUE)
     tmp@msFeatureData <- fd
@@ -2471,7 +2352,7 @@ test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
     ## With fake MS level 2 data.
     tmp <- xod_x
     fd <- new("MsFeatureData")
-    fd@.xData <- xcms:::.copy_env(tmp@msFeatureData)
+    fd@.xData <- .copy_env(tmp@msFeatureData)
     chromPeakData(fd)$ms_level <- 2L
     lockEnvironment(fd, bindings = TRUE)
     tmp@msFeatureData <- fd
