@@ -1,8 +1,9 @@
 test_that(".createProfileMatrix works", {
-    xr <- deepCopy(faahko_xr_1)
-    mz <- xr@env$mz
-    int <- xr@env$intensity
-    numPerSc <- diff(c(xr@scanindex, length(xr@env$mz)))
+    xr <- filterFile(faahko_od, 1)
+    mz <- mz(xr)
+    int <- unlist(intensity(xr), use.names = FALSE)
+    numPerSc <- lengths(mz)
+    mz <- unlist(mz, use.names = FALSE)
     ## Testing all properties.
     ## o bin
     pm <- .createProfileMatrix(mz = mz, int = int,
