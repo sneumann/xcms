@@ -1,9 +1,9 @@
 test_that("getPeakGroupsRtMatrix works", {
     param <- PeakGroupsParam()
     nSamples <- length(fileNames(xod_xg))
-    pkGrp <- xcms:::.getPeakGroupsRtMatrix(
+    pkGrp <- .getPeakGroupsRtMatrix(
         peaks = chromPeaks(xod_xg),
-        peakIndex = xcms:::.peakIndex(xod_xg),
+        peakIndex = .peakIndex(xod_xg),
         sampleIndex = seq_len(nSamples),
         missingSample = nSamples - (nSamples * minFraction(param)),
         extraPeaks = extraPeaks(param)
@@ -36,7 +36,7 @@ test_that("do_adjustRtime_peakGroups works", {
     res <- do_adjustRtime_peakGroups(
         peaks = chromPeaks(xsg), peakIndex = featureDefinitions(xsg)$peakidx,
         rtime = rtime(xsg, bySample = TRUE), minFraction = minFr)
-    res_orig <- xcms:::do_adjustRtime_peakGroups_orig(
+    res_orig <- do_adjustRtime_peakGroups_orig(
                            peaks = chromPeaks(xsg),
                            peakIndex = featureDefinitions(xsg)$peakidx,
                            rtime = rtime(xsg, bySample = TRUE),
@@ -69,7 +69,7 @@ test_that("applyRtAdjustment works", {
     rt_raw <- rtime(xod_xgr, adjusted = FALSE, bySample = TRUE)[[1]]
     rt_adj <- rtime(xod_xgr, bySample = TRUE)[[1]]
 
-    rt_new <- xcms:::.applyRtAdjustment(rt_raw, rt_raw, rt_adj)
+    rt_new <- .applyRtAdjustment(rt_raw, rt_raw, rt_adj)
     expect_equal(unname(rt_new), unname(rt_adj))
 
     rt_new2 <- .applyRtAdjustment(rt_raw, rt_raw[200:1000], rt_adj[200:1000])

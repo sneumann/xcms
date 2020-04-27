@@ -32,9 +32,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     tmp <- findChromPeaks(raw, param = CentWaveParam(peakwidth = c(2, 10),
                                                      prefilter = c(3, 500)))
     ## ## Use the getPeakInt2 which uses the rawMat function.
-    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## pkI2 <- .getPeakInt2(tmp, chromPeaks(tmp))
     ## ## Use the getPeakInt3 which uses the getEIC C function.
-    ## pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    ## pkI3 <- .getPeakInt3(tmp, chromPeaks(tmp))
     ## ## These fail for the original centWave code.
     ## expect_true(sum(pkI2 != chromPeaks(tmp)[, "into"]) > length(pkI2) / 2)
     ## ## expect_equal(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
@@ -65,8 +65,8 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## plot(cp2[, "rtmin"], pks[, "rtmin"])   ## Very similar
     ## plot(cp2[, "rtmax"], pks[, "rtmax"])   ## Very similar
     ## Use the getPeakInt3 which uses the getEIC C function.
-    ## pkI2_2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
-    ## pkI3_2 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    ## pkI2_2 <- .getPeakInt2(tmp2, chromPeaks(tmp2))
+    ## pkI3_2 <- .getPeakInt3(tmp2, chromPeaks(tmp2))
     ## ## These fail for the original centWave code.
     ## expect_equal(unname(pkI2_2), unname(chromPeaks(tmp2)[, "into"]))
     ## expect_equal(unname(pkI3_2), unname(chromPeaks(tmp2)[, "into"]))
@@ -78,9 +78,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     options(originalCentWave = TRUE)
     tmp <- filterFile(xod_xgrg, file = 3)
     ## ## Use the getPeakInt2 which uses the rawMat function.
-    ## pkI2 <- xcms:::.getPeakInt2(tmp, chromPeaks(tmp))
+    ## pkI2 <- .getPeakInt2(tmp, chromPeaks(tmp))
     ## ## Use the getPeakInt3 which uses the getEIC C function.
-    ## pkI3 <- xcms:::.getPeakInt3(tmp, chromPeaks(tmp))
+    ## pkI3 <- .getPeakInt3(tmp, chromPeaks(tmp))
     ## expect_equal(pkI2, pkI3)
     ## expect_equal(unname(pkI2), unname(chromPeaks(tmp)[, "into"]))
     ## expect_equal(unname(pkI3), unname(chromPeaks(tmp)[, "into"]))
@@ -92,9 +92,9 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## Even the identified peaks are identical!
     expect_equal(unname(chromPeaks(tmp)), unname(chromPeaks(tmp2)))
     ## Use the getPeakInt2 which uses the rawMat function.
-    ## pkI2 <- xcms:::.getPeakInt2(tmp2, chromPeaks(tmp2))
+    ## pkI2 <- .getPeakInt2(tmp2, chromPeaks(tmp2))
     ## ## Use the getPeakInt3 which uses the getEIC C function.
-    ## pkI3 <- xcms:::.getPeakInt3(tmp2, chromPeaks(tmp2))
+    ## pkI3 <- .getPeakInt3(tmp2, chromPeaks(tmp2))
     ## expect_equal(pkI2, pkI3)
     ## expect_equal(unname(pkI2), unname(chromPeaks(tmp2)[, "into"]))
     ## expect_equal(unname(pkI3), unname(chromPeaks(tmp2)[, "into"]))

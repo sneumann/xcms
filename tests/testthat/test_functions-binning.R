@@ -156,7 +156,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -169,7 +169,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -179,7 +179,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -191,7 +191,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,

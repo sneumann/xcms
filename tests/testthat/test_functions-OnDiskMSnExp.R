@@ -41,7 +41,7 @@ test_that(".obiwarp works", {
     expect_true(all(res[[3]] != unname(raw_rt[[3]])))
 
     prm <- ObiwarpParam(binSize = 1, subset = c(2, 3))
-    res <- xcms:::.obiwarp(od, param = prm)
+    res <- .obiwarp(od, param = prm)
     expect_equal(res[[2]], unname(raw_rt[[2]]))
     expect_true(sum(res[[1]] == unname(raw_rt[[1]])) > 500)
     expect_true(all(res[[3]] != unname(raw_rt[[3]])))

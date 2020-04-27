@@ -85,7 +85,7 @@ test_that("filterMz,filterRt,XChromatogram work", {
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
     pks <- matrix(nrow = 4, ncol = 6)
-    colnames(pks) <- xcms:::.CHROMPEAKS_REQ_NAMES
+    colnames(pks) <- .CHROMPEAKS_REQ_NAMES
     pks[1, ] <- c(4, 2, 8, 24, 24, NA)
     pks[2, ] <- c(3, 2, 7, 24, 18, NA)
     pks[3, ] <- c(9, 7, 10, 2, 2, NA)
@@ -112,7 +112,7 @@ test_that("hasChromPeaks,XChromatogram works", {
                         intensity = c(4, 12, 18, 24, 23, 18, 15, 3, 2, 5))
     xchr <- as(chr, "XChromatogram")
     pks <- matrix(nrow = 4, ncol = 6)
-    colnames(pks) <- xcms:::.CHROMPEAKS_REQ_NAMES
+    colnames(pks) <- .CHROMPEAKS_REQ_NAMES
     pks[1, ] <- c(4, 2, 8, 24, 24, NA)
     pks[2, ] <- c(3, 2, 7, 24, 18, NA)
     pks[3, ] <- c(9, 7, 10, 2, 2, NA)

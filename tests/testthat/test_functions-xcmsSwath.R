@@ -69,12 +69,12 @@ test_that(".reconstruct_ms2_for_peaks_file works", {
     expect_identical(rownames(chromPeaks(filterFile(xod_x, 1))),
                      mcols(res)$peak_id)
 
-    res <- xcms:::.reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
+    res <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L)
     expect_true(isEmpty(res)[1])
     expect_true(length(intensity(res[[3]])) == 8)
     expect_true(all(fromFile(res) == 2L))
 
-    res_3 <- xcms:::.reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,
+    res_3 <- .reconstruct_ms2_for_peaks_file(pest_swth, fromFile = 2L,
                                                     peakId = "CP03")
     expect_identical(intensity(res_3), intensity(res[3]))
     expect_identical(mcols(res_3)$ms2_peak_id[[1]], mcols(res)$ms2_peak_id[[3]])

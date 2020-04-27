@@ -111,22 +111,22 @@ test_that(".correlate_chromatogram works", {
                intensity = intensity2)
 
     ## check that correlation with NA values fails
-    expect_equal(xcms:::.correlate_chromatogram(ch1, ch2),
+    expect_equal(.correlate_chromatogram(ch1, ch2),
                  cor(intensity1, intensity2))
-    expect_equal(xcms:::.correlate_chromatogram(ch1, ch2),
-                 xcms:::.correlate_chromatogram(ch2, ch1))
+    expect_equal(.correlate_chromatogram(ch1, ch2),
+                 .correlate_chromatogram(ch2, ch1))
 
     expect_equal(
-        xcms:::.correlate_chromatogram(ch1, ch2, align = "approx"),
-        xcms:::.correlate_chromatogram(ch2, ch1, align = "approx"),
+        .correlate_chromatogram(ch1, ch2, align = "approx"),
+        .correlate_chromatogram(ch2, ch1, align = "approx"),
         tolerance = 0.0001
     )
 
     ch2 <- filterRt(ch2, rt = c(5.1, 23))
-    res <- xcms:::.correlate_chromatogram(ch1, ch2)
+    res <- .correlate_chromatogram(ch1, ch2)
     expect_equal(res, cor(intensity(ch2), intensity(ch1)[1:length(ch2)]))
 
-    res <- xcms:::.correlate_chromatogram(ch2, ch1, align = "approx",
+    res <- .correlate_chromatogram(ch2, ch1, align = "approx",
                                           use = "everything")
     expect_equal(res, NA_real_)
 })
