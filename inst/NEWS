@@ -1,3 +1,9 @@
+Changes in version 3.11.1
+
+- Add correlate method for Chromatograms allowing to correlate multiple
+  chromatograms with each other.
+
+
 Changes in version 3.9.4
 
 - Fix issue in centWave which skips peak detection depending on minimum

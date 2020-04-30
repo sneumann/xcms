@@ -229,9 +229,22 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' *aligned* to match data points in the first to data points in the second
 #' chromatogram. See [align()] for more details.
 #'
-#' @param x [Chromatogram()] object.
+#' If `correlate` is called on a single [Chromatograms()] object a pairwise
+#' correlation of each chromatogram with each other is performed and a `matrix`
+#' with the correlation coefficients is returned.
 #'
-#' @param y [Chromatogram()] object.
+#' Note that the correlation of two chromatograms depends also on their order,
+#' e.g. `correlate(chr1, chr2)` might not be identical to
+#' `correlate(chr2, chr1)`. The lower and upper triangular part of the
+#' correlation matrix might thus be different.
+#'
+#' For correlating elements of a `Chromatograms` with each other it might be
+#' sufficient to calculate just the upper triangular matrix. This can be done
+#' by setting `full = FALSE`.
+#'
+#' @param x [Chromatogram()] or [Chromatograms()] object.
+#'
+#' @param y [Chromatogram()] or [Chromatograms()] object.
 #'
 #' @param use `character(1)` passed to the `cor` function. See [cor()] for
 #'     details.
@@ -243,13 +256,36 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #'     [align()] for details. The value of this parameter is passed to the
 #'     `method` parameter of `align`.
 #'
+#' @param full `logical(1)` for `correlate` on a single `Chromatograms` object:
+#'     whether the *full* correlation matrix should be calculated (default) or
+#'     just the upper triangular matrix (and diagonal).
+#'
 #' @param ... optional parameters passed along to the `align` method.
 #'
-#' @return `numeric(1)` with the correlation coefficient.
+#' @return `numeric(1)` or `matrix` (if called on `Chromatograms` objects)
+#'     with the correlation coefficient. If a `matrix` is returned, the rows
+#'     represent the chromatograms in `x` and the columns the chromatograms in
+#'     `y`.
 #'
 #' @author Michael Witting, Johannes Rainer
 #'
 #' @md
+#'
+#' @examples
+#'
+#' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+#' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+#'     intensity = c(53, 80, 130, 15, 5, 3, 2))
+#'
+#' chrs <- Chromatograms(list(chr1, chr2, chr3))
+#'
+#' correlate(chr1, chr2)
+#' correlate(chr2, chr1)
+#'
+#' correlate(chrs, chrs)
 setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
           function(x, y, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),

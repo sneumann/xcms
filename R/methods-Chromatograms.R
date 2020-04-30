@@ -68,3 +68,107 @@ setMethod("align", signature = c(x = "Chromatograms", y = "Chromatogram"),
               validObject(x)
               x
           })
+
+#' @rdname correlate-Chromatogram
+setMethod("correlate", signature = c(x = "Chromatograms", y = "missing"),
+          function(x, y = NULL, use = "pairwise.complete.obs",
+                   method = c("pearson", "kendall", "spearman"),
+                   align = c("matchRtime", "approx"), full = TRUE, ...) {
+              .correlate_chromatograms(x, x, use = use, method = method,
+                                       align = align, full = full, ...)
+          })
+
+#' @rdname correlate-Chromatogram
+setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
+          function(x, y = NULL, use = "pairwise.complete.obs",
+                   method = c("pearson", "kendall", "spearman"),
+                   align = c("matchRtime", "approx"), ...) {
+              .correlate_chromatograms(x, y, use = use, method = method,
+                                       align = align, ...)
+          })
+
+#' @title Correlate chromatograms within an `Chromatograms` with each other
+#'
+#' @description
+#'
+#' The `correlate_chromatograms_self` function correlates each chromatogram
+#' in an (single column) [Chromatograms()] object with each other.
+#'
+#' @note
+#'
+#' This is an optimized version that does not calculate the lower triangular
+#' part of the correlation matrix - but might thus also not be correct,
+#' @param x `Chromatograms` object or a `list` of [Chromatogram] objects.
+#'
+#' @param ... Additional arguments to be passed down to the [correlate()]
+#'     function.
+#'
+#' @return `matrix` with the correlation coefficients.
+#'
+#' @importMethodsFrom xcms correlate
+#'
+#' @importFrom MSnbase Chromatogram
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+#'
+#' @examples
+#'
+#' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+#' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+#'     intensity = c(53, 80, 130, 15, 5, 3, 2))
+#'
+#' correlate_chromatograms_self(list(chr1, chr2, chr3))
+#'
+#' chrs <- Chromatograms(list(chr1, chr2, chr3))
+#' correlate_chromatograms_self(chrs)
+.correlate_chromatograms_self <- function(x, ...) {
+    if (inherits(x, "Chromatograms")) {
+        if (ncol(x) > 1)
+            stop("Currently only single column Chromatograms are supported.")
+        x <- unlist(x)
+    }
+    nx <- length(x)
+    m <- matrix(NA_real_, nrow = nx, ncol = nx)
+    cb <- which(lower.tri(m, diag = TRUE), arr.ind = TRUE)
+    for (i in seq_len(nrow(cb))) {
+        cur <- cb[i, 2L]
+        if (i == 1L || cb[i - 1L, 2L] != cur)
+            py <- px <- x[[cur]]
+        else
+            py <- x[[cb[i, 1L]]]
+        m[cb[i, 1L], cur] <- m[cur, cb[i, 1L]] <-
+            correlate(px, py, ...)
+    }
+    m
+}
+
+.correlate_chromatograms <- function(x, y, full = TRUE, ...) {
+    if (inherits(x, "Chromatograms")) {
+        if (ncol(x) > 1)
+            stop("Currently only single column Chromatograms are supported.")
+        x <- unlist(x)
+    }
+    if (inherits(y, "Chromatograms")) {
+        if (ncol(y) > 1)
+            stop("Currently only single column Chromatograms are supported.")
+        y <- unlist(y)
+    }
+    nx <- length(x)
+    ny <- length(y)
+
+    m <- matrix(NA_real_, nrow = nx, ncol = ny)
+
+    for (i in seq_len(nx)) {
+        for (j in seq_len(ny)) {
+            if (!full && i > j)
+                next
+            m[i, j] <- correlate(x[[i]], y[[j]], ...)
+        }
+    }
+    m
+}
