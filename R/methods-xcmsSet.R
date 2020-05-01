@@ -440,9 +440,17 @@ setMethod("groupval", "xcmsSet", function(object, method = c("medret", "maxint")
     method <- match.arg(method)
     peakmat <- peaks(object)
     groupmat <- groups(object)
+    if ("peakidx" %in% colnames(groupmat)) {
+        groupmat <- groupmat[, !colnames(groupmat) %in% "peakidx"]
+        groupmat <- apply(groupmat, 2, unlist)
+    }
     groupindex <- groupidx(object)
 
     sampnum <- seq(length = length(sampnames(object)))
+    if (length(sampnum) == 0) {
+        sampnum <- unique(object@peaks[, "sample"])
+    }
+    
     retcol <- match("rt", colnames(peakmat))
     intcol <- match(intensity, colnames(peakmat))
     sampcol <- match("sample", colnames(peakmat))
