@@ -1191,7 +1191,9 @@ setMethod("fillPeaks.chrom", "xcmsSet", function(object, nSlaves = 0,
     rtcor <- object@rt$corrected
 
     ## Remove groups that overlap with more "well-behaved" groups
-    numsamp <- rowSums(groupmat[,(match("npeaks", colnames(groupmat))+1):ncol(groupmat),drop=FALSE])
+    sampclasscols <- seq(match("npeaks", colnames(groupmat))+1,
+                         length.out=length(levels(sampclass(object))))
+    numsamp <- rowSums(groupmat[ , sampclasscols, drop=FALSE])
     uorder <- order(-numsamp, groupmat[,"npeaks"])
     uindex <- rectUnique(groupmat[,c("mzmin","mzmax","rtmin","rtmax"),drop=FALSE],
                          uorder)

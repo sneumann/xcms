@@ -24,11 +24,11 @@ test_that("XChromatograms, as, validator, hasChromPeaks work", {
     expect_true(all(vapply(xchrs, is, logical(1), "XChromatogram")))
 
     pks1 <- matrix(c(3, 2, 4, 339.2, 343, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     pks3 <- matrix(c(3, 2, 4, 145, 54, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     pks6 <- matrix(c(2, 2, 3, 108, 65, NA), nrow = 1,
-                   dimnames = list(NULL, xcms:::.CHROMPEAKS_REQ_NAMES))
+                   dimnames = list(NULL, .CHROMPEAKS_REQ_NAMES))
     ## With peak matrix.
     xchrs1 <- XChromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), ncol = 3,
                              chromPeaks = list(pks1, NULL, pks3, NULL, NULL,

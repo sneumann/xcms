@@ -8,3 +8,4 @@ local_data
 README.md
 Rplots.pdf
 .DS_Store
+^\.github$

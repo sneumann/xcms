@@ -26,7 +26,7 @@ test_that("binYonX max works", {
     breakMidPoint <- function(x) {
         return((x[-1L] + x[-length(x)])/2)
     }
-    
+
     ## o nBins
     res <- binYonX(X, Y, nBins = 5L)
     expect_equal(res$y, c(2, 4, 6, 8, 10))
@@ -141,14 +141,13 @@ test_that("binYonX max works", {
     expect_equal(res$x, breakMidPoint(brks))
 
     ## Test on real data:
-    xr <- deepCopy(faahko_xr_1)
-    X <- xr@env$mz
-    Y <- xr@env$intensity
+    xr <- filterFile(faahko_od, 1)
+    X <- mz(xr)
+    Y <- intensity(xr)
     xRangeFull <- range(X)
-    scanidx <- xr@scanindex
     ## Get the data from the first spectrum:
-    X1 <- X[1:scanidx[2]]
-    Y1 <- Y[1:scanidx[2]]
+    X1 <- X[[1]]
+    Y1 <- Y[[2]]
 
     ## ####
     ## Define the number of bins.
@@ -157,7 +156,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -170,7 +169,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -180,7 +179,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -192,7 +191,7 @@ test_that("binYonX max works", {
     mass <- seq(floor(min(xRangeFull)/step)*step,
                 ceiling(max(xRangeFull)/step)*step, by = step)
     nBins <- length(mass)
-    resR <- xcms:::profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
+    resR <- profBinR(X1, Y1, nBins = nBins, fromX = min(xRangeFull),
                             toX = max(xRangeFull), shiftByHalfBinSize = shift)
     res <- binYonX(X1, Y1, nBins = nBins, binFromX = min(xRangeFull),
                    binToX = max(xRangeFull), shiftByHalfBinSize = shift,
@@ -379,7 +378,7 @@ test_that("breaks defining functions work", {
                               binSize = 0.2)
     expect_equal(brks, brksR)
     ##
-    ## Ultimate fix for issue #118 
+    ## Ultimate fix for issue #118
     brksR <- seq((200 - 0.1), (600), by = 0.2)
     brks <- breaks_on_binSize((200 - 0.1), (600), binSize = 0.2)
     ## Compare them up to the last value, since in R that will be 600-01, while
