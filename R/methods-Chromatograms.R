@@ -172,3 +172,15 @@ setMethod("correlate", signature = c(x = "Chromatograms", y = "Chromatograms"),
     }
     m
 }
+
+#' @rdname removeIntensity-Chromatogram
+setMethod("removeIntensity", "Chromatograms",
+          function(object, which = "below_threshold", threshold = 0) {
+              object@.Data <- matrix(lapply(c(object@.Data),
+                                            FUN = removeIntensity,
+                                            which = which,
+                                            threshold = threshold),
+                                     ncol = ncol(object),
+                                     dimnames = dimnames(object@.Data))
+              object
+          })

@@ -123,3 +123,53 @@ test_that("hasChromPeaks,XChromatogram works", {
     xchr <- as(chr, "XChromatogram")
     expect_false(hasChromPeaks(xchr))
 })
+
+test_that("removeIntensity,XChromatogram(s) works", {
+    set.seed(123)
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    xchr <- as(chr1, "XChromatogram")
+    expect_warning(res <- removeIntensity(xchr, which = "outside_chromPeak"))
+    expect_equal(res, xchr)
+
+    xchrs <- featureChromatograms(xod_xgrg, features = c("FT07", "FT13"),
+                                  expandRt = 20)
+    res <- removeIntensity(xchrs[[1]], which = "outside_chromPeak")
+    expect_true(all(is.na(intensity(res)[rtime(res) < chromPeaks(res)[, "rtmin"]])))
+    expect_true(all(is.na(intensity(res)[rtime(res) > chromPeaks(res)[, "rtmax"]])))
+    expect_true(!all(is.na(intensity(xchrs[1, 1])[rtime(res) < chromPeaks(res)[, "rtmin"]])))
+    expect_true(!all(is.na(intensity(xchrs[1, 1])[rtime(res) > chromPeaks(res)[, "rtmax"]])))
+
+    res <- removeIntensity(xchrs, which = "outside_chromPeak")
+    expect_true(all(is.na(intensity(res[1, 1])[rtime(res[1, 1]) < chromPeaks(res[1, 1])[, "rtmin"]])))
+    expect_true(all(is.na(intensity(res[1, 1])[rtime(res[1, 1]) > chromPeaks(res[1, 1])[, "rtmax"]])))
+    expect_true(all(is.na(intensity(res[2, 2])[rtime(res[2, 2]) < chromPeaks(res[2, 2])[, "rtmin"]])))
+    expect_true(all(is.na(intensity(res[2, 2])[rtime(res[2, 2]) > chromPeaks(res[2, 2])[, "rtmax"]])))
+    expect_true(all(is.na(intensity(res[2, 3])[rtime(res[2, 3]) < chromPeaks(res[2, 3])[, "rtmin"]])))
+    expect_true(all(is.na(intensity(res[2, 3])[rtime(res[2, 3]) > chromPeaks(res[2, 3])[, "rtmax"]])))
+
+    ## with two peaks per chromatogram.
+    mzr <- 462.2 + c(-0.04, 0.04)
+    chr <- chromatogram(od_x, mz = mzr)
+    chr <- findChromPeaks(chr, CentWaveParam())
+    res <- removeIntensity(chr, which = "outside_chromPeak")
+
+    ## And if we had an XChromatograms
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+                         intensity = c(53, 80, 130, 15, 5, 3, 2))
+    chrs <- Chromatograms(list(chr1, chr2, chr3))
+    chrs <- as(chrs, "XChromatograms")
+
+    res <- removeIntensity(chrs)
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res, chrs)
+
+    res <- removeIntensity(chrs, threshold = 20)
+    expect_equal(intensity(res[1, 1]), c(NA_real_, 29, 50, NA_real_, 100,
+                                         NA_real_, NA_real_, NA_real_, NA_real_,
+                                         NA_real_))
+    expect_equal(intensity(res[3, 1]), c(53, 80, 130, NA_real_, NA_real_,
+                                         NA_real_, NA_real_))
+})

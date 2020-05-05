@@ -107,3 +107,28 @@ test_that("correlate,Chromatograms works", {
     expect_true(is.na(res[3, 1]))
 
 })
+
+test_that("removeIntensity,Chromatograms works", {
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+                         intensity = c(53, 80, 130, 15, 5, 3, 2))
+    chrs <- Chromatograms(list(chr1, chr2, chr3))
+
+    res <- removeIntensity(chrs)
+    expect_equal(res, chrs)
+
+    res <- removeIntensity(chrs, threshold = 20)
+    expect_equal(intensity(res[1, 1]), c(NA_real_, 29, 50, NA_real_, 100,
+                                         NA_real_, NA_real_, NA_real_, NA_real_,
+                                         NA_real_))
+    expect_equal(intensity(res[3, 1]), c(53, 80, 130, NA_real_, NA_real_,
+                                         NA_real_, NA_real_))
+
+    chrs <- Chromatograms(list(chr1, chr2, chr2, chr3), ncol = 2)
+    res <- removeIntensity(chrs, threshold = 20)
+    expect_equal(intensity(res[2, 2]), c(53, 80, 130, NA_real_, NA_real_,
+                                         NA_real_, NA_real_))
+})

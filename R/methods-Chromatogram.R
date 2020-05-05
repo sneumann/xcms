@@ -293,3 +293,57 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
               .correlate_chromatogram(x, y, use = use, method = method,
                                       align = align, ...)
           })
+
+#' @title Remove intensities from chromatographic data
+#'
+#' @aliases removeIntensity
+#'
+#' @rdname removeIntensity-Chromatogram
+#'
+#' @description
+#'
+#' `removeIntensities` allows to remove intensities from chromatographic data
+#' matching certain conditions (depending on parameter `which`). The
+#' intensities are actually not *removed* but replaced with `NA_real_`. To
+#' actually **remove** the intensities (and the associated retention times)
+#' use [clean()] afterwards.
+#'
+#' Parameter `which` allows to specify which intensities should be replaced by
+#' `NA_real_`. By default (`which = "below_threshod"` intensities below
+#' `threshold` are removed. If `x` is a `XChromatogram` or `XChromatograms`
+#' object (and hence provides also chromatographic peak definitions within the
+#' object) `which = "outside_chromPeak"` can be selected which removes any
+#' intensity which is outside the boundaries of identified chromatographic
+#' peak(s) in the chromatographic data.
+#'
+#' @param object an object representing chromatographic data. Can be a
+#'     [Chromatogram()], [Chromatograms()], [XChromatogram()] or
+#'     [XChromatograms()] object.
+#'
+#' @param which `character(1)` defining the condition to remove intensities.
+#'     See description for details and options.
+#'
+#' @param threshold `numeric(1)` defining the threshold below which intensities
+#'     are removed (if `which = "below_threshold"`).
+#'
+#' @return the input object with matching intensities being replaced by `NA`.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' chr <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#'
+#' ## Remove all intensities below 20
+#' res <- removeIntensity(chr, threshold = 20)
+#' intensity(res)
+setMethod("removeIntensity", "Chromatogram",
+          function(object, which = "below_threshold", threshold = 0) {
+              which <- match.arg(which)
+              if (which == "below_threshold")
+                  object@intensity[which(object@intensity < threshold)] <- NA_real_
+              object
+          })

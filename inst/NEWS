@@ -1,5 +1,8 @@
 Changes in version 3.11.1
 
+- Add removeIntensity method for Chromatogram, Chromatograms, XChromatogram
+  and XChromatograms objects allowing to *remove* intensities based on different
+  criteria.
 - Add correlate method for Chromatograms allowing to correlate multiple
   chromatograms with each other.
 

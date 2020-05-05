@@ -508,5 +508,6 @@ exportMethods("hasChromPeaks",
               "align",
               "correlate",
               "plot",
-              "refineChromPeaks"
+              "refineChromPeaks",
+              "removeIntensity"
               )
