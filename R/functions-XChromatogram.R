@@ -62,6 +62,12 @@
 #' [Chromatogram] or [Chromatograms()] objects using
 #' `as(object, "XChromatogram")` or `as(object, "XChromatograms")`.
 #'
+#' @section Filtering and subsetting:
+#'
+#' Besides classical subsetting with `[` specific filter operations on
+#' [Chromatograms()] and `XChromatograms` objects are available. See
+#' [filterColumnsIntensityAbove()] for more details.
+#'
 #' @param rtime For `XChromatogram`: `numeric` with the retention times
 #'     (length has to be equal to the length of `intensity`).
 #'

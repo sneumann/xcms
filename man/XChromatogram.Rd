@@ -386,6 +386,34 @@ Objects can be created with the contructor function \code{XChromatogram} and
 \code{as(object, "XChromatogram")} or \code{as(object, "XChromatograms")}.
 }
 
+\section{Filtering and subsetting}{
+
+
+Besides classical subsetting with \code{[} specific filter operations on
+\code{\link[=Chromatograms]{Chromatograms()}} and \code{XChromatograms} objects are available. See
+\code{\link[=filterColumnsIntensityAbove]{filterColumnsIntensityAbove()}} for more details.
+
+
+\itemize{
+\item \code{[} allows to subset a \code{XChromatograms} object by row (\code{i}) and column
+(\code{j}), with \code{i} and \code{j} being of type \code{integer}. The \code{featureDefinitions}
+will also be subsetted accordingly and the \code{peakidx} column updated.
+\item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram} or
+\code{XChromatograms}, if a column \code{"mz"} is present in the \code{chromPeaks} matrix.
+This would be the case if the \code{XChromatogram} was extracted from an
+\code{\link[=XCMSnExp]{XCMSnExp()}} object with the \code{\link[=chromatogram]{chromatogram()}} function. All
+chromatographic peaks with their m/z within the m/z range defined by \code{mz}
+will be retained. Also feature definitions (if present) will be subset
+accordingly. The function returns a filtered \code{XChromatogram} or
+\code{XChromatograms} object.
+\item \code{filterRt} filters chromatogram(s) by the provided retention time range.
+All eventually present chromatographic peaks with their apex within the
+retention time range specified with \code{rt} will be retained. Also feature
+definitions, if present, will be filtered accordingly. The function
+returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
+}
+}
+
 \section{Accessing data}{
 
 
@@ -466,28 +494,6 @@ it might be better to set \code{peakType = "none"} to avoid generating busy
 plots.
 \item \code{plotChromPeakDensity}: visualize \emph{peak density}-based correspondence
 analysis results. See section \emph{Correspondence analysis} for more details.
-}
-}
-
-\section{Filtering and subsetting}{
-
-\itemize{
-\item \code{[} allows to subset a \code{XChromatograms} object by row (\code{i}) and column
-(\code{j}), with \code{i} and \code{j} being of type \code{integer}. The \code{featureDefinitions}
-will also be subsetted accordingly and the \code{peakidx} column updated.
-\item \code{filterMz} filters the chromatographic peaks within an \code{XChromatogram} or
-\code{XChromatograms}, if a column \code{"mz"} is present in the \code{chromPeaks} matrix.
-This would be the case if the \code{XChromatogram} was extracted from an
-\code{\link[=XCMSnExp]{XCMSnExp()}} object with the \code{\link[=chromatogram]{chromatogram()}} function. All
-chromatographic peaks with their m/z within the m/z range defined by \code{mz}
-will be retained. Also feature definitions (if present) will be subset
-accordingly. The function returns a filtered \code{XChromatogram} or
-\code{XChromatograms} object.
-\item \code{filterRt} filters chromatogram(s) by the provided retention time range.
-All eventually present chromatographic peaks with their apex within the
-retention time range specified with \code{rt} will be retained. Also feature
-definitions, if present, will be filtered accordingly. The function
-returns a filtered \code{XChromatogram} or \code{XChromatograms} object.
 }
 }
 

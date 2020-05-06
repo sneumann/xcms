@@ -184,3 +184,100 @@ setMethod("removeIntensity", "Chromatograms",
                                      dimnames = dimnames(object@.Data))
               object
           })
+
+#' @title Filtering sets of chromatographic data
+#'
+#' @aliases filterColumnsIntensityAbove
+#'
+#' @rdname filter-Chromatograms
+#'
+#' @description
+#'
+#' These functions allow to filter (subset) [Chromatograms()] or
+#' [XChromatograms()] objects, i.e. sets of chromatographic data, without
+#' changing the data (intensity and retention times) within the individual
+#' chromatograms ([Chromatogram()] objects).
+#'
+#' - `filterColumnsIntensityAbove`: subsets a `Chromatograms` objects keeping
+#'   only columns (samples) for which `value` is larger than the provided
+#'   `threshold` in `which` rows (i.e. if `which = "any"` a
+#'   column is kept if **any** of the chromatograms in that column have a
+#'   `value` larger than `threshold` or with `which = "all"` **all**
+#'   chromatograms in that column fulfill this criteria). Parameter `value`
+#'   allows to define on which value the comparison should be performed, with
+#'   `value = "bpi"` the maximum intensity of each chromatogram is compared to
+#'   `threshold`, with `value = "tic" the total sum of intensities of each
+#'   chromatogram is compared to `threshold`. For `XChromatograms` object,
+#'   `value = "maxo"` and `value = "into"` are supported which compares the
+#'   largest intensity of all identified chromatographic peaks in the
+#'   chromatogram with `threshold`, or the integrated peak area, respectively.
+#'
+#' @param object [Chromatograms()] or [XChromatograms()] object.
+#'
+#' @param threshold for `filterColumnsIntensityAbove`: `numeric(1)` with the
+#'     threshold value to compare against.
+#'
+#' @param value `character(1)` defining which value should be used in the
+#'     comparison or sorting. Can be `value = "bpi"` (default) to use the
+#'     maximum intensity per chromatogram or `value = "tic"` to use the sum
+#'     of intensities per chromatogram. For [XChromatograms()] objects also
+#'     `value = "maxo"` and `value = "into"` is supported to use the maximum
+#'     intensity or the integrated area of identified chromatographic peaks
+#'     in each chromatogram.
+#'
+#' @param which for `filterColumnsIntensityAbove`: `character(1)` defining
+#'     whether **any** (`which = "any"`, default) or **all** (`which = "all"`)
+#'     chromatograms in a column have to fulfill the criteria for the column
+#'     to be kept.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+#' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+#'     intensity = c(53, 80, 130, 15, 5, 3, 2))
+#'
+#' chrs <- Chromatograms(list(chr1, chr2, chr1, chr3, chr2, chr3),
+#'     ncol = 3, byrow = FALSE)
+#' chrs
+#'
+#' ## Keep all columns with for which the maximum intensity of any of its
+#' ## chromatograms is larger 90
+#' filterColumnsIntensityAbove(chrs, threshold = 90)
+#'
+#' ## Require that ALL chromatograms in a column have a value larger 90
+#' filterColumnsIntensityAbove(chrs, threshold = 90, which = "all")
+#'
+#' ## If none of the columns fulfills the criteria no columns are returned
+#' filterColumnsIntensityAbove(chrs, threshold = 900)
+#'
+#' ## Filtering XChromatograms allow in addition to filter on the columns
+#' ## "maxo" or "into" of the identified chromatographic peaks within each
+#' ## chromatogram.
+setMethod("filterColumnsIntensityAbove", "Chromatograms",
+          function(object, threshold = 0, value = c("bpi", "tic"),
+                   which = c("any", "all")) {
+              value <- match.arg(value)
+              which <- match.arg(which)
+              if (length(threshold) > 1 || !is.numeric(threshold))
+                  stop("'threshold' should be a 'numeric' of length 1")
+              nc <- ncol(object)
+              if (value == "bpi")
+                  FUN <- max
+              else FUN <- sum
+              which_fun <- getFunction(which)
+              keep <- rep(FALSE, nc)
+              for (i in seq_len(nc)) {
+                  vals <- vapply(object[, i], function(z) {
+                      FUN(z@intensity, na.rm = TRUE)
+                  }, FUN.VALUE = NA_real_, USE.NAMES = FALSE)
+                  keep[i] <- which_fun(vals > threshold)
+              }
+              object[, keep]
+          })

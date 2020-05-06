@@ -1,3 +1,5 @@
+#' @include methods-Chromatograms.R
+
 setAs("Chromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
     res@.Data <- matrix(lapply(from, function(z) {
@@ -573,4 +575,33 @@ setMethod("refineChromPeaks", c(object = "XChromatograms",
               object <- addProcessHistory(object, xph)
               validObject(object)
               object
+          })
+
+#' @rdname filter-Chromatograms
+setMethod("filterColumnsIntensityAbove", "XChromatograms",
+          function(object, threshold = 0,
+                   value = c("bpi", "tic", "maxo", "into"),
+                   which = c("any", "all")) {
+              value <- match.arg(value)
+              which <- match.arg(which)
+              if (length(threshold) > 1 || !is.numeric(threshold))
+                  stop("'threshold' should be a 'numeric' of length 1")
+              if (value %in% c("maxo", "into")) {
+                  nc <- ncol(object)
+                  rws <- seq_len(nrow(object))
+                  cps <- chromPeaks(object)
+                  keep <- rep(FALSE, nc)
+                  for (i in seq_len(nc)) {
+                      vals <- cps[cps[, "column"] == i &
+                                  cps[, value] > threshold, "row"]
+                      if (length(vals)) {
+                          if (which == "any")
+                              keep[i] <- TRUE
+                          else keep[i] <- all(rws %in% vals)
+                      }
+                  }
+                  object[, keep]
+              } else
+                  callNextMethod(object, threshold = threshold, value = value,
+                                 which = which)
           })

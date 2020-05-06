@@ -489,3 +489,23 @@ test_that("refineChromPeaks,XChromatograms,MergeNeighboringPeaksParam works", {
     expect_true(nrow(chromPeaks(res)) < nrow(chromPeaks(chr)))
     expect_true(sum(chromPeakData(res)$merged) == 3)
 })
+
+test_that("filterColumnsIntensityAbove,XChromatograms works", {
+    mzr <- rbind(305.1 + c(-0.01, 0.01),
+                 462.2 + c(-0.04, 0.04))
+    chrs <- chromatogram(xod_x, mz = mzr)
+
+    res <- filterColumnsIntensityAbove(chrs)
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res, chrs)
+
+    res <- filterColumnsIntensityAbove(chrs, threshold = 20000, value = "maxo")
+    expect_true(is(res, "XChromatograms"))
+    expect_equal(res[, 1], chrs[, 1])
+    expect_equal(res[, 2], chrs[, 3])
+
+    res <- filterColumnsIntensityAbove(chrs, threshold = 20000, value = "maxo",
+                                       which = "all")
+    expect_equal(res[, 1], chrs[, 1])
+    expect_true(ncol(res) == 1)
+})
