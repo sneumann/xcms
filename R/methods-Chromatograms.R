@@ -212,7 +212,39 @@ setMethod("removeIntensity", "Chromatograms",
 #'   largest intensity of all identified chromatographic peaks in the
 #'   chromatogram with `threshold`, or the integrated peak area, respectively.
 #'
+#' - `filterColumnsKeepTop`: subsets a `Chromatograms` object keeping the top
+#'   `n` columns sorted by the value specified with `sortBy`. In detail, for
+#'   each column the value defined by `sortBy` is extracted from each
+#'   chromatogram and aggregated using the `aggregationFun`. Thus, by default,
+#'   for each chromatogram the maximum intensity is determined
+#'   (`sortBy = "bpi"`) and these values are summed up for chromatograms in the
+#'   same column (`aggregationFun = sum`). The columns are then sorted by these
+#'   values and the top `n` columns are retained in the returned
+#'   `Chromatograms`. Similar to the `filterColumnsIntensityAbove` function,
+#'   this function allows to use for `XChromatograms` objects to sort the
+#'   columns by column `sortBy = "maxo"` or `sortBy = "into"` of the
+#'   `chromPeaks` matrix.
+#'
+#' @param aggregationFun for `filterColumnsKeepTop`: function to be used to
+#'     aggregate (combine) the values from all chromatograms in each column.
+#'     Defaults to `aggregationFun = sum` in which case the sum of the values
+#'     is used to rank the columns. Alternatively the `mean`, `median` or
+#'     similar function can be used.
+#'
+#' @param n for `filterColumnsKeepTop`: `integer(1)` specifying the number of
+#'     columns that should be returned. `n` will be rounded to the closest
+#'     (larger) integer value.
+#'
 #' @param object [Chromatograms()] or [XChromatograms()] object.
+#'
+#' @param sortBy for `filterColumnsKeepTop`: the value by which columns should
+#'     be ordered to determine the top n columns. Can be either `sortBy = "bpi"`
+#'     (the default), in which case the maximum intensity of each column's
+#'     chromatograms is used, or `sortBy = "tic"` to use the total intensity
+#'     sum of all chromatograms. For [XChromatograms()] objects also
+#'     `value = "maxo"` and `value = "into"` is supported to use the maximum
+#'     intensity or the integrated area of identified chromatographic peaks
+#'     in each chromatogram.
 #'
 #' @param threshold for `filterColumnsIntensityAbove`: `numeric(1)` with the
 #'     threshold value to compare against.
@@ -229,6 +261,10 @@ setMethod("removeIntensity", "Chromatograms",
 #'     whether **any** (`which = "any"`, default) or **all** (`which = "all"`)
 #'     chromatograms in a column have to fulfill the criteria for the column
 #'     to be kept.
+#'
+#' @return a filtered `Chromatograms` (or `XChromatograms`) object with the
+#'     same number of rows (EICs) but eventually a lower number of columns
+#'     (samples).
 #'
 #' @author Johannes Rainer
 #'
@@ -247,6 +283,8 @@ setMethod("removeIntensity", "Chromatograms",
 #'     ncol = 3, byrow = FALSE)
 #' chrs
 #'
+#' #### filterColumnsIntensityAbove
+#' ##
 #' ## Keep all columns with for which the maximum intensity of any of its
 #' ## chromatograms is larger 90
 #' filterColumnsIntensityAbove(chrs, threshold = 90)
@@ -260,6 +298,16 @@ setMethod("removeIntensity", "Chromatograms",
 #' ## Filtering XChromatograms allow in addition to filter on the columns
 #' ## "maxo" or "into" of the identified chromatographic peaks within each
 #' ## chromatogram.
+#'
+#' #### filterColumnsKeepTop
+#' ##
+#' ## Keep the 2 columns with the highest sum of maximal intensities in their
+#' ## chromatograms
+#' filterColumnsKeepTop(chrs, n = 1)
+#'
+#' ## Keep the 50 percent of columns with the highest total sum of signal. Note
+#' ## that n will be rounded to the next larger integer value
+#' filterColumnsKeepTop(chrs, n = 0.5 * ncol(chrs), sortBy = "tic")
 setMethod("filterColumnsIntensityAbove", "Chromatograms",
           function(object, threshold = 0, value = c("bpi", "tic"),
                    which = c("any", "all")) {
@@ -280,4 +328,30 @@ setMethod("filterColumnsIntensityAbove", "Chromatograms",
                   keep[i] <- which_fun(vals > threshold)
               }
               object[, keep]
+          })
+
+#' @rdname filter-Chromatograms
+setMethod("filterColumnsKeepTop", "Chromatograms",
+          function(object, n = 1L, sortBy = c("bpi", "tic"),
+                   aggregationFun = sum) {
+              sortBy <- match.arg(sortBy)
+              if (length(n) > 1 || !is.numeric(n))
+                  stop("'n' should be an 'integer' of length 1")
+              n <- ceiling(n)
+              nc <- ncol(object)
+              if (n > nc)
+                  stop("'n' should be smaller or equal than the number of ",
+                       "columns (", nc, ")")
+              if (sortBy == "bpi")
+                  FUN <- max
+              else FUN <- sum
+              colval <- numeric(nc)
+              for (i in seq_len(nc)) {
+                  vals <- vapply(object[, i], function(z) {
+                      FUN(z@intensity, na.rm = TRUE)
+                  }, FUN.VALUE = NA_real_, USE.NAMES = FALSE)
+                  colval[i] <- aggregationFun(vals, na.rm = TRUE)
+              }
+              idx <- order(colval, decreasing = TRUE)[seq_len(n)]
+              object[, sort(idx)]
           })

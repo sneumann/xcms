@@ -164,3 +164,44 @@ test_that("filterColumnsIntensityAbove,Chromatograms works", {
                                        value = "tic")
     expect_equal(res, chrs[, 2])
 })
+
+test_that("filterChromatogramsKeepTop,Chromatograms works", {
+    chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+    chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+                         intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+    chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+                         intensity = c(53, 80, 130, 15, 5, 3, 2))
+    chr4 <- Chromatogram(rtime = 1:10,
+                         intensity = c(NA, NA, 4, NA, NA, 9, NA, 10, 9, 1))
+    chr5 <- Chromatogram(rtime = 1:4, intensity = c(345, 5554, 323, 2000))
+    chr6 <- Chromatogram(rtime = 1:3, intensity = c(400, 244, 133))
+
+
+    chrs <- Chromatograms(list(chr1, chr2, chr3, chr4, chr5, chr6), ncol = 3)
+
+    expect_error(filterColumnsKeepTop(chrs, n = c(1, 2)), "of length 1")
+    expect_error(filterColumnsKeepTop(chrs, n = "b"), "of length 1")
+    expect_error(filterColumnsKeepTop(chrs, n = 10), "number of columns")
+
+    res <- filterColumnsKeepTop(chrs, n = 1)
+    expect_equal(res, chrs[, 3])
+
+    res <- filterColumnsKeepTop(chrs, n = 2)
+    expect_equal(res[, 1], chrs[, 1])
+    expect_equal(res[, 2], chrs[, 3])
+
+    res <- filterColumnsKeepTop(chrs, n = 2, aggregationFun = max)
+    expect_equal(res[, 1], chrs[, 2])
+    expect_equal(res[, 2], chrs[, 3])
+
+    res <- filterColumnsKeepTop(chrs, n = 0)
+    expect_true(ncol(res) == 0)
+    expect_true(nrow(res) == 2)
+
+    res <- filterColumnsKeepTop(chrs, n = 1, sortBy = "tic")
+    expect_equal(res, chrs[, 3])
+
+    res <- filterColumnsKeepTop(chrs, n = 1, aggregationFun = mean)
+    expect_equal(res, chrs[, 3])
+})
