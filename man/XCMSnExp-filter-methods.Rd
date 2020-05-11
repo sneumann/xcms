@@ -20,7 +20,12 @@ filterFeatureDefinitions(x, features)
 
 \S4method{filterMsLevel}{XCMSnExp}(object, msLevel., keepAdjustedRtime = hasAdjustedRtime(object))
 
-\S4method{filterFile}{XCMSnExp}(object, file, keepAdjustedRtime = FALSE)
+\S4method{filterFile}{XCMSnExp}(
+  object,
+  file,
+  keepAdjustedRtime = hasAdjustedRtime(object),
+  keepFeatures = FALSE
+)
 
 \S4method{filterMz}{XCMSnExp}(object, mz, msLevel., ...)
 
@@ -62,6 +67,11 @@ retention times should be kept, even if e.g. features are being removed
 within the object to subset the object by file or \code{character}
 specifying the file names to sub set. The indices are expected to be
 increasingly ordered, if not they are ordered internally.}
+
+\item{keepFeatures}{For \code{filterFile}: \code{logical(1)} whether
+correspondence results (feature definitions) should be kept or dropped.
+Defaults to \code{keepFeatures = FALSE} hence removing feature
+definitions from the returned object.}
 
 \item{mz}{For \code{filterMz}: \code{numeric(2)} defining the lower and upper
 mz value for the filtering.}
@@ -112,10 +122,11 @@ results.
 
 \code{filterFile}: allows to reduce the
 \code{\link{XCMSnExp}} to data from only certain files. Identified
-chromatographic peaks for these files are retained while all eventually
-present features (peak grouping information) are dropped. By default
-also adjusted retention times are removed (if present). This can be
-overwritten by setting \code{keepAdjustedRtime = TRUE}.
+chromatographic peaks for these files are retained while correspondence
+results (feature definitions) are removed by default. To force keeping
+feature definitions use \code{keepFeatures = TRUE}. Adjusted retention times
+are kept by default if present. Use \code{keepAdjustedRtime = FALSE} to
+remove them.
 
 \code{filterMz}: filters the data set based on the
 provided mz value range. All chromatographic peaks and features (grouped
@@ -145,11 +156,11 @@ splitting, except adjusted retention times, if the optional argument
 }
 \details{
 All subsetting methods try to ensure that the returned data is
-consistent. Correspondence results for example are removed if the data
-set is sub-setted by file, since the correspondence results are dependent
-on the files on which correspondence was performed. Thus, some filter
-and sub-setting methods drop some of the preprocessing results. An
-exception are the adjusted retention times: most subsetting methods
+consistent. Correspondence results for example are removed by default if the
+data set is sub-setted by file, since the correspondence results are
+dependent on the files on which correspondence was performed. This can be
+changed by setting \code{keepFeatures = TRUE}.
+For adjusted retention times, most subsetting methods
 support the argument \code{keepAdjustedRtime} (even the \code{[} method)
 that forces the adjusted retention times to be retained even if the
 default would be to drop them.

@@ -2284,8 +2284,10 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         ## Keep only a single feature per row
         ## Keep only peaks for the features of interest.
         for (i in seq_len(nr)) {
-            ft_def <- fts_all[fts_all$row == i & rownames(fts_all) == ft_ids[i],
-                            , drop = FALSE]
+            is_feature <- fts_all$row == i & rownames(fts_all) == ft_ids[i]
+            if (!any(is_feature))
+                next
+            ft_def <- fts_all[is_feature, , drop = FALSE]
             ft_defs[[i]] <- ft_def
             pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
             for (j in seq_len(nc)) {

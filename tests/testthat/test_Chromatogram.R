@@ -37,7 +37,7 @@ test_that("chromatogram works", {
     ## with adjusted retention times.
     chrs <- chromatogram(filterFile(xod_xgr, file = 2),
                          adjustedRtime = FALSE, aggregationFun = "max")
-    spctr <- spectra(filterFile(xod_xgr, file = 2))
+    spctr <- spectra(filterFile(xod_xgr, file = 2, keepAdjustedRtime = FALSE))
     ints <- unlist(lapply(spctr, function(z)
         return(max(intensity(z)))))
     expect_equal(intensity(chrs[1, 1]), ints)

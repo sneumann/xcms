@@ -1126,19 +1126,20 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'
 #' \code{filterFile}: allows to reduce the
 #' \code{\link{XCMSnExp}} to data from only certain files. Identified
-#' chromatographic peaks for these files are retained while all eventually
-#' present features (peak grouping information) are dropped. By default
-#' also adjusted retention times are removed (if present). This can be
-#' overwritten by setting \code{keepAdjustedRtime = TRUE}.
+#' chromatographic peaks for these files are retained while correspondence
+#' results (feature definitions) are removed by default. To force keeping
+#' feature definitions use \code{keepFeatures = TRUE}. Adjusted retention times
+#' are kept by default if present. Use \code{keepAdjustedRtime = FALSE} to
+#' remove them.
 #'
 #' @details
 #'
 #' All subsetting methods try to ensure that the returned data is
-#' consistent. Correspondence results for example are removed if the data
-#' set is sub-setted by file, since the correspondence results are dependent
-#' on the files on which correspondence was performed. Thus, some filter
-#' and sub-setting methods drop some of the preprocessing results. An
-#' exception are the adjusted retention times: most subsetting methods
+#' consistent. Correspondence results for example are removed by default if the
+#' data set is sub-setted by file, since the correspondence results are
+#' dependent on the files on which correspondence was performed. This can be
+#' changed by setting \code{keepFeatures = TRUE}.
+#' For adjusted retention times, most subsetting methods
 #' support the argument \code{keepAdjustedRtime} (even the \code{[} method)
 #' that forces the adjusted retention times to be retained even if the
 #' default would be to drop them.
@@ -1169,6 +1170,11 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'     \code{[} \code{split}: \code{logical(1)} defining whether the adjusted
 #'     retention times should be kept, even if e.g. features are being removed
 #'     (and the retention time correction was performed on these features).
+#'
+#' @param keepFeatures For \code{filterFile}: \code{logical(1)} whether
+#'     correspondence results (feature definitions) should be kept or dropped.
+#'     Defaults to \code{keepFeatures = FALSE} hence removing feature
+#'     definitions from the returned object.
 #'
 #' @return All methods return an \code{\link{XCMSnExp}} object.
 #'
@@ -1238,69 +1244,82 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #' ## Split the object into a list of XCMSnExp objects, one per file
 #' xod_list <- split(xod, f = fromFile(xod))
 #' xod_list
-setMethod("filterFile", "XCMSnExp", function(object, file,
-                                             keepAdjustedRtime = FALSE) {
-    if (missing(file)) return(object)
-    if (is.character(file)) {
-        file <- base::match(file, basename(fileNames(object)))
-    }
-    ## This will not work if we want to get the files in a different
-    ## order (i.e. c(3, 1, 2, 5))
-    file <- base::sort(unique(file))
-    ## Error checking - seems that's not performed downstream.
-    if (!all(file %in% 1:length(fileNames(object))))
-        stop("'file' has to be within 1 and the number of files in the object!")
-    ## Drop features
-    has_features <- hasFeatures(object)
-    has_chrom_peaks <- hasChromPeaks(object)
-    has_adj_rt <- hasAdjustedRtime(object)
-    if (has_features) {
-        message("Correspondence results (features) removed.")
-        object <- dropFeatureDefinitions(object,
-                                         keepAdjustedRtime = keepAdjustedRtime)
-    }
-    if (has_adj_rt & !keepAdjustedRtime){
-        object <- dropAdjustedRtime(object)
-        has_adj_rt <- FALSE
-    }
-    ## Extracting all the XCMSnExp data from the object.
-    ph <- processHistory(object)
-    newFd <- new("MsFeatureData")
-    newFd@.xData <- .copy_env(object@msFeatureData)
-    ## Subset original data:
-    object <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
-                 "XCMSnExp")
-    ## Subset the results per file:
-    if (has_adj_rt) {
-        adjustedRtime(newFd) <- adjustedRtime(newFd)[file]
-    }
-    if (has_chrom_peaks) {
-        pks <- chromPeaks(newFd)
-        idx <- base::which(pks[, "sample"] %in% file)
-        pks <- pks[idx, , drop = FALSE]
-        pks[, "sample"] <- match(pks[, "sample"], file)
-        chromPeaks(newFd) <- pks
-        chromPeakData(newFd) <- chromPeakData(newFd)[idx, , drop = FALSE]
-    }
-    ## Remove ProcessHistory not related to any of the files.
-    if (length(ph)) {
-        kp <- unlist(lapply(ph, function(z) {
-            any(fileIndex(z) %in% file)
-        }))
-        ph <- ph[kp]
-    }
-    ## Update file index in process histories.
-    if (length(ph)) {
-        ph <- lapply(ph, function(z) {
-            updateFileIndex(z, old = file, new = 1:length(file))
-        })
-    }
-    lockEnvironment(newFd, bindings = TRUE)
-    object@msFeatureData <- newFd
-    object@.processHistory <- ph
-    validObject(object)
-    object
-})
+setMethod(
+    "filterFile", "XCMSnExp",
+    function(object, file, keepAdjustedRtime = hasAdjustedRtime(object),
+             keepFeatures = FALSE) {
+        if (missing(file)) return(object)
+        if (is.character(file)) {
+            file <- base::match(file, basename(fileNames(object)))
+        }
+        ## This will not work if we want to get the files in a different
+        ## order (i.e. c(3, 1, 2, 5))
+        file <- base::sort(unique(file))
+        ## Error checking - seems that's not performed downstream.
+        if (!all(file %in% seq_along(fileNames(object))))
+            stop("'file' has to be within 1 and the number of files in object.")
+        ## Drop features
+        has_features <- hasFeatures(object)
+        has_chrom_peaks <- hasChromPeaks(object)
+        has_adj_rt <- hasAdjustedRtime(object)
+        if (has_features && !keepFeatures) {
+            if (keepFeatures)
+                warning("Peak counts in featureDefinitions are no longer be",
+                        " valid after subsetting")
+            else {
+                message("Correspondence results (features) removed.")
+                object <- dropFeatureDefinitions(
+                    object, keepAdjustedRtime = keepAdjustedRtime)
+                has_features <- FALSE
+            }
+        }
+        if (has_adj_rt && !keepAdjustedRtime){
+            object <- dropAdjustedRtime(object)
+            has_adj_rt <- FALSE
+        }
+        ## Extracting all the XCMSnExp data from the object.
+        ph <- processHistory(object)
+        newFd <- new("MsFeatureData")
+        newFd@.xData <- .copy_env(object@msFeatureData)
+        ## Subset original data:
+        object <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
+                     "XCMSnExp")
+        if (has_adj_rt)
+            adjustedRtime(newFd) <- adjustedRtime(newFd)[file]
+        if (has_chrom_peaks) {
+            pks <- chromPeaks(newFd)
+            idx <- base::which(pks[, "sample"] %in% file)
+            pks <- pks[idx, , drop = FALSE]
+            pks[, "sample"] <- match(pks[, "sample"], file)
+            if (has_features) {
+                ## Update the peakidx in these!!!
+                featureDefinitions(newFd) <- .update_feature_definitions(
+                    featureDefinitions(newFd),
+                    original_names = rownames(chromPeaks(newFd)),
+                    subset_names = rownames(pks))
+            }
+            chromPeaks(newFd) <- pks
+            chromPeakData(newFd) <- chromPeakData(newFd)[idx, , drop = FALSE]
+        }
+        ## Remove ProcessHistory not related to any of the files.
+        if (length(ph)) {
+            kp <- unlist(lapply(ph, function(z) {
+                any(fileIndex(z) %in% file)
+            }))
+            ph <- ph[kp]
+        }
+        ## Update file index in process histories.
+        if (length(ph)) {
+            ph <- lapply(ph, function(z) {
+                updateFileIndex(z, old = file, new = 1:length(file))
+            })
+        }
+        lockEnvironment(newFd, bindings = TRUE)
+        object@msFeatureData <- newFd
+        object@.processHistory <- ph
+        validObject(object)
+        object
+    })
 
 #' @description
 #'
@@ -2487,53 +2506,65 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #'
 #' ## Plot just that one
 #' plot(chrs[1, , drop = FALSE])
-setMethod("chromatogram", "XCMSnExp", function(object, rt, mz,
-                                               aggregationFun = "sum",
-                                               missing = NA_real_,
-                                               msLevel = 1L,
-                                               BPPARAM = bpparam(),
-                                               adjustedRtime = hasAdjustedRtime(object),
-                                               filled = FALSE,
-                                               include = c("apex_within",
-                                                           "any", "none")) {
-    include <- match.arg(include)
-    if (adjustedRtime)
-        adj_rt <- rtime(object, adjusted = TRUE)
-    object_od <- as(object, "OnDiskMSnExp")
-    object_od <- selectFeatureData(
-        object_od, fcol = c("fileIdx", "spIdx", "seqNum",
-                            "acquisitionNum", "msLevel",
-                            "polarity", "retentionTime",
-                            "precursorScanNum"))
-    if (adjustedRtime) {
-        object_od@featureData$retentionTime <- adj_rt
-    }
-    res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
-                                 aggregationFun = aggregationFun,
-                                 missing = missing, msLevel = msLevel,
-                                 BPPARAM = BPPARAM)
-    if (!hasChromPeaks(object) | include == "none")
-        return(res)
-    ## Process peaks
-    lvls <- 1:length(fileNames(object))
-    if (missing(rt))
-        rt <- c(-Inf, Inf)
-    if (missing(mz))
-        mz <- c(-Inf, Inf)
-    if (is.matrix(rt) | is.matrix(mz)) {
-        ## Ensure rt and mz are aligned.
-        if (!is.matrix(rt))
-            rt <- matrix(rt, ncol = 2)
-        if (!is.matrix(mz))
-            mz <- matrix(mz, ncol = 2)
-        if (nrow(rt) == 1)
-            rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
-        if (nrow(mz) == 1)
-            mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
-        pk_list <- vector("list", nrow(mz))
-        pkd_list <- vector("list", nrow(mz))
-        for (i in 1:nrow(mz)) {
-            pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
+setMethod(
+    "chromatogram", "XCMSnExp",
+    function(object, rt, mz, aggregationFun = "sum", missing = NA_real_,
+             msLevel = 1L, BPPARAM = bpparam(),
+             adjustedRtime = hasAdjustedRtime(object), filled = FALSE,
+             include = c("apex_within", "any", "none")) {
+        include <- match.arg(include)
+        if (adjustedRtime)
+            adj_rt <- rtime(object, adjusted = TRUE)
+        object_od <- as(object, "OnDiskMSnExp")
+        object_od <- selectFeatureData(
+            object_od, fcol = c("fileIdx", "spIdx", "seqNum",
+                                "acquisitionNum", "msLevel",
+                                "polarity", "retentionTime",
+                                "precursorScanNum"))
+        if (adjustedRtime)
+            object_od@featureData$retentionTime <- adj_rt
+        res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
+                                     aggregationFun = aggregationFun,
+                                     missing = missing, msLevel = msLevel,
+                                     BPPARAM = BPPARAM)
+        if (!hasChromPeaks(object) | include == "none")
+            return(res)
+        ## Process peaks
+        lvls <- 1:length(fileNames(object))
+        if (missing(rt))
+            rt <- c(-Inf, Inf)
+        if (missing(mz))
+            mz <- c(-Inf, Inf)
+        if (is.matrix(rt) | is.matrix(mz)) {
+            ## Ensure rt and mz are aligned.
+            if (!is.matrix(rt))
+                rt <- matrix(rt, ncol = 2)
+            if (!is.matrix(mz))
+                mz <- matrix(mz, ncol = 2)
+            if (nrow(rt) == 1)
+                rt <- matrix(rep(rt, nrow(mz)), ncol = 2, byrow = TRUE)
+            if (nrow(mz) == 1)
+                mz <- matrix(rep(mz, nrow(rt)), ncol = 2, byrow = TRUE)
+            pk_list <- vector("list", nrow(mz))
+            pkd_list <- vector("list", nrow(mz))
+            for (i in 1:nrow(mz)) {
+                pks <- chromPeaks(object, rt = rt[i, ], mz = mz[i, ],
+                                  type = include)
+                pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
+                if (!filled) {
+                    pks <- pks[!pkd$is_filled, , drop = FALSE]
+                    pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+                }
+                smpls <- factor(pks[, "sample"], levels = lvls)
+                pk_list[[i]] <- split.data.frame(pks, smpls)
+                pkd_list[[i]] <- split.data.frame(pkd, smpls)
+            }
+            pks <- do.call(rbind, pk_list)
+            pks <- pks[seq_along(pks)]
+            pkd <- do.call(rbind, pkd_list)
+            pkd <- pkd[seq_along(pkd)]
+        } else {
+            pks <- chromPeaks(object, rt = rt, mz = mz,
                               type = include)
             pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
             if (!filled) {
@@ -2541,51 +2572,35 @@ setMethod("chromatogram", "XCMSnExp", function(object, rt, mz,
                 pkd <- pkd[!pkd$is_filled, , drop = FALSE]
             }
             smpls <- factor(pks[, "sample"], levels = lvls)
-            pk_list[[i]] <- split.data.frame(pks, smpls)
-            pkd_list[[i]] <- split.data.frame(pkd, smpls)
+            pks <- split.data.frame(pks, smpls)
+            pkd <- split.data.frame(pkd, smpls)
         }
-        pks <- do.call(rbind, pk_list)
-        pks <- pks[seq_along(pks)]
-        pkd <- do.call(rbind, pkd_list)
-        pkd <- pkd[seq_along(pkd)]
-    } else {
-        pks <- chromPeaks(object, rt = rt, mz = mz,
-                          type = include)
-        pkd <- chromPeakData(object)[rownames(pks), , drop = FALSE]
-        if (!filled) {
-            pks <- pks[!pkd$is_filled, , drop = FALSE]
-            pkd <- pkd[!pkd$is_filled, , drop = FALSE]
+        res <- as(res, "XChromatograms")
+        res@.Data <- matrix(
+            mapply(unlist(res), pks, pkd, FUN = function(chr, pk, pd) {
+                chr@chromPeaks <- pk
+                chr@chromPeakData <- pd
+                chr
+            }), nrow = nrow(res), dimnames = dimnames(res))
+        res@.processHistory <- object@.processHistory
+        if (hasFeatures(object)) {
+            pks_sub <- chromPeaks(res)
+            ## Loop through each EIC "row" to ensure all features in
+            ## that EIC are retained.
+            fts <- lapply(seq_len(nrow(res)), function(r) {
+                fdev <- featureDefinitions(object, mz = mz(res)[r, ],
+                                           rt = rt)
+                if (nrow(fdev)) {
+                    fdev$row <- r
+                    .subset_features_on_chrom_peaks(
+                        fdev, chromPeaks(object), pks_sub)
+                } else DataFrame()
+            })
+            res@featureDefinitions <- do.call(rbind, fts)
         }
-        smpls <- factor(pks[, "sample"], levels = lvls)
-        pks <- split.data.frame(pks, smpls)
-        pkd <- split.data.frame(pkd, smpls)
-    }
-    res <- as(res, "XChromatograms")
-    res@.Data <- matrix(
-        mapply(unlist(res), pks, pkd, FUN = function(chr, pk, pd) {
-            chr@chromPeaks <- pk
-            chr@chromPeakData <- pd
-            chr
-        }), nrow = nrow(res), dimnames = dimnames(res))
-    res@.processHistory <- object@.processHistory
-    if (hasFeatures(object)) {
-        pks_sub <- chromPeaks(res)
-        ## Loop through each EIC "row" to ensure all features in
-        ## that EIC are retained.
-        fts <- lapply(seq_len(nrow(res)), function(r) {
-            fdev <- featureDefinitions(object, mz = mz(res)[r, ],
-                                       rt = rt)
-            if (nrow(fdev)) {
-                fdev$row <- r
-                .subset_features_on_chrom_peaks(
-                    fdev, chromPeaks(object), pks_sub)
-            } else DataFrame()
-        })
-        res@featureDefinitions <- do.call(rbind, fts)
-    }
-    validObject(res)
-    res
-})
+        validObject(res)
+        res
+    })
 
 #' @rdname XCMSnExp-class
 #'

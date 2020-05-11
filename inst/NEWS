@@ -1,5 +1,7 @@
 Changes in version 3.11.1
 
+- `filterFile` gets new parameter `keepFeatures` to support retaining
+  correspondence results even if a data set is filtered by file.
 - Export the virtual `Param` class.
 - Add filterColumnsIntensityAbove method for Chromatograms object that allows
   to select columns (samples) of an Chromatograms object for which intensities
