@@ -266,6 +266,7 @@ exportMethods(
 
 ## New Param classes
 exportClasses(
+    "Param",
     "CentWaveParam",
     "MatchedFilterParam",
     "MassifquantParam",

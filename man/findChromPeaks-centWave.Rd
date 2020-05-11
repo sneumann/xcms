@@ -206,10 +206,10 @@ data within regions of interest is checked to be above the first baseline.}
 defining the scale for each region of interest in \code{roiList} that
 should be used for the centWave-wavelets.}
 
-\item{extendLengthMSW}{Option to force centWave to use all scales when 
+\item{extendLengthMSW}{Option to force centWave to use all scales when
 running centWave rather than truncating with the EIC length. Uses the "open"
-method to extend the EIC to a integer base-2 length prior to being passed to 
-\code{convolve} rather than the default "reflect" method. See 
+method to extend the EIC to a integer base-2 length prior to being passed to
+\code{convolve} rather than the default "reflect" method. See
 https://github.com/sneumann/xcms/issues/445 for more information.}
 
 \item{object}{For \code{findChromPeaks}: an

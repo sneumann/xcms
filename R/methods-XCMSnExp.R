@@ -259,10 +259,10 @@ setMethod("featureDefinitions", "XCMSnExp",
 #'
 #' @rdname XCMSnExp-class
 setReplaceMethod("featureDefinitions", "XCMSnExp", function(object, value) {
-    if (hasFeatures(object))
-        object <- dropFeatureDefinitions(object)
+    ## if (hasFeatures(object))
+    ##     object <- dropFeatureDefinitions(object)
     newFd <- new("MsFeatureData")
-    newFd@.xData <- .copy_env(object@msFeatureData)
+    newFd@.xData <- xcms:::.copy_env(object@msFeatureData)
     featureDefinitions(newFd) <- value
     lockEnvironment(newFd, bindings = TRUE)
     object@msFeatureData <- newFd

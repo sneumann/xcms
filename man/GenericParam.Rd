@@ -5,6 +5,9 @@
 \name{GenericParam-class}
 \alias{GenericParam-class}
 \alias{GenericParam}
+\alias{Param}
+\alias{class:Param}
+\alias{Param-class}
 \alias{show,GenericParam-method}
 \title{Generic parameter class}
 \usage{

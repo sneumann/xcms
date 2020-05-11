@@ -1,5 +1,6 @@
 Changes in version 3.11.1
 
+- Export the virtual `Param` class.
 - Add filterColumnsIntensityAbove method for Chromatograms object that allows
   to select columns (samples) of an Chromatograms object for which intensities
   of its chromatographic data are higher than a threshold.

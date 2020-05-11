@@ -4,6 +4,7 @@
 \name{filterColumnsIntensityAbove,Chromatograms-method}
 \alias{filterColumnsIntensityAbove,Chromatograms-method}
 \alias{filterColumnsIntensityAbove}
+\alias{filterColumnsKeepTop}
 \alias{filterColumnsKeepTop,Chromatograms-method}
 \alias{filterColumnsIntensityAbove,XChromatograms-method}
 \alias{filterColumnsKeepTop,XChromatograms-method}

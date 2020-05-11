@@ -187,7 +187,7 @@ setMethod("removeIntensity", "Chromatograms",
 
 #' @title Filtering sets of chromatographic data
 #'
-#' @aliases filterColumnsIntensityAbove
+#' @aliases filterColumnsIntensityAbove filterColumnsKeepTop
 #'
 #' @rdname filter-Chromatograms
 #'
