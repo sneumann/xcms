@@ -638,10 +638,10 @@ test_that(".XCMSnExp2SummarizedExperiment works", {
                  featureValues(xod_xgrg, value = "intb"))
 })
 
-test_that(".XCMSnExp2xcmsSet works", {
-    res <- xcms:::.XCMSnExp2xcmsSet(xod_xgrg)
-    expect_true(class(res)=="xcmsSet")
-    expect_error(featureDefinitions(res))
-    expect_true(typeof(groups(res))=="double")
-    expect_false("peakidx"%in%colnames(groups(res)))
-})
+# test_that(".XCMSnExp2xcmsSet works", {
+#     res <- xcms:::.XCMSnExp2xcmsSet(xod_xgrg)
+#     expect_true(class(res)=="xcmsSet")
+#     expect_error(featureDefinitions(res))
+#     expect_true(typeof(groups(res))=="double")
+#     expect_false("peakidx"%in%colnames(groups(res)))
+# })
