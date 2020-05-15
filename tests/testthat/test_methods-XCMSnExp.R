@@ -1000,6 +1000,12 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_warning(res <- as(od_2, "xcmsSet"))
     expect_equal(profStep(res), 2)
     expect_equal(profMethod(res), "binlinbase")
+    
+    # Tests for issue https://github.com/sneumann/xcms/issues/464
+    # The above code passes because "res" is overwritten and groups
+    # are re-assigned with `res <- group.density(res, minfrac = 0.5)`
+    res <- as(xod_xgrg, "xcmsSet")
+    expect_type(groups(res), "numeric")
 })
 
 test_that("chromatogram,XCMSnExp works", {
