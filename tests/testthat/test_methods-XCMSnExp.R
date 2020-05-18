@@ -972,7 +972,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
                                                       span = 0.4))
     ## With groups.
     res <- as(od_2, "xcmsSet")
-    ftDef <- featureDefinitions(od_2)[, -ncol(featureDefinitions(od_2))]
+    ftDef <- featureDefinitions(od_2)[, !names(featureDefinitions(od_2))%in%"peakidx"]
     ftDef <- S4Vectors::as.matrix(ftDef)
     rownames(ftDef) <- NULL
     expect_equal(res@groups, ftDef)
@@ -1002,10 +1002,8 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_equal(profMethod(res), "binlinbase")
     
     # Tests for issue https://github.com/sneumann/xcms/issues/464
-    # The above code passes because "res" is overwritten and groups
-    # are re-assigned with `res <- group.density(res, minfrac = 0.5)`
     res <- as(xod_xgrg, "xcmsSet")
-    expect_type(groups(res), "numeric")
+    expect_type(groups(res), "double")
 })
 
 test_that("chromatogram,XCMSnExp works", {
