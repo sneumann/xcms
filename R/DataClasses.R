@@ -189,6 +189,7 @@ setClass("xcmsPeaks", contains = "matrix")
 .PROCSTEP.RTIME.CORRECTION <- "Retention time correction"
 .PROCSTEP.PEAK.FILLING <- "Missing peak filling"
 .PROCSTEP.CALIBRATION <- "Calibration"
+.PROCSTEP.FEATURE.GROUPING <- "Feature grouping"
 .PROCSTEPS <- c(
     .PROCSTEP.UNKNOWN,
     .PROCSTEP.PEAK.DETECTION,
@@ -196,7 +197,8 @@ setClass("xcmsPeaks", contains = "matrix")
     .PROCSTEP.PEAK.GROUPING,
     .PROCSTEP.RTIME.CORRECTION,
     .PROCSTEP.PEAK.FILLING,
-    .PROCSTEP.CALIBRATION
+    .PROCSTEP.CALIBRATION,
+    .PROCSTEP.FEATURE.GROUPING
 )
 
 ############################################################
