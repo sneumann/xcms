@@ -339,6 +339,7 @@ setMethod("filterColumnsKeepTop", "Chromatograms",
                   stop("'n' should be an 'integer' of length 1")
               n <- ceiling(n)
               nc <- ncol(object)
+              nr <- nrow(object)
               if (n > nc)
                   stop("'n' should be smaller or equal than the number of ",
                        "columns (", nc, ")")
@@ -347,9 +348,12 @@ setMethod("filterColumnsKeepTop", "Chromatograms",
               else FUN <- sum
               colval <- numeric(nc)
               for (i in seq_len(nc)) {
-                  vals <- vapply(object[, i], function(z) {
-                      FUN(z@intensity, na.rm = TRUE)
-                  }, FUN.VALUE = NA_real_, USE.NAMES = FALSE)
+                  if (nr == 1)
+                      vals <- FUN(object[1, i]@intensity, na.rm = TRUE)
+                  else
+                      vals <- vapply(object[, i], function(z) {
+                          FUN(z@intensity, na.rm = TRUE)
+                      }, FUN.VALUE = NA_real_, USE.NAMES = FALSE)
                   colval[i] <- aggregationFun(vals, na.rm = TRUE)
               }
               idx <- order(colval, decreasing = TRUE)[seq_len(n)]
