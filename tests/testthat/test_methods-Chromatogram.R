@@ -49,3 +49,13 @@ test_that("removeIntensity,Chromatogram works", {
     expect_equal(intensity(res), c(NA_real_, NA_real_, NA_real_, 22, 34,
                                    NA_real_, NA_real_))
 })
+
+test_that("normalize,Chromatogram works", {
+    chr <- Chromatogram(rtime = c(1, 2, 3, 4, 5, 6, 7),
+                        intensity = c(NA_real_, 13, 16, 22, 34, 15, 6))
+    res <- normalize(chr)
+    expect_true(max(intensity(res), na.rm = TRUE) == 1)
+    expect_true(is.na(intensity(res)[1]))
+
+    res <- normalize(chr, method = "sum")
+})

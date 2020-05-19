@@ -347,3 +347,33 @@ setMethod("removeIntensity", "Chromatogram",
                   object@intensity[which(object@intensity < threshold)] <- NA_real_
               object
           })
+
+#' @title Normalize chromatographic data
+#'
+#' @aliases normalize,Chromatogram-method
+#'
+#' @name normalize-Chromatogram
+#'
+#' @description
+#'
+#' `normalize` *normalizes* the intensities of a chromatogram by dividing them
+#' either by the maximum intensity (`method = "max"`) or total intensity
+#' (`method = "sum"`) of the chromatogram.
+#'
+#' @param object [Chromatogram()] or [Chromatograms()] object.
+#'
+#' @param method `character(1)` defining whether each chromatogram should be
+#'     normalized to its maximum signal or total signal.
+#'
+#' @return the normalized input object.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @rdname normalize-Chromatogram
+setMethod("normalize", "Chromatogram",
+          function(object, method = c("max", "sum")) {
+              method <- match.arg(method)
+              .normalize_chromatogram(object, method)
+})

@@ -274,3 +274,9 @@
     list(chromPeaks = pks_new[keep, cns, drop = FALSE],
          chromPeakData = pkd[keep, , drop = FALSE])
 }
+
+.normalize_chromatogram <- function(x, method = "max") {
+    ref <- do.call(method, list(x = x@intensity, na.rm = TRUE))
+    x@intensity <- x@intensity / ref
+    x
+}

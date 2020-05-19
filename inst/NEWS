@@ -1,5 +1,6 @@
 Changes in version 3.11.1
 
+- Add `normalize` method for `Chromatogram` and `Chromatograms` objects.
 - `featureChromatograms` gets new parameter `n` and `value` to extract EICs
   only from the top n samples with highest intensities.
 - `filterFile` gets new parameter `keepFeatures` to support retaining

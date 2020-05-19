@@ -355,3 +355,15 @@ setMethod("filterColumnsKeepTop", "Chromatograms",
               idx <- order(colval, decreasing = TRUE)[seq_len(n)]
               object[, sort(idx)]
           })
+
+#' @rdname normalize-Chromatogram
+setMethod("normalize", "Chromatograms",
+          function(object, method = c("max", "sum")) {
+              method <- match.arg(method)
+              object@.Data <- matrix(lapply(c(object@.Data),
+                                            FUN = .normalize_chromatogram,
+                                            method = method),
+                                     ncol = ncol(object),
+                                     dimnames = dimnames(object@.Data))
+              object
+          })
