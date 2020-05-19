@@ -1,5 +1,7 @@
 Changes in version 3.11.1
 
+- `featureChromatograms` gets new parameter `n` and `value` to extract EICs
+  only from the top n samples with highest intensities.
 - `filterFile` gets new parameter `keepFeatures` to support retaining
   correspondence results even if a data set is filtered by file.
 - Export the virtual `Param` class.
