@@ -598,6 +598,34 @@ used to extract the chromatogram was larger than the peak's m/z.</p>
 <code>XChromatograms</code>, respectively. Also, they can be coerced from
 Chromatogram or <code>Chromatograms()</code> objects using
 <code>as(object, "XChromatogram")</code> or <code>as(object, "XChromatograms")</code>.</p>
+    <h2 class="hasAnchor" id="filtering-and-subsetting"><a class="anchor" href="#filtering-and-subsetting"></a>Filtering and subsetting</h2>
+
+    
+
+
+<p>Besides classical subsetting with <code>[</code> specific filter operations on
+<code>Chromatograms()</code> and <code>XChromatograms</code> objects are available. See
+<code><a href='filter-Chromatograms.html'>filterColumnsIntensityAbove()</a></code> for more details.</p>
+
+<ul>
+<li><p><code>[</code> allows to subset a <code>XChromatograms</code> object by row (<code>i</code>) and column
+(<code>j</code>), with <code>i</code> and <code>j</code> being of type <code>integer</code>. The <code>featureDefinitions</code>
+will also be subsetted accordingly and the <code>peakidx</code> column updated.</p></li>
+<li><p><code>filterMz</code> filters the chromatographic peaks within an <code>XChromatogram</code> or
+<code>XChromatograms</code>, if a column <code>"mz"</code> is present in the <code>chromPeaks</code> matrix.
+This would be the case if the <code>XChromatogram</code> was extracted from an
+<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram-method.html'>chromatogram()</a></code> function. All
+chromatographic peaks with their m/z within the m/z range defined by <code>mz</code>
+will be retained. Also feature definitions (if present) will be subset
+accordingly. The function returns a filtered <code>XChromatogram</code> or
+<code>XChromatograms</code> object.</p></li>
+<li><p><code>filterRt</code> filters chromatogram(s) by the provided retention time range.
+All eventually present chromatographic peaks with their apex within the
+retention time range specified with <code>rt</code> will be retained. Also feature
+definitions, if present, will be filtered accordingly. The function
+returns a filtered <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></li>
+</ul>
+
     <h2 class="hasAnchor" id="accessing-data"><a class="anchor" href="#accessing-data"></a>Accessing data</h2>
 
     
@@ -680,29 +708,6 @@ it might be better to set <code>peakType = "none"</code> to avoid generating bus
 plots.</p></li>
 <li><p><code>plotChromPeakDensity</code>: visualize <em>peak density</em>-based correspondence
 analysis results. See section <em>Correspondence analysis</em> for more details.</p></li>
-</ul>
-
-    <h2 class="hasAnchor" id="filtering-and-subsetting"><a class="anchor" href="#filtering-and-subsetting"></a>Filtering and subsetting</h2>
-
-    
-
-<ul>
-<li><p><code>[</code> allows to subset a <code>XChromatograms</code> object by row (<code>i</code>) and column
-(<code>j</code>), with <code>i</code> and <code>j</code> being of type <code>integer</code>. The <code>featureDefinitions</code>
-will also be subsetted accordingly and the <code>peakidx</code> column updated.</p></li>
-<li><p><code>filterMz</code> filters the chromatographic peaks within an <code>XChromatogram</code> or
-<code>XChromatograms</code>, if a column <code>"mz"</code> is present in the <code>chromPeaks</code> matrix.
-This would be the case if the <code>XChromatogram</code> was extracted from an
-<code><a href='XCMSnExp-class.html'>XCMSnExp()</a></code> object with the <code><a href='chromatogram-method.html'>chromatogram()</a></code> function. All
-chromatographic peaks with their m/z within the m/z range defined by <code>mz</code>
-will be retained. Also feature definitions (if present) will be subset
-accordingly. The function returns a filtered <code>XChromatogram</code> or
-<code>XChromatograms</code> object.</p></li>
-<li><p><code>filterRt</code> filters chromatogram(s) by the provided retention time range.
-All eventually present chromatographic peaks with their apex within the
-retention time range specified with <code>rt</code> will be retained. Also feature
-definitions, if present, will be filtered accordingly. The function
-returns a filtered <code>XChromatogram</code> or <code>XChromatograms</code> object.</p></li>
 </ul>
 
     <h2 class="hasAnchor" id="chromatographic-peak-detection"><a class="anchor" href="#chromatographic-peak-detection"></a>Chromatographic peak detection</h2>
@@ -816,7 +821,7 @@ detection on <code>Chromatograms()</code> objects.</p></div>
 <span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='no'>xchrs</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Wed May 20 05:35:31 2020 
+#&gt;  date: Wed May 20 14:35:31 2020 
 #&gt;  info:  
 #&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: CentWaveParam 

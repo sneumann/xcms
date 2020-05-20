@@ -64,10 +64,11 @@ XCMSnExp to enable subsetting also on the preprocessing
 results.
 filterFile: allows to reduce the
 XCMSnExp to data from only certain files. Identified
-chromatographic peaks for these files are retained while all eventually
-present features (peak grouping information) are dropped. By default
-also adjusted retention times are removed (if present). This can be
-overwritten by setting keepAdjustedRtime = TRUE.
+chromatographic peaks for these files are retained while correspondence
+results (feature definitions) are removed by default. To force keeping
+feature definitions use keepFeatures = TRUE. Adjusted retention times
+are kept by default if present. Use keepAdjustedRtime = FALSE to
+remove them.
 filterMz: filters the data set based on the
 provided mz value range. All chromatographic peaks and features (grouped
 peaks) falling completely within the provided mz value range are retained
@@ -209,10 +210,11 @@ examples.</p>
 results.</p>
 <p><code>filterFile</code>: allows to reduce the
 <code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> to data from only certain files. Identified
-chromatographic peaks for these files are retained while all eventually
-present features (peak grouping information) are dropped. By default
-also adjusted retention times are removed (if present). This can be
-overwritten by setting <code>keepAdjustedRtime = TRUE</code>.</p>
+chromatographic peaks for these files are retained while correspondence
+results (feature definitions) are removed by default. To force keeping
+feature definitions use <code>keepFeatures = TRUE</code>. Adjusted retention times
+are kept by default if present. Use <code>keepAdjustedRtime = FALSE</code> to
+remove them.</p>
 <p><code>filterMz</code>: filters the data set based on the
 provided mz value range. All chromatographic peaks and features (grouped
 peaks) falling completely within the provided mz value range are retained
@@ -250,7 +252,12 @@ splitting, except adjusted retention times, if the optional argument
 filterMsLevel(object, msLevel., keepAdjustedRtime = hasAdjustedRtime(object))
 
 # S4 method for XCMSnExp
-filterFile(object, file, keepAdjustedRtime = FALSE)
+filterFile(
+  object,
+  file,
+  keepAdjustedRtime = hasAdjustedRtime(object),
+  keepFeatures = FALSE
+)
 
 # S4 method for XCMSnExp
 filterMz(object, mz, msLevel., ...)
@@ -319,6 +326,13 @@ specifying the file names to sub set. The indices are expected to be
 increasingly ordered, if not they are ordered internally.</p></td>
     </tr>
     <tr>
+      <th>keepFeatures</th>
+      <td><p>For <code>filterFile</code>: <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> whether
+correspondence results (feature definitions) should be kept or dropped.
+Defaults to <code>keepFeatures = FALSE</code> hence removing feature
+definitions from the returned object.</p></td>
+    </tr>
+    <tr>
       <th>mz</th>
       <td><p>For <code>filterMz</code>: <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(2)</a></code> defining the lower and upper
 mz value for the filtering.</p></td>
@@ -350,11 +364,11 @@ a <code>factor</code>.</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>All subsetting methods try to ensure that the returned data is
-consistent. Correspondence results for example are removed if the data
-set is sub-setted by file, since the correspondence results are dependent
-on the files on which correspondence was performed. Thus, some filter
-and sub-setting methods drop some of the preprocessing results. An
-exception are the adjusted retention times: most subsetting methods
+consistent. Correspondence results for example are removed by default if the
+data set is sub-setted by file, since the correspondence results are
+dependent on the files on which correspondence was performed. This can be
+changed by setting <code>keepFeatures = TRUE</code>.
+For adjusted retention times, most subsetting methods
 support the argument <code>keepAdjustedRtime</code> (even the <code>[</code> method)
 that forces the adjusted retention times to be retained even if the
 default would be to drop them.</p>
@@ -454,7 +468,7 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 05:35:22 2020] 
+#&gt; Data loaded [Wed May 20 14:35:22 2020] 
 #&gt;  MSnbase version: 2.14.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
@@ -482,7 +496,7 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 05:35:22 2020] 
+#&gt; Data loaded [Wed May 20 14:35:22 2020] 
 #&gt;  MSnbase version: 2.14.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
@@ -507,7 +521,7 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 05:35:22 2020] 
+#&gt; Data loaded [Wed May 20 14:35:22 2020] 
 #&gt;  MSnbase version: 2.14.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
@@ -532,7 +546,7 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 05:35:22 2020] 
+#&gt; Data loaded [Wed May 20 14:35:22 2020] 
 #&gt;  MSnbase version: 2.14.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
