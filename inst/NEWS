@@ -1,3 +1,8 @@
+Changes in version 3.10.1
+
+- Fix problem in converting an XCMSnExp into an xcmsSet object (issue #464).
+
+
 Changes in version 3.9.4
 
 - Fix issue in centWave which skips peak detection depending on minimum

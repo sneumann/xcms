@@ -972,7 +972,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
                                                       span = 0.4))
     ## With groups.
     res <- as(od_2, "xcmsSet")
-    ftDef <- featureDefinitions(od_2)[, -ncol(featureDefinitions(od_2))]
+    ftDef <- featureDefinitions(od_2)[, colnames(featureDefinitions(od_2)) != "peakidx"]
     ftDef <- S4Vectors::as.matrix(ftDef)
     rownames(ftDef) <- NULL
     expect_equal(res@groups, ftDef)
@@ -1000,6 +1000,9 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_warning(res <- as(od_2, "xcmsSet"))
     expect_equal(profStep(res), 2)
     expect_equal(profMethod(res), "binlinbase")
+
+    res <- as(xod_xgrg, "xcmsSet")
+    expect_type(groups(res), "double")
 })
 
 test_that("chromatogram,XCMSnExp works", {
