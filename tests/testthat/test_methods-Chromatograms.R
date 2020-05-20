@@ -21,6 +21,7 @@ test_that("findChromPeaks,Chromatograms works", {
 })
 
 test_that(".correlate_chromatograms_self works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -43,6 +44,7 @@ test_that(".correlate_chromatograms_self works", {
 })
 
 test_that(".correlate_chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -85,6 +87,7 @@ test_that(".correlate_chromatograms works", {
 })
 
 test_that("correlate,Chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -109,6 +112,7 @@ test_that("correlate,Chromatograms works", {
 })
 
 test_that("removeIntensity,Chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -134,6 +138,7 @@ test_that("removeIntensity,Chromatograms works", {
 })
 
 test_that("filterColumnsIntensityAbove,Chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -166,6 +171,7 @@ test_that("filterColumnsIntensityAbove,Chromatograms works", {
 })
 
 test_that("filterChromatogramsKeepTop,Chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
@@ -207,6 +213,7 @@ test_that("filterChromatogramsKeepTop,Chromatograms works", {
 })
 
 test_that("normalize,Chromatograms works", {
+    set.seed(123)
     chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
                          intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
     chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
