@@ -1,5 +1,7 @@
 Changes in version 3.10.1
 
+- Fix for issue #471. Thanks for Andris Jankevics for reporting and providing a
+  solution.
 - Fix issue #475.
 - Fix problem in converting an XCMSnExp into an xcmsSet object (issue #464).
 

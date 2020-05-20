@@ -54,7 +54,12 @@ dropGenericProcessHistory <- function(x, fun) {
     xs@rt <- rts
 
     ## @phenoData
-    xs@phenoData <- pData(from)
+    pd <- pData(from)
+    if (nrow(pd) != length(fileNames(from))) {
+        pd <- data.frame(file_name = basename(fileNames(from)))
+        rownames(pd) <- pd$file_name
+    }
+    xs@phenoData <- pd
     ## @filepaths
     xs@filepaths <- fileNames(from)
 
