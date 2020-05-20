@@ -39,7 +39,7 @@ dropGenericProcessHistory <- function(x, fun) {
     ## @groupidx <- featureDefinitions(x)$peakidx
     if (hasFeatures(from)){
         fgs <- featureDefinitions(from)
-        xs@groups <- S4Vectors::as.matrix(fgs[, -ncol(fgs)])
+        xs@groups <- S4Vectors::as.matrix(fgs[,names(fgs)!="peakidx"])
         rownames(xs@groups) <- NULL
         xs@groupidx <- fgs$peakidx
     }
