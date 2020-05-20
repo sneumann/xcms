@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/sneumann/xcms.svg?branch=master)](https://travis-ci.org/sneumann/xcms)
+[![R-CMD-check](https://github.com/sneumann/xcms/workflows/R-CMD-check/badge.svg)](https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check)
 [![codecov.io](https://codecov.io/github/sneumann/xcms/coverage.svg?branch=master)](https://codecov.io/github/sneumann/xcms?branch=master)
 
 # The `xcms` package (version >= 3)
