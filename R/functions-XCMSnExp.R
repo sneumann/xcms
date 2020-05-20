@@ -447,7 +447,7 @@ dropGenericProcessHistory <- function(x, fun) {
         ## mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtime(object),
         ##                valsPerSpect = valsPerSpect,
         ##                mzrange = peakArea[i, c("mzmin", "mzmax")])
-        if (length(mtx)) {
+        if (length(mz_area)) {
             if (!all(is.na(mtx[, 3]))) {
                 ## How to calculate the area: (1)sum of all intensities
                 res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE)
