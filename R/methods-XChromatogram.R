@@ -432,3 +432,23 @@ setMethod("refineChromPeaks", c(object = "XChromatogram",
               validObject(object)
               object
           })
+
+#' @rdname removeIntensity-Chromatogram
+setMethod("removeIntensity", "XChromatogram",
+          function(object, which = c("below_threshold", "outside_chromPeak"),
+                   threshold = 0) {
+              which <- match.arg(which)
+              if (which == "outside_chromPeak") {
+                  cps <- chromPeaks(object)
+                  if (nrow(cps)) {
+                      keep <- rep(FALSE, length(object@rtime))
+                      for (i in seq_len(nrow(cps)))
+                          keep[which(object@rtime >= cps[i, "rtmin"] &
+                                     object@rtime <= cps[i, "rtmax"])] <- TRUE
+                      object@intensity[!keep] <- NA_real_
+                  } else
+                      warning("No chromatographic peaks present. ",
+                              "Returning data as is")
+                  return(object)
+              } else callNextMethod(object, which = which, threshold = threshold)
+          })

@@ -266,6 +266,7 @@ exportMethods(
 
 ## New Param classes
 exportClasses(
+    "Param",
     "CentWaveParam",
     "MatchedFilterParam",
     "MassifquantParam",
@@ -508,5 +509,8 @@ exportMethods("hasChromPeaks",
               "align",
               "correlate",
               "plot",
-              "refineChromPeaks"
+              "refineChromPeaks",
+              "removeIntensity",
+              "filterColumnsIntensityAbove",
+              "filterColumnsKeepTop"
               )

@@ -11,6 +11,8 @@ featureChromatograms(
   features,
   include = c("feature_only", "apex_within", "any", "all"),
   filled = FALSE,
+  n = length(fileNames(x)),
+  value = c("maxo", "into"),
   ...
 )
 }
@@ -39,6 +41,13 @@ for options and details.}
 the result object. The default is \code{filled = FALSE}, i.e. only detected
 peaks are reported.}
 
+\item{n}{\code{integer(1)} to optionally specify the number of \emph{top n} samples
+from which the EIC should be extracted.}
+
+\item{value}{\code{character(1)} specifying the column to be used to sort the
+samples. Can be either \code{"maxo"} (the default) or \code{"into"} to use the
+maximal peak intensity or the integrated peak area, respectively.}
+
 \item{...}{optional arguments to be passed along to the \code{\link[=chromatogram]{chromatogram()}}
 function.}
 }
@@ -62,6 +71,12 @@ chromatogram is extracted are returned too.
 With \code{include = "any"} or \code{include = "all"} all chromatographic peaks (and
 eventually the feature in which they are present) overlapping the m/z and rt
 range will be returned.
+}
+\note{
+When extracting EICs from only the top \code{n} samples it can happen that one
+or more of the features specified with \code{features} are dropped because they
+have no detected peak in the \emph{top n} samples. The chance for this to happen
+is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}).
 }
 \examples{
 
@@ -88,6 +103,10 @@ chrs <- featureChromatograms(od, features = 1:3)
 ## Plot the XIC for the first feature using different colors for each file
 par(mfrow = c(1, 2))
 plot(chrs[1, ], col = c("red", "green"))
+}
+\seealso{
+\code{\link[=filterColumnsKeepTop]{filterColumnsKeepTop()}} to filter the extracted EICs keeping only
+the \emph{top n} columns (samples) with the highest intensity.
 }
 \author{
 Johannes Rainer

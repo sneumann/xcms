@@ -229,9 +229,22 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #' *aligned* to match data points in the first to data points in the second
 #' chromatogram. See [align()] for more details.
 #'
-#' @param x [Chromatogram()] object.
+#' If `correlate` is called on a single [Chromatograms()] object a pairwise
+#' correlation of each chromatogram with each other is performed and a `matrix`
+#' with the correlation coefficients is returned.
 #'
-#' @param y [Chromatogram()] object.
+#' Note that the correlation of two chromatograms depends also on their order,
+#' e.g. `correlate(chr1, chr2)` might not be identical to
+#' `correlate(chr2, chr1)`. The lower and upper triangular part of the
+#' correlation matrix might thus be different.
+#'
+#' For correlating elements of a `Chromatograms` with each other it might be
+#' sufficient to calculate just the upper triangular matrix. This can be done
+#' by setting `full = FALSE`.
+#'
+#' @param x [Chromatogram()] or [Chromatograms()] object.
+#'
+#' @param y [Chromatogram()] or [Chromatograms()] object.
 #'
 #' @param use `character(1)` passed to the `cor` function. See [cor()] for
 #'     details.
@@ -243,13 +256,36 @@ setMethod("align", signature = c(x = "Chromatogram", y = "Chromatogram"),
 #'     [align()] for details. The value of this parameter is passed to the
 #'     `method` parameter of `align`.
 #'
+#' @param full `logical(1)` for `correlate` on a single `Chromatograms` object:
+#'     whether the *full* correlation matrix should be calculated (default) or
+#'     just the upper triangular matrix (and diagonal).
+#'
 #' @param ... optional parameters passed along to the `align` method.
 #'
-#' @return `numeric(1)` with the correlation coefficient.
+#' @return `numeric(1)` or `matrix` (if called on `Chromatograms` objects)
+#'     with the correlation coefficient. If a `matrix` is returned, the rows
+#'     represent the chromatograms in `x` and the columns the chromatograms in
+#'     `y`.
 #'
 #' @author Michael Witting, Johannes Rainer
 #'
 #' @md
+#'
+#' @examples
+#'
+#' chr1 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#' chr2 <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(80, 50, 20, 10, 9, 4, 3, 4, 1, 3))
+#' chr3 <- Chromatogram(rtime = 3:9 + rnorm(7, sd = 0.3),
+#'     intensity = c(53, 80, 130, 15, 5, 3, 2))
+#'
+#' chrs <- Chromatograms(list(chr1, chr2, chr3))
+#'
+#' correlate(chr1, chr2)
+#' correlate(chr2, chr1)
+#'
+#' correlate(chrs, chrs)
 setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
           function(x, y, use = "pairwise.complete.obs",
                    method = c("pearson", "kendall", "spearman"),
@@ -257,3 +293,87 @@ setMethod("correlate", signature = c(x = "Chromatogram", y = "Chromatogram"),
               .correlate_chromatogram(x, y, use = use, method = method,
                                       align = align, ...)
           })
+
+#' @title Remove intensities from chromatographic data
+#'
+#' @aliases removeIntensity
+#'
+#' @rdname removeIntensity-Chromatogram
+#'
+#' @description
+#'
+#' `removeIntensities` allows to remove intensities from chromatographic data
+#' matching certain conditions (depending on parameter `which`). The
+#' intensities are actually not *removed* but replaced with `NA_real_`. To
+#' actually **remove** the intensities (and the associated retention times)
+#' use [clean()] afterwards.
+#'
+#' Parameter `which` allows to specify which intensities should be replaced by
+#' `NA_real_`. By default (`which = "below_threshod"` intensities below
+#' `threshold` are removed. If `x` is a `XChromatogram` or `XChromatograms`
+#' object (and hence provides also chromatographic peak definitions within the
+#' object) `which = "outside_chromPeak"` can be selected which removes any
+#' intensity which is outside the boundaries of identified chromatographic
+#' peak(s) in the chromatographic data.
+#'
+#' @param object an object representing chromatographic data. Can be a
+#'     [Chromatogram()], [Chromatograms()], [XChromatogram()] or
+#'     [XChromatograms()] object.
+#'
+#' @param which `character(1)` defining the condition to remove intensities.
+#'     See description for details and options.
+#'
+#' @param threshold `numeric(1)` defining the threshold below which intensities
+#'     are removed (if `which = "below_threshold"`).
+#'
+#' @return the input object with matching intensities being replaced by `NA`.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @examples
+#'
+#' chr <- Chromatogram(rtime = 1:10 + rnorm(n = 10, sd = 0.3),
+#'     intensity = c(5, 29, 50, NA, 100, 12, 3, 4, 1, 3))
+#'
+#' ## Remove all intensities below 20
+#' res <- removeIntensity(chr, threshold = 20)
+#' intensity(res)
+setMethod("removeIntensity", "Chromatogram",
+          function(object, which = "below_threshold", threshold = 0) {
+              which <- match.arg(which)
+              if (which == "below_threshold")
+                  object@intensity[which(object@intensity < threshold)] <- NA_real_
+              object
+          })
+
+#' @title Normalize chromatographic data
+#'
+#' @aliases normalize,Chromatogram-method
+#'
+#' @name normalize-Chromatogram
+#'
+#' @description
+#'
+#' `normalize` *normalizes* the intensities of a chromatogram by dividing them
+#' either by the maximum intensity (`method = "max"`) or total intensity
+#' (`method = "sum"`) of the chromatogram.
+#'
+#' @param object [Chromatogram()] or [Chromatograms()] object.
+#'
+#' @param method `character(1)` defining whether each chromatogram should be
+#'     normalized to its maximum signal or total signal.
+#'
+#' @return the normalized input object.
+#'
+#' @author Johannes Rainer
+#'
+#' @md
+#'
+#' @rdname normalize-Chromatogram
+setMethod("normalize", "Chromatogram",
+          function(object, method = c("max", "sum")) {
+              method <- match.arg(method)
+              .normalize_chromatogram(object, method)
+})

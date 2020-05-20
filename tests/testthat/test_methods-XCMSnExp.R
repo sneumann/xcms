@@ -635,9 +635,19 @@ test_that("filterFile,XCMSnExp works", {
     expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
                  tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"])
     expect_equal(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
+    ## with keepFeatures = TRUE
+    res <- filterFile(xod_xg, file = 2, keepFeatures = TRUE)
+    expect_true(hasChromPeaks(res))
+    expect_true(hasFeatures(res))
+    fvals <- featureValues(xod_xg)[, 2, drop = FALSE]
+    expect_equal(featureValues(res), fvals[!is.na(fvals[,1]), , drop = FALSE])
+    res <- filterFile(xod_xg, file = c(1, 3), keepFeatures = TRUE)
+    expect_true(hasFeatures(res))
+    fvals <- featureValues(xod_xg)[, c(1, 3)]
+    expect_equal(featureValues(res), fvals)
     ## Do filterFile on xod_xgr
     ## Should remove adjusted rts and revert the original peak rts.
-    res <- filterFile(xod_xgr, file = 2)
+    res <- filterFile(xod_xgr, keepAdjustedRtime = FALSE, file = 2)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xg)
     expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
@@ -666,7 +676,7 @@ test_that("filterFile,XCMSnExp works", {
     expect_equal(processType(processHistory(res)[[2]]), "Peak grouping")
     expect_equal(processType(processHistory(res)[[3]]), "Retention time correction")
     ## Do filterFile on xod_xgrg
-    res <- filterFile(xod_xgrg, file = c(1, 3))
+    res <- filterFile(xod_xgrg, keepAdjustedRtime = FALSE, file = c(1, 3))
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_x)
     expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
@@ -697,6 +707,10 @@ test_that("filterFile,XCMSnExp works", {
     expect_equal(processType(processHistory(res)[[1]]), "Peak detection")
     expect_equal(processType(processHistory(res)[[2]]), "Peak grouping")
     expect_equal(processType(processHistory(res)[[3]]), "Retention time correction")
+    ## keep also features
+    res <- filterFile(xod_xgrg, file = c(1, 3), keepFeatures = TRUE)
+    expect_true(hasFeatures(res))
+    expect_equal(featureValues(res), featureValues(xod_xgrg)[, c(1, 3)])
 })
 
 test_that("filterMz,XCMSnExp works", {
@@ -977,6 +991,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
     rownames(ftDef) <- NULL
     expect_equal(res@groups, ftDef)
     expect_equal(res@groupidx, unname(featureDefinitions(od_2)$peakidx))
+    expect_equivalent(groupval(res), featureValues(od_2, value = "index"))
 
     ## With adjusted retention time.
     res_2 <- retcor.peakgroups(res, missing = 0, span = 0.4)
@@ -1000,7 +1015,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_warning(res <- as(od_2, "xcmsSet"))
     expect_equal(profStep(res), 2)
     expect_equal(profMethod(res), "binlinbase")
-    
+
     # Tests for issue https://github.com/sneumann/xcms/issues/464
     res <- as(xod_xgrg, "xcmsSet")
     expect_type(groups(res), "double")
@@ -1178,7 +1193,7 @@ test_that("signal integration is correct", {
                  ((rtr[2] - rtr[1]) / (length(chr[1, 1]) - 1)))
     expect_equal(pkInt, unname(chromPeaks(tmp)[1, "into"]))
 
-    tmp <- filterFile(xod_xgrg, file = 2)
+    tmp <- filterFile(xod_xgrg, file = 2, keepAdjustedRtime = FALSE)
     idxs <- sample(1:nrow(chromPeaks(tmp)), 5)
     ## Now, for i = 20, for 6 rt I got an NA. Should I remove these measurements?
     ## idxs <- 1:nrow(chromPeaks(tmp))

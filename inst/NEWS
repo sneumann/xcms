@@ -1,3 +1,23 @@
+Changes in version 3.11.1
+
+- Fix issue #471: conversion from `XCMSnExp` to `xcmsSet` looses phenodata
+  (thanks to Andris Jankevics for reporting and providing a solution).
+- Add `normalize` method for `Chromatogram` and `Chromatograms` objects.
+- `featureChromatograms` gets new parameter `n` and `value` to extract EICs
+  only from the top n samples with highest intensities.
+- `filterFile` gets new parameter `keepFeatures` to support retaining
+  correspondence results even if a data set is filtered by file.
+- Export the virtual `Param` class.
+- Add filterColumnsIntensityAbove method for Chromatograms object that allows
+  to select columns (samples) of an Chromatograms object for which intensities
+  of its chromatographic data are higher than a threshold.
+- Add removeIntensity method for Chromatogram, Chromatograms, XChromatogram
+  and XChromatograms objects allowing to *remove* intensities based on different
+  criteria.
+- Add correlate method for Chromatograms allowing to correlate multiple
+  chromatograms with each other.
+
+
 Changes in version 3.9.4
 
 - Fix issue in centWave which skips peak detection depending on minimum

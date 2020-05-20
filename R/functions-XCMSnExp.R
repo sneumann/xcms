@@ -54,7 +54,12 @@ dropGenericProcessHistory <- function(x, fun) {
     xs@rt <- rts
 
     ## @phenoData
-    xs@phenoData <- pData(from)
+    pd <- pData(from)
+    if (nrow(pd) != length(fileNames(from))) {
+        pd <- data.frame(file_name = basename(fileNames(from)))
+        rownames(pd) <- pd$file_name
+    }
+    xs@phenoData <- pd
     ## @filepaths
     xs@filepaths <- fileNames(from)
 
@@ -447,7 +452,7 @@ dropGenericProcessHistory <- function(x, fun) {
         ## mtx <- xcms:::.rawMat(mz = mzs, int = ints, scantime = rtime(object),
         ##                valsPerSpect = valsPerSpect,
         ##                mzrange = peakArea[i, c("mzmin", "mzmax")])
-        if (length(mtx)) {
+        if (length(mz_area)) {
             if (!all(is.na(mtx[, 3]))) {
                 ## How to calculate the area: (1)sum of all intensities
                 res[i, "into"] <- sum(mtx[, 3], na.rm = TRUE)
@@ -2164,6 +2169,13 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #' eventually the feature in which they are present) overlapping the m/z and rt
 #' range will be returned.
 #'
+#' @note
+#'
+#' When extracting EICs from only the top `n` samples it can happen that one
+#' or more of the features specified with `features` are dropped because they
+#' have no detected peak in the *top n* samples. The chance for this to happen
+#' is smaller if `x` contains also filled-in peaks (with `fillChromPeaks`).
+#'
 #' @param x `XCMSnExp` object with grouped chromatographic peaks.
 #'
 #' @param expandRt `numeric(1)` to expand the retention time range for each
@@ -2188,12 +2200,22 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'     the result object. The default is `filled = FALSE`, i.e. only detected
 #'     peaks are reported.
 #'
+#' @param n `integer(1)` to optionally specify the number of *top n* samples
+#'     from which the EIC should be extracted.
+#'
+#' @param value `character(1)` specifying the column to be used to sort the
+#'     samples. Can be either `"maxo"` (the default) or `"into"` to use the
+#'     maximal peak intensity or the integrated peak area, respectively.
+#'
 #' @param ... optional arguments to be passed along to the [chromatogram()]
 #'     function.
 #'
 #' @return [XChromatograms()] object.
 #'
 #' @md
+#'
+#' @seealso [filterColumnsKeepTop()] to filter the extracted EICs keeping only
+#'     the *top n* columns (samples) with the highest intensity.
 #'
 #' @author Johannes Rainer
 #'
@@ -2226,8 +2248,11 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
                                  features,
                                  include = c("feature_only", "apex_within",
                                              "any", "all"),
-                                 filled = FALSE, ...) {
+                                 filled = FALSE,
+                                 n = length(fileNames(x)),
+                                 value = c("maxo", "into"), ...) {
     include <- match.arg(include)
+    value <- match.arg(value)
     if (!hasFeatures(x))
         stop("No feature definitions present. Please run first 'groupChromPeaks'")
     if (!missing(features)) {
@@ -2249,6 +2274,32 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
     } else features <- seq_len(nrow(featureDefinitions(x)))
     if (!length(features))
         return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
+    ## If we want to get chromatograms only in a reduced number of samples
+    n <- ceiling(n[1])
+    if (n != length(fileNames(x))) {
+        fids <- rownames(featureDefinitions(x))[features]
+        if (n > length(fileNames(x)) || n < 1)
+            stop("'n' has to be a positive integer between 1 and ",
+                 length(fileNames(x)))
+        pks <- chromPeaks(x)
+        if (!filled)
+            pks[chromPeakData(x)$is_filled, ] <- NA
+        vals <- apply(xcms:::.feature_values(pks,
+                                      featureDefinitions(x)[features, ],
+                                      method = "maxint", value = value,
+                                      intensity = "maxo",
+                                      colnames = basename(fileNames(x))),
+                      MARGIN = 2, sum, na.rm = TRUE)
+        sample_idx <- order(vals, decreasing = TRUE)[seq_len(n)]
+        x <- filterFile(x, sample_idx, keepFeatures = TRUE)
+        features <- match(fids, rownames(featureDefinitions(x)))
+        features <- features[!is.na(features)]
+        if (length(features) < length(fids))
+            warning(length(fids) - length(features), " of ", length(fids),
+                    " features not present in the selected samples")
+        if (!length(features))
+            return(Chromatograms(ncol = length(fileNames(x)), nrow = 0))
+    }
     pks <- chromPeaks(x)
     if (length(unique(rownames(pks))) != nrow(pks)) {
         rownames(pks) <- .featureIDs(nrow(pks), "CP")
@@ -2284,8 +2335,10 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         ## Keep only a single feature per row
         ## Keep only peaks for the features of interest.
         for (i in seq_len(nr)) {
-            ft_def <- fts_all[fts_all$row == i & rownames(fts_all) == ft_ids[i],
-                            , drop = FALSE]
+            is_feature <- fts_all$row == i & rownames(fts_all) == ft_ids[i]
+            if (!any(is_feature))
+                next
+            ft_def <- fts_all[is_feature, , drop = FALSE]
             ft_defs[[i]] <- ft_def
             pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
             for (j in seq_len(nc)) {

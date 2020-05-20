@@ -337,6 +337,7 @@ test_that("featureChromatograms works", {
 
     fts <- rownames(featureDefinitions(xod_xgrg))
     chrs <- featureChromatograms(xod_xgrg, features = fts[c(1, 2, 1)])
+    expect_true(ncol(chrs) == 3)
     expect_equal(featureDefinitions(chrs)$row, 1:3)
     expect_equal(featureValues(chrs),
                  featureValues(xod_xgrg)[fts[c(1, 2, 1)], ])
@@ -346,6 +347,22 @@ test_that("featureChromatograms works", {
     rts_ext <- do.call(rbind, lapply(chrs_ext, function(z) range(rtime(z))))
     expect_true(all(rts[, 1] > rts_ext[, 1]))
     expect_true(all(rts[, 2] < rts_ext[, 2]))
+
+    expect_warning(res_n <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                                 features = fts[c(1, 2, 1)],
+                                                 n = 1))
+    expect_true(ncol(res_n) == 1)
+    fvals <- featureValues(xod_xgrg, value = "maxo", method = "maxint",
+                           intensity = "maxo")[fts[c(1, 2, 1)], ]
+    fvals_sum <- apply(fvals, MARGIN = 2, sum, na.rm = TRUE)
+    expect_true(colnames(res_n) == "ko15.CDF")
+    expect_equal(chromPeaks(chrs[, 1])[, 1:11], chromPeaks(res_n)[, 1:11])
+    expect_equal(featureValues(chrs[, 1]), featureValues(res_n))
+
+    res_n <- featureChromatograms(xod_xgrg, expandRt = 2,
+                                  features = fts[c(1, 2, 1)], n = 2)
+    expect_true(ncol(res_n) == 2)
+    expect_equal(featureValues(res_n), featureValues(chrs[, c(1, 3)]))
 
     res_2 <- featureChromatograms(xod_xgrg, features = c(1, 5))
     expect_equal(featureDefinitions(res_2)$row, 1:nrow(res_2))

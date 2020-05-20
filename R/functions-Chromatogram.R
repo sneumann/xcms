@@ -21,8 +21,8 @@
 #' @author Michael Witting
 #'
 #' @noRd
-.align_chromatogram_approx <- function(x, y, na.value = NA, ...) {
-    x_aligned <- approx(rtime(x), intensity(x), rtime(y))
+.align_chromatogram_approx <- function(x, y, na.value = NA_real_, ...) {
+    x_aligned <- approx(x@rtime, x@intensity, y@rtime)
     if (!is.na(na.value)) {
         x_aligned$y[is.na(x_aligned$y)] <- na.value
     }
@@ -56,8 +56,8 @@
 #' @author Johannes Rainer
 #'
 #' @noRd
-.align_chromatogram_match_rtime <- function(x, y, na.value = NA, ...) {
-    idx <- .match_closest(rtime(x), rtime(y), ...)
+.align_chromatogram_match_rtime <- function(x, y, na.value = NA_real_, ...) {
+    idx <- .match_closest(x@rtime, y@rtime, ...)
     not_na <- !is.na(idx)
     x@rtime <- rtime(y)
     new_int <- rep(na.value, length(y))
@@ -68,7 +68,7 @@
 }
 
 .align_chromatogram <- function(x, y, method = c("matchRtime", "approx"),
-                                na.value = NA, ...) {
+                                na.value = NA_real_, ...) {
     method <- match.arg(method)
     switch(method,
            matchRtime = .align_chromatogram_match_rtime(
@@ -114,7 +114,7 @@
     align <- match.arg(align)
     if(length(x) != length(y) || !all(rtime(x) %in% rtime(y)))
         x <- .align_chromatogram(x, y, method = align, ...)
-    cor(intensity(x), intensity(y), use = use, method = method)
+    cor(x@intensity, y@intensity, use = use, method = method)
 }
 
 #' @title Merge neighboring peaks in chromatogram
@@ -273,4 +273,10 @@
     keep <- !is.na(pks_new[, "rt"])
     list(chromPeaks = pks_new[keep, cns, drop = FALSE],
          chromPeakData = pkd[keep, , drop = FALSE])
+}
+
+.normalize_chromatogram <- function(x, method = "max") {
+    ref <- do.call(method, list(x = x@intensity, na.rm = TRUE))
+    x@intensity <- x@intensity / ref
+    x
 }

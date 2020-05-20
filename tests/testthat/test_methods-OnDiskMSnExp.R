@@ -76,7 +76,7 @@ test_that("findChromPeaks,OnDiskMSnExp,CentWaveParam variants", {
     ## The same for one of the test files; this works even with the original
     ## centWave code
     options(originalCentWave = TRUE)
-    tmp <- filterFile(xod_xgrg, file = 3)
+    tmp <- filterFile(xod_xgrg, file = 3, keepAdjustedRtime = FALSE)
     ## ## Use the getPeakInt2 which uses the rawMat function.
     ## pkI2 <- .getPeakInt2(tmp, chromPeaks(tmp))
     ## ## Use the getPeakInt3 which uses the getEIC C function.

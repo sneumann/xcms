@@ -1,3 +1,5 @@
+#' @include methods-Chromatograms.R
+
 setAs("Chromatograms", "XChromatograms", function(from) {
     res <- new("XChromatograms")
     res@.Data <- matrix(lapply(from, function(z) {
@@ -573,4 +575,64 @@ setMethod("refineChromPeaks", c(object = "XChromatograms",
               object <- addProcessHistory(object, xph)
               validObject(object)
               object
+          })
+
+#' @rdname filter-Chromatograms
+setMethod("filterColumnsIntensityAbove", "XChromatograms",
+          function(object, threshold = 0,
+                   value = c("bpi", "tic", "maxo", "into"),
+                   which = c("any", "all")) {
+              value <- match.arg(value)
+              which <- match.arg(which)
+              if (length(threshold) > 1 || !is.numeric(threshold))
+                  stop("'threshold' should be a 'numeric' of length 1")
+              if (value %in% c("maxo", "into")) {
+                  nc <- ncol(object)
+                  rws <- seq_len(nrow(object))
+                  cps <- chromPeaks(object)
+                  keep <- rep(FALSE, nc)
+                  for (i in seq_len(nc)) {
+                      vals <- cps[cps[, "column"] == i &
+                                  cps[, value] > threshold, "row"]
+                      if (length(vals)) {
+                          if (which == "any")
+                              keep[i] <- TRUE
+                          else keep[i] <- all(rws %in% vals)
+                      }
+                  }
+                  object[, keep]
+              } else
+                  callNextMethod(object, threshold = threshold, value = value,
+                                 which = which)
+          })
+
+#' @rdname filter-Chromatograms
+setMethod("filterColumnsKeepTop", "XChromatograms",
+          function(object, n = 1L, sortBy = c("bpi", "tic", "maxo", "into"),
+                   aggregationFun = sum) {
+              sortBy <- match.arg(sortBy)
+              if (length(n) > 1 || !is.numeric(n))
+                  stop("'n' should be an 'integer' of length 1")
+              if (sortBy %in% c("maxo", "into")) {
+                  n <- ceiling(n)
+                  nc <- ncol(object)
+                  if (n > nc)
+                      stop("'n' should be smaller or equal than the number of ",
+                           "columns (", nc, ")")
+                  colval <- numeric(nc)
+                  cps <- chromPeaks(object)
+                  for (i in seq_len(nc)) {
+                      vals <- cps[cps[, "column"] == i, c("row", sortBy),
+                                  drop = FALSE]
+                      if (nrow(vals)) {
+                          vals <- sapply(split(vals[, sortBy], vals[, "row"]),
+                                         max, na.rm = TRUE)
+                          colval[i] <- aggregationFun(vals, na.rm = TRUE)
+                      }
+                  }
+                  idx <- order(colval, decreasing = TRUE)[seq_len(n)]
+                  object[, sort(idx)]
+              } else
+                  callNextMethod(object, n = n, sortBy = sortBy,
+                                 aggregationFun = aggregationFun)
           })
