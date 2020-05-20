@@ -991,6 +991,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
     rownames(ftDef) <- NULL
     expect_equal(res@groups, ftDef)
     expect_equal(res@groupidx, unname(featureDefinitions(od_2)$peakidx))
+    expect_equivalent(groupval(res), featureValues(od_2, value = "index"))
 
     ## With adjusted retention time.
     res_2 <- retcor.peakgroups(res, missing = 0, span = 0.4)
@@ -1014,7 +1015,7 @@ test_that("as,XCMSnExp,xcmsSet works", {
     expect_warning(res <- as(od_2, "xcmsSet"))
     expect_equal(profStep(res), 2)
     expect_equal(profMethod(res), "binlinbase")
-    
+
     # Tests for issue https://github.com/sneumann/xcms/issues/464
     res <- as(xod_xgrg, "xcmsSet")
     expect_type(groups(res), "double")

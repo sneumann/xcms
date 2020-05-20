@@ -1,5 +1,7 @@
 Changes in version 3.11.1
 
+- Fix issue #471: conversion from `XCMSnExp` to `xcmsSet` looses phenodata
+  (thanks to Andris Jankevics for reporting and providing a solution).
 - Add `normalize` method for `Chromatogram` and `Chromatograms` objects.
 - `featureChromatograms` gets new parameter `n` and `value` to extract EICs
   only from the top n samples with highest intensities.
