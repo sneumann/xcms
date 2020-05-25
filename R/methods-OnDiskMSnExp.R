@@ -91,11 +91,8 @@ setMethod("findChromPeaks",
               if (hasAdjustedRtime(object_mslevel))
                   fData(object_mslevel)$retentionTime <-
                                           adjustedRtime(object_mslevel)
-              object_mslevel <- lapply(1:length(fileNames(object_mslevel)),
-                                       FUN = filterFile,
-                                       object = object_mslevel)
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(object_mslevel,
+              resList <- bplapply(.split_by_file(object_mslevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "centWave",
                                   param = param, BPPARAM = BPPARAM)
@@ -169,12 +166,11 @@ setMethod("findChromPeaks",
                        "peak detection")
               ## (1) split the object per file. Ensure we keep adjusted
               ##     retention times (issue #213).
-              args <- list(X = 1:length(fileNames(object_mslevel)),
-                           FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
-                  args$keepAdjustedRtime <- TRUE
+                  fData(object_mslevel)$retentionTime <-
+                                          adjustedRtime(object_mslevel)
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(do.call("lapply", args),
+              resList <- bplapply(.split_by_file(object_mslevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "matchedFilter",
                                   param = param,
@@ -273,12 +269,11 @@ setMethod("findChromPeaks",
                        "peak detection")
               ## (1) split the object per file. Ensure we keep adjusted
               ##     retention times (issue #213).
-              args <- list(X = 1:length(fileNames(object_mslevel)),
-                           FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
-                  args$keepAdjustedRtime <- TRUE
+                  fData(object_mslevel)$retentionTime <-
+                                          adjustedRtime(object_mslevel)
               ## (2) use bplapply to do the peaks detection.
-              resList <- bplapply(do.call("lapply", args),
+              resList <- bplapply(.split_by_file(object_mslevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "massifquant", param = param,
                                   BPPARAM = BPPARAM)
@@ -359,12 +354,11 @@ setMethod("findChromPeaks",
                        "retention time).")
               ## (1) split the object per file. Ensure we keep adjusted
               ##     retention times (issue #213).
-              args <- list(X = 1:length(fileNames(object_mslevel)),
-                           FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
-                  args$keepAdjustedRtime <- TRUE
+                  fData(object_mslevel)$retentionTime <-
+                                          adjustedRtime(object_mslevel)
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(do.call("lapply", args),
+              resList <- bplapply(.split_by_file(object_mslevel),
                                   FUN = findPeaks_MSW_OnDiskMSnExp,
                                   method = "MSW", param = param,
                                   BPPARAM = BPPARAM)
@@ -447,12 +441,11 @@ setMethod("findChromPeaks",
                           " works best on data in centroid mode.")
               ## (1) split the object per file. Ensure we keep adjusted
               ##     retention times (issue #213).
-              args <- list(X = 1:length(fileNames(object_mslevel)),
-                           FUN = filterFile, object = object_mslevel)
               if (hasAdjustedRtime(object_mslevel))
-                  args$keepAdjustedRtime <- TRUE
+                  fData(object_mslevel)$retentionTime <-
+                                          adjustedRtime(object_mslevel)
               ## (2) use bplapply to do the peak detection.
-              resList <- bplapply(do.call("lapply", args),
+              resList <- bplapply(.split_by_file(object_mslevel),
                                   FUN = findChromPeaks_OnDiskMSnExp,
                                   method = "centWaveWithPredIsoROIs",
                                   param = param, BPPARAM = BPPARAM)

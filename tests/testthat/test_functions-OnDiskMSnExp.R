@@ -75,3 +75,10 @@ test_that(".concatenate_OnDiskMSnExp works", {
 
     expect_equal(.concatenate_OnDiskMSnExp(od1), od1)
 })
+
+test_that(".split_by_file works", {
+    a <- lapply(seq_along(fileNames(od_x)), filterFile, object = od_x)
+    b <- .split_by_file(od_x)
+    expect_equal(a[[2]][[19]], b[[2]][[19]])
+    expect_equal(spectra(a[[3]]), spectra(b[[3]]))
+})

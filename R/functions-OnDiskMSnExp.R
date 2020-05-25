@@ -115,8 +115,29 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                               as(param, "list"))), date = procDat)
 }
 
-
-
+#' Internal function to split an OnDiskMSnExp by file supposed to be faster
+#' than the fileFile approach.
+#'
+#' @noRd
+.split_by_file <- function(x) {
+    procd <- x@processingData
+    expd <- new(
+        "MIAPE",
+        instrumentManufacturer = x@experimentData@instrumentManufacturer[1],
+        instrumentModel = x@experimentData@instrumentModel[1],
+        ionSource = x@experimentData@ionSource[1],
+        analyser = x@experimentData@analyser[1],
+        detectorType = x@experimentData@detectorType[1])
+    lapply(seq_along(fileNames(x)), function(z) {
+        a <- new("OnDiskMSnExp")
+        a@processingData@files <- procd@files[z]
+        a@featureData <- x@featureData[x@featureData$fileIdx == z, ]
+        a@featureData$fileIdx <- 1L
+        a@experimentData <- expd
+        a@spectraProcessingQueue <- x@spectraProcessingQueue
+        a
+    })
+}
 
 ############################################################
 #' @description Fill some settings and data from an OnDiskMSnExp or pSet into an

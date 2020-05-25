@@ -1,3 +1,9 @@
+Changes in version 3.11.2
+
+- More efficient splitting of processing which should increase the speed of
+  the findChromPeaks call.
+
+
 Changes in version 3.11.1
 
 - Fix issue #471: conversion from `XCMSnExp` to `xcmsSet` looses phenodata
