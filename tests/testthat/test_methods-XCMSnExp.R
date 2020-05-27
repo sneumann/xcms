@@ -571,7 +571,7 @@ test_that("XCMSnExp inherited methods work", {
     expect_equal(tmp_1, as(tmp_2, "OnDiskMSnExp"))
 })
 
-test_that("filterFile,XCMSnExp works", {
+test_that("filterFile,XCMSnExp and .filter_file_XCMSnExp works", {
     ## filterFile
     tmp <- filterFile(xod_x, file = 2)
     expect_error(tmp@msFeatureData$bla <- 3)
@@ -636,7 +636,7 @@ test_that("filterFile,XCMSnExp works", {
                  tmp[tmp[, "sample"] == 2, colnames(tmp) != "sample"])
     expect_equal(rtime(res), rtime(xod_xg, bySample = TRUE)[[2]])
     ## with keepFeatures = TRUE
-    res <- filterFile(xod_xg, file = 2, keepFeatures = TRUE)
+    res <- .filter_file_XCMSnExp(xod_xg, file = 2, keepFeatures = TRUE)
     expect_true(hasChromPeaks(res))
     expect_true(hasFeatures(res))
     fvals <- featureValues(xod_xg)[, 2, drop = FALSE]
@@ -647,7 +647,7 @@ test_that("filterFile,XCMSnExp works", {
     expect_equal(featureValues(res), fvals)
     ## Do filterFile on xod_xgr
     ## Should remove adjusted rts and revert the original peak rts.
-    res <- filterFile(xod_xgr, keepAdjustedRtime = FALSE, file = 2)
+    res <- .filter_file_XCMSnExp(xod_xgr, keepAdjustedRtime = FALSE, file = 2)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xg)
     expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
@@ -658,7 +658,7 @@ test_that("filterFile,XCMSnExp works", {
     expect_true(length(processHistory(res)) == 1)
     expect_equal(processType(processHistory(res)[[1]]), "Peak detection")
     ## The same but keep the adjusted retention times.
-    res <- filterFile(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
+    res <- .filter_file_XCMSnExp(xod_xgr, file = 2, keepAdjustedRtime = TRUE)
     expect_true(hasChromPeaks(res))
     tmp <- chromPeaks(xod_xgr)
     expect_equal(chromPeaks(res)[, colnames(chromPeaks(res)) != "sample"],
@@ -675,6 +675,12 @@ test_that("filterFile,XCMSnExp works", {
     expect_equal(processType(processHistory(res)[[1]]), "Peak detection")
     expect_equal(processType(processHistory(res)[[2]]), "Peak grouping")
     expect_equal(processType(processHistory(res)[[3]]), "Retention time correction")
+    res <- filterFile(xod_xgr, file = 2:3)
+    expect_true(hasAdjustedRtime(res))
+    expect_equal(adjustedRtime(xod_xgr, bySample = TRUE)[[2]],
+                 adjustedRtime(res, bySample = TRUE)[[1]])
+    expect_equal(adjustedRtime(xod_xgr, bySample = TRUE)[[3]],
+                 adjustedRtime(res, bySample = TRUE)[[2]])
     ## Do filterFile on xod_xgrg
     res <- filterFile(xod_xgrg, keepAdjustedRtime = FALSE, file = c(1, 3))
     expect_true(hasChromPeaks(res))
@@ -2367,6 +2373,12 @@ test_that("refineChromPeaks,MergeNeighboringPeaksParam works", {
     res <- refineChromPeaks(pest_swth, param = prm)
     expect_equal(chromPeaks(res), chromPeaks(pest_swth))
     expect_true(all(chromPeakData(res)$merged == FALSE))
+
+    res <- refineChromPeaks(pest_swth, param = prm, msLevel = 2L)
+    expect_equal(chromPeaks(res, msLevel = 1L),
+                 chromPeaks(pest_swth, msLevel = 1L))
+    expect_true(nrow(chromPeaks(res, msLevel = 2L)) <
+                nrow(chromPeaks(pest_swth, msLevel = 2L)))
 
     ## With fake MS level 2 data.
     tmp <- xod_x

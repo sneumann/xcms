@@ -78,7 +78,21 @@ test_that(".concatenate_OnDiskMSnExp works", {
 
 test_that(".split_by_file works", {
     a <- lapply(seq_along(fileNames(od_x)), filterFile, object = od_x)
-    b <- .split_by_file(od_x)
+    b <- .split_by_file(od_x, selectFeatureData = FALSE)
     expect_equal(a[[2]][[19]], b[[2]][[19]])
     expect_equal(spectra(a[[3]]), spectra(b[[3]]))
+
+    res <- .split_by_file(xod_xgr)
+    expect_true(length(res) == 3)
+    expect_equal(rtime(res[[2]]),
+                 rtime(xod_xgr, bySample = TRUE, adjusted = TRUE)[[2]])
+    expect_true(ncol(fData(res[[1]])) < ncol(fData(xod_xgr)))
+    expect_error(.split_by_file(xod_xgr, msLevel. = 2), "No MS level")
+
+    a <- filterFile(xod_xgrg, 2, keepAdjustedRtime = TRUE)
+    b <- .split_by_file(xod_xgrg, to_class = "XCMSnExp")
+    expect_equal(rtime(a), rtime(b[[2]]))
+    expect_true(is(b[[1]], "XCMSnExp"))
+    expect_equal(chromPeaks(a), chromPeaks(b[[2]]))
+    expect_equal(chromPeakData(a), chromPeakData(b[[2]]))
 })

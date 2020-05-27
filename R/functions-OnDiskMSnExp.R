@@ -115,11 +115,31 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                               as(param, "list"))), date = procDat)
 }
 
-#' Internal function to split an OnDiskMSnExp by file supposed to be faster
-#' than the fileFile approach.
+#' Internal function to split an OnDiskMSnExp by file into a list of
+#' `OnDiskMSnExp` objects allowing to subset in addition to:
+#' - MS level
+#' - set to minimal required feature columns
+#' - keep the lazy processing queue
+#' - if `x` is an `XCMSnExp` replace rtime with adjusted rtime.
+#' - if `x` is an `XCMSnExp` object and has chrom peaks: add also them.
+#'
+#' This is a faster than splitting the object with the fileFile approach.
+#'
+#' @param to_class defines whether we want to return an `XCMSnExp` or
+#'     `OnDiskMSnExp` object. For the former also potentially present chrom
+#'     peaks will be added.
 #'
 #' @noRd
-.split_by_file <- function(x) {
+.split_by_file <- function(x, msLevel. = unique(msLevel(x)),
+                           selectFeatureData = TRUE,
+                           to_class = "OnDiskMSnExp") {
+    if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
+        x@featureData$retentionTime <- adjustedRtime(x)
+    if (selectFeatureData)
+        x <- selectFeatureData(x, fcol = c(MSnbase:::.MSnExpReqFvarLabels,
+                                           "centroided"))
+    if (!any(msLevel(x) %in% msLevel.))
+        stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
     procd <- x@processingData
     expd <- new(
         "MIAPE",
@@ -129,12 +149,31 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         analyser = x@experimentData@analyser[1],
         detectorType = x@experimentData@detectorType[1])
     lapply(seq_along(fileNames(x)), function(z) {
-        a <- new("OnDiskMSnExp")
+        a <- new(to_class)
         a@processingData@files <- procd@files[z]
-        a@featureData <- x@featureData[x@featureData$fileIdx == z, ]
+        a@featureData <- x@featureData[x@featureData$msLevel %in% msLevel. &
+                                       x@featureData$fileIdx == z, ]
         a@featureData$fileIdx <- 1L
         a@experimentData <- expd
         a@spectraProcessingQueue <- x@spectraProcessingQueue
+        a@phenoData <- x@phenoData[z, , drop = FALSE]
+        if (is(a, "XCMSnExp") && hasChromPeaks(x)) {
+            pks_idx <- chromPeaks(x)[, "sample"] == z
+            pks <- chromPeaks(x)[pks_idx, , drop = FALSE]
+            pkd <- chromPeakData(x)[pks_idx, ]
+            if (any(colnames(pkd) == "ms_level")) {
+                keep <- pkd$ms_level %in% msLevel.
+                pks <- pks[keep, , drop = FALSE]
+                pkd <- pkd[keep, ]
+            }
+            if (nrow(pks))
+                pks[, "sample"] <- 1
+            newFd <- new("MsFeatureData")
+            chromPeaks(newFd) <- pks
+            chromPeakData(newFd) <- pkd
+            lockEnvironment(newFd, bindings = TRUE)
+            a@msFeatureData <- newFd
+        }
         a
     })
 }

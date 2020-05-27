@@ -1,7 +1,8 @@
 Changes in version 3.11.2
 
 - More efficient splitting of processing which should increase the speed of
-  the findChromPeaks call.
+  the findChromPeaks, refineChromPeaks, reconstructChromPeakSpectra and
+  chromPeakSpectra calls.
 
 
 Changes in version 3.11.1

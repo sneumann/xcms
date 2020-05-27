@@ -1248,75 +1248,9 @@ setMethod(
     "filterFile", "XCMSnExp",
     function(object, file, keepAdjustedRtime = hasAdjustedRtime(object),
              keepFeatures = FALSE) {
-        if (missing(file)) return(object)
-        if (is.character(file)) {
-            file <- base::match(file, basename(fileNames(object)))
-        }
-        ## This will not work if we want to get the files in a different
-        ## order (i.e. c(3, 1, 2, 5))
-        file <- base::sort(unique(file))
-        ## Error checking - seems that's not performed downstream.
-        if (!all(file %in% seq_along(fileNames(object))))
-            stop("'file' has to be within 1 and the number of files in object.")
-        ## Drop features
-        has_features <- hasFeatures(object)
-        has_chrom_peaks <- hasChromPeaks(object)
-        has_adj_rt <- hasAdjustedRtime(object)
-        if (has_features && !keepFeatures) {
-            if (keepFeatures)
-                warning("Peak counts in featureDefinitions are no longer be",
-                        " valid after subsetting")
-            else {
-                message("Correspondence results (features) removed.")
-                object <- dropFeatureDefinitions(
-                    object, keepAdjustedRtime = keepAdjustedRtime)
-                has_features <- FALSE
-            }
-        }
-        if (has_adj_rt && !keepAdjustedRtime){
-            object <- dropAdjustedRtime(object)
-            has_adj_rt <- FALSE
-        }
-        ## Extracting all the XCMSnExp data from the object.
-        ph <- processHistory(object)
-        newFd <- new("MsFeatureData")
-        newFd@.xData <- .copy_env(object@msFeatureData)
-        ## Subset original data:
-        object <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
-                     "XCMSnExp")
-        if (has_adj_rt)
-            adjustedRtime(newFd) <- adjustedRtime(newFd)[file]
-        if (has_chrom_peaks) {
-            pks <- chromPeaks(newFd)
-            idx <- base::which(pks[, "sample"] %in% file)
-            pks <- pks[idx, , drop = FALSE]
-            pks[, "sample"] <- match(pks[, "sample"], file)
-            if (has_features) {
-                ## Update the peakidx in these!!!
-                featureDefinitions(newFd) <- .update_feature_definitions(
-                    featureDefinitions(newFd),
-                    original_names = rownames(chromPeaks(newFd)),
-                    subset_names = rownames(pks))
-            }
-            chromPeaks(newFd) <- pks
-            chromPeakData(newFd) <- chromPeakData(newFd)[idx, , drop = FALSE]
-        }
-        ## Remove ProcessHistory not related to any of the files.
-        if (length(ph)) {
-            kp <- unlist(lapply(ph, function(z) {
-                any(fileIndex(z) %in% file)
-            }))
-            ph <- ph[kp]
-        }
-        ## Update file index in process histories.
-        if (length(ph)) {
-            ph <- lapply(ph, function(z) {
-                updateFileIndex(z, old = file, new = 1:length(file))
-            })
-        }
-        lockEnvironment(newFd, bindings = TRUE)
-        object@msFeatureData <- newFd
-        object@.processHistory <- ph
+        object <- .filter_file_XCMSnExp(object, file = file,
+                                        keepAdjustedRtime = keepAdjustedRtime,
+                                        keepFeatures = keepFeatures)
         validObject(object)
         object
     })
@@ -2942,7 +2876,7 @@ setMethod("fillChromPeaks",
                   min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {
                   fd <- min_fdata[min_fdata$fileIdx == i, ]
-                  fd$fileIdx <- 1
+                  fd$fileIdx <- 1L
                   objectL[[i]] <- new(
                       "OnDiskMSnExp",
                       processingData = new("MSnProcess",
@@ -3897,18 +3831,19 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               validObject(param)
               peak_count <- nrow(chromPeaks(object))
               idxs <- seq_along(fileNames(object))
-              object_list <- lapply(idxs, FUN = filterFile,
-                                    object = filterMsLevel(object, msLevel),
-                                    keepAdjustedRtime = TRUE)
-              res <- bpmapply(idxs, object_list, FUN = function(i, obj, param) {
-                  pks <- .merge_neighboring_peaks(
-                      obj, expandRt = param@expandRt,
-                      expandMz = param@expandMz, ppm = param@ppm,
-                      minProp = param@minProp)
-                  pks$chromPeaks[, "sample"] <- i
-                  pks
-              }, MoreArgs = list(param), BPPARAM = BPPARAM, SIMPLIFY = FALSE,
-              USE.NAMES = FALSE)
+              res <- bpmapply(idxs, .split_by_file(object, msLevel. = msLevel,
+                                                   to_class = "XCMSnExp",
+                                                   selectFeatureData = FALSE),
+                              FUN = function(i, obj, param) {
+                                  pks <- .merge_neighboring_peaks(
+                                      obj, expandRt = param@expandRt,
+                                      expandMz = param@expandMz, ppm = param@ppm,
+                                      minProp = param@minProp)
+                                  pks$chromPeaks[, "sample"] <- i
+                                  pks
+                              }, MoreArgs = list(param = param),
+                              BPPARAM = BPPARAM,
+                              SIMPLIFY = FALSE, USE.NAMES = FALSE)
               pks <- do.call(rbind, lapply(res, "[[", 1))
               pkd <- do.call(rbind, lapply(res, "[[", 2))
               ## Add also peaks for other MS levels!

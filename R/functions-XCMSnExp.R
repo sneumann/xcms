@@ -1839,8 +1839,6 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
                                   skipFilled = FALSE, subset = NULL,
                                   BPPARAM = bpparam()) {
     method <- match.arg(method)
-    if (hasAdjustedRtime(x))
-        x <- applyAdjustedRtime(x)
     pks <- chromPeaks(x)
     if (ppm != 0)
         ppm <- pks[, "mz"] * ppm / 1e6
@@ -1862,13 +1860,13 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
         rm(not_subset)
     }
     if (skipFilled && any(chromPeakData(x)$is_filled))
-        pks[chromPeakData(x)$is_filled] <- NA
-    x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
+        pks[chromPeakData(x)$is_filled, ] <- NA
     ## Split data per file
     file_factor <- factor(pks[, "sample"])
     peak_ids <- rownames(pks)
     pks <- split.data.frame(pks, f = file_factor)
-    x <- lapply(as.integer(levels(file_factor)), filterFile, object = x)
+    x <- .split_by_file(
+        x, msLevel. = 2L, selectFeatureData = FALSE)[as.integer(levels(file_factor))]
     res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
                     MoreArgs = list(method = method), SIMPLIFY = FALSE,
                     USE.NAMES = FALSE, BPPARAM = BPPARAM)
@@ -2605,10 +2603,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     if (length(peakId) < n_peak_id)
         warning("Only ", length(peakId), " of the provided",
                 " identifiers match IDs of MS1 chromatographic peaks")
-    ## Drop featureDefinitions if present
-    if (hasFeatures(object))
-        suppressMessages(object <- dropFeatureDefinitions(
-                             object, keepAdjustedRtime = TRUE))
     object <- selectFeatureData(object,
                                 fcol = c(MSnbase:::.MSnExpReqFvarLabels,
                                          "centroided",
@@ -2618,8 +2612,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                                          "isolationWindowLowerOffset",
                                          "isolationWindowUpperOffset"))
     sps <- bplapply(
-        lapply(seq_len(length(fileNames(object))), filterFile, object = object,
-               keepAdjustedRtime = TRUE),
+        .split_by_file(object, selectFeatureData = FALSE, to_class = "XCMSnExp"),
         FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,
@@ -2778,7 +2771,13 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #' expanded by `expandMz` and `ppm` (on both sides). This is to avoid data
 #' points in between peaks being `NA`.
 #'
-#' @param x `XCMSnExp` object with chromatographic peaks of a **single** file.
+#' @param x `XCMSnExp` object with chromatographic peaks of a **single** file or
+#'     an `OnDiskMSnExp` object, in which case parameters `pks` and `pkd` have
+#'     to be provided.
+#'
+#' @param pks `chromPeaks` matrix.
+#'
+#' @param pkd `chromPeakData` data frame.
 #'
 #' @param sample_index `integer(1)` representing the index of the sample in the
 #'     original object. To be used in column `"sample"` of the new peaks.
@@ -2835,24 +2834,27 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #' res_sub <- res[res[, "mz"] >= 496.15 & res[, "mz"] <= 496.25, ]
 #' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
 #'     border = "red")
-.merge_neighboring_peaks <- function(x, expandRt = 2, expandMz = 0, ppm = 10,
-                                  minProp = 0.75) {
-    if (hasAdjustedRtime(x))
-        x <- applyAdjustedRtime(x)
-    pks <- chromPeaks(x)
-    pkd <- chromPeakData(x)
+.merge_neighboring_peaks <- function(x, pks = chromPeaks(x),
+                                     pkd = chromPeakData(x),
+                                     expandRt = 2, expandMz = 0, ppm = 10,
+                                     minProp = 0.75) {
+    force(pks)
+    force(pkd)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    ms_level <- unique(chromPeakData(x)$ms_level)
+    ms_level <- unique(pkd$ms_level)
     if (length(ms_level) != 1)
         stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
-    x <- dropChromPeaks(x)
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
     message("Evaluating ", length(mz_groups), " peaks in file ",
             basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
+    if (!length(mz_groups)) {
+        message("OK")
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    }
     ## Defining merge candidates
     pk_groups <- list()
     chr_def_mat <- list()
@@ -2904,4 +2906,76 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     message("OK")
     list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
          chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
+}
+
+.filter_file_XCMSnExp <- function(object, file,
+                                  keepAdjustedRtime = hasAdjustedRtime(object),
+                                  keepFeatures = FALSE) {
+    if (missing(file)) return(object)
+    if (is.character(file))
+        file <- base::match(file, basename(fileNames(object)))
+    ## This will not work if we want to get the files in a different
+    ## order (i.e. c(3, 1, 2, 5))
+    file <- base::sort(unique(file))
+    ## Error checking - seems that's not performed downstream.
+    if (!all(file %in% seq_along(fileNames(object))))
+        stop("'file' has to be within 1 and the number of files in object.")
+    ## Drop features
+    has_features <- hasFeatures(object)
+    has_chrom_peaks <- hasChromPeaks(object)
+    has_adj_rt <- hasAdjustedRtime(object)
+    if (has_features && !keepFeatures) {
+        if (keepFeatures)
+            warning("Peak counts in featureDefinitions are no longer",
+                    " valid after subsetting")
+        else {
+            message("Correspondence results (features) removed.")
+            object <- dropFeatureDefinitions(
+                object, keepAdjustedRtime = keepAdjustedRtime)
+            has_features <- FALSE
+        }
+    }
+    if (has_adj_rt && !keepAdjustedRtime){
+        object <- dropAdjustedRtime(object)
+        has_adj_rt <- FALSE
+    }
+    ## Extracting all the XCMSnExp data from the object.
+    ph <- processHistory(object)
+    newFd <- new("MsFeatureData")
+    ## Subset original data:
+    nobject <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
+                 "XCMSnExp")
+    if (has_adj_rt)
+        adjustedRtime(newFd) <- adjustedRtime(object, bySample = TRUE)[file]
+    if (has_chrom_peaks) {
+        pks <- chromPeaks(object)
+        idx <- base::which(pks[, "sample"] %in% file)
+        pks <- pks[idx, , drop = FALSE]
+        pks[, "sample"] <- match(pks[, "sample"], file)
+        if (has_features) {
+            featureDefinitions(newFd) <- .update_feature_definitions(
+                featureDefinitions(object),
+                original_names = rownames(chromPeaks(object)),
+                subset_names = rownames(pks))
+        }
+        chromPeaks(newFd) <- pks
+        chromPeakData(newFd) <- chromPeakData(object)[idx, , drop = FALSE]
+    }
+    ## Remove ProcessHistory not related to any of the files.
+    if (length(ph)) {
+        kp <- unlist(lapply(ph, function(z) {
+            any(fileIndex(z) %in% file)
+        }))
+        ph <- ph[kp]
+    }
+    ## Update file index in process histories.
+    if (length(ph)) {
+        ph <- lapply(ph, function(z) {
+            updateFileIndex(z, old = file, new = 1:length(file))
+        })
+    }
+    lockEnvironment(newFd, bindings = TRUE)
+    nobject@msFeatureData <- newFd
+    nobject@.processHistory <- ph
+    nobject
 }
