@@ -81,7 +81,7 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 #' results (i.e. features).
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
+setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = integer()) {
     hasFeatures(object@msFeatureData, msLevel = msLevel)
 })
 
@@ -93,7 +93,7 @@ setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
 #' detection results.
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = 1:20) {
+setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = integer()) {
     hasChromPeaks(object@msFeatureData, msLevel = msLevel)
 })
 
@@ -141,7 +141,8 @@ setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
         ## Have to re-order the adjusted retention times by spectrum name, such
         ## that rtime are.
         res <- unlist(res, use.names = FALSE)
-        sNames <- unlist(split(featureNames(object), fromFile(object)),
+        sNames <- unlist(split(featureNames(object),
+                               as.factor(fromFile(object))),
                          use.names = FALSE)
         names(res) <- sNames
         res <- res[featureNames(object)]
@@ -216,7 +217,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 setMethod("featureDefinitions", "XCMSnExp",
           function(object, mz = numeric(), rt = numeric(), ppm = 0,
                    type = c("any", "within", "apex_within"),
-                   msLevel = 1:20) {
+                   msLevel = integer()) {
               feat_def <- featureDefinitions(object@msFeatureData,
                                              msLevel = msLevel)
               type <- match.arg(type)
@@ -471,7 +472,7 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE,
     ## res <- theM(object)
     res <- callNextMethod(object = object)
     if (bySample) {
-        tmp <- split(res, fromFile(object))
+        tmp <- split(res, as.factor(fromFile(object)))
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -499,7 +500,8 @@ setMethod("mz", "XCMSnExp", function(object, bySample = FALSE,
                                      BPPARAM = bpparam()) {
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        tmp <- lapply(split(res, as.factor(fromFile(object))),
+                      unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -528,7 +530,8 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
                                             BPPARAM = bpparam()) {
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        tmp <- lapply(split(res, as.factor(fromFile(object))),
+                      unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -567,7 +570,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
     else object <- as(object, "OnDiskMSnExp")
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- split(res, fromFile(object))
+        tmp <- split(res, as.factor(fromFile(object)))
         ## That's to ensure that we're always returning something for all files.
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
@@ -1041,7 +1044,7 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
     if (hasAdjustedRtime(object)) {
         if (keepAdjustedRtime) {
             ## issue #210: keep adjusted retention times if wanted.
-            keep_by_file <- base::split(keep_logical, fromFile(object))
+            keep_by_file <- base::split(keep_logical, as.factor(fromFile(object)))
             adj_rt <- base::mapply(FUN = function(y, z) {
                 return(y[z])
             }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
@@ -1382,7 +1385,7 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     if (hasAdjustedRtime(object)) {
         ## Subset the adjusted retention times (which are stored as a list of
         ## rts by file):
-        keep_by_file <- base::split(keep_logical, fromFile(object))
+        keep_by_file <- base::split(keep_logical, as.factor(fromFile(object)))
         adj_rt <- base::mapply(FUN = function(y, z) {
             return(y[z])
         }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
@@ -1685,7 +1688,7 @@ setMethod("groupChromPeaks",
               if (any(msLevel != 1))
                   stop("Currently peak grouping is only supported for MS level 1")
               ## I'm expecting a single spectrum per file!
-              rtL <- split(rtime(object), f = fromFile(object))
+              rtL <- split(rtime(object), f = as.factor(fromFile(object)))
               if (any(lengths(rtL) > 1))
                   stop("'object' contains multiple spectra per sample! This ",
                        "algorithm does only work for single spectra ",
@@ -2041,7 +2044,8 @@ setMethod("adjustRtime",
               ## Add the results. adjustedRtime<- should also fix the retention
               ## times for the peaks! Want to keep also the latest alignment
               ## information
-              adjustedRtime(object) <- unname(split(res, fromFile(object)))
+              adjustedRtime(object) <- unname(
+                  split(res, as.factor(fromFile(object))))
               ## Add the process history step.
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.RTIME.CORRECTION,
@@ -2179,7 +2183,7 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
                                                 value = "into",
                                                 intensity = "into",
                                                 filled = TRUE, missing = NA,
-                                                msLevel = 1:20) {
+                                                msLevel = integer()) {
     ## Input argument checkings
     if (!hasFeatures(object, msLevel = msLevel))
         stop("No feature definitions for MS level(s) ", msLevel,
@@ -2227,7 +2231,8 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
     if (method == "sum") {
         for (i in seq_along(ftIdx)) {
             cur_pks <- pks[ftIdx[[i]], c(value, "sample"), drop=FALSE]
-            int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
+            int_sum <- split(cur_pks[, value],
+                             as.factor(as.integer(cur_pks[, "sample"])))
             vals[i, as.numeric(names(int_sum))] <-
                 unlist(lapply(int_sum, base::sum), use.names = FALSE)
         }
@@ -3668,7 +3673,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
               msf <- new("MsFeatureData")
               msf@.xData <- .copy_env(object@msFeatureData)
               chromPeaks(msf) <- chromPeaks(object)[keep, , drop = FALSE]
-              chromPeakData(msf) <- chromPeakData(object)[keep, , drop = FALSE]
+              chromPeakData(msf) <- extractROWS(chromPeakData(object), keep)
               object@msFeatureData <- msf
               ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
               xph <- XProcessHistory(param = param, date. = date(),

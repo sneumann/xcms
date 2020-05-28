@@ -188,7 +188,7 @@ XChromatograms <- function(data, phenoData, featureData, chromPeaks,
                 which(ids_sub %in% ids_orig[fts$peakidx[[i]]] &
                       pks_sub[, "row"] == fts$row[i]))
         }
-        fts <- fts[lengths(fts$peakidx) > 0, , drop = FALSE]
+        fts <- extractROWS(fts, which(lengths(fts$peakidx) > 0))
     }
     fts
 }

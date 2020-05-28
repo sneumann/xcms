@@ -37,19 +37,23 @@ setMethod("hasAdjustedRtime", "MsFeatureData", function(object) {
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "MsFeatureData", function(object, msLevel = 1:20) {
-    !is.null(object$featureDefinitions) &&
-        (!any(colnames(object$featureDefinitions) == "ms_level") |
-         any(object$featureDefinitions$ms_level %in% msLevel))
+setMethod("hasFeatures", "MsFeatureData", function(object,
+                                                   msLevel = integer()) {
+    if (length(msLevel) && !is.null(object$featureDefinitions) &&
+        any(colnames(object$featureDefinitions) == "ms_level"))
+        any(msLevel %in% object$featureDefinitions$ms_level)
+    else !is.null(object$featureDefinitions)
 })
 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "MsFeatureData", function(object, msLevel = 1:20) {
-    !is.null(object$chromPeaks) &&
-        (!any(colnames(object$chromPeakData) == "ms_level") |
-         any(object$chromPeakData$ms_level %in% msLevel))
+setMethod("hasChromPeaks", "MsFeatureData", function(object,
+                                                     msLevel = integer()) {
+    if (length(msLevel) && !is.null(object$chromPeaks) &&
+        any(colnames(object$chromPeakData) == "ms_level"))
+        any(msLevel %in% object$chromPeakData$ms_level)
+    else !is.null(object$chromPeaks)
 })
 
 #' @noRd
@@ -82,9 +86,10 @@ setMethod("dropAdjustedRtime", "MsFeatureData", function(object) {
 #'
 #' @rdname XCMSnExp-class
 setMethod("featureDefinitions", "MsFeatureData", function(object,
-                                                          msLevel = 1:20) {
-    if (hasFeatures(object)) {
-        if (any(colnames(object$featureDefinitions) == "ms_level"))
+                                                          msLevel = integer()) {
+    if (length(object$featureDefinitions)) {
+        if (any(colnames(object$featureDefinitions) == "ms_level") &&
+            length(msLevel))
             object$featureDefinitions[object$featureDefinitions$ms_level %in%
                                       msLevel, ]
         else object$featureDefinitions
@@ -106,17 +111,14 @@ setReplaceMethod("featureDefinitions", "MsFeatureData", function(object, value) 
 setMethod("dropFeatureDefinitions", "MsFeatureData", function(object) {
     if (hasFeatures(object))
         rm(list = "featureDefinitions", envir = object)
-    return(object)
+    object
 })
 
 #' @noRd
 #'
 #' @rdname XCMSnExp-class
 setMethod("chromPeaks", "MsFeatureData", function(object) {
-    if (hasChromPeaks(object))
-        return(object$chromPeaks)
-    warning("No chromatographic peaks available.")
-    return(NULL)
+    object$chromPeaks
 })
 #' @noRd
 #'

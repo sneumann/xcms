@@ -90,9 +90,9 @@ hasFilledChromPeaks(object)
 
 \S4method{hasAdjustedRtime}{XCMSnExp}(object)
 
-\S4method{hasFeatures}{XCMSnExp}(object, msLevel = 1:20)
+\S4method{hasFeatures}{XCMSnExp}(object, msLevel = integer())
 
-\S4method{hasChromPeaks}{XCMSnExp}(object, msLevel = 1:20)
+\S4method{hasChromPeaks}{XCMSnExp}(object, msLevel = integer())
 
 \S4method{hasFilledChromPeaks}{XCMSnExp}(object)
 
@@ -106,7 +106,7 @@ hasFilledChromPeaks(object)
   rt = numeric(),
   ppm = 0,
   type = c("any", "within", "apex_within"),
-  msLevel = 1:20
+  msLevel = integer()
 )
 
 \S4method{featureDefinitions}{XCMSnExp}(object) <- value

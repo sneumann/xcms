@@ -115,19 +115,18 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                               as(param, "list"))), date = procDat)
 }
 
-#' Internal function to split an OnDiskMSnExp by file into a list of
-#' `OnDiskMSnExp` objects allowing to subset in addition to:
-#' - MS level
-#' - set to minimal required feature columns
-#' - keep the lazy processing queue
-#' - if `x` is an `XCMSnExp` replace rtime with adjusted rtime.
-#' - if `x` is an `XCMSnExp` object and has chrom peaks: add also them.
+#' Fast way to split an `XCMSnExp` object by file:
+#' - subsets the object to MS level specified with `msLevel`.
+#' - subsets feature data to the smallest possible set of columns (if
+#'   `selectFeatureData = TRUE`.
+#' - returns by default an `OnDiskMSnExp`, unless `to_class = "XCMSnExp"`, in
+#'   which case also potentially present chromatographic peaks are preserved.
 #'
-#' This is a faster than splitting the object with the fileFile approach.
+#' @note
 #'
-#' @param to_class defines whether we want to return an `XCMSnExp` or
-#'     `OnDiskMSnExp` object. For the former also potentially present chrom
-#'     peaks will be added.
+#' This function needs a considerable amount of memory if
+#' `to_class = "XCMSnExp"` because, for efficiency reasons, it first splits
+#' the `chromPeaks` and `chromPeakData` per file.
 #'
 #' @noRd
 .split_by_file <- function(x, msLevel. = unique(msLevel(x)),
@@ -138,8 +137,6 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     if (selectFeatureData)
         x <- selectFeatureData(x, fcol = c(MSnbase:::.MSnExpReqFvarLabels,
                                            "centroided"))
-    if (!any(msLevel(x) %in% msLevel.))
-        stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
     procd <- x@processingData
     expd <- new(
         "MIAPE",
@@ -148,34 +145,54 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ionSource = x@experimentData@ionSource[1],
         analyser = x@experimentData@analyser[1],
         detectorType = x@experimentData@detectorType[1])
-    lapply(seq_along(fileNames(x)), function(z) {
+    create_object <- function(x, i, to_class) {
         a <- new(to_class)
-        a@processingData@files <- procd@files[z]
-        a@featureData <- x@featureData[x@featureData$msLevel %in% msLevel. &
-                                       x@featureData$fileIdx == z, ]
+        a@processingData@files <- procd@files[i]
+        a@featureData <- extractROWS(
+            x@featureData, which(x@featureData$msLevel %in% msLevel. &
+                                 x@featureData$fileIdx == i))
+        if (!nrow(a@featureData))
+            stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
         a@featureData$fileIdx <- 1L
         a@experimentData <- expd
         a@spectraProcessingQueue <- x@spectraProcessingQueue
-        a@phenoData <- x@phenoData[z, , drop = FALSE]
-        if (is(a, "XCMSnExp") && hasChromPeaks(x)) {
-            pks_idx <- chromPeaks(x)[, "sample"] == z
-            pks <- chromPeaks(x)[pks_idx, , drop = FALSE]
-            pkd <- chromPeakData(x)[pks_idx, ]
-            if (any(colnames(pkd) == "ms_level")) {
-                keep <- pkd$ms_level %in% msLevel.
-                pks <- pks[keep, , drop = FALSE]
-                pkd <- pkd[keep, ]
-            }
-            if (nrow(pks))
-                pks[, "sample"] <- 1
+        a@phenoData <- x@phenoData[i, , drop = FALSE]
+        a
+    }
+    if (to_class == "XCMSnExp" && is(x, "XCMSnExp") && hasChromPeaks(x)) {
+        if (any(colnames(.chrom_peak_data(x@msFeatureData)) == "ms_level")) {
+            pk_idx <- which(
+                .chrom_peak_data(x@msFeatureData)$ms_level %in% msLevel.)
+        } else pk_idx <- seq_len(nrow(chromPeaks(x@msFeatureData)))
+        fct <- as.factor(
+            as.integer(chromPeaks(x@msFeatureData)[pk_idx, "sample"]))
+        pksl <- split.data.frame(
+            chromPeaks(x@msFeatureData)[pk_idx, , drop = FALSE], fct)
+        pkdl <- split.data.frame(
+            extractROWS(.chrom_peak_data(x@msFeatureData), pk_idx), fct)
+        res <- vector("list", length(fileNames(x)))
+        for (i in seq_along(res)) {
+            a <- create_object(x, i, to_class)
             newFd <- new("MsFeatureData")
-            chromPeaks(newFd) <- pks
-            chromPeakData(newFd) <- pkd
+            pks <- pksl[[as.character(i)]]
+            if (!is.null(pks) && nrow(pks)) {
+                pks[, "sample"] <- 1
+                chromPeaks(newFd) <- pks
+                chromPeakData(newFd) <- pkdl[[as.character(i)]]
+            } else {
+                chromPeaks(newFd) <- chromPeaks(x@msFeatureData)[0, ]
+                chromPeakData(newFd) <- .chrom_peak_data(x@msFeatureData)[0, ]
+            }
             lockEnvironment(newFd, bindings = TRUE)
             a@msFeatureData <- newFd
+            res[[i]] <- a
         }
-        a
-    })
+        res
+    } else {
+        lapply(seq_along(fileNames(x)), function(z) {
+            a <- create_object(x, z, to_class)
+        })
+    }
 }
 
 ############################################################
@@ -196,7 +213,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     filepaths(object) <- fileNames(pset)
     phenoData(object) <- pData(pset)
     ## rt
-    rt <- split(unname(rtime(pset)), f = fromFile(pset))
+    rt <- split(unname(rtime(pset)), f = as.factor(fromFile(pset)))
     object@rt <- list(raw = rt, corrected = rt)
     ## mslevel
     mslevel(object) <- unique(msLevel(pset))
@@ -294,7 +311,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         centerSample(param) <- floor(median(1:nSamples))
     message("Sample number ", centerSample(param), " used as center sample.")
 
-    rtraw <- split(rtime(object), fromFile(object))
+    rtraw <- split(rtime(object), as.factor(fromFile(object)))
     object <- filterFile(object, file = subs)
     ## Get the profile matrix of the center sample:
     ## Using the (hidden) parameter returnBreaks to return also the breaks of

@@ -108,7 +108,7 @@ setMethod("chromPeakData", "XChromatograms", function(object) {
     res <- do.call(rbind, res)
     res$row <- rep(row_idx, nrs)
     res$column <- rep(col_idx, nrs)
-    res[order(res[, "row"]), , drop = FALSE]
+    extractROWS(res, order(res[, "row"]))
 })
 
 #' @rdname XChromatogram
@@ -389,7 +389,7 @@ setMethod("featureDefinitions", "XChromatograms",
                       apex_within = which(feat_def$rtmed >= rt[1] &
                                           feat_def$rtmed <= rt[2])
                   )
-                  feat_def <- feat_def[keep, , drop = FALSE]
+                  feat_def <- extractROWS(feat_def, keep)
               }
               if (length(mz) && nrow(feat_def)) {
                   mz <- range(mz)
@@ -407,7 +407,7 @@ setMethod("featureDefinitions", "XChromatograms",
                       apex_within = which(feat_def$mzmed >= mz[1] &
                                           feat_def$mzmed <= mz[2])
                   )
-                  feat_def <- feat_def[keep, , drop = FALSE]
+                  feat_def <- extractROWS(feat_def, keep)
               }
               feat_def
           })

@@ -362,7 +362,7 @@ setMethod("filterMz", "XChromatogram", function(object, mz, ...) {
         mz <- range(mz)
         keep <- which(pks[, "mz"] >= mz[1] & pks[, "mz"] <= mz[2])
         object@chromPeaks <- pks[keep, , drop = FALSE]
-        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        object@chromPeakData <- extractROWS(object@chromPeakData, keep)
         validObject(object)
     }
     object
@@ -386,7 +386,7 @@ setMethod("filterRt", "XChromatogram", function(object, rt, ...) {
         rt <- range(rt)
         keep <- which(pks[, "rt"] >= rt[1] & pks[, "rt"] <= rt[2])
         object@chromPeaks <- pks[keep, , drop = FALSE]
-        object@chromPeakData <- object@chromPeakData[keep, , drop = FALSE]
+        object@chromPeakData <- extractROWS(object@chromPeakData, keep)
         validObject(object)
     }
     object
@@ -407,7 +407,7 @@ setMethod("dropFilledChromPeaks", "XChromatogram", function(object) {
         return(object)
     not_fld <- which(!object@chromPeakData$is_filled)
     object@chromPeaks <- object@chromPeaks[not_fld, , drop = FALSE]
-    object@chromPeakData <- object@chromPeakData[not_fld, , drop = FALSE]
+    object@chromPeakData <- extractROWS(object@chromPeakData, not_fld)
     validObject(object)
     object
 })

@@ -1331,7 +1331,7 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
         brks <- c(brks, brks[length(brks)] + binSize)
     pks <- chromPeaks(x, rt = xlim, msLevel = 1L)
     if (nrow(pks)) {
-        rts <- split(pks[, "rt"], pks[, "sample"])
+        rts <- split(pks[, "rt"], as.factor(as.integer(pks[, "sample"])))
         cnts <- lapply(rts, function(z) {
             hst <- hist(z, breaks = brks, plot = FALSE)
             hst$counts
@@ -2282,14 +2282,13 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         pks <- chromPeaks(x)
         if (!filled)
             pks[chromPeakData(x)$is_filled, ] <- NA
-        vals <- apply(xcms:::.feature_values(pks,
-                                      featureDefinitions(x)[features, ],
-                                      method = "maxint", value = value,
-                                      intensity = "maxo",
-                                      colnames = basename(fileNames(x))),
-                      MARGIN = 2, sum, na.rm = TRUE)
+        vals <- apply(.feature_values(
+            pks, extractROWS(featureDefinitions(x), features),
+            method = "maxint", value = value, intensity = "maxo",
+            colnames = basename(fileNames(x))),
+            MARGIN = 2, sum, na.rm = TRUE)
         sample_idx <- order(vals, decreasing = TRUE)[seq_len(n)]
-        x <- filterFile(x, sample_idx, keepFeatures = TRUE)
+        x <- .filter_file_XCMSnExp(x, sample_idx, keepFeatures = TRUE)
         features <- match(fids, rownames(featureDefinitions(x)))
         features <- features[!is.na(features)]
         if (length(features) < length(fids))
@@ -2333,20 +2332,20 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         ## Keep only a single feature per row
         ## Keep only peaks for the features of interest.
         for (i in seq_len(nr)) {
-            is_feature <- fts_all$row == i & rownames(fts_all) == ft_ids[i]
-            if (!any(is_feature))
+            is_feature <- which(fts_all$row == i & rownames(fts_all) == ft_ids[i])
+            if (!length(is_feature))
                 next
-            ft_def <- fts_all[is_feature, , drop = FALSE]
+            ft_def <- extractROWS(fts_all, is_feature)
             ft_defs[[i]] <- ft_def
             pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
             for (j in seq_len(nc)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
                 if (nrow(cur_pks)) {
-                    keep <- rownames(cur_pks) %in% pk_ids
+                    keep <- which(rownames(cur_pks) %in% pk_ids)
                     chrs@.Data[i, j][[1]]@chromPeaks <-
                         cur_pks[keep, , drop = FALSE]
                     chrs@.Data[i, j][[1]]@chromPeakData <-
-                        chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
+                        extractROWS(chrs@.Data[i, j][[1]]@chromPeakData, keep)
                 }
             }
         }
@@ -2892,7 +2891,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         pk_group <- pk_groups[[i]]
         res <- .chrom_merge_neighboring_peaks(
             chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
-            pkd[pk_group, , drop = FALSE], diffRt = 2 * expandRt,
+            extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
             minProp = minProp)
         drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
         res_list[[i]] <- res$chromPeaks
@@ -2900,12 +2899,13 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     }
     pks_new <- do.call(rbind, res_list)
     pkd_new <- do.call(rbind, pkd_list)
-    pks <- pks[!drop_peaks, , drop = FALSE]
-    pkd <- pkd[!drop_peaks, , drop = FALSE]
+    keep_peaks <- which(!drop_peaks)
+    pks <- pks[keep_peaks, , drop = FALSE]
+    pkd <- extractROWS(pkd, keep_peaks)
     idx_new <- is.na(rownames(pks_new))
     message("OK")
     list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
-         chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
+         chromPeakData = rbind(pkd, extractROWS(pkd_new, idx_new)))
 }
 
 .filter_file_XCMSnExp <- function(object, file,
@@ -2959,7 +2959,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                 subset_names = rownames(pks))
         }
         chromPeaks(newFd) <- pks
-        chromPeakData(newFd) <- chromPeakData(object)[idx, , drop = FALSE]
+        chromPeakData(newFd) <- extractROWS(chromPeakData(object), idx)
     }
     ## Remove ProcessHistory not related to any of the files.
     if (length(ph)) {

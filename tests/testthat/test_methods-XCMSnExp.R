@@ -2320,7 +2320,7 @@ test_that("refineChromPeaks,CleanPeaksParam works", {
     rtw2 <- chromPeaks(res)[, "rtmax"] - chromPeaks(res)[, "rtmin"]
     expect_true(all(rtw2 < 20))
     res <- refineChromPeaks(xod_x, param = CleanPeaksParam(1))
-    expect_warning(expect_true(length(chromPeaks(res)) == 0))
+    expect_true(length(chromPeaks(res)) == 0)
     expect_true(is(processHistory(res)[[2]]@param, "CleanPeaksParam"))
 
     expect_warning(res <- refineChromPeaks(xod_x, param = CleanPeaksParam(20),

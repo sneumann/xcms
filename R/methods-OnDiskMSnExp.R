@@ -312,7 +312,8 @@ setMethod("findChromPeaks",
                   stop("No MS level ", msLevel, " spectra present to perform ",
                        "peak detection")
 
-              rts <- split(rtime(object_mslevel), f = fromFile(object_mslevel))
+              rts <- split(rtime(object_mslevel),
+                           f = as.factor(fromFile(object_mslevel)))
               if (any(lengths(rts) > 1))
                   stop("The MSW method can only be applied to single spectrum,",
                        " non-chromatographic, files (i.e. with a single ",
@@ -540,7 +541,8 @@ setMethod("adjustRtime",
                   res <- rtime_all
               }
               res <- unlist(res, use.names = FALSE)
-              sNames <- unlist(split(featureNames(object), fromFile(object)),
+              sNames <- unlist(split(featureNames(object),
+                                     as.factor(fromFile(object))),
                                use.names = FALSE)
               names(res) <- sNames
               res <- res[featureNames(object)]
