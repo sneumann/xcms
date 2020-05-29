@@ -2455,11 +2455,10 @@ setMethod(
         if (adjustedRtime)
             adj_rt <- rtime(object, adjusted = TRUE)
         object_od <- as(object, "OnDiskMSnExp")
-        object_od <- selectFeatureData(
-            object_od, fcol = c("fileIdx", "spIdx", "seqNum",
-                                "acquisitionNum", "msLevel",
-                                "polarity", "retentionTime",
-                                "precursorScanNum"))
+        fcs <- c("fileIdx", "spIdx", "seqNum", "acquisitionNum", "msLevel",
+                 "polarity", "retentionTime", "precursorScanNum")
+        fcs <- intersect(fcs, colnames(fData(object)))
+        object_od <- selectFeatureData(object_od, fcol = fcs)
         if (adjustedRtime)
             object_od@featureData$retentionTime <- adj_rt
         res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
@@ -3838,7 +3837,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               idxs <- seq_along(fileNames(object))
               res <- bpmapply(idxs, .split_by_file(object, msLevel. = msLevel,
                                                    to_class = "XCMSnExp",
-                                                   selectFeatureData = FALSE),
+                                                   subsetFeatureData = TRUE),
                               FUN = function(i, obj, param) {
                                   pks <- .merge_neighboring_peaks(
                                       obj, expandRt = param@expandRt,

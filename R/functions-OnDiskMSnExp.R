@@ -130,13 +130,15 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #'
 #' @noRd
 .split_by_file <- function(x, msLevel. = unique(msLevel(x)),
-                           selectFeatureData = TRUE,
+                           subsetFeatureData = TRUE,
                            to_class = "OnDiskMSnExp") {
     if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
         x@featureData$retentionTime <- adjustedRtime(x)
-    if (selectFeatureData)
-        x <- selectFeatureData(x, fcol = c(MSnbase:::.MSnExpReqFvarLabels,
-                                           "centroided"))
+    if (subsetFeatureData) {
+        fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
+                           "polarity", "seqNum"), colnames(fData(x)))
+        x <- selectFeatureData(x, fcol = fcs)
+    }
     procd <- x@processingData
     expd <- new(
         "MIAPE",

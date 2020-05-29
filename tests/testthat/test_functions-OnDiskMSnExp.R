@@ -78,9 +78,12 @@ test_that(".concatenate_OnDiskMSnExp works", {
 
 test_that(".split_by_file works", {
     a <- lapply(seq_along(fileNames(od_x)), filterFile, object = od_x)
-    b <- .split_by_file(od_x, selectFeatureData = FALSE)
+    b <- .split_by_file(od_x, subsetFeatureData = FALSE)
     expect_equal(a[[2]][[19]], b[[2]][[19]])
     expect_equal(spectra(a[[3]]), spectra(b[[3]]))
+
+    b_2 <- .split_by_file(od_x, subsetFeatureData = TRUE)
+    expect_true(ncol(fData(b_2[[1]])) < ncol(fData(b[[1]])))
 
     res <- .split_by_file(xod_xgr)
     expect_true(length(res) == 3)
