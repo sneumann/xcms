@@ -1,5 +1,7 @@
 Changes in version 3.11.2
 
+- Potential fix for issue #481: function should no longer throw an error because
+  retention times are of length 0.
 - More efficient splitting of processing which should increase the speed of
   the findChromPeaks, refineChromPeaks, reconstructChromPeakSpectra and
   chromPeakSpectra calls.

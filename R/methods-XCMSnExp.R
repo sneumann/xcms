@@ -3835,9 +3835,10 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               validObject(param)
               peak_count <- nrow(chromPeaks(object))
               idxs <- seq_along(fileNames(object))
-              res <- bpmapply(idxs, .split_by_file(object, msLevel. = msLevel,
-                                                   to_class = "XCMSnExp",
-                                                   subsetFeatureData = TRUE),
+              objl <- .split_by_file(object, msLevel. = msLevel,
+                                     to_class = "XCMSnExp",
+                                     subsetFeatureData = TRUE)
+              res <- bpmapply(idxs, objl,
                               FUN = function(i, obj, param) {
                                   pks <- .merge_neighboring_peaks(
                                       obj, expandRt = param@expandRt,
@@ -3882,3 +3883,62 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               validObject(object)
               object
           })
+
+## Second version without bpmapply
+.do_merge_peaks_XCMSnExp <- function(object, param = MergeNeighboringPeaksParam(),
+                                     msLevel = 1L, BPPARAM = bpparam()) {
+    if (!hasChromPeaks(object, msLevel = msLevel)) {
+        warning("No chromatographic peaks present in for MS level ",
+                msLevel, ". Please run 'findChromPeaks' first.")
+        return(object)
+    }
+    if (hasFeatures(object)) {
+        message("Removing feature definitions.")
+        object <- dropFeatureDefinitions(object)
+    }
+    validObject(param)
+    peak_count <- nrow(chromPeaks(object))
+    idxs <- seq_along(fileNames(object))
+    objl <- .split_by_file(object, msLevel. = msLevel,
+                           to_class = "XCMSnExp",
+                           subsetFeatureData = TRUE)
+    res <- bplapply(objl,
+                    FUN = .merge_neighboring_peaks,
+                    expandRt = param@expandRt,
+                    expandMz = param@expandMz, ppm = param@ppm,
+                    minProp = param@minProp,
+                    BPPARAM = BPPARAM)
+    pks <- do.call(rbind, lapply(res, "[[", 1))
+    pkd <- do.call(rbind, lapply(res, "[[", 2))
+    ## Add also peaks for other MS levels!
+    other_msl <- !(chromPeakData(object)$ms_level %in% msLevel)
+    if (any(other_msl)) {
+        pks <- rbind(pks, chromPeaks(object)[other_msl, , drop = FALSE])
+        pkd <- rbind(pkd, chromPeakData(object)[other_msl, ])
+    }
+    which_new <- is.na(rownames(pks))
+    pkd$merged <- which_new
+    max_id <- max(as.numeric(sub("CP", "", rownames(pks))),
+                  na.rm = TRUE)
+              if (!is.finite(max_id))
+                  max_id <- 0
+    rownames(pks)[which_new] <- .featureIDs(sum(which_new),
+                                            prefix = "CPM",
+                                            from = max_id + 1)
+    rownames(pkd) <- rownames(pks)
+    message("Merging reduced ", peak_count, " chromPeaks to ",
+            nrow(pks), ".")
+    msf <- new("MsFeatureData")
+    msf@.xData <- .copy_env(object@msFeatureData)
+    chromPeaks(msf) <- pks
+    chromPeakData(msf) <- pkd
+    object@msFeatureData <- msf
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+    xph <- XProcessHistory(param = param, date. = date(),
+                           type. = .PROCSTEP.PEAK.REFINEMENT,
+                           fileIndex = 1:length(fileNames(object)),
+                           msLevel = msLevel)
+    object <- addProcessHistory(object, xph)
+    validObject(object)
+    object
+}

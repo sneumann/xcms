@@ -122,6 +122,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #' - returns by default an `OnDiskMSnExp`, unless `to_class = "XCMSnExp"`, in
 #'   which case also potentially present chromatographic peaks are preserved.
 #'
+#' @param keep_sample_idx if column "sample" should be kept as it is.
+#'
 #' @note
 #'
 #' This function needs a considerable amount of memory if
@@ -131,7 +133,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
 #' @noRd
 .split_by_file <- function(x, msLevel. = unique(msLevel(x)),
                            subsetFeatureData = TRUE,
-                           to_class = "OnDiskMSnExp") {
+                           to_class = "OnDiskMSnExp",
+                           keep_sample_idx = FALSE) {
     if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
         x@featureData$retentionTime <- adjustedRtime(x)
     if (subsetFeatureData) {
@@ -178,7 +181,8 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
             newFd <- new("MsFeatureData")
             pks <- pksl[[as.character(i)]]
             if (!is.null(pks) && nrow(pks)) {
-                pks[, "sample"] <- 1
+                if (!keep_sample_idx)
+                    pks[, "sample"] <- 1
                 chromPeaks(newFd) <- pks
                 chromPeakData(newFd) <- pkdl[[as.character(i)]]
             } else {
@@ -328,7 +332,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                            returnBreaks = TRUE)[[1]]
     )
     ## Now split the object by file
-    objL <- splitByFile(object, f = factor(seq_len(nSamples)))
+    objL <- .split_by_file(object, msLevel. = 1)
     objL <- objL[-centerSample(param)]
     centerObject <- filterFile(object, file = centerSample(param))
     ## Now we can bplapply here!
@@ -344,23 +348,25 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ## 1)Check the scan times of both objects:
         scantime1 <- unname(rtime(cntr))
         scantime2 <- unname(rtime(z))
+        scantime1_diff <- diff(scantime1)
+        scantime2_diff <- diff(scantime2)
         ## median difference between spectras' scan time.
-        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
+        mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
 
         ## rtup1 <- seq_along(scantime1)
         ## rtup2 <- seq_along(scantime2)
 
-        mst1 <- which(diff(scantime1) > 5 * mstdiff)[1]
+        mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
         if (!is.na(mst1)) {
-            scantime1 <- scantime1[seq_len((mst1 - 1))]
             message("Found gaps in scan times of the center sample: cut ",
                     "scantime-vector at ", scantime1[mst1]," seconds.")
+            scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
         }
-        mst2 <- which(diff(scantime2) > 5 * mstdiff)[1]
-        if(!is.na(mst2)) {
-            scantime2 <- scantime2[seq_len((mst2 - 1))]
+        mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
+        if (!is.na(mst2)) {
             message("Found gaps in scan time of file ", basename(fileNames(z)),
                     ": cut scantime-vector at ", scantime2[mst2]," seconds.")
+            scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
         }
         ## Drift of measured scan times - expected to be largest at the end.
         rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],

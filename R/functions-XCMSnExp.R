@@ -2898,6 +2898,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         pkd_list[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, res_list)
+    pks_new[, "sample"] <- pks[1, "sample"]
     pkd_new <- do.call(rbind, pkd_list)
     keep_peaks <- which(!drop_peaks)
     pks <- pks[keep_peaks, , drop = FALSE]
