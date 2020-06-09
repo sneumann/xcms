@@ -656,7 +656,7 @@ test_that(".XCMSnExp2SummarizedExperiment works", {
 })
 
 test_that(".features_ms_region works", {
-    res <- .features_ms_region(xod_xgrg)
+    res <- .features_ms_region(xod_xgrg, msLevel = 1L)
     expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
     expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
     expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
