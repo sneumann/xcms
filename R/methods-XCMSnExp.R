@@ -81,7 +81,7 @@ setMethod("hasAdjustedRtime", "XCMSnExp", function(object) {
 #' results (i.e. features).
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
+setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = integer()) {
     hasFeatures(object@msFeatureData, msLevel = msLevel)
 })
 
@@ -93,7 +93,7 @@ setMethod("hasFeatures", "XCMSnExp", function(object, msLevel = 1:20) {
 #' detection results.
 #'
 #' @rdname XCMSnExp-class
-setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = 1:20) {
+setMethod("hasChromPeaks", "XCMSnExp", function(object, msLevel = integer()) {
     hasChromPeaks(object@msFeatureData, msLevel = msLevel)
 })
 
@@ -141,7 +141,8 @@ setMethod("adjustedRtime", "XCMSnExp", function(object, bySample = FALSE) {
         ## Have to re-order the adjusted retention times by spectrum name, such
         ## that rtime are.
         res <- unlist(res, use.names = FALSE)
-        sNames <- unlist(split(featureNames(object), fromFile(object)),
+        sNames <- unlist(split(featureNames(object),
+                               as.factor(fromFile(object))),
                          use.names = FALSE)
         names(res) <- sNames
         res <- res[featureNames(object)]
@@ -216,7 +217,7 @@ setReplaceMethod("adjustedRtime", "XCMSnExp", function(object, value) {
 setMethod("featureDefinitions", "XCMSnExp",
           function(object, mz = numeric(), rt = numeric(), ppm = 0,
                    type = c("any", "within", "apex_within"),
-                   msLevel = 1:20) {
+                   msLevel = integer()) {
               feat_def <- featureDefinitions(object@msFeatureData,
                                              msLevel = msLevel)
               type <- match.arg(type)
@@ -471,7 +472,7 @@ setMethod("rtime", "XCMSnExp", function(object, bySample = FALSE,
     ## res <- theM(object)
     res <- callNextMethod(object = object)
     if (bySample) {
-        tmp <- split(res, fromFile(object))
+        tmp <- split(res, as.factor(fromFile(object)))
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -499,7 +500,8 @@ setMethod("mz", "XCMSnExp", function(object, bySample = FALSE,
                                      BPPARAM = bpparam()) {
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        tmp <- lapply(split(res, as.factor(fromFile(object))),
+                      unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -528,7 +530,8 @@ setMethod("intensity", "XCMSnExp", function(object, bySample = FALSE,
                                             BPPARAM = bpparam()) {
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- lapply(split(res, fromFile(object)), unlist, use.names = FALSE)
+        tmp <- lapply(split(res, as.factor(fromFile(object))),
+                      unlist, use.names = FALSE)
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
         res[as.numeric(names(tmp))] <- tmp
@@ -567,7 +570,7 @@ setMethod("spectra", "XCMSnExp", function(object, bySample = FALSE,
     else object <- as(object, "OnDiskMSnExp")
     res <- callNextMethod(object = object, BPPARAM = BPPARAM)
     if (bySample) {
-        tmp <- split(res, fromFile(object))
+        tmp <- split(res, as.factor(fromFile(object)))
         ## That's to ensure that we're always returning something for all files.
         res <- vector("list", length(fileNames(object)))
         names(res) <- as.character(1:length(res))
@@ -1041,7 +1044,7 @@ setMethod("filterMsLevel", "XCMSnExp", function(object, msLevel.,
     if (hasAdjustedRtime(object)) {
         if (keepAdjustedRtime) {
             ## issue #210: keep adjusted retention times if wanted.
-            keep_by_file <- base::split(keep_logical, fromFile(object))
+            keep_by_file <- base::split(keep_logical, as.factor(fromFile(object)))
             adj_rt <- base::mapply(FUN = function(y, z) {
                 return(y[z])
             }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
@@ -1248,75 +1251,9 @@ setMethod(
     "filterFile", "XCMSnExp",
     function(object, file, keepAdjustedRtime = hasAdjustedRtime(object),
              keepFeatures = FALSE) {
-        if (missing(file)) return(object)
-        if (is.character(file)) {
-            file <- base::match(file, basename(fileNames(object)))
-        }
-        ## This will not work if we want to get the files in a different
-        ## order (i.e. c(3, 1, 2, 5))
-        file <- base::sort(unique(file))
-        ## Error checking - seems that's not performed downstream.
-        if (!all(file %in% seq_along(fileNames(object))))
-            stop("'file' has to be within 1 and the number of files in object.")
-        ## Drop features
-        has_features <- hasFeatures(object)
-        has_chrom_peaks <- hasChromPeaks(object)
-        has_adj_rt <- hasAdjustedRtime(object)
-        if (has_features && !keepFeatures) {
-            if (keepFeatures)
-                warning("Peak counts in featureDefinitions are no longer be",
-                        " valid after subsetting")
-            else {
-                message("Correspondence results (features) removed.")
-                object <- dropFeatureDefinitions(
-                    object, keepAdjustedRtime = keepAdjustedRtime)
-                has_features <- FALSE
-            }
-        }
-        if (has_adj_rt && !keepAdjustedRtime){
-            object <- dropAdjustedRtime(object)
-            has_adj_rt <- FALSE
-        }
-        ## Extracting all the XCMSnExp data from the object.
-        ph <- processHistory(object)
-        newFd <- new("MsFeatureData")
-        newFd@.xData <- .copy_env(object@msFeatureData)
-        ## Subset original data:
-        object <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
-                     "XCMSnExp")
-        if (has_adj_rt)
-            adjustedRtime(newFd) <- adjustedRtime(newFd)[file]
-        if (has_chrom_peaks) {
-            pks <- chromPeaks(newFd)
-            idx <- base::which(pks[, "sample"] %in% file)
-            pks <- pks[idx, , drop = FALSE]
-            pks[, "sample"] <- match(pks[, "sample"], file)
-            if (has_features) {
-                ## Update the peakidx in these!!!
-                featureDefinitions(newFd) <- .update_feature_definitions(
-                    featureDefinitions(newFd),
-                    original_names = rownames(chromPeaks(newFd)),
-                    subset_names = rownames(pks))
-            }
-            chromPeaks(newFd) <- pks
-            chromPeakData(newFd) <- chromPeakData(newFd)[idx, , drop = FALSE]
-        }
-        ## Remove ProcessHistory not related to any of the files.
-        if (length(ph)) {
-            kp <- unlist(lapply(ph, function(z) {
-                any(fileIndex(z) %in% file)
-            }))
-            ph <- ph[kp]
-        }
-        ## Update file index in process histories.
-        if (length(ph)) {
-            ph <- lapply(ph, function(z) {
-                updateFileIndex(z, old = file, new = 1:length(file))
-            })
-        }
-        lockEnvironment(newFd, bindings = TRUE)
-        object@msFeatureData <- newFd
-        object@.processHistory <- ph
+        object <- .filter_file_XCMSnExp(object, file = file,
+                                        keepAdjustedRtime = keepAdjustedRtime,
+                                        keepFeatures = keepFeatures)
         validObject(object)
         object
     })
@@ -1448,7 +1385,7 @@ setMethod("filterRt", "XCMSnExp", function(object, rt, msLevel.,
     if (hasAdjustedRtime(object)) {
         ## Subset the adjusted retention times (which are stored as a list of
         ## rts by file):
-        keep_by_file <- base::split(keep_logical, fromFile(object))
+        keep_by_file <- base::split(keep_logical, as.factor(fromFile(object)))
         adj_rt <- base::mapply(FUN = function(y, z) {
             return(y[z])
         }, y = adjustedRtime(object, bySample = TRUE), z = keep_by_file,
@@ -1751,7 +1688,7 @@ setMethod("groupChromPeaks",
               if (any(msLevel != 1))
                   stop("Currently peak grouping is only supported for MS level 1")
               ## I'm expecting a single spectrum per file!
-              rtL <- split(rtime(object), f = fromFile(object))
+              rtL <- split(rtime(object), f = as.factor(fromFile(object)))
               if (any(lengths(rtL) > 1))
                   stop("'object' contains multiple spectra per sample! This ",
                        "algorithm does only work for single spectra ",
@@ -2107,7 +2044,8 @@ setMethod("adjustRtime",
               ## Add the results. adjustedRtime<- should also fix the retention
               ## times for the peaks! Want to keep also the latest alignment
               ## information
-              adjustedRtime(object) <- unname(split(res, fromFile(object)))
+              adjustedRtime(object) <- unname(
+                  split(res, as.factor(fromFile(object))))
               ## Add the process history step.
               xph <- XProcessHistory(param = param, date. = startDate,
                                      type. = .PROCSTEP.RTIME.CORRECTION,
@@ -2245,7 +2183,7 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
                                                 value = "into",
                                                 intensity = "into",
                                                 filled = TRUE, missing = NA,
-                                                msLevel = 1:20) {
+                                                msLevel = integer()) {
     ## Input argument checkings
     if (!hasFeatures(object, msLevel = msLevel))
         stop("No feature definitions for MS level(s) ", msLevel,
@@ -2293,7 +2231,8 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
     if (method == "sum") {
         for (i in seq_along(ftIdx)) {
             cur_pks <- pks[ftIdx[[i]], c(value, "sample"), drop=FALSE]
-            int_sum <- split(cur_pks[, value], cur_pks[, "sample"])
+            int_sum <- split(cur_pks[, value],
+                             as.factor(as.integer(cur_pks[, "sample"])))
             vals[i, as.numeric(names(int_sum))] <-
                 unlist(lapply(int_sum, base::sum), use.names = FALSE)
         }
@@ -2516,11 +2455,10 @@ setMethod(
         if (adjustedRtime)
             adj_rt <- rtime(object, adjusted = TRUE)
         object_od <- as(object, "OnDiskMSnExp")
-        object_od <- selectFeatureData(
-            object_od, fcol = c("fileIdx", "spIdx", "seqNum",
-                                "acquisitionNum", "msLevel",
-                                "polarity", "retentionTime",
-                                "precursorScanNum"))
+        fcs <- c("fileIdx", "spIdx", "seqNum", "acquisitionNum", "msLevel",
+                 "polarity", "retentionTime", "precursorScanNum")
+        fcs <- intersect(fcs, colnames(fData(object)))
+        object_od <- selectFeatureData(object_od, fcol = fcs)
         if (adjustedRtime)
             object_od@featureData$retentionTime <- adj_rt
         res <- MSnbase::chromatogram(object_od, rt = rt, mz = mz,
@@ -2682,109 +2620,153 @@ setMethod("findChromPeaks",
 #'
 #' Integrate signal in the mz-rt area of a feature (chromatographic
 #' peak group) for samples in which no chromatographic peak for this
-#' feature was identified and add it to the \code{chromPeaks}. Such peaks
-#' will have a \code{TRUE} in column \code{"is_filled"} in the
-#' \code{chromPeakData} data frame containing peak annotations.
+#' feature was identified and add it to the [chromPeaks()] matrix. Such
+#' *filled-in* peaks are indicated with a `TRUE` in column `"is_filled"` in
+#' the result object's [chromPeakData()] data frame.
+#'
+#' Two different gap-filling approaches are implemented:
+#'
+#' - `param = FillChromPeaksParam()`: the default of the original `xcms` code.
+#'   Signal is integrated from the m/z and retention time range as defined in
+#'   the [featureDefinitions()] data frame, i.e. from the `"rtmin"`, `"rtmax"`,
+#'   `"mzmin"` and `"mzmax"`. See details below for more information and
+#'   settings for this method.
+#'
+#' - `param = ChromPeakAreaParam()`: the area from which the signal for a
+#'   feature is integrated is defined based on the feature's chromatographic
+#'   peak areas. The m/z range is by default defined as the the lower quartile
+#'   of chromatographic peaks' `"mzmin"` value to the upper quartile of the
+#'   chromatographic peaks' `"mzmax"` values. The retention time range for the
+#'   area is defined analogously. Alternatively, by setting `mzmin = median`,
+#'   `mzmax = median`, `rtmin = median` and `rtmax = median` in
+#'   `ChromPeakAreaParam`, the median `"mzmin"`, `"mzmax"`, `"rtmin"` and
+#'   `"rtmax"` values from all detected chromatographic peaks of a feature
+#'   would be used instead.
+#'   In contrast to the  `FillChromPeaksParam` approach this method uses the
+#'   actual identified chromatographic peaks of a feature to define the area
+#'   from which the signal should be integrated.
 #'
 #' @details
 #'
 #' After correspondence (i.e. grouping of chromatographic peaks across
 #' samples) there will always be features (peak groups) that do not include
-#' peaks from every sample. The \code{fillChromPeaks} method defines
+#' peaks from every sample. The `fillChromPeaks` method defines
 #' intensity values for such features in the missing samples by integrating
-#' the signal in the mz-rt region of the feature. The mz-rt area is defined
-#' by the median mz and rt start and end points of the other detected
-#' chromatographic peaks for a given feature. Various parameters allow to
-#' increase this area, either by a constant value (\code{fixedMz} and
-#' \code{fixedRt}) or by a feature-relative amount (\code{expandMz} and
-#' \code{expandRt}).
+#' the signal in the mz-rt region of the feature. Two different approaches
+#' to define this region are available: with `ChromPeakAreaParam` the region
+#' is defined based on the detected **chromatographic peaks** of a feature,
+#' while with `FillChromPeaksParam` the region is defined based on the m/z and
+#' retention times of the **feature** (which represent the m/z and retentention
+#' times of the apex position of the associated chromatographic peaks). For the
+#' latter approach various parameters are available to increase the area from
+#' which signal is to be integrated, either by a constant value (`fixedMz` and
+#' `fixedRt`) or by a feature-relative amount (`expandMz` and `expandRt`).
 #'
 #' Adjusted retention times will be used if available.
 #'
 #' Based on the peak finding algorithm that was used to identify the
-#' (chromatographic) peaks different internal functions are employed to
+#' (chromatographic) peaks, different internal functions are used to
 #' guarantee that the integrated peak signal matches as much as possible
 #' the peak signal integration used during the peak detection. For peaks
-#' identified with the \code{\link{matchedFilter}} method, signal
-#' integration is performed on the \emph{profile matrix} generated with
+#' identified with the [matchedFilter()] method, signal
+#' integration is performed on the *profile matrix* generated with
 #' the same settings used also during peak finding (using the same
-#' \code{bin} size for example). For direct injection data and peaks
-#' identified with the \code{\link{MSW}} algorithm signal is integrated
+#' `bin` size for example). For direct injection data and peaks
+#' identified with the `MSW` algorithm signal is integrated
 #' only along the mz dimension. For all other methods the complete (raw)
-#' signal within the area defined by \code{"mzmin"}, \code{"mzmax"},
-#' \code{"rtmin"} and \code{"rtmax"} is used.
+#' signal within the area is used.
 #'
 #' @note
 #'
-#' The reported \code{"mzmin"}, \code{"mzmax"}, \code{"rtmin"} and
-#' \code{"rtmax"} for the filled peaks represents the actual MS area from
+#' The reported `"mzmin"`, `"mzmax"`, `"rtmin"` and
+#' `"rtmax"` for the filled peaks represents the actual MS area from
 #' which the signal was integrated.
 #' Note that no peak is filled in if no signal was present in a file/sample
-#' in the respective mz-rt area. These samples will still show a \code{NA}
-#' in the matrix returned by the \code{\link{featureValues}} method. This
-#' is in contrast to the \code{\link{fillPeaks.chrom}} method that returned
-#' an \code{"into"} and \code{"maxo"} of \code{0} for such peak areas.
-#' Growing the mz-rt area using the \code{expandMz} and \code{expandRt}
-#' might help to reduce the number of missing peak signals after filling.
+#' in the respective mz-rt area. These samples will still show a `NA`
+#' in the matrix returned by the [featureValues()] method.
 #'
-#' @param object \code{XCMSnExp} object with identified and grouped
-#'     chromatographic peaks.
+#' @param object `XCMSnExp` object with identified and grouped chromatographic
+#'     peaks.
 #'
-#' @param param A \code{FillChromPeaksParam} object with all settings.
+#' @param param `FillChromPeaksParam` or `ChromPeakAreaParam` object
+#'     defining which approach should be used (see details section).
 #'
-#' @param expandMz \code{numeric(1)} defining the value by which the mz width of
-#'     peaks should be expanded. Each peak is expanded in mz direction by
-#'     \code{expandMz *} their original mz width. A value of \code{0} means no
-#'     expansion, a value of \code{1} grows each peak by 1 * the mz width of
-#'     the peak resulting in peakswith twice their original size in mz
-#'     direction (expansion by half mz width to both sides).
+#' @param mzmin `function` to be applied to values in the `"mzmin"` column of all
+#'     chromatographic peaks of a feature to define the lower m/z value of the
+#'     area from which signal for the feature should be integrated. Defaults to
+#'     `mzmin = function(z) quantile(z, probs = 0.25)` hence using the 25%
+#'     quantile of all values.
 #'
-#' @param expandRt \code{numeric(1)}, same as \code{expandMz} but for the
-#'     retention time width.
+#' @param mzmax `function` to be applied to values in the `"mzmax"` column of all
+#'     chromatographic peaks of a feature to define the upper m/z value of the
+#'     area from which signal for the feature should be integrated. Defaults to
+#'     `mzmax = function(z) quantile(z, probs = 0.75)` hence using the 75%
+#'     quantile of all values.
 #'
-#' @param ppm \code{numeric(1)} optionally specifying a \emph{ppm} by which the
-#'     mz width of the peak region should be expanded. For peaks with an mz
-#'     width smaller than \code{mean(c(mzmin, mzmax)) * ppm / 1e6}, the
-#'     \code{mzmin} will be replaced by
-#'     \code{mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}
-#'     and \code{mzmax} by
-#'     \code{mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)}.
-#'     This is applied before eventually expanding the mz width using the
-#'     \code{expandMz} parameter.
+#' @param rtmin `function` to be applied to values in the `"rtmin"` column of all
+#'     chromatographic peaks of a feature to define the lower rt value of the
+#'     area from which signal for the feature should be integrated. Defaults to
+#'     `rtmin = function(z) quantile(z, probs = 0.25)` hence using the 25%
+#'     quantile of all values.
 #'
-#' @param fixedMz \code{numeric(1)} defining a constant factor by which the
-#'     m/z width of each feature is to be expanded. The m/z width is expanded
-#'     on both sides by \code{fixedMz} (i.e. \code{fixedMz} is subtracted
-#'     from the lower m/z and added to the upper m/z). This expansion is
-#'     applied \emph{after} \code{expandMz} and \code{ppm}.
+#' @param rtmax `function` to be applied to values in the `"rtmax"` column of all
+#'     chromatographic peaks of a feature to define the upper rt value of the
+#'     area from which signal for the feature should be integrated. Defaults to
+#'     `rtmax = function(z) quantile(z, probs = 0.75)` hence using the 75%
+#'     quantile of all values.
 #'
-#' @param fixedRt \code{numeric(1)} defining a constant factor by which the
-#'     retention time width of each factor is to be expanded. The rt width is
-#'     expanded on both sides by \code{fixedRt} (i.e. \code{fixedRt} is
-#'     subtracted from the lower rt and added to the upper rt). This
-#'     expansion is applied \emph{after} \code{expandRt}.
+#' @param expandMz for `FillChromPeaksParam`: `numeric(1)` defining the value
+#'     by which the mz width of peaks should be expanded. Each peak is expanded
+#'     in mz direction by `expandMz *` their original m/z width. A value of
+#'     `0` means no expansion, a value of `1` grows each peak by `1 *` the m/z
+#'     width of the peak resulting in peaks with twice their original size in
+#'     m/z direction (expansion by half m/z width to both sides).
 #'
-#' @param msLevel \code{integer(1)} defining the MS level on which peak filling
-#'     should be performed (defaults to \code{msLevel = 1L}). Only peak filling
+#' @param expandRt for `FillChromPeaksParam`: `numeric(1)`, same as `expandMz`
+#'     but for the retention time width.
+#'
+#' @param ppm for `FillChromPeaksParam`: `numeric(1)` optionally specifying a
+#'     *ppm* by which the m/z width of the peak region should be expanded. For
+#'     peaks with an m/z width smaller than `mean(c(mzmin, mzmax)) * ppm / 1e6`,
+#'     the `mzmin` will be replaced by
+#'     `mean(c(mzmin, mzmax)) - (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)`
+#'     `mzmax` by
+#'     `mean(c(mzmin, mzmax)) + (mean(c(mzmin, mzmax)) * ppm / 2 / 1e6)`.
+#'     This is applied before eventually expanding the m/z width using the
+#'     `expandMz` parameter.
+#'
+#' @param fixedMz for `FillChromPeaksParam`: `numeric(1)` defining a constant
+#'     factor by which the m/z width of each feature is to be expanded.
+#'     The m/z width is expanded on both sides by `fixedMz` (i.e. `fixedMz`
+#'     is subtracted from the lower m/z and added to the upper m/z). This
+#'     expansion is applied *after* `expandMz` and `ppm`.
+#'
+#' @param fixedRt for `FillChromPeaksParam`: `numeric(1)` defining a constant
+#'     factor by which the retention time width of each factor is to be
+#'     expanded. The rt width is expanded on both sides by `fixedRt` (i.e.
+#'     `fixedRt` is subtracted from the lower rt and added to the upper rt).
+#'     This expansion is applied *after* `expandRt`.
+#'
+#' @param msLevel `integer(1)` defining the MS level on which peak filling
+#'     should be performed (defaults to `msLevel = 1L`). Only peak filling
 #'     on one MS level at a time is supported, to fill in peaks for MS level 1
-#'     and 2 run first using \code{msLevel = 1} and then (on the returned
-#'     result object) again with \code{msLevel = 2}.
+#'     and 2 run first using `msLevel = 1` and then (on the returned
+#'     result object) again with `msLevel = 2`.
 #'
 #' @param BPPARAM Parallel processing settings.
 #'
 #' @return
 #'
-#' A \code{\link{XCMSnExp}} object with previously missing
-#' chromatographic peaks for features filled into its \code{chromPeaks}
-#' matrix.
+#' A `XCMSnExp` object with previously missing chromatographic peaks for
+#' features filled into its [chromPeaks()] matrix.
 #'
 #' @rdname fillChromPeaks
 #'
 #' @author Johannes Rainer
 #'
-#' @seealso \code{\link{groupChromPeaks}} for methods to perform the
-#'     correspondence.
-#'     \code{\link{dropFilledChromPeaks}} for the method to remove filled in peaks.
+#' @seealso [groupChromPeaks()] for methods to perform the correspondence.
+#'
+#' @md
 #'
 #' @examples
 #'
@@ -2812,8 +2794,9 @@ setMethod("findChromPeaks",
 #' ## For how many features do we lack an integrated peak signal?
 #' sum(is.na(featureValues(res)))
 #'
-#' ## Filling missing peak data using default settings.
-#' res <- fillChromPeaks(res)
+#' ## Filling missing peak data using the peak area from identified
+#' ## chromatographic peaks.
+#' res <- fillChromPeaks(res, param = ChromPeakAreaParam())
 #'
 #' ## Get the peaks that have been filled in:
 #' fp <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
@@ -2942,7 +2925,7 @@ setMethod("fillChromPeaks",
                   min_fdata$retentionTime <- adjustedRtime(object)
               for (i in 1:length(fileNames(object))) {
                   fd <- min_fdata[min_fdata$fileIdx == i, ]
-                  fd$fileIdx <- 1
+                  fd$fileIdx <- 1L
                   objectL[[i]] <- new(
                       "OnDiskMSnExp",
                       processingData = new("MSnProcess",
@@ -3016,7 +2999,10 @@ setMethod("fillChromPeaks",
 
               res <- do.call(rbind, res)
               ## cbind the group_idx column to track the feature/peak group.
-              res <- cbind(res, group_idx = do.call(rbind, pkAreaL)[, "group_idx"])
+              res <- cbind(
+                  res, group_idx = unlist(lapply(pkAreaL,
+                                                 function(z) z[, "group_idx"]),
+                                          use.names = FALSE))
               ## Remove those without a signal
               res <- res[!is.na(res[, "into"]), , drop = FALSE]
               if (nrow(res) == 0) {
@@ -3078,6 +3064,193 @@ setMethod("fillChromPeaks",
               object <- addProcessHistory(object, ph) ## this also validates object.
               object
           })
+
+
+#' @rdname fillChromPeaks
+setMethod("fillChromPeaks",
+          signature(object = "XCMSnExp", param = "ChromPeakAreaParam"),
+          function(object, param, msLevel = 1L, BPPARAM = bpparam()) {
+              if (length(msLevel) != 1)
+                  stop("Can only perform peak filling for one MS level at a time")
+              if (!hasFeatures(object, msLevel = msLevel))
+                  stop("No feature definitions for MS level ", msLevel,
+                       " present. Please run 'groupChromPeaks' first.")
+              if (.hasFilledPeaks(object))
+                  message("Filled peaks already present, adding still missing",
+                          " peaks.")
+              if (hasChromPeaks(object) & !.has_chrom_peak_data(object))
+                  object <- updateObject(object)
+              startDate <- date()
+              message("Defining peak areas for filling-in .",
+                      appendLF = FALSE)
+              fts_region <- .features_ms_region(
+                  object, mzmin = param@mzmin, mzmax = param@mzmax,
+                  rtmin = param@rtmin, rtmax = param@rtmax, msLevel = msLevel)
+              fts_region <- cbind(group_idx = seq_len(nrow(fts_region)),
+                                  fts_region,
+                                  mzmed = featureDefinitions(object)$mzmed)
+              message(".", appendLF = FALSE)
+              pk_idx <- featureValues(object, value = "index",
+                                      msLevel = msLevel)
+              message(".", appendLF = FALSE)
+              ## Check if there is anything to fill...
+              if (!any(is.na(rowSums(pk_idx)))) {
+                  message("No missing peaks present.")
+                  return(object)
+              }
+              ## Split the object by file and define the peaks for which
+              objectL <- vector("list", length(fileNames(object)))
+              pkAreaL <- objectL
+              ## We need "only" a list of OnDiskMSnExp, one for each file but
+              ## instead of filtering by file we create small objects to keep
+              ## memory requirement to a minimum.
+              req_fcol <- requiredFvarLabels("OnDiskMSnExp")
+              min_fdata <- fData(object)[, req_fcol]
+              if (hasAdjustedRtime(object))
+                  min_fdata$retentionTime <- adjustedRtime(object)
+              for (i in 1:length(fileNames(object))) {
+                  fd <- min_fdata[min_fdata$fileIdx == i, ]
+                  fd$fileIdx <- 1L
+                  objectL[[i]] <- new(
+                      "OnDiskMSnExp",
+                      processingData = new("MSnProcess",
+                                           files = fileNames(object)[i]),
+                      featureData = new("AnnotatedDataFrame", fd),
+                      phenoData = new("NAnnotatedDataFrame",
+                                      data.frame(sampleNames = "1")),
+                      experimentData = new("MIAPE",
+                                           instrumentManufacturer = "a",
+                                           instrumentModel = "a",
+                                           ionSource = "a",
+                                           analyser = "a",
+                                           detectorType = "a"))
+                  ## Want to extract intensities only for peaks that were not
+                  ## found in a sample.
+                  pkAreaL[[i]] <- fts_region[is.na(pk_idx[, i]), , drop = FALSE]
+              }
+              rm(pk_idx)
+              rm(fts_region)
+              rm(min_fdata)
+              message(" OK\nStart integrating peak areas from original files")
+              ## Get to know what algorithm was used for the peak detection.
+              ## Special cases are MSWParam (no retention time) and
+              ## MatchedFilterParam (integrate from profile matrix).
+              ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
+              findPeakMethod <- "unknown"
+              mzCenterFun <- "wMean"
+              if (length(ph)) {
+                  if (is(ph[[1]], "XProcessHistory")) {
+                      prm <- ph[[1]]@param
+                      findPeakMethod <- .param2string(prm)
+                      ## Check if the param class has a mzCenterFun slot
+                      if (.hasSlot(prm, "mzCenterFun"))
+                          mzCenterFun <- prm@mzCenterFun
+                  }
+              }
+              cp_colnames <- colnames(chromPeaks(object))
+              ## Now rename that to the correct function name in xcms.
+              mzCenterFun <- paste("mzCenter",
+                                   gsub(mzCenterFun, pattern = "mzCenter.",
+                                        replacement = "", fixed = TRUE), sep=".")
+              if (findPeakMethod == "MSW") {
+                  rts <- rtime(object, bySample = TRUE)
+                  ## Ensure that we REALLY have direct injection data.
+                  if (any(lengths(rts) > 1))
+                      stop("The data is supposed to be direct injection data, ",
+                           "but I got files with more than one spectrum/",
+                           "retention time!")
+                  ## That's not working, because integration uses the rt.
+                  res <- bpmapply(FUN = .getMSWPeakData, objectL,
+                                  pkAreaL, as.list(1:length(objectL)),
+                                  MoreArgs = list(
+                                      cn = cp_colnames),
+                                  BPPARAM = BPPARAM, SIMPLIFY = FALSE)
+              } else if (findPeakMethod == "matchedFilter") {
+                  res <- bpmapply(FUN = .getChromPeakData_matchedFilter,
+                                  objectL, pkAreaL, as.list(1:length(objectL)),
+                                  MoreArgs = list(cn = cp_colnames,
+                                                  param = prm,
+                                                  msLevel = msLevel),
+                                  BPPARAM = BPPARAM, SIMPLIFY = FALSE)
+              } else {
+                  res <- bpmapply(FUN = .getChromPeakData, objectL,
+                                  pkAreaL, as.list(1:length(objectL)),
+                                  MoreArgs = list(cn = cp_colnames,
+                                                  mzCenterFun = mzCenterFun,
+                                                  msLevel = msLevel),
+                                  BPPARAM = BPPARAM, SIMPLIFY = FALSE)
+              }
+              rm(objectL)
+
+              res <- do.call(rbind, res)
+              ## cbind the group_idx column to track the feature/peak group.
+              res <- cbind(
+                  res, group_idx = unlist(lapply(pkAreaL,
+                                                 function(z) z[, "group_idx"]),
+                                          use.names = FALSE))
+              ## Remove those without a signal
+              res <- res[!is.na(res[, "into"]), , drop = FALSE]
+              if (nrow(res) == 0) {
+                  warning("Could not integrate any signal for the missing ",
+                          "peaks!")
+                  return(object)
+              }
+              ## Intermediate cleanup of objects.
+              rm(pkAreaL)
+
+              ## Get the msFeatureData:
+              newFd <- new("MsFeatureData")
+              newFd@.xData <- .copy_env(object@msFeatureData)
+              object@msFeatureData <- new("MsFeatureData")
+              incr <- nrow(chromPeaks(newFd))
+              fdef <- featureDefinitions(newFd, msLevel = msLevel)
+              for (i in unique(res[, "group_idx"])) {
+                  fdef$peakidx[[i]] <- c(fdef$peakidx[[i]],
+                  (which(res[, "group_idx"] == i) + incr))
+              }
+              ## Combine feature data with those from other MS levels
+              fdef <- rbind(fdef,
+                            extractROWS(
+                                featureDefinitions(newFd),
+                                which(featureDefinitions(newFd)$ms_level != msLevel)))
+              if (!any(colnames(fdef) == "ms_level"))
+                  fdef$ms_level <- 1L
+              else
+                  fdef <- extractROWS(fdef, order(fdef$ms_level))
+              ## Define IDs for the new peaks; include fix for issue #347
+              maxId <- max(as.numeric(
+                  sub("M", "", sub("^CP", "", rownames(chromPeaks(newFd))))))
+              if (maxId < 1)
+                  stop("chromPeaks matrix lacks rownames; please update ",
+                       "'object' with the 'updateObject' function.")
+              toId <- maxId + nrow(res)
+              rownames(res) <- sprintf(
+                  paste0("CP", "%0", ceiling(log10(toId + 1L)), "d"),
+                  (maxId + 1L):toId)
+              chromPeaks(newFd) <- rbind(chromPeaks(newFd),
+                                         res[, -ncol(res)])
+              cpd <- chromPeakData(newFd)[rep(1L, nrow(res)), , drop = FALSE]
+              cpd[,] <- NA
+              cpd$ms_level <- as.integer(msLevel)
+              cpd$is_filled <- TRUE
+              if (!any(colnames(chromPeakData(newFd)) == "is_filled"))
+                  chromPeakData(newFd)$is_filled <- FALSE
+              chromPeakData(newFd) <- rbind(chromPeakData(newFd), cpd)
+              rownames(chromPeakData(newFd)) <- rownames(chromPeaks(newFd))
+              featureDefinitions(newFd) <- fdef
+              lockEnvironment(newFd, bindings = TRUE)
+              object@msFeatureData <- newFd
+              ## Add a process history step
+              ph <- XProcessHistory(param = param,
+                                    date. = startDate,
+                                    type. = .PROCSTEP.PEAK.FILLING,
+                                    fileIndex = 1:length(fileNames(object)),
+                                    msLevel = msLevel)
+              object <- addProcessHistory(object, ph) ## this also validates object.
+              object
+          })
+
+
 
 #' @rdname fillChromPeaks
 setMethod(
@@ -3734,7 +3907,7 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
               msf <- new("MsFeatureData")
               msf@.xData <- .copy_env(object@msFeatureData)
               chromPeaks(msf) <- chromPeaks(object)[keep, , drop = FALSE]
-              chromPeakData(msf) <- chromPeakData(object)[keep, , drop = FALSE]
+              chromPeakData(msf) <- extractROWS(chromPeakData(object), keep)
               object@msFeatureData <- msf
               ph <- processHistory(object, type = .PROCSTEP.PEAK.DETECTION)
               xph <- XProcessHistory(param = param, date. = date(),
@@ -3896,19 +4069,15 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp",
               }
               validObject(param)
               peak_count <- nrow(chromPeaks(object))
-              idxs <- seq_along(fileNames(object))
-              object_list <- lapply(idxs, FUN = filterFile,
-                                    object = filterMsLevel(object, msLevel),
-                                    keepAdjustedRtime = TRUE)
-              res <- bpmapply(idxs, object_list, FUN = function(i, obj, param) {
-                  pks <- .merge_neighboring_peaks(
-                      obj, expandRt = param@expandRt,
-                      expandMz = param@expandMz, ppm = param@ppm,
-                      minProp = param@minProp)
-                  pks$chromPeaks[, "sample"] <- i
-                  pks
-              }, MoreArgs = list(param), BPPARAM = BPPARAM, SIMPLIFY = FALSE,
-              USE.NAMES = FALSE)
+              res <- bplapply(.split_by_file(object, msLevel. = msLevel,
+                                             to_class = "XCMSnExp",
+                                             subsetFeatureData = TRUE,
+                                             keep_sample_idx = TRUE),
+                              FUN = .merge_neighboring_peaks,
+                              expandRt = param@expandRt,
+                              expandMz = param@expandMz, ppm = param@ppm,
+                              minProp = param@minProp,
+                              BPPARAM = BPPARAM)
               pks <- do.call(rbind, lapply(res, "[[", 1))
               pkd <- do.call(rbind, lapply(res, "[[", 2))
               ## Add also peaks for other MS levels!

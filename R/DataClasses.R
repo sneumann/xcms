@@ -2308,10 +2308,7 @@ setClass("ObiwarpParam",
              else TRUE
          })
 
-#' @description The \code{FillChromPeaksParam} object encapsules all settings for
-#' the signal integration for missing peaks.
-#'
-#' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. \code{.__classVersion__} stores the version of the class.
+#' @slot .__classVersion__,expandMz,expandRt,ppm,fixedMz,fixedRt See corresponding parameter above. `.__classVersion__` stores the version of the class.
 #'
 #' @rdname fillChromPeaks
 setClass("FillChromPeaksParam",
@@ -2345,6 +2342,17 @@ setClass("FillChromPeaksParam",
                  msg
              else TRUE
          }
+         )
+
+#' @rdname fillChromPeaks
+#'
+#' @slot .__classVersion__,rtmin,rtmax,mzmin,mzmax See corresponding parameter above. `.__classVersion__` stores the version of the class.
+setClass("ChromPeakAreaParam",
+         slots = c(rtmin = "function",
+                   rtmax = "function",
+                   mzmin = "function",
+                   mzmax = "function"),
+         contains = "Param"
          )
 
 #' @aliases MsFeatureData

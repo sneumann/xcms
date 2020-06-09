@@ -15,7 +15,7 @@
   intensity = "into",
   filled = TRUE,
   missing = NA,
-  msLevel = 1:20
+  msLevel = integer()
 )
 }
 \arguments{

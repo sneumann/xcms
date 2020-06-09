@@ -654,3 +654,11 @@ test_that(".XCMSnExp2SummarizedExperiment works", {
     expect_equal(SummarizedExperiment::assay(res),
                  featureValues(xod_xgrg, value = "intb"))
 })
+
+test_that(".features_ms_region works", {
+    res <- .features_ms_region(xod_xgrg, msLevel = 1L)
+    expect_equal(nrow(res), nrow(featureDefinitions(xod_xgrg)))
+    expect_equal(colnames(res), c("mzmin", "mzmax", "rtmin", "rtmax"))
+    expect_true(all(res[, "mzmin"] <= res[, "mzmax"]))
+    expect_true(all(res[, "rtmin"] < res[, "rtmax"]))
+})

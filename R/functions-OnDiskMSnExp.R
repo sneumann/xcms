@@ -115,8 +115,91 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                               as(param, "list"))), date = procDat)
 }
 
-
-
+#' Fast way to split an `XCMSnExp` object by file:
+#' - subsets the object to MS level specified with `msLevel`.
+#' - subsets feature data to the smallest possible set of columns (if
+#'   `selectFeatureData = TRUE`.
+#' - returns by default an `OnDiskMSnExp`, unless `to_class = "XCMSnExp"`, in
+#'   which case also potentially present chromatographic peaks are preserved.
+#'
+#' @param keep_sample_idx if column "sample" should be kept as it is.
+#'
+#' @note
+#'
+#' This function needs a considerable amount of memory if
+#' `to_class = "XCMSnExp"` because, for efficiency reasons, it first splits
+#' the `chromPeaks` and `chromPeakData` per file.
+#'
+#' @noRd
+.split_by_file <- function(x, msLevel. = unique(msLevel(x)),
+                           subsetFeatureData = TRUE,
+                           to_class = "OnDiskMSnExp",
+                           keep_sample_idx = FALSE) {
+    if (is(x, "XCMSnExp") && hasAdjustedRtime(x))
+        x@featureData$retentionTime <- adjustedRtime(x)
+    if (subsetFeatureData) {
+        fcs <- intersect(c(MSnbase:::.MSnExpReqFvarLabels, "centroided",
+                           "polarity", "seqNum"), colnames(fData(x)))
+        x <- selectFeatureData(x, fcol = fcs)
+    }
+    procd <- x@processingData
+    expd <- new(
+        "MIAPE",
+        instrumentManufacturer = x@experimentData@instrumentManufacturer[1],
+        instrumentModel = x@experimentData@instrumentModel[1],
+        ionSource = x@experimentData@ionSource[1],
+        analyser = x@experimentData@analyser[1],
+        detectorType = x@experimentData@detectorType[1])
+    create_object <- function(x, i, to_class) {
+        a <- new(to_class)
+        a@processingData@files <- procd@files[i]
+        a@featureData <- extractROWS(
+            x@featureData, which(x@featureData$msLevel %in% msLevel. &
+                                 x@featureData$fileIdx == i))
+        if (!nrow(a@featureData))
+            stop("No MS level ", msLevel., " spectra present.", call. = FALSE)
+        a@featureData$fileIdx <- 1L
+        a@experimentData <- expd
+        a@spectraProcessingQueue <- x@spectraProcessingQueue
+        a@phenoData <- x@phenoData[i, , drop = FALSE]
+        a
+    }
+    if (to_class == "XCMSnExp" && is(x, "XCMSnExp") && hasChromPeaks(x)) {
+        if (any(colnames(.chrom_peak_data(x@msFeatureData)) == "ms_level")) {
+            pk_idx <- which(
+                .chrom_peak_data(x@msFeatureData)$ms_level %in% msLevel.)
+        } else pk_idx <- seq_len(nrow(chromPeaks(x@msFeatureData)))
+        fct <- as.factor(
+            as.integer(chromPeaks(x@msFeatureData)[pk_idx, "sample"]))
+        pksl <- split.data.frame(
+            chromPeaks(x@msFeatureData)[pk_idx, , drop = FALSE], fct)
+        pkdl <- split.data.frame(
+            extractROWS(.chrom_peak_data(x@msFeatureData), pk_idx), fct)
+        res <- vector("list", length(fileNames(x)))
+        for (i in seq_along(res)) {
+            a <- create_object(x, i, to_class)
+            newFd <- new("MsFeatureData")
+            pks <- pksl[[as.character(i)]]
+            if (!is.null(pks) && nrow(pks)) {
+                if (!keep_sample_idx)
+                    pks[, "sample"] <- 1
+                chromPeaks(newFd) <- pks
+                chromPeakData(newFd) <- pkdl[[as.character(i)]]
+            } else {
+                chromPeaks(newFd) <- chromPeaks(x@msFeatureData)[0, ]
+                chromPeakData(newFd) <- .chrom_peak_data(x@msFeatureData)[0, ]
+            }
+            lockEnvironment(newFd, bindings = TRUE)
+            a@msFeatureData <- newFd
+            res[[i]] <- a
+        }
+        res
+    } else {
+        lapply(seq_along(fileNames(x)), function(z) {
+            a <- create_object(x, z, to_class)
+        })
+    }
+}
 
 ############################################################
 #' @description Fill some settings and data from an OnDiskMSnExp or pSet into an
@@ -136,7 +219,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
     filepaths(object) <- fileNames(pset)
     phenoData(object) <- pData(pset)
     ## rt
-    rt <- split(unname(rtime(pset)), f = fromFile(pset))
+    rt <- split(unname(rtime(pset)), f = as.factor(fromFile(pset)))
     object@rt <- list(raw = rt, corrected = rt)
     ## mslevel
     mslevel(object) <- unique(msLevel(pset))
@@ -234,7 +317,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         centerSample(param) <- floor(median(1:nSamples))
     message("Sample number ", centerSample(param), " used as center sample.")
 
-    rtraw <- split(rtime(object), fromFile(object))
+    rtraw <- split(rtime(object), as.factor(fromFile(object)))
     object <- filterFile(object, file = subs)
     ## Get the profile matrix of the center sample:
     ## Using the (hidden) parameter returnBreaks to return also the breaks of
@@ -249,7 +332,7 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
                            returnBreaks = TRUE)[[1]]
     )
     ## Now split the object by file
-    objL <- splitByFile(object, f = factor(seq_len(nSamples)))
+    objL <- .split_by_file(object, msLevel. = 1)
     objL <- objL[-centerSample(param)]
     centerObject <- filterFile(object, file = centerSample(param))
     ## Now we can bplapply here!
@@ -265,23 +348,25 @@ findPeaks_MSW_Spectrum_list <- function(x, method = "MSW", param) {
         ## 1)Check the scan times of both objects:
         scantime1 <- unname(rtime(cntr))
         scantime2 <- unname(rtime(z))
+        scantime1_diff <- diff(scantime1)
+        scantime2_diff <- diff(scantime2)
         ## median difference between spectras' scan time.
-        mstdiff <- median(c(diff(scantime1), diff(scantime2)))
+        mstdiff <- median(c(scantime1_diff, scantime2_diff), na.rm = TRUE)
 
         ## rtup1 <- seq_along(scantime1)
         ## rtup2 <- seq_along(scantime2)
 
-        mst1 <- which(diff(scantime1) > 5 * mstdiff)[1]
+        mst1 <- which(scantime1_diff > 5 * mstdiff)[1]
         if (!is.na(mst1)) {
-            scantime1 <- scantime1[seq_len((mst1 - 1))]
             message("Found gaps in scan times of the center sample: cut ",
                     "scantime-vector at ", scantime1[mst1]," seconds.")
+            scantime1 <- scantime1[seq_len(max(2, (mst1 - 1)))]
         }
-        mst2 <- which(diff(scantime2) > 5 * mstdiff)[1]
-        if(!is.na(mst2)) {
-            scantime2 <- scantime2[seq_len((mst2 - 1))]
+        mst2 <- which(scantime2_diff > 5 * mstdiff)[1]
+        if (!is.na(mst2)) {
             message("Found gaps in scan time of file ", basename(fileNames(z)),
                     ": cut scantime-vector at ", scantime2[mst2]," seconds.")
+            scantime2 <- scantime2[seq_len(max(2, (mst2 - 1)))]
         }
         ## Drift of measured scan times - expected to be largest at the end.
         rtmaxdiff <- abs(diff(c(scantime1[length(scantime1)],

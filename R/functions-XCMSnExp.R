@@ -1331,7 +1331,7 @@ plotChromPeakImage <- function(x, binSize = 30, xlim = NULL, log = FALSE,
         brks <- c(brks, brks[length(brks)] + binSize)
     pks <- chromPeaks(x, rt = xlim, msLevel = 1L)
     if (nrow(pks)) {
-        rts <- split(pks[, "rt"], pks[, "sample"])
+        rts <- split(pks[, "rt"], as.factor(as.integer(pks[, "sample"])))
         cnts <- lapply(rts, function(z) {
             hst <- hist(z, breaks = brks, plot = FALSE)
             hst$counts
@@ -1839,8 +1839,6 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
                                   skipFilled = FALSE, subset = NULL,
                                   BPPARAM = bpparam()) {
     method <- match.arg(method)
-    if (hasAdjustedRtime(x))
-        x <- applyAdjustedRtime(x)
     pks <- chromPeaks(x)
     if (ppm != 0)
         ppm <- pks[, "mz"] * ppm / 1e6
@@ -1862,13 +1860,13 @@ ms2_spectra_for_all_peaks <- function(x, expandRt = 0, expandMz = 0,
         rm(not_subset)
     }
     if (skipFilled && any(chromPeakData(x)$is_filled))
-        pks[chromPeakData(x)$is_filled] <- NA
-    x <- filterMsLevel(as(x, "OnDiskMSnExp"), 2L)
+        pks[chromPeakData(x)$is_filled, ] <- NA
     ## Split data per file
     file_factor <- factor(pks[, "sample"])
     peak_ids <- rownames(pks)
     pks <- split.data.frame(pks, f = file_factor)
-    x <- lapply(as.integer(levels(file_factor)), filterFile, object = x)
+    x <- .split_by_file(
+        x, msLevel. = 2L, subsetFeatureData = FALSE)[as.integer(levels(file_factor))]
     res <- bpmapply(ms2_spectra_for_peaks_from_file, x, pks,
                     MoreArgs = list(method = method), SIMPLIFY = FALSE,
                     USE.NAMES = FALSE, BPPARAM = BPPARAM)
@@ -2284,14 +2282,13 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         pks <- chromPeaks(x)
         if (!filled)
             pks[chromPeakData(x)$is_filled, ] <- NA
-        vals <- apply(xcms:::.feature_values(pks,
-                                      featureDefinitions(x)[features, ],
-                                      method = "maxint", value = value,
-                                      intensity = "maxo",
-                                      colnames = basename(fileNames(x))),
-                      MARGIN = 2, sum, na.rm = TRUE)
+        vals <- apply(.feature_values(
+            pks, extractROWS(featureDefinitions(x), features),
+            method = "maxint", value = value, intensity = "maxo",
+            colnames = basename(fileNames(x))),
+            MARGIN = 2, sum, na.rm = TRUE)
         sample_idx <- order(vals, decreasing = TRUE)[seq_len(n)]
-        x <- filterFile(x, sample_idx, keepFeatures = TRUE)
+        x <- .filter_file_XCMSnExp(x, sample_idx, keepFeatures = TRUE)
         features <- match(fids, rownames(featureDefinitions(x)))
         features <- features[!is.na(features)]
         if (length(features) < length(fids))
@@ -2335,20 +2332,20 @@ featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
         ## Keep only a single feature per row
         ## Keep only peaks for the features of interest.
         for (i in seq_len(nr)) {
-            is_feature <- fts_all$row == i & rownames(fts_all) == ft_ids[i]
-            if (!any(is_feature))
+            is_feature <- which(fts_all$row == i & rownames(fts_all) == ft_ids[i])
+            if (!length(is_feature))
                 next
-            ft_def <- fts_all[is_feature, , drop = FALSE]
+            ft_def <- extractROWS(fts_all, is_feature)
             ft_defs[[i]] <- ft_def
             pk_ids <- rownames(pks_all)[ft_def$peakidx[[1]]]
             for (j in seq_len(nc)) {
                 cur_pks <- chrs@.Data[i, j][[1]]@chromPeaks
                 if (nrow(cur_pks)) {
-                    keep <- rownames(cur_pks) %in% pk_ids
+                    keep <- which(rownames(cur_pks) %in% pk_ids)
                     chrs@.Data[i, j][[1]]@chromPeaks <-
                         cur_pks[keep, , drop = FALSE]
                     chrs@.Data[i, j][[1]]@chromPeakData <-
-                        chrs@.Data[i, j][[1]]@chromPeakData[keep, , drop = FALSE]
+                        extractROWS(chrs@.Data[i, j][[1]]@chromPeakData, keep)
                 }
             }
         }
@@ -2605,10 +2602,6 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     if (length(peakId) < n_peak_id)
         warning("Only ", length(peakId), " of the provided",
                 " identifiers match IDs of MS1 chromatographic peaks")
-    ## Drop featureDefinitions if present
-    if (hasFeatures(object))
-        suppressMessages(object <- dropFeatureDefinitions(
-                             object, keepAdjustedRtime = TRUE))
     object <- selectFeatureData(object,
                                 fcol = c(MSnbase:::.MSnExpReqFvarLabels,
                                          "centroided",
@@ -2618,8 +2611,7 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                                          "isolationWindowLowerOffset",
                                          "isolationWindowUpperOffset"))
     sps <- bplapply(
-        lapply(seq_len(length(fileNames(object))), filterFile, object = object,
-               keepAdjustedRtime = TRUE),
+        .split_by_file(object, subsetFeatureData = FALSE, to_class = "XCMSnExp"),
         FUN = function(x, files, expandRt, diffRt, minCor, col, pkId) {
             .reconstruct_ms2_for_peaks_file(
                 x, expandRt = expandRt, diffRt = diffRt,
@@ -2778,7 +2770,13 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #' expanded by `expandMz` and `ppm` (on both sides). This is to avoid data
 #' points in between peaks being `NA`.
 #'
-#' @param x `XCMSnExp` object with chromatographic peaks of a **single** file.
+#' @param x `XCMSnExp` object with chromatographic peaks of a **single** file or
+#'     an `OnDiskMSnExp` object, in which case parameters `pks` and `pkd` have
+#'     to be provided.
+#'
+#' @param pks `chromPeaks` matrix.
+#'
+#' @param pkd `chromPeakData` data frame.
 #'
 #' @param sample_index `integer(1)` representing the index of the sample in the
 #'     original object. To be used in column `"sample"` of the new peaks.
@@ -2835,24 +2833,27 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
 #' res_sub <- res[res[, "mz"] >= 496.15 & res[, "mz"] <= 496.25, ]
 #' rect(res_sub[, "rtmin"], 0, res_sub[, "rtmax"], res_sub[, "maxo"],
 #'     border = "red")
-.merge_neighboring_peaks <- function(x, expandRt = 2, expandMz = 0, ppm = 10,
-                                  minProp = 0.75) {
-    if (hasAdjustedRtime(x))
-        x <- applyAdjustedRtime(x)
-    pks <- chromPeaks(x)
-    pkd <- chromPeakData(x)
+.merge_neighboring_peaks <- function(x, pks = chromPeaks(x),
+                                     pkd = chromPeakData(x),
+                                     expandRt = 2, expandMz = 0, ppm = 10,
+                                     minProp = 0.75) {
+    pks <- force(pks)
+    pkd <- force(pkd)
     if (is.null(rownames(pks)))
         stop("Chromatographic peak IDs are required.")
-    ms_level <- unique(chromPeakData(x)$ms_level)
+    ms_level <- unique(pkd$ms_level)
     if (length(ms_level) != 1)
         stop("Got chromatographic peaks from different MS levels.", call. = FALSE)
-    x <- dropChromPeaks(x)
     mz_groups <- .group_overlapping_peaks(pks, expand = expandMz, ppm = ppm)
     mz_groups <- mz_groups[lengths(mz_groups) > 1]
     drop_peaks <- rep(FALSE, nrow(pks))
     names(drop_peaks) <- rownames(pks)
     message("Evaluating ", length(mz_groups), " peaks in file ",
             basename(fileNames(x)), " for merging ... ", appendLF = FALSE)
+    if (!length(mz_groups)) {
+        message("OK")
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    }
     ## Defining merge candidates
     pk_groups <- list()
     chr_def_mat <- list()
@@ -2890,18 +2891,125 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
         pk_group <- pk_groups[[i]]
         res <- .chrom_merge_neighboring_peaks(
             chrs[i, 1], pks = pks[pk_group, , drop = FALSE],
-            pkd[pk_group, , drop = FALSE], diffRt = 2 * expandRt,
+            extractROWS(pkd, pk_group), diffRt = 2 * expandRt,
             minProp = minProp)
         drop_peaks[pk_group[!pk_group %in% rownames(res$chromPeaks)]] <- TRUE
         res_list[[i]] <- res$chromPeaks
         pkd_list[[i]] <- res$chromPeakData
     }
     pks_new <- do.call(rbind, res_list)
+    pks_new[, "sample"] <- pks[1, "sample"]
     pkd_new <- do.call(rbind, pkd_list)
-    pks <- pks[!drop_peaks, , drop = FALSE]
-    pkd <- pkd[!drop_peaks, , drop = FALSE]
+    keep_peaks <- which(!drop_peaks)
+    pks <- pks[keep_peaks, , drop = FALSE]
+    pkd <- extractROWS(pkd, keep_peaks)
     idx_new <- is.na(rownames(pks_new))
     message("OK")
     list(chromPeaks = rbind(pks, pks_new[idx_new, , drop = FALSE]),
-         chromPeakData = rbind(pkd, pkd_new[idx_new, , drop = FALSE]))
+         chromPeakData = rbind(pkd, extractROWS(pkd_new, idx_new)))
+}
+
+.filter_file_XCMSnExp <- function(object, file,
+                                  keepAdjustedRtime = hasAdjustedRtime(object),
+                                  keepFeatures = FALSE) {
+    if (missing(file)) return(object)
+    if (is.character(file))
+        file <- base::match(file, basename(fileNames(object)))
+    ## This will not work if we want to get the files in a different
+    ## order (i.e. c(3, 1, 2, 5))
+    file <- base::sort(unique(file))
+    ## Error checking - seems that's not performed downstream.
+    if (!all(file %in% seq_along(fileNames(object))))
+        stop("'file' has to be within 1 and the number of files in object.")
+    ## Drop features
+    has_features <- hasFeatures(object)
+    has_chrom_peaks <- hasChromPeaks(object)
+    has_adj_rt <- hasAdjustedRtime(object)
+    if (has_features && !keepFeatures) {
+        if (keepFeatures)
+            warning("Peak counts in featureDefinitions are no longer",
+                    " valid after subsetting")
+        else {
+            message("Correspondence results (features) removed.")
+            object <- dropFeatureDefinitions(
+                object, keepAdjustedRtime = keepAdjustedRtime)
+            has_features <- FALSE
+        }
+    }
+    if (has_adj_rt && !keepAdjustedRtime){
+        object <- dropAdjustedRtime(object)
+        has_adj_rt <- FALSE
+    }
+    ## Extracting all the XCMSnExp data from the object.
+    ph <- processHistory(object)
+    newFd <- new("MsFeatureData")
+    ## Subset original data:
+    nobject <- as(filterFile(as(object, "OnDiskMSnExp"), file = file),
+                 "XCMSnExp")
+    if (has_adj_rt)
+        adjustedRtime(newFd) <- adjustedRtime(object, bySample = TRUE)[file]
+    if (has_chrom_peaks) {
+        pks <- chromPeaks(object)
+        idx <- base::which(pks[, "sample"] %in% file)
+        pks <- pks[idx, , drop = FALSE]
+        pks[, "sample"] <- match(pks[, "sample"], file)
+        if (has_features) {
+            featureDefinitions(newFd) <- .update_feature_definitions(
+                featureDefinitions(object),
+                original_names = rownames(chromPeaks(object)),
+                subset_names = rownames(pks))
+        }
+        chromPeaks(newFd) <- pks
+        chromPeakData(newFd) <- extractROWS(chromPeakData(object), idx)
+    }
+    ## Remove ProcessHistory not related to any of the files.
+    if (length(ph)) {
+        kp <- unlist(lapply(ph, function(z) {
+            any(fileIndex(z) %in% file)
+        }))
+        ph <- ph[kp]
+    }
+    ## Update file index in process histories.
+    if (length(ph)) {
+        ph <- lapply(ph, function(z) {
+            updateFileIndex(z, old = file, new = 1:length(file))
+        })
+    }
+    lockEnvironment(newFd, bindings = TRUE)
+    nobject@msFeatureData <- newFd
+    nobject@.processHistory <- ph
+    nobject
+}
+
+#' Define the MS region (m/z - rt range) for each feature based on the rtmin,
+#' rtmax, mzmin, mzmax of the corresponding detected peaks.
+#'
+#' @param x `XCMSnExp` object
+#'
+#' @param mzmin, mzmax, rtmin, rtmax `function` to be applied to the values
+#'     (rtmin, ...) of the chrom peaks. Defaults to `median` but would also
+#'     work with `mean` etc.
+#'
+#' @return `matrix` with columns `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"`
+#'     defining the range of
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.features_ms_region <- function(x, mzmin = median, mzmax = median,
+                                rtmin = median, rtmax = median,
+                                msLevel = unique(msLevel(x))) {
+    pk_idx <- featureValues(x, value = "index", method = "maxint",
+                            msLevel = msLevel)
+    n_ft <- nrow(pk_idx)
+    rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
+    for (i in seq_len(n_ft)) {
+        idx <- pk_idx[i, ]
+        tmp_pks <- chromPeaks(x)[idx[!is.na(idx)], , drop = FALSE]
+        rt_min[i] <- rtmin(tmp_pks[, "rtmin"])
+        rt_max[i] <- rtmax(tmp_pks[, "rtmax"])
+        mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
+        mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
+    }
+    cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
 }

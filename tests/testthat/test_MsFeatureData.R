@@ -74,7 +74,7 @@ test_that("MsFeatureData class_accessors work", {
     expect_true(!hasChromPeaks(fd))
     expect_true(!hasAdjustedRtime(fd))
     expect_true(!hasFeatures(fd))
-    expect_warning(expect_equal(chromPeaks(fd), NULL))
+    expect_equal(chromPeaks(fd), NULL)
     expect_warning(expect_equal(featureDefinitions(fd), DataFrame()))
     expect_warning(expect_equal(adjustedRtime(fd), NULL))
     ## chromPeaks

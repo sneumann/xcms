@@ -198,7 +198,7 @@
     ## x <- clean(x, all = TRUE)
     idx <- order(pks[, "rtmin"])
     pks <- pks[idx, , drop = FALSE]
-    pkd <- pkd[idx, , drop = FALSE]
+    pkd <- extractROWS(pkd, idx)
     cns <- colnames(pks)
     if (!any(cns == "mz"))
         pks <- cbind(pks, mz = NA_real_, mzmin = NA_real_, mzmax = NA_real_)
@@ -255,24 +255,24 @@
                 if (pks[i, "maxo"] > pks_new[current_peak, "maxo"]) {
                     pks_new[current_peak, c("mz", "rt", "maxo", "sn")] <-
                         pks[i, c("mz", "rt", "maxo", "sn")]
-                    pkd[current_peak, ] <- pkd[i, ] # replace peak data with new
+                    pkd[current_peak, ] <- extractROWS(pkd, i) # replace peak data with new
                 }
             } else {
                 current_peak <- current_peak + 1
                 pks_new[current_peak, ] <- pks[i, ]
                 rownames(pks_new)[current_peak] <- rownames(pks)[i]
-                pkd[current_peak, ] <- pkd[i, ]
+                pkd[current_peak, ] <- extractROWS(pkd, i)
             }
         } else {
             current_peak <- current_peak + 1
             pks_new[current_peak, ] <- pks[i, ]
             rownames(pks_new)[current_peak] <- rownames(pks)[i]
-            pkd[current_peak, ] <- pkd[i, ]
+            pkd[current_peak, ] <- extractROWS(pkd, i)
         }
     }
-    keep <- !is.na(pks_new[, "rt"])
+    keep <- which(!is.na(pks_new[, "rt"]))
     list(chromPeaks = pks_new[keep, cns, drop = FALSE],
-         chromPeakData = pkd[keep, , drop = FALSE])
+         chromPeakData = extractROWS(pkd, keep))
 }
 
 .normalize_chromatogram <- function(x, method = "max") {
