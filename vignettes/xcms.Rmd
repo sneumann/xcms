@@ -934,17 +934,15 @@ This feature matrix contains `NA` for samples in which no chromatographic peak
 was detected in the feature's m/z-rt region. While in many cases there might
 indeed be no peak signal in the respective region, it might also be that there
 is signal, but the peak detection algorithm failed to detect a chromatographic
-peak. `xcms` provides the `fillChromPeaks` method to *fill in* intensity data
-for such missing values from the original files. The *filled in* peaks are added
-to the `chromPeaks` matrix and get a `TRUE` value in the `"is_filled"` column of
-the `chromPeakData` data frame. Below we perform such a filling-in of missing
-peaks.
+peak (e.g. because the signal was too low or too noisy). `xcms` provides
+the `fillChromPeaks` method to *fill in* intensity data for such missing values
+from the original files. The *filled in* peaks are added to the `chromPeaks`
+matrix and indicated with a value `TRUE` in the `"is_filled"` column of
+the `chromPeakData` data frame. Below we perform such a gap filling.
 
 
 ```{r fill-chrom-peaks, message = FALSE }
-## Filling missing peaks using default settings. Alternatively we could
-## pass a FillChromPeaksParam object to the method.
-xdata <- fillChromPeaks(xdata)
+xdata <- fillChromPeaks(xdata, param = ChromPeakAreaParam())
 
 head(featureValues(xdata))
 ```
@@ -955,16 +953,19 @@ intensities in the mz-rt region of the feature, integrates the signal and adds a
 measured/available for the mz-rt region of the feature. For these, even after
 filling in missing peak data, a `NA` is reported in the `featureValues` matrix.
 
-It should be mentioned that `fillChromPeaks` uses columns `"rtmin"`, `"rtmax"`,
-`"mzmin"` and `"mzmax"` from the `featureDefinitions` table to define the region
-from which the signal should be integrated to generate the filled-in peak
-signal. These values correspond however to the positions of the peak apex not
-the peak boundaries of all chromatographic peaks assigned to a feature. It might
-be advisable to increase this area in retention time dimension by a constant
-value appropriate to the average peak width in the experiment. Such a value can
-be specified with `fixedRt` of the `FillChromPeaksParam`. If the average peak
-width in the experiment is 20 seconds, specifying`fixedRt = 10` ensures that the area
-from which peaks are integrated is at least 20 seconds wide.
+Different options to define the mz-rt region of the features are
+available. With the `ChromPeakAreaParam()` parameter object used above, the
+feature area is defined using the m/z and rt ranges of all of its (detected)
+chromatographic peaks: the lower m/z value of the area is defined as the lower
+quartile (25% quantile) of the `"mzmin"` values of all peaks of the feature,
+the upper m/z value as the upper quartile (75% quantile) of the `"mzmax"`
+values, the lower rt value as the lower quartile (25% quantile) of the `"rtmin"`
+and the upper rt value as the upper quartile (75% quantile) of the `"rtmax"`
+values. This ensures that the signal is integrated from a feature-specific area.
+
+Alternatively, it is possible to use the `FillChromPeaksParam` parameter object
+in the `fillChromPeaks` call, which resembles the approach of the original (old)
+`xcms` implementation.
 
 Below we compare the number of missing values before and after filling in
 missing values. We can use the parameter `filled` of the `featureValues` method

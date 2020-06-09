@@ -2980,3 +2980,36 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
     nobject@.processHistory <- ph
     nobject
 }
+
+#' Define the MS region (m/z - rt range) for each feature based on the rtmin,
+#' rtmax, mzmin, mzmax of the corresponding detected peaks.
+#'
+#' @param x `XCMSnExp` object
+#'
+#' @param mzmin, mzmax, rtmin, rtmax `function` to be applied to the values
+#'     (rtmin, ...) of the chrom peaks. Defaults to `median` but would also
+#'     work with `mean` etc.
+#'
+#' @return `matrix` with columns `"mzmin"`, `"mzmax"`, `"rtmin"`, `"rtmax"`
+#'     defining the range of
+#'
+#' @author Johannes Rainer
+#'
+#' @noRd
+.features_ms_region <- function(x, mzmin = median, mzmax = median,
+                                rtmin = median, rtmax = median,
+                                msLevel = unique(msLevel(x))) {
+    pk_idx <- featureValues(x, value = "index", method = "maxint",
+                            msLevel = msLevel)
+    n_ft <- nrow(pk_idx)
+    rt_min <- rt_max <- mz_min <- mz_max <- numeric(n_ft)
+    for (i in seq_len(n_ft)) {
+        idx <- pk_idx[i, ]
+        tmp_pks <- chromPeaks(x)[idx[!is.na(idx)], , drop = FALSE]
+        rt_min[i] <- rtmin(tmp_pks[, "rtmin"])
+        rt_max[i] <- rtmax(tmp_pks[, "rtmax"])
+        mz_min[i] <- mzmin(tmp_pks[, "mzmin"])
+        mz_max[i] <- mzmax(tmp_pks[, "mzmax"])
+    }
+    cbind(mzmin = mz_min, mzmax = mz_max, rtmin = rt_min, rtmax = rt_max)
+}

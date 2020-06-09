@@ -1,5 +1,8 @@
 Changes in version 3.11.2
 
+- Add `fillChromPeaks,ChromPeakAreaParam` to base the area from which missing
+  peak data should be filled-in on the actually detected chromatographic peaks
+  of a feature.
 - Potential fix for issue #481: function should no longer throw an error because
   retention times are of length 0.
 - More efficient splitting of processing which should increase the speed of

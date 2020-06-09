@@ -2096,6 +2096,11 @@ test_that("fillChromPeaks,XCMSnExp works with only MS2 data", {
                  chromPeaks(res_2)[chromPeaks(res_2)[, "sample"] == 1, ])
 })
 
+test_that("fillChomPeaks,ChromPeakAreaParam works", {
+    res <- fillChromPeaks(xod_xgrg, ChromPeakAreaParam())
+    expect_true(hasFilledChromPeaks(res))
+})
+
 test_that("fillChromPeaks,XCMSnExp with MSW works", {
     p <- MzClustParam()
     fticr_xodg <- groupChromPeaks(fticr_xod, param = p)

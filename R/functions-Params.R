@@ -377,3 +377,12 @@ MergeNeighboringPeaksParam <- function(expandRt = 2, expandMz = 0, ppm = 10,
         expandMz = as.numeric(expandMz), ppm = as.numeric(ppm),
         minProp = as.numeric(minProp))
 }
+
+#' @rdname fillChromPeaks
+ChromPeakAreaParam <- function(mzmin = function(z) quantile(z, probs = 0.25),
+                               mzmax = function(z) quantile(z, probs = 0.75),
+                               rtmin = function(z) quantile(z, probs = 0.25),
+                               rtmax = function(z) quantile(z, probs = 0.75)) {
+    new("ChromPeakAreaParam", mzmin = mzmin, mzmax = mzmax, rtmin = rtmin,
+        rtmax = rtmax)
+}

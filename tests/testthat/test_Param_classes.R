@@ -934,3 +934,10 @@ test_that("MergeNeighboringPeaksParam works", {
     expect_equal(p@minProp, 0.9)
     expect_error(MergeNeighboringPeaksParam(c(1, 3)), "numeric of length 1")
 })
+
+test_that("ChromPeakAreaParam works", {
+    res <- ChromPeakAreaParam()
+    expect_true(is(res, "ChromPeakAreaParam"))
+    res <- ChromPeakAreaParam(mzmin = median)
+    expect_true(validObject(res))
+})
