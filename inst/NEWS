@@ -1,3 +1,9 @@
+Changes in version 3.11.3
+
+- Fix error in `refineChromPeaks,MergeNeighboringPeaksParam` if no peaks found
+  to be merged.
+
+
 Changes in version 3.11.2
 
 - Add `fillChromPeaks,ChromPeakAreaParam` to base the area from which missing

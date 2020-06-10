@@ -2881,6 +2881,10 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
             current_group <- current_group + 1
         }
     }
+    if (!length(chr_def_mat)) {
+        message("OK")
+        return(list(chromPeaks = pks, chromPeakData = pkd))
+    }
     chr_def_mat <- do.call(rbind, chr_def_mat)
     chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],
                          rt = chr_def_mat[, c(3, 4)],
