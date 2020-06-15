@@ -1486,20 +1486,12 @@ NULL
 #' ##############################
 #' ## Chromatographic peak detection and grouping.
 #' ##
-#' ## Below we perform first a peak detection (using the matchedFilter
-#' ## method) on some of the test files from the faahKO package followed by
-#' ## a peak grouping using the density method.
-#' library(faahKO)
-#' library(MSnbase)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the chromatographic peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' res <- faahko_sub
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
@@ -1975,27 +1967,18 @@ NULL
 #' ##############################
 #' ## Chromatographic peak detection and grouping.
 #' ##
-#' ## Below we perform first a peak detection (using the matchedFilter
-#' ## method) on some of the test files from the faahKO package followed by
-#' ## a peak grouping.
-#' library(faahKO)
-#' library(xcms)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
-#'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+#' res <- faahko_sub
 #'
 #' head(chromPeaks(res))
 #' ## The number of peaks identified per sample:
 #' table(chromPeaks(res)[, "sample"])
 #'
 #' ## Performing the peak grouping using the "peak density" method.
-#' p <- PeakDensityParam(sampleGroups = c(1, 1))
+#' p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
 #' res <- groupChromPeaks(res, param = p)
 #'
 #' ## Perform the retention time adjustment using peak groups found in both
@@ -2014,7 +1997,7 @@ NULL
 #' segments(x0 = pkGrps[, 1], x1 = pkGrps[, 2],
 #'     y0 = rep(1, nrow(pkGrps)), y1 = rep(2, nrow(pkGrps)))
 #' grid()
-#' axis(side = 2, at = c(1, 2), labels = colnames(pkGrps))
+#' axis(side = 2, at = c(1, 2, 3), labels = colnames(pkGrps))
 #'
 #' ## Next we perform the alignment.
 #' res <- adjustRtime(res, param = fgp)
@@ -2023,14 +2006,12 @@ NULL
 #' hasFeatures(res)
 #'
 #' ## Plot the raw against the adjusted retention times.
-#' plot(rtime(raw_data), rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
+#' plot(rtime(res, adjusted = FALSE),
+#'     rtime(res), pch = 16, cex = 0.25, col = fromFile(res))
 #'
 #' ## Adjusterd retention times can be accessed using
 #' ## rtime(object, adjusted = TRUE) and adjustedRtime
 #' all.equal(rtime(res), adjustedRtime(res))
-#'
-#' ## To get the raw, unadjusted retention times:
-#' all.equal(rtime(res, adjusted = FALSE), rtime(raw_data))
 #'
 #' ## To extract the retention times grouped by sample/file:
 #' rts <- rtime(res, bySample = TRUE)
@@ -2220,23 +2201,6 @@ NULL
 #' ## file
 #' resL <- split(res, fromFile(raw_data))
 #'
-#' ##############################
-#' ## Perform retention time correction on an XCMSnExp:
-#' ##
-#' ## Perform first the chromatographic peak detection using the matchedFilter
-#' ## method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
-#'
-#' ## Performing the retention time adjustment using obiwarp.
-#' res_2 <- adjustRtime(res, param = ObiwarpParam())
-#'
-#' head(rtime(res_2))
-#' head(rtime(raw_data))
-#'
-#' ## Also the retention times of the detected peaks were adjusted.
-#' tail(chromPeaks(res))
-#' tail(chromPeaks(res_2))
 setClass("ObiwarpParam",
          slots = c(binSize = "numeric",
                    centerSample = "integer",
@@ -2565,36 +2529,30 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #'
 #' @examples
 #'
-#' ## Loading the data from 2 files of the faahKO package.
-#' library(faahKO)
-#' od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'                    system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-#'                  mode = "onDisk")
-#' ## Now we perform a chromatographic peak detection on this data set using the
-#' ## matched filter method. We are tuning the settings such that it performs
-#' ## faster.
-#' mfp <- MatchedFilterParam(binSize = 6)
-#' xod <- findChromPeaks(od, param = mfp)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## The results from the peak detection are now stored in the XCMSnExp
 #' ## object
-#' xod
+#' faahko_sub
 #'
 #' ## The detected peaks can be accessed with the chromPeaks method.
-#' head(chromPeaks(xod))
+#' head(chromPeaks(faahko_sub))
 #'
 #' ## The settings of the chromatographic peak detection can be accessed with
 #' ## the processHistory method
-#' processHistory(xod)
+#' processHistory(faahko_sub)
 #'
 #' ## Also the parameter class for the peak detection can be accessed
-#' processParam(processHistory(xod)[[1]])
+#' processParam(processHistory(faahko_sub)[[1]])
 #'
 #' ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
 #' ## defined in Bioconductor's MSnbase package. To access the (raw) retention
 #' ## time for each spectrum we can use the rtime method. Setting bySample = TRUE
 #' ## would cause the retention times to be grouped by sample
-#' head(rtime(xod))
+#' head(rtime(faahko_sub))
 #'
 #' ## Similarly it is possible to extract the mz values or the intensity values
 #' ## using the mz and intensity method, respectively, also with the option to
@@ -2603,15 +2561,15 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## spectra method which returns Spectrum objects containing all raw data.
 #' ## Note that all these methods read the information from the original input
 #' ## files and subsequently apply eventual data processing steps to them.
-#' mzs <- mz(xod, bySample = TRUE)
+#' mzs <- mz(faahko_sub, bySample = TRUE)
 #' length(mzs)
 #' lengths(mzs)
 #'
 #' ## The full data could also be read using the spectra data, which returns
 #' ## a list of Spectrum object containing the mz, intensity and rt values.
-#' ## spctr <- spectra(xod)
+#' ## spctr <- spectra(faahko_sub)
 #' ## To get all spectra of the first file we can split them by file
-#' ## head(split(spctr, fromFile(xod))[[1]])
+#' ## head(split(spctr, fromFile(faahko_sub))[[1]])
 #'
 #' ############
 #' ## Filtering
@@ -2621,19 +2579,17 @@ setClass("MsFeatureData", contains = c("environment", "Versioned"),
 #' ## retention time correction and peak grouping results) will be dropped.
 #' ## Below we filter the XCMSnExp object by file to extract the results for
 #' ## only the second file.
-#' xod_2 <- filterFile(xod, file = 2)
+#' xod_2 <- filterFile(faahko_sub, file = 2)
 #' xod_2
 #'
 #' ## Now the objects contains only the idenfified peaks for the second file
 #' head(chromPeaks(xod_2))
 #'
-#' head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
-#'
 #' ##########
 #' ## Coercing to an xcmsSet object
 #' ##
 #' ## We can also coerce the XCMSnExp object into an xcmsSet object:
-#' xs <- as(xod, "xcmsSet")
+#' xs <- as(faahko_sub, "xcmsSet")
 #' head(peaks(xs))
 setClass("XCMSnExp",
          slots = c(

@@ -62,6 +62,7 @@
 \alias{setAs}
 \alias{profMat,XCMSnExp-method}
 \alias{findChromPeaks,XCMSnExp,Param-method}
+\alias{faahko_sub}
 \alias{dropFilledChromPeaks,XCMSnExp-method}
 \alias{dropFilledChromPeaks}
 \alias{spectrapply,XCMSnExp-method}
@@ -676,36 +677,30 @@ with feature definitions and phenodata information, into a
 
 \examples{
 
-## Loading the data from 2 files of the faahKO package.
-library(faahKO)
-od <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-                   system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-                 mode = "onDisk")
-## Now we perform a chromatographic peak detection on this data set using the
-## matched filter method. We are tuning the settings such that it performs
-## faster.
-mfp <- MatchedFilterParam(binSize = 6)
-xod <- findChromPeaks(od, param = mfp)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## The results from the peak detection are now stored in the XCMSnExp
 ## object
-xod
+faahko_sub
 
 ## The detected peaks can be accessed with the chromPeaks method.
-head(chromPeaks(xod))
+head(chromPeaks(faahko_sub))
 
 ## The settings of the chromatographic peak detection can be accessed with
 ## the processHistory method
-processHistory(xod)
+processHistory(faahko_sub)
 
 ## Also the parameter class for the peak detection can be accessed
-processParam(processHistory(xod)[[1]])
+processParam(processHistory(faahko_sub)[[1]])
 
 ## The XCMSnExp inherits all methods from the pSet and OnDiskMSnExp classes
 ## defined in Bioconductor's MSnbase package. To access the (raw) retention
 ## time for each spectrum we can use the rtime method. Setting bySample = TRUE
 ## would cause the retention times to be grouped by sample
-head(rtime(xod))
+head(rtime(faahko_sub))
 
 ## Similarly it is possible to extract the mz values or the intensity values
 ## using the mz and intensity method, respectively, also with the option to
@@ -714,15 +709,15 @@ head(rtime(xod))
 ## spectra method which returns Spectrum objects containing all raw data.
 ## Note that all these methods read the information from the original input
 ## files and subsequently apply eventual data processing steps to them.
-mzs <- mz(xod, bySample = TRUE)
+mzs <- mz(faahko_sub, bySample = TRUE)
 length(mzs)
 lengths(mzs)
 
 ## The full data could also be read using the spectra data, which returns
 ## a list of Spectrum object containing the mz, intensity and rt values.
-## spctr <- spectra(xod)
+## spctr <- spectra(faahko_sub)
 ## To get all spectra of the first file we can split them by file
-## head(split(spctr, fromFile(xod))[[1]])
+## head(split(spctr, fromFile(faahko_sub))[[1]])
 
 ############
 ## Filtering
@@ -732,19 +727,17 @@ lengths(mzs)
 ## retention time correction and peak grouping results) will be dropped.
 ## Below we filter the XCMSnExp object by file to extract the results for
 ## only the second file.
-xod_2 <- filterFile(xod, file = 2)
+xod_2 <- filterFile(faahko_sub, file = 2)
 xod_2
 
 ## Now the objects contains only the idenfified peaks for the second file
 head(chromPeaks(xod_2))
 
-head(chromPeaks(xod)[chromPeaks(xod)[, "sample"] == 2, ])
-
 ##########
 ## Coercing to an xcmsSet object
 ##
 ## We can also coerce the XCMSnExp object into an xcmsSet object:
-xs <- as(xod, "xcmsSet")
+xs <- as(faahko_sub, "xcmsSet")
 head(peaks(xs))
 }
 \seealso{

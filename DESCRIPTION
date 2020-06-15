@@ -1,5 +1,5 @@
 Package: xcms
-Version: 3.11.2
+Version: 3.11.3
 Title: LC-MS and GC-MS Data Analysis
 Authors@R: c(
 	   person(given = "Colin A.", family = "Smith",
@@ -38,7 +38,7 @@ Author: Colin A. Smith <csmith@scripps.edu>,
     Michael Witting <michael.witting@helmholtz-muenchen.de>
 Maintainer: Steffen Neumann <sneumann@ipb-halle.de>
 Depends:
-    R (>= 2.14.0),
+    R (>= 3.5.0),
     methods,
     Biobase,
     BiocParallel (>= 1.8.0),

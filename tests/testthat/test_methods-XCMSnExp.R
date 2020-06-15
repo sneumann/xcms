@@ -13,36 +13,28 @@ test_that("XCMSnExp, XCMSnExp works", {
 })
 
 test_that("mz,XCMSnExp works", {
-    mzs <- mz(faahko_od)
+    tmp_od <- filterRt(faahko_od, rt = c(3500, 3800))
+    tmp_xod <- filterRt(xod_x, rt = c(3500, 3800))
+    mzs <- mz(tmp_od)
     ## The check below has to work, since we're calling the mz,OnDiskMSnExp.
-    ## mzs_2 <- mz(od_x)
-    ## expect_equal(mzs, mzs_2)
-    mzs_2 <- mz(xod_x, bySample = TRUE)
-    tmp <- split(mzs, fromFile(faahko_od))
+    mzs_2 <- mz(tmp_xod, bySample = TRUE)
+    tmp <- split(mzs, fromFile(tmp_od))
     expect_equal(lapply(tmp, unlist, use.names = FALSE), mzs_2)
-    ## Check if mz are correctly ordered for bySample
-    mzs_3 <- mz(filterFile(faahko_od, file = 2))
-    expect_equal(unlist(mzs_3, use.names = FALSE), mzs_2[[2]])
 })
 
 test_that("intensity,XCMSnExp works", {
-    ints <- intensity(faahko_od)
+    tmp_od <- filterRt(faahko_od, rt = c(3500, 3800))
+    tmp_xod <- filterRt(xod_x, rt = c(3500, 3800))
+    ints <- intensity(tmp_od)
     ## The check below has to work, since we're calling the intensity,OnDiskMSnExp.
     ## ints_2 <- intensity(od_x)
     ## expect_equal(ints, ints_2)
-    ints_2 <- intensity(xod_x, bySample = TRUE)
-    tmp <- split(ints, fromFile(faahko_od))
+    ints_2 <- intensity(tmp_xod, bySample = TRUE)
+    tmp <- split(ints, fromFile(tmp_od))
     expect_equal(lapply(tmp, unlist, use.names = FALSE), ints_2)
-    ## Check if mz are correctly ordered for bySample
-    ints_3 <- intensity(filterFile(faahko_od, file = 2))
-    expect_equal(unlist(ints_3, use.names = FALSE), ints_2[[2]])
 })
 
 test_that("spectra,XCMSnExp works", {
-    xod <- as(faahko_od, "XCMSnExp")
-    res <- spectra(xod)
-    res_2 <- spectra(xod, bySample = TRUE)
-    expect_equal(split(res, fromFile(xod)), res_2)
     ## xod_x
     tmp <- filterRt(xod_x, rt = c(2700, 2900))
     res <- spectra(tmp)
@@ -1562,10 +1554,10 @@ test_that("split,XCMSnExp works", {
     xod <- as(faahko_od, "XCMSnExp")
     tmp <- split(xod_xgr, f = fromFile(xod_xgr))
     ## Split by file.
-    expect_equal(spectra(tmp[[1]]), spectra(filterFile(xod, file = 1)))
-    expect_equal(spectra(tmp[[3]]), spectra(filterFile(xod, file = 3)))
+    expect_equal(spectra(tmp[[1]][7:13]), spectra(filterFile(xod, file = 1)[7:13]))
+    expect_equal(spectra(tmp[[3]][7:13]), spectra(filterFile(xod, file = 3)[7:13]))
     ## Split by acquisitionNum.
-    tmp <- filterRt(xod_xgr, rt = c(2500, 2700))
+    tmp <- filterRt(xod_xgr, rt = c(2600, 2700))
     expect_true(hasChromPeaks(tmp))
     expect_true(hasAdjustedRtime(tmp))
     tmp_2 <- split(tmp, f = acquisitionNum(tmp))

@@ -53,27 +53,18 @@ values from each file/sample in the provided rt-mz range (or for the full
 data range if \code{rt} and \code{mz} are not defined).
 }
 \examples{
-## Read some files from the test data package.
-library(faahKO)
-library(xcms)
-library(magrittr)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
 
-## Extract the full data as a data.frame
-ms_all <- as(raw_data, "data.frame")
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+
+## Extract the full MS data for a certain retention time range
+## as a data.frame
+tmp <- filterRt(faahko_sub, rt = c(2800, 2900))
+ms_all <- as(tmp, "data.frame")
 head(ms_all)
 nrow(ms_all)
-
-## Read the full MS data for a defined mz-rt region.
-res <- raw_data \%>\%
-    filterRt(rt = c(2700, 2900)) \%>\%
-    filterMz(mz = c(300, 320)) \%>\%
-    as("data.frame")
-
-head(res)
-nrow(res)
 }
 \seealso{
 \code{XCMSnExp} for the data object.

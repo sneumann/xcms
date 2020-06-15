@@ -760,25 +760,15 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #' @author Johannes Rainer
 #'
 #' @examples
-#' ## Below we perform first a peak detection (using the matchedFilter
-#' ## method) on some of the test files from the faahKO package followed by
-#' ## a peak grouping and retention time adjustment using the "peak groups"
-#' ## method
-#' library(faahKO)
-#' library(xcms)
-#' fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-#'            full.names = TRUE)
 #'
-#' ## Reading 2 of the KO samples
-#' raw_data <- readMSData(fls[1:2], mode = "onDisk")
-#'
-#' ## Perform the peak detection using the matchedFilter method.
-#' mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-#' res <- findChromPeaks(raw_data, param = mfp)
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Performing the peak grouping using the "peak density" method.
-#' p <- PeakDensityParam(sampleGroups = c(1, 1))
-#' res <- groupChromPeaks(res, param = p)
+#' p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+#' res <- groupChromPeaks(faahko_sub, param = p)
 #'
 #' ## Perform the retention time adjustment using peak groups found in both
 #' ## files.
@@ -1073,32 +1063,25 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
 #'
 #' @examples
 #'
-#' ## Read some files from the faahKO package.
-#' library(xcms)
-#' library(faahKO)
-#' faahko_3_files <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-#'
-#' od <- readMSData(faahko_3_files, mode = "onDisk")
-#'
-#' ## Peak detection using the 'matchedFilter' method. Note that we are using a
-#' ## larger binSize to reduce the runtime of the example.
-#' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
-#' chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
+#' chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
 #'
 #' plot(chrs)
 #'
 #' ## Extract chromatographic peaks for the mz/rt range (if any).
-#' chromPeaks(xod, rt = c(2700, 2900), mz = 335)
+#' chromPeaks(faahko_sub, rt = c(2700, 2900), mz = 335)
 #'
 #' ## Highlight the chromatographic peaks in the area
 #' ## Show the peak definition with a rectangle
-#' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335)
+#' highlightChromPeaks(faahko_sub, rt = c(2700, 2900), mz = 335)
 #'
 #' ## Color the actual peak
-#' highlightChromPeaks(xod, rt = c(2700, 2900), mz = 335,
+#' highlightChromPeaks(faahko_sub, rt = c(2700, 2900), mz = 335,
 #'     col = c("#ff000020", "#00ff0020"), type = "polygon")
 highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
                                 border = rep("00000040", length(fileNames(x))),
@@ -1247,27 +1230,20 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
 #'
 #' @examples
 #'
-#' ## Perform peak detection on two files from the faahKO package.
-#' library(xcms)
-#' library(faahKO)
-#' faahko_file <- c(system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'                  system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-#'
-#' od <- readMSData(faahko_file, mode = "onDisk")
-#'
-#' ## Peak detection using the 'matchedFilter' method. Note that we are using a
-#' ## larger binSize to reduce the runtime of the example.
-#' xod <- findChromPeaks(od, param = MatchedFilterParam(binSize = 0.3, snthresh = 20))
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## plotChromPeakImage: plot an image for the identified peaks per file
-#' plotChromPeakImage(xod)
+#' plotChromPeakImage(faahko_sub)
 #'
 #' ## Show all detected chromatographic peaks from the first file
-#' plotChromPeaks(xod)
+#' plotChromPeaks(faahko_sub)
 #'
 #' ## Plot all detected peaks from the second file and restrict the plot to a
 #' ## mz-rt slice
-#' plotChromPeaks(xod, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
+#' plotChromPeaks(faahko_sub, file = 2, xlim = c(3500, 3600), ylim = c(400, 600))
 plotChromPeaks <- function(x, file = 1, xlim = NULL, ylim = NULL,
                                add = FALSE, border = "#00000060", col = NA,
                                xlab = "retention time", ylab = "mz",
@@ -1417,17 +1393,13 @@ isCalibrated <- function(object) {
 #'     restore the raw retention times.
 #'
 #' @examples
-#' ## Load test data
-#' files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'     system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-#'     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 #'
-#' od <- readMSData(files, mode = "onDisk")
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Apply obiwarp retention time adjustment. We have to convert the
-#' ## OnDiskMSnExp first to an XCMSnExp
-#' xod <- as(od, "XCMSnExp")
-#' xod <- adjustRtime(xod, param = ObiwarpParam())
+#' xod <- adjustRtime(faahko_sub, param = ObiwarpParam())
 #'
 #' hasAdjustedRtime(xod)
 #'
@@ -1438,7 +1410,7 @@ isCalibrated <- function(object) {
 #' hasAdjustedRtime(xod)
 #'
 #' ## Raw retention times have been replaced with adjusted retention times
-#' plot(split(rtime(od), fromFile(od))[[1]] -
+#' plot(split(rtime(faahko_sub), fromFile(faahko_sub))[[1]] -
 #'     split(rtime(xod), fromFile(xod))[[1]], type = "l")
 #'
 #' ## And the process history still contains the settings for the alignment
@@ -1698,24 +1670,21 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #' @author Johannes Rainer
 #'
 #' @examples
-#' ## Load 2 test files.
-#' data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-#'                      system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-#'                    mode = "onDisk")
 #'
-#' ## Perform peak detection; parameters set to reduce processing speed
-#' data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
-#'     noise = 10000, snthresh = 40))
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Correspondence analysis
-#' data <- groupChromPeaks(data, param = PeakDensityParam(sampleGroups = c(1, 1)))
+#' xdata <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
 #'
 #' ## Identify overlapping features
-#' overlappingFeatures(data)
+#' overlappingFeatures(xdata)
 #'
 #' ## Identify features that are separated on retention time by less than
 #' ## 2 minutes
-#' overlappingFeatures(data, expandRt = 60)
+#' overlappingFeatures(xdata, expandRt = 60)
 overlappingFeatures <- function(x, expandMz = 0, expandRt = 0, ppm = 0) {
     if (!is(x, "XCMSnExp"))
         stop("'x' is expected to be an 'XCMSnExp' object")
@@ -2219,29 +2188,28 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'
 #' @examples
 #'
-#' library(xcms)
-#' library(faahKO)
-#' faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-#'                     system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+#' ## Load a test data set with detected peaks
+#' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
-#' ## Do a simple and fast preprocessing on a subset of the test data
-#' od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
-#' od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-#'     noise = 1000, prefilter = c(3, 10000)))
-#' od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
-#' od <- groupChromPeaks(od,
-#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 2)))
+#' ## Subset the object to a smaller retention time range
+#' xdata <- faahko_sub
+#'
+#' xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
+#' xdata <- groupChromPeaks(xdata,
+#'     param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 #'
 #' ## Get the feature definitions
-#' featureDefinitions(od)
+#' featureDefinitions(xdata)
 #'
 #' ## Extract ion chromatograms for the first 3 features. Parameter
 #' ## `features` can be either the feature IDs or feature indices.
-#' chrs <- featureChromatograms(od, features = 1:3)
+#' chrs <- featureChromatograms(xdata, features = 1:3)
 #'
 #' ## Plot the XIC for the first feature using different colors for each file
 #' par(mfrow = c(1, 2))
-#' plot(chrs[1, ], col = c("red", "green"))
+#' plot(chrs[1, ], col = c("red", "green", "blue"))
 featureChromatograms <- function(x, expandRt = 0, aggregationFun = "max",
                                  features,
                                  include = c("feature_only", "apex_within",
@@ -2880,6 +2848,10 @@ reconstructChromPeakSpectra <- function(object, expandRt = 1, diffRt = 2,
                   range(pks_sub[, c("rtmin", "rtmax")]))
             current_group <- current_group + 1
         }
+    }
+    if (!length(chr_def_mat)) {
+        message("OK")
+        return(list(chromPeaks = pks, chromPeakData = pkd))
     }
     chr_def_mat <- do.call(rbind, chr_def_mat)
     chrs <- chromatogram(x, mz = chr_def_mat[, c(1, 2)],

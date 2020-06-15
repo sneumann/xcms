@@ -332,23 +332,6 @@ head(res)
 ## file
 resL <- split(res, fromFile(raw_data))
 
-##############################
-## Perform retention time correction on an XCMSnExp:
-##
-## Perform first the chromatographic peak detection using the matchedFilter
-## method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
-
-## Performing the retention time adjustment using obiwarp.
-res_2 <- adjustRtime(res, param = ObiwarpParam())
-
-head(rtime(res_2))
-head(rtime(raw_data))
-
-## Also the retention times of the detected peaks were adjusted.
-tail(chromPeaks(res))
-tail(chromPeaks(res_2))
 }
 \references{
 John T. Prince and Edward M. Marcotte. "Chromatographic Alignment of

@@ -230,22 +230,11 @@ in the matrix returned by the \code{\link[=featureValues]{featureValues()}} meth
 }
 \examples{
 
-## Perform the peak detection using centWave on some of the files from the
-## faahKO package. Files are read using the readMSData from the MSnbase
-## package
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Create a CentWaveParam object. Note that the noise is set to 10000 to
-## speed up the execution of the example - in a real use case the default
-## value should be used, or it should be set to a reasonable value.
-cwp <- CentWaveParam(ppm = 20, prefilter = c(3, 10000),
-    noise = 10000, snthresh = 40)
-
-res <- findChromPeaks(raw_data, param = cwp)
+## Load a test data set with identified chromatographic peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
+res <- faahko_sub
 
 ## Perform the correspondence. We assign all samples to the same group.
 res <- groupChromPeaks(res,
@@ -258,14 +247,12 @@ sum(is.na(featureValues(res)))
 ## chromatographic peaks.
 res <- fillChromPeaks(res, param = ChromPeakAreaParam())
 
+## How many missing values do we have after peak filling?
+sum(is.na(featureValues(res)))
+
 ## Get the peaks that have been filled in:
 fp <- chromPeaks(res)[chromPeakData(res)$is_filled, ]
 head(fp)
-
-## Did we get a signal for all missing peaks?
-sum(is.na(featureValues(res)))
-
-## No.
 
 ## Get the process history step along with the parameters used to perform
 ## The peak filling:
@@ -275,18 +262,10 @@ ph
 ## The parameter class:
 ph@param
 
-## Drop the filled in peaks:
+## It is also possible to remove filled-in peaks:
 res <- dropFilledChromPeaks(res)
 
-## Perform the peak filling with modified settings: allow expansion of the
-## mz range by a specified ppm and expanding the mz range by mz width/2
-prm <- FillChromPeaksParam(ppm = 40, expandMz = 0.5)
-res <- fillChromPeaks(res, param = prm)
-
-## Did we get a signal for all missing peaks?
 sum(is.na(featureValues(res)))
-
-## Still the same missing peaks.
 }
 \seealso{
 \code{\link[=groupChromPeaks]{groupChromPeaks()}} for methods to perform the correspondence.

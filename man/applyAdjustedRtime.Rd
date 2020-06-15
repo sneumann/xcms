@@ -32,17 +32,13 @@ the \code{\link[=processHistory]{processHistory()}} of the \code{object} to ensu
 history is preserved.
 }
 \examples{
-## Load test data
-files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-    system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-od <- readMSData(files, mode = "onDisk")
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Apply obiwarp retention time adjustment. We have to convert the
-## OnDiskMSnExp first to an XCMSnExp
-xod <- as(od, "XCMSnExp")
-xod <- adjustRtime(xod, param = ObiwarpParam())
+xod <- adjustRtime(faahko_sub, param = ObiwarpParam())
 
 hasAdjustedRtime(xod)
 
@@ -53,7 +49,7 @@ xod <- applyAdjustedRtime(xod)
 hasAdjustedRtime(xod)
 
 ## Raw retention times have been replaced with adjusted retention times
-plot(split(rtime(od), fromFile(od))[[1]] -
+plot(split(rtime(faahko_sub), fromFile(faahko_sub))[[1]] -
     split(rtime(xod), fromFile(xod))[[1]], type = "l")
 
 ## And the process history still contains the settings for the alignment

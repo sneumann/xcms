@@ -80,29 +80,28 @@ is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}
 }
 \examples{
 
-library(xcms)
-library(faahKO)
-faahko_3_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                    system.file('cdf/KO/ko18.CDF', package = "faahKO"))
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
-## Do a simple and fast preprocessing on a subset of the test data
-od <- filterRt(readMSData(faahko_3_files, mode = "onDisk"), c(250, 3000))
-od <- findChromPeaks(od, param = CentWaveParam(peakwidth = c(30, 80),
-    noise = 1000, prefilter = c(3, 10000)))
-od <- adjustRtime(od, param = ObiwarpParam(binSize = 0.6))
-od <- groupChromPeaks(od,
-    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 2)))
+## Subset the object to a smaller retention time range
+xdata <- faahko_sub
+
+xdata <- adjustRtime(xdata, param = ObiwarpParam(binSize = 0.6))
+xdata <- groupChromPeaks(xdata,
+    param = PeakDensityParam(minFraction = 0.8, sampleGroups = rep(1, 3)))
 
 ## Get the feature definitions
-featureDefinitions(od)
+featureDefinitions(xdata)
 
 ## Extract ion chromatograms for the first 3 features. Parameter
 ## `features` can be either the feature IDs or feature indices.
-chrs <- featureChromatograms(od, features = 1:3)
+chrs <- featureChromatograms(xdata, features = 1:3)
 
 ## Plot the XIC for the first feature using different colors for each file
 par(mfrow = c(1, 2))
-plot(chrs[1, ], col = c("red", "green"))
+plot(chrs[1, ], col = c("red", "green", "blue"))
 }
 \seealso{
 \code{\link[=filterColumnsKeepTop]{filterColumnsKeepTop()}} to filter the extracted EICs keeping only

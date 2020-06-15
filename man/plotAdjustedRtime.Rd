@@ -66,25 +66,15 @@ time (y-axis) for each file along the (adjusted or raw) retention time
 groups) used for the alignment are shown.
 }
 \examples{
-## Below we perform first a peak detection (using the matchedFilter
-## method) on some of the test files from the faahKO package followed by
-## a peak grouping and retention time adjustment using the "peak groups"
-## method
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+## Load a test data set with detected peaks
+data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Performing the peak grouping using the "peak density" method.
-p <- PeakDensityParam(sampleGroups = c(1, 1))
-res <- groupChromPeaks(res, param = p)
+p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
+res <- groupChromPeaks(faahko_sub, param = p)
 
 ## Perform the retention time adjustment using peak groups found in both
 ## files.
