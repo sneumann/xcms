@@ -77,7 +77,7 @@ Chromatograms object." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -102,9 +102,6 @@ Chromatograms object." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -230,36 +227,29 @@ function.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Read some files from the faahKO package.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='no'>faahko_3_files</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko16.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-                    <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko18.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>))
-
-<span class='no'>od</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>faahko_3_files</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Peak detection using the 'matchedFilter' method. Note that we are using a</span>
-<span class='co'>## larger binSize to reduce the runtime of the example.</span>
-<span class='no'>xod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>od</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(<span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.3</span>, <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>20</span>))
+<span class='co'>## Load a test data set with detected peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Extract the ion chromatogram for one chromatographic peak in the data.</span>
-<span class='no'>chrs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span>(<span class='no'>xod</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)
+<span class='no'>chrs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatogram-method.html'>chromatogram</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)
 
 <span class='fu'><a href='https://rdrr.io/r/base/plot.html'>plot</a></span>(<span class='no'>chrs</span>)</div><div class='input'>
 <span class='co'>## Extract chromatographic peaks for the mz/rt range (if any).</span>
-<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
-#&gt; CP061 335   335   335 2786.199 2772.115 2803.414 1344842.9 2639447.9 58736
-#&gt; CP320 335   335   335 2786.201 2772.116 2803.415  186468.5  324567.1  8158
-#&gt;            maxf i       sn sample
-#&gt; CP061 133939.76 1 64.25547      1
-#&gt; CP320  16507.47 1 20.60148      2</div><div class='input'>
+<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='output co'>#&gt;        mz mzmin mzmax       rt   rtmin    rtmax    into    intb  maxo sn sample
+#&gt; CP095 335   335   335 2786.199 2764.29 2812.803 1496244 1451652 58736 55      2</div><div class='input'>
 <span class='co'>## Highlight the chromatographic peaks in the area</span>
 <span class='co'>## Show the peak definition with a rectangle</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='no'>xod</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='input'>
+<span class='fu'>highlightChromPeaks</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>)</div><div class='input'>
 <span class='co'>## Color the actual peak</span>
-<span class='fu'>highlightChromPeaks</span>(<span class='no'>xod</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>,
+<span class='fu'>highlightChromPeaks</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>), <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fl'>335</span>,
     <span class='kw'>col</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"#ff000020"</span>, <span class='st'>"#00ff0020"</span>), <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"polygon"</span>)</div><div class='img'><img src='highlightChromPeaks-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

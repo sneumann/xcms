@@ -82,7 +82,7 @@ represented with the color of the respective cell." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -107,9 +107,6 @@ represented with the color of the respective cell." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -274,27 +271,24 @@ and <code><a href='https://rdrr.io/r/graphics/par.html'>par(lty = 2)</a></code>,
 
     <div class='dont-index'><p><code><a href='highlightChromPeaks.html'>highlightChromPeaks</a></code> for the function to highlight
     detected chromatographic peaks in extracted ion chromatogram plots.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Perform peak detection on two files from the faahKO package.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='no'>faahko_file</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko16.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-                 <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko18.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>))
-
-<span class='no'>od</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>faahko_file</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Peak detection using the 'matchedFilter' method. Note that we are using a</span>
-<span class='co'>## larger binSize to reduce the runtime of the example.</span>
-<span class='no'>xod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>od</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(<span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>0.3</span>, <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>20</span>))
+<span class='co'>## Load a test data set with detected peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
 
 <span class='co'>## plotChromPeakImage: plot an image for the identified peaks per file</span>
-<span class='fu'>plotChromPeakImage</span>(<span class='no'>xod</span>)</div><div class='img'><img src='plotChromPeaks-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plotChromPeakImage</span>(<span class='no'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Show all detected chromatographic peaks from the first file</span>
-<span class='fu'>plotChromPeaks</span>(<span class='no'>xod</span>)</div><div class='img'><img src='plotChromPeaks-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plotChromPeaks</span>(<span class='no'>faahko_sub</span>)</div><div class='img'><img src='plotChromPeaks-2.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Plot all detected peaks from the second file and restrict the plot to a</span>
 <span class='co'>## mz-rt slice</span>
-<span class='fu'>plotChromPeaks</span>(<span class='no'>xod</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3500</span>, <span class='fl'>3600</span>), <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>400</span>, <span class='fl'>600</span>))</div><div class='img'><img src='plotChromPeaks-3.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'>plotChromPeaks</span>(<span class='no'>faahko_sub</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>xlim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3500</span>, <span class='fl'>3600</span>), <span class='kw'>ylim</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>400</span>, <span class='fl'>600</span>))</div><div class='img'><img src='plotChromPeaks-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

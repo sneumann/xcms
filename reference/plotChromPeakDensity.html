@@ -79,7 +79,7 @@ visualized setting simulate = FALSE." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -104,9 +104,6 @@ visualized setting simulate = FALSE." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -265,37 +262,31 @@ algorithm and its supported settings.</p>
 
     <div class='dont-index'><p><code><a href='groupChromPeaks-density.html'>groupChromPeaks-density()</a></code> for details on the
 <em>peak density</em> correspondence method and supported settings.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Below we perform first a peak detection (using the centWave</span>
-<span class='co'>## method) on some of the test files from the faahKO package.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>xcms</span>)
-<span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>), <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-           <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='co'>## Load a test data set with detected peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
 
-<span class='co'>## Reading 2 of the KO samples</span>
-<span class='no'>raw_data</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>fls</span>[<span class='fl'>1</span>:<span class='fl'>2</span>], <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Perform the peak detection using the centWave method (settings are tuned</span>
-<span class='co'>## to speed up example execution)</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>raw_data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(<span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>3000</span>, <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>40</span>))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 4011 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 157 found.</span></div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 4512 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 196 found.</span></div><div class='input'>
-<span class='co'>## Align the samples using obiwarp</span>
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='adjustRtime.html'>adjustRtime</a></span>(<span class='no'>res</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='adjustRtime-obiwarp.html'>ObiwarpParam</a></span>())</div><div class='output co'>#&gt; <span class='message'>Sample number 1 used as center sample.</span></div><div class='output co'>#&gt; <span class='message'>Aligning ko16.CDF against ko15.CDF ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Applying retention time adjustment to the identified chromatographic peaks ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Plot the chromatographic peak density for a specific mz range to evaluate</span>
 <span class='co'>## different peak density correspondence settings.</span>
 <span class='no'>mzr</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>305.05</span>, <span class='fl'>305.15</span>)
 
-<span class='fu'>plotChromPeakDensity</span>(<span class='no'>res</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
-    <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>res</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>plotChromPeakDensity</span>(<span class='no'>faahko_sub</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
+    <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>faahko_sub</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-1.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='co'>## Use a larger bandwidth</span>
-<span class='fu'>plotChromPeakDensity</span>(<span class='no'>res</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>bw</span> <span class='kw'>=</span> <span class='fl'>60</span>,
-    <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>res</span>)))), <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>## Neighboring peaks are now fused into one.</span>
+<span class='fu'>plotChromPeakDensity</span>(<span class='no'>faahko_sub</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>bw</span> <span class='kw'>=</span> <span class='fl'>60</span>,
+    <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>faahko_sub</span>)))), <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'>## Neighboring peaks are now fused into one.</span>
 
 <span class='co'>## Require the chromatographic peak to be present in all samples of a group</span>
-<span class='fu'>plotChromPeakDensity</span>(<span class='no'>res</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
+<span class='fu'>plotChromPeakDensity</span>(<span class='no'>faahko_sub</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='no'>mzr</span>, <span class='kw'>pch</span> <span class='kw'>=</span> <span class='fl'>16</span>,
     <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>minFraction</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-    <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>res</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-3.png' alt='' width='700' height='433' /></div></pre>
+    <span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>faahko_sub</span>)))))</div><div class='output co'>#&gt; <span class='warning'>Warning: Use of 'plotChromPeakDensity' on 'XCMSnExp' isdiscouraged. Please extract chromatographic data first and call 'plotChromPeakDensity' directly on the 'XChromatograms' object. See ?XChromatograms, section 'Correspondence analysis' for more details.</span></div><div class='img'><img src='plotChromPeakDensity-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

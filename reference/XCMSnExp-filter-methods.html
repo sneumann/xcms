@@ -123,7 +123,7 @@ keepAdjustedRtime = TRUE is provided." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -148,9 +148,6 @@ keepAdjustedRtime = TRUE is provided." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -388,88 +385,83 @@ the raw retention times with the adjusted ones.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='XCMSnExp-class.html'>XCMSnExp</a></code> for base class documentation.</p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='co'>## Load some of the files from the faahKO package.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='no'>fs</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko15.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-        <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko16.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-        <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>'cdf/KO/ko18.CDF'</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>))
-<span class='co'>## Read the files</span>
-<span class='no'>od</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='no'>fs</span>, <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Perform peak detection on them using the matched filter algorithm. Note</span>
-<span class='co'>## that we use a large value for binSize to reduce the runtime of the</span>
-<span class='co'>## example code.</span>
-<span class='no'>mfp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(<span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>5</span>)
-<span class='no'>xod</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>od</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>mfp</span>)
+<span class='co'>## Loading a test data set with identified chromatographic peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
 
 <span class='co'>## Subset the dataset to the first and third file.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='no'>xod</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))
+<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterFile</span>(<span class='no'>faahko_sub</span>, <span class='kw'>file</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>3</span>))
 
 <span class='co'>## The number of chromatographic peaks per file for the full object</span>
-<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
+<span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
 #&gt;   1   2   3 
-#&gt; 150 167 144 </div><div class='input'>
+#&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## The number of chromatographic peaks per file for the subset</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
-#&gt;   1   2 
-#&gt; 150 144 </div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>xod</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko16.CDF" "ko18.CDF"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko18.CDF"</div><div class='input'>
+#&gt;  1  2 
+#&gt; 87 61 </div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko16.CDF" "ko18.CDF"</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/basename.html'>basename</a></span>(<span class='fu'>fileNames</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] "ko15.CDF" "ko18.CDF"</div><div class='input'>
 <span class='co'>## Filter on mz values; chromatographic peaks and features within the</span>
 <span class='co'>## mz range are retained (as well as adjusted retention times).</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterMz</span>(<span class='no'>xod</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax    into    intf   maxo
-#&gt; CP025 300.1987 300.1 300.2 3379.317 3365.232 3394.966 4534354 9752747 218112
-#&gt; CP026 301.0000 301.0 301.0 2786.200 2772.115 2801.849 2739847 4867115 118512
-#&gt; CP027 300.1987 300.1 300.2 3379.317 3365.232 3394.966 4534354 9801902 218112
-#&gt; CP028 301.0000 301.0 301.0 2786.200 2772.115 2801.849 2739847 4867445 118512
-#&gt; CP029 304.1000 304.1 304.1 2923.916 2909.831 2938.000 1948206 3741626  94576
-#&gt; CP030 304.1000 304.1 304.1 2923.916 2909.831 2938.000 1948206 3741620  94576
-#&gt;           maxf i       sn sample
-#&gt; CP025 520673.1 1 68.82424      1
-#&gt; CP026 258437.5 2 34.16110      1
-#&gt; CP027 523174.6 1 52.33995      1
-#&gt; CP028 258439.1 2 25.85502      1
-#&gt; CP029 202567.6 3 20.26547      1
-#&gt; CP030 202567.6 1 37.08975      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 129</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod</span>))</div><div class='output co'>#&gt; [1] 461</div><div class='input'>
+<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterMz</span>(<span class='no'>faahko_sub</span>, <span class='kw'>mz</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>300</span>, <span class='fl'>400</span>))
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;        mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+#&gt; CP002 302   302   302 2617.185 2595.275 2640.659   687146.6   671297.8  30552
+#&gt; CP003 344   344   344 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
+#&gt; CP005 366   366   366 2679.783 2642.224 2718.907  3365174.0  3279468.3  79928
+#&gt; CP006 343   343   343 2678.218 2637.529 2712.647 24147443.2 23703761.7 672064
+#&gt; CP007 365   365   365 2679.783 2634.399 2717.342 14975760.8 14525699.1 357632
+#&gt; CP009 313   313   313 2783.070 2768.985 2806.544  1744615.5  1698756.0  74080
+#&gt;        sn sample
+#&gt; CP002  46      1
+#&gt; CP003  68      1
+#&gt; CP005  49      1
+#&gt; CP006  87      1
+#&gt; CP007 111      1
+#&gt; CP009  44      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 89</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'>
 <span class='co'>## Filter on rt values. All chromatographic peaks and features within the</span>
 <span class='co'>## retention time range are retained. Filtering is performed by default on</span>
 <span class='co'>## adjusted retention times, if present.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='no'>xod</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>))
+<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='fu'>filterRt</span>(<span class='no'>faahko_sub</span>, <span class='kw'>rt</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2700</span>, <span class='fl'>2900</span>))
 
-<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'>rtime</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 2700.127 2898.877</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
-#&gt; CP001 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3580019.5 84280
-#&gt; CP002 207.0839 207.0 207.1 2711.082 2698.562 2723.601  358347.2  630725.0 18800
-#&gt; CP003 205.0000 205.0 205.0 2784.635 2770.550 2800.284 1778568.9 3577971.3 84280
-#&gt; CP004 207.0839 207.0 207.1 2711.082 2698.562 2723.601  358347.2  614916.6 18800
-#&gt; CP007 244.1000 244.1 244.1 2828.453 2814.369 2842.538  598990.3 1145077.8 31312
-#&gt; CP009 244.1000 244.1 244.1 2828.453 2814.369 2842.538  598990.3 1221678.7 31312
-#&gt;            maxf i       sn sample
-#&gt; CP001 194233.12 1 63.28090      1
-#&gt; CP002  37449.32 2 12.20094      1
-#&gt; CP003 194213.46 1 66.00099      1
-#&gt; CP004  36745.31 2 12.48743      1
-#&gt; CP007  64181.64 2 16.99513      1
-#&gt; CP009  67743.45 2 23.92659      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>)[, <span class='st'>"rt"</span>])</div><div class='output co'>#&gt; [1] 2711.082 2895.746</div><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod</span>))</div><div class='output co'>#&gt; [1] 461</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 47</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'>rtime</span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 2700.127 2898.877</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+#&gt; CP008 579.1 579.1 579.1 2786.200 2765.855 2806.544  1669436.8  1642951.6  87656
+#&gt; CP009 313.0 313.0 313.0 2783.070 2768.985 2806.544  1744615.5  1698756.0  74080
+#&gt; CP010 301.0 301.0 301.0 2786.200 2765.855 2809.674  3051847.8  2958809.7 118512
+#&gt; CP011 279.0 279.0 279.0 2787.765 2764.290 2814.369 17140627.0 16526792.4 805248
+#&gt; CP012 279.1 279.1 279.1 2825.323 2820.629 2828.453   106769.4   106763.2  17760
+#&gt; CP018 453.2 453.2 453.2 2720.472 2678.218 2786.200  2987076.3  2986966.8  34208
+#&gt;          sn sample
+#&gt; CP008    57      1
+#&gt; CP009    44      1
+#&gt; CP010    62      1
+#&gt; CP011    45      1
+#&gt; CP012 17759      1
+#&gt; CP018 33983      1</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/range.html'>range</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>)[, <span class='st'>"rt"</span>])</div><div class='output co'>#&gt; [1] 2701.693 2895.746</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>faahko_sub</span>))</div><div class='output co'>#&gt; [1] 248</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>xod_sub</span>))</div><div class='output co'>#&gt; [1] 21</div><div class='input'>
 <span class='co'>## Extract a single Spectrum</span>
-<span class='no'>xod</span><span class='kw'>[[</span><span class='fl'>4</span>]]</div><div class='output co'>#&gt; Object of class "Spectrum1"
+<span class='no'>faahko_sub</span><span class='kw'>[[</span><span class='fl'>4</span>]]</div><div class='output co'>#&gt; Object of class "Spectrum1"
 #&gt;  Retention time: 41:46 
 #&gt;  MSn level: 1 
 #&gt;  Total ion count: 427 
 #&gt;  Polarity: NA </div><div class='input'>
 <span class='co'>## Subsetting using [ removes all preprocessing results - using</span>
 <span class='co'>## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.</span>
-<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='no'>xod</span>[<span class='fu'>fromFile</span>(<span class='no'>xod</span>) <span class='kw'>==</span> <span class='fl'>1</span>]</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed preprocessing results</span></div><div class='input'><span class='no'>xod_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
+<span class='no'>xod_sub</span> <span class='kw'>&lt;-</span> <span class='no'>faahko_sub</span>[<span class='fu'>fromFile</span>(<span class='no'>faahko_sub</span>) <span class='kw'>==</span> <span class='fl'>1</span>]</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed preprocessing results</span></div><div class='input'><span class='no'>xod_sub</span></div><div class='output co'>#&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.48 Mb
 #&gt; - - - Spectra data - - -
 #&gt;  MS level(s): 1 
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 14:35:22 2020] 
-#&gt;  MSnbase version: 2.14.2 
+#&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
+#&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
 #&gt;   rowNames: ko15.CDF
@@ -487,7 +479,7 @@ the raw retention times with the adjusted ones.</p>
 <span class='co'>## Using split does also remove preprocessing results, but it supports the</span>
 <span class='co'>## optional parameter keepAdjustedRtime.</span>
 <span class='co'>## Split the object into a list of XCMSnExp objects, one per file</span>
-<span class='no'>xod_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='no'>xod</span>, <span class='kw'>f</span> <span class='kw'>=</span> <span class='fu'>fromFile</span>(<span class='no'>xod</span>))
+<span class='no'>xod_list</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/split.html'>split</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>f</span> <span class='kw'>=</span> <span class='fu'>fromFile</span>(<span class='no'>faahko_sub</span>))
 <span class='no'>xod_list</span></div><div class='output co'>#&gt; $`1`
 #&gt; MSn experiment data ("XCMSnExp")
 #&gt; Object size in memory: 0.48 Mb
@@ -496,8 +488,8 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 14:35:22 2020] 
-#&gt;  MSnbase version: 2.14.2 
+#&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
+#&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
 #&gt;   rowNames: ko15.CDF
@@ -521,8 +513,8 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 14:35:22 2020] 
-#&gt;  MSnbase version: 2.14.2 
+#&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
+#&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
 #&gt;   rowNames: ko16.CDF
@@ -546,8 +538,8 @@ the raw retention times with the adjusted ones.</p>
 #&gt;  Number of spectra: 1278 
 #&gt;  MSn retention times: 41:41 - 74:60 minutes
 #&gt; - - - Processing information - - -
-#&gt; Data loaded [Wed May 20 14:35:22 2020] 
-#&gt;  MSnbase version: 2.14.2 
+#&gt; Data loaded [Mon Jun 15 06:30:44 2020] 
+#&gt;  MSnbase version: 2.15.2 
 #&gt; - - - Meta data  - - -
 #&gt; phenoData
 #&gt;   rowNames: ko18.CDF

@@ -105,7 +105,7 @@ already present feature definitions." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -130,9 +130,6 @@ already present feature definitions." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -372,6 +369,9 @@ possibility to test different parameter settings.</p>
 <code><a href='groupChromPeaks-mzClust.html'>groupChromPeaks-mzClust</a></code>,
 <code><a href='groupChromPeaks-nearest.html'>groupChromPeaks-nearest</a></code>,
 <code><a href='groupChromPeaks.html'>groupChromPeaks</a>()</code></p></div>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Colin Smith, Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
@@ -390,94 +390,87 @@ possibility to test different parameter settings.</p>
 <span class='co'>##############################</span>
 <span class='co'>## Chromatographic peak detection and grouping.</span>
 <span class='co'>##</span>
-<span class='co'>## Below we perform first a peak detection (using the matchedFilter</span>
-<span class='co'>## method) on some of the test files from the faahKO package followed by</span>
-<span class='co'>## a peak grouping using the density method.</span>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>faahKO</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>MSnbase</span>)
-<span class='no'>fls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.files.html'>dir</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>), <span class='kw'>recursive</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-           <span class='kw'>full.names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+<span class='co'>## Load a test data set with detected peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
 
-<span class='co'>## Reading 2 of the KO samples</span>
-<span class='no'>raw_data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/readMSData.html'>readMSData</a></span>(<span class='no'>fls</span>[<span class='fl'>1</span>:<span class='fl'>2</span>], <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Perform the chromatographic peak detection using the matchedFilter method.</span>
-<span class='no'>mfp</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='findChromPeaks-matchedFilter.html'>MatchedFilterParam</a></span>(<span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>binSize</span> <span class='kw'>=</span> <span class='fl'>1</span>)
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>raw_data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='no'>mfp</span>)
+<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='no'>faahko_sub</span>
 
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>))</div><div class='output co'>#&gt;             mz mzmin mzmax       rt    rtmin    rtmax      into      intf  maxo
-#&gt; CP001 205.0000   205 205.0 2784.635 2770.550 2800.284 1778568.9 3589494.1 84280
-#&gt; CP002 205.0000   205 205.0 2784.635 2770.550 2800.284 1778568.9 3589494.1 84280
-#&gt; CP003 207.0821   207 207.1 2712.647 2698.562 2726.731  380873.0  725545.6 18800
-#&gt; CP004 207.0821   207 207.1 2712.647 2698.562 2726.731  380873.0  725657.0 18800
-#&gt; CP005 233.0390   233 233.1 3019.378 3005.293 3033.462  399145.3  746572.1 19752
-#&gt; CP006 233.0390   233 233.1 3019.378 3005.293 3033.462  399145.3  746587.0 19752
-#&gt;            maxf i       sn sample
-#&gt; CP001 194326.10 1 88.11283      1
-#&gt; CP002 194326.10 1 87.30418      1
-#&gt; CP003  39851.35 1 25.05928      1
-#&gt; CP004  39851.56 1 26.10968      1
-#&gt; CP005  41455.94 1 28.58299      1
-#&gt; CP006  41456.03 1 30.40953      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>))</div><div class='output co'>#&gt;          mz mzmin mzmax       rt    rtmin    rtmax       into       intb   maxo
+#&gt; CP001 453.2 453.2 453.2 2506.073 2501.378 2527.982  1007409.0  1007380.8  38152
+#&gt; CP002 302.0 302.0 302.0 2617.185 2595.275 2640.659   687146.6   671297.8  30552
+#&gt; CP003 344.0 344.0 344.0 2679.783 2646.919 2709.517  5210015.9  5135916.9 152320
+#&gt; CP004 430.1 430.1 430.1 2681.348 2639.094 2712.647  2395840.3  2299899.6  65752
+#&gt; CP005 366.0 366.0 366.0 2679.783 2642.224 2718.907  3365174.0  3279468.3  79928
+#&gt; CP006 343.0 343.0 343.0 2678.218 2637.529 2712.647 24147443.2 23703761.7 672064
+#&gt;          sn sample
+#&gt; CP001 38151      1
+#&gt; CP002    46      1
+#&gt; CP003    68      1
+#&gt; CP004    42      1
+#&gt; CP005    49      1
+#&gt; CP006    87      1</div><div class='input'><span class='co'>## The number of peaks identified per sample:</span>
 <span class='fu'><a href='https://rdrr.io/r/base/table.html'>table</a></span>(<span class='fu'><a href='XCMSnExp-class.html'>chromPeaks</a></span>(<span class='no'>res</span>)[, <span class='st'>"sample"</span>])</div><div class='output co'>#&gt; 
-#&gt;   1   2 
-#&gt; 251 299 </div><div class='input'>
+#&gt;   1   2   3 
+#&gt;  87 100  61 </div><div class='input'>
 <span class='co'>## Performing the chromatographic peak grouping. Assigning all samples to</span>
 <span class='co'>## the same sample group.</span>
-<span class='no'>fdp</span> <span class='kw'>&lt;-</span> <span class='fu'>PeakDensityParam</span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>length</a></span>(<span class='fu'><a href='https://rdrr.io/pkg/MSnbase/man/pSet-class.html'>fileNames</a></span>(<span class='no'>res</span>))))
-<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>res</span>, <span class='no'>fdp</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 3195 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='no'>fdp</span> <span class='kw'>&lt;-</span> <span class='fu'>PeakDensityParam</span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='fu'>fileNames</span>(<span class='no'>res</span>))))
+<span class='no'>res</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>res</span>, <span class='no'>fdp</span>)</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## The definition of the features (peak groups):</span>
-<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; DataFrame with 243 rows and 10 columns
-#&gt;           mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
-#&gt;       &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
-#&gt; FT001   200.100   200.100   200.100   2876.97   2876.97   2876.97         1
-#&gt; FT002   201.091   201.091   201.091   3141.44   3141.44   3141.44         2
-#&gt; FT003   205.000   205.000   205.000   2787.76   2784.64   2790.89         4
-#&gt; FT004   207.090   207.082   207.098   2715.78   2712.65   2718.91         4
-#&gt; FT005   233.036   233.033   233.039   3021.73   3019.38   3024.07         4
-#&gt; ...         ...       ...       ...       ...       ...       ...       ...
-#&gt; FT239   593.500   593.500   593.500   3715.78   3715.78   3715.78         1
-#&gt; FT240   594.313   594.313   594.313   3603.11   3603.11   3603.11         2
-#&gt; FT241   596.334   596.317   596.334   3815.94   3797.16   3815.94         3
-#&gt; FT242   597.371   597.371   597.371   3815.94   3815.94   3815.94         1
-#&gt; FT243   599.313   599.313   599.313   3743.95   3743.95   3743.95         2
-#&gt;              X1         peakidx  ms_level
-#&gt;       &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
-#&gt; FT001         1             252         1
-#&gt; FT002         1         253,254         1
-#&gt; FT003         2   1,  2,255,...         1
-#&gt; FT004         2   3,  4,257,...         1
-#&gt; FT005         2   5,  6,259,...         1
-#&gt; ...         ...             ...       ...
-#&gt; FT239         1             547         1
-#&gt; FT240         1         247,248         1
-#&gt; FT241         2     249,548,549         1
-#&gt; FT242         1             550         1
-#&gt; FT243         1         250,251         1</div><div class='input'>
+<span class='fu'><a href='XCMSnExp-class.html'>featureDefinitions</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; DataFrame with 47 rows and 10 columns
+#&gt;          mzmed     mzmin     mzmax     rtmed     rtmin     rtmax    npeaks
+#&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+#&gt; FT01     279.0     279.0     279.0   2787.77   2787.76   2787.77         2
+#&gt; FT02     286.2     286.2     286.2   3254.90   3250.99   3258.82         2
+#&gt; FT03     300.2     300.2     300.2   3387.14   3379.32   3390.27         4
+#&gt; FT04     301.0     301.0     301.0   2787.77   2786.20   2792.46         3
+#&gt; FT05     305.1     305.1     305.1   2994.34   2994.34   2994.34         2
+#&gt; ...        ...       ...       ...       ...       ...       ...       ...
+#&gt; FT43    534.20     534.2     534.2   3580.41   3576.50   3584.33         2
+#&gt; FT44    536.20     536.2     536.2   3712.65   3703.26   3718.91         3
+#&gt; FT45    571.75     571.7     571.8   2918.44   2916.09   2920.78         2
+#&gt; FT46    579.10     579.1     579.1   2786.98   2786.20   2787.77         2
+#&gt; FT47    593.40     593.4     593.4   3707.18   3704.83   3709.52         2
+#&gt;             X1         peakidx  ms_level
+#&gt;      &lt;numeric&gt;          &lt;list&gt; &lt;integer&gt;
+#&gt; FT01         2          11,199         1
+#&gt; FT02         2         115,205         1
+#&gt; FT03         3  35,125,210,...         1
+#&gt; FT04         3      10, 97,198         1
+#&gt; FT05         2          15,203         1
+#&gt; ...        ...             ...       ...
+#&gt; FT43         2          61,227         1
+#&gt; FT44         3      73,174,237         1
+#&gt; FT45         2         100,201         1
+#&gt; FT46         2           8,197         1
+#&gt; FT47         2         164,234         1</div><div class='input'>
 <span class='co'>## Using the featureValues method to extract a matrix with the</span>
 <span class='co'>## intensities of the features per sample.</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"into"</span>))</div><div class='output co'>#&gt;        ko15.CDF  ko16.CDF
-#&gt; FT001        NA  451600.7
-#&gt; FT002        NA  272872.0
-#&gt; FT003 1778568.9 1567038.1
-#&gt; FT004  380873.0  449392.6
-#&gt; FT005  399145.3  356951.3
-#&gt; FT006  252282.0        NA</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span>(<span class='fu'><a href='XCMSnExp-peak-grouping-results.html'>featureValues</a></span>(<span class='no'>res</span>, <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"into"</span>))</div><div class='output co'>#&gt;        ko15.CDF ko16.CDF   ko18.CDF
+#&gt; FT01 17140627.0       NA 16919266.9
+#&gt; FT02         NA  1264119   732016.2
+#&gt; FT03  4700903.2  5313736  5169558.2
+#&gt; FT04  3051847.8  1964444  2774885.3
+#&gt; FT05   847473.1       NA  1003750.6
+#&gt; FT06  1070389.9       NA  1983342.5</div><div class='input'>
 <span class='co'>## The process history:</span>
 <span class='fu'><a href='XCMSnExp-class.html'>processHistory</a></span>(<span class='no'>res</span>)</div><div class='output co'>#&gt; [[1]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak detection 
-#&gt;  date: Wed May 20 14:38:13 2020 
+#&gt;  date: Mon Jun 15 06:30:55 2020 
 #&gt;  info:  
-#&gt;  fileIndex: 1,2 
-#&gt;  Parameter class: MatchedFilterParam 
+#&gt;  fileIndex: 1,2,3 
+#&gt;  Parameter class: CentWaveParam 
 #&gt;  MS level(s) 1 
 #&gt; 
 #&gt; [[2]]
 #&gt; Object of class "XProcessHistory"
 #&gt;  type: Peak grouping 
-#&gt;  date: Wed May 20 14:38:16 2020 
+#&gt;  date: Mon Jun 15 14:29:22 2020 
 #&gt;  info:  
-#&gt;  fileIndex: 1,2 
+#&gt;  fileIndex: 1,2,3 
 #&gt;  Parameter class: PeakDensityParam 
 #&gt;  MS level(s) 1 
 #&gt; </div></pre>

@@ -73,7 +73,7 @@ the m/z - rt space." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">xcms</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">3.11.3</span>
       </span>
     </div>
 
@@ -98,9 +98,6 @@ the m/z - rt space." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/new_functionality.html">New and modified functionality in xcms</a>
-    </li>
     <li>
       <a href="../articles/xcms-direct-injection.html">Grouping FTICR-MS data with xcms</a>
     </li>
@@ -176,29 +173,28 @@ identifying overlapping features.</p></td>
 
     <p><code>list</code> with indices of features (in <code><a href='XCMSnExp-class.html'>featureDefinitions()</a></code>) that
 are overlapping.</p>
+    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+
+    <p>Johannes Rainer</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Load 2 test files.</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'>readMSData</span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko15.CDF"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>),
-                     <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO/ko16.CDF"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)),
-                   <span class='kw'>mode</span> <span class='kw'>=</span> <span class='st'>"onDisk"</span>)</div><div class='output co'>#&gt; <span class='message'>Polarity can not be extracted from netCDF files, please set manually the polarity with the 'polarity' method.</span></div><div class='input'>
-<span class='co'>## Perform peak detection; parameters set to reduce processing speed</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='chromatographic-peak-detection.html'>findChromPeaks</a></span>(<span class='no'>data</span>, <span class='fu'><a href='findChromPeaks-centWave.html'>CentWaveParam</a></span>(<span class='kw'>prefilter</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>3</span>, <span class='fl'>10000</span>),
-    <span class='kw'>noise</span> <span class='kw'>=</span> <span class='fl'>10000</span>, <span class='kw'>snthresh</span> <span class='kw'>=</span> <span class='fl'>40</span>))</div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 937 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 87 found.</span></div><div class='output co'>#&gt; <span class='message'>Detecting mass traces at 25 ppm ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='output co'>#&gt; <span class='message'>Detecting chromatographic peaks in 1025 regions of interest ...</span></div><div class='output co'>#&gt; <span class='message'> OK: 100 found.</span></div><div class='input'>
+    <pre class="examples"><div class='input'>
+<span class='co'>## Load a test data set with detected peaks</span>
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='no'>faahko_sub</span>)
+<span class='co'>## Update the path to the files for the local system</span>
+<span class='fu'><a href='dirname.html'>dirname</a></span>(<span class='no'>faahko_sub</span>) <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/system.file.html'>system.file</a></span>(<span class='st'>"cdf/KO"</span>, <span class='kw'>package</span> <span class='kw'>=</span> <span class='st'>"faahKO"</span>)
+
 <span class='co'>## Correspondence analysis</span>
-<span class='no'>data</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>data</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
+<span class='no'>xdata</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='groupChromPeaks.html'>groupChromPeaks</a></span>(<span class='no'>faahko_sub</span>, <span class='kw'>param</span> <span class='kw'>=</span> <span class='fu'><a href='groupChromPeaks-density.html'>PeakDensityParam</a></span>(<span class='kw'>sampleGroups</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>1</span>, <span class='fl'>1</span>, <span class='fl'>1</span>)))</div><div class='output co'>#&gt; <span class='message'>Processing 2572 mz slices ... </span></div><div class='output co'>#&gt; <span class='message'>OK</span></div><div class='input'>
 <span class='co'>## Identify overlapping features</span>
-<span class='fu'>overlappingFeatures</span>(<span class='no'>data</span>)</div><div class='output co'>#&gt; list()</div><div class='input'>
+<span class='fu'>overlappingFeatures</span>(<span class='no'>xdata</span>)</div><div class='output co'>#&gt; list()</div><div class='input'>
 <span class='co'>## Identify features that are separated on retention time by less than</span>
 <span class='co'>## 2 minutes</span>
-<span class='fu'>overlappingFeatures</span>(<span class='no'>data</span>, <span class='kw'>expandRt</span> <span class='kw'>=</span> <span class='fl'>60</span>)</div><div class='output co'>#&gt; [[1]]
-#&gt; [1] 14 15
+<span class='fu'>overlappingFeatures</span>(<span class='no'>xdata</span>, <span class='kw'>expandRt</span> <span class='kw'>=</span> <span class='fl'>60</span>)</div><div class='output co'>#&gt; [[1]]
+#&gt; [1] 5 6
 #&gt; 
 #&gt; [[2]]
-#&gt; [1] 66 67 68 69 70
-#&gt; 
-#&gt; [[3]]
-#&gt; [1] 80 81
+#&gt; [1] 31 32
 #&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
