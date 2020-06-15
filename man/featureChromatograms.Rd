@@ -82,6 +82,8 @@ is smaller if \code{x} contains also filled-in peaks (with \code{fillChromPeaks}
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Subset the object to a smaller retention time range
 xdata <- faahko_sub

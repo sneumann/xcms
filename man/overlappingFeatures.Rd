@@ -36,6 +36,8 @@ the m/z - rt space.
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Correspondence analysis
 xdata <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = c(1, 1, 1)))

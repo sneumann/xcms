@@ -232,6 +232,8 @@ in the matrix returned by the \code{\link[=featureValues]{featureValues()}} meth
 
 ## Load a test data set with identified chromatographic peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 res <- faahko_sub
 
 ## Perform the correspondence. We assign all samples to the same group.

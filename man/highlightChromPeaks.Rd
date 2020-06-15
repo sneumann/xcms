@@ -74,6 +74,8 @@ peak definitions to an existing plot, such as one created by the
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Extract the ion chromatogram for one chromatographic peak in the data.
 chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)

@@ -763,6 +763,8 @@ adjustRtimePeakGroups <- function(object, param = PeakGroupsParam(),
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Performing the peak grouping using the "peak density" method.
 #' p <- PeakDensityParam(sampleGroups = c(1, 1, 1))
@@ -1063,6 +1065,8 @@ plotAdjustedRtime <- function(object, col = "#00000080", lty = 1, lwd = 1,
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
@@ -1228,6 +1232,8 @@ highlightChromPeaks <- function(x, rt, mz, peakIds = character(),
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## plotChromPeakImage: plot an image for the identified peaks per file
 #' plotChromPeakImage(faahko_sub)
@@ -1390,6 +1396,8 @@ isCalibrated <- function(object) {
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' xod <- adjustRtime(faahko_sub, param = ObiwarpParam())
 #'
@@ -1665,6 +1673,8 @@ featureSummary <- function(x, group, perSampleCounts = FALSE,
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Correspondence analysis
 #' xdata <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
@@ -2180,6 +2190,8 @@ featureSpectra <- function(x, msLevel = 2, expandRt = 0, expandMz = 0,
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Subset the object to a smaller retention time range
 #' xdata <- faahko_sub

@@ -1191,6 +1191,8 @@ setMethod("filterAcquisitionNum", "XCMSnExp", function(object, n, file) {
 #'
 #' ## Loading a test data set with identified chromatographic peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Subset the dataset to the first and third file.
 #' xod_sub <- filterFile(faahko_sub, file = c(1, 3))
@@ -2395,6 +2397,8 @@ setMethod("featureValues", "XCMSnExp", function(object, method = c("medret",
 #'
 #' ## Load a test data set with identified chromatographic peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Extract the ion chromatogram for one chromatographic peak in the data.
 #' chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
@@ -2750,6 +2754,8 @@ setMethod("findChromPeaks",
 #'
 #' ## Load a test data set with identified chromatographic peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #' res <- faahko_sub
 #'
 #' ## Perform the correspondence. We assign all samples to the same group.
@@ -3295,6 +3301,8 @@ setMethod("dropFilledChromPeaks", "XCMSnExp", function(object) {
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Extract the full MS data for a certain retention time range
 #' ## as a data.frame
@@ -3672,6 +3680,8 @@ setMethod("writeMSData", signature(object = "XCMSnExp", file = "character"),
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Plot the chromatographic peak density for a specific mz range to evaluate
 #' ## different peak density correspondence settings.
@@ -3964,6 +3974,8 @@ setMethod("refineChromPeaks", c(object = "XCMSnExp", param = "CleanPeaksParam"),
 #'
 #' ## Load a test data set with detected peaks
 #' data(faahko_sub)
+#' ## Update the path to the files for the local system
+#' dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 #'
 #' ## Subset to a single file
 #' xd <- filterFile(faahko_sub, file = 1)

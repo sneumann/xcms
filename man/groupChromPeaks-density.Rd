@@ -196,6 +196,8 @@ p
 ##
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 res <- faahko_sub
 

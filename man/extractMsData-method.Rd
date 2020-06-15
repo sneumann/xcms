@@ -56,6 +56,8 @@ data range if \code{rt} and \code{mz} are not defined).
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Extract the full MS data for a certain retention time range
 ## as a data.frame

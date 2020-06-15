@@ -99,6 +99,8 @@ algorithm and its supported settings.
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## Plot the chromatographic peak density for a specific mz range to evaluate
 ## different peak density correspondence settings.

@@ -679,7 +679,8 @@ with feature definitions and phenodata information, into a
 
 ## Load a test data set with detected peaks
 data(faahko_sub)
-## Loading the data from 2 files of the faahKO package.
+## Update the path to the files for the local system
+dirname(faahko_sub) <- system.file("cdf/KO", package = "faahKO")
 
 ## The results from the peak detection are now stored in the XCMSnExp
 ## object
