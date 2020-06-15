@@ -1,5 +1,8 @@
 [![R-CMD-check](https://github.com/sneumann/xcms/workflows/R-CMD-check/badge.svg)](https://github.com/sneumann/xcms/actions?query=workflow%3AR-CMD-check)
 [![codecov.io](https://codecov.io/github/sneumann/xcms/coverage.svg?branch=master)](https://codecov.io/github/sneumann/xcms?branch=master)
+[![Years in Bioconductor](http://www.bioconductor.org/shields/years-in-bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
+[![Bioconductor release build status](http://www.bioconductor.org/shields/build/release/bioc/xcms.svg)](http://www.bioconductor.org/packages/release/bioc/html/xcms.html)
+[![Bioconductor devel build status](http://www.bioconductor.org/shields/build/devel/bioc/xcms.svg)](http://www.bioconductor.org/checkResults/devel/bioc-LATEST/xcms.html)
 
 # The `xcms` package (version >= 3)
 
