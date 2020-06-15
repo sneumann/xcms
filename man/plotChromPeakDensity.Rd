@@ -97,39 +97,25 @@ algorithm and its supported settings.
 }
 \examples{
 
-## Below we perform first a peak detection (using the centWave
-## method) on some of the test files from the faahKO package.
-library(faahKO)
-library(xcms)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
-
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the peak detection using the centWave method (settings are tuned
-## to speed up example execution)
-res <- findChromPeaks(raw_data, param = CentWaveParam(noise = 3000, snthresh = 40))
-
-## Align the samples using obiwarp
-res <- adjustRtime(res, param = ObiwarpParam())
+## Load a test data set with detected peaks
+data(faahko_sub)
 
 ## Plot the chromatographic peak density for a specific mz range to evaluate
 ## different peak density correspondence settings.
 mzr <- c(305.05, 305.15)
 
-plotChromPeakDensity(res, mz = mzr, pch = 16,
-    param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(res)))))
+plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
+    param = PeakDensityParam(sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 
 ## Use a larger bandwidth
-plotChromPeakDensity(res, mz = mzr, param = PeakDensityParam(bw = 60,
-    sampleGroups = rep(1, length(fileNames(res)))), pch = 16)
+plotChromPeakDensity(faahko_sub, mz = mzr, param = PeakDensityParam(bw = 60,
+    sampleGroups = rep(1, length(fileNames(faahko_sub)))), pch = 16)
 ## Neighboring peaks are now fused into one.
 
 ## Require the chromatographic peak to be present in all samples of a group
-plotChromPeakDensity(res, mz = mzr, pch = 16,
+plotChromPeakDensity(faahko_sub, mz = mzr, pch = 16,
     param = PeakDensityParam(minFraction = 1,
-    sampleGroups = rep(1, length(fileNames(res)))))
+    sampleGroups = rep(1, length(fileNames(faahko_sub)))))
 }
 \seealso{
 \code{\link[=groupChromPeaks-density]{groupChromPeaks-density()}} for details on the

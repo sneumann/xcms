@@ -38,12 +38,13 @@ library(BiocStyle)
 library(xcms)
 library(faahKO)
 library(pander)
-## Use socket based parallel processing on Windows systems
-if (.Platform$OS.type == "unix") {
-    register(bpstart(MulticoreParam(3)))
-} else {
-    register(bpstart(SnowParam(3)))
-}
+## ## Use socket based parallel processing on Windows systems
+## if (.Platform$OS.type == "unix") {
+##     register(bpstart(MulticoreParam(3)))
+## } else {
+##     register(bpstart(SnowParam(3)))
+## }
+register(SerialParam())
 
 ```
 
@@ -338,13 +339,13 @@ plot(xchr, col = sample_colors,
 ```
 
 Finally we perform the chromatographic peak detection on the full data set. Note
-that we set the argument `prefilter` to `c(3, 5000)` and `noise` to `5000` to
+that we set the argument `prefilter` to `c(6, 5000)` and `noise` to `5000` to
 reduce the run time of this vignette. With this setting we consider only signals
 with a value larger than 5000 in the peak detection step.
 
 ```{r peak-detection-centwave, message = FALSE, results = "hide" }
 cwp <- CentWaveParam(peakwidth = c(20, 80), noise = 5000,
-                     prefilter = c(3, 5000))
+                     prefilter = c(6, 5000))
 xdata <- findChromPeaks(raw_data, param = cwp)
 ```
 

@@ -33,24 +33,19 @@ are overlapping.
 the m/z - rt space.
 }
 \examples{
-## Load 2 test files.
-data <- readMSData(c(system.file("cdf/KO/ko15.CDF", package = "faahKO"),
-                     system.file("cdf/KO/ko16.CDF", package = "faahKO")),
-                   mode = "onDisk")
 
-## Perform peak detection; parameters set to reduce processing speed
-data <- findChromPeaks(data, CentWaveParam(prefilter = c(3, 10000),
-    noise = 10000, snthresh = 40))
+## Load a test data set with detected peaks
+data(faahko_sub)
 
 ## Correspondence analysis
-data <- groupChromPeaks(data, param = PeakDensityParam(sampleGroups = c(1, 1)))
+xdata <- groupChromPeaks(faahko_sub, param = PeakDensityParam(sampleGroups = c(1, 1, 1)))
 
 ## Identify overlapping features
-overlappingFeatures(data)
+overlappingFeatures(xdata)
 
 ## Identify features that are separated on retention time by less than
 ## 2 minutes
-overlappingFeatures(data, expandRt = 60)
+overlappingFeatures(xdata, expandRt = 60)
 }
 \author{
 Johannes Rainer

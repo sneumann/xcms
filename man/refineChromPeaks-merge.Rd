@@ -121,27 +121,28 @@ newly merged peak are considered.
 }
 \examples{
 
-xd <- readMSData(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-    mode = "onDisk")
-xd <- findChromPeaks(xd, param = CentWaveParam(prefilter = c(5, 10000),
-    noise = 5000))
+## Load a test data set with detected peaks
+data(faahko_sub)
+
+## Subset to a single file
+xd <- filterFile(faahko_sub, file = 1)
 
 ## Example of a split peak that will be merged
 mzr <- 305.1 + c(-0.01, 0.01)
-chr <- chromatogram(xd, mz = mzr)
+chr <- chromatogram(xd, mz = mzr, rt = c(2700, 3700))
 plot(chr)
 
 ## Combine the peaks
 res <- refineChromPeaks(xd, param = MergeNeighboringPeaksParam(expandRt = 4))
-chr_res <- chromatogram(res, mz = mzr)
+chr_res <- chromatogram(res, mz = mzr, rt = c(2700, 3700))
 plot(chr_res)
 
 ## Example of a peak that was not merged, because the signal between them
 ## is lower than the cut-off minProp
 mzr <- 496.2 + c(-0.01, 0.01)
-chr <- chromatogram(xd, mz = mzr)
+chr <- chromatogram(xd, mz = mzr, rt = c(3200, 3500))
 plot(chr)
-chr_res <- chromatogram(res, mz = mzr)
+chr_res <- chromatogram(res, mz = mzr, rt = c(3200, 3500))
 plot(chr_res)
 }
 \seealso{

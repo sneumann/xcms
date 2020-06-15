@@ -104,24 +104,17 @@ and use these (for the subsetting based on the provided parameter
 \code{rt}). This can be changed by setting \code{adjustedRtime = FALSE}.
 }
 \examples{
-## Read some files from the faahKO package.
-library(xcms)
-library(faahKO)
-faahko_files <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-                  system.file('cdf/KO/ko18.CDF', package = "faahKO"))
 
-od <- readMSData(faahko_files, mode = "onDisk")
-
-## Subset to speed up processing
-od <- filterRt(od, rt = c(2500, 3000))
-
-## Perform peak detection using default CentWave parameters
-xod <- findChromPeaks(od, param = CentWaveParam(prefilter = c(3, 20000)))
+## Load a test data set with identified chromatographic peaks
+data(faahko_sub)
 
 ## Extract the ion chromatogram for one chromatographic peak in the data.
-chrs <- chromatogram(xod, rt = c(2700, 2900), mz = 335)
+chrs <- chromatogram(faahko_sub, rt = c(2700, 2900), mz = 335)
 
 chrs
+
+## Identified chromatographic peaks
+chromPeaks(chrs)
 
 ## Plot the chromatogram
 plot(chrs)
@@ -129,16 +122,10 @@ plot(chrs)
 ## Extract chromatograms for multiple ranges.
 mzr <- matrix(c(335, 335, 344, 344), ncol = 2, byrow = TRUE)
 rtr <- matrix(c(2700, 2900, 2600, 2750), ncol = 2, byrow = TRUE)
-chrs <- chromatogram(xod, mz = mzr, rt = rtr)
+chrs <- chromatogram(faahko_sub, mz = mzr, rt = rtr)
 
-chrs <- chromatogram(xod, mz = mzr)
+chromPeaks(chrs)
 
-rtr[1, 1] <- 2785
-chrs <- chromatogram(xod, mz = mzr, rt = rtr)
-
-chrs
-
-## Plot the extracted chromatograms
 plot(chrs)
 
 ## Get access to all chromatograms for the second mz/rt range

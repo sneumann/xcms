@@ -181,63 +181,52 @@ the raw retention times with the adjusted ones.
 }
 \examples{
 
-## Load some of the files from the faahKO package.
-library(faahKO)
-fs <- c(system.file('cdf/KO/ko15.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko16.CDF', package = "faahKO"),
-        system.file('cdf/KO/ko18.CDF', package = "faahKO"))
-## Read the files
-od <- readMSData(fs, mode = "onDisk")
-
-## Perform peak detection on them using the matched filter algorithm. Note
-## that we use a large value for binSize to reduce the runtime of the
-## example code.
-mfp <- MatchedFilterParam(binSize = 5)
-xod <- findChromPeaks(od, param = mfp)
+## Loading a test data set with identified chromatographic peaks
+data(faahko_sub)
 
 ## Subset the dataset to the first and third file.
-xod_sub <- filterFile(xod, file = c(1, 3))
+xod_sub <- filterFile(faahko_sub, file = c(1, 3))
 
 ## The number of chromatographic peaks per file for the full object
-table(chromPeaks(xod)[, "sample"])
+table(chromPeaks(faahko_sub)[, "sample"])
 
 ## The number of chromatographic peaks per file for the subset
 table(chromPeaks(xod_sub)[, "sample"])
 
-basename(fileNames(xod))
+basename(fileNames(faahko_sub))
 basename(fileNames(xod_sub))
 
 ## Filter on mz values; chromatographic peaks and features within the
 ## mz range are retained (as well as adjusted retention times).
-xod_sub <- filterMz(xod, mz = c(300, 400))
+xod_sub <- filterMz(faahko_sub, mz = c(300, 400))
 head(chromPeaks(xod_sub))
 nrow(chromPeaks(xod_sub))
-nrow(chromPeaks(xod))
+nrow(chromPeaks(faahko_sub))
 
 ## Filter on rt values. All chromatographic peaks and features within the
 ## retention time range are retained. Filtering is performed by default on
 ## adjusted retention times, if present.
-xod_sub <- filterRt(xod, rt = c(2700, 2900))
+xod_sub <- filterRt(faahko_sub, rt = c(2700, 2900))
 
 range(rtime(xod_sub))
 head(chromPeaks(xod_sub))
 range(chromPeaks(xod_sub)[, "rt"])
 
-nrow(chromPeaks(xod))
+nrow(chromPeaks(faahko_sub))
 nrow(chromPeaks(xod_sub))
 
 ## Extract a single Spectrum
-xod[[4]]
+faahko_sub[[4]]
 
 ## Subsetting using [ removes all preprocessing results - using
 ## keepAdjustedRtime = TRUE would keep adjusted retention times, if present.
-xod_sub <- xod[fromFile(xod) == 1]
+xod_sub <- faahko_sub[fromFile(faahko_sub) == 1]
 xod_sub
 
 ## Using split does also remove preprocessing results, but it supports the
 ## optional parameter keepAdjustedRtime.
 ## Split the object into a list of XCMSnExp objects, one per file
-xod_list <- split(xod, f = fromFile(xod))
+xod_list <- split(faahko_sub, f = fromFile(faahko_sub))
 xod_list
 }
 \seealso{

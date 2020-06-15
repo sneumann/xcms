@@ -194,20 +194,10 @@ p
 ##############################
 ## Chromatographic peak detection and grouping.
 ##
-## Below we perform first a peak detection (using the matchedFilter
-## method) on some of the test files from the faahKO package followed by
-## a peak grouping using the density method.
-library(faahKO)
-library(MSnbase)
-fls <- dir(system.file("cdf/KO", package = "faahKO"), recursive = TRUE,
-           full.names = TRUE)
+## Load a test data set with detected peaks
+data(faahko_sub)
 
-## Reading 2 of the KO samples
-raw_data <- readMSData(fls[1:2], mode = "onDisk")
-
-## Perform the chromatographic peak detection using the matchedFilter method.
-mfp <- MatchedFilterParam(snthresh = 20, binSize = 1)
-res <- findChromPeaks(raw_data, param = mfp)
+res <- faahko_sub
 
 head(chromPeaks(res))
 ## The number of peaks identified per sample:
