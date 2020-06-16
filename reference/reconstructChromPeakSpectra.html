@@ -180,7 +180,8 @@ spectrum reconstruction.</p></td>
       <th>intensity</th>
       <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the column in the <code>chromPeaks</code>
 matrix that should be used for the intensities of the reconstructed
-spectra's peaks.</p></td>
+spectra's peaks. The same value from the MS1 chromatographic peaks will
+be used as <code>precursorIntensity</code> of the resulting spectra.</p></td>
     </tr>
     <tr>
       <th>peakId</th>
@@ -207,7 +208,9 @@ and <code>NumericList()</code> with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
 As retention time the median retention times of all MS2 chromatographic
-peaks used for the spectrum reconstruction is reported.</p>
+peaks used for the spectrum reconstruction is reported. The MS1
+chromatographic peak intensity is reported as the reconstructed
+spectrum's <code>precursorIntensity</code> value (see parameter <code>intensity</code> above).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>In detail, the function performs for each MS1 chromatographic peak:</p><ul>
