@@ -27,11 +27,12 @@ test_that(".which_chrom_peak_diff_rt works", {
 test_that(".reconstruct_ms2_for_chrom_peak works", {
     ## Fluopicolide, exact mass = 381.965430576, [M+H]+ = 382.972706
     pk <- chromPeaks(pest_swth, mz = 382.972706, ppm = 10)
-    res <- .reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
+    res <- xcms:::.reconstruct_ms2_for_chrom_peak(pk, pest_swth, fromFile = 7L,
                                            expandRt = 3, diffRt = 2,
                                            minCor = 0.8)
     expect_true(is(res, "Spectra"))
     expect_equal(unname(fromFile(res)), 7L)
+    expect_true(!is.na(rtime(res)))
     expect_equal(length(mcols(res)$ms2_peak_id[[1]]), 14)
     expect_true(all(mcols(res)$ms2_peak_cor[[1]] > 0.8))
     expect_equal(length(intensity(res[[1]])), 14)

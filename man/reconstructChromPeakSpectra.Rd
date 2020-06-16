@@ -6,7 +6,7 @@
 \usage{
 reconstructChromPeakSpectra(
   object,
-  expandRt = 1,
+  expandRt = 0,
   diffRt = 2,
   minCor = 0.8,
   intensity = "maxo",
@@ -19,7 +19,8 @@ reconstructChromPeakSpectra(
 
 \item{expandRt}{\code{numeric(1)} allowing to expand the retention time range
 for extracted ion chromatograms by a constant value (for the peak
-shape correlation).}
+shape correlation). Defaults to \code{expandRt = 0} hence correlates only
+the signal included in the identified chromatographic peaks.}
 
 \item{diffRt}{\code{numeric(1)} defining the maximal allowed difference between
 the retention time of the chromatographic peak (apex) and the retention
@@ -51,6 +52,8 @@ columns \code{"ms2_peak_id"} and \code{"ms2_peak_cor"} (of type \code{\link[=Cha
 and \code{\link[=NumericList]{NumericList()}} with length equal to the number of peaks per
 reconstructed MS2 spectrum) providing the IDs and the correlation of the
 MS2 chromatographic peaks from which the MS2 spectrum was reconstructed.
+As retention time the median retention times of all MS2 chromatographic
+peaks used for the spectrum reconstruction is reported.
 }
 \description{
 Reconstructs MS2 spectra for each MS1 chromatographic peak (if possible) for
@@ -81,5 +84,5 @@ chromatographic peaks for each spectrum as well as their correlation value.
 peak detection in DIA isolation windows and for examples.
 }
 \author{
-Johannes Rainer, Micheal Witting
+Johannes Rainer, Michael Witting
 }
